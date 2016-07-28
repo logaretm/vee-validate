@@ -1,0 +1,27 @@
+{
+  "name": "vue-validation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava",
+    "lint": "eslint ./src ./test"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ava": "^0.15.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.9.0",
+    "eslint": "^3.1.1",
+    "eslint-config-airbnb-base": "^5.0.0",
+    "eslint-plugin-import": "^1.12.0",
+    "vue": "^1.0.26"
+  }
+}
