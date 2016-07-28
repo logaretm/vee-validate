@@ -8,6 +8,16 @@ export default class Validator
         this.rules = rules;
     }
 
+    attach(name, checks) {
+        checks.split('|').forEach(rule => {
+            if (! this.validations[name]) {
+                this.validations[name] = [];
+            }
+
+            this.validations[name].push(this.normalizeRule(rule));
+        });
+    }
+
     create(validations) {
         return new Validator(validations);
     }
@@ -38,25 +48,28 @@ export default class Validator
     normalize(validations) {
         const normalized = {};
         Object.keys(validations).forEach(property => {
-            const checks = validations[property].split('|');
-            checks.forEach(rule => {
-                let params = null;
-                if (~rule.indexOf(':')) {
-                    params = rule.split(':')[1].split(',');
-                }
-
+            validations[property].split('|').forEach(rule => {
                 if (! normalized[property]) {
                     normalized[property] = [];
                 }
 
-                normalized[property].push({
-                    name: rule.split(':')[0],
-                    params
-                });
+                normalized[property].push(this.normalizeRule(rule));
             });
         });
 
         return normalized;
+    }
+
+    normalizeRule(rule) {
+        let params = null;
+        if (~rule.indexOf(':')) {
+            params = rule.split(':')[1].split(',');
+        }
+
+        return {
+            name: rule.split(':')[0],
+            params
+        };
     }
 
     /**

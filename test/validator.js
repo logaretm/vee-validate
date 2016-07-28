@@ -51,3 +51,9 @@ test('it formats error messages', t => {
         ]
     });
 });
+
+test('it can attach new rules', t => {
+    validator.attach('field', 'required|min:5');
+    t.false(validator.validate('field', 'less'));
+    t.true(validator.validate('field', 'not less'));
+});
