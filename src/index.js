@@ -17,7 +17,7 @@ export default (Vue) => {
 
     Vue.directive('validate', {
         params: ['rules'],
-        onKeydown() {
+        onInput() {
             this.vm.$validator.validate(this.fieldName, this.el.value);
         },
         attachValidator() {
@@ -26,12 +26,12 @@ export default (Vue) => {
         bind() {
             this.fieldName = this.el.name;
             this.attachValidator();
-            this.onKeydownRef = this.onKeydown.bind(this);
-            this.el.addEventListener('keydown', this.onKeydownRef);
+            this.onInputRef = this.onInput.bind(this);
+            this.el.addEventListener('input', this.onInputRef);
         },
         unbind() {
             this.vm.$validator.detach(this.fieldName);
-            this.el.removeEventListener('keydown', this.onKeydownRef);
+            this.el.removeEventListener('input', this.onInputRef);
         }
     });
 };

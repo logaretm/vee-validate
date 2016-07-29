@@ -83,7 +83,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    Vue.directive('validate', {
 	        params: ['rules'],
-	        onKeydown: function onKeydown() {
+	        onInput: function onInput() {
 	            this.vm.$validator.validate(this.fieldName, this.el.value);
 	        },
 	        attachValidator: function attachValidator() {
@@ -92,12 +92,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        bind: function bind() {
 	            this.fieldName = this.el.name;
 	            this.attachValidator();
-	            this.onKeydownRef = this.onKeydown.bind(this);
-	            this.el.addEventListener('keydown', this.onKeydownRef);
+	            this.onInputRef = this.onInput.bind(this);
+	            this.el.addEventListener('input', this.onInputRef);
 	        },
 	        unbind: function unbind() {
 	            this.vm.$validator.detach(this.fieldName);
-	            this.el.removeEventListener('keydown', this.onKeydownRef);
+	            this.el.removeEventListener('input', this.onInputRef);
 	        }
 	    });
 	};
