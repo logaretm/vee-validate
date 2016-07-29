@@ -5,10 +5,13 @@ export default (Vue) => {
     Vue.prototype.$validator = Validator.create();
 
     Vue.mixin({
-        computed: {
-            $errors() {
-                return this.$validator.errors;
-            }
+        data() {
+            return {
+                errors: []
+            };
+        },
+        created() {
+            this.$set('errors', this.$validator.errors);
         }
     });
 

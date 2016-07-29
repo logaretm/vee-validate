@@ -71,10 +71,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Vue.prototype.$validator = _validator2.default.create();
 
 	    Vue.mixin({
-	        computed: {
-	            $errors: function $errors() {
-	                return this.$validator.errors;
-	            }
+	        data: function data() {
+	            return {
+	                errors: []
+	            };
+	        },
+	        created: function created() {
+	            this.$set('errors', this.$validator.errors);
 	        }
 	    });
 
@@ -117,6 +120,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _rules2 = _interopRequireDefault(_rules);
 
+	var _errorBag = __webpack_require__(8);
+
+	var _errorBag2 = _interopRequireDefault(_errorBag);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -126,7 +133,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Validator);
 
 	        this.validations = this.normalize(validations);
-	        this.errors = {};
+	        this.errors = new _errorBag2.default();
 	        this.rules = _rules2.default;
 	    }
 
@@ -154,7 +161,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var _this2 = this;
 
 	            var test = true;
-	            this.errors = {};
+	            this.errors.clear();
 	            Object.keys(values).forEach(function (property) {
 	                test = _this2.validate(property, values[property]);
 	            });
@@ -167,7 +174,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var _this3 = this;
 
 	            var test = true;
-	            this.errors[name] = [];
+	            this.errors.remove(name);
 	            this.validations[name].forEach(function (rule) {
 	                test = _this3.test(name, value, rule);
 	            });
@@ -233,7 +240,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var valid = validator.validate(value, rule.params);
 
 	            if (!valid) {
-	                this.errors[name].push(validator.msg(name, rule.params));
+	                this.errors.add(name, validator.msg(name, rule.params));
 	            }
 
 	            return valid;
@@ -413,6 +420,94 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return String(value).length <= length;
 	    }
 	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var ErrorBag = function () {
+	    function ErrorBag() {
+	        _classCallCheck(this, ErrorBag);
+
+	        this.errors = [];
+	    }
+
+	    _createClass(ErrorBag, [{
+	        key: "add",
+	        value: function add(field, msg) {
+	            this.errors.push({
+	                field: field,
+	                msg: msg
+	            });
+	        }
+	    }, {
+	        key: "remove",
+	        value: function remove(field) {
+	            this.errors = this.errors.filter(function (e) {
+	                return e.field !== field;
+	            });
+	        }
+	    }, {
+	        key: "has",
+	        value: function has(field) {
+	            for (var i = 0; i < this.errors.length; i++) {
+	                if (this.errors[i].field === field) {
+	                    return true;
+	                }
+	            }
+
+	            return false;
+	        }
+	    }, {
+	        key: "clear",
+	        value: function clear() {
+	            this.errors = [];
+	        }
+	    }, {
+	        key: "first",
+	        value: function first(field) {
+	            for (var i = 0; i < this.errors.length; i++) {
+	                if (this.errors[i].field === field) {
+	                    return this.errors[i].msg;
+	                }
+	            }
+
+	            return null;
+	        }
+	    }, {
+	        key: "collect",
+	        value: function collect(field) {
+	            return this.errors.filter(function (e) {
+	                return e.field === field;
+	            });
+	        }
+	    }, {
+	        key: "all",
+	        value: function all() {
+	            return this.errors;
+	        }
+	    }, {
+	        key: "count",
+	        value: function count() {
+	            return this.errors.length;
+	        }
+	    }]);
+
+	    return ErrorBag;
+	}();
+
+	exports.default = ErrorBag;
 	module.exports = exports["default"];
 
 /***/ }

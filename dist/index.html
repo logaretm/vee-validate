@@ -9,25 +9,25 @@
         <div id="app" class="container">
             <div class="col-md-6 col-md-offset-3">
                 <form action="" class="form-horizontal">
-                    <div :class="{'form-group': true, 'has-error': $errors.email && $errors.email.length}">
+                    <div :class="{'form-group': true, 'has-error': errors.has('email') }">
                         <label for="email">Email</label>
                         <input class="form-control" id="email" type="text" name="email" v-validate rules="required|email" v-model="email">
-                        <span v-show="$errors.name && $errors.email.length" class="help-block">
-                            {{ $errors.email[0] }}
+                        <span v-show="errors.has('email')" class="help-block">
+                            {{ errors.first('email') }}
                         </span>
                     </div>
-                    <div :class="{'form-group': true, 'has-error': $errors.name && $errors.name.length}">
+                    <div :class="{'form-group': true, 'has-error': errors.has('name') }">
                         <label for="name">Name</label>
                         <input class="form-control" id="name" type="text" name="name" v-validate rules="required|min:3" v-model="name">
-                        <span v-show="$errors.name && $errors.name.length" class="help-block">
-                            {{ $errors.name[0] }}
+                        <span v-show="errors.has('name')" class="help-block">
+                            {{ errors.first('name') }}
                         </span>
                     </div>
-                    <div :class="{'form-group': true, 'has-error': $errors.phone && $errors.phone.length}">
+                    <div :class="{'form-group': true, 'has-error': errors.has('phone')}">
                         <label for="phone">Phone</label>
                         <input class="form-control" id="phone" type="text" name="phone" v-validate rules="required|min:10" v-model="phone">
-                        <span v-show="$errors.phone && $errors.phone.length" class="help-block">
-                            {{ $errors.phone[0] }}
+                        <span v-show="errors.has('phone')" class="help-block">
+                            {{ errors.first('phone') }}
                         </span>
                     </div>
                     <button class="btn btn-primary" type="submit">Submit</button>
