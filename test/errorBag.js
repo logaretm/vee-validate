@@ -56,3 +56,24 @@ test('it fetches the first error message for a specific field', t => {
     errors.add('email', 'The email is shorter than 3 chars.');
     t.is(errors.first('email'), 'The email is shorter than 3 chars.');
 });
+
+test('it returns all errors in an array', t => {
+    const errors = new ErrorBag();
+    errors.add('name', 'The name is invalid');
+    errors.add('email', 'The email is invalid');
+    errors.add('email', 'The email is shorter than 3 chars.');
+
+    t.true(Array.isArray(errors.all()));
+    t.is(errors.all().length, 3);
+});
+
+
+test('it collects errors for a specific field in an array', t => {
+    const errors = new ErrorBag();
+    errors.add('name', 'The name is invalid');
+    errors.add('email', 'The email is invalid');
+    errors.add('email', 'The email is shorter than 3 chars.');
+
+    t.is(errors.collect('email').length, 2);
+    t.is(errors.collect('name').length, 1);
+});

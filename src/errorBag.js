@@ -39,6 +39,10 @@ export default class ErrorBag
         return null;
     }
 
+    collect(field) {
+        return this.errors.filter(e => e.field === field);
+    }
+
     all() {
         return this.errors;
     }
