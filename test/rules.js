@@ -1,5 +1,5 @@
 import test from 'ava';
-import Validator from './../src/validation/validator';
+import Validator from './../src/validator';
 
 const validator = new Validator({
     email: 'email',

@@ -1,10 +1,11 @@
 import rules from './rules';
+import ErrorBag from './errorBag';
 
 export default class Validator
 {
     constructor(validations) {
         this.validations = this.normalize(validations);
-        this.errors = {};
+        this.errors = new ErrorBag();
         this.rules = rules;
     }
 
@@ -28,7 +29,7 @@ export default class Validator
 
     validateAll(values) {
         let test = true;
-        this.errors = {};
+        this.errors.clear();
         Object.keys(values).forEach(property => {
             test = this.validate(property, values[property]);
         });
@@ -38,7 +39,7 @@ export default class Validator
 
     validate(name, value) {
         let test = true;
-        this.errors[name] = [];
+        this.errors.remove(name);
         this.validations[name].forEach(rule => {
             test = this.test(name, value, rule);
         });
@@ -95,7 +96,7 @@ export default class Validator
         const valid = validator.validate(value, rule.params);
 
         if (! valid) {
-            this.errors[name].push(validator.msg(name, rule.params));
+            this.errors.add(name, validator.msg(name, rule.params));
         }
 
         return valid;

@@ -19,13 +19,7 @@ test('it validates all values', t => {
     });
 
     t.true(result);
-    t.deepEqual(validator.errors, {
-        email: [],
-        name: [],
-        title: [],
-        content: [],
-        tags: []
-    });
+    t.deepEqual(validator.errors.all(), []);
 });
 
 test('it formats error messages', t => {
@@ -38,28 +32,23 @@ test('it formats error messages', t => {
     });
 
     t.false(result);
-    t.deepEqual(validator.errors, {
-        email: [
-            'The email must be a valid email.'
-        ],
-        name: [
-            'The name is required.',
-            'The name must be at least 3 characters.'
-        ],
-        title: [
-            'The title must be at least 3 characters.'
-        ],
-        content: [
-            'The content may not be greater than 20 characters.'
-        ],
-        tags: [
-            'The tags must be a valid value.'
-        ]
-    });
+    t.deepEqual(validator.errors.all(), [
+        { field: 'email', msg: 'The email must be a valid email.' },
+        { field: 'name', msg: 'The name is required.' },
+        { field: 'name', msg: 'The name must be at least 3 characters.' },
+        { field: 'title', msg: 'The title must be at least 3 characters.' },
+        { field: 'content', msg: 'The content may not be greater than 20 characters.' },
+        { field: 'tags', msg: 'The tags must be a valid value.' }
+    ]);
 });
 
 test('it can attach new rules', t => {
     validator.attach('field', 'required|min:5');
     t.false(validator.validate('field', 'less'));
     t.true(validator.validate('field', 'not less'));
+});
+
+test('it can detach rules', t => {
+    validator.detach('field');
+    t.falsy(validator.validations.field);
 });
