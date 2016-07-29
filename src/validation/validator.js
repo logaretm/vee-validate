@@ -24,6 +24,7 @@ export default class Validator
 
     validateAll(values) {
         let test = true;
+        this.errors = {};
         Object.keys(values).forEach(property => {
             test = this.validate(property, values[property]);
         });
@@ -33,6 +34,7 @@ export default class Validator
 
     validate(name, value) {
         let test = true;
+        this.errors[name] = [];
         this.validations[name].forEach(rule => {
             test = this.test(name, value, rule);
         });
@@ -85,10 +87,6 @@ export default class Validator
         const valid = validator.validate(value, rule.params);
 
         if (! valid) {
-            if (!this.errors[name]) {
-                this.errors[name] = [];
-            }
-
             this.errors[name].push(validator.msg(name, rule.params));
         }
 

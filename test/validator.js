@@ -19,7 +19,13 @@ test('it validates all values', t => {
     });
 
     t.true(result);
-    t.deepEqual(validator.errors, {});
+    t.deepEqual(validator.errors, {
+        email: [],
+        name: [],
+        title: [],
+        content: [],
+        tags: []
+    });
 });
 
 test('it formats error messages', t => {
