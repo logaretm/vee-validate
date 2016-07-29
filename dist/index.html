@@ -11,7 +11,7 @@
                 <form action="" class="form-horizontal">
                     <div :class="{'form-group': true, 'has-error': errors.has('email') }">
                         <label for="email">Email</label>
-                        <input class="form-control" id="email" type="text" name="email" v-validate rules="required|email" v-model="email">
+                        <input class="form-control" id="email" type="text" name="email" v-validate delay="100" rules="required|email" v-model="email">
                         <span v-show="errors.has('email')" class="help-block">
                             {{ errors.first('email') }}
                         </span>

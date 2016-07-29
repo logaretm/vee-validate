@@ -64,9 +64,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validator2 = _interopRequireDefault(_validator);
 
+	var _debouncer = __webpack_require__(9);
+
+	var _debouncer2 = _interopRequireDefault(_debouncer);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = function (Vue) {
+	exports.default = function (Vue, options) {
 	    // eslint-disable-next-line no-param-reassign
 	    Vue.prototype.$validator = _validator2.default.create();
 
@@ -82,7 +86,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 
 	    Vue.directive('validate', {
-	        params: ['rules'],
+	        params: ['rules', 'delay'],
 	        onInput: function onInput() {
 	            this.vm.$validator.validate(this.fieldName, this.el.value);
 	        },
@@ -90,9 +94,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.vm.$validator.attach(this.fieldName, this.params.rules);
 	        },
 	        bind: function bind() {
+	            var delay = options ? options.delay || 500 : this.params.delay || 500;
 	            this.fieldName = this.el.name;
 	            this.attachValidator();
-	            this.onInputRef = this.onInput.bind(this);
+	            this.onInputRef = (0, _debouncer2.default)(this.onInput.bind(this), delay);
 	            this.el.addEventListener('input', this.onInputRef);
 	        },
 	        unbind: function unbind() {
@@ -508,6 +513,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	}();
 
 	exports.default = ErrorBag;
+	module.exports = exports["default"];
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
+
+	exports.default = function (func) {
+	    var threshold = arguments.length <= 1 || arguments[1] === undefined ? 100 : arguments[1];
+	    var execAsap = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+
+	    var timeout = void 0;
+
+	    return function debounced(_ref) {
+	        var _ref2 = _toArray(_ref);
+
+	        var args = _ref2;
+
+	        var obj = this;
+
+	        function delayed() {
+	            if (!execAsap) {
+	                func.apply(obj, args);
+	            }
+	            timeout = null;
+	        }
+
+	        if (timeout) {
+	            clearTimeout(timeout);
+	        } else if (execAsap) {
+	            func.apply.apply(func, [obj].concat(_toConsumableArray(args)));
+	        }
+
+	        timeout = setTimeout(delayed, threshold || 100);
+	    };
+	};
+
 	module.exports = exports["default"];
 
 /***/ }
