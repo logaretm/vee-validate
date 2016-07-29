@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Vue Validation</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    </head>
+    <body>
+        <div id="app" class="container">
+            <div class="col-md-6 col-md-offset-3">
+                <form action="" class="form-horizontal">
+                    <div :class="{'form-group': true, 'has-error': $errors.email && $errors.email.length}">
+                        <label for="email">Email</label>
+                        <input class="form-control" id="email" type="text" name="email" v-validate rules="required|email" v-model="email">
+                        <span v-show="$errors.name && $errors.email.length" class="help-block">
+                            {{ $errors.email[0] }}
+                        </span>
+                    </div>
+                    <div :class="{'form-group': true, 'has-error': $errors.name && $errors.name.length}">
+                        <label for="name">Name</label>
+                        <input class="form-control" id="name" type="text" name="name" v-validate rules="required|min:3" v-model="name">
+                        <span v-show="$errors.name && $errors.name.length" class="help-block">
+                            {{ $errors.name[0] }}
+                        </span>
+                    </div>
+                    <div :class="{'form-group': true, 'has-error': $errors.phone && $errors.phone.length}">
+                        <label for="phone">Phone</label>
+                        <input class="form-control" id="phone" type="text" name="phone" v-validate rules="required|min:10" v-model="phone">
+                        <span v-show="$errors.phone && $errors.phone.length" class="help-block">
+                            {{ $errors.phone[0] }}
+                        </span>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="vue.js"></script>
+        <script src="vue-validation.js"></script>
+        <script>
+            Vue.use(VueValidation);
+            var vue = new Vue({
+                el: '#app',
+                data: {
+                    name: '',
+                    email: '',
+                    phone: ''
+                }
+            });
+        </script>
+    </body>
+</html>

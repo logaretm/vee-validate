@@ -18,7 +18,11 @@ export default class Validator
         });
     }
 
-    create(validations) {
+    detach(name) {
+        delete this.validations[name];
+    }
+
+    static create(validations) {
         return new Validator(validations);
     }
 
@@ -48,6 +52,10 @@ export default class Validator
      * @return {object} Normalized object.
      */
     normalize(validations) {
+        if (! validations) {
+            return {};
+        }
+
         const normalized = {};
         Object.keys(validations).forEach(property => {
             validations[property].split('|').forEach(rule => {
