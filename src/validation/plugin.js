@@ -1,6 +1,10 @@
 import Validator from './validator';
 
 export default (Vue) => {
+    Vue.mixin({
+        // TODO: Maybe add errors bindable field or property.
+    });
+
     Vue.directive('validate', {
         params: ['rules'],
         onChange() {
