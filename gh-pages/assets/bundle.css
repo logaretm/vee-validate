@@ -1477,6 +1477,10 @@ striping:
   color: #dd514c;
 }
 
+span.error {
+  font-size: 13px;
+}
+
 .pure-form .has-error input,
 .pure-form .has-error textarea,
 .pure-form .has-error select,
