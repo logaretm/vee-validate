@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "ava",
+    "dev": "webpack --progress --colors --watch",
+    "test": "nyc ava --colors",
+    "test:watch": "ava --watch",
     "lint": "eslint ./src ./test",
-    "build": "webpack"
+    "build": "webpack && cross-env NODE_ENV=production webpack -p"
   },
   "ava": {
     "require": [
@@ -21,9 +23,11 @@
     "babel-loader": "^6.2.4",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-preset-es2015": "^6.9.0",
+    "cross-env": "^2.0.0",
     "eslint": "^3.1.1",
     "eslint-config-airbnb-base": "^5.0.0",
     "eslint-plugin-import": "^1.12.0",
+    "nyc": "^7.1.0",
     "vue": "^1.0.26",
     "webpack": "^1.13.1"
   }
