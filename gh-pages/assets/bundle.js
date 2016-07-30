@@ -77,6 +77,33 @@
 
 	new _vue2.default({
 	    el: '#app',
+	    data: {
+	        content: 'home'
+	    },
+	    computed: {
+	        heading: function heading() {
+	            if (this.content === 'ex1') {
+	                return 'Example 1: Basic Validation';
+	            }
+
+	            if (this.content === 'ex2') {
+	                return 'Example 2: Delaying Validation';
+	            }
+
+	            return 'Vue Validations';
+	        },
+	        subtitle: function subtitle() {
+	            if (this.content === 'ex1') {
+	                return 'Basic Structure and Setup';
+	            }
+
+	            if (this.content === 'ex2') {
+	                return 'Debouncing the input validation';
+	            }
+
+	            return 'Easy Laravel-Like API to validate your inputs.';
+	        }
+	    },
 	    components: {
 	        FirstExample: _Example2.default,
 	        SecondExample: _Example4.default

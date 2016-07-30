@@ -11,6 +11,33 @@ Vue.component('code-example', CodeExample);
 
 new Vue({
     el: '#app',
+    data: {
+        content: 'home'
+    },
+    computed: {
+        heading() {
+            if (this.content === 'ex1') {
+                return 'Example 1: Basic Validation';
+            }
+
+            if (this.content === 'ex2') {
+                return 'Example 2: Delaying Validation';
+            }
+
+            return 'Vue Validations';
+        },
+        subtitle() {
+            if (this.content === 'ex1') {
+                return 'Basic Structure and Setup';
+            }
+
+            if (this.content === 'ex2') {
+                return 'Debouncing the input validation';
+            }
+
+            return 'Easy Laravel-Like API to validate your inputs.';
+        }
+    },
     components: {
         FirstExample,
         SecondExample
