@@ -4,9 +4,6 @@ import debounce from './utils/debouncer.js';
 const DEFAULT_DELAY = 0;
 
 export default (Vue, options) => {
-    // eslint-disable-next-line no-param-reassign
-    Vue.prototype.$validator = Validator.create();
-
     Vue.mixin({
         data() {
             return {
@@ -14,6 +11,7 @@ export default (Vue, options) => {
             };
         },
         created() {
+            this.$validator = Validator.create();
             this.$set('errors', this.$validator.errors);
         }
     });

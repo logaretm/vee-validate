@@ -3090,9 +3090,6 @@
 				var DEFAULT_DELAY = 0;
 
 				exports.default = function (Vue, options) {
-					// eslint-disable-next-line no-param-reassign
-					Vue.prototype.$validator = _validator2.default.create();
-
 					Vue.mixin({
 						data: function data() {
 							return {
@@ -3100,6 +3097,7 @@
 							};
 						},
 						created: function created() {
+							this.$validator = _validator2.default.create();
 							this.$set('errors', this.$validator.errors);
 						}
 					});
