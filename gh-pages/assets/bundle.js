@@ -72,8 +72,6 @@
 
 	__webpack_require__(25);
 
-	__webpack_require__(27);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	_vue2.default.use(_vueValidation2.default);
@@ -4854,13 +4852,6 @@
 
 /***/ },
 /* 25 */
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-/* 26 */,
-/* 27 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

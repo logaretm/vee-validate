@@ -6,7 +6,6 @@ import CodeExample from './components/CodeExample.vue';
 import FirstExample from './examples/Example-1.vue';
 import SecondExample from './examples/Example-2.vue';
 import './sass/main.scss';
-import './css/fontello.css';
 
 Vue.use(VueValidation);
 Vue.component('code-example', CodeExample);
