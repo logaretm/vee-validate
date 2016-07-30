@@ -11,7 +11,9 @@ const validator = new Validator({
     alpha: 'alpha',
     alpha_dash: 'alpha_dash',
     alpha_num: 'alpha_num',
-    numeric: 'numeric'
+    numeric: 'numeric',
+    regex: 'regex:[0-9]+',
+    regex2: 'regex:[a-z]+,i'
 });
 
 test('it validates alpha', t => {
@@ -75,4 +77,14 @@ test('it validates not_in', t => {
     t.false(validator.validate('not_in', 3));
     t.false(validator.validate('not_in', 5));
     t.true(validator.validate('not_in', 4));
+});
+
+
+// TODO: A regex expression with a pipe '|' or a comma ',' will get shat on.
+// fix this by supporting array syntax.
+test('it validates regular expressions', t => {
+    t.true(validator.validate('regex', '213213123123'));
+    t.true(validator.validate('regex', 'ad1231231231'));
+    t.false(validator.validate('regex', 'ads'));
+    t.true(validator.validate('regex2', 'ABC'));
 });
