@@ -3055,6 +3055,8 @@
 					return obj && obj.__esModule ? obj : { default: obj };
 				}
 
+				var DEFAULT_DELAY = 250;
+
 				exports.default = function (Vue, options) {
 					// eslint-disable-next-line no-param-reassign
 					Vue.prototype.$validator = _validator2.default.create();
@@ -3079,7 +3081,7 @@
 							this.vm.$validator.attach(this.fieldName, this.params.rules);
 						},
 						bind: function bind() {
-							var delay = options ? options.delay || 500 : this.params.delay || 500;
+							var delay = options ? options.delay || DEFAULT_DELAY : this.params.delay || DEFAULT_DELAY;
 							this.fieldName = this.el.name;
 							this.attachValidator();
 							this.onInputRef = (0, _debouncer2.default)(this.onInput.bind(this), delay);
