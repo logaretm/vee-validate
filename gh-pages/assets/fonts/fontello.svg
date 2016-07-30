@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2016 by original authors @ fontello.com</metadata>
+<defs>
+<font id="fontello" horiz-adv-x="1000" >
+<font-face font-family="fontello" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="play-outline" unicode="&#xe800;" d="M104 610l0-520q1 0 1 1t1 0l265 259-262 256-3 3t-2 1z m0 105q44 0 74-30l343-335q-207-201-345-335-30-30-72-30t-73 31-31 74l0 520q0 44 31 74t73 31z" horiz-adv-x="521" />
+
+<glyph glyph-name="code" unicode="&#xe801;" d="M380 636q16-14 16-32t-16-30l-246-224 246-226q16-12 16-30t-16-32q-30-30-60 0l-320 288 320 286q30 30 60 0z m302 0l318-286-318-288q-32-30-62 0-32 32 0 62l248 226-248 224q-32 30 0 62 30 30 62 0z" horiz-adv-x="1000" />
+
+<glyph glyph-name="html5" unicode="&#xf13b;" d="M631 517l9 98h-494l26-298h342l-12-128-110-29-110 29-7 78h-98l13-155 202-55h2v0l200 55 28 304h-359l-9 101h377z m-631 262h786l-72-803-322-90-321 90z" horiz-adv-x="785.7" />
+</font>
+</defs>
+</svg>

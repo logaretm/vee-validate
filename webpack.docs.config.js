@@ -22,6 +22,22 @@ module.exports = {
             {
                 test: /\.vue$/,
                 loader: 'vue'
+            },
+            {
+                test: /\.woff(2)?(\?.*)?$/i,
+                loader: 'url',
+                query: {
+                    limit: 10000,
+                    mimetype: 'application/font-woff',
+                    name: 'fonts/[name].[ext]'
+                }
+            },
+            {
+                test: /\.(ttf|eot|svg)(\?.*)?$/,
+                loader: 'file-loader',
+                query: {
+                    name: 'fonts/[name].[ext]'
+                }
             }
         ]
     },

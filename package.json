@@ -9,7 +9,8 @@
     "test:watch": "ava --watch",
     "lint": "eslint ./src ./test",
     "build": "webpack && cross-env NODE_ENV=production webpack -p",
-    "build:docs": "webpack --config webpack.docs.config.js"
+    "build:docs": "webpack --config webpack.docs.config.js",
+    "build:all": "npm run build && npm run build:docs"
   },
   "ava": {
     "require": [
@@ -20,6 +21,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "animate.css": "^3.5.1",
     "ava": "^0.15.2",
     "babel-loader": "^6.2.4",
     "babel-plugin-add-module-exports": "^0.2.1",
@@ -30,10 +32,13 @@
     "eslint-config-airbnb-base": "^5.0.0",
     "eslint-plugin-import": "^1.12.0",
     "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "^0.9.0",
     "nyc": "^7.1.0",
+    "prism-theme-one-dark": "^1.0.0",
     "prismjs": "^1.5.1",
     "purecss": "^0.6.0",
     "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
     "vue": "^1.0.26",
     "webpack": "^1.13.1",
     "webpack-preset-vue": "^1.0.0"

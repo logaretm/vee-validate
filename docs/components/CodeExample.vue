@@ -1,17 +1,37 @@
 <template>
     <div class="pure-g">
-        <div v-el="example" class="pure-u-1">
-            <slot name="example"></slot>
-        </div>
         <div class="pure-u-1">
-            <div class="pure-menu pure-menu-horizontal">
+            <div class="pure-menu pure-menu-horizontal flex-center">
                 <ul class="pure-menu-list">
-                    <li class="pure-menu-item"><a @click="activeMenu = 'html'" class="pure-menu-link">HTML</a></li>
-                    <li class="pure-menu-item"><a @click="activeMenu = 'js'" class="pure-menu-link">JavaScript</a></li>
+                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'demo'}">
+                        <a @click="content = 'demo'" class="pure-menu-link">
+                            <i class="demo-icon icon-play-outline"></i>
+                            Demo
+                        </a>
+                    </li>
+                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'html' }">
+                        <a @click="content = 'html'" class="pure-menu-link">
+                            <i class="demo-icon icon-html"></i>
+                            HTML
+                        </a>
+                    </li>
+                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'js' }">
+                        <a @click="content = 'js'" class="pure-menu-link">
+                            <i class="demo-icon icon-icon-code"></i>
+                            JavaScript
+                        </a>
+                    </li>
                 </ul>
             </div>
-            <pre v-show="activeMenu === 'html'"><code v-el:html class="language-html"><slot name="code-html"></slot></code></pre>
-            <pre v-show="activeMenu === 'js'"><code v-el:js class="language-javascript"><slot name="code-js"></slot></code></pre>
+        </div>
+        <div v-show="content === 'demo'" v-el="example" class="pure-u-1">
+            <slot name="example"></slot>
+        </div>
+        <div v-show="content === 'html'" class="pure-u-1">
+            <pre><code v-el:html class="language-html"><slot name="code-html"></slot></code></pre>
+        </div>
+        <div v-show="content === 'js'" class="pure-u-1">
+            <pre><code v-el:js class="language-javascript"><slot name="code-js"></slot></code></pre>
         </div>
     </div>
 </template>
@@ -20,11 +40,12 @@
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import 'prismjs/themes/prism-okaidia.css';
+import 'prism-theme-one-dark/prism-onedark.css';
 
 export default {
     data() {
         return {
-            activeMenu: ''
+            content: 'demo'
         }
     },
     methods: {
