@@ -9,6 +9,16 @@ const validator = new Validator({
     tags: 'required|in:1,2,3,5'
 });
 
+test('it can be initialized with static create method', t => {
+    const validator2 = Validator.create();
+    t.true(validator2 instanceof Validator);
+});
+
+test('it can be initialized without validations', t => {
+    const validator2 = new Validator();
+    t.true(validator2 instanceof Validator);
+});
+
 test('it validates all values', t => {
     const result = validator.validateAll({
         email: 'foo@bar.com',
