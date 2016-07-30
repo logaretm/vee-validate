@@ -55,6 +55,7 @@ test('it fetches the first error message for a specific field', t => {
     errors.clear();
     errors.add('email', 'The email is shorter than 3 chars.');
     t.is(errors.first('email'), 'The email is shorter than 3 chars.');
+    t.is(errors.first('name'), null);
 });
 
 test('it returns all errors in an array', t => {
