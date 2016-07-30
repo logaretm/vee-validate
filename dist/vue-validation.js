@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var DEFAULT_DELAY = 250;
+	var DEFAULT_DELAY = 0;
 
 	exports.default = function (Vue, options) {
 	    // eslint-disable-next-line no-param-reassign
@@ -96,10 +96,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.vm.$validator.attach(this.fieldName, this.params.rules);
 	        },
 	        bind: function bind() {
-	            var delay = options ? options.delay || DEFAULT_DELAY : this.params.delay || DEFAULT_DELAY;
 	            this.fieldName = this.el.name;
 	            this.attachValidator();
-	            this.onInputRef = (0, _debouncer2.default)(this.onInput.bind(this), delay);
+
+	            var delay = this.params.delay || options && options.delay || DEFAULT_DELAY;
+	            this.onInputRef = delay ? (0, _debouncer2.default)(this.onInput.bind(this), delay) : this.onInput.bind(this);
+
 	            this.el.addEventListener('input', this.onInputRef);
 	        },
 	        unbind: function unbind() {

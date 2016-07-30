@@ -66,15 +66,20 @@
 
 	var _Example2 = _interopRequireDefault(_Example);
 
+	var _Example3 = __webpack_require__(21);
+
+	var _Example4 = _interopRequireDefault(_Example3);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_vue2.default.component('code-example', _CodeExample2.default);
 	_vue2.default.use(_vueValidation2.default);
+	_vue2.default.component('code-example', _CodeExample2.default);
 
 	new _vue2.default({
 	    el: '#app',
 	    components: {
-	        FirstExample: _Example2.default
+	        FirstExample: _Example2.default,
+	        SecondExample: _Example4.default
 	    }
 	});
 
@@ -3055,7 +3060,7 @@
 					return obj && obj.__esModule ? obj : { default: obj };
 				}
 
-				var DEFAULT_DELAY = 250;
+				var DEFAULT_DELAY = 0;
 
 				exports.default = function (Vue, options) {
 					// eslint-disable-next-line no-param-reassign
@@ -3081,10 +3086,12 @@
 							this.vm.$validator.attach(this.fieldName, this.params.rules);
 						},
 						bind: function bind() {
-							var delay = options ? options.delay || DEFAULT_DELAY : this.params.delay || DEFAULT_DELAY;
 							this.fieldName = this.el.name;
 							this.attachValidator();
-							this.onInputRef = (0, _debouncer2.default)(this.onInput.bind(this), delay);
+
+							var delay = this.params.delay || options && options.delay || DEFAULT_DELAY;
+							this.onInputRef = delay ? (0, _debouncer2.default)(this.onInput.bind(this), delay) : this.onInput.bind(this);
+
 							this.el.addEventListener('input', this.onInputRef);
 						},
 						unbind: function unbind() {
@@ -3892,6 +3899,12 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = {
+	    data: function data() {
+	        return {
+	            activeMenu: ''
+	        };
+	    },
+
 	    methods: {
 	        removeWhitespaceForEl: function removeWhitespaceForEl(el) {
 	            var txt = el.textContent.replace(/^[\r\n]+/, "").replace(/\s+$/g, "");
@@ -4741,7 +4754,7 @@
 /* 18 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"pure-g\">\n    <div v-el=\"example\" class=\"pure-u-1-2\">\n        <slot name=\"example\"></slot>\n    </div>\n    <div class=\"pure-u-1-2\">\n        <pre><code v-el:html class=\"language-html\"><slot name=\"code-html\"></slot></code></pre>\n        <pre><code v-el:js class=\"language-javascript\"><slot name=\"code-js\"></slot></code></pre>\n    </div>\n</div>\n";
+	module.exports = "\n<div class=\"pure-g\">\n    <div v-el=\"example\" class=\"pure-u-1\">\n        <slot name=\"example\"></slot>\n    </div>\n    <div class=\"pure-u-1\">\n        <div class=\"pure-menu pure-menu-horizontal\">\n            <ul class=\"pure-menu-list\">\n                <li class=\"pure-menu-item\"><a @click=\"activeMenu = 'html'\" class=\"pure-menu-link\">HTML</a></li>\n                <li class=\"pure-menu-item\"><a @click=\"activeMenu = 'js'\" class=\"pure-menu-link\">JavaScript</a></li>\n            </ul>\n        </div>\n        <pre v-show=\"activeMenu === 'html'\"><code v-el:html class=\"language-html\"><slot name=\"code-html\"></slot></code></pre>\n        <pre v-show=\"activeMenu === 'js'\"><code v-el:js class=\"language-javascript\"><slot name=\"code-js\"></slot></code></pre>\n    </div>\n</div>\n";
 
 /***/ },
 /* 19 */
@@ -4770,7 +4783,36 @@
 /* 20 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>Basic Form</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" v-validate rules=\"required|email\" type=\"email\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" v-validate rules=\"required|min:3|alpha\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" v-validate rules=\"required|max:11|numeric\" type=\"text\" placeholder=\"Phone Number\">\n            <span class=\"error\" v-show=\"errors.has('phone')\">{{ errors.first('phone') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('password') }\" for=\"password\">Password</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('password') }\" name=\"password\" v-validate rules=\"required|min:8\" type=\"password\" placeholder=\"Password\">\n            <span class=\"error\" v-show=\"errors.has('password')\">{{ errors.first('password') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('state') }\" for=\"state\">State</label>\n            <select :class=\"{'pure-input-1': true, 'has-error': errors.has('state') }\" name=\"state\" v-validate rules=\"required|in:1,2,3\">\n                <option value=\"1\">Port Said</option>\n                <option value=\"2\">Cairo</option>\n                <option value=\"3\">Alexandrea</option>\n                <option value=\"4\">New York</option>\n            </select>\n            <span class=\"error\" v-show=\"errors.has('state')\">{{ errors.first('state') }}</span>\n        </div>\n        <button type=\"submit\" class=\"pure-button pure-button-primary\">Sign up</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;Basic Form&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; v-validate rules=&quot;required|email&quot; type=&quot;email&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ errors.first('email') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Name&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; v-validate rules=&quot;required|min:3|alpha&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ errors.first('name') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('phone') }&quot; for=&quot;phone&quot;&gt;Phone&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('phone') }&quot; name=&quot;phone&quot; v-validate rules=&quot;required|max:11|numeric&quot; type=&quot;text&quot; placeholder=&quot;Phone Number&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('phone')&quot;&gt;{{ errors.first('phone') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('password') }&quot; for=&quot;password&quot;&gt;Password&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('password') }&quot; name=&quot;password&quot; v-validate rules=&quot;required|min:8&quot; type=&quot;password&quot; placeholder=&quot;Password&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('password')&quot;&gt;{{ errors.first('password') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('state') }&quot; for=&quot;state&quot;&gt;State&lt;/label&gt;\n                &lt;select :class=&quot;{'pure-input-1': true, 'has-error': errors.has('state') }&quot; name=&quot;state&quot; v-validate rules=&quot;required|in:1,2,3&quot;&gt;\n                    &lt;option value=&quot;1&quot;&gt;Port Said&lt;/option&gt;\n                    &lt;option value=&quot;2&quot;&gt;Cairo&lt;/option&gt;\n                    &lt;option value=&quot;3&quot;&gt;Alexandrea&lt;/option&gt;\n                    &lt;option value=&quot;4&quot;&gt;New York&lt;/option&gt;\n                &lt;/select&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('state')&quot;&gt;{{ errors.first('state') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button type=&quot;submit&quot; class=&quot;pure-button pure-button-primary&quot;&gt;Sign up&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VueValidation);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
+	module.exports = "\n\n\n\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>Basic Form</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" v-validate rules=\"required|email\" type=\"email\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" v-validate rules=\"required|min:3|alpha\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" v-validate rules=\"required|max:11|numeric\" type=\"text\" placeholder=\"Phone Number\">\n            <span class=\"error\" v-show=\"errors.has('phone')\">{{ errors.first('phone') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('password') }\" for=\"password\">Password</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('password') }\" name=\"password\" v-validate rules=\"required|min:8\" type=\"password\" placeholder=\"Password\">\n            <span class=\"error\" v-show=\"errors.has('password')\">{{ errors.first('password') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('state') }\" for=\"state\">State</label>\n            <select :class=\"{'pure-input-1': true, 'has-error': errors.has('state') }\" name=\"state\" v-validate rules=\"required|in:1,2,3\">\n                <option value=\"1\">Port Said</option>\n                <option value=\"2\">Cairo</option>\n                <option value=\"3\">Alexandrea</option>\n                <option value=\"4\">New York</option>\n            </select>\n            <span class=\"error\" v-show=\"errors.has('state')\">{{ errors.first('state') }}</span>\n        </div>\n        <button type=\"submit\" class=\"pure-button pure-button-primary\">Sign up</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;Basic Form&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; v-validate rules=&quot;required|email&quot; type=&quot;email&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ errors.first('email') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Name&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; v-validate rules=&quot;required|min:3|alpha&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ errors.first('name') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('phone') }&quot; for=&quot;phone&quot;&gt;Phone&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('phone') }&quot; name=&quot;phone&quot; v-validate rules=&quot;required|max:11|numeric&quot; type=&quot;text&quot; placeholder=&quot;Phone Number&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('phone')&quot;&gt;{{ errors.first('phone') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('password') }&quot; for=&quot;password&quot;&gt;Password&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('password') }&quot; name=&quot;password&quot; v-validate rules=&quot;required|min:8&quot; type=&quot;password&quot; placeholder=&quot;Password&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('password')&quot;&gt;{{ errors.first('password') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('state') }&quot; for=&quot;state&quot;&gt;State&lt;/label&gt;\n                &lt;select :class=&quot;{'pure-input-1': true, 'has-error': errors.has('state') }&quot; name=&quot;state&quot; v-validate rules=&quot;required|in:1,2,3&quot;&gt;\n                    &lt;option value=&quot;1&quot;&gt;Port Said&lt;/option&gt;\n                    &lt;option value=&quot;2&quot;&gt;Cairo&lt;/option&gt;\n                    &lt;option value=&quot;3&quot;&gt;Alexandrea&lt;/option&gt;\n                    &lt;option value=&quot;4&quot;&gt;New York&lt;/option&gt;\n                &lt;/select&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('state')&quot;&gt;{{ errors.first('state') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button type=&quot;submit&quot; class=&quot;pure-button pure-button-primary&quot;&gt;Sign up&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VueValidation);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_template__ = __webpack_require__(22)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "_v-1d5b5cab/Example-2.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>Basic Form</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" v-validate rules=\"required|email\" delay=\"500\" type=\"email\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" v-validate rules=\"required|min:3|alpha\" delay=\"1000\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" v-validate rules=\"required|max:11|numeric\" type=\"text\" placeholder=\"Phone Number\">\n            <span class=\"error\" v-show=\"errors.has('phone')\">{{ errors.first('phone') }}</span>\n        </div>\n        <button type=\"submit\" class=\"pure-button pure-button-primary\">Sign up</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;Basic Form&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; v-validate rules=&quot;required|email&quot; delay=&quot;500&quot; type=&quot;email&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ errors.first('email') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Name&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; v-validate rules=&quot;required|min:3|alpha&quot; delay=&quot;1000&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ errors.first('name') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('phone') }&quot; for=&quot;phone&quot;&gt;Phone&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('phone') }&quot; name=&quot;phone&quot; v-validate rules=&quot;required|max:11|numeric&quot; type=&quot;text&quot; placeholder=&quot;Phone Number&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('phone')&quot;&gt;{{ errors.first('phone') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button type=&quot;submit&quot; class=&quot;pure-button pure-button-primary&quot;&gt;Sign up&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        // Set a global delay of 700.\n        Vue.use(VueValidation, { delay: 700 });\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
 
 /***/ }
 /******/ ]);

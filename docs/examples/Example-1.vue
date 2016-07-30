@@ -1,3 +1,6 @@
+<!--
+    Shows Most basic example
+-->
 <template>
     <code-example>
         <form slot="example" class="pure-form pure-form-stacked">

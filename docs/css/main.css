@@ -6,6 +6,10 @@ span.error {
   font-size: 13px;
 }
 
+.pure-menu-item a {
+  cursor: pointer;
+}
+
 .pure-form .has-error input,
 .pure-form .has-error textarea,
 .pure-form .has-error select,
