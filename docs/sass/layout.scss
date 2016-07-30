@@ -2,11 +2,6 @@ body {
     color: #777;
 }
 
-.flex-center {
-    display: flex;
-    justify-content: center;
-}
-
 .pure-img-responsive {
     max-width: 100%;
     height: auto;
@@ -15,10 +10,6 @@ body {
 #layout,
 #menu,
 .menu-link {
-    -webkit-transition: all 0.2s ease-out;
-    -moz-transition: all 0.2s ease-out;
-    -ms-transition: all 0.2s ease-out;
-    -o-transition: all 0.2s ease-out;
     transition: all 0.2s ease-out;
 }
 
@@ -70,53 +61,40 @@ body {
 }
 
 #menu {
-    margin-left: -150px; /* "#menu" width */
+    margin-left: -150px;
     width: 150px;
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
-    z-index: 1000; /* so the menu or its navicon stays above all content */
+    z-index: 1000;
     background: #191818;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
-/*
-All anchors inside the menu should be styled like this.
-*/
+
 #menu a {
     color: #999;
     border: none;
     padding: 0.6em 0 0.6em 0.6em;
 }
 
-/*
-Remove all background/borders, since we are applying them to #menu.
-*/
  #menu .pure-menu,
  #menu .pure-menu ul {
     border: none;
     background: transparent;
 }
 
-/*
-Add that light border to separate items into groups.
-*/
 #menu .pure-menu ul,
 #menu .pure-menu .menu-item-divided {
     border-top: 1px solid #333;
 }
-/*
-Change color of the anchor links on hover/focus.
-*/
+
 #menu .pure-menu li a:hover,
 #menu .pure-menu li a:focus {
     background: #333;
 }
 
-/*
-This styles the selected menu item `<li>`.
-*/
 #menu .pure-menu-selected,
 #menu .pure-menu-heading {
     background: #1f8dd6;
@@ -134,12 +112,12 @@ This styles the selected menu item `<li>`.
 
 .menu-link {
     position: fixed;
-    display: block; /* show this only on small screens */
+    display: block;
     top: 0;
-    left: 0; /* "#menu width" */
+    left: 0;
     background: #000;
     background: rgba(0,0,0,0.7);
-    font-size: 10px; /* change this value to increase/decrease button size */
+    font-size: 10px;
     z-index: 10;
     width: 2em;
     height: auto;
@@ -207,34 +185,4 @@ This styles the selected menu item `<li>`.
         position: relative;
         left: 150px;
     }
-}
-
-.error {
-    color: #dd514c;
-}
-
-span.error {
-    font-size: 13px;
-}
-
-.pure-menu-item a {
-    cursor: pointer;
-}
-
-.pure-form .has-error input,
-.pure-form .has-error textarea,
-.pure-form .has-error select,
-.pure-form input.has-error,
-.pure-form textarea.has-error,
-.pure-form select.has-error {
-    border-color: #dd514c;
-}
-
-.pure-form .has-error input:focus,
-.pure-form .has-error textarea:focus,
-.pure-form .has-error select:focus,
-.pure-form input.has-error:focus,
-.pure-form textarea.has-error:focus,
-.pure-form select.has-error:focus {
-    border-color: #dd514c;
 }

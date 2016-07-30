@@ -24,6 +24,10 @@ module.exports = {
                 loader: 'vue'
             },
             {
+                test: /.scss$/,
+                loader: ExtractTextPlugin.extract('style', ['css', 'sass'])
+            },
+            {
                 test: /\.woff(2)?(\?.*)?$/i,
                 loader: 'url',
                 query: {
