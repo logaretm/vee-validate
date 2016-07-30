@@ -64,7 +64,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _debouncer = __webpack_require__(9);
+	var _debouncer = __webpack_require__(15);
 
 	var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -125,7 +125,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _rules2 = _interopRequireDefault(_rules);
 
-	var _errorBag = __webpack_require__(8);
+	var _errorBag = __webpack_require__(14);
 
 	var _errorBag2 = _interopRequireDefault(_errorBag);
 
@@ -293,15 +293,50 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _max2 = _interopRequireDefault(_max);
 
+	var _notIn = __webpack_require__(8);
+
+	var _notIn2 = _interopRequireDefault(_notIn);
+
+	var _alpha = __webpack_require__(9);
+
+	var _alpha2 = _interopRequireDefault(_alpha);
+
+	var _alpha_num = __webpack_require__(10);
+
+	var _alpha_num2 = _interopRequireDefault(_alpha_num);
+
+	var _alpha_dash = __webpack_require__(11);
+
+	var _alpha_dash2 = _interopRequireDefault(_alpha_dash);
+
+	var _numeric = __webpack_require__(12);
+
+	var _numeric2 = _interopRequireDefault(_numeric);
+
+	var _regex = __webpack_require__(13);
+
+	var _regex2 = _interopRequireDefault(_regex);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// eslint-disable-line
+	// eslint-disable-line
 	exports.default = {
 	    email: _email2.default,
 	    min: _min2.default,
 	    max: _max2.default,
 	    required: _required2.default,
-	    in: _in2.default
-	};
+	    in: _in2.default,
+	    not_in: _notIn2.default,
+	    alpha: _alpha2.default,
+	    alpha_num: _alpha_num2.default,
+	    alpha_dash: _alpha_dash2.default,
+	    numeric: _numeric2.default,
+	    regex: _regex2.default
+	}; // eslint-disable-line
+	// eslint-disable-line
+	// eslint-disable-line
+
 	module.exports = exports['default'];
 
 /***/ },
@@ -339,7 +374,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    validate: function validate(value, options) {
 	        return !!options.filter(function (option) {
 	            return option == value;
-	        }).length;
+	        }).length; // eslint-disable-line
 	    }
 	};
 	module.exports = exports["default"];
@@ -436,6 +471,131 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.default = {
+	    msg: function msg(name) {
+	        return "The " + name + " must be a valid value.";
+	    },
+	    validate: function validate(value, options) {
+	        return !options.filter(function (option) {
+	            return option == value;
+	        }).length; // eslint-disable-line
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = {
+	    msg: function msg(name) {
+	        return "The " + name + " may only contain alphabetic characters and spaces.";
+	    },
+	    validate: function validate(value) {
+	        return !!value.match(/^[a-zA-Z ]*$/);
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = {
+	    msg: function msg(name) {
+	        return "The " + name + " may only contain alpha-numeric characters and spaces.";
+	    },
+	    validate: function validate(value) {
+	        return !!value.match(/^[a-zA-Z0-9 ]*$/);
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = {
+	    msg: function msg(name) {
+	        return "The " + name + " may contain alpha-numeric characters well as spaces, dashes and underscores.";
+	    },
+	    validate: function validate(value) {
+	        return !!value.match(/^[a-zA-Z0-9 _-]*$/);
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = {
+	    msg: function msg(name) {
+	        return "The " + name + " may only contain numeric characters.";
+	    },
+	    validate: function validate(value) {
+	        return !!String(value).match(/^[0-9]*$/);
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
+
+	exports.default = {
+	    msg: function msg(name) {
+	        return "The " + name + " format is invalid.";
+	    },
+	    validate: function validate(value, _ref) {
+	        var _ref2 = _toArray(_ref);
+
+	        var regex = _ref2[0];
+
+	        var flags = _ref2.slice(1);
+
+	        return !!String(value).match(new RegExp(regex, flags));
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -516,7 +676,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 9 */
+/* 15 */
 /***/ function(module, exports) {
 
 	"use strict";
