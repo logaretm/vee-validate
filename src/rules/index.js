@@ -8,7 +8,7 @@ import alpha from './alpha'; // eslint-disable-line
 import alpha_num from './alpha_num'; // eslint-disable-line
 import alpha_dash from './alpha_dash'; // eslint-disable-line
 import numeric from './numeric'; // eslint-disable-line
-
+import regex from './regex';
 
 export default {
     email,
@@ -20,5 +20,6 @@ export default {
     alpha,
     alpha_num,
     alpha_dash,
-    numeric
+    numeric,
+    regex
 };
