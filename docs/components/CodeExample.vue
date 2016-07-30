@@ -54,17 +54,7 @@ export default {
             this.removeWhitespaceForEl(this.$els.html);
         },
 
-        replaceTag(tag) {
-            const tagsToReplace = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;'
-            };
-
-            return tagsToReplace[tag] || tag;
-        },
-
-        escapeMarkup() {
+        unwrapMarkup() {
             const el = this.$els.html.firstChild;
             const parent = this.$els.html;
             while (el.firstChild) {
@@ -72,13 +62,11 @@ export default {
             }
 
             parent.removeChild(el);
-
-            this.$els.html.innerHTML = this.$els.html.innerHTML.replace(/[&<>]/g, this.replaceTag);
         }
     },
 
     ready() {
-        this.escapeMarkup();
+        this.unwrapMarkup();
         this.removeWhitespace();
 
         Prism.highlightElement(this.$els.js);
