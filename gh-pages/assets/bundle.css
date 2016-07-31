@@ -5220,11 +5220,11 @@ body {
   padding-left: 0; }
 
 #layout.active #menu {
-  left: 150px;
-  width: 150px; }
+  left: 200px;
+  width: 200px; }
 
 #layout.active .menu-link {
-  left: 150px; }
+  left: 200px; }
 
 .content {
   margin: 0 auto;
@@ -5257,8 +5257,8 @@ body {
   color: #888; }
 
 #menu {
-  margin-left: -150px;
-  width: 150px;
+  margin-left: -200px;
+  width: 200px;
   position: fixed;
   top: 0;
   left: 0;
@@ -5341,21 +5341,21 @@ body {
     padding-left: 2em;
     padding-right: 2em; }
   #layout {
-    padding-left: 150px;
+    padding-left: 200px;
     left: 0; }
   #menu {
-    left: 150px; }
+    left: 200px; }
   .menu-link {
     position: fixed;
-    left: 150px;
+    left: 200px;
     display: none; }
   #layout.active .menu-link {
-    left: 150px; } }
+    left: 200px; } }
 
 @media (max-width: 48em) {
   #layout.active {
     position: relative;
-    left: 150px; } }
+    left: 200px; } }
 
 .error {
   color: #dd514c; }

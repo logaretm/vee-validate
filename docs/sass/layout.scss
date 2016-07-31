@@ -19,12 +19,12 @@ body {
 }
 
 #layout.active #menu {
-    left: 150px;
-    width: 150px;
+    left: $menu-width;
+    width: $menu-width;
 }
 
 #layout.active .menu-link {
-    left: 150px;
+    left: $menu-width;
 }
 
 .content {
@@ -61,8 +61,8 @@ body {
 }
 
 #menu {
-    margin-left: -150px;
-    width: 150px;
+    margin-left: -$menu-width;
+    width: $menu-width;
     position: fixed;
     top: 0;
     left: 0;
@@ -162,27 +162,27 @@ body {
     }
 
     #layout {
-        padding-left: 150px;
+        padding-left: $menu-width;
         left: 0;
     }
     #menu {
-        left: 150px;
+        left: $menu-width;
     }
 
     .menu-link {
         position: fixed;
-        left: 150px;
+        left: $menu-width;
         display: none;
     }
 
     #layout.active .menu-link {
-        left: 150px;
+        left: $menu-width;
     }
 }
 
 @media (max-width: 48em) {
     #layout.active {
         position: relative;
-        left: 150px;
+        left: $menu-width;
     }
 }
