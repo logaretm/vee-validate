@@ -39,8 +39,6 @@
 <script>
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
-import 'prismjs/themes/prism-okaidia.css';
-import 'prism-theme-one-dark/prism-onedark.css';
 
 export default {
     data() {
