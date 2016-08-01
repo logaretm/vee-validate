@@ -1,5 +1,6 @@
 import test from 'ava';
 import Validator from './../src/validator';
+import { mockFile } from './helpers';
 
 const validator = new Validator({
     email: 'email',
@@ -14,7 +15,8 @@ const validator = new Validator({
     numeric: 'numeric',
     regex: 'regex:[0-9]+',
     regex2: 'regex:[a-z]+,i',
-    ip: 'ip'
+    ip: 'ip',
+    ext: 'ext:jpg,txt,svg'
 });
 
 test('it validates alpha', t => {
@@ -96,4 +98,17 @@ test('it validates ipv4 addresses', t => {
     t.false(validator.validate('ip', '256.123.1.1'));
     t.true(validator.validate('ip', '44.44.44.44'));
     t.false(validator.validate('ip', '192.168.a.1'));
+});
+
+
+test('it validates files extensions', t => {
+    const validFiles = [
+        mockFile('file.txt', 'text/plain'),
+        mockFile('file.jpg', 'image/jpeg'),
+        mockFile('file.svg', 'image/svg'),
+    ];
+
+    t.true(validator.validate('ext', validFiles));
+
+    t.false(validator.validate('ext', [mockFile('file.pdf', 'application/pdf')]));
 });

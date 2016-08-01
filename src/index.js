@@ -21,22 +21,24 @@ export default (Vue, options) => {
         onInput() {
             this.vm.$validator.validate(this.fieldName, this.el.value);
         },
+        onFileInput() {
+            this.vm.$validator.validate(this.fieldName, this.el.files);
+        },
         attachValidator() {
             this.vm.$validator.attach(this.fieldName, this.params.rules);
         },
         bind() {
             this.fieldName = this.el.name;
             this.attachValidator();
+            const handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
 
             const delay = this.params.delay || (options && options.delay) || DEFAULT_DELAY;
-            this.onInputRef = delay ?
-            debounce(this.onInput.bind(this), delay) : this.onInput.bind(this);
-
-            this.el.addEventListener('input', this.onInputRef);
+            this.handler = delay ? debounce(handler.bind(this), delay) : handler.bind(this);
+            this.el.addEventListener('input', this.handler);
         },
         unbind() {
             this.vm.$validator.detach(this.fieldName);
-            this.el.removeEventListener('input', this.onInputRef);
+            this.el.removeEventListener('input', this.handler);
         }
     });
 };

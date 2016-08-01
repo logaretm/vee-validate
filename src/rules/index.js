@@ -10,6 +10,7 @@ import alpha_dash from './alpha_dash'; // eslint-disable-line
 import numeric from './numeric'; // eslint-disable-line
 import regex from './regex';
 import ip from './ip';
+import ext from './ext';
 
 export default {
     email,
@@ -23,5 +24,6 @@ export default {
     alpha_dash,
     numeric,
     regex,
-    ip
+    ip,
+    ext
 };

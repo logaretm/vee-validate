@@ -64,7 +64,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _debouncer = __webpack_require__(16);
+	var _debouncer = __webpack_require__(17);
 
 	var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -90,21 +90,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        onInput: function onInput() {
 	            this.vm.$validator.validate(this.fieldName, this.el.value);
 	        },
+	        onFileInput: function onFileInput() {
+	            this.vm.$validator.validate(this.fieldName, this.el.files);
+	        },
 	        attachValidator: function attachValidator() {
 	            this.vm.$validator.attach(this.fieldName, this.params.rules);
 	        },
 	        bind: function bind() {
 	            this.fieldName = this.el.name;
 	            this.attachValidator();
+	            var handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
 
 	            var delay = this.params.delay || options && options.delay || DEFAULT_DELAY;
-	            this.onInputRef = delay ? (0, _debouncer2.default)(this.onInput.bind(this), delay) : this.onInput.bind(this);
-
-	            this.el.addEventListener('input', this.onInputRef);
+	            this.handler = delay ? (0, _debouncer2.default)(handler.bind(this), delay) : handler.bind(this);
+	            this.el.addEventListener('input', this.handler);
 	        },
 	        unbind: function unbind() {
 	            this.vm.$validator.detach(this.fieldName);
-	            this.el.removeEventListener('input', this.onInputRef);
+	            this.el.removeEventListener('input', this.handler);
 	        }
 	    });
 	};
@@ -127,7 +130,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _rules2 = _interopRequireDefault(_rules);
 
-	var _errorBag = __webpack_require__(15);
+	var _errorBag = __webpack_require__(16);
 
 	var _errorBag2 = _interopRequireDefault(_errorBag);
 
@@ -323,9 +326,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ip2 = _interopRequireDefault(_ip);
 
+	var _ext = __webpack_require__(15);
+
+	var _ext2 = _interopRequireDefault(_ext);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// eslint-disable-line
 	// eslint-disable-line
 	// eslint-disable-line
 	exports.default = {
@@ -340,8 +346,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    alpha_dash: _alpha_dash2.default,
 	    numeric: _numeric2.default,
 	    regex: _regex2.default,
-	    ip: _ip2.default
+	    ip: _ip2.default,
+	    ext: _ext2.default
 	}; // eslint-disable-line
+	// eslint-disable-line
 	// eslint-disable-line
 
 	module.exports = exports['default'];
@@ -619,6 +627,32 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 15 */
 /***/ function(module, exports) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = {
+	    msg: function msg(name) {
+	        return 'The ' + name + ' must be a valid file.';
+	    },
+	    validate: function validate(files, extensions) {
+	        var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
+	        for (var i = 0; i < files.length; i++) {
+	            if (!files[i].name.match(regex)) {
+	                return false;
+	            }
+	        }
+
+	        return true;
+	    }
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
@@ -704,7 +738,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 	"use strict";
