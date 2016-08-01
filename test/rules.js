@@ -13,7 +13,8 @@ const validator = new Validator({
     alpha_num: 'alpha_num',
     numeric: 'numeric',
     regex: 'regex:[0-9]+',
-    regex2: 'regex:[a-z]+,i'
+    regex2: 'regex:[a-z]+,i',
+    ip: 'ip'
 });
 
 test('it validates alpha', t => {
@@ -87,4 +88,12 @@ test('it validates regular expressions', t => {
     t.true(validator.validate('regex', 'ad1231231231'));
     t.false(validator.validate('regex', 'ads'));
     t.true(validator.validate('regex2', 'ABC'));
+});
+
+
+test('it validates ipv4 addresses', t => {
+    t.true(validator.validate('ip', '192.168.1.1'));
+    t.false(validator.validate('ip', '256.123.1.1'));
+    t.true(validator.validate('ip', '44.44.44.44'));
+    t.false(validator.validate('ip', '192.168.a.1'));
 });

@@ -64,7 +64,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _debouncer = __webpack_require__(15);
+	var _debouncer = __webpack_require__(16);
 
 	var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -127,7 +127,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _rules2 = _interopRequireDefault(_rules);
 
-	var _errorBag = __webpack_require__(14);
+	var _errorBag = __webpack_require__(15);
 
 	var _errorBag2 = _interopRequireDefault(_errorBag);
 
@@ -319,8 +319,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _regex2 = _interopRequireDefault(_regex);
 
+	var _ip = __webpack_require__(14);
+
+	var _ip2 = _interopRequireDefault(_ip);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// eslint-disable-line
 	// eslint-disable-line
 	// eslint-disable-line
 	exports.default = {
@@ -334,9 +339,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    alpha_num: _alpha_num2.default,
 	    alpha_dash: _alpha_dash2.default,
 	    numeric: _numeric2.default,
-	    regex: _regex2.default
+	    regex: _regex2.default,
+	    ip: _ip2.default
 	}; // eslint-disable-line
-	// eslint-disable-line
 	// eslint-disable-line
 
 	module.exports = exports['default'];
@@ -598,6 +603,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.default = {
+	    msg: function msg(name) {
+	        return "The " + name + " must be a valid ip address.";
+	    },
+
+	    // TODO: Maybe add an ipv6 flag?
+	    validate: function validate(value) {
+	        return !!value.match(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -678,7 +704,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	"use strict";
