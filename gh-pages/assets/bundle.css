@@ -4813,6 +4813,8 @@ striping:
   -webkit-animation-name: slideOutUp;
   animation-name: slideOutUp;
 }
+div.prism-show-language > div.prism-show-language-label {
+  top: 8px !important; }
 /**
  * prism.js default theme for JavaScript, CSS and HTML
  * Based on dabblet (http://dabblet.com)
@@ -4949,6 +4951,35 @@ pre[class*="language-"] {
 
 .token.entity {
 	cursor: help;
+}
+div.prism-show-language {
+	position: relative;
+}
+
+div.prism-show-language > div.prism-show-language-label {
+	color: black;
+	background-color: #CFCFCF;
+	display: inline-block;
+	position: absolute;
+	bottom: auto;
+	left: auto;
+	top: 0;
+	right: 0;
+	width: auto;
+	height: auto;
+	font-size: 0.9em;
+	border-radius: 0 0 0 5px;
+	padding: 0 0.5em;
+	text-shadow: none;
+	z-index: 1;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	-webkit-transform: none;
+	-moz-transform: none;
+	-ms-transform: none;
+	-o-transform: none;
+	transform: none;
 }
 @charset "UTF-8";
 body {

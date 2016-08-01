@@ -39,6 +39,8 @@
 <script>
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
+import 'prismjs/plugins/show-language/prism-show-language.css'
+import 'prismjs/plugins/show-language/prism-show-language.js'
 
 export default {
     data() {
@@ -104,3 +106,9 @@ export default {
     }
 }
 </script>
+
+<style lang="sass">
+    div.prism-show-language > div.prism-show-language-label {
+        top: 8px !important;
+    }
+</style>
