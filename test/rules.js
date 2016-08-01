@@ -16,7 +16,8 @@ const validator = new Validator({
     regex: 'regex:[0-9]+',
     regex2: 'regex:[a-z]+,i',
     ip: 'ip',
-    ext: 'ext:jpg,txt,svg'
+    ext: 'ext:jpg,txt,svg',
+    mimes: 'mimes:image/*,text/plain'
 });
 
 test('it validates alpha', t => {
@@ -111,4 +112,16 @@ test('it validates files extensions', t => {
     t.true(validator.validate('ext', validFiles));
 
     t.false(validator.validate('ext', [mockFile('file.pdf', 'application/pdf')]));
+});
+
+test('it validates mime types', t => {
+    const validFiles = [
+        mockFile('file.txt', 'text/plain'),
+        mockFile('file.jpg', 'image/jpeg'),
+        mockFile('file.svg', 'image/svg'),
+    ];
+
+    t.true(validator.validate('mimes', validFiles));
+
+    t.false(validator.validate('mimes', [mockFile('file.pdf', 'application/pdf')]));
 });

@@ -11,6 +11,7 @@ import numeric from './numeric'; // eslint-disable-line
 import regex from './regex';
 import ip from './ip';
 import ext from './ext';
+import mimes from './mimes';
 
 export default {
     email,
@@ -25,5 +26,6 @@ export default {
     numeric,
     regex,
     ip,
-    ext
+    ext,
+    mimes
 };

@@ -64,7 +64,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _debouncer = __webpack_require__(17);
+	var _debouncer = __webpack_require__(18);
 
 	var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -130,7 +130,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _rules2 = _interopRequireDefault(_rules);
 
-	var _errorBag = __webpack_require__(16);
+	var _errorBag = __webpack_require__(17);
 
 	var _errorBag2 = _interopRequireDefault(_errorBag);
 
@@ -330,8 +330,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ext2 = _interopRequireDefault(_ext);
 
+	var _mimes = __webpack_require__(16);
+
+	var _mimes2 = _interopRequireDefault(_mimes);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// eslint-disable-line
 	// eslint-disable-line
 	// eslint-disable-line
 	exports.default = {
@@ -347,9 +352,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    numeric: _numeric2.default,
 	    regex: _regex2.default,
 	    ip: _ip2.default,
-	    ext: _ext2.default
+	    ext: _ext2.default,
+	    mimes: _mimes2.default
 	}; // eslint-disable-line
-	// eslint-disable-line
 	// eslint-disable-line
 
 	module.exports = exports['default'];
@@ -653,6 +658,32 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 16 */
 /***/ function(module, exports) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = {
+	    msg: function msg(name) {
+	        return 'The ' + name + ' must be a valid file.';
+	    },
+	    validate: function validate(files, mimes) {
+	        var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
+	        for (var i = 0; i < files.length; i++) {
+	            if (!files[i].type.match(regex)) {
+	                return false;
+	            }
+	        }
+
+	        return true;
+	    }
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
@@ -738,7 +769,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	"use strict";
