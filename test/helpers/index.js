@@ -1,6 +1,5 @@
-exports.mockFile = (name, type) => {
-    return {
-        name,
-        type
-    };
-};
+exports.mockFile = (name, type, size = 1) => ({
+    name,
+    type,
+    size: size * 1024
+});

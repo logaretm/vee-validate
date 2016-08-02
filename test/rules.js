@@ -17,7 +17,9 @@ const validator = new Validator({
     regex2: 'regex:[a-z]+,i',
     ip: 'ip',
     ext: 'ext:jpg,txt,svg',
-    mimes: 'mimes:image/*,text/plain'
+    mimes: 'mimes:image/*,text/plain',
+    size: 'size:10',
+    invalidSize: 'size:blabla'
 });
 
 test('it validates alpha', t => {
@@ -124,4 +126,12 @@ test('it validates mime types', t => {
     t.true(validator.validate('mimes', validFiles));
 
     t.false(validator.validate('mimes', [mockFile('file.pdf', 'application/pdf')]));
+});
+
+test('it validates file size', t => {
+    t.true(validator.validate('size', [mockFile('file.txt', 'text/plain', 10)]));
+    t.false(validator.validate('size', [mockFile('file.txt', 'text/plain', 20)]));
+
+    t.false(validator.validate('invalidSize', [mockFile('file.txt', 'text/plain', 10)]));
+    t.false(validator.validate('invalidSize', [mockFile('file.txt', 'text/plain', 20)]));
 });

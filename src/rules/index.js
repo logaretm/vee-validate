@@ -12,6 +12,7 @@ import regex from './regex';
 import ip from './ip';
 import ext from './ext';
 import mimes from './mimes';
+import size from './size';
 
 export default {
     email,
@@ -27,5 +28,6 @@ export default {
     regex,
     ip,
     ext,
-    mimes
+    mimes,
+    size
 };
