@@ -41,6 +41,9 @@ import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import 'prismjs/plugins/show-language/prism-show-language.css'
 import 'prismjs/plugins/show-language/prism-show-language.js'
+import 'prismjs/plugins/line-numbers/prism-line-numbers.css'
+import 'prismjs/plugins/line-numbers/prism-line-numbers.js'
+
 
 export default {
     data() {

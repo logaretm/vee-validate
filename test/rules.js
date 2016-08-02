@@ -1,6 +1,6 @@
 import test from 'ava';
 import Validator from './../src/validator';
-import { mockFile } from './helpers';
+import { mockFile, mockDimensionsTest } from './helpers';
 
 const validator = new Validator({
     email: 'email',
@@ -159,4 +159,28 @@ test('it validates image files', t => {
     t.true(validator.validate('image', [mockFile('file.gif', 'image/gif')]));
 
     t.false(validator.validate('image', [mockFile('file.pdf', 'application/pdf')]));
+});
+
+// eslint-disable-next-line
+test('it validates image dimensions', async t => {
+    // Prepares Calls to window and Image objects.
+    mockDimensionsTest({ width: 150, height: 100});
+
+    // TODO: maybe add acutal file to be tested properly.
+    let value = await validator.validate('dimensions', [mockFile('file.jpg', 'image/jpeg', 10)]);
+    t.true(value);
+
+    // mock a failing Image, even with the right dimensions.
+    mockDimensionsTest({ width: 150, height: 100}, true);
+    value = await validator.validate('dimensions', [mockFile('file.jpg', 'image/jpeg', 10)]);
+    t.false(value);
+
+    // not an image.
+    value = await validator.validate('dimensions', [mockFile('file.pdf', 'apllication/pdf', 10)]);
+    t.false(value);
+
+    // wrong dimensions.
+    mockDimensionsTest({ width: 30, height: 20});
+    value = await validator.validate('dimensions', [mockFile('file.jpg', 'image/jpeg', 10)]);
+    t.false(value);
 });

@@ -821,7 +821,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 20 */
 /***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -836,7 +836,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var width = _ref2[0];
 	        var height = _ref2[1];
 
-	        return 'The ' + field + ' must be ' + width + ' pixels by ' + height + ' pixels.';
+	        return "The " + field + " must be " + width + " pixels by " + height + " pixels.";
 	    },
 	    validateImage: function validateImage(file, width, height) {
 	        var URL = window.URL || window.webkitURL;
@@ -850,9 +850,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var valid = true;
 
 	                // Validate exact dimensions.
-	                console.log('over here');
 	                valid = image.width === Number(width) && image.height === Number(height);
-	                console.log('over here');
 
 	                resolve({
 	                    name: file.name,
@@ -886,7 +884,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }));
 	    }
 	};
-	module.exports = exports['default'];
+	module.exports = exports["default"];
 
 /***/ },
 /* 21 */
