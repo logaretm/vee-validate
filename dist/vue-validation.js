@@ -64,7 +64,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _debouncer = __webpack_require__(23);
+	var _debouncer = __webpack_require__(24);
 
 	var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -133,7 +133,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _rules2 = _interopRequireDefault(_rules);
 
-	var _errorBag = __webpack_require__(22);
+	var _errorBag = __webpack_require__(23);
 
 	var _errorBag2 = _interopRequireDefault(_errorBag);
 
@@ -373,8 +373,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _between2 = _interopRequireDefault(_between);
 
+	var _confirmed = __webpack_require__(22);
+
+	var _confirmed2 = _interopRequireDefault(_confirmed);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// eslint-disable-line
 	// eslint-disable-line
 	// eslint-disable-line
 	exports.default = {
@@ -396,9 +401,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    digits: _digits2.default,
 	    image: _image2.default,
 	    dimensions: _dimensions2.default,
-	    between: _between2.default
+	    between: _between2.default,
+	    confirmed: _confirmed2.default
 	}; // eslint-disable-line
-	// eslint-disable-line
 	// eslint-disable-line
 
 	module.exports = exports['default'];
@@ -933,6 +938,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	exports.default = {
+	    msg: function msg(field, _ref) {
+	        var _ref2 = _slicedToArray(_ref, 1);
+
+	        var confirmedField = _ref2[0];
+
+	        return "The " + field + " does not match the " + confirmedField + ".";
+	    },
+	    validate: function validate(value, _ref3) {
+	        var _ref4 = _slicedToArray(_ref3, 1);
+
+	        var confirmedField = _ref4[0];
+
+	        var field = document.querySelector("input[name='" + confirmedField + "']");
+
+	        return !!(field && String(value) === field.value);
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1012,7 +1049,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	"use strict";

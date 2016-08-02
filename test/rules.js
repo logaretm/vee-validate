@@ -1,6 +1,6 @@
 import test from 'ava';
 import Validator from './../src/validator';
-import { mockFile, mockDimensionsTest } from './helpers';
+import { mockFile, mockDimensionsTest, mockDocumentQuerySelector } from './helpers';
 
 const validator = new Validator({
     email: 'email',
@@ -23,7 +23,8 @@ const validator = new Validator({
     digits: 'digits:3',
     image: 'image',
     dimensions: 'dimensions:150,100',
-    between: 'between:19,21'
+    between: 'between:19,21',
+    confirmed: 'confirmed:confirmation_field'
 });
 
 test('it validates alpha', t => {
@@ -191,5 +192,18 @@ test('it validates a number between values', t => {
         t.true(validator.validate('between', i));
     }
 
-    t.false(validator.validate('between', 22));        
+    t.false(validator.validate('between', 22));
+});
+
+test('it validates a field confirmation', t => {
+    mockDocumentQuerySelector({ value: 'p@$$word' });
+    t.true(validator.validate('confirmed', 'p@$$word'));
+
+    // field not found.
+    mockDocumentQuerySelector(null);
+    t.false(validator.validate('confirmed', 'p@$$word'));
+
+    // fields do not match.
+    mockDocumentQuerySelector({ value: 'p@$$word' });
+    t.false(validator.validate('confirmed', 'password'));
 });

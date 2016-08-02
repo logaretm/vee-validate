@@ -17,6 +17,7 @@ import digits from './digits';
 import image from './image';
 import dimensions from './dimensions';
 import between from './between';
+import confirmed from './confirmed';
 
 export default {
     email,
@@ -37,5 +38,6 @@ export default {
     digits,
     image,
     dimensions,
-    between
+    between,
+    confirmed
 };

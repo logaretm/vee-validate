@@ -4,6 +4,14 @@ exports.mockFile = (name, type, size = 1) => ({
     size: size * 1024
 });
 
+exports.mockDocumentQuerySelector = (el) => {
+    global.document = {
+        querySelector() {
+            return el;
+        }
+    };
+};
+
 exports.mockDimensionsTest = (dimensions, fails = false) => {
     global.window = {
         URL: {
