@@ -95,6 +95,18 @@ export default class Validator
         const validator = this.rules[rule.name];
         const valid = validator.validate(value, rule.params);
 
+        if (valid instanceof Promise) {
+            return valid.then(values => {
+                const allValid = values.reduce((prev, curr) => prev && curr.valid, true);
+
+                if (! allValid) {
+                    this.errors.add(name, validator.msg(name, rule.params));
+                }
+
+                return allValid;
+            });
+        }
+
         if (! valid) {
             this.errors.add(name, validator.msg(name, rule.params));
         }

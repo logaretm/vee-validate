@@ -21,7 +21,8 @@ const validator = new Validator({
     size: 'size:10',
     invalidSize: 'size:blabla',
     digits: 'digits:3',
-    image: 'image'
+    image: 'image',
+    dimensions: 'dimensions:150,100'
 });
 
 test('it validates alpha', t => {

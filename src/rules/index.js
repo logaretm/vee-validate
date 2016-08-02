@@ -15,6 +15,7 @@ import mimes from './mimes';
 import size from './size';
 import digits from './digits';
 import image from './image';
+import dimensions from './dimensions';
 
 export default {
     email,
@@ -33,5 +34,6 @@ export default {
     mimes,
     size,
     digits,
-    image
+    image,
+    dimensions
 };

@@ -15,6 +15,11 @@
                 <input :class="{'pure-input-1': true, 'has-error': errors.has('rejected') }" name="rejected" v-validate rules="mimes:image/*" type="file" reject>
                 <span class="error" v-show="errors.has('rejected')">{{ errors.first('rejected') }}</span>
             </div>
+            <div class="pure-u-1">
+                <label :class="{'error': errors.has('dimensions') }" for="dimensions">Dimensions Input</label>
+                <input :class="{'pure-input-1': true, 'has-error': errors.has('dimensions') }" name="dimensions" v-validate rules="dimensions:150,100" type="file">
+                <span class="error" v-show="errors.has('dimensions')">{{ errors.first('dimensions') }}</span>
+            </div>
             <button type="submit" class="pure-button pure-button-primary">Sign up</button>
         </form>
 

@@ -3093,7 +3093,7 @@
 
 				var _validator2 = _interopRequireDefault(_validator);
 
-				var _debouncer = __webpack_require__(20);
+				var _debouncer = __webpack_require__(22);
 
 				var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -3173,7 +3173,7 @@
 
 				var _rules2 = _interopRequireDefault(_rules);
 
-				var _errorBag = __webpack_require__(19);
+				var _errorBag = __webpack_require__(21);
 
 				var _errorBag2 = _interopRequireDefault(_errorBag);
 
@@ -3295,8 +3295,24 @@
 					}, {
 						key: 'test',
 						value: function test(name, value, rule) {
+							var _this5 = this;
+
 							var validator = this.rules[rule.name];
 							var valid = validator.validate(value, rule.params);
+
+							if (valid instanceof Promise) {
+								return valid.then(function (values) {
+									var allValid = values.reduce(function (prev, curr) {
+										return prev && curr.valid;
+									}, true);
+
+									if (!allValid) {
+										_this5.errors.add(name, validator.msg(name, rule.params));
+									}
+
+									return allValid;
+								});
+							}
 
 							if (!valid) {
 								this.errors.add(name, validator.msg(name, rule.params));
@@ -3392,6 +3408,14 @@
 
 				var _digits2 = _interopRequireDefault(_digits);
 
+				var _image = __webpack_require__(19);
+
+				var _image2 = _interopRequireDefault(_image);
+
+				var _dimensions = __webpack_require__(20);
+
+				var _dimensions2 = _interopRequireDefault(_dimensions);
+
 				function _interopRequireDefault(obj) {
 					return obj && obj.__esModule ? obj : { default: obj };
 				}
@@ -3415,7 +3439,9 @@
 					ext: _ext2.default,
 					mimes: _mimes2.default,
 					size: _size2.default,
-					digits: _digits2.default
+					digits: _digits2.default,
+					image: _image2.default,
+					dimensions: _dimensions2.default
 				}; // eslint-disable-line
 				// eslint-disable-line
 
@@ -3939,6 +3965,128 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
+				exports.default = {
+					msg: function msg(name) {
+						return "The " + name + " must be an image.";
+					},
+					validate: function validate(files) {
+						for (var i = 0; i < files.length; i++) {
+							if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+								return false;
+							}
+						}
+
+						return true;
+					}
+				};
+				module.exports = exports["default"];
+
+				/***/
+			},
+			/* 20 */
+			/***/function (module, exports) {
+
+				'use strict';
+
+				Object.defineProperty(exports, "__esModule", {
+					value: true
+				});
+
+				var _slicedToArray = function () {
+					function sliceIterator(arr, i) {
+						var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+							for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+								_arr.push(_s.value);if (i && _arr.length === i) break;
+							}
+						} catch (err) {
+							_d = true;_e = err;
+						} finally {
+							try {
+								if (!_n && _i["return"]) _i["return"]();
+							} finally {
+								if (_d) throw _e;
+							}
+						}return _arr;
+					}return function (arr, i) {
+						if (Array.isArray(arr)) {
+							return arr;
+						} else if (Symbol.iterator in Object(arr)) {
+							return sliceIterator(arr, i);
+						} else {
+							throw new TypeError("Invalid attempt to destructure non-iterable instance");
+						}
+					};
+				}();
+
+				exports.default = {
+					msg: function msg(field, _ref) {
+						var _ref2 = _slicedToArray(_ref, 2);
+
+						var width = _ref2[0];
+						var height = _ref2[1];
+
+						return 'The ' + field + ' must be ' + width + ' pixels by ' + height + ' pixels.';
+					},
+					validateImage: function validateImage(file, width, height) {
+						var URL = window.URL || window.webkitURL;
+						return new Promise(function (resolve) {
+							var image = new Image();
+							image.onerror = function () {
+								return resolve({ name: file.name, valid: false });
+							};
+
+							image.onload = function () {
+								var valid = true;
+
+								// Validate exact dimensions.
+								console.log('over here');
+								valid = image.width === Number(width) && image.height === Number(height);
+								console.log('over here');
+
+								resolve({
+									name: file.name,
+									valid: valid
+								});
+							};
+
+							image.src = URL.createObjectURL(file);
+						});
+					},
+					validate: function validate(files, _ref3) {
+						var _this = this;
+
+						var _ref4 = _slicedToArray(_ref3, 2);
+
+						var width = _ref4[0];
+						var height = _ref4[1];
+
+						var list = [];
+						for (var i = 0; i < files.length; i++) {
+							// if file is not an image, reject.
+							if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+								return false;
+							}
+
+							list.push(files[i]);
+						}
+
+						return Promise.all(list.map(function (file) {
+							return _this.validateImage(file, width, height);
+						}));
+					}
+				};
+				module.exports = exports['default'];
+
+				/***/
+			},
+			/* 21 */
+			/***/function (module, exports) {
+
+				"use strict";
+
+				Object.defineProperty(exports, "__esModule", {
+					value: true
+				});
 
 				var _createClass = function () {
 					function defineProperties(target, props) {
@@ -4032,7 +4180,7 @@
 
 				/***/
 			},
-			/* 20 */
+			/* 22 */
 			/***/function (module, exports) {
 
 				"use strict";
@@ -5155,7 +5303,7 @@
 /* 27 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>File Upload</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('file') }\" for=\"file\">Unrejected Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" v-validate rules=\"mimes:image/*\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('file')\">{{ errors.first('file') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('rejected') }\" for=\"rejected\">Rejected Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('rejected') }\" name=\"rejected\" v-validate rules=\"mimes:image/*\" type=\"file\" reject>\n            <span class=\"error\" v-show=\"errors.has('rejected')\">{{ errors.first('rejected') }}</span>\n        </div>\n        <button type=\"submit\" class=\"pure-button pure-button-primary\">Sign up</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;File Upload&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Unrejected Input&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; v-validate rules=&quot;mimes:image/*&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ \"{\" + \"{ errors.first('file') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Input&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; v-validate rules=&quot;mimes:image/*&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ \"{\" + \"{ errors.first('file') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button type=&quot;submit&quot; class=&quot;pure-button pure-button-primary&quot;&gt;Sign up&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VueValidation);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
+	module.exports = "\n\n\n\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>File Upload</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('file') }\" for=\"file\">Unrejected Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" v-validate rules=\"mimes:image/*\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('file')\">{{ errors.first('file') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('rejected') }\" for=\"rejected\">Rejected Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('rejected') }\" name=\"rejected\" v-validate rules=\"mimes:image/*\" type=\"file\" reject>\n            <span class=\"error\" v-show=\"errors.has('rejected')\">{{ errors.first('rejected') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('dimensions') }\" for=\"dimensions\">Dimensions Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('dimensions') }\" name=\"dimensions\" v-validate rules=\"dimensions:150,100\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('dimensions')\">{{ errors.first('dimensions') }}</span>\n        </div>\n        <button type=\"submit\" class=\"pure-button pure-button-primary\">Sign up</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;File Upload&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Unrejected Input&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; v-validate rules=&quot;mimes:image/*&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ \"{\" + \"{ errors.first('file') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Input&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; v-validate rules=&quot;mimes:image/*&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ \"{\" + \"{ errors.first('file') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button type=&quot;submit&quot; class=&quot;pure-button pure-button-primary&quot;&gt;Sign up&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VueValidation);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
 /* 28 */
