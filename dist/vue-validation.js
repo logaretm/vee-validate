@@ -86,12 +86,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 
 	    Vue.directive('validate', {
-	        params: ['rules', 'delay'],
+	        params: ['rules', 'delay', 'reject'],
 	        onInput: function onInput() {
 	            this.vm.$validator.validate(this.fieldName, this.el.value);
 	        },
 	        onFileInput: function onFileInput() {
-	            if (!this.vm.$validator.validate(this.fieldName, this.el.files)) {
+	            if (!this.vm.$validator.validate(this.fieldName, this.el.files) && this.params.reject) {
 	                this.el.value = '';
 	            }
 	        },

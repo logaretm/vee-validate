@@ -17,12 +17,13 @@ export default (Vue, options) => {
     });
 
     Vue.directive('validate', {
-        params: ['rules', 'delay'],
+        params: ['rules', 'delay', 'reject'],
         onInput() {
             this.vm.$validator.validate(this.fieldName, this.el.value);
         },
         onFileInput() {
-            if (! this.vm.$validator.validate(this.fieldName, this.el.files)) {
+            if (! this.vm.$validator.validate(this.fieldName, this.el.files)
+            && this.params.reject) {
                 this.el.value = '';
             }
         },
