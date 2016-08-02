@@ -22,7 +22,8 @@ const validator = new Validator({
     invalidSize: 'size:blabla',
     digits: 'digits:3',
     image: 'image',
-    dimensions: 'dimensions:150,100'
+    dimensions: 'dimensions:150,100',
+    between: 'between:19,21'
 });
 
 test('it validates alpha', t => {
@@ -183,4 +184,12 @@ test('it validates image dimensions', async t => {
     mockDimensionsTest({ width: 30, height: 20});
     value = await validator.validate('dimensions', [mockFile('file.jpg', 'image/jpeg', 10)]);
     t.false(value);
+});
+
+test('it validates a number between values', t => {
+    for(let i = 19; i < 22; i++) {
+        t.true(validator.validate('between', i));
+    }
+
+    t.false(validator.validate('between', 22));        
 });

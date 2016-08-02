@@ -16,6 +16,7 @@ import size from './size';
 import digits from './digits';
 import image from './image';
 import dimensions from './dimensions';
+import between from './between';
 
 export default {
     email,
@@ -35,5 +36,6 @@ export default {
     size,
     digits,
     image,
-    dimensions
+    dimensions,
+    between
 };
