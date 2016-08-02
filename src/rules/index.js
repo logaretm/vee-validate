@@ -13,6 +13,7 @@ import ip from './ip';
 import ext from './ext';
 import mimes from './mimes';
 import size from './size';
+import digits from './digits';
 
 export default {
     email,
@@ -29,5 +30,6 @@ export default {
     ip,
     ext,
     mimes,
-    size
+    size,
+    digits
 };

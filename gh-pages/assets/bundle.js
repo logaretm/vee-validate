@@ -3093,7 +3093,7 @@
 
 				var _validator2 = _interopRequireDefault(_validator);
 
-				var _debouncer = __webpack_require__(18);
+				var _debouncer = __webpack_require__(20);
 
 				var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -3173,7 +3173,7 @@
 
 				var _rules2 = _interopRequireDefault(_rules);
 
-				var _errorBag = __webpack_require__(17);
+				var _errorBag = __webpack_require__(19);
 
 				var _errorBag2 = _interopRequireDefault(_errorBag);
 
@@ -3384,6 +3384,14 @@
 
 				var _mimes2 = _interopRequireDefault(_mimes);
 
+				var _size = __webpack_require__(17);
+
+				var _size2 = _interopRequireDefault(_size);
+
+				var _digits = __webpack_require__(18);
+
+				var _digits2 = _interopRequireDefault(_digits);
+
 				function _interopRequireDefault(obj) {
 					return obj && obj.__esModule ? obj : { default: obj };
 				}
@@ -3405,7 +3413,9 @@
 					regex: _regex2.default,
 					ip: _ip2.default,
 					ext: _ext2.default,
-					mimes: _mimes2.default
+					mimes: _mimes2.default,
+					size: _size2.default,
+					digits: _digits2.default
 				}; // eslint-disable-line
 				// eslint-disable-line
 
@@ -3807,6 +3817,129 @@
 					value: true
 				});
 
+				var _slicedToArray = function () {
+					function sliceIterator(arr, i) {
+						var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+							for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+								_arr.push(_s.value);if (i && _arr.length === i) break;
+							}
+						} catch (err) {
+							_d = true;_e = err;
+						} finally {
+							try {
+								if (!_n && _i["return"]) _i["return"]();
+							} finally {
+								if (_d) throw _e;
+							}
+						}return _arr;
+					}return function (arr, i) {
+						if (Array.isArray(arr)) {
+							return arr;
+						} else if (Symbol.iterator in Object(arr)) {
+							return sliceIterator(arr, i);
+						} else {
+							throw new TypeError("Invalid attempt to destructure non-iterable instance");
+						}
+					};
+				}();
+
+				exports.default = {
+					msg: function msg(name, _ref) {
+						var _ref2 = _slicedToArray(_ref, 1);
+
+						var size = _ref2[0];
+
+						return "The " + name + " must be less than " + size + " KB.";
+					},
+					validate: function validate(files, _ref3) {
+						var _ref4 = _slicedToArray(_ref3, 1);
+
+						var size = _ref4[0];
+
+						if (isNaN(size)) {
+							return false;
+						}
+
+						var nSize = Number(size) * 1024;
+						for (var i = 0; i < files.length; i++) {
+							if (files[i].size > nSize) {
+								return false;
+							}
+						}
+
+						return true;
+					}
+				};
+				module.exports = exports["default"];
+
+				/***/
+			},
+			/* 18 */
+			/***/function (module, exports) {
+
+				"use strict";
+
+				Object.defineProperty(exports, "__esModule", {
+					value: true
+				});
+
+				var _slicedToArray = function () {
+					function sliceIterator(arr, i) {
+						var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+							for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+								_arr.push(_s.value);if (i && _arr.length === i) break;
+							}
+						} catch (err) {
+							_d = true;_e = err;
+						} finally {
+							try {
+								if (!_n && _i["return"]) _i["return"]();
+							} finally {
+								if (_d) throw _e;
+							}
+						}return _arr;
+					}return function (arr, i) {
+						if (Array.isArray(arr)) {
+							return arr;
+						} else if (Symbol.iterator in Object(arr)) {
+							return sliceIterator(arr, i);
+						} else {
+							throw new TypeError("Invalid attempt to destructure non-iterable instance");
+						}
+					};
+				}();
+
+				exports.default = {
+					msg: function msg(name, _ref) {
+						var _ref2 = _slicedToArray(_ref, 1);
+
+						var length = _ref2[0];
+
+						return "The " + name + " must be numeric and exactly contain " + length + " digits.";
+					},
+					validate: function validate(value, _ref3) {
+						var _ref4 = _slicedToArray(_ref3, 1);
+
+						var length = _ref4[0];
+
+						var strVal = String(value);
+
+						return !!(strVal.match(/^[0-9]*$/) && strVal.length === Number(length));
+					}
+				};
+				module.exports = exports["default"];
+
+				/***/
+			},
+			/* 19 */
+			/***/function (module, exports) {
+
+				"use strict";
+
+				Object.defineProperty(exports, "__esModule", {
+					value: true
+				});
+
 				var _createClass = function () {
 					function defineProperties(target, props) {
 						for (var i = 0; i < props.length; i++) {
@@ -3899,7 +4032,7 @@
 
 				/***/
 			},
-			/* 18 */
+			/* 20 */
 			/***/function (module, exports) {
 
 				"use strict";

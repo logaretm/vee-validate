@@ -19,7 +19,8 @@ const validator = new Validator({
     ext: 'ext:jpg,txt,svg',
     mimes: 'mimes:image/*,text/plain',
     size: 'size:10',
-    invalidSize: 'size:blabla'
+    invalidSize: 'size:blabla',
+    digits: 'digits:3'
 });
 
 test('it validates alpha', t => {
@@ -134,4 +135,15 @@ test('it validates file size', t => {
 
     t.false(validator.validate('invalidSize', [mockFile('file.txt', 'text/plain', 10)]));
     t.false(validator.validate('invalidSize', [mockFile('file.txt', 'text/plain', 20)]));
+});
+
+test('it validates digits rule', t => {
+    // must be numeric.
+    t.false(validator.validate('digits', '12c'));
+
+    // only 3 digits allowed.
+    t.false(validator.validate('digits', '1234'));
+
+    // is cool.
+    t.true(validator.validate('digits', '123'));
 });
