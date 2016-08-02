@@ -28,6 +28,9 @@
                             <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'ex2'}">
                                 <a @click="content = 'ex2'" class="pure-menu-link">Example 2</a>
                             </li>
+                            <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'ex3'}">
+                                <a @click="content = 'ex3'" class="pure-menu-link">Example 3</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -41,6 +44,7 @@
                         <!-- Examples -->
                         <first-example v-if="content === 'ex1'"></first-example>
                         <second-example v-if="content === 'ex2'"></second-example>
+                        <third-example v-if="content === 'ex3'"></third-example>
 
                         <!-- Home Content -->
                         <div v-if="content === 'home'">

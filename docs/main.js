@@ -5,6 +5,7 @@ import VueValidation from './../dist/vue-validation';
 import CodeExample from './components/CodeExample.vue';
 import FirstExample from './examples/Example-1.vue';
 import SecondExample from './examples/Example-2.vue';
+import ThirdExample from './examples/Example-3.vue';
 import './sass/main.scss';
 
 Vue.use(VueValidation);
@@ -41,6 +42,7 @@ new Vue({
     },
     components: {
         FirstExample,
-        SecondExample
+        SecondExample,
+        ThirdExample
     }
 });

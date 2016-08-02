@@ -70,7 +70,11 @@
 
 	var _Example4 = _interopRequireDefault(_Example3);
 
-	__webpack_require__(26);
+	var _Example5 = __webpack_require__(26);
+
+	var _Example6 = _interopRequireDefault(_Example5);
+
+	__webpack_require__(28);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -108,7 +112,8 @@
 	    },
 	    components: {
 	        FirstExample: _Example2.default,
-	        SecondExample: _Example4.default
+	        SecondExample: _Example4.default,
+	        ThirdExample: _Example6.default
 	    }
 	});
 
@@ -3088,7 +3093,7 @@
 
 				var _validator2 = _interopRequireDefault(_validator);
 
-				var _debouncer = __webpack_require__(15);
+				var _debouncer = __webpack_require__(18);
 
 				var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -3116,21 +3121,27 @@
 						onInput: function onInput() {
 							this.vm.$validator.validate(this.fieldName, this.el.value);
 						},
+						onFileInput: function onFileInput() {
+							if (!this.vm.$validator.validate(this.fieldName, this.el.files)) {
+								this.el.value = '';
+							}
+						},
 						attachValidator: function attachValidator() {
 							this.vm.$validator.attach(this.fieldName, this.params.rules);
 						},
 						bind: function bind() {
 							this.fieldName = this.el.name;
 							this.attachValidator();
+							var handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
+							this.handles = this.el.type === 'file' ? 'change' : 'input';
 
 							var delay = this.params.delay || options && options.delay || DEFAULT_DELAY;
-							this.onInputRef = delay ? (0, _debouncer2.default)(this.onInput.bind(this), delay) : this.onInput.bind(this);
-
-							this.el.addEventListener('input', this.onInputRef);
+							this.handler = delay ? (0, _debouncer2.default)(handler.bind(this), delay) : handler.bind(this);
+							this.el.addEventListener(this.handles, this.handler);
 						},
 						unbind: function unbind() {
 							this.vm.$validator.detach(this.fieldName);
-							this.el.removeEventListener('input', this.onInputRef);
+							this.el.removeEventListener(this.handles, this.handler);
 						}
 					});
 				};
@@ -3162,7 +3173,7 @@
 
 				var _rules2 = _interopRequireDefault(_rules);
 
-				var _errorBag = __webpack_require__(14);
+				var _errorBag = __webpack_require__(17);
 
 				var _errorBag2 = _interopRequireDefault(_errorBag);
 
@@ -3361,10 +3372,23 @@
 
 				var _regex2 = _interopRequireDefault(_regex);
 
+				var _ip = __webpack_require__(14);
+
+				var _ip2 = _interopRequireDefault(_ip);
+
+				var _ext = __webpack_require__(15);
+
+				var _ext2 = _interopRequireDefault(_ext);
+
+				var _mimes = __webpack_require__(16);
+
+				var _mimes2 = _interopRequireDefault(_mimes);
+
 				function _interopRequireDefault(obj) {
 					return obj && obj.__esModule ? obj : { default: obj };
 				}
 
+				// eslint-disable-line
 				// eslint-disable-line
 				// eslint-disable-line
 				exports.default = {
@@ -3378,9 +3402,11 @@
 					alpha_num: _alpha_num2.default,
 					alpha_dash: _alpha_dash2.default,
 					numeric: _numeric2.default,
-					regex: _regex2.default
+					regex: _regex2.default,
+					ip: _ip2.default,
+					ext: _ext2.default,
+					mimes: _mimes2.default
 				}; // eslint-disable-line
-				// eslint-disable-line
 				// eslint-disable-line
 
 				module.exports = exports['default'];
@@ -3704,6 +3730,82 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
+				exports.default = {
+					msg: function msg(name) {
+						return "The " + name + " must be a valid ip address.";
+					},
+
+					// TODO: Maybe add an ipv6 flag?
+					validate: function validate(value) {
+						return !!value.match(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
+					}
+				};
+				module.exports = exports["default"];
+
+				/***/
+			},
+			/* 15 */
+			/***/function (module, exports) {
+
+				'use strict';
+
+				Object.defineProperty(exports, "__esModule", {
+					value: true
+				});
+				exports.default = {
+					msg: function msg(name) {
+						return 'The ' + name + ' must be a valid file.';
+					},
+					validate: function validate(files, extensions) {
+						var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
+						for (var i = 0; i < files.length; i++) {
+							if (!files[i].name.match(regex)) {
+								return false;
+							}
+						}
+
+						return true;
+					}
+				};
+				module.exports = exports['default'];
+
+				/***/
+			},
+			/* 16 */
+			/***/function (module, exports) {
+
+				'use strict';
+
+				Object.defineProperty(exports, "__esModule", {
+					value: true
+				});
+				exports.default = {
+					msg: function msg(name) {
+						return 'The ' + name + ' must be a valid file.';
+					},
+					validate: function validate(files, mimes) {
+						var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
+						for (var i = 0; i < files.length; i++) {
+							if (!files[i].type.match(regex)) {
+								return false;
+							}
+						}
+
+						return true;
+					}
+				};
+				module.exports = exports['default'];
+
+				/***/
+			},
+			/* 17 */
+			/***/function (module, exports) {
+
+				"use strict";
+
+				Object.defineProperty(exports, "__esModule", {
+					value: true
+				});
 
 				var _createClass = function () {
 					function defineProperties(target, props) {
@@ -3797,7 +3899,7 @@
 
 				/***/
 			},
-			/* 15 */
+			/* 18 */
 			/***/function (module, exports) {
 
 				"use strict";
@@ -4895,6 +4997,35 @@
 
 /***/ },
 /* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_template__ = __webpack_require__(27)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "_v-1d69742c/Example-3.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 27 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>File Upload</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('file') }\" for=\"file\">Image</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" v-validate rules=\"mimes:image/*\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('file')\">{{ errors.first('file') }}</span>\n        </div>\n        <button type=\"submit\" class=\"pure-button pure-button-primary\">Sign up</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;File Upload&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Image&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; v-validate rules=&quot;mimes:image/*&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ \"{\" + \"{ errors.first('file') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button type=&quot;submit&quot; class=&quot;pure-button pure-button-primary&quot;&gt;Sign up&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VueValidation);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
+
+/***/ },
+/* 28 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

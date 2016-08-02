@@ -91,7 +91,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.vm.$validator.validate(this.fieldName, this.el.value);
 	        },
 	        onFileInput: function onFileInput() {
-	            this.vm.$validator.validate(this.fieldName, this.el.files);
+	            if (!this.vm.$validator.validate(this.fieldName, this.el.files)) {
+	                this.el.value = '';
+	            }
 	        },
 	        attachValidator: function attachValidator() {
 	            this.vm.$validator.attach(this.fieldName, this.params.rules);
@@ -100,14 +102,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.fieldName = this.el.name;
 	            this.attachValidator();
 	            var handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
+	            this.handles = this.el.type === 'file' ? 'change' : 'input';
 
 	            var delay = this.params.delay || options && options.delay || DEFAULT_DELAY;
 	            this.handler = delay ? (0, _debouncer2.default)(handler.bind(this), delay) : handler.bind(this);
-	            this.el.addEventListener('input', this.handler);
+	            this.el.addEventListener(this.handles, this.handler);
 	        },
 	        unbind: function unbind() {
 	            this.vm.$validator.detach(this.fieldName);
-	            this.el.removeEventListener('input', this.handler);
+	            this.el.removeEventListener(this.handles, this.handler);
 	        }
 	    });
 	};
