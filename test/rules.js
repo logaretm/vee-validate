@@ -20,7 +20,8 @@ const validator = new Validator({
     mimes: 'mimes:image/*,text/plain',
     size: 'size:10',
     invalidSize: 'size:blabla',
-    digits: 'digits:3'
+    digits: 'digits:3',
+    image: 'image'
 });
 
 test('it validates alpha', t => {
@@ -146,4 +147,15 @@ test('it validates digits rule', t => {
 
     // is cool.
     t.true(validator.validate('digits', '123'));
+});
+
+test('it validates image files', t => {
+    t.true(validator.validate('image', [mockFile('file.jpg', 'image/jpeg')]));
+    t.true(validator.validate('image', [mockFile('file.jpeg', 'image/jpeg')]));
+    t.true(validator.validate('image', [mockFile('file.svg', 'image/svg')]));
+    t.true(validator.validate('image', [mockFile('file.bmp', 'image/bmp')]));
+    t.true(validator.validate('image', [mockFile('file.png', 'image/png')]));
+    t.true(validator.validate('image', [mockFile('file.gif', 'image/gif')]));
+
+    t.false(validator.validate('image', [mockFile('file.pdf', 'application/pdf')]));
 });

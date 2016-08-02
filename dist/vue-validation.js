@@ -64,7 +64,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _debouncer = __webpack_require__(20);
+	var _debouncer = __webpack_require__(21);
 
 	var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -133,7 +133,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _rules2 = _interopRequireDefault(_rules);
 
-	var _errorBag = __webpack_require__(19);
+	var _errorBag = __webpack_require__(20);
 
 	var _errorBag2 = _interopRequireDefault(_errorBag);
 
@@ -345,9 +345,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _digits2 = _interopRequireDefault(_digits);
 
+	var _image = __webpack_require__(19);
+
+	var _image2 = _interopRequireDefault(_image);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// eslint-disable-line
 	// eslint-disable-line
 	// eslint-disable-line
 	exports.default = {
@@ -366,8 +369,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ext: _ext2.default,
 	    mimes: _mimes2.default,
 	    size: _size2.default,
-	    digits: _digits2.default
+	    digits: _digits2.default,
+	    image: _image2.default
 	}; // eslint-disable-line
+	// eslint-disable-line
 	// eslint-disable-line
 
 	module.exports = exports['default'];
@@ -775,6 +780,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.default = {
+	    msg: function msg(name) {
+	        return "The " + name + " must be an image.";
+	    },
+	    validate: function validate(files) {
+	        for (var i = 0; i < files.length; i++) {
+	            if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+	                return false;
+	            }
+	        }
+
+	        return true;
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -855,7 +885,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	"use strict";
