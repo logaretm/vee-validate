@@ -63,13 +63,36 @@
 
                         validator.detach('email'); // you can also detach fields.
                     </code-block>
-                    After that you can validate values like this:
+                    After that you can validate values with <code class="inline">validate(field, value)</code> like this:
                     <code-block class="language-javascript">
                         validator.validate('email', 'foo@bar.com'); // true
                         validator.validate('email', 'foo@bar'); // false
                     </code-block>
-                    <b class="important">Note:</b> Most validators return a boolean, however some validators (very few) return a <code class="inline">Promise</code> which will resolve asynchronously with a boolean.
+                    <div class="note">
+                        <b class="important">Note:</b> Most validators return a boolean, however some validators (very few) return a <code class="inline">Promise</code> which will resolve asynchronously with a boolean.
+                    </div>
+                    <br>
+                    You Can validate multiple values at the same time using <code class="inline">validateAll(obj)</code>:
+                    <code-block class="language-javascript">
+                        validator.validateAll({
+                            email: 'foo@bar.com',
+                            name: 'John Snow'
+                        });
+                    </code-block>
+                    Returns true if all values passed validation, false if at least one value failed validation. The ErrorBag will be populated with any errors encountered.
+                    You can access the <code class="inline">errorBag</code> property directly or using <code class="inline">getErrors()</code>.
+                    <code-block class="language-javascript">
+                        var errorBag = validator.errorBag;
+                        // or
+                        var errorBag = validator.getErrors();
+                    </code-block>
                 </p>
+                <h2 id="validator-example" class="content-subhead">Validator Example</h2>
+                <p>
+                    Here is an example of using the validator without the directive, which means you will be responsible for monitoring input changes on your own, and calling the API methods as you see fit.
+                    This example uses a vue instance to simplify things, but it can be used in plain JavaScript as well.
+                </p>
+                <validator-example></validator-example>
             </app>
         </div>
         <script src="assets/bundle.js"></script>

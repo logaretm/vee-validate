@@ -42,21 +42,6 @@ export default {
         return {
             content: 'demo'
         }
-    },
-    methods: {
-        unwrapMarkup() {
-            const el = this.$els.html.firstChild;
-            const parent = this.$els.html;
-            while (el.firstChild) {
-                parent.insertBefore(el.firstChild, el);
-            }
-
-            parent.removeChild(el);
-        }
-    },
-
-    ready() {
-        this.unwrapMarkup();
     }
 }
 </script>

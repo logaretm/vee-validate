@@ -76,19 +76,19 @@
 
 	var _examples2 = _interopRequireDefault(_examples);
 
-	var _CodeExample = __webpack_require__(48);
+	var _CodeExample = __webpack_require__(51);
 
 	var _CodeExample2 = _interopRequireDefault(_CodeExample);
 
-	var _CodeBlock = __webpack_require__(53);
+	var _CodeBlock = __webpack_require__(56);
 
 	var _CodeBlock2 = _interopRequireDefault(_CodeBlock);
 
-	var _App = __webpack_require__(59);
+	var _App = __webpack_require__(62);
 
 	var _App2 = _interopRequireDefault(_App);
 
-	__webpack_require__(62);
+	__webpack_require__(65);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3185,6 +3185,7 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
+				exports.ErrorBag = exports.Validator = undefined;
 
 				var _validator = __webpack_require__(1);
 
@@ -3213,7 +3214,7 @@
 						},
 						created: function created() {
 							this.$validator = _validator2.default.create();
-							this.$set('errors', this.$validator.errors);
+							this.$set('errors', this.$validator.errorBag);
 						}
 					});
 
@@ -3248,9 +3249,7 @@
 				};
 
 				exports.Validator = _validator2.default;
-
 				exports.ErrorBag = _errorBag2.default;
-				module.exports = exports['default'];
 
 				/***/
 			},
@@ -3296,7 +3295,7 @@
 						_classCallCheck(this, Validator);
 
 						this.validations = this.normalize(validations);
-						this.errors = new _errorBag2.default();
+						this.errorBag = new _errorBag2.default();
 						this.rules = _rules2.default;
 					}
 
@@ -3324,7 +3323,7 @@
 							var _this2 = this;
 
 							var test = true;
-							this.errors.clear();
+							this.errorBag.clear();
 							Object.keys(values).forEach(function (property) {
 								test = _this2.validate(property, values[property]);
 							});
@@ -3337,7 +3336,7 @@
 							var _this3 = this;
 
 							var test = true;
-							this.errors.remove(name);
+							this.errorBag.remove(name);
 							this.validations[name].forEach(function (rule) {
 								test = _this3.test(name, value, rule);
 							});
@@ -3411,7 +3410,7 @@
 									}, true);
 
 									if (!allValid) {
-										_this5.errors.add(name, validator.msg(name, rule.params));
+										_this5.errorBag.add(name, validator.msg(name, rule.params));
 									}
 
 									return allValid;
@@ -3419,10 +3418,21 @@
 							}
 
 							if (!valid) {
-								this.errors.add(name, validator.msg(name, rule.params));
+								this.errorBag.add(name, validator.msg(name, rule.params));
 							}
 
 							return valid;
+						}
+
+						/**
+	      * Gets the internal error.
+	      * @return {ErrorBag} The internal error bag object.
+	      */
+
+					}, {
+						key: 'getErrors',
+						value: function getErrors() {
+							return this.errorBag;
 						}
 					}], [{
 						key: 'create',
@@ -4502,7 +4512,7 @@
 	        _classCallCheck(this, Validator);
 
 	        this.validations = this.normalize(validations);
-	        this.errors = new _errorBag2.default();
+	        this.errorBag = new _errorBag2.default();
 	        this.rules = _rules2.default;
 	    }
 
@@ -4530,7 +4540,7 @@
 	            var _this2 = this;
 
 	            var test = true;
-	            this.errors.clear();
+	            this.errorBag.clear();
 	            Object.keys(values).forEach(function (property) {
 	                test = _this2.validate(property, values[property]);
 	            });
@@ -4543,7 +4553,7 @@
 	            var _this3 = this;
 
 	            var test = true;
-	            this.errors.remove(name);
+	            this.errorBag.remove(name);
 	            this.validations[name].forEach(function (rule) {
 	                test = _this3.test(name, value, rule);
 	            });
@@ -4617,7 +4627,7 @@
 	                    }, true);
 
 	                    if (!allValid) {
-	                        _this5.errors.add(name, validator.msg(name, rule.params));
+	                        _this5.errorBag.add(name, validator.msg(name, rule.params));
 	                    }
 
 	                    return allValid;
@@ -4625,10 +4635,21 @@
 	            }
 
 	            if (!valid) {
-	                this.errors.add(name, validator.msg(name, rule.params));
+	                this.errorBag.add(name, validator.msg(name, rule.params));
 	            }
 
 	            return valid;
+	        }
+
+	        /**
+	         * Gets the internal errorBag instance.
+	         * @return {ErrorBag} The internal error bag object.
+	         */
+
+	    }, {
+	        key: 'getErrors',
+	        value: function getErrors() {
+	            return this.errorBag;
 	        }
 	    }], [{
 	        key: 'create',
@@ -5430,6 +5451,10 @@
 
 	var _Example6 = _interopRequireDefault(_Example5);
 
+	var _ValidatorExample = __webpack_require__(48);
+
+	var _ValidatorExample2 = _interopRequireDefault(_ValidatorExample);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	// Register Examples.
@@ -5437,6 +5462,7 @@
 	    Vue.component('first-example', _Example2.default);
 	    Vue.component('second-example', _Example4.default);
 	    Vue.component('third-example', _Example6.default);
+	    Vue.component('validator-example', _ValidatorExample2.default);
 	};
 
 	module.exports = exports['default'];
@@ -5533,13 +5559,97 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(49)
-	__vue_script__ = __webpack_require__(51)
+	__vue_script__ = __webpack_require__(49)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] docs\\components\\examples\\ValidatorExample.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(50)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "_v-83f2a8d8/ValidatorExample.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _vueValidation = __webpack_require__(17);
+
+	exports.default = {
+	    validator: null,
+	    data: function data() {
+	        return {
+	            email: '',
+	            name: '',
+	            errors: []
+	        };
+	    },
+
+	    watch: {
+	        email: function email(value) {
+	            this.validator.validate('email', value);
+	        },
+	        name: function name(value) {
+	            this.validator.validate('name', value);
+	        }
+	    },
+	    methods: {
+	        validateForm: function validateForm() {
+	            this.validator.validateAll({
+	                email: this.email,
+	                name: this.name
+	            });
+	        },
+	        clearErrors: function clearErrors() {
+	            this.errors.clear();
+	        }
+	    },
+	    ready: function ready() {
+	        this.validator = new _vueValidation.Validator({
+	            email: 'required|email',
+	            name: 'required|alpha|min:3'
+	        });
+	        this.$set('errors', this.validator.errorBag);
+	    }
+	};
+
+/***/ },
+/* 50 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-model=\"email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">Errors: {{ errors.collect('email') | json }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n            <input v-model=\"name\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">Errors: {{ errors.collect('name') | json }}</span>\n        </div>\n        <button class=\"pure-button pure-button-primary\" @click=\"validateForm\" type=\"button\" name=\"button\">Validate All</button>\n        <button class=\"pure-button button-error\" @click=\"clearErrors\" type=\"button\" name=\"button\">Clear</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-model=&quot;email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ errors.collect('email') | json }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Full Name&lt;/label&gt;\n                &lt;input v-model=&quot;name&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ errors.collect('name') | json }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button class=&quot;pure-button pure-button-primary&quot; @click=&quot;validateForm&quot; type=&quot;button&quot; name=&quot;button&quot;&gt;Validate All&lt;/button&gt;\n            &lt;button class=&quot;pure-button button-error&quot; @click=&quot;clearErrors&quot; type=&quot;button&quot; name=&quot;button&quot;&gt;Clear&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n    <div slot=\"code-js\">\n        import Vue from 'vue';\n        import { Validator } from 'vue-validation';\n\n        new Vue({\n            validator: null, // private reference\n            data() {\n                return {\n                    email: '',\n                    name: '',\n                    errors: []\n                }\n            },\n            watch: {\n                email(value) {\n                    this.validator.validate('email', value);\n                },\n                name(value) {\n                    this.validator.validate('name', value);\n                }\n            },\n            methods: {\n                validateForm() {\n                    this.validator.validateAll({\n                        email: this.email,\n                        name: this.name\n                    });\n                },\n                clearErrors() {\n                    this.errors.clear();\n                }\n            },\n            ready() {\n                this.validator = new Validator({\n                    email: 'required|email',\n                    name: 'required|alpha|min:3'\n                });\n                this.$set('errors', this.validator.errorBag); // update the data.\n            }\n        });\n    </div>\n</code-example>\n";
+
+/***/ },
+/* 51 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(52)
+	__vue_script__ = __webpack_require__(54)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] docs\\components\\CodeExample.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(52)
+	__vue_template__ = __webpack_require__(55)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -5558,14 +5668,14 @@
 	})()}
 
 /***/ },
-/* 49 */
+/* 52 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 50 */,
-/* 51 */
+/* 53 */,
+/* 54 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -5578,43 +5688,27 @@
 	        return {
 	            content: 'demo'
 	        };
-	    },
-
-	    methods: {
-	        unwrapMarkup: function unwrapMarkup() {
-	            var el = this.$els.html.firstChild;
-	            var parent = this.$els.html;
-	            while (el.firstChild) {
-	                parent.insertBefore(el.firstChild, el);
-	            }
-
-	            parent.removeChild(el);
-	        }
-	    },
-
-	    ready: function ready() {
-	        this.unwrapMarkup();
 	    }
 	};
 
 /***/ },
-/* 52 */
+/* 55 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div class=\"pure-g\">\n    <div class=\"pure-u-1\">\n        <div class=\"pure-menu pure-menu-horizontal\">\n            <ul class=\"pure-menu-list\">\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'demo'}\">\n                    <a @click=\"content = 'demo'\" class=\"pure-menu-link\">\n                        <i class=\"demo-icon icon-play-outline\"></i>\n                        Demo\n                    </a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'html' }\">\n                    <a @click=\"content = 'html'\" class=\"pure-menu-link\">\n                        <i class=\"demo-icon icon-html\"></i>\n                        HTML\n                    </a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'js' }\">\n                    <a @click=\"content = 'js'\" class=\"pure-menu-link\">\n                        <i class=\"demo-icon icon-icon-code\"></i>\n                        JavaScript\n                    </a>\n                </li>\n            </ul>\n        </div>\n    </div>\n    <div v-show=\"content === 'demo'\" v-el=\"example\" class=\"pure-u-1\">\n        <slot name=\"example\"></slot>\n    </div>\n    <div v-show=\"content === 'html'\" class=\"pure-u-1\">\n        <code-block class=\"language-html\"><slot name=\"code-html\"></slot></code-block>\n    </div>\n    <div v-show=\"content === 'js'\" class=\"pure-u-1\">\n        <code-block class=\"language-javascript\"><slot name=\"code-js\"></slot></code-block>\n    </div>\n</div>\n";
 
 /***/ },
-/* 53 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(54)
-	__vue_script__ = __webpack_require__(55)
+	__webpack_require__(57)
+	__vue_script__ = __webpack_require__(58)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] docs\\components\\CodeBlock.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(58)
+	__vue_template__ = __webpack_require__(61)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -5633,13 +5727,13 @@
 	})()}
 
 /***/ },
-/* 54 */
+/* 57 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 55 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5648,11 +5742,11 @@
 	    value: true
 	});
 
-	var _prismjs = __webpack_require__(56);
+	var _prismjs = __webpack_require__(59);
 
 	var _prismjs2 = _interopRequireDefault(_prismjs);
 
-	__webpack_require__(57);
+	__webpack_require__(60);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5697,7 +5791,7 @@
 	};
 
 /***/ },
-/* 56 */
+/* 59 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -6474,7 +6568,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 57 */
+/* 60 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -6516,22 +6610,22 @@
 	})();
 
 /***/ },
-/* 58 */
+/* 61 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<pre><code v-el:code :class=\"class\"><slot></slot></code></pre>\n";
 
 /***/ },
-/* 59 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(60)
+	__vue_script__ = __webpack_require__(63)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] docs\\components\\App.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(61)
+	__vue_template__ = __webpack_require__(64)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -6550,7 +6644,7 @@
 	})()}
 
 /***/ },
-/* 60 */
+/* 63 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -6596,13 +6690,13 @@
 	};
 
 /***/ },
-/* 61 */
+/* 64 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div id=\"layout\" v-el:layout>\n    <!-- Menu toggle -->\n    <a href=\"#menu\" id=\"menuLink\" class=\"menu-link\" v-el:menuLink>\n        <!-- Hamburger icon -->\n        <span></span>\n    </a>\n\n    <div id=\"menu\" v-el:menu>\n        <div class=\"pure-menu\">\n            <a href=\"/\" class=\"pure-menu-heading\">Vue Validation</a>\n            <ul class=\"pure-menu-list\">\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#installation\" class=\"pure-menu-link\">Installation</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#basic-example\" class=\"pure-menu-link\">Basic Example</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#render-errors\" class=\"pure-menu-link\">Rendering Errors</a>\n                </li>\n            </ul>\n        </div>\n    </div>\n\n    <div id=\"main\">\n        <div class=\"header\">\n            <h1>{{ heading }}</h1>\n            <h2>{{ subtitle }}</h2>\n        </div>\n        <div class=\"content\">\n            <slot></slot>\n        </div>\n    </div>\n</div>\n";
 
 /***/ },
-/* 62 */
+/* 65 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
