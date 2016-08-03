@@ -10,11 +10,10 @@ export default class Validator
     }
 
     attach(name, checks) {
-        checks.split('|').forEach(rule => {
-            if (! this.validations[name]) {
-                this.validations[name] = [];
-            }
+        this.validations[name] = [];
+        this.errorBag.remove(name);
 
+        checks.split('|').forEach(rule => {
             this.validations[name].push(this.normalizeRule(rule));
         });
     }
