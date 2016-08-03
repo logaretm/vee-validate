@@ -85,7 +85,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	        created: function created() {
 	            this.$validator = _validator2.default.create();
-	            this.$set('errors', this.$validator.errors);
+	            this.$set('errors', this.$validator.errorBag);
 	        }
 	    });
 
@@ -153,7 +153,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Validator);
 
 	        this.validations = this.normalize(validations);
-	        this.errors = new _errorBag2.default();
+	        this.errorBag = new _errorBag2.default();
 	        this.rules = _rules2.default;
 	    }
 
@@ -181,7 +181,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var _this2 = this;
 
 	            var test = true;
-	            this.errors.clear();
+	            this.errorBag.clear();
 	            Object.keys(values).forEach(function (property) {
 	                test = _this2.validate(property, values[property]);
 	            });
@@ -194,7 +194,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var _this3 = this;
 
 	            var test = true;
-	            this.errors.remove(name);
+	            this.errorBag.remove(name);
 	            this.validations[name].forEach(function (rule) {
 	                test = _this3.test(name, value, rule);
 	            });
@@ -268,7 +268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }, true);
 
 	                    if (!allValid) {
-	                        _this5.errors.add(name, validator.msg(name, rule.params));
+	                        _this5.errorBag.add(name, validator.msg(name, rule.params));
 	                    }
 
 	                    return allValid;
@@ -276,10 +276,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            if (!valid) {
-	                this.errors.add(name, validator.msg(name, rule.params));
+	                this.errorBag.add(name, validator.msg(name, rule.params));
 	            }
 
 	            return valid;
+	        }
+
+	        /**
+	         * Gets the internal errorBag instance.
+	         * @return {ErrorBag} The internal error bag object.
+	         */
+
+	    }, {
+	        key: 'getErrors',
+	        value: function getErrors() {
+	            return this.errorBag;
 	        }
 	    }], [{
 	        key: 'create',

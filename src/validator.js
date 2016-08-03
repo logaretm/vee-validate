@@ -5,7 +5,7 @@ export default class Validator
 {
     constructor(validations) {
         this.validations = this.normalize(validations);
-        this.errors = new ErrorBag();
+        this.errorBag = new ErrorBag();
         this.rules = rules;
     }
 
@@ -29,7 +29,7 @@ export default class Validator
 
     validateAll(values) {
         let test = true;
-        this.errors.clear();
+        this.errorBag.clear();
         Object.keys(values).forEach(property => {
             test = this.validate(property, values[property]);
         });
@@ -39,7 +39,7 @@ export default class Validator
 
     validate(name, value) {
         let test = true;
-        this.errors.remove(name);
+        this.errorBag.remove(name);
         this.validations[name].forEach(rule => {
             test = this.test(name, value, rule);
         });
@@ -100,7 +100,7 @@ export default class Validator
                 const allValid = values.reduce((prev, curr) => prev && curr.valid, true);
 
                 if (! allValid) {
-                    this.errors.add(name, validator.msg(name, rule.params));
+                    this.errorBag.add(name, validator.msg(name, rule.params));
                 }
 
                 return allValid;
@@ -108,9 +108,17 @@ export default class Validator
         }
 
         if (! valid) {
-            this.errors.add(name, validator.msg(name, rule.params));
+            this.errorBag.add(name, validator.msg(name, rule.params));
         }
 
         return valid;
+    }
+
+    /**
+     * Gets the internal errorBag instance.
+     * @return {ErrorBag} The internal error bag object.
+     */
+    getErrors() {
+        return this.errorBag;
     }
 }

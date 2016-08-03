@@ -13,7 +13,7 @@ export default (Vue, options) => {
         },
         created() {
             this.$validator = Validator.create();
-            this.$set('errors', this.$validator.errors);
+            this.$set('errors', this.$validator.errorBag);
         }
     });
 

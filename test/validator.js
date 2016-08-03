@@ -29,7 +29,7 @@ test('it validates all values', t => {
     });
 
     t.true(result);
-    t.deepEqual(validator.errors.all(), []);
+    t.deepEqual(validator.errorBag.all(), []);
 });
 
 test('it formats error messages', t => {
@@ -42,7 +42,15 @@ test('it formats error messages', t => {
     });
 
     t.false(result);
-    t.deepEqual(validator.errors.all(), [
+    t.deepEqual(validator.errorBag.all(), [
+        'The email must be a valid email.',
+        'The name is required.',
+        'The name must be at least 3 characters.',
+        'The title must be at least 3 characters.',
+        'The content may not be greater than 20 characters.',
+        'The tags must be a valid value.'
+    ]);
+    t.deepEqual(validator.getErrors().all(), [
         'The email must be a valid email.',
         'The name is required.',
         'The name must be at least 3 characters.',
