@@ -9,6 +9,9 @@ module.exports = {
         path: path.join(__dirname, 'gh-pages', 'assets'),
         filename: '[name].js'
     },
+    devServer: {
+        contentBase: './gh-pages',
+    },
     module: {
         loaders: [
             {

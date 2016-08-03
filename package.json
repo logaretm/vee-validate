@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "webpack-dev-server --hot --inline --config webpack.docs.config.js",
     "dev": "webpack --progress --colors --watch",
     "test": "nyc ava --colors",
     "test:watch": "ava --watch",
