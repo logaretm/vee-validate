@@ -43,12 +43,12 @@ test('it formats error messages', t => {
 
     t.false(result);
     t.deepEqual(validator.errors.all(), [
-        { field: 'email', msg: 'The email must be a valid email.' },
-        { field: 'name', msg: 'The name is required.' },
-        { field: 'name', msg: 'The name must be at least 3 characters.' },
-        { field: 'title', msg: 'The title must be at least 3 characters.' },
-        { field: 'content', msg: 'The content may not be greater than 20 characters.' },
-        { field: 'tags', msg: 'The tags must be a valid value.' }
+        'The email must be a valid email.',
+        'The name is required.',
+        'The name must be at least 3 characters.',
+        'The title must be at least 3 characters.',
+        'The content may not be greater than 20 characters.',
+        'The tags must be a valid value.'
     ]);
 });
 

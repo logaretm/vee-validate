@@ -1028,12 +1028,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function collect(field) {
 	            return this.errors.filter(function (e) {
 	                return e.field === field;
+	            }).map(function (e) {
+	                return e.msg;
 	            });
 	        }
 	    }, {
 	        key: "all",
 	        value: function all() {
-	            return this.errors;
+	            return this.errors.map(function (e) {
+	                return e.msg;
+	            });
 	        }
 	    }, {
 	        key: "count",

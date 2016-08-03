@@ -40,11 +40,11 @@ export default class ErrorBag
     }
 
     collect(field) {
-        return this.errors.filter(e => e.field === field);
+        return this.errors.filter(e => e.field === field).map(e => e.msg);
     }
 
     all() {
-        return this.errors;
+        return this.errors.map(e => e.msg);
     }
 
     count() {
