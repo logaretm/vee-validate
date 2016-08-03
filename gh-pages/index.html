@@ -8,7 +8,7 @@
     </head>
     <body>
         <div id="app">
-            <app heading="VueValidation"
+            <app heading="Vue-Validation"
                  subtitle="Simple VueJS Form Validation"
             >
                 <h2 class="content-subhead">What is VueValidation</h2>
@@ -29,10 +29,12 @@
                 </p>
                 <h2 id="basic-example" class="content-subhead">Basic Example</h2>
                 <first-example></first-example>
+                <div class="flex-center"><a class="link" href="examples.html">More Examples</a></div>
                 <h2 id="render-errors" class="content-subhead">Rendering Errors</h2>
                 <p>
                     Natuarally, you would want to display the errors to your users, The plugin augments your Vue instance with a private validator object and a public errors data object.
-                    <br><br>The errors object exposes a simple methods to render your errors:
+                    You are responsible for how the errors should be rendered.
+                    <br><br>The errors object exposes a simple methods to help you render errors:
                     <ul>
                         <li><code class="inline">errors.first('field')</code> Fetches the first error message assoicated with that field.</li>
                         <li><code class="inline">errors.collect('field')</code> Fetches all error messages associated with that field.</li>
@@ -42,7 +44,7 @@
                     There are a few more <a class="link" href="api.html#error-bag">methods</a> that you can use to manipulate the errors object.
                 </p>
                 <h2 id="available-rules" class="content-subhead">Available Rules</h2>
-                <p>There are more than 20 rules available for validation:</p>
+                <p>There are more than 20 rules available to validate your inputs:</p>
                 <div class="pure-g">
                     <div v-for="group in rules" class="pure-u-1-{{ rules.length }}">
                         <ul>

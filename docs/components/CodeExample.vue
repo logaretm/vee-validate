@@ -28,23 +28,15 @@
             <slot name="example"></slot>
         </div>
         <div v-show="content === 'html'" class="pure-u-1">
-            <pre><code v-el:html class="language-html"><slot name="code-html"></slot></code></pre>
+            <code-block class="language-html"><slot name="code-html"></slot></code-block>
         </div>
         <div v-show="content === 'js'" class="pure-u-1">
-            <pre><code v-el:js class="language-javascript"><slot name="code-js"></slot></code></pre>
+            <code-block class="language-javascript"><slot name="code-js"></slot></code-block>
         </div>
     </div>
 </template>
 
 <script>
-import Prism from 'prismjs';
-import 'prismjs/themes/prism.css';
-import 'prismjs/plugins/show-language/prism-show-language.css'
-import 'prismjs/plugins/show-language/prism-show-language.js'
-import 'prismjs/plugins/line-numbers/prism-line-numbers.css'
-import 'prismjs/plugins/line-numbers/prism-line-numbers.js'
-
-
 export default {
     data() {
         return {
@@ -52,43 +44,6 @@ export default {
         }
     },
     methods: {
-        removeWhitespaceForEl(el) {
-            const txt = el.textContent
-                .replace(/^[\r\n]+/, "")
-                .replace(/\s+$/g, "");
-
-            if (/^\S/gm.test(txt)) {
-                el.textContent = txt;
-                return;
-            }
-
-            let mat;
-            let str;
-            const re = /^[\t ]+/gm;
-            let len;
-            let min = 1e3;
-
-            while (mat = re.exec(txt)) {
-                len = mat[0].length;
-
-                if (len < min) {
-                    min = len;
-                    str = mat[0];
-                }
-            }
-
-            if (min == 1e3) {
-                return;
-            }
-
-            el.textContent = txt.replace(new RegExp("^" + str, 'gm'), "");
-        },
-
-        removeWhitespace() {
-            this.removeWhitespaceForEl(this.$els.js);
-            this.removeWhitespaceForEl(this.$els.html);
-        },
-
         unwrapMarkup() {
             const el = this.$els.html.firstChild;
             const parent = this.$els.html;
@@ -102,10 +57,6 @@ export default {
 
     ready() {
         this.unwrapMarkup();
-        this.removeWhitespace();
-
-        Prism.highlightElement(this.$els.js);
-        Prism.highlightElement(this.$els.html);
     }
 }
 </script>

@@ -1,5 +1,6 @@
 import Validator from './validator';
 import debounce from './utils/debouncer.js';
+import ErrorBag from './errorBag';
 
 const DEFAULT_DELAY = 0;
 
@@ -46,3 +47,7 @@ export default (Vue, options) => {
         }
     });
 };
+
+exports.Validator = Validator;
+
+exports.ErrorBag = ErrorBag;

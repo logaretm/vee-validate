@@ -68,6 +68,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _debouncer2 = _interopRequireDefault(_debouncer);
 
+	var _errorBag = __webpack_require__(23);
+
+	var _errorBag2 = _interopRequireDefault(_errorBag);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var DEFAULT_DELAY = 0;
@@ -115,6 +119,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	};
 
+	exports.Validator = _validator2.default;
+
+	exports.ErrorBag = _errorBag2.default;
 	module.exports = exports['default'];
 
 /***/ },

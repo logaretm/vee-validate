@@ -11,13 +11,13 @@
                 <a href="/" class="pure-menu-heading">Vue Validation</a>
                 <ul class="pure-menu-list">
                     <li class="pure-menu-item">
-                        <a href="#installation" class="pure-menu-link">Installation</a>
+                        <a href="index.html#installation" class="pure-menu-link">Installation</a>
                     </li>
                     <li class="pure-menu-item">
-                        <a href="#basic-example" class="pure-menu-link">Basic Example</a>
+                        <a href="index.html#basic-example" class="pure-menu-link">Basic Example</a>
                     </li>
                     <li class="pure-menu-item">
-                        <a href="#render-errors" class="pure-menu-link">Rendering Errors</a>
+                        <a href="index.html#render-errors" class="pure-menu-link">Rendering Errors</a>
                     </li>
                 </ul>
             </div>

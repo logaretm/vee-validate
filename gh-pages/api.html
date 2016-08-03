@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Vue Validation</title>
+        <link rel="stylesheet" href="assets/bundle.css">
+    </head>
+    <body>
+        <div id="app">
+            <app heading="Vue-Validation"
+                 subtitle="Classes API"
+            >
+                <h2 id="error-bag" class="content-subhead">ErrorBag</h2>
+                <p>
+                    The ErrorBag class is a wrapper around an array, and is standalone and has no dependencies, you can use it in your code for any reason:
+                    <code-block class="language-javascript">
+                        import { ErrorBag } from 'vue-validation'; // ES6 Import.
+                        const bag = new ErrorBag();
+                    </code-block>
+                    The internal array contains the error objects, the structure is:
+                    <code-block class="language-javascript">
+                        {
+                            errors: [
+                                { field: 'Field name', msg: 'Error message' },
+                                { field: 'Field name', msg: 'Error message' },
+                                { field: 'Field name', msg: 'Error message' }
+                            ]
+                        }
+                    </code-block>
+                </p>
+                <p>
+                    Available Methods:
+                    <ul>
+                        <li><code class="inline">add(object)</code> adds an object to the internal array.</li>
+                        <li><code class="inline">all()</code> Gets all messages from the internal array.</li>
+                        <li><code class="inline">clear()</code> Removes all items from the internal array.</li>
+                        <li><code class="inline">collect(string)</code> Gets all messages associated with a specific field.</li>
+                        <li><code class="inline">count()</code> Gets the length of the internal array. or the number of messages.</li>
+                        <li><code class="inline">first(string)</code> Gets the first error message associated with the specified field.</li>
+                        <li><code class="inline">has(string)</code> Checks if there is at least one error assoicated with the specified field.</li>
+                        <li><code class="inline">remove(string)</code> Removes all errors for a specified field from the internal array.</li>
+                    </ul>
+                </p>
+                <h2 id="validator" class="content-subhead">Validator</h2>
+                <p>
+                    The validator is injected to the vue instance as <code class="inline">$validator</code> automatically.
+                    However it is also a stand alone class and can be used seperatly for programatically validating values.
+                    The constructor can optionally take an object to map each field name to a set of validations.
+                    <code-block class="language-javascript">
+                        import { Validator } from 'vue-validation';
+                        const validator = new Validator({
+                            email: 'required|email',
+                            name: 'required|alpha|min:3',
+                        }); // or Validator.create({ ... });
+                    </code-block>
+                    But you can construct the object without passing anything and add the validation rules later.
+                    <code-block class="language-javascript">
+                        import { Validator } from 'vue-validation';
+                        const validator = new Validator();
+
+                        validator.attach('email', 'required|email');
+
+                        validator.detach('email'); // you can also detach fields.
+                    </code-block>
+                    After that you can validate values like this:
+                    <code-block class="language-javascript">
+                        validator.validate('email', 'foo@bar.com'); // true
+                        validator.validate('email', 'foo@bar'); // false
+                    </code-block>
+                    <b class="important">Note:</b> Most validators return a boolean, however some validators (very few) return a <code class="inline">Promise</code> which will resolve asynchronously with a boolean.
+                </p>
+            </app>
+        </div>
+        <script src="assets/bundle.js"></script>
+    </body>
+</html>
