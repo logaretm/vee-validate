@@ -5259,3 +5259,9 @@ span.error {
 .flex-center {
   display: flex;
   justify-content: center; }
+
+code.inline {
+  color: #41b883; }
+
+a.link {
+  color: #41b883; }

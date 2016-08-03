@@ -4,3 +4,11 @@
 @import 'form';
 @import 'fonts';
 @import 'utils';
+
+code.inline {
+    color: $vue-green;
+}
+
+a.link {
+    color: $vue-green;
+}

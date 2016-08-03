@@ -8,115 +8,50 @@
     </head>
     <body>
         <div id="app">
-            <div id="layout">
-                <!-- Menu toggle -->
-                <a href="#menu" id="menuLink" class="menu-link">
-                    <!-- Hamburger icon -->
-                    <span></span>
-                </a>
-
-                <div id="menu">
-                    <div class="pure-menu">
-                        <a class="pure-menu-heading">Vue Validation</a>
-                        <ul class="pure-menu-list">
-                            <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'home'}">
-                                <a @click="content = 'home'" class="pure-menu-link">Home</a>
-                            </li>
-                            <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'ex1'}">
-                                <a @click="content = 'ex1'" class="pure-menu-link">Example 1</a>
-                            </li>
-                            <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'ex2'}">
-                                <a @click="content = 'ex2'" class="pure-menu-link">Example 2</a>
-                            </li>
-                            <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'ex3'}">
-                                <a @click="content = 'ex3'" class="pure-menu-link">Example 3</a>
-                            </li>
+            <app heading="VueValidation"
+                 subtitle="Simple VueJS Form Validation"
+            >
+                <h2 class="content-subhead">What is VueValidation</h2>
+                <p>
+                    This is a lightweight plugin for VueJS that allows you to validate input fields, and display errors.
+                    <br><br>
+                    <b>What makes it different is: </b> You don't have to do anything fancy in your app, most of the work goes into the html,
+                    You only need to specify for each input what kind of validators should be used when the value changes. You will then get informed of the errors for each field.
+                    <br><br>
+                    Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object.
+                    <br><br>
+                    Currently there are over 20 validation rules available in the plugin.
+                    This plugin is inspired by PHP Framework Laravel's validation syntax.
+                </p>
+                <h2 id="installation" class="content-subhead">Installation</h2>
+                <p>
+                    <pre><code class="language-bash">npm install vue-validation --save</code></pre>
+                </p>
+                <h2 id="basic-example" class="content-subhead">Basic Example</h2>
+                <first-example></first-example>
+                <h2 id="render-errors" class="content-subhead">Rendering Errors</h2>
+                <p>
+                    Natuarally, you would want to display the errors to your users, The plugin augments your Vue instance with a private validator object and a public errors data object.
+                    <br><br>The errors object exposes a simple methods to render your errors:
+                    <ul>
+                        <li><code class="inline">errors.first('field')</code> Fetches the first error message assoicated with that field.</li>
+                        <li><code class="inline">errors.collect('field')</code> Fetches all error messages associated with that field.</li>
+                        <li><code class="inline">errors.has('field')</code> Checks if there are any errors associated with that field.</li>
+                        <li><code class="inline">errors.all()</code> Gets all error messages.</li>
+                    </ul>
+                    There are a few more <a class="link" href="api.html#error-bag">methods</a> that you can use to manipulate the errors object.
+                </p>
+                <h2 id="available-rules" class="content-subhead">Available Rules</h2>
+                <p>There are more than 20 rules available for validation:</p>
+                <div class="pure-g">
+                    <div v-for="group in rules" class="pure-u-1-{{ rules.length }}">
+                        <ul>
+                            <li v-for="rule in group"><a class="link" :href="'rules.html#' + rule">{{ rule }}</a></li>
                         </ul>
                     </div>
                 </div>
-
-                <div id="main">
-                    <div class="header">
-                        <h1>{{ heading }}</h1>
-                        <h2>{{ subtitle }}</h2>
-                    </div>
-                    <div class="content">
-                        <!-- Examples -->
-                        <first-example v-if="content === 'ex1'"></first-example>
-                        <second-example v-if="content === 'ex2'"></second-example>
-                        <third-example v-if="content === 'ex3'"></third-example>
-
-                        <!-- Home Content -->
-                        <div v-if="content === 'home'">
-                            <h2 class="content-subhead">How to use this layout</h2>
-                            <p>
-                                To use this layout, you can just copy paste the HTML, along with the CSS in <a href="/css/layouts/side-menu.css" alt="Side Menu CSS">side-menu.css</a>, and the JavaScript in <a href="/js/ui.js">ui.js</a>. The JS file uses vanilla JavaScript to simply toggle an <code>active</code> class that makes the menu responsive.
-                            </p>
-                            <h2 class="content-subhead">Now Let's Speak Some Latin</h2>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                            <div class="pure-g">
-                                <div class="pure-u-1-4">
-                                    <img class="pure-img-responsive" src="http://farm3.staticflickr.com/2875/9069037713_1752f5daeb.jpg" alt="Peyto Lake">
-                                </div>
-                                <div class="pure-u-1-4">
-                                    <img class="pure-img-responsive" src="http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg" alt="Train">
-                                </div>
-                                <div class="pure-u-1-4">
-                                    <img class="pure-img-responsive" src="http://farm6.staticflickr.com/5456/9121446012_c1640e42d0.jpg" alt="T-Shirt Store">
-                                </div>
-                                <div class="pure-u-1-4">
-                                    <img class="pure-img-responsive" src="http://farm8.staticflickr.com/7357/9086701425_fda3024927.jpg" alt="Mountain">
-                                </div>
-                            </div>
-
-                            <h2 class="content-subhead">Try Resizing your Browser</h2>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </app>
         </div>
-        <script>
-            (function (window, document) {
-
-                var layout   = document.getElementById('layout'),
-                    menu     = document.getElementById('menu'),
-                    menuLink = document.getElementById('menuLink');
-
-                function toggleClass(element, className) {
-                    var classes = element.className.split(/\s+/),
-                        length = classes.length,
-                        i = 0;
-
-                    for(; i < length; i++) {
-                      if (classes[i] === className) {
-                        classes.splice(i, 1);
-                        break;
-                      }
-                    }
-                    // The className is not found
-                    if (length === classes.length) {
-                        classes.push(className);
-                    }
-
-                    element.className = classes.join(' ');
-                }
-
-                menuLink.onclick = function (e) {
-                    var active = 'active';
-
-                    e.preventDefault();
-                    toggleClass(layout, active);
-                    toggleClass(menu, active);
-                    toggleClass(menuLink, active);
-                };
-
-            }(this, this.document));
-        </script>
         <script src="assets/bundle.js"></script>
     </body>
 </html>

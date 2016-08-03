@@ -1,7 +1,7 @@
 <template>
     <div class="pure-g">
         <div class="pure-u-1">
-            <div class="pure-menu pure-menu-horizontal flex-center">
+            <div class="pure-menu pure-menu-horizontal">
                 <ul class="pure-menu-list">
                     <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'demo'}">
                         <a @click="content = 'demo'" class="pure-menu-link">

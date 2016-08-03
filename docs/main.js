@@ -1,48 +1,24 @@
 import 'purecss/build/pure.css';
 import 'animate.css/animate.css';
 import Vue from 'vue';
+import Collection from 'collectionsjs';
 import VueValidation from './../dist/vue-validation';
+import Validator from './../src/validator';
+import Examples from './components/examples';
 import CodeExample from './components/CodeExample.vue';
-import FirstExample from './examples/Example-1.vue';
-import SecondExample from './examples/Example-2.vue';
-import ThirdExample from './examples/Example-3.vue';
+import App from './components/App.vue';
 import './sass/main.scss';
 
 Vue.use(VueValidation);
+Vue.use(Examples);
 Vue.component('code-example', CodeExample);
 
 new Vue({
     el: '#app',
     data: {
-        content: 'home'
-    },
-    computed: {
-        heading() {
-            if (this.content === 'ex1') {
-                return 'Example 1: Basic Validation';
-            }
-
-            if (this.content === 'ex2') {
-                return 'Example 2: Delaying Validation';
-            }
-
-            return 'Vue Validations';
-        },
-        subtitle() {
-            if (this.content === 'ex1') {
-                return 'Basic Structure and Setup';
-            }
-
-            if (this.content === 'ex2') {
-                return 'Debouncing the input validation';
-            }
-
-            return 'Easy Laravel-Like API to validate your inputs.';
-        }
+        rules: new Collection(Object.keys(Validator.create().rules)).chunk(10).all()
     },
     components: {
-        FirstExample,
-        SecondExample,
-        ThirdExample
+        App
     }
 });
