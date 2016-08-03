@@ -48,6 +48,4 @@ export default (Vue, options) => {
     });
 };
 
-exports.Validator = Validator;
-
-exports.ErrorBag = ErrorBag;
+export { Validator, ErrorBag };

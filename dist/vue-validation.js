@@ -59,6 +59,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.ErrorBag = exports.Validator = undefined;
 
 	var _validator = __webpack_require__(1);
 
@@ -120,9 +121,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	exports.Validator = _validator2.default;
-
 	exports.ErrorBag = _errorBag2.default;
-	module.exports = exports['default'];
 
 /***/ },
 /* 1 */
@@ -283,7 +282,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
-	         * Gets the internal errorBag instance.
+	         * Gets the internal error.
 	         * @return {ErrorBag} The internal error bag object.
 	         */
 
