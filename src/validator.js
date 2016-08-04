@@ -1,5 +1,6 @@
 import rules from './rules';
 import ErrorBag from './errorBag';
+import ValidatorException from './exceptions/validatorException';
 
 export default class Validator
 {
@@ -24,6 +25,50 @@ export default class Validator
 
     static create(validations) {
         return new Validator(validations);
+    }
+
+    extend(name, validator) {
+        if (! validator.msg && typeof validator.msg !== 'function') {
+            throw new ValidatorException(
+                `Extension Error: The ${name} validator must have a 'msg' method.`
+            );
+        }
+
+        if (! validator.validate && typeof validator.validate !== 'function') {
+            throw new ValidatorException(
+                `Extension Error: The ${name} validator must have a 'validate' method.`
+            );
+        }
+
+        if (this.rules[name]) {
+            throw new ValidatorException(
+                `Extension Error: There is an existing validator with the same name '${name}'.`
+            );
+        }
+
+        this.rules[name] = validator;
+    }
+
+    static extend(name, validator) {
+        if (! validator.msg && typeof validator.msg !== 'function') {
+            throw new ValidatorException(
+                `Extension Error: The ${name} validator must have a 'msg' method.`
+            );
+        }
+
+        if (! validator.validate && typeof validator.validate !== 'function') {
+            throw new ValidatorException(
+                `Extension Error: The ${name} validator must have a 'validate' method.`
+            );
+        }
+
+        if (rules[name]) {
+            throw new ValidatorException(
+                `Extension Error: There is an existing validator with the same name '${name}'.`
+            );
+        }
+
+        rules[name] = validator;
     }
 
     validateAll(values) {

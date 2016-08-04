@@ -65,7 +65,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _debouncer = __webpack_require__(24);
+	var _debouncer = __webpack_require__(25);
 
 	var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -143,6 +143,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _errorBag2 = _interopRequireDefault(_errorBag);
 
+	var _validatorException = __webpack_require__(24);
+
+	var _validatorException2 = _interopRequireDefault(_validatorException);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -161,11 +165,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function attach(name, checks) {
 	            var _this = this;
 
-	            checks.split('|').forEach(function (rule) {
-	                if (!_this.validations[name]) {
-	                    _this.validations[name] = [];
-	                }
+	            this.validations[name] = [];
+	            this.errorBag.remove(name);
 
+	            checks.split('|').forEach(function (rule) {
 	                _this.validations[name].push(_this.normalizeRule(rule));
 	            });
 	        }
@@ -173,6 +176,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'detach',
 	        value: function detach(name) {
 	            delete this.validations[name];
+	        }
+	    }, {
+	        key: 'extend',
+	        value: function extend(name, validator) {
+	            if (!validator.msg && typeof validator.msg !== 'function') {
+	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'msg\' method.');
+	            }
+
+	            if (!validator.validate && typeof validator.validate !== 'function') {
+	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'validate\' method.');
+	            }
+
+	            if (this.rules[name]) {
+	                throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
+	            }
+
+	            this.rules[name] = validator;
 	        }
 	    }, {
 	        key: 'validateAll',
@@ -282,7 +302,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
-	         * Gets the internal error.
+	         * Gets the internal errorBag instance.
 	         * @return {ErrorBag} The internal error bag object.
 	         */
 
@@ -295,6 +315,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'create',
 	        value: function create(validations) {
 	            return new Validator(validations);
+	        }
+	    }, {
+	        key: 'extend',
+	        value: function extend(name, validator) {
+	            if (!validator.msg && typeof validator.msg !== 'function') {
+	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'msg\' method.');
+	            }
+
+	            if (!validator.validate && typeof validator.validate !== 'function') {
+	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'validate\' method.');
+	            }
+
+	            if (_rules2.default[name]) {
+	                throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
+	            }
+
+	            _rules2.default[name] = validator;
 	        }
 	    }]);
 
@@ -1071,6 +1108,40 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 24 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var _class = function () {
+	    function _class(msg) {
+	        _classCallCheck(this, _class);
+
+	        this.msg = msg;
+	    }
+
+	    _createClass(_class, [{
+	        key: "toString",
+	        value: function toString() {
+	            return this.msg;
+	        }
+	    }]);
+
+	    return _class;
+	}();
+
+	exports.default = _class;
+	module.exports = exports["default"];
+
+/***/ },
+/* 25 */
 /***/ function(module, exports) {
 
 	"use strict";
