@@ -57,6 +57,11 @@
                         And both recieve the <code class="inline">args</code> which are the params that were configured with the validation rule.
                         for example look at the <a class="link" href="https://github.com/logaretm/vue-validation/blob/master/src/rules/min.js">actual implementaion of the min rule</a>.
                     </div>
+                    <br>
+                    <div class="note">
+                        <b class="important">Note:</b> As you can see a validation rule must implement two methods, <code class="inline">msg()</code> and <code class="inline">validate()</code>.
+                         Not doing so will throw a <code class="inline">ValidatorException</code> with an appropiate error message detailing what were you missing.
+                    </div>
                 </p>
                 <p>
                     You can add a custom validation rule using <code class="inline">extend(name, validator)</code> method in the validator object.
@@ -81,11 +86,6 @@
                     <div class="note">
                         <b class="important">Note:</b> Using any of the <code class="inline">extend</code> either statically or on instance will extend all validators with the new validation rule.
                          extending a new rule that have the same name as an existing rule will throw a <code class="inline">ValidatorException</code> with an error message.
-                    </div>
-                    <br>
-                    <div class="note">
-                        <b class="important">Note:</b> A validation rule must implement two methods, <code class="inline">msg()</code> and <code class="inline">validate()</code>.
-                         Not doing so will throw a <code class="inline">ValidatorException</code> with an appropiate error message.
                     </div>
                 </p>
             </app>

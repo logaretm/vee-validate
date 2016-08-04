@@ -75,18 +75,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 	var DEFAULT_DELAY = 0;
 
 	exports.default = function (Vue, options) {
+	    var errorsBagName = options ? options.errorsBagName || 'errors' : 'errors';
 	    Vue.mixin({
 	        data: function data() {
-	            return {
-	                errors: []
-	            };
+	            return _defineProperty({}, errorsBagName, this.$validator.errorBag);
 	        },
-	        created: function created() {
+	        init: function init() {
 	            this.$validator = _validator2.default.create();
-	            this.$set('errors', this.$validator.errorBag);
 	        }
 	    });
 

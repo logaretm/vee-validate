@@ -5,15 +5,15 @@ import ErrorBag from './errorBag';
 const DEFAULT_DELAY = 0;
 
 export default (Vue, options) => {
+    const errorsBagName = options ? options.errorsBagName || 'errors' : 'errors';
     Vue.mixin({
         data() {
             return {
-                errors: []
+                [errorsBagName]: this.$validator.errorBag
             };
         },
-        created() {
+        init() {
             this.$validator = Validator.create();
-            this.$set('errors', this.$validator.errorBag);
         }
     });
 
