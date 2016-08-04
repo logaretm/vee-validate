@@ -180,13 +180,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'extend',
 	        value: function extend(name, validator) {
-	            if (!validator.msg && typeof validator.msg !== 'function') {
-	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'msg\' method.');
-	            }
-
-	            if (!validator.validate && typeof validator.validate !== 'function') {
-	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'validate\' method.');
-	            }
+	            Validator.guardExtend(name, validator);
 
 	            if (this.rules[name]) {
 	                throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
@@ -319,19 +313,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'extend',
 	        value: function extend(name, validator) {
-	            if (!validator.msg && typeof validator.msg !== 'function') {
-	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'msg\' method.');
-	            }
-
-	            if (!validator.validate && typeof validator.validate !== 'function') {
-	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'validate\' method.');
-	            }
+	            Validator.guardExtend(name, validator);
 
 	            if (_rules2.default[name]) {
 	                throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
 	            }
 
 	            _rules2.default[name] = validator;
+	        }
+
+	        /**
+	         * Guards from extnsion violations.
+	         * @param  {string} name name of the validation rule.
+	         * @param  {object} validator a validation rule object.
+	         */
+
+	    }, {
+	        key: 'guardExtend',
+	        value: function guardExtend(name, validator) {
+	            if (!(validator.msg || typeof validator.msg === 'function' || validator.validate || typeof validator.validate === 'function')) {
+	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have both \'validate\' and \'msg\' methods.' // eslint-disable-line
+	                );
+	            }
+
+	            if (!validator.validate && typeof validator.validate !== 'function') {
+	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'validate\' method.');
+	            }
+
+	            if (!validator.msg && typeof validator.msg !== 'function') {
+	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'msg\' method.');
+	            }
 	        }
 	    }]);
 

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Vue Validation</title>
+        <link rel="stylesheet" href="assets/bundle.css">
+    </head>
+    <body>
+        <div id="app">
+            <app heading="Vue-Validation"
+                 subtitle="Validation Rules"
+            >
+                <h2 id="syntax" class="content-subhead">Syntax</h2>
+                <p>
+                    The validation rules have a very simple syntax similair to what Laravel validation syntax.
+                    A validation expression is a string a series of validators seperated by a pipe <code class="inline">|</code>:
+                    <code-block class="language-javascript">
+                        var single = 'required'; // single rule.
+                        var multiple = 'required|numeric' // multiple rules.
+                    </code-block>
+                    Some rules can have parameters, which are passed in a comma seperated list without spaces.
+                    <code-block class="language-javascript">
+                        var someRule = 'in:1,2,3,4';
+                    </code-block>
+                    <div class="note">
+                        <b class="important">Note:</b> The validators (rules) and their parameters are statically saved, in order to update some validation rule you have to attach it again with the new parameters and it will be overwritten.
+                    </div>
+                </p>
+                <h2 id="available-rules" class="content-subhead">Available Rules</h2>
+                <p>
+                    <code class="inline">vue-validation</code> Comes out of the box with 21 validation rules, which are:
+                </p>
+                <div class="pure-g">
+                    <div v-for="group in rules" class="pure-u-1-{{ rules.length }}">
+                        <ul>
+                            <li v-for="rule in group"><a class="link" :href="'rules.html#' + rule">{{ rule }}</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <h2 id="custom-rules" class="content-subhead">Custom Rules</h2>
+                <p>
+                    You can easily add custom rules to the validators, but your custom validation rules must adhere to a contract, or certain structure:
+                    <code-block class="language-javascript">
+                        {
+                            msg(field, args) {
+                                // Return some string.
+                            },
+                            validate(value, args) {
+                                // Return a boolean or a Promise.
+                            }
+                        }
+                    </code-block>
+                    <div class="note">
+                        <b class="important">Note:</b> Notice how the <code class="inline">msg</code> method gets passed the field name as a first parameter.
+                        And how the <code class="inline">validate</code> method gets passed the value as a first parameter.
+                        And both recieve the <code class="inline">args</code> which are the params that were configured with the validation rule.
+                        for example look at the <a class="link" href="https://github.com/logaretm/vue-validation/blob/master/src/rules/min.js">actual implementaion of the min rule</a>.
+                    </div>
+                </p>
+                <p>
+                    You can add a custom validation rule using <code class="inline">extend(name, validator)</code> method in the validator object.
+                    <code-block class="language-javascript">
+                        import { Validator } from 'vue-validations';
+                        // These are 'ES6' arrow functions.
+                        Validator.extend('truthy', {
+                            msg: field =&gt; 'The ' + field + ' value is not truthy.',
+                            validate: value =&gt; !! value
+                        });
+
+                        const instance = new Validator({
+                            field: 'truthy'
+                        });
+
+                        // Also there is an instance 'extend' method for convience.
+                        instance.extend('falsy', {
+                            msg: field =&gt; 'The ' + field + ' value is not falsy.',
+                            validate: value =&gt; ! value
+                        });
+                    </code-block>
+                    <div class="note">
+                        <b class="important">Note:</b> Using any of the <code class="inline">extend</code> either statically or on instance will extend all validators with the new validation rule.
+                         extending a new rule that have the same name as an existing rule will throw a <code class="inline">ValidatorException</code> with an error message.
+                    </div>
+                    <br>
+                    <div class="note">
+                        <b class="important">Note:</b> A validation rule must implement two methods, <code class="inline">msg()</code> and <code class="inline">validate()</code>.
+                         Not doing so will throw a <code class="inline">ValidatorException</code> with an appropiate error message.
+                    </div>
+                </p>
+            </app>
+        </div>
+        <script src="assets/bundle.js"></script>
+    </body>
+</html>
