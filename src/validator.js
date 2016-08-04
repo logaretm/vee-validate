@@ -28,17 +28,7 @@ export default class Validator
     }
 
     extend(name, validator) {
-        if (! validator.msg && typeof validator.msg !== 'function') {
-            throw new ValidatorException(
-                `Extension Error: The ${name} validator must have a 'msg' method.`
-            );
-        }
-
-        if (! validator.validate && typeof validator.validate !== 'function') {
-            throw new ValidatorException(
-                `Extension Error: The ${name} validator must have a 'validate' method.`
-            );
-        }
+        Validator.guardExtend(name, validator);
 
         if (this.rules[name]) {
             throw new ValidatorException(
@@ -50,9 +40,28 @@ export default class Validator
     }
 
     static extend(name, validator) {
-        if (! validator.msg && typeof validator.msg !== 'function') {
+        Validator.guardExtend(name, validator);
+
+        if (rules[name]) {
             throw new ValidatorException(
-                `Extension Error: The ${name} validator must have a 'msg' method.`
+                `Extension Error: There is an existing validator with the same name '${name}'.`
+            );
+        }
+
+        rules[name] = validator;
+    }
+
+    /**
+     * Guards from extnsion violations.
+     * @param  {string} name name of the validation rule.
+     * @param  {object} validator a validation rule object.
+     */
+    static guardExtend(name, validator) {
+        if (! (
+            validator.msg || typeof validator.msg === 'function' ||
+            validator.validate || typeof validator.validate === 'function')) {
+            throw new ValidatorException(
+                `Extension Error: The ${name} validator must have both 'validate' and 'msg' methods.` // eslint-disable-line
             );
         }
 
@@ -62,13 +71,11 @@ export default class Validator
             );
         }
 
-        if (rules[name]) {
+        if (! validator.msg && typeof validator.msg !== 'function') {
             throw new ValidatorException(
-                `Extension Error: There is an existing validator with the same name '${name}'.`
+                `Extension Error: The ${name} validator must have a 'msg' method.`
             );
         }
-
-        rules[name] = validator;
     }
 
     validateAll(values) {
