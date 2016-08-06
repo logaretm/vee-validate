@@ -98,25 +98,28 @@ test('it can extend the validators for a validator instance', t => {
         validate: (value) => !! value
     };
 
-    const falsy = {
-        messages: {
-            en: (field) => `The ${field} value is not falsy.`
-        },
-        validate: (value) => ! value
-    };
-    validator.extend('truthy', truthy); // instance extend.
-
+    Validator.extend('truthy', truthy); // static extend.
     validator.attach('anotherField', 'truthy');
     t.true(validator.validate('anotherField', 1));
     t.false(validator.validate('anotherField', 0));
     t.is(validator.errorBag.first('anotherField'), 'The anotherField value is not truthy.');
+});
 
-    Validator.extend('falsy', falsy); // static extend.
-
-    validator.attach('field', 'falsy');
-    t.true(validator.validate('field', 0));
-    t.false(validator.validate('field', 1));
-    t.is(validator.errorBag.first('field'), 'The field value is not falsy.');
+test('it can add a custom validator with localized messages', t => {
+    const falsy = {
+        messages: {
+            en: (field) => `The ${field} value is not falsy.`,
+            ar: () => 'Some Arabic Text'
+        },
+        validate: (value) => ! value
+    };
+    Validator.extend('falsy', falsy);
+    validator.attach('anotherField', 'falsy');
+    t.false(validator.validate('anotherField', 1));
+    t.is(validator.errorBag.first('anotherField'), 'The anotherField value is not falsy.');
+    validator.setLocale('ar');
+    t.false(validator.validate('anotherField', 1));
+    t.is(validator.errorBag.first('anotherField'), 'Some Arabic Text');
 });
 
 
@@ -138,42 +141,46 @@ test('it throws an exception when extending with an invalid validator', t => {
     t.throws(() => {
         Validator.extend('numeric', { getMessage: name => name, validate: () => true });
     });
-
-    // instance Extend.
-    // No getMessage nor a validate method.
-    t.throws(() => {
-        validator.extend('fail', {});
-    });
-    // No validate method.
-    t.throws(() => {
-        validator.extend('fail', { getMessage: name => name });
-    });
-    // No getMessage method.
-    t.throws(() => {
-        validator.extend('fail', { validate: () => true });
-    });
-    // numeric is already registered.
-    t.throws(() => {
-        validator.extend('numeric', { getMessage: name => name, validate: () => true });
-    });
-});
-
-test('it can change locales', t => {
-    const arabicValidator = new Validator({ first_name: 'alpha' });
-    arabicValidator.setLocale('ar');
-    arabicValidator.attach('first_name', 'alpha');
-    arabicValidator.validate('first_name', '0123');
-    t.is(arabicValidator.errorBag.first('first_name'), 'first_name يجب ان يحتوي على حروف فقط.');
 });
 
 
 test('it defaults to english messages if no current locale counterpart is found', t => {
     const arabicValidator = new Validator({ first_name: 'alpha' });
-    arabicValidator.setLocale('blabla');
+    arabicValidator.setLocale('ar');
     arabicValidator.attach('first_name', 'alpha');
     arabicValidator.validate('first_name', '0123');
     t.is(
         arabicValidator.errorBag.first('first_name'),
         'The first_name may only contain alphabetic characters and spaces.'
     );
+});
+
+test('it can overwrite messages and add translated messages', t => {
+    const arabicValidator = new Validator({ first_name: 'alpha' });
+    Validator.updateDictionary({
+        ar: { alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.` },
+        en: { alpha: (field) => `${field} is alphabetic.` }
+    });
+    arabicValidator.attach('first_name', 'alpha');
+    arabicValidator.validate('first_name', '0123');
+    t.is(arabicValidator.errorBag.first('first_name'), 'first_name is alphabetic.');
+    arabicValidator.setLocale('ar');
+    arabicValidator.validate('first_name', '0123');
+    t.is(arabicValidator.errorBag.first('first_name'), 'first_name يجب ان يحتوي على حروف فقط.');
+    arabicValidator.updateDictionary({
+        ar: { alpha: () => 'My name is jeff' }
+    });
+    arabicValidator.validate('first_name', '0123');
+    t.is(arabicValidator.errorBag.first('first_name'), 'My name is jeff');
+});
+
+test('test merging line 30', t => {
+    const chineseValidator = new Validator({ first_name: 'alpha' });
+    chineseValidator.updateDictionary({
+        cn: { alpha: () => 'My name is jeff' }
+    });
+    chineseValidator.setLocale('cn');
+
+    chineseValidator.validate('first_name', '0123');
+    t.is(chineseValidator.errorBag.first('first_name'), 'My name is jeff');
 });

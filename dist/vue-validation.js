@@ -65,7 +65,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _debouncer = __webpack_require__(28);
+	var _debouncer = __webpack_require__(27);
 
 	var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -184,6 +184,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        }
 	    }, {
+	        key: 'updateDictionary',
+	        value: function updateDictionary(messages) {
+	            Validator.updateDictionary(messages);
+	        }
+	    }, {
 	        key: 'detach',
 	        value: function detach(name) {
 	            delete this.validations[name];
@@ -191,9 +196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'extend',
 	        value: function extend(name, validator) {
-	            Validator.guardExtend(name, validator);
-
-	            Validator.merge(name, validator);
+	            Validator.extend(name, validator);
 	        }
 	    }, {
 	        key: 'validateAll',
@@ -266,7 +269,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'formatErrorMessage',
 	        value: function formatErrorMessage(field, rule) {
-	            if (!_messages2.default[this.locale]) {
+	            if (!_messages2.default[this.locale] || typeof _messages2.default[this.locale][rule.name] !== 'function') {
 	                // Default to english message.
 	                return _messages2.default.en[rule.name](field, rule.params);
 	            }
@@ -323,6 +326,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return this.errorBag;
 	        }
 	    }], [{
+	        key: 'updateDictionary',
+	        value: function updateDictionary(messages) {
+	            Object.keys(messages).forEach(function (locale) {
+	                if (!_messages2.default[locale]) {
+	                    _messages2.default[locale] = {};
+	                }
+
+	                Object.keys(messages[locale]).forEach(function (name) {
+	                    _messages2.default[locale][name] = messages[locale][name];
+	                });
+	            });
+	        }
+	    }, {
 	        key: 'create',
 	        value: function create(validations) {
 	            return new Validator(validations);
@@ -353,6 +369,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (validator.messages) {
 	                Object.keys(validator.messages).forEach(function (locale) {
+	                    if (!_messages2.default[locale]) {
+	                        _messages2.default[locale] = {};
+	                    }
+
 	                    _messages2.default[locale][name] = validator.messages[locale];
 	                });
 	            }
@@ -1108,15 +1128,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _en2 = _interopRequireDefault(_en);
 
-	var _ar = __webpack_require__(27);
-
-	var _ar2 = _interopRequireDefault(_ar);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = {
-	    en: _en2.default,
-	    ar: _ar2.default
+	    en: _en2.default
 	};
 	module.exports = exports['default'];
 
@@ -1221,105 +1236,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 27 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-	exports.default = {
-	    alpha_dash: function alpha_dash(field) {
-	        return field + " قد يحتوي فقط على حروف او ارقام او مسافات او - او _";
-	    },
-	    alpha_num: function alpha_num(field) {
-	        return field + " قد يحتوي فقط على حروف او ارقام او مسافات.";
-	    },
-	    alpha: function alpha(field) {
-	        return field + " يجب ان يحتوي على حروف فقط.";
-	    },
-	    between: function between(field, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 2);
-
-	        var min = _ref2[0];
-	        var max = _ref2[1];
-	        return "قيمة " + field + " يجب ان تكون ما بين " + min + " و " + max + ".";
-	    },
-	    confirmed: function confirmed(field, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
-
-	        var confirmedField = _ref4[0];
-	        return field + " لا يماثل التأكيد.";
-	    },
-	    digits: function digits(field, _ref5) {
-	        var _ref6 = _slicedToArray(_ref5, 1);
-
-	        var length = _ref6[0];
-	        return field + " يجب ان تحتوي فقط على ارقام والا يزيد عددها عن " + length + " رقم.";
-	    },
-	    dimensions: function dimensions(field, _ref7) {
-	        var _ref8 = _slicedToArray(_ref7, 2);
-
-	        var width = _ref8[0];
-	        var height = _ref8[1];
-	        return field + " يجب ان تكون بمقاس " + width + " بكسل في " + height + " بكسل.";
-	    },
-	    email: function email(field) {
-	        return field + " يجب ان يكون بريدا اليكتروني صحيح.";
-	    },
-	    ext: function ext(field) {
-	        return "نوع ملف " + field + " غير صحيح.";
-	    },
-	    image: function image(field) {
-	        return field + " يجب ان تكون صورة.";
-	    },
-	    in: function _in(field) {
-	        return "الحقل " + field + " يجب ان يكون قيمة صحيحة.";
-	    },
-	    ip: function ip(field) {
-	        return field + " يجب ان يكون ip صحيح.";
-	    },
-	    max: function max(field, _ref9) {
-	        var _ref10 = _slicedToArray(_ref9, 1);
-
-	        var length = _ref10[0];
-	        return "الحقل " + field + " يجب ان يحتوي على " + length + " حروف على الأكثر.";
-	    },
-	    mimes: function mimes(field) {
-	        return "نوع ملف " + field + " غير صحيح.";
-	    },
-	    min: function min(field, _ref11) {
-	        var _ref12 = _slicedToArray(_ref11, 1);
-
-	        var length = _ref12[0];
-	        return "الحقل " + field + " يجب ان يحتوي على " + length + " حروف على الأقل.";
-	    },
-	    not_in: function not_in(field) {
-	        return "الحقل " + field + " غير صحيح.";
-	    },
-	    numeric: function numeric(field) {
-	        return field + " يمكن ان يحتوي فقط على ارقام.";
-	    },
-	    regex: function regex(field) {
-	        return "الحقل " + field + " غير صحيح.";
-	    },
-	    required: function required(field) {
-	        return field + " مطلوب.";
-	    },
-	    size: function size(field, _ref13) {
-	        var _ref14 = _slicedToArray(_ref13, 1);
-
-	        var _size = _ref14[0];
-	        return field + " يجب ان يكون اقل من " + _size + " كيلوبايت.";
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 28 */
 /***/ function(module, exports) {
 
 	"use strict";

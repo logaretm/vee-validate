@@ -24,6 +24,22 @@ export default class Validator
         });
     }
 
+    static updateDictionary(messages) {
+        Object.keys(messages).forEach(locale => {
+            if (! Messages[locale]) {
+                Messages[locale] = {};
+            }
+
+            Object.keys(messages[locale]).forEach(name => {
+                Messages[locale][name] = messages[locale][name];
+            });
+        });
+    }
+
+    updateDictionary(messages) {
+        Validator.updateDictionary(messages);
+    }
+
     detach(name) {
         delete this.validations[name];
     }
@@ -33,9 +49,7 @@ export default class Validator
     }
 
     extend(name, validator) {
-        Validator.guardExtend(name, validator);
-
-        Validator.merge(name, validator);
+        Validator.extend(name, validator);
     }
 
     static extend(name, validator) {
@@ -59,6 +73,10 @@ export default class Validator
 
         if (validator.messages) {
             Object.keys(validator.messages).forEach(locale => {
+                if (! Messages[locale]) {
+                    Messages[locale] = {};
+                }
+
                 Messages[locale][name] = validator.messages[locale];
             });
         }
@@ -152,7 +170,7 @@ export default class Validator
     }
 
     formatErrorMessage(field, rule) {
-        if (! Messages[this.locale]) {
+        if (! Messages[this.locale] || typeof Messages[this.locale][rule.name] !== 'function') {
             // Default to english message.
             return Messages.en[rule.name](field, rule.params);
         }
