@@ -1,13 +1,18 @@
-import rules from './rules';
+import Rules from './rules';
 import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
+import Messages from './messages';
 
 export default class Validator
 {
     constructor(validations) {
+        this.locale = 'en';
         this.validations = this.normalize(validations);
         this.errorBag = new ErrorBag();
-        this.rules = rules;
+    }
+
+    setLocale(language) {
+        this.locale = language;
     }
 
     attach(name, checks) {
@@ -30,25 +35,33 @@ export default class Validator
     extend(name, validator) {
         Validator.guardExtend(name, validator);
 
-        if (this.rules[name]) {
-            throw new ValidatorException(
-                `Extension Error: There is an existing validator with the same name '${name}'.`
-            );
-        }
-
-        this.rules[name] = validator;
+        Validator.merge(name, validator);
     }
 
     static extend(name, validator) {
         Validator.guardExtend(name, validator);
 
-        if (rules[name]) {
-            throw new ValidatorException(
-                `Extension Error: There is an existing validator with the same name '${name}'.`
-            );
+        Validator.merge(name, validator);
+    }
+
+    static merge(name, validator) {
+        if (typeof validator === 'function') {
+            Rules[name] = validator;
+            Messages.en[name] = (field) => `The ${field} value is not valid.`;
+            return;
         }
 
-        rules[name] = validator;
+        Rules[name] = validator.validate;
+
+        if (validator.getMessage && typeof validator.getMessage === 'function') {
+            Messages.en[name] = validator.getMessage;
+        }
+
+        if (validator.messages) {
+            Object.keys(validator.messages).forEach(locale => {
+                Messages[locale][name] = validator.messages[locale];
+            });
+        }
     }
 
     /**
@@ -57,23 +70,27 @@ export default class Validator
      * @param  {object} validator a validation rule object.
      */
     static guardExtend(name, validator) {
-        if (! (
-            validator.msg || typeof validator.msg === 'function' ||
-            validator.validate || typeof validator.validate === 'function')) {
+        if (Rules[name]) {
             throw new ValidatorException(
-                `Extension Error: The ${name} validator must have both 'validate' and 'msg' methods.` // eslint-disable-line
+                `Extension Error: There is an existing validator with the same name '${name}'.`
             );
         }
 
-        if (! validator.validate && typeof validator.validate !== 'function') {
+        if (typeof validator === 'function') {
+            return;
+        }
+
+        if (typeof validator.validate !== 'function') {
             throw new ValidatorException(
-                `Extension Error: The ${name} validator must have a 'validate' method.`
+                // eslint-disable-next-line
+                `Extension Error: The validator '${name}' must be a function or have a 'validate' method.`
             );
         }
 
-        if (! validator.msg && typeof validator.msg !== 'function') {
+        if (typeof validator.getMessage !== 'function' && typeof validator.messages !== 'object') {
             throw new ValidatorException(
-                `Extension Error: The ${name} validator must have a 'msg' method.`
+                // eslint-disable-next-line
+                `Extension Error: The validator '${name}' must have a 'getMessage' method or have a 'messages' object.`
             );
         }
     }
@@ -134,6 +151,15 @@ export default class Validator
         };
     }
 
+    formatErrorMessage(field, rule) {
+        if (! Messages[this.locale]) {
+            // Default to english message.
+            return Messages.en[rule.name](field, rule.params);
+        }
+
+        return Messages[this.locale][rule.name](field, rule.params);
+    }
+
     /**
      * test a single input value against a rule.
      *
@@ -143,15 +169,15 @@ export default class Validator
      * @return {boolean} Wether if it passes the check.
      */
     test(name, value, rule) {
-        const validator = this.rules[rule.name];
-        const valid = validator.validate(value, rule.params);
+        const validator = Rules[rule.name];
+        const valid = validator(value, rule.params);
 
         if (valid instanceof Promise) {
             return valid.then(values => {
                 const allValid = values.reduce((prev, curr) => prev && curr.valid, true);
 
                 if (! allValid) {
-                    this.errorBag.add(name, validator.msg(name, rule.params));
+                    this.errorBag.add(name, this.formatErrorMessage(name, rule));
                 }
 
                 return allValid;
@@ -159,7 +185,7 @@ export default class Validator
         }
 
         if (! valid) {
-            this.errorBag.add(name, validator.msg(name, rule.params));
+            this.errorBag.add(name, this.formatErrorMessage(name, rule));
         }
 
         return valid;

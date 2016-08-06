@@ -83,78 +83,97 @@ test('it can detach rules', t => {
     t.falsy(validator.validations.field);
 });
 
+test('it can extend the validator with a validator function', t => {
+    validator.extend('neg', (value) => Number(value) < 0);
+    validator.attach('anotherField', 'neg');
+    t.true(validator.validate('anotherField', -1));
+    t.false(validator.validate('anotherField', 1));
+    // default message check.
+    t.is(validator.errorBag.first('anotherField'), 'The anotherField value is not valid.');
+});
+
 test('it can extend the validators for a validator instance', t => {
     const truthy = {
-        msg(field) {
-            return `The ${field} value is not truthy.`;
-        },
-        validate(value) {
-            return !! value;
-        }
+        getMessage: (field) => `The ${field} value is not truthy.`,
+        validate: (value) => !! value
     };
 
     const falsy = {
-        msg(field) {
-            return `The ${field} value is not falsy.`;
+        messages: {
+            en: (field) => `The ${field} value is not falsy.`
         },
-        validate(value) {
-            return ! value;
-        }
+        validate: (value) => ! value
     };
-    let otherValidator = new Validator();
     validator.extend('truthy', truthy); // instance extend.
 
     validator.attach('anotherField', 'truthy');
     t.true(validator.validate('anotherField', 1));
     t.false(validator.validate('anotherField', 0));
-    t.truthy(Validator.create().rules.truthy); // new objects are also extended.
-    t.truthy(otherValidator.rules.truthy); // current objects are also extended.
+    t.is(validator.errorBag.first('anotherField'), 'The anotherField value is not truthy.');
 
     Validator.extend('falsy', falsy); // static extend.
 
-    otherValidator = new Validator();
-    t.truthy(otherValidator.rules.falsy); // new Objects are extended.
-    t.truthy(validator.rules.falsy); // old objects are also extended.
-    otherValidator.attach('field', 'falsy');
-    t.false(otherValidator.validate('field', 1));
-    t.true(otherValidator.validate('field', 0));
+    validator.attach('field', 'falsy');
+    t.true(validator.validate('field', 0));
+    t.false(validator.validate('field', 1));
+    t.is(validator.errorBag.first('field'), 'The field value is not falsy.');
 });
 
 
 test('it throws an exception when extending with an invalid validator', t => {
     // Static Extend.
-    // No msg nor a validate method.
+    // No getMessage nor a validate method.
     t.throws(() => {
         Validator.extend('fail', {});
     });
     // No validate method.
     t.throws(() => {
-        Validator.extend('fail', { msg: name => name });
+        Validator.extend('fail', { getMessage: name => name });
     });
-    // No msg method.
+    // No getMessage method.
     t.throws(() => {
         Validator.extend('fail', { validate: () => true });
     });
     // numeric is already registered.
     t.throws(() => {
-        Validator.extend('numeric', { msg: name => name, validate: () => true });
+        Validator.extend('numeric', { getMessage: name => name, validate: () => true });
     });
 
     // instance Extend.
-    // No msg nor a validate method.
+    // No getMessage nor a validate method.
     t.throws(() => {
         validator.extend('fail', {});
     });
     // No validate method.
     t.throws(() => {
-        validator.extend('fail', { msg: name => name });
+        validator.extend('fail', { getMessage: name => name });
     });
-    // No msg method.
+    // No getMessage method.
     t.throws(() => {
         validator.extend('fail', { validate: () => true });
     });
     // numeric is already registered.
     t.throws(() => {
-        validator.extend('numeric', { msg: name => name, validate: () => true });
+        validator.extend('numeric', { getMessage: name => name, validate: () => true });
     });
+});
+
+test('it can change locales', t => {
+    const arabicValidator = new Validator({ first_name: 'alpha' });
+    arabicValidator.setLocale('ar');
+    arabicValidator.attach('first_name', 'alpha');
+    arabicValidator.validate('first_name', '0123');
+    t.is(arabicValidator.errorBag.first('first_name'), 'first_name يجب ان يحتوي على حروف فقط.');
+});
+
+
+test('it defaults to english messages if no current locale counterpart is found', t => {
+    const arabicValidator = new Validator({ first_name: 'alpha' });
+    arabicValidator.setLocale('blabla');
+    arabicValidator.attach('first_name', 'alpha');
+    arabicValidator.validate('first_name', '0123');
+    t.is(
+        arabicValidator.errorBag.first('first_name'),
+        'The first_name may only contain alphabetic characters and spaces.'
+    );
 });
