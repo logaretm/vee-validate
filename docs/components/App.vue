@@ -10,6 +10,9 @@
             <div class="pure-menu">
                 <a href="/" class="pure-menu-heading">Vue Validation</a>
                 <ul class="pure-menu-list">
+                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': ! selected}">
+                        <a href="index.html" class="pure-menu-link">Getting Started</a>
+                    </li>
                     <li class="pure-menu-item">
                         <a href="index.html#installation" class="pure-menu-link">Installation</a>
                     </li>
@@ -18,6 +21,15 @@
                     </li>
                     <li class="pure-menu-item">
                         <a href="index.html#render-errors" class="pure-menu-link">Rendering Errors</a>
+                    </li>
+                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'examples'}">
+                        <a href="examples.html" class="pure-menu-link">Examples</a>
+                    </li>
+                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'rules'}">
+                        <a href="rules.html" class="pure-menu-link">Validation Rules</a>
+                    </li>
+                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'api'}">
+                        <a href="api.html" class="pure-menu-link">API Reference</a>
                     </li>
                 </ul>
             </div>

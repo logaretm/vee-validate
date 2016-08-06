@@ -10,6 +10,7 @@
         <div id="app">
             <app heading="Vue-Validation"
                  subtitle="Classes API"
+                 selected="api"
             >
                 <h2 id="error-bag" class="content-subhead">ErrorBag</h2>
                 <p>
@@ -86,6 +87,15 @@
                         // or
                         var errorBag = validator.getErrors();
                     </code-block>
+
+                    The validator instance can only generate messages for one locale at a time. But you need to use <code class="inline">setLocale</code> method to switch the validator locale.
+                    <code-block class="language-javascript">
+                        validator.setLocale('ar');
+                    </code-block>
+                    <div class="note">
+                        <b class="important">Note:</b> Each validator keeps track of its own locale. so be sure to update any instances whenever the language changes.
+                        For more information about how to overwrite messages and add new ones refer to the <a href="rules.html#custom-messages" class="link">custom messages</a> section.
+                    </div>
                 </p>
                 <h2 id="validator-example" class="content-subhead">Validator Example</h2>
                 <p>

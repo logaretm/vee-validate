@@ -10,6 +10,7 @@
         <div id="app">
             <app heading="Vue-Validation"
                  subtitle="Validation Rules"
+                 selected="rules"
             >
                 <h2 id="syntax" class="content-subhead">Syntax</h2>
                 <p>
@@ -24,7 +25,7 @@
                         var someRule = 'in:1,2,3,4';
                     </code-block>
                     <div class="note">
-                        <b class="important">Note:</b> The validators (rules) and their parameters are statically saved, in order to update some validation rule you have to attach it again with the new parameters and it will be overwritten.
+                        <b class="important">Note:</b> The validators (rules) and their parameters are statically saved, in order to update some validation rule, you have to attach it again with the new parameters and it will be overwritten.
                     </div>
                 </p>
                 <h2 id="available-rules" class="content-subhead">Available Rules</h2>
@@ -41,51 +42,100 @@
                 <h2 id="custom-rules" class="content-subhead">Custom Rules</h2>
                 <p>
                     You can easily add custom rules to the validators, but your custom validation rules must adhere to a contract, or certain structure:
+                    <b class="important">Function Form:</b>
+                    This is the most basic custom validator form, it consists of only a function that returns either a boolean or a promise. However it will have a default error message.
                     <code-block class="language-javascript">
-                        {
-                            msg(field, args) {
-                                // Return some string.
-                            },
-                            validate(value, args) {
-                                // Return a boolean or a Promise.
-                            }
+                        const validator = (value, args) =&gt; {
+                            // Return a boolean or a Promise.
                         }
                     </code-block>
+                    <b class="important">Object Form:</b>
+                    <code-block class="language-javascript">
+                        const validator = {
+                            getMessage(field, args) { // will be added to default english messages.
+                                // Returns a message.
+                            },
+                            validate(value, args) {
+                                // Returns a boolean or a Promise.
+                            }
+                        };
+                    </code-block>
+                    or
+                    <code-block class="language-javascript">
+                        const validator = {
+                            messages: {
+                                en: (field, args) =&gt; {
+                                    // Returns a message.
+                                },
+                                cn: (field, args) =&gt; {
+                                    // Returns a chinese message.
+                                }
+                            },
+                            validate(value, args) {
+                                // Returns a boolean or a Promise.
+                            }
+                        };
+                    </code-block>
+                    This validator form must have a <code class="inline">validate</code> method, and either a <code class="inline">getMessage</code> method, or a <code class="inline">messages</code> object.
+                    The only difference that the latter will allow you to add localized messages, the former only adds it to the English dictionary.
+
                     <div class="note">
-                        <b class="important">Note:</b> Notice how the <code class="inline">msg</code> method gets passed the field name as a first parameter.
+                        <b class="important">Note:</b> Notice how the <b class="important">messages</b> methods gets passed the field name as a first parameter.
                         And how the <code class="inline">validate</code> method gets passed the value as a first parameter.
                         And both recieve the <code class="inline">args</code> which are the params that were configured with the validation rule.
                         for example look at the <a class="link" href="https://github.com/logaretm/vue-validation/blob/master/src/rules/min.js">actual implementaion of the min rule</a>.
                     </div>
                     <br>
                     <div class="note">
-                        <b class="important">Note:</b> As you can see a validation rule must implement two methods, <code class="inline">msg()</code> and <code class="inline">validate()</code>.
+                        <b class="important">Note:</b> As you can see a validation rule must implement one of the two forms discussed above.
                          Not doing so will throw a <code class="inline">ValidatorException</code> with an appropiate error message detailing what were you missing.
                     </div>
                 </p>
                 <p>
-                    You can add a custom validation rule using <code class="inline">extend(name, validator)</code> method in the validator object.
+                    After creating your validator, You can add it to the list of rules using <code class="inline">extend(name, validator)</code> method in the validator instance.
                     <code-block class="language-javascript">
                         import { Validator } from 'vue-validations';
                         // These are 'ES6' arrow functions.
                         Validator.extend('truthy', {
-                            msg: field =&gt; 'The ' + field + ' value is not truthy.',
+                            getMessage: field =&gt; 'The ' + field + ' value is not truthy.',
                             validate: value =&gt; !! value
                         });
 
-                        const instance = new Validator({
-                            field: 'truthy'
+                        let instance = new Validator({
+                            trueField: 'truthy'
                         });
 
                         // Also there is an instance 'extend' method for convience.
-                        instance.extend('falsy', {
-                            msg: field =&gt; 'The ' + field + ' value is not falsy.',
-                            validate: value =&gt; ! value
-                        });
+                        instance.extend('falsy', (value) =&gt; ! value);
+                        instance.attach('falseField', 'falsy');
                     </code-block>
                     <div class="note">
-                        <b class="important">Note:</b> Using any of the <code class="inline">extend</code> either statically or on instance will extend all validators with the new validation rule.
+                        <b class="important">Note:</b> Using any of the <code class="inline">extend</code> either statically or on an instance will extend all validators with the new validation rule.
                          extending a new rule that have the same name as an existing rule will throw a <code class="inline">ValidatorException</code> with an error message.
+                    </div>
+                </p>
+                <h2 id="custom-messages" class="content-subhead">Custom Messages</h2>
+                <p>
+                    Of course you might need to overwrite the error messages, or add new ones. The Validator class and its instances provide an <code class="inline">updateDictionary</code> method.
+                    which will merge the messages with the internal dicitonary, overwriting any duplicates.
+                    <div class="note">
+                        <b class="important">Note:</b> Any merges will have an effect on all validator instances as the messages dictionary is shared.
+                    </div>
+                    <code-block class="language-javascript">
+                        import { Validator } from 'vue-validations';
+
+                        const dictionary = {
+                            en: { alpha: () =&gt; 'Some English Message' },
+                            ar: { alpha: () =&gt; 'Some Arabic Message' }
+                        };
+
+                        Validator.updateDictionary(dictionary);
+
+                        const validator = new Validator({ first_name: 'alpha' });
+                        validator.setLocale('ar'); // now this validator will generate messages in arabic.
+                    </code-block>
+                    <div class="note">
+                        <b class="important">Note:</b> You must provide the messages in an object path like: <code class="inline">dictionary.locale.message</code>.
                     </div>
                 </p>
             </app>

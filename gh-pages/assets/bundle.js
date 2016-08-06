@@ -68,27 +68,27 @@
 
 	var _vueValidation2 = _interopRequireDefault(_vueValidation);
 
-	var _validator = __webpack_require__(18);
-
-	var _validator2 = _interopRequireDefault(_validator);
-
-	var _examples = __webpack_require__(42);
+	var _examples = __webpack_require__(18);
 
 	var _examples2 = _interopRequireDefault(_examples);
 
-	var _CodeExample = __webpack_require__(52);
+	var _CodeExample = __webpack_require__(28);
 
 	var _CodeExample2 = _interopRequireDefault(_CodeExample);
 
-	var _CodeBlock = __webpack_require__(57);
+	var _CodeBlock = __webpack_require__(33);
 
 	var _CodeBlock2 = _interopRequireDefault(_CodeBlock);
 
-	var _App = __webpack_require__(63);
+	var _App = __webpack_require__(39);
 
 	var _App2 = _interopRequireDefault(_App);
 
-	__webpack_require__(66);
+	__webpack_require__(42);
+
+	var _rules = __webpack_require__(49);
+
+	var _rules2 = _interopRequireDefault(_rules);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -100,7 +100,7 @@
 	new _vue2.default({
 	    el: '#app',
 	    data: {
-	        rules: new _collectionsjs2.default(Object.keys(_validator2.default.create().rules)).chunk(10).all()
+	        rules: new _collectionsjs2.default(Object.keys(_rules2.default)).chunk(10).all()
 	    },
 	    components: {
 	        App: _App2.default
@@ -3127,10 +3127,10 @@
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	(function webpackUniversalModuleDefinition(root, factory) {
-		if (( false ? 'undefined' : _typeof(exports)) === 'object' && ( false ? 'undefined' : _typeof(module)) === 'object') module.exports = factory();else if (true) !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));else if ((typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object') exports["VueValidation"] = factory();else root["VueValidation"] = factory();
+		if (( false ? 'undefined' : _typeof2(exports)) === 'object' && ( false ? 'undefined' : _typeof2(module)) === 'object') module.exports = factory();else if (true) !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));else if ((typeof exports === 'undefined' ? 'undefined' : _typeof2(exports)) === 'object') exports["VueValidation"] = factory();else root["VueValidation"] = factory();
 	})(undefined, function () {
 		return (/******/function (modules) {
 				// webpackBootstrap
@@ -3191,7 +3191,7 @@
 
 				var _validator2 = _interopRequireDefault(_validator);
 
-				var _debouncer = __webpack_require__(25);
+				var _debouncer = __webpack_require__(27);
 
 				var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -3268,6 +3268,12 @@
 					value: true
 				});
 
+				var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+					return typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
+				} : function (obj) {
+					return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
+				};
+
 				var _createClass = function () {
 					function defineProperties(target, props) {
 						for (var i = 0; i < props.length; i++) {
@@ -3290,6 +3296,10 @@
 
 				var _validatorException2 = _interopRequireDefault(_validatorException);
 
+				var _messages = __webpack_require__(25);
+
+				var _messages2 = _interopRequireDefault(_messages);
+
 				function _interopRequireDefault(obj) {
 					return obj && obj.__esModule ? obj : { default: obj };
 				}
@@ -3304,12 +3314,31 @@
 					function Validator(validations) {
 						_classCallCheck(this, Validator);
 
+						this.locale = 'en';
 						this.validations = this.normalize(validations);
 						this.errorBag = new _errorBag2.default();
-						this.rules = _rules2.default;
 					}
 
+					/**
+	     * Sets the validator current langauge.
+	     *
+	     * @param {string} language locale or language id.
+	     */
+
 					_createClass(Validator, [{
+						key: 'setLocale',
+						value: function setLocale(language) {
+							this.locale = language;
+						}
+
+						/**
+	      * Registers a field to be validated.
+	      *
+	      * @param  {string} name The field name.
+	      * @param  {string} checks validations expression.
+	      */
+
+					}, {
 						key: 'attach',
 						value: function attach(name, checks) {
 							var _this = this;
@@ -3321,22 +3350,57 @@
 								_this.validations[name].push(_this.normalizeRule(rule));
 							});
 						}
+
+						/**
+	      * Updates the messages dicitionary, overwriting existing values and adding new ones.
+	      *
+	      * @param  {object} messages The messages object.
+	     =     */
+
+					}, {
+						key: 'updateDictionary',
+
+						/**
+	      * Updates the messages dicitionary, overwriting existing values and adding new ones.
+	      *
+	      * @param  {object} messages The messages object.
+	      */
+						value: function updateDictionary(messages) {
+							Validator.updateDictionary(messages);
+						}
+
+						/**
+	      * Removes a field from the validator.
+	      *
+	      * @param  {string} name The name of the field.
+	      */
+
 					}, {
 						key: 'detach',
 						value: function detach(name) {
 							delete this.validations[name];
 						}
+
+						/**
+	      * Adds a custom validator to the list of validation rules.
+	      *
+	      * @param  {string} name The name of the validator.
+	      * @param  {object|function} validator The validator object/function.
+	      */
+
 					}, {
 						key: 'extend',
 						value: function extend(name, validator) {
-							Validator.guardExtend(name, validator);
-
-							if (this.rules[name]) {
-								throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
-							}
-
-							this.rules[name] = validator;
+							Validator.extend(name, validator);
 						}
+
+						/**
+	      * Validates each value against the corresponding field validations.
+	      * @param  {object} values The values to be validated.
+	      * @return {boolean|Promise} result Returns a boolean or a promise that will
+	      * resolve to a boolean.
+	      */
+
 					}, {
 						key: 'validateAll',
 						value: function validateAll(values) {
@@ -3350,6 +3414,16 @@
 
 							return test;
 						}
+
+						/**
+	      * Validates a value against a registered field validations.
+	      *
+	      * @param  {string} name the field name.
+	      * @param  {*} value The value to be validated.
+	      * @return {boolean|Promise} result returns a boolean or a promise that will resolve to
+	      *  a boolean.
+	      */
+
 					}, {
 						key: 'validate',
 						value: function validate(name, value) {
@@ -3366,6 +3440,7 @@
 
 						/**
 	      * Normalizes the validations object.
+	      *
 	      * @param  {object} validations
 	      * @return {object} Normalized object.
 	      */
@@ -3392,6 +3467,14 @@
 
 							return normalized;
 						}
+
+						/**
+	      * Normalizes a single validation object.
+	      *
+	      * @param  {string} rule The rule to be normalized.
+	      * @return {object} rule The normalized rule.
+	      */
+
 					}, {
 						key: 'normalizeRule',
 						value: function normalizeRule(rule) {
@@ -3407,7 +3490,26 @@
 						}
 
 						/**
-	      * test a single input value against a rule.
+	      * Formats an error message for field and a rule.
+	      *
+	      * @param  {string} field The field name.
+	      * @param  {object} rule Normalized rule object.
+	      * @return {string} msg Formatted error message.
+	      */
+
+					}, {
+						key: 'formatErrorMessage',
+						value: function formatErrorMessage(field, rule) {
+							if (!_messages2.default[this.locale] || typeof _messages2.default[this.locale][rule.name] !== 'function') {
+								// Default to english message.
+								return _messages2.default.en[rule.name](field, rule.params);
+							}
+
+							return _messages2.default[this.locale][rule.name](field, rule.params);
+						}
+
+						/**
+	      * Tests a single input value against a rule.
 	      *
 	      * @param  {*} name The name of the field.
 	      * @param  {*} value  [description]
@@ -3420,8 +3522,8 @@
 						value: function test(name, value, rule) {
 							var _this5 = this;
 
-							var validator = this.rules[rule.name];
-							var valid = validator.validate(value, rule.params);
+							var validator = _rules2.default[rule.name];
+							var valid = validator(value, rule.params);
 
 							if (valid instanceof Promise) {
 								return valid.then(function (values) {
@@ -3430,7 +3532,7 @@
 									}, true);
 
 									if (!allValid) {
-										_this5.errorBag.add(name, validator.msg(name, rule.params));
+										_this5.errorBag.add(name, _this5.formatErrorMessage(name, rule));
 									}
 
 									return allValid;
@@ -3438,7 +3540,7 @@
 							}
 
 							if (!valid) {
-								this.errorBag.add(name, validator.msg(name, rule.params));
+								this.errorBag.add(name, this.formatErrorMessage(name, rule));
 							}
 
 							return valid;
@@ -3446,7 +3548,8 @@
 
 						/**
 	      * Gets the internal errorBag instance.
-	      * @return {ErrorBag} The internal error bag object.
+	      *
+	      * @return {ErrorBag} errorBag The internal error bag object.
 	      */
 
 					}, {
@@ -3455,24 +3558,85 @@
 							return this.errorBag;
 						}
 					}], [{
+						key: 'updateDictionary',
+						value: function updateDictionary(messages) {
+							Object.keys(messages).forEach(function (locale) {
+								if (!_messages2.default[locale]) {
+									_messages2.default[locale] = {};
+								}
+
+								Object.keys(messages[locale]).forEach(function (name) {
+									_messages2.default[locale][name] = messages[locale][name];
+								});
+							});
+						}
+
+						/**
+	      * Static constructor.
+	      *
+	      * @param  {object} validations The validations object.
+	      * @return {Validator} validator A validator object.
+	      */
+
+					}, {
 						key: 'create',
 						value: function create(validations) {
 							return new Validator(validations);
 						}
+
+						/**
+	      * Adds a custom validator to the list of validation rules.
+	      *
+	      * @param  {string} name The name of the validator.
+	      * @param  {object|function} validator The validator object/function.
+	      */
+
 					}, {
 						key: 'extend',
 						value: function extend(name, validator) {
 							Validator.guardExtend(name, validator);
 
-							if (_rules2.default[name]) {
-								throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
+							Validator.merge(name, validator);
+						}
+
+						/**
+	      * Merges a validator object into the Rules and Messages.
+	      *
+	      * @param  {string} name The name of the validator.
+	      * @param  {function|object} validator The validator object.
+	      */
+
+					}, {
+						key: 'merge',
+						value: function merge(name, validator) {
+							if (typeof validator === 'function') {
+								_rules2.default[name] = validator;
+								_messages2.default.en[name] = function (field) {
+									return 'The ' + field + ' value is not valid.';
+								};
+								return;
 							}
 
-							_rules2.default[name] = validator;
+							_rules2.default[name] = validator.validate;
+
+							if (validator.getMessage && typeof validator.getMessage === 'function') {
+								_messages2.default.en[name] = validator.getMessage;
+							}
+
+							if (validator.messages) {
+								Object.keys(validator.messages).forEach(function (locale) {
+									if (!_messages2.default[locale]) {
+										_messages2.default[locale] = {};
+									}
+
+									_messages2.default[locale][name] = validator.messages[locale];
+								});
+							}
 						}
 
 						/**
 	      * Guards from extnsion violations.
+	      *
 	      * @param  {string} name name of the validation rule.
 	      * @param  {object} validator a validation rule object.
 	      */
@@ -3480,17 +3644,24 @@
 					}, {
 						key: 'guardExtend',
 						value: function guardExtend(name, validator) {
-							if (!(validator.msg || typeof validator.msg === 'function' || validator.validate || typeof validator.validate === 'function')) {
-								throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have both \'validate\' and \'msg\' methods.' // eslint-disable-line
-								);
+							if (_rules2.default[name]) {
+								throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
 							}
 
-							if (!validator.validate && typeof validator.validate !== 'function') {
-								throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'validate\' method.');
+							if (typeof validator === 'function') {
+								return;
 							}
 
-							if (!validator.msg && typeof validator.msg !== 'function') {
-								throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'msg\' method.');
+							if (typeof validator.validate !== 'function') {
+								throw new _validatorException2.default(
+								// eslint-disable-next-line
+								'Extension Error: The validator \'' + name + '\' must be a function or have a \'validate\' method.');
+							}
+
+							if (typeof validator.getMessage !== 'function' && _typeof(validator.messages) !== 'object') {
+								throw new _validatorException2.default(
+								// eslint-disable-next-line
+								'Extension Error: The validator \'' + name + '\' must have a \'getMessage\' method or have a \'messages\' object.');
 							}
 						}
 					}]);
@@ -3635,14 +3806,11 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " must be a valid email.";
-					},
-					validate: function validate(value) {
-						return !!value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/);
-					}
+
+				exports.default = function (value) {
+					return !!value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/);
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3655,16 +3823,14 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " must be a valid value.";
-					},
-					validate: function validate(value, options) {
-						return !!options.filter(function (option) {
-							return option == value;
-						}).length; // eslint-disable-line
-					}
-				};
+
+				exports.default = function (value, options) {
+					return !!options.filter(function (option) {
+						return option == value;
+					}).length;
+				}; // eslint-disable-line
+
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3677,18 +3843,15 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " is required.";
-					},
-					validate: function validate(value) {
-						if (Array.isArray(value)) {
-							return !!value.length;
-						}
 
-						return !!String(value).length;
+				exports.default = function (value) {
+					if (Array.isArray(value)) {
+						return !!value.length;
 					}
+
+					return !!String(value).length;
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3728,22 +3891,13 @@
 					};
 				}();
 
-				exports.default = {
-					msg: function msg(name, _ref) {
-						var _ref2 = _slicedToArray(_ref, 1);
+				exports.default = function (value, _ref) {
+					var _ref2 = _slicedToArray(_ref, 1);
 
-						var length = _ref2[0];
-
-						return "The " + name + " must be at least " + length + " characters.";
-					},
-					validate: function validate(value, _ref3) {
-						var _ref4 = _slicedToArray(_ref3, 1);
-
-						var length = _ref4[0];
-
-						return String(value).length >= length;
-					}
+					var length = _ref2[0];
+					return String(value).length >= length;
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3783,22 +3937,13 @@
 					};
 				}();
 
-				exports.default = {
-					msg: function msg(name, _ref) {
-						var _ref2 = _slicedToArray(_ref, 1);
+				exports.default = function (value, _ref) {
+					var _ref2 = _slicedToArray(_ref, 1);
 
-						var length = _ref2[0];
-
-						return "The " + name + " may not be greater than " + length + " characters.";
-					},
-					validate: function validate(value, _ref3) {
-						var _ref4 = _slicedToArray(_ref3, 1);
-
-						var length = _ref4[0];
-
-						return String(value).length <= length;
-					}
+					var length = _ref2[0];
+					return String(value).length <= length;
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3811,16 +3956,14 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " must be a valid value.";
-					},
-					validate: function validate(value, options) {
-						return !options.filter(function (option) {
-							return option == value;
-						}).length; // eslint-disable-line
-					}
-				};
+
+				exports.default = function (value, options) {
+					return !options.filter(function (option) {
+						return option == value;
+					}).length;
+				}; // eslint-disable-line
+
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3833,14 +3976,11 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " may only contain alphabetic characters and spaces.";
-					},
-					validate: function validate(value) {
-						return !!value.match(/^[a-zA-Z ]*$/);
-					}
+
+				exports.default = function (value) {
+					return !!value.match(/^[a-zA-Z ]*$/);
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3853,14 +3993,11 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " may only contain alpha-numeric characters and spaces.";
-					},
-					validate: function validate(value) {
-						return !!value.match(/^[a-zA-Z0-9 ]*$/);
-					}
+
+				exports.default = function (value) {
+					return !!value.match(/^[a-zA-Z0-9 ]*$/);
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3873,14 +4010,11 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " may contain alpha-numeric characters well as spaces, dashes and underscores.";
-					},
-					validate: function validate(value) {
-						return !!value.match(/^[a-zA-Z0-9 _-]*$/);
-					}
+
+				exports.default = function (value) {
+					return !!value.match(/^[a-zA-Z0-9 _-]*$/);
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3893,14 +4027,11 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " may only contain numeric characters.";
-					},
-					validate: function validate(value) {
-						return !!String(value).match(/^[0-9]*$/);
-					}
+
+				exports.default = function (value) {
+					return !!String(value).match(/^[0-9]*$/);
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3918,20 +4049,16 @@
 					return Array.isArray(arr) ? arr : Array.from(arr);
 				}
 
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " format is invalid.";
-					},
-					validate: function validate(value, _ref) {
-						var _ref2 = _toArray(_ref);
+				exports.default = function (value, _ref) {
+					var _ref2 = _toArray(_ref);
 
-						var regex = _ref2[0];
+					var regex = _ref2[0];
 
-						var flags = _ref2.slice(1);
+					var flags = _ref2.slice(1);
 
-						return !!String(value).match(new RegExp(regex, flags));
-					}
+					return !!String(value).match(new RegExp(regex, flags));
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3944,16 +4071,13 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " must be a valid ip address.";
-					},
 
-					// TODO: Maybe add an ipv6 flag?
-					validate: function validate(value) {
-						return !!value.match(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
-					}
+				// TODO: Maybe add ipv6 flag?
+				// eslint-disable-next-line
+				exports.default = function (value) {
+					return !!value.match(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -3966,21 +4090,18 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return 'The ' + name + ' must be a valid file.';
-					},
-					validate: function validate(files, extensions) {
-						var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
-						for (var i = 0; i < files.length; i++) {
-							if (!files[i].name.match(regex)) {
-								return false;
-							}
-						}
 
-						return true;
+				exports.default = function (files, extensions) {
+					var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
+					for (var i = 0; i < files.length; i++) {
+						if (!files[i].name.match(regex)) {
+							return false;
+						}
 					}
+
+					return true;
 				};
+
 				module.exports = exports['default'];
 
 				/***/
@@ -3993,21 +4114,18 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return 'The ' + name + ' must be a valid file.';
-					},
-					validate: function validate(files, mimes) {
-						var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
-						for (var i = 0; i < files.length; i++) {
-							if (!files[i].type.match(regex)) {
-								return false;
-							}
-						}
 
-						return true;
+				exports.default = function (files, mimes) {
+					var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
+					for (var i = 0; i < files.length; i++) {
+						if (!files[i].type.match(regex)) {
+							return false;
+						}
 					}
+
+					return true;
 				};
+
 				module.exports = exports['default'];
 
 				/***/
@@ -4047,33 +4165,25 @@
 					};
 				}();
 
-				exports.default = {
-					msg: function msg(name, _ref) {
-						var _ref2 = _slicedToArray(_ref, 1);
+				exports.default = function (files, _ref) {
+					var _ref2 = _slicedToArray(_ref, 1);
 
-						var size = _ref2[0];
+					var size = _ref2[0];
 
-						return "The " + name + " must be less than " + size + " KB.";
-					},
-					validate: function validate(files, _ref3) {
-						var _ref4 = _slicedToArray(_ref3, 1);
+					if (isNaN(size)) {
+						return false;
+					}
 
-						var size = _ref4[0];
-
-						if (isNaN(size)) {
+					var nSize = Number(size) * 1024;
+					for (var i = 0; i < files.length; i++) {
+						if (files[i].size > nSize) {
 							return false;
 						}
-
-						var nSize = Number(size) * 1024;
-						for (var i = 0; i < files.length; i++) {
-							if (files[i].size > nSize) {
-								return false;
-							}
-						}
-
-						return true;
 					}
+
+					return true;
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -4113,24 +4223,16 @@
 					};
 				}();
 
-				exports.default = {
-					msg: function msg(name, _ref) {
-						var _ref2 = _slicedToArray(_ref, 1);
+				exports.default = function (value, _ref) {
+					var _ref2 = _slicedToArray(_ref, 1);
 
-						var length = _ref2[0];
+					var length = _ref2[0];
 
-						return "The " + name + " must be numeric and exactly contain " + length + " digits.";
-					},
-					validate: function validate(value, _ref3) {
-						var _ref4 = _slicedToArray(_ref3, 1);
+					var strVal = String(value);
 
-						var length = _ref4[0];
-
-						var strVal = String(value);
-
-						return !!(strVal.match(/^[0-9]*$/) && strVal.length === Number(length));
-					}
+					return !!(strVal.match(/^[0-9]*$/) && strVal.length === Number(length));
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -4143,20 +4245,17 @@
 				Object.defineProperty(exports, "__esModule", {
 					value: true
 				});
-				exports.default = {
-					msg: function msg(name) {
-						return "The " + name + " must be an image.";
-					},
-					validate: function validate(files) {
-						for (var i = 0; i < files.length; i++) {
-							if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
-								return false;
-							}
-						}
 
-						return true;
+				exports.default = function (files) {
+					for (var i = 0; i < files.length; i++) {
+						if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+							return false;
+						}
 					}
+
+					return true;
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -4196,61 +4295,51 @@
 					};
 				}();
 
-				exports.default = {
-					msg: function msg(field, _ref) {
-						var _ref2 = _slicedToArray(_ref, 2);
+				var validateImage = function validateImage(file, width, height) {
+					var URL = window.URL || window.webkitURL;
+					return new Promise(function (resolve) {
+						var image = new Image();
+						image.onerror = function () {
+							return resolve({ name: file.name, valid: false });
+						};
 
-						var width = _ref2[0];
-						var height = _ref2[1];
+						image.onload = function () {
+							var valid = true;
 
-						return "The " + field + " must be " + width + " pixels by " + height + " pixels.";
-					},
-					validateImage: function validateImage(file, width, height) {
-						var URL = window.URL || window.webkitURL;
-						return new Promise(function (resolve) {
-							var image = new Image();
-							image.onerror = function () {
-								return resolve({ name: file.name, valid: false });
-							};
+							// Validate exact dimensions.
+							valid = image.width === Number(width) && image.height === Number(height);
 
-							image.onload = function () {
-								var valid = true;
+							resolve({
+								name: file.name,
+								valid: valid
+							});
+						};
 
-								// Validate exact dimensions.
-								valid = image.width === Number(width) && image.height === Number(height);
+						image.src = URL.createObjectURL(file);
+					});
+				};
 
-								resolve({
-									name: file.name,
-									valid: valid
-								});
-							};
+				exports.default = function (files, _ref) {
+					var _ref2 = _slicedToArray(_ref, 2);
 
-							image.src = URL.createObjectURL(file);
-						});
-					},
-					validate: function validate(files, _ref3) {
-						var _this = this;
+					var width = _ref2[0];
+					var height = _ref2[1];
 
-						var _ref4 = _slicedToArray(_ref3, 2);
-
-						var width = _ref4[0];
-						var height = _ref4[1];
-
-						var list = [];
-						for (var i = 0; i < files.length; i++) {
-							// if file is not an image, reject.
-							if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
-								return false;
-							}
-
-							list.push(files[i]);
+					var list = [];
+					for (var i = 0; i < files.length; i++) {
+						// if file is not an image, reject.
+						if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+							return false;
 						}
 
-						return Promise.all(list.map(function (file) {
-							return _this.validateImage(file, width, height);
-						}));
+						list.push(files[i]);
 					}
+
+					return Promise.all(list.map(function (file) {
+						return validateImage(file, width, height);
+					}));
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -4290,24 +4379,14 @@
 					};
 				}();
 
-				exports.default = {
-					msg: function msg(field, _ref) {
-						var _ref2 = _slicedToArray(_ref, 2);
+				exports.default = function (value, _ref) {
+					var _ref2 = _slicedToArray(_ref, 2);
 
-						var min = _ref2[0];
-						var max = _ref2[1];
-
-						return "The " + field + " must be between " + min + " and " + max + ".";
-					},
-					validate: function validate(value, _ref3) {
-						var _ref4 = _slicedToArray(_ref3, 2);
-
-						var min = _ref4[0];
-						var max = _ref4[1];
-
-						return Number(min) <= value && Number(max) >= value;
-					}
+					var min = _ref2[0];
+					var max = _ref2[1];
+					return Number(min) <= value && Number(max) >= value;
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -4347,24 +4426,16 @@
 					};
 				}();
 
-				exports.default = {
-					msg: function msg(field, _ref) {
-						var _ref2 = _slicedToArray(_ref, 1);
+				exports.default = function (value, _ref) {
+					var _ref2 = _slicedToArray(_ref, 1);
 
-						var confirmedField = _ref2[0];
+					var confirmedField = _ref2[0];
 
-						return "The " + field + " does not match the " + confirmedField + ".";
-					},
-					validate: function validate(value, _ref3) {
-						var _ref4 = _slicedToArray(_ref3, 1);
+					var field = document.querySelector("input[name='" + confirmedField + "']");
 
-						var confirmedField = _ref4[0];
-
-						var field = document.querySelector("input[name='" + confirmedField + "']");
-
-						return !!(field && String(value) === field.value);
-					}
+					return !!(field && String(value) === field.value);
 				};
+
 				module.exports = exports["default"];
 
 				/***/
@@ -4401,6 +4472,13 @@
 						this.errors = [];
 					}
 
+					/**
+	     * Adds an error to the internal array.
+	     *
+	     * @param {string} field The field name.
+	     * @param {string} msg The error message.
+	     */
+
 					_createClass(ErrorBag, [{
 						key: "add",
 						value: function add(field, msg) {
@@ -4409,29 +4487,67 @@
 								msg: msg
 							});
 						}
+
+						/**
+	      * Gets all error messages from the internal array.
+	      *
+	      * @return {Array} errors Array of all error messages.
+	      */
+
 					}, {
-						key: "remove",
-						value: function remove(field) {
-							this.errors = this.errors.filter(function (e) {
-								return e.field !== field;
+						key: "all",
+						value: function all() {
+							return this.errors.map(function (e) {
+								return e.msg;
 							});
 						}
-					}, {
-						key: "has",
-						value: function has(field) {
-							for (var i = 0; i < this.errors.length; i++) {
-								if (this.errors[i].field === field) {
-									return true;
-								}
-							}
 
-							return false;
-						}
+						/**
+	      * Removes all items from the internal array.
+	      */
+
 					}, {
 						key: "clear",
 						value: function clear() {
 							this.errors = [];
 						}
+
+						/**
+	      * Groups the errors for a specific field into a single array.
+	      *
+	      * @param  {string} field The field name.
+	      * @return {Array} errors The errors for the specified field.
+	      */
+
+					}, {
+						key: "collect",
+						value: function collect(field) {
+							return this.errors.filter(function (e) {
+								return e.field === field;
+							}).map(function (e) {
+								return e.msg;
+							});
+						}
+
+						/**
+	      * Gets the internal array length.
+	      *
+	      * @return {Number} length The internal array length.
+	      */
+
+					}, {
+						key: "count",
+						value: function count() {
+							return this.errors.length;
+						}
+
+						/**
+	      * Gets the first error message for a specific field.
+	      *
+	      * @param  {string} field The field name.
+	      * @return {string|null} message The error message.
+	      */
+
 					}, {
 						key: "first",
 						value: function first(field) {
@@ -4443,26 +4559,38 @@
 
 							return null;
 						}
+
+						/**
+	      * Checks if the internal array has at least one error for the specified field.
+	      *
+	      * @param  {string} field The specified field.
+	      * @return {Boolean} result True if at least one error is found, false otherwise.
+	      */
+
 					}, {
-						key: "collect",
-						value: function collect(field) {
-							return this.errors.filter(function (e) {
-								return e.field === field;
-							}).map(function (e) {
-								return e.msg;
-							});
+						key: "has",
+						value: function has(field) {
+							for (var i = 0; i < this.errors.length; i++) {
+								if (this.errors[i].field === field) {
+									return true;
+								}
+							}
+
+							return false;
 						}
+
+						/**
+	      * Removes all error messages assoicated with a specific field.
+	      *
+	      * @param  {string} field The field which messages are to be removed.
+	      */
+
 					}, {
-						key: "all",
-						value: function all() {
-							return this.errors.map(function (e) {
-								return e.msg;
+						key: "remove",
+						value: function remove(field) {
+							this.errors = this.errors.filter(function (e) {
+								return e.field !== field;
 							});
-						}
-					}, {
-						key: "count",
-						value: function count() {
-							return this.errors.length;
 						}
 					}]);
 
@@ -4522,6 +4650,154 @@
 				/***/
 			},
 			/* 25 */
+			/***/function (module, exports, __webpack_require__) {
+
+				'use strict';
+
+				Object.defineProperty(exports, "__esModule", {
+					value: true
+				});
+
+				var _en = __webpack_require__(26);
+
+				var _en2 = _interopRequireDefault(_en);
+
+				function _interopRequireDefault(obj) {
+					return obj && obj.__esModule ? obj : { default: obj };
+				}
+
+				exports.default = {
+					en: _en2.default
+				};
+				module.exports = exports['default'];
+
+				/***/
+			},
+			/* 26 */
+			/***/function (module, exports) {
+
+				"use strict";
+
+				Object.defineProperty(exports, "__esModule", {
+					value: true
+				});
+
+				var _slicedToArray = function () {
+					function sliceIterator(arr, i) {
+						var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+							for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+								_arr.push(_s.value);if (i && _arr.length === i) break;
+							}
+						} catch (err) {
+							_d = true;_e = err;
+						} finally {
+							try {
+								if (!_n && _i["return"]) _i["return"]();
+							} finally {
+								if (_d) throw _e;
+							}
+						}return _arr;
+					}return function (arr, i) {
+						if (Array.isArray(arr)) {
+							return arr;
+						} else if (Symbol.iterator in Object(arr)) {
+							return sliceIterator(arr, i);
+						} else {
+							throw new TypeError("Invalid attempt to destructure non-iterable instance");
+						}
+					};
+				}();
+
+				exports.default = {
+					alpha_dash: function alpha_dash(field) {
+						return "The " + field + " may contain alpha-numeric characters well as spaces, dashes and underscores.";
+					},
+					alpha_num: function alpha_num(field) {
+						return "The " + field + " may only contain alpha-numeric characters and spaces.";
+					},
+					alpha: function alpha(field) {
+						return "The " + field + " may only contain alphabetic characters and spaces.";
+					},
+					between: function between(field, _ref) {
+						var _ref2 = _slicedToArray(_ref, 2);
+
+						var min = _ref2[0];
+						var max = _ref2[1];
+						return "The " + field + " must be between " + min + " and " + max + ".";
+					},
+					confirmed: function confirmed(field, _ref3) {
+						var _ref4 = _slicedToArray(_ref3, 1);
+
+						var confirmedField = _ref4[0];
+						return "The " + field + " does not match the " + confirmedField + ".";
+					},
+					digits: function digits(field, _ref5) {
+						var _ref6 = _slicedToArray(_ref5, 1);
+
+						var length = _ref6[0];
+						return "The " + field + " must be numeric and exactly contain " + length + " digits.";
+					},
+					dimensions: function dimensions(field, _ref7) {
+						var _ref8 = _slicedToArray(_ref7, 2);
+
+						var width = _ref8[0];
+						var height = _ref8[1];
+						return "The " + field + " must be " + width + " pixels by " + height + " pixels.";
+					},
+					email: function email(field) {
+						return "The " + field + " must be a valid email.";
+					},
+					ext: function ext(field) {
+						return "The " + field + " must be a valid file.";
+					},
+					image: function image(field) {
+						return "The " + field + " must be an image.";
+					},
+					in: function _in(field) {
+						return "The " + field + " must be a valid value.";
+					},
+					ip: function ip(field) {
+						return "The " + field + " must be a valid ip address.";
+					},
+					max: function max(field, _ref9) {
+						var _ref10 = _slicedToArray(_ref9, 1);
+
+						var length = _ref10[0];
+						return "The " + field + " may not be greater than " + length + " characters.";
+					},
+					mimes: function mimes(field) {
+						return "The " + field + " must have a valid file type.";
+					},
+					min: function min(field, _ref11) {
+						var _ref12 = _slicedToArray(_ref11, 1);
+
+						var length = _ref12[0];
+						return "The " + field + " must be at least " + length + " characters.";
+					},
+					not_in: function not_in(field) {
+						return "The " + field + " must be a valid value.";
+					},
+					numeric: function numeric(field) {
+						return "The " + field + " may only contain numeric characters.";
+					},
+					regex: function regex(field) {
+						return "The " + field + " format is invalid.";
+					},
+					required: function required(field) {
+						return "The " + field + " is required.";
+					},
+					size: function size(field, _ref13) {
+						var _ref14 = _slicedToArray(_ref13, 1);
+
+						var _size = _ref14[0];
+						return "The " + field + " must be less than " + _size + " KB.";
+					}
+				};
+				module.exports = exports["default"];
+
+				/***/
+			},
+			/* 27 */
 			/***/function (module, exports) {
 
 				"use strict";
@@ -4594,1047 +4870,19 @@
 	    value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _rules = __webpack_require__(19);
-
-	var _rules2 = _interopRequireDefault(_rules);
-
-	var _errorBag = __webpack_require__(40);
-
-	var _errorBag2 = _interopRequireDefault(_errorBag);
-
-	var _validatorException = __webpack_require__(41);
-
-	var _validatorException2 = _interopRequireDefault(_validatorException);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var Validator = function () {
-	    function Validator(validations) {
-	        _classCallCheck(this, Validator);
-
-	        this.validations = this.normalize(validations);
-	        this.errorBag = new _errorBag2.default();
-	        this.rules = _rules2.default;
-	    }
-
-	    _createClass(Validator, [{
-	        key: 'attach',
-	        value: function attach(name, checks) {
-	            var _this = this;
-
-	            this.validations[name] = [];
-	            this.errorBag.remove(name);
-
-	            checks.split('|').forEach(function (rule) {
-	                _this.validations[name].push(_this.normalizeRule(rule));
-	            });
-	        }
-	    }, {
-	        key: 'detach',
-	        value: function detach(name) {
-	            delete this.validations[name];
-	        }
-	    }, {
-	        key: 'extend',
-	        value: function extend(name, validator) {
-	            Validator.guardExtend(name, validator);
-
-	            if (this.rules[name]) {
-	                throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
-	            }
-
-	            this.rules[name] = validator;
-	        }
-	    }, {
-	        key: 'validateAll',
-	        value: function validateAll(values) {
-	            var _this2 = this;
-
-	            var test = true;
-	            this.errorBag.clear();
-	            Object.keys(values).forEach(function (property) {
-	                test = _this2.validate(property, values[property]);
-	            });
-
-	            return test;
-	        }
-	    }, {
-	        key: 'validate',
-	        value: function validate(name, value) {
-	            var _this3 = this;
-
-	            var test = true;
-	            this.errorBag.remove(name);
-	            this.validations[name].forEach(function (rule) {
-	                test = _this3.test(name, value, rule);
-	            });
-
-	            return test;
-	        }
-
-	        /**
-	         * Normalizes the validations object.
-	         * @param  {object} validations
-	         * @return {object} Normalized object.
-	         */
-
-	    }, {
-	        key: 'normalize',
-	        value: function normalize(validations) {
-	            var _this4 = this;
-
-	            if (!validations) {
-	                return {};
-	            }
-
-	            var normalized = {};
-	            Object.keys(validations).forEach(function (property) {
-	                validations[property].split('|').forEach(function (rule) {
-	                    if (!normalized[property]) {
-	                        normalized[property] = [];
-	                    }
-
-	                    normalized[property].push(_this4.normalizeRule(rule));
-	                });
-	            });
-
-	            return normalized;
-	        }
-	    }, {
-	        key: 'normalizeRule',
-	        value: function normalizeRule(rule) {
-	            var params = null;
-	            if (~rule.indexOf(':')) {
-	                params = rule.split(':')[1].split(',');
-	            }
-
-	            return {
-	                name: rule.split(':')[0],
-	                params: params
-	            };
-	        }
-
-	        /**
-	         * test a single input value against a rule.
-	         *
-	         * @param  {*} name The name of the field.
-	         * @param  {*} value  [description]
-	         * @param  {object} rule the rule object.
-	         * @return {boolean} Wether if it passes the check.
-	         */
-
-	    }, {
-	        key: 'test',
-	        value: function test(name, value, rule) {
-	            var _this5 = this;
-
-	            var validator = this.rules[rule.name];
-	            var valid = validator.validate(value, rule.params);
-
-	            if (valid instanceof Promise) {
-	                return valid.then(function (values) {
-	                    var allValid = values.reduce(function (prev, curr) {
-	                        return prev && curr.valid;
-	                    }, true);
-
-	                    if (!allValid) {
-	                        _this5.errorBag.add(name, validator.msg(name, rule.params));
-	                    }
-
-	                    return allValid;
-	                });
-	            }
-
-	            if (!valid) {
-	                this.errorBag.add(name, validator.msg(name, rule.params));
-	            }
-
-	            return valid;
-	        }
-
-	        /**
-	         * Gets the internal errorBag instance.
-	         * @return {ErrorBag} The internal error bag object.
-	         */
-
-	    }, {
-	        key: 'getErrors',
-	        value: function getErrors() {
-	            return this.errorBag;
-	        }
-	    }], [{
-	        key: 'create',
-	        value: function create(validations) {
-	            return new Validator(validations);
-	        }
-	    }, {
-	        key: 'extend',
-	        value: function extend(name, validator) {
-	            Validator.guardExtend(name, validator);
-
-	            if (_rules2.default[name]) {
-	                throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
-	            }
-
-	            _rules2.default[name] = validator;
-	        }
-
-	        /**
-	         * Guards from extnsion violations.
-	         * @param  {string} name name of the validation rule.
-	         * @param  {object} validator a validation rule object.
-	         */
-
-	    }, {
-	        key: 'guardExtend',
-	        value: function guardExtend(name, validator) {
-	            if (!(validator.msg || typeof validator.msg === 'function' || validator.validate || typeof validator.validate === 'function')) {
-	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have both \'validate\' and \'msg\' methods.' // eslint-disable-line
-	                );
-	            }
-
-	            if (!validator.validate && typeof validator.validate !== 'function') {
-	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'validate\' method.');
-	            }
-
-	            if (!validator.msg && typeof validator.msg !== 'function') {
-	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'msg\' method.');
-	            }
-	        }
-	    }]);
-
-	    return Validator;
-	}();
-
-	exports.default = Validator;
-	module.exports = exports['default'];
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _email = __webpack_require__(20);
-
-	var _email2 = _interopRequireDefault(_email);
-
-	var _in = __webpack_require__(21);
-
-	var _in2 = _interopRequireDefault(_in);
-
-	var _required = __webpack_require__(22);
-
-	var _required2 = _interopRequireDefault(_required);
-
-	var _min = __webpack_require__(23);
-
-	var _min2 = _interopRequireDefault(_min);
-
-	var _max = __webpack_require__(24);
-
-	var _max2 = _interopRequireDefault(_max);
-
-	var _notIn = __webpack_require__(25);
-
-	var _notIn2 = _interopRequireDefault(_notIn);
-
-	var _alpha = __webpack_require__(26);
-
-	var _alpha2 = _interopRequireDefault(_alpha);
-
-	var _alpha_num = __webpack_require__(27);
-
-	var _alpha_num2 = _interopRequireDefault(_alpha_num);
-
-	var _alpha_dash = __webpack_require__(28);
-
-	var _alpha_dash2 = _interopRequireDefault(_alpha_dash);
-
-	var _numeric = __webpack_require__(29);
-
-	var _numeric2 = _interopRequireDefault(_numeric);
-
-	var _regex = __webpack_require__(30);
-
-	var _regex2 = _interopRequireDefault(_regex);
-
-	var _ip = __webpack_require__(31);
-
-	var _ip2 = _interopRequireDefault(_ip);
-
-	var _ext = __webpack_require__(32);
-
-	var _ext2 = _interopRequireDefault(_ext);
-
-	var _mimes = __webpack_require__(33);
-
-	var _mimes2 = _interopRequireDefault(_mimes);
-
-	var _size = __webpack_require__(34);
-
-	var _size2 = _interopRequireDefault(_size);
-
-	var _digits = __webpack_require__(35);
-
-	var _digits2 = _interopRequireDefault(_digits);
-
-	var _image = __webpack_require__(36);
-
-	var _image2 = _interopRequireDefault(_image);
-
-	var _dimensions = __webpack_require__(37);
-
-	var _dimensions2 = _interopRequireDefault(_dimensions);
-
-	var _between = __webpack_require__(38);
-
-	var _between2 = _interopRequireDefault(_between);
-
-	var _confirmed = __webpack_require__(39);
-
-	var _confirmed2 = _interopRequireDefault(_confirmed);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// eslint-disable-line
-	// eslint-disable-line
-	// eslint-disable-line
-	exports.default = {
-	    email: _email2.default,
-	    min: _min2.default,
-	    max: _max2.default,
-	    required: _required2.default,
-	    in: _in2.default,
-	    not_in: _notIn2.default,
-	    alpha: _alpha2.default,
-	    alpha_num: _alpha_num2.default,
-	    alpha_dash: _alpha_dash2.default,
-	    numeric: _numeric2.default,
-	    regex: _regex2.default,
-	    ip: _ip2.default,
-	    ext: _ext2.default,
-	    mimes: _mimes2.default,
-	    size: _size2.default,
-	    digits: _digits2.default,
-	    image: _image2.default,
-	    dimensions: _dimensions2.default,
-	    between: _between2.default,
-	    confirmed: _confirmed2.default
-	}; // eslint-disable-line
-	// eslint-disable-line
-
-	module.exports = exports['default'];
-
-/***/ },
-/* 20 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " must be a valid email.";
-	    },
-	    validate: function validate(value) {
-	        return !!value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/);
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 21 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " must be a valid value.";
-	    },
-	    validate: function validate(value, options) {
-	        return !!options.filter(function (option) {
-	            return option == value;
-	        }).length; // eslint-disable-line
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 22 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " is required.";
-	    },
-	    validate: function validate(value) {
-	        if (Array.isArray(value)) {
-	            return !!value.length;
-	        }
-
-	        return !!String(value).length;
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 23 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-	exports.default = {
-	    msg: function msg(name, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 1);
-
-	        var length = _ref2[0];
-
-	        return "The " + name + " must be at least " + length + " characters.";
-	    },
-	    validate: function validate(value, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
-
-	        var length = _ref4[0];
-
-	        return String(value).length >= length;
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 24 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-	exports.default = {
-	    msg: function msg(name, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 1);
-
-	        var length = _ref2[0];
-
-	        return "The " + name + " may not be greater than " + length + " characters.";
-	    },
-	    validate: function validate(value, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
-
-	        var length = _ref4[0];
-
-	        return String(value).length <= length;
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 25 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " must be a valid value.";
-	    },
-	    validate: function validate(value, options) {
-	        return !options.filter(function (option) {
-	            return option == value;
-	        }).length; // eslint-disable-line
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 26 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " may only contain alphabetic characters and spaces.";
-	    },
-	    validate: function validate(value) {
-	        return !!value.match(/^[a-zA-Z ]*$/);
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 27 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " may only contain alpha-numeric characters and spaces.";
-	    },
-	    validate: function validate(value) {
-	        return !!value.match(/^[a-zA-Z0-9 ]*$/);
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 28 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " may contain alpha-numeric characters well as spaces, dashes and underscores.";
-	    },
-	    validate: function validate(value) {
-	        return !!value.match(/^[a-zA-Z0-9 _-]*$/);
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 29 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " may only contain numeric characters.";
-	    },
-	    validate: function validate(value) {
-	        return !!String(value).match(/^[0-9]*$/);
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 30 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
-
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " format is invalid.";
-	    },
-	    validate: function validate(value, _ref) {
-	        var _ref2 = _toArray(_ref);
-
-	        var regex = _ref2[0];
-
-	        var flags = _ref2.slice(1);
-
-	        return !!String(value).match(new RegExp(regex, flags));
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 31 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " must be a valid ip address.";
-	    },
-
-	    // TODO: Maybe add an ipv6 flag?
-	    validate: function validate(value) {
-	        return !!value.match(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 32 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return 'The ' + name + ' must be a valid file.';
-	    },
-	    validate: function validate(files, extensions) {
-	        var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
-	        for (var i = 0; i < files.length; i++) {
-	            if (!files[i].name.match(regex)) {
-	                return false;
-	            }
-	        }
-
-	        return true;
-	    }
-	};
-	module.exports = exports['default'];
-
-/***/ },
-/* 33 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return 'The ' + name + ' must be a valid file.';
-	    },
-	    validate: function validate(files, mimes) {
-	        var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
-	        for (var i = 0; i < files.length; i++) {
-	            if (!files[i].type.match(regex)) {
-	                return false;
-	            }
-	        }
-
-	        return true;
-	    }
-	};
-	module.exports = exports['default'];
-
-/***/ },
-/* 34 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-	exports.default = {
-	    msg: function msg(name, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 1);
-
-	        var size = _ref2[0];
-
-	        return "The " + name + " must be less than " + size + " KB.";
-	    },
-	    validate: function validate(files, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
-
-	        var size = _ref4[0];
-
-	        if (isNaN(size)) {
-	            return false;
-	        }
-
-	        var nSize = Number(size) * 1024;
-	        for (var i = 0; i < files.length; i++) {
-	            if (files[i].size > nSize) {
-	                return false;
-	            }
-	        }
-
-	        return true;
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 35 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-	exports.default = {
-	    msg: function msg(name, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 1);
-
-	        var length = _ref2[0];
-
-	        return "The " + name + " must be numeric and exactly contain " + length + " digits.";
-	    },
-	    validate: function validate(value, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
-
-	        var length = _ref4[0];
-
-	        var strVal = String(value);
-
-	        return !!(strVal.match(/^[0-9]*$/) && strVal.length === Number(length));
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 36 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " must be an image.";
-	    },
-	    validate: function validate(files) {
-	        for (var i = 0; i < files.length; i++) {
-	            if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
-	                return false;
-	            }
-	        }
-
-	        return true;
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 37 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-	exports.default = {
-	    msg: function msg(field, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 2);
-
-	        var width = _ref2[0];
-	        var height = _ref2[1];
-
-	        return "The " + field + " must be " + width + " pixels by " + height + " pixels.";
-	    },
-	    validateImage: function validateImage(file, width, height) {
-	        var URL = window.URL || window.webkitURL;
-	        return new Promise(function (resolve) {
-	            var image = new Image();
-	            image.onerror = function () {
-	                return resolve({ name: file.name, valid: false });
-	            };
-
-	            image.onload = function () {
-	                var valid = true;
-
-	                // Validate exact dimensions.
-	                valid = image.width === Number(width) && image.height === Number(height);
-
-	                resolve({
-	                    name: file.name,
-	                    valid: valid
-	                });
-	            };
-
-	            image.src = URL.createObjectURL(file);
-	        });
-	    },
-	    validate: function validate(files, _ref3) {
-	        var _this = this;
-
-	        var _ref4 = _slicedToArray(_ref3, 2);
-
-	        var width = _ref4[0];
-	        var height = _ref4[1];
-
-	        var list = [];
-	        for (var i = 0; i < files.length; i++) {
-	            // if file is not an image, reject.
-	            if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
-	                return false;
-	            }
-
-	            list.push(files[i]);
-	        }
-
-	        return Promise.all(list.map(function (file) {
-	            return _this.validateImage(file, width, height);
-	        }));
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 38 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-	exports.default = {
-	    msg: function msg(field, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 2);
-
-	        var min = _ref2[0];
-	        var max = _ref2[1];
-
-	        return "The " + field + " must be between " + min + " and " + max + ".";
-	    },
-	    validate: function validate(value, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 2);
-
-	        var min = _ref4[0];
-	        var max = _ref4[1];
-
-	        return Number(min) <= value && Number(max) >= value;
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 39 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-	exports.default = {
-	    msg: function msg(field, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 1);
-
-	        var confirmedField = _ref2[0];
-
-	        return "The " + field + " does not match the " + confirmedField + ".";
-	    },
-	    validate: function validate(value, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
-
-	        var confirmedField = _ref4[0];
-
-	        var field = document.querySelector("input[name='" + confirmedField + "']");
-
-	        return !!(field && String(value) === field.value);
-	    }
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 40 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var ErrorBag = function () {
-	    function ErrorBag() {
-	        _classCallCheck(this, ErrorBag);
-
-	        this.errors = [];
-	    }
-
-	    _createClass(ErrorBag, [{
-	        key: "add",
-	        value: function add(field, msg) {
-	            this.errors.push({
-	                field: field,
-	                msg: msg
-	            });
-	        }
-	    }, {
-	        key: "remove",
-	        value: function remove(field) {
-	            this.errors = this.errors.filter(function (e) {
-	                return e.field !== field;
-	            });
-	        }
-	    }, {
-	        key: "has",
-	        value: function has(field) {
-	            for (var i = 0; i < this.errors.length; i++) {
-	                if (this.errors[i].field === field) {
-	                    return true;
-	                }
-	            }
-
-	            return false;
-	        }
-	    }, {
-	        key: "clear",
-	        value: function clear() {
-	            this.errors = [];
-	        }
-	    }, {
-	        key: "first",
-	        value: function first(field) {
-	            for (var i = 0; i < this.errors.length; i++) {
-	                if (this.errors[i].field === field) {
-	                    return this.errors[i].msg;
-	                }
-	            }
-
-	            return null;
-	        }
-	    }, {
-	        key: "collect",
-	        value: function collect(field) {
-	            return this.errors.filter(function (e) {
-	                return e.field === field;
-	            }).map(function (e) {
-	                return e.msg;
-	            });
-	        }
-	    }, {
-	        key: "all",
-	        value: function all() {
-	            return this.errors.map(function (e) {
-	                return e.msg;
-	            });
-	        }
-	    }, {
-	        key: "count",
-	        value: function count() {
-	            return this.errors.length;
-	        }
-	    }]);
-
-	    return ErrorBag;
-	}();
-
-	exports.default = ErrorBag;
-	module.exports = exports["default"];
-
-/***/ },
-/* 41 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var _class = function () {
-	    function _class(msg) {
-	        _classCallCheck(this, _class);
-
-	        this.msg = msg;
-	    }
-
-	    _createClass(_class, [{
-	        key: "toString",
-	        value: function toString() {
-	            return this.msg;
-	        }
-	    }]);
-
-	    return _class;
-	}();
-
-	exports.default = _class;
-	module.exports = exports["default"];
-
-/***/ },
-/* 42 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _Example = __webpack_require__(43);
+	var _Example = __webpack_require__(19);
 
 	var _Example2 = _interopRequireDefault(_Example);
 
-	var _Example3 = __webpack_require__(45);
+	var _Example3 = __webpack_require__(21);
 
 	var _Example4 = _interopRequireDefault(_Example3);
 
-	var _Example5 = __webpack_require__(47);
+	var _Example5 = __webpack_require__(23);
 
 	var _Example6 = _interopRequireDefault(_Example5);
 
-	var _ValidatorExample = __webpack_require__(49);
+	var _ValidatorExample = __webpack_require__(25);
 
 	var _ValidatorExample2 = _interopRequireDefault(_ValidatorExample);
 
@@ -5651,11 +4899,11 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 43 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_template__ = __webpack_require__(44)
+	__vue_template__ = __webpack_require__(20)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -5674,17 +4922,17 @@
 	})()}
 
 /***/ },
-/* 44 */
+/* 20 */
 /***/ function(module, exports) {
 
 	module.exports = "\n\n\n\n<p>\n    All you need is to add the <code class=\"inline\">v-validate</code> directive to the input you wish to validate.\n    <br><br>\n    Then Add a <code class=\"inline\">rules</code> attribute which contains a list of validation rules seperated by a pipe '<code class=\"inline\">|</code>'.\n    For the following example the validation rules are straight forward, use <code class=\"inline\">required</code> to indicate that the field is required.\n    And <code class=\"inline\">email</code> to indicate that the field must be an email.\n    To combine both rules we assign the value <code class=\"inline\">required|email</code> to the <code class=\"inline\">rules</code> attribute.\n</p>\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-validate rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        import VueValidation from 'vue-validation';\n        Vue.use(VueValidation);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
-/* 45 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_template__ = __webpack_require__(46)
+	__vue_template__ = __webpack_require__(22)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -5703,17 +4951,17 @@
 	})()}
 
 /***/ },
-/* 46 */
+/* 22 */
 /***/ function(module, exports) {
 
 	module.exports = "\n\n\n\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>Basic Form</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" v-validate rules=\"required|email\" delay=\"500\" type=\"email\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" v-validate rules=\"required|min:3|alpha\" delay=\"1000\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" v-validate rules=\"required|max:11|numeric\" type=\"text\" placeholder=\"Phone Number\">\n            <span class=\"error\" v-show=\"errors.has('phone')\">{{ errors.first('phone') }}</span>\n        </div>\n        <button type=\"submit\" class=\"pure-button pure-button-primary\">Sign up</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;Basic Form&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; v-validate rules=&quot;required|email&quot; delay=&quot;500&quot; type=&quot;email&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Name&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; v-validate rules=&quot;required|min:3|alpha&quot; delay=&quot;1000&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ \"{\" + \"{ errors.first('name') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('phone') }&quot; for=&quot;phone&quot;&gt;Phone&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('phone') }&quot; name=&quot;phone&quot; v-validate rules=&quot;required|max:11|numeric&quot; type=&quot;text&quot; placeholder=&quot;Phone Number&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('phone')&quot;&gt;{{ \"{\" + \"{ errors.first('phone') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button type=&quot;submit&quot; class=&quot;pure-button pure-button-primary&quot;&gt;Sign up&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        // Set a global delay of 700.\n        Vue.use(VueValidation, { delay: 700 });\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
-/* 47 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_template__ = __webpack_require__(48)
+	__vue_template__ = __webpack_require__(24)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -5732,22 +4980,22 @@
 	})()}
 
 /***/ },
-/* 48 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = "\n\n\n\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>File Upload</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('file') }\" for=\"file\">Unrejected Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" v-validate rules=\"mimes:image/*\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('file')\">{{ errors.first('file') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('rejected') }\" for=\"rejected\">Rejected Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('rejected') }\" name=\"rejected\" v-validate rules=\"mimes:image/*\" type=\"file\" reject>\n            <span class=\"error\" v-show=\"errors.has('rejected')\">{{ errors.first('rejected') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('dimensions') }\" for=\"dimensions\">Dimensions Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('dimensions') }\" name=\"dimensions\" v-validate rules=\"dimensions:150,100\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('dimensions')\">{{ errors.first('dimensions') }}</span>\n        </div>\n        <button type=\"submit\" class=\"pure-button pure-button-primary\">Sign up</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;File Upload&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Unrejected Input&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; v-validate rules=&quot;mimes:image/*&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ \"{\" + \"{ errors.first('file') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Input&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; v-validate rules=&quot;mimes:image/*&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ \"{\" + \"{ errors.first('file') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button type=&quot;submit&quot; class=&quot;pure-button pure-button-primary&quot;&gt;Sign up&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VueValidation);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
-/* 49 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(50)
+	__vue_script__ = __webpack_require__(26)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] docs\\components\\examples\\ValidatorExample.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(51)
+	__vue_template__ = __webpack_require__(27)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -5766,7 +5014,7 @@
 	})()}
 
 /***/ },
-/* 50 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5816,23 +5064,23 @@
 	};
 
 /***/ },
-/* 51 */
+/* 27 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-model=\"email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">Errors: {{ errors.collect('email') | json }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n            <input v-model=\"name\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">Errors: {{ errors.collect('name') | json }}</span>\n        </div>\n        <button class=\"pure-button pure-button-primary\" @click=\"validateForm\" type=\"button\" name=\"button\">Validate All</button>\n        <button class=\"pure-button button-error\" @click=\"clearErrors\" type=\"button\" name=\"button\">Clear</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-model=&quot;email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ errors.collect('email') | json }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Full Name&lt;/label&gt;\n                &lt;input v-model=&quot;name&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ errors.collect('name') | json }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button class=&quot;pure-button pure-button-primary&quot; @click=&quot;validateForm&quot; type=&quot;button&quot; name=&quot;button&quot;&gt;Validate All&lt;/button&gt;\n            &lt;button class=&quot;pure-button button-error&quot; @click=&quot;clearErrors&quot; type=&quot;button&quot; name=&quot;button&quot;&gt;Clear&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n    <div slot=\"code-js\">\n        import Vue from 'vue';\n        import { Validator } from 'vue-validation';\n\n        new Vue({\n            validator: null, // private reference\n            data() {\n                return {\n                    email: '',\n                    name: '',\n                    errors: []\n                }\n            },\n            watch: {\n                email(value) {\n                    this.validator.validate('email', value);\n                },\n                name(value) {\n                    this.validator.validate('name', value);\n                }\n            },\n            methods: {\n                validateForm() {\n                    this.validator.validateAll({\n                        email: this.email,\n                        name: this.name\n                    });\n                },\n                clearErrors() {\n                    this.errors.clear();\n                }\n            },\n            ready() {\n                this.validator = new Validator({\n                    email: 'required|email',\n                    name: 'required|alpha|min:3'\n                });\n                this.$set('errors', this.validator.errorBag); // update the data.\n            }\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
-/* 52 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(53)
-	__vue_script__ = __webpack_require__(55)
+	__webpack_require__(29)
+	__vue_script__ = __webpack_require__(31)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] docs\\components\\CodeExample.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(56)
+	__vue_template__ = __webpack_require__(32)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -5851,14 +5099,14 @@
 	})()}
 
 /***/ },
-/* 53 */
+/* 29 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 54 */,
-/* 55 */
+/* 30 */,
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -5875,23 +5123,23 @@
 	};
 
 /***/ },
-/* 56 */
+/* 32 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div class=\"pure-g\">\n    <div class=\"pure-u-1\">\n        <div class=\"pure-menu pure-menu-horizontal\">\n            <ul class=\"pure-menu-list\">\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'demo'}\">\n                    <a @click=\"content = 'demo'\" class=\"pure-menu-link\">\n                        <i class=\"demo-icon icon-play-outline\"></i>\n                        Demo\n                    </a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'html' }\">\n                    <a @click=\"content = 'html'\" class=\"pure-menu-link\">\n                        <i class=\"demo-icon icon-html\"></i>\n                        HTML\n                    </a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'js' }\">\n                    <a @click=\"content = 'js'\" class=\"pure-menu-link\">\n                        <i class=\"demo-icon icon-icon-code\"></i>\n                        JavaScript\n                    </a>\n                </li>\n            </ul>\n        </div>\n    </div>\n    <div v-show=\"content === 'demo'\" v-el=\"example\" class=\"pure-u-1\">\n        <slot name=\"example\"></slot>\n    </div>\n    <div v-show=\"content === 'html'\" class=\"pure-u-1\">\n        <code-block class=\"language-html\"><slot name=\"code-html\"></slot></code-block>\n    </div>\n    <div v-show=\"content === 'js'\" class=\"pure-u-1\">\n        <code-block class=\"language-javascript\"><slot name=\"code-js\"></slot></code-block>\n    </div>\n</div>\n";
 
 /***/ },
-/* 57 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(58)
-	__vue_script__ = __webpack_require__(59)
+	__webpack_require__(34)
+	__vue_script__ = __webpack_require__(35)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] docs\\components\\CodeBlock.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(62)
+	__vue_template__ = __webpack_require__(38)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -5910,13 +5158,13 @@
 	})()}
 
 /***/ },
-/* 58 */
+/* 34 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 59 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5925,11 +5173,11 @@
 	    value: true
 	});
 
-	var _prismjs = __webpack_require__(60);
+	var _prismjs = __webpack_require__(36);
 
 	var _prismjs2 = _interopRequireDefault(_prismjs);
 
-	__webpack_require__(61);
+	__webpack_require__(37);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5974,7 +5222,7 @@
 	};
 
 /***/ },
-/* 60 */
+/* 36 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -6751,7 +5999,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 61 */
+/* 37 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -6793,22 +6041,22 @@
 	})();
 
 /***/ },
-/* 62 */
+/* 38 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<pre><code v-el:code :class=\"class\"><slot></slot></code></pre>\n";
 
 /***/ },
-/* 63 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(64)
+	__vue_script__ = __webpack_require__(40)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] docs\\components\\App.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(65)
+	__vue_template__ = __webpack_require__(41)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -6827,7 +6075,7 @@
 	})()}
 
 /***/ },
-/* 64 */
+/* 40 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -6873,16 +6121,595 @@
 	};
 
 /***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div id=\"layout\" v-el:layout>\n    <!-- Menu toggle -->\n    <a href=\"#menu\" id=\"menuLink\" class=\"menu-link\" v-el:menuLink>\n        <!-- Hamburger icon -->\n        <span></span>\n    </a>\n\n    <div id=\"menu\" v-el:menu>\n        <div class=\"pure-menu\">\n            <a href=\"/\" class=\"pure-menu-heading\">Vue Validation</a>\n            <ul class=\"pure-menu-list\">\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': ! selected}\">\n                    <a href=\"index.html\" class=\"pure-menu-link\">Getting Started</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#installation\" class=\"pure-menu-link\">Installation</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#basic-example\" class=\"pure-menu-link\">Basic Example</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#render-errors\" class=\"pure-menu-link\">Rendering Errors</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'examples'}\">\n                    <a href=\"examples.html\" class=\"pure-menu-link\">Examples</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'rules'}\">\n                    <a href=\"rules.html\" class=\"pure-menu-link\">Validation Rules</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'api'}\">\n                    <a href=\"api.html\" class=\"pure-menu-link\">API Reference</a>\n                </li>\n            </ul>\n        </div>\n    </div>\n\n    <div id=\"main\">\n        <div class=\"header\">\n            <h1>{{ heading }}</h1>\n            <h2>{{ subtitle }}</h2>\n        </div>\n        <div class=\"content\">\n            <slot></slot>\n        </div>\n    </div>\n</div>\n";
+
+/***/ },
+/* 42 */
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _email = __webpack_require__(50);
+
+	var _email2 = _interopRequireDefault(_email);
+
+	var _in = __webpack_require__(51);
+
+	var _in2 = _interopRequireDefault(_in);
+
+	var _required = __webpack_require__(52);
+
+	var _required2 = _interopRequireDefault(_required);
+
+	var _min = __webpack_require__(53);
+
+	var _min2 = _interopRequireDefault(_min);
+
+	var _max = __webpack_require__(54);
+
+	var _max2 = _interopRequireDefault(_max);
+
+	var _notIn = __webpack_require__(55);
+
+	var _notIn2 = _interopRequireDefault(_notIn);
+
+	var _alpha = __webpack_require__(56);
+
+	var _alpha2 = _interopRequireDefault(_alpha);
+
+	var _alpha_num = __webpack_require__(57);
+
+	var _alpha_num2 = _interopRequireDefault(_alpha_num);
+
+	var _alpha_dash = __webpack_require__(58);
+
+	var _alpha_dash2 = _interopRequireDefault(_alpha_dash);
+
+	var _numeric = __webpack_require__(59);
+
+	var _numeric2 = _interopRequireDefault(_numeric);
+
+	var _regex = __webpack_require__(60);
+
+	var _regex2 = _interopRequireDefault(_regex);
+
+	var _ip = __webpack_require__(61);
+
+	var _ip2 = _interopRequireDefault(_ip);
+
+	var _ext = __webpack_require__(62);
+
+	var _ext2 = _interopRequireDefault(_ext);
+
+	var _mimes = __webpack_require__(63);
+
+	var _mimes2 = _interopRequireDefault(_mimes);
+
+	var _size = __webpack_require__(64);
+
+	var _size2 = _interopRequireDefault(_size);
+
+	var _digits = __webpack_require__(65);
+
+	var _digits2 = _interopRequireDefault(_digits);
+
+	var _image = __webpack_require__(66);
+
+	var _image2 = _interopRequireDefault(_image);
+
+	var _dimensions = __webpack_require__(67);
+
+	var _dimensions2 = _interopRequireDefault(_dimensions);
+
+	var _between = __webpack_require__(68);
+
+	var _between2 = _interopRequireDefault(_between);
+
+	var _confirmed = __webpack_require__(69);
+
+	var _confirmed2 = _interopRequireDefault(_confirmed);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// eslint-disable-line
+	// eslint-disable-line
+	// eslint-disable-line
+	exports.default = {
+	    email: _email2.default,
+	    min: _min2.default,
+	    max: _max2.default,
+	    required: _required2.default,
+	    in: _in2.default,
+	    not_in: _notIn2.default,
+	    alpha: _alpha2.default,
+	    alpha_num: _alpha_num2.default,
+	    alpha_dash: _alpha_dash2.default,
+	    numeric: _numeric2.default,
+	    regex: _regex2.default,
+	    ip: _ip2.default,
+	    ext: _ext2.default,
+	    mimes: _mimes2.default,
+	    size: _size2.default,
+	    digits: _digits2.default,
+	    image: _image2.default,
+	    dimensions: _dimensions2.default,
+	    between: _between2.default,
+	    confirmed: _confirmed2.default
+	}; // eslint-disable-line
+	// eslint-disable-line
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 50 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (value) {
+	  return !!value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/);
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 51 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (value, options) {
+	  return !!options.filter(function (option) {
+	    return option == value;
+	  }).length;
+	}; // eslint-disable-line
+
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 52 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (value) {
+	    if (Array.isArray(value)) {
+	        return !!value.length;
+	    }
+
+	    return !!String(value).length;
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 53 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	exports.default = function (value, _ref) {
+	  var _ref2 = _slicedToArray(_ref, 1);
+
+	  var length = _ref2[0];
+	  return String(value).length >= length;
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 54 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	exports.default = function (value, _ref) {
+	  var _ref2 = _slicedToArray(_ref, 1);
+
+	  var length = _ref2[0];
+	  return String(value).length <= length;
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 55 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (value, options) {
+	  return !options.filter(function (option) {
+	    return option == value;
+	  }).length;
+	}; // eslint-disable-line
+
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 56 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (value) {
+	  return !!value.match(/^[a-zA-Z ]*$/);
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 57 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (value) {
+	  return !!value.match(/^[a-zA-Z0-9 ]*$/);
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 58 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (value) {
+	  return !!value.match(/^[a-zA-Z0-9 _-]*$/);
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 59 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (value) {
+	  return !!String(value).match(/^[0-9]*$/);
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 60 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
+
+	exports.default = function (value, _ref) {
+	  var _ref2 = _toArray(_ref);
+
+	  var regex = _ref2[0];
+
+	  var flags = _ref2.slice(1);
+
+	  return !!String(value).match(new RegExp(regex, flags));
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 61 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	// TODO: Maybe add ipv6 flag?
+	// eslint-disable-next-line
+	exports.default = function (value) {
+	  return !!value.match(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 62 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (files, extensions) {
+	    var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
+	    for (var i = 0; i < files.length; i++) {
+	        if (!files[i].name.match(regex)) {
+	            return false;
+	        }
+	    }
+
+	    return true;
+	};
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 63 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (files, mimes) {
+	    var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
+	    for (var i = 0; i < files.length; i++) {
+	        if (!files[i].type.match(regex)) {
+	            return false;
+	        }
+	    }
+
+	    return true;
+	};
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 64 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	exports.default = function (files, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 1);
+
+	    var size = _ref2[0];
+
+	    if (isNaN(size)) {
+	        return false;
+	    }
+
+	    var nSize = Number(size) * 1024;
+	    for (var i = 0; i < files.length; i++) {
+	        if (files[i].size > nSize) {
+	            return false;
+	        }
+	    }
+
+	    return true;
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
 /* 65 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div id=\"layout\" v-el:layout>\n    <!-- Menu toggle -->\n    <a href=\"#menu\" id=\"menuLink\" class=\"menu-link\" v-el:menuLink>\n        <!-- Hamburger icon -->\n        <span></span>\n    </a>\n\n    <div id=\"menu\" v-el:menu>\n        <div class=\"pure-menu\">\n            <a href=\"/\" class=\"pure-menu-heading\">Vue Validation</a>\n            <ul class=\"pure-menu-list\">\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#installation\" class=\"pure-menu-link\">Installation</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#basic-example\" class=\"pure-menu-link\">Basic Example</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#render-errors\" class=\"pure-menu-link\">Rendering Errors</a>\n                </li>\n            </ul>\n        </div>\n    </div>\n\n    <div id=\"main\">\n        <div class=\"header\">\n            <h1>{{ heading }}</h1>\n            <h2>{{ subtitle }}</h2>\n        </div>\n        <div class=\"content\">\n            <slot></slot>\n        </div>\n    </div>\n</div>\n";
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	exports.default = function (value, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 1);
+
+	    var length = _ref2[0];
+
+	    var strVal = String(value);
+
+	    return !!(strVal.match(/^[0-9]*$/) && strVal.length === Number(length));
+	};
+
+	module.exports = exports["default"];
 
 /***/ },
 /* 66 */
 /***/ function(module, exports) {
 
-	// removed by extract-text-webpack-plugin
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (files) {
+	    for (var i = 0; i < files.length; i++) {
+	        if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+	            return false;
+	        }
+	    }
+
+	    return true;
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 67 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	var validateImage = function validateImage(file, width, height) {
+	    var URL = window.URL || window.webkitURL;
+	    return new Promise(function (resolve) {
+	        var image = new Image();
+	        image.onerror = function () {
+	            return resolve({ name: file.name, valid: false });
+	        };
+
+	        image.onload = function () {
+	            var valid = true;
+
+	            // Validate exact dimensions.
+	            valid = image.width === Number(width) && image.height === Number(height);
+
+	            resolve({
+	                name: file.name,
+	                valid: valid
+	            });
+	        };
+
+	        image.src = URL.createObjectURL(file);
+	    });
+	};
+
+	exports.default = function (files, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 2);
+
+	    var width = _ref2[0];
+	    var height = _ref2[1];
+
+	    var list = [];
+	    for (var i = 0; i < files.length; i++) {
+	        // if file is not an image, reject.
+	        if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+	            return false;
+	        }
+
+	        list.push(files[i]);
+	    }
+
+	    return Promise.all(list.map(function (file) {
+	        return validateImage(file, width, height);
+	    }));
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 68 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	exports.default = function (value, _ref) {
+	  var _ref2 = _slicedToArray(_ref, 2);
+
+	  var min = _ref2[0];
+	  var max = _ref2[1];
+	  return Number(min) <= value && Number(max) >= value;
+	};
+
+	module.exports = exports["default"];
+
+/***/ },
+/* 69 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	exports.default = function (value, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 1);
+
+	    var confirmedField = _ref2[0];
+
+	    var field = document.querySelector("input[name='" + confirmedField + "']");
+
+	    return !!(field && String(value) === field.value);
+	};
+
+	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);
