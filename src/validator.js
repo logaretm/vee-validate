@@ -11,10 +11,21 @@ export default class Validator
         this.errorBag = new ErrorBag();
     }
 
+    /**
+     * Sets the validator current langauge.
+     *
+     * @param {string} language locale or language id.
+     */
     setLocale(language) {
         this.locale = language;
     }
 
+    /**
+     * Registers a field to be validated.
+     *
+     * @param  {string} name The field name.
+     * @param  {string} checks validations expression.
+     */
     attach(name, checks) {
         this.validations[name] = [];
         this.errorBag.remove(name);
@@ -24,6 +35,11 @@ export default class Validator
         });
     }
 
+    /**
+     * Updates the messages dicitionary, overwriting existing values and adding new ones.
+     *
+     * @param  {object} messages The messages object.
+=     */
     static updateDictionary(messages) {
         Object.keys(messages).forEach(locale => {
             if (! Messages[locale]) {
@@ -36,28 +52,34 @@ export default class Validator
         });
     }
 
-    updateDictionary(messages) {
-        Validator.updateDictionary(messages);
-    }
-
-    detach(name) {
-        delete this.validations[name];
-    }
-
+    /**
+     * Static constructor.
+     *
+     * @param  {object} validations The validations object.
+     * @return {Validator} validator A validator object.
+     */
     static create(validations) {
         return new Validator(validations);
     }
 
-    extend(name, validator) {
-        Validator.extend(name, validator);
-    }
-
+    /**
+     * Adds a custom validator to the list of validation rules.
+     *
+     * @param  {string} name The name of the validator.
+     * @param  {object|function} validator The validator object/function.
+     */
     static extend(name, validator) {
         Validator.guardExtend(name, validator);
 
         Validator.merge(name, validator);
     }
 
+    /**
+     * Merges a validator object into the Rules and Messages.
+     *
+     * @param  {string} name The name of the validator.
+     * @param  {function|object} validator The validator object.
+     */
     static merge(name, validator) {
         if (typeof validator === 'function') {
             Rules[name] = validator;
@@ -84,6 +106,7 @@ export default class Validator
 
     /**
      * Guards from extnsion violations.
+     *
      * @param  {string} name name of the validation rule.
      * @param  {object} validator a validation rule object.
      */
@@ -113,6 +136,40 @@ export default class Validator
         }
     }
 
+    /**
+     * Updates the messages dicitionary, overwriting existing values and adding new ones.
+     *
+     * @param  {object} messages The messages object.
+     */
+    updateDictionary(messages) {
+        Validator.updateDictionary(messages);
+    }
+
+    /**
+     * Removes a field from the validator.
+     *
+     * @param  {string} name The name of the field.
+     */
+    detach(name) {
+        delete this.validations[name];
+    }
+
+    /**
+     * Adds a custom validator to the list of validation rules.
+     *
+     * @param  {string} name The name of the validator.
+     * @param  {object|function} validator The validator object/function.
+     */
+    extend(name, validator) {
+        Validator.extend(name, validator);
+    }
+
+    /**
+     * Validates each value against the corresponding field validations.
+     * @param  {object} values The values to be validated.
+     * @return {boolean|Promise} result Returns a boolean or a promise that will
+     * resolve to a boolean.
+     */
     validateAll(values) {
         let test = true;
         this.errorBag.clear();
@@ -123,6 +180,14 @@ export default class Validator
         return test;
     }
 
+    /**
+     * Validates a value against a registered field validations.
+     *
+     * @param  {string} name the field name.
+     * @param  {*} value The value to be validated.
+     * @return {boolean|Promise} result returns a boolean or a promise that will resolve to
+     *  a boolean.
+     */
     validate(name, value) {
         let test = true;
         this.errorBag.remove(name);
@@ -135,6 +200,7 @@ export default class Validator
 
     /**
      * Normalizes the validations object.
+     *
      * @param  {object} validations
      * @return {object} Normalized object.
      */
@@ -157,6 +223,12 @@ export default class Validator
         return normalized;
     }
 
+    /**
+     * Normalizes a single validation object.
+     *
+     * @param  {string} rule The rule to be normalized.
+     * @return {object} rule The normalized rule.
+     */
     normalizeRule(rule) {
         let params = null;
         if (~rule.indexOf(':')) {
@@ -169,6 +241,13 @@ export default class Validator
         };
     }
 
+    /**
+     * Formats an error message for field and a rule.
+     *
+     * @param  {string} field The field name.
+     * @param  {object} rule Normalized rule object.
+     * @return {string} msg Formatted error message.
+     */
     formatErrorMessage(field, rule) {
         if (! Messages[this.locale] || typeof Messages[this.locale][rule.name] !== 'function') {
             // Default to english message.
@@ -179,7 +258,7 @@ export default class Validator
     }
 
     /**
-     * test a single input value against a rule.
+     * Tests a single input value against a rule.
      *
      * @param  {*} name The name of the field.
      * @param  {*} value  [description]
@@ -211,7 +290,8 @@ export default class Validator
 
     /**
      * Gets the internal errorBag instance.
-     * @return {ErrorBag} The internal error bag object.
+     *
+     * @return {ErrorBag} errorBag The internal error bag object.
      */
     getErrors() {
         return this.errorBag;
