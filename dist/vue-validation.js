@@ -166,11 +166,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.errorBag = new _errorBag2.default();
 	    }
 
+	    /**
+	     * Sets the validator current langauge.
+	     *
+	     * @param {string} language locale or language id.
+	     */
+
+
 	    _createClass(Validator, [{
 	        key: 'setLocale',
 	        value: function setLocale(language) {
 	            this.locale = language;
 	        }
+
+	        /**
+	         * Registers a field to be validated.
+	         *
+	         * @param  {string} name The field name.
+	         * @param  {string} checks validations expression.
+	         */
+
 	    }, {
 	        key: 'attach',
 	        value: function attach(name, checks) {
@@ -183,21 +198,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _this.validations[name].push(_this.normalizeRule(rule));
 	            });
 	        }
+
+	        /**
+	         * Updates the messages dicitionary, overwriting existing values and adding new ones.
+	         *
+	         * @param  {object} messages The messages object.
+	        =     */
+
 	    }, {
 	        key: 'updateDictionary',
+
+
+	        /**
+	         * Updates the messages dicitionary, overwriting existing values and adding new ones.
+	         *
+	         * @param  {object} messages The messages object.
+	         */
 	        value: function updateDictionary(messages) {
 	            Validator.updateDictionary(messages);
 	        }
+
+	        /**
+	         * Removes a field from the validator.
+	         *
+	         * @param  {string} name The name of the field.
+	         */
+
 	    }, {
 	        key: 'detach',
 	        value: function detach(name) {
 	            delete this.validations[name];
 	        }
+
+	        /**
+	         * Adds a custom validator to the list of validation rules.
+	         *
+	         * @param  {string} name The name of the validator.
+	         * @param  {object|function} validator The validator object/function.
+	         */
+
 	    }, {
 	        key: 'extend',
 	        value: function extend(name, validator) {
 	            Validator.extend(name, validator);
 	        }
+
+	        /**
+	         * Validates each value against the corresponding field validations.
+	         * @param  {object} values The values to be validated.
+	         * @return {boolean|Promise} result Returns a boolean or a promise that will
+	         * resolve to a boolean.
+	         */
+
 	    }, {
 	        key: 'validateAll',
 	        value: function validateAll(values) {
@@ -211,6 +263,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            return test;
 	        }
+
+	        /**
+	         * Validates a value against a registered field validations.
+	         *
+	         * @param  {string} name the field name.
+	         * @param  {*} value The value to be validated.
+	         * @return {boolean|Promise} result returns a boolean or a promise that will resolve to
+	         *  a boolean.
+	         */
+
 	    }, {
 	        key: 'validate',
 	        value: function validate(name, value) {
@@ -227,6 +289,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Normalizes the validations object.
+	         *
 	         * @param  {object} validations
 	         * @return {object} Normalized object.
 	         */
@@ -253,6 +316,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            return normalized;
 	        }
+
+	        /**
+	         * Normalizes a single validation object.
+	         *
+	         * @param  {string} rule The rule to be normalized.
+	         * @return {object} rule The normalized rule.
+	         */
+
 	    }, {
 	        key: 'normalizeRule',
 	        value: function normalizeRule(rule) {
@@ -266,6 +337,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                params: params
 	            };
 	        }
+
+	        /**
+	         * Formats an error message for field and a rule.
+	         *
+	         * @param  {string} field The field name.
+	         * @param  {object} rule Normalized rule object.
+	         * @return {string} msg Formatted error message.
+	         */
+
 	    }, {
 	        key: 'formatErrorMessage',
 	        value: function formatErrorMessage(field, rule) {
@@ -278,7 +358,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
-	         * test a single input value against a rule.
+	         * Tests a single input value against a rule.
 	         *
 	         * @param  {*} name The name of the field.
 	         * @param  {*} value  [description]
@@ -317,7 +397,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Gets the internal errorBag instance.
-	         * @return {ErrorBag} The internal error bag object.
+	         *
+	         * @return {ErrorBag} errorBag The internal error bag object.
 	         */
 
 	    }, {
@@ -338,11 +419,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	                });
 	            });
 	        }
+
+	        /**
+	         * Static constructor.
+	         *
+	         * @param  {object} validations The validations object.
+	         * @return {Validator} validator A validator object.
+	         */
+
 	    }, {
 	        key: 'create',
 	        value: function create(validations) {
 	            return new Validator(validations);
 	        }
+
+	        /**
+	         * Adds a custom validator to the list of validation rules.
+	         *
+	         * @param  {string} name The name of the validator.
+	         * @param  {object|function} validator The validator object/function.
+	         */
+
 	    }, {
 	        key: 'extend',
 	        value: function extend(name, validator) {
@@ -350,6 +447,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            Validator.merge(name, validator);
 	        }
+
+	        /**
+	         * Merges a validator object into the Rules and Messages.
+	         *
+	         * @param  {string} name The name of the validator.
+	         * @param  {function|object} validator The validator object.
+	         */
+
 	    }, {
 	        key: 'merge',
 	        value: function merge(name, validator) {
@@ -380,6 +485,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Guards from extnsion violations.
+	         *
 	         * @param  {string} name name of the validation rule.
 	         * @param  {object} validator a validation rule object.
 	         */
@@ -1009,6 +1115,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.errors = [];
 	    }
 
+	    /**
+	     * Adds an error to the internal array.
+	     *
+	     * @param {string} field The field name.
+	     * @param {string} msg The error message.
+	     */
+
+
 	    _createClass(ErrorBag, [{
 	        key: "add",
 	        value: function add(field, msg) {
@@ -1017,29 +1131,67 @@ return /******/ (function(modules) { // webpackBootstrap
 	                msg: msg
 	            });
 	        }
+
+	        /**
+	         * Gets all error messages from the internal array.
+	         *
+	         * @return {Array} errors Array of all error messages.
+	         */
+
 	    }, {
-	        key: "remove",
-	        value: function remove(field) {
-	            this.errors = this.errors.filter(function (e) {
-	                return e.field !== field;
+	        key: "all",
+	        value: function all() {
+	            return this.errors.map(function (e) {
+	                return e.msg;
 	            });
 	        }
-	    }, {
-	        key: "has",
-	        value: function has(field) {
-	            for (var i = 0; i < this.errors.length; i++) {
-	                if (this.errors[i].field === field) {
-	                    return true;
-	                }
-	            }
 
-	            return false;
-	        }
+	        /**
+	         * Removes all items from the internal array.
+	         */
+
 	    }, {
 	        key: "clear",
 	        value: function clear() {
 	            this.errors = [];
 	        }
+
+	        /**
+	         * Groups the errors for a specific field into a single array.
+	         *
+	         * @param  {string} field The field name.
+	         * @return {Array} errors The errors for the specified field.
+	         */
+
+	    }, {
+	        key: "collect",
+	        value: function collect(field) {
+	            return this.errors.filter(function (e) {
+	                return e.field === field;
+	            }).map(function (e) {
+	                return e.msg;
+	            });
+	        }
+
+	        /**
+	         * Gets the internal array length.
+	         *
+	         * @return {Number} length The internal array length.
+	         */
+
+	    }, {
+	        key: "count",
+	        value: function count() {
+	            return this.errors.length;
+	        }
+
+	        /**
+	         * Gets the first error message for a specific field.
+	         *
+	         * @param  {string} field The field name.
+	         * @return {string|null} message The error message.
+	         */
+
 	    }, {
 	        key: "first",
 	        value: function first(field) {
@@ -1051,26 +1203,38 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            return null;
 	        }
+
+	        /**
+	         * Checks if the internal array has at least one error for the specified field.
+	         *
+	         * @param  {string} field The specified field.
+	         * @return {Boolean} result True if at least one error is found, false otherwise.
+	         */
+
 	    }, {
-	        key: "collect",
-	        value: function collect(field) {
-	            return this.errors.filter(function (e) {
-	                return e.field === field;
-	            }).map(function (e) {
-	                return e.msg;
-	            });
+	        key: "has",
+	        value: function has(field) {
+	            for (var i = 0; i < this.errors.length; i++) {
+	                if (this.errors[i].field === field) {
+	                    return true;
+	                }
+	            }
+
+	            return false;
 	        }
+
+	        /**
+	         * Removes all error messages assoicated with a specific field.
+	         *
+	         * @param  {string} field The field which messages are to be removed.
+	         */
+
 	    }, {
-	        key: "all",
-	        value: function all() {
-	            return this.errors.map(function (e) {
-	                return e.msg;
+	        key: "remove",
+	        value: function remove(field) {
+	            this.errors = this.errors.filter(function (e) {
+	                return e.field !== field;
 	            });
-	        }
-	    }, {
-	        key: "count",
-	        value: function count() {
-	            return this.errors.length;
 	        }
 	    }]);
 
