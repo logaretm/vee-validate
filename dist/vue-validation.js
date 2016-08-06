@@ -65,7 +65,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _debouncer = __webpack_require__(25);
+	var _debouncer = __webpack_require__(28);
 
 	var _debouncer2 = _interopRequireDefault(_debouncer);
 
@@ -133,6 +133,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _rules = __webpack_require__(2);
@@ -147,6 +149,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _validatorException2 = _interopRequireDefault(_validatorException);
 
+	var _messages = __webpack_require__(25);
+
+	var _messages2 = _interopRequireDefault(_messages);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -155,12 +161,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Validator(validations) {
 	        _classCallCheck(this, Validator);
 
+	        this.locale = 'en';
 	        this.validations = this.normalize(validations);
 	        this.errorBag = new _errorBag2.default();
-	        this.rules = _rules2.default;
 	    }
 
 	    _createClass(Validator, [{
+	        key: 'setLocale',
+	        value: function setLocale(language) {
+	            this.locale = language;
+	        }
+	    }, {
 	        key: 'attach',
 	        value: function attach(name, checks) {
 	            var _this = this;
@@ -182,11 +193,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function extend(name, validator) {
 	            Validator.guardExtend(name, validator);
 
-	            if (this.rules[name]) {
-	                throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
-	            }
-
-	            this.rules[name] = validator;
+	            Validator.merge(name, validator);
 	        }
 	    }, {
 	        key: 'validateAll',
@@ -256,6 +263,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                params: params
 	            };
 	        }
+	    }, {
+	        key: 'formatErrorMessage',
+	        value: function formatErrorMessage(field, rule) {
+	            if (!_messages2.default[this.locale]) {
+	                // Default to english message.
+	                return _messages2.default.en[rule.name](field, rule.params);
+	            }
+
+	            return _messages2.default[this.locale][rule.name](field, rule.params);
+	        }
 
 	        /**
 	         * test a single input value against a rule.
@@ -271,8 +288,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function test(name, value, rule) {
 	            var _this5 = this;
 
-	            var validator = this.rules[rule.name];
-	            var valid = validator.validate(value, rule.params);
+	            var validator = _rules2.default[rule.name];
+	            var valid = validator(value, rule.params);
 
 	            if (valid instanceof Promise) {
 	                return valid.then(function (values) {
@@ -281,7 +298,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }, true);
 
 	                    if (!allValid) {
-	                        _this5.errorBag.add(name, validator.msg(name, rule.params));
+	                        _this5.errorBag.add(name, _this5.formatErrorMessage(name, rule));
 	                    }
 
 	                    return allValid;
@@ -289,7 +306,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            if (!valid) {
-	                this.errorBag.add(name, validator.msg(name, rule.params));
+	                this.errorBag.add(name, this.formatErrorMessage(name, rule));
 	            }
 
 	            return valid;
@@ -315,11 +332,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function extend(name, validator) {
 	            Validator.guardExtend(name, validator);
 
-	            if (_rules2.default[name]) {
-	                throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
+	            Validator.merge(name, validator);
+	        }
+	    }, {
+	        key: 'merge',
+	        value: function merge(name, validator) {
+	            if (typeof validator === 'function') {
+	                _rules2.default[name] = validator;
+	                _messages2.default.en[name] = function (field) {
+	                    return 'The ' + field + ' value is not valid.';
+	                };
+	                return;
 	            }
 
-	            _rules2.default[name] = validator;
+	            _rules2.default[name] = validator.validate;
+
+	            if (validator.getMessage && typeof validator.getMessage === 'function') {
+	                _messages2.default.en[name] = validator.getMessage;
+	            }
+
+	            if (validator.messages) {
+	                Object.keys(validator.messages).forEach(function (locale) {
+	                    _messages2.default[locale][name] = validator.messages[locale];
+	                });
+	            }
 	        }
 
 	        /**
@@ -331,17 +367,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'guardExtend',
 	        value: function guardExtend(name, validator) {
-	            if (!(validator.msg || typeof validator.msg === 'function' || validator.validate || typeof validator.validate === 'function')) {
-	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have both \'validate\' and \'msg\' methods.' // eslint-disable-line
-	                );
+	            if (_rules2.default[name]) {
+	                throw new _validatorException2.default('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
 	            }
 
-	            if (!validator.validate && typeof validator.validate !== 'function') {
-	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'validate\' method.');
+	            if (typeof validator === 'function') {
+	                return;
 	            }
 
-	            if (!validator.msg && typeof validator.msg !== 'function') {
-	                throw new _validatorException2.default('Extension Error: The ' + name + ' validator must have a \'msg\' method.');
+	            if (typeof validator.validate !== 'function') {
+	                throw new _validatorException2.default(
+	                // eslint-disable-next-line
+	                'Extension Error: The validator \'' + name + '\' must be a function or have a \'validate\' method.');
+	            }
+
+	            if (typeof validator.getMessage !== 'function' && _typeof(validator.messages) !== 'object') {
+	                throw new _validatorException2.default(
+	                // eslint-disable-next-line
+	                'Extension Error: The validator \'' + name + '\' must have a \'getMessage\' method or have a \'messages\' object.');
 	            }
 	        }
 	    }]);
@@ -480,16 +523,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " must be a valid email.";
-	    },
-	    validate: function validate(value) {
-	        return !!value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/);
-	    }
+
+	exports.default = function (value) {
+	  return !!value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/);
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -499,18 +539,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " must be a valid value.";
-	    },
-	    validate: function validate(value, options) {
-	        return !!options.filter(function (option) {
-	            return option == value;
-	        }).length; // eslint-disable-line
-	    }
-	};
+
+	exports.default = function (value, options) {
+	  return !!options.filter(function (option) {
+	    return option == value;
+	  }).length;
+	}; // eslint-disable-line
+
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -522,18 +560,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " is required.";
-	    },
-	    validate: function validate(value) {
-	        if (Array.isArray(value)) {
-	            return !!value.length;
-	        }
 
-	        return !!String(value).length;
+	exports.default = function (value) {
+	    if (Array.isArray(value)) {
+	        return !!value.length;
 	    }
+
+	    return !!String(value).length;
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -543,27 +578,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	exports.default = {
-	    msg: function msg(name, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 1);
+	exports.default = function (value, _ref) {
+	  var _ref2 = _slicedToArray(_ref, 1);
 
-	        var length = _ref2[0];
-
-	        return "The " + name + " must be at least " + length + " characters.";
-	    },
-	    validate: function validate(value, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
-
-	        var length = _ref4[0];
-
-	        return String(value).length >= length;
-	    }
+	  var length = _ref2[0];
+	  return String(value).length >= length;
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -573,27 +599,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	exports.default = {
-	    msg: function msg(name, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 1);
+	exports.default = function (value, _ref) {
+	  var _ref2 = _slicedToArray(_ref, 1);
 
-	        var length = _ref2[0];
-
-	        return "The " + name + " may not be greater than " + length + " characters.";
-	    },
-	    validate: function validate(value, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
-
-	        var length = _ref4[0];
-
-	        return String(value).length <= length;
-	    }
+	  var length = _ref2[0];
+	  return String(value).length <= length;
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -603,18 +620,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " must be a valid value.";
-	    },
-	    validate: function validate(value, options) {
-	        return !options.filter(function (option) {
-	            return option == value;
-	        }).length; // eslint-disable-line
-	    }
-	};
+
+	exports.default = function (value, options) {
+	  return !options.filter(function (option) {
+	    return option == value;
+	  }).length;
+	}; // eslint-disable-line
+
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -624,16 +639,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " may only contain alphabetic characters and spaces.";
-	    },
-	    validate: function validate(value) {
-	        return !!value.match(/^[a-zA-Z ]*$/);
-	    }
+
+	exports.default = function (value) {
+	  return !!value.match(/^[a-zA-Z ]*$/);
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -643,16 +655,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " may only contain alpha-numeric characters and spaces.";
-	    },
-	    validate: function validate(value) {
-	        return !!value.match(/^[a-zA-Z0-9 ]*$/);
-	    }
+
+	exports.default = function (value) {
+	  return !!value.match(/^[a-zA-Z0-9 ]*$/);
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -662,16 +671,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " may contain alpha-numeric characters well as spaces, dashes and underscores.";
-	    },
-	    validate: function validate(value) {
-	        return !!value.match(/^[a-zA-Z0-9 _-]*$/);
-	    }
+
+	exports.default = function (value) {
+	  return !!value.match(/^[a-zA-Z0-9 _-]*$/);
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -681,16 +687,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " may only contain numeric characters.";
-	    },
-	    validate: function validate(value) {
-	        return !!String(value).match(/^[0-9]*$/);
-	    }
+
+	exports.default = function (value) {
+	  return !!String(value).match(/^[0-9]*$/);
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -700,25 +703,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 
 	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " format is invalid.";
-	    },
-	    validate: function validate(value, _ref) {
-	        var _ref2 = _toArray(_ref);
+	exports.default = function (value, _ref) {
+	  var _ref2 = _toArray(_ref);
 
-	        var regex = _ref2[0];
+	  var regex = _ref2[0];
 
-	        var flags = _ref2.slice(1);
+	  var flags = _ref2.slice(1);
 
-	        return !!String(value).match(new RegExp(regex, flags));
-	    }
+	  return !!String(value).match(new RegExp(regex, flags));
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -728,18 +727,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " must be a valid ip address.";
-	    },
 
-	    // TODO: Maybe add an ipv6 flag?
-	    validate: function validate(value) {
-	        return !!value.match(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
-	    }
+	// TODO: Maybe add ipv6 flag?
+	// eslint-disable-next-line
+	exports.default = function (value) {
+	  return !!value.match(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -751,21 +747,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return 'The ' + name + ' must be a valid file.';
-	    },
-	    validate: function validate(files, extensions) {
-	        var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
-	        for (var i = 0; i < files.length; i++) {
-	            if (!files[i].name.match(regex)) {
-	                return false;
-	            }
-	        }
 
-	        return true;
+	exports.default = function (files, extensions) {
+	    var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
+	    for (var i = 0; i < files.length; i++) {
+	        if (!files[i].name.match(regex)) {
+	            return false;
+	        }
 	    }
+
+	    return true;
 	};
+
 	module.exports = exports['default'];
 
 /***/ },
@@ -777,21 +770,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return 'The ' + name + ' must be a valid file.';
-	    },
-	    validate: function validate(files, mimes) {
-	        var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
-	        for (var i = 0; i < files.length; i++) {
-	            if (!files[i].type.match(regex)) {
-	                return false;
-	            }
-	        }
 
-	        return true;
+	exports.default = function (files, mimes) {
+	    var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
+	    for (var i = 0; i < files.length; i++) {
+	        if (!files[i].type.match(regex)) {
+	            return false;
+	        }
 	    }
+
+	    return true;
 	};
+
 	module.exports = exports['default'];
 
 /***/ },
@@ -806,33 +796,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	exports.default = {
-	    msg: function msg(name, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 1);
+	exports.default = function (files, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 1);
 
-	        var size = _ref2[0];
+	    var size = _ref2[0];
 
-	        return "The " + name + " must be less than " + size + " KB.";
-	    },
-	    validate: function validate(files, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
+	    if (isNaN(size)) {
+	        return false;
+	    }
 
-	        var size = _ref4[0];
-
-	        if (isNaN(size)) {
+	    var nSize = Number(size) * 1024;
+	    for (var i = 0; i < files.length; i++) {
+	        if (files[i].size > nSize) {
 	            return false;
 	        }
-
-	        var nSize = Number(size) * 1024;
-	        for (var i = 0; i < files.length; i++) {
-	            if (files[i].size > nSize) {
-	                return false;
-	            }
-	        }
-
-	        return true;
 	    }
+
+	    return true;
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -847,24 +829,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	exports.default = {
-	    msg: function msg(name, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 1);
+	exports.default = function (value, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 1);
 
-	        var length = _ref2[0];
+	    var length = _ref2[0];
 
-	        return "The " + name + " must be numeric and exactly contain " + length + " digits.";
-	    },
-	    validate: function validate(value, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
+	    var strVal = String(value);
 
-	        var length = _ref4[0];
-
-	        var strVal = String(value);
-
-	        return !!(strVal.match(/^[0-9]*$/) && strVal.length === Number(length));
-	    }
+	    return !!(strVal.match(/^[0-9]*$/) && strVal.length === Number(length));
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -876,20 +850,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.default = {
-	    msg: function msg(name) {
-	        return "The " + name + " must be an image.";
-	    },
-	    validate: function validate(files) {
-	        for (var i = 0; i < files.length; i++) {
-	            if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
-	                return false;
-	            }
-	        }
 
-	        return true;
+	exports.default = function (files) {
+	    for (var i = 0; i < files.length; i++) {
+	        if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+	            return false;
+	        }
 	    }
+
+	    return true;
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -904,61 +875,51 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	exports.default = {
-	    msg: function msg(field, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 2);
+	var validateImage = function validateImage(file, width, height) {
+	    var URL = window.URL || window.webkitURL;
+	    return new Promise(function (resolve) {
+	        var image = new Image();
+	        image.onerror = function () {
+	            return resolve({ name: file.name, valid: false });
+	        };
 
-	        var width = _ref2[0];
-	        var height = _ref2[1];
+	        image.onload = function () {
+	            var valid = true;
 
-	        return "The " + field + " must be " + width + " pixels by " + height + " pixels.";
-	    },
-	    validateImage: function validateImage(file, width, height) {
-	        var URL = window.URL || window.webkitURL;
-	        return new Promise(function (resolve) {
-	            var image = new Image();
-	            image.onerror = function () {
-	                return resolve({ name: file.name, valid: false });
-	            };
+	            // Validate exact dimensions.
+	            valid = image.width === Number(width) && image.height === Number(height);
 
-	            image.onload = function () {
-	                var valid = true;
+	            resolve({
+	                name: file.name,
+	                valid: valid
+	            });
+	        };
 
-	                // Validate exact dimensions.
-	                valid = image.width === Number(width) && image.height === Number(height);
+	        image.src = URL.createObjectURL(file);
+	    });
+	};
 
-	                resolve({
-	                    name: file.name,
-	                    valid: valid
-	                });
-	            };
+	exports.default = function (files, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 2);
 
-	            image.src = URL.createObjectURL(file);
-	        });
-	    },
-	    validate: function validate(files, _ref3) {
-	        var _this = this;
+	    var width = _ref2[0];
+	    var height = _ref2[1];
 
-	        var _ref4 = _slicedToArray(_ref3, 2);
-
-	        var width = _ref4[0];
-	        var height = _ref4[1];
-
-	        var list = [];
-	        for (var i = 0; i < files.length; i++) {
-	            // if file is not an image, reject.
-	            if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
-	                return false;
-	            }
-
-	            list.push(files[i]);
+	    var list = [];
+	    for (var i = 0; i < files.length; i++) {
+	        // if file is not an image, reject.
+	        if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+	            return false;
 	        }
 
-	        return Promise.all(list.map(function (file) {
-	            return _this.validateImage(file, width, height);
-	        }));
+	        list.push(files[i]);
 	    }
+
+	    return Promise.all(list.map(function (file) {
+	        return validateImage(file, width, height);
+	    }));
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -968,29 +929,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	exports.default = {
-	    msg: function msg(field, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 2);
+	exports.default = function (value, _ref) {
+	  var _ref2 = _slicedToArray(_ref, 2);
 
-	        var min = _ref2[0];
-	        var max = _ref2[1];
-
-	        return "The " + field + " must be between " + min + " and " + max + ".";
-	    },
-	    validate: function validate(value, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 2);
-
-	        var min = _ref4[0];
-	        var max = _ref4[1];
-
-	        return Number(min) <= value && Number(max) >= value;
-	    }
+	  var min = _ref2[0];
+	  var max = _ref2[1];
+	  return Number(min) <= value && Number(max) >= value;
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -1005,24 +956,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	exports.default = {
-	    msg: function msg(field, _ref) {
-	        var _ref2 = _slicedToArray(_ref, 1);
+	exports.default = function (value, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 1);
 
-	        var confirmedField = _ref2[0];
+	    var confirmedField = _ref2[0];
 
-	        return "The " + field + " does not match the " + confirmedField + ".";
-	    },
-	    validate: function validate(value, _ref3) {
-	        var _ref4 = _slicedToArray(_ref3, 1);
+	    var field = document.querySelector("input[name='" + confirmedField + "']");
 
-	        var confirmedField = _ref4[0];
-
-	        var field = document.querySelector("input[name='" + confirmedField + "']");
-
-	        return !!(field && String(value) === field.value);
-	    }
+	    return !!(field && String(value) === field.value);
 	};
+
 	module.exports = exports["default"];
 
 /***/ },
@@ -1153,6 +1096,230 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _en = __webpack_require__(26);
+
+	var _en2 = _interopRequireDefault(_en);
+
+	var _ar = __webpack_require__(27);
+
+	var _ar2 = _interopRequireDefault(_ar);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = {
+	    en: _en2.default,
+	    ar: _ar2.default
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 26 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	exports.default = {
+	    alpha_dash: function alpha_dash(field) {
+	        return "The " + field + " may contain alpha-numeric characters well as spaces, dashes and underscores.";
+	    },
+	    alpha_num: function alpha_num(field) {
+	        return "The " + field + " may only contain alpha-numeric characters and spaces.";
+	    },
+	    alpha: function alpha(field) {
+	        return "The " + field + " may only contain alphabetic characters and spaces.";
+	    },
+	    between: function between(field, _ref) {
+	        var _ref2 = _slicedToArray(_ref, 2);
+
+	        var min = _ref2[0];
+	        var max = _ref2[1];
+	        return "The " + field + " must be between " + min + " and " + max + ".";
+	    },
+	    confirmed: function confirmed(field, _ref3) {
+	        var _ref4 = _slicedToArray(_ref3, 1);
+
+	        var confirmedField = _ref4[0];
+	        return "The " + field + " does not match the " + confirmedField + ".";
+	    },
+	    digits: function digits(field, _ref5) {
+	        var _ref6 = _slicedToArray(_ref5, 1);
+
+	        var length = _ref6[0];
+	        return "The " + field + " must be numeric and exactly contain " + length + " digits.";
+	    },
+	    dimensions: function dimensions(field, _ref7) {
+	        var _ref8 = _slicedToArray(_ref7, 2);
+
+	        var width = _ref8[0];
+	        var height = _ref8[1];
+	        return "The " + field + " must be " + width + " pixels by " + height + " pixels.";
+	    },
+	    email: function email(field) {
+	        return "The " + field + " must be a valid email.";
+	    },
+	    ext: function ext(field) {
+	        return "The " + field + " must be a valid file.";
+	    },
+	    image: function image(field) {
+	        return "The " + field + " must be an image.";
+	    },
+	    in: function _in(field) {
+	        return "The " + field + " must be a valid value.";
+	    },
+	    ip: function ip(field) {
+	        return "The " + field + " must be a valid ip address.";
+	    },
+	    max: function max(field, _ref9) {
+	        var _ref10 = _slicedToArray(_ref9, 1);
+
+	        var length = _ref10[0];
+	        return "The " + field + " may not be greater than " + length + " characters.";
+	    },
+	    mimes: function mimes(field) {
+	        return "The " + field + " must have a valid file type.";
+	    },
+	    min: function min(field, _ref11) {
+	        var _ref12 = _slicedToArray(_ref11, 1);
+
+	        var length = _ref12[0];
+	        return "The " + field + " must be at least " + length + " characters.";
+	    },
+	    not_in: function not_in(field) {
+	        return "The " + field + " must be a valid value.";
+	    },
+	    numeric: function numeric(field) {
+	        return "The " + field + " may only contain numeric characters.";
+	    },
+	    regex: function regex(field) {
+	        return "The " + field + " format is invalid.";
+	    },
+	    required: function required(field) {
+	        return "The " + field + " is required.";
+	    },
+	    size: function size(field, _ref13) {
+	        var _ref14 = _slicedToArray(_ref13, 1);
+
+	        var _size = _ref14[0];
+	        return "The " + field + " must be less than " + _size + " KB.";
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 27 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	exports.default = {
+	    alpha_dash: function alpha_dash(field) {
+	        return field + " قد يحتوي فقط على حروف او ارقام او مسافات او - او _";
+	    },
+	    alpha_num: function alpha_num(field) {
+	        return field + " قد يحتوي فقط على حروف او ارقام او مسافات.";
+	    },
+	    alpha: function alpha(field) {
+	        return field + " يجب ان يحتوي على حروف فقط.";
+	    },
+	    between: function between(field, _ref) {
+	        var _ref2 = _slicedToArray(_ref, 2);
+
+	        var min = _ref2[0];
+	        var max = _ref2[1];
+	        return "قيمة " + field + " يجب ان تكون ما بين " + min + " و " + max + ".";
+	    },
+	    confirmed: function confirmed(field, _ref3) {
+	        var _ref4 = _slicedToArray(_ref3, 1);
+
+	        var confirmedField = _ref4[0];
+	        return field + " لا يماثل التأكيد.";
+	    },
+	    digits: function digits(field, _ref5) {
+	        var _ref6 = _slicedToArray(_ref5, 1);
+
+	        var length = _ref6[0];
+	        return field + " يجب ان تحتوي فقط على ارقام والا يزيد عددها عن " + length + " رقم.";
+	    },
+	    dimensions: function dimensions(field, _ref7) {
+	        var _ref8 = _slicedToArray(_ref7, 2);
+
+	        var width = _ref8[0];
+	        var height = _ref8[1];
+	        return field + " يجب ان تكون بمقاس " + width + " بكسل في " + height + " بكسل.";
+	    },
+	    email: function email(field) {
+	        return field + " يجب ان يكون بريدا اليكتروني صحيح.";
+	    },
+	    ext: function ext(field) {
+	        return "نوع ملف " + field + " غير صحيح.";
+	    },
+	    image: function image(field) {
+	        return field + " يجب ان تكون صورة.";
+	    },
+	    in: function _in(field) {
+	        return "الحقل " + field + " يجب ان يكون قيمة صحيحة.";
+	    },
+	    ip: function ip(field) {
+	        return field + " يجب ان يكون ip صحيح.";
+	    },
+	    max: function max(field, _ref9) {
+	        var _ref10 = _slicedToArray(_ref9, 1);
+
+	        var length = _ref10[0];
+	        return "الحقل " + field + " يجب ان يحتوي على " + length + " حروف على الأكثر.";
+	    },
+	    mimes: function mimes(field) {
+	        return "نوع ملف " + field + " غير صحيح.";
+	    },
+	    min: function min(field, _ref11) {
+	        var _ref12 = _slicedToArray(_ref11, 1);
+
+	        var length = _ref12[0];
+	        return "الحقل " + field + " يجب ان يحتوي على " + length + " حروف على الأقل.";
+	    },
+	    not_in: function not_in(field) {
+	        return "الحقل " + field + " غير صحيح.";
+	    },
+	    numeric: function numeric(field) {
+	        return field + " يمكن ان يحتوي فقط على ارقام.";
+	    },
+	    regex: function regex(field) {
+	        return "الحقل " + field + " غير صحيح.";
+	    },
+	    required: function required(field) {
+	        return field + " مطلوب.";
+	    },
+	    size: function size(field, _ref13) {
+	        var _ref14 = _slicedToArray(_ref13, 1);
+
+	        var _size = _ref14[0];
+	        return field + " يجب ان يكون اقل من " + _size + " كيلوبايت.";
+	    }
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 28 */
 /***/ function(module, exports) {
 
 	"use strict";
