@@ -68,7 +68,7 @@ body {
     left: 0;
     bottom: 0;
     z-index: 1000;
-    background: #191818;
+    background: $vue-background;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
@@ -87,12 +87,12 @@ body {
 
 #menu .pure-menu ul,
 #menu .pure-menu .menu-item-divided {
-    border-top: 1px solid #333;
+    border-top: 1px solid $vue-background;
 }
 
 #menu .pure-menu li a:hover,
 #menu .pure-menu li a:focus {
-    background: #333;
+    background: $vue-hover;
 }
 
 #menu .pure-menu-selected,

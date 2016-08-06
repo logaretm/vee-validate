@@ -5134,7 +5134,7 @@ body {
   left: 0;
   bottom: 0;
   z-index: 1000;
-  background: #191818;
+  background: #1b2733;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; }
 
@@ -5150,11 +5150,11 @@ body {
 
 #menu .pure-menu ul,
 #menu .pure-menu .menu-item-divided {
-  border-top: 1px solid #333; }
+  border-top: 1px solid #1b2733; }
 
 #menu .pure-menu li a:hover,
 #menu .pure-menu li a:focus {
-  background: #333; }
+  background: #34495e; }
 
 #menu .pure-menu-selected,
 #menu .pure-menu-heading {
@@ -5334,3 +5334,6 @@ b.important {
 
 .button-error {
   background: #ca3c3c; }
+
+.pure-button-primary {
+  background: #41b883; }
