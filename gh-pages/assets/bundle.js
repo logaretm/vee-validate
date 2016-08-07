@@ -4505,33 +4505,33 @@ var args=toArray(arguments,1);args.unshift(this);if(typeof plugin.install==='fun
    */config._assetTypes.forEach(function(type){Vue[type]=function(id,definition){if(!definition){return this.options[type+'s'][id];}else{/* istanbul ignore if */if(process.env.NODE_ENV!=='production'){if(type==='component'&&(commonTagRE.test(id)||reservedTagRE.test(id))){warn('Do not use built-in or reserved HTML elements as component '+'id: '+id);}}if(type==='component'&&isPlainObject(definition)){if(!definition.name){definition.name=id;}definition=Vue.extend(definition);}this.options[type+'s'][id]=definition;return definition;}};});// expose internal transition API
 extend(Vue.transition,transition);}installGlobalAPI(Vue);Vue.version='1.0.26';// devtools global hook
 /* istanbul ignore next */setTimeout(function(){if(config.devtools){if(devtools){devtools.emit('init',Vue);}else if(process.env.NODE_ENV!=='production'&&inBrowser&&/Chrome\/\d+/.test(window.navigator.userAgent)){console.log('Download the Vue Devtools for a better development experience:\n'+'https://github.com/vuejs/vue-devtools');}}},0);module.exports=Vue;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(17)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(21)))
 
 /***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__in__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__required__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__min__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__max__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__notIn__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__alpha__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__alpha_num__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__alpha_dash__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__numeric__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__regex__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ip__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ext__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__mimes__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__size__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__digits__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__image__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__between__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__confirmed__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__in__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__required__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__min__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__max__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__notIn__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__alpha__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__alpha_num__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__alpha_dash__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__numeric__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__regex__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ip__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ext__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__mimes__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__size__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__digits__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__image__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__between__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__confirmed__ = __webpack_require__(26);
 
 
 
@@ -4611,7 +4611,7 @@ extend(Vue.transition,transition);}installGlobalAPI(Vue);Vue.version='1.0.26';//
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_script__, __vue_template__
-__vue_script__ = __webpack_require__(38)
+__vue_script__ = __webpack_require__(15)
 if (__vue_script__ &&
     __vue_script__.__esModule &&
     Object.keys(__vue_script__).length > 1) {
@@ -4640,7 +4640,7 @@ if (false) {(function () {  module.hot.accept()
 
 var __vue_script__, __vue_template__
 __webpack_require__(43)
-__vue_script__ = __webpack_require__(39)
+__vue_script__ = __webpack_require__(16)
 if (__vue_script__ &&
     __vue_script__.__esModule &&
     Object.keys(__vue_script__).length > 1) {
@@ -4669,7 +4669,7 @@ if (false) {(function () {  module.hot.accept()
 
 var __vue_script__, __vue_template__
 __webpack_require__(42)
-__vue_script__ = __webpack_require__(40)
+__vue_script__ = __webpack_require__(17)
 if (__vue_script__ &&
     __vue_script__.__esModule &&
     Object.keys(__vue_script__).length > 1) {
@@ -4694,6 +4694,181 @@ if (false) {(function () {  module.hot.accept()
 
 /***/ },
 /* 15 */
+/***/ function(module, exports) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: ['heading', 'subtitle', 'selected'],
+
+    ready: function ready() {
+        var layout = this.$els.layout;
+        var menu = this.$els.menu;
+        var menuLink = this.$els.menulink;
+
+        var toggleClass = function toggleClass(element, className) {
+            var classes = element.className.split(/\s+/);
+            var length = classes.length;
+
+            for (var i = 0; i < length; i++) {
+                if (classes[i] === className) {
+                    classes.splice(i, 1);
+                    break;
+                }
+            }
+
+            if (length === classes.length) {
+                classes.push(className);
+            }
+
+            element.className = classes.join(' ');
+        };
+
+        menuLink.onclick = function (e) {
+            var active = 'active';
+
+            e.preventDefault();
+            toggleClass(layout, active);
+            toggleClass(menu, active);
+            toggleClass(menuLink, active);
+        };
+    }
+};
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _prismjs = __webpack_require__(20);
+
+var _prismjs2 = _interopRequireDefault(_prismjs);
+
+__webpack_require__(19);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: ['class'],
+    methods: {
+        removeWhitespace: function removeWhitespace() {
+            var el = this.$els.code;
+            var txt = el.textContent.replace(/^[\r\n]+/, "").replace(/\s+$/g, "");
+
+            if (/^\S/gm.test(txt)) {
+                el.textContent = txt;
+                return;
+            }
+
+            var mat = void 0;
+            var str = void 0;
+            var re = /^[\t ]+/gm;
+            var len = void 0;
+            var min = 1e3;
+
+            while (mat = re.exec(txt)) {
+                len = mat[0].length;
+
+                if (len < min) {
+                    min = len;
+                    str = mat[0];
+                }
+            }
+
+            if (min == 1e3) {
+                return;
+            }
+
+            el.textContent = txt.replace(new RegExp("^" + str, 'gm'), "");
+        }
+    },
+    ready: function ready() {
+        this.removeWhitespace();
+        _prismjs2.default.highlightElement(this.$els.code);
+    }
+};
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    data: function data() {
+        return {
+            content: 'demo'
+        };
+    }
+};
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _vueValidation = __webpack_require__(0);
+
+exports.default = {
+    validator: null,
+    data: function data() {
+        return {
+            email: '',
+            name: '',
+            errors: []
+        };
+    },
+
+    watch: {
+        email: function email(value) {
+            this.validator.validate('email', value);
+        },
+        name: function name(value) {
+            this.validator.validate('name', value);
+        }
+    },
+    methods: {
+        validateForm: function validateForm() {
+            this.validator.validateAll({
+                email: this.email,
+                name: this.name
+            });
+        },
+        clearErrors: function clearErrors() {
+            this.errors.clear();
+        }
+    },
+    ready: function ready() {
+        this.validator = new _vueValidation.Validator({
+            email: 'required|email',
+            name: 'required|alpha|min:3'
+        });
+        this.$set('errors', this.validator.errorBag);
+    }
+};
+
+/***/ },
+/* 19 */
 /***/ function(module, exports) {
 
 (function () {
@@ -4733,7 +4908,7 @@ if (false) {(function () {  module.hot.accept()
 })();
 
 /***/ },
-/* 16 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -5509,7 +5684,7 @@ Prism.languages.js = Prism.languages.javascript;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ },
-/* 17 */
+/* 21 */
 /***/ function(module, exports) {
 
 // shim for using process in browser
@@ -5650,7 +5825,7 @@ process.umask = function () {
 };
 
 /***/ },
-/* 18 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5659,7 +5834,7 @@ process.umask = function () {
 };
 
 /***/ },
-/* 19 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5668,7 +5843,7 @@ process.umask = function () {
 };
 
 /***/ },
-/* 20 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5677,7 +5852,7 @@ process.umask = function () {
 };
 
 /***/ },
-/* 21 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5692,7 +5867,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 22 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5709,7 +5884,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 23 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5726,7 +5901,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 24 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5778,7 +5953,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 25 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5787,7 +5962,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 26 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5803,7 +5978,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 27 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5818,7 +5993,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 28 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5829,7 +6004,7 @@ var validateImage = function validateImage(file, width, height) {
 }; // eslint-disable-line
 
 /***/ },
-/* 29 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5840,7 +6015,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 30 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5854,7 +6029,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 31 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5870,7 +6045,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 32 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5884,7 +6059,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 33 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5895,7 +6070,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 }; // eslint-disable-line
 
 /***/ },
-/* 34 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5904,7 +6079,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 35 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5921,7 +6096,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 };
 
 /***/ },
-/* 36 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5934,7 +6109,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 };
 
 /***/ },
-/* 37 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5957,181 +6132,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     return true;
-};
-
-/***/ },
-/* 38 */
-/***/ function(module, exports) {
-
-"use strict";
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = {
-    props: ['heading', 'subtitle', 'selected'],
-
-    ready: function ready() {
-        var layout = this.$els.layout;
-        var menu = this.$els.menu;
-        var menuLink = this.$els.menulink;
-
-        var toggleClass = function toggleClass(element, className) {
-            var classes = element.className.split(/\s+/);
-            var length = classes.length;
-
-            for (var i = 0; i < length; i++) {
-                if (classes[i] === className) {
-                    classes.splice(i, 1);
-                    break;
-                }
-            }
-
-            if (length === classes.length) {
-                classes.push(className);
-            }
-
-            element.className = classes.join(' ');
-        };
-
-        menuLink.onclick = function (e) {
-            var active = 'active';
-
-            e.preventDefault();
-            toggleClass(layout, active);
-            toggleClass(menu, active);
-            toggleClass(menuLink, active);
-        };
-    }
-};
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _prismjs = __webpack_require__(16);
-
-var _prismjs2 = _interopRequireDefault(_prismjs);
-
-__webpack_require__(15);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    props: ['class'],
-    methods: {
-        removeWhitespace: function removeWhitespace() {
-            var el = this.$els.code;
-            var txt = el.textContent.replace(/^[\r\n]+/, "").replace(/\s+$/g, "");
-
-            if (/^\S/gm.test(txt)) {
-                el.textContent = txt;
-                return;
-            }
-
-            var mat = void 0;
-            var str = void 0;
-            var re = /^[\t ]+/gm;
-            var len = void 0;
-            var min = 1e3;
-
-            while (mat = re.exec(txt)) {
-                len = mat[0].length;
-
-                if (len < min) {
-                    min = len;
-                    str = mat[0];
-                }
-            }
-
-            if (min == 1e3) {
-                return;
-            }
-
-            el.textContent = txt.replace(new RegExp("^" + str, 'gm'), "");
-        }
-    },
-    ready: function ready() {
-        this.removeWhitespace();
-        _prismjs2.default.highlightElement(this.$els.code);
-    }
-};
-
-/***/ },
-/* 40 */
-/***/ function(module, exports) {
-
-"use strict";
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = {
-    data: function data() {
-        return {
-            content: 'demo'
-        };
-    }
-};
-
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _vueValidation = __webpack_require__(0);
-
-exports.default = {
-    validator: null,
-    data: function data() {
-        return {
-            email: '',
-            name: '',
-            errors: []
-        };
-    },
-
-    watch: {
-        email: function email(value) {
-            this.validator.validate('email', value);
-        },
-        name: function name(value) {
-            this.validator.validate('name', value);
-        }
-    },
-    methods: {
-        validateForm: function validateForm() {
-            this.validator.validateAll({
-                email: this.email,
-                name: this.name
-            });
-        },
-        clearErrors: function clearErrors() {
-            this.errors.clear();
-        }
-    },
-    ready: function ready() {
-        this.validator = new _vueValidation.Validator({
-            email: 'required|email',
-            name: 'required|alpha|min:3'
-        });
-        this.$set('errors', this.validator.errorBag);
-    }
 };
 
 /***/ },
@@ -6262,7 +6262,7 @@ if (false) {(function () {  module.hot.accept()
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_script__, __vue_template__
-__vue_script__ = __webpack_require__(41)
+__vue_script__ = __webpack_require__(18)
 if (__vue_script__ &&
     __vue_script__.__esModule &&
     Object.keys(__vue_script__).length > 1) {

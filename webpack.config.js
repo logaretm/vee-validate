@@ -16,7 +16,13 @@ module.exports = {
         loaders: [
             {
                 test: /\.js$/,
-                loader: 'babel'
+                loader: 'babel',
+                query: {
+                    babelrc: false,
+                    presets: [
+                      ['es2015', { modules: false }]
+                    ]
+                }
             }
         ]
     }

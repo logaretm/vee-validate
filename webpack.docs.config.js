@@ -20,7 +20,13 @@ let config = {
         loaders: [
             {
                 test: /\.js$/,
-                loader: 'babel'
+                loader: 'babel',
+                query: {
+                    babelrc: false,
+                    presets: [
+                      ['es2015', { modules: false }]
+                    ]
+                }
             },
             {
                 test: /\.css$/,
