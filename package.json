@@ -1,8 +1,8 @@
 {
   "name": "vue-validation",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Simple VueJS input validation plugin",
+  "main": "dist/vue-validation.js",
   "scripts": {
     "start": "webpack-dev-server --hot --inline --config webpack.docs.config.js",
     "dev": "webpack --progress --colors --watch",
@@ -19,9 +19,9 @@
       "babel-register"
     ]
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["VueJS", "Vue", "validation", "validator", "inputs", "form"],
+  "author": "Abdelrahman Awad <logaretm1@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "animate.css": "^3.5.1",
     "ava": "^0.15.2",
