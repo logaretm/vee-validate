@@ -4,7 +4,7 @@ import ErrorBag from './errorBag';
 
 const DEFAULT_DELAY = 0;
 
-export default (Vue, options) => {
+const install = (Vue, options) => {
     const errorBagName = options ? options.errorBagName || 'errors' : 'errors';
     Vue.mixin({
         data() {
@@ -49,4 +49,4 @@ export default (Vue, options) => {
     });
 };
 
-export { Validator, ErrorBag };
+export { install, Validator, ErrorBag };

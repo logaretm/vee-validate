@@ -24,7 +24,10 @@ let config = {
             },
             {
                 test: /\.css$/,
-                loader: ExtractTextPlugin.extract('style', 'css')
+                loader: ExtractTextPlugin.extract({
+                    fallbackLoader: 'style',
+                    loader: 'css'
+                })
             },
             {
                 test: /\.vue$/,
@@ -32,7 +35,10 @@ let config = {
             },
             {
                 test: /.scss$/,
-                loader: ExtractTextPlugin.extract('style', ['css', 'sass'])
+                loader: ExtractTextPlugin.extract({
+                    fallbackLoader: 'style',
+                    loader: ['css', 'sass']
+                })
             },
             {
                 test: /\.woff(2)?(\?.*)?$/i,
@@ -54,8 +60,14 @@ let config = {
     },
     vue: {
         loaders: {
-            css: ExtractTextPlugin.extract('css'),
-            sass: ExtractTextPlugin.extract('style', ['css', 'sass'])
+            css: ExtractTextPlugin.extract({
+                fallbackLoader: 'style',
+                loader: 'css'
+            }),
+            sass: ExtractTextPlugin.extract({
+                fallbackLoader: 'style',
+                loader: ['css', 'sass']
+            })
         },
         plugins: [
             new ExtractTextPlugin('[name].css')
