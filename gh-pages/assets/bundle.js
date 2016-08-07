@@ -3214,14 +3214,14 @@
 				var DEFAULT_DELAY = 0;
 
 				exports.default = function (Vue, options) {
-					var errorsBagName = options ? options.errorsBagName || 'errors' : 'errors';
+					var errorBagName = options ? options.errorBagName || 'errors' : 'errors';
 					Vue.mixin({
 						data: function data() {
-							return _defineProperty({}, errorsBagName, null);
+							return _defineProperty({}, errorBagName, null);
 						},
 						created: function created() {
 							this.$validator = _validator2.default.create();
-							this.$set(errorsBagName, this.$validator.errorBag);
+							this.$set(errorBagName, this.$validator.errorBag);
 						}
 					});
 
@@ -4501,6 +4501,18 @@
 							return this.errors.map(function (e) {
 								return e.msg;
 							});
+						}
+
+						/**
+	      * Checks if there is any errrors in the internal array.
+	      *
+	      * @return {boolean} result True if there was at least one error, false otherwise.
+	      */
+
+					}, {
+						key: "any",
+						value: function any() {
+							return !!this.errors.length;
 						}
 
 						/**

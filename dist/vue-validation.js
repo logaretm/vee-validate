@@ -80,14 +80,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	var DEFAULT_DELAY = 0;
 
 	exports.default = function (Vue, options) {
-	    var errorsBagName = options ? options.errorsBagName || 'errors' : 'errors';
+	    var errorBagName = options ? options.errorBagName || 'errors' : 'errors';
 	    Vue.mixin({
 	        data: function data() {
-	            return _defineProperty({}, errorsBagName, null);
+	            return _defineProperty({}, errorBagName, null);
 	        },
 	        created: function created() {
 	            this.$validator = _validator2.default.create();
-	            this.$set(errorsBagName, this.$validator.errorBag);
+	            this.$set(errorBagName, this.$validator.errorBag);
 	        }
 	    });
 
