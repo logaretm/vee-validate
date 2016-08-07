@@ -12,7 +12,7 @@
     "build": "webpack && cross-env NODE_ENV=production webpack -p",
     "docs": "webpack --config webpack.docs.config.js",
     "docs:production": "cross-env NODE_ENV=production webpack -p --config webpack.docs.config.js",
-    "build:all": "npm run build && npm run build:docs"
+    "build:all": "npm run build && npm run docs"
   },
   "ava": {
     "require": [
