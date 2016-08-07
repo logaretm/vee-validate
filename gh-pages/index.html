@@ -25,7 +25,24 @@
                 </p>
                 <h2 id="installation" class="content-subhead"><a href="#installation">Installation</a></h2>
                 <p>
-                    <pre><code class="language-bash">npm install vue-validation --save</code></pre>
+                    <code-block class="language-bash">npm install vue-validation --save</code-block>
+
+                    Then you may use it like this:
+                    <code-block class="language-html">
+                        &lt;script src=&quot;path/to/vue.js&quot;&gt;&lt;/script&gt;
+                        &lt;script src=&quot;path/to/vue-validation.js&quot;&gt;&lt;/script&gt;
+                        &lt;script&gt;
+                            Vue.use(VueValidation); // good to go.
+                        &lt;/script&gt;
+                    </code-block>
+
+                    or you may import it using ES6:
+                    <code-block class="language-javascript">
+                        import Vue from 'vue';
+                        import VueValidation from 'vue-validation';
+                        
+                        Vue.use(VueValidation);
+                    </code-block>
                 </p>
                 <h2 id="basic-example" class="content-subhead"><a href="#basic-example">Basic Example</a></h2>
                 <basic-example></basic-example>
