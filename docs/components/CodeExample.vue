@@ -5,19 +5,19 @@
                 <ul class="pure-menu-list">
                     <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'demo'}">
                         <a @click="content = 'demo'" class="pure-menu-link">
-                            <i class="demo-icon icon-play-outline"></i>
+                            <i class="icon-play"></i>
                             Demo
                         </a>
                     </li>
                     <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'html' }">
                         <a @click="content = 'html'" class="pure-menu-link">
-                            <i class="demo-icon icon-html"></i>
+                            <i class="icon-html5"></i>
                             HTML
                         </a>
                     </li>
                     <li :class="{'pure-menu-item': true, 'pure-menu-selected': content === 'js' }">
                         <a @click="content = 'js'" class="pure-menu-link">
-                            <i class="demo-icon icon-icon-code"></i>
+                            <i class="icon-code"></i>
                             JavaScript
                         </a>
                     </li>
