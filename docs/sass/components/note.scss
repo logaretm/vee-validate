@@ -1,0 +1,26 @@
+.note:before {
+    font-family: 'fontello';
+    content: '\e802';
+    position: absolute;
+    margin-left: -23px;
+}
+
+.note {
+    text-align: justify;
+    color: #e0e0e0;
+    border-radius: 5px;
+    background: $vue-hover;
+    padding: 20px 20px 20px 40px;
+}
+
+.note b {
+    color: $vue-green;
+}
+
+.note a {
+    color: $vue-green;
+}
+
+.note code {
+    color: $vue-green;
+}

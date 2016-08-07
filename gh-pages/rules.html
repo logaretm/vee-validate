@@ -25,7 +25,7 @@
                         var someRule = 'in:1,2,3,4';
                     </code-block>
                     <div class="note">
-                        <b class="important">Note:</b> The validators (rules) and their parameters are statically saved, in order to update some validation rule, you have to attach it again with the new parameters and it will be overwritten.
+                        <b>Note:</b> The validators (rules) and their parameters are statically saved, in order to update some validation rule, you have to attach it again with the new parameters and it will be overwritten.
                     </div>
                 </p>
                 <h2 id="available-rules" class="content-subhead"><a href="#available-rules">Available Rules</a></h2>
@@ -183,7 +183,7 @@
                             <code class="inline">args:</code> List of comma separated mime types. <code class="inline">mimes:image/jpeg|image/png</code>
                         </div>
                         <div class="note">
-                            <b class="important">Note:</b> You can use '*' to specify a wild card, something like <code class="inline">mimes:image/*</code> will accept all image types.
+                            <b>Note:</b> You can use '*' to specify a wild card, something like <code>mimes:image/*</code> will accept all image types.
                         </div>
                     </div>
                     <div class="rule" id="rule-min">
@@ -229,7 +229,7 @@
                             </ul>
                         </div>
                         <div class="note">
-                            <b class="important">Note:</b> Currently you should not use the pipe | within your regular expression as it will cause a conflict with how parsing validators work. A workaround is in progress.
+                            <b>Note:</b> Currently you should not use the pipe | within your regular expression as it will cause a conflict with how parsing validators work. A workaround is in progress.
                         </div>
                     </div>
                     <div class="rule" id="rule-required">
@@ -296,15 +296,15 @@
                     The only difference that the latter will allow you to add localized messages, the former only adds it to the English dictionary.
 
                     <div class="note">
-                        <b class="important">Note:</b> Notice how the <code class="inline">messages</code> methods gets passed the <code class="inline">field name</code> as a first parameter.
-                        And how the <code class="inline">validate</code> method gets passed the value as a first parameter.
-                        And both receive the <code class="inline">args</code> which are the parameters (arguments) that were configured with the validation rule.
-                        for example look at the <a class="link" href="https://github.com/logaretm/vue-validation/blob/master/src/rules/min.js">actual implementation of the min rule</a>.
+                        <b>Note:</b> Notice how the <code>messages</code> methods gets passed the <code>field</code> which is the name of the field under validation as a first parameter.
+                        And how the <code>validate</code> method gets passed the value as a first parameter.
+                        And both receive the <code>args</code> which are the parameters (arguments) that were configured with the validation rule.
+                        for example look at the <a href="https://github.com/logaretm/vue-validation/blob/master/src/rules/min.js">actual implementation of the min rule</a>.
                     </div>
                     <br>
                     <div class="note">
-                        <b class="important">Note:</b> As you can see a validation rule must implement one of the three forms discussed above.
-                         Not doing so will throw a <code class="inline">ValidatorException</code> with a suitable error message detailing what were you missing.
+                        <b>Note:</b> As you can see a validation rule must implement one of the three forms discussed above.
+                         Not doing so will throw a <code>ValidatorException</code> with a suitable error message detailing what were you missing.
                     </div>
                 </p>
                 <p>
@@ -326,8 +326,8 @@
                         instance.attach('falseField', 'falsy');
                     </code-block>
                     <div class="note">
-                        <b class="important">Note:</b> Using any of the <code class="inline">extend</code> either statically or on an instance will extend all validators with the new validation rule.
-                         extending a new rule that have the same name as an existing rule will throw a <code class="inline">ValidatorException</code> with an error message.
+                        <b>Note:</b> Using any of the <code>extend</code> either statically or on an instance will extend all validators with the new validation rule.
+                         extending a new rule that have the same name as an existing rule will throw a <code>ValidatorException</code> with an error message.
                     </div>
                 </p>
                 <h2 id="custom-messages" class="content-subhead"><a href="#custom-messages">Custom Messages and Localization</a></h2>
@@ -335,7 +335,7 @@
                     Of course you might need to overwrite the error messages, or add new ones. The Validator class and its instances provide an <code class="inline">updateDictionary</code> method.
                     which will merge the messages with the internal dictionary, overwriting any duplicates.
                     <div class="note">
-                        <b class="important">Note:</b> Any merges will have an effect on all validator instances as the messages dictionary is shared.
+                        <b>Note:</b> Any merges will have an effect on all validator instances as the messages dictionary is shared.
                     </div>
                     <code-block class="language-javascript">
                         import { Validator } from 'vue-validations';
@@ -351,7 +351,7 @@
                         validator.setLocale('ar'); // now this validator will generate messages in arabic.
                     </code-block>
                     <div class="note">
-                        <b class="important">Note:</b> You must provide the messages in an object path like: <code class="inline">dictionary.locale.message</code>.
+                        <b>Note:</b> You must provide the messages in an object path like: <code>dictionary.locale.message</code>.
                     </div>
                 </p>
             </app>
