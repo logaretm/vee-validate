@@ -1,4 +1,6 @@
 # Vue-Validation
+[![Build Status](https://travis-ci.org/logaretm/vue-validation.svg?branch=master)](https://travis-ci.org/logaretm/vue-validation)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/db5e216c54e1438a94ad2bf1c0b515cc)](https://www.codacy.com/app/logaretm1/vue-validation?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=logaretm/vue-validation&amp;utm_campaign=Badge_Grade)
 
 This is a lightweight plugin for [VueJS](https://vuejs.org/) that allows you to validate input fields, and display errors.
 

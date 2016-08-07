@@ -12,7 +12,8 @@
     "build": "webpack && cross-env NODE_ENV=production webpack -p",
     "docs": "webpack --config webpack.docs.config.js",
     "docs:production": "cross-env NODE_ENV=production webpack -p --config webpack.docs.config.js",
-    "build:all": "npm run build && npm run docs"
+    "build:all": "npm run build && npm run docs",
+    "cover": "nyc report --reporter=lcov > coverage.lcov && codecov" 
   },
   "ava": {
     "require": [
