@@ -8,13 +8,13 @@ Although most of the validations occur automatically, you can use the validator 
 
 This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.com/).
 
-## Installation
+### Installation
 
 ```
 npm install vue-validation --save
 ```
 
-## Getting Started
+### Getting Started
 
 In your script entry point:
 ```javascript
@@ -26,7 +26,7 @@ Vue.use(VueValidation);
 
 Now you are all setup to use the plugin.
 
-## Usage
+### Usage
 
 Just apply the `v-validate` directive on your input and a `rules` attribute which is a list of validations separated by a pipe, for example we will use the `required` and the `email` validators:
 
@@ -46,8 +46,8 @@ this.errors; // injected into $data by the plugin, you can customize the propert
 
 Of course there is more to it than that, refer to the documentation for more details about the rules, and usage of this plugin.
 
-## Documentation
+### Documentation
 
 Read the [documentation and demos](https://logaretm.github.io/vue-validation/).
 
-# license MIT
+### license MIT
