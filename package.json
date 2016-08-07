@@ -30,7 +30,6 @@
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "animate.css": "^3.5.1",
     "ava": "^0.15.2",
     "babel-core": "^6.13.2",
     "babel-loader": "^6.2.4",

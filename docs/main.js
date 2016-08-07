@@ -1,5 +1,4 @@
 import 'purecss/build/pure.css';
-import 'animate.css/animate.css';
 import 'prismjs/themes/prism.css';
 import 'prismjs/plugins/show-language/prism-show-language.css';
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
