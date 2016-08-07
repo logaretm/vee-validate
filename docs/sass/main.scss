@@ -1,9 +1,11 @@
 @import 'colors';
 @import 'variables';
 @import 'layout';
-@import 'form';
 @import 'fonts';
 @import 'utils';
+@import 'components/form';
+@import 'components/button';
+@import 'components/header';
 
 code.inline {
     color: $vue-green;
@@ -17,48 +19,10 @@ b.important {
     color: $vue-green;
 }
 
-.content-subhead {
-    color: $vue-green;
-}
-
-.button-success,
-.button-error,
-.button-warning,
-.button-secondary {
-    color: white;
-    border-radius: 4px;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-}
-
-.button-error {
-    background: rgb(202, 60, 60);
-}
-
-.pure-button-primary {
-    background: $vue-green;
-}
-
 .rule {
     margin: 20px 0px;
 }
 
-.rule > div {
+.rule div {
     margin: 5px 0px;
-}
-
-h2.content-subhead a:before {
-    content: '#';
-    color: $vue-green;
-    opacity: 0.6;
-    margin-left: -20px;
-    position: absolute;
-}
-
-h2.content-subhead a {
-    text-decoration: none;
-    color: $vue-hover;
-}
-
-.header h1 {
-    color: $vue-hover;
 }

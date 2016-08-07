@@ -5227,31 +5227,6 @@ body {
     position: relative;
     left: 200px; } }
 
-.error {
-  color: #dd514c; }
-
-span.error {
-  font-size: 13px; }
-
-.pure-menu-item a {
-  cursor: pointer; }
-
-.pure-form .has-error input,
-.pure-form .has-error textarea,
-.pure-form .has-error select,
-.pure-form input.has-error,
-.pure-form textarea.has-error,
-.pure-form select.has-error {
-  border-color: #dd514c; }
-
-.pure-form .has-error input:focus,
-.pure-form .has-error textarea:focus,
-.pure-form .has-error select:focus,
-.pure-form input.has-error:focus,
-.pure-form textarea.has-error:focus,
-.pure-form select.has-error:focus {
-  border-color: #dd514c; }
-
 @font-face {
   font-family: 'fontello';
   src: url(fonts/fontello.eot);
@@ -5312,17 +5287,30 @@ span.error {
   display: flex;
   justify-content: center; }
 
-code.inline {
-  color: #41b883; }
+.error {
+  color: #dd514c; }
 
-a.link {
-  color: #41b883; }
+span.error {
+  font-size: 13px; }
 
-b.important {
-  color: #41b883; }
+.pure-menu-item a {
+  cursor: pointer; }
 
-.content-subhead {
-  color: #41b883; }
+.pure-form .has-error input,
+.pure-form .has-error textarea,
+.pure-form .has-error select,
+.pure-form input.has-error,
+.pure-form textarea.has-error,
+.pure-form select.has-error {
+  border-color: #dd514c; }
+
+.pure-form .has-error input:focus,
+.pure-form .has-error textarea:focus,
+.pure-form .has-error select:focus,
+.pure-form input.has-error:focus,
+.pure-form textarea.has-error:focus,
+.pure-form select.has-error:focus {
+  border-color: #dd514c; }
 
 .button-success,
 .button-error,
@@ -5338,12 +5326,6 @@ b.important {
 .pure-button-primary {
   background: #41b883; }
 
-.rule {
-  margin: 20px 0px; }
-
-.rule > div {
-  margin: 5px 0px; }
-
 h2.content-subhead a:before {
   content: '#';
   color: #41b883;
@@ -5357,3 +5339,18 @@ h2.content-subhead a {
 
 .header h1 {
   color: #34495e; }
+
+code.inline {
+  color: #41b883; }
+
+a.link {
+  color: #41b883; }
+
+b.important {
+  color: #41b883; }
+
+.rule {
+  margin: 20px 0px; }
+
+.rule div {
+  margin: 5px 0px; }

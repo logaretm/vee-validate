@@ -31,6 +31,9 @@
                     <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'api'}">
                         <a href="api.html" class="pure-menu-link">API Reference</a>
                     </li>
+                    <li :class="pure-menu-item">
+                        <a href="index.html#configuration" class="pure-menu-link">Configuration</a>
+                    </li>
                 </ul>
             </div>
         </div>
