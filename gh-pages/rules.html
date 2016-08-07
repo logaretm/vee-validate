@@ -14,13 +14,13 @@
             >
                 <h2 id="syntax" class="content-subhead"><a href="#syntax">Syntax</a></h2>
                 <p>
-                    The validation rules have a very simple syntax similair to <a href="https://laravel.com/docs/5.2/validation" class="link">Laravel validation syntax</a>.
-                    A validation expression is a string of a series of validators seperated by a pipe <code class="inline">|</code>:
+                    The validation rules have a very simple syntax similar to <a href="https://laravel.com/docs/5.2/validation" class="link">Laravel validation syntax</a>.
+                    A validation expression is a string of a series of validators separated by a pipe <code class="inline">|</code>:
                     <code-block class="language-javascript">
                         var single = 'required'; // single rule.
                         var multiple = 'required|numeric' // multiple rules.
                     </code-block>
-                    Some rules can have parameters, which are passed in a comma seperated list without spaces.
+                    Some rules can have parameters, which are passed in a comma separated list without spaces.
                     <code-block class="language-javascript">
                         var someRule = 'in:1,2,3,4';
                     </code-block>
@@ -132,7 +132,7 @@
                             The file added the field under validation must have one of the extensions specified.
                         </div>
                         <div class="args">
-                            <code class="inline">args:</code> Comma seperated list of extensions. ex: <code class="inline">ext:jpg,png,bmp,svg</code>.
+                            <code class="inline">args:</code> Comma separated list of extensions. ex: <code class="inline">ext:jpg,png,bmp,svg</code>.
                         </div>
                     </div>
                     <div class="rule" id="rule-image">
@@ -150,7 +150,7 @@
                             The field under validation must have a value that is in the specified list.
                         </div>
                         <div class="args">
-                            <code class="inline">args:</code> Comma seperated list of values. ex <code class="inline">in:1,2,3,4</code>
+                            <code class="inline">args:</code> Comma separated list of values. ex <code class="inline">in:1,2,3,4</code>
                         </div>
                     </div>
                     <div class="rule" id="rule-ip">
@@ -180,7 +180,7 @@
                             The file type added to the field under validation should have one of the specified mime types.
                         </div>
                         <div class="args">
-                            <code class="inline">args:</code> List of comma seperated mime types. <code class="inline">mimes:image/jpeg|image/png</code>
+                            <code class="inline">args:</code> List of comma separated mime types. <code class="inline">mimes:image/jpeg|image/png</code>
                         </div>
                         <div class="note">
                             <b class="important">Note:</b> You can use '*' to specify a wild card, something like <code class="inline">mimes:image/*</code> will accept all image types.
@@ -204,7 +204,7 @@
                             The field under validation length should not have any value within the specified values.
                         </div>
                         <div class="args">
-                            <code class="inline">args:</code> Comma seperated list of invalid values. ex: <code class="inline">not_in:1,2,3,4</code>
+                            <code class="inline">args:</code> Comma separated list of invalid values. ex: <code class="inline">not_in:1,2,3,4</code>
                         </div>
                     </div>
                     <div class="rule" id="rule-numeric">
@@ -259,20 +259,20 @@
                     You can easily add custom rules to the validators, but your custom validation rules must adhere to a contract, or certain structure:
                     <br><br>
                     <b class="important">Function Form:</b>
-                    This is the most basic custom validator form, it consists of only a function that returns either a boolean or a promise. However it will have a default error message.
+                    This is the most basic custom validator form, it consists of only a function that returns either a Boolean or a promise. However it will have a default error message.
                     <code-block class="language-javascript">
                         const validator = (value, args) =&gt; {
-                            // Return a boolean or a Promise.
+                            // Return a Boolean or a Promise.
                         }
                     </code-block>
                     <b class="important">Object Form:</b>
                     <code-block class="language-javascript">
                         const validator = {
-                            getMessage(field, args) { // will be added to default english messages.
+                            getMessage(field, args) { // will be added to default English messages.
                                 // Returns a message.
                             },
                             validate(value, args) {
-                                // Returns a boolean or a Promise.
+                                // Returns a Boolean or a Promise.
                             }
                         };
                     </code-block>
@@ -284,11 +284,11 @@
                                     // Returns a message.
                                 },
                                 cn: (field, args) =&gt; {
-                                    // Returns a chinese message.
+                                    // Returns a Chinese message.
                                 }
                             },
                             validate(value, args) {
-                                // Returns a boolean or a Promise.
+                                // Returns a Boolean or a Promise.
                             }
                         };
                     </code-block>
@@ -298,13 +298,13 @@
                     <div class="note">
                         <b class="important">Note:</b> Notice how the <code class="inline">messages</code> methods gets passed the <code class="inline">field name</code> as a first parameter.
                         And how the <code class="inline">validate</code> method gets passed the value as a first parameter.
-                        And both recieve the <code class="inline">args</code> which are the params that were configured with the validation rule.
-                        for example look at the <a class="link" href="https://github.com/logaretm/vue-validation/blob/master/src/rules/min.js">actual implementaion of the min rule</a>.
+                        And both receive the <code class="inline">args</code> which are the parameters (arguments) that were configured with the validation rule.
+                        for example look at the <a class="link" href="https://github.com/logaretm/vue-validation/blob/master/src/rules/min.js">actual implementation of the min rule</a>.
                     </div>
                     <br>
                     <div class="note">
                         <b class="important">Note:</b> As you can see a validation rule must implement one of the three forms discussed above.
-                         Not doing so will throw a <code class="inline">ValidatorException</code> with an appropiate error message detailing what were you missing.
+                         Not doing so will throw a <code class="inline">ValidatorException</code> with a suitable error message detailing what were you missing.
                     </div>
                 </p>
                 <p>
@@ -333,7 +333,7 @@
                 <h2 id="custom-messages" class="content-subhead"><a href="#custom-messages">Custom Messages and Localization</a></h2>
                 <p>
                     Of course you might need to overwrite the error messages, or add new ones. The Validator class and its instances provide an <code class="inline">updateDictionary</code> method.
-                    which will merge the messages with the internal dicitonary, overwriting any duplicates.
+                    which will merge the messages with the internal dictionary, overwriting any duplicates.
                     <div class="note">
                         <b class="important">Note:</b> Any merges will have an effect on all validator instances as the messages dictionary is shared.
                     </div>

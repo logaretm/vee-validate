@@ -40,14 +40,14 @@
                         <li><code class="inline">collect(string)</code> Gets all messages associated with a specific field.</li>
                         <li><code class="inline">count()</code> Gets the length of the internal array. or the number of messages.</li>
                         <li><code class="inline">first(string)</code> Gets the first error message associated with the specified field.</li>
-                        <li><code class="inline">has(string)</code> Checks if there is at least one error assoicated with the specified field.</li>
+                        <li><code class="inline">has(string)</code> Checks if there is at least one error associated with the specified field.</li>
                         <li><code class="inline">remove(string)</code> Removes all errors for a specified field from the internal array.</li>
                     </ul>
                 </p>
                 <h2 id="validator" class="content-subhead"><a href="#validator">Validator</a></h2>
                 <p>
-                    The validator is injected to the vue instance as <code class="inline">$validator</code> automatically.
-                    However it is also a stand alone class and can be used seperatly for programatically validating values.
+                    The validator is injected to the Vue instance as <code class="inline">$validator</code> automatically.
+                    However it is also a stand alone class and can be used separately for programmatically validating values.
                     The constructor can optionally take an object to map each field name to a set of validations.
                     <code-block class="language-javascript">
                         import { Validator } from 'vue-validation';
@@ -71,7 +71,7 @@
                         validator.validate('email', 'foo@bar'); // false
                     </code-block>
                     <div class="note">
-                        <b class="important">Note:</b> Most validators return a boolean, however some validators (very few) return a <code class="inline">Promise</code> which will resolve asynchronously with a boolean.
+                        <b class="important">Note:</b> Most validators return a Boolean, however some validators (very few) return a <code class="inline">Promise</code> which will resolve asynchronously with a Boolean.
                     </div>
                     <br>
                     You Can validate multiple values at the same time using <code class="inline">validateAll(obj)</code>:
@@ -101,7 +101,7 @@
                 <h2 id="validator-example" class="content-subhead"><a href="#validator-example">Validator Example</a></h2>
                 <p>
                     Here is an example of using the validator without the directive, which means you will be responsible for monitoring input changes on your own, and calling the API methods as you see fit.
-                    This example uses a vue instance to simplify things, but it can be used in plain JavaScript as well.
+                    This example uses a Vue instance to simplify things, but it can be used in plain JavaScript as well.
                 </p>
                 <validator-example></validator-example>
             </app>

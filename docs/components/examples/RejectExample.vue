@@ -13,12 +13,12 @@
         <form slot="example" class="pure-form pure-form-stacked">
             <legend>File Upload</legend>
             <div class="pure-u-1">
-                <label :class="{'error': errors.has('image') }" for="image">Unrejected Input</label>
+                <label :class="{'error': errors.has('image') }" for="image">Unrejected Image</label>
                 <input v-validate rules="mimes:image/*" :class="{'pure-input-1': true, 'has-error': errors.has('image') }" name="image" type="file">
                 <span class="error" v-show="errors.has('image')">{{ errors.first('image') }}</span>
             </div>
             <div class="pure-u-1">
-                <label :class="{'error': errors.has('file') }" for="file">Rejected Input</label>
+                <label :class="{'error': errors.has('file') }" for="file">Rejected Image</label>
                 <input  v-validate rules="mimes:image/*" reject :class="{'pure-input-1': true, 'has-error': errors.has('file') }" name="file" type="file">
                 <span class="error" v-show="errors.has('file')">{{ errors.first('file') }}</span>
             </div>
@@ -28,12 +28,12 @@
             &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;
                 &lt;legend&gt;File Upload&lt;/legend&gt;
                 &lt;div class=&quot;pure-u-1&quot;&gt;
-                    &lt;label :class=&quot;{'error': errors.has('image') }&quot; for=&quot;image&quot;&gt;Unrejected Input&lt;/label&gt;
+                    &lt;label :class=&quot;{'error': errors.has('image') }&quot; for=&quot;image&quot;&gt;Unrejected Image&lt;/label&gt;
                     &lt;input v-validate rules=&quot;mimes:image/*&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('image') }&quot; name=&quot;image&quot; type=&quot;file&quot;&gt;
                     &lt;span class=&quot;error&quot; v-show=&quot;errors.has('image')&quot;&gt;{{ errors.first('image') }}&lt;/span&gt;
                 &lt;/div&gt;
                 &lt;div class=&quot;pure-u-1&quot;&gt;
-                    &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Input&lt;/label&gt;
+                    &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Image&lt;/label&gt;
                     &lt;input  v-validate rules=&quot;mimes:image/*&quot; reject :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; type=&quot;file&quot;&gt;
                     &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ errors.first('file') }}&lt;/span&gt;
                 &lt;/div&gt;
