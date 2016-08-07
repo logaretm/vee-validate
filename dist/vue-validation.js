@@ -83,10 +83,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var errorsBagName = options ? options.errorsBagName || 'errors' : 'errors';
 	    Vue.mixin({
 	        data: function data() {
-	            return _defineProperty({}, errorsBagName, this.$validator.errorBag);
+	            return _defineProperty({}, errorsBagName, null);
 	        },
-	        init: function init() {
+	        created: function created() {
 	            this.$validator = _validator2.default.create();
+	            this.$set(errorsBagName, this.$validator.errorBag);
 	        }
 	    });
 

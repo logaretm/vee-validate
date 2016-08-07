@@ -9,11 +9,12 @@ export default (Vue, options) => {
     Vue.mixin({
         data() {
             return {
-                [errorsBagName]: this.$validator.errorBag
+                [errorsBagName]: null
             };
         },
-        init() {
+        created() {
             this.$validator = Validator.create();
+            this.$set(errorsBagName, this.$validator.errorBag);
         }
     });
 
