@@ -1,12 +1,12 @@
-import FirstExample from './Example-1.vue';
-import SecondExample from './Example-2.vue';
-import ThirdExample from './Example-3.vue';
+import BasicExample from './BasicExample.vue';
+import DelayExample from './DelayExample.vue';
+import RejectExample from './RejectExample.vue';
 import ValidatorExample from './ValidatorExample.vue';
 
 // Register Examples.
 export default (Vue) => {
-    Vue.component('first-example', FirstExample);
-    Vue.component('second-example', SecondExample);
-    Vue.component('third-example', ThirdExample);
+    Vue.component('basic-example', BasicExample);
+    Vue.component('delay-example', DelayExample);
+    Vue.component('reject-example', RejectExample);
     Vue.component('validator-example', ValidatorExample);
 };

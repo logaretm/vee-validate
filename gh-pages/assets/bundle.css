@@ -5337,3 +5337,23 @@ b.important {
 
 .pure-button-primary {
   background: #41b883; }
+
+.rule {
+  margin: 20px 0px; }
+
+.rule > div {
+  margin: 5px 0px; }
+
+h2.content-subhead a:before {
+  content: '#';
+  color: #41b883;
+  opacity: 0.6;
+  margin-left: -20px;
+  position: absolute; }
+
+h2.content-subhead a {
+  text-decoration: none;
+  color: #34495e; }
+
+.header h1 {
+  color: #34495e; }

@@ -100,7 +100,7 @@
 	new _vue2.default({
 	    el: '#app',
 	    data: {
-	        rules: new _collectionsjs2.default(Object.keys(_rules2.default)).chunk(10).all()
+	        rules: new _collectionsjs2.default(Object.keys(_rules2.default)).sort().chunk(10).all()
 	    },
 	    components: {
 	        App: _App2.default
@@ -3217,10 +3217,11 @@
 					var errorsBagName = options ? options.errorsBagName || 'errors' : 'errors';
 					Vue.mixin({
 						data: function data() {
-							return _defineProperty({}, errorsBagName, this.$validator.errorBag);
+							return _defineProperty({}, errorsBagName, null);
 						},
-						init: function init() {
+						created: function created() {
 							this.$validator = _validator2.default.create();
+							this.$set(errorsBagName, this.$validator.errorBag);
 						}
 					});
 
@@ -4870,17 +4871,17 @@
 	    value: true
 	});
 
-	var _Example = __webpack_require__(19);
+	var _BasicExample = __webpack_require__(19);
 
-	var _Example2 = _interopRequireDefault(_Example);
+	var _BasicExample2 = _interopRequireDefault(_BasicExample);
 
-	var _Example3 = __webpack_require__(21);
+	var _DelayExample = __webpack_require__(21);
 
-	var _Example4 = _interopRequireDefault(_Example3);
+	var _DelayExample2 = _interopRequireDefault(_DelayExample);
 
-	var _Example5 = __webpack_require__(23);
+	var _RejectExample = __webpack_require__(23);
 
-	var _Example6 = _interopRequireDefault(_Example5);
+	var _RejectExample2 = _interopRequireDefault(_RejectExample);
 
 	var _ValidatorExample = __webpack_require__(25);
 
@@ -4890,9 +4891,9 @@
 
 	// Register Examples.
 	exports.default = function (Vue) {
-	    Vue.component('first-example', _Example2.default);
-	    Vue.component('second-example', _Example4.default);
-	    Vue.component('third-example', _Example6.default);
+	    Vue.component('basic-example', _BasicExample2.default);
+	    Vue.component('delay-example', _DelayExample2.default);
+	    Vue.component('reject-example', _RejectExample2.default);
 	    Vue.component('validator-example', _ValidatorExample2.default);
 	};
 
@@ -4913,7 +4914,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-f14be53c/Example-1.vue"
+	  var id = "_v-e19d7990/BasicExample.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -4942,7 +4943,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-f12fb63a/Example-2.vue"
+	  var id = "_v-7c43b27a/DelayExample.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -4954,7 +4955,7 @@
 /* 22 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>Basic Form</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" v-validate rules=\"required|email\" delay=\"500\" type=\"email\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" v-validate rules=\"required|min:3|alpha\" delay=\"1000\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" v-validate rules=\"required|max:11|numeric\" type=\"text\" placeholder=\"Phone Number\">\n            <span class=\"error\" v-show=\"errors.has('phone')\">{{ errors.first('phone') }}</span>\n        </div>\n        <button type=\"submit\" class=\"pure-button pure-button-primary\">Sign up</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;Basic Form&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; v-validate rules=&quot;required|email&quot; delay=&quot;500&quot; type=&quot;email&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Name&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; v-validate rules=&quot;required|min:3|alpha&quot; delay=&quot;1000&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ \"{\" + \"{ errors.first('name') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('phone') }&quot; for=&quot;phone&quot;&gt;Phone&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('phone') }&quot; name=&quot;phone&quot; v-validate rules=&quot;required|max:11|numeric&quot; type=&quot;text&quot; placeholder=&quot;Phone Number&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('phone')&quot;&gt;{{ \"{\" + \"{ errors.first('phone') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button type=&quot;submit&quot; class=&quot;pure-button pure-button-primary&quot;&gt;Sign up&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        // Set a global delay of 700.\n        Vue.use(VueValidation, { delay: 700 });\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
+	module.exports = "\n\n\n\n<p>\n    You can specify a delay to debounce the input event, a case senario you may want the user to stop typing then validate the field.\n    This can be acheived by passing a <code class=\"inline\">delay</code> attribute on the field being validated, and assign it the number of milliseconds you want to wait for.\n</p>\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>Basic Form</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-validate rules=\"required|email\" delay=\"500\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"email\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name</label>\n            <input v-validate rules=\"required|alpha|min:3\" delay=\"1000\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;Basic Form&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|email&quot; delay=&quot;500&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;email&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Name&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|alpha|min:3&quot; delay=&quot;1000&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ \"{\" + \"{ errors.first('name') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VueValidation);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
 /* 23 */
@@ -4971,7 +4972,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "_v-f1138738/Example-3.vue"
+	  var id = "_v-bc240dc2/RejectExample.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -4983,7 +4984,7 @@
 /* 24 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>File Upload</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('file') }\" for=\"file\">Unrejected Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" v-validate rules=\"mimes:image/*\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('file')\">{{ errors.first('file') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('rejected') }\" for=\"rejected\">Rejected Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('rejected') }\" name=\"rejected\" v-validate rules=\"mimes:image/*\" type=\"file\" reject>\n            <span class=\"error\" v-show=\"errors.has('rejected')\">{{ errors.first('rejected') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('dimensions') }\" for=\"dimensions\">Dimensions Input</label>\n            <input :class=\"{'pure-input-1': true, 'has-error': errors.has('dimensions') }\" name=\"dimensions\" v-validate rules=\"dimensions:150,100\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('dimensions')\">{{ errors.first('dimensions') }}</span>\n        </div>\n        <button type=\"submit\" class=\"pure-button pure-button-primary\">Sign up</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;File Upload&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Unrejected Input&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; v-validate rules=&quot;mimes:image/*&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ \"{\" + \"{ errors.first('file') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Input&lt;/label&gt;\n                &lt;input :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; v-validate rules=&quot;mimes:image/*&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ \"{\" + \"{ errors.first('file') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button type=&quot;submit&quot; class=&quot;pure-button pure-button-primary&quot;&gt;Sign up&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VueValidation);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
+	module.exports = "\n\n\n\n<p>\n    After validating a file, you may want to rejct the uploaded file if it fails the validation, this can be done by passing\n    the <code class=\"inline\">reject</code> attribute to the input fields.\n    <div class=\"note\">\n        <b>Note: </b> This attribute is only relevant on file inputs, adding it to other input types will not have an effect.\n    </div>\n</p>\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>File Upload</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('image') }\" for=\"image\">Unrejected Input</label>\n            <input v-validate rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('image') }\" name=\"image\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('image')\">{{ errors.first('image') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('file') }\" for=\"file\">Rejected Input</label>\n            <input  v-validate rules=\"mimes:image/*\" reject :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('file')\">{{ errors.first('file') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;File Upload&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('image') }&quot; for=&quot;image&quot;&gt;Unrejected Input&lt;/label&gt;\n                &lt;input v-validate rules=&quot;mimes:image/*&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('image') }&quot; name=&quot;image&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('image')&quot;&gt;{{ errors.first('image') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Input&lt;/label&gt;\n                &lt;input  v-validate rules=&quot;mimes:image/*&quot; reject :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ errors.first('file') }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VueValidation);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
 /* 25 */

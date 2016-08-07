@@ -21,7 +21,7 @@ Vue.component('code-block', CodeBlock);
 new Vue({
     el: '#app',
     data: {
-        rules: new Collection(Object.keys(Rules)).chunk(10).all()
+        rules: new Collection(Object.keys(Rules)).sort().chunk(10).all()
     },
     components: {
         App

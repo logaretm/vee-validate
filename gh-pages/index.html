@@ -11,26 +11,26 @@
             <app heading="Vue-Validation"
                  subtitle="Simple VueJS Form Validation"
             >
-                <h2 class="content-subhead">What is VueValidation</h2>
+                <h2 id="about" class="content-subhead"><a href="#about">What is VueValidation</a></h2>
                 <p>
                     This is a lightweight plugin for VueJS that allows you to validate input fields, and display errors.
                     <br><br>
-                    <b>What makes it different is: </b> You don't have to do anything fancy in your app, most of the work goes into the html,
+                    <b class="important">What makes it different is: </b> You don't have to do anything fancy in your app, most of the work goes into the html,
                     You only need to specify for each input what kind of validators should be used when the value changes. You will then get informed of the errors for each field.
                     <br><br>
                     Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object.
                     <br><br>
                     Currently there are over 20 validation rules available in the plugin.
-                    This plugin is inspired by PHP Framework Laravel's validation syntax.
+                    This plugin is inspired by <a href="https://laravel.com/" class="link">PHP Framework Laravel's validation syntax</a>.
                 </p>
-                <h2 id="installation" class="content-subhead">Installation</h2>
+                <h2 id="installation" class="content-subhead"><a href="#installation">Installation</a></h2>
                 <p>
                     <pre><code class="language-bash">npm install vue-validation --save</code></pre>
                 </p>
-                <h2 id="basic-example" class="content-subhead">Basic Example</h2>
-                <first-example></first-example>
+                <h2 id="basic-example" class="content-subhead"><a href="#basic-example">Basic Example</a></h2>
+                <basic-example></basic-example>
                 <div class="flex-center"><a class="link" href="examples.html">More Examples</a></div>
-                <h2 id="render-errors" class="content-subhead">Rendering Errors</h2>
+                <h2 id="render-errors" class="content-subhead"><a href="#render-errors">Rendering Errors</a></h2>
                 <p>
                     Natuarally, you would want to display the errors to your users, The plugin augments your Vue instance with a private validator object and a public errors data object.
                     You are responsible for how the errors should be rendered.
@@ -43,12 +43,12 @@
                     </ul>
                     There are a few more <a class="link" href="api.html#error-bag">methods</a> that you can use to manipulate the errors object.
                 </p>
-                <h2 id="available-rules" class="content-subhead">Available Rules</h2>
+                <h2 id="available-rules" class="content-subhead"><a href="#available-rules">Available Rules</a></h2>
                 <p>There are more than 20 rules available to validate your inputs:</p>
                 <div class="pure-g">
                     <div v-for="group in rules" class="pure-u-1-{{ rules.length }}">
                         <ul>
-                            <li v-for="rule in group"><a class="link" :href="'rules.html#' + rule">{{ rule }}</a></li>
+                            <li v-for="rule in group"><a class="link" :href="'rules.html#rule-' + rule">{{ rule }}</a></li>
                         </ul>
                     </div>
                 </div>

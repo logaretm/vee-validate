@@ -37,3 +37,28 @@ b.important {
 .pure-button-primary {
     background: $vue-green;
 }
+
+.rule {
+    margin: 20px 0px;
+}
+
+.rule > div {
+    margin: 5px 0px;
+}
+
+h2.content-subhead a:before {
+    content: '#';
+    color: $vue-green;
+    opacity: 0.6;
+    margin-left: -20px;
+    position: absolute;
+}
+
+h2.content-subhead a {
+    text-decoration: none;
+    color: $vue-hover;
+}
+
+.header h1 {
+    color: $vue-hover;
+}

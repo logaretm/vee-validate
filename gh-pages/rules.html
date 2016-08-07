@@ -12,10 +12,10 @@
                  subtitle="Validation Rules"
                  selected="rules"
             >
-                <h2 id="syntax" class="content-subhead">Syntax</h2>
+                <h2 id="syntax" class="content-subhead"><a href="#syntax">Syntax</a></h2>
                 <p>
-                    The validation rules have a very simple syntax similair to what Laravel validation syntax.
-                    A validation expression is a string a series of validators seperated by a pipe <code class="inline">|</code>:
+                    The validation rules have a very simple syntax similair to <a href="https://laravel.com/docs/5.2/validation" class="link">Laravel validation syntax</a>.
+                    A validation expression is a string of a series of validators seperated by a pipe <code class="inline">|</code>:
                     <code-block class="language-javascript">
                         var single = 'required'; // single rule.
                         var multiple = 'required|numeric' // multiple rules.
@@ -28,7 +28,7 @@
                         <b class="important">Note:</b> The validators (rules) and their parameters are statically saved, in order to update some validation rule, you have to attach it again with the new parameters and it will be overwritten.
                     </div>
                 </p>
-                <h2 id="available-rules" class="content-subhead">Available Rules</h2>
+                <h2 id="available-rules" class="content-subhead"><a href="#available-rules">Available Rules</a></h2>
                 <p>
                     <code class="inline">vue-validation</code> Comes out of the box with 21 validation rules, which are:
                 </p>
@@ -39,9 +39,225 @@
                         </ul>
                     </div>
                 </div>
-                <h2 id="custom-rules" class="content-subhead">Custom Rules</h2>
+                <div class="rules">
+                    <div class="rule" id="rule-alpha">
+                        <b class="important">alpha</b>
+                        <div class="description">
+                            The field under validation may have an alphabetic characters or spaces.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> none.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-alpha_dash">
+                        <b class="important">alpha_dash</b>
+                        <div class="description">
+                            The field under validation may have an alphabetic characters, numbers, spaces, dashes or underscores.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> none.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-alpha_num">
+                        <b class="important">alpha_num</b>
+                        <div class="description">
+                            The field under validation may have an alphabetic characters, numbers or spaces
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> none.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-between">
+                        <b class="important">between:{min},{max}</b>
+                        <div class="description">
+                            The field under validation must have a numeric value bounded by a minimum value and a maximum value.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">min:</code> The minimum value.</li>
+                                <li><code class="inline">max:</code> The maximum value.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-confirmed">
+                        <b class="important">confirmed:{target}</b>
+                        <div class="description">
+                            The field under validation must have the exact same value as the confirmation field.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">target:</code> The name of the confirmation field.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-digits">
+                        <b class="important">digits:{length}</b>
+                        <div class="description">
+                            The field under validation must be numeric and have the specified number of digits.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">length:</code> The number of digits.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-dimensions">
+                        <b class="important">dimensions:{width},{height}</b>
+                        <div class="description">
+                            The image added to the field under validation must have the exact specified dimensions.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">width:</code> The width of the image.</li>
+                                <li><code class="inline">height:</code> The height of the image.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-email">
+                        <b class="important">email</b>
+                        <div class="description">
+                            The field under validation must be a valid email.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> none.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-ext">
+                        <b class="important">ext:[extensions]</b>
+                        <div class="description">
+                            The file added the field under validation must have one of the extensions specified.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> Comma seperated list of extensions. ex: <code class="inline">ext:jpg,png,bmp,svg</code>.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-image">
+                        <b class="important">image</b>
+                        <div class="description">
+                            The file added the field under validation must have an image mime type (image/*).
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> none.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-in">
+                        <b class="important">in:[list]</b>
+                        <div class="description">
+                            The field under validation must have a value that is in the specified list.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> Comma seperated list of values. ex <code class="inline">in:1,2,3,4</code>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-ip">
+                        <b class="important">ip</b>
+                        <div class="description">
+                            The field under validation must have a string that is a valid ipv4 value.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> none.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-max">
+                        <b class="important">max:{length}</b>
+                        <div class="description">
+                            The field under validation length may not exceed the specified length.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">length:</code> A numeric value representing the maximum number of characters.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-mimes">
+                        <b class="important">mimes:[list]</b>
+                        <div class="description">
+                            The file type added to the field under validation should have one of the specified mime types.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> List of comma seperated mime types. <code class="inline">mimes:image/jpeg|image/png</code>
+                        </div>
+                        <div class="note">
+                            <b class="important">Note:</b> You can use '*' to specify a wild card, something like <code class="inline">mimes:image/*</code> will accept all image types.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-min">
+                        <b class="important">min:{length}</b>
+                        <div class="description">
+                            The field under validation length should not be less than the specified length.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">length:</code> A numeric value representing the minimum number of characters.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-not_in">
+                        <b class="important">not_in:[list]</b>
+                        <div class="description">
+                            The field under validation length should not have any value within the specified values.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> Comma seperated list of invalid values. ex: <code class="inline">not_in:1,2,3,4</code>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-numeric">
+                        <b class="important">numeric</b>
+                        <div class="description">
+                            The field under validation must only consist of numbers.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> none.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-regex">
+                        <b class="important">regex:{pattern}</b>
+                        <div class="description">
+                            The field under validation must match the specified regular expression.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">pattern:</code> A regular expression</li>
+                                <li><code class="inline">flags:</code> list of regular expression flags (optional)</li>
+                            </ul>
+                        </div>
+                        <div class="note">
+                            <b class="important">Note:</b> Currently you should not use the pipe | within your regular expression as it will cause a conflict with how parsing validators work. A workaround is in progress.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-required">
+                        <b class="important">required</b>
+                        <div class="description">
+                            The field under validation must have more than 0 characters.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code> none.
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-size">
+                        <b class="important">size:{kb}</b>
+                        <div class="description">
+                            The file size added to the field under validation must not exceed the specified size in kilobytes.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">size:</code> The maximum file size in kilobytes.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <h2 id="custom-rules" class="content-subhead"><a href="#custom-rules">Custom Rules</a></h2>
                 <p>
                     You can easily add custom rules to the validators, but your custom validation rules must adhere to a contract, or certain structure:
+                    <br><br>
                     <b class="important">Function Form:</b>
                     This is the most basic custom validator form, it consists of only a function that returns either a boolean or a promise. However it will have a default error message.
                     <code-block class="language-javascript">
@@ -60,7 +276,7 @@
                             }
                         };
                     </code-block>
-                    or
+                    <b class="important">Localized Object Form:</b>
                     <code-block class="language-javascript">
                         const validator = {
                             messages: {
@@ -80,14 +296,14 @@
                     The only difference that the latter will allow you to add localized messages, the former only adds it to the English dictionary.
 
                     <div class="note">
-                        <b class="important">Note:</b> Notice how the <b class="important">messages</b> methods gets passed the field name as a first parameter.
+                        <b class="important">Note:</b> Notice how the <code class="inline">messages</code> methods gets passed the <code class="inline">field name</code> as a first parameter.
                         And how the <code class="inline">validate</code> method gets passed the value as a first parameter.
                         And both recieve the <code class="inline">args</code> which are the params that were configured with the validation rule.
                         for example look at the <a class="link" href="https://github.com/logaretm/vue-validation/blob/master/src/rules/min.js">actual implementaion of the min rule</a>.
                     </div>
                     <br>
                     <div class="note">
-                        <b class="important">Note:</b> As you can see a validation rule must implement one of the two forms discussed above.
+                        <b class="important">Note:</b> As you can see a validation rule must implement one of the three forms discussed above.
                          Not doing so will throw a <code class="inline">ValidatorException</code> with an appropiate error message detailing what were you missing.
                     </div>
                 </p>
@@ -114,7 +330,7 @@
                          extending a new rule that have the same name as an existing rule will throw a <code class="inline">ValidatorException</code> with an error message.
                     </div>
                 </p>
-                <h2 id="custom-messages" class="content-subhead">Custom Messages</h2>
+                <h2 id="custom-messages" class="content-subhead"><a href="#custom-messages">Custom Messages and Localization</a></h2>
                 <p>
                     Of course you might need to overwrite the error messages, or add new ones. The Validator class and its instances provide an <code class="inline">updateDictionary</code> method.
                     which will merge the messages with the internal dicitonary, overwriting any duplicates.
