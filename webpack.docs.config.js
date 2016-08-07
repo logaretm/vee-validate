@@ -1,7 +1,11 @@
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const webpack = require('webpack');
+const merge = require('webpack-merge');
 
-module.exports = {
+const isProduction = process.env.NODE_ENV === 'production';
+
+let config = {
     entry: {
         bundle: path.join(__dirname, 'docs', 'main'),
     },
@@ -61,3 +65,25 @@ module.exports = {
         new ExtractTextPlugin('[name].css')
     ]
 };
+
+if (isProduction) {
+    config = merge(config, {
+        plugins: [
+            new webpack.optimize.UglifyJsPlugin({
+                mangle: true,
+                compress: {
+                    warnings: false
+                }
+            }),
+            new webpack.optimize.OccurenceOrderPlugin(),
+            new webpack.DefinePlugin({
+                'process.env': {
+                    BABEL_ENV: JSON.stringify(process.env.NODE_ENV),
+                    NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+                },
+            })
+        ]
+    });
+}
+
+module.exports = config;

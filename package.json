@@ -52,6 +52,7 @@
     "url-loader": "^0.5.7",
     "vue": "^1.0.26",
     "webpack": "^1.13.1",
+    "webpack-merge": "^0.14.1",
     "webpack-preset-vue": "^1.0.0"
   }
 }
