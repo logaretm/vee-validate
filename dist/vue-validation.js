@@ -1148,6 +1148,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
+	         * Checks if there is any errrors in the internal array.
+	         *
+	         * @return {boolean} result True if there was at least one error, false otherwise.
+	         */
+
+	    }, {
+	        key: "any",
+	        value: function any() {
+	            return !!this.errors.length;
+	        }
+
+	        /**
 	         * Removes all items from the internal array.
 	         */
 

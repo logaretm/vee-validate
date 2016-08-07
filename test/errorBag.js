@@ -87,3 +87,10 @@ test('it collects errors for a specific field in an array', t => {
         'The name is invalid'
     ]);
 });
+
+test('it checks if there are any errors in the array', t => {
+    const errors = new ErrorBag();
+    t.false(errors.any());
+    errors.add('name', 'The name is invalid');
+    t.true(errors.any());
+});
