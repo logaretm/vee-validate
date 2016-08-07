@@ -36,6 +36,9 @@
                     </li>
                 </ul>
             </div>
+            <div class="about flex-center">
+                <a target="github" href="https://github.com/logaretm/vue-validation"><i class="icon-github"></i></a>
+            </div>
         </div>
 
         <div id="main">

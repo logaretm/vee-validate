@@ -5085,6 +5085,15 @@ body {
 .menu-link {
   transition: all 0.2s ease-out; }
 
+#menu div.about {
+  left: 0;
+  bottom: 0;
+  position: absolute;
+  font-size: 32px; }
+
+#menu div.about > a > i:hover {
+  color: #fff; }
+
 #layout {
   position: relative;
   padding-left: 0; }
