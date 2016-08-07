@@ -1,0 +1,9 @@
+.*
+node_modules
+coverage
+docs
+gh-pages
+src
+test
+webpack.config.js
+webpack.docs.config.js
