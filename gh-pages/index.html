@@ -3,15 +3,15 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Vue Validation</title>
+        <title>Vee Validate</title>
         <link rel="stylesheet" href="assets/bundle.css">
     </head>
     <body>
         <div id="app">
-            <app heading="Vue-Validation"
+            <app heading="Vee-Validate"
                  subtitle="Simple VueJS Form Validation"
             >
-                <h2 id="about" class="content-subhead"><a href="#about">What is vue-validation?</a></h2>
+                <h2 id="about" class="content-subhead"><a href="#about">What is vee-validate?</a></h2>
                 <p>
                     This is a lightweight plugin for <a href="https://vuejs.org/" class="link">VueJS</a> that allows you to validate input fields, and display errors.
                     <br><br>
@@ -25,23 +25,23 @@
                 </p>
                 <h2 id="installation" class="content-subhead"><a href="#installation">Installation</a></h2>
                 <p>
-                    <code-block class="language-bash">npm install vue-validation --save</code-block>
+                    <code-block class="language-bash">npm install vee-validate --save</code-block>
 
                     Then you may use it like this:
                     <code-block class="language-html">
                         &lt;script src=&quot;path/to/vue.js&quot;&gt;&lt;/script&gt;
-                        &lt;script src=&quot;path/to/vue-validation.js&quot;&gt;&lt;/script&gt;
+                        &lt;script src=&quot;path/to/vee-validate.js&quot;&gt;&lt;/script&gt;
                         &lt;script&gt;
-                            Vue.use(VueValidation); // good to go.
+                            Vue.use(VeeValidate); // good to go.
                         &lt;/script&gt;
                     </code-block>
 
                     or you may import it using ES6:
                     <code-block class="language-javascript">
                         import Vue from 'vue';
-                        import VueValidation from 'vue-validation';
-                        
-                        Vue.use(VueValidation);
+                        import VeeValidate from 'vee-validate';
+
+                        Vue.use(VeeValidate);
                     </code-block>
                 </p>
                 <h2 id="basic-example" class="content-subhead"><a href="#basic-example">Basic Example</a></h2>
@@ -75,15 +75,15 @@
                     You may need to configure some options to tweak some of the plugin internals, here is how you would set up the options along with the default values:
                 </p>
                 <code-block class="language-javascript">
-                    import VueValidation from 'vue-validation';
                     import Vue from 'vue';
+                    import VeeValidate from 'vee-validate';
 
                     const config = {
                         errorBagName: 'errors',
                         delay: 0
                     };
 
-                    Vue.use(VueValidation, config);
+                    Vue.use(VeeValidate, config);
                 </code-block>
                 <ul>
                     <li><code class="inline">errorBagName:</code> The name of the ErrorBag object that will be injected in each of Vue's instances' data.</li>

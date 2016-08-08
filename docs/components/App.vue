@@ -8,7 +8,7 @@
 
         <div id="menu" v-el:menu>
             <div class="pure-menu">
-                <a href="/" class="pure-menu-heading">Vue Validation</a>
+                <a href="/" class="pure-menu-heading">Vee Validate</a>
                 <ul class="pure-menu-list">
                     <li :class="{'pure-menu-item': true, 'pure-menu-selected': ! selected}">
                         <a href="index.html" class="pure-menu-link">Getting Started</a>
@@ -37,7 +37,7 @@
                 </ul>
             </div>
             <div class="about flex-center">
-                <a target="github" href="https://github.com/logaretm/vue-validation"><i class="icon-github"></i></a>
+                <a target="github" href="https://github.com/logaretm/vee-validation"><i class="icon-github"></i></a>
             </div>
         </div>
 

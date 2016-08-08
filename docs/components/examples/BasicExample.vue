@@ -31,8 +31,8 @@
 
 
         <div slot="code-js">
-            import VueValidation from 'vue-validation';
-            Vue.use(VueValidation);
+            import VeeValidate from 'vee-validate';
+            Vue.use(VeeValidate);
 
             new Vue({
                 el: '#app'

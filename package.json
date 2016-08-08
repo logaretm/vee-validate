@@ -1,8 +1,8 @@
 {
-  "name": "vue-validation",
+  "name": "vee-validate",
   "version": "1.0.0",
   "description": "Simple VueJS input validation plugin",
-  "main": "dist/vue-validation.js",
+  "main": "dist/vee-validate.js",
   "scripts": {
     "start": "webpack-dev-server --hot --inline --config webpack.docs.config.js",
     "dev": "webpack --progress --colors --watch",
@@ -13,7 +13,7 @@
     "docs": "webpack --config webpack.docs.config.js",
     "docs:production": "cross-env NODE_ENV=production webpack -p --config webpack.docs.config.js",
     "build:all": "npm run build && npm run docs",
-    "cover": "nyc report --reporter=lcov > coverage.lcov && codecov" 
+    "cover": "nyc report --reporter=lcov > coverage.lcov && codecov"
   },
   "ava": {
     "require": [

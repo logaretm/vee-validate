@@ -42,7 +42,7 @@
 
 
         <div slot="code-js">
-            Vue.use(VueValidation);
+            Vue.use(VeeValidate);
 
             new Vue({
                 el: '#app'

@@ -3,12 +3,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Vue Validation</title>
+        <title>Vee Validate</title>
         <link rel="stylesheet" href="assets/bundle.css">
     </head>
     <body>
         <div id="app">
-            <app heading="Vue-Validation"
+            <app heading="Vee-Validate"
                  subtitle="Classes API"
                  selected="api"
             >
@@ -16,7 +16,7 @@
                 <p>
                     The ErrorBag class is a wrapper around an array, and is standalone and has no dependencies, you can use it in your code for any reason:
                     <code-block class="language-javascript">
-                        import { ErrorBag } from 'vue-validation'; // ES6 Import.
+                        import { ErrorBag } from 'vee-validate'; // ES6 Import.
                         const bag = new ErrorBag();
                     </code-block>
                     The internal array contains the error objects, the structure is:
@@ -50,7 +50,7 @@
                     However it is also a stand alone class and can be used separately for programmatically validating values.
                     The constructor can optionally take an object to map each field name to a set of validations.
                     <code-block class="language-javascript">
-                        import { Validator } from 'vue-validation';
+                        import { Validator } from 'vee-validate';
                         const validator = new Validator({
                             email: 'required|email',
                             name: 'required|alpha|min:3',
@@ -58,7 +58,7 @@
                     </code-block>
                     But you can construct the object without passing anything and add the validation rules later.
                     <code-block class="language-javascript">
-                        import { Validator } from 'vue-validation';
+                        import { Validator } from 'vee-validate';
                         const validator = new Validator();
 
                         validator.attach('email', 'required|email');

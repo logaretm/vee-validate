@@ -3,12 +3,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Vue Validation</title>
+        <title>Vee Validate</title>
         <link rel="stylesheet" href="assets/bundle.css">
     </head>
     <body>
         <div id="app">
-            <app heading="Vue-Validation"
+            <app heading="Vee-Validate"
                  subtitle="Validation Rules"
                  selected="rules"
             >
@@ -30,7 +30,7 @@
                 </p>
                 <h2 id="available-rules" class="content-subhead"><a href="#available-rules">Available Rules</a></h2>
                 <p>
-                    <code class="inline">vue-validation</code> Comes out of the box with 21 validation rules, which are:
+                    <code class="inline">vee-validate</code> Comes out of the box with 21 validation rules, which are:
                 </p>
                 <div class="pure-g">
                     <div v-for="group in rules" class="pure-u-1-{{ rules.length }}">
@@ -275,7 +275,7 @@
                         <b>Note:</b> Notice how the <code>messages</code> methods gets passed the <code>field</code> which is the name of the field under validation as a first parameter.
                         And how the <code>validate</code> method gets passed the value as a first parameter.
                         And both receive the <code>args</code> which are the parameters (arguments) that were configured with the validation rule.
-                        for example look at the <a href="https://github.com/logaretm/vue-validation/blob/master/src/rules/min.js">actual implementation of the min rule</a>.
+                        for example look at the <a href="https://github.com/logaretm/vee-validate/blob/master/src/rules/min.js">actual implementation of the min rule</a>.
                     </div>
                     <br>
                     <div class="note">
@@ -286,7 +286,7 @@
                 <p>
                     After creating your validator, You can add it to the list of rules using <code class="inline">extend(name, validator)</code> method in the validator instance.
                     <code-block class="language-javascript">
-                        import { Validator } from 'vue-validations';
+                        import { Validator } from 'vee-validate';
                         // These are 'ES6' arrow functions.
                         Validator.extend('truthy', {
                             getMessage: field =&gt; 'The ' + field + ' value is not truthy.',
@@ -314,7 +314,7 @@
                         <b>Note:</b> Any merges will have an effect on all validator instances as the messages dictionary is shared.
                     </div>
                     <code-block class="language-javascript">
-                        import { Validator } from 'vue-validations';
+                        import { Validator } from 'vee-validate';
 
                         const dictionary = {
                             en: { alpha: () =&gt; 'Some English Message' },

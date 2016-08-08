@@ -4,7 +4,7 @@ import 'prismjs/plugins/show-language/prism-show-language.css';
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 import Vue from 'vue';
 import Collection from 'collectionsjs';
-import VueValidation from './../dist/vue-validation';
+import VeeValidate from './../dist/vee-validate';
 import Examples from './components/examples';
 import CodeExample from './components/CodeExample.vue';
 import CodeBlock from './components/CodeBlock.vue';
@@ -12,7 +12,7 @@ import App from './components/App.vue';
 import './sass/main.scss';
 import Rules from './../src/rules';
 
-Vue.use(VueValidation);
+Vue.use(VeeValidate);
 Vue.use(Examples);
 Vue.component('code-example', CodeExample);
 Vue.component('code-block', CodeBlock);

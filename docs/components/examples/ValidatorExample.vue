@@ -34,7 +34,7 @@
 
         <div slot="code-js">
             import Vue from 'vue';
-            import { Validator } from 'vue-validation';
+            import { Validator } from 'vee-validate';
 
             new Vue({
                 validator: null, // private reference
@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { Validator } from './../../../dist/vue-validation';
+import { Validator } from './../../../dist/vee-validate';
 export default {
     validator: null,
     data() {

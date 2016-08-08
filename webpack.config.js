@@ -8,8 +8,8 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: isProduction ? 'vue-validation.min.js' : 'vue-validation.js',
-        library: 'VueValidation',
+        filename: isProduction ? 'vee-validate.min.js' : 'vee-validate.js',
+        library: 'VeeValidate',
         libraryTarget: 'umd'
     },
     module: {
