@@ -47,6 +47,11 @@
                 <h2 id="basic-example" class="content-subhead"><a href="#basic-example">Basic Example</a></h2>
                 <basic-example></basic-example>
                 <div class="flex-center"><a class="link" href="examples.html">More Examples</a></div>
+                <br>
+                <div class="note">
+                    <b>Note:</b> The field name that appears in the error messages is usually the input's <code>name</code> attribute, unless you passed a value from the vue instance <code>$data</code> object,
+                    The name will be then the expression name, check the <a href="examples.html#validate-data-example">data validation example</a>.
+                </div>
                 <h2 id="render-errors" class="content-subhead"><a href="#render-errors">Rendering Errors</a></h2>
                 <p>
                     Naturally, you would want to display the errors to your users, The plugin augments your Vue instance with a private validator object and a public errors data object.
