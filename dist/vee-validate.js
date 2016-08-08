@@ -1207,7 +1207,13 @@ var install = function install(Vue, options) {
             this.vm.$validator.attach(this.fieldName, this.params.rules);
         },
         bind: function bind() {
-            this.fieldName = this.el.name;
+            this.fieldName = this.expression || this.el.name;
+            this.attachValidator();
+
+            if (this.expression) {
+                return;
+            }
+
             this.attachValidator();
             var handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
             this.handles = this.el.type === 'file' ? 'change' : 'input';
@@ -1216,9 +1222,19 @@ var install = function install(Vue, options) {
             this.handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_debouncer_js__["a" /* default */])(handler.bind(this), delay) : handler.bind(this);
             this.el.addEventListener(this.handles, this.handler);
         },
+        update: function update(value) {
+            if (!this.expression) {
+                return;
+            }
+
+            this.vm.$validator.validate(this.fieldName, value);
+        },
         unbind: function unbind() {
+            if (this.handler) {
+                this.el.removeEventListener(this.handles, this.handler);
+            }
+
             this.vm.$validator.detach(this.fieldName);
-            this.el.removeEventListener(this.handles, this.handler);
         }
     });
 };

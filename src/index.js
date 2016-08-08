@@ -33,7 +33,13 @@ const install = (Vue, options) => {
             this.vm.$validator.attach(this.fieldName, this.params.rules);
         },
         bind() {
-            this.fieldName = this.el.name;
+            this.fieldName = this.expression || this.el.name;
+            this.attachValidator();
+
+            if (this.expression) {
+                return;
+            }
+
             this.attachValidator();
             const handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
             this.handles = this.el.type === 'file' ? 'change' : 'input';
@@ -42,9 +48,19 @@ const install = (Vue, options) => {
             this.handler = delay ? debounce(handler.bind(this), delay) : handler.bind(this);
             this.el.addEventListener(this.handles, this.handler);
         },
+        update(value) {
+            if (! this.expression) {
+                return;
+            }
+
+            this.vm.$validator.validate(this.fieldName, value);
+        },
         unbind() {
+            if (this.handler) {
+                this.el.removeEventListener(this.handles, this.handler);
+            }
+
             this.vm.$validator.detach(this.fieldName);
-            this.el.removeEventListener(this.handles, this.handler);
         }
     });
 };
