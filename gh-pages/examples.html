@@ -20,17 +20,20 @@
                 The basic approach relies on listening to the <code class="inline">input</code> or the <code class="inline">change</code> events depending on the file type.
                 However most of the time, your values are bound to your Vue instance and some code may change their inputs programatically, the basic approach won't detect this change.
                 <br><br>
-                <b class="important">The Solution:</b> The <code class="inline">v-validate</code> directive can take an expression, the expression is the data value you wish to validate for example:
+                <b class="important">The Solution:</b> The <code class="inline">v-validate</code> directive can take an expression, the expression is the data name you wish to validate. for example:
                 <code-block class="language-html">
                     &lt;input v-validate=&quot;email&quot; rules=&quot;required|email&quot; type=&quot;text&quot; name=&quot;email&quot;&gt;
                 </code-block>
-                Whenever the expression is updated, the validator will validate the new expression value automatically.
+                Whenever the value is updated, the validator will validate the new expression value automatically.
                 <div class="note">
-                    <b>Note:</b> The plugin won't retrive the value from the input anymore, it will validate whatever value in your vue instance data.
-                    And as you noticed, you don't need to provide a <code>name</code> attribute the expression name will be used instead.
+                    <b>Note:</b> The plugin will use the data in your vue instance as the source of the input value, meaning it won't be watching the input anymore.
+                    And as you noticed, you don't need to provide a <code>name</code> attribute, as the expression name will be used instead.
                 </div>
              </p>
              <validate-data-example></validate-data-example>
+             <div class="note">
+                 <b>Note:</b> When you provide the expression to the directive, <code>delay</code> and <code>reject</code> attributes won't have an effect anymore. so you might want to handle debouncing the inputs yourself.
+             </div>
             <h2 id="reject-example" class="content-subhead"><a href="#reject-example">Reject Invalid Files</a></h2>
             <reject-example></reject-example>
             </app>
