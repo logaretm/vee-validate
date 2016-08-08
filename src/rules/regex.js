@@ -1,1 +1,1 @@
-export default (value, [regex, ...flags]) => !! String(value).match(new RegExp(regex, flags));
+export default (value, [regex, ...flags]) => new RegExp(regex, flags).test(String(value));

@@ -1,1 +1,1 @@
-export default (value) => !! value.match(/^[a-zA-Z0-9 ]*$/);
+export default (value) => /^[a-zA-Z0-9 ]*$/.test(value);

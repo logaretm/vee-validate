@@ -946,7 +946,8 @@
             "use strict";
             /* harmony default export */
             exports["a"] = function (value) {
-                return !!value.match(/^[a-zA-Z ]*$/);
+                return (/^[a-zA-Z ]*$/.test(value)
+                );
             };
 
             /***/
@@ -957,7 +958,8 @@
             "use strict";
             /* harmony default export */
             exports["a"] = function (value) {
-                return !!value.match(/^[a-zA-Z0-9 _-]*$/);
+                return (/^[a-zA-Z0-9 _-]*$/.test(value)
+                );
             };
 
             /***/
@@ -968,7 +970,8 @@
             "use strict";
             /* harmony default export */
             exports["a"] = function (value) {
-                return !!value.match(/^[a-zA-Z0-9 ]*$/);
+                return (/^[a-zA-Z0-9 ]*$/.test(value)
+                );
             };
 
             /***/
@@ -1095,7 +1098,8 @@
 
                 var strVal = String(value);
 
-                return !!(strVal.match(/^[0-9]*$/) && strVal.length === Number(length));
+                return (/^[0-9]*$/.test(strVal) && strVal.length === Number(length)
+                );
             };
 
             /***/
@@ -1164,7 +1168,7 @@
                 var list = [];
                 for (var i = 0; i < files.length; i++) {
                     // if file is not an image, reject.
-                    if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+                    if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
                         return false;
                     }
 
@@ -1184,7 +1188,8 @@
             "use strict";
             /* harmony default export */
             exports["a"] = function (value) {
-                return !!value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/);
+                return (/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value)
+                );
             };
 
             /***/
@@ -1197,7 +1202,7 @@
             exports["a"] = function (files, extensions) {
                 var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
                 for (var i = 0; i < files.length; i++) {
-                    if (!files[i].name.match(regex)) {
+                    if (!regex.test(files[i].name)) {
                         return false;
                     }
                 }
@@ -1214,7 +1219,7 @@
             /* harmony default export */
             exports["a"] = function (files) {
                 for (var i = 0; i < files.length; i++) {
-                    if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+                    if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
                         return false;
                     }
                 }
@@ -1300,10 +1305,10 @@
 
             "use strict";
             // TODO: Maybe add ipv6 flag?
-            // eslint-disable-next-line
             /* harmony default export */
             exports["a"] = function (value) {
-                return !!value.match(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
+                return (/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value)
+                );
             };
 
             /***/
@@ -1356,7 +1361,7 @@
             exports["a"] = function (files, mimes) {
                 var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
                 for (var i = 0; i < files.length; i++) {
-                    if (!files[i].type.match(regex)) {
+                    if (!regex.test(files[i].type)) {
                         return false;
                     }
                 }
@@ -1446,7 +1451,7 @@
 
                 var flags = _ref2.slice(1);
 
-                return !!String(value).match(new RegExp(regex, flags));
+                return new RegExp(regex, flags).test(String(value));
             };
 
             /***/
@@ -5869,7 +5874,8 @@ process.umask = function () {
 
 "use strict";
 /* harmony default export */ exports["a"] = function (value) {
-  return !!value.match(/^[a-zA-Z ]*$/);
+  return (/^[a-zA-Z ]*$/.test(value)
+  );
 };
 
 /***/ },
@@ -5878,7 +5884,8 @@ process.umask = function () {
 
 "use strict";
 /* harmony default export */ exports["a"] = function (value) {
-  return !!value.match(/^[a-zA-Z0-9 _-]*$/);
+  return (/^[a-zA-Z0-9 _-]*$/.test(value)
+  );
 };
 
 /***/ },
@@ -5887,7 +5894,8 @@ process.umask = function () {
 
 "use strict";
 /* harmony default export */ exports["a"] = function (value) {
-  return !!value.match(/^[a-zA-Z0-9 ]*$/);
+  return (/^[a-zA-Z0-9 ]*$/.test(value)
+  );
 };
 
 /***/ },
@@ -5936,7 +5944,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     var strVal = String(value);
 
-    return !!(strVal.match(/^[0-9]*$/) && strVal.length === Number(length));
+    return (/^[0-9]*$/.test(strVal) && strVal.length === Number(length)
+    );
 };
 
 /***/ },
@@ -5979,7 +5988,7 @@ var validateImage = function validateImage(file, width, height) {
     var list = [];
     for (var i = 0; i < files.length; i++) {
         // if file is not an image, reject.
-        if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+        if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
             return false;
         }
 
@@ -5997,7 +6006,8 @@ var validateImage = function validateImage(file, width, height) {
 
 "use strict";
 /* harmony default export */ exports["a"] = function (value) {
-  return !!value.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/);
+  return (/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value)
+  );
 };
 
 /***/ },
@@ -6008,7 +6018,7 @@ var validateImage = function validateImage(file, width, height) {
 /* harmony default export */ exports["a"] = function (files, extensions) {
     var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
     for (var i = 0; i < files.length; i++) {
-        if (!files[i].name.match(regex)) {
+        if (!regex.test(files[i].name)) {
             return false;
         }
     }
@@ -6023,7 +6033,7 @@ var validateImage = function validateImage(file, width, height) {
 "use strict";
 /* harmony default export */ exports["a"] = function (files) {
     for (var i = 0; i < files.length; i++) {
-        if (!files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+        if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
             return false;
         }
     }
@@ -6048,9 +6058,9 @@ var validateImage = function validateImage(file, width, height) {
 
 "use strict";
 // TODO: Maybe add ipv6 flag?
-// eslint-disable-next-line
 /* harmony default export */ exports["a"] = function (value) {
-  return !!value.match(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
+  return (/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value)
+  );
 };
 
 /***/ },
@@ -6075,7 +6085,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* harmony default export */ exports["a"] = function (files, mimes) {
     var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
     for (var i = 0; i < files.length; i++) {
-        if (!files[i].type.match(regex)) {
+        if (!regex.test(files[i].type)) {
             return false;
         }
     }
@@ -6131,7 +6141,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
   var flags = _ref2.slice(1);
 
-  return !!String(value).match(new RegExp(regex, flags));
+  return new RegExp(regex, flags).test(String(value));
 };
 
 /***/ },

@@ -1,5 +1,5 @@
 export default (value, [length]) => {
     const strVal = String(value);
 
-    return !! (strVal.match(/^[0-9]*$/) && strVal.length === Number(length));
+    return /^[0-9]*$/.test(strVal) && strVal.length === Number(length);
 };

@@ -1,7 +1,7 @@
 export default (files, extensions) => {
     const regex = new RegExp(`\.(${extensions.join('|')})$`, 'i');
     for (let i = 0; i < files.length; i++) {
-        if (! files[i].name.match(regex)) {
+        if (! regex.test(files[i].name)) {
             return false;
         }
     }

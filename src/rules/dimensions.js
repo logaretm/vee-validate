@@ -24,7 +24,7 @@ export default (files, [width, height]) => {
     const list = [];
     for (let i = 0; i < files.length; i++) {
         // if file is not an image, reject.
-        if (! files[i].name.match(/\.(jpg|svg|jpeg|png|bmp|gif)$/i)) {
+        if (! /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
             return false;
         }
 
