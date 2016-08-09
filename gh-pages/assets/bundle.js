@@ -1668,7 +1668,7 @@
                 });
 
                 Vue.directive('validate', {
-                    params: ['rules', 'delay', 'reject'],
+                    params: ['rules', 'delay', 'reject', 'initial'],
                     onInput: function onInput() {
                         this.vm.$validator.validate(this.fieldName, this.el.value);
                     },
@@ -1698,6 +1698,12 @@
                     },
                     update: function update(value) {
                         if (!this.expression) {
+                            return;
+                        }
+
+                        if (this.params.initial) {
+                            this.params.initial = false;
+
                             return;
                         }
 
@@ -6372,7 +6378,7 @@ module.exports = "\n\n\n\n<p>\n    After validating a file, you may want to rejc
 /* 52 */
 /***/ function(module, exports) {
 
-module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-model=\"email\" v-validate=\"email\" rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n            <input v-model=\"name\" v-validate=\"name\" rules=\"required|alpha\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-model=&quot;email&quot; v-validate=&quot;email&quot; rules=&quot;required|email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Full Name&lt;/label&gt;\n                &lt;input v-model=&quot;name&quot; v-validate=&quot;name&quot; rules=&quot;required|alpha&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ \"{\" + \"{ errors.first('name') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n    <div slot=\"code-js\">\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        new Vue({\n            data: {\n                email: '',\n                name: ''\n            }\n        });\n    </div>\n</code-example>\n";
+module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-model=\"email\" v-validate=\"email\" rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n            <input v-model=\"name\" v-validate=\"name\" initial rules=\"required|alpha\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-model=&quot;email&quot; v-validate=&quot;email&quot; rules=&quot;required|email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Full Name&lt;/label&gt;\n                &lt;input v-model=&quot;name&quot; v-validate=&quot;name&quot; initial rules=&quot;required|alpha&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ \"{\" + \"{ errors.first('name') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n    <div slot=\"code-js\">\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        new Vue({\n            data: {\n                email: '',\n                name: ''\n            }\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
 /* 53 */

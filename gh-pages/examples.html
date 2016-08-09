@@ -32,9 +32,17 @@
                     </div>
                  </p>
                  <validate-data-example></validate-data-example>
-                 <div class="note">
-                     <b>Note:</b> When you provide the expression to the directive, <code>delay</code> and <code>reject</code> attributes won't have an effect anymore. so you might want to handle debouncing the inputs yourself.
-                 </div>
+                 <p>
+                    <div class="note">
+                        <b>Note:</b> Notice that the <code>email</code> field was immediatly validated when you open the page, you may not want this behavior, use the <code>initial</code> attribute to tell the validator to ignore the first evaluation.
+                        like the <code>name</code> field that didn't display any errors when you opened this page.
+                        This attribute is only relevant when validating using expressions, it has no effect otherwise.
+                    </div>
+                    <br>
+                    <div class="note">
+                        <b>Note:</b> When you provide the expression to the directive, <code>delay</code> and <code>reject</code> attributes won't have an effect anymore. so you might want to handle debouncing the inputs yourself.
+                    </div>
+                 </p>
             </app>
         </div>
         <script src="assets/bundle.js"></script>

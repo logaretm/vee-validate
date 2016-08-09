@@ -8,7 +8,7 @@
             </div>
             <div class="pure-u-1">
                 <label :class="{'error': errors.has('name') }" for="name">Full Name</label>
-                <input v-model="name" v-validate="name" rules="required|alpha" :class="{'pure-input-1': true, 'has-error': errors.has('name') }" type="text" placeholder="Full Name">
+                <input v-model="name" v-validate="name" initial rules="required|alpha" :class="{'pure-input-1': true, 'has-error': errors.has('name') }" type="text" placeholder="Full Name">
                 <span class="error" v-show="errors.has('name')">{{ errors.first('name') }}</span>
             </div>
         </form>
@@ -22,7 +22,7 @@
                 &lt;/div&gt;
                 &lt;div class=&quot;pure-u-1&quot;&gt;
                     &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Full Name&lt;/label&gt;
-                    &lt;input v-model=&quot;name&quot; v-validate=&quot;name&quot; rules=&quot;required|alpha&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;
+                    &lt;input v-model=&quot;name&quot; v-validate=&quot;name&quot; initial rules=&quot;required|alpha&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;
                     &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ "{" + "{ errors.first('name') }" + "}" }}&lt;/span&gt;
                 &lt;/div&gt;
             &lt;/form&gt;

@@ -25,7 +25,7 @@ const install = (Vue, options) => {
     });
 
     Vue.directive('validate', {
-        params: ['rules', 'delay', 'reject'],
+        params: ['rules', 'delay', 'reject', 'initial'],
         onInput() {
             this.vm.$validator.validate(this.fieldName, this.el.value);
         },
@@ -56,6 +56,12 @@ const install = (Vue, options) => {
         },
         update(value) {
             if (! this.expression) {
+                return;
+            }
+
+            if (this.params.initial) {
+                this.params.initial = false;
+
                 return;
             }
 
