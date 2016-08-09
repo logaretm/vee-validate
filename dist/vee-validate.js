@@ -71,7 +71,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 27);
+/******/ 	return __webpack_require__(__webpack_require__.s = 28);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -994,6 +994,7 @@ var validateImage = function validateImage(file, width, height) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__between__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__confirmed__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__url__ = __webpack_require__(27);
 
 
 
@@ -1004,6 +1005,7 @@ var validateImage = function validateImage(file, width, height) {
  // eslint-disable-line
  // eslint-disable-line
  // eslint-disable-line
+
 
 
 
@@ -1035,7 +1037,8 @@ var validateImage = function validateImage(file, width, height) {
     image: __WEBPACK_IMPORTED_MODULE_16__image__["a" /* default */],
     dimensions: __WEBPACK_IMPORTED_MODULE_17__dimensions__["a" /* default */],
     between: __WEBPACK_IMPORTED_MODULE_18__between__["a" /* default */],
-    confirmed: __WEBPACK_IMPORTED_MODULE_19__confirmed__["a" /* default */]
+    confirmed: __WEBPACK_IMPORTED_MODULE_19__confirmed__["a" /* default */],
+    url: __WEBPACK_IMPORTED_MODULE_20__url__["a" /* default */]
 };
 
 /***/ },
@@ -1171,6 +1174,29 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 /***/ },
 /* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+/* harmony default export */ exports["a"] = function (value) {
+    var _ref = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
+    var _ref2 = _slicedToArray(_ref, 1);
+
+    var domain = _ref2[0];
+
+    var isUrl = /^https?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.\(\)%-]*)*\/?$/.test(value);
+
+    if (domain && isUrl) {
+        return new RegExp('^https?://(([da-z.-]+).)*(' + domain.replace('.', '\\$&') + ')').test(value);
+    }
+
+    return isUrl;
+};
+
+/***/ },
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";

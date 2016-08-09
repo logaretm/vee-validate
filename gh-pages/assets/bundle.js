@@ -61,7 +61,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 58);
+/******/ 	return __webpack_require__(__webpack_require__.s = 59);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -147,7 +147,7 @@
             /******/__webpack_require__.p = "";
 
             /******/ // Load entry module and return exports
-            /******/return __webpack_require__(__webpack_require__.s = 27);
+            /******/return __webpack_require__(__webpack_require__.s = 28);
             /******/
         }(
         /************************************************************************/
@@ -1267,6 +1267,7 @@
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(12);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_18__between__ = __webpack_require__(9);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_19__confirmed__ = __webpack_require__(10);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_20__url__ = __webpack_require__(27);
 
             // eslint-disable-line
             // eslint-disable-line
@@ -1295,7 +1296,8 @@
                 image: __WEBPACK_IMPORTED_MODULE_16__image__["a" /* default */],
                 dimensions: __WEBPACK_IMPORTED_MODULE_17__dimensions__["a" /* default */],
                 between: __WEBPACK_IMPORTED_MODULE_18__between__["a" /* default */],
-                confirmed: __WEBPACK_IMPORTED_MODULE_19__confirmed__["a" /* default */]
+                confirmed: __WEBPACK_IMPORTED_MODULE_19__confirmed__["a" /* default */],
+                url: __WEBPACK_IMPORTED_MODULE_20__url__["a" /* default */]
             };
 
             /***/
@@ -1527,6 +1529,55 @@
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
+
+            var _slicedToArray = function () {
+                function sliceIterator(arr, i) {
+                    var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+                        for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+                            _arr.push(_s.value);if (i && _arr.length === i) break;
+                        }
+                    } catch (err) {
+                        _d = true;_e = err;
+                    } finally {
+                        try {
+                            if (!_n && _i["return"]) _i["return"]();
+                        } finally {
+                            if (_d) throw _e;
+                        }
+                    }return _arr;
+                }return function (arr, i) {
+                    if (Array.isArray(arr)) {
+                        return arr;
+                    } else if (Symbol.iterator in Object(arr)) {
+                        return sliceIterator(arr, i);
+                    } else {
+                        throw new TypeError("Invalid attempt to destructure non-iterable instance");
+                    }
+                };
+            }();
+
+            /* harmony default export */exports["a"] = function (value) {
+                var _ref = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
+                var _ref2 = _slicedToArray(_ref, 1);
+
+                var domain = _ref2[0];
+
+                var isUrl = /^https?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.\(\)%-]*)*\/?$/.test(value);
+
+                if (domain && isUrl) {
+                    return new RegExp('^https?://(([da-z.-]+).)*(' + domain.replace('.', '\\$&') + ')').test(value);
+                }
+
+                return isUrl;
+            };
+
+            /***/
+        },
+        /* 28 */
+        /***/function (module, exports, __webpack_require__) {
+
+            "use strict";
             /* harmony import */
             var __WEBPACK_IMPORTED_MODULE_0__validator__ = __webpack_require__(2);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__utils_debouncer_js__ = __webpack_require__(1);
@@ -1678,15 +1729,15 @@ module.exports = function (module) {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BasicExample_vue__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BasicExample_vue__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BasicExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__BasicExample_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__DelayExample_vue__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__DelayExample_vue__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__DelayExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__DelayExample_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RejectExample_vue__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RejectExample_vue__ = __webpack_require__(56);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RejectExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__RejectExample_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ValidatorExample_vue__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ValidatorExample_vue__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ValidatorExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__ValidatorExample_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ValidateData_vue__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ValidateData_vue__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ValidateData_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__ValidateData_vue__);
 
 
@@ -4557,6 +4608,7 @@ extend(Vue.transition,transition);}installGlobalAPI(Vue);Vue.version='1.0.26';//
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__between__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__confirmed__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__url__ = __webpack_require__(43);
 
 
 
@@ -4567,6 +4619,7 @@ extend(Vue.transition,transition);}installGlobalAPI(Vue);Vue.version='1.0.26';//
  // eslint-disable-line
  // eslint-disable-line
  // eslint-disable-line
+
 
 
 
@@ -4598,7 +4651,8 @@ extend(Vue.transition,transition);}installGlobalAPI(Vue);Vue.version='1.0.26';//
     image: __WEBPACK_IMPORTED_MODULE_16__image__["a" /* default */],
     dimensions: __WEBPACK_IMPORTED_MODULE_17__dimensions__["a" /* default */],
     between: __WEBPACK_IMPORTED_MODULE_18__between__["a" /* default */],
-    confirmed: __WEBPACK_IMPORTED_MODULE_19__confirmed__["a" /* default */]
+    confirmed: __WEBPACK_IMPORTED_MODULE_19__confirmed__["a" /* default */],
+    url: __WEBPACK_IMPORTED_MODULE_20__url__["a" /* default */]
 };
 
 /***/ },
@@ -4641,7 +4695,7 @@ if (__vue_script__ &&
     __vue_script__.__esModule &&
     Object.keys(__vue_script__).length > 1) {
   console.warn("[vue-loader] docs\\components\\App.vue: named exports in *.vue files are ignored.")}
-__vue_template__ = __webpack_require__(45)
+__vue_template__ = __webpack_require__(46)
 module.exports = __vue_script__ || {}
 if (module.exports.__esModule) module.exports = module.exports.default
 if (__vue_template__) {
@@ -4664,13 +4718,13 @@ if (false) {(function () {  module.hot.accept()
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_script__, __vue_template__
-__webpack_require__(44)
+__webpack_require__(45)
 __vue_script__ = __webpack_require__(16)
 if (__vue_script__ &&
     __vue_script__.__esModule &&
     Object.keys(__vue_script__).length > 1) {
   console.warn("[vue-loader] docs\\components\\CodeBlock.vue: named exports in *.vue files are ignored.")}
-__vue_template__ = __webpack_require__(46)
+__vue_template__ = __webpack_require__(47)
 module.exports = __vue_script__ || {}
 if (module.exports.__esModule) module.exports = module.exports.default
 if (__vue_template__) {
@@ -4693,13 +4747,13 @@ if (false) {(function () {  module.hot.accept()
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_script__, __vue_template__
-__webpack_require__(43)
+__webpack_require__(44)
 __vue_script__ = __webpack_require__(17)
 if (__vue_script__ &&
     __vue_script__.__esModule &&
     Object.keys(__vue_script__).length > 1) {
   console.warn("[vue-loader] docs\\components\\CodeExample.vue: named exports in *.vue files are ignored.")}
-__vue_template__ = __webpack_require__(47)
+__vue_template__ = __webpack_require__(48)
 module.exports = __vue_script__ || {}
 if (module.exports.__esModule) module.exports = module.exports.default
 if (__vue_template__) {
@@ -6185,9 +6239,26 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 /***/ },
 /* 43 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-// removed by extract-text-webpack-plugin
+"use strict";
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+/* harmony default export */ exports["a"] = function (value) {
+    var _ref = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
+    var _ref2 = _slicedToArray(_ref, 1);
+
+    var domain = _ref2[0];
+
+    var isUrl = /^https?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.\(\)%-]*)*\/?$/.test(value);
+
+    if (domain && isUrl) {
+        return new RegExp('^https?://(([da-z.-]+).)*(' + domain.replace('.', '\\$&') + ')').test(value);
+    }
+
+    return isUrl;
+};
 
 /***/ },
 /* 44 */
@@ -6199,72 +6270,55 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* 45 */
 /***/ function(module, exports) {
 
-module.exports = "\n<div id=\"layout\" v-el:layout>\n    <!-- Menu toggle -->\n    <a href=\"#menu\" id=\"menuLink\" class=\"menu-link\" v-el:menuLink>\n        <!-- Hamburger icon -->\n        <span></span>\n    </a>\n\n    <div id=\"menu\" v-el:menu>\n        <div class=\"pure-menu\">\n            <a href=\"/\" class=\"pure-menu-heading\">Vee Validate</a>\n            <ul class=\"pure-menu-list\">\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': ! selected}\">\n                    <a href=\"index.html\" class=\"pure-menu-link\">Getting Started</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#installation\" class=\"pure-menu-link\">Installation</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#basic-example\" class=\"pure-menu-link\">Basic Example</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#render-errors\" class=\"pure-menu-link\">Rendering Errors</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'examples'}\">\n                    <a href=\"examples.html\" class=\"pure-menu-link\">Examples</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'rules'}\">\n                    <a href=\"rules.html\" class=\"pure-menu-link\">Validation Rules</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'api'}\">\n                    <a href=\"api.html\" class=\"pure-menu-link\">API Reference</a>\n                </li>\n                <li :class=\"pure-menu-item\">\n                    <a href=\"index.html#configuration\" class=\"pure-menu-link\">Configuration</a>\n                </li>\n            </ul>\n        </div>\n        <div class=\"about flex-center\">\n            <a target=\"github\" href=\"https://github.com/logaretm/vee-validation\"><i class=\"icon-github\"></i></a>\n        </div>\n    </div>\n\n    <div id=\"main\">\n        <div class=\"header\">\n            <h1>{{ heading }}</h1>\n            <h2>{{ subtitle }}</h2>\n        </div>\n        <div class=\"content\">\n            <slot></slot>\n        </div>\n    </div>\n</div>\n";
+// removed by extract-text-webpack-plugin
 
 /***/ },
 /* 46 */
 /***/ function(module, exports) {
 
-module.exports = "\n<pre><code v-el:code :class=\"class\"><slot></slot></code></pre>\n";
+module.exports = "\n<div id=\"layout\" v-el:layout>\n    <!-- Menu toggle -->\n    <a href=\"#menu\" id=\"menuLink\" class=\"menu-link\" v-el:menuLink>\n        <!-- Hamburger icon -->\n        <span></span>\n    </a>\n\n    <div id=\"menu\" v-el:menu>\n        <div class=\"pure-menu\">\n            <a href=\"/\" class=\"pure-menu-heading\">Vee Validate</a>\n            <ul class=\"pure-menu-list\">\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': ! selected}\">\n                    <a href=\"index.html\" class=\"pure-menu-link\">Getting Started</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#installation\" class=\"pure-menu-link\">Installation</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#basic-example\" class=\"pure-menu-link\">Basic Example</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#render-errors\" class=\"pure-menu-link\">Rendering Errors</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'examples'}\">\n                    <a href=\"examples.html\" class=\"pure-menu-link\">Examples</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'rules'}\">\n                    <a href=\"rules.html\" class=\"pure-menu-link\">Validation Rules</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'api'}\">\n                    <a href=\"api.html\" class=\"pure-menu-link\">API Reference</a>\n                </li>\n                <li :class=\"pure-menu-item\">\n                    <a href=\"index.html#configuration\" class=\"pure-menu-link\">Configuration</a>\n                </li>\n            </ul>\n        </div>\n        <div class=\"about flex-center\">\n            <a target=\"github\" href=\"https://github.com/logaretm/vee-validation\"><i class=\"icon-github\"></i></a>\n        </div>\n    </div>\n\n    <div id=\"main\">\n        <div class=\"header\">\n            <h1>{{ heading }}</h1>\n            <h2>{{ subtitle }}</h2>\n        </div>\n        <div class=\"content\">\n            <slot></slot>\n        </div>\n    </div>\n</div>\n";
 
 /***/ },
 /* 47 */
 /***/ function(module, exports) {
 
-module.exports = "\n<div class=\"pure-g\">\n    <div class=\"pure-u-1\">\n        <div class=\"pure-menu pure-menu-horizontal\">\n            <ul class=\"pure-menu-list\">\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'demo'}\">\n                    <a @click=\"content = 'demo'\" class=\"pure-menu-link\">\n                        <i class=\"icon-play\"></i>\n                        Demo\n                    </a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'html' }\">\n                    <a @click=\"content = 'html'\" class=\"pure-menu-link\">\n                        <i class=\"icon-html5\"></i>\n                        HTML\n                    </a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'js' }\">\n                    <a @click=\"content = 'js'\" class=\"pure-menu-link\">\n                        <i class=\"icon-code\"></i>\n                        JavaScript\n                    </a>\n                </li>\n            </ul>\n        </div>\n    </div>\n    <div v-show=\"content === 'demo'\" v-el=\"example\" class=\"pure-u-1\">\n        <slot name=\"example\"></slot>\n    </div>\n    <div v-show=\"content === 'html'\" class=\"pure-u-1\">\n        <code-block class=\"language-html\"><slot name=\"code-html\"></slot></code-block>\n    </div>\n    <div v-show=\"content === 'js'\" class=\"pure-u-1\">\n        <code-block class=\"language-javascript\"><slot name=\"code-js\"></slot></code-block>\n    </div>\n</div>\n";
+module.exports = "\n<pre><code v-el:code :class=\"class\"><slot></slot></code></pre>\n";
 
 /***/ },
 /* 48 */
 /***/ function(module, exports) {
 
-module.exports = "\n\n\n\n<p>\n    All you need is to add the <code class=\"inline\">v-validate</code> directive to the input you wish to validate.\n    <br><br>\n    Then Add a <code class=\"inline\">rules</code> attribute which contains a list of validation rules separated by a pipe '<code class=\"inline\">|</code>'.\n    For the following example the validation rules are straight forward, use <code class=\"inline\">required</code> to indicate that the field is required.\n    And <code class=\"inline\">email</code> to indicate that the field must be an email.\n    To combine both rules we assign the value <code class=\"inline\">required|email</code> to the <code class=\"inline\">rules</code> attribute.\n</p>\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-validate rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        import VeeValidate from 'vee-validate';\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
+module.exports = "\n<div class=\"pure-g\">\n    <div class=\"pure-u-1\">\n        <div class=\"pure-menu pure-menu-horizontal\">\n            <ul class=\"pure-menu-list\">\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'demo'}\">\n                    <a @click=\"content = 'demo'\" class=\"pure-menu-link\">\n                        <i class=\"icon-play\"></i>\n                        Demo\n                    </a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'html' }\">\n                    <a @click=\"content = 'html'\" class=\"pure-menu-link\">\n                        <i class=\"icon-html5\"></i>\n                        HTML\n                    </a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': content === 'js' }\">\n                    <a @click=\"content = 'js'\" class=\"pure-menu-link\">\n                        <i class=\"icon-code\"></i>\n                        JavaScript\n                    </a>\n                </li>\n            </ul>\n        </div>\n    </div>\n    <div v-show=\"content === 'demo'\" v-el=\"example\" class=\"pure-u-1\">\n        <slot name=\"example\"></slot>\n    </div>\n    <div v-show=\"content === 'html'\" class=\"pure-u-1\">\n        <code-block class=\"language-html\"><slot name=\"code-html\"></slot></code-block>\n    </div>\n    <div v-show=\"content === 'js'\" class=\"pure-u-1\">\n        <code-block class=\"language-javascript\"><slot name=\"code-js\"></slot></code-block>\n    </div>\n</div>\n";
 
 /***/ },
 /* 49 */
 /***/ function(module, exports) {
 
-module.exports = "\n\n\n\n<p>\n    You can specify a delay to debounce the input event, a case scenario that you may want to wait for the user to stop typing then validate the field.\n    This can be achieved by passing a <code class=\"inline\">delay</code> attribute on the field being validated, and assign it the number of milliseconds you want to wait for.\n</p>\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>Debounced Form</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email - Delay: 500ms</label>\n            <input v-validate rules=\"required|email\" delay=\"500\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"email\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name - Delay: 1s</label>\n            <input v-validate rules=\"required|alpha|min:3\" delay=\"1000\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;Basic Form&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email - Delay: 500ms&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|email&quot; delay=&quot;500&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;email&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Name - Delay: 1s&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|alpha|min:3&quot; delay=&quot;1000&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ \"{\" + \"{ errors.first('name') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
+module.exports = "\n\n\n\n<p>\n    All you need is to add the <code class=\"inline\">v-validate</code> directive to the input you wish to validate.\n    <br><br>\n    Then Add a <code class=\"inline\">rules</code> attribute which contains a list of validation rules separated by a pipe '<code class=\"inline\">|</code>'.\n    For the following example the validation rules are straight forward, use <code class=\"inline\">required</code> to indicate that the field is required.\n    And <code class=\"inline\">email</code> to indicate that the field must be an email.\n    To combine both rules we assign the value <code class=\"inline\">required|email</code> to the <code class=\"inline\">rules</code> attribute.\n</p>\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-validate rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        import VeeValidate from 'vee-validate';\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
 /* 50 */
 /***/ function(module, exports) {
 
-module.exports = "\n\n\n\n<p>\n    After validating a file, you may want to rejct the uploaded file if it fails the validation, this can be done by passing\n    the <code class=\"inline\">reject</code> attribute to the input fields.\n    <div class=\"note\">\n        <b>Note: </b> This attribute is only relevant on file inputs, adding it to other input types will not have an effect.\n    </div>\n</p>\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>File Upload</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('image') }\" for=\"image\">Unrejected Image</label>\n            <input v-validate rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('image') }\" name=\"image\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('image')\">{{ errors.first('image') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('file') }\" for=\"file\">Rejected Image</label>\n            <input  v-validate rules=\"mimes:image/*\" reject :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('file')\">{{ errors.first('file') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;File Upload&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('image') }&quot; for=&quot;image&quot;&gt;Unrejected Image&lt;/label&gt;\n                &lt;input v-validate rules=&quot;mimes:image/*&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('image') }&quot; name=&quot;image&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('image')&quot;&gt;{{ errors.first('image') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Image&lt;/label&gt;\n                &lt;input  v-validate rules=&quot;mimes:image/*&quot; reject :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ errors.first('file') }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
+module.exports = "\n\n\n\n<p>\n    You can specify a delay to debounce the input event, a case scenario that you may want to wait for the user to stop typing then validate the field.\n    This can be achieved by passing a <code class=\"inline\">delay</code> attribute on the field being validated, and assign it the number of milliseconds you want to wait for.\n</p>\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>Debounced Form</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email - Delay: 500ms</label>\n            <input v-validate rules=\"required|email\" delay=\"500\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"email\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name - Delay: 1s</label>\n            <input v-validate rules=\"required|alpha|min:3\" delay=\"1000\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;Basic Form&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email - Delay: 500ms&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|email&quot; delay=&quot;500&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;email&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Name - Delay: 1s&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|alpha|min:3&quot; delay=&quot;1000&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ \"{\" + \"{ errors.first('name') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
 /* 51 */
 /***/ function(module, exports) {
 
-module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-model=\"email\" v-validate=\"email\" rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n            <input v-model=\"name\" v-validate=\"name\" rules=\"required|alpha\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-model=&quot;email&quot; v-validate=&quot;email&quot; rules=&quot;required|email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Full Name&lt;/label&gt;\n                &lt;input v-model=&quot;name&quot; v-validate=&quot;name&quot; rules=&quot;required|alpha&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ \"{\" + \"{ errors.first('name') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n    <div slot=\"code-js\">\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        new Vue({\n            data: {\n                email: '',\n                name: ''\n            }\n        });\n    </div>\n</code-example>\n";
+module.exports = "\n\n\n\n<p>\n    After validating a file, you may want to rejct the uploaded file if it fails the validation, this can be done by passing\n    the <code class=\"inline\">reject</code> attribute to the input fields.\n    <div class=\"note\">\n        <b>Note: </b> This attribute is only relevant on file inputs, adding it to other input types will not have an effect.\n    </div>\n</p>\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <legend>File Upload</legend>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('image') }\" for=\"image\">Unrejected Image</label>\n            <input v-validate rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('image') }\" name=\"image\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('image')\">{{ errors.first('image') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('file') }\" for=\"file\">Rejected Image</label>\n            <input  v-validate rules=\"mimes:image/*\" reject :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" type=\"file\">\n            <span class=\"error\" v-show=\"errors.has('file')\">{{ errors.first('file') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;legend&gt;File Upload&lt;/legend&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('image') }&quot; for=&quot;image&quot;&gt;Unrejected Image&lt;/label&gt;\n                &lt;input v-validate rules=&quot;mimes:image/*&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('image') }&quot; name=&quot;image&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('image')&quot;&gt;{{ errors.first('image') }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Image&lt;/label&gt;\n                &lt;input  v-validate rules=&quot;mimes:image/*&quot; reject :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; type=&quot;file&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ errors.first('file') }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n\n\n    <div slot=\"code-js\">\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
 /* 52 */
 /***/ function(module, exports) {
 
-module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-model=\"email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">Errors: {{ errors.collect('email') | json }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n            <input v-model=\"name\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">Errors: {{ errors.collect('name') | json }}</span>\n        </div>\n        <button class=\"pure-button pure-button-primary\" @click=\"validateForm\" type=\"button\" name=\"button\">Validate All</button>\n        <button class=\"pure-button button-error\" @click=\"clearErrors\" type=\"button\" name=\"button\">Clear</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-model=&quot;email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ errors.collect('email') | json }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Full Name&lt;/label&gt;\n                &lt;input v-model=&quot;name&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ errors.collect('name') | json }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button class=&quot;pure-button pure-button-primary&quot; @click=&quot;validateForm&quot; type=&quot;button&quot; name=&quot;button&quot;&gt;Validate All&lt;/button&gt;\n            &lt;button class=&quot;pure-button button-error&quot; @click=&quot;clearErrors&quot; type=&quot;button&quot; name=&quot;button&quot;&gt;Clear&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n    <div slot=\"code-js\">\n        import Vue from 'vue';\n        import { Validator } from 'vee-validate';\n\n        new Vue({\n            validator: null, // private reference\n            data() {\n                return {\n                    email: '',\n                    name: '',\n                    errors: []\n                }\n            },\n            watch: {\n                email(value) {\n                    this.validator.validate('email', value);\n                },\n                name(value) {\n                    this.validator.validate('name', value);\n                }\n            },\n            methods: {\n                validateForm() {\n                    this.validator.validateAll({\n                        email: this.email,\n                        name: this.name\n                    });\n                },\n                clearErrors() {\n                    this.errors.clear();\n                }\n            },\n            ready() {\n                this.validator = new Validator({\n                    email: 'required|email',\n                    name: 'required|alpha|min:3'\n                });\n                this.$set('errors', this.validator.errorBag); // update the data.\n            }\n        });\n    </div>\n</code-example>\n";
+module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-model=\"email\" v-validate=\"email\" rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n            <input v-model=\"name\" v-validate=\"name\" rules=\"required|alpha\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">{{ errors.first('name') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-model=&quot;email&quot; v-validate=&quot;email&quot; rules=&quot;required|email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Full Name&lt;/label&gt;\n                &lt;input v-model=&quot;name&quot; v-validate=&quot;name&quot; rules=&quot;required|alpha&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ \"{\" + \"{ errors.first('name') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n    <div slot=\"code-js\">\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        new Vue({\n            data: {\n                email: '',\n                name: ''\n            }\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
 /* 53 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-var __vue_script__, __vue_template__
-__vue_template__ = __webpack_require__(48)
-module.exports = __vue_script__ || {}
-if (module.exports.__esModule) module.exports = module.exports.default
-if (__vue_template__) {
-(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-}
-if (false) {(function () {  module.hot.accept()
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  var id = "_v-744f89c5/BasicExample.vue"
-  if (!module.hot.data) {
-    hotAPI.createRecord(id, module.exports)
-  } else {
-    hotAPI.update(id, module.exports, __vue_template__)
-  }
-})()}
+module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-model=\"email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n            <span class=\"error\" v-show=\"errors.has('email')\">Errors: {{ errors.collect('email') | json }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n            <input v-model=\"name\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n            <span class=\"error\" v-show=\"errors.has('name')\">Errors: {{ errors.collect('name') | json }}</span>\n        </div>\n        <button class=\"pure-button pure-button-primary\" @click=\"validateForm\" type=\"button\" name=\"button\">Validate All</button>\n        <button class=\"pure-button button-error\" @click=\"clearErrors\" type=\"button\" name=\"button\">Clear</button>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-model=&quot;email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ errors.collect('email') | json }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('name') }&quot; for=&quot;name&quot;&gt;Full Name&lt;/label&gt;\n                &lt;input v-model=&quot;name&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('name') }&quot; name=&quot;name&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('name')&quot;&gt;{{ errors.collect('name') | json }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;button class=&quot;pure-button pure-button-primary&quot; @click=&quot;validateForm&quot; type=&quot;button&quot; name=&quot;button&quot;&gt;Validate All&lt;/button&gt;\n            &lt;button class=&quot;pure-button button-error&quot; @click=&quot;clearErrors&quot; type=&quot;button&quot; name=&quot;button&quot;&gt;Clear&lt;/button&gt;\n        &lt;/form&gt;\n    </div>\n\n    <div slot=\"code-js\">\n        import Vue from 'vue';\n        import { Validator } from 'vee-validate';\n\n        new Vue({\n            validator: null, // private reference\n            data() {\n                return {\n                    email: '',\n                    name: '',\n                    errors: []\n                }\n            },\n            watch: {\n                email(value) {\n                    this.validator.validate('email', value);\n                },\n                name(value) {\n                    this.validator.validate('name', value);\n                }\n            },\n            methods: {\n                validateForm() {\n                    this.validator.validateAll({\n                        email: this.email,\n                        name: this.name\n                    });\n                },\n                clearErrors() {\n                    this.errors.clear();\n                }\n            },\n            ready() {\n                this.validator = new Validator({\n                    email: 'required|email',\n                    name: 'required|alpha|min:3'\n                });\n                this.$set('errors', this.validator.errorBag); // update the data.\n            }\n        });\n    </div>\n</code-example>\n";
 
 /***/ },
 /* 54 */
@@ -6281,7 +6335,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-b2072560/DelayExample.vue"
+  var id = "_v-744f89c5/BasicExample.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -6304,7 +6358,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-60988432/RejectExample.vue"
+  var id = "_v-b2072560/DelayExample.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -6317,12 +6371,35 @@ if (false) {(function () {  module.hot.accept()
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_script__, __vue_template__
+__vue_template__ = __webpack_require__(51)
+module.exports = __vue_script__ || {}
+if (module.exports.__esModule) module.exports = module.exports.default
+if (__vue_template__) {
+(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+}
+if (false) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  var id = "_v-60988432/RejectExample.vue"
+  if (!module.hot.data) {
+    hotAPI.createRecord(id, module.exports)
+  } else {
+    hotAPI.update(id, module.exports, __vue_template__)
+  }
+})()}
+
+/***/ },
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_script__, __vue_template__
 __vue_script__ = __webpack_require__(18)
 if (__vue_script__ &&
     __vue_script__.__esModule &&
     Object.keys(__vue_script__).length > 1) {
   console.warn("[vue-loader] docs\\components\\examples\\ValidateData.vue: named exports in *.vue files are ignored.")}
-__vue_template__ = __webpack_require__(51)
+__vue_template__ = __webpack_require__(52)
 module.exports = __vue_script__ || {}
 if (module.exports.__esModule) module.exports = module.exports.default
 if (__vue_template__) {
@@ -6341,7 +6418,7 @@ if (false) {(function () {  module.hot.accept()
 })()}
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_script__, __vue_template__
@@ -6350,7 +6427,7 @@ if (__vue_script__ &&
     __vue_script__.__esModule &&
     Object.keys(__vue_script__).length > 1) {
   console.warn("[vue-loader] docs\\components\\examples\\ValidatorExample.vue: named exports in *.vue files are ignored.")}
-__vue_template__ = __webpack_require__(52)
+__vue_template__ = __webpack_require__(53)
 module.exports = __vue_script__ || {}
 if (module.exports.__esModule) module.exports = module.exports.default
 if (__vue_template__) {
@@ -6369,7 +6446,7 @@ if (false) {(function () {  module.hot.accept()
 })()}
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";

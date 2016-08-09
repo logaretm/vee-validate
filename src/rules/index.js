@@ -18,6 +18,7 @@ import image from './image';
 import dimensions from './dimensions';
 import between from './between';
 import confirmed from './confirmed';
+import url from './url';
 
 export default {
     email,
@@ -39,5 +40,6 @@ export default {
     image,
     dimensions,
     between,
-    confirmed
+    confirmed,
+    url
 };
