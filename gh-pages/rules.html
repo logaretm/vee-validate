@@ -40,6 +40,13 @@
                     </div>
                 </div>
                 <div class="rules">
+                    <div class="note">
+                        <b>Note: </b>In the rule signature required parameters are enclosed within <code>{}</code> like this: <code>{param}</code>.
+                        <br>
+                        Optional parameters have a <code>?</code> at the end: <code>{optional?}</code>.
+                        <br>
+                        Lists are enclosed withn brackets <code>[]</code>. ex: <code>[list]</code>.
+                    </div>
                     <div class="rule" id="rule-alpha">
                         <b class="important">alpha</b>
                         <div class="description">
@@ -226,6 +233,18 @@
                             <code class="inline">args:</code>
                             <ul>
                                 <li><code class="inline">size:</code> The maximum file size in kilobytes.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-url">
+                        <b class="important">url:{domain?}</b>
+                        <div class="description">
+                            The field under validation must be a valid url. A domain may be optionally passed. supports subdomains.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">domain:</code> Adds another check if the url belongs to a specific domain. tlds should improve the accuracy.</li>
                             </ul>
                         </div>
                     </div>
