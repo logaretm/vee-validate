@@ -1,5 +1,5 @@
 import test from 'ava';
-import Validator from './../src/validator';
+import Validator, { register, unregister } from './../src/validator';
 
 const validator = new Validator({
     email: 'required|email',
@@ -183,4 +183,18 @@ test('test merging line 30', t => {
 
     chineseValidator.validate('first_name', '0123');
     t.is(chineseValidator.errorBag.first('first_name'), 'My name is jeff');
+});
+
+test('it should create and maintain a reference to a validator instance', t => {
+    const $vm = { huh: "I'm a vue instance." };
+    const instance = register($vm);
+    let instance2 = register($vm); // should return the same instance reference.
+    const instance3 = register({ huh: 'someOtherVM' });
+
+    t.is(instance, instance2);
+    t.not(instance, instance3);
+    t.true(unregister($vm));
+    instance2 = register($vm); // should be another one.
+    t.not(instance, instance2);
+    t.false(unregister({ huh: 'none existant vm' }));
 });
