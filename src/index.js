@@ -1,4 +1,4 @@
-import Validator from './validator';
+import Validator, { register, unregister } from './validator';
 import debounce from './utils/debouncer.js';
 import ErrorBag from './errorBag';
 
@@ -6,15 +6,21 @@ const DEFAULT_DELAY = 0;
 
 const install = (Vue, options) => {
     const errorBagName = options ? options.errorBagName || 'errors' : 'errors';
+    Object.defineProperties(Vue.prototype, {
+        $validator: {
+            get() {
+                return register(this);
+            }
+        }
+    });
     Vue.mixin({
         data() {
             return {
-                [errorBagName]: null
+                [errorBagName]: this.$validator.errorBag
             };
         },
-        created() {
-            this.$validator = Validator.create();
-            this.$set(errorBagName, this.$validator.errorBag);
+        destroyed() {
+            unregister(this);
         }
     });
 

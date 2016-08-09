@@ -381,7 +381,13 @@
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__errorBag__ = __webpack_require__(0);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__ = __webpack_require__(3);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__messages__ = __webpack_require__(5);
-            var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+
+            /* harmony export */__webpack_require__.d(exports, "a", function () {
+                return register;
+            });
+            /* harmony export */__webpack_require__.d(exports, "b", function () {
+                return unregister;
+            });var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
                 return typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
             } : function (obj) {
                 return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
@@ -762,7 +768,55 @@
                 return Validator;
             }();
 
-            /* harmony default export */exports["a"] = Validator;
+            /* harmony default export */exports["c"] = Validator;
+
+            var instances = [];
+
+            /**
+             * Finds a validator instance from the instances array.
+             * @param  {[type]} $vm The Vue instance.
+             * @return {object} pair the $vm,$validator pair.
+             */
+            var find = function find($vm) {
+                for (var i = 0; i < instances.length; i++) {
+                    if (instances[i].$vm === $vm) {
+                        return instances[i].$validator;
+                    }
+                }
+
+                return undefined;
+            };
+
+            /**
+             * Registers a validator for a $vm instance.
+             * @param  {*} $vm The Vue instance.
+             * @return {Validator} $validator The validator instance.
+             */
+            var register = function register($vm) {
+                var instance = find($vm);
+                if (!instance) {
+                    instance = Validator.create();
+
+                    instances.push({
+                        $vm: $vm,
+                        $validator: instance
+                    });
+                }
+
+                return instance;
+            };
+
+            var unregister = function unregister($vm) {
+                for (var i = 0; i < instances.length; i++) {
+                    if (instances[i].$vm === $vm) {
+                        instances.splice(i, 1);
+
+                        return true;
+                    }
+                }
+
+                return false;
+            };
 
             /***/
         },
@@ -1597,13 +1651,19 @@
 
             var install = function install(Vue, options) {
                 var errorBagName = options ? options.errorBagName || 'errors' : 'errors';
+                Object.defineProperties(Vue.prototype, {
+                    $validator: {
+                        get: function get() {
+                            return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__validator__["a" /* register */])(this);
+                        }
+                    }
+                });
                 Vue.mixin({
                     data: function data() {
-                        return _defineProperty({}, errorBagName, null);
+                        return _defineProperty({}, errorBagName, this.$validator.errorBag);
                     },
-                    created: function created() {
-                        this.$validator = __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].create();
-                        this.$set(errorBagName, this.$validator.errorBag);
+                    destroyed: function destroyed() {
+                        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__validator__["b" /* unregister */])(this);
                     }
                 });
 
@@ -1653,8 +1713,8 @@
                 });
             };
 
-            /* harmony reexport */if (__webpack_require__.o(__WEBPACK_IMPORTED_MODULE_0__validator__, "a")) __webpack_require__.d(exports, "Validator", function () {
-                return __WEBPACK_IMPORTED_MODULE_0__validator__["a"];
+            /* harmony reexport */if (__webpack_require__.o(__WEBPACK_IMPORTED_MODULE_0__validator__, "c")) __webpack_require__.d(exports, "Validator", function () {
+                return __WEBPACK_IMPORTED_MODULE_0__validator__["c"];
             });
             /* harmony reexport */if (__webpack_require__.o(__WEBPACK_IMPORTED_MODULE_2__errorBag__, "a")) __webpack_require__.d(exports, "ErrorBag", function () {
                 return __WEBPACK_IMPORTED_MODULE_2__errorBag__["a"];

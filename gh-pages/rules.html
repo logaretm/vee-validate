@@ -345,6 +345,9 @@
                         const validator = new Validator({ first_name: 'alpha' });
                         validator.setLocale('ar'); // now this validator will generate messages in arabic.
                     </code-block>
+                    <p>
+                        Usually you would stucture your language files for your app rather than adding hardcoded strings like the example above, check the <a class="link" href="localization.html">localization guide</a> for a better approach.
+                    </p>
                     <div class="note">
                         <b>Note:</b> You must provide the messages in an object path like: <code>dictionary.locale.message</code>.
                     </div>
