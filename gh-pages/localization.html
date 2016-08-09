@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Vee Validate</title>
+        <link rel="stylesheet" href="assets/bundle.css">
+    </head>
+    <body>
+        <div id="app">
+            <app heading="Vee-Validate"
+                 subtitle="Localization"
+                 selected="localization"
+            >
+                <h2 id="translation" class="content-subhead"><a href="#translation">Translation</a></h2>
+                <p>
+                    This plugin only comes with English messages to keep things small, but it was built with flexible message generation in mind.
+                    <br>
+                    The <a href="https://github.com/logaretm/vee-validate/blob/master/src/messages/en.js" class="link" target="github">English messages file</a> is an example on how you would structure those messages.
+                    Then you may want to update the validator dictionary, which should happen once in your app startup. still you may update them whenever you want in any point of your app, review the <a href="rules.html#custom-messages" class="link">custom messages</a> here.
+                </p>
+                <p>
+                    Here is a little code example on how would you add support for your localized messages. Note that this is the entry point of your application, and you shouldn't update the dictionary dynamically because it will affect all other validators.
+                </p>
+                <code-block class="language-javascript">
+                    import Vue from 'vue';
+                    import VeeValidate from 'vee-validate';
+                    import arMessages from './strings/validator/ar.js';
+
+                    Vue.use(VeeValidate);
+
+                    new Vue({
+                        el: '#app',
+                        data: {
+                            // Some Data ...
+                        },
+                        methods {
+                            // Cool methods ...
+                        },
+                        ready() {
+                            this.$validator.updateDictionary({ ar: arMessages });
+                            this.$validator.setLocale('ar');
+                        }
+                    });
+                </code-block>
+                <h2 id="localized-files" class="content-subhead"><a href="#localized-files">Localized Files</a></h2>
+                <p>
+                    In the <a href=""><code class="inline">dist/locale</code></a> directory of this plugin, is a collection of localized files, mainly the English and The Arabic languages.
+                    If you can't find your locale, you could help this plugin by contributing a localized version to the <a href="https://github.com/logaretm/vee-validate" class="link" target="github">repo</a>. I will happily accept it.
+                </p>
+            </app>
+        </div>
+        <script src="assets/bundle.js"></script>
+    </body>
+</html>

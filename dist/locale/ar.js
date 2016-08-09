@@ -1,0 +1,22 @@
+export default {
+    alpha_dash: (field) => `${field} قد يحتوي فقط على حروف او ارقام او مسافات او - او _`,
+    alpha_num: (field) => `${field} قد يحتوي فقط على حروف او ارقام او مسافات.`,
+    alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.`,
+    between: (field, [min, max]) => `قيمة ${field} يجب ان تكون ما بين ${min} و ${max}.`,
+    confirmed: (field, [confirmedField]) => `${field} لا يماثل التأكيد.`,
+    digits: (field, [length]) => `${field} يجب ان تحتوي فقط على ارقام والا يزيد عددها عن ${length} رقم.`,
+    dimensions: (field, [width, height]) => `${field} يجب ان تكون بمقاس ${width} بكسل في ${height} بكسل.`,
+    email: (field) => `${field} يجب ان يكون بريدا اليكتروني صحيح.`,
+    ext: (field) => `نوع ملف ${field} غير صحيح.`,
+    image: (field) => `${field} يجب ان تكون صورة.`,
+    in: (field) => `الحقل ${field} يجب ان يكون قيمة صحيحة.`,
+    ip: (field) => `${field} يجب ان يكون ip صحيح.`,
+    max: (field, [length]) => `الحقل ${field} يجب ان يحتوي على ${length} حروف على الأكثر.`,
+    mimes: (field) => `نوع ملف ${field} غير صحيح.`,
+    min: (field, [length]) => `الحقل ${field} يجب ان يحتوي على ${length} حروف على الأقل.`,
+    not_in: (field) => `الحقل ${field} غير صحيح.`,
+    numeric: (field) => `${field} يمكن ان يحتوي فقط على ارقام.`,
+    regex: (field) => `الحقل ${field} غير صحيح.`,
+    required: (field) => `${field} مطلوب.`,
+    size: (field, [size]) => `${field} يجب ان يكون اقل من ${size} كيلوبايت.`
+};

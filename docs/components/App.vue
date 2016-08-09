@@ -28,6 +28,9 @@
                     <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'rules'}">
                         <a href="rules.html" class="pure-menu-link">Validation Rules</a>
                     </li>
+                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'locale'}">
+                        <a href="localization.html" class="pure-menu-link">Localization</a>
+                    </li>
                     <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'api'}">
                         <a href="api.html" class="pure-menu-link">API Reference</a>
                     </li>
