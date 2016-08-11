@@ -353,7 +353,7 @@ var Validator = function () {
             var _this2 = this;
 
             this.errorBag.clear();
-            /* istanbul ignore next */
+            /* istanbul ignore if */
             if (this.$vm && !this.values) {
                 this.$vm.$emit(this.event);
 
@@ -815,6 +815,8 @@ var _class = function () {
 "use strict";
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
+/* istanbul ignore next */
+/* eslint-disable max-len */
 /* harmony default export */ exports["a"] = {
     alpha_dash: function alpha_dash(field) {
         return "The " + field + " may contain alpha-numeric characters well as spaces, dashes and underscores.";
@@ -922,8 +924,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 "use strict";
 /* harmony default export */ exports["a"] = function (value) {
-  return (/^[a-zA-Z ]*$/.test(value)
-  );
+  return !Array.isArray(value) && /^[a-zA-Z]*$/.test(value);
 };
 
 /***/ },
@@ -932,8 +933,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 "use strict";
 /* harmony default export */ exports["a"] = function (value) {
-  return (/^[a-zA-Z0-9 _-]*$/.test(value)
-  );
+  return !Array.isArray(value) && /^[a-zA-Z0-9_-]*$/.test(value);
 };
 
 /***/ },
@@ -942,8 +942,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 "use strict";
 /* harmony default export */ exports["a"] = function (value) {
-  return (/^[a-zA-Z0-9 ]*$/.test(value)
-  );
+  return !Array.isArray(value) && /^[a-zA-Z0-9]*$/.test(value);
 };
 
 /***/ },
@@ -1012,10 +1011,8 @@ var validateImage = function validateImage(file, width, height) {
         };
 
         image.onload = function () {
-            var valid = true;
-
             // Validate exact dimensions.
-            valid = image.width === Number(width) && image.height === Number(height);
+            var valid = image.width === Number(width) && image.height === Number(height);
 
             resolve({
                 name: file.name,
@@ -1191,10 +1188,15 @@ var validateImage = function validateImage(file, width, height) {
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 /* harmony default export */ exports["a"] = function (value, _ref) {
-  var _ref2 = _slicedToArray(_ref, 1);
+    var _ref2 = _slicedToArray(_ref, 1);
 
-  var length = _ref2[0];
-  return String(value).length <= length;
+    var length = _ref2[0];
+
+    if (value === undefined || value === null) {
+        return length >= 0;
+    }
+
+    return String(value).length <= length;
 };
 
 /***/ },
@@ -1221,10 +1223,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 /* harmony default export */ exports["a"] = function (value, _ref) {
-  var _ref2 = _slicedToArray(_ref, 1);
+    var _ref2 = _slicedToArray(_ref, 1);
 
-  var length = _ref2[0];
-  return String(value).length >= length;
+    var length = _ref2[0];
+
+    if (value === undefined || value === null) {
+        return false;
+    }
+
+    return String(value).length >= length;
 };
 
 /***/ },
@@ -1244,7 +1251,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 "use strict";
 /* harmony default export */ exports["a"] = function (value) {
-  return !!String(value).match(/^[0-9]*$/);
+  return !Array.isArray(value) && /^[0-9]*$/.test(value);
 };
 
 /***/ },
