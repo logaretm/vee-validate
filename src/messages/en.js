@@ -1,3 +1,5 @@
+/* istanbul ignore next */
+/* eslint-disable max-len */
 export default {
     alpha_dash: (field) => `The ${field} may contain alpha-numeric characters well as spaces, dashes and underscores.`,
     alpha_num: (field) => `The ${field} may only contain alpha-numeric characters and spaces.`,

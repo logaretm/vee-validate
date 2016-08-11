@@ -5,10 +5,8 @@ const validateImage = (file, width, height) => {
         image.onerror = () => resolve({ name: file.name, valid: false });
 
         image.onload = () => {
-            let valid = true;
-
             // Validate exact dimensions.
-            valid = image.width === Number(width) && image.height === Number(height);
+            const valid = image.width === Number(width) && image.height === Number(height);
 
             resolve({
                 name: file.name,

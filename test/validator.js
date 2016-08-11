@@ -1,5 +1,6 @@
 import test from 'ava';
 import Validator, { register, unregister } from './../src/validator';
+import mocks from './helpers';
 
 const validator = new Validator({
     email: 'required|email',
@@ -197,4 +198,27 @@ test('it should create and maintain a reference to a validator instance', t => {
     instance2 = register($vm); // should be another one.
     t.not(instance, instance2);
     t.false(unregister({ huh: 'none existant vm' }));
+});
+
+test('it should resolve promises to booleans', async t => {
+    const params = [150, 100];
+    const v = new Validator({
+        image: 'dimensions:150,100'
+    });
+
+    mocks.dimensionsTest({ width: 150, height: 100 });
+
+    let value = await v.validate('image', [mocks.file('file.jpg', 'image/jpeg', 10)], params);
+    t.true(value);
+
+    mocks.dimensionsTest({ width: 150, height: 100}, true);
+    value = await v.validate('image', [mocks.file('file.jpg', 'image/jpeg', 10)], params);
+    t.false(value);
+
+    value = await v.validate('image', [mocks.file('file.pdf', 'application/pdf', 10)], params);
+    t.false(value);
+
+    mocks.dimensionsTest({ width: 30, height: 20});
+    value = await v.validate('image', [mocks.file('file.jpg', 'image/jpeg', 10)], params);
+    t.false(value);
 });

@@ -1,33 +1,33 @@
-exports.mockFile = (name, type, size = 1) => ({
-    name,
-    type,
-    size: size * 1024
-});
-
-exports.mockDocumentQuerySelector = (el) => {
-    global.document = {
-        querySelector() {
-            return el;
-        }
-    };
-};
-
-exports.mockDimensionsTest = (dimensions, fails = false) => {
-    global.window = {
-        URL: {
-            createObjectURL() {
-                return 'data:image/png;base64,AAAAAAA';
+export default {
+    file: (name, type, size = 1) => ({
+        name,
+        type,
+        size: size * 1024
+    }),
+    dimensionsTest: (dimensions, fails = false) => {
+        global.window = {
+            URL: {
+                createObjectURL() {
+                    return 'data:image/png;base64,AAAAAAA';
+                }
             }
-        }
-    };
+        };
 
-    global.Image = class Image {
-        // eslint-disable-next-line
-        set src(value) {
-            this.width = dimensions.width;
-            this.height = dimensions.height;
+        global.Image = class Image {
+            // eslint-disable-next-line
+            set src(value) {
+                this.width = dimensions.width;
+                this.height = dimensions.height;
 
-            this[fails ? 'onerror' : 'onload']();
-        }
-    };
+                this[fails ? 'onerror' : 'onload']();
+            }
+        };
+    },
+    querySelector: (el) => {
+        global.document = {
+            querySelector() {
+                return el;
+            }
+        };
+    }
 };

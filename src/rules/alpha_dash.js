@@ -1,1 +1,1 @@
-export default (value) => /^[a-zA-Z0-9 _-]*$/.test(value);
+export default (value) => ! Array.isArray(value) && /^[a-zA-Z0-9_-]*$/.test(value);

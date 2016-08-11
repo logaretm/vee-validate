@@ -175,7 +175,7 @@ export default class Validator
      */
     validateAll(values) {
         this.errorBag.clear();
-        /* istanbul ignore next */
+        /* istanbul ignore if */
         if (this.$vm && ! this.values) {
             this.$vm.$emit(this.event);
 
