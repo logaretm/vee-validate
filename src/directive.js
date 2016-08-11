@@ -1,7 +1,7 @@
 import debounce from './utils/debouncer.js';
 
 const DEFAULT_DELAY = 0;
-const DEFAULT_EVENT_NAME = 'validate';
+const DEFAULT_EVENT_NAME = '$veeValidate';
 
 export default (options) => ({
     params: ['rules', 'delay', 'reject', 'initial'],
@@ -21,7 +21,7 @@ export default (options) => ({
             this.handler();
         };
 
-        this.vm.$on((options && options.eventName) || DEFAULT_EVENT_NAME, this.validateCallback);
+        this.vm.$on(DEFAULT_EVENT_NAME, this.validateCallback);
     },
     bind() {
         this.fieldName = this.expression || this.el.name;
@@ -61,6 +61,6 @@ export default (options) => ({
         }
 
         this.vm.$validator.detach(this.fieldName);
-        this.vm.$off((options && options.eventName) || DEFAULT_EVENT_NAME, this.validateCallback);
+        this.vm.$off(DEFAULT_EVENT_NAME, this.validateCallback);
     }
 });

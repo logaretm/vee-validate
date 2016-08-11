@@ -358,15 +358,16 @@
                 }
             }
 
+            var EVENT_NAME = '$veeValidate';
+
             var Validator = function () {
-                function Validator(validations, $vm, eventName) {
+                function Validator(validations, $vm) {
                     _classCallCheck(this, Validator);
 
                     this.locale = 'en';
                     this.validations = this.normalize(validations);
                     this.errorBag = new __WEBPACK_IMPORTED_MODULE_1__errorBag__["a" /* default */]();
                     this.$vm = $vm;
-                    this.event = eventName;
                 }
 
                 /**
@@ -459,7 +460,7 @@
                         this.errorBag.clear();
                         /* istanbul ignore if */
                         if (this.$vm && !this.values) {
-                            this.$vm.$emit(this.event);
+                            this.$vm.$emit(EVENT_NAME);
 
                             return;
                         }
@@ -637,8 +638,8 @@
 
                 }, {
                     key: 'create',
-                    value: function create(validations, $vm, eventName) {
-                        return new Validator(validations, $vm, eventName);
+                    value: function create(validations, $vm) {
+                        return new Validator(validations, $vm);
                     }
 
                     /**
@@ -754,10 +755,10 @@
              * @param  {*} $vm The Vue instance.
              * @return {Validator} $validator The validator instance.
              */
-            var register = function register($vm, eventName) {
+            var register = function register($vm) {
                 var instance = find($vm);
                 if (!instance) {
-                    instance = Validator.create(undefined, $vm, eventName);
+                    instance = Validator.create(undefined, $vm);
 
                     instances.push({
                         $vm: $vm,
@@ -790,7 +791,7 @@
             var __WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__ = __webpack_require__(29);
 
             var DEFAULT_DELAY = 0;
-            var DEFAULT_EVENT_NAME = 'validate';
+            var DEFAULT_EVENT_NAME = '$veeValidate';
 
             /* harmony default export */exports["a"] = function (options) {
                 return {
@@ -812,7 +813,7 @@
                             _this.handler();
                         };
 
-                        this.vm.$on(options && options.eventName || DEFAULT_EVENT_NAME, this.validateCallback);
+                        this.vm.$on(DEFAULT_EVENT_NAME, this.validateCallback);
                     },
                     bind: function bind() {
                         this.fieldName = this.expression || this.el.name;
@@ -852,7 +853,7 @@
                         }
 
                         this.vm.$validator.detach(this.fieldName);
-                        this.vm.$off(options && options.eventName || DEFAULT_EVENT_NAME, this.validateCallback);
+                        this.vm.$off(DEFAULT_EVENT_NAME, this.validateCallback);
                     }
                 };
             };
@@ -1747,8 +1748,6 @@
                 return install;
             });
 
-            var DEFAULT_EVENT_NAME = 'validate';
-
             /**
              * Installs the plugin.
              */
@@ -1756,7 +1755,7 @@
                 Object.defineProperties(Vue.prototype, {
                     $validator: {
                         get: function get() {
-                            return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__validator__["b" /* register */])(this, options && options.eventName || DEFAULT_EVENT_NAME);
+                            return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__validator__["b" /* register */])(this);
                         }
                     }
                 });

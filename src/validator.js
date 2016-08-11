@@ -3,15 +3,15 @@ import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
 import Messages from './messages';
 
+const EVENT_NAME = '$veeValidate';
 
 export default class Validator
 {
-    constructor(validations, $vm, eventName) {
+    constructor(validations, $vm) {
         this.locale = 'en';
         this.validations = this.normalize(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
-        this.event = eventName;
     }
 
     /**
@@ -61,8 +61,8 @@ export default class Validator
      * @param  {object} validations The validations object.
      * @return {Validator} validator A validator object.
      */
-    static create(validations, $vm, eventName) {
-        return new Validator(validations, $vm, eventName);
+    static create(validations, $vm) {
+        return new Validator(validations, $vm);
     }
 
     /**
@@ -177,7 +177,7 @@ export default class Validator
         this.errorBag.clear();
         /* istanbul ignore if */
         if (this.$vm && ! this.values) {
-            this.$vm.$emit(this.event);
+            this.$vm.$emit(EVENT_NAME);
 
             return;
         }
@@ -334,10 +334,10 @@ const find = ($vm) => {
  * @param  {*} $vm The Vue instance.
  * @return {Validator} $validator The validator instance.
  */
-const register = ($vm, eventName) => {
+const register = ($vm) => {
     let instance = find($vm);
     if (! instance) {
-        instance = Validator.create(undefined, $vm, eventName);
+        instance = Validator.create(undefined, $vm);
 
         instances.push({
             $vm,

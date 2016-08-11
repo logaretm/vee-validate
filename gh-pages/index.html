@@ -77,7 +77,7 @@
                 <p>Visit the <a class="link" href="rules.html#available-rules">rules documentation</a> to learn more about how to use each rule, and how to <a href="rules.html#custom-rules" class="link">create your own</a>.</p>
                 <h2 id="configuration" class="content-subhead"><a href="#configuration">Configuration</a></h2>
                 <p>
-                    You may need to configure some options to tweak some of the plugin internals, this is not required, however if you are using for example a property called 'errors' on your vue instance this may cause conflicts.
+                    You may need to configure some options to tweak some of the plugin internals, this is not required, but could cause conflicts. For example: if you are using a property called <code class="inline">errors</code> on your vue instance this may cause conflicts.
                      here is how you would set up the options along with the default values:
                 </p>
                 <code-block class="language-javascript">
@@ -85,8 +85,7 @@
                     import VeeValidate from 'vee-validate';
 
                     const config = {
-                        errorBagName: 'errors', // change if property conflict.
-                        eventName: 'validate', // change if another event conflicts.
+                        errorBagName: 'errors', // change if property conflicts.
                         delay: 0,
                     };
 
@@ -94,7 +93,6 @@
                 </code-block>
                 <ul>
                     <li><code class="inline">errorBagName:</code> The name of the ErrorBag object that will be injected in each of Vue's instances' data.</li>
-                    <li><code class="inline">eventName</code> The internal event used to trigger validation for all inputs attached to the validator.</li>
                     <li><code class="inline">delay</code> The default debounce time for all inputs (only affects validations).</li>
                 </ul>
             </app>
