@@ -18,5 +18,6 @@ export default {
     numeric: (field) => `${field} يمكن ان يحتوي فقط على ارقام.`,
     regex: (field) => `الحقل ${field} غير صحيح.`,
     required: (field) => `${field} مطلوب.`,
-    size: (field, [size]) => `${field} يجب ان يكون اقل من ${size} كيلوبايت.`
+    size: (field, [size]) => `${field} يجب ان يكون اقل من ${size} كيلوبايت.`,
+    url: (field) => `الحقل ${field} يجب ان يكون رابطاً صحيحاً.`
 };
