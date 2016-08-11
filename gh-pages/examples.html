@@ -16,22 +16,22 @@
                 <delay-example></delay-example>
                 <h2 id="reject-example" class="content-subhead"><a href="#reject-example">Reject Invalid Files</a></h2>
                 <reject-example></reject-example>
-                <h2 id="validate-data-example" class="content-subhead"><a href="#validate-data-example">Validate Data Values</a></h2>
+                <h2 id="validate-data-example" class="content-subhead"><a href="#validate-data-example">Validate $data</a></h2>
                 <p>
                     The basic approach relies on listening to the <code class="inline">input</code> or the <code class="inline">change</code> events depending on the file type.
                     However most of the time, your values are bound to your Vue instance and some code may change their inputs programatically, the basic approach won't detect this change.
                     <br><br>
-                    <b class="important">The Solution:</b> The <code class="inline">v-validate</code> directive can take an expression, the expression is the data name you wish to validate. for example:
+                    <b class="important">The Solution:</b> The <code class="inline">v-validate</code> directive can take a binding expression, the expression is the data name you wish to validte. for example:
                     <code-block class="language-html">
                         &lt;input v-validate=&quot;email&quot; rules=&quot;required|email&quot; type=&quot;text&quot; name=&quot;email&quot;&gt;
                     </code-block>
-                    Whenever the value is updated, the validator will validate the new expression value automatically.
+                    Whenever the binding value is updated, the validator will validate the new value automatically.
                     <div class="note">
                         <b>Note:</b> The plugin will use the data in your vue instance as the source of the input value, meaning it won't be watching the input anymore.
                         And as you noticed, you don't need to provide a <code>name</code> attribute, as the expression name will be used instead.
                     </div>
                  </p>
-                 <validate-data-example></validate-data-example>
+                 <data-example></data-example>
                  <p>
                     <div class="note">
                         <b>Note:</b> Notice that the <code>email</code> field was immediatly validated when you open the page, you may not want this behavior, use the <code>initial</code> attribute to tell the validator to ignore the first evaluation.
@@ -41,6 +41,17 @@
                     <br>
                     <div class="note">
                         <b>Note:</b> When you provide the expression to the directive, <code>delay</code> and <code>reject</code> attributes won't have an effect anymore. so you might want to handle debouncing the inputs yourself.
+                    </div>
+                 </p>
+                 <h2 id="validate-form" class="content-subhead"><a href="#validate-form">Validate Form Before Submit</a></h2>
+                 <p>
+                    You may want to trigger all inputs validation before submitting a form, maybe display an alert or prevent form submission if any errors are detected.
+                 </p>
+                 <event-example></event-example>
+                 <p>
+                    <div class="note">
+                        <b>Note:</b> This works by emitting an event on the owning vue instance of the directive, you may want to configure the event name used if it's going to conflict with your app events.
+                        See <a href="index.html#configuration">configuration</a> for more details.
                     </div>
                  </p>
             </app>
