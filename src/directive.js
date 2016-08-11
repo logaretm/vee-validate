@@ -1,6 +1,7 @@
 import debounce from './utils/debouncer.js';
 
 const DEFAULT_DELAY = 0;
+const DEFAULT_EVENT_NAME = 'validate';
 
 export default (options) => ({
     params: ['rules', 'delay', 'reject', 'initial'],
@@ -13,24 +14,33 @@ export default (options) => ({
             this.el.value = '';
         }
     },
-    attachValidator() {
-        this.vm.$validator.attach(this.fieldName, this.params.rules);
+    attachValidatorEvent() {
+        this.validateCallback = this.expression ? () => {
+            this.vm.$validator.validate(this.fieldName, this.value);
+        } : () => {
+            this.handler();
+        };
+
+        this.vm.$on((options && options.eventName) || DEFAULT_EVENT_NAME, this.validateCallback);
     },
     bind() {
         this.fieldName = this.expression || this.el.name;
-        this.attachValidator();
+        this.vm.$validator.attach(this.fieldName, this.params.rules);
 
         if (this.expression) {
+            this.attachValidatorEvent();
+
             return;
         }
 
-        this.attachValidator();
         const handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
         this.handles = this.el.type === 'file' ? 'change' : 'input';
 
         const delay = this.params.delay || (options && options.delay) || DEFAULT_DELAY;
         this.handler = delay ? debounce(handler.bind(this), delay) : handler.bind(this);
         this.el.addEventListener(this.handles, this.handler);
+
+        this.attachValidatorEvent();
     },
     update(value) {
         if (! this.expression) {
@@ -51,5 +61,6 @@ export default (options) => ({
         }
 
         this.vm.$validator.detach(this.fieldName);
+        this.vm.$off((options && options.eventName) || DEFAULT_EVENT_NAME, this.validateCallback);
     }
 });

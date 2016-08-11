@@ -253,12 +253,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 var Validator = function () {
-    function Validator(validations) {
+    function Validator(validations, $vm, eventName) {
         _classCallCheck(this, Validator);
 
         this.locale = 'en';
         this.validations = this.normalize(validations);
         this.errorBag = new __WEBPACK_IMPORTED_MODULE_1__errorBag__["a" /* default */]();
+        this.$vm = $vm;
+        this.event = eventName;
     }
 
     /**
@@ -341,7 +343,7 @@ var Validator = function () {
         /**
          * Validates each value against the corresponding field validations.
          * @param  {object} values The values to be validated.
-         * @return {boolean|Promise} result Returns a boolean or a promise that will
+         * @return {boolean|Promise|void} result Returns a boolean or a promise that will
          * resolve to a boolean.
          */
 
@@ -350,12 +352,19 @@ var Validator = function () {
         value: function validateAll(values) {
             var _this2 = this;
 
-            var test = true;
             this.errorBag.clear();
+            /* istanbul ignore next */
+            if (this.$vm && !this.values) {
+                this.$vm.$emit(this.event);
+
+                return;
+            }
+
+            var test = true;
             Object.keys(values).forEach(function (property) {
                 test = _this2.validate(property, values[property]);
             });
-
+            // eslint-disable-next-line
             return test;
         }
 
@@ -524,8 +533,8 @@ var Validator = function () {
 
     }, {
         key: 'create',
-        value: function create(validations) {
-            return new Validator(validations);
+        value: function create(validations, $vm, eventName) {
+            return new Validator(validations, $vm, eventName);
         }
 
         /**
@@ -613,9 +622,13 @@ var Validator = function () {
     return Validator;
 }();
 
+/**
+ * Keeps track of $vm, $validator instances.
+ * @type {Array}
+ */
+
+
 /* harmony default export */ exports["c"] = Validator;
-
-
 var instances = [];
 
 /**
@@ -638,10 +651,10 @@ var find = function find($vm) {
  * @param  {*} $vm The Vue instance.
  * @return {Validator} $validator The validator instance.
  */
-var register = function register($vm) {
+var register = function register($vm, eventName) {
     var instance = find($vm);
     if (!instance) {
-        instance = Validator.create();
+        instance = Validator.create(undefined, $vm, eventName);
 
         instances.push({
             $vm: $vm,
@@ -675,6 +688,7 @@ var unregister = function unregister($vm) {
 
 
 var DEFAULT_DELAY = 0;
+var DEFAULT_EVENT_NAME = 'validate';
 
 /* harmony default export */ exports["a"] = function (options) {
     return {
@@ -687,24 +701,35 @@ var DEFAULT_DELAY = 0;
                 this.el.value = '';
             }
         },
-        attachValidator: function attachValidator() {
-            this.vm.$validator.attach(this.fieldName, this.params.rules);
+        attachValidatorEvent: function attachValidatorEvent() {
+            var _this = this;
+
+            this.validateCallback = this.expression ? function () {
+                _this.vm.$validator.validate(_this.fieldName, _this.value);
+            } : function () {
+                _this.handler();
+            };
+
+            this.vm.$on(options && options.eventName || DEFAULT_EVENT_NAME, this.validateCallback);
         },
         bind: function bind() {
             this.fieldName = this.expression || this.el.name;
-            this.attachValidator();
+            this.vm.$validator.attach(this.fieldName, this.params.rules);
 
             if (this.expression) {
+                this.attachValidatorEvent();
+
                 return;
             }
 
-            this.attachValidator();
             var handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
             this.handles = this.el.type === 'file' ? 'change' : 'input';
 
             var delay = this.params.delay || options && options.delay || DEFAULT_DELAY;
             this.handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler.bind(this), delay) : handler.bind(this);
             this.el.addEventListener(this.handles, this.handler);
+
+            this.attachValidatorEvent();
         },
         update: function update(value) {
             if (!this.expression) {
@@ -725,6 +750,7 @@ var DEFAULT_DELAY = 0;
             }
 
             this.vm.$validator.detach(this.fieldName);
+            this.vm.$off(options && options.eventName || DEFAULT_EVENT_NAME, this.validateCallback);
         }
     };
 };
@@ -872,6 +898,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
         var _size = _ref14[0];
         return "The " + field + " must be less than " + _size + " KB.";
+    },
+    url: function url(field) {
+        return "The " + field + " is not a valid URL.";
     }
 };
 
@@ -1245,6 +1274,10 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
         return !!value.length;
     }
 
+    if (value === undefined || value === null) {
+        return false;
+    }
+
     return !!String(value).length;
 };
 
@@ -1279,19 +1312,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-/* harmony default export */ exports["a"] = function (value) {
-    var _ref = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
-
-    var _ref2 = _slicedToArray(_ref, 1);
-
-    var domain = _ref2[0];
-
+/* harmony default export */ exports["a"] = function (value, params) {
     var isUrl = /^https?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.\(\)%-]*)*\/?$/.test(value);
 
+    var domain = params && params[0];
+
     if (domain && isUrl) {
-        return new RegExp('^https?://(([da-z.-]+).)*(' + domain.replace('.', '\\$&') + ')').test(value);
+        return new RegExp('^https?://(([da-z.-]+).)*(' + params[0].replace('.', '\\$&') + ')').test(value);
     }
 
     return isUrl;
@@ -1351,6 +1378,8 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 
 
+var DEFAULT_EVENT_NAME = 'validate';
+
 /**
  * Installs the plugin.
  */
@@ -1358,7 +1387,7 @@ var install = function install(Vue, options) {
     Object.defineProperties(Vue.prototype, {
         $validator: {
             get: function get() {
-                return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__validator__["b" /* register */])(this);
+                return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__validator__["b" /* register */])(this, options && options.eventName || DEFAULT_EVENT_NAME);
             }
         }
     });

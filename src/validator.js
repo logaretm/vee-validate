@@ -6,10 +6,12 @@ import Messages from './messages';
 
 export default class Validator
 {
-    constructor(validations) {
+    constructor(validations, $vm, eventName) {
         this.locale = 'en';
         this.validations = this.normalize(validations);
         this.errorBag = new ErrorBag();
+        this.$vm = $vm;
+        this.event = eventName;
     }
 
     /**
@@ -59,8 +61,8 @@ export default class Validator
      * @param  {object} validations The validations object.
      * @return {Validator} validator A validator object.
      */
-    static create(validations) {
-        return new Validator(validations);
+    static create(validations, $vm, eventName) {
+        return new Validator(validations, $vm, eventName);
     }
 
     /**
@@ -168,16 +170,23 @@ export default class Validator
     /**
      * Validates each value against the corresponding field validations.
      * @param  {object} values The values to be validated.
-     * @return {boolean|Promise} result Returns a boolean or a promise that will
+     * @return {boolean|Promise|void} result Returns a boolean or a promise that will
      * resolve to a boolean.
      */
     validateAll(values) {
-        let test = true;
         this.errorBag.clear();
+        /* istanbul ignore next */
+        if (this.$vm && ! this.values) {
+            this.$vm.$emit(this.event);
+
+            return;
+        }
+
+        let test = true;
         Object.keys(values).forEach(property => {
             test = this.validate(property, values[property]);
         });
-
+        // eslint-disable-next-line
         return test;
     }
 
@@ -299,7 +308,10 @@ export default class Validator
     }
 }
 
-
+/**
+ * Keeps track of $vm, $validator instances.
+ * @type {Array}
+ */
 const instances = [];
 
 /**
@@ -322,10 +334,10 @@ const find = ($vm) => {
  * @param  {*} $vm The Vue instance.
  * @return {Validator} $validator The validator instance.
  */
-const register = ($vm) => {
+const register = ($vm, eventName) => {
     let instance = find($vm);
     if (! instance) {
-        instance = Validator.create();
+        instance = Validator.create(undefined, $vm, eventName);
 
         instances.push({
             $vm,
