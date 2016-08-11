@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Simple VueJS input validation plugin",
   "main": "dist/vee-validate.js",
+  "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
     "start": "webpack-dev-server --hot --inline --config webpack.docs.config.js",
     "dev": "webpack --progress --colors --watch",
