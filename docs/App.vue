@@ -10,7 +10,7 @@
             <div class="pure-menu">
                 <a href="/" class="pure-menu-heading">Vee Validate</a>
                 <ul class="pure-menu-list">
-                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': ! selected}">
+                    <li class="pure-menu-item">
                         <a href="index.html" class="pure-menu-link">Getting Started</a>
                     </li>
                     <li class="pure-menu-item">
@@ -25,16 +25,16 @@
                     <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'examples'}">
                         <a href="examples.html" class="pure-menu-link">Examples</a>
                     </li>
-                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'rules'}">
+                    <li class="pure-menu-item">
                         <a href="rules.html" class="pure-menu-link">Validation Rules</a>
                     </li>
-                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'locale'}">
+                    <li class="pure-menu-item">
                         <a href="localization.html" class="pure-menu-link">Localization</a>
                     </li>
-                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'api'}">
+                    <li class="pure-menu-item">
                         <a href="api.html" class="pure-menu-link">API Reference</a>
                     </li>
-                    <li :class="pure-menu-item">
+                    <li class="pure-menu-item">
                         <a href="index.html#configuration" class="pure-menu-link">Configuration</a>
                     </li>
                 </ul>
@@ -58,7 +58,7 @@
 
 <script>
 export default {
-    props: ['heading', 'subtitle', 'selected'],
+    props: ['heading', 'subtitle'],
 
     ready() {
         const layout = this.$els.layout;

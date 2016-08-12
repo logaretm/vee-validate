@@ -8,7 +8,7 @@ import VeeValidate from './../dist/vee-validate';
 import Examples from './components/examples';
 import CodeExample from './components/CodeExample.vue';
 import CodeBlock from './components/CodeBlock.vue';
-import App from './components/App.vue';
+import App from './App.vue';
 import './sass/main.scss';
 import Rules from './../src/rules';
 

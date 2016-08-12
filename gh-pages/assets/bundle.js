@@ -4809,7 +4809,7 @@ __vue_script__ = __webpack_require__(15)
 if (__vue_script__ &&
     __vue_script__.__esModule &&
     Object.keys(__vue_script__).length > 1) {
-  console.warn("[vue-loader] docs\\components\\App.vue: named exports in *.vue files are ignored.")}
+  console.warn("[vue-loader] docs\\App.vue: named exports in *.vue files are ignored.")}
 __vue_template__ = __webpack_require__(47)
 module.exports = __vue_script__ || {}
 if (module.exports.__esModule) module.exports = module.exports.default
@@ -4820,7 +4820,7 @@ if (false) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), false)
   if (!hotAPI.compatible) return
-  var id = "_v-79c02417/App.vue"
+  var id = "_v-a3709856/App.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {
@@ -4897,7 +4897,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
-    props: ['heading', 'subtitle', 'selected'],
+    props: ['heading', 'subtitle'],
 
     ready: function ready() {
         var layout = this.$els.layout;
@@ -6425,7 +6425,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* 47 */
 /***/ function(module, exports) {
 
-module.exports = "\n<div id=\"layout\" v-el:layout>\n    <!-- Menu toggle -->\n    <a href=\"#menu\" id=\"menuLink\" class=\"menu-link\" v-el:menuLink>\n        <!-- Hamburger icon -->\n        <span></span>\n    </a>\n\n    <div id=\"menu\" v-el:menu>\n        <div class=\"pure-menu\">\n            <a href=\"/\" class=\"pure-menu-heading\">Vee Validate</a>\n            <ul class=\"pure-menu-list\">\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': ! selected}\">\n                    <a href=\"index.html\" class=\"pure-menu-link\">Getting Started</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#installation\" class=\"pure-menu-link\">Installation</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#basic-example\" class=\"pure-menu-link\">Basic Example</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#render-errors\" class=\"pure-menu-link\">Rendering Errors</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'examples'}\">\n                    <a href=\"examples.html\" class=\"pure-menu-link\">Examples</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'rules'}\">\n                    <a href=\"rules.html\" class=\"pure-menu-link\">Validation Rules</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'locale'}\">\n                    <a href=\"localization.html\" class=\"pure-menu-link\">Localization</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'api'}\">\n                    <a href=\"api.html\" class=\"pure-menu-link\">API Reference</a>\n                </li>\n                <li :class=\"pure-menu-item\">\n                    <a href=\"index.html#configuration\" class=\"pure-menu-link\">Configuration</a>\n                </li>\n            </ul>\n        </div>\n        <div class=\"about flex-center\">\n            <a target=\"github\" href=\"https://github.com/logaretm/vee-validation\"><i class=\"icon-github\"></i></a>\n        </div>\n    </div>\n\n    <div id=\"main\">\n        <div class=\"header\">\n            <h1>{{ heading }}</h1>\n            <h2>{{ subtitle }}</h2>\n        </div>\n        <div class=\"content\">\n            <slot></slot>\n        </div>\n    </div>\n</div>\n";
+module.exports = "\n<div id=\"layout\" v-el:layout>\n    <!-- Menu toggle -->\n    <a href=\"#menu\" id=\"menuLink\" class=\"menu-link\" v-el:menuLink>\n        <!-- Hamburger icon -->\n        <span></span>\n    </a>\n\n    <div id=\"menu\" v-el:menu>\n        <div class=\"pure-menu\">\n            <a href=\"/\" class=\"pure-menu-heading\">Vee Validate</a>\n            <ul class=\"pure-menu-list\">\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html\" class=\"pure-menu-link\">Getting Started</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#installation\" class=\"pure-menu-link\">Installation</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#basic-example\" class=\"pure-menu-link\">Basic Example</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#render-errors\" class=\"pure-menu-link\">Rendering Errors</a>\n                </li>\n                <li :class=\"{'pure-menu-item': true, 'pure-menu-selected': selected === 'examples'}\">\n                    <a href=\"examples.html\" class=\"pure-menu-link\">Examples</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"rules.html\" class=\"pure-menu-link\">Validation Rules</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"localization.html\" class=\"pure-menu-link\">Localization</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"api.html\" class=\"pure-menu-link\">API Reference</a>\n                </li>\n                <li class=\"pure-menu-item\">\n                    <a href=\"index.html#configuration\" class=\"pure-menu-link\">Configuration</a>\n                </li>\n            </ul>\n        </div>\n        <div class=\"about flex-center\">\n            <a target=\"github\" href=\"https://github.com/logaretm/vee-validation\"><i class=\"icon-github\"></i></a>\n        </div>\n    </div>\n\n    <div id=\"main\">\n        <div class=\"header\">\n            <h1>{{ heading }}</h1>\n            <h2>{{ subtitle }}</h2>\n        </div>\n        <div class=\"content\">\n            <slot></slot>\n        </div>\n    </div>\n</div>\n";
 
 /***/ },
 /* 48 */
@@ -6652,8 +6652,8 @@ if (false) {(function () {  module.hot.accept()
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_CodeExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8__components_CodeExample_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_CodeBlock_vue__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_CodeBlock_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9__components_CodeBlock_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_App_vue__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_App_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10__components_App_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__App_vue__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__App_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10__App_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sass_main_scss__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__sass_main_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_11__sass_main_scss__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__src_rules__ = __webpack_require__(6);
@@ -6682,7 +6682,7 @@ new __WEBPACK_IMPORTED_MODULE_4_vue___default.a({
         rules: new __WEBPACK_IMPORTED_MODULE_5_collectionsjs___default.a(Object.keys(__WEBPACK_IMPORTED_MODULE_12__src_rules__["a" /* default */])).sort().chunk(10).all()
     },
     components: {
-        App: __WEBPACK_IMPORTED_MODULE_10__components_App_vue___default.a
+        App: __WEBPACK_IMPORTED_MODULE_10__App_vue___default.a
     }
 });
 
