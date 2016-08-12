@@ -72,7 +72,6 @@ test('it returns all errors in an array', t => {
     ]);
 });
 
-
 test('it collects errors for a specific field in an array', t => {
     const errors = new ErrorBag();
     errors.add('name', 'The name is invalid');
@@ -86,6 +85,22 @@ test('it collects errors for a specific field in an array', t => {
     t.deepEqual(errors.collect('name'), [
         'The name is invalid'
     ]);
+});
+
+test('it groups errors by field name', t => {
+    const errors = new ErrorBag();
+    errors.add('name', 'The name is invalid');
+    errors.add('email', 'The email is invalid');
+    errors.add('email', 'The email is shorter than 3 chars.');
+    t.deepEqual(errors.collect(), {
+        email: [
+            'The email is invalid',
+            'The email is shorter than 3 chars.'
+        ],
+        name: [
+            'The name is invalid'
+        ]
+    });
 });
 
 test('it checks if there are any errors in the array', t => {

@@ -79,6 +79,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -144,7 +146,7 @@ var ErrorBag = function () {
         }
 
         /**
-         * Groups the errors for a specific field into a single array.
+         * Collects errors into groups or for a specific field.
          *
          * @param  {string} field The field name.
          * @return {Array} errors The errors for the specified field.
@@ -153,6 +155,27 @@ var ErrorBag = function () {
     }, {
         key: "collect",
         value: function collect(field) {
+            var _this = this;
+
+            if (!field) {
+                var _ret = function () {
+                    var collection = {};
+                    _this.errors.forEach(function (e) {
+                        if (!collection[e.field]) {
+                            collection[e.field] = [];
+                        }
+
+                        collection[e.field].push(e.msg);
+                    });
+
+                    return {
+                        v: collection
+                    };
+                }();
+
+                if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
+            }
+
             return this.errors.filter(function (e) {
                 return e.field === field;
             }).map(function (e) {

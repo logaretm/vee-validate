@@ -157,6 +157,12 @@
 
             "use strict";
 
+            var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+                return typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
+            } : function (obj) {
+                return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
+            };
+
             var _createClass = function () {
                 function defineProperties(target, props) {
                     for (var i = 0; i < props.length; i++) {
@@ -233,7 +239,7 @@
                     }
 
                     /**
-                     * Groups the errors for a specific field into a single array.
+                     * Collects errors into groups or for a specific field.
                      *
                      * @param  {string} field The field name.
                      * @return {Array} errors The errors for the specified field.
@@ -242,6 +248,27 @@
                 }, {
                     key: "collect",
                     value: function collect(field) {
+                        var _this = this;
+
+                        if (!field) {
+                            var _ret = function () {
+                                var collection = {};
+                                _this.errors.forEach(function (e) {
+                                    if (!collection[e.field]) {
+                                        collection[e.field] = [];
+                                    }
+
+                                    collection[e.field].push(e.msg);
+                                });
+
+                                return {
+                                    v: collection
+                                };
+                            }();
+
+                            if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
+                        }
+
                         return this.errors.filter(function (e) {
                             return e.field === field;
                         }).map(function (e) {

@@ -43,12 +43,25 @@ export default class ErrorBag
     }
 
     /**
-     * Groups the errors for a specific field into a single array.
+     * Collects errors into groups or for a specific field.
      *
      * @param  {string} field The field name.
      * @return {Array} errors The errors for the specified field.
      */
     collect(field) {
+        if (! field) {
+            const collection = {};
+            this.errors.forEach(e => {
+                if (! collection[e.field]) {
+                    collection[e.field] = [];
+                }
+
+                collection[e.field].push(e.msg);
+            });
+
+            return collection;
+        }
+
         return this.errors.filter(e => e.field === field).map(e => e.msg);
     }
 
