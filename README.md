@@ -1,4 +1,5 @@
 # Vee-Validate
+[![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg?token=XFzlvHKFP5)](https://codecov.io/gh/logaretm/vee-validate)
 
 vee-validate is a lightweight plugin for [VueJS](https://vuejs.org/) that allows you to validate input fields, and display errors.
 
