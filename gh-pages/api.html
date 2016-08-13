@@ -32,15 +32,15 @@
                 <p>
                     <b class="important">Available Methods:</b>
                     <ul>
-                        <li><code class="inline">add(object)</code> adds an object to the internal array.</li>
+                        <li><code class="inline">add(object error)</code> adds an error object to the internal array.</li>
                         <li><code class="inline">all()</code> Gets all messages from the internal array.</li>
                         <li><code class="inline">any()</code> Checks if there are any errors.</li>
                         <li><code class="inline">clear()</code> Removes all items from the internal array.</li>
-                        <li><code class="inline">collect(string)</code> Collects errors associated with a specific field. not passing the field name will group all errors by field name instead.</li>
+                        <li><code class="inline">collect(String field)</code> Collects errors associated with a specific field. not passing the field name will group all errors by field name instead.</li>
                         <li><code class="inline">count()</code> Gets the length of the internal array. or the number of messages.</li>
-                        <li><code class="inline">first(string)</code> Gets the first error message associated with the specified field.</li>
-                        <li><code class="inline">has(string)</code> Checks if there is at least one error associated with the specified field.</li>
-                        <li><code class="inline">remove(string)</code> Removes all errors for a specified field from the internal array.</li>
+                        <li><code class="inline">first(String field)</code> Gets the first error message associated with the specified field.</li>
+                        <li><code class="inline">has(String field)</code> Checks if there is at least one error associated with the specified field.</li>
+                        <li><code class="inline">remove(String field)</code> Removes all errors for a specified field from the internal array.</li>
                     </ul>
                 </p>
                 <h2 id="validator" class="content-subhead"><a href="#validator">Validator</a></h2>
