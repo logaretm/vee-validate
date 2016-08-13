@@ -2053,3 +2053,6 @@ b.important {
 
 .rule div {
   margin: 5px 0px; }
+
+.rtl {
+  direction: rtl; }

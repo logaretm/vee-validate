@@ -10,7 +10,7 @@ export default class Validator
 {
     constructor(validations, $vm) {
         this.locale = 'en';
-        this.$validations = this.normalize(validations);
+        this.$fields = this.normalize(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
     }
@@ -21,6 +21,7 @@ export default class Validator
      * @param {string} language locale or language id.
      */
     setLocale(language) {
+        /* istanbul ignore if */
         if (! Messages[language]) {
             // eslint-disable-next-line
             warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
@@ -36,11 +37,15 @@ export default class Validator
      * @param  {string} checks validations expression.
      */
     attach(name, checks) {
-        this.$validations[name] = [];
+        if (! this.$fields[name]) {
+            this.$fields[name] = {};
+        }
+
+        this.$fields[name].validations = [];
         this.errorBag.remove(name);
 
         checks.split('|').forEach(rule => {
-            this.$validations[name].push(this.normalizeRule(rule));
+            this.$fields[name].validations.push(this.normalizeRule(rule));
         });
     }
 
@@ -160,7 +165,7 @@ export default class Validator
      * @param  {string} name The name of the field.
      */
     detach(name) {
-        delete this.$validations[name];
+        delete this.$fields[name];
     }
 
     /**
@@ -205,9 +210,15 @@ export default class Validator
      *  a boolean.
      */
     validate(name, value) {
+        if (! this.$fields[name]) {
+            warn('You are trying to validate a non-existant field. Use "attach()" first.');
+
+            return false;
+        }
+
         let test = true;
         this.errorBag.remove(name);
-        this.$validations[name].forEach(rule => {
+        this.$fields[name].validations.forEach(rule => {
             test = this.test(name, value, rule);
         });
 
@@ -229,10 +240,10 @@ export default class Validator
         Object.keys(validations).forEach(property => {
             validations[property].split('|').forEach(rule => {
                 if (! normalized[property]) {
-                    normalized[property] = [];
+                    normalized[property] = { validations: [] };
                 }
 
-                normalized[property].push(this.normalizeRule(rule));
+                normalized[property].validations.push(this.normalizeRule(rule));
             });
         });
 

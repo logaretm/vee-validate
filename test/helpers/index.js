@@ -29,5 +29,10 @@ export default {
                 return el;
             }
         };
+    },
+    window() {
+        global.window = {
+
+        };
     }
 };

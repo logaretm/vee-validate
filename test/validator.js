@@ -1,5 +1,5 @@
 import test from 'ava';
-import Validator, { register, unregister } from './../src/validator';
+import Validator from './../src/validator';
 import mocks from './helpers';
 
 const validator = new Validator({
@@ -59,8 +59,8 @@ test('it formats error messages', t => {
         'The content may not be greater than 20 characters.',
         'The tags must be a valid value.'
     ]);
-});
 
+});
 test('it can attach new rules', t => {
     validator.attach('field', 'required|min:5');
     t.false(validator.validate('field', 'less'));
@@ -79,9 +79,14 @@ test('attaching new rules to an existing field should overwrite the old rules', 
     t.false(validator.validate('someField', 'woww')); // did the max validator work?
 });
 
+test('it returns false when trying to validate a non-existant field.', t => {
+    mocks.window();
+    t.false(validator.validate('nonExistant', 'whatever'));
+});
+
 test('it can detach rules', t => {
     validator.detach('field');
-    t.falsy(validator.validations.field);
+    t.falsy(validator.$fields.field);
 });
 
 test('it can extend the validator with a validator function', t => {
@@ -184,20 +189,6 @@ test('test merging line 30', t => {
 
     chineseValidator.validate('first_name', '0123');
     t.is(chineseValidator.errorBag.first('first_name'), 'My name is jeff');
-});
-
-test('it should create and maintain a reference to a validator instance', t => {
-    const $vm = { huh: "I'm a vue instance." };
-    const instance = register($vm);
-    let instance2 = register($vm); // should return the same instance reference.
-    const instance3 = register({ huh: 'someOtherVM' });
-
-    t.is(instance, instance2);
-    t.not(instance, instance3);
-    t.true(unregister($vm));
-    instance2 = register($vm); // should be another one.
-    t.not(instance, instance2);
-    t.false(unregister({ huh: 'none existant vm' }));
 });
 
 test('it should resolve promises to booleans', async t => {

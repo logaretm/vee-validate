@@ -88,12 +88,12 @@ if (isProduction) {
     config = merge(config, {
         plugins: [
             new webpack.optimize.UglifyJsPlugin({
+                exclude: /\.vue$/,
                 mangle: true,
                 compress: {
                     warnings: false
                 }
             }),
-            new webpack.optimize.OccurenceOrderPlugin(),
             new webpack.DefinePlugin({
                 'process.env': {
                     BABEL_ENV: JSON.stringify(process.env.NODE_ENV),
