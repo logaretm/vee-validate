@@ -1,4 +1,4 @@
-import { unregister } from './validator';
+import { unregister } from './utils/maps';
 
 const DEFAULT_BAG_NAME = 'errors';
 

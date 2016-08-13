@@ -1,4 +1,5 @@
-import Validator, { register } from './validator';
+import Validator from './validator';
+import { register } from './utils/maps';
 import mixin from './mixin';
 import directive from './directive';
 import ErrorBag from './errorBag';

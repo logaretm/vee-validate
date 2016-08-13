@@ -2,6 +2,7 @@ import Rules from './rules';
 import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
 import Messages from './messages';
+import warn from './utils/warn';
 
 const EVENT_NAME = '$veeValidate';
 
@@ -9,7 +10,7 @@ export default class Validator
 {
     constructor(validations, $vm) {
         this.locale = 'en';
-        this.validations = this.normalize(validations);
+        this.$validations = this.normalize(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
     }
@@ -20,6 +21,11 @@ export default class Validator
      * @param {string} language locale or language id.
      */
     setLocale(language) {
+        if (! Messages[language]) {
+            // eslint-disable-next-line
+            warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+        }
+
         this.locale = language;
     }
 
@@ -30,11 +36,11 @@ export default class Validator
      * @param  {string} checks validations expression.
      */
     attach(name, checks) {
-        this.validations[name] = [];
+        this.$validations[name] = [];
         this.errorBag.remove(name);
 
         checks.split('|').forEach(rule => {
-            this.validations[name].push(this.normalizeRule(rule));
+            this.$validations[name].push(this.normalizeRule(rule));
         });
     }
 
@@ -154,7 +160,7 @@ export default class Validator
      * @param  {string} name The name of the field.
      */
     detach(name) {
-        delete this.validations[name];
+        delete this.$validations[name];
     }
 
     /**
@@ -201,7 +207,7 @@ export default class Validator
     validate(name, value) {
         let test = true;
         this.errorBag.remove(name);
-        this.validations[name].forEach(rule => {
+        this.$validations[name].forEach(rule => {
             test = this.test(name, value, rule);
         });
 
@@ -307,57 +313,3 @@ export default class Validator
         return this.errorBag;
     }
 }
-
-/**
- * Keeps track of $vm, $validator instances.
- * @type {Array}
- */
-const instances = [];
-
-/**
- * Finds a validator instance from the instances array.
- * @param  {[type]} $vm The Vue instance.
- * @return {object} pair the $vm,$validator pair.
- */
-const find = ($vm) => {
-    for (let i = 0; i < instances.length; i++) {
-        if (instances[i].$vm === $vm) {
-            return instances[i].$validator;
-        }
-    }
-
-    return undefined;
-};
-
-/**
- * Registers a validator for a $vm instance.
- * @param  {*} $vm The Vue instance.
- * @return {Validator} $validator The validator instance.
- */
-const register = ($vm) => {
-    let instance = find($vm);
-    if (! instance) {
-        instance = Validator.create(undefined, $vm);
-
-        instances.push({
-            $vm,
-            $validator: instance
-        });
-    }
-
-    return instance;
-};
-
-const unregister = ($vm) => {
-    for (let i = 0; i < instances.length; i++) {
-        if (instances[i].$vm === $vm) {
-            instances.splice(i, 1);
-
-            return true;
-        }
-    }
-
-    return false;
-};
-
-export { register, unregister };
