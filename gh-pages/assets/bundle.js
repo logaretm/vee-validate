@@ -1787,9 +1787,7 @@
                     return;
                 }
 
-                var warn = console.warn || console.log; // eslint-disable-line
-
-                warn("vee-validate: " + message);
+                console.warn("vee-validate: " + message); // eslint-disable-line
             };
 
             /***/
