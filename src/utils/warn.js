@@ -1,6 +1,6 @@
 /* istanbul ignore next */
 export default (message) => {
-    if (! window.console) {
+    if (! console) {
         return;
     }
 

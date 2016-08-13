@@ -455,7 +455,7 @@
                     _classCallCheck(this, Validator);
 
                     this.locale = 'en';
-                    this.$validations = this.normalize(validations);
+                    this.$fields = this.normalize(validations);
                     this.errorBag = new __WEBPACK_IMPORTED_MODULE_1__errorBag__["a" /* default */]();
                     this.$vm = $vm;
                 }
@@ -469,6 +469,7 @@
                 _createClass(Validator, [{
                     key: 'setLocale',
                     value: function setLocale(language) {
+                        /* istanbul ignore if */
                         if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][language]) {
                             // eslint-disable-next-line
                             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
@@ -489,12 +490,22 @@
                     value: function attach(name, checks) {
                         var _this = this;
 
-                        this.$validations[name] = [];
+                        var prettyName = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+
+                        if (!this.$fields[name]) {
+                            this.$fields[name] = {};
+                        }
+
+                        this.$fields[name].validations = [];
                         this.errorBag.remove(name);
 
                         checks.split('|').forEach(function (rule) {
-                            _this.$validations[name].push(_this.normalizeRule(rule));
+                            _this.$fields[name].validations.push(_this.normalizeRule(rule));
                         });
+
+                        if (prettyName) {
+                            this.$fields[name].name = prettyName;
+                        }
                     }
 
                     /**
@@ -524,7 +535,7 @@
                 }, {
                     key: 'detach',
                     value: function detach(name) {
-                        delete this.$validations[name];
+                        delete this.$fields[name];
                     }
 
                     /**
@@ -582,9 +593,15 @@
                     value: function validate(name, value) {
                         var _this3 = this;
 
+                        if (!this.$fields[name]) {
+                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are trying to validate a non-existant field. Use "attach()" first.');
+
+                            return false;
+                        }
+
                         var test = true;
                         this.errorBag.remove(name);
-                        this.$validations[name].forEach(function (rule) {
+                        this.$fields[name].validations.forEach(function (rule) {
                             test = _this3.test(name, value, rule);
                         });
 
@@ -611,10 +628,10 @@
                         Object.keys(validations).forEach(function (property) {
                             validations[property].split('|').forEach(function (rule) {
                                 if (!normalized[property]) {
-                                    normalized[property] = [];
+                                    normalized[property] = { validations: [] };
                                 }
 
-                                normalized[property].push(_this4.normalizeRule(rule));
+                                normalized[property].validations.push(_this4.normalizeRule(rule));
                             });
                         });
 
@@ -677,6 +694,7 @@
 
                         var validator = __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][rule.name];
                         var valid = validator(value, rule.params);
+                        var displayName = this.$fields[name].name || name;
 
                         if (valid instanceof Promise) {
                             return valid.then(function (values) {
@@ -685,7 +703,7 @@
                                 }, true);
 
                                 if (!allValid) {
-                                    _this5.errorBag.add(name, _this5.formatErrorMessage(name, rule));
+                                    _this5.errorBag.add(name, _this5.formatErrorMessage(displayName, rule));
                                 }
 
                                 return allValid;
@@ -693,7 +711,7 @@
                         }
 
                         if (!valid) {
-                            this.errorBag.add(name, this.formatErrorMessage(name, rule));
+                            this.errorBag.add(name, this.formatErrorMessage(displayName, rule));
                         }
 
                         return valid;
@@ -838,7 +856,7 @@
 
             /* harmony default export */exports["a"] = function (options) {
                 return {
-                    params: ['rules', 'delay', 'reject', 'initial'],
+                    params: ['rules', 'delay', 'reject', 'initial', 'as'],
                     onInput: function onInput() {
                         this.vm.$validator.validate(this.fieldName, this.el.value);
                     },
@@ -860,7 +878,7 @@
                     },
                     bind: function bind() {
                         this.fieldName = this.expression || this.el.name;
-                        this.vm.$validator.attach(this.fieldName, this.params.rules);
+                        this.vm.$validator.attach(this.fieldName, this.params.rules, this.params.as);
 
                         if (this.expression) {
                             this.attachValidatorEvent();
@@ -1781,6 +1799,7 @@
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
+            /* istanbul ignore next */
             /* harmony default export */
             exports["a"] = function (message) {
                 if (!window.console) {
@@ -6646,7 +6665,7 @@ module.exports = "\n\n\n\n<p>\n    You can specify a delay to debounce the input
 /* 54 */
 /***/ function(module, exports) {
 
-module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked rtl\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-validate rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n            <input v-validate rules=\"required|numeric\" reject :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" type=\"text\">\n            <span class=\"error\" v-show=\"errors.has('phone')\">{{ errors.first('phone') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked rtl&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|email&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;text&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('phone') }&quot; for=&quot;phone&quot;&gt;Phone&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|numeric&quot; reject :class=&quot;{'pure-input-1': true, 'has-error': errors.has('phone') }&quot; name=&quot;phone&quot; type=&quot;text&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('phone')&quot;&gt;{{ \"{\" + \"{ errors.first('phone') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n    <div slot=\"code-js\">\n        import ar from './locale/ar';\n        import Vue from 'vue';\n        import VeeValidate, { Validator } from 'vee-validate';\n\n        // Merge dictionary messages.\n        Validator.updateDictionary({ ar });\n\n        new Vue({\n            el: 'body',\n            data: {\n                phone: '',\n                email: ''\n            },\n            created() {\n                this.$validator.setLocale('ar'); // Switch locale for this instance.\n            }\n        });\n    </div>\n\n</code-example>\n";
+module.exports = "\n<code-example>\n    <form slot=\"example\" class=\"pure-form pure-form-stacked rtl\">\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n            <input v-validate rules=\"required|email\" as=\"البريد\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\">\n            <span class=\"error\" v-show=\"errors.has('email')\">{{ errors.first('email') }}</span>\n        </div>\n        <div class=\"pure-u-1\">\n            <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n            <input v-validate rules=\"required|numeric\" as=\"رقم الهاتف\" :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" type=\"text\">\n            <span class=\"error\" v-show=\"errors.has('phone')\">{{ errors.first('phone') }}</span>\n        </div>\n    </form>\n\n    <div slot=\"code-html\">\n        &lt;form class=&quot;pure-form pure-form-stacked rtl&quot;&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('email') }&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|email&quot; as=&quot;البريد&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;text&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('email')&quot;&gt;{{ \"{\" + \"{ errors.first('email') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n            &lt;div class=&quot;pure-u-1&quot;&gt;\n                &lt;label :class=&quot;{'error': errors.has('phone') }&quot; for=&quot;phone&quot;&gt;Phone&lt;/label&gt;\n                &lt;input v-validate rules=&quot;required|numeric&quot; as=&quot;رقم الهاتف&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('phone') }&quot; name=&quot;phone&quot; type=&quot;text&quot;&gt;\n                &lt;span class=&quot;error&quot; v-show=&quot;errors.has('phone')&quot;&gt;{{ \"{\" + \"{ errors.first('phone') }\" + \"}\" }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/form&gt;\n    </div>\n    <div slot=\"code-js\">\n        import ar from './locale/ar';\n        import Vue from 'vue';\n        import VeeValidate, { Validator } from 'vee-validate';\n\n        // Merge dictionary messages.\n        Validator.updateDictionary({ ar });\n\n        new Vue({\n            el: 'body',\n            data: {\n                phone: '',\n                email: ''\n            },\n            created() {\n                this.$validator.setLocale('ar'); // Switch locale for this instance.\n            }\n        });\n    </div>\n\n</code-example>\n";
 
 /***/ },
 /* 55 */

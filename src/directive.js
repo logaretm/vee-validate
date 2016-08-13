@@ -4,7 +4,7 @@ const DEFAULT_DELAY = 0;
 const DEFAULT_EVENT_NAME = '$veeValidate';
 
 export default (options) => ({
-    params: ['rules', 'delay', 'reject', 'initial'],
+    params: ['rules', 'delay', 'reject', 'initial', 'as'],
     onInput() {
         this.vm.$validator.validate(this.fieldName, this.el.value);
     },
@@ -25,7 +25,7 @@ export default (options) => ({
     },
     bind() {
         this.fieldName = this.expression || this.el.name;
-        this.vm.$validator.attach(this.fieldName, this.params.rules);
+        this.vm.$validator.attach(this.fieldName, this.params.rules, this.params.as);
 
         if (this.expression) {
             this.attachValidatorEvent();

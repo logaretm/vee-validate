@@ -346,7 +346,7 @@ var Validator = function () {
         _classCallCheck(this, Validator);
 
         this.locale = 'en';
-        this.$validations = this.normalize(validations);
+        this.$fields = this.normalize(validations);
         this.errorBag = new __WEBPACK_IMPORTED_MODULE_1__errorBag__["a" /* default */]();
         this.$vm = $vm;
     }
@@ -361,6 +361,7 @@ var Validator = function () {
     _createClass(Validator, [{
         key: 'setLocale',
         value: function setLocale(language) {
+            /* istanbul ignore if */
             if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][language]) {
                 // eslint-disable-next-line
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
@@ -381,12 +382,22 @@ var Validator = function () {
         value: function attach(name, checks) {
             var _this = this;
 
-            this.$validations[name] = [];
+            var prettyName = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+
+            if (!this.$fields[name]) {
+                this.$fields[name] = {};
+            }
+
+            this.$fields[name].validations = [];
             this.errorBag.remove(name);
 
             checks.split('|').forEach(function (rule) {
-                _this.$validations[name].push(_this.normalizeRule(rule));
+                _this.$fields[name].validations.push(_this.normalizeRule(rule));
             });
+
+            if (prettyName) {
+                this.$fields[name].name = prettyName;
+            }
         }
 
         /**
@@ -417,7 +428,7 @@ var Validator = function () {
     }, {
         key: 'detach',
         value: function detach(name) {
-            delete this.$validations[name];
+            delete this.$fields[name];
         }
 
         /**
@@ -475,9 +486,15 @@ var Validator = function () {
         value: function validate(name, value) {
             var _this3 = this;
 
+            if (!this.$fields[name]) {
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are trying to validate a non-existant field. Use "attach()" first.');
+
+                return false;
+            }
+
             var test = true;
             this.errorBag.remove(name);
-            this.$validations[name].forEach(function (rule) {
+            this.$fields[name].validations.forEach(function (rule) {
                 test = _this3.test(name, value, rule);
             });
 
@@ -504,10 +521,10 @@ var Validator = function () {
             Object.keys(validations).forEach(function (property) {
                 validations[property].split('|').forEach(function (rule) {
                     if (!normalized[property]) {
-                        normalized[property] = [];
+                        normalized[property] = { validations: [] };
                     }
 
-                    normalized[property].push(_this4.normalizeRule(rule));
+                    normalized[property].validations.push(_this4.normalizeRule(rule));
                 });
             });
 
@@ -570,6 +587,7 @@ var Validator = function () {
 
             var validator = __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][rule.name];
             var valid = validator(value, rule.params);
+            var displayName = this.$fields[name].name || name;
 
             if (valid instanceof Promise) {
                 return valid.then(function (values) {
@@ -578,7 +596,7 @@ var Validator = function () {
                     }, true);
 
                     if (!allValid) {
-                        _this5.errorBag.add(name, _this5.formatErrorMessage(name, rule));
+                        _this5.errorBag.add(name, _this5.formatErrorMessage(displayName, rule));
                     }
 
                     return allValid;
@@ -586,7 +604,7 @@ var Validator = function () {
             }
 
             if (!valid) {
-                this.errorBag.add(name, this.formatErrorMessage(name, rule));
+                this.errorBag.add(name, this.formatErrorMessage(displayName, rule));
             }
 
             return valid;
@@ -730,7 +748,7 @@ var DEFAULT_EVENT_NAME = '$veeValidate';
 
 /* harmony default export */ exports["a"] = function (options) {
     return {
-        params: ['rules', 'delay', 'reject', 'initial'],
+        params: ['rules', 'delay', 'reject', 'initial', 'as'],
         onInput: function onInput() {
             this.vm.$validator.validate(this.fieldName, this.el.value);
         },
@@ -752,7 +770,7 @@ var DEFAULT_EVENT_NAME = '$veeValidate';
         },
         bind: function bind() {
             this.fieldName = this.expression || this.el.name;
-            this.vm.$validator.attach(this.fieldName, this.params.rules);
+            this.vm.$validator.attach(this.fieldName, this.params.rules, this.params.as);
 
             if (this.expression) {
                 this.attachValidatorEvent();
@@ -1413,6 +1431,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
+/* istanbul ignore next */
 /* harmony default export */ exports["a"] = function (message) {
     if (!window.console) {
         return;

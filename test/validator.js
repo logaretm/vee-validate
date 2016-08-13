@@ -67,6 +67,12 @@ test('it can attach new rules', t => {
     t.true(validator.validate('field', 'not less'));
 });
 
+test('it can attach new rules and display errors with custom names', t => {
+    validator.attach('field', 'min:5', 'pretty field');
+    validator.validate('field', 'wo');
+    t.is(validator.getErrors().first('field'), 'The pretty field must be at least 5 characters.')
+});
+
 test('attaching new rules to an existing field should overwrite the old rules', t => {
     validator.attach('someField', 'required|min:3');
     t.false(validator.validate('someField', 'wo')); // add error.
@@ -80,7 +86,6 @@ test('attaching new rules to an existing field should overwrite the old rules', 
 });
 
 test('it returns false when trying to validate a non-existant field.', t => {
-    mocks.window();
     t.false(validator.validate('nonExistant', 'whatever'));
 });
 

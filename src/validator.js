@@ -36,7 +36,7 @@ export default class Validator
      * @param  {string} name The field name.
      * @param  {string} checks validations expression.
      */
-    attach(name, checks) {
+    attach(name, checks, prettyName = null) {
         if (! this.$fields[name]) {
             this.$fields[name] = {};
         }
@@ -47,6 +47,10 @@ export default class Validator
         checks.split('|').forEach(rule => {
             this.$fields[name].validations.push(this.normalizeRule(rule));
         });
+
+        if (prettyName) {
+            this.$fields[name].name = prettyName;
+        }
     }
 
     /**
@@ -295,13 +299,14 @@ export default class Validator
     test(name, value, rule) {
         const validator = Rules[rule.name];
         const valid = validator(value, rule.params);
+        const displayName = this.$fields[name].name || name;
 
         if (valid instanceof Promise) {
             return valid.then(values => {
                 const allValid = values.reduce((prev, curr) => prev && curr.valid, true);
 
                 if (! allValid) {
-                    this.errorBag.add(name, this.formatErrorMessage(name, rule));
+                    this.errorBag.add(name, this.formatErrorMessage(displayName, rule));
                 }
 
                 return allValid;
@@ -309,7 +314,7 @@ export default class Validator
         }
 
         if (! valid) {
-            this.errorBag.add(name, this.formatErrorMessage(name, rule));
+            this.errorBag.add(name, this.formatErrorMessage(displayName, rule));
         }
 
         return valid;
