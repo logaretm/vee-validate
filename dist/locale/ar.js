@@ -1,6 +1,6 @@
 export default {
-    alpha_dash: (field) => `${field} قد يحتوي فقط على حروف او ارقام او مسافات او - او _`,
-    alpha_num: (field) => `${field} قد يحتوي فقط على حروف او ارقام او مسافات.`,
+    alpha_dash: (field) => `${field} قد يحتوي على حروف او الرموز - و _.`,
+    alpha_num: (field) => `${field} قد يحتوي فقط على حروف وارقام.`,
     alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.`,
     between: (field, [min, max]) => `قيمة ${field} يجب ان تكون ما بين ${min} و ${max}.`,
     confirmed: (field, [confirmedField]) => `${field} لا يماثل التأكيد.`,
