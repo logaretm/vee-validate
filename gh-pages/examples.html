@@ -29,7 +29,7 @@
                     <br><br>
                     <b class="important">The Solution:</b> The <code class="inline">v-validate</code> directive can take a binding expression, the expression is the data name you wish to validte. for example:
                     <code-block class="language-html">
-                        &lt;input v-validate=&quot;email&quot; rules=&quot;required|email&quot; type=&quot;text&quot; name=&quot;email&quot;&gt;
+                        &lt;input v-validate=&quot;email&quot; data-rules=&quot;required|email&quot; type=&quot;text&quot; name=&quot;email&quot;&gt;
                     </code-block>
                     Whenever the binding value is updated, the validator will validate the new value automatically.
                     <div class="note">
@@ -61,7 +61,7 @@
                  <locale-example></locale-example>
                  <p>
                     <div class="note">
-                        <b>Note: </b> Here we are also seeing <code>as</code> attribute which tells the validator to use that value as the field name when generating error messages, this is a good way to display 'pretty names' for your inputs in error messages, which would make sense when displaying messages in other languages.
+                        <b>Note: </b> Here we are also seeing <code>data-as</code> attribute which tells the validator to use that value as the field name when generating error messages, this is a good way to display 'pretty names' for your inputs in error messages, which would make sense when displaying messages in other languages.
                         <br><br>Keep in mind that those pretty names are only used when generating error messages.
                     </div>
                  </p>

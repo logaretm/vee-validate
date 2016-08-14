@@ -748,7 +748,6 @@ var DEFAULT_EVENT_NAME = '$veeValidate';
 
 /* harmony default export */ exports["a"] = function (options) {
     return {
-        params: ['rules', 'delay', 'as'],
         onInput: function onInput() {
             this.vm.$validator.validate(this.fieldName, this.el.value);
         },
@@ -770,7 +769,7 @@ var DEFAULT_EVENT_NAME = '$veeValidate';
         },
         bind: function bind() {
             this.fieldName = this.expression || this.el.name;
-            this.vm.$validator.attach(this.fieldName, this.params.rules, this.params.as);
+            this.vm.$validator.attach(this.fieldName, this.el.dataset.rules, this.el.dataset.as);
 
             if (this.expression) {
                 this.attachValidatorEvent();
@@ -781,7 +780,7 @@ var DEFAULT_EVENT_NAME = '$veeValidate';
             var handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
             this.handles = this.el.type === 'file' ? 'change' : 'input';
 
-            var delay = this.params.delay || options && options.delay || DEFAULT_DELAY;
+            var delay = this.el.dataset.delay || options && options.delay || DEFAULT_DELAY;
             this.handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler.bind(this), delay) : handler.bind(this);
             this.el.addEventListener(this.handles, this.handler);
 

@@ -4,7 +4,6 @@ const DEFAULT_DELAY = 0;
 const DEFAULT_EVENT_NAME = '$veeValidate';
 
 export default (options) => ({
-    params: ['rules', 'delay', 'as'],
     onInput() {
         this.vm.$validator.validate(this.fieldName, this.el.value);
     },
@@ -25,7 +24,7 @@ export default (options) => ({
     },
     bind() {
         this.fieldName = this.expression || this.el.name;
-        this.vm.$validator.attach(this.fieldName, this.params.rules, this.params.as);
+        this.vm.$validator.attach(this.fieldName, this.el.dataset.rules, this.el.dataset.as);
 
         if (this.expression) {
             this.attachValidatorEvent();
@@ -36,7 +35,7 @@ export default (options) => ({
         const handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
         this.handles = this.el.type === 'file' ? 'change' : 'input';
 
-        const delay = this.params.delay || (options && options.delay) || DEFAULT_DELAY;
+        const delay = this.el.dataset.delay || (options && options.delay) || DEFAULT_DELAY;
         this.handler = delay ? debounce(handler.bind(this), delay) : handler.bind(this);
         this.el.addEventListener(this.handles, this.handler);
 

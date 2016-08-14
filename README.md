@@ -32,7 +32,7 @@ Now you are all setup to use the plugin.
 Just apply the `v-validate` directive on your input and a `rules` attribute which is a list of validations separated by a pipe, for example we will use the `required` and the `email` validators:
 
 ```html
-<input v-validate rules="required|email" type="text" name="email">
+<input v-validate data-rules="required|email" type="text" name="email">
 ```
 
 Now every time the input changes, the validator will run the list of validations from left to right, populating the errors helper object whenever an input fails validation.

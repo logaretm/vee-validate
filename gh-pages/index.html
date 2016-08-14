@@ -45,6 +45,14 @@
                     </code-block>
                 </p>
                 <h2 id="basic-example" class="content-subhead"><a href="#basic-example">Basic Example</a></h2>
+                <p>
+                    All you need is to add the <code class="inline">v-validate</code> directive to the input you wish to validate.
+                    <br><br>
+                    Then Add a <code class="inline">data-rules</code> attribute which contains a list of validation rules separated by a pipe '<code class="inline">|</code>'.
+                    For the following example the validation rules are straight forward, use <code class="inline">required</code> to indicate that the field is required.
+                    And <code class="inline">email</code> to indicate that the field must be an email.
+                    To combine both rules we assign the value <code class="inline">required|email</code> to the <code class="inline">data-rules</code> data-set attribute.
+                </p>
                 <basic-example></basic-example>
                 <div class="flex-center"><a class="link" href="examples.html">More Examples</a></div>
                 <br>
