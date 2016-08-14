@@ -339,27 +339,37 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-var EVENT_NAME = '$veeValidate';
+var EVENT_NAME = 'veeValidate';
+var DEFAULT_LOCALE = 'en';
+
+/* eslint-disable no-underscore-dangle */
 
 var Validator = function () {
     function Validator(validations, $vm) {
         _classCallCheck(this, Validator);
 
-        this.locale = 'en';
-        this.$fields = this.normalize(validations);
+        this.locale = DEFAULT_LOCALE;
+        this.$fields = this._normalize(validations);
         this.errorBag = new __WEBPACK_IMPORTED_MODULE_1__errorBag__["a" /* default */]();
         this.$vm = $vm;
     }
 
     /**
-     * Sets the validator current langauge.
+     * Sets the default locale for all validators.
      *
-     * @param {string} language locale or language id.
+     * @param {String} language The locale id.
      */
 
 
     _createClass(Validator, [{
         key: 'setLocale',
+
+
+        /**
+         * Sets the validator current langauge.
+         *
+         * @param {string} language locale or language id.
+         */
         value: function setLocale(language) {
             /* istanbul ignore if */
             if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][language]) {
@@ -375,6 +385,7 @@ var Validator = function () {
          *
          * @param  {string} name The field name.
          * @param  {string} checks validations expression.
+         * @param {string} prettyName Custom name to be used as field name in error messages.
          */
 
     }, {
@@ -392,7 +403,7 @@ var Validator = function () {
             this.errorBag.remove(name);
 
             checks.split('|').forEach(function (rule) {
-                _this.$fields[name].validations.push(_this.normalizeRule(rule));
+                _this.$fields[name].validations.push(_this._normalizeRule(rule));
             });
 
             if (prettyName) {
@@ -404,17 +415,10 @@ var Validator = function () {
          * Updates the messages dicitionary, overwriting existing values and adding new ones.
          *
          * @param  {object} messages The messages object.
-        =     */
+         */
 
     }, {
         key: 'updateDictionary',
-
-
-        /**
-         * Updates the messages dicitionary, overwriting existing values and adding new ones.
-         *
-         * @param  {object} messages The messages object.
-         */
         value: function updateDictionary(messages) {
             Validator.updateDictionary(messages);
         }
@@ -495,7 +499,7 @@ var Validator = function () {
             var test = true;
             this.errorBag.remove(name);
             this.$fields[name].validations.forEach(function (rule) {
-                test = _this3.test(name, value, rule);
+                test = _this3._test(name, value, rule);
             });
 
             return test;
@@ -509,8 +513,8 @@ var Validator = function () {
          */
 
     }, {
-        key: 'normalize',
-        value: function normalize(validations) {
+        key: '_normalize',
+        value: function _normalize(validations) {
             var _this4 = this;
 
             if (!validations) {
@@ -524,7 +528,7 @@ var Validator = function () {
                         normalized[property] = { validations: [] };
                     }
 
-                    normalized[property].validations.push(_this4.normalizeRule(rule));
+                    normalized[property].validations.push(_this4._normalizeRule(rule));
                 });
             });
 
@@ -539,8 +543,8 @@ var Validator = function () {
          */
 
     }, {
-        key: 'normalizeRule',
-        value: function normalizeRule(rule) {
+        key: '_normalizeRule',
+        value: function _normalizeRule(rule) {
             var params = null;
             if (~rule.indexOf(':')) {
                 params = rule.split(':')[1].split(',');
@@ -561,8 +565,8 @@ var Validator = function () {
          */
 
     }, {
-        key: 'formatErrorMessage',
-        value: function formatErrorMessage(field, rule) {
+        key: '_formatErrorMessage',
+        value: function _formatErrorMessage(field, rule) {
             if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][this.locale] || typeof __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][this.locale][rule.name] !== 'function') {
                 // Default to english message.
                 return __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */].en[rule.name](field, rule.params);
@@ -581,8 +585,8 @@ var Validator = function () {
          */
 
     }, {
-        key: 'test',
-        value: function test(name, value, rule) {
+        key: '_test',
+        value: function _test(name, value, rule) {
             var _this5 = this;
 
             var validator = __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][rule.name];
@@ -596,7 +600,7 @@ var Validator = function () {
                     }, true);
 
                     if (!allValid) {
-                        _this5.errorBag.add(name, _this5.formatErrorMessage(displayName, rule));
+                        _this5.errorBag.add(name, _this5._formatErrorMessage(displayName, rule));
                     }
 
                     return allValid;
@@ -604,7 +608,7 @@ var Validator = function () {
             }
 
             if (!valid) {
-                this.errorBag.add(name, this.formatErrorMessage(displayName, rule));
+                this.errorBag.add(name, this._formatErrorMessage(displayName, rule));
             }
 
             return valid;
@@ -622,6 +626,26 @@ var Validator = function () {
             return this.errorBag;
         }
     }], [{
+        key: 'setDefaultLocale',
+        value: function setDefaultLocale() {
+            var language = arguments.length <= 0 || arguments[0] === undefined ? 'en' : arguments[0];
+
+            /* istanbul ignore if */
+            if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][language]) {
+                // eslint-disable-next-line
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+            }
+
+            DEFAULT_LOCALE = language;
+        }
+
+        /**
+         * Updates the messages dicitionary, overwriting existing values and adding new ones.
+         *
+         * @param  {object} messages The messages object.
+        =     */
+
+    }, {
         key: 'updateDictionary',
         value: function updateDictionary(messages) {
             Object.keys(messages).forEach(function (locale) {
@@ -658,9 +682,8 @@ var Validator = function () {
     }, {
         key: 'extend',
         value: function extend(name, validator) {
-            Validator.guardExtend(name, validator);
-
-            Validator.merge(name, validator);
+            Validator._guardExtend(name, validator);
+            Validator._merge(name, validator);
         }
 
         /**
@@ -671,8 +694,8 @@ var Validator = function () {
          */
 
     }, {
-        key: 'merge',
-        value: function merge(name, validator) {
+        key: '_merge',
+        value: function _merge(name, validator) {
             if (typeof validator === 'function') {
                 __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][name] = validator;
                 __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */].en[name] = function (field) {
@@ -706,8 +729,8 @@ var Validator = function () {
          */
 
     }, {
-        key: 'guardExtend',
-        value: function guardExtend(name, validator) {
+        key: '_guardExtend',
+        value: function _guardExtend(name, validator) {
             if (__WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][name]) {
                 throw new __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__["a" /* default */]('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
             }
@@ -743,8 +766,7 @@ var Validator = function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__ = __webpack_require__(30);
 
 
-var DEFAULT_DELAY = 0;
-var DEFAULT_EVENT_NAME = '$veeValidate';
+var DEFAULT_EVENT_NAME = 'veeValidate';
 
 /* harmony default export */ exports["a"] = function (options) {
     return {
@@ -780,7 +802,7 @@ var DEFAULT_EVENT_NAME = '$veeValidate';
             var handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
             this.handles = this.el.type === 'file' ? 'change' : 'input';
 
-            var delay = this.el.dataset.delay || options && options.delay || DEFAULT_DELAY;
+            var delay = this.el.dataset.delay || options.delay;
             this.handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler.bind(this), delay) : handler.bind(this);
             this.el.addEventListener(this.handles, this.handler);
 
@@ -820,14 +842,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-var DEFAULT_BAG_NAME = 'errors';
-
 /* harmony default export */ exports["a"] = function (options) {
-    var errorBagName = options && options.errorBagName || DEFAULT_BAG_NAME;
-
     return {
         data: function data() {
-            return _defineProperty({}, errorBagName, this.$validator.errorBag);
+            return _defineProperty({}, options.errorBagName, this.$validator.errorBag);
         },
         destroyed: function destroyed() {
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_maps__["a" /* unregister */])(this);
@@ -874,13 +892,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* eslint-disable max-len */
 /* harmony default export */ exports["a"] = {
     alpha_dash: function alpha_dash(field) {
-        return "The " + field + " may contain alpha-numeric characters well as spaces, dashes and underscores.";
+        return "The " + field + " may contain alpha-numeric characters as well as dashes and underscores.";
     },
     alpha_num: function alpha_num(field) {
-        return "The " + field + " may only contain alpha-numeric characters and spaces.";
+        return "The " + field + " may only contain alpha-numeric characters and.";
     },
     alpha: function alpha(field) {
-        return "The " + field + " may only contain alphabetic characters and spaces.";
+        return "The " + field + " may only contain alphabetic characters.";
     },
     between: function between(field, _ref) {
         var _ref2 = _slicedToArray(_ref, 2);
@@ -1459,7 +1477,32 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 /**
  * Installs the plugin.
  */
-var install = function install(Vue, options) {
+var install = function install(Vue) {
+    var _ref = arguments.length <= 1 || arguments[1] === undefined ? {
+        locale: 'en',
+        delay: 0,
+        errorBagName: 'errors',
+        messages: null
+    } : arguments[1];
+
+    var locale = _ref.locale;
+    var delay = _ref.delay;
+    var errorBagName = _ref.errorBagName;
+    var messages = _ref.messages;
+
+    if (messages) {
+        __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].updateDictionary(messages);
+    }
+
+    __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].setDefaultLocale(locale);
+
+    var options = {
+        locale: locale,
+        delay: delay,
+        messages: messages,
+        errorBagName: errorBagName
+    };
+
     Object.defineProperties(Vue.prototype, {
         $validator: {
             get: function get() {

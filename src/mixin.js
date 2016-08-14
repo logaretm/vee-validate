@@ -1,18 +1,12 @@
 import { unregister } from './utils/maps';
 
-const DEFAULT_BAG_NAME = 'errors';
-
-export default (options) => {
-    const errorBagName = (options && options.errorBagName) || DEFAULT_BAG_NAME;
-
-    return {
-        data() {
-            return {
-                [errorBagName]: this.$validator.errorBag
-            };
-        },
-        destroyed() {
-            unregister(this);
-        }
-    };
-};
+export default (options) => ({
+    data() {
+        return {
+            [options.errorBagName]: this.$validator.errorBag
+        };
+    },
+    destroyed() {
+        unregister(this);
+    }
+});

@@ -95,13 +95,17 @@
                     const config = {
                         errorBagName: 'errors', // change if property conflicts.
                         delay: 0,
+                        locale: 'en',
+                        messages: null
                     };
 
                     Vue.use(VeeValidate, config);
                 </code-block>
                 <ul>
                     <li><code class="inline">errorBagName:</code> The name of the ErrorBag object that will be injected in each of Vue's instances' data.</li>
-                    <li><code class="inline">delay</code> The default debounce time for all inputs (only affects validations).</li>
+                    <li><code class="inline">delay:</code> The default debounce time for all inputs (only affects validations).</li>
+                    <li><code class="inline">locale:</code> The default language for the validation messages.</li>
+                    <li><code class="inline">messages:</code> The messages to be generated for the validation errors, check <a href="rules.html#custom-messages">custom messages</a> section.</li>
                 </ul>
             </app>
         </div>

@@ -4,53 +4,33 @@ import ValidatorException from './exceptions/validatorException';
 import Messages from './messages';
 import warn from './utils/warn';
 
-const EVENT_NAME = '$veeValidate';
+const EVENT_NAME = 'veeValidate';
+let DEFAULT_LOCALE = 'en';
+
+/* eslint-disable no-underscore-dangle */
 
 export default class Validator
 {
     constructor(validations, $vm) {
-        this.locale = 'en';
-        this.$fields = this.normalize(validations);
+        this.locale = DEFAULT_LOCALE;
+        this.$fields = this._normalize(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
     }
 
     /**
-     * Sets the validator current langauge.
+     * Sets the default locale for all validators.
      *
-     * @param {string} language locale or language id.
+     * @param {String} language The locale id.
      */
-    setLocale(language) {
+    static setDefaultLocale(language = 'en') {
         /* istanbul ignore if */
         if (! Messages[language]) {
             // eslint-disable-next-line
             warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
         }
 
-        this.locale = language;
-    }
-
-    /**
-     * Registers a field to be validated.
-     *
-     * @param  {string} name The field name.
-     * @param  {string} checks validations expression.
-     */
-    attach(name, checks, prettyName = null) {
-        if (! this.$fields[name]) {
-            this.$fields[name] = {};
-        }
-
-        this.$fields[name].validations = [];
-        this.errorBag.remove(name);
-
-        checks.split('|').forEach(rule => {
-            this.$fields[name].validations.push(this.normalizeRule(rule));
-        });
-
-        if (prettyName) {
-            this.$fields[name].name = prettyName;
-        }
+        DEFAULT_LOCALE = language;
     }
 
     /**
@@ -87,9 +67,8 @@ export default class Validator
      * @param  {object|function} validator The validator object/function.
      */
     static extend(name, validator) {
-        Validator.guardExtend(name, validator);
-
-        Validator.merge(name, validator);
+        Validator._guardExtend(name, validator);
+        Validator._merge(name, validator);
     }
 
     /**
@@ -98,7 +77,7 @@ export default class Validator
      * @param  {string} name The name of the validator.
      * @param  {function|object} validator The validator object.
      */
-    static merge(name, validator) {
+    static _merge(name, validator) {
         if (typeof validator === 'function') {
             Rules[name] = validator;
             Messages.en[name] = (field) => `The ${field} value is not valid.`;
@@ -128,7 +107,7 @@ export default class Validator
      * @param  {string} name name of the validation rule.
      * @param  {object} validator a validation rule object.
      */
-    static guardExtend(name, validator) {
+    static _guardExtend(name, validator) {
         if (Rules[name]) {
             throw new ValidatorException(
                 `Extension Error: There is an existing validator with the same name '${name}'.`
@@ -151,6 +130,45 @@ export default class Validator
                 // eslint-disable-next-line
                 `Extension Error: The validator '${name}' must have a 'getMessage' method or have a 'messages' object.`
             );
+        }
+    }
+
+    /**
+     * Sets the validator current langauge.
+     *
+     * @param {string} language locale or language id.
+     */
+    setLocale(language) {
+        /* istanbul ignore if */
+        if (! Messages[language]) {
+            // eslint-disable-next-line
+            warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+        }
+
+        this.locale = language;
+    }
+
+    /**
+     * Registers a field to be validated.
+     *
+     * @param  {string} name The field name.
+     * @param  {string} checks validations expression.
+     * @param {string} prettyName Custom name to be used as field name in error messages.
+     */
+    attach(name, checks, prettyName = null) {
+        if (! this.$fields[name]) {
+            this.$fields[name] = {};
+        }
+
+        this.$fields[name].validations = [];
+        this.errorBag.remove(name);
+
+        checks.split('|').forEach(rule => {
+            this.$fields[name].validations.push(this._normalizeRule(rule));
+        });
+
+        if (prettyName) {
+            this.$fields[name].name = prettyName;
         }
     }
 
@@ -223,7 +241,7 @@ export default class Validator
         let test = true;
         this.errorBag.remove(name);
         this.$fields[name].validations.forEach(rule => {
-            test = this.test(name, value, rule);
+            test = this._test(name, value, rule);
         });
 
         return test;
@@ -235,7 +253,7 @@ export default class Validator
      * @param  {object} validations
      * @return {object} Normalized object.
      */
-    normalize(validations) {
+    _normalize(validations) {
         if (! validations) {
             return {};
         }
@@ -247,7 +265,7 @@ export default class Validator
                     normalized[property] = { validations: [] };
                 }
 
-                normalized[property].validations.push(this.normalizeRule(rule));
+                normalized[property].validations.push(this._normalizeRule(rule));
             });
         });
 
@@ -260,7 +278,7 @@ export default class Validator
      * @param  {string} rule The rule to be normalized.
      * @return {object} rule The normalized rule.
      */
-    normalizeRule(rule) {
+    _normalizeRule(rule) {
         let params = null;
         if (~rule.indexOf(':')) {
             params = rule.split(':')[1].split(',');
@@ -279,7 +297,7 @@ export default class Validator
      * @param  {object} rule Normalized rule object.
      * @return {string} msg Formatted error message.
      */
-    formatErrorMessage(field, rule) {
+    _formatErrorMessage(field, rule) {
         if (! Messages[this.locale] || typeof Messages[this.locale][rule.name] !== 'function') {
             // Default to english message.
             return Messages.en[rule.name](field, rule.params);
@@ -296,7 +314,7 @@ export default class Validator
      * @param  {object} rule the rule object.
      * @return {boolean} Wether if it passes the check.
      */
-    test(name, value, rule) {
+    _test(name, value, rule) {
         const validator = Rules[rule.name];
         const valid = validator(value, rule.params);
         const displayName = this.$fields[name].name || name;
@@ -306,7 +324,7 @@ export default class Validator
                 const allValid = values.reduce((prev, curr) => prev && curr.valid, true);
 
                 if (! allValid) {
-                    this.errorBag.add(name, this.formatErrorMessage(displayName, rule));
+                    this.errorBag.add(name, this._formatErrorMessage(displayName, rule));
                 }
 
                 return allValid;
@@ -314,7 +332,7 @@ export default class Validator
         }
 
         if (! valid) {
-            this.errorBag.add(name, this.formatErrorMessage(displayName, rule));
+            this.errorBag.add(name, this._formatErrorMessage(displayName, rule));
         }
 
         return valid;

@@ -96,6 +96,15 @@
                         <b>Note:</b> Each validator keeps track of its own locale. so be sure to update any instances whenever the language changes.
                         For more information about how to overwrite messages and add new ones, please refer to the <a href="rules.html#custom-messages" class="link">custom messages</a> section.
                     </div>
+                    The Validator class has a static method called <code class="inline">setDefaultLocale(string)</code> which sets the default language for all newly instantiated validators to that language.
+                    <code-block class="language-javascript">
+                        import { Validator } from 'vee-validate';
+
+                        Validator.setDefaultLocale('ar'); // from now on, all validators that are created will have this locale.
+                        Validator.create().locale // 'ar';
+
+                        Validator.setDefaultLocale(); // resets to english, again for all newly created validators, previously created ones won't be touched.
+                    </code-block>
                 </p>
                 <h2 id="validator-example" class="content-subhead"><a href="#validator-example">Validator Example</a></h2>
                 <p>

@@ -1,7 +1,6 @@
 import debounce from './utils/debouncer.js';
 
-const DEFAULT_DELAY = 0;
-const DEFAULT_EVENT_NAME = '$veeValidate';
+const DEFAULT_EVENT_NAME = 'veeValidate';
 
 export default (options) => ({
     onInput() {
@@ -35,7 +34,7 @@ export default (options) => ({
         const handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
         this.handles = this.el.type === 'file' ? 'change' : 'input';
 
-        const delay = this.el.dataset.delay || (options && options.delay) || DEFAULT_DELAY;
+        const delay = this.el.dataset.delay || options.delay;
         this.handler = delay ? debounce(handler.bind(this), delay) : handler.bind(this);
         this.el.addEventListener(this.handles, this.handler);
 

@@ -133,6 +133,16 @@ test('it can add a custom validator with localized messages', t => {
     t.is(validator.errorBag.first('anotherField'), 'Some Arabic Text');
 });
 
+test('it can set the default locale for newly created validators', t => {
+    Validator.updateDictionary({ ar: { alpha: () => 'البتاعة لازم يكون حروف بس' } });
+    Validator.setDefaultLocale('ar');
+    const loc = new Validator({ name: 'alpha' });
+    t.false(loc.validate('name', '1234'));
+    t.is(loc.locale, 'ar');
+    t.is(loc.getErrors().first('name'), 'البتاعة لازم يكون حروف بس');
+    Validator.setDefaultLocale(); // resets to english.
+    Validator.updateDictionary({ ar: { alpha: '' } }); // reset the dictionary for other tests.
+});
 
 test('it throws an exception when extending with an invalid validator', t => {
     // Static Extend.
@@ -156,33 +166,33 @@ test('it throws an exception when extending with an invalid validator', t => {
 
 
 test('it defaults to english messages if no current locale counterpart is found', t => {
-    const arabicValidator = new Validator({ first_name: 'alpha' });
-    arabicValidator.setLocale('ar');
-    arabicValidator.attach('first_name', 'alpha');
-    arabicValidator.validate('first_name', '0123');
+    const loc = new Validator({ first_name: 'alpha' });
+    loc.setLocale('ar');
+    loc.attach('first_name', 'alpha');
+    loc.validate('first_name', '0123');
     t.is(
-        arabicValidator.errorBag.first('first_name'),
-        'The first_name may only contain alphabetic characters and spaces.'
+        loc.errorBag.first('first_name'),
+        'The first_name may only contain alphabetic characters.'
     );
 });
 
 test('it can overwrite messages and add translated messages', t => {
-    const arabicValidator = new Validator({ first_name: 'alpha' });
+    const loc = new Validator({ first_name: 'alpha' });
     Validator.updateDictionary({
         ar: { alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.` },
         en: { alpha: (field) => `${field} is alphabetic.` }
     });
-    arabicValidator.attach('first_name', 'alpha');
-    arabicValidator.validate('first_name', '0123');
-    t.is(arabicValidator.errorBag.first('first_name'), 'first_name is alphabetic.');
-    arabicValidator.setLocale('ar');
-    arabicValidator.validate('first_name', '0123');
-    t.is(arabicValidator.errorBag.first('first_name'), 'first_name يجب ان يحتوي على حروف فقط.');
-    arabicValidator.updateDictionary({
+    loc.attach('first_name', 'alpha');
+    loc.validate('first_name', '0123');
+    t.is(loc.errorBag.first('first_name'), 'first_name is alphabetic.');
+    loc.setLocale('ar');
+    loc.validate('first_name', '0123');
+    t.is(loc.errorBag.first('first_name'), 'first_name يجب ان يحتوي على حروف فقط.');
+    loc.updateDictionary({
         ar: { alpha: () => 'My name is jeff' }
     });
-    arabicValidator.validate('first_name', '0123');
-    t.is(arabicValidator.errorBag.first('first_name'), 'My name is jeff');
+    loc.validate('first_name', '0123');
+    t.is(loc.errorBag.first('first_name'), 'My name is jeff');
 });
 
 test('test merging line 30', t => {

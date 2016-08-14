@@ -7,7 +7,25 @@ import ErrorBag from './errorBag';
 /**
  * Installs the plugin.
  */
-const install = (Vue, options) => {
+const install = (Vue, { locale, delay, errorBagName, messages } = {
+    locale: 'en',
+    delay: 0,
+    errorBagName: 'errors',
+    messages: null
+}) => {
+    if (messages) {
+        Validator.updateDictionary(messages);
+    }
+
+    Validator.setDefaultLocale(locale);
+
+    const options = {
+        locale,
+        delay,
+        messages,
+        errorBagName
+    };
+
     Object.defineProperties(Vue.prototype, {
         $validator: {
             get() {
