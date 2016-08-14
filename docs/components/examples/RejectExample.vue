@@ -15,23 +15,28 @@
         </form>
 
         <div slot="code-html">
-            &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;
-                &lt;legend&gt;File Upload&lt;/legend&gt;
-                &lt;div class=&quot;pure-u-1&quot;&gt;
-                    &lt;label :class=&quot;{'error': errors.has('image') }&quot; for=&quot;image&quot;&gt;Unrejected Image&lt;/label&gt;
-                    &lt;input v-validate data-rules=&quot;mimes:image/*&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('image') }&quot; name=&quot;image&quot; type=&quot;file&quot;&gt;
-                    &lt;span class=&quot;error&quot; v-show=&quot;errors.has('image')&quot;&gt;{{ errors.first('image') }}&lt;/span&gt;
-                &lt;/div&gt;
-                &lt;div class=&quot;pure-u-1&quot;&gt;
-                    &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Image&lt;/label&gt;
-                    &lt;input  v-validate.reject data-rules=&quot;mimes:image/*&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; type=&quot;file&quot;&gt;
-                    &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ errors.first('file') }}&lt;/span&gt;
-                &lt;/div&gt;
-            &lt;/form&gt;
+            &lt;div id=&quot;app&quot;&gt;
+                &lt;form class=&quot;pure-form pure-form-stacked&quot;&gt;
+                    &lt;legend&gt;File Upload&lt;/legend&gt;
+                    &lt;div class=&quot;pure-u-1&quot;&gt;
+                        &lt;label :class=&quot;{'error': errors.has('image') }&quot; for=&quot;image&quot;&gt;Unrejected Image&lt;/label&gt;
+                        &lt;input v-validate data-rules=&quot;mimes:image/*&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('image') }&quot; name=&quot;image&quot; type=&quot;file&quot;&gt;
+                        &lt;span class=&quot;error&quot; v-show=&quot;errors.has('image')&quot;&gt;{{ errors.first('image') }}&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;pure-u-1&quot;&gt;
+                        &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Image&lt;/label&gt;
+                        &lt;input  v-validate.reject data-rules=&quot;mimes:image/*&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; type=&quot;file&quot;&gt;
+                        &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ errors.first('file') }}&lt;/span&gt;
+                    &lt;/div&gt;
+                &lt;/form&gt;
+            &lt;/div&gt;
         </div>
 
 
         <div slot="code-js">
+            import Vue from 'vue';
+            import VeeValidate from 'vee-validate';
+
             Vue.use(VeeValidate);
 
             new Vue({
