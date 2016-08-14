@@ -748,12 +748,12 @@ var DEFAULT_EVENT_NAME = '$veeValidate';
 
 /* harmony default export */ exports["a"] = function (options) {
     return {
-        params: ['rules', 'delay', 'reject', 'initial', 'as'],
+        params: ['rules', 'delay', 'as'],
         onInput: function onInput() {
             this.vm.$validator.validate(this.fieldName, this.el.value);
         },
         onFileInput: function onFileInput() {
-            if (!this.vm.$validator.validate(this.fieldName, this.el.files) && this.params.reject) {
+            if (!this.vm.$validator.validate(this.fieldName, this.el.files) && this.modifiers.reject) {
                 this.el.value = '';
             }
         },
@@ -792,8 +792,8 @@ var DEFAULT_EVENT_NAME = '$veeValidate';
                 return;
             }
 
-            if (this.params.initial) {
-                this.params.initial = false;
+            if (this.modifiers.initial) {
+                this.modifiers.initial = false;
 
                 return;
             }
@@ -1433,7 +1433,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 "use strict";
 /* istanbul ignore next */
 /* harmony default export */ exports["a"] = function (message) {
-    if (!window.console) {
+    if (!console) {
         return;
     }
 

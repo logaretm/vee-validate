@@ -4,13 +4,13 @@ const DEFAULT_DELAY = 0;
 const DEFAULT_EVENT_NAME = '$veeValidate';
 
 export default (options) => ({
-    params: ['rules', 'delay', 'reject', 'initial', 'as'],
+    params: ['rules', 'delay', 'as'],
     onInput() {
         this.vm.$validator.validate(this.fieldName, this.el.value);
     },
     onFileInput() {
         if (! this.vm.$validator.validate(this.fieldName, this.el.files)
-        && this.params.reject) {
+        && this.modifiers.reject) {
             this.el.value = '';
         }
     },
@@ -47,8 +47,8 @@ export default (options) => ({
             return;
         }
 
-        if (this.params.initial) {
-            this.params.initial = false;
+        if (this.modifiers.initial) {
+            this.modifiers.initial = false;
 
             return;
         }

@@ -65,5 +65,5 @@ export default {
         });
         this.$validator.setLocale('ar');
     }
-};
+}
 </script>

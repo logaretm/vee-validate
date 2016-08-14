@@ -1,14 +1,4 @@
-<!--
-    Shows Delay Configurations.
--->
 <template>
-    <p>
-        After validating a file, you may want to rejct the uploaded file if it fails the validation, this can be done by passing
-        the <code class="inline">reject</code> attribute to the input fields.
-        <div class="note">
-            <b>Note: </b> This attribute is only relevant on file inputs, adding it to other input types will not have an effect.
-        </div>
-    </p>
     <code-example>
         <form slot="example" class="pure-form pure-form-stacked">
             <legend>File Upload</legend>
@@ -19,7 +9,7 @@
             </div>
             <div class="pure-u-1">
                 <label :class="{'error': errors.has('file') }" for="file">Rejected Image</label>
-                <input  v-validate rules="mimes:image/*" reject :class="{'pure-input-1': true, 'has-error': errors.has('file') }" name="file" type="file">
+                <input v-validate.reject rules="mimes:image/*" :class="{'pure-input-1': true, 'has-error': errors.has('file') }" name="file" type="file">
                 <span class="error" v-show="errors.has('file')">{{ errors.first('file') }}</span>
             </div>
         </form>
@@ -34,7 +24,7 @@
                 &lt;/div&gt;
                 &lt;div class=&quot;pure-u-1&quot;&gt;
                     &lt;label :class=&quot;{'error': errors.has('file') }&quot; for=&quot;file&quot;&gt;Rejected Image&lt;/label&gt;
-                    &lt;input  v-validate rules=&quot;mimes:image/*&quot; reject :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; type=&quot;file&quot;&gt;
+                    &lt;input  v-validate.reject rules=&quot;mimes:image/*&quot; :class=&quot;{'pure-input-1': true, 'has-error': errors.has('file') }&quot; name=&quot;file&quot; type=&quot;file&quot;&gt;
                     &lt;span class=&quot;error&quot; v-show=&quot;errors.has('file')&quot;&gt;{{ errors.first('file') }}&lt;/span&gt;
                 &lt;/div&gt;
             &lt;/form&gt;

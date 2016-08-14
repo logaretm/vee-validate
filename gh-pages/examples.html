@@ -14,6 +14,13 @@
                 <h2 id="debounce-example" class="content-subhead"><a href="#debounce-example">Delayed Validation (Debounced)</a></h2>
                 <delay-example></delay-example>
                 <h2 id="reject-example" class="content-subhead"><a href="#reject-example">Reject Invalid Files</a></h2>
+                <p>
+                    After validating a file, you may want to reject the uploaded file if it fails the validation, this can be done by adding
+                    the <code class="inline">reject</code> modifier to directive. so you would use it like this: <code class="inline">v-validate.reject</code>.
+                    <div class="note">
+                        <b>Note: </b> The <code>reject</code> modifier is only relevant on file inputs, adding it to other input types will not have an effect.
+                    </div>
+                </p>
                 <reject-example></reject-example>
                 <h2 id="validate-data-example" class="content-subhead"><a href="#validate-data-example">Validate $data</a></h2>
                 <p>
@@ -33,13 +40,13 @@
                  <data-example></data-example>
                  <p>
                     <div class="note">
-                        <b>Note:</b> Notice that the <code>email</code> field was immediatly validated when you open the page, you may not want this behavior, use the <code>initial</code> attribute to tell the validator to ignore the first evaluation.
-                        like the <code>name</code> field that didn't display any errors when you opened this page.
-                        This attribute is only relevant when validating using expressions, it has no effect otherwise.
+                        <b>Note:</b> Notice that the <code>email</code> field was immediatly validated when you open the page, you may not want this behavior, use the <code>initial</code> modifier to tell the validator to ignore the first evaluation like this: <code>v-validate.initial</code>.
+                        <br>For example the name field above didn't display any errors when you opened this page.
+                        This attribute is only relevant when validating using binding expressions, it has no effect otherwise.
                     </div>
                     <br>
                     <div class="note">
-                        <b>Note:</b> When you provide the expression to the directive, <code>delay</code> and <code>reject</code> attributes won't have an effect anymore. so you might want to handle debouncing the inputs yourself.
+                        <b>Note:</b> When you provide a binding expression to the directive, <code>delay</code> attribute and <code>reject</code> modifier won't have an effect anymore. so you might want to handle debouncing the inputs yourself.
                     </div>
                  </p>
                  <h2 id="validate-form" class="content-subhead"><a href="#validate-form">Validate Form Before Submit</a></h2>
