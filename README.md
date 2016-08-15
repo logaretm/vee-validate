@@ -16,7 +16,7 @@ This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.
 npm install vee-validate --save
 ```
 
-or if you are using Vue 2.0:
+or if you are using **Vue 2.0**:
 ```
 npm install vee-validate@next --save
 ```
