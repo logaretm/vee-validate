@@ -31,6 +31,11 @@ export default (options) => ({
         if (binding.expression) {
             attachValidatorEvent(el, binding, { context });
 
+            // if its bound, validate it. (since update doesn't trigger after bind).
+            if (! binding.modifiers.initial) {
+                context.$validator.validate(binding.expression, binding.value);
+            }
+
             return;
         }
 
@@ -42,21 +47,9 @@ export default (options) => ({
         el.addEventListener(el.type === 'file' ? 'change' : 'input', handler);
 
         attachValidatorEvent(el, binding, { context });
-
-        // if its bound, validate it (ensures consistant behavior with v1.x and inital modifier).
-        if (binding.expression) {
-            context.$validator.validate(binding.expression, binding.value);
-        }
     },
     update(el, { expression, value, modifiers, oldValue }, { context }) {
         if (! expression || value === oldValue) {
-            return;
-        }
-
-        if (modifiers.initial && ! el.dataset.initial) {
-            // eslint-disable-next-line
-            el.dataset.initial = 'updated';
-
             return;
         }
 

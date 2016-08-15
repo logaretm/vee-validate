@@ -815,6 +815,11 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
             if (binding.expression) {
                 attachValidatorEvent(el, binding, { context: context });
 
+                // if its bound, validate it. (since update doesn't trigger after bind).
+                if (!binding.modifiers.initial) {
+                    context.$validator.validate(binding.expression, binding.value);
+                }
+
                 return;
             }
 
@@ -825,11 +830,6 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
             el.addEventListener(el.type === 'file' ? 'change' : 'input', handler);
 
             attachValidatorEvent(el, binding, { context: context });
-
-            // if its bound, validate it (ensures consistant behavior with v1.x and inital modifier).
-            if (binding.expression) {
-                context.$validator.validate(binding.expression, binding.value);
-            }
         },
         update: function update(el, _ref8, _ref9) {
             var expression = _ref8.expression;
@@ -839,13 +839,6 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
             var context = _ref9.context;
 
             if (!expression || value === oldValue) {
-                return;
-            }
-
-            if (modifiers.initial && !el.dataset.initial) {
-                // eslint-disable-next-line
-                el.dataset.initial = 'updated';
-
                 return;
             }
 
