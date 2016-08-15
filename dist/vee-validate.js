@@ -768,73 +768,83 @@ var Validator = function () {
 
 var DEFAULT_EVENT_NAME = 'veeValidate';
 
-var onInput = function onInput(el, binding, _ref) {
-    var context = _ref.context;
+var onInput = function onInput(el, _ref, _ref2) {
+    var expression = _ref.expression;
+    var context = _ref2.context;
     return function () {
-        context.$validator.validate(name, el.value);
+        context.$validator.validate(expression || el.name, el.value);
     };
 };
 
-var onFileInput = function onFileInput(el, _ref2, _ref3) {
-    var modifiers = _ref2.modifiers;
-    var context = _ref3.context;
+var onFileInput = function onFileInput(el, _ref3, _ref4) {
+    var modifiers = _ref3.modifiers;
+    var expression = _ref3.expression;
+    var context = _ref4.context;
     return function () {
-        if (!context.$validator.validate(name, el.files) && modifiers.reject) {
+        if (!context.$validator.validate(expression || el.name, el.files) && modifiers.reject) {
             // eslint-disable-next-line
             el.value = '';
         }
     };
 };
 
-var attachValidatorEvent = function attachValidatorEvent(el, binding, vnode) {
+var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
+    var expression = _ref5.expression;
+    var value = _ref5.value;
+    var context = _ref6.context;
+
     var callback = void 0;
-    if (binding.expression) {
-        callback = onInput(el, binding, vnode);
+    if (expression) {
+        callback = onInput(el, { expression: expression }, { context: context });
     } else {
         callback = function callback() {
-            return vnode.context.$validator.validate(name, binding.value);
+            return context.$validator.validate(expression || el.name, value);
         };
     }
 
-    vnode.context.$on(DEFAULT_EVENT_NAME, callback);
+    context.$on(DEFAULT_EVENT_NAME, callback);
 };
 
 /* harmony default export */ exports["a"] = function (options) {
     return {
-        bind: function bind(el, _ref4, vnode) {
-            var expression = _ref4.expression;
-            var modifiers = _ref4.modifiers;
+        bind: function bind(el, binding, _ref7) {
+            var context = _ref7.context;
 
-            var name = expression || el.name;
-            vnode.context.$validator.attach(name, el.dataset.rules, el.dataset.as);
+            context.$validator.attach(binding.expression || el.name, el.dataset.rules, el.dataset.as);
 
-            if (expression) {
-                attachValidatorEvent(el, { expression: expression }, vnode);
+            if (binding.expression) {
+                attachValidatorEvent(el, binding, { context: context });
 
                 return;
             }
 
-            var handler = el.type === 'file' ? onFileInput(el, { modifiers: modifiers }, vnode) : onInput(el, {}, vnode);
+            var handler = el.type === 'file' ? onFileInput(el, binding, { context: context }) : onInput(el, {}, { context: context });
 
             var delay = el.dataset.delay || options.delay;
             handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler, delay) : handler;
             el.addEventListener(el.type === 'file' ? 'change' : 'input', handler);
 
-            attachValidatorEvent(el, { expression: expression }, vnode);
-        },
-        update: function update(el, _ref5, _ref6) {
-            var expression = _ref5.expression;
-            var value = _ref5.value;
-            var modifiers = _ref5.modifiers;
-            var context = _ref6.context;
+            attachValidatorEvent(el, binding, { context: context });
 
-            if (!expression) {
+            // if its bound, validate it (ensures consistant behavior with v1.x and inital modifier).
+            if (binding.expression) {
+                context.$validator.validate(binding.expression, binding.value);
+            }
+        },
+        update: function update(el, _ref8, _ref9) {
+            var expression = _ref8.expression;
+            var value = _ref8.value;
+            var modifiers = _ref8.modifiers;
+            var oldValue = _ref8.oldValue;
+            var context = _ref9.context;
+
+            if (!expression || value === oldValue) {
                 return;
             }
 
-            if (modifiers.initial) {
+            if (modifiers.initial && !el.dataset.initial) {
                 // eslint-disable-next-line
-                modifiers.initial = false;
+                el.dataset.initial = 'updated';
 
                 return;
             }
