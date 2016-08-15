@@ -1,5 +1,6 @@
 # Vee-Validate
 [![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg?token=XFzlvHKFP5)](https://codecov.io/gh/logaretm/vee-validate)
+[![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=master)](https://travis-ci.org/logaretm/vee-validate)
 
 vee-validate is a lightweight plugin for [VueJS](https://vuejs.org/) that allows you to validate input fields, and display errors.
 
@@ -14,6 +15,13 @@ This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.
 ```
 npm install vee-validate --save
 ```
+
+or if you are using Vue 2.0:
+```
+npm install vee-validate@next --save
+```
+
+**Note:** The latest version of this plugin on npm will be pointing to the latest version that supports Vue 1.x until Vue 2.0 is released which is pretty soon.
 
 ### Getting Started
 
@@ -49,6 +57,6 @@ Of course there is more to it than that, refer to the documentation for more det
 
 ### Documentation
 
-Read the [documentation and demos](https://logaretm.github.io/vee-validate/).
+Read the [documentation and examples](https://logaretm.github.io/vee-validate/).
 
 ### license MIT
