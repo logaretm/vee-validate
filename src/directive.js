@@ -27,7 +27,7 @@ const attachValidatorEvent = (el, binding, vnode) => {
 export default (options) => ({
     bind(el, { expression, modifiers }, vnode) {
         const name = expression || el.name;
-        this.vm.$validator.attach(name, el.dataset.rules, el.dataset.as);
+        vnode.context.$validator.attach(name, el.dataset.rules, el.dataset.as);
 
         if (expression) {
             attachValidatorEvent(el, { expression }, vnode);
@@ -40,9 +40,9 @@ export default (options) => ({
 
         const delay = el.dataset.delay || options.delay;
         handler = delay ? debounce(handler, delay) : handler;
-        this.el.addEventListener(el.type === 'file' ? 'change' : 'input', handler);
+        el.addEventListener(el.type === 'file' ? 'change' : 'input', handler);
 
-        this.attachValidatorEvent();
+        attachValidatorEvent(el, { expression }, vnode);
     },
     update(el, { expression, value, modifiers }, { context }) {
         if (! expression) {
