@@ -811,14 +811,11 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
             var context = _ref7.context;
 
             context.$validator.attach(binding.expression || el.name, el.dataset.rules, el.dataset.as);
+            attachValidatorEvent(el, binding, { context: context });
 
-            if (binding.expression) {
-                attachValidatorEvent(el, binding, { context: context });
-
+            if (binding.expression && !binding.modifiers.initial) {
                 // if its bound, validate it. (since update doesn't trigger after bind).
-                if (!binding.modifiers.initial) {
-                    context.$validator.validate(binding.expression, binding.value);
-                }
+                context.$validator.validate(binding.expression, binding.value);
 
                 return;
             }
@@ -828,8 +825,6 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
             var delay = el.dataset.delay || options.delay;
             handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler, delay) : handler;
             el.addEventListener(el.type === 'file' ? 'change' : 'input', handler);
-
-            attachValidatorEvent(el, binding, { context: context });
         },
         update: function update(el, _ref8, _ref9) {
             var expression = _ref8.expression;

@@ -27,26 +27,21 @@ const attachValidatorEvent = (el, { expression, value }, { context }) => {
 export default (options) => ({
     bind(el, binding, { context }) {
         context.$validator.attach(binding.expression || el.name, el.dataset.rules, el.dataset.as);
+        attachValidatorEvent(el, binding, { context });
 
-        if (binding.expression) {
-            attachValidatorEvent(el, binding, { context });
-
+        if (binding.expression && ! binding.modifiers.initial) {
             // if its bound, validate it. (since update doesn't trigger after bind).
-            if (! binding.modifiers.initial) {
-                context.$validator.validate(binding.expression, binding.value);
-            }
+            context.$validator.validate(binding.expression, binding.value);
 
             return;
         }
 
         let handler = el.type === 'file' ? onFileInput(el, binding, { context }) :
-         onInput(el, {}, { context });
+        onInput(el, {}, { context });
 
         const delay = el.dataset.delay || options.delay;
         handler = delay ? debounce(handler, delay) : handler;
         el.addEventListener(el.type === 'file' ? 'change' : 'input', handler);
-
-        attachValidatorEvent(el, binding, { context });
     },
     update(el, { expression, value, modifiers, oldValue }, { context }) {
         if (! expression || value === oldValue) {
