@@ -768,66 +768,78 @@ var Validator = function () {
 
 var DEFAULT_EVENT_NAME = 'veeValidate';
 
+var onInput = function onInput(el, binding, _ref) {
+    var context = _ref.context;
+    return function () {
+        context.$validator.validate(name, el.value);
+    };
+};
+
+var onFileInput = function onFileInput(el, _ref2, _ref3) {
+    var modifiers = _ref2.modifiers;
+    var context = _ref3.context;
+    return function () {
+        if (!context.$validator.validate(name, el.files) && modifiers.reject) {
+            // eslint-disable-next-line
+            el.value = '';
+        }
+    };
+};
+
+var attachValidatorEvent = function attachValidatorEvent(el, binding, vnode) {
+    var callback = void 0;
+    if (binding.expression) {
+        callback = onInput(el, binding, vnode);
+    } else {
+        callback = function callback() {
+            return vnode.context.$validator.validate(name, binding.value);
+        };
+    }
+
+    vnode.context.$on(DEFAULT_EVENT_NAME, callback);
+};
+
 /* harmony default export */ exports["a"] = function (options) {
     return {
-        onInput: function onInput() {
-            this.vm.$validator.validate(this.fieldName, this.el.value);
-        },
-        onFileInput: function onFileInput() {
-            if (!this.vm.$validator.validate(this.fieldName, this.el.files) && this.modifiers.reject) {
-                this.el.value = '';
-            }
-        },
-        attachValidatorEvent: function attachValidatorEvent() {
-            var _this = this;
+        bind: function bind(el, _ref4, vnode) {
+            var expression = _ref4.expression;
+            var modifiers = _ref4.modifiers;
 
-            this.validateCallback = this.expression ? function () {
-                _this.vm.$validator.validate(_this.fieldName, _this.value);
-            } : function () {
-                _this.handler();
-            };
+            var name = expression || el.name;
+            vnode.context.$validator.attach(name, el.dataset.rules, el.dataset.as);
 
-            this.vm.$on(DEFAULT_EVENT_NAME, this.validateCallback);
-        },
-        bind: function bind() {
-            this.fieldName = this.expression || this.el.name;
-            this.vm.$validator.attach(this.fieldName, this.el.dataset.rules, this.el.dataset.as);
-
-            if (this.expression) {
-                this.attachValidatorEvent();
+            if (expression) {
+                attachValidatorEvent(el, { expression: expression }, vnode);
 
                 return;
             }
 
-            var handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
-            this.handles = this.el.type === 'file' ? 'change' : 'input';
+            var handler = el.type === 'file' ? onFileInput(el, { modifiers: modifiers }, vnode) : onInput(el, {}, vnode);
 
-            var delay = this.el.dataset.delay || options.delay;
-            this.handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler.bind(this), delay) : handler.bind(this);
-            this.el.addEventListener(this.handles, this.handler);
+            var delay = el.dataset.delay || options.delay;
+            handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler, delay) : handler;
+            el.addEventListener(el.type === 'file' ? 'change' : 'input', handler);
 
-            this.attachValidatorEvent();
+            attachValidatorEvent(el, { expression: expression }, vnode);
         },
-        update: function update(value) {
-            if (!this.expression) {
+        update: function update(el, _ref5, _ref6) {
+            var expression = _ref5.expression;
+            var value = _ref5.value;
+            var modifiers = _ref5.modifiers;
+            var context = _ref6.context;
+
+            if (!expression) {
                 return;
             }
 
-            if (this.modifiers.initial) {
-                this.modifiers.initial = false;
+            if (modifiers.initial) {
+                // eslint-disable-next-line
+                modifiers.initial = false;
 
                 return;
             }
 
-            this.vm.$validator.validate(this.fieldName, value);
-        },
-        unbind: function unbind() {
-            if (this.handler) {
-                this.el.removeEventListener(this.handles, this.handler);
-            }
-
-            this.vm.$validator.detach(this.fieldName);
-            this.vm.$off(DEFAULT_EVENT_NAME, this.validateCallback);
+            context.$validator.validate(expression || el.name, value);
         }
     };
 };
