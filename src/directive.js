@@ -1,5 +1,7 @@
 import debounce from './utils/debouncer.js';
 
+const callbackMaps = [];
+
 const DEFAULT_EVENT_NAME = 'veeValidate';
 
 const onInput = (el, { expression }, { context }) => () => {
@@ -21,6 +23,7 @@ const attachValidatorEvent = (el, { expression, value }, { context }) => {
         callback = () => context.$validator.validate(expression || el.name, value);
     }
 
+    callbackMaps.push({ vm: context, event: 'validatorEvent', callback, el });
     context.$on(DEFAULT_EVENT_NAME, callback);
 };
 
@@ -41,7 +44,9 @@ export default (options) => ({
 
         const delay = el.dataset.delay || options.delay;
         handler = delay ? debounce(handler, delay) : handler;
-        el.addEventListener(el.type === 'file' ? 'change' : 'input', handler);
+        const event = el.type === 'file' ? 'change' : 'input';
+        el.addEventListener(event, handler);
+        callbackMaps.push({ vm: context, event, callback: handler, el });
     },
     update(el, { expression, value, modifiers, oldValue }, { context }) {
         if (! expression || value === oldValue) {
@@ -49,5 +54,16 @@ export default (options) => ({
         }
 
         context.$validator.validate(expression || el.name, value);
+    },
+    unbind(el, binding, { context }) {
+        const handlers = callbackMaps.filter(h => h.vm === context && h.el === el);
+        context.$off(
+            DEFAULT_EVENT_NAME,
+            handlers.filter(({ event }) => event === 'validatorEvent')[0]
+        );
+
+        handlers.filter(({ event }) => event !== 'validatorEvent').forEach(h => {
+            el.removeEventListener(h.event, h.callback);
+        });
     }
 });
