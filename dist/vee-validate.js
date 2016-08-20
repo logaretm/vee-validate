@@ -928,7 +928,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return "The " + field + " may contain alpha-numeric characters as well as dashes and underscores.";
     },
     alpha_num: function alpha_num(field) {
-        return "The " + field + " may only contain alpha-numeric characters and.";
+        return "The " + field + " may only contain alpha-numeric characters.";
     },
     alpha: function alpha(field) {
         return "The " + field + " may only contain alphabetic characters.";
