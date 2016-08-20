@@ -114,10 +114,9 @@
                         </div>
                         <div>
                             <form class="pure-form pure-form-stacked">
-                                <input name="pw_confirm" data-as="confirmation" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password">
-                                <span class="error" v-show="errors.has('confirm_field')">{{ errors.first('confirm_field') }}</span>
-
                                 <input v-validate data-rules="confirmed:pw_confirm" name="confirm_field" data-as="password" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password">
+                                <span class="error" v-show="errors.has('confirm_field')">{{ errors.first('confirm_field') }}</span>
+                                <input name="pw_confirm" data-as="confirmation" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password">
                             </form>
                         </div>
                     </div>
