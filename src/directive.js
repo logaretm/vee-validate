@@ -47,6 +47,19 @@ export default (options) => ({
         const event = el.type === 'file' ? 'change' : 'input';
         el.addEventListener(event, handler);
         callbackMaps.push({ vm: context, event, callback: handler, el });
+
+        // confirmed requires another listener on the target field.
+        // TODO: Clean this up.
+        if (el.dataset.rules && ~el.dataset.rules.indexOf('confirmed')) {
+            const fieldName = el.dataset.rules.split('|')
+            .filter(r => !! ~r.indexOf('confirmed'))[0]
+            .split(':')[1];
+
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelector(`input[name='${fieldName}']`)
+                        .addEventListener('input', handler);
+            });
+        }
     },
     update(el, { expression, value, modifiers, oldValue }, { context }) {
         if (! expression || value === oldValue) {

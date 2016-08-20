@@ -830,6 +830,20 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
             var event = el.type === 'file' ? 'change' : 'input';
             el.addEventListener(event, handler);
             callbackMaps.push({ vm: context, event: event, callback: handler, el: el });
+
+            // confirmed requires another listener on the target field.
+            // TODO: Clean this up.
+            if (el.dataset.rules && ~el.dataset.rules.indexOf('confirmed')) {
+                (function () {
+                    var fieldName = el.dataset.rules.split('|').filter(function (r) {
+                        return !!~r.indexOf('confirmed');
+                    })[0].split(':')[1];
+
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', handler);
+                    });
+                })();
+            }
         },
         update: function update(el, _ref8, _ref9) {
             var expression = _ref8.expression;
