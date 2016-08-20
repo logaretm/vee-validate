@@ -898,6 +898,8 @@
                         this.vm.$on(DEFAULT_EVENT_NAME, this.validateCallback);
                     },
                     bind: function bind() {
+                        var _this2 = this;
+
                         this.fieldName = this.expression || this.el.name;
                         this.vm.$validator.attach(this.fieldName, this.el.dataset.rules, this.el.dataset.as);
 
@@ -915,6 +917,17 @@
                         this.el.addEventListener(this.handles, this.handler);
 
                         this.attachValidatorEvent();
+                        if (this.el.dataset.rules && ~this.el.dataset.rules.indexOf('confirmed')) {
+                            (function () {
+                                var fieldName = _this2.el.dataset.rules.split('|').filter(function (r) {
+                                    return !!~r.indexOf('confirmed');
+                                })[0].split(':')[1];
+
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', _this2.handler);
+                                });
+                            })();
+                        }
                     },
                     update: function update(value) {
                         if (!this.expression) {
@@ -1049,7 +1062,7 @@
                     return "The " + field + " may contain alpha-numeric characters as well as dashes and underscores.";
                 },
                 alpha_num: function alpha_num(field) {
-                    return "The " + field + " may only contain alpha-numeric characters and.";
+                    return "The " + field + " may only contain alpha-numeric characters.";
                 },
                 alpha: function alpha(field) {
                     return "The " + field + " may only contain alphabetic characters.";

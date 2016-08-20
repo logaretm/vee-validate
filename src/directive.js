@@ -39,6 +39,16 @@ export default (options) => ({
         this.el.addEventListener(this.handles, this.handler);
 
         this.attachValidatorEvent();
+        if (this.el.dataset.rules && ~this.el.dataset.rules.indexOf('confirmed')) {
+            const fieldName = this.el.dataset.rules.split('|')
+            .filter(r => !! ~r.indexOf('confirmed'))[0]
+            .split(':')[1];
+
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelector(`input[name='${fieldName}']`)
+                        .addEventListener('input', this.handler);
+            });
+        }
     },
     update(value) {
         if (! this.expression) {
