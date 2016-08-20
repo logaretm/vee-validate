@@ -51,17 +51,35 @@
                         <div class="description">
                             The field under validation may only contain alphabetic characters.
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="alpha" name="alpha_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_field') }" type="text">
+                                <span class="error" v-show="errors.has('alpha_field')">{{ errors.first('alpha_field') }}</span>
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-alpha_dash">
                         <b class="important">alpha_dash</b>
                         <div class="description">
                             The field under validation may contain alphabetic characters, numbers, dashes or underscores.
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="alpha_dash" name="alpha_dash_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_dash_field') }" type="text">
+                                <span class="error" v-show="errors.has('alpha_dash_field')">{{ errors.first('alpha_dash_field') }}</span>
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-alpha_num">
                         <b class="important">alpha_num</b>
                         <div class="description">
                             The field under validation may contain alphabetic characters or numbers.
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="alpha_num" name="alpha_num_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_num_field') }" type="text">
+                                <span class="error" v-show="errors.has('alpha_num_field')">{{ errors.first('alpha_num_field') }}</span>
+                            </form>
                         </div>
                     </div>
                     <div class="rule" id="rule-between">
@@ -76,6 +94,12 @@
                                 <li><code class="inline">max:</code> The maximum value.</li>
                             </ul>
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="between:1,11" name="between_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('between_field') }" type="text">
+                                <span class="error" v-show="errors.has('between_field')">{{ errors.first('between_field') }}</span>
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-confirmed">
                         <b class="important">confirmed:{target}</b>
@@ -88,6 +112,14 @@
                                 <li><code class="inline">target:</code> The name of the confirmation field.</li>
                             </ul>
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input name="pw_confirm" data-as="confirmation" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password">
+                                <span class="error" v-show="errors.has('confirm_field')">{{ errors.first('confirm_field') }}</span>
+
+                                <input v-validate data-rules="confirmed:pw_confirm" name="confirm_field" data-as="password" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password">
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-digits">
                         <b class="important">digits:{length}</b>
@@ -99,6 +131,12 @@
                             <ul>
                                 <li><code class="inline">length:</code> The number of digits.</li>
                             </ul>
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="digits:3" name="digits_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('digits_field') }" type="text">
+                                <span class="error" v-show="errors.has('digits_field')">{{ errors.first('digits_field') }}</span>
+                            </form>
                         </div>
                     </div>
                     <div class="rule" id="rule-dimensions">
@@ -113,11 +151,23 @@
                                 <li><code class="inline">height:</code> The height of the image.</li>
                             </ul>
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="dimensions:30,30" name="dimensions_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('dimensions_field') }" type="file">
+                                <span class="error" v-show="errors.has('dimensions_field')">{{ errors.first('dimensions_field') }}</span>
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-email">
                         <b class="important">email</b>
                         <div class="description">
                             The field under validation must be a valid email.
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="email" name="email_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('email_field') }" type="text">
+                                <span class="error" v-show="errors.has('email_field')">{{ errors.first('email_field') }}</span>
+                            </form>
                         </div>
                     </div>
                     <div class="rule" id="rule-ext">
@@ -128,11 +178,23 @@
                         <div class="args">
                             <code class="inline">args:</code> Comma separated list of extensions. ex: <code class="inline">ext:jpg,png,bmp,svg</code>.
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="ext:jpeg,jpg" name="ext_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('ext_field') }" type="file">
+                                <span class="error" v-show="errors.has('ext_field')">{{ errors.first('ext_field') }}</span>
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-image">
                         <b class="important">image</b>
                         <div class="description">
                             The file added the field under validation must have an image mime type (image/*).
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="image" name="image_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('image_field') }" type="file">
+                                <span class="error" v-show="errors.has('image_field')">{{ errors.first('image_field') }}</span>
+                            </form>
                         </div>
                     </div>
                     <div class="rule" id="rule-in">
@@ -143,11 +205,23 @@
                         <div class="args">
                             <code class="inline">args:</code> Comma separated list of values. ex <code class="inline">in:1,2,3,4</code>
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="in:mystic,valor" name="in_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('in_field') }" type="text" placeholder="Your Pokemon Go Team">
+                                <span class="error" v-show="errors.has('in_field')">{{ errors.first('in_field') }}</span>
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-ip">
                         <b class="important">ip</b>
                         <div class="description">
                             The field under validation must have a string that is a valid ipv4 value.
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="ip" name="ip_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('ip_field') }" type="text" placeholder="Ipv4">
+                                <span class="error" v-show="errors.has('ip_field')">{{ errors.first('ip_field') }}</span>
+                            </form>
                         </div>
                     </div>
                     <div class="rule" id="rule-max">
@@ -161,6 +235,12 @@
                                 <li><code class="inline">length:</code> A numeric value representing the maximum number of characters.</li>
                             </ul>
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="max:11" name="max_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('max_field') }" type="text" placeholder="Max Value: 11">
+                                <span class="error" v-show="errors.has('max_field')">{{ errors.first('max_field') }}</span>
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-mimes">
                         <b class="important">mimes:[list]</b>
@@ -169,6 +249,12 @@
                         </div>
                         <div class="args">
                             <code class="inline">args:</code> List of comma separated mime types. <code class="inline">mimes:image/jpeg|image/png</code>
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="mimes:image/*" name="mimes_field" data-as="image" :class="{'pure-input-1': true, 'has-error': errors.has('mimes_field') }" type="file">
+                                <span class="error" v-show="errors.has('mimes_field')">{{ errors.first('mimes_field') }}</span>
+                            </form>
                         </div>
                         <div class="note">
                             <b>Note:</b> You can use '*' to specify a wild card, something like <code>mimes:image/*</code> will accept all image types.
@@ -185,6 +271,12 @@
                                 <li><code class="inline">length:</code> A numeric value representing the minimum number of characters.</li>
                             </ul>
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="min:3" name="min_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('min_field') }" type="text" placeholder="Min Length: 3">
+                                <span class="error" v-show="errors.has('min_field')">{{ errors.first('min_field') }}</span>
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-not_in">
                         <b class="important">not_in:[list]</b>
@@ -194,11 +286,23 @@
                         <div class="args">
                             <code class="inline">args:</code> Comma separated list of invalid values. ex: <code class="inline">not_in:1,2,3,4</code>
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="not_in:valor,instinct" name="not_in_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('not_in_field') }" type="text" placeholder="Your Pokemon Go Team">
+                                <span class="error" v-show="errors.has('not_in_field')">{{ errors.first('not_in_field') }}</span>
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-numeric">
                         <b class="important">numeric</b>
                         <div class="description">
                             The field under validation must only consist of numbers.
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="numeric" name="numeric_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('numeric_field') }" type="text" placeholder="Numeric Value">
+                                <span class="error" v-show="errors.has('numeric_field')">{{ errors.first('numeric_field') }}</span>
+                            </form>
                         </div>
                     </div>
                     <div class="rule" id="rule-regex">
@@ -213,6 +317,12 @@
                                 <li><code class="inline">flags:</code> list of regular expression flags (optional)</li>
                             </ul>
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="regex:^([0-9]+)$" name="regex_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('regex_field') }" type="text" placeholder="Enter Numeric Value">
+                                <span class="error" v-show="errors.has('regex_field')">{{ errors.first('regex_field') }}</span>
+                            </form>
+                        </div>
                         <div class="note">
                             <b>Note:</b> Currently you should not use the pipe | within your regular expression as it will cause a conflict with how parsing validators work. A workaround is in progress.
                         </div>
@@ -221,6 +331,12 @@
                         <b class="important">required</b>
                         <div class="description">
                             The field under validation must have more than 0 characters.
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="required" name="required_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('required_field') }" type="text" placeholder="Anything">
+                                <span class="error" v-show="errors.has('required_field')">{{ errors.first('required_field') }}</span>
+                            </form>
                         </div>
                     </div>
                     <div class="rule" id="rule-size">
@@ -234,6 +350,12 @@
                                 <li><code class="inline">size:</code> The maximum file size in kilobytes.</li>
                             </ul>
                         </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="size:10" name="size_field" data-as="file" :class="{'pure-input-1': true, 'has-error': errors.has('size_field') }" type="file">
+                                <span class="error" v-show="errors.has('size_field')">{{ errors.first('size_field') }}</span>
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-url">
                         <b class="important">url:{domain?}</b>
@@ -245,6 +367,12 @@
                             <ul>
                                 <li><code class="inline">domain:</code> Adds another check if the url belongs to a specific domain. tlds should improve the accuracy.</li>
                             </ul>
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="url:google.com" name="url_field" data-as="file" :class="{'pure-input-1': true, 'has-error': errors.has('url_field') }" type="text" placeholder="Enter a google url">
+                                <span class="error" v-show="errors.has('url_field')">{{ errors.first('url_field') }}</span>
+                            </form>
                         </div>
                     </div>
                 </div>
