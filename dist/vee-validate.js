@@ -766,6 +766,8 @@ var Validator = function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__ = __webpack_require__(30);
 
 
+var callbackMaps = [];
+
 var DEFAULT_EVENT_NAME = 'veeValidate';
 
 var onInput = function onInput(el, _ref, _ref2) {
@@ -802,6 +804,7 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
         };
     }
 
+    callbackMaps.push({ vm: context, event: 'validatorEvent', callback: callback, el: el });
     context.$on(DEFAULT_EVENT_NAME, callback);
 };
 
@@ -824,7 +827,9 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
 
             var delay = el.dataset.delay || options.delay;
             handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler, delay) : handler;
-            el.addEventListener(el.type === 'file' ? 'change' : 'input', handler);
+            var event = el.type === 'file' ? 'change' : 'input';
+            el.addEventListener(event, handler);
+            callbackMaps.push({ vm: context, event: event, callback: handler, el: el });
         },
         update: function update(el, _ref8, _ref9) {
             var expression = _ref8.expression;
@@ -838,6 +843,24 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
             }
 
             context.$validator.validate(expression || el.name, value);
+        },
+        unbind: function unbind(el, binding, _ref10) {
+            var context = _ref10.context;
+
+            var handlers = callbackMaps.filter(function (h) {
+                return h.vm === context && h.el === el;
+            });
+            context.$off(DEFAULT_EVENT_NAME, handlers.filter(function (_ref11) {
+                var event = _ref11.event;
+                return event === 'validatorEvent';
+            })[0]);
+
+            handlers.filter(function (_ref12) {
+                var event = _ref12.event;
+                return event !== 'validatorEvent';
+            }).forEach(function (h) {
+                el.removeEventListener(h.event, h.callback);
+            });
         }
     };
 };
