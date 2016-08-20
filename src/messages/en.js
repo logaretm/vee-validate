@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 export default {
     alpha_dash: (field) => `The ${field} may contain alpha-numeric characters as well as dashes and underscores.`,
-    alpha_num: (field) => `The ${field} may only contain alpha-numeric characters and.`,
+    alpha_num: (field) => `The ${field} may only contain alpha-numeric characters.`,
     alpha: (field) => `The ${field} may only contain alphabetic characters.`,
     between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
     confirmed: (field, [confirmedField]) => `The ${field} does not match the ${confirmedField}.`,
