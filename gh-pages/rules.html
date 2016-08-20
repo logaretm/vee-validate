@@ -53,7 +53,7 @@
                         </div>
                         <div>
                             <form class="pure-form pure-form-stacked">
-                                <input v-validate data-rules="alpha" name="alpha_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_field') }" type="text">
+                                <input v-validate data-rules="alpha" name="alpha_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_field') }" type="text" placeholder="Enter some characters">
                                 <span class="error" v-show="errors.has('alpha_field')">{{ errors.first('alpha_field') }}</span>
                             </form>
                         </div>
@@ -65,7 +65,7 @@
                         </div>
                         <div>
                             <form class="pure-form pure-form-stacked">
-                                <input v-validate data-rules="alpha_dash" name="alpha_dash_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_dash_field') }" type="text">
+                                <input v-validate data-rules="alpha_dash" name="alpha_dash_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_dash_field') }" type="text" placeholder="Enter a string with dashes">
                                 <span class="error" v-show="errors.has('alpha_dash_field')">{{ errors.first('alpha_dash_field') }}</span>
                             </form>
                         </div>
@@ -77,7 +77,7 @@
                         </div>
                         <div>
                             <form class="pure-form pure-form-stacked">
-                                <input v-validate data-rules="alpha_num" name="alpha_num_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_num_field') }" type="text">
+                                <input v-validate data-rules="alpha_num" name="alpha_num_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_num_field') }" type="text" placeholder="Enter a string with numbers">
                                 <span class="error" v-show="errors.has('alpha_num_field')">{{ errors.first('alpha_num_field') }}</span>
                             </form>
                         </div>
@@ -96,7 +96,7 @@
                         </div>
                         <div>
                             <form class="pure-form pure-form-stacked">
-                                <input v-validate data-rules="between:1,11" name="between_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('between_field') }" type="text">
+                                <input v-validate data-rules="between:1,11" name="between_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('between_field') }" type="text" placeholder="Enter a number between 1 and 11">
                                 <span class="error" v-show="errors.has('between_field')">{{ errors.first('between_field') }}</span>
                             </form>
                         </div>
@@ -114,9 +114,9 @@
                         </div>
                         <div>
                             <form class="pure-form pure-form-stacked">
-                                <input v-validate data-rules="confirmed:pw_confirm" name="confirm_field" data-as="password" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password">
+                                <input v-validate data-rules="confirmed:pw_confirm" name="confirm_field" data-as="password" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password" placeholder="Enter The Password">
                                 <span class="error" v-show="errors.has('confirm_field')">{{ errors.first('confirm_field') }}</span>
-                                <input name="pw_confirm" data-as="confirmation" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password">
+                                <input name="pw_confirm" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password" placeholder="Confirm the password">
                             </form>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                         </div>
                         <div>
                             <form class="pure-form pure-form-stacked">
-                                <input v-validate data-rules="digits:3" name="digits_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('digits_field') }" type="text">
+                                <input v-validate data-rules="digits:3" name="digits_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('digits_field') }" type="text" placeholder="Enter a three digit number">
                                 <span class="error" v-show="errors.has('digits_field')">{{ errors.first('digits_field') }}</span>
                             </form>
                         </div>
@@ -164,7 +164,7 @@
                         </div>
                         <div>
                             <form class="pure-form pure-form-stacked">
-                                <input v-validate data-rules="email" name="email_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('email_field') }" type="text">
+                                <input v-validate data-rules="email" name="email_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('email_field') }" type="text" placeholder="Enter a valid email">
                                 <span class="error" v-show="errors.has('email_field')">{{ errors.first('email_field') }}</span>
                             </form>
                         </div>
