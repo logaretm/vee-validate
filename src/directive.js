@@ -55,7 +55,7 @@ export default (options) => ({
             .filter(r => !! ~r.indexOf('confirmed'))[0]
             .split(':')[1];
 
-            document.addEventListener('DOMContentLoaded', () => {
+            context.$once('validatorReady', () => {
                 document.querySelector(`input[name='${fieldName}']`)
                         .addEventListener('input', handler);
             });
