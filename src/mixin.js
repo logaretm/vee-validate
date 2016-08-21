@@ -6,6 +6,9 @@ export default (options) => ({
             [options.errorBagName]: this.$validator.errorBag
         };
     },
+    ready() {
+        this.$emit('validatorReady');
+    },
     destroyed() {
         unregister(this);
     }

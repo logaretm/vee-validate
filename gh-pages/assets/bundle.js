@@ -923,7 +923,7 @@
                                     return !!~r.indexOf('confirmed');
                                 })[0].split(':')[1];
 
-                                document.addEventListener('DOMContentLoaded', function () {
+                                _this2.vm.$once('validatorReady', function () {
                                     document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', _this2.handler);
                                 });
                             })();
@@ -973,6 +973,9 @@
                 return {
                     data: function data() {
                         return _defineProperty({}, options.errorBagName, this.$validator.errorBag);
+                    },
+                    ready: function ready() {
+                        this.$emit('validatorReady');
                     },
                     destroyed: function destroyed() {
                         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_maps__["a" /* unregister */])(this);
