@@ -41,7 +41,7 @@ export default {
             el.textContent = txt.replace(new RegExp("^" + str, 'gm'), "");
         }
     },
-    ready() {
+    mounted() {
         this.removeWhitespace();
         Prism.highlightElement(this.$refs.code);
     }

@@ -1,12 +1,12 @@
 <template>
-    <div id="layout" v-el:layout>
+    <div id="layout" ref="layout">
         <!-- Menu toggle -->
-        <a href="#menu" id="menuLink" class="menu-link" v-el:menuLink>
+        <a href="#menu" id="menuLink" class="menu-link" ref="menuLink">
             <!-- Hamburger icon -->
             <span></span>
         </a>
 
-        <div id="menu" v-el:menu>
+        <div id="menu" ref="menu">
             <div class="pure-menu">
                 <a href="/" class="pure-menu-heading">Vee Validate</a>
                 <ul class="pure-menu-list">
@@ -60,10 +60,10 @@
 export default {
     props: ['heading', 'subtitle'],
 
-    ready() {
-        const layout = this.$els.layout;
-        const menu = this.$els.menu;
-        const menuLink = this.$els.menulink;
+    mounted() {
+        const layout = this.$refs.layout;
+        const menu = this.$refs.menu;
+        const menuLink = this.$refs.menuLink;
 
         const toggleClass = (element, className) => {
             const classes = element.className.split(/\s+/);
