@@ -8,9 +8,7 @@
     </head>
     <body>
         <div id="app">
-            <app heading="Vee-Validate"
-                 subtitle="Simple VueJS Form Validation"
-            >
+            <app heading="Vee-Validate" subtitle="Simple VueJS Form Validation">
                 <h2 id="about" class="content-subhead"><a href="#about">What is vee-validate?</a></h2>
                 <p>
                     This is a lightweight plugin for <a href="https://vuejs.org/" class="link">VueJS</a> that allows you to validate input fields, and display errors.
@@ -76,7 +74,7 @@
                 <h2 id="available-rules" class="content-subhead"><a href="#available-rules">Available Rules</a></h2>
                 <p>There are more than 20 rules available to validate your inputs:</p>
                 <div class="pure-g">
-                    <div v-for="group in rules" class="pure-u-1-{{ rules.length }}">
+                    <div v-for="group in rules" :class="'pure-u-1-' + rules.length">
                         <ul>
                             <li v-for="rule in group"><a class="link" :href="'rules.html#rule-' + rule">{{ rule }}</a></li>
                         </ul>

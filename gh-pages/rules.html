@@ -32,7 +32,7 @@
                     <code class="inline">vee-validate</code> Comes out of the box with 21 validation rules, which are:
                 </p>
                 <div class="pure-g">
-                    <div v-for="group in rules" class="pure-u-1-{{ rules.length }}">
+                    <div v-for="group in rules" :class="'pure-u-1-' + rules.length">
                         <ul>
                             <li v-for="rule in group"><a class="link" :href="'rules.html#' + rule">{{ rule }}</a></li>
                         </ul>
