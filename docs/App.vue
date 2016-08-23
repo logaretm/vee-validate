@@ -22,7 +22,7 @@
                     <li class="pure-menu-item">
                         <a href="index.html#render-errors" class="pure-menu-link">Rendering Errors</a>
                     </li>
-                    <li :class="{'pure-menu-item': true, 'pure-menu-selected': selected === 'examples'}">
+                    <li class="pure-menu-item">
                         <a href="examples.html" class="pure-menu-link">Examples</a>
                     </li>
                     <li class="pure-menu-item">

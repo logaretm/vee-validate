@@ -22,7 +22,5 @@ new Vue({
     data: {
         rules: new Collection(Object.keys(Rules)).sort().chunk(10).all()
     },
-    components: {
-        App
-    }
+    render: h => h(App)
 });

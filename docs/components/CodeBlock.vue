@@ -1,5 +1,5 @@
 <template lang="html">
-    <pre><code v-el:code :class="class"><slot></slot></code></pre>
+    <pre><code ref="code"><slot></slot></code></pre>
 </template>
 
 <script>
@@ -7,10 +7,9 @@ import Prism from 'prismjs';
 import 'prismjs/plugins/show-language/prism-show-language.js';
 
 export default {
-    props: ['class'],
     methods: {
         removeWhitespace() {
-            const el = this.$els.code;
+            const el = this.$refs.code;
             const txt = el.textContent
                 .replace(/^[\r\n]+/, "")
                 .replace(/\s+$/g, "");
@@ -44,7 +43,7 @@ export default {
     },
     ready() {
         this.removeWhitespace();
-        Prism.highlightElement(this.$els.code);
+        Prism.highlightElement(this.$refs.code);
     }
 }
 </script>
