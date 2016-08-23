@@ -73,9 +73,10 @@
                     <br><br>The errors object exposes a simple methods to help you render errors:
                     <ul>
                         <li><code class="inline">first('field')</code> Fetches the first error message associated with that field.</li>
-                        <li><code class="inline">collect('field')</code> Fetches all error messages associated with that field.</li>
+                        <li><code class="inline">collect('field')</code> Fetches all error messages associated with that field. alternativly you can pass nothing and it will return errors grouped by fields</li>
                         <li><code class="inline">has('field')</code> Checks if there are any errors associated with that field.</li>
                         <li><code class="inline">all()</code> Gets all error messages.</li>
+                        <li><code class="inline">any()</code> Checks if there are any errors.</li>
                     </ul>
                     There are a few more <a class="link" href="api.html#error-bag">methods</a> that you can use to manipulate the errors object.
                 </p>
