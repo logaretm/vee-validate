@@ -7,14 +7,14 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 let config = {
     entry: {
-        bundle: path.join(__dirname, 'docs', 'main'),
+        bundle: path.join(__dirname, 'src', 'main'),
     },
     output: {
-        path: path.join(__dirname, 'gh-pages', 'assets'),
+        path: path.join(__dirname, '../gh-pages', 'assets'),
         filename: '[name].js'
     },
     devServer: {
-        contentBase: './gh-pages',
+        contentBase: '../gh-pages',
     },
     module: {
         loaders: [
