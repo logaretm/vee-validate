@@ -3,6 +3,7 @@ import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
 import Messages from './messages';
 import warn from './utils/warn';
+import date from './plugins/date.js';
 
 const EVENT_NAME = 'veeValidate';
 let DEFAULT_LOCALE = 'en';
@@ -16,6 +17,12 @@ export default class Validator
         this.$fields = this._normalize(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
+
+        // if momentjs is present, install the validators.
+        if (typeof moment === 'function') {
+            // eslint-disable-next-line
+            this.installDateTimeValidators(moment);
+        }
     }
 
     /**
@@ -31,6 +38,29 @@ export default class Validator
         }
 
         DEFAULT_LOCALE = language;
+    }
+
+    /**
+     * Installs the datetime validators and the messages.
+     */
+    static installDateTimeValidators(moment) {
+        if (typeof moment !== 'function') {
+            warn('To use the date-time validators you must provide moment reference.');
+        }
+
+        const validators = date.make(moment);
+        Object.keys(validators).forEach(name => {
+            Validator.extend(name, validators[name]);
+        });
+
+        Validator.updateDictionary(date.messages);
+    }
+
+    /**
+     * Just an alias to the static method for convienece.
+     */
+    installDateTimeValidators(moment) {
+        Validator.installDateTimeValidators(moment);
     }
 
     /**
