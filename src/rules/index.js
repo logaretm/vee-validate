@@ -19,7 +19,7 @@ import dimensions from './dimensions';
 import between from './between';
 import confirmed from './confirmed';
 import url from './url';
-import decimal from './decmial';
+import decimal from './decimal';
 
 export default {
     email,
