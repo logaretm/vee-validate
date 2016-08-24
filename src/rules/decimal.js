@@ -3,8 +3,16 @@ export default (value, [decimals] = ['*']) => {
         return false;
     }
 
-    const regexPart = decimals === '*' ? '*' : `{0,${decimals}}`;
-    const regex = new RegExp(`^[0-9]*(\.[0-9]${regexPart})?$`);
+    if (value === null || value === undefined || value === '') {
+        return true;
+    }
 
-    return regex.test(value);
+    const regexPart = decimals === '*' ? '*' : `{0,${decimals}}`;
+    const regex = new RegExp(`^[0-9]*.?[0-9]${regexPart}$`);
+
+    if (! regex.test(value)) {
+        return false;
+    }
+
+    return ! Number.isNaN(parseFloat(value));
 };
