@@ -19,6 +19,7 @@ import dimensions from './dimensions';
 import between from './between';
 import confirmed from './confirmed';
 import url from './url';
+import decimal from './decmial';
 
 export default {
     email,
@@ -41,5 +42,6 @@ export default {
     dimensions,
     between,
     confirmed,
-    url
+    url,
+    decimal
 };
