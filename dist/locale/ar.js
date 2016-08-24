@@ -4,6 +4,7 @@ export default {
     alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.`,
     between: (field, [min, max]) => `قيمة ${field} يجب ان تكون ما بين ${min} و ${max}.`,
     confirmed: (field, [confirmedField]) => `${field} لا يماثل التأكيد.`,
+    decimal: (field, [decimals] = ['*']) => `${field} يجب ان يكون قيمة رقمية وقد يحتوي على ${decimals === '*' ? '' : decimals} ارقام عشرية.`,
     digits: (field, [length]) => `${field} يجب ان تحتوي فقط على ارقام والا يزيد عددها عن ${length} رقم.`,
     dimensions: (field, [width, height]) => `${field} يجب ان تكون بمقاس ${width} بكسل في ${height} بكسل.`,
     email: (field) => `${field} يجب ان يكون بريدا اليكتروني صحيح.`,
