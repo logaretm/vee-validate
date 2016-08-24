@@ -545,7 +545,7 @@ var Validator = function () {
     }, {
         key: '_normalizeRule',
         value: function _normalizeRule(rule) {
-            var params = null;
+            var params = [];
             if (~rule.indexOf(':')) {
                 params = rule.split(':')[1].split(',');
             }
@@ -942,90 +942,98 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* eslint-disable max-len */
 /* harmony default export */ exports["a"] = {
     alpha_dash: function alpha_dash(field) {
-        return "The " + field + " may contain alpha-numeric characters as well as dashes and underscores.";
+        return 'The ' + field + ' may contain alpha-numeric characters as well as dashes and underscores.';
     },
     alpha_num: function alpha_num(field) {
-        return "The " + field + " may only contain alpha-numeric characters.";
+        return 'The ' + field + ' may only contain alpha-numeric characters.';
     },
     alpha: function alpha(field) {
-        return "The " + field + " may only contain alphabetic characters.";
+        return 'The ' + field + ' may only contain alphabetic characters.';
     },
     between: function between(field, _ref) {
         var _ref2 = _slicedToArray(_ref, 2);
 
         var min = _ref2[0];
         var max = _ref2[1];
-        return "The " + field + " must be between " + min + " and " + max + ".";
+        return 'The ' + field + ' must be between ' + min + ' and ' + max + '.';
     },
     confirmed: function confirmed(field, _ref3) {
         var _ref4 = _slicedToArray(_ref3, 1);
 
         var confirmedField = _ref4[0];
-        return "The " + field + " does not match the " + confirmedField + ".";
+        return 'The ' + field + ' does not match the ' + confirmedField + '.';
     },
-    digits: function digits(field, _ref5) {
+    decimal: function decimal(field) {
+        var _ref5 = arguments.length <= 1 || arguments[1] === undefined ? ['*'] : arguments[1];
+
         var _ref6 = _slicedToArray(_ref5, 1);
 
-        var length = _ref6[0];
-        return "The " + field + " must be numeric and exactly contain " + length + " digits.";
+        var decimals = _ref6[0];
+        return 'The ' + field + ' must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decmial points.';
     },
-    dimensions: function dimensions(field, _ref7) {
-        var _ref8 = _slicedToArray(_ref7, 2);
+    digits: function digits(field, _ref7) {
+        var _ref8 = _slicedToArray(_ref7, 1);
 
-        var width = _ref8[0];
-        var height = _ref8[1];
-        return "The " + field + " must be " + width + " pixels by " + height + " pixels.";
+        var length = _ref8[0];
+        return 'The ' + field + ' must be numeric and exactly contain ' + length + ' digits.';
+    },
+    dimensions: function dimensions(field, _ref9) {
+        var _ref10 = _slicedToArray(_ref9, 2);
+
+        var width = _ref10[0];
+        var height = _ref10[1];
+        return 'The ' + field + ' must be ' + width + ' pixels by ' + height + ' pixels.';
     },
     email: function email(field) {
-        return "The " + field + " must be a valid email.";
+        return 'The ' + field + ' must be a valid email.';
     },
     ext: function ext(field) {
-        return "The " + field + " must be a valid file.";
+        return 'The ' + field + ' must be a valid file.';
     },
     image: function image(field) {
-        return "The " + field + " must be an image.";
+        return 'The ' + field + ' must be an image.';
     },
     in: function _in(field) {
-        return "The " + field + " must be a valid value.";
+        return 'The ' + field + ' must be a valid value.';
     },
     ip: function ip(field) {
-        return "The " + field + " must be a valid ip address.";
+        return 'The ' + field + ' must be a valid ip address.';
     },
-    max: function max(field, _ref9) {
-        var _ref10 = _slicedToArray(_ref9, 1);
-
-        var length = _ref10[0];
-        return "The " + field + " may not be greater than " + length + " characters.";
-    },
-    mimes: function mimes(field) {
-        return "The " + field + " must have a valid file type.";
-    },
-    min: function min(field, _ref11) {
+    max: function max(field, _ref11) {
         var _ref12 = _slicedToArray(_ref11, 1);
 
         var length = _ref12[0];
-        return "The " + field + " must be at least " + length + " characters.";
+        return 'The ' + field + ' may not be greater than ' + length + ' characters.';
     },
-    not_in: function not_in(field) {
-        return "The " + field + " must be a valid value.";
+    mimes: function mimes(field) {
+        return 'The ' + field + ' must have a valid file type.';
     },
-    numeric: function numeric(field) {
-        return "The " + field + " may only contain numeric characters.";
-    },
-    regex: function regex(field) {
-        return "The " + field + " format is invalid.";
-    },
-    required: function required(field) {
-        return "The " + field + " is required.";
-    },
-    size: function size(field, _ref13) {
+    min: function min(field, _ref13) {
         var _ref14 = _slicedToArray(_ref13, 1);
 
-        var _size = _ref14[0];
-        return "The " + field + " must be less than " + _size + " KB.";
+        var length = _ref14[0];
+        return 'The ' + field + ' must be at least ' + length + ' characters.';
+    },
+    not_in: function not_in(field) {
+        return 'The ' + field + ' must be a valid value.';
+    },
+    numeric: function numeric(field) {
+        return 'The ' + field + ' may only contain numeric characters.';
+    },
+    regex: function regex(field) {
+        return 'The ' + field + ' format is invalid.';
+    },
+    required: function required(field) {
+        return 'The ' + field + ' is required.';
+    },
+    size: function size(field, _ref15) {
+        var _ref16 = _slicedToArray(_ref15, 1);
+
+        var _size = _ref16[0];
+        return 'The ' + field + ' must be less than ' + _size + ' KB.';
     },
     url: function url(field) {
-        return "The " + field + " is not a valid URL.";
+        return 'The ' + field + ' is not a valid URL.';
     }
 };
 
