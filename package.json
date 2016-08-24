@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Simple VueJS input validation plugin",
   "main": "dist/vee-validate.js",
   "repository": "https://github.com/logaretm/vee-validate",
