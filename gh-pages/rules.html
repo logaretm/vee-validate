@@ -101,6 +101,24 @@
                             </form>
                         </div>
                     </div>
+                    <div class="rule" id="rule-decimal">
+                        <b class="important">decimal:{decimals?}</b>
+                        <div class="description">
+                            The field under validation must be numeric and may contain the specified amount of decmial points.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">decmials:</code> The maximum allowed number of decimal point numbers. Not passing the decmials will accept numeric data which may or may not contain decimal point numbers.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="decimal:3" name="decimal_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('decimal_field') }" type="text" placeholder="Enter a numeric value with decmials">
+                                <span class="error" v-show="errors.has('decimal_field')">{{ errors.first('decimal_field') }}</span>
+                            </form>
+                        </div>
+                    </div>
                     <div class="rule" id="rule-confirmed">
                         <b class="important">confirmed:{target}</b>
                         <div class="description">

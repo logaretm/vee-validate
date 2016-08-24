@@ -61,7 +61,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 65);
+/******/ 	return __webpack_require__(__webpack_require__.s = 66);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -147,7 +147,7 @@
             /******/__webpack_require__.p = "";
 
             /******/ // Load entry module and return exports
-            /******/return __webpack_require__(__webpack_require__.s = 32);
+            /******/return __webpack_require__(__webpack_require__.s = 33);
             /******/
         }(
         /************************************************************************/
@@ -421,11 +421,11 @@
 
             "use strict";
             /* harmony import */
-            var __WEBPACK_IMPORTED_MODULE_0__rules__ = __webpack_require__(19);
+            var __WEBPACK_IMPORTED_MODULE_0__rules__ = __webpack_require__(20);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__errorBag__ = __webpack_require__(0);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__ = __webpack_require__(5);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__messages__ = __webpack_require__(7);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__utils_warn__ = __webpack_require__(31);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__utils_warn__ = __webpack_require__(32);
             var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
                 return typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
             } : function (obj) {
@@ -652,7 +652,7 @@
                 }, {
                     key: '_normalizeRule',
                     value: function _normalizeRule(rule) {
-                        var params = null;
+                        var params = [];
                         if (~rule.indexOf(':')) {
                             params = rule.split(':')[1].split(',');
                         }
@@ -872,7 +872,7 @@
 
             "use strict";
             /* harmony import */
-            var __WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__ = __webpack_require__(30);
+            var __WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__ = __webpack_require__(31);
 
             var callbackMaps = [];
 
@@ -1096,90 +1096,98 @@
             /* eslint-disable max-len */
             /* harmony default export */exports["a"] = {
                 alpha_dash: function alpha_dash(field) {
-                    return "The " + field + " may contain alpha-numeric characters as well as dashes and underscores.";
+                    return 'The ' + field + ' may contain alpha-numeric characters as well as dashes and underscores.';
                 },
                 alpha_num: function alpha_num(field) {
-                    return "The " + field + " may only contain alpha-numeric characters.";
+                    return 'The ' + field + ' may only contain alpha-numeric characters.';
                 },
                 alpha: function alpha(field) {
-                    return "The " + field + " may only contain alphabetic characters.";
+                    return 'The ' + field + ' may only contain alphabetic characters.';
                 },
                 between: function between(field, _ref) {
                     var _ref2 = _slicedToArray(_ref, 2);
 
                     var min = _ref2[0];
                     var max = _ref2[1];
-                    return "The " + field + " must be between " + min + " and " + max + ".";
+                    return 'The ' + field + ' must be between ' + min + ' and ' + max + '.';
                 },
                 confirmed: function confirmed(field, _ref3) {
                     var _ref4 = _slicedToArray(_ref3, 1);
 
                     var confirmedField = _ref4[0];
-                    return "The " + field + " does not match the " + confirmedField + ".";
+                    return 'The ' + field + ' does not match the ' + confirmedField + '.';
                 },
-                digits: function digits(field, _ref5) {
+                decimal: function decimal(field) {
+                    var _ref5 = arguments.length <= 1 || arguments[1] === undefined ? ['*'] : arguments[1];
+
                     var _ref6 = _slicedToArray(_ref5, 1);
 
-                    var length = _ref6[0];
-                    return "The " + field + " must be numeric and exactly contain " + length + " digits.";
+                    var decimals = _ref6[0];
+                    return 'The ' + field + ' must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decmial points.';
                 },
-                dimensions: function dimensions(field, _ref7) {
-                    var _ref8 = _slicedToArray(_ref7, 2);
+                digits: function digits(field, _ref7) {
+                    var _ref8 = _slicedToArray(_ref7, 1);
 
-                    var width = _ref8[0];
-                    var height = _ref8[1];
-                    return "The " + field + " must be " + width + " pixels by " + height + " pixels.";
+                    var length = _ref8[0];
+                    return 'The ' + field + ' must be numeric and exactly contain ' + length + ' digits.';
+                },
+                dimensions: function dimensions(field, _ref9) {
+                    var _ref10 = _slicedToArray(_ref9, 2);
+
+                    var width = _ref10[0];
+                    var height = _ref10[1];
+                    return 'The ' + field + ' must be ' + width + ' pixels by ' + height + ' pixels.';
                 },
                 email: function email(field) {
-                    return "The " + field + " must be a valid email.";
+                    return 'The ' + field + ' must be a valid email.';
                 },
                 ext: function ext(field) {
-                    return "The " + field + " must be a valid file.";
+                    return 'The ' + field + ' must be a valid file.';
                 },
                 image: function image(field) {
-                    return "The " + field + " must be an image.";
+                    return 'The ' + field + ' must be an image.';
                 },
                 in: function _in(field) {
-                    return "The " + field + " must be a valid value.";
+                    return 'The ' + field + ' must be a valid value.';
                 },
                 ip: function ip(field) {
-                    return "The " + field + " must be a valid ip address.";
+                    return 'The ' + field + ' must be a valid ip address.';
                 },
-                max: function max(field, _ref9) {
-                    var _ref10 = _slicedToArray(_ref9, 1);
-
-                    var length = _ref10[0];
-                    return "The " + field + " may not be greater than " + length + " characters.";
-                },
-                mimes: function mimes(field) {
-                    return "The " + field + " must have a valid file type.";
-                },
-                min: function min(field, _ref11) {
+                max: function max(field, _ref11) {
                     var _ref12 = _slicedToArray(_ref11, 1);
 
                     var length = _ref12[0];
-                    return "The " + field + " must be at least " + length + " characters.";
+                    return 'The ' + field + ' may not be greater than ' + length + ' characters.';
                 },
-                not_in: function not_in(field) {
-                    return "The " + field + " must be a valid value.";
+                mimes: function mimes(field) {
+                    return 'The ' + field + ' must have a valid file type.';
                 },
-                numeric: function numeric(field) {
-                    return "The " + field + " may only contain numeric characters.";
-                },
-                regex: function regex(field) {
-                    return "The " + field + " format is invalid.";
-                },
-                required: function required(field) {
-                    return "The " + field + " is required.";
-                },
-                size: function size(field, _ref13) {
+                min: function min(field, _ref13) {
                     var _ref14 = _slicedToArray(_ref13, 1);
 
-                    var _size = _ref14[0];
-                    return "The " + field + " must be less than " + _size + " KB.";
+                    var length = _ref14[0];
+                    return 'The ' + field + ' must be at least ' + length + ' characters.';
+                },
+                not_in: function not_in(field) {
+                    return 'The ' + field + ' must be a valid value.';
+                },
+                numeric: function numeric(field) {
+                    return 'The ' + field + ' may only contain numeric characters.';
+                },
+                regex: function regex(field) {
+                    return 'The ' + field + ' format is invalid.';
+                },
+                required: function required(field) {
+                    return 'The ' + field + ' is required.';
+                },
+                size: function size(field, _ref15) {
+                    var _ref16 = _slicedToArray(_ref15, 1);
+
+                    var _size = _ref16[0];
+                    return 'The ' + field + ' must be less than ' + _size + ' KB.';
                 },
                 url: function url(field) {
-                    return "The " + field + " is not a valid URL.";
+                    return 'The ' + field + ' is not a valid URL.';
                 }
             };
 
@@ -1346,6 +1354,64 @@
                 };
             }();
 
+            /* harmony default export */exports["a"] = function (value) {
+                var _ref = arguments.length <= 1 || arguments[1] === undefined ? ['*'] : arguments[1];
+
+                var _ref2 = _slicedToArray(_ref, 1);
+
+                var decimals = _ref2[0];
+
+                if (Array.isArray(value)) {
+                    return false;
+                }
+
+                if (value === null || value === undefined || value === '') {
+                    return true;
+                }
+
+                var regexPart = decimals === '*' ? '*' : '{0,' + decimals + '}';
+                var regex = new RegExp('^[0-9]*.?[0-9]' + regexPart + '$');
+
+                if (!regex.test(value)) {
+                    return false;
+                }
+
+                return !Number.isNaN(parseFloat(value));
+            };
+
+            /***/
+        },
+        /* 14 */
+        /***/function (module, exports, __webpack_require__) {
+
+            "use strict";
+
+            var _slicedToArray = function () {
+                function sliceIterator(arr, i) {
+                    var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+                        for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+                            _arr.push(_s.value);if (i && _arr.length === i) break;
+                        }
+                    } catch (err) {
+                        _d = true;_e = err;
+                    } finally {
+                        try {
+                            if (!_n && _i["return"]) _i["return"]();
+                        } finally {
+                            if (_d) throw _e;
+                        }
+                    }return _arr;
+                }return function (arr, i) {
+                    if (Array.isArray(arr)) {
+                        return arr;
+                    } else if (Symbol.iterator in Object(arr)) {
+                        return sliceIterator(arr, i);
+                    } else {
+                        throw new TypeError("Invalid attempt to destructure non-iterable instance");
+                    }
+                };
+            }();
+
             /* harmony default export */exports["a"] = function (value, _ref) {
                 var _ref2 = _slicedToArray(_ref, 1);
 
@@ -1359,7 +1425,7 @@
 
             /***/
         },
-        /* 14 */
+        /* 15 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1435,7 +1501,7 @@
 
             /***/
         },
-        /* 15 */
+        /* 16 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1447,7 +1513,7 @@
 
             /***/
         },
-        /* 16 */
+        /* 17 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1465,7 +1531,7 @@
 
             /***/
         },
-        /* 17 */
+        /* 18 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1482,7 +1548,7 @@
 
             /***/
         },
-        /* 18 */
+        /* 19 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1495,32 +1561,33 @@
 
             /***/
         },
-        /* 19 */
+        /* 20 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
             /* harmony import */
-            var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(15);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__in__ = __webpack_require__(18);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__required__ = __webpack_require__(27);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__min__ = __webpack_require__(23);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__max__ = __webpack_require__(21);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_5__notIn__ = __webpack_require__(24);
+            var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(16);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__in__ = __webpack_require__(19);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__required__ = __webpack_require__(28);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__min__ = __webpack_require__(24);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__max__ = __webpack_require__(22);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_5__notIn__ = __webpack_require__(25);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_6__alpha__ = __webpack_require__(8);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_7__alpha_num__ = __webpack_require__(10);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_8__alpha_dash__ = __webpack_require__(9);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_9__numeric__ = __webpack_require__(25);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_10__regex__ = __webpack_require__(26);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_11__ip__ = __webpack_require__(20);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_12__ext__ = __webpack_require__(16);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_13__mimes__ = __webpack_require__(22);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_14__size__ = __webpack_require__(28);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_15__digits__ = __webpack_require__(13);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_16__image__ = __webpack_require__(17);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(14);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_9__numeric__ = __webpack_require__(26);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_10__regex__ = __webpack_require__(27);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_11__ip__ = __webpack_require__(21);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_12__ext__ = __webpack_require__(17);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_13__mimes__ = __webpack_require__(23);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_14__size__ = __webpack_require__(29);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_15__digits__ = __webpack_require__(14);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_16__image__ = __webpack_require__(18);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(15);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_18__between__ = __webpack_require__(11);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_19__confirmed__ = __webpack_require__(12);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_20__url__ = __webpack_require__(29);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_20__url__ = __webpack_require__(30);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_21__decimal__ = __webpack_require__(13);
 
             // eslint-disable-line
             // eslint-disable-line
@@ -1550,12 +1617,13 @@
                 dimensions: __WEBPACK_IMPORTED_MODULE_17__dimensions__["a" /* default */],
                 between: __WEBPACK_IMPORTED_MODULE_18__between__["a" /* default */],
                 confirmed: __WEBPACK_IMPORTED_MODULE_19__confirmed__["a" /* default */],
-                url: __WEBPACK_IMPORTED_MODULE_20__url__["a" /* default */]
+                url: __WEBPACK_IMPORTED_MODULE_20__url__["a" /* default */],
+                decimal: __WEBPACK_IMPORTED_MODULE_21__decimal__["a" /* default */]
             };
 
             /***/
         },
-        /* 20 */
+        /* 21 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1568,7 +1636,7 @@
 
             /***/
         },
-        /* 21 */
+        /* 22 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1613,7 +1681,7 @@
 
             /***/
         },
-        /* 22 */
+        /* 23 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1631,7 +1699,7 @@
 
             /***/
         },
-        /* 23 */
+        /* 24 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1676,7 +1744,7 @@
 
             /***/
         },
-        /* 24 */
+        /* 25 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1689,7 +1757,7 @@
 
             /***/
         },
-        /* 25 */
+        /* 26 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1700,7 +1768,7 @@
 
             /***/
         },
-        /* 26 */
+        /* 27 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1721,7 +1789,7 @@
 
             /***/
         },
-        /* 27 */
+        /* 28 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1740,7 +1808,7 @@
 
             /***/
         },
-        /* 28 */
+        /* 29 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1792,7 +1860,7 @@
 
             /***/
         },
-        /* 29 */
+        /* 30 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1811,7 +1879,7 @@
 
             /***/
         },
-        /* 30 */
+        /* 31 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1862,7 +1930,7 @@
 
             /***/
         },
-        /* 31 */
+        /* 32 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1878,7 +1946,7 @@
 
             /***/
         },
-        /* 32 */
+        /* 33 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -2747,19 +2815,19 @@ if(!options.render){var template=options.template;var isFromDOM=false;if(templat
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BasicExample_vue__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BasicExample_vue__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__BasicExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__BasicExample_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__DelayExample_vue__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__DelayExample_vue__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__DelayExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__DelayExample_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RejectExample_vue__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RejectExample_vue__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__RejectExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__RejectExample_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ValidatorExample_vue__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ValidatorExample_vue__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ValidatorExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__ValidatorExample_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ValidateData_vue__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ValidateData_vue__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ValidateData_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__ValidateData_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ValidateEventExample_vue__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ValidateEventExample_vue__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ValidateEventExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__ValidateEventExample_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__LocaleExample_vue__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__LocaleExample_vue__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__LocaleExample_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__LocaleExample_vue__);
 
 
@@ -2785,27 +2853,28 @@ if(!options.render){var template=options.template;var isFromDOM=false;if(templat
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__in__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__required__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__min__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__max__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__notIn__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__in__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__required__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__min__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__max__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__notIn__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__alpha__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__alpha_num__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__alpha_dash__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__numeric__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__regex__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ip__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ext__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__mimes__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__size__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__digits__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__image__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__numeric__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__regex__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ip__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ext__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__mimes__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__size__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__digits__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__image__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__between__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__confirmed__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__url__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__url__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__decimal__ = __webpack_require__(30);
 
 
 
@@ -2816,6 +2885,7 @@ if(!options.render){var template=options.template;var isFromDOM=false;if(templat
  // eslint-disable-line
  // eslint-disable-line
  // eslint-disable-line
+
 
 
 
@@ -2849,7 +2919,8 @@ if(!options.render){var template=options.template;var isFromDOM=false;if(templat
     dimensions: __WEBPACK_IMPORTED_MODULE_17__dimensions__["a" /* default */],
     between: __WEBPACK_IMPORTED_MODULE_18__between__["a" /* default */],
     confirmed: __WEBPACK_IMPORTED_MODULE_19__confirmed__["a" /* default */],
-    url: __WEBPACK_IMPORTED_MODULE_20__url__["a" /* default */]
+    url: __WEBPACK_IMPORTED_MODULE_20__url__["a" /* default */],
+    decimal: __WEBPACK_IMPORTED_MODULE_21__decimal__["a" /* default */]
 };
 
 /***/ },
@@ -2892,7 +2963,7 @@ var __vue_exports__, __vue_options__
 __vue_exports__ = __webpack_require__(15)
 
 /* template */
-var __vue_template__ = __webpack_require__(58)
+var __vue_template__ = __webpack_require__(59)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -2934,49 +3005,7 @@ __webpack_require__(47)
 __vue_exports__ = __webpack_require__(16)
 
 /* template */
-var __vue_template__ = __webpack_require__(57)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-2", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-2", __vue_options__)
-  }
-})()}
-if (__vue_options__.functional) {console.error("[vue-loader] CodeBlock.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* styles */
-__webpack_require__(46)
-
-/* script */
-__vue_exports__ = __webpack_require__(17)
-
-/* template */
-var __vue_template__ = __webpack_require__(55)
+var __vue_template__ = __webpack_require__(56)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -2998,6 +3027,48 @@ if (false) {(function () {
     hotAPI.createRecord("data-v-1", __vue_options__)
   } else {
     hotAPI.reload("data-v-1", __vue_options__)
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] CodeBlock.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* styles */
+__webpack_require__(48)
+
+/* script */
+__vue_exports__ = __webpack_require__(17)
+
+/* template */
+var __vue_template__ = __webpack_require__(58)
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-2", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-2", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] CodeExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -3643,90 +3714,98 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 /* harmony default export */ exports["default"] = {
     alpha_dash: function alpha_dash(field) {
-        return field + " قد يحتوي على حروف او الرموز - و _.";
+        return field + ' قد يحتوي على حروف او الرموز - و _.';
     },
     alpha_num: function alpha_num(field) {
-        return field + " قد يحتوي فقط على حروف وارقام.";
+        return field + ' قد يحتوي فقط على حروف وارقام.';
     },
     alpha: function alpha(field) {
-        return field + " يجب ان يحتوي على حروف فقط.";
+        return field + ' يجب ان يحتوي على حروف فقط.';
     },
     between: function between(field, _ref) {
         var _ref2 = _slicedToArray(_ref, 2);
 
         var min = _ref2[0];
         var max = _ref2[1];
-        return "قيمة " + field + " يجب ان تكون ما بين " + min + " و " + max + ".";
+        return 'قيمة ' + field + ' يجب ان تكون ما بين ' + min + ' و ' + max + '.';
     },
     confirmed: function confirmed(field, _ref3) {
         var _ref4 = _slicedToArray(_ref3, 1);
 
         var confirmedField = _ref4[0];
-        return field + " لا يماثل التأكيد.";
+        return field + ' لا يماثل التأكيد.';
     },
-    digits: function digits(field, _ref5) {
+    decimal: function decimal(field) {
+        var _ref5 = arguments.length <= 1 || arguments[1] === undefined ? ['*'] : arguments[1];
+
         var _ref6 = _slicedToArray(_ref5, 1);
 
-        var length = _ref6[0];
-        return field + " يجب ان تحتوي فقط على ارقام والا يزيد عددها عن " + length + " رقم.";
+        var decimals = _ref6[0];
+        return field + ' يجب ان يكون قيمة رقمية وقد يحتوي على ' + (decimals === '*' ? '' : decimals) + ' ارقام عشرية.';
     },
-    dimensions: function dimensions(field, _ref7) {
-        var _ref8 = _slicedToArray(_ref7, 2);
+    digits: function digits(field, _ref7) {
+        var _ref8 = _slicedToArray(_ref7, 1);
 
-        var width = _ref8[0];
-        var height = _ref8[1];
-        return field + " يجب ان تكون بمقاس " + width + " بكسل في " + height + " بكسل.";
+        var length = _ref8[0];
+        return field + ' يجب ان تحتوي فقط على ارقام والا يزيد عددها عن ' + length + ' رقم.';
+    },
+    dimensions: function dimensions(field, _ref9) {
+        var _ref10 = _slicedToArray(_ref9, 2);
+
+        var width = _ref10[0];
+        var height = _ref10[1];
+        return field + ' يجب ان تكون بمقاس ' + width + ' بكسل في ' + height + ' بكسل.';
     },
     email: function email(field) {
-        return field + " يجب ان يكون بريدا اليكتروني صحيح.";
+        return field + ' يجب ان يكون بريدا اليكتروني صحيح.';
     },
     ext: function ext(field) {
-        return "نوع ملف " + field + " غير صحيح.";
+        return 'نوع ملف ' + field + ' غير صحيح.';
     },
     image: function image(field) {
-        return field + " يجب ان تكون صورة.";
+        return field + ' يجب ان تكون صورة.';
     },
     in: function _in(field) {
-        return "الحقل " + field + " يجب ان يكون قيمة صحيحة.";
+        return 'الحقل ' + field + ' يجب ان يكون قيمة صحيحة.';
     },
     ip: function ip(field) {
-        return field + " يجب ان يكون ip صحيح.";
+        return field + ' يجب ان يكون ip صحيح.';
     },
-    max: function max(field, _ref9) {
-        var _ref10 = _slicedToArray(_ref9, 1);
-
-        var length = _ref10[0];
-        return "الحقل " + field + " يجب ان يحتوي على " + length + " حروف على الأكثر.";
-    },
-    mimes: function mimes(field) {
-        return "نوع ملف " + field + " غير صحيح.";
-    },
-    min: function min(field, _ref11) {
+    max: function max(field, _ref11) {
         var _ref12 = _slicedToArray(_ref11, 1);
 
         var length = _ref12[0];
-        return "الحقل " + field + " يجب ان يحتوي على " + length + " حروف على الأقل.";
+        return 'الحقل ' + field + ' يجب ان يحتوي على ' + length + ' حروف على الأكثر.';
     },
-    not_in: function not_in(field) {
-        return "الحقل " + field + " غير صحيح.";
+    mimes: function mimes(field) {
+        return 'نوع ملف ' + field + ' غير صحيح.';
     },
-    numeric: function numeric(field) {
-        return field + " يمكن ان يحتوي فقط على ارقام.";
-    },
-    regex: function regex(field) {
-        return "الحقل " + field + " غير صحيح.";
-    },
-    required: function required(field) {
-        return field + " مطلوب.";
-    },
-    size: function size(field, _ref13) {
+    min: function min(field, _ref13) {
         var _ref14 = _slicedToArray(_ref13, 1);
 
-        var _size = _ref14[0];
-        return field + " يجب ان يكون اقل من " + _size + " كيلوبايت.";
+        var length = _ref14[0];
+        return 'الحقل ' + field + ' يجب ان يحتوي على ' + length + ' حروف على الأقل.';
+    },
+    not_in: function not_in(field) {
+        return 'الحقل ' + field + ' غير صحيح.';
+    },
+    numeric: function numeric(field) {
+        return field + ' يمكن ان يحتوي فقط على ارقام.';
+    },
+    regex: function regex(field) {
+        return 'الحقل ' + field + ' غير صحيح.';
+    },
+    required: function required(field) {
+        return field + ' مطلوب.';
+    },
+    size: function size(field, _ref15) {
+        var _ref16 = _slicedToArray(_ref15, 1);
+
+        var _size = _ref16[0];
+        return field + ' يجب ان يكون اقل من ' + _size + ' كيلوبايت.';
     },
     url: function url(field) {
-        return "الحقل " + field + " يجب ان يكون رابطاً صحيحاً.";
+        return 'الحقل ' + field + ' يجب ان يكون رابطاً صحيحاً.';
     }
 };
 
@@ -4612,6 +4691,38 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 "use strict";
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
+/* harmony default export */ exports["a"] = function (value) {
+    var _ref = arguments.length <= 1 || arguments[1] === undefined ? ['*'] : arguments[1];
+
+    var _ref2 = _slicedToArray(_ref, 1);
+
+    var decimals = _ref2[0];
+
+    if (Array.isArray(value)) {
+        return false;
+    }
+
+    if (value === null || value === undefined || value === '') {
+        return true;
+    }
+
+    var regexPart = decimals === '*' ? '*' : '{0,' + decimals + '}';
+    var regex = new RegExp('^[0-9]*.?[0-9]' + regexPart + '$');
+
+    if (!regex.test(value)) {
+        return false;
+    }
+
+    return !Number.isNaN(parseFloat(value));
+};
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 /* harmony default export */ exports["a"] = function (value, _ref) {
     var _ref2 = _slicedToArray(_ref, 1);
 
@@ -4624,7 +4735,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4674,7 +4785,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4684,7 +4795,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4700,7 +4811,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4715,7 +4826,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4726,7 +4837,7 @@ var validateImage = function validateImage(file, width, height) {
 }; // eslint-disable-line
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4737,7 +4848,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4756,7 +4867,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4772,7 +4883,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4791,7 +4902,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4802,7 +4913,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 }; // eslint-disable-line
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4811,7 +4922,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4828,7 +4939,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 };
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4845,7 +4956,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 };
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4871,7 +4982,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4888,12 +4999,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 46 */
-/***/ function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ },
 /* 47 */
 /***/ function(module, exports) {
 
@@ -4901,12 +5006,18 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 /***/ },
 /* 48 */
+/***/ function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 
 /* template */
-var __vue_template__ = __webpack_require__(59)
+var __vue_template__ = __webpack_require__(60)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -4936,13 +5047,13 @@ module.exports = __vue_exports__
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 
 /* template */
-var __vue_template__ = __webpack_require__(56)
+var __vue_template__ = __webpack_require__(62)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -4961,9 +5072,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-10", __vue_options__)
+    hotAPI.createRecord("data-v-6", __vue_options__)
   } else {
-    hotAPI.reload("data-v-10", __vue_options__)
+    hotAPI.reload("data-v-6", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] DelayExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -4972,7 +5083,7 @@ module.exports = __vue_exports__
 
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
@@ -4981,7 +5092,7 @@ var __vue_exports__, __vue_options__
 __vue_exports__ = __webpack_require__(18)
 
 /* template */
-var __vue_template__ = __webpack_require__(63)
+var __vue_template__ = __webpack_require__(64)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -5011,52 +5122,13 @@ module.exports = __vue_exports__
 
 
 /***/ },
-/* 51 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* template */
-var __vue_template__ = __webpack_require__(64)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-9", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-9", __vue_options__)
-  }
-})()}
-if (__vue_options__.functional) {console.error("[vue-loader] RejectExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
 /* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 
-/* script */
-__vue_exports__ = __webpack_require__(19)
-
 /* template */
-var __vue_template__ = __webpack_require__(60)
+var __vue_template__ = __webpack_require__(61)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -5080,7 +5152,7 @@ if (false) {(function () {
     hotAPI.reload("data-v-5", __vue_options__)
   }
 })()}
-if (__vue_options__.functional) {console.error("[vue-loader] ValidateData.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+if (__vue_options__.functional) {console.error("[vue-loader] RejectExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
 
 module.exports = __vue_exports__
 
@@ -5092,10 +5164,10 @@ module.exports = __vue_exports__
 var __vue_exports__, __vue_options__
 
 /* script */
-__vue_exports__ = __webpack_require__(20)
+__vue_exports__ = __webpack_require__(19)
 
 /* template */
-var __vue_template__ = __webpack_require__(62)
+var __vue_template__ = __webpack_require__(63)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -5119,7 +5191,7 @@ if (false) {(function () {
     hotAPI.reload("data-v-7", __vue_options__)
   }
 })()}
-if (__vue_options__.functional) {console.error("[vue-loader] ValidateEventExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+if (__vue_options__.functional) {console.error("[vue-loader] ValidateData.vue: functional components are not supported and should be defined in plain js files using render functions.")}
 
 module.exports = __vue_exports__
 
@@ -5131,10 +5203,10 @@ module.exports = __vue_exports__
 var __vue_exports__, __vue_options__
 
 /* script */
-__vue_exports__ = __webpack_require__(21)
+__vue_exports__ = __webpack_require__(20)
 
 /* template */
-var __vue_template__ = __webpack_require__(61)
+var __vue_template__ = __webpack_require__(65)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -5153,9 +5225,48 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6", __vue_options__)
+    hotAPI.createRecord("data-v-9", __vue_options__)
   } else {
-    hotAPI.reload("data-v-6", __vue_options__)
+    hotAPI.reload("data-v-9", __vue_options__)
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] ValidateEventExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* script */
+__vue_exports__ = __webpack_require__(21)
+
+/* template */
+var __vue_template__ = __webpack_require__(57)
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-10", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-10", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] ValidatorExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -5164,7 +5275,140 @@ module.exports = __vue_exports__
 
 
 /***/ },
-/* 55 */
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('pre', [_h('code', {
+    ref: "code"
+  }, [$slots["default"]])])
+}},staticRenderFns: []}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-1", module.exports)
+  }
+}
+
+/***/ },
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email"]), " ", _h('input', {
+    directives: [{
+      name: "model",
+      value: (email),
+      expression: "email"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email')
+    },
+    attrs: {
+      "name": "email",
+      "type": "text",
+      "placeholder": "Email"
+    },
+    domProps: {
+      "value": _s(email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        email = $event.target.value
+      }
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email')),
+      expression: "errors.has('email')"
+    }],
+    staticClass: "error"
+  }, ["Errors: " + _s(_f("json")(errors.collect('email')))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('name')
+    },
+    attrs: {
+      "for": "name"
+    }
+  }, ["Full Name"]), " ", _h('input', {
+    directives: [{
+      name: "model",
+      value: (name),
+      expression: "name"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('name')
+    },
+    attrs: {
+      "name": "name",
+      "type": "text",
+      "placeholder": "Full Name"
+    },
+    domProps: {
+      "value": _s(name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        name = $event.target.value
+      }
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('name')),
+      expression: "errors.has('name')"
+    }],
+    staticClass: "error"
+  }, ["Errors: " + _s(_f("json")(errors.collect('name')))])]), " ", _h('button', {
+    staticClass: "pure-button pure-button-primary",
+    attrs: {
+      "type": "button",
+      "name": "button"
+    },
+    on: {
+      "click": validateForm
+    }
+  }, ["Validate All"]), " ", _h('button', {
+    staticClass: "pure-button button-error",
+    attrs: {
+      "type": "button",
+      "name": "button"
+    },
+    on: {
+      "click": clearErrors
+    }
+  }, ["Clear"])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-model=\"email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s(_f("json")(errors.collect('email'))) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n                    <input v-model=\"name\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s(_f("json")(errors.collect('name'))) + "</span>\n                </div>\n                <button class=\"pure-button pure-button-primary\" @click=\"validateForm\" type=\"button\" name=\"button\">Validate All</button>\n                <button class=\"pure-button button-error\" @click=\"clearErrors\" type=\"button\" name=\"button\">Clear</button>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import { Validator } from 'vee-validate';\n\n        new Vue({\n            el: '#app',\n            validator: null, // private reference\n            data() {\n                return {\n                    email: '',\n                    name: '',\n                    errors: []\n                }\n            },\n            watch: {\n                email(value) {\n                    this.validator.validate('email', value);\n                },\n                name(value) {\n                    this.validator.validate('name', value);\n                }\n            },\n            methods: {\n                validateForm() {\n                    this.validator.validateAll({\n                        email: this.email,\n                        name: this.name\n                    });\n                },\n                clearErrors() {\n                    this.errors.clear();\n                }\n            },\n            ready() {\n                this.validator = new Validator({\n                    email: 'required|email',\n                    name: 'required|alpha|min:3'\n                });\n                this.$set('errors', this.validator.errorBag); // update the data.\n            }\n        });\n    "])])
+}},staticRenderFns: []}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-10", module.exports)
+  }
+}
+
+/***/ },
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -5251,111 +5495,12 @@ module.exports={render:function (){with(this) {
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-1", module.exports)
-  }
-}
-
-/***/ },
-/* 56 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked"
-  }, [_m(0), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('email')
-    },
-    attrs: {
-      "for": "email"
-    }
-  }, ["Email - Delay: 500ms"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('email')
-    },
-    attrs: {
-      "data-rules": "required|email",
-      "data-delay": "500",
-      "name": "email",
-      "type": "text",
-      "placeholder": "Email"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('email')),
-      expression: "errors.has('email')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('email'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('name')
-    },
-    attrs: {
-      "for": "name"
-    }
-  }, ["Name - Delay: 1s"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('name')
-    },
-    attrs: {
-      "data-rules": "required|alpha|min:3",
-      "data-delay": "1000",
-      "name": "name",
-      "type": "text",
-      "placeholder": "Full Name"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('name')),
-      expression: "errors.has('name')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('name'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>Basic Form</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email - Delay: 500ms</label>\n                    <input v-validate data-rules=\"required|email\" data-delay=\"500\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"email\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name - Delay: 1s</label>\n                    <input v-validate data-rules=\"required|alpha|min:3\" data-delay=\"1000\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s("{" + "{ errors.first('name') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
-}},staticRenderFns: [function (){with(this) {
-  return _h('legend', ["Debounced Form"])
-}}]}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-10", module.exports)
-  }
-}
-
-/***/ },
-/* 57 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('pre', [_h('code', {
-    ref: "code"
-  }, [$slots["default"]])])
-}},staticRenderFns: []}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
      require("vue-hot-reload-api").rerender("data-v-2", module.exports)
   }
 }
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -5481,7 +5626,7 @@ if (false) {
 }
 
 /***/ },
-/* 59 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -5531,7 +5676,172 @@ if (false) {
 }
 
 /***/ },
-/* 60 */
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_m(0), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('image')
+    },
+    attrs: {
+      "for": "image"
+    }
+  }, ["Unrejected Image"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('image')
+    },
+    attrs: {
+      "data-rules": "mimes:image/*",
+      "name": "image",
+      "type": "file"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('image')),
+      expression: "errors.has('image')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('image'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('file')
+    },
+    attrs: {
+      "for": "file"
+    }
+  }, ["Rejected Image"]), " ", _h('input', {
+    directives: [{
+      name: "validate",
+      modifiers: {
+        "reject": true
+      }
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('file')
+    },
+    attrs: {
+      "data-rules": "mimes:image/*",
+      "name": "file",
+      "type": "file"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('file')),
+      expression: "errors.has('file')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('file'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>File Upload</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('image') }\" for=\"image\">Unrejected Image</label>\n                    <input v-validate data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('image') }\" name=\"image\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('image')\">" + _s(errors.first('image')) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('file') }\" for=\"file\">Rejected Image</label>\n                    <input  v-validate.reject data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('file')\">" + _s(errors.first('file')) + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('legend', ["File Upload"])
+}}]}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-5", module.exports)
+  }
+}
+
+/***/ },
+/* 62 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_m(0), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email - Delay: 500ms"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email')
+    },
+    attrs: {
+      "data-rules": "required|email",
+      "data-delay": "500",
+      "name": "email",
+      "type": "text",
+      "placeholder": "Email"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email')),
+      expression: "errors.has('email')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('email'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('name')
+    },
+    attrs: {
+      "for": "name"
+    }
+  }, ["Name - Delay: 1s"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('name')
+    },
+    attrs: {
+      "data-rules": "required|alpha|min:3",
+      "data-delay": "1000",
+      "name": "name",
+      "type": "text",
+      "placeholder": "Full Name"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('name')),
+      expression: "errors.has('name')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('name'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>Basic Form</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email - Delay: 500ms</label>\n                    <input v-validate data-rules=\"required|email\" data-delay=\"500\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"email\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name - Delay: 1s</label>\n                    <input v-validate data-rules=\"required|alpha|min:3\" data-delay=\"1000\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s("{" + "{ errors.first('name') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('legend', ["Debounced Form"])
+}}]}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-6", module.exports)
+  }
+}
+
+/***/ },
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -5636,18 +5946,18 @@ module.exports={render:function (){with(this) {
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-5", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-7", module.exports)
   }
 }
 
 /***/ },
-/* 61 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
   return _h('code-example', [_h('form', {
     slot: "example",
-    staticClass: "pure-form pure-form-stacked"
+    staticClass: "pure-form pure-form-stacked rtl"
   }, [_h('div', {
     staticClass: "pure-u-1"
   }, [_h('label', {
@@ -5659,26 +5969,16 @@ module.exports={render:function (){with(this) {
     }
   }, ["Email"]), " ", _h('input', {
     directives: [{
-      name: "model",
-      value: (email),
-      expression: "email"
+      name: "validate"
     }],
     class: {
       'pure-input-1': true, 'has-error': errors.has('email')
     },
     attrs: {
+      "data-rules": "required|email",
+      "data-as": "البريد",
       "name": "email",
-      "type": "text",
-      "placeholder": "Email"
-    },
-    domProps: {
-      "value": _s(email)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) return;
-        email = $event.target.value
-      }
+      "type": "text"
     }
   }), " ", _h('span', {
     directives: [{
@@ -5687,78 +5987,50 @@ module.exports={render:function (){with(this) {
       expression: "errors.has('email')"
     }],
     staticClass: "error"
-  }, ["Errors: " + _s(_f("json")(errors.collect('email')))])]), " ", _h('div', {
+  }, [_s(errors.first('email'))])]), " ", _h('div', {
     staticClass: "pure-u-1"
   }, [_h('label', {
     class: {
-      'error': errors.has('name')
+      'error': errors.has('phone')
     },
     attrs: {
-      "for": "name"
+      "for": "phone"
     }
-  }, ["Full Name"]), " ", _h('input', {
+  }, ["Phone"]), " ", _h('input', {
     directives: [{
-      name: "model",
-      value: (name),
-      expression: "name"
+      name: "validate"
     }],
     class: {
-      'pure-input-1': true, 'has-error': errors.has('name')
+      'pure-input-1': true, 'has-error': errors.has('phone')
     },
     attrs: {
-      "name": "name",
-      "type": "text",
-      "placeholder": "Full Name"
-    },
-    domProps: {
-      "value": _s(name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) return;
-        name = $event.target.value
-      }
+      "data-rules": "required|numeric",
+      "data-as": "رقم الهاتف",
+      "name": "phone",
+      "type": "text"
     }
   }), " ", _h('span', {
     directives: [{
       name: "show",
-      value: (errors.has('name')),
-      expression: "errors.has('name')"
+      value: (errors.has('phone')),
+      expression: "errors.has('phone')"
     }],
     staticClass: "error"
-  }, ["Errors: " + _s(_f("json")(errors.collect('name')))])]), " ", _h('button', {
-    staticClass: "pure-button pure-button-primary",
-    attrs: {
-      "type": "button",
-      "name": "button"
-    },
-    on: {
-      "click": validateForm
-    }
-  }, ["Validate All"]), " ", _h('button', {
-    staticClass: "pure-button button-error",
-    attrs: {
-      "type": "button",
-      "name": "button"
-    },
-    on: {
-      "click": clearErrors
-    }
-  }, ["Clear"])]), " ", _h('div', {
+  }, [_s(errors.first('phone'))])])]), " ", _h('div', {
     slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-model=\"email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s(_f("json")(errors.collect('email'))) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n                    <input v-model=\"name\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s(_f("json")(errors.collect('name'))) + "</span>\n                </div>\n                <button class=\"pure-button pure-button-primary\" @click=\"validateForm\" type=\"button\" name=\"button\">Validate All</button>\n                <button class=\"pure-button button-error\" @click=\"clearErrors\" type=\"button\" name=\"button\">Clear</button>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked rtl\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-validate data-rules=\"required|email\" data-as=\"البريد\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n                    <input v-validate data-rules=\"required|numeric\" data-as=\"رقم الهاتف\" :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('phone')\">" + _s("{" + "{ errors.first('phone') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
     slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import { Validator } from 'vee-validate';\n\n        new Vue({\n            el: '#app',\n            validator: null, // private reference\n            data() {\n                return {\n                    email: '',\n                    name: '',\n                    errors: []\n                }\n            },\n            watch: {\n                email(value) {\n                    this.validator.validate('email', value);\n                },\n                name(value) {\n                    this.validator.validate('name', value);\n                }\n            },\n            methods: {\n                validateForm() {\n                    this.validator.validateAll({\n                        email: this.email,\n                        name: this.name\n                    });\n                },\n                clearErrors() {\n                    this.errors.clear();\n                }\n            },\n            ready() {\n                this.validator = new Validator({\n                    email: 'required|email',\n                    name: 'required|alpha|min:3'\n                });\n                this.$set('errors', this.validator.errorBag); // update the data.\n            }\n        });\n    "])])
+  }, ["\n        import ar from './locale/ar';\n        import Vue from 'vue';\n        import VeeValidate, { Validator } from 'vee-validate';\n        Vue.use(VeeValidate);\n\n        // Merge dictionary messages.\n        Validator.updateDictionary({ ar });\n\n        new Vue({\n            el: 'body',\n            data: {\n                phone: '',\n                email: ''\n            },\n            created() {\n                this.$validator.setLocale('ar'); // Switch locale for this instance.\n            }\n        });\n    "])])
 }},staticRenderFns: []}
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-6", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-8", module.exports)
   }
 }
 
 /***/ },
-/* 62 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -5968,173 +6240,12 @@ module.exports={render:function (){with(this) {
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-7", module.exports)
-  }
-}
-
-/***/ },
-/* 63 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked rtl"
-  }, [_h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('email')
-    },
-    attrs: {
-      "for": "email"
-    }
-  }, ["Email"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('email')
-    },
-    attrs: {
-      "data-rules": "required|email",
-      "data-as": "البريد",
-      "name": "email",
-      "type": "text"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('email')),
-      expression: "errors.has('email')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('email'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('phone')
-    },
-    attrs: {
-      "for": "phone"
-    }
-  }, ["Phone"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('phone')
-    },
-    attrs: {
-      "data-rules": "required|numeric",
-      "data-as": "رقم الهاتف",
-      "name": "phone",
-      "type": "text"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('phone')),
-      expression: "errors.has('phone')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('phone'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked rtl\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-validate data-rules=\"required|email\" data-as=\"البريد\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n                    <input v-validate data-rules=\"required|numeric\" data-as=\"رقم الهاتف\" :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('phone')\">" + _s("{" + "{ errors.first('phone') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import ar from './locale/ar';\n        import Vue from 'vue';\n        import VeeValidate, { Validator } from 'vee-validate';\n        Vue.use(VeeValidate);\n\n        // Merge dictionary messages.\n        Validator.updateDictionary({ ar });\n\n        new Vue({\n            el: 'body',\n            data: {\n                phone: '',\n                email: ''\n            },\n            created() {\n                this.$validator.setLocale('ar'); // Switch locale for this instance.\n            }\n        });\n    "])])
-}},staticRenderFns: []}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-8", module.exports)
-  }
-}
-
-/***/ },
-/* 64 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked"
-  }, [_m(0), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('image')
-    },
-    attrs: {
-      "for": "image"
-    }
-  }, ["Unrejected Image"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('image')
-    },
-    attrs: {
-      "data-rules": "mimes:image/*",
-      "name": "image",
-      "type": "file"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('image')),
-      expression: "errors.has('image')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('image'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('file')
-    },
-    attrs: {
-      "for": "file"
-    }
-  }, ["Rejected Image"]), " ", _h('input', {
-    directives: [{
-      name: "validate",
-      modifiers: {
-        "reject": true
-      }
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('file')
-    },
-    attrs: {
-      "data-rules": "mimes:image/*",
-      "name": "file",
-      "type": "file"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('file')),
-      expression: "errors.has('file')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('file'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>File Upload</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('image') }\" for=\"image\">Unrejected Image</label>\n                    <input v-validate data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('image') }\" name=\"image\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('image')\">" + _s(errors.first('image')) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('file') }\" for=\"file\">Rejected Image</label>\n                    <input  v-validate.reject data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('file')\">" + _s(errors.first('file')) + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
-}},staticRenderFns: [function (){with(this) {
-  return _h('legend', ["File Upload"])
-}}]}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
      require("vue-hot-reload-api").rerender("data-v-9", module.exports)
   }
 }
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
