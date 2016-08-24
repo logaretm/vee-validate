@@ -969,7 +969,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var _ref6 = _slicedToArray(_ref5, 1);
 
         var decimals = _ref6[0];
-        return 'The ' + field + ' must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decmial points.';
+        return 'The ' + field + ' must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decimal points.';
     },
     digits: function digits(field, _ref7) {
         var _ref8 = _slicedToArray(_ref7, 1);
