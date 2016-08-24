@@ -279,7 +279,7 @@ export default class Validator
      * @return {object} rule The normalized rule.
      */
     _normalizeRule(rule) {
-        let params = null;
+        let params = [];
         if (~rule.indexOf(':')) {
             params = rule.split(':')[1].split(',');
         }
