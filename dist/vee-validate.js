@@ -462,7 +462,7 @@ var Validator = function () {
 
             this.errorBag.clear();
             /* istanbul ignore if */
-            if (this.$vm && !this.values) {
+            if (this.$vm && !values) {
                 this.$vm.$emit(EVENT_NAME);
 
                 return;
