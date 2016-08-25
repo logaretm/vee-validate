@@ -3,7 +3,7 @@ import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
 import Messages from './messages';
 import warn from './utils/warn';
-import date from './plugins/date.js';
+import date from './plugins/date';
 
 const EVENT_NAME = 'veeValidate';
 let DEFAULT_LOCALE = 'en';
@@ -300,7 +300,7 @@ export default class Validator
                     normalized[property] = { validations: [] };
                 }
 
-                normalized[property].validations.push(this._normalizeRule(rule, normalized));
+                normalized[property].validations.push(this._normalizeRule(rule, normalized[property].validations));
             });
         });
 
@@ -313,14 +313,23 @@ export default class Validator
      * @param  {string} rule The rule to be normalized.
      * @return {object} rule The normalized rule.
      */
-    _normalizeRule(rule) {
+    _normalizeRule(rule, validations) {
         let params = [];
+        const name = rule.split(':')[0];
         if (~rule.indexOf(':')) {
             params = rule.split(':')[1].split(',');
         }
 
+        // Those rules need the date format to parse and compare correctly.
+        if (date.installed && ~ ['after', 'before', 'date_between'].indexOf(name)) {
+            const dateFormat = validations.filter(v => v.name === 'date_format')[0];
+            if (dateFormat) {
+                params.push(dateFormat.params[0]);
+            }
+        }
+
         return {
-            name: rule.split(':')[0],
+            name,
             params
         };
     }

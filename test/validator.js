@@ -228,3 +228,14 @@ test('it should resolve promises to booleans', async t => {
     value = await v.validate('image', [mocks.file('file.jpg', 'image/jpeg', 10)], params);
     t.false(value);
 });
+
+test('it installs date validators', t => {
+    const moment = require('moment');
+    Validator.installDateTimeValidators(moment);
+    const v = new Validator({
+        birthday: 'date_format:DD/MM/YYYY|after:field',
+    });
+    mocks.querySelector({ value: '2/1/2008' });
+    t.true(v.validate('birthday', '1/12/2008'));
+    t.false(v.validate('birthday', '1/1/2008'));
+});
