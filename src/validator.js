@@ -46,10 +46,12 @@ export default class Validator
     static installDateTimeValidators(moment) {
         if (typeof moment !== 'function') {
             warn('To use the date-time validators you must provide moment reference.');
+
+            return false;
         }
 
         if (date.installed) {
-            return;
+            return true;
         }
 
         const validators = date.make(moment);
@@ -59,6 +61,8 @@ export default class Validator
 
         Validator.updateDictionary(date.messages);
         date.installed = true;
+
+        return true;
     }
 
     /**

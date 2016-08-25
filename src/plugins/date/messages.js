@@ -1,3 +1,5 @@
+/* istanbul ignore next */
+/* eslint-disable max-len */
 export default {
     en: {
         date_format: (field, [format]) => `The ${field} must be in the format ${format}.`,
