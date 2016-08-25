@@ -8,9 +8,7 @@
     </head>
     <body>
         <div id="app">
-            <app heading="Vee-Validate"
-                 subtitle="Simple VueJS Form Validation"
-            >
+            <app heading="Vee-Validate" subtitle="Simple VueJS Form Validation">
                 <h2 id="about" class="content-subhead"><a href="#about">What is vee-validate?</a></h2>
                 <p>
                     This is a lightweight plugin for <a href="https://vuejs.org/" class="link">VueJS</a> that allows you to validate input fields, and display errors.
@@ -22,10 +20,18 @@
                     <br><br>
                     Currently there are over 20 validation rules available in the plugin.
                     This plugin is inspired by <a href="https://laravel.com/" class="link">PHP Framework Laravel's validation syntax</a>.
+                    <br><br>It also supports Vue 2.0, All examples here are built using Vue 2.0 with the plugin.
                 </p>
                 <h2 id="installation" class="content-subhead"><a href="#installation">Installation</a></h2>
                 <p>
+                    <b>Vue 1.x</b>
                     <code-block class="language-bash">npm install vee-validate --save</code-block>
+                    <b>Vue 2.x</b>
+                    <code-block class="language-bash">npm install vee-validate@next --save</code-block>
+                    <div class="note">
+                        <b>Note:</b> The latest version of this plugin will keep pointing to the Vue 1.x version, until Vue 2.0 is released which is soon, then the latest will point to Vue 2.0 while another tag will be used for the Vue 1.x versions.
+                    </div>
+                    <br>
 
                     or if you are using Vue 2.0:
                     <code-block class="language-bash">npm install vee-validate@next --save</code-block>
@@ -70,16 +76,17 @@
                     <br><br>The errors object exposes a simple methods to help you render errors:
                     <ul>
                         <li><code class="inline">first('field')</code> Fetches the first error message associated with that field.</li>
-                        <li><code class="inline">collect('field')</code> Fetches all error messages associated with that field.</li>
+                        <li><code class="inline">collect('field')</code> Fetches all error messages associated with that field. alternativly you can pass nothing and it will return errors grouped by fields</li>
                         <li><code class="inline">has('field')</code> Checks if there are any errors associated with that field.</li>
                         <li><code class="inline">all()</code> Gets all error messages.</li>
+                        <li><code class="inline">any()</code> Checks if there are any errors.</li>
                     </ul>
                     There are a few more <a class="link" href="api.html#error-bag">methods</a> that you can use to manipulate the errors object.
                 </p>
                 <h2 id="available-rules" class="content-subhead"><a href="#available-rules">Available Rules</a></h2>
                 <p>There are more than 20 rules available to validate your inputs:</p>
                 <div class="pure-g">
-                    <div v-for="group in rules" class="pure-u-1-{{ rules.length }}">
+                    <div v-for="group in rules" :class="'pure-u-1-' + rules.length">
                         <ul>
                             <li v-for="rule in group"><a class="link" :href="'rules.html#rule-' + rule">{{ rule }}</a></li>
                         </ul>

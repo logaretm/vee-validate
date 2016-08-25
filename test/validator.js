@@ -228,3 +228,29 @@ test('it should resolve promises to booleans', async t => {
     value = await v.validate('image', [mocks.file('file.jpg', 'image/jpeg', 10)], params);
     t.false(value);
 });
+
+test('it wont install moment if the provided reference is not provided or not a function', t => {
+    t.false(Validator.installDateTimeValidators());
+    t.false(Validator.installDateTimeValidators('But I am moment!')); // nope.
+});
+
+test('it installs date validators', t => {
+    const moment = require('moment');
+    t.true(Validator.installDateTimeValidators(moment));
+    const v = new Validator({
+        birthday: 'date_format:DD/MM/YYYY|after:field',
+    });
+    mocks.querySelector({ value: '2/1/2008' });
+    t.true(v.validate('birthday', '1/12/2008'));
+    t.false(v.validate('birthday', '1/1/2008'));
+});
+
+test('it auto installs date validators if moment is present globally', t => {
+    global.moment = require('moment');
+    const v = new Validator({
+        birthday: 'date_format:DD/MM/YYYY|after:field',
+    });
+    mocks.querySelector({ value: '2/1/2008' });
+    t.true(v.validate('birthday', '1/12/2008'));
+    t.false(v.validate('birthday', '1/1/2008'));
+});

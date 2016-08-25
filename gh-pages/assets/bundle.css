@@ -1678,9 +1678,10 @@ pre.line-numbers > code {
 			display: block;
 			padding-right: 0.8em;
 			text-align: right;
-		}div.prism-show-language > div.prism-show-language-label {
-  top: 8px !important; }
-
+		}
+div.prism-show-language > div.prism-show-language-label {
+  top: 8px !important;
+}
 
 
 

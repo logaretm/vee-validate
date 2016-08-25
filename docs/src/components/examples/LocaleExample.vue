@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import messages from './../../../dist/locale/ar';
+import messages from './../../../../dist/locale/ar';
 export default {
     data() {
         return {

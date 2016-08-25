@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import { Validator } from './../../../dist/vee-validate';
+import { Validator } from './../../../../dist/vee-validate';
 export default {
     validator: null,
     data() {
@@ -109,7 +109,7 @@ export default {
             this.errors.clear();
         }
     },
-    ready() {
+    mounted() {
         this.validator = new Validator({
             email: 'required|email',
             name: 'required|alpha|min:3'

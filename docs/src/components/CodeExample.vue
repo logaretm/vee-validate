@@ -24,7 +24,7 @@
                 </ul>
             </div>
         </div>
-        <div v-show="content === 'demo'" v-el="example" class="pure-u-1">
+        <div v-show="content === 'demo'" class="pure-u-1">
             <slot name="example"></slot>
         </div>
         <div v-show="content === 'html'" class="pure-u-1">
