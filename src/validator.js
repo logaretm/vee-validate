@@ -300,7 +300,7 @@ export default class Validator
                     normalized[property] = { validations: [] };
                 }
 
-                normalized[property].validations.push(this._normalizeRule(rule));
+                normalized[property].validations.push(this._normalizeRule(rule, normalized));
             });
         });
 

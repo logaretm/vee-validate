@@ -1,8 +1,8 @@
 import test from 'ava';
 import moment from 'moment';
-import date from './../../src/plugins/date';
+import dateFormat from './../../src/plugins/date/date_format';
 
-const validate = date.make(moment).date_format;
+const validate = dateFormat(moment);
 
 test('it validates a date format', t => {
     t.true(validate('2010-10-20 04:30', ['YYYY-MM-DD HH:mm']));
