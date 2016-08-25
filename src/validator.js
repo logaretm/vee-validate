@@ -6,6 +6,7 @@ import warn from './utils/warn';
 
 const EVENT_NAME = 'veeValidate';
 let DEFAULT_LOCALE = 'en';
+let STRICT_MODE = true;
 
 /* eslint-disable no-underscore-dangle */
 
@@ -13,6 +14,7 @@ export default class Validator
 {
     constructor(validations, $vm) {
         this.locale = DEFAULT_LOCALE;
+        this.strictMode = STRICT_MODE;
         this.$fields = this._normalize(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
@@ -31,6 +33,16 @@ export default class Validator
         }
 
         DEFAULT_LOCALE = language;
+    }
+
+    /**
+     * Sets default strict mode value for all validators.
+     *
+     * @param {Boolean} strictMode Whether to run in strict mode.
+     */
+    static setStrictMode(strictMode = true) {
+
+        STRICT_MODE = strictMode;
     }
 
     /**
@@ -233,6 +245,9 @@ export default class Validator
      */
     validate(name, value) {
         if (! this.$fields[name]) {
+        	/* istanbul ignore if */
+        	if (!this.strictMode) { return true }
+
             warn('You are trying to validate a non-existant field. Use "attach()" first.');
 
             return false;
