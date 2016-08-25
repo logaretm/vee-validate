@@ -300,7 +300,9 @@ export default class Validator
                     normalized[property] = { validations: [] };
                 }
 
-                normalized[property].validations.push(this._normalizeRule(rule, normalized[property].validations));
+                normalized[property].validations.push(
+                    this._normalizeRule(rule, normalized[property].validations)
+                );
             });
         });
 
@@ -324,6 +326,7 @@ export default class Validator
         if (date.installed && ~ ['after', 'before', 'date_between'].indexOf(name)) {
             const dateFormat = validations.filter(v => v.name === 'date_format')[0];
             if (dateFormat) {
+                // pass it as the last param.
                 params.push(dateFormat.params[0]);
             }
         }

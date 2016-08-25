@@ -1,14 +1,12 @@
 export default (moment) => (value, [targetField, format]) => {
     const dateValue = moment(value, format);
+    const field = document.querySelector(`input[name='${targetField}']`);
 
-    if (! dateValue.isValid()) {
+    if (! dateValue.isValid() || ! field) {
         return false;
     }
 
-    const other = moment(
-        document.querySelector(`input[name='${targetField}']`).value,
-        format
-    );
+    const other = moment(field.value, format);
 
     if (! other.isValid()) {
         return false;
