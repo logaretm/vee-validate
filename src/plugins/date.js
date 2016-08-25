@@ -41,5 +41,6 @@ const messages = {
 
 export default {
     make,
-    messages
+    messages,
+    installed: false
 };

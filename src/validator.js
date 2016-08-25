@@ -48,12 +48,17 @@ export default class Validator
             warn('To use the date-time validators you must provide moment reference.');
         }
 
+        if (date.installed) {
+            return;
+        }
+
         const validators = date.make(moment);
         Object.keys(validators).forEach(name => {
             Validator.extend(name, validators[name]);
         });
 
         Validator.updateDictionary(date.messages);
+        date.installed = true;
     }
 
     /**
