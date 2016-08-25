@@ -144,6 +144,12 @@ test('it can set the default locale for newly created validators', t => {
     Validator.updateDictionary({ ar: { alpha: '' } }); // reset the dictionary for other tests.
 });
 
+test('it can override the default strict mode for newly created validators', t => {
+    Validator.setStrictMode(false);
+    const loc = new Validator({ name: 'alpha' });
+    t.true(loc.validate('location', '1234'));
+});
+
 test('it throws an exception when extending with an invalid validator', t => {
     // Static Extend.
     // No getMessage nor a validate method.
