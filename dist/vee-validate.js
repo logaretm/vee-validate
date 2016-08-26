@@ -494,11 +494,23 @@ var Validator = function () {
             }
 
             var test = true;
+            var promise = null;
             Object.keys(values).forEach(function (property) {
-                test = _this2.validate(property, values[property]);
+                var result = _this2.validate(property, values[property]);
+                if (result instanceof Promise) {
+                    promise = result;
+                } else if (!result) {
+                    test = false;
+                }
             });
-            // eslint-disable-next-line
-            return test;
+
+            if (test && promise instanceof Promise) {
+                return promise.then(function (t) {
+                    return t && test;
+                }); // eslint-disable-line
+            }
+
+            return test; // eslint-disable-line
         }
 
         /**
@@ -522,10 +534,22 @@ var Validator = function () {
             }
 
             var test = true;
+            var promise = null;
             this.errorBag.remove(name);
             this.$fields[name].validations.forEach(function (rule) {
-                test = _this3._test(name, value, rule);
+                var result = _this3._test(name, value, rule);
+                if (result instanceof Promise) {
+                    promise = result;
+                } else if (!result) {
+                    test = false;
+                }
             });
+
+            if (test && promise instanceof Promise) {
+                return promise.then(function (t) {
+                    return t && test;
+                });
+            }
 
             return test;
         }
@@ -1087,14 +1111,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var targetField = _ref2[0];
         var format = _ref2[1];
 
-        var dateValue = moment(value, format);
+        var dateValue = moment(value, format, true);
         var field = document.querySelector("input[name='" + targetField + "']");
 
         if (!(dateValue.isValid() && field)) {
             return false;
         }
 
-        var other = moment(field.value, format);
+        var other = moment(field.value, format, true);
 
         if (!other.isValid()) {
             return false;
@@ -1118,14 +1142,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var targetField = _ref2[0];
         var format = _ref2[1];
 
-        var dateValue = moment(value, format);
+        var dateValue = moment(value, format, true);
         var field = document.querySelector("input[name='" + targetField + "']");
 
         if (!dateValue.isValid() || !field) {
             return false;
         }
 
-        var other = moment(field.value, format);
+        var other = moment(field.value, format, true);
 
         if (!other.isValid()) {
             return false;
@@ -1150,9 +1174,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var max = _ref2[1];
         var format = _ref2[2];
 
-        var minDate = moment(min, format);
-        var maxDate = moment(max, format);
-        var dateVal = moment(value, format);
+        var minDate = moment(min, format, true);
+        var maxDate = moment(max, format, true);
+        var dateVal = moment(value, format, true);
 
         if (!(minDate.isValid() && maxDate.isValid() && dateVal.isValid())) {
             return false;
@@ -1593,7 +1617,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     if (value === undefined || value === null) {
         return false;
     }
-
     return String(value).length >= length;
 };
 
