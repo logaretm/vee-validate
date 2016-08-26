@@ -203,7 +203,9 @@ export default class Validator
         this.errorBag.remove(name);
 
         checks.split('|').forEach(rule => {
-            this.$fields[name].validations.push(this._normalizeRule(rule));
+            this.$fields[name].validations.push(
+                this._normalizeRule(rule, this.$fields[name].validations)
+            );
         });
 
         if (prettyName) {
@@ -260,9 +262,11 @@ export default class Validator
             const result = this.validate(property, values[property]);
             if (result instanceof Promise) {
                 promise = result;
-            } else if (! result) {
-                test = false;
+
+                return;
             }
+
+            test = test && result;
         });
 
         if (test && promise instanceof Promise) {
@@ -294,9 +298,11 @@ export default class Validator
             const result = this._test(name, value, rule);
             if (result instanceof Promise) {
                 promise = result;
-            } else if (! result) {
-                test = false;
+
+                return;
             }
+
+            test = test && result;
         });
 
         if (test && promise instanceof Promise) {

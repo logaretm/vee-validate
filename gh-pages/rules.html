@@ -29,10 +29,10 @@
                 </p>
                 <h2 id="available-rules" class="content-subhead"><a href="#available-rules">Available Rules</a></h2>
                 <p>
-                    <code class="inline">vee-validate</code> Comes out of the box with 21 validation rules, which are:
+                    <code class="inline">vee-validate</code> Comes out of the box with many validation rules, which are:
                 </p>
                 <div class="pure-g">
-                    <div v-for="group in rules" class="pure-u-1-{{ rules.length }}">
+                    <div v-for="group in rules" :class="'pure-u-1-' + rules.length">
                         <ul>
                             <li v-for="rule in group"><a class="link" :href="'rules.html#rule-' + rule">{{ rule }}</a></li>
                         </ul>
@@ -40,11 +40,35 @@
                 </div>
                 <div class="rules">
                     <div class="note">
+                        <b>Note: </b>Date validators always require the <code>date_format</code> rule to be always present and must preceed them in the rules order. The date validators are not enabled by default, they require <a href="http://momentjs.com">momentjs</a> in order to work.
+                        If your setup contains momentjs globally, it will be installed automatically for all validator instances. otherwise you may want to pass the moment reference to <code>installDateTimeValidators(moment)</code> which is available both statically and on instances.
+                    </div>
+                    <br>
+                    <div class="note">
                         <b>Note: </b>In the rule signature required parameters are enclosed within <code>{}</code> like this: <code>{param}</code>.
                         <br>
                         Optional parameters have a <code>?</code> at the end: <code>{optional?}</code>.
                         <br>
                         Lists are enclosed withn brackets <code>[]</code>. ex: <code>[list]</code>.
+                    </div>
+                    <div class="rule" id="rule-after">
+                        <b class="important">after:{target}</b>
+                        <div class="description">
+                            The field under validation must have a valid date and is after the date value in the target field.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">target:</code>The input name to be validated against. must have the same format as the date_format rule.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="date_format:DD/MM/YYYY|after:after_field_target" name="after_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('after_field') }" type="text" placeholder="DD/MM/YYYY">
+                                <span class="error" v-show="errors.has('after_field')">{{ errors.first('after_field') }}</span>
+                                <input name="after_field_target" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('after_field') }" type="text" placeholder="DD/MM/YYYY">
+                            </form>
+                        </div>
                     </div>
                     <div class="rule" id="rule-alpha">
                         <b class="important">alpha</b>
@@ -79,6 +103,19 @@
                             <form class="pure-form pure-form-stacked">
                                 <input v-validate data-rules="alpha_num" name="alpha_num_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_num_field') }" type="text" placeholder="Enter a string with numbers">
                                 <span class="error" v-show="errors.has('alpha_num_field')">{{ errors.first('alpha_num_field') }}</span>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-before">
+                        <b class="important">before:{target}</b>
+                        <div class="description">
+                            The field under validation must have a valid date and is before the date value in the target field.
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="date_format:DD/MM/YYYY|before:before_field_target" name="before_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('before_field') }" type="text" placeholder="DD/MM/YYYY">
+                                <span class="error" v-show="errors.has('before_field')">{{ errors.first('before_field') }}</span>
+                                <input name="before_field_target" :class="{'pure-input-1': true, 'has-error': errors.has('alpha_field') }" type="text" placeholder="DD/MM/YYYY">
                             </form>
                         </div>
                     </div>
@@ -117,6 +154,61 @@
                                 <input v-validate data-rules="confirmed:pw_confirm" name="confirm_field" data-as="password" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password" placeholder="Enter The Password">
                                 <span class="error" v-show="errors.has('confirm_field')">{{ errors.first('confirm_field') }}</span>
                                 <input name="pw_confirm" :class="{'pure-input-1': true, 'has-error': errors.has('confirm_field') }" type="password" placeholder="Confirm the password">
+                            </form>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-date_between">
+                        <b class="important">date_between:{min,max}</b>
+                        <div class="description">
+                            The field under validation must be a valid date between the two dates specified.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">min:</code>The minimum allowed value for date. must be in the same format as the date_format rule.</li>
+                                <li><code class="inline">max:</code>The maximum allowed value for date. must be in the same format as the date_format rule.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="date_format:DD/MM/YYYY|between:10/09/2016,20/09/2016" name="date_between_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('date_between_field') }" type="text" placeholder="DD/MM/YYYY betweem 10/09/2016 and 20/09/2016">
+                                <span class="error" v-show="errors.has('date_between_field')">{{ errors.first('date_between_field') }}</span>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-date_format">
+                        <b class="important">date_format:{format}</b>
+                        <div class="description">
+                            The field under validation must be a valid date in the specified format. This rule must be present when using any date rules.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">format:</code> The date format. See <a href="http://momentjs.com/docs/#/parsing/string-format/">momentjs parsing.</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="date_format:DD/MM/YYYY" name="date_format_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('date_format_field') }" type="text" placeholder="DD/MM/YYYY">
+                                <span class="error" v-show="errors.has('date_format_field')">{{ errors.first('date_format_field') }}</span>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="rule" id="rule-decimal">
+                        <b class="important">decimal:{decimals?}</b>
+                        <div class="description">
+                            The field under validation must be numeric and may contain the specified amount of decmial points.
+                        </div>
+                        <div class="args">
+                            <code class="inline">args:</code>
+                            <ul>
+                                <li><code class="inline">decmials:</code> The maximum allowed number of decimal point numbers. Not passing the decmials will accept numeric data which may or may not contain decimal point numbers.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <form class="pure-form pure-form-stacked">
+                                <input v-validate data-rules="decimal:3" name="decimal_field" data-as="field" :class="{'pure-input-1': true, 'has-error': errors.has('decimal_field') }" type="text" placeholder="Enter a numeric value with decmials">
+                                <span class="error" v-show="errors.has('decimal_field')">{{ errors.first('decimal_field') }}</span>
                             </form>
                         </div>
                     </div>
