@@ -17,6 +17,16 @@ test('it can validate single values', t => {
     t.false(validator.validate('title', 'a'.repeat(256)));
 });
 
+test('it validates correctly regardless of rule placement', t => {
+    const result1 = validator.validate('title', 'Winter is coming');
+    const result2 = validator.validate('title', 'No');
+    const result3 = validator.validate('content', 'Winter is coming says everyone in the north');
+
+    t.true(result1);
+    t.false(result2);
+    t.false(result3);
+});
+
 test('it can be initialized with static create method', t => {
     const validator2 = Validator.create();
     t.true(validator2 instanceof Validator);
