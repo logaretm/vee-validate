@@ -428,7 +428,7 @@ var Validator = function () {
             this.errorBag.remove(name);
 
             checks.split('|').forEach(function (rule) {
-                _this.$fields[name].validations.push(_this._normalizeRule(rule));
+                _this.$fields[name].validations.push(_this._normalizeRule(rule, _this.$fields[name].validations));
             });
 
             if (prettyName) {
@@ -499,9 +499,10 @@ var Validator = function () {
                 var result = _this2.validate(property, values[property]);
                 if (result instanceof Promise) {
                     promise = result;
-                } else if (!result) {
-                    test = false;
+                    return;
                 }
+
+                test = test && result;
             });
 
             if (test && promise instanceof Promise) {
@@ -540,9 +541,10 @@ var Validator = function () {
                 var result = _this3._test(name, value, rule);
                 if (result instanceof Promise) {
                     promise = result;
-                } else if (!result) {
-                    test = false;
+                    return;
                 }
+
+                test = test && result;
             });
 
             if (test && promise instanceof Promise) {
