@@ -10,6 +10,13 @@ const validator = new Validator({
     tags: 'required|in:1,2,3,5'
 });
 
+test('it can validate single values', t => {
+    t.true(validator.validate('title', 'abc'));
+    t.false(validator.validate('title', 'ab'));
+    t.false(validator.validate('title', ''));
+    t.false(validator.validate('title', 'a'.repeat(256)));
+});
+
 test('it can be initialized with static create method', t => {
     const validator2 = Validator.create();
     t.true(validator2 instanceof Validator);
@@ -20,7 +27,7 @@ test('it can be initialized without validations', t => {
     t.true(validator2 instanceof Validator);
 });
 
-test('it validates all values', t => {
+test('it validates multiple values', t => {
     const result = validator.validateAll({
         email: 'foo@bar.com',
         name: 'John Snow',
@@ -31,6 +38,19 @@ test('it validates all values', t => {
 
     t.true(result);
     t.deepEqual(validator.errorBag.all(), []);
+});
+
+test('it fails validation on a one-of-many failure', t => {
+    const result = validator.validateAll({
+        email: 'foo@bar.com',
+        name: 'John Snow',
+        title: 'No',
+        content: 'John knows nothing',
+        tags: 1
+    });
+
+    t.false(result);
+    t.deepEqual(validator.errorBag.all(), ["The title must be at least 3 characters."]);
 });
 
 test('it formats error messages', t => {
@@ -164,7 +184,6 @@ test('it throws an exception when extending with an invalid validator', t => {
     });
 });
 
-
 test('it defaults to english messages if no current locale counterpart is found', t => {
     const loc = new Validator({ first_name: 'alpha' });
     loc.setLocale('ar');
@@ -237,20 +256,16 @@ test('it wont install moment if the provided reference is not provided or not a 
 test('it installs date validators', t => {
     const moment = require('moment');
     t.true(Validator.installDateTimeValidators(moment));
-    const v = new Validator({
-        birthday: 'date_format:DD/MM/YYYY|after:field',
-    });
-    mocks.querySelector({ value: '2/1/2008' });
-    t.true(v.validate('birthday', '1/12/2008'));
-    t.false(v.validate('birthday', '1/1/2008'));
+    const v = new Validator({ birthday: 'date_format:DD/MM/YYYY|after:field' });
+    mocks.querySelector({ value: '02/01/2008' });
+    t.true(v.validate('birthday', '01/12/2008'));
+    t.false(v.validate('birthday', '01/01/2008'));
 });
 
 test('it auto installs date validators if moment is present globally', t => {
     global.moment = require('moment');
-    const v = new Validator({
-        birthday: 'date_format:DD/MM/YYYY|after:field',
-    });
-    mocks.querySelector({ value: '2/1/2008' });
-    t.true(v.validate('birthday', '1/12/2008'));
-    t.false(v.validate('birthday', '1/1/2008'));
+    const v = new Validator({ birthday: 'date_format:DD/MM/YYYY|after:field' });
+    mocks.querySelector({ value: '02/01/2008' });
+    t.true(v.validate('birthday', '01/12/2008'));
+    t.false(v.validate('birthday', '01/01/2008'));
 });

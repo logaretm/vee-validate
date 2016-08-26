@@ -255,11 +255,21 @@ export default class Validator
         }
 
         let test = true;
+        let promise = null;
         Object.keys(values).forEach(property => {
-            test = this.validate(property, values[property]);
+            const result = this.validate(property, values[property]);
+            if (result instanceof Promise) {
+                promise = result;
+            } else if (! result) {
+                test = false;
+            }
         });
-        // eslint-disable-next-line
-        return test;
+
+        if (test && promise instanceof Promise) {
+            return promise.then(t => t && test); // eslint-disable-line
+        }
+
+        return test; // eslint-disable-line
     }
 
     /**
@@ -278,10 +288,20 @@ export default class Validator
         }
 
         let test = true;
+        let promise = null;
         this.errorBag.remove(name);
         this.$fields[name].validations.forEach(rule => {
-            test = this._test(name, value, rule);
+            const result = this._test(name, value, rule);
+            if (result instanceof Promise) {
+                promise = result;
+            } else if (! result) {
+                test = false;
+            }
         });
+
+        if (test && promise instanceof Promise) {
+            return promise.then(t => t && test);
+        }
 
         return test;
     }
