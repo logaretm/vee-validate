@@ -43,13 +43,12 @@ export default class Validator
     }
 
     /**
-     * Sets the operating mode for all validators.
+     * Sets the operating mode for all newly created validators.
      * strictMode = true: Values without a rule are invalid and cause failure.
      * strictMode = false: Values without a rule are valid and are skipped.
-     * @param {String} language The locale id.
+     * @param {Boolean} strictMode.
      */
     static setStrictMode(strictMode = true) {
-
         STRICT_MODE = strictMode;
     }
 
@@ -83,6 +82,16 @@ export default class Validator
      */
     installDateTimeValidators(moment) {
         Validator.installDateTimeValidators(moment);
+    }
+
+    /**
+     * Sets the operating mode for this validator.
+     * strictMode = true: Values without a rule are invalid and cause failure.
+     * strictMode = false: Values without a rule are valid and are skipped.
+     * @param {Boolean} strictMode.
+     */
+    setStrictMode(strictMode = true) {
+        this.strictMode = strictMode;
     }
 
     /**
@@ -299,7 +308,7 @@ export default class Validator
      */
     validate(name, value) {
         if (! this.$fields[name]) {
-        	if (! this.strictMode) { return true }
+            if (! this.strictMode) { return true; }
             warn('You are trying to validate a non-existant field. Use "attach()" first.');
 
             return false;

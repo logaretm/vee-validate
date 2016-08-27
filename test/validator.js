@@ -78,6 +78,30 @@ test('it bypasses values without rules in strictMode = off', t => {
     Validator.setStrictMode(true) // reset strictMode for remaining tests
 });
 
+test('it can set strict mode on specific instances', t => {
+	const validator3 = new Validator({
+		imp: 'required'
+	});
+    let result = validator3.validateAll({
+    	imp: 'Tyrion Lannister',
+        headless: 'Ned Stark'
+    });
+    t.false(result); // strict = true.
+    validator3.setStrictMode(false);
+    result = validator3.validateAll({
+    	imp: 'Tyrion Lannister',
+        headless: 'Ned Stark'
+    });
+
+    t.true(result); // strict = false.
+
+    result = new Validator({ imp: 'required' }).validateAll({
+    	imp: 'Tyrion Lannister',
+        headless: 'Ned Stark'
+    });
+    t.false(result); // strict = true because this is a different instance.
+});
+
 test('it formats error messages', t => {
     const result = validator.validateAll({
         email: 'foo@bar.c',
