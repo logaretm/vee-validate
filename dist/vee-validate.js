@@ -383,6 +383,21 @@ var Validator = function () {
         }
 
         /**
+         * Sets the operating mode for this validator.
+         * strictMode = true: Values without a rule are invalid and cause failure.
+         * strictMode = false: Values without a rule are valid and are skipped.
+         * @param {Boolean} strictMode.
+         */
+
+    }, {
+        key: 'setStrictMode',
+        value: function setStrictMode() {
+            var strictMode = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+            this.strictMode = strictMode;
+        }
+
+        /**
          * Updates the messages dicitionary, overwriting existing values and adding new ones.
          *
          * @param  {object} messages The messages object.
@@ -708,17 +723,16 @@ var Validator = function () {
         }
 
         /**
-         * Sets the operating mode for all validators.
+         * Sets the operating mode for all newly created validators.
          * strictMode = true: Values without a rule are invalid and cause failure.
          * strictMode = false: Values without a rule are valid and are skipped.
-         * @param {String} language The locale id.
+         * @param {Boolean} strictMode.
          */
 
     }, {
         key: 'setStrictMode',
         value: function setStrictMode() {
             var strictMode = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
-
 
             STRICT_MODE = strictMode;
         }
