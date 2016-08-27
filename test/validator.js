@@ -63,6 +63,21 @@ test('it fails validation on a one-of-many failure', t => {
     t.deepEqual(validator.errorBag.all(), ["The title must be at least 3 characters."]);
 });
 
+test('it bypasses values without rules in strictMode = off', t => {
+	Validator.setStrictMode(false)
+	const validator3 = new Validator({
+		imp: 'required'
+	});
+    const result = validator3.validateAll({
+    	imp: 'Tyrion Lannister',
+        headless: 'Ned Stark'
+    });
+
+    t.true(result);
+    t.deepEqual(validator3.errorBag.all(), []);
+    Validator.setStrictMode(true) // reset strictMode for remaining tests
+});
+
 test('it formats error messages', t => {
     const result = validator.validateAll({
         email: 'foo@bar.c',
