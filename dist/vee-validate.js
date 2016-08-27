@@ -343,6 +343,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var EVENT_NAME = 'veeValidate';
 var DEFAULT_LOCALE = 'en';
+var STRICT_MODE = true;
 
 /* eslint-disable no-underscore-dangle */
 
@@ -351,6 +352,7 @@ var Validator = function () {
         _classCallCheck(this, Validator);
 
         this.locale = DEFAULT_LOCALE;
+        this.strictMode = STRICT_MODE;
         this.$fields = this._normalize(validations);
         this.errorBag = new __WEBPACK_IMPORTED_MODULE_1__errorBag__["a" /* default */]();
         this.$vm = $vm;
@@ -529,6 +531,9 @@ var Validator = function () {
             var _this3 = this;
 
             if (!this.$fields[name]) {
+                if (!this.strictMode) {
+                    return true;
+                }
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are trying to validate a non-existant field. Use "attach()" first.');
 
                 return false;
@@ -700,6 +705,22 @@ var Validator = function () {
             }
 
             DEFAULT_LOCALE = language;
+        }
+
+        /**
+         * Sets the operating mode for all validators.
+         * strictMode = true: Values without a rule are invalid and cause failure.
+         * strictMode = false: Values without a rule are valid and are skipped.
+         * @param {String} language The locale id.
+         */
+
+    }, {
+        key: 'setStrictMode',
+        value: function setStrictMode() {
+            var strictMode = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+
+            STRICT_MODE = strictMode;
         }
 
         /**

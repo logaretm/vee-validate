@@ -7,6 +7,7 @@ import date from './plugins/date';
 
 const EVENT_NAME = 'veeValidate';
 let DEFAULT_LOCALE = 'en';
+let STRICT_MODE = true;
 
 /* eslint-disable no-underscore-dangle */
 
@@ -14,6 +15,7 @@ export default class Validator
 {
     constructor(validations, $vm) {
         this.locale = DEFAULT_LOCALE;
+        this.strictMode = STRICT_MODE;
         this.$fields = this._normalize(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
@@ -38,6 +40,17 @@ export default class Validator
         }
 
         DEFAULT_LOCALE = language;
+    }
+
+    /**
+     * Sets the operating mode for all validators.
+     * strictMode = true: Values without a rule are invalid and cause failure.
+     * strictMode = false: Values without a rule are valid and are skipped.
+     * @param {String} language The locale id.
+     */
+    static setStrictMode(strictMode = true) {
+
+        STRICT_MODE = strictMode;
     }
 
     /**
@@ -285,6 +298,7 @@ export default class Validator
      */
     validate(name, value) {
         if (! this.$fields[name]) {
+        	if (! this.strictMode) { return true }
             warn('You are trying to validate a non-existant field. Use "attach()" first.');
 
             return false;
