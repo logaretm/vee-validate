@@ -103,7 +103,8 @@
                         errorBagName: 'errors', // change if property conflicts.
                         delay: 0,
                         locale: 'en',
-                        messages: null
+                        messages: null,
+                        strict: true
                     };
 
                     Vue.use(VeeValidate, config);
@@ -113,6 +114,7 @@
                     <li><code class="inline">delay:</code> The default debounce time for all inputs (only affects validations).</li>
                     <li><code class="inline">locale:</code> The default language for the validation messages.</li>
                     <li><code class="inline">messages:</code> The messages to be generated for the validation errors, check <a href="rules.html#custom-messages">custom messages</a> section.</li>
+                    <li><code class="inline">strict:</code> Fields that have no rules will fail validation unless <code class="inline">strict</code> is set to false.</li>
                 </ul>
             </app>
         </div>
