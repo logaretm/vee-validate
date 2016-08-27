@@ -62,4 +62,6 @@ Read the [documentation and demos](https://logaretm.github.io/vee-validate/).
 You are welcome to contribute to this repo with anything you think is useful. fixes are more than welcome.
 However if you are adding a new validation rule, it should have multiple uses or as generic as possible.
 
+You can find more information in the [contribution guide](contributing.md).
+
 ### license MIT
