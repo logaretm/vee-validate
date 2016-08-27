@@ -909,6 +909,17 @@ var onFileInput = function onFileInput(el, _ref3, _ref4) {
     };
 };
 
+var hasFieldDependency = function hasFieldDependency(rules) {
+    var results = rules.split('|').filter(function (r) {
+        return !!r.match(/confirmed|after|before/);
+    });
+    if (!results.length) {
+        return false;
+    }
+
+    return results[0].split(':')[1];
+};
+
 var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
     var expression = _ref5.expression;
     var value = _ref5.value;
@@ -950,18 +961,13 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
             el.addEventListener(event, handler);
             callbackMaps.push({ vm: context, event: event, callback: handler, el: el });
 
-            // confirmed requires another listener on the target field.
+            // some rules require another listener on the target field.
             // TODO: Clean this up.
-            if (el.dataset.rules && ~el.dataset.rules.indexOf('confirmed')) {
-                (function () {
-                    var fieldName = el.dataset.rules.split('|').filter(function (r) {
-                        return !!~r.indexOf('confirmed');
-                    })[0].split(':')[1];
-
-                    context.$once('validatorReady', function () {
-                        document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', handler);
-                    });
-                })();
+            var fieldName = hasFieldDependency(el.dataset.rules);
+            if (el.dataset.rules && fieldName) {
+                context.$once('validatorReady', function () {
+                    document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', handler);
+                });
             }
         },
         update: function update(el, _ref8, _ref9) {
@@ -1866,19 +1872,22 @@ var install = function install(Vue) {
         locale: 'en',
         delay: 0,
         errorBagName: 'errors',
-        messages: null
+        messages: null,
+        strict: true
     } : arguments[1];
 
     var locale = _ref.locale;
     var delay = _ref.delay;
     var errorBagName = _ref.errorBagName;
     var messages = _ref.messages;
+    var strict = _ref.strict;
 
     if (messages) {
         __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].updateDictionary(messages);
     }
 
     __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].setDefaultLocale(locale);
+    __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].setStrictMode(strict);
 
     var options = {
         locale: locale,
