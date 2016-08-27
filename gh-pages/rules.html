@@ -42,6 +42,8 @@
                     <div class="note">
                         <b>Note: </b>Date validators always require the <code>date_format</code> rule to be always present and must preceed them in the rules order. The date validators are not enabled by default, they require <a href="http://momentjs.com">momentjs</a> in order to work.
                         If your setup contains momentjs globally, it will be installed automatically for all validator instances. otherwise you may want to pass the moment reference to <code>installDateTimeValidators(moment)</code> which is available both statically and on instances.
+
+                        Also note that the date validators always use the <a href="http://momentjs.com/guides/#/parsing/strict-mode/" class="link">'strict' moment parsing mode</a>.
                     </div>
                     <br>
                     <div class="note">
