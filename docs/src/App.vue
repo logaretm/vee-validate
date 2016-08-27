@@ -40,7 +40,7 @@
                 </ul>
             </div>
             <div class="about flex-center">
-                <a target="github" href="https://github.com/logaretm/vee-validation"><i class="icon-github"></i></a>
+                <a target="github" href="https://github.com/logaretm/vee-validate"><i class="icon-github"></i></a>
             </div>
         </div>
 
