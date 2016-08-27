@@ -15,6 +15,15 @@ const onFileInput = (el, { modifiers, expression }, { context }) => () => {
     }
 };
 
+const hasFieldDependency = (rules) => {
+    const results = rules.split('|').filter(r => !! r.match(/confirmed|after|before/));
+    if (! results.length) {
+        return false;
+    }
+
+    return results[0].split(':')[1];
+};
+
 const attachValidatorEvent = (el, { expression, value }, { context }) => {
     let callback;
     if (expression) {
@@ -48,13 +57,10 @@ export default (options) => ({
         el.addEventListener(event, handler);
         callbackMaps.push({ vm: context, event, callback: handler, el });
 
-        // confirmed requires another listener on the target field.
+        // some rules require another listener on the target field.
         // TODO: Clean this up.
-        if (el.dataset.rules && ~el.dataset.rules.indexOf('confirmed')) {
-            const fieldName = el.dataset.rules.split('|')
-            .filter(r => !! ~r.indexOf('confirmed'))[0]
-            .split(':')[1];
-
+        const fieldName = hasFieldDependency(el.dataset.rules);
+        if (el.dataset.rules && fieldName) {
             context.$once('validatorReady', () => {
                 document.querySelector(`input[name='${fieldName}']`)
                         .addEventListener('input', handler);
