@@ -889,6 +889,17 @@ var Validator = function () {
 
 var DEFAULT_EVENT_NAME = 'veeValidate';
 
+var hasFieldDependency = function hasFieldDependency(rules) {
+    var results = rules.split('|').filter(function (r) {
+        return !!r.match(/confirmed|after|before/);
+    });
+    if (!results.length) {
+        return false;
+    }
+
+    return results[0].split(':')[1];
+};
+
 /* harmony default export */ exports["a"] = function (options) {
     return {
         onInput: function onInput() {
@@ -930,16 +941,11 @@ var DEFAULT_EVENT_NAME = 'veeValidate';
             this.el.addEventListener(this.handles, this.handler);
 
             this.attachValidatorEvent();
-            if (this.el.dataset.rules && ~this.el.dataset.rules.indexOf('confirmed')) {
-                (function () {
-                    var fieldName = _this2.el.dataset.rules.split('|').filter(function (r) {
-                        return !!~r.indexOf('confirmed');
-                    })[0].split(':')[1];
-
-                    _this2.vm.$once('validatorReady', function () {
-                        document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', _this2.handler);
-                    });
-                })();
+            var fieldName = hasFieldDependency(this.el.dataset.rules);
+            if (this.el.dataset.rules && fieldName) {
+                this.vm.$once('validatorReady', function () {
+                    document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', _this2.handler);
+                });
             }
         },
         update: function update(value) {
@@ -1834,19 +1840,22 @@ var install = function install(Vue) {
         locale: 'en',
         delay: 0,
         errorBagName: 'errors',
-        messages: null
+        messages: null,
+        strict: true
     } : arguments[1];
 
     var locale = _ref.locale;
     var delay = _ref.delay;
     var errorBagName = _ref.errorBagName;
     var messages = _ref.messages;
+    var strict = _ref.strict;
 
     if (messages) {
         __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].updateDictionary(messages);
     }
 
     __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].setDefaultLocale(locale);
+    __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].setStrictMode(strict);
 
     var options = {
         locale: locale,

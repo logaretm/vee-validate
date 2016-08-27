@@ -2,6 +2,15 @@ import debounce from './utils/debouncer.js';
 
 const DEFAULT_EVENT_NAME = 'veeValidate';
 
+const hasFieldDependency = (rules) => {
+    const results = rules.split('|').filter(r => !! r.match(/confirmed|after|before/));
+    if (! results.length) {
+        return false;
+    }
+
+    return results[0].split(':')[1];
+};
+
 export default (options) => ({
     onInput() {
         this.vm.$validator.validate(this.fieldName, this.el.value);
@@ -39,11 +48,8 @@ export default (options) => ({
         this.el.addEventListener(this.handles, this.handler);
 
         this.attachValidatorEvent();
-        if (this.el.dataset.rules && ~this.el.dataset.rules.indexOf('confirmed')) {
-            const fieldName = this.el.dataset.rules.split('|')
-            .filter(r => !! ~r.indexOf('confirmed'))[0]
-            .split(':')[1];
-
+        const fieldName = hasFieldDependency(this.el.dataset.rules);
+        if (this.el.dataset.rules && fieldName) {
             this.vm.$once('validatorReady', () => {
                 document.querySelector(`input[name='${fieldName}']`)
                         .addEventListener('input', this.handler);
