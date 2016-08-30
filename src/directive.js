@@ -49,7 +49,7 @@ export default (options) => ({
         }
 
         let handler = el.type === 'file' ? onFileInput(el, binding, { context }) :
-        onInput(el, {}, { context });
+        onInput(el, binding, { context });
 
         const delay = el.dataset.delay || options.delay;
         handler = delay ? debounce(handler, delay) : handler;
