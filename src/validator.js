@@ -1,7 +1,8 @@
 import Rules from './rules';
 import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
-import Messages from './messages';
+import Dictionary from './dictionary';
+import messages from './messages';
 import warn from './utils/warn';
 import date from './plugins/date';
 
@@ -9,8 +10,14 @@ const EVENT_NAME = 'veeValidate';
 let DEFAULT_LOCALE = 'en';
 let STRICT_MODE = true;
 
-/* eslint-disable no-underscore-dangle */
+const dictionary = new Dictionary({
+    en: {
+        messages,
+        attributes: {}
+    }
+});
 
+/* eslint-disable no-underscore-dangle */
 export default class Validator
 {
     constructor(validations, $vm) {
@@ -34,7 +41,7 @@ export default class Validator
      */
     static setDefaultLocale(language = 'en') {
         /* istanbul ignore if */
-        if (! Messages[language]) {
+        if (! dictionary.hasLocale(language)) {
             // eslint-disable-next-line
             warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
         }
@@ -71,7 +78,11 @@ export default class Validator
             Validator.extend(name, validators[name]);
         });
 
-        Validator.updateDictionary(date.messages);
+        Validator.updateDictionary({
+            en: {
+                messages: date.messages
+            }
+        });
         date.installed = true;
 
         return true;
@@ -95,20 +106,12 @@ export default class Validator
     }
 
     /**
-     * Updates the messages dicitionary, overwriting existing values and adding new ones.
+     * Updates the dicitionary, overwriting existing values and adding new ones.
      *
-     * @param  {object} messages The messages object.
+     * @param  {object} data The dictionary object.
 =     */
-    static updateDictionary(messages) {
-        Object.keys(messages).forEach(locale => {
-            if (! Messages[locale]) {
-                Messages[locale] = {};
-            }
-
-            Object.keys(messages[locale]).forEach(name => {
-                Messages[locale][name] = messages[locale][name];
-            });
-        });
+    static updateDictionary(data) {
+        dictionary.merge(data);
     }
 
     /**
@@ -141,24 +144,29 @@ export default class Validator
     static _merge(name, validator) {
         if (typeof validator === 'function') {
             Rules[name] = validator;
-            Messages.en[name] = (field) => `The ${field} value is not valid.`;
+            dictionary.setMessage('en', name, (field) => `The ${field} value is not valid.`);
             return;
         }
 
         Rules[name] = validator.validate;
 
         if (validator.getMessage && typeof validator.getMessage === 'function') {
-            Messages.en[name] = validator.getMessage;
+            dictionary.setMessage('en', name, validator.getMessage);
         }
 
         if (validator.messages) {
-            Object.keys(validator.messages).forEach(locale => {
-                if (! Messages[locale]) {
-                    Messages[locale] = {};
-                }
+            dictionary.merge(
+                Object.keys(validator.messages).reduce((prev, curr) => {
+                    const dict = prev;
+                    dict[curr] = {
+                        messages: {
+                            [name]: validator.messages[curr]
+                        }
+                    };
 
-                Messages[locale][name] = validator.messages[locale];
-            });
+                    return dict;
+                }, {})
+            );
         }
     }
 
@@ -201,7 +209,7 @@ export default class Validator
      */
     setLocale(language) {
         /* istanbul ignore if */
-        if (! Messages[language]) {
+        if (! dictionary.hasLocale(language)) {
             // eslint-disable-next-line
             warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
         }
@@ -238,10 +246,10 @@ export default class Validator
     /**
      * Updates the messages dicitionary, overwriting existing values and adding new ones.
      *
-     * @param  {object} messages The messages object.
+     * @param  {object} data The messages object.
      */
-    updateDictionary(messages) {
-        Validator.updateDictionary(messages);
+    updateDictionary(data) {
+        Validator.updateDictionary(data);
     }
 
     /**
@@ -396,12 +404,13 @@ export default class Validator
      * @return {string} msg Formatted error message.
      */
     _formatErrorMessage(field, rule) {
-        if (! Messages[this.locale] || typeof Messages[this.locale][rule.name] !== 'function') {
+        if (! dictionary.hasLocale(this.locale) ||
+         typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
             // Default to english message.
-            return Messages.en[rule.name](field, rule.params);
+            return dictionary.getMessage('en', rule.name)(field, rule.params);
         }
 
-        return Messages[this.locale][rule.name](field, rule.params);
+        return dictionary.getMessage(this.locale, rule.name)(field, rule.params);
     }
 
     /**

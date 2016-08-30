@@ -130,13 +130,13 @@ test('it formats error messages', t => {
     ]);
 
 });
-test('it can attach new rules', t => {
+test('it can attach new fields', t => {
     validator.attach('field', 'required|min:5');
     t.false(validator.validate('field', 'less'));
     t.true(validator.validate('field', 'not less'));
 });
 
-test('it can attach new rules and display errors with custom names', t => {
+test('it can attach new fields and display errors with custom names', t => {
     validator.attach('field', 'min:5', 'pretty field');
     validator.validate('field', 'wo');
     t.is(validator.getErrors().first('field'), 'The pretty field must be at least 5 characters.')
@@ -203,14 +203,18 @@ test('it can add a custom validator with localized messages', t => {
 });
 
 test('it can set the default locale for newly created validators', t => {
-    Validator.updateDictionary({ ar: { alpha: () => 'البتاعة لازم يكون حروف بس' } });
+    Validator.updateDictionary({ ar: {
+        messages: {
+            alpha: () => 'البتاعة لازم يكون حروف بس'
+        }
+    }});
     Validator.setDefaultLocale('ar');
     const loc = new Validator({ name: 'alpha' });
     t.false(loc.validate('name', '1234'));
     t.is(loc.locale, 'ar');
     t.is(loc.getErrors().first('name'), 'البتاعة لازم يكون حروف بس');
     Validator.setDefaultLocale(); // resets to english.
-    Validator.updateDictionary({ ar: { alpha: '' } }); // reset the dictionary for other tests.
+    Validator.updateDictionary({ ar: { messages: { alpha: '' } }}); // reset the dictionary for other tests.
 });
 
 test('it throws an exception when extending with an invalid validator', t => {
@@ -247,8 +251,8 @@ test('it defaults to english messages if no current locale counterpart is found'
 test('it can overwrite messages and add translated messages', t => {
     const loc = new Validator({ first_name: 'alpha' });
     Validator.updateDictionary({
-        ar: { alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.` },
-        en: { alpha: (field) => `${field} is alphabetic.` }
+        ar: { messages: { alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.`} },
+        en: { messages: { alpha: (field) => `${field} is alphabetic.` } }
     });
     loc.attach('first_name', 'alpha');
     loc.validate('first_name', '0123');
@@ -257,7 +261,7 @@ test('it can overwrite messages and add translated messages', t => {
     loc.validate('first_name', '0123');
     t.is(loc.errorBag.first('first_name'), 'first_name يجب ان يحتوي على حروف فقط.');
     loc.updateDictionary({
-        ar: { alpha: () => 'My name is jeff' }
+        ar: { messages: { alpha: () => 'My name is jeff' } }
     });
     loc.validate('first_name', '0123');
     t.is(loc.errorBag.first('first_name'), 'My name is jeff');
@@ -266,7 +270,7 @@ test('it can overwrite messages and add translated messages', t => {
 test('test merging line 30', t => {
     const chineseValidator = new Validator({ first_name: 'alpha' });
     chineseValidator.updateDictionary({
-        cn: { alpha: () => 'My name is jeff' }
+        cn: { messages: { alpha: () => 'My name is jeff' } }
     });
     chineseValidator.setLocale('cn');
 

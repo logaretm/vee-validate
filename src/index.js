@@ -4,18 +4,20 @@ import mixin from './mixin';
 import directive from './directive';
 import ErrorBag from './errorBag';
 
-/**
- * Installs the plugin.
- */
-const install = (Vue, { locale, delay, errorBagName, messages, strict } = {
+const DEFAULT_OPTIONS = {
     locale: 'en',
     delay: 0,
     errorBagName: 'errors',
-    messages: null,
+    dictionary: null,
     strict: true
-}) => {
-    if (messages) {
-        Validator.updateDictionary(messages);
+};
+
+/**
+ * Installs the plugin.
+ */
+const install = (Vue, { locale, delay, errorBagName, dictionary, strict } = DEFAULT_OPTIONS) => {
+    if (dictionary) {
+        Validator.updateDictionary(dictionary);
     }
 
     Validator.setDefaultLocale(locale);
@@ -24,7 +26,7 @@ const install = (Vue, { locale, delay, errorBagName, messages, strict } = {
     const options = {
         locale,
         delay,
-        messages,
+        dictionary,
         errorBagName
     };
 
