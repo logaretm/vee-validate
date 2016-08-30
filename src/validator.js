@@ -414,6 +414,15 @@ export default class Validator
     }
 
     /**
+     * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
+     * Then the dictionary, then fallsback to field name.
+     * @return {String} displayName The name to be used in the errors.
+     */
+    _getFieldDisplayName(field) {
+        return this.$fields[field].name || dictionary.getAttribute(this.locale, field, field);
+    }
+
+    /**
      * Tests a single input value against a rule.
      *
      * @param  {*} name The name of the field.
@@ -424,7 +433,7 @@ export default class Validator
     _test(name, value, rule) {
         const validator = Rules[rule.name];
         const valid = validator(value, rule.params);
-        const displayName = this.$fields[name].name || name;
+        const displayName = this._getFieldDisplayName(name);
 
         if (valid instanceof Promise) {
             return valid.then(values => {

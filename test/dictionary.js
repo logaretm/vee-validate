@@ -64,6 +64,18 @@ test('it can fetch an attribute', t => {
     t.is(dict.getAttribute('en', 'email'), 'Email Address');
 });
 
+test('it can default to a fallback if message or attribute does not exist', t => {
+    const dict = new Dictionary();
+    t.is(
+        dict.getMessage('en', 'winter', 'Winter is still coming'),
+        'Winter is still coming'
+    );
+    t.is(
+        dict.getAttribute('en', 'john', 'Knows nothing'),
+        'Knows nothing'
+    );
+});
+
 test('it can set messages', t => {
     const dict = new Dictionary();
     dict.setMessage('en', 'winter', 'Winter is coming');
