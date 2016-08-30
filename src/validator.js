@@ -317,7 +317,7 @@ export default class Validator
     validate(name, value) {
         if (! this.$fields[name]) {
             if (! this.strictMode) { return true; }
-            warn('You are trying to validate a non-existant field. Use "attach()" first.');
+            warn(`Trying to validate a non-existant field: "${name}". Use "attach()" first.`);
 
             return false;
         }
