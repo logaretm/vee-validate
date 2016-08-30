@@ -28,11 +28,19 @@ export default class Dictionary
     }
 
     hasMessage(locale, key) {
-        return !! (this.hasLocale(locale) && this.dictionary[locale].messages[key]);
+        return !! (
+            this.hasLocale(locale) &&
+            this.dictionary[locale].messages &&
+            this.dictionary[locale].messages[key]
+        );
     }
 
     hasAttribute(locale, key) {
-        return !! (this.hasLocale(locale) && this.dictionary[locale].attributes[key]);
+        return !! (
+            this.hasLocale(locale) &&
+            this.dictionary[locale].attributes &&
+            this.dictionary[locale].attributes[key]
+        );
     }
 
     merge(dictionary) {
