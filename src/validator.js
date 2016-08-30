@@ -287,20 +287,20 @@ export default class Validator
         }
 
         let test = true;
-        let promise = null;
+        const promises = [];
         Object.keys(values).forEach(property => {
             const result = this.validate(property, values[property]);
-            if (result instanceof Promise) {
-                promise = result;
-
+            if (typeof result.then === 'function') {
+                promises.push(result);
                 return;
             }
 
             test = test && result;
         });
 
-        if (test && promise instanceof Promise) {
-            return promise.then(t => t && test); // eslint-disable-line
+        if (promises.length) {
+            // eslint-disable-next-line
+            return Promise.all(promises).then(values => values.every(t => t) && test);
         }
 
         return test; // eslint-disable-line
@@ -323,21 +323,20 @@ export default class Validator
         }
 
         let test = true;
-        let promise = null;
+        const promises = [];
         this.errorBag.remove(name);
         this.$fields[name].validations.forEach(rule => {
             const result = this._test(name, value, rule);
-            if (result instanceof Promise) {
-                promise = result;
-
+            if (typeof result.then === 'function') {
+                promises.push(result);
                 return;
             }
 
             test = test && result;
         });
 
-        if (test && promise instanceof Promise) {
-            return promise.then(t => t && test);
+        if (promises.length) {
+            return Promise.all(promises).then(values => values.every(t => t) && test);
         }
 
         return test;
@@ -392,10 +391,7 @@ export default class Validator
             }
         }
 
-        return {
-            name,
-            params
-        };
+        return { name, params };
     }
 
     /**
@@ -437,9 +433,9 @@ export default class Validator
         const valid = validator(value, rule.params);
         const displayName = this._getFieldDisplayName(name);
 
-        if (valid instanceof Promise) {
+        if (typeof valid.then === 'function') {
             return valid.then(values => {
-                const allValid = values.reduce((prev, curr) => prev && curr.valid, true);
+                const allValid = Array.isArray(values) ? values.every(t => t.valid) : values.valid;
 
                 if (! allValid) {
                     this.errorBag.add(name, this._formatErrorMessage(displayName, rule));
