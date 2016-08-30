@@ -322,3 +322,59 @@ test('it auto installs date validators if moment is present globally', t => {
     t.true(v.validate('birthday', '01/12/2008'));
     t.false(v.validate('birthday', '01/01/2008'));
 });
+
+test('it can add custom names via the attributes dictionary', t => {
+    const v = new Validator({
+        email: 'required|email'
+    });
+
+    v.updateDictionary({
+        en: {
+            attributes: {
+                email: 'Email Address'
+            }
+        }
+    });
+
+    t.false(v.validate('email', 'notvalidemail'));
+    t.is(v.getErrors().first('email'), 'The Email Address must be a valid email.');
+});
+
+// Converts the value to a boolean and returns it in a promise.
+Validator.extend('promised', (value) => {
+    return new Promise(resolve => {
+        resolve({
+            valid: !! value
+        });
+    });
+});
+
+test('it cascades promise values with previous boolean tests', async t => {
+    const v = new Validator({ email: 'required|promised|email' });
+    const result = v.validate('email', 'someemail@email.com');
+    t.true(typeof result.then === 'function');
+    t.true(await result);
+    t.false(await v.validate('email', 'invalid'));
+});
+
+test('it cascades promise values with previous fields tests', async t => {
+    const v = new Validator({
+        email: 'required|promised|email',
+        name: 'alpha|promised',
+        phone: 'promised|numeric'
+    });
+    let result = v.validateAll({
+        email: 'somemeail@yahoo.com',
+        name: 'ProperName',
+        phone: '11123112123'
+    });
+    t.true(typeof result.then === 'function'); // is a promise.
+    t.true(await result); // should pass.
+
+    result = v.validateAll({
+        email: 'somemeail', // not valid email.
+        name: 'ProperName',
+        phone: '11123112123'
+    });
+    t.false(await result); // should fail.
+});
