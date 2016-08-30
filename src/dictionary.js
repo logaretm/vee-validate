@@ -11,11 +11,19 @@ export default class Dictionary
         return !! this.dictionary[locale];
     }
 
-    getMessage(locale, key) {
+    getMessage(locale, key, fallback = '') {
+        if (! this.hasMessage(locale, key)) {
+            return fallback;
+        }
+
         return this.dictionary[locale].messages[key];
     }
 
-    getAttribute(locale, key) {
+    getAttribute(locale, key, fallback = '') {
+        if (! this.hasAttribute(locale, key)) {
+            return fallback;
+        }
+
         return this.dictionary[locale].attributes[key];
     }
 
