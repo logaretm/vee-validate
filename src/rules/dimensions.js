@@ -2,17 +2,10 @@ const validateImage = (file, width, height) => {
     const URL = window.URL || window.webkitURL;
     return new Promise(resolve => {
         const image = new Image();
-        image.onerror = () => resolve({ name: file.name, valid: false });
-
-        image.onload = () => {
-            // Validate exact dimensions.
-            const valid = image.width === Number(width) && image.height === Number(height);
-
-            resolve({
-                name: file.name,
-                valid
-            });
-        };
+        image.onerror = () => resolve({ valid: false });
+        image.onload = () => resolve({
+            valid: image.width === Number(width) && image.height === Number(height)
+        });
 
         image.src = URL.createObjectURL(file);
     });
