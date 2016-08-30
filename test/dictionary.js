@@ -1,6 +1,12 @@
 import test from 'ava';
 import Dictionary from './../src/dictionary';
 
+test('it does not merge if a non object is provided', t => {
+    const dict = new Dictionary('a string');
+
+    t.false(dict.hasLocale('en'));
+});
+
 test('it can check for locale existance', t => {
     const dict = new Dictionary({
         en: { }
