@@ -822,10 +822,11 @@ module.exports = function (module) {
             /* harmony import */
             var __WEBPACK_IMPORTED_MODULE_0__rules__ = __webpack_require__(26);
             /* harmony import */var __WEBPACK_IMPORTED_MODULE_1__errorBag__ = __webpack_require__(0);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__ = __webpack_require__(5);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__messages__ = __webpack_require__(7);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__utils_warn__ = __webpack_require__(38);
-            /* harmony import */var __WEBPACK_IMPORTED_MODULE_5__plugins_date__ = __webpack_require__(12);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__ = __webpack_require__(6);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_3__dictionary__ = __webpack_require__(5);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_4__messages__ = __webpack_require__(7);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_5__utils_warn__ = __webpack_require__(38);
+            /* harmony import */var __WEBPACK_IMPORTED_MODULE_6__plugins_date__ = __webpack_require__(12);
             var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
                 return typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
             } : function (obj) {
@@ -842,6 +843,14 @@ module.exports = function (module) {
                 };
             }();
 
+            function _defineProperty(obj, key, value) {
+                if (key in obj) {
+                    Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });
+                } else {
+                    obj[key] = value;
+                }return obj;
+            }
+
             function _classCallCheck(instance, Constructor) {
                 if (!(instance instanceof Constructor)) {
                     throw new TypeError("Cannot call a class as a function");
@@ -850,6 +859,13 @@ module.exports = function (module) {
 
             var EVENT_NAME = 'veeValidate';
             var DEFAULT_LOCALE = 'en';
+
+            var dictionary = new __WEBPACK_IMPORTED_MODULE_3__dictionary__["a" /* default */]({
+                en: {
+                    messages: __WEBPACK_IMPORTED_MODULE_4__messages__["a" /* default */],
+                    attributes: {}
+                }
+            });
 
             /* eslint-disable no-underscore-dangle */
 
@@ -886,9 +902,28 @@ module.exports = function (module) {
                     }
 
                     /**
+<<<<<<< HEAD
                      * Updates the messages dicitionary, overwriting existing values and adding new ones.
+=======
+                     * Sets the operating mode for this validator.
+                     * strictMode = true: Values without a rule are invalid and cause failure.
+                     * strictMode = false: Values without a rule are valid and are skipped.
+                     * @param {Boolean} strictMode.
+                     */
+
+                }, {
+                    key: 'setStrictMode',
+                    value: function setStrictMode() {
+                        var strictMode = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+                        this.strictMode = strictMode;
+                    }
+
+                    /**
+                     * Updates the dicitionary, overwriting existing values and adding new ones.
+>>>>>>> b71e49c... update locale example
                      *
-                     * @param  {object} messages The messages object.
+                     * @param  {object} data The dictionary object.
                     =     */
 
                 }, {
@@ -901,9 +936,9 @@ module.exports = function (module) {
                      */
                     value: function setLocale(language) {
                         /* istanbul ignore if */
-                        if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][language]) {
+                        if (!dictionary.hasLocale(language)) {
                             // eslint-disable-next-line
-                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
                         }
 
                         this.locale = language;
@@ -943,13 +978,13 @@ module.exports = function (module) {
                     /**
                      * Updates the messages dicitionary, overwriting existing values and adding new ones.
                      *
-                     * @param  {object} messages The messages object.
+                     * @param  {object} data The messages object.
                      */
 
                 }, {
                     key: 'updateDictionary',
-                    value: function updateDictionary(messages) {
-                        Validator.updateDictionary(messages);
+                    value: function updateDictionary(data) {
+                        Validator.updateDictionary(data);
                     }
 
                     /**
@@ -998,21 +1033,24 @@ module.exports = function (module) {
                         }
 
                         var test = true;
-                        var promise = null;
+                        var promises = [];
                         Object.keys(values).forEach(function (property) {
                             var result = _this2.validate(property, values[property]);
-                            if (result instanceof Promise) {
-                                promise = result;
+                            if (typeof result.then === 'function') {
+                                promises.push(result);
                                 return;
                             }
 
                             test = test && result;
                         });
 
-                        if (test && promise instanceof Promise) {
-                            return promise.then(function (t) {
-                                return t && test;
-                            }); // eslint-disable-line
+                        if (promises.length) {
+                            // eslint-disable-next-line
+                            return Promise.all(promises).then(function (values) {
+                                return values.every(function (t) {
+                                    return t;
+                                }) && test;
+                            });
                         }
 
                         return test; // eslint-disable-line
@@ -1033,27 +1071,36 @@ module.exports = function (module) {
                         var _this3 = this;
 
                         if (!this.$fields[name]) {
+<<<<<<< HEAD
                             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are trying to validate a non-existant field. Use "attach()" first.');
+=======
+                            if (!this.strictMode) {
+                                return true;
+                            }
+                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warn__["a" /* default */])('You are trying to validate a non-existant field. Use "attach()" first.');
+>>>>>>> b71e49c... update locale example
 
                             return false;
                         }
 
                         var test = true;
-                        var promise = null;
+                        var promises = [];
                         this.errorBag.remove(name);
                         this.$fields[name].validations.forEach(function (rule) {
                             var result = _this3._test(name, value, rule);
-                            if (result instanceof Promise) {
-                                promise = result;
+                            if (typeof result.then === 'function') {
+                                promises.push(result);
                                 return;
                             }
 
                             test = test && result;
                         });
 
-                        if (test && promise instanceof Promise) {
-                            return promise.then(function (t) {
-                                return t && test;
+                        if (promises.length) {
+                            return Promise.all(promises).then(function (values) {
+                                return values.every(function (t) {
+                                    return t;
+                                }) && test;
                             });
                         }
 
@@ -1107,7 +1154,7 @@ module.exports = function (module) {
                         }
 
                         // Those rules need the date format to parse and compare correctly.
-                        if (__WEBPACK_IMPORTED_MODULE_5__plugins_date__["a" /* default */].installed && ~['after', 'before', 'date_between'].indexOf(name)) {
+                        if (__WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].installed && ~['after', 'before', 'date_between'].indexOf(name)) {
                             var dateFormat = validations.filter(function (v) {
                                 return v.name === 'date_format';
                             })[0];
@@ -1117,10 +1164,7 @@ module.exports = function (module) {
                             }
                         }
 
-                        return {
-                            name: name,
-                            params: params
-                        };
+                        return { name: name, params: params };
                     }
 
                     /**
@@ -1134,12 +1178,24 @@ module.exports = function (module) {
                 }, {
                     key: '_formatErrorMessage',
                     value: function _formatErrorMessage(field, rule) {
-                        if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][this.locale] || typeof __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][this.locale][rule.name] !== 'function') {
+                        if (!dictionary.hasLocale(this.locale) || typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
                             // Default to english message.
-                            return __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */].en[rule.name](field, rule.params);
+                            return dictionary.getMessage('en', rule.name)(field, rule.params);
                         }
 
-                        return __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][this.locale][rule.name](field, rule.params);
+                        return dictionary.getMessage(this.locale, rule.name)(field, rule.params);
+                    }
+
+                    /**
+                     * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
+                     * Then the dictionary, then fallsback to field name.
+                     * @return {String} displayName The name to be used in the errors.
+                     */
+
+                }, {
+                    key: '_getFieldDisplayName',
+                    value: function _getFieldDisplayName(field) {
+                        return this.$fields[field].name || dictionary.getAttribute(this.locale, field, field);
                     }
 
                     /**
@@ -1158,13 +1214,13 @@ module.exports = function (module) {
 
                         var validator = __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][rule.name];
                         var valid = validator(value, rule.params);
-                        var displayName = this.$fields[name].name || name;
+                        var displayName = this._getFieldDisplayName(name);
 
-                        if (valid instanceof Promise) {
+                        if (typeof valid.then === 'function') {
                             return valid.then(function (values) {
-                                var allValid = values.reduce(function (prev, curr) {
-                                    return prev && curr.valid;
-                                }, true);
+                                var allValid = Array.isArray(values) ? values.every(function (t) {
+                                    return t.valid;
+                                }) : values.valid;
 
                                 if (!allValid) {
                                     _this5.errorBag.add(name, _this5._formatErrorMessage(displayName, rule));
@@ -1198,9 +1254,9 @@ module.exports = function (module) {
                         var language = arguments.length <= 0 || arguments[0] === undefined ? 'en' : arguments[0];
 
                         /* istanbul ignore if */
-                        if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][language]) {
+                        if (!dictionary.hasLocale(language)) {
                             // eslint-disable-next-line
-                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
                         }
 
                         DEFAULT_LOCALE = language;
@@ -1214,37 +1270,33 @@ module.exports = function (module) {
                     key: 'installDateTimeValidators',
                     value: function installDateTimeValidators(moment) {
                         if (typeof moment !== 'function') {
-                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('To use the date-time validators you must provide moment reference.');
+                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warn__["a" /* default */])('To use the date-time validators you must provide moment reference.');
 
                             return false;
                         }
 
-                        if (__WEBPACK_IMPORTED_MODULE_5__plugins_date__["a" /* default */].installed) {
+                        if (__WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].installed) {
                             return true;
                         }
 
-                        var validators = __WEBPACK_IMPORTED_MODULE_5__plugins_date__["a" /* default */].make(moment);
+                        var validators = __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].make(moment);
                         Object.keys(validators).forEach(function (name) {
                             Validator.extend(name, validators[name]);
                         });
 
-                        Validator.updateDictionary(__WEBPACK_IMPORTED_MODULE_5__plugins_date__["a" /* default */].messages);
-                        __WEBPACK_IMPORTED_MODULE_5__plugins_date__["a" /* default */].installed = true;
+                        Validator.updateDictionary({
+                            en: {
+                                messages: __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].messages
+                            }
+                        });
+                        __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].installed = true;
 
                         return true;
                     }
                 }, {
                     key: 'updateDictionary',
-                    value: function updateDictionary(messages) {
-                        Object.keys(messages).forEach(function (locale) {
-                            if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale]) {
-                                __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale] = {};
-                            }
-
-                            Object.keys(messages[locale]).forEach(function (name) {
-                                __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale][name] = messages[locale][name];
-                            });
-                        });
+                    value: function updateDictionary(data) {
+                        dictionary.merge(data);
                     }
 
                     /**
@@ -1286,26 +1338,27 @@ module.exports = function (module) {
                     value: function _merge(name, validator) {
                         if (typeof validator === 'function') {
                             __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][name] = validator;
-                            __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */].en[name] = function (field) {
+                            dictionary.setMessage('en', name, function (field) {
                                 return 'The ' + field + ' value is not valid.';
-                            };
+                            });
                             return;
                         }
 
                         __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][name] = validator.validate;
 
                         if (validator.getMessage && typeof validator.getMessage === 'function') {
-                            __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */].en[name] = validator.getMessage;
+                            dictionary.setMessage('en', name, validator.getMessage);
                         }
 
                         if (validator.messages) {
-                            Object.keys(validator.messages).forEach(function (locale) {
-                                if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale]) {
-                                    __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale] = {};
-                                }
+                            dictionary.merge(Object.keys(validator.messages).reduce(function (prev, curr) {
+                                var dict = prev;
+                                dict[curr] = {
+                                    messages: _defineProperty({}, name, validator.messages[curr])
+                                };
 
-                                __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale][name] = validator.messages[locale];
-                            });
+                                return dict;
+                            }, {}));
                         }
                     }
 
@@ -1505,6 +1558,157 @@ module.exports = function (module) {
 
             "use strict";
 
+            var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+                return typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
+            } : function (obj) {
+                return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === 'undefined' ? 'undefined' : _typeof2(obj);
+            };
+
+            var _createClass = function () {
+                function defineProperties(target, props) {
+                    for (var i = 0; i < props.length; i++) {
+                        var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+                    }
+                }return function (Constructor, protoProps, staticProps) {
+                    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+                };
+            }();
+
+            function _defineProperty(obj, key, value) {
+                if (key in obj) {
+                    Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });
+                } else {
+                    obj[key] = value;
+                }return obj;
+            }
+
+            function _classCallCheck(instance, Constructor) {
+                if (!(instance instanceof Constructor)) {
+                    throw new TypeError("Cannot call a class as a function");
+                }
+            }
+
+            /* eslint-disable no-underscore-dangle */
+
+            var Dictionary = function () {
+                function Dictionary() {
+                    var dictionary = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+                    _classCallCheck(this, Dictionary);
+
+                    this.dictionary = {};
+                    this.merge(dictionary);
+                }
+
+                _createClass(Dictionary, [{
+                    key: 'hasLocale',
+                    value: function hasLocale(locale) {
+                        return !!this.dictionary[locale];
+                    }
+                }, {
+                    key: 'getMessage',
+                    value: function getMessage(locale, key) {
+                        var fallback = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
+
+                        if (!this.hasMessage(locale, key)) {
+                            return fallback;
+                        }
+
+                        return this.dictionary[locale].messages[key];
+                    }
+                }, {
+                    key: 'getAttribute',
+                    value: function getAttribute(locale, key) {
+                        var fallback = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
+
+                        if (!this.hasAttribute(locale, key)) {
+                            return fallback;
+                        }
+
+                        return this.dictionary[locale].attributes[key];
+                    }
+                }, {
+                    key: 'hasMessage',
+                    value: function hasMessage(locale, key) {
+                        return !!(this.hasLocale(locale) && this.dictionary[locale].messages && this.dictionary[locale].messages[key]);
+                    }
+                }, {
+                    key: 'hasAttribute',
+                    value: function hasAttribute(locale, key) {
+                        return !!(this.hasLocale(locale) && this.dictionary[locale].attributes && this.dictionary[locale].attributes[key]);
+                    }
+                }, {
+                    key: 'merge',
+                    value: function merge(dictionary) {
+                        this._merge(this.dictionary, dictionary);
+                    }
+                }, {
+                    key: 'setMessage',
+                    value: function setMessage(locale, key, message) {
+                        if (!this.hasLocale(locale)) {
+                            this.dictionary[locale] = {
+                                messages: {},
+                                attributes: {}
+                            };
+                        }
+
+                        this.dictionary[locale].messages[key] = message;
+                    }
+                }, {
+                    key: 'setAttribute',
+                    value: function setAttribute(locale, key, attribute) {
+                        if (!this.hasLocale(locale)) {
+                            this.dictionary[locale] = {
+                                messages: {},
+                                attributes: {}
+                            };
+                        }
+
+                        this.dictionary[locale].attributes[key] = attribute;
+                    }
+                }, {
+                    key: '_isObject',
+                    value: function _isObject(object) {
+                        return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object) && object !== null;
+                    }
+                }, {
+                    key: '_merge',
+                    value: function _merge(target, source) {
+                        var _this = this;
+
+                        if (!(this._isObject(target) && this._isObject(source))) {
+                            return target;
+                        }
+
+                        Object.keys(source).forEach(function (key) {
+                            if (_this._isObject(source[key])) {
+                                if (!target[key]) {
+                                    Object.assign(target, _defineProperty({}, key, {}));
+                                }
+
+                                _this._merge(target[key], source[key]);
+                                return;
+                            }
+
+                            Object.assign(target, _defineProperty({}, key, source[key]));
+                        });
+
+                        return target;
+                    }
+                }]);
+
+                return Dictionary;
+            }();
+
+            /* harmony default export */exports["a"] = Dictionary;
+
+            /***/
+        },
+        /* 6 */
+        /***/function (module, exports, __webpack_require__) {
+
+            "use strict";
+
             var _createClass = function () {
                 function defineProperties(target, props) {
                     for (var i = 0; i < props.length; i++) {
@@ -1542,7 +1746,7 @@ module.exports = function (module) {
 
             /***/
         },
-        /* 6 */
+        /* 7 */
         /***/function (module, exports, __webpack_require__) {
 
             "use strict";
@@ -1670,19 +1874,6 @@ module.exports = function (module) {
                 url: function url(field) {
                     return 'The ' + field + ' is not a valid URL.';
                 }
-            };
-
-            /***/
-        },
-        /* 7 */
-        /***/function (module, exports, __webpack_require__) {
-
-            "use strict";
-            /* harmony import */
-            var __WEBPACK_IMPORTED_MODULE_0__en__ = __webpack_require__(6);
-
-            /* harmony default export */exports["a"] = {
-                en: __WEBPACK_IMPORTED_MODULE_0__en__["a" /* default */]
             };
 
             /***/
@@ -1960,32 +2151,30 @@ module.exports = function (module) {
             /* istanbul ignore next */
             /* eslint-disable max-len */
             /* harmony default export */exports["a"] = {
-                en: {
-                    date_format: function date_format(field, _ref) {
-                        var _ref2 = _slicedToArray(_ref, 1);
+                date_format: function date_format(field, _ref) {
+                    var _ref2 = _slicedToArray(_ref, 1);
 
-                        var format = _ref2[0];
-                        return "The " + field + " must be in the format " + format + ".";
-                    },
-                    before: function before(field, _ref3) {
-                        var _ref4 = _slicedToArray(_ref3, 1);
+                    var format = _ref2[0];
+                    return "The " + field + " must be in the format " + format + ".";
+                },
+                before: function before(field, _ref3) {
+                    var _ref4 = _slicedToArray(_ref3, 1);
 
-                        var target = _ref4[0];
-                        return "The " + field + " must be before " + target + ".";
-                    },
-                    after: function after(field, _ref5) {
-                        var _ref6 = _slicedToArray(_ref5, 1);
+                    var target = _ref4[0];
+                    return "The " + field + " must be before " + target + ".";
+                },
+                after: function after(field, _ref5) {
+                    var _ref6 = _slicedToArray(_ref5, 1);
 
-                        var target = _ref6[0];
-                        return "The " + field + " must be after " + target + ".";
-                    },
-                    between: function between(field, _ref7) {
-                        var _ref8 = _slicedToArray(_ref7, 2);
+                    var target = _ref6[0];
+                    return "The " + field + " must be after " + target + ".";
+                },
+                between: function between(field, _ref7) {
+                    var _ref8 = _slicedToArray(_ref7, 2);
 
-                        var min = _ref8[0];
-                        var max = _ref8[1];
-                        return "The " + field + " must be between " + min + " and " + max + ".";
-                    }
+                    var min = _ref8[0];
+                    var max = _ref8[1];
+                    return "The " + field + " must be between " + min + " and " + max + ".";
                 }
             };
 
@@ -2246,16 +2435,11 @@ module.exports = function (module) {
                 return new Promise(function (resolve) {
                     var image = new Image();
                     image.onerror = function () {
-                        return resolve({ name: file.name, valid: false });
+                        return resolve({ valid: false });
                     };
-
                     image.onload = function () {
-                        // Validate exact dimensions.
-                        var valid = image.width === Number(width) && image.height === Number(height);
-
-                        resolve({
-                            name: file.name,
-                            valid: valid
+                        return resolve({
+                            valid: image.width === Number(width) && image.height === Number(height)
                         });
                     };
 
@@ -2745,24 +2929,41 @@ module.exports = function (module) {
                 return install;
             });
 
+            var DEFAULT_OPTIONS = {
+                locale: 'en',
+                delay: 0,
+                errorBagName: 'errors',
+                dictionary: null,
+                strict: true
+            };
+
             /**
              * Installs the plugin.
              */
             var install = function install(Vue) {
+<<<<<<< HEAD
                 var _ref = arguments.length <= 1 || arguments[1] === undefined ? {
                     locale: 'en',
                     delay: 0,
                     errorBagName: 'errors',
                     messages: null
                 } : arguments[1];
+=======
+                var _ref = arguments.length <= 1 || arguments[1] === undefined ? DEFAULT_OPTIONS : arguments[1];
+>>>>>>> b71e49c... update locale example
 
                 var locale = _ref.locale;
                 var delay = _ref.delay;
                 var errorBagName = _ref.errorBagName;
+<<<<<<< HEAD
                 var messages = _ref.messages;
+=======
+                var dictionary = _ref.dictionary;
+                var strict = _ref.strict;
+>>>>>>> b71e49c... update locale example
 
-                if (messages) {
-                    __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].updateDictionary(messages);
+                if (dictionary) {
+                    __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].updateDictionary(dictionary);
                 }
 
                 __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].setDefaultLocale(locale);
@@ -2770,7 +2971,7 @@ module.exports = function (module) {
                 var options = {
                     locale: locale,
                     delay: delay,
-                    messages: messages,
+                    dictionary: dictionary,
                     errorBagName: errorBagName
                 };
 
@@ -13202,7 +13403,11 @@ var __vue_exports__, __vue_options__
 __vue_exports__ = __webpack_require__(118)
 
 /* template */
+<<<<<<< HEAD
 var __vue_template__ = __webpack_require__(165)
+=======
+var __vue_template__ = __webpack_require__(167)
+>>>>>>> b71e49c... update locale example
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -13221,9 +13426,15 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
+<<<<<<< HEAD
     hotAPI.createRecord("data-v-1", __vue_options__)
   } else {
     hotAPI.reload("data-v-1", __vue_options__)
+=======
+    hotAPI.createRecord("data-v-2", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-2", __vue_options__)
+>>>>>>> b71e49c... update locale example
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] App.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -13244,7 +13455,11 @@ __webpack_require__(156)
 __vue_exports__ = __webpack_require__(119)
 
 /* template */
+<<<<<<< HEAD
 var __vue_template__ = __webpack_require__(168)
+=======
+var __vue_template__ = __webpack_require__(170)
+>>>>>>> b71e49c... update locale example
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -13263,9 +13478,15 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
+<<<<<<< HEAD
     hotAPI.createRecord("data-v-3", __vue_options__)
   } else {
     hotAPI.reload("data-v-3", __vue_options__)
+=======
+    hotAPI.createRecord("data-v-5", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-5", __vue_options__)
+>>>>>>> b71e49c... update locale example
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] CodeBlock.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -13286,7 +13507,11 @@ __webpack_require__(155)
 __vue_exports__ = __webpack_require__(120)
 
 /* template */
+<<<<<<< HEAD
 var __vue_template__ = __webpack_require__(167)
+=======
+var __vue_template__ = __webpack_require__(169)
+>>>>>>> b71e49c... update locale example
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -13305,9 +13530,15 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
+<<<<<<< HEAD
     hotAPI.createRecord("data-v-2", __vue_options__)
   } else {
     hotAPI.reload("data-v-2", __vue_options__)
+=======
+    hotAPI.createRecord("data-v-4", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-4", __vue_options__)
+>>>>>>> b71e49c... update locale example
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] CodeExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -13567,11 +13798,17 @@ exports.default = {
     },
     created: function created() {
         this.$validator.updateDictionary({
-            ar: _ar2.default.default
+            ar: {
+                messages: _ar2.default.default
+            }
         });
         this.$validator.setLocale('ar');
     }
 }; //
+//
+//
+//
+//
 //
 //
 //
@@ -14979,32 +15216,30 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* istanbul ignore next */
 /* eslint-disable max-len */
 /* harmony default export */ exports["a"] = {
-    en: {
-        date_format: function date_format(field, _ref) {
-            var _ref2 = _slicedToArray(_ref, 1);
+    date_format: function date_format(field, _ref) {
+        var _ref2 = _slicedToArray(_ref, 1);
 
-            var format = _ref2[0];
-            return "The " + field + " must be in the format " + format + ".";
-        },
-        before: function before(field, _ref3) {
-            var _ref4 = _slicedToArray(_ref3, 1);
+        var format = _ref2[0];
+        return "The " + field + " must be in the format " + format + ".";
+    },
+    before: function before(field, _ref3) {
+        var _ref4 = _slicedToArray(_ref3, 1);
 
-            var target = _ref4[0];
-            return "The " + field + " must be before " + target + ".";
-        },
-        after: function after(field, _ref5) {
-            var _ref6 = _slicedToArray(_ref5, 1);
+        var target = _ref4[0];
+        return "The " + field + " must be before " + target + ".";
+    },
+    after: function after(field, _ref5) {
+        var _ref6 = _slicedToArray(_ref5, 1);
 
-            var target = _ref6[0];
-            return "The " + field + " must be after " + target + ".";
-        },
-        between: function between(field, _ref7) {
-            var _ref8 = _slicedToArray(_ref7, 2);
+        var target = _ref6[0];
+        return "The " + field + " must be after " + target + ".";
+    },
+    between: function between(field, _ref7) {
+        var _ref8 = _slicedToArray(_ref7, 2);
 
-            var min = _ref8[0];
-            var max = _ref8[1];
-            return "The " + field + " must be between " + min + " and " + max + ".";
-        }
+        var min = _ref8[0];
+        var max = _ref8[1];
+        return "The " + field + " must be between " + min + " and " + max + ".";
     }
 };
 
@@ -15129,16 +15364,11 @@ var validateImage = function validateImage(file, width, height) {
     return new Promise(function (resolve) {
         var image = new Image();
         image.onerror = function () {
-            return resolve({ name: file.name, valid: false });
+            return resolve({ valid: false });
         };
-
         image.onload = function () {
-            // Validate exact dimensions.
-            var valid = image.width === Number(width) && image.height === Number(height);
-
-            resolve({
-                name: file.name,
-                valid: valid
+            return resolve({
+                valid: image.width === Number(width) && image.height === Number(height)
             });
         };
 
@@ -15624,7 +15854,7 @@ webpackContext.id = 157;
 var __vue_exports__, __vue_options__
 
 /* template */
-var __vue_template__ = __webpack_require__(170)
+var __vue_template__ = __webpack_require__(168)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -15643,9 +15873,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-5", __vue_options__)
+    hotAPI.createRecord("data-v-3", __vue_options__)
   } else {
-    hotAPI.reload("data-v-5", __vue_options__)
+    hotAPI.reload("data-v-3", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] BasicExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -15660,7 +15890,11 @@ module.exports = __vue_exports__
 var __vue_exports__, __vue_options__
 
 /* template */
+<<<<<<< HEAD
 var __vue_template__ = __webpack_require__(172)
+=======
+var __vue_template__ = __webpack_require__(165)
+>>>>>>> b71e49c... update locale example
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -15679,9 +15913,15 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
+<<<<<<< HEAD
     hotAPI.createRecord("data-v-7", __vue_options__)
   } else {
     hotAPI.reload("data-v-7", __vue_options__)
+=======
+    hotAPI.createRecord("data-v-1", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-1", __vue_options__)
+>>>>>>> b71e49c... update locale example
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] DelayExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -15697,6 +15937,199 @@ var __vue_exports__, __vue_options__
 
 /* script */
 __vue_exports__ = __webpack_require__(121)
+
+/* template */
+<<<<<<< HEAD
+var __vue_template__ = __webpack_require__(174)
+=======
+var __vue_template__ = __webpack_require__(172)
+>>>>>>> b71e49c... update locale example
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+<<<<<<< HEAD
+    hotAPI.createRecord("data-v-9", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-9", __vue_options__)
+=======
+    hotAPI.createRecord("data-v-7", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-7", __vue_options__)
+>>>>>>> b71e49c... update locale example
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] LocaleExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* template */
+<<<<<<< HEAD
+var __vue_template__ = __webpack_require__(169)
+=======
+var __vue_template__ = __webpack_require__(171)
+>>>>>>> b71e49c... update locale example
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+<<<<<<< HEAD
+    hotAPI.createRecord("data-v-4", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-4", __vue_options__)
+=======
+    hotAPI.createRecord("data-v-6", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-6", __vue_options__)
+>>>>>>> b71e49c... update locale example
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] RejectExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 162 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* script */
+__vue_exports__ = __webpack_require__(122)
+
+/* template */
+<<<<<<< HEAD
+var __vue_template__ = __webpack_require__(173)
+=======
+var __vue_template__ = __webpack_require__(166)
+>>>>>>> b71e49c... update locale example
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+<<<<<<< HEAD
+    hotAPI.createRecord("data-v-8", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-8", __vue_options__)
+=======
+    hotAPI.createRecord("data-v-10", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-10", __vue_options__)
+>>>>>>> b71e49c... update locale example
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] ValidateData.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 163 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* script */
+__vue_exports__ = __webpack_require__(123)
+
+/* template */
+<<<<<<< HEAD
+var __vue_template__ = __webpack_require__(166)
+=======
+var __vue_template__ = __webpack_require__(173)
+>>>>>>> b71e49c... update locale example
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+<<<<<<< HEAD
+    hotAPI.createRecord("data-v-10", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-10", __vue_options__)
+=======
+    hotAPI.createRecord("data-v-8", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-8", __vue_options__)
+>>>>>>> b71e49c... update locale example
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] ValidateEventExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 164 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* script */
+__vue_exports__ = __webpack_require__(124)
 
 /* template */
 var __vue_template__ = __webpack_require__(174)
@@ -15723,159 +16156,6 @@ if (false) {(function () {
     hotAPI.reload("data-v-9", __vue_options__)
   }
 })()}
-if (__vue_options__.functional) {console.error("[vue-loader] LocaleExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 161 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* template */
-var __vue_template__ = __webpack_require__(169)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-4", __vue_options__)
-  }
-})()}
-if (__vue_options__.functional) {console.error("[vue-loader] RejectExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 162 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* script */
-__vue_exports__ = __webpack_require__(122)
-
-/* template */
-var __vue_template__ = __webpack_require__(173)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-8", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-8", __vue_options__)
-  }
-})()}
-if (__vue_options__.functional) {console.error("[vue-loader] ValidateData.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 163 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* script */
-__vue_exports__ = __webpack_require__(123)
-
-/* template */
-var __vue_template__ = __webpack_require__(166)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-10", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-10", __vue_options__)
-  }
-})()}
-if (__vue_options__.functional) {console.error("[vue-loader] ValidateEventExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 164 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* script */
-__vue_exports__ = __webpack_require__(124)
-
-/* template */
-var __vue_template__ = __webpack_require__(171)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-6", __vue_options__)
-  }
-})()}
 if (__vue_options__.functional) {console.error("[vue-loader] ValidatorExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
 
 module.exports = __vue_exports__
@@ -15886,6 +16166,202 @@ module.exports = __vue_exports__
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
+<<<<<<< HEAD
+=======
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_m(0), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email - Delay: 500ms"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email')
+    },
+    attrs: {
+      "data-rules": "required|email",
+      "data-delay": "500",
+      "name": "email",
+      "type": "text",
+      "placeholder": "Email"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email')),
+      expression: "errors.has('email')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('email'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('name')
+    },
+    attrs: {
+      "for": "name"
+    }
+  }, ["Name - Delay: 1s"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('name')
+    },
+    attrs: {
+      "data-rules": "required|alpha|min:3",
+      "data-delay": "1000",
+      "name": "name",
+      "type": "text",
+      "placeholder": "Full Name"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('name')),
+      expression: "errors.has('name')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('name'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>Basic Form</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email - Delay: 500ms</label>\n                    <input v-validate data-rules=\"required|email\" data-delay=\"500\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"email\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name - Delay: 1s</label>\n                    <input v-validate data-rules=\"required|alpha|min:3\" data-delay=\"1000\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s("{" + "{ errors.first('name') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('legend', ["Debounced Form"])
+}}]}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-1", module.exports)
+  }
+}
+
+/***/ },
+/* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email"]), " ", _h('input', {
+    directives: [{
+      name: "model",
+      value: (email),
+      expression: "email"
+    }, {
+      name: "validate",
+      value: (email),
+      expression: "email"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email')
+    },
+    attrs: {
+      "data-rules": "required|email",
+      "type": "text",
+      "placeholder": "Email"
+    },
+    domProps: {
+      "value": _s(email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        email = $event.target.value
+      }
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email')),
+      expression: "errors.has('email')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('email'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('name')
+    },
+    attrs: {
+      "for": "name"
+    }
+  }, ["Full Name"]), " ", _h('input', {
+    directives: [{
+      name: "model",
+      value: (name),
+      expression: "name"
+    }, {
+      name: "validate",
+      value: (name),
+      expression: "name",
+      modifiers: {
+        "initial": true
+      }
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('name')
+    },
+    attrs: {
+      "data-rules": "required|alpha",
+      "type": "text",
+      "placeholder": "Full Name"
+    },
+    domProps: {
+      "value": _s(name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        name = $event.target.value
+      }
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('name')),
+      expression: "errors.has('name')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('name'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-model=\"email\" v-validate=\"email\" data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n                    <input v-model=\"name\" v-validate.initial=\"name\" data-rules=\"required|alpha\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s("{" + "{ errors.first('name') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app',\n            data: {\n                email: '',\n                name: ''\n            }\n        });\n    "])])
+}},staticRenderFns: []}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-10", module.exports)
+  }
+}
+
+/***/ },
+/* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+>>>>>>> b71e49c... update locale example
   return _h('div', {
     ref: "layout",
     attrs: {
@@ -16003,21 +16479,33 @@ module.exports={render:function (){with(this) {
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
+<<<<<<< HEAD
      require("vue-hot-reload-api").rerender("data-v-1", module.exports)
+=======
+     require("vue-hot-reload-api").rerender("data-v-2", module.exports)
+>>>>>>> b71e49c... update locale example
   }
 }
 
 /***/ },
+<<<<<<< HEAD
 /* 166 */
+=======
+/* 168 */
+>>>>>>> b71e49c... update locale example
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
   return _h('code-example', [_h('form', {
     slot: "example",
+<<<<<<< HEAD
     staticClass: "pure-form pure-form-stacked",
     on: {
       "submit": validateBeforeSubmit
     }
+=======
+    staticClass: "pure-form pure-form-stacked"
+>>>>>>> b71e49c... update locale example
   }, [_h('div', {
     staticClass: "pure-u-1"
   }, [_h('label', {
@@ -16045,6 +16533,10 @@ module.exports={render:function (){with(this) {
     },
     attrs: {
       "data-rules": "required|email",
+<<<<<<< HEAD
+=======
+      "name": "email",
+>>>>>>> b71e49c... update locale example
       "type": "text",
       "placeholder": "Email"
     },
@@ -16064,6 +16556,7 @@ module.exports={render:function (){with(this) {
       expression: "errors.has('email')"
     }],
     staticClass: "error"
+<<<<<<< HEAD
   }, [_s(errors.first('email'))])]), " ", _h('div', {
     staticClass: "pure-u-1"
   }, [_h('label', {
@@ -16111,9 +16604,37 @@ module.exports={render:function (){with(this) {
     }],
     staticClass: "error"
   }, [_s(errors.first('name'))])]), " ", _h('div', {
+=======
+  }, [_s(errors.first('email'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-validate data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
+}},staticRenderFns: []}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-3", module.exports)
+  }
+}
+
+/***/ },
+/* 169 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('div', {
+    staticClass: "pure-g"
+  }, [_h('div', {
+>>>>>>> b71e49c... update locale example
     staticClass: "pure-u-1"
-  }, [_h('label', {
+  }, [_h('div', {
+    staticClass: "pure-menu pure-menu-horizontal"
+  }, [_h('ul', {
+    staticClass: "pure-menu-list"
+  }, [_h('li', {
     class: {
+<<<<<<< HEAD
       'error': errors.has('phone')
     },
     attrs: {
@@ -16358,6 +16879,175 @@ module.exports={render:function (){with(this) {
       "data-rules": "mimes:image/*",
       "name": "image",
       "type": "file"
+=======
+      'pure-menu-item': true, 'pure-menu-selected': content === 'demo'
+    }
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    on: {
+      "click": function($event) {
+        content = 'demo'
+      }
+    }
+  }, [_m(0), "\n                        Demo\n                    "])]), " ", _h('li', {
+    class: {
+      'pure-menu-item': true, 'pure-menu-selected': content === 'html'
+    }
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    on: {
+      "click": function($event) {
+        content = 'html'
+      }
+    }
+  }, [_m(1), "\n                        HTML\n                    "])]), " ", _h('li', {
+    class: {
+      'pure-menu-item': true, 'pure-menu-selected': content === 'js'
+    }
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    on: {
+      "click": function($event) {
+        content = 'js'
+      }
+>>>>>>> b71e49c... update locale example
+    }
+  }, [_m(2), "\n                        JavaScript\n                    "])])])])]), " ", _h('div', {
+    directives: [{
+      name: "show",
+<<<<<<< HEAD
+      value: (errors.has('image')),
+      expression: "errors.has('image')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('image'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('file')
+    },
+    attrs: {
+      "for": "file"
+    }
+  }, ["Rejected Image"]), " ", _h('input', {
+    directives: [{
+      name: "validate",
+      modifiers: {
+        "reject": true
+      }
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('file')
+    },
+    attrs: {
+      "data-rules": "mimes:image/*",
+      "name": "file",
+      "type": "file"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('file')),
+      expression: "errors.has('file')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('file'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>File Upload</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('image') }\" for=\"image\">Unrejected Image</label>\n                    <input v-validate data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('image') }\" name=\"image\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('image')\">" + _s(errors.first('image')) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('file') }\" for=\"file\">Rejected Image</label>\n                    <input  v-validate.reject data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('file')\">" + _s(errors.first('file')) + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('legend', ["File Upload"])
+}}]}
+=======
+      value: (content === 'demo'),
+      expression: "content === 'demo'"
+    }],
+    staticClass: "pure-u-1"
+  }, [$slots["example"]]), " ", _h('div', {
+    directives: [{
+      name: "show",
+      value: (content === 'html'),
+      expression: "content === 'html'"
+    }],
+    staticClass: "pure-u-1"
+  }, [_h('code-block', {
+    staticClass: "language-html"
+  }, [$slots["code-html"]])]), " ", _h('div', {
+    directives: [{
+      name: "show",
+      value: (content === 'js'),
+      expression: "content === 'js'"
+    }],
+    staticClass: "pure-u-1"
+  }, [_h('code-block', {
+    staticClass: "language-javascript"
+  }, [$slots["code-js"]])])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('i', {
+    staticClass: "icon-play"
+  })
+}},function (){with(this) {
+  return _h('i', {
+    staticClass: "icon-html5"
+  })
+}},function (){with(this) {
+  return _h('i', {
+    staticClass: "icon-code"
+  })
+}}]}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-4", module.exports)
+  }
+}
+
+/***/ },
+/* 170 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('pre', [_h('code', {
+    ref: "code"
+  }, [$slots["default"]])])
+}},staticRenderFns: []}
+>>>>>>> b71e49c... update locale example
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-5", module.exports)
+  }
+}
+
+/***/ },
+/* 171 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_m(0), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('image')
+    },
+    attrs: {
+      "for": "image"
+    }
+  }, ["Unrejected Image"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('image')
+    },
+    attrs: {
+      "data-rules": "mimes:image/*",
+      "name": "image",
+      "type": "file"
     }
   }), " ", _h('span', {
     directives: [{
@@ -16408,18 +17098,18 @@ module.exports={render:function (){with(this) {
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-4", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-6", module.exports)
   }
 }
 
 /***/ },
-/* 170 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
   return _h('code-example', [_h('form', {
     slot: "example",
-    staticClass: "pure-form pure-form-stacked"
+    staticClass: "pure-form pure-form-stacked rtl"
   }, [_h('div', {
     staticClass: "pure-u-1"
   }, [_h('label', {
@@ -16438,9 +17128,9 @@ module.exports={render:function (){with(this) {
     },
     attrs: {
       "data-rules": "required|email",
+      "data-as": "البريد",
       "name": "email",
-      "type": "text",
-      "placeholder": "Email"
+      "type": "text"
     }
   }), " ", _h('span', {
     directives: [{
@@ -16449,138 +17139,50 @@ module.exports={render:function (){with(this) {
       expression: "errors.has('email')"
     }],
     staticClass: "error"
-  }, [_s(errors.first('email'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-validate data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
-}},staticRenderFns: []}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-5", module.exports)
-  }
-}
-
-/***/ },
-/* 171 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked"
-  }, [_h('div', {
+  }, [_s(errors.first('email'))])]), " ", _h('div', {
     staticClass: "pure-u-1"
   }, [_h('label', {
     class: {
-      'error': errors.has('email')
+      'error': errors.has('phone')
     },
     attrs: {
-      "for": "email"
+      "for": "phone"
     }
-  }, ["Email"]), " ", _h('input', {
+  }, ["Phone"]), " ", _h('input', {
     directives: [{
-      name: "model",
-      value: (email),
-      expression: "email"
+      name: "validate"
     }],
     class: {
-      'pure-input-1': true, 'has-error': errors.has('email')
+      'pure-input-1': true, 'has-error': errors.has('phone')
     },
     attrs: {
-      "name": "email",
-      "type": "text",
-      "placeholder": "Email"
-    },
-    domProps: {
-      "value": _s(email)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) return;
-        email = $event.target.value
-      }
+      "data-rules": "required|numeric",
+      "data-as": "رقم الهاتف",
+      "name": "phone",
+      "type": "text"
     }
   }), " ", _h('span', {
     directives: [{
       name: "show",
-      value: (errors.has('email')),
-      expression: "errors.has('email')"
+      value: (errors.has('phone')),
+      expression: "errors.has('phone')"
     }],
     staticClass: "error"
-  }, ["Errors: " + _s(_f("json")(errors.collect('email')))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('name')
-    },
-    attrs: {
-      "for": "name"
-    }
-  }, ["Full Name"]), " ", _h('input', {
-    directives: [{
-      name: "model",
-      value: (name),
-      expression: "name"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('name')
-    },
-    attrs: {
-      "name": "name",
-      "type": "text",
-      "placeholder": "Full Name"
-    },
-    domProps: {
-      "value": _s(name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) return;
-        name = $event.target.value
-      }
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('name')),
-      expression: "errors.has('name')"
-    }],
-    staticClass: "error"
-  }, ["Errors: " + _s(_f("json")(errors.collect('name')))])]), " ", _h('button', {
-    staticClass: "pure-button pure-button-primary",
-    attrs: {
-      "type": "button",
-      "name": "button"
-    },
-    on: {
-      "click": validateForm
-    }
-  }, ["Validate All"]), " ", _h('button', {
-    staticClass: "pure-button button-error",
-    attrs: {
-      "type": "button",
-      "name": "button"
-    },
-    on: {
-      "click": clearErrors
-    }
-  }, ["Clear"])]), " ", _h('div', {
+  }, [_s(errors.first('phone'))])])]), " ", _h('div', {
     slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-model=\"email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s(_f("json")(errors.collect('email'))) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n                    <input v-model=\"name\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s(_f("json")(errors.collect('name'))) + "</span>\n                </div>\n                <button class=\"pure-button pure-button-primary\" @click=\"validateForm\" type=\"button\" name=\"button\">Validate All</button>\n                <button class=\"pure-button button-error\" @click=\"clearErrors\" type=\"button\" name=\"button\">Clear</button>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked rtl\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-validate data-rules=\"required|email\" data-as=\"البريد\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n                    <input v-validate data-rules=\"required|numeric\" data-as=\"رقم الهاتف\" :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('phone')\">" + _s("{" + "{ errors.first('phone') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
     slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import { Validator } from 'vee-validate';\n\n        new Vue({\n            el: '#app',\n            validator: null, // private reference\n            data() {\n                return {\n                    email: '',\n                    name: '',\n                    errors: []\n                }\n            },\n            watch: {\n                email(value) {\n                    this.validator.validate('email', value);\n                },\n                name(value) {\n                    this.validator.validate('name', value);\n                }\n            },\n            methods: {\n                validateForm() {\n                    this.validator.validateAll({\n                        email: this.email,\n                        name: this.name\n                    });\n                },\n                clearErrors() {\n                    this.errors.clear();\n                }\n            },\n            ready() {\n                this.validator = new Validator({\n                    email: 'required|email',\n                    name: 'required|alpha|min:3'\n                });\n                this.$set('errors', this.validator.errorBag); // update the data.\n            }\n        });\n    "])])
+  }, ["\n        import messages from './locale/ar';\n        import Vue from 'vue';\n        import VeeValidate, { Validator } from 'vee-validate';\n        Vue.use(VeeValidate);\n\n        // Merge dictionary messages.\n        Validator.updateDictionary({\n            ar: {\n                messages\n            }\n        });\n\n        new Vue({\n            el: 'body',\n            data: {\n                phone: '',\n                email: ''\n            },\n            created() {\n                this.$validator.setLocale('ar'); // Switch locale for this instance.\n            }\n        });\n    "])])
 }},staticRenderFns: []}
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-6", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-7", module.exports)
   }
 }
 
 /***/ },
-/* 172 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -16779,7 +17381,7 @@ if (false) {
 module.exports={render:function (){with(this) {
   return _h('code-example', [_h('form', {
     slot: "example",
-    staticClass: "pure-form pure-form-stacked rtl"
+    staticClass: "pure-form pure-form-stacked"
   }, [_h('div', {
     staticClass: "pure-u-1"
   }, [_h('label', {
@@ -16791,16 +17393,26 @@ module.exports={render:function (){with(this) {
     }
   }, ["Email"]), " ", _h('input', {
     directives: [{
-      name: "validate"
+      name: "model",
+      value: (email),
+      expression: "email"
     }],
     class: {
       'pure-input-1': true, 'has-error': errors.has('email')
     },
     attrs: {
-      "data-rules": "required|email",
-      "data-as": "البريد",
       "name": "email",
-      "type": "text"
+      "type": "text",
+      "placeholder": "Email"
+    },
+    domProps: {
+      "value": _s(email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        email = $event.target.value
+      }
     }
   }), " ", _h('span', {
     directives: [{
@@ -16809,40 +17421,72 @@ module.exports={render:function (){with(this) {
       expression: "errors.has('email')"
     }],
     staticClass: "error"
-  }, [_s(errors.first('email'))])]), " ", _h('div', {
+  }, ["Errors: " + _s(_f("json")(errors.collect('email')))])]), " ", _h('div', {
     staticClass: "pure-u-1"
   }, [_h('label', {
     class: {
-      'error': errors.has('phone')
+      'error': errors.has('name')
     },
     attrs: {
-      "for": "phone"
+      "for": "name"
     }
-  }, ["Phone"]), " ", _h('input', {
+  }, ["Full Name"]), " ", _h('input', {
     directives: [{
-      name: "validate"
+      name: "model",
+      value: (name),
+      expression: "name"
     }],
     class: {
-      'pure-input-1': true, 'has-error': errors.has('phone')
+      'pure-input-1': true, 'has-error': errors.has('name')
     },
     attrs: {
-      "data-rules": "required|numeric",
-      "data-as": "رقم الهاتف",
-      "name": "phone",
-      "type": "text"
+      "name": "name",
+      "type": "text",
+      "placeholder": "Full Name"
+    },
+    domProps: {
+      "value": _s(name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        name = $event.target.value
+      }
     }
   }), " ", _h('span', {
     directives: [{
       name: "show",
-      value: (errors.has('phone')),
-      expression: "errors.has('phone')"
+      value: (errors.has('name')),
+      expression: "errors.has('name')"
     }],
     staticClass: "error"
-  }, [_s(errors.first('phone'))])])]), " ", _h('div', {
+  }, ["Errors: " + _s(_f("json")(errors.collect('name')))])]), " ", _h('button', {
+    staticClass: "pure-button pure-button-primary",
+    attrs: {
+      "type": "button",
+      "name": "button"
+    },
+    on: {
+      "click": validateForm
+    }
+  }, ["Validate All"]), " ", _h('button', {
+    staticClass: "pure-button button-error",
+    attrs: {
+      "type": "button",
+      "name": "button"
+    },
+    on: {
+      "click": clearErrors
+    }
+  }, ["Clear"])]), " ", _h('div', {
     slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked rtl\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-validate data-rules=\"required|email\" data-as=\"البريد\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n                    <input v-validate data-rules=\"required|numeric\" data-as=\"رقم الهاتف\" :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('phone')\">" + _s("{" + "{ errors.first('phone') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-model=\"email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s(_f("json")(errors.collect('email'))) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n                    <input v-model=\"name\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s(_f("json")(errors.collect('name'))) + "</span>\n                </div>\n                <button class=\"pure-button pure-button-primary\" @click=\"validateForm\" type=\"button\" name=\"button\">Validate All</button>\n                <button class=\"pure-button button-error\" @click=\"clearErrors\" type=\"button\" name=\"button\">Clear</button>\n            </form>\n        </div>\n    "]), " ", _h('div', {
     slot: "code-js"
+<<<<<<< HEAD
   }, ["\n        import ar from './locale/ar';\n        import Vue from 'vue';\n        import VeeValidate, { Validator } from 'vee-validate';\n        Vue.use(VeeValidate);\n\n        // Merge dictionary messages.\n        Validator.updateDictionary({ ar });\n\n        new Vue({\n            el: 'body',\n            data: {\n                phone: '',\n                email: ''\n            },\n            created() {\n                this.$validator.setLocale('ar'); // Switch locale for this instance.\n            }\n        });\n    "])])
+=======
+  }, ["\n        import Vue from 'vue';\n        import { Validator } from 'vee-validate';\n\n        new Vue({\n            el: '#app',\n            validator: null, // private reference\n            data() {\n                return {\n                    email: '',\n                    name: '',\n                    errors: []\n                }\n            },\n            watch: {\n                email(value) {\n                    this.validator.validate('email', value);\n                },\n                name(value) {\n                    this.validator.validate('name', value);\n                }\n            },\n            methods: {\n                validateForm() {\n                    this.validator.validateAll({\n                        email: this.email,\n                        name: this.name\n                    });\n                },\n                clearErrors() {\n                    this.errors.clear();\n                }\n            },\n            ready() {\n                this.validator = new Validator({\n                    email: 'required|email',\n                    name: 'required|alpha|min:3'\n                });\n                this.$set('errors', this.validator.errorBag); // update the data.\n            }\n        });\n    "])])
+>>>>>>> b71e49c... update locale example
 }},staticRenderFns: []}
 if (false) {
   module.hot.accept()

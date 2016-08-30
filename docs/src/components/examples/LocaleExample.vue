@@ -30,13 +30,17 @@
             &lt;/div&gt;
         </div>
         <div slot="code-js">
-            import ar from './locale/ar';
+            import messages from './locale/ar';
             import Vue from 'vue';
             import VeeValidate, { Validator } from 'vee-validate';
             Vue.use(VeeValidate);
 
             // Merge dictionary messages.
-            Validator.updateDictionary({ ar });
+            Validator.updateDictionary({
+                ar: {
+                    messages
+                }
+            });
 
             new Vue({
                 el: 'body',
@@ -64,7 +68,9 @@ export default {
     },
     created() {
         this.$validator.updateDictionary({
-            ar: messages.default
+            ar: {
+                messages: messages.default
+            }
         });
         this.$validator.setLocale('ar');
     }
