@@ -563,7 +563,7 @@ var Validator = function () {
                 if (!this.strictMode) {
                     return true;
                 }
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warn__["a" /* default */])('You are trying to validate a non-existant field. Use "attach()" first.');
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warn__["a" /* default */])('Trying to validate a non-existant field: "' + name + '". Use "attach()" first.');
 
                 return false;
             }
@@ -975,7 +975,7 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
                 return;
             }
 
-            var handler = el.type === 'file' ? onFileInput(el, binding, { context: context }) : onInput(el, {}, { context: context });
+            var handler = el.type === 'file' ? onFileInput(el, binding, { context: context }) : onInput(el, binding, { context: context });
 
             var delay = el.dataset.delay || options.delay;
             handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler, delay) : handler;

@@ -30,13 +30,13 @@
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "vue-html-loader": "^1.2.3",
-    "vue-loader": "^9.4.0",
+    "vue-loader": "^9.4.2",
     "vue-style-loader": "^1.0.0",
     "webpack": "^2.1.0-beta.20",
     "webpack-dev-server": "^2.1.0-beta.0",
     "webpack-merge": "^0.14.1"
   },
   "dependencies": {
-    "vue": "^2.0.0-rc.3"
+    "vue": "^2.0.0-rc.4"
   }
 }
