@@ -60,17 +60,18 @@
                         import { Validator } from 'vee-validate';
                         const validator = new Validator();
 
-                        validator.attach('email', 'required|email');
+                        validator.attach('email', 'required|email'); // attach field.
+                        validator.attach('name', 'required|alpha', 'Full Name'); // attach field with display name for error generation.
 
                         validator.detach('email'); // you can also detach fields.
                     </code-block>
-                    After that you can validate values with <code class="inline">validate(field, value)</code> like this:
+                    After that you can validate values with <code class="inline">validate(field, value)</code> which should returna boolean if all validations pass. like this:
                     <code-block class="language-javascript">
                         validator.validate('email', 'foo@bar.com'); // true
                         validator.validate('email', 'foo@bar'); // false
                     </code-block>
                     <div class="note">
-                        <b>Note:</b> Most validators return a Boolean, however some validators (very few) return a <code>Promise</code> which will resolve asynchronously with a Boolean.
+                        <b>Note:</b> Most validators return a Boolean, however some validators (very few) return a <code>Promise</code> The validator is aware of this and will only return a Promise if at least one validation yields a promise. the promise is resolved to boolean which you can later chain to check your fields.
                     </div>
                     <br>
                     You Can validate multiple values at the same time using <code class="inline">validateAll(obj)</code>:
@@ -80,7 +81,7 @@
                             name: 'John Snow'
                         });
                     </code-block>
-                    Returns true if all values passed validation, false if at least one value failed validation. The ErrorBag will be populated with any errors encountered.
+                    Returns true if all values passed validation, false if at least one value failed validation. will return a <code>Promise</code> if at least one field validation rule returned a <code>Promise</code> which is also resolved to a boolean The ErrorBag will be populated with any errors encountered.
                     You can access the <code class="inline">errorBag</code> property directly or using <code class="inline">getErrors()</code>.
                     <code-block class="language-javascript">
                         var errorBag = validator.errorBag;
