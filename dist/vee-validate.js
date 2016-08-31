@@ -324,15 +324,19 @@ var unregister = function unregister($vm) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__rules__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__errorBag__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__messages__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_warn__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__plugins_date__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dictionary__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__messages__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_warn__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__plugins_date__ = __webpack_require__(12);
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 
 
 
@@ -344,6 +348,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var EVENT_NAME = 'veeValidate';
 var DEFAULT_LOCALE = 'en';
 var STRICT_MODE = true;
+
+var dictionary = new __WEBPACK_IMPORTED_MODULE_3__dictionary__["a" /* default */]({
+    en: {
+        messages: __WEBPACK_IMPORTED_MODULE_4__messages__["a" /* default */],
+        attributes: {}
+    }
+});
 
 /* eslint-disable no-underscore-dangle */
 
@@ -398,9 +409,9 @@ var Validator = function () {
         }
 
         /**
-         * Updates the messages dicitionary, overwriting existing values and adding new ones.
+         * Updates the dicitionary, overwriting existing values and adding new ones.
          *
-         * @param  {object} messages The messages object.
+         * @param  {object} data The dictionary object.
         =     */
 
     }, {
@@ -414,9 +425,9 @@ var Validator = function () {
          */
         value: function setLocale(language) {
             /* istanbul ignore if */
-            if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][language]) {
+            if (!dictionary.hasLocale(language)) {
                 // eslint-disable-next-line
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
             }
 
             this.locale = language;
@@ -456,13 +467,13 @@ var Validator = function () {
         /**
          * Updates the messages dicitionary, overwriting existing values and adding new ones.
          *
-         * @param  {object} messages The messages object.
+         * @param  {object} data The messages object.
          */
 
     }, {
         key: 'updateDictionary',
-        value: function updateDictionary(messages) {
-            Validator.updateDictionary(messages);
+        value: function updateDictionary(data) {
+            Validator.updateDictionary(data);
         }
 
         /**
@@ -511,22 +522,24 @@ var Validator = function () {
             }
 
             var test = true;
-            var promise = null;
+            var promises = [];
             Object.keys(values).forEach(function (property) {
                 var result = _this2.validate(property, values[property]);
-                if (result instanceof Promise) {
-                    promise = result;
-
+                if (typeof result.then === 'function') {
+                    promises.push(result);
                     return;
                 }
 
                 test = test && result;
             });
 
-            if (test && promise instanceof Promise) {
-                return promise.then(function (t) {
-                    return t && test;
-                }); // eslint-disable-line
+            if (promises.length) {
+                // eslint-disable-next-line
+                return Promise.all(promises).then(function (values) {
+                    return values.every(function (t) {
+                        return t;
+                    }) && test;
+                });
             }
 
             return test; // eslint-disable-line
@@ -550,28 +563,29 @@ var Validator = function () {
                 if (!this.strictMode) {
                     return true;
                 }
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are trying to validate a non-existant field. Use "attach()" first.');
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warn__["a" /* default */])('Trying to validate a non-existant field: "' + name + '". Use "attach()" first.');
 
                 return false;
             }
 
             var test = true;
-            var promise = null;
+            var promises = [];
             this.errorBag.remove(name);
             this.$fields[name].validations.forEach(function (rule) {
                 var result = _this3._test(name, value, rule);
-                if (result instanceof Promise) {
-                    promise = result;
-
+                if (typeof result.then === 'function') {
+                    promises.push(result);
                     return;
                 }
 
                 test = test && result;
             });
 
-            if (test && promise instanceof Promise) {
-                return promise.then(function (t) {
-                    return t && test;
+            if (promises.length) {
+                return Promise.all(promises).then(function (values) {
+                    return values.every(function (t) {
+                        return t;
+                    }) && test;
                 });
             }
 
@@ -625,7 +639,7 @@ var Validator = function () {
             }
 
             // Those rules need the date format to parse and compare correctly.
-            if (__WEBPACK_IMPORTED_MODULE_5__plugins_date__["a" /* default */].installed && ~['after', 'before', 'date_between'].indexOf(name)) {
+            if (__WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].installed && ~['after', 'before', 'date_between'].indexOf(name)) {
                 var dateFormat = validations.filter(function (v) {
                     return v.name === 'date_format';
                 })[0];
@@ -635,10 +649,7 @@ var Validator = function () {
                 }
             }
 
-            return {
-                name: name,
-                params: params
-            };
+            return { name: name, params: params };
         }
 
         /**
@@ -652,12 +663,24 @@ var Validator = function () {
     }, {
         key: '_formatErrorMessage',
         value: function _formatErrorMessage(field, rule) {
-            if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][this.locale] || typeof __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][this.locale][rule.name] !== 'function') {
+            if (!dictionary.hasLocale(this.locale) || typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
                 // Default to english message.
-                return __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */].en[rule.name](field, rule.params);
+                return dictionary.getMessage('en', rule.name)(field, rule.params);
             }
 
-            return __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][this.locale][rule.name](field, rule.params);
+            return dictionary.getMessage(this.locale, rule.name)(field, rule.params);
+        }
+
+        /**
+         * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
+         * Then the dictionary, then fallsback to field name.
+         * @return {String} displayName The name to be used in the errors.
+         */
+
+    }, {
+        key: '_getFieldDisplayName',
+        value: function _getFieldDisplayName(field) {
+            return this.$fields[field].name || dictionary.getAttribute(this.locale, field, field);
         }
 
         /**
@@ -676,13 +699,13 @@ var Validator = function () {
 
             var validator = __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][rule.name];
             var valid = validator(value, rule.params);
-            var displayName = this.$fields[name].name || name;
+            var displayName = this._getFieldDisplayName(name);
 
-            if (valid instanceof Promise) {
+            if (typeof valid.then === 'function') {
                 return valid.then(function (values) {
-                    var allValid = values.reduce(function (prev, curr) {
-                        return prev && curr.valid;
-                    }, true);
+                    var allValid = Array.isArray(values) ? values.every(function (t) {
+                        return t.valid;
+                    }) : values.valid;
 
                     if (!allValid) {
                         _this5.errorBag.add(name, _this5._formatErrorMessage(displayName, rule));
@@ -716,9 +739,9 @@ var Validator = function () {
             var language = arguments.length <= 0 || arguments[0] === undefined ? 'en' : arguments[0];
 
             /* istanbul ignore if */
-            if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][language]) {
+            if (!dictionary.hasLocale(language)) {
                 // eslint-disable-next-line
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warn__["a" /* default */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
             }
 
             DEFAULT_LOCALE = language;
@@ -747,37 +770,33 @@ var Validator = function () {
         key: 'installDateTimeValidators',
         value: function installDateTimeValidators(moment) {
             if (typeof moment !== 'function') {
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_warn__["a" /* default */])('To use the date-time validators you must provide moment reference.');
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_warn__["a" /* default */])('To use the date-time validators you must provide moment reference.');
 
                 return false;
             }
 
-            if (__WEBPACK_IMPORTED_MODULE_5__plugins_date__["a" /* default */].installed) {
+            if (__WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].installed) {
                 return true;
             }
 
-            var validators = __WEBPACK_IMPORTED_MODULE_5__plugins_date__["a" /* default */].make(moment);
+            var validators = __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].make(moment);
             Object.keys(validators).forEach(function (name) {
                 Validator.extend(name, validators[name]);
             });
 
-            Validator.updateDictionary(__WEBPACK_IMPORTED_MODULE_5__plugins_date__["a" /* default */].messages);
-            __WEBPACK_IMPORTED_MODULE_5__plugins_date__["a" /* default */].installed = true;
+            Validator.updateDictionary({
+                en: {
+                    messages: __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].messages
+                }
+            });
+            __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].installed = true;
 
             return true;
         }
     }, {
         key: 'updateDictionary',
-        value: function updateDictionary(messages) {
-            Object.keys(messages).forEach(function (locale) {
-                if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale]) {
-                    __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale] = {};
-                }
-
-                Object.keys(messages[locale]).forEach(function (name) {
-                    __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale][name] = messages[locale][name];
-                });
-            });
+        value: function updateDictionary(data) {
+            dictionary.merge(data);
         }
 
         /**
@@ -819,26 +838,27 @@ var Validator = function () {
         value: function _merge(name, validator) {
             if (typeof validator === 'function') {
                 __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][name] = validator;
-                __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */].en[name] = function (field) {
+                dictionary.setMessage('en', name, function (field) {
                     return 'The ' + field + ' value is not valid.';
-                };
+                });
                 return;
             }
 
             __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][name] = validator.validate;
 
             if (validator.getMessage && typeof validator.getMessage === 'function') {
-                __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */].en[name] = validator.getMessage;
+                dictionary.setMessage('en', name, validator.getMessage);
             }
 
             if (validator.messages) {
-                Object.keys(validator.messages).forEach(function (locale) {
-                    if (!__WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale]) {
-                        __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale] = {};
-                    }
+                dictionary.merge(Object.keys(validator.messages).reduce(function (prev, curr) {
+                    var dict = prev;
+                    dict[curr] = {
+                        messages: _defineProperty({}, name, validator.messages[curr])
+                    };
 
-                    __WEBPACK_IMPORTED_MODULE_3__messages__["a" /* default */][locale][name] = validator.messages[locale];
-                });
+                    return dict;
+                }, {}));
             }
         }
 
@@ -1001,6 +1021,133 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* eslint-disable no-underscore-dangle */
+
+var Dictionary = function () {
+    function Dictionary() {
+        var dictionary = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+        _classCallCheck(this, Dictionary);
+
+        this.dictionary = {};
+        this.merge(dictionary);
+    }
+
+    _createClass(Dictionary, [{
+        key: 'hasLocale',
+        value: function hasLocale(locale) {
+            return !!this.dictionary[locale];
+        }
+    }, {
+        key: 'getMessage',
+        value: function getMessage(locale, key) {
+            var fallback = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
+
+            if (!this.hasMessage(locale, key)) {
+                return fallback;
+            }
+
+            return this.dictionary[locale].messages[key];
+        }
+    }, {
+        key: 'getAttribute',
+        value: function getAttribute(locale, key) {
+            var fallback = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
+
+            if (!this.hasAttribute(locale, key)) {
+                return fallback;
+            }
+
+            return this.dictionary[locale].attributes[key];
+        }
+    }, {
+        key: 'hasMessage',
+        value: function hasMessage(locale, key) {
+            return !!(this.hasLocale(locale) && this.dictionary[locale].messages && this.dictionary[locale].messages[key]);
+        }
+    }, {
+        key: 'hasAttribute',
+        value: function hasAttribute(locale, key) {
+            return !!(this.hasLocale(locale) && this.dictionary[locale].attributes && this.dictionary[locale].attributes[key]);
+        }
+    }, {
+        key: 'merge',
+        value: function merge(dictionary) {
+            this._merge(this.dictionary, dictionary);
+        }
+    }, {
+        key: 'setMessage',
+        value: function setMessage(locale, key, message) {
+            if (!this.hasLocale(locale)) {
+                this.dictionary[locale] = {
+                    messages: {},
+                    attributes: {}
+                };
+            }
+
+            this.dictionary[locale].messages[key] = message;
+        }
+    }, {
+        key: 'setAttribute',
+        value: function setAttribute(locale, key, attribute) {
+            if (!this.hasLocale(locale)) {
+                this.dictionary[locale] = {
+                    messages: {},
+                    attributes: {}
+                };
+            }
+
+            this.dictionary[locale].attributes[key] = attribute;
+        }
+    }, {
+        key: '_isObject',
+        value: function _isObject(object) {
+            return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object) && object !== null;
+        }
+    }, {
+        key: '_merge',
+        value: function _merge(target, source) {
+            var _this = this;
+
+            if (!(this._isObject(target) && this._isObject(source))) {
+                return target;
+            }
+
+            Object.keys(source).forEach(function (key) {
+                if (_this._isObject(source[key])) {
+                    if (!target[key]) {
+                        Object.assign(target, _defineProperty({}, key, {}));
+                    }
+
+                    _this._merge(target[key], source[key]);
+                    return;
+                }
+
+                Object.assign(target, _defineProperty({}, key, source[key]));
+            });
+
+            return target;
+        }
+    }]);
+
+    return Dictionary;
+}();
+
+/* harmony default export */ exports["a"] = Dictionary;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1025,7 +1172,7 @@ var _class = function () {
 /* harmony default export */ exports["a"] = _class;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1128,18 +1275,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     url: function url(field) {
         return 'The ' + field + ' is not a valid URL.';
     }
-};
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__en__ = __webpack_require__(6);
-
-
-/* harmony default export */ exports["a"] = {
-    en: __WEBPACK_IMPORTED_MODULE_0__en__["a" /* default */]
 };
 
 /***/ },
@@ -1286,32 +1421,30 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* istanbul ignore next */
 /* eslint-disable max-len */
 /* harmony default export */ exports["a"] = {
-    en: {
-        date_format: function date_format(field, _ref) {
-            var _ref2 = _slicedToArray(_ref, 1);
+    date_format: function date_format(field, _ref) {
+        var _ref2 = _slicedToArray(_ref, 1);
 
-            var format = _ref2[0];
-            return "The " + field + " must be in the format " + format + ".";
-        },
-        before: function before(field, _ref3) {
-            var _ref4 = _slicedToArray(_ref3, 1);
+        var format = _ref2[0];
+        return "The " + field + " must be in the format " + format + ".";
+    },
+    before: function before(field, _ref3) {
+        var _ref4 = _slicedToArray(_ref3, 1);
 
-            var target = _ref4[0];
-            return "The " + field + " must be before " + target + ".";
-        },
-        after: function after(field, _ref5) {
-            var _ref6 = _slicedToArray(_ref5, 1);
+        var target = _ref4[0];
+        return "The " + field + " must be before " + target + ".";
+    },
+    after: function after(field, _ref5) {
+        var _ref6 = _slicedToArray(_ref5, 1);
 
-            var target = _ref6[0];
-            return "The " + field + " must be after " + target + ".";
-        },
-        between: function between(field, _ref7) {
-            var _ref8 = _slicedToArray(_ref7, 2);
+        var target = _ref6[0];
+        return "The " + field + " must be after " + target + ".";
+    },
+    between: function between(field, _ref7) {
+        var _ref8 = _slicedToArray(_ref7, 2);
 
-            var min = _ref8[0];
-            var max = _ref8[1];
-            return "The " + field + " must be between " + min + " and " + max + ".";
-        }
+        var min = _ref8[0];
+        var max = _ref8[1];
+        return "The " + field + " must be between " + min + " and " + max + ".";
     }
 };
 
@@ -1436,16 +1569,11 @@ var validateImage = function validateImage(file, width, height) {
     return new Promise(function (resolve) {
         var image = new Image();
         image.onerror = function () {
-            return resolve({ name: file.name, valid: false });
+            return resolve({ valid: false });
         };
-
         image.onload = function () {
-            // Validate exact dimensions.
-            var valid = image.width === Number(width) && image.height === Number(height);
-
-            resolve({
-                name: file.name,
-                valid: valid
+            return resolve({
+                valid: image.width === Number(width) && image.height === Number(height)
             });
         };
 
@@ -1832,26 +1960,28 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 
 
+var DEFAULT_OPTIONS = {
+    locale: 'en',
+    delay: 0,
+    errorBagName: 'errors',
+    dictionary: null,
+    strict: true
+};
+
 /**
  * Installs the plugin.
  */
 var install = function install(Vue) {
-    var _ref = arguments.length <= 1 || arguments[1] === undefined ? {
-        locale: 'en',
-        delay: 0,
-        errorBagName: 'errors',
-        messages: null,
-        strict: true
-    } : arguments[1];
+    var _ref = arguments.length <= 1 || arguments[1] === undefined ? DEFAULT_OPTIONS : arguments[1];
 
     var locale = _ref.locale;
     var delay = _ref.delay;
     var errorBagName = _ref.errorBagName;
-    var messages = _ref.messages;
+    var dictionary = _ref.dictionary;
     var strict = _ref.strict;
 
-    if (messages) {
-        __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].updateDictionary(messages);
+    if (dictionary) {
+        __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].updateDictionary(dictionary);
     }
 
     __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].setDefaultLocale(locale);
@@ -1860,7 +1990,7 @@ var install = function install(Vue) {
     var options = {
         locale: locale,
         delay: delay,
-        messages: messages,
+        dictionary: dictionary,
         errorBagName: errorBagName
     };
 
