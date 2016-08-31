@@ -20,5 +20,9 @@ export default {
     regex: (field) => `الحقل ${field} غير صحيح.`,
     required: (field) => `${field} مطلوب.`,
     size: (field, [size]) => `${field} يجب ان يكون اقل من ${size} كيلوبايت.`,
-    url: (field) => `الحقل ${field} يجب ان يكون رابطاً صحيحاً.`
+    url: (field) => `الحقل ${field} يجب ان يكون رابطاً صحيحاً.`,
+    date_format: (field, [format]) => `${field} يجب ان يكون على هيئة ${format}.`,
+    before: (field, [target]) => `${field} يجب ان يكون قبل ${target}.`,
+    after: (field, [target]) => `${field} يجب ان يكون بعد ${target}.`,
+    between: (field, [min, max]) => `${field} يجب ان يكون ما بين ${min} و ${max}.`
 };
