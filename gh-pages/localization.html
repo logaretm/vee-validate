@@ -32,7 +32,8 @@
                 </p>
                 <h2 id="attributes-dictionary" class="content-subhead"><a href="#attributes-dictionary">Attributes (Dictionary)</a></h2>
                 <p>
-                    All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes, if the validator finds a localized attribute for that field it will be used instead of the field name. Pretty much like <code>data-as</code>.
+                    All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes, if the validator finds a localized attribute name for that field it will be used instead of the field name.
+                    Pretty much like <code>data-as</code> but <code>data-as</code> takes priorty if both are found.
                 </p>
                 <p>
                     Here is a little code example on how would you add support for your localized messages and attributes. Note that this is the entry point of your application.
