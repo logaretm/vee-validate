@@ -1960,25 +1960,18 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 
 
-var DEFAULT_OPTIONS = {
-    locale: 'en',
-    delay: 0,
-    errorBagName: 'errors',
-    dictionary: null,
-    strict: true
-};
-
-/**
- * Installs the plugin.
- */
-var install = function install(Vue) {
-    var _ref = arguments.length <= 1 || arguments[1] === undefined ? DEFAULT_OPTIONS : arguments[1];
-
-    var locale = _ref.locale;
-    var delay = _ref.delay;
-    var errorBagName = _ref.errorBagName;
-    var dictionary = _ref.dictionary;
-    var strict = _ref.strict;
+// eslint-disable-next-line
+var install = function install(Vue, _ref) {
+    var _ref$locale = _ref.locale;
+    var locale = _ref$locale === undefined ? 'en' : _ref$locale;
+    var _ref$delay = _ref.delay;
+    var delay = _ref$delay === undefined ? 0 : _ref$delay;
+    var _ref$errorBagName = _ref.errorBagName;
+    var errorBagName = _ref$errorBagName === undefined ? 'errors' : _ref$errorBagName;
+    var _ref$dictionary = _ref.dictionary;
+    var dictionary = _ref$dictionary === undefined ? null : _ref$dictionary;
+    var _ref$strict = _ref.strict;
+    var strict = _ref$strict === undefined ? true : _ref$strict;
 
     if (dictionary) {
         __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].updateDictionary(dictionary);

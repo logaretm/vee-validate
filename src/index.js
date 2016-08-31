@@ -4,18 +4,8 @@ import mixin from './mixin';
 import directive from './directive';
 import ErrorBag from './errorBag';
 
-const DEFAULT_OPTIONS = {
-    locale: 'en',
-    delay: 0,
-    errorBagName: 'errors',
-    dictionary: null,
-    strict: true
-};
-
-/**
- * Installs the plugin.
- */
-const install = (Vue, { locale, delay, errorBagName, dictionary, strict } = DEFAULT_OPTIONS) => {
+// eslint-disable-next-line
+const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true }) => {
     if (dictionary) {
         Validator.updateDictionary(dictionary);
     }
