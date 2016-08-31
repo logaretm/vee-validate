@@ -18,20 +18,44 @@
                     The <a href="https://github.com/logaretm/vee-validate/blob/master/src/messages/en.js" class="link" target="github">English messages file</a> is an example on how you would structure those messages.
                     Then you may want to update the validator dictionary, which should happen once in your app startup. still you may update them whenever you want in any point of your app, review the <a href="rules.html#custom-messages" class="link">custom messages</a> here.
                 </p>
+                <h2 id="attributes-data-as" class="content-subhead"><a href="#attributes-data-as">Attributes (data-as)</a></h2>
                 <p>
-                    Here is a little code example on how would you add support for your localized messages. Note that this is the entry point of your application.
+                    Seeing 'first_name' in your error messages can't be very good for your user experience, this plugin offer a couple of solutions:
+
+                    You can use the <code>data-as</code> attribute on your field and give it a better name for your users, it would look like this:
+                    <code-block class="language-html">
+                        &lt;input v-validate data-rules=&quot;alpha|min:3&quot; data-as=&quot;First Name&quot; name=&quot;first_name&quot; type=&quot;text&quot;&gt;
+                    </code-block>
+
+                    Now when any error message is generated for this input will use the <code>data-as</code> value instead of the actual field name. this is also the same for binding expressions.
+                    While this is very useful for simple setups and displaying localized names, you might want to check the approach below.
+                </p>
+                <h2 id="attributes-dictionary" class="content-subhead"><a href="#attributes-dictionary">Attributes (Dictionary)</a></h2>
+                <p>
+                    All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes, if the validator finds a localized attribute for that field it will be used instead of the field name. Pretty much like <code>data-as</code>.
+                </p>
+                <p>
+                    Here is a little code example on how would you add support for your localized messages and attributes. Note that this is the entry point of your application.
                 </p>
                 <code-block class="language-javascript">
                     import Vue from 'vue';
                     import VeeValidate from 'vee-validate';
-                    import messages from './strings/validator/ar.js';
+                    import messagesAr from './strings/validator/messages/ar.js';
+                    import attributesAr from './strings/validator/attributes/ar.js';
+                    import attributesEn from './strings/validator/attributes/en.js';
 
-                    // Pass options to make all validators use the arabic language.
+                    // Pass options to make all validators use the arabic language, also merge the english and arabic attributes with the internal dictionary.
                     // You can still modify each validator locale indvidually via the 'setLocale' on the validator instance.
                     Vue.use(VeeValidate, {
                         locale: 'ar',
-                        messages: {
-                            ar: messages
+                        dictionary: { // dictionary object
+                            en: {  // locale key
+                                attributes: attributesEn // English attributes
+                            }
+                            ar: {   // locale key
+                                messages: messagesAr,   // Arabic messages
+                                attributes: attributesAr  // Arabic attributes
+                            }
                         }
                     });
 
