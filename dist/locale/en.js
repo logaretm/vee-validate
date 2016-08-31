@@ -20,5 +20,9 @@ export default {
     regex: (field) => `The ${field} format is invalid.`,
     required: (field) => `The ${field} is required.`,
     size: (field, [size]) => `The ${field} must be less than ${size} KB.`,
-    url: (field) => `The ${field} is not a valid URL.`
+    url: (field) => `The ${field} is not a valid URL.`,
+    date_format: (field, [format]) => `The ${field} must be in the format ${format}.`,
+    before: (field, [target]) => `The ${field} must be before ${target}.`,
+    after: (field, [target]) => `The ${field} must be after ${target}.`,
+    between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`
 };
