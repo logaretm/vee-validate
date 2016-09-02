@@ -944,37 +944,50 @@ var hasFieldDependency = function hasFieldDependency(rules) {
         bind: function bind() {
             var _this2 = this;
 
-            this.fieldName = this.expression || this.el.name;
-            this.vm.$validator.attach(this.fieldName, this.el.dataset.rules, this.el.dataset.as);
+            this.vm.$nextTick(function () {
+                _this2.fieldName = _this2.expression || _this2.el.name;
+                _this2.vm.$validator.attach(_this2.fieldName, _this2.el.dataset.rules, _this2.el.dataset.as);
 
-            if (this.expression) {
-                this.attachValidatorEvent();
+                if (_this2.expression) {
+                    _this2.attachValidatorEvent();
 
-                return;
-            }
+                    return;
+                }
 
-            var handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
-            this.handles = this.el.type === 'file' ? 'change' : 'input';
+                var handler = _this2.el.type === 'file' ? _this2.onFileInput : _this2.onInput;
+                _this2.handles = _this2.el.type === 'file' ? 'change' : 'input';
 
-            var delay = this.el.dataset.delay || options.delay;
-            this.handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler.bind(this), delay) : handler.bind(this);
-            this.el.addEventListener(this.handles, this.handler);
+                var delay = _this2.el.dataset.delay || options.delay;
+                _this2.handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler.bind(_this2), delay) : handler.bind(_this2);
+                _this2.el.addEventListener(_this2.handles, _this2.handler);
 
-            this.attachValidatorEvent();
-            var fieldName = hasFieldDependency(this.el.dataset.rules);
-            if (this.el.dataset.rules && fieldName) {
-                this.vm.$once('validatorReady', function () {
-                    document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', _this2.handler);
-                });
-            }
+                _this2.attachValidatorEvent();
+                var fieldName = hasFieldDependency(_this2.el.dataset.rules);
+                if (_this2.el.dataset.rules && fieldName) {
+                    _this2.vm.$once('validatorReady', function () {
+                        document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', _this2.handler);
+                    });
+                }
+            });
         },
         update: function update(value) {
+            var _this3 = this;
+
             if (!this.expression) {
                 return;
             }
 
             if (this.modifiers.initial) {
                 this.modifiers.initial = false;
+
+                return;
+            }
+
+            // might be not ready yet.
+            if (!this.fieldName) {
+                this.vm.$nextTick(function () {
+                    _this3.vm.$validator.validate(_this3.fieldName, value);
+                });
 
                 return;
             }
