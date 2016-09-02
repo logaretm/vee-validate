@@ -15,14 +15,15 @@ test('empty values pass validation unless they are required', t => {
         email: 'email',
         name: 'min:3',
         title: 'min:3',
-        content: 'max:10',
-        tags: 'in:1,2,3,4'
+        content: 'required|max:10',
     });
 
     t.true(v.validate('email', ''));
     t.true(v.validate('name', null));
     t.true(v.validate('title', undefined));
+    t.true(v.validate('content', 'works'));
 
+    t.false(v.validate('content', ''));
     t.false(v.validate('email', 'loga'));
     t.false(v.validate('name', 'no'));
     t.false(v.validate('title', 'no'));

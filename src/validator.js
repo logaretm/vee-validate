@@ -233,9 +233,12 @@ export default class Validator
         this.errorBag.remove(name);
 
         checks.split('|').forEach(rule => {
-            this.$fields[name].validations.push(
-                this._normalizeRule(rule, this.$fields[name].validations)
-            );
+            const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
+            if (normalizedRule.name === 'required') {
+                this.$fields[name].required = true;
+            }
+
+            this.$fields[name].validations.push(normalizedRule);
         });
 
         if (prettyName) {
