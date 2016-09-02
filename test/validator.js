@@ -10,6 +10,24 @@ const validator = new Validator({
     tags: 'required|in:1,2,3,5'
 });
 
+test('empty values pass validation unless they are required', t => {
+    const v = new Validator({
+        email: 'email',
+        name: 'min:3',
+        title: 'min:3',
+        content: 'max:10',
+        tags: 'in:1,2,3,4'
+    });
+
+    t.true(v.validate('email', ''));
+    t.true(v.validate('name', null));
+    t.true(v.validate('title', undefined));
+
+    t.false(v.validate('email', 'loga'));
+    t.false(v.validate('name', 'no'));
+    t.false(v.validate('title', 'no'));
+});
+
 test('it can validate single values', t => {
     t.true(validator.validate('title', 'abc'));
     t.false(validator.validate('title', 'ab'));
