@@ -568,6 +568,11 @@ var Validator = function () {
                 return false;
             }
 
+            // if its not required and is empty or null or undefined then it passes.
+            if (!this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
+                return true;
+            }
+
             var test = true;
             var promises = [];
             this.errorBag.remove(name);
@@ -615,7 +620,12 @@ var Validator = function () {
                         normalized[property] = { validations: [] };
                     }
 
-                    normalized[property].validations.push(_this4._normalizeRule(rule, normalized[property].validations));
+                    var normalizedRule = _this4._normalizeRule(rule, normalized[property].validations);
+                    if (normalizedRule.name === 'required') {
+                        normalized[property].required = true;
+                    }
+
+                    normalized[property].validations.push(normalizedRule);
                 });
             });
 
