@@ -456,7 +456,12 @@ var Validator = function () {
             this.errorBag.remove(name);
 
             checks.split('|').forEach(function (rule) {
-                _this.$fields[name].validations.push(_this._normalizeRule(rule, _this.$fields[name].validations));
+                var normalizedRule = _this._normalizeRule(rule, _this.$fields[name].validations);
+                if (normalizedRule.name === 'required') {
+                    _this.$fields[name].required = true;
+                }
+
+                _this.$fields[name].validations.push(normalizedRule);
             });
 
             if (prettyName) {
