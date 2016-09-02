@@ -2005,7 +2005,9 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 
 // eslint-disable-next-line
-var install = function install(Vue, _ref) {
+var install = function install(Vue) {
+    var _ref = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
     var _ref$locale = _ref.locale;
     var locale = _ref$locale === undefined ? 'en' : _ref$locale;
     var _ref$delay = _ref.delay;
