@@ -5,7 +5,7 @@ import directive from './directive';
 import ErrorBag from './errorBag';
 
 // eslint-disable-next-line
-const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true }) => {
+const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true } = {}) => {
     if (dictionary) {
         Validator.updateDictionary(dictionary);
     }
