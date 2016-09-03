@@ -1,6 +1,6 @@
 export default (value, [length]) => {
     if (value === undefined || value === null) {
-        return length >= 0;
+        return false;
     }
 
     return String(value).length <= length;
