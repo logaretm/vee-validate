@@ -1,6 +1,7 @@
 # Vee-Validate
 [![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg?token=XFzlvHKFP5)](https://codecov.io/gh/logaretm/vee-validate)
 [![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=master)](https://travis-ci.org/logaretm/vee-validate)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/logaretm1/vee-validate?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=logaretm/vee-validate&amp;utm_campaign=Badge_Grade)
 
 vee-validate is a lightweight plugin for [VueJS](https://vuejs.org/) that allows you to validate input fields, and display errors.
 
