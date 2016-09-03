@@ -1802,7 +1802,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var length = _ref2[0];
 
     if (value === undefined || value === null) {
-        return length >= 0;
+        return false;
     }
 
     return String(value).length <= length;
