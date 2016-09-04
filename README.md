@@ -67,4 +67,8 @@ However if you are adding a new validation rule, it should have multiple uses or
 
 You can find more information in the [contribution guide](contributing.md).
 
+### Tutorials
+
+- [Form Validation using Vue.js 2](https://dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d#.m95idzlj2) by [Alex Kyriakidis](https://github.com/hootlex)
+
 ### license MIT
