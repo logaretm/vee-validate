@@ -973,6 +973,13 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
 
     callbackMaps.push({ vm: context, event: 'validatorEvent', callback: callback, el: el });
     context.$on(DEFAULT_EVENT_NAME, callback);
+
+    var fieldName = hasFieldDependency(el.dataset.rules);
+    if (el.dataset.rules && fieldName) {
+        context.$once('validatorReady', function () {
+            document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', callback);
+        });
+    }
 };
 
 /* harmony default export */ exports["a"] = function (options) {
@@ -997,15 +1004,6 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
             var event = el.type === 'file' ? 'change' : 'input';
             el.addEventListener(event, handler);
             callbackMaps.push({ vm: context, event: event, callback: handler, el: el });
-
-            // some rules require another listener on the target field.
-            // TODO: Clean this up.
-            var fieldName = hasFieldDependency(el.dataset.rules);
-            if (el.dataset.rules && fieldName) {
-                context.$once('validatorReady', function () {
-                    document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', handler);
-                });
-            }
         },
         update: function update(el, _ref8, _ref9) {
             var expression = _ref8.expression;
