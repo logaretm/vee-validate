@@ -23,12 +23,19 @@ export default (options) => ({
     },
     attachValidatorEvent() {
         this.validateCallback = this.expression ? () => {
-            this.vm.$validator.validate(this.fieldName, this.value);
+            this.vm.$validator.validate(this.fieldName, this.el.value);
         } : () => {
             this.handler();
         };
 
         this.vm.$on(DEFAULT_EVENT_NAME, this.validateCallback);
+        const fieldName = hasFieldDependency(this.el.dataset.rules);
+        if (this.el.dataset.rules && fieldName) {
+            this.vm.$once('validatorReady', () => {
+                document.querySelector(`input[name='${fieldName}']`)
+                        .addEventListener('input', this.validateCallback);
+            });
+        }
     },
     bind() {
         this.vm.$nextTick(() => {
@@ -49,13 +56,6 @@ export default (options) => ({
             this.el.addEventListener(this.handles, this.handler);
 
             this.attachValidatorEvent();
-            const fieldName = hasFieldDependency(this.el.dataset.rules);
-            if (this.el.dataset.rules && fieldName) {
-                this.vm.$once('validatorReady', () => {
-                    document.querySelector(`input[name='${fieldName}']`)
-                            .addEventListener('input', this.handler);
-                });
-            }
         });
     },
     update(value) {
