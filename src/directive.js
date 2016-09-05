@@ -34,6 +34,14 @@ const attachValidatorEvent = (el, { expression, value }, { context }) => {
 
     callbackMaps.push({ vm: context, event: 'validatorEvent', callback, el });
     context.$on(DEFAULT_EVENT_NAME, callback);
+
+    const fieldName = hasFieldDependency(el.dataset.rules);
+    if (el.dataset.rules && fieldName) {
+        context.$once('validatorReady', () => {
+            document.querySelector(`input[name='${fieldName}']`)
+                    .addEventListener('input', callback);
+        });
+    }
 };
 
 export default (options) => ({
@@ -56,16 +64,6 @@ export default (options) => ({
         const event = el.type === 'file' ? 'change' : 'input';
         el.addEventListener(event, handler);
         callbackMaps.push({ vm: context, event, callback: handler, el });
-
-        // some rules require another listener on the target field.
-        // TODO: Clean this up.
-        const fieldName = hasFieldDependency(el.dataset.rules);
-        if (el.dataset.rules && fieldName) {
-            context.$once('validatorReady', () => {
-                document.querySelector(`input[name='${fieldName}']`)
-                        .addEventListener('input', handler);
-            });
-        }
     },
     update(el, { expression, value, modifiers, oldValue }, { context }) {
         if (! expression || value === oldValue) {
