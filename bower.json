@@ -1,0 +1,29 @@
+{
+  "name": "vee-validate",
+  "version": "2.0.0-beta.7",
+  "homepage": "https://logaretm.github.io/vee-validate/",
+  "authors": [
+    "'Abdelrahman Awad' <'logaretm1@outlook.com'>"
+  ],
+  "description": "Simple VueJS validation plugin",
+  "main": "dist/vee-validate.min.js",
+  "keywords": [
+    "vee-validate",
+    "vuejs",
+    "validate",
+    "laravel"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "src",
+    "gh-pages",
+    "docs",
+    "coverage",
+    "webpack.config.js"
+  ]
+}
