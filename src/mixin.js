@@ -7,7 +7,7 @@ export default (options) => ({
         };
     },
     ready() {
-        this.$emit('validatorReady');
+        this.$nextTick(() => { this.$emit('validatorReady'); });
     },
     destroyed() {
         unregister(this);
