@@ -949,12 +949,18 @@ var hasFieldDependency = function hasFieldDependency(rules) {
             var _this = this;
 
             this.validateCallback = this.expression ? function () {
-                _this.vm.$validator.validate(_this.fieldName, _this.value);
+                _this.vm.$validator.validate(_this.fieldName, _this.el.value);
             } : function () {
                 _this.handler();
             };
 
             this.vm.$on(DEFAULT_EVENT_NAME, this.validateCallback);
+            var fieldName = hasFieldDependency(this.el.dataset.rules);
+            if (this.el.dataset.rules && fieldName) {
+                this.vm.$once('validatorReady', function () {
+                    document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', _this.validateCallback);
+                });
+            }
         },
         bind: function bind() {
             var _this2 = this;
@@ -977,12 +983,6 @@ var hasFieldDependency = function hasFieldDependency(rules) {
                 _this2.el.addEventListener(_this2.handles, _this2.handler);
 
                 _this2.attachValidatorEvent();
-                var fieldName = hasFieldDependency(_this2.el.dataset.rules);
-                if (_this2.el.dataset.rules && fieldName) {
-                    _this2.vm.$once('validatorReady', function () {
-                        document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', _this2.handler);
-                    });
-                }
             });
         },
         update: function update(value) {
