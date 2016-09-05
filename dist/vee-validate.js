@@ -1036,7 +1036,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             return _defineProperty({}, options.errorBagName, this.$validator.errorBag);
         },
         ready: function ready() {
-            this.$emit('validatorReady');
+            var _this = this;
+
+            this.$nextTick(function () {
+                _this.$emit('validatorReady');
+            });
         },
         destroyed: function destroyed() {
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_maps__["a" /* unregister */])(this);
