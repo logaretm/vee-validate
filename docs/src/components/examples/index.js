@@ -5,6 +5,7 @@ import ValidatorExample from './ValidatorExample.vue';
 import ValidateData from './ValidateData.vue';
 import ValidateEvent from './ValidateEventExample.vue';
 import LocaleExample from './LocaleExample.vue';
+import ScopeExample from './ScopeExample.vue';
 
 // Register Examples.
 export default (Vue) => {
@@ -15,4 +16,5 @@ export default (Vue) => {
     Vue.component('data-example', ValidateData);
     Vue.component('event-example', ValidateEvent);
     Vue.component('locale-example', LocaleExample);
+    Vue.component('scope-example', ScopeExample);
 };
