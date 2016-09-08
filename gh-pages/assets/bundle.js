@@ -5343,8 +5343,16 @@
 
                 var callback = void 0;
                 if (expression) {
-                    callback = function callback() {
-                        return context.$validator.validate(expression || el.name, value, getScope(el));
+                    callback = function callback(scope) {
+                        if (scope) {
+                            if (getScope(el) === scope) {
+                                context.$validator.validate(expression || el.name, el.value, getScope(el));
+                            }
+
+                            return;
+                        }
+
+                        context.$validator.validate(expression || el.name, el.value, getScope(el));
                     };
                 } else {
                     callback = function callback(scope) {
@@ -16806,48 +16814,6 @@ var __vue_exports__, __vue_options__
 __vue_exports__ = __webpack_require__(118)
 
 /* template */
-var __vue_template__ = __webpack_require__(167)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-1", __vue_options__)
-  }
-})()}
-if (__vue_options__.functional) {console.error("[vue-loader] App.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 115 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* styles */
-__webpack_require__(154)
-
-/* script */
-__vue_exports__ = __webpack_require__(119)
-
-/* template */
 var __vue_template__ = __webpack_require__(170)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
@@ -16872,13 +16838,13 @@ if (false) {(function () {
     hotAPI.reload("data-v-2", __vue_options__)
   }
 })()}
-if (__vue_options__.functional) {console.error("[vue-loader] CodeBlock.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+if (__vue_options__.functional) {console.error("[vue-loader] App.vue: functional components are not supported and should be defined in plain js files using render functions.")}
 
 module.exports = __vue_exports__
 
 
 /***/ },
-/* 116 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
@@ -16887,7 +16853,7 @@ var __vue_exports__, __vue_options__
 __webpack_require__(155)
 
 /* script */
-__vue_exports__ = __webpack_require__(120)
+__vue_exports__ = __webpack_require__(119)
 
 /* template */
 var __vue_template__ = __webpack_require__(171)
@@ -16912,6 +16878,48 @@ if (false) {(function () {
     hotAPI.createRecord("data-v-3", __vue_options__)
   } else {
     hotAPI.reload("data-v-3", __vue_options__)
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] CodeBlock.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 116 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* styles */
+__webpack_require__(154)
+
+/* script */
+__vue_exports__ = __webpack_require__(120)
+
+/* template */
+var __vue_template__ = __webpack_require__(167)
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-1", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-1", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] CodeExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -26672,7 +26680,7 @@ module.exports = __vue_exports__
 var __vue_exports__, __vue_options__
 
 /* template */
-var __vue_template__ = __webpack_require__(173)
+var __vue_template__ = __webpack_require__(174)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -26691,9 +26699,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-5", __vue_options__)
+    hotAPI.createRecord("data-v-6", __vue_options__)
   } else {
-    hotAPI.reload("data-v-5", __vue_options__)
+    hotAPI.reload("data-v-6", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] DelayExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -26747,7 +26755,7 @@ module.exports = __vue_exports__
 var __vue_exports__, __vue_options__
 
 /* template */
-var __vue_template__ = __webpack_require__(176)
+var __vue_template__ = __webpack_require__(173)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -26766,9 +26774,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-8", __vue_options__)
+    hotAPI.createRecord("data-v-5", __vue_options__)
   } else {
-    hotAPI.reload("data-v-8", __vue_options__)
+    hotAPI.reload("data-v-5", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] RejectExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -26825,45 +26833,6 @@ var __vue_exports__, __vue_options__
 __vue_exports__ = __webpack_require__(123)
 
 /* template */
-var __vue_template__ = __webpack_require__(177)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-9", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-9", __vue_options__)
-  }
-})()}
-if (__vue_options__.functional) {console.error("[vue-loader] ValidateData.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 165 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* script */
-__vue_exports__ = __webpack_require__(124)
-
-/* template */
 var __vue_template__ = __webpack_require__(175)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
@@ -26888,22 +26857,22 @@ if (false) {(function () {
     hotAPI.reload("data-v-7", __vue_options__)
   }
 })()}
-if (__vue_options__.functional) {console.error("[vue-loader] ValidateEventExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+if (__vue_options__.functional) {console.error("[vue-loader] ValidateData.vue: functional components are not supported and should be defined in plain js files using render functions.")}
 
 module.exports = __vue_exports__
 
 
 /***/ },
-/* 166 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 
 /* script */
-__vue_exports__ = __webpack_require__(125)
+__vue_exports__ = __webpack_require__(124)
 
 /* template */
-var __vue_template__ = __webpack_require__(174)
+var __vue_template__ = __webpack_require__(177)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -26922,9 +26891,48 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6", __vue_options__)
+    hotAPI.createRecord("data-v-9", __vue_options__)
   } else {
-    hotAPI.reload("data-v-6", __vue_options__)
+    hotAPI.reload("data-v-9", __vue_options__)
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] ValidateEventExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* script */
+__vue_exports__ = __webpack_require__(125)
+
+/* template */
+var __vue_template__ = __webpack_require__(176)
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-8", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-8", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] ValidatorExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -26938,118 +26946,84 @@ module.exports = __vue_exports__
 
 module.exports={render:function (){with(this) {
   return _h('div', {
-    ref: "layout",
-    attrs: {
-      "id": "layout"
-    }
-  }, [_h('a', {
-    ref: "menuLink",
-    staticClass: "menu-link",
-    attrs: {
-      "href": "#menu",
-      "id": "menuLink"
-    }
-  }, [_m(0)]), " ", _h('div', {
-    ref: "menu",
-    attrs: {
-      "id": "menu"
-    }
-  }, [_m(1), " ", _m(2)]), " ", _h('div', {
-    attrs: {
-      "id": "main"
-    }
+    staticClass: "pure-g"
   }, [_h('div', {
-    staticClass: "header"
-  }, [_h('h1', [_s(heading)]), " ", _h('h2', [_s(subtitle)])]), " ", _h('div', {
-    staticClass: "content"
-  }, [$slots["default"]])])])
-}},staticRenderFns: [function (){with(this) {
-  return _h('span')
-}},function (){with(this) {
-  return _h('div', {
-    staticClass: "pure-menu"
-  }, [_h('a', {
-    staticClass: "pure-menu-heading",
-    attrs: {
-      "href": "/"
-    }
-  }, ["Vee Validate"]), " ", _h('ul', {
+    staticClass: "pure-u-1"
+  }, [_h('div', {
+    staticClass: "pure-menu pure-menu-horizontal"
+  }, [_h('ul', {
     staticClass: "pure-menu-list"
   }, [_h('li', {
-    staticClass: "pure-menu-item"
+    class: {
+      'pure-menu-item': true, 'pure-menu-selected': content === 'demo'
+    }
   }, [_h('a', {
     staticClass: "pure-menu-link",
-    attrs: {
-      "href": "index.html"
+    on: {
+      "click": function($event) {
+        content = 'demo'
+      }
     }
-  }, ["Getting Started"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
+  }, [_m(0), "\n                        Demo\n                    "])]), " ", _h('li', {
+    class: {
+      'pure-menu-item': true, 'pure-menu-selected': content === 'html'
+    }
   }, [_h('a', {
     staticClass: "pure-menu-link",
-    attrs: {
-      "href": "index.html#installation"
+    on: {
+      "click": function($event) {
+        content = 'html'
+      }
     }
-  }, ["Installation"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
+  }, [_m(1), "\n                        HTML\n                    "])]), " ", _h('li', {
+    class: {
+      'pure-menu-item': true, 'pure-menu-selected': content === 'js'
+    }
   }, [_h('a', {
     staticClass: "pure-menu-link",
-    attrs: {
-      "href": "index.html#basic-example"
+    on: {
+      "click": function($event) {
+        content = 'js'
+      }
     }
-  }, ["Basic Example"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "index.html#render-errors"
-    }
-  }, ["Rendering Errors"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "examples.html"
-    }
-  }, ["Examples"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "rules.html"
-    }
-  }, ["Validation Rules"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "localization.html"
-    }
-  }, ["Localization"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "api.html"
-    }
-  }, ["API Reference"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "index.html#configuration"
-    }
-  }, ["Configuration"])])])])
+  }, [_m(2), "\n                        JavaScript\n                    "])])])])]), " ", _h('div', {
+    directives: [{
+      name: "show",
+      value: (content === 'demo'),
+      expression: "content === 'demo'"
+    }],
+    staticClass: "pure-u-1"
+  }, [$slots["example"]]), " ", _h('div', {
+    directives: [{
+      name: "show",
+      value: (content === 'html'),
+      expression: "content === 'html'"
+    }],
+    staticClass: "pure-u-1"
+  }, [_h('code-block', {
+    staticClass: "language-html"
+  }, [$slots["code-html"]])]), " ", _h('div', {
+    directives: [{
+      name: "show",
+      value: (content === 'js'),
+      expression: "content === 'js'"
+    }],
+    staticClass: "pure-u-1"
+  }, [_h('code-block', {
+    staticClass: "language-javascript"
+  }, [$slots["code-js"]])])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('i', {
+    staticClass: "icon-play"
+  })
 }},function (){with(this) {
-  return _h('div', {
-    staticClass: "about flex-center"
-  }, [_h('a', {
-    attrs: {
-      "target": "github",
-      "href": "https://github.com/logaretm/vee-validate"
-    }
-  }, [_h('i', {
-    staticClass: "icon-github"
-  })])])
+  return _h('i', {
+    staticClass: "icon-html5"
+  })
+}},function (){with(this) {
+  return _h('i', {
+    staticClass: "icon-code"
+  })
 }}]}
 if (false) {
   module.hot.accept()
@@ -27298,10 +27272,120 @@ if (false) {
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
-  return _h('pre', [_h('code', {
-    ref: "code"
-  }, [$slots["default"]])])
-}},staticRenderFns: []}
+  return _h('div', {
+    ref: "layout",
+    attrs: {
+      "id": "layout"
+    }
+  }, [_h('a', {
+    ref: "menuLink",
+    staticClass: "menu-link",
+    attrs: {
+      "href": "#menu",
+      "id": "menuLink"
+    }
+  }, [_m(0)]), " ", _h('div', {
+    ref: "menu",
+    attrs: {
+      "id": "menu"
+    }
+  }, [_m(1), " ", _m(2)]), " ", _h('div', {
+    attrs: {
+      "id": "main"
+    }
+  }, [_h('div', {
+    staticClass: "header"
+  }, [_h('h1', [_s(heading)]), " ", _h('h2', [_s(subtitle)])]), " ", _h('div', {
+    staticClass: "content"
+  }, [$slots["default"]])])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('span')
+}},function (){with(this) {
+  return _h('div', {
+    staticClass: "pure-menu"
+  }, [_h('a', {
+    staticClass: "pure-menu-heading",
+    attrs: {
+      "href": "/"
+    }
+  }, ["Vee Validate"]), " ", _h('ul', {
+    staticClass: "pure-menu-list"
+  }, [_h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "index.html"
+    }
+  }, ["Getting Started"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "index.html#installation"
+    }
+  }, ["Installation"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "index.html#basic-example"
+    }
+  }, ["Basic Example"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "index.html#render-errors"
+    }
+  }, ["Rendering Errors"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "examples.html"
+    }
+  }, ["Examples"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "rules.html"
+    }
+  }, ["Validation Rules"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "localization.html"
+    }
+  }, ["Localization"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "api.html"
+    }
+  }, ["API Reference"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "index.html#configuration"
+    }
+  }, ["Configuration"])])])])
+}},function (){with(this) {
+  return _h('div', {
+    staticClass: "about flex-center"
+  }, [_h('a', {
+    attrs: {
+      "target": "github",
+      "href": "https://github.com/logaretm/vee-validate"
+    }
+  }, [_h('i', {
+    staticClass: "icon-github"
+  })])])
+}}]}
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
@@ -27314,86 +27398,10 @@ if (false) {
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
-  return _h('div', {
-    staticClass: "pure-g"
-  }, [_h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('div', {
-    staticClass: "pure-menu pure-menu-horizontal"
-  }, [_h('ul', {
-    staticClass: "pure-menu-list"
-  }, [_h('li', {
-    class: {
-      'pure-menu-item': true, 'pure-menu-selected': content === 'demo'
-    }
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    on: {
-      "click": function($event) {
-        content = 'demo'
-      }
-    }
-  }, [_m(0), "\n                        Demo\n                    "])]), " ", _h('li', {
-    class: {
-      'pure-menu-item': true, 'pure-menu-selected': content === 'html'
-    }
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    on: {
-      "click": function($event) {
-        content = 'html'
-      }
-    }
-  }, [_m(1), "\n                        HTML\n                    "])]), " ", _h('li', {
-    class: {
-      'pure-menu-item': true, 'pure-menu-selected': content === 'js'
-    }
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    on: {
-      "click": function($event) {
-        content = 'js'
-      }
-    }
-  }, [_m(2), "\n                        JavaScript\n                    "])])])])]), " ", _h('div', {
-    directives: [{
-      name: "show",
-      value: (content === 'demo'),
-      expression: "content === 'demo'"
-    }],
-    staticClass: "pure-u-1"
-  }, [$slots["example"]]), " ", _h('div', {
-    directives: [{
-      name: "show",
-      value: (content === 'html'),
-      expression: "content === 'html'"
-    }],
-    staticClass: "pure-u-1"
-  }, [_h('code-block', {
-    staticClass: "language-html"
-  }, [$slots["code-html"]])]), " ", _h('div', {
-    directives: [{
-      name: "show",
-      value: (content === 'js'),
-      expression: "content === 'js'"
-    }],
-    staticClass: "pure-u-1"
-  }, [_h('code-block', {
-    staticClass: "language-javascript"
-  }, [$slots["code-js"]])])])
-}},staticRenderFns: [function (){with(this) {
-  return _h('i', {
-    staticClass: "icon-play"
-  })
-}},function (){with(this) {
-  return _h('i', {
-    staticClass: "icon-html5"
-  })
-}},function (){with(this) {
-  return _h('i', {
-    staticClass: "icon-code"
-  })
-}}]}
+  return _h('pre', [_h('code', {
+    ref: "code"
+  }, [$slots["default"]])])
+}},staticRenderFns: []}
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
@@ -27453,6 +27461,88 @@ if (false) {
 
 /***/ },
 /* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_m(0), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('image')
+    },
+    attrs: {
+      "for": "image"
+    }
+  }, ["Unrejected Image"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('image')
+    },
+    attrs: {
+      "data-rules": "mimes:image/*",
+      "name": "image",
+      "type": "file"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('image')),
+      expression: "errors.has('image')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('image'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('file')
+    },
+    attrs: {
+      "for": "file"
+    }
+  }, ["Rejected Image"]), " ", _h('input', {
+    directives: [{
+      name: "validate",
+      modifiers: {
+        "reject": true
+      }
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('file')
+    },
+    attrs: {
+      "data-rules": "mimes:image/*",
+      "name": "file",
+      "type": "file"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('file')),
+      expression: "errors.has('file')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('file'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>File Upload</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('image') }\" for=\"image\">Unrejected Image</label>\n                    <input v-validate data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('image') }\" name=\"image\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('image')\">" + _s(errors.first('image')) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('file') }\" for=\"file\">Rejected Image</label>\n                    <input  v-validate.reject data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('file')\">" + _s(errors.first('file')) + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('legend', ["File Upload"])
+}}]}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-5", module.exports)
+  }
+}
+
+/***/ },
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -27530,12 +27620,122 @@ module.exports={render:function (){with(this) {
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-5", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-6", module.exports)
   }
 }
 
 /***/ },
-/* 174 */
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email"]), " ", _h('input', {
+    directives: [{
+      name: "model",
+      value: (email),
+      expression: "email"
+    }, {
+      name: "validate",
+      value: (email),
+      expression: "email"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email')
+    },
+    attrs: {
+      "data-rules": "required|email",
+      "type": "text",
+      "placeholder": "Email"
+    },
+    domProps: {
+      "value": _s(email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        email = $event.target.value
+      }
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email')),
+      expression: "errors.has('email')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('email'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('name')
+    },
+    attrs: {
+      "for": "name"
+    }
+  }, ["Full Name"]), " ", _h('input', {
+    directives: [{
+      name: "model",
+      value: (name),
+      expression: "name"
+    }, {
+      name: "validate",
+      value: (name),
+      expression: "name",
+      modifiers: {
+        "initial": true
+      }
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('name')
+    },
+    attrs: {
+      "data-rules": "required|alpha",
+      "type": "text",
+      "placeholder": "Full Name"
+    },
+    domProps: {
+      "value": _s(name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        name = $event.target.value
+      }
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('name')),
+      expression: "errors.has('name')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('name'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-model=\"email\" v-validate=\"email\" data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n                    <input v-model=\"name\" v-validate.initial=\"name\" data-rules=\"required|alpha\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s("{" + "{ errors.first('name') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app',\n            data: {\n                email: '',\n                name: ''\n            }\n        });\n    "])])
+}},staticRenderFns: []}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-7", module.exports)
+  }
+}
+
+/***/ },
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -27647,12 +27847,12 @@ module.exports={render:function (){with(this) {
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-6", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-8", module.exports)
   }
 }
 
 /***/ },
-/* 175 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -27859,198 +28059,6 @@ module.exports={render:function (){with(this) {
     }
   })
 }}]}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-7", module.exports)
-  }
-}
-
-/***/ },
-/* 176 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked"
-  }, [_m(0), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('image')
-    },
-    attrs: {
-      "for": "image"
-    }
-  }, ["Unrejected Image"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('image')
-    },
-    attrs: {
-      "data-rules": "mimes:image/*",
-      "name": "image",
-      "type": "file"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('image')),
-      expression: "errors.has('image')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('image'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('file')
-    },
-    attrs: {
-      "for": "file"
-    }
-  }, ["Rejected Image"]), " ", _h('input', {
-    directives: [{
-      name: "validate",
-      modifiers: {
-        "reject": true
-      }
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('file')
-    },
-    attrs: {
-      "data-rules": "mimes:image/*",
-      "name": "file",
-      "type": "file"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('file')),
-      expression: "errors.has('file')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('file'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>File Upload</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('image') }\" for=\"image\">Unrejected Image</label>\n                    <input v-validate data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('image') }\" name=\"image\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('image')\">" + _s(errors.first('image')) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('file') }\" for=\"file\">Rejected Image</label>\n                    <input  v-validate.reject data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('file')\">" + _s(errors.first('file')) + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
-}},staticRenderFns: [function (){with(this) {
-  return _h('legend', ["File Upload"])
-}}]}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-8", module.exports)
-  }
-}
-
-/***/ },
-/* 177 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked"
-  }, [_h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('email')
-    },
-    attrs: {
-      "for": "email"
-    }
-  }, ["Email"]), " ", _h('input', {
-    directives: [{
-      name: "model",
-      value: (email),
-      expression: "email"
-    }, {
-      name: "validate",
-      value: (email),
-      expression: "email"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('email')
-    },
-    attrs: {
-      "data-rules": "required|email",
-      "type": "text",
-      "placeholder": "Email"
-    },
-    domProps: {
-      "value": _s(email)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) return;
-        email = $event.target.value
-      }
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('email')),
-      expression: "errors.has('email')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('email'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('name')
-    },
-    attrs: {
-      "for": "name"
-    }
-  }, ["Full Name"]), " ", _h('input', {
-    directives: [{
-      name: "model",
-      value: (name),
-      expression: "name"
-    }, {
-      name: "validate",
-      value: (name),
-      expression: "name",
-      modifiers: {
-        "initial": true
-      }
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('name')
-    },
-    attrs: {
-      "data-rules": "required|alpha",
-      "type": "text",
-      "placeholder": "Full Name"
-    },
-    domProps: {
-      "value": _s(name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) return;
-        name = $event.target.value
-      }
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('name')),
-      expression: "errors.has('name')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('name'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-model=\"email\" v-validate=\"email\" data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n                    <input v-model=\"name\" v-validate.initial=\"name\" data-rules=\"required|alpha\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s("{" + "{ errors.first('name') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app',\n            data: {\n                email: '',\n                name: ''\n            }\n        });\n    "])])
-}},staticRenderFns: []}
 if (false) {
   module.hot.accept()
   if (module.hot.data) {

@@ -1032,8 +1032,16 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
 
     var callback = void 0;
     if (expression) {
-        callback = function callback() {
-            return context.$validator.validate(expression || el.name, value, getScope(el));
+        callback = function callback(scope) {
+            if (scope) {
+                if (getScope(el) === scope) {
+                    context.$validator.validate(expression || el.name, el.value, getScope(el));
+                }
+
+                return;
+            }
+
+            context.$validator.validate(expression || el.name, el.value, getScope(el));
         };
     } else {
         callback = function callback(scope) {
