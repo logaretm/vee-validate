@@ -281,16 +281,17 @@ export default class Validator
      * resolve to a boolean.
      */
     validateAll(values) {
-        this.errorBag.clear();
         /* istanbul ignore if */
-        if (this.$vm && ! values) {
-            this.$vm.$emit(EVENT_NAME);
+        if (this.$vm && (! values || typeof values === 'string')) {
+            this.errorBag.clear(values);
+            this.$vm.$emit(EVENT_NAME, values);
 
             return;
         }
 
         let test = true;
         const promises = [];
+        this.errorBag.clear();
         Object.keys(values).forEach(property => {
             const result = this.validate(property, values[property]);
             if (typeof result.then === 'function') {

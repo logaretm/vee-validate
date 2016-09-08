@@ -30,9 +30,19 @@ const hasFieldDependency = (rules) => {
 const attachValidatorEvent = (el, { expression, value }, { context }) => {
     let callback;
     if (expression) {
-        callback = onInput(el, { expression }, { context });
-    } else {
         callback = () => context.$validator.validate(expression || el.name, value, getScope(el));
+    } else {
+        callback = (scope) => {
+            if (scope) {
+                if (getScope(el) === scope) {
+                    onInput(el, { expression }, { context })();
+                }
+
+                return;
+            }
+
+            onInput(el, { expression }, { context })();
+        };
     }
 
     callbackMaps.push({ vm: context, event: 'validatorEvent', callback, el });
@@ -52,9 +62,11 @@ export default (options) => ({
         context.$validator.attach(binding.expression || el.name, el.dataset.rules, el.dataset.as);
         attachValidatorEvent(el, binding, { context });
 
-        if (binding.expression && ! binding.modifiers.initial) {
+        if (binding.expression) {
             // if its bound, validate it. (since update doesn't trigger after bind).
-            context.$validator.validate(binding.expression, binding.value, getScope(el));
+            if (! binding.modifiers.initial) {
+                context.$validator.validate(binding.expression, binding.value, getScope(el));
+            }
 
             return;
         }
