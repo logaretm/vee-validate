@@ -2,6 +2,8 @@ import debounce from './utils/debouncer.js';
 
 const DEFAULT_EVENT_NAME = 'veeValidate';
 
+const getScope = (el) => el.dataset.scope || el.form.dataset.scope || undefined;
+
 const hasFieldDependency = (rules) => {
     const results = rules.split('|').filter(r => !! r.match(/confirmed|after|before/));
     if (! results.length) {
@@ -13,17 +15,17 @@ const hasFieldDependency = (rules) => {
 
 export default (options) => ({
     onInput() {
-        this.vm.$validator.validate(this.fieldName, this.el.value);
+        this.vm.$validator.validate(this.fieldName, this.el.value, getScope(this.el));
     },
     onFileInput() {
-        if (! this.vm.$validator.validate(this.fieldName, this.el.files)
+        if (! this.vm.$validator.validate(this.fieldName, this.el.files, getScope(this.el))
         && this.modifiers.reject) {
             this.el.value = '';
         }
     },
     attachValidatorEvent() {
         this.validateCallback = this.expression ? () => {
-            this.vm.$validator.validate(this.fieldName, this.el.value);
+            this.vm.$validator.validate(this.fieldName, this.el.value, getScope(this.el));
         } : () => {
             this.handler();
         };
@@ -54,7 +56,6 @@ export default (options) => ({
             const delay = this.el.dataset.delay || options.delay;
             this.handler = delay ? debounce(handler.bind(this), delay) : handler.bind(this);
             this.el.addEventListener(this.handles, this.handler);
-
             this.attachValidatorEvent();
         });
     },
