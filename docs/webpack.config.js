@@ -20,6 +20,7 @@ let config = {
         loaders: [
             {
                 test: /\.js$/,
+                exclude: /node_modules/,
                 loader: 'babel',
                 query: {
                     babelrc: false,
