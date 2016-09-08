@@ -73,9 +73,9 @@
                  <p>
                     By default the scope of the validator is the same as the Vue instance that owns it, sometimes you may have multiple fields with the same name, they are in different forms and serve different purposes.
                     The validator will then treat those two fields as the same field which will cause problems detecting the input and displaying the errors.
-                    <br>
-                    You can tell the validator to scope the fields by adding a <code class="inline">data-scope</code> attribute which tells the validator the name of the scope. Those fields will be then identified using their name and their scope. allowing duplicate fields to exist.
-                    <br>
+                    <br><br>
+                    You can tell the validator to scope the fields by adding a <code class="inline">data-scope</code> attribute which tells the validator the name of the scope. Those fields will be then identified using their name and their scope. allowing duplicate fields to exist within the same component.
+                    <br><br>
                     For convienece you may add the <code class="inline">data-scope</code> on the form that owns the inputs, you don't have to add the attribute on each and every input.
                  </p>
                  <scope-example></scope-example>
