@@ -43,7 +43,6 @@ export default (options) => ({
         this.vm.$nextTick(() => {
             this.fieldName = this.expression || this.el.name;
             this.vm.$validator.attach(this.fieldName, this.el.dataset.rules, this.el.dataset.as);
-
             if (this.expression) {
                 this.attachValidatorEvent();
 
