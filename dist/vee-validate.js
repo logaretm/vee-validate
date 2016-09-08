@@ -85,6 +85,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/* eslint-disable no-underscore-dangle */
 var ErrorBag = function () {
     function ErrorBag() {
         _classCallCheck(this, ErrorBag);
@@ -97,27 +98,43 @@ var ErrorBag = function () {
      *
      * @param {string} field The field name.
      * @param {string} msg The error message.
+     * @param {String} scope The Scope name, optional.
      */
 
 
     _createClass(ErrorBag, [{
         key: "add",
-        value: function add(field, msg) {
-            this.errors.push({
+        value: function add(field, msg, scope) {
+            var error = {
                 field: field,
                 msg: msg
-            });
+            };
+
+            if (scope) {
+                error.scope = scope;
+            }
+
+            this.errors.push(error);
         }
 
         /**
          * Gets all error messages from the internal array.
          *
+         * @param {String} scope The Scope name, optional.
          * @return {Array} errors Array of all error messages.
          */
 
     }, {
         key: "all",
-        value: function all() {
+        value: function all(scope) {
+            if (scope) {
+                return this.errors.filter(function (e) {
+                    return e.scope === scope;
+                }).map(function (e) {
+                    return e.msg;
+                });
+            }
+
             return this.errors.map(function (e) {
                 return e.msg;
             });
@@ -125,23 +142,38 @@ var ErrorBag = function () {
 
         /**
          * Checks if there is any errrors in the internal array.
-         *
+         * @param {String} scope The Scope name, optional.
          * @return {boolean} result True if there was at least one error, false otherwise.
          */
 
     }, {
         key: "any",
-        value: function any() {
+        value: function any(scope) {
+            if (scope) {
+                return !!this.errors.filter(function (e) {
+                    return e.scope === scope;
+                }).length;
+            }
+
             return !!this.errors.length;
         }
 
         /**
          * Removes all items from the internal array.
+         * @param {String} scope The Scope name, optional.
          */
 
     }, {
         key: "clear",
-        value: function clear() {
+        value: function clear(scope) {
+            if (scope) {
+                this.errors = this.errors.filter(function (e) {
+                    return e.scope !== scope;
+                });
+
+                return;
+            }
+
             this.errors = [];
         }
 
@@ -149,12 +181,13 @@ var ErrorBag = function () {
          * Collects errors into groups or for a specific field.
          *
          * @param  {string} field The field name.
+         * @param  {string} scope The scope name.
          * @return {Array} errors The errors for the specified field.
          */
 
     }, {
         key: "collect",
-        value: function collect(field) {
+        value: function collect(field, scope) {
             var _this = this;
 
             if (!field) {
@@ -176,13 +209,20 @@ var ErrorBag = function () {
                 if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
             }
 
+            if (scope) {
+                return this.errors.filter(function (e) {
+                    return e.field === field && e.scope === scope;
+                }).map(function (e) {
+                    return e.msg;
+                });
+            }
+
             return this.errors.filter(function (e) {
                 return e.field === field;
             }).map(function (e) {
                 return e.msg;
             });
         }
-
         /**
          * Gets the internal array length.
          *
@@ -204,10 +244,16 @@ var ErrorBag = function () {
 
     }, {
         key: "first",
-        value: function first(field) {
+        value: function first(field, scope) {
             for (var i = 0; i < this.errors.length; i++) {
                 if (this.errors[i].field === field) {
-                    return this.errors[i].msg;
+                    if (scope) {
+                        if (this.errors[i].scope === scope) {
+                            return this.errors[i].msg;
+                        }
+                    } else {
+                        return this.errors[i].msg;
+                    }
                 }
             }
 
@@ -223,10 +269,16 @@ var ErrorBag = function () {
 
     }, {
         key: "has",
-        value: function has(field) {
+        value: function has(field, scope) {
             for (var i = 0; i < this.errors.length; i++) {
                 if (this.errors[i].field === field) {
-                    return true;
+                    if (scope) {
+                        if (this.errors[i].scope === scope) {
+                            return true;
+                        }
+                    } else {
+                        return true;
+                    }
                 }
             }
 
@@ -237,11 +289,20 @@ var ErrorBag = function () {
          * Removes all error messages assoicated with a specific field.
          *
          * @param  {string} field The field which messages are to be removed.
+         * @param {String} scope The Scope name, optional.
          */
 
     }, {
         key: "remove",
-        value: function remove(field) {
+        value: function remove(field, scope) {
+            if (scope) {
+                this.errors = this.errors.filter(function (e) {
+                    return e.field !== field || e.scope !== scope;
+                });
+
+                return;
+            }
+
             this.errors = this.errors.filter(function (e) {
                 return e.field !== field;
             });
@@ -259,9 +320,10 @@ var ErrorBag = function () {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__validator__ = __webpack_require__(2);
+/* harmony export (binding) */ __webpack_require__.d(exports, "b", function() { return register; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "a", function() { return unregister; });
+/* unused harmony export find */
 
-/* harmony export */ __webpack_require__.d(exports, "b", function() { return register; });
-/* harmony export */ __webpack_require__.d(exports, "a", function() { return unregister; });/* unused harmony export find */
 
 /**
  * Keeps track of $vm, $validator instances.
@@ -518,16 +580,17 @@ var Validator = function () {
         value: function validateAll(values) {
             var _this2 = this;
 
-            this.errorBag.clear();
             /* istanbul ignore if */
-            if (this.$vm && !values) {
-                this.$vm.$emit(EVENT_NAME);
+            if (this.$vm && (!values || typeof values === 'string')) {
+                this.errorBag.clear(values);
+                this.$vm.$emit(EVENT_NAME, values);
 
                 return;
             }
 
             var test = true;
             var promises = [];
+            this.errorBag.clear();
             Object.keys(values).forEach(function (property) {
                 var result = _this2.validate(property, values[property]);
                 if (typeof result.then === 'function') {
@@ -561,7 +624,7 @@ var Validator = function () {
 
     }, {
         key: 'validate',
-        value: function validate(name, value) {
+        value: function validate(name, value, scope) {
             var _this3 = this;
 
             if (!this.$fields[name]) {
@@ -573,7 +636,7 @@ var Validator = function () {
                 return false;
             }
 
-            this.errorBag.remove(name);
+            this.errorBag.remove(name, scope);
             // if its not required and is empty or null or undefined then it passes.
             if (!this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
                 return true;
@@ -582,7 +645,7 @@ var Validator = function () {
             var test = true;
             var promises = [];
             this.$fields[name].validations.forEach(function (rule) {
-                var result = _this3._test(name, value, rule);
+                var result = _this3._test(name, value, rule, scope);
                 if (typeof result.then === 'function') {
                     promises.push(result);
                     return;
@@ -709,7 +772,7 @@ var Validator = function () {
 
     }, {
         key: '_test',
-        value: function _test(name, value, rule) {
+        value: function _test(name, value, rule, scope) {
             var _this5 = this;
 
             var validator = __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][rule.name];
@@ -723,7 +786,7 @@ var Validator = function () {
                     }) : values.valid;
 
                     if (!allValid) {
-                        _this5.errorBag.add(name, _this5._formatErrorMessage(displayName, rule));
+                        _this5.errorBag.add(name, _this5._formatErrorMessage(displayName, rule), scope);
                     }
 
                     return allValid;
@@ -731,7 +794,7 @@ var Validator = function () {
             }
 
             if (!valid) {
-                this.errorBag.add(name, this._formatErrorMessage(displayName, rule));
+                this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
             }
 
             return valid;
@@ -926,11 +989,15 @@ var callbackMaps = [];
 
 var DEFAULT_EVENT_NAME = 'veeValidate';
 
+var getScope = function getScope(el) {
+    return el.dataset.scope || el.form.dataset.scope || undefined;
+};
+
 var onInput = function onInput(el, _ref, _ref2) {
     var expression = _ref.expression;
     var context = _ref2.context;
     return function () {
-        context.$validator.validate(expression || el.name, el.value);
+        context.$validator.validate(expression || el.name, el.value, getScope(el));
     };
 };
 
@@ -939,7 +1006,8 @@ var onFileInput = function onFileInput(el, _ref3, _ref4) {
     var expression = _ref3.expression;
     var context = _ref4.context;
     return function () {
-        if (!context.$validator.validate(expression || el.name, el.files) && modifiers.reject) {
+        var isValid = context.$validator.validate(expression || el.name, el.files, getScope(el));
+        if (!isValid && modifiers.reject) {
             // eslint-disable-next-line
             el.value = '';
         }
@@ -964,10 +1032,20 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
 
     var callback = void 0;
     if (expression) {
-        callback = onInput(el, { expression: expression }, { context: context });
-    } else {
         callback = function callback() {
-            return context.$validator.validate(expression || el.name, value);
+            return context.$validator.validate(expression || el.name, value, getScope(el));
+        };
+    } else {
+        callback = function callback(scope) {
+            if (scope) {
+                if (getScope(el) === scope) {
+                    onInput(el, { expression: expression }, { context: context })();
+                }
+
+                return;
+            }
+
+            onInput(el, { expression: expression }, { context: context })();
         };
     }
 
@@ -990,9 +1068,11 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
             context.$validator.attach(binding.expression || el.name, el.dataset.rules, el.dataset.as);
             attachValidatorEvent(el, binding, { context: context });
 
-            if (binding.expression && !binding.modifiers.initial) {
+            if (binding.expression) {
                 // if its bound, validate it. (since update doesn't trigger after bind).
-                context.$validator.validate(binding.expression, binding.value);
+                if (!binding.modifiers.initial) {
+                    context.$validator.validate(binding.expression, binding.value, getScope(el));
+                }
 
                 return;
             }
@@ -1016,7 +1096,7 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
                 return;
             }
 
-            context.$validator.validate(expression || el.name, value);
+            context.$validator.validate(expression || el.name, value, getScope(el));
         },
         unbind: function unbind(el, binding, _ref10) {
             var context = _ref10.context;
@@ -2000,8 +2080,8 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__mixin__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__directive__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__errorBag__ = __webpack_require__(0);
+/* harmony export (binding) */ __webpack_require__.d(exports, "install", function() { return install; });
 
-/* harmony export */ __webpack_require__.d(exports, "install", function() { return install; });
 
 
 
@@ -2048,8 +2128,8 @@ var install = function install(Vue) {
     Vue.directive('validate', __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__directive__["a" /* default */])(options)); // Install directive.
 };
 
-/* harmony reexport */ if(__webpack_require__.o(__WEBPACK_IMPORTED_MODULE_0__validator__, "a")) __webpack_require__.d(exports, "Validator", function() { return __WEBPACK_IMPORTED_MODULE_0__validator__["a"]; });
-/* harmony reexport */ if(__webpack_require__.o(__WEBPACK_IMPORTED_MODULE_4__errorBag__, "a")) __webpack_require__.d(exports, "ErrorBag", function() { return __WEBPACK_IMPORTED_MODULE_4__errorBag__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(exports, "Validator", function() { return __WEBPACK_IMPORTED_MODULE_0__validator__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(exports, "ErrorBag", function() { return __WEBPACK_IMPORTED_MODULE_4__errorBag__["a"]; });
 
 
 /***/ }
