@@ -40,6 +40,6 @@
     "eslint-plugin-import": "^1.12.0",
     "moment": "^2.14.1",
     "nyc": "^7.1.0",
-    "webpack": "^2.1.0-beta.20"
+    "webpack": "^2.1.0-beta.22"
   }
 }
