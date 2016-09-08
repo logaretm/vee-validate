@@ -325,7 +325,7 @@ export default class Validator
             return false;
         }
 
-        this.errorBag.remove(name);
+        this.errorBag.remove(name, scope);
         // if its not required and is empty or null or undefined then it passes.
         if (! this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
             return true;
