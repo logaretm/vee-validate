@@ -317,7 +317,7 @@ export default class Validator
      * @return {boolean|Promise} result returns a boolean or a promise that will resolve to
      *  a boolean.
      */
-    validate(name, value) {
+    validate(name, value, scope) {
         if (! this.$fields[name]) {
             if (! this.strictMode) { return true; }
             warn(`Trying to validate a non-existant field: "${name}". Use "attach()" first.`);
@@ -334,7 +334,7 @@ export default class Validator
         let test = true;
         const promises = [];
         this.$fields[name].validations.forEach(rule => {
-            const result = this._test(name, value, rule);
+            const result = this._test(name, value, rule, scope);
             if (typeof result.then === 'function') {
                 promises.push(result);
                 return;
@@ -439,7 +439,7 @@ export default class Validator
      * @param  {object} rule the rule object.
      * @return {boolean} Wether if it passes the check.
      */
-    _test(name, value, rule) {
+    _test(name, value, rule, scope) {
         const validator = Rules[rule.name];
         const valid = validator(value, rule.params);
         const displayName = this._getFieldDisplayName(name);
@@ -449,7 +449,7 @@ export default class Validator
                 const allValid = Array.isArray(values) ? values.every(t => t.valid) : values.valid;
 
                 if (! allValid) {
-                    this.errorBag.add(name, this._formatErrorMessage(displayName, rule));
+                    this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
                 }
 
                 return allValid;
@@ -457,7 +457,7 @@ export default class Validator
         }
 
         if (! valid) {
-            this.errorBag.add(name, this._formatErrorMessage(displayName, rule));
+            this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
         }
 
         return valid;

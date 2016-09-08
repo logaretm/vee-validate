@@ -4,12 +4,15 @@ const callbackMaps = [];
 
 const DEFAULT_EVENT_NAME = 'veeValidate';
 
+const getScope = (el) => el.dataset.scope || el.form.dataset.scope || undefined;
+
 const onInput = (el, { expression }, { context }) => () => {
-    context.$validator.validate(expression || el.name, el.value);
+    context.$validator.validate(expression || el.name, el.value, getScope(el));
 };
 
 const onFileInput = (el, { modifiers, expression }, { context }) => () => {
-    if (! context.$validator.validate(expression || el.name, el.files) && modifiers.reject) {
+    const isValid = context.$validator.validate(expression || el.name, el.files, getScope(el));
+    if (! isValid && modifiers.reject) {
         // eslint-disable-next-line
         el.value = '';
     }
@@ -29,7 +32,7 @@ const attachValidatorEvent = (el, { expression, value }, { context }) => {
     if (expression) {
         callback = onInput(el, { expression }, { context });
     } else {
-        callback = () => context.$validator.validate(expression || el.name, value);
+        callback = () => context.$validator.validate(expression || el.name, value, getScope(el));
     }
 
     callbackMaps.push({ vm: context, event: 'validatorEvent', callback, el });
@@ -51,7 +54,7 @@ export default (options) => ({
 
         if (binding.expression && ! binding.modifiers.initial) {
             // if its bound, validate it. (since update doesn't trigger after bind).
-            context.$validator.validate(binding.expression, binding.value);
+            context.$validator.validate(binding.expression, binding.value, getScope(el));
 
             return;
         }
@@ -70,7 +73,7 @@ export default (options) => ({
             return;
         }
 
-        context.$validator.validate(expression || el.name, value);
+        context.$validator.validate(expression || el.name, value, getScope(el));
     },
     unbind(el, binding, { context }) {
         const handlers = callbackMaps.filter(h => h.vm === context && h.el === el);
