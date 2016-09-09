@@ -1030,32 +1030,12 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
     var value = _ref5.value;
     var context = _ref6.context;
 
-    var callback = void 0;
-    if (expression) {
-        callback = function callback(scope) {
-            if (scope) {
-                if (getScope(el) === scope) {
-                    context.$validator.validate(expression || el.name, el.value, getScope(el));
-                }
-
-                return;
-            }
-
-            context.$validator.validate(expression || el.name, el.value, getScope(el));
-        };
-    } else {
-        callback = function callback(scope) {
-            if (scope) {
-                if (getScope(el) === scope) {
-                    onInput(el, { expression: expression }, { context: context })();
-                }
-
-                return;
-            }
-
+    var elScope = getScope(el);
+    var callback = elScope ? function (scope) {
+        if (scope === elScope) {
             onInput(el, { expression: expression }, { context: context })();
-        };
-    }
+        }
+    } : onInput(el, { expression: expression }, { context: context });
 
     callbackMaps.push({ vm: context, event: 'validatorEvent', callback: callback, el: el });
     context.$on(DEFAULT_EVENT_NAME, callback);
