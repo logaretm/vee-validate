@@ -24,34 +24,24 @@ export default (options) => ({
         }
     },
     attachValidatorEvent() {
-        let callback;
         const elScope = getScope(this.el);
-        if (! elScope) {
-            callback = this.expression ? () => {
+        const callback = elScope ? (scope) => {
+            if (scope === elScope) {
                 this.vm.$validator.validate(this.fieldName, this.el.value, elScope);
-            } : () => {
-                this.handler();
-            };
-        } else {
-            callback = this.expression ? (scope) => {
-                if (scope === elScope) {
-                    this.vm.$validator.validate(this.fieldName, this.el.value, elScope);
-                }
-            } : (scope) => {
-                if (scope === elScope) {
-                    this.handler();
-                }
-            };
-        }
+            }
+        } : () => {
+            this.vm.$validator.validate(this.fieldName, this.el.value, elScope);
+        };
 
-
-        this.validateCallback = callback;
-        this.vm.$on(DEFAULT_EVENT_NAME, this.validateCallback);
+        this.validatorCallback = callback;
+        this.vm.$on(DEFAULT_EVENT_NAME, this.validatorCallback);
         const fieldName = hasFieldDependency(this.el.dataset.rules);
         if (this.el.dataset.rules && fieldName) {
             this.vm.$once('validatorReady', () => {
                 document.querySelector(`input[name='${fieldName}']`)
-                        .addEventListener('input', this.validateCallback);
+                        .addEventListener('input', () => {
+                            this.vm.$validator.validate(this.fieldName, this.el.value, elScope);
+                        });
             });
         }
     },
@@ -102,6 +92,6 @@ export default (options) => ({
         }
 
         this.vm.$validator.detach(this.fieldName);
-        this.vm.$off(DEFAULT_EVENT_NAME, this.validateCallback);
+        this.vm.$off(DEFAULT_EVENT_NAME, this.validatorCallback);
     }
 });
