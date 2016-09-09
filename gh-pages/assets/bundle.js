@@ -16814,7 +16814,7 @@ var __vue_exports__, __vue_options__
 __vue_exports__ = __webpack_require__(118)
 
 /* template */
-var __vue_template__ = __webpack_require__(171)
+var __vue_template__ = __webpack_require__(167)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -16833,9 +16833,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3", __vue_options__)
+    hotAPI.createRecord("data-v-1", __vue_options__)
   } else {
-    hotAPI.reload("data-v-3", __vue_options__)
+    hotAPI.reload("data-v-1", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] App.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -16854,6 +16854,48 @@ __webpack_require__(155)
 
 /* script */
 __vue_exports__ = __webpack_require__(119)
+
+/* template */
+var __vue_template__ = __webpack_require__(173)
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-5", __vue_options__)
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] CodeBlock.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 116 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* styles */
+__webpack_require__(154)
+
+/* script */
+__vue_exports__ = __webpack_require__(120)
 
 /* template */
 var __vue_template__ = __webpack_require__(170)
@@ -16878,48 +16920,6 @@ if (false) {(function () {
     hotAPI.createRecord("data-v-2", __vue_options__)
   } else {
     hotAPI.reload("data-v-2", __vue_options__)
-  }
-})()}
-if (__vue_options__.functional) {console.error("[vue-loader] CodeBlock.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 116 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* styles */
-__webpack_require__(154)
-
-/* script */
-__vue_exports__ = __webpack_require__(120)
-
-/* template */
-var __vue_template__ = __webpack_require__(167)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-1", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] CodeExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -26753,7 +26753,7 @@ module.exports = __vue_exports__
 var __vue_exports__, __vue_options__
 
 /* template */
-var __vue_template__ = __webpack_require__(175)
+var __vue_template__ = __webpack_require__(168)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -26772,9 +26772,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-7", __vue_options__)
+    hotAPI.createRecord("data-v-10", __vue_options__)
   } else {
-    hotAPI.reload("data-v-7", __vue_options__)
+    hotAPI.reload("data-v-10", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] DelayExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -26790,81 +26790,6 @@ var __vue_exports__, __vue_options__
 
 /* script */
 __vue_exports__ = __webpack_require__(121)
-
-/* template */
-var __vue_template__ = __webpack_require__(177)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-9", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-9", __vue_options__)
-  }
-})()}
-if (__vue_options__.functional) {console.error("[vue-loader] LocaleExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 162 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* template */
-var __vue_template__ = __webpack_require__(174)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-6", __vue_options__)
-  }
-})()}
-if (__vue_options__.functional) {console.error("[vue-loader] RejectExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 163 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* script */
-__vue_exports__ = __webpack_require__(122)
 
 /* template */
 var __vue_template__ = __webpack_require__(169)
@@ -26891,6 +26816,81 @@ if (false) {(function () {
     hotAPI.reload("data-v-11", __vue_options__)
   }
 })()}
+if (__vue_options__.functional) {console.error("[vue-loader] LocaleExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 162 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* template */
+var __vue_template__ = __webpack_require__(171)
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-3", __vue_options__)
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] RejectExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 163 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* script */
+__vue_exports__ = __webpack_require__(122)
+
+/* template */
+var __vue_template__ = __webpack_require__(175)
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-7", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-7", __vue_options__)
+  }
+})()}
 if (__vue_options__.functional) {console.error("[vue-loader] ScopeExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
 
 module.exports = __vue_exports__
@@ -26904,6 +26904,45 @@ var __vue_exports__, __vue_options__
 
 /* script */
 __vue_exports__ = __webpack_require__(123)
+
+/* template */
+var __vue_template__ = __webpack_require__(174)
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (typeof __vue_exports__.default === "object") {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-6", __vue_options__)
+  } else {
+    hotAPI.reload("data-v-6", __vue_options__)
+  }
+})()}
+if (__vue_options__.functional) {console.error("[vue-loader] ValidateData.vue: functional components are not supported and should be defined in plain js files using render functions.")}
+
+module.exports = __vue_exports__
+
+
+/***/ },
+/* 165 */
+/***/ function(module, exports, __webpack_require__) {
+
+var __vue_exports__, __vue_options__
+
+/* script */
+__vue_exports__ = __webpack_require__(124)
 
 /* template */
 var __vue_template__ = __webpack_require__(176)
@@ -26930,45 +26969,6 @@ if (false) {(function () {
     hotAPI.reload("data-v-8", __vue_options__)
   }
 })()}
-if (__vue_options__.functional) {console.error("[vue-loader] ValidateData.vue: functional components are not supported and should be defined in plain js files using render functions.")}
-
-module.exports = __vue_exports__
-
-
-/***/ },
-/* 165 */
-/***/ function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-
-/* script */
-__vue_exports__ = __webpack_require__(124)
-
-/* template */
-var __vue_template__ = __webpack_require__(168)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (typeof __vue_exports__.default === "object") {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-10", __vue_options__)
-  } else {
-    hotAPI.reload("data-v-10", __vue_options__)
-  }
-})()}
 if (__vue_options__.functional) {console.error("[vue-loader] ValidateEventExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
 
 module.exports = __vue_exports__
@@ -26984,7 +26984,7 @@ var __vue_exports__, __vue_options__
 __vue_exports__ = __webpack_require__(125)
 
 /* template */
-var __vue_template__ = __webpack_require__(173)
+var __vue_template__ = __webpack_require__(177)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (typeof __vue_exports__.default === "object") {
 if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
@@ -27003,9 +27003,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-5", __vue_options__)
+    hotAPI.createRecord("data-v-9", __vue_options__)
   } else {
-    hotAPI.reload("data-v-5", __vue_options__)
+    hotAPI.reload("data-v-9", __vue_options__)
   }
 })()}
 if (__vue_options__.functional) {console.error("[vue-loader] ValidatorExample.vue: functional components are not supported and should be defined in plain js files using render functions.")}
@@ -27015,6 +27015,294 @@ module.exports = __vue_exports__
 
 /***/ },
 /* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('div', {
+    ref: "layout",
+    attrs: {
+      "id": "layout"
+    }
+  }, [_h('a', {
+    ref: "menuLink",
+    staticClass: "menu-link",
+    attrs: {
+      "href": "#menu",
+      "id": "menuLink"
+    }
+  }, [_m(0)]), " ", _h('div', {
+    ref: "menu",
+    attrs: {
+      "id": "menu"
+    }
+  }, [_m(1), " ", _m(2)]), " ", _h('div', {
+    attrs: {
+      "id": "main"
+    }
+  }, [_h('div', {
+    staticClass: "header"
+  }, [_h('h1', [_s(heading)]), " ", _h('h2', [_s(subtitle)])]), " ", _h('div', {
+    staticClass: "content"
+  }, [$slots["default"]])])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('span')
+}},function (){with(this) {
+  return _h('div', {
+    staticClass: "pure-menu"
+  }, [_h('a', {
+    staticClass: "pure-menu-heading",
+    attrs: {
+      "href": "/"
+    }
+  }, ["Vee Validate"]), " ", _h('ul', {
+    staticClass: "pure-menu-list"
+  }, [_h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "index.html"
+    }
+  }, ["Getting Started"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "index.html#installation"
+    }
+  }, ["Installation"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "index.html#basic-example"
+    }
+  }, ["Basic Example"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "index.html#render-errors"
+    }
+  }, ["Rendering Errors"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "examples.html"
+    }
+  }, ["Examples"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "rules.html"
+    }
+  }, ["Validation Rules"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "localization.html"
+    }
+  }, ["Localization"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "api.html"
+    }
+  }, ["API Reference"])]), " ", _h('li', {
+    staticClass: "pure-menu-item"
+  }, [_h('a', {
+    staticClass: "pure-menu-link",
+    attrs: {
+      "href": "index.html#configuration"
+    }
+  }, ["Configuration"])])])])
+}},function (){with(this) {
+  return _h('div', {
+    staticClass: "about flex-center"
+  }, [_h('a', {
+    attrs: {
+      "target": "github",
+      "href": "https://github.com/logaretm/vee-validate"
+    }
+  }, [_h('i', {
+    staticClass: "icon-github"
+  })])])
+}}]}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-1", module.exports)
+  }
+}
+
+/***/ },
+/* 168 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_m(0), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email - Delay: 500ms"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email')
+    },
+    attrs: {
+      "data-rules": "required|email",
+      "data-delay": "500",
+      "name": "email",
+      "type": "text",
+      "placeholder": "Email"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email')),
+      expression: "errors.has('email')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('email'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('name')
+    },
+    attrs: {
+      "for": "name"
+    }
+  }, ["Name - Delay: 1s"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('name')
+    },
+    attrs: {
+      "data-rules": "required|alpha|min:3",
+      "data-delay": "1000",
+      "name": "name",
+      "type": "text",
+      "placeholder": "Full Name"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('name')),
+      expression: "errors.has('name')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('name'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>Basic Form</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email - Delay: 500ms</label>\n                    <input v-validate data-rules=\"required|email\" data-delay=\"500\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"email\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name - Delay: 1s</label>\n                    <input v-validate data-rules=\"required|alpha|min:3\" data-delay=\"1000\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s("{" + "{ errors.first('name') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('legend', ["Debounced Form"])
+}}]}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-10", module.exports)
+  }
+}
+
+/***/ },
+/* 169 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked rtl"
+  }, [_h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email')
+    },
+    attrs: {
+      "data-rules": "required|email",
+      "data-as": "البريد",
+      "name": "email",
+      "type": "text"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email')),
+      expression: "errors.has('email')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('email'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('phone')
+    },
+    attrs: {
+      "for": "phone"
+    }
+  }, ["Phone"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('phone')
+    },
+    attrs: {
+      "data-rules": "required|numeric",
+      "data-as": "رقم الهاتف",
+      "name": "phone",
+      "type": "text"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('phone')),
+      expression: "errors.has('phone')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('phone'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked rtl\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-validate data-rules=\"required|email\" data-as=\"البريد\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n                    <input v-validate data-rules=\"required|numeric\" data-as=\"رقم الهاتف\" :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('phone')\">" + _s("{" + "{ errors.first('phone') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import messages from './locale/ar';\n        import Vue from 'vue';\n        import VeeValidate, { Validator } from 'vee-validate';\n        Vue.use(VeeValidate);\n\n        // Merge dictionary messages.\n        Validator.updateDictionary({\n            ar: {\n                messages\n            }\n        });\n\n        new Vue({\n            el: 'body',\n            data: {\n                phone: '',\n                email: ''\n            },\n            created() {\n                this.$validator.setLocale('ar'); // Switch locale for this instance.\n            }\n        });\n    "])])
+}},staticRenderFns: []}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-11", module.exports)
+  }
+}
+
+/***/ },
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -27101,12 +27389,460 @@ module.exports={render:function (){with(this) {
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-1", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-2", module.exports)
   }
 }
 
 /***/ },
-/* 168 */
+/* 171 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_m(0), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('image')
+    },
+    attrs: {
+      "for": "image"
+    }
+  }, ["Unrejected Image"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('image')
+    },
+    attrs: {
+      "data-rules": "mimes:image/*",
+      "name": "image",
+      "type": "file"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('image')),
+      expression: "errors.has('image')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('image'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('file')
+    },
+    attrs: {
+      "for": "file"
+    }
+  }, ["Rejected Image"]), " ", _h('input', {
+    directives: [{
+      name: "validate",
+      modifiers: {
+        "reject": true
+      }
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('file')
+    },
+    attrs: {
+      "data-rules": "mimes:image/*",
+      "name": "file",
+      "type": "file"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('file')),
+      expression: "errors.has('file')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('file'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>File Upload</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('image') }\" for=\"image\">Unrejected Image</label>\n                    <input v-validate data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('image') }\" name=\"image\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('image')\">" + _s(errors.first('image')) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('file') }\" for=\"file\">Rejected Image</label>\n                    <input  v-validate.reject data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('file')\">" + _s(errors.first('file')) + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('legend', ["File Upload"])
+}}]}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-3", module.exports)
+  }
+}
+
+/***/ },
+/* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email')
+    },
+    attrs: {
+      "data-rules": "required|email",
+      "name": "email",
+      "type": "text",
+      "placeholder": "Email"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email')),
+      expression: "errors.has('email')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('email'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-validate data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
+}},staticRenderFns: []}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-4", module.exports)
+  }
+}
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('pre', [_h('code', {
+    ref: "code"
+  }, [$slots["default"]])])
+}},staticRenderFns: []}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-5", module.exports)
+  }
+}
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('form', {
+    slot: "example",
+    staticClass: "pure-form pure-form-stacked"
+  }, [_h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email"]), " ", _h('input', {
+    directives: [{
+      name: "model",
+      value: (email),
+      expression: "email"
+    }, {
+      name: "validate",
+      value: (email),
+      expression: "email"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email')
+    },
+    attrs: {
+      "data-rules": "required|email",
+      "type": "text",
+      "placeholder": "Email"
+    },
+    domProps: {
+      "value": _s(email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        email = $event.target.value
+      }
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email')),
+      expression: "errors.has('email')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('email'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('name')
+    },
+    attrs: {
+      "for": "name"
+    }
+  }, ["Full Name"]), " ", _h('input', {
+    directives: [{
+      name: "model",
+      value: (name),
+      expression: "name"
+    }, {
+      name: "validate",
+      value: (name),
+      expression: "name",
+      modifiers: {
+        "initial": true
+      }
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('name')
+    },
+    attrs: {
+      "data-rules": "required|alpha",
+      "type": "text",
+      "placeholder": "Full Name"
+    },
+    domProps: {
+      "value": _s(name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        name = $event.target.value
+      }
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('name')),
+      expression: "errors.has('name')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('name'))])])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-model=\"email\" v-validate=\"email\" data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n                    <input v-model=\"name\" v-validate.initial=\"name\" data-rules=\"required|alpha\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s("{" + "{ errors.first('name') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app',\n            data: {\n                email: '',\n                name: ''\n            }\n        });\n    "])])
+}},staticRenderFns: []}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-6", module.exports)
+  }
+}
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){with(this) {
+  return _h('code-example', [_h('div', {
+    slot: "example"
+  }, [_h('form', {
+    staticClass: "pure-form pure-form-stacked",
+    on: {
+      "submit": validateForm1
+    }
+  }, [_m(0), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('name', 'form-1')
+    },
+    attrs: {
+      "for": "name"
+    }
+  }, ["Name"]), " ", _h('input', {
+    directives: [{
+      name: "validate",
+      value: (name),
+      expression: "name"
+    }, {
+      name: "model",
+      value: (name),
+      expression: "name"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('name', 'form-1')
+    },
+    attrs: {
+      "data-rules": "required|alpha",
+      "data-scope": "form-1",
+      "name": "name",
+      "type": "text"
+    },
+    domProps: {
+      "value": _s(name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        name = $event.target.value
+      }
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('name', 'form-1')),
+      expression: "errors.has('name', 'form-1')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('name', 'form-1'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email', 'form-1')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email"]), " ", _h('input', {
+    directives: [{
+      name: "validate",
+      value: (email),
+      expression: "email"
+    }, {
+      name: "model",
+      value: (email),
+      expression: "email"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email', 'form-1')
+    },
+    attrs: {
+      "data-rules": "required|email",
+      "data-scope": "form-1",
+      "name": "email",
+      "type": "text"
+    },
+    domProps: {
+      "value": _s(email)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) return;
+        email = $event.target.value
+      }
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email', 'form-1')),
+      expression: "errors.has('email', 'form-1')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('email', 'form-1'))])]), " ", _m(1)]), " ", _h('form', {
+    staticClass: "pure-form pure-form-stacked",
+    attrs: {
+      "data-scope": "form-2"
+    },
+    on: {
+      "submit": validateForm2
+    }
+  }, [_m(2), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email', 'form-2')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Email"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email', 'form-2')
+    },
+    attrs: {
+      "data-rules": "required|email",
+      "name": "email",
+      "type": "text"
+    }
+  }), " ", _h('span', {
+    directives: [{
+      name: "show",
+      value: (errors.has('email', 'form-2')),
+      expression: "errors.has('email', 'form-2')"
+    }],
+    staticClass: "error"
+  }, [_s(errors.first('email', 'form-2'))])]), " ", _h('div', {
+    staticClass: "pure-u-1"
+  }, [_h('label', {
+    class: {
+      'error': errors.has('email', 'form-2')
+    },
+    attrs: {
+      "for": "email"
+    }
+  }, ["Password"]), " ", _h('input', {
+    directives: [{
+      name: "validate"
+    }],
+    class: {
+      'pure-input-1': true, 'has-error': errors.has('email', 'form-2')
+    },
+    attrs: {
+      "data-rules": "required",
+      "name": "password",
+      "type": "password"
+    }
+  })]), " ", _m(3)])]), " ", _h('div', {
+    slot: "code-html"
+  }, ["\n        <form @submit=\"validateForm1\" class=\"pure-form pure-form-stacked\">\n            <legend>Form 1</legend>\n            <div class=\"pure-u-1\">\n                <label :class=\"{'error': errors.has('name', 'form-1') }\" for=\"name\">Name</label>\n                <input v-validate=\"name\" v-model=\"name\" data-rules=\"required|alpha\" data-scope=\"form-1\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name', 'form-1') }\" name=\"name\" type=\"text\">\n                <span class=\"error\" v-show=\"errors.has('name', 'form-1')\">" + _s(errors.first('name', 'form-1')) + "</span>\n            </div>\n            <div class=\"pure-u-1\">\n                <label :class=\"{'error': errors.has('email', 'form-1') }\" for=\"email\">Email</label>\n                <input v-validate=\"email\" v-model=\"email\" data-rules=\"required|email\" data-scope=\"form-1\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email', 'form-1') }\" name=\"email\" type=\"text\">\n                <span class=\"error\" v-show=\"errors.has('email', 'form-1')\">" + _s(errors.first('email', 'form-1')) + "</span>\n            </div>\n\n            <button class=\"pure-button pure-button-primary\" type=\"submit\" name=\"button\">Sign up</button>\n        </form>\n\n        <form @submit=\"validateForm2\" class=\"pure-form pure-form-stacked\" data-scope=\"form-2\">\n            <legend>Form 2</legend>\n            <div class=\"pure-u-1\">\n                <label :class=\"{'error': errors.has('email', 'form-2') }\" for=\"email\">Email</label>\n                <input v-validate data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email', 'form-2') }\" name=\"email\" type=\"text\">\n                <span class=\"error\" v-show=\"errors.has('email', 'form-2')\">" + _s(errors.first('email', 'form-2')) + "</span>\n            </div>\n\n            <div class=\"pure-u-1\">\n                <label :class=\"{'error': errors.has('email', 'form-2') }\" for=\"email\">Password</label>\n                <input v-validate data-rules=\"required\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email', 'form-2') }\" name=\"password\" type=\"password\">\n            </div>\n\n            <button class=\"pure-button pure-button-primary\" type=\"submit\" name=\"button\">Log in</button>\n        </form>\n    "]), " ", _h('div', {
+    slot: "code-js"
+  }, ["\n        new Vue({\n           el: '#app',\n           data: {\n               name: '',\n               email: ''\n           },\n           methods: {\n               validateForm1(e) {\n                   this.$validator.validateAll('form-1');\n                   if (this.errors.any('form-1')) {\n                       e.preventDefault();\n                       return;\n                   }\n\n                   e.preventDefault();\n                   alert('Form Submitted!');\n               },\n               validateForm2(e) {\n                   this.$validator.validateAll('form-2');\n                   if (this.errors.any('form-2')) {\n                       e.preventDefault();\n                       return;\n                   }\n\n                   e.preventDefault();\n                   alert('Form Submitted!');\n               }\n           }\n       });\n    "])])
+}},staticRenderFns: [function (){with(this) {
+  return _h('legend', ["Form 1"])
+}},function (){with(this) {
+  return _h('button', {
+    staticClass: "pure-button pure-button-primary",
+    attrs: {
+      "type": "submit",
+      "name": "button"
+    }
+  }, ["Sign up"])
+}},function (){with(this) {
+  return _h('legend', ["Form 2"])
+}},function (){with(this) {
+  return _h('button', {
+    staticClass: "pure-button pure-button-primary",
+    attrs: {
+      "type": "submit",
+      "name": "button"
+    }
+  }, ["Log in"])
+}}]}
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-7", module.exports)
+  }
+}
+
+/***/ },
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -27316,394 +28052,12 @@ module.exports={render:function (){with(this) {
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-10", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-8", module.exports)
   }
 }
 
 /***/ },
-/* 169 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('div', {
-    slot: "example"
-  }, [_h('form', {
-    staticClass: "pure-form pure-form-stacked",
-    on: {
-      "submit": validateForm1
-    }
-  }, [_m(0), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('name', 'form-1')
-    },
-    attrs: {
-      "for": "name"
-    }
-  }, ["Name"]), " ", _h('input', {
-    directives: [{
-      name: "validate",
-      value: (name),
-      expression: "name"
-    }, {
-      name: "model",
-      value: (name),
-      expression: "name"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('name', 'form-1')
-    },
-    attrs: {
-      "data-rules": "required|alpha",
-      "data-scope": "form-1",
-      "name": "name",
-      "type": "text"
-    },
-    domProps: {
-      "value": _s(name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) return;
-        name = $event.target.value
-      }
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('name', 'form-1')),
-      expression: "errors.has('name', 'form-1')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('name', 'form-1'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('email', 'form-1')
-    },
-    attrs: {
-      "for": "email"
-    }
-  }, ["Email"]), " ", _h('input', {
-    directives: [{
-      name: "validate",
-      value: (email),
-      expression: "email"
-    }, {
-      name: "model",
-      value: (email),
-      expression: "email"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('email', 'form-1')
-    },
-    attrs: {
-      "data-rules": "required|email",
-      "data-scope": "form-1",
-      "name": "email",
-      "type": "text"
-    },
-    domProps: {
-      "value": _s(email)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) return;
-        email = $event.target.value
-      }
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('email', 'form-1')),
-      expression: "errors.has('email', 'form-1')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('email', 'form-1'))])]), " ", _m(1)]), " ", _h('form', {
-    staticClass: "pure-form pure-form-stacked",
-    attrs: {
-      "data-scope": "form-2"
-    },
-    on: {
-      "submit": validateForm2
-    }
-  }, [_m(2), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('email', 'form-2')
-    },
-    attrs: {
-      "for": "email"
-    }
-  }, ["Email"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('email', 'form-2')
-    },
-    attrs: {
-      "data-rules": "required|email",
-      "name": "email",
-      "type": "text"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('email', 'form-2')),
-      expression: "errors.has('email', 'form-2')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('email', 'form-2'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('email', 'form-2')
-    },
-    attrs: {
-      "for": "email"
-    }
-  }, ["Password"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('email', 'form-2')
-    },
-    attrs: {
-      "data-rules": "required",
-      "name": "password",
-      "type": "password"
-    }
-  })]), " ", _m(3)])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <form @submit=\"validateForm1\" class=\"pure-form pure-form-stacked\">\n            <legend>Form 1</legend>\n            <div class=\"pure-u-1\">\n                <label :class=\"{'error': errors.has('name', 'form-1') }\" for=\"name\">Name</label>\n                <input v-validate=\"name\" v-model=\"name\" data-rules=\"required|alpha\" data-scope=\"form-1\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name', 'form-1') }\" name=\"name\" type=\"text\">\n                <span class=\"error\" v-show=\"errors.has('name', 'form-1')\">" + _s(errors.first('name', 'form-1')) + "</span>\n            </div>\n            <div class=\"pure-u-1\">\n                <label :class=\"{'error': errors.has('email', 'form-1') }\" for=\"email\">Email</label>\n                <input v-validate=\"email\" v-model=\"email\" data-rules=\"required|email\" data-scope=\"form-1\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email', 'form-1') }\" name=\"email\" type=\"text\">\n                <span class=\"error\" v-show=\"errors.has('email', 'form-1')\">" + _s(errors.first('email', 'form-1')) + "</span>\n            </div>\n\n            <button class=\"pure-button pure-button-primary\" type=\"submit\" name=\"button\">Sign up</button>\n        </form>\n\n        <form @submit=\"validateForm2\" class=\"pure-form pure-form-stacked\" data-scope=\"form-2\">\n            <legend>Form 2</legend>\n            <div class=\"pure-u-1\">\n                <label :class=\"{'error': errors.has('email', 'form-2') }\" for=\"email\">Email</label>\n                <input v-validate data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email', 'form-2') }\" name=\"email\" type=\"text\">\n                <span class=\"error\" v-show=\"errors.has('email', 'form-2')\">" + _s(errors.first('email', 'form-2')) + "</span>\n            </div>\n\n            <div class=\"pure-u-1\">\n                <label :class=\"{'error': errors.has('email', 'form-2') }\" for=\"email\">Password</label>\n                <input v-validate data-rules=\"required\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email', 'form-2') }\" name=\"password\" type=\"password\">\n            </div>\n\n            <button class=\"pure-button pure-button-primary\" type=\"submit\" name=\"button\">Log in</button>\n        </form>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        new Vue({\n           el: '#app',\n           data: {\n               name: '',\n               email: ''\n           },\n           methods: {\n               validateForm1(e) {\n                   this.$validator.validateAll('form-1');\n                   if (this.errors.any('form-1')) {\n                       e.preventDefault();\n                       return;\n                   }\n\n                   e.preventDefault();\n                   alert('Form Submitted!');\n               },\n               validateForm2(e) {\n                   this.$validator.validateAll('form-2');\n                   if (this.errors.any('form-2')) {\n                       e.preventDefault();\n                       return;\n                   }\n\n                   e.preventDefault();\n                   alert('Form Submitted!');\n               }\n           }\n       });\n    "])])
-}},staticRenderFns: [function (){with(this) {
-  return _h('legend', ["Form 1"])
-}},function (){with(this) {
-  return _h('button', {
-    staticClass: "pure-button pure-button-primary",
-    attrs: {
-      "type": "submit",
-      "name": "button"
-    }
-  }, ["Sign up"])
-}},function (){with(this) {
-  return _h('legend', ["Form 2"])
-}},function (){with(this) {
-  return _h('button', {
-    staticClass: "pure-button pure-button-primary",
-    attrs: {
-      "type": "submit",
-      "name": "button"
-    }
-  }, ["Log in"])
-}}]}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-11", module.exports)
-  }
-}
-
-/***/ },
-/* 170 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('pre', [_h('code', {
-    ref: "code"
-  }, [$slots["default"]])])
-}},staticRenderFns: []}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-2", module.exports)
-  }
-}
-
-/***/ },
-/* 171 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('div', {
-    ref: "layout",
-    attrs: {
-      "id": "layout"
-    }
-  }, [_h('a', {
-    ref: "menuLink",
-    staticClass: "menu-link",
-    attrs: {
-      "href": "#menu",
-      "id": "menuLink"
-    }
-  }, [_m(0)]), " ", _h('div', {
-    ref: "menu",
-    attrs: {
-      "id": "menu"
-    }
-  }, [_m(1), " ", _m(2)]), " ", _h('div', {
-    attrs: {
-      "id": "main"
-    }
-  }, [_h('div', {
-    staticClass: "header"
-  }, [_h('h1', [_s(heading)]), " ", _h('h2', [_s(subtitle)])]), " ", _h('div', {
-    staticClass: "content"
-  }, [$slots["default"]])])])
-}},staticRenderFns: [function (){with(this) {
-  return _h('span')
-}},function (){with(this) {
-  return _h('div', {
-    staticClass: "pure-menu"
-  }, [_h('a', {
-    staticClass: "pure-menu-heading",
-    attrs: {
-      "href": "/"
-    }
-  }, ["Vee Validate"]), " ", _h('ul', {
-    staticClass: "pure-menu-list"
-  }, [_h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "index.html"
-    }
-  }, ["Getting Started"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "index.html#installation"
-    }
-  }, ["Installation"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "index.html#basic-example"
-    }
-  }, ["Basic Example"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "index.html#render-errors"
-    }
-  }, ["Rendering Errors"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "examples.html"
-    }
-  }, ["Examples"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "rules.html"
-    }
-  }, ["Validation Rules"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "localization.html"
-    }
-  }, ["Localization"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "api.html"
-    }
-  }, ["API Reference"])]), " ", _h('li', {
-    staticClass: "pure-menu-item"
-  }, [_h('a', {
-    staticClass: "pure-menu-link",
-    attrs: {
-      "href": "index.html#configuration"
-    }
-  }, ["Configuration"])])])])
-}},function (){with(this) {
-  return _h('div', {
-    staticClass: "about flex-center"
-  }, [_h('a', {
-    attrs: {
-      "target": "github",
-      "href": "https://github.com/logaretm/vee-validate"
-    }
-  }, [_h('i', {
-    staticClass: "icon-github"
-  })])])
-}}]}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-3", module.exports)
-  }
-}
-
-/***/ },
-/* 172 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked"
-  }, [_h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('email')
-    },
-    attrs: {
-      "for": "email"
-    }
-  }, ["Email"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('email')
-    },
-    attrs: {
-      "data-rules": "required|email",
-      "name": "email",
-      "type": "text",
-      "placeholder": "Email"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('email')),
-      expression: "errors.has('email')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('email'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-validate data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
-}},staticRenderFns: []}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-4", module.exports)
-  }
-}
-
-/***/ },
-/* 173 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){with(this) {
@@ -27811,360 +28165,6 @@ module.exports={render:function (){with(this) {
   }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-model=\"email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s(_f("json")(errors.collect('email'))) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n                    <input v-model=\"name\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s(_f("json")(errors.collect('name'))) + "</span>\n                </div>\n                <button class=\"pure-button pure-button-primary\" @click=\"validateForm\" type=\"button\" name=\"button\">Validate All</button>\n                <button class=\"pure-button button-error\" @click=\"clearErrors\" type=\"button\" name=\"button\">Clear</button>\n            </form>\n        </div>\n    "]), " ", _h('div', {
     slot: "code-js"
   }, ["\n        import Vue from 'vue';\n        import { Validator } from 'vee-validate';\n\n        new Vue({\n            el: '#app',\n            validator: null, // private reference\n            data() {\n                return {\n                    email: '',\n                    name: '',\n                    errors: []\n                }\n            },\n            watch: {\n                email(value) {\n                    this.validator.validate('email', value);\n                },\n                name(value) {\n                    this.validator.validate('name', value);\n                }\n            },\n            methods: {\n                validateForm() {\n                    this.validator.validateAll({\n                        email: this.email,\n                        name: this.name\n                    });\n                },\n                clearErrors() {\n                    this.errors.clear();\n                }\n            },\n            ready() {\n                this.validator = new Validator({\n                    email: 'required|email',\n                    name: 'required|alpha|min:3'\n                });\n                this.$set('errors', this.validator.errorBag); // update the data.\n            }\n        });\n    "])])
-}},staticRenderFns: []}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-5", module.exports)
-  }
-}
-
-/***/ },
-/* 174 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked"
-  }, [_m(0), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('image')
-    },
-    attrs: {
-      "for": "image"
-    }
-  }, ["Unrejected Image"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('image')
-    },
-    attrs: {
-      "data-rules": "mimes:image/*",
-      "name": "image",
-      "type": "file"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('image')),
-      expression: "errors.has('image')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('image'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('file')
-    },
-    attrs: {
-      "for": "file"
-    }
-  }, ["Rejected Image"]), " ", _h('input', {
-    directives: [{
-      name: "validate",
-      modifiers: {
-        "reject": true
-      }
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('file')
-    },
-    attrs: {
-      "data-rules": "mimes:image/*",
-      "name": "file",
-      "type": "file"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('file')),
-      expression: "errors.has('file')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('file'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>File Upload</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('image') }\" for=\"image\">Unrejected Image</label>\n                    <input v-validate data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('image') }\" name=\"image\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('image')\">" + _s(errors.first('image')) + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('file') }\" for=\"file\">Rejected Image</label>\n                    <input  v-validate.reject data-rules=\"mimes:image/*\" :class=\"{'pure-input-1': true, 'has-error': errors.has('file') }\" name=\"file\" type=\"file\">\n                    <span class=\"error\" v-show=\"errors.has('file')\">" + _s(errors.first('file')) + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
-}},staticRenderFns: [function (){with(this) {
-  return _h('legend', ["File Upload"])
-}}]}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-6", module.exports)
-  }
-}
-
-/***/ },
-/* 175 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked"
-  }, [_m(0), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('email')
-    },
-    attrs: {
-      "for": "email"
-    }
-  }, ["Email - Delay: 500ms"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('email')
-    },
-    attrs: {
-      "data-rules": "required|email",
-      "data-delay": "500",
-      "name": "email",
-      "type": "text",
-      "placeholder": "Email"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('email')),
-      expression: "errors.has('email')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('email'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('name')
-    },
-    attrs: {
-      "for": "name"
-    }
-  }, ["Name - Delay: 1s"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('name')
-    },
-    attrs: {
-      "data-rules": "required|alpha|min:3",
-      "data-delay": "1000",
-      "name": "name",
-      "type": "text",
-      "placeholder": "Full Name"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('name')),
-      expression: "errors.has('name')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('name'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <legend>Basic Form</legend>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email - Delay: 500ms</label>\n                    <input v-validate data-rules=\"required|email\" data-delay=\"500\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"email\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Name - Delay: 1s</label>\n                    <input v-validate data-rules=\"required|alpha|min:3\" data-delay=\"1000\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" name=\"name\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s("{" + "{ errors.first('name') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app'\n        });\n    "])])
-}},staticRenderFns: [function (){with(this) {
-  return _h('legend', ["Debounced Form"])
-}}]}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-7", module.exports)
-  }
-}
-
-/***/ },
-/* 176 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked"
-  }, [_h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('email')
-    },
-    attrs: {
-      "for": "email"
-    }
-  }, ["Email"]), " ", _h('input', {
-    directives: [{
-      name: "model",
-      value: (email),
-      expression: "email"
-    }, {
-      name: "validate",
-      value: (email),
-      expression: "email"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('email')
-    },
-    attrs: {
-      "data-rules": "required|email",
-      "type": "text",
-      "placeholder": "Email"
-    },
-    domProps: {
-      "value": _s(email)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) return;
-        email = $event.target.value
-      }
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('email')),
-      expression: "errors.has('email')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('email'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('name')
-    },
-    attrs: {
-      "for": "name"
-    }
-  }, ["Full Name"]), " ", _h('input', {
-    directives: [{
-      name: "model",
-      value: (name),
-      expression: "name"
-    }, {
-      name: "validate",
-      value: (name),
-      expression: "name",
-      modifiers: {
-        "initial": true
-      }
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('name')
-    },
-    attrs: {
-      "data-rules": "required|alpha",
-      "type": "text",
-      "placeholder": "Full Name"
-    },
-    domProps: {
-      "value": _s(name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) return;
-        name = $event.target.value
-      }
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('name')),
-      expression: "errors.has('name')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('name'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-model=\"email\" v-validate=\"email\" data-rules=\"required|email\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" type=\"text\" placeholder=\"Email\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('name') }\" for=\"name\">Full Name</label>\n                    <input v-model=\"name\" v-validate.initial=\"name\" data-rules=\"required|alpha\" :class=\"{'pure-input-1': true, 'has-error': errors.has('name') }\" type=\"text\" placeholder=\"Full Name\">\n                    <span class=\"error\" v-show=\"errors.has('name')\">" + _s("{" + "{ errors.first('name') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import Vue from 'vue';\n        import VeeValidate from 'vee-validate';\n\n        Vue.use(VeeValidate);\n\n        new Vue({\n            el: '#app',\n            data: {\n                email: '',\n                name: ''\n            }\n        });\n    "])])
-}},staticRenderFns: []}
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-8", module.exports)
-  }
-}
-
-/***/ },
-/* 177 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){with(this) {
-  return _h('code-example', [_h('form', {
-    slot: "example",
-    staticClass: "pure-form pure-form-stacked rtl"
-  }, [_h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('email')
-    },
-    attrs: {
-      "for": "email"
-    }
-  }, ["Email"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('email')
-    },
-    attrs: {
-      "data-rules": "required|email",
-      "data-as": "البريد",
-      "name": "email",
-      "type": "text"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('email')),
-      expression: "errors.has('email')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('email'))])]), " ", _h('div', {
-    staticClass: "pure-u-1"
-  }, [_h('label', {
-    class: {
-      'error': errors.has('phone')
-    },
-    attrs: {
-      "for": "phone"
-    }
-  }, ["Phone"]), " ", _h('input', {
-    directives: [{
-      name: "validate"
-    }],
-    class: {
-      'pure-input-1': true, 'has-error': errors.has('phone')
-    },
-    attrs: {
-      "data-rules": "required|numeric",
-      "data-as": "رقم الهاتف",
-      "name": "phone",
-      "type": "text"
-    }
-  }), " ", _h('span', {
-    directives: [{
-      name: "show",
-      value: (errors.has('phone')),
-      expression: "errors.has('phone')"
-    }],
-    staticClass: "error"
-  }, [_s(errors.first('phone'))])])]), " ", _h('div', {
-    slot: "code-html"
-  }, ["\n        <div id=\"app\">\n            <form class=\"pure-form pure-form-stacked rtl\">\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('email') }\" for=\"email\">Email</label>\n                    <input v-validate data-rules=\"required|email\" data-as=\"البريد\" :class=\"{'pure-input-1': true, 'has-error': errors.has('email') }\" name=\"email\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('email')\">" + _s("{" + "{ errors.first('email') }" + "}") + "</span>\n                </div>\n                <div class=\"pure-u-1\">\n                    <label :class=\"{'error': errors.has('phone') }\" for=\"phone\">Phone</label>\n                    <input v-validate data-rules=\"required|numeric\" data-as=\"رقم الهاتف\" :class=\"{'pure-input-1': true, 'has-error': errors.has('phone') }\" name=\"phone\" type=\"text\">\n                    <span class=\"error\" v-show=\"errors.has('phone')\">" + _s("{" + "{ errors.first('phone') }" + "}") + "</span>\n                </div>\n            </form>\n        </div>\n    "]), " ", _h('div', {
-    slot: "code-js"
-  }, ["\n        import messages from './locale/ar';\n        import Vue from 'vue';\n        import VeeValidate, { Validator } from 'vee-validate';\n        Vue.use(VeeValidate);\n\n        // Merge dictionary messages.\n        Validator.updateDictionary({\n            ar: {\n                messages\n            }\n        });\n\n        new Vue({\n            el: 'body',\n            data: {\n                phone: '',\n                email: ''\n            },\n            created() {\n                this.$validator.setLocale('ar'); // Switch locale for this instance.\n            }\n        });\n    "])])
 }},staticRenderFns: []}
 if (false) {
   module.hot.accept()

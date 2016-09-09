@@ -1,4 +1,4 @@
-h2.content-subhead a:before {
+.content-subhead a:before {
     content: '#';
     color: $vue-green;
     opacity: 0.6;
@@ -6,7 +6,7 @@ h2.content-subhead a:before {
     position: absolute;
 }
 
-h2.content-subhead a {
+.content-subhead a {
     text-decoration: none;
     color: $vue-hover;
 }

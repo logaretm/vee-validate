@@ -2004,14 +2004,14 @@ span.error {
 .pure-button-primary {
   background: #41b883; }
 
-h2.content-subhead a:before {
+.content-subhead a:before {
   content: '#';
   color: #41b883;
   opacity: 0.6;
   margin-left: -20px;
   position: absolute; }
 
-h2.content-subhead a {
+.content-subhead a {
   text-decoration: none;
   color: #34495e; }
 
