@@ -40,7 +40,7 @@ const attachValidatorEvent = (el, { expression, value }, { context }) => {
     context.$on(DEFAULT_EVENT_NAME, callback);
 
     const fieldName = hasFieldDependency(el.dataset.rules);
-    if (el.dataset.rules && fieldName) {
+    if (fieldName) {
         context.$once('validatorReady', () => {
             document.querySelector(`input[name='${fieldName}']`)
                     .addEventListener('input', callback);
