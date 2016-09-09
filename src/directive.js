@@ -28,32 +28,13 @@ const hasFieldDependency = (rules) => {
 };
 
 const attachValidatorEvent = (el, { expression, value }, { context }) => {
-    let callback;
-    if (expression) {
-        callback = (scope) => {
-            if (scope) {
-                if (getScope(el) === scope) {
-                    context.$validator.validate(expression || el.name, el.value, getScope(el));
-                }
-
-                return;
-            }
-
-            context.$validator.validate(expression || el.name, el.value, getScope(el));
-        };
-    } else {
-        callback = (scope) => {
-            if (scope) {
-                if (getScope(el) === scope) {
-                    onInput(el, { expression }, { context })();
-                }
-
-                return;
-            }
-
+    const elScope = getScope(el);
+    const callback = elScope ? (scope) => {
+        if (scope === elScope) {
             onInput(el, { expression }, { context })();
-        };
-    }
+        }
+    } : onInput(el, { expression }, { context });
+
 
     callbackMaps.push({ vm: context, event: 'validatorEvent', callback, el });
     context.$on(DEFAULT_EVENT_NAME, callback);
