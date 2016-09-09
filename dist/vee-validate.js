@@ -1019,14 +1019,14 @@ var hasFieldDependency = function hasFieldDependency(rules) {
             var elScope = getScope(this.el);
             if (!elScope) {
                 callback = this.expression ? function () {
-                    _this.vm.$validator.validate(_this.fieldName, _this.el.value, getScope(_this.el));
+                    _this.vm.$validator.validate(_this.fieldName, _this.el.value, elScope);
                 } : function () {
                     _this.handler();
                 };
             } else {
                 callback = this.expression ? function (scope) {
                     if (scope === elScope) {
-                        _this.vm.$validator.validate(_this.fieldName, _this.el.value, getScope(_this.el));
+                        _this.vm.$validator.validate(_this.fieldName, _this.el.value, elScope);
                     }
                 } : function (scope) {
                     if (scope === elScope) {
