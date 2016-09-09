@@ -24,12 +24,28 @@ export default (options) => ({
         }
     },
     attachValidatorEvent() {
-        this.validateCallback = this.expression ? () => {
-            this.vm.$validator.validate(this.fieldName, this.el.value, getScope(this.el));
-        } : () => {
-            this.handler();
-        };
+        let callback;
+        const elScope = getScope(this.el);
+        if (! elScope) {
+            callback = this.expression ? () => {
+                this.vm.$validator.validate(this.fieldName, this.el.value, getScope(this.el));
+            } : () => {
+                this.handler();
+            };
+        } else {
+            callback = this.expression ? (scope) => {
+                if (scope === elScope) {
+                    this.vm.$validator.validate(this.fieldName, this.el.value, getScope(this.el));
+                }
+            } : (scope) => {
+                if (scope === elScope) {
+                    this.handler();
+                }
+            };
+        }
 
+
+        this.validateCallback = callback;
         this.vm.$on(DEFAULT_EVENT_NAME, this.validateCallback);
         const fieldName = hasFieldDependency(this.el.dataset.rules);
         if (this.el.dataset.rules && fieldName) {
