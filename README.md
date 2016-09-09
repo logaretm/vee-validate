@@ -13,6 +13,8 @@ This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.
 
 ### Installation
 
+#### npm
+
 ```
 npm install vee-validate --save
 ```
@@ -20,6 +22,19 @@ npm install vee-validate --save
 or if you are using **Vue 2.0**:
 ```
 npm install vee-validate@next --save
+```
+
+#### bower
+
+**Vue 1.0**:
+```
+bower install vee-validate#1.0.0-beta.3 --save
+```
+
+**Vue 2.0**:
+
+```
+bower install vee-validate#2.0.0-beta.8 --save
 ```
 
 ### Getting Started
