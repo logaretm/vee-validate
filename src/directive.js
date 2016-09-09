@@ -28,14 +28,14 @@ export default (options) => ({
         const elScope = getScope(this.el);
         if (! elScope) {
             callback = this.expression ? () => {
-                this.vm.$validator.validate(this.fieldName, this.el.value, getScope(this.el));
+                this.vm.$validator.validate(this.fieldName, this.el.value, elScope);
             } : () => {
                 this.handler();
             };
         } else {
             callback = this.expression ? (scope) => {
                 if (scope === elScope) {
-                    this.vm.$validator.validate(this.fieldName, this.el.value, getScope(this.el));
+                    this.vm.$validator.validate(this.fieldName, this.el.value, elScope);
                 }
             } : (scope) => {
                 if (scope === elScope) {
