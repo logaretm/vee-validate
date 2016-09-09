@@ -1015,32 +1015,23 @@ var hasFieldDependency = function hasFieldDependency(rules) {
         attachValidatorEvent: function attachValidatorEvent() {
             var _this = this;
 
-            var callback = void 0;
             var elScope = getScope(this.el);
-            if (!elScope) {
-                callback = this.expression ? function () {
+            var callback = elScope ? function (scope) {
+                if (scope === elScope) {
                     _this.vm.$validator.validate(_this.fieldName, _this.el.value, elScope);
-                } : function () {
-                    _this.handler();
-                };
-            } else {
-                callback = this.expression ? function (scope) {
-                    if (scope === elScope) {
-                        _this.vm.$validator.validate(_this.fieldName, _this.el.value, elScope);
-                    }
-                } : function (scope) {
-                    if (scope === elScope) {
-                        _this.handler();
-                    }
-                };
-            }
+                }
+            } : function () {
+                _this.vm.$validator.validate(_this.fieldName, _this.el.value, elScope);
+            };
 
-            this.validateCallback = callback;
-            this.vm.$on(DEFAULT_EVENT_NAME, this.validateCallback);
+            this.validatorCallback = callback;
+            this.vm.$on(DEFAULT_EVENT_NAME, this.validatorCallback);
             var fieldName = hasFieldDependency(this.el.dataset.rules);
             if (this.el.dataset.rules && fieldName) {
                 this.vm.$once('validatorReady', function () {
-                    document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', _this.validateCallback);
+                    document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', function () {
+                        _this.vm.$validator.validate(_this.fieldName, _this.el.value, elScope);
+                    });
                 });
             }
         },
@@ -1095,7 +1086,7 @@ var hasFieldDependency = function hasFieldDependency(rules) {
             }
 
             this.vm.$validator.detach(this.fieldName);
-            this.vm.$off(DEFAULT_EVENT_NAME, this.validateCallback);
+            this.vm.$off(DEFAULT_EVENT_NAME, this.validatorCallback);
         }
     };
 };
