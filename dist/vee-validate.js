@@ -1041,7 +1041,7 @@ var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
     context.$on(DEFAULT_EVENT_NAME, callback);
 
     var fieldName = hasFieldDependency(el.dataset.rules);
-    if (el.dataset.rules && fieldName) {
+    if (fieldName) {
         context.$once('validatorReady', function () {
             document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', callback);
         });
