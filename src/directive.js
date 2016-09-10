@@ -4,7 +4,7 @@ const callbackMaps = [];
 
 const DEFAULT_EVENT_NAME = 'veeValidate';
 
-const getScope = (el) => el.dataset.scope || el.form.dataset.scope || undefined;
+const getScope = (el) => el.dataset.scope || (el.form && el.form.dataset.scope) || undefined;
 
 const onInput = (el, { expression }, { context }) => () => {
     context.$validator.validate(expression || el.name, el.value, getScope(el));
