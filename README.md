@@ -13,6 +13,8 @@ This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.
 
 ### Installation
 
+#### npm
+
 ```
 npm install vee-validate --save
 ```
@@ -22,7 +24,18 @@ or if you are using **Vue 2.0**:
 npm install vee-validate@next --save
 ```
 
-**Note:** The latest version of this plugin on npm will be pointing to the latest version that supports Vue 1.x until Vue 2.0 is released which is pretty soon.
+#### bower
+
+**Vue 1.0**:
+```
+bower install vee-validate#1.0.0-beta.5 --save
+```
+
+**Vue 2.0**:
+
+```
+bower install vee-validate#2.0.0-beta.10 --save
+```
 
 ### Getting Started
 
@@ -58,7 +71,7 @@ Of course there is more to it than that, refer to the documentation for more det
 
 ### Documentation
 
-Read the [documentation and examples](https://logaretm.github.io/vee-validate/).
+Read the [documentation and demos](https://logaretm.github.io/vee-validate/).
 
 ### Contributing
 
