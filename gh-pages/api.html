@@ -65,7 +65,7 @@
 
                         validator.detach('email'); // you can also detach fields.
                     </code-block>
-                    After that you can validate values with <code class="inline">validate(field, value)</code> which should returna boolean if all validations pass. like this:
+                    After that you can validate values with <code class="inline">validate(field, value)</code> which should return a boolean if all validations pass. Like this:
                     <code-block class="language-javascript">
                         validator.validate('email', 'foo@bar.com'); // true
                         validator.validate('email', 'foo@bar'); // false
@@ -74,7 +74,7 @@
                         <b>Note:</b> Most validators return a Boolean, however some validators (very few) return a <code>Promise</code> The validator is aware of this and will only return a Promise if at least one validation yields a promise. the promise is resolved to boolean which you can later chain to check your fields.
                     </div>
                     <br>
-                    You Can validate multiple values at the same time using <code class="inline">validateAll(obj)</code>:
+                    You can validate multiple values at the same time using <code class="inline">validateAll(obj)</code>:
                     <code-block class="language-javascript">
                         validator.validateAll({
                             email: 'foo@bar.com',
