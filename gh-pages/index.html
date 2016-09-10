@@ -8,19 +8,19 @@
     </head>
     <body>
         <div id="app">
-            <app heading="Vee-Validate" subtitle="Simple VueJS Form Validation">
+            <app heading="Vee-Validate" subtitle="Simple Vue.JS Form Validation">
                 <h2 id="about" class="content-subhead"><a href="#about">What is vee-validate?</a></h2>
                 <p>
                     This is a lightweight plugin for <a href="https://vuejs.org/" class="link">VueJS</a> that allows you to validate input fields, and display errors.
                     <br><br>
-                    You don't have to do anything fancy in your app, most of the work goes into the html,
+                    You don't have to do anything fancy in your app, most of the work goes into the html.
                     You only need to specify for each input what kind of validators should be used when the value changes. You will then get informed of the errors for each field.
                     <br><br>
                     Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object.
                     <br><br>
                     Currently there are over 20 validation rules available in the plugin.
                     This plugin is inspired by <a href="https://laravel.com/" class="link">PHP Framework Laravel's validation syntax</a>.
-                    <br><br>It also supports Vue 2.0, All examples here are built using Vue 2.0 with the plugin.
+                    <br><br>It also supports Vue 2.0. All examples here are built using Vue 2.0 with the plugin.
                 </p>
                 <h2 id="installation" class="content-subhead"><a href="#installation">Installation</a></h2>
                 <p>
@@ -61,7 +61,7 @@
                 <p>
                     All you need is to add the <code class="inline">v-validate</code> directive to the input you wish to validate.
                     <br><br>
-                    Then Add a <code class="inline">data-rules</code> attribute which contains a list of validation rules separated by a pipe '<code class="inline">|</code>'.
+                    Then add a <code class="inline">data-rules</code> attribute which contains a list of validation rules separated by a pipe '<code class="inline">|</code>'.
                     For the following example the validation rules are straight forward, use <code class="inline">required</code> to indicate that the field is required.
                     And <code class="inline">email</code> to indicate that the field must be an email.
                     To combine both rules we assign the value <code class="inline">required|email</code> to the <code class="inline">data-rules</code> data-set attribute.
@@ -75,7 +75,7 @@
                 </div>
                 <h2 id="render-errors" class="content-subhead"><a href="#render-errors">Rendering Errors</a></h2>
                 <p>
-                    Naturally, you would want to display the errors to your users, The plugin augments your Vue instance with a private validator object and a public errors data object.
+                    Naturally, you would want to display the errors to your users. The plugin augments your Vue instance with a private validator object and a public errors data object.
                     You are responsible for how the errors should be rendered.
                     <br><br>The errors object exposes a simple methods to help you render errors:
                     <ul>
@@ -100,7 +100,7 @@
                 <h2 id="configuration" class="content-subhead"><a href="#configuration">Configuration</a></h2>
                 <p>
                     You may need to configure some options to tweak some of the plugin internals, this is not required, but could cause conflicts. For example: if you are using a property called <code class="inline">errors</code> on your vue instance this may cause conflicts.
-                     here is how you would set up the options along with the default values:
+                     Here is how you would set up the options along with the default values:
                 </p>
                 <code-block class="language-javascript">
                     import Vue from 'vue';
