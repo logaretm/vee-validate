@@ -2,7 +2,7 @@ import debounce from './utils/debouncer.js';
 
 const DEFAULT_EVENT_NAME = 'veeValidate';
 
-const getScope = (el) => el.dataset.scope || el.form.dataset.scope || undefined;
+const getScope = (el) => el.dataset.scope || (el.form && el.form.dataset.scope) || undefined;
 
 const hasFieldDependency = (rules) => {
     const results = rules.split('|').filter(r => !! r.match(/confirmed|after|before/));
