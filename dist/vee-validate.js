@@ -990,7 +990,7 @@ var callbackMaps = [];
 var DEFAULT_EVENT_NAME = 'veeValidate';
 
 var getScope = function getScope(el) {
-    return el.dataset.scope || el.form.dataset.scope || undefined;
+    return el.dataset.scope || el.form && el.form.dataset.scope || undefined;
 };
 
 var onInput = function onInput(el, _ref, _ref2) {
