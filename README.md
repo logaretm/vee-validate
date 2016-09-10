@@ -28,13 +28,13 @@ npm install vee-validate@next --save
 
 **Vue 1.0**:
 ```
-bower install vee-validate#1.0.0-beta.4 --save
+bower install vee-validate#1.0.0-beta.5 --save
 ```
 
 **Vue 2.0**:
 
 ```
-bower install vee-validate#2.0.0-beta.9 --save
+bower install vee-validate#2.0.0-beta.10 --save
 ```
 
 ### Getting Started
