@@ -1,11 +1,11 @@
 {
   "name": "vee-validate",
-  "version": "2.0.0-beta.10",
+  "version": "2.0.0-beta.11",
   "homepage": "http://vee-validate.logaretm.com/",
   "authors": [
     "'Abdelrahman Awad' <'logaretm1@outlook.com'>"
   ],
-  "description": "Simple VueJS validation plugin",
+  "description": "Simple Vue.js validation plugin",
   "main": "dist/vee-validate.min.js",
   "keywords": [
     "vee-validate",
