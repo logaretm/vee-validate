@@ -3,6 +3,7 @@
   "version": "2.0.0-beta.10",
   "description": "Simple VueJS input validation plugin",
   "main": "dist/vee-validate.js",
+  "homepage": "http://vee-validate.logaretm.com",
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
     "start": "webpack-dev-server --hot --inline --config webpack.docs.config.js",
