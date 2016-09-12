@@ -25,8 +25,8 @@ As you can see we have:
     - `utils`: contains small utility functions.
 - `dist` contains the unminified and the minified build of the repository.
 - `test` contains the test files for the project, it uses [avajs](https://github.com/avajs/ava) for testing. it contains a similar folder structure as the `src` folder.
-- `docs` contains the source files for the documentation.
-- `gh-pages` contains the built version of the documentation which is the live one. **Note:** The live docs are served from the `next` branch, master is out of sync for now.
+
+If you want to contribute to the docs you can find it [here](https://github.com/logaretm/vee-validate-docs).
 
 ### Source Code
 
@@ -44,7 +44,7 @@ or
 
 `npm run test:watch`
 
-currently I'm not testing the directive and the mixin, I will work on adding those tests later.
+Currently I'm not testing the directive and the mixin, I will work on adding those tests later if I can, help will be appreciated.
 
 ### Building
 
