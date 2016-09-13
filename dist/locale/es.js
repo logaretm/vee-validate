@@ -6,6 +6,7 @@ export default {
     before: (field, [target]) => `El campo ${field} debe ser anterior a ${target}.`,
     between: (field, [min, max]) => `El campo ${field} debe estar entre ${min} y ${max}.`,
     confirmed: (field, [confirmedField]) => `El campo ${field} no coincide con ${confirmedField}.`,
+    date_between: (field, [min, max]) => `El campo ${field} debe estar entre ${min} y ${max}.`,
     date_format: (field, [format]) => `El campo ${field} debe tener formato formato ${format}.`,
     decimal: (field, [decimals] = ['*']) => `El campo ${field} debe ser númerico y contener ${decimals === '*' ? '' : decimals} puntos decimales.`,
     digits: (field, [length]) => `El campo ${field} debe ser númerico y contener exactamente ${length} dígitos.`,
@@ -23,5 +24,5 @@ export default {
     regex: (field) => `El formato del campo ${field} no es válido.`,
     required: (field) => `El campo ${field} es obligatorio.`,
     size: (field, [size]) => `El campo ${field} debe ser menor a ${size} KB.`,
-    url: (field) => `El campo ${field} no es una URL válida.`,
+    url: (field) => `El campo ${field} no es una URL válida.`
 };
