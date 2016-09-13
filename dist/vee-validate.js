@@ -1536,11 +1536,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* istanbul ignore next */
 /* eslint-disable max-len */
 /* harmony default export */ exports["a"] = {
-    date_format: function date_format(field, _ref) {
+    after: function after(field, _ref) {
         var _ref2 = _slicedToArray(_ref, 1);
 
-        var format = _ref2[0];
-        return "The " + field + " must be in the format " + format + ".";
+        var target = _ref2[0];
+        return "The " + field + " must be after " + target + ".";
     },
     before: function before(field, _ref3) {
         var _ref4 = _slicedToArray(_ref3, 1);
@@ -1548,18 +1548,18 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var target = _ref4[0];
         return "The " + field + " must be before " + target + ".";
     },
-    after: function after(field, _ref5) {
-        var _ref6 = _slicedToArray(_ref5, 1);
+    date_between: function date_between(field, _ref5) {
+        var _ref6 = _slicedToArray(_ref5, 2);
 
-        var target = _ref6[0];
-        return "The " + field + " must be after " + target + ".";
-    },
-    between: function between(field, _ref7) {
-        var _ref8 = _slicedToArray(_ref7, 2);
-
-        var min = _ref8[0];
-        var max = _ref8[1];
+        var min = _ref6[0];
+        var max = _ref6[1];
         return "The " + field + " must be between " + min + " and " + max + ".";
+    },
+    date_format: function date_format(field, _ref7) {
+        var _ref8 = _slicedToArray(_ref7, 1);
+
+        var format = _ref8[0];
+        return "The " + field + " must be in the format " + format + ".";
     }
 };
 
