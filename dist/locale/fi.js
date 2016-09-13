@@ -1,9 +1,13 @@
 export default {
+    after: (field, [target]) => `${field} tulee olla jälkeen ${target}.`,
     alpha_dash: (field) => `${field} voi sisältää vain kirajimia, numeroita, ja tavu-, tai alaviivoja.`,
     alpha_num: (field) => `${field} voi sisältää vain kirjaimia ja numeroita.`,
     alpha: (field) => `${field} voi sisältää vain kirjaimia.`,
+    before: (field, [target]) => `${field} tulee olla ennen ${target}.`,
     between: (field, [min, max]) => `Kentän ${field} tulee olla ${min} ja ${max} väliltä.`,
     confirmed: (field, [confirmedField]) => `${field} ei vastannut ${confirmedField}.`,
+    date_between: (field, [min, max]) => `${field} tulee olla ${min} ja ${max} väliltä.`,
+    date_format: (field, [format]) => `${field} tulee olla muodossa ${format}.`,
     decimal: (field, [decimals] = ['*']) => `${field} tulee olla numeerinen ja voi sisältää ${decimals === '*' ? '' : decimals} desimaalia.`,
     digits: (field, [length]) => `${field} tulee olla numeerinen ja tarkalleen ${length} merkkiä.`,
     dimensions: (field, [width, height]) => `${field} tulee olla ${width} pikseliä kertaa ${height} pikseliä.`,
@@ -20,9 +24,5 @@ export default {
     regex: (field) => `${field} tulee olla kelvollinen säännöllinen lauseke.`,
     required: (field) => `${field} on pakollinen kenttä.`,
     size: (field, [size]) => `${field} tulee olla vähemmän kuin ${size} KB.`,
-    url: (field) => `${field} tulee olla kelvollinen URL-osoite.`,
-    date_format: (field, [format]) => `${field} tulee olla muodossa ${format}.`,
-    before: (field, [target]) => `${field} tulee olla ennen ${target}.`,
-    after: (field, [target]) => `${field} tulee olla jälkeen ${target}.`,
-    between: (field, [min, max]) => `${field} tulee olla ${min} ja ${max} väliltä.`
+    url: (field) => `${field} tulee olla kelvollinen URL-osoite.`
 };

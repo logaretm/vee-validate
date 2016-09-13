@@ -1,9 +1,13 @@
 export default {
+    after: (field, [target]) => `O campo ${field} deve estar depois do campo ${target}.`,
     alpha_dash: (field) => `O campo ${field} deve conter letras, números e traços.`,
     alpha_num: (field) => `O campo ${field} deve conter somente letras e números.`,
     alpha: (field) => `O campo ${field} deve conter somente letras.`,
+    before: (field, [target]) => `O campo ${field} deve estar antes do campo ${target}.`,
     between: (field, [min, max]) => `O campo ${field} deve estar entre ${min} e ${max}.`,
     confirmed: (field, [confirmedField]) => `O campo ${field} e ${confirmedField} devem ser iguais.`,
+    date_between: (field, [min, max]) => `O campo ${field} deve estar entre ${min} e ${max}.`,
+    date_format: (field, [format]) => `O campo ${field} deve estar no formato ${format}.`,
     decimal: (field, [decimals] = ['*']) => `O campo ${field} deve ser numérico e deve conter ${decimals === '*' ? '' : decimals} casas decimais.`,
     digits: (field, [length]) => `O campo ${field} deve ser numérico e ter ${length} dígitos.`,
     dimensions: (field, [width, height]) => `O campo ${field} deve ter ${width} pixels de largura por ${height} pixels de altura.`,
@@ -20,9 +24,5 @@ export default {
     regex: (field) => `O campo ${field} possui um formato inválido.`,
     required: (field) => `O campo ${field} é obrigatório.`,
     size: (field, [size]) => `O campo ${field} deve ser menor que ${size} KB.`,
-    url: (field) => `O campo ${field} não é uma URL válida.`,
-    date_format: (field, [format]) => `O campo ${field} deve estar no formato ${format}.`,
-    before: (field, [target]) => `O campo ${field} deve estar antes do campo ${target}.`,
-    after: (field, [target]) => `O campo ${field} deve estar depois do campo ${target}.`,
-    between: (field, [min, max]) => `O campo ${field} deve estar entre ${min} e ${max}.`
+    url: (field) => `O campo ${field} não é uma URL válida.`
 };

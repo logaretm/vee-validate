@@ -1,9 +1,13 @@
 export default {
+    after: (field, [target]) => ` ${field} muss nach ${target} liegen.`,
     alpha_dash: (field) => `${field} darf alphanumerische Zeichen sowie Striche und Unterstriche enthalten.`,
     alpha_num: (field) => `${field} darf nur alphanumerische Zeichen enthalten.`,
     alpha: (field) => `${field} darf nur alphabetische Zeichen enthalten.`,
+    before: (field, [target]) => `${field} muss vor  ${target} liegen.`,
     between: (field, [min, max]) => `${field} muss zwischen ${min} und ${max} liegen.`,
     confirmed: (field, [confirmedField]) => `${field} passt nicht zum Inhalt von ${confirmedField}.`,
+    date_between: (field, [min, max]) => `${field} muss zwischen ${min} und ${max} liegen.`,
+    date_format: (field, [format]) => `${field} muss das Format ${format} haben.`,
     decimal: (field, [decimals] = ['*']) => `${field} muss numerisch darf ${decimals === '*' ? '' : decimals} Dezimalpunkte enthalten.`,
     digits: (field, [length]) => `${field} muss numerisch sein und exakt ${length} Ziffern enthalten.`,
     dimensions: (field, [width, height]) => `${field} muss ${width} x ${height} Bildpunkte groß sein.`,
@@ -20,9 +24,5 @@ export default {
     regex: (field) => `Das Format von ${field} ist ungültig.`,
     required: (field) => `${field} ist ein Pflichtfeld.`,
     size: (field, [size]) => `${field} muss kleiner als ${size} KB sein.`,
-    url: (field) => `${field} ist keine gültige URL.`,
-    date_format: (field, [format]) => `${field} muss das Format ${format} haben.`,
-    before: (field, [target]) => `${field} muss vor  ${target} liegen.`,
-    after: (field, [target]) => ` ${field} muss nach ${target} liegen.`,
-    between: (field, [min, max]) => `${field} muss zwischen ${min} und ${max} liegen.`
+    url: (field) => `${field} ist keine gültige URL.`
 };
