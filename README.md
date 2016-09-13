@@ -37,6 +37,25 @@ bower install vee-validate#1.0.0-beta.6 --save
 bower install vee-validate#2.0.0-beta.11 --save
 ```
 
+### CDN
+
+vee-validate is also available on jsdelivr cdn:
+
+**Vue 1.0**:
+
+```html
+<script src="https://cdn.jsdelivr.net/vee-validate/1.0.0-beta.6/vee-validate.min.js"></script>
+```
+
+**Vue 2.0**:
+
+```html
+<script src="https://cdn.jsdelivr.net/vee-validate/2.0.0-beta.11/vee-validate.min.js"></script>
+```
+
+Or select whatever [version](https://www.jsdelivr.com/?query=vee-validate) you would like to use.
+
+
 ### Getting Started
 
 In your script entry point:
