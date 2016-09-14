@@ -53,7 +53,7 @@ vee-validate is also available on jsdelivr cdn:
 <script src="https://cdn.jsdelivr.net/vee-validate/2.0.0-beta.11/vee-validate.min.js"></script>
 ```
 
-Or select whatever [version](https://www.jsdelivr.com/?query=vee-validate) you would like to use.
+Or select whatever [version](https://www.jsdelivr.com/projects/vee-validate) you would like to use.
 
 ### Getting Started
 
