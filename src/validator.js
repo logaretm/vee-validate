@@ -23,7 +23,8 @@ export default class Validator
     constructor(validations, $vm) {
         this.locale = DEFAULT_LOCALE;
         this.strictMode = STRICT_MODE;
-        this.$fields = this._normalize(validations);
+        this.$fields = {};
+        this._createFields(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
 
@@ -225,21 +226,8 @@ export default class Validator
      * @param {string} prettyName Custom name to be used as field name in error messages.
      */
     attach(name, checks, prettyName = null) {
-        if (! this.$fields[name]) {
-            this.$fields[name] = {};
-        }
-
-        this.$fields[name].validations = [];
         this.errorBag.remove(name);
-
-        checks.split('|').forEach(rule => {
-            const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
-            if (normalizedRule.name === 'required') {
-                this.$fields[name].required = true;
-            }
-
-            this.$fields[name].validations.push(normalizedRule);
-        });
+        this._createField(name, checks);
 
         if (prettyName) {
             this.$fields[name].name = prettyName;
@@ -357,28 +345,34 @@ export default class Validator
      * @param  {object} validations
      * @return {object} Normalized object.
      */
-    _normalize(validations) {
+    _createFields(validations) {
         if (! validations) {
-            return {};
+            return;
         }
 
-        const normalized = {};
         Object.keys(validations).forEach(property => {
-            validations[property].split('|').forEach(rule => {
-                if (! normalized[property]) {
-                    normalized[property] = { validations: [] };
-                }
-
-                const normalizedRule = this._normalizeRule(rule, normalized[property].validations);
-                if (normalizedRule.name === 'required') {
-                    normalized[property].required = true;
-                }
-
-                normalized[property].validations.push(normalizedRule);
-            });
+            this._createField(property, validations[property]);
         });
+    }
 
-        return normalized;
+    /**
+     * Creates a field entry in the fields object.
+     */
+    _createField(name, checks) {
+        if (! this.$fields[name]) {
+            this.$fields[name] = {};
+        }
+
+        this.$fields[name].validations = [];
+
+        checks.split('|').forEach(rule => {
+            const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
+            if (normalizedRule.name === 'required') {
+                this.$fields[name].required = true;
+            }
+
+            this.$fields[name].validations.push(normalizedRule);
+        });
     }
 
     /**
