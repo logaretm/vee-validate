@@ -340,7 +340,7 @@ export default class Validator
     }
 
     /**
-     * Normalizes the validations object.
+     * Creates the fields to be validated.
      *
      * @param  {object} validations
      * @return {object} Normalized object.
@@ -357,6 +357,8 @@ export default class Validator
 
     /**
      * Creates a field entry in the fields object.
+     * @param {String} name.
+     * @param {String} Checks.
      */
     _createField(name, checks) {
         if (! this.$fields[name]) {
