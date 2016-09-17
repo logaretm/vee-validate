@@ -426,7 +426,8 @@ var Validator = function () {
 
         this.locale = DEFAULT_LOCALE;
         this.strictMode = STRICT_MODE;
-        this.$fields = this._normalize(validations);
+        this.$fields = {};
+        this._createFields(validations);
         this.errorBag = new __WEBPACK_IMPORTED_MODULE_1__errorBag__["a" /* default */]();
         this.$vm = $vm;
 
@@ -506,25 +507,10 @@ var Validator = function () {
     }, {
         key: 'attach',
         value: function attach(name, checks) {
-            var _this = this;
-
             var prettyName = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
 
-            if (!this.$fields[name]) {
-                this.$fields[name] = {};
-            }
-
-            this.$fields[name].validations = [];
             this.errorBag.remove(name);
-
-            checks.split('|').forEach(function (rule) {
-                var normalizedRule = _this._normalizeRule(rule, _this.$fields[name].validations);
-                if (normalizedRule.name === 'required') {
-                    _this.$fields[name].required = true;
-                }
-
-                _this.$fields[name].validations.push(normalizedRule);
-            });
+            this._createField(name, checks);
 
             if (prettyName) {
                 this.$fields[name].name = prettyName;
@@ -578,7 +564,7 @@ var Validator = function () {
     }, {
         key: 'validateAll',
         value: function validateAll(values) {
-            var _this2 = this;
+            var _this = this;
 
             /* istanbul ignore if */
             if (this.$vm && (!values || typeof values === 'string')) {
@@ -592,7 +578,7 @@ var Validator = function () {
             var promises = [];
             this.errorBag.clear();
             Object.keys(values).forEach(function (property) {
-                var result = _this2.validate(property, values[property]);
+                var result = _this.validate(property, values[property]);
                 if (typeof result.then === 'function') {
                     promises.push(result);
                     return;
@@ -625,7 +611,7 @@ var Validator = function () {
     }, {
         key: 'validate',
         value: function validate(name, value, scope) {
-            var _this3 = this;
+            var _this2 = this;
 
             if (!this.$fields[name]) {
                 if (!this.strictMode) {
@@ -645,7 +631,7 @@ var Validator = function () {
             var test = true;
             var promises = [];
             this.$fields[name].validations.forEach(function (rule) {
-                var result = _this3._test(name, value, rule, scope);
+                var result = _this2._test(name, value, rule, scope);
                 if (typeof result.then === 'function') {
                     promises.push(result);
                     return;
@@ -666,38 +652,51 @@ var Validator = function () {
         }
 
         /**
-         * Normalizes the validations object.
+         * Creates the fields to be validated.
          *
          * @param  {object} validations
          * @return {object} Normalized object.
          */
 
     }, {
-        key: '_normalize',
-        value: function _normalize(validations) {
-            var _this4 = this;
+        key: '_createFields',
+        value: function _createFields(validations) {
+            var _this3 = this;
 
             if (!validations) {
-                return {};
+                return;
             }
 
-            var normalized = {};
             Object.keys(validations).forEach(function (property) {
-                validations[property].split('|').forEach(function (rule) {
-                    if (!normalized[property]) {
-                        normalized[property] = { validations: [] };
-                    }
-
-                    var normalizedRule = _this4._normalizeRule(rule, normalized[property].validations);
-                    if (normalizedRule.name === 'required') {
-                        normalized[property].required = true;
-                    }
-
-                    normalized[property].validations.push(normalizedRule);
-                });
+                _this3._createField(property, validations[property]);
             });
+        }
 
-            return normalized;
+        /**
+         * Creates a field entry in the fields object.
+         * @param {String} name.
+         * @param {String} Checks.
+         */
+
+    }, {
+        key: '_createField',
+        value: function _createField(name, checks) {
+            var _this4 = this;
+
+            if (!this.$fields[name]) {
+                this.$fields[name] = {};
+            }
+
+            this.$fields[name].validations = [];
+
+            checks.split('|').forEach(function (rule) {
+                var normalizedRule = _this4._normalizeRule(rule, _this4.$fields[name].validations);
+                if (normalizedRule.name === 'required') {
+                    _this4.$fields[name].required = true;
+                }
+
+                _this4.$fields[name].validations.push(normalizedRule);
+            });
         }
 
         /**
@@ -1133,7 +1132,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /* eslint-disable no-underscore-dangle */
-
+/* eslint-disable prefer-rest-params */
 var Dictionary = function () {
     function Dictionary() {
         var dictionary = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
@@ -1224,20 +1223,50 @@ var Dictionary = function () {
                 return target;
             }
 
+            var assign = Object.assign || this._assign;
+
             Object.keys(source).forEach(function (key) {
                 if (_this._isObject(source[key])) {
                     if (!target[key]) {
-                        Object.assign(target, _defineProperty({}, key, {}));
+                        assign(target, _defineProperty({}, key, {}));
                     }
 
                     _this._merge(target[key], source[key]);
                     return;
                 }
 
-                Object.assign(target, _defineProperty({}, key, source[key]));
+                assign(target, _defineProperty({}, key, source[key]));
             });
 
             return target;
+        }
+    }, {
+        key: '_assign',
+        value: function _assign(target) {
+            var _arguments = arguments;
+
+            if (target === undefined || target === null) {
+                throw new TypeError('Cannot convert undefined or null to object');
+            }
+
+            var output = Object(target);
+
+            var _loop = function _loop(index) {
+                var source = _arguments[index];
+                if (source !== undefined && source !== null) {
+                    Object.keys(source).forEach(function (key) {
+                        if ({}.hasOwnProperty.call(source, key)) {
+                            output[key] = source[key];
+                        }
+                    });
+                }
+            };
+
+            for (var index = 1; index < arguments.length; index++) {
+                _loop(index);
+            }
+
+            return output;
         }
     }]);
 
