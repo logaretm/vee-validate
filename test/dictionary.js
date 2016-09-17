@@ -40,6 +40,23 @@ test('it can fetch a message', t => {
     t.is(dict.getMessage('en', 'winter'), 'Winter is coming');
 });
 
+test('it should use the polyfill if object.assign does not exist', t => {
+    const assign = Object.assign;
+    Object.assign = undefined;
+
+    const dict = new Dictionary({
+        en: {
+            messages: {
+                winter: 'Winter is coming'
+            }
+        }
+    });
+
+    t.is(dict.getMessage('en', 'winter'), 'Winter is coming');
+
+    Object.assign = assign;
+});
+
 test('it can check for attribute existance', t => {
     const dict = new Dictionary({
         en: {

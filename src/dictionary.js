@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-
+/* eslint-disable prefer-rest-params */
 export default class Dictionary
 {
     constructor(dictionary = {}) {
@@ -78,19 +78,41 @@ export default class Dictionary
             return target;
         }
 
+        const assign = Object.assign || this._assign;
+
         Object.keys(source).forEach(key => {
             if (this._isObject(source[key])) {
                 if (! target[key]) {
-                    Object.assign(target, { [key]: {} });
+                    assign(target, { [key]: {} });
                 }
 
                 this._merge(target[key], source[key]);
                 return;
             }
 
-            Object.assign(target, { [key]: source[key] });
+            assign(target, { [key]: source[key] });
         });
 
         return target;
+    }
+
+    _assign(target) {
+        if (target === undefined || target === null) {
+            throw new TypeError('Cannot convert undefined or null to object');
+        }
+
+        const output = Object(target);
+        for (let index = 1; index < arguments.length; index++) {
+            const source = arguments[index];
+            if (source !== undefined && source !== null) {
+                Object.keys(source).forEach(key => {
+                    if ({}.hasOwnProperty.call(source, key)) {
+                        output[key] = source[key];
+                    }
+                });
+            }
+        }
+
+        return output;
     }
 }
