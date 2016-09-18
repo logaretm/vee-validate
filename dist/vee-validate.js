@@ -1051,13 +1051,14 @@ var hasFieldDependency = function hasFieldDependency(rules) {
 
             if (this.el.type === 'radio') {
                 callback = function callback() {
-                    var el = document.querySelector('input[name="' + _this.fieldName + '"]:checked');
+                    var el = document.querySelector('input[name="' + _this.el.name + '"]:checked');
+                    console.log(_this.fieldName, el);
                     if (!el) {
-                        _this.vm.$validator.validate(_this.fieldName, null, null);
+                        _this.vm.$validator.validate(_this.fieldName, null, elScope);
                         return;
                     }
 
-                    _this.vm.$validator.validate(_this.fieldName, el.value, getScope(el));
+                    _this.vm.$validator.validate(_this.fieldName, el.value, elScope);
                 };
             }
 

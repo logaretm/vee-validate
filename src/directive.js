@@ -61,13 +61,13 @@ export default (options) => ({
 
         if (this.el.type === 'radio') {
             callback = () => {
-                const el = document.querySelector(`input[name="${this.fieldName}"]:checked`);
+                const el = document.querySelector(`input[name="${this.el.name}"]:checked`);
                 if (! el) {
-                    this.vm.$validator.validate(this.fieldName, null, null);
+                    this.vm.$validator.validate(this.fieldName, null, elScope);
                     return;
                 }
 
-                this.vm.$validator.validate(this.fieldName, el.value, getScope(el));
+                this.vm.$validator.validate(this.fieldName, el.value, elScope);
             };
         }
 
