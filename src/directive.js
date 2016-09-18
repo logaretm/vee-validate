@@ -23,15 +23,53 @@ export default (options) => ({
             this.el.value = '';
         }
     },
+    onChange() {
+        const el = document.querySelector(`input[name="${this.fieldName}"]:checked`);
+        this.vm.$validator.validate(this.fieldName, el.value, getScope(el));
+    },
+    getInputHandler() {
+        if (this.el.type === 'file') {
+            return this.onFileInput;
+        }
+
+        if (this.el.type === 'radio') {
+            return this.onChange;
+        }
+
+        return this.onInput;
+    },
+    getEventName() {
+        if (this.el.type === 'file') {
+            return 'change';
+        }
+
+        if (this.el.type === 'radio') {
+            return 'change';
+        }
+
+        return 'input';
+    },
     attachValidatorEvent() {
         const elScope = getScope(this.el);
-        const callback = elScope ? (scope) => {
+        let callback = elScope ? (scope) => {
             if (scope === elScope) {
                 this.vm.$validator.validate(this.fieldName, this.el.value, elScope);
             }
         } : () => {
             this.vm.$validator.validate(this.fieldName, this.el.value, elScope);
         };
+
+        if (this.el.type === 'radio') {
+            callback = () => {
+                const el = document.querySelector(`input[name="${this.fieldName}"]:checked`);
+                if (! el) {
+                    this.vm.$validator.validate(this.fieldName, null, null);
+                    return;
+                }
+
+                this.vm.$validator.validate(this.fieldName, el.value, getScope(el));
+            };
+        }
 
         this.validatorCallback = callback;
         this.vm.$on(DEFAULT_EVENT_NAME, this.validatorCallback);
@@ -45,6 +83,17 @@ export default (options) => ({
             });
         }
     },
+    attachInputEvent(name, handler) {
+        if (this.el.type === 'radio') {
+            document.querySelectorAll(`input[name="${this.fieldName}"]`).forEach(el => {
+                el.addEventListener(name, handler.bind(this));
+            });
+
+            return;
+        }
+
+        this.el.addEventListener(name, handler);
+    },
     bind() {
         this.vm.$nextTick(() => {
             this.fieldName = this.expression || this.el.name;
@@ -55,12 +104,13 @@ export default (options) => ({
                 return;
             }
 
-            const handler = this.el.type === 'file' ? this.onFileInput : this.onInput;
-            this.handles = this.el.type === 'file' ? 'change' : 'input';
+            const handler = this.getInputHandler();
+            this.handles = this.getEventName();
 
             const delay = this.el.dataset.delay || options.delay;
             this.handler = delay ? debounce(handler.bind(this), delay) : handler.bind(this);
-            this.el.addEventListener(this.handles, this.handler);
+
+            this.attachInputEvent(this.handles, this.handler);
             this.attachValidatorEvent();
         });
     },
@@ -88,7 +138,13 @@ export default (options) => ({
     },
     unbind() {
         if (this.handler) {
-            this.el.removeEventListener(this.handles, this.handler);
+            if (this.el.type === 'radio') {
+                document.querySelectorAll(`input[name="${this.fieldName}"]`).forEach(el => {
+                    el.removeEventListener(this.handles, this.handler);
+                });
+            } else {
+                this.el.removeEventListener(this.handles, this.handler);
+            }
         }
 
         this.vm.$validator.detach(this.fieldName);

@@ -1011,6 +1011,32 @@ var hasFieldDependency = function hasFieldDependency(rules) {
                 this.el.value = '';
             }
         },
+        onChange: function onChange() {
+            var el = document.querySelector('input[name="' + this.fieldName + '"]:checked');
+            this.vm.$validator.validate(this.fieldName, el.value, getScope(el));
+        },
+        getInputHandler: function getInputHandler() {
+            if (this.el.type === 'file') {
+                return this.onFileInput;
+            }
+
+            if (this.el.type === 'radio') {
+                return this.onChange;
+            }
+
+            return this.onInput;
+        },
+        getEventName: function getEventName() {
+            if (this.el.type === 'file') {
+                return 'change';
+            }
+
+            if (this.el.type === 'radio') {
+                return 'change';
+            }
+
+            return 'input';
+        },
         attachValidatorEvent: function attachValidatorEvent() {
             var _this = this;
 
@@ -1023,6 +1049,18 @@ var hasFieldDependency = function hasFieldDependency(rules) {
                 _this.vm.$validator.validate(_this.fieldName, _this.el.value, elScope);
             };
 
+            if (this.el.type === 'radio') {
+                callback = function callback() {
+                    var el = document.querySelector('input[name="' + _this.fieldName + '"]:checked');
+                    if (!el) {
+                        _this.vm.$validator.validate(_this.fieldName, null, null);
+                        return;
+                    }
+
+                    _this.vm.$validator.validate(_this.fieldName, el.value, getScope(el));
+                };
+            }
+
             this.validatorCallback = callback;
             this.vm.$on(DEFAULT_EVENT_NAME, this.validatorCallback);
             var fieldName = hasFieldDependency(this.el.dataset.rules);
@@ -1034,29 +1072,43 @@ var hasFieldDependency = function hasFieldDependency(rules) {
                 });
             }
         },
-        bind: function bind() {
+        attachInputEvent: function attachInputEvent(name, handler) {
             var _this2 = this;
 
+            if (this.el.type === 'radio') {
+                document.querySelectorAll('input[name="' + this.fieldName + '"]').forEach(function (el) {
+                    el.addEventListener(name, handler.bind(_this2));
+                });
+
+                return;
+            }
+
+            this.el.addEventListener(name, handler);
+        },
+        bind: function bind() {
+            var _this3 = this;
+
             this.vm.$nextTick(function () {
-                _this2.fieldName = _this2.expression || _this2.el.name;
-                _this2.vm.$validator.attach(_this2.fieldName, _this2.el.dataset.rules, _this2.el.dataset.as);
-                if (_this2.expression) {
-                    _this2.attachValidatorEvent();
+                _this3.fieldName = _this3.expression || _this3.el.name;
+                _this3.vm.$validator.attach(_this3.fieldName, _this3.el.dataset.rules, _this3.el.dataset.as);
+                if (_this3.expression) {
+                    _this3.attachValidatorEvent();
 
                     return;
                 }
 
-                var handler = _this2.el.type === 'file' ? _this2.onFileInput : _this2.onInput;
-                _this2.handles = _this2.el.type === 'file' ? 'change' : 'input';
+                var handler = _this3.getInputHandler();
+                _this3.handles = _this3.getEventName();
 
-                var delay = _this2.el.dataset.delay || options.delay;
-                _this2.handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler.bind(_this2), delay) : handler.bind(_this2);
-                _this2.el.addEventListener(_this2.handles, _this2.handler);
-                _this2.attachValidatorEvent();
+                var delay = _this3.el.dataset.delay || options.delay;
+                _this3.handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler.bind(_this3), delay) : handler.bind(_this3);
+
+                _this3.attachInputEvent(_this3.handles, _this3.handler);
+                _this3.attachValidatorEvent();
             });
         },
         update: function update(value) {
-            var _this3 = this;
+            var _this4 = this;
 
             if (!this.expression) {
                 return;
@@ -1071,7 +1123,7 @@ var hasFieldDependency = function hasFieldDependency(rules) {
             // might be not ready yet.
             if (!this.fieldName) {
                 this.vm.$nextTick(function () {
-                    _this3.vm.$validator.validate(_this3.fieldName, value);
+                    _this4.vm.$validator.validate(_this4.fieldName, value);
                 });
 
                 return;
@@ -1080,8 +1132,16 @@ var hasFieldDependency = function hasFieldDependency(rules) {
             this.vm.$validator.validate(this.fieldName, value);
         },
         unbind: function unbind() {
+            var _this5 = this;
+
             if (this.handler) {
-                this.el.removeEventListener(this.handles, this.handler);
+                if (this.el.type === 'radio') {
+                    document.querySelectorAll('input[name="' + this.fieldName + '"]').forEach(function (el) {
+                        el.removeEventListener(_this5.handles, _this5.handler);
+                    });
+                } else {
+                    this.el.removeEventListener(this.handles, this.handler);
+                }
             }
 
             this.vm.$validator.detach(this.fieldName);
