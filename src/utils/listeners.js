@@ -1,6 +1,4 @@
-import warn from './warn';
-import debounce from './debouncer';
-import { getScope } from './helpers';
+import { getScope, debounce, warn } from './helpers';
 
 /**
  * Holds default name for the validator self-validation trigger name.
@@ -44,15 +42,41 @@ const _onFileChanged = (el, { modifiers, expression }, { context }) => () => {
     }
 };
 
-const _attachValidatorEvent = (el, { expression, value }, { context }) => {
-    const elScope = getScope(el);
+/**
+ * Validates radio buttons, triggered by 'change' event.
+ */
+const _onChange = (el, { expression }, { context }) => () => {
+    const checked = document.querySelector(`input[name="${el.name}"]:checked`);
+    console.log(checked);
+    if (! checked) {
+        context.$validator.validate(expression || el.name, null, getScope(el));
+        return;
+    }
 
-    const callback = elScope ? (scope) => {
-        // only validate when they have the same scope.
-        if (scope === elScope) {
-            _onInput(el, { expression }, { context })();
-        }
-    } : _onInput(el, { expression }, { context });
+    context.$validator.validate(expression || el.name, checked.value, getScope(el));
+};
+
+/**
+ * Returns a scoped callback, only runs if the el scope is the same as the recieved scope
+ * From the event.
+ */
+const _getScopedListener = (elScope, callback) => {
+    if (elScope) {
+        return (scope) => {
+            if (scope === elScope) {
+                callback();
+            }
+        };
+    }
+
+    return callback;
+};
+
+const _attachValidatorEvent = (el, { expression, value }, { context }) => {
+    const callback = _getScopedListener(
+        getScope(el),
+        (el.type === 'radio' ? _onChange : _onInput)(el, { expression }, { context })
+    );
 
     callbackMaps.push({ vm: context, event: 'validatorEvent', callback, el });
     context.$on(DEFAULT_EVENT_NAME, callback);
@@ -77,17 +101,24 @@ const _attachValidatorEvent = (el, { expression, value }, { context }) => {
 /**
  * Finds the suitable listener for the input type.
  */
-const _getSuitableListener = (el, binding, { context }) => {
+const _getSuitableListener = (el, binding, vnode) => {
     if (el.type === 'file') {
         return {
             name: 'change',
-            listener: _onFileChanged(el, binding, { context })
+            listener: _onFileChanged(el, binding, vnode)
+        };
+    }
+
+    if (el.type === 'radio') {
+        return {
+            name: 'change',
+            listener: _onChange(el, binding, vnode)
         };
     }
 
     return {
         name: 'input',
-        listener: _onInput(el, binding, { context })
+        listener: _onInput(el, binding, vnode)
     };
 };
 
@@ -96,10 +127,20 @@ const _getSuitableListener = (el, binding, { context }) => {
  */
 const _attachFieldListeners = (el, binding, { context }, options) => {
     const handler = _getSuitableListener(el, binding, { context });
-    const delay = el.dataset.delay || options.delay;
-    const listener = delay ? debounce(handler.listener, delay) : handler.listener;
+    const listener = debounce(handler.listener, el.dataset.delay || options.delay);
+
+    if (el.type === 'radio') {
+        // TODO: attach events via the vnode and not he document query selector.
+        document.querySelectorAll(`input[name="${el.name}"]`).forEach(input => {
+            input.addEventListener(handler.name, listener);
+            callbackMaps.push({ vm: context, event: handler.name, callback: listener, el: input });
+        });
+
+        return;
+    }
+
     el.addEventListener(handler.name, listener);
-    callbackMaps.push({ vm: context, event, callback: listener, el });
+    callbackMaps.push({ vm: context, event: handler.name, callback: listener, el });
 };
 
 /**
@@ -128,11 +169,11 @@ const detach = (el, context) => {
     const handlers = callbackMaps.filter(h => h.vm === context && h.el === el);
     context.$off(
         DEFAULT_EVENT_NAME,
-        handlers.filter(({ event }) => event === 'validatorEvent')[0]
+        handlers.filter(({ event }) => event === DEFAULT_EVENT_NAME)[0]
     );
 
-    handlers.filter(({ event }) => event !== 'validatorEvent').forEach(e => {
-        el.removeEventListener(e.event, e.callback);
+    handlers.filter(({ event }) => event !== DEFAULT_EVENT_NAME).forEach(h => {
+        h.el.removeEventListener(h.event, h.callback);
     });
 };
 

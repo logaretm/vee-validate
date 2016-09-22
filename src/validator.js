@@ -3,7 +3,7 @@ import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
 import Dictionary from './dictionary';
 import messages from './messages';
-import warn from './utils/warn';
+import { warn } from './utils/helpers';
 import date from './plugins/date';
 
 const EVENT_NAME = 'veeValidate';
