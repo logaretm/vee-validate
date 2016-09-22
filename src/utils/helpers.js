@@ -1,3 +1,5 @@
+/* istanbul ignore next */
+
 /**
  * Determines the input field scope.
  */

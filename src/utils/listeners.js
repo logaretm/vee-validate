@@ -47,7 +47,6 @@ const _onFileChanged = (el, { modifiers, expression }, { context }) => () => {
  */
 const _onChange = (el, { expression }, { context }) => () => {
     const checked = document.querySelector(`input[name="${el.name}"]:checked`);
-    console.log(checked);
     if (! checked) {
         context.$validator.validate(expression || el.name, null, getScope(el));
         return;
@@ -130,10 +129,16 @@ const _attachFieldListeners = (el, binding, { context }, options) => {
     const listener = debounce(handler.listener, el.dataset.delay || options.delay);
 
     if (el.type === 'radio') {
-        // TODO: attach events via the vnode and not he document query selector.
-        document.querySelectorAll(`input[name="${el.name}"]`).forEach(input => {
-            input.addEventListener(handler.name, listener);
-            callbackMaps.push({ vm: context, event: handler.name, callback: listener, el: input });
+        context.$once('validatorReady', () => {
+            document.querySelectorAll(`input[name="${el.name}"]`).forEach(input => {
+                input.addEventListener(handler.name, listener);
+                callbackMaps.push({
+                    vm: context,
+                    event: handler.name,
+                    callback: listener,
+                    el: input
+                });
+            });
         });
 
         return;
