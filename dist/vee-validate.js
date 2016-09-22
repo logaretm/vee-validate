@@ -71,7 +71,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 39);
+/******/ 	return __webpack_require__(__webpack_require__.s = 41);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -384,13 +384,13 @@ var unregister = function unregister($vm) {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__rules__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__rules__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__errorBag__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dictionary__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__messages__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_warn__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__plugins_date__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dictionary__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__messages__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_warn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__plugins_date__ = __webpack_require__(14);
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -981,133 +981,68 @@ var Validator = function () {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__ = __webpack_require__(37);
-
-
-var callbackMaps = [];
-
-var DEFAULT_EVENT_NAME = 'veeValidate';
-
+/* harmony export (binding) */ __webpack_require__.d(exports, "a", function() { return getScope; });
+/**
+ * Determines the input field scope.
+ */
 var getScope = function getScope(el) {
-    return el.dataset.scope || el.form && el.form.dataset.scope || undefined;
+  return el.dataset.scope || el.form && el.form.dataset.scope || undefined;
 };
 
-var onInput = function onInput(el, _ref, _ref2) {
-    var expression = _ref.expression;
-    var context = _ref2.context;
-    return function () {
-        context.$validator.validate(expression || el.name, el.value, getScope(el));
-    };
-};
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
 
-var onFileInput = function onFileInput(el, _ref3, _ref4) {
-    var modifiers = _ref3.modifiers;
-    var expression = _ref3.expression;
-    var context = _ref4.context;
-    return function () {
-        var isValid = context.$validator.validate(expression || el.name, el.files, getScope(el));
-        if (!isValid && modifiers.reject) {
-            // eslint-disable-next-line
-            el.value = '';
-        }
-    };
-};
-
-var hasFieldDependency = function hasFieldDependency(rules) {
-    var results = rules.split('|').filter(function (r) {
-        return !!r.match(/confirmed|after|before/);
-    });
-    if (!results.length) {
-        return false;
+"use strict";
+/* istanbul ignore next */
+/* harmony default export */ exports["a"] = function (message) {
+    if (!console) {
+        return;
     }
 
-    return results[0].split(':')[1];
+    console.warn("vee-validate: " + message); // eslint-disable-line
 };
 
-var attachValidatorEvent = function attachValidatorEvent(el, _ref5, _ref6) {
-    var expression = _ref5.expression;
-    var value = _ref5.value;
-    var context = _ref6.context;
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
 
-    var elScope = getScope(el);
-    var callback = elScope ? function (scope) {
-        if (scope === elScope) {
-            onInput(el, { expression: expression }, { context: context })();
-        }
-    } : onInput(el, { expression: expression }, { context: context });
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_listeners__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_helpers__ = __webpack_require__(3);
 
-    callbackMaps.push({ vm: context, event: 'validatorEvent', callback: callback, el: el });
-    context.$on(DEFAULT_EVENT_NAME, callback);
 
-    var fieldName = hasFieldDependency(el.dataset.rules);
-    if (fieldName) {
-        context.$once('validatorReady', function () {
-            document.querySelector('input[name=\'' + fieldName + '\']').addEventListener('input', callback);
-        });
-    }
-};
 
 /* harmony default export */ exports["a"] = function (options) {
     return {
-        bind: function bind(el, binding, _ref7) {
-            var context = _ref7.context;
+        bind: function bind(el, binding, _ref) {
+            var context = _ref.context;
 
-            context.$validator.attach(binding.expression || el.name, el.dataset.rules, el.dataset.as);
-            attachValidatorEvent(el, binding, { context: context });
-
-            if (binding.expression) {
-                // if its bound, validate it. (since update doesn't trigger after bind).
-                if (!binding.modifiers.initial) {
-                    context.$validator.validate(binding.expression, binding.value, getScope(el));
-                }
-
-                return;
-            }
-
-            var handler = el.type === 'file' ? onFileInput(el, binding, { context: context }) : onInput(el, binding, { context: context });
-
-            var delay = el.dataset.delay || options.delay;
-            handler = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_debouncer_js__["a" /* default */])(handler, delay) : handler;
-            var event = el.type === 'file' ? 'change' : 'input';
-            el.addEventListener(event, handler);
-            callbackMaps.push({ vm: context, event: event, callback: handler, el: el });
+            __WEBPACK_IMPORTED_MODULE_0__utils_listeners__["a" /* default */].attach(el, binding, { context: context }, options);
         },
-        update: function update(el, _ref8, _ref9) {
-            var expression = _ref8.expression;
-            var value = _ref8.value;
-            var modifiers = _ref8.modifiers;
-            var oldValue = _ref8.oldValue;
-            var context = _ref9.context;
+        update: function update(el, _ref2, _ref3) {
+            var expression = _ref2.expression;
+            var value = _ref2.value;
+            var modifiers = _ref2.modifiers;
+            var oldValue = _ref2.oldValue;
+            var context = _ref3.context;
 
             if (!expression || value === oldValue) {
                 return;
             }
 
-            context.$validator.validate(expression || el.name, value, getScope(el));
+            context.$validator.validate(expression || el.name, value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_helpers__["a" /* getScope */])(el));
         },
-        unbind: function unbind(el, binding, _ref10) {
-            var context = _ref10.context;
+        unbind: function unbind(el, binding, _ref4) {
+            var context = _ref4.context;
 
-            var handlers = callbackMaps.filter(function (h) {
-                return h.vm === context && h.el === el;
-            });
-            context.$off(DEFAULT_EVENT_NAME, handlers.filter(function (_ref11) {
-                var event = _ref11.event;
-                return event === 'validatorEvent';
-            })[0]);
-
-            handlers.filter(function (_ref12) {
-                var event = _ref12.event;
-                return event !== 'validatorEvent';
-            }).forEach(function (h) {
-                el.removeEventListener(h.event, h.callback);
-            });
+            __WEBPACK_IMPORTED_MODULE_0__utils_listeners__["a" /* default */].detach(el, context);
         }
     };
 };
 
 /***/ },
-/* 4 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1131,7 +1066,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 };
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1288,7 +1223,7 @@ var Dictionary = function () {
 /* harmony default export */ exports["a"] = Dictionary;
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1316,7 +1251,7 @@ var _class = function () {
 /* harmony default export */ exports["a"] = _class;
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1422,7 +1357,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1453,7 +1388,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1484,7 +1419,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1511,7 +1446,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1527,15 +1462,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__after__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__before__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__date_format__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__date_between__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__messages__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__after__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__before__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__date_format__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__date_between__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__messages__ = __webpack_require__(15);
 
 
  // eslint-disable-line
@@ -1556,7 +1491,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1593,7 +1528,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1602,7 +1537,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1611,7 +1546,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1620,7 +1555,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1635,7 +1570,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1652,7 +1587,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1684,7 +1619,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1702,7 +1637,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1747,7 +1682,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1757,7 +1692,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1773,7 +1708,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1788,7 +1723,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1799,32 +1734,32 @@ var validateImage = function validateImage(file, width, height) {
 }; // eslint-disable-line
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__in__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__required__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__min__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__max__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__notIn__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__alpha__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__alpha_num__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__alpha_dash__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__numeric__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__regex__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ip__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ext__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__mimes__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__size__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__digits__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__image__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__between__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__confirmed__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__url__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__decimal__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__email__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__in__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__required__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__min__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__max__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__notIn__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__alpha__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__alpha_num__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__alpha_dash__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__numeric__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__regex__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ip__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ext__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__mimes__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__size__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__digits__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__image__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__dimensions__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__between__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__confirmed__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__url__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__decimal__ = __webpack_require__(21);
 
 
 
@@ -1874,7 +1809,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 27 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1885,7 +1820,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 28 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1904,7 +1839,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 29 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1920,7 +1855,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 30 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1938,7 +1873,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1949,7 +1884,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 }; // eslint-disable-line
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1958,7 +1893,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 33 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1975,7 +1910,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 };
 
 /***/ },
-/* 34 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1992,7 +1927,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 };
 
 /***/ },
-/* 35 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2018,7 +1953,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 36 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2035,7 +1970,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 37 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2074,28 +2009,186 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 };
 
 /***/ },
-/* 38 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* istanbul ignore next */
-/* harmony default export */ exports["a"] = function (message) {
-    if (!console) {
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__warn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__debouncer__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers__ = __webpack_require__(3);
+
+
+
+
+/**
+ * Holds default name for the validator self-validation trigger name.
+ * @type {String}
+ */
+var DEFAULT_EVENT_NAME = 'veeValidate';
+
+/**
+ * Keeps track of attached callbacks.
+ * @type {Array}
+ */
+var callbackMaps = [];
+
+/**
+ * Determines if the validation rule requires additional listeners on target fields.
+ */
+var _hasFieldDependency = function _hasFieldDependency(rules) {
+    var results = rules.split('|').filter(function (r) {
+        return !!r.match(/confirmed|after|before/);
+    });
+    if (!results.length) {
+        return false;
+    }
+
+    return results[0].split(':')[1];
+};
+
+/**
+ * Validates input value, triggered by 'input' event.
+ */
+var _onInput = function _onInput(el, _ref, _ref2) {
+    var expression = _ref.expression;
+    var context = _ref2.context;
+    return function () {
+        context.$validator.validate(expression || el.name, el.value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__helpers__["a" /* getScope */])(el));
+    };
+};
+
+/**
+ * Validates files, triggered by 'change' event.
+ */
+var _onFileChanged = function _onFileChanged(el, _ref3, _ref4) {
+    var modifiers = _ref3.modifiers;
+    var expression = _ref3.expression;
+    var context = _ref4.context;
+    return function () {
+        var isValid = context.$validator.validate(expression || el.name, el.files, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__helpers__["a" /* getScope */])(el));
+        if (!isValid && modifiers.reject) {
+            // eslint-disable-next-line
+            el.value = '';
+        }
+    };
+};
+
+var _attachValidatorEvent = function _attachValidatorEvent(el, _ref5, _ref6) {
+    var expression = _ref5.expression;
+    var value = _ref5.value;
+    var context = _ref6.context;
+
+    var elScope = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__helpers__["a" /* getScope */])(el);
+
+    var callback = elScope ? function (scope) {
+        // only validate when they have the same scope.
+        if (scope === elScope) {
+            _onInput(el, { expression: expression }, { context: context })();
+        }
+    } : _onInput(el, { expression: expression }, { context: context });
+
+    callbackMaps.push({ vm: context, event: 'validatorEvent', callback: callback, el: el });
+    context.$on(DEFAULT_EVENT_NAME, callback);
+
+    var fieldName = _hasFieldDependency(el.dataset.rules);
+    if (fieldName) {
+        // Wait for the validator ready triggered when vm is mounted because maybe
+        // the element isn't mounted yet.
+        context.$once('validatorReady', function () {
+            var target = document.querySelector('input[name=\'' + fieldName + '\']');
+            if (!target) {
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__warn__["a" /* default */])('Cannot find target field, no additional listeners were attached.');
+                return;
+            }
+
+            target.addEventListener('input', callback);
+            callbackMaps.push({ vm: context, event: 'fieldDependency', callback: callback, el: target });
+        });
+    }
+};
+
+/**
+ * Finds the suitable listener for the input type.
+ */
+var _getSuitableListener = function _getSuitableListener(el, binding, _ref7) {
+    var context = _ref7.context;
+
+    if (el.type === 'file') {
+        return {
+            name: 'change',
+            listener: _onFileChanged(el, binding, { context: context })
+        };
+    }
+
+    return {
+        name: 'input',
+        listener: _onInput(el, binding, { context: context })
+    };
+};
+
+/**
+ * Attachs a suitable listener for the input.
+ */
+var _attachFieldListeners = function _attachFieldListeners(el, binding, _ref8, options) {
+    var context = _ref8.context;
+
+    var handler = _getSuitableListener(el, binding, { context: context });
+    var delay = el.dataset.delay || options.delay;
+    var listener = delay ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__debouncer__["a" /* default */])(handler.listener, delay) : handler.listener;
+    el.addEventListener(handler.name, listener);
+    callbackMaps.push({ vm: context, event: event, callback: listener, el: el });
+};
+
+/**
+ * Attaches the required events, and any additional listeners.
+ */
+var attach = function attach(el, binding, vnode, options) {
+    vnode.context.$validator.attach(binding.expression || el.name, el.dataset.rules, el.dataset.as);
+    _attachValidatorEvent(el, binding, vnode);
+
+    if (binding.expression) {
+        // if its bound, validate it. (since update doesn't trigger after bind).
+        if (!binding.modifiers.initial) {
+            vnode.context.$validator.validate(binding.expression, binding.value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__helpers__["a" /* getScope */])(el));
+        }
+
         return;
     }
 
-    console.warn("vee-validate: " + message); // eslint-disable-line
+    _attachFieldListeners(el, binding, vnode, options);
 };
 
+/**
+ * Removes all event listeners.
+ */
+var detach = function detach(el, context) {
+    var handlers = callbackMaps.filter(function (h) {
+        return h.vm === context && h.el === el;
+    });
+    context.$off(DEFAULT_EVENT_NAME, handlers.filter(function (_ref9) {
+        var event = _ref9.event;
+        return event === 'validatorEvent';
+    })[0]);
+
+    handlers.filter(function (_ref10) {
+        var event = _ref10.event;
+        return event !== 'validatorEvent';
+    }).forEach(function (e) {
+        el.removeEventListener(e.event, e.callback);
+    });
+};
+
+/* harmony default export */ exports["a"] = { attach: attach, detach: detach };
+
 /***/ },
-/* 39 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__validator__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_maps__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__mixin__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__directive__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__mixin__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__directive__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__errorBag__ = __webpack_require__(0);
 /* harmony export (binding) */ __webpack_require__.d(exports, "install", function() { return install; });
 
