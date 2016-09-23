@@ -24,6 +24,8 @@
     "gh-pages",
     "docs",
     "coverage",
-    "webpack.config.js"
+    "webpack.config.js",
+    "rollup.config.dev.js",
+    "rollup.config.prod.js"
   ]
 }

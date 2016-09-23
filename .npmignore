@@ -6,4 +6,5 @@ gh-pages
 src
 test
 webpack.config.js
-webpack.docs.config.js
+rollup.config.dev.js
+rollup.config.prod.js
