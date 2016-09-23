@@ -62,7 +62,7 @@ export default class ListenerGenerator
      */
     _getScopedListener(callback) {
         return (scope) => {
-            if (! scope || (scope === getScope(this.el))) {
+            if (! scope || scope === getScope(this.el) || scope instanceof Event) {
                 callback();
             }
         };

@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 export default class ErrorBag
 {
     constructor() {

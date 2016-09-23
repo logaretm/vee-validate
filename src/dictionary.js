@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 /* eslint-disable prefer-rest-params */
 export default class Dictionary
 {
