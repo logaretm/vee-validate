@@ -133,13 +133,9 @@ export default class ListenerGenerator
 
         if (this.el.type === 'radio') {
             this.vm.$once('validatorReady', () => {
-                document.querySelectorAll(`input[name="${this.el.name}"]`).forEach(input => {
+                [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
                     input.addEventListener(handler.name, listener);
-                    this.callbacks.push({
-                        event: handler.name,
-                        callback: listener,
-                        el: input
-                    });
+                    this.callbacks.push({ event: handler.name, callback: listener, el: input });
                 });
             });
 
