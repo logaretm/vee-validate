@@ -1891,13 +1891,9 @@ var ListenerGenerator = function () {
 
             if (this.el.type === 'radio') {
                 this.vm.$once('validatorReady', function () {
-                    document.querySelectorAll('input[name="' + _this3.el.name + '"]').forEach(function (input) {
+                    [].concat(toConsumableArray(document.querySelectorAll('input[name="' + _this3.el.name + '"]'))).forEach(function (input) {
                         input.addEventListener(handler.name, listener);
-                        _this3.callbacks.push({
-                            event: handler.name,
-                            callback: listener,
-                            el: input
-                        });
+                        _this3.callbacks.push({ event: handler.name, callback: listener, el: input });
                     });
                 });
 
