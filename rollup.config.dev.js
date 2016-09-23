@@ -5,6 +5,15 @@ export default {
     entry: 'src/index.js',
     format: 'umd',
     dest: 'dist/vee-validate.js',
-    plugins: [babel(), nodeResolve()],
+    plugins: [
+        babel({
+            babelrc: false,
+            presets: [
+                ['es2015', { modules: false }]
+            ],
+            plugins: ['external-helpers']
+        }),
+        nodeResolve()
+    ],
     moduleName: 'VeeValidate'
 };
