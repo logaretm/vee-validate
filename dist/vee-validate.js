@@ -152,7 +152,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/* eslint-disable no-underscore-dangle */
 var ErrorBag = function () {
     function ErrorBag() {
         _classCallCheck(this, ErrorBag);
@@ -484,8 +483,6 @@ var dictionary = new __WEBPACK_IMPORTED_MODULE_3__dictionary__["a" /* default */
         attributes: {}
     }
 });
-
-/* eslint-disable no-underscore-dangle */
 
 var Validator = function () {
     function Validator(validations, $vm) {
@@ -1126,7 +1123,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/* eslint-disable no-underscore-dangle */
 /* eslint-disable prefer-rest-params */
 var Dictionary = function () {
     function Dictionary() {
@@ -1393,7 +1389,7 @@ var ListenerGenerator = function () {
             var _this = this;
 
             return function (scope) {
-                if (!scope || scope === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["b" /* getScope */])(_this.el)) {
+                if (!scope || scope === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["b" /* getScope */])(_this.el) || scope instanceof Event) {
                     callback();
                 }
             };
