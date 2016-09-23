@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.VeeValidate = global.VeeValidate || {})));
-}(this, (function (exports) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global.VeeValidate = factory());
+}(this, (function () { 'use strict';
 
 var email$1 = (function (value) {
   return (/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value)
@@ -798,10 +798,6 @@ var Dictionary = function () {
         key: '_assign',
         value: function _assign(target) {
             var _arguments = arguments;
-
-            if (target === undefined || target === null) {
-                throw new TypeError('Cannot convert undefined or null to object');
-            }
 
             var output = Object(target);
 
@@ -2038,10 +2034,8 @@ var install = function install(Vue) {
     Vue.directive('validate', directive(options)); // Install directive.
 };
 
-exports.install = install;
-exports.Validator = Validator;
-exports.ErrorBag = ErrorBag;
+var index = { install: install, Validator: Validator, ErrorBag: ErrorBag };
 
-Object.defineProperty(exports, '__esModule', { value: true });
+return index;
 
 })));
