@@ -9,7 +9,7 @@
     "test": "nyc ava --colors",
     "test:watch": "ava --watch",
     "lint": "eslint ./src ./test",
-    "build": "rollup -c rollup.config.dev.js && rollup.config.prod.js",
+    "build": "rollup -c rollup.config.dev.js && rollup -c rollup.config.prod.js",
     "cover": "nyc report --reporter=lcov > coverage.lcov && codecov"
   },
   "ava": {
