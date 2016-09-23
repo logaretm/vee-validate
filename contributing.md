@@ -30,7 +30,7 @@ If you want to contribute to the docs you can find it [here](https://github.com/
 
 ### Source Code
 
-Currently we are using ES2015 (ES6) for the source code, using Babel and Webpack to convert it to ES5.
+Currently we are using ES2015 (ES6) for the source code, using Babel and Rollup to convert it to ES5.
 
 ### Testing
 
