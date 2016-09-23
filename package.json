@@ -17,6 +17,11 @@
       "babel-register"
     ]
   },
+  "nyc": {
+    "exclude": [
+      "src/utils/helpers.js"  
+    ]
+  },
   "keywords": [
     "VueJS",
     "Vue",
