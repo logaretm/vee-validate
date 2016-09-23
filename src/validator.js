@@ -17,7 +17,6 @@ const dictionary = new Dictionary({
     }
 });
 
-/* eslint-disable no-underscore-dangle */
 export default class Validator
 {
     constructor(validations, $vm) {

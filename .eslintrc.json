@@ -31,6 +31,7 @@
         "no-global-assign": 0,
         "no-unsafe-negation": 0,
         "import/no-named-as-default": 0,
-        "import/no-named-as-default-member": 0
+        "import/no-named-as-default-member": 0,
+        "no-underscore-dangle": 0
     }
 }

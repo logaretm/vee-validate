@@ -62,7 +62,7 @@ export default class ListenerGenerator
      */
     _getScopedListener(callback) {
         return (scope) => {
-            if (! scope || (scope === getScope(this.el))) {
+            if (! scope || scope === getScope(this.el) || scope instanceof Event) {
                 callback();
             }
         };
@@ -158,15 +158,6 @@ export default class ListenerGenerator
         this._attachValidatorEvent();
 
         if (this.binding.expression) {
-            // if its bound, validate it. (since update doesn't trigger after bind).
-            if (! this.binding.modifiers.initial) {
-                this.vm.$validator.validate(
-                    this.binding.expression,
-                    this.binding.value,
-                    getScope(this.el)
-                );
-            }
-
             return;
         }
 
