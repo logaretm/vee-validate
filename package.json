@@ -6,12 +6,10 @@
   "homepage": "http://vee-validate.logaretm.com",
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
-    "start": "webpack-dev-server --hot --inline --config webpack.docs.config.js",
-    "dev": "webpack --progress --colors --watch",
     "test": "nyc ava --colors",
     "test:watch": "ava --watch",
     "lint": "eslint ./src ./test",
-    "build": "webpack && cross-env NODE_ENV=production webpack -p",
+    "build": "rollup -c rollup.config.dev.js && rollup.config.prod.js",
     "cover": "nyc report --reporter=lcov > coverage.lcov && codecov"
   },
   "ava": {
@@ -41,6 +39,9 @@
     "eslint-plugin-import": "^1.12.0",
     "moment": "^2.14.1",
     "nyc": "^7.1.0",
-    "webpack": "^2.1.0-beta.20"
+    "rollup": "^0.36.0",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-uglify": "^1.0.1"
   }
 }
