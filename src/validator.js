@@ -366,6 +366,12 @@ export default class Validator
 
         this.$fields[name].validations = [];
 
+        if (Array.isArray(checks)) {
+            this.$fields[name].validations = checks;
+
+            return;
+        }
+
         checks.split('|').forEach(rule => {
             const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
             if (normalizedRule.name === 'required') {

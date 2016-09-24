@@ -56,6 +56,18 @@ test('it can be initialized without validations', t => {
     t.true(validator2 instanceof Validator);
 });
 
+test('it can allow array of rules for fields', t => {
+    const v = new Validator();
+    v.attach('file', [
+        { name: 'required' },
+        { name: 'regex', params: [/.(js|ts)$/] }
+    ]);
+
+    t.true(v.validate('file', 'blabla.js'));
+    t.true(v.validate('file', 'blabla.ts'));
+    t.false(v.validate('file', 'blabla.css'));
+});
+
 test('it validates multiple values', t => {
     const result = validator.validateAll({
         email: 'foo@bar.com',
