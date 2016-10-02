@@ -251,13 +251,17 @@ var numeric$1 = (function (value) {
 });
 
 var regex$1 = (function (value, _ref) {
-  var _ref2 = toArray(_ref);
+    var _ref2 = toArray(_ref);
 
-  var regex = _ref2[0];
+    var regex = _ref2[0];
 
-  var flags = _ref2.slice(1);
+    var flags = _ref2.slice(1);
 
-  return new RegExp(regex, flags).test(String(value));
+    if (regex instanceof RegExp) {
+        return regex.test(value);
+    }
+
+    return new RegExp(regex, flags).test(String(value));
 });
 
 // TODO: Maybe add ipv6 flag?
@@ -798,10 +802,6 @@ var Dictionary = function () {
         key: '_assign',
         value: function _assign(target) {
             var _arguments = arguments;
-
-            if (target === undefined || target === null) {
-                throw new TypeError('Cannot convert undefined or null to object');
-            }
 
             var output = Object(target);
 
@@ -1379,6 +1379,12 @@ var Validator = function () {
             }
 
             this.$fields[name].validations = [];
+
+            if (Array.isArray(checks)) {
+                this.$fields[name].validations = checks;
+
+                return;
+            }
 
             checks.split('|').forEach(function (rule) {
                 var normalizedRule = _this4._normalizeRule(rule, _this4.$fields[name].validations);
