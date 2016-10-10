@@ -63,7 +63,7 @@ export default class ListenerGenerator
      */
     _checkboxListener() {
         const checkedBoxes = document.querySelectorAll(`input[name="${this.el.name}"]:checked`);
-        if (! checkedBoxes) {
+        if (! checkedBoxes || ! checkedBoxes.length) {
             this.vm.$validator.validate(this.fieldName, null, getScope(this.el));
             return;
         }
