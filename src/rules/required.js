@@ -7,5 +7,5 @@ export default (value) => {
         return false;
     }
 
-    return !! String(value).length;
+    return !! String(value).trim().length;
 };

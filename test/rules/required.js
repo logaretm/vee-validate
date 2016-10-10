@@ -5,11 +5,13 @@ const valid = [
     'asjdj',
     0,
     'undefined',
-    'null'
+    'null',
+    's '
 ];
 
 const invalid = [
     '',
+    ' ',
     [],
     undefined,
     null
