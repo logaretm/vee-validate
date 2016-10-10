@@ -36,7 +36,9 @@ export default class ListenerGenerator
      * Validates files, triggered by 'change' event.
      */
     _fileListener() {
-        const isValid = this.vm.$validator.validate(this.fieldName, this.el.files, getScope(this.el));
+        const isValid = this.vm.$validator.validate(
+            this.fieldName, this.el.files, getScope(this.el)
+        );
         if (! isValid && this.binding.modifiers.reject) {
             // eslint-disable-next-line
             el.value = '';
@@ -57,6 +59,21 @@ export default class ListenerGenerator
     }
 
     /**
+     * Validates checkboxes, triggered by change event.
+     */
+    _checkboxListener() {
+        const checkedBoxes = document.querySelectorAll(`input[name="${this.el.name}"]:checked`);
+        if (! checkedBoxes || ! checkedBoxes.length) {
+            this.vm.$validator.validate(this.fieldName, null, getScope(this.el));
+            return;
+        }
+
+        [...checkedBoxes].forEach(box => {
+            this.vm.$validator.validate(this.fieldName, box.value, getScope(this.el));
+        });
+    }
+
+    /**
      * Returns a scoped callback, only runs if the el scope is the same as the recieved scope
      * From the event.
      */
@@ -72,10 +89,7 @@ export default class ListenerGenerator
      * Attaches validator event-triggered validation.
      */
     _attachValidatorEvent() {
-        const listener = this._getScopedListener(
-            this.el.type === 'radio' ? this._radioListener.bind(this) :
-                                       this._inputListener.bind(this)
-        );
+        const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
 
         this.vm.$on(DEFAULT_EVENT_NAME, listener);
         this.callbacks.push({ event: DEFAULT_EVENT_NAME, listener });
@@ -115,6 +129,13 @@ export default class ListenerGenerator
             };
         }
 
+        if (this.el.type === 'checkbox') {
+            return {
+                name: 'change',
+                listener: this._checkboxListener
+            };
+        }
+
         return {
             name: 'input',
             listener: this._inputListener
@@ -131,7 +152,7 @@ export default class ListenerGenerator
             this.el.dataset.delay || this.options.delay
         );
 
-        if (this.el.type === 'radio') {
+        if (~['radio', 'checkbox'].indexOf(this.el.type)) {
             this.vm.$once('validatorReady', () => {
                 [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
                     input.addEventListener(handler.name, listener);
