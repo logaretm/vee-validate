@@ -5,6 +5,10 @@ const valid = [
     'someone@example.com',
     'someone@example.co',
     'someone123@example.co.uk',
+    'Pelé@example.com',
+    'very.common@example.com',
+    'other.email-with-dash@example.com',
+    'disposable.style.email.with+symbol@example.com'
 ];
 
 const invalid = [
@@ -15,6 +19,7 @@ const invalid = [
     'undefined',
     'null',
     'someone#@example.co.uk',
+    'someone@example.c',
 ];
 
 test('it validates that the string is a valid email address', t => {
