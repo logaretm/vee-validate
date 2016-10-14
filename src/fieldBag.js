@@ -4,6 +4,7 @@ export default class FieldBag {
         this.fields = new Proxy({}, {
             get(target, property) {
                 if (! (property in target) && typeof property === 'string') {
+                    // eslint-disable-next-line
                     target[property] = {};
                 }
                 return target[property];
@@ -44,6 +45,9 @@ export default class FieldBag {
         this[method](name, value, initial);
     }
 
+    /**
+     * Sets the dirty flag along with dependant flags.
+     */
     setDirty(name, value, initial = false) {
         this.fields[name].dirty = value;
         this.fields[name].clean = initial || ! value;
@@ -51,6 +55,9 @@ export default class FieldBag {
         this.fields[name].failed = ! this.fields[name].valid && value;
     }
 
+    /**
+     * Sets the valid flag along with dependant flags.
+     */
     setValid(name, value) {
         this.fields[name].valid = value;
         this.fields[name].passed = this.fields[name].dirty && value;

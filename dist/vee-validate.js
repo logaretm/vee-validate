@@ -1108,6 +1108,7 @@ var FieldBag = function () {
         this.fields = new Proxy({}, {
             get: function get(target, property) {
                 if (!(property in target) && typeof property === 'string') {
+                    // eslint-disable-next-line
                     target[property] = {};
                 }
                 return target[property];
@@ -1168,6 +1169,11 @@ var FieldBag = function () {
 
             this[method](name, value, initial);
         }
+
+        /**
+         * Sets the dirty flag along with dependant flags.
+         */
+
     }, {
         key: 'setDirty',
         value: function setDirty(name, value) {
@@ -1178,6 +1184,11 @@ var FieldBag = function () {
             this.fields[name].passed = this.fields[name].valid && value;
             this.fields[name].failed = !this.fields[name].valid && value;
         }
+
+        /**
+         * Sets the valid flag along with dependant flags.
+         */
+
     }, {
         key: 'setValid',
         value: function setValid(name, value) {
