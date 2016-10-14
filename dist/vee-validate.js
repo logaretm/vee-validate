@@ -1095,13 +1095,18 @@ var date = {
 };
 
 var FieldBag = function () {
-    function FieldBag() {
+    function FieldBag($vm) {
         classCallCheck(this, FieldBag);
 
+        this.$vm = $vm;
         // Needed to bypass render errors if the fields aren't populated yet.
         this.fields = new Proxy({}, {
             get: function get(target, property) {
-                return property in target ? target[property] : { fake: true };
+                if (!(property in target) && typeof property === 'string') {
+                    target[property] = { dirty: false, valid: false, clean: false, failed: false, passed: false };
+                }
+
+                return target[property];
             }
         });
     }
@@ -1146,6 +1151,7 @@ var FieldBag = function () {
             Object.keys(flags).forEach(function (flag) {
                 return _this._setFlag(name, flag, flags[flag], initial);
             });
+            this.$vm.fields = Object.assign({}, this.$vm.fields, this.fields);
         }
 
         /**
@@ -1203,7 +1209,7 @@ var Validator = function () {
         this.locale = DEFAULT_LOCALE;
         this.strictMode = STRICT_MODE;
         this.$fields = {};
-        this.fieldBag = new FieldBag();
+        this.fieldBag = new FieldBag($vm);
         this._createFields(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
@@ -1818,14 +1824,10 @@ var unregister = function unregister($vm) {
 var mixin = (function (options) {
     return {
         data: function data() {
-            return defineProperty({}, options.errorBagName, this.$validator.errorBag);
-        },
+            var _ref;
 
-        computed: defineProperty({}, options.fieldsBagName, {
-            get: function get() {
-                return this.$validator.fieldBag.fields;
-            }
-        }),
+            return _ref = {}, defineProperty(_ref, options.errorBagName, this.$validator.errorBag), defineProperty(_ref, options.fieldsBagName, this.$validator.fieldBag.fields), _ref;
+        },
         ready: function ready() {
             var _this = this;
 

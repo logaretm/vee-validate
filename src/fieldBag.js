@@ -1,9 +1,14 @@
 export default class FieldBag {
-    constructor() {
+    constructor($vm) {
+        this.$vm = $vm;
         // Needed to bypass render errors if the fields aren't populated yet.
         this.fields = new Proxy({}, {
             get(target, property) {
-                return property in target ? target[property] : { fake: true };
+                if (! (property in target) && typeof property === 'string') {
+                    target[property] = { dirty: false, valid: false, clean: false, failed: false, passed: false };
+                }
+
+                return target[property];
             }
         });
     }
@@ -13,7 +18,7 @@ export default class FieldBag {
      */
     _add(name) {
         this.fields[name] = {};
-        this._setFlags(name, { dirty: false, valid: false, }, true);
+        this._setFlags(name, { dirty: false, valid: false }, true);
     }
 
     /**
@@ -32,6 +37,7 @@ export default class FieldBag {
         }
 
         Object.keys(flags).forEach(flag => this._setFlag(name, flag, flags[flag], initial));
+        this.$vm.fields = Object.assign({}, this.$vm.fields, this.fields);
     }
 
     /**

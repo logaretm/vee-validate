@@ -24,7 +24,7 @@ export default class Validator
         this.locale = DEFAULT_LOCALE;
         this.strictMode = STRICT_MODE;
         this.$fields = {};
-        this.fieldBag = new FieldBag();
+        this.fieldBag = new FieldBag($vm);
         this._createFields(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
