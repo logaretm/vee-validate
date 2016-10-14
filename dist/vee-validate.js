@@ -1103,7 +1103,8 @@ var FieldBag = function () {
         this.fields = new Proxy({}, {
             get: function get(target, property) {
                 if (!(property in target) && typeof property === 'string') {
-                    target[property] = { dirty: false, valid: false, clean: false, failed: false, passed: false };
+                    // eslint-disable-next-line
+                    target[property] = {};
                 }
 
                 return target[property];
@@ -1144,14 +1145,14 @@ var FieldBag = function () {
 
             var initial = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
 
-            if (!this.fields[name] || this.fields[name].fake) {
-                return;
-            }
-
             Object.keys(flags).forEach(function (flag) {
                 return _this._setFlag(name, flag, flags[flag], initial);
             });
-            this.$vm.fields = Object.assign({}, this.$vm.fields, this.fields);
+
+            /* istanbul ignore if */
+            if (this.$vm) {
+                this.$vm.fields = Object.assign({}, this.$vm.fields, this.fields);
+            }
         }
 
         /**
@@ -1170,6 +1171,11 @@ var FieldBag = function () {
 
             this[method](name, value, initial);
         }
+
+        /**
+         * Updates the dirty flag for a specified field with its dependant flags.
+         */
+
     }, {
         key: 'setDirty',
         value: function setDirty(name, value) {
@@ -1180,6 +1186,11 @@ var FieldBag = function () {
             this.fields[name].passed = this.fields[name].valid && value;
             this.fields[name].failed = !this.fields[name].valid && value;
         }
+
+        /**
+         * Updates the valid flag for a specified field with its dependant flags.
+         */
+
     }, {
         key: 'setValid',
         value: function setValid(name, value) {
