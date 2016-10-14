@@ -5,6 +5,7 @@ import Dictionary from './dictionary';
 import messages from './messages';
 import { warn } from './utils/helpers';
 import date from './plugins/date';
+import FieldBag from './fieldBag';
 
 const EVENT_NAME = 'veeValidate';
 let DEFAULT_LOCALE = 'en';
@@ -23,6 +24,7 @@ export default class Validator
         this.locale = DEFAULT_LOCALE;
         this.strictMode = STRICT_MODE;
         this.$fields = {};
+        this.fieldBag = new FieldBag();
         this._createFields(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
@@ -349,8 +351,8 @@ export default class Validator
             return;
         }
 
-        Object.keys(validations).forEach(property => {
-            this._createField(property, validations[property]);
+        Object.keys(validations).forEach(field => {
+            this._createField(field, validations[field]);
         });
     }
 
@@ -364,6 +366,7 @@ export default class Validator
             this.$fields[name] = {};
         }
 
+        this._createFieldFlags(name);
         this.$fields[name].validations = [];
 
         if (Array.isArray(checks)) {
@@ -379,6 +382,17 @@ export default class Validator
             }
 
             this.$fields[name].validations.push(normalizedRule);
+        });
+    }
+
+    /**
+     * initializes the flags object.
+     */
+    _createFieldFlags(name) {
+        this.fieldBag.add(name, {
+            valid: false,
+            dirty: false,
+            validated: false
         });
     }
 
@@ -454,6 +468,8 @@ export default class Validator
                     this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
                 }
 
+                this._updateFieldFlags(name, { valid: allValid, validated: true, dirty: true });
+
                 return allValid;
             });
         }
@@ -462,7 +478,18 @@ export default class Validator
             this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
         }
 
+        this._updateFieldFlags(name, { valid, validated: true, dirty: true });
+
         return valid;
+    }
+
+    /**
+     * Updates the field flags.
+     * @param {String} name The field name.
+     * @param {Object} flags The flags object.
+     */
+    _updateFieldFlags(name, flags) {
+        this.fieldBag.setFlags(name, flags);
     }
 
     /**
