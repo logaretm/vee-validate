@@ -3,7 +3,10 @@ export default class FieldBag {
         // Needed to bypass render errors if the fields aren't populated yet.
         this.fields = new Proxy({}, {
             get(target, property) {
-                return property in target ? target[property] : { fake: true };
+                if (! (property in target) && typeof property === 'string') {
+                    target[property] = {};
+                }
+                return target[property];
             }
         });
     }
@@ -12,7 +15,6 @@ export default class FieldBag {
      * Initializes and adds a new field to the bag.
      */
     _add(name) {
-        this.fields[name] = {};
         this._setFlags(name, { dirty: false, valid: false, }, true);
     }
 
@@ -27,10 +29,6 @@ export default class FieldBag {
      * Sets the flags for a specified field.
      */
     _setFlags(name, flags, initial = false) {
-        if (! this.fields[name] || this.fields[name].fake) {
-            return;
-        }
-
         Object.keys(flags).forEach(flag => this._setFlag(name, flag, flags[flag], initial));
     }
 

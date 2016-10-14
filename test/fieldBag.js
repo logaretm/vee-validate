@@ -53,21 +53,17 @@ test('it sets the flag along with other dependant flags', t => {
     t.true(bag.fields.name.passed);
 });
 
-test('it does not set any flags when the field does not exist', t => {
+test('it adds the field if the field does not exist when setting flags', t => {
     const bag = new FieldBag();
 
     bag._setFlags('name', { dirty: true });
-    t.falsy(bag.fields.name.dirty);
-    t.falsy(bag.fields.name.clean);
-    t.falsy(bag.fields.name.failed);
-    t.falsy(bag.fields.name.passed);
+    t.true(bag.fields.name.dirty);
 
     bag._setFlags('name', { valid: true });
-    t.falsy(bag.fields.name.failed);
-    t.falsy(bag.fields.name.passed);
+    t.true(bag.fields.name.valid);
 });
 
-test('it does allow adding new flags', t => {
+test('it does not allow adding new flags', t => {
     const bag = new FieldBag();
     bag._add('name');
 
