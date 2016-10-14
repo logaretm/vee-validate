@@ -1107,7 +1107,10 @@ var FieldBag = function () {
         // Needed to bypass render errors if the fields aren't populated yet.
         this.fields = new Proxy({}, {
             get: function get(target, property) {
-                return property in target ? target[property] : { fake: true };
+                if (!(property in target) && typeof property === 'string') {
+                    target[property] = {};
+                }
+                return target[property];
             }
         });
     }
@@ -1120,7 +1123,6 @@ var FieldBag = function () {
     createClass(FieldBag, [{
         key: '_add',
         value: function _add(name) {
-            this.fields[name] = {};
             this._setFlags(name, { dirty: false, valid: false }, true);
         }
 
@@ -1144,10 +1146,6 @@ var FieldBag = function () {
             var _this = this;
 
             var initial = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-
-            if (!this.fields[name] || this.fields[name].fake) {
-                return;
-            }
 
             Object.keys(flags).forEach(function (flag) {
                 return _this._setFlag(name, flag, flags[flag], initial);
