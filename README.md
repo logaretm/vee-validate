@@ -28,13 +28,13 @@ npm install vee-validate@next --save
 
 **Vue 1.0**:
 ```
-bower install vee-validate#1.0.0-beta.7 --save
+bower install vee-validate#1.0.0-beta.8 --save
 ```
 
 **Vue 2.0**:
 
 ```
-bower install vee-validate#2.0.0-beta.12 --save
+bower install vee-validate#2.0.0-beta.13 --save
 ```
 
 ### CDN
@@ -44,13 +44,13 @@ vee-validate is also available on jsdelivr cdn:
 **Vue 1.0**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/vee-validate/1.0.0-beta.7/vee-validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/vee-validate/1.0.0-beta.8/vee-validate.min.js"></script>
 ```
 
 **Vue 2.0**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/vee-validate/2.0.0-beta.12/vee-validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/vee-validate/2.0.0-beta.13/vee-validate.min.js"></script>
 ```
 
 Or select whatever [version](https://www.jsdelivr.com/projects/vee-validate) you would like to use.
