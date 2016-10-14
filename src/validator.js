@@ -5,6 +5,7 @@ import Dictionary from './dictionary';
 import messages from './messages';
 import { warn } from './utils/helpers';
 import date from './plugins/date';
+import FieldBag from './fieldBag';
 
 const EVENT_NAME = 'veeValidate';
 let DEFAULT_LOCALE = 'en';
@@ -23,6 +24,7 @@ export default class Validator
         this.locale = DEFAULT_LOCALE;
         this.strictMode = STRICT_MODE;
         this.$fields = {};
+        this.fieldBag = new FieldBag();
         this._createFields(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
@@ -249,6 +251,7 @@ export default class Validator
      */
     detach(name) {
         delete this.$fields[name];
+        this.fieldBag._remove(name);
     }
 
     /**
@@ -332,8 +335,15 @@ export default class Validator
         });
 
         if (promises.length) {
-            return Promise.all(promises).then(values => values.every(t => t) && test);
+            return Promise.all(promises).then(values => {
+                const valid = values.every(t => t) && test;
+                this.fieldBag._setFlags(name, { valid, dirty: true });
+
+                return valid;
+            });
         }
+
+        this.fieldBag._setFlags(name, { valid: test, dirty: true });
 
         return test;
     }
@@ -349,8 +359,8 @@ export default class Validator
             return;
         }
 
-        Object.keys(validations).forEach(property => {
-            this._createField(property, validations[property]);
+        Object.keys(validations).forEach(field => {
+            this._createField(field, validations[field]);
         });
     }
 
@@ -364,6 +374,7 @@ export default class Validator
             this.$fields[name] = {};
         }
 
+        this.fieldBag._add(name);
         this.$fields[name].validations = [];
 
         if (Array.isArray(checks)) {
