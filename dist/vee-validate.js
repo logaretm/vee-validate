@@ -5,7 +5,7 @@
 }(this, (function () { 'use strict';
 
 var email$1 = (function (value) {
-  return (/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value)
+  return (/^(([^<>()[\]\\.,;:#\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,6}))$/.test(value)
   );
 });
 
@@ -24,7 +24,7 @@ var required$1 = (function (value) {
         return false;
     }
 
-    return !!String(value).length;
+    return !!String(value).trim().length;
 });
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -1100,6 +1100,97 @@ var date = {
     installed: false
 };
 
+var FieldBag = function () {
+    function FieldBag() {
+        classCallCheck(this, FieldBag);
+
+        // Needed to bypass render errors if the fields aren't populated yet.
+        this.fields = new Proxy({}, {
+            get: function get(target, property) {
+                return property in target ? target[property] : { fake: true };
+            }
+        });
+    }
+
+    /**
+     * Initializes and adds a new field to the bag.
+     */
+
+
+    createClass(FieldBag, [{
+        key: '_add',
+        value: function _add(name) {
+            this.fields[name] = {};
+            this._setFlags(name, { dirty: false, valid: false }, true);
+        }
+
+        /**
+         * Remooves a field from the bag.
+         */
+
+    }, {
+        key: '_remove',
+        value: function _remove(name) {
+            delete this.fields[name];
+        }
+
+        /**
+         * Sets the flags for a specified field.
+         */
+
+    }, {
+        key: '_setFlags',
+        value: function _setFlags(name, flags) {
+            var _this = this;
+
+            var initial = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+
+            if (!this.fields[name] || this.fields[name].fake) {
+                return;
+            }
+
+            Object.keys(flags).forEach(function (flag) {
+                return _this._setFlag(name, flag, flags[flag], initial);
+            });
+        }
+
+        /**
+         * Sets a flag for a specified field.
+         */
+
+    }, {
+        key: '_setFlag',
+        value: function _setFlag(name, flag, value) {
+            var initial = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
+
+            var method = 'set' + flag.charAt(0).toUpperCase() + flag.slice(1);
+            if (typeof this[method] !== 'function') {
+                return;
+            }
+
+            this[method](name, value, initial);
+        }
+    }, {
+        key: 'setDirty',
+        value: function setDirty(name, value) {
+            var initial = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+
+            this.fields[name].dirty = value;
+            this.fields[name].clean = initial || !value;
+            this.fields[name].passed = this.fields[name].valid && value;
+            this.fields[name].failed = !this.fields[name].valid && value;
+        }
+    }, {
+        key: 'setValid',
+        value: function setValid(name, value) {
+            this.fields[name].valid = value;
+            this.fields[name].passed = this.fields[name].dirty && value;
+            this.fields[name].failed = this.fields[name].dirty && !value;
+        }
+    }]);
+    return FieldBag;
+}();
+
 var EVENT_NAME = 'veeValidate';
 var DEFAULT_LOCALE = 'en';
 var STRICT_MODE = true;
@@ -1118,6 +1209,7 @@ var Validator = function () {
         this.locale = DEFAULT_LOCALE;
         this.strictMode = STRICT_MODE;
         this.$fields = {};
+        this.fieldBag = new FieldBag();
         this._createFields(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
@@ -1230,6 +1322,7 @@ var Validator = function () {
         key: 'detach',
         value: function detach(name) {
             delete this.$fields[name];
+            this.fieldBag._remove(name);
         }
 
         /**
@@ -1333,11 +1426,16 @@ var Validator = function () {
 
             if (promises.length) {
                 return Promise.all(promises).then(function (values) {
-                    return values.every(function (t) {
+                    var valid = values.every(function (t) {
                         return t;
                     }) && test;
+                    _this2.fieldBag._setFlags(name, { valid: valid, dirty: true });
+
+                    return valid;
                 });
             }
+
+            this.fieldBag._setFlags(name, { valid: test, dirty: true });
 
             return test;
         }
@@ -1358,8 +1456,8 @@ var Validator = function () {
                 return;
             }
 
-            Object.keys(validations).forEach(function (property) {
-                _this3._createField(property, validations[property]);
+            Object.keys(validations).forEach(function (field) {
+                _this3._createField(field, validations[field]);
             });
         }
 
@@ -1378,6 +1476,7 @@ var Validator = function () {
                 this.$fields[name] = {};
             }
 
+            this.fieldBag._add(name);
             this.$fields[name].validations = [];
 
             if (Array.isArray(checks)) {
@@ -1727,6 +1826,12 @@ var mixin = (function (options) {
         data: function data() {
             return defineProperty({}, options.errorBagName, this.$validator.errorBag);
         },
+
+        computed: defineProperty({}, options.fieldsBagName, {
+            get: function get() {
+                return this.$validator.fieldBag.fields;
+            }
+        }),
         mounted: function mounted() {
             this.$emit('validatorReady');
         },
@@ -1809,6 +1914,26 @@ var ListenerGenerator = function () {
         }
 
         /**
+         * Validates checkboxes, triggered by change event.
+         */
+
+    }, {
+        key: '_checkboxListener',
+        value: function _checkboxListener() {
+            var _this = this;
+
+            var checkedBoxes = document.querySelectorAll('input[name="' + this.el.name + '"]:checked');
+            if (!checkedBoxes || !checkedBoxes.length) {
+                this.vm.$validator.validate(this.fieldName, null, getScope(this.el));
+                return;
+            }
+
+            [].concat(toConsumableArray(checkedBoxes)).forEach(function (box) {
+                _this.vm.$validator.validate(_this.fieldName, box.value, getScope(_this.el));
+            });
+        }
+
+        /**
          * Returns a scoped callback, only runs if the el scope is the same as the recieved scope
          * From the event.
          */
@@ -1816,10 +1941,10 @@ var ListenerGenerator = function () {
     }, {
         key: '_getScopedListener',
         value: function _getScopedListener(callback) {
-            var _this = this;
+            var _this2 = this;
 
             return function (scope) {
-                if (!scope || scope === getScope(_this.el) || scope instanceof Event) {
+                if (!scope || scope === getScope(_this2.el) || scope instanceof Event) {
                     callback();
                 }
             };
@@ -1832,9 +1957,9 @@ var ListenerGenerator = function () {
     }, {
         key: '_attachValidatorEvent',
         value: function _attachValidatorEvent() {
-            var _this2 = this;
+            var _this3 = this;
 
-            var listener = this._getScopedListener(this.el.type === 'radio' ? this._radioListener.bind(this) : this._inputListener.bind(this));
+            var listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
 
             this.vm.$on(DEFAULT_EVENT_NAME, listener);
             this.callbacks.push({ event: DEFAULT_EVENT_NAME, listener: listener });
@@ -1851,7 +1976,7 @@ var ListenerGenerator = function () {
                     }
 
                     target.addEventListener('input', listener);
-                    _this2.callbacks.push({ event: 'input', listener: listener, el: target });
+                    _this3.callbacks.push({ event: 'input', listener: listener, el: target });
                 });
             }
         }
@@ -1877,6 +2002,13 @@ var ListenerGenerator = function () {
                 };
             }
 
+            if (this.el.type === 'checkbox') {
+                return {
+                    name: 'change',
+                    listener: this._checkboxListener
+                };
+            }
+
             return {
                 name: 'input',
                 listener: this._inputListener
@@ -1890,16 +2022,16 @@ var ListenerGenerator = function () {
     }, {
         key: '_attachFieldListeners',
         value: function _attachFieldListeners() {
-            var _this3 = this;
+            var _this4 = this;
 
             var handler = this._getSuitableListener();
             var listener = debounce(handler.listener.bind(this), this.el.dataset.delay || this.options.delay);
 
-            if (this.el.type === 'radio') {
+            if (~['radio', 'checkbox'].indexOf(this.el.type)) {
                 this.vm.$once('validatorReady', function () {
-                    [].concat(toConsumableArray(document.querySelectorAll('input[name="' + _this3.el.name + '"]'))).forEach(function (input) {
+                    [].concat(toConsumableArray(document.querySelectorAll('input[name="' + _this4.el.name + '"]'))).forEach(function (input) {
                         input.addEventListener(handler.name, listener);
-                        _this3.callbacks.push({ event: handler.name, callback: listener, el: input });
+                        _this4.callbacks.push({ event: handler.name, callback: listener, el: input });
                     });
                 });
 
@@ -2005,6 +2137,8 @@ var install = function install(Vue) {
     var dictionary = _ref$dictionary === undefined ? null : _ref$dictionary;
     var _ref$strict = _ref.strict;
     var strict = _ref$strict === undefined ? true : _ref$strict;
+    var _ref$fieldsBagName = _ref.fieldsBagName;
+    var fieldsBagName = _ref$fieldsBagName === undefined ? 'fields' : _ref$fieldsBagName;
 
     if (dictionary) {
         Validator.updateDictionary(dictionary);
@@ -2017,7 +2151,8 @@ var install = function install(Vue) {
         locale: locale,
         delay: delay,
         dictionary: dictionary,
-        errorBagName: errorBagName
+        errorBagName: errorBagName,
+        fieldsBagName: fieldsBagName
     };
 
     Object.defineProperties(Vue.prototype, {
