@@ -4,8 +4,14 @@ export default (options) => ({
     data() {
         return {
             [options.errorBagName]: this.$validator.errorBag,
-            [options.fieldsBagName]: this.$validator.fieldBag
         };
+    },
+    computed: {
+        [options.fieldsBagName]: {
+            get() {
+                return this.$validator.fieldBag.fields;
+            }
+        }
     },
     mounted() {
         this.$emit('validatorReady');

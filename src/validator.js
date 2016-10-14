@@ -251,6 +251,7 @@ export default class Validator
      */
     detach(name) {
         delete this.$fields[name];
+        this.fieldBag._remove(name);
     }
 
     /**
@@ -334,8 +335,15 @@ export default class Validator
         });
 
         if (promises.length) {
-            return Promise.all(promises).then(values => values.every(t => t) && test);
+            return Promise.all(promises).then(values => {
+                const valid = values.every(t => t) && test;
+                this.fieldBag._setFlags(name, { valid, dirty: true });
+
+                return valid;
+            });
         }
+
+        this.fieldBag._setFlags(name, { valid: test, dirty: true });
 
         return test;
     }
@@ -366,7 +374,7 @@ export default class Validator
             this.$fields[name] = {};
         }
 
-        this._createFieldFlags(name);
+        this.fieldBag._add(name);
         this.$fields[name].validations = [];
 
         if (Array.isArray(checks)) {
@@ -382,17 +390,6 @@ export default class Validator
             }
 
             this.$fields[name].validations.push(normalizedRule);
-        });
-    }
-
-    /**
-     * initializes the flags object.
-     */
-    _createFieldFlags(name) {
-        this.fieldBag.add(name, {
-            valid: false,
-            dirty: false,
-            validated: false
         });
     }
 
@@ -468,8 +465,6 @@ export default class Validator
                     this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
                 }
 
-                this._updateFieldFlags(name, { valid: allValid, validated: true, dirty: true });
-
                 return allValid;
             });
         }
@@ -478,18 +473,7 @@ export default class Validator
             this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
         }
 
-        this._updateFieldFlags(name, { valid, validated: true, dirty: true });
-
         return valid;
-    }
-
-    /**
-     * Updates the field flags.
-     * @param {String} name The field name.
-     * @param {Object} flags The flags object.
-     */
-    _updateFieldFlags(name, flags) {
-        this.fieldBag.setFlags(name, flags);
     }
 
     /**
