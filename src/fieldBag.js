@@ -5,7 +5,8 @@ export default class FieldBag {
         this.fields = new Proxy({}, {
             get(target, property) {
                 if (! (property in target) && typeof property === 'string') {
-                    target[property] = { dirty: false, valid: false, clean: false, failed: false, passed: false };
+                    // eslint-disable-next-line
+                    target[property] = {};
                 }
 
                 return target[property];
@@ -32,12 +33,12 @@ export default class FieldBag {
      * Sets the flags for a specified field.
      */
     _setFlags(name, flags, initial = false) {
-        if (! this.fields[name] || this.fields[name].fake) {
-            return;
-        }
-
         Object.keys(flags).forEach(flag => this._setFlag(name, flag, flags[flag], initial));
-        this.$vm.fields = Object.assign({}, this.$vm.fields, this.fields);
+
+        /* istanbul ignore if */
+        if (this.$vm) {
+            this.$vm.fields = Object.assign({}, this.$vm.fields, this.fields);
+        }
     }
 
     /**
@@ -52,6 +53,9 @@ export default class FieldBag {
         this[method](name, value, initial);
     }
 
+    /**
+     * Updates the dirty flag for a specified field with its dependant flags.
+     */
     setDirty(name, value, initial = false) {
         this.fields[name].dirty = value;
         this.fields[name].clean = initial || ! value;
@@ -59,6 +63,9 @@ export default class FieldBag {
         this.fields[name].failed = ! this.fields[name].valid && value;
     }
 
+    /**
+     * Updates the valid flag for a specified field with its dependant flags.
+     */
     setValid(name, value) {
         this.fields[name].valid = value;
         this.fields[name].passed = this.fields[name].dirty && value;
