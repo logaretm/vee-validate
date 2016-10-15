@@ -781,46 +781,20 @@ var Dictionary = function () {
                 return target;
             }
 
-            var assign = Object.assign || this._assign;
-
             Object.keys(source).forEach(function (key) {
                 if (_this._isObject(source[key])) {
                     if (!target[key]) {
-                        assign(target, defineProperty({}, key, {}));
+                        Object.assign(target, defineProperty({}, key, {}));
                     }
 
                     _this._merge(target[key], source[key]);
                     return;
                 }
 
-                assign(target, defineProperty({}, key, source[key]));
+                Object.assign(target, defineProperty({}, key, source[key]));
             });
 
             return target;
-        }
-    }, {
-        key: '_assign',
-        value: function _assign(target) {
-            var _arguments = arguments;
-
-            var output = Object(target);
-
-            var _loop = function _loop(index) {
-                var source = _arguments[index];
-                if (source !== undefined && source !== null) {
-                    Object.keys(source).forEach(function (key) {
-                        if ({}.hasOwnProperty.call(source, key)) {
-                            output[key] = source[key];
-                        }
-                    });
-                }
-            };
-
-            for (var index = 1; index < arguments.length; index++) {
-                _loop(index);
-            }
-
-            return output;
         }
     }]);
     return Dictionary;
