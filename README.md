@@ -91,6 +91,16 @@ Of course there is more to it than that, refer to the documentation for more det
 
 Read the [documentation and demos](http://vee-validate.logaretm.com/).
 
+### Compatibility
+
+This plugin should be compatible with the major browsers, but it requires few polyfills to work on older ones. The polyfills are:
+
+- Promise Polyfill.
+- Object.assign Polyfill.
+- Proxy Polyfill.
+
+The reason they are not included is because most of the workflows already use polyfills within their code, so to cut down the package size the redundant polyfills were removed, you can use [Polyfill.io](https://polyfill.io/v2/docs/) to provide the needed polyfills for all browsers automatically.
+
 ### Contributing
 
 You are welcome to contribute to this repo with anything you think is useful. fixes are more than welcome.
