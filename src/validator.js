@@ -429,10 +429,22 @@ export default class Validator
         if (! dictionary.hasLocale(this.locale) ||
          typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
             // Default to english message.
-            return dictionary.getMessage('en', rule.name)(field, rule.params);
+            return dictionary.getMessage('en', rule.name)(field, this._getLocalizedParams(rule));
         }
 
-        return dictionary.getMessage(this.locale, rule.name)(field, rule.params);
+        return dictionary.getMessage(this.locale, rule.name)(field, this._getLocalizedParams(rule));
+    }
+
+    /**
+     * Translates the parameters passed to the rule (mainly for target fields).
+     */
+    _getLocalizedParams(rule) {
+        if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) &&
+        rule.params && rule.params[0]) {
+            return [dictionary.getAttribute(this.locale, rule.params[0], rule.params[0])];
+        }
+
+        return rule.params;
     }
 
     /**
