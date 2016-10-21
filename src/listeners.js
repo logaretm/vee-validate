@@ -92,7 +92,12 @@ export default class ListenerGenerator
         const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
 
         this.vm.$on(DEFAULT_EVENT_NAME, listener);
-        this.callbacks.push({ event: DEFAULT_EVENT_NAME, listener });
+        this.callbacks.push({ name: DEFAULT_EVENT_NAME, listener });
+        this.vm.$on('VALIDATOR_OFF', (field) => {
+            if (this.fieldName === field) {
+                this.detach();
+            }
+        });
 
         const fieldName = this._hasFieldDependency(this.el.dataset.rules);
         if (fieldName) {
@@ -106,7 +111,7 @@ export default class ListenerGenerator
                 }
 
                 target.addEventListener('input', listener);
-                this.callbacks.push({ event: 'input', listener, el: target });
+                this.callbacks.push({ name: 'input', listener, el: target });
             });
         }
     }
@@ -156,7 +161,7 @@ export default class ListenerGenerator
             this.vm.$once('validatorReady', () => {
                 [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
                     input.addEventListener(handler.name, listener);
-                    this.callbacks.push({ event: handler.name, callback: listener, el: input });
+                    this.callbacks.push({ name: handler.name, listener, el: input });
                 });
             });
 
@@ -164,7 +169,7 @@ export default class ListenerGenerator
         }
 
         this.el.addEventListener(handler.name, listener);
-        this.callbacks.push({ event: handler.name, callback: listener, el: this.el });
+        this.callbacks.push({ name: handler.name, listener, el: this.el });
     }
 
     /**
@@ -194,13 +199,12 @@ export default class ListenerGenerator
      * Removes all attached event listeners.
      */
     detach() {
-        this.vm.$off(
-            DEFAULT_EVENT_NAME,
-            this.callbacks.filter(({ event }) => event === DEFAULT_EVENT_NAME)[0]
-        );
+        this.callbacks.filter(({ name }) => name === DEFAULT_EVENT_NAME).forEach(h => {
+            this.vm.$off(DEFAULT_EVENT_NAME, h.listener);
+        });
 
-        this.callbacks.filter(({ event }) => event !== DEFAULT_EVENT_NAME).forEach(h => {
-            h.el.removeEventListener(h.event, h.listener);
+        this.callbacks.filter(({ name }) => name !== DEFAULT_EVENT_NAME).forEach(h => {
+            h.el.removeEventListener(h.name, h.listener);
         });
     }
 }
