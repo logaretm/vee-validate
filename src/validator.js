@@ -250,6 +250,10 @@ export default class Validator
      * @param  {string} name The name of the field.
      */
     detach(name) {
+        if (this.$vm && typeof this.$vm.$emit === 'function') {
+            this.$vm.$emit('VALIDATOR_OFF', name);
+        }
+
         delete this.$fields[name];
         this.fieldBag._remove(name);
     }
