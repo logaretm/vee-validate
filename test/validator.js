@@ -409,3 +409,23 @@ test('it cascades promise values with previous fields tests', async t => {
     });
     t.false(await result); // should fail.
 });
+
+test('it can translate target field for field dependent validations', t => {
+    const v = new Validator({
+        email: 'email|confirmed:email_confirmation'
+    });
+
+    v.updateDictionary({
+        en: {
+            attributes: {
+                email: 'Email Address',
+                email_confirmation: 'Email Confirmation'
+            }
+        }
+    });
+
+    mocks.querySelector({ value: 'someemail@gmail.com' });
+    v.validate('email', 'someotheremail@gmail.com');
+
+    t.is(v.errorBag.first('email'), 'The Email Address does not match the Email Confirmation.');
+});
