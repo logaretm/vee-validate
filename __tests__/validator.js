@@ -356,20 +356,18 @@ it('installs date validators', () => {
     expect(Validator.installDateTimeValidators(moment)).toBe(true);
     const v = new Validator({ birthday: 'date_format:DD/MM/YYYY|after:field' });
 
-    helpers.jsdom({ name: 'field', value: '02/01/2008' }, () => {
-        expect(v.validate('birthday', '01/12/2008')).toBe(true);
-        expect(v.validate('birthday', '01/01/2008')).toBe(false);
-    });
+    helpers.querySelector({ name: 'field', value: '02/01/2008' });
+    expect(v.validate('birthday', '01/12/2008')).toBe(true);
+    expect(v.validate('birthday', '01/01/2008')).toBe(false);
 });
 
 it('auto installs date validators if moment is present globally', () => {
     global.moment = require('moment');
     const v = new Validator({ birthday: 'date_format:DD/MM/YYYY|after:field' });
 
-    helpers.jsdom({ name: 'field', value: '02/01/2008' }, () => {
-        expect(v.validate('birthday', '01/12/2008')).toBe(true);
-        expect(v.validate('birthday', '01/01/2008')).toBe(false);
-    });
+    helpers.querySelector({ name: 'field', value: '02/01/2008' });
+    expect(v.validate('birthday', '01/12/2008')).toBe(true);
+    expect(v.validate('birthday', '01/01/2008')).toBe(false);
 });
 
 it('can add custom names via the attributes dictionary', () => {
@@ -442,8 +440,7 @@ it('can translate target field for field dependent validations', () => {
         }
     });
 
-    helpers.jsdom({ name: 'email_confirmation', value: 'someemail@gmail.com' }, () => {
-        v.validate('email', 'someotheremail@gmail.com');
-        expect(v.errorBag.first('email')).toBe('The Email Address does not match the Email Confirmation.');
-    });
+    helpers.querySelector({ name: 'email_confirmation', value: 'someemail@gmail.com' });
+    v.validate('email', 'someotheremail@gmail.com');
+    expect(v.errorBag.first('email')).toBe('The Email Address does not match the Email Confirmation.');
 });

@@ -1,9 +1,6 @@
-import jsdom from 'jsdom';
-
 export default {
-    jsdom(el, callback) {
-        const html = el ? `<input name="${el.name}" type="text" value="${el.value}">` : '';
-        jsdom.env(html, [], callback);
+    querySelector(el) {
+        global.document.querySelector = () => el || null
     },
     file: (name, type, size = 1) => ({
         name,
