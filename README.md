@@ -98,7 +98,6 @@ This plugin should be compatible with the major browsers, but it requires few po
 
 - Promise Polyfill.
 - Object.assign Polyfill.
-- Proxy Polyfill.
 
 The reason they are not included is because most of the workflows already use polyfills within their code, so to cut down the package size the redundant polyfills were removed, you can use [Polyfill.io](https://polyfill.io/v2/docs/) to provide the needed polyfills for all browsers automatically.
 
