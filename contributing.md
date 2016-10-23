@@ -10,7 +10,7 @@ Clone the repo
 
 Install npm dev dependencies
 
-`npm install`
+`npm install` or `yarn`
 
 Check the `scripts` section of `package.json` for any npm scripts that might find useful.
 
@@ -24,13 +24,13 @@ As you can see we have:
     - `rules`: contains validation rules that are available to the validator instances.
     - `utils`: contains small utility functions.
 - `dist` contains the unminified and the minified build of the repository.
-- `test` contains the test files for the project, it uses [avajs](https://github.com/avajs/ava) for testing. it contains a similar folder structure as the `src` folder.
+- `__tests__` contains the test files for the project, it uses [jest](https://facebook.github.io/jest/) for testing. it contains a similar folder structure as the `src` folder.
 
 If you want to contribute to the docs you can find it [here](https://github.com/logaretm/vee-validate-docs).
 
 ### Source Code
 
-Currently we are using ES2015 (ES6) for the source code, using Babel and Rollup to convert it to ES5.
+Currently we are using ES2015 (ES6) for the source code, using Babel and Rollup to convert it to ES5, the available builds are: non-minified, minified and es6.
 
 ### Testing
 
@@ -40,12 +40,8 @@ To run the tests:
 
 `npm test`
 
-or
-
-`npm run test:watch`
-
 Currently I'm not testing the directive and the mixin, I will work on adding those tests later if I can, help will be appreciated.
 
 ### Building
 
-Use `npm run build` to build the project both minified and unminified versions.
+Use `npm run build` to build the project both minified and unminified versions as well as the es6 version.
