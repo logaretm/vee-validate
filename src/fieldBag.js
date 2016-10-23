@@ -22,7 +22,7 @@ export default class FieldBag {
      * Sets the flags for a specified field.
      */
     _setFlags(name, flags, initial = false) {
-        Object.keys(flags).forEach(flag => this._setFlag(name, flag, flags[flag], initial));
+        return Object.keys(flags).every(flag => this._setFlag(name, flag, flags[flag], initial));
     }
 
     /**
@@ -31,10 +31,12 @@ export default class FieldBag {
     _setFlag(name, flag, value, initial = false) {
         const method = `set${flag.charAt(0).toUpperCase()}${flag.slice(1)}`;
         if (typeof this[method] !== 'function') {
-            return;
+            return false;
         }
 
         this[method](name, value, initial);
+
+        return true;
     }
 
     /**
@@ -79,7 +81,11 @@ export default class FieldBag {
         return this._getFieldFlag(name, 'passed');
     }
 
-    faild(name) {
+    failed(name) {
         return this._getFieldFlag(name, 'failed');
+    }
+
+    clean(name) {
+        return this._getFieldFlag(name, 'clean');
     }
 }
