@@ -5,22 +5,19 @@
   "main": "dist/vee-validate.js",
   "homepage": "http://vee-validate.logaretm.com",
   "repository": "https://github.com/logaretm/vee-validate",
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/src/(helpers|messages|utils)/",
+      "src/plugins/date/messages.js"
+    ],
+    "testPathIgnorePatterns": ["<rootDir>/__tests__/helpers/", "<rootDir>/node_modules/"]
+  },
   "scripts": {
-    "test": "nyc ava --colors",
-    "test:watch": "ava --watch",
+    "test": "jest",
     "lint": "eslint ./src ./test",
-    "build": "rollup -c rollup.config.dev.js && rollup -c rollup.config.prod.js && rollup -c rollup.config.es.js",
-    "cover": "nyc report --reporter=lcov > coverage.lcov && codecov"
-  },
-  "ava": {
-    "require": [
-      "babel-register"
-    ]
-  },
-  "nyc": {
-    "exclude": [
-      "src/utils/helpers.js"
-    ]
+    "build": "rollup -c rollup.config.dev.js && rollup -c rollup.config.prod.js && rollup -c rollup.config.es6.js",
+    "cover": "jest --coverage"
   },
   "keywords": [
     "VueJS",
@@ -33,18 +30,19 @@
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "ava": "^0.15.2",
     "babel-core": "^6.13.2",
+    "babel-jest": "^16.0.0",
     "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-external-helpers": "^6.8.0",
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
+    "babel-polyfill": "^6.16.0",
     "babel-preset-es2015": "^6.13.2",
     "cross-env": "^2.0.0",
     "eslint": "^3.1.1",
     "eslint-config-airbnb-base": "^5.0.0",
     "eslint-plugin-import": "^1.12.0",
+    "jest": "^16.0.2",
     "moment": "^2.14.1",
-    "nyc": "^7.1.0",
-    "rollup": "^0.36.0",
+    "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.6.1",
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-uglify": "^1.0.1"
