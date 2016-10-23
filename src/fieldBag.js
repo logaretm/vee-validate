@@ -1,29 +1,13 @@
 export default class FieldBag {
     constructor() {
-        // Needed to bypass render errors if the fields aren't populated yet.
-        this.fields = (() => {
-            const _fields = {};
-
-            return (property, remove) => {
-                if (remove === true) {
-                    delete _fields[property];
-                    return;
-                }
-
-                if (!(property in _fields) && typeof property === 'string') {
-                    // eslint-disable-next-line
-                    _fields[property] = {};
-                }
-                // eslint-disable-next-line
-                return _fields[property];
-            };
-        })();
+        this.fields = {};
     }
 
     /**
      * Initializes and adds a new field to the bag.
      */
     _add(name) {
+        this.fields[name] = {};
         this._setFlags(name, { dirty: false, valid: false, }, true);
     }
 
@@ -31,7 +15,7 @@ export default class FieldBag {
      * Remooves a field from the bag.
      */
     _remove(name) {
-        this.fields(name, true);
+        delete this.fields[name];
     }
 
     /**
@@ -57,18 +41,46 @@ export default class FieldBag {
      * Sets the dirty flag along with dependant flags.
      */
     setDirty(name, value, initial = false) {
-        this.fields(name).dirty = value;
-        this.fields(name).clean = initial || ! value;
-        this.fields(name).passed = this.fields(name).valid && value;
-        this.fields(name).failed = ! this.fields(name).valid && value;
+        this.fields[name].dirty = value;
+        this.fields[name].clean = initial || ! value;
+        this.fields[name].passed = this.fields[name].valid && value;
+        this.fields[name].failed = ! this.fields[name].valid && value;
     }
 
     /**
      * Sets the valid flag along with dependant flags.
      */
     setValid(name, value) {
-        this.fields(name).valid = value;
-        this.fields(name).passed = this.fields(name).dirty && value;
-        this.fields(name).failed = this.fields(name).dirty && ! value;
+        this.fields[name].valid = value;
+        this.fields[name].passed = this.fields[name].dirty && value;
+        this.fields[name].failed = this.fields[name].dirty && ! value;
+    }
+
+    _getFieldFlag(name) {
+        if (this.fields[name]) {
+            return this.fields[name];
+        }
+
+        return false;
+    }
+
+    dirty(name) {
+        return this._getFieldFlag(name, 'dirty');
+    }
+
+    valid(name) {
+        return this._getFieldFlag(name, 'valid');
+    }
+
+    passed(name) {
+        return this._getFieldFlag(name, 'passed');
+    }
+
+    failed(name) {
+        return this._getFieldFlag(name, 'failed');
+    }
+
+    clean(name) {
+        return this._getFieldFlag(name, 'clean');
     }
 }
