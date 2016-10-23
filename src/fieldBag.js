@@ -1,17 +1,6 @@
 export default class FieldBag {
-    constructor($vm) {
-        this.$vm = $vm;
-        // Needed to bypass render errors if the fields aren't populated yet.
-        this.fields = new Proxy({}, {
-            get(target, property) {
-                if (! (property in target) && typeof property === 'string') {
-                    // eslint-disable-next-line
-                    target[property] = {};
-                }
-
-                return target[property];
-            }
-        });
+    constructor() {
+        this.fields = {};
     }
 
     /**
@@ -34,11 +23,6 @@ export default class FieldBag {
      */
     _setFlags(name, flags, initial = false) {
         Object.keys(flags).forEach(flag => this._setFlag(name, flag, flags[flag], initial));
-
-        /* istanbul ignore if */
-        if (this.$vm) {
-            this.$vm.fields = Object.assign({}, this.$vm.fields, this.fields);
-        }
     }
 
     /**
@@ -70,5 +54,32 @@ export default class FieldBag {
         this.fields[name].valid = value;
         this.fields[name].passed = this.fields[name].dirty && value;
         this.fields[name].failed = this.fields[name].dirty && ! value;
+    }
+
+    /**
+     * Gets a flag.
+     */
+    _getFieldFlag(name, flag) {
+        if (this.fields[name]) {
+            return this.fields[name][flag];
+        }
+
+        return false;
+    }
+
+    dirty(name) {
+        return this._getFieldFlag(name, 'dirty');
+    }
+
+    valid(name) {
+        return this._getFieldFlag(name, 'valid');
+    }
+
+    passed(name) {
+        return this._getFieldFlag(name, 'passed');
+    }
+
+    faild(name) {
+        return this._getFieldFlag(name, 'failed');
     }
 }
