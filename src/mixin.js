@@ -9,7 +9,7 @@ export default (options) => ({
     computed: {
         [options.fieldsBagName]: {
             get() {
-                return this.$validator.fieldBag.fields;
+                return this.$validator.fieldBag;
             }
         }
     },
