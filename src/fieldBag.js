@@ -1,6 +1,7 @@
 export default class FieldBag {
-    constructor() {
+    constructor($vm) {
         this.fields = {};
+        this.$vm = $vm;
     }
 
     /**
@@ -8,6 +9,7 @@ export default class FieldBag {
      */
     _add(name) {
         this.fields[name] = {};
+        this.$vm.$set(`fields.${name}`, {});
         this._setFlags(name, { dirty: false, valid: false }, true);
     }
 
@@ -22,7 +24,15 @@ export default class FieldBag {
      * Sets the flags for a specified field.
      */
     _setFlags(name, flags, initial = false) {
-        return Object.keys(flags).every(flag => this._setFlag(name, flag, flags[flag], initial));
+        const success = Object.keys(flags).every(
+            flag => this._setFlag(name, flag, flags[flag], initial)
+        );
+
+        if (success) {
+            this.$vm.$set(`fields.${name}`, this.fields[name]);
+        }
+
+        return success;
     }
 
     /**

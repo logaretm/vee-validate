@@ -11,7 +11,10 @@
       "/src/(helpers|messages|utils)/",
       "src/plugins/date/messages.js"
     ],
-    "testPathIgnorePatterns": ["<rootDir>/__tests__/helpers/", "<rootDir>/node_modules/"]
+    "testPathIgnorePatterns": [
+      "<rootDir>/__tests__/helpers/",
+      "<rootDir>/node_modules/"
+    ]
   },
   "scripts": {
     "test": "jest",
@@ -33,6 +36,7 @@
     "babel-core": "^6.13.2",
     "babel-jest": "^16.0.0",
     "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-external-helpers": "^6.8.0",
     "babel-plugin-transform-async-to-generator": "^6.16.0",
     "babel-polyfill": "^6.16.0",
     "babel-preset-es2015": "^6.13.2",

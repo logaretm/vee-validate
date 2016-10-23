@@ -4,7 +4,7 @@ export default (options) => ({
     data() {
         return {
             [options.errorBagName]: this.$validator.errorBag,
-            [options.fieldsBagName]: this.$validator.fieldBag.fields
+            [options.fieldsBagName]: this.$validator.fieldBag
         };
     },
     ready() {
