@@ -371,7 +371,7 @@ var ValidatorException = class
     toString() {
         return this.msg;
     }
-}
+};
 
 /* eslint-disable prefer-rest-params */
 class Dictionary
@@ -612,22 +612,14 @@ var date = {
 
 class FieldBag {
     constructor() {
-        // Needed to bypass render errors if the fields aren't populated yet.
-        this.fields = new Proxy({}, {
-            get(target, property) {
-                if (! (property in target) && typeof property === 'string') {
-                    // eslint-disable-next-line
-                    target[property] = {};
-                }
-                return target[property];
-            }
-        });
+        this.fields = {};
     }
 
     /**
      * Initializes and adds a new field to the bag.
      */
     _add(name) {
+        this.fields[name] = {};
         this._setFlags(name, { dirty: false, valid: false, }, true);
     }
 
@@ -674,6 +666,34 @@ class FieldBag {
         this.fields[name].valid = value;
         this.fields[name].passed = this.fields[name].dirty && value;
         this.fields[name].failed = this.fields[name].dirty && ! value;
+    }
+
+    _getFieldFlag(name) {
+        if (this.fields[name]) {
+            return this.fields[name];
+        }
+
+        return false;
+    }
+
+    dirty(name) {
+        return this._getFieldFlag(name, 'dirty');
+    }
+
+    valid(name) {
+        return this._getFieldFlag(name, 'valid');
+    }
+
+    passed(name) {
+        return this._getFieldFlag(name, 'passed');
+    }
+
+    failed(name) {
+        return this._getFieldFlag(name, 'failed');
+    }
+
+    clean(name) {
+        return this._getFieldFlag(name, 'clean');
     }
 }
 
@@ -920,6 +940,11 @@ class Validator
      * @param  {string} name The name of the field.
      */
     detach(name) {
+        if (this.$vm && typeof this.$vm.$emit === 'function') {
+            this.$vm.$emit('VALIDATOR_OFF', name);
+        }
+
+        this.errorBag.remove(name);
         delete this.$fields[name];
         this.fieldBag._remove(name);
     }
@@ -1099,10 +1124,22 @@ class Validator
         if (! dictionary.hasLocale(this.locale) ||
          typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
             // Default to english message.
-            return dictionary.getMessage('en', rule.name)(field, rule.params);
+            return dictionary.getMessage('en', rule.name)(field, this._getLocalizedParams(rule));
         }
 
-        return dictionary.getMessage(this.locale, rule.name)(field, rule.params);
+        return dictionary.getMessage(this.locale, rule.name)(field, this._getLocalizedParams(rule));
+    }
+
+    /**
+     * Translates the parameters passed to the rule (mainly for target fields).
+     */
+    _getLocalizedParams(rule) {
+        if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) &&
+        rule.params && rule.params[0]) {
+            return [dictionary.getAttribute(this.locale, rule.params[0], rule.params[0])];
+        }
+
+        return rule.params;
     }
 
     /**
@@ -1217,7 +1254,7 @@ var mixin = (options) => ({
     computed: {
         [options.fieldsBagName]: {
             get() {
-                return this.$validator.fieldBag.fields;
+                return this.$validator.fieldBag;
             }
         }
     },
@@ -1321,7 +1358,12 @@ class ListenerGenerator
         const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
 
         this.vm.$on(DEFAULT_EVENT_NAME, listener);
-        this.callbacks.push({ event: DEFAULT_EVENT_NAME, listener });
+        this.callbacks.push({ name: DEFAULT_EVENT_NAME, listener });
+        this.vm.$on('VALIDATOR_OFF', (field) => {
+            if (this.fieldName === field) {
+                this.detach();
+            }
+        });
 
         const fieldName = this._hasFieldDependency(this.el.dataset.rules);
         if (fieldName) {
@@ -1335,7 +1377,7 @@ class ListenerGenerator
                 }
 
                 target.addEventListener('input', listener);
-                this.callbacks.push({ event: 'input', listener, el: target });
+                this.callbacks.push({ name: 'input', listener, el: target });
             });
         }
     }
@@ -1385,7 +1427,7 @@ class ListenerGenerator
             this.vm.$once('validatorReady', () => {
                 [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
                     input.addEventListener(handler.name, listener);
-                    this.callbacks.push({ event: handler.name, callback: listener, el: input });
+                    this.callbacks.push({ name: handler.name, listener, el: input });
                 });
             });
 
@@ -1393,7 +1435,7 @@ class ListenerGenerator
         }
 
         this.el.addEventListener(handler.name, listener);
-        this.callbacks.push({ event: handler.name, callback: listener, el: this.el });
+        this.callbacks.push({ name: handler.name, listener, el: this.el });
     }
 
     /**
@@ -1423,13 +1465,12 @@ class ListenerGenerator
      * Removes all attached event listeners.
      */
     detach() {
-        this.vm.$off(
-            DEFAULT_EVENT_NAME,
-            this.callbacks.filter(({ event }) => event === DEFAULT_EVENT_NAME)[0]
-        );
+        this.callbacks.filter(({ name }) => name === DEFAULT_EVENT_NAME).forEach(h => {
+            this.vm.$off(DEFAULT_EVENT_NAME, h.listener);
+        });
 
-        this.callbacks.filter(({ event }) => event !== DEFAULT_EVENT_NAME).forEach(h => {
-            h.el.removeEventListener(h.event, h.listener);
+        this.callbacks.filter(({ name }) => name !== DEFAULT_EVENT_NAME).forEach(h => {
+            h.el.removeEventListener(h.name, h.listener);
         });
     }
 }

@@ -30,8 +30,125 @@ var required$1 = (function (value) {
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
+
+
+
+
+
+var asyncGenerator = function () {
+  function AwaitValue(value) {
+    this.value = value;
+  }
+
+  function AsyncGenerator(gen) {
+    var front, back;
+
+    function send(key, arg) {
+      return new Promise(function (resolve, reject) {
+        var request = {
+          key: key,
+          arg: arg,
+          resolve: resolve,
+          reject: reject,
+          next: null
+        };
+
+        if (back) {
+          back = back.next = request;
+        } else {
+          front = back = request;
+          resume(key, arg);
+        }
+      });
+    }
+
+    function resume(key, arg) {
+      try {
+        var result = gen[key](arg);
+        var value = result.value;
+
+        if (value instanceof AwaitValue) {
+          Promise.resolve(value.value).then(function (arg) {
+            resume("next", arg);
+          }, function (arg) {
+            resume("throw", arg);
+          });
+        } else {
+          settle(result.done ? "return" : "normal", result.value);
+        }
+      } catch (err) {
+        settle("throw", err);
+      }
+    }
+
+    function settle(type, value) {
+      switch (type) {
+        case "return":
+          front.resolve({
+            value: value,
+            done: true
+          });
+          break;
+
+        case "throw":
+          front.reject(value);
+          break;
+
+        default:
+          front.resolve({
+            value: value,
+            done: false
+          });
+          break;
+      }
+
+      front = front.next;
+
+      if (front) {
+        resume(front.key, front.arg);
+      } else {
+        back = null;
+      }
+    }
+
+    this._invoke = send;
+
+    if (typeof gen.return !== "function") {
+      this.return = undefined;
+    }
+  }
+
+  if (typeof Symbol === "function" && Symbol.asyncIterator) {
+    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+      return this;
+    };
+  }
+
+  AsyncGenerator.prototype.next = function (arg) {
+    return this._invoke("next", arg);
+  };
+
+  AsyncGenerator.prototype.throw = function (arg) {
+    return this._invoke("throw", arg);
+  };
+
+  AsyncGenerator.prototype.return = function (arg) {
+    return this._invoke("return", arg);
+  };
+
+  return {
+    wrap: function (fn) {
+      return function () {
+        return new AsyncGenerator(fn.apply(this, arguments));
+      };
+    },
+    await: function (value) {
+      return new AwaitValue(value);
+    }
+  };
+}();
 
 
 
@@ -401,7 +518,7 @@ var url$1 = (function (value, params) {
 });
 
 var decimal$1 = (function (value) {
-    var _ref = arguments.length <= 1 || arguments[1] === undefined ? ['*'] : arguments[1];
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
 
     var _ref2 = slicedToArray(_ref, 1);
 
@@ -694,7 +811,7 @@ var _class = function () {
 /* eslint-disable prefer-rest-params */
 var Dictionary = function () {
     function Dictionary() {
-        var dictionary = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+        var dictionary = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
         classCallCheck(this, Dictionary);
 
         this.dictionary = {};
@@ -709,7 +826,7 @@ var Dictionary = function () {
     }, {
         key: 'getMessage',
         value: function getMessage(locale, key) {
-            var fallback = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
+            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
             if (!this.hasMessage(locale, key)) {
                 return fallback;
@@ -720,7 +837,7 @@ var Dictionary = function () {
     }, {
         key: 'getAttribute',
         value: function getAttribute(locale, key) {
-            var fallback = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
+            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
             if (!this.hasAttribute(locale, key)) {
                 return fallback;
@@ -826,7 +943,7 @@ var messages = {
         return 'The ' + field + ' does not match the ' + confirmedField + '.';
     },
     decimal: function decimal(field) {
-        var _ref5 = arguments.length <= 1 || arguments[1] === undefined ? ['*'] : arguments[1];
+        var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
 
         var _ref6 = slicedToArray(_ref5, 1);
 
@@ -910,8 +1027,8 @@ var getScope = function getScope(el) {
  * Debounces a function.
  */
 var debounce = function debounce(func) {
-    var threshold = arguments.length <= 1 || arguments[1] === undefined ? 100 : arguments[1];
-    var execAsap = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+    var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
+    var execAsap = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
     if (!threshold) {
         return func;
@@ -1078,16 +1195,7 @@ var FieldBag = function () {
     function FieldBag() {
         classCallCheck(this, FieldBag);
 
-        // Needed to bypass render errors if the fields aren't populated yet.
-        this.fields = new Proxy({}, {
-            get: function get(target, property) {
-                if (!(property in target) && typeof property === 'string') {
-                    // eslint-disable-next-line
-                    target[property] = {};
-                }
-                return target[property];
-            }
-        });
+        this.fields = {};
     }
 
     /**
@@ -1098,6 +1206,7 @@ var FieldBag = function () {
     createClass(FieldBag, [{
         key: '_add',
         value: function _add(name) {
+            this.fields[name] = {};
             this._setFlags(name, { dirty: false, valid: false }, true);
         }
 
@@ -1120,7 +1229,7 @@ var FieldBag = function () {
         value: function _setFlags(name, flags) {
             var _this = this;
 
-            var initial = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+            var initial = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
             Object.keys(flags).forEach(function (flag) {
                 return _this._setFlag(name, flag, flags[flag], initial);
@@ -1134,7 +1243,7 @@ var FieldBag = function () {
     }, {
         key: '_setFlag',
         value: function _setFlag(name, flag, value) {
-            var initial = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
+            var initial = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
             var method = 'set' + flag.charAt(0).toUpperCase() + flag.slice(1);
             if (typeof this[method] !== 'function') {
@@ -1151,7 +1260,7 @@ var FieldBag = function () {
     }, {
         key: 'setDirty',
         value: function setDirty(name, value) {
-            var initial = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+            var initial = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
             this.fields[name].dirty = value;
             this.fields[name].clean = initial || !value;
@@ -1169,6 +1278,40 @@ var FieldBag = function () {
             this.fields[name].valid = value;
             this.fields[name].passed = this.fields[name].dirty && value;
             this.fields[name].failed = this.fields[name].dirty && !value;
+        }
+    }, {
+        key: '_getFieldFlag',
+        value: function _getFieldFlag(name) {
+            if (this.fields[name]) {
+                return this.fields[name];
+            }
+
+            return false;
+        }
+    }, {
+        key: 'dirty',
+        value: function dirty(name) {
+            return this._getFieldFlag(name, 'dirty');
+        }
+    }, {
+        key: 'valid',
+        value: function valid(name) {
+            return this._getFieldFlag(name, 'valid');
+        }
+    }, {
+        key: 'passed',
+        value: function passed(name) {
+            return this._getFieldFlag(name, 'passed');
+        }
+    }, {
+        key: 'failed',
+        value: function failed(name) {
+            return this._getFieldFlag(name, 'failed');
+        }
+    }, {
+        key: 'clean',
+        value: function clean(name) {
+            return this._getFieldFlag(name, 'clean');
         }
     }]);
     return FieldBag;
@@ -1232,7 +1375,7 @@ var Validator = function () {
     }, {
         key: 'setStrictMode',
         value: function setStrictMode() {
-            var strictMode = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+            var strictMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
             this.strictMode = strictMode;
         }
@@ -1273,7 +1416,7 @@ var Validator = function () {
     }, {
         key: 'attach',
         value: function attach(name, checks) {
-            var prettyName = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+            var prettyName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
             this.errorBag.remove(name);
             this._createField(name, checks);
@@ -1304,6 +1447,11 @@ var Validator = function () {
     }, {
         key: 'detach',
         value: function detach(name) {
+            if (this.$vm && typeof this.$vm.$emit === 'function') {
+                this.$vm.$emit('VALIDATOR_OFF', name);
+            }
+
+            this.errorBag.remove(name);
             delete this.$fields[name];
             this.fieldBag._remove(name);
         }
@@ -1521,10 +1669,24 @@ var Validator = function () {
         value: function _formatErrorMessage(field, rule) {
             if (!dictionary.hasLocale(this.locale) || typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
                 // Default to english message.
-                return dictionary.getMessage('en', rule.name)(field, rule.params);
+                return dictionary.getMessage('en', rule.name)(field, this._getLocalizedParams(rule));
             }
 
-            return dictionary.getMessage(this.locale, rule.name)(field, rule.params);
+            return dictionary.getMessage(this.locale, rule.name)(field, this._getLocalizedParams(rule));
+        }
+
+        /**
+         * Translates the parameters passed to the rule (mainly for target fields).
+         */
+
+    }, {
+        key: '_getLocalizedParams',
+        value: function _getLocalizedParams(rule) {
+            if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
+                return [dictionary.getAttribute(this.locale, rule.params[0], rule.params[0])];
+            }
+
+            return rule.params;
         }
 
         /**
@@ -1592,7 +1754,7 @@ var Validator = function () {
     }], [{
         key: 'setDefaultLocale',
         value: function setDefaultLocale() {
-            var language = arguments.length <= 0 || arguments[0] === undefined ? 'en' : arguments[0];
+            var language = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'en';
 
             /* istanbul ignore if */
             if (!dictionary.hasLocale(language)) {
@@ -1613,7 +1775,7 @@ var Validator = function () {
     }, {
         key: 'setStrictMode',
         value: function setStrictMode() {
-            var strictMode = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+            var strictMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
             STRICT_MODE = strictMode;
         }
@@ -1812,7 +1974,7 @@ var mixin = (function (options) {
 
         computed: defineProperty({}, options.fieldsBagName, {
             get: function get() {
-                return this.$validator.fieldBag.fields;
+                return this.$validator.fieldBag;
             }
         }),
         mounted: function mounted() {
@@ -1945,7 +2107,12 @@ var ListenerGenerator = function () {
             var listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
 
             this.vm.$on(DEFAULT_EVENT_NAME, listener);
-            this.callbacks.push({ event: DEFAULT_EVENT_NAME, listener: listener });
+            this.callbacks.push({ name: DEFAULT_EVENT_NAME, listener: listener });
+            this.vm.$on('VALIDATOR_OFF', function (field) {
+                if (_this3.fieldName === field) {
+                    _this3.detach();
+                }
+            });
 
             var fieldName = this._hasFieldDependency(this.el.dataset.rules);
             if (fieldName) {
@@ -1959,7 +2126,7 @@ var ListenerGenerator = function () {
                     }
 
                     target.addEventListener('input', listener);
-                    _this3.callbacks.push({ event: 'input', listener: listener, el: target });
+                    _this3.callbacks.push({ name: 'input', listener: listener, el: target });
                 });
             }
         }
@@ -2014,7 +2181,7 @@ var ListenerGenerator = function () {
                 this.vm.$once('validatorReady', function () {
                     [].concat(toConsumableArray(document.querySelectorAll('input[name="' + _this4.el.name + '"]'))).forEach(function (input) {
                         input.addEventListener(handler.name, listener);
-                        _this4.callbacks.push({ event: handler.name, callback: listener, el: input });
+                        _this4.callbacks.push({ name: handler.name, listener: listener, el: input });
                     });
                 });
 
@@ -2022,7 +2189,7 @@ var ListenerGenerator = function () {
             }
 
             this.el.addEventListener(handler.name, listener);
-            this.callbacks.push({ event: handler.name, callback: listener, el: this.el });
+            this.callbacks.push({ name: handler.name, listener: listener, el: this.el });
         }
 
         /**
@@ -2054,16 +2221,20 @@ var ListenerGenerator = function () {
     }, {
         key: 'detach',
         value: function detach() {
-            this.vm.$off(DEFAULT_EVENT_NAME, this.callbacks.filter(function (_ref) {
-                var event = _ref.event;
-                return event === DEFAULT_EVENT_NAME;
-            })[0]);
+            var _this5 = this;
+
+            this.callbacks.filter(function (_ref) {
+                var name = _ref.name;
+                return name === DEFAULT_EVENT_NAME;
+            }).forEach(function (h) {
+                _this5.vm.$off(DEFAULT_EVENT_NAME, h.listener);
+            });
 
             this.callbacks.filter(function (_ref2) {
-                var event = _ref2.event;
-                return event !== DEFAULT_EVENT_NAME;
+                var name = _ref2.name;
+                return name !== DEFAULT_EVENT_NAME;
             }).forEach(function (h) {
-                h.el.removeEventListener(h.event, h.listener);
+                h.el.removeEventListener(h.name, h.listener);
             });
         }
     }]);
@@ -2108,7 +2279,7 @@ var directive = (function (options) {
 
 // eslint-disable-next-line
 var install = function install(Vue) {
-    var _ref = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     var _ref$locale = _ref.locale;
     var locale = _ref$locale === undefined ? 'en' : _ref$locale;
