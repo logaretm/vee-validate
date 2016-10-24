@@ -19,6 +19,21 @@ export default class FieldBag {
     }
 
     /**
+     * Resets the flags state for a specified field or all fields.
+     */
+    reset(name) {
+        if (! name) {
+            Object.keys(this.fields).forEach(field => {
+                this._setFlags(field, { dirty: false, valid: false, }, true);
+            });
+
+            return;
+        }
+
+        this._setFlags(name, { dirty: false, valid: false, }, true);
+    }
+
+    /**
      * Sets the flags for a specified field.
      */
     _setFlags(name, flags, initial = false) {
@@ -72,22 +87,42 @@ export default class FieldBag {
     }
 
     dirty(name) {
+        if (! name) {
+            return Object.keys(this.fields).some(field => this.fields[field].dirty);
+        }
+
         return this._getFieldFlag(name, 'dirty');
     }
 
     valid(name) {
+        if (! name) {
+            return Object.keys(this.fields).every(field => this.fields[field].valid);
+        }
+
         return this._getFieldFlag(name, 'valid');
     }
 
     passed(name) {
+        if (! name) {
+            return Object.keys(this.fields).every(field => this.fields[field].passed);
+        }
+
         return this._getFieldFlag(name, 'passed');
     }
 
     failed(name) {
+        if (! name) {
+            return Object.keys(this.fields).some(field => this.fields[field].failed);
+        }
+
         return this._getFieldFlag(name, 'failed');
     }
 
     clean(name) {
+        if (! name) {
+            return ! this.dirty();
+        }
+
         return this._getFieldFlag(name, 'clean');
     }
 }
