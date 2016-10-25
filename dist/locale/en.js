@@ -2,6 +2,7 @@ export default {
     after: (field, [target]) => `The ${field} must be after ${target}.`,
     alpha_dash: (field) => `The ${field} may contain alpha-numeric characters as well as dashes and underscores.`,
     alpha_num: (field) => `The ${field} may only contain alpha-numeric characters.`,
+    alpha_spaces: (field) => `The ${field} may only contain alphabetic characters as well as spaces.`,
     alpha: (field) => `The ${field} may only contain alphabetic characters.`,
     before: (field, [target]) => `The ${field} must be before ${target}.`,
     between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
