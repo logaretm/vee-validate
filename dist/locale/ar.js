@@ -2,6 +2,7 @@ export default {
     after: (field, [target]) => `${field} يجب ان يكون بعد ${target}.`,
     alpha_dash: (field) => `${field} قد يحتوي على حروف او الرموز - و _.`,
     alpha_num: (field) => `${field} قد يحتوي فقط على حروف وارقام.`,
+    alpha_spaces: (field) => `${field} قد يحتوي فقط على حروف ومسافات.`,
     alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.`,
     before: (field, [target]) => `${field} يجب ان يكون قبل ${target}.`,
     between: (field, [min, max]) => `قيمة ${field} يجب ان تكون ما بين ${min} و ${max}.`,
