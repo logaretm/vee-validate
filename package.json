@@ -38,6 +38,7 @@
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-external-helpers": "^6.8.0",
     "babel-plugin-transform-async-to-generator": "^6.16.0",
+    "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-polyfill": "^6.16.0",
     "babel-preset-es2015": "^6.13.2",
     "cross-env": "^2.0.0",
