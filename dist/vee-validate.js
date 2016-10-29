@@ -4,27 +4,21 @@
   (global.VeeValidate = factory());
 }(this, (function () { 'use strict';
 
-var email$1 = (function (value) {
-  return (/^(([^<>()[\]\\.,;:#\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,6}))$/.test(value)
-  );
+var alpha$1 = (function (value) {
+  return !Array.isArray(value) && /^[a-zA-Z]*$/.test(value);
 });
 
-var In = (function (value, options) {
-  return !!options.filter(function (option) {
-    return option == value;
-  }).length;
-}); // eslint-disable-line
+var alpha_dash$1 = (function (value) {
+  return !Array.isArray(value) && /^[a-zA-Z0-9_-]*$/.test(value);
+});
 
-var required$1 = (function (value) {
-    if (Array.isArray(value)) {
-        return !!value.length;
-    }
+var alpha_num$1 = (function (value) {
+  return !Array.isArray(value) && /^[a-zA-Z0-9]*$/.test(value);
+});
 
-    if (value === undefined || value === null) {
-        return false;
-    }
-
-    return !!String(value).trim().length;
+var alpha_spaces$1 = (function (value) {
+  return (/^[a-zA-Z\s]*$/.test(String(value))
+  );
 });
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -197,6 +191,20 @@ var defineProperty = function (obj, key, value) {
   return obj;
 };
 
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
 var get$1 = function get$1(object, property, receiver) {
   if (object === null) object = Function.prototype;
   var desc = Object.getOwnPropertyDescriptor(object, property);
@@ -322,110 +330,47 @@ var toConsumableArray = function (arr) {
   }
 };
 
-var min$1 = (function (value, _ref) {
+var between$1 = (function (value, _ref) {
+  var _ref2 = slicedToArray(_ref, 2);
+
+  var min = _ref2[0];
+  var max = _ref2[1];
+  return Number(min) <= value && Number(max) >= value;
+});
+
+var confirmed$1 = (function (value, _ref) {
     var _ref2 = slicedToArray(_ref, 1);
 
-    var length = _ref2[0];
+    var confirmedField = _ref2[0];
 
-    if (value === undefined || value === null) {
-        return false;
-    }
-    return String(value).length >= length;
+    var field = document.querySelector("input[name='" + confirmedField + "']");
+
+    return !!(field && String(value) === field.value);
 });
 
-var max$1 = (function (value, _ref) {
+var decimal$1 = (function (value) {
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
+
     var _ref2 = slicedToArray(_ref, 1);
 
-    var length = _ref2[0];
+    var decimals = _ref2[0];
 
-    if (value === undefined || value === null) {
-        return length >= 0;
-    }
-
-    return String(value).length <= length;
-});
-
-var not_in$1 = (function (value, options) {
-  return !options.filter(function (option) {
-    return option == value;
-  }).length;
-}); // eslint-disable-line
-
-var alpha$1 = (function (value) {
-  return !Array.isArray(value) && /^[a-zA-Z]*$/.test(value);
-});
-
-var alpha_num$1 = (function (value) {
-  return !Array.isArray(value) && /^[a-zA-Z0-9]*$/.test(value);
-});
-
-var alpha_dash$1 = (function (value) {
-  return !Array.isArray(value) && /^[a-zA-Z0-9_-]*$/.test(value);
-});
-
-var numeric$1 = (function (value) {
-  return !Array.isArray(value) && /^[0-9]*$/.test(value);
-});
-
-var regex$1 = (function (value, _ref) {
-    var _ref2 = toArray(_ref);
-
-    var regex = _ref2[0];
-
-    var flags = _ref2.slice(1);
-
-    if (regex instanceof RegExp) {
-        return regex.test(value);
-    }
-
-    return new RegExp(regex, flags).test(String(value));
-});
-
-// TODO: Maybe add ipv6 flag?
-var ip$1 = (function (value) {
-  return (/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value)
-  );
-});
-
-var ext$1 = (function (files, extensions) {
-    var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
-    for (var i = 0; i < files.length; i++) {
-        if (!regex.test(files[i].name)) {
-            return false;
-        }
-    }
-
-    return true;
-});
-
-var mimes$1 = (function (files, mimes) {
-    var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
-    for (var i = 0; i < files.length; i++) {
-        if (!regex.test(files[i].type)) {
-            return false;
-        }
-    }
-
-    return true;
-});
-
-var size$1 = (function (files, _ref) {
-    var _ref2 = slicedToArray(_ref, 1);
-
-    var size = _ref2[0];
-
-    if (isNaN(size)) {
+    if (Array.isArray(value)) {
         return false;
     }
 
-    var nSize = Number(size) * 1024;
-    for (var i = 0; i < files.length; i++) {
-        if (files[i].size > nSize) {
-            return false;
-        }
+    if (value === null || value === undefined || value === '') {
+        return true;
     }
 
-    return true;
+    var regexPart = decimals === '*' ? '*' : '{0,' + decimals + '}';
+    var regex = new RegExp('^[0-9]*.?[0-9]' + regexPart + '$');
+
+    if (!regex.test(value)) {
+        return false;
+    }
+
+    return !Number.isNaN(parseFloat(value));
 });
 
 var digits$1 = (function (value, _ref) {
@@ -437,16 +382,6 @@ var digits$1 = (function (value, _ref) {
 
     return (/^[0-9]*$/.test(strVal) && strVal.length === Number(length)
     );
-});
-
-var image$1 = (function (files) {
-    for (var i = 0; i < files.length; i++) {
-        if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
-            return false;
-        }
-    }
-
-    return true;
 });
 
 var validateImage = function validateImage(file, width, height) {
@@ -487,22 +422,131 @@ var dimensions$1 = (function (files, _ref) {
     }));
 });
 
-var between$1 = (function (value, _ref) {
-  var _ref2 = slicedToArray(_ref, 2);
-
-  var min = _ref2[0];
-  var max = _ref2[1];
-  return Number(min) <= value && Number(max) >= value;
+var email$1 = (function (value) {
+  return (/^(([^<>()[\]\\.,;:#\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,6}))$/.test(value)
+  );
 });
 
-var confirmed$1 = (function (value, _ref) {
+var ext$1 = (function (files, extensions) {
+    var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
+    for (var i = 0; i < files.length; i++) {
+        if (!regex.test(files[i].name)) {
+            return false;
+        }
+    }
+
+    return true;
+});
+
+var image$1 = (function (files) {
+    for (var i = 0; i < files.length; i++) {
+        if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
+            return false;
+        }
+    }
+
+    return true;
+});
+
+var In = (function (value, options) {
+  return !!options.filter(function (option) {
+    return option == value;
+  }).length;
+}); // eslint-disable-line
+
+// TODO: Maybe add ipv6 flag?
+var ip$1 = (function (value) {
+  return (/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value)
+  );
+});
+
+var max$1 = (function (value, _ref) {
     var _ref2 = slicedToArray(_ref, 1);
 
-    var confirmedField = _ref2[0];
+    var length = _ref2[0];
 
-    var field = document.querySelector("input[name='" + confirmedField + "']");
+    if (value === undefined || value === null) {
+        return length >= 0;
+    }
 
-    return !!(field && String(value) === field.value);
+    return String(value).length <= length;
+});
+
+var mimes$1 = (function (files, mimes) {
+    var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
+    for (var i = 0; i < files.length; i++) {
+        if (!regex.test(files[i].type)) {
+            return false;
+        }
+    }
+
+    return true;
+});
+
+var min$1 = (function (value, _ref) {
+    var _ref2 = slicedToArray(_ref, 1);
+
+    var length = _ref2[0];
+
+    if (value === undefined || value === null) {
+        return false;
+    }
+    return String(value).length >= length;
+});
+
+var not_in$1 = (function (value, options) {
+  return !options.filter(function (option) {
+    return option == value;
+  }).length;
+}); // eslint-disable-line
+
+var numeric$1 = (function (value) {
+  return !Array.isArray(value) && /^[0-9]*$/.test(value);
+});
+
+var regex$1 = (function (value, _ref) {
+    var _ref2 = toArray(_ref);
+
+    var regex = _ref2[0];
+
+    var flags = _ref2.slice(1);
+
+    if (regex instanceof RegExp) {
+        return regex.test(value);
+    }
+
+    return new RegExp(regex, flags).test(String(value));
+});
+
+var required$1 = (function (value) {
+    if (Array.isArray(value)) {
+        return !!value.length;
+    }
+
+    if (value === undefined || value === null) {
+        return false;
+    }
+
+    return !!String(value).trim().length;
+});
+
+var size$1 = (function (files, _ref) {
+    var _ref2 = slicedToArray(_ref, 1);
+
+    var size = _ref2[0];
+
+    if (isNaN(size)) {
+        return false;
+    }
+
+    var nSize = Number(size) * 1024;
+    for (var i = 0; i < files.length; i++) {
+        if (files[i].size > nSize) {
+            return false;
+        }
+    }
+
+    return true;
 });
 
 var url$1 = (function (value, params) {
@@ -517,54 +561,31 @@ var url$1 = (function (value, params) {
     return isUrl;
 });
 
-var decimal$1 = (function (value) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
-
-    var _ref2 = slicedToArray(_ref, 1);
-
-    var decimals = _ref2[0];
-
-    if (Array.isArray(value)) {
-        return false;
-    }
-
-    if (value === null || value === undefined || value === '') {
-        return true;
-    }
-
-    var regexPart = decimals === '*' ? '*' : '{0,' + decimals + '}';
-    var regex = new RegExp('^[0-9]*.?[0-9]' + regexPart + '$');
-
-    if (!regex.test(value)) {
-        return false;
-    }
-
-    return !Number.isNaN(parseFloat(value));
-});
-
+/* eslint-disable camelcase */
 var Rules = {
-    email: email$1,
-    min: min$1,
-    max: max$1,
-    required: required$1,
-    in: In,
-    not_in: not_in$1,
-    alpha: alpha$1,
-    alpha_num: alpha_num$1,
     alpha_dash: alpha_dash$1,
-    numeric: numeric$1,
-    regex: regex$1,
-    ip: ip$1,
-    ext: ext$1,
-    mimes: mimes$1,
-    size: size$1,
-    digits: digits$1,
-    image: image$1,
-    dimensions: dimensions$1,
+    alpha_num: alpha_num$1,
+    alpha_spaces: alpha_spaces$1,
+    alpha: alpha$1,
     between: between$1,
     confirmed: confirmed$1,
-    url: url$1,
-    decimal: decimal$1
+    decimal: decimal$1,
+    digits: digits$1,
+    dimensions: dimensions$1,
+    email: email$1,
+    ext: ext$1,
+    image: image$1,
+    in: In,
+    ip: ip$1,
+    max: max$1,
+    mimes: mimes$1,
+    min: min$1,
+    not_in: not_in$1,
+    numeric: numeric$1,
+    regex: regex$1,
+    required: required$1,
+    size: size$1,
+    url: url$1
 };
 
 var ErrorBag = function () {
@@ -901,14 +922,14 @@ var Dictionary = function () {
             Object.keys(source).forEach(function (key) {
                 if (_this._isObject(source[key])) {
                     if (!target[key]) {
-                        Object.assign(target, defineProperty({}, key, {}));
+                        _extends(target, defineProperty({}, key, {}));
                     }
 
                     _this._merge(target[key], source[key]);
                     return;
                 }
 
-                Object.assign(target, defineProperty({}, key, source[key]));
+                _extends(target, defineProperty({}, key, source[key]));
             });
 
             return target;
@@ -925,6 +946,9 @@ var messages = {
     },
     alpha_num: function alpha_num(field) {
         return 'The ' + field + ' may only contain alpha-numeric characters.';
+    },
+    alpha_spaces: function alpha_spaces(field) {
+        return 'The ' + field + ' may only contain alphabetic characters as well as spaces.';
     },
     alpha: function alpha(field) {
         return 'The ' + field + ' may only contain alphabetic characters.';
@@ -1201,8 +1225,34 @@ var FieldBag = function () {
     createClass(FieldBag, [{
         key: '_add',
         value: function _add(name) {
-            this.fields[name] = {};
-            this.$vm.$set('fields.' + name, {});
+            this._update(name, {});
+            this._setFlags(name, { dirty: false, valid: false }, true);
+        }
+    }, {
+        key: '_update',
+        value: function _update(name, value) {
+            this.fields[name] = value;
+            if (this.$vm && typeof this.$vm.$set === 'function') {
+                this.$vm.$set('fields.' + name, value);
+            }
+        }
+
+        /**
+         * Resets the flags for a specific field.
+         */
+
+    }, {
+        key: 'reset',
+        value: function reset(name) {
+            var _this = this;
+
+            if (!name) {
+                Object.keys(this.fields).forEach(function (field) {
+                    _this._setFlags(field, { dirty: false, valid: false }, true);
+                });
+
+                return;
+            }
             this._setFlags(name, { dirty: false, valid: false }, true);
         }
 
@@ -1223,17 +1273,15 @@ var FieldBag = function () {
     }, {
         key: '_setFlags',
         value: function _setFlags(name, flags) {
-            var _this = this;
+            var _this2 = this;
 
             var initial = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
             var success = Object.keys(flags).every(function (flag) {
-                return _this._setFlag(name, flag, flags[flag], initial);
+                return _this2._setFlag(name, flag, flags[flag], initial);
             });
 
-            if (success) {
-                this.$vm.$set('fields.' + name, this.fields[name]);
-            }
+            this._update(name, this.fields[name]);
 
             return success;
         }
@@ -1300,26 +1348,62 @@ var FieldBag = function () {
     }, {
         key: 'dirty',
         value: function dirty(name) {
+            var _this3 = this;
+
+            if (!name) {
+                return Object.keys(this.fields).some(function (field) {
+                    return _this3.fields[field].dirty;
+                });
+            }
+
             return this._getFieldFlag(name, 'dirty');
         }
     }, {
         key: 'valid',
         value: function valid(name) {
+            var _this4 = this;
+
+            if (!name) {
+                return Object.keys(this.fields).every(function (field) {
+                    return _this4.fields[field].valid;
+                });
+            }
+
             return this._getFieldFlag(name, 'valid');
         }
     }, {
         key: 'passed',
         value: function passed(name) {
+            var _this5 = this;
+
+            if (!name) {
+                return Object.keys(this.fields).every(function (field) {
+                    return _this5.fields[field].passed;
+                });
+            }
+
             return this._getFieldFlag(name, 'passed');
         }
     }, {
         key: 'failed',
         value: function failed(name) {
+            var _this6 = this;
+
+            if (!name) {
+                return Object.keys(this.fields).some(function (field) {
+                    return _this6.fields[field].failed;
+                });
+            }
+
             return this._getFieldFlag(name, 'failed');
         }
     }, {
         key: 'clean',
         value: function clean(name) {
+            if (!name) {
+                return !this.dirty();
+            }
+
             return this._getFieldFlag(name, 'clean');
         }
     }]);

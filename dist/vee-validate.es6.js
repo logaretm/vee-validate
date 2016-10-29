@@ -1,108 +1,42 @@
-var email = (value) => /^(([^<>()[\]\\.,;:#\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,6}))$/.test(value);
-
-var In = (value, options) => !! options.filter(option => option == value).length; // eslint-disable-line
-
-var required = (value) => {
-    if (Array.isArray(value)) {
-        return !! value.length;
-    }
-
-    if (value === undefined || value === null) {
-        return false;
-    }
-
-    return !! String(value).trim().length;
-};
-
-var min = (value, [length]) => {
-    if (value === undefined || value === null) {
-        return false;
-    }
-    return String(value).length >= length;
-};
-
-var max = (value, [length]) => {
-    if (value === undefined || value === null) {
-        return length >= 0;
-    }
-
-    return String(value).length <= length;
-};
-
-var not_in = (value, options) => ! options.filter(option => option == value).length; // eslint-disable-line
-
 var alpha = (value) => ! Array.isArray(value) && /^[a-zA-Z]*$/.test(value);
-
-var alpha_num = (value) => ! Array.isArray(value) && /^[a-zA-Z0-9]*$/.test(value);
 
 var alpha_dash = (value) => ! Array.isArray(value) && /^[a-zA-Z0-9_-]*$/.test(value);
 
-var numeric = (value) => ! Array.isArray(value) && /^[0-9]*$/.test(value);
+var alpha_num = (value) => ! Array.isArray(value) && /^[a-zA-Z0-9]*$/.test(value);
 
-var regex = (value, [regex, ...flags]) => {
-    if (regex instanceof RegExp) {
-        return regex.test(value);
-    }
+var alpha_spaces = (value) => /^[a-zA-Z\s]*$/.test(String(value));
 
-    return new RegExp(regex, flags).test(String(value));
+var between = (value, [min, max]) => Number(min) <= value && Number(max) >= value;
+
+var confirmed = (value, [confirmedField]) => {
+    const field = document.querySelector(`input[name='${confirmedField}']`);
+
+    return !! (field && String(value) === field.value);
 };
 
-// TODO: Maybe add ipv6 flag?
-var ip = (value) =>
-/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-.test(value);
-
-var ext = (files, extensions) => {
-    const regex = new RegExp(`\.(${extensions.join('|')})$`, 'i');
-    for (let i = 0; i < files.length; i++) {
-        if (! regex.test(files[i].name)) {
-            return false;
-        }
-    }
-
-    return true;
-};
-
-var mimes = (files, mimes) => {
-    const regex = new RegExp(`${mimes.join('|').replace('*', '.+')}$`, 'i');
-    for (let i = 0; i < files.length; i++) {
-        if (! regex.test(files[i].type)) {
-            return false;
-        }
-    }
-
-    return true;
-};
-
-var size = (files, [size]) => {
-    if (isNaN(size)) {
+var decimal = (value, [decimals] = ['*']) => {
+    if (Array.isArray(value)) {
         return false;
     }
 
-    const nSize = Number(size) * 1024;
-    for (let i = 0; i < files.length; i++) {
-        if (files[i].size > nSize) {
-            return false;
-        }
+    if (value === null || value === undefined || value === '') {
+        return true;
     }
 
-    return true;
+    const regexPart = decimals === '*' ? '*' : `{0,${decimals}}`;
+    const regex = new RegExp(`^[0-9]*.?[0-9]${regexPart}$`);
+
+    if (! regex.test(value)) {
+        return false;
+    }
+
+    return ! Number.isNaN(parseFloat(value));
 };
 
 var digits = (value, [length]) => {
     const strVal = String(value);
 
     return /^[0-9]*$/.test(strVal) && strVal.length === Number(length);
-};
-
-var image = (files) => {
-    for (let i = 0; i < files.length; i++) {
-        if (! /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
-            return false;
-        }
-    }
-
-    return true;
 };
 
 const validateImage = (file, width, height) => {
@@ -132,12 +66,99 @@ var dimensions = (files, [width, height]) => {
     return Promise.all(list.map(file => validateImage(file, width, height)));
 };
 
-var between = (value, [min, max]) => Number(min) <= value && Number(max) >= value;
+var email = (value) => /^(([^<>()[\]\\.,;:#\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,6}))$/.test(value);
 
-var confirmed = (value, [confirmedField]) => {
-    const field = document.querySelector(`input[name='${confirmedField}']`);
+var ext = (files, extensions) => {
+    const regex = new RegExp(`\.(${extensions.join('|')})$`, 'i');
+    for (let i = 0; i < files.length; i++) {
+        if (! regex.test(files[i].name)) {
+            return false;
+        }
+    }
 
-    return !! (field && String(value) === field.value);
+    return true;
+};
+
+var image = (files) => {
+    for (let i = 0; i < files.length; i++) {
+        if (! /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+var In = (value, options) => !! options.filter(option => option == value).length; // eslint-disable-line
+
+// TODO: Maybe add ipv6 flag?
+var ip = (value) =>
+/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+.test(value);
+
+var max = (value, [length]) => {
+    if (value === undefined || value === null) {
+        return length >= 0;
+    }
+
+    return String(value).length <= length;
+};
+
+var mimes = (files, mimes) => {
+    const regex = new RegExp(`${mimes.join('|').replace('*', '.+')}$`, 'i');
+    for (let i = 0; i < files.length; i++) {
+        if (! regex.test(files[i].type)) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+var min = (value, [length]) => {
+    if (value === undefined || value === null) {
+        return false;
+    }
+    return String(value).length >= length;
+};
+
+var not_in = (value, options) => ! options.filter(option => option == value).length; // eslint-disable-line
+
+var numeric = (value) => ! Array.isArray(value) && /^[0-9]*$/.test(value);
+
+var regex = (value, [regex, ...flags]) => {
+    if (regex instanceof RegExp) {
+        return regex.test(value);
+    }
+
+    return new RegExp(regex, flags).test(String(value));
+};
+
+var required = (value) => {
+    if (Array.isArray(value)) {
+        return !! value.length;
+    }
+
+    if (value === undefined || value === null) {
+        return false;
+    }
+
+    return !! String(value).trim().length;
+};
+
+var size = (files, [size]) => {
+    if (isNaN(size)) {
+        return false;
+    }
+
+    const nSize = Number(size) * 1024;
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].size > nSize) {
+            return false;
+        }
+    }
+
+    return true;
 };
 
 var url = (value, params) => {
@@ -154,48 +175,31 @@ var url = (value, params) => {
     return isUrl;
 };
 
-var decimal = (value, [decimals] = ['*']) => {
-    if (Array.isArray(value)) {
-        return false;
-    }
-
-    if (value === null || value === undefined || value === '') {
-        return true;
-    }
-
-    const regexPart = decimals === '*' ? '*' : `{0,${decimals}}`;
-    const regex = new RegExp(`^[0-9]*.?[0-9]${regexPart}$`);
-
-    if (! regex.test(value)) {
-        return false;
-    }
-
-    return ! Number.isNaN(parseFloat(value));
-};
-
+/* eslint-disable camelcase */
 var Rules = {
-    email,
-    min,
-    max,
-    required,
-    in: In,
-    not_in,
-    alpha,
-    alpha_num,
     alpha_dash,
-    numeric,
-    regex,
-    ip,
-    ext,
-    mimes,
-    size,
-    digits,
-    image,
-    dimensions,
+    alpha_num,
+    alpha_spaces,
+    alpha,
     between,
     confirmed,
-    url,
-    decimal
+    decimal,
+    digits,
+    dimensions,
+    email,
+    ext,
+    image,
+    in: In,
+    ip,
+    max,
+    mimes,
+    min,
+    not_in,
+    numeric,
+    regex,
+    required,
+    size,
+    url
 };
 
 class ErrorBag
@@ -474,6 +478,7 @@ class Dictionary
 var messages = {
     alpha_dash: (field) => `The ${field} may contain alpha-numeric characters as well as dashes and underscores.`,
     alpha_num: (field) => `The ${field} may only contain alpha-numeric characters.`,
+    alpha_spaces: (field) => `The ${field} may only contain alphabetic characters as well as spaces.`,
     alpha: (field) => `The ${field} may only contain alphabetic characters.`,
     between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
     confirmed: (field, [confirmedField]) => `The ${field} does not match the ${confirmedField}.`,
@@ -616,8 +621,28 @@ class FieldBag {
      * Initializes and adds a new field to the bag.
      */
     _add(name) {
-        this.fields[name] = {};
-        this.$vm.$set(`fields.${name}`, {});
+        this._update(name, {});
+        this._setFlags(name, { dirty: false, valid: false }, true);
+    }
+
+    _update(name, value) {
+        this.fields[name] = value;
+        if (this.$vm && typeof this.$vm.$set === 'function') {
+            this.$vm.$set(`fields.${name}`, value);
+        }
+    }
+
+    /**
+     * Resets the flags for a specific field.
+     */
+    reset(name) {
+        if (! name) {
+            Object.keys(this.fields).forEach(field => {
+                this._setFlags(field, { dirty: false, valid: false }, true);
+            });
+
+            return;
+        }
         this._setFlags(name, { dirty: false, valid: false }, true);
     }
 
@@ -636,9 +661,7 @@ class FieldBag {
             flag => this._setFlag(name, flag, flags[flag], initial)
         );
 
-        if (success) {
-            this.$vm.$set(`fields.${name}`, this.fields[name]);
-        }
+        this._update(name, this.fields[name]);
 
         return success;
     }
@@ -688,22 +711,42 @@ class FieldBag {
     }
 
     dirty(name) {
+        if (! name) {
+            return Object.keys(this.fields).some(field => this.fields[field].dirty);
+        }
+
         return this._getFieldFlag(name, 'dirty');
     }
 
     valid(name) {
+        if (! name) {
+            return Object.keys(this.fields).every(field => this.fields[field].valid);
+        }
+
         return this._getFieldFlag(name, 'valid');
     }
 
     passed(name) {
+        if (! name) {
+            return Object.keys(this.fields).every(field => this.fields[field].passed);
+        }
+
         return this._getFieldFlag(name, 'passed');
     }
 
     failed(name) {
+        if (! name) {
+            return Object.keys(this.fields).some(field => this.fields[field].failed);
+        }
+
         return this._getFieldFlag(name, 'failed');
     }
 
     clean(name) {
+        if (! name) {
+            return ! this.dirty();
+        }
+
         return this._getFieldFlag(name, 'clean');
     }
 }
