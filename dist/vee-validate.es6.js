@@ -621,15 +621,11 @@ class FieldBag {
      * Initializes and adds a new field to the bag.
      */
     _add(name) {
-        this._update(name, {});
-        this._setFlags(name, { dirty: false, valid: false }, true);
-    }
-
-    _update(name, value) {
-        this.fields[name] = value;
-        if (this.$vm && typeof this.$vm.$set === 'function') {
-            this.$vm.$set(`fields.${name}`, value);
+        this.fields[name] = {};
+        if (typeof this.$vm.$set === 'function') {
+            this.$vm.$set(`fields.${name}`, {});
         }
+        this._setFlags(name, { dirty: false, valid: false }, true);
     }
 
     /**
@@ -661,7 +657,9 @@ class FieldBag {
             flag => this._setFlag(name, flag, flags[flag], initial)
         );
 
-        this._update(name, this.fields[name]);
+        if (success && this.$vm && typeof this.$vm.$set === 'function') {
+            this.$vm.$set(`fields.${name}`, this.fields[name]);
+        }
 
         return success;
     }

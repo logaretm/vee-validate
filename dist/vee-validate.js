@@ -1225,16 +1225,11 @@ var FieldBag = function () {
     createClass(FieldBag, [{
         key: '_add',
         value: function _add(name) {
-            this._update(name, {});
-            this._setFlags(name, { dirty: false, valid: false }, true);
-        }
-    }, {
-        key: '_update',
-        value: function _update(name, value) {
-            this.fields[name] = value;
-            if (this.$vm && typeof this.$vm.$set === 'function') {
-                this.$vm.$set('fields.' + name, value);
+            this.fields[name] = {};
+            if (typeof this.$vm.$set === 'function') {
+                this.$vm.$set('fields.' + name, {});
             }
+            this._setFlags(name, { dirty: false, valid: false }, true);
         }
 
         /**
@@ -1281,7 +1276,9 @@ var FieldBag = function () {
                 return _this2._setFlag(name, flag, flags[flag], initial);
             });
 
-            this._update(name, this.fields[name]);
+            if (success && this.$vm && typeof this.$vm.$set === 'function') {
+                this.$vm.$set('fields.' + name, this.fields[name]);
+            }
 
             return success;
         }
