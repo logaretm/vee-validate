@@ -3,7 +3,7 @@ import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
 import Dictionary from './dictionary';
 import messages from './messages';
-import { warn } from './utils/helpers';
+import { warn, isObject } from './utils/helpers';
 import date from './plugins/date';
 import FieldBag from './fieldBag';
 
@@ -428,16 +428,20 @@ export default class Validator
      *
      * @param  {string} field The field name.
      * @param  {object} rule Normalized rule object.
+     * @param {object} data Additional Information about the validation result.
      * @return {string} msg Formatted error message.
      */
-    _formatErrorMessage(field, rule) {
+    _formatErrorMessage(field, rule, data = {}) {
+        const name = this._getFieldDisplayName(field);
+        const params = this._getLocalizedParams(rule);
+
         if (! dictionary.hasLocale(this.locale) ||
          typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
             // Default to english message.
-            return dictionary.getMessage('en', rule.name)(field, this._getLocalizedParams(rule));
+            return dictionary.getMessage('en', rule.name)(name, params, data);
         }
 
-        return dictionary.getMessage(this.locale, rule.name)(field, this._getLocalizedParams(rule));
+        return dictionary.getMessage(this.locale, rule.name)(name, params, data);
     }
 
     /**
@@ -471,26 +475,42 @@ export default class Validator
      */
     _test(name, value, rule, scope) {
         const validator = Rules[rule.name];
-        const valid = validator(value, rule.params);
-        const displayName = this._getFieldDisplayName(name);
+        const result = validator(value, rule.params);
 
-        if (typeof valid.then === 'function') {
-            return valid.then(values => {
-                const allValid = Array.isArray(values) ? values.every(t => t.valid) : values.valid;
-
-                if (! allValid) {
-                    this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
+        if (typeof result.then === 'function') {
+            return result.then(values => {
+                let allValid = true;
+                if (Array.isArray(values)) {
+                    allValid = values.every(t => t.valid);
+                    if (! allValid) {
+                        this.errorBag.add(name, this._formatErrorMessage(name, rule), scope);
+                    }
+                } else { // Is a single object.
+                    allValid = values.valid;
+                    this.errorBag.add(
+                        name,
+                        this._formatErrorMessage(name, rule, values.data),
+                        scope
+                    );
                 }
 
                 return allValid;
             });
         }
 
-        if (! valid) {
-            this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
+        if (isObject(result)) {
+            if (! result.valid) {
+                this.errorBag.add(name, this._formatErrorMessage(name, rule, result.data), scope);
+            }
+
+            return result.valid;
         }
 
-        return valid;
+        if (! result) {
+            this.errorBag.add(name, this._formatErrorMessage(name, rule), scope);
+        }
+
+        return result;
     }
 
     /**
