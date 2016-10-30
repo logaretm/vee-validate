@@ -450,25 +450,25 @@ it('validators can specify a reason for failing that will alter the error messag
 
     v.extend('reason_test', {
         getMessage(field, params, data) {
-            return data.message || 'Something went wrong';
+            return (data && data.message) || 'Something went wrong';
         },
         validate(value) {
             if (value === 'trigger') {
                 return {
                     valid: false,
                     data: {
-                        message: 'Not this value';
+                        message: 'Not this value'
                     }
                 }
             }
 
             return !! value;
         }
-    })
+    });
     v.attach('reason_field', 'reason_test');
 
-    expect(v.validate('reason_field', 'trigger')).toBe(false);
-    expect(v.errorBag.first('reason_field')).toBe('Not This Value');
+    expect(v.validate('reason_field', 'trigger')).toEqual(false);
+    expect(v.errorBag.first('reason_field')).toBe('Not this value');
     expect(v.validate('reason_field', false)).toBe(false);
     expect(v.errorBag.first('reason_field')).toBe('Something went wrong');
 });
