@@ -444,3 +444,31 @@ it('can translate target field for field dependent validations', () => {
     v.validate('email', 'someotheremail@gmail.com');
     expect(v.errorBag.first('email')).toBe('The Email Address does not match the Email Confirmation.');
 });
+
+it('validators can specify a reason for failing that will alter the error message', () => {
+    const v = new Validator();
+
+    v.extend('reason_test', {
+        getMessage(field, params, data) {
+            return data.message || 'Something went wrong';
+        },
+        validate(value) {
+            if (value === 'trigger') {
+                return {
+                    valid: false,
+                    data: {
+                        message: 'Not this value';
+                    }
+                }
+            }
+
+            return !! value;
+        }
+    })
+    v.attach('reason_field', 'reason_test');
+
+    expect(v.validate('reason_field', 'trigger')).toBe(false);
+    expect(v.errorBag.first('reason_field')).toBe('Not This Value');
+    expect(v.validate('reason_field', false)).toBe(false);
+    expect(v.errorBag.first('reason_field')).toBe('Something went wrong');
+});
