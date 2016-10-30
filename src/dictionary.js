@@ -1,4 +1,6 @@
 /* eslint-disable prefer-rest-params */
+import { isObject } from './utils/helpers';
+
 export default class Dictionary
 {
     constructor(dictionary = {}) {
@@ -68,17 +70,13 @@ export default class Dictionary
         this.dictionary[locale].attributes[key] = attribute;
     }
 
-    _isObject(object) {
-        return object && typeof object === 'object' && ! Array.isArray(object) && object !== null;
-    }
-
     _merge(target, source) {
-        if (! (this._isObject(target) && this._isObject(source))) {
+        if (! (isObject(target) && isObject(source))) {
             return target;
         }
 
         Object.keys(source).forEach(key => {
-            if (this._isObject(source[key])) {
+            if (isObject(source[key])) {
                 if (! target[key]) {
                     Object.assign(target, { [key]: {} });
                 }
