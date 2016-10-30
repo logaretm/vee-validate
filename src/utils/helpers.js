@@ -43,3 +43,11 @@ export const warn = (message) => {
 
     console.warn(`vee-validate: ${message}`); // eslint-disable-line
 };
+
+/**
+ * Checks if the value is an object.
+ */
+ // eslint-disable-next-line
+export const isObject = (object) => {
+    return object && typeof object === 'object' && ! Array.isArray(object) && object !== null;
+};
