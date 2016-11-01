@@ -23,8 +23,8 @@ var decimal = (value, [decimals] = ['*']) => {
         return true;
     }
 
-    const regexPart = decimals === '*' ? '*' : `{0,${decimals}}`;
-    const regex = new RegExp(`^[0-9]*.?[0-9]${regexPart}$`);
+    const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
+    const regex = new RegExp(`^-?\\d*(\\.\\d${regexPart})?$`);
 
     if (! regex.test(value)) {
         return false;
@@ -377,6 +377,53 @@ var ValidatorException = class
     }
 };
 
+/**
+ * Determines the input field scope.
+ */
+const getScope = (el) => {
+    return el.dataset.scope || (el.form && el.form.dataset.scope);
+};
+
+const debounce = (func, threshold = 100, execAsap = false) => {
+    if (! threshold) {
+        return func;
+    }
+
+    let timeout;
+
+    return function debounced([...args]) {
+        const obj = this;
+
+        function delayed() {
+            if (!execAsap) {
+                func.apply(obj, args);
+            }
+            timeout = null;
+        }
+
+        if (timeout) {
+            clearTimeout(timeout);
+        } else if (execAsap) {
+            func.apply(obj, ...args);
+        }
+
+        timeout = setTimeout(delayed, threshold || 100);
+    };
+};
+
+const warn = (message) => {
+    if (! console) {
+        return;
+    }
+
+    console.warn(`vee-validate: ${message}`); // eslint-disable-line
+};
+
+// eslint-disable-next-line
+const isObject = (object) => {
+    return object && typeof object === 'object' && ! Array.isArray(object) && object !== null;
+};
+
 /* eslint-disable prefer-rest-params */
 class Dictionary
 {
@@ -447,17 +494,13 @@ class Dictionary
         this.dictionary[locale].attributes[key] = attribute;
     }
 
-    _isObject(object) {
-        return object && typeof object === 'object' && ! Array.isArray(object) && object !== null;
-    }
-
     _merge(target, source) {
-        if (! (this._isObject(target) && this._isObject(source))) {
+        if (! (isObject(target) && isObject(source))) {
             return target;
         }
 
         Object.keys(source).forEach(key => {
-            if (this._isObject(source[key])) {
+            if (isObject(source[key])) {
                 if (! target[key]) {
                     Object.assign(target, { [key]: {} });
                 }
@@ -499,48 +542,6 @@ var messages = {
     required: (field) => `The ${field} is required.`,
     size: (field, [size]) => `The ${field} must be less than ${size} KB.`,
     url: (field) => `The ${field} is not a valid URL.`
-};
-
-/**
- * Determines the input field scope.
- */
-const getScope = (el) => {
-    return el.dataset.scope || (el.form && el.form.dataset.scope);
-};
-
-const debounce = (func, threshold = 100, execAsap = false) => {
-    if (! threshold) {
-        return func;
-    }
-
-    let timeout;
-
-    return function debounced([...args]) {
-        const obj = this;
-
-        function delayed() {
-            if (!execAsap) {
-                func.apply(obj, args);
-            }
-            timeout = null;
-        }
-
-        if (timeout) {
-            clearTimeout(timeout);
-        } else if (execAsap) {
-            func.apply(obj, ...args);
-        }
-
-        timeout = setTimeout(delayed, threshold || 100);
-    };
-};
-
-const warn = (message) => {
-    if (! console) {
-        return;
-    }
-
-    console.warn(`vee-validate: ${message}`); // eslint-disable-line
 };
 
 var after = (moment) => (value, [targetField, format]) => {
@@ -622,7 +623,7 @@ class FieldBag {
      */
     _add(name) {
         this.fields[name] = {};
-        if (typeof this.$vm.$set === 'function') {
+        if (this.$vm && typeof this.$vm.$set === 'function') {
             this.$vm.$set(`fields.${name}`, {});
         }
         this._setFlags(name, { dirty: false, valid: false }, true);
@@ -1170,16 +1171,20 @@ class Validator
      *
      * @param  {string} field The field name.
      * @param  {object} rule Normalized rule object.
+     * @param {object} data Additional Information about the validation result.
      * @return {string} msg Formatted error message.
      */
-    _formatErrorMessage(field, rule) {
+    _formatErrorMessage(field, rule, data = {}) {
+        const name = this._getFieldDisplayName(field);
+        const params = this._getLocalizedParams(rule);
+
         if (! dictionary.hasLocale(this.locale) ||
          typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
             // Default to english message.
-            return dictionary.getMessage('en', rule.name)(field, this._getLocalizedParams(rule));
+            return dictionary.getMessage('en', rule.name)(name, params, data);
         }
 
-        return dictionary.getMessage(this.locale, rule.name)(field, this._getLocalizedParams(rule));
+        return dictionary.getMessage(this.locale, rule.name)(name, params, data);
     }
 
     /**
@@ -1213,26 +1218,42 @@ class Validator
      */
     _test(name, value, rule, scope) {
         const validator = Rules[rule.name];
-        const valid = validator(value, rule.params);
-        const displayName = this._getFieldDisplayName(name);
+        const result = validator(value, rule.params);
 
-        if (typeof valid.then === 'function') {
-            return valid.then(values => {
-                const allValid = Array.isArray(values) ? values.every(t => t.valid) : values.valid;
-
-                if (! allValid) {
-                    this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
+        if (typeof result.then === 'function') {
+            return result.then(values => {
+                let allValid = true;
+                if (Array.isArray(values)) {
+                    allValid = values.every(t => t.valid);
+                    if (! allValid) {
+                        this.errorBag.add(name, this._formatErrorMessage(name, rule), scope);
+                    }
+                } else { // Is a single object.
+                    allValid = values.valid;
+                    this.errorBag.add(
+                        name,
+                        this._formatErrorMessage(name, rule, values.data),
+                        scope
+                    );
                 }
 
                 return allValid;
             });
         }
 
-        if (! valid) {
-            this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
+        if (isObject(result)) {
+            if (! result.valid) {
+                this.errorBag.add(name, this._formatErrorMessage(name, rule, result.data), scope);
+            }
+
+            return result.valid;
         }
 
-        return valid;
+        if (! result) {
+            this.errorBag.add(name, this._formatErrorMessage(name, rule), scope);
+        }
+
+        return result;
     }
 
     /**
