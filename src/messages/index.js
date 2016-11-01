@@ -22,6 +22,7 @@ export default {
     numeric: (field) => `The ${field} may only contain numeric characters.`,
     regex: (field) => `The ${field} format is invalid.`,
     required: (field) => `The ${field} is required.`,
+    required_if: (field, [targetField, targetValue]) => `The ${field} is required when ${targetField} is ${targetValue}`,
     size: (field, [size]) => `The ${field} must be less than ${size} KB.`,
     url: (field) => `The ${field} is not a valid URL.`
 };

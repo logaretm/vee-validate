@@ -390,7 +390,7 @@ export default class Validator
 
         checks.split('|').forEach(rule => {
             const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
-            if (normalizedRule.name === 'required') {
+            if (normalizedRule.name === 'required' || normalizedRule.name === 'required_if') {
                 this.$fields[name].required = true;
             }
 
