@@ -7,8 +7,8 @@ export default (value, [decimals] = ['*']) => {
         return true;
     }
 
-    const regexPart = decimals === '*' ? '*' : `{0,${decimals}}`;
-    const regex = new RegExp(`^[0-9]*.?[0-9]${regexPart}$`);
+    const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
+    const regex = new RegExp(`^-?\\d*(\\.\\d${regexPart})?$`);
 
     if (! regex.test(value)) {
         return false;
