@@ -363,8 +363,8 @@ var decimal$1 = (function (value) {
         return true;
     }
 
-    var regexPart = decimals === '*' ? '*' : '{0,' + decimals + '}';
-    var regex = new RegExp('^[0-9]*.?[0-9]' + regexPart + '$');
+    var regexPart = decimals === '*' ? '+' : '{1,' + decimals + '}';
+    var regex = new RegExp('^-?\\d*(\\.\\d' + regexPart + ')?$');
 
     if (!regex.test(value)) {
         return false;
@@ -829,6 +829,69 @@ var _class = function () {
     return _class;
 }();
 
+/**
+ * Determines the input field scope.
+ */
+var getScope = function getScope(el) {
+    return el.dataset.scope || el.form && el.form.dataset.scope;
+};
+
+/**
+ * Debounces a function.
+ */
+var debounce = function debounce(func) {
+    var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
+    var execAsap = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    if (!threshold) {
+        return func;
+    }
+
+    var timeout = void 0;
+
+    return function debounced(_ref) {
+        var _ref2 = toArray(_ref);
+
+        var args = _ref2;
+
+        var obj = this;
+
+        function delayed() {
+            if (!execAsap) {
+                func.apply(obj, args);
+            }
+            timeout = null;
+        }
+
+        if (timeout) {
+            clearTimeout(timeout);
+        } else if (execAsap) {
+            func.apply.apply(func, [obj].concat(toConsumableArray(args)));
+        }
+
+        timeout = setTimeout(delayed, threshold || 100);
+    };
+};
+
+/**
+ * Emits a warning to the console.
+ */
+var warn = function warn(message) {
+    if (!console) {
+        return;
+    }
+
+    console.warn('vee-validate: ' + message); // eslint-disable-line
+};
+
+/**
+ * Checks if the value is an object.
+ */
+// eslint-disable-next-line
+var isObject = function isObject(object) {
+    return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object) && object !== null;
+};
+
 /* eslint-disable prefer-rest-params */
 var Dictionary = function () {
     function Dictionary() {
@@ -906,21 +969,16 @@ var Dictionary = function () {
             this.dictionary[locale].attributes[key] = attribute;
         }
     }, {
-        key: '_isObject',
-        value: function _isObject(object) {
-            return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object) && object !== null;
-        }
-    }, {
         key: '_merge',
         value: function _merge(target, source) {
             var _this = this;
 
-            if (!(this._isObject(target) && this._isObject(source))) {
+            if (!(isObject(target) && isObject(source))) {
                 return target;
             }
 
             Object.keys(source).forEach(function (key) {
-                if (_this._isObject(source[key])) {
+                if (isObject(source[key])) {
                     if (!target[key]) {
                         _extends(target, defineProperty({}, key, {}));
                     }
@@ -1038,61 +1096,6 @@ var messages = {
     url: function url(field) {
         return 'The ' + field + ' is not a valid URL.';
     }
-};
-
-/**
- * Determines the input field scope.
- */
-var getScope = function getScope(el) {
-    return el.dataset.scope || el.form && el.form.dataset.scope;
-};
-
-/**
- * Debounces a function.
- */
-var debounce = function debounce(func) {
-    var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
-    var execAsap = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-    if (!threshold) {
-        return func;
-    }
-
-    var timeout = void 0;
-
-    return function debounced(_ref) {
-        var _ref2 = toArray(_ref);
-
-        var args = _ref2;
-
-        var obj = this;
-
-        function delayed() {
-            if (!execAsap) {
-                func.apply(obj, args);
-            }
-            timeout = null;
-        }
-
-        if (timeout) {
-            clearTimeout(timeout);
-        } else if (execAsap) {
-            func.apply.apply(func, [obj].concat(toConsumableArray(args)));
-        }
-
-        timeout = setTimeout(delayed, threshold || 100);
-    };
-};
-
-/**
- * Emits a warning to the console.
- */
-var warn = function warn(message) {
-    if (!console) {
-        return;
-    }
-
-    console.warn("vee-validate: " + message); // eslint-disable-line
 };
 
 var after$1 = (function (moment) {
@@ -1534,11 +1537,11 @@ var Validator = function () {
     }, {
         key: 'detach',
         value: function detach(name) {
+            /* istanbul ignore if */
             if (this.$vm && typeof this.$vm.$emit === 'function') {
                 this.$vm.$emit('VALIDATOR_OFF', name);
             }
 
-            this.errorBag.remove(name);
             delete this.$fields[name];
             this.fieldBag._remove(name);
         }
@@ -1748,18 +1751,24 @@ var Validator = function () {
          *
          * @param  {string} field The field name.
          * @param  {object} rule Normalized rule object.
+         * @param {object} data Additional Information about the validation result.
          * @return {string} msg Formatted error message.
          */
 
     }, {
         key: '_formatErrorMessage',
         value: function _formatErrorMessage(field, rule) {
+            var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            var name = this._getFieldDisplayName(field);
+            var params = this._getLocalizedParams(rule);
+
             if (!dictionary.hasLocale(this.locale) || typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
                 // Default to english message.
-                return dictionary.getMessage('en', rule.name)(field, this._getLocalizedParams(rule));
+                return dictionary.getMessage('en', rule.name)(name, params, data);
             }
 
-            return dictionary.getMessage(this.locale, rule.name)(field, this._getLocalizedParams(rule));
+            return dictionary.getMessage(this.locale, rule.name)(name, params, data);
         }
 
         /**
@@ -1803,28 +1812,41 @@ var Validator = function () {
             var _this5 = this;
 
             var validator = Rules[rule.name];
-            var valid = validator(value, rule.params);
-            var displayName = this._getFieldDisplayName(name);
+            var result = validator(value, rule.params);
 
-            if (typeof valid.then === 'function') {
-                return valid.then(function (values) {
-                    var allValid = Array.isArray(values) ? values.every(function (t) {
-                        return t.valid;
-                    }) : values.valid;
-
-                    if (!allValid) {
-                        _this5.errorBag.add(name, _this5._formatErrorMessage(displayName, rule), scope);
+            if (typeof result.then === 'function') {
+                return result.then(function (values) {
+                    var allValid = true;
+                    if (Array.isArray(values)) {
+                        allValid = values.every(function (t) {
+                            return t.valid;
+                        });
+                        if (!allValid) {
+                            _this5.errorBag.add(name, _this5._formatErrorMessage(name, rule), scope);
+                        }
+                    } else {
+                        // Is a single object.
+                        allValid = values.valid;
+                        _this5.errorBag.add(name, _this5._formatErrorMessage(name, rule, values.data), scope);
                     }
 
                     return allValid;
                 });
             }
 
-            if (!valid) {
-                this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
+            if (isObject(result)) {
+                if (!result.valid) {
+                    this.errorBag.add(name, this._formatErrorMessage(name, rule, result.data), scope);
+                }
+
+                return result.valid;
             }
 
-            return valid;
+            if (!result) {
+                this.errorBag.add(name, this._formatErrorMessage(name, rule), scope);
+            }
+
+            return result;
         }
 
         /**
