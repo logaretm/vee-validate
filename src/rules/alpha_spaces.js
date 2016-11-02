@@ -1,1 +1,1 @@
-export default (value) => /^[a-zA-Z\s]*$/.test(String(value));
+export default (value) => /^[a-zA-Z\s]*$/.test(value);

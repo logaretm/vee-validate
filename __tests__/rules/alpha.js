@@ -15,7 +15,6 @@ const invalid = [
     'this is sparta',
     '1234567a89',
     {},
-    [],
     ' '
 ];
 

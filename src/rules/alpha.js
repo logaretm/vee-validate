@@ -1,1 +1,1 @@
-export default (value) => ! Array.isArray(value) && /^[a-zA-Z]*$/.test(value);
+export default (value) => /^[a-zA-Z]*$/.test(value);
