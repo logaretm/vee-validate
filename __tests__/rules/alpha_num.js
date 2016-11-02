@@ -19,7 +19,6 @@ const invalid = [
     'this is sparta',
     '123-abc',
     {},
-    [],
     ' '
 ];
 
