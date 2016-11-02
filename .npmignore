@@ -7,3 +7,4 @@ src
 test
 rollup.config.dev.js
 rollup.config.prod.js
+__tests__
