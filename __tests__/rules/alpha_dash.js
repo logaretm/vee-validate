@@ -20,7 +20,6 @@ const valid = [
 const invalid = [
     'this is sparta',
     {},
-    [],
     ' '
 ];
 
