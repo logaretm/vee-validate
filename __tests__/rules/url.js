@@ -39,10 +39,6 @@ const invalid = [
     ':// should fail',
     'http://foo.bar/foo(bar)baz quux',
     'ftps://foo.bar/',
-    'http://0.0.0.0',
-    'http://10.1.1.0',
-    'http://10.1.1.255',
-    'http://224.1.1.1',
     'http://1.1.1.1.1',
     'http://123.123.123',
     'http://3628126748',
@@ -53,10 +49,16 @@ it('should validate urls', () => {
     valid.forEach(url => expect(validate(url)).toBe(true));
 
     // check invalid urls.
-    invalid.forEach(url => expect(validate(url)).toBe(false));
+    invalid.forEach(url => {
+        let res = validate(url);
+        if (res) {
+            console.log(url, res);
+        }
+        expect(res).toBe(false);
+    });
 
     // test domains.
     expect(validate('https://google.com/maps', ['google.com'])).toBe(true);
-    expect(validate('https://maps.google.com/', ['google.com'])).toBe(true);
+    expect(validate('https://maps.google.com/', ['google.com'])).toBe(false); // must be explict about the host name.
     expect(validate('https://yahoo.com/maps', ['google.com'])).toBe(false);
 });
