@@ -36,6 +36,7 @@
     "babel-core": "^6.13.2",
     "babel-jest": "^16.0.0",
     "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-external-helpers": "^6.18.0",
     "babel-plugin-transform-async-to-generator": "^6.16.0",
     "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-polyfill": "^6.16.0",
@@ -48,7 +49,10 @@
     "moment": "^2.14.1",
     "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0",
-    "rollup-plugin-uglify": "^1.0.1"
+    "rollup-plugin-uglify": "^1.0.1",
+    "validator": "^6.1.0",
+    "validator.js": "^2.0.3"
   }
 }
