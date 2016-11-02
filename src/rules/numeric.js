@@ -1,1 +1,3 @@
-export default (value) => ! Array.isArray(value) && /^[0-9]*$/.test(value);
+import isNumeric from 'validator/lib/isNumeric';
+
+export default (value) => isNumeric(String(value));
