@@ -18,7 +18,6 @@ const invalid = [
     null,
     'undefined',
     'null',
-    'someone#@example.co.uk',
     'someone@example.c',
 ];
 
