@@ -17,12 +17,12 @@ export default class ListenerGenerator
      * Determines if the validation rule requires additional listeners on target fields.
      */
     _hasFieldDependency(rules) {
-        const results = rules.split('|').filter(r => !! r.match(/confirmed|after|before/));
+        const results = rules.split('|').filter(r => !! r.match(/confirmed|required_if|after|before/));
         if (! results.length) {
             return false;
         }
 
-        return results[0].split(':')[1];
+        return results[0].split(':')[1].split(',')[0];
     }
 
     /**
@@ -110,8 +110,15 @@ export default class ListenerGenerator
                     return;
                 }
 
-                target.addEventListener('input', listener);
-                this.callbacks.push({ name: 'input', listener, el: target });
+                if (~['radio', 'checkbox'].indexOf(target.type.trim())) {
+                    [...document.querySelectorAll(`input[name="${fieldName}"]`)].forEach(input => {
+                        input.addEventListener('change', listener);
+                        this.callbacks.push({ name: 'change', listener, el: input });
+                    });
+                } else {
+                    target.addEventListener('input', listener);
+                    this.callbacks.push({ name: 'input', listener, el: target });
+                }
             });
         }
     }
