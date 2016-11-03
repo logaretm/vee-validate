@@ -530,6 +530,44 @@ var required$1 = (function (value) {
     return !!String(value).trim().length;
 });
 
+var required_if$1 = (function (value, _ref) {
+    var _ref2 = slicedToArray(_ref, 2);
+
+    var targetField = _ref2[0];
+    var targetValue = _ref2[1];
+
+    var field = document.querySelector('input[name=\'' + targetField + '\']');
+
+    if (field && ~['radio', 'checkbox'].indexOf(field.type)) {
+        field = document.querySelector('input[name=\'' + targetField + '\']:checked');
+    }
+
+    // No field, validation fails.
+    if (!field) {
+        return false;
+    }
+
+    // No validation applies.
+    if (field && field.value !== targetValue) {
+        return true;
+    }
+
+    // Field has target value, apply validation.
+    if (field && field.value === targetValue) {
+        if (Array.isArray(value)) {
+            return !!value.length;
+        }
+
+        if (value === undefined || value === null) {
+            return false;
+        }
+
+        return !!String(value).trim().length;
+    }
+
+    return false;
+});
+
 var size$1 = (function (files, _ref) {
     var _ref2 = slicedToArray(_ref, 1);
 
@@ -584,6 +622,7 @@ var Rules = {
     numeric: numeric$1,
     regex: regex$1,
     required: required$1,
+    required_if: required_if$1,
     size: size$1,
     url: url$1
 };
@@ -1087,10 +1126,17 @@ var messages = {
     required: function required(field) {
         return 'The ' + field + ' is required.';
     },
-    size: function size(field, _ref15) {
-        var _ref16 = slicedToArray(_ref15, 1);
+    required_if: function required_if(field, _ref15) {
+        var _ref16 = slicedToArray(_ref15, 2);
 
-        var _size = _ref16[0];
+        var targetField = _ref16[0];
+        var targetValue = _ref16[1];
+        return 'The ' + field + ' is required when ' + targetField + ' is ' + targetValue;
+    },
+    size: function size(field, _ref17) {
+        var _ref18 = slicedToArray(_ref17, 1);
+
+        var _size = _ref18[0];
         return 'The ' + field + ' must be less than ' + _size + ' KB.';
     },
     url: function url(field) {
@@ -1708,7 +1754,7 @@ var Validator = function () {
 
             checks.split('|').forEach(function (rule) {
                 var normalizedRule = _this4._normalizeRule(rule, _this4.$fields[name].validations);
-                if (normalizedRule.name === 'required') {
+                if (normalizedRule.name === 'required' || normalizedRule.name === 'required_if') {
                     _this4.$fields[name].required = true;
                 }
 
@@ -2118,13 +2164,13 @@ var ListenerGenerator = function () {
         key: '_hasFieldDependency',
         value: function _hasFieldDependency(rules) {
             var results = rules.split('|').filter(function (r) {
-                return !!r.match(/confirmed|after|before/);
+                return !!r.match(/confirmed|required_if|after|before/);
             });
             if (!results.length) {
                 return false;
             }
 
-            return results[0].split(':')[1];
+            return results[0].split(':')[1].split(',')[0];
         }
 
         /**
@@ -2234,8 +2280,15 @@ var ListenerGenerator = function () {
                         return;
                     }
 
-                    target.addEventListener('input', listener);
-                    _this3.callbacks.push({ name: 'input', listener: listener, el: target });
+                    if (~['radio', 'checkbox'].indexOf(target.type.trim())) {
+                        [].concat(toConsumableArray(document.querySelectorAll('input[name="' + fieldName + '"]'))).forEach(function (input) {
+                            input.addEventListener('change', listener);
+                            _this3.callbacks.push({ name: 'change', listener: listener, el: input });
+                        });
+                    } else {
+                        target.addEventListener('input', listener);
+                        _this3.callbacks.push({ name: 'input', listener: listener, el: target });
+                    }
                 });
             }
         }

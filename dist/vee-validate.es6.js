@@ -146,6 +146,39 @@ var required = (value) => {
     return !! String(value).trim().length;
 };
 
+var required_if = (value, [targetField, targetValue]) => {
+    let field = document.querySelector(`input[name='${targetField}']`);
+
+    if (field && ~['radio', 'checkbox'].indexOf(field.type)) {
+        field = document.querySelector(`input[name='${targetField}']:checked`);
+    }
+
+    // No field, validation fails.
+    if (! field) {
+        return false;
+    }
+
+    // No validation applies.
+    if (field && field.value !== targetValue) {
+        return true;
+    }
+
+    // Field has target value, apply validation.
+    if (field && field.value === targetValue) {
+        if (Array.isArray(value)) {
+            return !! value.length;
+        }
+
+        if (value === undefined || value === null) {
+            return false;
+        }
+
+        return !! String(value).trim().length;
+    }
+
+    return false;
+};
+
 var size = (files, [size]) => {
     if (isNaN(size)) {
         return false;
@@ -198,6 +231,7 @@ var Rules = {
     numeric,
     regex,
     required,
+    required_if,
     size,
     url
 };
@@ -547,6 +581,7 @@ var messages = {
     numeric: (field) => `The ${field} may only contain numeric characters.`,
     regex: (field) => `The ${field} format is invalid.`,
     required: (field) => `The ${field} is required.`,
+    required_if: (field, [targetField, targetValue]) => `The ${field} is required when ${targetField} is ${targetValue}`,
     size: (field, [size]) => `The ${field} must be less than ${size} KB.`,
     url: (field) => `The ${field} is not a valid URL.`
 };
@@ -1131,7 +1166,7 @@ class Validator
 
         checks.split('|').forEach(rule => {
             const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
-            if (normalizedRule.name === 'required') {
+            if (normalizedRule.name === 'required' || normalizedRule.name === 'required_if') {
                 this.$fields[name].required = true;
             }
 
@@ -1354,12 +1389,12 @@ class ListenerGenerator
      * Determines if the validation rule requires additional listeners on target fields.
      */
     _hasFieldDependency(rules) {
-        const results = rules.split('|').filter(r => !! r.match(/confirmed|after|before/));
+        const results = rules.split('|').filter(r => !! r.match(/confirmed|required_if|after|before/));
         if (! results.length) {
             return false;
         }
 
-        return results[0].split(':')[1];
+        return results[0].split(':')[1].split(',')[0];
     }
 
     /**
@@ -1447,8 +1482,15 @@ class ListenerGenerator
                     return;
                 }
 
-                target.addEventListener('input', listener);
-                this.callbacks.push({ name: 'input', listener, el: target });
+                if (~['radio', 'checkbox'].indexOf(target.type.trim())) {
+                    [...document.querySelectorAll(`input[name="${fieldName}"]`)].forEach(input => {
+                        input.addEventListener('change', listener);
+                        this.callbacks.push({ name: 'change', listener, el: input });
+                    });
+                } else {
+                    target.addEventListener('input', listener);
+                    this.callbacks.push({ name: 'input', listener, el: target });
+                }
             });
         }
     }
