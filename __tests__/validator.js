@@ -445,45 +445,68 @@ it('can translate target field for field dependent validations', () => {
     expect(v.errorBag.first('email')).toBe('The Email Address does not match the Email Confirmation.');
 });
 
-it('validators can specify a reason for failing that will alter the error message', async () => {
-    const v = new Validator();
 
-    v.extend('reason_test', {
-        getMessage(field, params, data) {
-            return (data && data.message) || 'Something went wrong';
-        },
-        validate(value) {
-            if (value === 'trigger') {
+describe('validators can provide reasoning for failing', () => {
+
+    it('without promises', () => {
+        const v = new Validator();
+        v.extend('reason', {
+            getMessage(field, params, data) {
+                return data;
+            },
+            validate(value, params) {
                 return {
                     valid: false,
-                    data: {
-                        message: 'Not this value'
-                    }
+                    data: 'Not correct'
                 }
             }
+        });
 
-            return !! value;
-        }
+        v.attach('field', 'reason');
+        expect(v.validate('field', 'wow')).toBe(false);
+        expect(v.errorBag.first('field')).toBe('Not correct');
     });
-    v.extend('reason_test_promise', {
-        getMessage(field, params, data) {
-            return (data && data.message) || 'Something went wrong';
-        },
-        validate(value) {
-            return new Promise(resolve => {
-                resolve({
-                    valid: value === 'trigger' ? false : !! value,
-                    data: value !== 'trigger' ? undefined : {
-                        message: 'Not this value'
+
+    it('using promises', async () => {
+        const v = new Validator();
+
+        v.extend('reason_test', {
+            getMessage(field, params, data) {
+                return (data && data.message) || 'Something went wrong';
+            },
+            validate(value) {
+                if (value === 'trigger') {
+                    return {
+                        valid: false,
+                        data: {
+                            message: 'Not this value'
+                        }
                     }
-                });
-            })
-        }
-    });
-    v.attach('reason_field', 'reason_test');
+                }
 
-    expect(await v.validate('reason_field', 'trigger')).toEqual(false);
-    expect(v.errorBag.first('reason_field')).toBe('Not this value');
-    expect(await v.validate('reason_field', false)).toBe(false);
-    expect(v.errorBag.first('reason_field')).toBe('Something went wrong');
+                return !! value;
+            }
+        });
+        v.extend('reason_test_promise', {
+            getMessage(field, params, data) {
+                return (data && data.message) || 'Something went wrong';
+            },
+            validate(value) {
+                return new Promise(resolve => {
+                    resolve({
+                        valid: value === 'trigger' ? false : !! value,
+                        data: value !== 'trigger' ? undefined : {
+                            message: 'Not this value'
+                        }
+                    });
+                })
+            }
+        });
+        v.attach('reason_field', 'reason_test');
+
+        expect(await v.validate('reason_field', 'trigger')).toEqual(false);
+        expect(v.errorBag.first('reason_field')).toBe('Not this value');
+        expect(await v.validate('reason_field', false)).toBe(false);
+        expect(v.errorBag.first('reason_field')).toBe('Something went wrong');
+    });
 });

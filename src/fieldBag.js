@@ -9,6 +9,7 @@ export default class FieldBag {
      */
     _add(name) {
         this.fields[name] = {};
+        /* istanbul ignore if */
         if (this.$vm && typeof this.$vm.$set === 'function') {
             this.$vm.$set(`fields.${name}`, {});
         }
@@ -30,7 +31,7 @@ export default class FieldBag {
     }
 
     /**
-     * Remooves a field from the bag.
+     * Removes a field from the bag.
      */
     _remove(name) {
         delete this.fields[name];
@@ -44,6 +45,7 @@ export default class FieldBag {
             flag => this._setFlag(name, flag, flags[flag], initial)
         );
 
+        /* istanbul ignore if */
         if (success && this.$vm && typeof this.$vm.$set === 'function') {
             this.$vm.$set(`fields.${name}`, this.fields[name]);
         }
