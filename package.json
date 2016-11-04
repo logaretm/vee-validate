@@ -18,8 +18,9 @@
   },
   "scripts": {
     "test": "jest",
-    "lint": "eslint ./src ./test",
-    "build": "rollup -c rollup.config.dev.js && rollup -c rollup.config.prod.js && rollup -c rollup.config.es6.js",
+    "lint": "eslint ./src",
+    "build": "webpack && cross-env NODE_ENV=production webpack -p",
+    "dev": "webpack --colors --progress --watch",
     "cover": "jest --coverage"
   },
   "keywords": [
@@ -35,6 +36,7 @@
   "devDependencies": {
     "babel-core": "^6.13.2",
     "babel-jest": "^16.0.0",
+    "babel-loader": "^6.2.7",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-external-helpers": "^6.18.0",
     "babel-plugin-transform-async-to-generator": "^6.16.0",
@@ -44,15 +46,11 @@
     "cross-env": "^2.0.0",
     "eslint": "^3.1.1",
     "eslint-config-airbnb-base": "^5.0.0",
+    "eslint-loader": "^1.6.1",
     "eslint-plugin-import": "^1.12.0",
     "jest": "^16.0.2",
     "moment": "^2.14.1",
-    "rollup": "^0.36.3",
-    "rollup-plugin-babel": "^2.6.1",
-    "rollup-plugin-commonjs": "^5.0.5",
-    "rollup-plugin-node-resolve": "^2.0.0",
-    "rollup-plugin-uglify": "^1.0.1",
     "validator": "^6.1.0",
-    "validator.js": "^2.0.3"
+    "webpack": "2.1.0-beta.25"
   }
 }
