@@ -8,9 +8,10 @@ const valid = [
 ];
 
 const invalid = [
-	10.01,
-	11,
-	[],
+    '',
+    10.01,
+    11,
+    [],
     undefined,
     null,
     {},
