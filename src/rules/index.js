@@ -14,8 +14,10 @@ import image from './image';
 import In from './in';
 import ip from './ip';
 import max from './max';
+import max_value from './max_value';
 import mimes from './mimes';
 import min from './min';
+import min_value from './min_value';
 import not_in from './notIn';
 import numeric from './numeric';
 import regex from './regex';
@@ -39,8 +41,10 @@ export default {
     in: In,
     ip,
     max,
+    max_value,
     mimes,
     min,
+    min_value,
     not_in,
     numeric,
     regex,
