@@ -120,31 +120,45 @@ export default class ListenerGenerator
      * Determines a suitable listener for the element.
      */
     _getSuitableListener() {
-        if (this.el.type === 'file') {
-            return {
-                name: 'change',
-                listener: this._fileListener
-            };
+        let listener;
+
+        // determine the suitable listener and events to handle
+        switch (this.el.type) {
+            case 'file':
+                listener = {
+                    names: ['change'],
+                    listener: this._fileListener
+                };
+                break;
+
+            case 'radio':
+                listener = {
+                    names: ['change'],
+                    listener: this._radioListener
+                };
+                break;
+
+            case 'checkbox':
+                listener = {
+                    names: ['change'],
+                    listener: this._checkboxListener
+                };
+                break;
+        
+            default:
+                listener = {
+                    names: ['input', 'blur'],
+                    listener: this._inputListener
+                };
+                break;
         }
 
-        if (this.el.type === 'radio') {
-            return {
-                name: 'change',
-                listener: this._radioListener
-            };
-        }
+        // users are able to skip validation on certain events
+        // pipe separated list of handler names to skip
+        const skipValidateOn = this.el.dataset.skip ? this.el.dataset.skip.split('|') : [];
+        listener.names = listener.names.filter(listenerName => skipValidateOn.indexOf(listenerName) === -1);
 
-        if (this.el.type === 'checkbox') {
-            return {
-                name: 'change',
-                listener: this._checkboxListener
-            };
-        }
-
-        return {
-            name: 'input',
-            listener: this._inputListener
-        };
+        return listener;
     }
 
     /**
@@ -160,16 +174,20 @@ export default class ListenerGenerator
         if (~['radio', 'checkbox'].indexOf(this.el.type)) {
             this.vm.$once('validatorReady', () => {
                 [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
-                    input.addEventListener(handler.name, listener);
-                    this.callbacks.push({ name: handler.name, listener, el: input });
+                    handler.names.forEach(handlerName => {
+                        input.addEventListener(handlerName, listener);
+                        this.callbacks.push({ name: handlerName, listener, el: input });
+                    });
                 });
             });
 
             return;
         }
 
-        this.el.addEventListener(handler.name, listener);
-        this.callbacks.push({ name: handler.name, listener, el: this.el });
+        handler.names.forEach(handlerName => {
+            this.el.addEventListener(handlerName, listener);
+            this.callbacks.push({ name: handlerName, listener, el: this.el });
+        });
     }
 
     /**
