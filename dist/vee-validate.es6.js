@@ -1103,6 +1103,21 @@ class Validator
             return true;
         }
 
+        if (this.$fields[name].validations[0].name == 'required_if') {
+            let [targetField, targetValue] = this.$fields[name].validations[0].params;
+
+            let field = document.querySelector(`input[name='${targetField}']`);
+
+            if (field && ~['radio', 'checkbox'].indexOf(field.type)) {
+                field = document.querySelector(`input[name='${targetField}']:checked`);
+            }
+
+            if (field && field.value != targetValue) {
+                return true;
+            }
+        }
+
+
         let test = true;
         const promises = [];
         this.$fields[name].validations.forEach(rule => {

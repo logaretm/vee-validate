@@ -1679,6 +1679,24 @@ var Validator = function () {
                 return true;
             }
 
+            if (this.$fields[name].validations[0].name == 'required_if') {
+                var _$fields$name$validat = slicedToArray(this.$fields[name].validations[0].params, 2);
+
+                var targetField = _$fields$name$validat[0];
+                var targetValue = _$fields$name$validat[1];
+
+
+                var field = document.querySelector('input[name=\'' + targetField + '\']');
+
+                if (field && ~['radio', 'checkbox'].indexOf(field.type)) {
+                    field = document.querySelector('input[name=\'' + targetField + '\']:checked');
+                }
+
+                if (field && field.value != targetValue) {
+                    return true;
+                }
+            }
+
             var test = true;
             var promises = [];
             this.$fields[name].validations.forEach(function (rule) {
