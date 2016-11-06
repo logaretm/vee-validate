@@ -120,31 +120,44 @@ export default class ListenerGenerator
      * Determines a suitable listener for the element.
      */
     _getSuitableListener() {
-        if (this.el.type === 'file') {
-            return {
-                names: ['change'],
-                listener: this._fileListener
-            };
+        let listener;
+
+        // determine the suitable listener and events to handle
+        switch (this.el.type) {
+            case 'file':
+                listener = {
+                    names: ['change'],
+                    listener: this._fileListener
+                };
+                break;
+
+            case 'radio':
+                listener = {
+                    names: ['change'],
+                    listener: this._radioListener
+                };
+                break;
+
+            case 'checkbox':
+                listener = {
+                    names: ['change'],
+                    listener: this._checkboxListener
+                };
+                break;
+        
+            default:
+                listener = {
+                    names: ['input', 'blur'],
+                    listener: this._inputListener
+                };
+                break;
         }
 
-        if (this.el.type === 'radio') {
-            return {
-                names: ['change'],
-                listener: this._radioListener
-            };
-        }
+        //Always remove those events that have been disabled
+        const disableValidateOn = this._getDisabledListenerNames();
+        listener.names = listener.names.filter(listenerName => disableValidateOn.indexOf(listenerName) === -1);
 
-        if (this.el.type === 'checkbox') {
-            return {
-                names: ['change'],
-                listener: this._checkboxListener
-            };
-        }
-
-        return {
-            names: ['input', 'blur'],
-            listener: this._inputListener
-        };
+        return listener;
     }
 
     /**
@@ -174,6 +187,14 @@ export default class ListenerGenerator
             this.el.addEventListener(handlerName, listener);
             this.callbacks.push({ name: handlerName, listener, el: this.el });
         });
+    }
+
+    /**
+     * Returns an array of Event Listeners that have been disabled on the element
+     */
+    _getDisabledListenerNames() {
+        // stick with | separated syntax used elsewhere
+        return this.el.dataset.disableValidateOn ? this.el.dataset.disableValidateOn.split('|') : [];
     }
 
     /**
