@@ -153,9 +153,10 @@ export default class ListenerGenerator
                 break;
         }
 
-        //Always remove those events that have been disabled
-        const disableValidateOn = this._getDisabledListenerNames();
-        listener.names = listener.names.filter(listenerName => disableValidateOn.indexOf(listenerName) === -1);
+        // users are able to skip validation on certain events
+        // pipe separated list of handler names to skip
+        const skipValidateOn = this.el.dataset.skip ? this.el.dataset.skip.split('|') : [];
+        listener.names = listener.names.filter(listenerName => skipValidateOn.indexOf(listenerName) === -1);
 
         return listener;
     }
@@ -187,14 +188,6 @@ export default class ListenerGenerator
             this.el.addEventListener(handlerName, listener);
             this.callbacks.push({ name: handlerName, listener, el: this.el });
         });
-    }
-
-    /**
-     * Returns an array of Event Listeners that have been disabled on the element
-     */
-    _getDisabledListenerNames() {
-        // stick with | separated syntax used elsewhere
-        return this.el.dataset.disableValidateOn ? this.el.dataset.disableValidateOn.split('|') : [];
     }
 
     /**
