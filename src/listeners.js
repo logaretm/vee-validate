@@ -122,27 +122,27 @@ export default class ListenerGenerator
     _getSuitableListener() {
         if (this.el.type === 'file') {
             return {
-                name: 'change',
+                names: ['change'],
                 listener: this._fileListener
             };
         }
 
         if (this.el.type === 'radio') {
             return {
-                name: 'change',
+                names: ['change'],
                 listener: this._radioListener
             };
         }
 
         if (this.el.type === 'checkbox') {
             return {
-                name: 'change',
+                names: ['change'],
                 listener: this._checkboxListener
             };
         }
 
         return {
-            name: 'input',
+            names: ['input', 'blur'],
             listener: this._inputListener
         };
     }
@@ -160,16 +160,20 @@ export default class ListenerGenerator
         if (~['radio', 'checkbox'].indexOf(this.el.type)) {
             this.vm.$once('validatorReady', () => {
                 [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
-                    input.addEventListener(handler.name, listener);
-                    this.callbacks.push({ name: handler.name, listener, el: input });
+                    handler.names.forEach(handlerName => {
+                        input.addEventListener(handlerName, listener);
+                        this.callbacks.push({ name: handlerName, listener, el: input });
+                    });
                 });
             });
 
             return;
         }
 
-        this.el.addEventListener(handler.name, listener);
-        this.callbacks.push({ name: handler.name, listener, el: this.el });
+        handler.names.forEach(handlerName => {
+            this.el.addEventListener(handlerName, listener);
+            this.callbacks.push({ name: handlerName, listener, el: this.el });
+        });
     }
 
     /**
