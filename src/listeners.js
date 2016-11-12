@@ -153,12 +153,10 @@ export default class ListenerGenerator
                 break;
         }
 
-        // users are able to opt in for specific events.
-        // pipe separated list of handler names to handle.
-        const validateOn = this.el.dataset.validateOn ? this.el.dataset.validateOn.split('|') : null;
-        if (! validateOn) {
-            listener.names = validateOn;
-        }
+        // users are able to skip validation on certain events
+        // pipe separated list of handler names to skip
+        const skipValidateOn = this.el.dataset.skip ? this.el.dataset.skip.split('|') : [];
+        listener.names = listener.names.filter(listenerName => skipValidateOn.indexOf(listenerName) === -1);
 
         return listener;
     }
