@@ -4,10 +4,10 @@ import { getScope } from './utils/helpers';
 const listenersInstances = [];
 
 export default (options) => ({
-    bind(el, binding, { context }) {
-        const listener = new ListenerGenerator(el, binding, context, options);
+    bind(el, binding, vnode) {
+        const listener = new ListenerGenerator(el, binding, vnode, options);
         listener.attach();
-        listenersInstances.push({ vm: context, el, instance: listener });
+        listenersInstances.push({ vm: vnode.context, el, instance: listener });
     },
     update(el, { expression, value, modifiers, oldValue }, { context }) {
         if (! expression || value === oldValue) {

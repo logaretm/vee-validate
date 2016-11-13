@@ -4,11 +4,12 @@ const DEFAULT_EVENT_NAME = 'veeValidate';
 
 export default class ListenerGenerator
 {
-    constructor(el, binding, context, options) {
+    constructor(el, binding, vnode, options) {
         this.callbacks = [];
         this.el = el;
         this.binding = binding;
-        this.vm = context;
+        this.vm = vnode.context;
+        this.component = vnode.child;
         this.options = options;
         this.fieldName = binding.expression || el.name;
     }
@@ -166,6 +167,15 @@ export default class ListenerGenerator
      * Attachs a suitable listener for the input.
      */
     _attachFieldListeners() {
+        if (this.component) {
+            this.component.$on('input', (value) => {
+                console.log('Gotcha: ' + value, this.fieldName);
+                this.vm.$validator.validate(this.fieldName, value);
+            });
+
+            return;
+        }
+
         const handler = this._getSuitableListener();
         const listener = debounce(
             handler.listener.bind(this),
