@@ -5,7 +5,7 @@ export default {
     alpha_spaces: (field) => `${field}는 영문자와 공백만 사용할 수 있습니다.`,
     alpha: (field) => `${field}는 영문자만 사용할 수 있습니다.`,
     before: (field, [target]) => `${field}는 ${target} 앞에 와야 합니다.`,
-    between: (field, [min, max]) => `${field}는 ${min} 와 ${max} 사이 값이어야 합니다..`,
+    between: (field, [min, max]) => `${field}는 ${min} 와 ${max} 사이 값이어야 합니다.`,
     confirmed: (field, [confirmedField]) => `${field}는 ${confirmedField}와 일치하지 않습니다.`,
     date_between: (field, [min, max]) => `${field}는 ${min}와 ${max} 사이의 날짜이어야 합니다.`,
     date_format: (field, [format]) => `${field}는 ${format} 형식이어야 합니다.`,
