@@ -407,8 +407,9 @@ export default class Validator
     _normalizeRule(rule, validations) {
         let params = [];
         const name = rule.split(':')[0];
+
         if (~rule.indexOf(':')) {
-            params = rule.split(':')[1].split(',');
+            params = rule.split(':').slice(1).join(':').split(',');
         }
 
         // Those rules need the date format to parse and compare correctly.

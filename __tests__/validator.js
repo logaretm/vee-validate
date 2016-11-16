@@ -361,6 +361,12 @@ it('installs date validators', () => {
     expect(v.validate('birthday', '01/01/2008')).toBe(false);
 });
 
+it('correctly parses rules with multiple colons', () => {
+    const v = new Validator({ time: 'date_format:HH:mm' });
+    expect(v.validate('time', '15:30')).toBe(true);
+    expect(v.validate('time', '1700')).toBe(false);
+});
+
 it('auto installs date validators if moment is present globally', () => {
     global.moment = require('moment');
     const v = new Validator({ birthday: 'date_format:DD/MM/YYYY|after:field' });
