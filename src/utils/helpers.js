@@ -1,9 +1,7 @@
 /**
  * Determines the input field scope.
  */
-export const getScope = (el) => {
-    return el.dataset.scope || (el.form && el.form.dataset.scope);
-};
+export const getScope = (el) => el.dataset.vvScope || (el.form && el.form.dataset.vvScope);
 
 export const debounce = (func, threshold = 100, execAsap = false) => {
     if (! threshold) {
