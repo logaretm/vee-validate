@@ -30,16 +30,15 @@ export default class ListenerGenerator
      * Validates input value, triggered by 'input' event.
      */
     _inputListener() {
-        this.vm.$validator.validate(this.fieldName, this.el.value, getScope(this.el));
+        this._validate(this.el.value);
     }
 
     /**
      * Validates files, triggered by 'change' event.
      */
     _fileListener() {
-        const isValid = this.vm.$validator.validate(
-            this.fieldName, this.el.files, getScope(this.el)
-        );
+        const isValid = this._validate(this.el.files);
+
         if (! isValid && this.binding.modifiers.reject) {
             // eslint-disable-next-line
             el.value = '';
@@ -51,12 +50,7 @@ export default class ListenerGenerator
      */
     _radioListener() {
         const checked = document.querySelector(`input[name="${this.el.name}"]:checked`);
-        if (! checked) {
-            this.vm.$validator.validate(this.fieldName, null, getScope(this.el));
-            return;
-        }
-
-        this.vm.$validator.validate(this.fieldName, checked.value, getScope(this.el));
+        this._validate(checked ? checked.value : null);
     }
 
     /**
@@ -65,13 +59,20 @@ export default class ListenerGenerator
     _checkboxListener() {
         const checkedBoxes = document.querySelectorAll(`input[name="${this.el.name}"]:checked`);
         if (! checkedBoxes || ! checkedBoxes.length) {
-            this.vm.$validator.validate(this.fieldName, null, getScope(this.el));
+            this._validate(null);
             return;
         }
 
         [...checkedBoxes].forEach(box => {
-            this.vm.$validator.validate(this.fieldName, box.value, getScope(this.el));
+            this._validate(box.value);
         });
+    }
+
+    /**
+     * Trigger the validation for a specific value.
+     */
+    _validate(value) {
+        return this.vm.$validator.validate(this.fieldName, value, getScope(this.el));
     }
 
     /**
@@ -145,7 +146,7 @@ export default class ListenerGenerator
                     listener: this._checkboxListener
                 };
                 break;
-        
+
             default:
                 listener = {
                     names: ['input', 'blur'],
@@ -158,7 +159,7 @@ export default class ListenerGenerator
         // pipe separated list of handler names to use
         if (this.el.dataset.validateOn) {
             listener.names = this.el.dataset.validateOn.split('|');
-        } 
+        }
 
         return listener;
     }
