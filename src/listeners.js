@@ -101,7 +101,7 @@ export default class ListenerGenerator
             }
         });
 
-        const fieldName = this._hasFieldDependency(this.el.dataset.rules);
+        const fieldName = this._hasFieldDependency(this.el.dataset.vvRules);
         if (fieldName) {
             // Wait for the validator ready triggered when vm is mounted because maybe
             // the element isn't mounted yet.
@@ -126,39 +126,39 @@ export default class ListenerGenerator
 
         // determine the suitable listener and events to handle
         switch (this.el.type) {
-            case 'file':
-                listener = {
-                    names: ['change'],
-                    listener: this._fileListener
-                };
-                break;
+        case 'file':
+            listener = {
+                names: ['change'],
+                listener: this._fileListener
+            };
+            break;
 
-            case 'radio':
-                listener = {
-                    names: ['change'],
-                    listener: this._radioListener
-                };
-                break;
+        case 'radio':
+            listener = {
+                names: ['change'],
+                listener: this._radioListener
+            };
+            break;
 
-            case 'checkbox':
-                listener = {
-                    names: ['change'],
-                    listener: this._checkboxListener
-                };
-                break;
+        case 'checkbox':
+            listener = {
+                names: ['change'],
+                listener: this._checkboxListener
+            };
+            break;
 
-            default:
-                listener = {
-                    names: ['input', 'blur'],
-                    listener: this._inputListener
-                };
-                break;
+        default:
+            listener = {
+                names: ['input', 'blur'],
+                listener: this._inputListener
+            };
+            break;
         }
 
         // users are able to specify which events they want to validate on
         // pipe separated list of handler names to use
-        if (this.el.dataset.validateOn) {
-            listener.names = this.el.dataset.validateOn.split('|');
+        if (this.el.dataset.vvValidateOn) {
+            listener.names = this.el.dataset.vvValidateOn.split('|');
         }
 
         return listener;
@@ -170,7 +170,7 @@ export default class ListenerGenerator
     _attachFieldListeners() {
         if (this.component) {
             this.component.$on('input', (value) => {
-                console.log('Gotcha: ' + value, this.fieldName);
+                console.log(`Gotcha: ${value}`, this.fieldName);
                 this.vm.$validator.validate(this.fieldName, value);
             });
 
@@ -180,7 +180,7 @@ export default class ListenerGenerator
         const handler = this._getSuitableListener();
         const listener = debounce(
             handler.listener.bind(this),
-            this.el.dataset.delay || this.options.delay
+            this.el.dataset.vvDelay || this.options.delay
         );
 
         if (~['radio', 'checkbox'].indexOf(this.el.type)) {
@@ -206,7 +206,7 @@ export default class ListenerGenerator
      * Attaches the Event Listeners.
      */
     attach() {
-        this.vm.$validator.attach(this.fieldName, this.el.dataset.rules, this.el.dataset.as);
+        this.vm.$validator.attach(this.fieldName, this.el.dataset.vvRules, this.el.dataset.vvAs);
         this._attachValidatorEvent();
 
         if (this.binding.expression) {

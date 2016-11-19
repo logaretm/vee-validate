@@ -1,7 +1,7 @@
 /**
  * Determines the input field scope.
  */
-export const getScope = (el) => el.dataset.scope || (el.form && el.form.dataset.scope);
+export const getScope = (el) => el.dataset.vvScope || (el.form && el.form.dataset.vvScope);
 
 /**
  * Debounces a function.
