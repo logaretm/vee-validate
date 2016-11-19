@@ -1,10 +1,9 @@
 import ListenerGenerator from './../src/listeners';
 import helpers from './helpers';
 
-const lg = new ListenerGenerator({ name: 'el'}, '', '', {});
 
 it('has field dependent rule', () => {
-
+    const lg = new ListenerGenerator({ name: 'el'}, '', '', {});
     expect(lg._hasFieldDependency('confirmed:field|required')).toBe('field');
     expect(lg._hasFieldDependency('required|before:field')).toBe('field');
     expect(lg._hasFieldDependency('after:field')).toBe('field');
@@ -18,3 +17,45 @@ it('has field dependent rule', () => {
     expect(lg._hasFieldDependency('required|before_time:10')).toBe(false);
     expect(lg._hasFieldDependency('required|only_after:10')).toBe(false);
 });
+
+it('detects input listener events', () => {
+
+    const el = document.createElement("input");
+    el.name = 'field';
+    el.dataset = {};
+
+    const valid = [
+        ['file', '_fileListener', ['change']],
+        ['radio', '_radioListener', ['change']],
+        ['checkbox', '_checkboxListener', ['change']],
+        ['text', '_inputListener', ['input', 'blur']]
+    ];
+
+    valid.forEach(([type, callback, event]) => {
+        el.type = type;
+        const lg = new ListenerGenerator(el, '', '', {})._getSuitableListener();
+        expect(lg.listener.name).toBe(callback);
+        expect(lg.names).toEqual(event);
+    });
+});
+
+
+it('detects custom listener events', () => {
+
+    const el = document.createElement("input");
+    el.name = 'field';
+    el.dataset = {};
+
+    const valid = [
+        'foo|bar',
+        'baz'
+    ];
+
+    valid.forEach(event => {
+        el.dataset.validateOn = event;
+        const lg = new ListenerGenerator(el, '', '', {})._getSuitableListener();
+        expect(lg.names).toEqual(event.split('|'));
+    });
+});
+
+
