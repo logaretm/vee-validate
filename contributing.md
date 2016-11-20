@@ -10,7 +10,7 @@ Clone the repo
 
 Install npm dev dependencies
 
-`npm install` or `yarn`
+`npm install` or for better results use `yarn`
 
 Check the `scripts` section of `package.json` for any npm scripts that might find useful.
 
@@ -28,9 +28,21 @@ As you can see we have:
 
 If you want to contribute to the docs you can find it [here](https://github.com/logaretm/vee-validate-docs).
 
+### Pull Requests
+
+- The `master` branch serves Vue 2.0 version of the plugin, for Vue 1.0 version check the `vue1` branch.
+- Respect the ESlint rules, but we are open to any suggestions or alterations.
+- You don't have to build the library with each pull request, but you will if you plan to test it manually. No need to submit it in the PR to avoid as much conflicts as possible.
+- The clearer the PR title is, the faster it will get merged.
+- Make sure that your PR is up to date with the branch you are targeting, use git rebase for this.
+- Unfinished/In-Progress PRs should have `[WIP]` prefix to them.
+- Make sure to mention which issues are being fixed by the PR so they can be closed properly.
+
 ### Source Code
 
-Currently we are using ES2015 (ES6) for the source code, using Babel and Rollup to convert it to ES5, the available builds are: non-minified, minified and es6.
+Currently we are using ES2015 (ES6) for the source code, using Babel and Webpack to convert it to ES5, the available builds are: non-minified and minified.
+
+Also we are using ESlint for code style, it based of airbnb config but with few modifications, please respect them as much as you can.
 
 ### Testing
 
@@ -40,8 +52,8 @@ To run the tests:
 
 `npm test`
 
-Currently I'm not testing the directive and the mixin, I will work on adding those tests later if I can, help will be appreciated.
+Currently I'm not testing the directive and the mixin, I will work on adding those tests later if I can, help will be appreciated if we can test the other stuff.
 
 ### Building
 
-Use `npm run build` to build the project both minified and unminified versions as well as the es6 version.
+Use `npm run build` to build the project both minified and unminified versions.
