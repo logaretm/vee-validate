@@ -9,12 +9,14 @@ export default class ErrorBag
      *
      * @param {string} field The field name.
      * @param {string} msg The error message.
+     * @param {String} rule The rule that is responsible for the error.
      * @param {String} scope The Scope name, optional.
      */
-    add(field, msg, scope) {
+    add(field, msg, rule, scope) {
         const error = {
             field,
-            msg
+            msg,
+            rule
         };
 
         if (scope) {
@@ -70,9 +72,10 @@ export default class ErrorBag
      *
      * @param  {string} field The field name.
      * @param  {string} scope The scope name.
+     * @param {Boolean} map If it should map the errors to strings instead of objects.
      * @return {Array} errors The errors for the specified field.
      */
-    collect(field, scope) {
+    collect(field, scope, map = true) {
         if (! field) {
             const collection = {};
             this.errors.forEach(e => {
@@ -80,17 +83,18 @@ export default class ErrorBag
                     collection[e.field] = [];
                 }
 
-                collection[e.field].push(e.msg);
+                collection[e.field].push(map ? e.msg : e);
             });
 
             return collection;
         }
 
         if (scope) {
-            return this.errors.filter(e => e.field === field && e.scope === scope).map(e => e.msg);
+            return this.errors.filter(e => e.field === field && e.scope === scope)
+                       .map(e => (map ? e.msg : e));
         }
 
-        return this.errors.filter(e => e.field === field).map(e => e.msg);
+        return this.errors.filter(e => e.field === field).map(e => (map ? e.msg : e));
     }
     /**
      * Gets the internal array length.
@@ -143,6 +147,18 @@ export default class ErrorBag
         }
 
         return false;
+    }
+
+    /**
+     * Gets the first error message for a specific field and a rule.
+     * @param {String} name The name of the field.
+     * @param {String} rule The name of the rule.
+     * @param {String} scope The name of the scope (optional).
+     */
+    firstOf(name, rule, scope) {
+        const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
+
+        return (error && error.msg) || null;
     }
 
     /**
