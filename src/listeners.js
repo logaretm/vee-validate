@@ -168,9 +168,9 @@ export default class ListenerGenerator
      * Attachs a suitable listener for the input.
      */
     _attachFieldListeners() {
+        // If it is a component, use vue events instead.
         if (this.component) {
             this.component.$on('input', (value) => {
-                console.log(`Gotcha: ${value}`, this.fieldName);
                 this.vm.$validator.validate(this.fieldName, value);
             });
 
