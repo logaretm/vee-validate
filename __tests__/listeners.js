@@ -52,10 +52,8 @@ it('detects custom listener events', () => {
     ];
 
     valid.forEach(event => {
-        el.dataset.validateOn = event;
+        el.dataset.vvValidateOn = event;
         const lg = new ListenerGenerator(el, '', '', {})._getSuitableListener();
         expect(lg.names).toEqual(event.split('|'));
     });
 });
-
-
