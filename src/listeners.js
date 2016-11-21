@@ -11,7 +11,7 @@ export default class ListenerGenerator
         this.vm = vnode.context;
         this.component = vnode.child;
         this.options = options;
-        this.fieldName = binding.expression || el.name;
+        this.fieldName = this.component ? this.component.name : (binding.expression || el.name);
     }
 
     /**
@@ -165,14 +165,21 @@ export default class ListenerGenerator
     }
 
     /**
+     * Attaches neccessary validation events for the component.
+     */
+    _attachForComponent() {
+        this.component.$on('input', (value) => {
+            this.vm.$validator.validate(this.fieldName, value);
+        });
+    }
+
+    /**
      * Attachs a suitable listener for the input.
      */
     _attachFieldListeners() {
         // If it is a component, use vue events instead.
         if (this.component) {
-            this.component.$on('input', (value) => {
-                this.vm.$validator.validate(this.fieldName, value);
-            });
+            this._attachForComponent();
 
             return;
         }
