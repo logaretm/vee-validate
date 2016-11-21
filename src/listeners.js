@@ -11,7 +11,19 @@ export default class ListenerGenerator
         this.vm = vnode.context;
         this.component = vnode.child;
         this.options = options;
-        this.fieldName = this.component ? this.component.name : (binding.expression || el.name);
+        this.fieldName = this._resolveFieldName();
+    }
+
+    /**
+     * Resolves the field name to trigger validations.
+     * @return {String} The field name.
+     */
+    _resolveFieldName() {
+        if (this.component) {
+            return this.component.name || this.el.dataset.vvName;
+        }
+
+        return this.binding.expression || this.el.name || this.el.dataset.vvName;
     }
 
     /**
