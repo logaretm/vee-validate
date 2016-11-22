@@ -19,10 +19,11 @@ it('has field dependent rule', () => {
 });
 
 it('detects input listener events', () => {
-
-    const el = document.createElement("input");
-    el.name = 'field';
-    el.dataset = {};
+    document.body.innerHTML =
+        `<div>
+            <input id="el" type="text" name="field" data-vv-rules="required" data-vv-delay="100">
+        </div>`;
+    const el = document.querySelector('#el');
 
     const valid = [
         ['file', '_fileListener', ['change']],
@@ -41,18 +42,17 @@ it('detects input listener events', () => {
 
 
 it('detects custom listener events', () => {
-
-    const el = document.createElement("input");
-    el.name = 'field';
-    el.dataset = {};
-
     const valid = [
         'foo|bar',
         'baz'
     ];
 
     valid.forEach(event => {
-        el.dataset.vvValidateOn = event;
+        document.body.innerHTML =
+                `<div>
+                    <input id="el" type="text" name="field" data-vv-validate-on="${event}">
+                </div>`;
+        const el = document.querySelector('#el');        
         const lg = new ListenerGenerator(el, '', '', {})._getSuitableListener();
         expect(lg.names).toEqual(event.split('|'));
     });
