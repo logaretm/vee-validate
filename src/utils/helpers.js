@@ -55,5 +55,5 @@ export const warn = (message) => {
  */
  // eslint-disable-next-line
 export const isObject = (object) => {
-    return object && typeof object === 'object' && ! Array.isArray(object) && object !== null;
+    return object !== null && object && typeof object === 'object' && ! Array.isArray(object);
 };
