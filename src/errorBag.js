@@ -120,14 +120,12 @@ export default class ErrorBag
         }
 
         for (let i = 0; i < this.errors.length; i++) {
-            if (this.errors[i].field === field) {
-                if (scope) {
-                    if (this.errors[i].scope === scope) {
-                        return this.errors[i].msg;
-                    }
-                } else {
-                    return this.errors[i].msg;
-                }
+            if (this.errors[i].field !== field) {
+                continue;
+            }
+
+            if (! scope || (scope && this.errors[i].scope === scope)) {
+                return this.errors[i].msg;
             }
         }
 
