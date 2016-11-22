@@ -1,7 +1,13 @@
 /**
+ * Gets the data attribute. the name must be kebab-case.
+ */
+export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
+
+/**
  * Determines the input field scope.
  */
-export const getScope = (el) => el.dataset.vvScope || (el.form && el.form.dataset.vvScope);
+export const getScope = (el) =>
+    getDataAttribute(el, 'scope') || (el.form && getDataAttribute(el.form, 'scope'));
 
 /**
  * Debounces a function.

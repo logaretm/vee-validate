@@ -1,4 +1,4 @@
-import { getScope, debounce, warn } from './utils/helpers';
+import { getScope, debounce, warn, getDataAttribute } from './utils/helpers';
 
 const DEFAULT_EVENT_NAME = 'veeValidate';
 
@@ -20,10 +20,10 @@ export default class ListenerGenerator
      */
     _resolveFieldName() {
         if (this.component) {
-            return this.component.name || this.el.dataset.vvName;
+            return this.component.name || getDataAttribute(this.el, 'name');
         }
 
-        return this.binding.expression || this.el.name || this.el.dataset.vvName;
+        return this.binding.expression || this.el.name || getDataAttribute(this.el, 'name');
     }
 
     /**
@@ -113,7 +113,7 @@ export default class ListenerGenerator
             }
         });
 
-        const fieldName = this._hasFieldDependency(this.el.dataset.vvRules);
+        const fieldName = this._hasFieldDependency(getDataAttribute(this.el, 'rules'));
         if (fieldName) {
             // Wait for the validator ready triggered when vm is mounted because maybe
             // the element isn't mounted yet.
@@ -169,8 +169,9 @@ export default class ListenerGenerator
 
         // users are able to specify which events they want to validate on
         // pipe separated list of handler names to use
-        if (this.el.dataset.vvValidateOn) {
-            listener.names = this.el.dataset.vvValidateOn.split('|');
+        const events = getDataAttribute(this.el, 'validate-on');
+        if (events) {
+            listener.names = events.split('|');
         }
 
         return listener;
@@ -199,7 +200,7 @@ export default class ListenerGenerator
         const handler = this._getSuitableListener();
         const listener = debounce(
             handler.listener.bind(this),
-            this.el.dataset.vvDelay || this.options.delay
+            getDataAttribute(this.el, 'delay') || this.options.delay
         );
 
         if (~['radio', 'checkbox'].indexOf(this.el.type)) {
@@ -225,7 +226,9 @@ export default class ListenerGenerator
      * Attaches the Event Listeners.
      */
     attach() {
-        this.vm.$validator.attach(this.fieldName, this.el.dataset.vvRules, this.el.dataset.vvAs);
+        this.vm.$validator.attach(
+            this.fieldName, getDataAttribute(this.el, 'rules'), getDataAttribute(this.el, 'as')
+        );
         this._attachValidatorEvent();
 
         if (this.binding.expression) {
