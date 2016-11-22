@@ -12,18 +12,8 @@ export default class ErrorBag
      * @param {String} rule The rule that is responsible for the error.
      * @param {String} scope The Scope name, optional.
      */
-    add(field, msg, rule, scope) {
-        const error = {
-            field,
-            msg,
-            rule
-        };
-
-        if (scope) {
-            error.scope = scope;
-        }
-
-        this.errors.push(error);
+    add(field, msg, rule, scope = null) {
+        this.errors.push({ field, msg, rule, scope });
     }
 
     /**
@@ -120,11 +110,7 @@ export default class ErrorBag
         }
 
         for (let i = 0; i < this.errors.length; i++) {
-            if (this.errors[i].field !== field) {
-                continue;
-            }
-
-            if (! scope || (scope && this.errors[i].scope === scope)) {
+            if (this.errors[i].field === field && (! scope || this.errors[i].scope === scope)) {
                 return this.errors[i].msg;
             }
         }
