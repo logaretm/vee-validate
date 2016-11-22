@@ -12,18 +12,8 @@ export default class ErrorBag
      * @param {String} rule The rule that is responsible for the error.
      * @param {String} scope The Scope name, optional.
      */
-    add(field, msg, rule, scope) {
-        const error = {
-            field,
-            msg,
-            rule
-        };
-
-        if (scope) {
-            error.scope = scope;
-        }
-
-        this.errors.push(error);
+    add(field, msg, rule, scope = null) {
+        this.errors.push({ field, msg, rule, scope });
     }
 
     /**
@@ -41,7 +31,7 @@ export default class ErrorBag
     }
 
     /**
-     * Checks if there is any errrors in the internal array.
+     * Checks if there are any errors in the internal array.
      * @param {String} scope The Scope name, optional.
      * @return {boolean} result True if there was at least one error, false otherwise.
      */
@@ -55,6 +45,7 @@ export default class ErrorBag
 
     /**
      * Removes all items from the internal array.
+     *
      * @param {String} scope The Scope name, optional.
      */
     clear(scope) {
@@ -112,15 +103,15 @@ export default class ErrorBag
      * @return {string|null} message The error message.
      */
     first(field, scope) {
+        const selector = this.selector(field);
+
+        if (selector) {
+            return this.firstOf(selector.name, selector.rule, scope);
+        }
+
         for (let i = 0; i < this.errors.length; i++) {
-            if (this.errors[i].field === field) {
-                if (scope) {
-                    if (this.errors[i].scope === scope) {
-                        return this.errors[i].msg;
-                    }
-                } else {
-                    return this.errors[i].msg;
-                }
+            if (this.errors[i].field === field && (! scope || this.errors[i].scope === scope)) {
+                return this.errors[i].msg;
             }
         }
 
@@ -134,19 +125,7 @@ export default class ErrorBag
      * @return {Boolean} result True if at least one error is found, false otherwise.
      */
     has(field, scope) {
-        for (let i = 0; i < this.errors.length; i++) {
-            if (this.errors[i].field === field) {
-                if (scope) {
-                    if (this.errors[i].scope === scope) {
-                        return true;
-                    }
-                } else {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return !! this.first(field, scope);
     }
 
     /**
@@ -162,7 +141,7 @@ export default class ErrorBag
     }
 
     /**
-     * Removes all error messages assoicated with a specific field.
+     * Removes all error messages associated with a specific field.
      *
      * @param  {string} field The field which messages are to be removed.
      * @param {String} scope The Scope name, optional.
@@ -175,5 +154,22 @@ export default class ErrorBag
         }
 
         this.errors = this.errors.filter(e => e.field !== field);
+    }
+
+
+    /**
+     * Get the field attributes if there's a rule selector.
+     *
+     * @param  {string} field The specified field.
+     * @return {Object|null}
+     */
+    selector(field) {
+        if (field.indexOf(':') > -1) {
+            const [name, rule] = field.split(':');
+
+            return { name, rule };
+        }
+
+        return null;
     }
 }

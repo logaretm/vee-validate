@@ -59,10 +59,22 @@ it('clears the errors within a scope', () => {
     expect(errors.count()).toBe(1);
 });
 
+it('checks for field selector existence', () => {
+    const errors = new ErrorBag();
+
+    expect(errors.selector('name:rule').name).toBe('name');
+    expect(errors.selector('name:rule').rule).toBe('rule');
+
+    expect(errors.selector('name')).toBe(null);
+});
+
 it('checks for field error existence', () => {
     const errors = new ErrorBag();
     errors.add('name', 'The name is invalid', 'rule1',);
     expect(errors.has('name')).toBe(true);
+    expect(errors.has('name:rule1')).toBe(true);
+
+    expect(errors.has('name:rule2')).toBe(false);
     expect(errors.has('email')).toBe(false);
 });
 
@@ -89,7 +101,11 @@ it('fetches the first error message for a specific field', () => {
     errors.add('email', 'The email is invalid', 'rule1');
     errors.add('email', 'The email is shorter than 3 chars.', 'rule1');
 
+    errors.add('email', 'This is the third rule', 'rule2');
+    errors.add('email', 'This is the forth rule', 'rule2');
+
     expect(errors.first('email')).toBe('The email is invalid');
+    expect(errors.first('email:rule2')).toBe('This is the third rule');
 
     errors.clear();
     errors.add('email', 'The email is shorter than 3 chars.', 'rule1');
