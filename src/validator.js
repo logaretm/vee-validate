@@ -498,7 +498,7 @@ export default class Validator
                     data = values.data;
                 }
 
-                if ( ! allValid) {
+                if (! allValid) {
                     this.errorBag.add(
                         name,
                         this._formatErrorMessage(name, rule, data),
