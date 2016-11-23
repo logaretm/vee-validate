@@ -497,12 +497,14 @@ export default class Validator
                     }
                 } else { // Is a single object.
                     allValid = values.valid;
-                    this.errorBag.add(
-                        name,
-                        this._formatErrorMessage(name, rule, values.data),
-                        rule,
-                        scope
-                    );
+                    if ( ! allValid) {
+                        this.errorBag.add(
+                            name,
+                            this._formatErrorMessage(name, rule, values.data),
+                            rule,
+                            scope
+                        );
+                    }
                 }
 
                 return allValid;
