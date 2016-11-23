@@ -446,6 +446,18 @@ it('can translate target field for field dependent validations', () => {
     expect(v.errorBag.first('email')).toBe('The Email Address does not match the Email Confirmation.');
 });
 
+
+it('auto detect confirmation field when none given', () => {
+    const v = new Validator({
+        password: 'confirmed'
+    });
+
+    helpers.querySelector({ name: 'password_confirmation', value: 'secret' });
+    expect(v.validate('password', 'secret')).toBe(true);
+
+    expect(v.validate('password', 'fail')).toBe(false);
+});
+
 describe('validators can provide reasoning for failing', () => {
     it('without promises', () => {
         const v = new Validator();
