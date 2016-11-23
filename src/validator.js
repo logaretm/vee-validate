@@ -480,7 +480,7 @@ export default class Validator
      * @param  {*} name The name of the field.
      * @param  {*} value  [description]
      * @param  {object} rule the rule object.
-     * @return {boolean} Wether if it passes the check.
+     * @return {boolean} Whether it passes the check.
      */
     _test(name, value, rule, scope) {
         const validator = Rules[rule.name];
