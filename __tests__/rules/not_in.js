@@ -1,7 +1,7 @@
 
 import validate from './../../src/rules/notIn';
 
-it('validates that the value exists within a list', () => {
+it('validates that the value does not exist within a list', () => {
     const list = [1, 2, 3, 4, 5];
 
     // valid.
