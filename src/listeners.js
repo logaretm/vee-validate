@@ -1,7 +1,5 @@
 import { getScope, debounce, warn, getDataAttribute } from './utils/helpers';
 
-const DEFAULT_EVENT_NAME = 'veeValidate';
-
 export default class ListenerGenerator
 {
     constructor(el, binding, vnode, options) {
@@ -105,8 +103,6 @@ export default class ListenerGenerator
     _attachValidatorEvent() {
         const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
 
-        this.vm.$on(DEFAULT_EVENT_NAME, listener);
-        this.callbacks.push({ name: DEFAULT_EVENT_NAME, listener });
         this.vm.$on('VALIDATOR_OFF', (field) => {
             if (this.fieldName === field) {
                 this.detach();
@@ -180,7 +176,7 @@ export default class ListenerGenerator
     /**
      * Attaches neccessary validation events for the component.
      */
-    _attachForComponent() {
+    _attachComponentListeners() {
         this.component.$on('input', (value) => {
             this.vm.$validator.validate(this.fieldName, value);
         });
@@ -192,7 +188,7 @@ export default class ListenerGenerator
     _attachFieldListeners() {
         // If it is a component, use vue events instead.
         if (this.component) {
-            this._attachForComponent();
+            this._attachComponentListeners();
 
             return;
         }
@@ -223,11 +219,62 @@ export default class ListenerGenerator
     }
 
     /**
+     * Returns a function that is used to retrieve a fresh value for the input.
+     */
+    _resolveValueGetter() {
+        if (this.component) {
+            return {
+                context: () => this.component,
+                getter(context) {
+                    return context.value || context[getDataAttribute(context.$el, 'value-path')];
+                }
+            };
+        }
+
+        switch (this.el.type) {
+        case 'checkbox': return {
+            context: () => document.querySelectorAll(`input[name="${this.el.name}"]:checked`),
+            getter(context) {
+                if (! context || ! context.length) {
+                    return null;
+                }
+
+                return [...context].map(checkbox => checkbox.value);
+            }
+        };
+        case 'radio': return {
+            context: () => document.querySelector(`input[name="${this.el.name}"]:checked`),
+            getter(context) {
+                return context && context.value;
+            }
+        };
+        case 'file': return {
+            context: () => this.el,
+            getter(context) {
+                return context.files;
+            }
+        };
+
+        default: return {
+            context: () => this.el,
+            getter(context) {
+                return context.value;
+            }
+        };
+        }
+    }
+
+    /**
      * Attaches the Event Listeners.
      */
     attach() {
+        const { context, getter } = this._resolveValueGetter();
         this.vm.$validator.attach(
-            this.fieldName, getDataAttribute(this.el, 'rules'), getDataAttribute(this.el, 'as')
+            this.fieldName,
+            getDataAttribute(this.el, 'rules'),
+            getDataAttribute(this.el, 'as'),
+            context,
+            getter
         );
         this._attachValidatorEvent();
 
@@ -251,11 +298,7 @@ export default class ListenerGenerator
      * Removes all attached event listeners.
      */
     detach() {
-        this.callbacks.filter(({ name }) => name === DEFAULT_EVENT_NAME).forEach(h => {
-            this.vm.$off(DEFAULT_EVENT_NAME, h.listener);
-        });
-
-        this.callbacks.filter(({ name }) => name !== DEFAULT_EVENT_NAME).forEach(h => {
+        this.callbacks.forEach(h => {
             h.el.removeEventListener(h.name, h.listener);
         });
     }

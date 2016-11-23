@@ -76,8 +76,8 @@ it('can allow array of rules for fields', () => {
     expect(v.validate('file', 'blabla.css')).toBe(false);
 });
 
-it('validates multiple values', () => {
-    const result = validator.validateAll({
+it('validates multiple values', async () => {
+    const result = await validator.validateAll({
         email: 'foo@bar.com',
         name: 'John Snow',
         title: 'Winter is coming',
@@ -89,8 +89,8 @@ it('validates multiple values', () => {
     expect(validator.errorBag.all()).toEqual([]);
 });
 
-it('fails validation on a one-of-many failure', () => {
-    const result = validator.validateAll({
+it('fails validation on a one-of-many failure', async () => {
+    const result = await validator.validateAll({
         email: 'foo@bar.com',
         name: 'John Snow',
         title: 'No',
@@ -102,47 +102,47 @@ it('fails validation on a one-of-many failure', () => {
     expect(validator.errorBag.all()).toContain("The title must be at least 3 characters.");
 });
 
-it('bypasses values without rules in strictMode = off', () => {
+it('bypasses values without rules in strictMode = off', async () => {
 	Validator.setStrictMode(false)
 	const validator3 = new Validator({
 		imp: 'required'
 	});
-    const result = validator3.validateAll({
+    const result = await validator3.validateAll({
     	imp: 'Tyrion Lannister',
         headless: 'Ned Stark'
     });
 
     expect(result).toBe(true);
     expect(validator3.errorBag.all()).toEqual([]);
-    Validator.setStrictMode(true) // reset strictMode for remaining tests.
+    Validator.setStrictMode(true); // reset strictMode for remaining tests.
 });
 
-it('can set strict mode on specific instances', () => {
+it('can set strict mode on specific instances', async () => {
 	const validator3 = new Validator({
 		imp: 'required'
 	});
-    let result = validator3.validateAll({
+    let result = await validator3.validateAll({
     	imp: 'Tyrion Lannister',
         headless: 'Ned Stark'
     });
     expect(result).toBe(false); // strict = true.
     validator3.setStrictMode(false);
-    result = validator3.validateAll({
+    result = await validator3.validateAll({
     	imp: 'Tyrion Lannister',
         headless: 'Ned Stark'
     });
 
     expect(result).toBe(true); // strict = false.
 
-    result = new Validator({ imp: 'required' }).validateAll({
+    result = await (new Validator({ imp: 'required' }).validateAll({
     	imp: 'Tyrion Lannister',
         headless: 'Ned Stark'
-    });
+    }));
     expect(result).toBe(false); // strict = true because this is a different instance.
 });
 
-it('formats error messages', () => {
-    const result = validator.validateAll({
+it('formats error messages', async () => {
+    const result = await validator.validateAll({
         email: 'foo@bar.c',
         name: '',
         title: 'Wi',
@@ -406,30 +406,25 @@ it('cascades promise values with previous boolean', () => {
     });
 });
 
-it('cascades promise values with previous fields', () => {
+it('cascades promise values with previous fields', async () => {
     const v = new Validator({
         email: 'required|promised|email',
         name: 'alpha|promised',
         phone: 'promised|numeric'
     });
-    let result = v.validateAll({
+    let result = await v.validateAll({
         email: 'somemeail@yahoo.com',
         name: 'ProperName',
         phone: '11123112123'
     });
-    expect(typeof result.then === 'function').toBe(true); // is a promise
-    result.then(value => {
-        expect(value).toBe(true); // should pass
-    });
+    expect(result).toBe(true); // should pass
 
-    result = v.validateAll({
+    result = await v.validateAll({
         email: 'somemeail', // not valid email.
         name: 'ProperName',
         phone: '11123112123'
     });
-    result.then(value => {
-        expect(value).toBe(false); // should fail
-    });
+    expect(result).toBe(false); // should fail
 });
 
 it('can translate target field for field dependent validations', () => {

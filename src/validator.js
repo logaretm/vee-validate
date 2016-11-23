@@ -7,7 +7,6 @@ import { warn, isObject } from './utils/helpers';
 import date from './plugins/date';
 import FieldBag from './fieldBag';
 
-const EVENT_NAME = 'veeValidate';
 let DEFAULT_LOCALE = 'en';
 let STRICT_MODE = true;
 
@@ -225,14 +224,15 @@ export default class Validator
      * @param  {string} name The field name.
      * @param  {string} checks validations expression.
      * @param {string} prettyName Custom name to be used as field name in error messages.
+     * @param {Function} getter A function used to retrive a fresh value for the field.
      */
-    attach(name, checks, prettyName = null) {
+    attach(name, checks, prettyName = undefined, context = undefined, getter = undefined) {
         this.errorBag.remove(name);
         this._createField(name, checks);
 
-        if (prettyName) {
-            this.$fields[name].name = prettyName;
-        }
+        this.$fields[name].name = prettyName;
+        this.$fields[name].getter = getter;
+        this.$fields[name].context = context;
     }
 
     /**
@@ -270,20 +270,29 @@ export default class Validator
     }
 
     /**
+     * Resolves the field values from the getter functions.
+     */
+    _resolveValuesFromGetters() {
+        const values = {};
+        Object.keys(this.$fields).forEach(field => {
+            const getter = this.$fields[field].getter;
+            const context = this.$fields[field].context;
+
+            if (getter && context) {
+                values[field] = getter(context());
+            }
+        });
+
+        return values;
+    }
+
+    /**
      * Validates each value against the corresponding field validations.
      * @param  {object} values The values to be validated.
-     * @return {boolean|Promise|void} result Returns a boolean or a promise that will
+     * @return {Promise} result Returns a boolean or a promise that will
      * resolve to a boolean.
      */
-    validateAll(values) {
-        /* istanbul ignore if */
-        if (this.$vm && (! values || typeof values === 'string')) {
-            this.errorBag.clear(values);
-            this.$vm.$emit(EVENT_NAME, values);
-
-            return;
-        }
-
+    validateAll(values = this._resolveValuesFromGetters()) {
         let test = true;
         const promises = [];
         this.errorBag.clear();
@@ -297,12 +306,11 @@ export default class Validator
             test = test && result;
         });
 
-        if (promises.length) {
-            // eslint-disable-next-line
-            return Promise.all(promises).then(values => values.every(t => t) && test);
-        }
+        return Promise.all(promises).then(vals => {
+            const valid = vals.every(t => t) && test;
 
-        return test; // eslint-disable-line
+            return valid;
+        });
     }
 
     /**
@@ -478,6 +486,7 @@ export default class Validator
         const validator = Rules[rule.name];
         const result = validator(value, rule.params);
 
+        // If it is a promise.
         if (typeof result.then === 'function') {
             return result.then(values => {
                 let allValid = true;
