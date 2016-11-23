@@ -484,7 +484,7 @@ export default class Validator
      */
     _test(name, value, rule, scope) {
         const validator = Rules[rule.name];
-        let result = validator(value, rule.params);
+        let result = validator(value, rule.params, name);
 
         // If it is a promise.
         if (typeof result.then === 'function') {

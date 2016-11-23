@@ -446,7 +446,6 @@ it('can translate target field for field dependent validations', () => {
     expect(v.errorBag.first('email')).toBe('The Email Address does not match the Email Confirmation.');
 });
 
-
 describe('validators can provide reasoning for failing', () => {
 
     it('without promises', () => {
