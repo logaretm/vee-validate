@@ -7,6 +7,7 @@ export default {
     alpha: (field) => `The ${field} may only contain alphabetic characters.`,
     between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
     confirmed: (field, [confirmedField]) => `The ${field} does not match the ${confirmedField}.`,
+    credit_card: (field) => `The ${field} is invalid.`,
     decimal: (field, [decimals] = ['*']) => `The ${field} must be numeric and may contain ${decimals === '*' ? '' : decimals} decimal points.`,
     digits: (field, [length]) => `The ${field} must be numeric and exactly contain ${length} digits.`,
     dimensions: (field, [width, height]) => `The ${field} must be ${width} pixels by ${height} pixels.`,
