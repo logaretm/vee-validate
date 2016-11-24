@@ -5,6 +5,7 @@ import alpha_num from './alpha_num';
 import alpha_spaces from './alpha_spaces';
 import between from './between';
 import confirmed from './confirmed';
+import credit_card from './credit_card';
 import decimal from './decimal';
 import digits from './digits';
 import dimensions from './dimensions';
@@ -32,6 +33,7 @@ export default {
     alpha,
     between,
     confirmed,
+    credit_card,
     decimal,
     digits,
     dimensions,

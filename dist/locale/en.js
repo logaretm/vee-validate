@@ -7,6 +7,7 @@ export default {
     before: (field, [target]) => `The ${field} must be before ${target}.`,
     between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
     confirmed: (field, [confirmedField]) => `The ${field} does not match the ${confirmedField}.`,
+    credit_card: (field) => `The ${field} is invalid.`,
     date_between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
     date_format: (field, [format]) => `The ${field} must be in the format ${format}.`,
     decimal: (field, [decimals] = ['*']) => `The ${field} must be numeric and may contain ${decimals === '*' ? '' : decimals} decimal points.`,
