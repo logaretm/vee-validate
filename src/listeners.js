@@ -219,14 +219,14 @@ export default class ListenerGenerator
     }
 
     /**
-     * Returns a function that is used to retrieve a fresh value for the input.
+     * Returns a context, getter factory pairs for each input type.
      */
     _resolveValueGetter() {
         if (this.component) {
             return {
                 context: () => this.component,
                 getter(context) {
-                    return context.value || context[getDataAttribute(context.$el, 'value-path')];
+                    return context[getDataAttribute(context.$el, 'value-path')] || context.value;
                 }
             };
         }
