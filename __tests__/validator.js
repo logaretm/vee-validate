@@ -315,6 +315,28 @@ it('can overwrite messages and add translated messages', () => {
     expect(loc.errorBag.first('first_name')).toBe('My name is jeff');
 });
 
+it('sets locale for all validators', () => {
+    const v1 = new Validator({ first_name: 'alpha' });
+    const v2 = new Validator({ first_name: 'alpha' });
+    Validator.updateDictionary({
+        ar: { messages: { alpha: (field) => 'عايز حروف'} },
+        en: { messages: { alpha: (field) => `is alphabetic` } }
+    });
+
+    v1.setLocale('ar');
+    v1.validate('first_name', '213');
+    v2.validate('first_name', '213');
+    expect(v1.errorBag.first('first_name')).toBe('عايز حروف');
+    expect(v2.errorBag.first('first_name')).toBe('عايز حروف');
+
+    Validator.setLocale('en');
+    // must regenerate.
+    v1.validate('first_name', '213');
+    v2.validate('first_name', '213');
+    expect(v1.errorBag.first('first_name')).toBe('is alphabetic');
+    expect(v2.errorBag.first('first_name')).toBe('is alphabetic');
+});
+
 it('ing line 30', () => {
     const chineseValidator = new Validator({ first_name: 'alpha' });
     chineseValidator.updateDictionary({
