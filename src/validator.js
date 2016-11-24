@@ -7,7 +7,7 @@ import { warn, isObject } from './utils/helpers';
 import date from './plugins/date';
 import FieldBag from './fieldBag';
 
-let DEFAULT_LOCALE = 'en';
+let LOCALE = 'en';
 let STRICT_MODE = true;
 
 const dictionary = new Dictionary({
@@ -20,7 +20,6 @@ const dictionary = new Dictionary({
 export default class Validator
 {
     constructor(validations, $vm) {
-        this.locale = DEFAULT_LOCALE;
         this.strictMode = STRICT_MODE;
         this.$fields = {};
         this.fieldBag = new FieldBag($vm);
@@ -40,14 +39,14 @@ export default class Validator
      *
      * @param {String} language The locale id.
      */
-    static setDefaultLocale(language = 'en') {
+    static setLocale(language = 'en') {
         /* istanbul ignore if */
         if (! dictionary.hasLocale(language)) {
             // eslint-disable-next-line
             warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
         }
 
-        DEFAULT_LOCALE = language;
+        LOCALE = language;
     }
 
     /**
@@ -215,7 +214,7 @@ export default class Validator
             warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
         }
 
-        this.locale = language;
+        LOCALE = language;
     }
 
     /**
@@ -289,8 +288,7 @@ export default class Validator
     /**
      * Validates each value against the corresponding field validations.
      * @param  {object} values The values to be validated.
-     * @return {Promise} result Returns a boolean or a promise that will
-     * resolve to a boolean.
+     * @return {Promise} Returns a promise with the validation result.
      */
     validateAll(values = this._resolveValuesFromGetters()) {
         let test = true;
@@ -444,13 +442,13 @@ export default class Validator
         const name = this._getFieldDisplayName(field);
         const params = this._getLocalizedParams(rule);
 
-        if (! dictionary.hasLocale(this.locale) ||
-         typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
+        if (! dictionary.hasLocale(LOCALE) ||
+         typeof dictionary.getMessage(LOCALE, rule.name) !== 'function') {
             // Default to english message.
             return dictionary.getMessage('en', rule.name)(name, params, data);
         }
 
-        return dictionary.getMessage(this.locale, rule.name)(name, params, data);
+        return dictionary.getMessage(LOCALE, rule.name)(name, params, data);
     }
 
     /**
@@ -459,7 +457,7 @@ export default class Validator
     _getLocalizedParams(rule) {
         if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) &&
         rule.params && rule.params[0]) {
-            return [dictionary.getAttribute(this.locale, rule.params[0], rule.params[0])];
+            return [dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
         }
 
         return rule.params;
@@ -471,7 +469,7 @@ export default class Validator
      * @return {String} displayName The name to be used in the errors.
      */
     _getFieldDisplayName(field) {
-        return this.$fields[field].name || dictionary.getAttribute(this.locale, field, field);
+        return this.$fields[field].name || dictionary.getAttribute(LOCALE, field, field);
     }
 
     /**
@@ -534,5 +532,9 @@ export default class Validator
      */
     getErrors() {
         return this.errorBag;
+    }
+
+    getLocale() {
+        return LOCALE;
     }
 }
