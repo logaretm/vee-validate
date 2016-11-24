@@ -106,7 +106,7 @@ export default class ErrorBag
         const selector = this.selector(field);
 
         if (selector) {
-            return this.firstOf(selector.name, selector.rule, scope);
+            return this.firstByRule(selector.name, selector.rule, scope);
         }
 
         for (let i = 0; i < this.errors.length; i++) {
@@ -134,7 +134,7 @@ export default class ErrorBag
      * @param {String} rule The name of the rule.
      * @param {String} scope The name of the scope (optional).
      */
-    firstOf(name, rule, scope) {
+    firstByRule(name, rule, scope) {
         const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
 
         return (error && error.msg) || null;
