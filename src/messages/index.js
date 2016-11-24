@@ -6,7 +6,7 @@ export default {
     alpha_spaces: (field) => `The ${field} may only contain alphabetic characters as well as spaces.`,
     alpha: (field) => `The ${field} may only contain alphabetic characters.`,
     between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
-    confirmed: (field, [confirmedField]) => `The ${field} does not match the ${confirmedField}.`,
+    confirmed: (field) => `The ${field} confirmation does not match.`,
     credit_card: (field) => `The ${field} is invalid.`,
     decimal: (field, [decimals] = ['*']) => `The ${field} must be numeric and may contain ${decimals === '*' ? '' : decimals} decimal points.`,
     digits: (field, [length]) => `The ${field} must be numeric and exactly contain ${length} digits.`,

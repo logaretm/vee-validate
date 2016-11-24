@@ -6,7 +6,7 @@ export default {
     alpha: (field) => `The ${field} may only contain alphabetic characters.`,
     before: (field, [target]) => `The ${field} must be before ${target}.`,
     between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
-    confirmed: (field, [confirmedField]) => `The ${field} does not match the ${confirmedField}.`,
+    confirmed: (field) => `The ${field} confirmation does not match.`,
     credit_card: (field) => `The ${field} is invalid.`,
     date_between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
     date_format: (field, [format]) => `The ${field} must be in the format ${format}.`,
