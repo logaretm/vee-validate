@@ -298,6 +298,7 @@ export default class ListenerGenerator
      * Removes all attached event listeners.
      */
     detach() {
+        this.vm.$validator.detach(this.fieldName, getScope(this.el));
         this.callbacks.forEach(h => {
             h.el.removeEventListener(h.name, h.listener);
         });

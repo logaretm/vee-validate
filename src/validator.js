@@ -248,14 +248,15 @@ export default class Validator
      *
      * @param  {string} name The name of the field.
      */
-    detach(name) {
+    detach(name, scope) {
         /* istanbul ignore if */
         if (this.$vm && typeof this.$vm.$emit === 'function') {
             this.$vm.$emit('VALIDATOR_OFF', name);
         }
 
-        delete this.$fields[name];
+        this.errorBag.remove(name, scope);
         this.fieldBag._remove(name);
+        delete this.$fields[name];
     }
 
     /**
