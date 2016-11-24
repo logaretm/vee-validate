@@ -478,26 +478,28 @@ export default class Validator
      * @param  {*} name The name of the field.
      * @param  {*} value  [description]
      * @param  {object} rule the rule object.
-     * @return {boolean} Wether if it passes the check.
+     * @return {boolean} Whether it passes the check.
      */
     _test(name, value, rule, scope) {
         const validator = Rules[rule.name];
-        const result = validator(value, rule.params);
+        let result = validator(value, rule.params, name);
 
         // If it is a promise.
         if (typeof result.then === 'function') {
             return result.then(values => {
                 let allValid = true;
+                let data = {};
                 if (Array.isArray(values)) {
                     allValid = values.every(t => t.valid);
-                    if (! allValid) {
-                        this.errorBag.add(name, this._formatErrorMessage(name, rule), rule, scope);
-                    }
                 } else { // Is a single object.
                     allValid = values.valid;
+                    data = values.data;
+                }
+
+                if (! allValid) {
                     this.errorBag.add(
                         name,
-                        this._formatErrorMessage(name, rule, values.data),
+                        this._formatErrorMessage(name, rule, data),
                         rule,
                         scope
                     );
@@ -507,24 +509,20 @@ export default class Validator
             });
         }
 
-        if (isObject(result)) {
-            if (! result.valid) {
-                this.errorBag.add(
-                    name,
-                    this._formatErrorMessage(name, rule, result.data),
-                    rule,
-                    scope
-                );
-            }
-
-            return result.valid;
+        if (! isObject(result)) {
+            result = { valid: result, data: {} };
         }
 
-        if (! result) {
-            this.errorBag.add(name, this._formatErrorMessage(name, rule), rule, scope);
+        if (! result.valid) {
+            this.errorBag.add(
+                name,
+                this._formatErrorMessage(name, rule, result.data),
+                rule,
+                scope
+            );
         }
 
-        return result;
+        return result.valid;
     }
 
     /**
