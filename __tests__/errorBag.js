@@ -215,8 +215,7 @@ it('can get a specific error message for a specific rule', () => {
     errors.add('name', 'The name is invalid', 'rule1');
     errors.add('name', 'The name is really invalid', 'rule2');
 
-    expect(errors.firstOf('name', 'rule1')).toBe('The name is invalid');
-    expect(errors.firstOf('name', 'rule2')).toBe('The name is really invalid');
-
-    expect(errors.firstOf('email', 'rule1')).toBe(null);
+    expect(errors.firstByRule('name', 'rule1')).toBe('The name is invalid');
+    expect(errors.firstByRule('name', 'rule2')).toBe('The name is really invalid');
+    expect(errors.firstByRule('email', 'rule1')).toBe(null);
 });
