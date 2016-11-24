@@ -1,6 +1,10 @@
 import Validator from './../src/validator';
 import helpers from './helpers';
 
+afterEach(() => {
+    Validator.setLocale();
+});
+
 // Converts the value to a boolean and returns it in a promise.
 Validator.extend('promised', (value) => {
     return new Promise(resolve => {
@@ -242,21 +246,20 @@ it('can add a custom validator with localized messages', () => {
     expect(validator.errorBag.first('anotherField')).toBe('Some Arabic Text');
 });
 
-it('can set the default locale for newly created validators', () => {
+it('can set the locale statically', () => {
     Validator.updateDictionary({ ar: {
         messages: {
             alpha: () => 'البتاعة لازم يكون حروف بس'
         }
     }});
-    Validator.setDefaultLocale('ar');
+    Validator.setLocale('ar');
     const loc = new Validator({ name: 'alpha' });
 
     expect(loc.validate('name', '1234')).toBe(false);
-    expect(loc.locale).toBe('ar');
+    expect(loc.getLocale()).toBe('ar');
     expect(loc.getErrors().first('name')).toBe('البتاعة لازم يكون حروف بس');
 
-    Validator.setDefaultLocale(); // resets to english.
-    Validator.updateDictionary({ ar: { messages: { alpha: '' } }}); // reset the dictionary for other tests.
+    Validator.updateDictionary({ ar: null }); // reset the dictionary for other tests.
 });
 
 it('throws an exception when extending with an invalid validator', () => {

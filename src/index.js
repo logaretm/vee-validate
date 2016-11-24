@@ -10,7 +10,7 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
         Validator.updateDictionary(dictionary);
     }
 
-    Validator.setDefaultLocale(locale);
+    Validator.setLocale(locale);
     Validator.setStrictMode(strict);
 
     const options = {
