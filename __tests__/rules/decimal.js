@@ -17,4 +17,7 @@ it('validates numerics with decmial numbers', () => {
     expect(validate('1-1.22', params)).toBe(false);
     expect(validate([])).toBe(false);
     expect(validate('a')).toBe(false);
+
+    expect(validate('1.11', ['0'])).toBe(false);
+    expect(validate('1', ['0'])).toBe(true);
 });
