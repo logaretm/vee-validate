@@ -148,16 +148,19 @@ describe('can resolve value getters and context functions', () => {
         const el = document.querySelector('#el1');
         const lg = new ListenerGenerator(el, {}, {}, {});
         const { context, getter } = lg._resolveValueGetter();
-
         expect(getter(context())).toEqual(['1']);
-
         document.body.innerHTML = `
             <div>
                 <input id="el1" type="checkbox" name="name" value="1" checked>
                 <input id="el2" type="checkbox" name="name" value="2" checked>
             </div>`;
-
         expect(getter(context())).toEqual(['1', '2']);
+        document.body.innerHTML = `
+            <div>
+                <input id="el1" type="checkbox" name="name" value="1">
+                <input id="el2" type="checkbox" name="name" value="2">
+            </div>`;
+        expect(getter(context())).toEqual(null);
     });
 
     it('resolves value getters for radio inputs', () => {
@@ -167,18 +170,21 @@ describe('can resolve value getters and context functions', () => {
                 <input id="el2" type="radio" name="name" value="2">
             </div>`;
         const el = document.querySelector('#el1');
-        const el2 = document.querySelector('#el2');
         const lg = new ListenerGenerator(el, {}, {}, {});
         const { context, getter } = lg._resolveValueGetter();
-
-        expect(getter(el)).toBe('1');
+        expect(getter(context())).toBe('1');
 
         document.body.innerHTML = `
             <div>
                 <input id="el1" type="radio" name="name" value="1">
                 <input id="el2" type="radio" name="name" value="2" checked>
             </div>`;
-
         expect(getter(context())).toBe('2');
+        document.body.innerHTML = `
+            <div>
+                <input id="el1" type="radio" name="name" value="1">
+                <input id="el2" type="radio" name="name" value="2">
+            </div>`;
+        expect(getter(context())).toBe(null);
     });
 });
