@@ -543,3 +543,13 @@ describe('validators can provide reasoning for failing', () => {
         expect(v.errorBag.first('reason_field')).toBe('Something went wrong');
     });
 });
+
+it('can remove rules from the list of validators', () => {
+    Validator.extend('dummy', (value) => !! value);
+    const v1 = new Validator({ name: 'dummy'});
+    expect(v1.validate('name', false)).toBe(false);
+    v1.remove('dummy');
+    expect(() => {
+        v1.validate('name', false)
+    }).toThrow();
+});

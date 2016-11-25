@@ -136,6 +136,22 @@ export default class Validator
     }
 
     /**
+     * Removes a rule from the list of validators.
+     * @param {String} name The name of the validator/rule.
+     */
+    static remove(name) {
+        delete Rules[name];
+    }
+
+    /**
+     * Removes a rule from the list of validators.
+     * @param {String} name The name of the validator/rule.
+     */
+    remove(name) {
+        Validator.remove(name);
+    }
+
+    /**
      * Merges a validator object into the Rules and Messages.
      *
      * @param  {string} name The name of the validator.
@@ -483,6 +499,10 @@ export default class Validator
      */
     _test(name, value, rule, scope) {
         const validator = Rules[rule.name];
+        if (! validator || typeof validator !== 'function') {
+            throw new ValidatorException(`No such validator '${rule.name}' exists.`);
+        }
+
         let result = validator(value, rule.params, name);
 
         // If it is a promise.
