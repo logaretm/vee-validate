@@ -51,21 +51,47 @@ it('detects custom listener events', () => {
 });
 
 it('can resolve a field name', () => {
+    // using direct field name.
     document.body.innerHTML = `<input id="el" type="text" name="field">`;
     let el = document.querySelector('#el');
-    let name = new ListenerGenerator(el, '', '', {})._resolveFieldName();
+    let name = new ListenerGenerator(el, {}, {}, {})._resolveFieldName();
     expect(name).toBe('field');
 
+    // using data attribute.
     document.body.innerHTML = `<input id="el" type="text" data-vv-name="dataName">`;
     el = document.querySelector('#el');
-    name = new ListenerGenerator(el, '', '', {})._resolveFieldName();
+    name = new ListenerGenerator(el, {}, {}, {})._resolveFieldName();
     expect(name).toBe('dataName');
 
+    // using expression.
     name = new ListenerGenerator(el, { expression: 'expressedName' }, '', {})._resolveFieldName();
     expect(name).toBe('expressedName');
 
-
+    // using component attribute.
     let cgl = new ListenerGenerator(el, { expression: 'expressedName' }, '', {});
     cgl.component = { name: 'componentName' };
     expect(cgl._resolveFieldName()).toBe('componentName');
+});
+
+it('can generate a scoped listener', () => {
+    document.body.innerHTML = `<input id="el" type="text" name="name" data-vv-scope="scope1">`;
+    const el = document.querySelector('#el');
+    const scopedCallback = new ListenerGenerator(el, {}, {}, {})._getScopedListener(() => {
+        throw 'Oops!'
+    });
+
+    // different scope, nope.
+    expect(() => {
+        scopedCallback('scope2')
+    }).not.toThrow('Oops!');
+
+    // no scope, yep.
+    expect(() => {
+        scopedCallback()
+    }).toThrowError('Oops!');
+
+    // same scope, yep.
+    expect(() => {
+        scopedCallback('scope1')
+    }).toThrowError('Oops!');
 });
