@@ -1,5 +1,6 @@
 import ListenerGenerator from './../src/listeners';
 import helpers from './helpers';
+import Validator from '../src/validator';
 
 it('has field dependent rule', () => {
     const lg = new ListenerGenerator({ name: 'el'}, '', '', {});
@@ -68,7 +69,7 @@ it('can resolve a field name', () => {
     expect(name).toBe('expressedName');
 
     // using component attribute.
-    let cgl = new ListenerGenerator(el, { expression: 'expressedName' }, '', {});
+    const cgl = new ListenerGenerator(el, { expression: 'expressedName' }, '', {});
     cgl.component = { name: 'componentName' };
     expect(cgl._resolveFieldName()).toBe('componentName');
 });
@@ -186,5 +187,74 @@ describe('can resolve value getters and context functions', () => {
                 <input id="el2" type="radio" name="name" value="2">
             </div>`;
         expect(getter(context())).toBe(null);
+    });
+});
+
+describe('the generator can handle input events', () => {
+    it('can handle text input event', () => {
+        const vm = { $validator: helpers.validator() };
+        document.body.innerHTML = `<input id="el" type="text" name="field" value="1">`;
+        const el = document.querySelector('#el');
+        expect(() => {
+            new ListenerGenerator(el, {}, { context: vm }, {})._inputListener();
+        }).toThrow();
+    });
+
+    it('can handle file change event', () => {
+        let vm = { $validator: helpers.validator(false) };
+        document.body.innerHTML = `<input id="el" type="file" name="field" value="files.jpg">`;
+        const el = document.querySelector('#el');
+        new ListenerGenerator(el, { modifiers: { reject: true }}, { context: vm }, {})._fileListener();
+        expect(el.value).toBe(''); // test reject.
+        vm = { $validator: helpers.validator() };
+        expect(() => {
+            new ListenerGenerator(el, {}, { context: vm }, {})._fileListener();
+        }).toThrow();
+    });
+
+    it('can handle radio input change', () => {
+        let vm = { $validator: helpers.validator() };
+        document.body.innerHTML = `
+            <input id="el" type="radio" name="field" value="1" checked>
+            <input id="el2" type="radio" name="field" value="2">
+        `;
+        const el = document.querySelector('#el');
+        expect(() => {
+            new ListenerGenerator(el, {}, { context: vm }, {})._radioListener();
+        }).toThrowError('1');
+        document.body.innerHTML = `
+            <input id="el" type="radio" name="field" value="1">
+            <input id="el2" type="radio" name="field" value="2" checked>
+        `;
+        expect(() => {
+            new ListenerGenerator(el, {}, { context: vm }, {})._radioListener();
+        }).toThrowError('2');
+    });
+
+    it('can handle checkboxes input change', () => {
+        let vm = { $validator: helpers.validator() };
+        document.body.innerHTML = `
+            <input id="el" type="checkbox" name="field" value="1" checked>
+            <input id="el2" type="checkbox" name="field" value="2">
+        `;
+        const el = document.querySelector('#el');
+        expect(() => {
+            new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
+        }).toThrowError('1');
+        document.body.innerHTML = `
+            <input id="el" type="checkbox" name="field" value="1">
+            <input id="el2" type="checkbox" name="field" value="2" checked>
+        `;
+        expect(() => {
+            new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
+        }).toThrowError('2');
+
+        document.body.innerHTML = `
+            <input id="el" type="checkbox" name="field" value="1" checked>
+            <input id="el2" type="checkbox" name="field" value="2" checked>
+        `;
+        expect(() => {
+            new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
+        }).toThrowError('1');
     });
 });
