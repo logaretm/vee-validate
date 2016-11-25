@@ -2,6 +2,17 @@ export default {
     querySelector(el) {
         global.document.querySelector = () => el || null
     },
+    validator(shouldThrow = true, result = false) {
+        return {
+            validate(name, value) {
+                if (shouldThrow) {
+                    throw value;
+                }
+
+                return result;
+            }
+        }
+    },
     file: (name, type, size = 1) => ({
         name,
         type,
