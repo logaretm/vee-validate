@@ -95,3 +95,70 @@ it('can generate a scoped listener', () => {
         scopedCallback('scope1')
     }).toThrowError('Oops!');
 });
+
+describe('can resolve value getters and context functions', () => {
+    it('resolves value getters for text inputs', () => {
+        document.body.innerHTML = `<input id="el" type="text" name="name" value="val">`;
+        const el = document.querySelector('#el');
+        const lg = new ListenerGenerator(el, {}, {}, {});
+        const { context, getter } = lg._resolveValueGetter();
+
+        expect(context()).toBe(el);
+        expect(getter(el)).toBe('val');
+        el.value = 'notval';
+        expect(getter(context())).toBe('notval');
+    });
+
+    it('resolves value getters for file inputs', () => {
+        const el = {
+            name: 'upload',
+            type: 'file',
+            files: [
+                helpers.file('val.jpg', 'image/jpg')
+            ]
+        };
+        const lg = new ListenerGenerator(el, {}, {}, {});
+        const { context, getter } = lg._resolveValueGetter();
+
+        expect(context()).toBe(el);
+        expect(getter(context())).toEqual(el.files);
+        el.files.push(helpers.file('another.jpg', 'image/jpg'));
+        expect(getter(context())).toEqual(el.files);
+    });
+
+    it('resolves value getters for components', () => {
+        document.body.innerHTML = `<input id="el" type="text" name="name" value="1" data-vv-value-path="internalValue">`;
+        const el = document.querySelector('#el');
+        const lg = new ListenerGenerator(el, {}, {}, {});
+        lg.component = { $el: el, internalValue: 'first' };
+        const { context, getter } = lg._resolveValueGetter();
+
+        expect(context()).toBe(lg.component);
+        expect(getter(context())).toBe('first');
+        lg.component.internalValue = 'second'; // simulate change.
+        expect(getter(context())).toBe('second');
+    });
+
+    // it('resolves value getters for radio inputs', () => {
+    //     document.body.innerHTML = `
+    //         <div>
+    //             <input id="el1" type="radio" name="name" value="1">
+    //             <input id="el2" type="radio" name="name" value="2">
+    //         </div>`;
+    //     const el = document.querySelector('#el1');
+    //     const el2 = document.querySelector('#el2');
+    //     const lg = new ListenerGenerator(el, {}, {}, {});
+    //     const { context, getter } = lg._resolveValueGetter();
+    //
+    //     el.checked = true;
+    //     expect(context()).toBe(el);
+    //     expect(getter(el)).toBe('1');
+    //     el.checked = false;
+    //     el2.checked = true;
+    //     expect(context()).toBe(el2);
+    //     expect(getter(context())).toBe('2');
+    // });
+
+
+
+});
