@@ -135,7 +135,7 @@ export default class ErrorBag
      * @param {String} scope The name of the scope (optional).
      */
     firstByRule(name, rule, scope) {
-        const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
+        const error = this.collect(name, scope, false).filter(e => e.rule.name === rule)[0];
 
         return (error && error.msg) || null;
     }
