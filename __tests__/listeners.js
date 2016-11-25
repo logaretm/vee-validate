@@ -1,7 +1,6 @@
 import ListenerGenerator from './../src/listeners';
 import helpers from './helpers';
 
-
 it('has field dependent rule', () => {
     const lg = new ListenerGenerator({ name: 'el'}, '', '', {});
     expect(lg._hasFieldDependency('confirmed:field|required')).toBe('field');
@@ -19,10 +18,7 @@ it('has field dependent rule', () => {
 });
 
 it('detects input listener events', () => {
-    document.body.innerHTML =
-        `<div>
-            <input id="el" type="text" name="field" data-vv-rules="required" data-vv-delay="100">
-        </div>`;
+    document.body.innerHTML =`<input id="el" type="text" name="field" data-vv-rules="required" data-vv-delay="100">`;
     const el = document.querySelector('#el');
 
     const valid = [
@@ -40,7 +36,6 @@ it('detects input listener events', () => {
     });
 });
 
-
 it('detects custom listener events', () => {
     const valid = [
         'foo|bar',
@@ -48,12 +43,29 @@ it('detects custom listener events', () => {
     ];
 
     valid.forEach(event => {
-        document.body.innerHTML =
-                `<div>
-                    <input id="el" type="text" name="field" data-vv-validate-on="${event}">
-                </div>`;
-        const el = document.querySelector('#el');        
+        document.body.innerHTML =`<input id="el" type="text" name="field" data-vv-validate-on="${event}">`;
+        const el = document.querySelector('#el');
         const lg = new ListenerGenerator(el, '', '', {})._getSuitableListener();
         expect(lg.names).toEqual(event.split('|'));
     });
+});
+
+it('can resolve a field name', () => {
+    document.body.innerHTML = `<input id="el" type="text" name="field">`;
+    let el = document.querySelector('#el');
+    let name = new ListenerGenerator(el, '', '', {})._resolveFieldName();
+    expect(name).toBe('field');
+
+    document.body.innerHTML = `<input id="el" type="text" data-vv-name="dataName">`;
+    el = document.querySelector('#el');
+    name = new ListenerGenerator(el, '', '', {})._resolveFieldName();
+    expect(name).toBe('dataName');
+
+    name = new ListenerGenerator(el, { expression: 'expressedName' }, '', {})._resolveFieldName();
+    expect(name).toBe('expressedName');
+
+
+    let cgl = new ListenerGenerator(el, { expression: 'expressedName' }, '', {});
+    cgl.component = { name: 'componentName' };
+    expect(cgl._resolveFieldName()).toBe('componentName');
 });
