@@ -565,3 +565,10 @@ it('can remove rules from the list of validators', () => {
         v1.validate('name', false)
     }).toThrow();
 });
+
+it('does not add empty rules', () => {
+    // contains two empty rules, one with params.
+    const v1 = new Validator({ name: 'required|alpha||:blabla' });
+    expect(v1.validate('name', 12)).toBe(false);
+    expect(v1.validate('name', 'Martin')).toBe(true);
+});
