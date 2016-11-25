@@ -6,7 +6,7 @@ export default {
         return {
             validate(name, value) {
                 if (shouldThrow) {
-                    throw value;
+                    throw (value ? value : String(value));
                 }
 
                 return result;

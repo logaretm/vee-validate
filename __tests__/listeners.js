@@ -256,5 +256,9 @@ describe('the generator can handle input events', () => {
         expect(() => {
             new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
         }).toThrowError('1');
+        document.body.innerHTML = ``;
+        expect(() => {
+            new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
+        }).toThrowError("null");
     });
 });
