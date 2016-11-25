@@ -206,6 +206,14 @@ it('can detach rules', () => {
     expect(validator.$fields.field).toBeFalsy();
 });
 
+it('can find errors by field and rule', () => {
+    const v1 = new Validator({ name: 'alpha' });
+    v1.validate('name', 12);
+
+    expect(v1.errorBag.first('name:alpha')).toBe('The name may only contain alphabetic characters.');
+    expect(v1.errorBag.first('name:required')).toBeNull();
+});
+
 it('can extend the validator with a validator function', () => {
     validator.extend('neg', (value) => Number(value) < 0);
     validator.attach('anotherField', 'neg');
