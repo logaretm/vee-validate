@@ -554,6 +554,24 @@ it('can remove rules from the list of validators', () => {
     }).toThrow();
 });
 
+it('can fetch the values using getters when not specifying values in validateAll', async () => {
+    const v1 = new Validator();
+    const getter = (context) => {
+        return context.value
+    };
+    let toggle = false;
+    const context = () => {
+        toggle = ! toggle;
+        return { value: toggle ? 'valid' : '123' }
+    };
+
+    // must use the attach API.
+    v1.attach('name', 'required|alpha', 'Full Name', context, getter);
+    expect(await v1.validateAll()).toBe(true);
+    expect(toggle).toBe(true);
+    expect(await v1.validateAll()).toBe(false); // should have toggled after first call.
+});
+
 it('does not add empty rules', () => {
     // contains two empty rules, one with params.
     const v1 = new Validator({ name: 'required|alpha||:blabla' });
