@@ -501,7 +501,7 @@ export default class Validator
                     this.errorBag.add(
                         name,
                         this._formatErrorMessage(name, rule, data),
-                        rule,
+                        rule.name,
                         scope
                     );
                 }
@@ -518,7 +518,7 @@ export default class Validator
             this.errorBag.add(
                 name,
                 this._formatErrorMessage(name, rule, result.data),
-                rule,
+                rule.name,
                 scope
             );
         }
