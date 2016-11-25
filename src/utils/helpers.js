@@ -41,7 +41,7 @@ export const warn = (message) => {
         return;
     }
 
-    console.warn(`vee-validate: ${message}`); // eslint-disable-line
+    console.warn(`[vee-validate]: ${message}`); // eslint-disable-line
 };
 
 // eslint-disable-next-line
