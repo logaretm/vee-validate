@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "1.0.0-beta.9",
+  "version": "1.0.0-beta.10",
   "description": "Simple Vue.js input validation plugin",
   "main": "dist/vee-validate.js",
   "homepage": "http://vee-validate.logaretm.com",
@@ -48,12 +48,9 @@
     "eslint-config-airbnb-base": "^5.0.0",
     "eslint-loader": "^1.6.1",
     "eslint-plugin-import": "^1.12.0",
-    "jest": "^16.0.2",
+    "jest": "^17.0.3",
     "moment": "^2.14.1",
     "validator": "^6.1.0",
     "webpack": "2.1.0-beta.25"
-  },
-  "dependencies": {
-    "jest": "^16.0.2"
   }
 }
