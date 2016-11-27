@@ -1392,7 +1392,6 @@ var listenersInstances = [];
         bind: function bind() {
             var _this = this;
 
-            console.log('vm:', this);
             this.vm.$nextTick(function () {
                 _this.fieldName = _this.expression || _this.el.name;
                 var binding = { expression: _this.expression, modifiers: _this.modifiers };
@@ -2068,7 +2067,6 @@ var ListenerGenerator = function () {
             var _this4 = this;
 
             this.component.$on('input', function (value) {
-                console.log(_this4.fieldName, value);
                 _this4.vm.$validator.validate(_this4.fieldName, value);
             });
         }
