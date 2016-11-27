@@ -73,6 +73,12 @@ this.$validator.errorBag;
 this.errors; // injected into $data by the plugin, you can customize the property name.
 ```
 
+so lets display the error for the email input we've created:
+```html
+<!-- If it has an email error, display the first message associated with it. -->
+<span v-show="errors.has('email')">{{ errors.first('email') }}</span>
+```
+
 Of course there is more to it than that, refer to the documentation for more details about the rules, and usage of this plugin.
 
 ### Documentation
