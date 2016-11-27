@@ -71,7 +71,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 49);
+/******/ 	return __webpack_require__(__webpack_require__.s = 53);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -97,8 +97,9 @@ module.exports = exports['default'];
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(exports, "c", function() { return getScope; });
-/* harmony export (binding) */ __webpack_require__.d(exports, "d", function() { return debounce; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "c", function() { return getDataAttribute; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "d", function() { return getScope; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "e", function() { return debounce; });
 /* harmony export (binding) */ __webpack_require__.d(exports, "b", function() { return warn; });
 /* harmony export (binding) */ __webpack_require__.d(exports, "a", function() { return isObject; });
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -108,15 +109,19 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 /**
- * Determines the input field scope.
+ * Gets the data attribute. the name must be kebab-case.
  */
-var getScope = function getScope(el) {
-    return el.dataset.scope || el.form && el.form.dataset.scope;
+var getDataAttribute = function getDataAttribute(el, name) {
+    return el.getAttribute('data-vv-' + name);
 };
 
 /**
- * Debounces a function.
+ * Determines the input field scope.
  */
+var getScope = function getScope(el) {
+    return getDataAttribute(el, 'scope') || el.form && getDataAttribute(el.form, 'scope');
+};
+
 var debounce = function debounce(func) {
     var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
     var execAsap = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -151,23 +156,17 @@ var debounce = function debounce(func) {
     };
 };
 
-/**
- * Emits a warning to the console.
- */
 var warn = function warn(message) {
     if (!console) {
         return;
     }
 
-    console.warn('vee-validate: ' + message); // eslint-disable-line
+    console.warn('[vee-validate]: ' + message); // eslint-disable-line
 };
 
-/**
- * Checks if the value is an object.
- */
 // eslint-disable-next-line
 var isObject = function isObject(object) {
-    return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object) && object !== null;
+    return object !== null && object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object);
 };
 
 /***/ },
@@ -199,6 +198,8 @@ module.exports = exports['default'];
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -217,23 +218,17 @@ var ErrorBag = function () {
      *
      * @param {string} field The field name.
      * @param {string} msg The error message.
+     * @param {String} rule The rule that is responsible for the error.
      * @param {String} scope The Scope name, optional.
      */
 
 
     _createClass(ErrorBag, [{
-        key: "add",
-        value: function add(field, msg, scope) {
-            var error = {
-                field: field,
-                msg: msg
-            };
+        key: 'add',
+        value: function add(field, msg, rule) {
+            var scope = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
-            if (scope) {
-                error.scope = scope;
-            }
-
-            this.errors.push(error);
+            this.errors.push({ field: field, msg: msg, rule: rule, scope: scope });
         }
 
         /**
@@ -244,7 +239,7 @@ var ErrorBag = function () {
          */
 
     }, {
-        key: "all",
+        key: 'all',
         value: function all(scope) {
             if (scope) {
                 return this.errors.filter(function (e) {
@@ -260,13 +255,13 @@ var ErrorBag = function () {
         }
 
         /**
-         * Checks if there is any errrors in the internal array.
+         * Checks if there are any errors in the internal array.
          * @param {String} scope The Scope name, optional.
          * @return {boolean} result True if there was at least one error, false otherwise.
          */
 
     }, {
-        key: "any",
+        key: 'any',
         value: function any(scope) {
             if (scope) {
                 return !!this.errors.filter(function (e) {
@@ -279,11 +274,12 @@ var ErrorBag = function () {
 
         /**
          * Removes all items from the internal array.
+         *
          * @param {String} scope The Scope name, optional.
          */
 
     }, {
-        key: "clear",
+        key: 'clear',
         value: function clear(scope) {
             if (scope) {
                 this.errors = this.errors.filter(function (e) {
@@ -301,13 +297,16 @@ var ErrorBag = function () {
          *
          * @param  {string} field The field name.
          * @param  {string} scope The scope name.
+         * @param {Boolean} map If it should map the errors to strings instead of objects.
          * @return {Array} errors The errors for the specified field.
          */
 
     }, {
-        key: "collect",
+        key: 'collect',
         value: function collect(field, scope) {
             var _this = this;
+
+            var map = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
             if (!field) {
                 var _ret = function () {
@@ -317,7 +316,7 @@ var ErrorBag = function () {
                             collection[e.field] = [];
                         }
 
-                        collection[e.field].push(e.msg);
+                        collection[e.field].push(map ? e.msg : e);
                     });
 
                     return {
@@ -325,21 +324,21 @@ var ErrorBag = function () {
                     };
                 }();
 
-                if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
+                if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
             }
 
             if (scope) {
                 return this.errors.filter(function (e) {
                     return e.field === field && e.scope === scope;
                 }).map(function (e) {
-                    return e.msg;
+                    return map ? e.msg : e;
                 });
             }
 
             return this.errors.filter(function (e) {
                 return e.field === field;
             }).map(function (e) {
-                return e.msg;
+                return map ? e.msg : e;
             });
         }
         /**
@@ -349,7 +348,7 @@ var ErrorBag = function () {
          */
 
     }, {
-        key: "count",
+        key: 'count',
         value: function count() {
             return this.errors.length;
         }
@@ -362,17 +361,17 @@ var ErrorBag = function () {
          */
 
     }, {
-        key: "first",
+        key: 'first',
         value: function first(field, scope) {
+            var selector = this.selector(field);
+
+            if (selector) {
+                return this.firstByRule(selector.name, selector.rule, scope);
+            }
+
             for (var i = 0; i < this.errors.length; i++) {
-                if (this.errors[i].field === field) {
-                    if (scope) {
-                        if (this.errors[i].scope === scope) {
-                            return this.errors[i].msg;
-                        }
-                    } else {
-                        return this.errors[i].msg;
-                    }
+                if (this.errors[i].field === field && (!scope || this.errors[i].scope === scope)) {
+                    return this.errors[i].msg;
                 }
             }
 
@@ -387,32 +386,37 @@ var ErrorBag = function () {
          */
 
     }, {
-        key: "has",
+        key: 'has',
         value: function has(field, scope) {
-            for (var i = 0; i < this.errors.length; i++) {
-                if (this.errors[i].field === field) {
-                    if (scope) {
-                        if (this.errors[i].scope === scope) {
-                            return true;
-                        }
-                    } else {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            return !!this.first(field, scope);
         }
 
         /**
-         * Removes all error messages assoicated with a specific field.
+         * Gets the first error message for a specific field and a rule.
+         * @param {String} name The name of the field.
+         * @param {String} rule The name of the rule.
+         * @param {String} scope The name of the scope (optional).
+         */
+
+    }, {
+        key: 'firstByRule',
+        value: function firstByRule(name, rule, scope) {
+            var error = this.collect(name, scope, false).filter(function (e) {
+                return e.rule === rule;
+            })[0];
+
+            return error && error.msg || null;
+        }
+
+        /**
+         * Removes all error messages associated with a specific field.
          *
          * @param  {string} field The field which messages are to be removed.
          * @param {String} scope The Scope name, optional.
          */
 
     }, {
-        key: "remove",
+        key: 'remove',
         value: function remove(field, scope) {
             if (scope) {
                 this.errors = this.errors.filter(function (e) {
@@ -425,6 +429,31 @@ var ErrorBag = function () {
             this.errors = this.errors.filter(function (e) {
                 return e.field !== field;
             });
+        }
+
+        /**
+         * Get the field attributes if there's a rule selector.
+         *
+         * @param  {string} field The specified field.
+         * @return {Object|null}
+         */
+
+    }, {
+        key: 'selector',
+        value: function selector(field) {
+            if (field.indexOf(':') > -1) {
+                var _field$split = field.split(':');
+
+                var _field$split2 = _slicedToArray(_field$split, 2);
+
+                var name = _field$split2[0];
+                var rule = _field$split2[1];
+
+
+                return { name: name, rule: rule };
+            }
+
+            return null;
         }
     }]);
 
@@ -503,7 +532,7 @@ var unregister = function unregister($vm) {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__rules__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__rules__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__errorBag__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dictionary__ = __webpack_require__(10);
@@ -528,8 +557,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-var EVENT_NAME = 'veeValidate';
-var DEFAULT_LOCALE = 'en';
+var LOCALE = 'en';
 var STRICT_MODE = true;
 
 var dictionary = new __WEBPACK_IMPORTED_MODULE_3__dictionary__["a" /* default */]({
@@ -543,10 +571,9 @@ var Validator = function () {
     function Validator(validations, $vm) {
         _classCallCheck(this, Validator);
 
-        this.locale = DEFAULT_LOCALE;
         this.strictMode = STRICT_MODE;
         this.$fields = {};
-        this.fieldBag = new __WEBPACK_IMPORTED_MODULE_7__fieldBag__["a" /* default */]();
+        this.fieldBag = new __WEBPACK_IMPORTED_MODULE_7__fieldBag__["a" /* default */]($vm);
         this._createFields(validations);
         this.errorBag = new __WEBPACK_IMPORTED_MODULE_1__errorBag__["a" /* default */]();
         this.$vm = $vm;
@@ -598,6 +625,25 @@ var Validator = function () {
         =     */
 
     }, {
+        key: 'remove',
+
+
+        /**
+         * Removes a rule from the list of validators.
+         * @param {String} name The name of the validator/rule.
+         */
+        value: function remove(name) {
+            Validator.remove(name);
+        }
+
+        /**
+         * Merges a validator object into the Rules and Messages.
+         *
+         * @param  {string} name The name of the validator.
+         * @param  {function|object} validator The validator object.
+         */
+
+    }, {
         key: 'setLocale',
 
 
@@ -613,7 +659,7 @@ var Validator = function () {
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["b" /* warn */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
             }
 
-            this.locale = language;
+            LOCALE = language;
         }
 
         /**
@@ -622,19 +668,22 @@ var Validator = function () {
          * @param  {string} name The field name.
          * @param  {string} checks validations expression.
          * @param {string} prettyName Custom name to be used as field name in error messages.
+         * @param {Function} getter A function used to retrive a fresh value for the field.
          */
 
     }, {
         key: 'attach',
         value: function attach(name, checks) {
-            var prettyName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+            var prettyName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+            var context = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+            var getter = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
 
             this.errorBag.remove(name);
             this._createField(name, checks);
 
-            if (prettyName) {
-                this.$fields[name].name = prettyName;
-            }
+            this.$fields[name].name = prettyName;
+            this.$fields[name].getter = getter;
+            this.$fields[name].context = context;
         }
 
         /**
@@ -657,14 +706,15 @@ var Validator = function () {
 
     }, {
         key: 'detach',
-        value: function detach(name) {
+        value: function detach(name, scope) {
             /* istanbul ignore if */
             if (this.$vm && typeof this.$vm.$emit === 'function') {
                 this.$vm.$emit('VALIDATOR_OFF', name);
             }
 
-            delete this.$fields[name];
+            this.errorBag.remove(name, scope);
             this.fieldBag._remove(name);
+            delete this.$fields[name];
         }
 
         /**
@@ -681,30 +731,45 @@ var Validator = function () {
         }
 
         /**
+         * Resolves the field values from the getter functions.
+         */
+
+    }, {
+        key: '_resolveValuesFromGetters',
+        value: function _resolveValuesFromGetters() {
+            var _this = this;
+
+            var values = {};
+            Object.keys(this.$fields).forEach(function (field) {
+                var getter = _this.$fields[field].getter;
+                var context = _this.$fields[field].context;
+
+                if (getter && context) {
+                    values[field] = getter(context());
+                }
+            });
+
+            return values;
+        }
+
+        /**
          * Validates each value against the corresponding field validations.
          * @param  {object} values The values to be validated.
-         * @return {boolean|Promise|void} result Returns a boolean or a promise that will
-         * resolve to a boolean.
+         * @return {Promise} Returns a promise with the validation result.
          */
 
     }, {
         key: 'validateAll',
-        value: function validateAll(values) {
-            var _this = this;
+        value: function validateAll() {
+            var _this2 = this;
 
-            /* istanbul ignore if */
-            if (this.$vm && (!values || typeof values === 'string')) {
-                this.errorBag.clear(values);
-                this.$vm.$emit(EVENT_NAME, values);
-
-                return;
-            }
+            var values = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._resolveValuesFromGetters();
 
             var test = true;
             var promises = [];
             this.errorBag.clear();
             Object.keys(values).forEach(function (property) {
-                var result = _this.validate(property, values[property]);
+                var result = _this2.validate(property, values[property]);
                 if (typeof result.then === 'function') {
                     promises.push(result);
                     return;
@@ -713,16 +778,13 @@ var Validator = function () {
                 test = test && result;
             });
 
-            if (promises.length) {
-                // eslint-disable-next-line
-                return Promise.all(promises).then(function (values) {
-                    return values.every(function (t) {
-                        return t;
-                    }) && test;
-                });
-            }
+            return Promise.all(promises).then(function (vals) {
+                var valid = vals.every(function (t) {
+                    return t;
+                }) && test;
 
-            return test; // eslint-disable-line
+                return valid;
+            });
         }
 
         /**
@@ -737,7 +799,7 @@ var Validator = function () {
     }, {
         key: 'validate',
         value: function validate(name, value, scope) {
-            var _this2 = this;
+            var _this3 = this;
 
             if (!this.$fields[name]) {
                 if (!this.strictMode) {
@@ -757,7 +819,7 @@ var Validator = function () {
             var test = true;
             var promises = [];
             this.$fields[name].validations.forEach(function (rule) {
-                var result = _this2._test(name, value, rule, scope);
+                var result = _this3._test(name, value, rule, scope);
                 if (typeof result.then === 'function') {
                     promises.push(result);
                     return;
@@ -771,7 +833,7 @@ var Validator = function () {
                     var valid = values.every(function (t) {
                         return t;
                     }) && test;
-                    _this2.fieldBag._setFlags(name, { valid: valid, dirty: true });
+                    _this3.fieldBag._setFlags(name, { valid: valid, dirty: true });
 
                     return valid;
                 });
@@ -792,14 +854,14 @@ var Validator = function () {
     }, {
         key: '_createFields',
         value: function _createFields(validations) {
-            var _this3 = this;
+            var _this4 = this;
 
             if (!validations) {
                 return;
             }
 
             Object.keys(validations).forEach(function (field) {
-                _this3._createField(field, validations[field]);
+                _this4._createField(field, validations[field]);
             });
         }
 
@@ -812,7 +874,7 @@ var Validator = function () {
     }, {
         key: '_createField',
         value: function _createField(name, checks) {
-            var _this4 = this;
+            var _this5 = this;
 
             if (!this.$fields[name]) {
                 this.$fields[name] = {};
@@ -828,12 +890,16 @@ var Validator = function () {
             }
 
             checks.split('|').forEach(function (rule) {
-                var normalizedRule = _this4._normalizeRule(rule, _this4.$fields[name].validations);
-                if (normalizedRule.name === 'required') {
-                    _this4.$fields[name].required = true;
+                var normalizedRule = _this5._normalizeRule(rule, _this5.$fields[name].validations);
+                if (!normalizedRule.name) {
+                    return;
                 }
 
-                _this4.$fields[name].validations.push(normalizedRule);
+                if (normalizedRule.name === 'required') {
+                    _this5.$fields[name].required = true;
+                }
+
+                _this5.$fields[name].validations.push(normalizedRule);
             });
         }
 
@@ -849,8 +915,9 @@ var Validator = function () {
         value: function _normalizeRule(rule, validations) {
             var params = [];
             var name = rule.split(':')[0];
+
             if (~rule.indexOf(':')) {
-                params = rule.split(':')[1].split(',');
+                params = rule.split(':').slice(1).join(':').split(',');
             }
 
             // Those rules need the date format to parse and compare correctly.
@@ -884,12 +951,12 @@ var Validator = function () {
             var name = this._getFieldDisplayName(field);
             var params = this._getLocalizedParams(rule);
 
-            if (!dictionary.hasLocale(this.locale) || typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
+            if (!dictionary.hasLocale(LOCALE) || typeof dictionary.getMessage(LOCALE, rule.name) !== 'function') {
                 // Default to english message.
                 return dictionary.getMessage('en', rule.name)(name, params, data);
             }
 
-            return dictionary.getMessage(this.locale, rule.name)(name, params, data);
+            return dictionary.getMessage(LOCALE, rule.name)(name, params, data);
         }
 
         /**
@@ -900,7 +967,7 @@ var Validator = function () {
         key: '_getLocalizedParams',
         value: function _getLocalizedParams(rule) {
             if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
-                return [dictionary.getAttribute(this.locale, rule.params[0], rule.params[0])];
+                return [dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
             }
 
             return rule.params;
@@ -915,7 +982,7 @@ var Validator = function () {
     }, {
         key: '_getFieldDisplayName',
         value: function _getFieldDisplayName(field) {
-            return this.$fields[field].name || dictionary.getAttribute(this.locale, field, field);
+            return this.$fields[field].name || dictionary.getAttribute(LOCALE, field, field);
         }
 
         /**
@@ -924,50 +991,53 @@ var Validator = function () {
          * @param  {*} name The name of the field.
          * @param  {*} value  [description]
          * @param  {object} rule the rule object.
-         * @return {boolean} Wether if it passes the check.
+         * @return {boolean} Whether it passes the check.
          */
 
     }, {
         key: '_test',
         value: function _test(name, value, rule, scope) {
-            var _this5 = this;
+            var _this6 = this;
 
             var validator = __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][rule.name];
-            var result = validator(value, rule.params);
+            if (!validator || typeof validator !== 'function') {
+                throw new __WEBPACK_IMPORTED_MODULE_2__exceptions_validatorException__["a" /* default */]('No such validator \'' + rule.name + '\' exists.');
+            }
 
+            var result = validator(value, rule.params, name);
+
+            // If it is a promise.
             if (typeof result.then === 'function') {
                 return result.then(function (values) {
                     var allValid = true;
+                    var data = {};
                     if (Array.isArray(values)) {
                         allValid = values.every(function (t) {
                             return t.valid;
                         });
-                        if (!allValid) {
-                            _this5.errorBag.add(name, _this5._formatErrorMessage(name, rule), scope);
-                        }
                     } else {
                         // Is a single object.
                         allValid = values.valid;
-                        _this5.errorBag.add(name, _this5._formatErrorMessage(name, rule, values.data), scope);
+                        data = values.data;
+                    }
+
+                    if (!allValid) {
+                        _this6.errorBag.add(name, _this6._formatErrorMessage(name, rule, data), rule.name, scope);
                     }
 
                     return allValid;
                 });
             }
 
-            if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["a" /* isObject */])(result)) {
-                if (!result.valid) {
-                    this.errorBag.add(name, this._formatErrorMessage(name, rule, result.data), scope);
-                }
-
-                return result.valid;
+            if (!__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["a" /* isObject */])(result)) {
+                result = { valid: result, data: {} };
             }
 
-            if (!result) {
-                this.errorBag.add(name, this._formatErrorMessage(name, rule), scope);
+            if (!result.valid) {
+                this.errorBag.add(name, this._formatErrorMessage(name, rule, result.data), rule.name, scope);
             }
 
-            return result;
+            return result.valid;
         }
 
         /**
@@ -981,9 +1051,14 @@ var Validator = function () {
         value: function getErrors() {
             return this.errorBag;
         }
+    }, {
+        key: 'getLocale',
+        value: function getLocale() {
+            return LOCALE;
+        }
     }], [{
-        key: 'setDefaultLocale',
-        value: function setDefaultLocale() {
+        key: 'setLocale',
+        value: function setLocale() {
             var language = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'en';
 
             /* istanbul ignore if */
@@ -992,7 +1067,7 @@ var Validator = function () {
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["b" /* warn */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
             }
 
-            DEFAULT_LOCALE = language;
+            LOCALE = language;
         }
 
         /**
@@ -1075,12 +1150,15 @@ var Validator = function () {
         }
 
         /**
-         * Merges a validator object into the Rules and Messages.
-         *
-         * @param  {string} name The name of the validator.
-         * @param  {function|object} validator The validator object.
+         * Removes a rule from the list of validators.
+         * @param {String} name The name of the validator/rule.
          */
 
+    }, {
+        key: 'remove',
+        value: function remove(name) {
+            delete __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][name];
+        }
     }, {
         key: '_merge',
         value: function _merge(name, validator) {
@@ -1311,29 +1389,47 @@ var listenersInstances = [];
 
 /* harmony default export */ exports["a"] = function (options) {
     return {
-        bind: function bind(el, binding, vnode) {
-            var listener = new __WEBPACK_IMPORTED_MODULE_0__listeners__["a" /* default */](el, binding, vnode, options);
-            listener.attach();
-            listenersInstances.push({ vm: vnode.context, el: el, instance: listener });
-        },
-        update: function update(el, _ref, _ref2) {
-            var expression = _ref.expression;
-            var value = _ref.value;
-            var modifiers = _ref.modifiers;
-            var oldValue = _ref.oldValue;
-            var context = _ref2.context;
+        bind: function bind() {
+            var _this = this;
 
-            if (!expression || value === oldValue) {
+            console.log('vm:', this);
+            this.vm.$nextTick(function () {
+                _this.fieldName = _this.expression || _this.el.name;
+                var binding = { expression: _this.expression, modifiers: _this.modifiers };
+                var listener = new __WEBPACK_IMPORTED_MODULE_0__listeners__["a" /* default */](_this.el, binding, { context: _this.vm }, options);
+                listener.attach();
+                listenersInstances.push({ vm: _this.vm, el: _this.el, instance: listener });
+            });
+        },
+        update: function update(value) {
+            var _this2 = this;
+
+            if (!this.expression) {
                 return;
             }
 
-            context.$validator.validate(expression || el.name, value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_helpers__["c" /* getScope */])(el));
+            if (this.modifiers.initial) {
+                this.modifiers.initial = false;
+
+                return;
+            }
+
+            // might be not ready yet.
+            if (!this.fieldName) {
+                this.vm.$nextTick(function () {
+                    _this2.vm.$validator.validate(_this2.fieldName, value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_helpers__["d" /* getScope */])(_this2.el));
+                });
+
+                return;
+            }
+
+            this.vm.$validator.validate(this.fieldName, value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_helpers__["d" /* getScope */])(this.el));
         },
-        unbind: function unbind(el, binding, _ref3) {
-            var context = _ref3.context;
+        unbind: function unbind() {
+            var _this3 = this;
 
             var holder = listenersInstances.filter(function (l) {
-                return l.vm === context && l.el === el;
+                return l.vm === _this3.vm && l.el === _this3.el;
             })[0];
             holder.instance.detach();
             listenersInstances.splice(listenersInstances.indexOf(holder), 1);
@@ -1354,16 +1450,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ exports["a"] = function (options) {
     return {
         data: function data() {
-            return _defineProperty({}, options.errorBagName, this.$validator.errorBag);
-        },
+            var _ref;
 
-        computed: _defineProperty({}, options.fieldsBagName, {
-            get: function get() {
-                return this.$validator.fieldBag;
-            }
-        }),
-        mounted: function mounted() {
-            this.$emit('validatorReady');
+            return _ref = {}, _defineProperty(_ref, options.errorBagName, this.$validator.errorBag), _defineProperty(_ref, options.fieldsBagName, this.$validator.fieldBag), _ref;
+        },
+        ready: function ready() {
+            var _this = this;
+
+            this.$nextTick(function () {
+                _this.$emit('validatorReady');
+            });
         },
         destroyed: function destroyed() {
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_maps__["a" /* unregister */])(this);
@@ -1508,7 +1604,7 @@ var _class = function () {
     function _class(msg) {
         _classCallCheck(this, _class);
 
-        this.msg = msg;
+        this.msg = "[vee-validate]: " + msg;
     }
 
     _createClass(_class, [{
@@ -1533,10 +1629,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var FieldBag = function () {
-    function FieldBag() {
+    function FieldBag($vm) {
         _classCallCheck(this, FieldBag);
 
         this.fields = {};
+        this.$vm = $vm;
     }
 
     /**
@@ -1548,21 +1645,15 @@ var FieldBag = function () {
         key: '_add',
         value: function _add(name) {
             this.fields[name] = {};
+            /* istanbul ignore if */
+            if (this.$vm && typeof this.$vm.$set === 'function') {
+                this.$vm.$set('fields.' + name, {});
+            }
             this._setFlags(name, { dirty: false, valid: false }, true);
         }
 
         /**
-         * Remooves a field from the bag.
-         */
-
-    }, {
-        key: '_remove',
-        value: function _remove(name) {
-            delete this.fields[name];
-        }
-
-        /**
-         * Resets the flags state for a specified field or all fields.
+         * Resets the flags for a specific field.
          */
 
     }, {
@@ -1577,8 +1668,17 @@ var FieldBag = function () {
 
                 return;
             }
-
             this._setFlags(name, { dirty: false, valid: false }, true);
+        }
+
+        /**
+         * Removes a field from the bag.
+         */
+
+    }, {
+        key: '_remove',
+        value: function _remove(name) {
+            delete this.fields[name];
         }
 
         /**
@@ -1592,9 +1692,16 @@ var FieldBag = function () {
 
             var initial = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-            return Object.keys(flags).every(function (flag) {
+            var success = Object.keys(flags).every(function (flag) {
                 return _this2._setFlag(name, flag, flags[flag], initial);
             });
+
+            /* istanbul ignore if */
+            if (success && this.$vm && typeof this.$vm.$set === 'function') {
+                this.$vm.$set('fields.' + name, this.fields[name]);
+            }
+
+            return success;
         }
 
         /**
@@ -1617,7 +1724,7 @@ var FieldBag = function () {
         }
 
         /**
-         * Sets the dirty flag along with dependant flags.
+         * Updates the dirty flag for a specified field with its dependant flags.
          */
 
     }, {
@@ -1632,7 +1739,7 @@ var FieldBag = function () {
         }
 
         /**
-         * Sets the valid flag along with dependant flags.
+         * Updates the valid flag for a specified field with its dependant flags.
          */
 
     }, {
@@ -1644,7 +1751,7 @@ var FieldBag = function () {
         }
 
         /**
-         * Gets a field flag value.
+         * Gets a flag.
          */
 
     }, {
@@ -1738,8 +1845,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-var DEFAULT_EVENT_NAME = 'veeValidate';
-
 var ListenerGenerator = function () {
     function ListenerGenerator(el, binding, vnode, options) {
         _classCallCheck(this, ListenerGenerator);
@@ -1748,21 +1853,36 @@ var ListenerGenerator = function () {
         this.el = el;
         this.binding = binding;
         this.vm = vnode.context;
-        this.component = vnode.child;
+        this.component = this.el.__vue__;
         this.options = options;
-        this.fieldName = binding.expression || el.name;
+        this.fieldName = this._resolveFieldName();
     }
 
     /**
-     * Determines if the validation rule requires additional listeners on target fields.
+     * Resolves the field name to trigger validations.
+     * @return {String} The field name.
      */
 
 
     _createClass(ListenerGenerator, [{
+        key: '_resolveFieldName',
+        value: function _resolveFieldName() {
+            if (this.component) {
+                return this.component.name || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'name');
+            }
+
+            return this.binding.expression || this.el.name || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'name');
+        }
+
+        /**
+         * Determines if the validation rule requires additional listeners on target fields.
+         */
+
+    }, {
         key: '_hasFieldDependency',
         value: function _hasFieldDependency(rules) {
             var results = rules.split('|').filter(function (r) {
-                return !!r.match(/confirmed|after|before/);
+                return !!r.match(/\b(confirmed|after|before):/);
             });
             if (!results.length) {
                 return false;
@@ -1778,7 +1898,7 @@ var ListenerGenerator = function () {
     }, {
         key: '_inputListener',
         value: function _inputListener() {
-            this.vm.$validator.validate(this.fieldName, this.el.value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getScope */])(this.el));
+            this._validate(this.el.value);
         }
 
         /**
@@ -1788,7 +1908,8 @@ var ListenerGenerator = function () {
     }, {
         key: '_fileListener',
         value: function _fileListener() {
-            var isValid = this.vm.$validator.validate(this.fieldName, this.el.files, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getScope */])(this.el));
+            var isValid = this._validate(this.el.files);
+
             if (!isValid && this.binding.modifiers.reject) {
                 // eslint-disable-next-line
                 el.value = '';
@@ -1803,12 +1924,7 @@ var ListenerGenerator = function () {
         key: '_radioListener',
         value: function _radioListener() {
             var checked = document.querySelector('input[name="' + this.el.name + '"]:checked');
-            if (!checked) {
-                this.vm.$validator.validate(this.fieldName, null, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getScope */])(this.el));
-                return;
-            }
-
-            this.vm.$validator.validate(this.fieldName, checked.value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getScope */])(this.el));
+            this._validate(checked ? checked.value : null);
         }
 
         /**
@@ -1822,13 +1938,23 @@ var ListenerGenerator = function () {
 
             var checkedBoxes = document.querySelectorAll('input[name="' + this.el.name + '"]:checked');
             if (!checkedBoxes || !checkedBoxes.length) {
-                this.vm.$validator.validate(this.fieldName, null, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getScope */])(this.el));
+                this._validate(null);
                 return;
             }
 
             [].concat(_toConsumableArray(checkedBoxes)).forEach(function (box) {
-                _this.vm.$validator.validate(_this.fieldName, box.value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getScope */])(_this.el));
+                _this._validate(box.value);
             });
+        }
+
+        /**
+         * Trigger the validation for a specific value.
+         */
+
+    }, {
+        key: '_validate',
+        value: function _validate(value) {
+            return this.vm.$validator.validate(this.fieldName, value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(this.el));
         }
 
         /**
@@ -1842,28 +1968,11 @@ var ListenerGenerator = function () {
             var _this2 = this;
 
             return function (scope) {
-                if (!scope || scope === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getScope */])(_this2.el) || scope instanceof Event) {
+                if (!scope || scope === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(_this2.el) || scope instanceof Event) {
                     callback();
                 }
             };
         }
-<<<<<<< HEAD
-    }]);
-    return _class;
-}();
-
-/**
- * Determines the input field scope.
- */
-var getScope = function getScope(el) {
-    return el.dataset.scope || el.form && el.form.dataset.scope;
-};
-
-var debounce = function debounce(func) {
-    var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
-    var execAsap = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-=======
->>>>>>> 4ba370c... getting the value from a component
 
         /**
          * Attaches validator event-triggered validation.
@@ -1876,15 +1985,13 @@ var debounce = function debounce(func) {
 
             var listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
 
-            this.vm.$on(DEFAULT_EVENT_NAME, listener);
-            this.callbacks.push({ name: DEFAULT_EVENT_NAME, listener: listener });
             this.vm.$on('VALIDATOR_OFF', function (field) {
                 if (_this3.fieldName === field) {
                     _this3.detach();
                 }
             });
 
-            var fieldName = this._hasFieldDependency(this.el.dataset.rules);
+            var fieldName = this._hasFieldDependency(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'rules'));
             if (fieldName) {
                 // Wait for the validator ready triggered when vm is mounted because maybe
                 // the element isn't mounted yet.
@@ -1901,67 +2008,69 @@ var debounce = function debounce(func) {
             }
         }
 
-<<<<<<< HEAD
-        timeout = setTimeout(delayed, threshold || 100);
-    };
-};
-
-var warn = function warn(message) {
-    if (!console) {
-        return;
-    }
-
-    console.warn('vee-validate: ' + message); // eslint-disable-line
-};
-
-// eslint-disable-next-line
-var isObject = function isObject(object) {
-    return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object) && object !== null;
-};
-
-/* eslint-disable prefer-rest-params */
-var Dictionary = function () {
-    function Dictionary() {
-        var dictionary = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        classCallCheck(this, Dictionary);
-
-        this.dictionary = {};
-        this.merge(dictionary);
-    }
-=======
         /**
          * Determines a suitable listener for the element.
          */
->>>>>>> 4ba370c... getting the value from a component
 
     }, {
         key: '_getSuitableListener',
         value: function _getSuitableListener() {
-            if (this.el.type === 'file') {
-                return {
-                    name: 'change',
-                    listener: this._fileListener
-                };
+            var listener = void 0;
+
+            // determine the suitable listener and events to handle
+            switch (this.el.type) {
+                case 'file':
+                    listener = {
+                        names: ['change'],
+                        listener: this._fileListener
+                    };
+                    break;
+
+                case 'radio':
+                    listener = {
+                        names: ['change'],
+                        listener: this._radioListener
+                    };
+                    break;
+
+                case 'checkbox':
+                    listener = {
+                        names: ['change'],
+                        listener: this._checkboxListener
+                    };
+                    break;
+
+                default:
+                    listener = {
+                        names: ['input', 'blur'],
+                        listener: this._inputListener
+                    };
+                    break;
             }
 
-            if (this.el.type === 'radio') {
-                return {
-                    name: 'change',
-                    listener: this._radioListener
-                };
+            // users are able to specify which events they want to validate on
+            // pipe separated list of handler names to use
+            var events = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'validate-on');
+            if (events) {
+                listener.names = events.split('|');
             }
 
-            if (this.el.type === 'checkbox') {
-                return {
-                    name: 'change',
-                    listener: this._checkboxListener
-                };
-            }
+            return listener;
+        }
 
-            return {
-                name: 'input',
-                listener: this._inputListener
-            };
+        /**
+         * Attaches neccessary validation events for the component.
+         */
+
+    }, {
+        key: '_attachComponentListeners',
+        value: function _attachComponentListeners() {
+            var _this4 = this;
+
+            this.component.$on('input', function (value) {
+                console.log(_this4.fieldName, value);
+                _this4.vm.$validator.validate(_this4.fieldName, value);
+            });
         }
 
         /**
@@ -1971,33 +2080,102 @@ var Dictionary = function () {
     }, {
         key: '_attachFieldListeners',
         value: function _attachFieldListeners() {
-            var _this4 = this;
+            var _this5 = this;
 
+            // If it is a component, use vue events instead.
             if (this.component) {
-                this.component.$on('input', function (value) {
-                    console.log('Gotcha: ' + value, _this4.fieldName);
-                    _this4.vm.$validator.validate(_this4.fieldName, value);
-                });
+                this._attachComponentListeners();
 
                 return;
             }
 
             var handler = this._getSuitableListener();
-            var listener = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* debounce */])(handler.listener.bind(this), this.el.dataset.delay || this.options.delay);
+            var listener = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["e" /* debounce */])(handler.listener.bind(this), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'delay') || this.options.delay);
 
             if (~['radio', 'checkbox'].indexOf(this.el.type)) {
                 this.vm.$once('validatorReady', function () {
-                    [].concat(_toConsumableArray(document.querySelectorAll('input[name="' + _this4.el.name + '"]'))).forEach(function (input) {
-                        input.addEventListener(handler.name, listener);
-                        _this4.callbacks.push({ name: handler.name, listener: listener, el: input });
+                    [].concat(_toConsumableArray(document.querySelectorAll('input[name="' + _this5.el.name + '"]'))).forEach(function (input) {
+                        handler.names.forEach(function (handlerName) {
+                            input.addEventListener(handlerName, listener);
+                            _this5.callbacks.push({ name: handlerName, listener: listener, el: input });
+                        });
                     });
                 });
 
                 return;
             }
 
-            this.el.addEventListener(handler.name, listener);
-            this.callbacks.push({ name: handler.name, listener: listener, el: this.el });
+            handler.names.forEach(function (handlerName) {
+                _this5.el.addEventListener(handlerName, listener);
+                _this5.callbacks.push({ name: handlerName, listener: listener, el: _this5.el });
+            });
+        }
+
+        /**
+         * Returns a context, getter factory pairs for each input type.
+         */
+
+    }, {
+        key: '_resolveValueGetter',
+        value: function _resolveValueGetter() {
+            var _this6 = this;
+
+            if (this.component) {
+                return {
+                    context: function context() {
+                        return _this6.component;
+                    },
+                    getter: function getter(context) {
+                        return context[__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(context.$el, 'value-path')] || context.value;
+                    }
+                };
+            }
+
+            switch (this.el.type) {
+                case 'checkbox':
+                    return {
+                        context: function context() {
+                            return document.querySelectorAll('input[name="' + _this6.el.name + '"]:checked');
+                        },
+                        getter: function getter(context) {
+                            if (!context || !context.length) {
+                                return null;
+                            }
+
+                            return [].concat(_toConsumableArray(context)).map(function (checkbox) {
+                                return checkbox.value;
+                            });
+                        }
+                    };
+                case 'radio':
+                    return {
+                        context: function context() {
+                            return document.querySelector('input[name="' + _this6.el.name + '"]:checked');
+                        },
+                        getter: function getter(context) {
+                            return context && context.value;
+                        }
+                    };
+                case 'file':
+                    return {
+                        context: function context() {
+                            return _this6.el;
+                        },
+                        getter: function getter(context) {
+                            return context.files;
+                        }
+                    };
+
+                default:
+                    return {
+                        context: function context() {
+                            return _this6.el;
+                        },
+                        getter: function getter(context) {
+                            return context.value;
+                        }
+                    };
+            }
         }
 
         /**
@@ -2007,15 +2185,15 @@ var Dictionary = function () {
     }, {
         key: 'attach',
         value: function attach() {
-            this.vm.$validator.attach(this.fieldName, this.el.dataset.rules, this.el.dataset.as);
+            var _resolveValueGetter2 = this._resolveValueGetter();
+
+            var context = _resolveValueGetter2.context;
+            var getter = _resolveValueGetter2.getter;
+
+            this.vm.$validator.attach(this.fieldName, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'rules'), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'as'), context, getter);
             this._attachValidatorEvent();
 
             if (this.binding.expression) {
-                // if its bound, validate it. (since update doesn't trigger after bind).
-                if (!this.binding.modifiers.initial) {
-                    this.vm.$validator.validate(this.binding.expression, this.binding.value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getScope */])(this.el));
-                }
-
                 return;
             }
 
@@ -2029,19 +2207,8 @@ var Dictionary = function () {
     }, {
         key: 'detach',
         value: function detach() {
-            var _this5 = this;
-
-            this.callbacks.filter(function (_ref) {
-                var name = _ref.name;
-                return name === DEFAULT_EVENT_NAME;
-            }).forEach(function (h) {
-                _this5.vm.$off(DEFAULT_EVENT_NAME, h.listener);
-            });
-
-            this.callbacks.filter(function (_ref2) {
-                var name = _ref2.name;
-                return name !== DEFAULT_EVENT_NAME;
-            }).forEach(function (h) {
+            this.vm.$validator.detach(this.fieldName, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(this.el));
+            this.callbacks.forEach(function (h) {
                 h.el.removeEventListener(h.name, h.listener);
             });
         }
@@ -2081,31 +2248,31 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var max = _ref2[1];
         return 'The ' + field + ' must be between ' + min + ' and ' + max + '.';
     },
-    confirmed: function confirmed(field, _ref3) {
-        var _ref4 = _slicedToArray(_ref3, 1);
-
-        var confirmedField = _ref4[0];
-        return 'The ' + field + ' does not match the ' + confirmedField + '.';
+    confirmed: function confirmed(field) {
+        return 'The ' + field + ' confirmation does not match.';
+    },
+    credit_card: function credit_card(field) {
+        return 'The ' + field + ' is invalid.';
     },
     decimal: function decimal(field) {
-        var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
+        var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
 
-        var _ref6 = _slicedToArray(_ref5, 1);
+        var _ref4 = _slicedToArray(_ref3, 1);
 
-        var decimals = _ref6[0];
+        var decimals = _ref4[0];
         return 'The ' + field + ' must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decimal points.';
     },
-    digits: function digits(field, _ref7) {
-        var _ref8 = _slicedToArray(_ref7, 1);
+    digits: function digits(field, _ref5) {
+        var _ref6 = _slicedToArray(_ref5, 1);
 
-        var length = _ref8[0];
+        var length = _ref6[0];
         return 'The ' + field + ' must be numeric and exactly contain ' + length + ' digits.';
     },
-    dimensions: function dimensions(field, _ref9) {
-        var _ref10 = _slicedToArray(_ref9, 2);
+    dimensions: function dimensions(field, _ref7) {
+        var _ref8 = _slicedToArray(_ref7, 2);
 
-        var width = _ref10[0];
-        var height = _ref10[1];
+        var width = _ref8[0];
+        var height = _ref8[1];
         return 'The ' + field + ' must be ' + width + ' pixels by ' + height + ' pixels.';
     },
     email: function email(field) {
@@ -2123,11 +2290,17 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     ip: function ip(field) {
         return 'The ' + field + ' must be a valid ip address.';
     },
-    max: function max(field, _ref11) {
+    max: function max(field, _ref9) {
+        var _ref10 = _slicedToArray(_ref9, 1);
+
+        var length = _ref10[0];
+        return 'The ' + field + ' may not be greater than ' + length + ' characters.';
+    },
+    max_value: function max_value(field, _ref11) {
         var _ref12 = _slicedToArray(_ref11, 1);
 
-        var length = _ref12[0];
-        return 'The ' + field + ' may not be greater than ' + length + ' characters.';
+        var max = _ref12[0];
+        return 'The ' + field + ' must be ' + max + ' or less.';
     },
     mimes: function mimes(field) {
         return 'The ' + field + ' must have a valid file type.';
@@ -2137,6 +2310,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
         var length = _ref14[0];
         return 'The ' + field + ' must be at least ' + length + ' characters.';
+    },
+    min_value: function min_value(field, _ref15) {
+        var _ref16 = _slicedToArray(_ref15, 1);
+
+        var min = _ref16[0];
+        return 'The ' + field + ' must be ' + min + ' or more.';
     },
     not_in: function not_in(field) {
         return 'The ' + field + ' must be a valid value.';
@@ -2150,10 +2329,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     required: function required(field) {
         return 'The ' + field + ' is required.';
     },
-    size: function size(field, _ref15) {
-        var _ref16 = _slicedToArray(_ref15, 1);
+    size: function size(field, _ref17) {
+        var _ref18 = _slicedToArray(_ref17, 1);
 
-        var _size = _ref16[0];
+        var _size = _ref18[0];
         return 'The ' + field + ' must be less than ' + _size + ' KB.';
     },
     url: function url(field) {
@@ -2190,108 +2369,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
         return dateValue.isAfter(other);
     };
-<<<<<<< HEAD
-});
-
-/* istanbul ignore next */
-/* eslint-disable max-len */
-var messages$1 = {
-    after: function after(field, _ref) {
-        var _ref2 = slicedToArray(_ref, 1);
-
-        var target = _ref2[0];
-        return "The " + field + " must be after " + target + ".";
-    },
-    before: function before(field, _ref3) {
-        var _ref4 = slicedToArray(_ref3, 1);
-
-        var target = _ref4[0];
-        return "The " + field + " must be before " + target + ".";
-    },
-    date_between: function date_between(field, _ref5) {
-        var _ref6 = slicedToArray(_ref5, 2);
-
-        var min = _ref6[0];
-        var max = _ref6[1];
-        return "The " + field + " must be between " + min + " and " + max + ".";
-    },
-    date_format: function date_format(field, _ref7) {
-        var _ref8 = slicedToArray(_ref7, 1);
-
-        var format = _ref8[0];
-        return "The " + field + " must be in the format " + format + ".";
-    }
-};
-
-var date = {
-    make: function make(moment) {
-        return {
-            date_format: date_format$1(moment),
-            after: after$1(moment),
-            before: before$1(moment),
-            date_between: date_between$1(moment)
-        };
-    },
-    messages: messages$1,
-    installed: false
-};
-
-var FieldBag = function () {
-    function FieldBag($vm) {
-        classCallCheck(this, FieldBag);
-
-        this.fields = {};
-        this.$vm = $vm;
-    }
-
-    /**
-     * Initializes and adds a new field to the bag.
-     */
-
-
-    createClass(FieldBag, [{
-        key: '_add',
-        value: function _add(name) {
-            this.fields[name] = {};
-            if (this.$vm && typeof this.$vm.$set === 'function') {
-                this.$vm.$set('fields.' + name, {});
-            }
-            this._setFlags(name, { dirty: false, valid: false }, true);
-        }
-
-        /**
-         * Resets the flags for a specific field.
-         */
-
-    }, {
-        key: 'reset',
-        value: function reset(name) {
-            var _this = this;
-
-            if (!name) {
-                Object.keys(this.fields).forEach(function (field) {
-                    _this._setFlags(field, { dirty: false, valid: false }, true);
-                });
-
-                return;
-            }
-            this._setFlags(name, { dirty: false, valid: false }, true);
-        }
-
-        /**
-         * Remooves a field from the bag.
-         */
-
-    }, {
-        key: '_remove',
-        value: function _remove(name) {
-            delete this.fields[name];
-        }
-
-        /**
-         * Sets the flags for a specified field.
-         */
-=======
 };
 
 /***/ },
@@ -2304,7 +2381,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* harmony default export */ exports["a"] = function (moment) {
     return function (value, _ref) {
         var _ref2 = _slicedToArray(_ref, 2);
->>>>>>> 4ba370c... getting the value from a component
 
         var targetField = _ref2[0];
         var format = _ref2[1];
@@ -2312,20 +2388,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var dateValue = moment(value, format, true);
         var field = document.querySelector("input[name='" + targetField + "']");
 
-<<<<<<< HEAD
-            var success = Object.keys(flags).every(function (flag) {
-                return _this2._setFlag(name, flag, flags[flag], initial);
-            });
-
-            if (success && this.$vm && typeof this.$vm.$set === 'function') {
-                this.$vm.$set('fields.' + name, this.fields[name]);
-            }
-
-            return success;
-=======
         if (!dateValue.isValid() || !field) {
             return false;
->>>>>>> 4ba370c... getting the value from a component
         }
 
         var other = moment(field.value, format, true);
@@ -2345,15 +2409,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 "use strict";
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-<<<<<<< HEAD
-        /**
-         * Updates the dirty flag for a specified field with its dependant flags.
-         */
-=======
 /* harmony default export */ exports["a"] = function (moment) {
     return function (value, _ref) {
         var _ref2 = _slicedToArray(_ref, 3);
->>>>>>> 4ba370c... getting the value from a component
 
         var min = _ref2[0];
         var max = _ref2[1];
@@ -2367,28 +2425,16 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             return false;
         }
 
-<<<<<<< HEAD
-        /**
-         * Updates the valid flag for a specified field with its dependant flags.
-         */
-=======
         return dateVal.isBetween(minDate, maxDate);
     };
 };
->>>>>>> 4ba370c... getting the value from a component
 
 /***/ },
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-        /**
-         * Gets a flag.
-         */
-=======
 "use strict";
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
->>>>>>> 4ba370c... getting the value from a component
 
 /* harmony default export */ exports["a"] = function (moment) {
   return function (value, _ref) {
@@ -2469,21 +2515,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-        this.locale = DEFAULT_LOCALE;
-        this.strictMode = STRICT_MODE;
-        this.$fields = {};
-        this.fieldBag = new FieldBag($vm);
-        this._createFields(validations);
-        this.errorBag = new ErrorBag();
-        this.$vm = $vm;
-=======
 "use strict";
 /* harmony default export */ exports["a"] = function (value) {
   return (/^[a-zA-Z]*$/.test(value)
   );
 };
->>>>>>> 4ba370c... getting the value from a component
 
 /***/ },
 /* 22 */
@@ -2537,18 +2573,31 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 "use strict";
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-/* harmony default export */ exports["a"] = function (value, _ref) {
+/* harmony default export */ exports["a"] = function (value, _ref, validatingField) {
     var _ref2 = _slicedToArray(_ref, 1);
 
     var confirmedField = _ref2[0];
 
-    var field = document.querySelector("input[name='" + confirmedField + "']");
+    var field = confirmedField ? document.querySelector("input[name='" + confirmedField + "']") : document.querySelector("input[name='" + validatingField + "_confirmation']");
 
     return !!(field && String(value) === field.value);
 };
 
 /***/ },
 /* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isCreditCard__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isCreditCard___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_validator_lib_isCreditCard__);
+
+
+/* harmony default export */ exports["a"] = function (value) {
+  return __WEBPACK_IMPORTED_MODULE_0_validator_lib_isCreditCard___default()(String(value));
+};
+
+/***/ },
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2569,6 +2618,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return true;
     }
 
+    // if is 0.
+    if (Number(decimals) === 0) {
+        return (/^-?\d*$/.test(value)
+        );
+    }
+
     var regexPart = decimals === '*' ? '+' : '{1,' + decimals + '}';
     var regex = new RegExp('^-?\\d*(\\.\\d' + regexPart + ')?$');
 
@@ -2580,7 +2635,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2598,7 +2653,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2643,11 +2698,11 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isEmail__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isEmail__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isEmail___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_validator_lib_isEmail__);
 
 
@@ -2656,7 +2711,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2672,7 +2727,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2687,7 +2742,7 @@ var validateImage = function validateImage(file, width, height) {
 };
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2698,7 +2753,7 @@ var validateImage = function validateImage(file, width, height) {
 }; // eslint-disable-line
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2708,24 +2763,30 @@ var validateImage = function validateImage(file, width, height) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__alpha_spaces__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__between__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__confirmed__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__decimal__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__digits__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__dimensions__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__email__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ext__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__image__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__in__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ip__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__max__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__mimes__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__min__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__notIn__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__numeric__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__regex__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__required__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__size__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__url__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__credit_card__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__decimal__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__digits__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__dimensions__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__email__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ext__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__image__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__in__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ip__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__max__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__max_value__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__mimes__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__min__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__min_value__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__notIn__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__numeric__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__regex__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__required__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__size__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__url__ = __webpack_require__(47);
 /* eslint-disable camelcase */
+
+
+
 
 
 
@@ -2757,27 +2818,30 @@ var validateImage = function validateImage(file, width, height) {
     alpha: __WEBPACK_IMPORTED_MODULE_0__alpha__["a" /* default */],
     between: __WEBPACK_IMPORTED_MODULE_4__between__["a" /* default */],
     confirmed: __WEBPACK_IMPORTED_MODULE_5__confirmed__["a" /* default */],
-    decimal: __WEBPACK_IMPORTED_MODULE_6__decimal__["a" /* default */],
-    digits: __WEBPACK_IMPORTED_MODULE_7__digits__["a" /* default */],
-    dimensions: __WEBPACK_IMPORTED_MODULE_8__dimensions__["a" /* default */],
-    email: __WEBPACK_IMPORTED_MODULE_9__email__["a" /* default */],
-    ext: __WEBPACK_IMPORTED_MODULE_10__ext__["a" /* default */],
-    image: __WEBPACK_IMPORTED_MODULE_11__image__["a" /* default */],
-    in: __WEBPACK_IMPORTED_MODULE_12__in__["a" /* default */],
-    ip: __WEBPACK_IMPORTED_MODULE_13__ip__["a" /* default */],
-    max: __WEBPACK_IMPORTED_MODULE_14__max__["a" /* default */],
-    mimes: __WEBPACK_IMPORTED_MODULE_15__mimes__["a" /* default */],
-    min: __WEBPACK_IMPORTED_MODULE_16__min__["a" /* default */],
-    not_in: __WEBPACK_IMPORTED_MODULE_17__notIn__["a" /* default */],
-    numeric: __WEBPACK_IMPORTED_MODULE_18__numeric__["a" /* default */],
-    regex: __WEBPACK_IMPORTED_MODULE_19__regex__["a" /* default */],
-    required: __WEBPACK_IMPORTED_MODULE_20__required__["a" /* default */],
-    size: __WEBPACK_IMPORTED_MODULE_21__size__["a" /* default */],
-    url: __WEBPACK_IMPORTED_MODULE_22__url__["a" /* default */]
+    credit_card: __WEBPACK_IMPORTED_MODULE_6__credit_card__["a" /* default */],
+    decimal: __WEBPACK_IMPORTED_MODULE_7__decimal__["a" /* default */],
+    digits: __WEBPACK_IMPORTED_MODULE_8__digits__["a" /* default */],
+    dimensions: __WEBPACK_IMPORTED_MODULE_9__dimensions__["a" /* default */],
+    email: __WEBPACK_IMPORTED_MODULE_10__email__["a" /* default */],
+    ext: __WEBPACK_IMPORTED_MODULE_11__ext__["a" /* default */],
+    image: __WEBPACK_IMPORTED_MODULE_12__image__["a" /* default */],
+    in: __WEBPACK_IMPORTED_MODULE_13__in__["a" /* default */],
+    ip: __WEBPACK_IMPORTED_MODULE_14__ip__["a" /* default */],
+    max: __WEBPACK_IMPORTED_MODULE_15__max__["a" /* default */],
+    max_value: __WEBPACK_IMPORTED_MODULE_16__max_value__["a" /* default */],
+    mimes: __WEBPACK_IMPORTED_MODULE_17__mimes__["a" /* default */],
+    min: __WEBPACK_IMPORTED_MODULE_18__min__["a" /* default */],
+    min_value: __WEBPACK_IMPORTED_MODULE_19__min_value__["a" /* default */],
+    not_in: __WEBPACK_IMPORTED_MODULE_20__notIn__["a" /* default */],
+    numeric: __WEBPACK_IMPORTED_MODULE_21__numeric__["a" /* default */],
+    regex: __WEBPACK_IMPORTED_MODULE_22__regex__["a" /* default */],
+    required: __WEBPACK_IMPORTED_MODULE_23__required__["a" /* default */],
+    size: __WEBPACK_IMPORTED_MODULE_24__size__["a" /* default */],
+    url: __WEBPACK_IMPORTED_MODULE_25__url__["a" /* default */]
 };
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2797,7 +2861,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2816,7 +2880,26 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 37 */
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+/* harmony default export */ exports["a"] = function (value, _ref) {
+    var _ref2 = _slicedToArray(_ref, 1);
+
+    var max = _ref2[0];
+
+    if (Array.isArray(value) || value === null || value === undefined || value === '') {
+        return false;
+    }
+
+    return Number(value) <= max;
+};
+
+/***/ },
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2832,7 +2915,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 38 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2850,7 +2933,26 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 39 */
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+/* harmony default export */ exports["a"] = function (value, _ref) {
+    var _ref2 = _slicedToArray(_ref, 1);
+
+    var min = _ref2[0];
+
+    if (Array.isArray(value) || value === null || value === undefined || value === '') {
+        return false;
+    }
+
+    return Number(value) >= min;
+};
+
+/***/ },
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2861,11 +2963,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 }; // eslint-disable-line
 
 /***/ },
-/* 40 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isNumeric__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isNumeric__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isNumeric___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_validator_lib_isNumeric__);
 
 
@@ -2874,7 +2976,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 41 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2895,7 +2997,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 };
 
 /***/ },
-/* 42 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2912,7 +3014,7 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 };
 
 /***/ },
-/* 43 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2938,11 +3040,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 44 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL__);
 
 
@@ -2951,7 +3053,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 };
 
 /***/ },
-/* 45 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2961,26 +3063,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-<<<<<<< HEAD
-var mixin = (function (options) {
-    return {
-        data: function data() {
-            var _ref;
-
-            return _ref = {}, defineProperty(_ref, options.errorBagName, this.$validator.errorBag), defineProperty(_ref, options.fieldsBagName, this.$validator.fieldBag), _ref;
-        },
-        ready: function ready() {
-            var _this = this;
-
-            this.$nextTick(function () {
-                _this.$emit('validatorReady');
-            });
-        },
-        destroyed: function destroyed() {
-            unregister(this);
-        }
-    };
-=======
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 exports.default = isByteLength;
@@ -3010,7 +3092,7 @@ function isByteLength(str, options) {
 module.exports = exports['default'];
 
 /***/ },
-/* 46 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3018,7 +3100,57 @@ module.exports = exports['default'];
 
 Object.defineProperty(exports, "__esModule", {
   value: true
->>>>>>> 4ba370c... getting the value from a component
+});
+exports.default = isCreditCard;
+
+var _assertString = __webpack_require__(0);
+
+var _assertString2 = _interopRequireDefault(_assertString);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* eslint-disable max-len */
+var creditCard = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|(222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})|62[0-9]{14}$/;
+/* eslint-enable max-len */
+
+function isCreditCard(str) {
+  (0, _assertString2.default)(str);
+  var sanitized = str.replace(/[^0-9]+/g, '');
+  if (!creditCard.test(sanitized)) {
+    return false;
+  }
+  var sum = 0;
+  var digit = void 0;
+  var tmpNum = void 0;
+  var shouldDouble = void 0;
+  for (var i = sanitized.length - 1; i >= 0; i--) {
+    digit = sanitized.substring(i, i + 1);
+    tmpNum = parseInt(digit, 10);
+    if (shouldDouble) {
+      tmpNum *= 2;
+      if (tmpNum >= 10) {
+        sum += tmpNum % 10 + 1;
+      } else {
+        sum += tmpNum;
+      }
+    } else {
+      sum += tmpNum;
+    }
+    shouldDouble = !shouldDouble;
+  }
+  return !!(sum % 10 === 0 ? sanitized : false);
+}
+module.exports = exports['default'];
+
+/***/ },
+/* 50 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
 exports.default = isEmail;
 
@@ -3030,7 +3162,7 @@ var _merge = __webpack_require__(2);
 
 var _merge2 = _interopRequireDefault(_merge);
 
-var _isByteLength = __webpack_require__(45);
+var _isByteLength = __webpack_require__(48);
 
 var _isByteLength2 = _interopRequireDefault(_isByteLength);
 
@@ -3103,7 +3235,7 @@ function isEmail(str, options) {
 module.exports = exports['default'];
 
 /***/ },
-/* 47 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3129,7 +3261,7 @@ function isNumeric(str) {
 module.exports = exports['default'];
 
 /***/ },
-/* 48 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3185,19 +3317,6 @@ function checkHost(host, matches) {
   return false;
 }
 
-<<<<<<< HEAD
-            if (~['radio', 'checkbox'].indexOf(this.el.type)) {
-                this.vm.$once('validatorReady', function () {
-                    [].concat(toConsumableArray(document.querySelectorAll('input[name="' + _this4.el.name + '"]'))).forEach(function (input) {
-                        input.addEventListener(handler.name, listener);
-                        _this4.callbacks.push({
-                            name: handler.name,
-                            listener: listener,
-                            el: input
-                        });
-                    });
-                });
-=======
 function isURL(url, options) {
   (0, _assertString2.default)(url);
   if (!url || url.length >= 2083 || /\s/.test(url)) {
@@ -3215,7 +3334,6 @@ function isURL(url, options) {
       port_str = void 0,
       split = void 0,
       ipv6 = void 0;
->>>>>>> 4ba370c... getting the value from a component
 
   split = url.split('#');
   url = split.shift();
@@ -3239,11 +3357,6 @@ function isURL(url, options) {
   split = url.split('/');
   url = split.shift();
 
-<<<<<<< HEAD
-            if (this.binding.expression) {
-                return;
-            }
-=======
   if (url === '' && !options.require_host) {
     return true;
   }
@@ -3256,7 +3369,6 @@ function isURL(url, options) {
     }
   }
   hostname = split.join('@');
->>>>>>> 4ba370c... getting the value from a component
 
   port_str = ipv6 = null;
   var ipv6_match = hostname.match(wrapped_ipv6);
@@ -3297,7 +3409,7 @@ function isURL(url, options) {
 module.exports = exports['default'];
 
 /***/ },
-/* 49 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3308,61 +3420,10 @@ module.exports = exports['default'];
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__errorBag__ = __webpack_require__(3);
 /* harmony export (binding) */ __webpack_require__.d(exports, "install", function() { return install; });
 
-<<<<<<< HEAD
-var directive = (function (options) {
-    return {
-        bind: function bind() {
-            var _this = this;
-
-            this.vm.$nextTick(function () {
-                _this.fieldName = _this.expression || _this.el.name;
-                var binding = { expression: _this.expression, modifiers: _this.modifiers };
-                var listener = new ListenerGenerator(_this.el, binding, _this.vm, options);
-                listener.attach();
-                listenersInstances.push({ vm: _this.vm, el: _this.el, instance: listener });
-            });
-        },
-        update: function update(value) {
-            var _this2 = this;
-
-            if (!this.expression) {
-                return;
-            }
-
-            if (this.modifiers.initial) {
-                this.modifiers.initial = false;
-
-                return;
-            }
-
-            // might be not ready yet.
-            if (!this.fieldName) {
-                this.vm.$nextTick(function () {
-                    _this2.vm.$validator.validate(_this2.fieldName, value, getScope(_this2.el));
-                });
-
-                return;
-            }
-
-            this.vm.$validator.validate(this.fieldName, value, getScope(this.el));
-        },
-        unbind: function unbind() {
-            var _this3 = this;
-
-            var holder = listenersInstances.filter(function (l) {
-                return l.vm === _this3.vm && l.el === _this3.el;
-            })[0];
-            holder.instance.detach();
-            listenersInstances.splice(listenersInstances.indexOf(holder), 1);
-        }
-    };
-});
-=======
 
 
 
 
->>>>>>> 4ba370c... getting the value from a component
 
 // eslint-disable-next-line
 var install = function install(Vue) {
@@ -3385,7 +3446,7 @@ var install = function install(Vue) {
         __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].updateDictionary(dictionary);
     }
 
-    __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].setDefaultLocale(locale);
+    __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].setLocale(locale);
     __WEBPACK_IMPORTED_MODULE_0__validator__["a" /* default */].setStrictMode(strict);
 
     var options = {

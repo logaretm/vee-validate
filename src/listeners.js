@@ -7,7 +7,7 @@ export default class ListenerGenerator
         this.el = el;
         this.binding = binding;
         this.vm = vnode.context;
-        this.component = vnode.child;
+        this.component = this.el.__vue__;
         this.options = options;
         this.fieldName = this._resolveFieldName();
     }

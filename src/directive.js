@@ -8,7 +8,7 @@ export default (options) => ({
         this.vm.$nextTick(() => {
             this.fieldName = this.expression || this.el.name;
             const binding = { expression: this.expression, modifiers: this.modifiers };
-            const listener = new ListenerGenerator(this.el, binding, this.vm, options);
+            const listener = new ListenerGenerator(this.el, binding, { context: this.vm }, options);
             listener.attach();
             listenersInstances.push({ vm: this.vm, el: this.el, instance: listener });
         });
