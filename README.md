@@ -1,6 +1,6 @@
 # Vee-Validate
 [![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
-[![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=next)](https://travis-ci.org/logaretm/vee-validate)
+[![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=master)](https://travis-ci.org/logaretm/vee-validate)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/logaretm1/vee-validate?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=logaretm/vee-validate&amp;utm_campaign=Badge_Grade)
 
 vee-validate is a lightweight plugin for [Vue.js](https://vuejs.org/) that allows you to validate input fields, and display errors.
@@ -28,32 +28,20 @@ npm install vee-validate@next --save
 
 **Vue 1.0**:
 ```
-bower install vee-validate#1.0.0-beta.8 --save
+bower install vee-validate#1.0.0-beta.9 --save
 ```
 
 **Vue 2.0**:
 
 ```
-bower install vee-validate#2.0.0-beta.13 --save
+bower install vee-validate#2.0.0-beta.15 --save
 ```
 
 ### CDN
 
 vee-validate is also available on jsdelivr cdn:
 
-**Vue 1.0**:
-
-```html
-<script src="https://cdn.jsdelivr.net/vee-validate/1.0.0-beta.8/vee-validate.min.js"></script>
-```
-
-**Vue 2.0**:
-
-```html
-<script src="https://cdn.jsdelivr.net/vee-validate/2.0.0-beta.13/vee-validate.min.js"></script>
-```
-
-Or select whatever [version](https://www.jsdelivr.com/projects/vee-validate) you would like to use.
+[select whatever version](https://www.jsdelivr.com/projects/vee-validate) you would like to use.
 
 ### Getting Started
 
@@ -69,10 +57,10 @@ Now you are all setup to use the plugin.
 
 ### Usage
 
-Just apply the `v-validate` directive on your input and a `rules` attribute which is a list of validations separated by a pipe, for example we will use the `required` and the `email` validators:
+Just apply the `v-validate` directive on your input and a `data-vv-rules` attribute which is a list of validations separated by a pipe, for example we will use the `required` and the `email` validators:
 
 ```html
-<input v-validate data-rules="required|email" type="text" name="email">
+<input v-validate data-vv-rules="required|email" type="text" name="email">
 ```
 
 Now every time the input changes, the validator will run the list of validations from left to right, populating the errors helper object whenever an input fails validation.
@@ -93,12 +81,9 @@ Read the [documentation and demos](http://vee-validate.logaretm.com/).
 
 ### Compatibility
 
-This plugin should be compatible with the major browsers, but it requires few polyfills to work on older ones. The polyfills are:
+This plugin should be compatible with the major browsers, but it requires few polyfills to work on older ones.
 
-- Promise Polyfill.
-- Object.assign Polyfill.
-
-The reason they are not included is because most of the workflows already use polyfills within their code, so to cut down the package size the redundant polyfills were removed, you can use [Polyfill.io](https://polyfill.io/v2/docs/) to provide the needed polyfills for all browsers automatically.
+The reason they are not included is because most of the workflows already use polyfills within their code, so to cut down the package size the redundant polyfills were removed, you can use [Polyfill.io](https://polyfill.io/v2/docs/) to provide the needed polyfills for all browsers automatically, or feel free to provide them on your own.
 
 ### Contributing
 
@@ -107,8 +92,9 @@ However if you are adding a new validation rule, it should have multiple uses or
 
 You can find more information in the [contribution guide](contributing.md).
 
-### Tutorials
+### Tutorials and Examples
 
 - [Form Validation using Vue.js 2](https://dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d#.m95idzlj2) by [Alex Kyriakidis](https://github.com/hootlex)
+- [Vue Multi Step From](http://statemachine.davestewart.io/html/examples/vue/vue-sign-up.html) by [Dave Stewart](https://github.com/davestewart)
 
 ### license MIT
