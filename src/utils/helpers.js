@@ -6,8 +6,14 @@ export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`)
 /**
  * Determines the input field scope.
  */
-export const getScope = (el) =>
-    getDataAttribute(el, 'scope') || (el.form && getDataAttribute(el.form, 'scope'));
+export const getScope = (el) => {
+    let scope = getDataAttribute(el, 'scope');
+    if (! scope && el.form) {
+        scope = getDataAttribute(el.form, 'scope');
+    }
+
+    return scope;
+};
 
 /**
  * Debounces a function.

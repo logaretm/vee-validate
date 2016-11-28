@@ -270,7 +270,7 @@ export default class ListenerGenerator
     attach() {
         const { context, getter } = this._resolveValueGetter();
         this.vm.$validator.attach(this.fieldName, getDataAttribute(this.el, 'rules'), {
-            scope: getDataAttribute(this.el, 'scope'),
+            scope: () => getScope(this.el),
             prettyName: getDataAttribute(this.el, 'as'),
             context,
             getter

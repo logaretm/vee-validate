@@ -200,9 +200,14 @@ export default class Validator
         Object.keys(this.$fields).forEach(field => {
             const getter = this.$fields[field].getter;
             const context = this.$fields[field].context;
+            const fieldScope = typeof this.$fields[field].scope === 'function' ?
+                               this.$fields[field].scope() : undefined;
 
-            if (getter && context && (! scope || this.$fields[field].scope === scope)) {
-                values[field] = getter(context());
+            if (getter && context && (! scope || fieldScope === scope)) {
+                values[field] = {
+                    _val: getter(context()),
+                    scope: fieldScope
+                };
             }
         });
 
@@ -394,7 +399,6 @@ export default class Validator
     attach(name, checks, options = {}) {
         this.errorBag.remove(name);
         this._createField(name, checks);
-
         this.$fields[name].scope = options.scope;
         this.$fields[name].name = options.prettyName;
         this.$fields[name].getter = options.getter;
@@ -559,7 +563,8 @@ export default class Validator
         const promises = [];
         this.errorBag.clear();
         Object.keys(values).forEach(property => {
-            const result = this.validate(property, values[property]);
+            const value = values[property]._val || values[property];
+            const result = this.validate(property, value, values[property].scope);
             if (typeof result.then === 'function') {
                 promises.push(result);
                 return;

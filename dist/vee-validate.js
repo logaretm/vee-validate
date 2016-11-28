@@ -119,7 +119,12 @@ var getDataAttribute = function getDataAttribute(el, name) {
  * Determines the input field scope.
  */
 var getScope = function getScope(el) {
-    return getDataAttribute(el, 'scope') || el.form && getDataAttribute(el.form, 'scope');
+    var scope = getDataAttribute(el, 'scope');
+    if (!scope && el.form) {
+        scope = getDataAttribute(el.form, 'scope');
+    }
+
+    return scope;
 };
 
 /**
@@ -615,9 +620,13 @@ var Validator = function () {
             Object.keys(this.$fields).forEach(function (field) {
                 var getter = _this.$fields[field].getter;
                 var context = _this.$fields[field].context;
+                var fieldScope = typeof _this.$fields[field].scope === 'function' ? _this.$fields[field].scope() : undefined;
 
-                if (getter && context && (!scope || _this.$fields[field].scope === scope)) {
-                    values[field] = getter(context());
+                if (getter && context && (!scope || fieldScope === scope)) {
+                    values[field] = {
+                        _val: getter(context()),
+                        scope: fieldScope
+                    };
                 }
             });
 
@@ -836,7 +845,6 @@ var Validator = function () {
 
             this.errorBag.remove(name);
             this._createField(name, checks);
-
             this.$fields[name].scope = options.scope;
             this.$fields[name].name = options.prettyName;
             this.$fields[name].getter = options.getter;
@@ -1046,7 +1054,8 @@ var Validator = function () {
             var promises = [];
             this.errorBag.clear();
             Object.keys(values).forEach(function (property) {
-                var result = _this6.validate(property, values[property]);
+                var value = values[property]._val || values[property];
+                var result = _this6.validate(property, value, values[property].scope);
                 if (typeof result.then === 'function') {
                     promises.push(result);
                     return;
@@ -2176,13 +2185,17 @@ var ListenerGenerator = function () {
     }, {
         key: 'attach',
         value: function attach() {
+            var _this7 = this;
+
             var _resolveValueGetter2 = this._resolveValueGetter();
 
             var context = _resolveValueGetter2.context;
             var getter = _resolveValueGetter2.getter;
 
             this.vm.$validator.attach(this.fieldName, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'rules'), {
-                scope: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'scope'),
+                scope: function scope() {
+                    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(_this7.el);
+                },
                 prettyName: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'as'),
                 context: context,
                 getter: getter
