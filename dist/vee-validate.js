@@ -559,7 +559,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var LOCALE = 'en';
 var STRICT_MODE = true;
-
 var dictionary = new __WEBPACK_IMPORTED_MODULE_3__dictionary__["a" /* default */]({
     en: {
         messages: __WEBPACK_IMPORTED_MODULE_4__messages__["a" /* default */],
@@ -586,157 +585,21 @@ var Validator = function () {
     }
 
     /**
-     * Sets the default locale for all validators.
+     * Merges a validator object into the Rules and Messages.
      *
-     * @param {String} language The locale id.
+     * @param  {string} name The name of the validator.
+     * @param  {function|object} validator The validator object.
      */
 
 
     _createClass(Validator, [{
-        key: 'installDateTimeValidators',
+        key: '_resolveValuesFromGetters',
 
-
-        /**
-         * Just an alias to the static method for convienece.
-         */
-        value: function installDateTimeValidators(moment) {
-            Validator.installDateTimeValidators(moment);
-        }
-
-        /**
-         * Sets the operating mode for this validator.
-         * strictMode = true: Values without a rule are invalid and cause failure.
-         * strictMode = false: Values without a rule are valid and are skipped.
-         * @param {Boolean} strictMode.
-         */
-
-    }, {
-        key: 'setStrictMode',
-        value: function setStrictMode() {
-            var strictMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-            this.strictMode = strictMode;
-        }
-
-        /**
-         * Updates the dicitionary, overwriting existing values and adding new ones.
-         *
-         * @param  {object} data The dictionary object.
-        =     */
-
-    }, {
-        key: 'remove',
-
-
-        /**
-         * Removes a rule from the list of validators.
-         * @param {String} name The name of the validator/rule.
-         */
-        value: function remove(name) {
-            Validator.remove(name);
-        }
-
-        /**
-         * Merges a validator object into the Rules and Messages.
-         *
-         * @param  {string} name The name of the validator.
-         * @param  {function|object} validator The validator object.
-         */
-
-    }, {
-        key: 'setLocale',
-
-
-        /**
-         * Sets the validator current langauge.
-         *
-         * @param {string} language locale or language id.
-         */
-        value: function setLocale(language) {
-            /* istanbul ignore if */
-            if (!dictionary.hasLocale(language)) {
-                // eslint-disable-next-line
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["b" /* warn */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
-            }
-
-            LOCALE = language;
-        }
-
-        /**
-         * Registers a field to be validated.
-         *
-         * @param  {string} name The field name.
-         * @param  {string} checks validations expression.
-         * @param {string} prettyName Custom name to be used as field name in error messages.
-         * @param {Function} getter A function used to retrive a fresh value for the field.
-         */
-
-    }, {
-        key: 'attach',
-        value: function attach(name, checks) {
-            var prettyName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-            var context = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-            var getter = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
-
-            this.errorBag.remove(name);
-            this._createField(name, checks);
-
-            this.$fields[name].name = prettyName;
-            this.$fields[name].getter = getter;
-            this.$fields[name].context = context;
-        }
-
-        /**
-         * Updates the messages dicitionary, overwriting existing values and adding new ones.
-         *
-         * @param  {object} data The messages object.
-         */
-
-    }, {
-        key: 'updateDictionary',
-        value: function updateDictionary(data) {
-            Validator.updateDictionary(data);
-        }
-
-        /**
-         * Removes a field from the validator.
-         *
-         * @param  {string} name The name of the field.
-         */
-
-    }, {
-        key: 'detach',
-        value: function detach(name, scope) {
-            /* istanbul ignore if */
-            if (this.$vm && typeof this.$vm.$emit === 'function') {
-                this.$vm.$emit('VALIDATOR_OFF', name);
-            }
-
-            this.errorBag.remove(name, scope);
-            this.fieldBag._remove(name);
-            delete this.$fields[name];
-        }
-
-        /**
-         * Adds a custom validator to the list of validation rules.
-         *
-         * @param  {string} name The name of the validator.
-         * @param  {object|function} validator The validator object/function.
-         */
-
-    }, {
-        key: 'extend',
-        value: function extend(name, validator) {
-            Validator.extend(name, validator);
-        }
 
         /**
          * Resolves the field values from the getter functions.
          */
-
-    }, {
-        key: '_resolveValuesFromGetters',
-        value: function _resolveValuesFromGetters() {
+        value: function _resolveValuesFromGetters(scope) {
             var _this = this;
 
             var values = {};
@@ -744,104 +607,12 @@ var Validator = function () {
                 var getter = _this.$fields[field].getter;
                 var context = _this.$fields[field].context;
 
-                if (getter && context) {
+                if (getter && context && (!scope || _this.$fields[field].scope === scope)) {
                     values[field] = getter(context());
                 }
             });
 
             return values;
-        }
-
-        /**
-         * Validates each value against the corresponding field validations.
-         * @param  {object} values The values to be validated.
-         * @return {Promise} Returns a promise with the validation result.
-         */
-
-    }, {
-        key: 'validateAll',
-        value: function validateAll() {
-            var _this2 = this;
-
-            var values = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._resolveValuesFromGetters();
-
-            var test = true;
-            var promises = [];
-            this.errorBag.clear();
-            Object.keys(values).forEach(function (property) {
-                var result = _this2.validate(property, values[property]);
-                if (typeof result.then === 'function') {
-                    promises.push(result);
-                    return;
-                }
-
-                test = test && result;
-            });
-
-            return Promise.all(promises).then(function (vals) {
-                var valid = vals.every(function (t) {
-                    return t;
-                }) && test;
-
-                return valid;
-            });
-        }
-
-        /**
-         * Validates a value against a registered field validations.
-         *
-         * @param  {string} name the field name.
-         * @param  {*} value The value to be validated.
-         * @return {boolean|Promise} result returns a boolean or a promise that will resolve to
-         *  a boolean.
-         */
-
-    }, {
-        key: 'validate',
-        value: function validate(name, value, scope) {
-            var _this3 = this;
-
-            if (!this.$fields[name]) {
-                if (!this.strictMode) {
-                    return true;
-                }
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["b" /* warn */])('Trying to validate a non-existant field: "' + name + '". Use "attach()" first.');
-
-                return false;
-            }
-
-            this.errorBag.remove(name, scope);
-            // if its not required and is empty or null or undefined then it passes.
-            if (!this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
-                return true;
-            }
-
-            var test = true;
-            var promises = [];
-            this.$fields[name].validations.forEach(function (rule) {
-                var result = _this3._test(name, value, rule, scope);
-                if (typeof result.then === 'function') {
-                    promises.push(result);
-                    return;
-                }
-
-                test = test && result;
-            });
-
-            if (promises.length) {
-                return Promise.all(promises).then(function (values) {
-                    var valid = values.every(function (t) {
-                        return t;
-                    }) && test;
-                    _this3.fieldBag._setFlags(name, { valid: valid, dirty: true });
-
-                    return valid;
-                });
-            }
-
-            this.fieldBag._setFlags(name, { valid: test, dirty: true });
-
-            return test;
         }
 
         /**
@@ -854,14 +625,14 @@ var Validator = function () {
     }, {
         key: '_createFields',
         value: function _createFields(validations) {
-            var _this4 = this;
+            var _this2 = this;
 
             if (!validations) {
                 return;
             }
 
             Object.keys(validations).forEach(function (field) {
-                _this4._createField(field, validations[field]);
+                _this2._createField(field, validations[field]);
             });
         }
 
@@ -874,7 +645,7 @@ var Validator = function () {
     }, {
         key: '_createField',
         value: function _createField(name, checks) {
-            var _this5 = this;
+            var _this3 = this;
 
             if (!this.$fields[name]) {
                 this.$fields[name] = {};
@@ -890,16 +661,16 @@ var Validator = function () {
             }
 
             checks.split('|').forEach(function (rule) {
-                var normalizedRule = _this5._normalizeRule(rule, _this5.$fields[name].validations);
+                var normalizedRule = _this3._normalizeRule(rule, _this3.$fields[name].validations);
                 if (!normalizedRule.name) {
                     return;
                 }
 
                 if (normalizedRule.name === 'required') {
-                    _this5.$fields[name].required = true;
+                    _this3.$fields[name].required = true;
                 }
 
-                _this5.$fields[name].validations.push(normalizedRule);
+                _this3.$fields[name].validations.push(normalizedRule);
             });
         }
 
@@ -997,7 +768,7 @@ var Validator = function () {
     }, {
         key: '_test',
         value: function _test(name, value, rule, scope) {
-            var _this6 = this;
+            var _this4 = this;
 
             var validator = __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][rule.name];
             if (!validator || typeof validator !== 'function') {
@@ -1022,7 +793,7 @@ var Validator = function () {
                     }
 
                     if (!allValid) {
-                        _this6.errorBag.add(name, _this6._formatErrorMessage(name, rule, data), rule.name, scope);
+                        _this4.errorBag.add(name, _this4._formatErrorMessage(name, rule, data), rule.name, scope);
                     }
 
                     return allValid;
@@ -1041,98 +812,46 @@ var Validator = function () {
         }
 
         /**
-         * Gets the internal errorBag instance.
+         * Registers a field to be validated.
          *
-         * @return {ErrorBag} errorBag The internal error bag object.
+         * @param  {string} name The field name.
+         * @param  {string} checks validations expression.
+         * @param {string} prettyName Custom name to be used as field name in error messages.
+         * @param {Function} getter A function used to retrive a fresh value for the field.
          */
 
     }, {
-        key: 'getErrors',
-        value: function getErrors() {
-            return this.errorBag;
-        }
-    }, {
-        key: 'getLocale',
-        value: function getLocale() {
-            return LOCALE;
-        }
-    }], [{
-        key: 'setLocale',
-        value: function setLocale() {
-            var language = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'en';
+        key: 'attach',
+        value: function attach(name, checks) {
+            var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
+            this.errorBag.remove(name);
+            this._createField(name, checks);
+
+            this.$fields[name].scope = options.scope;
+            this.$fields[name].name = options.prettyName;
+            this.$fields[name].getter = options.getter;
+            this.$fields[name].context = options.context;
+        }
+
+        /**
+         * Removes a field from the validator.
+         *
+         * @param  {String} name The name of the field.
+         * @param {String} scope The name of the field scope.
+         */
+
+    }, {
+        key: 'detach',
+        value: function detach(name, scope) {
             /* istanbul ignore if */
-            if (!dictionary.hasLocale(language)) {
-                // eslint-disable-next-line
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["b" /* warn */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+            if (this.$vm && typeof this.$vm.$emit === 'function') {
+                this.$vm.$emit('VALIDATOR_OFF', name);
             }
 
-            LOCALE = language;
-        }
-
-        /**
-         * Sets the operating mode for all newly created validators.
-         * strictMode = true: Values without a rule are invalid and cause failure.
-         * strictMode = false: Values without a rule are valid and are skipped.
-         * @param {Boolean} strictMode.
-         */
-
-    }, {
-        key: 'setStrictMode',
-        value: function setStrictMode() {
-            var strictMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-            STRICT_MODE = strictMode;
-        }
-
-        /**
-         * Installs the datetime validators and the messages.
-         */
-
-    }, {
-        key: 'installDateTimeValidators',
-        value: function installDateTimeValidators(moment) {
-            if (typeof moment !== 'function') {
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["b" /* warn */])('To use the date-time validators you must provide moment reference.');
-
-                return false;
-            }
-
-            if (__WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].installed) {
-                return true;
-            }
-
-            var validators = __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].make(moment);
-            Object.keys(validators).forEach(function (name) {
-                Validator.extend(name, validators[name]);
-            });
-
-            Validator.updateDictionary({
-                en: {
-                    messages: __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].messages
-                }
-            });
-            __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].installed = true;
-
-            return true;
-        }
-    }, {
-        key: 'updateDictionary',
-        value: function updateDictionary(data) {
-            dictionary.merge(data);
-        }
-
-        /**
-         * Static constructor.
-         *
-         * @param  {object} validations The validations object.
-         * @return {Validator} validator A validator object.
-         */
-
-    }, {
-        key: 'create',
-        value: function create(validations, $vm) {
-            return new Validator(validations, $vm);
+            this.errorBag.remove(name, scope);
+            this.fieldBag._remove(name);
+            delete this.$fields[name];
         }
 
         /**
@@ -1145,8 +864,41 @@ var Validator = function () {
     }, {
         key: 'extend',
         value: function extend(name, validator) {
-            Validator._guardExtend(name, validator);
-            Validator._merge(name, validator);
+            Validator.extend(name, validator);
+        }
+
+        /**
+         * Gets the internal errorBag instance.
+         *
+         * @return {ErrorBag} errorBag The internal error bag object.
+         */
+
+    }, {
+        key: 'getErrors',
+        value: function getErrors() {
+            return this.errorBag;
+        }
+
+        /**
+         * Gets the currently active locale.
+         *
+         * @return {String} Locale identifier.
+         */
+
+    }, {
+        key: 'getLocale',
+        value: function getLocale() {
+            return LOCALE;
+        }
+
+        /**
+         * Just an alias to the static method for convienece.
+         */
+
+    }, {
+        key: 'installDateTimeValidators',
+        value: function installDateTimeValidators(moment) {
+            Validator.installDateTimeValidators(moment);
         }
 
         /**
@@ -1157,9 +909,152 @@ var Validator = function () {
     }, {
         key: 'remove',
         value: function remove(name) {
-            delete __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][name];
+            Validator.remove(name);
         }
+
+        /**
+         * Sets the validator current langauge.
+         *
+         * @param {string} language locale or language id.
+         */
+
     }, {
+        key: 'setLocale',
+        value: function setLocale(language) {
+            /* istanbul ignore if */
+            if (!dictionary.hasLocale(language)) {
+                // eslint-disable-next-line
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["b" /* warn */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+            }
+
+            LOCALE = language;
+        }
+
+        /**
+         * Sets the operating mode for this validator.
+         * strictMode = true: Values without a rule are invalid and cause failure.
+         * strictMode = false: Values without a rule are valid and are skipped.
+         * @param {Boolean} strictMode.
+         */
+
+    }, {
+        key: 'setStrictMode',
+        value: function setStrictMode() {
+            var strictMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+            this.strictMode = strictMode;
+        }
+
+        /**
+         * Updates the messages dicitionary, overwriting existing values and adding new ones.
+         *
+         * @param  {object} data The messages object.
+         */
+
+    }, {
+        key: 'updateDictionary',
+        value: function updateDictionary(data) {
+            Validator.updateDictionary(data);
+        }
+
+        /**
+         * Validates a value against a registered field validations.
+         *
+         * @param  {string} name the field name.
+         * @param  {*} value The value to be validated.
+         * @return {boolean|Promise} result returns a boolean or a promise that will resolve to
+         *  a boolean.
+         */
+
+    }, {
+        key: 'validate',
+        value: function validate(name, value, scope) {
+            var _this5 = this;
+
+            if (!this.$fields[name]) {
+                if (!this.strictMode) {
+                    return true;
+                }
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["b" /* warn */])('Trying to validate a non-existant field: "' + name + '". Use "attach()" first.');
+
+                return false;
+            }
+
+            this.errorBag.remove(name, scope);
+            // if its not required and is empty or null or undefined then it passes.
+            if (!this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
+                return true;
+            }
+
+            var test = true;
+            var promises = [];
+            this.$fields[name].validations.forEach(function (rule) {
+                var result = _this5._test(name, value, rule, scope);
+                if (typeof result.then === 'function') {
+                    promises.push(result);
+                    return;
+                }
+
+                test = test && result;
+            });
+
+            if (promises.length) {
+                return Promise.all(promises).then(function (values) {
+                    var valid = values.every(function (t) {
+                        return t;
+                    }) && test;
+                    _this5.fieldBag._setFlags(name, { valid: valid, dirty: true });
+
+                    return valid;
+                });
+            }
+
+            this.fieldBag._setFlags(name, { valid: test, dirty: true });
+
+            return test;
+        }
+
+        /**
+         * Validates each value against the corresponding field validations.
+         * @param  {object} values The values to be validated.
+         * @return {Promise} Returns a promise with the validation result.
+         */
+
+    }, {
+        key: 'validateAll',
+        value: function validateAll() {
+            var _this6 = this;
+
+            var values = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._resolveValuesFromGetters();
+
+            // for scoped validation.
+            if (typeof values === 'string') {
+                // eslint-disable-next-line
+                values = this._resolveValuesFromGetters(values);
+            }
+
+            var test = true;
+            var promises = [];
+            this.errorBag.clear();
+            Object.keys(values).forEach(function (property) {
+                var result = _this6.validate(property, values[property]);
+                if (typeof result.then === 'function') {
+                    promises.push(result);
+                    return;
+                }
+
+                test = test && result;
+            });
+
+            return Promise.all(promises).then(function (vals) {
+                var valid = vals.every(function (t) {
+                    return t;
+                }) && test;
+
+                return valid;
+            });
+        }
+    }], [{
         key: '_merge',
         value: function _merge(name, validator) {
             if (typeof validator === 'function') {
@@ -1217,6 +1112,123 @@ var Validator = function () {
                 // eslint-disable-next-line
                 'Extension Error: The validator \'' + name + '\' must have a \'getMessage\' method or have a \'messages\' object.');
             }
+        }
+
+        /**
+         * Static constructor.
+         *
+         * @param  {object} validations The validations object.
+         * @return {Validator} validator A validator object.
+         */
+
+    }, {
+        key: 'create',
+        value: function create(validations, $vm) {
+            return new Validator(validations, $vm);
+        }
+
+        /**
+         * Adds a custom validator to the list of validation rules.
+         *
+         * @param  {string} name The name of the validator.
+         * @param  {object|function} validator The validator object/function.
+         */
+
+    }, {
+        key: 'extend',
+        value: function extend(name, validator) {
+            Validator._guardExtend(name, validator);
+            Validator._merge(name, validator);
+        }
+
+        /**
+         * Installs the datetime validators and the messages.
+         */
+
+    }, {
+        key: 'installDateTimeValidators',
+        value: function installDateTimeValidators(moment) {
+            if (typeof moment !== 'function') {
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["b" /* warn */])('To use the date-time validators you must provide moment reference.');
+
+                return false;
+            }
+
+            if (__WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].installed) {
+                return true;
+            }
+
+            var validators = __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].make(moment);
+            Object.keys(validators).forEach(function (name) {
+                Validator.extend(name, validators[name]);
+            });
+
+            Validator.updateDictionary({
+                en: {
+                    messages: __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].messages
+                }
+            });
+            __WEBPACK_IMPORTED_MODULE_6__plugins_date__["a" /* default */].installed = true;
+
+            return true;
+        }
+
+        /**
+         * Removes a rule from the list of validators.
+         * @param {String} name The name of the validator/rule.
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove(name) {
+            delete __WEBPACK_IMPORTED_MODULE_0__rules__["a" /* default */][name];
+        }
+
+        /**
+         * Sets the default locale for all validators.
+         *
+         * @param {String} language The locale id.
+         */
+
+    }, {
+        key: 'setLocale',
+        value: function setLocale() {
+            var language = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'en';
+
+            /* istanbul ignore if */
+            if (!dictionary.hasLocale(language)) {
+                // eslint-disable-next-line
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_helpers__["b" /* warn */])('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+            }
+
+            LOCALE = language;
+        }
+
+        /**
+         * Sets the operating mode for all newly created validators.
+         * strictMode = true: Values without a rule are invalid and cause failure.
+         * strictMode = false: Values without a rule are valid and are skipped.
+         * @param {Boolean} strictMode.
+         */
+
+    }, {
+        key: 'setStrictMode',
+        value: function setStrictMode() {
+            var strictMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+            STRICT_MODE = strictMode;
+        }
+
+        /**
+         * Updates the dicitionary, overwriting existing values and adding new ones.
+         *
+         * @param  {object} data The dictionary object.
+         */
+
+    }, {
+        key: 'updateDictionary',
+        value: function updateDictionary(data) {
+            dictionary.merge(data);
         }
     }]);
 
@@ -2188,9 +2200,14 @@ var ListenerGenerator = function () {
             var context = _resolveValueGetter2.context;
             var getter = _resolveValueGetter2.getter;
 
-            this.vm.$validator.attach(this.fieldName, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'rules'), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'as'), context, getter);
-            this._attachValidatorEvent();
+            this.vm.$validator.attach(this.fieldName, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'rules'), {
+                scope: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'scope'),
+                prettyName: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'as'),
+                context: context,
+                getter: getter
+            });
 
+            this._attachValidatorEvent();
             if (this.binding.expression) {
                 return;
             }

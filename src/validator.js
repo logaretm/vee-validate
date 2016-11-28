@@ -9,7 +9,6 @@ import FieldBag from './fieldBag';
 
 let LOCALE = 'en';
 let STRICT_MODE = true;
-
 const dictionary = new Dictionary({
     en: {
         messages,
@@ -196,13 +195,13 @@ export default class Validator
     /**
      * Resolves the field values from the getter functions.
      */
-    _resolveValuesFromGetters() {
+    _resolveValuesFromGetters(scope) {
         const values = {};
         Object.keys(this.$fields).forEach(field => {
             const getter = this.$fields[field].getter;
             const context = this.$fields[field].context;
 
-            if (getter && context) {
+            if (getter && context && (! scope || this.$fields[field].scope === scope)) {
                 values[field] = getter(context());
             }
         });
@@ -392,13 +391,14 @@ export default class Validator
      * @param {string} prettyName Custom name to be used as field name in error messages.
      * @param {Function} getter A function used to retrive a fresh value for the field.
      */
-    attach(name, checks, prettyName = undefined, context = undefined, getter = undefined) {
+    attach(name, checks, options = {}) {
         this.errorBag.remove(name);
         this._createField(name, checks);
 
-        this.$fields[name].name = prettyName;
-        this.$fields[name].getter = getter;
-        this.$fields[name].context = context;
+        this.$fields[name].scope = options.scope;
+        this.$fields[name].name = options.prettyName;
+        this.$fields[name].getter = options.getter;
+        this.$fields[name].context = options.context;
     }
 
     /**
@@ -486,7 +486,6 @@ export default class Validator
         this.strictMode = strictMode;
     }
 
-
     /**
      * Updates the messages dicitionary, overwriting existing values and adding new ones.
      *
@@ -550,6 +549,12 @@ export default class Validator
      * @return {Promise} Returns a promise with the validation result.
      */
     validateAll(values = this._resolveValuesFromGetters()) {
+        // for scoped validation.
+        if (typeof values === 'string') {
+            // eslint-disable-next-line
+            values = this._resolveValuesFromGetters(values);
+        }
+
         let test = true;
         const promises = [];
         this.errorBag.clear();
