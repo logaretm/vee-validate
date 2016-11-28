@@ -551,13 +551,15 @@ export default class Validator
     validateAll(values = this._resolveValuesFromGetters()) {
         // for scoped validation.
         if (typeof values === 'string') {
+            this.errorBag.clear(values);
             // eslint-disable-next-line
             values = this._resolveValuesFromGetters(values);
+        } else {
+            this.errorBag.clear();
         }
 
         let test = true;
         const promises = [];
-        this.errorBag.clear();
         Object.keys(values).forEach(property => {
             const result = this.validate(property, values[property]);
             if (typeof result.then === 'function') {
