@@ -616,7 +616,7 @@ var Validator = function () {
                 var getter = _this.$fields[field].getter;
                 var context = _this.$fields[field].context;
 
-                if (getter && context && (!scope || values[field].scope === scope)) {
+                if (getter && context && (!scope || _this.$fields[field].scope === scope)) {
                     values[field] = getter(context());
                 }
             });
