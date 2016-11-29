@@ -567,7 +567,9 @@ export default class Validator
         let test = true;
         const promises = [];
         Object.keys(values).forEach(property => {
-            const result = this.validate(property, values[property]);
+            const value = typeof values[property._val] !== undefined ?
+                                 values[property]._val : values[property];
+            const result = this.validate(property, value, values[property].scope);
             if (typeof result.then === 'function') {
                 promises.push(result);
                 return;
