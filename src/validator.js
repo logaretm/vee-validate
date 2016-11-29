@@ -200,9 +200,14 @@ export default class Validator
         Object.keys(this.$fields).forEach(field => {
             const getter = this.$fields[field].getter;
             const context = this.$fields[field].context;
+            const fieldScope = typeof this.$fields[field].scope === 'function' ?
+                               this.$fields[field].scope() : undefined;
 
-            if (getter && context && (! scope || this.$fields[field].scope === scope)) {
-                values[field] = getter(context());
+            if (getter && context && (! scope || fieldScope === scope)) {
+                values[field] = {
+                    value: getter(context()),
+                    scope: fieldScope
+                };
             }
         });
 
@@ -554,22 +559,31 @@ export default class Validator
      * @param  {object} values The values to be validated.
      * @return {Promise} Returns a promise with the validation result.
      */
-    validateAll(values = this._resolveValuesFromGetters()) {
-        // for scoped validation.
-        if (typeof values === 'string') {
-            this.errorBag.clear(values);
-            // eslint-disable-next-line
-            values = this._resolveValuesFromGetters(values);
-        } else {
+    validateAll(values) {
+        let normalizedValues;
+        if (! values) {
+            normalizedValues = this._resolveValuesFromGetters();
             this.errorBag.clear();
+        } else if (typeof values === 'string') {
+            this.errorBag.clear(values);
+            normalizedValues = this._resolveValuesFromGetters(values);
+        } else {
+            normalizedValues = {};
+            Object.keys(values).forEach(key => {
+                normalizedValues[key] = {
+                    value: values[key]
+                };
+            });
         }
 
         let test = true;
         const promises = [];
-        Object.keys(values).forEach(property => {
-            const value = typeof values[property._val] !== undefined ?
-                                 values[property]._val : values[property];
-            const result = this.validate(property, value, values[property].scope);
+        Object.keys(normalizedValues).forEach(property => {
+            const result = this.validate(
+                property,
+                normalizedValues[property].value,
+                normalizedValues[property].scope
+            );
             if (typeof result.then === 'function') {
                 promises.push(result);
                 return;
