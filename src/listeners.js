@@ -28,12 +28,22 @@ export default class ListenerGenerator
      * Determines if the validation rule requires additional listeners on target fields.
      */
     _hasFieldDependency(rules) {
-        const results = rules.split('|').filter(r => !! r.match(/\b(confirmed|after|before):/));
-        if (! results.length) {
-            return false;
-        }
+        let fieldName = false;
+        rules.split('|').every(r => {
+            if (/\b(confirmed|after|before):/.test(r)) {
+                fieldName = r.split(':')[1];
+                return false;
+            }
 
-        return results[0].split(':')[1];
+            if (/\b(confirmed)/.test(r)) {
+                fieldName = `${this.fieldName}_confirmation`;
+                return false;
+            }
+
+            return true;
+        });
+
+        return fieldName;
     }
 
     /**
