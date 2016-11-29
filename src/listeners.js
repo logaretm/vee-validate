@@ -102,13 +102,6 @@ export default class ListenerGenerator
      */
     _attachValidatorEvent() {
         const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
-
-        this.vm.$on('VALIDATOR_OFF', (field) => {
-            if (this.fieldName === field) {
-                this.detach();
-            }
-        });
-
         const fieldName = this._hasFieldDependency(getDataAttribute(this.el, 'rules'));
         if (fieldName) {
             // Wait for the validator ready triggered when vm is mounted because maybe
@@ -273,7 +266,8 @@ export default class ListenerGenerator
             scope: getDataAttribute(this.el, 'scope'),
             prettyName: getDataAttribute(this.el, 'as'),
             context,
-            getter
+            getter,
+            listeners: this
         });
 
         this._attachValidatorEvent();
@@ -288,7 +282,6 @@ export default class ListenerGenerator
      * Removes all attached event listeners.
      */
     detach() {
-        this.vm.$validator.detach(this.fieldName, getScope(this.el));
         this.callbacks.forEach(h => {
             h.el.removeEventListener(h.name, h.listener);
         });

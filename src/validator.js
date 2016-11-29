@@ -399,6 +399,7 @@ export default class Validator
         this.$fields[name].name = options.prettyName;
         this.$fields[name].getter = options.getter;
         this.$fields[name].context = options.context;
+        this.$fields[name].listeners = options.listeners || { detach() {} };
     }
 
     /**
@@ -408,9 +409,14 @@ export default class Validator
      * @param {String} scope The name of the field scope.
      */
     detach(name, scope) {
+        // No such field.
+        if (! this.$fields[name]) {
+            return;
+        }
+
         /* istanbul ignore if */
         if (this.$vm && typeof this.$vm.$emit === 'function') {
-            this.$vm.$emit('VALIDATOR_OFF', name);
+            this.$fields[name].listeners.detach();
         }
 
         this.errorBag.remove(name, scope);
