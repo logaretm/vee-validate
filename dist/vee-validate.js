@@ -624,7 +624,7 @@ var Validator = function () {
 
                 if (getter && context && (!scope || fieldScope === scope)) {
                     values[field] = {
-                        _val: getter(context()),
+                        value: getter(context()),
                         scope: fieldScope
                     };
                 }
@@ -1047,25 +1047,29 @@ var Validator = function () {
 
     }, {
         key: 'validateAll',
-        value: function validateAll() {
+        value: function validateAll(values) {
             var _this6 = this;
 
-            var values = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._resolveValuesFromGetters();
-
-            // for scoped validation.
-            if (typeof values === 'string') {
-                this.errorBag.clear(values);
-                // eslint-disable-next-line
-                values = this._resolveValuesFromGetters(values);
-            } else {
+            var normalizedValues = void 0;
+            if (!values) {
+                normalizedValues = this._resolveValuesFromGetters();
                 this.errorBag.clear();
+            } else if (typeof values === 'string') {
+                this.errorBag.clear(values);
+                normalizedValues = this._resolveValuesFromGetters(values);
+            } else {
+                normalizedValues = {};
+                Object.keys(values).forEach(function (key) {
+                    normalizedValues[key] = {
+                        value: values[key]
+                    };
+                });
             }
 
             var test = true;
             var promises = [];
-            Object.keys(values).forEach(function (property) {
-                var value = _typeof(values[property._val]) !== undefined ? values[property]._val : values[property];
-                var result = _this6.validate(property, value, values[property].scope);
+            Object.keys(normalizedValues).forEach(function (property) {
+                var result = _this6.validate(property, normalizedValues[property].value, normalizedValues[property].scope);
                 if (typeof result.then === 'function') {
                     promises.push(result);
                     return;
