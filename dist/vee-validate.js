@@ -849,6 +849,9 @@ var Validator = function () {
             this.$fields[name].name = options.prettyName;
             this.$fields[name].getter = options.getter;
             this.$fields[name].context = options.context;
+            this.$fields[name].listeners = options.listeners || {
+                detach: function detach() {}
+            };
         }
 
         /**
@@ -861,9 +864,14 @@ var Validator = function () {
     }, {
         key: 'detach',
         value: function detach(name, scope) {
+            // No such field.
+            if (!this.$fields[name]) {
+                return;
+            }
+
             /* istanbul ignore if */
             if (this.$vm && typeof this.$vm.$emit === 'function') {
-                this.$vm.$emit('VALIDATOR_OFF', name);
+                this.$fields[name].listeners.detach();
             }
 
             this.errorBag.remove(name, scope);
@@ -1046,15 +1054,17 @@ var Validator = function () {
 
             // for scoped validation.
             if (typeof values === 'string') {
+                this.errorBag.clear(values);
                 // eslint-disable-next-line
                 values = this._resolveValuesFromGetters(values);
+            } else {
+                this.errorBag.clear();
             }
 
             var test = true;
             var promises = [];
-            this.errorBag.clear();
             Object.keys(values).forEach(function (property) {
-                var value = values[property]._val || values[property];
+                var value = _typeof(values[property._val]) !== undefined ? values[property]._val : values[property];
                 var result = _this6.validate(property, value, values[property].scope);
                 if (typeof result.then === 'function') {
                     promises.push(result);
@@ -1985,13 +1995,6 @@ var ListenerGenerator = function () {
             var _this3 = this;
 
             var listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
-
-            this.vm.$on('VALIDATOR_OFF', function (field) {
-                if (_this3.fieldName === field) {
-                    _this3.detach();
-                }
-            });
-
             var fieldName = this._hasFieldDependency(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'rules'));
             if (fieldName) {
                 // Wait for the validator ready triggered when vm is mounted because maybe
@@ -2198,7 +2201,8 @@ var ListenerGenerator = function () {
                 },
                 prettyName: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'as'),
                 context: context,
-                getter: getter
+                getter: getter,
+                listeners: this
             });
 
             this._attachValidatorEvent();
@@ -2221,7 +2225,6 @@ var ListenerGenerator = function () {
     }, {
         key: 'detach',
         value: function detach() {
-            this.vm.$validator.detach(this.fieldName, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(this.el));
             this.callbacks.forEach(function (h) {
                 h.el.removeEventListener(h.name, h.listener);
             });
