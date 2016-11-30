@@ -1896,14 +1896,24 @@ var ListenerGenerator = function () {
     }, {
         key: '_hasFieldDependency',
         value: function _hasFieldDependency(rules) {
-            var results = rules.split('|').filter(function (r) {
-                return !!r.match(/\b(confirmed|after|before):/);
-            });
-            if (!results.length) {
-                return false;
-            }
+            var _this = this;
 
-            return results[0].split(':')[1];
+            var fieldName = false;
+            rules.split('|').every(function (r) {
+                if (/\b(confirmed|after|before):/.test(r)) {
+                    fieldName = r.split(':')[1];
+                    return false;
+                }
+
+                if (/\b(confirmed)/.test(r)) {
+                    fieldName = _this.fieldName + '_confirmation';
+                    return false;
+                }
+
+                return true;
+            });
+
+            return fieldName;
         }
 
         /**
@@ -1949,7 +1959,7 @@ var ListenerGenerator = function () {
     }, {
         key: '_checkboxListener',
         value: function _checkboxListener() {
-            var _this = this;
+            var _this2 = this;
 
             var checkedBoxes = document.querySelectorAll('input[name="' + this.el.name + '"]:checked');
             if (!checkedBoxes || !checkedBoxes.length) {
@@ -1958,7 +1968,7 @@ var ListenerGenerator = function () {
             }
 
             [].concat(_toConsumableArray(checkedBoxes)).forEach(function (box) {
-                _this._validate(box.value);
+                _this2._validate(box.value);
             });
         }
 
@@ -1980,10 +1990,10 @@ var ListenerGenerator = function () {
     }, {
         key: '_getScopedListener',
         value: function _getScopedListener(callback) {
-            var _this2 = this;
+            var _this3 = this;
 
             return function (scope) {
-                if (!scope || scope === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(_this2.el) || scope instanceof Event) {
+                if (!scope || scope === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(_this3.el) || scope instanceof Event) {
                     callback();
                 }
             };
@@ -1996,7 +2006,7 @@ var ListenerGenerator = function () {
     }, {
         key: '_attachValidatorEvent',
         value: function _attachValidatorEvent() {
-            var _this3 = this;
+            var _this4 = this;
 
             var listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
             var fieldName = this._hasFieldDependency(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'rules'));
@@ -2011,7 +2021,7 @@ var ListenerGenerator = function () {
                     }
 
                     target.addEventListener('input', listener);
-                    _this3.callbacks.push({ name: 'input', listener: listener, el: target });
+                    _this4.callbacks.push({ name: 'input', listener: listener, el: target });
                 });
             }
         }
@@ -2073,10 +2083,10 @@ var ListenerGenerator = function () {
     }, {
         key: '_attachComponentListeners',
         value: function _attachComponentListeners() {
-            var _this4 = this;
+            var _this5 = this;
 
             this.component.$on('input', function (value) {
-                _this4.vm.$validator.validate(_this4.fieldName, value);
+                _this5.vm.$validator.validate(_this5.fieldName, value);
             });
         }
 
@@ -2087,7 +2097,7 @@ var ListenerGenerator = function () {
     }, {
         key: '_attachFieldListeners',
         value: function _attachFieldListeners() {
-            var _this5 = this;
+            var _this6 = this;
 
             // If it is a component, use vue events instead.
             if (this.component) {
@@ -2101,10 +2111,10 @@ var ListenerGenerator = function () {
 
             if (~['radio', 'checkbox'].indexOf(this.el.type)) {
                 this.vm.$once('validatorReady', function () {
-                    [].concat(_toConsumableArray(document.querySelectorAll('input[name="' + _this5.el.name + '"]'))).forEach(function (input) {
+                    [].concat(_toConsumableArray(document.querySelectorAll('input[name="' + _this6.el.name + '"]'))).forEach(function (input) {
                         handler.names.forEach(function (handlerName) {
                             input.addEventListener(handlerName, listener);
-                            _this5.callbacks.push({ name: handlerName, listener: listener, el: input });
+                            _this6.callbacks.push({ name: handlerName, listener: listener, el: input });
                         });
                     });
                 });
@@ -2113,8 +2123,8 @@ var ListenerGenerator = function () {
             }
 
             handler.names.forEach(function (handlerName) {
-                _this5.el.addEventListener(handlerName, listener);
-                _this5.callbacks.push({ name: handlerName, listener: listener, el: _this5.el });
+                _this6.el.addEventListener(handlerName, listener);
+                _this6.callbacks.push({ name: handlerName, listener: listener, el: _this6.el });
             });
         }
 
@@ -2125,12 +2135,12 @@ var ListenerGenerator = function () {
     }, {
         key: '_resolveValueGetter',
         value: function _resolveValueGetter() {
-            var _this6 = this;
+            var _this7 = this;
 
             if (this.component) {
                 return {
                     context: function context() {
-                        return _this6.component;
+                        return _this7.component;
                     },
                     getter: function getter(context) {
                         return context[__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(context.$el, 'value-path')] || context.value;
@@ -2142,7 +2152,7 @@ var ListenerGenerator = function () {
                 case 'checkbox':
                     return {
                         context: function context() {
-                            return document.querySelectorAll('input[name="' + _this6.el.name + '"]:checked');
+                            return document.querySelectorAll('input[name="' + _this7.el.name + '"]:checked');
                         },
                         getter: function getter(context) {
                             if (!context || !context.length) {
@@ -2157,7 +2167,7 @@ var ListenerGenerator = function () {
                 case 'radio':
                     return {
                         context: function context() {
-                            return document.querySelector('input[name="' + _this6.el.name + '"]:checked');
+                            return document.querySelector('input[name="' + _this7.el.name + '"]:checked');
                         },
                         getter: function getter(context) {
                             return context && context.value;
@@ -2166,7 +2176,7 @@ var ListenerGenerator = function () {
                 case 'file':
                     return {
                         context: function context() {
-                            return _this6.el;
+                            return _this7.el;
                         },
                         getter: function getter(context) {
                             return context.files;
@@ -2176,7 +2186,7 @@ var ListenerGenerator = function () {
                 default:
                     return {
                         context: function context() {
-                            return _this6.el;
+                            return _this7.el;
                         },
                         getter: function getter(context) {
                             return context.value;
@@ -2192,7 +2202,7 @@ var ListenerGenerator = function () {
     }, {
         key: 'attach',
         value: function attach() {
-            var _this7 = this;
+            var _this8 = this;
 
             var _resolveValueGetter2 = this._resolveValueGetter();
 
@@ -2201,7 +2211,7 @@ var ListenerGenerator = function () {
 
             this.vm.$validator.attach(this.fieldName, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'rules'), {
                 scope: function scope() {
-                    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(_this7.el);
+                    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(_this8.el);
                 },
                 prettyName: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'as'),
                 context: context,
@@ -3067,10 +3077,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL__);
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 
-/* harmony default export */ exports["a"] = function (value, domains) {
-  return __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default()(value, { host_whitelist: domains || false });
+
+/* harmony default export */ exports["a"] = function (value, _ref) {
+  var _ref2 = _slicedToArray(_ref, 1);
+
+  var domain = _ref2[0];
+  return __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default()(value, { host_whitelist: domain ? [domain] : undefined });
 };
 
 /***/ },
