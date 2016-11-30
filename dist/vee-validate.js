@@ -606,9 +606,13 @@ var Validator = function () {
             Object.keys(this.$fields).forEach(function (field) {
                 var getter = _this.$fields[field].getter;
                 var context = _this.$fields[field].context;
+                var fieldScope = typeof _this.$fields[field].scope === 'function' ? _this.$fields[field].scope() : undefined;
 
-                if (getter && context && (!scope || _this.$fields[field].scope === scope)) {
-                    values[field] = getter(context());
+                if (getter && context && (!scope || fieldScope === scope)) {
+                    values[field] = {
+                        value: getter(context()),
+                        scope: fieldScope
+                    };
                 }
             });
 
@@ -832,6 +836,9 @@ var Validator = function () {
             this.$fields[name].name = options.prettyName;
             this.$fields[name].getter = options.getter;
             this.$fields[name].context = options.context;
+            this.$fields[name].listeners = options.listeners || {
+                detach: function detach() {}
+            };
         }
 
         /**
@@ -844,9 +851,14 @@ var Validator = function () {
     }, {
         key: 'detach',
         value: function detach(name, scope) {
+            // No such field.
+            if (!this.$fields[name]) {
+                return;
+            }
+
             /* istanbul ignore if */
             if (this.$vm && typeof this.$vm.$emit === 'function') {
-                this.$vm.$emit('VALIDATOR_OFF', name);
+                this.$fields[name].listeners.detach();
             }
 
             this.errorBag.remove(name, scope);
@@ -1022,22 +1034,29 @@ var Validator = function () {
 
     }, {
         key: 'validateAll',
-        value: function validateAll() {
+        value: function validateAll(values) {
             var _this6 = this;
 
-            var values = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._resolveValuesFromGetters();
-
-            // for scoped validation.
-            if (typeof values === 'string') {
-                // eslint-disable-next-line
-                values = this._resolveValuesFromGetters(values);
+            var normalizedValues = void 0;
+            if (!values) {
+                normalizedValues = this._resolveValuesFromGetters();
+                this.errorBag.clear();
+            } else if (typeof values === 'string') {
+                this.errorBag.clear(values);
+                normalizedValues = this._resolveValuesFromGetters(values);
+            } else {
+                normalizedValues = {};
+                Object.keys(values).forEach(function (key) {
+                    normalizedValues[key] = {
+                        value: values[key]
+                    };
+                });
             }
 
             var test = true;
             var promises = [];
-            this.errorBag.clear();
-            Object.keys(values).forEach(function (property) {
-                var result = _this6.validate(property, values[property]);
+            Object.keys(normalizedValues).forEach(function (property) {
+                var result = _this6.validate(property, normalizedValues[property].value, normalizedValues[property].scope);
                 if (typeof result.then === 'function') {
                     promises.push(result);
                     return;
@@ -1892,14 +1911,24 @@ var ListenerGenerator = function () {
     }, {
         key: '_hasFieldDependency',
         value: function _hasFieldDependency(rules) {
-            var results = rules.split('|').filter(function (r) {
-                return !!r.match(/\b(confirmed|after|before):/);
-            });
-            if (!results.length) {
-                return false;
-            }
+            var _this = this;
 
-            return results[0].split(':')[1];
+            var fieldName = false;
+            rules.split('|').every(function (r) {
+                if (/\b(confirmed|after|before):/.test(r)) {
+                    fieldName = r.split(':')[1];
+                    return false;
+                }
+
+                if (/\b(confirmed)/.test(r)) {
+                    fieldName = _this.fieldName + '_confirmation';
+                    return false;
+                }
+
+                return true;
+            });
+
+            return fieldName;
         }
 
         /**
@@ -1945,7 +1974,7 @@ var ListenerGenerator = function () {
     }, {
         key: '_checkboxListener',
         value: function _checkboxListener() {
-            var _this = this;
+            var _this2 = this;
 
             var checkedBoxes = document.querySelectorAll('input[name="' + this.el.name + '"]:checked');
             if (!checkedBoxes || !checkedBoxes.length) {
@@ -1954,7 +1983,7 @@ var ListenerGenerator = function () {
             }
 
             [].concat(_toConsumableArray(checkedBoxes)).forEach(function (box) {
-                _this._validate(box.value);
+                _this2._validate(box.value);
             });
         }
 
@@ -1976,10 +2005,10 @@ var ListenerGenerator = function () {
     }, {
         key: '_getScopedListener',
         value: function _getScopedListener(callback) {
-            var _this2 = this;
+            var _this3 = this;
 
             return function (scope) {
-                if (!scope || scope === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(_this2.el) || scope instanceof Event) {
+                if (!scope || scope === __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(_this3.el) || scope instanceof Event) {
                     callback();
                 }
             };
@@ -1992,16 +2021,9 @@ var ListenerGenerator = function () {
     }, {
         key: '_attachValidatorEvent',
         value: function _attachValidatorEvent() {
-            var _this3 = this;
+            var _this4 = this;
 
             var listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
-
-            this.vm.$on('VALIDATOR_OFF', function (field) {
-                if (_this3.fieldName === field) {
-                    _this3.detach();
-                }
-            });
-
             var fieldName = this._hasFieldDependency(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'rules'));
             if (fieldName) {
                 // Wait for the validator ready triggered when vm is mounted because maybe
@@ -2014,7 +2036,7 @@ var ListenerGenerator = function () {
                     }
 
                     target.addEventListener('input', listener);
-                    _this3.callbacks.push({ name: 'input', listener: listener, el: target });
+                    _this4.callbacks.push({ name: 'input', listener: listener, el: target });
                 });
             }
         }
@@ -2076,10 +2098,10 @@ var ListenerGenerator = function () {
     }, {
         key: '_attachComponentListeners',
         value: function _attachComponentListeners() {
-            var _this4 = this;
+            var _this5 = this;
 
             this.component.$on('input', function (value) {
-                _this4.vm.$validator.validate(_this4.fieldName, value);
+                _this5.vm.$validator.validate(_this5.fieldName, value);
             });
         }
 
@@ -2090,7 +2112,7 @@ var ListenerGenerator = function () {
     }, {
         key: '_attachFieldListeners',
         value: function _attachFieldListeners() {
-            var _this5 = this;
+            var _this6 = this;
 
             // If it is a component, use vue events instead.
             if (this.component) {
@@ -2104,10 +2126,10 @@ var ListenerGenerator = function () {
 
             if (~['radio', 'checkbox'].indexOf(this.el.type)) {
                 this.vm.$once('validatorReady', function () {
-                    [].concat(_toConsumableArray(document.querySelectorAll('input[name="' + _this5.el.name + '"]'))).forEach(function (input) {
+                    [].concat(_toConsumableArray(document.querySelectorAll('input[name="' + _this6.el.name + '"]'))).forEach(function (input) {
                         handler.names.forEach(function (handlerName) {
                             input.addEventListener(handlerName, listener);
-                            _this5.callbacks.push({ name: handlerName, listener: listener, el: input });
+                            _this6.callbacks.push({ name: handlerName, listener: listener, el: input });
                         });
                     });
                 });
@@ -2116,8 +2138,8 @@ var ListenerGenerator = function () {
             }
 
             handler.names.forEach(function (handlerName) {
-                _this5.el.addEventListener(handlerName, listener);
-                _this5.callbacks.push({ name: handlerName, listener: listener, el: _this5.el });
+                _this6.el.addEventListener(handlerName, listener);
+                _this6.callbacks.push({ name: handlerName, listener: listener, el: _this6.el });
             });
         }
 
@@ -2128,12 +2150,12 @@ var ListenerGenerator = function () {
     }, {
         key: '_resolveValueGetter',
         value: function _resolveValueGetter() {
-            var _this6 = this;
+            var _this7 = this;
 
             if (this.component) {
                 return {
                     context: function context() {
-                        return _this6.component;
+                        return _this7.component;
                     },
                     getter: function getter(context) {
                         return context[__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(context.$el, 'value-path')] || context.value;
@@ -2145,7 +2167,7 @@ var ListenerGenerator = function () {
                 case 'checkbox':
                     return {
                         context: function context() {
-                            return document.querySelectorAll('input[name="' + _this6.el.name + '"]:checked');
+                            return document.querySelectorAll('input[name="' + _this7.el.name + '"]:checked');
                         },
                         getter: function getter(context) {
                             if (!context || !context.length) {
@@ -2160,7 +2182,7 @@ var ListenerGenerator = function () {
                 case 'radio':
                     return {
                         context: function context() {
-                            return document.querySelector('input[name="' + _this6.el.name + '"]:checked');
+                            return document.querySelector('input[name="' + _this7.el.name + '"]:checked');
                         },
                         getter: function getter(context) {
                             return context && context.value;
@@ -2169,7 +2191,7 @@ var ListenerGenerator = function () {
                 case 'file':
                     return {
                         context: function context() {
-                            return _this6.el;
+                            return _this7.el;
                         },
                         getter: function getter(context) {
                             return context.files;
@@ -2179,7 +2201,7 @@ var ListenerGenerator = function () {
                 default:
                     return {
                         context: function context() {
-                            return _this6.el;
+                            return _this7.el;
                         },
                         getter: function getter(context) {
                             return context.value;
@@ -2204,7 +2226,8 @@ var ListenerGenerator = function () {
                 scope: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'scope'),
                 prettyName: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'as'),
                 context: context,
-                getter: getter
+                getter: getter,
+                listeners: this
             });
 
             this._attachValidatorEvent();
@@ -2222,7 +2245,6 @@ var ListenerGenerator = function () {
     }, {
         key: 'detach',
         value: function detach() {
-            this.vm.$validator.detach(this.fieldName, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(this.el));
             this.callbacks.forEach(function (h) {
                 h.el.removeEventListener(h.name, h.listener);
             });
@@ -3061,10 +3083,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL__);
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 
-/* harmony default export */ exports["a"] = function (value, domains) {
-  return __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default()(value, { host_whitelist: domains || false });
+
+/* harmony default export */ exports["a"] = function (value, _ref) {
+  var _ref2 = _slicedToArray(_ref, 1);
+
+  var domain = _ref2[0];
+  return __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default()(value, { host_whitelist: domain ? [domain] : undefined });
 };
 
 /***/ },
