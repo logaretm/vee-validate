@@ -3081,11 +3081,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 
 
-/* harmony default export */ exports["a"] = function (value, _ref) {
-  var _ref2 = _slicedToArray(_ref, 1);
+/* harmony default export */ exports["a"] = function (value) {
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [undefined];
 
-  var domain = _ref2[0];
-  return __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default()(value, { host_whitelist: domain ? [domain] : undefined });
+    var _ref2 = _slicedToArray(_ref, 1);
+
+    var domain = _ref2[0];
+    return __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default()(value, { host_whitelist: domain ? [domain] : undefined });
 };
 
 /***/ },
