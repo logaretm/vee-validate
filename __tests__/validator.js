@@ -103,7 +103,7 @@ it('fails validation on a one-of-many failure', async () => {
     });
 
     expect(result).toBe(false);
-    expect(validator.errorBag.all()).toContain("The title must be at least 3 characters.");
+    expect(validator.errorBag.all()).toContain("The title field must be at least 3 characters.");
 });
 
 it('bypasses values without rules in strictMode = off', async () => {
@@ -156,20 +156,20 @@ it('formats error messages', async () => {
 
     expect(result).toBe(false);
     expect(validator.errorBag.all()).toEqual([
-        'The email must be a valid email.',
-        'The name is required.',
-        'The name must be at least 3 characters.',
-        'The title must be at least 3 characters.',
-        'The content may not be greater than 20 characters.',
-        'The tags must be a valid value.'
+        'The email field must be a valid email.',
+        'The name field is required.',
+        'The name field must be at least 3 characters.',
+        'The title field must be at least 3 characters.',
+        'The content field may not be greater than 20 characters.',
+        'The tags field must be a valid value.'
     ]);
     expect(validator.getErrors().all()).toEqual([
-        'The email must be a valid email.',
-        'The name is required.',
-        'The name must be at least 3 characters.',
-        'The title must be at least 3 characters.',
-        'The content may not be greater than 20 characters.',
-        'The tags must be a valid value.'
+        'The email field must be a valid email.',
+        'The name field is required.',
+        'The name field must be at least 3 characters.',
+        'The title field must be at least 3 characters.',
+        'The content field may not be greater than 20 characters.',
+        'The tags field must be a valid value.'
     ]);
 
 });
@@ -180,7 +180,7 @@ it('can attach new fields', () => {
 });
 
 it('can attach new fields and display errors with custom names', () => {
-    validator.attach('field', 'min:5', { prettyName: 'pretty field' });
+    validator.attach('field', 'min:5', { prettyName: 'pretty' });
     validator.validate('field', 'wo');
     expect(validator.getErrors().first('field')).toBe('The pretty field must be at least 5 characters.');
 });
@@ -210,7 +210,7 @@ it('can find errors by field and rule', () => {
     const v1 = new Validator({ name: 'alpha' });
     v1.validate('name', 12);
 
-    expect(v1.errorBag.first('name:alpha')).toBe('The name may only contain alphabetic characters.');
+    expect(v1.errorBag.first('name:alpha')).toBe('The name field may only contain alphabetic characters.');
     expect(v1.errorBag.first('name:required')).toBeNull();
 });
 
@@ -225,7 +225,7 @@ it('can extend the validator with a validator function', () => {
 
 it('can extend the validators for a validator instance', () => {
     const truthy = {
-        getMessage: (field) => `The ${field} value is not truthy.`,
+        getMessage: (field) => `The ${field} field value is not truthy.`,
         validate: (value) => !! value
     };
 
@@ -233,13 +233,13 @@ it('can extend the validators for a validator instance', () => {
     validator.attach('anotherField', 'truthy');
     expect(validator.validate('anotherField', 1)).toBe(true);
     expect(validator.validate('anotherField', 0)).toBe(false);
-    expect(validator.errorBag.first('anotherField')).toBe('The anotherField value is not truthy.');
+    expect(validator.errorBag.first('anotherField')).toBe('The anotherField field value is not truthy.');
 });
 
 it('can add a custom validator with localized messages', () => {
     const falsy = {
         messages: {
-            en: (field) => `The ${field} value is not falsy.`,
+            en: (field) => `The ${field} field value is not falsy.`,
             ar: () => 'Some Arabic Text'
         },
         validate: (value) => ! value
@@ -248,7 +248,7 @@ it('can add a custom validator with localized messages', () => {
     Validator.extend('falsy', falsy);
     validator.attach('anotherField', 'falsy');
     expect(validator.validate('anotherField', 1)).toBe(false);
-    expect(validator.errorBag.first('anotherField')).toBe('The anotherField value is not falsy.');
+    expect(validator.errorBag.first('anotherField')).toBe('The anotherField field value is not falsy.');
     validator.setLocale('ar');
     expect(validator.validate('anotherField', 1)).toBe(false);
     expect(validator.errorBag.first('anotherField')).toBe('Some Arabic Text');
@@ -296,7 +296,7 @@ it('defaults to english messages if no current locale counterpart is found', () 
     loc.attach('first_name', 'alpha');
     loc.validate('first_name', '0123');
 
-    expect(loc.errorBag.first('first_name')).toBe('The first_name may only contain alphabetic characters.');
+    expect(loc.errorBag.first('first_name')).toBe('The first_name field may only contain alphabetic characters.');
 });
 
 it('can overwrite messages and add translated messages', () => {
@@ -423,7 +423,7 @@ it('can add custom names via the attributes dictionary', () => {
     });
 
     expect(v.validate('email', 'notvalidemail')).toBe(false);
-    expect(v.getErrors().first('email')).toBe('The Email Address must be a valid email.');
+    expect(v.getErrors().first('email')).toBe('The Email Address field must be a valid email.');
 });
 
 it('cascades promise values with previous boolean', () => {
