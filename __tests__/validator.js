@@ -581,8 +581,8 @@ it('can fetch the values using getters for a specific scope when not specifying 
     const getter = (c) => c.value;
 
     // must use the attach API.
-    v1.attach('name', 'required|alpha', { scope: 'scope1', context: contexts[0], getter });
-    v1.attach('name_two', 'required|alpha', { scope: 'scope2', context: contexts[1], getter });
+    v1.attach('name', 'required|alpha', { scope: () => 'scope1', context: contexts[0], getter });
+    v1.attach('name_two', 'required|alpha', { scope: () => 'scope2', context: contexts[1], getter });
 
     expect(await v1.validateAll('scope1')).toBe(true);
     expect(await v1.validateAll('scope2')).toBe(false);
