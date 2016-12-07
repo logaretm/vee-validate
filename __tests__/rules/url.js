@@ -50,15 +50,12 @@ it('should validate urls', () => {
 
     // check invalid urls.
     invalid.forEach(url => {
-        let res = validate(url);
-        if (res) {
-            console.log(url, res);
-        }
-        expect(res).toBe(false);
+        expect(validate(url)).toBe(false);
     });
 
-    // test domains.
-    expect(validate('https://google.com/maps', ['google.com'])).toBe(true);
-    expect(validate('https://maps.google.com/', ['google.com'])).toBe(false); // must be explict about the host name.
-    expect(validate('https://yahoo.com/maps', ['google.com'])).toBe(false);
+    // test require protocol.
+    expect(validate('google.com', [true])).toBe(false);
+    expect(validate('https://google.com', [true])).toBe(true);
+    expect(validate('google.com', [false])).toBe(true);
+    expect(validate('https://google.com', [false])).toBe(true);
 });
