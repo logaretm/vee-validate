@@ -65,12 +65,20 @@ it('can resolve a field name', () => {
     name = new ListenerGenerator(el, {}, {}, {})._resolveFieldName();
     expect(name).toBe('dataName');
 
-    // using expression.
+    // using expression does not affect the field name.
     name = new ListenerGenerator(el, { expression: 'expressedName' }, '', {})._resolveFieldName();
-    expect(name).toBe('expressedName');
+    expect(name).toBe('dataName');
 
     // using component attribute.
-    const cgl = new ListenerGenerator(el, { expression: 'expressedName' }, '', {});
+    let cgl = new ListenerGenerator(el, { expression: 'expressedName' }, '', {});
+    cgl.component = { name: 'componentName' };
+    // it will use the data-vv-name then the name property of the component if it exists.
+    expect(cgl._resolveFieldName()).toBe('dataName');
+
+    // No data-vv-name.
+    document.body.innerHTML = `<input id="el" type="text">`;
+    el = document.querySelector('#el');
+    cgl = new ListenerGenerator(el, { expression: 'expressedName' }, '', {});
     cgl.component = { name: 'componentName' };
     expect(cgl._resolveFieldName()).toBe('componentName');
 });
