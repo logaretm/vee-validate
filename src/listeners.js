@@ -18,10 +18,10 @@ export default class ListenerGenerator
      */
     _resolveFieldName() {
         if (this.component) {
-            return this.component.name || getDataAttribute(this.el, 'name');
+            return getDataAttribute(this.el, 'name') || this.component.name;
         }
 
-        return this.binding.expression || this.el.name || getDataAttribute(this.el, 'name');
+        return this.el.name || getDataAttribute(this.el, 'name');
     }
 
     /**
@@ -285,7 +285,7 @@ export default class ListenerGenerator
             // if its bound, validate it. (since update doesn't trigger after bind).
             if (! this.binding.modifiers.initial) {
                 this.vm.$validator.validate(
-                    this.binding.expression,
+                    this.fieldName,
                     this.binding.value,
                     getScope(this.el)
                 );
