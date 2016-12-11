@@ -1445,7 +1445,10 @@ var listenersInstances = [];
                 return;
             }
 
-            context.$validator.validate(expression || el.name, value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_helpers__["d" /* getScope */])(el));
+            var holder = listenersInstances.filter(function (l) {
+                return l.vm === context && l.el === el;
+            })[0];
+            context.$validator.validate(holder.instance.fieldName, value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_helpers__["d" /* getScope */])(el));
         },
         unbind: function unbind(el, binding, _ref3) {
             var context = _ref3.context;
@@ -2030,6 +2033,13 @@ var ListenerGenerator = function () {
         key: '_getSuitableListener',
         value: function _getSuitableListener() {
             var listener = void 0;
+
+            if (this.el.tagName === 'SELECT') {
+                return {
+                    names: ['change', 'blur'],
+                    listener: this._inputListener
+                };
+            }
 
             // determine the suitable listener and events to handle
             switch (this.el.type) {
