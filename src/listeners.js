@@ -203,7 +203,7 @@ export default class ListenerGenerator
         );
 
         if (~['radio', 'checkbox'].indexOf(this.el.type)) {
-            this.vm.$once('validatorReady', () => {
+            this.vm.$nextTick(() => {
                 [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
                     handler.names.forEach(handlerName => {
                         input.addEventListener(handlerName, listener);
