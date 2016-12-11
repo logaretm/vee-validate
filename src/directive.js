@@ -18,7 +18,7 @@ export default (options) => ({
     },
     unbind(el, binding, { context }) {
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
-        holder.instance.detach();
+        context.$validator.detach(holder.instance.fieldName, getScope(el));
         listenersInstances.splice(listenersInstances.indexOf(holder), 1);
     }
 });

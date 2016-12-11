@@ -418,11 +418,8 @@ export default class Validator
             return;
         }
 
-        /* istanbul ignore if */
-        if (this.$vm && typeof this.$vm.$emit === 'function') {
-            this.$fields[name].listeners.detach();
-        }
 
+        this.$fields[name].listeners.detach();
         this.errorBag.remove(name, scope);
         this.fieldBag._remove(name);
         delete this.$fields[name];
