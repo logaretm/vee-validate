@@ -869,11 +869,7 @@ var Validator = function () {
                 return;
             }
 
-            /* istanbul ignore if */
-            if (this.$vm && typeof this.$vm.$emit === 'function') {
-                this.$fields[name].listeners.detach();
-            }
-
+            this.$fields[name].listeners.detach();
             this.errorBag.remove(name, scope);
             this.fieldBag._remove(name);
             delete this.$fields[name];
@@ -1457,7 +1453,7 @@ var listenersInstances = [];
             var holder = listenersInstances.filter(function (l) {
                 return l.vm === context && l.el === el;
             })[0];
-            holder.instance.detach();
+            context.$validator.detach(holder.instance.fieldName, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_helpers__["d" /* getScope */])(el));
             listenersInstances.splice(listenersInstances.indexOf(holder), 1);
         }
     };
@@ -1883,10 +1879,10 @@ var ListenerGenerator = function () {
         key: '_resolveFieldName',
         value: function _resolveFieldName() {
             if (this.component) {
-                return this.component.name || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'name');
+                return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'name') || this.component.name;
             }
 
-            return this.binding.expression || this.el.name || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'name');
+            return this.el.name || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'name');
         }
 
         /**
@@ -2110,7 +2106,7 @@ var ListenerGenerator = function () {
             var listener = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["e" /* debounce */])(handler.listener.bind(this), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'delay') || this.options.delay);
 
             if (~['radio', 'checkbox'].indexOf(this.el.type)) {
-                this.vm.$once('validatorReady', function () {
+                this.vm.$nextTick(function () {
                     [].concat(_toConsumableArray(document.querySelectorAll('input[name="' + _this6.el.name + '"]'))).forEach(function (input) {
                         handler.names.forEach(function (handlerName) {
                             input.addEventListener(handlerName, listener);
@@ -2223,7 +2219,7 @@ var ListenerGenerator = function () {
             if (this.binding.expression) {
                 // if its bound, validate it. (since update doesn't trigger after bind).
                 if (!this.binding.modifiers.initial) {
-                    this.vm.$validator.validate(this.binding.expression, this.binding.value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(this.el));
+                    this.vm.$validator.validate(this.fieldName, this.binding.value, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["d" /* getScope */])(this.el));
                 }
 
                 return;
@@ -2261,29 +2257,29 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /* eslint-disable max-len */
 /* harmony default export */ exports["a"] = {
     alpha_dash: function alpha_dash(field) {
-        return 'The ' + field + ' may contain alpha-numeric characters as well as dashes and underscores.';
+        return 'The ' + field + ' field may contain alpha-numeric characters as well as dashes and underscores.';
     },
     alpha_num: function alpha_num(field) {
-        return 'The ' + field + ' may only contain alpha-numeric characters.';
+        return 'The ' + field + ' field may only contain alpha-numeric characters.';
     },
     alpha_spaces: function alpha_spaces(field) {
-        return 'The ' + field + ' may only contain alphabetic characters as well as spaces.';
+        return 'The ' + field + ' field may only contain alphabetic characters as well as spaces.';
     },
     alpha: function alpha(field) {
-        return 'The ' + field + ' may only contain alphabetic characters.';
+        return 'The ' + field + ' field may only contain alphabetic characters.';
     },
     between: function between(field, _ref) {
         var _ref2 = _slicedToArray(_ref, 2);
 
         var min = _ref2[0];
         var max = _ref2[1];
-        return 'The ' + field + ' must be between ' + min + ' and ' + max + '.';
+        return 'The ' + field + ' field must be between ' + min + ' and ' + max + '.';
     },
     confirmed: function confirmed(field) {
         return 'The ' + field + ' confirmation does not match.';
     },
     credit_card: function credit_card(field) {
-        return 'The ' + field + ' is invalid.';
+        return 'The ' + field + ' field is invalid.';
     },
     decimal: function decimal(field) {
         var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
@@ -2291,83 +2287,83 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var _ref4 = _slicedToArray(_ref3, 1);
 
         var decimals = _ref4[0];
-        return 'The ' + field + ' must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decimal points.';
+        return 'The ' + field + ' field must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decimal points.';
     },
     digits: function digits(field, _ref5) {
         var _ref6 = _slicedToArray(_ref5, 1);
 
         var length = _ref6[0];
-        return 'The ' + field + ' must be numeric and exactly contain ' + length + ' digits.';
+        return 'The ' + field + ' field must be numeric and exactly contain ' + length + ' digits.';
     },
     dimensions: function dimensions(field, _ref7) {
         var _ref8 = _slicedToArray(_ref7, 2);
 
         var width = _ref8[0];
         var height = _ref8[1];
-        return 'The ' + field + ' must be ' + width + ' pixels by ' + height + ' pixels.';
+        return 'The ' + field + ' field must be ' + width + ' pixels by ' + height + ' pixels.';
     },
     email: function email(field) {
-        return 'The ' + field + ' must be a valid email.';
+        return 'The ' + field + ' field must be a valid email.';
     },
     ext: function ext(field) {
-        return 'The ' + field + ' must be a valid file.';
+        return 'The ' + field + ' field must be a valid file.';
     },
     image: function image(field) {
-        return 'The ' + field + ' must be an image.';
+        return 'The ' + field + ' field must be an image.';
     },
     in: function _in(field) {
-        return 'The ' + field + ' must be a valid value.';
+        return 'The ' + field + ' field must be a valid value.';
     },
     ip: function ip(field) {
-        return 'The ' + field + ' must be a valid ip address.';
+        return 'The ' + field + ' field must be a valid ip address.';
     },
     max: function max(field, _ref9) {
         var _ref10 = _slicedToArray(_ref9, 1);
 
         var length = _ref10[0];
-        return 'The ' + field + ' may not be greater than ' + length + ' characters.';
+        return 'The ' + field + ' field may not be greater than ' + length + ' characters.';
     },
     max_value: function max_value(field, _ref11) {
         var _ref12 = _slicedToArray(_ref11, 1);
 
         var max = _ref12[0];
-        return 'The ' + field + ' must be ' + max + ' or less.';
+        return 'The ' + field + ' field must be ' + max + ' or less.';
     },
     mimes: function mimes(field) {
-        return 'The ' + field + ' must have a valid file type.';
+        return 'The ' + field + ' field must have a valid file type.';
     },
     min: function min(field, _ref13) {
         var _ref14 = _slicedToArray(_ref13, 1);
 
         var length = _ref14[0];
-        return 'The ' + field + ' must be at least ' + length + ' characters.';
+        return 'The ' + field + ' field must be at least ' + length + ' characters.';
     },
     min_value: function min_value(field, _ref15) {
         var _ref16 = _slicedToArray(_ref15, 1);
 
         var min = _ref16[0];
-        return 'The ' + field + ' must be ' + min + ' or more.';
+        return 'The ' + field + ' field must be ' + min + ' or more.';
     },
     not_in: function not_in(field) {
-        return 'The ' + field + ' must be a valid value.';
+        return 'The ' + field + ' field must be a valid value.';
     },
     numeric: function numeric(field) {
-        return 'The ' + field + ' may only contain numeric characters.';
+        return 'The ' + field + ' field may only contain numeric characters.';
     },
     regex: function regex(field) {
-        return 'The ' + field + ' format is invalid.';
+        return 'The ' + field + ' field format is invalid.';
     },
     required: function required(field) {
-        return 'The ' + field + ' is required.';
+        return 'The ' + field + ' field is required.';
     },
     size: function size(field, _ref17) {
         var _ref18 = _slicedToArray(_ref17, 1);
 
         var _size = _ref18[0];
-        return 'The ' + field + ' must be less than ' + _size + ' KB.';
+        return 'The ' + field + ' field must be less than ' + _size + ' KB.';
     },
     url: function url(field) {
-        return 'The ' + field + ' is not a valid URL.';
+        return 'The ' + field + ' field is not a valid URL.';
     }
 };
 
@@ -3082,12 +3078,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 
 /* harmony default export */ exports["a"] = function (value) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [undefined];
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [true];
 
     var _ref2 = _slicedToArray(_ref, 1);
 
-    var domain = _ref2[0];
-    return __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default()(value, { host_whitelist: domain ? [domain] : undefined });
+    var requireProtocol = _ref2[0];
+    return __WEBPACK_IMPORTED_MODULE_0_validator_lib_isURL___default()(value, { require_protocol: !!requireProtocol });
 };
 
 /***/ },
