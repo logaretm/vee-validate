@@ -116,7 +116,7 @@ export default class ListenerGenerator
         if (fieldName) {
             // Wait for the validator ready triggered when vm is mounted because maybe
             // the element isn't mounted yet.
-            this.vm.$once('validatorReady', () => {
+            this.vm.$nextTick(() => {
                 const target = document.querySelector(`input[name='${fieldName}']`);
                 if (! target) {
                     warn('Cannot find target field, no additional listeners were attached.');
