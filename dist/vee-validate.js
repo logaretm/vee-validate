@@ -2009,7 +2009,7 @@ var ListenerGenerator = function () {
             if (fieldName) {
                 // Wait for the validator ready triggered when vm is mounted because maybe
                 // the element isn't mounted yet.
-                this.vm.$once('validatorReady', function () {
+                this.vm.$nextTick(function () {
                     var target = document.querySelector('input[name=\'' + fieldName + '\']');
                     if (!target) {
                         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["b" /* warn */])('Cannot find target field, no additional listeners were attached.');

@@ -1,5 +1,5 @@
 import ListenerGenerator from './listeners';
-import { getScope } from './utils/helpers';
+import { getScope, getDataAttribute } from './utils/helpers';
 
 const listenersInstances = [];
 
@@ -14,7 +14,8 @@ export default (options) => ({
             return;
         }
 
-        context.$validator.validate(expression || el.name, value, getScope(el));
+        const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
+        context.$validator.validate(holder.instance.fieldName, value, getScope(el));
     },
     unbind(el, binding, { context }) {
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
