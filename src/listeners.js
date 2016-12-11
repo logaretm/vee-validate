@@ -135,6 +135,13 @@ export default class ListenerGenerator
     _getSuitableListener() {
         let listener;
 
+        if (this.el.tagName === 'SELECT') {
+            return {
+                names: ['change', 'blur'],
+                listener: this._inputListener
+            };
+        }
+
         // determine the suitable listener and events to handle
         switch (this.el.type) {
         case 'file':

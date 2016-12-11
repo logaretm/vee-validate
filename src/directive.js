@@ -1,5 +1,5 @@
 import ListenerGenerator from './listeners';
-import { getScope, getDataAttribute } from './utils/helpers';
+import { getScope } from './utils/helpers';
 
 const listenersInstances = [];
 
