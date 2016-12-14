@@ -26,6 +26,6 @@ export default {
     numeric: (field) => `Поле ${field} должно быть числом.`,
     regex: (field) => `Поле ${field} имеет ошибочный формат.`,
     required: (field) => `Поле ${field} обязательно для заполнения.`,
-    size: (field, [size]) => `Поле ${field} должна быть меньше, чем ${size} KB.`,
+    size: (field, [size]) => `Поле ${field} должно быть меньше, чем ${size} KB.`,
     url: (field) => `Поле ${field} имеет ошибочный формат URL.`
 };
