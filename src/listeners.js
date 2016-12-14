@@ -60,8 +60,7 @@ export default class ListenerGenerator
         const isValid = this._validate(this.el.files);
 
         if (! isValid && this.binding.modifiers.reject) {
-            // eslint-disable-next-line
-            el.value = '';
+            this.el.value = '';
         }
     }
 
