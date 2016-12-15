@@ -19,22 +19,22 @@ This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.
 npm install vee-validate --save
 ```
 
-or if you are using **Vue 2.0**:
+or if you are using **Vue 1.0**:
 ```
-npm install vee-validate@next --save
+npm install vee-validate@prev --save
 ```
 
 #### bower
 
 **Vue 1.0**:
 ```
-bower install vee-validate#1.0.0-beta.9 --save
+bower install vee-validate#1.0.0-beta.11 --save
 ```
 
 **Vue 2.0**:
 
 ```
-bower install vee-validate#2.0.0-beta.15 --save
+bower install vee-validate#2.0.0-beta.18 --save
 ```
 
 ### CDN
