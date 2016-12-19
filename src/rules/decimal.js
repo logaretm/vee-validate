@@ -19,5 +19,8 @@ export default (value, [decimals] = ['*']) => {
         return false;
     }
 
-    return ! Number.isNaN(parseFloat(value));
+    const parsedValue = parseFloat(value);
+
+    // eslint-disable-next-line
+    return parsedValue === parsedValue;
 };
