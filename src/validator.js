@@ -249,6 +249,11 @@ export default class Validator
             return;
         }
 
+        // Make sure we are not splitting an empty value.
+        if (! checks) {
+            return;
+        }
+
         checks.split('|').forEach(rule => {
             const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
             if (! normalizedRule.name) {

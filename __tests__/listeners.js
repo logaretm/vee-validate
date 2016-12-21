@@ -19,6 +19,17 @@ it('has field dependent rule', () => {
     expect(lg._hasFieldDependency('required|only_after:10')).toBe(false);
 });
 
+it('should not crash if no rules attribute was specified', () => {
+    document.body.innerHTML =`<input id="el" type="text" name="field">`;
+    const el = document.querySelector('#el');
+
+    expect(() => {
+        const lg = new ListenerGenerator(el, '', { context: { $validator: new Validator() } }, {});
+        lg.attach();
+    }).not.toThrowError("Cannot read property 'split' of null");
+    
+});
+
 it('detects input listener events', () => {
     document.body.innerHTML =`<input id="el" type="text" name="field" data-vv-rules="required" data-vv-delay="100">`;
     const el = document.querySelector('#el');

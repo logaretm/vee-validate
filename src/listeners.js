@@ -29,6 +29,10 @@ export default class ListenerGenerator
      */
     _hasFieldDependency(rules) {
         let fieldName = false;
+        if (! rules) {
+            return false;
+        }
+
         rules.split('|').every(r => {
             if (/\b(confirmed|after|before):/.test(r)) {
                 fieldName = r.split(':')[1];
