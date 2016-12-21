@@ -1,4 +1,5 @@
-export default (value, [decimals] = ['*']) => {
+export default (value, params) => {
+    const decimals = Array.isArray(params) ? (params[0] || '*') : '*';
     if (Array.isArray(value)) {
         return false;
     }
