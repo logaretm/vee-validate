@@ -110,12 +110,16 @@ export default class ListenerGenerator
         };
     }
 
+    _getRules() {
+        return this.binding.expression ? this.binding.value : getDataAttribute(this.el, 'rules');
+    }
+
     /**
      * Attaches validator event-triggered validation.
      */
     _attachValidatorEvent() {
         const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
-        const fieldName = this._hasFieldDependency(getDataAttribute(this.el, 'rules'));
+        const fieldName = this._hasFieldDependency(this._getRules());
         if (fieldName) {
             // Wait for the validator ready triggered when vm is mounted because maybe
             // the element isn't mounted yet.
@@ -284,7 +288,7 @@ export default class ListenerGenerator
      */
     attach() {
         const { context, getter } = this._resolveValueGetter();
-        this.vm.$validator.attach(this.fieldName, getDataAttribute(this.el, 'rules'), {
+        this.vm.$validator.attach(this.fieldName, this._getRules(), {
             scope: () => getScope(this.el),
             prettyName: getDataAttribute(this.el, 'as'),
             context,
@@ -293,16 +297,7 @@ export default class ListenerGenerator
         });
 
         this._attachValidatorEvent();
-        if (this.binding.expression) {
-            // if its bound, validate it. (since update doesn't trigger after bind).
-            if (! this.binding.modifiers.initial) {
-                this.vm.$validator.validate(
-                    this.fieldName,
-                    this.binding.value,
-                    getScope(this.el)
-                );
-            }
-
+        if (this.binding.arg) {
             return;
         }
 

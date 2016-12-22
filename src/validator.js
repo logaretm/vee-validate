@@ -436,6 +436,14 @@ export default class Validator
     }
 
     /**
+     * Updates the field rules with new ones.
+     */
+    updateField(name, checks) {
+        this.errorBag.remove(name);
+        this._createField(name, checks);
+    }
+
+    /**
      * Removes a field from the validator.
      *
      * @param  {String} name The name of the field.

@@ -9,13 +9,13 @@ export default (options) => ({
         listener.attach();
         listenersInstances.push({ vm: vnode.context, el, instance: listener });
     },
-    update(el, { expression, value, modifiers, oldValue }, { context }) {
+    update(el, { expression, value, oldValue }, { context }) {
         if (! expression || value === oldValue) {
             return;
         }
 
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
-        context.$validator.validate(holder.instance.fieldName, value, getScope(el));
+        context.$validator.updateField(holder.instance.fieldName, value);
     },
     unbind(el, binding, { context }) {
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
