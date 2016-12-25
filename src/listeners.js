@@ -3,6 +3,7 @@ import { getScope, debounce, warn, getDataAttribute } from './utils/helpers';
 export default class ListenerGenerator
 {
     constructor(el, binding, vnode, options) {
+        this.unwatch = undefined;
         this.callbacks = [];
         this.el = el;
         this.binding = binding;
@@ -298,6 +299,10 @@ export default class ListenerGenerator
 
         this._attachValidatorEvent();
         if (this.binding.arg) {
+            this.unwatch = this.vm.$watch(this.binding.arg, (value) => {
+                this.vm.$validator.validate(this.binding.arg, value, getScope(this.el));
+            });
+
             return;
         }
 
@@ -310,6 +315,10 @@ export default class ListenerGenerator
     detach() {
         if (this.component) {
             this.component.$off('input', this.componentListener);
+        }
+
+        if (this.unwatch) {
+            this.unwatch();
         }
 
         this.callbacks.forEach(h => {
