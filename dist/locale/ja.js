@@ -24,7 +24,7 @@ export default {
   min: (field, [length]) => `${field}は${length}文字以上でなければなりません`,
   min_value: (field, [min]) => `${field}は${min}以上でなければなりません`,
   not_in: (field) => `${field}は不正な値です`,
-  numeric: (field) => `${field}は整数のみ使用できます`,
+  numeric: (field) => `${field}は数字のみ使用できます`,
   regex: (field) => `${field}が正しくありません`,
   required: (field) => `${field}は必須項目です`,
   size: (field, [size]) => `${field}は${size}KB以内でなければなりません`,
