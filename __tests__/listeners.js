@@ -76,12 +76,12 @@ it('can resolve a field name', () => {
     name = new ListenerGenerator(el, {}, {}, {})._resolveFieldName();
     expect(name).toBe('dataName');
 
-    // using expression does not affect the field name.
-    name = new ListenerGenerator(el, { expression: 'expressedName' }, '', {})._resolveFieldName();
+    // using arg does not affect the field name.
+    name = new ListenerGenerator(el, { arg: 'expressedName' }, '', {})._resolveFieldName();
     expect(name).toBe('dataName');
 
     // using component attribute.
-    let cgl = new ListenerGenerator(el, { expression: 'expressedName' }, '', {});
+    let cgl = new ListenerGenerator(el, { arg: 'expressedName' }, '', {});
     cgl.component = { name: 'componentName' };
     // it will use the data-vv-name then the name property of the component if it exists.
     expect(cgl._resolveFieldName()).toBe('dataName');
@@ -89,7 +89,7 @@ it('can resolve a field name', () => {
     // No data-vv-name.
     document.body.innerHTML = `<input id="el" type="text">`;
     el = document.querySelector('#el');
-    cgl = new ListenerGenerator(el, { expression: 'expressedName' }, '', {});
+    cgl = new ListenerGenerator(el, { arg: 'expressedName' }, '', {});
     cgl.component = { name: 'componentName' };
     expect(cgl._resolveFieldName()).toBe('componentName');
 });
@@ -277,6 +277,15 @@ describe('the generator can handle input events', () => {
             new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
         }).toThrowError('1');
         document.body.innerHTML = ``;
+        expect(() => {
+            new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
+        }).toThrowError("null");
+
+        document.body.innerHTML = `
+            <input id="el" type="checkbox" name="field" value="1">
+            <input id="el2" type="checkbox" name="field" value="2">
+        `;
+
         expect(() => {
             new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
         }).toThrowError("null");
