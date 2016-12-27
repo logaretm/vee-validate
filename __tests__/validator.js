@@ -213,6 +213,9 @@ it('returns false when trying to validate a non-existant field.', () => {
 it('can detach rules', () => {
     validator.detach('field');
     expect(validator.$fields.field).toBeFalsy();
+    expect(() => {
+        validator.detach('someOtherField');
+    }).not.toThrow();
 });
 
 it('can find errors by field and rule', () => {
@@ -371,19 +374,20 @@ it('resolves promises to booleans', async () => {
         image: 'dimensions:150,100'
     });
 
-    helpers.dimensionsTest({ width: 150, height: 100 });
+
+    helpers.dimensionsTest({ width: 150, height: 100 }, false, global);
 
     let value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
     expect(value).toBe(true);
 
-    helpers.dimensionsTest({ width: 150, height: 100}, true);
+    helpers.dimensionsTest({ width: 150, height: 100}, true, global);
     value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
     expect(value).toBe(false);
 
     value = await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)], params);
     expect(value).toBe(false);
 
-    helpers.dimensionsTest({ width: 30, height: 20});
+    helpers.dimensionsTest({ width: 30, height: 20}, false, global);
     value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
     expect(value).toBe(false);
 });
@@ -615,4 +619,14 @@ it('does not add empty rules', () => {
     const v1 = new Validator({ name: 'required|alpha||:blabla' });
     expect(v1.validate('name', 12)).toBe(false);
     expect(v1.validate('name', 'Martin')).toBe(true);
+});
+
+it('can update validations of a field', () => {
+    const v = new Validator({
+        name: 'required|alpha'
+    });
+    expect(v.validate('name', 12)).toBe(false);
+    v.updateField('name', 'required|numeric');
+    expect(v.errors.count()).toBe(0);
+    expect(v.validate('name', 12)).toBe(true);
 });

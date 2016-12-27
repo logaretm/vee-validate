@@ -290,4 +290,20 @@ describe('the generator can handle input events', () => {
             new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
         }).toThrowError("null");
     });
+
+    it('can handle select fields value change', () => {
+        const vm = { $validator: helpers.validator() };
+        document.body.innerHTML = `
+            <select id="el" name="field">
+                <option value="val1" checked>1</option>
+                <option value="val2">2</option>
+            </select>
+        `;
+        
+        const el = document.querySelector('#el');
+
+        expect(() => {
+            new ListenerGenerator(el, {}, { context: vm }, {})._inputListener();
+        }).toThrowError('val1');
+    });
 });
