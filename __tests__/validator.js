@@ -389,18 +389,24 @@ it('resolves promises to booleans', async () => {
     expect(value).toBe(true);
 
     helpers.dimensionsTest({ width: 150, height: 100}, true, global);
-    expect(async () => {
+    try {
         await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
-    }).toThrow();
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+    }
 
-    expect(async () => {
+    try {
         await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)], params);
-    }).toThrow();
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+    }
 
     helpers.dimensionsTest({ width: 30, height: 20}, false, global);
-    expect(async () => {
+    try {
         await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
-    }).toThrow();
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+    }
 });
 
 it('wont install moment if the provided reference is not provided or not a function', () => {
