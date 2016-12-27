@@ -94,16 +94,17 @@ it('validates multiple values', async () => {
 });
 
 it('fails validation on a one-of-many failure', async () => {
-    const result = await validator.validateAll({
-        email: 'foo@bar.com',
-        name: 'John Snow',
-        title: 'No',
-        content: 'John knows nothing',
-        tags: 1
-    });
-
-    expect(result).toBe(false);
-    expect(validator.errorBag.all()).toContain("The title field must be at least 3 characters.");
+    try {
+        const result = await validator.validateAll({
+            email: 'foo@bar.com',
+            name: 'John Snow',
+            title: 'No',
+            content: 'John knows nothing',
+            tags: 1
+        });
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
 });
 
 it('bypasses values without rules in strictMode = off', async () => {
@@ -125,53 +126,61 @@ it('can set strict mode on specific instances', async () => {
 	const validator3 = new Validator({
 		imp: 'required'
 	});
-    let result = await validator3.validateAll({
-    	imp: 'Tyrion Lannister',
-        headless: 'Ned Stark'
-    });
-    expect(result).toBe(false); // strict = true.
+    try {
+        let result = await validator3.validateAll({
+            imp: 'Tyrion Lannister',
+            headless: 'Ned Stark'
+        });
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
+
     validator3.setStrictMode(false);
-    result = await validator3.validateAll({
+    let result = await validator3.validateAll({
     	imp: 'Tyrion Lannister',
         headless: 'Ned Stark'
     });
 
     expect(result).toBe(true); // strict = false.
 
-    result = await (new Validator({ imp: 'required' }).validateAll({
-    	imp: 'Tyrion Lannister',
-        headless: 'Ned Stark'
-    }));
-    expect(result).toBe(false); // strict = true because this is a different instance.
+    try {
+        await (new Validator({ imp: 'required' }).validateAll({
+            imp: 'Tyrion Lannister',
+            headless: 'Ned Stark'
+        })); // strict = true because this is a different instance.
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
 });
 
 it('formats error messages', async () => {
-    const result = await validator.validateAll({
-        email: 'foo@bar.c',
-        name: '',
-        title: 'Wi',
-        content: 'John knows nothing about this validator',
-        tags: 4
-    });
-
-    expect(result).toBe(false);
-    expect(validator.errorBag.all()).toEqual([
-        'The email field must be a valid email.',
-        'The name field is required.',
-        'The name field must be at least 3 characters.',
-        'The title field must be at least 3 characters.',
-        'The content field may not be greater than 20 characters.',
-        'The tags field must be a valid value.'
-    ]);
-    expect(validator.getErrors().all()).toEqual([
-        'The email field must be a valid email.',
-        'The name field is required.',
-        'The name field must be at least 3 characters.',
-        'The title field must be at least 3 characters.',
-        'The content field may not be greater than 20 characters.',
-        'The tags field must be a valid value.'
-    ]);
-
+    try {
+        const result = await validator.validateAll({
+            email: 'foo@bar.c',
+            name: '',
+            title: 'Wi',
+            content: 'John knows nothing about this validator',
+            tags: 4
+        });
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+        expect(validator.errorBag.all()).toEqual([
+            'The email field must be a valid email.',
+            'The name field is required.',
+            'The name field must be at least 3 characters.',
+            'The title field must be at least 3 characters.',
+            'The content field may not be greater than 20 characters.',
+            'The tags field must be a valid value.'
+        ]);
+        expect(validator.getErrors().all()).toEqual([
+            'The email field must be a valid email.',
+            'The name field is required.',
+            'The name field must be at least 3 characters.',
+            'The title field must be at least 3 characters.',
+            'The content field may not be greater than 20 characters.',
+            'The tags field must be a valid value.'
+        ]);
+    }
 });
 it('can attach new fields', () => {
     validator.attach('field', 'required|min:5');
@@ -376,20 +385,22 @@ it('resolves promises to booleans', async () => {
 
 
     helpers.dimensionsTest({ width: 150, height: 100 }, false, global);
-
     let value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
     expect(value).toBe(true);
 
     helpers.dimensionsTest({ width: 150, height: 100}, true, global);
-    value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
-    expect(value).toBe(false);
+    expect(async () => {
+        await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
+    }).toThrow();
 
-    value = await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)], params);
-    expect(value).toBe(false);
+    expect(async () => {
+        await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)], params);
+    }).toThrow();
 
     helpers.dimensionsTest({ width: 30, height: 20}, false, global);
-    value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
-    expect(value).toBe(false);
+    expect(async () => {
+        await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
+    }).toThrow();
 });
 
 it('wont install moment if the provided reference is not provided or not a function', () => {
@@ -449,6 +460,8 @@ it('cascades promise values with previous boolean', () => {
     });
     v.validate('email', 'invalid').then(value => {
         expect(value).toBe(false);
+    }).catch(error => {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
     });
 });
 
@@ -465,12 +478,15 @@ it('cascades promise values with previous fields', async () => {
     });
     expect(result).toBe(true); // should pass
 
-    result = await v.validateAll({
-        email: 'somemeail', // not valid email.
-        name: 'ProperName',
-        phone: '11123112123'
-    });
-    expect(result).toBe(false); // should fail
+    try {
+        await v.validateAll({
+            email: 'somemeail', // not valid email.
+            name: 'ProperName',
+            phone: '11123112123'
+        });
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+    }
 });
 
 it('can translate target field for field dependent validations', () => {
@@ -594,7 +610,12 @@ it('can fetch the values using getters when not specifying values in validateAll
     v1.attach('name', 'required|alpha', { prettyName: 'Full Name', context, getter });
     expect(await v1.validateAll()).toBe(true);
     expect(toggle).toBe(true);
-    expect(await v1.validateAll()).toBe(false); // should have toggled after first call.
+    try {
+        await v1.validateAll();
+    } catch (error) {
+        // should have toggled after first call.
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
 });
 
 it('can fetch the values using getters for a specific scope when not specifying values in validateAll', async () => {
@@ -610,8 +631,19 @@ it('can fetch the values using getters for a specific scope when not specifying 
     v1.attach('name_two', 'required|alpha', { scope: () => 'scope2', context: contexts[1], getter });
 
     expect(await v1.validateAll('scope1')).toBe(true);
-    expect(await v1.validateAll('scope2')).toBe(false);
-    expect(await v1.validateAll()).toBe(false);
+    try {
+        await v1.validateAll('scope2');
+    } catch (error) {
+        // should have toggled after first call.
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
+
+    try {
+        await v1.validateAll();
+    } catch (error) {
+        // should have toggled after first call.
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
 });
 
 it('does not add empty rules', () => {

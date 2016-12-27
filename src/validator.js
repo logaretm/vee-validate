@@ -629,6 +629,10 @@ export default class Validator
         return Promise.all(promises).then(vals => {
             const valid = vals.every(t => t) && test;
 
+            if (! valid) {
+                throw new ValidatorException('Validation Failed');
+            }
+
             return valid;
         });
     }
