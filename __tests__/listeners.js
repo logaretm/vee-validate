@@ -307,3 +307,57 @@ describe('the generator can handle input events', () => {
         }).toThrowError('val1');
     });
 });
+
+
+it('should attach additional listeners for rules with dependent fields', () => {
+    document.body.innerHTML = `<div id="app">
+        <input type="text" name="field" id="el" data-vv-rules="confirmed:other">
+        <input type="text" name="other" id="other" data-vv-rules="confirmed:other">
+    </div>`;
+    const el = document.querySelector('#el');
+    const vm = {
+        $nextTick: (callback) => {
+            callback();
+        }
+    };
+
+    const lg = new ListenerGenerator(el, {}, { context: vm }, {});
+    lg._attachValidatorEvent();
+
+    expect(lg.callbacks.map(c => c.el.name)).toContain('other');
+});
+
+it('should attach a listener for each radio element', () => {
+    document.body.innerHTML = `<div id="app">
+        <input type="radio" name="field" id="el" value="1">
+        <input type="radio" name="field" value="2">
+    </div>`;
+    const el = document.querySelector('#el');
+    const vm = {
+        $nextTick: (callback) => {
+            callback();
+        }
+    };
+
+    const lg = new ListenerGenerator(el, {}, { context: vm }, {});
+    lg._attachFieldListeners();
+    expect(lg.callbacks.filter(c => c.el.name === 'field').length).toBe(2);
+});
+
+
+it('should attach a listener for each checkbox element', () => {
+    document.body.innerHTML = `<div id="app">
+        <input type="checkbox" name="field" id="el" value="1">
+        <input type="checkbox" name="field" value="2">
+    </div>`;
+    const el = document.querySelector('#el');
+    const vm = {
+        $nextTick: (callback) => {
+            callback();
+        }
+    };
+
+    const lg = new ListenerGenerator(el, {}, { context: vm }, {});
+    lg._attachFieldListeners();
+    expect(lg.callbacks.filter(c => c.el.name === 'field').length).toBe(2);
+});
