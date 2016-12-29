@@ -526,6 +526,7 @@ export default class Validator
         this.errorBag.remove(name, scope);
         // if its not required and is empty or null or undefined then it passes.
         if (! this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
+            this.fieldBag._setFlags(name, { valid: true, dirty: true });
             return true;
         }
 
