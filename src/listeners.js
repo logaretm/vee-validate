@@ -190,9 +190,11 @@ export default class ListenerGenerator
      * Attaches neccessary validation events for the component.
      */
     _attachComponentListeners() {
-        this.component.$on('input', (value) => {
+        this.componentListener = debounce((value) => {
             this.vm.$validator.validate(this.fieldName, value);
-        });
+        }, getDataAttribute(this.el, 'delay') || this.options.delay);
+
+        this.component.$on('input', this.componentListener);
     }
 
     /**
@@ -311,6 +313,10 @@ export default class ListenerGenerator
      * Removes all attached event listeners.
      */
     detach() {
+        if (this.component) {
+            this.component.$off('input', this.componentListener);
+        }
+
         this.callbacks.forEach(h => {
             h.el.removeEventListener(h.name, h.listener);
         });
