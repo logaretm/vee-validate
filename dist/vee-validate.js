@@ -678,6 +678,11 @@ var Validator = function () {
                 return;
             }
 
+            // Make sure we are not splitting an empty value.
+            if (!checks) {
+                return;
+            }
+
             checks.split('|').forEach(function (rule) {
                 var normalizedRule = _this3._normalizeRule(rule, _this3.$fields[name].validations);
                 if (!normalizedRule.name) {
@@ -1004,6 +1009,7 @@ var Validator = function () {
             this.errorBag.remove(name, scope);
             // if its not required and is empty or null or undefined then it passes.
             if (!this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
+                this.fieldBag._setFlags(name, { valid: true, dirty: true });
                 return true;
             }
 
@@ -1456,6 +1462,10 @@ var listenersInstances = [];
             var holder = listenersInstances.filter(function (l) {
                 return l.vm === context && l.el === el;
             })[0];
+            if (typeof holder === 'undefined') {
+                return;
+            }
+
             context.$validator.detach(holder.instance.fieldName, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_helpers__["d" /* getScope */])(el));
             listenersInstances.splice(listenersInstances.indexOf(holder), 1);
         }
@@ -1898,6 +1908,10 @@ var ListenerGenerator = function () {
             var _this = this;
 
             var fieldName = false;
+            if (!rules) {
+                return false;
+            }
+
             rules.split('|').every(function (r) {
                 if (/\b(confirmed|after|before):/.test(r)) {
                     fieldName = r.split(':')[1];
@@ -1932,7 +1946,7 @@ var ListenerGenerator = function () {
     }, {
         key: '_fileListener',
         value: function _fileListener() {
-            var isValid = this._validate(this.el.files);
+            var isValid = this._validate([].concat(_toConsumableArray(this.el.files)));
 
             if (!isValid && this.binding.modifiers.reject) {
                 this.el.value = '';
@@ -2090,9 +2104,11 @@ var ListenerGenerator = function () {
         value: function _attachComponentListeners() {
             var _this5 = this;
 
-            this.component.$on('input', function (value) {
+            this.componentListener = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["e" /* debounce */])(function (value) {
                 _this5.vm.$validator.validate(_this5.fieldName, value);
-            });
+            }, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils_helpers__["c" /* getDataAttribute */])(this.el, 'delay') || this.options.delay);
+
+            this.component.$on('input', this.componentListener);
         }
 
         /**
@@ -2184,7 +2200,7 @@ var ListenerGenerator = function () {
                             return _this7.el;
                         },
                         getter: function getter(context) {
-                            return context.files;
+                            return [].concat(_toConsumableArray(context.files));
                         }
                     };
 
@@ -2244,6 +2260,10 @@ var ListenerGenerator = function () {
     }, {
         key: 'detach',
         value: function detach() {
+            if (this.component) {
+                this.component.$off('input', this.componentListener);
+            }
+
             this.callbacks.forEach(function (h) {
                 h.el.removeEventListener(h.name, h.listener);
             });
@@ -2637,15 +2657,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-/* harmony default export */ exports["a"] = function (value) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
-
-    var _ref2 = _slicedToArray(_ref, 1);
-
-    var decimals = _ref2[0];
-
+/* harmony default export */ exports["a"] = function (value, params) {
+    var decimals = Array.isArray(params) ? params[0] || '*' : '*';
     if (Array.isArray(value)) {
         return false;
     }
@@ -2667,7 +2680,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return false;
     }
 
-    return !Number.isNaN(parseFloat(value));
+    var parsedValue = parseFloat(value);
+
+    // eslint-disable-next-line
+    return parsedValue === parsedValue;
 };
 
 /***/ },
@@ -2753,13 +2769,10 @@ var validateImage = function validateImage(file, width, height) {
 "use strict";
 /* harmony default export */ exports["a"] = function (files, extensions) {
     var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
-    for (var i = 0; i < files.length; i++) {
-        if (!regex.test(files[i].name)) {
-            return false;
-        }
-    }
 
-    return true;
+    return files.every(function (file) {
+        return regex.test(file.name);
+    });
 };
 
 /***/ },
@@ -2768,13 +2781,10 @@ var validateImage = function validateImage(file, width, height) {
 
 "use strict";
 /* harmony default export */ exports["a"] = function (files) {
-    for (var i = 0; i < files.length; i++) {
-        if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
-            return false;
-        }
-    }
-
-    return true;
+    return files.every(function (file) {
+        return (/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(file.name)
+        );
+    });
 };
 
 /***/ },
@@ -2941,13 +2951,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 "use strict";
 /* harmony default export */ exports["a"] = function (files, mimes) {
     var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
-    for (var i = 0; i < files.length; i++) {
-        if (!regex.test(files[i].type)) {
-            return false;
-        }
-    }
 
-    return true;
+    return files.every(function (file) {
+        return regex.test(file.type);
+    });
 };
 
 /***/ },
