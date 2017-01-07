@@ -298,9 +298,10 @@ export default class ListenerGenerator
         });
 
         this._attachValidatorEvent();
-        if (this.binding.arg) {
-            this.unwatch = this.vm.$watch(this.binding.arg, (value) => {
-                this.vm.$validator.validate(this.binding.arg, value, getScope(this.el));
+        const arg = this.binding.arg || getDataAttribute(this.el, 'arg');
+        if (arg) {
+            this.unwatch = this.vm.$watch(arg, (value) => {
+                this.vm.$validator.validate(this.fieldName, value, getScope(this.el));
             });
 
             return;
