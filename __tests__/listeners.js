@@ -327,10 +327,29 @@ describe('the generator can handle input events', () => {
         `;
         
         const el = document.querySelector('#el');
+        expect(
+            new ListenerGenerator(el, {}, { context: vm }, {})._getSuitableListener().names
+        ).toEqual(['change', 'blur']);
 
         expect(() => {
             new ListenerGenerator(el, {}, { context: vm }, {})._inputListener();
         }).toThrowError('val1');
+    });
+
+    it('can handle component input event', () => {
+        document.body.innerHTML = `<input id="el" type="text" name="name" value="1">`;
+        const el = document.querySelector('#el');
+        const mockedComponent = {
+            $on(whatever, callback) {
+                throw 'something';
+            }
+        };
+
+        const lg = new ListenerGenerator(el, {}, {}, {});
+        expect(() => {
+            lg.component = mockedComponent;
+            lg._attachComponentListeners();
+        }).toThrowError('something');
     });
 });
 
