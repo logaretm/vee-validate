@@ -406,3 +406,25 @@ it('should attach a listener for each checkbox element', () => {
     lg._attachFieldListeners();
     expect(lg.callbacks.filter(c => c.el.name === 'field').length).toBe(2);
 });
+
+it('detaches listeners', () => {
+    document.body.innerHTML = `<input type="text" name="field" id="el">`;
+    const el = document.querySelector('#el');
+    const lg = new ListenerGenerator(el, {}, {}, {});
+    const throws = { unwatch: true, off: true };
+    lg.unwatch = () => { if (throws.unwatch) throw 'unwatched'; };
+    lg.component = { $off() { if(throws.off) throw 'offed listener'; } };
+
+    const mockFn = jest.fn();
+    el.removeEventListener = mockFn;
+
+    expect(() => { lg.detach(); }).toThrow('offed listener');
+    throws.off = false;
+    expect(() => { lg.detach(); }).toThrow('unwatched');
+    throws.unwatch = false;
+
+    lg.callbacks.push({ el, name: 'input', listener: () => {} })
+    expect(lg.callbacks.length).toBe(1);
+    lg.detach();
+    expect(mockFn.mock.calls.length).toBe(1);
+});
