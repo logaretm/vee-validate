@@ -30,6 +30,32 @@ it('should not crash if no rules attribute was specified', () => {
     
 });
 
+it('should get rules', () => {
+    document.body.innerHTML =`<input id="el" type="text" name="field">`;
+    const el = document.querySelector('#el');
+
+    // test if the rules were passed as the expression.
+    let lg = new ListenerGenerator(el, { expression: true, value: 'required|email' }, {}, {});
+    expect(lg._getRules()).toBe('required|email');
+
+    // test if the rules was passed as a part of the expression.
+    lg = new ListenerGenerator(el, { expression: true, value: { rules: 'required|email' } }, {}, {});
+    expect(lg._getRules()).toBe('required|email');
+});
+
+it('should get the arg', () => {
+    document.body.innerHTML =`<input id="el" type="text" name="field">`;
+    const el = document.querySelector('#el');
+
+    // Arg is passed to the directive.
+    let lg = new ListenerGenerator(el, { arg: 'email', expression: true, value: 'required|email' }, {}, {});
+    expect(lg._getArg()).toBe('email');
+
+    // Arg is passed as part of the expression.
+    lg = new ListenerGenerator(el, { expression: true, value: { rules: 'required|email', arg: 'form.email' } }, {}, {});
+    expect(lg._getArg()).toBe('form.email');
+});
+
 it('detects input listener events', () => {
     document.body.innerHTML =`<input id="el" type="text" name="field" data-vv-rules="required" data-vv-delay="100">`;
     const el = document.querySelector('#el');
