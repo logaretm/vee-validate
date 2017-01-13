@@ -1,4 +1,4 @@
-import { getScope, debounce, warn, getDataAttribute } from './utils/helpers';
+import { getScope, debounce, warn, getDataAttribute, isObject } from './utils/helpers';
 
 export default class ListenerGenerator
 {
@@ -112,7 +112,11 @@ export default class ListenerGenerator
     }
 
     _getRules() {
-        return this.binding.expression ? this.binding.value : getDataAttribute(this.el, 'rules');
+        if (! this.binding.expression) {
+            return getDataAttribute(this.el, 'rules');
+        }
+
+        return isObject(this.binding.value) ? this.binding.value.rules : this.binding.value;
     }
 
     /**
@@ -284,6 +288,17 @@ export default class ListenerGenerator
         }
     }
 
+    /*
+    * Gets the arg string value, either from the directive or the expression value.
+    */
+    _getArg() {
+        if (this.binding.arg) {
+            return this.binding.arg;
+        }
+
+        return isObject(this.binding.value) ? this.binding.value.arg : null;
+    }
+
     /**
      * Attaches the Event Listeners.
      */
@@ -298,7 +313,7 @@ export default class ListenerGenerator
         });
 
         this._attachValidatorEvent();
-        const arg = this.binding.arg || getDataAttribute(this.el, 'arg');
+        const arg = this._getArg();
         if (arg) {
             this.unwatch = this.vm.$watch(arg, (value) => {
                 this.vm.$validator.validate(this.fieldName, value, getScope(this.el));

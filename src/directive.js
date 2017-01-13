@@ -1,5 +1,5 @@
 import ListenerGenerator from './listeners';
-import { getScope } from './utils/helpers';
+import { getScope, isObject } from './utils/helpers';
 
 const listenersInstances = [];
 
@@ -10,12 +10,13 @@ export default (options) => ({
         listenersInstances.push({ vm: vnode.context, el, instance: listener });
     },
     update(el, { expression, value, oldValue }, { context }) {
-        if (! expression || value === oldValue) {
-            return;
-        }
+        if (! expression || JSON.stringify(value) === JSON.stringify(oldValue)) return;
 
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
-        context.$validator.updateField(holder.instance.fieldName, value);
+        context.$validator.updateField(
+            holder.instance.fieldName,
+            isObject(value) ? value.rules : value
+        );
     },
     unbind(el, binding, { context }) {
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
