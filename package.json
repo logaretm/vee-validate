@@ -3,6 +3,7 @@
   "version": "2.0.0-beta.18",
   "description": "Simple Vue.js input validation plugin",
   "main": "dist/vee-validate.js",
+  "module": "dist/vee-validate.es2015.js",
   "homepage": "http://vee-validate.logaretm.com",
   "repository": "https://github.com/logaretm/vee-validate",
   "jest": {
@@ -19,7 +20,10 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint ./src",
-    "build": "rollup -c build/rollup.config.js && uglifyjs dist/vee-validate.js -o dist/vee-validate.min.js -c -m",
+    "build:es": "rollup -c build/rollup.es2015.config.js",
+    "build:main": "rollup -c build/rollup.config.js",
+    "minify": "uglifyjs dist/vee-validate.js -o dist/vee-validate.min.js -c -m",
+    "build": "npm run build:es && npm run build:main && npm run minify",
     "cover": "jest --coverage"
   },
   "keywords": [

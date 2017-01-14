@@ -40,7 +40,7 @@ If you want to contribute to the docs you can find it [here](https://github.com/
 
 ### Source Code
 
-Currently we are using ES2015 (ES6) for the source code, using Babel and Webpack to convert it to ES5, the available builds are: non-minified and minified.
+Currently we are using ES2015 (ES6) for the source code, using buble and rollup to convert and bundle it to ES5, the available builds are: non-minified and minified.
 
 Also we are using ESlint for code style, it based of airbnb config but with few modifications, please respect them as much as you can.
 

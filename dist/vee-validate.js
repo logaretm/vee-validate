@@ -745,10 +745,11 @@ module.exports = exports['default'];
 
 var isURL = unwrapExports(isURL_1);
 
-var url = function (value, params) {
-        if ( params === void 0 ) params = [true];
+var url = function (value, ref) {
+        if ( ref === void 0 ) ref = [true];
+        var requireProtocol = ref[0];
 
-        return isURL(value, { require_protocol: !! params[0] });
+        return isURL(value, { require_protocol: !! requireProtocol });
 };
 
 /* eslint-disable camelcase */
