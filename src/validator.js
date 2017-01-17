@@ -412,6 +412,30 @@ export default class Validator
     }
 
     /**
+     * Append another validation to an existing field.
+     *
+     * @param  {string} name The field name.
+     * @param  {string} checks validations expression.
+     */
+    append(name, checks, options = {}) {
+        // No such field
+        if (!this.$fields[name]) {
+            return;
+        }
+
+        let checksArray = []
+        checks.split('|').forEach(rule => {
+            const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
+            if (! normalizedRule.name) {
+                return;
+            }
+            checksArray.push(normalizedRule);
+        });
+        const mergedChecks = this.$fields[name].validations.concat(checksArray);
+        this.attach(name, mergedChecks, options);
+    }
+
+    /**
      * Removes a field from the validator.
      *
      * @param  {String} name The name of the field.

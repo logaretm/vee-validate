@@ -197,6 +197,15 @@ it('attaching new rules to an existing field should overwrite the old rules', ()
     expect(validator.validate('someField', 'woww')).toBe(false); // did the max validator work?
 });
 
+it('can append new validations to a field', () => {
+    validator.attach('field', 'min:2', { prettyName: 'pretty' });
+    validator.append('field', 'max:3', { prettyName: 'pretty' });
+    expect(validator.validate('field', 'wo')).toBe(true);
+    expect(validator.validate('field', 'wow')).toBe(true);
+    expect(validator.validate('field', 'woww')).toBe(false);
+    expect(validator.validate('field', 'w')).toBe(false);
+});
+
 it('returns false when trying to validate a non-existant field.', () => {
     expect(validator.validate('nonExistant', 'whatever')).toBe(false);
 });
