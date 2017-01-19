@@ -13,18 +13,21 @@ export default (options) => ({
         if (! expression || JSON.stringify(value) === JSON.stringify(oldValue)) return;
 
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
+        const scope = isObject(value) ? value.scope : getScope(el);
         context.$validator.updateField(
             holder.instance.fieldName,
-            isObject(value) ? value.rules : value
+            isObject(value) ? value.rules : value,
+            { scope }
         );
     },
-    unbind(el, binding, { context }) {
+    unbind(el, { value }, { context }) {
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
         if (typeof holder === 'undefined') {
             return;
         }
 
-        context.$validator.detach(holder.instance.fieldName, getScope(el));
+        const scope = isObject(value) ? value.scope : getScope(el);
+        context.$validator.detach(holder.instance.fieldName, scope);
         listenersInstances.splice(listenersInstances.indexOf(holder), 1);
     }
 });
