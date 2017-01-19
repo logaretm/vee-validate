@@ -3,7 +3,7 @@ import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
 import Dictionary from './dictionary';
 import messages from './messages';
-import { warn, isObject } from './utils/helpers';
+import { warn, isObject, isCallable } from './utils/helpers';
 import date from './plugins/date';
 import FieldBag from './fieldBag';
 
@@ -20,7 +20,7 @@ export default class Validator
 {
     constructor(validations, $vm) {
         this.strictMode = STRICT_MODE;
-        this.$fields = {};
+        this.$scopes = { __global__: {} };
         this.fieldBag = new FieldBag();
         this._createFields(validations);
         this.errorBag = new ErrorBag();
@@ -40,7 +40,7 @@ export default class Validator
      * @param  {function|object} validator The validator object.
      */
     static _merge(name, validator) {
-        if (typeof validator === 'function') {
+        if (isCallable(validator)) {
             Rules[name] = validator;
             dictionary.setMessage('en', name, (field) => `The ${field} value is not valid.`);
             return;
@@ -48,7 +48,7 @@ export default class Validator
 
         Rules[name] = validator.validate;
 
-        if (validator.getMessage && typeof validator.getMessage === 'function') {
+        if (validator.getMessage && typeof isCallable(validator.getMessage)) {
             dictionary.setMessage('en', name, validator.getMessage);
         }
 
@@ -81,18 +81,18 @@ export default class Validator
             );
         }
 
-        if (typeof validator === 'function') {
+        if (isCallable(validator)) {
             return;
         }
 
-        if (typeof validator.validate !== 'function') {
+        if (! isCallable(validator.validate)) {
             throw new ValidatorException(
                 // eslint-disable-next-line
                 `Extension Error: The validator '${name}' must be a function or have a 'validate' method.`
             );
         }
 
-        if (typeof validator.getMessage !== 'function' && typeof validator.messages !== 'object') {
+        if (! isCallable(validator.getMessage) && ! isObject(validator.messages)) {
             throw new ValidatorException(
                 // eslint-disable-next-line
                 `Extension Error: The validator '${name}' must have a 'getMessage' method or have a 'messages' object.`
@@ -193,18 +193,36 @@ export default class Validator
     }
 
     /**
+     * Resolves the scope value. Only strings and functions are allowed.
+     * @param {Function|String} scope
+     * @returns {String}
+     */
+    _resolveScope(scope) {
+        if (typeof scope === 'string') {
+            return scope;
+        }
+
+        // The resolved value should be string.
+        if (isCallable(scope)) {
+            const value = scope();
+            return typeof value === 'string' ? value : '__global__';
+        }
+
+        return '__global__';
+    }
+
+    /**
      * Resolves the field values from the getter functions.
      */
-    _resolveValuesFromGetters(scope) {
+    _resolveValuesFromGetters(scope = '__global__') {
         const values = {};
-        Object.keys(this.$fields).forEach(field => {
-            const getter = this.$fields[field].getter;
-            const context = this.$fields[field].context;
-            const fieldScope = typeof this.$fields[field].scope === 'function' ?
-                               this.$fields[field].scope() : undefined;
-
-            if (getter && context && (! scope || fieldScope === scope)) {
-                values[field] = {
+        Object.keys(this.$scopes[scope]).forEach(name => {
+            const field = this.$scopes[scope][name];
+            const getter = field.getter;
+            const context = field.context;
+            const fieldScope = this._resolveScope(field.scope);
+            if (getter && context && (scope === '__global__' || fieldScope === scope)) {
+                values[name] = {
                     value: getter(context()),
                     scope: fieldScope
                 };
@@ -233,38 +251,50 @@ export default class Validator
     /**
      * Creates a field entry in the fields object.
      * @param {String} name.
-     * @param {String} Checks.
+     * @param {String|Array} checks.
      */
-    _createField(name, checks) {
-        if (! this.$fields[name]) {
-            this.$fields[name] = {};
+    _createField(name, checks, scope = '__global__') {
+        scope = this._resolveScope(scope);
+        if (! this.$scopes[scope]) {
+            this.$scopes[scope] = {};
         }
 
+        if (! this.$scopes[scope][name]) {
+            this.$scopes[scope][name] = {};
+        }
+
+        const field = this.$scopes[scope][name];
         this.fieldBag._add(name);
-        this.$fields[name].validations = [];
-
+        field.validations = [];
         if (Array.isArray(checks)) {
-            this.$fields[name].validations = checks;
-
+            field.validations = checks;
+            field.required = !! checks.find(c => c === 'required' || c.name === 'required');
             return;
         }
 
         // Make sure we are not splitting an empty value.
-        if (! checks) {
-            return;
-        }
+        if (! checks) return;
 
-        checks.split('|').forEach(rule => {
-            const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
+        this._normalize(checks, field);
+    }
+
+    /**
+     * Normalizes string rules.
+     * @param {String} rules The rules that will be normalized.
+     * @param {Object} field The field object that is being operated on.
+     */
+    _normalize(rules, field) {
+        rules.split('|').forEach(rule => {
+            const normalizedRule = this._normalizeRule(rule, field.validations);
             if (! normalizedRule.name) {
                 return;
             }
 
             if (normalizedRule.name === 'required') {
-                this.$fields[name].required = true;
+                field.required = true;
             }
 
-            this.$fields[name].validations.push(normalizedRule);
+            field.validations.push(normalizedRule);
         });
     }
 
@@ -300,10 +330,11 @@ export default class Validator
      * @param  {string} field The field name.
      * @param  {object} rule Normalized rule object.
      * @param {object} data Additional Information about the validation result.
+     * @param {string} scope The field scope.
      * @return {string} msg Formatted error message.
      */
-    _formatErrorMessage(field, rule, data = {}) {
-        const name = this._getFieldDisplayName(field);
+    _formatErrorMessage(field, rule, data = {}, scope = '__global__') {
+        const name = this._getFieldDisplayName(field, scope);
         const params = this._getLocalizedParams(rule);
 
         if (! dictionary.hasLocale(LOCALE) ||
@@ -332,19 +363,20 @@ export default class Validator
      * Then the dictionary, then fallsback to field name.
      * @return {String} displayName The name to be used in the errors.
      */
-    _getFieldDisplayName(field) {
-        return this.$fields[field].name || dictionary.getAttribute(LOCALE, field, field);
+    _getFieldDisplayName(field, scope = '__global__') {
+        return this.$scopes[scope][field].name || dictionary.getAttribute(LOCALE, field, field);
     }
 
     /**
      * Tests a single input value against a rule.
      *
      * @param  {*} name The name of the field.
-     * @param  {*} value  [description]
+     * @param  {*} value  the value of the field.
      * @param  {object} rule the rule object.
+     * @param {scope} scope The field scope.
      * @return {boolean} Whether it passes the check.
      */
-    _test(name, value, rule, scope) {
+    _test(name, value, rule, scope = '__global__') {
         const validator = Rules[rule.name];
         if (! validator || typeof validator !== 'function') {
             throw new ValidatorException(`No such validator '${rule.name}' exists.`);
@@ -353,7 +385,7 @@ export default class Validator
         let result = validator(value, rule.params, name);
 
         // If it is a promise.
-        if (typeof result.then === 'function') {
+        if (isCallable(result.then)) {
             return result.then(values => {
                 let allValid = true;
                 let data = {};
@@ -367,7 +399,7 @@ export default class Validator
                 if (! allValid) {
                     this.errorBag.add(
                         name,
-                        this._formatErrorMessage(name, rule, data),
+                        this._formatErrorMessage(name, rule, data, scope),
                         rule.name,
                         scope
                     );
@@ -384,7 +416,7 @@ export default class Validator
         if (! result.valid) {
             this.errorBag.add(
                 name,
-                this._formatErrorMessage(name, rule, result.data),
+                this._formatErrorMessage(name, rule, result.data, scope),
                 rule.name,
                 scope
             );
@@ -402,13 +434,13 @@ export default class Validator
      * @param {Function} getter A function used to retrive a fresh value for the field.
      */
     attach(name, checks, options = {}) {
-        this.errorBag.remove(name);
-        this._createField(name, checks);
-        this.$fields[name].scope = options.scope;
-        this.$fields[name].name = options.prettyName;
-        this.$fields[name].getter = options.getter;
-        this.$fields[name].context = options.context;
-        this.$fields[name].listeners = options.listeners || { detach() {} };
+        options.scope = this._resolveScope(options.scope);
+        this.updateField(name, checks, options);
+        const field = this.$scopes[options.scope][name];
+        field.name = options.prettyName;
+        field.getter = options.getter;
+        field.context = options.context;
+        field.listeners = options.listeners || { detach() {} };
     }
 
     /**
@@ -438,9 +470,9 @@ export default class Validator
     /**
      * Updates the field rules with new ones.
      */
-    updateField(name, checks) {
-        this.errorBag.remove(name);
-        this._createField(name, checks);
+    updateField(name, checks, options = {}) {
+        this.errorBag.remove(name, options.scope);
+        this._createField(name, checks, options.scope);
     }
 
     /**
@@ -449,17 +481,17 @@ export default class Validator
      * @param  {String} name The name of the field.
      * @param {String} scope The name of the field scope.
      */
-    detach(name, scope) {
+    detach(name, scope = '__global__') {
         // No such field.
-        if (! this.$fields[name]) {
+        if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
             return;
         }
 
 
-        this.$fields[name].listeners.detach();
+        this.$scopes[scope][name].listeners.detach();
         this.errorBag.remove(name, scope);
         this.fieldBag._remove(name);
-        delete this.$fields[name];
+        delete this.$scopes[scope][name];
     }
 
     /**
@@ -544,11 +576,12 @@ export default class Validator
      *
      * @param  {string} name the field name.
      * @param  {*} value The value to be validated.
+     * @param {String} scope The scope of the field.
      * @return {boolean|Promise} result returns a boolean or a promise that will resolve to
      *  a boolean.
      */
-    validate(name, value, scope) {
-        if (! this.$fields[name]) {
+    validate(name, value, scope = '__global__') {
+        if (! this.$scopes[scope][name]) {
             if (! this.strictMode) { return true; }
             warn(`Trying to validate a non-existant field: "${name}". Use "attach()" first.`);
 
@@ -557,16 +590,16 @@ export default class Validator
 
         this.errorBag.remove(name, scope);
         // if its not required and is empty or null or undefined then it passes.
-        if (! this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
+        if (! this.$scopes[scope][name].required && ~[null, undefined, ''].indexOf(value)) {
             this.fieldBag._setFlags(name, { valid: true, dirty: true });
             return true;
         }
 
         let test = true;
         const promises = [];
-        this.$fields[name].validations.forEach(rule => {
+        this.$scopes[scope][name].validations.forEach(rule => {
             const result = this._test(name, value, rule, scope);
-            if (typeof result.then === 'function') {
+            if (isCallable(result.then)) {
                 promises.push(result);
                 return;
             }
@@ -618,7 +651,7 @@ export default class Validator
                 normalizedValues[property].value,
                 normalizedValues[property].scope
             );
-            if (typeof result.then === 'function') {
+            if (isCallable(result.then)) {
                 promises.push(result);
                 return;
             }

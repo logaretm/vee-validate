@@ -183,9 +183,12 @@ it('formats error messages', async () => {
     }
 });
 it('can attach new fields', () => {
-    validator.attach('field', 'required|min:5');
-    expect(validator.validate('field', 'less')).toBe(false);
-    expect(validator.validate('field', 'not less')).toBe(true);
+    const v = new Validator();
+    expect(v.$scopes.__global__.field).toBeFalsy();
+    v.attach('field', 'required|min:5');
+    expect(v.$scopes.__global__.field).toBeTruthy();
+    expect(v.validate('field', 'less')).toBe(false);
+    expect(v.validate('field', 'not less')).toBe(true);
 });
 
 it('can attach new fields and display errors with custom names', () => {
@@ -220,10 +223,14 @@ it('returns false when trying to validate a non-existant field.', () => {
 });
 
 it('can detach rules', () => {
-    validator.detach('field');
-    expect(validator.$fields.field).toBeFalsy();
+    const v = new Validator();
+    v.attach('field', 'required');
+    expect(v.$scopes.__global__.field).toBeTruthy();
+    v.detach('field');
+    expect(v.$scopes.__global__.field).toBeFalsy();
+    // Silently fails if the field does not exist.
     expect(() => {
-        validator.detach('someOtherField');
+        v.detach('someOtherField');
     }).not.toThrow();
 });
 
@@ -385,25 +392,25 @@ it('resolves promises to booleans', async () => {
 
 
     helpers.dimensionsTest({ width: 150, height: 100 }, false, global);
-    let value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
+    let value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
     expect(value).toBe(true);
 
     helpers.dimensionsTest({ width: 150, height: 100}, true, global);
     try {
-        await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
+        await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
     } catch (error) {
         expect(error.msg).toBe('[vee-validate]: Validation Failed');        
     }
 
     try {
-        await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)], params);
+        await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)]);
     } catch (error) {
         expect(error.msg).toBe('[vee-validate]: Validation Failed');        
     }
 
     helpers.dimensionsTest({ width: 30, height: 20}, false, global);
     try {
-        await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
+        await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
     } catch (error) {
         expect(error.msg).toBe('[vee-validate]: Validation Failed');        
     }
@@ -619,7 +626,6 @@ it('can fetch the values using getters when not specifying values in validateAll
     try {
         await v1.validateAll();
     } catch (error) {
-        // should have toggled after first call.
         expect(error.msg).toBe('[vee-validate]: Validation Failed');
     }
 });
@@ -640,14 +646,12 @@ it('can fetch the values using getters for a specific scope when not specifying 
     try {
         await v1.validateAll('scope2');
     } catch (error) {
-        // should have toggled after first call.
         expect(error.msg).toBe('[vee-validate]: Validation Failed');
     }
 
     try {
         await v1.validateAll();
     } catch (error) {
-        // should have toggled after first call.
         expect(error.msg).toBe('[vee-validate]: Validation Failed');
     }
 });

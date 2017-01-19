@@ -63,3 +63,9 @@ export const warn = (message) => {
 export const isObject = (object) => {
     return object !== null && object && typeof object === 'object' && ! Array.isArray(object);
 };
+
+
+/**
+ * Checks if a function is callable.
+ */
+export const isCallable = (func) => typeof func === 'function';
