@@ -23,11 +23,11 @@ export default class ErrorBag
      * @return {Array} errors Array of all error messages.
      */
     all(scope) {
-        if (scope) {
-            return this.errors.filter(e => e.scope === scope).map(e => e.msg);
+        if (! scope) {
+            scope = '__global__';
         }
 
-        return this.errors.map(e => e.msg);
+        return this.errors.filter(e => e.scope === scope).map(e => e.msg);
     }
 
     /**
@@ -36,11 +36,11 @@ export default class ErrorBag
      * @return {boolean} result True if there was at least one error, false otherwise.
      */
     any(scope) {
-        if (scope) {
-            return !! this.errors.filter(e => e.scope === scope).length;
+        if (! scope) {
+            scope = '__global__';
         }
 
-        return !! this.errors.length;
+        return !! this.errors.filter(e => e.scope === scope).length;
     }
 
     /**
@@ -49,13 +49,11 @@ export default class ErrorBag
      * @param {String} scope The Scope name, optional.
      */
     clear(scope) {
-        if (scope) {
-            this.errors = this.errors.filter(e => e.scope !== scope);
-
-            return;
+        if (! scope) {
+            scope = '__global__';
         }
 
-        this.errors = [];
+        this.errors = this.errors.filter(e => e.scope !== scope);
     }
 
     /**
