@@ -70,7 +70,7 @@ it('checks for field selector existence', () => {
 
 it('checks for field error existence', () => {
     const errors = new ErrorBag();
-    errors.add('name', 'The name is invalid', 'rule1',);
+    errors.add('name', 'The name is invalid', 'rule1');
     expect(errors.has('name')).toBe(true);
     expect(errors.has('name:rule1')).toBe(true);
 
@@ -82,7 +82,7 @@ it('checks for scoped field error existence', () => {
     const errors = new ErrorBag();
     errors.add('name', 'The name is invalid', 'rule1', 'scope1');
 
-    expect(errors.has('name')).toBe(true);
+    expect(errors.has('name')).toBe(false);
     expect(errors.has('name', 'scope1')).toBe(true);
     expect(errors.has('name', 'scope2')).toBe(false); // no such scoped field.
 });

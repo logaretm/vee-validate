@@ -21,6 +21,7 @@ const validator = new Validator({
     content: 'required|max:20',
     tags: 'required|in:1,2,3,5'
 });
+validator.init();
 
 it('empty values pass validation unless they are required', () => {
     const v = new Validator({
@@ -74,6 +75,7 @@ it('can allow array of rules for fields', () => {
         { name: 'required' },
         { name: 'regex', params: [/.(js|ts)$/] }
     ]);
+    v.init();
 
     expect(v.validate('file', 'blabla.js')).toBe(true);
     expect(v.validate('file', 'blabla.ts')).toBe(true);
@@ -184,6 +186,7 @@ it('formats error messages', async () => {
 });
 it('can attach new fields', () => {
     const v = new Validator();
+    v.init();
     expect(v.$scopes.__global__.field).toBeFalsy();
     v.attach('field', 'required|min:5');
     expect(v.$scopes.__global__.field).toBeTruthy();
@@ -224,6 +227,7 @@ it('returns false when trying to validate a non-existant field.', () => {
 
 it('can detach rules', () => {
     const v = new Validator();
+    v.init();
     v.attach('field', 'required');
     expect(v.$scopes.__global__.field).toBeTruthy();
     v.detach('field');
@@ -550,6 +554,7 @@ describe('validators can provide reasoning for failing', () => {
         });
 
         v.attach('field', 'reason');
+        v.init();
         expect(v.validate('field', 'wow')).toBe(false);
         expect(v.errorBag.first('field')).toBe('Not correct');
     });
@@ -590,7 +595,7 @@ describe('validators can provide reasoning for failing', () => {
             }
         });
         v.attach('reason_field', 'reason_test');
-
+        v.init();
         expect(await v.validate('reason_field', 'trigger')).toEqual(false);
         expect(v.errorBag.first('reason_field')).toBe('Not this value');
         expect(await v.validate('reason_field', false)).toBe(false);
@@ -609,7 +614,7 @@ it('can remove rules from the list of validators', () => {
 });
 
 it('can fetch the values using getters when not specifying values in validateAll', async () => {
-    const v1 = new Validator();
+    const v = new Validator();
     const getter = (context) => {
         return context.value
     };
@@ -620,11 +625,12 @@ it('can fetch the values using getters when not specifying values in validateAll
     };
 
     // must use the attach API.
-    v1.attach('name', 'required|alpha', { prettyName: 'Full Name', context, getter });
-    expect(await v1.validateAll()).toBe(true);
+    v.attach('name', 'required|alpha', { prettyName: 'Full Name', context, getter });
+    v.init();
+    expect(await v.validateAll()).toBe(true);
     expect(toggle).toBe(true);
     try {
-        await v1.validateAll();
+        await v.validateAll();
     } catch (error) {
         expect(error.msg).toBe('[vee-validate]: Validation Failed');
     }
