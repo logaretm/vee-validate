@@ -58,6 +58,16 @@ it('should get the arg', () => {
     expect(lg._getArg()).toBe('form.email');
 });
 
+it('should add unwatch property for arg watching', () => {
+    document.body.innerHTML =`<input id="el" type="text" name="field">`;
+    const el = document.querySelector('#el');
+    const lg = new ListenerGenerator(el, { arg: 'email', expression: true, value: 'required|email' }, {}, {});
+    lg.vm = { $watch(arg, callback) { return true }, $validator: { attach() {} } };
+    expect(lg.unwatch).toBeFalsy();
+    lg.attach();
+    expect(lg.unwatch).toBeTruthy();
+});
+
 it('detects input listener events', () => {
     document.body.innerHTML =`<input id="el" type="text" name="field" data-vv-rules="required" data-vv-delay="100">`;
     const el = document.querySelector('#el');
@@ -320,6 +330,11 @@ describe('the generator can handle input events', () => {
         expect(() => {
             new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
         }).toThrowError("null");
+
+        vm = { $validator: helpers.validator(false) };
+        const lg = new ListenerGenerator(el, {}, { context: vm }, {});
+        document.body.innerHTML = '';
+        expect(lg._checkboxListener()).toBeFalsy();
     });
 
     it('can handle select fields value change', () => {
@@ -350,11 +365,24 @@ describe('the generator can handle input events', () => {
             }
         };
 
-        const lg = new ListenerGenerator(el, {}, {}, {});
+        let vm = { $validator: helpers.validator(false) };
+        let lg = new ListenerGenerator(el, {}, {context: vm }, {});
         expect(() => {
             lg.component = mockedComponent;
-            lg._attachComponentListeners();
+            lg.attach();
         }).toThrowError('something');
+
+
+        vm = { $validator: helpers.validator() };
+        lg = new ListenerGenerator(el, {}, { context: vm }, {});
+        lg.component = {
+            $on(whatever, callback) {
+                lg.component.onInput = (value) => { callback(value); }
+            }
+        };
+        expect(lg.component.onInput).toBeFalsy();
+        expect(lg._attachComponentListeners()).toBeFalsy();
+        expect(lg.component.onInput).toBeTruthy();
     });
 });
 
@@ -375,6 +403,23 @@ it('should attach additional listeners for rules with dependent fields', () => {
     lg._attachValidatorEvent();
 
     expect(lg.callbacks.map(c => c.el.name)).toContain('other');
+});
+
+it('should not attach additional listeners for rules with dependent fields that do not exist', () => {
+        document.body.innerHTML = `<div id="app">
+            <input type="text" name="field" id="el" data-vv-rules="confirmed:other">
+        </div>`;
+    const el = document.querySelector('#el');
+    const vm = {
+        $nextTick: (callback) => {
+            callback();
+        }
+    };
+
+    const lg = new ListenerGenerator(el, {}, { context: vm }, {});
+    lg._attachValidatorEvent();
+
+    expect(lg.callbacks.map(c => c.el.name)).not.toContain('other');
 });
 
 it('should attach a listener for each radio element', () => {

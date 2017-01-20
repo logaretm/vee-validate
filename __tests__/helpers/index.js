@@ -10,6 +10,9 @@ export default {
                 }
 
                 return result;
+            },
+            attach() {
+                
             }
         }
     },
