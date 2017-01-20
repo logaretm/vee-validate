@@ -757,7 +757,7 @@ class ErrorBag
      * @param {String} rule The rule that is responsible for the error.
      * @param {String} scope The Scope name, optional.
      */
-    add(field, msg, rule, scope = null) {
+    add(field, msg, rule, scope = '__global__') {
         this.errors.push({ field, msg, rule, scope });
     }
 
@@ -811,7 +811,7 @@ class ErrorBag
      * @param {Boolean} map If it should map the errors to strings instead of objects.
      * @return {Array} errors The errors for the specified field.
      */
-    collect(field, scope, map = true) {
+    collect(field, scope = '__global__', map = true) {
         if (! field) {
             const collection = {};
             this.errors.forEach(e => {
@@ -847,7 +847,7 @@ class ErrorBag
      * @param  {string} field The field name.
      * @return {string|null} message The error message.
      */
-    first(field, scope) {
+    first(field, scope = '__global__') {
         const selector = this.selector(field);
 
         if (selector) {
@@ -869,7 +869,7 @@ class ErrorBag
      * @param  {string} field The specified field.
      * @return {Boolean} result True if at least one error is found, false otherwise.
      */
-    has(field, scope) {
+    has(field, scope = '__global__') {
         return !! this.first(field, scope);
     }
 
@@ -879,7 +879,7 @@ class ErrorBag
      * @param {String} rule The name of the rule.
      * @param {String} scope The name of the scope (optional).
      */
-    firstByRule(name, rule, scope) {
+    firstByRule(name, rule, scope = '__global__') {
         const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
 
         return (error && error.msg) || null;
@@ -891,7 +891,7 @@ class ErrorBag
      * @param  {string} field The field which messages are to be removed.
      * @param {String} scope The Scope name, optional.
      */
-    remove(field, scope) {
+    remove(field, scope = '__global__') {
         if (scope) {
             this.errors = this.errors.filter(e => e.field !== field || e.scope !== scope);
 
@@ -995,6 +995,12 @@ const warn = (message) => {
 const isObject = (object) => {
     return object !== null && object && typeof object === 'object' && ! Array.isArray(object);
 };
+
+
+/**
+ * Checks if a function is callable.
+ */
+const isCallable = (func) => typeof func === 'function';
 
 /* eslint-disable prefer-rest-params */
 class Dictionary
@@ -1329,11 +1335,15 @@ class Validator
 {
     constructor(validations, $vm) {
         this.strictMode = STRICT_MODE;
-        this.$fields = {};
+        this.$scopes = { __global__: {} };
         this.fieldBag = new FieldBag();
         this._createFields(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
+        // Some fields will be later evaluated, because the vm isn't mounted yet
+        // so it may register it under an inaccurate scope.
+        this.$deferred = [];
+        this.$ready = false;
 
         // if momentjs is present, install the validators.
         if (typeof moment === 'function') {
@@ -1349,7 +1359,7 @@ class Validator
      * @param  {function|object} validator The validator object.
      */
     static _merge(name, validator) {
-        if (typeof validator === 'function') {
+        if (isCallable(validator)) {
             Rules[name] = validator;
             dictionary.setMessage('en', name, (field) => `The ${field} value is not valid.`);
             return;
@@ -1357,7 +1367,7 @@ class Validator
 
         Rules[name] = validator.validate;
 
-        if (validator.getMessage && typeof validator.getMessage === 'function') {
+        if (validator.getMessage && typeof isCallable(validator.getMessage)) {
             dictionary.setMessage('en', name, validator.getMessage);
         }
 
@@ -1390,18 +1400,18 @@ class Validator
             );
         }
 
-        if (typeof validator === 'function') {
+        if (isCallable(validator)) {
             return;
         }
 
-        if (typeof validator.validate !== 'function') {
+        if (! isCallable(validator.validate)) {
             throw new ValidatorException(
                 // eslint-disable-next-line
                 `Extension Error: The validator '${name}' must be a function or have a 'validate' method.`
             );
         }
 
-        if (typeof validator.getMessage !== 'function' && typeof validator.messages !== 'object') {
+        if (! isCallable(validator.getMessage) && ! isObject(validator.messages)) {
             throw new ValidatorException(
                 // eslint-disable-next-line
                 `Extension Error: The validator '${name}' must have a 'getMessage' method or have a 'messages' object.`
@@ -1502,18 +1512,39 @@ class Validator
     }
 
     /**
+     * Resolves the scope value. Only strings and functions are allowed.
+     * @param {Function|String} scope
+     * @returns {String}
+     */
+    _resolveScope(scope) {
+        if (typeof scope === 'string') {
+            return scope;
+        }
+
+        // The resolved value should be string.
+        if (isCallable(scope)) {
+            const value = scope();
+            return typeof value === 'string' ? value : '__global__';
+        }
+
+        return '__global__';
+    }
+
+    /**
      * Resolves the field values from the getter functions.
      */
-    _resolveValuesFromGetters(scope) {
+    _resolveValuesFromGetters(scope = '__global__') {
+        if (! this.$scopes[scope]) {
+            return {};
+        }
         const values = {};
-        Object.keys(this.$fields).forEach(field => {
-            const getter = this.$fields[field].getter;
-            const context = this.$fields[field].context;
-            const fieldScope = typeof this.$fields[field].scope === 'function' ?
-                               this.$fields[field].scope() : undefined;
-
-            if (getter && context && (! scope || fieldScope === scope)) {
-                values[field] = {
+        Object.keys(this.$scopes[scope]).forEach(name => {
+            const field = this.$scopes[scope][name];
+            const getter = field.getter;
+            const context = field.context;
+            const fieldScope = this._resolveScope(field.scope);
+            if (getter && context && (scope === '__global__' || fieldScope === scope)) {
+                values[name] = {
                     value: getter(context()),
                     scope: fieldScope
                 };
@@ -1542,38 +1573,50 @@ class Validator
     /**
      * Creates a field entry in the fields object.
      * @param {String} name.
-     * @param {String} Checks.
+     * @param {String|Array} checks.
      */
-    _createField(name, checks) {
-        if (! this.$fields[name]) {
-            this.$fields[name] = {};
+    _createField(name, checks, scope = '__global__') {
+        scope = this._resolveScope(scope);
+        if (! this.$scopes[scope]) {
+            this.$scopes[scope] = {};
         }
 
+        if (! this.$scopes[scope][name]) {
+            this.$scopes[scope][name] = {};
+        }
+
+        const field = this.$scopes[scope][name];
         this.fieldBag._add(name);
-        this.$fields[name].validations = [];
-
+        field.validations = [];
         if (Array.isArray(checks)) {
-            this.$fields[name].validations = checks;
-
+            field.validations = checks;
+            field.required = !! checks.find(c => c === 'required' || c.name === 'required');
             return;
         }
 
         // Make sure we are not splitting an empty value.
-        if (! checks) {
-            return;
-        }
+        if (! checks) return;
 
-        checks.split('|').forEach(rule => {
-            const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
+        this._normalize(checks, field);
+    }
+
+    /**
+     * Normalizes string rules.
+     * @param {String} rules The rules that will be normalized.
+     * @param {Object} field The field object that is being operated on.
+     */
+    _normalize(rules, field) {
+        rules.split('|').forEach(rule => {
+            const normalizedRule = this._normalizeRule(rule, field.validations);
             if (! normalizedRule.name) {
                 return;
             }
 
             if (normalizedRule.name === 'required') {
-                this.$fields[name].required = true;
+                field.required = true;
             }
 
-            this.$fields[name].validations.push(normalizedRule);
+            field.validations.push(normalizedRule);
         });
     }
 
@@ -1609,10 +1652,11 @@ class Validator
      * @param  {string} field The field name.
      * @param  {object} rule Normalized rule object.
      * @param {object} data Additional Information about the validation result.
+     * @param {string} scope The field scope.
      * @return {string} msg Formatted error message.
      */
-    _formatErrorMessage(field, rule, data = {}) {
-        const name = this._getFieldDisplayName(field);
+    _formatErrorMessage(field, rule, data = {}, scope = '__global__') {
+        const name = this._getFieldDisplayName(field, scope);
         const params = this._getLocalizedParams(rule);
 
         if (! dictionary.hasLocale(LOCALE) ||
@@ -1641,19 +1685,20 @@ class Validator
      * Then the dictionary, then fallsback to field name.
      * @return {String} displayName The name to be used in the errors.
      */
-    _getFieldDisplayName(field) {
-        return this.$fields[field].name || dictionary.getAttribute(LOCALE, field, field);
+    _getFieldDisplayName(field, scope = '__global__') {
+        return this.$scopes[scope][field].name || dictionary.getAttribute(LOCALE, field, field);
     }
 
     /**
      * Tests a single input value against a rule.
      *
      * @param  {*} name The name of the field.
-     * @param  {*} value  [description]
+     * @param  {*} value  the value of the field.
      * @param  {object} rule the rule object.
+     * @param {scope} scope The field scope.
      * @return {boolean} Whether it passes the check.
      */
-    _test(name, value, rule, scope) {
+    _test(name, value, rule, scope = '__global__') {
         const validator = Rules[rule.name];
         if (! validator || typeof validator !== 'function') {
             throw new ValidatorException(`No such validator '${rule.name}' exists.`);
@@ -1662,7 +1707,7 @@ class Validator
         let result = validator(value, rule.params, name);
 
         // If it is a promise.
-        if (typeof result.then === 'function') {
+        if (isCallable(result.then)) {
             return result.then(values => {
                 let allValid = true;
                 let data = {};
@@ -1676,7 +1721,7 @@ class Validator
                 if (! allValid) {
                     this.errorBag.add(
                         name,
-                        this._formatErrorMessage(name, rule, data),
+                        this._formatErrorMessage(name, rule, data, scope),
                         rule.name,
                         scope
                     );
@@ -1693,7 +1738,7 @@ class Validator
         if (! result.valid) {
             this.errorBag.add(
                 name,
-                this._formatErrorMessage(name, rule, result.data),
+                this._formatErrorMessage(name, rule, result.data, scope),
                 rule.name,
                 scope
             );
@@ -1711,21 +1756,41 @@ class Validator
      * @param {Function} getter A function used to retrive a fresh value for the field.
      */
     attach(name, checks, options = {}) {
-        this.errorBag.remove(name);
-        this._createField(name, checks);
-        this.$fields[name].scope = options.scope;
-        this.$fields[name].name = options.prettyName;
-        this.$fields[name].getter = options.getter;
-        this.$fields[name].context = options.context;
-        this.$fields[name].listeners = options.listeners || { detach() {} };
+        const attach = () => {
+            options.scope = this._resolveScope(options.scope);
+            this.updateField(name, checks, options);
+            const field = this.$scopes[options.scope][name];
+            field.scope = options.scope;
+            field.name = options.prettyName;
+            field.getter = options.getter;
+            field.context = options.context;
+            field.listeners = options.listeners || { detach() {} };
+        };
+
+        const scope = isCallable(options.scope) ? options.scope() : options.scope;
+        if (! scope && ! this.$ready) {
+            this.$deferred.push(attach);
+            return;
+        }
+
+
+        attach();
+    }
+
+    init() {
+        this.$ready = true;
+        this.$deferred.forEach(attach => {
+            attach();
+        });
+        this.$deferred = [];
     }
 
     /**
      * Updates the field rules with new ones.
      */
-    updateField(name, checks) {
-        this.errorBag.remove(name);
-        this._createField(name, checks);
+    updateField(name, checks, options = {}) {
+        this.errorBag.remove(name, options.scope);
+        this._createField(name, checks, options.scope);
     }
 
     /**
@@ -1734,17 +1799,17 @@ class Validator
      * @param  {String} name The name of the field.
      * @param {String} scope The name of the field scope.
      */
-    detach(name, scope) {
+    detach(name, scope = '__global__') {
         // No such field.
-        if (! this.$fields[name]) {
+        if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
             return;
         }
 
 
-        this.$fields[name].listeners.detach();
+        this.$scopes[scope][name].listeners.detach();
         this.errorBag.remove(name, scope);
         this.fieldBag._remove(name);
-        delete this.$fields[name];
+        delete this.$scopes[scope][name];
     }
 
     /**
@@ -1824,34 +1889,43 @@ class Validator
         Validator.updateDictionary(data);
     }
 
+    addScope(scope) {
+        if (scope && ! this.$scopes[scope]) {
+            this.$scopes[scope] = {};
+        }
+    }
+
     /**
      * Validates a value against a registered field validations.
      *
      * @param  {string} name the field name.
      * @param  {*} value The value to be validated.
+     * @param {String} scope The scope of the field.
      * @return {boolean|Promise} result returns a boolean or a promise that will resolve to
      *  a boolean.
      */
-    validate(name, value, scope) {
-        if (! this.$fields[name]) {
+    validate(name, value, scope = '__global__') {
+        if (! scope) scope = '__global__';
+        if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
             if (! this.strictMode) { return true; }
-            warn(`Trying to validate a non-existant field: "${name}". Use "attach()" first.`);
+            const fullName = scope === '__global__' ? name : `${scope}.${name}`;
+            warn(`Validating a non-existant field: "${fullName}". Use "attach()" first.`);
 
             return false;
         }
 
         this.errorBag.remove(name, scope);
         // if its not required and is empty or null or undefined then it passes.
-        if (! this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
+        if (! this.$scopes[scope][name].required && ~[null, undefined, ''].indexOf(value)) {
             this.fieldBag._setFlags(name, { valid: true, dirty: true });
             return true;
         }
 
         let test = true;
         const promises = [];
-        this.$fields[name].validations.forEach(rule => {
+        this.$scopes[scope][name].validations.forEach(rule => {
             const result = this._test(name, value, rule, scope);
-            if (typeof result.then === 'function') {
+            if (isCallable(result.then)) {
                 promises.push(result);
                 return;
             }
@@ -1880,10 +1954,7 @@ class Validator
      */
     validateAll(values) {
         let normalizedValues;
-        if (! values) {
-            normalizedValues = this._resolveValuesFromGetters();
-            this.errorBag.clear();
-        } else if (typeof values === 'string') {
+        if (! values || typeof values === 'string') {
             this.errorBag.clear(values);
             normalizedValues = this._resolveValuesFromGetters(values);
         } else {
@@ -1903,7 +1974,7 @@ class Validator
                 normalizedValues[property].value,
                 normalizedValues[property].scope
             );
-            if (typeof result.then === 'function') {
+            if (isCallable(result.then)) {
                 promises.push(result);
                 return;
             }
@@ -1989,7 +2060,7 @@ var mixin = (options) => ({
         }
     },
     mounted() {
-        this.$emit('validatorReady');
+        this.$validator.init();
     },
     destroyed() {
         unregister(this);
@@ -2002,6 +2073,7 @@ class ListenerGenerator
         this.unwatch = undefined;
         this.callbacks = [];
         this.el = el;
+        this.scope = isObject(binding.value) ? binding.value.scope : getScope(el);
         this.binding = binding;
         this.vm = vnode.context;
         this.component = vnode.child;
@@ -2092,7 +2164,7 @@ class ListenerGenerator
      * Trigger the validation for a specific value.
      */
     _validate(value) {
-        return this.vm.$validator.validate(this.fieldName, value, getScope(this.el));
+        return this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
     }
 
     /**
@@ -2101,7 +2173,7 @@ class ListenerGenerator
      */
     _getScopedListener(callback) {
         return (scope) => {
-            if (! scope || scope === getScope(this.el) || scope instanceof Event) {
+            if (! scope || scope === this.scope || scope instanceof Event) {
                 callback();
             }
         };
@@ -2301,7 +2373,9 @@ class ListenerGenerator
     attach() {
         const { context, getter } = this._resolveValueGetter();
         this.vm.$validator.attach(this.fieldName, this._getRules(), {
-            scope: () => getScope(this.el),
+            scope: () => {
+                return this.scope || getScope(this.el);
+            },
             prettyName: getDataAttribute(this.el, 'as'),
             context,
             getter,
@@ -2312,7 +2386,7 @@ class ListenerGenerator
         const arg = this._getArg();
         if (arg) {
             this.unwatch = this.vm.$watch(arg, (value) => {
-                this.vm.$validator.validate(this.fieldName, value, getScope(this.el));
+                this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
             });
 
             return;
@@ -2351,21 +2425,32 @@ var directive = (options) => ({
         if (! expression || JSON.stringify(value) === JSON.stringify(oldValue)) return;
 
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
+        const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
         context.$validator.updateField(
             holder.instance.fieldName,
-            isObject(value) ? value.rules : value
+            isObject(value) ? value.rules : value,
+            { scope }
         );
     },
-    unbind(el, binding, { context }) {
+    unbind(el, { value }, { context }) {
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
         if (typeof holder === 'undefined') {
             return;
         }
 
-        context.$validator.detach(holder.instance.fieldName, getScope(el));
+        const scope = isObject(value) ? value.scope : getScope(el);
+        context.$validator.detach(holder.instance.fieldName, scope);
         listenersInstances.splice(listenersInstances.indexOf(holder), 1);
     }
 });
+
+var scope = {
+    bind(el, binding, vnode) {
+        const scope = binding.arg || binding.value || getDataAttribute('scope');
+        vnode.context.$validator.addScope(scope);
+        el.setAttribute('data-vv-scope', scope);
+    }
+};
 
 // eslint-disable-next-line
 const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true, fieldsBagName = 'fields' } = {}) => {
@@ -2394,6 +2479,7 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
 
     Vue.mixin(mixin(options)); // Install Mixin.
     Vue.directive('validate', directive(options)); // Install directive.
+    Vue.directive('scope', scope);
 };
 
 var index = { install, Validator, ErrorBag };

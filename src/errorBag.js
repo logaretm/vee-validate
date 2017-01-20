@@ -12,7 +12,7 @@ export default class ErrorBag
      * @param {String} rule The rule that is responsible for the error.
      * @param {String} scope The Scope name, optional.
      */
-    add(field, msg, rule, scope = null) {
+    add(field, msg, rule, scope = '__global__') {
         this.errors.push({ field, msg, rule, scope });
     }
 
@@ -66,7 +66,7 @@ export default class ErrorBag
      * @param {Boolean} map If it should map the errors to strings instead of objects.
      * @return {Array} errors The errors for the specified field.
      */
-    collect(field, scope, map = true) {
+    collect(field, scope = '__global__', map = true) {
         if (! field) {
             const collection = {};
             this.errors.forEach(e => {
@@ -102,7 +102,7 @@ export default class ErrorBag
      * @param  {string} field The field name.
      * @return {string|null} message The error message.
      */
-    first(field, scope) {
+    first(field, scope = '__global__') {
         const selector = this.selector(field);
 
         if (selector) {
@@ -124,7 +124,7 @@ export default class ErrorBag
      * @param  {string} field The specified field.
      * @return {Boolean} result True if at least one error is found, false otherwise.
      */
-    has(field, scope) {
+    has(field, scope = '__global__') {
         return !! this.first(field, scope);
     }
 
@@ -134,7 +134,7 @@ export default class ErrorBag
      * @param {String} rule The name of the rule.
      * @param {String} scope The name of the scope (optional).
      */
-    firstByRule(name, rule, scope) {
+    firstByRule(name, rule, scope = '__global__') {
         const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
 
         return (error && error.msg) || null;
@@ -146,7 +146,7 @@ export default class ErrorBag
      * @param  {string} field The field which messages are to be removed.
      * @param {String} scope The Scope name, optional.
      */
-    remove(field, scope) {
+    remove(field, scope = '__global__') {
         if (scope) {
             this.errors = this.errors.filter(e => e.field !== field || e.scope !== scope);
 

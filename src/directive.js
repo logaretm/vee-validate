@@ -13,7 +13,7 @@ export default (options) => ({
         if (! expression || JSON.stringify(value) === JSON.stringify(oldValue)) return;
 
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
-        const scope = isObject(value) ? value.scope : getScope(el);
+        const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
         context.$validator.updateField(
             holder.instance.fieldName,
             isObject(value) ? value.rules : value,

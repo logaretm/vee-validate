@@ -25,6 +25,10 @@ export default class Validator
         this._createFields(validations);
         this.errorBag = new ErrorBag();
         this.$vm = $vm;
+        // Some fields will be later evaluated, because the vm isn't mounted yet
+        // so it may register it under an inaccurate scope.
+        this.$deferred = [];
+        this.$ready = false;
 
         // if momentjs is present, install the validators.
         if (typeof moment === 'function') {
@@ -215,6 +219,9 @@ export default class Validator
      * Resolves the field values from the getter functions.
      */
     _resolveValuesFromGetters(scope = '__global__') {
+        if (! this.$scopes[scope]) {
+            return {};
+        }
         const values = {};
         Object.keys(this.$scopes[scope]).forEach(name => {
             const field = this.$scopes[scope][name];
@@ -434,13 +441,33 @@ export default class Validator
      * @param {Function} getter A function used to retrive a fresh value for the field.
      */
     attach(name, checks, options = {}) {
-        options.scope = this._resolveScope(options.scope);
-        this.updateField(name, checks, options);
-        const field = this.$scopes[options.scope][name];
-        field.name = options.prettyName;
-        field.getter = options.getter;
-        field.context = options.context;
-        field.listeners = options.listeners || { detach() {} };
+        const attach = () => {
+            options.scope = this._resolveScope(options.scope);
+            this.updateField(name, checks, options);
+            const field = this.$scopes[options.scope][name];
+            field.scope = options.scope;
+            field.name = options.prettyName;
+            field.getter = options.getter;
+            field.context = options.context;
+            field.listeners = options.listeners || { detach() {} };
+        };
+
+        const scope = isCallable(options.scope) ? options.scope() : options.scope;
+        if (! scope && ! this.$ready) {
+            this.$deferred.push(attach);
+            return;
+        }
+
+
+        attach();
+    }
+
+    init() {
+        this.$ready = true;
+        this.$deferred.forEach(attach => {
+            attach();
+        });
+        this.$deferred = [];
     }
 
     /**
@@ -571,6 +598,12 @@ export default class Validator
         Validator.updateDictionary(data);
     }
 
+    addScope(scope) {
+        if (scope && ! this.$scopes[scope]) {
+            this.$scopes[scope] = {};
+        }
+    }
+
     /**
      * Validates a value against a registered field validations.
      *
@@ -581,9 +614,11 @@ export default class Validator
      *  a boolean.
      */
     validate(name, value, scope = '__global__') {
-        if (! this.$scopes[scope][name]) {
+        if (! scope) scope = '__global__';
+        if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
             if (! this.strictMode) { return true; }
-            warn(`Trying to validate a non-existant field: "${name}". Use "attach()" first.`);
+            const fullName = scope === '__global__' ? name : `${scope}.${name}`;
+            warn(`Validating a non-existant field: "${fullName}". Use "attach()" first.`);
 
             return false;
         }
@@ -628,10 +663,7 @@ export default class Validator
      */
     validateAll(values) {
         let normalizedValues;
-        if (! values) {
-            normalizedValues = this._resolveValuesFromGetters();
-            this.errorBag.clear();
-        } else if (typeof values === 'string') {
+        if (! values || typeof values === 'string') {
             this.errorBag.clear(values);
             normalizedValues = this._resolveValuesFromGetters(values);
         } else {

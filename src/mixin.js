@@ -14,7 +14,7 @@ export default (options) => ({
         }
     },
     mounted() {
-        this.$emit('validatorReady');
+        this.$validator.init();
     },
     destroyed() {
         unregister(this);

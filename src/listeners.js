@@ -6,6 +6,7 @@ export default class ListenerGenerator
         this.unwatch = undefined;
         this.callbacks = [];
         this.el = el;
+        this.scope = isObject(binding.value) ? binding.value.scope : getScope(el);
         this.binding = binding;
         this.vm = vnode.context;
         this.component = vnode.child;
@@ -96,7 +97,7 @@ export default class ListenerGenerator
      * Trigger the validation for a specific value.
      */
     _validate(value) {
-        return this.vm.$validator.validate(this.fieldName, value, getScope(this.el));
+        return this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
     }
 
     /**
@@ -105,7 +106,7 @@ export default class ListenerGenerator
      */
     _getScopedListener(callback) {
         return (scope) => {
-            if (! scope || scope === getScope(this.el) || scope instanceof Event) {
+            if (! scope || scope === this.scope || scope instanceof Event) {
                 callback();
             }
         };
@@ -305,7 +306,9 @@ export default class ListenerGenerator
     attach() {
         const { context, getter } = this._resolveValueGetter();
         this.vm.$validator.attach(this.fieldName, this._getRules(), {
-            scope: () => getScope(this.el),
+            scope: () => {
+                return this.scope || getScope(this.el);
+            },
             prettyName: getDataAttribute(this.el, 'as'),
             context,
             getter,
@@ -316,7 +319,7 @@ export default class ListenerGenerator
         const arg = this._getArg();
         if (arg) {
             this.unwatch = this.vm.$watch(arg, (value) => {
-                this.vm.$validator.validate(this.fieldName, value, getScope(this.el));
+                this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
             });
 
             return;

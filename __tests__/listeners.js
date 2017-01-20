@@ -3,7 +3,9 @@ import helpers from './helpers';
 import Validator from '../src/validator';
 
 it('has field dependent rule', () => {
-    const lg = new ListenerGenerator({ name: 'el'}, '', '', {});
+    document.body.innerHTML =`<input id="el" type="text" name="el">`;
+    const el = document.querySelector('#el');
+    const lg = new ListenerGenerator(el, '', '', {});
     expect(lg._hasFieldDependency('confirmed:field|required')).toBe('field');
     expect(lg._hasFieldDependency('required|before:field')).toBe('field');
     expect(lg._hasFieldDependency('after:field')).toBe('field');
@@ -160,6 +162,9 @@ describe('can resolve value getters and context functions', () => {
         const el = {
             name: 'upload',
             type: 'file',
+            getAttribute() {
+                return '';
+            },
             files: [
                 helpers.file('val.jpg', 'image/jpg')
             ]
