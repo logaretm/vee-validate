@@ -1515,7 +1515,7 @@ Validator._merge = function _merge (name, validator) {
 
     Rules[name] = validator.validate;
 
-    if (validator.getMessage && typeof isCallable(validator.getMessage)) {
+    if (validator.getMessage && isCallable(validator.getMessage)) {
         dictionary.setMessage('en', name, validator.getMessage);
     }
 
@@ -2609,7 +2609,7 @@ ListenerGenerator.prototype.detach = function detach () {
 
 var listenersInstances = [];
 
-var directive = function (options) { return ({
+var validate = function (options) { return ({
     bind: function bind(el, binding, vnode) {
         var listener = new ListenerGenerator(el, binding, vnode, options);
         listener.attach();
@@ -2646,12 +2646,18 @@ var directive = function (options) { return ({
     }
 }); };
 
-var scope = {
+// eslint-disable-next-line
+var scope = function (options) { return ({
     bind: function bind(el, binding, vnode) {
         var scope = binding.arg || binding.value || getDataAttribute('scope');
         vnode.context.$validator.addScope(scope);
         el.setAttribute('data-vv-scope', scope);
     }
+}); };
+
+var directives = function (Vue, options) {
+    Vue.directive('validate', validate(options));
+    Vue.directive('scope', scope(options));
 };
 
 // eslint-disable-next-line
@@ -2688,8 +2694,7 @@ var install = function (Vue, ref) {
     });
 
     Vue.mixin(mixin(options)); // Install Mixin.
-    Vue.directive('validate', directive(options)); // Install directive.
-    Vue.directive('scope', scope);
+    Vue.use(directives, options); // Install directives.
 };
 
 var index = { install: install, Validator: Validator, ErrorBag: ErrorBag };

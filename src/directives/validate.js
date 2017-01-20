@@ -1,5 +1,5 @@
-import ListenerGenerator from './listeners';
-import { getScope, isObject } from './utils/helpers';
+import ListenerGenerator from '../listeners';
+import { getScope, isObject } from '../utils/helpers';
 
 const listenersInstances = [];
 

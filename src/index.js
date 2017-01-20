@@ -1,9 +1,8 @@
 import Validator from './validator';
 import { register } from './utils/maps';
 import mixin from './mixin';
-import directive from './directive';
+import directives from './directives';
 import ErrorBag from './errorBag';
-import scope from './scope';
 
 // eslint-disable-next-line
 const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true, fieldsBagName = 'fields' } = {}) => {
@@ -31,8 +30,7 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
     });
 
     Vue.mixin(mixin(options)); // Install Mixin.
-    Vue.directive('validate', directive(options)); // Install directive.
-    Vue.directive('scope', scope);
+    Vue.use(directives, options); // Install directives.
 };
 
 export default { install, Validator, ErrorBag };

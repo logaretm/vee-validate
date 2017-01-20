@@ -52,7 +52,7 @@ export default class Validator
 
         Rules[name] = validator.validate;
 
-        if (validator.getMessage && typeof isCallable(validator.getMessage)) {
+        if (validator.getMessage && isCallable(validator.getMessage)) {
             dictionary.setMessage('en', name, validator.getMessage);
         }
 
