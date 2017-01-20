@@ -477,21 +477,23 @@ export default class Validator
      * @param  {string} checks validations expression.
      */
     append(name, checks, options = {}) {
+        options.scope = this._resolveScope(options.scope);
         // No such field
-        if (!this.$fields[name]) {
-            return;
+        if (! this.$scopes[options.scope] || ! this.$scopes[options.scope][name]) {
+            this.attach(name, checks, options);
         }
 
-        let checksArray = []
+        const field = this.$scopes[options.scope][name];
+        const checksArray = [];
         checks.split('|').forEach(rule => {
-            const normalizedRule = this._normalizeRule(rule, this.$fields[name].validations);
+            const normalizedRule = this._normalizeRule(rule, field.validations);
             if (! normalizedRule.name) {
                 return;
             }
             checksArray.push(normalizedRule);
         });
-        const mergedChecks = this.$fields[name].validations.concat(checksArray);
-        this.attach(name, mergedChecks, options);
+        const mergedChecks = field.validations.concat(checksArray);
+        this.updateField(name, mergedChecks, options);
     }
 
     /**
