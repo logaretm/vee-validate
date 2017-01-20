@@ -616,6 +616,9 @@ export default class Validator
      *  a boolean.
      */
     validate(name, value, scope = '__global__') {
+        if (name && name.indexOf('.') > -1) {
+            [scope, name] = name.split('.');
+        }
         if (! scope) scope = '__global__';
         if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
             if (! this.strictMode) { return true; }

@@ -47,6 +47,12 @@ it('can validate single values', () => {
     expect(validator.validate('title', 'ab')).toBe(false);
     expect(validator.validate('title', '')).toBe(false);
     expect(validator.validate('title', 'a'.repeat(256))).toBe(false);
+
+    const v = new Validator();
+    v.init();
+    v.attach('el', 'required|min:3', { scope: 'scope' });
+    expect(v.validate('scope.el', '12')).toBe(false);
+    expect(v.validate('scope.el', '123')).toBe(true);
 });
 
 it('validates correctly regardless of rule placement', () => {
