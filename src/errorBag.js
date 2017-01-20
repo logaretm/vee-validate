@@ -102,7 +102,12 @@ export default class ErrorBag
      * @return {string|null} message The error message.
      */
     first(field, scope = '__global__') {
-        const selector = this.selector(field);
+        const selector = this._selector(field);
+        const scoped = this._scope(field);
+
+        if (scoped) {
+            return this.first(scoped.name, scoped.scope);
+        }
 
         if (selector) {
             return this.firstByRule(selector.name, selector.rule, scope);
@@ -162,11 +167,27 @@ export default class ErrorBag
      * @param  {string} field The specified field.
      * @return {Object|null}
      */
-    selector(field) {
+    _selector(field) {
         if (field.indexOf(':') > -1) {
             const [name, rule] = field.split(':');
 
             return { name, rule };
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the field scope if specified using dot notation.
+     *
+     * @param {string} field the specifie field.
+     * @return {Object|null}
+     */
+    _scope(field) {
+        if (field.indexOf('.') > -1) {
+            const [scope, name] = field.split('.');
+
+            return { name, scope };
         }
 
         return null;

@@ -62,10 +62,10 @@ it('clears the errors within a scope', () => {
 it('checks for field selector existence', () => {
     const errors = new ErrorBag();
 
-    expect(errors.selector('name:rule').name).toBe('name');
-    expect(errors.selector('name:rule').rule).toBe('rule');
+    expect(errors._selector('name:rule').name).toBe('name');
+    expect(errors._selector('name:rule').rule).toBe('rule');
 
-    expect(errors.selector('name')).toBe(null);
+    expect(errors._selector('name')).toBe(null);
 });
 
 it('checks for field error existence', () => {
@@ -104,6 +104,7 @@ it('fetches the first error message for a specific field', () => {
     errors.add('email', 'This is the third rule', 'rule2');
     errors.add('email', 'This is the forth rule', 'rule2');
 
+    // test colon notation.
     expect(errors.first('email')).toBe('The email is invalid');
     expect(errors.first('email:rule2')).toBe('This is the third rule');
 
@@ -112,6 +113,13 @@ it('fetches the first error message for a specific field', () => {
 
     expect(errors.first('email')).toBe('The email is shorter than 3 chars.');
     expect(errors.first('name')).toBeNull();
+
+    // test dot notation.
+    errors.add('email', 'nah', 'rule2', 'scope1');
+    errors.add('email', 'bah', 'rule1', 'scope2');
+    errors.add('email', 'mah', 'rule2', 'scope2');
+    expect(errors.first('scope1.email')).toBe('nah');
+    expect(errors.first('scope2.email:rule2')).toBe('mah');
 });
 
 it('fetches the first error message for a specific scoped field', () => {
