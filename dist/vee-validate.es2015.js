@@ -768,11 +768,11 @@ class ErrorBag
      * @return {Array} errors Array of all error messages.
      */
     all(scope) {
-        if (scope) {
-            return this.errors.filter(e => e.scope === scope).map(e => e.msg);
+        if (! scope) {
+            scope = '__global__';
         }
 
-        return this.errors.map(e => e.msg);
+        return this.errors.filter(e => e.scope === scope).map(e => e.msg);
     }
 
     /**
@@ -781,11 +781,11 @@ class ErrorBag
      * @return {boolean} result True if there was at least one error, false otherwise.
      */
     any(scope) {
-        if (scope) {
-            return !! this.errors.filter(e => e.scope === scope).length;
+        if (! scope) {
+            scope = '__global__';
         }
 
-        return !! this.errors.length;
+        return !! this.errors.filter(e => e.scope === scope).length;
     }
 
     /**
@@ -794,13 +794,11 @@ class ErrorBag
      * @param {String} scope The Scope name, optional.
      */
     clear(scope) {
-        if (scope) {
-            this.errors = this.errors.filter(e => e.scope !== scope);
-
-            return;
+        if (! scope) {
+            scope = '__global__';
         }
 
-        this.errors = [];
+        this.errors = this.errors.filter(e => e.scope !== scope);
     }
 
     /**
@@ -811,7 +809,7 @@ class ErrorBag
      * @param {Boolean} map If it should map the errors to strings instead of objects.
      * @return {Array} errors The errors for the specified field.
      */
-    collect(field, scope = '__global__', map = true) {
+    collect(field, scope, map = true) {
         if (! field) {
             const collection = {};
             this.errors.forEach(e => {
@@ -830,7 +828,8 @@ class ErrorBag
                        .map(e => (map ? e.msg : e));
         }
 
-        return this.errors.filter(e => e.field === field).map(e => (map ? e.msg : e));
+        return this.errors.filter(e => e.field === field && e.scope === '__global__')
+                          .map(e => (map ? e.msg : e));
     }
     /**
      * Gets the internal array length.
@@ -848,14 +847,19 @@ class ErrorBag
      * @return {string|null} message The error message.
      */
     first(field, scope = '__global__') {
-        const selector = this.selector(field);
+        const selector = this._selector(field);
+        const scoped = this._scope(field);
+
+        if (scoped) {
+            return this.first(scoped.name, scoped.scope);
+        }
 
         if (selector) {
             return this.firstByRule(selector.name, selector.rule, scope);
         }
 
         for (let i = 0; i < this.errors.length; i++) {
-            if (this.errors[i].field === field && (! scope || this.errors[i].scope === scope)) {
+            if (this.errors[i].field === field && (this.errors[i].scope === scope)) {
                 return this.errors[i].msg;
             }
         }
@@ -879,7 +883,7 @@ class ErrorBag
      * @param {String} rule The name of the rule.
      * @param {String} scope The name of the scope (optional).
      */
-    firstByRule(name, rule, scope = '__global__') {
+    firstByRule(name, rule, scope) {
         const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
 
         return (error && error.msg) || null;
@@ -891,14 +895,14 @@ class ErrorBag
      * @param  {string} field The field which messages are to be removed.
      * @param {String} scope The Scope name, optional.
      */
-    remove(field, scope = '__global__') {
+    remove(field, scope) {
         if (scope) {
             this.errors = this.errors.filter(e => e.field !== field || e.scope !== scope);
 
             return;
         }
 
-        this.errors = this.errors.filter(e => e.field !== field);
+        this.errors = this.errors.filter(e => e.field !== field && e.scope === '__global__');
     }
 
 
@@ -908,11 +912,27 @@ class ErrorBag
      * @param  {string} field The specified field.
      * @return {Object|null}
      */
-    selector(field) {
+    _selector(field) {
         if (field.indexOf(':') > -1) {
             const [name, rule] = field.split(':');
 
             return { name, rule };
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the field scope if specified using dot notation.
+     *
+     * @param {string} field the specifie field.
+     * @return {Object|null}
+     */
+    _scope(field) {
+        if (field.indexOf('.') > -1) {
+            const [scope, name] = field.split('.');
+
+            return { name, scope };
         }
 
         return null;
@@ -950,32 +970,19 @@ const getScope = (el) => {
 /**
  * Debounces a function.
  */
-const debounce = (func, threshold = 100, execAsap = false) => {
-    if (! threshold) {
-        return func;
-    }
+const debounce = (callback, wait, context = undefined) => {
+    let timeout = null;
+    let callbackArgs = null;
 
-    let timeout;
+    const later = () => callback.apply(context, callbackArgs);
 
-    return function debounced([...args]) {
-        const obj = this;
-
-        function delayed() {
-            if (!execAsap) {
-                func.apply(obj, args);
-            }
-            timeout = null;
-        }
-
-        if (timeout) {
-            clearTimeout(timeout);
-        } else if (execAsap) {
-            func.apply(obj, ...args);
-        }
-
-        timeout = setTimeout(delayed, threshold || 100);
+    return () => {
+        callbackArgs = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
     };
 };
+
 
 /**
  * Emits a warning to the console.
@@ -1786,6 +1793,32 @@ class Validator
     }
 
     /**
+     * Append another validation to an existing field.
+     *
+     * @param  {string} name The field name.
+     * @param  {string} checks validations expression.
+     */
+    append(name, checks, options = {}) {
+        options.scope = this._resolveScope(options.scope);
+        // No such field
+        if (! this.$scopes[options.scope] || ! this.$scopes[options.scope][name]) {
+            this.attach(name, checks, options);
+        }
+
+        const field = this.$scopes[options.scope][name];
+        const checksArray = [];
+        checks.split('|').forEach(rule => {
+            const normalizedRule = this._normalizeRule(rule, field.validations);
+            if (! normalizedRule.name) {
+                return;
+            }
+            checksArray.push(normalizedRule);
+        });
+        const mergedChecks = field.validations.concat(checksArray);
+        this.updateField(name, mergedChecks, options);
+    }
+
+    /**
      * Updates the field rules with new ones.
      */
     updateField(name, checks, options = {}) {
@@ -1905,6 +1938,9 @@ class Validator
      *  a boolean.
      */
     validate(name, value, scope = '__global__') {
+        if (name && name.indexOf('.') > -1) {
+            [scope, name] = name.split('.');
+        }
         if (! scope) scope = '__global__';
         if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
             if (! this.strictMode) { return true; }
@@ -1991,6 +2027,16 @@ class Validator
 
             return valid;
         });
+    }
+
+    /**
+     * Validates all scopes.
+     * @returns {Promise} All promises resulted from each scope.
+     */
+    validateScopes() {
+        return Promise.all(
+            Object.keys(this.$scopes).map(scope => this.validateAll(scope))
+        );
     }
 }
 
@@ -2269,7 +2315,7 @@ class ListenerGenerator
     _attachComponentListeners() {
         this.componentListener = debounce((value) => {
             this.vm.$validator.validate(this.fieldName, value);
-        }, getDataAttribute(this.el, 'delay') || this.options.delay);
+        }, getDataAttribute(this.el, 'delay') || this.options.delay, this);
 
         this.component.$on('input', this.componentListener);
     }
@@ -2293,7 +2339,8 @@ class ListenerGenerator
 
         if (~['radio', 'checkbox'].indexOf(this.el.type)) {
             this.vm.$nextTick(() => {
-                [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
+                const elms = document.querySelectorAll(`input[name="${this.el.name}"]`);
+                Array.from(elms).forEach(input => {
                     handler.names.forEach(handlerName => {
                         input.addEventListener(handlerName, listener);
                         this.callbacks.push({ name: handlerName, listener, el: input });

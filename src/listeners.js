@@ -202,7 +202,7 @@ export default class ListenerGenerator
     _attachComponentListeners() {
         this.componentListener = debounce((value) => {
             this.vm.$validator.validate(this.fieldName, value);
-        }, getDataAttribute(this.el, 'delay') || this.options.delay);
+        }, getDataAttribute(this.el, 'delay') || this.options.delay, this);
 
         this.component.$on('input', this.componentListener);
     }
@@ -226,7 +226,8 @@ export default class ListenerGenerator
 
         if (~['radio', 'checkbox'].indexOf(this.el.type)) {
             this.vm.$nextTick(() => {
-                [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
+                const elms = document.querySelectorAll(`input[name="${this.el.name}"]`);
+                Array.from(elms).forEach(input => {
                     handler.names.forEach(handlerName => {
                         input.addEventListener(handlerName, listener);
                         this.callbacks.push({ name: handlerName, listener, el: input });

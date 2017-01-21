@@ -807,11 +807,11 @@ ErrorBag.prototype.add = function add (field, msg, rule, scope) {
  * @return {Array} errors Array of all error messages.
  */
 ErrorBag.prototype.all = function all (scope) {
-    if (scope) {
-        return this.errors.filter(function (e) { return e.scope === scope; }).map(function (e) { return e.msg; });
+    if (! scope) {
+        scope = '__global__';
     }
 
-    return this.errors.map(function (e) { return e.msg; });
+    return this.errors.filter(function (e) { return e.scope === scope; }).map(function (e) { return e.msg; });
 };
 
 /**
@@ -820,11 +820,11 @@ ErrorBag.prototype.all = function all (scope) {
  * @return {boolean} result True if there was at least one error, false otherwise.
  */
 ErrorBag.prototype.any = function any (scope) {
-    if (scope) {
-        return !! this.errors.filter(function (e) { return e.scope === scope; }).length;
+    if (! scope) {
+        scope = '__global__';
     }
 
-    return !! this.errors.length;
+    return !! this.errors.filter(function (e) { return e.scope === scope; }).length;
 };
 
 /**
@@ -833,13 +833,11 @@ ErrorBag.prototype.any = function any (scope) {
  * @param {String} scope The Scope name, optional.
  */
 ErrorBag.prototype.clear = function clear (scope) {
-    if (scope) {
-        this.errors = this.errors.filter(function (e) { return e.scope !== scope; });
-
-        return;
+    if (! scope) {
+        scope = '__global__';
     }
 
-    this.errors = [];
+    this.errors = this.errors.filter(function (e) { return e.scope !== scope; });
 };
 
 /**
@@ -851,7 +849,6 @@ ErrorBag.prototype.clear = function clear (scope) {
  * @return {Array} errors The errors for the specified field.
  */
 ErrorBag.prototype.collect = function collect (field, scope, map) {
-        if ( scope === void 0 ) scope = '__global__';
         if ( map === void 0 ) map = true;
 
     if (! field) {
@@ -872,7 +869,8 @@ ErrorBag.prototype.collect = function collect (field, scope, map) {
                    .map(function (e) { return (map ? e.msg : e); });
     }
 
-    return this.errors.filter(function (e) { return e.field === field; }).map(function (e) { return (map ? e.msg : e); });
+    return this.errors.filter(function (e) { return e.field === field && e.scope === '__global__'; })
+                      .map(function (e) { return (map ? e.msg : e); });
 };
 /**
  * Gets the internal array length.
@@ -893,14 +891,19 @@ ErrorBag.prototype.first = function first (field, scope) {
         var this$1 = this;
         if ( scope === void 0 ) scope = '__global__';
 
-    var selector = this.selector(field);
+    var selector = this._selector(field);
+    var scoped = this._scope(field);
+
+    if (scoped) {
+        return this.first(scoped.name, scoped.scope);
+    }
 
     if (selector) {
         return this.firstByRule(selector.name, selector.rule, scope);
     }
 
     for (var i = 0; i < this.errors.length; i++) {
-        if (this$1.errors[i].field === field && (! scope || this$1.errors[i].scope === scope)) {
+        if (this$1.errors[i].field === field && (this$1.errors[i].scope === scope)) {
             return this$1.errors[i].msg;
         }
     }
@@ -927,8 +930,6 @@ ErrorBag.prototype.has = function has (field, scope) {
  * @param {String} scope The name of the scope (optional).
  */
 ErrorBag.prototype.firstByRule = function firstByRule (name, rule, scope) {
-        if ( scope === void 0 ) scope = '__global__';
-
     var error = this.collect(name, scope, false).filter(function (e) { return e.rule === rule; })[0];
 
     return (error && error.msg) || null;
@@ -941,15 +942,13 @@ ErrorBag.prototype.firstByRule = function firstByRule (name, rule, scope) {
  * @param {String} scope The Scope name, optional.
  */
 ErrorBag.prototype.remove = function remove (field, scope) {
-        if ( scope === void 0 ) scope = '__global__';
-
     if (scope) {
         this.errors = this.errors.filter(function (e) { return e.field !== field || e.scope !== scope; });
 
         return;
     }
 
-    this.errors = this.errors.filter(function (e) { return e.field !== field; });
+    this.errors = this.errors.filter(function (e) { return e.field !== field && e.scope === '__global__'; });
 };
 
 
@@ -959,13 +958,31 @@ ErrorBag.prototype.remove = function remove (field, scope) {
  * @param  {string} field The specified field.
  * @return {Object|null}
  */
-ErrorBag.prototype.selector = function selector (field) {
+ErrorBag.prototype._selector = function _selector (field) {
     if (field.indexOf(':') > -1) {
         var ref = field.split(':');
             var name = ref[0];
             var rule = ref[1];
 
         return { name: name, rule: rule };
+    }
+
+    return null;
+};
+
+/**
+ * Get the field scope if specified using dot notation.
+ *
+ * @param {string} field the specifie field.
+ * @return {Object|null}
+ */
+ErrorBag.prototype._scope = function _scope (field) {
+    if (field.indexOf('.') > -1) {
+        var ref = field.split('.');
+            var scope = ref[0];
+            var name = ref[1];
+
+        return { name: name, scope: scope };
     }
 
     return null;
@@ -983,6 +1000,8 @@ var ValidatorException = (function () {
     return anonymous;
 }());
 
+var arguments$1 = arguments;
+var this$1 = undefined;
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
@@ -1003,37 +1022,21 @@ var getScope = function (el) {
 /**
  * Debounces a function.
  */
-var debounce = function (func, threshold, execAsap) {
-    if ( threshold === void 0 ) threshold = 100;
-    if ( execAsap === void 0 ) execAsap = false;
+var debounce = function (callback, wait, context) {
+    if ( context === void 0 ) context = this$1;
 
-    if (! threshold) {
-        return func;
-    }
+    var timeout = null;
+    var callbackArgs = null;
 
-    var timeout;
+    var later = function () { return callback.apply(context, callbackArgs); };
 
-    return function debounced(ref) {
-        var args = ref.slice(0);
-
-        var obj = this;
-
-        function delayed() {
-            if (!execAsap) {
-                func.apply(obj, args);
-            }
-            timeout = null;
-        }
-
-        if (timeout) {
-            clearTimeout(timeout);
-        } else if (execAsap) {
-            func.apply.apply(func, [ obj ].concat( args ));
-        }
-
-        timeout = setTimeout(delayed, threshold || 100);
+    return function () {
+        callbackArgs = arguments$1;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
     };
 };
+
 
 /**
  * Emits a warning to the console.
@@ -1957,6 +1960,35 @@ Validator.prototype.init = function init () {
 };
 
 /**
+ * Append another validation to an existing field.
+ *
+ * @param  {string} name The field name.
+ * @param  {string} checks validations expression.
+ */
+Validator.prototype.append = function append (name, checks, options) {
+        var this$1 = this;
+        if ( options === void 0 ) options = {};
+
+    options.scope = this._resolveScope(options.scope);
+    // No such field
+    if (! this.$scopes[options.scope] || ! this.$scopes[options.scope][name]) {
+        this.attach(name, checks, options);
+    }
+
+    var field = this.$scopes[options.scope][name];
+    var checksArray = [];
+    checks.split('|').forEach(function (rule) {
+        var normalizedRule = this$1._normalizeRule(rule, field.validations);
+        if (! normalizedRule.name) {
+            return;
+        }
+        checksArray.push(normalizedRule);
+    });
+    var mergedChecks = field.validations.concat(checksArray);
+    this.updateField(name, mergedChecks, options);
+};
+
+/**
  * Updates the field rules with new ones.
  */
 Validator.prototype.updateField = function updateField (name, checks, options) {
@@ -2085,6 +2117,10 @@ Validator.prototype.validate = function validate (name, value, scope) {
         var this$1 = this;
         if ( scope === void 0 ) scope = '__global__';
 
+    if (name && name.indexOf('.') > -1) {
+        var assign;
+            (assign = name.split('.'), scope = assign[0], name = assign[1]);
+    }
     if (! scope) { scope = '__global__'; }
     if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
         if (! this.strictMode) { return true; }
@@ -2173,6 +2209,18 @@ Validator.prototype.validateAll = function validateAll (values) {
 
         return valid;
     });
+};
+
+/**
+ * Validates all scopes.
+ * @returns {Promise} All promises resulted from each scope.
+ */
+Validator.prototype.validateScopes = function validateScopes () {
+        var this$1 = this;
+
+    return Promise.all(
+        Object.keys(this.$scopes).map(function (scope) { return this$1.validateAll(scope); })
+    );
 };
 
 /**
@@ -2456,7 +2504,7 @@ ListenerGenerator.prototype._attachComponentListeners = function _attachComponen
 
     this.componentListener = debounce(function (value) {
         this$1.vm.$validator.validate(this$1.fieldName, value);
-    }, getDataAttribute(this.el, 'delay') || this.options.delay);
+    }, getDataAttribute(this.el, 'delay') || this.options.delay, this);
 
     this.component.$on('input', this.componentListener);
 };
@@ -2482,7 +2530,8 @@ ListenerGenerator.prototype._attachFieldListeners = function _attachFieldListene
 
     if (~['radio', 'checkbox'].indexOf(this.el.type)) {
         this.vm.$nextTick(function () {
-            [].concat( document.querySelectorAll(("input[name=\"" + (this$1.el.name) + "\"]")) ).forEach(function (input) {
+            var elms = document.querySelectorAll(("input[name=\"" + (this$1.el.name) + "\"]"));
+            Array.from(elms).forEach(function (input) {
                 handler.names.forEach(function (handlerName) {
                     input.addEventListener(handlerName, listener);
                     this$1.callbacks.push({ name: handlerName, listener: listener, el: input });
