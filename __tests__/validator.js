@@ -244,6 +244,36 @@ it('can detach rules', () => {
     }).not.toThrow();
 });
 
+it('can validate specific scopes', async () => {
+    const v = new Validator();
+    v.init();
+    v.attach('field', 'alpha', { getter: () => '123', context: () => 'context' });
+    v.attach('field', 'alpha', { scope: 'myscope', getter: () => '123', context: () => 'context' });
+    v.attach('field', 'alpha', { scope: 'otherscope', getter: () => '123', context: () => 'context' });
+
+    // only '__global__' scope got validated.    
+    try {
+        await v.validateAll();
+    } catch (error) {
+        expect(v.errorBag.count()).toBe(1);
+    }
+
+    // the second scope too.
+    try {
+        await v.validateAll('myscope');
+    } catch (error) {
+        expect(v.errorBag.count()).toBe(2);
+    }
+    
+    v.errorBag.clear();
+    try {
+        // all scopes.
+        await v.validateScopes();
+    } catch (error) {
+        expect(v.errorBag.count()).toBe(3);
+    }
+});
+
 it('can find errors by field and rule', () => {
     const v1 = new Validator({ name: 'alpha' });
     v1.validate('name', 12);

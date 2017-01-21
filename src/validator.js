@@ -706,4 +706,14 @@ export default class Validator
             return valid;
         });
     }
+
+    /**
+     * Validates all scopes.
+     * @returns {Promise} All promises resulted from each scope.
+     */
+    validateScopes() {
+        return Promise.all(
+            Object.keys(this.$scopes).map(scope => this.validateAll(scope))
+        );
+    }
 }
