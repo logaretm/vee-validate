@@ -1,8 +1,8 @@
 (function (global, factory) {
-        typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-        typeof define === 'function' && define.amd ? define(['exports'], factory) :
-        (factory((global.VeeValidate = global.VeeValidate || {})));
-}(this, (function (exports) { 'use strict';
+        typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+        typeof define === 'function' && define.amd ? define(factory) :
+        (global.VeeValidate = factory());
+}(this, (function () { 'use strict';
 
 var alpha = function (value) { return /^[a-zA-Z]*$/.test(value); };
 
@@ -2743,10 +2743,13 @@ var install = function (Vue, ref) {
     Vue.use(directives, options); // Install directives.
 };
 
-exports['default'] = install;
-exports.Validator = Validator;
-exports.ErrorBag = ErrorBag;
+var index = {
+    install: install,
+    Validator: Validator,
+    ErrorBag: ErrorBag,
+    version: '2.0.0-beta.19'
+};
 
-Object.defineProperty(exports, '__esModule', { value: true });
+return index;
 
 })));

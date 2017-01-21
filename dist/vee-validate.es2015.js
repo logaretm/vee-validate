@@ -2534,4 +2534,11 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
     Vue.use(directives, options); // Install directives.
 };
 
-export { Validator, ErrorBag };export default install;
+var index = {
+    install,
+    Validator,
+    ErrorBag,
+    version: '2.0.0-beta.19'
+};
+
+export default index;

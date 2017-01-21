@@ -1,6 +1,8 @@
 const buble = require('rollup-plugin-buble');
 const nodeResolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
+const replace = require('rollup-plugin-replace');
+const version = require('../package.json').version;
 
 module.exports = {
     entry: 'src/index.js',
@@ -8,6 +10,7 @@ module.exports = {
     format: 'umd',
     moduleName: 'VeeValidate',
     plugins: [
+        replace({ __VERSION__: version }),
         nodeResolve(),
         commonjs(),
         buble()

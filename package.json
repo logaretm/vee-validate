@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "2.0.0-beta.18",
+  "version": "2.0.0-beta.19",
   "description": "Simple Vue.js input validation plugin",
   "main": "dist/vee-validate.js",
   "module": "dist/vee-validate.es2015.js",
@@ -54,6 +54,7 @@
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-commonjs": "^7.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-replace": "^1.1.1",
     "uglify-js": "^2.7.5",
     "validator": "^6.1.0"
   }

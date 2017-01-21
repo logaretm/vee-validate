@@ -33,4 +33,9 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
     Vue.use(directives, options); // Install directives.
 };
 
-export { install as default, Validator, ErrorBag };
+export default {
+    install,
+    Validator,
+    ErrorBag,
+    version: '__VERSION__'
+};
