@@ -970,7 +970,7 @@ const getScope = (el) => {
 /**
  * Debounces a function.
  */
-const debounce = (callback, wait, context = undefined) => {
+const debounce = (callback, wait, context) => {
     let timeout = null;
     let callbackArgs = null;
 
@@ -2534,6 +2534,4 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
     Vue.use(directives, options); // Install directives.
 };
 
-var index = { install, Validator, ErrorBag };
-
-export default index;
+export { Validator, ErrorBag };export default install;

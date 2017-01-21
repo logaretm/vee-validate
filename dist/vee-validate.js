@@ -1,8 +1,8 @@
 (function (global, factory) {
-        typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-        typeof define === 'function' && define.amd ? define(factory) :
-        (global.VeeValidate = factory());
-}(this, (function () { 'use strict';
+        typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+        typeof define === 'function' && define.amd ? define(['exports'], factory) :
+        (factory((global.VeeValidate = global.VeeValidate || {})));
+}(this, (function (exports) { 'use strict';
 
 var alpha = function (value) { return /^[a-zA-Z]*$/.test(value); };
 
@@ -1001,7 +1001,6 @@ var ValidatorException = (function () {
 }());
 
 var arguments$1 = arguments;
-var this$1 = undefined;
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
@@ -1023,8 +1022,6 @@ var getScope = function (el) {
  * Debounces a function.
  */
 var debounce = function (callback, wait, context) {
-    if ( context === void 0 ) context = this$1;
-
     var timeout = null;
     var callbackArgs = null;
 
@@ -2746,8 +2743,10 @@ var install = function (Vue, ref) {
     Vue.use(directives, options); // Install directives.
 };
 
-var index = { install: install, Validator: Validator, ErrorBag: ErrorBag };
+exports['default'] = install;
+exports.Validator = Validator;
+exports.ErrorBag = ErrorBag;
 
-return index;
+Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
