@@ -75,17 +75,36 @@ it('can be initialized without validations', () => {
     expect(validator2).toBeInstanceOf(Validator);
 });
 
-it('can allow array of rules for fields', () => {
+it('can add scopes', () => {
     const v = new Validator();
-    v.attach('file', [
-        { name: 'required' },
-        { name: 'regex', params: [/.(js|ts)$/] }
-    ]);
+    v.init();
+    expect(v.$scopes.myscope).toBeFalsy();
+    v.addScope('myscope');
+    expect(v.$scopes.myscope).toBeTruthy();
+    expect(v.$scopes.myscope.field).toBeFalsy();
+    v.attach('field', 'required', { scope: 'myscope' });
+    expect(v.$scopes.myscope.field).toBeTruthy();
+    v.addScope('myscope'); // doesn't overwrite if it exists.
+    expect(v.$scopes.myscope.field).toBeTruthy();
+});
+
+it('can allow rules object', () => {
+    const v = new Validator();
+    v.attach('field', {
+        required: true, // test boolean.
+        regex: /.(js|ts)$/, // test single value.
+        min: 5, // test single value.
+        in: ['blabla.js', 'blabla.ts'] // test params
+    });
     v.init();
 
-    expect(v.validate('file', 'blabla.js')).toBe(true);
-    expect(v.validate('file', 'blabla.ts')).toBe(true);
-    expect(v.validate('file', 'blabla.css')).toBe(false);
+    expect(v.validate('field', '')).toBe(false); // required.
+    expect(v.validate('field', 'blabla')).toBe(false); // regex.
+    expect(v.validate('field', 'g.js')).toBe(false); // min.
+    expect(v.validate('field', 'else.js')).toBe(false); // in.
+
+    expect(v.validate('field', 'blabla.js')).toBe(true);
+    expect(v.validate('field', 'blabla.ts')).toBe(true);
 });
 
 it('validates multiple values', async () => {
@@ -225,6 +244,15 @@ it('can append new validations to a field', () => {
     expect(validator.validate('field', 'wow')).toBe(true);
     expect(validator.validate('field', 'woww')).toBe(false);
     expect(validator.validate('field', 'w')).toBe(false);
+
+    // attaches if the field doesn't exist.
+    const v = new Validator();
+    v.init();
+    v.attach('field', 'min:2');
+    v.detach('field');
+    v.append('field', 'min:3');
+    expect(v.validate('field', 'wo')).toBe(false);
+    expect(v.validate('field', 'wow')).toBe(true);
 });
 
 it('returns false when trying to validate a non-existant field.', () => {
