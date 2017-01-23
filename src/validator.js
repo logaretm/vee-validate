@@ -18,7 +18,7 @@ const dictionary = new Dictionary({
 
 export default class Validator
 {
-    constructor(validations, $vm) {
+    constructor(validations, $vm, options = { init: true }) {
         this.strictMode = STRICT_MODE;
         this.$scopes = { __global__: {} };
         this.fieldBag = new FieldBag();
@@ -34,6 +34,10 @@ export default class Validator
         if (typeof moment === 'function') {
             // eslint-disable-next-line
             this.installDateTimeValidators(moment);
+        }
+
+        if (options.init) {
+            this.init();
         }
     }
 
@@ -110,8 +114,8 @@ export default class Validator
      * @param  {object} validations The validations object.
      * @return {Validator} validator A validator object.
      */
-    static create(validations, $vm) {
-        return new Validator(validations, $vm);
+    static create(validations, $vm, options) {
+        return new Validator(validations, $vm, options);
     }
 
     /**
@@ -519,12 +523,17 @@ export default class Validator
         attach();
     }
 
+    /**
+     * Initializes the non-scoped fields and any bootstrap logic.
+     */
     init() {
         this.$ready = true;
         this.$deferred.forEach(attach => {
             attach();
         });
         this.$deferred = [];
+
+        return this;
     }
 
     /**

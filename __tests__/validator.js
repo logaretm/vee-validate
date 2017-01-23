@@ -49,7 +49,7 @@ it('can validate single values', () => {
     expect(validator.validate('title', 'a'.repeat(256))).toBe(false);
 
     const v = new Validator();
-    v.init();
+    
     v.attach('el', 'required|min:3', { scope: 'scope' });
     expect(v.validate('scope.el', '12')).toBe(false);
     expect(v.validate('scope.el', '123')).toBe(true);
@@ -77,7 +77,7 @@ it('can be initialized without validations', () => {
 
 it('can add scopes', () => {
     const v = new Validator();
-    v.init();
+    
     expect(v.$scopes.myscope).toBeFalsy();
     v.addScope('myscope');
     expect(v.$scopes.myscope).toBeTruthy();
@@ -86,6 +86,10 @@ it('can add scopes', () => {
     expect(v.$scopes.myscope.field).toBeTruthy();
     v.addScope('myscope'); // doesn't overwrite if it exists.
     expect(v.$scopes.myscope.field).toBeTruthy();
+
+    // scopes can be numbers
+    v.addScope(1);
+    expect(v.$scopes[1]).toBeTruthy();
 });
 
 it('can allow rules object', () => {
@@ -96,7 +100,7 @@ it('can allow rules object', () => {
         min: 5, // test single value.
         in: ['blabla.js', 'blabla.ts'] // test params
     });
-    v.init();
+    
 
     expect(v.validate('field', '')).toBe(false); // required.
     expect(v.validate('field', 'blabla')).toBe(false); // regex.
@@ -211,7 +215,7 @@ it('formats error messages', async () => {
 });
 it('can attach new fields', () => {
     const v = new Validator();
-    v.init();
+    
     expect(v.$scopes.__global__.field).toBeFalsy();
     v.attach('field', 'required|min:5');
     expect(v.$scopes.__global__.field).toBeTruthy();
@@ -247,7 +251,7 @@ it('can append new validations to a field', () => {
 
     // attaches if the field doesn't exist.
     const v = new Validator();
-    v.init();
+    
     v.attach('field', 'min:2');
     v.detach('field');
     v.append('field', 'min:3');
@@ -261,7 +265,7 @@ it('returns false when trying to validate a non-existant field.', () => {
 
 it('can detach rules', () => {
     const v = new Validator();
-    v.init();
+    
     v.attach('field', 'required');
     expect(v.$scopes.__global__.field).toBeTruthy();
     v.detach('field');
@@ -274,7 +278,7 @@ it('can detach rules', () => {
 
 it('can validate specific scopes', async () => {
     const v = new Validator();
-    v.init();
+    
     v.attach('field', 'alpha', { getter: () => '123', context: () => 'context' });
     v.attach('field', 'alpha', { scope: 'myscope', getter: () => '123', context: () => 'context' });
     v.attach('field', 'alpha', { scope: 'otherscope', getter: () => '123', context: () => 'context' });
@@ -618,7 +622,7 @@ describe('validators can provide reasoning for failing', () => {
         });
 
         v.attach('field', 'reason');
-        v.init();
+        
         expect(v.validate('field', 'wow')).toBe(false);
         expect(v.errorBag.first('field')).toBe('Not correct');
     });
@@ -659,7 +663,7 @@ describe('validators can provide reasoning for failing', () => {
             }
         });
         v.attach('reason_field', 'reason_test');
-        v.init();
+        
         expect(await v.validate('reason_field', 'trigger')).toEqual(false);
         expect(v.errorBag.first('reason_field')).toBe('Not this value');
         expect(await v.validate('reason_field', false)).toBe(false);
@@ -690,7 +694,7 @@ it('can fetch the values using getters when not specifying values in validateAll
 
     // must use the attach API.
     v.attach('name', 'required|alpha', { prettyName: 'Full Name', context, getter });
-    v.init();
+    
     expect(await v.validateAll()).toBe(true);
     expect(toggle).toBe(true);
     try {
