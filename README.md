@@ -37,7 +37,7 @@ bower install vee-validate#1.0.0-beta.11 --save
 **Vue 2.0**:
 
 ```
-bower install vee-validate#2.0.0-beta.18 --save
+bower install vee-validate#2.0.0-beta.19 --save
 ```
 
 ### CDN
@@ -60,10 +60,16 @@ Now you are all setup to use the plugin.
 
 ### Usage
 
-Just apply the `v-validate` directive on your input and a `data-vv-rules` attribute which is a list of validations separated by a pipe, for example we will use the `required` and the `email` validators:
+Just apply the `v-validate` directive on your input and pass a string value which is a list of validations separated by a pipe, for example we will use the `required` and the `email` validators:
 
-```html
-<input v-validate data-vv-rules="required|email" type="text" name="email">
+```vue
+<input v-validate="'required|email'" type="text" name="email">
+```
+
+You can also pass an object for more flexibility:
+
+```vue
+<input v-validate="{ rules: { required: true, email: true } }" type="text" name="email">
 ```
 
 Now every time the input changes, the validator will run the list of validations from left to right, populating the errors helper object whenever an input fails validation.
