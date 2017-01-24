@@ -1,7 +1,7 @@
 import Validator from './validator';
 import { register } from './utils/maps';
 import mixin from './mixin';
-import directive from './directive';
+import directive from './directives/validate';
 import ErrorBag from './errorBag';
 
 // eslint-disable-next-line
@@ -30,7 +30,12 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
     });
 
     Vue.mixin(mixin(options)); // Install Mixin.
-    Vue.directive('validate', directive(options)); // Install directive.
+    Vue.directive('validate', directive(options));
 };
 
-export { install, Validator, ErrorBag };
+export default {
+    install,
+    Validator,
+    ErrorBag,
+    version: '__VERSION__'
+};

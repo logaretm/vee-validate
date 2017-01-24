@@ -18,32 +18,19 @@ export const getScope = (el) => {
 /**
  * Debounces a function.
  */
-export const debounce = (func, threshold = 100, execAsap = false) => {
-    if (! threshold) {
-        return func;
-    }
+export const debounce = (callback, wait, context) => {
+    let timeout = null;
+    let callbackArgs = null;
 
-    let timeout;
+    const later = () => callback.apply(context, callbackArgs);
 
-    return function debounced([...args]) {
-        const obj = this;
-
-        function delayed() {
-            if (!execAsap) {
-                func.apply(obj, args);
-            }
-            timeout = null;
-        }
-
-        if (timeout) {
-            clearTimeout(timeout);
-        } else if (execAsap) {
-            func.apply(obj, ...args);
-        }
-
-        timeout = setTimeout(delayed, threshold || 100);
+    return () => {
+        callbackArgs = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
     };
 };
+
 
 /**
  * Emits a warning to the console.
@@ -63,3 +50,9 @@ export const warn = (message) => {
 export const isObject = (object) => {
     return object !== null && object && typeof object === 'object' && ! Array.isArray(object);
 };
+
+
+/**
+ * Checks if a function is callable.
+ */
+export const isCallable = (func) => typeof func === 'function';

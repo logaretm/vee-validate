@@ -12,7 +12,7 @@ export default class ErrorBag
      * @param {String} rule The rule that is responsible for the error.
      * @param {String} scope The Scope name, optional.
      */
-    add(field, msg, rule, scope = null) {
+    add(field, msg, rule, scope = '__global__') {
         this.errors.push({ field, msg, rule, scope });
     }
 
@@ -23,11 +23,11 @@ export default class ErrorBag
      * @return {Array} errors Array of all error messages.
      */
     all(scope) {
-        if (scope) {
-            return this.errors.filter(e => e.scope === scope).map(e => e.msg);
+        if (! scope) {
+            scope = '__global__';
         }
 
-        return this.errors.map(e => e.msg);
+        return this.errors.filter(e => e.scope === scope).map(e => e.msg);
     }
 
     /**
@@ -36,11 +36,11 @@ export default class ErrorBag
      * @return {boolean} result True if there was at least one error, false otherwise.
      */
     any(scope) {
-        if (scope) {
-            return !! this.errors.filter(e => e.scope === scope).length;
+        if (! scope) {
+            scope = '__global__';
         }
 
-        return !! this.errors.length;
+        return !! this.errors.filter(e => e.scope === scope).length;
     }
 
     /**
@@ -49,13 +49,11 @@ export default class ErrorBag
      * @param {String} scope The Scope name, optional.
      */
     clear(scope) {
-        if (scope) {
-            this.errors = this.errors.filter(e => e.scope !== scope);
-
-            return;
+        if (! scope) {
+            scope = '__global__';
         }
 
-        this.errors = [];
+        this.errors = this.errors.filter(e => e.scope !== scope);
     }
 
     /**
@@ -85,7 +83,8 @@ export default class ErrorBag
                        .map(e => (map ? e.msg : e));
         }
 
-        return this.errors.filter(e => e.field === field).map(e => (map ? e.msg : e));
+        return this.errors.filter(e => e.field === field && e.scope === '__global__')
+                          .map(e => (map ? e.msg : e));
     }
     /**
      * Gets the internal array length.
@@ -102,15 +101,20 @@ export default class ErrorBag
      * @param  {string} field The field name.
      * @return {string|null} message The error message.
      */
-    first(field, scope) {
-        const selector = this.selector(field);
+    first(field, scope = '__global__') {
+        const selector = this._selector(field);
+        const scoped = this._scope(field);
+
+        if (scoped) {
+            return this.first(scoped.name, scoped.scope);
+        }
 
         if (selector) {
             return this.firstByRule(selector.name, selector.rule, scope);
         }
 
         for (let i = 0; i < this.errors.length; i++) {
-            if (this.errors[i].field === field && (! scope || this.errors[i].scope === scope)) {
+            if (this.errors[i].field === field && (this.errors[i].scope === scope)) {
                 return this.errors[i].msg;
             }
         }
@@ -124,7 +128,7 @@ export default class ErrorBag
      * @param  {string} field The specified field.
      * @return {Boolean} result True if at least one error is found, false otherwise.
      */
-    has(field, scope) {
+    has(field, scope = '__global__') {
         return !! this.first(field, scope);
     }
 
@@ -153,7 +157,7 @@ export default class ErrorBag
             return;
         }
 
-        this.errors = this.errors.filter(e => e.field !== field);
+        this.errors = this.errors.filter(e => e.field !== field && e.scope === '__global__');
     }
 
 
@@ -163,11 +167,27 @@ export default class ErrorBag
      * @param  {string} field The specified field.
      * @return {Object|null}
      */
-    selector(field) {
+    _selector(field) {
         if (field.indexOf(':') > -1) {
             const [name, rule] = field.split(':');
 
             return { name, rule };
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the field scope if specified using dot notation.
+     *
+     * @param {string} field the specifie field.
+     * @return {Object|null}
+     */
+    _scope(field) {
+        if (field.indexOf('.') > -1) {
+            const [scope, name] = field.split('.');
+
+            return { name, scope };
         }
 
         return null;

@@ -21,6 +21,7 @@ const validator = new Validator({
     content: 'required|max:20',
     tags: 'required|in:1,2,3,5'
 });
+validator.init();
 
 it('empty values pass validation unless they are required', () => {
     const v = new Validator({
@@ -46,6 +47,12 @@ it('can validate single values', () => {
     expect(validator.validate('title', 'ab')).toBe(false);
     expect(validator.validate('title', '')).toBe(false);
     expect(validator.validate('title', 'a'.repeat(256))).toBe(false);
+
+    const v = new Validator();
+    
+    v.attach('el', 'required|min:3', { scope: 'scope' });
+    expect(v.validate('scope.el', '12')).toBe(false);
+    expect(v.validate('scope.el', '123')).toBe(true);
 });
 
 it('validates correctly regardless of rule placement', () => {
@@ -68,16 +75,40 @@ it('can be initialized without validations', () => {
     expect(validator2).toBeInstanceOf(Validator);
 });
 
-it('can allow array of rules for fields', () => {
+it('can add scopes', () => {
     const v = new Validator();
-    v.attach('file', [
-        { name: 'required' },
-        { name: 'regex', params: [/.(js|ts)$/] }
-    ]);
+    
+    expect(v.$scopes.myscope).toBeFalsy();
+    v.addScope('myscope');
+    expect(v.$scopes.myscope).toBeTruthy();
+    expect(v.$scopes.myscope.field).toBeFalsy();
+    v.attach('field', 'required', { scope: 'myscope' });
+    expect(v.$scopes.myscope.field).toBeTruthy();
+    v.addScope('myscope'); // doesn't overwrite if it exists.
+    expect(v.$scopes.myscope.field).toBeTruthy();
 
-    expect(v.validate('file', 'blabla.js')).toBe(true);
-    expect(v.validate('file', 'blabla.ts')).toBe(true);
-    expect(v.validate('file', 'blabla.css')).toBe(false);
+    // scopes can be numbers
+    v.addScope(1);
+    expect(v.$scopes[1]).toBeTruthy();
+});
+
+it('can allow rules object', () => {
+    const v = new Validator();
+    v.attach('field', {
+        required: true, // test boolean.
+        regex: /.(js|ts)$/, // test single value.
+        min: 5, // test single value.
+        in: ['blabla.js', 'blabla.ts'] // test params
+    });
+    
+
+    expect(v.validate('field', '')).toBe(false); // required.
+    expect(v.validate('field', 'blabla')).toBe(false); // regex.
+    expect(v.validate('field', 'g.js')).toBe(false); // min.
+    expect(v.validate('field', 'else.js')).toBe(false); // in.
+
+    expect(v.validate('field', 'blabla.js')).toBe(true);
+    expect(v.validate('field', 'blabla.ts')).toBe(true);
 });
 
 it('validates multiple values', async () => {
@@ -94,16 +125,17 @@ it('validates multiple values', async () => {
 });
 
 it('fails validation on a one-of-many failure', async () => {
-    const result = await validator.validateAll({
-        email: 'foo@bar.com',
-        name: 'John Snow',
-        title: 'No',
-        content: 'John knows nothing',
-        tags: 1
-    });
-
-    expect(result).toBe(false);
-    expect(validator.errorBag.all()).toContain("The title field must be at least 3 characters.");
+    try {
+        const result = await validator.validateAll({
+            email: 'foo@bar.com',
+            name: 'John Snow',
+            title: 'No',
+            content: 'John knows nothing',
+            tags: 1
+        });
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
 });
 
 it('bypasses values without rules in strictMode = off', async () => {
@@ -125,58 +157,70 @@ it('can set strict mode on specific instances', async () => {
 	const validator3 = new Validator({
 		imp: 'required'
 	});
-    let result = await validator3.validateAll({
-    	imp: 'Tyrion Lannister',
-        headless: 'Ned Stark'
-    });
-    expect(result).toBe(false); // strict = true.
+    try {
+        let result = await validator3.validateAll({
+            imp: 'Tyrion Lannister',
+            headless: 'Ned Stark'
+        });
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
+
     validator3.setStrictMode(false);
-    result = await validator3.validateAll({
+    let result = await validator3.validateAll({
     	imp: 'Tyrion Lannister',
         headless: 'Ned Stark'
     });
 
     expect(result).toBe(true); // strict = false.
 
-    result = await (new Validator({ imp: 'required' }).validateAll({
-    	imp: 'Tyrion Lannister',
-        headless: 'Ned Stark'
-    }));
-    expect(result).toBe(false); // strict = true because this is a different instance.
+    try {
+        await (new Validator({ imp: 'required' }).validateAll({
+            imp: 'Tyrion Lannister',
+            headless: 'Ned Stark'
+        })); // strict = true because this is a different instance.
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
 });
 
 it('formats error messages', async () => {
-    const result = await validator.validateAll({
-        email: 'foo@bar.c',
-        name: '',
-        title: 'Wi',
-        content: 'John knows nothing about this validator',
-        tags: 4
-    });
-
-    expect(result).toBe(false);
-    expect(validator.errorBag.all()).toEqual([
-        'The email field must be a valid email.',
-        'The name field is required.',
-        'The name field must be at least 3 characters.',
-        'The title field must be at least 3 characters.',
-        'The content field may not be greater than 20 characters.',
-        'The tags field must be a valid value.'
-    ]);
-    expect(validator.getErrors().all()).toEqual([
-        'The email field must be a valid email.',
-        'The name field is required.',
-        'The name field must be at least 3 characters.',
-        'The title field must be at least 3 characters.',
-        'The content field may not be greater than 20 characters.',
-        'The tags field must be a valid value.'
-    ]);
-
+    try {
+        const result = await validator.validateAll({
+            email: 'foo@bar.c',
+            name: '',
+            title: 'Wi',
+            content: 'John knows nothing about this validator',
+            tags: 4
+        });
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+        expect(validator.errorBag.all()).toEqual([
+            'The email field must be a valid email.',
+            'The name field is required.',
+            'The name field must be at least 3 characters.',
+            'The title field must be at least 3 characters.',
+            'The content field may not be greater than 20 characters.',
+            'The tags field must be a valid value.'
+        ]);
+        expect(validator.getErrors().all()).toEqual([
+            'The email field must be a valid email.',
+            'The name field is required.',
+            'The name field must be at least 3 characters.',
+            'The title field must be at least 3 characters.',
+            'The content field may not be greater than 20 characters.',
+            'The tags field must be a valid value.'
+        ]);
+    }
 });
 it('can attach new fields', () => {
-    validator.attach('field', 'required|min:5');
-    expect(validator.validate('field', 'less')).toBe(false);
-    expect(validator.validate('field', 'not less')).toBe(true);
+    const v = new Validator();
+    
+    expect(v.$scopes.__global__.field).toBeFalsy();
+    v.attach('field', 'required|min:5');
+    expect(v.$scopes.__global__.field).toBeTruthy();
+    expect(v.validate('field', 'less')).toBe(false);
+    expect(v.validate('field', 'not less')).toBe(true);
 });
 
 it('can attach new fields and display errors with custom names', () => {
@@ -204,6 +248,15 @@ it('can append new validations to a field', () => {
     expect(validator.validate('field', 'wow')).toBe(true);
     expect(validator.validate('field', 'woww')).toBe(false);
     expect(validator.validate('field', 'w')).toBe(false);
+
+    // attaches if the field doesn't exist.
+    const v = new Validator();
+    
+    v.attach('field', 'min:2');
+    v.detach('field');
+    v.append('field', 'min:3');
+    expect(v.validate('field', 'wo')).toBe(false);
+    expect(v.validate('field', 'wow')).toBe(true);
 });
 
 it('returns false when trying to validate a non-existant field.', () => {
@@ -211,8 +264,46 @@ it('returns false when trying to validate a non-existant field.', () => {
 });
 
 it('can detach rules', () => {
-    validator.detach('field');
-    expect(validator.$fields.field).toBeFalsy();
+    const v = new Validator();
+    
+    v.attach('field', 'required');
+    expect(v.$scopes.__global__.field).toBeTruthy();
+    v.detach('field');
+    expect(v.$scopes.__global__.field).toBeFalsy();
+    // Silently fails if the field does not exist.
+    expect(() => {
+        v.detach('someOtherField');
+    }).not.toThrow();
+});
+
+it('can validate specific scopes', async () => {
+    const v = new Validator();
+    
+    v.attach('field', 'alpha', { getter: () => '123', context: () => 'context' });
+    v.attach('field', 'alpha', { scope: 'myscope', getter: () => '123', context: () => 'context' });
+    v.attach('field', 'alpha', { scope: 'otherscope', getter: () => '123', context: () => 'context' });
+
+    // only '__global__' scope got validated.    
+    try {
+        await v.validateAll();
+    } catch (error) {
+        expect(v.errorBag.count()).toBe(1);
+    }
+
+    // the second scope too.
+    try {
+        await v.validateAll('myscope');
+    } catch (error) {
+        expect(v.errorBag.count()).toBe(2);
+    }
+    
+    v.errorBag.clear();
+    try {
+        // all scopes.
+        await v.validateScopes();
+    } catch (error) {
+        expect(v.errorBag.count()).toBe(3);
+    }
 });
 
 it('can find errors by field and rule', () => {
@@ -371,21 +462,30 @@ it('resolves promises to booleans', async () => {
         image: 'dimensions:150,100'
     });
 
-    helpers.dimensionsTest({ width: 150, height: 100 });
 
-    let value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
+    helpers.dimensionsTest({ width: 150, height: 100 }, false, global);
+    let value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
     expect(value).toBe(true);
 
-    helpers.dimensionsTest({ width: 150, height: 100}, true);
-    value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
-    expect(value).toBe(false);
+    helpers.dimensionsTest({ width: 150, height: 100}, true, global);
+    try {
+        await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+    }
 
-    value = await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)], params);
-    expect(value).toBe(false);
+    try {
+        await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)]);
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+    }
 
-    helpers.dimensionsTest({ width: 30, height: 20});
-    value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)], params);
-    expect(value).toBe(false);
+    helpers.dimensionsTest({ width: 30, height: 20}, false, global);
+    try {
+        await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+    }
 });
 
 it('wont install moment if the provided reference is not provided or not a function', () => {
@@ -445,6 +545,8 @@ it('cascades promise values with previous boolean', () => {
     });
     v.validate('email', 'invalid').then(value => {
         expect(value).toBe(false);
+    }).catch(error => {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
     });
 });
 
@@ -461,12 +563,15 @@ it('cascades promise values with previous fields', async () => {
     });
     expect(result).toBe(true); // should pass
 
-    result = await v.validateAll({
-        email: 'somemeail', // not valid email.
-        name: 'ProperName',
-        phone: '11123112123'
-    });
-    expect(result).toBe(false); // should fail
+    try {
+        await v.validateAll({
+            email: 'somemeail', // not valid email.
+            name: 'ProperName',
+            phone: '11123112123'
+        });
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+    }
 });
 
 it('can translate target field for field dependent validations', () => {
@@ -517,6 +622,7 @@ describe('validators can provide reasoning for failing', () => {
         });
 
         v.attach('field', 'reason');
+        
         expect(v.validate('field', 'wow')).toBe(false);
         expect(v.errorBag.first('field')).toBe('Not correct');
     });
@@ -557,7 +663,7 @@ describe('validators can provide reasoning for failing', () => {
             }
         });
         v.attach('reason_field', 'reason_test');
-
+        
         expect(await v.validate('reason_field', 'trigger')).toEqual(false);
         expect(v.errorBag.first('reason_field')).toBe('Not this value');
         expect(await v.validate('reason_field', false)).toBe(false);
@@ -576,7 +682,7 @@ it('can remove rules from the list of validators', () => {
 });
 
 it('can fetch the values using getters when not specifying values in validateAll', async () => {
-    const v1 = new Validator();
+    const v = new Validator();
     const getter = (context) => {
         return context.value
     };
@@ -587,10 +693,15 @@ it('can fetch the values using getters when not specifying values in validateAll
     };
 
     // must use the attach API.
-    v1.attach('name', 'required|alpha', { prettyName: 'Full Name', context, getter });
-    expect(await v1.validateAll()).toBe(true);
+    v.attach('name', 'required|alpha', { prettyName: 'Full Name', context, getter });
+    
+    expect(await v.validateAll()).toBe(true);
     expect(toggle).toBe(true);
-    expect(await v1.validateAll()).toBe(false); // should have toggled after first call.
+    try {
+        await v.validateAll();
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
 });
 
 it('can fetch the values using getters for a specific scope when not specifying values in validateAll', async () => {
@@ -606,8 +717,17 @@ it('can fetch the values using getters for a specific scope when not specifying 
     v1.attach('name_two', 'required|alpha', { scope: () => 'scope2', context: contexts[1], getter });
 
     expect(await v1.validateAll('scope1')).toBe(true);
-    expect(await v1.validateAll('scope2')).toBe(false);
-    expect(await v1.validateAll()).toBe(false);
+    try {
+        await v1.validateAll('scope2');
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
+
+    try {
+        await v1.validateAll();
+    } catch (error) {
+        expect(error.msg).toBe('[vee-validate]: Validation Failed');
+    }
 });
 
 it('does not add empty rules', () => {
@@ -615,4 +735,14 @@ it('does not add empty rules', () => {
     const v1 = new Validator({ name: 'required|alpha||:blabla' });
     expect(v1.validate('name', 12)).toBe(false);
     expect(v1.validate('name', 'Martin')).toBe(true);
+});
+
+it('can update validations of a field', () => {
+    const v = new Validator({
+        name: 'required|alpha'
+    });
+    expect(v.validate('name', 12)).toBe(false);
+    v.updateField('name', 'required|numeric');
+    expect(v.errorBag.count()).toBe(0);
+    expect(v.validate('name', 12)).toBe(true);
 });

@@ -1,10 +1,12 @@
-import { getScope, debounce, warn, getDataAttribute } from './utils/helpers';
+import { getScope, debounce, warn, getDataAttribute, isObject } from './utils/helpers';
 
 export default class ListenerGenerator
 {
     constructor(el, binding, vnode, options) {
+        this.unwatch = undefined;
         this.callbacks = [];
         this.el = el;
+        this.scope = isObject(binding.value) ? binding.value.scope : getScope(el);
         this.binding = binding;
         this.vm = vnode.context;
         this.component = vnode.child;
@@ -31,6 +33,18 @@ export default class ListenerGenerator
         let fieldName = false;
         if (! rules) {
             return false;
+        }
+
+        if (isObject(rules)) {
+            Object.keys(rules).forEach(r => {
+                if (/confirmed|after|before/.test(r)) {
+                    fieldName = rules[r];
+
+                    return false;
+                }
+            });
+
+            return fieldName;
         }
 
         rules.split('|').every(r => {
@@ -95,7 +109,7 @@ export default class ListenerGenerator
      * Trigger the validation for a specific value.
      */
     _validate(value) {
-        return this.vm.$validator.validate(this.fieldName, value, getScope(this.el));
+        return this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
     }
 
     /**
@@ -104,10 +118,18 @@ export default class ListenerGenerator
      */
     _getScopedListener(callback) {
         return (scope) => {
-            if (! scope || scope === getScope(this.el) || scope instanceof Event) {
+            if (! scope || scope === this.scope || scope instanceof Event) {
                 callback();
             }
         };
+    }
+
+    _getRules() {
+        if (! this.binding.expression) {
+            return getDataAttribute(this.el, 'rules');
+        }
+
+        return isObject(this.binding.value) ? this.binding.value.rules : this.binding.value;
     }
 
     /**
@@ -115,7 +137,7 @@ export default class ListenerGenerator
      */
     _attachValidatorEvent() {
         const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
-        const fieldName = this._hasFieldDependency(getDataAttribute(this.el, 'rules'));
+        const fieldName = this._hasFieldDependency(this._getRules());
         if (fieldName) {
             // Wait for the validator ready triggered when vm is mounted because maybe
             // the element isn't mounted yet.
@@ -192,7 +214,7 @@ export default class ListenerGenerator
     _attachComponentListeners() {
         this.componentListener = debounce((value) => {
             this.vm.$validator.validate(this.fieldName, value);
-        }, getDataAttribute(this.el, 'delay') || this.options.delay);
+        }, getDataAttribute(this.el, 'delay') || this.options.delay, this);
 
         this.component.$on('input', this.componentListener);
     }
@@ -216,7 +238,8 @@ export default class ListenerGenerator
 
         if (~['radio', 'checkbox'].indexOf(this.el.type)) {
             this.vm.$nextTick(() => {
-                [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
+                const elms = document.querySelectorAll(`input[name="${this.el.name}"]`);
+                Array.from(elms).forEach(input => {
                     handler.names.forEach(handlerName => {
                         input.addEventListener(handlerName, listener);
                         this.callbacks.push({ name: handlerName, listener, el: input });
@@ -279,13 +302,26 @@ export default class ListenerGenerator
         }
     }
 
+    /*
+    * Gets the arg string value, either from the directive or the expression value.
+    */
+    _getArg() {
+        if (this.binding.arg) {
+            return this.binding.arg;
+        }
+
+        return isObject(this.binding.value) ? this.binding.value.arg : null;
+    }
+
     /**
      * Attaches the Event Listeners.
      */
     attach() {
         const { context, getter } = this._resolveValueGetter();
-        this.vm.$validator.attach(this.fieldName, getDataAttribute(this.el, 'rules'), {
-            scope: () => getScope(this.el),
+        this.vm.$validator.attach(this.fieldName, this._getRules(), {
+            scope: () => {
+                return this.scope || getScope(this.el);
+            },
             prettyName: getDataAttribute(this.el, 'as'),
             context,
             getter,
@@ -293,15 +329,11 @@ export default class ListenerGenerator
         });
 
         this._attachValidatorEvent();
-        if (this.binding.expression) {
-            // if its bound, validate it. (since update doesn't trigger after bind).
-            if (! this.binding.modifiers.initial) {
-                this.vm.$validator.validate(
-                    this.fieldName,
-                    this.binding.value,
-                    getScope(this.el)
-                );
-            }
+        const arg = this._getArg();
+        if (arg) {
+            this.unwatch = this.vm.$watch(arg, (value) => {
+                this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
+            });
 
             return;
         }
@@ -315,6 +347,10 @@ export default class ListenerGenerator
     detach() {
         if (this.component) {
             this.component.$off('input', this.componentListener);
+        }
+
+        if (this.unwatch) {
+            this.unwatch();
         }
 
         this.callbacks.forEach(h => {

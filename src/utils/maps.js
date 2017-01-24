@@ -29,7 +29,7 @@ const find = ($vm) => {
 const register = ($vm) => {
     let instance = find($vm);
     if (! instance) {
-        instance = Validator.create(undefined, $vm);
+        instance = Validator.create(undefined, $vm, { init: false });
 
         instances.push({
             $vm,

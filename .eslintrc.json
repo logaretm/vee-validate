@@ -32,6 +32,7 @@
         "no-unsafe-negation": 0,
         "import/no-named-as-default": 0,
         "import/no-named-as-default-member": 0,
-        "no-underscore-dangle": 0
+        "no-underscore-dangle": 0,
+        "no-param-reassign": 0
     }
 }
