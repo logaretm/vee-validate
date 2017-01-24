@@ -1340,7 +1340,7 @@ const dictionary = new Dictionary({
 
 class Validator
 {
-    constructor(validations, $vm) {
+    constructor(validations, $vm, options = { init: true }) {
         this.strictMode = STRICT_MODE;
         this.$scopes = { __global__: {} };
         this.fieldBag = new FieldBag();
@@ -1356,6 +1356,10 @@ class Validator
         if (typeof moment === 'function') {
             // eslint-disable-next-line
             this.installDateTimeValidators(moment);
+        }
+
+        if (options.init) {
+            this.init();
         }
     }
 
@@ -1432,8 +1436,8 @@ class Validator
      * @param  {object} validations The validations object.
      * @return {Validator} validator A validator object.
      */
-    static create(validations, $vm) {
-        return new Validator(validations, $vm);
+    static create(validations, $vm, options) {
+        return new Validator(validations, $vm, options);
     }
 
     /**
@@ -1594,17 +1598,77 @@ class Validator
 
         const field = this.$scopes[scope][name];
         this.fieldBag._add(name);
-        field.validations = [];
-        if (Array.isArray(checks)) {
-            field.validations = checks;
-            field.required = !! checks.find(c => c === 'required' || c.name === 'required');
-            return;
+        field.validations = this._normalizeRules(name, checks, scope);
+        field.required = this._isRequired(field);
+    }
+
+    /**
+     * Normalizes rules.
+     * @return {Object}
+     */
+    _normalizeRules(name, checks, scope) {
+        if (! checks) return {};
+
+        if (typeof checks === 'string') {
+            return this._normalizeString(checks);
         }
 
-        // Make sure we are not splitting an empty value.
-        if (! checks) return;
+        if (! isObject(checks)) {
+            warn(`Your checks for '${scope}.${name}' must be either a string or an object.`);
+            return {};
+        }
 
-        this._normalize(checks, field);
+        return this._normalizeObject(checks);
+    }
+
+    /**
+     * Checks if a field has a required rule.
+     */
+    _isRequired(field) {
+        return field.validations && field.validations.required;
+    }
+
+    /**
+     * Normalizes an object of rules.
+     */
+    _normalizeObject(rules) {
+        const validations = {};
+        Object.keys(rules).forEach(rule => {
+            let params = [];
+            if (rules[rule] === true) {
+                params = [];
+            } else if (Array.isArray(rules[rule])) {
+                params = rules[rule];
+            } else {
+                params = [rules[rule]];
+            }
+            validations[rule] = params;
+            if (date.installed && this._isADateRule(rule)) {
+                validations[rule].push(this._getDateFormat(validations));
+            }
+        });
+
+        return validations;
+    }
+
+    /**
+     * Date rules need the existance of a format, so date_format must be supplied.
+     * @param {String} name The rule name.
+     * @param {Array} validations the field validations.
+     */
+    _getDateFormat(validations) {
+        if (validations.date_format && Array.isArray(validations.date_format)) {
+            return validations.date_format[0];
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks if the passed rule is a date rule.
+     */
+    _isADateRule(rule) {
+        return !! ~['after', 'before', 'date_between'].indexOf(rule);
     }
 
     /**
@@ -1612,42 +1676,39 @@ class Validator
      * @param {String} rules The rules that will be normalized.
      * @param {Object} field The field object that is being operated on.
      */
-    _normalize(rules, field) {
+    _normalizeString(rules) {
+        const validations = {};
         rules.split('|').forEach(rule => {
-            const normalizedRule = this._normalizeRule(rule, field.validations);
-            if (! normalizedRule.name) {
+            const parsedRule = this._parseRule(rule);
+            if (! parsedRule.name) {
                 return;
             }
 
-            if (normalizedRule.name === 'required') {
-                field.required = true;
+            if (parsedRule.name === 'required') {
+                validations.required = true;
             }
 
-            field.validations.push(normalizedRule);
+            validations[parsedRule.name] = parsedRule.params;
+            if (date.installed && this._isADateRule(parsedRule.name)) {
+                validations[parsedRule.name].push(this._getDateFormat(validations));
+            }
         });
+
+        return validations;
     }
 
     /**
-     * Normalizes a single validation object.
+     * Normalizes a string rule.
      *
-     * @param  {string} rule The rule to be normalized.
+     * @param {string} rule The rule to be normalized.
      * @return {object} rule The normalized rule.
      */
-    _normalizeRule(rule, validations) {
+    _parseRule(rule) {
         let params = [];
         const name = rule.split(':')[0];
 
         if (~rule.indexOf(':')) {
             params = rule.split(':').slice(1).join(':').split(',');
-        }
-
-        // Those rules need the date format to parse and compare correctly.
-        if (date.installed && ~ ['after', 'before', 'date_between'].indexOf(name)) {
-            const dateFormat = validations.filter(v => v.name === 'date_format')[0];
-            if (dateFormat) {
-                // pass it as the last param.
-                params.push(dateFormat.params[0]);
-            }
         }
 
         return { name, params };
@@ -1758,7 +1819,7 @@ class Validator
      * Registers a field to be validated.
      *
      * @param  {string} name The field name.
-     * @param  {string} checks validations expression.
+     * @param  {String|Array|Object} checks validations expression.
      * @param {string} prettyName Custom name to be used as field name in error messages.
      * @param {Function} getter A function used to retrive a fresh value for the field.
      */
@@ -1784,12 +1845,17 @@ class Validator
         attach();
     }
 
+    /**
+     * Initializes the non-scoped fields and any bootstrap logic.
+     */
     init() {
         this.$ready = true;
         this.$deferred.forEach(attach => {
             attach();
         });
         this.$deferred = [];
+
+        return this;
     }
 
     /**
@@ -1806,16 +1872,10 @@ class Validator
         }
 
         const field = this.$scopes[options.scope][name];
-        const checksArray = [];
-        checks.split('|').forEach(rule => {
-            const normalizedRule = this._normalizeRule(rule, field.validations);
-            if (! normalizedRule.name) {
-                return;
-            }
-            checksArray.push(normalizedRule);
+        const newChecks = this._normalizeRules(name, checks, options.scope);
+        Object.keys(newChecks).forEach(key => {
+            field.validations[key] = newChecks[key];
         });
-        const mergedChecks = field.validations.concat(checksArray);
-        this.updateField(name, mergedChecks, options);
     }
 
     /**
@@ -1922,6 +1982,9 @@ class Validator
         Validator.updateDictionary(data);
     }
 
+    /**
+     * Adds a scope.
+     */
     addScope(scope) {
         if (scope && ! this.$scopes[scope]) {
             this.$scopes[scope] = {};
@@ -1950,17 +2013,22 @@ class Validator
             return false;
         }
 
+        const field = this.$scopes[scope][name];
         this.errorBag.remove(name, scope);
         // if its not required and is empty or null or undefined then it passes.
-        if (! this.$scopes[scope][name].required && ~[null, undefined, ''].indexOf(value)) {
+        if (! field.required && ~[null, undefined, ''].indexOf(value)) {
             this.fieldBag._setFlags(name, { valid: true, dirty: true });
             return true;
         }
 
         let test = true;
         const promises = [];
-        this.$scopes[scope][name].validations.forEach(rule => {
-            const result = this._test(name, value, rule, scope);
+        Object.keys(field.validations).forEach(rule => {
+            const result = this._test(
+                name,
+                value,
+                { name: rule, params: field.validations[rule] },
+                scope);
             if (isCallable(result.then)) {
                 promises.push(result);
                 return;
@@ -2069,7 +2137,7 @@ const find = ($vm) => {
 const register = ($vm) => {
     let instance = find($vm);
     if (! instance) {
-        instance = Validator.create(undefined, $vm);
+        instance = Validator.create(undefined, $vm, { init: false });
 
         instances.push({
             $vm,
@@ -2146,6 +2214,18 @@ class ListenerGenerator
         let fieldName = false;
         if (! rules) {
             return false;
+        }
+
+        if (isObject(rules)) {
+            Object.keys(rules).forEach(r => {
+                if (/confirmed|after|before/.test(r)) {
+                    fieldName = rules[r];
+
+                    return false;
+                }
+            });
+
+            return fieldName;
         }
 
         rules.split('|').every(r => {
@@ -2491,18 +2571,8 @@ var validate = (options) => ({
     }
 });
 
-// eslint-disable-next-line
-var scope = (options) => ({
-    bind(el, binding, vnode) {
-        const scope = binding.arg || binding.value || getDataAttribute('scope');
-        vnode.context.$validator.addScope(scope);
-        el.setAttribute('data-vv-scope', scope);
-    }
-});
-
 var directives = (Vue, options) => {
     Vue.directive('validate', validate(options));
-    Vue.directive('scope', scope(options));
 };
 
 // eslint-disable-next-line

@@ -35,6 +35,18 @@ export default class ListenerGenerator
             return false;
         }
 
+        if (isObject(rules)) {
+            Object.keys(rules).forEach(r => {
+                if (/confirmed|after|before/.test(r)) {
+                    fieldName = rules[r];
+
+                    return false;
+                }
+            });
+
+            return fieldName;
+        }
+
         rules.split('|').every(r => {
             if (/\b(confirmed|after|before):/.test(r)) {
                 fieldName = r.split(':')[1];
