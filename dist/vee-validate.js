@@ -2738,7 +2738,7 @@ ListenerGenerator.prototype.detach = function detach () {
 
 var listenersInstances = [];
 
-var validate = function (options) { return ({
+var directive = function (options) { return ({
     bind: function bind(el, binding, vnode) {
         var listener = new ListenerGenerator(el, binding, vnode, options);
         listener.attach();
@@ -2775,10 +2775,6 @@ var validate = function (options) { return ({
     }
 }); };
 
-var directives = function (Vue, options) {
-    Vue.directive('validate', validate(options));
-};
-
 // eslint-disable-next-line
 var install = function (Vue, ref) {
     if ( ref === void 0 ) ref = {};
@@ -2813,7 +2809,7 @@ var install = function (Vue, ref) {
     });
 
     Vue.mixin(mixin(options)); // Install Mixin.
-    Vue.use(directives, options); // Install directives.
+    Vue.directive('validate', directive(options));
 };
 
 var index = {

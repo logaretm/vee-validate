@@ -2542,7 +2542,7 @@ class ListenerGenerator
 
 const listenersInstances = [];
 
-var validate = (options) => ({
+var directive = (options) => ({
     bind(el, binding, vnode) {
         const listener = new ListenerGenerator(el, binding, vnode, options);
         listener.attach();
@@ -2571,10 +2571,6 @@ var validate = (options) => ({
     }
 });
 
-var directives = (Vue, options) => {
-    Vue.directive('validate', validate(options));
-};
-
 // eslint-disable-next-line
 const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true, fieldsBagName = 'fields' } = {}) => {
     if (dictionary) {
@@ -2601,7 +2597,7 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
     });
 
     Vue.mixin(mixin(options)); // Install Mixin.
-    Vue.use(directives, options); // Install directives.
+    Vue.directive('validate', directive(options));
 };
 
 var index = {

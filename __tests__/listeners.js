@@ -19,6 +19,9 @@ it('has field dependent rule', () => {
     // custom user declared rules
     expect(lg._hasFieldDependency('required|before_time:10')).toBe(false);
     expect(lg._hasFieldDependency('required|only_after:10')).toBe(false);
+
+    expect(lg._hasFieldDependency({ required: true, confirmed: 'field'})).toBe('field');
+    expect(lg._hasFieldDependency({ required: true })).toBe(false);
 });
 
 it('should not crash if no rules attribute was specified', () => {
