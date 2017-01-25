@@ -122,6 +122,17 @@ it('fetches the first error message for a specific field', () => {
     expect(errors.first('scope2.email:rule2')).toBe('mah');
 });
 
+it('fetches the first error rule for a specific field', () => {
+    const errors = new ErrorBag();
+    errors.add('email', 'The email is invalid', 'rule1');
+    errors.add('name', 'Your name is required', 'rule2');
+
+    expect(errors.firstRule('email')).toBe('rule1');
+    expect(errors.firstRule('name')).toBe('rule2');
+    expect(errors.firstRule('email', 'scope3')).toBeNull();
+    expect(errors.firstRule('password')).toBeNull();
+});
+
 it('fetches the first error message for a specific scoped field', () => {
     const errors = new ErrorBag();
     errors.add('email', 'The email is invalid', 'rule1', 'scope1');
