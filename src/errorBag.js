@@ -123,6 +123,18 @@ export default class ErrorBag
     }
 
     /**
+     * Returns the first error rule for the specified field
+     *
+     * @param {string} field The specified field.
+     * @return {string|null} First error rule on the specified field if one is found, otherwise null
+     */
+    firstRule(field, scope) {
+        const errors = this.collect(name, scope, false);
+
+        return (errors.length && errors[0].rule) || null;
+    }
+
+    /**
      * Checks if the internal array has at least one error for the specified field.
      *
      * @param  {string} field The specified field.
