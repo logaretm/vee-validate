@@ -129,7 +129,7 @@ export default class ErrorBag
      * @return {string|null} First error rule on the specified field if one is found, otherwise null
      */
     firstRule(field, scope) {
-        const errors = this.collect(name, scope, false);
+        const errors = this.collect(field, scope, false);
 
         return (errors.length && errors[0].rule) || null;
     }
