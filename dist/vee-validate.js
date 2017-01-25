@@ -1000,7 +1000,6 @@ var ValidatorException = (function () {
     return anonymous;
 }());
 
-var arguments$1 = arguments;
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
@@ -1021,16 +1020,22 @@ var getScope = function (el) {
 /**
  * Debounces a function.
  */
-var debounce = function (callback, wait, context) {
-    var timeout = null;
-    var callbackArgs = null;
+var debounce = function (callback, wait, immediate) {
+    if ( wait === void 0 ) wait = 0;
 
-    var later = function () { return callback.apply(context, callbackArgs); };
-
+    var timeout;
     return function () {
-        callbackArgs = arguments$1;
+        var args = [], len = arguments.length;
+        while ( len-- ) args[ len ] = arguments[ len ];
+
+        var later = function () {
+            timeout = null;
+            if (!immediate) { callback.apply(void 0, args); }
+        };
+        var callNow = immediate && !timeout;
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
+        if (callNow) { callback(args); }
     };
 };
 
@@ -2583,8 +2588,8 @@ ListenerGenerator.prototype._attachComponentListeners = function _attachComponen
         var this$1 = this;
 
     this.componentListener = debounce(function (value) {
-        this$1.vm.$validator.validate(this$1.fieldName, value);
-    }, getDataAttribute(this.el, 'delay') || this.options.delay, this);
+        this$1._validate(value);
+    }, getDataAttribute(this.el, 'delay') || this.options.delay);
 
     this.component.$on('input', this.componentListener);
 };

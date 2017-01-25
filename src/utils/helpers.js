@@ -18,16 +18,17 @@ export const getScope = (el) => {
 /**
  * Debounces a function.
  */
-export const debounce = (callback, wait, context) => {
-    let timeout = null;
-    let callbackArgs = null;
-
-    const later = () => callback.apply(context, callbackArgs);
-
-    return () => {
-        callbackArgs = arguments;
+export const debounce = (callback, wait = 0, immediate) => {
+    let timeout;
+    return (...args) => {
+        const later = () => {
+            timeout = null;
+            if (!immediate) callback(...args);
+        };
+        const callNow = immediate && !timeout;
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
+        if (callNow) callback(args);
     };
 };
 

@@ -213,8 +213,8 @@ export default class ListenerGenerator
      */
     _attachComponentListeners() {
         this.componentListener = debounce((value) => {
-            this.vm.$validator.validate(this.fieldName, value);
-        }, getDataAttribute(this.el, 'delay') || this.options.delay, this);
+            this._validate(value);
+        }, getDataAttribute(this.el, 'delay') || this.options.delay);
 
         this.component.$on('input', this.componentListener);
     }

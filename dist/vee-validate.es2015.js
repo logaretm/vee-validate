@@ -970,16 +970,17 @@ const getScope = (el) => {
 /**
  * Debounces a function.
  */
-const debounce = (callback, wait, context) => {
-    let timeout = null;
-    let callbackArgs = null;
-
-    const later = () => callback.apply(context, callbackArgs);
-
-    return () => {
-        callbackArgs = arguments;
+const debounce = (callback, wait = 0, immediate) => {
+    let timeout;
+    return (...args) => {
+        const later = () => {
+            timeout = null;
+            if (!immediate) callback(...args);
+        };
+        const callNow = immediate && !timeout;
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
+        if (callNow) callback(args);
     };
 };
 
@@ -2394,8 +2395,8 @@ class ListenerGenerator
      */
     _attachComponentListeners() {
         this.componentListener = debounce((value) => {
-            this.vm.$validator.validate(this.fieldName, value);
-        }, getDataAttribute(this.el, 'delay') || this.options.delay, this);
+            this._validate(value);
+        }, getDataAttribute(this.el, 'delay') || this.options.delay);
 
         this.component.$on('input', this.componentListener);
     }
