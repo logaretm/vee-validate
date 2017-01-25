@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "2.0.0-beta.19",
+  "version": "2.0.0-beta.20",
   "description": "Simple Vue.js input validation plugin",
   "main": "dist/vee-validate.js",
   "module": "dist/vee-validate.es2015.js",
