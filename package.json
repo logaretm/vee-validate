@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "2.0.0-beta.20",
+  "version": "2.0.0-beta.21",
   "description": "Simple Vue.js input validation plugin",
   "main": "dist/vee-validate.js",
   "homepage": "http://vee-validate.logaretm.com",

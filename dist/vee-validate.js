@@ -2821,7 +2821,7 @@ var index = {
     install: install,
     Validator: Validator,
     ErrorBag: ErrorBag,
-    version: '2.0.0-beta.20'
+    version: '2.0.0-beta.21'
 };
 
 return index;

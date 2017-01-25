@@ -2605,7 +2605,7 @@ var index = {
     install,
     Validator,
     ErrorBag,
-    version: '2.0.0-beta.20'
+    version: '2.0.0-beta.21'
 };
 
 export default index;
