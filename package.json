@@ -1,9 +1,8 @@
 {
   "name": "vee-validate",
-  "version": "2.0.0-beta.20",
+  "version": "2.0.0-beta.21",
   "description": "Simple Vue.js input validation plugin",
   "main": "dist/vee-validate.js",
-  "module": "dist/vee-validate.es2015.js",
   "homepage": "http://vee-validate.logaretm.com",
   "repository": "https://github.com/logaretm/vee-validate",
   "jest": {
@@ -50,7 +49,7 @@
     "eslint-plugin-import": "^1.12.0",
     "jest": "^17.0.3",
     "moment": "^2.14.1",
-    "rollup": "0.41.1",
+    "rollup": "0.41.0",
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-commonjs": "^7.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
