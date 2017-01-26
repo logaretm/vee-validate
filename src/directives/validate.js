@@ -69,7 +69,7 @@ export default (options) => ({
             el.onfocus = () => {
                 setDirty(el, classNames);
             };
-            
+
             addClasses(el, vnode.context.fields, classNames);
         }
     },
