@@ -75,7 +75,7 @@ export default class ListenerGenerator
      * Validates files, triggered by 'change' event.
      */
     _fileListener() {
-        const isValid = this._validate([...this.el.files]);
+        const isValid = this._validate(Array.from(this.el.files));
 
         if (! isValid && this.binding.modifiers.reject) {
             this.el.value = '';
@@ -100,7 +100,7 @@ export default class ListenerGenerator
             return;
         }
 
-        [...checkedBoxes].forEach(box => {
+        Array.from(checkedBoxes).forEach(box => {
             this._validate(box.value);
         });
     }
@@ -277,7 +277,7 @@ export default class ListenerGenerator
                     return null;
                 }
 
-                return [...context].map(checkbox => checkbox.value);
+                return Array.from(context).map(checkbox => checkbox.value);
             }
         };
         case 'radio': return {
@@ -289,7 +289,7 @@ export default class ListenerGenerator
         case 'file': return {
             context: () => this.el,
             getter(context) {
-                return [...context.files];
+                return Array.from(context.files);
             }
         };
 
