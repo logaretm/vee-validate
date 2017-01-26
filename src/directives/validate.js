@@ -12,17 +12,15 @@ const defaultClassNames = {
     dirty: 'dirty' // control has been interacted with
 };
 
-function addClasses(el, fields, classNames = null) {
-    const field = el.getAttribute('name');
-
-    if (!field) {
+function addClasses(el, fieldName, fields, classNames = null) {
+    if (!fieldName) {
         return;
     }
 
     classNames = Object.assign({}, defaultClassNames, classNames);
 
-    const isDirty = fields.dirty(name);
-    const isValid = fields.valid(name);
+    const isDirty = fields.dirty(fieldName);
+    const isValid = fields.valid(fieldName);
 
     if (isDirty) {
         addClass(el, classNames.touched);
@@ -58,6 +56,7 @@ function setPristine(el, classNames) {
 export default (options) => ({
     bind(el, binding, vnode) {
         const listener = new ListenerGenerator(el, binding, vnode, options);
+
         listener.attach();
         listenersInstances.push({ vm: vnode.context, el, instance: listener });
 
@@ -70,17 +69,18 @@ export default (options) => ({
                 setDirty(el, classNames);
             };
 
-            addClasses(el, vnode.context.fields, classNames);
+            addClasses(el, listener.fieldName, vnode.context.fields, classNames);
         }
     },
     update(el, { expression, value, oldValue }, { context }) {
+        const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
+ 
         if (options.enableAutoClasses) {
-            addClasses(el, context.fields, options.classNames);
+            addClasses(el, holder.instance.fieldName, context.fields, options.classNames);
         }
 
         if (! expression || JSON.stringify(value) === JSON.stringify(oldValue)) return;
 
-        const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
         const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
 
         context.$validator.updateField(
