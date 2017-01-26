@@ -74,7 +74,7 @@ export default (options) => ({
     },
     update(el, { expression, value, oldValue }, { context }) {
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
- 
+
         if (options.enableAutoClasses) {
             addClasses(el, holder.instance.fieldName, context.fields, options.classNames);
         }
