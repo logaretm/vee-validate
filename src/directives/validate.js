@@ -72,17 +72,14 @@ export default (options) => ({
             addClasses(el, listener.fieldName, vnode.context.fields, classNames);
         }
     },
-    update(el, { expression, value, oldValue }, { context }) {
+    update(el, { value }, { context }) {
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
 
         if (options.enableAutoClasses) {
             addClasses(el, holder.instance.fieldName, context.fields, options.classNames);
         }
 
-        if (! expression || JSON.stringify(value) === JSON.stringify(oldValue)) return;
-
         const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
-
         context.$validator.updateField(
             holder.instance.fieldName,
             isObject(value) ? value.rules : value,

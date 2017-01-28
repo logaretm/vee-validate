@@ -320,7 +320,13 @@ export default class Validator
             } else {
                 params = [rules[rule]];
             }
-            validations[rule] = params;
+
+            if (rules[rule] === false) {
+                delete validations[rule];
+            } else {
+                validations[rule] = params;
+            }
+
             if (date.installed && this._isADateRule(rule)) {
                 validations[rule].push(this._getDateFormat(validations));
             }
@@ -560,7 +566,6 @@ export default class Validator
      * Updates the field rules with new ones.
      */
     updateField(name, checks, options = {}) {
-        this.errorBag.remove(name, options.scope);
         this._createField(name, checks, options.scope);
     }
 
