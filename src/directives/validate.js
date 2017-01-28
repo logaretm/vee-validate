@@ -72,18 +72,23 @@ export default (options) => ({
             addClasses(el, listener.fieldName, vnode.context.fields, classNames);
         }
     },
-    update(el, { value }, { context }) {
+    update(el, { expression, value, oldValue }, { context }) {
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
 
         if (options.enableAutoClasses) {
             addClasses(el, holder.instance.fieldName, context.fields, options.classNames);
         }
 
+        // make sure we don't do uneccessary work if no expression was passed
+        // or if the string value did not change.
+        // eslint-disable-next-line
+        if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) return;
+
         const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
         context.$validator.updateField(
             holder.instance.fieldName,
             isObject(value) ? value.rules : value,
-            { scope }
+            { scope: scope || '__global__' }
         );
     },
     unbind(el, { value }, { context }) {
