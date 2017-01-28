@@ -742,7 +742,7 @@ it('can update validations of a field', () => {
         name: 'required|alpha'
     });
     expect(v.validate('name', 12)).toBe(false);
-    v.updateField('name', 'required|numeric');
+    v.updateField('name', 'required|numeric', { scope: '__global__' });
     expect(v.errorBag.count()).toBe(0);
     expect(v.validate('name', 12)).toBe(true);
 });
