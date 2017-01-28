@@ -214,6 +214,15 @@ export default class ListenerGenerator
     _attachComponentListeners() {
         this.componentListener = debounce((value) => {
             this._validate(value);
+
+            // Pass down errors to component if any
+            const errors = this.vm.errors.errors.filter(error => error.field === this.fieldName);
+
+            this.component.errors.clear();
+
+            errors.forEach(({ field, msg, rule, scope }) => {
+                this.component.errors.add(field, msg, rule, scope);
+            });
         }, getDataAttribute(this.el, 'delay') || this.options.delay);
 
         this.component.$on('input', this.componentListener);
