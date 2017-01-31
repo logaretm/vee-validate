@@ -333,7 +333,7 @@ export default class ListenerGenerator
         if (arg) {
             this.unwatch = this.vm.$watch(arg, (value) => {
                 this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
-            });
+            }, { deep: true });
 
             return;
         }
