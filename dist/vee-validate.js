@@ -1109,6 +1109,51 @@ var removeClass = function (el, className) {
   }
 };
 
+/**
+ * Converts an array-like object to array.
+ * Simple polyfill for Array.from
+ */
+var toArray = function (arrayLike) {
+  if (Array.from) {
+    return Array.from(arrayLike);
+  }
+
+  var array = [];
+  var length = arrayLike.length;
+  for (var i = 0; i < length; i++) {
+    array.push(arrayLike[i]);
+  }
+
+  return array;
+};
+
+/**
+ * Assign polyfill from the mdn.
+ */
+var assign = function (target) {
+  var others = [], len = arguments.length - 1;
+  while ( len-- > 0 ) others[ len ] = arguments[ len + 1 ];
+
+  if (Object.assign) {
+    return Object.assign.apply(Object, [ target ].concat( others ));
+  }
+
+  if (target == null) { // TypeError if undefined or null
+    throw new TypeError('Cannot convert undefined or null to object');
+  }
+
+  var to = Object(target);
+  others.forEach(function (arg) {
+    if (arg != null) { // Skip over if undefined or null
+      Object.keys(arg).forEach(function (key) {
+        to[key] = arg[key];
+      });
+    }
+  });
+
+  return to;
+};
+
 /* eslint-disable prefer-rest-params */
 var Dictionary = function Dictionary(dictionary) {
   if ( dictionary === void 0 ) dictionary = {};
@@ -1193,7 +1238,7 @@ Dictionary.prototype._merge = function _merge (target, source) {
   Object.keys(source).forEach(function (key) {
     if (isObject(source[key])) {
       if (! target[key]) {
-        Object.assign(target, ( obj = {}, obj[key] = {}, obj ));
+        assign(target, ( obj = {}, obj[key] = {}, obj ));
           var obj;
       }
 
@@ -1201,7 +1246,7 @@ Dictionary.prototype._merge = function _merge (target, source) {
       return;
     }
 
-    Object.assign(target, ( obj$1 = {}, obj$1[key] = source[key], obj$1 ));
+    assign(target, ( obj$1 = {}, obj$1[key] = source[key], obj$1 ));
       var obj$1;
   });
 
@@ -2245,8 +2290,8 @@ Validator.prototype.validate = function validate (name, value, scope) {
     if ( scope === void 0 ) scope = '__global__';
 
   if (name && name.indexOf('.') > -1) {
-    var assign;
-      (assign = name.split('.'), scope = assign[0], name = assign[1]);
+    var assign$$1;
+      (assign$$1 = name.split('.'), scope = assign$$1[0], name = assign$$1[1]);
   }
   if (! scope) { scope = '__global__'; }
   if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
@@ -2436,7 +2481,9 @@ var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) 
   this.component = vnode.child;
   this.options = options;
   this.fieldName = this._resolveFieldName();
-  this.model = this._resolveModel(vnode.data.directives);
+  if (vnode.data && vnode.data.directives) {
+    this.model = this._resolveModel(vnode.data.directives);
+  }
 };
 
 /**
@@ -2520,7 +2567,7 @@ ListenerGenerator.prototype._inputListener = function _inputListener () {
    * Validates files, triggered by 'change' event.
    */
 ListenerGenerator.prototype._fileListener = function _fileListener () {
-  var isValid = this._validate(Array.from(this.el.files));
+  var isValid = this._validate(toArray(this.el.files));
 
   if (! isValid && this.binding.modifiers.reject) {
     this.el.value = '';
@@ -2547,7 +2594,7 @@ ListenerGenerator.prototype._checkboxListener = function _checkboxListener () {
     return;
   }
 
-  Array.from(checkedBoxes).forEach(function (box) {
+  toArray(checkedBoxes).forEach(function (box) {
     this$1._validate(box.value);
   });
 };
@@ -2694,7 +2741,7 @@ ListenerGenerator.prototype._attachFieldListeners = function _attachFieldListene
   if (~['radio', 'checkbox'].indexOf(this.el.type)) {
     this.vm.$nextTick(function () {
       var elms = document.querySelectorAll(("input[name=\"" + (this$1.el.name) + "\"]"));
-      Array.from(elms).forEach(function (input) {
+      toArray(elms).forEach(function (input) {
         handler.names.forEach(function (handlerName) {
           input.addEventListener(handlerName, listener);
           this$1.callbacks.push({ name: handlerName, listener: listener, el: input });
@@ -2734,7 +2781,7 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
         return null;
       }
 
-      return Array.from(context).map(function (checkbox) { return checkbox.value; });
+      return toArray(context).map(function (checkbox) { return checkbox.value; });
     }
   };
   case 'radio': return {
@@ -2746,7 +2793,7 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
   case 'file': return {
     context: function () { return this$1.el; },
     getter: function getter(context) {
-      return Array.from(context.files);
+      return toArray(context.files);
     }
   };
 
@@ -2842,10 +2889,11 @@ function addClasses(el, fieldName, fields, classNames) {
     return;
   }
 
-  classNames = Object.assign({}, defaultClassNames, classNames);
+  classNames = assign({}, defaultClassNames, classNames);
 
   var isDirty = fields.dirty(fieldName);
   var isValid = fields.valid(fieldName);
+  var failed = fields.failed(fieldName);
 
   if (isDirty) {
     addClass(el, classNames.touched);
@@ -2859,20 +2907,22 @@ function addClasses(el, fieldName, fields, classNames) {
     addClass(el, classNames.valid);
     removeClass(el, classNames.invalid);
   } else {
-    addClass(el, classNames.invalid);
+    if (failed) {
+      addClass(el, classNames.invalid);
+    }
     removeClass(el, classNames.valid);
   }
 }
 
 function setDirty(el, classNames) {
-  classNames = Object.assign({}, defaultClassNames, classNames);
+  classNames = assign({}, defaultClassNames, classNames);
 
   addClass(el, classNames.dirty);
   removeClass(el, classNames.pristine);
 }
 
 function setPristine(el, classNames) {
-  classNames = Object.assign({}, defaultClassNames, classNames);
+  classNames = assign({}, defaultClassNames, classNames);
 
   addClass(el, classNames.pristine);
   removeClass(el, classNames.dirty);
@@ -2894,7 +2944,7 @@ var directive = function (options) { return ({
         setDirty(el, classNames);
       };
 
-      addClasses(el, listener.fieldName, vnode.context.fields, classNames);
+      addClasses(el, listener.fieldName, vnode.context[options.fieldsBagName], classNames);
     }
   },
   update: function update(el, ref, ref$1) {
@@ -2904,15 +2954,14 @@ var directive = function (options) { return ({
     var context = ref$1.context;
 
     var holder = listenersInstances.filter(function (l) { return l.vm === context && l.el === el; })[0];
-
     if (options.enableAutoClasses) {
-      addClasses(el, holder.instance.fieldName, context.fields, options.classNames);
+      addClasses(el, holder.instance.fieldName, context[options.fieldsBagName], options.classNames);
     }
 
-        // make sure we don't do uneccessary work if no expression was passed
-        // or if the string value did not change.
-        // eslint-disable-next-line
-        if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) { return; }
+    // make sure we don't do uneccessary work if no expression was passed
+    // or if the string value did not change.
+    // eslint-disable-next-line
+    if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) { return; }
 
     var scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
@@ -2981,7 +3030,7 @@ var index = {
   install: install,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.0-beta.21'
+  version: '2.0.0-beta.22'
 };
 
 return index;

@@ -1,5 +1,5 @@
 /* eslint-disable prefer-rest-params */
-import { isObject } from './utils/helpers';
+import { isObject, assign } from './utils/helpers';
 
 export default class Dictionary
 {
@@ -78,14 +78,14 @@ export default class Dictionary
     Object.keys(source).forEach(key => {
       if (isObject(source[key])) {
         if (! target[key]) {
-          Object.assign(target, { [key]: {} });
+          assign(target, { [key]: {} });
         }
 
         this._merge(target[key], source[key]);
         return;
       }
 
-      Object.assign(target, { [key]: source[key] });
+      assign(target, { [key]: source[key] });
     });
 
     return target;

@@ -2,6 +2,13 @@ export default {
     querySelector(el) {
         global.document.querySelector = () => el || null
     },
+    vnode() {
+        return {
+            data: {
+                directives: []
+            }
+        }
+    },
     validator(shouldThrow = true, result = false) {
         return {
             validate(name, value) {

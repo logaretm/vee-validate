@@ -1,4 +1,4 @@
-import { getScope, debounce, warn, getDataAttribute, isObject } from './utils/helpers';
+import { getScope, debounce, warn, getDataAttribute, isObject, toArray } from './utils/helpers';
 
 export default class ListenerGenerator
 {
@@ -96,7 +96,7 @@ export default class ListenerGenerator
      * Validates files, triggered by 'change' event.
      */
   _fileListener() {
-    const isValid = this._validate(Array.from(this.el.files));
+    const isValid = this._validate(toArray(this.el.files));
 
     if (! isValid && this.binding.modifiers.reject) {
       this.el.value = '';
@@ -121,7 +121,7 @@ export default class ListenerGenerator
       return;
     }
 
-    Array.from(checkedBoxes).forEach(box => {
+    toArray(checkedBoxes).forEach(box => {
       this._validate(box.value);
     });
   }
@@ -260,7 +260,7 @@ export default class ListenerGenerator
     if (~['radio', 'checkbox'].indexOf(this.el.type)) {
       this.vm.$nextTick(() => {
         const elms = document.querySelectorAll(`input[name="${this.el.name}"]`);
-        Array.from(elms).forEach(input => {
+        toArray(elms).forEach(input => {
           handler.names.forEach(handlerName => {
             input.addEventListener(handlerName, listener);
             this.callbacks.push({ name: handlerName, listener, el: input });
@@ -298,7 +298,7 @@ export default class ListenerGenerator
           return null;
         }
 
-        return Array.from(context).map(checkbox => checkbox.value);
+        return toArray(context).map(checkbox => checkbox.value);
       }
     };
     case 'radio': return {
@@ -310,7 +310,7 @@ export default class ListenerGenerator
     case 'file': return {
       context: () => this.el,
       getter(context) {
-        return Array.from(context.files);
+        return toArray(context.files);
       }
     };
 

@@ -5,7 +5,7 @@ import Validator from '../src/validator';
 it('has field dependent rule', () => {
     document.body.innerHTML =`<input id="el" type="text" name="el">`;
     const el = document.querySelector('#el');
-    const lg = new ListenerGenerator(el, '', '', {});
+    const lg = new ListenerGenerator(el, '', helpers.vnode(), {});
     expect(lg._hasFieldDependency('confirmed:field|required')).toBe('field');
     expect(lg._hasFieldDependency('required|before:field')).toBe('field');
     expect(lg._hasFieldDependency('after:field')).toBe('field');

@@ -1,5 +1,5 @@
 import ListenerGenerator from '../listeners';
-import { getScope, isObject, addClass, removeClass } from '../utils/helpers';
+import { getScope, isObject, addClass, removeClass, assign } from '../utils/helpers';
 
 const listenersInstances = [];
 
@@ -17,10 +17,11 @@ function addClasses(el, fieldName, fields, classNames = null) {
     return;
   }
 
-  classNames = Object.assign({}, defaultClassNames, classNames);
+  classNames = assign({}, defaultClassNames, classNames);
 
   const isDirty = fields.dirty(fieldName);
   const isValid = fields.valid(fieldName);
+  const failed = fields.failed(fieldName);
 
   if (isDirty) {
     addClass(el, classNames.touched);
@@ -34,20 +35,22 @@ function addClasses(el, fieldName, fields, classNames = null) {
     addClass(el, classNames.valid);
     removeClass(el, classNames.invalid);
   } else {
-    addClass(el, classNames.invalid);
+    if (failed) {
+      addClass(el, classNames.invalid);
+    }
     removeClass(el, classNames.valid);
   }
 }
 
 function setDirty(el, classNames) {
-  classNames = Object.assign({}, defaultClassNames, classNames);
+  classNames = assign({}, defaultClassNames, classNames);
 
   addClass(el, classNames.dirty);
   removeClass(el, classNames.pristine);
 }
 
 function setPristine(el, classNames) {
-  classNames = Object.assign({}, defaultClassNames, classNames);
+  classNames = assign({}, defaultClassNames, classNames);
 
   addClass(el, classNames.pristine);
   removeClass(el, classNames.dirty);
@@ -69,20 +72,19 @@ export default (options) => ({
         setDirty(el, classNames);
       };
 
-      addClasses(el, listener.fieldName, vnode.context.fields, classNames);
+      addClasses(el, listener.fieldName, vnode.context[options.fieldsBagName], classNames);
     }
   },
   update(el, { expression, value, oldValue }, { context }) {
     const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
-
     if (options.enableAutoClasses) {
-      addClasses(el, holder.instance.fieldName, context.fields, options.classNames);
+      addClasses(el, holder.instance.fieldName, context[options.fieldsBagName], options.classNames);
     }
 
-        // make sure we don't do uneccessary work if no expression was passed
-        // or if the string value did not change.
-        // eslint-disable-next-line
-        if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) return;
+    // make sure we don't do uneccessary work if no expression was passed
+    // or if the string value did not change.
+    // eslint-disable-next-line
+    if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) return;
 
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(

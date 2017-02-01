@@ -1054,6 +1054,48 @@ const removeClass = (el, className) => {
   }
 };
 
+/**
+ * Converts an array-like object to array.
+ * Simple polyfill for Array.from
+ */
+const toArray = (arrayLike) => {
+  if (Array.from) {
+    return Array.from(arrayLike);
+  }
+
+  const array = [];
+  const length = arrayLike.length;
+  for (let i = 0; i < length; i++) {
+    array.push(arrayLike[i]);
+  }
+
+  return array;
+};
+
+/**
+ * Assign polyfill from the mdn.
+ */
+const assign = (target, ...others) => {
+  if (Object.assign) {
+    return Object.assign(target, ...others);
+  }
+
+  if (target == null) { // TypeError if undefined or null
+    throw new TypeError('Cannot convert undefined or null to object');
+  }
+
+  const to = Object(target);
+  others.forEach(arg => {
+    if (arg != null) { // Skip over if undefined or null
+      Object.keys(arg).forEach(key => {
+        to[key] = arg[key];
+      });
+    }
+  });
+
+  return to;
+};
+
 /* eslint-disable prefer-rest-params */
 class Dictionary
 {
@@ -1132,14 +1174,14 @@ class Dictionary
     Object.keys(source).forEach(key => {
       if (isObject(source[key])) {
         if (! target[key]) {
-          Object.assign(target, { [key]: {} });
+          assign(target, { [key]: {} });
         }
 
         this._merge(target[key], source[key]);
         return;
       }
 
-      Object.assign(target, { [key]: source[key] });
+      assign(target, { [key]: source[key] });
     });
 
     return target;
@@ -2253,7 +2295,9 @@ class ListenerGenerator
     this.component = vnode.child;
     this.options = options;
     this.fieldName = this._resolveFieldName();
-    this.model = this._resolveModel(vnode.data.directives);
+    if (vnode.data && vnode.data.directives) {
+      this.model = this._resolveModel(vnode.data.directives);
+    }
   }
 
   /**
@@ -2335,7 +2379,7 @@ class ListenerGenerator
      * Validates files, triggered by 'change' event.
      */
   _fileListener() {
-    const isValid = this._validate(Array.from(this.el.files));
+    const isValid = this._validate(toArray(this.el.files));
 
     if (! isValid && this.binding.modifiers.reject) {
       this.el.value = '';
@@ -2360,7 +2404,7 @@ class ListenerGenerator
       return;
     }
 
-    Array.from(checkedBoxes).forEach(box => {
+    toArray(checkedBoxes).forEach(box => {
       this._validate(box.value);
     });
   }
@@ -2499,7 +2543,7 @@ class ListenerGenerator
     if (~['radio', 'checkbox'].indexOf(this.el.type)) {
       this.vm.$nextTick(() => {
         const elms = document.querySelectorAll(`input[name="${this.el.name}"]`);
-        Array.from(elms).forEach(input => {
+        toArray(elms).forEach(input => {
           handler.names.forEach(handlerName => {
             input.addEventListener(handlerName, listener);
             this.callbacks.push({ name: handlerName, listener, el: input });
@@ -2537,7 +2581,7 @@ class ListenerGenerator
           return null;
         }
 
-        return Array.from(context).map(checkbox => checkbox.value);
+        return toArray(context).map(checkbox => checkbox.value);
       }
     };
     case 'radio': return {
@@ -2549,7 +2593,7 @@ class ListenerGenerator
     case 'file': return {
       context: () => this.el,
       getter(context) {
-        return Array.from(context.files);
+        return toArray(context.files);
       }
     };
 
@@ -2640,10 +2684,11 @@ function addClasses(el, fieldName, fields, classNames = null) {
     return;
   }
 
-  classNames = Object.assign({}, defaultClassNames, classNames);
+  classNames = assign({}, defaultClassNames, classNames);
 
   const isDirty = fields.dirty(fieldName);
   const isValid = fields.valid(fieldName);
+  const failed = fields.failed(fieldName);
 
   if (isDirty) {
     addClass(el, classNames.touched);
@@ -2657,20 +2702,22 @@ function addClasses(el, fieldName, fields, classNames = null) {
     addClass(el, classNames.valid);
     removeClass(el, classNames.invalid);
   } else {
-    addClass(el, classNames.invalid);
+    if (failed) {
+      addClass(el, classNames.invalid);
+    }
     removeClass(el, classNames.valid);
   }
 }
 
 function setDirty(el, classNames) {
-  classNames = Object.assign({}, defaultClassNames, classNames);
+  classNames = assign({}, defaultClassNames, classNames);
 
   addClass(el, classNames.dirty);
   removeClass(el, classNames.pristine);
 }
 
 function setPristine(el, classNames) {
-  classNames = Object.assign({}, defaultClassNames, classNames);
+  classNames = assign({}, defaultClassNames, classNames);
 
   addClass(el, classNames.pristine);
   removeClass(el, classNames.dirty);
@@ -2692,20 +2739,19 @@ var directive = (options) => ({
         setDirty(el, classNames);
       };
 
-      addClasses(el, listener.fieldName, vnode.context.fields, classNames);
+      addClasses(el, listener.fieldName, vnode.context[options.fieldsBagName], classNames);
     }
   },
   update(el, { expression, value, oldValue }, { context }) {
     const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
-
     if (options.enableAutoClasses) {
-      addClasses(el, holder.instance.fieldName, context.fields, options.classNames);
+      addClasses(el, holder.instance.fieldName, context[options.fieldsBagName], options.classNames);
     }
 
-        // make sure we don't do uneccessary work if no expression was passed
-        // or if the string value did not change.
-        // eslint-disable-next-line
-        if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) return;
+    // make sure we don't do uneccessary work if no expression was passed
+    // or if the string value did not change.
+    // eslint-disable-next-line
+    if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) return;
 
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
@@ -2761,7 +2807,7 @@ var index = {
   install,
   Validator,
   ErrorBag,
-  version: '2.0.0-beta.21'
+  version: '2.0.0-beta.22'
 };
 
 export default index;

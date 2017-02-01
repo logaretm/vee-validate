@@ -89,3 +89,45 @@ export const removeClass = (el, className) => {
     el.className = el.className.replace(reg, ' ');
   }
 };
+
+/**
+ * Converts an array-like object to array.
+ * Simple polyfill for Array.from
+ */
+export const toArray = (arrayLike) => {
+  if (Array.from) {
+    return Array.from(arrayLike);
+  }
+
+  const array = [];
+  const length = arrayLike.length;
+  for (let i = 0; i < length; i++) {
+    array.push(arrayLike[i]);
+  }
+
+  return array;
+};
+
+/**
+ * Assign polyfill from the mdn.
+ */
+export const assign = (target, ...others) => {
+  if (Object.assign) {
+    return Object.assign(target, ...others);
+  }
+
+  if (target == null) { // TypeError if undefined or null
+    throw new TypeError('Cannot convert undefined or null to object');
+  }
+
+  const to = Object(target);
+  others.forEach(arg => {
+    if (arg != null) { // Skip over if undefined or null
+      Object.keys(arg).forEach(key => {
+        to[key] = arg[key];
+      });
+    }
+  });
+
+  return to;
+};
