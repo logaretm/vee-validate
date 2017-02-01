@@ -12,6 +12,22 @@ export default class ListenerGenerator
     this.component = vnode.child;
     this.options = options;
     this.fieldName = this._resolveFieldName();
+    this.model = _resolveBinding(vnode.data.directives);
+  }
+
+  _resolveBinding(directives) {
+    let boundTo = null;
+    directives.some(d => {
+      if (d.name === 'model') {
+        boundTo = d.expression;
+
+        return true;
+      }
+
+      return false;
+    });
+
+    return boundTo;
   }
 
     /**
@@ -306,6 +322,10 @@ export default class ListenerGenerator
     * Gets the arg string value, either from the directive or the expression value.
     */
   _getArg() {
+    if (this.model) {
+      return this.model;
+    }
+
     if (this.binding.arg) {
       return this.binding.arg;
     }
@@ -319,6 +339,7 @@ export default class ListenerGenerator
   attach() {
     const { context, getter } = this._resolveValueGetter();
     this.vm.$validator.attach(this.fieldName, this._getRules(), {
+      // eslint-disable-next-line
       scope: () => {
         return this.scope || getScope(this.el);
       },
