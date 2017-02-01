@@ -12,7 +12,9 @@ export default class ListenerGenerator
     this.component = vnode.child;
     this.options = options;
     this.fieldName = this._resolveFieldName();
-    this.model = this._resolveModel(vnode.data.directives);
+    if (vnode.data && vnode.data.directives) {
+      this.model = this._resolveModel(vnode.data.directives);
+    }
   }
 
   /**
