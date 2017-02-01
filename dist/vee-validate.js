@@ -912,6 +912,18 @@ ErrorBag.prototype.first = function first (field, scope) {
 };
 
 /**
+ * Returns the first error rule for the specified field
+ *
+ * @param {string} field The specified field.
+ * @return {string|null} First error rule on the specified field if one is found, otherwise null
+ */
+ErrorBag.prototype.firstRule = function firstRule (field, scope) {
+    var errors = this.collect(field, scope, false);
+
+    return (errors.length && errors[0].rule) || null;
+};
+
+/**
  * Checks if the internal array has at least one error for the specified field.
  *
  * @param  {string} field The specified field.
@@ -1039,7 +1051,6 @@ var debounce = function (callback, wait, immediate) {
     };
 };
 
-
 /**
  * Emits a warning to the console.
  */
@@ -1059,11 +1070,44 @@ var isObject = function (object) {
     return object !== null && object && typeof object === 'object' && ! Array.isArray(object);
 };
 
-
 /**
  * Checks if a function is callable.
  */
 var isCallable = function (func) { return typeof func === 'function'; };
+
+/**
+ * Check if element has the css class on it.
+ */
+var hasClass = function (el, className) {
+    if (el.classList) {
+        return el.classList.contains(className);
+    }
+
+    return !!el.className.match(new RegExp(("(\\s|^)" + className + "(\\s|$)")));
+};
+
+/**
+ * Adds the provided css className to the element.
+ */
+var addClass = function (el, className) {
+    if (el.classList) {
+        el.classList.add(className);
+    } else if (!hasClass(el, className)) {
+        el.className += " " + className;
+    }
+};
+
+/**
+ * Remove the provided css className from the element.
+ */
+var removeClass = function (el, className) {
+    if (el.classList) {
+        el.classList.remove(className);
+    } else if (hasClass(el, className)) {
+        var reg = new RegExp(("(\\s|^)" + className + "(\\s|$)"));
+        el.className = el.className.replace(reg, ' ');
+    }
+};
 
 /* eslint-disable prefer-rest-params */
 var Dictionary = function Dictionary(dictionary) {
@@ -1802,7 +1846,13 @@ Validator.prototype._normalizeObject = function _normalizeObject (rules) {
         } else {
             params = [rules[rule]];
         }
-        validations[rule] = params;
+
+        if (rules[rule] === false) {
+            delete validations[rule];
+        } else {
+            validations[rule] = params;
+        }
+
         if (date.installed && this$1._isADateRule(rule)) {
             validations[rule].push(this$1._getDateFormat(validations));
         }
@@ -2059,8 +2109,17 @@ Validator.prototype.append = function append (name, checks, options) {
 Validator.prototype.updateField = function updateField (name, checks, options) {
         if ( options === void 0 ) options = {};
 
-    this.errorBag.remove(name, options.scope);
+    var field = (this.$scopes[options.scope] && this.$scopes[options.scope][name]) || null;
+    var oldChecks = field ? JSON.stringify(field.validations) : '';
     this._createField(name, checks, options.scope);
+    field = (this.$scopes[options.scope] && this.$scopes[options.scope][name]) || null;
+    var newChecks = field ? JSON.stringify(field.validations) : '';
+
+    // compare both newChecks and oldChecks to make sure we don't trigger uneccessary directive
+    // update by changing the errorBag (prevents infinite loops).
+    if (newChecks !== oldChecks) {
+        this.errorBag.remove(name, options.scope);
+    }
 };
 
 /**
@@ -2442,7 +2501,7 @@ ListenerGenerator.prototype._inputListener = function _inputListener () {
  * Validates files, triggered by 'change' event.
  */
 ListenerGenerator.prototype._fileListener = function _fileListener () {
-    var isValid = this._validate([].concat( this.el.files ));
+    var isValid = this._validate(Array.from(this.el.files));
 
     if (! isValid && this.binding.modifiers.reject) {
         this.el.value = '';
@@ -2469,7 +2528,7 @@ ListenerGenerator.prototype._checkboxListener = function _checkboxListener () {
         return;
     }
 
-    [].concat( checkedBoxes ).forEach(function (box) {
+    Array.from(checkedBoxes).forEach(function (box) {
         this$1._validate(box.value);
     });
 };
@@ -2656,7 +2715,7 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
                 return null;
             }
 
-            return [].concat( context ).map(function (checkbox) { return checkbox.value; });
+            return Array.from(context).map(function (checkbox) { return checkbox.value; });
         }
     };
     case 'radio': return {
@@ -2668,7 +2727,7 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
     case 'file': return {
         context: function () { return this$1.el; },
         getter: function getter(context) {
-            return [].concat( context.files );
+            return Array.from(context.files);
         }
     };
 
@@ -2743,11 +2802,76 @@ ListenerGenerator.prototype.detach = function detach () {
 
 var listenersInstances = [];
 
+var defaultClassNames = {
+    touched: 'touched', // the control has been blurred
+    untouched: 'untouched', // the control hasn't been blurred
+    valid: 'valid', // model is valid
+    invalid: 'invalid', // model is invalid
+    pristine: 'pristine', // control has not been interacted with
+    dirty: 'dirty' // control has been interacted with
+};
+
+function addClasses(el, fieldName, fields, classNames) {
+    if ( classNames === void 0 ) classNames = null;
+
+    if (!fieldName) {
+        return;
+    }
+
+    classNames = Object.assign({}, defaultClassNames, classNames);
+
+    var isDirty = fields.dirty(fieldName);
+    var isValid = fields.valid(fieldName);
+
+    if (isDirty) {
+        addClass(el, classNames.touched);
+        removeClass(el, classNames.untouched);
+    } else {
+        addClass(el, classNames.untouched);
+        removeClass(el, classNames.touched);
+    }
+
+    if (isValid) {
+        addClass(el, classNames.valid);
+        removeClass(el, classNames.invalid);
+    } else {
+        addClass(el, classNames.invalid);
+        removeClass(el, classNames.valid);
+    }
+}
+
+function setDirty(el, classNames) {
+    classNames = Object.assign({}, defaultClassNames, classNames);
+
+    addClass(el, classNames.dirty);
+    removeClass(el, classNames.pristine);
+}
+
+function setPristine(el, classNames) {
+    classNames = Object.assign({}, defaultClassNames, classNames);
+
+    addClass(el, classNames.pristine);
+    removeClass(el, classNames.dirty);
+}
+
 var directive = function (options) { return ({
     bind: function bind(el, binding, vnode) {
         var listener = new ListenerGenerator(el, binding, vnode, options);
+
         listener.attach();
         listenersInstances.push({ vm: vnode.context, el: el, instance: listener });
+
+        if (options.enableAutoClasses) {
+            var classNames = options.classNames;
+
+            setPristine(el, classNames);
+
+            el.onfocus = function () {
+                setDirty(el, classNames);
+            };
+
+            addClasses(el, listener.fieldName, vnode.context.fields, classNames);
+        }
     },
     update: function update(el, ref, ref$1) {
         var expression = ref.expression;
@@ -2755,14 +2879,22 @@ var directive = function (options) { return ({
         var oldValue = ref.oldValue;
         var context = ref$1.context;
 
-        if (! expression || JSON.stringify(value) === JSON.stringify(oldValue)) { return; }
-
         var holder = listenersInstances.filter(function (l) { return l.vm === context && l.el === el; })[0];
+
+        if (options.enableAutoClasses) {
+            addClasses(el, holder.instance.fieldName, context.fields, options.classNames);
+        }
+
+        // make sure we don't do uneccessary work if no expression was passed
+        // or if the string value did not change.
+        // eslint-disable-next-line
+        if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) { return; }
+
         var scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
         context.$validator.updateField(
             holder.instance.fieldName,
             isObject(value) ? value.rules : value,
-            { scope: scope }
+            { scope: scope || '__global__' }
         );
     },
     unbind: function unbind(el, ref, ref$1) {
@@ -2789,6 +2921,8 @@ var install = function (Vue, ref) {
     var dictionary = ref.dictionary; if ( dictionary === void 0 ) dictionary = null;
     var strict = ref.strict; if ( strict === void 0 ) strict = true;
     var fieldsBagName = ref.fieldsBagName; if ( fieldsBagName === void 0 ) fieldsBagName = 'fields';
+    var enableAutoClasses = ref.enableAutoClasses; if ( enableAutoClasses === void 0 ) enableAutoClasses = false;
+    var classNames = ref.classNames; if ( classNames === void 0 ) classNames = null;
 
     if (dictionary) {
         Validator.updateDictionary(dictionary);
@@ -2802,7 +2936,9 @@ var install = function (Vue, ref) {
         delay: delay,
         dictionary: dictionary,
         errorBagName: errorBagName,
-        fieldsBagName: fieldsBagName
+        fieldsBagName: fieldsBagName,
+        enableAutoClasses: enableAutoClasses,
+        classNames: classNames
     };
 
     Object.defineProperties(Vue.prototype, {

@@ -1,16 +1,16 @@
 export default (moment) => (value, [targetField, format]) => {
-    const dateValue = moment(value, format, true);
-    const field = document.querySelector(`input[name='${targetField}']`);
+  const dateValue = moment(value, format, true);
+  const field = document.querySelector(`input[name='${targetField}']`);
 
-    if (! dateValue.isValid() || ! field) {
-        return false;
-    }
+  if (! dateValue.isValid() || ! field) {
+    return false;
+  }
 
-    const other = moment(field.value, format, true);
+  const other = moment(field.value, format, true);
 
-    if (! other.isValid()) {
-        return false;
-    }
+  if (! other.isValid()) {
+    return false;
+  }
 
-    return dateValue.isBefore(other);
+  return dateValue.isBefore(other);
 };

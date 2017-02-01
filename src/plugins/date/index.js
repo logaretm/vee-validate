@@ -5,12 +5,12 @@ import date_between from './date_between'; // eslint-disable-line
 import messages from './messages';
 
 export default {
-    make: (moment) => ({
-        date_format: date_format(moment),
-        after: after(moment),
-        before: before(moment),
-        date_between: date_between(moment)
-    }),
-    messages,
-    installed: false
+  make: (moment) => ({
+    date_format: date_format(moment),
+    after: after(moment),
+    before: before(moment),
+    date_between: date_between(moment)
+  }),
+  messages,
+  installed: false
 };

@@ -1,22 +1,22 @@
 import { unregister } from './utils/maps';
 
 export default (options) => ({
-    data() {
-        return {
-            [options.errorBagName]: this.$validator.errorBag,
-        };
-    },
-    computed: {
-        [options.fieldsBagName]: {
-            get() {
-                return this.$validator.fieldBag;
-            }
-        }
-    },
-    mounted() {
-        this.$validator.init();
-    },
-    destroyed() {
-        unregister(this);
+  data() {
+    return {
+      [options.errorBagName]: this.$validator.errorBag,
+    };
+  },
+  computed: {
+    [options.fieldsBagName]: {
+      get() {
+        return this.$validator.fieldBag;
+      }
     }
+  },
+  mounted() {
+    this.$validator.init();
+  },
+  destroyed() {
+    unregister(this);
+  }
 });

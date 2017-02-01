@@ -868,6 +868,18 @@ class ErrorBag
     }
 
     /**
+     * Returns the first error rule for the specified field
+     *
+     * @param {string} field The specified field.
+     * @return {string|null} First error rule on the specified field if one is found, otherwise null
+     */
+    firstRule(field, scope) {
+        const errors = this.collect(field, scope, false);
+
+        return (errors.length && errors[0].rule) || null;
+    }
+
+    /**
      * Checks if the internal array has at least one error for the specified field.
      *
      * @param  {string} field The specified field.
@@ -984,7 +996,6 @@ const debounce = (callback, wait = 0, immediate) => {
     };
 };
 
-
 /**
  * Emits a warning to the console.
  */
@@ -1004,11 +1015,44 @@ const isObject = (object) => {
     return object !== null && object && typeof object === 'object' && ! Array.isArray(object);
 };
 
-
 /**
  * Checks if a function is callable.
  */
 const isCallable = (func) => typeof func === 'function';
+
+/**
+ * Check if element has the css class on it.
+ */
+const hasClass = (el, className) => {
+    if (el.classList) {
+        return el.classList.contains(className);
+    }
+
+    return !!el.className.match(new RegExp(`(\\s|^)${className}(\\s|$)`));
+};
+
+/**
+ * Adds the provided css className to the element.
+ */
+const addClass = (el, className) => {
+    if (el.classList) {
+        el.classList.add(className);
+    } else if (!hasClass(el, className)) {
+        el.className += ` ${className}`;
+    }
+};
+
+/**
+ * Remove the provided css className from the element.
+ */
+const removeClass = (el, className) => {
+    if (el.classList) {
+        el.classList.remove(className);
+    } else if (hasClass(el, className)) {
+        const reg = new RegExp(`(\\s|^)${className}(\\s|$)`);
+        el.className = el.className.replace(reg, ' ');
+    }
+};
 
 /* eslint-disable prefer-rest-params */
 class Dictionary
@@ -1643,7 +1687,13 @@ class Validator
             } else {
                 params = [rules[rule]];
             }
-            validations[rule] = params;
+
+            if (rules[rule] === false) {
+                delete validations[rule];
+            } else {
+                validations[rule] = params;
+            }
+
             if (date.installed && this._isADateRule(rule)) {
                 validations[rule].push(this._getDateFormat(validations));
             }
@@ -1883,8 +1933,17 @@ class Validator
      * Updates the field rules with new ones.
      */
     updateField(name, checks, options = {}) {
-        this.errorBag.remove(name, options.scope);
+        let field = (this.$scopes[options.scope] && this.$scopes[options.scope][name]) || null;
+        const oldChecks = field ? JSON.stringify(field.validations) : '';
         this._createField(name, checks, options.scope);
+        field = (this.$scopes[options.scope] && this.$scopes[options.scope][name]) || null;
+        const newChecks = field ? JSON.stringify(field.validations) : '';
+
+        // compare both newChecks and oldChecks to make sure we don't trigger uneccessary directive
+        // update by changing the errorBag (prevents infinite loops).
+        if (newChecks !== oldChecks) {
+            this.errorBag.remove(name, options.scope);
+        }
     }
 
     /**
@@ -2257,7 +2316,7 @@ class ListenerGenerator
      * Validates files, triggered by 'change' event.
      */
     _fileListener() {
-        const isValid = this._validate([...this.el.files]);
+        const isValid = this._validate(Array.from(this.el.files));
 
         if (! isValid && this.binding.modifiers.reject) {
             this.el.value = '';
@@ -2282,7 +2341,7 @@ class ListenerGenerator
             return;
         }
 
-        [...checkedBoxes].forEach(box => {
+        Array.from(checkedBoxes).forEach(box => {
             this._validate(box.value);
         });
     }
@@ -2459,7 +2518,7 @@ class ListenerGenerator
                     return null;
                 }
 
-                return [...context].map(checkbox => checkbox.value);
+                return Array.from(context).map(checkbox => checkbox.value);
             }
         };
         case 'radio': return {
@@ -2471,7 +2530,7 @@ class ListenerGenerator
         case 'file': return {
             context: () => this.el,
             getter(context) {
-                return [...context.files];
+                return Array.from(context.files);
             }
         };
 
@@ -2543,21 +2602,92 @@ class ListenerGenerator
 
 const listenersInstances = [];
 
+const defaultClassNames = {
+    touched: 'touched', // the control has been blurred
+    untouched: 'untouched', // the control hasn't been blurred
+    valid: 'valid', // model is valid
+    invalid: 'invalid', // model is invalid
+    pristine: 'pristine', // control has not been interacted with
+    dirty: 'dirty' // control has been interacted with
+};
+
+function addClasses(el, fieldName, fields, classNames = null) {
+    if (!fieldName) {
+        return;
+    }
+
+    classNames = Object.assign({}, defaultClassNames, classNames);
+
+    const isDirty = fields.dirty(fieldName);
+    const isValid = fields.valid(fieldName);
+
+    if (isDirty) {
+        addClass(el, classNames.touched);
+        removeClass(el, classNames.untouched);
+    } else {
+        addClass(el, classNames.untouched);
+        removeClass(el, classNames.touched);
+    }
+
+    if (isValid) {
+        addClass(el, classNames.valid);
+        removeClass(el, classNames.invalid);
+    } else {
+        addClass(el, classNames.invalid);
+        removeClass(el, classNames.valid);
+    }
+}
+
+function setDirty(el, classNames) {
+    classNames = Object.assign({}, defaultClassNames, classNames);
+
+    addClass(el, classNames.dirty);
+    removeClass(el, classNames.pristine);
+}
+
+function setPristine(el, classNames) {
+    classNames = Object.assign({}, defaultClassNames, classNames);
+
+    addClass(el, classNames.pristine);
+    removeClass(el, classNames.dirty);
+}
+
 var directive = (options) => ({
     bind(el, binding, vnode) {
         const listener = new ListenerGenerator(el, binding, vnode, options);
+
         listener.attach();
         listenersInstances.push({ vm: vnode.context, el, instance: listener });
+
+        if (options.enableAutoClasses) {
+            const classNames = options.classNames;
+
+            setPristine(el, classNames);
+
+            el.onfocus = () => {
+                setDirty(el, classNames);
+            };
+
+            addClasses(el, listener.fieldName, vnode.context.fields, classNames);
+        }
     },
     update(el, { expression, value, oldValue }, { context }) {
-        if (! expression || JSON.stringify(value) === JSON.stringify(oldValue)) return;
-
         const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
+
+        if (options.enableAutoClasses) {
+            addClasses(el, holder.instance.fieldName, context.fields, options.classNames);
+        }
+
+        // make sure we don't do uneccessary work if no expression was passed
+        // or if the string value did not change.
+        // eslint-disable-next-line
+        if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) return;
+
         const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
         context.$validator.updateField(
             holder.instance.fieldName,
             isObject(value) ? value.rules : value,
-            { scope }
+            { scope: scope || '__global__' }
         );
     },
     unbind(el, { value }, { context }) {
@@ -2573,7 +2703,7 @@ var directive = (options) => ({
 });
 
 // eslint-disable-next-line
-const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true, fieldsBagName = 'fields' } = {}) => {
+const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true, fieldsBagName = 'fields', enableAutoClasses = false, classNames = null } = {}) => {
     if (dictionary) {
         Validator.updateDictionary(dictionary);
     }
@@ -2586,7 +2716,9 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
         delay,
         dictionary,
         errorBagName,
-        fieldsBagName
+        fieldsBagName,
+        enableAutoClasses,
+        classNames
     };
 
     Object.defineProperties(Vue.prototype, {

@@ -1,5 +1,5 @@
 export default (files, extensions) => {
-    const regex = new RegExp(`.(${extensions.join('|')})$`, 'i');
+  const regex = new RegExp(`.(${extensions.join('|')})$`, 'i');
 
-    return files.every(file => regex.test(file.name));
+  return files.every(file => regex.test(file.name));
 };

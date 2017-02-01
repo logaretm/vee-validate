@@ -1,10 +1,10 @@
 export default class
 {
-    constructor(msg) {
-        this.msg = `[vee-validate]: ${msg}`;
-    }
+  constructor(msg) {
+    this.msg = `[vee-validate]: ${msg}`;
+  }
 
-    toString() {
-        return this.msg;
-    }
+  toString() {
+    return this.msg;
+  }
 }
