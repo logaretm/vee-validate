@@ -12,10 +12,13 @@ export default class ListenerGenerator
     this.component = vnode.child;
     this.options = options;
     this.fieldName = this._resolveFieldName();
-    this.model = _resolveBinding(vnode.data.directives);
+    this.model = this._resolveModel(vnode.data.directives);
   }
 
-  _resolveBinding(directives) {
+  /**
+   * Checks if the node directives contains a v-model.
+   */
+  _resolveModel(directives) {
     let boundTo = null;
     directives.some(d => {
       if (d.name === 'model') {
