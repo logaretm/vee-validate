@@ -18,13 +18,12 @@ const dictionary = new Dictionary({
 
 export default class Validator
 {
-  constructor(validations, $vm, options = { init: true }) {
+  constructor(validations, options = { init: true }) {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };
     this.fieldBag = new FieldBag();
     this._createFields(validations);
     this.errorBag = new ErrorBag();
-    this.$vm = $vm;
         // Some fields will be later evaluated, because the vm isn't mounted yet
         // so it may register it under an inaccurate scope.
     this.$deferred = [];

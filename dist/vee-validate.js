@@ -1575,7 +1575,7 @@ var dictionary = new Dictionary({
   }
 });
 
-var Validator = function Validator(validations, $vm, options) {
+var Validator = function Validator(validations, options) {
   if ( options === void 0 ) options = { init: true };
 
   this.strictMode = STRICT_MODE;
@@ -1583,7 +1583,6 @@ var Validator = function Validator(validations, $vm, options) {
   this.fieldBag = new FieldBag();
   this._createFields(validations);
   this.errorBag = new ErrorBag();
-  this.$vm = $vm;
       // Some fields will be later evaluated, because the vm isn't mounted yet
       // so it may register it under an inaccurate scope.
   this.$deferred = [];
@@ -2400,59 +2399,7 @@ Validator.prototype.validateScopes = function validateScopes () {
       );
 };
 
-/**
- * Keeps track of $vm, $validator instances.
- * @type {Array}
- */
-var instances = [];
-
-/**
- * Finds a validator instance from the instances array.
- * @param  {[type]} $vm The Vue instance.
- * @return {object} pair the $vm,$validator pair.
- */
-var find = function ($vm) {
-  for (var i = 0; i < instances.length; i++) {
-    if (instances[i].$vm === $vm) {
-      return instances[i].$validator;
-    }
-  }
-
-  return undefined;
-};
-
-/**
- * Registers a validator for a $vm instance.
- * @param  {*} $vm The Vue instance.
- * @return {Validator} $validator The validator instance.
- */
-var register = function ($vm) {
-  var instance = find($vm);
-  if (! instance) {
-    instance = Validator.create(undefined, $vm, { init: false });
-
-    instances.push({
-      $vm: $vm,
-      $validator: instance
-    });
-  }
-
-  return instance;
-};
-
-var unregister = function ($vm) {
-  for (var i = 0; i < instances.length; i++) {
-    if (instances[i].$vm === $vm) {
-      instances.splice(i, 1);
-
-      return true;
-    }
-  }
-
-  return false;
-};
-
-var mixin = function (options) { return ({
+var makeMixin = function (options) { return ({
   data: function data() {
     return ( obj = {}, obj[options.errorBagName] = this.$validator.errorBag, obj );
     var obj;
@@ -2462,11 +2409,11 @@ var mixin = function (options) { return ({
         return this.$validator.fieldBag;
       }
     }, obj ),
+  beforeCreate: function beforeCreate() {
+    this.$validator = new Validator(null, { init: false });
+  },
   mounted: function mounted() {
     this.$validator.init();
-  },
-  destroyed: function destroyed() {
-    unregister(this);
   }
 })
   var obj; };
@@ -2928,7 +2875,7 @@ function setPristine(el, classNames) {
   removeClass(el, classNames.dirty);
 }
 
-var directive = function (options) { return ({
+var makeDirective = function (options) { return ({
   bind: function bind(el, binding, vnode) {
     var listener = new ListenerGenerator(el, binding, vnode, options);
 
@@ -3014,16 +2961,8 @@ var install = function (Vue, ref) {
     classNames: classNames
   };
 
-  Object.defineProperties(Vue.prototype, {
-    $validator: {
-      get: function get() {
-        return register(this);
-      }
-    }
-  });
-
-  Vue.mixin(mixin(options)); // Install Mixin.
-  Vue.directive('validate', directive(options));
+  Vue.mixin(makeMixin(options));
+  Vue.directive('validate', makeDirective(options));
 };
 
 var index = {
