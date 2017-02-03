@@ -1,3 +1,5 @@
+import Vue = require("vue");
+
 export class ErrorBag {
     constructor();
     add(field: string, msg: string, rule: string, scope?: string): void;
@@ -40,4 +42,4 @@ export class Validator {
     static updateDictionary(data: any): void;
 }
 export const version: string;
-export function install(Vue: any, ref: any): any;
+export function install(Vue: Vue, ref: any): any;
