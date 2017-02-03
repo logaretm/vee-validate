@@ -1,16 +1,16 @@
 export class ErrorBag {
     constructor();
-    add(field: any, msg: any, rule: any, scope: any): void;
-    all(scope: any): any;
-    any(scope: any): any;
-    clear(scope: any): any;
-    collect(field: any, scope: any, map: any): any;
-    count(): any;
-    first(field: any, scope: any): any;
-    firstByRule(name: any, rule: any, scope: any): any;
-    firstRule(field: any, scope: any): any;
-    has(field: any, scope: any): any;
-    remove(field: any, scope: any): any;
+    add(field: string, msg: string, rule: string, scope?: string): void;
+    all(scope: string): string[];
+    any(scope: string): boolean;
+    clear(scope: string): void;
+    collect(field: string, scope: string, map: boolean): any;
+    count(): number;
+    first(field: string, scope?: string): string;
+    firstByRule(name: string, rule: string, scope?: string): any;
+    firstRule(field: string, scope: string): string;
+    has(field: string, scope?: string): boolean;
+    remove(field: string, scope: string): void;
 }
 export class Validator {
     constructor(validations: any, $vm: any, options: any);
