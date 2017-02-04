@@ -3,16 +3,16 @@ import Vue = require("vue");
 export class ErrorBag {
     constructor();
     add(field: string, msg: string, rule: string, scope?: string): void;
-    all(scope: string): string[];
-    any(scope: string): boolean;
-    clear(scope: string): void;
-    collect(field: string, scope: string, map: boolean): any;
+    all(scope?: string): string[];
+    any(scope?: string): boolean;
+    clear(scope?: string): void;
+    collect(field?: string, scope?: string, map?: boolean): any;
     count(): number;
     first(field: string, scope?: string): string;
     firstByRule(name: string, rule: string, scope?: string): any;
     firstRule(field: string, scope: string): string;
     has(field: string, scope?: string): boolean;
-    remove(field: string, scope: string): void;
+    remove(field: string, scope?: string): void;
 }
 export class Validator {
 
