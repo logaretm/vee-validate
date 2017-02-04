@@ -15,6 +15,9 @@ export class ErrorBag {
     remove(field: string, scope: string): void;
 }
 export class Validator {
+
+    errorBag: ErrorBag
+
     constructor(validations: any, $vm: any, options: any);
     addScope(scope: any): void;
     append(name: any, checks: any, options: any): void;
