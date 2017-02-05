@@ -1,4 +1,4 @@
-import { getScope, debounce, warn, getDataAttribute, isObject, toArray } from './utils/helpers';
+import { getScope, debounce, warn, getDataAttribute, isObject, toArray, find } from './utils';
 
 export default class ListenerGenerator
 {
@@ -19,19 +19,10 @@ export default class ListenerGenerator
    * Checks if the node directives contains a v-model.
    */
   _resolveModel(directives) {
-    let boundTo = null;
     const expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
-    directives.some(d => {
-      if (d.name === 'model' && expRegex.test(d.expression)) {
-        boundTo = d.expression;
+    const model = find(directives, d => d.name === 'model' && expRegex.test(d.expression));
 
-        return true;
-      }
-
-      return false;
-    });
-
-    return boundTo;
+    return model && model.expression;
   }
 
     /**

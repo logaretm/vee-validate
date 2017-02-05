@@ -131,3 +131,26 @@ export const assign = (target, ...others) => {
 
   return to;
 };
+
+/**
+ * polyfills array.find
+ * @param {Array} array
+ * @param {Function} predicate
+ */
+export const find = (array, predicate) => {
+  if (array.find) {
+    return array.find(predicate);
+  }
+
+  let result;
+  array.some(item => {
+    if (predicate(item)) {
+      result = item;
+      return true;
+    }
+
+    return false;
+  });
+
+  return result;
+};

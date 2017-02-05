@@ -1,29 +1,12 @@
-import ListenerGenerator from '../listeners';
-import { getScope, isObject, addClass, removeClass, assign } from '../utils/helpers';
+import ListenerGenerator from './listeners';
+import { getScope, isObject, addClass, removeClass, find } from './utils';
 
 const listenersInstances = [];
 
-const defaultClassNames = {
-  touched: 'touched', // the control has been blurred
-  untouched: 'untouched', // the control hasn't been blurred
-  valid: 'valid', // model is valid
-  invalid: 'invalid', // model is invalid
-  pristine: 'pristine', // control has not been interacted with
-  dirty: 'dirty' // control has been interacted with
-};
+function addClasses(el, flags, classNames) {
+  if (! flags) return;
 
-function addClasses(el, fieldName, fields, classNames = null) {
-  if (!fieldName) {
-    return;
-  }
-
-  classNames = assign({}, defaultClassNames, classNames);
-
-  const isDirty = fields.dirty(fieldName);
-  const isValid = fields.valid(fieldName);
-  const failed = fields.failed(fieldName);
-
-  if (isDirty) {
+  if (flags.dirty) {
     addClass(el, classNames.touched);
     removeClass(el, classNames.untouched);
   } else {
@@ -31,27 +14,21 @@ function addClasses(el, fieldName, fields, classNames = null) {
     removeClass(el, classNames.touched);
   }
 
-  if (isValid) {
+  if (flags.valid || flags.passed) {
     addClass(el, classNames.valid);
     removeClass(el, classNames.invalid);
   } else {
-    if (failed) {
-      addClass(el, classNames.invalid);
-    }
+    addClass(el, classNames.invalid);
     removeClass(el, classNames.valid);
   }
 }
 
 function setDirty(el, classNames) {
-  classNames = assign({}, defaultClassNames, classNames);
-
   addClass(el, classNames.dirty);
   removeClass(el, classNames.pristine);
 }
 
 function setPristine(el, classNames) {
-  classNames = assign({}, defaultClassNames, classNames);
-
   addClass(el, classNames.pristine);
   removeClass(el, classNames.dirty);
 }
@@ -64,21 +41,19 @@ export default (options) => ({
     listenersInstances.push({ vm: vnode.context, el, instance: listener });
 
     if (options.enableAutoClasses) {
-      const classNames = options.classNames;
-
-      setPristine(el, classNames);
-
-      el.onfocus = () => {
-        setDirty(el, classNames);
-      };
-
-      addClasses(el, listener.fieldName, vnode.context[options.fieldsBagName], classNames);
+      setPristine(el, options.classNames);
+      el.onfocus = () => { setDirty(el, options.classNames); };
+      addClasses(
+        el,
+        vnode.context.$validator.fieldBag.fields[listener.fieldName],
+        options.classNames
+      );
     }
   },
   update(el, { expression, value, oldValue }, { context }) {
-    const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
+    const { instance } = find(listenersInstances, l => l.vm === context && l.el === el);
     if (options.enableAutoClasses) {
-      addClasses(el, holder.instance.fieldName, context[options.fieldsBagName], options.classNames);
+      addClasses(el, context.$validator.fieldBag.fields[instance.fieldName], options.classNames);
     }
 
     // make sure we don't do uneccessary work if no expression was passed
@@ -88,13 +63,13 @@ export default (options) => ({
 
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
-            holder.instance.fieldName,
-            isObject(value) ? value.rules : value,
-            { scope: scope || '__global__' }
-        );
+      instance.fieldName,
+      isObject(value) ? value.rules : value,
+      { scope: scope || '__global__' }
+    );
   },
   unbind(el, { value }, { context }) {
-    const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
+    const holder = find(listenersInstances, l => l.vm === context && l.el === el);
     if (typeof holder === 'undefined') {
       return;
     }
