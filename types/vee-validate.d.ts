@@ -39,7 +39,7 @@ export class Validator {
     updateDictionary(data: Object): void;
     updateField(name: string, checks: string|Object, options: any): void;
     validate(name: string, value: any, scope?: string): boolean|Promise;
-    validateAll(values: Object): Promise;
+    validateAll(values?: Object): Promise;
     validateScopes(): Promise;
     static create(validations: Object, $vm: any, options: any): Validator;
     static extend(name: string, validator: Object|Function): void;
