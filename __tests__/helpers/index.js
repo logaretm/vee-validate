@@ -2,8 +2,14 @@ export default {
     querySelector(el) {
         global.document.querySelector = () => el || null
     },
-    vnode() {
+    vnode(shouldThrow, result) {
         return {
+            context: {
+                $validator: this.validator(shouldThrow, result),
+                $nextTick: (callback) => {
+                    callback();
+                }
+            },
             data: {
                 directives: []
             }

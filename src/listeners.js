@@ -12,9 +12,7 @@ export default class ListenerGenerator
     this.component = vnode.child;
     this.options = options;
     this.fieldName = this._resolveFieldName();
-    if (vnode.data && vnode.data.directives) {
-      this.model = this._resolveModel(vnode.data.directives);
-    }
+    this.model = this._resolveModel(vnode.data.directives);
   }
 
   /**
@@ -22,8 +20,9 @@ export default class ListenerGenerator
    */
   _resolveModel(directives) {
     let boundTo = null;
+    const expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
     directives.some(d => {
-      if (d.name === 'model') {
+      if (d.name === 'model' && expRegex.test(d.expression)) {
         boundTo = d.expression;
 
         return true;
@@ -57,7 +56,7 @@ export default class ListenerGenerator
     }
 
     if (isObject(rules)) {
-      Object.keys(rules).forEach(r => {
+      Object.keys(rules).forEach(r => { // eslint-disable-line
         if (/confirmed|after|before/.test(r)) {
           fieldName = rules[r];
 
@@ -327,12 +326,14 @@ export default class ListenerGenerator
     * Gets the arg string value, either from the directive or the expression value.
     */
   _getArg() {
-    if (this.model) {
-      return this.model;
-    }
-
+    // Get it from the directive arg.
     if (this.binding.arg) {
       return this.binding.arg;
+    }
+
+    // Get it from v-model.
+    if (this.model) {
+      return this.model;
     }
 
     return isObject(this.binding.value) ? this.binding.value.arg : null;
