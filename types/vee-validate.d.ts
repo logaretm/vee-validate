@@ -14,34 +14,36 @@ export class ErrorBag {
     has(field: string, scope?: string): boolean;
     remove(field: string, scope?: string): void;
 }
+
+
 export class Validator {
 
     errorBag: ErrorBag
 
     constructor(validations: any, $vm: any, options: any);
-    addScope(scope: any): void;
-    append(name: any, checks: any, options: any): void;
-    attach(name: any, checks: any, options: any): void;
-    detach(name: any, scope: any): void;
-    extend(name: any, validator: any): void;
-    getErrors(): any;
-    getLocale(): any;
+    addScope(scope: string): void;
+    append(name: string, checks: string|Object, options: any): void;
+    attach(name: string, checks: string|Object, options: any): void;
+    detach(name: string, scope: string): void;
+    extend(name: string, validator: any): void;
+    getErrors(): ErrorBag;
+    getLocale(): string;
     init(): any;
     installDateTimeValidators(moment: any): void;
-    remove(name: any): void;
-    setLocale(language: any): void;
-    setStrictMode(strictMode: any): void;
+    remove(name: string): void;
+    setLocale(language?: string): void;
+    setStrictMode(strictMode: boolean): void;
     updateDictionary(data: any): void;
-    updateField(name: any, checks: any, options: any): void;
-    validate(name: any, value: any, scope: any): any;
-    validateAll(values: any): any;
+    updateField(name: string, checks: string|Object, options: any): void;
+    validate(name: string, value: string, scope?: string): boolean|Promise;
+    validateAll(values: any): Promise;
     validateScopes(): any;
     static create(validations: any, $vm: any, options: any): any;
-    static extend(name: any, validator: any): void;
+    static extend(name: string, validator: any): void;
     static installDateTimeValidators(moment: any): any;
-    static remove(name: any): void;
-    static setLocale(language: any): void;
-    static setStrictMode(strictMode: any): void;
+    static remove(name: string): void;
+    static setLocale(language?: string): void;
+    static setStrictMode(strictMode: boolean): void;
     static updateDictionary(data: any): void;
 }
 export const version: string;
