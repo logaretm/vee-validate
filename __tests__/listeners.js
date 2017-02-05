@@ -63,14 +63,15 @@ it('should get the arg', () => {
     // Arg is passed in v-model.
     const vnode = helpers.vnode();
     const directives = [
-        { name: 'model', expression: 'u.name', valid: true },
+        { name: 'model', expression: 'u.nAMe', valid: true },
+        { name: 'model', expression: 'A', valid: true },
         { name: 'model', expression: 'u.', valid: false },
         { name: 'model', expression: '.u', valid: false },
         { name: 'model', expression: '12may', valid: false },
         { name: 'model', expression: 'may12', valid: true },
         { name: 'model', expression: 'users[1]', valid: false },
         { name: 'model', expression: 'u.1', valid: false },
-        { name: 'model', expression: 'u .mnae', valid: false }
+        { name: 'model', expression: 'u .NAME', valid: false }
     ];
 
     directives.forEach(dir => {
