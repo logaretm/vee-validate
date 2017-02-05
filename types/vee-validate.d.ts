@@ -28,7 +28,7 @@ export class Validator {
     append(name: string, checks: string|Object, options: any): void;
     attach(name: string, checks: string|Object, options: any): void;
     detach(name: string, scope: string): void;
-    extend(name: string, validator: any): void;
+    extend(name: string, validator: Object|Function): void;
     getErrors(): ErrorBag;
     getLocale(): string;
     init(): any;
@@ -36,13 +36,13 @@ export class Validator {
     remove(name: string): void;
     setLocale(language?: string): void;
     setStrictMode(strictMode: boolean): void;
-    updateDictionary(data: any): void;
+    updateDictionary(data: Object): void;
     updateField(name: string, checks: string|Object, options: any): void;
-    validate(name: string, value: string, scope?: string): boolean|Promise;
-    validateAll(values: any): Promise;
-    validateScopes(): any;
-    static create(validations: any, $vm: any, options: any): any;
-    static extend(name: string, validator: any): void;
+    validate(name: string, value: any, scope?: string): boolean|Promise;
+    validateAll(values: Object): Promise;
+    validateScopes(): Promise;
+    static create(validations: Object, $vm: any, options: any): Validator;
+    static extend(name: string, validator: Object|Function): void;
     static installDateTimeValidators(moment: Moment): any;
     static remove(name: string): void;
     static setLocale(language?: string): void;
