@@ -1,4 +1,5 @@
 import Vue = require("vue");
+import { Moment } from 'moment'
 
 export class ErrorBag {
     constructor();
@@ -31,7 +32,7 @@ export class Validator {
     getErrors(): ErrorBag;
     getLocale(): string;
     init(): any;
-    installDateTimeValidators(moment: any): void;
+    installDateTimeValidators(moment: Moment): void;
     remove(name: string): void;
     setLocale(language?: string): void;
     setStrictMode(strictMode: boolean): void;
@@ -42,7 +43,7 @@ export class Validator {
     validateScopes(): any;
     static create(validations: any, $vm: any, options: any): any;
     static extend(name: string, validator: any): void;
-    static installDateTimeValidators(moment: any): any;
+    static installDateTimeValidators(moment: Moment): any;
     static remove(name: string): void;
     static setLocale(language?: string): void;
     static setStrictMode(strictMode: boolean): void;
