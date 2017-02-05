@@ -19,6 +19,8 @@ export class ErrorBag {
 export class Validator {
 
     errorBag: ErrorBag
+    fieldBag: any
+    strictMode: boolean
 
     constructor(validations: any, $vm: any, options: any);
     addScope(scope: string): void;
