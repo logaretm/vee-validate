@@ -209,8 +209,8 @@ export default class ListenerGenerator
       break;
     }
 
-        // users are able to specify which events they want to validate on
-        // pipe separated list of handler names to use
+    // users are able to specify which events they want to validate on
+    // pipe separated list of handler names to use
     const events = getDataAttribute(this.el, 'validate-on');
     if (events) {
       listener.names = events.split('|');
@@ -219,9 +219,9 @@ export default class ListenerGenerator
     return listener;
   }
 
-    /**
-     * Attaches neccessary validation events for the component.
-     */
+  /**
+   * Attaches neccessary validation events for the component.
+   */
   _attachComponentListeners() {
     this.componentListener = debounce((value) => {
       this._validate(value);
@@ -230,11 +230,11 @@ export default class ListenerGenerator
     this.component.$on('input', this.componentListener);
   }
 
-    /**
-     * Attachs a suitable listener for the input.
-     */
+  /**
+   * Attachs a suitable listener for the input.
+   */
   _attachFieldListeners() {
-        // If it is a component, use vue events instead.
+    // If it is a component, use vue events instead.
     if (this.component) {
       this._attachComponentListeners();
 
@@ -267,9 +267,9 @@ export default class ListenerGenerator
     });
   }
 
-    /**
-     * Returns a context, getter factory pairs for each input type.
-     */
+  /**
+   * Returns a context, getter factory pairs for each input type.
+   */
   _resolveValueGetter() {
     if (this.component) {
       return {
@@ -313,9 +313,9 @@ export default class ListenerGenerator
     }
   }
 
-    /*
-    * Gets the arg string value, either from the directive or the expression value.
-    */
+  /*
+  * Gets the arg string value, either from the directive or the expression value.
+  */
   _getArg() {
     // Get it from the directive arg.
     if (this.binding.arg) {
@@ -330,9 +330,30 @@ export default class ListenerGenerator
     return isObject(this.binding.value) ? this.binding.value.arg : null;
   }
 
-    /**
-     * Attaches the Event Listeners.
-     */
+  /**
+   * Attaches model watchers and extra listeners.
+   */
+  _attachModelWatcher(arg) {
+    const events = getDataAttribute(this.el, 'validate-on') || 'input|blur';
+    const listener = debounce(
+      this._getSuitableListener().listener.bind(this),
+      getDataAttribute(this.el, 'delay') || this.options.delay
+    );
+    events.split('|').forEach(name => {
+      if (name === 'input') {
+        this.unwatch = this.vm.$watch(arg, (value) => {
+          this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
+        }, { deep: true });
+      }
+
+      this.el.addEventListener(name, listener);
+      this.callbacks.push({ name, listener, el: this.el });
+    });
+  }
+
+  /**
+   * Attaches the Event Listeners.
+   */
   attach() {
     const { context, getter } = this._resolveValueGetter();
     this.vm.$validator.attach(this.fieldName, this._getRules(), {
@@ -349,10 +370,7 @@ export default class ListenerGenerator
     this._attachValidatorEvent();
     const arg = this._getArg();
     if (arg) {
-      this.unwatch = this.vm.$watch(arg, (value) => {
-        this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
-      }, { deep: true });
-
+      this._attachModelWatcher(arg);
       return;
     }
 
