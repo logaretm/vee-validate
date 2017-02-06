@@ -55,6 +55,7 @@
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-replace": "^1.1.1",
     "uglify-js": "^2.7.5",
-    "validator": "^6.1.0"
+    "validator": "^6.1.0",
+    "vue": "^2.1.10"
   }
 }
