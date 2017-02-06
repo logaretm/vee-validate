@@ -38,9 +38,9 @@ export class Validator {
     setStrictMode(strictMode: boolean): void;
     updateDictionary(data: Object): void;
     updateField(name: string, checks: string|Object, options: any): void;
-    validate(name: string, value: any, scope?: string): boolean|Promise;
-    validateAll(values?: Object): Promise;
-    validateScopes(): Promise;
+    validate(name: string, value: any, scope?: string): boolean|Promise<any>;
+    validateAll(values?: Object): Promise<any>;
+    validateScopes(): Promise<any>;
     static create(validations: Object, $vm: any, options: any): Validator;
     static extend(name: string, validator: Object|Function): void;
     static installDateTimeValidators(moment: Moment): any;
@@ -50,4 +50,5 @@ export class Validator {
     static updateDictionary(data: any): void;
 }
 export const version: string;
-export function install(Vue: Vue, ref: any): any;
+
+export const install: Vue.PluginFunction<never>
