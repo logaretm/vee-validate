@@ -1,4 +1,4 @@
-import * as helpers from '../src/utils/helpers.js';
+import * as helpers from '../src/utils';
 
 it('gets the data attribute prefixed with the plugin', () => {
     document.body.innerHTML =
@@ -36,4 +36,19 @@ it('checks if a value is an object', () => {
     expect(isObject([])).toBe(false);
     expect(isObject('someval')).toBe(false);
     expect(isObject({})).toBe(true);
+});
+
+it('returns first matching element from array', () => {
+    const find = helpers.find;
+    const arr = [
+        { el: 'name' },
+        { el: 'email' },
+        { el: 'address' },
+        { el: 'something' },
+        { el: 'else' }
+    ];
+    expect(find(arr, e => e.el === 'name').el).toBe('name');
+    arr.find = null;
+    
+    expect(find(arr, e => e.el === 'else').el).toBe('else');
 });

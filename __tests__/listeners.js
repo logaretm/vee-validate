@@ -29,7 +29,7 @@ it('should not crash if no rules attribute was specified', () => {
     const el = document.querySelector('#el');
 
     expect(() => {
-        const lg = new ListenerGenerator(el, '', { context: { $validator: new Validator() } }, {});
+        const lg = new ListenerGenerator(el, '', helpers.vnode(), {});
         lg.attach();
     }).not.toThrowError("Cannot read property 'split' of null");
     
@@ -40,11 +40,11 @@ it('should get rules', () => {
     const el = document.querySelector('#el');
 
     // test if the rules were passed as the expression.
-    let lg = new ListenerGenerator(el, { expression: true, value: 'required|email' }, {}, {});
+    let lg = new ListenerGenerator(el, { expression: true, value: 'required|email' }, helpers.vnode(), {});
     expect(lg._getRules()).toBe('required|email');
 
     // test if the rules was passed as a part of the expression.
-    lg = new ListenerGenerator(el, { expression: true, value: { rules: 'required|email' } }, {}, {});
+    lg = new ListenerGenerator(el, { expression: true, value: { rules: 'required|email' } }, helpers.vnode(), {});
     expect(lg._getRules()).toBe('required|email');
 });
 
@@ -53,18 +53,36 @@ it('should get the arg', () => {
     const el = document.querySelector('#el');
 
     // Arg is passed to the directive.
-    let lg = new ListenerGenerator(el, { arg: 'email', expression: true, value: 'required|email' }, {}, {});
+    let lg = new ListenerGenerator(el, { arg: 'email', expression: true, value: 'required|email' }, helpers.vnode(), {});
     expect(lg._getArg()).toBe('email');
 
     // Arg is passed as part of the expression.
-    lg = new ListenerGenerator(el, { expression: true, value: { rules: 'required|email', arg: 'form.email' } }, {}, {});
+    lg = new ListenerGenerator(el, { expression: true, value: { rules: 'required|email', arg: 'form.email' } }, helpers.vnode(), {});
     expect(lg._getArg()).toBe('form.email');
+
+    // Arg is passed in v-model.
+    const vnode = helpers.vnode();
+    const directives = [
+        { name: 'model', expression: 'u.nAMe', valid: true },
+        { name: 'model', expression: 'A', valid: true },
+        { name: 'model', expression: 'u.', valid: false },
+        { name: 'model', expression: '.u', valid: false },
+        { name: 'model', expression: '12may', valid: false },
+        { name: 'model', expression: 'may12', valid: true },
+        { name: 'model', expression: 'users[1]', valid: false },
+        { name: 'model', expression: 'u.1', valid: false },
+        { name: 'model', expression: 'u .NAME', valid: false }
+    ];
+
+    directives.forEach(dir => {
+        expect(!! lg._resolveModel([dir])).toBe(dir.valid);
+    });
 });
 
 it('should add unwatch property for arg watching', () => {
     document.body.innerHTML =`<input id="el" type="text" name="field">`;
     const el = document.querySelector('#el');
-    const lg = new ListenerGenerator(el, { arg: 'email', expression: true, value: 'required|email' }, {}, {});
+    const lg = new ListenerGenerator(el, { arg: 'email', expression: true, value: 'required|email' }, helpers.vnode(), {});
     lg.vm = { $watch(arg, callback) { return true }, $validator: { attach() {} } };
     expect(lg.unwatch).toBeFalsy();
     lg.attach();
@@ -84,7 +102,7 @@ it('detects input listener events', () => {
 
     valid.forEach(([type, callback, event]) => {
         el.type = type;
-        const lg = new ListenerGenerator(el, '', '', {})._getSuitableListener();
+        const lg = new ListenerGenerator(el, '', helpers.vnode(), {})._getSuitableListener();
         expect(lg.listener.name).toBe(callback);
         expect(lg.names).toEqual(event);
     });
@@ -99,7 +117,7 @@ it('detects custom listener events', () => {
     valid.forEach(event => {
         document.body.innerHTML =`<input id="el" type="text" name="field" data-vv-validate-on="${event}">`;
         const el = document.querySelector('#el');
-        const lg = new ListenerGenerator(el, '', '', {})._getSuitableListener();
+        const lg = new ListenerGenerator(el, '', helpers.vnode(), {})._getSuitableListener();
         expect(lg.names).toEqual(event.split('|'));
     });
 });
@@ -108,21 +126,21 @@ it('can resolve a field name', () => {
     // using direct field name.
     document.body.innerHTML = `<input id="el" type="text" name="field">`;
     let el = document.querySelector('#el');
-    let name = new ListenerGenerator(el, {}, {}, {})._resolveFieldName();
+    let name = new ListenerGenerator(el, {}, helpers.vnode(), {})._resolveFieldName();
     expect(name).toBe('field');
 
     // using data attribute.
     document.body.innerHTML = `<input id="el" type="text" data-vv-name="dataName">`;
     el = document.querySelector('#el');
-    name = new ListenerGenerator(el, {}, {}, {})._resolveFieldName();
+    name = new ListenerGenerator(el, {}, helpers.vnode(), {})._resolveFieldName();
     expect(name).toBe('dataName');
 
     // using arg does not affect the field name.
-    name = new ListenerGenerator(el, { arg: 'expressedName' }, '', {})._resolveFieldName();
+    name = new ListenerGenerator(el, { arg: 'expressedName' }, helpers.vnode(), {})._resolveFieldName();
     expect(name).toBe('dataName');
 
     // using component attribute.
-    let cgl = new ListenerGenerator(el, { arg: 'expressedName' }, '', {});
+    let cgl = new ListenerGenerator(el, { arg: 'expressedName' }, helpers.vnode(), {});
     cgl.component = { name: 'componentName' };
     // it will use the data-vv-name then the name property of the component if it exists.
     expect(cgl._resolveFieldName()).toBe('dataName');
@@ -130,7 +148,7 @@ it('can resolve a field name', () => {
     // No data-vv-name.
     document.body.innerHTML = `<input id="el" type="text">`;
     el = document.querySelector('#el');
-    cgl = new ListenerGenerator(el, { arg: 'expressedName' }, '', {});
+    cgl = new ListenerGenerator(el, { arg: 'expressedName' }, helpers.vnode(), {});
     cgl.component = { name: 'componentName' };
     expect(cgl._resolveFieldName()).toBe('componentName');
 });
@@ -138,7 +156,7 @@ it('can resolve a field name', () => {
 it('can generate a scoped listener', () => {
     document.body.innerHTML = `<input id="el" type="text" name="name" data-vv-scope="scope1">`;
     const el = document.querySelector('#el');
-    const scopedCallback = new ListenerGenerator(el, {}, {}, {})._getScopedListener(() => {
+    const scopedCallback = new ListenerGenerator(el, {}, helpers.vnode(), {})._getScopedListener(() => {
         throw 'Oops!'
     });
 
@@ -162,7 +180,7 @@ describe('can resolve value getters and context functions', () => {
     it('resolves value getters for text inputs', () => {
         document.body.innerHTML = `<input id="el" type="text" name="name" value="val">`;
         const el = document.querySelector('#el');
-        const lg = new ListenerGenerator(el, {}, {}, {});
+        const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
         const { context, getter } = lg._resolveValueGetter();
 
         expect(context()).toBe(el);
@@ -182,7 +200,7 @@ describe('can resolve value getters and context functions', () => {
                 helpers.file('val.jpg', 'image/jpg')
             ]
         };
-        const lg = new ListenerGenerator(el, {}, {}, {});
+        const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
         const { context, getter } = lg._resolveValueGetter();
 
         expect(context()).toBe(el);
@@ -194,7 +212,7 @@ describe('can resolve value getters and context functions', () => {
     it('resolves value getters for components', () => {
         document.body.innerHTML = `<input id="el" type="text" name="name" value="1" data-vv-value-path="internalValue">`;
         const el = document.querySelector('#el');
-        const lg = new ListenerGenerator(el, {}, {}, {});
+        const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
         lg.component = { $el: el, internalValue: 'first' };
         const { context, getter } = lg._resolveValueGetter();
 
@@ -211,7 +229,7 @@ describe('can resolve value getters and context functions', () => {
                 <input id="el2" type="checkbox" name="name" value="2">
             </div>`;
         const el = document.querySelector('#el1');
-        const lg = new ListenerGenerator(el, {}, {}, {});
+        const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
         const { context, getter } = lg._resolveValueGetter();
         expect(getter(context())).toEqual(['1']);
         document.body.innerHTML = `
@@ -235,7 +253,7 @@ describe('can resolve value getters and context functions', () => {
                 <input id="el2" type="radio" name="name" value="2">
             </div>`;
         const el = document.querySelector('#el1');
-        const lg = new ListenerGenerator(el, {}, {}, {});
+        const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
         const { context, getter } = lg._resolveValueGetter();
         expect(getter(context())).toBe('1');
 
@@ -256,61 +274,58 @@ describe('can resolve value getters and context functions', () => {
 
 describe('the generator can handle input events', () => {
     it('can handle text input event', () => {
-        const vm = { $validator: helpers.validator() };
         document.body.innerHTML = `<input id="el" type="text" name="field" value="1">`;
         const el = document.querySelector('#el');
         expect(() => {
-            new ListenerGenerator(el, {}, { context: vm }, {})._inputListener();
+            new ListenerGenerator(el, {}, helpers.vnode(), {})._inputListener();
         }).toThrow();
     });
 
     it('can handle file change event', () => {
-        let vm = { $validator: helpers.validator(false) };
         document.body.innerHTML = `<input id="el" type="file" name="field" value="files.jpg">`;
         const el = document.querySelector('#el');
-        new ListenerGenerator(el, { modifiers: { reject: true }}, { context: vm }, {})._fileListener();
+        new ListenerGenerator(el, { modifiers: { reject: true }}, helpers.vnode(false), {})._fileListener();
         expect(el.value).toBe(''); // test reject.
-        vm = { $validator: helpers.validator() };
         expect(() => {
-            new ListenerGenerator(el, {}, { context: vm }, {})._fileListener();
+            new ListenerGenerator(el, {}, helpers.vnode(), {})._fileListener();
         }).toThrow();
     });
 
     it('can handle radio input change', () => {
-        let vm = { $validator: helpers.validator() };
+        const vnode = helpers.vnode();
         document.body.innerHTML = `
             <input id="el" type="radio" name="field" value="1" checked>
             <input id="el2" type="radio" name="field" value="2">
         `;
         const el = document.querySelector('#el');
         expect(() => {
-            new ListenerGenerator(el, {}, { context: vm }, {})._radioListener();
+            new ListenerGenerator(el, {}, vnode, {})._radioListener();
         }).toThrowError('1');
         document.body.innerHTML = `
             <input id="el" type="radio" name="field" value="1">
             <input id="el2" type="radio" name="field" value="2" checked>
         `;
         expect(() => {
-            new ListenerGenerator(el, {}, { context: vm }, {})._radioListener();
+            new ListenerGenerator(el, {}, vnode, {})._radioListener();
         }).toThrowError('2');
     });
 
     it('can handle checkboxes input change', () => {
-        let vm = { $validator: helpers.validator() };
+        const vnode = helpers.vnode();
         document.body.innerHTML = `
             <input id="el" type="checkbox" name="field" value="1" checked>
             <input id="el2" type="checkbox" name="field" value="2">
         `;
         const el = document.querySelector('#el');
         expect(() => {
-            new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
+            new ListenerGenerator(el, {}, vnode, {})._checkboxListener();
         }).toThrowError('1');
         document.body.innerHTML = `
             <input id="el" type="checkbox" name="field" value="1">
             <input id="el2" type="checkbox" name="field" value="2" checked>
         `;
         expect(() => {
-            new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
+            new ListenerGenerator(el, {}, vnode, {})._checkboxListener();
         }).toThrowError('2');
 
         document.body.innerHTML = `
@@ -318,11 +333,11 @@ describe('the generator can handle input events', () => {
             <input id="el2" type="checkbox" name="field" value="2" checked>
         `;
         expect(() => {
-            new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
+            new ListenerGenerator(el, {}, vnode, {})._checkboxListener();
         }).toThrowError('1');
         document.body.innerHTML = ``;
         expect(() => {
-            new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
+            new ListenerGenerator(el, {}, vnode, {})._checkboxListener();
         }).toThrowError("null");
 
         document.body.innerHTML = `
@@ -331,17 +346,16 @@ describe('the generator can handle input events', () => {
         `;
 
         expect(() => {
-            new ListenerGenerator(el, {}, { context: vm }, {})._checkboxListener();
+            new ListenerGenerator(el, {}, vnode, {})._checkboxListener();
         }).toThrowError("null");
 
-        vm = { $validator: helpers.validator(false) };
-        const lg = new ListenerGenerator(el, {}, { context: vm }, {});
+        const lg = new ListenerGenerator(el, {}, helpers.vnode(false), {});
         document.body.innerHTML = '';
         expect(lg._checkboxListener()).toBeFalsy();
     });
 
     it('can handle select fields value change', () => {
-        const vm = { $validator: helpers.validator() };
+        const vnode = helpers.vnode();
         document.body.innerHTML = `
             <select id="el" name="field">
                 <option value="val1" checked>1</option>
@@ -351,11 +365,11 @@ describe('the generator can handle input events', () => {
         
         const el = document.querySelector('#el');
         expect(
-            new ListenerGenerator(el, {}, { context: vm }, {})._getSuitableListener().names
+            new ListenerGenerator(el, {}, vnode, {})._getSuitableListener().names
         ).toEqual(['change', 'blur']);
 
         expect(() => {
-            new ListenerGenerator(el, {}, { context: vm }, {})._inputListener();
+            new ListenerGenerator(el, {}, vnode, {})._inputListener();
         }).toThrowError('val1');
     });
 
@@ -368,16 +382,16 @@ describe('the generator can handle input events', () => {
             }
         };
 
-        let vm = { $validator: helpers.validator(false) };
-        let lg = new ListenerGenerator(el, {}, {context: vm }, {});
+        let vnode = helpers.vnode(false);
+        let lg = new ListenerGenerator(el, {}, vnode, {});
         expect(() => {
             lg.component = mockedComponent;
             lg.attach();
         }).toThrowError('something');
 
 
-        vm = { $validator: helpers.validator() };
-        lg = new ListenerGenerator(el, {}, { context: vm }, {});
+        vnode = helpers.vnode();
+        lg = new ListenerGenerator(el, {}, vnode, {});
         lg.component = {
             $on(whatever, callback) {
                 lg.component.onInput = (value) => { callback(value); }
@@ -396,13 +410,9 @@ it('should attach additional listeners for rules with dependent fields', () => {
         <input type="text" name="other" id="other" data-vv-rules="confirmed:other">
     </div>`;
     const el = document.querySelector('#el');
-    const vm = {
-        $nextTick: (callback) => {
-            callback();
-        }
-    };
+    const vnode = helpers.vnode();
 
-    const lg = new ListenerGenerator(el, {}, { context: vm }, {});
+    const lg = new ListenerGenerator(el, {}, vnode, {});
     lg._attachValidatorEvent();
 
     expect(lg.callbacks.map(c => c.el.name)).toContain('other');
@@ -413,13 +423,8 @@ it('should not attach additional listeners for rules with dependent fields that 
             <input type="text" name="field" id="el" data-vv-rules="confirmed:other">
         </div>`;
     const el = document.querySelector('#el');
-    const vm = {
-        $nextTick: (callback) => {
-            callback();
-        }
-    };
 
-    const lg = new ListenerGenerator(el, {}, { context: vm }, {});
+    const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
     lg._attachValidatorEvent();
 
     expect(lg.callbacks.map(c => c.el.name)).not.toContain('other');
@@ -431,13 +436,8 @@ it('should attach a listener for each radio element', () => {
         <input type="radio" name="field" value="2">
     </div>`;
     const el = document.querySelector('#el');
-    const vm = {
-        $nextTick: (callback) => {
-            callback();
-        }
-    };
 
-    const lg = new ListenerGenerator(el, {}, { context: vm }, {});
+    const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
     lg._attachFieldListeners();
     expect(lg.callbacks.filter(c => c.el.name === 'field').length).toBe(2);
 });
@@ -449,13 +449,8 @@ it('should attach a listener for each checkbox element', () => {
         <input type="checkbox" name="field" value="2">
     </div>`;
     const el = document.querySelector('#el');
-    const vm = {
-        $nextTick: (callback) => {
-            callback();
-        }
-    };
 
-    const lg = new ListenerGenerator(el, {}, { context: vm }, {});
+    const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
     lg._attachFieldListeners();
     expect(lg.callbacks.filter(c => c.el.name === 'field').length).toBe(2);
 });
@@ -463,7 +458,7 @@ it('should attach a listener for each checkbox element', () => {
 it('detaches listeners', () => {
     document.body.innerHTML = `<input type="text" name="field" id="el">`;
     const el = document.querySelector('#el');
-    const lg = new ListenerGenerator(el, {}, {}, {});
+    const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
     const throws = { unwatch: true, off: true };
     lg.unwatch = () => { if (throws.unwatch) throw 'unwatched'; };
     lg.component = { $off() { if(throws.off) throw 'offed listener'; } };

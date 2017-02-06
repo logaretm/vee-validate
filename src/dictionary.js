@@ -1,5 +1,5 @@
 /* eslint-disable prefer-rest-params */
-import { isObject, assign } from './utils/helpers';
+import { isObject, assign } from './utils';
 
 export default class Dictionary
 {

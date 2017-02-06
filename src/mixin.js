@@ -1,4 +1,4 @@
-import { unregister } from './utils/maps';
+import Validator from './validator';
 
 export default (options) => ({
   data() {
@@ -13,10 +13,10 @@ export default (options) => ({
       }
     }
   },
+  beforeCreate() {
+    this.$validator = new Validator(null, { init: false });
+  },
   mounted() {
     this.$validator.init();
-  },
-  destroyed() {
-    unregister(this);
   }
 });

@@ -11,6 +11,17 @@ export default class FieldBag {
     this._setFlags(name, { dirty: false, valid: false, }, true);
   }
 
+  /**
+   * Adds a field if it does not exist.
+   */
+  _addIfNotExists(name) {
+    if (this.fields[name]) {
+      return;
+    }
+
+    this._add(name);
+  }
+
     /**
      * Remooves a field from the bag.
      */
