@@ -694,7 +694,10 @@ export default class Validator
      */
   validate(name, value, scope = '__global__') {
     if (name && name.indexOf('.') > -1) {
-      [scope, name] = name.split('.');
+      // no such field, try the scope form.
+      if (! this.$scopes.__global__[name]) {
+        [scope, name] = name.split('.');
+      }
     }
     if (! scope) scope = '__global__';
     if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {

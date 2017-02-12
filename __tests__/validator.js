@@ -746,3 +746,10 @@ it('can update validations of a field', () => {
     expect(v.errorBag.count()).toBe(0);
     expect(v.validate('name', 12)).toBe(true);
 });
+
+it('handles dot notation names', () => {
+    const v = new Validator();
+    v.attach('example.name', 'required|alpha');
+    expect(v.validate('example.name', '')).toBe(false);
+    expect(v.validate('example.name', 'ad')).toBe(true);
+});

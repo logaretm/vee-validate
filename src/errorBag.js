@@ -106,7 +106,12 @@ export default class ErrorBag
     const scoped = this._scope(field);
 
     if (scoped) {
-      return this.first(scoped.name, scoped.scope);
+      const result = this.first(scoped.name, scoped.scope);
+      // if such result exist, return it. otherwise it could be a field.
+      // with dot in its name.
+      if (result) {
+        return result;
+      }
     }
 
     if (selector) {

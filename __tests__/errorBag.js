@@ -238,3 +238,12 @@ it('can get a specific error message for a specific rule', () => {
     expect(errors.firstByRule('name', 'rule2')).toBe('The name is really invalid');
     expect(errors.firstByRule('email', 'rule1')).toBe(null);
 });
+
+it('fetches both scoped names and names with dots', () => {
+    const errors = new ErrorBag();
+    errors.add('name.example', 'The name is invalid', 'rule1');
+    errors.add('name', 'The name is really invalid', 'rule2', 'example');
+    expect(errors.first('name.example')).toBe('The name is invalid');
+    expect(errors.first('example.name')).toBe('The name is really invalid');
+});
+
