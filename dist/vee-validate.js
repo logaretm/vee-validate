@@ -895,7 +895,12 @@ ErrorBag.prototype.first = function first (field, scope) {
   var scoped = this._scope(field);
 
   if (scoped) {
-    return this.first(scoped.name, scoped.scope);
+    var result = this.first(scoped.name, scoped.scope);
+    // if such result exist, return it. otherwise it could be a field.
+    // with dot in its name.
+    if (result) {
+      return result;
+    }
   }
 
   if (selector) {
@@ -1152,6 +1157,29 @@ var assign = function (target) {
   });
 
   return to;
+};
+
+/**
+ * polyfills array.find
+ * @param {Array} array
+ * @param {Function} predicate
+ */
+var find = function (array, predicate) {
+  if (array.find) {
+    return array.find(predicate);
+  }
+
+  var result;
+  array.some(function (item) {
+    if (predicate(item)) {
+      result = item;
+      return true;
+    }
+
+    return false;
+  });
+
+  return result;
 };
 
 /* eslint-disable prefer-rest-params */
@@ -1432,6 +1460,17 @@ var FieldBag = function FieldBag() {
 FieldBag.prototype._add = function _add (name) {
   this.fields[name] = {};
   this._setFlags(name, { dirty: false, valid: false, }, true);
+};
+
+/**
+ * Adds a field if it does not exist.
+ */
+FieldBag.prototype._addIfNotExists = function _addIfNotExists (name) {
+  if (this.fields[name]) {
+    return;
+  }
+
+  this._add(name);
 };
 
   /**
@@ -1843,7 +1882,7 @@ Validator.prototype._createField = function _createField (name, checks, scope) {
   }
 
   var field = this.$scopes[scope][name];
-  this.fieldBag._add(name);
+  this.fieldBag._addIfNotExists(name);
   field.validations = this._normalizeRules(name, checks, scope);
   field.required = this._isRequired(field);
 };
@@ -2289,8 +2328,11 @@ Validator.prototype.validate = function validate (name, value, scope) {
     if ( scope === void 0 ) scope = '__global__';
 
   if (name && name.indexOf('.') > -1) {
-    var assign$$1;
-      (assign$$1 = name.split('.'), scope = assign$$1[0], name = assign$$1[1]);
+    // no such field, try the scope form.
+    if (! this.$scopes.__global__[name]) {
+      var assign$$1;
+        (assign$$1 = name.split('.'), scope = assign$$1[0], name = assign$$1[1]);
+    }
   }
   if (! scope) { scope = '__global__'; }
   if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
@@ -2428,27 +2470,17 @@ var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) 
   this.component = vnode.child;
   this.options = options;
   this.fieldName = this._resolveFieldName();
-  if (vnode.data && vnode.data.directives) {
-    this.model = this._resolveModel(vnode.data.directives);
-  }
+  this.model = this._resolveModel(vnode.data.directives);
 };
 
 /**
  * Checks if the node directives contains a v-model.
  */
 ListenerGenerator.prototype._resolveModel = function _resolveModel (directives) {
-  var boundTo = null;
-  directives.some(function (d) {
-    if (d.name === 'model') {
-      boundTo = d.expression;
+  var expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
+  var model = find(directives, function (d) { return d.name === 'model' && expRegex.test(d.expression); });
 
-      return true;
-    }
-
-    return false;
-  });
-
-  return boundTo;
+  return model && model.expression;
 };
 
   /**
@@ -2475,7 +2507,7 @@ ListenerGenerator.prototype._hasFieldDependency = function _hasFieldDependency (
   }
 
   if (isObject(rules)) {
-    Object.keys(rules).forEach(function (r) {
+    Object.keys(rules).forEach(function (r) { // eslint-disable-line
       if (/confirmed|after|before/.test(r)) {
         fieldName = rules[r];
 
@@ -2643,8 +2675,8 @@ ListenerGenerator.prototype._getSuitableListener = function _getSuitableListener
     break;
   }
 
-      // users are able to specify which events they want to validate on
-      // pipe separated list of handler names to use
+  // users are able to specify which events they want to validate on
+  // pipe separated list of handler names to use
   var events = getDataAttribute(this.el, 'validate-on');
   if (events) {
     listener.names = events.split('|');
@@ -2653,9 +2685,9 @@ ListenerGenerator.prototype._getSuitableListener = function _getSuitableListener
   return listener;
 };
 
-  /**
-   * Attaches neccessary validation events for the component.
-   */
+/**
+ * Attaches neccessary validation events for the component.
+ */
 ListenerGenerator.prototype._attachComponentListeners = function _attachComponentListeners () {
     var this$1 = this;
 
@@ -2666,13 +2698,13 @@ ListenerGenerator.prototype._attachComponentListeners = function _attachComponen
   this.component.$on('input', this.componentListener);
 };
 
-  /**
-   * Attachs a suitable listener for the input.
-   */
+/**
+ * Attachs a suitable listener for the input.
+ */
 ListenerGenerator.prototype._attachFieldListeners = function _attachFieldListeners () {
     var this$1 = this;
 
-      // If it is a component, use vue events instead.
+  // If it is a component, use vue events instead.
   if (this.component) {
     this._attachComponentListeners();
 
@@ -2705,9 +2737,9 @@ ListenerGenerator.prototype._attachFieldListeners = function _attachFieldListene
   });
 };
 
-  /**
-   * Returns a context, getter factory pairs for each input type.
-   */
+/**
+ * Returns a context, getter factory pairs for each input type.
+ */
 ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter () {
     var this$1 = this;
 
@@ -2753,24 +2785,49 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
   }
 };
 
-  /*
-  * Gets the arg string value, either from the directive or the expression value.
-  */
+/*
+* Gets the arg string value, either from the directive or the expression value.
+*/
 ListenerGenerator.prototype._getArg = function _getArg () {
-  if (this.model) {
-    return this.model;
-  }
-
+  // Get it from the directive arg.
   if (this.binding.arg) {
     return this.binding.arg;
+  }
+
+  // Get it from v-model.
+  if (this.model) {
+    return this.model;
   }
 
   return isObject(this.binding.value) ? this.binding.value.arg : null;
 };
 
-  /**
-   * Attaches the Event Listeners.
-   */
+/**
+ * Attaches model watchers and extra listeners.
+ */
+ListenerGenerator.prototype._attachModelWatcher = function _attachModelWatcher (arg) {
+    var this$1 = this;
+
+  var events = getDataAttribute(this.el, 'validate-on') || 'input|blur';
+  var listener = debounce(
+    this._getSuitableListener().listener.bind(this),
+    getDataAttribute(this.el, 'delay') || this.options.delay
+  );
+  events.split('|').forEach(function (name) {
+    if (name === 'input') {
+      this$1.unwatch = this$1.vm.$watch(arg, function (value) {
+        this$1.vm.$validator.validate(this$1.fieldName, value, this$1.scope || getScope(this$1.el));
+      }, { deep: true });
+    }
+
+    this$1.el.addEventListener(name, listener);
+    this$1.callbacks.push({ name: name, listener: listener, el: this$1.el });
+  });
+};
+
+/**
+ * Attaches the Event Listeners.
+ */
 ListenerGenerator.prototype.attach = function attach () {
     var this$1 = this;
 
@@ -2791,10 +2848,7 @@ ListenerGenerator.prototype.attach = function attach () {
   this._attachValidatorEvent();
   var arg = this._getArg();
   if (arg) {
-    this.unwatch = this.vm.$watch(arg, function (value) {
-      this$1.vm.$validator.validate(this$1.fieldName, value, this$1.scope || getScope(this$1.el));
-    }, { deep: true });
-
+    this._attachModelWatcher(arg);
     return;
   }
 
@@ -2820,29 +2874,10 @@ ListenerGenerator.prototype.detach = function detach () {
 
 var listenersInstances = [];
 
-var defaultClassNames = {
-  touched: 'touched', // the control has been blurred
-  untouched: 'untouched', // the control hasn't been blurred
-  valid: 'valid', // model is valid
-  invalid: 'invalid', // model is invalid
-  pristine: 'pristine', // control has not been interacted with
-  dirty: 'dirty' // control has been interacted with
-};
+function addClasses(el, flags, classNames) {
+  if (! flags) { return; }
 
-function addClasses(el, fieldName, fields, classNames) {
-  if ( classNames === void 0 ) classNames = null;
-
-  if (!fieldName) {
-    return;
-  }
-
-  classNames = assign({}, defaultClassNames, classNames);
-
-  var isDirty = fields.dirty(fieldName);
-  var isValid = fields.valid(fieldName);
-  var failed = fields.failed(fieldName);
-
-  if (isDirty) {
+  if (flags.dirty) {
     addClass(el, classNames.touched);
     removeClass(el, classNames.untouched);
   } else {
@@ -2850,27 +2885,21 @@ function addClasses(el, fieldName, fields, classNames) {
     removeClass(el, classNames.touched);
   }
 
-  if (isValid) {
+  if (flags.valid || flags.passed) {
     addClass(el, classNames.valid);
     removeClass(el, classNames.invalid);
   } else {
-    if (failed) {
-      addClass(el, classNames.invalid);
-    }
+    addClass(el, classNames.invalid);
     removeClass(el, classNames.valid);
   }
 }
 
 function setDirty(el, classNames) {
-  classNames = assign({}, defaultClassNames, classNames);
-
   addClass(el, classNames.dirty);
   removeClass(el, classNames.pristine);
 }
 
 function setPristine(el, classNames) {
-  classNames = assign({}, defaultClassNames, classNames);
-
   addClass(el, classNames.pristine);
   removeClass(el, classNames.dirty);
 }
@@ -2883,15 +2912,13 @@ var makeDirective = function (options) { return ({
     listenersInstances.push({ vm: vnode.context, el: el, instance: listener });
 
     if (options.enableAutoClasses) {
-      var classNames = options.classNames;
-
-      setPristine(el, classNames);
-
-      el.onfocus = function () {
-        setDirty(el, classNames);
-      };
-
-      addClasses(el, listener.fieldName, vnode.context[options.fieldsBagName], classNames);
+      setPristine(el, options.classNames);
+      el.onfocus = function () { setDirty(el, options.classNames); };
+      addClasses(
+        el,
+        vnode.context.$validator.fieldBag.fields[listener.fieldName],
+        options.classNames
+      );
     }
   },
   update: function update(el, ref, ref$1) {
@@ -2900,9 +2927,10 @@ var makeDirective = function (options) { return ({
     var oldValue = ref.oldValue;
     var context = ref$1.context;
 
-    var holder = listenersInstances.filter(function (l) { return l.vm === context && l.el === el; })[0];
+    var ref$2 = find(listenersInstances, function (l) { return l.vm === context && l.el === el; });
+    var instance = ref$2.instance;
     if (options.enableAutoClasses) {
-      addClasses(el, holder.instance.fieldName, context[options.fieldsBagName], options.classNames);
+      addClasses(el, context.$validator.fieldBag.fields[instance.fieldName], options.classNames);
     }
 
     // make sure we don't do uneccessary work if no expression was passed
@@ -2912,16 +2940,16 @@ var makeDirective = function (options) { return ({
 
     var scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
-            holder.instance.fieldName,
-            isObject(value) ? value.rules : value,
-            { scope: scope || '__global__' }
-        );
+      instance.fieldName,
+      isObject(value) ? value.rules : value,
+      { scope: scope || '__global__' }
+    );
   },
   unbind: function unbind(el, ref, ref$1) {
     var value = ref.value;
     var context = ref$1.context;
 
-    var holder = listenersInstances.filter(function (l) { return l.vm === context && l.el === el; })[0];
+    var holder = find(listenersInstances, function (l) { return l.vm === context && l.el === el; });
     if (typeof holder === 'undefined') {
       return;
     }
@@ -2931,6 +2959,15 @@ var makeDirective = function (options) { return ({
     listenersInstances.splice(listenersInstances.indexOf(holder), 1);
   }
 }); };
+
+var DEFAULT_CLASS_NAMES = {
+  touched: 'touched', // the control has been blurred
+  untouched: 'untouched', // the control hasn't been blurred
+  valid: 'valid', // model is valid
+  invalid: 'invalid', // model is invalid
+  pristine: 'pristine', // control has not been interacted with
+  dirty: 'dirty' // control has been interacted with
+};
 
 // eslint-disable-next-line
 var install = function (Vue, ref) {
@@ -2942,7 +2979,7 @@ var install = function (Vue, ref) {
   var strict = ref.strict; if ( strict === void 0 ) strict = true;
   var fieldsBagName = ref.fieldsBagName; if ( fieldsBagName === void 0 ) fieldsBagName = 'fields';
   var enableAutoClasses = ref.enableAutoClasses; if ( enableAutoClasses === void 0 ) enableAutoClasses = false;
-  var classNames = ref.classNames; if ( classNames === void 0 ) classNames = null;
+  var classNames = ref.classNames; if ( classNames === void 0 ) classNames = {};
 
   if (dictionary) {
     Validator.updateDictionary(dictionary);
@@ -2958,7 +2995,7 @@ var install = function (Vue, ref) {
     errorBagName: errorBagName,
     fieldsBagName: fieldsBagName,
     enableAutoClasses: enableAutoClasses,
-    classNames: classNames
+    classNames: assign({}, DEFAULT_CLASS_NAMES, classNames)
   };
 
   Vue.mixin(makeMixin(options));

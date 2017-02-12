@@ -851,7 +851,12 @@ class ErrorBag
     const scoped = this._scope(field);
 
     if (scoped) {
-      return this.first(scoped.name, scoped.scope);
+      const result = this.first(scoped.name, scoped.scope);
+      // if such result exist, return it. otherwise it could be a field.
+      // with dot in its name.
+      if (result) {
+        return result;
+      }
     }
 
     if (selector) {
@@ -1096,6 +1101,29 @@ const assign = (target, ...others) => {
   return to;
 };
 
+/**
+ * polyfills array.find
+ * @param {Array} array
+ * @param {Function} predicate
+ */
+const find = (array, predicate) => {
+  if (array.find) {
+    return array.find(predicate);
+  }
+
+  let result;
+  array.some(item => {
+    if (predicate(item)) {
+      result = item;
+      return true;
+    }
+
+    return false;
+  });
+
+  return result;
+};
+
 /* eslint-disable prefer-rest-params */
 class Dictionary
 {
@@ -1298,6 +1326,17 @@ class FieldBag {
   _add(name) {
     this.fields[name] = {};
     this._setFlags(name, { dirty: false, valid: false, }, true);
+  }
+
+  /**
+   * Adds a field if it does not exist.
+   */
+  _addIfNotExists(name) {
+    if (this.fields[name]) {
+      return;
+    }
+
+    this._add(name);
   }
 
     /**
@@ -1683,7 +1722,7 @@ class Validator
     }
 
     const field = this.$scopes[scope][name];
-    this.fieldBag._add(name);
+    this.fieldBag._addIfNotExists(name);
     field.validations = this._normalizeRules(name, checks, scope);
     field.required = this._isRequired(field);
   }
@@ -2103,7 +2142,10 @@ class Validator
      */
   validate(name, value, scope = '__global__') {
     if (name && name.indexOf('.') > -1) {
-      [scope, name] = name.split('.');
+      // no such field, try the scope form.
+      if (! this.$scopes.__global__[name]) {
+        [scope, name] = name.split('.');
+      }
     }
     if (! scope) scope = '__global__';
     if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
@@ -2242,27 +2284,17 @@ class ListenerGenerator
     this.component = vnode.child;
     this.options = options;
     this.fieldName = this._resolveFieldName();
-    if (vnode.data && vnode.data.directives) {
-      this.model = this._resolveModel(vnode.data.directives);
-    }
+    this.model = this._resolveModel(vnode.data.directives);
   }
 
   /**
    * Checks if the node directives contains a v-model.
    */
   _resolveModel(directives) {
-    let boundTo = null;
-    directives.some(d => {
-      if (d.name === 'model') {
-        boundTo = d.expression;
+    const expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
+    const model = find(directives, d => d.name === 'model' && expRegex.test(d.expression));
 
-        return true;
-      }
-
-      return false;
-    });
-
-    return boundTo;
+    return model && model.expression;
   }
 
     /**
@@ -2287,7 +2319,7 @@ class ListenerGenerator
     }
 
     if (isObject(rules)) {
-      Object.keys(rules).forEach(r => {
+      Object.keys(rules).forEach(r => { // eslint-disable-line
         if (/confirmed|after|before/.test(r)) {
           fieldName = rules[r];
 
@@ -2449,8 +2481,8 @@ class ListenerGenerator
       break;
     }
 
-        // users are able to specify which events they want to validate on
-        // pipe separated list of handler names to use
+    // users are able to specify which events they want to validate on
+    // pipe separated list of handler names to use
     const events = getDataAttribute(this.el, 'validate-on');
     if (events) {
       listener.names = events.split('|');
@@ -2459,9 +2491,9 @@ class ListenerGenerator
     return listener;
   }
 
-    /**
-     * Attaches neccessary validation events for the component.
-     */
+  /**
+   * Attaches neccessary validation events for the component.
+   */
   _attachComponentListeners() {
     this.componentListener = debounce((value) => {
       this._validate(value);
@@ -2470,11 +2502,11 @@ class ListenerGenerator
     this.component.$on('input', this.componentListener);
   }
 
-    /**
-     * Attachs a suitable listener for the input.
-     */
+  /**
+   * Attachs a suitable listener for the input.
+   */
   _attachFieldListeners() {
-        // If it is a component, use vue events instead.
+    // If it is a component, use vue events instead.
     if (this.component) {
       this._attachComponentListeners();
 
@@ -2507,9 +2539,9 @@ class ListenerGenerator
     });
   }
 
-    /**
-     * Returns a context, getter factory pairs for each input type.
-     */
+  /**
+   * Returns a context, getter factory pairs for each input type.
+   */
   _resolveValueGetter() {
     if (this.component) {
       return {
@@ -2553,24 +2585,47 @@ class ListenerGenerator
     }
   }
 
-    /*
-    * Gets the arg string value, either from the directive or the expression value.
-    */
+  /*
+  * Gets the arg string value, either from the directive or the expression value.
+  */
   _getArg() {
-    if (this.model) {
-      return this.model;
-    }
-
+    // Get it from the directive arg.
     if (this.binding.arg) {
       return this.binding.arg;
+    }
+
+    // Get it from v-model.
+    if (this.model) {
+      return this.model;
     }
 
     return isObject(this.binding.value) ? this.binding.value.arg : null;
   }
 
-    /**
-     * Attaches the Event Listeners.
-     */
+  /**
+   * Attaches model watchers and extra listeners.
+   */
+  _attachModelWatcher(arg) {
+    const events = getDataAttribute(this.el, 'validate-on') || 'input|blur';
+    const listener = debounce(
+      this._getSuitableListener().listener.bind(this),
+      getDataAttribute(this.el, 'delay') || this.options.delay
+    );
+    events.split('|').forEach(name => {
+      if (name === 'input') {
+        this.unwatch = this.vm.$watch(arg, (value) => {
+          this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
+        }, { deep: true });
+      }
+
+      this.el.addEventListener(name, listener);
+      this.callbacks.push({ name, listener, el: this.el });
+    });
+  }
+
+  /**
+   * Attaches the Event Listeners.
+   */
   attach() {
     const { context, getter } = this._resolveValueGetter();
     this.vm.$validator.attach(this.fieldName, this._getRules(), {
@@ -2587,10 +2642,7 @@ class ListenerGenerator
     this._attachValidatorEvent();
     const arg = this._getArg();
     if (arg) {
-      this.unwatch = this.vm.$watch(arg, (value) => {
-        this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
-      }, { deep: true });
-
+      this._attachModelWatcher(arg);
       return;
     }
 
@@ -2617,27 +2669,10 @@ class ListenerGenerator
 
 const listenersInstances = [];
 
-const defaultClassNames = {
-  touched: 'touched', // the control has been blurred
-  untouched: 'untouched', // the control hasn't been blurred
-  valid: 'valid', // model is valid
-  invalid: 'invalid', // model is invalid
-  pristine: 'pristine', // control has not been interacted with
-  dirty: 'dirty' // control has been interacted with
-};
+function addClasses(el, flags, classNames) {
+  if (! flags) return;
 
-function addClasses(el, fieldName, fields, classNames = null) {
-  if (!fieldName) {
-    return;
-  }
-
-  classNames = assign({}, defaultClassNames, classNames);
-
-  const isDirty = fields.dirty(fieldName);
-  const isValid = fields.valid(fieldName);
-  const failed = fields.failed(fieldName);
-
-  if (isDirty) {
+  if (flags.dirty) {
     addClass(el, classNames.touched);
     removeClass(el, classNames.untouched);
   } else {
@@ -2645,27 +2680,21 @@ function addClasses(el, fieldName, fields, classNames = null) {
     removeClass(el, classNames.touched);
   }
 
-  if (isValid) {
+  if (flags.valid || flags.passed) {
     addClass(el, classNames.valid);
     removeClass(el, classNames.invalid);
   } else {
-    if (failed) {
-      addClass(el, classNames.invalid);
-    }
+    addClass(el, classNames.invalid);
     removeClass(el, classNames.valid);
   }
 }
 
 function setDirty(el, classNames) {
-  classNames = assign({}, defaultClassNames, classNames);
-
   addClass(el, classNames.dirty);
   removeClass(el, classNames.pristine);
 }
 
 function setPristine(el, classNames) {
-  classNames = assign({}, defaultClassNames, classNames);
-
   addClass(el, classNames.pristine);
   removeClass(el, classNames.dirty);
 }
@@ -2678,21 +2707,19 @@ var makeDirective = (options) => ({
     listenersInstances.push({ vm: vnode.context, el, instance: listener });
 
     if (options.enableAutoClasses) {
-      const classNames = options.classNames;
-
-      setPristine(el, classNames);
-
-      el.onfocus = () => {
-        setDirty(el, classNames);
-      };
-
-      addClasses(el, listener.fieldName, vnode.context[options.fieldsBagName], classNames);
+      setPristine(el, options.classNames);
+      el.onfocus = () => { setDirty(el, options.classNames); };
+      addClasses(
+        el,
+        vnode.context.$validator.fieldBag.fields[listener.fieldName],
+        options.classNames
+      );
     }
   },
   update(el, { expression, value, oldValue }, { context }) {
-    const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
+    const { instance } = find(listenersInstances, l => l.vm === context && l.el === el);
     if (options.enableAutoClasses) {
-      addClasses(el, holder.instance.fieldName, context[options.fieldsBagName], options.classNames);
+      addClasses(el, context.$validator.fieldBag.fields[instance.fieldName], options.classNames);
     }
 
     // make sure we don't do uneccessary work if no expression was passed
@@ -2702,13 +2729,13 @@ var makeDirective = (options) => ({
 
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
-            holder.instance.fieldName,
-            isObject(value) ? value.rules : value,
-            { scope: scope || '__global__' }
-        );
+      instance.fieldName,
+      isObject(value) ? value.rules : value,
+      { scope: scope || '__global__' }
+    );
   },
   unbind(el, { value }, { context }) {
-    const holder = listenersInstances.filter(l => l.vm === context && l.el === el)[0];
+    const holder = find(listenersInstances, l => l.vm === context && l.el === el);
     if (typeof holder === 'undefined') {
       return;
     }
@@ -2719,8 +2746,17 @@ var makeDirective = (options) => ({
   }
 });
 
+const DEFAULT_CLASS_NAMES = {
+  touched: 'touched', // the control has been blurred
+  untouched: 'untouched', // the control hasn't been blurred
+  valid: 'valid', // model is valid
+  invalid: 'invalid', // model is invalid
+  pristine: 'pristine', // control has not been interacted with
+  dirty: 'dirty' // control has been interacted with
+};
+
 // eslint-disable-next-line
-const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true, fieldsBagName = 'fields', enableAutoClasses = false, classNames = null } = {}) => {
+const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true, fieldsBagName = 'fields', enableAutoClasses = false, classNames = {} } = {}) => {
   if (dictionary) {
     Validator.updateDictionary(dictionary);
   }
@@ -2735,7 +2771,7 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
     errorBagName,
     fieldsBagName,
     enableAutoClasses,
-    classNames
+    classNames: assign({}, DEFAULT_CLASS_NAMES, classNames)
   };
 
   Vue.mixin(makeMixin(options));
