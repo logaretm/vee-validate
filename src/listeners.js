@@ -34,7 +34,7 @@ export default class ListenerGenerator
       return getDataAttribute(this.el, 'name') || this.component.name;
     }
 
-    return this.el.name || getDataAttribute(this.el, 'name');
+    return getDataAttribute(this.el, 'name') || this.el.name;
   }
 
     /**
