@@ -62,6 +62,14 @@ it('should get the arg', () => {
 
     // Arg is passed in v-model.
     const vnode = helpers.vnode();
+    vnode.context = {
+        u: {
+            nAMe: null
+        },
+        A: true,
+        may12: true
+    };
+    lg = new ListenerGenerator(el, {}, vnode, {});
     const directives = [
         { name: 'model', expression: 'u.nAMe', valid: true },
         { name: 'model', expression: 'A', valid: true },
@@ -475,4 +483,22 @@ it('detaches listeners', () => {
     expect(lg.callbacks.length).toBe(1);
     lg.detach();
     expect(mockFn.mock.calls.length).toBe(1);
+});
+
+it('checks if the value path exists before using it as an arg', () => {
+    const vnode = helpers.vnode();
+    vnode.context = {
+        some: {
+            value: {
+                path: undefined,
+                val: 1
+            }
+        }
+    };
+    document.body.innerHTML = `<input type="text" name="field" id="el">`;
+    const el = document.querySelector('#el');
+    const lg = new ListenerGenerator(el, {}, vnode, {});
+    expect(lg._isExistingPath('some.value.val')).toBe(true); // exists.
+    expect(lg._isExistingPath('some.value.path')).toBe(true); // undefined but exists.
+    expect(lg._isExistingPath('some.value.not')).toBe(false); // does not.
 });

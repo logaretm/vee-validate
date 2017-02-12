@@ -22,7 +22,23 @@ export default class ListenerGenerator
     const expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
     const model = find(directives, d => d.name === 'model' && expRegex.test(d.expression));
 
-    return model && model.expression;
+    return model && this._isExistingPath(model.expression) && model.expression;
+  }
+
+  /**
+   * Checks if the object path exists.
+   */
+  _isExistingPath(path) {
+    let obj = this.vm;
+    return path.split('.').every(prop => {
+      if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+        return false;
+      }
+
+      obj = obj[prop];
+
+      return true;
+    });
   }
 
     /**
