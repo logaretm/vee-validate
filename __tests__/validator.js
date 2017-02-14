@@ -198,7 +198,6 @@ it('formats error messages', async () => {
         expect(validator.errorBag.all()).toEqual([
             'The email field must be a valid email.',
             'The name field is required.',
-            'The name field must be at least 3 characters.',
             'The title field must be at least 3 characters.',
             'The content field may not be greater than 20 characters.',
             'The tags field must be a valid value.'
@@ -206,7 +205,6 @@ it('formats error messages', async () => {
         expect(validator.getErrors().all()).toEqual([
             'The email field must be a valid email.',
             'The name field is required.',
-            'The name field must be at least 3 characters.',
             'The title field must be at least 3 characters.',
             'The content field may not be greater than 20 characters.',
             'The tags field must be a valid value.'

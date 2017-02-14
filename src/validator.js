@@ -710,26 +710,25 @@ export default class Validator
 
     const field = this.$scopes[scope][name];
     this.errorBag.remove(name, scope);
-        // if its not required and is empty or null or undefined then it passes.
+    // if its not required and is empty or null or undefined then it passes.
     if (! field.required && ~[null, undefined, ''].indexOf(value)) {
       this.fieldBag._setFlags(name, { valid: true, dirty: true });
       return true;
     }
 
-    let test = true;
     const promises = [];
-    Object.keys(field.validations).forEach(rule => {
+    const test = Object.keys(field.validations).every(rule => {
       const result = this._test(
-                name,
-                value,
-                { name: rule, params: field.validations[rule] },
-                scope);
+        name,
+        value,
+        { name: rule, params: field.validations[rule] },
+        scope
+      );
       if (isCallable(result.then)) {
         promises.push(result);
-        return;
       }
 
-      test = test && result;
+      return result;
     });
 
     if (promises.length) {
