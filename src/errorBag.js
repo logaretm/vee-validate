@@ -24,7 +24,7 @@ export default class ErrorBag
      */
   all(scope) {
     if (! scope) {
-      scope = '__global__';
+      return this.errors.map(e => e.msg);
     }
 
     return this.errors.filter(e => e.scope === scope).map(e => e.msg);
@@ -37,7 +37,7 @@ export default class ErrorBag
      */
   any(scope) {
     if (! scope) {
-      scope = '__global__';
+      return !! this.errors.length;
     }
 
     return !! this.errors.filter(e => e.scope === scope).length;
