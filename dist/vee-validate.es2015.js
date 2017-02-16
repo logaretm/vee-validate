@@ -2265,7 +2265,8 @@ var makeMixin = (Vue, options) => ({
   },
   beforeCreate() {
     this.$validator = new Validator(null, { init: false });
-    Vue.util.defineReactive(this.$validator, options.errorBagName, this.$validator.errorBag);
+    // Probably should do the same to the fields prop ...
+    Vue.util.defineReactive(this.$validator, 'errorBag', this.$validator.errorBag);
   },
   mounted() {
     this.$validator.init();
