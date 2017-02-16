@@ -769,7 +769,7 @@ class ErrorBag
      */
   all(scope) {
     if (! scope) {
-      scope = '__global__';
+      return this.errors.map(e => e.msg);
     }
 
     return this.errors.filter(e => e.scope === scope).map(e => e.msg);
@@ -782,7 +782,7 @@ class ErrorBag
      */
   any(scope) {
     if (! scope) {
-      scope = '__global__';
+      return !! this.errors.length;
     }
 
     return !! this.errors.filter(e => e.scope === scope).length;
@@ -2158,26 +2158,25 @@ class Validator
 
     const field = this.$scopes[scope][name];
     this.errorBag.remove(name, scope);
-        // if its not required and is empty or null or undefined then it passes.
+    // if its not required and is empty or null or undefined then it passes.
     if (! field.required && ~[null, undefined, ''].indexOf(value)) {
       this.fieldBag._setFlags(name, { valid: true, dirty: true });
       return true;
     }
 
-    let test = true;
     const promises = [];
-    Object.keys(field.validations).forEach(rule => {
+    const test = Object.keys(field.validations).every(rule => {
       const result = this._test(
-                name,
-                value,
-                { name: rule, params: field.validations[rule] },
-                scope);
+        name,
+        value,
+        { name: rule, params: field.validations[rule] },
+        scope
+      );
       if (isCallable(result.then)) {
         promises.push(result);
-        return;
       }
 
-      test = test && result;
+      return result;
     });
 
     if (promises.length) {
@@ -2251,13 +2250,13 @@ class Validator
   }
 }
 
-var makeMixin = (options) => ({
-  data() {
-    return {
-      [options.errorBagName]: this.$validator.errorBag,
-    };
-  },
+var makeMixin = (Vue, options) => ({
   computed: {
+    [options.errorBagName]: {
+      get() {
+        return this.$validator.errorBag;
+      }
+    },
     [options.fieldsBagName]: {
       get() {
         return this.$validator.fieldBag;
@@ -2266,6 +2265,7 @@ var makeMixin = (options) => ({
   },
   beforeCreate() {
     this.$validator = new Validator(null, { init: false });
+    Vue.util.defineReactive(this.$validator, options.errorBagName, this.$validator.errorBag);
   },
   mounted() {
     this.$validator.init();
@@ -2294,7 +2294,23 @@ class ListenerGenerator
     const expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
     const model = find(directives, d => d.name === 'model' && expRegex.test(d.expression));
 
-    return model && model.expression;
+    return model && this._isExistingPath(model.expression) && model.expression;
+  }
+
+  /**
+   * Checks if the object path exists.
+   */
+  _isExistingPath(path) {
+    let obj = this.vm;
+    return path.split('.').every(prop => {
+      if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+        return false;
+      }
+
+      obj = obj[prop];
+
+      return true;
+    });
   }
 
     /**
@@ -2306,7 +2322,7 @@ class ListenerGenerator
       return getDataAttribute(this.el, 'name') || this.component.name;
     }
 
-    return this.el.name || getDataAttribute(this.el, 'name');
+    return getDataAttribute(this.el, 'name') || this.el.name;
   }
 
     /**
@@ -2774,7 +2790,7 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
     classNames: assign({}, DEFAULT_CLASS_NAMES, classNames)
   };
 
-  Vue.mixin(makeMixin(options));
+  Vue.mixin(makeMixin(Vue, options));
   Vue.directive('validate', makeDirective(options));
 };
 

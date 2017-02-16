@@ -32,7 +32,7 @@ const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dicti
     classNames: assign({}, DEFAULT_CLASS_NAMES, classNames)
   };
 
-  Vue.mixin(makeMixin(options));
+  Vue.mixin(makeMixin(Vue, options));
   Vue.directive('validate', makeDirective(options));
 };
 

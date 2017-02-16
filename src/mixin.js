@@ -1,12 +1,12 @@
 import Validator from './validator';
 
-export default (options) => ({
-  data() {
-    return {
-      [options.errorBagName]: this.$validator.errorBag,
-    };
-  },
+export default (Vue, options) => ({
   computed: {
+    [options.errorBagName]: {
+      get() {
+        return this.$validator.errorBag;
+      }
+    },
     [options.fieldsBagName]: {
       get() {
         return this.$validator.fieldBag;
@@ -15,6 +15,8 @@ export default (options) => ({
   },
   beforeCreate() {
     this.$validator = new Validator(null, { init: false });
+    // Probably should do the same to the fields prop ...
+    Vue.util.defineReactive(this.$validator, options.errorBagName, this.$validator.errorBag);
   },
   mounted() {
     this.$validator.init();

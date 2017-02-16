@@ -808,7 +808,7 @@ ErrorBag.prototype.add = function add (field, msg, rule, scope) {
    */
 ErrorBag.prototype.all = function all (scope) {
   if (! scope) {
-    scope = '__global__';
+    return this.errors.map(function (e) { return e.msg; });
   }
 
   return this.errors.filter(function (e) { return e.scope === scope; }).map(function (e) { return e.msg; });
@@ -821,7 +821,7 @@ ErrorBag.prototype.all = function all (scope) {
    */
 ErrorBag.prototype.any = function any (scope) {
   if (! scope) {
-    scope = '__global__';
+    return !! this.errors.length;
   }
 
   return !! this.errors.filter(function (e) { return e.scope === scope; }).length;
@@ -2345,26 +2345,25 @@ Validator.prototype.validate = function validate (name, value, scope) {
 
   var field = this.$scopes[scope][name];
   this.errorBag.remove(name, scope);
-      // if its not required and is empty or null or undefined then it passes.
+  // if its not required and is empty or null or undefined then it passes.
   if (! field.required && ~[null, undefined, ''].indexOf(value)) {
     this.fieldBag._setFlags(name, { valid: true, dirty: true });
     return true;
   }
 
-  var test = true;
   var promises = [];
-  Object.keys(field.validations).forEach(function (rule) {
+  var test = Object.keys(field.validations).every(function (rule) {
     var result = this$1._test(
-              name,
-              value,
-              { name: rule, params: field.validations[rule] },
-              scope);
+      name,
+      value,
+      { name: rule, params: field.validations[rule] },
+      scope
+    );
     if (isCallable(result.then)) {
       promises.push(result);
-      return;
     }
 
-    test = test && result;
+    return result;
   });
 
   if (promises.length) {
@@ -2441,18 +2440,19 @@ Validator.prototype.validateScopes = function validateScopes () {
       );
 };
 
-var makeMixin = function (options) { return ({
-  data: function data() {
-    return ( obj = {}, obj[options.errorBagName] = this.$validator.errorBag, obj );
-    var obj;
-  },
-  computed: ( obj = {}, obj[options.fieldsBagName] = {
+var makeMixin = function (Vue, options) { return ({
+  computed: ( obj = {}, obj[options.errorBagName] = {
+      get: function get() {
+        return this.$validator.errorBag;
+      }
+    }, obj[options.fieldsBagName] = {
       get: function get() {
         return this.$validator.fieldBag;
       }
     }, obj ),
   beforeCreate: function beforeCreate() {
     this.$validator = new Validator(null, { init: false });
+    Vue.util.defineReactive(this.$validator, options.errorBagName, this.$validator.errorBag);
   },
   mounted: function mounted() {
     this.$validator.init();
@@ -2480,7 +2480,23 @@ ListenerGenerator.prototype._resolveModel = function _resolveModel (directives) 
   var expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
   var model = find(directives, function (d) { return d.name === 'model' && expRegex.test(d.expression); });
 
-  return model && model.expression;
+  return model && this._isExistingPath(model.expression) && model.expression;
+};
+
+/**
+ * Checks if the object path exists.
+ */
+ListenerGenerator.prototype._isExistingPath = function _isExistingPath (path) {
+  var obj = this.vm;
+  return path.split('.').every(function (prop) {
+    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+
+    obj = obj[prop];
+
+    return true;
+  });
 };
 
   /**
@@ -2492,7 +2508,7 @@ ListenerGenerator.prototype._resolveFieldName = function _resolveFieldName () {
     return getDataAttribute(this.el, 'name') || this.component.name;
   }
 
-  return this.el.name || getDataAttribute(this.el, 'name');
+  return getDataAttribute(this.el, 'name') || this.el.name;
 };
 
   /**
@@ -2998,7 +3014,7 @@ var install = function (Vue, ref) {
     classNames: assign({}, DEFAULT_CLASS_NAMES, classNames)
   };
 
-  Vue.mixin(makeMixin(options));
+  Vue.mixin(makeMixin(Vue, options));
   Vue.directive('validate', makeDirective(options));
 };
 
