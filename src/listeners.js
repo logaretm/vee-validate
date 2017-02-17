@@ -357,9 +357,10 @@ export default class ListenerGenerator
     );
     events.split('|').forEach(name => {
       if (name === 'input') {
-        this.unwatch = this.vm.$watch(arg, (value) => {
+        const debounced = debounce((value) => {
           this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
-        }, { deep: true });
+        }, getDataAttribute(this.el, 'delay') || this.options.delay);
+        this.unwatch = this.vm.$watch(arg, debounced, { deep: true });
       }
 
       this.el.addEventListener(name, listener);
