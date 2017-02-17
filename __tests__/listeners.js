@@ -35,19 +35,6 @@ it('should not crash if no rules attribute was specified', () => {
     
 });
 
-it('should get rules', () => {
-    document.body.innerHTML =`<input id="el" type="text" name="field">`;
-    const el = document.querySelector('#el');
-
-    // test if the rules were passed as the expression.
-    let lg = new ListenerGenerator(el, { expression: true, value: 'required|email' }, helpers.vnode(), {});
-    expect(lg._getRules()).toBe('required|email');
-
-    // test if the rules was passed as a part of the expression.
-    lg = new ListenerGenerator(el, { expression: true, value: { rules: 'required|email' } }, helpers.vnode(), {});
-    expect(lg._getRules()).toBe('required|email');
-});
-
 it('should get the arg', () => {
     document.body.innerHTML =`<input id="el" type="text" name="field">`;
     const el = document.querySelector('#el');

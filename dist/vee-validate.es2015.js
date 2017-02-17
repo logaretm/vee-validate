@@ -1124,6 +1124,19 @@ const find = (array, predicate) => {
   return result;
 };
 
+const getRules = (expression, value, el) => {
+  // TODO: Deprecate this.
+  if (! expression) {
+    return getDataAttribute(el, 'rules');
+  }
+
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  return isObject(value.rules) ? value.rules : value;
+};
+
 /* eslint-disable prefer-rest-params */
 class Dictionary
 {
@@ -2424,20 +2437,14 @@ class ListenerGenerator
     };
   }
 
-  _getRules() {
-    if (! this.binding.expression) {
-      return getDataAttribute(this.el, 'rules');
-    }
-
-    return isObject(this.binding.value) ? this.binding.value.rules : this.binding.value;
-  }
-
     /**
      * Attaches validator event-triggered validation.
      */
   _attachValidatorEvent() {
     const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
-    const fieldName = this._hasFieldDependency(this._getRules());
+    const fieldName = this._hasFieldDependency(
+        getRules(this.binding.expression, this.binding.value, this.el)
+      );
     if (fieldName) {
             // Wait for the validator ready triggered when vm is mounted because maybe
             // the element isn't mounted yet.
@@ -2629,10 +2636,13 @@ class ListenerGenerator
       getDataAttribute(this.el, 'delay') || this.options.delay
     );
     events.split('|').forEach(name => {
-      if (name === 'input') {
-        this.unwatch = this.vm.$watch(arg, (value) => {
+      if (~['input', 'change'].indexOf(name)) {
+        const debounced = debounce((value) => {
           this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
-        }, { deep: true });
+        }, getDataAttribute(this.el, 'delay') || this.options.delay);
+        this.unwatch = this.vm.$watch(arg, debounced, { deep: true });
+        // No need to attach it on element as it will use the vue watcher.
+        return;
       }
 
       this.el.addEventListener(name, listener);
@@ -2645,16 +2655,19 @@ class ListenerGenerator
    */
   attach() {
     const { context, getter } = this._resolveValueGetter();
-    this.vm.$validator.attach(this.fieldName, this._getRules(), {
-      // eslint-disable-next-line
-      scope: () => {
-        return this.scope || getScope(this.el);
-      },
-      prettyName: getDataAttribute(this.el, 'as'),
-      context,
-      getter,
-      listeners: this
-    });
+    this.vm.$validator.attach(
+      this.fieldName,
+      getRules(this.binding.expression, this.binding.value, this.el), {
+        // eslint-disable-next-line
+        scope: () => {
+          return this.scope || getScope(this.el);
+        },
+        prettyName: getDataAttribute(this.el, 'as'),
+        context,
+        getter,
+        listeners: this
+      }
+    );
 
     this._attachValidatorEvent();
     const arg = this._getArg();
@@ -2747,7 +2760,7 @@ var makeDirective = (options) => ({
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
       instance.fieldName,
-      isObject(value) ? value.rules : value,
+      getRules(expression, value, el),
       { scope: scope || '__global__' }
     );
   },

@@ -1182,6 +1182,19 @@ var find = function (array, predicate) {
   return result;
 };
 
+var getRules = function (expression, value, el) {
+  // TODO: Deprecate this.
+  if (! expression) {
+    return getDataAttribute(el, 'rules');
+  }
+
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  return isObject(value.rules) ? value.rules : value;
+};
+
 /* eslint-disable prefer-rest-params */
 var Dictionary = function Dictionary(dictionary) {
   if ( dictionary === void 0 ) dictionary = {};
@@ -2616,14 +2629,6 @@ ListenerGenerator.prototype._getScopedListener = function _getScopedListener (ca
   };
 };
 
-ListenerGenerator.prototype._getRules = function _getRules () {
-  if (! this.binding.expression) {
-    return getDataAttribute(this.el, 'rules');
-  }
-
-  return isObject(this.binding.value) ? this.binding.value.rules : this.binding.value;
-};
-
   /**
    * Attaches validator event-triggered validation.
    */
@@ -2631,7 +2636,9 @@ ListenerGenerator.prototype._attachValidatorEvent = function _attachValidatorEve
     var this$1 = this;
 
   var listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
-  var fieldName = this._hasFieldDependency(this._getRules());
+  var fieldName = this._hasFieldDependency(
+      getRules(this.binding.expression, this.binding.value, this.el)
+    );
   if (fieldName) {
           // Wait for the validator ready triggered when vm is mounted because maybe
           // the element isn't mounted yet.
@@ -2831,10 +2838,13 @@ ListenerGenerator.prototype._attachModelWatcher = function _attachModelWatcher (
     getDataAttribute(this.el, 'delay') || this.options.delay
   );
   events.split('|').forEach(function (name) {
-    if (name === 'input') {
-      this$1.unwatch = this$1.vm.$watch(arg, function (value) {
+    if (~['input', 'change'].indexOf(name)) {
+      var debounced = debounce(function (value) {
         this$1.vm.$validator.validate(this$1.fieldName, value, this$1.scope || getScope(this$1.el));
-      }, { deep: true });
+      }, getDataAttribute(this$1.el, 'delay') || this$1.options.delay);
+      this$1.unwatch = this$1.vm.$watch(arg, debounced, { deep: true });
+      // No need to attach it on element as it will use the vue watcher.
+      return;
     }
 
     this$1.el.addEventListener(name, listener);
@@ -2851,16 +2861,19 @@ ListenerGenerator.prototype.attach = function attach () {
   var ref = this._resolveValueGetter();
     var context = ref.context;
     var getter = ref.getter;
-  this.vm.$validator.attach(this.fieldName, this._getRules(), {
-    // eslint-disable-next-line
-    scope: function () {
-      return this$1.scope || getScope(this$1.el);
-    },
-    prettyName: getDataAttribute(this.el, 'as'),
-    context: context,
-    getter: getter,
-    listeners: this
-  });
+  this.vm.$validator.attach(
+    this.fieldName,
+    getRules(this.binding.expression, this.binding.value, this.el), {
+      // eslint-disable-next-line
+      scope: function () {
+        return this$1.scope || getScope(this$1.el);
+      },
+      prettyName: getDataAttribute(this.el, 'as'),
+      context: context,
+      getter: getter,
+      listeners: this
+    }
+  );
 
   this._attachValidatorEvent();
   var arg = this._getArg();
@@ -2958,7 +2971,7 @@ var makeDirective = function (options) { return ({
     var scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
       instance.fieldName,
-      isObject(value) ? value.rules : value,
+      getRules(expression, value, el),
       { scope: scope || '__global__' }
     );
   },

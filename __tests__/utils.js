@@ -52,3 +52,37 @@ it('returns first matching element from array', () => {
     
     expect(find(arr, e => e.el === 'else').el).toBe('else');
 });
+
+it('should return valid rules data', () => {
+    const getRules = helpers.getRules;
+    document.body.innerHTML = `<input type="text" name"el" id="el" data-vv-rules="required|email">`;
+    const el = document.querySelector('#el');
+    expect(getRules(null, null, el)).toBe('required|email');
+
+    let exp = 'someexpr';
+    let value = 'required|email';
+
+    expect(getRules(exp, value)).toBe('required|email');
+    
+    value = {
+        rules: {
+            required: true,
+            email: true
+        }
+    };
+
+    expect(getRules(exp, value)).toEqual({
+        required: true,
+        email: true
+    });
+
+    value = {
+        required: true,
+        email: true
+    };
+
+    expect(getRules(exp, value)).toEqual({
+        required: true,
+        email: true
+    });
+});

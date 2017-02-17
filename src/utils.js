@@ -154,3 +154,16 @@ export const find = (array, predicate) => {
 
   return result;
 };
+
+export const getRules = (expression, value, el) => {
+  // TODO: Deprecate this.
+  if (! expression) {
+    return getDataAttribute(el, 'rules');
+  }
+
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  return isObject(value.rules) ? value.rules : value;
+};

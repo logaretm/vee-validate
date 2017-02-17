@@ -1,5 +1,5 @@
 import ListenerGenerator from './listeners';
-import { getScope, isObject, addClass, removeClass, find } from './utils';
+import { getScope, isObject, addClass, removeClass, find, getRules } from './utils';
 
 const listenersInstances = [];
 
@@ -64,7 +64,7 @@ export default (options) => ({
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
       instance.fieldName,
-      isObject(value) ? value.rules : value,
+      getRules(expression, value, el),
       { scope: scope || '__global__' }
     );
   },
