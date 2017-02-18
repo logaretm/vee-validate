@@ -410,5 +410,6 @@ export default class ListenerGenerator
     this.callbacks.forEach(h => {
       h.el.removeEventListener(h.name, h.listener);
     });
+    this.callbacks = [];
   }
 }

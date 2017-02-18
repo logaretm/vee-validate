@@ -74,7 +74,7 @@ export default (options) => ({
       return;
     }
 
-    const scope = isObject(value) ? value.scope : getScope(el);
+    const scope = isObject(value) ? value.scope : (getScope(el) || '__global__');
     context.$validator.detach(holder.instance.fieldName, scope);
     listenersInstances.splice(listenersInstances.indexOf(holder), 1);
   }

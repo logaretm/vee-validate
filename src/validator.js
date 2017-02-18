@@ -24,15 +24,15 @@ export default class Validator
     this.fieldBag = new FieldBag();
     this._createFields(validations);
     this.errorBag = new ErrorBag();
-        // Some fields will be later evaluated, because the vm isn't mounted yet
-        // so it may register it under an inaccurate scope.
+    // Some fields will be later evaluated, because the vm isn't mounted yet
+    // so it may register it under an inaccurate scope.
     this.$deferred = [];
     this.$ready = false;
 
-        // if momentjs is present, install the validators.
+    // if momentjs is present, install the validators.
     if (typeof moment === 'function') {
-            // eslint-disable-next-line
-            this.installDateTimeValidators(moment);
+      // eslint-disable-next-line
+      this.installDateTimeValidators(moment);
     }
 
     if (options.init) {
@@ -585,11 +585,10 @@ export default class Validator
      * @param {String} scope The name of the field scope.
      */
   detach(name, scope = '__global__') {
-        // No such field.
+    // No such field.
     if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
       return;
     }
-
 
     this.$scopes[scope][name].listeners.detach();
     this.errorBag.remove(name, scope);
