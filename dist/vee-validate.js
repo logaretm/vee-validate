@@ -2058,7 +2058,8 @@ Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule, sc
 
   if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) &&
       rule.params && rule.params[0]) {
-    return [this.$scopes[scope][rule.params[0]].name || dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+    if (this.$scopes[scope][rule.params[0]]) { return [this.$scopes[scope][rule.params[0]].name]; }
+    return [dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
   }
 
   return rule.params;
