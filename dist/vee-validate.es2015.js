@@ -297,6 +297,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var default_email_options = {
   allow_display_name: false,
+  require_display_name: false,
   allow_utf8_local_part: true,
   require_tld: true
 };
@@ -315,10 +316,12 @@ function isEmail(str, options) {
   (0, _assertString2.default)(str);
   options = (0, _merge2.default)(options, default_email_options);
 
-  if (options.allow_display_name) {
+  if (options.require_display_name || options.allow_display_name) {
     var display_email = str.match(displayName);
     if (display_email) {
       str = display_email[1];
+    } else if (options.require_display_name) {
+      return false;
     }
   }
 
@@ -618,7 +621,7 @@ function checkHost(host, matches) {
 
 function isURL(url, options) {
   (0, _assertString2.default)(url);
-  if (!url || url.length >= 2083 || /\s/.test(url)) {
+  if (!url || url.length >= 2083 || /[\s<>]/.test(url)) {
     return false;
   }
   if (url.indexOf('mailto:') === 0) {
@@ -1869,7 +1872,7 @@ class Validator
      */
   _formatErrorMessage(field, rule, data = {}, scope = '__global__') {
     const name = this._getFieldDisplayName(field, scope);
-    const params = this._getLocalizedParams(rule);
+    const params = this._getLocalizedParams(rule, scope);
 
     if (! dictionary.hasLocale(LOCALE) ||
          typeof dictionary.getMessage(LOCALE, rule.name) !== 'function') {
@@ -1883,10 +1886,10 @@ class Validator
     /**
      * Translates the parameters passed to the rule (mainly for target fields).
      */
-  _getLocalizedParams(rule) {
+  _getLocalizedParams(rule, scope = '__global__') {
     if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) &&
         rule.params && rule.params[0]) {
-      return [dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+      return [this.$scopes[scope][rule.params[0]].name || dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
     }
 
     return rule.params;
