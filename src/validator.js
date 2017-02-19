@@ -408,7 +408,7 @@ export default class Validator
      */
   _formatErrorMessage(field, rule, data = {}, scope = '__global__') {
     const name = this._getFieldDisplayName(field, scope);
-    const params = this._getLocalizedParams(rule);
+    const params = this._getLocalizedParams(rule, scope);
 
     if (! dictionary.hasLocale(LOCALE) ||
          typeof dictionary.getMessage(LOCALE, rule.name) !== 'function') {
@@ -422,9 +422,10 @@ export default class Validator
     /**
      * Translates the parameters passed to the rule (mainly for target fields).
      */
-  _getLocalizedParams(rule) {
+  _getLocalizedParams(rule, scope = '__global__') {
     if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) &&
         rule.params && rule.params[0]) {
+      if (this.$scopes[scope][rule.params[0]]) return [this.$scopes[scope][rule.params[0]].name];
       return [dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
     }
 
