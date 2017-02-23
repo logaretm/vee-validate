@@ -37,7 +37,7 @@ bower install vee-validate#1.0.0-beta.11 --save
 **Vue 2.0**:
 
 ```
-bower install vee-validate#2.0.0-beta.22 --save
+bower install vee-validate#2.0.0-beta.23 --save
 ```
 
 ### CDN
@@ -93,12 +93,6 @@ Of course there is more to it than that, refer to the documentation for more det
 ### Documentation
 
 Read the [documentation and demos](http://vee-validate.logaretm.com/).
-
-### Compatibility
-
-This plugin should be compatible with the major browsers, but it requires few polyfills to work on older ones.
-
-The reason they are not included is because most of the workflows already use polyfills within their code, so to cut down the package size the redundant polyfills were removed, you can use [Polyfill.io](https://polyfill.io/v2/docs/) to provide the needed polyfills for all browsers automatically, or feel free to provide them on your own.
 
 ### Contributing
 
