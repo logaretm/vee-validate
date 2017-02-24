@@ -425,7 +425,8 @@ export default class Validator
   _getLocalizedParams(rule, scope = '__global__') {
     if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) &&
         rule.params && rule.params[0]) {
-      if (this.$scopes[scope][rule.params[0]] && this.$scopes[scope][rule.params[0]].name) return [this.$scopes[scope][rule.params[0]].name];
+      const param = this.$scopes[scope][rule.params[0]];
+      if (param && param.name) return [param.name];
       return [dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
     }
 
