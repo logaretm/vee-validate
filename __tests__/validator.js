@@ -594,29 +594,27 @@ it('resolves promises to booleans', async () => {
         image: 'dimensions:150,100'
     });
 
-
     helpers.dimensionsTest({ width: 150, height: 100 }, false, global);
-    let value = await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
-    expect(value).toBe(true);
+    expect(await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)])).toBe(true);
 
     helpers.dimensionsTest({ width: 150, height: 100}, true, global);
     try {
         await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
     } catch (error) {
-        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+        expect(error).toBe(false);        
     }
 
     try {
         await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)]);
     } catch (error) {
-        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+        expect(error).toBe(false);        
     }
 
     helpers.dimensionsTest({ width: 30, height: 20}, false, global);
     try {
         await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
     } catch (error) {
-        expect(error.msg).toBe('[vee-validate]: Validation Failed');        
+        expect(error).toBe(false);        
     }
 });
 
