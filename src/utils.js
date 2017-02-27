@@ -46,7 +46,6 @@ export const warn = (message) => {
 /**
  * Checks if the value is an object.
  */
- // eslint-disable-next-line
 export const isObject = (object) => {
   return object !== null && object && typeof object === 'object' && ! Array.isArray(object);
 };
@@ -105,16 +104,12 @@ export const toArray = (arrayLike) => {
     return Array.from(arrayLike);
   }
 
-  /* istanbul ignore next */
   const array = [];
-  /* istanbul ignore next */
   const length = arrayLike.length;
-  /* istanbul ignore next */
   for (let i = 0; i < length; i++) {
     array.push(arrayLike[i]);
   }
 
-  /* istanbul ignore next */
   return array;
 };
 
@@ -126,23 +121,20 @@ export const assign = (target, ...others) => {
     return Object.assign(target, ...others);
   }
 
-  /* istanbul ignore next */
-  if (target == null) { // TypeError if undefined or null
+  if (target == null) {
     throw new TypeError('Cannot convert undefined or null to object');
   }
 
-  /* istanbul ignore next */
   const to = Object(target);
-  /* istanbul ignore next */
   others.forEach(arg => {
-    if (arg != null) { // Skip over if undefined or null
+    // Skip over if undefined or null
+    if (arg != null) {
       Object.keys(arg).forEach(key => {
         to[key] = arg[key];
       });
     }
   });
 
-  /* istanbul ignore next */
   return to;
 };
 
@@ -169,6 +161,14 @@ export const find = (array, predicate) => {
   return result;
 };
 
+/**
+ * Gets the rules from a binding value or the element dataset.
+ * 
+ * @param {String} expression The binding expression.
+ * @param {Object|String} value The binding value.
+ * @param {element} el The element.
+ * @returns {String|Object}
+ */
 export const getRules = (expression, value, el) => {
   if (! expression) {
     return getDataAttribute(el, 'rules');
