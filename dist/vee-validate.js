@@ -1205,7 +1205,11 @@ var getRules = function (expression, value, el) {
     return value;
   }
 
-  return isObject(value.rules) ? value.rules : value;
+  if (~['string', 'object'].indexOf(typeof value.rules)) {
+    return value.rules
+  }
+
+  return value;
 };
 
 /* eslint-disable prefer-rest-params */
