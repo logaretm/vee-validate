@@ -34,7 +34,7 @@ function setPristine(el, classNames) {
 }
 
 export default (options) => ({
-  bind(el, binding, vnode) {
+  inserted(el, binding, vnode) {
     const listener = new ListenerGenerator(el, binding, vnode, options);
 
     listener.attach();
