@@ -1,4 +1,4 @@
-
+import test from 'ava';
 import validate from './../../src/rules/max';
 
 const valid = [
@@ -17,12 +17,13 @@ const invalid = [
     'undefined'
 ];
 
-it('validates maximum number of characters in a string', () => {
+test('validates maximum number of characters in a string', t => {
+    t.plan(10);
     const limit = 3;
 
     // valid.
-    valid.forEach(value => expect(validate(value, [limit])).toBe(true));
+    valid.forEach(value => t.true(validate(value, [limit])));
 
     // invalid
-    invalid.forEach(value => expect(validate(value, [limit])).toBe(false));
+    invalid.forEach(value => t.false(validate(value, [limit])));
 });

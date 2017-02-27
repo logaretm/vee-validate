@@ -1,3 +1,4 @@
+import test from 'ava';
 import validate from './../../src/rules/alpha_spaces';
 
 const valid = [
@@ -22,10 +23,11 @@ const invalid = [
     123
 ];
 
-it('validates that the string may only contain alphabetic characters and spaces', () => {
+test('validates that the string may only contain alphabetic characters and spaces', t => {
+    t.plan(16);
     // valid.
-    valid.forEach(value => expect(validate(value)).toBe(true));
+    valid.forEach(value => t.true(validate(value)));
 
     // invalid
-    invalid.forEach(value => expect(validate(value)).toBe(false));
+    invalid.forEach(value => t.false(validate(value)));
 });

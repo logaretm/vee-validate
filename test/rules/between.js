@@ -1,3 +1,4 @@
+import test from 'ava';
 import validate from './../../src/rules/between';
 
 const valid = [
@@ -21,15 +22,16 @@ const invalid = [
     -1
 ];
 
-it('validates numbers range', () => {
+test('validates numbers range', t => {
+    t.plan(15);
     const params = [1, 3]; // min: 1, max: 3
-    valid.forEach(value => expect(validate(value, params)).toBe(true));
+    valid.forEach(value => t.true(validate(value, params)));
 
-    invalid.forEach(value => expect(validate(value, params)).toBe(false));
+    invalid.forEach(value => t.false(validate(value, params)));
 });
 
-it('validates numbers range including negative numbers', () => {
+test('validates numbers range including negative numbers', t => {
     const range = [-10, 1];
-    expect(validate(0, range)).toBe(true);
-    expect(validate('-9', range)).toBe(true);
+    t.true(validate(0, range));
+    t.true(validate('-9', range));
 });

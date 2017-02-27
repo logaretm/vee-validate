@@ -1,3 +1,4 @@
+import test from 'ava';
 import validate from './../../src/rules/numeric';
 
 const valid = [
@@ -16,10 +17,11 @@ const invalid = [
     []
 ];
 
-it('validates that the string only contains numeric characters', () => {
+test('validates that the string only contains numeric characters', t => {
+    t.plan(10);
     // valid.
-    valid.forEach(value => expect(validate(value)).toBe(true));
+    valid.forEach(value => t.true(validate(value)));
 
     // invalid
-    invalid.forEach(value => expect(validate(value)).toBe(false));
+    invalid.forEach(value => t.false(validate(value)));
 });

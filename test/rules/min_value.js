@@ -1,3 +1,4 @@
+import test from 'ava';
 import validate from './../../src/rules/min_value';
 
 const valid = [
@@ -17,12 +18,13 @@ const invalid = [
     '-3'
 ];
 
-it('validates number minimum value', () => {
+test('validates number minimum value', t => {
+    t.plan(11);
     const min = -1;
 
     // valid
-    valid.forEach(value => expect(validate(value, [min])).toBe(true));
+    valid.forEach(value => t.true(validate(value, [min])));
 
     // invalid
-    invalid.forEach(value => expect(validate(value, [min])).toBe(false));
+    invalid.forEach(value => t.false(validate(value, [min])));
 });

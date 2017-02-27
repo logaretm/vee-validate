@@ -1,10 +1,11 @@
+import test from 'ava';
 import validate from './../../src/rules/size';
 import mocks from './../helpers';
 
-it('validates file size', () => {
+test('validates file size', t => {
     const params = [15];
-    expect(validate([mocks.file('file.txt', 'text/plain', 10)], params)).toBe(true);
-    expect(validate([mocks.file('file.txt', 'text/plain', 15)], params)).toBe(true);
-    expect(validate([mocks.file('file.txt', 'text/plain', 16)], params)).toBe(false);
-    expect(validate([mocks.file('file.txt', 'text/plain', 16)], ['not a number'])).toBe(false);
+    t.true(validate([mocks.file('file.txt', 'text/plain', 10)], params));
+    t.true(validate([mocks.file('file.txt', 'text/plain', 15)], params));
+    t.false(validate([mocks.file('file.txt', 'text/plain', 16)], params));
+    t.false(validate([mocks.file('file.txt', 'text/plain', 16)], ['not a number']));
 });

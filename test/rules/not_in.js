@@ -1,12 +1,12 @@
-
+import test from 'ava';
 import validate from './../../src/rules/notIn';
 
-it('validates that the value does not exist within a list', () => {
+test('validates that the value does not exist within a list', t => {
     const list = [1, 2, 3, 4, 5];
 
     // valid.
-    [0, 6].forEach(value => expect(validate(value, list)).toBe(true));
+    [0, 6].forEach(value => t.true(validate(value, list)));
 
     // invalid
-    list.forEach(value => expect(validate(value, list)).toBe(false));
+    list.forEach(value => t.false(validate(value, list)));
 });

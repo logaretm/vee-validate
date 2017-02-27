@@ -1,3 +1,4 @@
+import test from 'ava';
 import validate from './../../src/rules/url';
 
 /**
@@ -44,18 +45,19 @@ const invalid = [
     'http://3628126748',
 ];
 
-it('should validate urls', () => {
+test('should validate urls', t => {
+    t.plan(38);
     // check valid urls.
-    valid.forEach(url => expect(validate(url)).toBe(true));
+    valid.forEach(url => t.true(validate(url)));
 
     // check invalid urls.
     invalid.forEach(url => {
-        expect(validate(url)).toBe(false);
+        t.false(validate(url));
     });
 
     // test require protocol.
-    expect(validate('google.com', [true])).toBe(false);
-    expect(validate('https://google.com', [true])).toBe(true);
-    expect(validate('google.com', [false])).toBe(true);
-    expect(validate('https://google.com', [false])).toBe(true);
+    t.false(validate('google.com', [true]));
+    t.true(validate('https://google.com', [true]));
+    t.true(validate('google.com', [false]));
+    t.true(validate('https://google.com', [false]));
 });

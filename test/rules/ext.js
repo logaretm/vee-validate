@@ -1,8 +1,9 @@
+import test from 'ava';
 import validate from './../../src/rules/ext';
 import mocks from './../helpers';
 
 
-it('validates files extensions', () => {
+test('validates files extensions', t => {
     const params = ['txt', 'jpg', 'svg'];
     const validFiles = [
         mocks.file('file.txt', 'text/plain'),
@@ -10,6 +11,6 @@ it('validates files extensions', () => {
         mocks.file('file.svg', 'image/svg'),
     ];
 
-    expect(validate(validFiles, params)).toBe(true);
-    expect(validate([mocks.file('file.pdf', 'application/pdf')], params)).toBe(false);
+    t.true(validate(validFiles, params));
+    t.false(validate([mocks.file('file.pdf', 'application/pdf')], params));
 });

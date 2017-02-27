@@ -1,4 +1,4 @@
-
+import test from 'ava';
 import validate from './../../src/rules/max_value';
 
 const valid = [
@@ -18,12 +18,13 @@ const invalid = [
     'abc'
 ];
 
-it('validates number maximum value', () => {
+test('validates number maximum value', t => {
+    t.plan(11);
     const max = 10;
 
     // valid.
-    valid.forEach(value => expect(validate(value, [max])).toBe(true));
+    valid.forEach(value => t.true(validate(value, [max])));
 
     // invalid
-    invalid.forEach(value => expect(validate(value, [max])).toBe(false));
+    invalid.forEach(value => t.false(validate(value, [max])));
 });

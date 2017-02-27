@@ -1,4 +1,4 @@
-
+import test from 'ava';
 import validate from './../../src/rules/digits';
 
 const valid = [
@@ -20,9 +20,10 @@ const invalid = [
     '12a'
 ];
 
-it('validates required', () => {
+test('validates required', t => {
+    t.plan(13);
     const params = [3]; // 3 digits only.
-    valid.forEach(value => expect(validate(value, params)).toBe(true));
+    valid.forEach(value => t.true(validate(value, params)));
 
-    invalid.forEach(value => expect(validate(value, params)).toBe(false));
+    invalid.forEach(value => t.false(validate(value, params)));
 });

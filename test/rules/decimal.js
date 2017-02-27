@@ -1,28 +1,28 @@
+import test from 'ava';
 import validate from './../../src/rules/decimal';
 
-it('validates numerics with decmial numbers', () => {
+test('validates numerics with decmial numbers', t => {
     const params = [2];
 
-    expect(validate('')).toBe(true);
-    expect(validate('11.223123818')).toBe(true);
-    expect(validate('11.223123818', [])).toBe(true);
-    expect(validate('11.223123818', null)).toBe(true);
-    expect(validate('11.223123818', undefined)).toBe(true);
-    expect(validate('11.223123818', [null])).toBe(true);
-    expect(validate('11.223123818', [undefined])).toBe(true);
-    expect(validate('11.2', params)).toBe(true);
-    expect(validate('11.23', params)).toBe(true);
-    expect(validate('-1', params)).toBe(true);
-    expect(validate('11', params)).toBe(true);
-    expect(validate('.11')).toBe(true);
+    t.true(validate(''));
+    t.true(validate('11.223123818'));
+    t.true(validate('11.223123818', []));
+    t.true(validate('11.223123818', null));
+    t.true(validate('11.223123818', undefined));
+    t.true(validate('11.223123818', [null]));
+    t.true(validate('11.223123818', [undefined]));
+    t.true(validate('11.2', params));
+    t.true(validate('11.23', params));
+    t.true(validate('-1', params));
+    t.true(validate('11', params));
+    t.true(validate('.11'));
+    t.true(validate('1', ['0']));
 
-    expect(validate('11.234', params)).toBe(false);
-    expect(validate('1-', params)).toBe(false);
-    expect(validate('1-1', params)).toBe(false);
-    expect(validate('1-1.22', params)).toBe(false);
-    expect(validate([])).toBe(false);
-    expect(validate('a')).toBe(false);
-
-    expect(validate('1.11', ['0'])).toBe(false);
-    expect(validate('1', ['0'])).toBe(true);
+    t.false(validate('11.234', params));
+    t.false(validate('1-', params));
+    t.false(validate('1-1', params));
+    t.false(validate('1-1.22', params));
+    t.false(validate([]));
+    t.false(validate('a'));
+    t.false(validate('1.11', ['0']));
 });

@@ -1,4 +1,4 @@
-
+import test from 'ava';
 import validate from './../../src/rules/credit_card';
 
 const valid = [
@@ -17,7 +17,8 @@ const invalid = [
     null
 ];
 
-it('validates that the number is a valid credit card', () => {
-    valid.forEach(value => expect(validate(value)).toBe(true));
-    invalid.forEach(value => expect(validate(value)).toBe(false));
+test('validates that the number is a valid credit card', t => {
+    t.plan(10);
+    valid.forEach(value => t.true(validate(value)));
+    invalid.forEach(value => t.false(validate(value)));
 });

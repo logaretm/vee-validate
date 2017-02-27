@@ -1,3 +1,4 @@
+import test from 'ava';
 import validate from './../../src/rules/alpha_dash';
 
 const valid = [
@@ -24,10 +25,11 @@ const invalid = [
 ];
 
 // eslint-disable-next-line
-it('validates that the string may only contain alpha-numeric characters as well as dashes and spaces', () => {
+test('validates that the string may only contain alpha-numeric characters as well as dashes and spaces', t => {
+    t.plan(17);
     // valid.
-    valid.forEach(value => expect(validate(value)).toBe(true));
+    valid.forEach(value => t.true(validate(value)));
 
     // invalid
-    invalid.forEach(value => expect(validate(value)).toBe(false));
+    invalid.forEach(value => t.false(validate(value)));
 });

@@ -1,3 +1,4 @@
+import test from 'ava';
 import validate from './../../src/rules/required';
 
 const valid = [
@@ -16,8 +17,9 @@ const invalid = [
     null
 ];
 
-it('validates required', () => {
-    valid.forEach(value => expect(validate(value)).toBe(true));
+test('validates required', t => {
+    t.plan(10);
+    valid.forEach(value => t.true(validate(value)));
 
-    invalid.forEach(value => expect(validate(value)).toBe(false));
+    invalid.forEach(value => t.false(validate(value)));
 });

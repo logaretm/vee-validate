@@ -1,4 +1,4 @@
-
+import test from 'ava';
 import validate from './../../src/rules/email';
 
 const valid = [
@@ -21,10 +21,11 @@ const invalid = [
     'someone@example.c',
 ];
 
-it('validates that the string is a valid email address', () => {
+test('validates that the string is a valid email address', t => {
+    t.plan(14);
     // valid.
-    valid.forEach(value => expect(validate(value)).toBe(true));
+    valid.forEach(value => t.true(validate(value)));
 
     // invalid
-    invalid.forEach(value => expect(validate(value)).toBe(false));
+    invalid.forEach(value => t.false(validate(value)));
 });
