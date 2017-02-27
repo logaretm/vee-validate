@@ -73,7 +73,10 @@ export const hasClass = (el, className) => {
 export const addClass = (el, className) => {
   if (el.classList) {
     el.classList.add(className);
-  } else if (!hasClass(el, className)) {
+    return;
+  } 
+  
+  if (!hasClass(el, className)) {
     el.className += ` ${className}`;
   }
 };
@@ -84,7 +87,10 @@ export const addClass = (el, className) => {
 export const removeClass = (el, className) => {
   if (el.classList) {
     el.classList.remove(className);
-  } else if (hasClass(el, className)) {
+    return;
+  }
+
+  if (hasClass(el, className)) {
     const reg = new RegExp(`(\\s|^)${className}(\\s|$)`);
     el.className = el.className.replace(reg, ' ');
   }
@@ -99,12 +105,16 @@ export const toArray = (arrayLike) => {
     return Array.from(arrayLike);
   }
 
+  /* istanbul ignore next */
   const array = [];
+  /* istanbul ignore next */
   const length = arrayLike.length;
+  /* istanbul ignore next */
   for (let i = 0; i < length; i++) {
     array.push(arrayLike[i]);
   }
 
+  /* istanbul ignore next */
   return array;
 };
 
@@ -116,11 +126,14 @@ export const assign = (target, ...others) => {
     return Object.assign(target, ...others);
   }
 
+  /* istanbul ignore next */
   if (target == null) { // TypeError if undefined or null
     throw new TypeError('Cannot convert undefined or null to object');
   }
 
+  /* istanbul ignore next */
   const to = Object(target);
+  /* istanbul ignore next */
   others.forEach(arg => {
     if (arg != null) { // Skip over if undefined or null
       Object.keys(arg).forEach(key => {
@@ -129,6 +142,7 @@ export const assign = (target, ...others) => {
     }
   });
 
+  /* istanbul ignore next */
   return to;
 };
 
@@ -156,7 +170,6 @@ export const find = (array, predicate) => {
 };
 
 export const getRules = (expression, value, el) => {
-  // TODO: Deprecate this.
   if (! expression) {
     return getDataAttribute(el, 'rules');
   }

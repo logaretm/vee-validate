@@ -86,3 +86,38 @@ it('should return valid rules data', () => {
         email: true
     });
 });
+
+it('assigns objects', () => {
+    const o1 = { a: 1, b: 1, c: 1 };
+    const o2 = { b: 2, c: 2 };
+    const o3 = { c: 3 };
+    const result = { a: 1, b: 2, c: 3 };
+    expect(helpers.assign({}, o1, o2, o3)).toEqual(result);
+
+    expect(() => {
+        helpers.assign(null, o1);
+    }).toThrow();
+});
+
+it('removes classes', () => {
+    document.body.innerHTML = `<input id="el" type="text" class="some class">`;
+    const el = document.querySelector('#el');
+    helpers.removeClass(el, 'some');
+    expect(helpers.hasClass(el, 'some')).toBe(false);
+    el.classList = undefined;
+    helpers.removeClass(el, 'class');
+    expect(helpers.hasClass(el, 'class')).toBe(false);
+});
+
+it('adds classes', () => {
+    document.body.innerHTML = `<input id="el" type="text" class="class">`;
+    const el = document.querySelector('#el');
+    helpers.addClass(el, 'some');
+    expect(helpers.hasClass(el, 'some')).toBe(true);
+    el.classList = undefined;
+
+    expect(helpers.hasClass(el, 'class')).toBe(false);
+    helpers.addClass(el, 'class');
+    expect(helpers.hasClass(el, 'class')).toBe(true);
+});
+
