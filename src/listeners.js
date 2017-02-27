@@ -147,7 +147,7 @@ export default class ListenerGenerator
      */
   _getScopedListener(callback) {
     return (scope) => {
-      if (! scope || scope === this.scope || scope instanceof Event) {
+      if (! scope || scope === this.scope || scope instanceof window.Event) {
         callback();
       }
     };

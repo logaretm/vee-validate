@@ -132,7 +132,6 @@ test('resets the flags state for a field', t => {
   t.true(bag.clean('name'));
 });
 
-
 test('resets the flags state for all fields', t => {
   const bag = new FieldBag();
   bag._add('name');
