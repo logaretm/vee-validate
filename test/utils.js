@@ -116,7 +116,7 @@ test('removes classes', t => {
 });
 
 test('adds classes', t => {
-  document.body.innerHTML = `<input id="el" type="text" class="class">`;
+  document.body.innerHTML = `<input id="el" type="text">`;
   const el = document.querySelector('#el');
   utils.addClass(el, 'some');
   t.is(utils.hasClass(el, 'some'), true);
@@ -127,3 +127,22 @@ test('adds classes', t => {
   t.is(utils.hasClass(el, 'class'), true);
 });
 
+test('converts array like objects to arrays', t => {
+    document.body.innerHTML = `
+        <div class="class"></div>
+        <div class="class"></div>
+        <div class="class"></div>
+    `;
+
+    const nodeList = document.querySelectorAll('.class');
+    t.false(Array.isArray(nodeList));
+
+    let array = utils.toArray(nodeList);
+    t.true(Array.isArray(array));
+
+    // Test polyfill
+    const from = Array.from;
+    Array.from = undefined;
+    array = utils.toArray(nodeList);
+    t.true(Array.isArray(array));
+});

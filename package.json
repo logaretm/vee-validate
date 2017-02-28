@@ -7,13 +7,13 @@
   "homepage": "http://vee-validate.logaretm.com",
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
-    "test": "ava",
+    "test": "nyc ava",
     "lint": "eslint ./src",
     "build:es": "rollup -c build/rollup.es2015.config.js",
     "build:main": "rollup -c build/rollup.config.js",
     "minify": "uglifyjs dist/vee-validate.js -o dist/vee-validate.min.js -c -m",
     "build": "npm run build:es && npm run build:main && npm run minify",
-    "cover": "jest --coverage"
+    "cover": "nyc report"
   },
   "keywords": [
     "VueJS",
@@ -41,6 +41,7 @@
     "eslint-config-airbnb-base": "^5.0.0",
     "eslint-plugin-import": "^1.12.0",
     "moment": "^2.14.1",
+    "nyc": "^10.1.2",
     "rollup": "0.41.0",
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-commonjs": "^7.0.0",
