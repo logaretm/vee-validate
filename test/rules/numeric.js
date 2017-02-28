@@ -14,11 +14,13 @@ const invalid = [
     true,
     false,
     {},
-    []
+    [],
+    '+123',
+    '-123'
 ];
 
 test('validates that the string only contains numeric characters', t => {
-    t.plan(10);
+    t.plan(12);
     // valid.
     valid.forEach(value => t.true(validate(value)));
 

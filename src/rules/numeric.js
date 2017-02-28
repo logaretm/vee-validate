@@ -1,3 +1,1 @@
-import isNumeric from 'validator/lib/isNumeric';
-
-export default (value) => isNumeric(String(value));
+export default (value) => /^[0-9]+$/.test(String(value));
