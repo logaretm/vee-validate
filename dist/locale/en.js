@@ -1,4 +1,5 @@
 export default {
+    _default: (field) => `The ${field} value is not valid.`,
     after: (field, [target]) => `The ${field} must be after ${target}.`,
     alpha_dash: (field) => `The ${field} may contain alpha-numeric characters as well as dashes and underscores.`,
     alpha_num: (field) => `The ${field} may only contain alpha-numeric characters.`,

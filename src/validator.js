@@ -49,7 +49,6 @@ export default class Validator
   static _merge(name, validator) {
     if (isCallable(validator)) {
       Rules[name] = validator;
-      dictionary.setMessage('en', name, (field) => `The ${field} value is not valid.`);
       return;
     }
 
@@ -403,15 +402,13 @@ export default class Validator
    * @param  {object} rule Normalized rule object.
    * @param {object} data Additional Information about the validation result.
    * @param {string} scope The field scope.
-   * @return {string} msg Formatted error message.
+   * @return {string} Formatted error message.
    */
   _formatErrorMessage(field, rule, data = {}, scope = '__global__') {
     const name = this._getFieldDisplayName(field, scope);
     const params = this._getLocalizedParams(rule, scope);
-
-    if (! dictionary.hasLocale(LOCALE) ||
-         typeof dictionary.getMessage(LOCALE, rule.name) !== 'function') {
-            // Default to english message.
+    // Defaults to english message.
+    if (! dictionary.hasLocale(LOCALE)) {
       return dictionary.getMessage('en', rule.name)(name, params, data);
     }
 

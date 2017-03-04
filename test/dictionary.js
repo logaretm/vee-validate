@@ -84,3 +84,28 @@ test('can set attributes', t => {
 
   t.is(dict.getAttribute('en', 'email'), 'Email Address');
 });
+
+test('returns the default message for the given locale when no fallback is provided', t => {
+  const dict = new Dictionary({
+    en: {
+      messages: {
+        _default: 'This is default'
+      }
+    },
+    ar: {
+      messages: {
+        _default: 'رسالة افتراضية'
+      }
+    },
+    fr: {
+      messages: {}
+    }
+  });
+
+
+  // default for locale
+  t.is(dict.getMessage('ar', 'any'), 'رسالة افتراضية');
+
+  // no default message
+  t.is(dict.getMessage('fr', 'any'), 'This is default');
+});

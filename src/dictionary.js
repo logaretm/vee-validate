@@ -12,12 +12,20 @@ export default class Dictionary
     return !! this.dictionary[locale];
   }
 
-  getMessage(locale, key, fallback = '') {
+  getMessage(locale, key, fallback) {
     if (! this.hasMessage(locale, key)) {
-      return fallback;
+      return fallback || this._getDefaultMessage(locale);
     }
 
     return this.dictionary[locale].messages[key];
+  }
+
+  _getDefaultMessage(locale) {
+    if (this.hasMessage(locale, '_default')) {
+      return this.dictionary[locale].messages._default;
+    }
+
+    return this.dictionary.en.messages._default;
   }
 
   getAttribute(locale, key, fallback = '') {

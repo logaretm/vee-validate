@@ -1,4 +1,5 @@
 export default {
+    _default: (field) => `قيمة الحقل ${field} غير صحيحة.`,
     after: (field, [target]) => `${field} يجب ان يكون بعد ${target}.`,
     alpha_dash: (field) => `${field} قد يحتوي على حروف او الرموز - و _.`,
     alpha_num: (field) => `${field} قد يحتوي فقط على حروف وارقام.`,
