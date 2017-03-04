@@ -20,6 +20,9 @@ export const getScope = (el) => {
  */
 export const debounce = (callback, wait = 0, immediate) => {
   let timeout;
+  if (wait == 0) {
+    return callback;
+  }
   return (...args) => {
     const later = () => {
       timeout = null;
