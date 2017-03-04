@@ -57,10 +57,10 @@ export default (options) => ({
     }
 
     // make sure we don't do uneccessary work if no expression was passed
-    // or if the string value did not change.
-    // eslint-disable-next-line
-    if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) return;
+    // nor if the expression did not change.
+    if (! expression || (instance.cachedExp === JSON.stringify(value))) return;
 
+    instance.cachedExp = JSON.stringify(value);
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
       instance.fieldName,
