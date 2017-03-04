@@ -378,7 +378,7 @@ export default class ListenerGenerator
         scope: () => {
           return this.scope || getScope(this.el);
         },
-        prettyName: getDataAttribute(this.el, 'as'),
+        prettyName: getDataAttribute(this.el, 'as') || this.el.title,
         context,
         getter,
         listeners: this
