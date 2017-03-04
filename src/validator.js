@@ -462,7 +462,7 @@ export default class Validator
 
     let result = validator(value, rule.params, name);
 
-        // If it is a promise.
+    // If it is a promise.
     if (isCallable(result.then)) {
       return result.then(values => {
         let allValid = true;
@@ -521,6 +521,9 @@ export default class Validator
       field.getter = options.getter;
       field.context = options.context;
       field.listeners = options.listeners || { detach() {} };
+      field.el = field.listeners.el;
+      this._setAriaRequiredAttribute(field);
+      this._setAriaValidAttribute(field, true);
     };
 
     const scope = isCallable(options.scope) ? options.scope() : options.scope;
@@ -650,10 +653,10 @@ export default class Validator
    * @param {string} language locale or language id.
    */
   setLocale(language) {
-        /* istanbul ignore if */
+    /* istanbul ignore if */
     if (! this.dictionary.hasLocale(language)) {
-            // eslint-disable-next-line
-            warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+      // eslint-disable-next-line
+      warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
     }
 
     LOCALE = language;
@@ -739,21 +742,45 @@ export default class Validator
       return Promise.all(promises).then(values => {
         const valid = values.every(t => t) && test;
         this.fieldBag._setFlags(name, { valid, dirty: true });
+        this._setAriaValidAttribute(field, test);
 
         return valid;
       });
     }
 
     this.fieldBag._setFlags(name, { valid: test, dirty: true });
+    this._setAriaValidAttribute(field, test);
 
     return new Promise((resolve, reject) => {
       if (test) {
-        resolve(test)
-        return
+        resolve(test);
+        return;
       }
 
       reject(false);
     });
+  }
+
+  /**
+   * Sets the aria-invalid attribute on the element.
+   */
+  _setAriaValidAttribute(field, valid) {
+    if (! field.el) {
+      return;
+    }
+
+    field.el.setAttribute('aria-invalid', !valid);
+  }
+
+  /**
+   * Sets the aria-required attribute on the element.
+   */
+  _setAriaRequiredAttribute(field) {
+    if (! field.el) {
+      return;
+    }
+
+    field.el.setAttribute('aria-required', !! field.required);
   }
 
   /**

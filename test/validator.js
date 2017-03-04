@@ -974,3 +974,25 @@ test('handles dot notation names', async t => {
     }
     t.true(await v.validate('example.name', 'ad'));
 });
+
+test('sets aria attributes on elements', async t => {
+    const v = new Validator();
+    let el = document.createElement('input');
+    v.attach('name', 'required', {
+        listeners: { el }
+    });
+    t.is(el.getAttribute('aria-required'), 'true');
+    el = document.createElement('input');
+    v.attach('valid', 'alpha', {
+        listeners: { el }
+    });
+    t.is(el.getAttribute('aria-required'), 'false');
+    t.is(el.getAttribute('aria-invalid'), 'false');
+    try {
+        await v.validate('valid', '123');
+    } catch (err) {
+        t.is(el.getAttribute('aria-invalid'), 'true');
+    }
+    await v.validate('valid', 'abc');
+    t.is(el.getAttribute('aria-invalid'), 'false');
+});
