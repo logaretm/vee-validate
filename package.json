@@ -12,7 +12,8 @@
     "build:es": "rollup -c build/rollup.es2015.config.js",
     "build:main": "rollup -c build/rollup.config.js",
     "minify": "uglifyjs dist/vee-validate.js -o dist/vee-validate.min.js -c -m",
-    "build": "npm run build:es && npm run build:main && npm run minify",
+    "build:locale": "node build/locale",
+    "build": "npm run build:es && npm run build:main && npm run minify && npm run build:locale",
     "cover": "nyc report"
   },
   "keywords": [

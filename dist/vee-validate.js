@@ -531,32 +531,7 @@ var min_value = function (value, ref) {
 
 var not_in = function (value, options) { return ! options.filter(function (option) { return option == value; }).length; }; // eslint-disable-line
 
-var isNumeric_1 = createCommonjsModule(function (module, exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = isNumeric;
-
-var _assertString = assertString_1;
-
-var _assertString2 = _interopRequireDefault(_assertString);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var numeric = /^[-+]?[0-9]+$/;
-
-function isNumeric(str) {
-  (0, _assertString2.default)(str);
-  return numeric.test(str);
-}
-module.exports = exports['default'];
-});
-
-var isNumeric = unwrapExports(isNumeric_1);
-
-var numeric = function (value) { return isNumeric(String(value)); };
+var numeric = function (value) { return /^[0-9]+$/.test(String(value)); };
 
 var regex = function (value, ref) {
   var regex = ref[0];
@@ -1070,7 +1045,6 @@ var warn = function (message) {
 /**
  * Checks if the value is an object.
  */
- // eslint-disable-next-line
 var isObject = function (object) {
   return object !== null && object && typeof object === 'object' && ! Array.isArray(object);
 };
@@ -1129,16 +1103,12 @@ var toArray = function (arrayLike) {
     return Array.from(arrayLike);
   }
 
-  /* istanbul ignore next */
   var array = [];
-  /* istanbul ignore next */
   var length = arrayLike.length;
-  /* istanbul ignore next */
   for (var i = 0; i < length; i++) {
     array.push(arrayLike[i]);
   }
 
-  /* istanbul ignore next */
   return array;
 };
 
@@ -1153,23 +1123,20 @@ var assign = function (target) {
     return Object.assign.apply(Object, [ target ].concat( others ));
   }
 
-  /* istanbul ignore next */
-  if (target == null) { // TypeError if undefined or null
+  if (target == null) {
     throw new TypeError('Cannot convert undefined or null to object');
   }
 
-  /* istanbul ignore next */
   var to = Object(target);
-  /* istanbul ignore next */
   others.forEach(function (arg) {
-    if (arg != null) { // Skip over if undefined or null
+    // Skip over if undefined or null
+    if (arg != null) {
       Object.keys(arg).forEach(function (key) {
         to[key] = arg[key];
       });
     }
   });
 
-  /* istanbul ignore next */
   return to;
 };
 
@@ -1196,6 +1163,14 @@ var find = function (array, predicate) {
   return result;
 };
 
+/**
+ * Gets the rules from a binding value or the element dataset.
+ * 
+ * @param {String} expression The binding expression.
+ * @param {Object|String} value The binding value.
+ * @param {element} el The element.
+ * @returns {String|Object}
+ */
 var getRules = function (expression, value, el) {
   if (! expression) {
     return getDataAttribute(el, 'rules');
@@ -1225,13 +1200,19 @@ Dictionary.prototype.hasLocale = function hasLocale (locale) {
 };
 
 Dictionary.prototype.getMessage = function getMessage (locale, key, fallback) {
-    if ( fallback === void 0 ) fallback = '';
-
   if (! this.hasMessage(locale, key)) {
-    return fallback;
+    return fallback || this._getDefaultMessage(locale);
   }
 
   return this.dictionary[locale].messages[key];
+};
+
+Dictionary.prototype._getDefaultMessage = function _getDefaultMessage (locale) {
+  if (this.hasMessage(locale, '_default')) {
+    return this.dictionary[locale].messages._default;
+  }
+
+  return this.dictionary.en.messages._default;
 };
 
 Dictionary.prototype.getAttribute = function getAttribute (locale, key, fallback) {
@@ -1314,6 +1295,7 @@ Dictionary.prototype._merge = function _merge (target, source) {
 /* istanbul ignore next */
 /* eslint-disable max-len */
 var messages = {
+  _default: function (field) { return ("The " + field + " value is not valid."); },
   alpha_dash: function (field) { return ("The " + field + " field may contain alpha-numeric characters as well as dashes and underscores."); },
   alpha_num: function (field) { return ("The " + field + " field may only contain alpha-numeric characters."); },
   alpha_spaces: function (field) { return ("The " + field + " field may only contain alphabetic characters as well as spaces."); },
@@ -1637,7 +1619,7 @@ FieldBag.prototype.clean = function clean (name) {
 
 var LOCALE = 'en';
 var STRICT_MODE = true;
-var dictionary = new Dictionary({
+var DICTIONARY = new Dictionary({
   en: {
     messages: messages,
     attributes: {}
@@ -1668,6 +1650,15 @@ var Validator = function Validator(validations, options) {
   }
 };
 
+var prototypeAccessors = { dictionary: {} };
+
+/**
+ * @return Dictionary
+ */
+prototypeAccessors.dictionary.get = function () {
+  return DICTIONARY;
+};
+
 /**
  * Merges a validator object into the Rules and Messages.
  *
@@ -1677,17 +1668,16 @@ var Validator = function Validator(validations, options) {
 Validator._merge = function _merge (name, validator) {
   if (isCallable(validator)) {
     Rules[name] = validator;
-    dictionary.setMessage('en', name, function (field) { return ("The " + field + " value is not valid."); });
     return;
   }
 
   Rules[name] = validator.validate;
   if (validator.getMessage && isCallable(validator.getMessage)) {
-    dictionary.setMessage('en', name, validator.getMessage);
+    DICTIONARY.setMessage('en', name, validator.getMessage);
   }
 
   if (validator.messages) {
-    dictionary.merge(
+    DICTIONARY.merge(
       Object.keys(validator.messages).reduce(function (prev, curr) {
         var dict = prev;
         dict[curr] = {
@@ -1800,7 +1790,7 @@ Validator.setLocale = function setLocale (language) {
     if ( language === void 0 ) language = 'en';
 
   /* istanbul ignore if */
-  if (! dictionary.hasLocale(language)) {
+  if (! DICTIONARY.hasLocale(language)) {
     // eslint-disable-next-line
     warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
   }
@@ -1826,7 +1816,21 @@ Validator.setStrictMode = function setStrictMode (strictMode) {
  * @param{object} data The dictionary object.
  */
 Validator.updateDictionary = function updateDictionary (data) {
-  dictionary.merge(data);
+  DICTIONARY.merge(data);
+};
+
+Validator.addLocale = function addLocale (locale) {
+  if (! locale.name) {
+    warn('Your locale must have a name property');
+    return;
+  }
+    
+  this.updateDictionary(( obj = {}, obj[locale.name] = locale, obj ));
+    var obj;
+};
+
+Validator.prototype.addLocale = function addLocale (locale) {
+  Validator.addLocale(locale);
 };
 
 /**
@@ -2045,7 +2049,7 @@ Validator.prototype._parseRule = function _parseRule (rule) {
  * @param{object} rule Normalized rule object.
  * @param {object} data Additional Information about the validation result.
  * @param {string} scope The field scope.
- * @return {string} msg Formatted error message.
+ * @return {string} Formatted error message.
  */
 Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, rule, data, scope) {
     if ( data === void 0 ) data = {};
@@ -2053,14 +2057,12 @@ Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, r
 
   var name = this._getFieldDisplayName(field, scope);
   var params = this._getLocalizedParams(rule, scope);
-
-  if (! dictionary.hasLocale(LOCALE) ||
-       typeof dictionary.getMessage(LOCALE, rule.name) !== 'function') {
-          // Default to english message.
-    return dictionary.getMessage('en', rule.name)(name, params, data);
+  // Defaults to english message.
+  if (! this.dictionary.hasLocale(LOCALE)) {
+    return this.dictionary.getMessage('en', rule.name)(name, params, data);
   }
 
-  return dictionary.getMessage(LOCALE, rule.name)(name, params, data);
+  return this.dictionary.getMessage(LOCALE, rule.name)(name, params, data);
 };
 
 /**
@@ -2073,7 +2075,7 @@ Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule, sc
       rule.params && rule.params[0]) {
     var param = this.$scopes[scope][rule.params[0]];
     if (param && param.name) { return [param.name]; }
-    return [dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+    return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
   }
 
   return rule.params;
@@ -2087,7 +2089,7 @@ Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule, sc
 Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field, scope) {
     if ( scope === void 0 ) scope = '__global__';
 
-  return this.$scopes[scope][field].name || dictionary.getAttribute(LOCALE, field, field);
+  return this.$scopes[scope][field].name || this.dictionary.getAttribute(LOCALE, field, field);
 };
 
 /**
@@ -2110,7 +2112,7 @@ Validator.prototype._test = function _test (name, value, rule, scope) {
 
   var result = validator(value, rule.params, name);
 
-      // If it is a promise.
+  // If it is a promise.
   if (isCallable(result.then)) {
     return result.then(function (values) {
       var allValid = true;
@@ -2172,6 +2174,9 @@ Validator.prototype.attach = function attach (name, checks, options) {
     field.getter = options.getter;
     field.context = options.context;
     field.listeners = options.listeners || { detach: function detach() {} };
+    field.el = field.listeners.el;
+    this$1._setAriaRequiredAttribute(field);
+    this$1._setAriaValidAttribute(field, true);
   };
 
   var scope = isCallable(options.scope) ? options.scope() : options.scope;
@@ -2307,10 +2312,10 @@ Validator.prototype.remove = function remove (name) {
  * @param {string} language locale or language id.
  */
 Validator.prototype.setLocale = function setLocale (language) {
-      /* istanbul ignore if */
-  if (! dictionary.hasLocale(language)) {
-          // eslint-disable-next-line
-          warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+  /* istanbul ignore if */
+  if (! this.dictionary.hasLocale(language)) {
+    // eslint-disable-next-line
+    warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
   }
 
   LOCALE = language;
@@ -2402,21 +2407,45 @@ Validator.prototype.validate = function validate (name, value, scope) {
     return Promise.all(promises).then(function (values) {
       var valid = values.every(function (t) { return t; }) && test;
       this$1.fieldBag._setFlags(name, { valid: valid, dirty: true });
+      this$1._setAriaValidAttribute(field, test);
 
       return valid;
     });
   }
 
   this.fieldBag._setFlags(name, { valid: test, dirty: true });
+  this._setAriaValidAttribute(field, test);
 
   return new Promise(function (resolve, reject) {
     if (test) {
       resolve(test);
-      return
+      return;
     }
 
     reject(false);
   });
+};
+
+/**
+ * Sets the aria-invalid attribute on the element.
+ */
+Validator.prototype._setAriaValidAttribute = function _setAriaValidAttribute (field, valid) {
+  if (! field.el) {
+    return;
+  }
+
+  field.el.setAttribute('aria-invalid', !valid);
+};
+
+/**
+ * Sets the aria-required attribute on the element.
+ */
+Validator.prototype._setAriaRequiredAttribute = function _setAriaRequiredAttribute (field) {
+  if (! field.el) {
+    return;
+  }
+
+  field.el.setAttribute('aria-required', !! field.required);
 };
 
 /**
@@ -2464,6 +2493,8 @@ Validator.prototype.validateScopes = function validateScopes () {
     Object.keys(this.$scopes).map(function (scope) { return this$1.validateAll(scope); })
   );
 };
+
+Object.defineProperties( Validator.prototype, prototypeAccessors );
 
 var makeMixin = function (Vue, options) { return ({
   computed: ( obj = {}, obj[options.errorBagName] = {
@@ -2635,7 +2666,7 @@ ListenerGenerator.prototype._getScopedListener = function _getScopedListener (ca
     var this$1 = this;
 
   return function (scope) {
-    if (! scope || scope === this$1.scope || scope instanceof Event) {
+    if (! scope || scope === this$1.scope || scope instanceof window.Event) {
       callback();
     }
   };

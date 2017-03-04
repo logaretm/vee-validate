@@ -204,6 +204,21 @@ export default class Validator
     DICTIONARY.merge(data);
   }
 
+  static addLocale(locale) {
+    if (! locale.name) {
+      warn('Your locale must have a name property');
+      return;
+    }
+    
+    this.updateDictionary({
+      [locale.name]: locale
+    });
+  }
+
+  addLocale(locale) {
+    Validator.addLocale(locale);
+  }
+
   /**
    * Resolves the scope value. Only strings and functions are allowed.
    * @param {Function|String} scope
