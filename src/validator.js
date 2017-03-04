@@ -9,7 +9,7 @@ import FieldBag from './fieldBag';
 
 let LOCALE = 'en';
 let STRICT_MODE = true;
-const dictionary = new Dictionary({
+const DICTIONARY = new Dictionary({
   en: {
     messages,
     attributes: {}
@@ -41,6 +41,13 @@ export default class Validator
   }
 
   /**
+   * @return Dictionary
+   */
+  get dictionary() {
+    return DICTIONARY;
+  }
+
+  /**
    * Merges a validator object into the Rules and Messages.
    *
    * @param  {string} name The name of the validator.
@@ -54,11 +61,11 @@ export default class Validator
 
     Rules[name] = validator.validate;
     if (validator.getMessage && isCallable(validator.getMessage)) {
-      dictionary.setMessage('en', name, validator.getMessage);
+      DICTIONARY.setMessage('en', name, validator.getMessage);
     }
 
     if (validator.messages) {
-      dictionary.merge(
+      DICTIONARY.merge(
         Object.keys(validator.messages).reduce((prev, curr) => {
           const dict = prev;
           dict[curr] = {
@@ -170,7 +177,7 @@ export default class Validator
    */
   static setLocale(language = 'en') {
     /* istanbul ignore if */
-    if (! dictionary.hasLocale(language)) {
+    if (! DICTIONARY.hasLocale(language)) {
       // eslint-disable-next-line
       warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
     }
@@ -194,7 +201,7 @@ export default class Validator
    * @param  {object} data The dictionary object.
    */
   static updateDictionary(data) {
-    dictionary.merge(data);
+    DICTIONARY.merge(data);
   }
 
   /**
@@ -408,11 +415,11 @@ export default class Validator
     const name = this._getFieldDisplayName(field, scope);
     const params = this._getLocalizedParams(rule, scope);
     // Defaults to english message.
-    if (! dictionary.hasLocale(LOCALE)) {
-      return dictionary.getMessage('en', rule.name)(name, params, data);
+    if (! this.dictionary.hasLocale(LOCALE)) {
+      return this.dictionary.getMessage('en', rule.name)(name, params, data);
     }
 
-    return dictionary.getMessage(LOCALE, rule.name)(name, params, data);
+    return this.dictionary.getMessage(LOCALE, rule.name)(name, params, data);
   }
 
   /**
@@ -423,7 +430,7 @@ export default class Validator
         rule.params && rule.params[0]) {
       const param = this.$scopes[scope][rule.params[0]];
       if (param && param.name) return [param.name];
-      return [dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
     }
 
     return rule.params;
@@ -435,7 +442,7 @@ export default class Validator
    * @return {String} displayName The name to be used in the errors.
    */
   _getFieldDisplayName(field, scope = '__global__') {
-    return this.$scopes[scope][field].name || dictionary.getAttribute(LOCALE, field, field);
+    return this.$scopes[scope][field].name || this.dictionary.getAttribute(LOCALE, field, field);
   }
 
   /**
@@ -644,7 +651,7 @@ export default class Validator
    */
   setLocale(language) {
         /* istanbul ignore if */
-    if (! dictionary.hasLocale(language)) {
+    if (! this.dictionary.hasLocale(language)) {
             // eslint-disable-next-line
             warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
     }
