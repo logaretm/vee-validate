@@ -1,3 +1,8 @@
+/**
+ * vee-validate v2.0.0-beta.24
+ * (c) 2017 Abdelrahman Awad
+ * @license MIT
+ */
 (function (global, factory) {
         typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
         typeof define === 'function' && define.amd ? define(factory) :
@@ -1003,7 +1008,7 @@ var getDataAttribute = function (el, name) { return el.getAttribute(("data-vv-" 
 var getScope = function (el) {
   var scope = getDataAttribute(el, 'scope');
   if (! scope && el.form) {
-    scope = getDataAttribute(el.form, 'scope');    
+    scope = getDataAttribute(el.form, 'scope');
   }
 
   return scope;
@@ -1016,6 +1021,9 @@ var debounce = function (callback, wait, immediate) {
   if ( wait === void 0 ) wait = 0;
 
   var timeout;
+  if (wait == 0) {
+    return callback;
+  }
   return function () {
     var args = [], len = arguments.length;
     while ( len-- ) args[ len ] = arguments[ len ];
@@ -2468,15 +2476,12 @@ Validator.prototype.validateAll = function validateAll (values) {
       };
     });
   }
-
-   var promises = Object.keys(normalizedValues).map(function (property) {
-    return this$1.validate(
-      property,
-      normalizedValues[property].value,
-      normalizedValues[property].scope
-    );
-  });
-
+  var promises = Object.keys(normalizedValues).map(function (property) { return this$1.validate(
+    property,
+    normalizedValues[property].value,
+    normalizedValues[property].scope
+  ); });
+    
   return Promise.all(promises).then(function () { return true; }).catch(function () {
     throw new ValidatorException('Validation Failed');
   });
@@ -2911,7 +2916,7 @@ ListenerGenerator.prototype.attach = function attach () {
       scope: function () {
         return this$1.scope || getScope(this$1.el);
       },
-      prettyName: getDataAttribute(this.el, 'as'),
+      prettyName: getDataAttribute(this.el, 'as') || this.el.title,
       context: context,
       getter: getter,
       listeners: this
@@ -3008,10 +3013,10 @@ var makeDirective = function (options) { return ({
     }
 
     // make sure we don't do uneccessary work if no expression was passed
-    // or if the string value did not change.
-    // eslint-disable-next-line
-    if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) { return; }
+    // nor if the expression did not change.
+    if (! expression || (instance.cachedExp === JSON.stringify(value))) { return; }
 
+    instance.cachedExp = JSON.stringify(value);
     var scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
       instance.fieldName,
@@ -3080,7 +3085,7 @@ var index = {
   install: install,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.0-beta.23'
+  version: '2.0.0-beta.24'
 };
 
 return index;

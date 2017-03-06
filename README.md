@@ -37,7 +37,7 @@ bower install vee-validate#1.0.0-beta.11 --save
 **Vue 2.0**:
 
 ```
-bower install vee-validate#2.0.0-beta.23 --save
+bower install vee-validate#2.0.0-beta.24 --save
 ```
 
 ### CDN

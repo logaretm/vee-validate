@@ -13,6 +13,12 @@ module.exports = {
         replace({ __VERSION__: version }),
         nodeResolve(),
         commonjs(),
-        buble()
-    ]
+        buble(),
+    ],
+    banner: 
+`/**
+ * vee-validate v${version}
+ * (c) ${new Date().getFullYear()} Abdelrahman Awad
+ * @license MIT
+ */`
 };

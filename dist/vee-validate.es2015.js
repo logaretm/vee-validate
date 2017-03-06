@@ -1,3 +1,8 @@
+/**
+ * vee-validate v2.0.0-beta.24
+ * (c) 2017 Abdelrahman Awad
+ * @license MIT
+ */
 var alpha = (value) => /^[a-zA-Z]*$/.test(value);
 
 var alpha_dash = (value) => /^[a-zA-Z0-9_-]*$/.test(value);
@@ -953,7 +958,7 @@ const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
 const getScope = (el) => {
   let scope = getDataAttribute(el, 'scope');
   if (! scope && el.form) {
-    scope = getDataAttribute(el.form, 'scope');    
+    scope = getDataAttribute(el.form, 'scope');
   }
 
   return scope;
@@ -964,6 +969,9 @@ const getScope = (el) => {
  */
 const debounce = (callback, wait = 0, immediate) => {
   let timeout;
+  if (wait == 0) {
+    return callback;
+  }
   return (...args) => {
     const later = () => {
       timeout = null;
@@ -2278,15 +2286,12 @@ class Validator
         };
       });
     }
-
-     const promises = Object.keys(normalizedValues).map(property => {
-      return this.validate(
-        property,
-        normalizedValues[property].value,
-        normalizedValues[property].scope
-      );
-    });
-
+    const promises = Object.keys(normalizedValues).map(property => this.validate(
+      property,
+      normalizedValues[property].value,
+      normalizedValues[property].scope
+    ));
+    
     return Promise.all(promises).then(() => true).catch(() => {
       throw new ValidatorException('Validation Failed');
     });
@@ -2702,7 +2707,7 @@ class ListenerGenerator
         scope: () => {
           return this.scope || getScope(this.el);
         },
-        prettyName: getDataAttribute(this.el, 'as'),
+        prettyName: getDataAttribute(this.el, 'as') || this.el.title,
         context,
         getter,
         listeners: this
@@ -2794,10 +2799,10 @@ var makeDirective = (options) => ({
     }
 
     // make sure we don't do uneccessary work if no expression was passed
-    // or if the string value did not change.
-    // eslint-disable-next-line
-    if (! expression || (typeof value === 'string' && typeof oldValue === 'string' && value === oldValue)) return;
+    // nor if the expression did not change.
+    if (! expression || (instance.cachedExp === JSON.stringify(value))) return;
 
+    instance.cachedExp = JSON.stringify(value);
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
       instance.fieldName,
@@ -2853,7 +2858,7 @@ var index = {
   install,
   Validator,
   ErrorBag,
-  version: '2.0.0-beta.23'
+  version: '2.0.0-beta.24'
 };
 
 export default index;
