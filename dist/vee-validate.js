@@ -2660,7 +2660,11 @@ ListenerGenerator.prototype._checkboxListener = function _checkboxListener () {
    * Trigger the validation for a specific value.
    */
 ListenerGenerator.prototype._validate = function _validate (value) {
-  return this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
+  return this.vm.$validator.validate(
+    this.fieldName, value, this.scope || getScope(this.el)
+    ).catch(function (result) {
+      return result;
+    });
 };
 
   /**
@@ -2888,7 +2892,11 @@ ListenerGenerator.prototype._attachModelWatcher = function _attachModelWatcher (
   events.split('|').forEach(function (name) {
     if (~['input', 'change'].indexOf(name)) {
       var debounced = debounce(function (value) {
-        this$1.vm.$validator.validate(this$1.fieldName, value, this$1.scope || getScope(this$1.el));
+        this$1.vm.$validator.validate(
+          this$1.fieldName, value, this$1.scope || getScope(this$1.el)
+          ).catch(function (result) {
+            return result
+          });
       }, getDataAttribute(this$1.el, 'delay') || this$1.options.delay);
       this$1.unwatch = this$1.vm.$watch(arg, debounced, { deep: true });
       // No need to attach it on element as it will use the vue watcher.

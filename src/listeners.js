@@ -138,7 +138,11 @@ export default class ListenerGenerator
      * Trigger the validation for a specific value.
      */
   _validate(value) {
-    return this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
+    return this.vm.$validator.validate(
+      this.fieldName, value, this.scope || getScope(this.el)
+      ).catch(result => {
+        return result;
+      });
   }
 
     /**
@@ -354,7 +358,11 @@ export default class ListenerGenerator
     events.split('|').forEach(name => {
       if (~['input', 'change'].indexOf(name)) {
         const debounced = debounce((value) => {
-          this.vm.$validator.validate(this.fieldName, value, this.scope || getScope(this.el));
+          this.vm.$validator.validate(
+            this.fieldName, value, this.scope || getScope(this.el)
+            ).catch(result => {
+              return result
+            });
         }, getDataAttribute(this.el, 'delay') || this.options.delay);
         this.unwatch = this.vm.$watch(arg, debounced, { deep: true });
         // No need to attach it on element as it will use the vue watcher.
