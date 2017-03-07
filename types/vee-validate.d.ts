@@ -21,7 +21,7 @@ export class Validator {
     errorBag: ErrorBag
     fieldBag: any
     strictMode: boolean
-    dictionary: any
+    readonly dictionary: any
 
     constructor(validations: any, $vm: any, options: any);
     addScope(scope: string): void;
