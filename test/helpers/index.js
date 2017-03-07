@@ -21,8 +21,14 @@ export default {
             if (shouldThrow) {
                 throw (value ? value : String(value));
             }
+            return new Promise((resolve, reject) => {
+                if (shouldThrow) {
+                    reject(value ? value : String(value));
+                    return;
+                }
 
-            return result;
+                resolve(result);
+            });
         },
         attach() {
             
