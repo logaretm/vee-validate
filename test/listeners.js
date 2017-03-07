@@ -277,11 +277,14 @@ test('can handle text input event', t => {
     });
 });
 
-test('can handle file change event', t => {
+test.cb('can handle file change event', t => {
+    t.plan(2);
     document.body.innerHTML = `<input id="el" type="file" name="field" value="files.jpg">`;
     const el = document.querySelector('#el');
-    new ListenerGenerator(el, { modifiers: { reject: true }}, helpers.vnode(false), {})._fileListener();
-    t.is(el.value, ''); // test reject.
+    new ListenerGenerator(el, { modifiers: { reject: true }}, helpers.vnode(false), {})._fileListener().then(() => {
+        t.is(el.value, ''); // test reject.
+        t.end();
+    });
     t.throws(() => {
         new ListenerGenerator(el, {}, helpers.vnode(), {})._fileListener();
     });

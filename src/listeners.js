@@ -97,18 +97,18 @@ export default class ListenerGenerator
      * Validates input value, triggered by 'input' event.
      */
   _inputListener() {
-    this._validate(this.el.value);
+    return this._validate(this.el.value);
   }
 
     /**
      * Validates files, triggered by 'change' event.
      */
   _fileListener() {
-    const isValid = this._validate(toArray(this.el.files));
-
-    if (! isValid && this.binding.modifiers.reject) {
-      this.el.value = '';
-    }
+    return this._validate(toArray(this.el.files)).then(isValid => {
+      if (! isValid && this.binding.modifiers.reject) {
+        this.el.value = '';
+      }
+    });
   }
 
     /**
@@ -116,7 +116,7 @@ export default class ListenerGenerator
      */
   _radioListener() {
     const checked = document.querySelector(`input[name="${this.el.name}"]:checked`);
-    this._validate(checked ? checked.value : null);
+    return this._validate(checked ? checked.value : null);
   }
 
     /**

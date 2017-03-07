@@ -2,10 +2,10 @@ export default {
   querySelector(el) {
       global.document.querySelector = () => el || null
   },
-  vnode(shouldThrow, result) {
+  vnode(shouldThrow, result, callback) {
       return {
           context: {
-              $validator: this.validator(shouldThrow, result),
+              $validator: this.validator(shouldThrow, result, callback),
               $nextTick: (callback) => {
                   callback();
               }
@@ -15,7 +15,7 @@ export default {
           }
       }
   },
-  validator(shouldThrow = true, result = false) {
+  validator(shouldThrow = true, result = false, callback) {
     return {
         validate(name, value) {
             if (shouldThrow) {
@@ -26,8 +26,10 @@ export default {
                     reject(value ? value : String(value));
                     return;
                 }
-
                 resolve(result);
+            }).then(result => {
+                if(typeof callback === 'function') callback();
+                return result;
             });
         },
         attach() {
