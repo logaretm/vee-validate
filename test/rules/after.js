@@ -12,6 +12,12 @@ test('checks if a date is after another date', t => {
     t.false(validate('10/09/2016', ['otherField', format]));
 });
 
+test('it accepts dates instead of fields', t => {
+    const format = 'DD/MM/YYYY';
+    t.true(validate('12/09/2016', ['11/09/2016', format]));
+    t.false(validate('10/09/2016', ['11/09/2016', format]));
+});
+
 test('fails validation if any date is invalid', t => {
     const format = 'DD/MM/YYYY';
     helpers.querySelector({ name: 'otherField', value: '11/15/2016' });
