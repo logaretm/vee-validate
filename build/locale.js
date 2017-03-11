@@ -3,13 +3,13 @@ const rollup = require('rollup');
 const buble = require('rollup-plugin-buble');
 const fs = require('fs');
 var UglifyJS = require('uglify-js');
-const localesDir = path.join(__dirname, '../src/locales');
+const localesDir = path.join(__dirname, '../locale');
 
 const files = fs.readdirSync(localesDir);
 let cache;
 
 files.forEach(file => {
-  const entry  = path.join(__dirname, '../src/locales', file);
+  const entry  = path.join(__dirname, '../locale', file);
   const output = path.join(__dirname, '../dist/locale', file);
   rollup.rollup({
     entry,

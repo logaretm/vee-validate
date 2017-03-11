@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-beta.24
+ * vee-validate v2.0.0-beta.25
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -1270,37 +1270,29 @@ var messages = {
 };
 
 var after = (moment) => (value, [targetField, format]) => {
-  const dateValue = moment(value, format, true);
   const field = document.querySelector(`input[name='${targetField}']`);
+  const dateValue = moment(value, format, true);
+  const otherValue = moment(field ? field.value : targetField, format, true);
 
-  if (! (dateValue.isValid() && field)) {
+  // if either is not valid.
+  if (! dateValue.isValid() || ! otherValue.isValid()) {
     return false;
   }
 
-  const other = moment(field.value, format, true);
-
-  if (! other.isValid()) {
-    return false;
-  }
-
-  return dateValue.isAfter(other);
+  return dateValue.isAfter(otherValue);
 };
 
 var before = (moment) => (value, [targetField, format]) => {
-  const dateValue = moment(value, format, true);
   const field = document.querySelector(`input[name='${targetField}']`);
+  const dateValue = moment(value, format, true);
+  const otherValue = moment(field ? field.value : targetField, format, true);
 
-  if (! dateValue.isValid() || ! field) {
+  // if either is not valid.
+  if (! dateValue.isValid() || ! otherValue.isValid()) {
     return false;
   }
 
-  const other = moment(field.value, format, true);
-
-  if (! other.isValid()) {
-    return false;
-  }
-
-  return dateValue.isBefore(other);
+  return dateValue.isBefore(otherValue);
 };
 
 var date_format = (moment) => (value, [format]) => moment(value, format, true).isValid();
@@ -2426,18 +2418,18 @@ class ListenerGenerator
      * Validates input value, triggered by 'input' event.
      */
   _inputListener() {
-    this._validate(this.el.value);
+    return this._validate(this.el.value);
   }
 
     /**
      * Validates files, triggered by 'change' event.
      */
   _fileListener() {
-    const isValid = this._validate(toArray(this.el.files));
-
-    if (! isValid && this.binding.modifiers.reject) {
-      this.el.value = '';
-    }
+    return this._validate(toArray(this.el.files)).then(isValid => {
+      if (! isValid && this.binding.modifiers.reject) {
+        this.el.value = '';
+      }
+    });
   }
 
     /**
@@ -2445,7 +2437,7 @@ class ListenerGenerator
      */
   _radioListener() {
     const checked = document.querySelector(`input[name="${this.el.name}"]:checked`);
-    this._validate(checked ? checked.value : null);
+    return this._validate(checked ? checked.value : null);
   }
 
     /**
@@ -2866,7 +2858,7 @@ var index = {
   install,
   Validator,
   ErrorBag,
-  version: '2.0.0-beta.24'
+  version: '2.0.0-beta.25'
 };
 
 export default index;

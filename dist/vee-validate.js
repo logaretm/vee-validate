@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-beta.24
+ * vee-validate v2.0.0-beta.25
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -1375,40 +1375,32 @@ var after = function (moment) { return function (value, ref) {
   var targetField = ref[0];
   var format = ref[1];
 
-  var dateValue = moment(value, format, true);
   var field = document.querySelector(("input[name='" + targetField + "']"));
+  var dateValue = moment(value, format, true);
+  var otherValue = moment(field ? field.value : targetField, format, true);
 
-  if (! (dateValue.isValid() && field)) {
+  // if either is not valid.
+  if (! dateValue.isValid() || ! otherValue.isValid()) {
     return false;
   }
 
-  var other = moment(field.value, format, true);
-
-  if (! other.isValid()) {
-    return false;
-  }
-
-  return dateValue.isAfter(other);
+  return dateValue.isAfter(otherValue);
 }; };
 
 var before = function (moment) { return function (value, ref) {
   var targetField = ref[0];
   var format = ref[1];
 
-  var dateValue = moment(value, format, true);
   var field = document.querySelector(("input[name='" + targetField + "']"));
+  var dateValue = moment(value, format, true);
+  var otherValue = moment(field ? field.value : targetField, format, true);
 
-  if (! dateValue.isValid() || ! field) {
+  // if either is not valid.
+  if (! dateValue.isValid() || ! otherValue.isValid()) {
     return false;
   }
 
-  var other = moment(field.value, format, true);
-
-  if (! other.isValid()) {
-    return false;
-  }
-
-  return dateValue.isBefore(other);
+  return dateValue.isBefore(otherValue);
 }; };
 
 var date_format = function (moment) { return function (value, ref) {
@@ -2617,18 +2609,20 @@ ListenerGenerator.prototype._hasFieldDependency = function _hasFieldDependency (
    * Validates input value, triggered by 'input' event.
    */
 ListenerGenerator.prototype._inputListener = function _inputListener () {
-  this._validate(this.el.value);
+  return this._validate(this.el.value);
 };
 
   /**
    * Validates files, triggered by 'change' event.
    */
 ListenerGenerator.prototype._fileListener = function _fileListener () {
-  var isValid = this._validate(toArray(this.el.files));
+    var this$1 = this;
 
-  if (! isValid && this.binding.modifiers.reject) {
-    this.el.value = '';
-  }
+  return this._validate(toArray(this.el.files)).then(function (isValid) {
+    if (! isValid && this$1.binding.modifiers.reject) {
+      this$1.el.value = '';
+    }
+  });
 };
 
   /**
@@ -2636,7 +2630,7 @@ ListenerGenerator.prototype._fileListener = function _fileListener () {
    */
 ListenerGenerator.prototype._radioListener = function _radioListener () {
   var checked = document.querySelector(("input[name=\"" + (this.el.name) + "\"]:checked"));
-  this._validate(checked ? checked.value : null);
+  return this._validate(checked ? checked.value : null);
 };
 
   /**
@@ -3093,7 +3087,7 @@ var index = {
   install: install,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.0-beta.24'
+  version: '2.0.0-beta.25'
 };
 
 return index;
