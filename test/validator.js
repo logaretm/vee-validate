@@ -1,6 +1,7 @@
 import test from 'ava';
 import Validator from './../src/validator';
 import helpers from './helpers';
+import ValidatorException from './../src/exceptions/validatorException';
 
 // Converts the value to a boolean and returns it in a promise.
 Validator.extend('promised', (value) => {
@@ -35,24 +36,24 @@ test('empty values pass validation unless they are required', async t => {
     try {
         await v.validate('content', '');
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
 
     try {
         await v.validate('email', 'loga')
     } catch (error) {
-        t.false(error);           
+        t.true(error instanceof ValidatorException);
     }
 
     try {
         await v.validate('name', 'no');
     } catch (error) {
-        t.false(error);          
+        t.true(error instanceof ValidatorException);
     }
     try {
         await v.validate('title', 'no')
     } catch (error) {
-        t.false(error);   
+        t.true(error instanceof ValidatorException);
     }
 });
 
@@ -69,17 +70,17 @@ test('can validate single values', async t => {
     try {
         await v.validate('title', 'ab');
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
     try {
         await v.validate('title', '');
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
     try {
         await v.validate('title', 'a'.repeat(256));
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
 
     v = new Validator();
@@ -87,7 +88,7 @@ test('can validate single values', async t => {
     try {
         await v.validate('scope.el', '12')
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
     t.true(await v.validate('scope.el', '123'));
 });
@@ -104,12 +105,12 @@ test('validates correctly regardless of rule placement', async t => {
     try {
         await v.validate('title', 'No');
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
     try {
         await v.validate('content', 'Winter is coming says everyone in the north');
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
 });
 
@@ -125,7 +126,7 @@ test('can be initialized without validations', t => {
 
 test('can add scopes', t => {
     const v = new Validator();
-    
+
     t.falsy(v.$scopes.myscope);
     v.addScope('myscope');
     t.truthy(v.$scopes.myscope);
@@ -148,28 +149,28 @@ test('can allow rules object', async t => {
         min: 5, // test single value.
         in: ['blabla.js', 'blabla.ts'] // test params
     });
-    
+
 
     try {
         await v.validate('field', '')
     } catch (err) {
-        t.false(err); // required.
+        t.true(err instanceof ValidatorException); // required.
     }
     try {
         await v.validate('field', 'blabla')
     } catch (err) {
-        t.false(err); // regex.
+        t.true(err instanceof ValidatorException); // regex.
     }
     try {
         await v.validate('field', 'g.js')
     } catch (err) {
-        t.false(err); // min.
+        t.true(err instanceof ValidatorException); // min.
     }
 
     try {
         await v.validate('field', 'else.js')
     } catch (err) {
-        t.false(err); // in
+        t.true(err instanceof ValidatorException); // in
     }
 
     t.true(await v.validate('field', 'blabla.js'));
@@ -270,7 +271,7 @@ test('formats error messages', async t => {
         content: 'required|max:20',
         tags: 'required|in:1,2,3,5'
     });
-    
+
     try {
         await v.validateAll({
             email: 'foo@bar.c',
@@ -299,16 +300,16 @@ test('formats error messages', async t => {
 });
 test('can attach new fields', async t => {
     const v = new Validator();
-    
+
     t.falsy(v.$scopes.__global__.field);
     v.attach('field', 'required|min:5');
     t.truthy(v.$scopes.__global__.field);
     try {
         await v.validate('field', 'less')
     } catch (error) {
-        t.false(error);    
+        t.true(error instanceof ValidatorException);
     }
-    
+
     t.true(await v.validate('field', 'not less'));
 });
 
@@ -318,8 +319,8 @@ test('can attach new fields and display errors with custom names', async t => {
     try {
         await v.validate('field', 'wo');
     } catch (error) {
-        t.false(error);
-        t.is(v.getErrors().first('field'), 'The pretty field must be at least 5 characters.');   
+        t.true(error instanceof ValidatorException);
+        t.is(v.getErrors().first('field'), 'The pretty field must be at least 5 characters.');
     }
 });
 
@@ -338,13 +339,13 @@ test('attaching new rules to an existing field should overwrite the old rules', 
     try {
         await v.validate('someField', 'wo');
     } catch (result) {
-        t.true(result)   
+        t.true(result)
     }
-    
+
     try {
         await v.validate('someField', 'woww');
-    } catch (result) {
-        t.false(result); // did the max validator work?
+    } catch (error) {
+        t.true(error instanceof ValidatorException); // did the max validator work?
     }
 });
 
@@ -364,25 +365,25 @@ test('can append new validations to a field', async t => {
     try {
         await validator.validate('field', 'woww')
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
 
     try {
         await validator.validate('field', 'w')
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
 
     // attaches if the field doesn't exist.
     const v = new Validator();
-    
+
     v.attach('field', 'min:2');
     v.detach('field');
     v.append('field', 'min:3');
     try {
         await v.validate('field', 'wo')
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
     t.true(await v.validate('field', 'wow'));
 });
@@ -398,13 +399,13 @@ test('returns false when trying to validate a non-existant field.', async t => {
     try {
         await v.validate('nonExistant', 'whatever');
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
 });
 
 test('can detach rules', t => {
     const v = new Validator();
-    
+
     v.attach('field', 'required');
     t.truthy(v.$scopes.__global__.field);
     v.detach('field');
@@ -417,12 +418,12 @@ test('can detach rules', t => {
 
 test('can validate specific scopes', async t => {
     const v = new Validator();
-    
+
     v.attach('field', 'alpha', { getter: () => '123', context: () => 'context' });
     v.attach('field', 'alpha', { scope: 'myscope', getter: () => '123', context: () => 'context' });
     v.attach('field', 'alpha', { scope: 'otherscope', getter: () => '123', context: () => 'context' });
 
-    // only '__global__' scope got validated.    
+    // only '__global__' scope got validated.
     try {
         await v.validateAll();
     } catch (error) {
@@ -435,7 +436,7 @@ test('can validate specific scopes', async t => {
     } catch (error) {
         t.is(v.errorBag.count(), 2);
     }
-    
+
     v.errorBag.clear();
     try {
         // all scopes.
@@ -450,7 +451,7 @@ test('can find errors by field and rule', async t => {
     try {
         await v.validate('name', 12);
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
 
     t.truthy(v.errorBag.first('name:alpha'));
@@ -465,7 +466,7 @@ test('can extend the validator with a validator function', async t => {
     try {
         await v.validate('anotherField', 1);
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
         t.is(v.errorBag.first('anotherField'), 'The anotherField value is not valid.');
     }
 });
@@ -483,7 +484,7 @@ test('can extend the validators for a validator instance', async t => {
     try {
         await v.validate('anotherField', 0)
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
     t.is(v.errorBag.first('anotherField'), 'The anotherField field value is not truthy.');
 });
@@ -503,7 +504,7 @@ test.serial('can add a custom validator with localized messages', async t => {
     try {
         await v.validate('anotherField', 1)
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
         t.is(v.errorBag.first('anotherField'), 'The anotherField field value is not falsy.');
     }
 
@@ -512,7 +513,7 @@ test.serial('can add a custom validator with localized messages', async t => {
     try {
         await v.validate('anotherField', 1);
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
         t.is(v.errorBag.first('anotherField'), 'Some Arabic Text');
     }
 });
@@ -530,9 +531,9 @@ test.serial('can set the locale statically', async t => {
     try {
         await loc.validate('name', '1234')
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
         t.is(loc.getLocale(), 'ar');
-        t.is(loc.getErrors().first('name'), 'البتاعة لازم يكون حروف بس');   
+        t.is(loc.getErrors().first('name'), 'البتاعة لازم يكون حروف بس');
     }
 });
 
@@ -594,8 +595,8 @@ test.serial('can overwrite messages and add translated messages', async t => {
     try {
         await loc.validate('first_name', '0123');
     } catch (error) {
-        t.false(error);
-        t.is(loc.errorBag.first('first_name'), 'My name is jeff');   
+        t.true(error instanceof ValidatorException);
+        t.is(loc.errorBag.first('first_name'), 'My name is jeff');
     }
 });
 
@@ -611,14 +612,14 @@ test.serial('sets locale for all validators', async t => {
     try {
         await v1.validate('first_name', '213');
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
         t.is(v1.errorBag.first('first_name'), 'عايز حروف');
     }
     try {
         await v2.validate('first_name', '213');
     } catch (err) {
-        t.false(err);
-        t.is(v2.errorBag.first('first_name'), 'عايز حروف');        
+        t.true(err instanceof ValidatorException);
+        t.is(v2.errorBag.first('first_name'), 'عايز حروف');
     }
     // doesn't matter which instance sets the locale.
     v2.setLocale('en');
@@ -647,20 +648,20 @@ test('resolves promises to booleans', async t => {
     try {
         await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
     } catch (error) {
-        t.false(error);        
+        t.true(error instanceof ValidatorException);
     }
 
     try {
         await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)]);
     } catch (error) {
-        t.false(error);        
+        t.true(error instanceof ValidatorException);
     }
 
     helpers.dimensionsTest({ width: 30, height: 20}, false, global);
     try {
         await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
     } catch (error) {
-        t.false(error);        
+        t.true(error instanceof ValidatorException);
     }
 });
 
@@ -679,7 +680,7 @@ test('installs date validators', async t => {
     try {
         await v.validate('birthday', '01/01/2008');
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
     }
 });
 
@@ -689,7 +690,7 @@ test('correctly parses rules with multiple colons', async t => {
     try {
         await v.validate('time', '1700');
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
     }
 });
 
@@ -702,7 +703,7 @@ test('auto installs date validators if moment is present globally', async t => {
     try {
         await v.validate('birthday', '01/01/2008')
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
     }
 });
 
@@ -722,7 +723,7 @@ test('can add custom names via the attributes dictionary', async t => {
     try {
         await v.validate('email', 'notvalidemail');
     } catch (err) {
-        t.false(err);   
+        t.true(err instanceof ValidatorException);
     }
     t.is(v.getErrors().first('email'), 'The Email Address field must be a valid email.');
 });
@@ -732,9 +733,9 @@ test('cascades promise values with previous boolean', async t => {
     const result = v.validate('email', 'someemail@email.com');
     t.true(typeof result.then === 'function');
     try {
-        await v.validate('email', 'invalid');    
+        await v.validate('email', 'invalid');
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
     }
 });
 
@@ -758,7 +759,7 @@ test('cascades promise values with previous fields', async t => {
             phone: '11123112123'
         });
     } catch (error) {
-        t.is(error.msg, '[vee-validate]: Validation Failed');        
+        t.is(error.msg, '[vee-validate]: Validation Failed');
     }
 });
 
@@ -780,7 +781,7 @@ test('can translate target field for field dependent validations', async t => {
     try {
         await v.validate('email', 'someotheremail@gmail.com');
     } catch (error) {
-        t.false(error);
+        t.true(error instanceof ValidatorException);
         t.is(v.errorBag.first('email'), 'The Email Address confirmation does not match.');
     }
 });
@@ -797,7 +798,7 @@ test('auto detect confirmation field when none given', async t => {
     try {
         await v.validate('password', 'fail');
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
     }
     t.is(v.errorBag.first('password'), 'The password confirmation does not match.');
 });
@@ -820,9 +821,9 @@ test('without promises', async t => {
     try {
         await v.validate('field', 'wow');
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
     }
-    
+
     t.is(v.errorBag.first('field'), 'Not correct');
 });
 
@@ -865,13 +866,13 @@ test('using promises', async t => {
     try {
         await v.validate('reason_field', 'trigger');
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
     }
     t.is(v.errorBag.first('reason_field'), 'Not this value');
     try {
-        await v.validate('reason_field', false); 
+        await v.validate('reason_field', false);
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
     }
     t.is(v.errorBag.first('reason_field'), 'Something went wrong');
 });
@@ -882,7 +883,7 @@ test('can remove rules from the list of validators', async t => {
     try {
         await v1.validate('name', false);
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
     }
     v1.remove('dummy');
     t.throws(() => {
@@ -903,7 +904,7 @@ test('can fetch the values using getters when not specifying values in validateA
 
     // must use the attach API.
     v.attach('name', 'required|alpha', { prettyName: 'Full Name', context, getter });
-    
+
     t.true(await v.validateAll());
     t.true(toggle);
     try {
@@ -945,7 +946,7 @@ test('ignores empty rules', async t => {
     try {
         await v1.validate('name', 12);
     } catch (err) {
-        t.false(err);   
+        t.true(err instanceof ValidatorException);
     }
     t.true(await v1.validate('name', 'Martin'));
 });
@@ -955,9 +956,9 @@ test('can update validations of a field', async t => {
         name: 'required|alpha'
     });
     try {
-        await v.validate('name', 12) 
+        await v.validate('name', 12)
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
     }
     v.updateField('name', 'required|numeric', { scope: '__global__' });
     t.is(v.errorBag.count(), 0);
@@ -970,7 +971,7 @@ test('handles dot notation names', async t => {
     try {
         await v.validate('example.name', '')
     } catch (err) {
-        t.false(err);
+        t.true(err instanceof ValidatorException);
     }
     t.true(await v.validate('example.name', 'ad'));
 });

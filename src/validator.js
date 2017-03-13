@@ -209,7 +209,7 @@ export default class Validator
       warn('Your locale must have a name property');
       return;
     }
-    
+
     this.updateDictionary({
       [locale.name]: locale
     });
@@ -711,9 +711,10 @@ export default class Validator
    * @param  {string} name the field name.
    * @param  {*} value The value to be validated.
    * @param {String} scope The scope of the field.
+   * @param {Boolean} throws If it should throw.
    * @return {Promise}
    */
-  validate(name, value, scope = '__global__') {
+  validate(name, value, scope = '__global__', throws = true) {
     if (name && name.indexOf('.') > -1) {
       // no such field, try the scope form.
       if (! this.$scopes.__global__[name]) {
@@ -727,7 +728,7 @@ export default class Validator
       const fullName = scope === '__global__' ? name : `${scope}.${name}`;
       warn(`Validating a non-existant field: "${fullName}". Use "attach()" first.`);
 
-      return Promise.reject(false);
+      throw new ValidatorException('Validation Failed');
     }
 
     const field = this.$scopes[scope][name];
@@ -735,45 +736,49 @@ export default class Validator
     // if its not required and is empty or null or undefined then it passes.
     if (! field.required && ~[null, undefined, ''].indexOf(value)) {
       this.fieldBag._setFlags(name, { valid: true, dirty: true });
+      this._setAriaValidAttribute(field, true);
+
       return Promise.resolve(true);
     }
 
-    const promises = [];
-    const test = Object.keys(field.validations).every(rule => {
-      const result = this._test(
-        name,
-        value,
-        { name: rule, params: field.validations[rule] },
-        scope
-      );
-      if (isCallable(result.then)) {
-        promises.push(result);
-      }
+    try {
+      const promises = Object.keys(field.validations).map(rule => {
+        const result = this._test(
+          name,
+          value,
+          { name: rule, params: field.validations[rule] },
+          scope
+        );
 
-      return result;
-    });
+        if (isCallable(result.then)) {
+          return result;
+        }
 
-    if (promises.length) {
+        // Early exit.
+        if (! result) {
+          throw new ValidatorException('Validation Aborted.');
+        }
+
+        return Promise.resolve(result);
+      });
+
       return Promise.all(promises).then(values => {
-        const valid = values.every(t => t) && test;
+        const valid = values.every(t => t);
         this.fieldBag._setFlags(name, { valid, dirty: true });
-        this._setAriaValidAttribute(field, test);
+        this._setAriaValidAttribute(field, valid);
 
+        if (! valid && throws) {
+          throw new ValidatorException('Failed Validation');
+        }
         return valid;
       });
-    }
-
-    this.fieldBag._setFlags(name, { valid: test, dirty: true });
-    this._setAriaValidAttribute(field, test);
-
-    return new Promise((resolve, reject) => {
-      if (test) {
-        resolve(test);
-        return;
+    } catch (error) {
+      if (error.msg === '[vee-validate]: Validation Aborted.') {
+        return Promise.resolve(false);
       }
 
-      reject(false);
-    });
+      throw error;
+    }
   }
 
   /**
@@ -819,11 +824,17 @@ export default class Validator
     const promises = Object.keys(normalizedValues).map(property => this.validate(
       property,
       normalizedValues[property].value,
-      normalizedValues[property].scope
+      normalizedValues[property].scope,
+      false // do not throw
     ));
-    
-    return Promise.all(promises).then(() => true).catch(() => {
-      throw new ValidatorException('Validation Failed');
+
+    return Promise.all(promises).then(values => {
+      const valid = values.every(t => t);
+      if (! valid) {
+        throw new ValidatorException('Validation Failed');
+      }
+
+      return valid;
     });
   }
 

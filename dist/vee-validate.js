@@ -1824,7 +1824,7 @@ Validator.addLocale = function addLocale (locale) {
     warn('Your locale must have a name property');
     return;
   }
-    
+
   this.updateDictionary(( obj = {}, obj[locale.name] = locale, obj ));
     var obj;
 };
@@ -2357,11 +2357,13 @@ Validator.prototype.addScope = function addScope (scope) {
  * @param{string} name the field name.
  * @param{*} value The value to be validated.
  * @param {String} scope The scope of the field.
+ * @param {Boolean} throws If it should throw.
  * @return {Promise}
  */
-Validator.prototype.validate = function validate (name, value, scope) {
+Validator.prototype.validate = function validate (name, value, scope, throws) {
     var this$1 = this;
     if ( scope === void 0 ) scope = '__global__';
+    if ( throws === void 0 ) throws = true;
 
   if (name && name.indexOf('.') > -1) {
     // no such field, try the scope form.
@@ -2377,7 +2379,7 @@ Validator.prototype.validate = function validate (name, value, scope) {
     var fullName = scope === '__global__' ? name : (scope + "." + name);
     warn(("Validating a non-existant field: \"" + fullName + "\". Use \"attach()\" first."));
 
-    return Promise.reject(false);
+    throw new ValidatorException('Validation Failed');
   }
 
   var field = this.$scopes[scope][name];
@@ -2385,45 +2387,49 @@ Validator.prototype.validate = function validate (name, value, scope) {
   // if its not required and is empty or null or undefined then it passes.
   if (! field.required && ~[null, undefined, ''].indexOf(value)) {
     this.fieldBag._setFlags(name, { valid: true, dirty: true });
+    this._setAriaValidAttribute(field, true);
+
     return Promise.resolve(true);
   }
 
-  var promises = [];
-  var test = Object.keys(field.validations).every(function (rule) {
-    var result = this$1._test(
-      name,
-      value,
-      { name: rule, params: field.validations[rule] },
-      scope
-    );
-    if (isCallable(result.then)) {
-      promises.push(result);
-    }
+  try {
+    var promises = Object.keys(field.validations).map(function (rule) {
+      var result = this$1._test(
+        name,
+        value,
+        { name: rule, params: field.validations[rule] },
+        scope
+      );
 
-    return result;
-  });
+      if (isCallable(result.then)) {
+        return result;
+      }
 
-  if (promises.length) {
+      // Early exit.
+      if (! result) {
+        throw new ValidatorException('Validation Aborted.');
+      }
+
+      return Promise.resolve(result);
+    });
+
     return Promise.all(promises).then(function (values) {
-      var valid = values.every(function (t) { return t; }) && test;
+      var valid = values.every(function (t) { return t; });
       this$1.fieldBag._setFlags(name, { valid: valid, dirty: true });
-      this$1._setAriaValidAttribute(field, test);
+      this$1._setAriaValidAttribute(field, valid);
 
+      if (! valid && throws) {
+        throw new ValidatorException('Failed Validation');
+      }
       return valid;
     });
-  }
-
-  this.fieldBag._setFlags(name, { valid: test, dirty: true });
-  this._setAriaValidAttribute(field, test);
-
-  return new Promise(function (resolve, reject) {
-    if (test) {
-      resolve(test);
-      return;
+  } catch (error) {
+    if (error.msg === '[vee-validate]: Validation Aborted.') {
+      return Promise.resolve(false);
     }
 
-    reject(false);
-  });
+    throw error;
+  }
 };
 
 /**
@@ -2471,11 +2477,17 @@ Validator.prototype.validateAll = function validateAll (values) {
   var promises = Object.keys(normalizedValues).map(function (property) { return this$1.validate(
     property,
     normalizedValues[property].value,
-    normalizedValues[property].scope
+    normalizedValues[property].scope,
+    false // do not throw
   ); });
-    
-  return Promise.all(promises).then(function () { return true; }).catch(function () {
-    throw new ValidatorException('Validation Failed');
+
+  return Promise.all(promises).then(function (values) {
+    var valid = values.every(function (t) { return t; });
+    if (! valid) {
+      throw new ValidatorException('Validation Failed');
+    }
+
+    return valid;
   });
 };
 
