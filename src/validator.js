@@ -806,9 +806,10 @@ export default class Validator
   /**
    * Validates each value against the corresponding field validations.
    * @param  {object} values The values to be validated.
+   * @param  {String} scope The scope to be applied on validation.
    * @return {Promise} Returns a promise with the validation result.
    */
-  validateAll(values) {
+  validateAll(values, scope = '__global__') {
     let normalizedValues;
     if (! values || typeof values === 'string') {
       this.errorBag.clear(values);
@@ -817,7 +818,8 @@ export default class Validator
       normalizedValues = {};
       Object.keys(values).forEach(key => {
         normalizedValues[key] = {
-          value: values[key]
+          value: values[key],
+          scope
         };
       });
     }
