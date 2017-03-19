@@ -446,6 +446,30 @@ test('can validate specific scopes', async t => {
     }
 });
 
+test('can validate specific scopes on an object', async t => {
+    const v = new Validator({
+        'field': 'required'
+    });
+
+    v.attach('field', 'required', { scope: 'myscope' })
+    v.attach('anotherfield', 'required', { scope: 'myscope' })
+
+    // only '__global__' scope got validated.
+    try {
+        await v.validateAll({ field: null });
+    } catch (error) {
+        t.is(v.errorBag.count(), 1);
+    }
+
+    // this time only 'myscope' got validated.
+    v.errorBag.clear();
+    try {
+        await v.validateAll({ field: null, anotherfield: null }, 'myscope');
+    } catch (error) {
+        t.is(v.errorBag.count(), 2);
+    }
+})
+
 test('can find errors by field and rule', async t => {
     const v = new Validator({ name: 'alpha' });
     try {
