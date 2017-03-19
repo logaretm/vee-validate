@@ -20,9 +20,7 @@ export const getScope = (el) => {
  */
 export const debounce = (callback, wait = 0, immediate) => {
   let timeout;
-  if (wait == 0) {
-    return callback;
-  }
+
   return (...args) => {
     const later = () => {
       timeout = null;
@@ -49,9 +47,8 @@ export const warn = (message) => {
 /**
  * Checks if the value is an object.
  */
-export const isObject = (object) => {
-  return object !== null && object && typeof object === 'object' && ! Array.isArray(object);
-};
+export const isObject = (object) =>
+  object !== null && object && typeof object === 'object' && ! Array.isArray(object);
 
 /**
  * Checks if a function is callable.
@@ -76,8 +73,8 @@ export const addClass = (el, className) => {
   if (el.classList) {
     el.classList.add(className);
     return;
-  } 
-  
+  }
+
   if (!hasClass(el, className)) {
     el.className += ` ${className}`;
   }
@@ -166,7 +163,7 @@ export const find = (array, predicate) => {
 
 /**
  * Gets the rules from a binding value or the element dataset.
- * 
+ *
  * @param {String} expression The binding expression.
  * @param {Object|String} value The binding value.
  * @param {element} el The element.
@@ -182,7 +179,7 @@ export const getRules = (expression, value, el) => {
   }
 
   if (~['string', 'object'].indexOf(typeof value.rules)) {
-    return value.rules
+    return value.rules;
   }
 
   return value;
