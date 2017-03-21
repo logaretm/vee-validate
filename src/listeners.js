@@ -140,9 +140,7 @@ export default class ListenerGenerator
   _validate(value) {
     return this.vm.$validator.validate(
       this.fieldName, value, this.scope || getScope(this.el)
-      ).catch(result => {
-        return result;
-      });
+      ).catch(result => result);
   }
 
     /**
@@ -175,8 +173,11 @@ export default class ListenerGenerator
           return;
         }
 
-        target.addEventListener('input', listener);
-        this.callbacks.push({ name: 'input', listener, el: target });
+        const events = getDataAttribute(this.el, 'validate-on') || 'input|blur';
+        events.split('|').forEach(e => {
+          target.addEventListener(e, listener);
+          this.callbacks.push({ name: e, listener, el: target });
+        });
       });
     }
   }
@@ -360,9 +361,7 @@ export default class ListenerGenerator
         const debounced = debounce((value) => {
           this.vm.$validator.validate(
             this.fieldName, value, this.scope || getScope(this.el)
-            ).catch(result => {
-              return result
-            });
+          ).catch(result => result);
         }, getDataAttribute(this.el, 'delay') || this.options.delay);
         this.unwatch = this.vm.$watch(arg, debounced, { deep: true });
         // No need to attach it on element as it will use the vue watcher.
