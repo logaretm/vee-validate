@@ -392,6 +392,10 @@ export default class ListenerGenerator
       }
     );
 
+    if (this.binding.modifiers.disable) {
+      return;
+    }
+
     this._attachValidatorEvent();
     const arg = this._getArg();
     if (arg) {
