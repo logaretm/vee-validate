@@ -830,8 +830,8 @@ export default class Validator
       false // do not throw
     ));
 
-    return Promise.all(promises).then(values => {
-      const valid = values.every(t => t);
+    return Promise.all(promises).then(results => {
+      const valid = results.every(t => t);
       if (! valid) {
         throw new ValidatorException('Validation Failed');
       }
