@@ -105,4 +105,8 @@ You can find more information in the [contribution guide](contributing.md).
 - Some validations/test scenarios are provided/based on [validator.js](https://github.com/chriso/validator.js).
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
 
+### Roadmap
+- First Full Release (Out of beta).
+- Vuex Support
+
 ### license MIT
