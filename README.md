@@ -8,9 +8,9 @@
 
 vee-validate is a lightweight plugin for [Vue.js](https://vuejs.org/) that allows you to validate input fields, and display errors.
 
-**What makes it different is:** You don't have to do anything fancy in your app, most of the work goes into the html, You only need to specify for each input what kind of validators should be used when the value changes. You will then get informed of the errors for each field.
+**What makes it different is:** You don't have to do anything fancy in your app, most of the work goes into the html, You only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated. The plugin offers [many validations out of the box](http://vee-validate.logaretm.com/rules).
 
-Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object. This plugin is built with localization in mind. and currently there are over 20 validation rules available in the plugin. Read the [docs](http://vee-validate.logaretm.com/) for more info.
+Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object. This plugin is built with localization in mind. Read the [docs](http://vee-validate.logaretm.com/) for more info.
 
 This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.com/).
 
@@ -27,14 +27,9 @@ or if you are using **Vue 1.0**:
 npm install vee-validate@prev --save
 ```
 
+**Note:** Vue 1.0 version is currently outdated and does not have the latest features and fixes.
+
 #### bower
-
-**Vue 1.0**:
-```
-bower install vee-validate#1.0.0-beta.11 --save
-```
-
-**Vue 2.0**:
 
 ```
 bower install vee-validate#2.0.0-beta.25 --save
@@ -105,5 +100,9 @@ You can find more information in the [contribution guide](contributing.md).
 
 - [Form Validation using Vue.js 2](https://dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d#.m95idzlj2) by [Alex Kyriakidis](https://github.com/hootlex)
 - [Vue Multi Step Form](http://statemachine.davestewart.io/html/examples/vue/vue-sign-up.html) by [Dave Stewart](https://github.com/davestewart)
+
+### Credits
+- Some validations/test scenarios are provided/based on [validator.js](https://github.com/chriso/validator.js).
+- Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
 
 ### license MIT
