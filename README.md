@@ -106,7 +106,7 @@ You can find more information in the [contribution guide](contributing.md).
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
 
 ### Roadmap
-- First Full Release (Out of beta).
-- Vuex Support
+- First Full Release (Out of beta) - Late March / Mid April 2017
+- Vuex Support - Late May / Mid June 2017
 
 ### license MIT
