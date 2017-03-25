@@ -1,4 +1,5 @@
 const messages = {
+    _default: (field) => `${field} ist ungültig.`,
     after: (field, [target]) => `${field} muss nach ${target} liegen.`,
     alpha_dash: (field) => `${field} darf alphanumerische Zeichen sowie Striche und Unterstriche enthalten.`,
     alpha_num: (field) => `${field} darf nur alphanumerische Zeichen enthalten.`,
