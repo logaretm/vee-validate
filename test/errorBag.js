@@ -25,7 +25,7 @@ test('removes errors for a specific field', t => {
 });
 
 test('removes errors for a specific field and scope', t => {
-  const errors = new ErrorBag();
+  let errors = new ErrorBag();
   errors.add('name', 'The name is invalid', 'rule1', 'scope1');
   errors.add('email', 'The email is invalid', 'rule1', 'scope1');
   errors.add('email', 'The email is shorter than 3 chars.', 'rule1', 'scope2');
@@ -34,6 +34,14 @@ test('removes errors for a specific field and scope', t => {
   errors.remove('email', 'scope1'); // remove the scope1 scoped field called email.
   t.is(errors.count(), 2);
   t.is(errors.first('email', 'scope2'), 'The email is shorter than 3 chars.');
+
+  errors = new ErrorBag();
+  errors.add('name', 'The name is invalid', 'rule1');
+  errors.add('email', 'The email is invalid', 'rule1');
+  errors.add('email', 'The email is shorter than 3 chars.', 'rule1', 'scope1');
+
+  errors.remove('name');
+  t.is(errors.count(), 2);
 });
 
 test('clears the errors', t => {

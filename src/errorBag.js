@@ -174,7 +174,7 @@ export default class ErrorBag
       return;
     }
 
-    this.errors = this.errors.filter(e => e.field !== field && e.scope === '__global__');
+    this.errors = this.errors.filter(e => e.field !== field || e.scope !== '__global__');
   }
 
 
