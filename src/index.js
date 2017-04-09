@@ -2,6 +2,7 @@ import Validator from './validator';
 import makeMixin from './mixin';
 import makeDirective from './directive';
 import ErrorBag from './errorBag';
+import Rules from './rules';
 import { assign } from './utils';
 
 const DEFAULT_CLASS_NAMES = {
@@ -40,5 +41,6 @@ export default {
   install,
   Validator,
   ErrorBag,
+  Rules,
   version: '__VERSION__'
 };

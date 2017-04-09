@@ -28,7 +28,6 @@ export default class Validator
     // so it may register it under an inaccurate scope.
     this.$deferred = [];
     this.$ready = false;
-    this.rules = Rules;
 
     // if momentjs is present, install the validators.
     if (typeof moment === 'function') {
@@ -46,6 +45,10 @@ export default class Validator
    */
   get dictionary() {
     return DICTIONARY;
+  }
+
+  get rules() {
+    return Rules;
   }
 
   /**
