@@ -351,7 +351,11 @@ export default class Validator
       }
 
       if (date.installed && this._isADateRule(rule)) {
-        validations[rule].push(this._getDateFormat(validations));
+        const dateFormat = this._getDateFormat(validations);
+
+        if (! this._containsValidation(validations[rule], dateFormat)) {
+          validations[rule].push(this._getDateFormat(validations));  
+        }
       }
     });
 
@@ -379,6 +383,13 @@ export default class Validator
   }
 
   /**
+   * Checks if the passed validation appears inside the array.
+   */
+  _containsValidation(validations, validation) {
+    return !! ~validations.indexOf(validation);
+  }
+
+  /**
    * Normalizes string rules.
    * @param {String} rules The rules that will be normalized.
    * @param {Object} field The field object that is being operated on.
@@ -397,7 +408,11 @@ export default class Validator
 
       validations[parsedRule.name] = parsedRule.params;
       if (date.installed && this._isADateRule(parsedRule.name)) {
-        validations[parsedRule.name].push(this._getDateFormat(validations));
+        const dateFormat = this._getDateFormat(validations);
+
+        if (! this._containsValidation(validations[parsedRule.name], dateFormat)) {
+          validations[parsedRule.name].push(this._getDateFormat(validations));
+        }
       }
     });
 
