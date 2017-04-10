@@ -19,4 +19,4 @@ export default (moment) => (value, params) => {
   }
 
   return dateVal.isBetween(minDate, maxDate, 'days', inclusivity);
-}
+};
