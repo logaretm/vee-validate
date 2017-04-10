@@ -354,7 +354,7 @@ export default class Validator
         const dateFormat = this._getDateFormat(validations);
 
         if (! this._containsValidation(validations[rule], dateFormat)) {
-          validations[rule].push(this._getDateFormat(validations));  
+          validations[rule].push(this._getDateFormat(validations));
         }
       }
     });
