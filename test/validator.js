@@ -708,6 +708,25 @@ test('installs date validators', async t => {
     }
 });
 
+test('appends date_format to validator using dynamic rule', async t => {
+    const moment = require('moment');
+    t.true(Validator.installDateTimeValidators(moment));
+    const v = new Validator({ birthday: {
+        date_format:'DD/MM/YYYY',
+        date_between: [ '01/10/2007', '03/12/2008']
+    } });
+
+    let rules = v._normalizeObject({
+        date_format:'DD/MM/YYYY',
+        date_between: [ '01/10/2007', '03/12/2008']
+    });
+
+    t.true(rules.date_between.length === 3);
+
+    rules = v._normalizeObject(rules);
+    t.true(rules.date_between.length === 3);
+});
+
 test('correctly parses rules with multiple colons', async t => {
     const v = new Validator({ time: 'date_format:HH:mm' });
     t.true(await v.validate('time', '15:30'));
