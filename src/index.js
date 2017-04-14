@@ -4,37 +4,20 @@ import makeDirective from './directive';
 import ErrorBag from './errorBag';
 import Rules from './rules';
 import { assign } from './utils';
-
-const DEFAULT_CLASS_NAMES = {
-  touched: 'touched', // the control has been blurred
-  untouched: 'untouched', // the control hasn't been blurred
-  valid: 'valid', // model is valid
-  invalid: 'invalid', // model is invalid
-  pristine: 'pristine', // control has not been interacted with
-  dirty: 'dirty' // control has been interacted with
-};
+import defaultOptions from './config';
 
 // eslint-disable-next-line
-const install = (Vue, { locale = 'en', delay = 0, errorBagName = 'errors', dictionary = null, strict = true, fieldsBagName = 'fields', enableAutoClasses = false, classNames = {} } = {}) => {
-  if (dictionary) {
-    Validator.updateDictionary(dictionary);
+const install = (Vue, options) => {
+  const config = assign({}, defaultOptions, options);
+  if (config.dictionary) {
+    Validator.updateDictionary(config.dictionary);
   }
 
-  Validator.setLocale(locale);
-  Validator.setStrictMode(strict);
+  Validator.setLocale(config.locale);
+  Validator.setStrictMode(config.strict);
 
-  const options = {
-    locale,
-    delay,
-    dictionary,
-    errorBagName,
-    fieldsBagName,
-    enableAutoClasses,
-    classNames: assign({}, DEFAULT_CLASS_NAMES, classNames)
-  };
-
-  Vue.mixin(makeMixin(Vue, options));
-  Vue.directive('validate', makeDirective(options));
+  Vue.mixin(makeMixin(Vue, config));
+  Vue.directive('validate', makeDirective(config));
 };
 
 export default {

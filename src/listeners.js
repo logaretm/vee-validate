@@ -1,3 +1,4 @@
+import ClassManager from './classes';
 import {
   getScope, debounce, warn, getDataAttribute, isObject, toArray, find, getRules
 } from './utils';
@@ -15,6 +16,9 @@ export default class ListenerGenerator
     this.options = options;
     this.fieldName = this._resolveFieldName();
     this.model = this._resolveModel(vnode.data.directives);
+    if (options.enableAutoClasses) {
+      this.classes = new ClassManager(el, this.fieldName, this.vm.$validator, options);
+    }
   }
 
   /**
@@ -175,7 +179,7 @@ export default class ListenerGenerator
 
         const events = getDataAttribute(this.el, 'validate-on') || 'input|blur';
         events.split('|').forEach(e => {
-          target.addEventListener(e, listener);
+          target.addEventListener(e, listener, false);
           this.callbacks.push({ name: e, listener, el: target });
         });
       });
@@ -269,7 +273,7 @@ export default class ListenerGenerator
         const elms = document.querySelectorAll(`input[name="${this.el.name}"]`);
         toArray(elms).forEach(input => {
           handler.names.forEach(handlerName => {
-            input.addEventListener(handlerName, listener);
+            input.addEventListener(handlerName, listener, false);
             this.callbacks.push({ name: handlerName, listener, el: input });
           });
         });
@@ -279,7 +283,7 @@ export default class ListenerGenerator
     }
 
     handler.names.forEach(handlerName => {
-      this.el.addEventListener(handlerName, listener);
+      this.el.addEventListener(handlerName, listener, false);
       this.callbacks.push({ name: handlerName, listener, el: this.el });
     });
   }
@@ -368,7 +372,7 @@ export default class ListenerGenerator
         return;
       }
 
-      this.el.addEventListener(name, listener);
+      this.el.addEventListener(name, listener, false);
       this.callbacks.push({ name, listener, el: this.el });
     });
   }
@@ -416,6 +420,10 @@ export default class ListenerGenerator
 
     if (this.unwatch) {
       this.unwatch();
+    }
+
+    if (this.classes) {
+      this.classes.detach();
     }
 
     this.callbacks.forEach(h => {

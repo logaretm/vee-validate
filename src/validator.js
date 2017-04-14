@@ -538,6 +538,52 @@ export default class Validator
   }
 
   /**
+   * Adds an event listener for a specific field.
+   * @param {String} name
+   * @param {String} fieldName
+   * @param {Function} callback
+   */
+  on(name, fieldName, callback) {
+    if (! fieldName) {
+      throw new ValidatorException(`Cannot add a listener for non-existent field ${fieldName}.`);
+    }
+
+    if (! isCallable(callback)) {
+      throw new ValidatorException(`The ${name} callback for field ${fieldName} is not callable.`);
+    }
+
+    let scope = '__global__';
+    if (fieldName.indexOf('.') > -1) {
+      // if no such field, try the scope form.
+      if (! this.$scopes.__global__[name]) {
+        [scope, fieldName] = fieldName.split('.');
+      }
+    }
+
+    this.$scopes[scope][fieldName].events[name] = callback;
+  }
+
+  /**
+   * Removes the event listener for a specific field.
+   * @param {String} name
+   * @param {String} fieldName
+   */
+  off(name, fieldName) {
+    if (! fieldName) {
+      warn(`Cannot remove a listener for non-existent field ${fieldName}.`);
+    }
+
+    let scope = '__global__';
+    if (fieldName.indexOf('.') > -1) {
+      // if no such field, try the scope form.
+      if (! this.$scopes.__global__[name]) {
+        [scope, fieldName] = fieldName.split('.');
+      }
+    }
+    this.$scopes[scope][fieldName].events[name] = undefined;
+  }
+
+  /**
    * Registers a field to be validated.
    *
    * @param  {string} name The field name.
@@ -556,6 +602,10 @@ export default class Validator
       field.context = options.context;
       field.listeners = options.listeners || { detach() {} };
       field.el = field.listeners.el;
+      field.events = {};
+      if (field.listeners.classes) {
+        field.listeners.classes.attach();
+      }
       this._setAriaRequiredAttribute(field);
       this._setAriaValidAttribute(field, true);
     };
@@ -756,7 +806,9 @@ export default class Validator
     if (! field.required && ~[null, undefined, ''].indexOf(value)) {
       this.fieldBag._setFlags(name, { valid: true, dirty: true });
       this._setAriaValidAttribute(field, true);
-
+      if (isCallable(field.events.after)) {
+        field.events.after({ valid: true });
+      }
       return Promise.resolve(true);
     }
 
@@ -775,9 +827,15 @@ export default class Validator
 
         // Early exit.
         if (! result) {
+          if (isCallable(field.events.after)) {
+            field.events.after({ valid: false });
+          }
           throw new ValidatorException('Validation Aborted.');
         }
 
+        if (isCallable(field.events.after)) {
+          field.events.after({ valid: true });
+        }
         return Promise.resolve(result);
       });
 
@@ -787,12 +845,18 @@ export default class Validator
         this._setAriaValidAttribute(field, valid);
 
         if (! valid && throws) {
+          if (isCallable(field.events.after)) {
+            field.events.after({ valid: false });
+          }
           throw new ValidatorException('Failed Validation');
         }
         return valid;
       });
     } catch (error) {
       if (error.msg === '[vee-validate]: Validation Aborted.') {
+        if (isCallable(field.events.after)) {
+          field.events.after({ valid: false });
+        }
         return Promise.resolve(false);
       }
 
