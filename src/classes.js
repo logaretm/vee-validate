@@ -11,47 +11,92 @@ const DEFAULT_CLASS_NAMES = {
 
 export default class ClassListener
 {
-  constructor(el, fieldName, validator, options = {}) {
+  constructor(el, validator, options = {}) {
     this.el = el;
-    this.fieldName = fieldName;
     this.validator = validator;
     this.classNames = assign({}, DEFAULT_CLASS_NAMES, options.classNames || {});
     this.listeners = {};
   }
 
-  attach() {
+  /**
+   * Resets the classes state.
+   */
+  reset() {
+    // detach all listeners.
+    this.detach();
+
+    // remove classes
+    this.remove(this.classNames.dirty);
+    this.remove(this.classNames.touched);
+    this.remove(this.classNames.valid);
+    this.remove(this.classNames.invalid);
+
+    // listen again.
+    this.attach(this.field);
+  }
+
+  /**
+   * Attach field with its listeners.
+   * @param {*} field
+   */
+  attach(field) {
+    this.field = field;
     this.add(this.classNames.pristine);
     this.add(this.classNames.untouched);
+
+    // listen for focus event.
     this.listeners.focus = () => {
       this.remove(this.classNames.untouched);
       this.add(this.classNames.touched);
+      // only needed once.
       this.el.removeEventListener('focus', this.listeners.focus);
+      this.field.flags.touched = true;
+      this.field.flags.untouched = false;
     };
+
+    // listen for input.
     this.listeners.input = () => {
       this.remove(this.classNames.pristine);
       this.add(this.classNames.dirty);
+      // only needed once.
       this.el.removeEventListener('input', this.listeners.input);
+      this.field.flags.dirty = true;
+      this.field.flags.pristine = false;
     };
+
     this.listeners.after = (e) => {
       this.remove(e.valid ? this.classNames.invalid : this.classNames.valid);
       this.add(e.valid ? this.classNames.valid : this.classNames.invalid);
+      this.field.flags.valid = e.valid;
+      this.field.flags.invalid = ! e.valid;
     };
 
     this.el.addEventListener('focus', this.listeners.focus);
     this.el.addEventListener('input', this.listeners.input);
-    this.validator.on('after', this.fieldName, this.listeners.after);
+    this.validator.on('after', `${this.field.scope}.${this.field.name}`, this.listeners.after);
   }
 
+  /**
+   * Detach all listeners.
+   */
   detach() {
     this.el.removeEventListener('focus', this.listeners.focus);
     this.el.removeEventListener('input', this.listeners.input);
-    this.validator.off('after', this.fieldName);
+    this.validator.off('after', `${this.field.scope}.${this.field.name}`);
   }
 
+  /**
+   * Add a class.
+   * @param {*} className
+   */
   add(className) {
     addClass(this.el, className);
   }
 
+  /**
+   * Remove a class.
+   * @param {*} className
+   */
   remove(className) {
     removeClass(this.el, className);
   }

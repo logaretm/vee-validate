@@ -5,7 +5,6 @@ import Dictionary from './dictionary';
 import messages from './messages';
 import { warn, isObject, isCallable } from './utils';
 import date from './plugins/date';
-import FieldBag from './fieldBag';
 
 let LOCALE = 'en';
 let STRICT_MODE = true;
@@ -21,9 +20,10 @@ export default class Validator
   constructor(validations, options = { init: true }) {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };
-    this.fieldBag = new FieldBag();
+    this.$vm = options.vm;
     this._createFields(validations);
     this.errorBag = new ErrorBag();
+    this.fieldBag = {};
     // Some fields will be later evaluated, because the vm isn't mounted yet
     // so it may register it under an inaccurate scope.
     this.$deferred = [];
@@ -298,7 +298,6 @@ export default class Validator
     }
 
     const field = this.$scopes[scope][name];
-    this.fieldBag._addIfNotExists(name);
     field.validations = this._normalizeRules(name, checks, scope);
     field.required = this._isRequired(field);
   }
@@ -476,7 +475,7 @@ export default class Validator
    * @return {String} displayName The name to be used in the errors.
    */
   _getFieldDisplayName(field, scope = '__global__') {
-    return this.$scopes[scope][field].name || this.dictionary.getAttribute(LOCALE, field, field);
+    return this.$scopes[scope][field].as || this.dictionary.getAttribute(LOCALE, field, field);
   }
 
   /**
@@ -597,14 +596,24 @@ export default class Validator
       this.updateField(name, checks, options);
       const field = this.$scopes[options.scope][name];
       field.scope = options.scope;
-      field.name = options.prettyName;
+      field.name = name;
+      field.as = options.prettyName;
       field.getter = options.getter;
       field.context = options.context;
       field.listeners = options.listeners || { detach() {} };
       field.el = field.listeners.el;
       field.events = {};
+      field.flags = {
+        untouched: true,
+        touched: false,
+        dirty: false,
+        pristine: true,
+        valid: false,
+        invalid: false
+      };
+      this.fieldBag = Object.assign({}, this.fieldBag, { [name]: field.flags });
       if (field.listeners.classes) {
-        field.listeners.classes.attach();
+        field.listeners.classes.attach(field);
       }
       this._setAriaRequiredAttribute(field);
       this._setAriaValidAttribute(field, true);
@@ -687,7 +696,6 @@ export default class Validator
 
     this.$scopes[scope][name].listeners.detach();
     this.errorBag.remove(name, scope);
-    this.fieldBag._remove(name);
     delete this.$scopes[scope][name];
   }
 
@@ -807,8 +815,9 @@ export default class Validator
     this.errorBag.remove(name, scope);
     // if its not required and is empty or null or undefined then it passes.
     if (! field.required && ~[null, undefined, ''].indexOf(value)) {
-      this.fieldBag._setFlags(name, { valid: true, dirty: true });
       this._setAriaValidAttribute(field, true);
+      field.invalid = false;
+      field.valid = true;
       if (field.events && isCallable(field.events.after)) {
         field.events.after({ valid: true });
       }
@@ -844,7 +853,6 @@ export default class Validator
 
       return Promise.all(promises).then(values => {
         const valid = values.every(t => t);
-        this.fieldBag._setFlags(name, { valid, dirty: true });
         this._setAriaValidAttribute(field, valid);
 
         if (! valid && throws) {
