@@ -806,7 +806,7 @@ export default class Validator
     if (! field.required && ~[null, undefined, ''].indexOf(value)) {
       this.fieldBag._setFlags(name, { valid: true, dirty: true });
       this._setAriaValidAttribute(field, true);
-      if (isCallable(field.events.after)) {
+      if (field.events && isCallable(field.events.after)) {
         field.events.after({ valid: true });
       }
       return Promise.resolve(true);
@@ -827,13 +827,13 @@ export default class Validator
 
         // Early exit.
         if (! result) {
-          if (isCallable(field.events.after)) {
+          if (field.events && isCallable(field.events.after)) {
             field.events.after({ valid: false });
           }
           throw new ValidatorException('Validation Aborted.');
         }
 
-        if (isCallable(field.events.after)) {
+        if (field.events && isCallable(field.events.after)) {
           field.events.after({ valid: true });
         }
         return Promise.resolve(result);
@@ -845,7 +845,7 @@ export default class Validator
         this._setAriaValidAttribute(field, valid);
 
         if (! valid && throws) {
-          if (isCallable(field.events.after)) {
+          if (field.events && isCallable(field.events.after)) {
             field.events.after({ valid: false });
           }
           throw new ValidatorException('Failed Validation');
@@ -854,7 +854,7 @@ export default class Validator
       });
     } catch (error) {
       if (error.msg === '[vee-validate]: Validation Aborted.') {
-        if (isCallable(field.events.after)) {
+        if (field.events && isCallable(field.events.after)) {
           field.events.after({ valid: false });
         }
         return Promise.resolve(false);
