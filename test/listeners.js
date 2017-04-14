@@ -209,7 +209,7 @@ test('resolves value getters for components', t => {
   document.body.innerHTML = '<input id="el" type="text" name="name" value="1" data-vv-value-path="internalValue">';
   const el = document.querySelector('#el');
   const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
-  lg.component = { $el: el, internalValue: 'first' };
+  lg.component = { $el: el, value: 'first' };
   const { context, getter } = lg._resolveValueGetter();
 
   t.is(context(), lg.component);
@@ -381,7 +381,8 @@ test('can handle component input event', t => {
   const mockedComponent = {
     $on(whatever, callback) {
       throw 'something';
-    }
+    },
+    $watch() {}
   };
 
   let vnode = helpers.vnode(false);
@@ -397,7 +398,8 @@ test('can handle component input event', t => {
   lg.component = {
     $on(whatever, callback) {
       lg.component.onInput = (value) => { callback(value); };
-    }
+    },
+    $watch() {}
   };
   t.falsy(lg._attachComponentListeners());
   t.truthy(lg.component.onInput);
@@ -460,6 +462,7 @@ test('detaches listeners', t => {
   const throws = { unwatch: true, off: true };
   lg.unwatch = t => { if (throws.unwatch) throw 'unwatched'; };
   lg.component = { $off() { if (throws.off) throw 'offed listener'; } };
+  lg.componentPropUnwatch = () => {};
 
   let calls = 0;
   el.removeEventListener = () => {
