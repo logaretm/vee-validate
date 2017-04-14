@@ -214,7 +214,7 @@ test('resolves value getters for components', t => {
 
   t.is(context(), lg.component);
   t.is(getter(context()), 'first');
-  lg.component.internalValue = 'second'; // simulate change.
+  lg.component.value = 'second'; // simulate change.
   t.is(getter(context()), 'second');
 });
 
