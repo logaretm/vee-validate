@@ -249,6 +249,7 @@ export default class ListenerGenerator
     }, getDataAttribute(this.el, 'delay') || this.options.delay);
 
     this.component.$on('input', this.componentListener);
+    this.componentPropUnwatch = this.component.$watch('value', this.componentListener);
   }
 
   /**
@@ -264,9 +265,9 @@ export default class ListenerGenerator
 
     const handler = this._getSuitableListener();
     const listener = debounce(
-            handler.listener.bind(this),
-            getDataAttribute(this.el, 'delay') || this.options.delay
-        );
+      handler.listener.bind(this),
+      getDataAttribute(this.el, 'delay') || this.options.delay
+    );
 
     if (~['radio', 'checkbox'].indexOf(this.el.type)) {
       this.vm.$nextTick(() => {
@@ -296,7 +297,7 @@ export default class ListenerGenerator
       return {
         context: () => this.component,
         getter(context) {
-          return context[getDataAttribute(context.$el, 'value-path')] || context.value;
+          return context.value;
         }
       };
     }
@@ -417,6 +418,7 @@ export default class ListenerGenerator
   detach() {
     if (this.component) {
       this.component.$off('input', this.componentListener);
+      this.componentPropUnwatch();
     }
 
     if (this.unwatch) {
