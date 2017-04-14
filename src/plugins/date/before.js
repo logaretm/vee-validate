@@ -1,5 +1,9 @@
-export default (moment) => (value, [targetField, format]) => {
+export default (moment) => (value, [targetField, inclusion, format]) => {
   const field = document.querySelector(`input[name='${targetField}']`);
+  if (typeof format === 'undefined') {
+    format = inclusion;
+    inclusion = false;
+  }
   const dateValue = moment(value, format, true);
   const otherValue = moment(field ? field.value : targetField, format, true);
 
@@ -8,5 +12,5 @@ export default (moment) => (value, [targetField, format]) => {
     return false;
   }
 
-  return dateValue.isBefore(otherValue);
+  return dateValue.isBefore(otherValue) || (inclusion && dateValue.isSame(otherValue));
 };
