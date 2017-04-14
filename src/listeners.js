@@ -392,7 +392,8 @@ export default class ListenerGenerator
         prettyName: getDataAttribute(this.el, 'as') || this.el.title,
         context,
         getter,
-        listeners: this
+        listeners: this,
+        initial: this.binding.modifiers.initial
       }
     );
 

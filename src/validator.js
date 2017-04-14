@@ -608,6 +608,10 @@ export default class Validator
       }
       this._setAriaRequiredAttribute(field);
       this._setAriaValidAttribute(field, true);
+      // if initial modifier is applied, validate immediatly.
+      if (options.initial) {
+        this.validate(name, field.getter(field.context()), field.scope).catch(() => {});
+      }
     };
 
     const scope = isCallable(options.scope) ? options.scope() : options.scope;
@@ -615,7 +619,6 @@ export default class Validator
       this.$deferred.push(attach);
       return;
     }
-
 
     attach();
   }
