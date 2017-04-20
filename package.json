@@ -54,5 +54,8 @@
   },
   "peerDependencies": {
     "vue": "2.x"
+  },
+  "dependencies": {
+    "babel-plugin-external-helpers": "^6.22.0"
   }
 }
