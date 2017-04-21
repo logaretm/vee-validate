@@ -78,13 +78,12 @@ export default class ErrorBag
       return collection;
     }
 
-    if (scope) {
-      return this.errors.filter(e => e.field === field && e.scope === scope)
-                       .map(e => (map ? e.msg : e));
+    if (! scope) {
+      return this.errors.filter(e => e.field === field).map(e => (map ? e.msg : e));
     }
 
-    return this.errors.filter(e => e.field === field && e.scope === '__global__')
-                          .map(e => (map ? e.msg : e));
+    return this.errors.filter(e => e.field === field && e.scope === scope)
+                      .map(e => (map ? e.msg : e));
   }
     /**
      * Gets the internal array length.

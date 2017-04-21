@@ -154,9 +154,9 @@ test('returns all errors in an array', t => {
 
   t.is(Array.isArray(errors.all()), true);
   t.deepEqual(errors.all(), [
-      'The name is invalid',
-      'The email is invalid',
-      'The email is shorter than 3 chars.'
+    'The name is invalid',
+    'The email is invalid',
+    'The email is shorter than 3 chars.'
   ]);
 });
 
@@ -168,8 +168,8 @@ test('returns all scoped errors in an array', t => {
 
   t.is(Array.isArray(errors.all()), true);
   t.deepEqual(errors.all('scope1'), [
-      'The name is invalid',
-      'The email is invalid'
+    'The name is invalid',
+    'The email is invalid'
   ]);
 });
 
@@ -180,10 +180,20 @@ test('collects errors for a specific field in an array', t => {
   errors.add('email', 'The email is shorter than 3 chars.', 'rule1');
 
   t.deepEqual(errors.collect('email'), [
-      'The email is invalid',
-      'The email is shorter than 3 chars.'
+    'The email is invalid',
+    'The email is shorter than 3 chars.'
   ]);
   t.truthy(~errors.collect('name').indexOf('The name is invalid'));
+});
+
+test('collects all errors across scopes if no scope is defined', t => {
+  const errors = new ErrorBag();
+  errors.add('name', 'The name is invalid', 'rule1');
+  errors.add('name', 'The name is invalid', 'rule1', 'scope1');
+  errors.add('name', 'The name is invalid', 'rule1', 'scope2');
+
+  t.is(errors.collect('name').length, 3);
+  t.is(errors.collect('name', 'scope2').length, 1);
 });
 
 test('collects errors for a specific field and scope', t => {
@@ -193,8 +203,8 @@ test('collects errors for a specific field and scope', t => {
   errors.add('email', 'The email is shorter than 3 chars.', 'rule1', 'scope2');
 
   t.deepEqual(errors.collect('email', 'scope1'), [
-      'The email is not email.',
-      'The email is invalid',
+    'The email is not email.',
+    'The email is invalid',
   ]);
   t.truthy(~errors.collect('email', 'scope2').indexOf('The email is shorter than 3 chars.'));
 });
@@ -206,13 +216,13 @@ test('groups errors by field name', t => {
   errors.add('email', 'The email is shorter than 3 chars.', 'rule1');
 
   t.deepEqual(errors.collect(), {
-      email: [
-          'The email is invalid',
-          'The email is shorter than 3 chars.'
-      ],
-      name: [
-          'The name is invalid'
-      ]
+    email: [
+      'The email is invalid',
+      'The email is shorter than 3 chars.'
+    ],
+    name: [
+      'The name is invalid'
+    ]
   });
 });
 
