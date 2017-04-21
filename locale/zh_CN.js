@@ -26,16 +26,16 @@ const messages = {
   required: (field) => `${field} 是必须的.`,
   size: (field, [size]) => ` ${field} 必须小于 ${size} KB.`,
   url: (field) => ` ${field}不是有效的url.`
-}
+};
 
 const locale = {
-    name: 'zh_CN',
-    messages,
-    attributes: {}
+  name: 'zh_CN',
+  messages,
+  attributes: {}
 };
 
 if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
-    VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.addLocale(locale);
 }
 
 export default locale;

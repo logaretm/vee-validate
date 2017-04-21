@@ -29,16 +29,16 @@ const messages = {
   required: (field) => `${field} 不能留空。`,
   size: (field, [size]) => `${field} 的大小必須小於 ${size} KB..`,
   url: (field) => `${field} 的格式錯誤。`
-}
+};
 
 const locale = {
-    name: 'zh_TW',
-    messages,
-    attributes: {}
+  name: 'zh_TW',
+  messages,
+  attributes: {}
 };
 
 if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
-    VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.addLocale(locale);
 }
 
 export default locale;
