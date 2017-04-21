@@ -47,6 +47,10 @@ export default class Validator
     return DICTIONARY;
   }
 
+  get locale() {
+    return LOCALE;
+  }
+
   get rules() {
     return Rules;
   }
@@ -64,8 +68,8 @@ export default class Validator
     }
 
     Rules[name] = validator.validate;
-    if (validator.getMessage && isCallable(validator.getMessage)) {
-      DICTIONARY.setMessage('en', name, validator.getMessage);
+    if (isCallable(validator.getMessage)) {
+      DICTIONARY.setMessage(LOCALE, name, validator.getMessage);
     }
 
     if (validator.messages) {
@@ -716,15 +720,6 @@ export default class Validator
    */
   getErrors() {
     return this.errorBag;
-  }
-
-  /**
-   * Gets the currently active locale.
-   *
-   * @return {String} Locale identifier.
-   */
-  getLocale() {
-    return LOCALE;
   }
 
   /**

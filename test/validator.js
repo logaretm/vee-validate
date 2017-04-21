@@ -533,7 +533,7 @@ test.serial('can add a custom validator with localized messages', async t => {
     }
 
     v.setLocale('ar');
-    t.is(v.getLocale(), 'ar');
+    t.is(v.locale, 'ar');
     try {
         await v.validate('anotherField', 1);
     } catch (error) {
@@ -556,7 +556,7 @@ test.serial('can set the locale statically', async t => {
         await loc.validate('name', '1234')
     } catch (error) {
         t.true(error instanceof ValidatorException);
-        t.is(loc.getLocale(), 'ar');
+        t.is(loc.locale, 'ar');
         t.is(loc.getErrors().first('name'), 'البتاعة لازم يكون حروف بس');
     }
 });
