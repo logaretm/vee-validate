@@ -811,8 +811,6 @@ export default class Validator
     // if its not required and is empty or null or undefined then it passes.
     if (! field.required && ~[null, undefined, ''].indexOf(value)) {
       this._setAriaValidAttribute(field, true);
-      field.invalid = false;
-      field.valid = true;
       if (field.events && isCallable(field.events.after)) {
         field.events.after({ valid: true });
       }
