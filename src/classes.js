@@ -9,8 +9,7 @@ const DEFAULT_CLASS_NAMES = {
   dirty: 'dirty' // control has been interacted with
 };
 
-export default class ClassListener
-{
+export default class ClassListener {
   constructor(el, validator, options = {}) {
     this.el = el;
     this.validator = validator;

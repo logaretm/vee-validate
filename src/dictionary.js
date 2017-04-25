@@ -1,8 +1,7 @@
 /* eslint-disable prefer-rest-params */
 import { isObject, assign } from './utils';
 
-export default class Dictionary
-{
+export default class Dictionary {
   constructor(dictionary = {}) {
     this.dictionary = {};
     this.merge(dictionary);

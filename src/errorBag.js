@@ -1,5 +1,4 @@
-export default class ErrorBag
-{
+export default class ErrorBag {
   constructor() {
     this.errors = [];
   }

@@ -15,8 +15,7 @@ const DICTIONARY = new Dictionary({
   }
 });
 
-export default class Validator
-{
+export default class Validator {
   constructor(validations, options = { init: true }) {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };

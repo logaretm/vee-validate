@@ -3,8 +3,7 @@ import {
   getScope, debounce, warn, getDataAttribute, isObject, toArray, find, getRules
 } from './utils';
 
-export default class ListenerGenerator
-{
+export default class ListenerGenerator {
   constructor(el, binding, vnode, options) {
     this.unwatch = undefined;
     this.callbacks = [];
