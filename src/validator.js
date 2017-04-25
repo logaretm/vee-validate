@@ -40,16 +40,22 @@ export default class Validator {
   }
 
   /**
-   * @return Dictionary
+   * @return {Dictionary}
    */
   get dictionary() {
     return DICTIONARY;
   }
 
+  /**
+   * @return {String}
+   */
   get locale() {
     return LOCALE;
   }
 
+  /**
+   * @return {Object}
+   */
   get rules() {
     return Rules;
   }
