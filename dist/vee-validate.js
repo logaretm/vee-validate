@@ -4,18 +4,135 @@
  * @license MIT
  */
 (function (global, factory) {
-        typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-        typeof define === 'function' && define.amd ? define(factory) :
-        (global.VeeValidate = factory());
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.VeeValidate = factory());
 }(this, (function () { 'use strict';
 
-var alpha = function (value) { return /^[a-zA-Z]*$/.test(value); };
+/**
+ * Some Alpha Regex helpers.
+ * https://github.com/chriso/validator.js/blob/master/src/lib/alpha.js
+ */
 
-var alpha_dash = function (value) { return /^[a-zA-Z0-9_-]*$/.test(value); };
+var alpha$1 = {
+  en: /^[A-Z]*$/i,
+  cs: /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]*$/i,
+  da: /^[A-ZÆØÅ]*$/i,
+  de: /^[A-ZÄÖÜß]*$/i,
+  es: /^[A-ZÁÉÍÑÓÚÜ]*$/i,
+  fr: /^[A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ]*$/i,
+  nl: /^[A-ZÉËÏÓÖÜ]*$/i,
+  hu: /^[A-ZÁÉÍÓÖŐÚÜŰ]*$/i,
+  pl: /^[A-ZĄĆĘŚŁŃÓŻŹ]*$/i,
+  pt: /^[A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ]*$/i,
+  ru: /^[А-ЯЁ]*$/i,
+  sr: /^[A-ZČĆŽŠĐ]*$/i,
+  tr: /^[A-ZÇĞİıÖŞÜ]*$/i,
+  uk: /^[А-ЩЬЮЯЄIЇҐ]*$/i,
+  ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/
+};
 
-var alpha_num = function (value) { return /^[a-zA-Z0-9]*$/.test(value); };
+var alphaSpaces = {
+  en: /^[A-Z\s]*$/i,
+  cs: /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s]*$/i,
+  da: /^[A-ZÆØÅ\s]*$/i,
+  de: /^[A-ZÄÖÜß\s]*$/i,
+  es: /^[A-ZÁÉÍÑÓÚÜ\s]*$/i,
+  fr: /^[A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ\s]*$/i,
+  nl: /^[A-ZÉËÏÓÖÜ\s]*$/i,
+  hu: /^[A-ZÁÉÍÓÖŐÚÜŰ\s]*$/i,
+  pl: /^[A-ZĄĆĘŚŁŃÓŻŹ\s]*$/i,
+  pt: /^[A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ\s]*$/i,
+  ru: /^[А-ЯЁ\s]*$/i,
+  sr: /^[A-ZČĆŽŠĐ\s]*$/i,
+  tr: /^[A-ZÇĞİıÖŞÜ\s]*$/i,
+  uk: /^[А-ЩЬЮЯЄIЇҐ\s]*$/i,
+  ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ\s]*$/
+};
 
-var alpha_spaces = function (value) { return /^[a-zA-Z\s]*$/.test(value); };
+var alphanumeric = {
+  en: /^[0-9A-Z]*$/i,
+  cs: /^[0-9A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]*$/i,
+  da: /^[0-9A-ZÆØÅ]$/i,
+  de: /^[0-9A-ZÄÖÜß]*$/i,
+  es: /^[0-9A-ZÁÉÍÑÓÚÜ]*$/i,
+  fr: /^[0-9A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ]*$/i,
+  hu: /^[0-9A-ZÁÉÍÓÖŐÚÜŰ]*$/i,
+  nl: /^[0-9A-ZÉËÏÓÖÜ]*$/i,
+  pl: /^[0-9A-ZĄĆĘŚŁŃÓŻŹ]*$/i,
+  pt: /^[0-9A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ]*$/i,
+  ru: /^[0-9А-ЯЁ]*$/i,
+  sr: /^[0-9A-ZČĆŽŠĐ]*$/i,
+  tr: /^[0-9A-ZÇĞİıÖŞÜ]*$/i,
+  uk: /^[0-9А-ЩЬЮЯЄIЇҐ]*$/i,
+  ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/
+};
+
+var alphaDash = {
+  en: /^[0-9A-Z_-]*$/i,
+  cs: /^[0-9A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ_-]*$/i,
+  da: /^[0-9A-ZÆØÅ_-]*$/i,
+  de: /^[0-9A-ZÄÖÜß_-]*$/i,
+  es: /^[0-9A-ZÁÉÍÑÓÚÜ_-]*$/i,
+  fr: /^[0-9A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ_-]*$/i,
+  nl: /^[0-9A-ZÉËÏÓÖÜ_-]*$/i,
+  hu: /^[0-9A-ZÁÉÍÓÖŐÚÜŰ_-]*$/i,
+  pl: /^[0-9A-ZĄĆĘŚŁŃÓŻŹ_-]*$/i,
+  pt: /^[0-9A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ_-]*$/i,
+  ru: /^[0-9А-ЯЁ_-]*$/i,
+  sr: /^[0-9A-ZČĆŽŠĐ_-]*$/i,
+  tr: /^[0-9A-ZÇĞİıÖŞÜ_-]*$/i,
+  uk: /^[0-9А-ЩЬЮЯЄIЇҐ_-]*$/i,
+  ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ_-]*$/
+};
+
+var alpha$$1 = function (value, ref) {
+  if ( ref === void 0 ) ref = [null];
+  var locale = ref[0];
+
+  // Match at least one locale.
+  if (! locale) {
+    return Object.keys(alpha$1).some(function (loc) { return alpha$1[loc].test(value); });
+  }
+
+  return (alpha$1[locale] || alpha$1.en).test(value);
+};
+
+var alpha_dash = function (value, ref) {
+  if ( ref === void 0 ) ref = [null];
+  var locale = ref[0];
+
+  // Match at least one locale.
+  if (! locale) {
+    return Object.keys(alphaDash).some(function (loc) { return alphaDash[loc].test(value); });
+  }
+
+  return (alphaDash[locale] || alphaDash.en).test(value);
+};
+
+var alpha_num = function (value, ref) {
+  if ( ref === void 0 ) ref = [null];
+  var locale = ref[0];
+
+  // Match at least one locale.
+  if (! locale) {
+    return Object.keys(alphanumeric).some(function (loc) { return alphanumeric[loc].test(value); });
+  }
+
+  return (alphanumeric[locale] || alphanumeric.en).test(value);
+};
+
+var alpha_spaces = function (value, ref) {
+  if ( ref === void 0 ) ref = [null];
+  var locale = ref[0];
+
+  // Match at least one locale.
+  if (! locale) {
+    return Object.keys(alphaSpaces).some(function (loc) { return alphaSpaces[loc].test(value); });
+  }
+
+  return (alphaSpaces[locale] || alphaSpaces.en).test(value);
+};
 
 var between = function (value, ref) {
 	var min = ref[0];
@@ -65,9 +182,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = isCreditCard;
 
-var _assertString = assertString_1;
 
-var _assertString2 = _interopRequireDefault(_assertString);
+
+var _assertString2 = _interopRequireDefault(assertString_1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -207,9 +324,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 exports.default = isByteLength;
 
-var _assertString = assertString_1;
 
-var _assertString2 = _interopRequireDefault(_assertString);
+
+var _assertString2 = _interopRequireDefault(assertString_1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -240,13 +357,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = isFDQN;
 
-var _assertString = assertString_1;
 
-var _assertString2 = _interopRequireDefault(_assertString);
 
-var _merge = merge_1;
+var _assertString2 = _interopRequireDefault(assertString_1);
 
-var _merge2 = _interopRequireDefault(_merge);
+
+
+var _merge2 = _interopRequireDefault(merge_1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -300,26 +417,27 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = isEmail;
 
-var _assertString = assertString_1;
 
-var _assertString2 = _interopRequireDefault(_assertString);
 
-var _merge = merge_1;
+var _assertString2 = _interopRequireDefault(assertString_1);
 
-var _merge2 = _interopRequireDefault(_merge);
 
-var _isByteLength = isByteLength_1;
 
-var _isByteLength2 = _interopRequireDefault(_isByteLength);
+var _merge2 = _interopRequireDefault(merge_1);
 
-var _isFQDN = isFQDN;
 
-var _isFQDN2 = _interopRequireDefault(_isFQDN);
+
+var _isByteLength2 = _interopRequireDefault(isByteLength_1);
+
+
+
+var _isFQDN2 = _interopRequireDefault(isFQDN);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var default_email_options = {
   allow_display_name: false,
+  require_display_name: false,
   allow_utf8_local_part: true,
   require_tld: true
 };
@@ -338,10 +456,12 @@ function isEmail(str, options) {
   (0, _assertString2.default)(str);
   options = (0, _merge2.default)(options, default_email_options);
 
-  if (options.allow_display_name) {
+  if (options.require_display_name || options.allow_display_name) {
     var display_email = str.match(displayName);
     if (display_email) {
       str = display_email[1];
+    } else if (options.require_display_name) {
+      return false;
     }
   }
 
@@ -404,9 +524,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = isIP;
 
-var _assertString = assertString_1;
 
-var _assertString2 = _interopRequireDefault(_assertString);
+
+var _assertString2 = _interopRequireDefault(assertString_1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -586,21 +706,21 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = isURL;
 
-var _assertString = assertString_1;
 
-var _assertString2 = _interopRequireDefault(_assertString);
 
-var _isFQDN = isFQDN;
+var _assertString2 = _interopRequireDefault(assertString_1);
 
-var _isFQDN2 = _interopRequireDefault(_isFQDN);
 
-var _isIP = isIP_1;
 
-var _isIP2 = _interopRequireDefault(_isIP);
+var _isFQDN2 = _interopRequireDefault(isFQDN);
 
-var _merge = merge_1;
 
-var _merge2 = _interopRequireDefault(_merge);
+
+var _isIP2 = _interopRequireDefault(isIP_1);
+
+
+
+var _merge2 = _interopRequireDefault(merge_1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -633,7 +753,7 @@ function checkHost(host, matches) {
 
 function isURL(url, options) {
   (0, _assertString2.default)(url);
-  if (!url || url.length >= 2083 || /\s/.test(url)) {
+  if (!url || url.length >= 2083 || /[\s<>]/.test(url)) {
     return false;
   }
   if (url.indexOf('mailto:') === 0) {
@@ -737,7 +857,7 @@ var Rules = {
   alpha_dash: alpha_dash,
   alpha_num: alpha_num,
   alpha_spaces: alpha_spaces,
-  alpha: alpha,
+  alpha: alpha$$1,
   between: between,
   confirmed: confirmed,
   credit_card: credit_card,
@@ -844,13 +964,12 @@ ErrorBag.prototype.collect = function collect (field, scope, map) {
     return collection;
   }
 
-  if (scope) {
-    return this.errors.filter(function (e) { return e.field === field && e.scope === scope; })
-                     .map(function (e) { return (map ? e.msg : e); });
+  if (! scope) {
+    return this.errors.filter(function (e) { return e.field === field; }).map(function (e) { return (map ? e.msg : e); });
   }
 
-  return this.errors.filter(function (e) { return e.field === field && e.scope === '__global__'; })
-                        .map(function (e) { return (map ? e.msg : e); });
+  return this.errors.filter(function (e) { return e.field === field && e.scope === scope; })
+                    .map(function (e) { return (map ? e.msg : e); });
 };
   /**
    * Gets the internal array length.
@@ -945,7 +1064,7 @@ ErrorBag.prototype.remove = function remove (field, scope) {
     return;
   }
 
-  this.errors = this.errors.filter(function (e) { return e.field !== field && e.scope === '__global__'; });
+  this.errors = this.errors.filter(function (e) { return e.field !== field || e.scope !== '__global__'; });
 };
 
 
@@ -1015,15 +1134,40 @@ var getScope = function (el) {
 };
 
 /**
+ * Gets the value in an object safely.
+ * @param {String} propPath
+ * @param {Object} target
+ * @param {*} def
+ */
+var getPath = function (propPath, target, def) {
+  if ( def === void 0 ) def = undefined;
+
+  if (!propPath || !target) { return def; }
+
+  var value = target;
+  propPath.split('.').every(function (prop) {
+    if (! Object.prototype.hasOwnProperty.call(value, prop)) {
+      value = def;
+
+      return false;
+    }
+
+    value = value[prop];
+
+    return true;
+  });
+
+  return value;
+};
+
+/**
  * Debounces a function.
  */
 var debounce = function (callback, wait, immediate) {
   if ( wait === void 0 ) wait = 0;
 
   var timeout;
-  if (wait == 0) {
-    return callback;
-  }
+
   return function () {
     var args = [], len = arguments.length;
     while ( len-- ) args[ len ] = arguments[ len ];
@@ -1053,9 +1197,7 @@ var warn = function (message) {
 /**
  * Checks if the value is an object.
  */
-var isObject = function (object) {
-  return object !== null && object && typeof object === 'object' && ! Array.isArray(object);
-};
+var isObject = function (object) { return object !== null && object && typeof object === 'object' && ! Array.isArray(object); };
 
 /**
  * Checks if a function is callable.
@@ -1080,8 +1222,8 @@ var addClass = function (el, className) {
   if (el.classList) {
     el.classList.add(className);
     return;
-  } 
-  
+  }
+
   if (!hasClass(el, className)) {
     el.className += " " + className;
   }
@@ -1173,7 +1315,7 @@ var find = function (array, predicate) {
 
 /**
  * Gets the rules from a binding value or the element dataset.
- * 
+ *
  * @param {String} expression The binding expression.
  * @param {Object|String} value The binding value.
  * @param {element} el The element.
@@ -1189,7 +1331,7 @@ var getRules = function (expression, value, el) {
   }
 
   if (~['string', 'object'].indexOf(typeof value.rules)) {
-    return value.rules
+    return value.rules;
   }
 
   return value;
@@ -1373,9 +1515,14 @@ var messages = {
 
 var after = function (moment) { return function (value, ref) {
   var targetField = ref[0];
-  var format = ref[1];
+  var inclusion = ref[1];
+  var format = ref[2];
 
   var field = document.querySelector(("input[name='" + targetField + "']"));
+  if (typeof format === 'undefined') {
+    format = inclusion;
+    inclusion = false;
+  }
   var dateValue = moment(value, format, true);
   var otherValue = moment(field ? field.value : targetField, format, true);
 
@@ -1384,14 +1531,19 @@ var after = function (moment) { return function (value, ref) {
     return false;
   }
 
-  return dateValue.isAfter(otherValue);
+  return dateValue.isAfter(otherValue) || (inclusion && dateValue.isSame(otherValue));
 }; };
 
 var before = function (moment) { return function (value, ref) {
   var targetField = ref[0];
-  var format = ref[1];
+  var inclusion = ref[1];
+  var format = ref[2];
 
   var field = document.querySelector(("input[name='" + targetField + "']"));
+  if (typeof format === 'undefined') {
+    format = inclusion;
+    inclusion = false;
+  }
   var dateValue = moment(value, format, true);
   var otherValue = moment(field ? field.value : targetField, format, true);
 
@@ -1400,7 +1552,7 @@ var before = function (moment) { return function (value, ref) {
     return false;
   }
 
-  return dateValue.isBefore(otherValue);
+  return dateValue.isBefore(otherValue) || (inclusion && dateValue.isSame(otherValue));
 }; };
 
 var date_format = function (moment) { return function (value, ref) {
@@ -1409,10 +1561,19 @@ var date_format = function (moment) { return function (value, ref) {
 	return moment(value, format, true).isValid();
  }	};
 
-var date_between = function (moment) { return function (value, ref) {
-  var min = ref[0];
-  var max = ref[1];
-  var format = ref[2];
+var date_between = function (moment) { return function (value, params) {
+  var min;
+  var max;
+  var format;
+  var inclusivity = '()';
+
+  if (params.length > 3) {
+    var assign;
+    (assign = params, min = assign[0], max = assign[1], inclusivity = assign[2], format = assign[3]);
+  } else {
+    var assign$1;
+    (assign$1 = params, min = assign$1[0], max = assign$1[1], format = assign$1[2]);
+  }
 
   var minDate = moment(min, format, true);
   var maxDate = moment(max, format, true);
@@ -1422,7 +1583,7 @@ var date_between = function (moment) { return function (value, ref) {
     return false;
   }
 
-  return dateVal.isBetween(minDate, maxDate);
+  return dateVal.isBetween(minDate, maxDate, 'days', inclusivity);
 }; };
 
 /* istanbul ignore next */
@@ -1462,161 +1623,6 @@ var date = {
   installed: false
 };
 
-var FieldBag = function FieldBag() {
-  this.fields = {};
-};
-
-  /**
-   * Initializes and adds a new field to the bag.
-   */
-FieldBag.prototype._add = function _add (name) {
-  this.fields[name] = {};
-  this._setFlags(name, { dirty: false, valid: false, }, true);
-};
-
-/**
- * Adds a field if it does not exist.
- */
-FieldBag.prototype._addIfNotExists = function _addIfNotExists (name) {
-  if (this.fields[name]) {
-    return;
-  }
-
-  this._add(name);
-};
-
-  /**
-   * Remooves a field from the bag.
-   */
-FieldBag.prototype._remove = function _remove (name) {
-  delete this.fields[name];
-};
-
-  /**
-   * Resets the flags state for a specified field or all fields.
-   */
-FieldBag.prototype.reset = function reset (name) {
-    var this$1 = this;
-
-  if (! name) {
-    Object.keys(this.fields).forEach(function (field) {
-      this$1._setFlags(field, { dirty: false, valid: false, }, true);
-    });
-
-    return;
-  }
-
-  this._setFlags(name, { dirty: false, valid: false, }, true);
-};
-
-  /**
-   * Sets the flags for a specified field.
-   */
-FieldBag.prototype._setFlags = function _setFlags (name, flags, initial) {
-    var this$1 = this;
-    if ( initial === void 0 ) initial = false;
-
-  return Object.keys(flags).every(
-          function (flag) { return this$1._setFlag(name, flag, flags[flag], initial); }
-      );
-};
-
-  /**
-   * Sets a flag for a specified field.
-   */
-FieldBag.prototype._setFlag = function _setFlag (name, flag, value, initial) {
-    if ( initial === void 0 ) initial = false;
-
-  var method = "set" + (flag.charAt(0).toUpperCase()) + (flag.slice(1));
-  if (typeof this[method] !== 'function') {
-    return false;
-  }
-
-  this[method](name, value, initial);
-
-  return true;
-};
-
-  /**
-   * Sets the dirty flag along with dependant flags.
-   */
-FieldBag.prototype.setDirty = function setDirty (name, value, initial) {
-    if ( initial === void 0 ) initial = false;
-
-  this.fields[name].dirty = value;
-  this.fields[name].clean = initial || ! value;
-  this.fields[name].passed = this.fields[name].valid && value;
-  this.fields[name].failed = ! this.fields[name].valid && value;
-};
-
-  /**
-   * Sets the valid flag along with dependant flags.
-   */
-FieldBag.prototype.setValid = function setValid (name, value) {
-  this.fields[name].valid = value;
-  this.fields[name].passed = this.fields[name].dirty && value;
-  this.fields[name].failed = this.fields[name].dirty && ! value;
-};
-
-  /**
-   * Gets a field flag value.
-   */
-FieldBag.prototype._getFieldFlag = function _getFieldFlag (name, flag) {
-  if (this.fields[name]) {
-    return this.fields[name][flag];
-  }
-
-  return false;
-};
-
-FieldBag.prototype.dirty = function dirty (name) {
-    var this$1 = this;
-
-  if (! name) {
-    return Object.keys(this.fields).some(function (field) { return this$1.fields[field].dirty; });
-  }
-
-  return this._getFieldFlag(name, 'dirty');
-};
-
-FieldBag.prototype.valid = function valid (name) {
-    var this$1 = this;
-
-  if (! name) {
-    return Object.keys(this.fields).every(function (field) { return this$1.fields[field].valid; });
-  }
-
-  return this._getFieldFlag(name, 'valid');
-};
-
-FieldBag.prototype.passed = function passed (name) {
-    var this$1 = this;
-
-  if (! name) {
-    return Object.keys(this.fields).every(function (field) { return this$1.fields[field].passed; });
-  }
-
-  return this._getFieldFlag(name, 'passed');
-};
-
-FieldBag.prototype.failed = function failed (name) {
-    var this$1 = this;
-
-  if (! name) {
-    return Object.keys(this.fields).some(function (field) { return this$1.fields[field].failed; });
-  }
-
-  return this._getFieldFlag(name, 'failed');
-};
-
-FieldBag.prototype.clean = function clean (name) {
-  if (! name) {
-    return ! this.dirty();
-  }
-
-  return this._getFieldFlag(name, 'clean');
-};
-
 var LOCALE = 'en';
 var STRICT_MODE = true;
 var DICTIONARY = new Dictionary({
@@ -1631,9 +1637,10 @@ var Validator = function Validator(validations, options) {
 
   this.strictMode = STRICT_MODE;
   this.$scopes = { __global__: {} };
-  this.fieldBag = new FieldBag();
+  this.$vm = options.vm;
   this._createFields(validations);
   this.errorBag = new ErrorBag();
+  this.fieldBag = {};
   // Some fields will be later evaluated, because the vm isn't mounted yet
   // so it may register it under an inaccurate scope.
   this.$deferred = [];
@@ -1650,13 +1657,27 @@ var Validator = function Validator(validations, options) {
   }
 };
 
-var prototypeAccessors = { dictionary: {} };
+var prototypeAccessors = { dictionary: {},locale: {},rules: {} };
 
 /**
- * @return Dictionary
+ * @return {Dictionary}
  */
 prototypeAccessors.dictionary.get = function () {
   return DICTIONARY;
+};
+
+/**
+ * @return {String}
+ */
+prototypeAccessors.locale.get = function () {
+  return LOCALE;
+};
+
+/**
+ * @return {Object}
+ */
+prototypeAccessors.rules.get = function () {
+  return Rules;
 };
 
 /**
@@ -1672,8 +1693,8 @@ Validator._merge = function _merge (name, validator) {
   }
 
   Rules[name] = validator.validate;
-  if (validator.getMessage && isCallable(validator.getMessage)) {
-    DICTIONARY.setMessage('en', name, validator.getMessage);
+  if (isCallable(validator.getMessage)) {
+    DICTIONARY.setMessage(LOCALE, name, validator.getMessage);
   }
 
   if (validator.messages) {
@@ -1915,7 +1936,6 @@ Validator.prototype._createField = function _createField (name, checks, scope) {
   }
 
   var field = this.$scopes[scope][name];
-  this.fieldBag._addIfNotExists(name);
   field.validations = this._normalizeRules(name, checks, scope);
   field.required = this._isRequired(field);
 };
@@ -1970,7 +1990,11 @@ Validator.prototype._normalizeObject = function _normalizeObject (rules) {
     }
 
     if (date.installed && this$1._isADateRule(rule)) {
-      validations[rule].push(this$1._getDateFormat(validations));
+      var dateFormat = this$1._getDateFormat(validations);
+
+      if (! this$1._containsValidation(validations[rule], dateFormat)) {
+        validations[rule].push(this$1._getDateFormat(validations));
+      }
     }
   });
 
@@ -1998,6 +2022,13 @@ Validator.prototype._isADateRule = function _isADateRule (rule) {
 };
 
 /**
+ * Checks if the passed validation appears inside the array.
+ */
+Validator.prototype._containsValidation = function _containsValidation (validations, validation) {
+  return !! ~validations.indexOf(validation);
+};
+
+/**
  * Normalizes string rules.
  * @param {String} rules The rules that will be normalized.
  * @param {Object} field The field object that is being operated on.
@@ -2018,7 +2049,11 @@ Validator.prototype._normalizeString = function _normalizeString (rules) {
 
     validations[parsedRule.name] = parsedRule.params;
     if (date.installed && this$1._isADateRule(parsedRule.name)) {
-      validations[parsedRule.name].push(this$1._getDateFormat(validations));
+      var dateFormat = this$1._getDateFormat(validations);
+
+      if (! this$1._containsValidation(validations[parsedRule.name], dateFormat)) {
+        validations[parsedRule.name].push(this$1._getDateFormat(validations));
+      }
     }
   });
 
@@ -2089,7 +2124,7 @@ Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule, sc
 Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field, scope) {
     if ( scope === void 0 ) scope = '__global__';
 
-  return this.$scopes[scope][field].name || this.dictionary.getAttribute(LOCALE, field, field);
+  return this.$scopes[scope][field].as || this.dictionary.getAttribute(LOCALE, field, field);
 };
 
 /**
@@ -2154,6 +2189,75 @@ Validator.prototype._test = function _test (name, value, rule, scope) {
 };
 
 /**
+ * Adds an event listener for a specific field.
+ * @param {String} name
+ * @param {String} fieldName
+ * @param {Function} callback
+ */
+Validator.prototype.on = function on (name, fieldName, callback) {
+  if (! fieldName) {
+    throw new ValidatorException(("Cannot add a listener for non-existent field " + fieldName + "."));
+  }
+
+  if (! isCallable(callback)) {
+    throw new ValidatorException(("The " + name + " callback for field " + fieldName + " is not callable."));
+  }
+
+  var scope = '__global__';
+  if (fieldName.indexOf('.') > -1) {
+    // if no such field, try the scope form.
+    if (! this.$scopes.__global__[name]) {
+      var assign$$1;
+        (assign$$1 = fieldName.split('.'), scope = assign$$1[0], fieldName = assign$$1[1]);
+    }
+  }
+
+  this.$scopes[scope][fieldName].events[name] = callback;
+};
+
+/**
+ * Removes the event listener for a specific field.
+ * @param {String} name
+ * @param {String} fieldName
+ */
+Validator.prototype.off = function off (name, fieldName) {
+  if (! fieldName) {
+    warn(("Cannot remove a listener for non-existent field " + fieldName + "."));
+  }
+
+  var scope = '__global__';
+  if (fieldName.indexOf('.') > -1) {
+    // if no such field, try the scope form.
+    if (! this.$scopes.__global__[name]) {
+      var assign$$1;
+        (assign$$1 = fieldName.split('.'), scope = assign$$1[0], fieldName = assign$$1[1]);
+    }
+  }
+  this.$scopes[scope][fieldName].events[name] = undefined;
+};
+
+Validator.prototype._assignFlags = function _assignFlags (field) {
+  field.flags = {
+    untouched: true,
+    touched: false,
+    dirty: false,
+    pristine: true,
+    valid: false,
+    invalid: false
+  };
+
+  var flagObj = {};
+    flagObj[field.name] = field.flags;
+  if (field.scope === '__global__') {
+    this.fieldBag = assign({}, this.fieldBag, flagObj);
+    return;
+  }
+
+  this.fieldBag = assign({}, this.fieldBag, ( obj = {}, obj[("$" + (field.scope))] = flagObj, obj ));
+    var obj;
+};
+
+/**
  * Registers a field to be validated.
  *
  * @param{string} name The field name.
@@ -2170,13 +2274,24 @@ Validator.prototype.attach = function attach (name, checks, options) {
     this$1.updateField(name, checks, options);
     var field = this$1.$scopes[options.scope][name];
     field.scope = options.scope;
-    field.name = options.prettyName;
+    field.name = name;
+    field.as = options.prettyName;
     field.getter = options.getter;
     field.context = options.context;
     field.listeners = options.listeners || { detach: function detach() {} };
     field.el = field.listeners.el;
+    field.events = {};
+    this$1._assignFlags(field);
+
+    if (field.listeners.classes) {
+      field.listeners.classes.attach(field);
+    }
     this$1._setAriaRequiredAttribute(field);
     this$1._setAriaValidAttribute(field, true);
+    // if initial modifier is applied, validate immediatly.
+    if (options.initial) {
+      this$1.validate(name, field.getter(field.context()), field.scope).catch(function () {});
+    }
   };
 
   var scope = isCallable(options.scope) ? options.scope() : options.scope;
@@ -2184,7 +2299,6 @@ Validator.prototype.attach = function attach (name, checks, options) {
     this.$deferred.push(attach);
     return;
   }
-
 
   attach();
 };
@@ -2200,6 +2314,23 @@ Validator.prototype.init = function init () {
   this.$deferred = [];
 
   return this;
+};
+
+/**
+ * Sets the flags on a field.
+ *
+ * @param {String} name
+ * @param {Object} flags
+ */
+Validator.prototype.flag = function flag (name, flags) {
+  if (! this.fieldBag[name]) {
+    return;
+  }
+  var field = this.fieldBag[name];
+
+  Object.keys(field).forEach(function (flag) {
+    field[flag] = flags[flag] !== undefined ? flags[flag] : field[flag];
+  });
 };
 
 /**
@@ -2230,10 +2361,10 @@ Validator.prototype.append = function append (name, checks, options) {
 Validator.prototype.updateField = function updateField (name, checks, options) {
     if ( options === void 0 ) options = {};
 
-  var field = (this.$scopes[options.scope] && this.$scopes[options.scope][name]) || null;
+  var field = getPath(((options.scope) + "." + name), this.$scopes, null);
   var oldChecks = field ? JSON.stringify(field.validations) : '';
   this._createField(name, checks, options.scope);
-  field = (this.$scopes[options.scope] && this.$scopes[options.scope][name]) || null;
+  field = getPath(((options.scope) + "." + name), this.$scopes, null);
   var newChecks = field ? JSON.stringify(field.validations) : '';
 
   // compare both newChecks and oldChecks to make sure we don't trigger uneccessary directive
@@ -2259,7 +2390,6 @@ Validator.prototype.detach = function detach (name, scope) {
 
   this.$scopes[scope][name].listeners.detach();
   this.errorBag.remove(name, scope);
-  this.fieldBag._remove(name);
   delete this.$scopes[scope][name];
 };
 
@@ -2280,15 +2410,6 @@ Validator.prototype.extend = function extend (name, validator) {
  */
 Validator.prototype.getErrors = function getErrors () {
   return this.errorBag;
-};
-
-/**
- * Gets the currently active locale.
- *
- * @return {String} Locale identifier.
- */
-Validator.prototype.getLocale = function getLocale () {
-  return LOCALE;
 };
 
 /**
@@ -2386,9 +2507,10 @@ Validator.prototype.validate = function validate (name, value, scope, throws) {
   this.errorBag.remove(name, scope);
   // if its not required and is empty or null or undefined then it passes.
   if (! field.required && ~[null, undefined, ''].indexOf(value)) {
-    this.fieldBag._setFlags(name, { valid: true, dirty: true });
     this._setAriaValidAttribute(field, true);
-
+    if (field.events && isCallable(field.events.after)) {
+      field.events.after({ valid: true });
+    }
     return Promise.resolve(true);
   }
 
@@ -2407,24 +2529,35 @@ Validator.prototype.validate = function validate (name, value, scope, throws) {
 
       // Early exit.
       if (! result) {
+        if (field.events && isCallable(field.events.after)) {
+          field.events.after({ valid: false });
+        }
         throw new ValidatorException('Validation Aborted.');
       }
 
+      if (field.events && isCallable(field.events.after)) {
+        field.events.after({ valid: true });
+      }
       return Promise.resolve(result);
     });
 
     return Promise.all(promises).then(function (values) {
       var valid = values.every(function (t) { return t; });
-      this$1.fieldBag._setFlags(name, { valid: valid, dirty: true });
       this$1._setAriaValidAttribute(field, valid);
 
       if (! valid && throws) {
+        if (field.events && isCallable(field.events.after)) {
+          field.events.after({ valid: false });
+        }
         throw new ValidatorException('Failed Validation');
       }
       return valid;
     });
   } catch (error) {
     if (error.msg === '[vee-validate]: Validation Aborted.') {
+      if (field.events && isCallable(field.events.after)) {
+        field.events.after({ valid: false });
+      }
       return Promise.resolve(false);
     }
 
@@ -2436,7 +2569,7 @@ Validator.prototype.validate = function validate (name, value, scope, throws) {
  * Sets the aria-invalid attribute on the element.
  */
 Validator.prototype._setAriaValidAttribute = function _setAriaValidAttribute (field, valid) {
-  if (! field.el) {
+  if (! field.el || field.listeners.component) {
     return;
   }
 
@@ -2447,7 +2580,7 @@ Validator.prototype._setAriaValidAttribute = function _setAriaValidAttribute (fi
  * Sets the aria-required attribute on the element.
  */
 Validator.prototype._setAriaRequiredAttribute = function _setAriaRequiredAttribute (field) {
-  if (! field.el) {
+  if (! field.el || field.listeners.component) {
     return;
   }
 
@@ -2457,10 +2590,12 @@ Validator.prototype._setAriaRequiredAttribute = function _setAriaRequiredAttribu
 /**
  * Validates each value against the corresponding field validations.
  * @param{object} values The values to be validated.
+ * @param{String} scope The scope to be applied on validation.
  * @return {Promise} Returns a promise with the validation result.
  */
-Validator.prototype.validateAll = function validateAll (values) {
+Validator.prototype.validateAll = function validateAll (values, scope) {
     var this$1 = this;
+    if ( scope === void 0 ) scope = '__global__';
 
   var normalizedValues;
   if (! values || typeof values === 'string') {
@@ -2470,7 +2605,8 @@ Validator.prototype.validateAll = function validateAll (values) {
     normalizedValues = {};
     Object.keys(values).forEach(function (key) {
       normalizedValues[key] = {
-        value: values[key]
+        value: values[key],
+        scope: scope
       };
     });
   }
@@ -2481,8 +2617,8 @@ Validator.prototype.validateAll = function validateAll (values) {
     false // do not throw
   ); });
 
-  return Promise.all(promises).then(function (values) {
-    var valid = values.every(function (t) { return t; });
+  return Promise.all(promises).then(function (results) {
+    var valid = results.every(function (t) { return t; });
     if (! valid) {
       throw new ValidatorException('Validation Failed');
     }
@@ -2526,6 +2662,117 @@ var makeMixin = function (Vue, options) { return ({
 })
   var obj; };
 
+var DEFAULT_CLASS_NAMES = {
+  touched: 'touched', // the control has been blurred
+  untouched: 'untouched', // the control hasn't been blurred
+  valid: 'valid', // model is valid
+  invalid: 'invalid', // model is invalid
+  pristine: 'pristine', // control has not been interacted with
+  dirty: 'dirty' // control has been interacted with
+};
+
+var ClassListener = function ClassListener(el, validator, options) {
+  if ( options === void 0 ) options = {};
+
+  this.el = el;
+  this.validator = validator;
+  this.enabled = options.enableAutoClasses;
+  this.classNames = assign({}, DEFAULT_CLASS_NAMES, options.classNames || {});
+  this.listeners = {};
+};
+
+/**
+ * Resets the classes state.
+ */
+ClassListener.prototype.reset = function reset () {
+  // detach all listeners.
+  this.detach();
+
+  // remove classes
+  this.remove(this.classNames.dirty);
+  this.remove(this.classNames.touched);
+  this.remove(this.classNames.valid);
+  this.remove(this.classNames.invalid);
+
+  // listen again.
+  this.attach(this.field);
+};
+
+/**
+ * Attach field with its listeners.
+ * @param {*} field
+ */
+ClassListener.prototype.attach = function attach (field) {
+    var this$1 = this;
+
+  this.field = field;
+  this.add(this.classNames.pristine);
+  this.add(this.classNames.untouched);
+
+  // listen for focus event.
+  this.listeners.focus = function () {
+    this$1.remove(this$1.classNames.untouched);
+    this$1.add(this$1.classNames.touched);
+    // only needed once.
+    this$1.el.removeEventListener('focus', this$1.listeners.focus);
+    this$1.field.flags.touched = true;
+    this$1.field.flags.untouched = false;
+  };
+
+  // listen for input.
+  this.listeners.input = function () {
+    this$1.remove(this$1.classNames.pristine);
+    this$1.add(this$1.classNames.dirty);
+    // only needed once.
+    this$1.el.removeEventListener('input', this$1.listeners.input);
+    this$1.field.flags.dirty = true;
+    this$1.field.flags.pristine = false;
+  };
+
+  this.listeners.after = function (e) {
+    this$1.remove(e.valid ? this$1.classNames.invalid : this$1.classNames.valid);
+    this$1.add(e.valid ? this$1.classNames.valid : this$1.classNames.invalid);
+    this$1.field.flags.valid = e.valid;
+    this$1.field.flags.invalid = ! e.valid;
+  };
+
+  this.el.addEventListener('focus', this.listeners.focus);
+  this.el.addEventListener('input', this.listeners.input);
+  this.validator.on('after', ((this.field.scope) + "." + (this.field.name)), this.listeners.after);
+};
+
+/**
+ * Detach all listeners.
+ */
+ClassListener.prototype.detach = function detach () {
+  // TODO: Why could the field be undefined?
+  if (! this.field) { return; }
+
+  this.el.removeEventListener('focus', this.listeners.focus);
+  this.el.removeEventListener('input', this.listeners.input);
+  this.validator.off('after', ((this.field.scope) + "." + (this.field.name)));
+};
+
+/**
+ * Add a class.
+ * @param {*} className
+ */
+ClassListener.prototype.add = function add (className) {
+  if (! this.enabled || this.field.component) { return; }
+
+  addClass(this.el, className);
+};
+
+/**
+ * Remove a class.
+ * @param {*} className
+ */
+ClassListener.prototype.remove = function remove (className) {
+  if (! this.enabled || this.field.component) { return; }
+
+  removeClass(this.el, className);
+};
+
 var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) {
   this.unwatch = undefined;
   this.callbacks = [];
@@ -2537,6 +2784,7 @@ var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) 
   this.options = options;
   this.fieldName = this._resolveFieldName();
   this.model = this._resolveModel(vnode.data.directives);
+  this.classes = new ClassListener(el, this.vm.$validator, options);
 };
 
 /**
@@ -2546,23 +2794,7 @@ ListenerGenerator.prototype._resolveModel = function _resolveModel (directives) 
   var expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
   var model = find(directives, function (d) { return d.name === 'model' && expRegex.test(d.expression); });
 
-  return model && this._isExistingPath(model.expression) && model.expression;
-};
-
-/**
- * Checks if the object path exists.
- */
-ListenerGenerator.prototype._isExistingPath = function _isExistingPath (path) {
-  var obj = this.vm;
-  return path.split('.').every(function (prop) {
-    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
-      return false;
-    }
-
-    obj = obj[prop];
-
-    return true;
-  });
+  return model && getPath(model.expression, this.vm);
 };
 
   /**
@@ -2668,9 +2900,7 @@ ListenerGenerator.prototype._checkboxListener = function _checkboxListener () {
 ListenerGenerator.prototype._validate = function _validate (value) {
   return this.vm.$validator.validate(
     this.fieldName, value, this.scope || getScope(this.el)
-    ).catch(function (result) {
-      return result;
-    });
+    ).catch(function (result) { return result; });
 };
 
   /**
@@ -2707,8 +2937,11 @@ ListenerGenerator.prototype._attachValidatorEvent = function _attachValidatorEve
         return;
       }
 
-      target.addEventListener('input', listener);
-      this$1.callbacks.push({ name: 'input', listener: listener, el: target });
+      var events = getDataAttribute(this$1.el, 'validate-on') || 'input|blur';
+      events.split('|').forEach(function (e) {
+        target.addEventListener(e, listener, false);
+        this$1.callbacks.push({ name: e, listener: listener, el: target });
+      });
     });
   }
 };
@@ -2778,6 +3011,7 @@ ListenerGenerator.prototype._attachComponentListeners = function _attachComponen
   }, getDataAttribute(this.el, 'delay') || this.options.delay);
 
   this.component.$on('input', this.componentListener);
+  this.componentPropUnwatch = this.component.$watch('value', this.componentListener);
 };
 
 /**
@@ -2795,16 +3029,16 @@ ListenerGenerator.prototype._attachFieldListeners = function _attachFieldListene
 
   var handler = this._getSuitableListener();
   var listener = debounce(
-          handler.listener.bind(this),
-          getDataAttribute(this.el, 'delay') || this.options.delay
-      );
+    handler.listener.bind(this),
+    getDataAttribute(this.el, 'delay') || this.options.delay
+  );
 
   if (~['radio', 'checkbox'].indexOf(this.el.type)) {
     this.vm.$nextTick(function () {
       var elms = document.querySelectorAll(("input[name=\"" + (this$1.el.name) + "\"]"));
       toArray(elms).forEach(function (input) {
         handler.names.forEach(function (handlerName) {
-          input.addEventListener(handlerName, listener);
+          input.addEventListener(handlerName, listener, false);
           this$1.callbacks.push({ name: handlerName, listener: listener, el: input });
         });
       });
@@ -2814,7 +3048,7 @@ ListenerGenerator.prototype._attachFieldListeners = function _attachFieldListene
   }
 
   handler.names.forEach(function (handlerName) {
-    this$1.el.addEventListener(handlerName, listener);
+    this$1.el.addEventListener(handlerName, listener, false);
     this$1.callbacks.push({ name: handlerName, listener: listener, el: this$1.el });
   });
 };
@@ -2829,7 +3063,7 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
     return {
       context: function () { return this$1.component; },
       getter: function getter(context) {
-        return context[getDataAttribute(context.$el, 'value-path')] || context.value;
+        return context.value;
       }
     };
   }
@@ -2900,16 +3134,14 @@ ListenerGenerator.prototype._attachModelWatcher = function _attachModelWatcher (
       var debounced = debounce(function (value) {
         this$1.vm.$validator.validate(
           this$1.fieldName, value, this$1.scope || getScope(this$1.el)
-          ).catch(function (result) {
-            return result
-          });
+        ).catch(function (result) { return result; });
       }, getDataAttribute(this$1.el, 'delay') || this$1.options.delay);
       this$1.unwatch = this$1.vm.$watch(arg, debounced, { deep: true });
       // No need to attach it on element as it will use the vue watcher.
       return;
     }
 
-    this$1.el.addEventListener(name, listener);
+    this$1.el.addEventListener(name, listener, false);
     this$1.callbacks.push({ name: name, listener: listener, el: this$1.el });
   });
 };
@@ -2933,9 +3165,14 @@ ListenerGenerator.prototype.attach = function attach () {
       prettyName: getDataAttribute(this.el, 'as') || this.el.title,
       context: context,
       getter: getter,
-      listeners: this
+      listeners: this,
+      initial: this.binding.modifiers.initial
     }
   );
+
+  if (this.binding.modifiers.disable) {
+    return;
+  }
 
   this._attachValidatorEvent();
   var arg = this._getArg();
@@ -2953,11 +3190,14 @@ ListenerGenerator.prototype.attach = function attach () {
 ListenerGenerator.prototype.detach = function detach () {
   if (this.component) {
     this.component.$off('input', this.componentListener);
+    this.componentPropUnwatch();
   }
 
   if (this.unwatch) {
     this.unwatch();
   }
+
+  this.classes.detach();
 
   this.callbacks.forEach(function (h) {
     h.el.removeEventListener(h.name, h.listener);
@@ -2967,65 +3207,19 @@ ListenerGenerator.prototype.detach = function detach () {
 
 var listenersInstances = [];
 
-function addClasses(el, flags, classNames) {
-  if (! flags) { return; }
-
-  if (flags.dirty) {
-    addClass(el, classNames.touched);
-    removeClass(el, classNames.untouched);
-  } else {
-    addClass(el, classNames.untouched);
-    removeClass(el, classNames.touched);
-  }
-
-  if (flags.valid || flags.passed) {
-    addClass(el, classNames.valid);
-    removeClass(el, classNames.invalid);
-  } else {
-    addClass(el, classNames.invalid);
-    removeClass(el, classNames.valid);
-  }
-}
-
-function setDirty(el, classNames) {
-  addClass(el, classNames.dirty);
-  removeClass(el, classNames.pristine);
-}
-
-function setPristine(el, classNames) {
-  addClass(el, classNames.pristine);
-  removeClass(el, classNames.dirty);
-}
-
 var makeDirective = function (options) { return ({
   inserted: function inserted(el, binding, vnode) {
     var listener = new ListenerGenerator(el, binding, vnode, options);
-
     listener.attach();
     listenersInstances.push({ vm: vnode.context, el: el, instance: listener });
-
-    if (options.enableAutoClasses) {
-      setPristine(el, options.classNames);
-      el.onfocus = function () { setDirty(el, options.classNames); };
-      addClasses(
-        el,
-        vnode.context.$validator.fieldBag.fields[listener.fieldName],
-        options.classNames
-      );
-    }
   },
   update: function update(el, ref, ref$1) {
     var expression = ref.expression;
     var value = ref.value;
-    var oldValue = ref.oldValue;
     var context = ref$1.context;
 
     var ref$2 = find(listenersInstances, function (l) { return l.vm === context && l.el === el; });
     var instance = ref$2.instance;
-    if (options.enableAutoClasses) {
-      addClasses(el, context.$validator.fieldBag.fields[instance.fieldName], options.classNames);
-    }
-
     // make sure we don't do uneccessary work if no expression was passed
     // nor if the expression did not change.
     if (! expression || (instance.cachedExp === JSON.stringify(value))) { return; }
@@ -3053,52 +3247,82 @@ var makeDirective = function (options) { return ({
   }
 }); };
 
-var DEFAULT_CLASS_NAMES = {
-  touched: 'touched', // the control has been blurred
-  untouched: 'untouched', // the control hasn't been blurred
-  valid: 'valid', // model is valid
-  invalid: 'invalid', // model is invalid
-  pristine: 'pristine', // control has not been interacted with
-  dirty: 'dirty' // control has been interacted with
+var defaultOptions = {
+  locale: 'en',
+  delay: 0,
+  errorBagName: 'errors',
+  dictionary: null,
+  strict: true,
+  fieldsBagName: 'fields',
+  enableAutoClasses: false,
+  classNames: {}
+};
+
+var normalize = function (fields) {
+  if (Array.isArray(fields)) {
+    return fields.reduce(function (prev, curr) {
+      if (~curr.indexOf('.')) {
+        prev[curr.split('.')[1]] = curr;
+      } else {
+        prev[curr] = curr;
+      }
+
+      return prev;
+    }, {});
+  }
+
+  return fields;
+};
+
+/**
+ * Maps fields to computed functions.
+ *
+ * @param {Array|Object} fields
+ */
+var mapFields = function (fields) {
+  var normalized = normalize(fields);
+  return Object.keys(normalized).reduce(function (prev, curr) {
+    var field = normalized[curr];
+    prev[curr] = function mappedField() {
+      if (this.$validator.fieldBag[field]) {
+        return this.$validator.fieldBag[field];
+      }
+
+      var index = field.indexOf('.');
+      if (index <= 0) {
+        return {};
+      }
+      var ref = field.split('.');
+      var scope = ref[0];
+      var name = ref[1];
+
+      return getPath(("$" + scope + "." + name), this.$validator.fieldBag, {});
+    };
+
+    return prev;
+  }, {});
 };
 
 // eslint-disable-next-line
-var install = function (Vue, ref) {
-  if ( ref === void 0 ) ref = {};
-  var locale = ref.locale; if ( locale === void 0 ) locale = 'en';
-  var delay = ref.delay; if ( delay === void 0 ) delay = 0;
-  var errorBagName = ref.errorBagName; if ( errorBagName === void 0 ) errorBagName = 'errors';
-  var dictionary = ref.dictionary; if ( dictionary === void 0 ) dictionary = null;
-  var strict = ref.strict; if ( strict === void 0 ) strict = true;
-  var fieldsBagName = ref.fieldsBagName; if ( fieldsBagName === void 0 ) fieldsBagName = 'fields';
-  var enableAutoClasses = ref.enableAutoClasses; if ( enableAutoClasses === void 0 ) enableAutoClasses = false;
-  var classNames = ref.classNames; if ( classNames === void 0 ) classNames = {};
-
-  if (dictionary) {
-    Validator.updateDictionary(dictionary);
+var install = function (Vue, options) {
+  var config = assign({}, defaultOptions, options);
+  if (config.dictionary) {
+    Validator.updateDictionary(config.dictionary);
   }
 
-  Validator.setLocale(locale);
-  Validator.setStrictMode(strict);
+  Validator.setLocale(config.locale);
+  Validator.setStrictMode(config.strict);
 
-  var options = {
-    locale: locale,
-    delay: delay,
-    dictionary: dictionary,
-    errorBagName: errorBagName,
-    fieldsBagName: fieldsBagName,
-    enableAutoClasses: enableAutoClasses,
-    classNames: assign({}, DEFAULT_CLASS_NAMES, classNames)
-  };
-
-  Vue.mixin(makeMixin(Vue, options));
-  Vue.directive('validate', makeDirective(options));
+  Vue.mixin(makeMixin(Vue, config));
+  Vue.directive('validate', makeDirective(config));
 };
 
 var index = {
   install: install,
+  mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
+  Rules: Rules,
   version: '2.0.0-beta.25'
 };
 
