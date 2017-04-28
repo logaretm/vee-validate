@@ -2737,11 +2737,12 @@ ClassListener.prototype.attach = function attach (field) {
     this$1.field.flags.invalid = ! e.valid;
   };
 
-  this.el.addEventListener('focus', this.listeners.focus);
-  this.el.addEventListener('input', this.listeners.input);
   if (this.component) {
     this.component.$once('input', this.listeners.input);
     this.component.$once('focus', this.listeners.focus);
+  } else {
+    this.el.addEventListener('focus', this.listeners.focus);
+    this.el.addEventListener('input', this.listeners.input);
   }
   this.validator.on('after', ((this.field.scope) + "." + (this.field.name)), this.listeners.after);
 };
@@ -2753,8 +2754,10 @@ ClassListener.prototype.detach = function detach () {
   // TODO: Why could the field be undefined?
   if (! this.field) { return; }
 
-  this.el.removeEventListener('focus', this.listeners.focus);
-  this.el.removeEventListener('input', this.listeners.input);
+  if (! this.component) {
+    this.el.removeEventListener('focus', this.listeners.focus);
+    this.el.removeEventListener('input', this.listeners.input);
+  }
   this.validator.off('after', ((this.field.scope) + "." + (this.field.name)));
 };
 
