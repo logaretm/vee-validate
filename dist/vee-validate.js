@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-beta.25
+ * vee-validate v2.0.0-rc.1
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -2678,6 +2678,7 @@ var ClassListener = function ClassListener(el, validator, options) {
   this.validator = validator;
   this.enabled = options.enableAutoClasses;
   this.classNames = assign({}, DEFAULT_CLASS_NAMES, options.classNames || {});
+  this.component = options.component;
   this.listeners = {};
 };
 
@@ -2738,6 +2739,10 @@ ClassListener.prototype.attach = function attach (field) {
 
   this.el.addEventListener('focus', this.listeners.focus);
   this.el.addEventListener('input', this.listeners.input);
+  if (this.component) {
+    this.component.$once('input', this.listeners.input);
+    this.component.$once('focus', this.listeners.focus);
+  }
   this.validator.on('after', ((this.field.scope) + "." + (this.field.name)), this.listeners.after);
 };
 
@@ -2758,7 +2763,7 @@ ClassListener.prototype.detach = function detach () {
  * @param {*} className
  */
 ClassListener.prototype.add = function add (className) {
-  if (! this.enabled || this.field.component) { return; }
+  if (! this.enabled || this.component) { return; }
 
   addClass(this.el, className);
 };
@@ -2768,7 +2773,7 @@ ClassListener.prototype.add = function add (className) {
  * @param {*} className
  */
 ClassListener.prototype.remove = function remove (className) {
-  if (! this.enabled || this.field.component) { return; }
+  if (! this.enabled || this.component) { return; }
 
   removeClass(this.el, className);
 };
@@ -2784,7 +2789,11 @@ var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) 
   this.options = options;
   this.fieldName = this._resolveFieldName();
   this.model = this._resolveModel(vnode.data.directives);
-  this.classes = new ClassListener(el, this.vm.$validator, options);
+  this.classes = new ClassListener(el, this.vm.$validator, {
+    component: this.component,
+    enableAutoClasses: options.enableAutoClasses,
+    classNames: options.classNames
+  });
 };
 
 /**
@@ -3323,7 +3332,7 @@ var index = {
   Validator: Validator,
   ErrorBag: ErrorBag,
   Rules: Rules,
-  version: '2.0.0-beta.25'
+  version: '2.0.0-rc.1'
 };
 
 return index;

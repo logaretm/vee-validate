@@ -15,7 +15,11 @@ export default class ListenerGenerator {
     this.options = options;
     this.fieldName = this._resolveFieldName();
     this.model = this._resolveModel(vnode.data.directives);
-    this.classes = new ClassManager(el, this.vm.$validator, options);
+    this.classes = new ClassManager(el, this.vm.$validator, {
+      component: this.component,
+      enableAutoClasses: options.enableAutoClasses,
+      classNames: options.classNames
+    });
   }
 
   /**

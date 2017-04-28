@@ -15,6 +15,7 @@ export default class ClassListener {
     this.validator = validator;
     this.enabled = options.enableAutoClasses;
     this.classNames = assign({}, DEFAULT_CLASS_NAMES, options.classNames || {});
+    this.component = options.component;
     this.listeners = {};
   }
 
@@ -73,6 +74,10 @@ export default class ClassListener {
 
     this.el.addEventListener('focus', this.listeners.focus);
     this.el.addEventListener('input', this.listeners.input);
+    if (this.component) {
+      this.component.$once('input', this.listeners.input);
+      this.component.$once('focus', this.listeners.focus);
+    }
     this.validator.on('after', `${this.field.scope}.${this.field.name}`, this.listeners.after);
   }
 
@@ -93,7 +98,7 @@ export default class ClassListener {
    * @param {*} className
    */
   add(className) {
-    if (! this.enabled || this.field.component) return;
+    if (! this.enabled || this.component) return;
 
     addClass(this.el, className);
   }
@@ -103,7 +108,7 @@ export default class ClassListener {
    * @param {*} className
    */
   remove(className) {
-    if (! this.enabled || this.field.component) return;
+    if (! this.enabled || this.component) return;
 
     removeClass(this.el, className);
   }
