@@ -33,7 +33,7 @@
     ]
   },
   "devDependencies": {
-    "ava": "^0.19.1",
+    "ava": "0.18.2",
     "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.24.1",
     "browser-env": "^2.0.30",
