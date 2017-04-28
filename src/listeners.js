@@ -15,9 +15,7 @@ export default class ListenerGenerator {
     this.options = options;
     this.fieldName = this._resolveFieldName();
     this.model = this._resolveModel(vnode.data.directives);
-    if (options.enableAutoClasses) {
-      this.classes = new ClassManager(el, this.vm.$validator, options);
-    }
+    this.classes = new ClassManager(el, this.vm.$validator, options);
   }
 
   /**
@@ -424,9 +422,7 @@ export default class ListenerGenerator {
       this.unwatch();
     }
 
-    if (this.classes) {
-      this.classes.detach();
-    }
+    this.classes.detach();
 
     this.callbacks.forEach(h => {
       h.el.removeEventListener(h.name, h.listener);

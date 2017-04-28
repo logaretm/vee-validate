@@ -655,6 +655,23 @@ export default class Validator {
   }
 
   /**
+   * Sets the flags on a field.
+   *
+   * @param {String} name
+   * @param {Object} flags
+   */
+  flag(name, flags) {
+    if (! this.fieldBag[name]) {
+      return;
+    }
+    const field = this.fieldBag[name];
+
+    Object.keys(field).forEach(flag => {
+      field[flag] = flags[flag] !== undefined ? flags[flag] : field[flag];
+    });
+  }
+
+  /**
    * Append another validation to an existing field.
    *
    * @param  {string} name The field name.

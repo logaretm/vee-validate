@@ -13,6 +13,7 @@ export default class ClassListener {
   constructor(el, validator, options = {}) {
     this.el = el;
     this.validator = validator;
+    this.enabled = options.enableAutoClasses;
     this.classNames = assign({}, DEFAULT_CLASS_NAMES, options.classNames || {});
     this.listeners = {};
   }
@@ -89,6 +90,8 @@ export default class ClassListener {
    * @param {*} className
    */
   add(className) {
+    if (! this.enabled) return;
+
     addClass(this.el, className);
   }
 
@@ -97,6 +100,8 @@ export default class ClassListener {
    * @param {*} className
    */
   remove(className) {
+    if (! this.enabled) return;
+
     removeClass(this.el, className);
   }
 }
