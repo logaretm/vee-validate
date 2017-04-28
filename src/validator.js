@@ -3,7 +3,7 @@ import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
 import Dictionary from './dictionary';
 import messages from './messages';
-import { warn, isObject, isCallable } from './utils';
+import { warn, isObject, isCallable, assign } from './utils';
 import date from './plugins/date';
 
 let LOCALE = 'en';
@@ -591,6 +591,25 @@ export default class Validator {
     this.$scopes[scope][fieldName].events[name] = undefined;
   }
 
+  _assignFlags(field) {
+    field.flags = {
+      untouched: true,
+      touched: false,
+      dirty: false,
+      pristine: true,
+      valid: false,
+      invalid: false
+    };
+
+    const flagObj = { [field.name]: field.flags };
+    if (field.scope === '__global__') {
+      this.fieldBag = assign({}, this.fieldBag, flagObj);
+      return;
+    }
+
+    this.fieldBag = assign({}, this.fieldBag, { [`$${field.scope}`]: flagObj });
+  }
+
   /**
    * Registers a field to be validated.
    *
@@ -612,15 +631,8 @@ export default class Validator {
       field.listeners = options.listeners || { detach() {} };
       field.el = field.listeners.el;
       field.events = {};
-      field.flags = {
-        untouched: true,
-        touched: false,
-        dirty: false,
-        pristine: true,
-        valid: false,
-        invalid: false
-      };
-      this.fieldBag = Object.assign({}, this.fieldBag, { [name]: field.flags });
+      this._assignFlags(field);
+
       if (field.listeners.classes) {
         field.listeners.classes.attach(field);
       }
