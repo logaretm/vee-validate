@@ -70,7 +70,7 @@ test('should get the arg', t => {
   ];
 
   directives.forEach(dir => {
-    t.is(!! lg._resolveModel([dir]), dir.valid);
+    t.is(lg._resolveModel([dir]) !== undefined, dir.valid);
   });
 });
 
@@ -379,7 +379,8 @@ test('can handle component input event', t => {
   document.body.innerHTML = '<input id="el" type="text" name="name" value="1">';
   const el = document.querySelector('#el');
   const mockedComponent = {
-    $on(whatever, callback) {
+    $on() {
+      // eslint-disable-next-line
       throw 'something';
     },
     $watch() {}
@@ -418,7 +419,7 @@ test('should attach additional listeners for rules with dependent fields', t => 
   t.truthy(~lg.callbacks.map(c => c.el.name).indexOf('other'));
 });
 
-test('should not attach additional listeners for rules with dependent fields that do not exist', t => {
+test('should not attach listeners for rules with dependent fields that do not exist', t => {
   document.body.innerHTML = `<div id="app">
       <input type="text" name="field" id="el" data-vv-rules="confirmed:other">
   </div>`;
@@ -460,7 +461,10 @@ test('detaches listeners', t => {
   const el = document.querySelector('#el');
   const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
   const throws = { unwatch: true, off: true };
+  // eslint-disable-next-line
   lg.unwatch = t => { if (throws.unwatch) throw 'unwatched'; };
+
+  // eslint-disable-next-line
   lg.component = { $off() { if (throws.off) throw 'offed listener'; } };
   lg.componentPropUnwatch = () => {};
 
@@ -480,22 +484,4 @@ test('detaches listeners', t => {
   t.is(lg.callbacks.length, 1);
   lg.detach();
   t.is(calls, 1);
-});
-
-test('checks if the value path exists before using it as an arg', t => {
-  const vnode = helpers.vnode();
-  vnode.context = {
-    some: {
-      value: {
-        path: undefined,
-        val: 1
-      }
-    }
-  };
-  document.body.innerHTML = '<input type="text" name="field" id="el">';
-  const el = document.querySelector('#el');
-  const lg = new ListenerGenerator(el, {}, vnode, {});
-  t.true(lg._isExistingPath('some.value.val')); // exists.
-  t.true(lg._isExistingPath('some.value.path')); // undefined but exists.
-  t.false(lg._isExistingPath('some.value.not')); // does not.
 });

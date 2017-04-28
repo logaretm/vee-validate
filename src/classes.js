@@ -80,6 +80,9 @@ export default class ClassListener {
    * Detach all listeners.
    */
   detach() {
+    // TODO: Why could the field be undefined?
+    if (! this.field) return;
+
     this.el.removeEventListener('focus', this.listeners.focus);
     this.el.removeEventListener('input', this.listeners.input);
     this.validator.off('after', `${this.field.scope}.${this.field.name}`);

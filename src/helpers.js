@@ -1,3 +1,5 @@
+import { getPath } from './utils';
+
 const normalize = (fields) => {
   if (Array.isArray(fields)) {
     return fields.reduce((prev, curr) => {
@@ -34,7 +36,7 @@ const mapFields = (fields) => {
       }
       const [scope, name] = field.split('.');
 
-      return (this.$validator.fieldBag[`$${scope}`] && this.$validator.fieldBag[`$${scope}`][name]) || {};
+      return getPath(`$${scope}.${name}`, this.$validator.fieldBag, {});
     };
 
     return prev;

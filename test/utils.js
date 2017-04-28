@@ -53,35 +53,35 @@ test('returns first matching element from array', t => {
 
 test('should return valid rules data', t => {
   const getRules = utils.getRules;
-  document.body.innerHTML = `<input type="text" name"el" id="el" data-vv-rules="required|email">`;
+  document.body.innerHTML = '<input type="text" name"el" id="el" data-vv-rules="required|email">';
   const el = document.querySelector('#el');
   t.is(getRules(null, null, el), 'required|email');
 
-  let exp = 'someexpr';
+  const exp = 'someexpr';
   let value = 'required|email';
 
   t.is(getRules(exp, value), 'required|email');
-  
+
   value = {
-      rules: {
-          required: true,
-          email: true
-      }
+    rules: {
+      required: true,
+      email: true
+    }
   };
 
   t.deepEqual(getRules(exp, value), {
-      required: true,
-      email: true
+    required: true,
+    email: true
   });
 
   value = {
-      required: true,
-      email: true
+    required: true,
+    email: true
   };
 
   t.deepEqual(getRules(exp, value), {
-      required: true,
-      email: true
+    required: true,
+    email: true
   });
 });
 
@@ -106,7 +106,7 @@ test('assigns objects', t => {
 });
 
 test('removes classes', t => {
-  document.body.innerHTML = `<input id="el" type="text" class="some class">`;
+  document.body.innerHTML = '<input id="el" type="text" class="some class">';
   const el = document.querySelector('#el');
   utils.removeClass(el, 'some');
   t.is(utils.hasClass(el, 'some'), false);
@@ -116,7 +116,7 @@ test('removes classes', t => {
 });
 
 test('adds classes', t => {
-  document.body.innerHTML = `<input id="el" type="text">`;
+  document.body.innerHTML = '<input id="el" type="text">';
   const el = document.querySelector('#el');
   utils.addClass(el, 'some');
   t.is(utils.hasClass(el, 'some'), true);
@@ -128,21 +128,34 @@ test('adds classes', t => {
 });
 
 test('converts array like objects to arrays', t => {
-    document.body.innerHTML = `
+  document.body.innerHTML = `
         <div class="class"></div>
         <div class="class"></div>
         <div class="class"></div>
     `;
 
-    const nodeList = document.querySelectorAll('.class');
-    t.false(Array.isArray(nodeList));
+  const nodeList = document.querySelectorAll('.class');
+  t.false(Array.isArray(nodeList));
 
-    let array = utils.toArray(nodeList);
-    t.true(Array.isArray(array));
+  let array = utils.toArray(nodeList);
+  t.true(Array.isArray(array));
 
     // Test polyfill
-    const from = Array.from;
-    Array.from = undefined;
-    array = utils.toArray(nodeList);
-    t.true(Array.isArray(array));
+  Array.from = undefined;
+  array = utils.toArray(nodeList);
+  t.true(Array.isArray(array));
+});
+
+
+test('gets the value path with a fallback value', t => {
+  const some = {
+    value: {
+      path: undefined,
+      val: 1
+    }
+  };
+
+  t.is(utils.getPath('value.val', some), 1); // exists.
+  t.is(utils.getPath('value.path', some), undefined); // undefined but exists.
+  t.false(utils.getPath('value.not', some, false)); // does not.
 });

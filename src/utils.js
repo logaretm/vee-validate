@@ -16,6 +16,31 @@ export const getScope = (el) => {
 };
 
 /**
+ * Gets the value in an object safely.
+ * @param {String} propPath
+ * @param {Object} target
+ * @param {*} def
+ */
+export const getPath = (propPath, target, def = undefined) => {
+  if (!propPath || !target) return def;
+
+  let value = target;
+  propPath.split('.').every(prop => {
+    if (! Object.prototype.hasOwnProperty.call(value, prop)) {
+      value = def;
+
+      return false;
+    }
+
+    value = value[prop];
+
+    return true;
+  });
+
+  return value;
+};
+
+/**
  * Debounces a function.
  */
 export const debounce = (callback, wait = 0, immediate) => {

@@ -3,7 +3,7 @@ import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
 import Dictionary from './dictionary';
 import messages from './messages';
-import { warn, isObject, isCallable, assign } from './utils';
+import { warn, isObject, isCallable, assign, getPath } from './utils';
 import date from './plugins/date';
 
 let LOCALE = 'en';
@@ -707,10 +707,10 @@ export default class Validator {
    * Updates the field rules with new ones.
    */
   updateField(name, checks, options = {}) {
-    let field = (this.$scopes[options.scope] && this.$scopes[options.scope][name]) || null;
+    let field = getPath(`${options.scope}.${name}`, this.$scopes, null);
     const oldChecks = field ? JSON.stringify(field.validations) : '';
     this._createField(name, checks, options.scope);
-    field = (this.$scopes[options.scope] && this.$scopes[options.scope][name]) || null;
+    field = getPath(`${options.scope}.${name}`, this.$scopes, null);
     const newChecks = field ? JSON.stringify(field.validations) : '';
 
     // compare both newChecks and oldChecks to make sure we don't trigger uneccessary directive
