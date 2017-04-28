@@ -5,6 +5,7 @@ import ErrorBag from './errorBag';
 import Rules from './rules';
 import { assign } from './utils';
 import defaultOptions from './config';
+import mapFields from './helpers';
 
 // eslint-disable-next-line
 const install = (Vue, options) => {
@@ -22,6 +23,7 @@ const install = (Vue, options) => {
 
 export default {
   install,
+  mapFields,
   Validator,
   ErrorBag,
   Rules,
