@@ -894,7 +894,7 @@ export default class Validator {
    * Sets the aria-invalid attribute on the element.
    */
   _setAriaValidAttribute(field, valid) {
-    if (! field.el) {
+    if (! field.el || field.listeners.component) {
       return;
     }
 
@@ -905,7 +905,7 @@ export default class Validator {
    * Sets the aria-required attribute on the element.
    */
   _setAriaRequiredAttribute(field) {
-    if (! field.el) {
+    if (! field.el || field.listeners.component) {
       return;
     }
 

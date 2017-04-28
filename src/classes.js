@@ -90,7 +90,7 @@ export default class ClassListener {
    * @param {*} className
    */
   add(className) {
-    if (! this.enabled) return;
+    if (! this.enabled || this.field.component) return;
 
     addClass(this.el, className);
   }
@@ -100,7 +100,7 @@ export default class ClassListener {
    * @param {*} className
    */
   remove(className) {
-    if (! this.enabled) return;
+    if (! this.enabled || this.field.component) return;
 
     removeClass(this.el, className);
   }
