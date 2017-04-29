@@ -673,14 +673,20 @@ export default class Validator {
    * @param {Object} flags
    */
   flag(name, flags) {
-    if (! this.fieldBag[name]) {
+    let [scope, fieldName] = name.split('.');
+    if (!fieldName) {
+      fieldName = scope;
+      scope = null;
+    }
+    const field = scope ? getPath(`${scope}.${fieldName}`, this.$scopes) : this.$scopes[fieldName];
+    if (! field) {
       return;
     }
-    const field = this.fieldBag[name];
 
-    Object.keys(field).forEach(flag => {
-      field[flag] = flags[flag] !== undefined ? flags[flag] : field[flag];
+    Object.keys(field.flags).forEach(flag => {
+      field.flags[flag] = flags[flag] !== undefined ? flags[flag] : field.flags[flag];
     });
+    field.listeners.classes.sync();
   }
 
   /**

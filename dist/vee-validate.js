@@ -2323,14 +2323,22 @@ Validator.prototype.init = function init () {
  * @param {Object} flags
  */
 Validator.prototype.flag = function flag (name, flags) {
-  if (! this.fieldBag[name]) {
+  var ref = name.split('.');
+    var scope = ref[0];
+    var fieldName = ref[1];
+  if (!fieldName) {
+    fieldName = scope;
+    scope = null;
+  }
+  var field = scope ? getPath((scope + "." + fieldName), this.$scopes) : this.$scopes[fieldName];
+  if (! field) {
     return;
   }
-  var field = this.fieldBag[name];
 
-  Object.keys(field).forEach(function (flag) {
-    field[flag] = flags[flag] !== undefined ? flags[flag] : field[flag];
+  Object.keys(field.flags).forEach(function (flag) {
+    field.flags[flag] = flags[flag] !== undefined ? flags[flag] : field.flags[flag];
   });
+  field.listeners.classes.sync();
 };
 
 /**
@@ -2700,6 +2708,20 @@ ClassListener.prototype.reset = function reset () {
 };
 
 /**
+ * Syncs the automatic classes.
+ */
+ClassListener.prototype.sync = function sync () {
+  if (! this.enabled) { return; }
+
+  this.toggle(this.classNames.dirty, this.field.flags.dirty);
+  this.toggle(this.classNames.pristine, this.field.flags.pristine);
+  this.toggle(this.classNames.valid, this.field.flags.valid);
+  this.toggle(this.classNames.invalid, this.field.flags.invalid);
+  this.toggle(this.classNames.touched, this.field.flags.touched);
+  this.toggle(this.classNames.untouched, this.field.flags.untouched);
+};
+
+/**
  * Attach field with its listeners.
  * @param {*} field
  */
@@ -2738,8 +2760,8 @@ ClassListener.prototype.attach = function attach (field) {
   };
 
   if (this.component) {
-    this.component.$once('input', this.listeners.input);
-    this.component.$once('focus', this.listeners.focus);
+    this.component.$on('input', this.listeners.input);
+    this.component.$on('focus', this.listeners.focus);
   } else {
     this.el.addEventListener('focus', this.listeners.focus);
     this.el.addEventListener('input', this.listeners.input);
@@ -2754,7 +2776,10 @@ ClassListener.prototype.detach = function detach () {
   // TODO: Why could the field be undefined?
   if (! this.field) { return; }
 
-  if (! this.component) {
+  if (this.component) {
+    this.component.$off('input', this.listeners.input);
+    this.component.$off('focus', this.listeners.focus);
+  } else {
     this.el.removeEventListener('focus', this.listeners.focus);
     this.el.removeEventListener('input', this.listeners.input);
   }
@@ -2779,6 +2804,21 @@ ClassListener.prototype.remove = function remove (className) {
   if (! this.enabled || this.component) { return; }
 
   removeClass(this.el, className);
+};
+
+/**
+ * Toggles the class name.
+ *
+ * @param {String} className
+ * @param {Boolean} status
+ */
+ClassListener.prototype.toggle = function toggle (className, status) {
+  if (status) {
+    this.add(className);
+    return;
+  }
+
+  this.remove(className);
 };
 
 var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) {

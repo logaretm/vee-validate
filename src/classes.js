@@ -37,6 +37,20 @@ export default class ClassListener {
   }
 
   /**
+   * Syncs the automatic classes.
+   */
+  sync() {
+    if (! this.enabled) return;
+
+    this.toggle(this.classNames.dirty, this.field.flags.dirty);
+    this.toggle(this.classNames.pristine, this.field.flags.pristine);
+    this.toggle(this.classNames.valid, this.field.flags.valid);
+    this.toggle(this.classNames.invalid, this.field.flags.invalid);
+    this.toggle(this.classNames.touched, this.field.flags.touched);
+    this.toggle(this.classNames.untouched, this.field.flags.untouched);
+  }
+
+  /**
    * Attach field with its listeners.
    * @param {*} field
    */
@@ -73,8 +87,8 @@ export default class ClassListener {
     };
 
     if (this.component) {
-      this.component.$once('input', this.listeners.input);
-      this.component.$once('focus', this.listeners.focus);
+      this.component.$on('input', this.listeners.input);
+      this.component.$on('focus', this.listeners.focus);
     } else {
       this.el.addEventListener('focus', this.listeners.focus);
       this.el.addEventListener('input', this.listeners.input);
@@ -89,7 +103,10 @@ export default class ClassListener {
     // TODO: Why could the field be undefined?
     if (! this.field) return;
 
-    if (! this.component) {
+    if (this.component) {
+      this.component.$off('input', this.listeners.input);
+      this.component.$off('focus', this.listeners.focus);
+    } else {
       this.el.removeEventListener('focus', this.listeners.focus);
       this.el.removeEventListener('input', this.listeners.input);
     }
@@ -114,5 +131,20 @@ export default class ClassListener {
     if (! this.enabled || this.component) return;
 
     removeClass(this.el, className);
+  }
+
+  /**
+   * Toggles the class name.
+   *
+   * @param {String} className
+   * @param {Boolean} status
+   */
+  toggle(className, status) {
+    if (status) {
+      this.add(className);
+      return;
+    }
+
+    this.remove(className);
   }
 }
