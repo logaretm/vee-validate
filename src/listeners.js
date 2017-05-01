@@ -1,6 +1,6 @@
 import ClassManager from './classes';
 import {
-  getScope, debounce, warn, getDataAttribute, isObject, toArray, find, getRules, getPath
+  getScope, debounce, warn, getDataAttribute, isObject, toArray, find, getRules
 } from './utils';
 
 export default class ListenerGenerator {
