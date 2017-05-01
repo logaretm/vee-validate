@@ -606,7 +606,9 @@ export default class Validator {
       return;
     }
 
-    this.fieldBag = assign({}, this.fieldBag, { [`$${field.scope}`]: flagObj });
+    const scopeObj = assign({}, this.fieldBag[`$${field.scope}`], flagObj);
+
+    this.fieldBag = assign({}, this.fieldBag, { [`$${field.scope}`]: scopeObj });
   }
 
   /**

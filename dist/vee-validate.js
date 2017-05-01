@@ -2252,7 +2252,9 @@ Validator.prototype._assignFlags = function _assignFlags (field) {
     return;
   }
 
-  this.fieldBag = assign({}, this.fieldBag, ( obj = {}, obj[("$" + (field.scope))] = flagObj, obj ));
+  var scopeObj = assign({}, this.fieldBag[("$" + (field.scope))], flagObj);
+
+  this.fieldBag = assign({}, this.fieldBag, ( obj = {}, obj[("$" + (field.scope))] = scopeObj, obj ));
     var obj;
 };
 
