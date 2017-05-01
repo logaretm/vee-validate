@@ -1637,7 +1637,6 @@ var Validator = function Validator(validations, options) {
 
   this.strictMode = STRICT_MODE;
   this.$scopes = { __global__: {} };
-  this.$vm = options.vm;
   this._createFields(validations);
   this.errorBag = new ErrorBag();
   this.fieldBag = {};
@@ -2846,7 +2845,23 @@ ListenerGenerator.prototype._resolveModel = function _resolveModel (directives) 
   var expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
   var model = find(directives, function (d) { return d.name === 'model' && expRegex.test(d.expression); });
 
-  return model && getPath(model.expression, this.vm);
+  return model && this._isExistingPath(model.expression) && model.expression;
+};
+
+/**
+ * @param {String} path
+ */
+ListenerGenerator.prototype._isExistingPath = function _isExistingPath (path) {
+  var obj = this.vm;
+  return path.split('.').every(function (prop) {
+    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+
+    obj = obj[prop];
+
+    return true;
+  });
 };
 
   /**

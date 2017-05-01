@@ -1488,7 +1488,6 @@ class Validator {
   constructor(validations, options = { init: true }) {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };
-    this.$vm = options.vm;
     this._createFields(validations);
     this.errorBag = new ErrorBag();
     this.fieldBag = {};
@@ -2645,7 +2644,23 @@ class ListenerGenerator {
     const expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
     const model = find(directives, d => d.name === 'model' && expRegex.test(d.expression));
 
-    return model && getPath(model.expression, this.vm);
+    return model && this._isExistingPath(model.expression) && model.expression;
+  }
+
+  /**
+   * @param {String} path
+   */
+  _isExistingPath(path) {
+    let obj = this.vm;
+    return path.split('.').every(prop => {
+      if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+        return false;
+      }
+
+      obj = obj[prop];
+
+      return true;
+    });
   }
 
     /**
