@@ -19,7 +19,6 @@ export default class Validator {
   constructor(validations, options = { init: true }) {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };
-    this.$vm = options.vm;
     this._createFields(validations);
     this.errorBag = new ErrorBag();
     this.fieldBag = {};
