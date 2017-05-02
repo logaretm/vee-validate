@@ -679,7 +679,7 @@ export default class Validator {
       fieldName = scope;
       scope = null;
     }
-    const field = scope ? getPath(`${scope}.${fieldName}`, this.$scopes) : this.$scopes[fieldName];
+    const field = scope ? getPath(`${scope}.${fieldName}`, this.$scopes) : this.$scopes.__global__[fieldName];
     if (! field) {
       return;
     }

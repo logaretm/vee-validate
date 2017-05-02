@@ -118,7 +118,7 @@ export default class ClassListener {
    * @param {*} className
    */
   add(className) {
-    if (! this.enabled || this.component) return;
+    if (! this.enabled) return;
 
     addClass(this.el, className);
   }
@@ -128,7 +128,7 @@ export default class ClassListener {
    * @param {*} className
    */
   remove(className) {
-    if (! this.enabled || this.component) return;
+    if (! this.enabled) return;
 
     removeClass(this.el, className);
   }
