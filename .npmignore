@@ -1,12 +1,8 @@
 .*
 node_modules
 coverage
-docs
-gh-pages
-src
+/docs
+/src
 /locale
 /test
-webpack.config.js
-rollup.config.dev.js
-rollup.config.prod.js
 /build
