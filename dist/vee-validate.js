@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.1
+ * vee-validate v2.0.0-rc.2
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -3392,7 +3392,7 @@ var index = {
   Validator: Validator,
   ErrorBag: ErrorBag,
   Rules: Rules,
-  version: '2.0.0-rc.1'
+  version: '2.0.0-rc.2'
 };
 
 return index;

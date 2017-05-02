@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.1
+ * vee-validate v2.0.0-rc.2
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -2075,7 +2075,9 @@ class Validator {
       return;
     }
 
-    this.fieldBag = assign({}, this.fieldBag, { [`$${field.scope}`]: flagObj });
+    const scopeObj = assign({}, this.fieldBag[`$${field.scope}`], flagObj);
+
+    this.fieldBag = assign({}, this.fieldBag, { [`$${field.scope}`]: scopeObj });
   }
 
   /**
@@ -3158,7 +3160,7 @@ var index = {
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.1'
+  version: '2.0.0-rc.2'
 };
 
 export default index;
