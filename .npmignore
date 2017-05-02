@@ -4,10 +4,9 @@ coverage
 docs
 gh-pages
 src
-locale
-test
+/locale
+/test
 webpack.config.js
 rollup.config.dev.js
 rollup.config.prod.js
-__tests__
-build
+/build
