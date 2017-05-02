@@ -24,17 +24,17 @@ This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.
 npm install vee-validate --save
 ```
 
-or if you are using **Vue 1.0**:
+or if you are using **Vue 1.0 (deprecated)** :
 ```
 npm install vee-validate@prev --save
 ```
 
-**Note:** Vue 1.0 version is currently outdated and does not have the latest features and fixes.
+**Note:** Vue 1.0 version is currently deprecated and does not have the latest features and fixes.
 
 #### bower
 
 ```
-bower install vee-validate#2.0.0-beta.25 --save
+bower install vee-validate#2.0.0-rc.2 --save
 ```
 
 ### CDN
@@ -108,7 +108,7 @@ You can find more information in the [contribution guide](contributing.md).
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
 
 ### Roadmap
-- First Full Release (Out of beta) - Late March / Mid April 2017
+- First Full Release (Out of beta) - Mid May 2017
 - Vuex Support - Late May / Mid June 2017
 
 ### license MIT
