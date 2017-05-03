@@ -1,0 +1,10 @@
+extends layout/app.pug
+
+block vars
+  - const meta = {
+  -   title: 'Localization | VeeValidate',
+  -   description: 'Translation and multi-language support.'
+  - };
+
+block content
+  include:markdown-it(langPrefix='highlight-') markdown/localization.md

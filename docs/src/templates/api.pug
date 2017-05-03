@@ -1,0 +1,13 @@
+extends layout/app.pug
+
+block vars
+  - const meta = {
+  -   title: 'API | VeeValidate',
+  -   description: 'Classes Public API'
+  - };
+
+block content
+  include:markdown-it(html=true langPrefix="highlight-") markdown/api.md
+  
+  +example('ValidatorExample')
+    validator-example

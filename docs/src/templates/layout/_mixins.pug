@@ -1,0 +1,26 @@
+-
+  function escapeCurly(code) {
+    const regex = /{{ (.+) }}/g;
+    if (regex.test(code)) {      
+      return code.replace(regex, (match, p1) => {
+        return `{{"{" + "{ ${p1} }" + "}"}}`;
+      });
+    }
+
+    return code;
+  }
+
+mixin example(path)
+  code-example
+    div(slot="example")
+      if block
+        block
+    div(slot="js")!= require('!!raw-loader!vue-loader/lib/selector?type=script!../js/components/examples/' + path + '.vue').replace(/^[\/\n]*/m,'')
+    div(slot="html")= escapeCurly(require('!!raw-loader!vue-loader/lib/selector?type=template!../js/components/examples/' + path + '.vue'))
+  
+  mixin note()
+    .note
+      if block
+        block
+      else
+        | This is a note

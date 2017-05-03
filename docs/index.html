@@ -1,0 +1,227 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:title" content="VeeValidate"><meta property="og:description" content="Simple Vue.js Input Validation"><meta name="description" content="Simple Vue.js Input Validation"><title>VeeValidate</title><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css"><link href="assets/css/bundle.css" rel="stylesheet"></head><body><svg style="display: none;"><symbol id="github" viewbox="0 0 16 16"><path d="M8 0C3.58 0 0 3.582 0 8c0 3.535 2.292 6.533 5.47 7.59.4.075.547-.172.547-.385 0-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056 1.225.824 1.225.824.714 1.223 1.873.87 2.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953 0-.873.31-1.587.823-2.147-.09-.202-.36-1.015.07-2.117 0 0 .67-.215 2.2.82.64-.178 1.32-.266 2-.27.68.004 1.36.092 2 .27 1.52-1.035 2.19-.82 2.19-.82.43 1.102.16 1.915.08 2.117.51.56.82 1.274.82 2.147 0 3.073-1.87 3.75-3.65 3.947.28.24.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.14.46.55.38C13.71 14.53 16 11.53 16 8c0-4.418-3.582-8-8-8"></path></symbol><symbol id="i-star" viewbox="0 0 32 32"><path d="M16 2 L20 12 30 12 22 19 25 30 16 23 7 30 10 19 2 12 12 12 Z"></path></symbol><div class="columns is-mobile" id="app"><button :class="{ 'button': true, 'sidebar-button': true, 'is-open': sidebarToggle }" @click="sidebarToggle = ! sidebarToggle" type="button"><span class="icon is-small"><i class="fa fa-bars"></i></span></button><div class="column is-2 sidebar-container" :class="{ 'column is-2 sidebar-container': true, 'is-open': sidebarToggle }"><aside class="menu sidebar"><animated-button link="https://github.com/logaretm/vee-validate"><div class="flex-div" slot="default"><svg class="icon"><use xlink:href="#github"></use></svg>Star</div><div class="flex-div" slot="hover"><svg class="icon"><use xlink:href="#i-star"></use></svg>{{ stars }}</div></animated-button><p class="menu-label">Getting Started</p><ul class="menu-list"><li><a href="index.html#about">What is vee-validate?</a></li><li><a href="index.html#installation">Installation</a><ul><li><a href="index.html#npm">npm</a></li><li><a href="index.html#bower">bower</a></li><li><a href="index.html#cdn">CDN</a></li></ul></li><li><a href="index.html#basic-example">Basic Example</a></li><li><a href="index.html#render-errors">Rendering Errors</a></li><li><a href="index.html#available-rules">Available Validations</a></li><li><a href="index.html#configuration">Configuration</a></li></ul><p class="menu-label">Validation Rules</p><ul class="menu-list"><li><a href="rules.html#syntax">Syntax</a></li><li><a href="rules.html#available-validations">Available Validations</a></li><li><a href="rules.html#custom-rules">Custom Validations</a></li><li><a href="rules.html#custom-messages">Custom Messages</a></li><li><a href="rules.html#custom-attributes">Custom Attributes</a></li></ul><p class="menu-label">Localization</p><ul class="menu-list"><li><a href="localization.html#translation">Translation</a></li><li><a href="localization.html#attributes-data-as">Attributes</a><ul><li><a href="localization.html#attributes-data-as">alias</a></li><li><a href="localization.html#attributes-dictionary">dictionary</a></li></ul></li><li><a href="localization.html#localized-files">Localized Files</a></li></ul><p class="menu-label">Examples</p><ul class="menu-list"><li><a href="examples.html#debounce-example">Debounce</a></li><li><a href="examples.html#reject-example">Reject Files</a></li><li><a href="examples.html#validate-data-example">Validating Expressions</a></li><li><a href="examples.html#validate-form">Form Validation</a></li><li><a href="examples.html#locale-example">Localized Messages</a></li><li><a href="examples.html#scope-example">Validation Scopes</a></li><li><a href="examples.html#coupon-example">Custom Validation: Coupon</a></li><li><a href="examples.html#radio-buttons-example">Radio Buttons Validation</a></li><li><a href="examples.html#checkbox-example">Checkbox Example</a></li><li><a href="examples.html#flags-example">Validation Flags</a></li><li><a href="examples.html#selectors-example">Error Selectors</a></li><li><a href="examples.html#component-example">Component Validation</a></li><li><a href="examples.html#event-bus-example">Event Bus</a></li></ul><p class="menu-label">API</p><ul class="menu-list"><li><a href="api.html#directive">v-validate</a></li><li><a href="api.html#data-attributes">data-* Attributes</a></li><li><a href="api.html#error-bag">Error Bag</a></li><li><a href="api.html#validator">Validator</a><ul><li><a href="api.html#validator">API</a></li><li><a href="api.html#validator-example">Example</a></li></ul></li></ul></aside></div><div class="column columns is-mobile main-container"><div class="column is-12"><section class="hero"><div class="hero-body"><div class="container has-text-centered"><h1 class="title is-2">VeeValidate</h1><h2 class="subtitle is-4">Simple Vuejs Input Validation</h2></div></div></section><div class="container"><div class="column content-container is-mobile"><h2><a href="#about">What is vee-validate?</a></h2>
+<p>This is a lightweight plugin for <a href="https://vuejs.org/">Vue.js</a> that allows you to validate input fields, and display errors.</p>
+<p>You don't have to do anything fancy in your app, most of the work goes into the html. You only need to specify for each input what kind of validators should be used when the value changes. You will then get informed of the errors for each field.</p>
+<p>Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object.</p>
+<p>Currently there are over 20 validation rules available in the plugin. This plugin is inspired by <a href="https://laravel.com/">PHP Framework Laravel's validation syntax</a>.</p>
+<p>It also supports Vue 2.0. All examples here are built using Vue 2.0 with the plugin.</p>
+<h2><a href="#installation">Installation</a></h2>
+<p>You can install this plugin via <a href="#npm">npm</a> or <a href="#bower">bower</a> or via a <a href="#cdn">CDN</a>.</p>
+<h3><a href="#npm">npm</a></h3>
+<p><strong>Vue 1.x</strong></p>
+<pre><code class="highlight-bash">npm install vee-validate@prev --save
+</code></pre>
+<p><strong>Vue 2.x</strong></p>
+<pre><code class="highlight-bash">npm install vee-validate --save
+</code></pre>
+<h3><a href="#bower">bower</a></h3>
+<p><strong>Vue 1.x (deprecated)</strong></p>
+<pre><code class="highlight-bash">bower install vee-validate#1.0.0-beta.11 --save
+</code></pre>
+<p><strong>Vue 2.x</strong></p>
+<pre><code class="highlight-bash">bower install vee-validate#2.0.0-rc.3 --save
+</code></pre>
+<h3><a href="#cdn">CDN</a></h3>
+<p>Head over to <a href="https://www.jsdelivr.com/projects/vee-validate">jsdelivr</a> and grab the latest version. Then you may use it like this:</p>
+<pre><code class="highlight-html">  &lt;script src=&quot;path/to/vue.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;path/to/vee-validate.js&quot;&gt;&lt;/script&gt;
+  &lt;script&gt;
+    Vue.use(VeeValidate); // good to go. 
+  &lt;/script&gt;
+</code></pre>
+<p>or you may import it using <strong>ES6</strong>:</p>
+<pre><code class="highlight-js">import Vue from 'vue';
+import VeeValidate from 'vee-validate';
+
+Vue.use(VeeValidate);
+</code></pre>
+<h2><a href="#basic-example">Basic Example</a></h2>
+<p>All you need is to add the <code>v-validate</code> directive to the input you wish to validate.</p>
+<p>Then pass to the directive a <code>rules</code> string which contains a list of validation rules separated by a pipe '<code>|</code>'. For the following example the validation rules are straight forward, use <code>required</code> to indicate that the field is required. And <code>email</code> to indicate that the field must be an email. To combine both rules we assign the string value <code>required|email</code> to the <code>v-validate</code> expression value.</p>
+<code-example><div slot="example"><basic-example></basic-example></div><div slot="js">export default {
+  name: 'basic-example'
+};
+</div><div slot="html">
+&lt;div class=&quot;column is-12&quot;&gt;
+    &lt;label class=&quot;label&quot; for=&quot;email&quot;&gt;Email&lt;/label&gt;
+    &lt;p :class=&quot;{ 'control': true }&quot;&gt;
+        &lt;input v-validate=&quot;'required|email'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('email') }&quot; name=&quot;email&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;
+        &lt;span v-show=&quot;errors.has('email')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('email') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+    &lt;/p&gt;
+&lt;/div&gt;
+</div></code-example><div class="flex-center"><a href="examples.html">More Examples</a></div><blockquote>
+<p>The field must always have either a <code>name</code> or a <code>data-vv-name</code> attribute, which both acts as the identifier for that input. The <code>name</code> attribute takes precedent. However the name that appears in the error messages can be customized using <code>data-vv-as</code> attribute or it can use the <a href="localization.html#dictionary">dictionary object</a></p>
+</blockquote>
+<h2><a href="#render-errors">Rendering Errors</a></h2>
+<p>Naturally, you would want to display the errors to your users. The plugin augments your Vue instance with a private validator object and a public errors data object. You are responsible for how the errors should be rendered.</p>
+<p>The errors object exposes a simple methods to help you render errors:</p>
+<ul>
+<li><code>first('field')</code> Fetches the first error message associated with that field.</li>
+<li><code>collect('field')</code> Fetches all error messages associated with that field. alternativly you can pass nothing and it will return errors grouped by fields</li>
+<li><code>has('field')</code> Checks if there are any errors associated with that field.</li>
+<li><code>all()</code> Gets all error messages.</li>
+<li><code>any()</code> Checks if there are any errors.</li>
+</ul>
+<p>There are a few more <a href="api.html#error-bag">methods</a> that you can use to manipulate the errors object.</p>
+<h2><a href="#available-rules">Available Rules</a></h2>
+<p>There are more than 20 rules available to validate your inputs:</p>
+<div class="columns is-multiline">
+  <div class="column is-4"> 
+<ul>
+<li>
+<p><a href="rules.html#rule-after">after</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-alpha">alpha</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-alpha_dash">alpha_dash</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-alpha_num">alpha_num</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-alpha_spaces">alpha_spaces</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-before">before</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-between">between</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-confirmed">confirmed</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-credit_card">credit_card</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-date_between">date_between</a></p>
+</div>
+<div class="column is-4">
+</li>
+</ul>
+<ul>
+<li>
+<p><a href="rules.html#rule-date_format">date_format</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-decimal">decimal</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-digits">digits</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-dimensions">dimensions</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-email">email</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-ext">ext</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-image">image</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-in">in</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-ip">ip</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-max">max</a></p>
+</div>
+<div class="column is-4">
+</li>
+</ul>
+<ul>
+<li>
+<p><a href="rules.html#rule-max_value">max_value</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-mimes">mimes</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-min">min</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-min_value">min_value</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-not_in">not_in</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-numeric">numeric</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-regex">regex</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-required">required</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-size">size</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-url">url</a></p>
+</div>
+</li>
+</ul>
+</div><p>Visit the <a href="rules.html#available-rules">rules documentation</a> to learn more about how to use each rule, and how to <a href="rules.html#custom-rules">create your own</a>.</p>
+<h2><a href="#configuration">Configuration</a></h2>
+<p>You may need to configure some options to tweak some of the plugin internals, this is not required, but could cause conflicts. For example: if you are using a property called <code>errors</code> on your vue instance this may cause conflicts. Here is how you would set up the options along with the default values:</p>
+<pre><code class="highlight-js">import Vue from 'vue';
+import VeeValidate from 'vee-validate';
+
+const config = {
+  errorBagName: 'errors', // change if property conflicts.
+  fieldsBagName: 'fields', 
+  delay: 0, 
+  locale: 'en', 
+  dictionary: null, 
+  strict: true, 
+  enableAutoClasses: false, 
+  classNames: {
+    touched: 'touched', // the control has been blurred
+    untouched: 'untouched', // the control hasn't been blurred
+    valid: 'valid', // model is valid
+    invalid: 'invalid', // model is invalid
+    pristine: 'pristine', // control has not been interacted with
+    dirty: 'dirty' // control has been interacted with
+  }
+};
+
+Vue.use(VeeValidate, config);
+</code></pre>
+<ul>
+<li><code>errorBagName:</code> The name of the ErrorBag object that will be injected in each of Vue's instances' data.</li>
+<li><code>fieldsBagName:</code> The name of the FieldBag object that will be injected All Vue instances.</li>
+<li><code>delay:</code> The default debounce time for all inputs (only affects validations).</li>
+<li><code>locale:</code> The default language for the validation messages.</li>
+<li><code>dictionary:</code> A dictionary to be merged with the validators dictionary, check <a href="rules.html#custom-messages">custom messages</a> and <a href="localization.html">localization</a> sections.</li>
+<li><code>strict:</code> Fields that have no rules will fail validation unless <code>strict</code> is set to false.</li>
+<li><code>enableAutoClasses:</code>Applies automatic classes on inputs or components root elements being validated.</li>
+<li><code>classNames:</code>The classes to be applied depending on the state of the input.</li>
+</ul>
+</div></div></div></div></div></svg><script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script><script>hljs.initHighlightingOnLoad();
+Array.from(document.querySelectorAll('h2')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-4');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+Array.from(document.querySelectorAll('h3')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-5');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+if (location.hash) {
+  var hash = location.hash;
+  location.hash = '';
+  location.hash = hash;
+}</script><script type="text/javascript" src="assets/js/vendor.js"></script><script type="text/javascript" src="assets/js/bundle.js"></script></body></html>
