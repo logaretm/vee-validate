@@ -1,4 +1,11 @@
-# Vee-Validate
+<p align="center">
+  <a href="https://vee-validate.logaretm.com" target="_blank">
+    <img width="200" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.jpg">
+  </a>
+</p>
+
+<p align="center">
+
 [![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
 [![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=master)](https://travis-ci.org/logaretm/vee-validate)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/logaretm1/vee-validate?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=logaretm/vee-validate&amp;utm_campaign=Badge_Grade)
@@ -7,6 +14,18 @@
 [![npm](https://img.shields.io/npm/v/vee-validate.svg)](https://www.npmjs.com/package/vee-validate)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/logaretm/vee-validate.svg)](http://isitmaintained.com/project/logaretm/vee-validate "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/logaretm/vee-validate.svg)](http://isitmaintained.com/project/logaretm/vee-validate "Percentage of issues still open")
+
+</p>
+<br>
+
+<p align="center">
+  <strong>Proudly sponsored by:</strong>
+  <br><br>
+  <a href="https://www.baianat.com/" target="_blank">
+    <img width="300" src="https://s3.eu-central-1.amazonaws.com/logaretm/baianat.svg">
+  </a>
+</p>
+<br><br>
 
 vee-validate is a lightweight plugin for [Vue.js](https://vuejs.org/) that allows you to validate input fields, and display errors.
 
