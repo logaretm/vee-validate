@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://vee-validate.logaretm.com" target="_blank">
-    <img width="200" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.jpg">
+    <img width="200" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg">
   </a>
 </p>
 
