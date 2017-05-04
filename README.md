@@ -125,6 +125,7 @@ You can find more information in the [contribution guide](contributing.md).
 ### Credits
 - Some validations/test scenarios are provided/based on [validator.js](https://github.com/chriso/validator.js).
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
+- Logo by [Abdelrahman Ismail](https://github.com/Abdelrahman3D)
 
 ### Roadmap
 - First Full Release (Out of beta) - Mid May 2017
