@@ -10,11 +10,11 @@
             <label class="label">Email</label>
             <p class="control has-icon has-icon-right">
                 <input v-model="email" name="email" v-validate:email="'required|email'" :class="{'input': true, 'is-danger': emailFlags.invalid, 'is-success': emailFlags.valid }" type="text" placeholder="Email">
-                <i v-show="fields.failed('email') || fields.passed('email')" :class="{ 'fa': true, 'fa-warning': emailFlags.invalid, 'fa-check': emailFlags.valid }"></i>
+                <i v-show="emailFlags.dirty" :class="{ 'fa': true, 'fa-warning': emailFlags.invalid, 'fa-check': emailFlags.valid }"></i>
                 <span v-show="emailFlags.invalid" class="help is-danger">{{ errors.first('email') }}</span>
             </p>
             <p class="control">
-                <button type="button" class="button is-primary" :disabled="formDirty">Save</button>
+                <button type="button" class="button is-primary" :disabled="!formDirty">Save</button>
             </p>
         </div>
     </div>
@@ -33,7 +33,7 @@ export default {
       nameFlags: 'name',
       emailFlags: 'email'
     }),
-    formDiry() {
+    formDirty() {
       // are some fields dirty?
       return Object.keys(this.fields).some(key => this.fields[key].dirty);
     }

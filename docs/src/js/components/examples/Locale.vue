@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     changeLocale() {
-      this.locale = this.$validator.getLocale() === 'ar' ? 'en' : 'ar';
+      this.locale = this.$validator.locale === 'ar' ? 'en' : 'ar';
       this.$validator.setLocale(this.locale);
     }
   },

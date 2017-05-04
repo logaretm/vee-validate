@@ -2,12 +2,14 @@
 
 vee-validate includes few flags that could help you improve your user experience, each field under validation has its own set of flags which are:
 
-- tocuhed: indicates that the field has been touched or focused.
-- untouched: indicates that the field has not been touched nor focused.
-- dirty: indicates that the field has been manipluated.
-- pristene: indicates that the field has not been manipluated.
-- valid: indicates that the field has been validated at least once and that it passed the validation.
-- invalid: indicates that the field has been validated at least once and that it failed the validation.
+
+- `tocuhed`: indicates that the field has been touched or focused.
+- `untouched`: indicates that the field has not been touched nor focused.
+- `dirty`: indicates that the field has been manipluated.
+- `pristine`: indicates that the field has not been manipluated.
+- `valid`: indicates that the field has been validated at least once and that it passed the validation.
+- `invalid`: indicates that the field has been validated at least once and that it failed the validation.
+
 
 The flags are reactive objects, so you can build computed properties based on them. For example here is how you can tell if a form has been manipulated, say maybe to disable/enable a button.
 
@@ -107,17 +109,17 @@ export default {
 }
 ```
 
-You can set those scopes manually using the `Validator.flag(fieldName, flagsObj)` method:
+Additionally, In case you want to set the flags manually, you can use the `Validator.flag(fieldName, flagsObj)` method:
 
 ```js
 // flag the field as valid and dirty.
-validator.flag('field', {
+this.$validator.flag('field', {
   valid: false,
   dirty: true
 });
 
 // set flags for scoped field.
-validator.flag('scoped.field', {
+this.$validator.flag('scoped.field', {
   touched: false,
   dirty: false
 });

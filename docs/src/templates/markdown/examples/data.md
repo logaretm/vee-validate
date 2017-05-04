@@ -26,4 +26,7 @@ As you can see, the arg is `name` which tells `v-validate` to watch for whenever
 
 > You can debounce the validation using the `lazy` modifier on your v-model directive which will cause the validation to occur only when the user leaves the input.
 
+
+## [Initial Value Validation](#initial-value)
+
 In the next example, notice the usage of `.initial` modifier to force the validation of the field initial value.

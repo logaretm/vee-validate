@@ -24,15 +24,16 @@ html
         path(d='M16 2 L20 12 30 12 22 19 25 30 16 23 7 30 10 19 2 12 12 12 Z')
       #app.columns.is-mobile
         button(:class="{ 'button': true, 'sidebar-button': true, 'is-open': sidebarToggle }", @click='sidebarToggle = ! sidebarToggle', type='button')
-          span.icon.is-small
+          span.icon
             i.fa.fa-bars
-        div(:class="{ 'column is-2 sidebar-container': true, 'is-open': sidebarToggle }" class="column is-2 sidebar-container")
+        div(:class="{ 'column is-2 sidebar-container': true, 'is-open': sidebarToggle }" class="column is-2 sidebar-container" v-cloak)
           include _sidemenu.pug
-        .column.columns.is-mobile.main-container
+        .column.columns.is-mobile.main-container(@click="sidebarToggle = false")
           .column.is-12
             section.hero
               .hero-body
                 .container.has-text-centered
+                  img(width="150" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg")
                   h1(class="title is-2")= meta.title.replace('| VeeValidate', '')
                   h2(class="subtitle is-4")= meta.description.replace('.', '')
             .container
