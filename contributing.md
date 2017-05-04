@@ -24,9 +24,10 @@ As you can see we have:
     - `rules`: contains validation rules that are available to the validator instances.
     - `utils`: contains small utility functions.
 - `dist` contains the unminified and the minified build of the repository.
-- `__tests__` contains the test files for the project, it uses [jest](https://facebook.github.io/jest/) for testing. it contains a similar folder structure as the `src` folder.
+- `docs` contains the src and built files for the documentation.
+- `test` contains the test files for the project, it uses [ava](https://github.com/avajs/ava) for testing. it contains a similar folder structure as the `src` folder.
 
-If you want to contribute to the docs you can find it [here](https://github.com/logaretm/vee-validate-docs).
+If you want to contribute to the docs you can find it in the `docs` folder.
 
 ### Pull Requests
 

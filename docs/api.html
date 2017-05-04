@@ -16,13 +16,27 @@ const expression = {
 
 // Object with rules as object.
 const expression = {
-  rules: { 
+  rules: {
     // parameterless rules take a boolean value.
     required: true,
     // single parameter rules take a single value.
     regex: /.(js|ts)$/,
     // multiple paramter rules take a single array.
-    in: [1, 2, 3] }, scope: 'myscope', arg: 'from.email'
+    in: [1, 2, 3] 
+  },
+  scope: 'myscope', // optional
+  arg: 'from.email' // optional
+};
+
+// You can omit the omit nesting the rules in a property if you don't
+// need to provide other options.
+const expression = {
+  // parameterless rules take a boolean value.
+  required: true,
+  // single parameter rules take a single value.
+  regex: /.(js|ts)$/,
+  // multiple paramter rules take a single array.
+  in: [1, 2, 3]
 };
 </code></pre>
 <h2><a href="#directive-args">args</a></h2>
