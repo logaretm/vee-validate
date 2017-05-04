@@ -6,4 +6,4 @@ The `errors.first` and `errors.has` methods don't only provide you with a way to
 errors.first('newsletter.email:email');
 ```
   
-In the example below, you have a collection of errors and you may use the input to filter down the errors.
+In the example below, you have a collection of errors and you may use the input to filter down the errors, note that currently it is unlikely that the error bag will have multiple errors of the same input since it early exit upon first failure.
