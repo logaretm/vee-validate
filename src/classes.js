@@ -93,7 +93,8 @@ export default class ClassListener {
       this.el.addEventListener('focus', this.listeners.focus);
       this.el.addEventListener('input', this.listeners.input);
     }
-    this.validator.on('after', `${this.field.scope}.${this.field.name}`, this.listeners.after);
+
+    this.validator.on('after', this.field.name, this.field.scope, this.listeners.after);
   }
 
   /**
@@ -110,7 +111,7 @@ export default class ClassListener {
       this.el.removeEventListener('focus', this.listeners.focus);
       this.el.removeEventListener('input', this.listeners.input);
     }
-    this.validator.off('after', `${this.field.scope}.${this.field.name}`);
+    this.validator.off('after', this.field.name, this.field.scope);
   }
 
   /**

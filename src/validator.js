@@ -550,21 +550,13 @@ export default class Validator {
    * @param {String} fieldName
    * @param {Function} callback
    */
-  on(name, fieldName, callback) {
+  on(name, fieldName, scope, callback) {
     if (! fieldName) {
       throw new ValidatorException(`Cannot add a listener for non-existent field ${fieldName}.`);
     }
 
     if (! isCallable(callback)) {
       throw new ValidatorException(`The ${name} callback for field ${fieldName} is not callable.`);
-    }
-
-    let scope = '__global__';
-    if (fieldName.indexOf('.') > -1) {
-      // if no such field, try the scope form.
-      if (! this.$scopes.__global__[name]) {
-        [scope, fieldName] = fieldName.split('.');
-      }
     }
 
     this.$scopes[scope][fieldName].events[name] = callback;
@@ -575,18 +567,11 @@ export default class Validator {
    * @param {String} name
    * @param {String} fieldName
    */
-  off(name, fieldName) {
+  off(name, fieldName, scope) {
     if (! fieldName) {
       warn(`Cannot remove a listener for non-existent field ${fieldName}.`);
     }
 
-    let scope = '__global__';
-    if (fieldName.indexOf('.') > -1) {
-      // if no such field, try the scope form.
-      if (! this.$scopes.__global__[name]) {
-        [scope, fieldName] = fieldName.split('.');
-      }
-    }
     this.$scopes[scope][fieldName].events[name] = undefined;
   }
 

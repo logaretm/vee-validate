@@ -1040,3 +1040,29 @@ test('sets aria attributes on elements', async t => {
     await v.validate('valid', 'abc');
     t.is(el.getAttribute('aria-invalid'), 'false');
 });
+
+test('it can add events via on', t => {
+    const v = new Validator();
+    v.attach('name', 'required', {
+        scope: 'scope'
+    });
+    v.on('after', 'name', 'scope', () => {});
+    t.true(typeof v.$scopes['scope'].name.events.after === 'function');
+    v.attach('dotted.name', 'required');
+    v.on('after', 'dotted.name', '__global__', () => {});
+    t.true(typeof v.$scopes.__global__['dotted.name'].events.after === 'function');
+});
+
+test('it can remove events via off', t => {
+    const v = new Validator();
+    v.attach('name', 'required', {
+        scope: 'scope'
+    });
+    v.on('after', 'name', 'scope', () => {});
+    v.off('after', 'name', 'scope');
+    t.true(typeof v.$scopes['scope'].name.events.after === 'undefined');
+    v.attach('dotted.name', 'required');
+    v.on('after', 'dotted.name', '__global__', () => {});
+    v.off('after', 'dotted.name', '__global__');
+    t.true(typeof v.$scopes.__global__['dotted.name'].events.after === 'undefined');
+});
