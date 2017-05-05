@@ -19,10 +19,11 @@ export class ErrorBag {
 export class Validator {
 
     errorBag: ErrorBag
+    fieldBag: any
     strictMode: boolean
     readonly dictionary: any
 
-    constructor(validations: any, $vm: any, options: any);
+    constructor(validations: any, options: any);
     addScope(scope: string): void;
     append(name: string, checks: string|Object, options: any): void;
     attach(name: string, checks: string|Object, options: any): void;
