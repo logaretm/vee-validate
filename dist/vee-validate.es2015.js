@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.2
+ * vee-validate v2.0.0-rc.3
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -1393,7 +1393,8 @@ var messages = {
   regex: (field) => `The ${field} field format is invalid.`,
   required: (field) => `The ${field} field is required.`,
   size: (field, [size]) => `The ${field} field must be less than ${size} KB.`,
-  url: (field) => `The ${field} field is not a valid URL.`
+  url: (field) => `The ${field} field is not a valid URL.`,
+  length: (field, [length]) => `The ${field} field must exactly contain ${length} characters.`
 };
 
 var after = (moment) => (value, [targetField, inclusion, format]) => {
@@ -2019,21 +2020,13 @@ class Validator {
    * @param {String} fieldName
    * @param {Function} callback
    */
-  on(name, fieldName, callback) {
+  on(name, fieldName, scope, callback) {
     if (! fieldName) {
       throw new ValidatorException(`Cannot add a listener for non-existent field ${fieldName}.`);
     }
 
     if (! isCallable(callback)) {
       throw new ValidatorException(`The ${name} callback for field ${fieldName} is not callable.`);
-    }
-
-    let scope = '__global__';
-    if (fieldName.indexOf('.') > -1) {
-      // if no such field, try the scope form.
-      if (! this.$scopes.__global__[name]) {
-        [scope, fieldName] = fieldName.split('.');
-      }
     }
 
     this.$scopes[scope][fieldName].events[name] = callback;
@@ -2044,18 +2037,11 @@ class Validator {
    * @param {String} name
    * @param {String} fieldName
    */
-  off(name, fieldName) {
+  off(name, fieldName, scope) {
     if (! fieldName) {
       warn(`Cannot remove a listener for non-existent field ${fieldName}.`);
     }
 
-    let scope = '__global__';
-    if (fieldName.indexOf('.') > -1) {
-      // if no such field, try the scope form.
-      if (! this.$scopes.__global__[name]) {
-        [scope, fieldName] = fieldName.split('.');
-      }
-    }
     this.$scopes[scope][fieldName].events[name] = undefined;
   }
 
@@ -2148,7 +2134,8 @@ class Validator {
       fieldName = scope;
       scope = null;
     }
-    const field = scope ? getPath(`${scope}.${fieldName}`, this.$scopes) : this.$scopes[fieldName];
+    const field = scope ? getPath(`${scope}.${fieldName}`, this.$scopes) :
+                          this.$scopes.__global__[fieldName];
     if (! field) {
       return;
     }
@@ -2564,7 +2551,8 @@ class ClassListener {
       this.el.addEventListener('focus', this.listeners.focus);
       this.el.addEventListener('input', this.listeners.input);
     }
-    this.validator.on('after', `${this.field.scope}.${this.field.name}`, this.listeners.after);
+
+    this.validator.on('after', this.field.name, this.field.scope, this.listeners.after);
   }
 
   /**
@@ -2581,7 +2569,7 @@ class ClassListener {
       this.el.removeEventListener('focus', this.listeners.focus);
       this.el.removeEventListener('input', this.listeners.input);
     }
-    this.validator.off('after', `${this.field.scope}.${this.field.name}`);
+    this.validator.off('after', this.field.name, this.field.scope);
   }
 
   /**
@@ -2589,7 +2577,7 @@ class ClassListener {
    * @param {*} className
    */
   add(className) {
-    if (! this.enabled || this.component) return;
+    if (! this.enabled) return;
 
     addClass(this.el, className);
   }
@@ -2599,7 +2587,7 @@ class ClassListener {
    * @param {*} className
    */
   remove(className) {
-    if (! this.enabled || this.component) return;
+    if (! this.enabled) return;
 
     removeClass(this.el, className);
   }
@@ -3160,7 +3148,7 @@ var index = {
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.2'
+  version: '2.0.0-rc.3'
 };
 
 export default index;
