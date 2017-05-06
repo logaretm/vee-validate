@@ -3,5 +3,5 @@ export default (value, [length]) => {
     return false;
   }
 
-  return String(value).length === length;
+  return String(value).length == length;
 };
