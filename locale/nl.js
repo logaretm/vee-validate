@@ -24,7 +24,8 @@ const messages = {
   regex: (field) => `${field} formaat is ongeldig.`,
   required: (field) => `${field} is verplicht.`,
   size: (field, [size]) => `${field} moet minstens ${size} KB groot zijn.`,
-  url: (field) => `${field} is geen geldige URL.`
+  url: (field) => `${field} is geen geldige URL.`,
+  length: (field, [length]) => `${field} moet exact ${length} tekens bevatten.`
 };
 
 const locale = {

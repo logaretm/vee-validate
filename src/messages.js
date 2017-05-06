@@ -27,5 +27,6 @@ export default {
   regex: (field) => `The ${field} field format is invalid.`,
   required: (field) => `The ${field} field is required.`,
   size: (field, [size]) => `The ${field} field must be less than ${size} KB.`,
-  url: (field) => `The ${field} field is not a valid URL.`
+  url: (field) => `The ${field} field is not a valid URL.`,
+  length: (field, [length]) => `The ${field} field must exactly contain ${length} characters.`
 };
