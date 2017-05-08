@@ -23,7 +23,8 @@ const config = {
     invalid: 'invalid', // model is invalid
     pristine: 'pristine', // control has not been interacted with
     dirty: 'dirty' // control has been interacted with
-  }
+  },
+  events: 'input|blur'
 };
 
 Vue.use(VeeValidate, config);
@@ -35,5 +36,6 @@ Vue.use(VeeValidate, config);
 - `locale:` The default language for the validation messages.
 - `dictionary:` A dictionary to be merged with the validators dictionary, check [custom messages](rules.html#custom-messages) and [localization](localization.html) sections.
 - `strict:` Fields that have no rules will fail validation unless `strict` is set to false.
-- `enableAutoClasses:`Applies automatic classes on inputs or components root elements being validated.
-- `classNames:`The classes to be applied depending on the state of the input.
+- `enableAutoClasses:` Applies automatic classes on inputs or components root elements being validated.
+- `classNames:` The classes to be applied depending on the state of the input.
+- `events`: Pipe seperated list of the default event names that will be listened for to trigger validation, if empty string is provided it will disable all listeners.
