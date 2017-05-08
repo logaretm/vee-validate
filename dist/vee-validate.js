@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.2
+ * vee-validate v2.0.0-rc.3
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -2193,22 +2193,13 @@ Validator.prototype._test = function _test (name, value, rule, scope) {
  * @param {String} fieldName
  * @param {Function} callback
  */
-Validator.prototype.on = function on (name, fieldName, callback) {
+Validator.prototype.on = function on (name, fieldName, scope, callback) {
   if (! fieldName) {
     throw new ValidatorException(("Cannot add a listener for non-existent field " + fieldName + "."));
   }
 
   if (! isCallable(callback)) {
     throw new ValidatorException(("The " + name + " callback for field " + fieldName + " is not callable."));
-  }
-
-  var scope = '__global__';
-  if (fieldName.indexOf('.') > -1) {
-    // if no such field, try the scope form.
-    if (! this.$scopes.__global__[name]) {
-      var assign$$1;
-        (assign$$1 = fieldName.split('.'), scope = assign$$1[0], fieldName = assign$$1[1]);
-    }
   }
 
   this.$scopes[scope][fieldName].events[name] = callback;
@@ -2219,19 +2210,11 @@ Validator.prototype.on = function on (name, fieldName, callback) {
  * @param {String} name
  * @param {String} fieldName
  */
-Validator.prototype.off = function off (name, fieldName) {
+Validator.prototype.off = function off (name, fieldName, scope) {
   if (! fieldName) {
     warn(("Cannot remove a listener for non-existent field " + fieldName + "."));
   }
 
-  var scope = '__global__';
-  if (fieldName.indexOf('.') > -1) {
-    // if no such field, try the scope form.
-    if (! this.$scopes.__global__[name]) {
-      var assign$$1;
-        (assign$$1 = fieldName.split('.'), scope = assign$$1[0], fieldName = assign$$1[1]);
-    }
-  }
   this.$scopes[scope][fieldName].events[name] = undefined;
 };
 
@@ -2331,7 +2314,8 @@ Validator.prototype.flag = function flag (name, flags) {
     fieldName = scope;
     scope = null;
   }
-  var field = scope ? getPath((scope + "." + fieldName), this.$scopes) : this.$scopes[fieldName];
+  var field = scope ? getPath((scope + "." + fieldName), this.$scopes) :
+                        this.$scopes.__global__[fieldName];
   if (! field) {
     return;
   }
@@ -2767,7 +2751,8 @@ ClassListener.prototype.attach = function attach (field) {
     this.el.addEventListener('focus', this.listeners.focus);
     this.el.addEventListener('input', this.listeners.input);
   }
-  this.validator.on('after', ((this.field.scope) + "." + (this.field.name)), this.listeners.after);
+
+  this.validator.on('after', this.field.name, this.field.scope, this.listeners.after);
 };
 
 /**
@@ -2784,7 +2769,7 @@ ClassListener.prototype.detach = function detach () {
     this.el.removeEventListener('focus', this.listeners.focus);
     this.el.removeEventListener('input', this.listeners.input);
   }
-  this.validator.off('after', ((this.field.scope) + "." + (this.field.name)));
+  this.validator.off('after', this.field.name, this.field.scope);
 };
 
 /**
@@ -2792,7 +2777,7 @@ ClassListener.prototype.detach = function detach () {
  * @param {*} className
  */
 ClassListener.prototype.add = function add (className) {
-  if (! this.enabled || this.component) { return; }
+  if (! this.enabled) { return; }
 
   addClass(this.el, className);
 };
@@ -2802,7 +2787,7 @@ ClassListener.prototype.add = function add (className) {
  * @param {*} className
  */
 ClassListener.prototype.remove = function remove (className) {
-  if (! this.enabled || this.component) { return; }
+  if (! this.enabled) { return; }
 
   removeClass(this.el, className);
 };
@@ -3392,7 +3377,7 @@ var index = {
   Validator: Validator,
   ErrorBag: ErrorBag,
   Rules: Rules,
-  version: '2.0.0-rc.2'
+  version: '2.0.0-rc.3'
 };
 
 return index;
