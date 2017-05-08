@@ -1,10 +1,16 @@
 import ListenerGenerator from './listeners';
-import { getScope, isObject, find, getRules } from './utils';
+import { getScope, isObject, find, getRules, warn } from './utils';
 
 const listenersInstances = [];
 
 export default (options) => ({
   inserted(el, binding, vnode) {
+    if (! vnode.context.$validator) {
+      // eslint-disable-next-line
+      warn(`No validator instance is present on this component ${vnode.context.$options.name}, did you forget to inject '$validator'?`);
+
+      return;
+    }
     const listener = new ListenerGenerator(el, binding, vnode, options);
     listener.attach();
     listenersInstances.push({ vm: vnode.context, el, instance: listener });
