@@ -1,3 +1,4 @@
+import { isObject } from './utils';
 import Validator from './validator';
 
 export default (Vue, options) => {
@@ -7,10 +8,11 @@ export default (Vue, options) => {
     const v = new Validator(null, { init: false });
     Vue.util.defineReactive(v, 'errorBag', v.errorBag);
     Vue.util.defineReactive(v, 'fieldBag', v.fieldBag);
+    this.$v = v;
 
     return {
       $validator: v,
-      $parentValidator: (this.$parent && this.$parent.$validator) || null
+      $parentValidator: (this.$parent && this.$parent.$v)
     };
   };
 
@@ -18,7 +20,18 @@ export default (Vue, options) => {
     mixin.inject = ['$validator'];
   }
   mixin.beforeCreate = function beforeCreate() {
-    if (! this.$options.inject || ! ~this.$options.inject.indexOf('$validator')) return;
+    const injectionOpts = this.$options.inject;
+    if (! injectionOpts) {
+      return;
+    }
+
+    if (Array.isArray(injectionOpts) && ! ~injectionOpts.indexOf('$validator')) {
+      return;
+    }
+
+    if (isObject(injectionOpts) && ! injectionOpts.$validator) {
+      return;
+    }
 
     if (! this.$options.computed) {
       this.$options.computed = {};
