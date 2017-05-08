@@ -34,6 +34,7 @@
         "import/no-named-as-default-member": 0,
         "no-underscore-dangle": 0,
         "no-param-reassign": 0,
-        "class-methods-use-this": 0
+        "class-methods-use-this": 0,
+        "no-bitwise": 0
     }
 }
