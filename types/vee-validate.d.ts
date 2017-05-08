@@ -15,13 +15,25 @@ export class ErrorBag {
     remove(field: string, scope?: string): void;
 }
 
+export class FieldBag {
+    [field: string]: FieldFlags;
+}
+
+export class FieldFlags {
+    untouched: boolean;
+    touched: boolean;
+    dirty: boolean;
+    pristine: boolean;
+    valid: boolean;
+    invalid: boolean;
+}
 
 export class Validator {
 
-    errorBag: ErrorBag
-    fieldBag: any
-    strictMode: boolean
-    readonly dictionary: any
+    errorBag: ErrorBag;
+    fieldBag: FieldBag;
+    strictMode: boolean;
+    readonly dictionary: any;
 
     constructor(validations: any, options: any);
     addScope(scope: string): void;
