@@ -6,5 +6,6 @@ export default {
   strict: true,
   fieldsBagName: 'fields',
   enableAutoClasses: false,
-  classNames: {}
+  classNames: {},
+  events: 'input|blur'
 };

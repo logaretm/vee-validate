@@ -1,7 +1,8 @@
 import ClassManager from './classes';
 import {
-  getScope, debounce, warn, getDataAttribute, isObject, toArray, find, getRules
+  getScope, debounce, warn, getDataAttribute, isObject, toArray, find, getRules, assign
 } from './utils';
+import config from './config';
 
 export default class ListenerGenerator {
   constructor(el, binding, vnode, options) {
@@ -12,7 +13,7 @@ export default class ListenerGenerator {
     this.binding = binding;
     this.vm = vnode.context;
     this.component = vnode.child;
-    this.options = options;
+    this.options = assign({}, config, options);
     this.fieldName = this._resolveFieldName();
     this.model = this._resolveModel(vnode.data.directives);
     this.classes = new ClassManager(el, this.vm.$validator, {
@@ -178,7 +179,7 @@ export default class ListenerGenerator {
           return;
         }
 
-        const events = getDataAttribute(this.el, 'validate-on') || 'input|blur';
+        const events = getDataAttribute(this.el, 'validate-on') || this.options.events;
         events.split('|').forEach(e => {
           target.addEventListener(e, listener, false);
           this.callbacks.push({ name: e, listener, el: target });
@@ -192,51 +193,58 @@ export default class ListenerGenerator {
      */
   _getSuitableListener() {
     let listener;
+    const overrides = {
+      input: 'input',
+      blur: 'blur'
+    };
 
     if (this.el.tagName === 'SELECT') {
-      return {
+      overrides.input = 'change';
+      listener = {
         names: ['change', 'blur'],
         listener: this._inputListener
       };
+    } else {
+      // determine the suitable listener and events to handle
+      switch (this.el.type) {
+      case 'file':
+        overrides.input = 'change';
+        overrides.blur = null;
+        listener = {
+          names: ['change'],
+          listener: this._fileListener
+        };
+        break;
+
+      case 'radio':
+        overrides.input = 'change';
+        overrides.blur = null;
+        listener = {
+          names: ['change'],
+          listener: this._radioListener
+        };
+        break;
+
+      case 'checkbox':
+        overrides.input = 'change';
+        overrides.blur = null;
+        listener = {
+          names: ['change'],
+          listener: this._checkboxListener
+        };
+        break;
+
+      default:
+        listener = {
+          names: ['input', 'blur'],
+          listener: this._inputListener
+        };
+        break;
+      }
     }
-
-        // determine the suitable listener and events to handle
-    switch (this.el.type) {
-    case 'file':
-      listener = {
-        names: ['change'],
-        listener: this._fileListener
-      };
-      break;
-
-    case 'radio':
-      listener = {
-        names: ['change'],
-        listener: this._radioListener
-      };
-      break;
-
-    case 'checkbox':
-      listener = {
-        names: ['change'],
-        listener: this._checkboxListener
-      };
-      break;
-
-    default:
-      listener = {
-        names: ['input', 'blur'],
-        listener: this._inputListener
-      };
-      break;
-    }
-
     // users are able to specify which events they want to validate on
-    // pipe separated list of handler names to use
-    const events = getDataAttribute(this.el, 'validate-on');
-    if (events) {
-      listener.names = events.split('|');
-    }
+    const events = getDataAttribute(this.el, 'validate-on') || this.options.events;
+    listener.names = events.split('|').filter(e => overrides[e] !== null).map(e => overrides[e] || e);
 
     return listener;
   }
@@ -357,7 +365,7 @@ export default class ListenerGenerator {
    * Attaches model watchers and extra listeners.
    */
   _attachModelWatcher(arg) {
-    const events = getDataAttribute(this.el, 'validate-on') || 'input|blur';
+    const events = getDataAttribute(this.el, 'validate-on') || this.options.events;
     const listener = debounce(
       this._getSuitableListener().listener.bind(this),
       getDataAttribute(this.el, 'delay') || this.options.delay
