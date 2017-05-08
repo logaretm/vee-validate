@@ -84,6 +84,7 @@ export default class ClassListener {
       this.add(e.valid ? this.classNames.valid : this.classNames.invalid);
       this.field.flags.valid = e.valid;
       this.field.flags.invalid = ! e.valid;
+      this.field.flags.pending = false;
     };
 
     if (this.component) {

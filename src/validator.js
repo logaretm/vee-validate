@@ -582,7 +582,9 @@ export default class Validator {
       dirty: false,
       pristine: true,
       valid: false,
-      invalid: false
+      invalid: false,
+      required: field.required,
+      pending: false
     };
 
     const flagObj = { [field.name]: field.flags };
@@ -834,6 +836,7 @@ export default class Validator {
     }
 
     const field = this.$scopes[scope][name];
+    field.flags.pending = true;
     this.errorBag.remove(name, scope);
     // if its not required and is empty or null or undefined then it passes.
     if (! field.required && ~[null, undefined, ''].indexOf(value)) {
@@ -841,6 +844,7 @@ export default class Validator {
       if (field.events && isCallable(field.events.after)) {
         field.events.after({ valid: true });
       }
+
       return Promise.resolve(true);
     }
 
