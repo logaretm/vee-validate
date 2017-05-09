@@ -17,7 +17,7 @@ The flags are reactive objects, so you can build computed properties based on th
 export default {
   // ...
   computed: {
-    isFormDiry() {
+    isFormDirty() {
       return Object.keys(this.fields).some(key => this.fields[key].dirty);
     }
   },
