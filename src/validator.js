@@ -836,7 +836,9 @@ export default class Validator {
     }
 
     const field = this.$scopes[scope][name];
-    field.flags.pending = true;
+    if (field.flags) {
+      field.flags.pending = true;
+    }
     this.errorBag.remove(name, scope);
     // if its not required and is empty or null or undefined then it passes.
     if (! field.required && ~[null, undefined, ''].indexOf(value)) {
