@@ -4,33 +4,38 @@ import Validator from './validator';
 export default (Vue, options) => {
   const mixin = {};
 
-  mixin.provide = function provide() {
-    const v = new Validator(null, { init: false });
-    Vue.util.defineReactive(v, 'errorBag', v.errorBag);
-    Vue.util.defineReactive(v, 'fieldBag', v.fieldBag);
-    this.$v = v;
-
+  mixin.provide = function providesValidator() {
     return {
-      $validator: v,
-      $parentValidator: (this.$parent && this.$parent.$v)
+      $validator: this.$validator
     };
   };
 
-  if (options.inject) {
-    mixin.inject = ['$validator'];
-  }
   mixin.beforeCreate = function beforeCreate() {
-    const injectionOpts = this.$options.inject;
-    if (! injectionOpts) {
-      return;
+    let reactive = false;
+    // if its a root instance, inject anyways.
+    if (options.inject || !this.$parent) {
+      this.$validator = new Validator(null, { init: false, vm: this });
+    } else {
+      const injectionOpts = this.$options.inject;
+      if (! injectionOpts) {
+        return;
+      }
+
+      if (Array.isArray(injectionOpts) && ! ~injectionOpts.indexOf('$validator')) {
+        return;
+      }
+
+      if (isObject(injectionOpts) && ! injectionOpts.$validator) {
+        return;
+      }
+
+      reactive = true;
     }
 
-    if (Array.isArray(injectionOpts) && ! ~injectionOpts.indexOf('$validator')) {
-      return;
-    }
 
-    if (isObject(injectionOpts) && ! injectionOpts.$validator) {
-      return;
+    if (! reactive) {
+      Vue.util.defineReactive(this.$validator, 'errorBag', this.$validator.errorBag);
+      Vue.util.defineReactive(this.$validator, 'fieldBag', this.$validator.fieldBag);
     }
 
     if (! this.$options.computed) {

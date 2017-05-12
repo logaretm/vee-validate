@@ -1,6 +1,25 @@
+import { isCallable } from './utils';
+
 export default class ErrorBag {
-  constructor() {
+  constructor(vm = null) {
     this.errors = [];
+    if (vm && isCallable(vm.$nextTick)) {
+      this.$nextTick = vm.$nextTick.bind(vm);
+    }
+  }
+
+  /**
+   * Tries to call the callback in the next tick handler.
+   * @param {Function} callback
+   */
+  _tryNextTick(callback) {
+    if (! this.$nextTick) {
+      // Call immediatly if next tick isn't available.
+      callback();
+      return;
+    }
+
+    this.$nextTick(callback.bind(this));
   }
 
     /**
@@ -12,7 +31,9 @@ export default class ErrorBag {
      * @param {String} scope The Scope name, optional.
      */
   add(field, msg, rule, scope = '__global__') {
-    this.errors.push({ field, msg, rule, scope });
+    this._tryNextTick(() => {
+      this.errors.push({ field, msg, rule, scope });
+    });
   }
 
     /**
@@ -52,7 +73,9 @@ export default class ErrorBag {
       scope = '__global__';
     }
 
-    this.errors = this.errors.filter(e => e.scope !== scope);
+    this._tryNextTick(() => {
+      this.errors = this.errors.filter(e => e.scope !== scope);
+    });
   }
 
     /**
@@ -166,13 +189,12 @@ export default class ErrorBag {
      * @param {String} scope The Scope name, optional.
      */
   remove(field, scope) {
-    if (scope) {
-      this.errors = this.errors.filter(e => e.field !== field || e.scope !== scope);
+    const filter = scope ? (e => e.field !== field || e.scope !== scope) :
+                           (e => e.field !== field || e.scope !== '__global__');
 
-      return;
-    }
-
-    this.errors = this.errors.filter(e => e.field !== field || e.scope !== '__global__');
+    this._tryNextTick(() => {
+      this.errors = this.errors.filter(filter);
+    });
   }
 
 

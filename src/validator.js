@@ -16,11 +16,11 @@ const DICTIONARY = new Dictionary({
 });
 
 export default class Validator {
-  constructor(validations, options = { init: true }) {
+  constructor(validations, options = { init: true, vm: null }) {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };
     this._createFields(validations);
-    this.errorBag = new ErrorBag();
+    this.errorBag = new ErrorBag(options.vm);
     this.fieldBag = {};
     // Some fields will be later evaluated, because the vm isn't mounted yet
     // so it may register it under an inaccurate scope.
