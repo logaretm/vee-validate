@@ -6,8 +6,9 @@ const listenersInstances = [];
 export default (options) => ({
   inserted(el, binding, vnode) {
     if (! vnode.context.$validator) {
+      const name = vnode.context.$options._componentTag;
       // eslint-disable-next-line
-      warn(`No validator instance is present on this component ${vnode.context.$options.name}, did you forget to inject '$validator'?`);
+      warn(`No validator instance is present on ${name ?'component "' +  name + '"' : 'un-named component'}, did you forget to inject '$validator'?`);
 
       return;
     }
