@@ -12,8 +12,8 @@ export default (Vue, options) => {
 
   mixin.beforeCreate = function beforeCreate() {
     let reactive = false;
-    // if its a root instance, inject anyways.
-    if (options.inject || !this.$parent) {
+    // if its a root instance, inject anyways, or if it requested an instance.
+    if (options.inject || !this.$parent || this.$options.$validates) {
       this.$validator = new Validator(null, { init: false, vm: this });
     } else {
       const injectionOpts = this.$options.inject;

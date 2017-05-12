@@ -2677,8 +2677,8 @@ var makeMixin = function (Vue, options) {
 
   mixin.beforeCreate = function beforeCreate() {
     var reactive = false;
-    // if its a root instance, inject anyways.
-    if (options.inject || !this.$parent) {
+    // if its a root instance, inject anyways, or if it requested an instance.
+    if (options.inject || !this.$parent || this.$options.$validates) {
       this.$validator = new Validator(null, { init: false, vm: this });
     } else {
       var injectionOpts = this.$options.inject;
@@ -3354,8 +3354,9 @@ var listenersInstances = [];
 var makeDirective = function (options) { return ({
   inserted: function inserted(el, binding, vnode) {
     if (! vnode.context.$validator) {
+      var name = vnode.context.$options._componentTag;
       // eslint-disable-next-line
-      warn(("No validator instance is present on this component " + (vnode.context.$options.name) + ", did you forget to inject '$validator'?"));
+      warn(("No validator instance is present on " + (name ?'component "' +  name + '"' : 'un-named component') + ", did you forget to inject '$validator'?"));
 
       return;
     }
