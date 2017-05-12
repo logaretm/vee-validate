@@ -1,6 +1,6 @@
 import ClassManager from './classes';
 import {
-  getScope, debounce, warn, getDataAttribute, isObject, toArray, find, getRules, assign
+  getScope, debounce, warn, getDataAttribute, isObject, toArray, find, getRules, assign, isCallable
 } from './utils';
 import config from './config';
 
@@ -244,7 +244,9 @@ export default class ListenerGenerator {
     }
     // users are able to specify which events they want to validate on
     const events = getDataAttribute(this.el, 'validate-on') || this.options.events;
-    listener.names = events.split('|').filter(e => overrides[e] !== null).map(e => overrides[e] || e);
+    listener.names = events.split('|')
+                           .filter(e => overrides[e] !== null)
+                           .map(e => overrides[e] || e);
 
     return listener;
   }
@@ -427,7 +429,10 @@ export default class ListenerGenerator {
   detach() {
     if (this.component) {
       this.component.$off('input', this.componentListener);
-      this.componentPropUnwatch();
+
+      if (isCallable(this.componentPropUnwatch)) {
+        this.componentPropUnwatch();
+      }
     }
 
     if (this.unwatch) {
