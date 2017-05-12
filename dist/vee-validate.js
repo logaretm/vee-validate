@@ -1540,7 +1540,12 @@ var messages = {
 
     return ("The " + field + " field must be less than " + size + " KB.");
 },
-  url: function (field) { return ("The " + field + " field is not a valid URL."); }
+  url: function (field) { return ("The " + field + " field is not a valid URL."); },
+  length: function (field, ref) {
+    var length = ref[0];
+
+    return ("The " + field + " field must exactly contain " + length + " characters.");
+}
 };
 
 var after = function (moment) { return function (value, ref) {

@@ -18,13 +18,14 @@ const messages = {
   ip: (field) => `${field} moet een geldig ip adres zijn.`,
   max: (field, [length]) => `${field} mag niet groter zijn dan ${length} karakters.`,
   mimes: (field) => `${field} moet een geldig bestandstype hebben.`,
-  min: (field, [length]) => `${field} moet minimaal ${length} karakaters zijn.`,
+  min: (field, [length]) => `${field} moet minimaal ${length} karakters zijn.`,
   not_in: (field) => `${field} is ongeldig.`,
   numeric: (field) => `${field} mag alleen nummers bevatten`,
   regex: (field) => `${field} formaat is ongeldig.`,
   required: (field) => `${field} is verplicht.`,
   size: (field, [size]) => `${field} moet minstens ${size} KB groot zijn.`,
-  url: (field) => `${field} is geen geldige URL.`
+  url: (field) => `${field} is geen geldige URL.`,
+  length: (field, [length]) => `${field} moet exact ${length} tekens bevatten.`
 };
 
 const locale = {
