@@ -581,8 +581,8 @@ export default class Validator {
       touched: false,
       dirty: false,
       pristine: true,
-      valid: false,
-      invalid: false,
+      valid: null,
+      invalid: null,
       required: field.required,
       pending: false
     };
