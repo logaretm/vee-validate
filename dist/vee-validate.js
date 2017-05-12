@@ -1117,13 +1117,17 @@ var ErrorBag = function ErrorBag(vm) {
  * @param {Function} callback
  */
 ErrorBag.prototype._tryNextTick = function _tryNextTick (callback) {
+    var this$1 = this;
+
   if (! this.$nextTick) {
     // Call immediatly if next tick isn't available.
     callback();
     return;
   }
 
-  this.$nextTick(callback.bind(this));
+  this.$nextTick(function () {
+    setTimeout(callback.bind(this$1), 10);
+  });
 };
 
   /**
