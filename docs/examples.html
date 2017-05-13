@@ -483,7 +483,7 @@ export default {
 </div></code-example><h2><a href="#flags-example">Flags</a></h2>
 <p>vee-validate includes few flags that could help you improve your user experience, each field under validation has its own set of flags which are:</p>
 <ul>
-<li><code>tocuhed</code>: indicates that the field has been touched or focused.</li>
+<li><code>touched</code>: indicates that the field has been touched or focused.</li>
 <li><code>untouched</code>: indicates that the field has not been touched nor focused.</li>
 <li><code>dirty</code>: indicates that the field has been manipluated.</li>
 <li><code>pristine</code>: indicates that the field has not been manipluated.</li>
@@ -494,7 +494,7 @@ export default {
 <pre><code class="highlight-js">export default {
   // ...
   computed: {
-    isFormDiry() {
+    isFormDirty() {
       return Object.keys(this.fields).some(key =&gt; this.fields[key].dirty);
     }
   },
