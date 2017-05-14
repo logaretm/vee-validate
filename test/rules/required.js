@@ -20,7 +20,7 @@ const invalid = [
 ];
 
 test('validates required', t => {
-  t.plan(10);
+  t.plan(12);
   valid.forEach(value => t.true(validate(value)));
 
   invalid.forEach(value => t.false(validate(value)));
