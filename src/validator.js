@@ -22,6 +22,7 @@ export default class Validator {
     this._createFields(validations);
     this.errorBag = new ErrorBag(options.vm);
     this.fieldBag = {};
+    this.paused = false;
     // Some fields will be later evaluated, because the vm isn't mounted yet
     // so it may register it under an inaccurate scope.
     this.$deferred = [];
@@ -819,6 +820,8 @@ export default class Validator {
    * @return {Promise}
    */
   validate(name, value, scope = '__global__', throws = true) {
+    if (this.paused) return Promise.resolve(true);
+
     if (name && name.indexOf('.') > -1) {
       // no such field, try the scope form.
       if (! this.$scopes.__global__[name]) {
@@ -923,6 +926,18 @@ export default class Validator {
     field.el.setAttribute('aria-required', !! field.required);
   }
 
+  pause() {
+    this.paused = true;
+
+    return this;
+  }
+
+  resume() {
+    this.paused = false;
+
+    return this;
+  }
+
   /**
    * Validates each value against the corresponding field validations.
    * @param  {object} values The values to be validated.
@@ -930,6 +945,8 @@ export default class Validator {
    * @return {Promise} Returns a promise with the validation result.
    */
   validateAll(values, scope = '__global__') {
+    if (this.paused) return Promise.resolve(true);
+
     let normalizedValues;
     if (! values || typeof values === 'string') {
       this.errorBag.clear(values);
@@ -965,6 +982,8 @@ export default class Validator {
    * @returns {Promise} All promises resulted from each scope.
    */
   validateScopes() {
+    if (this.paused) return Promise.resolve(true);
+
     return Promise.all(
       Object.keys(this.$scopes).map(scope => this.validateAll(scope))
     );

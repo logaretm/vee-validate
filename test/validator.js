@@ -1066,3 +1066,25 @@ test('it can remove events via off', t => {
     v.off('after', 'dotted.name', '__global__');
     t.true(typeof v.$scopes.__global__['dotted.name'].events.after === 'undefined');
 });
+
+test('validations can be paused and resumed', async t => {
+    const v = new Validator();
+    v.attach('name', 'required');
+
+    v.pause();
+
+    t.true(await v.validate('name', ''));
+    t.true(await v.validateAll());
+    t.true(await v.validateScopes());
+    
+    v.resume();
+    t.false(await v.validate('name', ''));
+
+    try {
+        await v.validateAll({
+            name: ''
+        })
+    } catch (error) {
+        t.is(error.msg, '[vee-validate]: Validation Failed');
+    }
+});
