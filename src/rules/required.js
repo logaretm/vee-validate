@@ -3,7 +3,7 @@ export default (value) => {
     return !! value.length;
   }
 
-  if (value === undefined || value === null) {
+  if (value === undefined || value === null || value === false) {
     return false;
   }
 
