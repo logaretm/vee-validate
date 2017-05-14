@@ -674,7 +674,7 @@ var required = function (value) {
     return !! value.length;
   }
 
-  if (value === undefined || value === null) {
+  if (value === undefined || value === null || value === false) {
     return false;
   }
 
@@ -1117,17 +1117,13 @@ var ErrorBag = function ErrorBag(vm) {
  * @param {Function} callback
  */
 ErrorBag.prototype._tryNextTick = function _tryNextTick (callback) {
-    var this$1 = this;
-
   if (! this.$nextTick) {
     // Call immediatly if next tick isn't available.
     callback();
     return;
   }
 
-  this.$nextTick(function () {
-    setTimeout(callback.bind(this$1), 10);
-  });
+  this.$nextTick(callback.bind(this));
 };
 
   /**
@@ -1670,6 +1666,7 @@ var Validator = function Validator(validations, options) {
   this._createFields(validations);
   this.errorBag = new ErrorBag(options.vm);
   this.fieldBag = {};
+  this.paused = false;
   // Some fields will be later evaluated, because the vm isn't mounted yet
   // so it may register it under an inaccurate scope.
   this.$deferred = [];
@@ -2511,6 +2508,8 @@ Validator.prototype.validate = function validate (name, value, scope, throws) {
     if ( scope === void 0 ) scope = '__global__';
     if ( throws === void 0 ) throws = true;
 
+  if (this.paused) { return Promise.resolve(true); }
+
   if (name && name.indexOf('.') > -1) {
     // no such field, try the scope form.
     if (! this.$scopes.__global__[name]) {
@@ -2616,6 +2615,18 @@ Validator.prototype._setAriaRequiredAttribute = function _setAriaRequiredAttribu
   field.el.setAttribute('aria-required', !! field.required);
 };
 
+Validator.prototype.pause = function pause () {
+  this.paused = true;
+
+  return this;
+};
+
+Validator.prototype.resume = function resume () {
+  this.paused = false;
+
+  return this;
+};
+
 /**
  * Validates each value against the corresponding field validations.
  * @param{object} values The values to be validated.
@@ -2625,6 +2636,8 @@ Validator.prototype._setAriaRequiredAttribute = function _setAriaRequiredAttribu
 Validator.prototype.validateAll = function validateAll (values, scope) {
     var this$1 = this;
     if ( scope === void 0 ) scope = '__global__';
+
+  if (this.paused) { return Promise.resolve(true); }
 
   var normalizedValues;
   if (! values || typeof values === 'string') {
@@ -2662,6 +2675,8 @@ Validator.prototype.validateAll = function validateAll (values, scope) {
  */
 Validator.prototype.validateScopes = function validateScopes () {
     var this$1 = this;
+
+  if (this.paused) { return Promise.resolve(true); }
 
   return Promise.all(
     Object.keys(this.$scopes).map(function (scope) { return this$1.validateAll(scope); })
@@ -3143,7 +3158,9 @@ ListenerGenerator.prototype._getSuitableListener = function _getSuitableListener
   }
   // users are able to specify which events they want to validate on
   var events = getDataAttribute(this.el, 'validate-on') || this.options.events;
-  listener.names = events.split('|').filter(function (e) { return overrides[e] !== null; }).map(function (e) { return overrides[e] || e; });
+  listener.names = events.split('|')
+                         .filter(function (e) { return overrides[e] !== null; })
+                         .map(function (e) { return overrides[e] || e; });
 
   return listener;
 };
@@ -3338,7 +3355,10 @@ ListenerGenerator.prototype.attach = function attach () {
 ListenerGenerator.prototype.detach = function detach () {
   if (this.component) {
     this.component.$off('input', this.componentListener);
-    this.componentPropUnwatch();
+
+    if (isCallable(this.componentPropUnwatch)) {
+      this.componentPropUnwatch();
+    }
   }
 
   if (this.unwatch) {
