@@ -926,12 +926,22 @@ export default class Validator {
     field.el.setAttribute('aria-required', !! field.required);
   }
 
+  /**
+   * Pauses the validator.
+   *
+   * @return {Validator}
+   */
   pause() {
     this.paused = true;
 
     return this;
   }
 
+  /**
+   * Resumes the validator.
+   *
+   * @return {Validator}
+   */
   resume() {
     this.paused = false;
 
