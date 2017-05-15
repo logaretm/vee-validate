@@ -32,7 +32,7 @@ const messages = {
 };
 
 const locale = {
-  name: 'uk',
+  name: 'ua',
   messages,
   attributes: {}
 };
