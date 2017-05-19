@@ -1,4 +1,3 @@
-/* eslint-disable prefer-rest-params */
 import { isObject, assign } from './utils';
 
 export default class Dictionary {
@@ -17,6 +16,26 @@ export default class Dictionary {
     }
 
     return this.dictionary[locale].messages[key];
+  }
+
+  /**
+   * Gets a specific message for field. fallsback to the rule message.
+   *
+   * @param {String} locale
+   * @param {String} field
+   * @param {String} key
+   */
+  getFieldMessage(locale, field, key) {
+    if (! this.hasLocale(locale)) {
+      return this.getMessage(locale, key);
+    }
+
+    const dict = this.dictionary[locale].custom && this.dictionary[locale].custom[field];
+    if (! dict) {
+      return this.getMessage(locale, key);
+    }
+
+    return dict[key];
   }
 
   _getDefaultMessage(locale) {

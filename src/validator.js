@@ -11,7 +11,8 @@ let STRICT_MODE = true;
 const DICTIONARY = new Dictionary({
   en: {
     messages,
-    attributes: {}
+    attributes: {},
+    custom: {}
   }
 });
 
@@ -458,10 +459,10 @@ export default class Validator {
     const params = this._getLocalizedParams(rule, scope);
     // Defaults to english message.
     if (! this.dictionary.hasLocale(LOCALE)) {
-      return this.dictionary.getMessage('en', rule.name)(name, params, data);
+      return this.dictionary.getFieldMessage('en', field, rule.name)(name, params, data);
     }
 
-    return this.dictionary.getMessage(LOCALE, rule.name)(name, params, data);
+    return this.dictionary.getFieldMessage(LOCALE, field, rule.name)(name, params, data);
   }
 
   /**

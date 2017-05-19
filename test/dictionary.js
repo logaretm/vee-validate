@@ -9,7 +9,7 @@ test('does not merge if a non object is provided', t => {
 
 test('can check for locale existance', t => {
   const dict = new Dictionary({
-      en: { }
+    en: { }
   });
 
   t.is(dict.hasLocale('en'), true);
@@ -108,4 +108,31 @@ test('returns the default message for the given locale when no fallback is provi
 
   // no default message
   t.is(dict.getMessage('fr', 'any'), 'This is default');
+});
+
+test('custom messages can be provided for specific fields', t => {
+  const dict = new Dictionary({
+    en: {
+      messages: {
+        alpha: 'not letters'
+      }
+    }
+  });
+
+  t.is(dict.getMessage('en', 'alpha'), 'not letters');
+
+  // test fallback
+  t.is(dict.getFieldMessage('en', 'name', 'alpha'), 'not letters');
+
+  dict.merge({
+    en: {
+      custom: {
+        name: {
+          alpha: 'custom message'
+        }
+      }
+    }
+  });
+
+  t.is(dict.getFieldMessage('en', 'name', 'alpha'), 'custom message');
 });
