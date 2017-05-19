@@ -31,7 +31,7 @@ export default class Dictionary {
     }
 
     const dict = this.dictionary[locale].custom && this.dictionary[locale].custom[field];
-    if (! dict) {
+    if (! dict || ! dict[key]) {
       return this.getMessage(locale, key);
     }
 

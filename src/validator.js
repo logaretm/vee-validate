@@ -459,10 +459,14 @@ export default class Validator {
     const params = this._getLocalizedParams(rule, scope);
     // Defaults to english message.
     if (! this.dictionary.hasLocale(LOCALE)) {
-      return this.dictionary.getFieldMessage('en', field, rule.name)(name, params, data);
+      const msg = this.dictionary.getFieldMessage('en', field, rule.name);
+
+      return isCallable(msg) ? msg(name, params, data) : msg;
     }
 
-    return this.dictionary.getFieldMessage(LOCALE, field, rule.name)(name, params, data);
+    const msg = this.dictionary.getFieldMessage(LOCALE, field, rule.name);
+
+    return isCallable(msg) ? msg(name, params, data) : msg;
   }
 
   /**
