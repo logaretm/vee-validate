@@ -2615,12 +2615,22 @@ Validator.prototype._setAriaRequiredAttribute = function _setAriaRequiredAttribu
   field.el.setAttribute('aria-required', !! field.required);
 };
 
+/**
+ * Pauses the validator.
+ *
+ * @return {Validator}
+ */
 Validator.prototype.pause = function pause () {
   this.paused = true;
 
   return this;
 };
 
+/**
+ * Resumes the validator.
+ *
+ * @return {Validator}
+ */
 Validator.prototype.resume = function resume () {
   this.paused = false;
 
@@ -2689,9 +2699,11 @@ var makeMixin = function (Vue, options) {
   var mixin = {};
 
   mixin.provide = function providesValidator() {
-    return {
-      $validator: this.$validator
-    };
+    if (this.$validator) {
+      return {
+          $validator: this.$validator
+      };
+    }
   };
 
   mixin.beforeCreate = function beforeCreate() {

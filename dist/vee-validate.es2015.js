@@ -2414,12 +2414,22 @@ class Validator {
     field.el.setAttribute('aria-required', !! field.required);
   }
 
+  /**
+   * Pauses the validator.
+   *
+   * @return {Validator}
+   */
   pause() {
     this.paused = true;
 
     return this;
   }
 
+  /**
+   * Resumes the validator.
+   *
+   * @return {Validator}
+   */
   resume() {
     this.paused = false;
 
@@ -2482,9 +2492,11 @@ var makeMixin = (Vue, options) => {
   const mixin = {};
 
   mixin.provide = function providesValidator() {
-    return {
-      $validator: this.$validator
-    };
+    if (this.$validator) {
+      return {
+          $validator: this.$validator
+      };
+    }
   };
 
   mixin.beforeCreate = function beforeCreate() {

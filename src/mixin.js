@@ -5,9 +5,11 @@ export default (Vue, options) => {
   const mixin = {};
 
   mixin.provide = function providesValidator() {
-    return {
-      $validator: this.$validator
-    };
+    if (this.$validator) {
+      return {
+        $validator: this.$validator
+      };
+    }
   };
 
   mixin.beforeCreate = function beforeCreate() {
