@@ -627,7 +627,9 @@ export default class Validator {
       field.events = {};
       this._assignFlags(field);
       // cache the scope property.
-      field.el.setAttribute('data-vv-scope', field.scope);
+      if (field.el && isCallable(field.el.setAttribute)) {
+        field.el.setAttribute('data-vv-scope', field.scope);
+      }
 
       if (field.listeners.classes) {
         field.listeners.classes.attach(field);
