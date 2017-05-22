@@ -4,11 +4,11 @@ This is a plugin for [Vue.js](https://vuejs.org/) that allows you to validate in
 
 You don't have to do anything fancy in your app, most of the work goes into the html. You only need to specify for each input what kind of validators should be used when the value changes. You will then get informed of the errors for each field.  
 
-Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object.  
+Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object.
+
 
 Currently there are over 20 validation rules available in the plugin. This plugin is inspired by [PHP Framework Laravel's validation syntax](https://laravel.com/).  
 
-It also supports Vue 2.0\. All examples here are built using Vue 2.0 with the plugin.
 
 ## [Installation](#installation)
 

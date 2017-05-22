@@ -2,22 +2,25 @@ import CodeBlock from './CodeBlock.vue';
 import CodeExample from './CodeExample.vue';
 import AnimatedButton from './AnimatedButton.vue';
 
+// eslint-disable-next-line
+const loadAsync = (name) => () => import(`./examples/${name}.vue`);
+
 // Examples.
-import DelayExample from './examples/Delay.vue';
-import BasicExample from './examples/Basic.vue';
-import LocaleExample from './examples/Locale.vue';
-import RejectExample from './examples/FileReject.vue';
-import ScopeExample from './examples/Scopes.vue';
-import DataExample from './examples/Data.vue';
-import FormExample from './examples/Form.vue';
-import CouponExample from './examples/Coupon.vue';
-import RadioButtonsExample from './examples/RadioButtons.vue';
-import CheckboxExample from './examples/Checkbox.vue';
-import FlagsExample from './examples/Flags.vue';
-import SelectorsExample from './examples/Selectors.vue';
-import ComponentExample from './examples/Component.vue';
-import EventBusExample from './examples/EventBusParent.vue';
-import ValidatorExample from './examples/ValidatorExample.vue';
+const DelayExample = loadAsync('Delay');
+const BasicExample = loadAsync('Basic');
+const LocaleExample = loadAsync('Locale');
+const RejectExample = loadAsync('FileReject');
+const ScopeExample = loadAsync('Scopes');
+const DataExample = loadAsync('Data');
+const FormExample = loadAsync('Form');
+const CouponExample = loadAsync('Coupon');
+const RadioButtonsExample = loadAsync('RadioButtons');
+const CheckboxExample = loadAsync('Checkbox');
+const FlagsExample = loadAsync('Flags');
+const SelectorsExample = loadAsync('Selectors');
+const ComponentExample = loadAsync('Component');
+const EventBusExample = loadAsync('EventBusParent');
+const ValidatorExample = loadAsync('ValidatorExample');
 
 
 export default (Vue) => {
@@ -25,19 +28,19 @@ export default (Vue) => {
   Vue.component(CodeBlock.name, CodeBlock);
   Vue.component(CodeExample.name, CodeExample);
 
-  Vue.component(BasicExample.name, BasicExample);
-  Vue.component(DelayExample.name, DelayExample);
-  Vue.component(LocaleExample.name, LocaleExample);
-  Vue.component(RejectExample.name, RejectExample);
-  Vue.component(ScopeExample.name, ScopeExample);
-  Vue.component(DataExample.name, DataExample);
-  Vue.component(FormExample.name, FormExample);
-  Vue.component(CouponExample.name, CouponExample);
-  Vue.component(RadioButtonsExample.name, RadioButtonsExample);
-  Vue.component(CheckboxExample.name, CheckboxExample);
-  Vue.component(FlagsExample.name, FlagsExample);
-  Vue.component(ComponentExample.name, ComponentExample);
-  Vue.component(EventBusExample.name, EventBusExample);
-  Vue.component(SelectorsExample.name, SelectorsExample);
-  Vue.component(ValidatorExample.name, ValidatorExample);
+  Vue.component('basic-example', BasicExample);
+  Vue.component('delay-example', DelayExample);
+  Vue.component('locale-example', LocaleExample);
+  Vue.component('reject-example', RejectExample);
+  Vue.component('scopes-example', ScopeExample);
+  Vue.component('data-example', DataExample);
+  Vue.component('form-example', FormExample);
+  Vue.component('coupon-example', CouponExample);
+  Vue.component('radio-buttons-example', RadioButtonsExample);
+  Vue.component('checkbox-example', CheckboxExample);
+  Vue.component('flags-example', FlagsExample);
+  Vue.component('component-example', ComponentExample);
+  Vue.component('event-bus-example', EventBusExample);
+  Vue.component('selectors-example', SelectorsExample);
+  Vue.component('validator-example', ValidatorExample);
 };

@@ -20,7 +20,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 let config = {
   entry: {
     bundle: path.join(__dirname, '/../', 'src/js/main'),
-    vendor: ['vue', 'moment', 'axios', 'vee-validate']
+    vendor: ['vue', 'vee-validate']
   },
   output: {
     path: path.join(__dirname, '/../', 'assets'),
@@ -51,16 +51,20 @@ let config = {
       {
         test: /\.js$/,
         exclude: /(node_modules|locale)/,
-        loader: 'babel-loader',
-        query: {
-          babelrc: false,
-          presets: [
-            ['es2015', { modules: false }],
-          ],
-          plugins: [
-            'transform-object-rest-spread'
-          ]
-        }
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['es2015', { modules: false }],
+              ],
+              plugins: [
+                'transform-object-rest-spread',
+                'syntax-dynamic-import'
+              ]
+            }
+          }
+        ]
       },
       {
         test: /\.vue$/,

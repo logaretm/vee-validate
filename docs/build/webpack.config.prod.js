@@ -1,10 +1,12 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const OfflinePlugin = require('offline-plugin');
 const path = require('path');
 
 module.exports = {
   plugins: [
+    new OfflinePlugin(),
     new CleanWebpackPlugin(path.join(__dirname, 'assets')),
     new ExtractTextPlugin('css/[name].css'),
     new webpack.optimize.CommonsChunkPlugin({
@@ -29,11 +31,11 @@ module.exports = {
         loaders: {
           css: ExtractTextPlugin.extract({
             fallback: 'style-loader',
-            loader: 'css-loader'
+            use: 'css-loader'
           }),
           stylus: ExtractTextPlugin.extract({
             fallback: 'style-loader',
-            loader: ['css-loader', 'stylus-loader']
+            use: ['css-loader', 'stylus-loader']
           })
         }
       }
@@ -45,14 +47,14 @@ module.exports = {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          loader: 'css-loader'
+          use: 'css-loader'
         })
       },
       {
         test: /.styl$/,
         loader: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          loader: ['css-loader', 'stylus-loader']
+          use: ['css-loader', 'stylus-loader']
         })
       }
     ]
