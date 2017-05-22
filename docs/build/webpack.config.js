@@ -24,7 +24,7 @@ let config = {
   },
   output: {
     path: path.join(__dirname, '/../', 'assets'),
-    filename: 'js/[name].js',
+    filename: 'js/[name]-[hash].js',
     publicPath: '/assets/'
   },
   resolve: {
