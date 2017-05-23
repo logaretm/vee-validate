@@ -7,19 +7,19 @@ html(lang="en")
       -   description: 'Simple Vue.js Input Validation'
       - };
         meta(charset='utf-8')
-    link(rel="apple-touch-icon" sizes="57x57" href="assets/icons/apple-icon-57x57.png")
-    link(rel="apple-touch-icon" sizes="60x60" href="assets/icons/apple-icon-60x60.png")
-    link(rel="apple-touch-icon" sizes="72x72" href="assets/icons/apple-icon-72x72.png")
-    link(rel="apple-touch-icon" sizes="76x76" href="assets/icons/apple-icon-76x76.png")
-    link(rel="apple-touch-icon" sizes="114x114" href="assets/icons/apple-icon-114x114.png")
-    link(rel="apple-touch-icon" sizes="120x120" href="assets/icons/apple-icon-120x120.png")
-    link(rel="apple-touch-icon" sizes="144x144" href="assets/icons/apple-icon-144x144.png")
-    link(rel="apple-touch-icon" sizes="152x152" href="assets/icons/apple-icon-152x152.png")
-    link(rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-icon-180x180.png")
-    link(rel="icon" type="image/png" sizes="192x192" href="assets/icons/android-icon-192x192.png")
-    link(rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png")
-    link(rel="icon" type="image/png" sizes="96x96" href="assets/icons/favicon-96x96.png")
-    link(rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png")
+    link(rel="apple-touch-icon" sizes="57x57" href="favico/apple-icon-57x57.png")
+    link(rel="apple-touch-icon" sizes="60x60" href="favico/apple-icon-60x60.png")
+    link(rel="apple-touch-icon" sizes="72x72" href="favico/apple-icon-72x72.png")
+    link(rel="apple-touch-icon" sizes="76x76" href="favico/apple-icon-76x76.png")
+    link(rel="apple-touch-icon" sizes="114x114" href="favico/apple-icon-114x114.png")
+    link(rel="apple-touch-icon" sizes="120x120" href="favico/apple-icon-120x120.png")
+    link(rel="apple-touch-icon" sizes="144x144" href="favico/apple-icon-144x144.png")
+    link(rel="apple-touch-icon" sizes="152x152" href="favico/apple-icon-152x152.png")
+    link(rel="apple-touch-icon" sizes="180x180" href="favico/apple-icon-180x180.png")
+    link(rel="icon" type="image/png" sizes="192x192" href="favico/android-icon-192x192.png")
+    link(rel="icon" type="image/png" sizes="32x32" href="favico/favicon-32x32.png")
+    link(rel="icon" type="image/png" sizes="96x96" href="favico/favicon-96x96.png")
+    link(rel="icon" type="image/png" sizes="16x16" href="favico/favicon-16x16.png")
     meta(name="msapplication-TileColor" content="#ffffff")
     meta(name="msapplication-TileImage" content="/ms-icon-144x144.png")
     meta(name="theme-color" content="#41b883")
@@ -28,7 +28,6 @@ html(lang="en")
     meta(property='og:description', content=meta.description)
     meta(name='description', content=meta.description)
     title= meta.title
-    link(rel="link" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css")
 
   body
     include _mixins.pug
@@ -57,9 +56,7 @@ html(lang="en")
                 block content
 
     script(src='https://cdn.polyfill.io/v2/polyfill.min.js')
-    script(src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js")
     script.
-      hljs.initHighlightingOnLoad();
       Array.from(document.querySelectorAll('h2')).forEach(h => {
         h.classList.add('title');
         h.classList.add('is-4');

@@ -1,13 +1,13 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const OfflinePlugin = require('offline-plugin');
 const path = require('path');
 
 module.exports = {
   plugins: [
-    new OfflinePlugin(),
-    new CleanWebpackPlugin(path.join(__dirname, 'assets')),
+    new CleanWebpackPlugin(['assets'], {
+      root: path.join(__dirname, '/../')
+    }),
     new ExtractTextPlugin('css/[name].css'),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',

@@ -28,15 +28,16 @@
             <slot name="example"></slot>
         </div>
         <div v-show="content === 'html'" class="column is-12">
-            <code-block class="language-html"><slot name="html"></slot></code-block>
+            <code-block ref="htmlCode" class="language-html"><slot name="html"></slot></code-block>
         </div>
         <div v-show="content === 'js'" class="column is-12">
-            <code-block class="language-javascript"><slot name="js"></slot></code-block>
+            <code-block ref="jsCode" class="language-javascript"><slot name="js"></slot></code-block>
         </div>
     </div>
 </template>
 
 <script>
+
 export default {
   name: 'code-example',
   data: () => ({

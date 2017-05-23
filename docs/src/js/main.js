@@ -2,6 +2,7 @@ import 'bulma/css/bulma.css';
 import 'font-awesome/css/font-awesome.css';
 import Vue from 'vue';
 import VeeValidate, { Validator } from 'vee-validate';
+import hljs from 'highlight.js';
 import Components from './components';
 import '../stylus/app.styl';
 
@@ -14,6 +15,8 @@ if (! window.fetch) {
   // eslint-disable-next-line
   import('whatwg-fetch');
 }
+
+hljs.initHighlightingOnLoad();
 
 Vue.use(VeeValidate);
 Vue.use(Components);

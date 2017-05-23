@@ -1,5 +1,5 @@
-<template lang="html">
-    <pre ref="code"><code><slot></slot></code></pre>
+<template>
+    <pre><code ref="code"><slot></slot></code></pre>
 </template>
 
 <script>
