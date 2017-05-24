@@ -737,7 +737,10 @@ export default class Validator {
       return;
     }
 
-    this.$scopes[scope][name].listeners.detach();
+    if (this.$scopes[scope][name].listeners) {
+      this.$scopes[scope][name].listeners.detach();
+    }
+
     this.errorBag.remove(name, scope);
     delete this.$scopes[scope][name];
   }
