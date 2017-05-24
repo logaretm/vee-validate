@@ -42,7 +42,12 @@ export default (Vue, options) => {
       this.$validator = new Validator(null, { init: false, vm: this });
     }
 
-    // There is a validator but it isn't injected.
+    // don't inject errors or fieldBag as no validator was resolved.
+    if (! requested && ! this.$validator) {
+      return;
+    }
+
+    // There is a validator but it isn't injected, mark as reactive.
     if (! requested && this.$validator) {
       Vue.util.defineReactive(this.$validator, 'errorBag', this.$validator.errorBag);
       Vue.util.defineReactive(this.$validator, 'fieldBag', this.$validator.fieldBag);
