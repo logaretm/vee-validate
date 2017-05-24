@@ -6,11 +6,11 @@ const validatorRequested = (injections) => {
     return false;
   }
 
-  if (Array.isArray(injections) && ! ~injections.indexOf('$validator')) {
+  if (Array.isArray(injections) && ~injections.indexOf('$validator')) {
     return true;
   }
 
-  if (isObject(injections) && ! injections.$validator) {
+  if (isObject(injections) && injections.$validator) {
     return true;
   }
 
@@ -30,21 +30,20 @@ export default (Vue, options) => {
   };
 
   mixin.beforeCreate = function beforeCreate() {
-    let reactive = false;
-    const requested = validatorRequested(this.$options.inject);
-    // if its a root instance, inject anyways, or if it requested an instance.
-    if (options.inject || !this.$parent || this.$options.$validates) {
+    // if its a root instance, inject anyways, or if it requested a new instance.
+    if (this.$options.$validates || !this.$parent) {
       this.$validator = new Validator(null, { init: false, vm: this });
-    } else {
-      if (! requested) {
-        return;
-      }
-
-      reactive = true;
     }
 
+    const requested = validatorRequested(this.$options.inject);
 
-    if (! reactive) {
+    // if automatic injection is enabled and no instance was requested.
+    if (! this.$validator && options.inject && !requested) {
+      this.$validator = new Validator(null, { init: false, vm: this });
+    }
+
+    // There is a validator but it isn't injected.
+    if (! requested && this.$validator) {
       Vue.util.defineReactive(this.$validator, 'errorBag', this.$validator.errorBag);
       Vue.util.defineReactive(this.$validator, 'fieldBag', this.$validator.fieldBag);
     }
