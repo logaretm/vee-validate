@@ -3,17 +3,15 @@ import Validator from './validator';
 
 export default (Vue, options) => {
   const mixin = {};
-  if (!options.inject) {
-    mixin.provide = function providesValidator() {
-      if (this.$validator) {
-        return {
-          $validator: this.$validator
-        };
-      }
+  mixin.provide = function providesValidator() {
+    if (this.$validator) {
+      return {
+        $validator: this.$validator
+      };
+    }
 
-      return {};
-    };
-  }
+    return {};
+  };
 
   mixin.beforeCreate = function beforeCreate() {
     let reactive = false;
