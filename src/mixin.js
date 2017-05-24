@@ -1,6 +1,22 @@
 import { isObject } from './utils';
 import Validator from './validator';
 
+const validatorRequested = (injections) => {
+  if (! injections) {
+    return false;
+  }
+
+  if (Array.isArray(injections) && ! ~injections.indexOf('$validator')) {
+    return true;
+  }
+
+  if (isObject(injections) && ! injections.$validator) {
+    return true;
+  }
+
+  return false;
+};
+
 export default (Vue, options) => {
   const mixin = {};
   mixin.provide = function providesValidator() {
@@ -15,20 +31,12 @@ export default (Vue, options) => {
 
   mixin.beforeCreate = function beforeCreate() {
     let reactive = false;
+    const requested = validatorRequested(this.$options.inject);
     // if its a root instance, inject anyways, or if it requested an instance.
     if (options.inject || !this.$parent || this.$options.$validates) {
       this.$validator = new Validator(null, { init: false, vm: this });
     } else {
-      const injectionOpts = this.$options.inject;
-      if (! injectionOpts) {
-        return;
-      }
-
-      if (Array.isArray(injectionOpts) && ! ~injectionOpts.indexOf('$validator')) {
-        return;
-      }
-
-      if (isObject(injectionOpts) && ! injectionOpts.$validator) {
+      if (! requested) {
         return;
       }
 
