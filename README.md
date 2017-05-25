@@ -53,7 +53,7 @@ npm install vee-validate@prev --save
 #### bower
 
 ```
-bower install vee-validate#2.0.0-rc.3 --save
+bower install vee-validate#2.0.0-rc.4--save
 ```
 
 ### CDN
