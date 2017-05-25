@@ -885,6 +885,7 @@ var Rules = {
 var ErrorBag = function ErrorBag() {
   this.errors = [];
 };
+
   /**
    * Adds an error to the internal array.
    *
@@ -935,6 +936,7 @@ ErrorBag.prototype.clear = function clear (scope) {
   if (! scope) {
     scope = '__global__';
   }
+
   this.errors = this.errors.filter(function (e) { return e.scope !== scope; });
 };
 
@@ -1648,7 +1650,7 @@ var DICTIONARY = new Dictionary({
 });
 
 var Validator = function Validator(validations, options) {
-  if ( options === void 0 ) options = { init: true };
+  if ( options === void 0 ) options = { init: true, vm: null };
 
   this.strictMode = STRICT_MODE;
   this.$scopes = { __global__: {} };
@@ -1656,6 +1658,8 @@ var Validator = function Validator(validations, options) {
   this.errorBag = new ErrorBag();
   this.fieldBag = {};
   this.paused = false;
+  this.$vm = options.vm;
+
   // Some fields will be later evaluated, because the vm isn't mounted yet
   // so it may register it under an inaccurate scope.
   this.$deferred = [];
@@ -2391,6 +2395,21 @@ Validator.prototype.updateField = function updateField (name, checks, options) {
   if (newChecks !== oldChecks) {
     this.errorBag.remove(name, options.scope);
   }
+};
+
+/**
+ * Clears the errors from the errorBag using the next tick if possible.
+ */
+Validator.prototype.clean = function clean () {
+    var this$1 = this;
+
+  if (! this.$vm || ! isCallable(this.$vm.$nextTick)) {
+    return;
+  }
+
+  this.$vm.$nextTick(function () {
+    this$1.errorBag.clear();
+  });
 };
 
 /**

@@ -21,9 +21,11 @@ export default class Validator {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };
     this._createFields(validations);
-    this.errorBag = new ErrorBag(options.vm);
+    this.errorBag = new ErrorBag();
     this.fieldBag = {};
     this.paused = false;
+    this.$vm = options.vm;
+
     // Some fields will be later evaluated, because the vm isn't mounted yet
     // so it may register it under an inaccurate scope.
     this.$deferred = [];
@@ -132,8 +134,8 @@ export default class Validator {
    * @param  {object} validations The validations object.
    * @return {Validator} validator A validator object.
    */
-  static create(validations, $vm, options) {
-    return new Validator(validations, $vm, options);
+  static create(validations, options) {
+    return new Validator(validations, options);
   }
 
   /**
@@ -723,6 +725,19 @@ export default class Validator {
     if (newChecks !== oldChecks) {
       this.errorBag.remove(name, options.scope);
     }
+  }
+
+  /**
+   * Clears the errors from the errorBag using the next tick if possible.
+   */
+  clean() {
+    if (! this.$vm || ! isCallable(this.$vm.$nextTick)) {
+      return;
+    }
+
+    this.$vm.$nextTick(() => {
+      this.errorBag.clear();
+    });
   }
 
   /**
