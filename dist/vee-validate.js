@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.3
+ * vee-validate v2.0.0-rc.4
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -2828,6 +2828,8 @@ ClassListener.prototype.reset = function reset () {
  * Syncs the automatic classes.
  */
 ClassListener.prototype.sync = function sync () {
+  this.addInteractionListeners();
+
   if (! this.enabled) { return; }
 
   this.toggle(this.classNames.dirty, this.field.flags.dirty);
@@ -2836,6 +2838,64 @@ ClassListener.prototype.sync = function sync () {
   this.toggle(this.classNames.invalid, this.field.flags.invalid);
   this.toggle(this.classNames.touched, this.field.flags.touched);
   this.toggle(this.classNames.untouched, this.field.flags.untouched);
+};
+
+ClassListener.prototype.addFocusListener = function addFocusListener () {
+    var this$1 = this;
+
+  // listen for focus event.
+  this.listeners.focus = function () {
+    this$1.remove(this$1.classNames.untouched);
+    this$1.add(this$1.classNames.touched);
+    this$1.field.flags.touched = true;
+    this$1.field.flags.untouched = false;
+
+    if (this$1.component) { return; }
+
+    // only needed once.
+    this$1.el.removeEventListener('focus', this$1.listeners.focus);
+    this$1.listeners.focus = null;
+  };
+
+  if (this.component) {
+    this.component.$once('focus', this.listeners.focus);
+  } else {
+    this.el.addEventListener('focus', this.listeners.focus);
+  }
+};
+
+ClassListener.prototype.addInputListener = function addInputListener () {
+    var this$1 = this;
+
+  // listen for input.
+  this.listeners.input = function () {
+    this$1.remove(this$1.classNames.pristine);
+    this$1.add(this$1.classNames.dirty);
+    this$1.field.flags.dirty = true;
+    this$1.field.flags.pristine = false;
+
+    if (this$1.component) { return; }
+
+    // only needed once.
+    this$1.el.removeEventListener('input', this$1.listeners.input);
+    this$1.listeners.input = null;
+  };
+
+  if (this.component) {
+    this.component.$once('input', this.listeners.input);
+  } else {
+    this.el.addEventListener('input', this.listeners.input);
+  }
+};
+
+ClassListener.prototype.addInteractionListeners = function addInteractionListeners () {
+  if (! this.listeners.focus) {
+    this.addFocusListener();
+  }
+
+  if (! this.listeners.input) {
+    this.addInputListener();
+  }
 };
 
 /**
@@ -2849,25 +2909,7 @@ ClassListener.prototype.attach = function attach (field) {
   this.add(this.classNames.pristine);
   this.add(this.classNames.untouched);
 
-  // listen for focus event.
-  this.listeners.focus = function () {
-    this$1.remove(this$1.classNames.untouched);
-    this$1.add(this$1.classNames.touched);
-    // only needed once.
-    this$1.el.removeEventListener('focus', this$1.listeners.focus);
-    this$1.field.flags.touched = true;
-    this$1.field.flags.untouched = false;
-  };
-
-  // listen for input.
-  this.listeners.input = function () {
-    this$1.remove(this$1.classNames.pristine);
-    this$1.add(this$1.classNames.dirty);
-    // only needed once.
-    this$1.el.removeEventListener('input', this$1.listeners.input);
-    this$1.field.flags.dirty = true;
-    this$1.field.flags.pristine = false;
-  };
+  this.addInteractionListeners();
 
   this.listeners.after = function (e) {
     this$1.remove(e.valid ? this$1.classNames.invalid : this$1.classNames.valid);
@@ -2876,14 +2918,6 @@ ClassListener.prototype.attach = function attach (field) {
     this$1.field.flags.invalid = ! e.valid;
     this$1.field.flags.pending = false;
   };
-
-  if (this.component) {
-    this.component.$on('input', this.listeners.input);
-    this.component.$on('focus', this.listeners.focus);
-  } else {
-    this.el.addEventListener('focus', this.listeners.focus);
-    this.el.addEventListener('input', this.listeners.input);
-  }
 
   this.validator.on('after', this.field.name, this.field.scope, this.listeners.after);
 };
@@ -3531,7 +3565,7 @@ var index = {
   Validator: Validator,
   ErrorBag: ErrorBag,
   Rules: Rules,
-  version: '2.0.0-rc.3'
+  version: '2.0.0-rc.4'
 };
 
 return index;

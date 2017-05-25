@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.3
+ * vee-validate v2.0.0-rc.4
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -831,6 +831,225 @@ var Rules = {
   url
 };
 
+class ErrorBag {
+  constructor() {
+    this.errors = [];
+  }
+
+    /**
+     * Adds an error to the internal array.
+     *
+     * @param {string} field The field name.
+     * @param {string} msg The error message.
+     * @param {String} rule The rule that is responsible for the error.
+     * @param {String} scope The Scope name, optional.
+     */
+  add(field, msg, rule, scope = '__global__') {
+    this.errors.push({ field, msg, rule, scope });
+  }
+
+    /**
+     * Gets all error messages from the internal array.
+     *
+     * @param {String} scope The Scope name, optional.
+     * @return {Array} errors Array of all error messages.
+     */
+  all(scope) {
+    if (! scope) {
+      return this.errors.map(e => e.msg);
+    }
+
+    return this.errors.filter(e => e.scope === scope).map(e => e.msg);
+  }
+
+    /**
+     * Checks if there are any errors in the internal array.
+     * @param {String} scope The Scope name, optional.
+     * @return {boolean} result True if there was at least one error, false otherwise.
+     */
+  any(scope) {
+    if (! scope) {
+      return !! this.errors.length;
+    }
+
+    return !! this.errors.filter(e => e.scope === scope).length;
+  }
+
+    /**
+     * Removes all items from the internal array.
+     *
+     * @param {String} scope The Scope name, optional.
+     */
+  clear(scope) {
+    if (! scope) {
+      scope = '__global__';
+    }
+
+    this.errors = this.errors.filter(e => e.scope !== scope);
+  }
+
+    /**
+     * Collects errors into groups or for a specific field.
+     *
+     * @param  {string} field The field name.
+     * @param  {string} scope The scope name.
+     * @param {Boolean} map If it should map the errors to strings instead of objects.
+     * @return {Array} errors The errors for the specified field.
+     */
+  collect(field, scope, map = true) {
+    if (! field) {
+      const collection = {};
+      this.errors.forEach(e => {
+        if (! collection[e.field]) {
+          collection[e.field] = [];
+        }
+
+        collection[e.field].push(map ? e.msg : e);
+      });
+
+      return collection;
+    }
+
+    if (! scope) {
+      return this.errors.filter(e => e.field === field).map(e => (map ? e.msg : e));
+    }
+
+    return this.errors.filter(e => e.field === field && e.scope === scope)
+                      .map(e => (map ? e.msg : e));
+  }
+    /**
+     * Gets the internal array length.
+     *
+     * @return {Number} length The internal array length.
+     */
+  count() {
+    return this.errors.length;
+  }
+
+    /**
+     * Gets the first error message for a specific field.
+     *
+     * @param  {string} field The field name.
+     * @return {string|null} message The error message.
+     */
+  first(field, scope = '__global__') {
+    const selector = this._selector(field);
+    const scoped = this._scope(field);
+
+    if (scoped) {
+      const result = this.first(scoped.name, scoped.scope);
+      // if such result exist, return it. otherwise it could be a field.
+      // with dot in its name.
+      if (result) {
+        return result;
+      }
+    }
+
+    if (selector) {
+      return this.firstByRule(selector.name, selector.rule, scope);
+    }
+
+    for (let i = 0; i < this.errors.length; i++) {
+      if (this.errors[i].field === field && (this.errors[i].scope === scope)) {
+        return this.errors[i].msg;
+      }
+    }
+
+    return null;
+  }
+
+    /**
+     * Returns the first error rule for the specified field
+     *
+     * @param {string} field The specified field.
+     * @return {string|null} First error rule on the specified field if one is found, otherwise null
+     */
+  firstRule(field, scope) {
+    const errors = this.collect(field, scope, false);
+
+    return (errors.length && errors[0].rule) || null;
+  }
+
+    /**
+     * Checks if the internal array has at least one error for the specified field.
+     *
+     * @param  {string} field The specified field.
+     * @return {Boolean} result True if at least one error is found, false otherwise.
+     */
+  has(field, scope = '__global__') {
+    return !! this.first(field, scope);
+  }
+
+    /**
+     * Gets the first error message for a specific field and a rule.
+     * @param {String} name The name of the field.
+     * @param {String} rule The name of the rule.
+     * @param {String} scope The name of the scope (optional).
+     */
+  firstByRule(name, rule, scope) {
+    const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
+
+    return (error && error.msg) || null;
+  }
+
+    /**
+     * Removes all error messages associated with a specific field.
+     *
+     * @param  {string} field The field which messages are to be removed.
+     * @param {String} scope The Scope name, optional.
+     */
+  remove(field, scope) {
+    const filter = scope ? (e => e.field !== field || e.scope !== scope) :
+                           (e => e.field !== field || e.scope !== '__global__');
+
+    this.errors = this.errors.filter(filter);
+  }
+
+
+    /**
+     * Get the field attributes if there's a rule selector.
+     *
+     * @param  {string} field The specified field.
+     * @return {Object|null}
+     */
+  _selector(field) {
+    if (field.indexOf(':') > -1) {
+      const [name, rule] = field.split(':');
+
+      return { name, rule };
+    }
+
+    return null;
+  }
+
+    /**
+     * Get the field scope if specified using dot notation.
+     *
+     * @param {string} field the specifie field.
+     * @return {Object|null}
+     */
+  _scope(field) {
+    if (field.indexOf('.') > -1) {
+      const [scope, name] = field.split('.');
+
+      return { name, scope };
+    }
+
+    return null;
+  }
+}
+
+var ValidatorException = class
+{
+  constructor(msg) {
+    this.msg = `[vee-validate]: ${msg}`;
+  }
+
+  toString() {
+    return this.msg;
+  }
+};
+
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
@@ -876,7 +1095,7 @@ const getPath = (propPath, target, def = undefined) => {
 /**
  * Debounces a function.
  */
-const debounce = (callback, wait = 0, immediate) => {
+const debounce = (callback, wait = 0, immediate = true) => {
   let timeout;
 
   return (...args) => {
@@ -1043,249 +1262,6 @@ const getRules = (expression, value, el) => {
   return value;
 };
 
-class ErrorBag {
-  constructor(vm = null) {
-    this.errors = [];
-    if (vm && isCallable(vm.$nextTick)) {
-      this.$nextTick = vm.$nextTick.bind(vm);
-    }
-  }
-
-  /**
-   * Tries to call the callback in the next tick handler.
-   * @param {Function} callback
-   */
-  _tryNextTick(callback) {
-    if (! this.$nextTick) {
-      // Call immediatly if next tick isn't available.
-      callback();
-      return;
-    }
-
-    this.$nextTick(callback.bind(this));
-  }
-
-    /**
-     * Adds an error to the internal array.
-     *
-     * @param {string} field The field name.
-     * @param {string} msg The error message.
-     * @param {String} rule The rule that is responsible for the error.
-     * @param {String} scope The Scope name, optional.
-     */
-  add(field, msg, rule, scope = '__global__') {
-    this._tryNextTick(() => {
-      this.errors.push({ field, msg, rule, scope });
-    });
-  }
-
-    /**
-     * Gets all error messages from the internal array.
-     *
-     * @param {String} scope The Scope name, optional.
-     * @return {Array} errors Array of all error messages.
-     */
-  all(scope) {
-    if (! scope) {
-      return this.errors.map(e => e.msg);
-    }
-
-    return this.errors.filter(e => e.scope === scope).map(e => e.msg);
-  }
-
-    /**
-     * Checks if there are any errors in the internal array.
-     * @param {String} scope The Scope name, optional.
-     * @return {boolean} result True if there was at least one error, false otherwise.
-     */
-  any(scope) {
-    if (! scope) {
-      return !! this.errors.length;
-    }
-
-    return !! this.errors.filter(e => e.scope === scope).length;
-  }
-
-    /**
-     * Removes all items from the internal array.
-     *
-     * @param {String} scope The Scope name, optional.
-     */
-  clear(scope) {
-    if (! scope) {
-      scope = '__global__';
-    }
-
-    this._tryNextTick(() => {
-      this.errors = this.errors.filter(e => e.scope !== scope);
-    });
-  }
-
-    /**
-     * Collects errors into groups or for a specific field.
-     *
-     * @param  {string} field The field name.
-     * @param  {string} scope The scope name.
-     * @param {Boolean} map If it should map the errors to strings instead of objects.
-     * @return {Array} errors The errors for the specified field.
-     */
-  collect(field, scope, map = true) {
-    if (! field) {
-      const collection = {};
-      this.errors.forEach(e => {
-        if (! collection[e.field]) {
-          collection[e.field] = [];
-        }
-
-        collection[e.field].push(map ? e.msg : e);
-      });
-
-      return collection;
-    }
-
-    if (! scope) {
-      return this.errors.filter(e => e.field === field).map(e => (map ? e.msg : e));
-    }
-
-    return this.errors.filter(e => e.field === field && e.scope === scope)
-                      .map(e => (map ? e.msg : e));
-  }
-    /**
-     * Gets the internal array length.
-     *
-     * @return {Number} length The internal array length.
-     */
-  count() {
-    return this.errors.length;
-  }
-
-    /**
-     * Gets the first error message for a specific field.
-     *
-     * @param  {string} field The field name.
-     * @return {string|null} message The error message.
-     */
-  first(field, scope = '__global__') {
-    const selector = this._selector(field);
-    const scoped = this._scope(field);
-
-    if (scoped) {
-      const result = this.first(scoped.name, scoped.scope);
-      // if such result exist, return it. otherwise it could be a field.
-      // with dot in its name.
-      if (result) {
-        return result;
-      }
-    }
-
-    if (selector) {
-      return this.firstByRule(selector.name, selector.rule, scope);
-    }
-
-    for (let i = 0; i < this.errors.length; i++) {
-      if (this.errors[i].field === field && (this.errors[i].scope === scope)) {
-        return this.errors[i].msg;
-      }
-    }
-
-    return null;
-  }
-
-    /**
-     * Returns the first error rule for the specified field
-     *
-     * @param {string} field The specified field.
-     * @return {string|null} First error rule on the specified field if one is found, otherwise null
-     */
-  firstRule(field, scope) {
-    const errors = this.collect(field, scope, false);
-
-    return (errors.length && errors[0].rule) || null;
-  }
-
-    /**
-     * Checks if the internal array has at least one error for the specified field.
-     *
-     * @param  {string} field The specified field.
-     * @return {Boolean} result True if at least one error is found, false otherwise.
-     */
-  has(field, scope = '__global__') {
-    return !! this.first(field, scope);
-  }
-
-    /**
-     * Gets the first error message for a specific field and a rule.
-     * @param {String} name The name of the field.
-     * @param {String} rule The name of the rule.
-     * @param {String} scope The name of the scope (optional).
-     */
-  firstByRule(name, rule, scope) {
-    const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
-
-    return (error && error.msg) || null;
-  }
-
-    /**
-     * Removes all error messages associated with a specific field.
-     *
-     * @param  {string} field The field which messages are to be removed.
-     * @param {String} scope The Scope name, optional.
-     */
-  remove(field, scope) {
-    const filter = scope ? (e => e.field !== field || e.scope !== scope) :
-                           (e => e.field !== field || e.scope !== '__global__');
-
-    this._tryNextTick(() => {
-      this.errors = this.errors.filter(filter);
-    });
-  }
-
-
-    /**
-     * Get the field attributes if there's a rule selector.
-     *
-     * @param  {string} field The specified field.
-     * @return {Object|null}
-     */
-  _selector(field) {
-    if (field.indexOf(':') > -1) {
-      const [name, rule] = field.split(':');
-
-      return { name, rule };
-    }
-
-    return null;
-  }
-
-    /**
-     * Get the field scope if specified using dot notation.
-     *
-     * @param {string} field the specifie field.
-     * @return {Object|null}
-     */
-  _scope(field) {
-    if (field.indexOf('.') > -1) {
-      const [scope, name] = field.split('.');
-
-      return { name, scope };
-    }
-
-    return null;
-  }
-}
-
-var ValidatorException = class
-{
-  constructor(msg) {
-    this.msg = `[vee-validate]: ${msg}`;
-  }
-
-  toString() {
-    return this.msg;
-  }
-};
-
-/* eslint-disable prefer-rest-params */
 class Dictionary {
   constructor(dictionary = {}) {
     this.dictionary = {};
@@ -1302,6 +1278,26 @@ class Dictionary {
     }
 
     return this.dictionary[locale].messages[key];
+  }
+
+  /**
+   * Gets a specific message for field. fallsback to the rule message.
+   *
+   * @param {String} locale
+   * @param {String} field
+   * @param {String} key
+   */
+  getFieldMessage(locale, field, key) {
+    if (! this.hasLocale(locale)) {
+      return this.getMessage(locale, key);
+    }
+
+    const dict = this.dictionary[locale].custom && this.dictionary[locale].custom[field];
+    if (! dict || ! dict[key]) {
+      return this.getMessage(locale, key);
+    }
+
+    return dict[key];
   }
 
   _getDefaultMessage(locale) {
@@ -1499,7 +1495,8 @@ let STRICT_MODE = true;
 const DICTIONARY = new Dictionary({
   en: {
     messages,
-    attributes: {}
+    attributes: {},
+    custom: {}
   }
 });
 
@@ -1508,9 +1505,11 @@ class Validator {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };
     this._createFields(validations);
-    this.errorBag = new ErrorBag(options.vm);
+    this.errorBag = new ErrorBag();
     this.fieldBag = {};
     this.paused = false;
+    this.$vm = options.vm;
+
     // Some fields will be later evaluated, because the vm isn't mounted yet
     // so it may register it under an inaccurate scope.
     this.$deferred = [];
@@ -1619,8 +1618,8 @@ class Validator {
    * @param  {object} validations The validations object.
    * @return {Validator} validator A validator object.
    */
-  static create(validations, $vm, options) {
-    return new Validator(validations, $vm, options);
+  static create(validations, options) {
+    return new Validator(validations, options);
   }
 
   /**
@@ -1946,10 +1945,14 @@ class Validator {
     const params = this._getLocalizedParams(rule, scope);
     // Defaults to english message.
     if (! this.dictionary.hasLocale(LOCALE)) {
-      return this.dictionary.getMessage('en', rule.name)(name, params, data);
+      const msg = this.dictionary.getFieldMessage('en', field, rule.name);
+
+      return isCallable(msg) ? msg(name, params, data) : msg;
     }
 
-    return this.dictionary.getMessage(LOCALE, rule.name)(name, params, data);
+    const msg = this.dictionary.getFieldMessage(LOCALE, field, rule.name);
+
+    return isCallable(msg) ? msg(name, params, data) : msg;
   }
 
   /**
@@ -2109,6 +2112,10 @@ class Validator {
       field.el = field.listeners.el;
       field.events = {};
       this._assignFlags(field);
+      // cache the scope property.
+      if (field.el && isCallable(field.el.setAttribute)) {
+        field.el.setAttribute('data-vv-scope', field.scope);
+      }
 
       if (field.listeners.classes) {
         field.listeners.classes.attach(field);
@@ -2205,6 +2212,19 @@ class Validator {
   }
 
   /**
+   * Clears the errors from the errorBag using the next tick if possible.
+   */
+  clean() {
+    if (! this.$vm || ! isCallable(this.$vm.$nextTick)) {
+      return;
+    }
+
+    this.$vm.$nextTick(() => {
+      this.errorBag.clear();
+    });
+  }
+
+  /**
    * Removes a field from the validator.
    *
    * @param  {String} name The name of the field.
@@ -2216,7 +2236,10 @@ class Validator {
       return;
     }
 
-    this.$scopes[scope][name].listeners.detach();
+    if (this.$scopes[scope][name].listeners) {
+      this.$scopes[scope][name].listeners.detach();
+    }
+
     this.errorBag.remove(name, scope);
     delete this.$scopes[scope][name];
   }
@@ -2488,41 +2511,54 @@ class Validator {
   }
 }
 
+const validatorRequested = (injections) => {
+  if (! injections) {
+    return false;
+  }
+
+  if (Array.isArray(injections) && ~injections.indexOf('$validator')) {
+    return true;
+  }
+
+  if (isObject(injections) && injections.$validator) {
+    return true;
+  }
+
+  return false;
+};
+
 var makeMixin = (Vue, options) => {
   const mixin = {};
-
   mixin.provide = function providesValidator() {
     if (this.$validator) {
       return {
-          $validator: this.$validator
+        $validator: this.$validator
       };
     }
+
+    return {};
   };
 
   mixin.beforeCreate = function beforeCreate() {
-    let reactive = false;
-    // if its a root instance, inject anyways, or if it requested an instance.
-    if (options.inject || !this.$parent || this.$options.$validates) {
+    // if its a root instance, inject anyways, or if it requested a new instance.
+    if (this.$options.$validates || !this.$parent) {
       this.$validator = new Validator(null, { init: false, vm: this });
-    } else {
-      const injectionOpts = this.$options.inject;
-      if (! injectionOpts) {
-        return;
-      }
-
-      if (Array.isArray(injectionOpts) && ! ~injectionOpts.indexOf('$validator')) {
-        return;
-      }
-
-      if (isObject(injectionOpts) && ! injectionOpts.$validator) {
-        return;
-      }
-
-      reactive = true;
     }
 
+    const requested = validatorRequested(this.$options.inject);
 
-    if (! reactive) {
+    // if automatic injection is enabled and no instance was requested.
+    if (! this.$validator && options.inject && !requested) {
+      this.$validator = new Validator(null, { init: false, vm: this });
+    }
+
+    // don't inject errors or fieldBag as no validator was resolved.
+    if (! requested && ! this.$validator) {
+      return;
+    }
+
+    // There is a validator but it isn't injected, mark as reactive.
+    if (! requested && this.$validator) {
       Vue.util.defineReactive(this.$validator, 'errorBag', this.$validator.errorBag);
       Vue.util.defineReactive(this.$validator, 'fieldBag', this.$validator.fieldBag);
     }
@@ -2588,6 +2624,8 @@ class ClassListener {
    * Syncs the automatic classes.
    */
   sync() {
+    this.addInteractionListeners();
+
     if (! this.enabled) return;
 
     this.toggle(this.classNames.dirty, this.field.flags.dirty);
@@ -2596,6 +2634,60 @@ class ClassListener {
     this.toggle(this.classNames.invalid, this.field.flags.invalid);
     this.toggle(this.classNames.touched, this.field.flags.touched);
     this.toggle(this.classNames.untouched, this.field.flags.untouched);
+  }
+
+  addFocusListener() {
+    // listen for focus event.
+    this.listeners.focus = () => {
+      this.remove(this.classNames.untouched);
+      this.add(this.classNames.touched);
+      this.field.flags.touched = true;
+      this.field.flags.untouched = false;
+
+      if (this.component) return;
+
+      // only needed once.
+      this.el.removeEventListener('focus', this.listeners.focus);
+      this.listeners.focus = null;
+    };
+
+    if (this.component) {
+      this.component.$once('focus', this.listeners.focus);
+    } else {
+      this.el.addEventListener('focus', this.listeners.focus);
+    }
+  }
+
+  addInputListener() {
+    // listen for input.
+    this.listeners.input = () => {
+      this.remove(this.classNames.pristine);
+      this.add(this.classNames.dirty);
+      this.field.flags.dirty = true;
+      this.field.flags.pristine = false;
+
+      if (this.component) return;
+
+      // only needed once.
+      this.el.removeEventListener('input', this.listeners.input);
+      this.listeners.input = null;
+    };
+
+    if (this.component) {
+      this.component.$once('input', this.listeners.input);
+    } else {
+      this.el.addEventListener('input', this.listeners.input);
+    }
+  }
+
+  addInteractionListeners() {
+    if (! this.listeners.focus) {
+      this.addFocusListener();
+    }
+
+    if (! this.listeners.input) {
+      this.addInputListener();
+    }
   }
 
   /**
@@ -2607,25 +2699,7 @@ class ClassListener {
     this.add(this.classNames.pristine);
     this.add(this.classNames.untouched);
 
-    // listen for focus event.
-    this.listeners.focus = () => {
-      this.remove(this.classNames.untouched);
-      this.add(this.classNames.touched);
-      // only needed once.
-      this.el.removeEventListener('focus', this.listeners.focus);
-      this.field.flags.touched = true;
-      this.field.flags.untouched = false;
-    };
-
-    // listen for input.
-    this.listeners.input = () => {
-      this.remove(this.classNames.pristine);
-      this.add(this.classNames.dirty);
-      // only needed once.
-      this.el.removeEventListener('input', this.listeners.input);
-      this.field.flags.dirty = true;
-      this.field.flags.pristine = false;
-    };
+    this.addInteractionListeners();
 
     this.listeners.after = (e) => {
       this.remove(e.valid ? this.classNames.invalid : this.classNames.valid);
@@ -2634,14 +2708,6 @@ class ClassListener {
       this.field.flags.invalid = ! e.valid;
       this.field.flags.pending = false;
     };
-
-    if (this.component) {
-      this.component.$on('input', this.listeners.input);
-      this.component.$on('focus', this.listeners.focus);
-    } else {
-      this.el.addEventListener('focus', this.listeners.focus);
-      this.el.addEventListener('input', this.listeners.input);
-    }
 
     this.validator.on('after', this.field.name, this.field.scope, this.listeners.after);
   }
@@ -3260,7 +3326,7 @@ var index = {
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.3'
+  version: '2.0.0-rc.4'
 };
 
 export default index;
