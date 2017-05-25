@@ -24,7 +24,8 @@ const messages = {
   regex: (field) => `Format ${field} salah.`,
   required: (field) => `${field} harus diisi.`,
   size: (field, [size]) => `${field} harus lebih kecil dari ${size} KB.`,
-  url: (field) => `${field} harus berupa tautan yang benar.`
+  url: (field) => `${field} harus berupa tautan yang benar.`,
+  min_value: (field, [size]) => `Nilai ${field} minimal adalah ${size}.`
 };
 
 const locale = {
