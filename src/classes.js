@@ -40,6 +40,8 @@ export default class ClassListener {
    * Syncs the automatic classes.
    */
   sync() {
+    this.addInteractionListeners();
+
     if (! this.enabled) return;
 
     this.toggle(this.classNames.dirty, this.field.flags.dirty);
@@ -48,6 +50,60 @@ export default class ClassListener {
     this.toggle(this.classNames.invalid, this.field.flags.invalid);
     this.toggle(this.classNames.touched, this.field.flags.touched);
     this.toggle(this.classNames.untouched, this.field.flags.untouched);
+  }
+
+  addFocusListener() {
+    // listen for focus event.
+    this.listeners.focus = () => {
+      this.remove(this.classNames.untouched);
+      this.add(this.classNames.touched);
+      this.field.flags.touched = true;
+      this.field.flags.untouched = false;
+
+      if (this.component) return;
+
+      // only needed once.
+      this.el.removeEventListener('focus', this.listeners.focus);
+      this.listeners.focus = null;
+    };
+
+    if (this.component) {
+      this.component.$once('focus', this.listeners.focus);
+    } else {
+      this.el.addEventListener('focus', this.listeners.focus);
+    }
+  }
+
+  addInputListener() {
+    // listen for input.
+    this.listeners.input = () => {
+      this.remove(this.classNames.pristine);
+      this.add(this.classNames.dirty);
+      this.field.flags.dirty = true;
+      this.field.flags.pristine = false;
+
+      if (this.component) return;
+
+      // only needed once.
+      this.el.removeEventListener('input', this.listeners.input);
+      this.listeners.input = null;
+    };
+
+    if (this.component) {
+      this.component.$once('input', this.listeners.input);
+    } else {
+      this.el.addEventListener('input', this.listeners.input);
+    }
+  }
+
+  addInteractionListeners() {
+    if (! this.listeners.focus) {
+      this.addFocusListener();
+    }
+
+    if (! this.listeners.input) {
+      this.addInputListener();
+    }
   }
 
   /**
@@ -59,25 +115,7 @@ export default class ClassListener {
     this.add(this.classNames.pristine);
     this.add(this.classNames.untouched);
 
-    // listen for focus event.
-    this.listeners.focus = () => {
-      this.remove(this.classNames.untouched);
-      this.add(this.classNames.touched);
-      // only needed once.
-      this.el.removeEventListener('focus', this.listeners.focus);
-      this.field.flags.touched = true;
-      this.field.flags.untouched = false;
-    };
-
-    // listen for input.
-    this.listeners.input = () => {
-      this.remove(this.classNames.pristine);
-      this.add(this.classNames.dirty);
-      // only needed once.
-      this.el.removeEventListener('input', this.listeners.input);
-      this.field.flags.dirty = true;
-      this.field.flags.pristine = false;
-    };
+    this.addInteractionListeners();
 
     this.listeners.after = (e) => {
       this.remove(e.valid ? this.classNames.invalid : this.classNames.valid);
@@ -86,14 +124,6 @@ export default class ClassListener {
       this.field.flags.invalid = ! e.valid;
       this.field.flags.pending = false;
     };
-
-    if (this.component) {
-      this.component.$on('input', this.listeners.input);
-      this.component.$on('focus', this.listeners.focus);
-    } else {
-      this.el.addEventListener('focus', this.listeners.focus);
-      this.el.addEventListener('input', this.listeners.input);
-    }
 
     this.validator.on('after', this.field.name, this.field.scope, this.listeners.after);
   }
