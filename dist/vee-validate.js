@@ -882,6 +882,235 @@ var Rules = {
   url: url
 };
 
+var ErrorBag = function ErrorBag() {
+  this.errors = [];
+};
+  /**
+   * Adds an error to the internal array.
+   *
+   * @param {string} field The field name.
+   * @param {string} msg The error message.
+   * @param {String} rule The rule that is responsible for the error.
+   * @param {String} scope The Scope name, optional.
+   */
+ErrorBag.prototype.add = function add (field, msg, rule, scope) {
+    if ( scope === void 0 ) scope = '__global__';
+
+  this.errors.push({ field: field, msg: msg, rule: rule, scope: scope });
+};
+
+  /**
+   * Gets all error messages from the internal array.
+   *
+   * @param {String} scope The Scope name, optional.
+   * @return {Array} errors Array of all error messages.
+   */
+ErrorBag.prototype.all = function all (scope) {
+  if (! scope) {
+    return this.errors.map(function (e) { return e.msg; });
+  }
+
+  return this.errors.filter(function (e) { return e.scope === scope; }).map(function (e) { return e.msg; });
+};
+
+  /**
+   * Checks if there are any errors in the internal array.
+   * @param {String} scope The Scope name, optional.
+   * @return {boolean} result True if there was at least one error, false otherwise.
+   */
+ErrorBag.prototype.any = function any (scope) {
+  if (! scope) {
+    return !! this.errors.length;
+  }
+
+  return !! this.errors.filter(function (e) { return e.scope === scope; }).length;
+};
+
+  /**
+   * Removes all items from the internal array.
+   *
+   * @param {String} scope The Scope name, optional.
+   */
+ErrorBag.prototype.clear = function clear (scope) {
+  if (! scope) {
+    scope = '__global__';
+  }
+  this.errors = this.errors.filter(function (e) { return e.scope !== scope; });
+};
+
+  /**
+   * Collects errors into groups or for a specific field.
+   *
+   * @param{string} field The field name.
+   * @param{string} scope The scope name.
+   * @param {Boolean} map If it should map the errors to strings instead of objects.
+   * @return {Array} errors The errors for the specified field.
+   */
+ErrorBag.prototype.collect = function collect (field, scope, map) {
+    if ( map === void 0 ) map = true;
+
+  if (! field) {
+    var collection = {};
+    this.errors.forEach(function (e) {
+      if (! collection[e.field]) {
+        collection[e.field] = [];
+      }
+
+      collection[e.field].push(map ? e.msg : e);
+    });
+
+    return collection;
+  }
+
+  if (! scope) {
+    return this.errors.filter(function (e) { return e.field === field; }).map(function (e) { return (map ? e.msg : e); });
+  }
+
+  return this.errors.filter(function (e) { return e.field === field && e.scope === scope; })
+                    .map(function (e) { return (map ? e.msg : e); });
+};
+  /**
+   * Gets the internal array length.
+   *
+   * @return {Number} length The internal array length.
+   */
+ErrorBag.prototype.count = function count () {
+  return this.errors.length;
+};
+
+  /**
+   * Gets the first error message for a specific field.
+   *
+   * @param{string} field The field name.
+   * @return {string|null} message The error message.
+   */
+ErrorBag.prototype.first = function first (field, scope) {
+    var this$1 = this;
+    if ( scope === void 0 ) scope = '__global__';
+
+  var selector = this._selector(field);
+  var scoped = this._scope(field);
+
+  if (scoped) {
+    var result = this.first(scoped.name, scoped.scope);
+    // if such result exist, return it. otherwise it could be a field.
+    // with dot in its name.
+    if (result) {
+      return result;
+    }
+  }
+
+  if (selector) {
+    return this.firstByRule(selector.name, selector.rule, scope);
+  }
+
+  for (var i = 0; i < this.errors.length; i++) {
+    if (this$1.errors[i].field === field && (this$1.errors[i].scope === scope)) {
+      return this$1.errors[i].msg;
+    }
+  }
+
+  return null;
+};
+
+  /**
+   * Returns the first error rule for the specified field
+   *
+   * @param {string} field The specified field.
+   * @return {string|null} First error rule on the specified field if one is found, otherwise null
+   */
+ErrorBag.prototype.firstRule = function firstRule (field, scope) {
+  var errors = this.collect(field, scope, false);
+
+  return (errors.length && errors[0].rule) || null;
+};
+
+  /**
+   * Checks if the internal array has at least one error for the specified field.
+   *
+   * @param{string} field The specified field.
+   * @return {Boolean} result True if at least one error is found, false otherwise.
+   */
+ErrorBag.prototype.has = function has (field, scope) {
+    if ( scope === void 0 ) scope = '__global__';
+
+  return !! this.first(field, scope);
+};
+
+  /**
+   * Gets the first error message for a specific field and a rule.
+   * @param {String} name The name of the field.
+   * @param {String} rule The name of the rule.
+   * @param {String} scope The name of the scope (optional).
+   */
+ErrorBag.prototype.firstByRule = function firstByRule (name, rule, scope) {
+  var error = this.collect(name, scope, false).filter(function (e) { return e.rule === rule; })[0];
+
+  return (error && error.msg) || null;
+};
+
+  /**
+   * Removes all error messages associated with a specific field.
+   *
+   * @param{string} field The field which messages are to be removed.
+   * @param {String} scope The Scope name, optional.
+   */
+ErrorBag.prototype.remove = function remove (field, scope) {
+  var filter = scope ? (function (e) { return e.field !== field || e.scope !== scope; }) :
+                         (function (e) { return e.field !== field || e.scope !== '__global__'; });
+
+  this.errors = this.errors.filter(filter);
+};
+
+
+  /**
+   * Get the field attributes if there's a rule selector.
+   *
+   * @param{string} field The specified field.
+   * @return {Object|null}
+   */
+ErrorBag.prototype._selector = function _selector (field) {
+  if (field.indexOf(':') > -1) {
+    var ref = field.split(':');
+      var name = ref[0];
+      var rule = ref[1];
+
+    return { name: name, rule: rule };
+  }
+
+  return null;
+};
+
+  /**
+   * Get the field scope if specified using dot notation.
+   *
+   * @param {string} field the specifie field.
+   * @return {Object|null}
+   */
+ErrorBag.prototype._scope = function _scope (field) {
+  if (field.indexOf('.') > -1) {
+    var ref = field.split('.');
+      var scope = ref[0];
+      var name = ref[1];
+
+    return { name: name, scope: scope };
+  }
+
+  return null;
+};
+
+var ValidatorException = (function () {
+  function anonymous(msg) {
+    this.msg = "[vee-validate]: " + msg;
+  }
+
+  anonymous.prototype.toString = function toString () {
+    return this.msg;
+  };
+
+  return anonymous;
+}());
+
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
@@ -931,8 +1160,12 @@ var getPath = function (propPath, target, def) {
  */
 var debounce = function (callback, wait, immediate) {
   if ( wait === void 0 ) wait = 0;
+  if ( immediate === void 0 ) immediate = true;
 
   var timeout;
+  if (! wait) {
+    return callback;
+  }
 
   return function () {
     var args = [], len = arguments.length;
@@ -1102,267 +1335,6 @@ var getRules = function (expression, value, el) {
 
   return value;
 };
-
-var ErrorBag = function ErrorBag(vm) {
-  if ( vm === void 0 ) vm = null;
-
-  this.errors = [];
-  if (vm && isCallable(vm.$nextTick)) {
-    this.$nextTick = vm.$nextTick.bind(vm);
-  }
-};
-
-/**
- * Tries to call the callback in the next tick handler.
- * @param {Function} callback
- */
-ErrorBag.prototype._tryNextTick = function _tryNextTick (callback) {
-  if (! this.$nextTick) {
-    // Call immediatly if next tick isn't available.
-    callback();
-    return;
-  }
-
-  this.$nextTick(callback.bind(this));
-};
-
-  /**
-   * Adds an error to the internal array.
-   *
-   * @param {string} field The field name.
-   * @param {string} msg The error message.
-   * @param {String} rule The rule that is responsible for the error.
-   * @param {String} scope The Scope name, optional.
-   */
-ErrorBag.prototype.add = function add (field, msg, rule, scope) {
-    var this$1 = this;
-    if ( scope === void 0 ) scope = '__global__';
-
-  this._tryNextTick(function () {
-    this$1.errors.push({ field: field, msg: msg, rule: rule, scope: scope });
-  });
-};
-
-  /**
-   * Gets all error messages from the internal array.
-   *
-   * @param {String} scope The Scope name, optional.
-   * @return {Array} errors Array of all error messages.
-   */
-ErrorBag.prototype.all = function all (scope) {
-  if (! scope) {
-    return this.errors.map(function (e) { return e.msg; });
-  }
-
-  return this.errors.filter(function (e) { return e.scope === scope; }).map(function (e) { return e.msg; });
-};
-
-  /**
-   * Checks if there are any errors in the internal array.
-   * @param {String} scope The Scope name, optional.
-   * @return {boolean} result True if there was at least one error, false otherwise.
-   */
-ErrorBag.prototype.any = function any (scope) {
-  if (! scope) {
-    return !! this.errors.length;
-  }
-
-  return !! this.errors.filter(function (e) { return e.scope === scope; }).length;
-};
-
-  /**
-   * Removes all items from the internal array.
-   *
-   * @param {String} scope The Scope name, optional.
-   */
-ErrorBag.prototype.clear = function clear (scope) {
-    var this$1 = this;
-
-  if (! scope) {
-    scope = '__global__';
-  }
-
-  this._tryNextTick(function () {
-    this$1.errors = this$1.errors.filter(function (e) { return e.scope !== scope; });
-  });
-};
-
-  /**
-   * Collects errors into groups or for a specific field.
-   *
-   * @param{string} field The field name.
-   * @param{string} scope The scope name.
-   * @param {Boolean} map If it should map the errors to strings instead of objects.
-   * @return {Array} errors The errors for the specified field.
-   */
-ErrorBag.prototype.collect = function collect (field, scope, map) {
-    if ( map === void 0 ) map = true;
-
-  if (! field) {
-    var collection = {};
-    this.errors.forEach(function (e) {
-      if (! collection[e.field]) {
-        collection[e.field] = [];
-      }
-
-      collection[e.field].push(map ? e.msg : e);
-    });
-
-    return collection;
-  }
-
-  if (! scope) {
-    return this.errors.filter(function (e) { return e.field === field; }).map(function (e) { return (map ? e.msg : e); });
-  }
-
-  return this.errors.filter(function (e) { return e.field === field && e.scope === scope; })
-                    .map(function (e) { return (map ? e.msg : e); });
-};
-  /**
-   * Gets the internal array length.
-   *
-   * @return {Number} length The internal array length.
-   */
-ErrorBag.prototype.count = function count () {
-  return this.errors.length;
-};
-
-  /**
-   * Gets the first error message for a specific field.
-   *
-   * @param{string} field The field name.
-   * @return {string|null} message The error message.
-   */
-ErrorBag.prototype.first = function first (field, scope) {
-    var this$1 = this;
-    if ( scope === void 0 ) scope = '__global__';
-
-  var selector = this._selector(field);
-  var scoped = this._scope(field);
-
-  if (scoped) {
-    var result = this.first(scoped.name, scoped.scope);
-    // if such result exist, return it. otherwise it could be a field.
-    // with dot in its name.
-    if (result) {
-      return result;
-    }
-  }
-
-  if (selector) {
-    return this.firstByRule(selector.name, selector.rule, scope);
-  }
-
-  for (var i = 0; i < this.errors.length; i++) {
-    if (this$1.errors[i].field === field && (this$1.errors[i].scope === scope)) {
-      return this$1.errors[i].msg;
-    }
-  }
-
-  return null;
-};
-
-  /**
-   * Returns the first error rule for the specified field
-   *
-   * @param {string} field The specified field.
-   * @return {string|null} First error rule on the specified field if one is found, otherwise null
-   */
-ErrorBag.prototype.firstRule = function firstRule (field, scope) {
-  var errors = this.collect(field, scope, false);
-
-  return (errors.length && errors[0].rule) || null;
-};
-
-  /**
-   * Checks if the internal array has at least one error for the specified field.
-   *
-   * @param{string} field The specified field.
-   * @return {Boolean} result True if at least one error is found, false otherwise.
-   */
-ErrorBag.prototype.has = function has (field, scope) {
-    if ( scope === void 0 ) scope = '__global__';
-
-  return !! this.first(field, scope);
-};
-
-  /**
-   * Gets the first error message for a specific field and a rule.
-   * @param {String} name The name of the field.
-   * @param {String} rule The name of the rule.
-   * @param {String} scope The name of the scope (optional).
-   */
-ErrorBag.prototype.firstByRule = function firstByRule (name, rule, scope) {
-  var error = this.collect(name, scope, false).filter(function (e) { return e.rule === rule; })[0];
-
-  return (error && error.msg) || null;
-};
-
-  /**
-   * Removes all error messages associated with a specific field.
-   *
-   * @param{string} field The field which messages are to be removed.
-   * @param {String} scope The Scope name, optional.
-   */
-ErrorBag.prototype.remove = function remove (field, scope) {
-    var this$1 = this;
-
-  var filter = scope ? (function (e) { return e.field !== field || e.scope !== scope; }) :
-                         (function (e) { return e.field !== field || e.scope !== '__global__'; });
-
-  this._tryNextTick(function () {
-    this$1.errors = this$1.errors.filter(filter);
-  });
-};
-
-
-  /**
-   * Get the field attributes if there's a rule selector.
-   *
-   * @param{string} field The specified field.
-   * @return {Object|null}
-   */
-ErrorBag.prototype._selector = function _selector (field) {
-  if (field.indexOf(':') > -1) {
-    var ref = field.split(':');
-      var name = ref[0];
-      var rule = ref[1];
-
-    return { name: name, rule: rule };
-  }
-
-  return null;
-};
-
-  /**
-   * Get the field scope if specified using dot notation.
-   *
-   * @param {string} field the specifie field.
-   * @return {Object|null}
-   */
-ErrorBag.prototype._scope = function _scope (field) {
-  if (field.indexOf('.') > -1) {
-    var ref = field.split('.');
-      var scope = ref[0];
-      var name = ref[1];
-
-    return { name: name, scope: scope };
-  }
-
-  return null;
-};
-
-var ValidatorException = (function () {
-  function anonymous(msg) {
-    this.msg = "[vee-validate]: " + msg;
-  }
-
-  anonymous.prototype.toString = function toString () {
-    return this.msg;
-  };
-
-  return anonymous;
-}());
 
 var Dictionary = function Dictionary(dictionary) {
   if ( dictionary === void 0 ) dictionary = {};
@@ -1679,19 +1651,18 @@ var DICTIONARY = new Dictionary({
 });
 
 var Validator = function Validator(validations, options) {
-  if ( options === void 0 ) options = { init: true, vm: null };
+  if ( options === void 0 ) options = { init: true };
 
   this.strictMode = STRICT_MODE;
   this.$scopes = { __global__: {} };
   this._createFields(validations);
-  this.errorBag = new ErrorBag(options.vm);
+  this.errorBag = new ErrorBag();
   this.fieldBag = {};
   this.paused = false;
   // Some fields will be later evaluated, because the vm isn't mounted yet
   // so it may register it under an inaccurate scope.
   this.$deferred = [];
   this.$ready = false;
-  this.$vm = options.vm;
 
   // if momentjs is present, install the validators.
   if (typeof moment === 'function') {
@@ -1797,8 +1768,8 @@ Validator._guardExtend = function _guardExtend (name, validator) {
  * @param{object} validations The validations object.
  * @return {Validator} validator A validator object.
  */
-Validator.create = function create (validations, $vm, options) {
-  return new Validator(validations, $vm, options);
+Validator.create = function create (validations, options) {
+  return new Validator(validations, options);
 };
 
 /**
@@ -2664,16 +2635,6 @@ Validator.prototype.pause = function pause () {
  * @return {Validator}
  */
 Validator.prototype.resume = function resume () {
-    var this$1 = this;
-
-  if (this.$vm && isCallable(this.$vm.$nextTick)) {
-    this.$vm.$nextTick(function () {
-      this$1.paused = false;
-    });
-
-    return this;
-  }
-
   this.paused = false;
 
   return this;
