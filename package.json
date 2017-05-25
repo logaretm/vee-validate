@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "2.0.0-rc.3",
+  "version": "2.0.0-rc.4",
   "description": "Simple Vue.js input validation plugin",
   "main": "dist/vee-validate.js",
   "typings": "types/index.d.ts",
@@ -53,6 +53,6 @@
     "vue": "^2.2.6"
   },
   "peerDependencies": {
-    "vue": "2.x"
+    "vue": ">= 2.2.0"
   }
 }
