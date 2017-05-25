@@ -1163,9 +1163,6 @@ var debounce = function (callback, wait, immediate) {
   if ( immediate === void 0 ) immediate = true;
 
   var timeout;
-  if (! wait) {
-    return callback;
-  }
 
   return function () {
     var args = [], len = arguments.length;
