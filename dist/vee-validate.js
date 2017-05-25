@@ -1364,7 +1364,6 @@ var ValidatorException = (function () {
   return anonymous;
 }());
 
-/* eslint-disable prefer-rest-params */
 var Dictionary = function Dictionary(dictionary) {
   if ( dictionary === void 0 ) dictionary = {};
 
@@ -1382,6 +1381,26 @@ Dictionary.prototype.getMessage = function getMessage (locale, key, fallback) {
   }
 
   return this.dictionary[locale].messages[key];
+};
+
+/**
+ * Gets a specific message for field. fallsback to the rule message.
+ *
+ * @param {String} locale
+ * @param {String} field
+ * @param {String} key
+ */
+Dictionary.prototype.getFieldMessage = function getFieldMessage (locale, field, key) {
+  if (! this.hasLocale(locale)) {
+    return this.getMessage(locale, key);
+  }
+
+  var dict = this.dictionary[locale].custom && this.dictionary[locale].custom[field];
+  if (! dict || ! dict[key]) {
+    return this.getMessage(locale, key);
+  }
+
+  return dict[key];
 };
 
 Dictionary.prototype._getDefaultMessage = function _getDefaultMessage (locale) {
@@ -1654,7 +1673,8 @@ var STRICT_MODE = true;
 var DICTIONARY = new Dictionary({
   en: {
     messages: messages,
-    attributes: {}
+    attributes: {},
+    custom: {}
   }
 });
 
@@ -1671,6 +1691,7 @@ var Validator = function Validator(validations, options) {
   // so it may register it under an inaccurate scope.
   this.$deferred = [];
   this.$ready = false;
+  this.$vm = options.vm;
 
   // if momentjs is present, install the validators.
   if (typeof moment === 'function') {
@@ -2120,10 +2141,14 @@ Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, r
   var params = this._getLocalizedParams(rule, scope);
   // Defaults to english message.
   if (! this.dictionary.hasLocale(LOCALE)) {
-    return this.dictionary.getMessage('en', rule.name)(name, params, data);
+    var msg$1 = this.dictionary.getFieldMessage('en', field, rule.name);
+
+    return isCallable(msg$1) ? msg$1(name, params, data) : msg$1;
   }
 
-  return this.dictionary.getMessage(LOCALE, rule.name)(name, params, data);
+  var msg = this.dictionary.getFieldMessage(LOCALE, field, rule.name);
+
+  return isCallable(msg) ? msg(name, params, data) : msg;
 };
 
 /**
@@ -2295,6 +2320,10 @@ Validator.prototype.attach = function attach (name, checks, options) {
     field.el = field.listeners.el;
     field.events = {};
     this$1._assignFlags(field);
+    // cache the scope property.
+    if (field.el && isCallable(field.el.setAttribute)) {
+      field.el.setAttribute('data-vv-scope', field.scope);
+    }
 
     if (field.listeners.classes) {
       field.listeners.classes.attach(field);
@@ -2410,7 +2439,10 @@ Validator.prototype.detach = function detach (name, scope) {
     return;
   }
 
-  this.$scopes[scope][name].listeners.detach();
+  if (this.$scopes[scope][name].listeners) {
+    this.$scopes[scope][name].listeners.detach();
+  }
+
   this.errorBag.remove(name, scope);
   delete this.$scopes[scope][name];
 };
@@ -2632,6 +2664,16 @@ Validator.prototype.pause = function pause () {
  * @return {Validator}
  */
 Validator.prototype.resume = function resume () {
+    var this$1 = this;
+
+  if (this.$vm && isCallable(this.$vm.$nextTick)) {
+    this.$vm.$nextTick(function () {
+      this$1.paused = false;
+    });
+
+    return this;
+  }
+
   this.paused = false;
 
   return this;
@@ -2695,41 +2737,54 @@ Validator.prototype.validateScopes = function validateScopes () {
 
 Object.defineProperties( Validator.prototype, prototypeAccessors );
 
+var validatorRequested = function (injections) {
+  if (! injections) {
+    return false;
+  }
+
+  if (Array.isArray(injections) && ~injections.indexOf('$validator')) {
+    return true;
+  }
+
+  if (isObject(injections) && injections.$validator) {
+    return true;
+  }
+
+  return false;
+};
+
 var makeMixin = function (Vue, options) {
   var mixin = {};
-
   mixin.provide = function providesValidator() {
     if (this.$validator) {
       return {
-          $validator: this.$validator
+        $validator: this.$validator
       };
     }
+
+    return {};
   };
 
   mixin.beforeCreate = function beforeCreate() {
-    var reactive = false;
-    // if its a root instance, inject anyways, or if it requested an instance.
-    if (options.inject || !this.$parent || this.$options.$validates) {
+    // if its a root instance, inject anyways, or if it requested a new instance.
+    if (this.$options.$validates || !this.$parent) {
       this.$validator = new Validator(null, { init: false, vm: this });
-    } else {
-      var injectionOpts = this.$options.inject;
-      if (! injectionOpts) {
-        return;
-      }
-
-      if (Array.isArray(injectionOpts) && ! ~injectionOpts.indexOf('$validator')) {
-        return;
-      }
-
-      if (isObject(injectionOpts) && ! injectionOpts.$validator) {
-        return;
-      }
-
-      reactive = true;
     }
 
+    var requested = validatorRequested(this.$options.inject);
 
-    if (! reactive) {
+    // if automatic injection is enabled and no instance was requested.
+    if (! this.$validator && options.inject && !requested) {
+      this.$validator = new Validator(null, { init: false, vm: this });
+    }
+
+    // don't inject errors or fieldBag as no validator was resolved.
+    if (! requested && ! this.$validator) {
+      return;
+    }
+
+    // There is a validator but it isn't injected, mark as reactive.
+    if (! requested && this.$validator) {
       Vue.util.defineReactive(this.$validator, 'errorBag', this.$validator.errorBag);
       Vue.util.defineReactive(this.$validator, 'fieldBag', this.$validator.fieldBag);
     }
