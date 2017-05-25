@@ -3,6 +3,8 @@
 This plugin only comes with English messages to keep things small, but it was built with flexible message generation in mind.  
 The [English messages file](https://github.com/logaretm/vee-validate/blob/master/dist/locale/en.js) is an example on how you would structure those messages. Then you may want to update the validator dictionary, which should happen once in your app startup. still you may update them whenever you want in any point of your app, check the [dictionary](#attributes-dictionary) description below.
 
+> The messages shown in the provided locale files contains mostly functions, however your messages can also be strings depending on your needs, the included locales make use of field names and paramaters provided, so they had to be functions.
+
 ## [Attributes (data-vv-as)](#attributes-data-vv-as)
 
 Seeing 'first_name' in your error messages can't be very good for your user experience, this plugin offer a couple of solutions: You can use the `data-vv-as` attribute on your field and give it a better name for your users, it would look like this:
