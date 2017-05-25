@@ -17,15 +17,16 @@ const messages = {
   in: (field) => `${field} harus berupa nilai yang sah.`,
   ip: (field) => `${field} harus berupa alamat ip yang sah.`,
   max: (field, [length]) => `${field} tidak boleh lebih dari ${length} karakter.`,
+  min_value: (field, [size]) => `Nilai ${field} tidak boleh lebih dari ${size}.`,
   mimes: (field) => `Tipe berkas ${field} harus benar.`,
   min: (field, [length]) => `${field} minimal mengandung ${length} karakter.`,
+  min_value: (field, [size]) => `Nilai ${field} tidak boleh kurang dari ${size}.`,
   not_in: (field) => `${field} harus berupa nilai yang sah.`,
   numeric: (field) => `${field} harus berupa angka.`,
   regex: (field) => `Format ${field} salah.`,
   required: (field) => `${field} harus diisi.`,
   size: (field, [size]) => `${field} harus lebih kecil dari ${size} KB.`,
-  url: (field) => `${field} harus berupa tautan yang benar.`,
-  min_value: (field, [size]) => `Nilai ${field} minimal adalah ${size}.`
+  url: (field) => `${field} harus berupa tautan yang benar.`
 };
 
 const locale = {
