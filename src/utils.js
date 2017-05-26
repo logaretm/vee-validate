@@ -54,7 +54,7 @@ export const debounce = (callback, wait = 0, immediate = true) => {
     const callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if (callNow) callback(args);
+    if (callNow) callback(...args);
   };
 };
 
