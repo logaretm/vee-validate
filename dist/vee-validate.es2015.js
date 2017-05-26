@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.4
+ * vee-validate v2.0.0-rc.5
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -1106,7 +1106,7 @@ const debounce = (callback, wait = 0, immediate = true) => {
     const callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if (callNow) callback(args);
+    if (callNow) callback(...args);
   };
 };
 
@@ -3326,7 +3326,7 @@ var index = {
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.4'
+  version: '2.0.0-rc.5'
 };
 
 export default index;

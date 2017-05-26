@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.4
+ * vee-validate v2.0.0-rc.5
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -1177,7 +1177,7 @@ var debounce = function (callback, wait, immediate) {
     var callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if (callNow) { callback(args); }
+    if (callNow) { callback.apply(void 0, args); }
   };
 };
 
@@ -3565,7 +3565,7 @@ var index = {
   Validator: Validator,
   ErrorBag: ErrorBag,
   Rules: Rules,
-  version: '2.0.0-rc.4'
+  version: '2.0.0-rc.5'
 };
 
 return index;
