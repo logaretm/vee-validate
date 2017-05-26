@@ -16,26 +16,14 @@ You can install this plugin via [npm](#npm) or [bower](#bower) or via a [CDN](#c
 
 ### [npm](#npm)
 
-**Vue 1.x**
-```bash
-npm install vee-validate@prev --save
-```
-
-**Vue 2.x**
 ```bash
 npm install vee-validate --save
 ```
 
 ### [bower](#bower)
 
-**Vue 1.x (deprecated)**
 ```bash
-bower install vee-validate#1.0.0-beta.11 --save
-```
-
-**Vue 2.x**
-```bash
-bower install vee-validate#2.0.0-rc.3 --save
+bower install vee-validate#2.0.0-rc.4 --save
 ```
 
 ### [CDN](#cdn)

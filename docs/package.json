@@ -57,7 +57,7 @@
     "font-awesome": "^4.7.0",
     "highlight.js": "^9.11.0",
     "moment": "^2.14.1",
-    "vee-validate": "^2.0.0-rc.3",
+    "vee-validate": "^2.0.0-rc.4",
     "vue": "^2.3.3",
     "whatwg-fetch": "^2.0.3"
   }

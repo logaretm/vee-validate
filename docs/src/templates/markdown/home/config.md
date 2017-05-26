@@ -24,18 +24,86 @@ const config = {
     pristine: 'pristine', // control has not been interacted with
     dirty: 'dirty' // control has been interacted with
   },
-  events: 'input|blur'
+  events: 'input|blur',
+  inject: true
 };
 
 Vue.use(VeeValidate, config);
 ```
 
-- `errorBagName:` The name of the ErrorBag object that will be injected in each of Vue's instances' data.
-- `fieldsBagName:` The name of the FieldBag object that will be injected All Vue instances.
-- `delay:` The default debounce time for all inputs (only affects validations).
-- `locale:` The default language for the validation messages.
-- `dictionary:` A dictionary to be merged with the validators dictionary, check [custom messages](rules.html#custom-messages) and [localization](localization.html) sections.
-- `strict:` Fields that have no rules will fail validation unless `strict` is set to false.
-- `enableAutoClasses:` Applies automatic classes on inputs or components root elements being validated.
-- `classNames:` The classes to be applied depending on the state of the input.
-- `events`: Pipe seperated list of the default event names that will be listened for to trigger validation, if empty string is provided it will disable all listeners.
+<table class="table">
+    <thead>
+        <tr>
+            <th>Config Name</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="is-method-name">errorBagName</td>
+            <td>errors</td>
+            <td>The name of the ErrorBag object that will be injected in each of Vue's instances' data.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">fieldsBagName</td>
+            <td>fields</td>            
+            <td>The name of the Fields (flags) object that will be injected in each of Vue's instances' data.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">delay</td>
+            <td>0</td>
+            <td>The default debounce time for all inputs (only affects validations).</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">locale</td>
+            <td>en</td>
+            <td>The default language for the validation messages.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">dictionary</td>
+            <td>null</td>
+            <td>  
+              A dictionary to be merged with the validators dictionary, check [custom messages](rules.html#custom-messages) and [localization](localization.html) sections.
+            </td>
+        </tr>
+        <tr>
+            <td class="is-method-name">strict</td>
+            <td>true</td>
+            <td>Fields that have no rules will fail validation unless `strict` is set to false.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">enableAutoClasses</td>
+            <td>false</td>
+            <td>Applies automatic classes on inputs or components root elements being validated.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">classNames</td>
+            <td>
+              <code-block>
+                  {
+                    touched: 'touched', // the control has been blurred
+                    untouched: 'untouched', // the control hasn't been blurred
+                    valid: 'valid', // model is valid
+                    invalid: 'invalid', // model is invalid
+                    pristine: 'pristine', // control has not been interacted with
+                    dirty: 'dirty' // control has been interacted with
+                  }
+              </code-block>
+            </td>
+            <td>The classes to be applied depending on the state of the input.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">events</td>
+            <td>input|blur</td>
+            <td>Pipe seperated list of the default event names that will be listened for to trigger validation, if empty string is provided it will disable all listeners.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">inject</td>
+            <td>true</td>
+            <td>
+              Specifies if a validator instance should be injected automatically for all components, check [Component Injections](advanced#injections) for more informatin.
+            </td>
+        </tr>
+    </tbody>
+</table>
