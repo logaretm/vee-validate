@@ -267,7 +267,7 @@ The file size added to the field under validation must not exceed the specified 
 - `size:` The maximum file size in kilobytes.
 
 <input v-validate="'size:10'" name="size_field" data-vv-as="file" type="file">
-<span class="help is-danger" v-show="errors.has('size_field')">{{ errors.first('size_field') }}</sp### [>](#rule->](#)
+<span class="help is-danger" v-show="errors.has('size_field')">{{ errors.first('size_field') }}</span>
 
 ### [url:{require_protocol?}](#rule-url)
 
