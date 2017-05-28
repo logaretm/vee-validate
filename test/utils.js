@@ -159,3 +159,31 @@ test('gets the value path with a fallback value', t => {
   t.is(utils.getPath('value.path', some), undefined); // undefined but exists.
   t.false(utils.getPath('value.not', some, false)); // does not.
 });
+
+
+test.cb('debounces the provided function', t => {
+  const [value, argument] = ['someval', 'somearg'];
+  t.plan(2);
+  const func = utils.debounce((val, arg) => {
+    t.is(val, value);
+    t.is(arg, argument);
+  }, 300);
+
+  func(value, argument);
+  setTimeout(() => {
+    func(value, argument);
+    t.end();
+  }, 200);
+});
+
+
+test.cb('calls functions immediatly if time is 0', t => {
+  const [value, argument] = ['someval', 'somearg'];
+  const func = utils.debounce((val, arg) => {
+    t.is(val, value);
+    t.is(arg, argument);
+    t.end();
+  }, 0);
+
+  func(value, argument);
+});
