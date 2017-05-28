@@ -255,7 +255,7 @@ The field under validation must match the specified regular expression.
 
 ### [required](#rule-required)
 
-The field under validation must have a non-empty value. By default all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty string, undefined, null.
+The field under validation must have a non-empty value. By default all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`, and `false`.
 
 <input v-validate="'required'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('required_field') }" name="required_field" type="text" placeholder="Is Required">
 <span v-show="errors.has('required_field')" class="help is-danger">{{ errors.first('required_field') }}</span>
