@@ -15,6 +15,7 @@ Validator.extend('promised', (value) => {
 test.beforeEach(() => {
     Validator.setLocale('en');
     Validator.updateDictionary({ ar: undefined }); // reset the dictionary for other tests.
+    Validator.setStrictMode(true);
 });
 
 // All tests are serial because the locale is shared across all validators
@@ -316,12 +317,8 @@ test('can attach new fields', async t => {
 test('can attach new fields and display errors with custom names', async t => {
     const v = new Validator();
     v.attach('field', 'min:5', { prettyName: 'pretty' });
-    try {
-        await v.validate('field', 'wo');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-        t.is(v.getErrors().first('field'), 'The pretty field must be at least 5 characters.');
-    }
+    await v.validate('field', 'wo');
+    t.is(v.getErrors().first('field'), 'The pretty field must be at least 5 characters.');
 });
 
 test('attaching new rules to an existing field should overwrite the old rules', async t => {
@@ -388,7 +385,7 @@ test('can append new validations to a field', async t => {
     t.true(await v.validate('field', 'wow'));
 });
 
-test('returns false when trying to validate a non-existant field.', async t => {
+test('fails when trying to validate a non-existant field when strict mode is true.', async t => {
     const v = new Validator({
         email: 'required|email',
         name: 'required|min:3',
@@ -551,14 +548,11 @@ test.serial('can set the locale statically', async t => {
         }
     });
     Validator.setLocale('ar');
-    const loc = new Validator({ name: 'alpha' });
-    try {
-        await loc.validate('name', '1234')
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-        t.is(loc.locale, 'ar');
-        t.is(loc.getErrors().first('name'), 'البتاعة لازم يكون حروف بس');
-    }
+    const loc = new Validator();
+    loc.attach('name', 'alpha');
+    await loc.validate('name', '1234', '__global__');
+    t.is(loc.locale, 'ar');
+    t.is(loc.getErrors().first('name'), 'البتاعة لازم يكون حروف بس');
 });
 
 test('throws an exception when extending with an invalid validator', t => {
@@ -585,11 +579,8 @@ test.serial('defaults to english messages if no current locale counterpart is fo
     const loc = new Validator({ first_name: 'alpha' });
     loc.setLocale('fr');
     loc.attach('first_name', 'alpha');
-    try {
-        await loc.validate('first_name', '0123');
-    } catch (err) {
-        t.is(loc.errorBag.first('first_name'), 'The first_name field may only contain alphabetic characters.');
-    }
+    await loc.validate('first_name', '0123');
+    t.is(loc.errorBag.first('first_name'), 'The first_name field may only contain alphabetic characters.');
 });
 
 test.serial('can overwrite messages and add translated messages', async t => {
@@ -599,29 +590,18 @@ test.serial('can overwrite messages and add translated messages', async t => {
         en: { messages: { alpha: (field) => `${field} is alphabetic.` } }
     });
     loc.attach('first_name', 'alpha');
-    try {
-        await loc.validate('first_name', '0123');
-    } catch (error) {
-        t.is(loc.errorBag.first('first_name'), 'first_name is alphabetic.');
-    }
+    await loc.validate('first_name', '0123');
+    t.is(loc.errorBag.first('first_name'), 'first_name is alphabetic.');
 
     loc.setLocale('ar');
-    try {
-        await loc.validate('first_name', '0123');
-    } catch (error) {
-        t.is(loc.errorBag.first('first_name'), 'first_name يجب ان يحتوي على حروف فقط.');
-    }
+    await loc.validate('first_name', '0123');
+    t.is(loc.errorBag.first('first_name'), 'first_name يجب ان يحتوي على حروف فقط.');
 
     loc.updateDictionary({
         ar: { messages: { alpha: () => 'My name is jeff' } }
     });
-
-    try {
-        await loc.validate('first_name', '0123');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-        t.is(loc.errorBag.first('first_name'), 'My name is jeff');
-    }
+    await loc.validate('first_name', '0123');
+    t.is(loc.errorBag.first('first_name'), 'My name is jeff');
 });
 
 test.serial('sets locale for all validators', async t => {
@@ -633,30 +613,18 @@ test.serial('sets locale for all validators', async t => {
     });
 
     v1.setLocale('ar');
-    try {
-        await v1.validate('first_name', '213');
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-        t.is(v1.errorBag.first('first_name'), 'عايز حروف');
-    }
-    try {
-        await v2.validate('first_name', '213');
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-        t.is(v2.errorBag.first('first_name'), 'عايز حروف');
-    }
+    await v1.validate('first_name', '213');
+    t.is(v1.errorBag.first('first_name'), 'عايز حروف');
+
+    await v2.validate('first_name', '213');
+    t.is(v2.errorBag.first('first_name'), 'عايز حروف');
+
     // doesn't matter which instance sets the locale.
     v2.setLocale('en');
-    try {
-        await v1.validate('first_name', '213');
-    } catch (err) {
-        t.is(v1.errorBag.first('first_name'), 'is alphabetic');
-    }
-    try {
-        await v2.validate('first_name', '213');
-    } catch (err) {
-        t.is(v2.errorBag.first('first_name'), 'is alphabetic');
-    }
+    await v1.validate('first_name', '213');
+    t.is(v1.errorBag.first('first_name'), 'is alphabetic');
+    await v2.validate('first_name', '213');
+    t.is(v2.errorBag.first('first_name'), 'is alphabetic');
 });
 
 test('resolves promises to booleans', async t => {
@@ -821,12 +789,8 @@ test('can translate target field for field dependent validations', async t => {
     });
 
     helpers.querySelector({ name: 'email_confirmation', value: 'someemail@gmail.com' });
-    try {
-        await v.validate('email', 'someotheremail@gmail.com');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-        t.is(v.errorBag.first('email'), 'The Email Address confirmation does not match.');
-    }
+    await v.validate('email', 'someotheremail@gmail.com');
+    t.is(v.errorBag.first('email'), 'The Email Address confirmation does not match.');
 });
 
 
