@@ -9,7 +9,7 @@
   "scripts": {
     "test": "nyc ava --colors",
     "lint": "eslint ./src",
-    "build:es": "rollup -c build/rollup.es2015.config.js",
+    "build:es": "rollup -c build/rollup.esm.config.js",
     "build:main": "rollup -c build/rollup.config.js",
     "minify": "uglifyjs dist/vee-validate.js -o dist/vee-validate.min.js -c -m",
     "build:locale": "node build/locale",

@@ -4,15 +4,15 @@ const replace = require('rollup-plugin-replace');
 const version = require('../package.json').version;
 
 module.exports = {
-    entry: 'src/index.js',
-    dest: 'dist/vee-validate.es2015.js',
-    format: 'es',
-    plugins: [
-        replace({ __VERSION__: version }),
-        nodeResolve(),
-        commonjs()
-    ],
-    banner:
+  entry: 'src/index.js',
+  dest: 'dist/vee-validate.esm.js',
+  format: 'es',
+  plugins: [
+    replace({ __VERSION__: version }),
+    nodeResolve(),
+    commonjs()
+  ],
+  banner:
 `/**
  * vee-validate v${version}
  * (c) ${new Date().getFullYear()} Abdelrahman Awad
