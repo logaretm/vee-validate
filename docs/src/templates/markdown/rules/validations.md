@@ -2,11 +2,12 @@
   
 > In the rule signature required parameters are enclosed within `{}` like this: `{param}`. Optional parameters have a `?` at the end: `{optional?}`. Lists are enclosed withn brackets `[]`. ex: `[list]`.</note>
 
-### [after:{target}](#rule-after)
+### [after:{target},{inclusion?}](#rule-after)
 
 The field under validation must have a valid date and is after the date value in the target field.
 
-- `target:` The input name to be validated against. Must have the same format as the date_format rule.
+- `target:` The input name to be validated against. Must have the same format as the date_format rule. Can also be a date value of the same format.
+- `inclusion`: Whether to include equal dates as a valid value, setting it to any value will set it to true, it is false by default.
 
 <input v-validate="'date_format:DD/MM/YYYY|after:after_field_target'" :class="{'input': true, 'is-danger': errors.has('after_field') }" name="after_field" type="text" placeholder="DD/MM/YYYY">
 <span v-show="errors.has('after_field')" class="help is-danger">{{ errors.first('after_field') }}</span>
@@ -41,9 +42,12 @@ The field under validation may contain alphabetic characters or spaces.
 <input v-validate="'alpha_spaces'" :class="{'input': true, 'is-danger': errors.has('alpha_spaces_field') }" name="alpha_spaces_field" type="text" placeholder="Enter characters and spaces">
 <span v-show="errors.has('alpha_spaces_field')" class="help is-danger">{{ errors.first('alpha_spaces_field') }}</span>
 
-### [before:{target}](#rule-before)
+### [before:{target},{inclusion?}](#rule-before)
 
 The field under validation must have a valid date and is before the date value in the target field.
+
+- `target`: The input name to be validated against. Must have the same format as the date_format rule. Can also be a date value of the same format.
+- `inclusion`: Whether to include equal dates as a valid value, setting it to any value will set it to true, it is false by default.
 
 <input v-validate="'date_format:DD/MM/YYYY|before:before_field_target'" :class="{'input': true, 'is-danger': errors.has('before_field') }" name="before_field" type="text" placeholder="DD/MM/YYYY">
 <span v-show="errors.has('before_field')" class="help is-danger">{{ errors.first('before_field') }}</span>
