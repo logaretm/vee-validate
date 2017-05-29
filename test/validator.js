@@ -776,21 +776,21 @@ test('cascades promise values with previous fields', async t => {
 
 test('can translate target field for field dependent validations', async t => {
     const v = new Validator({
-        email: 'email|confirmed:email_confirmation'
+        birthday: 'date_format:DD-MM-YYYY|after:birthday_min'
     });
 
     v.updateDictionary({
         en: {
             attributes: {
-                email: 'Email Address',
-                email_confirmation: 'Email Confirmation'
+                birthday: 'Birthday',
+                birthday_min: 'Some Date'
             }
         }
     });
 
-    helpers.querySelector({ name: 'email_confirmation', value: 'someemail@gmail.com' });
-    await v.validate('email', 'someotheremail@gmail.com');
-    t.is(v.errorBag.first('email'), 'The Email Address confirmation does not match.');
+    helpers.querySelector({ name: 'birthday_min', value: '12-09-2017' });
+    await v.validate('birthday', '11-09-2017');
+    t.is(v.errorBag.first('birthday'), 'The Birthday must be after Some Date.');
 });
 
 
