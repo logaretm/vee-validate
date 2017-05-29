@@ -129,7 +129,7 @@ You can find more information in the [contribution guide](contributing.md).
 - Logo by [Abdelrahman Ismail](https://github.com/Abdelrahman3D)
 
 ### Roadmap
-- First Full Release (Out of beta) - Mid May 2017
-- Vuex Support - Late May / Mid June 2017
+- First Full Release - Late June 2017
+- Vuex Support - After the first release
 
 ### license MIT
