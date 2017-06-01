@@ -8,5 +8,6 @@ export default {
   enableAutoClasses: false,
   classNames: {},
   events: 'input|blur',
-  inject: true
+  inject: true,
+  fastExit: true
 };

@@ -17,13 +17,14 @@ const DICTIONARY = new Dictionary({
 });
 
 export default class Validator {
-  constructor(validations, options = { init: true, vm: null }) {
+  constructor(validations, options = { init: true, vm: null, fastExit: true }) {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };
     this._createFields(validations);
     this.errorBag = new ErrorBag();
     this.fieldBag = {};
     this.paused = false;
+    this.fastExit = options.fastExit || false;
     this.$vm = options.vm;
 
     // Some fields will be later evaluated, because the vm isn't mounted yet
@@ -893,7 +894,7 @@ export default class Validator {
         }
 
         // Early exit.
-        if (! result) {
+        if (! result && this.fastExit) {
           if (field.events && isCallable(field.events.after)) {
             field.events.after({ valid: false });
           }
@@ -901,7 +902,7 @@ export default class Validator {
         }
 
         if (field.events && isCallable(field.events.after)) {
-          field.events.after({ valid: true });
+          field.events.after({ valid: result });
         }
         return Promise.resolve(result);
       });

@@ -1650,7 +1650,7 @@ var DICTIONARY = new Dictionary({
 });
 
 var Validator = function Validator(validations, options) {
-  if ( options === void 0 ) options = { init: true, vm: null };
+  if ( options === void 0 ) options = { init: true, vm: null, fastExit: true };
 
   this.strictMode = STRICT_MODE;
   this.$scopes = { __global__: {} };
@@ -1658,6 +1658,7 @@ var Validator = function Validator(validations, options) {
   this.errorBag = new ErrorBag();
   this.fieldBag = {};
   this.paused = false;
+  this.fastExit = options.fastExit || false;
   this.$vm = options.vm;
 
   // Some fields will be later evaluated, because the vm isn't mounted yet
@@ -2129,8 +2130,7 @@ Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, r
 Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule, scope) {
     if ( scope === void 0 ) scope = '__global__';
 
-  if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) &&
-      rule.params && rule.params[0]) {
+  if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
     var param = this.$scopes[scope][rule.params[0]];
     if (param && param.name) { return [param.name]; }
     return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
@@ -2575,7 +2575,7 @@ Validator.prototype.validate = function validate (name, value, scope, throws) {
       }
 
       // Early exit.
-      if (! result) {
+      if (! result && this$1.fastExit) {
         if (field.events && isCallable(field.events.after)) {
           field.events.after({ valid: false });
         }
@@ -2583,7 +2583,7 @@ Validator.prototype.validate = function validate (name, value, scope, throws) {
       }
 
       if (field.events && isCallable(field.events.after)) {
-        field.events.after({ valid: true });
+        field.events.after({ valid: result });
       }
       return Promise.resolve(result);
     });
@@ -2714,6 +2714,10 @@ Validator.prototype.validateScopes = function validateScopes () {
 
 Object.defineProperties( Validator.prototype, prototypeAccessors );
 
+/**
+ * Checks if a parent validator instance was requested.
+ * @param {Object|Array} injections
+ */
 var validatorRequested = function (injections) {
   if (! injections) {
     return false;
@@ -2730,6 +2734,17 @@ var validatorRequested = function (injections) {
   return false;
 };
 
+/**
+ * Creates a validator instance.
+ * @param {Vue} vm
+ * @param {Object} options
+ */
+var createValidator = function (vm, options) { return new Validator(null, {
+  init: false,
+  vm: vm,
+  fastExit: options.fastExit
+}); };
+
 var makeMixin = function (Vue, options) {
   var mixin = {};
   mixin.provide = function providesValidator() {
@@ -2745,14 +2760,14 @@ var makeMixin = function (Vue, options) {
   mixin.beforeCreate = function beforeCreate() {
     // if its a root instance, inject anyways, or if it requested a new instance.
     if (this.$options.$validates || !this.$parent) {
-      this.$validator = new Validator(null, { init: false, vm: this });
+      this.$validator = createValidator(this, options);
     }
 
     var requested = validatorRequested(this.$options.inject);
 
     // if automatic injection is enabled and no instance was requested.
     if (! this.$validator && options.inject && !requested) {
-      this.$validator = new Validator(null, { init: false, vm: this });
+      this.$validator = createValidator(this, options);
     }
 
     // don't inject errors or fieldBag as no validator was resolved.
@@ -2984,7 +2999,8 @@ var config = {
   enableAutoClasses: false,
   classNames: {},
   events: 'input|blur',
-  inject: true
+  inject: true,
+  fastExit: true
 };
 
 var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) {

@@ -1,6 +1,10 @@
 import { isObject } from './utils';
 import Validator from './validator';
 
+/**
+ * Checks if a parent validator instance was requested.
+ * @param {Object|Array} injections
+ */
 const validatorRequested = (injections) => {
   if (! injections) {
     return false;
@@ -17,6 +21,17 @@ const validatorRequested = (injections) => {
   return false;
 };
 
+/**
+ * Creates a validator instance.
+ * @param {Vue} vm
+ * @param {Object} options
+ */
+const createValidator = (vm, options) => new Validator(null, {
+  init: false,
+  vm,
+  fastExit: options.fastExit
+});
+
 export default (Vue, options) => {
   const mixin = {};
   mixin.provide = function providesValidator() {
@@ -32,14 +47,14 @@ export default (Vue, options) => {
   mixin.beforeCreate = function beforeCreate() {
     // if its a root instance, inject anyways, or if it requested a new instance.
     if (this.$options.$validates || !this.$parent) {
-      this.$validator = new Validator(null, { init: false, vm: this });
+      this.$validator = createValidator(this, options);
     }
 
     const requested = validatorRequested(this.$options.inject);
 
     // if automatic injection is enabled and no instance was requested.
     if (! this.$validator && options.inject && !requested) {
-      this.$validator = new Validator(null, { init: false, vm: this });
+      this.$validator = createValidator(this, options);
     }
 
     // don't inject errors or fieldBag as no validator was resolved.

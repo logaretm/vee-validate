@@ -1052,3 +1052,11 @@ test('validations can be paused and resumed', async t => {
         t.is(error.msg, '[vee-validate]: Validation Failed');
     }
 });
+
+test('it can hold multiple errors for one field', async t => {
+    const v = new Validator({
+        name: 'alpha|min:3'
+    }, { fastExit: false });
+    await t.throws(v.validate('name', '2'));
+    t.is(v.errorBag.count(), 2);
+});
