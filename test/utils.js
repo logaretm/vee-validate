@@ -167,6 +167,7 @@ test.cb('debounces the provided function', t => {
   const func = utils.debounce((val, arg) => {
     t.is(val, value);
     t.is(arg, argument);
+    t.end();
   }, 300);
 
   func(value, argument);

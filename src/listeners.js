@@ -317,7 +317,13 @@ export default class ListenerGenerator {
     if (this.component) {
       return {
         context: () => this.component,
-        getter: (context) => getDataAttribute(this.el, 'value-path') || context.value
+        getter: (context) => {
+          const path = getDataAttribute(this.el, 'value-path');
+          if (path) {
+            return getPath(path, this.component);
+          }
+          return context.value;
+        }
       };
     }
 

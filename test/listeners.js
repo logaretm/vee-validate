@@ -206,16 +206,26 @@ test('resolves value getters for file inputs', t => {
 });
 
 test('resolves value getters for components', t => {
-  document.body.innerHTML = '<input id="el" type="text" name="name" value="1" data-vv-value-path="internalValue">';
+  document.body.innerHTML = '<input id="el" type="text" name="name" value="first" data-vv-value-path="internalValue">';
   const el = document.querySelector('#el');
   const lg = new ListenerGenerator(el, {}, helpers.vnode(), {});
-  lg.component = { $el: el, value: 'first' };
+  lg.component = { $el: el, internalValue: 'first' };
   const { context, getter } = lg._resolveValueGetter();
 
   t.is(context(), lg.component);
   t.is(getter(context()), 'first');
-  lg.component.value = 'second'; // simulate change.
+  lg.component.internalValue = 'second'; // simulate change.
   t.is(getter(context()), 'second');
+
+  // test value property fallback
+  document.body.innerHTML = '<input id="el" type="text" name="name" value="1">';
+  const newEl = document.querySelector('#el');
+  lg.el = newEl;
+  lg.component = { $el: el, value: '1' };
+  const pairs = lg._resolveValueGetter();
+  t.is(pairs.getter(pairs.context()), '1');
+  lg.component.value = '2'; // simulate change.
+  t.is(pairs.getter(pairs.context()), '2');
 });
 
 test('resolves value getters for checkboxes', t => {
