@@ -3340,6 +3340,13 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
     };
   }
 
+  if (this.model) {
+    return {
+      context: function () { return this$1.vm; },
+      getter: function (context) { return getPath(this$1.model, context); }
+    };
+  }
+
   switch (this.el.type) {
   case 'checkbox': return {
     context: function () { return document.querySelectorAll(("input[name=\"" + (this$1.el.name) + "\"]:checked")); },

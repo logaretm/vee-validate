@@ -1,6 +1,9 @@
 import ClassManager from './classes';
 import {
-  getScope, debounce, warn, getDataAttribute, isObject, toArray, find, getRules, assign, isCallable
+  getScope, debounce, warn,
+  getDataAttribute, isObject, toArray,
+  find, getRules, assign, isCallable,
+  getPath
 } from './utils';
 import config from './config';
 
@@ -310,6 +313,13 @@ export default class ListenerGenerator {
         getter(context) {
           return context.value;
         }
+      };
+    }
+
+    if (this.model) {
+      return {
+        context: () => this.vm,
+        getter: (context) => getPath(this.model, context)
       };
     }
 
