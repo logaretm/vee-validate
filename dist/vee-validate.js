@@ -1339,6 +1339,14 @@ var getRules = function (expression, value, el) {
   return value;
 };
 
+var getInputEventName = function (el) {
+  if (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type)) {
+    return 'change';
+  }
+
+  return 'input';
+};
+
 var Dictionary = function Dictionary(dictionary) {
   if ( dictionary === void 0 ) dictionary = {};
 
@@ -1987,7 +1995,7 @@ Validator.prototype._normalizeRules = function _normalizeRules (name, checks, sc
  * Checks if a field has a required rule.
  */
 Validator.prototype._isRequired = function _isRequired (field) {
-  return field.validations && field.validations.required;
+  return !! (field.validations && field.validations.required);
 };
 
 /**
@@ -2887,6 +2895,7 @@ ClassListener.prototype.addInputListener = function addInputListener () {
     var this$1 = this;
 
   // listen for input.
+  var event = getInputEventName(this.el);
   this.listeners.input = function () {
     this$1.remove(this$1.classNames.pristine);
     this$1.add(this$1.classNames.dirty);
@@ -2896,14 +2905,14 @@ ClassListener.prototype.addInputListener = function addInputListener () {
     if (this$1.component) { return; }
 
     // only needed once.
-    this$1.el.removeEventListener('input', this$1.listeners.input);
+    this$1.el.removeEventListener(event, this$1.listeners.input);
     this$1.listeners.input = null;
   };
 
   if (this.component) {
     this.component.$once('input', this.listeners.input);
   } else {
-    this.el.addEventListener('input', this.listeners.input);
+    this.el.addEventListener(event, this.listeners.input);
   }
 };
 

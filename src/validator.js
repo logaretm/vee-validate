@@ -338,7 +338,7 @@ export default class Validator {
    * Checks if a field has a required rule.
    */
   _isRequired(field) {
-    return field.validations && field.validations.required;
+    return !! (field.validations && field.validations.required);
   }
 
   /**

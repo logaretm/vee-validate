@@ -213,3 +213,11 @@ export const getRules = (expression, value, el) => {
 
   return value;
 };
+
+export const getInputEventName = (el) => {
+  if (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type)) {
+    return 'change';
+  }
+
+  return 'input';
+};

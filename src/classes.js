@@ -1,4 +1,4 @@
-import { addClass, removeClass, assign } from './utils';
+import { addClass, removeClass, assign, getInputEventName } from './utils';
 
 const DEFAULT_CLASS_NAMES = {
   touched: 'touched', // the control has been blurred
@@ -76,6 +76,7 @@ export default class ClassListener {
 
   addInputListener() {
     // listen for input.
+    const event = getInputEventName(this.el);
     this.listeners.input = () => {
       this.remove(this.classNames.pristine);
       this.add(this.classNames.dirty);
@@ -85,14 +86,14 @@ export default class ClassListener {
       if (this.component) return;
 
       // only needed once.
-      this.el.removeEventListener('input', this.listeners.input);
+      this.el.removeEventListener(event, this.listeners.input);
       this.listeners.input = null;
     };
 
     if (this.component) {
       this.component.$once('input', this.listeners.input);
     } else {
-      this.el.addEventListener('input', this.listeners.input);
+      this.el.addEventListener(event, this.listeners.input);
     }
   }
 
