@@ -3474,7 +3474,7 @@ ListenerGenerator.prototype.detach = function detach () {
 var listenersInstances = [];
 
 var makeDirective = function (options) { return ({
-  inserted: function inserted(el, binding, vnode) {
+  bind: function bind(el, binding, vnode) {
     if (! vnode.context.$validator) {
       var name = vnode.context.$options._componentTag;
       // eslint-disable-next-line

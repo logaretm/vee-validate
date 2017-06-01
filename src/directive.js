@@ -4,7 +4,7 @@ import { getScope, isObject, find, getRules, warn } from './utils';
 const listenersInstances = [];
 
 export default (options) => ({
-  inserted(el, binding, vnode) {
+  bind(el, binding, vnode) {
     if (! vnode.context.$validator) {
       const name = vnode.context.$options._componentTag;
       // eslint-disable-next-line
