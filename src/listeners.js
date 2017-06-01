@@ -307,19 +307,17 @@ export default class ListenerGenerator {
    * Returns a context, getter factory pairs for each input type.
    */
   _resolveValueGetter() {
-    if (this.component) {
-      return {
-        context: () => this.component,
-        getter(context) {
-          return context.value;
-        }
-      };
-    }
-
     if (this.model) {
       return {
         context: () => this.vm,
         getter: (context) => getPath(this.model, context)
+      };
+    }
+
+    if (this.component) {
+      return {
+        context: () => this.component,
+        getter: (context) => getDataAttribute(this.el, 'value-path') || context.value
       };
     }
 
