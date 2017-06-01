@@ -1162,7 +1162,11 @@ var getPath = function (propPath, target, def) {
  */
 var debounce = function (callback, wait, immediate) {
   if ( wait === void 0 ) wait = 0;
-  if ( immediate === void 0 ) immediate = true;
+  if ( immediate === void 0 ) immediate = false;
+
+  if (wait === 0) {
+    return callback;
+  }
 
   var timeout;
 

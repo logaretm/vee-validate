@@ -43,7 +43,11 @@ export const getPath = (propPath, target, def = undefined) => {
 /**
  * Debounces a function.
  */
-export const debounce = (callback, wait = 0, immediate = true) => {
+export const debounce = (callback, wait = 0, immediate = false) => {
+  if (wait === 0) {
+    return callback;
+  }
+
   let timeout;
 
   return (...args) => {
