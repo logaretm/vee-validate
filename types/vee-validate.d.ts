@@ -37,29 +37,36 @@ export class Validator {
 
     constructor(validations: any, options: any);
     addScope(scope: string): void;
-    append(name: string, checks: string|Object, options: any): void;
-    attach(name: string, checks: string|Object, options: any): void;
-    detach(name: string, scope: string): void;
+    append(name: string, checks: string|Object, options?: Object): void;
+    attach(name: string, checks: string|Object, options?: Object): void;
+    clearInterval(): void;
+    detach(name: string, scope?: string): void;
     extend(name: string, validator: Object|Function): void;
+    flag(name: string, flags: Objet): void;
     getErrors(): ErrorBag;
     getLocale(): string;
-    init(): any;
+    init(): Validator;
     installDateTimeValidators(moment: any): void;
+    on(name: string, fieldName: string, scope: string, callback: Function): void;
+    off(name: string, fieldName: string, scope: string): void;
+    pause(): Validator;
     remove(name: string): void;
+    resume(): Validator;
     setLocale(language?: string): void;
-    setStrictMode(strictMode: boolean): void;
+    setStrictMode(strictMode?: boolean): void;
     updateDictionary(data: Object): void;
-    updateField(name: string, checks: string|Object, options: any): void;
-    validate(name: string, value: any, scope?: string): boolean|Promise<any>;
-    validateAll(values?: Object): Promise<any>;
+    updateField(name: string, checks: string|Object, options?: Object): void;
+    validate(name: string, value: any, scope?: string, throws?: boolean): Promise<any>;
+    validateAll(values?: Object, scope?: string): Promise<any>;
     validateScopes(): Promise<any>;
-    static create(validations: Object, $vm: any, options: any): Validator;
+    static create(validations: Object, options: any): Validator;
     static extend(name: string, validator: Object|Function): void;
     static installDateTimeValidators(moment: any): any;
     static remove(name: string): void;
     static setLocale(language?: string): void;
-    static setStrictMode(strictMode: boolean): void;
+    static setStrictMode(strictMode?: boolean): void;
     static updateDictionary(data: any): void;
+    static addLocale(local: Object): void;
 }
 export const version: string;
 
