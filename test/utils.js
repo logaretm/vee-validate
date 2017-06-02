@@ -167,14 +167,12 @@ test.cb('debounces the provided function', t => {
   const func = utils.debounce((val, arg) => {
     t.is(val, value);
     t.is(arg, argument);
-    t.end();
-  }, 300);
+  }, 200);
 
   func(value, argument);
   setTimeout(() => {
-    func(value, argument);
     t.end();
-  }, 200);
+  }, 201);
 });
 
 
