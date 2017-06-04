@@ -147,6 +147,10 @@ export default class ListenerGenerator {
      * Trigger the validation for a specific value.
      */
   _validate(value) {
+    if ((this.component && this.component.disabled) || this.el.disabled) {
+      return Promise.resolve(true);
+    }
+
     return this.vm.$validator.validate(
       this.fieldName, value, this.scope || getScope(this.el)
       ).catch(result => result);

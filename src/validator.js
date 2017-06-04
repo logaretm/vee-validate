@@ -263,8 +263,13 @@ export default class Validator {
       const context = field.context;
       const fieldScope = this._resolveScope(field.scope);
       if (getter && context && (scope === '__global__' || fieldScope === scope)) {
+        const ctx = context();
+        if (ctx.disabled) {
+          return;
+        }
+
         values[name] = {
-          value: getter(context()),
+          value: getter(ctx),
           scope: fieldScope
         };
       }
