@@ -570,7 +570,7 @@ test('throws an exception when extending with an invalid validator', t => {
         Validator.extend('fail', { validate: () => true });
     });
     // numeric is already registered.
-    t.throws(() => {
+    t.notThrows(() => {
         Validator.extend('numeric', { getMessage: name => name, validate: () => true });
     });
 });

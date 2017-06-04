@@ -104,12 +104,6 @@ export default class Validator {
    * @param  {object} validator a validation rule object.
    */
   static _guardExtend(name, validator) {
-    if (Rules[name]) {
-      throw new ValidatorException(
-        `Extension Error: There is an existing validator with the same name '${name}'.`
-      );
-    }
-
     if (isCallable(validator)) {
       return;
     }
