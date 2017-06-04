@@ -262,8 +262,21 @@ export default class ListenerGenerator {
       this._validate(value);
     }, getDataAttribute(this.el, 'delay') || this.options.delay);
 
-    this.component.$on('input', this.componentListener);
-    this.componentPropUnwatch = this.component.$watch('value', this.componentListener);
+    const events = getDataAttribute('validate-on') || this.options.events;
+    events.split('|').forEach(e => {
+      if (!e) {
+        return;
+      }
+      if (e === 'input') {
+        this.component.$on('input', this.componentListener);
+      } else if (e === 'blur') {
+        this.component.$on('blur', this.componentListener);
+      } else {
+        this.component.$on(e, this.componentListener);
+      }
+
+      this.componentPropUnwatch = this.component.$watch('value', this.componentListener);
+    });
   }
 
   /**
