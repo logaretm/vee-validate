@@ -148,6 +148,12 @@ var confirmed = function (value, ref, validatingField) {
     ? document.querySelector(("input[name='" + confirmedField + "']"))
     : document.querySelector(("input[name='" + validatingField + "_confirmation']"));
 
+  if (! field) {
+    field = confirmedField
+      ? document.querySelector(("input[data-vv-name='" + confirmedField + "']"))
+      : document.querySelector(("input[data-vv-name='" + validatingField + "_confirmation']"));
+  }
+
   return !! (field && String(value) === field.value);
 };
 
@@ -1619,13 +1625,15 @@ var date_between = function (moment) { return function (value, params) {
 var messages$1 = {
   after: function (field, ref) {
     var target = ref[0];
+    var inclusion = ref[1];
 
-    return ("The " + field + " must be after " + target + ".");
+    return ("The " + field + " must be after " + (inclusion ? 'or equal to ' : '') + target + ".");
 },
   before: function (field, ref) {
     var target = ref[0];
+    var inclusion = ref[1];
 
-    return ("The " + field + " must be before " + target + ".");
+    return ("The " + field + " must be before " + (inclusion ? 'or equal to ' : '') + target + ".");
 },
   date_between: function (field, ref) {
     var min = ref[0];
@@ -1751,12 +1759,6 @@ Validator._merge = function _merge (name, validator) {
  * @param{object} validator a validation rule object.
  */
 Validator._guardExtend = function _guardExtend (name, validator) {
-  if (Rules[name]) {
-    throw new ValidatorException(
-      ("Extension Error: There is an existing validator with the same name '" + name + "'.")
-    );
-  }
-
   if (isCallable(validator)) {
     return;
   }
@@ -3282,8 +3284,21 @@ ListenerGenerator.prototype._attachComponentListeners = function _attachComponen
     this$1._validate(value);
   }, getDataAttribute(this.el, 'delay') || this.options.delay);
 
-  this.component.$on('input', this.componentListener);
-  this.componentPropUnwatch = this.component.$watch('value', this.componentListener);
+  var events = getDataAttribute(this.el, 'validate-on') || this.options.events;
+  events.split('|').forEach(function (e) {
+    if (!e) {
+      return;
+    }
+    if (e === 'input') {
+      this$1.component.$on('input', this$1.componentListener);
+    } else if (e === 'blur') {
+      this$1.component.$on('blur', this$1.componentListener);
+    } else {
+      this$1.component.$on(e, this$1.componentListener);
+    }
+
+    this$1.componentPropUnwatch = this$1.component.$watch('value', this$1.componentListener);
+  });
 };
 
 /**
@@ -3331,19 +3346,23 @@ ListenerGenerator.prototype._attachFieldListeners = function _attachFieldListene
 ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter () {
     var this$1 = this;
 
-  if (this.component) {
-    return {
-      context: function () { return this$1.component; },
-      getter: function getter(context) {
-        return context.value;
-      }
-    };
-  }
-
   if (this.model) {
     return {
       context: function () { return this$1.vm; },
       getter: function (context) { return getPath(this$1.model, context); }
+    };
+  }
+
+  if (this.component) {
+    return {
+      context: function () { return this$1.component; },
+      getter: function (context) {
+        var path = getDataAttribute(this$1.el, 'value-path');
+        if (path) {
+          return getPath(path, this$1.component);
+        }
+        return context.value;
+      }
     };
   }
 

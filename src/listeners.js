@@ -262,7 +262,7 @@ export default class ListenerGenerator {
       this._validate(value);
     }, getDataAttribute(this.el, 'delay') || this.options.delay);
 
-    const events = getDataAttribute('validate-on') || this.options.events;
+    const events = getDataAttribute(this.el, 'validate-on') || this.options.events;
     events.split('|').forEach(e => {
       if (!e) {
         return;
