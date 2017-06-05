@@ -3,7 +3,7 @@
 vee-validate includes few flags that could help you improve your user experience, each field under validation has its own set of flags which are:
 
 
-- `tocuhed`: indicates that the field has been touched or focused.
+- `touched`: indicates that the field has been touched or focused.
 - `untouched`: indicates that the field has not been touched nor focused.
 - `dirty`: indicates that the field has been manipluated.
 - `pristine`: indicates that the field has not been manipluated.
