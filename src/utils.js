@@ -196,11 +196,16 @@ export const find = (array, predicate) => {
  * @param {String} expression The binding expression.
  * @param {Object|String} value The binding value.
  * @param {element} el The element.
+ * @param {Object} component The component.
  * @returns {String|Object}
  */
-export const getRules = (expression, value, el) => {
+export const getRules = (expression, value, el, component) => {
   if (! expression) {
-    return getDataAttribute(el, 'rules');
+    if (component && component.name && component.rulesets) {
+      return component.rulesets[component.name];
+    } else {
+      return getDataAttribute(el, 'rules');
+    }
   }
 
   if (typeof value === 'string') {

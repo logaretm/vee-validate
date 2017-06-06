@@ -16,7 +16,7 @@ export default (options) => ({
     listener.attach();
     listenersInstances.push({ vm: vnode.context, el, instance: listener });
   },
-  update(el, { expression, value }, { context }) {
+  update(el, { expression, value }, { context, child }) {
     const { instance } = find(listenersInstances, l => l.vm === context && l.el === el);
     // make sure we don't do uneccessary work if no expression was passed
     // nor if the expression did not change.
@@ -26,7 +26,7 @@ export default (options) => ({
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
       instance.fieldName,
-      getRules(expression, value, el),
+      getRules(expression, value, el, child),
       { scope: scope || '__global__' }
     );
   },
