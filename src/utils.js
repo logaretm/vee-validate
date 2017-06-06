@@ -203,9 +203,8 @@ export const getRules = (expression, value, el, component) => {
   if (! expression) {
     if (component && component.name && component.rulesets) {
       return component.rulesets[component.name];
-    } else {
-      return getDataAttribute(el, 'rules');
     }
+    return getDataAttribute(el, 'rules');
   }
 
   if (typeof value === 'string') {
