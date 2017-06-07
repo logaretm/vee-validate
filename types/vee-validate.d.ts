@@ -42,7 +42,7 @@ export class Validator {
     clearInterval(): void;
     detach(name: string, scope?: string): void;
     extend(name: string, validator: Object|Function): void;
-    flag(name: string, flags: Objet): void;
+    flag(name: string, flags: Object): void;
     getErrors(): ErrorBag;
     getLocale(): string;
     init(): Validator;
