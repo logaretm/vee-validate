@@ -1005,12 +1005,7 @@ export default class Validator {
     ));
 
     return Promise.all(promises).then(results => {
-      const valid = results.every(t => t);
-      if (! valid) {
-        throw new ValidatorException('Validation Failed');
-      }
-
-      return valid;
+      return results.every(t => t);
     });
   }
 
