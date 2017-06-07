@@ -124,6 +124,7 @@ export default class ClassListener {
       this.field.flags.valid = e.valid;
       this.field.flags.invalid = ! e.valid;
       this.field.flags.pending = false;
+      this.field.flags.validated = true;
     };
 
     this.validator.on('after', this.field.name, this.field.scope, this.listeners.after);

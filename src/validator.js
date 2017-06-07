@@ -590,6 +590,7 @@ export default class Validator {
       pristine: true,
       valid: null,
       invalid: null,
+      validated: false,
       required: field.required,
       pending: false
     };
