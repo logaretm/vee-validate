@@ -34,28 +34,11 @@ test('empty values pass validation unless they are required', async t => {
     t.true(await v.validate('title', undefined));
     t.true(await v.validate('content', 'works'));
 
-    try {
-        await v.validate('content', '');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    t.false(await v.validate('content', ''));
+    t.false(await v.validate('email', 'loga'));
+    t.false(await v.validate('name', 'no'));
+    t.false(await v.validate('title', 'no'));
 
-    try {
-        await v.validate('email', 'loga')
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
-
-    try {
-        await v.validate('name', 'no');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
-    try {
-        await v.validate('title', 'no')
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
 });
 
 test('can validate single values', async t => {
@@ -68,29 +51,13 @@ test('can validate single values', async t => {
     });
 
     t.true(await v.validate('title', 'abc'));
-    try {
-        await v.validate('title', 'ab');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
-    try {
-        await v.validate('title', '');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
-    try {
-        await v.validate('title', 'a'.repeat(256));
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    t.false(await v.validate('title', 'ab'));
+    t.false(await v.validate('title', ''));
+    t.false(await v.validate('title', 'a'.repeat(256)));
 
     v = new Validator();
     v.attach('el', 'required|min:3', { scope: 'scope' });
-    try {
-        await v.validate('scope.el', '12')
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    t.false(await v.validate('scope.el', '12'));
     t.true(await v.validate('scope.el', '123'));
 });
 
@@ -102,17 +69,10 @@ test('validates correctly regardless of rule placement', async t => {
         content: 'required|max:20',
         tags: 'required|in:1,2,3,5'
     });
+
     t.true(await v.validate('title', 'Winter is coming'));
-    try {
-        await v.validate('title', 'No');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
-    try {
-        await v.validate('content', 'Winter is coming says everyone in the north');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    t.false(await v.validate('title', 'No'));
+    t.false(await v.validate('content', 'Winter is coming says everyone in the north'));
 });
 
 test('can be initialized with static create method', t => {
@@ -151,29 +111,10 @@ test('can allow rules object', async t => {
         in: ['blabla.js', 'blabla.ts'] // test params
     });
 
-
-    try {
-        await v.validate('field', '')
-    } catch (err) {
-        t.true(err instanceof ValidatorException); // required.
-    }
-    try {
-        await v.validate('field', 'blabla')
-    } catch (err) {
-        t.true(err instanceof ValidatorException); // regex.
-    }
-    try {
-        await v.validate('field', 'g.js')
-    } catch (err) {
-        t.true(err instanceof ValidatorException); // min.
-    }
-
-    try {
-        await v.validate('field', 'else.js')
-    } catch (err) {
-        t.true(err instanceof ValidatorException); // in
-    }
-
+    t.false(await v.validate('field', ''));
+    t.false(await v.validate('field', 'blabla'));
+    t.false(await v.validate('field', 'g.js'));
+    t.false(await v.validate('field', 'else.js'));
     t.true(await v.validate('field', 'blabla.js'));
     t.true(await v.validate('field', 'blabla.ts'));
 });
@@ -205,17 +146,13 @@ test('fails validation on a one-of-many failure', async t => {
         content: 'required|max:20',
         tags: 'required|in:1,2,3,5'
     });
-    try {
-        await v.validateAll({
-            email: 'foo@bar.com',
-            name: 'John Snow',
-            title: 'No',
-            content: 'John knows nothing',
-            tags: 1
-        });
-    } catch (error) {
-        t.is(error.msg, '[vee-validate]: Validation Failed');
-    }
+    t.false(await v.validateAll({
+        email: 'foo@bar.com',
+        name: 'John Snow',
+        title: 'No',
+        content: 'John knows nothing',
+        tags: 1
+    }));
 });
 
 test('bypasses values without rules in strictMode = off', async t => {
@@ -237,13 +174,14 @@ test('can set strict mode on specific instances', async t => {
 	const v = new Validator({
 		imp: 'required'
 	});
+    
     try {
         let result = await v.validateAll({
             imp: 'Tyrion Lannister',
             headless: 'Ned Stark'
         });
     } catch (error) {
-        t.is(error.msg, '[vee-validate]: Validation Failed');
+        t.is(error.message, `[vee-validate]: Validating a non-existant field: "headless". Use "attach()" first.`);
     }
 
     v.setStrictMode(false);
@@ -260,7 +198,7 @@ test('can set strict mode on specific instances', async t => {
             headless: 'Ned Stark'
         })); // strict = true because this is a different instance.
     } catch (error) {
-        t.is(error.msg, '[vee-validate]: Validation Failed');
+        t.is(error.message, `[vee-validate]: Validating a non-existant field: "headless". Use "attach()" first.`);
     }
 });
 
@@ -272,32 +210,28 @@ test('formats error messages', async t => {
         content: 'required|max:20',
         tags: 'required|in:1,2,3,5'
     });
+    t.false(await v.validateAll({
+        email: 'foo@bar.c',
+        name: '',
+        title: 'Wi',
+        content: 'John knows nothing about this validator',
+        tags: 4
+    }));
 
-    try {
-        await v.validateAll({
-            email: 'foo@bar.c',
-            name: '',
-            title: 'Wi',
-            content: 'John knows nothing about this validator',
-            tags: 4
-        });
-    } catch (error) {
-        t.is(error.msg, '[vee-validate]: Validation Failed');
-        t.deepEqual(v.errorBag.all(), [
-            'The email field must be a valid email.',
-            'The name field is required.',
-            'The title field must be at least 3 characters.',
-            'The content field may not be greater than 20 characters.',
-            'The tags field must be a valid value.'
-        ]);
-        t.deepEqual(v.getErrors().all(), [
-            'The email field must be a valid email.',
-            'The name field is required.',
-            'The title field must be at least 3 characters.',
-            'The content field may not be greater than 20 characters.',
-            'The tags field must be a valid value.'
-        ]);
-    }
+    t.deepEqual(v.errorBag.all(), [
+        'The email field must be a valid email.',
+        'The name field is required.',
+        'The title field must be at least 3 characters.',
+        'The content field may not be greater than 20 characters.',
+        'The tags field must be a valid value.'
+    ]);
+    t.deepEqual(v.getErrors().all(), [
+        'The email field must be a valid email.',
+        'The name field is required.',
+        'The title field must be at least 3 characters.',
+        'The content field may not be greater than 20 characters.',
+        'The tags field must be a valid value.'
+    ]);
 });
 test('can attach new fields', async t => {
     const v = new Validator();
@@ -305,12 +239,7 @@ test('can attach new fields', async t => {
     t.falsy(v.$scopes.__global__.field);
     v.attach('field', 'required|min:5');
     t.truthy(v.$scopes.__global__.field);
-    try {
-        await v.validate('field', 'less')
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
-
+    t.false(await v.validate('field', 'less'));
     t.true(await v.validate('field', 'not less'));
 });
 
@@ -324,26 +253,14 @@ test('can attach new fields and display errors with custom names', async t => {
 test('attaching new rules to an existing field should overwrite the old rules', async t => {
     const v = new Validator();
     v.attach('someField', 'required|min:3');
-    try {
-        await v.validate('someField', 'wo');
-    } catch (error) {
-        t.is(v.errorBag.collect('someField').length, 1);
-    }
+    t.false(await v.validate('someField', 'wo'));
 
     // does it overwrite the old rule?
     v.attach('someField', 'min:1|max:3');
     t.is(v.errorBag.collect('someField').length, 0); // are field errors cleared?
-    try {
-        await v.validate('someField', 'wo');
-    } catch (result) {
-        t.true(result)
-    }
+    t.true(await v.validate('someField', 'wo'));
 
-    try {
-        await v.validate('someField', 'woww');
-    } catch (error) {
-        t.true(error instanceof ValidatorException); // did the max validator work?
-    }
+    t.false(await v.validate('someField', 'woww'));
 });
 
 test('can append new validations to a field', async t => {
@@ -359,17 +276,9 @@ test('can append new validations to a field', async t => {
     validator.append('field', 'max:3', { prettyName: 'pretty' });
     t.true(await validator.validate('field', 'wo'));
     t.true(await validator.validate('field', 'wow'));
-    try {
-        await validator.validate('field', 'woww')
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
-
-    try {
-        await validator.validate('field', 'w')
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    
+    t.false(await validator.validate('field', 'woww'));
+    t.false(await validator.validate('field', 'w'));
 
     // attaches if the field doesn't exist.
     const v = new Validator();
@@ -377,11 +286,8 @@ test('can append new validations to a field', async t => {
     v.attach('field', 'min:2');
     v.detach('field');
     v.append('field', 'min:3');
-    try {
-        await v.validate('field', 'wo')
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    
+    t.false(await v.validate('field', 'wo'));
     t.true(await v.validate('field', 'wow'));
 });
 
@@ -393,11 +299,8 @@ test('fails when trying to validate a non-existant field when strict mode is tru
         content: 'required|max:20',
         tags: 'required|in:1,2,3,5'
     });
-    try {
-        await v.validate('nonExistant', 'whatever');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    
+    t.throws(() => v.validate('nonExistant', 'whatever'));
 });
 
 test('can detach rules', t => {
@@ -421,26 +324,17 @@ test('can validate specific scopes', async t => {
     v.attach('field', 'alpha', { scope: 'otherscope', getter: () => '123', context: () => 'context' });
 
     // only '__global__' scope got validated.
-    try {
-        await v.validateAll();
-    } catch (error) {
-        t.is(v.errorBag.count(), 1);
-    }
+    t.false(await v.validateAll());
+    t.is(v.errorBag.count(), 1);
 
     // the second scope too.
-    try {
-        await v.validateAll('myscope');
-    } catch (error) {
-        t.is(v.errorBag.count(), 2);
-    }
+    t.false(await v.validateAll('myscope'));
+    t.is(v.errorBag.count(), 2);
+
 
     v.errorBag.clear();
-    try {
-        // all scopes.
-        await v.validateScopes();
-    } catch (error) {
-        t.is(v.errorBag.count(), 3);
-    }
+    t.false(await v.validateScopes());
+    t.is(v.errorBag.count(), 3);
 });
 
 test('can validate specific scopes on an object', async t => {
@@ -452,29 +346,18 @@ test('can validate specific scopes on an object', async t => {
     v.attach('anotherfield', 'required', { scope: 'myscope' })
 
     // only '__global__' scope got validated.
-    try {
-        await v.validateAll({ field: null });
-    } catch (error) {
-        t.is(v.errorBag.count(), 1);
-    }
+    t.false(await v.validateAll({ field: null }));
+    t.is(v.errorBag.count(), 1);
 
     // this time only 'myscope' got validated.
     v.errorBag.clear();
-    try {
-        await v.validateAll({ field: null, anotherfield: null }, 'myscope');
-    } catch (error) {
-        t.is(v.errorBag.count(), 2);
-    }
+    t.false(await v.validateAll({ field: null, anotherfield: null }, 'myscope'));
+    t.is(v.errorBag.count(), 2);
 })
 
 test('can find errors by field and rule', async t => {
     const v = new Validator({ name: 'alpha' });
-    try {
-        await v.validate('name', 12);
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
-
+    t.false(await v.validate('name', 12));
     t.truthy(v.errorBag.first('name:alpha'));
     t.falsy(v.errorBag.first('name:required'));
 });
@@ -484,12 +367,8 @@ test('can extend the validator with a validator function', async t => {
     v.extend('neg', (value) => Number(value) < 0);
     v.attach('anotherField', 'neg');
     t.true(await v.validate('anotherField', -1));
-    try {
-        await v.validate('anotherField', 1);
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-        t.is(v.errorBag.first('anotherField'), 'The anotherField value is not valid.');
-    }
+    t.false(await v.validate('anotherField', 1));
+    t.is(v.errorBag.first('anotherField'), 'The anotherField value is not valid.');
 });
 
 test('can extend the validators for a validator instance', async t => {
@@ -502,11 +381,7 @@ test('can extend the validators for a validator instance', async t => {
     const v = new Validator();
     v.attach('anotherField', 'truthy');
     t.true(await v.validate('anotherField', 1));
-    try {
-        await v.validate('anotherField', 0)
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    t.false(await v.validate('anotherField', 0));
     t.is(v.errorBag.first('anotherField'), 'The anotherField field value is not truthy.');
 });
 
@@ -522,21 +397,14 @@ test.serial('can add a custom validator with localized messages', async t => {
     Validator.extend('falsy', falsy);
     const v = new Validator();
     v.attach('anotherField', 'falsy');
-    try {
-        await v.validate('anotherField', 1)
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-        t.is(v.errorBag.first('anotherField'), 'The anotherField field value is not falsy.');
-    }
+    t.false(await v.validate('anotherField', 1));
+    t.is(v.errorBag.first('anotherField'), 'The anotherField field value is not falsy.');
 
     v.setLocale('ar');
     t.is(v.locale, 'ar');
-    try {
-        await v.validate('anotherField', 1);
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-        t.is(v.errorBag.first('anotherField'), 'Some Arabic Text');
-    }
+    
+    t.false(await v.validate('anotherField', 1));
+    t.is(v.errorBag.first('anotherField'), 'Some Arabic Text');
 });
 
 test.serial('can set the locale statically', async t => {
@@ -637,24 +505,11 @@ test('resolves promises to booleans', async t => {
     t.true(await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]));
 
     helpers.dimensionsTest({ width: 150, height: 100}, true, global);
-    try {
-        await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
-
-    try {
-        await v.validate('image', [helpers.file('file.pdf', 'application/pdf', 10)]);
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    t.false(await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]));
 
     helpers.dimensionsTest({ width: 30, height: 20}, false, global);
-    try {
-        await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]);
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    t.false(await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]));
+    
 });
 
 test('wont install moment if the provided reference is not provided or not a function', t => {
@@ -669,11 +524,8 @@ test('installs date validators', async t => {
 
     helpers.querySelector({ name: 'field', value: '02/01/2008' });
     t.true(await v.validate('birthday', '01/12/2008'));
-    try {
-        await v.validate('birthday', '01/01/2008');
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+
+    t.false(await v.validate('birthday', '01/01/2008'));
 });
 
 test('appends date_format to validator using dynamic rule', async t => {
@@ -698,11 +550,7 @@ test('appends date_format to validator using dynamic rule', async t => {
 test('correctly parses rules with multiple colons', async t => {
     const v = new Validator({ time: 'date_format:HH:mm' });
     t.true(await v.validate('time', '15:30'));
-    try {
-        await v.validate('time', '1700');
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+    t.false(await v.validate('time', '1700'));
 });
 
 test('auto installs date validators if moment is present globally', async t => {
@@ -711,11 +559,7 @@ test('auto installs date validators if moment is present globally', async t => {
 
     helpers.querySelector({ name: 'field', value: '02/01/2008' });
     t.true(await v.validate('birthday', '01/12/2008'));
-    try {
-        await v.validate('birthday', '01/01/2008')
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+    t.false(await v.validate('birthday', '01/01/2008'));
 });
 
 test('can add custom names via the attributes dictionary', async t => {
@@ -731,11 +575,7 @@ test('can add custom names via the attributes dictionary', async t => {
         }
     });
 
-    try {
-        await v.validate('email', 'notvalidemail');
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+    t.false(await v.validate('email', 'notvalidemail'));
     t.is(v.getErrors().first('email'), 'The Email Address field must be a valid email.');
 });
 
@@ -743,11 +583,7 @@ test('cascades promise values with previous boolean', async t => {
     const v = new Validator({ email: 'required|promised|email' });
     const result = v.validate('email', 'someemail@email.com');
     t.true(typeof result.then === 'function');
-    try {
-        await v.validate('email', 'invalid');
-    } catch (error) {
-        t.true(error instanceof ValidatorException);
-    }
+    t.false(await v.validate('email', 'invalid'));
 });
 
 test('cascades promise values with previous fields', async t => {
@@ -763,15 +599,11 @@ test('cascades promise values with previous fields', async t => {
     });
     t.true(result); // should pass
 
-    try {
-        await v.validateAll({
-            email: 'somemeail', // not valid email.
-            name: 'ProperName',
-            phone: '11123112123'
-        });
-    } catch (error) {
-        t.is(error.msg, '[vee-validate]: Validation Failed');
-    }
+    t.false(await v.validateAll({
+        email: 'somemeail', // not valid email.
+        name: 'ProperName',
+        phone: '11123112123'
+    }));
 });
 
 test('can translate target field for field dependent validations', async t => {
@@ -801,12 +633,7 @@ test('auto detect confirmation field when none given', async t => {
 
     helpers.querySelector({ name: 'password_confirmation', value: 'secret' });
     t.true(await v.validate('password', 'secret'));
-
-    try {
-        await v.validate('password', 'fail');
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+    t.false(await v.validate('password', 'fail'));
     t.is(v.errorBag.first('password'), 'The password confirmation does not match.');
 });
 
@@ -825,11 +652,9 @@ test('without promises', async t => {
     });
 
     v.attach('field', 'reason');
-    try {
-        await v.validate('field', 'wow');
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+    
+        t.false(await v.validate('field', 'wow'));
+
 
     t.is(v.errorBag.first('field'), 'Not correct');
 });
@@ -870,28 +695,22 @@ test('using promises', async t => {
         }
     });
     v.attach('reason_field', 'reason_test');
-    try {
-        await v.validate('reason_field', 'trigger');
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+    
+        t.false(await v.validate('reason_field', 'trigger'));
+
     t.is(v.errorBag.first('reason_field'), 'Not this value');
-    try {
-        await v.validate('reason_field', false);
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+    
+        t.false(await v.validate('reason_field', false));
+
     t.is(v.errorBag.first('reason_field'), 'Something went wrong');
 });
 
 test('can remove rules from the list of validators', async t => {
     Validator.extend('dummy', (value) => !! value);
     const v1 = new Validator({ name: 'dummy'});
-    try {
+    
         await v1.validate('name', false);
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+
     v1.remove('dummy');
     t.throws(() => {
         v1.validate('name', false)
@@ -914,11 +733,7 @@ test('can fetch the values using getters when not specifying values in validateA
 
     t.true(await v.validateAll());
     t.true(toggle);
-    try {
-        await v.validateAll();
-    } catch (error) {
-        t.is(error.msg, '[vee-validate]: Validation Failed');
-    }
+    t.false(await v.validateAll());
 });
 
 test('can fetch the values using getters for a specific scope when not specifying values in validateAll', async t => {
@@ -934,27 +749,13 @@ test('can fetch the values using getters for a specific scope when not specifyin
     v1.attach('name_two', 'required|alpha', { scope: () => 'scope2', context: contexts[1], getter });
 
     t.true(await v1.validateAll('scope1'));
-    try {
-        await v1.validateAll('scope2');
-    } catch (error) {
-        t.is(error.msg, '[vee-validate]: Validation Failed');
-    }
-
-    try {
-        await v1.validateAll();
-    } catch (error) {
-        t.is(error.msg, '[vee-validate]: Validation Failed');
-    }
+    t.false(await v1.validateAll('scope2'));    
 });
 
 test('ignores empty rules', async t => {
     // contains two empty rules, one with params.
     const v1 = new Validator({ name: 'required|alpha||:blabla' });
-    try {
-        await v1.validate('name', 12);
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+    t.false(await v1.validate('name', 12));
     t.true(await v1.validate('name', 'Martin'));
 });
 
@@ -962,11 +763,7 @@ test('can update validations of a field', async t => {
     const v = new Validator({
         name: 'required|alpha'
     });
-    try {
-        await v.validate('name', 12)
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+    t.false(await v.validate('name', 12));
     v.updateField('name', 'required|numeric', { scope: '__global__' });
     t.is(v.errorBag.count(), 0);
     t.true(await v.validate('name', 12));
@@ -975,11 +772,7 @@ test('can update validations of a field', async t => {
 test('handles dot notation names', async t => {
     const v = new Validator();
     v.attach('example.name', 'required|alpha');
-    try {
-        await v.validate('example.name', '')
-    } catch (err) {
-        t.true(err instanceof ValidatorException);
-    }
+    t.false(await v.validate('example.name', ''));
     t.true(await v.validate('example.name', 'ad'));
 });
 
@@ -996,11 +789,9 @@ test('sets aria attributes on elements', async t => {
     });
     t.is(el.getAttribute('aria-required'), 'false');
     t.is(el.getAttribute('aria-invalid'), 'false');
-    try {
-        await v.validate('valid', '123');
-    } catch (err) {
-        t.is(el.getAttribute('aria-invalid'), 'true');
-    }
+    t.false(await v.validate('valid', '123'));
+    t.is(el.getAttribute('aria-invalid'), 'true');
+
     await v.validate('valid', 'abc');
     t.is(el.getAttribute('aria-invalid'), 'false');
 });
@@ -1044,19 +835,15 @@ test('validations can be paused and resumed', async t => {
     v.resume();
     t.false(await v.validate('name', ''));
 
-    try {
-        await v.validateAll({
-            name: ''
-        })
-    } catch (error) {
-        t.is(error.msg, '[vee-validate]: Validation Failed');
-    }
+    t.false(await v.validateAll({
+        name: ''
+    }));
 });
 
 test('it can hold multiple errors for one field', async t => {
     const v = new Validator({
         name: 'alpha|min:3'
     }, { fastExit: false });
-    await t.throws(v.validate('name', '2'));
+    t.false(await v.validate('name', '2'));
     t.is(v.errorBag.count(), 2);
 });

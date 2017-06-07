@@ -310,6 +310,7 @@ export default class Validator {
     }
 
     const field = this.$scopes[scope][name];
+    field.name = name;
     field.validations = this._normalizeRules(name, checks, scope);
     field.required = this._isRequired(field);
   }
@@ -450,23 +451,22 @@ export default class Validator {
   /**
    * Formats an error message for field and a rule.
    *
-   * @param  {string} field The field name.
+   * @param  {Object} field The field object.
    * @param  {object} rule Normalized rule object.
    * @param {object} data Additional Information about the validation result.
-   * @param {string} scope The field scope.
    * @return {string} Formatted error message.
    */
-  _formatErrorMessage(field, rule, data = {}, scope = '__global__') {
-    const name = this._getFieldDisplayName(field, scope);
-    const params = this._getLocalizedParams(rule, scope);
+  _formatErrorMessage(field, rule, data = {}) {
+    const name = this._getFieldDisplayName(field);
+    const params = this._getLocalizedParams(rule, field.scope);
     // Defaults to english message.
     if (! this.dictionary.hasLocale(LOCALE)) {
-      const msg = this.dictionary.getFieldMessage('en', field, rule.name);
+      const msg = this.dictionary.getFieldMessage('en', field.name, rule.name);
 
       return isCallable(msg) ? msg(name, params, data) : msg;
     }
 
-    const msg = this.dictionary.getFieldMessage(LOCALE, field, rule.name);
+    const msg = this.dictionary.getFieldMessage(LOCALE, field.name, rule.name);
 
     return isCallable(msg) ? msg(name, params, data) : msg;
   }
@@ -487,28 +487,28 @@ export default class Validator {
   /**
    * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
    * Then the dictionary, then fallsback to field name.
-   * @return {String} displayName The name to be used in the errors.
+   * @param {Object} field The field object.
+   * @return {String} The name to be used in the errors.
    */
-  _getFieldDisplayName(field, scope = '__global__') {
-    return this.$scopes[scope][field].as || this.dictionary.getAttribute(LOCALE, field, field);
+  _getFieldDisplayName(field) {
+    return field.as || this.dictionary.getAttribute(LOCALE, field.name, field.name);
   }
 
   /**
    * Tests a single input value against a rule.
    *
-   * @param  {*} name The name of the field.
+   * @param  {Object} field The field under validation.
    * @param  {*} value  the value of the field.
    * @param  {object} rule the rule object.
-   * @param {scope} scope The field scope.
    * @return {boolean} Whether it passes the check.
    */
-  _test(name, value, rule, scope = '__global__') {
+  _test(field, value, rule) {
     const validator = Rules[rule.name];
     if (! validator || typeof validator !== 'function') {
       throw new ValidatorException(`No such validator '${rule.name}' exists.`);
     }
 
-    let result = validator(value, rule.params, name);
+    let result = validator(value, rule.params, field.name);
 
     // If it is a promise.
     if (isCallable(result.then)) {
@@ -524,11 +524,11 @@ export default class Validator {
 
         if (! allValid) {
           this.errorBag.add(
-                        name,
-                        this._formatErrorMessage(name, rule, data, scope),
-                        rule.name,
-                        scope
-                    );
+            field.name,
+            this._formatErrorMessage(field, rule, data),
+            rule.name,
+            field.scope
+          );
         }
 
         return allValid;
@@ -541,11 +541,11 @@ export default class Validator {
 
     if (! result.valid) {
       this.errorBag.add(
-                name,
-                this._formatErrorMessage(name, rule, result.data, scope),
-                rule.name,
-                scope
-            );
+        field.name,
+        this._formatErrorMessage(field, rule, result.data),
+        rule.name,
+        field.scope
+      );
     }
 
     return result.valid;
@@ -620,7 +620,6 @@ export default class Validator {
       this.updateField(name, checks, options);
       const field = this.$scopes[options.scope][name];
       field.scope = options.scope;
-      field.name = name;
       field.as = options.prettyName;
       field.getter = options.getter;
       field.context = options.context;
@@ -837,18 +836,7 @@ export default class Validator {
     }
   }
 
-  /**
-   * Validates a value against a registered field validations.
-   *
-   * @param  {string} name the field name.
-   * @param  {*} value The value to be validated.
-   * @param {String} scope The scope of the field.
-   * @param {Boolean} throws If it should throw.
-   * @return {Promise}
-   */
-  validate(name, value, scope = '__global__', throws = true) {
-    if (this.paused) return Promise.resolve(true);
-
+  _resolveField(name, scope) {
     if (name && name.indexOf('.') > -1) {
       // no such field, try the scope form.
       if (! this.$scopes.__global__[name]) {
@@ -856,79 +844,89 @@ export default class Validator {
       }
     }
     if (! scope) scope = '__global__';
-    if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
-      if (! this.strictMode) return Promise.resolve(true);
 
-      const fullName = scope === '__global__' ? name : `${scope}.${name}`;
-      warn(`Validating a non-existant field: "${fullName}". Use "attach()" first.`);
+    if (!this.$scopes[scope]) return null;
 
-      throw new ValidatorException('Validation Failed');
-    }
+    return this.$scopes[scope][name];
+  }
 
-    const field = this.$scopes[scope][name];
-    if (field.flags) {
-      field.flags.pending = true;
-    }
-    this.errorBag.remove(name, scope);
-    // if its not required and is empty or null or undefined then it passes.
+  _handleFieldNotFound(name, scope) {
+    if (! this.strictMode) return Promise.resolve(true);
+
+    const fullName = scope === '__global__' ? name : `${scope}.${name}`;
+    throw new ValidatorException(
+        `Validating a non-existant field: "${fullName}". Use "attach()" first.`
+      );
+  }
+
+  /**
+   * Starts the validation process.
+   *
+   * @param {Object} field
+   * @param {Promise} value
+   */
+  _validate(field, value) {
     if (! field.required && ~[null, undefined, ''].indexOf(value)) {
-      this._setAriaValidAttribute(field, true);
-      if (field.events && isCallable(field.events.after)) {
-        field.events.after({ valid: true });
-      }
-
       return Promise.resolve(true);
     }
 
-    try {
-      const promises = Object.keys(field.validations).map(rule => {
-        const result = this._test(
-          name,
-          value,
-          { name: rule, params: field.validations[rule] },
-          scope
-        );
+    const promises = [];
+    const syncResult = Object.keys(field.validations)[this.fastExit ? 'every' : 'some'](rule => {
+      const result = this._test(
+        field,
+        value,
+        { name: rule, params: field.validations[rule] }
+      );
 
-        if (isCallable(result.then)) {
-          return result;
-        }
-
-        // Early exit.
-        if (! result && this.fastExit) {
-          if (field.events && isCallable(field.events.after)) {
-            field.events.after({ valid: false });
-          }
-          throw new ValidatorException('Validation Aborted.');
-        }
-
-        if (field.events && isCallable(field.events.after)) {
-          field.events.after({ valid: result });
-        }
-        return Promise.resolve(result);
-      });
-
-      return Promise.all(promises).then(values => {
-        const valid = values.every(t => t);
-        this._setAriaValidAttribute(field, valid);
-
-        if (! valid && throws) {
-          if (field.events && isCallable(field.events.after)) {
-            field.events.after({ valid: false });
-          }
-          throw new ValidatorException('Failed Validation');
-        }
-        return valid;
-      });
-    } catch (error) {
-      if (error.msg === '[vee-validate]: Validation Aborted.') {
-        if (field.events && isCallable(field.events.after)) {
-          field.events.after({ valid: false });
-        }
-        return Promise.resolve(false);
+      if (isCallable(result.then)) {
+        promises.push(result);
+        return true;
       }
 
-      throw error;
+      return result;
+    });
+
+    return Promise.all(promises).then(values => {
+      const valid = syncResult && values.every(t => t);
+
+      return valid;
+    });
+  }
+
+  /**
+   * Validates a value against a registered field validations.
+   *
+   * @param  {string} name the field name.
+   * @param  {*} value The value to be validated.
+   * @param {String} scope The scope of the field.
+   * @return {Promise}
+   */
+  validate(name, value, scope = '__global__') {
+    if (this.paused) return Promise.resolve(true);
+
+    const field = this._resolveField(name, scope);
+    if (!field) {
+      return this._handleFieldNotFound(name, scope);
     }
+    this.errorBag.remove(field.name, field.scope);
+    if (field.flags) {
+      field.flags.pending = true;
+    }
+
+    return this._validate(field, value).then(result => {
+      this._setAriaValidAttribute(field, result);
+      if (field.flags) {
+        field.flags.pending = false;
+        field.flags.valid = result;
+        field.flags.invalid = ! result;
+        field.flags.pending = false;
+        field.flags.validated = true;
+      }
+      if (field.events && isCallable(field.events.after)) {
+        field.events.after({ valid: result });
+      }
+      return result;
+    });
   }
 
   /**
@@ -1004,9 +1002,7 @@ export default class Validator {
       false // do not throw
     ));
 
-    return Promise.all(promises).then(results => {
-      return results.every(t => t);
-    });
+    return Promise.all(promises).then(results => results.every(t => t));
   }
 
   /**
@@ -1018,6 +1014,6 @@ export default class Validator {
 
     return Promise.all(
       Object.keys(this.$scopes).map(scope => this.validateAll(scope))
-    );
+    ).then(results => results.every(t => t));
   }
 }

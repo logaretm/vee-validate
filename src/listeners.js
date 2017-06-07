@@ -153,7 +153,7 @@ export default class ListenerGenerator {
 
     return this.vm.$validator.validate(
       this.fieldName, value, this.scope || getScope(this.el)
-      ).catch(result => result);
+    );
   }
 
     /**
@@ -408,7 +408,7 @@ export default class ListenerGenerator {
         const debounced = debounce((value) => {
           this.vm.$validator.validate(
             this.fieldName, value, this.scope || getScope(this.el)
-          ).catch(result => result);
+          );
         }, getDataAttribute(this.el, 'delay') || this.options.delay);
         this.unwatch = this.vm.$watch(arg, debounced, { deep: true });
         // No need to attach it on element as it will use the vue watcher.
