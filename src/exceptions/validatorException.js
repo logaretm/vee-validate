@@ -1,10 +1,10 @@
-export default class
-{
-  constructor(msg) {
-    this.msg = `[vee-validate]: ${msg}`;
-  }
+export default class ValidatorException extends Error {
+  constructor(...args) {
+    super(...args);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ValidatorException);
+    }
 
-  toString() {
-    return this.msg;
+    this.message = `[vee-validate]: ${this.message}`;
   }
 }
