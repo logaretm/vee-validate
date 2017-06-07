@@ -58,15 +58,15 @@ test('should get the arg', t => {
   };
   lg = new ListenerGenerator(el, {}, vnode, {});
   const directives = [
-      { name: 'model', expression: 'u.nAMe', valid: true },
-      { name: 'model', expression: 'A', valid: true },
-      { name: 'model', expression: 'u.', valid: false },
-      { name: 'model', expression: '.u', valid: false },
-      { name: 'model', expression: '12may', valid: false },
-      { name: 'model', expression: 'may12', valid: true },
-      { name: 'model', expression: 'users[1]', valid: false },
-      { name: 'model', expression: 'u.1', valid: false },
-      { name: 'model', expression: 'u .NAME', valid: false }
+      { name: 'model', expression: 'u.nAMe', valid: true, modifiers: {} },
+      { name: 'model', expression: 'A', valid: true, modifiers: {} },
+      { name: 'model', expression: 'u.', valid: false, modifiers: {} },
+      { name: 'model', expression: '.u', valid: false, modifiers: {} },
+      { name: 'model', expression: '12may', valid: false, modifiers: {} },
+      { name: 'model', expression: 'may12', valid: true, modifiers: {} },
+      { name: 'model', expression: 'users[1]', valid: false, modifiers: {} },
+      { name: 'model', expression: 'u.1', valid: false, modifiers: {} },
+      { name: 'model', expression: 'u .NAME', valid: false, modifiers: {} }
   ];
 
   directives.forEach(dir => {
