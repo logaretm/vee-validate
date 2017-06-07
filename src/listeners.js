@@ -76,7 +76,7 @@ export default class ListenerGenerator {
     if (isObject(rules)) {
       Object.keys(rules).forEach(r => { // eslint-disable-line
         if (/confirmed|after|before/.test(r)) {
-          fieldName = rules[r];
+          fieldName = rules[r].split(',')[0];
 
           return false;
         }
