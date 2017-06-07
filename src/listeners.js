@@ -28,12 +28,27 @@ export default class ListenerGenerator {
 
   /**
    * Checks if the node directives contains a v-model.
+   *
+   * @param {Array} directives
+   * @return {Object}
    */
   _resolveModel(directives) {
-    const expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
-    const model = find(directives, d => d.name === 'model' && expRegex.test(d.expression));
+    const result = {
+      watchable: false,
+      expression: null,
+      lazy: false
+    };
+    const model = find(directives, d => d.name === 'model');
+    if (!model) {
+      return result;
+    }
 
-    return model && this._isExistingPath(model.expression) && model.expression;
+    result.expression = model.expression;
+    result.watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) &&
+                      this._isExistingPath(model.expression);
+    result.lazy = !! model.modifiers.lazy;
+
+    return result;
   }
 
   /**
@@ -201,7 +216,9 @@ export default class ListenerGenerator {
   _getSuitableListener() {
     let listener;
     const overrides = {
-      input: 'input',
+      // Models can be unwatchable and have a lazy modifier,
+      // so we make sure we listen on the proper event.
+      input: this.model.lazy ? 'change' : 'input',
       blur: 'blur'
     };
 
@@ -324,10 +341,10 @@ export default class ListenerGenerator {
    * Returns a context, getter factory pairs for each input type.
    */
   _resolveValueGetter() {
-    if (this.model) {
+    if (this.model.watchable) {
       return {
         context: () => this.vm,
-        getter: (context) => getPath(this.model, context)
+        getter: (context) => getPath(this.model.expression, context)
       };
     }
 
@@ -387,8 +404,8 @@ export default class ListenerGenerator {
     }
 
     // Get it from v-model.
-    if (this.model) {
-      return this.model;
+    if (this.model.watchable) {
+      return this.model.expression;
     }
 
     return isObject(this.binding.value) ? this.binding.value.arg : null;
