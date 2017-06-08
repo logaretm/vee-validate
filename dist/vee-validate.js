@@ -1154,10 +1154,9 @@ var getPath = function (propPath, target, def) {
   if ( def === void 0 ) def = undefined;
 
   if (!propPath || !target) { return def; }
-
   var value = target;
   propPath.split('.').every(function (prop) {
-    if (! Object.prototype.hasOwnProperty.call(value, prop)) {
+    if (! Object.prototype.hasOwnProperty.call(value, prop) && value[prop] === undefined) {
       value = def;
 
       return false;
@@ -3036,12 +3035,29 @@ var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) 
 };
 
 /**
- * Checks if the node directives contains a v-model.
+ * Checks if the node directives contains a v-model or a specified arg.
+ * Args take priority over models.
  *
  * @param {Array} directives
  * @return {Object}
  */
 ListenerGenerator.prototype._resolveModel = function _resolveModel (directives) {
+  if (this.binding.arg) {
+    return {
+      watchable: true,
+      expression: this.binding.arg,
+      lazy: false
+    };
+  }
+
+  if (isObject(this.binding.value) && this.binding.value.arg) {
+    return {
+      watchable: true,
+      expression: this.binding.value.arg,
+      lazy: false
+    };
+  }
+
   var result = {
     watchable: false,
     expression: null,
@@ -3229,12 +3245,26 @@ ListenerGenerator.prototype._attachValidatorEvent = function _attachValidatorEve
   }
 };
 
+ListenerGenerator.prototype._getModeledListener = function _getModeledListener () {
+    var this$1 = this;
+
+  if (!this.model.watchable) {
+    return null;
+  }
+
+  return function () {
+    this$1._validate(getPath(this$1.model.expression, this$1.vm));
+  };
+};
+
   /**
    * Determines a suitable listener for the element.
    */
 ListenerGenerator.prototype._getSuitableListener = function _getSuitableListener () {
   var listener;
   var overrides = {
+    // Models can be unwatchable and have a lazy modifier,
+    // so we make sure we listen on the proper event.
     input: this.model.lazy ? 'change' : 'input',
     blur: 'blur'
   };
@@ -3243,7 +3273,7 @@ ListenerGenerator.prototype._getSuitableListener = function _getSuitableListener
     overrides.input = 'change';
     listener = {
       names: ['change', 'blur'],
-      listener: this._inputListener
+      listener: this._getModeledListener() || this._inputListener
     };
   } else {
     // determine the suitable listener and events to handle
@@ -3262,7 +3292,7 @@ ListenerGenerator.prototype._getSuitableListener = function _getSuitableListener
       overrides.blur = null;
       listener = {
         names: ['change'],
-        listener: this._radioListener
+        listener: this._getModeledListener() || this._radioListener
       };
       break;
 
@@ -3271,14 +3301,14 @@ ListenerGenerator.prototype._getSuitableListener = function _getSuitableListener
       overrides.blur = null;
       listener = {
         names: ['change'],
-        listener: this._checkboxListener
+        listener: this._getModeledListener() || this._checkboxListener
       };
       break;
 
     default:
       listener = {
         names: ['input', 'blur'],
-        listener: this._inputListener
+        listener: this._getModeledListener() || this._inputListener
       };
       break;
     }
@@ -3367,7 +3397,10 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
   if (this.model.watchable) {
     return {
       context: function () { return this$1.vm; },
-      getter: function (context) { return getPath(this$1.model.expression, context); }
+      // eslint-disable-next-line
+      getter: function (context) { 
+        return getPath(this$1.model.expression, context);
+      }
     };
   }
 
@@ -3415,23 +3448,6 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
     }
   };
   }
-};
-
-/*
-* Gets the arg string value, either from the directive or the expression value.
-*/
-ListenerGenerator.prototype._getArg = function _getArg () {
-  // Get it from the directive arg.
-  if (this.binding.arg) {
-    return this.binding.arg;
-  }
-
-  // Get it from v-model.
-  if (this.model.watchable) {
-    return this.model.expression;
-  }
-
-  return isObject(this.binding.value) ? this.binding.value.arg : null;
 };
 
 /**
@@ -3491,9 +3507,8 @@ ListenerGenerator.prototype.attach = function attach () {
   }
 
   this._attachValidatorEvent();
-  var arg = this._getArg();
-  if (arg) {
-    this._attachModelWatcher(arg);
+  if (this.model.watchable) {
+    this._attachModelWatcher(this.model.expression);
     return;
   }
 

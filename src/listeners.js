@@ -227,6 +227,19 @@ export default class ListenerGenerator {
     }
   }
 
+  /**
+   * Gets a listener that listens on bound models instead of elements.
+   */
+  _getModeledListener() {
+    if (!this.model.watchable) {
+      return null;
+    }
+
+    return () => {
+      this._validate(getPath(this.model.expression, this.vm));
+    };
+  }
+
     /**
      * Determines a suitable listener for the element.
      */
@@ -243,7 +256,7 @@ export default class ListenerGenerator {
       overrides.input = 'change';
       listener = {
         names: ['change', 'blur'],
-        listener: this._inputListener
+        listener: this._getModeledListener() || this._inputListener
       };
     } else {
       // determine the suitable listener and events to handle
@@ -262,7 +275,7 @@ export default class ListenerGenerator {
         overrides.blur = null;
         listener = {
           names: ['change'],
-          listener: this._radioListener
+          listener: this._getModeledListener() || this._radioListener
         };
         break;
 
@@ -271,14 +284,14 @@ export default class ListenerGenerator {
         overrides.blur = null;
         listener = {
           names: ['change'],
-          listener: this._checkboxListener
+          listener: this._getModeledListener() || this._checkboxListener
         };
         break;
 
       default:
         listener = {
           names: ['input', 'blur'],
-          listener: this._inputListener
+          listener: this._getModeledListener() || this._inputListener
         };
         break;
       }
