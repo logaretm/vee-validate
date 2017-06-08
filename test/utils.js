@@ -84,15 +84,13 @@ test('should return valid rules data', t => {
     email: true
   });
 
-  const component = {
-    name: 'email',
-    rulesets: {
-      email: 'required|email',
-      password: 'required',
-    },
+  const rulesets = {
+    email: 'required|email',
+    password: 'required',
   };
 
-  t.deepEqual(getRules(null, null, null, component), 'required|email');
+  t.deepEqual(getRules(null, null, {}, { name: 'email', rulesets }), 'required|email');
+  t.deepEqual(getRules(null, null, { name: 'email' }, { rulesets }), 'required|email');
 });
 
 test('assigns objects', t => {
