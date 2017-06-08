@@ -27,12 +27,29 @@ export default class ListenerGenerator {
   }
 
   /**
-   * Checks if the node directives contains a v-model.
+   * Checks if the node directives contains a v-model or a specified arg.
+   * Args take priority over models.
    *
    * @param {Array} directives
    * @return {Object}
    */
   _resolveModel(directives) {
+    if (this.binding.arg) {
+      return {
+        watchable: true,
+        expression: this.binding.arg,
+        lazy: false
+      };
+    }
+
+    if (isObject(this.binding.value) && this.binding.value.arg) {
+      return {
+        watchable: true,
+        expression: this.binding.value.arg,
+        lazy: false
+      };
+    }
+
     const result = {
       watchable: false,
       expression: null,
@@ -344,7 +361,10 @@ export default class ListenerGenerator {
     if (this.model.watchable) {
       return {
         context: () => this.vm,
-        getter: (context) => getPath(this.model.expression, context)
+        // eslint-disable-next-line
+        getter: (context) => { 
+          return getPath(this.model.expression, context);
+        }
       };
     }
 
@@ -392,23 +412,6 @@ export default class ListenerGenerator {
       }
     };
     }
-  }
-
-  /*
-  * Gets the arg string value, either from the directive or the expression value.
-  */
-  _getArg() {
-    // Get it from the directive arg.
-    if (this.binding.arg) {
-      return this.binding.arg;
-    }
-
-    // Get it from v-model.
-    if (this.model.watchable) {
-      return this.model.expression;
-    }
-
-    return isObject(this.binding.value) ? this.binding.value.arg : null;
   }
 
   /**
@@ -462,9 +465,8 @@ export default class ListenerGenerator {
     }
 
     this._attachValidatorEvent();
-    const arg = this._getArg();
-    if (arg) {
-      this._attachModelWatcher(arg);
+    if (this.model.watchable) {
+      this._attachModelWatcher(this.model.expression);
       return;
     }
 

@@ -23,10 +23,9 @@ export const getScope = (el) => {
  */
 export const getPath = (propPath, target, def = undefined) => {
   if (!propPath || !target) return def;
-
   let value = target;
   propPath.split('.').every(prop => {
-    if (! Object.prototype.hasOwnProperty.call(value, prop)) {
+    if (! Object.prototype.hasOwnProperty.call(value, prop) && value[prop] === undefined) {
       value = def;
 
       return false;

@@ -41,11 +41,11 @@ test('should get the arg', t => {
 
   // Arg is passed to the directive.
   let lg = new ListenerGenerator(el, { arg: 'email', expression: true, value: 'required|email' }, helpers.vnode(), {});
-  t.is(lg._getArg(), 'email');
+  t.is(lg._resolveModel([]).expression, 'email');
 
   // Arg is passed as part of the expression.
   lg = new ListenerGenerator(el, { expression: true, value: { rules: 'required|email', arg: 'form.email' } }, helpers.vnode(), {});
-  t.is(lg._getArg(), 'form.email');
+  t.is(lg._resolveModel([]).expression, 'form.email');
 
   // Arg is passed in v-model.
   const vnode = helpers.vnode();
