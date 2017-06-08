@@ -201,8 +201,8 @@ export const find = (array, predicate) => {
  */
 export const getRules = (expression, value, el, component) => {
   if (! expression) {
-    if (component && component.name && component.rulesets) {
-      return component.rulesets[component.name];
+    if (component && (el.name || component.name) && component.rulesets) {
+      return component.rulesets[el.name || component.name];
     }
     return getDataAttribute(el, 'rules');
   }

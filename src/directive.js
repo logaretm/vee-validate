@@ -26,7 +26,7 @@ export default (options) => ({
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     context.$validator.updateField(
       instance.fieldName,
-      getRules(expression, value, el, child),
+      getRules(expression, value, el, child || context),
       { scope: scope || '__global__' }
     );
   },
