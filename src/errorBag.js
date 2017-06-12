@@ -52,7 +52,14 @@ export default class ErrorBag {
       scope = '__global__';
     }
 
-    this.errors = this.errors.filter(e => e.scope !== scope);
+    const removeCondition = e => e.scope === scope;
+
+    for (let i = 0; i < this.errors.length; ++i) {
+      if (removeCondition(this.errors[i])) {
+        this.errors.splice(i, 1);
+        i--;
+      }
+    }
   }
 
     /**
@@ -166,12 +173,16 @@ export default class ErrorBag {
      * @param {String} scope The Scope name, optional.
      */
   remove(field, scope) {
-    const filter = scope ? (e => e.field !== field || e.scope !== scope) :
-                           (e => e.field !== field || e.scope !== '__global__');
+    const removeCondition = scope ? (e => e.field === field && e.scope === scope) :
+                                    (e => e.field === field && e.scope === '__global__');
 
-    this.errors = this.errors.filter(filter);
+    for (let i = 0; i < this.errors.length; ++i) {
+      if (removeCondition(this.errors[i])) {
+        this.errors.splice(i, 1);
+        i--;
+      }
+    }
   }
-
 
     /**
      * Get the field attributes if there's a rule selector.
