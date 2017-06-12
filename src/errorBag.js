@@ -57,7 +57,7 @@ export default class ErrorBag {
     for (let i = 0; i < this.errors.length; ++i) {
       if (removeCondition(this.errors[i])) {
         this.errors.splice(i, 1);
-        i--;
+        --i;
       }
     }
   }
@@ -123,7 +123,7 @@ export default class ErrorBag {
       return this.firstByRule(selector.name, selector.rule, scope);
     }
 
-    for (let i = 0; i < this.errors.length; i++) {
+    for (let i = 0; i < this.errors.length; ++i) {
       if (this.errors[i].field === field && (this.errors[i].scope === scope)) {
         return this.errors[i].msg;
       }
@@ -179,7 +179,7 @@ export default class ErrorBag {
     for (let i = 0; i < this.errors.length; ++i) {
       if (removeCondition(this.errors[i])) {
         this.errors.splice(i, 1);
-        i--;
+        --i;
       }
     }
   }
