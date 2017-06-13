@@ -26,6 +26,8 @@ export class FieldFlags {
     pristine: boolean;
     valid: boolean;
     invalid: boolean;
+    required: boolean;
+    pending: boolean;
 }
 
 export class Validator {
