@@ -672,13 +672,7 @@ export default class Validator {
    * @param {Object} flags
    */
   flag(name, flags) {
-    let [scope, fieldName] = name.split('.');
-    if (!fieldName) {
-      fieldName = scope;
-      scope = null;
-    }
-    const field = scope ? getPath(`${scope}.${fieldName}`, this.$scopes) :
-                          this.$scopes.__global__[fieldName];
+    const field = this._resolveField(name);
     if (! field) {
       return;
     }
@@ -686,7 +680,9 @@ export default class Validator {
     Object.keys(field.flags).forEach(flag => {
       field.flags[flag] = flags[flag] !== undefined ? flags[flag] : field.flags[flag];
     });
-    field.listeners.classes.sync();
+    if (field.listeners && field.listeners.classes) {
+      field.listeners.classes.sync();
+    }
   }
 
   /**
@@ -838,7 +834,7 @@ export default class Validator {
 
   _resolveField(name, scope) {
     if (name && name.indexOf('.') > -1) {
-      // no such field, try the scope form.
+      // if no such field, try the scope form.
       if (! this.$scopes.__global__[name]) {
         [scope, name] = name.split('.');
       }

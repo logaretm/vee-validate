@@ -847,3 +847,30 @@ test('it can hold multiple errors for one field', async t => {
     t.false(await v.validate('name', '2'));
     t.is(v.errorBag.count(), 2);
 });
+
+test('it can set flags for attached fields', t => {
+    const v = new Validator();
+    v.attach('name', 'alpha');
+    t.true(v.fieldBag.name.untouched);
+
+    v.flag('name', {
+        untouched: false
+    });
+    t.false(v.fieldBag.name.untouched);
+
+    // scoped fields
+    v.attach('email', 'email', { scope: 'myscope' });
+    t.true(v.fieldBag.$myscope.email.untouched);
+    v.flag('myscope.email', {
+        untouched: false
+    });
+    t.false(v.fieldBag.$myscope.email.untouched);
+
+    // dotted name fields
+    v.attach('form.title', 'alpha');
+    t.true(v.fieldBag['form.title'].untouched);
+    v.flag('form.title', {
+        untouched: false
+    });
+    t.false(v.fieldBag['form.title'].untouched);
+});
