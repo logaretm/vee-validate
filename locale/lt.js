@@ -11,7 +11,7 @@ const messages = {
   credit_card: (field) => `Laukelis ${field} neteisingas.`,
   date_between: (field, [min, max]) => `Laukelio ${field} reikšmė turi būti tarp ${min} ir ${max}.`,
   date_format: (field, [format]) => `Laukelio ${field} formatas privalo būti toks - ${format}.`,
-  decimal: (field, [decimals] = ['*']) => `Laukelis ${field} skaitmuo su ${decimals === '*' ? '' : decimals} skaičiu(-ias) po kablelio.`,
+  decimal: (field, [decimals] = ['*']) => `Laukelis ${field} turi būti skaitmuo su ${decimals === '*' ? '' : decimals} skaičium(-ias) po kablelio.`,
   digits: (field, [length]) => `Lauklio ${field} reikšmė turi buti ${length} ženklų(-o) skaitmuo.`,
   dimensions: (field, [width, height]) => `${field} turi būti ${width} px x ${height} px.`,
   email: (field) => `Laukelis ${field} turi būti teisinga el. pašto adresas.`,
