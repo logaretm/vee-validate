@@ -60,10 +60,10 @@ export default class ClassListener {
       this.field.flags.touched = true;
       this.field.flags.untouched = false;
 
-      if (this.component) return;
-
       // only needed once.
-      this.el.removeEventListener('focus', this.listeners.focus);
+      if (!this.component) {
+        this.el.removeEventListener('focus', this.listeners.focus);
+      }
       this.listeners.focus = null;
     };
 
@@ -83,10 +83,10 @@ export default class ClassListener {
       this.field.flags.dirty = true;
       this.field.flags.pristine = false;
 
-      if (this.component) return;
-
       // only needed once.
-      this.el.removeEventListener(event, this.listeners.input);
+      if (!this.component) {
+        this.el.removeEventListener(event, this.listeners.input);
+      }
       this.listeners.input = null;
     };
 
