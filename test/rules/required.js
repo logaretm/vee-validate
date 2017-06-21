@@ -7,7 +7,8 @@ const valid = [
   'undefined',
   'null',
   's ',
-  true
+  true,
+  false
 ];
 
 const invalid = [
@@ -15,8 +16,7 @@ const invalid = [
   ' ',
     [],
   undefined,
-  null,
-  false
+  null
 ];
 
 test('validates required', t => {
