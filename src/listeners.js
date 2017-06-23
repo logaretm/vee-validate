@@ -492,6 +492,7 @@ export default class ListenerGenerator {
   detach() {
     if (this.component) {
       this.component.$off('input', this.componentListener);
+      this.component.$off('blur', this.componentListener);
 
       if (isCallable(this.componentPropUnwatch)) {
         this.componentPropUnwatch();
