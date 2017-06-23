@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.5
+ * vee-validate v2.0.0-rc.6
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -21,14 +21,16 @@ var alpha$1 = {
   de: /^[A-ZÄÖÜß]*$/i,
   es: /^[A-ZÁÉÍÑÓÚÜ]*$/i,
   fr: /^[A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ]*$/i,
+  lt: /^[A-ZĄČĘĖĮŠŲŪŽ]*$/i,
   nl: /^[A-ZÉËÏÓÖÜ]*$/i,
   hu: /^[A-ZÁÉÍÓÖŐÚÜŰ]*$/i,
   pl: /^[A-ZĄĆĘŚŁŃÓŻŹ]*$/i,
   pt: /^[A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ]*$/i,
   ru: /^[А-ЯЁ]*$/i,
+  sk: /^[A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ]*$/i,
   sr: /^[A-ZČĆŽŠĐ]*$/i,
   tr: /^[A-ZÇĞİıÖŞÜ]*$/i,
-  uk: /^[А-ЩЬЮЯЄIЇҐ]*$/i,
+  uk: /^[А-ЩЬЮЯЄІЇҐ]*$/i,
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/
 };
 
@@ -39,14 +41,16 @@ var alphaSpaces = {
   de: /^[A-ZÄÖÜß\s]*$/i,
   es: /^[A-ZÁÉÍÑÓÚÜ\s]*$/i,
   fr: /^[A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ\s]*$/i,
+  lt: /^[A-ZĄČĘĖĮŠŲŪŽ\s]*$/i,
   nl: /^[A-ZÉËÏÓÖÜ\s]*$/i,
   hu: /^[A-ZÁÉÍÓÖŐÚÜŰ\s]*$/i,
   pl: /^[A-ZĄĆĘŚŁŃÓŻŹ\s]*$/i,
   pt: /^[A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ\s]*$/i,
   ru: /^[А-ЯЁ\s]*$/i,
+  sk: /^[A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ\s]*$/i,
   sr: /^[A-ZČĆŽŠĐ\s]*$/i,
   tr: /^[A-ZÇĞİıÖŞÜ\s]*$/i,
-  uk: /^[А-ЩЬЮЯЄIЇҐ\s]*$/i,
+  uk: /^[А-ЩЬЮЯЄІЇҐ\s]*$/i,
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ\s]*$/
 };
 
@@ -57,14 +61,16 @@ var alphanumeric = {
   de: /^[0-9A-ZÄÖÜß]*$/i,
   es: /^[0-9A-ZÁÉÍÑÓÚÜ]*$/i,
   fr: /^[0-9A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ]*$/i,
+  lt: /^[0-9A-ZĄČĘĖĮŠŲŪŽ]*$/i,
   hu: /^[0-9A-ZÁÉÍÓÖŐÚÜŰ]*$/i,
   nl: /^[0-9A-ZÉËÏÓÖÜ]*$/i,
   pl: /^[0-9A-ZĄĆĘŚŁŃÓŻŹ]*$/i,
   pt: /^[0-9A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ]*$/i,
   ru: /^[0-9А-ЯЁ]*$/i,
+  sk: /^[0-9A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ]*$/i,
   sr: /^[0-9A-ZČĆŽŠĐ]*$/i,
   tr: /^[0-9A-ZÇĞİıÖŞÜ]*$/i,
-  uk: /^[0-9А-ЩЬЮЯЄIЇҐ]*$/i,
+  uk: /^[0-9А-ЩЬЮЯЄІЇҐ]*$/i,
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/
 };
 
@@ -75,14 +81,16 @@ var alphaDash = {
   de: /^[0-9A-ZÄÖÜß_-]*$/i,
   es: /^[0-9A-ZÁÉÍÑÓÚÜ_-]*$/i,
   fr: /^[0-9A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ_-]*$/i,
+  lt: /^[0-9A-ZĄČĘĖĮŠŲŪŽ_-]*$/i,
   nl: /^[0-9A-ZÉËÏÓÖÜ_-]*$/i,
   hu: /^[0-9A-ZÁÉÍÓÖŐÚÜŰ_-]*$/i,
   pl: /^[0-9A-ZĄĆĘŚŁŃÓŻŹ_-]*$/i,
   pt: /^[0-9A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ_-]*$/i,
   ru: /^[0-9А-ЯЁ_-]*$/i,
+  sk: /^[0-9A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ_-]*$/i,
   sr: /^[0-9A-ZČĆŽŠĐ_-]*$/i,
   tr: /^[0-9A-ZÇĞİıÖŞÜ_-]*$/i,
-  uk: /^[0-9А-ЩЬЮЯЄIЇҐ_-]*$/i,
+  uk: /^[0-9А-ЩЬЮЯЄІЇҐ_-]*$/i,
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ_-]*$/
 };
 
@@ -680,7 +688,7 @@ var required = function (value) {
     return !! value.length;
   }
 
-  if (value === undefined || value === null || value === false) {
+  if (value === undefined || value === null) {
     return false;
   }
 
@@ -939,11 +947,20 @@ ErrorBag.prototype.any = function any (scope) {
    * @param {String} scope The Scope name, optional.
    */
 ErrorBag.prototype.clear = function clear (scope) {
+    var this$1 = this;
+
   if (! scope) {
     scope = '__global__';
   }
 
-  this.errors = this.errors.filter(function (e) { return e.scope !== scope; });
+  var removeCondition = function (e) { return e.scope === scope; };
+
+  for (var i = 0; i < this.errors.length; ++i) {
+    if (removeCondition(this$1.errors[i])) {
+      this$1.errors.splice(i, 1);
+      --i;
+    }
+  }
 };
 
   /**
@@ -1012,7 +1029,7 @@ ErrorBag.prototype.first = function first (field, scope) {
     return this.firstByRule(selector.name, selector.rule, scope);
   }
 
-  for (var i = 0; i < this.errors.length; i++) {
+  for (var i = 0; i < this.errors.length; ++i) {
     if (this$1.errors[i].field === field && (this$1.errors[i].scope === scope)) {
       return this$1.errors[i].msg;
     }
@@ -1064,12 +1081,18 @@ ErrorBag.prototype.firstByRule = function firstByRule (name, rule, scope) {
    * @param {String} scope The Scope name, optional.
    */
 ErrorBag.prototype.remove = function remove (field, scope) {
-  var filter = scope ? (function (e) { return e.field !== field || e.scope !== scope; }) :
-                         (function (e) { return e.field !== field || e.scope !== '__global__'; });
+    var this$1 = this;
 
-  this.errors = this.errors.filter(filter);
+  var removeCondition = scope ? (function (e) { return e.field === field && e.scope === scope; }) :
+                                  (function (e) { return e.field === field && e.scope === '__global__'; });
+
+  for (var i = 0; i < this.errors.length; ++i) {
+    if (removeCondition(this$1.errors[i])) {
+      this$1.errors.splice(i, 1);
+      --i;
+    }
+  }
 };
-
 
   /**
    * Get the field attributes if there's a rule selector.
@@ -1503,7 +1526,7 @@ var messages = {
     if ( ref === void 0 ) ref = ['*'];
     var decimals = ref[0];
 
-    return ("The " + field + " field must be numeric and may contain " + (decimals === '*' ? '' : decimals) + " decimal points.");
+    return ("The " + field + " field must be numeric and may contain " + (!decimals || decimals === '*' ? '' : decimals) + " decimal points.");
 },
   digits: function (field, ref) {
     var length = ref[0];
@@ -2359,15 +2382,7 @@ Validator.prototype.init = function init () {
  * @param {Object} flags
  */
 Validator.prototype.flag = function flag (name, flags) {
-  var ref = name.split('.');
-    var scope = ref[0];
-    var fieldName = ref[1];
-  if (!fieldName) {
-    fieldName = scope;
-    scope = null;
-  }
-  var field = scope ? getPath((scope + "." + fieldName), this.$scopes) :
-                        this.$scopes.__global__[fieldName];
+  var field = this._resolveField(name);
   if (! field) {
     return;
   }
@@ -2375,7 +2390,9 @@ Validator.prototype.flag = function flag (name, flags) {
   Object.keys(field.flags).forEach(function (flag) {
     field.flags[flag] = flags[flag] !== undefined ? flags[flag] : field.flags[flag];
   });
-  field.listeners.classes.sync();
+  if (field.listeners && field.listeners.classes) {
+    field.listeners.classes.sync();
+  }
 };
 
 /**
@@ -2537,7 +2554,7 @@ Validator.prototype.addScope = function addScope (scope) {
 
 Validator.prototype._resolveField = function _resolveField (name, scope) {
   if (name && name.indexOf('.') > -1) {
-    // no such field, try the scope form.
+    // if no such field, try the scope form.
     if (! this.$scopes.__global__[name]) {
       var assign$$1;
         (assign$$1 = name.split('.'), scope = assign$$1[0], name = assign$$1[1]);
@@ -2880,10 +2897,10 @@ ClassListener.prototype.addFocusListener = function addFocusListener () {
     this$1.field.flags.touched = true;
     this$1.field.flags.untouched = false;
 
-    if (this$1.component) { return; }
-
     // only needed once.
-    this$1.el.removeEventListener('focus', this$1.listeners.focus);
+    if (!this$1.component) {
+      this$1.el.removeEventListener('focus', this$1.listeners.focus);
+    }
     this$1.listeners.focus = null;
   };
 
@@ -2905,10 +2922,10 @@ ClassListener.prototype.addInputListener = function addInputListener () {
     this$1.field.flags.dirty = true;
     this$1.field.flags.pristine = false;
 
-    if (this$1.component) { return; }
-
     // only needed once.
-    this$1.el.removeEventListener(event, this$1.listeners.input);
+    if (!this$1.component) {
+      this$1.el.removeEventListener(event, this$1.listeners.input);
+    }
     this$1.listeners.input = null;
   };
 
@@ -3245,6 +3262,9 @@ ListenerGenerator.prototype._attachValidatorEvent = function _attachValidatorEve
   }
 };
 
+/**
+ * Gets a listener that listens on bound models instead of elements.
+ */
 ListenerGenerator.prototype._getModeledListener = function _getModeledListener () {
     var this$1 = this;
 
@@ -3653,7 +3673,7 @@ var index = {
   Validator: Validator,
   ErrorBag: ErrorBag,
   Rules: Rules,
-  version: '2.0.0-rc.5'
+  version: '2.0.0-rc.6'
 };
 
 return index;

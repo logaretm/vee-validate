@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.5
+ * vee-validate v2.0.0-rc.6
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -15,14 +15,16 @@ const alpha$1 = {
   de: /^[A-ZÄÖÜß]*$/i,
   es: /^[A-ZÁÉÍÑÓÚÜ]*$/i,
   fr: /^[A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ]*$/i,
+  lt: /^[A-ZĄČĘĖĮŠŲŪŽ]*$/i,
   nl: /^[A-ZÉËÏÓÖÜ]*$/i,
   hu: /^[A-ZÁÉÍÓÖŐÚÜŰ]*$/i,
   pl: /^[A-ZĄĆĘŚŁŃÓŻŹ]*$/i,
   pt: /^[A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ]*$/i,
   ru: /^[А-ЯЁ]*$/i,
+  sk: /^[A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ]*$/i,
   sr: /^[A-ZČĆŽŠĐ]*$/i,
   tr: /^[A-ZÇĞİıÖŞÜ]*$/i,
-  uk: /^[А-ЩЬЮЯЄIЇҐ]*$/i,
+  uk: /^[А-ЩЬЮЯЄІЇҐ]*$/i,
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/
 };
 
@@ -33,14 +35,16 @@ const alphaSpaces = {
   de: /^[A-ZÄÖÜß\s]*$/i,
   es: /^[A-ZÁÉÍÑÓÚÜ\s]*$/i,
   fr: /^[A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ\s]*$/i,
+  lt: /^[A-ZĄČĘĖĮŠŲŪŽ\s]*$/i,
   nl: /^[A-ZÉËÏÓÖÜ\s]*$/i,
   hu: /^[A-ZÁÉÍÓÖŐÚÜŰ\s]*$/i,
   pl: /^[A-ZĄĆĘŚŁŃÓŻŹ\s]*$/i,
   pt: /^[A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ\s]*$/i,
   ru: /^[А-ЯЁ\s]*$/i,
+  sk: /^[A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ\s]*$/i,
   sr: /^[A-ZČĆŽŠĐ\s]*$/i,
   tr: /^[A-ZÇĞİıÖŞÜ\s]*$/i,
-  uk: /^[А-ЩЬЮЯЄIЇҐ\s]*$/i,
+  uk: /^[А-ЩЬЮЯЄІЇҐ\s]*$/i,
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ\s]*$/
 };
 
@@ -51,14 +55,16 @@ const alphanumeric = {
   de: /^[0-9A-ZÄÖÜß]*$/i,
   es: /^[0-9A-ZÁÉÍÑÓÚÜ]*$/i,
   fr: /^[0-9A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ]*$/i,
+  lt: /^[0-9A-ZĄČĘĖĮŠŲŪŽ]*$/i,
   hu: /^[0-9A-ZÁÉÍÓÖŐÚÜŰ]*$/i,
   nl: /^[0-9A-ZÉËÏÓÖÜ]*$/i,
   pl: /^[0-9A-ZĄĆĘŚŁŃÓŻŹ]*$/i,
   pt: /^[0-9A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ]*$/i,
   ru: /^[0-9А-ЯЁ]*$/i,
+  sk: /^[0-9A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ]*$/i,
   sr: /^[0-9A-ZČĆŽŠĐ]*$/i,
   tr: /^[0-9A-ZÇĞİıÖŞÜ]*$/i,
-  uk: /^[0-9А-ЩЬЮЯЄIЇҐ]*$/i,
+  uk: /^[0-9А-ЩЬЮЯЄІЇҐ]*$/i,
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/
 };
 
@@ -69,14 +75,16 @@ const alphaDash = {
   de: /^[0-9A-ZÄÖÜß_-]*$/i,
   es: /^[0-9A-ZÁÉÍÑÓÚÜ_-]*$/i,
   fr: /^[0-9A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ_-]*$/i,
+  lt: /^[0-9A-ZĄČĘĖĮŠŲŪŽ_-]*$/i,
   nl: /^[0-9A-ZÉËÏÓÖÜ_-]*$/i,
   hu: /^[0-9A-ZÁÉÍÓÖŐÚÜŰ_-]*$/i,
   pl: /^[0-9A-ZĄĆĘŚŁŃÓŻŹ_-]*$/i,
   pt: /^[0-9A-ZÃÁÀÂÇÉÊÍÕÓÔÚÜ_-]*$/i,
   ru: /^[0-9А-ЯЁ_-]*$/i,
+  sk: /^[0-9A-ZÁÄČĎÉÍĹĽŇÓŔŠŤÚÝŽ_-]*$/i,
   sr: /^[0-9A-ZČĆŽŠĐ_-]*$/i,
   tr: /^[0-9A-ZÇĞİıÖŞÜ_-]*$/i,
-  uk: /^[0-9А-ЩЬЮЯЄIЇҐ_-]*$/i,
+  uk: /^[0-9А-ЩЬЮЯЄІЇҐ_-]*$/i,
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ_-]*$/
 };
 
@@ -119,9 +127,15 @@ var alpha_spaces = (value, [locale] = [null]) => {
 var between = (value, [min, max]) => Number(min) <= value && Number(max) >= value;
 
 var confirmed = (value, [confirmedField], validatingField) => {
-  const field = confirmedField
+  let field = confirmedField
     ? document.querySelector(`input[name='${confirmedField}']`)
     : document.querySelector(`input[name='${validatingField}_confirmation']`);
+
+  if (! field) {
+    field = confirmedField
+      ? document.querySelector(`input[data-vv-name='${confirmedField}']`)
+      : document.querySelector(`input[data-vv-name='${validatingField}_confirmation']`);
+  }
 
   return !! (field && String(value) === field.value);
 };
@@ -629,7 +643,7 @@ var required = (value) => {
     return !! value.length;
   }
 
-  if (value === undefined || value === null || value === false) {
+  if (value === undefined || value === null) {
     return false;
   }
 
@@ -885,7 +899,14 @@ class ErrorBag {
       scope = '__global__';
     }
 
-    this.errors = this.errors.filter(e => e.scope !== scope);
+    const removeCondition = e => e.scope === scope;
+
+    for (let i = 0; i < this.errors.length; ++i) {
+      if (removeCondition(this.errors[i])) {
+        this.errors.splice(i, 1);
+        --i;
+      }
+    }
   }
 
     /**
@@ -949,7 +970,7 @@ class ErrorBag {
       return this.firstByRule(selector.name, selector.rule, scope);
     }
 
-    for (let i = 0; i < this.errors.length; i++) {
+    for (let i = 0; i < this.errors.length; ++i) {
       if (this.errors[i].field === field && (this.errors[i].scope === scope)) {
         return this.errors[i].msg;
       }
@@ -999,12 +1020,16 @@ class ErrorBag {
      * @param {String} scope The Scope name, optional.
      */
   remove(field, scope) {
-    const filter = scope ? (e => e.field !== field || e.scope !== scope) :
-                           (e => e.field !== field || e.scope !== '__global__');
+    const removeCondition = scope ? (e => e.field === field && e.scope === scope) :
+                                    (e => e.field === field && e.scope === '__global__');
 
-    this.errors = this.errors.filter(filter);
+    for (let i = 0; i < this.errors.length; ++i) {
+      if (removeCondition(this.errors[i])) {
+        this.errors.splice(i, 1);
+        --i;
+      }
+    }
   }
-
 
     /**
      * Get the field attributes if there's a rule selector.
@@ -1039,16 +1064,16 @@ class ErrorBag {
   }
 }
 
-var ValidatorException = class
-{
-  constructor(msg) {
-    this.msg = `[vee-validate]: ${msg}`;
-  }
+class ValidatorException extends Error {
+  constructor(...args) {
+    super(...args);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ValidatorException);
+    }
 
-  toString() {
-    return this.msg;
+    this.message = `[vee-validate]: ${this.message}`;
   }
-};
+}
 
 /**
  * Gets the data attribute. the name must be kebab-case.
@@ -1075,10 +1100,9 @@ const getScope = (el) => {
  */
 const getPath = (propPath, target, def = undefined) => {
   if (!propPath || !target) return def;
-
   let value = target;
   propPath.split('.').every(prop => {
-    if (! Object.prototype.hasOwnProperty.call(value, prop)) {
+    if (! Object.prototype.hasOwnProperty.call(value, prop) && value[prop] === undefined) {
       value = def;
 
       return false;
@@ -1095,7 +1119,11 @@ const getPath = (propPath, target, def = undefined) => {
 /**
  * Debounces a function.
  */
-const debounce = (callback, wait = 0, immediate = true) => {
+const debounce = (callback, wait = 0, immediate = false) => {
+  if (wait === 0) {
+    return callback;
+  }
+
   let timeout;
 
   return (...args) => {
@@ -1262,6 +1290,14 @@ const getRules = (expression, value, el) => {
   return value;
 };
 
+const getInputEventName = (el) => {
+  if (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type)) {
+    return 'change';
+  }
+
+  return 'input';
+};
+
 class Dictionary {
   constructor(dictionary = {}) {
     this.dictionary = {};
@@ -1390,7 +1426,7 @@ var messages = {
   between: (field, [min, max]) => `The ${field} field must be between ${min} and ${max}.`,
   confirmed: (field) => `The ${field} confirmation does not match.`,
   credit_card: (field) => `The ${field} field is invalid.`,
-  decimal: (field, [decimals] = ['*']) => `The ${field} field must be numeric and may contain ${decimals === '*' ? '' : decimals} decimal points.`,
+  decimal: (field, [decimals] = ['*']) => `The ${field} field must be numeric and may contain ${!decimals || decimals === '*' ? '' : decimals} decimal points.`,
   digits: (field, [length]) => `The ${field} field must be numeric and exactly contain ${length} digits.`,
   dimensions: (field, [width, height]) => `The ${field} field must be ${width} pixels by ${height} pixels.`,
   email: (field) => `The ${field} field must be a valid email.`,
@@ -1473,8 +1509,8 @@ var date_between = (moment) => (value, params) => {
 /* istanbul ignore next */
 /* eslint-disable max-len */
 var messages$1 = {
-  after: (field, [target]) => `The ${field} must be after ${target}.`,
-  before: (field, [target]) => `The ${field} must be before ${target}.`,
+  after: (field, [target, inclusion]) => `The ${field} must be after ${inclusion ? 'or equal to ' : ''}${target}.`,
+  before: (field, [target, inclusion]) => `The ${field} must be before ${inclusion ? 'or equal to ' : ''}${target}.`,
   date_between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
   date_format: (field, [format]) => `The ${field} must be in the format ${format}.`
 };
@@ -1501,13 +1537,14 @@ const DICTIONARY = new Dictionary({
 });
 
 class Validator {
-  constructor(validations, options = { init: true, vm: null }) {
+  constructor(validations, options = { init: true, vm: null, fastExit: true }) {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };
     this._createFields(validations);
     this.errorBag = new ErrorBag();
     this.fieldBag = {};
     this.paused = false;
+    this.fastExit = options.fastExit || false;
     this.$vm = options.vm;
 
     // Some fields will be later evaluated, because the vm isn't mounted yet
@@ -1587,12 +1624,6 @@ class Validator {
    * @param  {object} validator a validation rule object.
    */
   static _guardExtend(name, validator) {
-    if (Rules[name]) {
-      throw new ValidatorException(
-        `Extension Error: There is an existing validator with the same name '${name}'.`
-      );
-    }
-
     if (isCallable(validator)) {
       return;
     }
@@ -1752,8 +1783,13 @@ class Validator {
       const context = field.context;
       const fieldScope = this._resolveScope(field.scope);
       if (getter && context && (scope === '__global__' || fieldScope === scope)) {
+        const ctx = context();
+        if (ctx.disabled) {
+          return;
+        }
+
         values[name] = {
-          value: getter(context()),
+          value: getter(ctx),
           scope: fieldScope
         };
       }
@@ -1794,6 +1830,7 @@ class Validator {
     }
 
     const field = this.$scopes[scope][name];
+    field.name = name;
     field.validations = this._normalizeRules(name, checks, scope);
     field.required = this._isRequired(field);
   }
@@ -1821,7 +1858,7 @@ class Validator {
    * Checks if a field has a required rule.
    */
   _isRequired(field) {
-    return field.validations && field.validations.required;
+    return !! (field.validations && field.validations.required);
   }
 
   /**
@@ -1934,23 +1971,22 @@ class Validator {
   /**
    * Formats an error message for field and a rule.
    *
-   * @param  {string} field The field name.
+   * @param  {Object} field The field object.
    * @param  {object} rule Normalized rule object.
    * @param {object} data Additional Information about the validation result.
-   * @param {string} scope The field scope.
    * @return {string} Formatted error message.
    */
-  _formatErrorMessage(field, rule, data = {}, scope = '__global__') {
-    const name = this._getFieldDisplayName(field, scope);
-    const params = this._getLocalizedParams(rule, scope);
+  _formatErrorMessage(field, rule, data = {}) {
+    const name = this._getFieldDisplayName(field);
+    const params = this._getLocalizedParams(rule, field.scope);
     // Defaults to english message.
     if (! this.dictionary.hasLocale(LOCALE)) {
-      const msg = this.dictionary.getFieldMessage('en', field, rule.name);
+      const msg = this.dictionary.getFieldMessage('en', field.name, rule.name);
 
       return isCallable(msg) ? msg(name, params, data) : msg;
     }
 
-    const msg = this.dictionary.getFieldMessage(LOCALE, field, rule.name);
+    const msg = this.dictionary.getFieldMessage(LOCALE, field.name, rule.name);
 
     return isCallable(msg) ? msg(name, params, data) : msg;
   }
@@ -1959,8 +1995,7 @@ class Validator {
    * Translates the parameters passed to the rule (mainly for target fields).
    */
   _getLocalizedParams(rule, scope = '__global__') {
-    if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) &&
-        rule.params && rule.params[0]) {
+    if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
       const param = this.$scopes[scope][rule.params[0]];
       if (param && param.name) return [param.name];
       return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
@@ -1972,28 +2007,28 @@ class Validator {
   /**
    * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
    * Then the dictionary, then fallsback to field name.
-   * @return {String} displayName The name to be used in the errors.
+   * @param {Object} field The field object.
+   * @return {String} The name to be used in the errors.
    */
-  _getFieldDisplayName(field, scope = '__global__') {
-    return this.$scopes[scope][field].as || this.dictionary.getAttribute(LOCALE, field, field);
+  _getFieldDisplayName(field) {
+    return field.as || this.dictionary.getAttribute(LOCALE, field.name, field.name);
   }
 
   /**
    * Tests a single input value against a rule.
    *
-   * @param  {*} name The name of the field.
+   * @param  {Object} field The field under validation.
    * @param  {*} value  the value of the field.
    * @param  {object} rule the rule object.
-   * @param {scope} scope The field scope.
    * @return {boolean} Whether it passes the check.
    */
-  _test(name, value, rule, scope = '__global__') {
+  _test(field, value, rule) {
     const validator = Rules[rule.name];
     if (! validator || typeof validator !== 'function') {
       throw new ValidatorException(`No such validator '${rule.name}' exists.`);
     }
 
-    let result = validator(value, rule.params, name);
+    let result = validator(value, rule.params, field.name);
 
     // If it is a promise.
     if (isCallable(result.then)) {
@@ -2009,11 +2044,11 @@ class Validator {
 
         if (! allValid) {
           this.errorBag.add(
-                        name,
-                        this._formatErrorMessage(name, rule, data, scope),
-                        rule.name,
-                        scope
-                    );
+            field.name,
+            this._formatErrorMessage(field, rule, data),
+            rule.name,
+            field.scope
+          );
         }
 
         return allValid;
@@ -2026,11 +2061,11 @@ class Validator {
 
     if (! result.valid) {
       this.errorBag.add(
-                name,
-                this._formatErrorMessage(name, rule, result.data, scope),
-                rule.name,
-                scope
-            );
+        field.name,
+        this._formatErrorMessage(field, rule, result.data),
+        rule.name,
+        field.scope
+      );
     }
 
     return result.valid;
@@ -2075,6 +2110,7 @@ class Validator {
       pristine: true,
       valid: null,
       invalid: null,
+      validated: false,
       required: field.required,
       pending: false
     };
@@ -2104,7 +2140,6 @@ class Validator {
       this.updateField(name, checks, options);
       const field = this.$scopes[options.scope][name];
       field.scope = options.scope;
-      field.name = name;
       field.as = options.prettyName;
       field.getter = options.getter;
       field.context = options.context;
@@ -2157,13 +2192,7 @@ class Validator {
    * @param {Object} flags
    */
   flag(name, flags) {
-    let [scope, fieldName] = name.split('.');
-    if (!fieldName) {
-      fieldName = scope;
-      scope = null;
-    }
-    const field = scope ? getPath(`${scope}.${fieldName}`, this.$scopes) :
-                          this.$scopes.__global__[fieldName];
+    const field = this._resolveField(name);
     if (! field) {
       return;
     }
@@ -2171,7 +2200,9 @@ class Validator {
     Object.keys(field.flags).forEach(flag => {
       field.flags[flag] = flags[flag] !== undefined ? flags[flag] : field.flags[flag];
     });
-    field.listeners.classes.sync();
+    if (field.listeners && field.listeners.classes) {
+      field.listeners.classes.sync();
+    }
   }
 
   /**
@@ -2321,98 +2352,97 @@ class Validator {
     }
   }
 
+  _resolveField(name, scope) {
+    if (name && name.indexOf('.') > -1) {
+      // if no such field, try the scope form.
+      if (! this.$scopes.__global__[name]) {
+        [scope, name] = name.split('.');
+      }
+    }
+    if (! scope) scope = '__global__';
+
+    if (!this.$scopes[scope]) return null;
+
+    return this.$scopes[scope][name];
+  }
+
+  _handleFieldNotFound(name, scope) {
+    if (! this.strictMode) return Promise.resolve(true);
+
+    const fullName = scope === '__global__' ? name : `${scope}.${name}`;
+    throw new ValidatorException(
+        `Validating a non-existant field: "${fullName}". Use "attach()" first.`
+      );
+  }
+
+  /**
+   * Starts the validation process.
+   *
+   * @param {Object} field
+   * @param {Promise} value
+   */
+  _validate(field, value) {
+    if (! field.required && ~[null, undefined, ''].indexOf(value)) {
+      return Promise.resolve(true);
+    }
+
+    const promises = [];
+    const syncResult = Object.keys(field.validations)[this.fastExit ? 'every' : 'some'](rule => {
+      const result = this._test(
+        field,
+        value,
+        { name: rule, params: field.validations[rule] }
+      );
+
+      if (isCallable(result.then)) {
+        promises.push(result);
+        return true;
+      }
+
+      return result;
+    });
+
+    return Promise.all(promises).then(values => {
+      const valid = syncResult && values.every(t => t);
+
+      return valid;
+    });
+  }
+
   /**
    * Validates a value against a registered field validations.
    *
    * @param  {string} name the field name.
    * @param  {*} value The value to be validated.
    * @param {String} scope The scope of the field.
-   * @param {Boolean} throws If it should throw.
    * @return {Promise}
    */
-  validate(name, value, scope = '__global__', throws = true) {
+  validate(name, value, scope = '__global__') {
     if (this.paused) return Promise.resolve(true);
 
-    if (name && name.indexOf('.') > -1) {
-      // no such field, try the scope form.
-      if (! this.$scopes.__global__[name]) {
-        [scope, name] = name.split('.');
-      }
+    const field = this._resolveField(name, scope);
+    if (!field) {
+      return this._handleFieldNotFound(name, scope);
     }
-    if (! scope) scope = '__global__';
-    if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
-      if (! this.strictMode) return Promise.resolve(true);
-
-      const fullName = scope === '__global__' ? name : `${scope}.${name}`;
-      warn(`Validating a non-existant field: "${fullName}". Use "attach()" first.`);
-
-      throw new ValidatorException('Validation Failed');
-    }
-
-    const field = this.$scopes[scope][name];
+    this.errorBag.remove(field.name, field.scope);
     if (field.flags) {
       field.flags.pending = true;
     }
-    this.errorBag.remove(name, scope);
-    // if its not required and is empty or null or undefined then it passes.
-    if (! field.required && ~[null, undefined, ''].indexOf(value)) {
-      this._setAriaValidAttribute(field, true);
+
+    return this._validate(field, value).then(result => {
+      this._setAriaValidAttribute(field, result);
+      if (field.flags) {
+        field.flags.pending = false;
+        field.flags.valid = result;
+        field.flags.invalid = ! result;
+        field.flags.pending = false;
+        field.flags.validated = true;
+      }
       if (field.events && isCallable(field.events.after)) {
-        field.events.after({ valid: true });
+        field.events.after({ valid: result });
       }
-
-      return Promise.resolve(true);
-    }
-
-    try {
-      const promises = Object.keys(field.validations).map(rule => {
-        const result = this._test(
-          name,
-          value,
-          { name: rule, params: field.validations[rule] },
-          scope
-        );
-
-        if (isCallable(result.then)) {
-          return result;
-        }
-
-        // Early exit.
-        if (! result) {
-          if (field.events && isCallable(field.events.after)) {
-            field.events.after({ valid: false });
-          }
-          throw new ValidatorException('Validation Aborted.');
-        }
-
-        if (field.events && isCallable(field.events.after)) {
-          field.events.after({ valid: true });
-        }
-        return Promise.resolve(result);
-      });
-
-      return Promise.all(promises).then(values => {
-        const valid = values.every(t => t);
-        this._setAriaValidAttribute(field, valid);
-
-        if (! valid && throws) {
-          if (field.events && isCallable(field.events.after)) {
-            field.events.after({ valid: false });
-          }
-          throw new ValidatorException('Failed Validation');
-        }
-        return valid;
-      });
-    } catch (error) {
-      if (error.msg === '[vee-validate]: Validation Aborted.') {
-        if (field.events && isCallable(field.events.after)) {
-          field.events.after({ valid: false });
-        }
-        return Promise.resolve(false);
-      }
-
-      throw error;
-    }
+      return result;
+    });
   }
 
   /**
@@ -2488,14 +2518,7 @@ class Validator {
       false // do not throw
     ));
 
-    return Promise.all(promises).then(results => {
-      const valid = results.every(t => t);
-      if (! valid) {
-        throw new ValidatorException('Validation Failed');
-      }
-
-      return valid;
-    });
+    return Promise.all(promises).then(results => results.every(t => t));
   }
 
   /**
@@ -2507,10 +2530,14 @@ class Validator {
 
     return Promise.all(
       Object.keys(this.$scopes).map(scope => this.validateAll(scope))
-    );
+    ).then(results => results.every(t => t));
   }
 }
 
+/**
+ * Checks if a parent validator instance was requested.
+ * @param {Object|Array} injections
+ */
 const validatorRequested = (injections) => {
   if (! injections) {
     return false;
@@ -2527,6 +2554,17 @@ const validatorRequested = (injections) => {
   return false;
 };
 
+/**
+ * Creates a validator instance.
+ * @param {Vue} vm
+ * @param {Object} options
+ */
+const createValidator = (vm, options) => new Validator(null, {
+  init: false,
+  vm,
+  fastExit: options.fastExit
+});
+
 var makeMixin = (Vue, options) => {
   const mixin = {};
   mixin.provide = function providesValidator() {
@@ -2542,14 +2580,14 @@ var makeMixin = (Vue, options) => {
   mixin.beforeCreate = function beforeCreate() {
     // if its a root instance, inject anyways, or if it requested a new instance.
     if (this.$options.$validates || !this.$parent) {
-      this.$validator = new Validator(null, { init: false, vm: this });
+      this.$validator = createValidator(this, options);
     }
 
     const requested = validatorRequested(this.$options.inject);
 
     // if automatic injection is enabled and no instance was requested.
     if (! this.$validator && options.inject && !requested) {
-      this.$validator = new Validator(null, { init: false, vm: this });
+      this.$validator = createValidator(this, options);
     }
 
     // don't inject errors or fieldBag as no validator was resolved.
@@ -2644,10 +2682,10 @@ class ClassListener {
       this.field.flags.touched = true;
       this.field.flags.untouched = false;
 
-      if (this.component) return;
-
       // only needed once.
-      this.el.removeEventListener('focus', this.listeners.focus);
+      if (!this.component) {
+        this.el.removeEventListener('focus', this.listeners.focus);
+      }
       this.listeners.focus = null;
     };
 
@@ -2660,23 +2698,24 @@ class ClassListener {
 
   addInputListener() {
     // listen for input.
+    const event = getInputEventName(this.el);
     this.listeners.input = () => {
       this.remove(this.classNames.pristine);
       this.add(this.classNames.dirty);
       this.field.flags.dirty = true;
       this.field.flags.pristine = false;
 
-      if (this.component) return;
-
       // only needed once.
-      this.el.removeEventListener('input', this.listeners.input);
+      if (!this.component) {
+        this.el.removeEventListener(event, this.listeners.input);
+      }
       this.listeners.input = null;
     };
 
     if (this.component) {
       this.component.$once('input', this.listeners.input);
     } else {
-      this.el.addEventListener('input', this.listeners.input);
+      this.el.addEventListener(event, this.listeners.input);
     }
   }
 
@@ -2704,9 +2743,6 @@ class ClassListener {
     this.listeners.after = (e) => {
       this.remove(e.valid ? this.classNames.invalid : this.classNames.valid);
       this.add(e.valid ? this.classNames.valid : this.classNames.invalid);
-      this.field.flags.valid = e.valid;
-      this.field.flags.invalid = ! e.valid;
-      this.field.flags.pending = false;
     };
 
     this.validator.on('after', this.field.name, this.field.scope, this.listeners.after);
@@ -2775,7 +2811,8 @@ var config = {
   enableAutoClasses: false,
   classNames: {},
   events: 'input|blur',
-  inject: true
+  inject: true,
+  fastExit: true
 };
 
 class ListenerGenerator {
@@ -2798,13 +2835,45 @@ class ListenerGenerator {
   }
 
   /**
-   * Checks if the node directives contains a v-model.
+   * Checks if the node directives contains a v-model or a specified arg.
+   * Args take priority over models.
+   *
+   * @param {Array} directives
+   * @return {Object}
    */
   _resolveModel(directives) {
-    const expRegex = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i;
-    const model = find(directives, d => d.name === 'model' && expRegex.test(d.expression));
+    if (this.binding.arg) {
+      return {
+        watchable: true,
+        expression: this.binding.arg,
+        lazy: false
+      };
+    }
 
-    return model && this._isExistingPath(model.expression) && model.expression;
+    if (isObject(this.binding.value) && this.binding.value.arg) {
+      return {
+        watchable: true,
+        expression: this.binding.value.arg,
+        lazy: false
+      };
+    }
+
+    const result = {
+      watchable: false,
+      expression: null,
+      lazy: false
+    };
+    const model = find(directives, d => d.name === 'model');
+    if (!model) {
+      return result;
+    }
+
+    result.expression = model.expression;
+    result.watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) &&
+                      this._isExistingPath(model.expression);
+    result.lazy = !! model.modifiers.lazy;
+
+    return result;
   }
 
   /**
@@ -2847,7 +2916,7 @@ class ListenerGenerator {
     if (isObject(rules)) {
       Object.keys(rules).forEach(r => { // eslint-disable-line
         if (/confirmed|after|before/.test(r)) {
-          fieldName = rules[r];
+          fieldName = rules[r].split(',')[0];
 
           return false;
         }
@@ -2918,9 +2987,13 @@ class ListenerGenerator {
      * Trigger the validation for a specific value.
      */
   _validate(value) {
+    if ((this.component && this.component.disabled) || this.el.disabled) {
+      return Promise.resolve(true);
+    }
+
     return this.vm.$validator.validate(
       this.fieldName, value, this.scope || getScope(this.el)
-      ).catch(result => result);
+    );
   }
 
     /**
@@ -2962,13 +3035,28 @@ class ListenerGenerator {
     }
   }
 
+  /**
+   * Gets a listener that listens on bound models instead of elements.
+   */
+  _getModeledListener() {
+    if (!this.model.watchable) {
+      return null;
+    }
+
+    return () => {
+      this._validate(getPath(this.model.expression, this.vm));
+    };
+  }
+
     /**
      * Determines a suitable listener for the element.
      */
   _getSuitableListener() {
     let listener;
     const overrides = {
-      input: 'input',
+      // Models can be unwatchable and have a lazy modifier,
+      // so we make sure we listen on the proper event.
+      input: this.model.lazy ? 'change' : 'input',
       blur: 'blur'
     };
 
@@ -2976,7 +3064,7 @@ class ListenerGenerator {
       overrides.input = 'change';
       listener = {
         names: ['change', 'blur'],
-        listener: this._inputListener
+        listener: this._getModeledListener() || this._inputListener
       };
     } else {
       // determine the suitable listener and events to handle
@@ -2995,7 +3083,7 @@ class ListenerGenerator {
         overrides.blur = null;
         listener = {
           names: ['change'],
-          listener: this._radioListener
+          listener: this._getModeledListener() || this._radioListener
         };
         break;
 
@@ -3004,14 +3092,14 @@ class ListenerGenerator {
         overrides.blur = null;
         listener = {
           names: ['change'],
-          listener: this._checkboxListener
+          listener: this._getModeledListener() || this._checkboxListener
         };
         break;
 
       default:
         listener = {
           names: ['input', 'blur'],
-          listener: this._inputListener
+          listener: this._getModeledListener() || this._inputListener
         };
         break;
       }
@@ -3033,8 +3121,21 @@ class ListenerGenerator {
       this._validate(value);
     }, getDataAttribute(this.el, 'delay') || this.options.delay);
 
-    this.component.$on('input', this.componentListener);
-    this.componentPropUnwatch = this.component.$watch('value', this.componentListener);
+    const events = getDataAttribute(this.el, 'validate-on') || this.options.events;
+    events.split('|').forEach(e => {
+      if (!e) {
+        return;
+      }
+      if (e === 'input') {
+        this.component.$on('input', this.componentListener);
+      } else if (e === 'blur') {
+        this.component.$on('blur', this.componentListener);
+      } else {
+        this.component.$on(e, this.componentListener);
+      }
+
+      this.componentPropUnwatch = this.component.$watch('value', this.componentListener);
+    });
   }
 
   /**
@@ -3078,10 +3179,24 @@ class ListenerGenerator {
    * Returns a context, getter factory pairs for each input type.
    */
   _resolveValueGetter() {
+    if (this.model.watchable) {
+      return {
+        context: () => this.vm,
+        // eslint-disable-next-line
+        getter: (context) => { 
+          return getPath(this.model.expression, context);
+        }
+      };
+    }
+
     if (this.component) {
       return {
         context: () => this.component,
-        getter(context) {
+        getter: (context) => {
+          const path = getDataAttribute(this.el, 'value-path');
+          if (path) {
+            return getPath(path, this.component);
+          }
           return context.value;
         }
       };
@@ -3120,23 +3235,6 @@ class ListenerGenerator {
     }
   }
 
-  /*
-  * Gets the arg string value, either from the directive or the expression value.
-  */
-  _getArg() {
-    // Get it from the directive arg.
-    if (this.binding.arg) {
-      return this.binding.arg;
-    }
-
-    // Get it from v-model.
-    if (this.model) {
-      return this.model;
-    }
-
-    return isObject(this.binding.value) ? this.binding.value.arg : null;
-  }
-
   /**
    * Attaches model watchers and extra listeners.
    */
@@ -3151,7 +3249,7 @@ class ListenerGenerator {
         const debounced = debounce((value) => {
           this.vm.$validator.validate(
             this.fieldName, value, this.scope || getScope(this.el)
-          ).catch(result => result);
+          );
         }, getDataAttribute(this.el, 'delay') || this.options.delay);
         this.unwatch = this.vm.$watch(arg, debounced, { deep: true });
         // No need to attach it on element as it will use the vue watcher.
@@ -3188,9 +3286,8 @@ class ListenerGenerator {
     }
 
     this._attachValidatorEvent();
-    const arg = this._getArg();
-    if (arg) {
-      this._attachModelWatcher(arg);
+    if (this.model.watchable) {
+      this._attachModelWatcher(this.model.expression);
       return;
     }
 
@@ -3225,7 +3322,7 @@ class ListenerGenerator {
 const listenersInstances = [];
 
 var makeDirective = (options) => ({
-  inserted(el, binding, vnode) {
+  bind(el, binding, vnode) {
     if (! vnode.context.$validator) {
       const name = vnode.context.$options._componentTag;
       // eslint-disable-next-line
@@ -3326,7 +3423,7 @@ var index = {
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.5'
+  version: '2.0.0-rc.6'
 };
 
 export default index;
