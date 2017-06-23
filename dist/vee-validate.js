@@ -3541,6 +3541,7 @@ ListenerGenerator.prototype.attach = function attach () {
 ListenerGenerator.prototype.detach = function detach () {
   if (this.component) {
     this.component.$off('input', this.componentListener);
+    this.component.$off('blur', this.componentListener);
 
     if (isCallable(this.componentPropUnwatch)) {
       this.componentPropUnwatch();
