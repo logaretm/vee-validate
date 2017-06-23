@@ -2720,6 +2720,8 @@ Validator.prototype.validateAll = function validateAll (values, scope) {
       };
     });
   }
+
+  console.log(normalizedValues);
   var promises = Object.keys(normalizedValues).map(function (property) { return this$1.validate(
     property,
     normalizedValues[property].value,

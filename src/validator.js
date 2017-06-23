@@ -991,6 +991,8 @@ export default class Validator {
         };
       });
     }
+
+    console.log(normalizedValues);
     const promises = Object.keys(normalizedValues).map(property => this.validate(
       property,
       normalizedValues[property].value,

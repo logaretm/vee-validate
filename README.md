@@ -110,6 +110,11 @@ Of course there is more to it than that, refer to the documentation for more det
 
 Read the [documentation and demos](http://vee-validate.logaretm.com/).
 
+
+### Compatability
+
+This library uses ES6 Promises so be sure to provide a polyfill for it for the browsers that does not support it.
+
 ### Contributing
 
 You are welcome to contribute to this repo with anything you think is useful. fixes are more than welcome.
