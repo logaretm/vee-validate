@@ -172,10 +172,12 @@ export const assign = (target, ...others) => {
  * @param {Function} predicate
  */
 export const find = (array, predicate) => {
+  if (isObject(array)) {
+    array = Array.from(array);
+  }
   if (array.find) {
     return array.find(predicate);
   }
-
   let result;
   array.some(item => {
     if (predicate(item)) {

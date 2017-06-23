@@ -18,7 +18,7 @@ export default class ListenerGenerator {
     this.component = vnode.child;
     this.options = assign({}, config, options);
     this.fieldName = this._resolveFieldName();
-    this.model = this._resolveModel(vnode.data.directives);
+    this.model = this._resolveModel(vnode.data);
     this.classes = new ClassManager(el, this.vm.$validator, {
       component: this.component,
       enableAutoClasses: options.enableAutoClasses,
@@ -33,7 +33,7 @@ export default class ListenerGenerator {
    * @param {Array} directives
    * @return {Object}
    */
-  _resolveModel(directives) {
+  _resolveModel(data) {
     if (this.binding.arg) {
       return {
         watchable: true,
@@ -55,7 +55,7 @@ export default class ListenerGenerator {
       expression: null,
       lazy: false
     };
-    const model = find(directives, d => d.name === 'model');
+    const model = data.model || find(data.directives, d => d.name === 'model');
     if (!model) {
       return result;
     }
@@ -63,7 +63,7 @@ export default class ListenerGenerator {
     result.expression = model.expression;
     result.watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) &&
                       this._isExistingPath(model.expression);
-    result.lazy = !! model.modifiers.lazy;
+    result.lazy = !! model.modifiers && model.modifiers.lazy;
 
     return result;
   }

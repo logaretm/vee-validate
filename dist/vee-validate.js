@@ -1334,10 +1334,12 @@ var assign = function (target) {
  * @param {Function} predicate
  */
 var find = function (array, predicate) {
+  if (isObject(array)) {
+    array = Array.from(array);
+  }
   if (array.find) {
     return array.find(predicate);
   }
-
   var result;
   array.some(function (item) {
     if (predicate(item)) {
@@ -2721,7 +2723,6 @@ Validator.prototype.validateAll = function validateAll (values, scope) {
     });
   }
 
-  console.log(normalizedValues);
   var promises = Object.keys(normalizedValues).map(function (property) { return this$1.validate(
     property,
     normalizedValues[property].value,
@@ -3045,7 +3046,7 @@ var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) 
   this.component = vnode.child;
   this.options = assign({}, config, options);
   this.fieldName = this._resolveFieldName();
-  this.model = this._resolveModel(vnode.data.directives);
+  this.model = this._resolveModel(vnode.data);
   this.classes = new ClassListener(el, this.vm.$validator, {
     component: this.component,
     enableAutoClasses: options.enableAutoClasses,
@@ -3060,7 +3061,7 @@ var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) 
  * @param {Array} directives
  * @return {Object}
  */
-ListenerGenerator.prototype._resolveModel = function _resolveModel (directives) {
+ListenerGenerator.prototype._resolveModel = function _resolveModel (data) {
   if (this.binding.arg) {
     return {
       watchable: true,
@@ -3082,7 +3083,7 @@ ListenerGenerator.prototype._resolveModel = function _resolveModel (directives) 
     expression: null,
     lazy: false
   };
-  var model = find(directives, function (d) { return d.name === 'model'; });
+  var model = data.model || find(data.directives, function (d) { return d.name === 'model'; });
   if (!model) {
     return result;
   }
@@ -3090,7 +3091,7 @@ ListenerGenerator.prototype._resolveModel = function _resolveModel (directives) 
   result.expression = model.expression;
   result.watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) &&
                     this._isExistingPath(model.expression);
-  result.lazy = !! model.modifiers.lazy;
+  result.lazy = !! model.modifiers && model.modifiers.lazy;
 
   return result;
 };

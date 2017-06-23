@@ -1249,10 +1249,12 @@ const assign = (target, ...others) => {
  * @param {Function} predicate
  */
 const find = (array, predicate) => {
+  if (isObject(array)) {
+    array = Array.from(array);
+  }
   if (array.find) {
     return array.find(predicate);
   }
-
   let result;
   array.some(item => {
     if (predicate(item)) {
@@ -2512,7 +2514,6 @@ class Validator {
       });
     }
 
-    console.log(normalizedValues);
     const promises = Object.keys(normalizedValues).map(property => this.validate(
       property,
       normalizedValues[property].value,
@@ -2828,7 +2829,7 @@ class ListenerGenerator {
     this.component = vnode.child;
     this.options = assign({}, config, options);
     this.fieldName = this._resolveFieldName();
-    this.model = this._resolveModel(vnode.data.directives);
+    this.model = this._resolveModel(vnode.data);
     this.classes = new ClassListener(el, this.vm.$validator, {
       component: this.component,
       enableAutoClasses: options.enableAutoClasses,
@@ -2843,7 +2844,7 @@ class ListenerGenerator {
    * @param {Array} directives
    * @return {Object}
    */
-  _resolveModel(directives) {
+  _resolveModel(data) {
     if (this.binding.arg) {
       return {
         watchable: true,
@@ -2865,7 +2866,7 @@ class ListenerGenerator {
       expression: null,
       lazy: false
     };
-    const model = find(directives, d => d.name === 'model');
+    const model = data.model || find(data.directives, d => d.name === 'model');
     if (!model) {
       return result;
     }
@@ -2873,7 +2874,7 @@ class ListenerGenerator {
     result.expression = model.expression;
     result.watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) &&
                       this._isExistingPath(model.expression);
-    result.lazy = !! model.modifiers.lazy;
+    result.lazy = !! model.modifiers && model.modifiers.lazy;
 
     return result;
   }
