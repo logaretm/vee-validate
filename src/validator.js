@@ -995,8 +995,7 @@ export default class Validator {
     const promises = Object.keys(normalizedValues).map(property => this.validate(
       property,
       normalizedValues[property].value,
-      normalizedValues[property].scope,
-      false // do not throw
+      normalizedValues[property].scope
     ));
 
     return Promise.all(promises).then(results => results.every(t => t));
