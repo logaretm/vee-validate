@@ -30,7 +30,7 @@ export default class ListenerGenerator {
    * Checks if the node directives contains a v-model or a specified arg.
    * Args take priority over models.
    *
-   * @param {Array} directives
+   * @param {Object} data
    * @return {Object}
    */
   _resolveModel(data) {

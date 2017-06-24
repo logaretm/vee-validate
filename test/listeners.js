@@ -70,7 +70,7 @@ test('should get the arg', t => {
   ];
 
   directives.forEach(dir => {
-    t.is(lg._resolveModel([dir]).watchable, dir.valid);
+    t.is(lg._resolveModel({ directives: [dir] }).watchable, dir.valid);
   });
 });
 
