@@ -243,10 +243,13 @@ validator.validate('email', 'foo@bar'); // false
 
 You can validate multiple values at the same time using `validateAll(obj)`:
 ```js
-validator.validateAll({ email: 'foo@bar.com', name: 'John Snow' }).then(() => {
+validator.validateAll({ email: 'foo@bar.com', name: 'John Snow' }).then(result => {
+  if (!result) {
+    // validation failed.
+  }
   // success stuff.
 }).catch(() => {
-  // validation failed stuff
+  // something went wrong (non-validation related).
 });
 ```
 
