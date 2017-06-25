@@ -169,6 +169,12 @@ export const assign = (target, ...others) => {
 };
 
 /**
+ * Generates a unique id.
+ * @return {String}
+ */
+export const uniqId = () => `_${Math.random().toString(36).substr(2, 9)}`;
+
+/**
  * polyfills array.find
  * @param {Array} array
  * @param {Function} predicate
