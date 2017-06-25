@@ -1136,10 +1136,6 @@ var ValidatorException = (function (Error) {
     while ( len-- ) args[ len ] = arguments[ len ];
 
     Error.apply(this, args);
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ValidatorException);
-    }
-
     this.message = "[vee-validate]: " + (this.message);
   }
 
@@ -1702,7 +1698,7 @@ var DICTIONARY = new Dictionary({
 });
 
 var Validator = function Validator(validations, options) {
-  if ( options === void 0 ) options = { init: true, vm: null, fastExit: true };
+  if ( options === void 0 ) options = { vm: null, fastExit: true };
 
   this.strictMode = STRICT_MODE;
   this.$scopes = { __global__: {} };
@@ -1713,19 +1709,10 @@ var Validator = function Validator(validations, options) {
   this.fastExit = options.fastExit || false;
   this.$vm = options.vm;
 
-  // Some fields will be later evaluated, because the vm isn't mounted yet
-  // so it may register it under an inaccurate scope.
-  this.$deferred = [];
-  this.$ready = false;
-
   // if momentjs is present, install the validators.
   if (typeof moment === 'function') {
     // eslint-disable-next-line
     this.installDateTimeValidators(moment);
-  }
-
-  if (options.init) {
-    this.init();
   }
 };
 
@@ -1921,25 +1908,6 @@ Validator.prototype.addLocale = function addLocale (locale) {
 };
 
 /**
- * Resolves the scope value. Only strings and functions are allowed.
- * @param {Function|String} scope
- * @returns {String}
- */
-Validator.prototype._resolveScope = function _resolveScope (scope) {
-  if (typeof scope === 'string') {
-    return scope;
-  }
-
-  // The resolved value should be string.
-  if (isCallable(scope)) {
-    var value = scope();
-    return typeof value === 'string' ? value : '__global__';
-  }
-
-  return '__global__';
-};
-
-/**
  * Resolves the field values from the getter functions.
  */
 Validator.prototype._resolveValuesFromGetters = function _resolveValuesFromGetters (scope) {
@@ -1954,7 +1922,7 @@ Validator.prototype._resolveValuesFromGetters = function _resolveValuesFromGette
     var field = this$1.$scopes[scope][name];
     var getter = field.getter;
     var context = field.context;
-    var fieldScope = this$1._resolveScope(field.scope);
+    var fieldScope = field.scope;
     if (getter && context && (scope === '__global__' || fieldScope === scope)) {
       var ctx = context();
       if (ctx.disabled) {
@@ -1997,7 +1965,6 @@ Validator.prototype._createFields = function _createFields (validations) {
 Validator.prototype._createField = function _createField (name, checks, scope) {
     if ( scope === void 0 ) scope = '__global__';
 
-  scope = this._resolveScope(scope);
   if (! this.$scopes[scope]) {
     this.$scopes[scope] = {};
   }
@@ -2324,57 +2291,28 @@ Validator.prototype._assignFlags = function _assignFlags (field) {
  * @param {Function} getter A function used to retrive a fresh value for the field.
  */
 Validator.prototype.attach = function attach (name, checks, options) {
-    var this$1 = this;
     if ( options === void 0 ) options = {};
 
-  var attach = function () {
-    options.scope = this$1._resolveScope(options.scope);
-    this$1.updateField(name, checks, options);
-    var field = this$1.$scopes[options.scope][name];
-    field.scope = options.scope;
-    field.as = options.prettyName;
-    field.getter = options.getter;
-    field.context = options.context;
-    field.listeners = options.listeners || { detach: function detach() {} };
-    field.el = field.listeners.el;
-    field.events = {};
-    this$1._assignFlags(field);
-    // cache the scope property.
-    if (field.el && isCallable(field.el.setAttribute)) {
-      field.el.setAttribute('data-vv-scope', field.scope);
-    }
-
-    if (field.listeners.classes) {
-      field.listeners.classes.attach(field);
-    }
-    this$1._setAriaRequiredAttribute(field);
-    this$1._setAriaValidAttribute(field, true);
-    // if initial modifier is applied, validate immediatly.
-    if (options.initial) {
-      this$1.validate(name, field.getter(field.context()), field.scope).catch(function () {});
-    }
-  };
-
-  var scope = isCallable(options.scope) ? options.scope() : options.scope;
-  if (! scope && ! this.$ready) {
-    this.$deferred.push(attach);
-    return;
+  options.scope = options.scope;
+  this.updateField(name, checks, options);
+  var field = this.$scopes[options.scope][name];
+  field.scope = options.scope;
+  field.as = options.prettyName;
+  field.getter = options.getter;
+  field.context = options.context;
+  field.listeners = options.listeners || { detach: function detach() {} };
+  field.el = field.listeners.el;
+  field.events = {};
+  this._assignFlags(field);
+  if (field.listeners.classes) {
+    field.listeners.classes.attach(field);
   }
-
-  attach();
-};
-
-/**
- * Initializes the non-scoped fields and any bootstrap logic.
- */
-Validator.prototype.init = function init () {
-  this.$ready = true;
-  this.$deferred.forEach(function (attach) {
-    attach();
-  });
-  this.$deferred = [];
-
-  return this;
+  this._setAriaRequiredAttribute(field);
+  this._setAriaValidAttribute(field, true);
+  // if initial modifier is applied, validate immediatly.
+  if (options.initial) {
+    this.validate(name, field.getter(field.context()), field.scope).catch(function () {});
+  }
 };
 
 /**
@@ -2406,7 +2344,7 @@ Validator.prototype.flag = function flag (name, flags) {
 Validator.prototype.append = function append (name, checks, options) {
     if ( options === void 0 ) options = {};
 
-  options.scope = this._resolveScope(options.scope);
+  options.scope = options.scope;
   // No such field
   if (! this.$scopes[options.scope] || ! this.$scopes[options.scope][name]) {
     this.attach(name, checks, options);
@@ -2419,13 +2357,29 @@ Validator.prototype.append = function append (name, checks, options) {
   });
 };
 
+Validator.prototype._moveFieldScope = function _moveFieldScope (field, scope) {
+  console.log('moving scope');
+  if (!this.$scopes[scope]) {
+    this.$scopes[scope] = {};
+  }
+  // move the field to its new scope.
+  this.$scopes[scope][field.name] = field;
+  delete this.$scopes[field.scope][field.name];
+  field.scope = scope;
+  // update cached scope.
+  if (field.el && isCallable(field.el.setAttribute)) {
+    field.el.setAttribute('data-vv-scope', field.scope);
+  }
+  console.log('scope moved');
+};
+
 /**
  * Updates the field rules with new ones.
  */
 Validator.prototype.updateField = function updateField (name, checks, options) {
     if ( options === void 0 ) options = {};
 
-  var field = getPath(((options.scope) + "." + name), this.$scopes, null);
+  var field = getPath(((options.oldScope) + "." + name), this.$scopes, null);
   var oldChecks = field ? JSON.stringify(field.validations) : '';
   this._createField(name, checks, options.scope);
   field = getPath(((options.scope) + "." + name), this.$scopes, null);
@@ -2726,8 +2680,7 @@ Validator.prototype.validateAll = function validateAll (values, scope) {
   var promises = Object.keys(normalizedValues).map(function (property) { return this$1.validate(
     property,
     normalizedValues[property].value,
-    normalizedValues[property].scope,
-    false // do not throw
+    normalizedValues[property].scope
   ); });
 
   return Promise.all(promises).then(function (results) { return results.every(function (t) { return t; }); });
@@ -2826,12 +2779,6 @@ var makeMixin = function (Vue, options) {
     this.$options.computed[options.fieldsBagName] = function fieldBagGetter() {
       return this.$validator.fieldBag;
     };
-  };
-
-  mixin.mounted = function mounted() {
-    if (this.$validator) {
-      this.$validator.init();
-    }
   };
 
   return mixin;
@@ -3040,7 +2987,7 @@ var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) 
   this.unwatch = undefined;
   this.callbacks = [];
   this.el = el;
-  this.scope = isObject(binding.value) ? binding.value.scope : getScope(el);
+  this.scope = (isObject(binding.value) ? binding.value.scope : getScope(el)) || '__global__';
   this.binding = binding;
   this.vm = vnode.context;
   this.component = vnode.child;
@@ -3058,7 +3005,7 @@ var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) 
  * Checks if the node directives contains a v-model or a specified arg.
  * Args take priority over models.
  *
- * @param {Array} directives
+ * @param {Object} data
  * @return {Object}
  */
 ListenerGenerator.prototype._resolveModel = function _resolveModel (data) {
@@ -3505,8 +3452,6 @@ ListenerGenerator.prototype._attachModelWatcher = function _attachModelWatcher (
  * Attaches the Event Listeners.
  */
 ListenerGenerator.prototype.attach = function attach () {
-    var this$1 = this;
-
   var ref = this._resolveValueGetter();
     var context = ref.context;
     var getter = ref.getter;
@@ -3514,9 +3459,7 @@ ListenerGenerator.prototype.attach = function attach () {
     this.fieldName,
     getRules(this.binding.expression, this.binding.value, this.el), {
       // eslint-disable-next-line
-      scope: function () {
-        return this$1.scope || getScope(this$1.el);
-      },
+      scope: this.scope,
       prettyName: getDataAttribute(this.el, 'as') || this.el.title,
       context: context,
       getter: getter,
@@ -3566,6 +3509,21 @@ ListenerGenerator.prototype.detach = function detach () {
 var listenersInstances = [];
 
 var makeDirective = function (options) { return ({
+  inserted: function inserted(el, ref, ref$1) {
+    var value = ref.value;
+    var expression = ref.expression;
+    var context = ref$1.context;
+
+    var ref$2 = find(listenersInstances, function (l) { return l.vm === context && l.el === el; });
+    var instance = ref$2.instance;
+    var scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
+    console.log(el.form.dataset.vvScope, el.dataset.vvScope, scope);
+    if (scope !== instance.scope) {
+      var field = context.$validator._resolveField(instance.fieldName, instance.scope);
+      context.$validator._moveFieldScope(field, scope);
+      instance.scope = scope;
+    }
+  },
   bind: function bind(el, binding, vnode) {
     if (! vnode.context.$validator) {
       var name = vnode.context.$options._componentTag;

@@ -12,7 +12,7 @@ export default class ListenerGenerator {
     this.unwatch = undefined;
     this.callbacks = [];
     this.el = el;
-    this.scope = isObject(binding.value) ? binding.value.scope : getScope(el);
+    this.scope = (isObject(binding.value) ? binding.value.scope : getScope(el)) || '__global__';
     this.binding = binding;
     this.vm = vnode.context;
     this.component = vnode.child;
@@ -462,9 +462,7 @@ export default class ListenerGenerator {
       this.fieldName,
       getRules(this.binding.expression, this.binding.value, this.el), {
         // eslint-disable-next-line
-        scope: () => {
-          return this.scope || getScope(this.el);
-        },
+        scope: this.scope,
         prettyName: getDataAttribute(this.el, 'as') || this.el.title,
         context,
         getter,

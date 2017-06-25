@@ -17,7 +17,7 @@ const DICTIONARY = new Dictionary({
 });
 
 export default class Validator {
-  constructor(validations, options = { init: true, vm: null, fastExit: true }) {
+  constructor(validations, options = { vm: null, fastExit: true }) {
     this.strictMode = STRICT_MODE;
     this.$scopes = { __global__: {} };
     this._createFields(validations);
@@ -27,19 +27,10 @@ export default class Validator {
     this.fastExit = options.fastExit || false;
     this.$vm = options.vm;
 
-    // Some fields will be later evaluated, because the vm isn't mounted yet
-    // so it may register it under an inaccurate scope.
-    this.$deferred = [];
-    this.$ready = false;
-
     // if momentjs is present, install the validators.
     if (typeof moment === 'function') {
       // eslint-disable-next-line
       this.installDateTimeValidators(moment);
-    }
-
-    if (options.init) {
-      this.init();
     }
   }
 
@@ -231,25 +222,6 @@ export default class Validator {
   }
 
   /**
-   * Resolves the scope value. Only strings and functions are allowed.
-   * @param {Function|String} scope
-   * @returns {String}
-   */
-  _resolveScope(scope) {
-    if (typeof scope === 'string') {
-      return scope;
-    }
-
-    // The resolved value should be string.
-    if (isCallable(scope)) {
-      const value = scope();
-      return typeof value === 'string' ? value : '__global__';
-    }
-
-    return '__global__';
-  }
-
-  /**
    * Resolves the field values from the getter functions.
    */
   _resolveValuesFromGetters(scope = '__global__') {
@@ -261,7 +233,7 @@ export default class Validator {
       const field = this.$scopes[scope][name];
       const getter = field.getter;
       const context = field.context;
-      const fieldScope = this._resolveScope(field.scope);
+      const fieldScope = field.scope;
       if (getter && context && (scope === '__global__' || fieldScope === scope)) {
         const ctx = context();
         if (ctx.disabled) {
@@ -300,7 +272,6 @@ export default class Validator {
    * @param {String|Array} checks.
    */
   _createField(name, checks, scope = '__global__') {
-    scope = this._resolveScope(scope);
     if (! this.$scopes[scope]) {
       this.$scopes[scope] = {};
     }
@@ -615,54 +586,26 @@ export default class Validator {
    * @param {Function} getter A function used to retrive a fresh value for the field.
    */
   attach(name, checks, options = {}) {
-    const attach = () => {
-      options.scope = this._resolveScope(options.scope);
-      this.updateField(name, checks, options);
-      const field = this.$scopes[options.scope][name];
-      field.scope = options.scope;
-      field.as = options.prettyName;
-      field.getter = options.getter;
-      field.context = options.context;
-      field.listeners = options.listeners || { detach() {} };
-      field.el = field.listeners.el;
-      field.events = {};
-      this._assignFlags(field);
-      // cache the scope property.
-      if (field.el && isCallable(field.el.setAttribute)) {
-        field.el.setAttribute('data-vv-scope', field.scope);
-      }
-
-      if (field.listeners.classes) {
-        field.listeners.classes.attach(field);
-      }
-      this._setAriaRequiredAttribute(field);
-      this._setAriaValidAttribute(field, true);
-      // if initial modifier is applied, validate immediatly.
-      if (options.initial) {
-        this.validate(name, field.getter(field.context()), field.scope).catch(() => {});
-      }
-    };
-
-    const scope = isCallable(options.scope) ? options.scope() : options.scope;
-    if (! scope && ! this.$ready) {
-      this.$deferred.push(attach);
-      return;
+    options.scope = options.scope;
+    this.updateField(name, checks, options);
+    const field = this.$scopes[options.scope][name];
+    field.scope = options.scope;
+    field.as = options.prettyName;
+    field.getter = options.getter;
+    field.context = options.context;
+    field.listeners = options.listeners || { detach() {} };
+    field.el = field.listeners.el;
+    field.events = {};
+    this._assignFlags(field);
+    if (field.listeners.classes) {
+      field.listeners.classes.attach(field);
     }
-
-    attach();
-  }
-
-  /**
-   * Initializes the non-scoped fields and any bootstrap logic.
-   */
-  init() {
-    this.$ready = true;
-    this.$deferred.forEach(attach => {
-      attach();
-    });
-    this.$deferred = [];
-
-    return this;
+    this._setAriaRequiredAttribute(field);
+    this._setAriaValidAttribute(field, true);
+    // if initial modifier is applied, validate immediatly.
+    if (options.initial) {
+      this.validate(name, field.getter(field.context()), field.scope).catch(() => {});
+    }
   }
 
   /**
@@ -692,7 +635,7 @@ export default class Validator {
    * @param  {string} checks validations expression.
    */
   append(name, checks, options = {}) {
-    options.scope = this._resolveScope(options.scope);
+    options.scope = options.scope;
     // No such field
     if (! this.$scopes[options.scope] || ! this.$scopes[options.scope][name]) {
       this.attach(name, checks, options);
@@ -705,11 +648,25 @@ export default class Validator {
     });
   }
 
+  _moveFieldScope(field, scope) {
+    if (!this.$scopes[scope]) {
+      this.$scopes[scope] = {};
+    }
+    // move the field to its new scope.
+    this.$scopes[scope][field.name] = field;
+    delete this.$scopes[field.scope][field.name];
+    field.scope = scope;
+    // update cached scope.
+    if (field.el && isCallable(field.el.setAttribute)) {
+      field.el.setAttribute('data-vv-scope', field.scope);
+    }
+  }
+
   /**
    * Updates the field rules with new ones.
    */
   updateField(name, checks, options = {}) {
-    let field = getPath(`${options.scope}.${name}`, this.$scopes, null);
+    let field = getPath(`${options.oldScope}.${name}`, this.$scopes, null);
     const oldChecks = field ? JSON.stringify(field.validations) : '';
     this._createField(name, checks, options.scope);
     field = getPath(`${options.scope}.${name}`, this.$scopes, null);

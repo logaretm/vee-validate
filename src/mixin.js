@@ -80,11 +80,5 @@ export default (Vue, options) => {
     };
   };
 
-  mixin.mounted = function mounted() {
-    if (this.$validator) {
-      this.$validator.init();
-    }
-  };
-
   return mixin;
 };
