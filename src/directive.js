@@ -6,7 +6,10 @@ const listenersInstances = [];
 export default (options) => ({
   inserted(el, { value, expression }, { context }) {
     const { instance } = find(listenersInstances, l => l.vm === context && l.el === el);
-    const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
+    let scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
+    if (!scope) {
+      scope = '__global__';
+    }
     if (scope !== instance.scope) {
       const field = context.$validator._resolveField(instance.fieldName, instance.scope);
       context.$validator._moveFieldScope(field, scope);
