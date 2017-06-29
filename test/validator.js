@@ -745,8 +745,8 @@ test('can fetch the values using getters for a specific scope when not specifyin
     const getter = (c) => c.value;
 
     // must use the attach API.
-    v1.attach('name', 'required|alpha', { scope: () => 'scope1', context: contexts[0], getter });
-    v1.attach('name_two', 'required|alpha', { scope: () => 'scope2', context: contexts[1], getter });
+    v1.attach('name', 'required|alpha', { scope: 'scope1', context: contexts[0], getter });
+    v1.attach('name_two', 'required|alpha', { scope: 'scope2', context: contexts[1], getter });
 
     t.true(await v1.validateAll('scope1'));
     t.false(await v1.validateAll('scope2'));    
@@ -873,4 +873,12 @@ test('it can set flags for attached fields', t => {
         untouched: false
     });
     t.false(v.fieldBag['form.title'].untouched);
+});
+
+test('it can hold handle mixed successes and errors from one field', async t => {
+    const v = new Validator({
+        name: 'alpha|min:3'
+    }, { fastExit: false });
+    t.false(await v.validate('name', '123'));
+    t.is(v.errorBag.count(), 1);
 });

@@ -586,7 +586,7 @@ export default class Validator {
    * @param {Function} getter A function used to retrive a fresh value for the field.
    */
   attach(name, checks, options = {}) {
-    options.scope = options.scope;
+    options.scope = options.scope || '__global__';
     this.updateField(name, checks, options);
     const field = this.$scopes[options.scope][name];
     field.scope = options.scope;
@@ -635,7 +635,7 @@ export default class Validator {
    * @param  {string} checks validations expression.
    */
   append(name, checks, options = {}) {
-    options.scope = options.scope;
+    options.scope = options.scope || '__global__';
     // No such field
     if (! this.$scopes[options.scope] || ! this.$scopes[options.scope][name]) {
       this.attach(name, checks, options);
@@ -824,6 +824,7 @@ export default class Validator {
     }
 
     const promises = [];
+    let test = true;
     const syncResult = Object.keys(field.validations)[this.fastExit ? 'every' : 'some'](rule => {
       const result = this._test(
         field,
@@ -836,11 +837,12 @@ export default class Validator {
         return true;
       }
 
+      test = test && result;
       return result;
     });
 
     return Promise.all(promises).then(values => {
-      const valid = syncResult && values.every(t => t);
+      const valid = syncResult && test && values.every(t => t);
 
       return valid;
     });
