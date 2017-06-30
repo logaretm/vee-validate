@@ -236,7 +236,7 @@ export default class Validator {
       const fieldScope = field.scope;
       if (getter && context && (scope === '__global__' || fieldScope === scope)) {
         const ctx = context();
-        if (ctx.disabled) {
+        if (ctx && ctx.disabled) {
           return;
         }
 
