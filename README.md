@@ -58,9 +58,10 @@ bower install vee-validate#2.0.0-rc.6--save
 
 ### CDN
 
-vee-validate is also available on jsdelivr cdn:
+vee-validate is also available on these cdns:
 
-[select whatever version](https://www.jsdelivr.com/projects/vee-validate) you would like to use.
+- [jsdelivr cdn](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js)
+- [unpkg](https://unpkg.com/vee-validate@2.0.0-rc.6)
 
 ### Getting Started
 

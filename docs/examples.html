@@ -141,14 +141,9 @@ ga('send', 'pageview');
   }),
   methods: {
     validateBeforeSubmit() {
-      this.$validator.validateAll().then((result) => {
-          if(result){
-            // eslint-disable-next-line
-            alert('From Submitted!');
-          }else {
-            // eslint-disable-next-line
-            alert('Correct them errors!');
-          }
+      this.$validator.validateAll().then(() => {
+          // eslint-disable-next-line
+          alert('From Submitted!');
       }).catch(() => {
           // eslint-disable-next-line
           alert('Correct them errors!');
@@ -769,4 +764,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor.js"></script><script type="text/javascript" src="/assets/js/bundle-122e0b45429753842fbb.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor.js"></script><script type="text/javascript" src="/assets/js/bundle-cdd601e260a2e2f3ecb7.js"></script></body></html>

@@ -12,7 +12,7 @@ Currently there are over 20 validation rules available in the plugin. This plugi
 
 ## [Installation](#installation)
 
-You can install this plugin via [npm](#npm) or [bower](#bower) or via a [CDN](#cdn).
+You can install this plugin via [npm](#npm) or via a [CDN](#cdn).
 
 ### [npm](#npm)
 
@@ -20,15 +20,10 @@ You can install this plugin via [npm](#npm) or [bower](#bower) or via a [CDN](#c
 npm install vee-validate --save
 ```
 
-### [bower](#bower)
-
-```bash
-bower install vee-validate#2.0.0-rc.4 --save
-```
-
 ### [CDN](#cdn)
 
-Head over to [jsdelivr](https://www.jsdelivr.com/projects/vee-validate) and grab the latest version. Then you may use it like this: 
+- [jsdelivr cdn](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js)
+- [unpkg](https://unpkg.com/vee-validate@2.0.0-rc.6)
 
 ```html
   <script src="path/to/vue.js"></script>
