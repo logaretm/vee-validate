@@ -18,15 +18,6 @@
 </p>
 <br>
 
-<p align="center">
-  <strong>Proudly sponsored by:</strong>
-  <br><br>
-  <a href="https://www.baianat.com/" target="_blank">
-    <img width="300" src="https://s3.eu-central-1.amazonaws.com/logaretm/baianat.svg">
-  </a>
-</p>
-<br><br>
-
 vee-validate is a plugin for [Vue.js](https://vuejs.org/) that allows you to validate input fields, and display errors.
 
 You don't have to do anything fancy in your app, most of the work goes into the html, You only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated. The plugin offers [many validations out of the box](http://vee-validate.logaretm.com/rules).
