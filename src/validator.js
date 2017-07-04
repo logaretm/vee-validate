@@ -282,7 +282,7 @@ export default class Validator {
 
     const field = this.$scopes[scope][name];
     field.name = name;
-    field.validations = this._normalizeRules(name, checks, scope);
+    field.validations = this._normalizeRules(name, checks, scope, field);
     field.required = this._isRequired(field);
   }
 
@@ -290,11 +290,11 @@ export default class Validator {
    * Normalizes rules.
    * @return {Object}
    */
-  _normalizeRules(name, checks, scope) {
+  _normalizeRules(name, checks, scope, field) {
     if (! checks) return {};
 
     if (typeof checks === 'string') {
-      return this._normalizeString(checks);
+      return this._normalizeString(checks, field);
     }
 
     if (! isObject(checks)) {
@@ -302,7 +302,7 @@ export default class Validator {
       return {};
     }
 
-    return this._normalizeObject(checks);
+    return this._normalizeObject(checks, field);
   }
 
   /**
@@ -315,7 +315,7 @@ export default class Validator {
   /**
    * Normalizes an object of rules.
    */
-  _normalizeObject(rules) {
+  _normalizeObject(rules, field = null) {
     const validations = {};
     Object.keys(rules).forEach(rule => {
       let params = [];
@@ -325,6 +325,10 @@ export default class Validator {
         params = rules[rule];
       } else {
         params = [rules[rule]];
+      }
+
+      if (rule === 'required') {
+        params = [field && field.invalidateFalse];
       }
 
       if (rules[rule] === false) {
@@ -377,7 +381,7 @@ export default class Validator {
    * @param {String} rules The rules that will be normalized.
    * @param {Object} field The field object that is being operated on.
    */
-  _normalizeString(rules) {
+  _normalizeString(rules, field = null) {
     const validations = {};
     rules.split('|').forEach(rule => {
       const parsedRule = this._parseRule(rule);
@@ -385,11 +389,11 @@ export default class Validator {
         return;
       }
 
+      validations[parsedRule.name] = parsedRule.params;
       if (parsedRule.name === 'required') {
-        validations.required = true;
+        validations.required = [field && field.invalidateFalse];
       }
 
-      validations[parsedRule.name] = parsedRule.params;
       if (date.installed && this._isADateRule(parsedRule.name)) {
         const dateFormat = this._getDateFormat(validations);
 
@@ -592,6 +596,7 @@ export default class Validator {
     field.scope = options.scope;
     field.as = options.prettyName;
     field.getter = options.getter;
+    field.invalidateFalse = options.invalidateFalse;
     field.context = options.context;
     field.listeners = options.listeners || { detach() {} };
     field.el = field.listeners.el;
@@ -602,6 +607,7 @@ export default class Validator {
     }
     this._setAriaRequiredAttribute(field);
     this._setAriaValidAttribute(field, true);
+
     // if initial modifier is applied, validate immediatly.
     if (options.initial) {
       this.validate(name, field.getter(field.context()), field.scope).catch(() => {});
@@ -668,7 +674,7 @@ export default class Validator {
   updateField(name, checks, options = {}) {
     let field = getPath(`${options.oldScope}.${name}`, this.$scopes, null);
     const oldChecks = field ? JSON.stringify(field.validations) : '';
-    this._createField(name, checks, options.scope);
+    this._createField(name, checks, options.scope, field);
     field = getPath(`${options.scope}.${name}`, this.$scopes, null);
     const newChecks = field ? JSON.stringify(field.validations) : '';
 

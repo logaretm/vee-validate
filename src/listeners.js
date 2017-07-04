@@ -467,7 +467,8 @@ export default class ListenerGenerator {
         context,
         getter,
         listeners: this,
-        initial: this.binding.modifiers.initial
+        initial: this.binding.modifiers.initial,
+        invalidateFalse: !!(this.el && this.el.type === 'checkbox')
       }
     );
 

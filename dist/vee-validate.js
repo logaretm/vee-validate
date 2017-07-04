@@ -683,9 +683,15 @@ var regex = function (value, ref) {
   return new RegExp(regex, flags).test(String(value));
 };
 
-var required = function (value) {
+var required = function (value, params) {
   if (Array.isArray(value)) {
     return !! value.length;
+  }
+
+  // incase a field considers `false` as an empty value like checkboxes.
+  var invalidateFalse = params[0];
+  if (value === false && invalidateFalse) {
+    return false;
   }
 
   if (value === undefined || value === null) {
@@ -1925,7 +1931,7 @@ Validator.prototype._resolveValuesFromGetters = function _resolveValuesFromGette
     var fieldScope = field.scope;
     if (getter && context && (scope === '__global__' || fieldScope === scope)) {
       var ctx = context();
-      if (ctx.disabled) {
+      if (ctx && ctx.disabled) {
         return;
       }
 
@@ -1975,7 +1981,7 @@ Validator.prototype._createField = function _createField (name, checks, scope) {
 
   var field = this.$scopes[scope][name];
   field.name = name;
-  field.validations = this._normalizeRules(name, checks, scope);
+  field.validations = this._normalizeRules(name, checks, scope, field);
   field.required = this._isRequired(field);
 };
 
@@ -1983,11 +1989,11 @@ Validator.prototype._createField = function _createField (name, checks, scope) {
  * Normalizes rules.
  * @return {Object}
  */
-Validator.prototype._normalizeRules = function _normalizeRules (name, checks, scope) {
+Validator.prototype._normalizeRules = function _normalizeRules (name, checks, scope, field) {
   if (! checks) { return {}; }
 
   if (typeof checks === 'string') {
-    return this._normalizeString(checks);
+    return this._normalizeString(checks, field);
   }
 
   if (! isObject(checks)) {
@@ -1995,7 +2001,7 @@ Validator.prototype._normalizeRules = function _normalizeRules (name, checks, sc
     return {};
   }
 
-  return this._normalizeObject(checks);
+  return this._normalizeObject(checks, field);
 };
 
 /**
@@ -2008,8 +2014,9 @@ Validator.prototype._isRequired = function _isRequired (field) {
 /**
  * Normalizes an object of rules.
  */
-Validator.prototype._normalizeObject = function _normalizeObject (rules) {
+Validator.prototype._normalizeObject = function _normalizeObject (rules, field) {
     var this$1 = this;
+    if ( field === void 0 ) field = null;
 
   var validations = {};
   Object.keys(rules).forEach(function (rule) {
@@ -2020,6 +2027,10 @@ Validator.prototype._normalizeObject = function _normalizeObject (rules) {
       params = rules[rule];
     } else {
       params = [rules[rule]];
+    }
+
+    if (rule === 'required') {
+      params = [field && field.invalidateFalse];
     }
 
     if (rules[rule] === false) {
@@ -2072,8 +2083,9 @@ Validator.prototype._containsValidation = function _containsValidation (validati
  * @param {String} rules The rules that will be normalized.
  * @param {Object} field The field object that is being operated on.
  */
-Validator.prototype._normalizeString = function _normalizeString (rules) {
+Validator.prototype._normalizeString = function _normalizeString (rules, field) {
     var this$1 = this;
+    if ( field === void 0 ) field = null;
 
   var validations = {};
   rules.split('|').forEach(function (rule) {
@@ -2082,11 +2094,11 @@ Validator.prototype._normalizeString = function _normalizeString (rules) {
       return;
     }
 
+    validations[parsedRule.name] = parsedRule.params;
     if (parsedRule.name === 'required') {
-      validations.required = true;
+      validations.required = [field && field.invalidateFalse];
     }
 
-    validations[parsedRule.name] = parsedRule.params;
     if (date.installed && this$1._isADateRule(parsedRule.name)) {
       var dateFormat = this$1._getDateFormat(validations);
 
@@ -2181,6 +2193,7 @@ Validator.prototype._test = function _test (field, value, rule) {
   if (! validator || typeof validator !== 'function') {
     throw new ValidatorException(("No such validator '" + (rule.name) + "' exists."));
   }
+  console.log(rule, rule.params);
 
   var result = validator(value, rule.params, field.name);
 
@@ -2293,12 +2306,13 @@ Validator.prototype._assignFlags = function _assignFlags (field) {
 Validator.prototype.attach = function attach (name, checks, options) {
     if ( options === void 0 ) options = {};
 
-  options.scope = options.scope;
+  options.scope = options.scope || '__global__';
   this.updateField(name, checks, options);
   var field = this.$scopes[options.scope][name];
   field.scope = options.scope;
   field.as = options.prettyName;
   field.getter = options.getter;
+  field.invalidateFalse = options.invalidateFalse;
   field.context = options.context;
   field.listeners = options.listeners || { detach: function detach() {} };
   field.el = field.listeners.el;
@@ -2309,6 +2323,7 @@ Validator.prototype.attach = function attach (name, checks, options) {
   }
   this._setAriaRequiredAttribute(field);
   this._setAriaValidAttribute(field, true);
+
   // if initial modifier is applied, validate immediatly.
   if (options.initial) {
     this.validate(name, field.getter(field.context()), field.scope).catch(function () {});
@@ -2344,7 +2359,7 @@ Validator.prototype.flag = function flag (name, flags) {
 Validator.prototype.append = function append (name, checks, options) {
     if ( options === void 0 ) options = {};
 
-  options.scope = options.scope;
+  options.scope = options.scope || '__global__';
   // No such field
   if (! this.$scopes[options.scope] || ! this.$scopes[options.scope][name]) {
     this.attach(name, checks, options);
@@ -2358,7 +2373,6 @@ Validator.prototype.append = function append (name, checks, options) {
 };
 
 Validator.prototype._moveFieldScope = function _moveFieldScope (field, scope) {
-  console.log('moving scope');
   if (!this.$scopes[scope]) {
     this.$scopes[scope] = {};
   }
@@ -2370,7 +2384,6 @@ Validator.prototype._moveFieldScope = function _moveFieldScope (field, scope) {
   if (field.el && isCallable(field.el.setAttribute)) {
     field.el.setAttribute('data-vv-scope', field.scope);
   }
-  console.log('scope moved');
 };
 
 /**
@@ -2381,7 +2394,7 @@ Validator.prototype.updateField = function updateField (name, checks, options) {
 
   var field = getPath(((options.oldScope) + "." + name), this.$scopes, null);
   var oldChecks = field ? JSON.stringify(field.validations) : '';
-  this._createField(name, checks, options.scope);
+  this._createField(name, checks, options.scope, field);
   field = getPath(((options.scope) + "." + name), this.$scopes, null);
   var newChecks = field ? JSON.stringify(field.validations) : '';
 
@@ -2546,6 +2559,7 @@ Validator.prototype._validate = function _validate (field, value) {
   }
 
   var promises = [];
+  var test = true;
   var syncResult = Object.keys(field.validations)[this.fastExit ? 'every' : 'some'](function (rule) {
     var result = this$1._test(
       field,
@@ -2558,11 +2572,12 @@ Validator.prototype._validate = function _validate (field, value) {
       return true;
     }
 
+    test = test && result;
     return result;
   });
 
   return Promise.all(promises).then(function (values) {
-    var valid = syncResult && values.every(function (t) { return t; });
+    var valid = syncResult && test && values.every(function (t) { return t; });
 
     return valid;
   });
@@ -3464,7 +3479,8 @@ ListenerGenerator.prototype.attach = function attach () {
       context: context,
       getter: getter,
       listeners: this,
-      initial: this.binding.modifiers.initial
+      initial: this.binding.modifiers.initial,
+      invalidateFalse: !!(this.el && this.el.type === 'checkbox')
     }
   );
 
@@ -3517,7 +3533,9 @@ var makeDirective = function (options) { return ({
     var ref$2 = find(listenersInstances, function (l) { return l.vm === context && l.el === el; });
     var instance = ref$2.instance;
     var scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
-    console.log(el.form.dataset.vvScope, el.dataset.vvScope, scope);
+    if (!scope) {
+      scope = '__global__';
+    }
     if (scope !== instance.scope) {
       var field = context.$validator._resolveField(instance.fieldName, instance.scope);
       context.$validator._moveFieldScope(field, scope);
