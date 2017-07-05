@@ -491,9 +491,9 @@ export default class Validator {
         let allValid = true;
         let data = {};
         if (Array.isArray(values)) {
-          allValid = values.every(t => t.valid);
-        } else { // Is a single object.
-          allValid = values.valid;
+          allValid = values.every(t => (isObject(t) ? t.valid : t));
+        } else { // Is a single object/boolean.
+          allValid = isObject(values) ? values.valid : values;
           data = values.data;
         }
 

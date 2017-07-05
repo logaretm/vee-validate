@@ -509,8 +509,21 @@ test('resolves promises to booleans', async t => {
 
     helpers.dimensionsTest({ width: 30, height: 20}, false, global);
     t.false(await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)]));
-    
 });
+
+test('promises can return booleans directly', async t => {
+    Validator.extend('direct', (value) => {
+        return new Promoise(resovle => resolve(!!value));
+    });
+    const v = new Validator({
+        field: 'required|direct'
+    });
+    t.false(await v.validate('field', 0));
+    t.false(await v.validate('field', false));
+    t.true(await v.validate('field', true));
+
+    Validator.remove('direct');
+})
 
 test('wont install moment if the provided reference is not provided or not a function', t => {
     t.false(Validator.installDateTimeValidators());
