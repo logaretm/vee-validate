@@ -684,6 +684,8 @@ var regex = function (value, ref) {
 };
 
 var required = function (value, params) {
+  if ( params === void 0 ) params = [false];
+
   if (Array.isArray(value)) {
     return !! value.length;
   }
@@ -2193,7 +2195,6 @@ Validator.prototype._test = function _test (field, value, rule) {
   if (! validator || typeof validator !== 'function') {
     throw new ValidatorException(("No such validator '" + (rule.name) + "' exists."));
   }
-  console.log(rule, rule.params);
 
   var result = validator(value, rule.params, field.name);
 
@@ -2203,9 +2204,9 @@ Validator.prototype._test = function _test (field, value, rule) {
       var allValid = true;
       var data = {};
       if (Array.isArray(values)) {
-        allValid = values.every(function (t) { return t.valid; });
-      } else { // Is a single object.
-        allValid = values.valid;
+        allValid = values.every(function (t) { return (isObject(t) ? t.valid : t); });
+      } else { // Is a single object/boolean.
+        allValid = isObject(values) ? values.valid : values;
         data = values.data;
       }
 
