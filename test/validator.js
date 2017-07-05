@@ -513,7 +513,7 @@ test('resolves promises to booleans', async t => {
 
 test('promises can return booleans directly', async t => {
     Validator.extend('direct', (value) => {
-        return new Promoise(resovle => resolve(!!value));
+        return new Promise(resolve => resolve(!!value));
     });
     const v = new Validator({
         field: 'required|direct'

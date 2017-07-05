@@ -1,4 +1,4 @@
-export default (value, params) => {
+export default (value, params = [false]) => {
   if (Array.isArray(value)) {
     return !! value.length;
   }
