@@ -2,12 +2,28 @@ import { isObject, assign } from './utils';
 
 export default class Dictionary {
   constructor(dictionary = {}) {
-    this.dictionary = {};
+    this.container = {};
     this.merge(dictionary);
   }
 
   hasLocale(locale) {
-    return !! this.dictionary[locale];
+    return !! this.container[locale];
+  }
+
+  setDateFormat(locale, format) {
+    if (!this.container[locale]) {
+      this.container[locale] = {};
+    }
+
+    this.container[locale].dateFormat = format;
+  }
+
+  getDateFormat(locale) {
+    if (!this.container[locale]) {
+      return undefined;
+    }
+
+    return this.container[locale].dateFormat;
   }
 
   getMessage(locale, key, fallback) {
@@ -15,7 +31,7 @@ export default class Dictionary {
       return fallback || this._getDefaultMessage(locale);
     }
 
-    return this.dictionary[locale].messages[key];
+    return this.container[locale].messages[key];
   }
 
   /**
@@ -30,7 +46,7 @@ export default class Dictionary {
       return this.getMessage(locale, key);
     }
 
-    const dict = this.dictionary[locale].custom && this.dictionary[locale].custom[field];
+    const dict = this.container[locale].custom && this.container[locale].custom[field];
     if (! dict || ! dict[key]) {
       return this.getMessage(locale, key);
     }
@@ -40,10 +56,10 @@ export default class Dictionary {
 
   _getDefaultMessage(locale) {
     if (this.hasMessage(locale, '_default')) {
-      return this.dictionary[locale].messages._default;
+      return this.container[locale].messages._default;
     }
 
-    return this.dictionary.en.messages._default;
+    return this.container.en.messages._default;
   }
 
   getAttribute(locale, key, fallback = '') {
@@ -51,49 +67,49 @@ export default class Dictionary {
       return fallback;
     }
 
-    return this.dictionary[locale].attributes[key];
+    return this.container[locale].attributes[key];
   }
 
   hasMessage(locale, key) {
     return !! (
             this.hasLocale(locale) &&
-            this.dictionary[locale].messages &&
-            this.dictionary[locale].messages[key]
+            this.container[locale].messages &&
+            this.container[locale].messages[key]
         );
   }
 
   hasAttribute(locale, key) {
     return !! (
             this.hasLocale(locale) &&
-            this.dictionary[locale].attributes &&
-            this.dictionary[locale].attributes[key]
+            this.container[locale].attributes &&
+            this.container[locale].attributes[key]
         );
   }
 
   merge(dictionary) {
-    this._merge(this.dictionary, dictionary);
+    this._merge(this.container, dictionary);
   }
 
   setMessage(locale, key, message) {
     if (! this.hasLocale(locale)) {
-      this.dictionary[locale] = {
+      this.container[locale] = {
         messages: {},
         attributes: {}
       };
     }
 
-    this.dictionary[locale].messages[key] = message;
+    this.container[locale].messages[key] = message;
   }
 
   setAttribute(locale, key, attribute) {
     if (! this.hasLocale(locale)) {
-      this.dictionary[locale] = {
+      this.container[locale] = {
         messages: {},
         attributes: {}
       };
     }
 
-    this.dictionary[locale].attributes[key] = attribute;
+    this.container[locale].attributes[key] = attribute;
   }
 
   _merge(target, source) {

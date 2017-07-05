@@ -136,3 +136,12 @@ test('custom messages can be provided for specific fields', t => {
 
   t.is(dict.getFieldMessage('en', 'name', 'alpha'), 'custom message');
 });
+
+test('able to get and set dateformat attributes', t => {
+  const dict = new Dictionary();
+  dict.setDateFormat('en', 'MM/DD/YYYY');
+  dict.setDateFormat('ar', 'DD/MM/YYYY');
+
+  t.is(dict.getDateFormat('en'), 'MM/DD/YYYY');
+  t.is(dict.getDateFormat('ar'), 'DD/MM/YYYY');
+});
