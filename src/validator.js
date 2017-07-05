@@ -4,8 +4,6 @@ import Dictionary from './dictionary';
 import messages from './messages';
 import { warn, isObject, isCallable, assign, getPath, toArray, createError } from './utils';
 import date from './plugins/date';
-import FieldBag from './fieldBag';
-import Field from './field';
 
 let LOCALE = 'en';
 let STRICT_MODE = true;
@@ -20,9 +18,10 @@ const DICTIONARY = new Dictionary({
 export default class Validator {
   constructor (validations, options = { vm: null, fastExit: true }) {
     this.strictMode = STRICT_MODE;
+    this.$scopes = { __global__: {} };
     this._createFields(validations);
-    this.errors = new ErrorBag();
-    this.fields = new FieldBag();
+    this.errorBag = new ErrorBag();
+    this.fieldBag = {};
     this.paused = false;
     this.fastExit = options.fastExit || false;
     this.$vm = options.vm;
@@ -493,7 +492,7 @@ export default class Validator {
         }
 
         if (! allValid) {
-          this.errors.add(
+          this.errorBag.add(
             field.name,
             this._formatErrorMessage(field, rule, data),
             rule.name,
@@ -510,7 +509,7 @@ export default class Validator {
     }
 
     if (! result.valid) {
-      this.errors.add(
+      this.errorBag.add(
         field.name,
         this._formatErrorMessage(field, rule, result.data),
         rule.name,
@@ -649,6 +648,20 @@ export default class Validator {
     });
   }
 
+  _moveFieldScope (field, scope) {
+    if (!this.$scopes[scope]) {
+      this.$scopes[scope] = {};
+    }
+    // move the field to its new scope.
+    this.$scopes[scope][field.name] = field;
+    delete this.$scopes[field.scope][field.name];
+    field.scope = scope;
+    // update cached scope.
+    if (field.el && isCallable(field.el.setAttribute)) {
+      field.el.setAttribute('data-vv-scope', field.scope);
+    }
+  }
+
   /**
    * Updates the field rules with new ones.
    */
@@ -662,7 +675,7 @@ export default class Validator {
     // compare both newChecks and oldChecks to make sure we don't trigger uneccessary directive
     // update by changing the errorBag (prevents infinite loops).
     if (newChecks !== oldChecks) {
-      this.errors.remove(name, options.scope);
+      this.errorBag.remove(name, options.scope);
     }
   }
 
@@ -675,7 +688,7 @@ export default class Validator {
     }
 
     this.$vm.$nextTick(() => {
-      this.errors.clear();
+      this.errorBag.clear();
     });
   }
 
@@ -695,7 +708,7 @@ export default class Validator {
       this.$scopes[scope][name].listeners.detach();
     }
 
-    this.errors.remove(name, scope);
+    this.errorBag.remove(name, scope);
     delete this.$scopes[scope][name];
   }
 
@@ -857,7 +870,7 @@ export default class Validator {
     if (!field) {
       return this._handleFieldNotFound(name, scope);
     }
-    this.errors.remove(field.name, field.scope);
+    this.errorBag.remove(field.name, field.scope);
     if (field.flags) {
       field.flags.pending = true;
     }
@@ -933,7 +946,7 @@ export default class Validator {
 
     let normalizedValues;
     if (! values || typeof values === 'string') {
-      this.errors.clear(values);
+      this.errorBag.clear(values);
       normalizedValues = this._resolveValuesFromGetters(values);
     } else {
       normalizedValues = {};
