@@ -1,55 +1,59 @@
-import ListenerGenerator from './listeners';
-import { getScope, isObject, find, getRules, warn } from './utils';
+import Generator from './generator';
+import { getDataAttribute, isObject, getRules, warn, getScope } from './utils';
 
-const listenersInstances = [];
+/**
+ * Finds the requested field by id from the context object.
+ * @param {Object} context
+ */
+const findField = (context) => {
+  if (!context || !context.$validator) {
+    return null;
+  }
+
+  return context.$validator.fields.find({ id: getDataAttribute('id') });
+};
 
 export default (options) => ({
+  bind (el, binding, vnode) {
+    const validator = vnode.context.$validator;
+    if (! validator) {
+      const name = vnode.context.$options._componentTag;
+      // eslint-disable-next-line
+      warn(`No validator instance is present on ${name ?'component "' +  name + '"' : 'un-named component'}, did you forget to inject '$validator'?`);
+      return;
+    }
+    const fieldOptions = Generator.generate(el, binding, vnode, options);
+    validator.attach(fieldOptions);
+  },
   inserted (el, { value, expression }, { context }) {
-    const { instance } = find(listenersInstances, l => l.vm === context && l.el === el);
+    const field = findField(context);
+    if (!field) return;
+
     let scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     if (!scope) {
       scope = '__global__';
     }
-    if (scope !== instance.scope) {
-      const field = context.$validator._resolveField(instance.fieldName, instance.scope);
-      context.$validator._moveFieldScope(field, scope);
-      instance.scope = scope;
-    }
-  },
-  bind (el, binding, vnode) {
-    if (! vnode.context.$validator) {
-      const name = vnode.context.$options._componentTag;
-      // eslint-disable-next-line
-      warn(`No validator instance is present on ${name ?'component "' +  name + '"' : 'un-named component'}, did you forget to inject '$validator'?`);
 
-      return;
-    }
-    const listener = new ListenerGenerator(el, binding, vnode, options);
-    listener.attach();
-    listenersInstances.push({ vm: vnode.context, el, instance: listener });
+    field.update({ scope });
   },
   update (el, { expression, value }, { context }) {
-    const { instance } = find(listenersInstances, l => l.vm === context && l.el === el);
+    const field = findField(context);
     // make sure we don't do uneccessary work if no expression was passed
-    // nor if the expression did not change.
-    if (! expression || (instance.cachedExp === JSON.stringify(value))) return;
+    // nor if the expression value did not change.
+    if (!field || !expression || (field.expression === JSON.stringify(value))) return;
 
-    instance.cachedExp = JSON.stringify(value);
+    field.expression = JSON.stringify(value);
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
-    context.$validator.updateField(
-      instance.fieldName,
-      getRules(expression, value, el),
-      { scope: scope || '__global__' }
-    );
+    field.update({
+      rules: getRules(expression, value, el),
+      scope: scope || '__global__'
+    });
   },
   unbind (el, { value }, { context }) {
-    const holder = find(listenersInstances, l => l.vm === context && l.el === el);
-    if (typeof holder === 'undefined') {
-      return;
-    }
+    const field = findField(context);
+    if (!field) return;
 
-    const scope = isObject(value) ? value.scope : (getScope(el) || '__global__');
-    context.$validator.detach(holder.instance.fieldName, scope);
-    listenersInstances.splice(listenersInstances.indexOf(holder), 1);
+    context.$validator.fields.remove({ id: field.id });
+    field.destroy();
   }
 });

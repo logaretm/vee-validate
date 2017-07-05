@@ -64,8 +64,8 @@ export default (Vue, options) => {
 
     // There is a validator but it isn't injected, mark as reactive.
     if (! requested && this.$validator) {
-      Vue.util.defineReactive(this.$validator, 'errorBag', this.$validator.errorBag);
-      Vue.util.defineReactive(this.$validator, 'fieldBag', this.$validator.fieldBag);
+      Vue.util.defineReactive(this.$validator, 'errors', this.$validator.errors);
+      Vue.util.defineReactive(this.$validator, 'fields', this.$validator.fields);
     }
 
     if (! this.$options.computed) {
@@ -73,10 +73,10 @@ export default (Vue, options) => {
     }
 
     this.$options.computed[options.errorBagName] = function errorBagGetter () {
-      return this.$validator.errorBag;
+      return this.$validator.errors;
     };
     this.$options.computed[options.fieldsBagName] = function fieldBagGetter () {
-      return this.$validator.fieldBag;
+      return this.$validator.fields.items.map(field => field.flags);
     };
   };
 

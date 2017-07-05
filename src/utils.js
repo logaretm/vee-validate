@@ -3,6 +3,8 @@
  */
 export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
 
+export const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
+
 /**
  * Determines the input field scope.
  */

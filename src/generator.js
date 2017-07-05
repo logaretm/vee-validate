@@ -1,4 +1,3 @@
-import ClassManager from './classes';
 import {
   getScope, debounce, warn,
   getDataAttribute, isObject, toArray,
@@ -7,7 +6,10 @@ import {
 } from './utils';
 import config from './config';
 
-export default class ListenerGenerator {
+/**
+ * Generates the options required to construct a field.
+ */
+export default class Generator {
   constructor (el, binding, vnode, options) {
     this.unwatch = undefined;
     this.callbacks = [];
@@ -19,11 +21,40 @@ export default class ListenerGenerator {
     this.options = assign({}, config, options);
     this.fieldName = this._resolveFieldName();
     this.model = this._resolveModel(vnode.data);
-    this.classes = new ClassManager(el, this.vm.$validator, {
-      component: this.component,
-      enableAutoClasses: options.enableAutoClasses,
+    this.classes = {
+      enabled: options.classes,
       classNames: options.classNames
-    });
+    };
+  }
+
+  static generate (el, binding, vnode, options) {
+    const generator = new Generator(el, binding, vnode, options);
+
+    return generator.generate();
+  }
+
+  generate () {
+    this.setup();
+
+    return {
+      name: this.fieldName,
+      el: this.el,
+      scope: this.scope,
+      vm: this.vm,
+      expression: this.binding.value,
+      component: this.component,
+      classes: this.classes.enabled,
+      classNames: this.classes.classNames,
+      listeners: this.listeners,
+      getters: this._resolveGetters(),
+      rules: getRules(this.binding.expression, this.binding.value, this.el),
+      initial: this.binding.modifiers.initial,
+      invalidateFalse: !!(this.el && this.el.type === 'checkbox'),
+      alias: getDataAttribute(this.el, 'as') || this.el.title,
+      onDestroy: () => {
+        this.destroy();
+      }
+    };
   }
 
   /**
@@ -368,14 +399,14 @@ export default class ListenerGenerator {
   }
 
   /**
-   * Returns a context, getter factory pairs for each input type.
+   * Returns a context, value factory pairs for each input type.
    */
-  _resolveValueGetter () {
+  _resolveGetters () {
     if (this.model.watchable) {
       return {
         context: () => this.vm,
         // eslint-disable-next-line
-        getter: (context) => { 
+        value: (context) => { 
           return getPath(this.model.expression, context);
         }
       };
@@ -384,8 +415,13 @@ export default class ListenerGenerator {
     if (this.component) {
       return {
         context: () => this.component,
+<<<<<<< db34a24e4a5fb02a49e545a533cc906a2d69b9f0:src/listeners.js
         getter: (context) => {
           const path = getDataAttribute(this.el, 'value-path') || (this.component.$attrs && this.component.$attrs['data-vv-value-path']);
+=======
+        value: (context) => {
+          const path = getDataAttribute(this.el, 'value-path');
+>>>>>>> first API draft:src/generator.js
           if (path) {
             return getPath(path, this.component);
           }
@@ -397,7 +433,7 @@ export default class ListenerGenerator {
     switch (this.el.type) {
     case 'checkbox': return {
       context: () => document.querySelectorAll(`input[name="${this.el.name}"]:checked`),
-      getter (context) {
+      value (context) {
         if (! context || ! context.length) {
           return null;
         }
@@ -407,20 +443,20 @@ export default class ListenerGenerator {
     };
     case 'radio': return {
       context: () => document.querySelector(`input[name="${this.el.name}"]:checked`),
-      getter (context) {
+      value (context) {
         return context && context.value;
       }
     };
     case 'file': return {
       context: () => this.el,
-      getter (context) {
+      value (context) {
         return toArray(context.files);
       }
     };
 
     default: return {
       context: () => this.el,
-      getter (context) {
+      value (context) {
         return context.value;
       }
     };
@@ -456,22 +492,7 @@ export default class ListenerGenerator {
   /**
    * Attaches the Event Listeners.
    */
-  attach () {
-    const { context, getter } = this._resolveValueGetter();
-    this.vm.$validator.attach(
-      this.fieldName,
-      getRules(this.binding.expression, this.binding.value, this.el), {
-        // eslint-disable-next-line
-        scope: this.scope,
-        prettyName: getDataAttribute(this.el, 'as') || this.el.title,
-        context,
-        getter,
-        listeners: this,
-        initial: this.binding.modifiers.initial,
-        invalidateFalse: !!(this.el && this.el.type === 'checkbox')
-      }
-    );
-
+  setup () {
     if (this.binding.modifiers.disable) {
       return;
     }
@@ -488,7 +509,7 @@ export default class ListenerGenerator {
   /**
      * Removes all attached event listeners.
      */
-  detach () {
+  destroy () {
     if (this.component) {
       this.component.$off('input', this.componentListener);
       this.component.$off('blur', this.componentListener);
@@ -501,8 +522,6 @@ export default class ListenerGenerator {
     if (this.unwatch) {
       this.unwatch();
     }
-
-    this.classes.detach();
 
     this.callbacks.forEach(h => {
       h.el.removeEventListener(h.name, h.listener);
