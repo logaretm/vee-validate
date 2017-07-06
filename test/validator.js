@@ -1,7 +1,6 @@
 import test from 'ava';
 import Validator from './../src/validator';
 import helpers from './helpers';
-import ValidatorException from './../src/exceptions/validatorException';
 
 // Converts the value to a boolean and returns it in a promise.
 Validator.extend('promised', (value) => {

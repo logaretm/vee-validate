@@ -65,12 +65,14 @@ export const debounce = (callback, wait = 0, immediate = false) => {
  * Emits a warning to the console.
  */
 export const warn = (message) => {
-  if (! console) {
-    return;
-  }
-
-    console.warn(`[vee-validate]: ${message}`); // eslint-disable-line
+  console.warn(`[vee-validate] ${message}`); // eslint-disable-line
 };
+
+/**
+ * Creates a branded error object.
+ * @param {String} message
+ */
+export const createError = (message) => new Error(`[vee-validate] ${message}`);
 
 /**
  * Checks if the value is an object.

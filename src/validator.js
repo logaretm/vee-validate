@@ -1,9 +1,8 @@
 import Rules from './rules';
 import ErrorBag from './errorBag';
-import ValidatorException from './exceptions/validatorException';
 import Dictionary from './dictionary';
 import messages from './messages';
-import { warn, isObject, isCallable, assign, getPath, toArray } from './utils';
+import { warn, isObject, isCallable, assign, getPath, toArray, createError } from './utils';
 import date from './plugins/date';
 
 let LOCALE = 'en';
@@ -107,14 +106,14 @@ export default class Validator {
     }
 
     if (! isCallable(validator.validate)) {
-      throw new ValidatorException(
+      throw createError(
         // eslint-disable-next-line
         `Extension Error: The validator '${name}' must be a function or have a 'validate' method.`
       );
     }
 
     if (! isCallable(validator.getMessage) && ! isObject(validator.messages)) {
-      throw new ValidatorException(
+      throw createError(
         // eslint-disable-next-line
         `Extension Error: The validator '${name}' must have a 'getMessage' method or have a 'messages' object.`
       );
@@ -472,7 +471,7 @@ export default class Validator {
   _test(field, value, rule) {
     const validator = Rules[rule.name];
     if (! validator || typeof validator !== 'function') {
-      throw new ValidatorException(`No such validator '${rule.name}' exists.`);
+      throw createError(`No such validator '${rule.name}' exists.`);
     }
 
     if (date.installed && this._isADateRule(rule.name)) {
@@ -531,11 +530,11 @@ export default class Validator {
    */
   on(name, fieldName, scope, callback) {
     if (! fieldName) {
-      throw new ValidatorException(`Cannot add a listener for non-existent field ${fieldName}.`);
+      throw createError(`Cannot add a listener for non-existent field ${fieldName}.`);
     }
 
     if (! isCallable(callback)) {
-      throw new ValidatorException(`The ${name} callback for field ${fieldName} is not callable.`);
+      throw createError(`The ${name} callback for field ${fieldName} is not callable.`);
     }
 
     this.$scopes[scope][fieldName].events[name] = callback;
@@ -810,7 +809,7 @@ export default class Validator {
     if (! this.strictMode) return Promise.resolve(true);
 
     const fullName = scope === '__global__' ? name : `${scope}.${name}`;
-    throw new ValidatorException(
+    throw createError(
         `Validating a non-existant field: "${fullName}". Use "attach()" first.`
       );
   }
