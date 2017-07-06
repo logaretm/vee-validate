@@ -141,12 +141,14 @@ ga('send', 'pageview');
   }),
   methods: {
     validateBeforeSubmit() {
-      this.$validator.validateAll().then(() => {
+      this.$validator.validateAll().then(result => {
+        if (result) {
           // eslint-disable-next-line
           alert('From Submitted!');
-      }).catch(() => {
-          // eslint-disable-next-line
-          alert('Correct them errors!');
+          return;
+        }
+
+        alert('Correct them errors!');
       });
     }
   }
@@ -388,12 +390,13 @@ export default {
   }),
   methods: {
     validateForm() {
-      this.$validator.validateAll().then(() => {
+      this.$validator.validateAll().then(result => {
+        if (result) {
           // eslint-disable-next-line
           alert('All Passes!');
-      }).catch(() => {
-          // eslint-disable-next-line
-          alert('Oh NO!');
+          return;
+        }
+        alert('Oh NO!');
       });
     }
   }
@@ -457,10 +460,11 @@ export default {
   }),
   methods: {
     nextStep() {
-      this.$validator.validateAll().then(() => {
-        // eslint-disable-next-line
-        alert('You just agreed to conditions without reading it.');
-      }).catch(() => {
+      this.$validator.validateAll().then(result => {
+        if (result) {
+          alert('You just agreed to conditions without reading it.');
+          return;
+        }
         // eslint-disable-next-line
         alert('You actually did not agree?');
       });
@@ -764,4 +768,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor.js"></script><script type="text/javascript" src="/assets/js/bundle-cdd601e260a2e2f3ecb7.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor.js"></script><script type="text/javascript" src="/assets/js/bundle-2f47a8d664e45df008fe.js"></script></body></html>
