@@ -8,7 +8,7 @@ import {
 import config from './config';
 
 export default class ListenerGenerator {
-  constructor(el, binding, vnode, options) {
+  constructor (el, binding, vnode, options) {
     this.unwatch = undefined;
     this.callbacks = [];
     this.el = el;
@@ -33,7 +33,7 @@ export default class ListenerGenerator {
    * @param {Object} data
    * @return {Object}
    */
-  _resolveModel(data) {
+  _resolveModel (data) {
     if (this.binding.arg) {
       return {
         watchable: true,
@@ -71,7 +71,7 @@ export default class ListenerGenerator {
   /**
    * @param {String} path
    */
-  _isExistingPath(path) {
+  _isExistingPath (path) {
     let obj = this.vm;
     return path.split('.').every(prop => {
       if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
@@ -84,11 +84,11 @@ export default class ListenerGenerator {
     });
   }
 
-    /**
+  /**
      * Resolves the field name to trigger validations.
      * @return {String} The field name.
      */
-  _resolveFieldName() {
+  _resolveFieldName () {
     if (this.component) {
       return getDataAttribute(this.el, 'name') || this.component.name;
     }
@@ -96,10 +96,10 @@ export default class ListenerGenerator {
     return getDataAttribute(this.el, 'name') || this.el.name;
   }
 
-    /**
+  /**
      * Determines if the validation rule requires additional listeners on target fields.
      */
-  _hasFieldDependency(rules) {
+  _hasFieldDependency (rules) {
     let fieldName = false;
     if (! rules) {
       return false;
@@ -134,17 +134,17 @@ export default class ListenerGenerator {
     return fieldName;
   }
 
-    /**
+  /**
      * Validates input value, triggered by 'input' event.
      */
-  _inputListener() {
+  _inputListener () {
     return this._validate(this.el.value);
   }
 
-    /**
+  /**
      * Validates files, triggered by 'change' event.
      */
-  _fileListener() {
+  _fileListener () {
     return this._validate(toArray(this.el.files)).then(isValid => {
       if (! isValid && this.binding.modifiers.reject) {
         this.el.value = '';
@@ -152,18 +152,18 @@ export default class ListenerGenerator {
     });
   }
 
-    /**
+  /**
      * Validates radio buttons, triggered by 'change' event.
      */
-  _radioListener() {
+  _radioListener () {
     const checked = document.querySelector(`input[name="${this.el.name}"]:checked`);
     return this._validate(checked ? checked.value : null);
   }
 
-    /**
+  /**
      * Validates checkboxes, triggered by change event.
      */
-  _checkboxListener() {
+  _checkboxListener () {
     const checkedBoxes = document.querySelectorAll(`input[name="${this.el.name}"]:checked`);
     if (! checkedBoxes || ! checkedBoxes.length) {
       this._validate(null);
@@ -175,10 +175,10 @@ export default class ListenerGenerator {
     });
   }
 
-    /**
+  /**
      * Trigger the validation for a specific value.
      */
-  _validate(value) {
+  _validate (value) {
     if ((this.component && this.component.disabled) || this.el.disabled) {
       return Promise.resolve(true);
     }
@@ -188,11 +188,11 @@ export default class ListenerGenerator {
     );
   }
 
-    /**
+  /**
      * Returns a scoped callback, only runs if the el scope is the same as the recieved scope
      * From the event.
      */
-  _getScopedListener(callback) {
+  _getScopedListener (callback) {
     return (scope) => {
       if (! scope || scope === this.scope || scope instanceof window.Event) {
         callback();
@@ -200,17 +200,17 @@ export default class ListenerGenerator {
     };
   }
 
-    /**
+  /**
      * Attaches validator event-triggered validation.
      */
-  _attachValidatorEvent() {
+  _attachValidatorEvent () {
     const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
     const fieldName = this._hasFieldDependency(
-        getRules(this.binding.expression, this.binding.value, this.el)
-      );
+      getRules(this.binding.expression, this.binding.value, this.el)
+    );
     if (fieldName) {
-            // Wait for the validator ready triggered when vm is mounted because maybe
-            // the element isn't mounted yet.
+      // Wait for the validator ready triggered when vm is mounted because maybe
+      // the element isn't mounted yet.
       this.vm.$nextTick(() => {
         const target = document.querySelector(`input[name='${fieldName}']`);
         if (! target) {
@@ -230,7 +230,7 @@ export default class ListenerGenerator {
   /**
    * Gets a listener that listens on bound models instead of elements.
    */
-  _getModeledListener() {
+  _getModeledListener () {
     if (!this.model.watchable) {
       return null;
     }
@@ -240,10 +240,10 @@ export default class ListenerGenerator {
     };
   }
 
-    /**
+  /**
      * Determines a suitable listener for the element.
      */
-  _getSuitableListener() {
+  _getSuitableListener () {
     let listener;
     const overrides = {
       // Models can be unwatchable and have a lazy modifier,
@@ -299,8 +299,8 @@ export default class ListenerGenerator {
     // users are able to specify which events they want to validate on
     const events = getDataAttribute(this.el, 'validate-on') || this.options.events;
     listener.names = events.split('|')
-                           .filter(e => overrides[e] !== null)
-                           .map(e => overrides[e] || e);
+      .filter(e => overrides[e] !== null)
+      .map(e => overrides[e] || e);
 
     return listener;
   }
@@ -308,7 +308,7 @@ export default class ListenerGenerator {
   /**
    * Attaches neccessary validation events for the component.
    */
-  _attachComponentListeners() {
+  _attachComponentListeners () {
     this.componentListener = debounce((value) => {
       this._validate(value);
     }, getDataAttribute(this.el, 'delay') || this.options.delay);
@@ -333,7 +333,7 @@ export default class ListenerGenerator {
   /**
    * Attachs a suitable listener for the input.
    */
-  _attachFieldListeners() {
+  _attachFieldListeners () {
     // If it is a component, use vue events instead.
     if (this.component) {
       this._attachComponentListeners();
@@ -370,7 +370,7 @@ export default class ListenerGenerator {
   /**
    * Returns a context, getter factory pairs for each input type.
    */
-  _resolveValueGetter() {
+  _resolveValueGetter () {
     if (this.model.watchable) {
       return {
         context: () => this.vm,
@@ -397,7 +397,7 @@ export default class ListenerGenerator {
     switch (this.el.type) {
     case 'checkbox': return {
       context: () => document.querySelectorAll(`input[name="${this.el.name}"]:checked`),
-      getter(context) {
+      getter (context) {
         if (! context || ! context.length) {
           return null;
         }
@@ -407,20 +407,20 @@ export default class ListenerGenerator {
     };
     case 'radio': return {
       context: () => document.querySelector(`input[name="${this.el.name}"]:checked`),
-      getter(context) {
+      getter (context) {
         return context && context.value;
       }
     };
     case 'file': return {
       context: () => this.el,
-      getter(context) {
+      getter (context) {
         return toArray(context.files);
       }
     };
 
     default: return {
       context: () => this.el,
-      getter(context) {
+      getter (context) {
         return context.value;
       }
     };
@@ -430,7 +430,7 @@ export default class ListenerGenerator {
   /**
    * Attaches model watchers and extra listeners.
    */
-  _attachModelWatcher(arg) {
+  _attachModelWatcher (arg) {
     const events = getDataAttribute(this.el, 'validate-on') || this.options.events;
     const listener = debounce(
       this._getSuitableListener().listener.bind(this),
@@ -456,7 +456,7 @@ export default class ListenerGenerator {
   /**
    * Attaches the Event Listeners.
    */
-  attach() {
+  attach () {
     const { context, getter } = this._resolveValueGetter();
     this.vm.$validator.attach(
       this.fieldName,
@@ -485,10 +485,10 @@ export default class ListenerGenerator {
     this._attachFieldListeners();
   }
 
-    /**
+  /**
      * Removes all attached event listeners.
      */
-  detach() {
+  detach () {
     if (this.component) {
       this.component.$off('input', this.componentListener);
       this.component.$off('blur', this.componentListener);

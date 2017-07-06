@@ -8,7 +8,7 @@ export default (value, params) => {
     return true;
   }
 
-    // if is 0.
+  // if is 0.
   if (Number(decimals) === 0) {
     return /^-?\d*$/.test(value);
   }
@@ -22,6 +22,6 @@ export default (value, params) => {
 
   const parsedValue = parseFloat(value);
 
-    // eslint-disable-next-line
+  // eslint-disable-next-line
     return parsedValue === parsedValue;
 };

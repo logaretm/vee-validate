@@ -10,7 +10,7 @@ const DEFAULT_CLASS_NAMES = {
 };
 
 export default class ClassListener {
-  constructor(el, validator, options = {}) {
+  constructor (el, validator, options = {}) {
     this.el = el;
     this.validator = validator;
     this.enabled = options.enableAutoClasses;
@@ -22,7 +22,7 @@ export default class ClassListener {
   /**
    * Resets the classes state.
    */
-  reset() {
+  reset () {
     // detach all listeners.
     this.detach();
 
@@ -39,7 +39,7 @@ export default class ClassListener {
   /**
    * Syncs the automatic classes.
    */
-  sync() {
+  sync () {
     this.addInteractionListeners();
 
     if (! this.enabled) return;
@@ -52,7 +52,7 @@ export default class ClassListener {
     this.toggle(this.classNames.untouched, this.field.flags.untouched);
   }
 
-  addFocusListener() {
+  addFocusListener () {
     // listen for focus event.
     this.listeners.focus = () => {
       this.remove(this.classNames.untouched);
@@ -74,7 +74,7 @@ export default class ClassListener {
     }
   }
 
-  addInputListener() {
+  addInputListener () {
     // listen for input.
     const event = getInputEventName(this.el);
     this.listeners.input = () => {
@@ -97,7 +97,7 @@ export default class ClassListener {
     }
   }
 
-  addInteractionListeners() {
+  addInteractionListeners () {
     if (! this.listeners.focus) {
       this.addFocusListener();
     }
@@ -111,7 +111,7 @@ export default class ClassListener {
    * Attach field with its listeners.
    * @param {*} field
    */
-  attach(field) {
+  attach (field) {
     this.field = field;
     this.add(this.classNames.pristine);
     this.add(this.classNames.untouched);
@@ -129,7 +129,7 @@ export default class ClassListener {
   /**
    * Detach all listeners.
    */
-  detach() {
+  detach () {
     // TODO: Why could the field be undefined?
     if (! this.field) return;
 
@@ -147,7 +147,7 @@ export default class ClassListener {
    * Add a class.
    * @param {*} className
    */
-  add(className) {
+  add (className) {
     if (! this.enabled) return;
 
     addClass(this.el, className);
@@ -157,7 +157,7 @@ export default class ClassListener {
    * Remove a class.
    * @param {*} className
    */
-  remove(className) {
+  remove (className) {
     if (! this.enabled) return;
 
     removeClass(this.el, className);
@@ -169,7 +169,7 @@ export default class ClassListener {
    * @param {String} className
    * @param {Boolean} status
    */
-  toggle(className, status) {
+  toggle (className, status) {
     if (status) {
       this.add(className);
       return;

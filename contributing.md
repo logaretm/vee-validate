@@ -25,7 +25,7 @@ As you can see we have:
     - `utils`: contains small utility functions.
 - `dist` contains the unminified and the minified build of the repository.
 - `docs` contains the src and built files for the documentation.
-- `test` contains the test files for the project, it uses [ava](https://github.com/avajs/ava) for testing. it contains a similar folder structure as the `src` folder.
+- `tests` contains the test files for the project, it uses [jest](https://github.com/facebook/jest) for testing. it contains a similar folder structure as the `src` folder.
 
 If you want to contribute to the docs you can find it in the `docs` folder.
 
@@ -41,9 +41,9 @@ If you want to contribute to the docs you can find it in the `docs` folder.
 
 ### Source Code
 
-Currently we are using ES2015 (ES6) for the source code, using buble and rollup to convert and bundle it to ES5, the available builds are: non-minified and minified.
+Currently we are using ES2015 (ES6) for the source code, using buble and rollup to convert and bundle it to ES5, the available builds are: non-minified and minified and es6 build.
 
-Also we are using ESlint for code style, it based of airbnb config but with few modifications, please respect them as much as you can.
+Also we are using ESlint for code style, with the standard config with few modifications, please respect them as much as you can.
 
 ### Testing
 

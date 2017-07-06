@@ -25,7 +25,7 @@ const mapFields = (fields) => {
   const normalized = normalize(fields);
   return Object.keys(normalized).reduce((prev, curr) => {
     const field = normalized[curr];
-    prev[curr] = function mappedField() {
+    prev[curr] = function mappedField () {
       if (this.$validator.fieldBag[field]) {
         return this.$validator.fieldBag[field];
       }

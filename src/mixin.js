@@ -34,7 +34,7 @@ const createValidator = (vm, options) => new Validator(null, {
 
 export default (Vue, options) => {
   const mixin = {};
-  mixin.provide = function providesValidator() {
+  mixin.provide = function providesValidator () {
     if (this.$validator) {
       return {
         $validator: this.$validator
@@ -44,7 +44,7 @@ export default (Vue, options) => {
     return {};
   };
 
-  mixin.beforeCreate = function beforeCreate() {
+  mixin.beforeCreate = function beforeCreate () {
     // if its a root instance, inject anyways, or if it requested a new instance.
     if (this.$options.$validates || !this.$parent) {
       this.$validator = createValidator(this, options);
@@ -72,10 +72,10 @@ export default (Vue, options) => {
       this.$options.computed = {};
     }
 
-    this.$options.computed[options.errorBagName] = function errorBagGetter() {
+    this.$options.computed[options.errorBagName] = function errorBagGetter () {
       return this.$validator.errorBag;
     };
-    this.$options.computed[options.fieldsBagName] = function fieldBagGetter() {
+    this.$options.computed[options.fieldsBagName] = function fieldBagGetter () {
       return this.$validator.fieldBag;
     };
   };

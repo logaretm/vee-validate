@@ -42,9 +42,9 @@ export const getPath = (propPath, target, def = undefined) => {
 /**
  * Debounces a function.
  */
-export const debounce = (callback, wait = 0, immediate = false) => {
+export const debounce = (fn, wait = 0, immediate = false) => {
   if (wait === 0) {
-    return callback;
+    return fn;
   }
 
   let timeout;
@@ -52,12 +52,12 @@ export const debounce = (callback, wait = 0, immediate = false) => {
   return (...args) => {
     const later = () => {
       timeout = null;
-      if (!immediate) callback(...args);
+      if (!immediate) fn(...args);
     };
     const callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if (callNow) callback(...args);
+    if (callNow) fn(...args);
   };
 };
 

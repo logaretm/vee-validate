@@ -4,7 +4,7 @@ import { getScope, isObject, find, getRules, warn } from './utils';
 const listenersInstances = [];
 
 export default (options) => ({
-  inserted(el, { value, expression }, { context }) {
+  inserted (el, { value, expression }, { context }) {
     const { instance } = find(listenersInstances, l => l.vm === context && l.el === el);
     let scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     if (!scope) {
@@ -16,7 +16,7 @@ export default (options) => ({
       instance.scope = scope;
     }
   },
-  bind(el, binding, vnode) {
+  bind (el, binding, vnode) {
     if (! vnode.context.$validator) {
       const name = vnode.context.$options._componentTag;
       // eslint-disable-next-line
@@ -28,7 +28,7 @@ export default (options) => ({
     listener.attach();
     listenersInstances.push({ vm: vnode.context, el, instance: listener });
   },
-  update(el, { expression, value }, { context }) {
+  update (el, { expression, value }, { context }) {
     const { instance } = find(listenersInstances, l => l.vm === context && l.el === el);
     // make sure we don't do uneccessary work if no expression was passed
     // nor if the expression did not change.
@@ -42,7 +42,7 @@ export default (options) => ({
       { scope: scope || '__global__' }
     );
   },
-  unbind(el, { value }, { context }) {
+  unbind (el, { value }, { context }) {
     const holder = find(listenersInstances, l => l.vm === context && l.el === el);
     if (typeof holder === 'undefined') {
       return;

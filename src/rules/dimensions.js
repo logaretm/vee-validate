@@ -14,7 +14,7 @@ const validateImage = (file, width, height) => {
 export default (files, [width, height]) => {
   const list = [];
   for (let i = 0; i < files.length; i++) {
-        // if file is not an image, reject.
+    // if file is not an image, reject.
     if (! /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
       return false;
     }

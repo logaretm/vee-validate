@@ -1,16 +1,16 @@
 import { isObject, assign } from './utils';
 
 export default class Dictionary {
-  constructor(dictionary = {}) {
+  constructor (dictionary = {}) {
     this.container = {};
     this.merge(dictionary);
   }
 
-  hasLocale(locale) {
+  hasLocale (locale) {
     return !! this.container[locale];
   }
 
-  setDateFormat(locale, format) {
+  setDateFormat (locale, format) {
     if (!this.container[locale]) {
       this.container[locale] = {};
     }
@@ -18,7 +18,7 @@ export default class Dictionary {
     this.container[locale].dateFormat = format;
   }
 
-  getDateFormat(locale) {
+  getDateFormat (locale) {
     if (!this.container[locale]) {
       return undefined;
     }
@@ -26,7 +26,7 @@ export default class Dictionary {
     return this.container[locale].dateFormat;
   }
 
-  getMessage(locale, key, fallback) {
+  getMessage (locale, key, fallback) {
     if (! this.hasMessage(locale, key)) {
       return fallback || this._getDefaultMessage(locale);
     }
@@ -41,7 +41,7 @@ export default class Dictionary {
    * @param {String} field
    * @param {String} key
    */
-  getFieldMessage(locale, field, key) {
+  getFieldMessage (locale, field, key) {
     if (! this.hasLocale(locale)) {
       return this.getMessage(locale, key);
     }
@@ -54,7 +54,7 @@ export default class Dictionary {
     return dict[key];
   }
 
-  _getDefaultMessage(locale) {
+  _getDefaultMessage (locale) {
     if (this.hasMessage(locale, '_default')) {
       return this.container[locale].messages._default;
     }
@@ -62,7 +62,7 @@ export default class Dictionary {
     return this.container.en.messages._default;
   }
 
-  getAttribute(locale, key, fallback = '') {
+  getAttribute (locale, key, fallback = '') {
     if (! this.hasAttribute(locale, key)) {
       return fallback;
     }
@@ -70,27 +70,27 @@ export default class Dictionary {
     return this.container[locale].attributes[key];
   }
 
-  hasMessage(locale, key) {
+  hasMessage (locale, key) {
     return !! (
-            this.hasLocale(locale) &&
+      this.hasLocale(locale) &&
             this.container[locale].messages &&
             this.container[locale].messages[key]
-        );
+    );
   }
 
-  hasAttribute(locale, key) {
+  hasAttribute (locale, key) {
     return !! (
-            this.hasLocale(locale) &&
+      this.hasLocale(locale) &&
             this.container[locale].attributes &&
             this.container[locale].attributes[key]
-        );
+    );
   }
 
-  merge(dictionary) {
+  merge (dictionary) {
     this._merge(this.container, dictionary);
   }
 
-  setMessage(locale, key, message) {
+  setMessage (locale, key, message) {
     if (! this.hasLocale(locale)) {
       this.container[locale] = {
         messages: {},
@@ -101,7 +101,7 @@ export default class Dictionary {
     this.container[locale].messages[key] = message;
   }
 
-  setAttribute(locale, key, attribute) {
+  setAttribute (locale, key, attribute) {
     if (! this.hasLocale(locale)) {
       this.container[locale] = {
         messages: {},
@@ -112,7 +112,7 @@ export default class Dictionary {
     this.container[locale].attributes[key] = attribute;
   }
 
-  _merge(target, source) {
+  _merge (target, source) {
     if (! (isObject(target) && isObject(source))) {
       return target;
     }
