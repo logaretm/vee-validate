@@ -94,7 +94,7 @@ var alphaDash = {
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ_-]*$/
 };
 
-var alpha$$1 = function (value, ref) {
+var alpha = function (value, ref) {
   if ( ref === void 0 ) ref = [null];
   var locale = ref[0];
 
@@ -181,7 +181,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = assertString;
 function assertString(input) {
-  if (typeof input !== 'string') {
+  var isString = typeof input === 'string' || input instanceof String;
+
+  if (!isString) {
     throw new TypeError('This library (validator.js) validates strings only');
   }
 }
@@ -203,12 +205,12 @@ var _assertString2 = _interopRequireDefault(assertString_1);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* eslint-disable max-len */
-var creditCard = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|(222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})|62[0-9]{14}$/;
+var creditCard = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|(222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11}|62[0-9]{14})$/;
 /* eslint-enable max-len */
 
 function isCreditCard(str) {
   (0, _assertString2.default)(str);
-  var sanitized = str.replace(/[^0-9]+/g, '');
+  var sanitized = str.replace(/[- ]+/g, '');
   if (!creditCard.test(sanitized)) {
     return false;
   }
@@ -250,7 +252,7 @@ var decimal = function (value, params) {
     return true;
   }
 
-    // if is 0.
+  // if is 0.
   if (Number(decimals) === 0) {
     return /^-?\d*$/.test(value);
   }
@@ -264,7 +266,7 @@ var decimal = function (value, params) {
 
   var parsedValue = parseFloat(value);
 
-    // eslint-disable-next-line
+  // eslint-disable-next-line
     return parsedValue === parsedValue;
 };
 
@@ -295,7 +297,7 @@ var dimensions = function (files, ref) {
 
   var list = [];
   for (var i = 0; i < files.length; i++) {
-        // if file is not an image, reject.
+    // if file is not an image, reject.
     if (! /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
       return false;
     }
@@ -401,6 +403,10 @@ function isFDQN(str, options) {
     if (!parts.length || !/^([a-z\u00a1-\uffff]{2,}|xn[a-z0-9-]{2,})$/i.test(tld)) {
       return false;
     }
+    // disallow spaces
+    if (/[\s\u2002-\u200B\u202F\u205F\u3000\uFEFF\uDB40\uDC20]/.test(tld)) {
+      return false;
+    }
   }
   for (var part, i = 0; i < parts.length; i++) {
     part = parts[i];
@@ -410,8 +416,8 @@ function isFDQN(str, options) {
     if (!/^[a-z\u00a1-\uffff0-9-]+$/i.test(part)) {
       return false;
     }
+    // disallow full-width chars
     if (/[\uff01-\uff5e]/.test(part)) {
-      // disallow full-width chars
       return false;
     }
     if (part[0] === '-' || part[part.length - 1] === '-') {
@@ -488,7 +494,7 @@ function isEmail(str, options) {
     user = user.replace(/\./g, '').toLowerCase();
   }
 
-  if (!(0, _isByteLength2.default)(user, { max: 64 }) || !(0, _isByteLength2.default)(domain, { max: 256 })) {
+  if (!(0, _isByteLength2.default)(user, { max: 64 }) || !(0, _isByteLength2.default)(domain, { max: 254 })) {
     return false;
   }
 
@@ -826,7 +832,8 @@ function isURL(url, options) {
   }
   hostname = split.join('@');
 
-  port_str = ipv6 = null;
+  port_str = null;
+  ipv6 = null;
   var ipv6_match = hostname.match(wrapped_ipv6);
   if (ipv6_match) {
     host = '';
@@ -868,10 +875,10 @@ module.exports = exports['default'];
 var isURL = unwrapExports(isURL_1);
 
 var url = function (value, ref) {
-        if ( ref === void 0 ) ref = [true];
-        var requireProtocol = ref[0];
+    if ( ref === void 0 ) ref = [true];
+    var requireProtocol = ref[0];
 
-        return isURL(value, { require_protocol: !! requireProtocol });
+    return isURL(value, { require_protocol: !! requireProtocol });
 };
 
 /* eslint-disable camelcase */
@@ -879,7 +886,7 @@ var Rules = {
   alpha_dash: alpha_dash,
   alpha_num: alpha_num,
   alpha_spaces: alpha_spaces,
-  alpha: alpha$$1,
+  alpha: alpha,
   between: between,
   confirmed: confirmed,
   credit_card: credit_card,
@@ -904,11 +911,11 @@ var Rules = {
   url: url
 };
 
-var ErrorBag = function ErrorBag() {
+var ErrorBag = function ErrorBag () {
   this.errors = [];
 };
 
-  /**
+/**
    * Adds an error to the internal array.
    *
    * @param {string} field The field name.
@@ -922,7 +929,7 @@ ErrorBag.prototype.add = function add (field, msg, rule, scope) {
   this.errors.push({ field: field, msg: msg, rule: rule, scope: scope });
 };
 
-  /**
+/**
    * Gets all error messages from the internal array.
    *
    * @param {String} scope The Scope name, optional.
@@ -936,7 +943,7 @@ ErrorBag.prototype.all = function all (scope) {
   return this.errors.filter(function (e) { return e.scope === scope; }).map(function (e) { return e.msg; });
 };
 
-  /**
+/**
    * Checks if there are any errors in the internal array.
    * @param {String} scope The Scope name, optional.
    * @return {boolean} result True if there was at least one error, false otherwise.
@@ -949,7 +956,7 @@ ErrorBag.prototype.any = function any (scope) {
   return !! this.errors.filter(function (e) { return e.scope === scope; }).length;
 };
 
-  /**
+/**
    * Removes all items from the internal array.
    *
    * @param {String} scope The Scope name, optional.
@@ -971,7 +978,7 @@ ErrorBag.prototype.clear = function clear (scope) {
   }
 };
 
-  /**
+/**
    * Collects errors into groups or for a specific field.
    *
    * @param{string} field The field name.
@@ -1000,9 +1007,9 @@ ErrorBag.prototype.collect = function collect (field, scope, map) {
   }
 
   return this.errors.filter(function (e) { return e.field === field && e.scope === scope; })
-                    .map(function (e) { return (map ? e.msg : e); });
+    .map(function (e) { return (map ? e.msg : e); });
 };
-  /**
+/**
    * Gets the internal array length.
    *
    * @return {Number} length The internal array length.
@@ -1011,7 +1018,7 @@ ErrorBag.prototype.count = function count () {
   return this.errors.length;
 };
 
-  /**
+/**
    * Gets the first error message for a specific field.
    *
    * @param{string} field The field name.
@@ -1046,7 +1053,7 @@ ErrorBag.prototype.first = function first (field, scope) {
   return null;
 };
 
-  /**
+/**
    * Returns the first error rule for the specified field
    *
    * @param {string} field The specified field.
@@ -1058,7 +1065,7 @@ ErrorBag.prototype.firstRule = function firstRule (field, scope) {
   return (errors.length && errors[0].rule) || null;
 };
 
-  /**
+/**
    * Checks if the internal array has at least one error for the specified field.
    *
    * @param{string} field The specified field.
@@ -1070,7 +1077,7 @@ ErrorBag.prototype.has = function has (field, scope) {
   return !! this.first(field, scope);
 };
 
-  /**
+/**
    * Gets the first error message for a specific field and a rule.
    * @param {String} name The name of the field.
    * @param {String} rule The name of the rule.
@@ -1082,7 +1089,7 @@ ErrorBag.prototype.firstByRule = function firstByRule (name, rule, scope) {
   return (error && error.msg) || null;
 };
 
-  /**
+/**
    * Removes all error messages associated with a specific field.
    *
    * @param{string} field The field which messages are to be removed.
@@ -1091,8 +1098,8 @@ ErrorBag.prototype.firstByRule = function firstByRule (name, rule, scope) {
 ErrorBag.prototype.remove = function remove (field, scope) {
     var this$1 = this;
 
-  var removeCondition = scope ? (function (e) { return e.field === field && e.scope === scope; }) :
-                                  (function (e) { return e.field === field && e.scope === '__global__'; });
+  var removeCondition = scope ? function (e) { return e.field === field && e.scope === scope; }
+    : function (e) { return e.field === field && e.scope === '__global__'; };
 
   for (var i = 0; i < this.errors.length; ++i) {
     if (removeCondition(this$1.errors[i])) {
@@ -1102,7 +1109,7 @@ ErrorBag.prototype.remove = function remove (field, scope) {
   }
 };
 
-  /**
+/**
    * Get the field attributes if there's a rule selector.
    *
    * @param{string} field The specified field.
@@ -1120,7 +1127,7 @@ ErrorBag.prototype._selector = function _selector (field) {
   return null;
 };
 
-  /**
+/**
    * Get the field scope if specified using dot notation.
    *
    * @param {string} field the specifie field.
@@ -1137,22 +1144,6 @@ ErrorBag.prototype._scope = function _scope (field) {
 
   return null;
 };
-
-var ValidatorException = (function (Error) {
-  function ValidatorException() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    Error.apply(this, args);
-    this.message = "[vee-validate]: " + (this.message);
-  }
-
-  if ( Error ) ValidatorException.__proto__ = Error;
-  ValidatorException.prototype = Object.create( Error && Error.prototype );
-  ValidatorException.prototype.constructor = ValidatorException;
-
-  return ValidatorException;
-}(Error));
 
 /**
  * Gets the data attribute. the name must be kebab-case.
@@ -1200,12 +1191,12 @@ var getPath = function (propPath, target, def) {
 /**
  * Debounces a function.
  */
-var debounce = function (callback, wait, immediate) {
+var debounce = function (fn, wait, immediate) {
   if ( wait === void 0 ) wait = 0;
   if ( immediate === void 0 ) immediate = false;
 
   if (wait === 0) {
-    return callback;
+    return fn;
   }
 
   var timeout;
@@ -1216,12 +1207,12 @@ var debounce = function (callback, wait, immediate) {
 
     var later = function () {
       timeout = null;
-      if (!immediate) { callback.apply(void 0, args); }
+      if (!immediate) { fn.apply(void 0, args); }
     };
     var callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if (callNow) { callback.apply(void 0, args); }
+    if (callNow) { fn.apply(void 0, args); }
   };
 };
 
@@ -1229,12 +1220,14 @@ var debounce = function (callback, wait, immediate) {
  * Emits a warning to the console.
  */
 var warn = function (message) {
-  if (! console) {
-    return;
-  }
-
-    console.warn(("[vee-validate]: " + message)); // eslint-disable-line
+  console.warn(("[vee-validate] " + message)); // eslint-disable-line
 };
+
+/**
+ * Creates a branded error object.
+ * @param {String} message
+ */
+var createError = function (message) { return new Error(("[vee-validate] " + message)); };
 
 /**
  * Checks if the value is an object.
@@ -1389,7 +1382,7 @@ var getInputEventName = function (el) {
   return 'input';
 };
 
-var Dictionary = function Dictionary(dictionary) {
+var Dictionary = function Dictionary (dictionary) {
   if ( dictionary === void 0 ) dictionary = {};
 
   this.container = {};
@@ -1464,18 +1457,18 @@ Dictionary.prototype.getAttribute = function getAttribute (locale, key, fallback
 
 Dictionary.prototype.hasMessage = function hasMessage (locale, key) {
   return !! (
-          this.hasLocale(locale) &&
+    this.hasLocale(locale) &&
           this.container[locale].messages &&
           this.container[locale].messages[key]
-      );
+  );
 };
 
 Dictionary.prototype.hasAttribute = function hasAttribute (locale, key) {
   return !! (
-          this.hasLocale(locale) &&
+    this.hasLocale(locale) &&
           this.container[locale].attributes &&
           this.container[locale].attributes[key]
-      );
+  );
 };
 
 Dictionary.prototype.merge = function merge (dictionary) {
@@ -1721,7 +1714,7 @@ var DICTIONARY = new Dictionary({
   }
 });
 
-var Validator = function Validator(validations, options) {
+var Validator = function Validator (validations, options) {
   if ( options === void 0 ) options = { vm: null, fastExit: true };
 
   this.strictMode = STRICT_MODE;
@@ -1815,14 +1808,14 @@ Validator._guardExtend = function _guardExtend (name, validator) {
   }
 
   if (! isCallable(validator.validate)) {
-    throw new ValidatorException(
+    throw createError(
       // eslint-disable-next-line
       ("Extension Error: The validator '" + name + "' must be a function or have a 'validate' method.")
     );
   }
 
   if (! isCallable(validator.getMessage) && ! isObject(validator.messages)) {
-    throw new ValidatorException(
+    throw createError(
       // eslint-disable-next-line
       ("Extension Error: The validator '" + name + "' must have a 'getMessage' method or have a 'messages' object.")
     );
@@ -2170,8 +2163,6 @@ Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule, sc
     if ( scope === void 0 ) scope = '__global__';
 
   if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
-    var param = this.$scopes[scope][rule.params[0]];
-    if (param && param.name) { return [param.name]; }
     return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
   }
 
@@ -2201,7 +2192,7 @@ Validator.prototype._test = function _test (field, value, rule) {
 
   var validator = Rules[rule.name];
   if (! validator || typeof validator !== 'function') {
-    throw new ValidatorException(("No such validator '" + (rule.name) + "' exists."));
+    throw createError(("No such validator '" + (rule.name) + "' exists."));
   }
 
   if (date.installed && this._isADateRule(rule.name)) {
@@ -2260,11 +2251,11 @@ Validator.prototype._test = function _test (field, value, rule) {
  */
 Validator.prototype.on = function on (name, fieldName, scope, callback) {
   if (! fieldName) {
-    throw new ValidatorException(("Cannot add a listener for non-existent field " + fieldName + "."));
+    throw createError(("Cannot add a listener for non-existent field " + fieldName + "."));
   }
 
   if (! isCallable(callback)) {
-    throw new ValidatorException(("The " + name + " callback for field " + fieldName + " is not callable."));
+    throw createError(("The " + name + " callback for field " + fieldName + " is not callable."));
   }
 
   this.$scopes[scope][fieldName].events[name] = callback;
@@ -2328,7 +2319,7 @@ Validator.prototype.attach = function attach (name, checks, options) {
   field.getter = options.getter;
   field.invalidateFalse = options.invalidateFalse;
   field.context = options.context;
-  field.listeners = options.listeners || { detach: function detach() {} };
+  field.listeners = options.listeners || { detach: function detach () {} };
   field.el = field.listeners.el;
   field.events = {};
   this._assignFlags(field);
@@ -2554,9 +2545,9 @@ Validator.prototype._handleFieldNotFound = function _handleFieldNotFound (name, 
   if (! this.strictMode) { return Promise.resolve(true); }
 
   var fullName = scope === '__global__' ? name : (scope + "." + name);
-  throw new ValidatorException(
-      ("Validating a non-existant field: \"" + fullName + "\". Use \"attach()\" first.")
-    );
+  throw createError(
+    ("Validating a non-existant field: \"" + fullName + "\". Use \"attach()\" first.")
+  );
 };
 
 /**
@@ -2765,7 +2756,7 @@ var createValidator = function (vm, options) { return new Validator(null, {
 
 var makeMixin = function (Vue, options) {
   var mixin = {};
-  mixin.provide = function providesValidator() {
+  mixin.provide = function providesValidator () {
     if (this.$validator) {
       return {
         $validator: this.$validator
@@ -2775,7 +2766,7 @@ var makeMixin = function (Vue, options) {
     return {};
   };
 
-  mixin.beforeCreate = function beforeCreate() {
+  mixin.beforeCreate = function beforeCreate () {
     // if its a root instance, inject anyways, or if it requested a new instance.
     if (this.$options.$validates || !this.$parent) {
       this.$validator = createValidator(this, options);
@@ -2803,10 +2794,10 @@ var makeMixin = function (Vue, options) {
       this.$options.computed = {};
     }
 
-    this.$options.computed[options.errorBagName] = function errorBagGetter() {
+    this.$options.computed[options.errorBagName] = function errorBagGetter () {
       return this.$validator.errorBag;
     };
-    this.$options.computed[options.fieldsBagName] = function fieldBagGetter() {
+    this.$options.computed[options.fieldsBagName] = function fieldBagGetter () {
       return this.$validator.fieldBag;
     };
   };
@@ -2823,7 +2814,7 @@ var DEFAULT_CLASS_NAMES = {
   dirty: 'dirty' // control has been interacted with
 };
 
-var ClassListener = function ClassListener(el, validator, options) {
+var ClassListener = function ClassListener (el, validator, options) {
   if ( options === void 0 ) options = {};
 
   this.el = el;
@@ -3013,7 +3004,7 @@ var config = {
   fastExit: true
 };
 
-var ListenerGenerator = function ListenerGenerator(el, binding, vnode, options) {
+var ListenerGenerator = function ListenerGenerator (el, binding, vnode, options) {
   this.unwatch = undefined;
   this.callbacks = [];
   this.el = el;
@@ -3089,7 +3080,7 @@ ListenerGenerator.prototype._isExistingPath = function _isExistingPath (path) {
   });
 };
 
-  /**
+/**
    * Resolves the field name to trigger validations.
    * @return {String} The field name.
    */
@@ -3101,7 +3092,7 @@ ListenerGenerator.prototype._resolveFieldName = function _resolveFieldName () {
   return getDataAttribute(this.el, 'name') || this.el.name;
 };
 
-  /**
+/**
    * Determines if the validation rule requires additional listeners on target fields.
    */
 ListenerGenerator.prototype._hasFieldDependency = function _hasFieldDependency (rules) {
@@ -3141,14 +3132,14 @@ ListenerGenerator.prototype._hasFieldDependency = function _hasFieldDependency (
   return fieldName;
 };
 
-  /**
+/**
    * Validates input value, triggered by 'input' event.
    */
 ListenerGenerator.prototype._inputListener = function _inputListener () {
   return this._validate(this.el.value);
 };
 
-  /**
+/**
    * Validates files, triggered by 'change' event.
    */
 ListenerGenerator.prototype._fileListener = function _fileListener () {
@@ -3161,7 +3152,7 @@ ListenerGenerator.prototype._fileListener = function _fileListener () {
   });
 };
 
-  /**
+/**
    * Validates radio buttons, triggered by 'change' event.
    */
 ListenerGenerator.prototype._radioListener = function _radioListener () {
@@ -3169,7 +3160,7 @@ ListenerGenerator.prototype._radioListener = function _radioListener () {
   return this._validate(checked ? checked.value : null);
 };
 
-  /**
+/**
    * Validates checkboxes, triggered by change event.
    */
 ListenerGenerator.prototype._checkboxListener = function _checkboxListener () {
@@ -3186,7 +3177,7 @@ ListenerGenerator.prototype._checkboxListener = function _checkboxListener () {
   });
 };
 
-  /**
+/**
    * Trigger the validation for a specific value.
    */
 ListenerGenerator.prototype._validate = function _validate (value) {
@@ -3199,7 +3190,7 @@ ListenerGenerator.prototype._validate = function _validate (value) {
   );
 };
 
-  /**
+/**
    * Returns a scoped callback, only runs if the el scope is the same as the recieved scope
    * From the event.
    */
@@ -3213,7 +3204,7 @@ ListenerGenerator.prototype._getScopedListener = function _getScopedListener (ca
   };
 };
 
-  /**
+/**
    * Attaches validator event-triggered validation.
    */
 ListenerGenerator.prototype._attachValidatorEvent = function _attachValidatorEvent () {
@@ -3221,11 +3212,11 @@ ListenerGenerator.prototype._attachValidatorEvent = function _attachValidatorEve
 
   var listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
   var fieldName = this._hasFieldDependency(
-      getRules(this.binding.expression, this.binding.value, this.el)
-    );
+    getRules(this.binding.expression, this.binding.value, this.el)
+  );
   if (fieldName) {
-          // Wait for the validator ready triggered when vm is mounted because maybe
-          // the element isn't mounted yet.
+    // Wait for the validator ready triggered when vm is mounted because maybe
+    // the element isn't mounted yet.
     this.vm.$nextTick(function () {
       var target = document.querySelector(("input[name='" + fieldName + "']"));
       if (! target) {
@@ -3257,7 +3248,7 @@ ListenerGenerator.prototype._getModeledListener = function _getModeledListener (
   };
 };
 
-  /**
+/**
    * Determines a suitable listener for the element.
    */
 ListenerGenerator.prototype._getSuitableListener = function _getSuitableListener () {
@@ -3316,8 +3307,8 @@ ListenerGenerator.prototype._getSuitableListener = function _getSuitableListener
   // users are able to specify which events they want to validate on
   var events = getDataAttribute(this.el, 'validate-on') || this.options.events;
   listener.names = events.split('|')
-                         .filter(function (e) { return overrides[e] !== null; })
-                         .map(function (e) { return overrides[e] || e; });
+    .filter(function (e) { return overrides[e] !== null; })
+    .map(function (e) { return overrides[e] || e; });
 
   return listener;
 };
@@ -3420,7 +3411,7 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
   switch (this.el.type) {
   case 'checkbox': return {
     context: function () { return document.querySelectorAll(("input[name=\"" + (this$1.el.name) + "\"]:checked")); },
-    getter: function getter(context) {
+    getter: function getter (context) {
       if (! context || ! context.length) {
         return null;
       }
@@ -3430,20 +3421,20 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
   };
   case 'radio': return {
     context: function () { return document.querySelector(("input[name=\"" + (this$1.el.name) + "\"]:checked")); },
-    getter: function getter(context) {
+    getter: function getter (context) {
       return context && context.value;
     }
   };
   case 'file': return {
     context: function () { return this$1.el; },
-    getter: function getter(context) {
+    getter: function getter (context) {
       return toArray(context.files);
     }
   };
 
   default: return {
     context: function () { return this$1.el; },
-    getter: function getter(context) {
+    getter: function getter (context) {
       return context.value;
     }
   };
@@ -3512,7 +3503,7 @@ ListenerGenerator.prototype.attach = function attach () {
   this._attachFieldListeners();
 };
 
-  /**
+/**
    * Removes all attached event listeners.
    */
 ListenerGenerator.prototype.detach = function detach () {
@@ -3540,7 +3531,7 @@ ListenerGenerator.prototype.detach = function detach () {
 var listenersInstances = [];
 
 var makeDirective = function (options) { return ({
-  inserted: function inserted(el, ref, ref$1) {
+  inserted: function inserted (el, ref, ref$1) {
     var value = ref.value;
     var expression = ref.expression;
     var context = ref$1.context;
@@ -3557,7 +3548,7 @@ var makeDirective = function (options) { return ({
       instance.scope = scope;
     }
   },
-  bind: function bind(el, binding, vnode) {
+  bind: function bind (el, binding, vnode) {
     if (! vnode.context.$validator) {
       var name = vnode.context.$options._componentTag;
       // eslint-disable-next-line
@@ -3569,7 +3560,7 @@ var makeDirective = function (options) { return ({
     listener.attach();
     listenersInstances.push({ vm: vnode.context, el: el, instance: listener });
   },
-  update: function update(el, ref, ref$1) {
+  update: function update (el, ref, ref$1) {
     var expression = ref.expression;
     var value = ref.value;
     var context = ref$1.context;
@@ -3588,7 +3579,7 @@ var makeDirective = function (options) { return ({
       { scope: scope || '__global__' }
     );
   },
-  unbind: function unbind(el, ref, ref$1) {
+  unbind: function unbind (el, ref, ref$1) {
     var value = ref.value;
     var context = ref$1.context;
 
@@ -3628,7 +3619,7 @@ var mapFields = function (fields) {
   var normalized = normalize(fields);
   return Object.keys(normalized).reduce(function (prev, curr) {
     var field = normalized[curr];
-    prev[curr] = function mappedField() {
+    prev[curr] = function mappedField () {
       if (this.$validator.fieldBag[field]) {
         return this.$validator.fieldBag[field];
       }
