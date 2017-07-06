@@ -14,7 +14,7 @@
     "minify": "uglifyjs dist/vee-validate.js -o dist/vee-validate.min.js -c -m",
     "build:locale": "node build/locale",
     "build": "npm run build:es && npm run build:main && npm run minify && npm run build:locale",
-    "cover": "nyc report"
+    "cover": "jest --coverage"
   },
   "keywords": [
     "VueJS",

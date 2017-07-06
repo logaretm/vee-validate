@@ -810,8 +810,8 @@ export default class Validator {
 
     const fullName = scope === '__global__' ? name : `${scope}.${name}`;
     throw createError(
-        `Validating a non-existant field: "${fullName}". Use "attach()" first.`
-      );
+      `Validating a non-existant field: "${fullName}". Use "attach()" first.`
+    );
   }
 
   /**
