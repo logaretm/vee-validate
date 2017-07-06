@@ -461,29 +461,6 @@ test('promises can return booleans directly', async () => {
   expect(await v.validate('field', true)).toBe(true);
 
   Validator.remove('direct');
-})
-
-test('wont install moment if the provided reference is not provided or not a function', () => {
-  expect(Validator.installDateTimeValidators()).toBe(false);
-  expect(Validator.installDateTimeValidators('But I am moment!')).toBe(false); // nope
-});
-
-test('installs date validators', async () => {
-  document.body.innerHTML = `<input type="text" name="field" value="" id="el">`;
-  const el = document.querySelector('#el');
-  expect(Validator.installDateTimeValidators(moment)).toBe(true);
-  const v = new Validator();
-  v.attach({
-    name: 'birthday',
-    vm: {
-      $el: document.body
-    },
-    rules: 'date_format:DD/MM/YYYY|after:field'
-  });
-
-  el.value = '02/01/2008';
-  expect(await v.validate('birthday', '01/12/2008')).toBe(true);
-  expect(await v.validate('birthday', '01/01/2008')).toBe(false);
 });
 
 test('correctly parses rules with multiple colons', async () => {
@@ -491,23 +468,6 @@ test('correctly parses rules with multiple colons', async () => {
   expect(Validator.installDateTimeValidators(moment)).toBe(true);
   expect(await v.validate('time', '15:30')).toBe(true);
   expect(await v.validate('time', '1700')).toBe(false);
-});
-
-test('auto installs date validators if moment is present globally', async () => {
-  global.moment = require('moment');
-  document.body.innerHTML = `<input type="text" name="field" value="" id="el">`;
-  const el = document.querySelector('#el');
-  const v = new Validator();
-  v.attach({
-    name: 'birthday',
-    vm: {
-      $el: document.body
-    },
-    rules: 'date_format:DD/MM/YYYY|after:field'
-  });
-  el.value = '02/01/2008';
-  expect(await v.validate('birthday', '01/12/2008')).toBe(true);
-  expect(await v.validate('birthday', '01/01/2008')).toBe(false);
 });
 
 test('can add custom names via the attributes dictionary', async () => {
