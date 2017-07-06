@@ -83,6 +83,14 @@ test('should return valid rules data', t => {
     required: true,
     email: true
   });
+
+  const rulesets = {
+    email: 'required|email',
+    password: 'required',
+  };
+
+  t.deepEqual(getRules(null, null, {}, { name: 'email', rulesets }), 'required|email');
+  t.deepEqual(getRules(null, null, { name: 'email' }, { rulesets }), 'required|email');
 });
 
 test('assigns objects', t => {

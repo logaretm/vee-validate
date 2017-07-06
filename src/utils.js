@@ -199,10 +199,14 @@ export const find = (array, predicate) => {
  * @param {String} expression The binding expression.
  * @param {Object|String} value The binding value.
  * @param {element} el The element.
+ * @param {Object} component The component.
  * @returns {String|Object}
  */
-export const getRules = (expression, value, el) => {
+export const getRules = (expression, value, el, component) => {
   if (! expression) {
+    if (component && (el.name || component.name) && component.rulesets) {
+      return component.rulesets[el.name || component.name];
+    }
     return getDataAttribute(el, 'rules');
   }
 

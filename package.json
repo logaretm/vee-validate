@@ -7,7 +7,7 @@
   "homepage": "http://vee-validate.logaretm.com",
   "repository": "https://github.com/baianat/vee-validate",
   "scripts": {
-    "test": "nyc ava --colors",
+    "test": "nyc ava --colors --serial",
     "lint": "eslint ./src",
     "build:es": "rollup -c build/rollup.esm.config.js",
     "build:main": "rollup -c build/rollup.config.js",

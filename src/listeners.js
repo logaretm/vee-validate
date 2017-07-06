@@ -206,7 +206,7 @@ export default class ListenerGenerator {
   _attachValidatorEvent() {
     const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
     const fieldName = this._hasFieldDependency(
-        getRules(this.binding.expression, this.binding.value, this.el)
+        getRules(this.binding.expression, this.binding.value, this.el, this.component || this.vm)
       );
     if (fieldName) {
             // Wait for the validator ready triggered when vm is mounted because maybe
@@ -460,7 +460,7 @@ export default class ListenerGenerator {
     const { context, getter } = this._resolveValueGetter();
     this.vm.$validator.attach(
       this.fieldName,
-      getRules(this.binding.expression, this.binding.value, this.el), {
+      getRules(this.binding.expression, this.binding.value, this.el, this.component || this.vm), {
         // eslint-disable-next-line
         scope: this.scope,
         prettyName: getDataAttribute(this.el, 'as') || this.el.title,
