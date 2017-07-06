@@ -16,6 +16,7 @@ test.beforeEach(() => {
     Validator.setLocale('en');
     Validator.updateDictionary({ ar: undefined }); // reset the dictionary for other tests.
     Validator.setStrictMode(true);
+    Validator.dictionary.setDateFormat('en', undefined);
 });
 
 // All tests are serial because the locale is shared across all validators
@@ -541,23 +542,20 @@ test('installs date validators', async t => {
     t.false(await v.validate('birthday', '01/01/2008'));
 });
 
-test('appends date_format to validator using dynamic rule', async t => {
+test.serial('uses the locale date format if none are specified', async t => {
     const moment = require('moment');
     t.true(Validator.installDateTimeValidators(moment));
-    const v = new Validator({ birthday: {
-        date_format:'DD/MM/YYYY',
-        date_between: [ '01/10/2007', '03/12/2008']
-    } });
-
-    let rules = v._normalizeObject({
-        date_format:'DD/MM/YYYY',
-        date_between: [ '01/10/2007', '03/12/2008']
+    const v = new Validator({
+        birthday: 'after:01/12/2008'
     });
+    v.dictionary.setDateFormat('en', 'MM/DD/YYYY');
+    t.true(await v.validate('birthday', '01/13/2008'));
+    t.false(await v.validate('birthday', '13/01/2008'));
 
-    t.true(rules.date_between.length === 3);
-
-    rules = v._normalizeObject(rules);
-    t.true(rules.date_between.length === 3);
+    // can also skip adding date_format params
+    v.attach('field', 'date_format');
+    t.true(await v.validate('birthday', '01/13/2008'));
+    t.false(await v.validate('birthday', '13/01/2008'));
 });
 
 test('correctly parses rules with multiple colons', async t => {

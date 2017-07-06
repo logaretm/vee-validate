@@ -1392,12 +1392,28 @@ var getInputEventName = function (el) {
 var Dictionary = function Dictionary(dictionary) {
   if ( dictionary === void 0 ) dictionary = {};
 
-  this.dictionary = {};
+  this.container = {};
   this.merge(dictionary);
 };
 
 Dictionary.prototype.hasLocale = function hasLocale (locale) {
-  return !! this.dictionary[locale];
+  return !! this.container[locale];
+};
+
+Dictionary.prototype.setDateFormat = function setDateFormat (locale, format) {
+  if (!this.container[locale]) {
+    this.container[locale] = {};
+  }
+
+  this.container[locale].dateFormat = format;
+};
+
+Dictionary.prototype.getDateFormat = function getDateFormat (locale) {
+  if (!this.container[locale]) {
+    return undefined;
+  }
+
+  return this.container[locale].dateFormat;
 };
 
 Dictionary.prototype.getMessage = function getMessage (locale, key, fallback) {
@@ -1405,7 +1421,7 @@ Dictionary.prototype.getMessage = function getMessage (locale, key, fallback) {
     return fallback || this._getDefaultMessage(locale);
   }
 
-  return this.dictionary[locale].messages[key];
+  return this.container[locale].messages[key];
 };
 
 /**
@@ -1420,7 +1436,7 @@ Dictionary.prototype.getFieldMessage = function getFieldMessage (locale, field, 
     return this.getMessage(locale, key);
   }
 
-  var dict = this.dictionary[locale].custom && this.dictionary[locale].custom[field];
+  var dict = this.container[locale].custom && this.container[locale].custom[field];
   if (! dict || ! dict[key]) {
     return this.getMessage(locale, key);
   }
@@ -1430,10 +1446,10 @@ Dictionary.prototype.getFieldMessage = function getFieldMessage (locale, field, 
 
 Dictionary.prototype._getDefaultMessage = function _getDefaultMessage (locale) {
   if (this.hasMessage(locale, '_default')) {
-    return this.dictionary[locale].messages._default;
+    return this.container[locale].messages._default;
   }
 
-  return this.dictionary.en.messages._default;
+  return this.container.en.messages._default;
 };
 
 Dictionary.prototype.getAttribute = function getAttribute (locale, key, fallback) {
@@ -1443,49 +1459,49 @@ Dictionary.prototype.getAttribute = function getAttribute (locale, key, fallback
     return fallback;
   }
 
-  return this.dictionary[locale].attributes[key];
+  return this.container[locale].attributes[key];
 };
 
 Dictionary.prototype.hasMessage = function hasMessage (locale, key) {
   return !! (
           this.hasLocale(locale) &&
-          this.dictionary[locale].messages &&
-          this.dictionary[locale].messages[key]
+          this.container[locale].messages &&
+          this.container[locale].messages[key]
       );
 };
 
 Dictionary.prototype.hasAttribute = function hasAttribute (locale, key) {
   return !! (
           this.hasLocale(locale) &&
-          this.dictionary[locale].attributes &&
-          this.dictionary[locale].attributes[key]
+          this.container[locale].attributes &&
+          this.container[locale].attributes[key]
       );
 };
 
 Dictionary.prototype.merge = function merge (dictionary) {
-  this._merge(this.dictionary, dictionary);
+  this._merge(this.container, dictionary);
 };
 
 Dictionary.prototype.setMessage = function setMessage (locale, key, message) {
   if (! this.hasLocale(locale)) {
-    this.dictionary[locale] = {
+    this.container[locale] = {
       messages: {},
       attributes: {}
     };
   }
 
-  this.dictionary[locale].messages[key] = message;
+  this.container[locale].messages[key] = message;
 };
 
 Dictionary.prototype.setAttribute = function setAttribute (locale, key, attribute) {
   if (! this.hasLocale(locale)) {
-    this.dictionary[locale] = {
+    this.container[locale] = {
       messages: {},
       attributes: {}
     };
   }
 
-  this.dictionary[locale].attributes[key] = attribute;
+  this.container[locale].attributes[key] = attribute;
 };
 
 Dictionary.prototype._merge = function _merge (target, source) {
@@ -1725,11 +1741,19 @@ var Validator = function Validator(validations, options) {
 };
 
 var prototypeAccessors = { dictionary: {},locale: {},rules: {} };
+var staticAccessors = { dictionary: {} };
 
 /**
  * @return {Dictionary}
  */
 prototypeAccessors.dictionary.get = function () {
+  return DICTIONARY;
+};
+
+/**
+ * @return {Dictionary}
+ */
+staticAccessors.dictionary.get = function () {
   return DICTIONARY;
 };
 
@@ -2017,7 +2041,6 @@ Validator.prototype._isRequired = function _isRequired (field) {
  * Normalizes an object of rules.
  */
 Validator.prototype._normalizeObject = function _normalizeObject (rules, field) {
-    var this$1 = this;
     if ( field === void 0 ) field = null;
 
   var validations = {};
@@ -2040,14 +2063,6 @@ Validator.prototype._normalizeObject = function _normalizeObject (rules, field) 
     } else {
       validations[rule] = params;
     }
-
-    if (date.installed && this$1._isADateRule(rule)) {
-      var dateFormat = this$1._getDateFormat(validations);
-
-      if (! this$1._containsValidation(validations[rule], dateFormat)) {
-        validations[rule].push(this$1._getDateFormat(validations));
-      }
-    }
   });
 
   return validations;
@@ -2059,18 +2074,19 @@ Validator.prototype._normalizeObject = function _normalizeObject (rules, field) 
  * @param {Array} validations the field validations.
  */
 Validator.prototype._getDateFormat = function _getDateFormat (validations) {
+  var format = null;
   if (validations.date_format && Array.isArray(validations.date_format)) {
-    return validations.date_format[0];
+    format = validations.date_format[0];
   }
 
-  return null;
+  return format || this.dictionary.getDateFormat(this.locale);
 };
 
 /**
  * Checks if the passed rule is a date rule.
  */
 Validator.prototype._isADateRule = function _isADateRule (rule) {
-  return !! ~['after', 'before', 'date_between'].indexOf(rule);
+  return !! ~['after', 'before', 'date_between', 'date_format'].indexOf(rule);
 };
 
 /**
@@ -2099,14 +2115,6 @@ Validator.prototype._normalizeString = function _normalizeString (rules, field) 
     validations[parsedRule.name] = parsedRule.params;
     if (parsedRule.name === 'required') {
       validations.required = [field && field.invalidateFalse];
-    }
-
-    if (date.installed && this$1._isADateRule(parsedRule.name)) {
-      var dateFormat = this$1._getDateFormat(validations);
-
-      if (! this$1._containsValidation(validations[parsedRule.name], dateFormat)) {
-        validations[parsedRule.name].push(this$1._getDateFormat(validations));
-      }
     }
   });
 
@@ -2194,6 +2202,11 @@ Validator.prototype._test = function _test (field, value, rule) {
   var validator = Rules[rule.name];
   if (! validator || typeof validator !== 'function') {
     throw new ValidatorException(("No such validator '" + (rule.name) + "' exists."));
+  }
+
+  if (date.installed && this._isADateRule(rule.name)) {
+    var dateFormat = this._getDateFormat(field.validations);
+    rule.params = (Array.isArray(rule.params) ? toArray(rule.params) : []).concat([dateFormat]);
   }
 
   var result = validator(value, rule.params, field.name);
@@ -2717,6 +2730,7 @@ Validator.prototype.validateScopes = function validateScopes () {
 };
 
 Object.defineProperties( Validator.prototype, prototypeAccessors );
+Object.defineProperties( Validator, staticAccessors );
 
 /**
  * Checks if a parent validator instance was requested.

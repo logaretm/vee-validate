@@ -3,7 +3,7 @@ import ErrorBag from './errorBag';
 import ValidatorException from './exceptions/validatorException';
 import Dictionary from './dictionary';
 import messages from './messages';
-import { warn, isObject, isCallable, assign, getPath } from './utils';
+import { warn, isObject, isCallable, assign, getPath, toArray } from './utils';
 import date from './plugins/date';
 
 let LOCALE = 'en';
@@ -38,6 +38,13 @@ export default class Validator {
    * @return {Dictionary}
    */
   get dictionary() {
+    return DICTIONARY;
+  }
+
+  /**
+   * @return {Dictionary}
+   */
+  static get dictionary() {
     return DICTIONARY;
   }
 
@@ -336,14 +343,6 @@ export default class Validator {
       } else {
         validations[rule] = params;
       }
-
-      if (date.installed && this._isADateRule(rule)) {
-        const dateFormat = this._getDateFormat(validations);
-
-        if (! this._containsValidation(validations[rule], dateFormat)) {
-          validations[rule].push(this._getDateFormat(validations));
-        }
-      }
     });
 
     return validations;
@@ -355,18 +354,19 @@ export default class Validator {
    * @param {Array} validations the field validations.
    */
   _getDateFormat(validations) {
+    let format = null;
     if (validations.date_format && Array.isArray(validations.date_format)) {
-      return validations.date_format[0];
+      format = validations.date_format[0];
     }
 
-    return null;
+    return format || this.dictionary.getDateFormat(this.locale);
   }
 
   /**
    * Checks if the passed rule is a date rule.
    */
   _isADateRule(rule) {
-    return !! ~['after', 'before', 'date_between'].indexOf(rule);
+    return !! ~['after', 'before', 'date_between', 'date_format'].indexOf(rule);
   }
 
   /**
@@ -392,14 +392,6 @@ export default class Validator {
       validations[parsedRule.name] = parsedRule.params;
       if (parsedRule.name === 'required') {
         validations.required = [field && field.invalidateFalse];
-      }
-
-      if (date.installed && this._isADateRule(parsedRule.name)) {
-        const dateFormat = this._getDateFormat(validations);
-
-        if (! this._containsValidation(validations[parsedRule.name], dateFormat)) {
-          validations[parsedRule.name].push(this._getDateFormat(validations));
-        }
       }
     });
 
@@ -481,6 +473,11 @@ export default class Validator {
     const validator = Rules[rule.name];
     if (! validator || typeof validator !== 'function') {
       throw new ValidatorException(`No such validator '${rule.name}' exists.`);
+    }
+
+    if (date.installed && this._isADateRule(rule.name)) {
+      const dateFormat = this._getDateFormat(field.validations);
+      rule.params = (Array.isArray(rule.params) ? toArray(rule.params) : []).concat([dateFormat]);
     }
 
     let result = validator(value, rule.params, field.name);
