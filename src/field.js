@@ -1,4 +1,4 @@
-import { uniqId, assign, isCallable, setDataAttribute, addClass, removeClass, getInputEventName } from './utils';
+import { uniqId, assign, isCallable, setDataAttribute, addClass, removeClass, getInputEventName, debounce } from './utils';
 
 const DEFAULT_OPTIONS = {
   scope: '__global__',
@@ -7,6 +7,8 @@ const DEFAULT_OPTIONS = {
   rules: {},
   vm: null,
   classes: false,
+  events: 'input|blur',
+  delay: 0,
   classNames: {
     touched: 'touched', // the control has been blurred
     untouched: 'untouched', // the control hasn't been blurred
@@ -50,6 +52,10 @@ export default class Field {
     return !!this.component;
   }
 
+  get isDisabled () {
+    return (this.isVue && this.component.disabled) || this.el.disabled;
+  }
+
   /**
    * Gets the display name (user-friendly name).
    * @return {String}
@@ -91,10 +97,13 @@ export default class Field {
     this.scope = options.scope || this.scope;
     this.name = options.name || this.name;
     this.rules = options.rules || this.rules;
+    this.model = options.model || this.model;
     this.classNames = options.classNames;
     this.expression = JSON.stringify(options.expression);
     this.alias = options.alias;
     this.getters = options.getters;
+    this.delay = 0;
+    this.events = Array.isArray(options.events) ? options.events : options.events.split('|');
 
     if (options.classes && !this.classes) {
       this.addClassListeners();
@@ -105,9 +114,7 @@ export default class Field {
     }
 
     this.classes = options.classes;
-    if (isCallable(options.onDestroy)) {
-      this.events.push({ on: 'destroy', handler: options.onDestroy });
-    }
+    this.addValueListeners();
   }
 
   /**
@@ -207,12 +214,60 @@ export default class Field {
     });
   }
 
-  destroy () {
-    this.events.filter(e => e.on === 'destroy').forEach(e => {
-      e.handler();
+  /**
+   * Adds the listeners required for validation.
+   */
+  addValueListeners () {
+    this._unwatch(/input/);
+    const validate = debounce(() => {
+      this.$validator.validate(`#${this.id}`, this.value);
+    }, this.delay);
+
+    const inputEvent = getInputEventName(this.el);
+    // replace input event with suitable one.
+    let events = this.events.map(e => {
+      return e === 'input' ? inputEvent : e;
     });
 
-    // remove auto classes listeners.
-    this._unwatch(/class/);
+    // if there is a watchable model and an on input validation is requested.
+    if (this.model && events.indexOf(inputEvent) !== -1) {
+      const unwatch = this.vm.$watch(this.model.expression, validate);
+      this.watchers.push({
+        tag: 'input',
+        unwatch
+      });
+      // filter out input event as it is already handled by the watcher API.
+      events = events.filter(e => e !== inputEvent);
+    }
+
+    // Add events.
+    events.forEach(e => {
+      if (this.isVue) {
+        this.component.$on(e, validate);
+        this.watchers.push({
+          tag: 'vue_input',
+          unwatch: () => {
+            this.component.$off(e, validate);
+          }
+        });
+        return;
+      }
+
+      this.el.addEventListener(e, validate);
+      this.watchers.push({
+        tag: 'el_input',
+        unwatch: () => {
+          this.el.removeEventListener(e, validate);
+        }
+      });
+    });
+  }
+
+  /**
+   * Removes all listeners.
+   */
+  destroy () {
+    this.watchers.forEach(w => w.unwatch());
+    this.watchers = [];
   }
 }

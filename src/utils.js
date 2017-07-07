@@ -3,6 +3,12 @@
  */
 export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
 
+/**
+ * Sets the data attribute.
+ * @param {*} el 
+ * @param {String} name 
+ * @param {String} value 
+ */
 export const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
 
 /**
@@ -39,6 +45,25 @@ export const getPath = (propPath, target, def = undefined) => {
   });
 
   return value;
+};
+
+/**
+ * Checks if path exists within an object.
+ *
+ * @param {String} path 
+ * @param {Object} target 
+ */
+export const hasPath = (path, target) => {
+  let obj = target;
+  return path.split('.').every(prop => {
+    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+
+    obj = obj[prop];
+
+    return true;
+  });
 };
 
 /**

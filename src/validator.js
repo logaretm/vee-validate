@@ -17,7 +17,7 @@ const DICTIONARY = new Dictionary({
 
 export default class Validator {
   constructor (validations, options = { vm: null, fastExit: true }) {
-    this.strictMode = STRICT_MODE;
+    this.strict = STRICT_MODE;
     this.$scopes = { __global__: {} };
     this._createFields(validations);
     this.errorBag = new ErrorBag();
@@ -551,30 +551,6 @@ export default class Validator {
     this.$scopes[scope][fieldName].events[name] = undefined;
   }
 
-  _assignFlags (field) {
-    field.flags = {
-      untouched: true,
-      touched: false,
-      dirty: false,
-      pristine: true,
-      valid: null,
-      invalid: null,
-      validated: false,
-      required: field.required,
-      pending: false
-    };
-
-    const flagObj = { [field.name]: field.flags };
-    if (field.scope === '__global__') {
-      this.fieldBag = assign({}, this.fieldBag, flagObj);
-      return;
-    }
-
-    const scopeObj = assign({}, this.fieldBag[`$${field.scope}`], flagObj);
-
-    this.fieldBag = assign({}, this.fieldBag, { [`$${field.scope}`]: scopeObj });
-  }
-
   /**
    * Registers a field to be validated.
    *
@@ -584,28 +560,7 @@ export default class Validator {
    * @param {Function} getter A function used to retrive a fresh value for the field.
    */
   attach (name, checks, options = {}) {
-    options.scope = options.scope || '__global__';
-    this.updateField(name, checks, options);
-    const field = this.$scopes[options.scope][name];
-    field.scope = options.scope;
-    field.as = options.prettyName;
-    field.getter = options.getter;
-    field.invalidateFalse = options.invalidateFalse;
-    field.context = options.context;
-    field.listeners = options.listeners || { detach () {} };
-    field.el = field.listeners.el;
-    field.events = {};
-    this._assignFlags(field);
-    if (field.listeners.classes) {
-      field.listeners.classes.attach(field);
-    }
-    this._setAriaRequiredAttribute(field);
-    this._setAriaValidAttribute(field, true);
-
-    // if initial modifier is applied, validate immediatly.
-    if (options.initial) {
-      this.validate(name, field.getter(field.context()), field.scope).catch(() => {});
-    }
+    // TODO: New Attach
   }
 
   /**
@@ -635,48 +590,14 @@ export default class Validator {
    * @param  {string} checks validations expression.
    */
   append (name, checks, options = {}) {
-    options.scope = options.scope || '__global__';
-    // No such field
-    if (! this.$scopes[options.scope] || ! this.$scopes[options.scope][name]) {
-      this.attach(name, checks, options);
-    }
-
-    const field = this.$scopes[options.scope][name];
-    const newChecks = this._normalizeRules(name, checks, options.scope);
-    Object.keys(newChecks).forEach(key => {
-      field.validations[key] = newChecks[key];
-    });
-  }
-
-  _moveFieldScope (field, scope) {
-    if (!this.$scopes[scope]) {
-      this.$scopes[scope] = {};
-    }
-    // move the field to its new scope.
-    this.$scopes[scope][field.name] = field;
-    delete this.$scopes[field.scope][field.name];
-    field.scope = scope;
-    // update cached scope.
-    if (field.el && isCallable(field.el.setAttribute)) {
-      field.el.setAttribute('data-vv-scope', field.scope);
-    }
+    // TODO: Update or Deprecate
   }
 
   /**
    * Updates the field rules with new ones.
    */
   updateField (name, checks, options = {}) {
-    let field = getPath(`${options.oldScope}.${name}`, this.$scopes, null);
-    const oldChecks = field ? JSON.stringify(field.validations) : '';
-    this._createField(name, checks, options.scope, field);
-    field = getPath(`${options.scope}.${name}`, this.$scopes, null);
-    const newChecks = field ? JSON.stringify(field.validations) : '';
-
-    // compare both newChecks and oldChecks to make sure we don't trigger uneccessary directive
-    // update by changing the errorBag (prevents infinite loops).
-    if (newChecks !== oldChecks) {
-      this.errorBag.remove(name, options.scope);
-    }
+    // TODO: Deprecate
   }
 
   /**
@@ -699,17 +620,7 @@ export default class Validator {
    * @param {String} scope The name of the field scope.
    */
   detach (name, scope = '__global__') {
-    // No such field.
-    if (! this.$scopes[scope] || ! this.$scopes[scope][name]) {
-      return;
-    }
-
-    if (this.$scopes[scope][name].listeners) {
-      this.$scopes[scope][name].listeners.detach();
-    }
-
-    this.errorBag.remove(name, scope);
-    delete this.$scopes[scope][name];
+    // TODO: New Detach
   }
 
   /**
@@ -767,8 +678,8 @@ export default class Validator {
    * strictMode = false: Values without a rule are valid and are skipped.
    * @param {Boolean} strictMode.
    */
-  setStrictMode (strictMode = true) {
-    this.strictMode = strictMode;
+  setStrictMode (strict = true) {
+    this.strict = strict;
   }
 
   /**
@@ -778,15 +689,6 @@ export default class Validator {
    */
   updateDictionary (data) {
     Validator.updateDictionary(data);
-  }
-
-  /**
-   * Adds a scope.
-   */
-  addScope (scope) {
-    if (scope && ! this.$scopes[scope]) {
-      this.$scopes[scope] = {};
-    }
   }
 
   _resolveField (name, scope) {
@@ -804,7 +706,7 @@ export default class Validator {
   }
 
   _handleFieldNotFound (name, scope) {
-    if (! this.strictMode) return Promise.resolve(true);
+    if (! this.strict) return Promise.resolve(true);
 
     const fullName = scope === '__global__' ? name : `${scope}.${name}`;
     throw createError(
@@ -889,28 +791,6 @@ export default class Validator {
       }
       return result;
     });
-  }
-
-  /**
-   * Sets the aria-invalid attribute on the element.
-   */
-  _setAriaValidAttribute (field, valid) {
-    if (! field.el || field.listeners.component) {
-      return;
-    }
-
-    field.el.setAttribute('aria-invalid', !valid);
-  }
-
-  /**
-   * Sets the aria-required attribute on the element.
-   */
-  _setAriaRequiredAttribute (field) {
-    if (! field.el || field.listeners.component) {
-      return;
-    }
-
-    field.el.setAttribute('aria-required', !! field.required);
   }
 
   /**
