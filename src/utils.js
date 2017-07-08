@@ -66,6 +66,55 @@ export const hasPath = (path, target) => {
   });
 };
 
+export const parseRule = (rule) => {
+  let params = [];
+  const name = rule.split(':')[0];
+
+  if (~rule.indexOf(':')) {
+    params = rule.split(':').slice(1).join(':').split(',');
+  }
+
+  return { name, params };
+};
+
+/**
+ * Normalizes the given rules expression.
+ *
+ * @param {Object|String} rules 
+ */
+export const normalizeRules = (rules) => {
+  const validations = {};
+  if (isObject(rules)) {
+    Object.keys(rules).forEach(rule => {
+      let params = [];
+      if (rules[rule] === true) {
+        params = [];
+      } else if (Array.isArray(rules[rule])) {
+        params = rules[rule];
+      } else {
+        params = [rules[rule]];
+      }
+
+      if (rules[rule] !== false) {
+        validations[rule] = params;
+      }
+    });
+
+    return validations;
+  }
+
+  rules.split('|').forEach(rule => {
+    const parsedRule = parseRule(rule);
+    if (! parsedRule.name) {
+      return;
+    }
+
+    validations[parsedRule.name] = parsedRule.params;
+  });
+
+  return validations;
+};
+
 /**
  * Debounces a function.
  */
@@ -157,7 +206,7 @@ export const removeClass = (el, className) => {
  * Simple polyfill for Array.from
  */
 export const toArray = (arrayLike) => {
-  if (Array.from) {
+  if (isCallable(Array.from)) {
     return Array.from(arrayLike);
   }
 
@@ -172,9 +221,11 @@ export const toArray = (arrayLike) => {
 
 /**
  * Assign polyfill from the mdn.
+ * @param {Object} target
+ * @return {Object}
  */
 export const assign = (target, ...others) => {
-  if (Object.assign) {
+  if (isCallable(Object.assign)) {
     return Object.assign(target, ...others);
   }
 
@@ -208,7 +259,7 @@ export const uniqId = () => `_${Math.random().toString(36).substr(2, 9)}`;
  */
 export const find = (array, predicate) => {
   if (isObject(array)) {
-    array = Array.from(array);
+    array = toArray(array);
   }
   if (array.find) {
     return array.find(predicate);
@@ -250,10 +301,4 @@ export const getRules = (expression, value, el) => {
   return value;
 };
 
-export const getInputEventName = (el) => {
-  if (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type)) {
-    return 'change';
-  }
-
-  return 'input';
-};
+export const getInputEventName = (el) => el.type === 'text' ? 'input' : 'change';

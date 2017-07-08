@@ -13,6 +13,18 @@ test('gets the data attribute prefixed with the plugin', () => {
   expect(utils.getDataAttribute(el, 'as')).toBe(null);
 });
 
+test('sets the data attribute prefixed with the plugin vendor code', () => {
+  document.body.innerHTML =
+      `<input id="el" type="text" name="field" data-vv-delay="100">`;
+
+  const el = document.querySelector('#el');
+  expect(utils.getDataAttribute(el, 'delay')).toBe('100');
+  utils.setDataAttribute(el, 'delay', 200);
+  expect(utils.getDataAttribute(el, 'delay')).toBe('200');
+  utils.setDataAttribute(el, 'something', 'value');
+  expect(utils.getDataAttribute(el, 'something')).toBe('value');
+});
+
 test('gets the element scope from the element or from the owning form', () => {
   document.body.innerHTML =
       `<div>
@@ -38,16 +50,25 @@ test('checks if a value is an object', () => {
 
 test('returns first matching element from array', () => {
   const find = utils.find;
-  const arr = [
-      { el: 'name' },
-      { el: 'email' },
-      { el: 'address' },
-      { el: 'something' },
-      { el: 'else' }
-  ];
-  expect(find(arr, e => e.el === 'name').el).toBe('name');
+  // testing on a nodelist to check if it converts correctly.
+  document.body.innerHTML = `
+      <input class="class" name="i1" id="i1">
+      <input class="class" name="i2">
+      <input class="class" name="i3">
+  `;
+  const nodeList = document.querySelectorAll('.class');
+  const el = document.querySelector('#i1');
+  expect(find(nodeList, el => el.name === 'i1')).toBe(el);
+
+  // test polyfill.
+  let arr = Array.from(nodeList);
   arr.find = undefined;
-  expect(find(arr, e => e.el === 'else').el).toBe('else');
+  expect(find(arr, el => el.name === 'i1')).toBe(el);
+
+  // test not found
+  arr = [1, 2, 3];
+  arr.find = undefined;
+  expect(find(arr, i => i === 4)).toBe(undefined);
 });
 
 test('should return valid rules data', () => {
@@ -86,10 +107,16 @@ test('should return valid rules data', () => {
 
 test('assigns objects', () => {
   const o1 = { a: 1, b: 1, c: 1 };
-  const o2 = { b: 2, c: 2 };
+  const o2 = { b: 2, c: 2, d: { a: 1, b: 2 } };
   const o3 = { c: 3 };
-  const result = { a: 1, b: 2, c: 3 };
-  expect(utils.assign({}, o1, o2, o3)).toEqual(result);
+  const result = { a: 1, b: 2, c: 3, d: { a: 1, b: 2 } };
+  expect(utils.assign({}, o1, o2, o3, null)).toEqual(result);
+  expect(() => {
+    utils.assign(null, o1);
+  }).toThrow();
+
+  // TODO: test polyfill.
+  expect(utils.assign({}, o1, o2, o3, null)).toEqual(result);
   expect(() => {
     utils.assign(null, o1);
   }).toThrow();
@@ -97,24 +124,39 @@ test('assigns objects', () => {
 
 test('removes classes', () => {
   document.body.innerHTML = '<input id="el" type="text" class="some class">';
-  const el = document.querySelector('#el');
+  let el = document.querySelector('#el');
   utils.removeClass(el, 'some');
   expect(utils.hasClass(el, 'some')).toBe(false);
-  el.classList = undefined;
+
+  // repete for else check.
+  utils.removeClass(el, 'some');
+  expect(utils.hasClass(el, 'some')).toBe(false);
+
+  // test polyfill.
+  el = { className: 'some class' };
+
   utils.removeClass(el, 'class');
   expect(utils.hasClass(el, 'class')).toBe(false);
 });
 
 test('adds classes', () => {
   document.body.innerHTML = '<input id="el" type="text">';
-  const el = document.querySelector('#el');
+  let el = document.querySelector('#el');
   utils.addClass(el, 'some');
   expect(utils.hasClass(el, 'some')).toBe(true);
-  el.classList = undefined;
+
+  // reptition has no issues.
+  utils.addClass(el, 'some');
+  expect(utils.hasClass(el, 'some')).toBe(true);
+  expect(el.className).toBe('some');
+
+  // test polyfill.
+  el = { className: 'some' };
 
   expect(utils.hasClass(el, 'class')).toBe(false);
   utils.addClass(el, 'class');
   expect(utils.hasClass(el, 'class')).toBe(true);
+  expect(utils.hasClass(el, 'some class')).toBe(true);
 });
 
 test('converts array like objects to arrays', () => {
@@ -129,8 +171,27 @@ test('converts array like objects to arrays', () => {
 
   let array = utils.toArray(nodeList);
   expect(Array.isArray(array)).toBe(true);
+
+  // test polyfill.
+  global.Array.from = undefined;
+  array = utils.toArray(nodeList);
+  expect(Array.isArray(array)).toBe(true);
+  expect(array.length).toBe(3);
 });
 
+
+test('checks if a value path with exists', () => {
+  const some = {
+    value: {
+      path: undefined,
+      val: 1
+    }
+  };
+
+  expect(utils.hasPath('value.val', some)).toBe(true); // exists.
+  expect(utils.hasPath('value.path', some)).toBe(true); // undefined but exists.
+  expect(utils.hasPath('value.not', some)).toBe(false); // does not.
+});
 
 test('gets the value path with a fallback value', () => {
   const some = {
@@ -140,6 +201,9 @@ test('gets the value path with a fallback value', () => {
     }
   };
 
+  expect(utils.getPath(null, some)).toBe(undefined); // no path.
+  expect(utils.getPath('value.val', null)).toBe(undefined); // no object.
+  
   expect(utils.getPath('value.val', some)).toBe(1); // exists.
   expect(utils.getPath('value.path', some)).toBe(undefined); // undefined but exists.
   expect(utils.getPath('value.not', some, false)).toBe(false); // does not.
@@ -152,22 +216,98 @@ test('debounces the provided function', done => {
   const func = utils.debounce((val, arg) => {
     expect(val).toBe(value);
     expect(arg).toBe(argument);
-  }, 200);
+  }, 2);
 
   func(value, argument);
   setTimeout(() => {
     done();
-  }, 201);
+  }, 3);
 });
-
 
 test('calls functions immediatly if time is 0', done => {
   const [value, argument] = ['someval', 'somearg'];
+  expect.assertions(2);
   const func = utils.debounce((val, arg) => {
     expect(val).toBe(value);
     expect(arg).toBe(argument);
-    done();
   }, 0);
+  // test default value.
+  const func2 = utils.debounce((val, arg) => {
+    expect(val).toBe(value);
+    expect(arg).toBe(argument);
+  });
 
   func(value, argument);
+  expect.assertions(4);
+  func2(value, argument);
+  done();
+});
+
+test('warns with branded message', () => {
+  global.console = { warn: jest.fn() }
+  utils.warn('Something is not right');
+  expect(console.warn).toBeCalledWith('[vee-validate] Something is not right');
+});
+
+test('it generates a unique id', () => {
+  // using ES6 Sets to test, FeelsGood.
+  const ids = new Set();
+  // test uniqueness on 1000 elements, more than that is unlikely to happen within the same validator.
+  for (let i = 0; i < 1000; i++) {
+    ids.add(utils.uniqId());
+  }
+
+  // 1000 unique entries.
+  expect(ids.size).toBe(1000);
+});
+
+test('it normalizes string validation rules', () => {
+  const rules = utils.normalizeRules('required|email|min:3|dummy:1,2,3|||');
+  expect(rules).toEqual ({
+    required: [],
+    email: [],
+    min: ['3'],
+    dummy: ['1', '2', '3']
+  });
+});
+
+test('it normalizes object validation rules', () => {
+  const rules = utils.normalizeRules({
+    required: true,
+    email: true,
+    min: 3,
+    dummy: [1, 2, 3],
+    numeric: false
+  });
+  expect(rules).toEqual ({
+    required: [],
+    email: [],
+    min: [3],
+    dummy: [1, 2, 3]
+  });
+});
+
+test('gets appropiate input event name for inputs', () => {
+  const text = { type: 'text' };
+  const select = { tagName: 'SELECT' };
+  const checkbox = { type: 'checkbox' };
+  const radio = { type: 'radio' };
+  const file = { type: 'file' };
+
+  expect(utils.getInputEventName(text)).toBe('input');
+  expect(utils.getInputEventName(select)).toBe('change');
+  expect(utils.getInputEventName(checkbox)).toBe('change');
+  expect(utils.getInputEventName(radio)).toBe('change');
+  expect(utils.getInputEventName(file)).toBe('change');
+});
+
+test('creates branded errors', () => {
+  expect(() => {
+    throw utils.createError('My Error')
+  }).toThrowError('[vee-validate] My Error');
+});
+
+test('checks if a value is a callable function', () => {
+  expect(utils.isCallable(null)).toBe(false);
+  expect(utils.isCallable(() => {})).toBe(true);
 });
