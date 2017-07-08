@@ -1,22 +1,17 @@
-import {
-  getScope, debounce,
-  getDataAttribute, isObject, toArray,
-  find, getRules, assign,
-  getPath, hasPath
-} from './utils';
+import { getScope, getDataAttribute, isObject, toArray, find, getRules, assign, getPath, hasPath } from './utils';
 import config from './config';
 
 /**
  * Generates the options required to construct a field.
  */
 export default class Generator {
-  constructor (el, binding, vnode, options) {
+  constructor (el, binding, vnode, options = {}) {
     this.el = el;
     this.binding = binding;
     this.vnode = vnode;
     this.options = assign({}, config, options);
     this.classes = {
-      enabled: options.classes,
+      enabled: !!options.classes,
       classNames: options.classNames
     };
   }
@@ -28,12 +23,12 @@ export default class Generator {
   }
 
   resolveScope () {
-    return (isObject(this.binding.value) ? this.binding.value.scope : getScope(this.el)) || '__global__';
+    return (isObject(this.binding.value) ? this.binding.value.scope : getScope(this.el));
   }
 
   generate () {
     return {
-      name: this.resolveFieldName(),
+      name: this.resolveName(),
       el: this.el,
       scope: this.resolveScope(),
       vm: this.vnode.context,
@@ -41,13 +36,12 @@ export default class Generator {
       component: this.vnode.child,
       classes: this.classes.enabled,
       classNames: this.classes.classNames,
-      listeners: this.listeners,
-      getters: this.resolveGetters(),
+      getter: this.resolveGetter(),
       model: this.resolveModel(),
-      rules: getRules(this.binding.expression, this.binding.value, this.el),
-      initial: this.binding.modifiers.initial,
+      rules: getRules(this.binding, this.el),
+      initial: !!this.binding.modifiers.initial,
       invalidateFalse: !!(this.el && this.el.type === 'checkbox'),
-      alias: getDataAttribute(this.el, 'as') || this.el.title,
+      alias: getDataAttribute(this.el, 'as') || this.el.title || null,
     };
   }
 
@@ -71,16 +65,21 @@ export default class Generator {
       return null;
     }
 
-    const watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression);
+    const watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression, this.vnode.context);
 
-    return watchable ? model.expression : null;
+    if (!watchable) {
+      return null;
+    }
+
+    this.model = model.expression;
+    return this.model;
   }
 
   /**
      * Resolves the field name to trigger validations.
      * @return {String} The field name.
      */
-  resolveFieldName () {
+  resolveName () {
     if (this.vnode.child) {
       return getDataAttribute(this.el, 'name') || this.vnode.child.name;
     }
@@ -127,61 +126,48 @@ export default class Generator {
   }
 
   /**
-   * Returns a context, value factory pairs for each input type.
+   * Returns a value getter input type.
    */
-  resolveGetters () {
-    if (this.model.watchable) {
-      return {
-        context: () => this.vm,
-        // eslint-disable-next-line
-        value: (context) => { 
-          return getPath(this.model.expression, context);
-        }
+  resolveGetter () {
+    if (this.model) {
+      return () => {
+        return getPath(this.model, this.vnode.context);
       };
     }
 
-    if (this.component) {
-      return {
-        context: () => this.component,
-        getter: (context) => {
-          const path = getDataAttribute(this.el, 'value-path') || (this.component.$attrs && this.component.$attrs['data-vv-value-path']);
-          if (path) {
-            return getPath(path, this.component);
-          }
-          return context.value;
+    if (this.vnode.child) {
+      return () => {
+        const path = getDataAttribute(this.el, 'value-path') || (this.component.$attrs && this.component.$attrs['data-vv-value-path']);
+        if (path) {
+          return getPath(path, this.vnode.child);
         }
+        return this.vnode.child.value;
       };
     }
 
     switch (this.el.type) {
-    case 'checkbox': return {
-      context: () => document.querySelectorAll(`input[name="${this.el.name}"]:checked`),
-      value (context) {
-        if (!context || !context.length) {
-          return null;
-        }
+    case 'checkbox': return () => {
+      let els = document.querySelectorAll(`input[name="${this.el.name}"]`);
 
-        return toArray(context).map(checkbox => checkbox.value);
-      }
-    };
-    case 'radio': return {
-      context: () => document.querySelector(`input[name="${this.el.name}"]:checked`),
-      value (context) {
-        return context && context.value;
-      }
-    };
-    case 'file': return {
-      context: () => this.el,
-      value (context) {
-        return toArray(context.files);
-      }
-    };
+      els = toArray(els).filter(el => el.checked);
+      if (!els.length) return undefined;
 
-    default: return {
-      context: () => this.el,
-      value (context) {
-        return context.value;
-      }
+      return els.map(checkbox => checkbox.value);
+    };
+    case 'radio': return () => {
+      const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+      const el = find(els, el => el.checked);
+
+      return el && el.value;
+    };
+    case 'file': return (context) => {
+      return toArray(this.el.files);
+    };
+    case 'select-multiple': return () => {
+      return toArray(this.el.options).filter(opt => opt.selected).map(opt => opt.value);
+    };
+    default: return () => {
+      return this.el.value;
     };
     }
   }

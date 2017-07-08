@@ -73,14 +73,16 @@ test('returns first matching element from array', () => {
 
 test('should return valid rules data', () => {
   const getRules = utils.getRules;
-  document.body.innerHTML = '<input type="text" name"el" id="el" data-vv-rules="required|email">';
+  document.body.innerHTML = `
+    <input type="text" name="el" id="el" data-vv-rules="required|email">
+  `;
   const el = document.querySelector('#el');
-  expect(getRules(null, null, el)).toBe('required|email');
+  expect(getRules(null, el)).toBe('required|email');
 
-  const exp = 'someexpr';
+  const expression = 'someexpr';
   let value = 'required|email';
 
-  expect(getRules(exp, value)).toBe('required|email');
+  expect(getRules({ expression, value }, el)).toBe('required|email');
 
   value = {
     rules: {
@@ -89,7 +91,7 @@ test('should return valid rules data', () => {
     }
   };
 
-  expect(getRules(exp, value)).toEqual({
+  expect(getRules({ expression, value }, el)).toEqual({
     required: true,
     email: true
   });
@@ -99,7 +101,7 @@ test('should return valid rules data', () => {
     email: true
   };
 
-  expect(getRules(exp, value)).toEqual({
+  expect(getRules({ expression, value }, el)).toEqual({
     required: true,
     email: true
   });

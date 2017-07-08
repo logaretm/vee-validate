@@ -293,25 +293,24 @@ export const find = (array, predicate) => {
 /**
  * Gets the rules from a binding value or the element dataset.
  *
- * @param {String} expression The binding expression.
- * @param {Object|String} value The binding value.
+ * @param {Object} binding The binding object.
  * @param {element} el The element.
  * @returns {String|Object}
  */
-export const getRules = (expression, value, el) => {
-  if (! expression) {
+export const getRules = (binding, el) => {
+  if (!binding || ! binding.expression) {
     return getDataAttribute(el, 'rules');
   }
 
-  if (typeof value === 'string') {
-    return value;
+  if (typeof binding.value === 'string') {
+    return binding.value;
   }
 
-  if (~['string', 'object'].indexOf(typeof value.rules)) {
-    return value.rules;
+  if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
+    return binding.value.rules;
   }
 
-  return value;
+  return binding.value;
 };
 
 export const getInputEventName = (el) => el.type === 'text' ? 'input' : 'change';

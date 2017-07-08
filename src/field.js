@@ -90,11 +90,7 @@ export default class Field {
    * @return {*}
    */
   get value () {
-    if (!this.getters || !this.getters.context || !this.getters.value) return null;
-
-    const ctx = this.getters.context();
-
-    return this.getters.value(ctx);
+    return this.getter();
   }
 
   /**
@@ -135,7 +131,7 @@ export default class Field {
     this.classNames = options.classNames;
     this.expression = JSON.stringify(options.expression);
     this.alias = options.alias;
-    this.getters = options.getters;
+    this.getter = options.getter;
     this.delay = 0;
     this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
 
