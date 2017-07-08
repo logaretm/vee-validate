@@ -1,7 +1,7 @@
 import { find } from './utils';
 
 export default class FieldBag {
-  constructor() {
+  constructor () {
     this.items = [];
   }
 
@@ -9,15 +9,22 @@ export default class FieldBag {
    * Finds the first field that matches the provided matcher object.
    * @param {Object} matcher
    */
-  find(matcher) {
+  find (matcher) {
     return find(this.items, item => item.matches(matcher));
+  }
+
+  /**
+   * @param {Object} matcher 
+   */
+  filter (matcher) {
+    return this.items.filter(item => item.matches(matcher));
   }
 
   /**
    * Finds and removes the first field that matches the provided matcher object.
    * @param {Object} matcher
    */
-  remove(matcher) {
+  remove (matcher) {
     const item = this.find(matcher);
     if (!item) return;
 
@@ -26,5 +33,8 @@ export default class FieldBag {
 
     this.items.splice(index, 1);
   }
-}
 
+  push (item) {
+    this.items.push(item);
+  }
+}
