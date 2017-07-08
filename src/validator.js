@@ -2,7 +2,9 @@ import Rules from './rules';
 import ErrorBag from './errorBag';
 import Dictionary from './dictionary';
 import messages from './messages';
-import { warn, isObject, isCallable, assign, getPath, toArray, createError } from './utils';
+import { isObject, isCallable, toArray, warn, createError } from './utils';
+import Field from './field';
+import FieldBag from './fieldBag';
 import date from './plugins/date';
 
 let LOCALE = 'en';
@@ -21,7 +23,7 @@ export default class Validator {
     this.$scopes = { __global__: {} };
     this._createFields(validations);
     this.errorBag = new ErrorBag();
-    this.fieldBag = {};
+    this.fields = new FieldBag();
     this.paused = false;
     this.fastExit = options.fastExit || false;
     this.$vm = options.vm;
@@ -263,9 +265,7 @@ export default class Validator {
    * @return {object} Normalized object.
    */
   _createFields (validations) {
-    if (! validations) {
-      return;
-    }
+    if (! validations) return;
 
     Object.keys(validations).forEach(field => {
       this._createField(field, validations[field]);
@@ -275,76 +275,15 @@ export default class Validator {
   /**
    * Creates a field entry in the fields object.
    * @param {String} name.
-   * @param {String|Array} checks.
+   * @param {String|Array} rules
    */
-  _createField (name, checks, scope = '__global__') {
-    if (! this.$scopes[scope]) {
-      this.$scopes[scope] = {};
-    }
-
-    if (! this.$scopes[scope][name]) {
-      this.$scopes[scope][name] = {};
-    }
-
-    const field = this.$scopes[scope][name];
-    field.name = name;
-    field.validations = this._normalizeRules(name, checks, scope, field);
-    field.required = this._isRequired(field);
-  }
-
-  /**
-   * Normalizes rules.
-   * @return {Object}
-   */
-  _normalizeRules (name, checks, scope, field) {
-    if (! checks) return {};
-
-    if (typeof checks === 'string') {
-      return this._normalizeString(checks, field);
-    }
-
-    if (! isObject(checks)) {
-      warn(`Your checks for '${scope}.${name}' must be either a string or an object.`);
-      return {};
-    }
-
-    return this._normalizeObject(checks, field);
-  }
-
-  /**
-   * Checks if a field has a required rule.
-   */
-  _isRequired (field) {
-    return !! (field.validations && field.validations.required);
-  }
-
-  /**
-   * Normalizes an object of rules.
-   */
-  _normalizeObject (rules, field = null) {
-    const validations = {};
-    Object.keys(rules).forEach(rule => {
-      let params = [];
-      if (rules[rule] === true) {
-        params = [];
-      } else if (Array.isArray(rules[rule])) {
-        params = rules[rule];
-      } else {
-        params = [rules[rule]];
-      }
-
-      if (rule === 'required') {
-        params = [field && field.invalidateFalse];
-      }
-
-      if (rules[rule] === false) {
-        delete validations[rule];
-      } else {
-        validations[rule] = params;
-      }
+  _createField (name, rules) {
+    // add headless field.
+    const field = new Field(null, {
+      name,
+      rules
     });
-
-    return validations;
+    this.fields.push(field);
   }
 
   /**
@@ -366,52 +305,6 @@ export default class Validator {
    */
   _isADateRule (rule) {
     return !! ~['after', 'before', 'date_between', 'date_format'].indexOf(rule);
-  }
-
-  /**
-   * Checks if the passed validation appears inside the array.
-   */
-  _containsValidation (validations, validation) {
-    return !! ~validations.indexOf(validation);
-  }
-
-  /**
-   * Normalizes string rules.
-   * @param {String} rules The rules that will be normalized.
-   * @param {Object} field The field object that is being operated on.
-   */
-  _normalizeString (rules, field = null) {
-    const validations = {};
-    rules.split('|').forEach(rule => {
-      const parsedRule = this._parseRule(rule);
-      if (! parsedRule.name) {
-        return;
-      }
-
-      validations[parsedRule.name] = parsedRule.params;
-      if (parsedRule.name === 'required') {
-        validations.required = [field && field.invalidateFalse];
-      }
-    });
-
-    return validations;
-  }
-
-  /**
-   * Normalizes a string rule.
-   *
-   * @param {string} rule The rule to be normalized.
-   * @return {object} rule The normalized rule.
-   */
-  _parseRule (rule) {
-    let params = [];
-    const name = rule.split(':')[0];
-
-    if (~rule.indexOf(':')) {
-      params = rule.split(':').slice(1).join(':').split(',');
-    }
-
-    return { name, params };
   }
 
   /**
@@ -554,13 +447,14 @@ export default class Validator {
   /**
    * Registers a field to be validated.
    *
-   * @param  {string} name The field name.
-   * @param  {String|Array|Object} checks validations expression.
-   * @param {string} prettyName Custom name to be used as field name in error messages.
-   * @param {Function} getter A function used to retrive a fresh value for the field.
+   * @param  {Field|Object} name The field name.
    */
-  attach (name, checks, options = {}) {
-    // TODO: New Attach
+  attach (field) {
+    if (!field instanceof Field) {
+      field = new Field(field);
+    }
+
+    this.fields.push(field);
   }
 
   /**
@@ -673,16 +567,6 @@ export default class Validator {
   }
 
   /**
-   * Sets the operating mode for this validator.
-   * strictMode = true: Values without a rule are invalid and cause failure.
-   * strictMode = false: Values without a rule are valid and are skipped.
-   * @param {Boolean} strictMode.
-   */
-  setStrictMode (strict = true) {
-    this.strict = strict;
-  }
-
-  /**
    * Updates the messages dicitionary, overwriting existing values and adding new ones.
    *
    * @param  {object} data The messages object.
@@ -691,24 +575,42 @@ export default class Validator {
     Validator.updateDictionary(data);
   }
 
+  /**
+   * Tries different strategies to find a field.
+   * @param {String} name 
+   * @param {String} scope 
+   * @return {Field}
+   */
   _resolveField (name, scope) {
-    if (name && name.indexOf('.') > -1) {
-      // if no such field, try the scope form.
-      if (! this.$scopes.__global__[name]) {
-        [scope, name] = name.split('.');
+    if (scope) {
+      return this.fields.find({ name, scope });
+    }
+
+    if (name.indexOf('#') === 0) {
+      return this.fields.find({ id: name });
+    }
+
+    if (name.indexOf('.') > -1) {
+      const parts = name.split('.');
+      const field = this.fields.find({ name: parts[0], scope: parts[1] });
+      if (field) {
+        return field;
       }
     }
-    if (! scope) scope = '__global__';
 
-    if (!this.$scopes[scope]) return null;
-
-    return this.$scopes[scope][name];
+    return this.fields.find({ name, scope: null });
   }
 
+  /**
+   * Handles when a field is not found depending on the strict flag.
+   *
+   * @param {String} name 
+   * @param {String} scope 
+   */
   _handleFieldNotFound (name, scope) {
     if (! this.strict) return Promise.resolve(true);
 
-    const fullName = scope === '__global__' ? name : `${scope}.${name}`;
+    const fullName = scope ? name : `${scope}.${name}`;
     throw createError(
       `Validating a non-existant field: "${fullName}". Use "attach()" first.`
     );
@@ -768,27 +670,25 @@ export default class Validator {
   validate (name, value, scope = '__global__') {
     if (this.paused) return Promise.resolve(true);
 
+    // Alias to validate all.
+    if (arguments.length === 0) {
+      return this.validateAll();
+    }
+
     const field = this._resolveField(name, scope);
     if (!field) {
       return this._handleFieldNotFound(name, scope);
     }
     this.errorBag.remove(field.name, field.scope);
-    if (field.flags) {
-      field.flags.pending = true;
-    }
+    field.flags.pending = true;
 
     return this._validate(field, value).then(result => {
-      this._setAriaValidAttribute(field, result);
-      if (field.flags) {
-        field.flags.pending = false;
-        field.flags.valid = result;
-        field.flags.invalid = ! result;
-        field.flags.pending = false;
-        field.flags.validated = true;
-      }
-      if (field.events && isCallable(field.events.after)) {
-        field.events.after({ valid: result });
-      }
+      field.flags.pending = false;
+      field.flags.valid = result;
+      field.flags.invalid = !result;
+      field.flags.validated = true;
+      field.updateClasses();
+
       return result;
     });
   }
@@ -817,31 +717,25 @@ export default class Validator {
 
   /**
    * Validates each value against the corresponding field validations.
-   * @param  {object} values The values to be validated.
-   * @param  {String} scope The scope to be applied on validation.
+   * @param  {Object|String} values The values to be validated.
    * @return {Promise} Returns a promise with the validation result.
    */
-  validateAll (values, scope = '__global__') {
+  validateAll (values) {
     if (this.paused) return Promise.resolve(true);
-
-    let normalizedValues;
-    if (! values || typeof values === 'string') {
-      this.errorBag.clear(values);
-      normalizedValues = this._resolveValuesFromGetters(values);
-    } else {
-      normalizedValues = {};
-      Object.keys(values).forEach(key => {
-        normalizedValues[key] = {
-          value: values[key],
-          scope
-        };
-      });
+    let matcher = null;
+    let providedValues = false;
+    if (typeof values === 'string') {
+      matcher = { scope: values };
+    } else if (isObject(values)) {
+      matcher = Object.keys(values).map(key => key);
+      providedValues = true;
+    } else if (arguments.length === 0) {
+      matcher = { scope: null };
     }
 
-    const promises = Object.keys(normalizedValues).map(property => this.validate(
-      property,
-      normalizedValues[property].value,
-      normalizedValues[property].scope
+    const promises = this.fields.filter(matcher).map(field => this.validate(
+      `#${field.id}`,
+      providedValues ? values[field.name] : field.value
     ));
 
     return Promise.all(promises).then(results => results.every(t => t));
@@ -849,13 +743,15 @@ export default class Validator {
 
   /**
    * Validates all scopes.
+   *
    * @returns {Promise} All promises resulted from each scope.
    */
   validateScopes () {
-    if (this.paused) return Promise.resolve(true);
+    const promises = this.fields.map(field => this.validate(
+      `#${field.id}`,
+      field.value
+    ));
 
-    return Promise.all(
-      Object.keys(this.$scopes).map(scope => this.validateAll(scope))
-    ).then(results => results.every(t => t));
+    return Promise.all(promises).then(results => results.every(t => t));
   }
 }
