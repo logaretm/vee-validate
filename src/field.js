@@ -1,7 +1,12 @@
-import { uniqId, assign, isCallable, setDataAttribute, addClass, removeClass, getInputEventName, debounce } from './utils';
+import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce } from './utils';
+
+const NULL_VALIDATOR = {
+  validate: () => {}
+};
 
 const DEFAULT_OPTIONS = {
-  scope: '__global__',
+  scope: null,
+  name: null,
   active: true,
   required: false,
   rules: {},
@@ -42,9 +47,13 @@ export default class Field {
     this.expression = null;
     this.watchers = [];
     this.events = [];
-    setDataAttribute(this.el, 'id', this.id); // cache field id.
+    if (!this.isHeadless) {
+      setDataAttribute(this.el, 'id', this.id); // cache field id.
+    }
     options = assign({}, DEFAULT_OPTIONS, options);
     this.flags = generateFlags(options);
+    this.vm = options.vm || this.vm;
+    this.component = options.component || this.component;
     this.update(options);
   }
 
@@ -52,8 +61,20 @@ export default class Field {
     return !!this.component;
   }
 
+  get validator () {
+    if (this.vm) {
+      return this.vm.$validator;
+    }
+
+    return NULL_VALIDATOR;
+  }
+
   get isDisabled () {
-    return (this.isVue && this.component.disabled) || this.el.disabled;
+    return (this.isVue && this.component.disabled) || (this.el && this.el.disabled);
+  }
+
+  get isHeadless () {
+    return !this.el;
   }
 
   /**
@@ -81,8 +102,22 @@ export default class Field {
    * @param {Object} options The matching options.
    */
   matches (options) {
+    if (this.isDisabled) return false;
+
     if (options.id) {
       return this.id === options.id;
+    }
+
+    if (options.name === undefined && options.scope === undefined) {
+      return true;
+    }
+
+    if (options.scope === undefined) {
+      return this.name === options.name;
+    }
+
+    if (options.name === undefined) {
+      return this.scope === options.scope;
     }
 
     return options.name === this.name && options.scope === this.scope;
@@ -93,24 +128,29 @@ export default class Field {
    * @param {Object} options
    */
   update (options) {
-    this.component = options.vm || this.component;
-    this.scope = options.scope || this.scope;
-    this.name = options.name || this.name;
-    this.rules = options.rules || this.rules;
+    this.scope = options.scope || this.scope || null;
+    this.name = options.name || this.name || null;
+    this.rules = normalizeRules(options.rules || this.rules);
     this.model = options.model || this.model;
     this.classNames = options.classNames;
     this.expression = JSON.stringify(options.expression);
     this.alias = options.alias;
     this.getters = options.getters;
     this.delay = 0;
-    this.events = Array.isArray(options.events) ? options.events : options.events.split('|');
+    this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
+
+    // no need to continue.
+    if (this.isHeadless) {
+      this.classes = options.classes; // set it for consistency sake.
+      return;
+    };
 
     if (options.classes && !this.classes) {
       this.addClassListeners();
       this.updateClasses();
     } else if (this.classes) {
       // remove them.
-      this._unwatch(/class/);
+      this.unwatch(/class/);
     }
 
     this.classes = options.classes;
@@ -121,36 +161,23 @@ export default class Field {
    * Removes listeners.
    * @param {RegExp} tag 
    */
-  _unwatch (tag) {
+  unwatch (tag) {
     this.watchers.filter(w => tag.test(w.tag)).forEach(w => w.unwatch());
-    this.watchers = this.watchers.filter(w => w.tag !== tag);
-  }
-
-  /**
-   * Adds or removes a class name based on a boolean value.
-   * @param {String} className 
-   * @param {Boolean} status 
-   */
-  toggleClass (className, status) {
-    if (!className) return;
-
-    if (status) {
-      return addClass(this.el, className);
-    }
-
-    removeClass(this.el, className);
+    this.watchers = this.watchers.filter(w => !tag.test(w.tag));
   }
 
   /**
    * Updates the element classes depending on each field flag status.
    */
   updateClasses () {
-    this.toggleClass(this.classNames.dirty, this.flags.dirty);
-    this.toggleClass(this.classNames.pristine, this.flags.pristine);
-    this.toggleClass(this.classNames.valid, this.flags.valid);
-    this.toggleClass(this.classNames.invalid, this.flags.invalid);
-    this.toggleClass(this.classNames.touched, this.flags.touched);
-    this.toggleClass(this.classNames.untouched, this.flags.untouched);
+    if (!this.classes) return;
+
+    toggleClass(this.el, this.classNames.dirty, this.flags.dirty);
+    toggleClass(this.el, this.classNames.pristine, this.flags.pristine);
+    toggleClass(this.el, this.classNames.valid, !!this.flags.valid);
+    toggleClass(this.el, this.classNames.invalid, !!this.flags.invalid);
+    toggleClass(this.el, this.classNames.touched, this.flags.touched);
+    toggleClass(this.el, this.classNames.untouched, this.flags.untouched);
   }
 
   /**
@@ -158,27 +185,27 @@ export default class Field {
    */
   addClassListeners () {
     // remove previous listeners.
-    this._unwatch(/class/);
+    this.unwatch(/class/);
 
     const onFocus = () => {
-      this.toggleClass(this.classNames.touched, true);
-      this.toggleClass(this.classNames.untouched, false);
-      this.field.flags.touched = true;
-      this.field.flags.untouched = false;
+      toggleClass(this.el, this.classNames.touched, true);
+      toggleClass(this.el, this.classNames.untouched, false);
+      this.flags.touched = true;
+      this.flags.untouched = false;
 
       // only needed once.
-      this._unwatch(/^class_focus$/);
+      this.unwatch(/^class_focus$/);
     };
 
     const event = getInputEventName(this.el);
     const onInput = () => {
-      this.toggleClass(this.classNames.pristine, false);
-      this.toggleClass(this.classNames.dirty, true);
-      this.field.flags.dirty = true;
-      this.field.flags.pristine = false;
+      toggleClass(this.el, this.classNames.pristine, false);
+      toggleClass(this.el, this.classNames.dirty, true);
+      this.flags.dirty = true;
+      this.flags.pristine = false;
 
       // only needed once.
-      this._unwatch(/^class_input$/);
+      this.unwatch(/^class_input$/);
     };
 
     if (this.isVue) {
@@ -218,9 +245,9 @@ export default class Field {
    * Adds the listeners required for validation.
    */
   addValueListeners () {
-    this._unwatch(/input/);
+    this.unwatch(/^input_.+/);
     const validate = debounce(() => {
-      this.$validator.validate(`#${this.id}`, this.value);
+      this.validator.validate(`#${this.id}`, this.value);
     }, this.delay);
 
     const inputEvent = getInputEventName(this.el);
@@ -231,9 +258,9 @@ export default class Field {
 
     // if there is a watchable model and an on input validation is requested.
     if (this.model && events.indexOf(inputEvent) !== -1) {
-      const unwatch = this.vm.$watch(this.model.expression, validate);
+      const unwatch = this.vm.$watch(this.model, validate);
       this.watchers.push({
-        tag: 'input',
+        tag: 'input_model',
         unwatch
       });
       // filter out input event as it is already handled by the watcher API.
@@ -245,7 +272,7 @@ export default class Field {
       if (this.isVue) {
         this.component.$on(e, validate);
         this.watchers.push({
-          tag: 'vue_input',
+          tag: 'input_vue',
           unwatch: () => {
             this.component.$off(e, validate);
           }
@@ -255,7 +282,7 @@ export default class Field {
 
       this.el.addEventListener(e, validate);
       this.watchers.push({
-        tag: 'el_input',
+        tag: 'input_native',
         unwatch: () => {
           this.el.removeEventListener(e, validate);
         }

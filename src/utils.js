@@ -202,6 +202,19 @@ export const removeClass = (el, className) => {
 };
 
 /**
+ * Adds or removes a class name on the input depending on the status flag.
+ */
+export const toggleClass = (el, className, status) => {
+  if (!className) return;
+
+  if (status) {
+    return addClass(el, className);
+  }
+
+  removeClass(el, className);
+};
+
+/**
  * Converts an array-like object to array.
  * Simple polyfill for Array.from
  */

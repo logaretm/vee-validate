@@ -159,6 +159,20 @@ test('adds classes', () => {
   expect(utils.hasClass(el, 'some class')).toBe(true);
 });
 
+test('toggles classes', () => {
+  document.body.innerHTML = '<input id="el" type="text">';
+  const el = document.querySelector('#el');
+  utils.toggleClass(el, 'some', true);
+  expect(utils.hasClass(el, 'some')).toBe(true);
+
+  utils.toggleClass(el, 'some', false);
+  expect(utils.hasClass(el, 'some')).toBe(false);
+  
+  expect(() => {
+    utils.toggleClass(el, null, true);
+  }).not.toThrow();
+});
+
 test('converts array like objects to arrays', () => {
   document.body.innerHTML = `
         <div class="class"></div>
