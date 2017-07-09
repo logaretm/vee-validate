@@ -1,4 +1,3 @@
-/* istanbul ignore next */
 export default {
   _default: (field) => `The ${field} value is not valid.`,
   alpha_dash: (field) => `The ${field} field may contain alpha-numeric characters as well as dashes and underscores.`,
