@@ -1,4 +1,4 @@
-import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce } from './utils';
+import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable } from './utils';
 
 const NULL_VALIDATOR = {
   validate: () => {}
@@ -69,6 +69,10 @@ export default class Field {
     return NULL_VALIDATOR;
   }
 
+  get isRequired () {
+    return !!this.rules.required;
+  }
+
   get isDisabled () {
     return (this.isVue && this.component.disabled) || (this.el && this.el.disabled);
   }
@@ -82,7 +86,7 @@ export default class Field {
    * @return {String}
    */
   get displayName () {
-    return this.alias || this.name;
+    return this.alias;
   }
 
   /**
@@ -131,7 +135,7 @@ export default class Field {
     this.classNames = options.classNames;
     this.expression = JSON.stringify(options.expression);
     this.alias = options.alias;
-    this.getter = options.getter;
+    this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this.delay = 0;
     this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
 
@@ -151,6 +155,7 @@ export default class Field {
 
     this.classes = options.classes;
     this.addValueListeners();
+    this.updateAriaAttrs();
   }
 
   /**
@@ -284,6 +289,16 @@ export default class Field {
         }
       });
     });
+  }
+
+  /**
+   * Updates aria attributes on the element.
+   */
+  updateAriaAttrs () {
+    if (this.isHeadless || !isCallable(this.el.setAttribute)) return;
+
+    this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
+    this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
   }
 
   /**

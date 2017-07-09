@@ -736,22 +736,6 @@ test('handles dot notation names', async () => {
   expect(await v.validate('example.name', 'ad')).toBe(true);
 });
 
-test('sets aria attributes on elements', async () => {
-  const v = new Validator();
-  let el = document.createElement('input');
-  v.attach('name', 'required', { el });
-  expect(el.getAttribute('aria-required')).toBe('true');
-  el = document.createElement('input');
-  v.attach('valid', 'alpha', { el });
-  expect(el.getAttribute('aria-required')).toBe('false');
-  expect(el.getAttribute('aria-invalid')).toBe('false');
-  expect(await v.validate('valid', '123')).toBe(false);
-  expect(el.getAttribute('aria-invalid')).toBe('true');
-
-  await v.validate('valid', 'abc');
-  expect(el.getAttribute('aria-invalid')).toBe('false');
-});
-
 test('validations can be paused and resumed', async () => {
   const v = new Validator();
   v.attach('name', 'required');

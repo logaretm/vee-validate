@@ -50,12 +50,7 @@ test('it adds value listeners on the native inputs', () => {
     <input name="name" id="name" value="10">
   `;
   const el = document.querySelector('#name');
-  const field = new Field(el, {
-    getters: {
-      context: () => el,
-      value: (ctx) => ctx.value
-    }
-  });
+  const field = new Field(el, { getter: () => el.value });
 
   // two events [input and blur] without the classes.
   expect(field.watchers.length).toBe(2);
@@ -119,7 +114,8 @@ test('computes the disabled property', () => {
 
 test('computes the display name', () => {
   const field = new Field(null, { name: 'email' });
-  expect(field.displayName).toBe('email');
+  // no alias was defined.
+  expect(field.displayName).toBe(undefined);
   field.alias = 'aliased';
   expect(field.displayName).toBe('aliased');
 });
@@ -279,3 +275,21 @@ test('fields can be destroyed and have all their listeners cleaned up', () => {
   field.destroy();
   expect(field.watchers.length).toBe(0);
 })
+
+test('sets aria attributes on elements', async () => {
+  let el = document.createElement('input');
+  const field = new Field(el, { rules: 'required' });
+  expect(el.getAttribute('aria-required')).toBe('true');
+  expect(el.getAttribute('aria-invalid')).toBe('false');
+
+  field.flags.invalid = true;
+  field.update({ rules: 'min:3' });
+  expect(el.getAttribute('aria-required')).toBe('false');
+  expect(el.getAttribute('aria-invalid')).toBe('true');
+  field.el = null; // headless
+  field.updateAriaAttrs();
+  
+  // unchanged.
+  expect(el.getAttribute('aria-required')).toBe('false');
+  expect(el.getAttribute('aria-invalid')).toBe('true');
+});
