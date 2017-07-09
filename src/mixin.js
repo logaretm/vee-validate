@@ -5,7 +5,7 @@ import Validator from './validator';
  * Checks if a parent validator instance was requested.
  * @param {Object|Array} injections
  */
-const validatorRequested = (injections) => {
+const requestsValidator = (injections) => {
   if (! injections) {
     return false;
   }
@@ -32,7 +32,7 @@ const createValidator = (vm, options) => new Validator(null, {
   fastExit: options.fastExit
 });
 
-export default (Vue, options) => {
+export default (Vue, options = {}) => {
   const mixin = {};
   mixin.provide = function providesValidator () {
     if (this.$validator) {
@@ -50,7 +50,7 @@ export default (Vue, options) => {
       this.$validator = createValidator(this, options);
     }
 
-    const requested = validatorRequested(this.$options.inject);
+    const requested = requestsValidator(this.$options.inject);
 
     // if automatic injection is enabled and no instance was requested.
     if (! this.$validator && options.inject && !requested) {
@@ -72,10 +72,10 @@ export default (Vue, options) => {
       this.$options.computed = {};
     }
 
-    this.$options.computed[options.errorBagName] = function errorBagGetter () {
+    this.$options.computed[options.errorBagName || 'errors'] = function errorBagGetter () {
       return this.$validator.errors;
     };
-    this.$options.computed[options.fieldsBagName] = function fieldBagGetter () {
+    this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
       return this.$validator.fields.items.map(field => field.flags);
     };
   };
