@@ -52,6 +52,23 @@ test('filters the fields based on a matcher object', () => {
   expect(bag.filter({ name: 'email' })).toEqual([field1, field2, field3]);
   expect(bag.filter({ name: 'email', scope: 's2' })).toEqual([field2]);
   expect(bag.filter({ name: 'email', scope: null })).toEqual([field3]);
+
+  // multiple matching.
+  expect(bag.filter([
+    { name: 'email', scope: 's2' },
+    { name: 'email', scope: 's1' }
+  ])).toEqual([field1, field2]);
+});
+
+test('proxies the map method to the underlying array', () => {
+  const bag = new FieldBag();
+  const field1 = new Field(null, { name: 'email', scope: 's1' });
+  const field2 = new Field(null, { name: 'email', scope: 's2' });
+  const field3 = new Field(null, { name: 'email' });
+  bag.push(field1);
+  bag.push(field2);
+  bag.push(field3);
+  expect(bag.map(f => f.scope)).toEqual(['s1', 's2', null]);
 });
 
 test('removes the first field that matches a matcher object', () => {
@@ -64,15 +81,17 @@ test('removes the first field that matches a matcher object', () => {
   bag.push(field3);
 
   expect(bag.length).toBe(3);
-  bag.remove({ id: field1.id });
+  // returns removed item.
+  expect(bag.remove({ id: field1.id })).toBe(field1);
   expect(bag.length).toBe(2);
   bag.remove({ name: 'email' });
   expect(bag.length).toBe(1);
 
   // no such field.
-  bag.remove({ name: 'email', scope: 's2' });
+  expect(bag.remove({ name: 'email', scope: 's2' })).toBe(null);
   expect(bag.length).toBe(1);
 
-  bag.remove({ name: 'email', scope: null });
+  // can remove fields directly.
+  bag.remove(field3);
   expect(bag.length).toBe(0);
 });
