@@ -20,7 +20,7 @@ export const getScope = (el) => {
     scope = getDataAttribute(el.form, 'scope');
   }
 
-  return scope;
+  return scope || null;
 };
 
 /**
