@@ -11,7 +11,7 @@ export default class ErrorBag {
      * @param {String} rule The rule that is responsible for the error.
      * @param {String} scope The Scope name, optional.
      */
-  add (field, msg, rule, scope = '__global__') {
+  add (field, msg, rule, scope = null) {
     this.items.push({ field, msg, rule, scope });
   }
 
@@ -49,7 +49,7 @@ export default class ErrorBag {
      */
   clear (scope) {
     if (! scope) {
-      scope = '__global__';
+      scope = null;
     }
 
     const removeCondition = e => e.scope === scope;
@@ -106,7 +106,7 @@ export default class ErrorBag {
      * @param  {string} field The field name.
      * @return {string|null} message The error message.
      */
-  first (field, scope = '__global__') {
+  first (field, scope = null) {
     const selector = this._selector(field);
     const scoped = this._scope(field);
 
@@ -150,7 +150,7 @@ export default class ErrorBag {
      * @param  {string} field The specified field.
      * @return {Boolean} result True if at least one error is found, false otherwise.
      */
-  has (field, scope = '__global__') {
+  has (field, scope = null) {
     return !! this.first(field, scope);
   }
 
@@ -174,7 +174,7 @@ export default class ErrorBag {
      */
   remove (field, scope) {
     const removeCondition = scope ? e => e.field === field && e.scope === scope
-      : e => e.field === field && e.scope === '__global__';
+      : e => e.field === field && e.scope === null;
 
     for (let i = 0; i < this.items.length; ++i) {
       if (removeCondition(this.items[i])) {
