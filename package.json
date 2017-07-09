@@ -30,6 +30,11 @@
     ],
     "testPathIgnorePatterns": [
       "/helpers/"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/messages.js",
+      "!src/plugins/date/messages.js"
     ]
   },
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
