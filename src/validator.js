@@ -490,7 +490,7 @@ export default class Validator {
    * @param {String} scope The name of the field scope.
    */
   detach (name, scope) {
-    const field = this._resolveField(name, scope);
+    let field = name instanceof Field ? name : this._resolveField(name, scope);
     if (field) {
       field.destroy();
       this.fields.remove(field);
