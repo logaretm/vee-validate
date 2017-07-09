@@ -30,10 +30,6 @@ export default (options) => ({
     if (!field) return;
 
     let scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
-    if (!scope) {
-      scope = '__global__';
-    }
-
     field.update({ scope });
   },
   update (el, { expression, value }, { context }) {
@@ -45,8 +41,8 @@ export default (options) => ({
     field.expression = JSON.stringify(value);
     const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
     field.update({
-      rules: getRules(expression, value, el),
-      scope: scope || '__global__'
+      scope,
+      rules: getRules(expression, value, el)
     });
   },
   unbind (el, { value }, { context }) {
