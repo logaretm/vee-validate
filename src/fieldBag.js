@@ -23,23 +23,46 @@ export default class FieldBag {
   }
 
   /**
-   * @param {Object} matcher
+   * @param {Object|Array} matcher
    * @return {Array} Array of matching field items.
    */
   filter (matcher) {
+    // multiple matchers to be tried.
+    if (Array.isArray(matcher)) {
+      return this.items.filter(item => matcher.some(m => item.matches(m)));
+    }
+
     return this.items.filter(item => item.matches(matcher));
   }
 
   /**
+   * Maps the field items using the mapping function.
+   *
+   * @param {Function} mapper 
+   */
+  map (mapper) {
+    return this.items.map(mapper);
+  }
+
+  /**
    * Finds and removes the first field that matches the provided matcher object, returns the removed item.
-   * @param {Object} matcher
+   * @param {Object|Field} matcher
+   * @return {Field|null}
    */
   remove (matcher) {
-    const item = this.find(matcher);
-    if (!item) return;
+    let item = null;
+    if (matcher instanceof Field) {
+      item = matcher;
+    } else {
+      item = this.find(matcher);
+    }
+
+    if (!item) return null;
 
     const index = this.items.indexOf(item);
     this.items.splice(index, 1);
+
+    return item;
   }
 
   /**
