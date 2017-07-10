@@ -528,8 +528,8 @@ export default class Validator {
 
   /**
    * Tries different strategies to find a field.
-   * @param {String} name 
-   * @param {String} scope 
+   * @param {String} name
+   * @param {String} scope
    * @return {Field}
    */
   _resolveField (name, scope) {

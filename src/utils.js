@@ -5,9 +5,9 @@ export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`)
 
 /**
  * Sets the data attribute.
- * @param {*} el 
- * @param {String} name 
- * @param {String} value 
+ * @param {*} el
+ * @param {String} name
+ * @param {String} value
  */
 export const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
 
@@ -50,8 +50,8 @@ export const getPath = (propPath, target, def = undefined) => {
 /**
  * Checks if path exists within an object.
  *
- * @param {String} path 
- * @param {Object} target 
+ * @param {String} path
+ * @param {Object} target
  */
 export const hasPath = (path, target) => {
   let obj = target;
@@ -66,6 +66,9 @@ export const hasPath = (path, target) => {
   });
 };
 
+/**
+ * @param {String} rule
+ */
 export const parseRule = (rule) => {
   let params = [];
   const name = rule.split(':')[0];
@@ -80,7 +83,7 @@ export const parseRule = (rule) => {
 /**
  * Normalizes the given rules expression.
  *
- * @param {Object|String} rules 
+ * @param {Object|String} rules
  */
 export const normalizeRules = (rules) => {
   const validations = {};

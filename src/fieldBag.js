@@ -38,7 +38,7 @@ export default class FieldBag {
   /**
    * Maps the field items using the mapping function.
    *
-   * @param {Function} mapper 
+   * @param {Function} mapper
    */
   map (mapper) {
     return this.items.map(mapper);
@@ -68,7 +68,7 @@ export default class FieldBag {
   /**
    * Adds a field item to the list.
    *
-   * @param {Field} item 
+   * @param {Field} item
    */
   push (item) {
     if (! (item instanceof Field)) {

@@ -224,7 +224,7 @@ export default class Field {
 
   /**
    * Removes listeners.
-   * @param {RegExp} tag 
+   * @param {RegExp} tag
    */
   unwatch (tag) {
     this.watchers.filter(w => tag.test(w.tag)).forEach(w => w.unwatch());
