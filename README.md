@@ -44,7 +44,7 @@ npm install vee-validate@prev --save
 #### bower
 
 ```
-bower install vee-validate#2.0.0-rc.6--save
+bower install vee-validate#2.0.0-rc.7--save
 ```
 
 ### CDN
@@ -52,7 +52,7 @@ bower install vee-validate#2.0.0-rc.6--save
 vee-validate is also available on these cdns:
 
 - [jsdelivr cdn](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js)
-- [unpkg](https://unpkg.com/vee-validate@2.0.0-rc.6)
+- [unpkg](https://unpkg.com/vee-validate@2.0.0-rc.7)
 
 ### Getting Started
 
