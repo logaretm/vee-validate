@@ -23,7 +23,7 @@ npm install vee-validate --save
 ### [CDN](#cdn)
 
 - [jsdelivr cdn](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js)
-- [unpkg](https://unpkg.com/vee-validate@2.0.0-rc.6)
+- [unpkg](https://unpkg.com/vee-validate@2.0.0-rc.7)
 
 ```html
   <script src="path/to/vue.js"></script>
