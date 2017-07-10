@@ -1,4 +1,5 @@
-import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable } from './utils';
+import Generator from './generator';
+import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn } from './utils';
 
 const NULL_VALIDATOR = {
   validate: () => {}
@@ -45,6 +46,7 @@ export default class Field {
     this.id = uniqId();
     this.el = el;
     this.expression = null;
+    this.dependencies = [];
     this.watchers = [];
     this.events = [];
     if (!this.isHeadless) {
@@ -136,8 +138,9 @@ export default class Field {
     this.expression = JSON.stringify(options.expression);
     this.alias = options.alias;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
-    this.delay = 0;
+    this.delay = options.delay || this.delay || 0;
     this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
+    this.updateDependencies();
 
     // no need to continue.
     if (this.isHeadless) {
@@ -156,6 +159,67 @@ export default class Field {
     this.classes = options.classes;
     this.addValueListeners();
     this.updateAriaAttrs();
+  }
+
+  /**
+   * Determines if the field requires references to target fields.
+  */
+  updateDependencies () {
+    // reset dependencies.
+    this.dependencies.forEach(field => {
+      field.destroy();
+    });
+    this.dependencies = [];
+
+    // we got the selectors for each field.
+    const fields = Object.keys(this.rules).reduce((prev, r) => {
+      if (r === 'confirmed') {
+        prev.push({ selector: this.rules[r][0] || `${this.name}_confirmation`, name: r });
+      }
+      if (/after|before/.test(r)) {
+        prev.push({ selector: this.rules[r][0], name: r });
+      }
+
+      return prev;
+    }, []);
+
+    if (!fields.length || !this.vm || !this.vm.$el) return;
+
+    // must be contained within the same component, so we use the vm to search.
+    fields.forEach(({ selector, name }) => {
+      let el = null;
+      // regular query selector.
+      if (~['#', '.'].indexOf(selector[0])) {
+        el = this.vm.$el.querySelector(selector);
+      } else if (selector[0] === '$') {
+        el = this.vm.$refs[selector.split('$').join('')];
+      }
+
+      if (!el) {
+        return warn(`Could not find a field with this selector ${selector}.`);
+      }
+
+      let options = null;
+
+      // probably a component.
+      if (isCallable(el.$watch)) {
+        options = Generator.generate(el.$el, {}, { context: this.vm });
+        options.component = el;
+        options.el = el.$el;
+      } else {
+        options = Generator.generate(el, {}, { context: this.vm });
+        options.el = el;
+      }
+
+      // copy options.
+      options.classes = this.classes;
+      options.classNames = this.classNames;
+      options.delay = this.delay;
+      options.scope = this.scope;
+      options.events = this.events;
+
+      this.dependencies.push({ name, field: new Field(options.el, options) });
+    });
   }
 
   /**

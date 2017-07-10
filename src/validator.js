@@ -2,7 +2,7 @@ import Rules from './rules';
 import ErrorBag from './errorBag';
 import Dictionary from './dictionary';
 import messages from './messages';
-import { isObject, isCallable, toArray, warn, createError, assign } from './utils';
+import { isObject, isCallable, toArray, warn, createError, assign, find } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
 import date from './plugins/date';
@@ -20,7 +20,6 @@ const DICTIONARY = new Dictionary({
 export default class Validator {
   constructor (validations, options = { vm: null, fastExit: true }) {
     this.strict = STRICT_MODE;
-    this.$scopes = { __global__: {} };
     this.errors = new ErrorBag();
     this.fields = new FieldBag();
     this._createFields(validations);
@@ -230,35 +229,6 @@ export default class Validator {
   }
 
   /**
-   * Resolves the field values from the getter functions.
-   */
-  _resolveValuesFromGetters (scope = '__global__') {
-    if (! this.$scopes[scope]) {
-      return {};
-    }
-    const values = {};
-    Object.keys(this.$scopes[scope]).forEach(name => {
-      const field = this.$scopes[scope][name];
-      const getter = field.getter;
-      const context = field.context;
-      const fieldScope = field.scope;
-      if (getter && context && (scope === '__global__' || fieldScope === scope)) {
-        const ctx = context();
-        if (ctx && ctx.disabled) {
-          return;
-        }
-
-        values[name] = {
-          value: getter(ctx),
-          scope: fieldScope
-        };
-      }
-    });
-
-    return values;
-  }
-
-  /**
    * Creates the fields to be validated.
    *
    * @param  {object} validations
@@ -350,6 +320,16 @@ export default class Validator {
     const validator = Rules[rule.name];
     if (! validator || typeof validator !== 'function') {
       throw createError(`No such validator '${rule.name}' exists.`);
+    }
+
+    // has field depenencies
+    if (/(confirmed|after|before)/.test(rule.name)) {
+      const target = find(field.dependencies, d => d.name === rule.name);
+      if (target) {
+        rule.params = [target.field.value];
+      } else if (rule.name === 'confirmed') { // to prevent matching against field names.
+        rule.params = [null];
+      }
     }
 
     if (date.installed && this._isADateRule(rule.name)) {
