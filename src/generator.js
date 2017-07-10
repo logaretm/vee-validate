@@ -38,6 +38,7 @@ export default class Generator {
       classNames: this.classes.classNames,
       getter: this.resolveGetter(),
       model: this.resolveModel(),
+      delay: getDataAttribute(this.el, 'delay') || this.options.delay,
       rules: getRules(this.binding, this.el),
       initial: !!this.binding.modifiers.initial,
       invalidateFalse: !!(this.el && this.el.type === 'checkbox'),
@@ -85,44 +86,6 @@ export default class Generator {
     }
 
     return getDataAttribute(this.el, 'name') || this.el.name;
-  }
-
-  /**
-   * Determines if the validation rule requires additional listeners on target fields.
-  */
-  _hasFieldDependency (rules) {
-    let fieldName = false;
-    if (! rules) {
-      return false;
-    }
-
-    if (isObject(rules)) {
-      Object.keys(rules).forEach(r => { // eslint-disable-line
-        if (/confirmed|after|before/.test(r)) {
-          fieldName = rules[r].split(',')[0];
-
-          return false;
-        }
-      });
-
-      return fieldName;
-    }
-
-    rules.split('|').every(r => {
-      if (/\b(confirmed|after|before):/.test(r)) {
-        fieldName = r.split(':')[1];
-        return false;
-      }
-
-      if (/\b(confirmed)/.test(r)) {
-        fieldName = `${this.fieldName}_confirmation`;
-        return false;
-      }
-
-      return true;
-    });
-
-    return fieldName;
   }
 
   /**
