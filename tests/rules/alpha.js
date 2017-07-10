@@ -35,4 +35,8 @@ test('validates the string contains alphabetic chars from other locales', () => 
   // specfic locale
   expect(validate('peace', ['ar'])).toBe(false);
   expect(validate('peace', ['ru'])).toBe(false);
+
+  // non-existant locale defaults to english validation.
+  expect(validate('peace', ['blah'])).toBe(true);
+  expect(validate('اين اشيائي', ['blah'])).toBe(false); // non english characters.
 });
