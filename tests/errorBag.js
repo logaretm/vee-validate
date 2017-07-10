@@ -225,6 +225,15 @@ test('groups errors by field name', () => {
       'The name is invalid'
     ]
   });
+  expect(errors.collect(null, undefined, false)).toEqual({
+    email: [
+      { field: 'email', msg: 'The email is invalid', scope: null, rule: 'rule1' },
+      { field: 'email', msg: 'The email is shorter than 3 chars.', scope: null, rule: 'rule1' },
+    ],
+    name: [
+      { field: 'name', msg: 'The name is invalid', scope: null, rule: 'rule1' },
+    ]
+  });
 });
 
 test('checks if there are any errors in the array', () => {
