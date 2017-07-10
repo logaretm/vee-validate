@@ -469,22 +469,6 @@ test('sets locale for all validators', async () => {
   expect(v2.errors.first('first_name')).toBe('is alphabetic');
 });
 
-test('resolves promises to booleans', async () => {
-  const params = [150, 100];
-  const v = new Validator({
-    image: 'dimensions:150,100'
-  });
-
-  helpers.dimensionsTest({ width: 150, height: 100 }, false, global);
-  expect(await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)])).toBe(true);
-
-  helpers.dimensionsTest({ width: 150, height: 100}, true, global);
-  expect(await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)])).toBe(false);
-
-  helpers.dimensionsTest({ width: 30, height: 20}, false, global);
-  expect(await v.validate('image', [helpers.file('file.jpg', 'image/jpeg', 10)])).toBe(false);
-});
-
 test('promises can return booleans directly', async () => {
   Validator.extend('direct', (value) => {
     return new Promise(resolve => resolve(!!value));
