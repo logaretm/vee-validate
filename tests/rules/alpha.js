@@ -8,18 +8,20 @@ const valid = [
   'null',
   'undefined',
   true,
-  false
+  false,
+  ['abcdefg', 'hijk', 'lmnopq']
 ];
 
 const invalid = [
   'this is sparta',
   '1234567a89',
-    {},
-  ' '
+  {},
+  ' ',
+  ['abcdefg', 'hijk', 'lmnopq123']
 ];
 
 test('validates that the string may only contains alphabetic characters', () => {
-  expect.assertions(12);
+  expect.assertions(14);
     // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
 

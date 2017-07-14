@@ -14,18 +14,20 @@ const valid = [
   '123-abc',
   '123_abc',
   true,
-  false
+  false,
+  ['a', 'b', 'cdef-_']
 ];
 
 const invalid = [
   'this is sparta',
   {},
-  ' '
+  ' ',
+  [' ', 'ada as']
 ];
 
 // eslint-disable-next-line
 test('validates that the string may only contain alpha-numeric characters as well as dashes and spaces', () => {
-  expect.assertions(17);
+  expect.assertions(19);
     // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
 

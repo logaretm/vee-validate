@@ -11,7 +11,8 @@ const valid = [
   true,
   false,
   'this is sparta',
-  ' '
+  ' ',
+  ['adasd dasdasda', 'yy']
 ];
 
 const invalid = [
@@ -19,11 +20,12 @@ const invalid = [
     {},
   '1234567890',
   'abc123',
-  123
+  123,
+  ['adasd dasdasda', '123']
 ];
 
 test('validates that the string may only contain alphabetic characters and spaces', () => {
-  expect.assertions(16);
+  expect.assertions(18);
     // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
 

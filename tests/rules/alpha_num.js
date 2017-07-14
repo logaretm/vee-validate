@@ -12,18 +12,20 @@ const valid = [
   'null',
   'undefined',
   true,
-  false
+  false,
+  ['asdad', 123, 'asd2123']
 ];
 
 const invalid = [
   'this is sparta',
   '123-abc',
-    {},
-  ' '
+  {},
+  ' ',
+  ['asdasda  ', '123 ad']
 ];
 
 test('validates that the string may only contain alphabetic and numeric characters', () => {
-  expect.assertions(16);
+  expect.assertions(18);
     // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
 
