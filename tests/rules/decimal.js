@@ -5,6 +5,7 @@ test('validates numerics with decmial numbers', () => {
 
     expect(validate('')).toBe(true);
     expect(validate('11.223123818')).toBe(true);
+    expect(validate(['11.223123818', '13.1231'])).toBe(true);
     expect(validate('11.223123818', [])).toBe(true);
     expect(validate('11.223123818', null)).toBe(true);
     expect(validate('11.223123818', undefined)).toBe(true);
@@ -21,7 +22,7 @@ test('validates numerics with decmial numbers', () => {
     expect(validate('1-', params)).toBe(false);
     expect(validate('1-1', params)).toBe(false);
     expect(validate('1-1.22', params)).toBe(false);
-    expect(validate([])).toBe(false);
+    expect(validate(['1-2.223123818', '1-3.1231'])).toBe(false);
     expect(validate('a')).toBe(false);
     expect(validate('1.11', ['0'])).toBe(false);
 });
