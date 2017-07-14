@@ -7,7 +7,8 @@ const valid = [
     'Pelé@example.com',
     'very.common@example.com',
     'other.email-with-dash@example.com',
-    'disposable.style.email.with+symbol@example.com'
+    'disposable.style.email.with+symbol@example.com',
+    ['someone@example.com', 'someone12@example.com']
 ];
 
 const invalid = [
@@ -18,10 +19,11 @@ const invalid = [
     'undefined',
     'null',
     'someone@example.c',
+    ['someone@example.com', 'someone@example.c']
 ];
 
 test('validates that the string is a valid email address', () => {
-    expect.assertions(14);
+    expect.assertions(16);
     // valid.
     valid.forEach(value => expect(validate(value)).toBe(true));
 
