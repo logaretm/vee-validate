@@ -15,7 +15,7 @@ test('injects the flags collection', () => {
   const mixin = makeMixin(Vue);
   const VM = Vue.extend({ mixins: [mixin] });
   const app = new VM();
-  expect(app.fields instanceof Array).toBe(true);
+  expect(typeof app.fields === 'object').toBe(true);
 });
 
 test('injects a validator instance', () => {

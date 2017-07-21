@@ -1,5 +1,6 @@
 import Validator from './../src/validator';
 import helpers from './helpers';
+import moment from 'moment';
 
 // Converts the value to a boolean and returns it in a promise.
 Validator.extend('promised', (value) => {
@@ -237,34 +238,6 @@ test('attaching new rules to an existing field should overwrite the old rules', 
   expect(await v.validate('someField', 'woww')).toBe(false);
 });
 
-test.skip('can append new validations to a field', async () => {
-  const validator = new Validator({
-    email: 'required|email',
-    name: 'required|min:3',
-    title: 'required|min:3|max:255',
-    content: 'required|max:20',
-    tags: 'required|in:1,2,3,5'
-  });
-
-  validator.attach('field', 'min:2', { prettyName: 'pretty' });
-  validator.append('field', 'max:3', { prettyName: 'pretty' });
-  expect(await validator.validate('field', 'wo')).toBe(true);
-  expect(await validator.validate('field', 'wow')).toBe(true);
-  
-  expect(await validator.validate('field', 'woww')).toBe(false);
-  expect(await validator.validate('field', 'w')).toBe(false);
-
-  // attaches if the field doesn't exist.
-  const v = new Validator();
-
-  v.attach('field', 'min:2');
-  v.detach('field');
-  v.append('field', 'min:3');
-  
-  expect(await v.validate('field', 'wo')).toBe(false);
-  expect(await v.validate('field', 'wow')).toBe(true);
-});
-
 test('fails when trying to validate a non-existant field when strict mode is true.', async () => {
   const v = new Validator({
     email: 'required|email',
@@ -488,30 +461,44 @@ test('wont install moment if the provided reference is not provided or not a fun
   expect(Validator.installDateTimeValidators('But I am moment!')).toBe(false); // nope
 });
 
-test.skip('installs date validators', async () => {
-  const moment = require('moment');
+test('installs date validators', async () => {
+  document.body.innerHTML = `<input type="text" name="field" value="" id="el">`;
+  const el = document.querySelector('#el');
   expect(Validator.installDateTimeValidators(moment)).toBe(true);
-  const v = new Validator({ birthday: 'date_format:DD/MM/YYYY|after:field' });
+  const v = new Validator();
+  v.attach({
+    name: 'birthday',
+    vm: {
+      $el: document.body
+    },
+    rules: 'date_format:DD/MM/YYYY|after:field'
+  });
 
-  helpers.querySelector({ name: 'field', value: '02/01/2008' });
+  el.value = '02/01/2008';
   expect(await v.validate('birthday', '01/12/2008')).toBe(true);
-
   expect(await v.validate('birthday', '01/01/2008')).toBe(false);
 });
 
 test('correctly parses rules with multiple colons', async () => {
   const v = new Validator({ time: 'date_format:HH:mm' });
-  const moment = require('moment');
   expect(Validator.installDateTimeValidators(moment)).toBe(true);
   expect(await v.validate('time', '15:30')).toBe(true);
   expect(await v.validate('time', '1700')).toBe(false);
 });
 
-test.skip('auto installs date validators if moment is present globally', async () => {
+test('auto installs date validators if moment is present globally', async () => {
   global.moment = require('moment');
-  const v = new Validator({ birthday: 'date_format:DD/MM/YYYY|after:field' });
-
-  helpers.querySelector({ name: 'field', value: '02/01/2008' });
+  document.body.innerHTML = `<input type="text" name="field" value="" id="el">`;
+  const el = document.querySelector('#el');
+  const v = new Validator();
+  v.attach({
+    name: 'birthday',
+    vm: {
+      $el: document.body
+    },
+    rules: 'date_format:DD/MM/YYYY|after:field'
+  });
+  el.value = '02/01/2008';
   expect(await v.validate('birthday', '01/12/2008')).toBe(true);
   expect(await v.validate('birthday', '01/01/2008')).toBe(false);
 });
@@ -560,11 +547,18 @@ test('cascades promise values with previous fields', async () => {
   })).toBe(false);
 });
 
-test.skip('can translate target field for field dependent validations', async () => {
-  const v = new Validator({
-    birthday: 'date_format:DD-MM-YYYY|after:birthday_min'
+test('can translate target field for field dependent validations', async () => {
+  global.moment = require('moment');
+  document.body.innerHTML = `<input type="text" name="birthday_min" value="" id="el">`;
+  const el = document.querySelector('#el');
+  const v = new Validator();
+  v.attach({
+    name: 'birthday',
+    vm: {
+      $el: document.body
+    },
+    rules: 'date_format:DD-MM-YYYY|after:birthday_min'
   });
-
   v.updateDictionary({
     en: {
       attributes: {
@@ -574,19 +568,24 @@ test.skip('can translate target field for field dependent validations', async ()
     }
   });
 
-  helpers.querySelector({ name: 'birthday_min', value: '12-09-2017' });
+  el.value = '12-09-2017';
   await v.validate('birthday', '11-09-2017');
   expect(v.errors.first('birthday')).toBe('The Birthday must be after Some Date.');
 });
 
 
-// TODO: construct a proper test after changes.
-test.skip('auto detect confirmation field when none given', async () => {
-  const v = new Validator({
-    password: 'confirmed'
+test('auto detect confirmation field when none given', async () => {
+  document.body.innerHTML = `<input type="text" name="password_confirmation" value="secret" id="el">`;
+  const el = document.querySelector('#el');
+  const v = new Validator();
+  v.attach({
+    name: 'password',
+    vm: {
+      $el: document.body
+    },
+    rules: 'confirmed'
   });
 
-  helpers.querySelector({ name: 'password_confirmation', value: 'secret' });
   expect(await v.validate('password', 'secret')).toBe(true);
   expect(await v.validate('password', 'fail')).toBe(false);
   expect(v.errors.first('password')).toBe('The password confirmation does not match.');
@@ -749,7 +748,7 @@ test('it can hold multiple errors for one field', async () => {
   expect(v.errors.count()).toBe(2);
 });
 
-test.skip('it can set flags for attached fields', () => {
+test('it can set flags for attached fields', () => {
   const v = new Validator();
   let field = v.attach('name', 'alpha');
   expect(field.flags.untouched).toBe(true);
@@ -765,9 +764,9 @@ test.skip('it can set flags for attached fields', () => {
 
   // dotted name fields
   field = v.attach('form.title', 'alpha');
-  expect(field.untouched).toBe(true);
+  expect(field.flags.untouched).toBe(true);
   v.flag('form.title', { untouched: false });
-  expect(field.untouched).toBe(false);
+  expect(field.flags.untouched).toBe(false);
 });
 
 test('it can handle mixed successes and errors from one field regardless of rules order', async () => {

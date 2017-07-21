@@ -22,6 +22,7 @@ export default class Validator {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
     this.fields = new FieldBag();
+    this.fieldBag = {};
     this._createFields(validations);
     this.paused = false;
     this.fastExit = options.fastExit || false;
@@ -318,6 +319,7 @@ export default class Validator {
    */
   _test (field, value, rule) {
     const validator = Rules[rule.name];
+    let params = Array.isArray(rule.params) ? toArray(rule.params) : [];
     if (! validator || typeof validator !== 'function') {
       throw createError(`No such validator '${rule.name}' exists.`);
     }
@@ -326,18 +328,18 @@ export default class Validator {
     if (/(confirmed|after|before)/.test(rule.name)) {
       const target = find(field.dependencies, d => d.name === rule.name);
       if (target) {
-        rule.params = [target.field.value];
-      } else if (rule.name === 'confirmed') { // to prevent matching against field names.
-        rule.params = [null];
+        params = [target.field.value];
       }
     }
 
     if (date.installed && this._isADateRule(rule.name)) {
       const dateFormat = this._getDateFormat(field.rules);
-      rule.params = (Array.isArray(rule.params) ? toArray(rule.params) : []).concat([dateFormat]);
+      if (rule.name !== 'date_format') {
+        params.push(dateFormat);
+      }
     }
 
-    let result = validator(value, rule.params);
+    let result = validator(value, params);
 
     // If it is a promise.
     if (isCallable(result.then)) {
@@ -392,7 +394,7 @@ export default class Validator {
       field = assign({}, {
         name: arguments[0],
         rules: arguments[1]
-      }, arguments[2] || {});
+      }, arguments[2] || { vm: { $validator: this } });
     }
 
     // try to find exisitng field.
@@ -409,6 +411,13 @@ export default class Validator {
     }
 
     this.fields.push(field);
+    if (!field.scope) {
+      this.fieldBag = assign({}, this.fieldBag, { [`${field.name}`]: field.flags });
+      return field;
+    }
+
+    const scopeObj = assign({}, this.fieldBag[`$${field.scope}`] || {}, { [`${field.name}`]: field.flags });
+    this.fieldBag = assign({}, this.fieldBag, { [`$${field.scope}`]: scopeObj });
 
     return field;
   }

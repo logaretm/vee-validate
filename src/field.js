@@ -1,11 +1,13 @@
-import Generator from './generator';
 import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn } from './utils';
+import Generator from './generator';
 
 const NULL_VALIDATOR = {
   validate: () => {}
 };
 
 const DEFAULT_OPTIONS = {
+  targetOf: null,
+  initial: false,
   scope: null,
   name: null,
   active: true,
@@ -45,6 +47,7 @@ export default class Field {
   constructor (el, options = {}) {
     this.id = uniqId();
     this.el = el;
+    this.updated = false;
     this.expression = null;
     this.dependencies = [];
     this.watchers = [];
@@ -96,6 +99,10 @@ export default class Field {
    * @return {*}
    */
   get value () {
+    if (!isCallable(this.getter)) {
+      return undefined;
+    }
+
     return this.getter();
   }
 
@@ -130,9 +137,11 @@ export default class Field {
    * @param {Object} options
    */
   update (options) {
+    this.targetOf = options.targetOf || null;
+    this.initial = options.initial || this.initial || false;
     this.scope = options.scope || this.scope || null;
     this.name = options.name || this.name || null;
-    this.rules = normalizeRules(options.rules || this.rules);
+    this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
     this.classNames = options.classNames;
     this.expression = JSON.stringify(options.expression);
@@ -159,6 +168,12 @@ export default class Field {
     this.classes = options.classes;
     this.addValueListeners();
     this.updateAriaAttrs();
+
+    // validate if initial validation is needed or if it was updated before.
+    if (this.initial || this.updated) {
+      this.validator.validate(`#${this.id}`, this.value);
+    }
+    this.updated = true;
   }
 
   /**
@@ -166,12 +181,10 @@ export default class Field {
   */
   updateDependencies () {
     // reset dependencies.
-    this.dependencies.forEach(field => {
-      field.destroy();
-    });
+    this.dependencies.forEach(field => field.destroy());
     this.dependencies = [];
 
-    // we got the selectors for each field.
+    // we get the selectors for each field.
     const fields = Object.keys(this.rules).reduce((prev, r) => {
       if (r === 'confirmed') {
         prev.push({ selector: this.rules[r][0] || `${this.name}_confirmation`, name: r });
@@ -185,38 +198,46 @@ export default class Field {
 
     if (!fields.length || !this.vm || !this.vm.$el) return;
 
-    // must be contained within the same component, so we use the vm to search.
+    // must be contained within the same component, so we use the vm root element constrain our dom search.
     fields.forEach(({ selector, name }) => {
       let el = null;
-      // regular query selector.
-      if (~['#', '.'].indexOf(selector[0])) {
-        el = this.vm.$el.querySelector(selector);
-      } else if (selector[0] === '$') {
+      // vue ref selector.
+      if (selector[0] === '$') {
         el = this.vm.$refs[selector.split('$').join('')];
+      } else {
+        // try a query selection.
+        el = this.vm.$el.querySelector(selector);
       }
 
       if (!el) {
-        return warn(`Could not find a field with this selector ${selector}.`);
+        // try a name selector
+        el = this.vm.$el.querySelector(`input[name="${selector}"]`);
       }
 
-      let options = null;
+      if (!el) {
+        return warn(`Could not find a field with this selector: "${selector}".`);
+      }
+
+      let options = {
+        vm: this.vm,
+        classes: this.classes,
+        classNames: this.classNames,
+        delay: this.delay,
+        scope: this.scope,
+        events: this.events,
+        initial: this.initial,
+        targetOf: this.id
+      };
 
       // probably a component.
       if (isCallable(el.$watch)) {
-        options = Generator.generate(el.$el, {}, { context: this.vm });
         options.component = el;
         options.el = el.$el;
+        options.getter = Generator.resolveGetter(el.$el, { child: el });
       } else {
-        options = Generator.generate(el, {}, { context: this.vm });
         options.el = el;
+        options.getter = Generator.resolveGetter(el, {});
       }
-
-      // copy options.
-      options.classes = this.classes;
-      options.classNames = this.classNames;
-      options.delay = this.delay;
-      options.scope = this.scope;
-      options.events = this.events;
 
       this.dependencies.push({ name, field: new Field(options.el, options) });
     });
@@ -311,8 +332,9 @@ export default class Field {
    */
   addValueListeners () {
     this.unwatch(/^input_.+/);
+    const id = this.targetOf ? this.targetOf : this.id;
     const validate = debounce(() => {
-      this.validator.validate(`#${this.id}`, this.value);
+      this.validator.validate(`#${id}`, this.value);
     }, this.delay);
 
     const inputEvent = getInputEventName(this.el);

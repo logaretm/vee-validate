@@ -293,3 +293,18 @@ test('sets aria attributes on elements', async () => {
   expect(el.getAttribute('aria-required')).toBe('false');
   expect(el.getAttribute('aria-invalid')).toBe('true');
 });
+
+test('fields can track their dependencies', async () => {
+  document.body.innerHTML = `
+    <input name="other" id="name" value="10" type="text">
+  `;
+  const field = new Field(null, {
+    rules: 'required|confirmed:other',
+    vm: {
+      $el: document.body
+    }
+  });
+  expect(field.dependencies.length).toBe(1);
+  expect(field.dependencies[0].name).toBe('confirmed');
+  expect(field.dependencies[0].field.value).toBe('10');
+});
