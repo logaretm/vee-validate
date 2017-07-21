@@ -23,7 +23,7 @@ const messages = {
   numeric: (field) => `${field} mag alleen nummers bevatten`,
   regex: (field) => `${field} formaat is ongeldig.`,
   required: (field) => `${field} is verplicht.`,
-  size: (field, [size]) => `${field} moet minstens ${size} KB groot zijn.`,
+  size: (field, [size]) => `${field} mag niet groter zijn dan ${size} KB.`,
   url: (field) => `${field} is geen geldige URL.`
 };
 
