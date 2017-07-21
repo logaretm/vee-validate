@@ -38,7 +38,7 @@ export default class Generator {
       classNames: this.classes.classNames,
       getter: this.resolveGetter(),
       model: this.resolveModel(),
-      delay: getDataAttribute(this.el, 'delay') || this.options.delay,
+      delay: getDataAttribute(this.el, 'delay') || (this.vnode.child && this.vnode.child.$attrs && this.vnode.child.$attrs['data-vv-delay']) || this.options.delay,
       rules: getRules(this.binding, this.el),
       initial: !!this.binding.modifiers.initial,
       invalidateFalse: !!(this.el && this.el.type === 'checkbox'),
@@ -82,7 +82,7 @@ export default class Generator {
      */
   resolveName () {
     if (this.vnode.child) {
-      return getDataAttribute(this.el, 'name') || this.vnode.child.name;
+      return getDataAttribute(this.el, 'name') || (this.vnode.child.$attrs && this.vnode.child.$attrs['data-vv-name']) || this.vnode.child.name;
     }
 
     return getDataAttribute(this.el, 'name') || this.el.name;
@@ -100,7 +100,7 @@ export default class Generator {
 
     if (this.vnode.child) {
       return () => {
-        const path = getDataAttribute(this.el, 'value-path') || (this.component.$attrs && this.component.$attrs['data-vv-value-path']);
+        const path = getDataAttribute(this.el, 'value-path') || (this.vnode.child.$attrs && this.vnode.child.$attrs['data-vv-value-path']);
         if (path) {
           return getPath(path, this.vnode.child);
         }
