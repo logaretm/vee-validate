@@ -90,7 +90,7 @@ export default class ListenerGenerator {
      */
   _resolveFieldName () {
     if (this.component) {
-      return getDataAttribute(this.el, 'name') || this.component.name;
+      return getDataAttribute(this.el, 'name') || (this.component.$attrs && this.component.$attrs['data-vv-name']) || this.component.name;
     }
 
     return getDataAttribute(this.el, 'name') || this.el.name;
@@ -311,9 +311,9 @@ export default class ListenerGenerator {
   _attachComponentListeners () {
     this.componentListener = debounce((value) => {
       this._validate(value);
-    }, getDataAttribute(this.el, 'delay') || this.options.delay);
+    }, getDataAttribute(this.el, 'delay') || (this.component.$attrs && this.component.$attrs['data-vv-delay']) || this.options.delay);
 
-    const events = getDataAttribute(this.el, 'validate-on') || this.options.events;
+    const events = getDataAttribute(this.el, 'validate-on') || (this.component.$attrs && this.component.$attrs['data-vv-validate-on']) || this.options.events;
     events.split('|').forEach(e => {
       if (!e) {
         return;
@@ -385,7 +385,7 @@ export default class ListenerGenerator {
       return {
         context: () => this.component,
         getter: (context) => {
-          const path = getDataAttribute(this.el, 'value-path');
+          const path = getDataAttribute(this.el, 'value-path') || (this.component.$attrs && this.component.$attrs['data-vv-value-path']);
           if (path) {
             return getPath(path, this.component);
           }

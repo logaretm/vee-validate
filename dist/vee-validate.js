@@ -878,7 +878,7 @@ var url = function (value, ref) {
     if ( ref === void 0 ) ref = [true];
     var requireProtocol = ref[0];
 
-    return isURL(value, { require_protocol: !! requireProtocol });
+    return isURL(value, { require_protocol: !! requireProtocol, allow_underscores: true });
 };
 
 /* eslint-disable camelcase */
@@ -3086,7 +3086,7 @@ ListenerGenerator.prototype._isExistingPath = function _isExistingPath (path) {
    */
 ListenerGenerator.prototype._resolveFieldName = function _resolveFieldName () {
   if (this.component) {
-    return getDataAttribute(this.el, 'name') || this.component.name;
+    return getDataAttribute(this.el, 'name') || (this.component.$attrs && this.component.$attrs['data-vv-name']) || this.component.name;
   }
 
   return getDataAttribute(this.el, 'name') || this.el.name;
@@ -3321,9 +3321,9 @@ ListenerGenerator.prototype._attachComponentListeners = function _attachComponen
 
   this.componentListener = debounce(function (value) {
     this$1._validate(value);
-  }, getDataAttribute(this.el, 'delay') || this.options.delay);
+  }, getDataAttribute(this.el, 'delay') || (this.component.$attrs && this.component.$attrs['data-vv-delay']) || this.options.delay);
 
-  var events = getDataAttribute(this.el, 'validate-on') || this.options.events;
+  var events = getDataAttribute(this.el, 'validate-on') || (this.component.$attrs && this.component.$attrs['data-vv-validate-on']) || this.options.events;
   events.split('|').forEach(function (e) {
     if (!e) {
       return;
@@ -3399,7 +3399,7 @@ ListenerGenerator.prototype._resolveValueGetter = function _resolveValueGetter (
     return {
       context: function () { return this$1.component; },
       getter: function (context) {
-        var path = getDataAttribute(this$1.el, 'value-path');
+        var path = getDataAttribute(this$1.el, 'value-path') || (this$1.component.$attrs && this$1.component.$attrs['data-vv-value-path']);
         if (path) {
           return getPath(path, this$1.component);
         }
