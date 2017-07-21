@@ -564,8 +564,8 @@ export default class Validator {
   /**
    * Handles when a field is not found depending on the strict flag.
    *
-   * @param {String} name 
-   * @param {String} scope 
+   * @param {String} name
+   * @param {String} scope
    */
   _handleFieldNotFound (name, scope) {
     if (! this.strict) return Promise.resolve(true);

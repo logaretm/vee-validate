@@ -28,8 +28,8 @@ export default class Generator {
 
   /**
    * Resolves the scope for the field.
-   * @param {*} el 
-   * @param {*} binding 
+   * @param {*} el
+   * @param {*} binding
    */
   static resolveScope (el, binding) {
     return (isObject(binding.value) ? binding.value.scope : getScope(el));
