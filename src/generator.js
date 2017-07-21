@@ -1,49 +1,38 @@
-import { getScope, getDataAttribute, isObject, toArray, find, getRules, assign, getPath, hasPath } from './utils';
-import config from './config';
+import { getScope, getDataAttribute, isObject, toArray, find, getRules, getPath, hasPath } from './utils';
 
 /**
  * Generates the options required to construct a field.
  */
 export default class Generator {
-  constructor (el, binding, vnode, options = {}) {
-    this.el = el;
-    this.binding = binding;
-    this.vnode = vnode;
-    this.options = assign({}, config, options);
-    this.classes = {
-      enabled: !!options.classes,
-      classNames: options.classNames
-    };
-  }
+  static generate (el, binding, vnode, options = {}) {
+    const model = this.resolveModel(binding, vnode);
 
-  static generate (el, binding, vnode, options) {
-    const generator = new Generator(el, binding, vnode, options);
-
-    return generator.generate();
-  }
-
-  resolveScope () {
-    return (isObject(this.binding.value) ? this.binding.value.scope : getScope(this.el));
-  }
-
-  generate () {
     return {
-      name: this.resolveName(),
-      el: this.el,
-      scope: this.resolveScope(),
-      vm: this.vnode.context,
-      expression: this.binding.value,
-      component: this.vnode.child,
-      classes: this.classes.enabled,
-      classNames: this.classes.classNames,
-      getter: this.resolveGetter(),
-      model: this.resolveModel(),
-      delay: getDataAttribute(this.el, 'delay') || (this.vnode.child && this.vnode.child.$attrs && this.vnode.child.$attrs['data-vv-delay']) || this.options.delay,
-      rules: getRules(this.binding, this.el),
-      initial: !!this.binding.modifiers.initial,
-      invalidateFalse: !!(this.el && this.el.type === 'checkbox'),
-      alias: getDataAttribute(this.el, 'as') || this.el.title || null,
+      name: Generator.resolveName(el, vnode),
+      el: el,
+      scope: Generator.resolveScope(el, binding),
+      vm: vnode.context,
+      expression: binding.value,
+      component: vnode.child,
+      classes: options.classes,
+      classNames: options.classNames,
+      getter: Generator.resolveGetter(el, vnode, model),
+      model,
+      delay: getDataAttribute(el, 'delay') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-delay']) || options.delay,
+      rules: getRules(binding, el),
+      initial: !!binding.modifiers.initial,
+      invalidateFalse: !!(el && el.type === 'checkbox'),
+      alias: getDataAttribute(el, 'as') || el.title || null,
     };
+  }
+
+  /**
+   * Resolves the scope for the field.
+   * @param {*} el 
+   * @param {*} binding 
+   */
+  static resolveScope (el, binding) {
+    return (isObject(binding.value) ? binding.value.scope : getScope(el));
   }
 
   /**
@@ -52,65 +41,64 @@ export default class Generator {
    *
    * @return {Object}
    */
-  resolveModel () {
-    if (this.binding.arg) {
-      return this.binding.arg;
+  static resolveModel (binding, vnode) {
+    if (binding.arg) {
+      return binding.arg;
     }
 
-    if (isObject(this.binding.value) && this.binding.value.arg) {
-      return this.binding.value.arg;
+    if (isObject(binding.value) && binding.value.arg) {
+      return binding.value.arg;
     }
 
-    const model = this.vnode.data.model || find(this.vnode.data.directives, d => d.name === 'model');
+    const model = vnode.data.model || find(vnode.data.directives, d => d.name === 'model');
     if (!model) {
       return null;
     }
 
-    const watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression, this.vnode.context);
+    const watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression, vnode.context);
 
     if (!watchable) {
       return null;
     }
 
-    this.model = model.expression;
-    return this.model;
+    return model.expression;
   }
 
   /**
      * Resolves the field name to trigger validations.
      * @return {String} The field name.
      */
-  resolveName () {
-    if (this.vnode.child) {
-      return getDataAttribute(this.el, 'name') || (this.vnode.child.$attrs && this.vnode.child.$attrs['data-vv-name']) || this.vnode.child.name;
+  static resolveName (el, vnode) {
+    if (vnode.child) {
+      return getDataAttribute(el, 'name') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-name']) || vnode.child.name;
     }
 
-    return getDataAttribute(this.el, 'name') || this.el.name;
+    return getDataAttribute(el, 'name') || el.name;
   }
 
   /**
    * Returns a value getter input type.
    */
-  resolveGetter () {
-    if (this.model) {
+  static resolveGetter (el, vnode, model) {
+    if (model) {
       return () => {
-        return getPath(this.model, this.vnode.context);
+        return getPath(model, vnode.context);
       };
     }
 
-    if (this.vnode.child) {
+    if (vnode.child) {
       return () => {
-        const path = getDataAttribute(this.el, 'value-path') || (this.vnode.child.$attrs && this.vnode.child.$attrs['data-vv-value-path']);
+        const path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
         if (path) {
-          return getPath(path, this.vnode.child);
+          return getPath(path, vnode.child);
         }
-        return this.vnode.child.value;
+        return vnode.child.value;
       };
     }
 
-    switch (this.el.type) {
+    switch (el.type) {
     case 'checkbox': return () => {
-      let els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+      let els = document.querySelectorAll(`input[name="${el.name}"]`);
 
       els = toArray(els).filter(el => el.checked);
       if (!els.length) return undefined;
@@ -118,19 +106,19 @@ export default class Generator {
       return els.map(checkbox => checkbox.value);
     };
     case 'radio': return () => {
-      const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
-      const el = find(els, el => el.checked);
+      const els = document.querySelectorAll(`input[name="${el.name}"]`);
+      const elm = find(els, el => el.checked);
 
-      return el && el.value;
+      return elm && elm.value;
     };
     case 'file': return (context) => {
-      return toArray(this.el.files);
+      return toArray(el.files);
     };
     case 'select-multiple': return () => {
-      return toArray(this.el.options).filter(opt => opt.selected).map(opt => opt.value);
+      return toArray(el.options).filter(opt => opt.selected).map(opt => opt.value);
     };
     default: return () => {
-      return this.el.value;
+      return el && el.value;
     };
     }
   }

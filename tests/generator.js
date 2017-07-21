@@ -1,40 +1,34 @@
 import Generator from '../src/generator';
 
 test('resolves the bound model', () => {
-  document.body.innerHTML = `
-    <input type="text" name="field" id="el" v-model="email">
-  `;
-  const el = document.querySelector('#el');
-
   // watchable model.
   let vnode = { context: { email: '' }, data: { model: { expression: 'email' } } };
-  expect(new Generator(el, { arg: null, value: null }, vnode).resolveModel()).toBe('email');
+  expect(Generator.resolveModel({ arg: null, value: null }, vnode)).toBe('email');
 
   // watchable directive arg
   vnode = { context: { email: '' }, data: { model: { expression: 'email' } } };
-  expect(new Generator(el, { arg: 'email', value: null }, vnode).resolveModel()).toBe('email');
+  expect(Generator.resolveModel({ arg: 'email', value: null }, vnode)).toBe('email');
 
   // watchable expression arg
   vnode = { context: { email: '' }, data: { model: { expression: 'email' } } };
-  expect(new Generator(el, { arg: null, value: { arg: 'email' } }, vnode).resolveModel()).toBe('email');
+  expect(Generator.resolveModel({ arg: null, value: { arg: 'email' } }, vnode)).toBe('email');
 
   // old model when was included in directives array.
   vnode = { context: { email: '' }, data: { directives: [{ name: 'model', expression: 'email' }] } };
-  expect(new Generator(el, {}, vnode).resolveModel()).toBe('email');
+  expect(Generator.resolveModel({}, vnode)).toBe('email');
 
 
   // unresolvable.
   vnode = { context: { email: '' }, data: { directives: [] } };
-  expect(new Generator(el, {}, vnode).resolveModel()).toBe(null);
+  expect(Generator.resolveModel({}, vnode)).toBe(null);
 
   // unwatchable model because it does not exist on the vm (context).
   vnode = { context: {}, data: { model: { expression: 'email' } } };
-  expect(new Generator(el, { arg: null, value: null }, vnode).resolveModel()).toBe(null);
+  expect(Generator.resolveModel({ arg: null, value: null }, vnode)).toBe(null);
   
   // Part of a `v-for` cannot be watched by the $watch API.
   vnode = { context: {}, data: { model: { expression: 'emails[0]' } } };
-  expect(new Generator(el, { arg: null, value: null }, vnode).resolveModel()).toBe(null);  
-
+  expect(Generator.resolveModel({ arg: null, value: null }, vnode)).toBe(null);  
 });
 
 test('resolves the input scope', () => {
@@ -44,7 +38,7 @@ test('resolves the input scope', () => {
   `;
   let el = document.querySelector('#el');
   const vnode = { context: { email: '' }, data: { model: { expression: 'email' } } };
-  expect(new Generator(el, { arg: null, value: null }, vnode).resolveScope()).toBe('s1');
+  expect(Generator.resolveScope(el, { arg: null, value: null })).toBe('s1');
 
   // defined on form.
   document.body.innerHTML = `
@@ -53,11 +47,11 @@ test('resolves the input scope', () => {
     </form>
   `;
   el = document.querySelector('#el');
-  expect(new Generator(el, { arg: null, value: null }, vnode).resolveScope()).toBe('s2');
+  expect(Generator.resolveScope(el, { arg: null, value: null })).toBe('s2');
 
   // defined in expression.
   el = document.querySelector('#el');
-  expect(new Generator(el, { arg: null, value: { scope: 's3'} }, vnode).resolveScope()).toBe('s3');
+  expect(Generator.resolveScope(el, { arg: null, value: { scope: 's3'} })).toBe('s3');
 });
 
 describe('resolves the value getters', () => {
@@ -67,7 +61,7 @@ describe('resolves the value getters', () => {
     `;
     let el = document.querySelector('#el');
     let vnode = { context: { email: '' }, data: {} };
-    const getter = new Generator(el, {}, vnode).resolveGetter();
+    const getter = Generator.resolveGetter(el, vnode);
     expect(
       getter()
     ).toBe('somevalue');
@@ -86,7 +80,7 @@ describe('resolves the value getters', () => {
       document.querySelector('#el3')
     ];
     const vnode = { context: { email: '' }, data: {} };
-    const getter = new Generator(els[0], {}, vnode).resolveGetter();
+    const getter = Generator.resolveGetter(els[0], vnode);
 
     // none checked.
     expect(
@@ -124,7 +118,7 @@ describe('resolves the value getters', () => {
       document.querySelector('#el3')
     ];
     const vnode = { context: { email: '' }, data: {} };
-    const getter = new Generator(els[0], {}, vnode).resolveGetter();
+    const getter = Generator.resolveGetter(els[0], vnode);
     // none checked.
     expect(
       getter()
@@ -156,7 +150,7 @@ describe('resolves the value getters', () => {
     `;
     const el = document.querySelector('#el');
     const vnode = { context: { email: '' }, data: {} };
-    const getter = new Generator(el, {}, vnode).resolveGetter();
+    const getter = Generator.resolveGetter(el, vnode);
     expect(getter()).toBe('2');
   });
   
@@ -170,7 +164,7 @@ describe('resolves the value getters', () => {
     `;
     const el = document.querySelector('#el');
     const vnode = { context: { email: '' }, data: {} };
-    const getter = new Generator(el, {}, vnode).resolveGetter();
+    const getter = Generator.resolveGetter(el, vnode);
     expect(getter()).toEqual(['2', '3']);
   });
 
@@ -180,7 +174,7 @@ describe('resolves the value getters', () => {
     `;
     const el = document.querySelector('#el');
     const vnode = { context: { email: '' }, data: {} };
-    const getter = new Generator(el, {}, vnode).resolveGetter();
+    const getter = Generator.resolveGetter(el, vnode);
     expect(getter()).toEqual([]);
   });
 
@@ -190,9 +184,8 @@ describe('resolves the value getters', () => {
     `;
     const el = document.querySelector('#el');
     const vnode = { context: { email: 'example@example.com' }, data: { model: { expression: 'email' } } };
-    const generator = new Generator(el, { arg: null, value: null }, vnode);
-    generator.resolveModel(); // model must be resolved first.
-    const getter = generator.resolveGetter();
+    const model = Generator.resolveModel({ arg: null, value: null }, vnode); // model must be resolved first.
+    const getter = Generator.resolveGetter(el, vnode, model);
     expect(getter()).toBe('example@example.com');
     vnode.context.email = 'other@example.com';
     expect(getter()).toBe('other@example.com');
@@ -204,8 +197,7 @@ describe('resolves the value getters', () => {
     `;
     let el = document.querySelector('#el');
     const vnode = { context: {}, child: { someval: 'test', value: 'test2' }, data: {} };
-    const generator = new Generator(el, { arg: null, value: null }, vnode);
-    const getter = generator.resolveGetter();
+    const getter = Generator.resolveGetter(el, vnode);
     expect(getter()).toBe('test');
     vnode.child.someval = 'changed';
     expect(getter()).toBe('changed');
@@ -225,7 +217,7 @@ describe('resolves the field name', () => {
     `;
     const el = document.querySelector('#el');
     const vnode = { context: { email: '' }, data: {} };
-    expect(new Generator(el, { arg: null, value: null }, vnode).resolveName()).toBe('field');
+    expect(Generator.resolveName(el, vnode)).toBe('field');
   });
 
   test('using data-vv-name attribute', () => {
@@ -234,19 +226,22 @@ describe('resolves the field name', () => {
     `;
     const el = document.querySelector('#el');
     const vnode = { context: {}, data: {} };
-    expect(new Generator(el, { arg: null, value: null }, vnode).resolveName()).toBe('field');
+    expect(Generator.resolveName(el, vnode)).toBe('field');
   });
 
-  test('component name property if exists', () => {
+  test('custom component names', () => {
     document.body.innerHTML = `
       <input type="text" id="el">
     `;
     const el = document.querySelector('#el');
     const vnode = { context: {}, child: { name: 'component' }, data: {} };
-    expect(new Generator(el, {}, vnode).resolveName()).toBe('component');
+    expect(Generator.resolveName(el, vnode)).toBe('component');
     el.setAttribute('data-vv-name', 'field'); // data-vv-name takes priority.
     vnode.child.name = null;
-    expect(new Generator(el, {}, vnode).resolveName()).toBe('field');
+    expect(Generator.resolveName(el, vnode)).toBe('field');
+    el.setAttribute('data-vv-name', ''); // data-vv-name takes priority.
+    vnode.child.$attrs = { 'data-vv-name': 'attrName' }; // simulate Vue's 2.4 inheritAttrs set to false.
+    expect(Generator.resolveName(el, vnode)).toBe('attrName');
   });
 });
 
@@ -262,7 +257,7 @@ test('generates field options', () => {
     model: 'email',
     vm: vnode.context,
     component: undefined,
-    classes: false,
+    classes: undefined,
     classNames: undefined,
     expression: 'required|max:3',
     rules: 'required|max:3',
