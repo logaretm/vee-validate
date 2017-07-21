@@ -3070,7 +3070,7 @@ ListenerGenerator.prototype._resolveModel = function _resolveModel (data) {
 ListenerGenerator.prototype._isExistingPath = function _isExistingPath (path) {
   var obj = this.vm;
   return path.split('.').every(function (prop) {
-    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+    if (! Object.prototype.hasOwnProperty.call(obj, prop) && obj[prop] === undefined) {
       return false;
     }
 

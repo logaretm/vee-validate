@@ -2858,7 +2858,7 @@ class ListenerGenerator {
   _isExistingPath (path) {
     let obj = this.vm;
     return path.split('.').every(prop => {
-      if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+      if (! Object.prototype.hasOwnProperty.call(obj, prop) && obj[prop] === undefined) {
         return false;
       }
 
