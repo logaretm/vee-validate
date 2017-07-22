@@ -705,16 +705,6 @@ test('ignores empty rules', async () => {
   expect(await v1.validate('name', 'Martin')).toBe(true);
 });
 
-test('can update validations of a field', async () => {
-  const v = new Validator({
-    name: 'required|alpha'
-  });
-  expect(await v.validate('name', 12)).toBe(false);
-  v.updateField('name', 'required|numeric');
-  expect(v.errors.count()).toBe(0);
-  expect(await v.validate('name', 12)).toBe(true);
-});
-
 test('handles dot notation names', async () => {
   const v = new Validator();
   v.attach('example.name', 'required|alpha');

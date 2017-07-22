@@ -5,7 +5,7 @@ import { getScope, getDataAttribute, isObject, toArray, find, getRules, getPath,
  */
 export default class Generator {
   static generate (el, binding, vnode, options = {}) {
-    const model = this.resolveModel(binding, vnode);
+    const model = Generator.resolveModel(binding, vnode);
 
     return {
       name: Generator.resolveName(el, vnode),

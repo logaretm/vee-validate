@@ -1742,7 +1742,7 @@ var Generator = function Generator () {};
 Generator.generate = function generate (el, binding, vnode, options) {
     if ( options === void 0 ) options = {};
 
-  var model = this.resolveModel(binding, vnode);
+  var model = Generator.resolveModel(binding, vnode);
 
   return {
     name: Generator.resolveName(el, vnode),
