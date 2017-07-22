@@ -316,4 +316,10 @@ export const getRules = (binding, el) => {
   return binding.value;
 };
 
-export const getInputEventName = (el) => el.type === 'text' ? 'input' : 'change';
+export const getInputEventName = (el) => {
+  if (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type)) {
+    return 'change';
+  }
+
+  return 'input';
+};

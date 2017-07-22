@@ -17,6 +17,7 @@ export default class Generator {
       classes: options.classes,
       classNames: options.classNames,
       getter: Generator.resolveGetter(el, vnode, model),
+      events: Generator.resolveEvents(el, vnode) || options.events,
       model,
       delay: getDataAttribute(el, 'delay') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-delay']) || options.delay,
       rules: getRules(binding, el),
@@ -24,6 +25,14 @@ export default class Generator {
       invalidateFalse: !!(el && el.type === 'checkbox'),
       alias: getDataAttribute(el, 'as') || el.title || null,
     };
+  }
+
+  static resolveEvents (el, vnode) {
+    if (vnode.child) {
+      return getDataAttribute(el, 'validate-on') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-validate-on']);
+    }
+
+    return getDataAttribute(el, 'validate-on');
   }
 
   /**

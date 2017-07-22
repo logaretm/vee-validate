@@ -443,23 +443,6 @@ export default class Validator {
   }
 
   /**
-   * @deprecate
-   */
-  updateField (...args) {
-    this.attach(...args);
-  }
-
-  /**
-   * Append another validation to an existing field.
-   *
-   * @param  {string} name The field name.
-   * @param  {string} checks validations expression.
-   */
-  append (name, checks, options = {}) {
-    // TODO: Update or Deprecate
-  }
-
-  /**
    * Clears the errors from the errorBag using the next tick if possible.
    */
   clean () {
@@ -641,6 +624,9 @@ export default class Validator {
     }
     this.errors.remove(field.name, field.scope);
     field.flags.pending = true;
+    if (arguments.length === 1) {
+      value = field.value;
+    }
 
     return this._validate(field, value).then(result => {
       field.flags.pending = false;

@@ -1,10 +1,6 @@
 import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn } from './utils';
 import Generator from './generator';
 
-const NULL_VALIDATOR = {
-  validate: () => {}
-};
-
 const DEFAULT_OPTIONS = {
   targetOf: null,
   initial: false,
@@ -52,8 +48,8 @@ export default class Field {
     this.dependencies = [];
     this.watchers = [];
     this.events = [];
-    if (!this.isHeadless) {
-      setDataAttribute(this.el, 'id', this.id); // cache field id.
+    if (!this.isHeadless && !(this.targetOf || options.targetOf)) {
+      setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent.
     }
     options = assign({}, DEFAULT_OPTIONS, options);
     this.flags = generateFlags(options);
@@ -67,11 +63,12 @@ export default class Field {
   }
 
   get validator () {
-    if (this.vm) {
-      return this.vm.$validator;
+    if (!this.vm || !this.vm.$validator) {
+      warn('No validator instance detected.');
+      return { validate: () => {} };
     }
 
-    return NULL_VALIDATOR;
+    return this.vm.$validator;
   }
 
   get isRequired () {
@@ -170,10 +167,9 @@ export default class Field {
     this.updateAriaAttrs();
 
     // validate if initial validation is needed or if it was updated before.
-    if (this.initial || this.updated) {
+    if (this.initial) {
       this.validator.validate(`#${this.id}`, this.value);
     }
-    this.updated = true;
   }
 
   /**
@@ -181,7 +177,7 @@ export default class Field {
   */
   updateDependencies () {
     // reset dependencies.
-    this.dependencies.forEach(field => field.destroy());
+    this.dependencies.forEach(d => d.field.destroy());
     this.dependencies = [];
 
     // we get the selectors for each field.
@@ -224,7 +220,7 @@ export default class Field {
         classNames: this.classNames,
         delay: this.delay,
         scope: this.scope,
-        events: this.events,
+        events: this.events.join('|'),
         initial: this.initial,
         targetOf: this.id
       };
@@ -332,10 +328,23 @@ export default class Field {
    */
   addValueListeners () {
     this.unwatch(/^input_.+/);
-    const id = this.targetOf ? this.targetOf : this.id;
-    const validate = debounce(() => {
-      this.validator.validate(`#${id}`, this.value);
-    }, this.delay);
+    let fn = null;
+    if (this.targetOf) {
+      fn = value => {
+        if (arguments.length === 0 || value instanceof Event) {
+          value = this.value;
+        }
+        this.validator.validate(`#${this.targetOf}`);
+      };
+    } else {
+      fn = value => {
+        if (arguments.length === 0 || value instanceof Event) {
+          value = this.value;
+        }
+        this.validator.validate(`#${this.id}`, this.value);
+      };
+    }
+    const validate = debounce(fn, this.delay);
 
     const inputEvent = getInputEventName(this.el);
     // replace input event with suitable one.
