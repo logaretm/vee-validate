@@ -19,7 +19,7 @@ export default class Generator {
       getter: Generator.resolveGetter(el, vnode, model),
       events: Generator.resolveEvents(el, vnode) || options.events,
       model,
-      delay: getDataAttribute(el, 'delay') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-delay']) || options.delay,
+      delay: Generator.resolveDelay(el, vnode, options),
       rules: getRules(binding, el),
       initial: !!binding.modifiers.initial,
       invalidateFalse: !!(el && el.type === 'checkbox'),
@@ -27,6 +27,21 @@ export default class Generator {
     };
   }
 
+  /**
+   * Resolves the delay value.
+   * @param {*} el
+   * @param {*} vnode
+   * @param {Object} options
+   */
+  static resolveDelay (el, vnode, options = {}) {
+    return getDataAttribute(el, 'delay') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-delay']) || options.delay;
+  }
+
+  /**
+   * Resolves the events to validate in response to.
+   * @param {*} el
+   * @param {*} vnode
+   */
   static resolveEvents (el, vnode) {
     if (vnode.child) {
       return getDataAttribute(el, 'validate-on') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-validate-on']);

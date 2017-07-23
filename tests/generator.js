@@ -54,6 +54,31 @@ test('resolves the input scope', () => {
   expect(Generator.resolveScope(el, { arg: null, value: { scope: 's3'} })).toBe('s3');
 });
 
+test('resolves delay', () => {
+  document.body.innerHTML = `
+    <input type="text" name="field" id="el" v-model="email" data-vv-delay="100">
+  `;
+  const vnode = { child: { $attrs: { 'data-vv-delay': '200' } } };
+  let el = document.querySelector('#el');
+  expect(Generator.resolveDelay(el, {})).toBe('100');
+
+  el = { getAttribute: () => null };
+  expect(Generator.resolveDelay(el, vnode)).toBe('200');
+  expect(Generator.resolveDelay(el, {}, { delay: '300' })).toBe('300');
+})
+
+test('resolves events', () => {
+  document.body.innerHTML = `
+    <input type="text" name="field" id="el" v-model="email" data-vv-validate-on="input">
+  `;
+  let el = document.querySelector('#el');
+  const vnode = { child: { $attrs: { 'data-vv-validate-on': 'focus' } } };
+  expect(Generator.resolveEvents(el, {})).toBe('input');
+  el = { getAttribute: () => null };
+
+  expect(Generator.resolveEvents(el, vnode)).toBe('focus');  
+});
+
 describe('resolves the value getters', () => {
   test('resolves for text fields', () => {
     document.body.innerHTML = `
@@ -196,7 +221,7 @@ describe('resolves the value getters', () => {
       <input type="text" name="field" id="el" data-vv-value-path="someval">
     `;
     let el = document.querySelector('#el');
-    const vnode = { context: {}, child: { someval: 'test', value: 'test2' }, data: {} };
+    const vnode = { context: {}, child: { someval: 'test', value: 'test2', third: 33 }, data: {} };
     const getter = Generator.resolveGetter(el, vnode);
     expect(getter()).toBe('test');
     vnode.child.someval = 'changed';
@@ -207,6 +232,10 @@ describe('resolves the value getters', () => {
     expect(getter()).toBe('test2');
     vnode.child.value = 'changed';
     expect(getter()).toBe('changed');
+    delete vnode.child.value;
+  
+    vnode.child.$attrs = { 'data-vv-value-path': 'third' };
+    expect(Generator.resolveGetter(el, vnode)()).toBe(33);
   });
 });
 
