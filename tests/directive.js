@@ -2,16 +2,16 @@ import Vue from 'vue/dist/vue';
 import makeDirective from '../src/directive';
 
 test('warns if no validator was found during binding', () => {
-  const VM = Vue.extend({
+  let VM = Vue.extend({
     directives: { validate: makeDirective() },
     template: `
       <input v-validate>
     `
   });
   global.console.warn = jest.fn();
-  const app = new VM().$mount();
+  let app = new VM().$mount();
   expect(console.warn).toHaveBeenCalledWith(
-    `[vee-validate] No validator instance is present on un-named component, did you forget to inject '$validator'?`
+    `[vee-validate] No validator instance is present on vm, did you forget to inject '$validator'?`
   );
 });
 
@@ -77,6 +77,39 @@ test('evaluates field options after update', done => {
   });
 });
 
+test('expression can contain an object containing the scope', done => {
+  const field = {
+    update: jest.fn(),
+    expression: 'unlikeuhaveseen'
+  };
+  const $validator = {
+    attach: jest.fn(),
+    fields: {
+      find: jest.fn(() => field)
+    },
+    detach: jest.fn()
+  };
+  const VM = Vue.extend({
+    data: () => ({
+      value: ''
+    }),
+    directives: { validate: makeDirective() },
+    beforeCreate() {
+      this.$validator = $validator
+    },
+    template: `
+      <input v-validate="{ scope: 's1', rules: 'required' }" v-model="value">
+    `
+  });
+  const app = new VM().$mount();
+  expect(field.update).toHaveBeenCalledTimes(1); // at inserted.
+  app.value = 'new'; // trigger update.
+  app.$nextTick(() => {
+    expect(field.update).toHaveBeenCalledTimes(2); // at update.
+    done();
+  });
+});
+
 test('cleans up after unbinding', () => {
   const field = {
     update: jest.fn()
@@ -97,10 +130,15 @@ test('cleans up after unbinding', () => {
       <input v-validate="{ rules: 'required', scope: 's1' }" >
     `
   });
-  const app = new VM().$mount();
+  let app = new VM().$mount();
   expect($validator.attach).toHaveBeenCalledTimes(1); // field got attached.
   app.$destroy();
   expect($validator.detach).toHaveBeenCalledTimes(1); // field got detached.
+
+  $validator.fields.find = jest.fn(() => null); // test field early exit guard
+  app = new VM().$mount();
+  app.$destroy();
+  expect($validator.detach).toHaveBeenCalledTimes(1); // did not get called again.
 });
 
 test('revises scope after inserted', async () => {

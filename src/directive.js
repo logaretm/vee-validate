@@ -21,8 +21,7 @@ const createDirective = options => {
     bind (el, binding, vnode) {
       const validator = vnode.context.$validator;
       if (! validator) {
-        const name = vnode.context.$options._componentTag;
-        warn(`No validator instance is present on ${name ? 'component "' + name + '"' : 'un-named component'}, did you forget to inject '$validator'?`);
+        warn(`No validator instance is present on vm, did you forget to inject '$validator'?`);
         return;
       }
       const fieldOptions = Generator.generate(el, binding, vnode, options);
