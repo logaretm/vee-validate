@@ -263,14 +263,14 @@ export default class Field {
     // remove previous listeners.
     this.unwatch(/class/);
 
-    const onFocus = () => {
+    const onBlur = () => {
       toggleClass(this.el, this.classNames.touched, true);
       toggleClass(this.el, this.classNames.untouched, false);
       this.flags.touched = true;
       this.flags.untouched = false;
 
       // only needed once.
-      this.unwatch(/^class_focus$/);
+      this.unwatch(/^class_blur$/);
     };
 
     const event = getInputEventName(this.el);
@@ -286,7 +286,7 @@ export default class Field {
 
     if (this.isVue) {
       this.component.$once('input', onInput);
-      this.component.$once('focus', onFocus);
+      this.component.$once('blur', onBlur);
       this.watchers.push({
         tag: 'class_input',
         unwatch: () => {
@@ -294,15 +294,16 @@ export default class Field {
         }
       });
       this.watchers.push({
-        tag: 'class_focus',
+        tag: 'class_blur',
         unwatch: () => {
-          this.component.$off('focus', onFocus);
+          this.component.$off('blur', onBlur);
         }
       });
       return;
     }
+
     this.el.addEventListener(event, onInput);
-    this.el.addEventListener('focus', onFocus);
+    this.el.addEventListener('blur', onBlur);
     this.watchers.push({
       tag: 'class_input',
       unwatch: () => {
@@ -310,9 +311,9 @@ export default class Field {
       }
     });
     this.watchers.push({
-      tag: 'class_focus',
+      tag: 'class_blur',
       unwatch: () => {
-        this.el.removeEventListener('focus', onFocus);
+        this.el.removeEventListener('blur', onBlur);
       }
     });
   }

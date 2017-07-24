@@ -78,6 +78,26 @@ test('it adds value listeners on the native inputs', () => {
   expect(field.validator.validate).toHaveBeenCalledTimes(2);
 });
 
+test('it adds value listeners on all radio inputs that have the same name', () => {
+  document.body.innerHTML = `
+    <input name="name" id="name" value="1" type="radio">
+    <input name="name" value="2" type="radio">
+    <input name="name" id="last" value="3" type="radio">
+  `;
+  const el = document.querySelector('#name');
+  const el2 = document.querySelector('#last');
+  const field = new Field(el, { getter: () => el.value });
+  field.vm = { $validator: { validate: jest.fn() } };
+  el2.dispatchEvent(new Event('change'));
+
+  expect(field.validator.validate).toHaveBeenCalledTimes(1); // triggered.
+  expect(field.watchers.length).toBe(6); // 2 for each field.
+  field.unwatch(/input/);
+  el2.dispatchEvent(new Event('change'));
+  expect(field.watchers.length).toBe(0);
+  expect(field.validator.validate).toHaveBeenCalledTimes(1);
+});
+
 test('it adds value listeners on the components', () => {
   document.body.innerHTML = `
     <input name="name" id="name" value="10">
