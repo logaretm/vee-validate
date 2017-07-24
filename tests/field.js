@@ -52,10 +52,10 @@ test('it adds value listeners on the native inputs', () => {
   const el = document.querySelector('#name');
   const field = new Field(el, { getter: () => el.value });
 
-  // two events [input and blur] without the classes.
-  expect(field.watchers.length).toBe(2);
+  // two events [input and blur] along with same events for actions.
+  expect(field.watchers.length).toBe(4);
   field.addValueListeners(); // Idempotence call.
-  expect(field.watchers.length).toBe(2); // still 2
+  expect(field.watchers.length).toBe(4); // still 4
 
   field.vm = { $validator: { validate: jest.fn() } };
   
@@ -91,8 +91,8 @@ test('it adds value listeners on all radio inputs that have the same name', () =
   el2.dispatchEvent(new Event('change'));
 
   expect(field.validator.validate).toHaveBeenCalledTimes(1); // triggered.
-  expect(field.watchers.length).toBe(6); // 2 for each field.
-  field.unwatch(/input/);
+  expect(field.watchers.length).toBe(8); // 4 for each field.
+  field.unwatch();
   el2.dispatchEvent(new Event('change'));
   expect(field.watchers.length).toBe(0);
   expect(field.validator.validate).toHaveBeenCalledTimes(1);
@@ -111,11 +111,11 @@ test('it adds value listeners on the components', () => {
     }
   });
 
-  // two events [input and blur] without the classes.
-  expect(field.watchers.length).toBe(2);
+  // two events [input and blur] with the classes.
+  expect(field.watchers.length).toBe(4);
   expect(field.component.$on).toHaveBeenCalledTimes(2);
   field.addValueListeners(); // Idempotence call.
-  expect(field.watchers.length).toBe(2); // still 2
+  expect(field.watchers.length).toBe(4); // still 4
 });
 
 
@@ -156,7 +156,7 @@ test('it adds class listeners on the input', () => {
 
   // input, blur, focus, and another input.
   expect(field.watchers.length).toBe(4);
-  field.addClassListeners(); // Idempotence call.
+  field.addActionListeners(); // Idempotence call.
   expect(field.watchers.length).toBe(4); // still 4
 
   field.updateClasses();
@@ -172,7 +172,7 @@ test('it adds class listeners on the input', () => {
   expect(el.classList.contains('pristine')).toBe(false);
   expect(field.flags.pristine).toBe(false);
   
-  el.dispatchEvent(new Event('focus'));
+  el.dispatchEvent(new Event('blur'));
   expect(field.watchers.length).toBe(2); // 1 more down.
   expect(el.classList.contains('untouched')).toBe(false);
   expect(field.flags.untouched).toBe(false);
@@ -180,7 +180,7 @@ test('it adds class listeners on the input', () => {
   expect(field.flags.touched).toBe(true);
 
   // disable the classes after being enabled.
-  field.addClassListeners(); // Idempotence call.
+  field.addActionListeners(); // Idempotence call.
   expect(field.watchers.length).toBe(4); // back to 4.
   field.update({ classes: false }); // disable classes.
   expect(field.watchers.length).toBe(2); // they got cleaned up.
@@ -215,14 +215,14 @@ test('it adds class listeners on components', () => {
   // first call was to off the input listener.
   expect(field.component.$off.mock.calls[0][0]).toBe('input');
 
-  component.$emit('focus');
-  // second call was to off the focus listener.
-  expect(field.component.$off.mock.calls[1][0]).toBe('focus');
+  component.$emit('blur');
+  // second call was to off the blur listener.
+  expect(field.component.$off.mock.calls[1][0]).toBe('blur');
   expect(field.component.$off).toHaveBeenCalledTimes(2);
 
   // only once.
   component.$emit('input');
-  component.$emit('focus');
+  component.$emit('blur');
   expect(field.component.$off).toHaveBeenCalledTimes(2);
 
   // no events.
@@ -279,9 +279,9 @@ test('uses the watch API instead of adding listeners if the field is bound with 
   // opt in for only the input event.
   const field = new Field(el, { model: 'email', events: 'input', vm: { $watch: jest.fn() } });
 
-  // just one for model.
-  expect(field.watchers.length).toBe(1);
-  expect(field.watchers[0].tag).toBe('input_model');
+  // one for model, two for user actions.
+  expect(field.watchers.length).toBe(3);
+  expect(field.watchers[2].tag).toBe('input_model');
   expect(field.vm.$watch).toHaveBeenCalled();
 });
 

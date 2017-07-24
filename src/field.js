@@ -147,6 +147,7 @@ export default class Field {
     this.delay = options.delay || this.delay || 0;
     this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
     this.updateDependencies();
+    this.addActionListeners();
 
     // no need to continue.
     if (this.isHeadless) {
@@ -155,7 +156,6 @@ export default class Field {
     };
 
     if (options.classes && !this.classes) {
-      this.addClassListeners();
       this.updateClasses();
     } else if (this.classes) {
       // remove them.
@@ -238,6 +238,11 @@ export default class Field {
    * @param {RegExp} tag
    */
   unwatch (tag) {
+    if (!tag) {
+      this.watchers.forEach(w => w.unwatch());
+      this.watchers = [];
+      return;
+    }
     this.watchers.filter(w => tag.test(w.tag)).forEach(w => w.unwatch());
     this.watchers = this.watchers.filter(w => !tag.test(w.tag));
   }
@@ -257,17 +262,19 @@ export default class Field {
   }
 
   /**
-   * Adds the listeners required for automatic classes.
+   * Adds the listeners required for automatic classes and some flags.
    */
-  addClassListeners () {
+  addActionListeners () {
     // remove previous listeners.
     this.unwatch(/class/);
 
     const onBlur = () => {
-      toggleClass(this.el, this.classNames.touched, true);
-      toggleClass(this.el, this.classNames.untouched, false);
       this.flags.touched = true;
       this.flags.untouched = false;
+      if (this.classes) {
+        toggleClass(this.el, this.classNames.touched, true);
+        toggleClass(this.el, this.classNames.untouched, false);
+      }
 
       // only needed once.
       this.unwatch(/^class_blur$/);
@@ -275,16 +282,18 @@ export default class Field {
 
     const event = getInputEventName(this.el);
     const onInput = () => {
-      toggleClass(this.el, this.classNames.pristine, false);
-      toggleClass(this.el, this.classNames.dirty, true);
       this.flags.dirty = true;
       this.flags.pristine = false;
+      if (this.classes) {
+        toggleClass(this.el, this.classNames.pristine, false);
+        toggleClass(this.el, this.classNames.dirty, true);
+      }
 
       // only needed once.
       this.unwatch(/^class_input$/);
     };
 
-    if (this.isVue) {
+    if (this.isVue && isCallable(this.component.$once)) {
       this.component.$once('input', onInput);
       this.component.$once('blur', onBlur);
       this.watchers.push({
@@ -301,6 +310,8 @@ export default class Field {
       });
       return;
     }
+
+    if (this.isHeadless) return;
 
     this.el.addEventListener(event, onInput);
     this.el.addEventListener('blur', onBlur);
