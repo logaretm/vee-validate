@@ -45,11 +45,11 @@ describe('provides validator instances using provide/inject API', () => {
       name: 'third-child',
       template: `<div></div>`
     });
+     // does no inject the validator.
     const FourthChild = Vue.extend({
       mixins: [mixin],
       name: 'fourth-child',
       template: `<div></div>`,
-      inject: ['sum'] // does no inject the validator.
     });
     const VM = Vue.extend({
       mixins: [mixin],
