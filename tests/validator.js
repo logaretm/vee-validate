@@ -848,6 +848,13 @@ test('updates classes after validating a field', async () => {
   expect(field.updateClasses).toHaveBeenCalled();
 });
 
+test('triggers initial validation for fields', async () => {
+  const v = new Validator();
+  v.validate = jest.fn();
+  const field = v.attach('field', 'alpha', { el: document.createElement('input'), getter: () => '123', initial: true });
+  expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123');
+});
+
 test('adds locale objects to dictionary', () => {
   global.console.warn = jest.fn();
   Validator.addLocale({});
