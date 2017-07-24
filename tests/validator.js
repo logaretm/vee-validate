@@ -867,3 +867,18 @@ test('adds locale objects to dictionary', () => {
   v.addLocale(locale);
   expect(v.dictionary.container.ar).toEqual(locale);
 });
+
+test('validates multi-valued promises', async () => {
+  Validator.extend('many_promise', () => {
+    return new Promise(resolve => {
+      resolve([
+        { valid: true },
+        true
+      ]);
+    });
+  });
+
+  const v = new Validator();
+  v.attach('field', 'many_promise');
+  expect(await v.validate('field', 'sdad')).toBe(true);
+});
