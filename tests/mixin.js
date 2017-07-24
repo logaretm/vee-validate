@@ -50,6 +50,7 @@ describe('provides validator instances using provide/inject API', () => {
       mixins: [mixin],
       name: 'fourth-child',
       template: `<div></div>`,
+      inject: []
     });
     const VM = Vue.extend({
       mixins: [mixin],
