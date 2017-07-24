@@ -5,6 +5,7 @@ const DEFAULT_OPTIONS = {
   targetOf: null,
   initial: false,
   scope: null,
+  listen: true,
   name: null,
   active: true,
   required: false,
@@ -140,6 +141,7 @@ export default class Field {
     this.name = options.name || this.name || null;
     this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
+    this.listen = options.listen !== false;
     this.classNames = options.classNames || this.classNames;
     this.expression = JSON.stringify(options.expression);
     this.alias = options.alias;
@@ -334,6 +336,8 @@ export default class Field {
    */
   addValueListeners () {
     this.unwatch(/^input_.+/);
+    if (!this.listen) return;
+
     let fn = null;
     if (this.targetOf) {
       fn = () => {

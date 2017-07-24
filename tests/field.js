@@ -33,6 +33,15 @@ test('constructs a headless field with default values', () => {
   expect(field.isHeadless).toBe(true);
 });
 
+test('fields can be configured to not add any value listener', () => {
+  document.body.innerHTML = `
+    <input name="name" id="name">
+  `;
+  const el = document.querySelector('#name');
+  const field = new Field(el, { listen: false });
+  expect(field.watchers.length).toBe(2); // just action listeners.
+});
+
 test('caches the field id on the element data attributes', () => {
   document.body.innerHTML = `
     <input name="name" id="name">

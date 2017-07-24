@@ -10,6 +10,7 @@ export default class Generator {
     return {
       name: Generator.resolveName(el, vnode),
       el: el,
+      listen: !binding.modifiers.disable,
       scope: Generator.resolveScope(el, binding),
       vm: vnode.context,
       expression: binding.value,
