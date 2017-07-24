@@ -297,23 +297,6 @@ test('sets aria attributes on elements', async () => {
   expect(el.getAttribute('aria-invalid')).toBe('true');
 });
 
-test('triggers initial validation', async () => {
-  document.body.innerHTML = `
-    <input name="other" id="name" value="10" type="text">
-  `;
-  let field = new Field(document.body.children[0], {
-    rules: 'required',
-    getter: () => '10',
-    initial: true,
-    vm: {
-      $validator: { validate: jest.fn() },
-      $el: document.body
-    }
-  });
-
-  expect(field.vm.$validator.validate).toHaveBeenCalledWith(`#${field.id}`, '10');
-});
-
 test('validation trigger can validate values directly instead of resolving them', () => {
   document.body.innerHTML = `
     <input name="name" id="name" value="10" type="text">
