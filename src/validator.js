@@ -404,15 +404,6 @@ export default class Validator {
       }, arguments[2] || { vm: { $validator: this } });
     }
 
-    // try to find exisitng field.
-    const exists = this.fields.find({ name: field.name, scope: field.scope || null });
-    if (exists) {
-      // patch it instead.
-      exists.update(field); // update its options.
-      this.errors.remove(field.name, field.scope || null);
-      return exists;
-    }
-
     if (!(field instanceof Field)) {
       field = new Field(field.el || null, field);
     }
