@@ -10,6 +10,7 @@ const requestsValidator = (injections) => {
     return false;
   }
 
+  /* istanbul ignore next */
   if (Array.isArray(injections) && ~injections.indexOf('$validator')) {
     return true;
   }
