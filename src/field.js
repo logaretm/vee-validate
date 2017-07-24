@@ -184,8 +184,7 @@ export default class Field {
     const fields = Object.keys(this.rules).reduce((prev, r) => {
       if (r === 'confirmed') {
         prev.push({ selector: this.rules[r][0] || `${this.name}_confirmation`, name: r });
-      }
-      if (/after|before/.test(r)) {
+      } else if (/after|before/.test(r)) {
         prev.push({ selector: this.rules[r][0], name: r });
       }
 
@@ -199,7 +198,7 @@ export default class Field {
       let el = null;
       // vue ref selector.
       if (selector[0] === '$') {
-        el = this.vm.$refs[selector.split('$').join('')];
+        el = this.vm.$refs[selector.slice(1)];
       } else {
         // try a query selection.
         el = this.vm.$el.querySelector(selector);
@@ -330,18 +329,15 @@ export default class Field {
     this.unwatch(/^input_.+/);
     let fn = null;
     if (this.targetOf) {
-      fn = value => {
-        if (arguments.length === 0 || value instanceof Event) {
-          value = this.value;
-        }
+      fn = () => {
         this.validator.validate(`#${this.targetOf}`);
       };
     } else {
-      fn = value => {
-        if (arguments.length === 0 || value instanceof Event) {
-          value = this.value;
+      fn = (...args) => {
+        if (args.length === 0 || args[0] instanceof Event) {
+          args[0] = this.value;
         }
-        this.validator.validate(`#${this.id}`, this.value);
+        this.validator.validate(`#${this.id}`, args[0]);
       };
     }
     const validate = debounce(fn, this.delay);
@@ -402,5 +398,7 @@ export default class Field {
   destroy () {
     this.watchers.forEach(w => w.unwatch());
     this.watchers = [];
+    this.dependencies.forEach(d => d.field.destroy());
+    this.dependencies = [];
   }
 }

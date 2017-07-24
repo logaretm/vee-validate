@@ -265,15 +265,18 @@ test('uses the watch API instead of adding listeners if the field is bound with 
   expect(field.vm.$watch).toHaveBeenCalled();
 });
 
-test('fields can be destroyed and have all their listeners cleaned up', () => {
+test('fields can be destroyed and have all their listeners cleaned up along with their dependencies', () => {
   document.body.innerHTML = `
     <input name="name" id="name" value="10" type="text">
   `;
   const el = document.querySelector('#name');
   const field = new Field(el, { name: 'name', classes: true });
+  const destroy = jest.fn();
+  field.dependencies.push({ field: { destroy }});
   expect(field.watchers.length).toBe(4);
   field.destroy();
   expect(field.watchers.length).toBe(0);
+  expect(destroy).toHaveBeenCalled();
 })
 
 test('sets aria attributes on elements', async () => {
@@ -294,17 +297,126 @@ test('sets aria attributes on elements', async () => {
   expect(el.getAttribute('aria-invalid')).toBe('true');
 });
 
-test('fields can track their dependencies', async () => {
+test('triggers initial validation', async () => {
   document.body.innerHTML = `
     <input name="other" id="name" value="10" type="text">
   `;
-  const field = new Field(null, {
-    rules: 'required|confirmed:other',
+  let field = new Field(document.body.children[0], {
+    rules: 'required',
+    getter: () => '10',
+    initial: true,
     vm: {
+      $validator: { validate: jest.fn() },
       $el: document.body
     }
   });
-  expect(field.dependencies.length).toBe(1);
-  expect(field.dependencies[0].name).toBe('confirmed');
-  expect(field.dependencies[0].field.value).toBe('10');
+
+  expect(field.vm.$validator.validate).toHaveBeenCalledWith(`#${field.id}`, '10');
+});
+
+test('validation trigger can validate values directly instead of resolving them', () => {
+  document.body.innerHTML = `
+    <input name="name" id="name" value="10" type="text">
+  `;
+  const el = document.querySelector('#name');
+  const component = {
+    value: 10,
+    events: {}, // mocked callback register
+    $el: document.body.children[0],
+    $watch: () => {},
+    $on: jest.fn((event, callback) => {
+      component.events[event] = callback;
+    })
+  };
+
+  const field = new Field(el, {
+    rules: 'required',
+    component,
+    getter: () => el.value,
+    vm: {
+      $validator: { validate: jest.fn() },
+      $el: document.body
+    }
+  });
+
+  // trigger input event.
+  component.events.input('some val');
+  expect(field.vm.$validator.validate).toHaveBeenCalledWith(`#${field.id}`, 'some val');
+});
+
+
+describe('fields can track their dependencies', () => {
+  test('native input depencies', () => {
+    document.body.innerHTML = `
+      <input name="other" id="name" value="10" type="text">
+    `;
+    let field = new Field(null, {
+      rules: 'required|confirmed:other',
+      vm: {
+        $el: document.body,
+        $validator: { validate: jest.fn() }
+      }
+    });
+    expect(field.dependencies.length).toBe(1);
+    expect(field.dependencies[0].name).toBe('confirmed');
+    expect(field.dependencies[0].field.value).toBe('10');
+    const destroy = jest.fn();
+    field.dependencies[0].field.destroy = destroy;
+    field.updateDependencies(); // test destroy.
+
+    expect(destroy).toHaveBeenCalled();
+  });
+
+  test('component dependencies', () => {
+    const component = {
+      value: 10,
+      $el: document.body.children[0],
+      $watch: () => {},
+      $on: () => {}
+    };
+
+    const field = new Field(null, {
+      rules: 'required|confirmed:$other',
+      vm: {
+        $el: document.body,
+        $refs: {
+          other: component
+        }
+      }
+    });
+
+    expect(field.dependencies.length).toBe(1);
+    expect(field.dependencies[0].name).toBe('confirmed');
+    expect(field.dependencies[0].field.value).toBe(10);
+  });
+
+  test('warns if no dependency was resolved', () => {
+    document.body.innerHTML = ``;
+    global.console.warn = jest.fn();
+    let field = new Field(null, {
+      rules: 'required|confirmed:other',
+      vm: {
+        $el: document.body
+      }
+    });
+
+    expect(global.console.warn).toHaveBeenCalledWith(`[vee-validate] Could not find a field with this selector: "other".`)
+  });
+
+  test('validation triggers on the parent/controller field', () => {
+    document.body.innerHTML = `
+      <input name="other" id="name" value="10" type="text">
+    `;
+    const el = document.querySelector('#name');
+    const field = new Field(null, {
+      rules: 'required|confirmed:other',
+      vm: {
+        $el: document.body,
+        $validator: { validate: jest.fn() }
+      }
+    });
+
+    el.dispatchEvent(new Event('input'));
+    expect(field.dependencies[0].field.validator.validate).toHaveBeenCalledWith(`#${field.id}`);
+  });
 });
