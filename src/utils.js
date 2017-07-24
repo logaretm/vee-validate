@@ -133,9 +133,11 @@ export const debounce = (fn, wait = 0, immediate = false) => {
       timeout = null;
       if (!immediate) fn(...args);
     };
+    /* istanbul ignore next */
     const callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
+    /* istanbul ignore next */
     if (callNow) fn(...args);
   };
 };
