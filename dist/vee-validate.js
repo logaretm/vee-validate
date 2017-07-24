@@ -2564,8 +2564,9 @@ Validator.prototype._validate = function _validate (field, value) {
   }
 
   var promises = [];
-  var test = true;
-  var syncResult = Object.keys(field.validations)[this.fastExit ? 'every' : 'some'](function (rule) {
+  var isExitEarly = false;
+  // use of '.some()' is to break iteration in middle by returning true
+  Object.keys(field.validations).some(function (rule) {
     var result = this$1._test(
       field,
       value,
@@ -2574,16 +2575,22 @@ Validator.prototype._validate = function _validate (field, value) {
 
     if (isCallable(result.then)) {
       promises.push(result);
-      return true;
+    } else if (this$1.fastExit && !result) {
+      isExitEarly = true;
+    } else {
+      var resultAsPromise = new Promise(function (resolve) {
+        resolve(result);
+      });
+      promises.push(resultAsPromise);
     }
 
-    test = test && result;
-    return result;
+    return isExitEarly;
   });
 
-  return Promise.all(promises).then(function (values) {
-    var valid = syncResult && test && values.every(function (t) { return t; });
+  if (isExitEarly) { return Promise.resolve(false); }
 
+  return Promise.all(promises).then(function (values) {
+    var valid = values.every(function (t) { return t; });
     return valid;
   });
 };

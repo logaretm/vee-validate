@@ -826,7 +826,7 @@ module.exports = exports['default'];
 var isURL = unwrapExports(isURL_1);
 
 var url = (value, [requireProtocol] = [true]) =>
-  isURL(value, { require_protocol: !! requireProtocol });
+  isURL(value, { require_protocol: !! requireProtocol, allow_underscores: true });
 
 /* eslint-disable camelcase */
 var Rules = {
@@ -2367,8 +2367,9 @@ class Validator {
     }
 
     const promises = [];
-    let test = true;
-    const syncResult = Object.keys(field.validations)[this.fastExit ? 'every' : 'some'](rule => {
+    let isExitEarly = false;
+    // use of '.some()' is to break iteration in middle by returning true
+    Object.keys(field.validations).some(rule => {
       const result = this._test(
         field,
         value,
@@ -2377,16 +2378,22 @@ class Validator {
 
       if (isCallable(result.then)) {
         promises.push(result);
-        return true;
+      } else if (this.fastExit && !result) {
+        isExitEarly = true;
+      } else {
+        const resultAsPromise = new Promise(resolve => {
+          resolve(result);
+        });
+        promises.push(resultAsPromise);
       }
 
-      test = test && result;
-      return result;
+      return isExitEarly;
     });
 
-    return Promise.all(promises).then(values => {
-      const valid = syncResult && test && values.every(t => t);
+    if (isExitEarly) return Promise.resolve(false);
 
+    return Promise.all(promises).then(values => {
+      const valid = values.every(t => t);
       return valid;
     });
   }
@@ -2874,7 +2881,7 @@ class ListenerGenerator {
      */
   _resolveFieldName () {
     if (this.component) {
-      return getDataAttribute(this.el, 'name') || this.component.name;
+      return getDataAttribute(this.el, 'name') || (this.component.$attrs && this.component.$attrs['data-vv-name']) || this.component.name;
     }
 
     return getDataAttribute(this.el, 'name') || this.el.name;
@@ -3095,9 +3102,9 @@ class ListenerGenerator {
   _attachComponentListeners () {
     this.componentListener = debounce((value) => {
       this._validate(value);
-    }, getDataAttribute(this.el, 'delay') || this.options.delay);
+    }, getDataAttribute(this.el, 'delay') || (this.component.$attrs && this.component.$attrs['data-vv-delay']) || this.options.delay);
 
-    const events = getDataAttribute(this.el, 'validate-on') || this.options.events;
+    const events = getDataAttribute(this.el, 'validate-on') || (this.component.$attrs && this.component.$attrs['data-vv-validate-on']) || this.options.events;
     events.split('|').forEach(e => {
       if (!e) {
         return;
@@ -3169,7 +3176,7 @@ class ListenerGenerator {
       return {
         context: () => this.component,
         getter: (context) => {
-          const path = getDataAttribute(this.el, 'value-path');
+          const path = getDataAttribute(this.el, 'value-path') || (this.component.$attrs && this.component.$attrs['data-vv-value-path']);
           if (path) {
             return getPath(path, this.component);
           }
