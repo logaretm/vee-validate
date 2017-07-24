@@ -874,10 +874,15 @@ test('it can set flags for attached fields', () => {
   expect(v.fieldBag['form.title'].untouched).toBe(false);
 });
 
-test('it can hold handle mixed successes and errors from one field', async () => {
+test('it can handle mixed successes and errors from one field regardless of rules order', async () => {
   const v = new Validator({
-    name: 'alpha|min:3'
+    string1: 'alpha|min:3',
+    string2: 'min:3|alpha',
+    string3: 'alpha|min:3',
+    string4: 'min:3|alpha'
   }, { fastExit: false });
-  expect(await v.validate('name', '123')).toBe(false);
-  expect(v.errorBag.count()).toBe(1);
+  expect(await v.validate('string1', '123')).toBe(false);
+  expect(await v.validate('string2', '123')).toBe(false);
+  expect(await v.validate('string3', 'abc')).toBe(true);
+  expect(await v.validate('string4', 'abc')).toBe(true);
 });
