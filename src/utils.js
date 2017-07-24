@@ -241,15 +241,19 @@ export const toArray = (arrayLike) => {
  * @return {Object}
  */
 export const assign = (target, ...others) => {
+  /* istanbul ignore else */
   if (isCallable(Object.assign)) {
     return Object.assign(target, ...others);
   }
 
+  /* istanbul ignore next */
   if (target == null) {
     throw new TypeError('Cannot convert undefined or null to object');
   }
 
+  /* istanbul ignore next */
   const to = Object(target);
+  /* istanbul ignore next */
   others.forEach(arg => {
     // Skip over if undefined or null
     if (arg != null) {
@@ -258,7 +262,7 @@ export const assign = (target, ...others) => {
       });
     }
   });
-
+  /* istanbul ignore next */
   return to;
 };
 
