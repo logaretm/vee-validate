@@ -135,5 +135,5 @@ this.$emit('input', value);
 // The focus event which will set the touched and untouched flags.
 this.$emit('focus'); 
 ```
-Here is an example that uses those flags, the button is disabled unless one of the fields is dirty:
+Here is an example that displays those flags, intereact with the input and watch the flags change accordingly:
 
