@@ -49,7 +49,7 @@ export default class Field {
     this.watchers = [];
     this.events = [];
     if (!this.isHeadless && !(this.targetOf || options.targetOf)) {
-      setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent.
+      setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
     }
     options = assign({}, DEFAULT_OPTIONS, options);
     this.flags = generateFlags(options);
