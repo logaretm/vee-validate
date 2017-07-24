@@ -64,6 +64,13 @@ export default class Validator {
   }
 
   /**
+   * @return {Object}
+   */
+  static get rules () {
+    return Rules;
+  }
+
+  /**
    * Merges a validator object into the Rules and Messages.
    *
    * @param  {string} name The name of the validator.
@@ -275,7 +282,7 @@ export default class Validator {
    */
   _formatErrorMessage (field, rule, data = {}) {
     const name = this._getFieldDisplayName(field);
-    const params = this._getLocalizedParams(rule, field.scope);
+    const params = this._getLocalizedParams(rule);
     // Defaults to english message.
     if (! this.dictionary.hasLocale(LOCALE)) {
       const msg = this.dictionary.getFieldMessage('en', field.name, rule.name);
@@ -291,7 +298,7 @@ export default class Validator {
   /**
    * Translates the parameters passed to the rule (mainly for target fields).
    */
-  _getLocalizedParams (rule, scope = '__global__') {
+  _getLocalizedParams (rule) {
     if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
       return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
     }
@@ -447,6 +454,7 @@ export default class Validator {
    */
   clean () {
     if (! this.$vm || ! isCallable(this.$vm.$nextTick)) {
+      this.errors.clear();
       return;
     }
 

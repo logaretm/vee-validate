@@ -1,4 +1,5 @@
 import Validator from './../src/validator';
+import Field from './../src/field';
 import helpers from './helpers';
 import moment from 'moment';
 
@@ -671,6 +672,14 @@ test('can remove rules from the list of validators', async () => {
   }).toThrow();
 });
 
+test('calling validate without args will trigger validateAll', async () => {
+  const v = new Validator();
+  v.validateAll = jest.fn(async () => {});
+
+  await v.validate();
+  expect(v.validateAll).toHaveBeenCalled();
+});
+
 test('can fetch the values using getters when not specifying values in validateAll', async () => {
   const v = new Validator();
   let toggle = false;
@@ -757,7 +766,37 @@ test('it can set flags for attached fields', () => {
   expect(field.flags.untouched).toBe(true);
   v.flag('form.title', { untouched: false });
   expect(field.flags.untouched).toBe(false);
+
+  // non-existant flags fails silently
+  expect(() => {
+    v.flag('crap', { untouched: false });
+  }).not.toThrow();
+
+  // calls update classes.
+  field = v.attach(new Field(document.createElement('input'), {
+    name: 'somefield',
+    rules: 'alpha',
+    classes: true
+  }));
+  field.updateClasses = jest.fn();
+
+  v.flag('somefield', { dirty: true });
+  expect(field.updateClasses).toHaveBeenCalled();
 });
+
+test('cleans errors on the next tick if available', () => {
+  // not available.
+  let v = new Validator();
+  v.errors.add('some', 'message', 'by');
+  v.clean();
+  expect(v.errors.count()).toBe(0);
+
+  v = new Validator(null, { vm: { $nextTick: jest.fn(cb => cb()) } });
+  v.errors.add('some', 'message', 'by');
+  v.clean();
+  expect(v.$vm.$nextTick).toHaveBeenCalled();
+  expect(v.errors.count()).toBe(0);
+})
 
 test('it can handle mixed successes and errors from one field regardless of rules order', async () => {
   const v = new Validator({
@@ -771,4 +810,53 @@ test('it can handle mixed successes and errors from one field regardless of rule
   expect(await v.validate('string2', '123')).toBe(false);
   expect(await v.validate('string3', 'abc')).toBe(true);
   expect(await v.validate('string4', 'abc')).toBe(true);
+});
+
+test('exposes static readonly dictionary property', () => {
+  expect(typeof Validator.dictionary).toBe('object');
+});
+
+test('exposes static and instance readonly rules properties', () => {
+  const v = new Validator();
+  expect(typeof v.rules).toBe('object');
+  expect(typeof Validator.rules).toBe('object');
+});
+
+test('validate can resolve the value if it was not provided', async () => {
+  const v = new Validator();
+  const field = v.attach('field', 'alpha', { getter: () => '123' });
+  expect(await v.validate(`#${field.id}`)).toBe(false);
+});
+
+test('resolves a field by name and scope', async () => {
+  const v = new Validator();
+  const field = v.attach('field', 'alpha', { scope: 's1' });
+  expect(v._resolveField('field', 's1')).toBe(field);
+});
+
+test('handles unresolved fields when strict is false by returning true', async () => {
+  const v = new Validator();
+  v.strict = false;
+  expect(await v.validate('#plasd')).toBe(true);
+});
+
+test('updates classes after validating a field', async () => {
+  const v = new Validator();
+  const field = v.attach('field', 'alpha', { el: document.createElement('input'), classes: true });
+  field.updateClasses = jest.fn();
+  expect(await v.validate(`#${field.id}`, '123')).toBe(false);
+  expect(field.updateClasses).toHaveBeenCalled();
+});
+
+test('adds locale objects to dictionary', () => {
+  global.console.warn = jest.fn();
+  Validator.addLocale({});
+  expect(global.console.warn).toHaveBeenCalled();
+  const v = new Validator();
+  const locale = {
+    name: 'ar',
+    messages: {}
+  };
+  v.addLocale(locale);
+  expect(v.dictionary.container.ar).toEqual(locale);
 });
