@@ -11,7 +11,9 @@ const isUnique = (value) => {
     // Notice that we return an object containing both a valid property and a data property.
     return {
       valid: response.data.valid,
-      data: response.data.message
+      data: {
+        message: response.data.message
+      }
     };
   });
 };
