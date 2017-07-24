@@ -140,7 +140,7 @@ export default class Field {
     this.name = options.name || this.name || null;
     this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
-    this.classNames = options.classNames;
+    this.classNames = options.classNames || this.classNames;
     this.expression = JSON.stringify(options.expression);
     this.alias = options.alias;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
