@@ -367,6 +367,21 @@ export default class Field {
         return;
       }
 
+      if (~['radio', 'checkbox'].indexOf(this.el.type)) {
+        let els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+        els.forEach(el => {
+          el.addEventListener(e, validate);
+          this.watchers.push({
+            tag: 'input_native',
+            unwatch: () => {
+              el.removeEventListener(e, validate);
+            }
+          });
+        });
+
+        return;
+      }
+
       this.el.addEventListener(e, validate);
       this.watchers.push({
         tag: 'input_native',
