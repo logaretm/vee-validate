@@ -418,6 +418,10 @@ export default class Validator {
     }
 
     this.fields.push(field);
+    // validate if initial.
+    if (field.initial) {
+      this.validate(`#${field.id}`, field.value);
+    }
     if (!field.scope) {
       this.fieldBag = assign({}, this.fieldBag, { [`${field.name}`]: field.flags });
       return field;
@@ -537,8 +541,8 @@ export default class Validator {
       return this.fields.find({ name, scope });
     }
 
-    if (name.indexOf('#') === 0) {
-      return this.fields.find({ id: name.split('#').join('') });
+    if (name[0] === '#') {
+      return this.fields.find({ id: name.slice(1) });
     }
 
     if (name.indexOf('.') > -1) {
@@ -561,7 +565,7 @@ export default class Validator {
   _handleFieldNotFound (name, scope) {
     if (! this.strict) return Promise.resolve(true);
 
-    const fullName = scope ? name : `${scope}.${name}`;
+    const fullName = scope ? name : `${scope ? scope + '.' : ''}${name}`;
     throw createError(
       `Validating a non-existant field: "${fullName}". Use "attach()" first.`
     );

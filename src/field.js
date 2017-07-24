@@ -165,11 +165,6 @@ export default class Field {
     this.classes = options.classes;
     this.addValueListeners();
     this.updateAriaAttrs();
-
-    // validate if initial validation is needed or if it was updated before.
-    if (this.initial) {
-      this.validator.validate(`#${this.id}`, this.value);
-    }
   }
 
   /**
