@@ -824,8 +824,9 @@ export default class Validator {
     }
 
     const promises = [];
-    let test = true;
-    const syncResult = Object.keys(field.validations)[this.fastExit ? 'every' : 'some'](rule => {
+    let isExitEarly = false;
+    // use of '.some()' is to break iteration in middle by returning true
+    Object.keys(field.validations).some(rule => {
       const result = this._test(
         field,
         value,
@@ -834,16 +835,22 @@ export default class Validator {
 
       if (isCallable(result.then)) {
         promises.push(result);
-        return true;
+      } else if (this.fastExit && !result) {
+        isExitEarly = true;
+      } else {
+        const resultAsPromise = new Promise(resolve => {
+          resolve(result);
+        });
+        promises.push(resultAsPromise);
       }
 
-      test = test && result;
-      return result;
+      return isExitEarly;
     });
 
-    return Promise.all(promises).then(values => {
-      const valid = syncResult && test && values.every(t => t);
+    if (isExitEarly) return Promise.resolve(false);
 
+    return Promise.all(promises).then(values => {
+      const valid = values.every(t => t);
       return valid;
     });
   }
