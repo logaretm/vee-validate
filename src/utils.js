@@ -4,6 +4,14 @@
 export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
 
 /**
+ * Sets the data attribute.
+ * @param {*} el
+ * @param {String} name
+ * @param {String} value
+ */
+export const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
+
+/**
  * Determines the input field scope.
  */
 export const getScope = (el) => {
@@ -12,7 +20,7 @@ export const getScope = (el) => {
     scope = getDataAttribute(el.form, 'scope');
   }
 
-  return scope;
+  return scope || null;
 };
 
 /**
@@ -40,6 +48,77 @@ export const getPath = (propPath, target, def = undefined) => {
 };
 
 /**
+ * Checks if path exists within an object.
+ *
+ * @param {String} path
+ * @param {Object} target
+ */
+export const hasPath = (path, target) => {
+  let obj = target;
+  return path.split('.').every(prop => {
+    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+
+    obj = obj[prop];
+
+    return true;
+  });
+};
+
+/**
+ * @param {String} rule
+ */
+export const parseRule = (rule) => {
+  let params = [];
+  const name = rule.split(':')[0];
+
+  if (~rule.indexOf(':')) {
+    params = rule.split(':').slice(1).join(':').split(',');
+  }
+
+  return { name, params };
+};
+
+/**
+ * Normalizes the given rules expression.
+ *
+ * @param {Object|String} rules
+ */
+export const normalizeRules = (rules) => {
+  const validations = {};
+  if (isObject(rules)) {
+    Object.keys(rules).forEach(rule => {
+      let params = [];
+      if (rules[rule] === true) {
+        params = [];
+      } else if (Array.isArray(rules[rule])) {
+        params = rules[rule];
+      } else {
+        params = [rules[rule]];
+      }
+
+      if (rules[rule] !== false) {
+        validations[rule] = params;
+      }
+    });
+
+    return validations;
+  }
+
+  rules.split('|').forEach(rule => {
+    const parsedRule = parseRule(rule);
+    if (! parsedRule.name) {
+      return;
+    }
+
+    validations[parsedRule.name] = parsedRule.params;
+  });
+
+  return validations;
+};
+
+/**
  * Debounces a function.
  */
 export const debounce = (fn, wait = 0, immediate = false) => {
@@ -54,9 +133,11 @@ export const debounce = (fn, wait = 0, immediate = false) => {
       timeout = null;
       if (!immediate) fn(...args);
     };
+    /* istanbul ignore next */
     const callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
+    /* istanbul ignore next */
     if (callNow) fn(...args);
   };
 };
@@ -126,11 +207,24 @@ export const removeClass = (el, className) => {
 };
 
 /**
+ * Adds or removes a class name on the input depending on the status flag.
+ */
+export const toggleClass = (el, className, status) => {
+  if (!el || !className) return;
+
+  if (status) {
+    return addClass(el, className);
+  }
+
+  removeClass(el, className);
+};
+
+/**
  * Converts an array-like object to array.
  * Simple polyfill for Array.from
  */
 export const toArray = (arrayLike) => {
-  if (Array.from) {
+  if (isCallable(Array.from)) {
     return Array.from(arrayLike);
   }
 
@@ -145,17 +239,23 @@ export const toArray = (arrayLike) => {
 
 /**
  * Assign polyfill from the mdn.
+ * @param {Object} target
+ * @return {Object}
  */
 export const assign = (target, ...others) => {
-  if (Object.assign) {
+  /* istanbul ignore else */
+  if (isCallable(Object.assign)) {
     return Object.assign(target, ...others);
   }
 
+  /* istanbul ignore next */
   if (target == null) {
     throw new TypeError('Cannot convert undefined or null to object');
   }
 
+  /* istanbul ignore next */
   const to = Object(target);
+  /* istanbul ignore next */
   others.forEach(arg => {
     // Skip over if undefined or null
     if (arg != null) {
@@ -164,9 +264,15 @@ export const assign = (target, ...others) => {
       });
     }
   });
-
+  /* istanbul ignore next */
   return to;
 };
+
+/**
+ * Generates a unique id.
+ * @return {String}
+ */
+export const uniqId = () => `_${Math.random().toString(36).substr(2, 9)}`;
 
 /**
  * polyfills array.find
@@ -175,7 +281,7 @@ export const assign = (target, ...others) => {
  */
 export const find = (array, predicate) => {
   if (isObject(array)) {
-    array = Array.from(array);
+    array = toArray(array);
   }
   if (array.find) {
     return array.find(predicate);
@@ -196,29 +302,28 @@ export const find = (array, predicate) => {
 /**
  * Gets the rules from a binding value or the element dataset.
  *
- * @param {String} expression The binding expression.
- * @param {Object|String} value The binding value.
+ * @param {Object} binding The binding object.
  * @param {element} el The element.
  * @returns {String|Object}
  */
-export const getRules = (expression, value, el) => {
-  if (! expression) {
+export const getRules = (binding, el) => {
+  if (!binding || ! binding.expression) {
     return getDataAttribute(el, 'rules');
   }
 
-  if (typeof value === 'string') {
-    return value;
+  if (typeof binding.value === 'string') {
+    return binding.value;
   }
 
-  if (~['string', 'object'].indexOf(typeof value.rules)) {
-    return value.rules;
+  if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
+    return binding.value.rules;
   }
 
-  return value;
+  return binding.value;
 };
 
 export const getInputEventName = (el) => {
-  if (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type)) {
+  if (el && (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type))) {
     return 'change';
   }
 

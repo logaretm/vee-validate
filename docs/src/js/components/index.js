@@ -21,6 +21,7 @@ const SelectorsExample = loadAsync('Selectors');
 const ComponentExample = loadAsync('Component');
 const EventBusExample = loadAsync('EventBusParent');
 const ValidatorExample = loadAsync('ValidatorExample');
+const BackendExample = loadAsync('Backend');
 
 
 export default (Vue) => {
@@ -43,4 +44,5 @@ export default (Vue) => {
   Vue.component('event-bus-example', EventBusExample);
   Vue.component('selectors-example', SelectorsExample);
   Vue.component('validator-example', ValidatorExample);
+  Vue.component('backend-example', BackendExample);
 };

@@ -2,7 +2,6 @@
     <div class="columns is-multiline">
         <child-component></child-component>
         <div class="column is-12">
-            <button class="button is-primary" type="button" :disabled="errors.any()">Submit</button>
             <button class="button is-info" type="button" @click="validateChild">Validate Child</button>
             <button class="button is-danger" type="button" @click="clearChild">Clear Child Errors</button>
         </div>

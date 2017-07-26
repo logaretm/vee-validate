@@ -1,55 +1,60 @@
-import ListenerGenerator from './listeners';
-import { getScope, isObject, find, getRules, warn } from './utils';
+import Generator from './generator';
+import config from './config';
+import { getDataAttribute, isObject, getRules, warn, getScope, assign } from './utils';
 
-const listenersInstances = [];
-
-export default (options) => ({
-  inserted (el, { value, expression }, { context }) {
-    const { instance } = find(listenersInstances, l => l.vm === context && l.el === el);
-    let scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
-    if (!scope) {
-      scope = '__global__';
-    }
-    if (scope !== instance.scope) {
-      const field = context.$validator._resolveField(instance.fieldName, instance.scope);
-      context.$validator._moveFieldScope(field, scope);
-      instance.scope = scope;
-    }
-  },
-  bind (el, binding, vnode) {
-    if (! vnode.context.$validator) {
-      const name = vnode.context.$options._componentTag;
-      // eslint-disable-next-line
-      warn(`No validator instance is present on ${name ?'component "' +  name + '"' : 'un-named component'}, did you forget to inject '$validator'?`);
-
-      return;
-    }
-    const listener = new ListenerGenerator(el, binding, vnode, options);
-    listener.attach();
-    listenersInstances.push({ vm: vnode.context, el, instance: listener });
-  },
-  update (el, { expression, value }, { context }) {
-    const { instance } = find(listenersInstances, l => l.vm === context && l.el === el);
-    // make sure we don't do uneccessary work if no expression was passed
-    // nor if the expression did not change.
-    if (! expression || (instance.cachedExp === JSON.stringify(value))) return;
-
-    instance.cachedExp = JSON.stringify(value);
-    const scope = isObject(value) ? (value.scope || getScope(el)) : getScope(el);
-    context.$validator.updateField(
-      instance.fieldName,
-      getRules(expression, value, el),
-      { scope: scope || '__global__' }
-    );
-  },
-  unbind (el, { value }, { context }) {
-    const holder = find(listenersInstances, l => l.vm === context && l.el === el);
-    if (typeof holder === 'undefined') {
-      return;
-    }
-
-    const scope = isObject(value) ? value.scope : (getScope(el) || '__global__');
-    context.$validator.detach(holder.instance.fieldName, scope);
-    listenersInstances.splice(listenersInstances.indexOf(holder), 1);
+/**
+ * Finds the requested field by id from the context object.
+ * @param {Object} context
+ */
+const findField = (el, context) => {
+  if (!context || !context.$validator) {
+    return null;
   }
-});
+
+  return context.$validator.fields.find({ id: getDataAttribute(el, 'id') });
+};
+
+const createDirective = options => {
+  options = assign({}, config, options);
+
+  return {
+    bind (el, binding, vnode) {
+      const validator = vnode.context.$validator;
+      if (! validator) {
+        warn(`No validator instance is present on vm, did you forget to inject '$validator'?`);
+        return;
+      }
+      const fieldOptions = Generator.generate(el, binding, vnode, options);
+      validator.attach(fieldOptions);
+    },
+    inserted (el, { value, expression }, { context }) {
+      const field = findField(el, context);
+      if (!field) return;
+
+      const scope = isObject(value) && value.rules ? value.scope : getScope(el);
+      field.update({ scope });
+    },
+    update (el, { expression, value }, { context }) {
+      const field = findField(el, context);
+      // make sure we don't do uneccessary work if no expression was passed
+      // nor if the expression value did not change.
+      // TODO: Diffing for other options like delay or scope.
+      if (!field || !expression || field.expression === JSON.stringify(value)) return;
+
+      const scope = isObject(value) && value.rules ? value.scope : getScope(el);
+      field.update({
+        expression: value,
+        scope,
+        rules: getRules({ expression, value }, el)
+      });
+    },
+    unbind (el, binding, { context }) {
+      const field = findField(el, context);
+      if (!field) return;
+
+      context.$validator.detach(field);
+    }
+  };
+};
+
+export default createDirective;

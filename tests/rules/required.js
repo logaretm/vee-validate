@@ -24,3 +24,8 @@ test('validates required', () => {
 
   invalid.forEach(value => expect(validate(value)).toBe(false));
 });
+
+test('false value can be invalidated', () => {
+  expect(validate(false)).toBe(true);  
+  expect(validate(false, [true])).toBe(false);
+});

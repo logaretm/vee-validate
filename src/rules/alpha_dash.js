@@ -1,6 +1,10 @@
 import { alphaDash } from './alpha_helper';
 
-export default (value, [locale] = [null]) => {
+const validate = (value, [locale] = [null]) => {
+  if (Array.isArray(value)) {
+    return value.every(val => validate(val, [locale]));
+  }
+
   // Match at least one locale.
   if (! locale) {
     return Object.keys(alphaDash).some(loc => alphaDash[loc].test(value));
@@ -8,3 +12,5 @@ export default (value, [locale] = [null]) => {
 
   return (alphaDash[locale] || alphaDash.en).test(value);
 };
+
+export default validate;

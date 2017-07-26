@@ -30,6 +30,12 @@
     ],
     "testPathIgnorePatterns": [
       "/helpers/"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/index.js",
+      "!src/messages.js",
+      "!src/plugins/date/messages.js"
     ]
   },
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
@@ -54,7 +60,7 @@
     "rollup-plugin-replace": "^1.1.1",
     "uglify-js": "^3.0.23",
     "validator": "^7.2.0",
-    "vue": "^2.3.4"
+    "vue": "^2.4.2"
   },
   "peerDependencies": {
     "vue": ">= 2.2.0"

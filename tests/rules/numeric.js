@@ -13,16 +13,17 @@ const invalid = [
     true,
     false,
     {},
-    [],
     '+123',
     '-123'
 ];
 
 test('validates that the string only contains numeric characters', () => {
-    expect.assertions(12);
+    expect.assertions(13);
     // valid.
     valid.forEach(value => expect(validate(value)).toBe(true));
+    expect(validate(valid)).toBe(true);
 
     // invalid
     invalid.forEach(value => expect(validate(value)).toBe(false));
+    expect(validate(invalid)).toBe(false);
 });

@@ -8,18 +8,20 @@ const valid = [
   'null',
   'undefined',
   true,
-  false
+  false,
+  ['abcdefg', 'hijk', 'lmnopq']
 ];
 
 const invalid = [
   'this is sparta',
   '1234567a89',
-    {},
-  ' '
+  {},
+  ' ',
+  ['abcdefg', 'hijk', 'lmnopq123']
 ];
 
 test('validates that the string may only contains alphabetic characters', () => {
-  expect.assertions(12);
+  expect.assertions(14);
     // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
 
@@ -35,4 +37,8 @@ test('validates the string contains alphabetic chars from other locales', () => 
   // specfic locale
   expect(validate('peace', ['ar'])).toBe(false);
   expect(validate('peace', ['ru'])).toBe(false);
+
+  // non-existant locale defaults to english validation.
+  expect(validate('peace', ['blah'])).toBe(true);
+  expect(validate('اين اشيائي', ['blah'])).toBe(false); // non english characters.
 });

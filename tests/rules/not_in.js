@@ -5,7 +5,9 @@ test('validates that the value does not exist within a list', () => {
 
     // valid.
     [0, 6].forEach(value => expect(validate(value, list)).toBe(true));
+    expect(validate([6], list)).toBe(true);
 
     // invalid
     list.forEach(value => expect(validate(value, list)).toBe(false));
+    expect(validate([1, 2, 3], list)).toBe(false);
 });

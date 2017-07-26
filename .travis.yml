@@ -1,9 +1,10 @@
 language: node_js
 node_js:
-- '7'
+- '8'
 install:
-  - npm install
+  - npm install -g yarn
   - npm install -g codecov
+  - yarn
 after_success:
   - npm run cover
   - bash <(curl -s https://codecov.io/bash)
