@@ -1,7 +1,9 @@
 const messages = {
+  _default: (field) => `${field} er ikke gyldig.`,
   after: (field, [target]) => `${field} skal være efter ${target}.`,
   alpha_dash: (field) => `${field} må kun indeholde tal, bogstaver, bindestreger og underscores.`,
   alpha_num: (field) => `${field} må kun indeholde tal og bogstaver.`,
+  alpha_spaces: (field) => `${field} må kun indeholde bogstaver og mellemrum.`,
   alpha: (field) => `${field} må kun indeholde bogstaver.`,
   before: (field, [target]) => `${field} skal være før ${target}.`,
   between: (field, [min, max]) => `${field} skal være mellem ${min} og ${max}.`,
