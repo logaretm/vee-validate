@@ -34,17 +34,10 @@ This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.
 npm install vee-validate --save
 ```
 
-or if you are using **Vue 1.0 (deprecated)** :
-```
-npm install vee-validate@prev --save
-```
-
-**Note:** Vue 1.0 version is currently deprecated and does not have the latest features and fixes.
-
-#### bower
+### yarn
 
 ```
-bower install vee-validate#2.0.0-rc.7--save
+yarn add vee-validate
 ```
 
 ### CDN
