@@ -1,3 +1,5 @@
+import { find } from './utils';
+
 export default class ErrorBag {
   constructor () {
     this.items = [];
@@ -6,13 +8,39 @@ export default class ErrorBag {
   /**
      * Adds an error to the internal array.
      *
-     * @param {string} field The field name.
-     * @param {string} msg The error message.
-     * @param {String} rule The rule that is responsible for the error.
-     * @param {String} scope The Scope name, optional.
+     * @param {Object} error The error object.
      */
-  add (field, msg, rule, scope = null) {
-    this.items.push({ field, msg, rule, scope });
+  add (error) {
+    // handle old signature.
+    if (arguments.length > 1) {
+      error = {
+        field: arguments[0],
+        msg: arguments[1],
+        rule: arguments[2],
+        scope: arguments[3] || null
+      };
+    }
+
+    error.scope = error.scope || null;
+    this.items.push(error);
+  }
+
+  /**
+   * Updates a field error with the new field scope.
+   *
+   * @param {String} id 
+   * @param {Object} error 
+   */
+  update (id, error) {
+    const item = find(this.items, i => i.id === id);
+    if (!item) {
+      return;
+    }
+
+    const idx = this.items.indexOf(item);
+    this.items.splice(idx, 1);
+    item.scope = error.scope;
+    this.items.push(item);
   }
 
   /**
@@ -164,6 +192,19 @@ export default class ErrorBag {
     const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
 
     return (error && error.msg) || null;
+  }
+
+  /**
+   * Removes errors by matching against the id.
+   * @param {String} id 
+   */
+  removeById (id) {
+    for (let i = 0; i < this.items.length; ++i) {
+      if (this.items[i].id === id) {
+        this.items.splice(i, 1);
+        --i;
+      }
+    }
   }
 
   /**

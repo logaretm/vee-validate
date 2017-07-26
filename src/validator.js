@@ -361,12 +361,13 @@ export default class Validator {
         }
 
         if (! allValid) {
-          this.errors.add(
-            field.name,
-            this._formatErrorMessage(field, rule, data),
-            rule.name,
-            field.scope
-          );
+          this.errors.add({
+            id: field.id,
+            field: field.name,
+            msg: this._formatErrorMessage(field, rule, data),
+            rule: rule.name,
+            scope: field.scope
+          });
         }
 
         return allValid;
@@ -378,12 +379,13 @@ export default class Validator {
     }
 
     if (! result.valid) {
-      this.errors.add(
-        field.name,
-        this._formatErrorMessage(field, rule, result.data),
-        rule.name,
-        field.scope
-      );
+      this.errors.add({
+        id: field.id,
+        field: field.name,
+        msg: this._formatErrorMessage(field, rule, result.data),
+        rule: rule.name,
+        scope: field.scope
+      });
     }
 
     return result.valid;
@@ -625,7 +627,7 @@ export default class Validator {
     if (!field) {
       return this._handleFieldNotFound(name, scope);
     }
-    this.errors.remove(field.name, field.scope);
+    this.errors.removeById(field.id);
     field.flags.pending = true;
     if (arguments.length === 1) {
       value = field.value;

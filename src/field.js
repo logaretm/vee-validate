@@ -150,7 +150,11 @@ export default class Field {
     this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
     this.updateDependencies();
     this.addActionListeners();
+    if (this.updated && this.validator.errors && isCallable(this.validator.errors.update)) {
+      this.validator.errors.update(this.id, { scope: this.scope });
+    }
 
+    this.updated = true;
     // no need to continue.
     if (this.isHeadless) {
       this.classes = options.classes; // set it for consistency sake.

@@ -326,6 +326,20 @@ test('sets aria attributes on elements', async () => {
   expect(el.getAttribute('aria-invalid')).toBe('true');
 });
 
+test('calls the update method on the validator errors on following updates', () => {
+  let el = document.createElement('input');
+  const vm = {
+    $validator: {
+      errors: {
+        update: jest.fn()
+      }
+    }
+  };
+  const field = new Field(el, { rules: 'required', vm });
+  field.update({ rules: 'min:3' });
+  expect(vm.$validator.errors.update).toHaveBeenCalledTimes(1);
+});
+
 test('validation trigger can validate values directly instead of resolving them', () => {
   document.body.innerHTML = `
     <input name="name" id="name" value="10" type="text">

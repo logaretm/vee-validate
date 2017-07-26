@@ -8,6 +8,34 @@ test('adds errors to the collection', () => {
   // scoped field.
   errors.add('name', 'The scoped name is invalid', 'rule1', 'scope1');
   expect(errors.first('name', 'scope1')).toBe('The scoped name is invalid');
+
+  // test object form
+  errors.add({
+    field: 'name',
+    msg: 'Hey',
+    rule: 'r1',
+    scope: 's1'
+  })
+  expect(errors.first('name', 's1')).toBe('Hey');
+});
+
+test('updates error objects by matching against field id', () => {
+  const errors = new ErrorBag();
+  errors.add({
+    id: 'myId',
+    field: 'name',
+    msg: 'Hey',
+    rule: 'r1',
+    scope: 's1'
+  });
+  expect(errors.first('name', 's1')).toBe('Hey');
+  errors.update('myId', { scope: 's2' });
+  expect(errors.has('name', 's1')).toBe(false);
+  expect(errors.first('name', 's2')).toBe('Hey');
+
+  // silent failure
+  errors.update('myId1', { scope: 's2' });
+  expect(errors.count()).toBe(1);
 });
 
 test('removes errors for a specific field', () => {
@@ -20,6 +48,20 @@ test('removes errors for a specific field', () => {
   errors.remove('name');
   expect(errors.count()).toBe(2);
   errors.remove('email');
+  expect(errors.count()).toBe(0);
+});
+
+test('removes errors by matching against the field id', () => {
+  const errors = new ErrorBag();
+  errors.add({
+    id: 'myId',
+    field: 'name',
+    msg: 'Hey',
+    rule: 'r1',
+    scope: 's1'
+  })
+  expect(errors.count()).toBe(1);
+  errors.removeById('myId');
   expect(errors.count()).toBe(0);
 });
 
