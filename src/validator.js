@@ -576,7 +576,7 @@ export default class Validator {
     const promises = [];
     let isExitEarly = false;
     // use of '.some()' is to break iteration in middle by returning true
-    Object.keys(field.validations).some(rule => {
+    Object.keys(field.rules).some(rule => {
       const result = this._test(
         field,
         value,
