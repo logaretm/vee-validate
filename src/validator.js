@@ -470,6 +470,7 @@ export default class Validator {
     let field = name instanceof Field ? name : this._resolveField(name, scope);
     if (field) {
       field.destroy();
+      this.errors.removeById(field.id);
       this.fields.remove(field);
     }
   }

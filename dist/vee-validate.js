@@ -3057,6 +3057,7 @@ Validator.prototype.detach = function detach (name, scope) {
   var field = name instanceof Field ? name : this._resolveField(name, scope);
   if (field) {
     field.destroy();
+    this.errors.removeById(field.id);
     this.fields.remove(field);
   }
 };
