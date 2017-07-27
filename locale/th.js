@@ -14,22 +14,22 @@ const messages = {
   decimal: (field, [decimals] = ['*']) => `${field} ต้องเป็นตัวเลข และสามารถมีจุดทศนิยม ${decimals === '*' ? '' : decimals + ' จุด'}`,
   digits: (field, [length]) => `${field} ต้องเป็นตัวเลข ${length} หลักเท่านั้น`,
   dimensions: (field, [width, height]) => `${field} ต้องมีขนาด ${width} x ${height} px`,
-  email: (field) => `${field} ต้องเป็นอีเมล`,
-  ext: (field) => `${field} ต้องเป็นไฟล์`,
-  image: (field) => `${field} ต้องเป็นรูปภาพ`,
-  in: (field) => `${field} ต้องเป็นค่าที่ถูกต้อง`,
-  ip: (field) => `${field} ต้องเป็น ip address ที่ถูกต้อง`,
+  email: (field) => `${field} ต้องเป็นรูปแบบอีเมล`,
+  ext: (field) => `${field} สกุลไฟล์ไม่่ถูกต้อง`,
+  image: (field) => `${field} ต้องเป็นรูปภาพเท่านั้น`,
+  in: (field) => `${field} เป็นค่าทีไม่่ถูกต้องตามเงื่อนไขที่กำหนด`,
+  ip: (field) => `${field} ไม่ถูกต้องตามรูปแบบ ip address`,
   max: (field, [length]) => `${field} ต้องมีความยาวไม่เกิน ${length} ตัวอักษร`,
   max_value: (field, [max]) => `${field} ต้องมีค่าไม่เกิน ${max}`,
-  mimes: (field) => `${field} ต้องมีสกุลไฟล์ที่ถูกต้อง`,
+  mimes: (field) => `${field} ประเภทไฟล์ไม่ถูกต้อง`,
   min: (field, [length]) => `${field} ต้องมีความยาวอย่างน้อย ${length} ตัวอักษร`,
   min_value: (field, [min]) => `${field} ต้องมีค่าตั้งแต่ ${min} ขึ้นไป`,
-  not_in: (field) => `${field} ต้องเป็นค่าที่ถูกต้อง`,
+  not_in: (field) => `${field} เป็นค่าทีไม่่ถูกต้องตามเงื่อนไขที่กำหนด`,
   numeric: (field) => `${field} ต้องเป็นตัวเลขเท่านั้น`,
   regex: (field) => `รูปแบบ ${field} ไม่ถูกต้อง`,
   required: (field) => `กรุณากรอก ${field}`,
   size: (field, [size]) => `${field} ต้องมีขนาดไม่เกิน ${size} KB`,
-  url: (field) => `${field} เป็น URL ที่ไม่ถูกต้อง`
+  url: (field) => `${field} ไม่ใช่รูปแบบของ URL ที่ถูกต้อง`
 };
 
 const locale = {
