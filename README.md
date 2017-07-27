@@ -109,7 +109,6 @@ You can find more information in the [contribution guide](contributing.md).
 
 ### Tutorials and Examples
 
-- [Form Validation using Vue.js 2](https://dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d#.m95idzlj2) by [Alex Kyriakidis](https://github.com/hootlex)
 - [Vue Multi Step Form](http://statemachine.davestewart.io/html/examples/vue/vue-sign-up.html) by [Dave Stewart](https://github.com/davestewart)
 - [Laravel 5.4 with Vue and Vee Validate (Windows)](https://medium.com/@kanokpit.skuberg/laravel-5-4-with-vue-and-vee-validate-windows-c3ff7f4cdabc) by [Noi Skuberg](https://medium.com/@kanokpit.skuberg)
 
