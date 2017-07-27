@@ -211,7 +211,7 @@ export default class Field {
       }
 
       if (!el) {
-        return warn(`Could not find a field with this selector: "${selector}".`);
+        return;
       }
 
       let options = {
