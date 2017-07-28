@@ -79,6 +79,18 @@ test('resolves events', () => {
   expect(Generator.resolveEvents(el, vnode)).toBe('focus');  
 });
 
+test('resolves alias', () => {
+  document.body.innerHTML = `
+    <input type="text" name="field" id="el" v-model="email" data-vv-as="myAlias">
+  `;
+  let el = document.querySelector('#el');
+  const vnode = { child: { $attrs: { 'data-vv-as': 'alias' } } };
+  expect(Generator.resolveAlias(el, {})).toBe('myAlias');
+  el = { getAttribute: () => null };
+
+  expect(Generator.resolveAlias(el, vnode)).toBe('alias'); 
+});
+
 describe('resolves the value getters', () => {
   test('resolves for text fields', () => {
     document.body.innerHTML = `

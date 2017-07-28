@@ -24,7 +24,7 @@ export default class Generator {
       rules: getRules(binding, el),
       initial: !!binding.modifiers.initial,
       invalidateFalse: !!(el && el.type === 'checkbox'),
-      alias: getDataAttribute(el, 'as') || el.title || null,
+      alias: Generator.resolveAlias(el, vnode),
     };
   }
 
@@ -36,6 +36,15 @@ export default class Generator {
    */
   static resolveDelay (el, vnode, options = {}) {
     return getDataAttribute(el, 'delay') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-delay']) || options.delay;
+  }
+
+  /**
+   * Resolves the alias for the field.
+   * @param {*} el 
+   * @param {*} vnode 
+   */
+  static resolveAlias (el, vnode) {
+    return getDataAttribute(el, 'as') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-as']) || el.title || null;
   }
 
   /**

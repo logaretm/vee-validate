@@ -1806,7 +1806,7 @@ Generator.generate = function generate (el, binding, vnode, options) {
     rules: getRules(binding, el),
     initial: !!binding.modifiers.initial,
     invalidateFalse: !!(el && el.type === 'checkbox'),
-    alias: getDataAttribute(el, 'as') || el.title || null,
+    alias: Generator.resolveAlias(el, vnode),
   };
 };
 
@@ -1820,6 +1820,15 @@ Generator.resolveDelay = function resolveDelay (el, vnode, options) {
     if ( options === void 0 ) options = {};
 
   return getDataAttribute(el, 'delay') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-delay']) || options.delay;
+};
+
+/**
+ * Resolves the alias for the field.
+ * @param {*} el 
+ * @param {*} vnode 
+ */
+Generator.resolveAlias = function resolveAlias (el, vnode) {
+  return getDataAttribute(el, 'as') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-as']) || el.title || null;
 };
 
 /**
@@ -2078,7 +2087,7 @@ Field.prototype.update = function update (options) {
   this.listen = options.listen !== false;
   this.classNames = options.classNames || this.classNames;
   this.expression = JSON.stringify(options.expression);
-  this.alias = options.alias;
+  this.alias = options.alias || this.alias;
   this.getter = isCallable(options.getter) ? options.getter : this.getter;
   this.delay = options.delay || this.delay || 0;
   this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
@@ -2150,7 +2159,7 @@ Field.prototype.updateDependencies = function updateDependencies () {
     }
 
     if (!el) {
-      return warn(("Could not find a field with this selector: \"" + selector + "\"."));
+      return;
     }
 
     var options = {
