@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.7
+ * vee-validate v2.0.0-rc.8
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -1888,7 +1888,7 @@ Generator.resolveModel = function resolveModel (binding, vnode) {
    */
 Generator.resolveName = function resolveName (el, vnode) {
   if (vnode.child) {
-    return getDataAttribute(el, 'name') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-name']) || vnode.child.name;
+    return getDataAttribute(el, 'name') || (vnode.child.$attrs && (vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'])) || vnode.child.name;
   }
 
   return getDataAttribute(el, 'name') || el.name;
@@ -2328,7 +2328,6 @@ Field.prototype.addValueListeners = function addValueListeners () {
     // filter out input event as it is already handled by the watcher API.
     events = events.filter(function (e) { return e !== inputEvent; });
   }
-  console.log(events);
 
   // Add events.
   events.forEach(function (e) {
@@ -3561,7 +3560,7 @@ var index = {
   Validator: Validator,
   ErrorBag: ErrorBag,
   Rules: Rules,
-  version: '2.0.0-rc.7'
+  version: '2.0.0-rc.8'
 };
 
 return index;
