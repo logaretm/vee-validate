@@ -104,7 +104,7 @@ export default class Generator {
      */
   static resolveName (el, vnode) {
     if (vnode.child) {
-      return getDataAttribute(el, 'name') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-name']) || vnode.child.name;
+      return getDataAttribute(el, 'name') || (vnode.child.$attrs && (vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'])) || vnode.child.name;
     }
 
     return getDataAttribute(el, 'name') || el.name;

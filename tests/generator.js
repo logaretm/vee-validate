@@ -283,6 +283,10 @@ describe('resolves the field name', () => {
     el.setAttribute('data-vv-name', ''); // data-vv-name takes priority.
     vnode.child.$attrs = { 'data-vv-name': 'attrName' }; // simulate Vue's 2.4 inheritAttrs set to false.
     expect(Generator.resolveName(el, vnode)).toBe('attrName');
+
+    // if it doesn't expose the name as a prop in Vue 2.4+
+    vnode.child.$attrs = { "name": "attrName1" };
+    expect(Generator.resolveName(el, vnode)).toBe("attrName1");
   });
 });
 

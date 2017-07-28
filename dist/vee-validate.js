@@ -2328,6 +2328,7 @@ Field.prototype.addValueListeners = function addValueListeners () {
     // filter out input event as it is already handled by the watcher API.
     events = events.filter(function (e) { return e !== inputEvent; });
   }
+  console.log(events);
 
   // Add events.
   events.forEach(function (e) {
