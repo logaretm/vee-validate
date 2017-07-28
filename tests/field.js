@@ -416,7 +416,7 @@ describe('fields can track their dependencies', () => {
     expect(field.dependencies[0].field.value).toBe(10);
   });
 
-  test.skip('warns if no dependency was resolved', () => {
+  test('skips if no dependency was resolved', () => {
     document.body.innerHTML = ``;
     global.console.warn = jest.fn();
     let field = new Field(null, {
@@ -426,7 +426,7 @@ describe('fields can track their dependencies', () => {
       }
     });
 
-    expect(global.console.warn).toHaveBeenCalledWith(`[vee-validate] Could not find a field with this selector: "other".`)
+    expect(field.dependencies.length).toBe(0);
   });
 
   test('validation triggers on the parent/controller field', () => {
