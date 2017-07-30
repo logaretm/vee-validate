@@ -15,7 +15,7 @@ const config = {
   locale: 'en', 
   dictionary: null, 
   strict: true, 
-  enableAutoClasses: false, 
+  classes: false, 
   classNames: {
     touched: 'touched', // the control has been blurred
     untouched: 'untouched', // the control hasn't been blurred
@@ -73,7 +73,7 @@ Vue.use(VeeValidate, config);
             <td>Fields that have no rules will fail validation unless `strict` is set to false.</td>
         </tr>
         <tr>
-            <td class="is-method-name">enableAutoClasses</td>
+            <td class="is-method-name">classes</td>
             <td>false</td>
             <td>Applies automatic classes on inputs or components root elements being validated.</td>
         </tr>
