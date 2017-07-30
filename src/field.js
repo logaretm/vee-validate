@@ -142,7 +142,8 @@ export default class Field {
     this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
     this.listen = options.listen !== false;
-    this.classNames = options.classNames || this.classNames;
+    this.classes = options.classes || this.classes || false;
+    this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
     this.expression = JSON.stringify(options.expression);
     this.alias = options.alias || this.alias;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
@@ -157,18 +158,13 @@ export default class Field {
     this.updated = true;
     // no need to continue.
     if (this.isHeadless) {
-      this.classes = options.classes; // set it for consistency sake.
       return;
     };
 
-    if (options.classes && !this.classes) {
+    if (this.classes) {
       this.updateClasses();
-    } else if (this.classes) {
-      // remove them.
-      this.unwatch(/class/);
     }
 
-    this.classes = options.classes;
     this.addValueListeners();
     this.updateAriaAttrs();
   }

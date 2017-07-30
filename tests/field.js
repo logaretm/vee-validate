@@ -1,7 +1,7 @@
 import Field from '../src/field';
 
 test('constructs a headless field with default values', () => {
-  const field = new Field(null);
+  const field = new Field(null, {});
 
   expect(field.id).toBeTruthy(); // has been id'ed.
   expect(field.scope).toBe(null);
@@ -161,14 +161,19 @@ test('it adds class listeners on the input', () => {
     <input name="name" id="name" value="10" type="text">
   `;
   const el = document.querySelector('#name');
-  const field = new Field(el, { classes: true });
+  const field = new Field(el, { classes: false });
 
   // input, blur, focus, and another input.
   expect(field.watchers.length).toBe(4);
   field.addActionListeners(); // Idempotence call.
   expect(field.watchers.length).toBe(4); // still 4
 
+  // if field classes are disabled do not add.
   field.updateClasses();
+  expect(el.classList.contains('untouched')).toBe(false);
+  expect(el.classList.contains('pristine')).toBe(false);
+
+  field.update({ classes: true });
   expect(el.classList.contains('untouched')).toBe(true);
   expect(el.classList.contains('pristine')).toBe(true);
 
@@ -192,7 +197,7 @@ test('it adds class listeners on the input', () => {
   field.addActionListeners(); // Idempotence call.
   expect(field.watchers.length).toBe(4); // back to 4.
   field.update({ classes: false }); // disable classes.
-  expect(field.watchers.length).toBe(2); // they got cleaned up.
+  expect(field.watchers.length).toBe(4); // they remain because of flags.
 });
 
 test('it adds class listeners on components', () => {
