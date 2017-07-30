@@ -2085,7 +2085,7 @@ Field.prototype.update = function update (options) {
   this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
   this.model = options.model || this.model;
   this.listen = options.listen !== false;
-  this.classes = options.classes || this.classes;
+  this.classes = options.classes || this.classes || false;
   this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
   this.expression = JSON.stringify(options.expression);
   this.alias = options.alias || this.alias;
@@ -2098,6 +2098,11 @@ Field.prototype.update = function update (options) {
     this.validator.errors.update(this.id, { scope: this.scope });
   }
 
+  // validate if it is updated and was validated before and there was a rules mutation.
+  if (this.updated && this.flags.validated && options.rules) {
+    this.validator.validate(("#" + (this.id)));
+  }
+
   this.updated = true;
   // no need to continue.
   if (this.isHeadless) {
@@ -2106,9 +2111,6 @@ Field.prototype.update = function update (options) {
 
   if (this.classes) {
     this.updateClasses();
-  } else {
-    // remove them.
-    this.unwatch(/class/);
   }
 
   this.addValueListeners();

@@ -200,6 +200,28 @@ test('it adds class listeners on the input', () => {
   expect(field.watchers.length).toBe(4); // they remain because of flags.
 });
 
+test('calls validate if it was already validated and if there is a change in rules', () => {
+  document.body.innerHTML = `
+    <input name="name" id="name" value="10" type="text">
+  `;
+  const el = document.querySelector('#name');
+  const vm = { $validator: { validate: jest.fn() } };
+  const field = new Field(el, { rules: 'required', vm });
+
+  // field is updated but hadn't been validated yet.
+  field.update({});
+  expect(vm.$validator.validate).toHaveBeenCalledTimes(0);
+
+  // validated but no change in rules.
+  field.flags.validated = true;
+  field.update({});
+  expect(vm.$validator.validate).toHaveBeenCalledTimes(0);
+
+  // change in rules.
+  field.update({ rules: 'required|alpha' });
+  expect(vm.$validator.validate).toHaveBeenCalledWith(`#${field.id}`);
+});
+
 test('it adds class listeners on components', () => {
   document.body.innerHTML = `
     <input name="name" id="name" value="10" type="text">

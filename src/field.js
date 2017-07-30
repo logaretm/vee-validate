@@ -155,6 +155,11 @@ export default class Field {
       this.validator.errors.update(this.id, { scope: this.scope });
     }
 
+    // validate if it is updated and was validated before and there was a rules mutation.
+    if (this.updated && this.flags.validated && options.rules) {
+      this.validator.validate(`#${this.id}`);
+    }
+
     this.updated = true;
     // no need to continue.
     if (this.isHeadless) {
