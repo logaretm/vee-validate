@@ -335,7 +335,11 @@ export default class Validator {
     if (/(confirmed|after|before)/.test(rule.name)) {
       const target = find(field.dependencies, d => d.name === rule.name);
       if (target) {
-        params = [target.field.value];
+        if (params.length > 1) {
+          params = [target.field.value, params[1]];
+        } else {
+          params = [target.field.value];
+        }
       }
     }
 
