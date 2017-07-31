@@ -1990,6 +1990,7 @@ var Field = function Field (el, options) {
   this.dependencies = [];
   this.watchers = [];
   this.events = [];
+  this.rules = {};
   if (!this.isHeadless && !(this.targetOf || options.targetOf)) {
     setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
   }
