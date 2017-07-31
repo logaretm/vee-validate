@@ -1429,6 +1429,17 @@ ErrorBag.prototype.count = function count () {
 };
 
 /**
+ * Finds and fetches the first error message for the specified field id.
+ *
+ * @param {String} id 
+ */
+ErrorBag.prototype.firstById = function firstById (id) {
+  var error = find(this.items, function (i) { return i.id === id; });
+
+  return error ? error.msg : null;
+};
+
+/**
    * Gets the first error message for a specific field.
    *
    * @param{string} field The field name.
@@ -1788,7 +1799,6 @@ Generator.generate = function generate (el, binding, vnode, options) {
     if ( options === void 0 ) options = {};
 
   var model = Generator.resolveModel(binding, vnode);
-
   return {
     name: Generator.resolveName(el, vnode),
     el: el,
@@ -2085,7 +2095,7 @@ Field.prototype.update = function update (options) {
   this.name = options.name || this.name || null;
   this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
   this.model = options.model || this.model;
-  this.listen = options.listen !== false;
+  this.listen = options.listen !== undefined ? options.listen : this.listen;
   this.classes = options.classes || this.classes || false;
   this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
   this.expression = JSON.stringify(options.expression);
@@ -2110,10 +2120,7 @@ Field.prototype.update = function update (options) {
     return;
   }
 
-  if (this.classes) {
-    this.updateClasses();
-  }
-
+  this.updateClasses();
   this.addValueListeners();
   this.updateAriaAttrs();
 };
@@ -2377,6 +2384,15 @@ Field.prototype.updateAriaAttrs = function updateAriaAttrs () {
 
   this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
   this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
+};
+
+/**
+ * Updates the custom validity for the field.
+ */
+Field.prototype.updateCustomValidity = function updateCustomValidity () {
+  if (this.isHeadless || !isCallable(this.el.setCustomValidity)) { return; }
+
+  this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
 };
 
 /**
@@ -3242,9 +3258,8 @@ Validator.prototype.validate = function validate (name, value, scope) {
     field.flags.invalid = !result;
     field.flags.validated = true;
     field.updateAriaAttrs();
-    if (field.classes) {
-      field.updateClasses();
-    }
+    field.updateCustomValidity();
+    field.updateClasses();
 
     return result;
   });

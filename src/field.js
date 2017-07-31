@@ -142,7 +142,7 @@ export default class Field {
     this.name = options.name || this.name || null;
     this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
-    this.listen = options.listen !== false;
+    this.listen = options.listen !== undefined ? options.listen : this.listen;
     this.classes = options.classes || this.classes || false;
     this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
     this.expression = JSON.stringify(options.expression);
