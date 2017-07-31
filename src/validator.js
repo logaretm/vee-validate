@@ -640,9 +640,8 @@ export default class Validator {
       field.flags.invalid = !result;
       field.flags.validated = true;
       field.updateAriaAttrs();
-      if (field.classes) {
-        field.updateClasses();
-      }
+      field.updateCustomValidity();
+      field.updateClasses();
 
       return result;
     });

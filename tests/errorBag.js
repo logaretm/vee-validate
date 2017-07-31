@@ -38,6 +38,19 @@ test('updates error objects by matching against field id', () => {
   expect(errors.count()).toBe(1);
 });
 
+test('finds error messages by matching against field id', () => {
+  const errors = new ErrorBag();
+  errors.add({
+    id: 'myId',
+    field: 'name',
+    msg: 'Hey',
+    rule: 'r1',
+    scope: 's1'
+  });
+  expect(errors.firstById('someId')).toBe(null);
+  expect(errors.firstById('myId')).toBe('Hey');
+});
+
 test('removes errors for a specific field', () => {
   const errors = new ErrorBag();
   errors.add('name', 'The name is invalid', 'rule1');

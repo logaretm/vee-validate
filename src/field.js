@@ -167,10 +167,7 @@ export default class Field {
       return;
     };
 
-    if (this.classes) {
-      this.updateClasses();
-    }
-
+    this.updateClasses();
     this.addValueListeners();
     this.updateAriaAttrs();
   }
@@ -422,6 +419,15 @@ export default class Field {
 
     this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
     this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
+  }
+
+  /**
+   * Updates the custom validity for the field.
+   */
+  updateCustomValidity () {
+    if (this.isHeadless || !isCallable(this.el.setCustomValidity)) return;
+
+    this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
   }
 
   /**

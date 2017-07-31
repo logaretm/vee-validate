@@ -473,3 +473,28 @@ describe('fields can track their dependencies', () => {
     expect(field.dependencies[0].field.validator.validate).toHaveBeenCalledWith(`#${field.id}`);
   });
 });
+
+test('set field custom validity if possible', () => {
+  document.body.innerHTML = `
+      <input name="other" id="name" value="10" type="text">
+    `;
+  const el = document.querySelector('#name');
+  const field = new Field(null, {
+    rules: 'required|confirmed:other',
+    vm: {
+      $el: document.body,
+      $validator: { validate: jest.fn(), errors: { firstById: () => 'Error' } }
+    }
+  });
+
+  el.setCustomValidity = jest.fn();
+  field.flags.valid = false;
+  field.flags.invalid = true;
+
+  field.updateCustomValidity();
+  expect(el.setCustomValidity).toHaveBeenCalledTimes(0);
+
+  field.el = el;
+  field.updateCustomValidity();
+  expect(el.setCustomValidity).toHaveBeenCalledTimes(1);
+});

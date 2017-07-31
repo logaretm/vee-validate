@@ -129,6 +129,17 @@ export default class ErrorBag {
   }
 
   /**
+   * Finds and fetches the first error message for the specified field id.
+   *
+   * @param {String} id 
+   */
+  firstById (id) {
+    const error = find(this.items, i => i.id === id);
+
+    return error ? error.msg : null;
+  }
+
+  /**
      * Gets the first error message for a specific field.
      *
      * @param  {string} field The field name.
