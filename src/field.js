@@ -1,4 +1,4 @@
-import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn } from './utils';
+import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn, toArray } from './utils';
 import Generator from './generator';
 
 const DEFAULT_OPTIONS = {
@@ -387,8 +387,8 @@ export default class Field {
       }
 
       if (~['radio', 'checkbox'].indexOf(this.el.type)) {
-        let els = document.querySelectorAll(`input[name="${this.el.name}"]`);
-        els.forEach(el => {
+        const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+        toArray(els).forEach(el => {
           el.addEventListener(e, validate);
           this.watchers.push({
             tag: 'input_native',
