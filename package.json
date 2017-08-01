@@ -3,6 +3,7 @@
   "version": "2.0.0-rc.8",
   "description": "Simple Vue.js input validation plugin",
   "main": "dist/vee-validate.js",
+  "module": "dist/vee-validate.esm.js",
   "typings": "types/index.d.ts",
   "homepage": "http://vee-validate.logaretm.com",
   "repository": "https://github.com/baianat/vee-validate",
