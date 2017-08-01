@@ -39,8 +39,8 @@ export class ErrorBag {
 }
 
 export class FieldBag {
-    filter(matcher: any): Field[];
-    find(matcher: any): Field;
+    filter(matcher: {name?: string, scope?: string, id?: string}): Field[];
+    find(matcher: {name?: string, scope?: string, id?: string}): Field;
 }
 
 export class FieldFlagsBag {
