@@ -1,5 +1,28 @@
 import Vue = require("vue")
 
+export class FieldFlags {
+    untouched: boolean;
+    touched: boolean;
+    dirty: boolean;
+    pristine: boolean;
+    valid?: boolean;
+    invalid?: boolean;
+    validated: boolean;
+    required: boolean;
+    pending: boolean;
+}
+
+export class Field {
+    id: string;
+    name: string;    
+    scope: string;    
+    flags: FieldFlags;
+    isRequired: boolean;    
+    el: any;
+    value: any;
+    rules: any;
+}
+
 export class ErrorBag {
     constructor();
     add(field: string, msg: string, rule: string, scope?: string): void;
@@ -16,29 +39,22 @@ export class ErrorBag {
 }
 
 export class FieldBag {
+    filters(matcher: any): Field;
+    find(matcher: any): Field[];
+}
+
+export class FieldFlagsBag {
     [field: string]: FieldFlags;
 }
 
-export class FieldFlags {
-    untouched: boolean;
-    touched: boolean;
-    dirty: boolean;
-    pristine: boolean;
-    valid?: boolean;
-    invalid?: boolean;
-    validated: boolean;
-    required: boolean;
-    pending: boolean;
-}
-
 export class Validator {
-
     errors: ErrorBag;
-    fieldBag: FieldBag;
+    fields: FieldBag;
+    fieldBag: FieldFlagsBag;
     strict: boolean;
     readonly dictionary: any;
 
-    constructor(validations: any, options: any);
+    constructor(validations: any, options: any);    
     attach(name: string, checks: string|Object, options?: Object): void;
     clean(): void;
     detach(name: string, scope?: string): void;
@@ -68,6 +84,7 @@ export class Validator {
     static updateDictionary(data: any): void;
     static addLocale(local: Object): void;
 }
+
 export const version: string;
 
 export const install: Vue.PluginFunction<never>
