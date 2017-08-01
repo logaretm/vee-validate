@@ -31,6 +31,16 @@ test('constructs a headless field with default values', () => {
     dirty: 'dirty'
   });
   expect(field.isHeadless).toBe(true);
+  field.classNames = null; // make sure it resets to the default value.
+  field.update({});
+  expect(field.classNames).toEqual({
+    touched: 'touched',
+    untouched: 'untouched',
+    valid: 'valid',
+    invalid: 'invalid',
+    pristine: 'pristine',
+    dirty: 'dirty'
+  });
 });
 
 test('fields can be configured to not add any value listener', () => {
@@ -497,4 +507,15 @@ test('set field custom validity if possible', () => {
   field.el = el;
   field.updateCustomValidity();
   expect(el.setCustomValidity).toHaveBeenCalledTimes(1);
+
+  field.validator.errors.firstById = () => null;
+  // check unset.
+  field.flags.valid = true;
+  field.updateCustomValidity();
+  expect(el.setCustomValidity).toHaveBeenLastCalledWith('');
+
+  // Check set with no errors in error bag.
+  field.flags.valid = false;
+  field.updateCustomValidity();
+  expect(el.setCustomValidity).toHaveBeenLastCalledWith('');
 });

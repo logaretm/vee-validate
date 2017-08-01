@@ -882,3 +882,21 @@ test('validates multi-valued promises', async () => {
   v.attach('field', 'many_promise');
   expect(await v.validate('field', 'sdad')).toBe(true);
 });
+
+test('it should pass the after/before inclusion parameters correctly', async () => {
+  document.body.innerHTML = `<input type="text" name="field" value="" id="el">`;
+  const el = document.querySelector('#el');
+  expect(Validator.installDateTimeValidators(moment)).toBe(true);
+  const v = new Validator();
+  v.attach({
+    name: 'birthday',
+    vm: {
+      $el: document.body
+    },
+    rules: 'date_format:DD/MM/YYYY|after:field,true'
+  });
+
+  el.value = '01/12/2008';
+  expect(await v.validate('birthday', '01/12/2008')).toBe(true);
+  expect(await v.validate('birthday', '01/11/2008')).toBe(false);
+});
