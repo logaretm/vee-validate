@@ -1,5 +1,28 @@
 import Vue = require("vue")
 
+export class FieldFlags {
+    untouched: boolean;
+    touched: boolean;
+    dirty: boolean;
+    pristine: boolean;
+    valid?: boolean;
+    invalid?: boolean;
+    validated: boolean;
+    required: boolean;
+    pending: boolean;
+}
+
+export class Field {
+    id: string;
+    name: string;    
+    scope: string;    
+    flags: FieldFlags;
+    isRequired: boolean;    
+    el: any;
+    value: any;
+    rules: any;
+}
+
 export class ErrorBag {
     constructor();
     add(field: string, msg: string, rule: string, scope?: string): void;
@@ -16,32 +39,24 @@ export class ErrorBag {
 }
 
 export class FieldBag {
+    filter(matcher: {name?: string, scope?: string, id?: string}): Field[];
+    find(matcher: {name?: string, scope?: string, id?: string}): Field;
+}
+
+export class FieldFlagsBag {
     [field: string]: FieldFlags;
 }
 
-export class FieldFlags {
-    untouched: boolean;
-    touched: boolean;
-    dirty: boolean;
-    pristine: boolean;
-    valid: boolean;
-    invalid: boolean;
-    required: boolean;
-    pending: boolean;
-}
-
 export class Validator {
-
-    errorBag: ErrorBag;
-    fieldBag: FieldBag;
-    strictMode: boolean;
+    errors: ErrorBag;
+    fields: FieldBag;
+    fieldBag: FieldFlagsBag;
+    strict: boolean;
     readonly dictionary: any;
 
-    constructor(validations: any, options: any);
-    addScope(scope: string): void;
-    append(name: string, checks: string|Object, options?: Object): void;
+    constructor(validations: any, options: any);    
     attach(name: string, checks: string|Object, options?: Object): void;
-    clearInterval(): void;
+    clean(): void;
     detach(name: string, scope?: string): void;
     extend(name: string, validator: Object|Function): void;
     flag(name: string, flags: Object): void;
@@ -57,7 +72,6 @@ export class Validator {
     setLocale(language?: string): void;
     setStrictMode(strictMode?: boolean): void;
     updateDictionary(data: Object): void;
-    updateField(name: string, checks: string|Object, options?: Object): void;
     validate(name: string, value: any, scope?: string, throws?: boolean): Promise<any>;
     validateAll(values?: Object, scope?: string): Promise<any>;
     validateScopes(): Promise<any>;
@@ -70,6 +84,7 @@ export class Validator {
     static updateDictionary(data: any): void;
     static addLocale(local: Object): void;
 }
+
 export const version: string;
 
 export const install: Vue.PluginFunction<never>

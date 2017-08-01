@@ -300,7 +300,11 @@ export default class Validator {
    */
   _getLocalizedParams (rule) {
     if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
-      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+      if (rule.params.length > 1) {
+        return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]), rule.params[1]];
+      } else {
+        return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+      }
     }
 
     return rule.params;

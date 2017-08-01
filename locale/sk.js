@@ -1,10 +1,10 @@
 const messages = {
-  after: (field, [target]) => `Položka ${field} musí byť po položke ${target}.`,
+  after: (field, [target, inclusion]) => `Položka ${field} musí byť vačšia ${inclusion ? 'alebo rovná ' : ''} ako položka ${target}.`,
   alpha_dash: (field) => `${field} môže obsahovať len písmená, číslice, bodky a podčiarknutie.`,
   alpha_num: (field) => `${field} môže obsahovať len písmená a číslice.`,
   alpha_spaces: (field) => `${field} môže obsahovať len písmená, číslice a medzery.`,
   alpha: (field) => `${field} môže obsahovať len písmená.`,
-  before: (field, [target]) => `Položka ${field} musí byť pred položkou ${target}.`,
+  before: (field, [target, inclusion]) => `Položka ${field} musí byť menšia ${inclusion ? 'alebo rovná ' : ''} ako položka ${target}.`,
   between: (field, [min, max]) => `Položka ${field} musí byť medzi ${min} a ${max}.`,
   confirmed: (field) => `Hodnota položky ${field} nie je rovnaká.`,
   credit_card: (field) => `Položka ${field} je neplatná.`,
