@@ -39,8 +39,8 @@ export class ErrorBag {
 }
 
 export class FieldBag {
-    filters(matcher: any): Field;
-    find(matcher: any): Field[];
+    filter(matcher: any): Field[];
+    find(matcher: any): Field;
 }
 
 export class FieldFlagsBag {
