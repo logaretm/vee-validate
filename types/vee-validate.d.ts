@@ -24,24 +24,23 @@ export class FieldFlags {
     touched: boolean;
     dirty: boolean;
     pristine: boolean;
-    valid: boolean;
-    invalid: boolean;
+    valid?: boolean;
+    invalid?: boolean;
+    validated: boolean;
     required: boolean;
     pending: boolean;
 }
 
 export class Validator {
 
-    errorBag: ErrorBag;
+    errors: ErrorBag;
     fieldBag: FieldBag;
-    strictMode: boolean;
+    strict: boolean;
     readonly dictionary: any;
 
     constructor(validations: any, options: any);
-    addScope(scope: string): void;
-    append(name: string, checks: string|Object, options?: Object): void;
     attach(name: string, checks: string|Object, options?: Object): void;
-    clearInterval(): void;
+    clean(): void;
     detach(name: string, scope?: string): void;
     extend(name: string, validator: Object|Function): void;
     flag(name: string, flags: Object): void;
@@ -57,7 +56,6 @@ export class Validator {
     setLocale(language?: string): void;
     setStrictMode(strictMode?: boolean): void;
     updateDictionary(data: Object): void;
-    updateField(name: string, checks: string|Object, options?: Object): void;
     validate(name: string, value: any, scope?: string, throws?: boolean): Promise<any>;
     validateAll(values?: Object, scope?: string): Promise<any>;
     validateScopes(): Promise<any>;
