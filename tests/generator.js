@@ -309,7 +309,11 @@ test('generates field options', () => {
     name: 'field',
     scope: 's1',
     model: 'email',
-    vm: vnode.context,
+    vm: {
+      $el: null,
+      $refs: {},
+      $validator: null
+    },
     component: undefined,
     classes: undefined,
     classNames: undefined,

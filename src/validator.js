@@ -26,7 +26,14 @@ export default class Validator {
     this._createFields(validations);
     this.paused = false;
     this.fastExit = options.fastExit || false;
-    this.$vm = options.vm;
+    // create it statically since we don't need constant access to the vm.
+    this.clean = options.vm && isCallable(options.vm.$nextTick) ? () => {
+      options.vm.$nextTick(() => {
+        this.errors.clear();
+      });
+    } : () => {
+      this.errors.clear();
+    };
 
     // if momentjs is present, install the validators.
     if (typeof moment === 'function') {
@@ -452,20 +459,6 @@ export default class Validator {
     if (field.classes) {
       field.updateClasses();
     }
-  }
-
-  /**
-   * Clears the errors from the errorBag using the next tick if possible.
-   */
-  clean () {
-    if (! this.$vm || ! isCallable(this.$vm.$nextTick)) {
-      this.errors.clear();
-      return;
-    }
-
-    this.$vm.$nextTick(() => {
-      this.errors.clear();
-    });
   }
 
   /**

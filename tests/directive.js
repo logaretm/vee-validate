@@ -21,6 +21,7 @@ test('adds the field after binding', () => {
   };
   const $validator = {
     attach: jest.fn(),
+    validate: () => {},
     fields: {
       find: jest.fn(() => field)
     }
@@ -54,6 +55,7 @@ test('evaluates field options after update', done => {
     fields: {
       find: jest.fn(() => field)
     },
+    validate: () => {},
     detach: jest.fn()
   };
   const VM = Vue.extend({
@@ -87,6 +89,7 @@ test('expression can contain an object containing the scope', done => {
     fields: {
       find: jest.fn(() => field)
     },
+    validate: () => {},
     detach: jest.fn()
   };
   const VM = Vue.extend({
@@ -119,6 +122,7 @@ test('cleans up after unbinding', () => {
     fields: {
       find: jest.fn(() => field)
     },
+    validate: () => {},
     detach: jest.fn()
   };
   const VM = Vue.extend({
@@ -152,6 +156,7 @@ test('revises scope after inserted', async () => {
     fields: {
       find: jest.fn(() => field)
     },
+    validate: () => {},
     detach: jest.fn()
   };
   const VM = Vue.extend({

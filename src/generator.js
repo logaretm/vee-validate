@@ -12,7 +12,7 @@ export default class Generator {
       el: el,
       listen: !binding.modifiers.disable,
       scope: Generator.resolveScope(el, binding, vnode),
-      vm: vnode.context,
+      vm: Generator.makeVM(vnode.context),
       expression: binding.value,
       component: vnode.child,
       classes: options.classes,
@@ -26,6 +26,24 @@ export default class Generator {
       invalidateFalse: !!(el && el.type === 'checkbox'),
       alias: Generator.resolveAlias(el, vnode),
     };
+  }
+
+  /**
+   * Creates a non-circular fake VM instance.
+   * @param {*} vm 
+   */
+  static makeVM (vm) {
+    const instance = {
+      $el: vm.$el || null,
+      $refs: vm.$refs || {},
+      $watch: vm.$watch ? vm.$watch.bind(vm) : () => {},
+      $validator: vm.$validator ? {
+        errors: vm.$validator.errors,
+        validate: vm.$validator.validate.bind(vm.$validator)
+      } : null
+    };
+
+    return instance;
   }
 
   /**
