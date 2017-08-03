@@ -1805,7 +1805,7 @@ Generator.generate = function generate (el, binding, vnode, options) {
     el: el,
     listen: !binding.modifiers.disable,
     scope: Generator.resolveScope(el, binding, vnode),
-    vm: vnode.context,
+    vm: Generator.makeVM(vnode.context),
     expression: binding.value,
     component: vnode.child,
     classes: options.classes,
@@ -1819,6 +1819,24 @@ Generator.generate = function generate (el, binding, vnode, options) {
     invalidateFalse: !!(el && el.type === 'checkbox'),
     alias: Generator.resolveAlias(el, vnode),
   };
+};
+
+/**
+ * Creates a non-circular fake VM instance.
+ * @param {*} vm 
+ */
+Generator.makeVM = function makeVM (vm) {
+  var instance = {
+    $el: vm.$el || null,
+    $refs: vm.$refs || {},
+    $watch: vm.$watch ? vm.$watch.bind(vm) : function () {},
+    $validator: vm.$validator ? {
+      errors: vm.$validator.errors,
+      validate: vm.$validator.validate.bind(vm.$validator)
+    } : null
+  };
+
+  return instance;
 };
 
 /**
@@ -2625,6 +2643,7 @@ var DICTIONARY = new Dictionary({
 });
 
 var Validator = function Validator (validations, options) {
+  var this$1 = this;
   if ( options === void 0 ) options = { vm: null, fastExit: true };
 
   this.strict = STRICT_MODE;
@@ -2634,7 +2653,14 @@ var Validator = function Validator (validations, options) {
   this._createFields(validations);
   this.paused = false;
   this.fastExit = options.fastExit || false;
-  this.$vm = options.vm;
+  // create it statically since we don't need constant access to the vm.
+  this.clean = options.vm && isCallable(options.vm.$nextTick) ? function () {
+    options.vm.$nextTick(function () {
+      this$1.errors.clear();
+    });
+  } : function () {
+    this$1.errors.clear();
+  };
 
   // if momentjs is present, install the validators.
   if (typeof moment === 'function') {
@@ -3074,22 +3100,6 @@ Validator.prototype.flag = function flag (name, flags) {
   if (field.classes) {
     field.updateClasses();
   }
-};
-
-/**
- * Clears the errors from the errorBag using the next tick if possible.
- */
-Validator.prototype.clean = function clean () {
-    var this$1 = this;
-
-  if (! this.$vm || ! isCallable(this.$vm.$nextTick)) {
-    this.errors.clear();
-    return;
-  }
-
-  this.$vm.$nextTick(function () {
-    this$1.errors.clear();
-  });
 };
 
 /**
