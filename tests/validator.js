@@ -900,3 +900,17 @@ test('it should pass the after/before inclusion parameters correctly', async () 
   expect(await v.validate('birthday', '01/12/2008')).toBe(true);
   expect(await v.validate('birthday', '01/11/2008')).toBe(false);
 });
+
+test('it does not validate disabled fields', async () => {
+  document.body.innerHTML = `<input type="text" name="field" value="" disabled id="el">`;
+  const el = document.querySelector('#el');
+  const v = new Validator();
+  const field = v.attach({
+    el,
+    rules: 'required|email'
+  });
+
+  expect(await v.validate(`#${field.id}`)).toBe(true);
+  el.disabled = false;
+  expect(await v.validate(`#${field.id}`)).toBe(false);
+});

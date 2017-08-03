@@ -1799,6 +1799,7 @@ Generator.generate = function generate (el, binding, vnode, options) {
     if ( options === void 0 ) options = {};
 
   var model = Generator.resolveModel(binding, vnode);
+
   return {
     name: Generator.resolveName(el, vnode),
     el: el,
@@ -2063,8 +2064,6 @@ prototypeAccessors$1.value.get = function () {
  * @param {Object} options The matching options.
  */
 Field.prototype.matches = function matches (options) {
-  if (this.isDisabled) { return false; }
-
   if (options.id) {
     return this.id === options.id;
   }
@@ -2353,7 +2352,7 @@ Field.prototype.addValueListeners = function addValueListeners () {
 
     if (~['radio', 'checkbox'].indexOf(this$1.el.type)) {
       var els = document.querySelectorAll(("input[name=\"" + (this$1.el.name) + "\"]"));
-      els.forEach(function (el) {
+      toArray(els).forEach(function (el) {
         el.addEventListener(e, validate);
         this$1.watchers.push({
           tag: 'input_native',
@@ -2907,7 +2906,11 @@ Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, r
  */
 Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule) {
   if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
-    return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+    if (rule.params.length > 1) {
+      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]), rule.params[1]];
+    } else {
+      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+    }
   }
 
   return rule.params;
@@ -2944,7 +2947,11 @@ Validator.prototype._test = function _test (field, value, rule) {
   if (/(confirmed|after|before)/.test(rule.name)) {
     var target = find(field.dependencies, function (d) { return d.name === rule.name; });
     if (target) {
-      params = [target.field.value];
+      if (params.length > 1) {
+        params = [target.field.value, params[1]];
+      } else {
+        params = [target.field.value];
+      }
     }
   }
 
@@ -3247,6 +3254,9 @@ Validator.prototype.validate = function validate (name, value, scope) {
     return this._handleFieldNotFound(name, scope);
   }
   this.errors.removeById(field.id);
+  if (field.isDisabled) {
+    return Promise.resolve(true);
+  }
   field.flags.pending = true;
   if (arguments.length === 1) {
     value = field.value;

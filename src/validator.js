@@ -637,6 +637,9 @@ export default class Validator {
       return this._handleFieldNotFound(name, scope);
     }
     this.errors.removeById(field.id);
+    if (field.isDisabled) {
+      return Promise.resolve(true);
+    }
     field.flags.pending = true;
     if (arguments.length === 1) {
       value = field.value;

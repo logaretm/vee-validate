@@ -110,8 +110,6 @@ export default class Field {
    * @param {Object} options The matching options.
    */
   matches (options) {
-    if (this.isDisabled) return false;
-
     if (options.id) {
       return this.id === options.id;
     }

@@ -309,12 +309,6 @@ test('it checks against a specified matcher', () => {
 
   // no matcher.
   expect(field.matches({})).toBe(true);
-
-  // field is disabled, no matches.
-  el.disabled = true;
-  expect(field.matches({
-    id: field.id
-  })).toBe(false);
 });
 
 test('uses the watch API instead of adding listeners if the field is bound with a model', () => {
