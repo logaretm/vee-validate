@@ -11,7 +11,7 @@ export default class Generator {
       name: Generator.resolveName(el, vnode),
       el: el,
       listen: !binding.modifiers.disable,
-      scope: Generator.resolveScope(el, binding),
+      scope: Generator.resolveScope(el, binding, vnode),
       vm: vnode.context,
       expression: binding.value,
       component: vnode.child,
@@ -65,8 +65,17 @@ export default class Generator {
    * @param {*} el
    * @param {*} binding
    */
-  static resolveScope (el, binding) {
-    return (isObject(binding.value) ? binding.value.scope : getScope(el));
+  static resolveScope (el, binding, vnode = {}) {
+    let scope = null;
+    if (isObject(binding.value)) {
+      scope = binding.value.scope;
+    }
+
+    if (vnode.child && !scope) {
+      scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
+    }
+
+    return scope || getScope(el);
   }
 
   /**

@@ -37,7 +37,7 @@ test('resolves the input scope', () => {
     <input type="text" name="field" id="el" v-model="email" data-vv-scope="s1">
   `;
   let el = document.querySelector('#el');
-  const vnode = { context: { email: '' }, data: { model: { expression: 'email' } } };
+  let vnode = { context: { email: '' }, data: { model: { expression: 'email' } } };
   expect(Generator.resolveScope(el, { arg: null, value: null })).toBe('s1');
 
   // defined on form.
@@ -52,6 +52,15 @@ test('resolves the input scope', () => {
   // defined in expression.
   el = document.querySelector('#el');
   expect(Generator.resolveScope(el, { arg: null, value: { scope: 's3'} })).toBe('s3');
+
+  // defined in a components $attrs.
+  el = document.querySelector('#el');
+  vnode = { child: { $attrs: { 'data-vv-scope': 's4' } } };
+  expect(Generator.resolveScope(el, { arg: null, value: null }, vnode)).toBe('s4');
+
+  // define in a component's $el
+  vnode = { child: { $attrs: {} } };
+  expect(Generator.resolveScope(el, { arg: null, value: null }, vnode)).toBe('s2');
 });
 
 test('resolves delay', () => {

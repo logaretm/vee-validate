@@ -27,11 +27,11 @@ const createDirective = options => {
       const fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted (el, { value, expression }, { context }) {
-      const field = findField(el, context);
+    inserted (el, binding, vnode) {
+      const field = findField(el, vnode.context);
       if (!field) return;
 
-      const scope = isObject(value) && value.rules ? value.scope : getScope(el);
+      const scope = Generator.resolveScope(el, binding, vnode);
       field.update({ scope });
     },
     update (el, { expression, value }, { context }) {
