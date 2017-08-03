@@ -1804,7 +1804,7 @@ Generator.generate = function generate (el, binding, vnode, options) {
     name: Generator.resolveName(el, vnode),
     el: el,
     listen: !binding.modifiers.disable,
-    scope: Generator.resolveScope(el, binding),
+    scope: Generator.resolveScope(el, binding, vnode),
     vm: vnode.context,
     expression: binding.value,
     component: vnode.child,
@@ -1860,8 +1860,19 @@ Generator.resolveEvents = function resolveEvents (el, vnode) {
  * @param {*} el
  * @param {*} binding
  */
-Generator.resolveScope = function resolveScope (el, binding) {
-  return (isObject(binding.value) ? binding.value.scope : getScope(el));
+Generator.resolveScope = function resolveScope (el, binding, vnode) {
+    if ( vnode === void 0 ) vnode = {};
+
+  var scope = null;
+  if (isObject(binding.value)) {
+    scope = binding.value.scope;
+  }
+
+  if (vnode.child && !scope) {
+    scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
+  }
+
+  return scope || getScope(el);
 };
 
 /**
@@ -3475,15 +3486,11 @@ var createDirective = function (options) {
       var fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted: function inserted (el, ref, ref$1) {
-      var value = ref.value;
-      var expression = ref.expression;
-      var context = ref$1.context;
-
-      var field = findField(el, context);
+    inserted: function inserted (el, binding, vnode) {
+      var field = findField(el, vnode.context);
       if (!field) { return; }
 
-      var scope = isObject(value) && value.rules ? value.scope : getScope(el);
+      var scope = Generator.resolveScope(el, binding, vnode);
       field.update({ scope: scope });
     },
     update: function update (el, ref, ref$1) {
