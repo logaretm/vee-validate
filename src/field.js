@@ -283,7 +283,7 @@ export default class Field {
       this.unwatch(/^class_blur$/);
     };
 
-    const event = getInputEventName(this.el);
+    const inputEvent = getInputEventName(this.el);
     const onInput = () => {
       this.flags.dirty = true;
       this.flags.pristine = false;
@@ -316,18 +316,21 @@ export default class Field {
 
     if (this.isHeadless) return;
 
-    this.el.addEventListener(event, onInput);
-    this.el.addEventListener('blur', onBlur);
+    this.el.addEventListener(inputEvent, onInput);
+    // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
+    const blurEvent = ['radio', 'checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'click';
+    this.el.addEventListener(blurEvent, onBlur);
     this.watchers.push({
       tag: 'class_input',
       unwatch: () => {
-        this.el.removeEventListener(event, onInput);
+        this.el.removeEventListener(inputEvent, onInput);
       }
     });
+
     this.watchers.push({
       tag: 'class_blur',
       unwatch: () => {
-        this.el.removeEventListener('blur', onBlur);
+        this.el.removeEventListener(blurEvent, onBlur);
       }
     });
   }
