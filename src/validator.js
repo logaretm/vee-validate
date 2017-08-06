@@ -620,9 +620,20 @@ export default class Validator {
   validate (name, value, scope = null) {
     if (this.paused) return Promise.resolve(true);
 
-    // Alias to validate all.
+    // overload to validate all.
     if (arguments.length === 0) {
+      return this.validateScopes();
+    }
+
+    // overload to validate scopeless fields.
+    if (arguments.length === 1 && arguments[0] === '*') {
       return this.validateAll();
+    }
+
+    // overload to validate a scope.
+    if (arguments.length === 1 && typeof arguments[0] === 'string' && /^(.+)\.\*$/.test(arguments[0])) {
+      const matched = arguments[0].match(/^(.+)\.\*$/)[1];
+      return this.validateAll(matched);
     }
 
     const field = this._resolveField(name, scope);

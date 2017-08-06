@@ -674,10 +674,26 @@ test('can remove rules from the list of validators', async () => {
 
 test('calling validate without args will trigger validateAll', async () => {
   const v = new Validator();
-  v.validateAll = jest.fn(async () => {});
+  v.validateScopes = jest.fn(async () => {});
 
   await v.validate();
+  expect(v.validateScopes).toHaveBeenCalled();
+});
+
+test('calling validate with * will trigger validateScopes', async () => {
+  const v = new Validator();
+  v.validateAll = jest.fn(async () => { });
+
+  await v.validate('*');
   expect(v.validateAll).toHaveBeenCalled();
+});
+
+test('calling validate with a string ending with .* will validate the matched scope', async () => {
+  const v = new Validator();
+  v.validateAll = jest.fn(async () => { });
+
+  await v.validate('scope-1.*');
+  expect(v.validateAll).toHaveBeenCalledWith('scope-1');
 });
 
 test('can fetch the values using getters when not specifying values in validateAll', async () => {
