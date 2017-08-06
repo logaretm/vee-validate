@@ -29,11 +29,11 @@ export default class Generator {
   }
 
   /**
-   * Creates a non-circular fake VM instance.
+   * Creates a non-circular partial VM instance from a Vue instance.
    * @param {*} vm 
    */
   static makeVM (vm) {
-    const instance = {
+    return {
       $el: vm.$el || null,
       $refs: vm.$refs || {},
       $watch: vm.$watch ? vm.$watch.bind(vm) : () => {},
@@ -42,8 +42,6 @@ export default class Generator {
         validate: vm.$validator.validate.bind(vm.$validator)
       } : null
     };
-
-    return instance;
   }
 
   /**
