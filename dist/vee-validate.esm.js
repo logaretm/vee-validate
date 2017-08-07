@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.8
+ * vee-validate v2.0.0-rc.9
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -1370,6 +1370,17 @@ class ErrorBag {
   }
 
   /**
+   * Finds and fetches the first error message for the specified field id.
+   *
+   * @param {String} id 
+   */
+  firstById (id) {
+    const error = find(this.items, i => i.id === id);
+
+    return error ? error.msg : null;
+  }
+
+  /**
      * Gets the first error message for a specific field.
      *
      * @param  {string} field The field name.
@@ -1674,8 +1685,8 @@ class Generator {
       name: Generator.resolveName(el, vnode),
       el: el,
       listen: !binding.modifiers.disable,
-      scope: Generator.resolveScope(el, binding),
-      vm: vnode.context,
+      scope: Generator.resolveScope(el, binding, vnode),
+      vm: Generator.makeVM(vnode.context),
       expression: binding.value,
       component: vnode.child,
       classes: options.classes,
@@ -1686,8 +1697,23 @@ class Generator {
       delay: Generator.resolveDelay(el, vnode, options),
       rules: getRules(binding, el),
       initial: !!binding.modifiers.initial,
-      invalidateFalse: !!(el && el.type === 'checkbox'),
-      alias: Generator.resolveAlias(el, vnode),
+      alias: Generator.resolveAlias(el, vnode)
+    };
+  }
+
+  /**
+   * Creates a non-circular partial VM instance from a Vue instance.
+   * @param {*} vm 
+   */
+  static makeVM (vm) {
+    return {
+      $el: vm.$el || null,
+      $refs: vm.$refs || {},
+      $watch: vm.$watch ? vm.$watch.bind(vm) : () => {},
+      $validator: vm.$validator ? {
+        errors: vm.$validator.errors,
+        validate: vm.$validator.validate.bind(vm.$validator)
+      } : null
     };
   }
 
@@ -1728,8 +1754,17 @@ class Generator {
    * @param {*} el
    * @param {*} binding
    */
-  static resolveScope (el, binding) {
-    return (isObject(binding.value) ? binding.value.scope : getScope(el));
+  static resolveScope (el, binding, vnode = {}) {
+    let scope = null;
+    if (isObject(binding.value)) {
+      scope = binding.value.scope;
+    }
+
+    if (vnode.child && !scope) {
+      scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
+    }
+
+    return scope || getScope(el);
   }
 
   /**
@@ -1869,6 +1904,7 @@ class Field {
     this.dependencies = [];
     this.watchers = [];
     this.events = [];
+    this.rules = {};
     if (!this.isHeadless && !(this.targetOf || options.targetOf)) {
       setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
     }
@@ -1925,12 +1961,21 @@ class Field {
   }
 
   /**
+   * If the field rejects false as a valid value for the required rule. 
+   */
+  get rejectsFalse () {
+    if (this.isVue || this.isHeadless) {
+      return false;
+    }
+
+    return this.el.type === 'checkbox';
+  }
+
+  /**
    * Determines if the instance matches the options provided.
    * @param {Object} options The matching options.
    */
   matches (options) {
-    if (this.isDisabled) return false;
-
     if (options.id) {
       return this.id === options.id;
     }
@@ -1961,8 +2006,9 @@ class Field {
     this.name = options.name || this.name || null;
     this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
-    this.listen = options.listen !== false;
-    this.classNames = options.classNames || this.classNames;
+    this.listen = options.listen !== undefined ? options.listen : this.listen;
+    this.classes = options.classes || this.classes || false;
+    this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
     this.expression = JSON.stringify(options.expression);
     this.alias = options.alias || this.alias;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
@@ -1974,21 +2020,18 @@ class Field {
       this.validator.errors.update(this.id, { scope: this.scope });
     }
 
+    // validate if it is updated and was validated before and there was a rules mutation.
+    if (this.updated && this.flags.validated && options.rules) {
+      this.validator.validate(`#${this.id}`);
+    }
+
     this.updated = true;
     // no need to continue.
     if (this.isHeadless) {
-      this.classes = options.classes; // set it for consistency sake.
       return;
     }
 
-    if (options.classes && !this.classes) {
-      this.updateClasses();
-    } else if (this.classes) {
-      // remove them.
-      this.unwatch(/class/);
-    }
-
-    this.classes = options.classes;
+    this.updateClasses();
     this.addValueListeners();
     this.updateAriaAttrs();
   }
@@ -2106,7 +2149,7 @@ class Field {
       this.unwatch(/^class_blur$/);
     };
 
-    const event = getInputEventName(this.el);
+    const inputEvent = getInputEventName(this.el);
     const onInput = () => {
       this.flags.dirty = true;
       this.flags.pristine = false;
@@ -2139,18 +2182,21 @@ class Field {
 
     if (this.isHeadless) return;
 
-    this.el.addEventListener(event, onInput);
-    this.el.addEventListener('blur', onBlur);
+    this.el.addEventListener(inputEvent, onInput);
+    // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
+    const blurEvent = ['radio', 'checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'click';
+    this.el.addEventListener(blurEvent, onBlur);
     this.watchers.push({
       tag: 'class_input',
       unwatch: () => {
-        this.el.removeEventListener(event, onInput);
+        this.el.removeEventListener(inputEvent, onInput);
       }
     });
+
     this.watchers.push({
       tag: 'class_blur',
       unwatch: () => {
-        this.el.removeEventListener('blur', onBlur);
+        this.el.removeEventListener(blurEvent, onBlur);
       }
     });
   }
@@ -2208,8 +2254,8 @@ class Field {
       }
 
       if (~['radio', 'checkbox'].indexOf(this.el.type)) {
-        let els = document.querySelectorAll(`input[name="${this.el.name}"]`);
-        els.forEach(el => {
+        const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+        toArray(els).forEach(el => {
           el.addEventListener(e, validate);
           this.watchers.push({
             tag: 'input_native',
@@ -2240,6 +2286,15 @@ class Field {
 
     this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
     this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
+  }
+
+  /**
+   * Updates the custom validity for the field.
+   */
+  updateCustomValidity () {
+    if (this.isHeadless || !isCallable(this.el.setCustomValidity)) return;
+
+    this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
   }
 
   /**
@@ -2434,7 +2489,14 @@ class Validator {
     this._createFields(validations);
     this.paused = false;
     this.fastExit = options.fastExit || false;
-    this.$vm = options.vm;
+    // create it statically since we don't need constant access to the vm.
+    this.clean = options.vm && isCallable(options.vm.$nextTick) ? () => {
+      options.vm.$nextTick(() => {
+        this.errors.clear();
+      });
+    } : () => {
+      this.errors.clear();
+    };
 
     // if momentjs is present, install the validators.
     if (typeof moment === 'function') {
@@ -2708,7 +2770,11 @@ class Validator {
    */
   _getLocalizedParams (rule) {
     if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
-      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+      if (rule.params.length > 1) {
+        return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]), rule.params[1]];
+      } else {
+        return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+      }
     }
 
     return rule.params;
@@ -2743,8 +2809,15 @@ class Validator {
     if (/(confirmed|after|before)/.test(rule.name)) {
       const target = find(field.dependencies, d => d.name === rule.name);
       if (target) {
-        params = [target.field.value];
+        if (params.length > 1) {
+          params = [target.field.value, params[1]];
+        } else {
+          params = [target.field.value];
+        }
       }
+    } else if (rule.name === 'required' && field.rejectsFalse) {
+      // invalidate false if no args were specified and the field rejects false by default.
+      params = params.length ? params : [true];
     }
 
     if (date.installed && this._isADateRule(rule.name)) {
@@ -2852,20 +2925,6 @@ class Validator {
     if (field.classes) {
       field.updateClasses();
     }
-  }
-
-  /**
-   * Clears the errors from the errorBag using the next tick if possible.
-   */
-  clean () {
-    if (! this.$vm || ! isCallable(this.$vm.$nextTick)) {
-      this.errors.clear();
-      return;
-    }
-
-    this.$vm.$nextTick(() => {
-      this.errors.clear();
-    });
   }
 
   /**
@@ -3027,9 +3086,20 @@ class Validator {
   validate (name, value, scope = null) {
     if (this.paused) return Promise.resolve(true);
 
-    // Alias to validate all.
+    // overload to validate all.
     if (arguments.length === 0) {
+      return this.validateScopes();
+    }
+
+    // overload to validate scopeless fields.
+    if (arguments.length === 1 && arguments[0] === '*') {
       return this.validateAll();
+    }
+
+    // overload to validate a scope.
+    if (arguments.length === 1 && typeof arguments[0] === 'string' && /^(.+)\.\*$/.test(arguments[0])) {
+      const matched = arguments[0].match(/^(.+)\.\*$/)[1];
+      return this.validateAll(matched);
     }
 
     const field = this._resolveField(name, scope);
@@ -3037,6 +3107,9 @@ class Validator {
       return this._handleFieldNotFound(name, scope);
     }
     this.errors.removeById(field.id);
+    if (field.isDisabled) {
+      return Promise.resolve(true);
+    }
     field.flags.pending = true;
     if (arguments.length === 1) {
       value = field.value;
@@ -3048,9 +3121,8 @@ class Validator {
       field.flags.invalid = !result;
       field.flags.validated = true;
       field.updateAriaAttrs();
-      if (field.classes) {
-        field.updateClasses();
-      }
+      field.updateCustomValidity();
+      field.updateClasses();
 
       return result;
     });
@@ -3247,11 +3319,11 @@ const createDirective = options => {
       const fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted (el, { value, expression }, { context }) {
-      const field = findField(el, context);
+    inserted (el, binding, vnode) {
+      const field = findField(el, vnode.context);
       if (!field) return;
 
-      const scope = isObject(value) && value.rules ? value.scope : getScope(el);
+      const scope = Generator.resolveScope(el, binding, vnode);
       field.update({ scope });
     },
     update (el, { expression, value }, { context }) {
@@ -3347,7 +3419,7 @@ var index = {
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.8'
+  version: '2.0.0-rc.9'
 };
 
 export default index;

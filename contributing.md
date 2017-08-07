@@ -6,11 +6,19 @@ First of all, thanks for taking interest into contributing to this repository, b
 
 Clone the repo
 
-`git clone https://github.com/logaretm/vee-validate.git`
+`git clone https://github.com/baianat/vee-validate.git`
 
-Install npm dev dependencies
+Install dependencies
 
-`npm install` or for better results use `yarn`
+```
+npm install
+```
+
+or
+
+```
+yarn
+```
 
 Check the `scripts` section of `package.json` for any npm scripts that might find useful.
 
@@ -18,25 +26,23 @@ Check the `scripts` section of `package.json` for any npm scripts that might fin
 
 As you can see we have:
 - `src` contains the working code for the repository:
-    - `exceptions`: contains any validator-specific exceptions.
-    - `messages`: contains default English messages.
     - `plugins`: contains any sort of add-on behavior and rules, that may or not may be available at all times.
     - `rules`: contains validation rules that are available to the validator instances.
     - `utils`: contains small utility functions.
 - `dist` contains the unminified and the minified build of the repository.
 - `docs` contains the src and built files for the documentation.
+- `locale` contains the localized messages files.
 - `tests` contains the test files for the project, it uses [jest](https://github.com/facebook/jest) for testing. it contains a similar folder structure as the `src` folder.
 
 If you want to contribute to the docs you can find it in the `docs` folder.
 
 ### Pull Requests
 
-- The `master` branch serves Vue 2.0 version of the plugin, for Vue 1.0 version check the `vue1` branch.
 - Respect the ESlint rules, but we are open to any suggestions or alterations.
-- You don't have to build the library with each pull request, but you will if you plan to test it manually. No need to submit it in the PR to avoid as much conflicts as possible.
-- The clearer the PR title is, the faster it will get merged.
+- You don't have to build the library with each pull request, but you will if you plan to test it manually. No need to submit it in the PR to avoid unnecessary conflicts.
+- PRs should have titles that are clear as possible.
 - Make sure that your PR is up to date with the branch you are targeting, use git rebase for this.
-- Unfinished/In-Progress PRs should have `[WIP]` prefix to them.
+- Unfinished/In-Progress PRs should have `[WIP]` prefix to them, and preferably a checklist for ongoing todos.
 - Make sure to mention which issues are being fixed by the PR so they can be closed properly.
 
 ### Source Code
@@ -53,8 +59,22 @@ To run the tests:
 
 `npm test`
 
-Currently I'm not testing the directive and the mixin, I will work on adding those tests later if I can, help will be appreciated if we can test the other stuff.
-
 ### Building
 
 Use `npm run build` to build the project both minified and unminified versions.
+
+
+### Issues
+
+When creating issues, please provide as much details as possible. A clear explaination on the issue and a reliable production example can help us greatly in improving this project.
+
+If your issue gets closed for not providing enough info or not responding to the maintainers' comments, do not consider it a hostile action. There are probably other issues that the maintainers are working on and must give priority to issues that are well investigated, you can always revisit the issue and address the reasons that it was closed and we will be happy to re-open it and address it properly.
+
+To make sure your issues are addressed as fast as possible, follow the issue template and fill as much details as you can:
+
+- Provide the versions that you encounter the issue with for `vue` and `vee-validate` and any other third party package that are involved.
+
+- A clear details of what is happening and your comments on them.
+
+- An example that demonstrates the issue clearly, you should make sure that it has no other issues except the one you are reporting. 
+

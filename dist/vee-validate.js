@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.8
+ * vee-validate v2.0.0-rc.9
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -1816,17 +1816,16 @@ Generator.generate = function generate (el, binding, vnode, options) {
     delay: Generator.resolveDelay(el, vnode, options),
     rules: getRules(binding, el),
     initial: !!binding.modifiers.initial,
-    invalidateFalse: !!(el && el.type === 'checkbox'),
-    alias: Generator.resolveAlias(el, vnode),
+    alias: Generator.resolveAlias(el, vnode)
   };
 };
 
 /**
- * Creates a non-circular fake VM instance.
+ * Creates a non-circular partial VM instance from a Vue instance.
  * @param {*} vm 
  */
 Generator.makeVM = function makeVM (vm) {
-  var instance = {
+  return {
     $el: vm.$el || null,
     $refs: vm.$refs || {},
     $watch: vm.$watch ? vm.$watch.bind(vm) : function () {},
@@ -1835,8 +1834,6 @@ Generator.makeVM = function makeVM (vm) {
       validate: vm.$validator.validate.bind(vm.$validator)
     } : null
   };
-
-  return instance;
 };
 
 /**
@@ -2041,7 +2038,7 @@ var Field = function Field (el, options) {
   this.update(options);
 };
 
-var prototypeAccessors$1 = { isVue: {},validator: {},isRequired: {},isDisabled: {},isHeadless: {},displayName: {},value: {} };
+var prototypeAccessors$1 = { isVue: {},validator: {},isRequired: {},isDisabled: {},isHeadless: {},displayName: {},value: {},rejectsFalse: {} };
 
 prototypeAccessors$1.isVue.get = function () {
   return !!this.component;
@@ -2086,6 +2083,17 @@ prototypeAccessors$1.value.get = function () {
   }
 
   return this.getter();
+};
+
+/**
+ * If the field rejects false as a valid value for the required rule. 
+ */
+prototypeAccessors$1.rejectsFalse.get = function () {
+  if (this.isVue || this.isHeadless) {
+    return false;
+  }
+
+  return this.el.type === 'checkbox';
 };
 
 /**
@@ -2273,7 +2281,7 @@ Field.prototype.addActionListeners = function addActionListeners () {
     this$1.unwatch(/^class_blur$/);
   };
 
-  var event = getInputEventName(this.el);
+  var inputEvent = getInputEventName(this.el);
   var onInput = function () {
     this$1.flags.dirty = true;
     this$1.flags.pristine = false;
@@ -2306,18 +2314,21 @@ Field.prototype.addActionListeners = function addActionListeners () {
 
   if (this.isHeadless) { return; }
 
-  this.el.addEventListener(event, onInput);
-  this.el.addEventListener('blur', onBlur);
+  this.el.addEventListener(inputEvent, onInput);
+  // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
+  var blurEvent = ['radio', 'checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'click';
+  this.el.addEventListener(blurEvent, onBlur);
   this.watchers.push({
     tag: 'class_input',
     unwatch: function () {
-      this$1.el.removeEventListener(event, onInput);
+      this$1.el.removeEventListener(inputEvent, onInput);
     }
   });
+
   this.watchers.push({
     tag: 'class_blur',
     unwatch: function () {
-      this$1.el.removeEventListener('blur', onBlur);
+      this$1.el.removeEventListener(blurEvent, onBlur);
     }
   });
 };
@@ -2990,6 +3001,9 @@ Validator.prototype._test = function _test (field, value, rule) {
         params = [target.field.value];
       }
     }
+  } else if (rule.name === 'required' && field.rejectsFalse) {
+    // invalidate false if no args were specified and the field rejects false by default.
+    params = params.length ? params : [true];
   }
 
   if (date.installed && this._isADateRule(rule.name)) {
@@ -3265,9 +3279,20 @@ Validator.prototype.validate = function validate (name, value, scope) {
 
   if (this.paused) { return Promise.resolve(true); }
 
-  // Alias to validate all.
+  // overload to validate all.
   if (arguments.length === 0) {
+    return this.validateScopes();
+  }
+
+  // overload to validate scopeless fields.
+  if (arguments.length === 1 && arguments[0] === '*') {
     return this.validateAll();
+  }
+
+  // overload to validate a scope.
+  if (arguments.length === 1 && typeof arguments[0] === 'string' && /^(.+)\.\*$/.test(arguments[0])) {
+    var matched = arguments[0].match(/^(.+)\.\*$/)[1];
+    return this.validateAll(matched);
   }
 
   var field = this._resolveField(name, scope);
@@ -3604,7 +3629,7 @@ var index = {
   Validator: Validator,
   ErrorBag: ErrorBag,
   Rules: Rules,
-  version: '2.0.0-rc.8'
+  version: '2.0.0-rc.9'
 };
 
 return index;
