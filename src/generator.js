@@ -23,8 +23,7 @@ export default class Generator {
       delay: Generator.resolveDelay(el, vnode, options),
       rules: getRules(binding, el),
       initial: !!binding.modifiers.initial,
-      invalidateFalse: !!(el && el.type === 'checkbox'),
-      alias: Generator.resolveAlias(el, vnode),
+      alias: Generator.resolveAlias(el, vnode)
     };
   }
 

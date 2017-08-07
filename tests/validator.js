@@ -931,3 +931,24 @@ test('it does not validate disabled fields', async () => {
   el.disabled = false;
   expect(await v.validate(`#${field.id}`)).toBe(false);
 });
+
+test('some fields can blacklist false as a non-empty value', async () => {
+  const el = document.createElement('input');
+  el.type = "checkbox";
+  el.name = "field";
+  let val = true;
+  const v = new Validator();
+  const field = v.attach({
+    el,
+    rules: 'required',
+    getter: () => {
+      return val
+    }
+  });
+  expect(await v.validate(`#${field.id}`)).toBe(true);
+  val = false;
+  expect(await v.validate(`#${field.id}`)).toBe(false);
+
+  el.type = 'text'; // checboxes accept false as a value.
+  expect(await v.validate(`#${field.id}`)).toBe(true);
+});

@@ -357,6 +357,34 @@ test('sets aria attributes on elements', async () => {
   expect(el.getAttribute('aria-invalid')).toBe('true');
 });
 
+test('computes the rejectsFalse property', () => {
+  let el = document.createElement('input');
+  el.type = 'checkbox';
+  const vm = {
+    $validator: {
+      errors: {
+        update: jest.fn()
+      }
+    }
+  };
+  const component = {
+    value: 10,
+    events: {},
+    $el: document.body.children[0],
+    $watch: () => {},
+    $on: jest.fn()
+  };
+  let field = new Field(null);
+  expect(field.rejectsFalse).toBe(false);
+  field = new Field(null, {
+    component,
+    vm
+  });
+  expect(field.rejectsFalse).toBe(false);
+  field = new Field(el, { rules: 'required', vm });
+  expect(field.rejectsFalse).toBe(true);
+});
+
 test('calls the update method on the validator errors on following updates', () => {
   let el = document.createElement('input');
   const vm = {

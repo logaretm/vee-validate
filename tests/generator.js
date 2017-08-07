@@ -320,7 +320,6 @@ test('generates field options', () => {
     expression: 'required|max:3',
     rules: 'required|max:3',
     initial: false,
-    invalidateFalse: false,
     alias: null,
     el
   });

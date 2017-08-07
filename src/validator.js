@@ -352,6 +352,9 @@ export default class Validator {
           params = [target.field.value];
         }
       }
+    } else if (rule.name === 'required' && field.rejectsFalse) {
+      // invalidate false if no args were specified and the field rejects false by default.
+      params = params.length ? params : [true];
     }
 
     if (date.installed && this._isADateRule(rule.name)) {

@@ -106,6 +106,17 @@ export default class Field {
   }
 
   /**
+   * If the field rejects false as a valid value for the required rule. 
+   */
+  get rejectsFalse () {
+    if (this.isVue || this.isHeadless) {
+      return false;
+    }
+
+    return this.el.type === 'checkbox';
+  }
+
+  /**
    * Determines if the instance matches the options provided.
    * @param {Object} options The matching options.
    */
