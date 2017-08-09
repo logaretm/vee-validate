@@ -309,11 +309,7 @@ test('generates field options', () => {
     name: 'field',
     scope: 's1',
     model: 'email',
-    vm: {
-      $el: null,
-      $refs: {},
-      $validator: null
-    },
+    vm: {},
     component: undefined,
     classes: undefined,
     classNames: undefined,

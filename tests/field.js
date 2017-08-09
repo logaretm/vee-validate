@@ -420,7 +420,7 @@ test('validation trigger can validate values directly instead of resolving them'
     getter: () => el.value,
     vm: {
       $validator: { validate: jest.fn() },
-      $el: document.body
+      $el: () => document.body
     }
   });
 
@@ -438,7 +438,7 @@ describe('fields can track their dependencies', () => {
     let field = new Field(null, {
       rules: 'required|confirmed:other',
       vm: {
-        $el: document.body,
+        $el: () => document.body,
         $validator: { validate: jest.fn() }
       }
     });
@@ -463,10 +463,10 @@ describe('fields can track their dependencies', () => {
     const field = new Field(null, {
       rules: 'required|confirmed:$other',
       vm: {
-        $el: document.body,
-        $refs: {
+        $el: () => document.body,
+        $refs: () => ({
           other: component
-        }
+        })
       }
     });
 
@@ -481,7 +481,7 @@ describe('fields can track their dependencies', () => {
     let field = new Field(null, {
       rules: 'required|confirmed:other',
       vm: {
-        $el: document.body
+        $el: () => document.body
       }
     });
 
@@ -496,7 +496,7 @@ describe('fields can track their dependencies', () => {
     const field = new Field(null, {
       rules: 'required|confirmed:other',
       vm: {
-        $el: document.body,
+        $el: () => document.body,
         $validator: { validate: jest.fn() }
       }
     });
@@ -514,7 +514,7 @@ test('set field custom validity if possible', () => {
   const field = new Field(null, {
     rules: 'required|confirmed:other',
     vm: {
-      $el: document.body,
+      $el: () => document.body,
       $validator: { validate: jest.fn(), errors: { firstById: () => 'Error' } }
     }
   });

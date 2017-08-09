@@ -1826,8 +1826,12 @@ Generator.generate = function generate (el, binding, vnode, options) {
  */
 Generator.makeVM = function makeVM (vm) {
   return {
-    $el: vm.$el || null,
-    $refs: vm.$refs || {},
+    $el: function () {
+      return vm.$el;
+    },
+    $refs: function () {
+      return vm.$refs;
+    },
     $watch: vm.$watch ? vm.$watch.bind(vm) : function () {},
     $validator: vm.$validator ? {
       errors: vm.$validator.errors,
@@ -2182,7 +2186,11 @@ Field.prototype.updateDependencies = function updateDependencies () {
     return prev;
   }, []);
 
-  if (!fields.length || !this.vm || !this.vm.$el) { return; }
+  console.log(this.vm.$el());
+  var scopeElm = this.vm && isCallable(this.vm.$el) && this.vm.$el();
+  if (!fields.length || !scopeElm) { return; }
+
+  var $refs = this.vm && isCallable(this.vm.$refs) && this.vm.$refs();
 
   // must be contained within the same component, so we use the vm root element constrain our dom search.
   fields.forEach(function (ref) {
@@ -2192,15 +2200,15 @@ Field.prototype.updateDependencies = function updateDependencies () {
     var el = null;
     // vue ref selector.
     if (selector[0] === '$') {
-      el = this$1.vm.$refs[selector.slice(1)];
+      el = $refs[selector.slice(1)];
     } else {
       // try a query selection.
-      el = this$1.vm.$el.querySelector(selector);
+      el = scopeElm.querySelector(selector);
     }
 
     if (!el) {
       // try a name selector
-      el = this$1.vm.$el.querySelector(("input[name=\"" + selector + "\"]"));
+      el = scopeElm.querySelector(("input[name=\"" + selector + "\"]"));
     }
 
     if (!el) {

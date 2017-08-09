@@ -470,7 +470,7 @@ test('installs date validators', async () => {
   v.attach({
     name: 'birthday',
     vm: {
-      $el: document.body
+      $el: () => document.body
     },
     rules: 'date_format:DD/MM/YYYY|after:field'
   });
@@ -495,7 +495,7 @@ test('auto installs date validators if moment is present globally', async () => 
   v.attach({
     name: 'birthday',
     vm: {
-      $el: document.body
+      $el: () => document.body
     },
     rules: 'date_format:DD/MM/YYYY|after:field'
   });
@@ -556,7 +556,7 @@ test('can translate target field for field dependent validations', async () => {
   v.attach({
     name: 'birthday',
     vm: {
-      $el: document.body
+      $el: () => document.body
     },
     rules: 'date_format:DD-MM-YYYY|after:birthday_min'
   });
@@ -582,7 +582,7 @@ test('auto detect confirmation field when none given', async () => {
   v.attach({
     name: 'password',
     vm: {
-      $el: document.body
+      $el: () => document.body
     },
     rules: 'confirmed'
   });
@@ -908,7 +908,7 @@ test('it should pass the after/before inclusion parameters correctly', async () 
   v.attach({
     name: 'birthday',
     vm: {
-      $el: document.body
+      $el: () => document.body
     },
     rules: 'date_format:DD/MM/YYYY|after:field,true'
   });

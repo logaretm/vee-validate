@@ -33,8 +33,12 @@ export default class Generator {
    */
   static makeVM (vm) {
     return {
-      $el: vm.$el || null,
-      $refs: vm.$refs || {},
+      $el: () => {
+        return vm.$el;
+      },
+      $refs: () => {
+        return vm.$refs;
+      },
       $watch: vm.$watch ? vm.$watch.bind(vm) : () => {},
       $validator: vm.$validator ? {
         errors: vm.$validator.errors,

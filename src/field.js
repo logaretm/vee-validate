@@ -200,22 +200,25 @@ export default class Field {
       return prev;
     }, []);
 
-    if (!fields.length || !this.vm || !this.vm.$el) return;
+    const scopeElm = this.vm && isCallable(this.vm.$el) && this.vm.$el();
+    if (!fields.length || !scopeElm) return;
+
+    const $refs = this.vm && isCallable(this.vm.$refs) && this.vm.$refs();
 
     // must be contained within the same component, so we use the vm root element constrain our dom search.
     fields.forEach(({ selector, name }) => {
       let el = null;
       // vue ref selector.
       if (selector[0] === '$') {
-        el = this.vm.$refs[selector.slice(1)];
+        el = $refs[selector.slice(1)];
       } else {
         // try a query selection.
-        el = this.vm.$el.querySelector(selector);
+        el = scopeElm.querySelector(selector);
       }
 
       if (!el) {
         // try a name selector
-        el = this.vm.$el.querySelector(`input[name="${selector}"]`);
+        el = scopeElm.querySelector(`input[name="${selector}"]`);
       }
 
       if (!el) {
