@@ -194,7 +194,7 @@ const someRuleObj = { in: [1, 2, 3, 4] };
 <li><code>min:</code>The minimum allowed value for date. Must be in the same format as the date_format rule.</li>
 <li><code>max:</code>The maximum allowed value for date. Must be in the same format as the date_format rule.</li>
 </ul>
-<input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY betweem 10/09/2016 and 20/09/2016">
+<input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY between 10/09/2016 and 20/09/2016">
 <span v-show="errors.has('date_between_field')" class="help is-danger">{{ errors.first('date_between_field') }}</span>
 <h3><a href="#rule-date_format">date_format:{format}</a></h3>
 <p>The field under validation must be a valid date in the specified format. This rule must be present when using any date rule.</p>
