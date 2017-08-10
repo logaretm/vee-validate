@@ -1,4 +1,4 @@
-import { isObject } from './utils';
+import { isObject, isCallable } from './utils';
 import Validator from './validator';
 
 /**
@@ -79,6 +79,13 @@ export default (Vue, options = {}) => {
     this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
       return this.$validator.fieldBag;
     };
+  };
+
+  mixin.beforeDestroy = function beforeDestroy () {
+    // mark the validator paused to prevent delayed validation.
+    if (this.$validator && isCallable(this.$validator.pause)) {
+      this.$validator.pause();
+    }
   };
 
   return mixin;

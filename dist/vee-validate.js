@@ -980,14 +980,16 @@ var isEqual = function (lhs, rhs) {
     return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
   }
 
-  // if either are not objects, use the equality operator.
-  if (!isObject(lhs) || !isObject(rhs)) {
-    return lhs === rhs;
+  // if both are objects, compare each key recursively.
+  if (isObject(lhs) && isObject(rhs)) {
+    return Object.keys(lhs).every(function (key) {
+      return isEqual(lhs[key], rhs[key]);
+    }) && Object.keys(rhs).every(function (key) {
+      return isEqual(lhs[key], rhs[key]);
+    });
   }
 
-  return Object.keys(lhs).every(function (key) {
-    return isEqual(lhs[key], rhs[key]);
-  });
+  return lhs === rhs;
 };
 
 /**
@@ -2049,7 +2051,6 @@ var Field = function Field (el, options) {
   this.id = uniqId();
   this.el = el;
   this.updated = false;
-  this.expression = null;
   this.dependencies = [];
   this.watchers = [];
   this.events = [];
@@ -2160,7 +2161,6 @@ Field.prototype.update = function update (options) {
   this.listen = options.listen !== undefined ? options.listen : this.listen;
   this.classes = options.classes || this.classes || false;
   this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
-  this.expression = JSON.stringify(options.expression);
   this.alias = options.alias || this.alias;
   this.getter = isCallable(options.getter) ? options.getter : this.getter;
   this.delay = options.delay || this.delay || 0;
@@ -3508,6 +3508,13 @@ var makeMixin = function (Vue, options) {
     };
   };
 
+  mixin.beforeDestroy = function beforeDestroy () {
+    // mark the validator paused to prevent delayed validation.
+    if (this.$validator && isCallable(this.$validator.pause)) {
+      this.$validator.pause();
+    }
+  };
+
   return mixin;
 };
 
@@ -3561,14 +3568,11 @@ var createDirective = function (options) {
     update: function update (el, binding, vnode) {
       var field = findField(el, vnode.context);
       if (!field) { return; }
-      // make sure we don't do uneccessary work if no expression was passed
-      // nor if the expression value did not change.
-      // TODO: Diffing for other options like delay or scope.
+      // make sure we don't do uneccessary work if no change in expression.
       var scope = Generator.resolveScope(el, binding, vnode);
       if (scope === field.scope && isEqual(binding.value, binding.oldValue)) { return; }
 
       field.update({
-        expression: binding.value,
         scope: scope,
         rules: getRules(binding, el)
       });
