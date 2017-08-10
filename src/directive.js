@@ -40,12 +40,13 @@ const createDirective = options => {
       if (!field) return;
       // make sure we don't do uneccessary work if no change in expression.
       const scope = Generator.resolveScope(el, binding, vnode);
-      if (scope === field.scope && isEqual(binding.value, binding.oldValue)) return;
+      if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) return;
 
       field.update({
         scope,
         rules: getRules(binding, el)
       });
+      field.updated = true;
     },
     unbind (el, binding, { context }) {
       const field = findField(el, context);

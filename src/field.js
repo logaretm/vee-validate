@@ -168,7 +168,6 @@ export default class Field {
       this.validator.validate(`#${this.id}`);
     }
 
-    this.updated = true;
     // no need to continue.
     if (this.isHeadless) {
       return;
@@ -198,32 +197,29 @@ export default class Field {
       return prev;
     }, []);
 
-    const scopeElm = this.vm && isCallable(this.vm.$el) && this.vm.$el();
-    if (!fields.length || !scopeElm) return;
-
-    const $refs = this.vm && isCallable(this.vm.$refs) && this.vm.$refs();
+    if (!fields.length || !this.vm || !this.vm.$el) return;
 
     // must be contained within the same component, so we use the vm root element constrain our dom search.
     fields.forEach(({ selector, name }) => {
       let el = null;
       // vue ref selector.
       if (selector[0] === '$') {
-        el = $refs[selector.slice(1)];
+        el = this.vm.$refs[selector.slice(1)];
       } else {
         // try a query selection.
-        el = scopeElm.querySelector(selector);
+        el = this.vm.$el.querySelector(selector);
       }
 
       if (!el) {
         // try a name selector
-        el = scopeElm.querySelector(`input[name="${selector}"]`);
+        el = this.vm.$el.querySelector(`input[name="${selector}"]`);
       }
 
       if (!el) {
         return;
       }
 
-      let options = {
+      const options = {
         vm: this.vm,
         classes: this.classes,
         classNames: this.classNames,

@@ -1850,10 +1850,10 @@ Generator.generate = function generate (el, binding, vnode, options) {
  */
 Generator.makeVM = function makeVM (vm) {
   return {
-    $el: function () {
+    get $el () {
       return vm.$el;
     },
-    $refs: function () {
+    get $refs () {
       return vm.$refs;
     },
     $watch: vm.$watch ? vm.$watch.bind(vm) : function () {},
@@ -2176,7 +2176,6 @@ Field.prototype.update = function update (options) {
     this.validator.validate(("#" + (this.id)));
   }
 
-  this.updated = true;
   // no need to continue.
   if (this.isHeadless) {
     return;
@@ -2208,10 +2207,7 @@ Field.prototype.updateDependencies = function updateDependencies () {
     return prev;
   }, []);
 
-  var scopeElm = this.vm && isCallable(this.vm.$el) && this.vm.$el();
-  if (!fields.length || !scopeElm) { return; }
-
-  var $refs = this.vm && isCallable(this.vm.$refs) && this.vm.$refs();
+  if (!fields.length || !this.vm || !this.vm.$el) { return; }
 
   // must be contained within the same component, so we use the vm root element constrain our dom search.
   fields.forEach(function (ref) {
@@ -2221,15 +2217,15 @@ Field.prototype.updateDependencies = function updateDependencies () {
     var el = null;
     // vue ref selector.
     if (selector[0] === '$') {
-      el = $refs[selector.slice(1)];
+      el = this$1.vm.$refs[selector.slice(1)];
     } else {
       // try a query selection.
-      el = scopeElm.querySelector(selector);
+      el = this$1.vm.$el.querySelector(selector);
     }
 
     if (!el) {
       // try a name selector
-      el = scopeElm.querySelector(("input[name=\"" + selector + "\"]"));
+      el = this$1.vm.$el.querySelector(("input[name=\"" + selector + "\"]"));
     }
 
     if (!el) {
@@ -3570,12 +3566,13 @@ var createDirective = function (options) {
       if (!field) { return; }
       // make sure we don't do uneccessary work if no change in expression.
       var scope = Generator.resolveScope(el, binding, vnode);
-      if (scope === field.scope && isEqual(binding.value, binding.oldValue)) { return; }
+      if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) { return; }
 
       field.update({
         scope: scope,
         rules: getRules(binding, el)
       });
+      field.updated = true;
     },
     unbind: function unbind (el, binding, ref) {
       var context = ref.context;

@@ -33,10 +33,10 @@ export default class Generator {
    */
   static makeVM (vm) {
     return {
-      $el: () => {
+      get $el () {
         return vm.$el;
       },
-      $refs: () => {
+      get $refs () {
         return vm.$refs;
       },
       $watch: vm.$watch ? vm.$watch.bind(vm) : () => {},
