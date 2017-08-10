@@ -969,6 +969,28 @@ var getDataAttribute = function (el, name) { return el.getAttribute(("data-vv-" 
 var setDataAttribute = function (el, name, value) { return el.setAttribute(("data-vv-" + name), value); };
 
 /**
+ * Shallow object comparison.
+ *
+ * @param {*} lhs 
+ * @param {*} rhs 
+ * @return {Boolean}
+ */
+var isEqual = function (lhs, rhs) {
+  if (lhs instanceof RegExp && rhs instanceof RegExp) {
+    return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
+  }
+
+  // if either are not objects, use the equality operator.
+  if (!isObject(lhs) || !isObject(rhs)) {
+    return lhs === rhs;
+  }
+
+  return Object.keys(lhs).every(function (key) {
+    return isEqual(lhs[key], rhs[key]);
+  });
+};
+
+/**
  * Determines the input field scope.
  */
 var getScope = function (el) {
@@ -2186,7 +2208,6 @@ Field.prototype.updateDependencies = function updateDependencies () {
     return prev;
   }, []);
 
-  console.log(this.vm.$el());
   var scopeElm = this.vm && isCallable(this.vm.$el) && this.vm.$el();
   if (!fields.length || !scopeElm) { return; }
 
@@ -3507,6 +3528,7 @@ var config = {
 /**
  * Finds the requested field by id from the context object.
  * @param {Object} context
+ * @return {Field|null}
  */
 var findField = function (el, context) {
   if (!context || !context.$validator) {
@@ -3536,22 +3558,19 @@ var createDirective = function (options) {
       var scope = Generator.resolveScope(el, binding, vnode);
       field.update({ scope: scope });
     },
-    update: function update (el, ref, ref$1) {
-      var expression = ref.expression;
-      var value = ref.value;
-      var context = ref$1.context;
-
-      var field = findField(el, context);
+    update: function update (el, binding, vnode) {
+      var field = findField(el, vnode.context);
+      if (!field) { return; }
       // make sure we don't do uneccessary work if no expression was passed
       // nor if the expression value did not change.
       // TODO: Diffing for other options like delay or scope.
-      if (!field || !expression || field.expression === JSON.stringify(value)) { return; }
+      var scope = Generator.resolveScope(el, binding, vnode);
+      if (scope === field.scope && isEqual(binding.value, binding.oldValue)) { return; }
 
-      var scope = isObject(value) && value.rules ? value.scope : getScope(el);
       field.update({
-        expression: value,
+        expression: binding.value,
         scope: scope,
-        rules: getRules({ expression: expression, value: value }, el)
+        rules: getRules(binding, el)
       });
     },
     unbind: function unbind (el, binding, ref) {

@@ -12,6 +12,30 @@ export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`)
 export const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
 
 /**
+ * Shallow object comparison.
+ *
+ * @param {*} lhs 
+ * @param {*} rhs 
+ * @return {Boolean}
+ */
+export const isEqual = (lhs, rhs) => {
+  if (lhs instanceof RegExp && rhs instanceof RegExp) {
+    return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
+  }
+
+  // if both are objects, compare each key recursively.
+  if (isObject(lhs) && isObject(rhs)) {
+    return Object.keys(lhs).every(key => {
+      return isEqual(lhs[key], rhs[key]);
+    }) && Object.keys(rhs).every(key => {
+      return isEqual(lhs[key], rhs[key]);
+    });
+  }
+
+  return lhs === rhs;
+};
+
+/**
  * Determines the input field scope.
  */
 export const getScope = (el) => {

@@ -45,7 +45,6 @@ export default class Field {
     this.id = uniqId();
     this.el = el;
     this.updated = false;
-    this.expression = null;
     this.dependencies = [];
     this.watchers = [];
     this.events = [];
@@ -154,7 +153,6 @@ export default class Field {
     this.listen = options.listen !== undefined ? options.listen : this.listen;
     this.classes = options.classes || this.classes || false;
     this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
-    this.expression = JSON.stringify(options.expression);
     this.alias = options.alias || this.alias;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this.delay = options.delay || this.delay || 0;

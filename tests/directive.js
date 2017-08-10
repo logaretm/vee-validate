@@ -47,8 +47,7 @@ test('adds the field after binding', () => {
 
 test('evaluates field options after update', done => {
   const field = {
-    update: jest.fn(),
-    expression: 'unlikeuhaveseen'
+    update: jest.fn()
   };
   const $validator = {
     attach: jest.fn(),
@@ -147,9 +146,8 @@ test('cleans up after unbinding', () => {
 
 test('revises scope after inserted', async () => {
     const field = {
-    update: jest.fn(opts => {
-      field.expression = JSON.stringify(opts.expression);
-    }) // does not change expression.
+    update: jest.fn(),
+    scope: null
   };
   const $validator = {
     attach: jest.fn(),
@@ -175,7 +173,7 @@ test('revises scope after inserted', async () => {
   const app = new VM().$mount();
   app.value = 'new';
   await app.$nextTick(); // different expression.
-  expect(field.update).toHaveBeenCalledTimes(2); // CAUSE EXPRESSION HAS NOT CHANGED.
+  expect(field.update).toHaveBeenCalledTimes(2); // expression changed.
 
   app.name = 'other'; 
   await app.$nextTick();

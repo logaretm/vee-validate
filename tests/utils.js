@@ -327,3 +327,49 @@ test('checks if a value is a callable function', () => {
   expect(utils.isCallable(null)).toBe(false);
   expect(utils.isCallable(() => {})).toBe(true);
 });
+
+test('compares two values', () => {
+  expect(utils.isEqual(true, true)).toBe(true);
+  expect(utils.isEqual(true, false)).toBe(false);
+
+  expect(utils.isEqual(1, 1)).toBe(true);
+  expect(utils.isEqual(1, 2)).toBe(false);
+
+  expect(utils.isEqual('1', 1)).toBe(false);
+
+  expect(utils.isEqual('value', 'value')).toBe(true);
+  expect(utils.isEqual('value1', 'value')).toBe(false);
+
+  expect(utils.isEqual({}, {})).toBe(true);
+  expect(utils.isEqual({}, { new: null })).toBe(false);
+  // same effect.
+  expect(utils.isEqual({}, { new: undefined })).toBe(true);
+
+  //
+  expect(utils.isEqual({
+    foo: 1,
+    bar: 2,
+    baz: 'other'
+  }, {
+    foo: 1,
+    bar: '2',
+    baz: 'other'
+  })).toBe(false);
+
+  expect(utils.isEqual({
+    foo: /myregex/gi,
+    bar: 2
+  }, {
+    foo: /myregex/ig,
+    bar: 2
+  })).toBe(true);
+
+
+  expect(utils.isEqual({
+    foo: /myregx/g,
+    bar: 2
+  }, {
+    foo: /myregex/ig,
+    bar: 2
+  })).toBe(false);
+});

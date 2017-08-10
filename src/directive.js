@@ -1,10 +1,11 @@
 import Generator from './generator';
 import config from './config';
-import { getDataAttribute, isObject, getRules, warn, getScope, assign } from './utils';
+import { getDataAttribute, isEqual, getRules, warn, assign } from './utils';
 
 /**
  * Finds the requested field by id from the context object.
  * @param {Object} context
+ * @return {Field|null}
  */
 const findField = (el, context) => {
   if (!context || !context.$validator) {
@@ -34,18 +35,16 @@ const createDirective = options => {
       const scope = Generator.resolveScope(el, binding, vnode);
       field.update({ scope });
     },
-    update (el, { expression, value }, { context }) {
-      const field = findField(el, context);
-      // make sure we don't do uneccessary work if no expression was passed
-      // nor if the expression value did not change.
-      // TODO: Diffing for other options like delay or scope.
-      if (!field || !expression || field.expression === JSON.stringify(value)) return;
+    update (el, binding, vnode) {
+      const field = findField(el, vnode.context);
+      if (!field) return;
+      // make sure we don't do uneccessary work if no change in expression.
+      const scope = Generator.resolveScope(el, binding, vnode);
+      if (scope === field.scope && isEqual(binding.value, binding.oldValue)) return;
 
-      const scope = isObject(value) && value.rules ? value.scope : getScope(el);
       field.update({
-        expression: value,
         scope,
-        rules: getRules({ expression, value }, el)
+        rules: getRules(binding, el)
       });
     },
     unbind (el, binding, { context }) {
