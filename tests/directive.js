@@ -177,5 +177,5 @@ test('revises scope after inserted', async () => {
 
   app.name = 'other'; 
   await app.$nextTick();
-  expect(field.update).toHaveBeenCalledTimes(2); // CAUSE EXPRESSION HAS NOT CHANGED.
+  expect(field.update).toHaveBeenCalledTimes(3); // CAUSE EXPRESSION HAS NOT CHANGED.
 });

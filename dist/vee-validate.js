@@ -2061,6 +2061,7 @@ var Field = function Field (el, options) {
   this.vm = options.vm || this.vm;
   this.component = options.component || this.component;
   this.update(options);
+  this.updated = false;
 };
 
 var prototypeAccessors$1 = { isVue: {},validator: {},isRequired: {},isDisabled: {},isHeadless: {},displayName: {},value: {},rejectsFalse: {} };
@@ -2170,10 +2171,12 @@ Field.prototype.update = function update (options) {
     this.validator.errors.update(this.id, { scope: this.scope });
   }
 
-  // validate if it was validated before and there was a rules mutation.
-  if (this.flags.validated && options.rules) {
+  // validate if it was validated before and field was updated and there was a rules mutation.
+  if (this.flags.validated && options.rules && this.updated && !this.flags.pending) {
     this.validator.validate(("#" + (this.id)));
   }
+
+  this.updated = true;
 
   // no need to continue.
   if (this.isHeadless) {
@@ -3528,6 +3531,8 @@ var config = {
 };
 
 /**
+ * 
+ * 
  * Finds the requested field by id from the context object.
  * @param {Object} context
  * @return {Field|null}
@@ -3538,6 +3543,19 @@ var findField = function (el, context) {
   }
 
   return context.$validator.fields.find({ id: getDataAttribute(el, 'id') });
+};
+
+var update = function (el, binding, vnode) {
+  var field = findField(el, vnode.context);
+
+  // make sure we don't do uneccessary work if no important change was done.
+  if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) { return; }
+  var scope = Generator.resolveScope(el, binding, vnode);
+
+  field.update({
+    scope: scope,
+    rules: Generator.resolveRules(el, binding)
+  });
 };
 
 var createDirective = function (options) {
@@ -3553,33 +3571,8 @@ var createDirective = function (options) {
       var fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted: function (el, binding, vnode) {
-      var field = findField(el, vnode.context);
-      if (!field) { return; }
-
-      // make sure we don't do uneccessary work if no important change was done.
-      var scope = Generator.resolveScope(el, binding, vnode);
-      if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) { return; }
-
-      field.update({
-        scope: scope,
-        rules: Generator.resolveRules(el, binding)
-      });
-    },
-    update: function (el, binding, vnode) {
-      var field = findField(el, vnode.context);
-      if (!field) { return; }
-
-      // make sure we don't do uneccessary work if no important change was done.
-      var scope = Generator.resolveScope(el, binding, vnode);
-      if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) { return; }
-
-      field.update({
-        scope: scope,
-        rules: Generator.resolveRules(el, binding)
-      });
-      field.updated = true;
-    },
+    inserted: update,
+    update: update,
     unbind: function unbind (el, binding, ref) {
       var context = ref.context;
 

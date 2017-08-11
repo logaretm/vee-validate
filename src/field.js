@@ -57,6 +57,7 @@ export default class Field {
     this.vm = options.vm || this.vm;
     this.component = options.component || this.component;
     this.update(options);
+    this.updated = false;
   }
 
   get isVue () {
@@ -146,6 +147,12 @@ export default class Field {
   update (options) {
     this.targetOf = options.targetOf || null;
     this.initial = options.initial || this.initial || false;
+
+    // update errors scope if the field scope was changed.
+    if (options.scope && options.scope !== this.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
+      this.validator.errors.update(this.id, { scope: this.scope });
+    }
+
     this.scope = options.scope || this.scope || null;
     this.name = options.name || this.name || null;
     this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
@@ -159,15 +166,13 @@ export default class Field {
     this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
     this.updateDependencies();
     this.addActionListeners();
-    // update errors scope if the field scope was changed.
-    if (options.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
-      this.validator.errors.update(this.id, { scope: this.scope });
-    }
 
-    // validate if it was validated before and there was a rules mutation.
-    if (this.flags.validated && options.rules) {
+    // validate if it was validated before and field was updated and there was a rules mutation.
+    if (this.flags.validated && options.rules && this.updated) {
       this.validator.validate(`#${this.id}`);
     }
+
+    this.updated = true;
 
     // no need to continue.
     if (this.isHeadless) {
