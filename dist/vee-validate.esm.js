@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.9
+ * vee-validate v2.0.0-rc.10
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -923,6 +923,30 @@ const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
 const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
 
 /**
+ * Shallow object comparison.
+ *
+ * @param {*} lhs 
+ * @param {*} rhs 
+ * @return {Boolean}
+ */
+const isEqual = (lhs, rhs) => {
+  if (lhs instanceof RegExp && rhs instanceof RegExp) {
+    return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
+  }
+
+  // if both are objects, compare each key recursively.
+  if (isObject(lhs) && isObject(rhs)) {
+    return Object.keys(lhs).every(key => {
+      return isEqual(lhs[key], rhs[key]);
+    }) && Object.keys(rhs).every(key => {
+      return isEqual(lhs[key], rhs[key]);
+    });
+  }
+
+  return lhs === rhs;
+};
+
+/**
  * Determines the input field scope.
  */
 const getScope = (el) => {
@@ -1208,29 +1232,6 @@ const find = (array, predicate) => {
   });
 
   return result;
-};
-
-/**
- * Gets the rules from a binding value or the element dataset.
- *
- * @param {Object} binding The binding object.
- * @param {element} el The element.
- * @returns {String|Object}
- */
-const getRules = (binding, el) => {
-  if (!binding || ! binding.expression) {
-    return getDataAttribute(el, 'rules');
-  }
-
-  if (typeof binding.value === 'string') {
-    return binding.value;
-  }
-
-  if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
-    return binding.value.rules;
-  }
-
-  return binding.value;
 };
 
 const getInputEventName = (el) => {
@@ -1695,10 +1696,31 @@ class Generator {
       events: Generator.resolveEvents(el, vnode) || options.events,
       model,
       delay: Generator.resolveDelay(el, vnode, options),
-      rules: getRules(binding, el),
+      rules: Generator.resolveRules(el, binding),
       initial: !!binding.modifiers.initial,
       alias: Generator.resolveAlias(el, vnode)
     };
+  }
+
+  /**
+   * 
+   * @param {*} el 
+   * @param {*} binding 
+   */
+  static resolveRules (el, binding) {
+    if (!binding || !binding.expression) {
+      return getDataAttribute(el, 'rules');
+    }
+
+    if (typeof binding.value === 'string') {
+      return binding.value;
+    }
+
+    if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
+      return binding.value.rules;
+    }
+
+    return binding.value;
   }
 
   /**
@@ -1707,8 +1729,12 @@ class Generator {
    */
   static makeVM (vm) {
     return {
-      $el: vm.$el || null,
-      $refs: vm.$refs || {},
+      get $el () {
+        return vm.$el;
+      },
+      get $refs () {
+        return vm.$refs;
+      },
       $watch: vm.$watch ? vm.$watch.bind(vm) : () => {},
       $validator: vm.$validator ? {
         errors: vm.$validator.errors,
@@ -1900,7 +1926,6 @@ class Field {
     this.id = uniqId();
     this.el = el;
     this.updated = false;
-    this.expression = null;
     this.dependencies = [];
     this.watchers = [];
     this.events = [];
@@ -2009,23 +2034,22 @@ class Field {
     this.listen = options.listen !== undefined ? options.listen : this.listen;
     this.classes = options.classes || this.classes || false;
     this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
-    this.expression = JSON.stringify(options.expression);
     this.alias = options.alias || this.alias;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this.delay = options.delay || this.delay || 0;
     this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
     this.updateDependencies();
     this.addActionListeners();
-    if (this.updated && this.validator.errors && isCallable(this.validator.errors.update)) {
+    // update errors scope if the field scope was changed.
+    if (options.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
       this.validator.errors.update(this.id, { scope: this.scope });
     }
 
-    // validate if it is updated and was validated before and there was a rules mutation.
-    if (this.updated && this.flags.validated && options.rules) {
+    // validate if it was validated before and there was a rules mutation.
+    if (this.flags.validated && options.rules) {
       this.validator.validate(`#${this.id}`);
     }
 
-    this.updated = true;
     // no need to continue.
     if (this.isHeadless) {
       return;
@@ -2077,7 +2101,7 @@ class Field {
         return;
       }
 
-      let options = {
+      const options = {
         vm: this.vm,
         classes: this.classes,
         classNames: this.classNames,
@@ -3277,6 +3301,13 @@ var makeMixin = (Vue, options = {}) => {
     };
   };
 
+  mixin.beforeDestroy = function beforeDestroy () {
+    // mark the validator paused to prevent delayed validation.
+    if (this.$validator && isCallable(this.$validator.pause)) {
+      this.$validator.pause();
+    }
+  };
+
   return mixin;
 };
 
@@ -3297,6 +3328,7 @@ var config = {
 /**
  * Finds the requested field by id from the context object.
  * @param {Object} context
+ * @return {Field|null}
  */
 const findField = (el, context) => {
   if (!context || !context.$validator) {
@@ -3319,26 +3351,32 @@ const createDirective = options => {
       const fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted (el, binding, vnode) {
+    inserted: (el, binding, vnode) => {
       const field = findField(el, vnode.context);
       if (!field) return;
 
+      // make sure we don't do uneccessary work if no important change was done.
       const scope = Generator.resolveScope(el, binding, vnode);
-      field.update({ scope });
-    },
-    update (el, { expression, value }, { context }) {
-      const field = findField(el, context);
-      // make sure we don't do uneccessary work if no expression was passed
-      // nor if the expression value did not change.
-      // TODO: Diffing for other options like delay or scope.
-      if (!field || !expression || field.expression === JSON.stringify(value)) return;
+      if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) return;
 
-      const scope = isObject(value) && value.rules ? value.scope : getScope(el);
       field.update({
-        expression: value,
         scope,
-        rules: getRules({ expression, value }, el)
+        rules: Generator.resolveRules(el, binding)
       });
+    },
+    update: (el, binding, vnode) => {
+      const field = findField(el, vnode.context);
+      if (!field) return;
+
+      // make sure we don't do uneccessary work if no important change was done.
+      const scope = Generator.resolveScope(el, binding, vnode);
+      if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) return;
+
+      field.update({
+        scope,
+        rules: Generator.resolveRules(el, binding)
+      });
+      field.updated = true;
     },
     unbind (el, binding, { context }) {
       const field = findField(el, context);
@@ -3419,7 +3457,7 @@ var index = {
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.9'
+  version: '2.0.0-rc.10'
 };
 
 export default index;
