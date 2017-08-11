@@ -3573,7 +3573,11 @@ var createDirective = function (options) {
       var fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted: update,
+    inserted: function (el, binding, vnode) {
+      update(el, binding, vnode);
+      var field = findField(el, vnode.context);
+      field.updated = false;
+    },
     update: update,
     unbind: function unbind (el, binding, ref) {
       var context = ref.context;

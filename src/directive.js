@@ -43,7 +43,11 @@ const createDirective = options => {
       const fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted: update,
+    inserted: (el, binding, vnode) => {
+      update(el, binding, vnode);
+      const field = findField(el, vnode.context);
+      field.updated = false;
+    },
     update,
     unbind (el, binding, { context }) {
       const field = findField(el, context);
