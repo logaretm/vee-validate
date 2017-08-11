@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.10
+ * vee-validate v2.0.0-rc.11
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -2153,6 +2153,12 @@ Field.prototype.matches = function matches (options) {
 Field.prototype.update = function update (options) {
   this.targetOf = options.targetOf || null;
   this.initial = options.initial || this.initial || false;
+
+  // update errors scope if the field scope was changed.
+  if (options.scope && options.scope !== this.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
+    this.validator.errors.update(this.id, { scope: this.scope });
+  }
+
   this.scope = options.scope || this.scope || null;
   this.name = options.name || this.name || null;
   this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
@@ -2166,13 +2172,9 @@ Field.prototype.update = function update (options) {
   this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
   this.updateDependencies();
   this.addActionListeners();
-  // update errors scope if the field scope was changed.
-  if (options.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
-    this.validator.errors.update(this.id, { scope: this.scope });
-  }
 
   // validate if it was validated before and field was updated and there was a rules mutation.
-  if (this.flags.validated && options.rules && this.updated && !this.flags.pending) {
+  if (this.flags.validated && options.rules && this.updated) {
     this.validator.validate(("#" + (this.id)));
   }
 
@@ -3656,7 +3658,7 @@ var index = {
   Validator: Validator,
   ErrorBag: ErrorBag,
   Rules: Rules,
-  version: '2.0.0-rc.10'
+  version: '2.0.0-rc.11'
 };
 
 return index;

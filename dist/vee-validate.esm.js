@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.10
+ * vee-validate v2.0.0-rc.11
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -1938,6 +1938,7 @@ class Field {
     this.vm = options.vm || this.vm;
     this.component = options.component || this.component;
     this.update(options);
+    this.updated = false;
   }
 
   get isVue () {
@@ -2027,6 +2028,12 @@ class Field {
   update (options) {
     this.targetOf = options.targetOf || null;
     this.initial = options.initial || this.initial || false;
+
+    // update errors scope if the field scope was changed.
+    if (options.scope && options.scope !== this.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
+      this.validator.errors.update(this.id, { scope: this.scope });
+    }
+
     this.scope = options.scope || this.scope || null;
     this.name = options.name || this.name || null;
     this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
@@ -2040,15 +2047,13 @@ class Field {
     this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
     this.updateDependencies();
     this.addActionListeners();
-    // update errors scope if the field scope was changed.
-    if (options.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
-      this.validator.errors.update(this.id, { scope: this.scope });
-    }
 
-    // validate if it was validated before and there was a rules mutation.
-    if (this.flags.validated && options.rules) {
+    // validate if it was validated before and field was updated and there was a rules mutation.
+    if (this.flags.validated && options.rules && this.updated) {
       this.validator.validate(`#${this.id}`);
     }
+
+    this.updated = true;
 
     // no need to continue.
     if (this.isHeadless) {
@@ -3326,6 +3331,8 @@ var config = {
 };
 
 /**
+ * 
+ * 
  * Finds the requested field by id from the context object.
  * @param {Object} context
  * @return {Field|null}
@@ -3336,6 +3343,19 @@ const findField = (el, context) => {
   }
 
   return context.$validator.fields.find({ id: getDataAttribute(el, 'id') });
+};
+
+const update = (el, binding, vnode) => {
+  const field = findField(el, vnode.context);
+
+  // make sure we don't do uneccessary work if no important change was done.
+  if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
+  const scope = Generator.resolveScope(el, binding, vnode);
+
+  field.update({
+    scope,
+    rules: Generator.resolveRules(el, binding)
+  });
 };
 
 const createDirective = options => {
@@ -3351,33 +3371,8 @@ const createDirective = options => {
       const fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted: (el, binding, vnode) => {
-      const field = findField(el, vnode.context);
-      if (!field) return;
-
-      // make sure we don't do uneccessary work if no important change was done.
-      const scope = Generator.resolveScope(el, binding, vnode);
-      if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) return;
-
-      field.update({
-        scope,
-        rules: Generator.resolveRules(el, binding)
-      });
-    },
-    update: (el, binding, vnode) => {
-      const field = findField(el, vnode.context);
-      if (!field) return;
-
-      // make sure we don't do uneccessary work if no important change was done.
-      const scope = Generator.resolveScope(el, binding, vnode);
-      if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) return;
-
-      field.update({
-        scope,
-        rules: Generator.resolveRules(el, binding)
-      });
-      field.updated = true;
-    },
+    inserted: update,
+    update,
     unbind (el, binding, { context }) {
       const field = findField(el, context);
       if (!field) return;
@@ -3457,7 +3452,7 @@ var index = {
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.10'
+  version: '2.0.0-rc.11'
 };
 
 export default index;
