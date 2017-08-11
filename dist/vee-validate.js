@@ -1290,29 +1290,6 @@ var find = function (array, predicate) {
   return result;
 };
 
-/**
- * Gets the rules from a binding value or the element dataset.
- *
- * @param {Object} binding The binding object.
- * @param {element} el The element.
- * @returns {String|Object}
- */
-var getRules = function (binding, el) {
-  if (!binding || ! binding.expression) {
-    return getDataAttribute(el, 'rules');
-  }
-
-  if (typeof binding.value === 'string') {
-    return binding.value;
-  }
-
-  if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
-    return binding.value.rules;
-  }
-
-  return binding.value;
-};
-
 var getInputEventName = function (el) {
   if (el && (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type))) {
     return 'change';
@@ -1838,10 +1815,31 @@ Generator.generate = function generate (el, binding, vnode, options) {
     events: Generator.resolveEvents(el, vnode) || options.events,
     model: model,
     delay: Generator.resolveDelay(el, vnode, options),
-    rules: getRules(binding, el),
+    rules: Generator.resolveRules(el, binding),
     initial: !!binding.modifiers.initial,
     alias: Generator.resolveAlias(el, vnode)
   };
+};
+
+/**
+ * 
+ * @param {*} el 
+ * @param {*} binding 
+ */
+Generator.resolveRules = function resolveRules (el, binding) {
+  if (!binding || !binding.expression) {
+    return getDataAttribute(el, 'rules');
+  }
+
+  if (typeof binding.value === 'string') {
+    return binding.value;
+  }
+
+  if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
+    return binding.value.rules;
+  }
+
+  return binding.value;
 };
 
 /**
@@ -2167,12 +2165,13 @@ Field.prototype.update = function update (options) {
   this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
   this.updateDependencies();
   this.addActionListeners();
-  if (this.updated && this.validator.errors && isCallable(this.validator.errors.update)) {
+  // update errors scope if the field scope was changed.
+  if (options.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
     this.validator.errors.update(this.id, { scope: this.scope });
   }
 
-  // validate if it is updated and was validated before and there was a rules mutation.
-  if (this.updated && this.flags.validated && options.rules) {
+  // validate if it was validated before and there was a rules mutation.
+  if (this.flags.validated && options.rules) {
     this.validator.validate(("#" + (this.id)));
   }
 
@@ -3554,23 +3553,30 @@ var createDirective = function (options) {
       var fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted: function inserted (el, binding, vnode) {
+    inserted: function (el, binding, vnode) {
       var field = findField(el, vnode.context);
       if (!field) { return; }
 
-      var scope = Generator.resolveScope(el, binding, vnode);
-      field.update({ scope: scope });
-    },
-    update: function update (el, binding, vnode) {
-      var field = findField(el, vnode.context);
-      if (!field) { return; }
-      // make sure we don't do uneccessary work if no change in expression.
+      // make sure we don't do uneccessary work if no important change was done.
       var scope = Generator.resolveScope(el, binding, vnode);
       if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) { return; }
 
       field.update({
         scope: scope,
-        rules: getRules(binding, el)
+        rules: Generator.resolveRules(el, binding)
+      });
+    },
+    update: function (el, binding, vnode) {
+      var field = findField(el, vnode.context);
+      if (!field) { return; }
+
+      // make sure we don't do uneccessary work if no important change was done.
+      var scope = Generator.resolveScope(el, binding, vnode);
+      if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) { return; }
+
+      field.update({
+        scope: scope,
+        rules: Generator.resolveRules(el, binding)
       });
       field.updated = true;
     },

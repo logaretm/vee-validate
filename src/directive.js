@@ -1,6 +1,6 @@
 import Generator from './generator';
 import config from './config';
-import { getDataAttribute, isEqual, getRules, warn, assign } from './utils';
+import { getDataAttribute, isEqual, warn, assign } from './utils';
 
 /**
  * Finds the requested field by id from the context object.
@@ -28,23 +28,30 @@ const createDirective = options => {
       const fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted (el, binding, vnode) {
+    inserted: (el, binding, vnode) => {
       const field = findField(el, vnode.context);
       if (!field) return;
 
-      const scope = Generator.resolveScope(el, binding, vnode);
-      field.update({ scope });
-    },
-    update (el, binding, vnode) {
-      const field = findField(el, vnode.context);
-      if (!field) return;
-      // make sure we don't do uneccessary work if no change in expression.
+      // make sure we don't do uneccessary work if no important change was done.
       const scope = Generator.resolveScope(el, binding, vnode);
       if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) return;
 
       field.update({
         scope,
-        rules: getRules(binding, el)
+        rules: Generator.resolveRules(el, binding)
+      });
+    },
+    update: (el, binding, vnode) => {
+      const field = findField(el, vnode.context);
+      if (!field) return;
+
+      // make sure we don't do uneccessary work if no important change was done.
+      const scope = Generator.resolveScope(el, binding, vnode);
+      if (scope === field.scope && isEqual(binding.value, binding.oldValue) && field.updated) return;
+
+      field.update({
+        scope,
+        rules: Generator.resolveRules(el, binding)
       });
       field.updated = true;
     },

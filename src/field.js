@@ -159,12 +159,13 @@ export default class Field {
     this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
     this.updateDependencies();
     this.addActionListeners();
-    if (this.updated && this.validator.errors && isCallable(this.validator.errors.update)) {
+    // update errors scope if the field scope was changed.
+    if (options.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
       this.validator.errors.update(this.id, { scope: this.scope });
     }
 
-    // validate if it is updated and was validated before and there was a rules mutation.
-    if (this.updated && this.flags.validated && options.rules) {
+    // validate if it was validated before and there was a rules mutation.
+    if (this.flags.validated && options.rules) {
       this.validator.validate(`#${this.id}`);
     }
 

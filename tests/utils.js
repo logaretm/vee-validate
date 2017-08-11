@@ -71,42 +71,6 @@ test('returns first matching element from array', () => {
   expect(find(arr, i => i === 4)).toBe(undefined);
 });
 
-test('should return valid rules data', () => {
-  const getRules = utils.getRules;
-  document.body.innerHTML = `
-    <input type="text" name="el" id="el" data-vv-rules="required|email">
-  `;
-  const el = document.querySelector('#el');
-  expect(getRules(null, el)).toBe('required|email');
-
-  const expression = 'someexpr';
-  let value = 'required|email';
-
-  expect(getRules({ expression, value }, el)).toBe('required|email');
-
-  value = {
-    rules: {
-      required: true,
-      email: true
-    }
-  };
-
-  expect(getRules({ expression, value }, el)).toEqual({
-    required: true,
-    email: true
-  });
-
-  value = {
-    required: true,
-    email: true
-  };
-
-  expect(getRules({ expression, value }, el)).toEqual({
-    required: true,
-    email: true
-  });
-});
-
 test('assigns objects', () => {
   const o1 = { a: 1, b: 1, c: 1 };
   const o2 = { b: 2, c: 2, d: { a: 1, b: 2 } };

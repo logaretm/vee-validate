@@ -1,4 +1,4 @@
-import { getScope, getDataAttribute, isObject, toArray, find, getRules, getPath, hasPath } from './utils';
+import { getScope, getDataAttribute, isObject, toArray, find, getPath, hasPath } from './utils';
 
 /**
  * Generates the options required to construct a field.
@@ -21,10 +21,31 @@ export default class Generator {
       events: Generator.resolveEvents(el, vnode) || options.events,
       model,
       delay: Generator.resolveDelay(el, vnode, options),
-      rules: getRules(binding, el),
+      rules: Generator.resolveRules(el, binding),
       initial: !!binding.modifiers.initial,
       alias: Generator.resolveAlias(el, vnode)
     };
+  }
+
+  /**
+   * 
+   * @param {*} el 
+   * @param {*} binding 
+   */
+  static resolveRules (el, binding) {
+    if (!binding || !binding.expression) {
+      return getDataAttribute(el, 'rules');
+    }
+
+    if (typeof binding.value === 'string') {
+      return binding.value;
+    }
+
+    if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
+      return binding.value.rules;
+    }
+
+    return binding.value;
   }
 
   /**

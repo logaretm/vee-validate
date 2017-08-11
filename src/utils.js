@@ -323,29 +323,6 @@ export const find = (array, predicate) => {
   return result;
 };
 
-/**
- * Gets the rules from a binding value or the element dataset.
- *
- * @param {Object} binding The binding object.
- * @param {element} el The element.
- * @returns {String|Object}
- */
-export const getRules = (binding, el) => {
-  if (!binding || ! binding.expression) {
-    return getDataAttribute(el, 'rules');
-  }
-
-  if (typeof binding.value === 'string') {
-    return binding.value;
-  }
-
-  if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
-    return binding.value.rules;
-  }
-
-  return binding.value;
-};
-
 export const getInputEventName = (el) => {
   if (el && (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type))) {
     return 'change';

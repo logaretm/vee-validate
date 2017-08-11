@@ -385,7 +385,7 @@ test('computes the rejectsFalse property', () => {
   expect(field.rejectsFalse).toBe(true);
 });
 
-test('calls the update method on the validator errors on following updates', () => {
+test('calls the update method on the validator errors when updating scope', () => {
   let el = document.createElement('input');
   const vm = {
     $validator: {
@@ -395,7 +395,8 @@ test('calls the update method on the validator errors on following updates', () 
     }
   };
   const field = new Field(el, { rules: 'required', vm });
-  field.update({ rules: 'min:3' });
+  field.updated = true;
+  field.update({ rules: 'min:3', scope: 'scope' });
   expect(vm.$validator.errors.update).toHaveBeenCalledTimes(1);
 });
 

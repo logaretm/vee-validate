@@ -260,6 +260,41 @@ describe('resolves the value getters', () => {
   });
 });
 
+test('resolves the rules', () => {
+  document.body.innerHTML = `
+    <input type="text" name="el" id="el" data-vv-rules="required|email">
+  `;
+  const el = document.querySelector('#el');
+  expect(Generator.resolveRules(el, {})).toBe('required|email');
+
+  const expression = 'someexpr';
+  let value = 'required|email';
+
+  expect(Generator.resolveRules(el, { expression, value })).toBe('required|email');
+
+  value = {
+    rules: {
+      required: true,
+      email: true
+    }
+  };
+
+  expect(Generator.resolveRules(el, { expression, value })).toEqual({
+    required: true,
+    email: true
+  });
+
+  value = {
+    required: true,
+    email: true
+  };
+
+  expect(Generator.resolveRules(el, { expression, value })).toEqual({
+    required: true,
+    email: true
+  });
+});
+
 describe('resolves the field name', () => {
   test('using name attribute', () => {
     document.body.innerHTML = `
