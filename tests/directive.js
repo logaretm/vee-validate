@@ -146,8 +146,11 @@ test('cleans up after unbinding', () => {
 
 test('revises scope after inserted', async () => {
     const field = {
-    update: jest.fn(),
-    scope: null
+      updated: false,
+      update: jest.fn(() => {
+        field.updated = true;
+      }),
+      scope: null
   };
   const $validator = {
     attach: jest.fn(),
@@ -173,9 +176,9 @@ test('revises scope after inserted', async () => {
   const app = new VM().$mount();
   app.value = 'new';
   await app.$nextTick(); // different expression.
-  expect(field.update).toHaveBeenCalledTimes(2); // expression changed.
+  expect(field.update).toHaveBeenCalledTimes(1); // expression changed.
 
   app.name = 'other'; 
   await app.$nextTick();
-  expect(field.update).toHaveBeenCalledTimes(3); // CAUSE EXPRESSION HAS NOT CHANGED.
+  expect(field.update).toHaveBeenCalledTimes(1); // no meaningful change was detected, so it didn't update.
 });
