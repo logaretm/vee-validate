@@ -17,19 +17,6 @@ const findField = (el, context) => {
   return context.$validator.fields.find({ id: getDataAttribute(el, 'id') });
 };
 
-const update = (el, binding, vnode) => {
-  const field = findField(el, vnode.context);
-
-  // make sure we don't do uneccessary work if no important change was done.
-  if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
-  const scope = Generator.resolveScope(el, binding, vnode);
-
-  field.update({
-    scope,
-    rules: Generator.resolveRules(el, binding)
-  });
-};
-
 const createDirective = options => {
   options = assign({}, config, options);
 
@@ -44,11 +31,30 @@ const createDirective = options => {
       validator.attach(fieldOptions);
     },
     inserted: (el, binding, vnode) => {
-      update(el, binding, vnode);
       const field = findField(el, vnode.context);
+      const scope = Generator.resolveScope(el, binding, vnode);
+
+      // skip if scope hasn't changed.
+      if (!field || scope === field.scope) return;
+
+      // only update scope.
+      field.update({ scope });
+
+      // allows the field to re-evaluated once more in the update hook.
       field.updated = false;
     },
-    update,
+    update: (el, binding, vnode) => {
+      const field = findField(el, vnode.context);
+
+      // make sure we don't do uneccessary work if no important change was done.
+      if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
+      const scope = Generator.resolveScope(el, binding, vnode);
+
+      field.update({
+        scope,
+        rules: Generator.resolveRules(el, binding)
+      });
+    },
     unbind (el, binding, { context }) {
       const field = findField(el, context);
       if (!field) return;
