@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.11
+ * vee-validate v2.0.0-rc.12
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -3371,7 +3371,11 @@ const createDirective = options => {
       const fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted: update,
+    inserted: (el, binding, vnode) => {
+      update(el, binding, vnode);
+      const field = findField(el, vnode.context);
+      field.updated = false;
+    },
     update,
     unbind (el, binding, { context }) {
       const field = findField(el, context);
@@ -3452,7 +3456,7 @@ var index = {
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.11'
+  version: '2.0.0-rc.12'
 };
 
 export default index;
