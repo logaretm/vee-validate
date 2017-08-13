@@ -28,7 +28,7 @@
     created() {
       bus.$on('errors-changed', (errors) => {
         this.errors.clear();
-        errors.forEach(e => {
+        errors.forEach((e) => {
           this.errors.add(e.field, e.msg, e.rule, e.scope);
         });
       });

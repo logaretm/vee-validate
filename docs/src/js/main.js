@@ -28,7 +28,7 @@ new Vue({
     stars: 0
   },
   created() {
-    fetch('https://api.github.com/repos/logaretm/vee-validate').then(response => response.json()).then(body => {
+    fetch('https://api.github.com/repos/logaretm/vee-validate').then(response => response.json()).then((body) => {
       this.stars = body.stargazers_count;
     });
   }

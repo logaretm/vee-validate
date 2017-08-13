@@ -141,7 +141,7 @@ ga('send', 'pageview');
   }),
   methods: {
     validateBeforeSubmit() {
-      this.$validator.validateAll().then(result => {
+      this.$validator.validateAll().then((result) => {
         if (result) {
           // eslint-disable-next-line
           alert('From Submitted!');
@@ -257,7 +257,7 @@ export default {
   name: 'scopes-example',
   methods: {
     validateForm(scope) {
-      this.$validator.validateAll(scope).then(result => {
+      this.$validator.validateAll(scope).then((result) => {
         if (result) {
           // eslint-disable-next-line
           alert('Form Submitted!');
@@ -340,20 +340,21 @@ export default {
   },
   methods: {
     applyCoupon() {
-      this.$validator.validate('coupon', this.coupon).then(result => {
+      this.$validator.validate('coupon', this.coupon).then((result) => {
         this.discounted = result;
       });
     }
   },
   created() {
     Validator.extend('verify_coupon', {
-      getMessage: (field) => `The ${field} is not a valid coupon.`,
-      validate: (value) => new Promise(resolve => {
+      getMessage: field => `The ${field} is not a valid coupon.`,
+      validate: value => new Promise((resolve) => {
+        // API call or database access.
         const validCoupons = ['SUMMER2016', 'WINTER2016', 'FALL2016'];
 
         setTimeout(() => {
           resolve({
-            valid: value && !! ~validCoupons.indexOf(value.toUpperCase())
+            valid: value && validCoupons.indexOf(value.toUpperCase()) !== -1
           });
         }, 500);
       })
@@ -390,7 +391,7 @@ export default {
   }),
   methods: {
     validateForm() {
-      this.$validator.validateAll().then(result => {
+      this.$validator.validateAll().then((result) => {
         if (result) {
           // eslint-disable-next-line
           alert('All Passes!');
@@ -460,7 +461,7 @@ export default {
   }),
   methods: {
     nextStep() {
-      this.$validator.validateAll().then(result => {
+      this.$validator.validateAll().then((result) => {
         if (result) {
           alert('You just agreed to conditions without reading it.');
           return;
@@ -680,9 +681,9 @@ export default {
   },
   methods: {
     validate() {
-      this.$validator.validateAll().then(result => {
-          // eslint-disable-next-line
-          alert(`Validation Result: ${result}`);
+      this.$validator.validateAll().then((result) => {
+        // eslint-disable-next-line
+        alert(`Validation Result: ${result}`);
       });
     }
   }
@@ -719,7 +720,7 @@ export default {
   created() {
     bus.$on('errors-changed', (errors) => {
       this.errors.clear();
-      errors.forEach(e => {
+      errors.forEach((e) => {
         this.errors.add(e.field, e.msg, e.rule, e.scope);
       });
     });
@@ -766,7 +767,7 @@ export default {
   created() {
     // simulated DB.
     const emailsDB = [];
-    const isUnique = (value) => new Promise(resolve => {
+    const isUnique = value => new Promise((resolve) => {
       setTimeout(() => {
         if (emailsDB.indexOf(value) === -1) {
           emailsDB.push(value);
@@ -821,4 +822,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor.js"></script><script type="text/javascript" src="/assets/js/bundle-1d07e035db5054100f49.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor.js"></script><script type="text/javascript" src="/assets/js/bundle-157339ac49edd40b128b.js"></script></body></html>

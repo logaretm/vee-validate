@@ -58,7 +58,7 @@ export default {
   name: 'scopes-example',
   methods: {
     validateForm(scope) {
-      this.$validator.validateAll(scope).then(result => {
+      this.$validator.validateAll(scope).then((result) => {
         if (result) {
           // eslint-disable-next-line
           alert('Form Submitted!');

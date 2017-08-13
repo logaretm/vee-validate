@@ -19,7 +19,7 @@ export default {
   created() {
     // simulated DB.
     const emailsDB = [];
-    const isUnique = (value) => new Promise(resolve => {
+    const isUnique = value => new Promise((resolve) => {
       setTimeout(() => {
         if (emailsDB.indexOf(value) === -1) {
           emailsDB.push(value);

@@ -10,9 +10,7 @@ export default {
   methods: {
     removeWhitespace() {
       const el = this.$refs.code;
-      const txt = el.textContent
-          .replace(/^[\r\n]+/, '')
-          .replace(/\s+$/g, '');
+      const txt = el.textContent.replace(/^[\r\n]+/, '').replace(/\s+$/g, '');
 
       if (/^\S/gm.test(txt)) {
         el.textContent = txt;
