@@ -29,33 +29,6 @@ ga('send', 'pageview');
         &lt;/p&gt;
     &lt;/div&gt;
 &lt;/div&gt;
-</div></code-example><h2><a href="#reject-example">Reject Invalid Files</a></h2>
-<p>After validating a file, you may want to reject the uploaded file if it fails the validation, this can be done by adding the <code>reject</code> modifier to directive. so you would use it like this: <code>v-validate.reject</code>.</p>
-<blockquote>
-<p>The <code>reject</code> modifier is only relevant on file inputs, adding it to other input types will not have an effect.</p>
-</blockquote>
-<code-example><div slot="example"><reject-example></reject-example></div><div slot="js">export default {
-  name: 'reject-example'
-};
-</div><div slot="html">
-&lt;div class=&quot;columns is-multiline&quot;&gt;
-    &lt;div class=&quot;column is-12&quot;&gt;
-        &lt;label class=&quot;label&quot;&gt;Image (Doesn't Reject)&lt;/label&gt;
-        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
-            &lt;input name=&quot;image&quot; v-validate=&quot;'mimes:image/*'&quot; :class=&quot;{ 'is-danger': errors.has('image') }&quot; type=&quot;file&quot;&gt;
-            &lt;i v-show=&quot;errors.has('image')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
-            &lt;span v-show=&quot;errors.has('image')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('image') }&quot; + &quot;}&quot;}}&lt;/span&gt;
-        &lt;/p&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;column is-12&quot;&gt;
-        &lt;label class=&quot;label&quot;&gt;Image (Rejects)&lt;/label&gt;
-        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
-            &lt;input name=&quot;file&quot; v-validate.reject=&quot;'mimes:image/*'&quot; :class=&quot;{ 'is-danger': errors.has('file') }&quot; type=&quot;file&quot;&gt;
-            &lt;i v-show=&quot;errors.has('file')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
-            &lt;span v-show=&quot;errors.has('file')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('file') }&quot; + &quot;}&quot;}}&lt;/span&gt;
-        &lt;/p&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
 </div></code-example><h2><a href="#validate-model-example">Validate Models</a></h2>
 <p>The <code>v-validate</code> directive detects if the input has <code>v-model</code> bound to the same input, and watches for that value and validates it when it changes. But it can also listen for changes in computed properties by using the arg like this:</p>
 <pre><code class="language-html">&lt;input v-validate:name=&quot;'required|alpha_spaces'&quot; type=&quot;text&quot; name=&quot;name&quot;&gt;
@@ -822,4 +795,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor.js"></script><script type="text/javascript" src="/assets/js/bundle-157339ac49edd40b128b.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor.js"></script><script type="text/javascript" src="/assets/js/bundle-4ad2a4a582d478737f5e.js"></script></body></html>
