@@ -2167,7 +2167,7 @@ Field.prototype.update = function update (options) {
 
   // update errors scope if the field scope was changed.
   if (options.scope && options.scope !== this.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
-    this.validator.errors.update(this.id, { scope: this.scope });
+    this.validator.errors.update(this.id, { scope: options.scope });
   }
   this.scope = options.scope || this.scope || null;
   this.name = options.name || this.name || null;
