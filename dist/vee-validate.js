@@ -1069,6 +1069,11 @@ var parseRule = function (rule) {
  * @param {Object|String} rules
  */
 var normalizeRules = function (rules) {
+  // if falsy value return an empty object.
+  if (!rules) {
+    return {};
+  }
+
   var validations = {};
   if (isObject(rules)) {
     Object.keys(rules).forEach(function (rule) {
@@ -2158,10 +2163,9 @@ Field.prototype.update = function update (options) {
   if (options.scope && options.scope !== this.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
     this.validator.errors.update(this.id, { scope: this.scope });
   }
-
   this.scope = options.scope || this.scope || null;
   this.name = options.name || this.name || null;
-  this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
+  this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
   this.model = options.model || this.model;
   this.listen = options.listen !== undefined ? options.listen : this.listen;
   this.classes = options.classes || this.classes || false;
@@ -2381,7 +2385,7 @@ Field.prototype.addValueListeners = function addValueListeners () {
         var args = [], len = arguments.length;
         while ( len-- ) args[ len ] = arguments[ len ];
 
-      if (args.length === 0 || args[0] instanceof Event) {
+      if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event)) {
         args[0] = this$1.value;
       }
       this$1.validator.validate(("#" + (this$1.id)), args[0]);
@@ -3547,19 +3551,6 @@ var findField = function (el, context) {
   return context.$validator.fields.find({ id: getDataAttribute(el, 'id') });
 };
 
-var update = function (el, binding, vnode) {
-  var field = findField(el, vnode.context);
-
-  // make sure we don't do uneccessary work if no important change was done.
-  if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) { return; }
-  var scope = Generator.resolveScope(el, binding, vnode);
-
-  field.update({
-    scope: scope,
-    rules: Generator.resolveRules(el, binding)
-  });
-};
-
 var createDirective = function (options) {
   options = assign({}, config, options);
 
@@ -3574,11 +3565,32 @@ var createDirective = function (options) {
       validator.attach(fieldOptions);
     },
     inserted: function (el, binding, vnode) {
-      update(el, binding, vnode);
       var field = findField(el, vnode.context);
+      var scope = Generator.resolveScope(el, binding, vnode);
+
+      // skip if scope hasn't changed.
+      if (!field || scope === field.scope) { return; }
+
+      // only update scope.
+      field.update({ scope: scope });
+
+      // allows the field to re-evaluated once more in the update hook.
       field.updated = false;
     },
-    update: update,
+    update: function (el, binding, vnode) {
+      var field = findField(el, vnode.context);
+
+      // make sure we don't do uneccessary work if no important change was done.
+      if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) { return; }
+      var scope = Generator.resolveScope(el, binding, vnode);
+      var rules = Generator.resolveRules(el, binding);
+      console.log(("updated " + (field.name) + " " + rules));
+
+      field.update({
+        scope: scope,
+        rules: rules
+      });
+    },
     unbind: function unbind (el, binding, ref) {
       var context = ref.context;
 

@@ -49,10 +49,12 @@ const createDirective = options => {
       // make sure we don't do uneccessary work if no important change was done.
       if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
       const scope = Generator.resolveScope(el, binding, vnode);
+      const rules = Generator.resolveRules(el, binding);
+      console.log(`updated ${field.name} ${rules}`);
 
       field.update({
         scope,
-        rules: Generator.resolveRules(el, binding)
+        rules
       });
     },
     unbind (el, binding, { context }) {

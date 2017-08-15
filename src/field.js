@@ -152,10 +152,9 @@ export default class Field {
     if (options.scope && options.scope !== this.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
       this.validator.errors.update(this.id, { scope: this.scope });
     }
-
     this.scope = options.scope || this.scope || null;
     this.name = options.name || this.name || null;
-    this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
+    this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
     this.listen = options.listen !== undefined ? options.listen : this.listen;
     this.classes = options.classes || this.classes || false;

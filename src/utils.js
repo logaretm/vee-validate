@@ -110,6 +110,11 @@ export const parseRule = (rule) => {
  * @param {Object|String} rules
  */
 export const normalizeRules = (rules) => {
+  // if falsy value return an empty object.
+  if (!rules) {
+    return {};
+  }
+
   const validations = {};
   if (isObject(rules)) {
     Object.keys(rules).forEach(rule => {
