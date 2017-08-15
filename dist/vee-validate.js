@@ -1822,7 +1822,9 @@ Generator.generate = function generate (el, binding, vnode, options) {
     delay: Generator.resolveDelay(el, vnode, options),
     rules: Generator.resolveRules(el, binding),
     initial: !!binding.modifiers.initial,
-    alias: Generator.resolveAlias(el, vnode)
+    alias: Generator.resolveAlias(el, vnode),
+    validity: options.validity,
+    aria: options.aria
   };
 };
 
@@ -2020,6 +2022,8 @@ var DEFAULT_OPTIONS = {
   rules: {},
   vm: null,
   classes: false,
+  validity: true,
+  aria: true,
   events: 'input|blur',
   delay: 0,
   classNames: {
@@ -2062,6 +2066,8 @@ var Field = function Field (el, options) {
     setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
   }
   options = assign({}, DEFAULT_OPTIONS, options);
+  this.validity = options.validity;
+  this.aria = options.aria;
   this.flags = generateFlags(options);
   this.vm = options.vm || this.vm;
   this.component = options.component || this.component;
@@ -2452,7 +2458,7 @@ Field.prototype.addValueListeners = function addValueListeners () {
  * Updates aria attributes on the element.
  */
 Field.prototype.updateAriaAttrs = function updateAriaAttrs () {
-  if (this.isHeadless || !isCallable(this.el.setAttribute)) { return; }
+  if (!this.aria || this.isHeadless || !isCallable(this.el.setAttribute)) { return; }
 
   this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
   this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
@@ -2462,7 +2468,7 @@ Field.prototype.updateAriaAttrs = function updateAriaAttrs () {
  * Updates the custom validity for the field.
  */
 Field.prototype.updateCustomValidity = function updateCustomValidity () {
-  if (this.isHeadless || !isCallable(this.el.setCustomValidity)) { return; }
+  if (!this.validity || this.isHeadless || !isCallable(this.el.setCustomValidity)) { return; }
 
   this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
 };
@@ -3533,7 +3539,9 @@ var config = {
   classNames: undefined,
   events: 'input|blur',
   inject: true,
-  fastExit: true
+  fastExit: true,
+  aria: true,
+  validity: true
 };
 
 /**

@@ -23,7 +23,9 @@ export default class Generator {
       delay: Generator.resolveDelay(el, vnode, options),
       rules: Generator.resolveRules(el, binding),
       initial: !!binding.modifiers.initial,
-      alias: Generator.resolveAlias(el, vnode)
+      alias: Generator.resolveAlias(el, vnode),
+      validity: options.validity,
+      aria: options.aria
     };
   }
 

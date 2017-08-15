@@ -9,5 +9,7 @@ export default {
   classNames: undefined,
   events: 'input|blur',
   inject: true,
-  fastExit: true
+  fastExit: true,
+  aria: true,
+  validity: true
 };

@@ -12,6 +12,8 @@ const DEFAULT_OPTIONS = {
   rules: {},
   vm: null,
   classes: false,
+  validity: true,
+  aria: true,
   events: 'input|blur',
   delay: 0,
   classNames: {
@@ -53,6 +55,8 @@ export default class Field {
       setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
     }
     options = assign({}, DEFAULT_OPTIONS, options);
+    this.validity = options.validity;
+    this.aria = options.aria;
     this.flags = generateFlags(options);
     this.vm = options.vm || this.vm;
     this.component = options.component || this.component;
@@ -429,7 +433,7 @@ export default class Field {
    * Updates aria attributes on the element.
    */
   updateAriaAttrs () {
-    if (this.isHeadless || !isCallable(this.el.setAttribute)) return;
+    if (!this.aria || this.isHeadless || !isCallable(this.el.setAttribute)) return;
 
     this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
     this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
@@ -439,7 +443,7 @@ export default class Field {
    * Updates the custom validity for the field.
    */
   updateCustomValidity () {
-    if (this.isHeadless || !isCallable(this.el.setCustomValidity)) return;
+    if (!this.validity || this.isHeadless || !isCallable(this.el.setCustomValidity)) return;
 
     this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
   }
