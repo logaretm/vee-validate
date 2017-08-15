@@ -363,7 +363,7 @@ export default class Field {
       };
     } else {
       fn = (...args) => {
-        if (args.length === 0 || args[0] instanceof Event) {
+        if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event)) {
           args[0] = this.value;
         }
         this.validator.validate(`#${this.id}`, args[0]);
