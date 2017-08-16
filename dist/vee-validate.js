@@ -2703,6 +2703,7 @@ var Validator = function Validator (validations, options) {
   this._createFields(validations);
   this.paused = false;
   this.fastExit = options.fastExit || false;
+  this.ownerId = options.vm && options.vm._uid;
   // create it statically since we don't need constant access to the vm.
   this.clean = options.vm && isCallable(options.vm.$nextTick) ? function () {
     options.vm.$nextTick(function () {
@@ -3520,7 +3521,7 @@ var makeMixin = function (Vue, options) {
 
   mixin.beforeDestroy = function beforeDestroy () {
     // mark the validator paused to prevent delayed validation.
-    if (this.$validator && isCallable(this.$validator.pause)) {
+    if (this.$validator && this.$validator.ownerId === this._uid && isCallable(this.$validator.pause)) {
       this.$validator.pause();
     }
   };
@@ -3592,7 +3593,6 @@ var createDirective = function (options) {
       if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) { return; }
       var scope = Generator.resolveScope(el, binding, vnode);
       var rules = Generator.resolveRules(el, binding);
-      console.log(("updated " + (field.name) + " " + rules));
 
       field.update({
         scope: scope,
