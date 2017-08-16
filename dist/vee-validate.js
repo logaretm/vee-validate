@@ -3273,7 +3273,6 @@ Validator.prototype._validate = function _validate (field, value) {
   if (! field.isRequired && ~[null, undefined, ''].indexOf(value)) {
     return Promise.resolve(true);
   }
-  console.log(value);
 
   var promises = [];
   var isExitEarly = false;
