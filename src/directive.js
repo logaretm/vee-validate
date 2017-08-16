@@ -50,7 +50,6 @@ const createDirective = options => {
       if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
       const scope = Generator.resolveScope(el, binding, vnode);
       const rules = Generator.resolveRules(el, binding);
-      console.log(`updated ${field.name} ${rules}`);
 
       field.update({
         scope,
