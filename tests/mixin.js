@@ -101,4 +101,19 @@ describe('provides validator instances using provide/inject API', () => {
     expect(app.$validator).not.toBe(app.$children[0].$validator); // got a different instance.
     expect(app.$validator).toBe(app.$children[1].$validator); // got the parent's
   });
-})
+});
+
+test('component pauses the validator before destroy if it owns it', () => {
+  const mixin = makeMixin(Vue);
+  const VM = Vue.extend({ mixins: [mixin] });
+  let app = new VM();
+  const validator = app.$validator;
+  validator.pause = jest.fn();
+  app.$destroy();
+  expect(validator.pause).toHaveBeenCalledTimes(1);
+  validator.resume();
+  // does not pause because it does not own the validator.
+  app = new VM();
+  app.$destroy();
+  expect(validator.pause).toHaveBeenCalledTimes(1);
+});

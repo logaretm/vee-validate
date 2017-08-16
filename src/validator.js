@@ -26,6 +26,7 @@ export default class Validator {
     this._createFields(validations);
     this.paused = false;
     this.fastExit = options.fastExit || false;
+    this.ownerId = options.vm && options.vm._uid;
     // create it statically since we don't need constant access to the vm.
     this.clean = options.vm && isCallable(options.vm.$nextTick) ? () => {
       options.vm.$nextTick(() => {

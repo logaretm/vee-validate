@@ -83,7 +83,7 @@ export default (Vue, options = {}) => {
 
   mixin.beforeDestroy = function beforeDestroy () {
     // mark the validator paused to prevent delayed validation.
-    if (this.$validator && isCallable(this.$validator.pause)) {
+    if (this.$validator && this.$validator.ownerId === this._uid && isCallable(this.$validator.pause)) {
       this.$validator.pause();
     }
   };
