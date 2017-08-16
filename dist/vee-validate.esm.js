@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.12
+ * vee-validate v2.0.0-rc.13
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -1021,6 +1021,11 @@ const parseRule = (rule) => {
  * @param {Object|String} rules
  */
 const normalizeRules = (rules) => {
+  // if falsy value return an empty object.
+  if (!rules) {
+    return {};
+  }
+
   const validations = {};
   if (isObject(rules)) {
     Object.keys(rules).forEach(rule => {
@@ -1698,7 +1703,9 @@ class Generator {
       delay: Generator.resolveDelay(el, vnode, options),
       rules: Generator.resolveRules(el, binding),
       initial: !!binding.modifiers.initial,
-      alias: Generator.resolveAlias(el, vnode)
+      alias: Generator.resolveAlias(el, vnode),
+      validity: options.validity,
+      aria: options.aria
     };
   }
 
@@ -1893,6 +1900,8 @@ const DEFAULT_OPTIONS = {
   rules: {},
   vm: null,
   classes: false,
+  validity: true,
+  aria: true,
   events: 'input|blur',
   delay: 0,
   classNames: {
@@ -1934,6 +1943,8 @@ class Field {
       setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
     }
     options = assign({}, DEFAULT_OPTIONS, options);
+    this.validity = options.validity;
+    this.aria = options.aria;
     this.flags = generateFlags(options);
     this.vm = options.vm || this.vm;
     this.component = options.component || this.component;
@@ -2031,12 +2042,11 @@ class Field {
 
     // update errors scope if the field scope was changed.
     if (options.scope && options.scope !== this.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
-      this.validator.errors.update(this.id, { scope: this.scope });
+      this.validator.errors.update(this.id, { scope: options.scope });
     }
-
     this.scope = options.scope || this.scope || null;
     this.name = options.name || this.name || null;
-    this.rules = options.rules ? normalizeRules(options.rules) : this.rules;
+    this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
     this.listen = options.listen !== undefined ? options.listen : this.listen;
     this.classes = options.classes || this.classes || false;
@@ -2244,7 +2254,7 @@ class Field {
       };
     } else {
       fn = (...args) => {
-        if (args.length === 0 || args[0] instanceof Event) {
+        if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event)) {
           args[0] = this.value;
         }
         this.validator.validate(`#${this.id}`, args[0]);
@@ -2311,7 +2321,7 @@ class Field {
    * Updates aria attributes on the element.
    */
   updateAriaAttrs () {
-    if (this.isHeadless || !isCallable(this.el.setAttribute)) return;
+    if (!this.aria || this.isHeadless || !isCallable(this.el.setAttribute)) return;
 
     this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
     this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
@@ -2321,7 +2331,7 @@ class Field {
    * Updates the custom validity for the field.
    */
   updateCustomValidity () {
-    if (this.isHeadless || !isCallable(this.el.setCustomValidity)) return;
+    if (!this.validity || this.isHeadless || !isCallable(this.el.setCustomValidity)) return;
 
     this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
   }
@@ -2518,6 +2528,7 @@ class Validator {
     this._createFields(validations);
     this.paused = false;
     this.fastExit = options.fastExit || false;
+    this.ownerId = options.vm && options.vm._uid;
     // create it statically since we don't need constant access to the vm.
     this.clean = options.vm && isCallable(options.vm.$nextTick) ? () => {
       options.vm.$nextTick(() => {
@@ -3308,7 +3319,7 @@ var makeMixin = (Vue, options = {}) => {
 
   mixin.beforeDestroy = function beforeDestroy () {
     // mark the validator paused to prevent delayed validation.
-    if (this.$validator && isCallable(this.$validator.pause)) {
+    if (this.$validator && this.$validator.ownerId === this._uid && isCallable(this.$validator.pause)) {
       this.$validator.pause();
     }
   };
@@ -3327,7 +3338,9 @@ var config = {
   classNames: undefined,
   events: 'input|blur',
   inject: true,
-  fastExit: true
+  fastExit: true,
+  aria: true,
+  validity: true
 };
 
 /**
@@ -3345,19 +3358,6 @@ const findField = (el, context) => {
   return context.$validator.fields.find({ id: getDataAttribute(el, 'id') });
 };
 
-const update = (el, binding, vnode) => {
-  const field = findField(el, vnode.context);
-
-  // make sure we don't do uneccessary work if no important change was done.
-  if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
-  const scope = Generator.resolveScope(el, binding, vnode);
-
-  field.update({
-    scope,
-    rules: Generator.resolveRules(el, binding)
-  });
-};
-
 const createDirective = options => {
   options = assign({}, config, options);
 
@@ -3372,11 +3372,31 @@ const createDirective = options => {
       validator.attach(fieldOptions);
     },
     inserted: (el, binding, vnode) => {
-      update(el, binding, vnode);
       const field = findField(el, vnode.context);
+      const scope = Generator.resolveScope(el, binding, vnode);
+
+      // skip if scope hasn't changed.
+      if (!field || scope === field.scope) return;
+
+      // only update scope.
+      field.update({ scope });
+
+      // allows the field to re-evaluated once more in the update hook.
       field.updated = false;
     },
-    update,
+    update: (el, binding, vnode) => {
+      const field = findField(el, vnode.context);
+
+      // make sure we don't do uneccessary work if no important change was done.
+      if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
+      const scope = Generator.resolveScope(el, binding, vnode);
+      const rules = Generator.resolveRules(el, binding);
+
+      field.update({
+        scope,
+        rules
+      });
+    },
     unbind (el, binding, { context }) {
       const field = findField(el, context);
       if (!field) return;
@@ -3456,7 +3476,7 @@ var index = {
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.12'
+  version: '2.0.0-rc.13'
 };
 
 export default index;
