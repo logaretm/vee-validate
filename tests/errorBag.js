@@ -179,6 +179,20 @@ test('fetches the first error message for a specific field', () => {
   expect(errors.first('scope2.email:rule2')).toBe('mah');
 });
 
+test('fetches the first error message for a specific field that not match the rule', () => {
+  const errors = new ErrorBag();
+  errors.add('email', 'The email is required', 'required');
+
+  errors.add('email', 'The email is invalid', 'rule1');
+  errors.add('email', 'The email is shorter than 3 chars.', 'rule1');
+
+  errors.add('email', 'This is the third rule', 'rule2');
+  errors.add('email', 'This is the forth rule', 'rule2');
+
+  expect(errors.firstNot('email')).toBe('The email is invalid');
+  expect(errors.firstNot('email', 'rule1')).toBe('The email is required');
+});
+
 test('fetches the first error rule for a specific field', () => {
   const errors = new ErrorBag();
   errors.add('email', 'The email is invalid', 'rule1');
