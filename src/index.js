@@ -3,7 +3,7 @@ import makeMixin from './mixin';
 import makeDirective from './directive';
 import ErrorBag from './errorBag';
 import Rules from './rules';
-import { assign, warn } from './utils';
+import { assign, warn, isCallable } from './utils';
 import defaultOptions from './config';
 import mapFields from './helpers';
 
@@ -28,8 +28,17 @@ const install = (_Vue, options) => {
   Vue.directive('validate', makeDirective(config));
 };
 
+const use = (plugin, options = {}) => {
+  if (!isCallable(plugin)) {
+    return warn('The plugin must be a callable function');
+  }
+
+  plugin({ Validator, ErrorBag, Rules }, options);
+};
+
 export default {
   install,
+  use,
   mapFields,
   Validator,
   ErrorBag,

@@ -5,7 +5,7 @@ import messages from './messages';
 import { isObject, isCallable, toArray, warn, createError, assign, find } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
-import date from './plugins/date';
+import datePlugin from './plugins/date';
 
 let LOCALE = 'en';
 let STRICT_MODE = true;
@@ -164,25 +164,10 @@ export default class Validator {
   static installDateTimeValidators (moment) {
     if (typeof moment !== 'function') {
       warn('To use the date-time validators you must provide moment reference.');
-
       return false;
     }
 
-    if (date.installed) {
-      return true;
-    }
-
-    const validators = date.make(moment);
-    Object.keys(validators).forEach(name => {
-      Validator.extend(name, validators[name]);
-    });
-
-    Validator.updateDictionary({
-      en: {
-        messages: date.messages
-      }
-    });
-    date.installed = true;
+    datePlugin({ Validator }, moment);
 
     return true;
   }
@@ -358,7 +343,7 @@ export default class Validator {
       params = params.length ? params : [true];
     }
 
-    if (date.installed && this._isADateRule(rule.name)) {
+    if (datePlugin.installed && this._isADateRule(rule.name)) {
       const dateFormat = this._getDateFormat(field.rules);
       if (rule.name !== 'date_format') {
         params.push(dateFormat);
