@@ -167,7 +167,7 @@ export default class Validator {
       return false;
     }
 
-    datePlugin({ Validator }, moment);
+    datePlugin({ Validator }, { moment });
 
     return true;
   }

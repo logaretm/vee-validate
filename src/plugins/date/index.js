@@ -4,7 +4,7 @@ import date_format from './date_format'; // eslint-disable-line
 import date_between from './date_between'; // eslint-disable-line
 import messages from './messages';
 
-const installDate = ({ Validator }, moment) => {
+const installDate = ({ Validator }, { moment }) => {
   if (installDate.installed) return;
 
   Validator.extend('after', after(moment));
