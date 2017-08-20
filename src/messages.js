@@ -1,3 +1,5 @@
+import { formatFileSize } from './utils';
+
 export default {
   _default: (field) => `The ${field} value is not valid.`,
   alpha_dash: (field) => `The ${field} field may contain alpha-numeric characters as well as dashes and underscores.`,
@@ -24,6 +26,6 @@ export default {
   numeric: (field) => `The ${field} field may only contain numeric characters.`,
   regex: (field) => `The ${field} field format is invalid.`,
   required: (field) => `The ${field} field is required.`,
-  size: (field, [size]) => `The ${field} field must be less than ${size} KB.`,
+  size: (field, [size]) => `The ${field} size must be less than ${formatFileSize(size)}.`,
   url: (field) => `The ${field} field is not a valid URL.`
 };

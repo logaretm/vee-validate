@@ -337,3 +337,9 @@ test('compares two values', () => {
     bar: 2
   })).toBe(false);
 });
+
+test('formats file sizes', () => {
+  expect(utils.formatFileSize(1000)).toBe('1000 KB');
+  expect(utils.formatFileSize(1024)).toBe('1 MB');
+  expect(utils.formatFileSize(1050000)).toBe('1 GB');
+});
