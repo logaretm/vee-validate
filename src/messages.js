@@ -16,6 +16,7 @@ export default {
   ext: (field) => `The ${field} field must be a valid file.`,
   image: (field) => `The ${field} field must be an image.`,
   in: (field) => `The ${field} field must be a valid value.`,
+  integer: (field) => `The ${field} field must be an integer.`,
   ip: (field) => `The ${field} field must be a valid ip address.`,
   max: (field, [length]) => `The ${field} field may not be greater than ${length} characters.`,
   max_value: (field, [max]) => `The ${field} field must be ${max} or less.`,

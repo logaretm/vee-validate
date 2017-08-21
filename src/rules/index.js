@@ -14,6 +14,7 @@ import ext from './ext';
 import image from './image';
 import In from './in';
 import ip from './ip';
+import integer from './integer';
 import max from './max';
 import max_value from './max_value';
 import mimes from './mimes';
@@ -41,6 +42,7 @@ export default {
   ext,
   image,
   in: In,
+  integer,
   ip,
   max,
   max_value,
