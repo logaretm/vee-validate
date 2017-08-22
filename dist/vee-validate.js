@@ -655,6 +655,14 @@ var ip = function (value, ref) {
   return isIP(value, version);
 };
 
+var integer = function (value) {
+  if (Array.isArray(value)) {
+    return value.every(function (val) { return /^-?[0-9]+$/.test(String(val)); });
+  }
+
+  return /^-?[0-9]+$/.test(String(value));
+};
+
 var max = function (value, ref) {
   var length = ref[0];
 
@@ -855,6 +863,10 @@ function isURL(url, options) {
   }
   url = split.join('://');
 
+  if (url === '') {
+    return false;
+  }
+
   split = url.split('/');
   url = split.shift();
 
@@ -893,7 +905,7 @@ function isURL(url, options) {
     }
   }
 
-  if (!(0, _isIP2.default)(host) && !(0, _isFQDN2.default)(host, options) && (!ipv6 || !(0, _isIP2.default)(ipv6, 6)) && host !== 'localhost') {
+  if (!(0, _isIP2.default)(host) && !(0, _isFQDN2.default)(host, options) && (!ipv6 || !(0, _isIP2.default)(ipv6, 6))) {
     return false;
   }
 
@@ -941,6 +953,7 @@ var Rules = {
   ext: ext,
   image: image,
   in: validate$8,
+  integer: integer,
   ip: ip,
   max: max,
   max_value: max_value,
@@ -959,6 +972,19 @@ var Rules = {
  * Gets the data attribute. the name must be kebab-case.
  */
 var getDataAttribute = function (el, name) { return el.getAttribute(("data-vv-" + name)); };
+
+/**
+ * Formates file size.
+ *
+ * @param {Number|String} size
+ */
+var formatFileSize = function (size) {
+  var units = ['Byte', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  var threshold = 1024;
+  size = Number(size) * threshold;
+  var i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(threshold));
+  return (((size / Math.pow(threshold, i)).toFixed(2) * 1) + " " + (units[i]));
+};
 
 /**
  * Sets the data attribute.
@@ -1515,6 +1541,19 @@ ErrorBag.prototype.firstByRule = function firstByRule (name, rule, scope) {
 
   return (error && error.msg) || null;
 };
+/**
+   * Gets the first error message for a specific field that not match the rule.
+   * @param {String} name The name of the field.
+   * @param {String} rule The name of the rule.
+   * @param {String} scope The name of the scope (optional).
+   */
+ErrorBag.prototype.firstNot = function firstNot (name, rule, scope) {
+    if ( rule === void 0 ) rule = 'required';
+
+  var error = this.collect(name, scope, false).filter(function (e) { return e.rule !== rule; })[0];
+
+  return (error && error.msg) || null;
+};
 
 /**
  * Removes errors by matching against the id.
@@ -1762,6 +1801,7 @@ var messages = {
   ext: function (field) { return ("The " + field + " field must be a valid file."); },
   image: function (field) { return ("The " + field + " field must be an image."); },
   in: function (field) { return ("The " + field + " field must be a valid value."); },
+  integer: function (field) { return ("The " + field + " field must be an integer."); },
   ip: function (field) { return ("The " + field + " field must be a valid ip address."); },
   max: function (field, ref) {
     var length = ref[0];
@@ -1791,7 +1831,7 @@ var messages = {
   size: function (field, ref) {
     var size = ref[0];
 
-    return ("The " + field + " field must be less than " + size + " KB.");
+    return ("The " + field + " size must be less than " + (formatFileSize(size)) + ".");
 },
   url: function (field) { return ("The " + field + " field is not a valid URL."); }
 };
@@ -2036,22 +2076,6 @@ var DEFAULT_OPTIONS = {
   }
 };
 
-/**
- * Generates the default flags for the field.
- * @param {Object} options
- */
-var generateFlags = function (options) { return ({
-  untouched: true,
-  touched: false,
-  dirty: false,
-  pristine: true,
-  valid: null,
-  invalid: null,
-  validated: false,
-  pending: false,
-  required: !!options.rules.required
-}); };
-
 var Field = function Field (el, options) {
   if ( options === void 0 ) options = {};
 
@@ -2068,7 +2092,17 @@ var Field = function Field (el, options) {
   options = assign({}, DEFAULT_OPTIONS, options);
   this.validity = options.validity;
   this.aria = options.aria;
-  this.flags = generateFlags(options);
+  this.flags = {
+    untouched: true,
+    touched: false,
+    dirty: false,
+    pristine: true,
+    valid: null,
+    invalid: null,
+    validated: false,
+    pending: false,
+    required: false
+  };
   this.vm = options.vm || this.vm;
   this.component = options.component || this.component;
   this.update(options);
@@ -2183,8 +2217,13 @@ Field.prototype.update = function update (options) {
   this.updateDependencies();
   this.addActionListeners();
 
+  // update required flag flags
+  if (options.rules !== undefined) {
+    this.flags.required = this.isRequired;
+  }
+
   // validate if it was validated before and field was updated and there was a rules mutation.
-  if (this.flags.validated && options.rules && this.updated) {
+  if (this.flags.validated && options.rules !== undefined && this.updated) {
     this.validator.validate(("#" + (this.id)));
   }
 
@@ -2671,16 +2710,21 @@ var messages$1 = {
 }
 };
 
-var date = {
-  make: function (moment) { return ({
-    date_format: date_format(moment),
-    after: after(moment),
-    before: before(moment),
-    date_between: date_between(moment)
-  }); },
-  messages: messages$1,
-  installed: false
+var installDate = function (ref, ref$1) {
+  var Validator = ref.Validator;
+  var moment = ref$1.moment;
+
+  if (installDate.installed) { return; }
+
+  Validator.extend('after', after(moment));
+  Validator.extend('before', before(moment));
+  Validator.extend('date_format', date_format(moment));
+  Validator.extend('date_between', date_between(moment));
+  Validator.updateDictionary({ en: { messages: messages$1 } });
+  installDate.installed = true;
 };
+
+installDate.installed = false;
 
 var LOCALE = 'en';
 var STRICT_MODE = true;
@@ -2843,25 +2887,10 @@ Validator.extend = function extend (name, validator) {
 Validator.installDateTimeValidators = function installDateTimeValidators (moment) {
   if (typeof moment !== 'function') {
     warn('To use the date-time validators you must provide moment reference.');
-
     return false;
   }
 
-  if (date.installed) {
-    return true;
-  }
-
-  var validators = date.make(moment);
-  Object.keys(validators).forEach(function (name) {
-    Validator.extend(name, validators[name]);
-  });
-
-  Validator.updateDictionary({
-    en: {
-      messages: date.messages
-    }
-  });
-  date.installed = true;
+  installDate({ Validator: Validator }, { moment: moment });
 
   return true;
 };
@@ -3046,7 +3075,7 @@ Validator.prototype._test = function _test (field, value, rule) {
     params = params.length ? params : [true];
   }
 
-  if (date.installed && this._isADateRule(rule.name)) {
+  if (installDate.installed && this._isADateRule(rule.name)) {
     var dateFormat = this._getDateFormat(field.rules);
     if (rule.name !== 'date_format') {
       params.push(dateFormat);
@@ -3676,8 +3705,19 @@ var install = function (_Vue, options) {
   Vue.directive('validate', createDirective(config$$1));
 };
 
+var use = function (plugin, options) {
+  if ( options === void 0 ) options = {};
+
+  if (!isCallable(plugin)) {
+    return warn('The plugin must be a callable function');
+  }
+
+  plugin({ Validator: Validator, ErrorBag: ErrorBag, Rules: Rules }, options);
+};
+
 var index = {
   install: install,
+  use: use,
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,

@@ -26,22 +26,6 @@ const DEFAULT_OPTIONS = {
   }
 };
 
-/**
- * Generates the default flags for the field.
- * @param {Object} options
- */
-const generateFlags = (options) => ({
-  untouched: true,
-  touched: false,
-  dirty: false,
-  pristine: true,
-  valid: null,
-  invalid: null,
-  validated: false,
-  pending: false,
-  required: !!options.rules.required
-});
-
 export default class Field {
   constructor (el, options = {}) {
     this.id = uniqId();
@@ -57,7 +41,17 @@ export default class Field {
     options = assign({}, DEFAULT_OPTIONS, options);
     this.validity = options.validity;
     this.aria = options.aria;
-    this.flags = generateFlags(options);
+    this.flags = {
+      untouched: true,
+      touched: false,
+      dirty: false,
+      pristine: true,
+      valid: null,
+      invalid: null,
+      validated: false,
+      pending: false,
+      required: false
+    };
     this.vm = options.vm || this.vm;
     this.component = options.component || this.component;
     this.update(options);
@@ -170,8 +164,13 @@ export default class Field {
     this.updateDependencies();
     this.addActionListeners();
 
+    // update required flag flags
+    if (options.rules !== undefined) {
+      this.flags.required = this.isRequired;
+    }
+
     // validate if it was validated before and field was updated and there was a rules mutation.
-    if (this.flags.validated && options.rules && this.updated) {
+    if (this.flags.validated && options.rules !== undefined && this.updated) {
       this.validator.validate(`#${this.id}`);
     }
 
