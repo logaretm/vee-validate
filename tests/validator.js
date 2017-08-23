@@ -800,17 +800,17 @@ test('it can set flags for attached fields', () => {
   expect(field.updateClasses).toHaveBeenCalled();
 });
 
-test('cleans errors on the next tick if available', () => {
+test('resets errors on the next tick if available', () => {
   // not available.
   let v = new Validator();
   const vm = { $nextTick: jest.fn(cb => cb()) };
   v.errors.add('some', 'message', 'by');
-  v.clean();
+  v.reset();
   expect(v.errors.count()).toBe(0);
 
   v = new Validator(null, { vm });
   v.errors.add('some', 'message', 'by');
-  v.clean();
+  v.reset();
   expect(vm.$nextTick).toHaveBeenCalled();
   expect(v.errors.count()).toBe(0);
 })

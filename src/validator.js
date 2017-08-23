@@ -28,7 +28,7 @@ export default class Validator {
     this.fastExit = options.fastExit || false;
     this.ownerId = options.vm && options.vm._uid;
     // create it statically since we don't need constant access to the vm.
-    this.clean = options.vm && isCallable(options.vm.$nextTick) ? () => {
+    this.reset = options.vm && isCallable(options.vm.$nextTick) ? () => {
       options.vm.$nextTick(() => {
         this.fields.items.forEach(i => i.reset());
         this.errors.clear();
@@ -36,6 +36,10 @@ export default class Validator {
     } : () => {
       this.fields.items.forEach(i => i.reset());
       this.errors.clear();
+    };
+    this.clean = () => {
+      warn('validator.clean is marked for deprecation, please use validator.reset instead.');
+      this.reset();
     };
 
     // if momentjs is present, install the validators.
