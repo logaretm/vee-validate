@@ -1,6 +1,18 @@
 import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn, toArray } from './utils';
 import Generator from './generator';
 
+const DEFAULT_FLAGS = {
+  untouched: true,
+  touched: false,
+  dirty: false,
+  pristine: true,
+  valid: null,
+  invalid: null,
+  validated: false,
+  pending: false,
+  required: false
+};
+
 const DEFAULT_OPTIONS = {
   targetOf: null,
   initial: false,
@@ -41,17 +53,7 @@ export default class Field {
     options = assign({}, DEFAULT_OPTIONS, options);
     this.validity = options.validity;
     this.aria = options.aria;
-    this.flags = {
-      untouched: true,
-      touched: false,
-      dirty: false,
-      pristine: true,
-      valid: null,
-      invalid: null,
-      validated: false,
-      pending: false,
-      required: false
-    };
+    this.flags = assign({}, DEFAULT_FLAGS);
     this.vm = options.vm || this.vm;
     this.component = options.component || this.component;
     this.update(options);
@@ -187,6 +189,18 @@ export default class Field {
   }
 
   /**
+   * Resets field flags and errors.
+   */
+  reset () {
+    Object.keys(this.flags).forEach(flag => {
+      this.flags[flag] = DEFAULT_FLAGS[flag];
+    });
+
+    this.addActionListeners();
+    this.$validator.errors.removeById(this.id);
+  }
+
+  /**
    * Determines if the field requires references to target fields.
   */
   updateDependencies () {
@@ -256,7 +270,7 @@ export default class Field {
    * Removes listeners.
    * @param {RegExp} tag
    */
-  unwatch (tag) {
+  unwatch (tag = null) {
     if (!tag) {
       this.watchers.forEach(w => w.unwatch());
       this.watchers = [];

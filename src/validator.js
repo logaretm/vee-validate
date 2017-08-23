@@ -30,9 +30,11 @@ export default class Validator {
     // create it statically since we don't need constant access to the vm.
     this.clean = options.vm && isCallable(options.vm.$nextTick) ? () => {
       options.vm.$nextTick(() => {
+        this.fields.items.forEach(i => i.reset());
         this.errors.clear();
       });
     } : () => {
+      this.fields.items.forEach(i => i.reset());
       this.errors.clear();
     };
 
