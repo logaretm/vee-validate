@@ -440,16 +440,11 @@ export default class Validator {
    */
   flag (name, flags) {
     const field = this._resolveField(name);
-    if (! field) {
+    if (! field || !flags) {
       return;
     }
 
-    Object.keys(field.flags).forEach(flag => {
-      field.flags[flag] = flags[flag] !== undefined ? flags[flag] : field.flags[flag];
-    });
-    if (field.classes) {
-      field.updateClasses();
-    }
+    field.setFlags(flags);
   }
 
   /**
@@ -641,13 +636,11 @@ export default class Validator {
     }
 
     return this._validate(field, value).then(result => {
-      field.flags.pending = false;
-      field.flags.valid = result;
-      field.flags.invalid = !result;
-      field.flags.validated = true;
-      field.updateAriaAttrs();
-      field.updateCustomValidity();
-      field.updateClasses();
+      field.setFlags({
+        pending: false,
+        valid: result,
+        validated: true
+      });
 
       return result;
     });

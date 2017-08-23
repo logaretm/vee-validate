@@ -197,7 +197,38 @@ export default class Field {
     });
 
     this.addActionListeners();
-    this.$validator.errors.removeById(this.id);
+    this.updateClasses();
+    this.validator.errors.removeById(this.id);
+  }
+
+  /**
+   * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
+   * @param {Object} flags 
+   */
+  setFlags (flags) {
+    const negated = {
+      pristine: 'dirty',
+      dirty: 'pristene',
+      valid: 'invalid',
+      invalid: 'valid',
+      touched: 'untouched',
+      untouched: 'touched'
+    };
+
+    Object.keys(flags).forEach(flag => {
+      this.flags[flag] = flags[flag];
+      // if it has a negation and was not specified, set it as well.
+      if (negated[flag] && flags[negated[flag]] === undefined) {
+        this.flags[negated[flag]] = !flags[flag];
+      }
+    });
+
+    if (flags.untouched || flags.touched) {
+      this.addActionListeners();
+    }
+    this.updateClasses();
+    this.updateAriaAttrs();
+    this.updateCustomValidity();
   }
 
   /**

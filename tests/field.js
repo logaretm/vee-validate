@@ -542,3 +542,37 @@ test('set field custom validity if possible', () => {
   field.updateCustomValidity();
   expect(el.setCustomValidity).toHaveBeenLastCalledWith('');
 });
+
+test('resets field state', () => {
+  const vm = {
+    $validator: {
+      errors: {
+        removeById: jest.fn()
+      }
+    }
+  };
+  const field = new Field(null, { vm });
+  field.flags.valid = true;
+
+  field.reset();
+  expect(field.flags.valid).toBe(null);
+  expect(vm.$validator.errors.removeById).toHaveBeenCalledWith(field.id);
+});
+
+test('sets the field flags', () => {
+  const field = new Field(null);
+  field.setFlags({
+    valid: false
+  });
+  expect(field.flags.invalid).toBe(true);
+  expect(field.flags.valid).toBe(false);
+
+  // specifiying the negated flag is respected.
+  field.setFlags({
+    touched: false,
+    untouched: false
+  });
+
+  expect(field.flags.touched).toBe(false);
+  expect(field.flags.untouched).toBe(false);
+});
