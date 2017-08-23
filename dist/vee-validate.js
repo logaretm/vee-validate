@@ -655,6 +655,33 @@ var ip = function (value, ref) {
   return isIP(value, version);
 };
 
+var length = function (value, ref) {
+  var length = ref[0];
+  var max = ref[1]; if ( max === void 0 ) max = undefined;
+
+  if (value === undefined || value === null) {
+    return false;
+  }
+  var compare = function (value) {
+    if (max === undefined) {
+      return value.length === length;
+    }
+
+    return value.length >= length && value.length <= max;
+  };
+
+  if (!value.length) {
+    value = String(value);
+  }
+
+  return {
+    valid: compare(value),
+    data: {
+      isArray: Array.isArray(value)
+    }
+  };
+};
+
 var integer = function (value) {
   if (Array.isArray(value)) {
     return value.every(function (val) { return /^-?[0-9]+$/.test(String(val)); });
@@ -954,6 +981,7 @@ var Rules = {
   image: image,
   in: validate$8,
   integer: integer,
+  length: length,
   ip: ip,
   max: max,
   max_value: max_value,
@@ -1803,6 +1831,17 @@ var messages = {
   in: function (field) { return ("The " + field + " field must be a valid value."); },
   integer: function (field) { return ("The " + field + " field must be an integer."); },
   ip: function (field) { return ("The " + field + " field must be a valid ip address."); },
+  length: function (field, ref, ref$1) {
+    var length = ref[0];
+    var max = ref[1];
+    var isArray = ref$1.isArray;
+
+    if (max) {
+      return ("The " + field + " length be between " + length + " and " + max + ".")
+    }
+
+    return ("The " + field + " length must be " + length + ".")
+  },
   max: function (field, ref) {
     var length = ref[0];
 
@@ -2051,6 +2090,18 @@ Generator.resolveGetter = function resolveGetter (el, vnode, model) {
   }
 };
 
+var DEFAULT_FLAGS = {
+  untouched: true,
+  touched: false,
+  dirty: false,
+  pristine: true,
+  valid: null,
+  invalid: null,
+  validated: false,
+  pending: false,
+  required: false
+};
+
 var DEFAULT_OPTIONS = {
   targetOf: null,
   initial: false,
@@ -2092,17 +2143,7 @@ var Field = function Field (el, options) {
   options = assign({}, DEFAULT_OPTIONS, options);
   this.validity = options.validity;
   this.aria = options.aria;
-  this.flags = {
-    untouched: true,
-    touched: false,
-    dirty: false,
-    pristine: true,
-    valid: null,
-    invalid: null,
-    validated: false,
-    pending: false,
-    required: false
-  };
+  this.flags = assign({}, DEFAULT_FLAGS);
   this.vm = options.vm || this.vm;
   this.component = options.component || this.component;
   this.update(options);
@@ -2240,6 +2281,53 @@ Field.prototype.update = function update (options) {
 };
 
 /**
+ * Resets field flags and errors.
+ */
+Field.prototype.reset = function reset () {
+    var this$1 = this;
+
+  Object.keys(this.flags).forEach(function (flag) {
+    this$1.flags[flag] = DEFAULT_FLAGS[flag];
+  });
+
+  this.addActionListeners();
+  this.updateClasses();
+  this.validator.errors.removeById(this.id);
+};
+
+/**
+ * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
+ * @param {Object} flags 
+ */
+Field.prototype.setFlags = function setFlags (flags) {
+    var this$1 = this;
+
+  var negated = {
+    pristine: 'dirty',
+    dirty: 'pristene',
+    valid: 'invalid',
+    invalid: 'valid',
+    touched: 'untouched',
+    untouched: 'touched'
+  };
+
+  Object.keys(flags).forEach(function (flag) {
+    this$1.flags[flag] = flags[flag];
+    // if it has a negation and was not specified, set it as well.
+    if (negated[flag] && flags[negated[flag]] === undefined) {
+      this$1.flags[negated[flag]] = !flags[flag];
+    }
+  });
+
+  if (flags.untouched || flags.touched) {
+    this.addActionListeners();
+  }
+  this.updateClasses();
+  this.updateAriaAttrs();
+  this.updateCustomValidity();
+};
+
+/**
  * Determines if the field requires references to target fields.
 */
 Field.prototype.updateDependencies = function updateDependencies () {
@@ -2315,6 +2403,8 @@ Field.prototype.updateDependencies = function updateDependencies () {
  * @param {RegExp} tag
  */
 Field.prototype.unwatch = function unwatch (tag) {
+    if ( tag === void 0 ) tag = null;
+
   if (!tag) {
     this.watchers.forEach(function (w) { return w.unwatch(); });
     this.watchers = [];
@@ -2749,12 +2839,18 @@ var Validator = function Validator (validations, options) {
   this.fastExit = options.fastExit || false;
   this.ownerId = options.vm && options.vm._uid;
   // create it statically since we don't need constant access to the vm.
-  this.clean = options.vm && isCallable(options.vm.$nextTick) ? function () {
+  this.reset = options.vm && isCallable(options.vm.$nextTick) ? function () {
     options.vm.$nextTick(function () {
+      this$1.fields.items.forEach(function (i) { return i.reset(); });
       this$1.errors.clear();
     });
   } : function () {
+    this$1.fields.items.forEach(function (i) { return i.reset(); });
     this$1.errors.clear();
+  };
+  this.clean = function () {
+    warn('validator.clean is marked for deprecation, please use validator.reset instead.');
+    this$1.reset();
   };
 
   // if momentjs is present, install the validators.
@@ -3173,16 +3269,11 @@ Validator.prototype.attach = function attach (field) {
  */
 Validator.prototype.flag = function flag (name, flags) {
   var field = this._resolveField(name);
-  if (! field) {
+  if (! field || !flags) {
     return;
   }
 
-  Object.keys(field.flags).forEach(function (flag) {
-    field.flags[flag] = flags[flag] !== undefined ? flags[flag] : field.flags[flag];
-  });
-  if (field.classes) {
-    field.updateClasses();
-  }
+  field.setFlags(flags);
 };
 
 /**
@@ -3193,11 +3284,18 @@ Validator.prototype.flag = function flag (name, flags) {
  */
 Validator.prototype.detach = function detach (name, scope) {
   var field = name instanceof Field ? name : this._resolveField(name, scope);
-  if (field) {
-    field.destroy();
-    this.errors.removeById(field.id);
-    this.fields.remove(field);
+  if (!field) { return; }
+
+  field.destroy();
+  this.errors.removeById(field.id);
+  this.fields.remove(field);
+  var flags = this.fieldBag;
+  if (field.scope) {
+    delete flags[("$" + (field.scope))][field.name];
+  } else {
+    delete flags[field.name];
   }
+  this.fieldBag = Object.assign({}, flags);
 };
 
 /**
@@ -3378,13 +3476,11 @@ Validator.prototype.validate = function validate (name, value, scope) {
   }
 
   return this._validate(field, value).then(function (result) {
-    field.flags.pending = false;
-    field.flags.valid = result;
-    field.flags.invalid = !result;
-    field.flags.validated = true;
-    field.updateAriaAttrs();
-    field.updateCustomValidity();
-    field.updateClasses();
+    field.setFlags({
+      pending: false,
+      valid: result,
+      validated: true
+    });
 
     return result;
   });

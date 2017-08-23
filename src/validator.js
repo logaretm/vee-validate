@@ -459,11 +459,18 @@ export default class Validator {
    */
   detach (name, scope) {
     let field = name instanceof Field ? name : this._resolveField(name, scope);
-    if (field) {
-      field.destroy();
-      this.errors.removeById(field.id);
-      this.fields.remove(field);
+    if (!field) return;
+
+    field.destroy();
+    this.errors.removeById(field.id);
+    this.fields.remove(field);
+    const flags = this.fieldBag;
+    if (field.scope) {
+      delete flags[`$${field.scope}`][field.name];
+    } else {
+      delete flags[field.name];
     }
+    this.fieldBag = Object.assign({}, flags);
   }
 
   /**
