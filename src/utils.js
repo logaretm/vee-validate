@@ -36,6 +36,18 @@ export const isEqual = (lhs, rhs) => {
     return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
   }
 
+  if (Array.isArray(lhs) && Array.isArray(rhs)) {
+    if (lhs.length !== rhs.length) return false;
+
+    for (let i = 0; i < lhs.length; i++) {
+      if (!isEqual(lhs[i], rhs[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   // if both are objects, compare each key recursively.
   if (isObject(lhs) && isObject(rhs)) {
     return Object.keys(lhs).every(key => {
