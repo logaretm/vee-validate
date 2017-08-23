@@ -18,6 +18,13 @@ export default {
   in: (field) => `The ${field} field must be a valid value.`,
   integer: (field) => `The ${field} field must be an integer.`,
   ip: (field) => `The ${field} field must be a valid ip address.`,
+  length: (field, [length, max], { isArray }) => {
+    if (max) {
+      return `The ${field} length be between ${length} and ${max}.`
+    }
+
+    return `The ${field} length must be ${length}.`
+  },
   max: (field, [length]) => `The ${field} field may not be greater than ${length} characters.`,
   max_value: (field, [max]) => `The ${field} field must be ${max} or less.`,
   mimes: (field) => `The ${field} field must have a valid file type.`,

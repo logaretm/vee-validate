@@ -19,6 +19,13 @@ const messages = {
   image: (field) => `The ${field} must be an image.`,
   in: (field) => `The ${field} must be a valid value.`,
   ip: (field) => `The ${field} must be a valid ip address.`,
+  length: (field, [length, max], { isArray }) => {
+    if (max) {
+      return `The ${field} length be between ${length} and ${max}.`;
+    }
+
+    return `The ${field} length must be ${length}.`;
+  },
   max: (field, [length]) => `The ${field} may not be greater than ${length} characters.`,
   max_value: (field, [max]) => `The ${field} must be ${max} or less.`,
   mimes: (field) => `The ${field} must have a valid file type.`,
