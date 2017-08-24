@@ -1,4 +1,4 @@
-import { formatFileSize } from '../src/utils';
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
 
 const messages = {
   _default: (field) => `ข้อมูล ${field} ไม่ถูกต้อง`,
@@ -40,7 +40,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 

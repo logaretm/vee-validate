@@ -32,13 +32,13 @@ const messages = {
 };
 
 const locale = {
-    name: 'ja',
-    messages,
-    attributes: {}
+  name: 'ja',
+  messages,
+  attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
-    VeeValidate.Validator.addLocale(locale);
+if (isDefinedGlobally('VeeValidate.Validator')) {
+  VeeValidate.Validator.addLocale(locale);
 }
 
 export default locale;

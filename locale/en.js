@@ -1,4 +1,4 @@
-import { formatFileSize } from '../src/utils';
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
 
 export const messages = {
   _default: (field) => `The ${field} value is not valid.`,
@@ -18,7 +18,7 @@ export const messages = {
   in: (field) => `The ${field} field must be a valid value.`,
   integer: (field) => `The ${field} field must be an integer.`,
   ip: (field) => `The ${field} field must be a valid ip address.`,
-  length: (field, [length, max], { isArray }) => {
+  length: (field, [length, max]) => {
     if (max) {
       return `The ${field} length be between ${length} and ${max}.`;
     }
@@ -44,7 +44,8 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
+  // eslint-disable-next-line
   VeeValidate.Validator.addLocale(locale);
 }
 
