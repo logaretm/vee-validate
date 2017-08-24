@@ -22,8 +22,13 @@ const install = (_Vue, options = {}) => {
   }
 
   if (options) {
-    if (options.locale) Validator.setLocale(config.locale);
-    if (options.strict) Validator.setStrictMode(config.strict);
+    if (options.locale) {
+      Validator.locale = options.locale;
+    }
+
+    if (options.strict) {
+      Validator.setStrictMode(config.strict);
+    }
   }
 
   Vue.mixin(makeMixin(Vue, config));
