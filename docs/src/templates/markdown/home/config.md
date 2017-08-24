@@ -25,7 +25,9 @@ const config = {
     dirty: 'dirty' // control has been interacted with
   },
   events: 'input|blur',
-  inject: true
+  inject: true,
+  validity: true,
+  aria: true
 };
 
 Vue.use(VeeValidate, config);
@@ -103,6 +105,20 @@ Vue.use(VeeValidate, config);
             <td>true</td>
             <td>
               Specifies if a validator instance should be injected automatically for all components, check [Component Injections](advanced#injections) for more informatin.
+            </td>
+        </tr>
+        <tr>
+            <td class="is-method-name">validity</td>
+            <td>true</td>
+            <td>
+                Set custom validity (Constraint validation)[https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation] on native HTML inputs.
+            </td>
+        </tr>
+        <tr>
+            <td class="is-method-name">aria</td>
+            <td>true</td>
+            <td>
+                Sets `aria-invalid` and `aria-required` on native HTML inputs.
             </td>
         </tr>
     </tbody>
