@@ -260,12 +260,20 @@ export default class Field {
         el = this.vm.$refs[selector.slice(1)];
       } else {
         // try a query selection.
-        el = this.vm.$el.querySelector(selector);
+        try {
+          el = this.vm.$el.querySelector(selector);
+        } catch (err) {
+          el = null;
+        }
       }
 
       if (!el) {
-        // try a name selector
-        el = this.vm.$el.querySelector(`input[name="${selector}"]`);
+        try {
+          // try a name selector
+          el = this.vm.$el.querySelector(`input[name="${selector}"]`);
+        } catch (err) {
+          el = null;
+        }
       }
 
       if (!el) {
