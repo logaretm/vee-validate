@@ -14,10 +14,5 @@ export default (value, [length, max = undefined]) => {
     value = String(value);
   }
 
-  return {
-    valid: compare(value),
-    data: {
-      isArray: Array.isArray(value)
-    }
-  };
+  return compare(value);
 };

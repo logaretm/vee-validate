@@ -1,7 +1,7 @@
 import Rules from './rules';
 import ErrorBag from './errorBag';
 import Dictionary from './dictionary';
-import messages from './messages';
+import { messages } from '../locale/en';
 import { isObject, isCallable, toArray, warn, createError, assign, find } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
