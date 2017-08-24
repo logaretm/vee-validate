@@ -355,3 +355,21 @@ test('generates field options', () => {
     el
   });
 });
+
+test('generates fake vm', () => {
+  const vnode = {
+    context: {
+      $el: 'this is an el',
+      $refs: { myref: 1 },
+      $watch: jest.fn(),
+      $validator: {
+        validate: jest.fn(),
+        errors: {}
+      }
+    }
+  };
+
+  const vm = Generator.makeVM(vnode.context);
+  expect(vm.$el).toBe('this is an el');
+  expect(vm.$refs.myref).toBe(1);
+});
