@@ -809,6 +809,11 @@ const normalizeRules = (rules) => {
     return validations;
   }
 
+  if (typeof rules !== 'string') {
+    warn('rules must be either a string or an object.');
+    return {};
+  }
+
   rules.split('|').forEach(rule => {
     const parsedRule = parseRule(rule);
     if (! parsedRule.name) {
@@ -2202,7 +2207,9 @@ class Field {
 
     this.addActionListeners();
     this.updateClasses();
-    this.validator.errors.removeById(this.id);
+    if (this.validator.errors && isCallable(this.validator.errors.removeById)) {
+      this.validator.errors.removeById(this.id);
+    }
   }
 
   /**
@@ -2227,7 +2234,12 @@ class Field {
       }
     });
 
-    if (flags.untouched || flags.touched) {
+    if (
+      flags.untouched !== undefined ||
+      flags.touched !== undefined ||
+      flags.dirty !== undefined ||
+      flags.pristine !== undefined
+    ) {
       this.addActionListeners();
     }
     this.updateClasses();
@@ -2263,8 +2275,8 @@ class Field {
       if (selector[0] === '$') {
         el = this.vm.$refs[selector.slice(1)];
       } else {
-        // try a query selection.
         try {
+          // try query selector
           el = this.vm.$el.querySelector(selector);
         } catch (err) {
           el = null;
@@ -2704,6 +2716,7 @@ class Validator {
       this.fields.items.forEach(i => i.reset());
       this.errors.clear();
     };
+    /* istanbul ignore next */
     this.clean = () => {
       warn('validator.clean is marked for deprecation, please use validator.reset instead.');
       this.reset();

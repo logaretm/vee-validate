@@ -839,6 +839,11 @@ var normalizeRules = function (rules) {
     return validations;
   }
 
+  if (typeof rules !== 'string') {
+    warn('rules must be either a string or an object.');
+    return {};
+  }
+
   rules.split('|').forEach(function (rule) {
     var parsedRule = parseRule(rule);
     if (! parsedRule.name) {
@@ -2337,7 +2342,9 @@ Field.prototype.reset = function reset () {
 
   this.addActionListeners();
   this.updateClasses();
-  this.validator.errors.removeById(this.id);
+  if (this.validator.errors && isCallable(this.validator.errors.removeById)) {
+    this.validator.errors.removeById(this.id);
+  }
 };
 
 /**
@@ -2364,7 +2371,12 @@ Field.prototype.setFlags = function setFlags (flags) {
     }
   });
 
-  if (flags.untouched || flags.touched) {
+  if (
+    flags.untouched !== undefined ||
+    flags.touched !== undefined ||
+    flags.dirty !== undefined ||
+    flags.pristine !== undefined
+  ) {
     this.addActionListeners();
   }
   this.updateClasses();
@@ -2405,8 +2417,8 @@ Field.prototype.updateDependencies = function updateDependencies () {
     if (selector[0] === '$') {
       el = this$1.vm.$refs[selector.slice(1)];
     } else {
-      // try a query selection.
       try {
+        // try query selector
         el = this$1.vm.$el.querySelector(selector);
       } catch (err) {
         el = null;
@@ -2896,6 +2908,7 @@ var Validator = function Validator (validations, options) {
     this$1.fields.items.forEach(function (i) { return i.reset(); });
     this$1.errors.clear();
   };
+  /* istanbul ignore next */
   this.clean = function () {
     warn('validator.clean is marked for deprecation, please use validator.reset instead.');
     this$1.reset();
