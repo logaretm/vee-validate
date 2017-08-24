@@ -198,7 +198,9 @@ export default class Field {
 
     this.addActionListeners();
     this.updateClasses();
-    this.validator.errors.removeById(this.id);
+    if (this.validator.errors && isCallable(this.validator.errors.removeById)) {
+      this.validator.errors.removeById(this.id);
+    }
   }
 
   /**
