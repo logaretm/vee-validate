@@ -268,12 +268,7 @@ export default class Field {
       }
 
       if (!el) {
-        try {
-          // try a name selector
-          el = this.vm.$el.querySelector(`input[name="${selector}"]`);
-        } catch (err) {
-          el = null;
-        }
+        el = this.vm.$el.querySelector(`input[name="${selector}"]`);
       }
 
       if (!el) {

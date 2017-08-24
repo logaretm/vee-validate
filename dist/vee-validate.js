@@ -2373,11 +2373,14 @@ Field.prototype.updateDependencies = function updateDependencies () {
       el = this$1.vm.$refs[selector.slice(1)];
     } else {
       // try a query selection.
-      el = this$1.vm.$el.querySelector(selector);
+      try {
+        el = this$1.vm.$el.querySelector(selector);
+      } catch (err) {
+        el = null;
+      }
     }
 
     if (!el) {
-      // try a name selector
       el = this$1.vm.$el.querySelector(("input[name=\"" + selector + "\"]"));
     }
 
