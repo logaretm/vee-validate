@@ -180,6 +180,11 @@ export const normalizeRules = (rules) => {
     return validations;
   }
 
+  if (typeof rules !== 'string') {
+    warn('rules must be either a string or an object.');
+    return {};
+  }
+
   rules.split('|').forEach(rule => {
     const parsedRule = parseRule(rule);
     if (! parsedRule.name) {

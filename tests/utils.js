@@ -241,29 +241,39 @@ test('it generates a unique id', () => {
   expect(ids.size).toBe(1000);
 });
 
-test('it normalizes string validation rules', () => {
-  const rules = utils.normalizeRules('required|email|min:3|dummy:1,2,3|||');
-  expect(rules).toEqual ({
-    required: [],
-    email: [],
-    min: ['3'],
-    dummy: ['1', '2', '3']
+describe('normalizes rules', () => {
+  test('it normalizes string validation rules', () => {
+    const rules = utils.normalizeRules('required|email|min:3|dummy:1,2,3|||');
+    expect(rules).toEqual({
+      required: [],
+      email: [],
+      min: ['3'],
+      dummy: ['1', '2', '3']
+    });
   });
-});
 
-test('it normalizes object validation rules', () => {
-  const rules = utils.normalizeRules({
-    required: true,
-    email: true,
-    min: 3,
-    dummy: [1, 2, 3],
-    numeric: false
+  test('returns empty object if falsy rules value', () => {
+    expect(utils.normalizeRules('')).toEqual({});
+    expect(utils.normalizeRules(false)).toEqual({});
+    expect(utils.normalizeRules(null)).toEqual({});
+    expect(utils.normalizeRules(undefined)).toEqual({});
+    expect(utils.normalizeRules(1)).toEqual({});
   });
-  expect(rules).toEqual ({
-    required: [],
-    email: [],
-    min: [3],
-    dummy: [1, 2, 3]
+
+  test('it normalizes object validation rules', () => {
+    const rules = utils.normalizeRules({
+      required: true,
+      email: true,
+      min: 3,
+      dummy: [1, 2, 3],
+      numeric: false
+    });
+    expect(rules).toEqual({
+      required: [],
+      email: [],
+      min: [3],
+      dummy: [1, 2, 3]
+    });
   });
 });
 
@@ -346,4 +356,12 @@ test('formats file sizes', () => {
   expect(utils.formatFileSize(1000)).toBe('1000 KB');
   expect(utils.formatFileSize(1024)).toBe('1 MB');
   expect(utils.formatFileSize(1050000)).toBe('1 GB');
+});
+
+test('checks for property existence in global scope', () => {
+  expect(utils.isDefinedGlobally('myobj.myprop')).toBe(false);
+  global.myobj = {
+    myprop: true
+  };
+  expect(utils.isDefinedGlobally('myobj.myprop')).toBe(true);
 });
