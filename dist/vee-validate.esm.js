@@ -2738,6 +2738,33 @@ class Validator {
   }
 
   /**
+   * @return {String}
+   */
+  static get locale () {
+    return LOCALE;
+  }
+
+  /**
+   * @param {String} value
+   */
+  set locale (value) {
+    Validator.locale = value;
+  }
+
+  /**
+   * @param {String} value
+   */
+  static set locale (value) {
+    /* istanbul ignore if */
+    if (!DICTIONARY.hasLocale(value)) {
+      // eslint-disable-next-line
+      warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+    }
+
+    LOCALE = value;
+  }
+
+  /**
    * @return {Object}
    */
   get rules () {
@@ -2859,13 +2886,7 @@ class Validator {
    * @param {String} language The locale id.
    */
   static setLocale (language = 'en') {
-    /* istanbul ignore if */
-    if (! DICTIONARY.hasLocale(language)) {
-      // eslint-disable-next-line
-      warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
-    }
-
-    LOCALE = language;
+    Validator.locale = language;
   }
 
   /**
@@ -2900,6 +2921,21 @@ class Validator {
 
   addLocale (locale) {
     Validator.addLocale(locale);
+  }
+
+  localize (lang, dictionary) {
+    Validator.localize(lang, dictionary);
+  }
+
+  static localize (lang, dictionary) {
+    // merge the dictionary.
+    if (dictionary) {
+      dictionary = assign({}, dictionary, { name: lang });
+      Validator.addLocale(dictionary);
+    }
+
+    // set the locale.
+    Validator.locale = lang;
   }
 
   /**
@@ -3171,13 +3207,7 @@ class Validator {
    * @param {string} language locale or language id.
    */
   setLocale (language) {
-    /* istanbul ignore if */
-    if (! this.dictionary.hasLocale(language)) {
-      // eslint-disable-next-line
-      warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
-    }
-
-    LOCALE = language;
+    this.locale = language;
   }
 
   /**
@@ -3607,7 +3637,7 @@ const mapFields = (fields) => {
 
 let Vue;
 
-const install = (_Vue, options) => {
+const install = (_Vue, options = {}) => {
   if (Vue) {
     warn('already installed, Vue.use(VeeValidate) should only be called once.');
     return;
@@ -3619,8 +3649,15 @@ const install = (_Vue, options) => {
     Validator.updateDictionary(config$$1.dictionary);
   }
 
-  Validator.setLocale(config$$1.locale);
-  Validator.setStrictMode(config$$1.strict);
+  if (options) {
+    if (options.locale) {
+      Validator.locale = options.locale;
+    }
+
+    if (options.strict) {
+      Validator.setStrictMode(config$$1.strict);
+    }
+  }
 
   Vue.mixin(makeMixin(Vue, config$$1));
   Vue.directive('validate', createDirective(config$$1));

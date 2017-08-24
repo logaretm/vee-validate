@@ -71,6 +71,33 @@ export default class Validator {
   }
 
   /**
+   * @return {String}
+   */
+  static get locale () {
+    return LOCALE;
+  }
+
+  /**
+   * @param {String} value
+   */
+  set locale (value) {
+    Validator.locale = value;
+  }
+
+  /**
+   * @param {String} value
+   */
+  static set locale (value) {
+    /* istanbul ignore if */
+    if (!DICTIONARY.hasLocale(value)) {
+      // eslint-disable-next-line
+      warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+    }
+
+    LOCALE = value;
+  }
+
+  /**
    * @return {Object}
    */
   get rules () {
@@ -192,13 +219,7 @@ export default class Validator {
    * @param {String} language The locale id.
    */
   static setLocale (language = 'en') {
-    /* istanbul ignore if */
-    if (! DICTIONARY.hasLocale(language)) {
-      // eslint-disable-next-line
-      warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
-    }
-
-    LOCALE = language;
+    Validator.locale = language;
   }
 
   /**
@@ -233,6 +254,21 @@ export default class Validator {
 
   addLocale (locale) {
     Validator.addLocale(locale);
+  }
+
+  localize (lang, dictionary) {
+    Validator.localize(lang, dictionary);
+  }
+
+  static localize (lang, dictionary) {
+    // merge the dictionary.
+    if (dictionary) {
+      dictionary = assign({}, dictionary, { name: lang });
+      Validator.addLocale(dictionary);
+    }
+
+    // set the locale.
+    Validator.locale = lang;
   }
 
   /**
@@ -504,13 +540,7 @@ export default class Validator {
    * @param {string} language locale or language id.
    */
   setLocale (language) {
-    /* istanbul ignore if */
-    if (! this.dictionary.hasLocale(language)) {
-      // eslint-disable-next-line
-      warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
-    }
-
-    LOCALE = language;
+    this.locale = language;
   }
 
   /**
