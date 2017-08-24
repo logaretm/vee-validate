@@ -37,6 +37,7 @@ export default class Validator {
       this.fields.items.forEach(i => i.reset());
       this.errors.clear();
     };
+    /* istanbul ignore next */
     this.clean = () => {
       warn('validator.clean is marked for deprecation, please use validator.reset instead.');
       this.reset();

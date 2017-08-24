@@ -262,6 +262,12 @@ test('can detach fields', () => {
   expect(() => {
     v.detach('someOtherField');
   }).not.toThrow();
+
+  v.attach('field', 'required', {
+    scope: 'myscope'
+  });
+  v.detach('myscope.field');
+  expect(v.fields.find({ name: 'field', scope: 'myscope' })).toBeFalsy();
 });
 
 test('can validate specific scopes', async () => {
@@ -804,11 +810,13 @@ test('resets errors on the next tick if available', () => {
   // not available.
   let v = new Validator();
   const vm = { $nextTick: jest.fn(cb => cb()) };
+  v.attach(new Field(null, {}));
   v.errors.add('some', 'message', 'by');
   v.reset();
   expect(v.errors.count()).toBe(0);
 
   v = new Validator(null, { vm });
+  v.attach(new Field(null, {}));
   v.errors.add('some', 'message', 'by');
   v.reset();
   expect(vm.$nextTick).toHaveBeenCalled();
@@ -831,6 +839,10 @@ test('it can handle mixed successes and errors from one field regardless of rule
 
 test('exposes static readonly dictionary property', () => {
   expect(typeof Validator.dictionary).toBe('object');
+});
+
+test('exposes static locale property', () => {
+  expect(typeof Validator.locale).toBe('string');
 });
 
 test('exposes static and instance readonly rules properties', () => {
@@ -951,4 +963,23 @@ test('some fields can blacklist false as a non-empty value', async () => {
 
   el.type = 'text'; // checboxes accept false as a value.
   expect(await v.validate(`#${field.id}`)).toBe(true);
+});
+
+test('localize api', () => {
+  const v = new Validator();
+
+  // sets and updates the dictionary.
+  Validator.localize('ar', {
+    messages: {
+      hey: 'there'
+    }
+  });
+
+  expect(v.dictionary.container.ar.messages.hey).toBe('there');
+
+  Validator.localize('en');
+  expect(v.locale).toBe('en');
+
+  v.localize('ar');
+  expect(v.locale).toBe('ar');
 });
