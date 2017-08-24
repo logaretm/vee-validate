@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `${field}-feltet må være etter ${target}.`,
   alpha_dash: (field) => `${field}-feltet kan bare inneholde alfa-numeriske tegn, samt bindestrek og understrek.`,
@@ -27,7 +29,7 @@ const messages = {
   numeric: (field) => `${field}-feltet kan bare inneholde nummer.`,
   regex: (field) => `${field}-feltet sin formatering er ugyldig.`,
   required: (field) => `${field}-feltet er obligatorisk.`,
-  size: (field, [size]) => `${field}-feltet må være mindre enn ${size} KB.`,
+  size: (field, [size]) => `${field}-feltet må være mindre enn ${formatFileSize(size)}.`,
   url: (field) => `${field}-feltet er ikkje en gyldig URL.`
 };
 

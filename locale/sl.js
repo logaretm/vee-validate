@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   _default: (field) => `Vrednost polja ${field} ni veljavna.`,
   after: (field, [target]) => `Polje ${field} mora biti za ${target}.`,
@@ -28,7 +30,7 @@ const messages = {
   numeric: (field) => `Polje ${field} lahko vsebuje le numerične znake.`,
   regex: (field) => `Vrednost polja ${field} ni v ustreznem formatu.`,
   required: (field) => `Polje ${field} je obvezno.`,
-  size: (field, [size]) => `Velikost datoteke ${field} mora biti manjša kot ${size} KB.`,
+  size: (field, [size]) => `Velikost datoteke ${field} mora biti manjša kot ${formatFileSize(size)}.`,
   url: (field) => `Vrednost polja ${field} ni veljavni URL naslov.`
 };
 

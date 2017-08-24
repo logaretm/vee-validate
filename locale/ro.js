@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `Câmpul ${field} trebuie să fie după ${target}.`,
   alpha_dash: (field) => `Câmpul ${field} poate conține caracter alfanumerice, cât și caracterele "-" sau "_".`,
@@ -27,7 +29,7 @@ const messages = {
   numeric: (field) => `Câmpul ${field} poate conține doar valori numerice.`,
   regex: (field) => `Formatul câmpului ${field} este invalid.`,
   required: (field) => `Câmpul ${field} este necesar.`,
-  size: (field, [size]) => `Câmpul ${field} nu trebuie să depășească ${size} KB.`,
+  size: (field, [size]) => `Câmpul ${field} nu trebuie să depășească ${formatFileSize(size)}.`,
   url: (field) => `Câmpul ${field} nu este un URL valid.`
 };
 

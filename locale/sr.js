@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   _default: (field) => `Поље ${field} није валидно.`,
   after: (field, [target]) => `Поље ${field} мора бити после ${target}.`,
@@ -28,7 +30,7 @@ const messages = {
   numeric: (field) => `Поље ${field} мора бити број.`,
   regex: (field) => `Формат поља ${field} није валидан.`,
   required: (field) => `Поље ${field} је обавезно.`,
-  size: (field, [size]) => `Поље ${field} мора бити мање од ${size} KB.`,
+  size: (field, [size]) => `Поље ${field} мора бити мање од ${formatFileSize(size)}.`,
   url: (field) => `Поље ${field} није валидна веб адреса.`
 };
 

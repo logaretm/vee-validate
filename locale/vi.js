@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   _default: (field) => `Giá trị của ${field} không đúng.`,
   after: (field, [target]) => `${field} phải xuất hiện sau ${target}.`,
@@ -28,7 +30,7 @@ const messages = {
   numeric: (field) => `${field} chỉ có thể có các kí tự số.`,
   regex: (field) => `${field} có định dạng không đúng.`,
   required: (field) => `${field} là bắt buộc.`,
-  size: (field, [size]) => `${field} chỉ có thể chứa tệp nhỏ hơn ${size} KB.`,
+  size: (field, [size]) => `${field} chỉ có thể chứa tệp nhỏ hơn ${formatFileSize(size)}.`,
   url: (field) => `${field} không phải là một địa chỉ URL hợp lệ.`
 };
 

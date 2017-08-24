@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `В полі ${field} повинна бути дата після ${target}.`,
   alpha_dash: (field) => `Поле ${field} може містити буквено-цифрові символи, а також тире та підкреслення.`,
@@ -27,7 +29,7 @@ const messages = {
   numeric: (field) => `Поле ${field} може містить лише цифри.`,
   regex: (field) => `Поле ${field} має невірний формат.`,
   required: (field) => `Поле ${field} повинно мати значення.`,
-  size: (field, [size]) => `Поле ${field} повинно бути менше ${size} KB.`,
+  size: (field, [size]) => `Поле ${field} повинно бути менше ${formatFileSize(size)}.`,
   url: (field) => `В полі ${field} повиннен бути URL.`
 };
 

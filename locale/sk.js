@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   after: (field, [target, inclusion]) => `Položka ${field} musí byť vačšia ${inclusion ? 'alebo rovná ' : ''} ako položka ${target}.`,
   alpha_dash: (field) => `${field} môže obsahovať len písmená, číslice, bodky a podčiarknutie.`,
@@ -27,7 +29,7 @@ const messages = {
   numeric: (field) => `Položka ${field} môže obsahovať len číslice.`,
   regex: (field) => `Formát položky ${field} je nesprávny.`,
   required: (field) => `Položka ${field} je povinná.`,
-  size: (field, [size]) => `Položka ${field} musí byť menej ako ${size} KB.`,
+  size: (field, [size]) => `Položka ${field} musí byť menej ako ${formatFileSize(size)}.`,
   url: (field) => `Položka ${field} neobsahuje platnú URL.`,
 };
 

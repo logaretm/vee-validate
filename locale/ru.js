@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `В поле ${field} должна быть дата после ${target}.`,
   alpha_dash: (field) => `Поле ${field} может содержать только буквы, цифры и дефис.`,
@@ -26,7 +28,7 @@ const messages = {
   numeric: (field) => `Поле ${field} должно быть числом.`,
   regex: (field) => `Поле ${field} имеет ошибочный формат.`,
   required: (field) => `Поле ${field} обязательно для заполнения.`,
-  size: (field, [size]) => `Поле ${field} должно быть меньше, чем ${size} KB.`,
+  size: (field, [size]) => `Поле ${field} должно быть меньше, чем ${formatFileSize(size)}.`,
   url: (field) => `Поле ${field} имеет ошибочный формат URL.`
 };
 

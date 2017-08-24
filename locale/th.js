@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   _default: (field) => `ข้อมูล ${field} ไม่ถูกต้อง`,
   after: (field, [target]) => `${field} ต้องเป็นวันที่หลังจาก ${target}`,
@@ -28,7 +30,7 @@ const messages = {
   numeric: (field) => `${field} ต้องเป็นตัวเลขเท่านั้น`,
   regex: (field) => `รูปแบบ ${field} ไม่ถูกต้อง`,
   required: (field) => `กรุณากรอก ${field}`,
-  size: (field, [size]) => `${field} ต้องมีขนาดไม่เกิน ${size} KB`,
+  size: (field, [size]) => `${field} ต้องมีขนาดไม่เกิน ${formatFileSize(size)}`,
   url: (field) => `${field} ไม่ใช่รูปแบบของ URL ที่ถูกต้อง`
 };
 

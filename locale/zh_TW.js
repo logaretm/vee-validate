@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `${field} 必須要晚於 ${target}。`,
   alpha_dash: (field) => `${field} 只能以字母、數字及斜線組成。`,
@@ -27,7 +29,7 @@ const messages = {
   numeric: (field) => `${field} 必須為一個數字。`,
   regex: (field) => `${field} 的格式錯誤。`,
   required: (field) => `${field} 不能留空。`,
-  size: (field, [size]) => `${field} 的大小必須小於 ${size} KB..`,
+  size: (field, [size]) => `${field} 的大小必須小於 ${formatFileSize(size)}.`,
   url: (field) => `${field} 的格式錯誤。`
 };
 

@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `השדה ${field} חייב להכיל תאריך לאחר ${target}.`,
   alpha_dash: (field) => `השדה ${field} יכול להכיל רק אותיות, מספרים ומקפים.`,
@@ -26,7 +28,7 @@ const messages = {
   numeric: (field) => `השדה ${field} יכול להכיל ספרות בלבד.`,
   regex: (field) => `הפורמט של ${field} אינו תקין.`,
   required: (field) => `חובה למלא את השדה ${field}.`,
-  size: (field, [size]) => `השדה ${field} חייב לשקול פחות מ ${size} KB`,
+  size: (field, [size]) => `השדה ${field} חייב לשקול פחות מ ${formatFileSize(size)}.`,
   url: (field) => `${field} אינו מכיל כתובת אינטרנט תקינה.`
 };
 

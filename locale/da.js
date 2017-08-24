@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   _default: (field) => `${field} er ikke gyldig.`,
   after: (field, [target]) => `${field} skal være efter ${target}.`,
@@ -25,7 +27,7 @@ const messages = {
   numeric: (field) => `${field} skal være numerisk.`,
   regex: (field) => `${field} skal have et gyldigt format.`,
   required: (field) => `${field} skal udfyldes.`,
-  size: (field, [size]) => `${field} må maksimalt have en størrelse på ${size} KB.`,
+  size: (field, [size]) => `${field} må maksimalt have en størrelse på ${formatFileSize(size)}.`,
   url: (field) => `${field} skal være en gyldig URL.`
 };
 

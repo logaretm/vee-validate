@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `${field} tulee olla jälkeen ${target}.`,
   alpha_dash: (field) => `${field} voi sisältää vain kirajimia, numeroita, ja tavu-, tai alaviivoja.`,
@@ -23,7 +25,7 @@ const messages = {
   numeric: (field) => `${field} voi sisältää vain numeroita.`,
   regex: (field) => `${field} tulee olla kelvollinen säännöllinen lauseke.`,
   required: (field) => `${field} on pakollinen kenttä.`,
-  size: (field, [size]) => `${field} tulee olla vähemmän kuin ${size} KB.`,
+  size: (field, [size]) => `${field} tulee olla vähemmän kuin ${formatFileSize(size)}.`,
   url: (field) => `${field} tulee olla kelvollinen URL-osoite.`
 };
 

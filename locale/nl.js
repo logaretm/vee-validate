@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   _default: (field) => `${field} waarde is ongeldig.`,
   after: (field, [target, inclusion]) => `${field} moet later zijn dan ${inclusion ? 'of gelijk aan ' : ''}${target}.`,
@@ -28,7 +30,7 @@ const messages = {
   numeric: (field) => `${field} mag alleen nummers bevatten`,
   regex: (field) => `${field} formaat is ongeldig.`,
   required: (field) => `${field} is verplicht.`,
-  size: (field, [size]) => `${field} mag niet groter zijn dan ${size} KB.`,
+  size: (field, [size]) => `${field} mag niet groter zijn dan ${formatFileSize(size)}.`,
   url: (field) => `${field} is geen geldige URL.`
 };
 

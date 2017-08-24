@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   _default: (field) => `${field} n'est pas valide.`,
   after: (field, [target]) => `${field} doit être postérieur à ${target}.`,
@@ -28,7 +30,7 @@ const messages = {
   numeric: (field) => `${field} ne peut contenir que des chiffres.`,
   regex: (field) => `${field} est invalide.`,
   required: (field) => `${field} est obligatoire.`,
-  size: (field, [size]) => `${field} doit avoir un poids inférieur ${size} KB.`,
+  size: (field, [size]) => `${field} doit avoir un poids inférieur ${formatFileSize(size)}.`,
   url: (field) => `${field} n'est pas une URL valide.`
 };
 

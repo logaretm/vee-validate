@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `${field} harus sebelum ${target}.`,
   alpha_dash: (field) => `${field} boleh mengandung karakter alfanumerik, tanda hubung, dan garis bawah.`,
@@ -25,7 +27,7 @@ const messages = {
   numeric: (field) => `${field} harus berupa angka.`,
   regex: (field) => `Format ${field} salah.`,
   required: (field) => `${field} harus diisi.`,
-  size: (field, [size]) => `${field} harus lebih kecil dari ${size} KB.`,
+  size: (field, [size]) => `${field} harus lebih kecil dari ${formatFileSize(size)}.`,
   url: (field) => `${field} harus berupa tautan yang benar.`
 };
 

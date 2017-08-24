@@ -1,3 +1,5 @@
+import { formatFileSize } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `${field} ${target} alanından ileri bir tarih olmalıdır.`,
   alpha_dash: (field) => `${field} alanı harf ve tire (-) yada alttan tire (_) içerebilir.`,
@@ -27,7 +29,7 @@ const messages = {
   numeric: (field) => `${field} alanına sayısal bir değer giriniz.`,
   regex: (field) => `${field} formatı geçersiz.`,
   required: (field) => `${field} alanı gereklidir.`,
-  size: (field, [size]) => `${field} alanı ${size} KB'dan daha az olmalıdır.`,
+  size: (field, [size]) => `${field} alanı ${formatFileSize(size)}'dan daha az olmalıdır.`,
   url: (field) => `${field} geçersiz URL.`
 };
 
