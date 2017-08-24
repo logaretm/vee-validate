@@ -2356,7 +2356,7 @@ Field.prototype.setFlags = function setFlags (flags) {
 
   var negated = {
     pristine: 'dirty',
-    dirty: 'pristene',
+    dirty: 'pristine',
     valid: 'invalid',
     invalid: 'valid',
     touched: 'untouched',

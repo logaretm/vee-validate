@@ -39,7 +39,7 @@ However, for the scoped fields the **FieldBag** will group those fields in an pr
 this.fields.$myScope.name.dirty;
 
 // Is the 'name' field clean? 
-this.fields.$myScope.name.pristene; 
+this.fields.$myScope.name.pristine; 
 ```
 
 

@@ -210,7 +210,7 @@ export default class Field {
   setFlags (flags) {
     const negated = {
       pristine: 'dirty',
-      dirty: 'pristene',
+      dirty: 'pristine',
       valid: 'invalid',
       invalid: 'valid',
       touched: 'untouched',
