@@ -11,6 +11,22 @@ test('validates number of characters in a string', () => {
   expect(validate('hello there', [3, 5])).toBe(false);
 });
 
+test('null and undefined are always rejected', () => {
+  expect(validate(null, [3])).toBe(false);
+  expect(validate(undefined, [3])).toBe(false);
+});
+
+test('validates number of elements in an enumerable', () => {
+  const firstSet = new Set(['h', 'e', 'y']);
+  const secondSet = new Set(['h', 'e', 'l', 'l']);
+  expect(validate(firstSet, [3])).toBe(true);
+  expect(validate(secondSet, [4])).toBe(false);
+
+  // min-max
+  expect(validate(firstSet, [4, 5])).toBe(false);
+  expect(validate(secondSet, [3, 5])).toBe(true);
+  expect(validate(new Set(['h', 'e', 'l', 'l', 'o', ' ', 't', 'h', 'e', 'r', 'e']), [3, 5])).toBe(false);
+});
 
 test('validates number of elements in an array', () => {
   // exact length
