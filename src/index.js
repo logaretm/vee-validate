@@ -9,7 +9,7 @@ import mapFields from './helpers';
 
 let Vue;
 
-const install = (_Vue, options) => {
+const install = (_Vue, options = {}) => {
   if (Vue) {
     warn('already installed, Vue.use(VeeValidate) should only be called once.');
     return;
@@ -21,8 +21,10 @@ const install = (_Vue, options) => {
     Validator.updateDictionary(config.dictionary);
   }
 
-  Validator.setLocale(config.locale);
-  Validator.setStrictMode(config.strict);
+  if (options) {
+    if (options.locale) Validator.setLocale(config.locale);
+    if (options.strict) Validator.setStrictMode(config.strict);
+  }
 
   Vue.mixin(makeMixin(Vue, config));
   Vue.directive('validate', makeDirective(config));
