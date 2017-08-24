@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.13
+ * vee-validate v2.0.0-rc.14
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -627,292 +627,43 @@ var ip = (value, [version] = [4]) => {
   return isIP(value, version);
 };
 
-var max = (value, [length]) => {
-  if (value === undefined || value === null) {
-    return length >= 0;
-  }
-
-  return String(value).length <= length;
-};
-
-var max_value = (value, [max]) => {
-  if (Array.isArray(value) || value === null || value === undefined || value === '') {
-    return false;
-  }
-
-  return Number(value) <= max;
-};
-
-var mimes = (files, mimes) => {
-  const regex = new RegExp(`${mimes.join('|').replace('*', '.+')}$`, 'i');
-
-  return files.every(file => regex.test(file.type));
-};
-
-var min = (value, [length]) => {
-  if (value === undefined || value === null) {
-    return false;
-  }
-  return String(value).length >= length;
-};
-
-var min_value = (value, [min]) => {
-  if (Array.isArray(value) || value === null || value === undefined || value === '') {
-    return false;
-  }
-
-  return Number(value) >= min;
-};
-
-const validate$9 = (value, options) => {
-  if (Array.isArray(value)) {
-    return value.every(val => validate$9(val, options));
-  }
-
-  // eslint-disable-next-line
-  return ! options.filter(option => option == value).length;
-};
-
-var numeric = (value) => {
-  if (Array.isArray(value)) {
-    return value.every(val => /^[0-9]+$/.test(String(val)));
-  }
-
-  return /^[0-9]+$/.test(String(value));
-};
-
-var regex = (value, [regex, ...flags]) => {
-  if (regex instanceof RegExp) {
-    return regex.test(value);
-  }
-
-  return new RegExp(regex, flags).test(String(value));
-};
-
-var required = (value, params = [false]) => {
-  if (Array.isArray(value)) {
-    return !! value.length;
-  }
-
-  // incase a field considers `false` as an empty value like checkboxes.
-  const invalidateFalse = params[0];
-  if (value === false && invalidateFalse) {
-    return false;
-  }
-
-  if (value === undefined || value === null) {
-    return false;
-  }
-
-  return !! String(value).trim().length;
-};
-
-var size = (files, [size]) => {
-  if (isNaN(size)) {
-    return false;
-  }
-
-  const nSize = Number(size) * 1024;
-  for (let i = 0; i < files.length; i++) {
-    if (files[i].size > nSize) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
-var isURL_1 = createCommonjsModule(function (module, exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = isURL;
-
-
-
-var _assertString2 = _interopRequireDefault(assertString_1);
-
-
-
-var _isFQDN2 = _interopRequireDefault(isFQDN);
-
-
-
-var _isIP2 = _interopRequireDefault(isIP_1);
-
-
-
-var _merge2 = _interopRequireDefault(merge_1);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var default_url_options = {
-  protocols: ['http', 'https', 'ftp'],
-  require_tld: true,
-  require_protocol: false,
-  require_host: true,
-  require_valid_protocol: true,
-  allow_underscores: false,
-  allow_trailing_dot: false,
-  allow_protocol_relative_urls: false
-};
-
-var wrapped_ipv6 = /^\[([^\]]+)\](?::([0-9]+))?$/;
-
-function isRegExp(obj) {
-  return Object.prototype.toString.call(obj) === '[object RegExp]';
-}
-
-function checkHost(host, matches) {
-  for (var i = 0; i < matches.length; i++) {
-    var match = matches[i];
-    if (host === match || isRegExp(match) && match.test(host)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function isURL(url, options) {
-  (0, _assertString2.default)(url);
-  if (!url || url.length >= 2083 || /[\s<>]/.test(url)) {
-    return false;
-  }
-  if (url.indexOf('mailto:') === 0) {
-    return false;
-  }
-  options = (0, _merge2.default)(options, default_url_options);
-  var protocol = void 0,
-      auth = void 0,
-      host = void 0,
-      hostname = void 0,
-      port = void 0,
-      port_str = void 0,
-      split = void 0,
-      ipv6 = void 0;
-
-  split = url.split('#');
-  url = split.shift();
-
-  split = url.split('?');
-  url = split.shift();
-
-  split = url.split('://');
-  if (split.length > 1) {
-    protocol = split.shift();
-    if (options.require_valid_protocol && options.protocols.indexOf(protocol) === -1) {
-      return false;
-    }
-  } else if (options.require_protocol) {
-    return false;
-  } else if (options.allow_protocol_relative_urls && url.substr(0, 2) === '//') {
-    split[0] = url.substr(2);
-  }
-  url = split.join('://');
-
-  split = url.split('/');
-  url = split.shift();
-
-  if (url === '' && !options.require_host) {
-    return true;
-  }
-
-  split = url.split('@');
-  if (split.length > 1) {
-    auth = split.shift();
-    if (auth.indexOf(':') >= 0 && auth.split(':').length > 2) {
-      return false;
-    }
-  }
-  hostname = split.join('@');
-
-  port_str = null;
-  ipv6 = null;
-  var ipv6_match = hostname.match(wrapped_ipv6);
-  if (ipv6_match) {
-    host = '';
-    ipv6 = ipv6_match[1];
-    port_str = ipv6_match[2] || null;
-  } else {
-    split = hostname.split(':');
-    host = split.shift();
-    if (split.length) {
-      port_str = split.join(':');
-    }
-  }
-
-  if (port_str !== null) {
-    port = parseInt(port_str, 10);
-    if (!/^[0-9]+$/.test(port_str) || port <= 0 || port > 65535) {
-      return false;
-    }
-  }
-
-  if (!(0, _isIP2.default)(host) && !(0, _isFQDN2.default)(host, options) && (!ipv6 || !(0, _isIP2.default)(ipv6, 6)) && host !== 'localhost') {
-    return false;
-  }
-
-  host = host || ipv6;
-
-  if (options.host_whitelist && !checkHost(host, options.host_whitelist)) {
-    return false;
-  }
-  if (options.host_blacklist && checkHost(host, options.host_blacklist)) {
-    return false;
-  }
-
-  return true;
-}
-module.exports = exports['default'];
-});
-
-var isURL = unwrapExports(isURL_1);
-
-var url = (value, [requireProtocol] = [true]) => {
-  const options = { require_protocol: !!requireProtocol, allow_underscores: true };
-  if (Array.isArray(value)) {
-    return value.every(val => isURL(val, options));
-  }
-
-  return isURL(value, options);
-};
-
-/* eslint-disable camelcase */
-var Rules = {
-  alpha_dash: validate$1,
-  alpha_num: validate$2,
-  alpha_spaces: validate$3,
-  alpha: validate,
-  between: validate$4,
-  confirmed,
-  credit_card,
-  decimal: validate$5,
-  digits: validate$6,
-  dimensions,
-  email: validate$7,
-  ext,
-  image,
-  in: validate$8,
-  ip,
-  max,
-  max_value,
-  mimes,
-  min,
-  min_value,
-  not_in: validate$9,
-  numeric,
-  regex,
-  required,
-  size,
-  url
-};
-
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
 const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
+
+/**
+ * Checks if an object path is defined globally.
+ */
+const isDefinedGlobally = (prop) => {
+  let globalObj = null;
+  if (typeof window !== 'undefined') {
+    globalObj = window;
+  }
+
+  if (typeof global !== 'undefined') {
+    globalObj = global;
+  }
+
+  if (globalObj && hasPath(prop, globalObj)) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
+ * Formates file size.
+ *
+ * @param {Number|String} size
+ */
+const formatFileSize = (size) => {
+  const units = ['Byte', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const threshold = 1024;
+  size = Number(size) * threshold;
+  const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(threshold));
+  return `${(size / Math.pow(threshold, i)).toFixed(2) * 1} ${units[i]}`;
+};
 
 /**
  * Sets the data attribute.
@@ -932,6 +683,18 @@ const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`,
 const isEqual = (lhs, rhs) => {
   if (lhs instanceof RegExp && rhs instanceof RegExp) {
     return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
+  }
+
+  if (Array.isArray(lhs) && Array.isArray(rhs)) {
+    if (lhs.length !== rhs.length) return false;
+
+    for (let i = 0; i < lhs.length; i++) {
+      if (!isEqual(lhs[i], rhs[i])) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   // if both are objects, compare each key recursively.
@@ -1247,6 +1010,329 @@ const getInputEventName = (el) => {
   return 'input';
 };
 
+/**
+ * @param {Array} value 
+ * @param {Number?} max 
+ */
+const compare = (value, length, max) => {
+  if (max === undefined) {
+    return value.length === length;
+  }
+
+  // cast to number.
+  max = Number(max);
+
+  return value.length >= length && value.length <= max;
+};
+
+var length = (value, [length, max = undefined]) => {
+  if (value === undefined || value === null) {
+    return false;
+  }
+
+  if (!value.length) {
+    value = toArray(value);
+  }
+
+  return compare(value, length, max);
+};
+
+var integer = (value) => {
+  if (Array.isArray(value)) {
+    return value.every(val => /^-?[0-9]+$/.test(String(val)));
+  }
+
+  return /^-?[0-9]+$/.test(String(value));
+};
+
+var max = (value, [length]) => {
+  if (value === undefined || value === null) {
+    return length >= 0;
+  }
+
+  return String(value).length <= length;
+};
+
+var max_value = (value, [max]) => {
+  if (Array.isArray(value) || value === null || value === undefined || value === '') {
+    return false;
+  }
+
+  return Number(value) <= max;
+};
+
+var mimes = (files, mimes) => {
+  const regex = new RegExp(`${mimes.join('|').replace('*', '.+')}$`, 'i');
+
+  return files.every(file => regex.test(file.type));
+};
+
+var min = (value, [length]) => {
+  if (value === undefined || value === null) {
+    return false;
+  }
+  return String(value).length >= length;
+};
+
+var min_value = (value, [min]) => {
+  if (Array.isArray(value) || value === null || value === undefined || value === '') {
+    return false;
+  }
+
+  return Number(value) >= min;
+};
+
+const validate$9 = (value, options) => {
+  if (Array.isArray(value)) {
+    return value.every(val => validate$9(val, options));
+  }
+
+  // eslint-disable-next-line
+  return ! options.filter(option => option == value).length;
+};
+
+var numeric = (value) => {
+  if (Array.isArray(value)) {
+    return value.every(val => /^[0-9]+$/.test(String(val)));
+  }
+
+  return /^[0-9]+$/.test(String(value));
+};
+
+var regex = (value, [regex, ...flags]) => {
+  if (regex instanceof RegExp) {
+    return regex.test(value);
+  }
+
+  return new RegExp(regex, flags).test(String(value));
+};
+
+var required = (value, params = [false]) => {
+  if (Array.isArray(value)) {
+    return !! value.length;
+  }
+
+  // incase a field considers `false` as an empty value like checkboxes.
+  const invalidateFalse = params[0];
+  if (value === false && invalidateFalse) {
+    return false;
+  }
+
+  if (value === undefined || value === null) {
+    return false;
+  }
+
+  return !! String(value).trim().length;
+};
+
+var size = (files, [size]) => {
+  if (isNaN(size)) {
+    return false;
+  }
+
+  const nSize = Number(size) * 1024;
+  for (let i = 0; i < files.length; i++) {
+    if (files[i].size > nSize) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+var isURL_1 = createCommonjsModule(function (module, exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = isURL;
+
+
+
+var _assertString2 = _interopRequireDefault(assertString_1);
+
+
+
+var _isFQDN2 = _interopRequireDefault(isFQDN);
+
+
+
+var _isIP2 = _interopRequireDefault(isIP_1);
+
+
+
+var _merge2 = _interopRequireDefault(merge_1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var default_url_options = {
+  protocols: ['http', 'https', 'ftp'],
+  require_tld: true,
+  require_protocol: false,
+  require_host: true,
+  require_valid_protocol: true,
+  allow_underscores: false,
+  allow_trailing_dot: false,
+  allow_protocol_relative_urls: false
+};
+
+var wrapped_ipv6 = /^\[([^\]]+)\](?::([0-9]+))?$/;
+
+function isRegExp(obj) {
+  return Object.prototype.toString.call(obj) === '[object RegExp]';
+}
+
+function checkHost(host, matches) {
+  for (var i = 0; i < matches.length; i++) {
+    var match = matches[i];
+    if (host === match || isRegExp(match) && match.test(host)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isURL(url, options) {
+  (0, _assertString2.default)(url);
+  if (!url || url.length >= 2083 || /[\s<>]/.test(url)) {
+    return false;
+  }
+  if (url.indexOf('mailto:') === 0) {
+    return false;
+  }
+  options = (0, _merge2.default)(options, default_url_options);
+  var protocol = void 0,
+      auth = void 0,
+      host = void 0,
+      hostname = void 0,
+      port = void 0,
+      port_str = void 0,
+      split = void 0,
+      ipv6 = void 0;
+
+  split = url.split('#');
+  url = split.shift();
+
+  split = url.split('?');
+  url = split.shift();
+
+  split = url.split('://');
+  if (split.length > 1) {
+    protocol = split.shift();
+    if (options.require_valid_protocol && options.protocols.indexOf(protocol) === -1) {
+      return false;
+    }
+  } else if (options.require_protocol) {
+    return false;
+  } else if (options.allow_protocol_relative_urls && url.substr(0, 2) === '//') {
+    split[0] = url.substr(2);
+  }
+  url = split.join('://');
+
+  if (url === '') {
+    return false;
+  }
+
+  split = url.split('/');
+  url = split.shift();
+
+  if (url === '' && !options.require_host) {
+    return true;
+  }
+
+  split = url.split('@');
+  if (split.length > 1) {
+    auth = split.shift();
+    if (auth.indexOf(':') >= 0 && auth.split(':').length > 2) {
+      return false;
+    }
+  }
+  hostname = split.join('@');
+
+  port_str = null;
+  ipv6 = null;
+  var ipv6_match = hostname.match(wrapped_ipv6);
+  if (ipv6_match) {
+    host = '';
+    ipv6 = ipv6_match[1];
+    port_str = ipv6_match[2] || null;
+  } else {
+    split = hostname.split(':');
+    host = split.shift();
+    if (split.length) {
+      port_str = split.join(':');
+    }
+  }
+
+  if (port_str !== null) {
+    port = parseInt(port_str, 10);
+    if (!/^[0-9]+$/.test(port_str) || port <= 0 || port > 65535) {
+      return false;
+    }
+  }
+
+  if (!(0, _isIP2.default)(host) && !(0, _isFQDN2.default)(host, options) && (!ipv6 || !(0, _isIP2.default)(ipv6, 6))) {
+    return false;
+  }
+
+  host = host || ipv6;
+
+  if (options.host_whitelist && !checkHost(host, options.host_whitelist)) {
+    return false;
+  }
+  if (options.host_blacklist && checkHost(host, options.host_blacklist)) {
+    return false;
+  }
+
+  return true;
+}
+module.exports = exports['default'];
+});
+
+var isURL = unwrapExports(isURL_1);
+
+var url = (value, [requireProtocol] = [true]) => {
+  const options = { require_protocol: !!requireProtocol, allow_underscores: true };
+  if (Array.isArray(value)) {
+    return value.every(val => isURL(val, options));
+  }
+
+  return isURL(value, options);
+};
+
+/* eslint-disable camelcase */
+var Rules = {
+  alpha_dash: validate$1,
+  alpha_num: validate$2,
+  alpha_spaces: validate$3,
+  alpha: validate,
+  between: validate$4,
+  confirmed,
+  credit_card,
+  decimal: validate$5,
+  digits: validate$6,
+  dimensions,
+  email: validate$7,
+  ext,
+  image,
+  in: validate$8,
+  integer,
+  length,
+  ip,
+  max,
+  max_value,
+  mimes,
+  min,
+  min_value,
+  not_in: validate$9,
+  numeric,
+  regex,
+  required,
+  size,
+  url
+};
+
 class ErrorBag {
   constructor () {
     this.items = [];
@@ -1451,6 +1537,17 @@ class ErrorBag {
 
     return (error && error.msg) || null;
   }
+  /**
+     * Gets the first error message for a specific field that not match the rule.
+     * @param {String} name The name of the field.
+     * @param {String} rule The name of the rule.
+     * @param {String} scope The name of the scope (optional).
+     */
+  firstNot (name, rule = 'required', scope) {
+    const error = this.collect(name, scope, false).filter(e => e.rule !== rule)[0];
+
+    return (error && error.msg) || null;
+  }
 
   /**
    * Removes errors by matching against the id.
@@ -1650,7 +1747,7 @@ class Dictionary {
   }
 }
 
-var messages = {
+const messages = {
   _default: (field) => `The ${field} value is not valid.`,
   alpha_dash: (field) => `The ${field} field may contain alpha-numeric characters as well as dashes and underscores.`,
   alpha_num: (field) => `The ${field} field may only contain alpha-numeric characters.`,
@@ -1666,7 +1763,15 @@ var messages = {
   ext: (field) => `The ${field} field must be a valid file.`,
   image: (field) => `The ${field} field must be an image.`,
   in: (field) => `The ${field} field must be a valid value.`,
+  integer: (field) => `The ${field} field must be an integer.`,
   ip: (field) => `The ${field} field must be a valid ip address.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `The ${field} length be between ${length} and ${max}.`;
+    }
+
+    return `The ${field} length must be ${length}.`;
+  },
   max: (field, [length]) => `The ${field} field may not be greater than ${length} characters.`,
   max_value: (field, [max]) => `The ${field} field must be ${max} or less.`,
   mimes: (field) => `The ${field} field must have a valid file type.`,
@@ -1676,9 +1781,20 @@ var messages = {
   numeric: (field) => `The ${field} field may only contain numeric characters.`,
   regex: (field) => `The ${field} field format is invalid.`,
   required: (field) => `The ${field} field is required.`,
-  size: (field, [size]) => `The ${field} field must be less than ${size} KB.`,
+  size: (field, [size]) => `The ${field} size must be less than ${formatFileSize(size)}.`,
   url: (field) => `The ${field} field is not a valid URL.`
 };
+
+const locale = {
+  name: 'en',
+  messages,
+  attributes: {}
+};
+
+if (isDefinedGlobally('VeeValidate.Validator')) {
+  // eslint-disable-next-line
+  VeeValidate.Validator.addLocale(locale);
+}
 
 /**
  * Generates the options required to construct a field.
@@ -1889,6 +2005,18 @@ class Generator {
   }
 }
 
+const DEFAULT_FLAGS = {
+  untouched: true,
+  touched: false,
+  dirty: false,
+  pristine: true,
+  valid: null,
+  invalid: null,
+  validated: false,
+  pending: false,
+  required: false
+};
+
 const DEFAULT_OPTIONS = {
   targetOf: null,
   initial: false,
@@ -1914,22 +2042,6 @@ const DEFAULT_OPTIONS = {
   }
 };
 
-/**
- * Generates the default flags for the field.
- * @param {Object} options
- */
-const generateFlags = (options) => ({
-  untouched: true,
-  touched: false,
-  dirty: false,
-  pristine: true,
-  valid: null,
-  invalid: null,
-  validated: false,
-  pending: false,
-  required: !!options.rules.required
-});
-
 class Field {
   constructor (el, options = {}) {
     this.id = uniqId();
@@ -1945,7 +2057,7 @@ class Field {
     options = assign({}, DEFAULT_OPTIONS, options);
     this.validity = options.validity;
     this.aria = options.aria;
-    this.flags = generateFlags(options);
+    this.flags = assign({}, DEFAULT_FLAGS);
     this.vm = options.vm || this.vm;
     this.component = options.component || this.component;
     this.update(options);
@@ -2058,8 +2170,13 @@ class Field {
     this.updateDependencies();
     this.addActionListeners();
 
+    // update required flag flags
+    if (options.rules !== undefined) {
+      this.flags.required = this.isRequired;
+    }
+
     // validate if it was validated before and field was updated and there was a rules mutation.
-    if (this.flags.validated && options.rules && this.updated) {
+    if (this.flags.validated && options.rules !== undefined && this.updated) {
       this.validator.validate(`#${this.id}`);
     }
 
@@ -2073,6 +2190,49 @@ class Field {
     this.updateClasses();
     this.addValueListeners();
     this.updateAriaAttrs();
+  }
+
+  /**
+   * Resets field flags and errors.
+   */
+  reset () {
+    Object.keys(this.flags).forEach(flag => {
+      this.flags[flag] = DEFAULT_FLAGS[flag];
+    });
+
+    this.addActionListeners();
+    this.updateClasses();
+    this.validator.errors.removeById(this.id);
+  }
+
+  /**
+   * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
+   * @param {Object} flags 
+   */
+  setFlags (flags) {
+    const negated = {
+      pristine: 'dirty',
+      dirty: 'pristene',
+      valid: 'invalid',
+      invalid: 'valid',
+      touched: 'untouched',
+      untouched: 'touched'
+    };
+
+    Object.keys(flags).forEach(flag => {
+      this.flags[flag] = flags[flag];
+      // if it has a negation and was not specified, set it as well.
+      if (negated[flag] && flags[negated[flag]] === undefined) {
+        this.flags[negated[flag]] = !flags[flag];
+      }
+    });
+
+    if (flags.untouched || flags.touched) {
+      this.addActionListeners();
+    }
+    this.updateClasses();
+    this.updateAriaAttrs();
+    this.updateCustomValidity();
   }
 
   /**
@@ -2104,11 +2264,14 @@ class Field {
         el = this.vm.$refs[selector.slice(1)];
       } else {
         // try a query selection.
-        el = this.vm.$el.querySelector(selector);
+        try {
+          el = this.vm.$el.querySelector(selector);
+        } catch (err) {
+          el = null;
+        }
       }
 
       if (!el) {
-        // try a name selector
         el = this.vm.$el.querySelector(`input[name="${selector}"]`);
       }
 
@@ -2145,7 +2308,7 @@ class Field {
    * Removes listeners.
    * @param {RegExp} tag
    */
-  unwatch (tag) {
+  unwatch (tag = null) {
     if (!tag) {
       this.watchers.forEach(w => w.unwatch());
       this.watchers = [];
@@ -2498,16 +2661,18 @@ var messages$1 = {
   date_format: (field, [format]) => `The ${field} must be in the format ${format}.`
 };
 
-var date = {
-  make: (moment) => ({
-    date_format: date_format(moment),
-    after: after(moment),
-    before: before(moment),
-    date_between: date_between(moment)
-  }),
-  messages: messages$1,
-  installed: false
+const installDate = ({ Validator }, { moment }) => {
+  if (installDate.installed) return;
+
+  Validator.extend('after', after(moment));
+  Validator.extend('before', before(moment));
+  Validator.extend('date_format', date_format(moment));
+  Validator.extend('date_between', date_between(moment));
+  Validator.updateDictionary({ en: { messages: messages$1 } });
+  installDate.installed = true;
 };
+
+installDate.installed = false;
 
 let LOCALE = 'en';
 let STRICT_MODE = true;
@@ -2530,12 +2695,18 @@ class Validator {
     this.fastExit = options.fastExit || false;
     this.ownerId = options.vm && options.vm._uid;
     // create it statically since we don't need constant access to the vm.
-    this.clean = options.vm && isCallable(options.vm.$nextTick) ? () => {
+    this.reset = options.vm && isCallable(options.vm.$nextTick) ? () => {
       options.vm.$nextTick(() => {
+        this.fields.items.forEach(i => i.reset());
         this.errors.clear();
       });
     } : () => {
+      this.fields.items.forEach(i => i.reset());
       this.errors.clear();
+    };
+    this.clean = () => {
+      warn('validator.clean is marked for deprecation, please use validator.reset instead.');
+      this.reset();
     };
 
     // if momentjs is present, install the validators.
@@ -2666,25 +2837,10 @@ class Validator {
   static installDateTimeValidators (moment) {
     if (typeof moment !== 'function') {
       warn('To use the date-time validators you must provide moment reference.');
-
       return false;
     }
 
-    if (date.installed) {
-      return true;
-    }
-
-    const validators = date.make(moment);
-    Object.keys(validators).forEach(name => {
-      Validator.extend(name, validators[name]);
-    });
-
-    Validator.updateDictionary({
-      en: {
-        messages: date.messages
-      }
-    });
-    date.installed = true;
+    installDate({ Validator }, { moment });
 
     return true;
   }
@@ -2860,7 +3016,7 @@ class Validator {
       params = params.length ? params : [true];
     }
 
-    if (date.installed && this._isADateRule(rule.name)) {
+    if (installDate.installed && this._isADateRule(rule.name)) {
       const dateFormat = this._getDateFormat(field.rules);
       if (rule.name !== 'date_format') {
         params.push(dateFormat);
@@ -2955,16 +3111,11 @@ class Validator {
    */
   flag (name, flags) {
     const field = this._resolveField(name);
-    if (! field) {
+    if (! field || !flags) {
       return;
     }
 
-    Object.keys(field.flags).forEach(flag => {
-      field.flags[flag] = flags[flag] !== undefined ? flags[flag] : field.flags[flag];
-    });
-    if (field.classes) {
-      field.updateClasses();
-    }
+    field.setFlags(flags);
   }
 
   /**
@@ -2975,11 +3126,18 @@ class Validator {
    */
   detach (name, scope) {
     let field = name instanceof Field ? name : this._resolveField(name, scope);
-    if (field) {
-      field.destroy();
-      this.errors.removeById(field.id);
-      this.fields.remove(field);
+    if (!field) return;
+
+    field.destroy();
+    this.errors.removeById(field.id);
+    this.fields.remove(field);
+    const flags = this.fieldBag;
+    if (field.scope) {
+      delete flags[`$${field.scope}`][field.name];
+    } else {
+      delete flags[field.name];
     }
+    this.fieldBag = Object.assign({}, flags);
   }
 
   /**
@@ -3156,13 +3314,11 @@ class Validator {
     }
 
     return this._validate(field, value).then(result => {
-      field.flags.pending = false;
-      field.flags.valid = result;
-      field.flags.invalid = !result;
-      field.flags.validated = true;
-      field.updateAriaAttrs();
-      field.updateCustomValidity();
-      field.updateClasses();
+      field.setFlags({
+        pending: false,
+        valid: result,
+        validated: true
+      });
 
       return result;
     });
@@ -3470,13 +3626,22 @@ const install = (_Vue, options) => {
   Vue.directive('validate', createDirective(config$$1));
 };
 
+const use = (plugin, options = {}) => {
+  if (!isCallable(plugin)) {
+    return warn('The plugin must be a callable function');
+  }
+
+  plugin({ Validator, ErrorBag, Rules }, options);
+};
+
 var index = {
   install,
+  use,
   mapFields,
   Validator,
   ErrorBag,
   Rules,
-  version: '2.0.0-rc.13'
+  version: '2.0.0-rc.14'
 };
 
 export default index;
