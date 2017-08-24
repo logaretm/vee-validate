@@ -505,6 +505,20 @@ describe('fields can track their dependencies', () => {
     el.dispatchEvent(new Event('input'));
     expect(field.dependencies[0].field.validator.validate).toHaveBeenCalledWith(`#${field.id}`);
   });
+
+  test('fails silently with invalid selectors', () => {
+    document.body.innerHTML = `
+      <input name="other" id="name" value="10" type="text">
+    `;
+    let field = new Field(null, {
+      rules: 'required|confirmed:123-123-123',
+      vm: {
+        $el: document.body,
+        $validator: { validate: jest.fn() }
+      }
+    });
+    expect(field.dependencies.length).toBe(0);
+  });
 });
 
 test('set field custom validity if possible', () => {

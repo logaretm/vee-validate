@@ -223,7 +223,12 @@ export default class Field {
       }
     });
 
-    if (flags.untouched || flags.touched) {
+    if (
+      flags.untouched !== undefined ||
+      flags.touched !== undefined ||
+      flags.dirty !== undefined ||
+      flags.pristine !== undefined
+    ) {
       this.addActionListeners();
     }
     this.updateClasses();
@@ -259,8 +264,8 @@ export default class Field {
       if (selector[0] === '$') {
         el = this.vm.$refs[selector.slice(1)];
       } else {
-        // try a query selection.
         try {
+          // try query selector
           el = this.vm.$el.querySelector(selector);
         } catch (err) {
           el = null;
