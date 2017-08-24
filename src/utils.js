@@ -4,6 +4,26 @@
 export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
 
 /**
+ * Checks if an object path is defined globally.
+ */
+export const isDefinedGlobally = (prop) => {
+  let globalObj = null;
+  if (typeof window !== 'undefined') {
+    globalObj = window;
+  }
+
+  if (typeof global !== 'undefined') {
+    globalObj = global;
+  }
+
+  if (globalObj && hasPath(prop, globalObj)) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
  * Formates file size.
  *
  * @param {Number|String} size
