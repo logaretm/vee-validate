@@ -704,16 +704,15 @@ test('calling validate with a string ending with .* will validate the matched sc
 
 test('can fetch the values using getters when not specifying values in validateAll', async () => {
   const v = new Validator();
-  let toggle = false;
+  let toggle = true;
   const getter = () => {
-    toggle = !toggle;
     return toggle ? 'valid' : '123';
   };
 
   v.attach('name', 'required|alpha', { getter });
 
   expect(await v.validateAll()).toBe(true);
-  expect(toggle).toBe(true);
+  toggle = !toggle;
   expect(await v.validateAll()).toBe(false);
 });
 
