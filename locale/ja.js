@@ -29,7 +29,7 @@ const messages = {
   numeric: (field) => `${field}は数字のみ使用できます`,
   regex: (field) => `${field}が正しくありません`,
   required: (field) => `${field}は必須項目です`,
-  size: (field, [size]) => `${field}は${size}KB以内でなければなりません`,
+  size: (field, [size]) => `${field}は${formatFileSize(size)}以内でなければなりません`,
   url: (field) => `${field}が正しくありません`
 };
 

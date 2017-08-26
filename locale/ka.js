@@ -1,3 +1,5 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `${field} უნდა იყოს ${target}(ი)ს შემდეგ.`,
   alpha_dash: (field) => `${field} უნდა შესაძლებელია შეიცავდეს ციფრებს, ასოებს და პუნქტუაციის ნიშნებს.`,
@@ -26,7 +28,7 @@ const messages = {
   numeric: (field) => `${field} უნდა შეიცავდეს ციფრებს.`,
   regex: (field) => `${field}-(ი)ს ფორმატი არასწორია.`,
   required: (field) => `${field} აუცილებელია.`,
-  size: (field, [size]) => `${field} უნდა იყოს ${size}kb-ზე ნაკლები.`,
+  size: (field, [size]) => `${field} უნდა იყოს ${formatFileSize(size)}-ზე ნაკლები.`,
   url: (field) => `${field}-(ი)ს არ აქვს სწორი მისამართის ფორმატი`
 };
 
