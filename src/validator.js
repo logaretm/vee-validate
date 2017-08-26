@@ -255,10 +255,10 @@ export default class Validator {
     }
 
     this.fields.push(field);
-    // validate if initial.
-    if (field.initial) {
-      this.validate(`#${field.id}`, field.value);
-    }
+
+    // validate the field initially
+    this.validate(`#${field.id}`, field.value, !field.initial);
+
     if (!field.scope) {
       this.fieldBag = assign({}, this.fieldBag, { [`${field.name}`]: field.flags });
       return field;
@@ -351,17 +351,6 @@ export default class Validator {
   }
 
   /**
-   * Immediatly validate a value.
-   *
-   * @param {String} value 
-   * @param {String|Object} rules 
-   */
-  immediate (value, rules) {
-    rules = normalizeRules(rules);
-    Object.keys(rules).every();
-  }
-
-  /**
    * Validates a value against a registered field validations.
    *
    * @param  {string} name the field name.
@@ -371,6 +360,7 @@ export default class Validator {
    */
   validate (name, value, scope = null) {
     if (this.paused) return Promise.resolve(true);
+    let silent = false;
 
     // overload to validate all.
     if (arguments.length === 0) {
@@ -388,6 +378,12 @@ export default class Validator {
       return this.validateAll(matched);
     }
 
+    // silent validation was requested.
+    if (typeof scope === 'boolean') {
+      silent = scope;
+      scope = null;
+    }
+
     const field = this._resolveField(name, scope);
     if (!field) {
       return this._handleFieldNotFound(name, scope);
@@ -401,7 +397,7 @@ export default class Validator {
       value = field.value;
     }
 
-    return this._validate(field, value).then(result => {
+    return this._validate(field, value, silent).then(result => {
       field.setFlags({
         pending: false,
         valid: result,
@@ -572,7 +568,7 @@ export default class Validator {
    * @param  {object} rule the rule object.
    * @return {boolean} Whether it passes the check.
    */
-  _test (field, value, rule) {
+  _test (field, value, rule, silent) {
     const validator = Rules[rule.name];
     let params = Array.isArray(rule.params) ? toArray(rule.params) : [];
     if (!validator || typeof validator !== 'function') {
@@ -615,7 +611,7 @@ export default class Validator {
           data = values.data;
         }
 
-        if (!allValid) {
+        if (!allValid && !silent) {
           this.errors.add({
             id: field.id,
             field: field.name,
@@ -633,7 +629,7 @@ export default class Validator {
       result = { valid: result, data: {} };
     }
 
-    if (!result.valid) {
+    if (!result.valid && !silent) {
       this.errors.add({
         id: field.id,
         field: field.name,
@@ -751,8 +747,9 @@ export default class Validator {
    *
    * @param {Field} field
    * @param {Promise} value
+   * @param {Boolean} silent
    */
-  _validate (field, value) {
+  _validate (field, value, silent = false) {
     if (!field.isRequired && ~[null, undefined, ''].indexOf(value)) {
       return Promise.resolve(true);
     }
@@ -761,11 +758,7 @@ export default class Validator {
     let isExitEarly = false;
     // use of '.some()' is to break iteration in middle by returning true
     Object.keys(field.rules).some(rule => {
-      const result = this._test(
-        field,
-        value,
-        { name: rule, params: field.rules[rule] }
-      );
+      const result = this._test(field, value, { name: rule, params: field.rules[rule] }, silent);
 
       if (isCallable(result.then)) {
         promises.push(result);
@@ -783,9 +776,6 @@ export default class Validator {
 
     if (isExitEarly) return Promise.resolve(false);
 
-    return Promise.all(promises).then(values => {
-      const valid = values.every(t => t);
-      return valid;
-    });
+    return Promise.all(promises).then(values => values.every(t => t));
   }
 }
