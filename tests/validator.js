@@ -880,8 +880,7 @@ test('triggers initial validation for fields', async () => {
   const v = new Validator();
   v.validate = jest.fn();
   const field = v.attach('field', 'alpha', { el: document.createElement('input'), getter: () => '123', initial: true });
-  // last param is the silent modifier.
-  expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123', false);
+  expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123');
 });
 
 test('adds locale objects to dictionary', () => {

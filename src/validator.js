@@ -2,7 +2,7 @@ import Rules from './rules';
 import ErrorBag from './errorBag';
 import Dictionary from './dictionary';
 import { messages } from '../locale/en';
-import { isObject, isCallable, toArray, warn, createError, assign, find, normalizeRules } from './utils';
+import { isObject, isCallable, toArray, warn, createError, assign, find } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
 import datePlugin from './plugins/date';
@@ -257,7 +257,14 @@ export default class Validator {
     this.fields.push(field);
 
     // validate the field initially
-    this.validate(`#${field.id}`, field.value, !field.initial);
+    if (field.initial) {
+      this.validate(`#${field.id}`, field.value);
+    } else {
+      this._validate(field, field.value, true).then(valid => {
+        field.flags.valid = valid;
+        field.flags.invalid = !valid;
+      });
+    }
 
     if (!field.scope) {
       this.fieldBag = assign({}, this.fieldBag, { [`${field.name}`]: field.flags });
@@ -343,7 +350,7 @@ export default class Validator {
 
   /**
    * Updates the messages dicitionary, overwriting existing values and adding new ones.
-   *
+   * @deprecated
    * @param  {object} data The messages object.
    */
   updateDictionary (data) {
@@ -360,7 +367,6 @@ export default class Validator {
    */
   validate (name, value, scope = null) {
     if (this.paused) return Promise.resolve(true);
-    let silent = false;
 
     // overload to validate all.
     if (arguments.length === 0) {
@@ -378,12 +384,6 @@ export default class Validator {
       return this.validateAll(matched);
     }
 
-    // silent validation was requested.
-    if (typeof scope === 'boolean') {
-      silent = scope;
-      scope = null;
-    }
-
     const field = this._resolveField(name, scope);
     if (!field) {
       return this._handleFieldNotFound(name, scope);
@@ -397,7 +397,7 @@ export default class Validator {
       value = field.value;
     }
 
-    return this._validate(field, value, silent).then(result => {
+    return this._validate(field, value).then(result => {
       field.setFlags({
         pending: false,
         valid: result,
