@@ -669,9 +669,7 @@ export default class Validator {
       return this._handleFieldNotFound(name, scope);
     }
     this.errors.removeById(field.id);
-    if (field.isDisabled) {
-      return Promise.resolve(true);
-    }
+
     field.flags.pending = true;
     if (arguments.length === 1) {
       value = field.value;
@@ -683,6 +681,11 @@ export default class Validator {
         valid: result,
         validated: true
       });
+
+      if (field.isDisabled) {
+          this.errors.removeById(field.id);
+          return Promise.resolve(true);
+      }
 
       return result;
     });

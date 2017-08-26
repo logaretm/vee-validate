@@ -3558,20 +3558,24 @@ Validator.prototype.validate = function validate (name, value, scope) {
     return this._handleFieldNotFound(name, scope);
   }
   this.errors.removeById(field.id);
-  if (field.isDisabled) {
-    return Promise.resolve(true);
-  }
+
   field.flags.pending = true;
   if (arguments.length === 1) {
     value = field.value;
   }
 
+  var this$1 = this;
   return this._validate(field, value).then(function (result) {
     field.setFlags({
       pending: false,
       valid: result,
       validated: true
     });
+
+    if (field.isDisabled) {
+        this$1.errors.removeById(field.id);
+        return Promise.resolve(true);
+    }
 
     return result;
   });
