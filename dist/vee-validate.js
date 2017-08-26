@@ -2946,17 +2946,17 @@ prototypeAccessors.locale.get = function () {
 };
 
 /**
- * @return {String}
- */
-staticAccessors.locale.get = function () {
-  return LOCALE;
-};
-
-/**
  * @param {String} value
  */
 prototypeAccessors.locale.set = function (value) {
   Validator.locale = value;
+};
+
+/**
+* @return {String}
+*/
+staticAccessors.locale.get = function () {
+  return LOCALE;
 };
 
 /**
@@ -2984,64 +2984,6 @@ prototypeAccessors.rules.get = function () {
  */
 staticAccessors.rules.get = function () {
   return Rules;
-};
-
-/**
- * Merges a validator object into the Rules and Messages.
- *
- * @param{string} name The name of the validator.
- * @param{function|object} validator The validator object.
- */
-Validator._merge = function _merge (name, validator) {
-  if (isCallable(validator)) {
-    Rules[name] = validator;
-    return;
-  }
-
-  Rules[name] = validator.validate;
-  if (isCallable(validator.getMessage)) {
-    DICTIONARY.setMessage(LOCALE, name, validator.getMessage);
-  }
-
-  if (validator.messages) {
-    DICTIONARY.merge(
-      Object.keys(validator.messages).reduce(function (prev, curr) {
-        var dict = prev;
-        dict[curr] = {
-          messages: ( obj = {}, obj[name] = validator.messages[curr], obj )
-        };
-          var obj;
-
-        return dict;
-      }, {})
-    );
-  }
-};
-
-/**
- * Guards from extnsion violations.
- *
- * @param{string} name name of the validation rule.
- * @param{object} validator a validation rule object.
- */
-Validator._guardExtend = function _guardExtend (name, validator) {
-  if (isCallable(validator)) {
-    return;
-  }
-
-  if (! isCallable(validator.validate)) {
-    throw createError(
-      // eslint-disable-next-line
-      ("Extension Error: The validator '" + name + "' must be a function or have a 'validate' method.")
-    );
-  }
-
-  if (! isCallable(validator.getMessage) && ! isObject(validator.messages)) {
-    throw createError(
-      // eslint-disable-next-line
-      ("Extension Error: The validator '" + name + "' must have a 'getMessage' method or have a 'messages' object.")
-    );
-  }
 };
 
 /**
@@ -3089,7 +3031,7 @@ Validator.remove = function remove (name) {
 
 /**
  * Sets the default locale for all validators.
- *
+ * @deprecated
  * @param {String} language The locale id.
  */
 Validator.setLocale = function setLocale (language) {
@@ -3112,13 +3054,18 @@ Validator.setStrictMode = function setStrictMode (strictMode) {
 
 /**
  * Updates the dicitionary, overwriting existing values and adding new ones.
- *
+ * @deprecated
  * @param{object} data The dictionary object.
  */
 Validator.updateDictionary = function updateDictionary (data) {
   DICTIONARY.merge(data);
 };
 
+/**
+ * Adds a locale object to the dictionary.
+ * @deprecated
+ * @param {Object} locale 
+ */
 Validator.addLocale = function addLocale (locale) {
   if (! locale.name) {
     warn('Your locale must have a name property');
@@ -3129,14 +3076,31 @@ Validator.addLocale = function addLocale (locale) {
     var obj;
 };
 
+/**
+ * Adds a locale object to the dictionary.
+ * @deprecated
+ * @param {Object} locale 
+ */
 Validator.prototype.addLocale = function addLocale (locale) {
   Validator.addLocale(locale);
 };
 
+/**
+ * Adds and sets the current locale for the validator.
+ *
+ * @param {String} lang
+ * @param {Object} dictionary
+ */
 Validator.prototype.localize = function localize (lang, dictionary) {
   Validator.localize(lang, dictionary);
 };
 
+/**
+ * Adds and sets the current locale for the validator.
+ * 
+ * @param {String} lang
+ * @param {Object} dictionary
+ */
 Validator.localize = function localize (lang, dictionary) {
   // merge the dictionary.
   if (dictionary) {
@@ -3146,178 +3110,6 @@ Validator.localize = function localize (lang, dictionary) {
 
   // set the locale.
   Validator.locale = lang;
-};
-
-/**
- * Creates the fields to be validated.
- *
- * @param{object} validations
- * @return {object} Normalized object.
- */
-Validator.prototype._createFields = function _createFields (validations) {
-    var this$1 = this;
-
-  if (! validations) { return; }
-
-  Object.keys(validations).forEach(function (field) {
-    var options = assign({}, { name: field, rules: validations[field] });
-    this$1.attach(options);
-  });
-};
-
-/**
- * Date rules need the existance of a format, so date_format must be supplied.
- * @param {String} name The rule name.
- * @param {Array} validations the field validations.
- */
-Validator.prototype._getDateFormat = function _getDateFormat (validations) {
-  var format = null;
-  if (validations.date_format && Array.isArray(validations.date_format)) {
-    format = validations.date_format[0];
-  }
-
-  return format || this.dictionary.getDateFormat(this.locale);
-};
-
-/**
- * Checks if the passed rule is a date rule.
- */
-Validator.prototype._isADateRule = function _isADateRule (rule) {
-  return !! ~['after', 'before', 'date_between', 'date_format'].indexOf(rule);
-};
-
-/**
- * Formats an error message for field and a rule.
- *
- * @param{Field} field The field object.
- * @param{object} rule Normalized rule object.
- * @param {object} data Additional Information about the validation result.
- * @return {string} Formatted error message.
- */
-Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, rule, data) {
-    if ( data === void 0 ) data = {};
-
-  var name = this._getFieldDisplayName(field);
-  var params = this._getLocalizedParams(rule);
-  // Defaults to english message.
-  if (! this.dictionary.hasLocale(LOCALE)) {
-    var msg$1 = this.dictionary.getFieldMessage('en', field.name, rule.name);
-
-    return isCallable(msg$1) ? msg$1(name, params, data) : msg$1;
-  }
-
-  var msg = this.dictionary.getFieldMessage(LOCALE, field.name, rule.name);
-
-  return isCallable(msg) ? msg(name, params, data) : msg;
-};
-
-/**
- * Translates the parameters passed to the rule (mainly for target fields).
- */
-Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule) {
-  if (~ ['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
-    if (rule.params.length > 1) {
-      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]), rule.params[1]];
-    } else {
-      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
-    }
-  }
-
-  return rule.params;
-};
-
-/**
- * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
- * Then the dictionary, then fallsback to field name.
- * @param {Field} field The field object.
- * @return {String} The name to be used in the errors.
- */
-Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field) {
-  return field.displayName || this.dictionary.getAttribute(LOCALE, field.name, field.name);
-};
-
-/**
- * Tests a single input value against a rule.
- *
- * @param{Field} field The field under validation.
- * @param{*} valuethe value of the field.
- * @param{object} rule the rule object.
- * @return {boolean} Whether it passes the check.
- */
-Validator.prototype._test = function _test (field, value, rule) {
-    var this$1 = this;
-
-  var validator = Rules[rule.name];
-  var params = Array.isArray(rule.params) ? toArray(rule.params) : [];
-  if (! validator || typeof validator !== 'function') {
-    throw createError(("No such validator '" + (rule.name) + "' exists."));
-  }
-
-  // has field depenencies
-  if (/(confirmed|after|before)/.test(rule.name)) {
-    var target = find(field.dependencies, function (d) { return d.name === rule.name; });
-    if (target) {
-      if (params.length > 1) {
-        params = [target.field.value, params[1]];
-      } else {
-        params = [target.field.value];
-      }
-    }
-  } else if (rule.name === 'required' && field.rejectsFalse) {
-    // invalidate false if no args were specified and the field rejects false by default.
-    params = params.length ? params : [true];
-  }
-
-  if (installDate.installed && this._isADateRule(rule.name)) {
-    var dateFormat = this._getDateFormat(field.rules);
-    if (rule.name !== 'date_format') {
-      params.push(dateFormat);
-    }
-  }
-
-  var result = validator(value, params);
-
-  // If it is a promise.
-  if (isCallable(result.then)) {
-    return result.then(function (values) {
-      var allValid = true;
-      var data = {};
-      if (Array.isArray(values)) {
-        allValid = values.every(function (t) { return (isObject(t) ? t.valid : t); });
-      } else { // Is a single object/boolean.
-        allValid = isObject(values) ? values.valid : values;
-        data = values.data;
-      }
-
-      if (! allValid) {
-        this$1.errors.add({
-          id: field.id,
-          field: field.name,
-          msg: this$1._formatErrorMessage(field, rule, data),
-          rule: rule.name,
-          scope: field.scope
-        });
-      }
-
-      return allValid;
-    });
-  }
-
-  if (! isObject(result)) {
-    result = { valid: result, data: {} };
-  }
-
-  if (! result.valid) {
-    this.errors.add({
-      id: field.id,
-      field: field.name,
-      msg: this._formatErrorMessage(field, rule, result.data),
-      rule: rule.name,
-      scope: field.scope
-    });
-  }
-
-  return result.valid;
 };
 
 /**
@@ -3340,10 +3132,17 @@ Validator.prototype.attach = function attach (field) {
   }
 
   this.fields.push(field);
-  // validate if initial.
+
+  // validate the field initially
   if (field.initial) {
     this.validate(("#" + (field.id)), field.value);
+  } else {
+    this._validate(field, field.value, true).then(function (valid) {
+      field.flags.valid = valid;
+      field.flags.invalid = !valid;
+    });
   }
+
   if (!field.scope) {
     this.fieldBag = assign({}, this.fieldBag, ( obj = {}, obj[("" + (field.name))] = field.flags, obj ));
       var obj;
@@ -3431,97 +3230,11 @@ Validator.prototype.setLocale = function setLocale (language) {
 
 /**
  * Updates the messages dicitionary, overwriting existing values and adding new ones.
- *
+ * @deprecated
  * @param{object} data The messages object.
  */
 Validator.prototype.updateDictionary = function updateDictionary (data) {
   Validator.updateDictionary(data);
-};
-
-/**
- * Tries different strategies to find a field.
- * @param {String} name
- * @param {String} scope
- * @return {Field}
- */
-Validator.prototype._resolveField = function _resolveField (name, scope) {
-  if (scope) {
-    return this.fields.find({ name: name, scope: scope });
-  }
-
-  if (name[0] === '#') {
-    return this.fields.find({ id: name.slice(1) });
-  }
-
-  if (name.indexOf('.') > -1) {
-    var parts = name.split('.');
-    var field = this.fields.find({ name: parts[1], scope: parts[0] });
-    if (field) {
-      return field;
-    }
-  }
-
-  return this.fields.find({ name: name, scope: null });
-};
-
-/**
- * Handles when a field is not found depending on the strict flag.
- *
- * @param {String} name
- * @param {String} scope
- */
-Validator.prototype._handleFieldNotFound = function _handleFieldNotFound (name, scope) {
-  if (! this.strict) { return Promise.resolve(true); }
-
-  var fullName = scope ? name : ("" + (scope ? scope + '.' : '') + name);
-  throw createError(
-    ("Validating a non-existant field: \"" + fullName + "\". Use \"attach()\" first.")
-  );
-};
-
-/**
- * Starts the validation process.
- *
- * @param {Field} field
- * @param {Promise} value
- */
-Validator.prototype._validate = function _validate (field, value) {
-    var this$1 = this;
-
-  if (! field.isRequired && ~[null, undefined, ''].indexOf(value)) {
-    return Promise.resolve(true);
-  }
-
-  var promises = [];
-  var isExitEarly = false;
-  // use of '.some()' is to break iteration in middle by returning true
-  Object.keys(field.rules).some(function (rule) {
-    var result = this$1._test(
-      field,
-      value,
-      { name: rule, params: field.rules[rule] }
-    );
-
-    if (isCallable(result.then)) {
-      promises.push(result);
-    } else if (this$1.fastExit && !result) {
-      isExitEarly = true;
-    } else {
-      var resultAsPromise = new Promise(function (resolve) {
-        resolve(result);
-      });
-      promises.push(resultAsPromise);
-    }
-
-    return isExitEarly;
-  });
-
-  if (isExitEarly) { return Promise.resolve(false); }
-
-  return Promise.all(promises).then(function (values) {
-    var valid = values.every(function (t) { return t; });
-    return valid;
-  });
 };
 
 /**
@@ -3533,6 +3246,7 @@ Validator.prototype._validate = function _validate (field, value) {
  * @return {Promise}
  */
 Validator.prototype.validate = function validate (name, value, scope) {
+    var this$1 = this;
     if ( scope === void 0 ) scope = null;
 
   if (this.paused) { return Promise.resolve(true); }
@@ -3564,7 +3278,6 @@ Validator.prototype.validate = function validate (name, value, scope) {
     value = field.value;
   }
 
-  var this$1 = this;
   return this._validate(field, value).then(function (result) {
     field.setFlags({
       pending: false,
@@ -3573,8 +3286,8 @@ Validator.prototype.validate = function validate (name, value, scope) {
     });
 
     if (field.isDisabled) {
-        this$1.errors.removeById(field.id);
-        return Promise.resolve(true);
+      this$1.errors.removeById(field.id);
+      return Promise.resolve(true);
     }
 
     return result;
@@ -3652,6 +3365,317 @@ Validator.prototype.validateScopes = function validateScopes () {
   ); });
 
   return Promise.all(promises).then(function (results) { return results.every(function (t) { return t; }); });
+};
+
+/**
+ * Creates the fields to be validated.
+ *
+ * @param{object} validations
+ * @return {object} Normalized object.
+ */
+Validator.prototype._createFields = function _createFields (validations) {
+    var this$1 = this;
+
+  if (!validations) { return; }
+
+  Object.keys(validations).forEach(function (field) {
+    var options = assign({}, { name: field, rules: validations[field] });
+    this$1.attach(options);
+  });
+};
+
+/**
+ * Date rules need the existance of a format, so date_format must be supplied.
+ * @param {String} name The rule name.
+ * @param {Array} validations the field validations.
+ */
+Validator.prototype._getDateFormat = function _getDateFormat (validations) {
+  var format = null;
+  if (validations.date_format && Array.isArray(validations.date_format)) {
+    format = validations.date_format[0];
+  }
+
+  return format || this.dictionary.getDateFormat(this.locale);
+};
+
+/**
+ * Checks if the passed rule is a date rule.
+ */
+Validator.prototype._isADateRule = function _isADateRule (rule) {
+  return !! ~['after', 'before', 'date_between', 'date_format'].indexOf(rule);
+};
+
+/**
+ * Formats an error message for field and a rule.
+ *
+ * @param{Field} field The field object.
+ * @param{object} rule Normalized rule object.
+ * @param {object} data Additional Information about the validation result.
+ * @return {string} Formatted error message.
+ */
+Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, rule, data) {
+    if ( data === void 0 ) data = {};
+
+  var name = this._getFieldDisplayName(field);
+  var params = this._getLocalizedParams(rule);
+  // Defaults to english message.
+  if (!this.dictionary.hasLocale(LOCALE)) {
+    var msg$1 = this.dictionary.getFieldMessage('en', field.name, rule.name);
+
+    return isCallable(msg$1) ? msg$1(name, params, data) : msg$1;
+  }
+
+  var msg = this.dictionary.getFieldMessage(LOCALE, field.name, rule.name);
+
+  return isCallable(msg) ? msg(name, params, data) : msg;
+};
+
+/**
+ * Translates the parameters passed to the rule (mainly for target fields).
+ */
+Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule) {
+  if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
+    if (rule.params.length > 1) {
+      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]), rule.params[1]];
+    } else {
+      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
+    }
+  }
+
+  return rule.params;
+};
+
+/**
+ * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
+ * Then the dictionary, then fallsback to field name.
+ * @param {Field} field The field object.
+ * @return {String} The name to be used in the errors.
+ */
+Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field) {
+  return field.displayName || this.dictionary.getAttribute(LOCALE, field.name, field.name);
+};
+
+/**
+ * Tests a single input value against a rule.
+ *
+ * @param{Field} field The field under validation.
+ * @param{*} valuethe value of the field.
+ * @param{object} rule the rule object.
+ * @return {boolean} Whether it passes the check.
+ */
+Validator.prototype._test = function _test (field, value, rule, silent) {
+    var this$1 = this;
+
+  var validator = Rules[rule.name];
+  var params = Array.isArray(rule.params) ? toArray(rule.params) : [];
+  if (!validator || typeof validator !== 'function') {
+    throw createError(("No such validator '" + (rule.name) + "' exists."));
+  }
+
+  // has field depenencies
+  if (/(confirmed|after|before)/.test(rule.name)) {
+    var target = find(field.dependencies, function (d) { return d.name === rule.name; });
+    if (target) {
+      if (params.length > 1) {
+        params = [target.field.value, params[1]];
+      } else {
+        params = [target.field.value];
+      }
+    }
+  } else if (rule.name === 'required' && field.rejectsFalse) {
+    // invalidate false if no args were specified and the field rejects false by default.
+    params = params.length ? params : [true];
+  }
+
+  if (installDate.installed && this._isADateRule(rule.name)) {
+    var dateFormat = this._getDateFormat(field.rules);
+    if (rule.name !== 'date_format') {
+      params.push(dateFormat);
+    }
+  }
+
+  var result = validator(value, params);
+
+  // If it is a promise.
+  if (isCallable(result.then)) {
+    return result.then(function (values) {
+      var allValid = true;
+      var data = {};
+      if (Array.isArray(values)) {
+        allValid = values.every(function (t) { return (isObject(t) ? t.valid : t); });
+      } else { // Is a single object/boolean.
+        allValid = isObject(values) ? values.valid : values;
+        data = values.data;
+      }
+
+      if (!allValid && !silent) {
+        this$1.errors.add({
+          id: field.id,
+          field: field.name,
+          msg: this$1._formatErrorMessage(field, rule, data),
+          rule: rule.name,
+          scope: field.scope
+        });
+      }
+
+      return allValid;
+    });
+  }
+
+  if (!isObject(result)) {
+    result = { valid: result, data: {} };
+  }
+
+  if (!result.valid && !silent) {
+    this.errors.add({
+      id: field.id,
+      field: field.name,
+      msg: this._formatErrorMessage(field, rule, result.data),
+      rule: rule.name,
+      scope: field.scope
+    });
+  }
+
+  return result.valid;
+};
+
+/**
+ * Merges a validator object into the Rules and Messages.
+ *
+ * @param{string} name The name of the validator.
+ * @param{function|object} validator The validator object.
+ */
+Validator._merge = function _merge (name, validator) {
+  if (isCallable(validator)) {
+    Rules[name] = validator;
+    return;
+  }
+
+  Rules[name] = validator.validate;
+  if (isCallable(validator.getMessage)) {
+    DICTIONARY.setMessage(LOCALE, name, validator.getMessage);
+  }
+
+  if (validator.messages) {
+    DICTIONARY.merge(
+      Object.keys(validator.messages).reduce(function (prev, curr) {
+        var dict = prev;
+        dict[curr] = {
+          messages: ( obj = {}, obj[name] = validator.messages[curr], obj )
+        };
+          var obj;
+
+        return dict;
+      }, {})
+    );
+  }
+};
+
+/**
+ * Guards from extnsion violations.
+ *
+ * @param{string} name name of the validation rule.
+ * @param{object} validator a validation rule object.
+ */
+Validator._guardExtend = function _guardExtend (name, validator) {
+  if (isCallable(validator)) {
+    return;
+  }
+
+  if (!isCallable(validator.validate)) {
+    throw createError(
+      // eslint-disable-next-line
+      ("Extension Error: The validator '" + name + "' must be a function or have a 'validate' method.")
+    );
+  }
+
+  if (!isCallable(validator.getMessage) && !isObject(validator.messages)) {
+    throw createError(
+      // eslint-disable-next-line
+      ("Extension Error: The validator '" + name + "' must have a 'getMessage' method or have a 'messages' object.")
+    );
+  }
+};
+
+/**
+ * Tries different strategies to find a field.
+ * @param {String} name
+ * @param {String} scope
+ * @return {Field}
+ */
+Validator.prototype._resolveField = function _resolveField (name, scope) {
+  if (scope) {
+    return this.fields.find({ name: name, scope: scope });
+  }
+
+  if (name[0] === '#') {
+    return this.fields.find({ id: name.slice(1) });
+  }
+
+  if (name.indexOf('.') > -1) {
+    var parts = name.split('.');
+    var field = this.fields.find({ name: parts[1], scope: parts[0] });
+    if (field) {
+      return field;
+    }
+  }
+
+  return this.fields.find({ name: name, scope: null });
+};
+
+/**
+ * Handles when a field is not found depending on the strict flag.
+ *
+ * @param {String} name
+ * @param {String} scope
+ */
+Validator.prototype._handleFieldNotFound = function _handleFieldNotFound (name, scope) {
+  if (!this.strict) { return Promise.resolve(true); }
+
+  var fullName = scope ? name : ("" + (scope ? scope + '.' : '') + name);
+  throw createError(
+    ("Validating a non-existant field: \"" + fullName + "\". Use \"attach()\" first.")
+  );
+};
+
+/**
+ * Starts the validation process.
+ *
+ * @param {Field} field
+ * @param {Promise} value
+ * @param {Boolean} silent
+ */
+Validator.prototype._validate = function _validate (field, value, silent) {
+    var this$1 = this;
+    if ( silent === void 0 ) silent = false;
+
+  if (!field.isRequired && ~[null, undefined, ''].indexOf(value)) {
+    return Promise.resolve(true);
+  }
+
+  var promises = [];
+  var isExitEarly = false;
+  // use of '.some()' is to break iteration in middle by returning true
+  Object.keys(field.rules).some(function (rule) {
+    var result = this$1._test(field, value, { name: rule, params: field.rules[rule] }, silent);
+
+    if (isCallable(result.then)) {
+      promises.push(result);
+    } else if (this$1.fastExit && !result) {
+      isExitEarly = true;
+    } else {
+      var resultAsPromise = new Promise(function (resolve) {
+        resolve(result);
+      });
+      promises.push(resultAsPromise);
+    }
+
+    return isExitEarly;
+  });
+
+  if (isExitEarly) { return Promise.resolve(false); }
+
+  return Promise.all(promises).then(function (values) { return values.every(function (t) { return t; }); });
 };
 
 Object.defineProperties( Validator.prototype, prototypeAccessors );

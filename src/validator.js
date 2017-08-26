@@ -403,8 +403,8 @@ export default class Validator {
       });
 
       if (field.isDisabled) {
-          this.errors.removeById(field.id);
-          return Promise.resolve(true);
+        this.errors.removeById(field.id);
+        return Promise.resolve(true);
       }
 
       return result;
