@@ -389,15 +389,13 @@ test('calls the update method on the validator errors when updating scope', () =
   let el = document.createElement('input');
   const vm = {
     $validator: {
-      errors: {
-        update: jest.fn()
-      }
+      update: jest.fn()
     }
   };
   const field = new Field(el, { rules: 'required', vm });
   field.updated = true;
   field.update({ rules: 'min:3', scope: 'scope' });
-  expect(vm.$validator.errors.update).toHaveBeenCalledTimes(1);
+  expect(vm.$validator.update).toHaveBeenCalledTimes(1);
 });
 
 test('validation trigger can validate values directly instead of resolving them', () => {

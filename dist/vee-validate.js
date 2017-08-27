@@ -701,6 +701,26 @@ var formatFileSize = function (size) {
  */
 var setDataAttribute = function (el, name, value) { return el.setAttribute(("data-vv-" + name), value); };
 
+var createProxy = function (target, handler) {
+  if (typeof Proxy === 'undefined') {
+    // TODO: Polyfill or simulate the behavior.
+  }
+
+  return new Proxy(target, handler);
+};
+
+var createFlags = function () { return ({
+  untouched: true,
+  touched: false,
+  dirty: false,
+  pristine: true,
+  valid: null,
+  invalid: null,
+  validated: false,
+  pending: false,
+  required: false
+}); };
+
 /**
  * Shallow object comparison.
  *
@@ -1993,7 +2013,8 @@ Generator.makeVM = function makeVM (vm) {
     $watch: vm.$watch ? vm.$watch.bind(vm) : function () {},
     $validator: vm.$validator ? {
       errors: vm.$validator.errors,
-      validate: vm.$validator.validate.bind(vm.$validator)
+      validate: vm.$validator.validate.bind(vm.$validator),
+      update: vm.$validator.update.bind(vm.$validator)
     } : null
   };
 };
@@ -2140,18 +2161,6 @@ Generator.resolveGetter = function resolveGetter (el, vnode, model) {
   }
 };
 
-var DEFAULT_FLAGS = {
-  untouched: true,
-  touched: false,
-  dirty: false,
-  pristine: true,
-  valid: null,
-  invalid: null,
-  validated: false,
-  pending: false,
-  required: false
-};
-
 var DEFAULT_OPTIONS = {
   targetOf: null,
   initial: false,
@@ -2193,7 +2202,7 @@ var Field = function Field (el, options) {
   options = assign({}, DEFAULT_OPTIONS, options);
   this.validity = options.validity;
   this.aria = options.aria;
-  this.flags = assign({}, DEFAULT_FLAGS);
+  this.flags = createFlags();
   this.vm = options.vm || this.vm;
   this.component = options.component || this.component;
   this.update(options);
@@ -2291,8 +2300,8 @@ Field.prototype.update = function update (options) {
   this.initial = options.initial || this.initial || false;
 
   // update errors scope if the field scope was changed.
-  if (options.scope && options.scope !== this.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
-    this.validator.errors.update(this.id, { scope: options.scope });
+  if (options.scope && options.scope !== this.scope && isCallable(this.validator.update)) {
+    this.validator.update(this.id, { scope: options.scope });
   }
   this.scope = options.scope || this.scope || null;
   this.name = options.name || this.name || null;
@@ -2336,8 +2345,9 @@ Field.prototype.update = function update (options) {
 Field.prototype.reset = function reset () {
     var this$1 = this;
 
+  var def = createFlags();
   Object.keys(this.flags).forEach(function (flag) {
-    this$1.flags[flag] = DEFAULT_FLAGS[flag];
+    this$1.flags[flag] = def[flag];
   });
 
   this.addActionListeners();
@@ -2893,7 +2903,7 @@ var Validator = function Validator (validations, options) {
   this.strict = STRICT_MODE;
   this.errors = new ErrorBag();
   this.fields = new FieldBag();
-  this.fieldBag = {};
+  this.flags = {};
   this._createFields(validations);
   this.paused = false;
   this.fastExit = options.fastExit || false;
@@ -3143,17 +3153,7 @@ Validator.prototype.attach = function attach (field) {
     });
   }
 
-  if (!field.scope) {
-    this.fieldBag = assign({}, this.fieldBag, ( obj = {}, obj[("" + (field.name))] = field.flags, obj ));
-      var obj;
-    return field;
-  }
-
-  var scopeObj = assign({}, this.fieldBag[("$" + (field.scope))] || {}, ( obj$1 = {}, obj$1[("" + (field.name))] = field.flags, obj$1 ));
-    var obj$1;
-  this.fieldBag = assign({}, this.fieldBag, ( obj$2 = {}, obj$2[("$" + (field.scope))] = scopeObj, obj$2 ));
-    var obj$2;
-
+  this._addFlag(field, field.scope);
   return field;
 };
 
@@ -3185,13 +3185,13 @@ Validator.prototype.detach = function detach (name, scope) {
   field.destroy();
   this.errors.removeById(field.id);
   this.fields.remove(field);
-  var flags = this.fieldBag;
+  var flags = this.flags;
   if (field.scope) {
     delete flags[("$" + (field.scope))][field.name];
   } else {
     delete flags[field.name];
   }
-  this.fieldBag = Object.assign({}, flags);
+  this.flags = Object.assign({}, flags);
 };
 
 /**
@@ -3202,6 +3202,29 @@ Validator.prototype.detach = function detach (name, scope) {
  */
 Validator.prototype.extend = function extend (name, validator) {
   Validator.extend(name, validator);
+};
+
+/**
+ * Updates a field, updating both errors and flags.
+ *
+ * @param {String} id 
+ * @param {Object} diff 
+ */
+Validator.prototype.update = function update (id, ref) {
+    var scope = ref.scope;
+
+  this.errors.update(this.id, { scope: scope });
+  var field = this._resolveField(("#" + id));
+  var flags = this.flags;
+
+  // remove old scope.
+  if (field.scope) {
+    delete flags[("$" + (field.scope))][field.name];
+  } else {
+    delete flags[field.name];
+  }
+
+  this._addFlag(field, scope);
 };
 
 /**
@@ -3456,6 +3479,26 @@ Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field)
 };
 
 /**
+ * Adds a field flags to the flags collection.
+ * @param {Field} field 
+ * @param {String|null} scope 
+ */
+Validator.prototype._addFlag = function _addFlag (field, scope) {
+    if ( scope === void 0 ) scope = null;
+
+  if (!scope) {
+    this.flags = assign({}, this.flags, ( obj = {}, obj[("" + (field.name))] = field.flags, obj ));
+      var obj;
+    return;
+  }
+
+  var scopeObj = assign({}, this.flags[("$" + scope)] || {}, ( obj$1 = {}, obj$1[("" + (field.name))] = field.flags, obj$1 ));
+    var obj$1;
+  this.flags = assign({}, this.flags, ( obj$2 = {}, obj$2[("$" + scope)] = scopeObj, obj$2 ));
+    var obj$2;
+};
+
+/**
  * Tests a single input value against a rule.
  *
  * @param{Field} field The field under validation.
@@ -3681,6 +3724,17 @@ Validator.prototype._validate = function _validate (field, value, silent) {
 Object.defineProperties( Validator.prototype, prototypeAccessors );
 Object.defineProperties( Validator, staticAccessors );
 
+var fakeFlags = createProxy({}, {
+  get: function get (target, key) {
+    // is a scope
+    if (String(key).indexOf('$') === 0) {
+      return fakeFlags;
+    }
+
+    return createFlags();
+  }
+});
+
 /**
  * Checks if a parent validator instance was requested.
  * @param {Object|Array} injections
@@ -3748,7 +3802,7 @@ var makeMixin = function (Vue, options) {
     // There is a validator but it isn't injected, mark as reactive.
     if (! requested && this.$validator) {
       Vue.util.defineReactive(this.$validator, 'errors', this.$validator.errors);
-      Vue.util.defineReactive(this.$validator, 'fieldBag', this.$validator.fieldBag);
+      Vue.util.defineReactive(this.$validator, 'flags', this.$validator.flags);
     }
 
     if (! this.$options.computed) {
@@ -3759,7 +3813,11 @@ var makeMixin = function (Vue, options) {
       return this.$validator.errors;
     };
     this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
-      return this.$validator.fieldBag;
+      if (!Object.keys(this.$validator.flags).length) {
+        return fakeFlags;
+      }
+
+      return this.$validator.flags;
     };
   };
 

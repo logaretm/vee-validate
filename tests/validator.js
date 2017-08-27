@@ -778,9 +778,9 @@ test('it can set flags for attached fields', () => {
 
   // scoped fields
   v.attach('email', 'email', { scope: 'myscope' });
-  expect(v.fieldBag.$myscope.email.untouched).toBe(true);
+  expect(v.flags.$myscope.email.untouched).toBe(true);
   v.flag('myscope.email', { untouched: false });
-  expect(v.fieldBag.$myscope.email.untouched).toBe(false);
+  expect(v.flags.$myscope.email.untouched).toBe(false);
 
   // dotted name fields
   field = v.attach('form.title', 'alpha');

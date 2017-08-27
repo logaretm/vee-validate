@@ -364,7 +364,8 @@ test('generates fake vm', () => {
       $watch: jest.fn(),
       $validator: {
         validate: jest.fn(),
-        errors: {}
+        errors: {},
+        update: jest.fn()
       }
     }
   };

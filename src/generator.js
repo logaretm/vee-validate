@@ -65,7 +65,8 @@ export default class Generator {
       $watch: vm.$watch ? vm.$watch.bind(vm) : () => {},
       $validator: vm.$validator ? {
         errors: vm.$validator.errors,
-        validate: vm.$validator.validate.bind(vm.$validator)
+        validate: vm.$validator.validate.bind(vm.$validator),
+        update: vm.$validator.update.bind(vm.$validator)
       } : null
     };
   }

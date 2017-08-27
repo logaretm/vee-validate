@@ -1,17 +1,5 @@
-import { uniqId, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn, toArray } from './utils';
+import { uniqId, createFlags, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn, toArray } from './utils';
 import Generator from './generator';
-
-const DEFAULT_FLAGS = {
-  untouched: true,
-  touched: false,
-  dirty: false,
-  pristine: true,
-  valid: null,
-  invalid: null,
-  validated: false,
-  pending: false,
-  required: false
-};
 
 const DEFAULT_OPTIONS = {
   targetOf: null,
@@ -53,7 +41,7 @@ export default class Field {
     options = assign({}, DEFAULT_OPTIONS, options);
     this.validity = options.validity;
     this.aria = options.aria;
-    this.flags = assign({}, DEFAULT_FLAGS);
+    this.flags = createFlags();
     this.vm = options.vm || this.vm;
     this.component = options.component || this.component;
     this.update(options);
@@ -149,8 +137,8 @@ export default class Field {
     this.initial = options.initial || this.initial || false;
 
     // update errors scope if the field scope was changed.
-    if (options.scope && options.scope !== this.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
-      this.validator.errors.update(this.id, { scope: options.scope });
+    if (options.scope && options.scope !== this.scope && isCallable(this.validator.update)) {
+      this.validator.update(this.id, { scope: options.scope });
     }
     this.scope = options.scope || this.scope || null;
     this.name = options.name || this.name || null;
@@ -192,8 +180,9 @@ export default class Field {
    * Resets field flags and errors.
    */
   reset () {
+    const def = createFlags();
     Object.keys(this.flags).forEach(flag => {
-      this.flags[flag] = DEFAULT_FLAGS[flag];
+      this.flags[flag] = def[flag];
     });
 
     this.addActionListeners();

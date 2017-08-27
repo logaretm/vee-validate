@@ -22,7 +22,7 @@ export default class Validator {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
     this.fields = new FieldBag();
-    this.fieldBag = {};
+    this.flags = {};
     this._createFields(validations);
     this.paused = false;
     this.fastExit = options.fastExit || false;
@@ -266,14 +266,7 @@ export default class Validator {
       });
     }
 
-    if (!field.scope) {
-      this.fieldBag = assign({}, this.fieldBag, { [`${field.name}`]: field.flags });
-      return field;
-    }
-
-    const scopeObj = assign({}, this.fieldBag[`$${field.scope}`] || {}, { [`${field.name}`]: field.flags });
-    this.fieldBag = assign({}, this.fieldBag, { [`$${field.scope}`]: scopeObj });
-
+    this._addFlag(field, field.scope);
     return field;
   }
 
@@ -305,13 +298,13 @@ export default class Validator {
     field.destroy();
     this.errors.removeById(field.id);
     this.fields.remove(field);
-    const flags = this.fieldBag;
+    const flags = this.flags;
     if (field.scope) {
       delete flags[`$${field.scope}`][field.name];
     } else {
       delete flags[field.name];
     }
-    this.fieldBag = Object.assign({}, flags);
+    this.flags = Object.assign({}, flags);
   }
 
   /**
@@ -322,6 +315,27 @@ export default class Validator {
    */
   extend (name, validator) {
     Validator.extend(name, validator);
+  }
+
+  /**
+   * Updates a field, updating both errors and flags.
+   *
+   * @param {String} id 
+   * @param {Object} diff 
+   */
+  update (id, { scope }) {
+    this.errors.update(this.id, { scope });
+    const field = this._resolveField(`#${id}`);
+    const flags = this.flags;
+
+    // remove old scope.
+    if (field.scope) {
+      delete flags[`$${field.scope}`][field.name];
+    } else {
+      delete flags[field.name];
+    }
+
+    this._addFlag(field, scope);
   }
 
   /**
@@ -561,6 +575,21 @@ export default class Validator {
    */
   _getFieldDisplayName (field) {
     return field.displayName || this.dictionary.getAttribute(LOCALE, field.name, field.name);
+  }
+
+  /**
+   * Adds a field flags to the flags collection.
+   * @param {Field} field 
+   * @param {String|null} scope 
+   */
+  _addFlag (field, scope = null) {
+    if (!scope) {
+      this.flags = assign({}, this.flags, { [`${field.name}`]: field.flags });
+      return;
+    }
+
+    const scopeObj = assign({}, this.flags[`$${scope}`] || {}, { [`${field.name}`]: field.flags });
+    this.flags = assign({}, this.flags, { [`$${scope}`]: scopeObj });
   }
 
   /**

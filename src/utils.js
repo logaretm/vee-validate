@@ -44,6 +44,26 @@ export const formatFileSize = (size) => {
  */
 export const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
 
+export const createProxy = (target, handler) => {
+  if (typeof Proxy === 'undefined') {
+    // TODO: Polyfill or simulate the behavior.
+  }
+
+  return new Proxy(target, handler);
+};
+
+export const createFlags = () => ({
+  untouched: true,
+  touched: false,
+  dirty: false,
+  pristine: true,
+  valid: null,
+  invalid: null,
+  validated: false,
+  pending: false,
+  required: false
+});
+
 /**
  * Shallow object comparison.
  *
