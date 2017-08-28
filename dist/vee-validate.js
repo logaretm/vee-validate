@@ -804,7 +804,7 @@ var getPath = function (propPath, target, def) {
 var hasPath = function (path, target) {
   var obj = target;
   return path.split('.').every(function (prop) {
-    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+    if (! Object.prototype.hasOwnProperty.call(obj, prop) && obj[prop] === undefined) {
       return false;
     }
 
