@@ -537,9 +537,9 @@ export default class Validator {
    * @param {object} data Additional Information about the validation result.
    * @return {string} Formatted error message.
    */
-  _formatErrorMessage (field, rule, data = {}) {
+  _formatErrorMessage (field, rule, data = {}, targetName = null) {
     const name = this._getFieldDisplayName(field);
-    const params = this._getLocalizedParams(rule);
+    const params = this._getLocalizedParams(rule, targetName);
     // Defaults to english message.
     if (!this.dictionary.hasLocale(LOCALE)) {
       const msg = this.dictionary.getFieldMessage('en', field.name, rule.name);
@@ -555,13 +555,10 @@ export default class Validator {
   /**
    * Translates the parameters passed to the rule (mainly for target fields).
    */
-  _getLocalizedParams (rule) {
+  _getLocalizedParams (rule, targetName = null) {
     if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
-      if (rule.params.length > 1) {
-        return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]), rule.params[1]];
-      } else {
-        return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
-      }
+      const localizedName = targetName || this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]);
+      return [localizedName].concat(rule.params.slice(1));
     }
 
     return rule.params;
@@ -603,6 +600,7 @@ export default class Validator {
   _test (field, value, rule, silent) {
     const validator = Rules[rule.name];
     let params = Array.isArray(rule.params) ? toArray(rule.params) : [];
+    let targetName = null;
     if (!validator || typeof validator !== 'function') {
       throw createError(`No such validator '${rule.name}' exists.`);
     }
@@ -611,11 +609,8 @@ export default class Validator {
     if (/(confirmed|after|before)/.test(rule.name)) {
       const target = find(field.dependencies, d => d.name === rule.name);
       if (target) {
-        if (params.length > 1) {
-          params = [target.field.value, params[1]];
-        } else {
-          params = [target.field.value];
-        }
+        targetName = target.field.displayName;
+        params = [target.field.value].concat(params.slice(1));
       }
     } else if (rule.name === 'required' && field.rejectsFalse) {
       // invalidate false if no args were specified and the field rejects false by default.
@@ -647,7 +642,7 @@ export default class Validator {
           this.errors.add({
             id: field.id,
             field: field.name,
-            msg: this._formatErrorMessage(field, rule, data),
+            msg: this._formatErrorMessage(field, rule, data, targetName),
             rule: rule.name,
             scope: field.scope
           });
@@ -665,7 +660,7 @@ export default class Validator {
       this.errors.add({
         id: field.id,
         field: field.name,
-        msg: this._formatErrorMessage(field, rule, result.data),
+        msg: this._formatErrorMessage(field, rule, result.data, targetName),
         rule: rule.name,
         scope: field.scope
       });

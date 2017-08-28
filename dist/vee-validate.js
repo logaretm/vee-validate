@@ -2458,9 +2458,11 @@ Field.prototype.updateDependencies = function updateDependencies () {
     if (isCallable(el.$watch)) {
       options.component = el;
       options.el = el.$el;
+      options.alias = Generator.resolveAlias(el.$el, { child: el });
       options.getter = Generator.resolveGetter(el.$el, { child: el });
     } else {
       options.el = el;
+      options.alias = Generator.resolveAlias(el, {});
       options.getter = Generator.resolveGetter(el, {});
     }
 
@@ -3436,11 +3438,12 @@ Validator.prototype._isADateRule = function _isADateRule (rule) {
  * @param {object} data Additional Information about the validation result.
  * @return {string} Formatted error message.
  */
-Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, rule, data) {
+Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, rule, data, targetName) {
     if ( data === void 0 ) data = {};
+    if ( targetName === void 0 ) targetName = null;
 
   var name = this._getFieldDisplayName(field);
-  var params = this._getLocalizedParams(rule);
+  var params = this._getLocalizedParams(rule, targetName);
   // Defaults to english message.
   if (!this.dictionary.hasLocale(LOCALE)) {
     var msg$1 = this.dictionary.getFieldMessage('en', field.name, rule.name);
@@ -3456,13 +3459,12 @@ Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, r
 /**
  * Translates the parameters passed to the rule (mainly for target fields).
  */
-Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule) {
+Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule, targetName) {
+    if ( targetName === void 0 ) targetName = null;
+
   if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
-    if (rule.params.length > 1) {
-      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]), rule.params[1]];
-    } else {
-      return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
-    }
+    var localizedName = targetName || this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]);
+    return [localizedName].concat(rule.params.slice(1));
   }
 
   return rule.params;
@@ -3511,6 +3513,7 @@ Validator.prototype._test = function _test (field, value, rule, silent) {
 
   var validator = Rules[rule.name];
   var params = Array.isArray(rule.params) ? toArray(rule.params) : [];
+  var targetName = null;
   if (!validator || typeof validator !== 'function') {
     throw createError(("No such validator '" + (rule.name) + "' exists."));
   }
@@ -3519,11 +3522,8 @@ Validator.prototype._test = function _test (field, value, rule, silent) {
   if (/(confirmed|after|before)/.test(rule.name)) {
     var target = find(field.dependencies, function (d) { return d.name === rule.name; });
     if (target) {
-      if (params.length > 1) {
-        params = [target.field.value, params[1]];
-      } else {
-        params = [target.field.value];
-      }
+      targetName = target.field.displayName;
+      params = [target.field.value].concat(params.slice(1));
     }
   } else if (rule.name === 'required' && field.rejectsFalse) {
     // invalidate false if no args were specified and the field rejects false by default.
@@ -3555,7 +3555,7 @@ Validator.prototype._test = function _test (field, value, rule, silent) {
         this$1.errors.add({
           id: field.id,
           field: field.name,
-          msg: this$1._formatErrorMessage(field, rule, data),
+          msg: this$1._formatErrorMessage(field, rule, data, targetName),
           rule: rule.name,
           scope: field.scope
         });
@@ -3573,7 +3573,7 @@ Validator.prototype._test = function _test (field, value, rule, silent) {
     this.errors.add({
       id: field.id,
       field: field.name,
-      msg: this._formatErrorMessage(field, rule, result.data),
+      msg: this._formatErrorMessage(field, rule, result.data, targetName),
       rule: rule.name,
       scope: field.scope
     });

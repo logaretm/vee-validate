@@ -286,9 +286,11 @@ export default class Field {
       if (isCallable(el.$watch)) {
         options.component = el;
         options.el = el.$el;
+        options.alias = Generator.resolveAlias(el.$el, { child: el });
         options.getter = Generator.resolveGetter(el.$el, { child: el });
       } else {
         options.el = el;
+        options.alias = Generator.resolveAlias(el, {});
         options.getter = Generator.resolveGetter(el, {});
       }
 
