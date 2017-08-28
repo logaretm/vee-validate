@@ -11,9 +11,9 @@ block content
   +example('Delay')
     delay-example
   
-  include:markdown-it markdown/examples/reject.md
-  +example('FileReject')
-    reject-example
+  //- include:markdown-it markdown/examples/reject.md
+  //- +example('FileReject')
+  //-   reject-example
 
   include:markdown-it markdown/examples/data.md
   +example('Data')
@@ -57,4 +57,8 @@ block content
 
   include:markdown-it(langPrefix="highlight-") markdown/examples/eventBus.md
   +example('EventBusParent')
-    event-bus-example  
+    event-bus-example 
+
+  include:markdown-it(langPrefix="highlight-") markdown/examples/backend.md
+  +example('Backend')
+    backend-example  

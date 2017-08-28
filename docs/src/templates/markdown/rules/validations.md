@@ -1,5 +1,5 @@
-> Date validators always require the `date_format` rule to be always present and must preceed them in the rules order. The date validators are not enabled by default, they require [momentjs](http://momentjs.com) in order to work. If your setup contains momentjs globally, it will be installed automatically for all validator instances. Otherwise you may want to pass the moment reference to `installDateTimeValidators(moment)` which is available both statically and on instances. Also note that the date validators always use the ['strict' moment parsing mode](http://momentjs.com/guides/#/parsing/strict-mode/).
-  
+> Date validators always require the `date_format` rule to be always present ([or globally set](https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.7)) and must preceed them in the rules order. The date validators are not enabled by default, they require [momentjs](http://momentjs.com) in order to work. If your setup contains momentjs globally, it will be installed automatically for all validator instances. Otherwise you may want to pass the moment reference to `installDateTimeValidators(moment)` which is available both statically and on instances. Also note that the date validators always use the ['strict' moment parsing mode](http://momentjs.com/guides/#/parsing/strict-mode/).
+
 > In the rule signature required parameters are enclosed within `{}` like this: `{param}`. Optional parameters have a `?` at the end: `{optional?}`. Lists are enclosed withn brackets `[]`. ex: `[list]`.</note>
 
 ### [after:{target},{inclusion?}](#rule-after)

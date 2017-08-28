@@ -1,3 +1,5 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `El campo ${field} debe ser posterior a ${target}.`,
   alpha_dash: (field) => `El campo ${field} solo debe contener letras, números y guiones.`,
@@ -27,7 +29,7 @@ const messages = {
   numeric: (field) => `El campo ${field} debe contener solo caracteres númericos.`,
   regex: (field) => `El formato del campo ${field} no es válido.`,
   required: (field) => `El campo ${field} es obligatorio.`,
-  size: (field, [size]) => `El campo ${field} debe ser menor a ${size} KB.`,
+  size: (field, [size]) => `El campo ${field} debe ser menor a ${formatFileSize(size)}.`,
   url: (field) => `El campo ${field} no es una URL válida.`
 };
 
@@ -37,7 +39,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 

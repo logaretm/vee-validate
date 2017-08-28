@@ -27,7 +27,7 @@
         <div class="column is-12">
             <label class="label">Full Name</label>
             <p class="control has-icon has-icon-right">
-                <input disabled :value="name" name="name" v-validate:name.initial="'required|alpha_spaces'" :class="{'input': true, 'is-danger': errors.has('name') }" type="text" placeholder="Full Name">
+                <input :value="name" name="name" v-validate:name.initial="'required|alpha_spaces'" :class="{'input': true, 'is-danger': errors.has('name') }" type="text" placeholder="Full Name">
                 <i v-show="errors.has('name')" class="fa fa-warning"></i>
                 <span v-show="errors.has('name')" class="help is-danger">{{ errors.first('name') }}</span>
             </p>

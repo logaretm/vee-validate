@@ -1,18 +1,46 @@
+import { find } from './utils';
+
 export default class ErrorBag {
   constructor () {
-    this.errors = [];
+    this.items = [];
   }
 
   /**
      * Adds an error to the internal array.
      *
-     * @param {string} field The field name.
-     * @param {string} msg The error message.
-     * @param {String} rule The rule that is responsible for the error.
-     * @param {String} scope The Scope name, optional.
+     * @param {Object} error The error object.
      */
-  add (field, msg, rule, scope = '__global__') {
-    this.errors.push({ field, msg, rule, scope });
+  add (error) {
+    // handle old signature.
+    if (arguments.length > 1) {
+      error = {
+        field: arguments[0],
+        msg: arguments[1],
+        rule: arguments[2],
+        scope: arguments[3] || null
+      };
+    }
+
+    error.scope = error.scope || null;
+    this.items.push(error);
+  }
+
+  /**
+   * Updates a field error with the new field scope.
+   *
+   * @param {String} id 
+   * @param {Object} error 
+   */
+  update (id, error) {
+    const item = find(this.items, i => i.id === id);
+    if (!item) {
+      return;
+    }
+
+    const idx = this.items.indexOf(item);
+    this.items.splice(idx, 1);
+    item.scope = error.scope;
+    this.items.push(item);
   }
 
   /**
@@ -23,10 +51,10 @@ export default class ErrorBag {
      */
   all (scope) {
     if (! scope) {
-      return this.errors.map(e => e.msg);
+      return this.items.map(e => e.msg);
     }
 
-    return this.errors.filter(e => e.scope === scope).map(e => e.msg);
+    return this.items.filter(e => e.scope === scope).map(e => e.msg);
   }
 
   /**
@@ -36,10 +64,10 @@ export default class ErrorBag {
      */
   any (scope) {
     if (! scope) {
-      return !! this.errors.length;
+      return !! this.items.length;
     }
 
-    return !! this.errors.filter(e => e.scope === scope).length;
+    return !! this.items.filter(e => e.scope === scope).length;
   }
 
   /**
@@ -49,14 +77,14 @@ export default class ErrorBag {
      */
   clear (scope) {
     if (! scope) {
-      scope = '__global__';
+      scope = null;
     }
 
     const removeCondition = e => e.scope === scope;
 
-    for (let i = 0; i < this.errors.length; ++i) {
-      if (removeCondition(this.errors[i])) {
-        this.errors.splice(i, 1);
+    for (let i = 0; i < this.items.length; ++i) {
+      if (removeCondition(this.items[i])) {
+        this.items.splice(i, 1);
         --i;
       }
     }
@@ -73,7 +101,7 @@ export default class ErrorBag {
   collect (field, scope, map = true) {
     if (! field) {
       const collection = {};
-      this.errors.forEach(e => {
+      this.items.forEach(e => {
         if (! collection[e.field]) {
           collection[e.field] = [];
         }
@@ -85,10 +113,10 @@ export default class ErrorBag {
     }
 
     if (! scope) {
-      return this.errors.filter(e => e.field === field).map(e => (map ? e.msg : e));
+      return this.items.filter(e => e.field === field).map(e => (map ? e.msg : e));
     }
 
-    return this.errors.filter(e => e.field === field && e.scope === scope)
+    return this.items.filter(e => e.field === field && e.scope === scope)
       .map(e => (map ? e.msg : e));
   }
   /**
@@ -97,7 +125,18 @@ export default class ErrorBag {
      * @return {Number} length The internal array length.
      */
   count () {
-    return this.errors.length;
+    return this.items.length;
+  }
+
+  /**
+   * Finds and fetches the first error message for the specified field id.
+   *
+   * @param {String} id 
+   */
+  firstById (id) {
+    const error = find(this.items, i => i.id === id);
+
+    return error ? error.msg : null;
   }
 
   /**
@@ -106,7 +145,7 @@ export default class ErrorBag {
      * @param  {string} field The field name.
      * @return {string|null} message The error message.
      */
-  first (field, scope = '__global__') {
+  first (field, scope = null) {
     const selector = this._selector(field);
     const scoped = this._scope(field);
 
@@ -123,9 +162,9 @@ export default class ErrorBag {
       return this.firstByRule(selector.name, selector.rule, scope);
     }
 
-    for (let i = 0; i < this.errors.length; ++i) {
-      if (this.errors[i].field === field && (this.errors[i].scope === scope)) {
-        return this.errors[i].msg;
+    for (let i = 0; i < this.items.length; ++i) {
+      if (this.items[i].field === field && (this.items[i].scope === scope)) {
+        return this.items[i].msg;
       }
     }
 
@@ -150,7 +189,7 @@ export default class ErrorBag {
      * @param  {string} field The specified field.
      * @return {Boolean} result True if at least one error is found, false otherwise.
      */
-  has (field, scope = '__global__') {
+  has (field, scope = null) {
     return !! this.first(field, scope);
   }
 
@@ -165,6 +204,30 @@ export default class ErrorBag {
 
     return (error && error.msg) || null;
   }
+  /**
+     * Gets the first error message for a specific field that not match the rule.
+     * @param {String} name The name of the field.
+     * @param {String} rule The name of the rule.
+     * @param {String} scope The name of the scope (optional).
+     */
+  firstNot (name, rule = 'required', scope) {
+    const error = this.collect(name, scope, false).filter(e => e.rule !== rule)[0];
+
+    return (error && error.msg) || null;
+  }
+
+  /**
+   * Removes errors by matching against the id.
+   * @param {String} id 
+   */
+  removeById (id) {
+    for (let i = 0; i < this.items.length; ++i) {
+      if (this.items[i].id === id) {
+        this.items.splice(i, 1);
+        --i;
+      }
+    }
+  }
 
   /**
      * Removes all error messages associated with a specific field.
@@ -174,11 +237,11 @@ export default class ErrorBag {
      */
   remove (field, scope) {
     const removeCondition = scope ? e => e.field === field && e.scope === scope
-      : e => e.field === field && e.scope === '__global__';
+      : e => e.field === field && e.scope === null;
 
-    for (let i = 0; i < this.errors.length; ++i) {
-      if (removeCondition(this.errors[i])) {
-        this.errors.splice(i, 1);
+    for (let i = 0; i < this.items.length; ++i) {
+      if (removeCondition(this.items[i])) {
+        this.items.splice(i, 1);
         --i;
       }
     }

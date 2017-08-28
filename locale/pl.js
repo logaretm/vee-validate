@@ -1,3 +1,5 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `Pole ${field} musi być po polu ${target}.`,
   alpha_dash: (field) => `Pole ${field} może zawierać litery, cyfry oraz myślnik lub podkreślnik.`,
@@ -24,7 +26,7 @@ const messages = {
   numeric: (field) => `Pole ${field} może zawierać tylko cyfry.`,
   regex: (field) => `Format pola ${field} jest nieodpowiedni.`,
   required: (field) => `Pole ${field} jest wymagane.`,
-  size: (field, [size]) => `Plik ${field} musi być mniejszy niż ${size} KB.`,
+  size: (field, [size]) => `Plik ${field} musi być mniejszy niż ${formatFileSize(size)}.`,
   url: (field) => `Pole ${field} nie jest poprawnym URL.`
 };
 
@@ -34,7 +36,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 

@@ -1,3 +1,5 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => ` ${field}必须在${target}之后`,
   alpha_dash: (field) => ` ${field}能够包含字母数字字符，包括破折号、下划线`,
@@ -24,7 +26,7 @@ const messages = {
   numeric: (field) => ` ${field} 只能包含数字字符.`,
   regex: (field) => ` ${field} 格式无效.`,
   required: (field) => `${field} 是必须的.`,
-  size: (field, [size]) => ` ${field} 必须小于 ${size} KB.`,
+  size: (field, [size]) => ` ${field} 必须小于 ${formatFileSize(size)}.`,
   url: (field) => ` ${field}不是有效的url.`
 };
 
@@ -34,7 +36,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 

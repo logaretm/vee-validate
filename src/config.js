@@ -5,9 +5,11 @@ export default {
   dictionary: null,
   strict: true,
   fieldsBagName: 'fields',
-  enableAutoClasses: false,
-  classNames: {},
+  classes: false,
+  classNames: undefined,
   events: 'input|blur',
   inject: true,
-  fastExit: true
+  fastExit: true,
+  aria: true,
+  validity: true
 };

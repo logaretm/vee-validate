@@ -39,7 +39,7 @@ However, for the scoped fields the **FieldBag** will group those fields in an pr
 this.fields.$myScope.name.dirty;
 
 // Is the 'name' field clean? 
-this.fields.$myScope.name.pristene; 
+this.fields.$myScope.name.pristine; 
 ```
 
 
@@ -135,5 +135,5 @@ this.$emit('input', value);
 // The focus event which will set the touched and untouched flags.
 this.$emit('focus'); 
 ```
-Here is an example that uses those flags, the button is disabled unless one of the fields is dirty:
+Here is an example that displays those flags, intereact with the input and watch the flags change accordingly:
 

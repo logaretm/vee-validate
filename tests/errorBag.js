@@ -8,6 +8,47 @@ test('adds errors to the collection', () => {
   // scoped field.
   errors.add('name', 'The scoped name is invalid', 'rule1', 'scope1');
   expect(errors.first('name', 'scope1')).toBe('The scoped name is invalid');
+
+  // test object form
+  errors.add({
+    field: 'name',
+    msg: 'Hey',
+    rule: 'r1',
+    scope: 's1'
+  })
+  expect(errors.first('name', 's1')).toBe('Hey');
+});
+
+test('updates error objects by matching against field id', () => {
+  const errors = new ErrorBag();
+  errors.add({
+    id: 'myId',
+    field: 'name',
+    msg: 'Hey',
+    rule: 'r1',
+    scope: 's1'
+  });
+  expect(errors.first('name', 's1')).toBe('Hey');
+  errors.update('myId', { scope: 's2' });
+  expect(errors.has('name', 's1')).toBe(false);
+  expect(errors.first('name', 's2')).toBe('Hey');
+
+  // silent failure
+  errors.update('myId1', { scope: 's2' });
+  expect(errors.count()).toBe(1);
+});
+
+test('finds error messages by matching against field id', () => {
+  const errors = new ErrorBag();
+  errors.add({
+    id: 'myId',
+    field: 'name',
+    msg: 'Hey',
+    rule: 'r1',
+    scope: 's1'
+  });
+  expect(errors.firstById('someId')).toBe(null);
+  expect(errors.firstById('myId')).toBe('Hey');
 });
 
 test('removes errors for a specific field', () => {
@@ -20,6 +61,20 @@ test('removes errors for a specific field', () => {
   errors.remove('name');
   expect(errors.count()).toBe(2);
   errors.remove('email');
+  expect(errors.count()).toBe(0);
+});
+
+test('removes errors by matching against the field id', () => {
+  const errors = new ErrorBag();
+  errors.add({
+    id: 'myId',
+    field: 'name',
+    msg: 'Hey',
+    rule: 'r1',
+    scope: 's1'
+  })
+  expect(errors.count()).toBe(1);
+  errors.removeById('myId');
   expect(errors.count()).toBe(0);
 });
 
@@ -124,6 +179,20 @@ test('fetches the first error message for a specific field', () => {
   expect(errors.first('scope2.email:rule2')).toBe('mah');
 });
 
+test('fetches the first error message for a specific field that not match the rule', () => {
+  const errors = new ErrorBag();
+  errors.add('email', 'The email is required', 'required');
+
+  errors.add('email', 'The email is invalid', 'rule1');
+  errors.add('email', 'The email is shorter than 3 chars.', 'rule1');
+
+  errors.add('email', 'This is the third rule', 'rule2');
+  errors.add('email', 'This is the forth rule', 'rule2');
+
+  expect(errors.firstNot('email')).toBe('The email is invalid');
+  expect(errors.firstNot('email', 'rule1')).toBe('The email is required');
+});
+
 test('fetches the first error rule for a specific field', () => {
   const errors = new ErrorBag();
   errors.add('email', 'The email is invalid', 'rule1');
@@ -223,6 +292,15 @@ test('groups errors by field name', () => {
     ],
     name: [
       'The name is invalid'
+    ]
+  });
+  expect(errors.collect(null, undefined, false)).toEqual({
+    email: [
+      { field: 'email', msg: 'The email is invalid', scope: null, rule: 'rule1' },
+      { field: 'email', msg: 'The email is shorter than 3 chars.', scope: null, rule: 'rule1' },
+    ],
+    name: [
+      { field: 'name', msg: 'The name is invalid', scope: null, rule: 'rule1' },
     ]
   });
 });

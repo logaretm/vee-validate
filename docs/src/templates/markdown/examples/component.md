@@ -4,4 +4,4 @@ You might have a custom component that you want to treat it as an input, like a 
 
 - Must emit an `input` event whenever the value changes.
 - Should have a `data-vv-name` or a `name` attribute defined.
-- Should have a `data-vv-value-path` attribute which denotes how to access the value from within that component (Needed for `validateAll` calls)
+- Should have a `data-vv-value-path` attribute which denotes how to access the value from within that component (Needed for `validateAll` calls).

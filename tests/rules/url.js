@@ -45,14 +45,14 @@ const invalid = [
 ];
 
 test('should validate urls', () => {
-    expect.assertions(38);
+    expect.assertions(40);
     // check valid urls.
     valid.forEach(url => expect(validate(url)).toBe(true));
+    expect(validate(valid)).toBe(true);
 
     // check invalid urls.
-    invalid.forEach(url => {
-        expect(validate(url)).toBe(false);
-    });
+    invalid.forEach(url => expect(validate(url)).toBe(false));
+    expect(validate(invalid)).toBe(false);
 
     // test require protocol.
     expect(validate('google.com', [true])).toBe(false);

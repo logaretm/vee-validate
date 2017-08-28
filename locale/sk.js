@@ -1,10 +1,12 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
 const messages = {
-  after: (field, [target]) => `Položka ${field} musí byť po položke ${target}.`,
+  after: (field, [target, inclusion]) => `Položka ${field} musí byť vačšia ${inclusion ? 'alebo rovná ' : ''} ako položka ${target}.`,
   alpha_dash: (field) => `${field} môže obsahovať len písmená, číslice, bodky a podčiarknutie.`,
   alpha_num: (field) => `${field} môže obsahovať len písmená a číslice.`,
   alpha_spaces: (field) => `${field} môže obsahovať len písmená, číslice a medzery.`,
   alpha: (field) => `${field} môže obsahovať len písmená.`,
-  before: (field, [target]) => `Položka ${field} musí byť pred položkou ${target}.`,
+  before: (field, [target, inclusion]) => `Položka ${field} musí byť menšia ${inclusion ? 'alebo rovná ' : ''} ako položka ${target}.`,
   between: (field, [min, max]) => `Položka ${field} musí byť medzi ${min} a ${max}.`,
   confirmed: (field) => `Hodnota položky ${field} nie je rovnaká.`,
   credit_card: (field) => `Položka ${field} je neplatná.`,
@@ -27,7 +29,7 @@ const messages = {
   numeric: (field) => `Položka ${field} môže obsahovať len číslice.`,
   regex: (field) => `Formát položky ${field} je nesprávny.`,
   required: (field) => `Položka ${field} je povinná.`,
-  size: (field, [size]) => `Položka ${field} musí byť menej ako ${size} KB.`,
+  size: (field, [size]) => `Položka ${field} musí byť menej ako ${formatFileSize(size)}.`,
   url: (field) => `Položka ${field} neobsahuje platnú URL.`,
 };
 
@@ -37,7 +39,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 

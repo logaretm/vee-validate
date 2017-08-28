@@ -2,14 +2,8 @@ import validate from './../../src/rules/confirmed';
 import helpers from './../helpers';
 
 test('validates a field confirmation', () => {
-    helpers.querySelector({ name: 'somefield', value: 'p@$$word' });
-    expect(validate('p@$$word', 'somefield')).toBe(true);
-
-    // field not found.
-    helpers.querySelector(false);
-    expect(validate('p@$$word', 'somefield')).toBe(false);
+    expect(validate('p@$$word', 'p@$$word')).toBe(true);
 
     // fields do not match.
-    helpers.querySelector({ name: 'somefield', value: 'p@$$word' });
-    expect(validate('password', 'somefield')).toBe(false);
+    expect(validate('password', 'p@$$word')).toBe(false);
 });

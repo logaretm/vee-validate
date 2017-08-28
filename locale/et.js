@@ -1,5 +1,7 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
 // http://stackoverflow.com/a/1026087/1470607
-function capitalizeFirstLetter(string) {
+function capitalizeFirstLetter (string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
@@ -33,7 +35,7 @@ const messages = {
   numeric: (field) => `${capitalizeFirstLetter(field)} võib sisaldada ainult numbreid.`,
   regex: (field) => `${capitalizeFirstLetter(field)} pole sobival kujul.`,
   required: (field) => `${capitalizeFirstLetter(field)} on nõutud väli.`,
-  size: (field, [size]) => `${capitalizeFirstLetter(field)} peab olema väiksem kui ${size} KB.`,
+  size: (field, [size]) => `${capitalizeFirstLetter(field)} peab olema väiksem kui ${formatFileSize(size)}.`,
   url: (field) => `${capitalizeFirstLetter(field)} peab olema URL.`
 };
 
@@ -43,7 +45,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 

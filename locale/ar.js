@@ -1,3 +1,18 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
+const localizeSize = (size) => {
+  const map = {
+    Byte: 'بايت',
+    KB: 'كيلوبايت',
+    GB: 'جيجابايت',
+    PB: 'بيتابايت'
+  };
+
+  return formatFileSize(size).replace(/(Byte|KB|GB|PB)/, m => {
+    return map[m];
+  });
+};
+
 const messages = {
   _default: (field) => `قيمة الحقل ${field} غير صحيحة.`,
   after: (field, [target]) => `${field} يجب ان يكون بعد ${target}.`,
@@ -18,7 +33,15 @@ const messages = {
   ext: (field) => `نوع ملف ${field} غير صحيح.`,
   image: (field) => `${field} يجب ان تكون صورة.`,
   in: (field) => `الحقل ${field} يجب ان يكون قيمة صحيحة.`,
+  integer: (field) => `الحقل ${field} يجب ان يكون عدداً صحيحاً`,
   ip: (field) => `${field} يجب ان يكون ip صحيح.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `طول الحقل ${field} يجب ان يكون ما بين ${length} و ${max}.`;
+    }
+
+    return `طول الحقل ${field} يجب ان يكون ${length}.`;
+  },
   max: (field, [length]) => `الحقل ${field} يجب ان يحتوي على ${length} حروف على الأكثر.`,
   max_value: (field, [min]) => `قيمة الحقل ${field} يجب ان تكون اصغر من ${min} او تساويها.`,
   mimes: (field) => `نوع ملف ${field} غير صحيح.`,
@@ -28,7 +51,7 @@ const messages = {
   numeric: (field) => `${field} يمكن ان يحتوي فقط على ارقام.`,
   regex: (field) => `الحقل ${field} غير صحيح.`,
   required: (field) => `${field} مطلوب.`,
-  size: (field, [size]) => `${field} يجب ان يكون اقل من ${size} كيلوبايت.`,
+  size: (field, [size]) => `${field} يجب ان يكون اقل من ${localizeSize(size)}.`,
   url: (field) => `الحقل ${field} يجب ان يكون رابطاً صحيحاً.`
 };
 
@@ -38,7 +61,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 

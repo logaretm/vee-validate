@@ -1,3 +1,18 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
+const localizeSize = (size) => {
+  const map = {
+    Byte: 'بايت',
+    KB: 'كيلوبايت',
+    GB: 'جيجابايت',
+    PB: 'بيتابايت'
+  };
+
+  return formatFileSize(size).replace(/(Byte|KB|GB|PB)/, m => {
+    return map[m];
+  });
+};
+
 const messages = {
   after: (field, [target]) => `${field} باید بعد از تاریخ ${target} باشد.`,
   alpha_dash: (field) => `${field} فقط می تواند از حروف، اعداد، خط فاصله و زیرخط تشکیل شود.`,
@@ -27,7 +42,7 @@ const messages = {
   numeric: (field) => `${field} فقط می تواند عددی باشد.`,
   regex: (field) => `قالب ${field} قابل قبول نیست.`,
   required: (field) => `${field} الزامی است.`,
-  size: (field, [size]) => `حجم ${field} کمتر از ${size} کیلو بایت باشد.`,
+  size: (field, [size]) => `حجم ${field} کمتر از ${localizeSize(size)} باشد.`,
   url: (field) => `${field} باید یک تارنمای معتبر باشد.`
 };
 
@@ -37,7 +52,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 

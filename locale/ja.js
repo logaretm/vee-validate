@@ -1,3 +1,5 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `${field}は${target}の後でなければなりません`,
   alpha_dash: (field) => `${field}は英数字とハイフン、アンダースコアのみ使用できます`,
@@ -27,18 +29,18 @@ const messages = {
   numeric: (field) => `${field}は数字のみ使用できます`,
   regex: (field) => `${field}が正しくありません`,
   required: (field) => `${field}は必須項目です`,
-  size: (field, [size]) => `${field}は${size}KB以内でなければなりません`,
+  size: (field, [size]) => `${field}は${formatFileSize(size)}以内でなければなりません`,
   url: (field) => `${field}が正しくありません`
 };
 
 const locale = {
-    name: 'ja',
-    messages,
-    attributes: {}
+  name: 'ja',
+  messages,
+  attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
-    VeeValidate.Validator.addLocale(locale);
+if (isDefinedGlobally('VeeValidate.Validator')) {
+  VeeValidate.Validator.addLocale(locale);
 }
 
 export default locale;

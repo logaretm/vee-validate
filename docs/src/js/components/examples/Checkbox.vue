@@ -30,7 +30,7 @@ export default {
   }),
   methods: {
     nextStep() {
-      this.$validator.validateAll().then(result => {
+      this.$validator.validateAll().then((result) => {
         if (result) {
           alert('You just agreed to conditions without reading it.');
           return;

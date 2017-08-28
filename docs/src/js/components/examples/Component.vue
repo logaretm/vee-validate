@@ -19,9 +19,9 @@ export default {
   },
   methods: {
     validate() {
-      this.$validator.validateAll().then(result => {
-          // eslint-disable-next-line
-          alert(`Validation Result: ${result}`);
+      this.$validator.validateAll().then((result) => {
+        // eslint-disable-next-line
+        alert(`Validation Result: ${result}`);
       });
     }
   }

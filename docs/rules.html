@@ -129,7 +129,7 @@ const someRuleObj = { in: [1, 2, 3, 4] };
 </li>
 </ul>
 </div><div class="rules"><blockquote>
-<p>Date validators always require the <code>date_format</code> rule to be always present and must preceed them in the rules order. The date validators are not enabled by default, they require <a href="http://momentjs.com">momentjs</a> in order to work. If your setup contains momentjs globally, it will be installed automatically for all validator instances. Otherwise you may want to pass the moment reference to <code>installDateTimeValidators(moment)</code> which is available both statically and on instances. Also note that the date validators always use the <a href="http://momentjs.com/guides/#/parsing/strict-mode/">'strict' moment parsing mode</a>.</p>
+<p>Date validators always require the <code>date_format</code> rule to be always present (<a href="https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.7">or globally set</a>) and must preceed them in the rules order. The date validators are not enabled by default, they require <a href="http://momentjs.com">momentjs</a> in order to work. If your setup contains momentjs globally, it will be installed automatically for all validator instances. Otherwise you may want to pass the moment reference to <code>installDateTimeValidators(moment)</code> which is available both statically and on instances. Also note that the date validators always use the <a href="http://momentjs.com/guides/#/parsing/strict-mode/">'strict' moment parsing mode</a>.</p>
 </blockquote>
 <blockquote>
 <p>In the rule signature required parameters are enclosed within <code>{}</code> like this: <code>{param}</code>. Optional parameters have a <code>?</code> at the end: <code>{optional?}</code>. Lists are enclosed withn brackets <code>[]</code>. ex: <code>[list]</code>.</note></p>
@@ -516,4 +516,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor.js"></script><script type="text/javascript" src="/assets/js/bundle-9ca9e4344afc047c6ce7.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor.js"></script><script type="text/javascript" src="/assets/js/bundle-de60462242698889921c.js"></script></body></html>

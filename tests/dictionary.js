@@ -78,10 +78,24 @@ test('can set messages', () => {
 });
 
 test('can set attributes', () => {
-  const dict = new Dictionary();
+  const dict = new Dictionary({
+    en: {
+      attributes: {},
+      messages: {}
+    }
+  });
   dict.setAttribute('en', 'email', 'Email Address');
 
   expect(dict.getAttribute('en', 'email')).toBe('Email Address');
+  
+  // test graceful population of non-existant directories.
+  dict.setAttribute('fr', 'email', 'address');
+  expect(dict.container.fr).toEqual({
+    messages: {},
+    attributes: {
+      email: 'address'
+    }
+  });
 });
 
 test('returns the default message for the given locale when no fallback is provided', () => {
@@ -134,13 +148,15 @@ test('custom messages can be provided for specific fields', () => {
   });
 
   expect(dict.getFieldMessage('en', 'name', 'alpha')).toBe('custom message');
+  expect(dict.getFieldMessage('fr', 'name', 'alpha')).toBe(undefined);
 });
 
-test('able to get and set dateformat attributes', () => {
+test('able to get and set date format attributes', () => {
   const dict = new Dictionary();
   dict.setDateFormat('en', 'MM/DD/YYYY');
   dict.setDateFormat('ar', 'DD/MM/YYYY');
 
   expect(dict.getDateFormat('en')).toBe('MM/DD/YYYY');
   expect(dict.getDateFormat('ar')).toBe('DD/MM/YYYY');
+  expect(dict.getDateFormat('ru')).toBe(undefined);
 });

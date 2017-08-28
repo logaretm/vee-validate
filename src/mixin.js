@@ -1,15 +1,27 @@
-import { isObject } from './utils';
+import { isObject, isCallable, createProxy, createFlags } from './utils';
 import Validator from './validator';
+
+const fakeFlags = createProxy({}, {
+  get (target, key) {
+    // is a scope
+    if (String(key).indexOf('$') === 0) {
+      return fakeFlags;
+    }
+
+    return createFlags();
+  }
+});
 
 /**
  * Checks if a parent validator instance was requested.
  * @param {Object|Array} injections
  */
-const validatorRequested = (injections) => {
+const requestsValidator = (injections) => {
   if (! injections) {
     return false;
   }
 
+  /* istanbul ignore next */
   if (Array.isArray(injections) && ~injections.indexOf('$validator')) {
     return true;
   }
@@ -32,7 +44,7 @@ const createValidator = (vm, options) => new Validator(null, {
   fastExit: options.fastExit
 });
 
-export default (Vue, options) => {
+export default (Vue, options = {}) => {
   const mixin = {};
   mixin.provide = function providesValidator () {
     if (this.$validator) {
@@ -50,7 +62,7 @@ export default (Vue, options) => {
       this.$validator = createValidator(this, options);
     }
 
-    const requested = validatorRequested(this.$options.inject);
+    const requested = requestsValidator(this.$options.inject);
 
     // if automatic injection is enabled and no instance was requested.
     if (! this.$validator && options.inject && !requested) {
@@ -64,20 +76,31 @@ export default (Vue, options) => {
 
     // There is a validator but it isn't injected, mark as reactive.
     if (! requested && this.$validator) {
-      Vue.util.defineReactive(this.$validator, 'errorBag', this.$validator.errorBag);
-      Vue.util.defineReactive(this.$validator, 'fieldBag', this.$validator.fieldBag);
+      Vue.util.defineReactive(this.$validator, 'errors', this.$validator.errors);
+      Vue.util.defineReactive(this.$validator, 'flags', this.$validator.flags);
     }
 
     if (! this.$options.computed) {
       this.$options.computed = {};
     }
 
-    this.$options.computed[options.errorBagName] = function errorBagGetter () {
-      return this.$validator.errorBag;
+    this.$options.computed[options.errorBagName || 'errors'] = function errorBagGetter () {
+      return this.$validator.errors;
     };
-    this.$options.computed[options.fieldsBagName] = function fieldBagGetter () {
-      return this.$validator.fieldBag;
+    this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
+      if (!Object.keys(this.$validator.flags).length) {
+        return fakeFlags;
+      }
+
+      return this.$validator.flags;
     };
+  };
+
+  mixin.beforeDestroy = function beforeDestroy () {
+    // mark the validator paused to prevent delayed validation.
+    if (this.$validator && this.$validator.ownerId === this._uid && isCallable(this.$validator.pause)) {
+      this.$validator.pause();
+    }
   };
 
   return mixin;

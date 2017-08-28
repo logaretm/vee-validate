@@ -1,3 +1,5 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `${field}-feltet må vere etter ${target}.`,
   alpha_dash: (field) => `${field}-feltet kan berre innehalde alfa-numeriske tegn, samt bindestrek og understrek.`,
@@ -27,7 +29,7 @@ const messages = {
   numeric: (field) => `${field}-feltet kan berre innehalde nummer.`,
   regex: (field) => `${field} har ugyldig formatering.`,
   required: (field) => `${field} er eit obligatorisk felt.`,
-  size: (field, [size]) => `${field}-feltet må vere mindre enn ${size} KB.`,
+  size: (field, [size]) => `${field}-feltet må vere mindre enn ${formatFileSize(size)}.`,
   url: (field) => `${field} er ikkje ein gyldig URL.`
 };
 
@@ -37,7 +39,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 

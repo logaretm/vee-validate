@@ -15,7 +15,7 @@ const config = {
   locale: 'en', 
   dictionary: null, 
   strict: true, 
-  enableAutoClasses: false, 
+  classes: false, 
   classNames: {
     touched: 'touched', // the control has been blurred
     untouched: 'untouched', // the control hasn't been blurred
@@ -25,7 +25,9 @@ const config = {
     dirty: 'dirty' // control has been interacted with
   },
   events: 'input|blur',
-  inject: true
+  inject: true,
+  validity: true,
+  aria: true
 };
 
 Vue.use(VeeValidate, config);
@@ -73,7 +75,7 @@ Vue.use(VeeValidate, config);
             <td>Fields that have no rules will fail validation unless `strict` is set to false.</td>
         </tr>
         <tr>
-            <td class="is-method-name">enableAutoClasses</td>
+            <td class="is-method-name">classes</td>
             <td>false</td>
             <td>Applies automatic classes on inputs or components root elements being validated.</td>
         </tr>
@@ -103,6 +105,20 @@ Vue.use(VeeValidate, config);
             <td>true</td>
             <td>
               Specifies if a validator instance should be injected automatically for all components, check [Component Injections](advanced#injections) for more informatin.
+            </td>
+        </tr>
+        <tr>
+            <td class="is-method-name">validity</td>
+            <td>true</td>
+            <td>
+                Set custom validity (Constraint validation)[https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation] on native HTML inputs.
+            </td>
+        </tr>
+        <tr>
+            <td class="is-method-name">aria</td>
+            <td>true</td>
+            <td>
+                Sets `aria-invalid` and `aria-required` on native HTML inputs.
             </td>
         </tr>
     </tbody>

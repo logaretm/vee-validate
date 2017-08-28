@@ -1,3 +1,5 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
 const messages = {
   after: (field, [target]) => `${field}항목은 ${target}항목 뒤에 와야 합니다.`,
   alpha_dash: (field) => `${field}항목은 문자와 숫자 그리고 대시, 언더스코어를 사용할 수 있습니다.`,
@@ -26,7 +28,7 @@ const messages = {
   numeric: (field) => `${field}항목은 숫자이어야 합니다.`,
   regex: (field) => `${field}항목은 형식에 맞지 않습니다.`,
   required: (field) => `${field}항목이 필요합니다.`,
-  size: (field, [size]) => `${field}항목의 크기는 ${size} KB 보다 작아야 합니다.`,
+  size: (field, [size]) => `${field}항목의 크기는 ${formatFileSize(size)} 보다 작아야 합니다.`,
   url: (field) => `${field}항목은 올바른 주소(URL)가 아닙니다.`
 };
 
@@ -36,7 +38,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 

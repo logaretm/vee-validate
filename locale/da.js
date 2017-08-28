@@ -1,7 +1,11 @@
+import { formatFileSize, isDefinedGlobally } from '../src/utils';
+
 const messages = {
+  _default: (field) => `${field} er ikke gyldig.`,
   after: (field, [target]) => `${field} skal være efter ${target}.`,
   alpha_dash: (field) => `${field} må kun indeholde tal, bogstaver, bindestreger og underscores.`,
   alpha_num: (field) => `${field} må kun indeholde tal og bogstaver.`,
+  alpha_spaces: (field) => `${field} må kun indeholde bogstaver og mellemrum.`,
   alpha: (field) => `${field} må kun indeholde bogstaver.`,
   before: (field, [target]) => `${field} skal være før ${target}.`,
   between: (field, [min, max]) => `${field} skal være mellem ${min} og ${max}.`,
@@ -23,7 +27,7 @@ const messages = {
   numeric: (field) => `${field} skal være numerisk.`,
   regex: (field) => `${field} skal have et gyldigt format.`,
   required: (field) => `${field} skal udfyldes.`,
-  size: (field, [size]) => `${field} må maksimalt have en størrelse på ${size} KB.`,
+  size: (field, [size]) => `${field} må maksimalt have en størrelse på ${formatFileSize(size)}.`,
   url: (field) => `${field} skal være en gyldig URL.`
 };
 
@@ -33,7 +37,7 @@ const locale = {
   attributes: {}
 };
 
-if (typeof VeeValidate !== 'undefined' && VeeValidate && typeof VeeValidate.Validator) {
+if (isDefinedGlobally('VeeValidate.Validator')) {
   VeeValidate.Validator.addLocale(locale);
 }
 
