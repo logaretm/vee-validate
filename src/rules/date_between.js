@@ -1,4 +1,5 @@
-import { parse, isValid, isAfter, isBefore, isEqual } from 'date-fns';
+import { isAfter, isBefore, isEqual } from 'date-fns';
+import { parseDate as parse } from '../utils';
 
 export default (value, params) => {
   let min;
@@ -12,11 +13,11 @@ export default (value, params) => {
     [min, max, format] = params;
   }
 
-  const minDate = parse(min, format, new Date());
-  const maxDate = parse(max, format, new Date());
-  const dateVal = parse(value, format, new Date());
+  const minDate = parse(min, format);
+  const maxDate = parse(max, format);
+  const dateVal = parse(value, format);
 
-  if (! (isValid(minDate) && isValid(maxDate) && isValid(dateVal))) {
+  if (!minDate || !maxDate || !dateVal) {
     return false;
   }
 

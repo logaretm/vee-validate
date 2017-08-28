@@ -1,14 +1,16 @@
-import { parse, isValid, isBefore, isEqual } from 'date-fns';
+import { isBefore, isEqual } from 'date-fns';
+import { parseDate as parse } from '../utils';
 
 export default (value, [otherValue, inclusion, format]) => {
   if (typeof format === 'undefined') {
     format = inclusion;
     inclusion = false;
   }
-  value = parse(value, format, new Date());
-  otherValue = parse(otherValue, format, new Date());
+  value = parse(value, format);
+  otherValue = parse(otherValue, format);
+
   // if either is not valid.
-  if (! isValid(value) || !isValid(otherValue)) {
+  if (!value || !otherValue) {
     return false;
   }
 
