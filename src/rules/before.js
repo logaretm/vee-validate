@@ -1,17 +1,16 @@
 import { parse, isValid, isBefore, isEqual } from 'date-fns';
 
-export default (value, [targetField, inclusion, format]) => {
-  const field = document.querySelector(`input[name='${targetField}']`);
+export default (value, [otherValue, inclusion, format]) => {
   if (typeof format === 'undefined') {
     format = inclusion;
     inclusion = false;
   }
-  const dateValue = parse(value, format, new Date());
-  const otherValue = parse(field ? field.value : targetField, format, new Date());
+  value = parse(value, format, new Date());
+  otherValue = parse(otherValue, format, new Date());
   // if either is not valid.
-  if (! isValid(dateValue) || !isValid(otherValue)) {
+  if (! isValid(value) || !isValid(otherValue)) {
     return false;
   }
 
-  return isBefore(dateValue, otherValue) || (inclusion && isEqual(dateValue, otherValue));
+  return isBefore(value, otherValue) || (inclusion && isEqual(value, otherValue));
 };

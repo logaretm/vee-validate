@@ -1,7 +1,6 @@
 import Validator from './../src/validator';
 import Field from './../src/field';
 import helpers from './helpers';
-import moment from 'moment';
 
 // Converts the value to a boolean and returns it in a promise.
 Validator.extend('promised', (value) => {
@@ -465,7 +464,6 @@ test('promises can return booleans directly', async () => {
 
 test('correctly parses rules with multiple colons', async () => {
   const v = new Validator({ time: 'date_format:HH:mm' });
-  expect(Validator.installDateTimeValidators(moment)).toBe(true);
   expect(await v.validate('time', '15:30')).toBe(true);
   expect(await v.validate('time', '1700')).toBe(false);
 });
@@ -515,7 +513,6 @@ test('cascades promise values with previous fields', async () => {
 });
 
 test('can translate target field for field dependent validations', async () => {
-  global.moment = require('moment');
   document.body.innerHTML = `<input type="text" name="birthday_min" value="" id="el">`;
   const el = document.querySelector('#el');
   const v = new Validator();
@@ -874,7 +871,6 @@ test('validates multi-valued promises', async () => {
 test('it should pass the after/before inclusion parameters correctly', async () => {
   document.body.innerHTML = `<input type="text" name="field" value="" id="el">`;
   const el = document.querySelector('#el');
-  expect(Validator.installDateTimeValidators(moment)).toBe(true);
   const v = new Validator();
   v.attach({
     name: 'birthday',

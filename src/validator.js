@@ -607,11 +607,6 @@ export default class Validator {
     }
 
     if (this._isADateRule(rule.name)) {
-      const dateFormat = this._getDateFormat(field.validations);
-      rule.params = (Array.isArray(rule.params) ? toArray(rule.params) : []).concat([dateFormat]);
-    }
-
-    if (this._isADateRule(rule.name)) {
       const dateFormat = this._getDateFormat(field.rules);
       if (rule.name !== 'date_format') {
         params.push(dateFormat);
