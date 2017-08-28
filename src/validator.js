@@ -152,6 +152,20 @@ export default class Validator {
   }
 
   /**
+   * @deprecated
+   */
+  static installDateTimeValidators () {
+    warn('Date validations are now installed by default, you no longer need to install it.');
+  }
+
+  /**
+   * @deprecated
+   */
+  installDateTimeValidators () {
+    warn('Date validations are now installed by default, you no longer need to install it.');
+  }
+
+  /**
    * Sets the operating mode for all newly created validators.
    * strictMode = true: Values without a rule are invalid and cause failure.
    * strictMode = false: Values without a rule are valid and are skipped.
