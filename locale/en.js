@@ -2,13 +2,17 @@ import { formatFileSize, isDefinedGlobally } from '../src/utils';
 
 export const messages = {
   _default: (field) => `The ${field} value is not valid.`,
+  after: (field, [target, inclusion]) => `The ${field} must be after ${inclusion ? 'or equal to ' : ''}${target}.`,
   alpha_dash: (field) => `The ${field} field may contain alpha-numeric characters as well as dashes and underscores.`,
   alpha_num: (field) => `The ${field} field may only contain alpha-numeric characters.`,
   alpha_spaces: (field) => `The ${field} field may only contain alphabetic characters as well as spaces.`,
   alpha: (field) => `The ${field} field may only contain alphabetic characters.`,
+  before: (field, [target, inclusion]) => `The ${field} must be before ${inclusion ? 'or equal to ' : ''}${target}.`,
   between: (field, [min, max]) => `The ${field} field must be between ${min} and ${max}.`,
   confirmed: (field) => `The ${field} confirmation does not match.`,
   credit_card: (field) => `The ${field} field is invalid.`,
+  date_between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
+  date_format: (field, [format]) => `The ${field} must be in the format ${format}.`,
   decimal: (field, [decimals] = ['*']) => `The ${field} field must be numeric and may contain ${!decimals || decimals === '*' ? '' : decimals} decimal points.`,
   digits: (field, [length]) => `The ${field} field must be numeric and exactly contain ${length} digits.`,
   dimensions: (field, [width, height]) => `The ${field} field must be ${width} pixels by ${height} pixels.`,

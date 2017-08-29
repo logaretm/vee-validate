@@ -1,12 +1,16 @@
 /* eslint-disable camelcase */
+import after from './after';
 import alpha from './alpha';
 import alpha_dash from './alpha_dash';
 import alpha_num from './alpha_num';
 import alpha_spaces from './alpha_spaces';
+import before from './before';
 import between from './between';
 import confirmed from './confirmed';
 import credit_card from './credit_card';
 import decimal from './decimal';
+import date_between from './date_between';
+import date_format from './date_format';
 import digits from './digits';
 import dimensions from './dimensions';
 import email from './email';
@@ -29,13 +33,17 @@ import size from './size';
 import url from './url';
 
 export default {
+  after,
   alpha_dash,
   alpha_num,
   alpha_spaces,
   alpha,
+  before,
   between,
   confirmed,
   credit_card,
+  date_between,
+  date_format,
   decimal,
   digits,
   dimensions,

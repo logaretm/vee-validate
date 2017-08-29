@@ -5,7 +5,6 @@ import { messages } from '../locale/en';
 import { isObject, isCallable, toArray, warn, createError, assign, find } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
-import datePlugin from './plugins/date';
 
 let LOCALE = 'en';
 let STRICT_MODE = true;
@@ -42,12 +41,6 @@ export default class Validator {
       warn('validator.clean is marked for deprecation, please use validator.reset instead.');
       this.reset();
     };
-
-    // if momentjs is present, install the validators.
-    if (typeof moment === 'function') {
-      // eslint-disable-next-line
-      this.installDateTimeValidators(moment);
-    }
   }
 
   /**
@@ -134,20 +127,6 @@ export default class Validator {
   }
 
   /**
-   * Installs the datetime validators and the messages.
-   */
-  static installDateTimeValidators (moment) {
-    if (typeof moment !== 'function') {
-      warn('To use the date-time validators you must provide moment reference.');
-      return false;
-    }
-
-    datePlugin({ Validator }, { moment });
-
-    return true;
-  }
-
-  /**
    * Removes a rule from the list of validators.
    * @param {String} name The name of the validator/rule.
    */
@@ -162,6 +141,20 @@ export default class Validator {
    */
   static setLocale (language = 'en') {
     Validator.locale = language;
+  }
+
+  /**
+   * @deprecated
+   */
+  static installDateTimeValidators () {
+    warn('Date validations are now installed by default, you no longer need to install it.');
+  }
+
+  /**
+   * @deprecated
+   */
+  installDateTimeValidators () {
+    warn('Date validations are now installed by default, you no longer need to install it.');
   }
 
   /**
@@ -339,10 +332,12 @@ export default class Validator {
   }
 
   /**
-   * Just an alias to the static method for convienece.
+   * Gets the internal errorBag instance.
+   *
+   * @return {ErrorBag} errorBag The internal error bag object.
    */
-  installDateTimeValidators (moment) {
-    Validator.installDateTimeValidators(moment);
+  getErrors () {
+    return this.errorBag;
   }
 
   /**
@@ -617,7 +612,7 @@ export default class Validator {
       params = params.length ? params : [true];
     }
 
-    if (datePlugin.installed && this._isADateRule(rule.name)) {
+    if (this._isADateRule(rule.name)) {
       const dateFormat = this._getDateFormat(field.rules);
       if (rule.name !== 'date_format') {
         params.push(dateFormat);
