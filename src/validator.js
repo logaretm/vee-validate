@@ -147,6 +147,7 @@ export default class Validator {
    * @deprecated
    */
   static installDateTimeValidators () {
+    /* istanbul ignore next */
     warn('Date validations are now installed by default, you no longer need to install it.');
   }
 
@@ -154,6 +155,7 @@ export default class Validator {
    * @deprecated
    */
   installDateTimeValidators () {
+    /* istanbul ignore next */
     warn('Date validations are now installed by default, you no longer need to install it.');
   }
 
@@ -297,7 +299,7 @@ export default class Validator {
     } else {
       delete flags[field.name];
     }
-    this.flags = Object.assign({}, flags);
+    this.flags = assign({}, flags);
   }
 
   /**
@@ -317,27 +319,17 @@ export default class Validator {
    * @param {Object} diff 
    */
   update (id, { scope }) {
-    this.errors.update(this.id, { scope });
     const field = this._resolveField(`#${id}`);
-    const flags = this.flags;
+    this.errors.update(id, { scope });
 
     // remove old scope.
     if (field.scope) {
-      delete flags[`$${field.scope}`][field.name];
+      delete this.flags[`$${field.scope}`][field.name];
     } else {
-      delete flags[field.name];
+      delete this.flags[field.name];
     }
 
     this._addFlag(field, scope);
-  }
-
-  /**
-   * Gets the internal errorBag instance.
-   *
-   * @return {ErrorBag} errorBag The internal error bag object.
-   */
-  getErrors () {
-    return this.errorBag;
   }
 
   /**

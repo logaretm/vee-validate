@@ -938,3 +938,40 @@ test('localize api', () => {
   v.localize('ar');
   expect(v.locale).toBe('ar');
 });
+
+test('updates existing field errors and flags to match the new scope', () => {
+  const v = new Validator();
+  let field = v.attach({ name: 'email', rules: 'required|email' });
+  expect(v.flags.email).toBeTruthy();
+  v.validate('email', 'someinvalid');
+  expect(v.errors.first('email')).toBeTruthy();
+
+  // changed scope.
+  v.update(field.id, { scope: 'myscope' });
+
+  field.scope = 'myscope';
+  // test removal
+  expect(v.errors.first('email')).toBeFalsy();
+  expect(v.flags.email).toBeFalsy();
+
+  // test flag and errors updates.
+  expect(v.flags.$myscope.email).toBeTruthy();
+  expect(v.errors.first('myscope.email')).toBeTruthy();
+
+  // test scoped fields.
+  field = v.attach({ name: 'email', rules: 'required|email', scope: 's1' });
+  expect(v.flags.$s1.email).toBeTruthy();
+  v.validate('s1.email', 'someinvalid');
+  expect(v.errors.first('s1.email')).toBeTruthy();
+
+  // changed scope.
+  v.update(field.id, { scope: 's2' });
+
+  field.scope = 's2';
+  // test removal
+  expect(v.flags.$s1.email).toBeFalsy();
+
+  // test flag and errors updates.
+  expect(v.flags.$s2.email).toBeTruthy();
+  expect(v.errors.first('s2.email')).toBeTruthy();
+});
