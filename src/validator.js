@@ -41,14 +41,6 @@ export default class Validator {
       warn('validator.clean is marked for deprecation, please use validator.reset instead.');
       this.reset();
     };
-
-    // Some fields will be later evaluated, because the vm isn't mounted yet
-    // so it may register it under an inaccurate scope.
-    this.$deferred = [];
-    this.$ready = false;
-    if (options.init) {
-      this.init();
-    }
   }
 
   /**
