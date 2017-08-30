@@ -404,21 +404,13 @@ export default class Field {
     this.unwatch(/^input_.+/);
     if (!this.listen) return;
 
-    let fn = null;
-    if (this.targetOf) {
-      fn = () => {
-        this.validator.validate(`#${this.targetOf}`);
-      };
-    } else {
-      fn = (...args) => {
-        if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event)) {
-          args[0] = this.value;
-        }
-        this.validator.validate(`#${this.id}`, args[0]);
-      };
-    }
-    const validate = debounce(fn, this.delay);
+    const fn = this.targetOf ? () => {
+      this.validator.validate(`#${this.targetOf}`);
+    } : () => {
+      this.validator.validate(`#${this.id}`);
+    };
 
+    const validate = debounce(fn, this.delay);
     const inputEvent = getInputEventName(this.el);
     // replace input event with suitable one.
     let events = this.events.map(e => {

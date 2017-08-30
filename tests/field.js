@@ -80,12 +80,12 @@ test('it adds value listeners on the native inputs', () => {
   
   // test input event.
   el.dispatchEvent(new Event('input'));
-  expect(field.validator.validate).toHaveBeenCalledWith(`#${field.id}`, field.value);
+  expect(field.validator.validate).toHaveBeenCalledWith(`#${field.id}`);
 
   // blur event.
   el.dispatchEvent(new Event('blur'));
   expect(field.validator.validate).toHaveBeenCalledTimes(2);
-  expect(field.validator.validate).toHaveBeenLastCalledWith(`#${field.id}`, field.value);
+  expect(field.validator.validate).toHaveBeenLastCalledWith(`#${field.id}`);
 
   // test event removal
   field.unwatch(/input/);
@@ -397,37 +397,6 @@ test('calls the update method on the validator errors when updating scope', () =
   field.update({ rules: 'min:3', scope: 'scope' });
   expect(vm.$validator.update).toHaveBeenCalledTimes(1);
 });
-
-test('validation trigger can validate values directly instead of resolving them', () => {
-  document.body.innerHTML = `
-    <input name="name" id="name" value="10" type="text">
-  `;
-  const el = document.querySelector('#name');
-  const component = {
-    value: 10,
-    events: {}, // mocked callback register
-    $el: document.body.children[0],
-    $watch: () => {},
-    $on: jest.fn((event, callback) => {
-      component.events[event] = callback;
-    })
-  };
-
-  const field = new Field(el, {
-    rules: 'required',
-    component,
-    getter: () => el.value,
-    vm: {
-      $validator: { validate: jest.fn() },
-      $el: document.body
-    }
-  });
-
-  // trigger input event.
-  component.events.input('some val');
-  expect(field.vm.$validator.validate).toHaveBeenCalledWith(`#${field.id}`, 'some val');
-});
-
 
 describe('fields can track their dependencies', () => {
   test('native input depencies', () => {
