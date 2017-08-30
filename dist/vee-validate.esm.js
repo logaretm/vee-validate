@@ -3,12 +3,3025 @@
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
+var MILLISECONDS_IN_HOUR = 3600000;
+var MILLISECONDS_IN_MINUTE = 60000;
+var DEFAULT_ADDITIONAL_DIGITS = 2;
+
+var patterns = {
+  dateTimeDelimeter: /[T ]/,
+  plainTime: /:/,
+
+  // year tokens
+  YY: /^(\d{2})$/,
+  YYY: [
+    /^([+-]\d{2})$/, // 0 additional digits
+    /^([+-]\d{3})$/, // 1 additional digit
+    /^([+-]\d{4})$/ // 2 additional digits
+  ],
+  YYYY: /^(\d{4})/,
+  YYYYY: [
+    /^([+-]\d{4})/, // 0 additional digits
+    /^([+-]\d{5})/, // 1 additional digit
+    /^([+-]\d{6})/ // 2 additional digits
+  ],
+
+  // date tokens
+  MM: /^-(\d{2})$/,
+  DDD: /^-?(\d{3})$/,
+  MMDD: /^-?(\d{2})-?(\d{2})$/,
+  Www: /^-?W(\d{2})$/,
+  WwwD: /^-?W(\d{2})-?(\d{1})$/,
+
+  HH: /^(\d{2}([.,]\d*)?)$/,
+  HHMM: /^(\d{2}):?(\d{2}([.,]\d*)?)$/,
+  HHMMSS: /^(\d{2}):?(\d{2}):?(\d{2}([.,]\d*)?)$/,
+
+  // timezone tokens
+  timezone: /([Z+-].*)$/,
+  timezoneZ: /^(Z)$/,
+  timezoneHH: /^([+-])(\d{2})$/,
+  timezoneHHMM: /^([+-])(\d{2}):?(\d{2})$/
+};
+
+/**
+ * @name toDate
+ * @category Common Helpers
+ * @summary Convert the given argument to an instance of Date.
+ *
+ * @description
+ * Convert the given argument to an instance of Date.
+ *
+ * If the argument is an instance of Date, the function returns its clone.
+ *
+ * If the argument is a number, it is treated as a timestamp.
+ *
+ * If an argument is a string, the function tries to parse it.
+ * Function accepts complete ISO 8601 formats as well as partial implementations.
+ * ISO 8601: http://en.wikipedia.org/wiki/ISO_8601
+ *
+ * If all above fails, the function passes the given argument to Date constructor.
+ *
+ * **Note**: *all* Date arguments passed to any *date-fns* function is processed by `toDate`.
+ * All *date-fns* functions will throw `RangeError` if `options.additionalDigits` is not 0, 1, 2 or undefined.
+ *
+ * @param {Date|String|Number} argument - the value to convert
+ * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
+ * @param {0|1|2} [options.additionalDigits=2] - the additional number of digits in the extended year format
+ * @returns {Date} the parsed date in the local time zone
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ *
+ * @example
+ * // Convert string '2014-02-11T11:30:30' to date:
+ * var result = toDate('2014-02-11T11:30:30')
+ * //=> Tue Feb 11 2014 11:30:30
+ *
+ * @example
+ * // Convert string '+02014101' to date,
+ * // if the additional number of digits in the extended year format is 1:
+ * var result = toDate('+02014101', {additionalDigits: 1})
+ * //=> Fri Apr 11 2014 00:00:00
+ */
+function toDate (argument, dirtyOptions) {
+  var options = dirtyOptions || {};
+
+  var additionalDigits = options.additionalDigits === undefined ? DEFAULT_ADDITIONAL_DIGITS : Number(options.additionalDigits);
+  if (additionalDigits !== 2 && additionalDigits !== 1 && additionalDigits !== 0) {
+    throw new RangeError('additionalDigits must be 0, 1 or 2')
+  }
+
+  // Clone the date
+  if (argument instanceof Date) {
+    // Prevent the date to lose the milliseconds when passed to new Date() in IE10
+    return new Date(argument.getTime())
+  } else if (typeof argument !== 'string') {
+    return new Date(argument)
+  }
+
+  var dateStrings = splitDateString(argument);
+
+  var parseYearResult = parseYear(dateStrings.date, additionalDigits);
+  var year = parseYearResult.year;
+  var restDateString = parseYearResult.restDateString;
+
+  var date = parseDate(restDateString, year);
+
+  if (date) {
+    var timestamp = date.getTime();
+    var time = 0;
+    var offset;
+
+    if (dateStrings.time) {
+      time = parseTime(dateStrings.time);
+    }
+
+    if (dateStrings.timezone) {
+      offset = parseTimezone(dateStrings.timezone);
+    } else {
+      // get offset accurate to hour in timezones that change offset
+      offset = new Date(timestamp + time).getTimezoneOffset();
+      offset = new Date(timestamp + time + offset * MILLISECONDS_IN_MINUTE).getTimezoneOffset();
+    }
+
+    return new Date(timestamp + time + offset * MILLISECONDS_IN_MINUTE)
+  } else {
+    return new Date(argument)
+  }
+}
+
+function splitDateString (dateString) {
+  var dateStrings = {};
+  var array = dateString.split(patterns.dateTimeDelimeter);
+  var timeString;
+
+  if (patterns.plainTime.test(array[0])) {
+    dateStrings.date = null;
+    timeString = array[0];
+  } else {
+    dateStrings.date = array[0];
+    timeString = array[1];
+  }
+
+  if (timeString) {
+    var token = patterns.timezone.exec(timeString);
+    if (token) {
+      dateStrings.time = timeString.replace(token[1], '');
+      dateStrings.timezone = token[1];
+    } else {
+      dateStrings.time = timeString;
+    }
+  }
+
+  return dateStrings
+}
+
+function parseYear (dateString, additionalDigits) {
+  var patternYYY = patterns.YYY[additionalDigits];
+  var patternYYYYY = patterns.YYYYY[additionalDigits];
+
+  var token;
+
+  // YYYY or ±YYYYY
+  token = patterns.YYYY.exec(dateString) || patternYYYYY.exec(dateString);
+  if (token) {
+    var yearString = token[1];
+    return {
+      year: parseInt(yearString, 10),
+      restDateString: dateString.slice(yearString.length)
+    }
+  }
+
+  // YY or ±YYY
+  token = patterns.YY.exec(dateString) || patternYYY.exec(dateString);
+  if (token) {
+    var centuryString = token[1];
+    return {
+      year: parseInt(centuryString, 10) * 100,
+      restDateString: dateString.slice(centuryString.length)
+    }
+  }
+
+  // Invalid ISO-formatted year
+  return {
+    year: null
+  }
+}
+
+function parseDate (dateString, year) {
+  // Invalid ISO-formatted year
+  if (year === null) {
+    return null
+  }
+
+  var token;
+  var date;
+  var month;
+  var week;
+
+  // YYYY
+  if (dateString.length === 0) {
+    date = new Date(0);
+    date.setUTCFullYear(year);
+    return date
+  }
+
+  // YYYY-MM
+  token = patterns.MM.exec(dateString);
+  if (token) {
+    date = new Date(0);
+    month = parseInt(token[1], 10) - 1;
+    date.setUTCFullYear(year, month);
+    return date
+  }
+
+  // YYYY-DDD or YYYYDDD
+  token = patterns.DDD.exec(dateString);
+  if (token) {
+    date = new Date(0);
+    var dayOfYear = parseInt(token[1], 10);
+    date.setUTCFullYear(year, 0, dayOfYear);
+    return date
+  }
+
+  // YYYY-MM-DD or YYYYMMDD
+  token = patterns.MMDD.exec(dateString);
+  if (token) {
+    date = new Date(0);
+    month = parseInt(token[1], 10) - 1;
+    var day = parseInt(token[2], 10);
+    date.setUTCFullYear(year, month, day);
+    return date
+  }
+
+  // YYYY-Www or YYYYWww
+  token = patterns.Www.exec(dateString);
+  if (token) {
+    week = parseInt(token[1], 10) - 1;
+    return dayOfISOYear(year, week)
+  }
+
+  // YYYY-Www-D or YYYYWwwD
+  token = patterns.WwwD.exec(dateString);
+  if (token) {
+    week = parseInt(token[1], 10) - 1;
+    var dayOfWeek = parseInt(token[2], 10) - 1;
+    return dayOfISOYear(year, week, dayOfWeek)
+  }
+
+  // Invalid ISO-formatted date
+  return null
+}
+
+function parseTime (timeString) {
+  var token;
+  var hours;
+  var minutes;
+
+  // hh
+  token = patterns.HH.exec(timeString);
+  if (token) {
+    hours = parseFloat(token[1].replace(',', '.'));
+    return (hours % 24) * MILLISECONDS_IN_HOUR
+  }
+
+  // hh:mm or hhmm
+  token = patterns.HHMM.exec(timeString);
+  if (token) {
+    hours = parseInt(token[1], 10);
+    minutes = parseFloat(token[2].replace(',', '.'));
+    return (hours % 24) * MILLISECONDS_IN_HOUR +
+      minutes * MILLISECONDS_IN_MINUTE
+  }
+
+  // hh:mm:ss or hhmmss
+  token = patterns.HHMMSS.exec(timeString);
+  if (token) {
+    hours = parseInt(token[1], 10);
+    minutes = parseInt(token[2], 10);
+    var seconds = parseFloat(token[3].replace(',', '.'));
+    return (hours % 24) * MILLISECONDS_IN_HOUR +
+      minutes * MILLISECONDS_IN_MINUTE +
+      seconds * 1000
+  }
+
+  // Invalid ISO-formatted time
+  return null
+}
+
+function parseTimezone (timezoneString) {
+  var token;
+  var absoluteOffset;
+
+  // Z
+  token = patterns.timezoneZ.exec(timezoneString);
+  if (token) {
+    return 0
+  }
+
+  // ±hh
+  token = patterns.timezoneHH.exec(timezoneString);
+  if (token) {
+    absoluteOffset = parseInt(token[2], 10) * 60;
+    return (token[1] === '+') ? -absoluteOffset : absoluteOffset
+  }
+
+  // ±hh:mm or ±hhmm
+  token = patterns.timezoneHHMM.exec(timezoneString);
+  if (token) {
+    absoluteOffset = parseInt(token[2], 10) * 60 + parseInt(token[3], 10);
+    return (token[1] === '+') ? -absoluteOffset : absoluteOffset
+  }
+
+  return 0
+}
+
+function dayOfISOYear (isoYear, week, day) {
+  week = week || 0;
+  day = day || 0;
+  var date = new Date(0);
+  date.setUTCFullYear(isoYear, 0, 4);
+  var fourthOfJanuaryDay = date.getUTCDay() || 7;
+  var diff = week * 7 + day + 1 - fourthOfJanuaryDay;
+  date.setUTCDate(date.getUTCDate() + diff);
+  return date
+}
+
+/**
+ * @name addMilliseconds
+ * @category Millisecond Helpers
+ * @summary Add the specified number of milliseconds to the given date.
+ *
+ * @description
+ * Add the specified number of milliseconds to the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of milliseconds to be added
+ * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
+ * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
+ * @returns {Date} the new date with the milliseconds added
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ *
+ * @example
+ * // Add 750 milliseconds to 10 July 2014 12:45:30.000:
+ * var result = addMilliseconds(new Date(2014, 6, 10, 12, 45, 30, 0), 750)
+ * //=> Thu Jul 10 2014 12:45:30.750
+ */
+function addMilliseconds (dirtyDate, dirtyAmount, dirtyOptions) {
+  var timestamp = toDate(dirtyDate, dirtyOptions).getTime();
+  var amount = Number(dirtyAmount);
+  return new Date(timestamp + amount)
+}
+
+function cloneObject (dirtyObject) {
+  dirtyObject = dirtyObject || {};
+  var object = {};
+
+  for (var property in dirtyObject) {
+    if (dirtyObject.hasOwnProperty(property)) {
+      object[property] = dirtyObject[property];
+    }
+  }
+
+  return object
+}
+
+var MILLISECONDS_IN_MINUTE$2 = 60000;
+
+/**
+ * @name addMinutes
+ * @category Minute Helpers
+ * @summary Add the specified number of minutes to the given date.
+ *
+ * @description
+ * Add the specified number of minutes to the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of minutes to be added
+ * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
+ * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
+ * @returns {Date} the new date with the minutes added
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ *
+ * @example
+ * // Add 30 minutes to 10 July 2014 12:00:00:
+ * var result = addMinutes(new Date(2014, 6, 10, 12, 0), 30)
+ * //=> Thu Jul 10 2014 12:30:00
+ */
+function addMinutes (dirtyDate, dirtyAmount, dirtyOptions) {
+  var amount = Number(dirtyAmount);
+  return addMilliseconds(dirtyDate, amount * MILLISECONDS_IN_MINUTE$2, dirtyOptions)
+}
+
+/**
+ * @name isValid
+ * @category Common Helpers
+ * @summary Is the given date valid?
+ *
+ * @description
+ * Returns false if argument is Invalid Date and true otherwise.
+ * Argument is converted to Date using `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
+ * Invalid Date is a Date, whose time value is NaN.
+ *
+ * Time value of Date: http://es5.github.io/#x15.9.1.1
+ *
+ * @param {Date|String|Number} date - the date to check
+ * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
+ * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
+ * @returns {Boolean} the date is valid
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ *
+ * @example
+ * // For the valid date:
+ * var result = isValid(new Date(2014, 1, 31))
+ * //=> true
+ *
+ * @example
+ * // For the value, convertable into a date:
+ * var result = isValid('2014-02-31')
+ * //=> true
+ *
+ * @example
+ * // For the invalid date:
+ * var result = isValid(new Date(''))
+ * //=> false
+ */
+function isValid (dirtyDate, dirtyOptions) {
+  var date = toDate(dirtyDate, dirtyOptions);
+  return !isNaN(date)
+}
+
+var formatDistanceLocale = {
+  lessThanXSeconds: {
+    one: 'less than a second',
+    other: 'less than {{count}} seconds'
+  },
+
+  xSeconds: {
+    one: '1 second',
+    other: '{{count}} seconds'
+  },
+
+  halfAMinute: 'half a minute',
+
+  lessThanXMinutes: {
+    one: 'less than a minute',
+    other: 'less than {{count}} minutes'
+  },
+
+  xMinutes: {
+    one: '1 minute',
+    other: '{{count}} minutes'
+  },
+
+  aboutXHours: {
+    one: 'about 1 hour',
+    other: 'about {{count}} hours'
+  },
+
+  xHours: {
+    one: '1 hour',
+    other: '{{count}} hours'
+  },
+
+  xDays: {
+    one: '1 day',
+    other: '{{count}} days'
+  },
+
+  aboutXMonths: {
+    one: 'about 1 month',
+    other: 'about {{count}} months'
+  },
+
+  xMonths: {
+    one: '1 month',
+    other: '{{count}} months'
+  },
+
+  aboutXYears: {
+    one: 'about 1 year',
+    other: 'about {{count}} years'
+  },
+
+  xYears: {
+    one: '1 year',
+    other: '{{count}} years'
+  },
+
+  overXYears: {
+    one: 'over 1 year',
+    other: 'over {{count}} years'
+  },
+
+  almostXYears: {
+    one: 'almost 1 year',
+    other: 'almost {{count}} years'
+  }
+};
+
+function formatDistance (token, count, options) {
+  options = options || {};
+
+  var result;
+  if (typeof formatDistanceLocale[token] === 'string') {
+    result = formatDistanceLocale[token];
+  } else if (count === 1) {
+    result = formatDistanceLocale[token].one;
+  } else {
+    result = formatDistanceLocale[token].other.replace('{{count}}', count);
+  }
+
+  if (options.addSuffix) {
+    if (options.comparison > 0) {
+      return 'in ' + result
+    } else {
+      return result + ' ago'
+    }
+  }
+
+  return result
+}
+
+var tokensToBeShortedPattern = /MMMM|MM|DD|dddd/g;
+
+function buildShortLongFormat (format) {
+  return format.replace(tokensToBeShortedPattern, function (token) {
+    return token.slice(1)
+  })
+}
+
+/**
+ * @name buildFormatLongFn
+ * @category Locale Helpers
+ * @summary Build `formatLong` property for locale used by `format`, `formatRelative` and `parse` functions.
+ *
+ * @description
+ * Build `formatLong` property for locale used by `format`, `formatRelative` and `parse` functions.
+ * Returns a function which takes one of the following tokens as the argument:
+ * `'LTS'`, `'LT'`, `'L'`, `'LL'`, `'LLL'`, `'l'`, `'ll'`, `'lll'`, `'llll'`
+ * and returns a long format string written as `format` token strings.
+ * See [format]{@link https://date-fns.org/docs/format}
+ *
+ * `'l'`, `'ll'`, `'lll'` and `'llll'` formats are built automatically
+ * by shortening some of the tokens from corresponding unshortened formats
+ * (e.g., if `LL` is `'MMMM DD YYYY'` then `ll` will be `MMM D YYYY`)
+ *
+ * @param {Object} obj - the object with long formats written as `format` token strings
+ * @param {String} obj.LT - time format: hours and minutes
+ * @param {String} obj.LTS - time format: hours, minutes and seconds
+ * @param {String} obj.L - short date format: numeric day, month and year
+ * @param {String} [obj.l] - short date format: numeric day, month and year (shortened)
+ * @param {String} obj.LL - long date format: day, month in words, and year
+ * @param {String} [obj.ll] - long date format: day, month in words, and year (shortened)
+ * @param {String} obj.LLL - long date and time format
+ * @param {String} [obj.lll] - long date and time format (shortened)
+ * @param {String} obj.LLLL - long date, time and weekday format
+ * @param {String} [obj.llll] - long date, time and weekday format (shortened)
+ * @returns {Function} `formatLong` property of the locale
+ *
+ * @example
+ * // For `en-US` locale:
+ * locale.formatLong = buildFormatLongFn({
+ *   LT: 'h:mm aa',
+ *   LTS: 'h:mm:ss aa',
+ *   L: 'MM/DD/YYYY',
+ *   LL: 'MMMM D YYYY',
+ *   LLL: 'MMMM D YYYY h:mm aa',
+ *   LLLL: 'dddd, MMMM D YYYY h:mm aa'
+ * })
+ */
+function buildFormatLongFn (obj) {
+  var formatLongLocale = {
+    LTS: obj.LTS,
+    LT: obj.LT,
+    L: obj.L,
+    LL: obj.LL,
+    LLL: obj.LLL,
+    LLLL: obj.LLLL,
+    l: obj.l || buildShortLongFormat(obj.L),
+    ll: obj.ll || buildShortLongFormat(obj.LL),
+    lll: obj.lll || buildShortLongFormat(obj.LLL),
+    llll: obj.llll || buildShortLongFormat(obj.LLLL)
+  };
+
+  return function (token) {
+    return formatLongLocale[token]
+  }
+}
+
+var formatLong = buildFormatLongFn({
+  LT: 'h:mm aa',
+  LTS: 'h:mm:ss aa',
+  L: 'MM/DD/YYYY',
+  LL: 'MMMM D YYYY',
+  LLL: 'MMMM D YYYY h:mm aa',
+  LLLL: 'dddd, MMMM D YYYY h:mm aa'
+});
+
+var formatRelativeLocale = {
+  lastWeek: '[last] dddd [at] LT',
+  yesterday: '[yesterday at] LT',
+  today: '[today at] LT',
+  tomorrow: '[tomorrow at] LT',
+  nextWeek: 'dddd [at] LT',
+  other: 'L'
+};
+
+function formatRelative (token, date, baseDate, options) {
+  return formatRelativeLocale[token]
+}
+
+/**
+ * @name buildLocalizeFn
+ * @category Locale Helpers
+ * @summary Build `localize.weekday`, `localize.month` and `localize.timeOfDay` properties for the locale.
+ *
+ * @description
+ * Build `localize.weekday`, `localize.month` and `localize.timeOfDay` properties for the locale
+ * used by `format` function.
+ * If no `type` is supplied to the options of the resulting function, `defaultType` will be used (see example).
+ *
+ * `localize.weekday` function takes the weekday index as argument (0 - Sunday).
+ * `localize.month` takes the month index (0 - January).
+ * `localize.timeOfDay` takes the hours. Use `indexCallback` to convert them to an array index (see example).
+ *
+ * @param {Object} values - the object with arrays of values
+ * @param {String} defaultType - the default type for the localize function
+ * @param {Function} [indexCallback] - the callback which takes the resulting function argument
+ *   and converts it into value array index
+ * @returns {Function} the resulting function
+ *
+ * @example
+ * var timeOfDayValues = {
+ *   uppercase: ['AM', 'PM'],
+ *   lowercase: ['am', 'pm'],
+ *   long: ['a.m.', 'p.m.']
+ * }
+ * locale.localize.timeOfDay = buildLocalizeFn(timeOfDayValues, 'long', function (hours) {
+ *   // 0 is a.m. array index, 1 is p.m. array index
+ *   return (hours / 12) >= 1 ? 1 : 0
+ * })
+ * locale.localize.timeOfDay(16, {type: 'uppercase'}) //=> 'PM'
+ * locale.localize.timeOfDay(5) //=> 'a.m.'
+ */
+function buildLocalizeFn (values, defaultType, indexCallback) {
+  return function (dirtyIndex, dirtyOptions) {
+    var options = dirtyOptions || {};
+    var type = options.type ? String(options.type) : defaultType;
+    var valuesArray = values[type] || values[defaultType];
+    var index = indexCallback ? indexCallback(Number(dirtyIndex)) : Number(dirtyIndex);
+    return valuesArray[index]
+  }
+}
+
+/**
+ * @name buildLocalizeArrayFn
+ * @category Locale Helpers
+ * @summary Build `localize.weekdays`, `localize.months` and `localize.timesOfDay` properties for the locale.
+ *
+ * @description
+ * Build `localize.weekdays`, `localize.months` and `localize.timesOfDay` properties for the locale.
+ * If no `type` is supplied to the options of the resulting function, `defaultType` will be used (see example).
+ *
+ * @param {Object} values - the object with arrays of values
+ * @param {String} defaultType - the default type for the localize function
+ * @returns {Function} the resulting function
+ *
+ * @example
+ * var weekdayValues = {
+ *   narrow: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+ *   short: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+ *   long: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+ * }
+ * locale.localize.weekdays = buildLocalizeArrayFn(weekdayValues, 'long')
+ * locale.localize.weekdays({type: 'narrow'}) //=> ['Su', 'Mo', ...]
+ * locale.localize.weekdays() //=> ['Sunday', 'Monday', ...]
+ */
+function buildLocalizeArrayFn (values, defaultType) {
+  return function (dirtyOptions) {
+    var options = dirtyOptions || {};
+    var type = options.type ? String(options.type) : defaultType;
+    return values[type] || values[defaultType]
+  }
+}
+
+// Note: in English, the names of days of the week and months are capitalized.
+// If you are making a new locale based on this one, check if the same is true for the language you're working on.
+// Generally, formatted dates should look like they are in the middle of a sentence,
+// e.g. in Spanish language the weekdays and months should be in the lowercase.
+var weekdayValues = {
+  narrow: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+  short: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  long: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+};
+
+var monthValues = {
+  short: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  long: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+};
+
+// `timeOfDay` is used to designate which part of the day it is, when used with 12-hour clock.
+// Use the system which is used the most commonly in the locale.
+// For example, if the country doesn't use a.m./p.m., you can use `night`/`morning`/`afternoon`/`evening`:
+//
+//   var timeOfDayValues = {
+//     any: ['in the night', 'in the morning', 'in the afternoon', 'in the evening']
+//   }
+//
+// And later:
+//
+//   var localize = {
+//     // The callback takes the hours as the argument and returns the array index
+//     timeOfDay: buildLocalizeFn(timeOfDayValues, 'any', function (hours) {
+//       if (hours >= 17) {
+//         return 3
+//       } else if (hours >= 12) {
+//         return 2
+//       } else if (hours >= 4) {
+//         return 1
+//       } else {
+//         return 0
+//       }
+//     }),
+//     timesOfDay: buildLocalizeArrayFn(timeOfDayValues, 'any')
+//   }
+var timeOfDayValues = {
+  uppercase: ['AM', 'PM'],
+  lowercase: ['am', 'pm'],
+  long: ['a.m.', 'p.m.']
+};
+
+function ordinalNumber (dirtyNumber, dirtyOptions) {
+  var number = Number(dirtyNumber);
+
+  // If ordinal numbers depend on context, for example,
+  // if they are different for different grammatical genders,
+  // use `options.unit`:
+  //
+  //   var options = dirtyOptions || {}
+  //   var unit = String(options.unit)
+  //
+  // where `unit` can be 'month', 'quarter', 'week', 'isoWeek', 'dayOfYear',
+  // 'dayOfMonth' or 'dayOfWeek'
+
+  var rem100 = number % 100;
+  if (rem100 > 20 || rem100 < 10) {
+    switch (rem100 % 10) {
+      case 1:
+        return number + 'st'
+      case 2:
+        return number + 'nd'
+      case 3:
+        return number + 'rd'
+    }
+  }
+  return number + 'th'
+}
+
+var localize = {
+  ordinalNumber: ordinalNumber,
+  weekday: buildLocalizeFn(weekdayValues, 'long'),
+  weekdays: buildLocalizeArrayFn(weekdayValues, 'long'),
+  month: buildLocalizeFn(monthValues, 'long'),
+  months: buildLocalizeArrayFn(monthValues, 'long'),
+  timeOfDay: buildLocalizeFn(timeOfDayValues, 'long', function (hours) {
+    return (hours / 12) >= 1 ? 1 : 0
+  }),
+  timesOfDay: buildLocalizeArrayFn(timeOfDayValues, 'long')
+};
+
+/**
+ * @name buildMatchFn
+ * @category Locale Helpers
+ * @summary Build `match.weekdays`, `match.months` and `match.timesOfDay` properties for the locale.
+ *
+ * @description
+ * Build `match.weekdays`, `match.months` and `match.timesOfDay` properties for the locale used by `parse` function.
+ * If no `type` is supplied to the options of the resulting function, `defaultType` will be used (see example).
+ * The result of the match function will be passed into corresponding parser function
+ * (`match.weekday`, `match.month` or `match.timeOfDay` respectively. See `buildParseFn`).
+ *
+ * @param {Object} values - the object with RegExps
+ * @param {String} defaultType - the default type for the match function
+ * @returns {Function} the resulting function
+ *
+ * @example
+ * var matchWeekdaysPatterns = {
+ *   narrow: /^(su|mo|tu|we|th|fr|sa)/i,
+ *   short: /^(sun|mon|tue|wed|thu|fri|sat)/i,
+ *   long: /^(sunday|monday|tuesday|wednesday|thursday|friday|saturday)/i
+ * }
+ * locale.match.weekdays = buildMatchFn(matchWeekdaysPatterns, 'long')
+ * locale.match.weekdays('Sunday', {type: 'narrow'}) //=> ['Su', 'Su', ...]
+ * locale.match.weekdays('Sunday') //=> ['Sunday', 'Sunday', ...]
+ */
+function buildMatchFn (patterns, defaultType) {
+  return function (dirtyString, dirtyOptions) {
+    var options = dirtyOptions || {};
+    var type = options.type ? String(options.type) : defaultType;
+    var pattern = patterns[type] || patterns[defaultType];
+    var string = String(dirtyString);
+    return string.match(pattern)
+  }
+}
+
+/**
+ * @name buildParseFn
+ * @category Locale Helpers
+ * @summary Build `match.weekday`, `match.month` and `match.timeOfDay` properties for the locale.
+ *
+ * @description
+ * Build `match.weekday`, `match.month` and `match.timeOfDay` properties for the locale used by `parse` function.
+ * The argument of the resulting function is the result of the corresponding match function
+ * (`match.weekdays`, `match.months` or `match.timesOfDay` respectively. See `buildMatchFn`).
+ *
+ * @param {Object} values - the object with arrays of RegExps
+ * @param {String} defaultType - the default type for the parser function
+ * @returns {Function} the resulting function
+ *
+ * @example
+ * var parseWeekdayPatterns = {
+ *   any: [/^su/i, /^m/i, /^tu/i, /^w/i, /^th/i, /^f/i, /^sa/i]
+ * }
+ * locale.match.weekday = buildParseFn(matchWeekdaysPatterns, 'long')
+ * var matchResult = locale.match.weekdays('Friday')
+ * locale.match.weekday(matchResult) //=> 5
+ */
+function buildParseFn (patterns, defaultType) {
+  return function (matchResult, dirtyOptions) {
+    var options = dirtyOptions || {};
+    var type = options.type ? String(options.type) : defaultType;
+    var patternsArray = patterns[type] || patterns[defaultType];
+    var string = matchResult[1];
+
+    return patternsArray.findIndex(function (pattern) {
+      return pattern.test(string)
+    })
+  }
+}
+
+/**
+ * @name buildMatchPatternFn
+ * @category Locale Helpers
+ * @summary Build match function from a single RegExp.
+ *
+ * @description
+ * Build match function from a single RegExp.
+ * Usually used for building `match.ordinalNumbers` property of the locale.
+ *
+ * @param {Object} pattern - the RegExp
+ * @returns {Function} the resulting function
+ *
+ * @example
+ * locale.match.ordinalNumbers = buildMatchPatternFn(/^(\d+)(th|st|nd|rd)?/i)
+ * locale.match.ordinalNumbers('3rd') //=> ['3rd', '3', 'rd', ...]
+ */
+function buildMatchPatternFn (pattern) {
+  return function (dirtyString) {
+    var string = String(dirtyString);
+    return string.match(pattern)
+  }
+}
+
+/**
+ * @name parseDecimal
+ * @category Locale Helpers
+ * @summary Parses the match result into decimal number.
+ *
+ * @description
+ * Parses the match result into decimal number.
+ * Uses the string matched with the first set of parentheses of match RegExp.
+ *
+ * @param {Array} matchResult - the object returned by matching function
+ * @returns {Number} the parsed value
+ *
+ * @example
+ * locale.match = {
+ *   ordinalNumbers: (dirtyString) {
+ *     return String(dirtyString).match(/^(\d+)(th|st|nd|rd)?/i)
+ *   },
+ *   ordinalNumber: parseDecimal
+ * }
+ */
+function parseDecimal (matchResult) {
+  return parseInt(matchResult[1], 10)
+}
+
+var matchOrdinalNumbersPattern = /^(\d+)(th|st|nd|rd)?/i;
+
+var matchWeekdaysPatterns = {
+  narrow: /^(su|mo|tu|we|th|fr|sa)/i,
+  short: /^(sun|mon|tue|wed|thu|fri|sat)/i,
+  long: /^(sunday|monday|tuesday|wednesday|thursday|friday|saturday)/i
+};
+
+var parseWeekdayPatterns = {
+  any: [/^su/i, /^m/i, /^tu/i, /^w/i, /^th/i, /^f/i, /^sa/i]
+};
+
+var matchMonthsPatterns = {
+  short: /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i,
+  long: /^(january|february|march|april|may|june|july|august|september|october|november|december)/i
+};
+
+var parseMonthPatterns = {
+  any: [/^ja/i, /^f/i, /^mar/i, /^ap/i, /^may/i, /^jun/i, /^jul/i, /^au/i, /^s/i, /^o/i, /^n/i, /^d/i]
+};
+
+// `timeOfDay` is used to designate which part of the day it is, when used with 12-hour clock.
+// Use the system which is used the most commonly in the locale.
+// For example, if the country doesn't use a.m./p.m., you can use `night`/`morning`/`afternoon`/`evening`:
+//
+//   var matchTimesOfDayPatterns = {
+//     long: /^((in the)? (night|morning|afternoon|evening?))/i
+//   }
+//
+//   var parseTimeOfDayPatterns = {
+//     any: [/(night|morning)/i, /(afternoon|evening)/i]
+//   }
+var matchTimesOfDayPatterns = {
+  short: /^(am|pm)/i,
+  long: /^([ap]\.?\s?m\.?)/i
+};
+
+var parseTimeOfDayPatterns = {
+  any: [/^a/i, /^p/i]
+};
+
+var match = {
+  ordinalNumbers: buildMatchPatternFn(matchOrdinalNumbersPattern),
+  ordinalNumber: parseDecimal,
+  weekdays: buildMatchFn(matchWeekdaysPatterns, 'long'),
+  weekday: buildParseFn(parseWeekdayPatterns, 'any'),
+  months: buildMatchFn(matchMonthsPatterns, 'long'),
+  month: buildParseFn(parseMonthPatterns, 'any'),
+  timesOfDay: buildMatchFn(matchTimesOfDayPatterns, 'long'),
+  timeOfDay: buildParseFn(parseTimeOfDayPatterns, 'any')
+};
+
+/**
+ * @type {Locale}
+ * @category Locales
+ * @summary English locale (United States).
+ * @language English
+ * @iso-639-2 eng
+ */
+var locale = {
+  formatDistance: formatDistance,
+  formatLong: formatLong,
+  formatRelative: formatRelative,
+  localize: localize,
+  match: match,
+  options: {
+    weekStartsOn: 0 /* Sunday */,
+    firstWeekContainsDate: 1
+  }
+};
+
+var MILLISECONDS_IN_DAY$1 = 86400000;
+
+// This function will be a part of public API when UTC function will be implemented.
+// See issue: https://github.com/date-fns/date-fns/issues/376
+function getUTCDayOfYear (dirtyDate, dirtyOptions) {
+  var date = toDate(dirtyDate, dirtyOptions);
+  var timestamp = date.getTime();
+  date.setUTCMonth(0, 1);
+  date.setUTCHours(0, 0, 0, 0);
+  var startOfYearTimestamp = date.getTime();
+  var difference = timestamp - startOfYearTimestamp;
+  return Math.floor(difference / MILLISECONDS_IN_DAY$1) + 1
+}
+
+// This function will be a part of public API when UTC function will be implemented.
+// See issue: https://github.com/date-fns/date-fns/issues/376
+function startOfUTCISOWeek (dirtyDate, dirtyOptions) {
+  var weekStartsOn = 1;
+
+  var date = toDate(dirtyDate, dirtyOptions);
+  var day = date.getUTCDay();
+  var diff = (day < weekStartsOn ? 7 : 0) + day - weekStartsOn;
+
+  date.setUTCDate(date.getUTCDate() - diff);
+  date.setUTCHours(0, 0, 0, 0);
+  return date
+}
+
+// This function will be a part of public API when UTC function will be implemented.
+// See issue: https://github.com/date-fns/date-fns/issues/376
+function getUTCISOWeekYear (dirtyDate, dirtyOptions) {
+  var date = toDate(dirtyDate, dirtyOptions);
+  var year = date.getUTCFullYear();
+
+  var fourthOfJanuaryOfNextYear = new Date(0);
+  fourthOfJanuaryOfNextYear.setUTCFullYear(year + 1, 0, 4);
+  fourthOfJanuaryOfNextYear.setUTCHours(0, 0, 0, 0);
+  var startOfNextYear = startOfUTCISOWeek(fourthOfJanuaryOfNextYear, dirtyOptions);
+
+  var fourthOfJanuaryOfThisYear = new Date(0);
+  fourthOfJanuaryOfThisYear.setUTCFullYear(year, 0, 4);
+  fourthOfJanuaryOfThisYear.setUTCHours(0, 0, 0, 0);
+  var startOfThisYear = startOfUTCISOWeek(fourthOfJanuaryOfThisYear, dirtyOptions);
+
+  if (date.getTime() >= startOfNextYear.getTime()) {
+    return year + 1
+  } else if (date.getTime() >= startOfThisYear.getTime()) {
+    return year
+  } else {
+    return year - 1
+  }
+}
+
+// This function will be a part of public API when UTC function will be implemented.
+// See issue: https://github.com/date-fns/date-fns/issues/376
+function startOfUTCISOWeekYear (dirtyDate, dirtyOptions) {
+  var year = getUTCISOWeekYear(dirtyDate, dirtyOptions);
+  var fourthOfJanuary = new Date(0);
+  fourthOfJanuary.setUTCFullYear(year, 0, 4);
+  fourthOfJanuary.setUTCHours(0, 0, 0, 0);
+  var date = startOfUTCISOWeek(fourthOfJanuary, dirtyOptions);
+  return date
+}
+
+var MILLISECONDS_IN_WEEK$2 = 604800000;
+
+// This function will be a part of public API when UTC function will be implemented.
+// See issue: https://github.com/date-fns/date-fns/issues/376
+function getUTCISOWeek (dirtyDate, dirtyOptions) {
+  var date = toDate(dirtyDate, dirtyOptions);
+  var diff = startOfUTCISOWeek(date, dirtyOptions).getTime() - startOfUTCISOWeekYear(date, dirtyOptions).getTime();
+
+  // Round the number of days to the nearest integer
+  // because the number of milliseconds in a week is not constant
+  // (e.g. it's different in the week of the daylight saving time clock shift)
+  return Math.round(diff / MILLISECONDS_IN_WEEK$2) + 1
+}
+
+var formatters = {
+  // Month: 1, 2, ..., 12
+  'M': function (date) {
+    return date.getUTCMonth() + 1
+  },
+
+  // Month: 1st, 2nd, ..., 12th
+  'Mo': function (date, options) {
+    var month = date.getUTCMonth() + 1;
+    return options.locale.localize.ordinalNumber(month, {unit: 'month'})
+  },
+
+  // Month: 01, 02, ..., 12
+  'MM': function (date) {
+    return addLeadingZeros(date.getUTCMonth() + 1, 2)
+  },
+
+  // Month: Jan, Feb, ..., Dec
+  'MMM': function (date, options) {
+    return options.locale.localize.month(date.getUTCMonth(), {type: 'short'})
+  },
+
+  // Month: January, February, ..., December
+  'MMMM': function (date, options) {
+    return options.locale.localize.month(date.getUTCMonth(), {type: 'long'})
+  },
+
+  // Quarter: 1, 2, 3, 4
+  'Q': function (date) {
+    return Math.ceil((date.getUTCMonth() + 1) / 3)
+  },
+
+  // Quarter: 1st, 2nd, 3rd, 4th
+  'Qo': function (date, options) {
+    var quarter = Math.ceil((date.getUTCMonth() + 1) / 3);
+    return options.locale.localize.ordinalNumber(quarter, {unit: 'quarter'})
+  },
+
+  // Day of month: 1, 2, ..., 31
+  'D': function (date) {
+    return date.getUTCDate()
+  },
+
+  // Day of month: 1st, 2nd, ..., 31st
+  'Do': function (date, options) {
+    return options.locale.localize.ordinalNumber(date.getUTCDate(), {unit: 'dayOfMonth'})
+  },
+
+  // Day of month: 01, 02, ..., 31
+  'DD': function (date) {
+    return addLeadingZeros(date.getUTCDate(), 2)
+  },
+
+  // Day of year: 1, 2, ..., 366
+  'DDD': function (date) {
+    return getUTCDayOfYear(date)
+  },
+
+  // Day of year: 1st, 2nd, ..., 366th
+  'DDDo': function (date, options) {
+    return options.locale.localize.ordinalNumber(getUTCDayOfYear(date), {unit: 'dayOfYear'})
+  },
+
+  // Day of year: 001, 002, ..., 366
+  'DDDD': function (date) {
+    return addLeadingZeros(getUTCDayOfYear(date), 3)
+  },
+
+  // Day of week: Su, Mo, ..., Sa
+  'dd': function (date, options) {
+    return options.locale.localize.weekday(date.getUTCDay(), {type: 'narrow'})
+  },
+
+  // Day of week: Sun, Mon, ..., Sat
+  'ddd': function (date, options) {
+    return options.locale.localize.weekday(date.getUTCDay(), {type: 'short'})
+  },
+
+  // Day of week: Sunday, Monday, ..., Saturday
+  'dddd': function (date, options) {
+    return options.locale.localize.weekday(date.getUTCDay(), {type: 'long'})
+  },
+
+  // Day of week: 0, 1, ..., 6
+  'd': function (date) {
+    return date.getUTCDay()
+  },
+
+  // Day of week: 0th, 1st, 2nd, ..., 6th
+  'do': function (date, options) {
+    return options.locale.localize.ordinalNumber(date.getUTCDay(), {unit: 'dayOfWeek'})
+  },
+
+  // Day of ISO week: 1, 2, ..., 7
+  'E': function (date) {
+    return date.getUTCDay() || 7
+  },
+
+  // ISO week: 1, 2, ..., 53
+  'W': function (date) {
+    return getUTCISOWeek(date)
+  },
+
+  // ISO week: 1st, 2nd, ..., 53th
+  'Wo': function (date, options) {
+    return options.locale.localize.ordinalNumber(getUTCISOWeek(date), {unit: 'isoWeek'})
+  },
+
+  // ISO week: 01, 02, ..., 53
+  'WW': function (date) {
+    return addLeadingZeros(getUTCISOWeek(date), 2)
+  },
+
+  // Year: 00, 01, ..., 99
+  'YY': function (date) {
+    return addLeadingZeros(date.getUTCFullYear(), 4).substr(2)
+  },
+
+  // Year: 1900, 1901, ..., 2099
+  'YYYY': function (date) {
+    return addLeadingZeros(date.getUTCFullYear(), 4)
+  },
+
+  // ISO week-numbering year: 00, 01, ..., 99
+  'GG': function (date) {
+    return String(getUTCISOWeekYear(date)).substr(2)
+  },
+
+  // ISO week-numbering year: 1900, 1901, ..., 2099
+  'GGGG': function (date) {
+    return getUTCISOWeekYear(date)
+  },
+
+  // Hour: 0, 1, ... 23
+  'H': function (date) {
+    return date.getUTCHours()
+  },
+
+  // Hour: 00, 01, ..., 23
+  'HH': function (date) {
+    return addLeadingZeros(date.getUTCHours(), 2)
+  },
+
+  // Hour: 1, 2, ..., 12
+  'h': function (date) {
+    var hours = date.getUTCHours();
+    if (hours === 0) {
+      return 12
+    } else if (hours > 12) {
+      return hours % 12
+    } else {
+      return hours
+    }
+  },
+
+  // Hour: 01, 02, ..., 12
+  'hh': function (date) {
+    return addLeadingZeros(formatters['h'](date), 2)
+  },
+
+  // Minute: 0, 1, ..., 59
+  'm': function (date) {
+    return date.getUTCMinutes()
+  },
+
+  // Minute: 00, 01, ..., 59
+  'mm': function (date) {
+    return addLeadingZeros(date.getUTCMinutes(), 2)
+  },
+
+  // Second: 0, 1, ..., 59
+  's': function (date) {
+    return date.getUTCSeconds()
+  },
+
+  // Second: 00, 01, ..., 59
+  'ss': function (date) {
+    return addLeadingZeros(date.getUTCSeconds(), 2)
+  },
+
+  // 1/10 of second: 0, 1, ..., 9
+  'S': function (date) {
+    return Math.floor(date.getUTCMilliseconds() / 100)
+  },
+
+  // 1/100 of second: 00, 01, ..., 99
+  'SS': function (date) {
+    return addLeadingZeros(Math.floor(date.getUTCMilliseconds() / 10), 2)
+  },
+
+  // Millisecond: 000, 001, ..., 999
+  'SSS': function (date) {
+    return addLeadingZeros(date.getUTCMilliseconds(), 3)
+  },
+
+  // Timezone: -01:00, +00:00, ... +12:00
+  'Z': function (date, options) {
+    var originalDate = options._originalDate || date;
+    return formatTimezone(originalDate.getTimezoneOffset(), ':')
+  },
+
+  // Timezone: -0100, +0000, ... +1200
+  'ZZ': function (date, options) {
+    var originalDate = options._originalDate || date;
+    return formatTimezone(originalDate.getTimezoneOffset())
+  },
+
+  // Seconds timestamp: 512969520
+  'X': function (date, options) {
+    var originalDate = options._originalDate || date;
+    return Math.floor(originalDate.getTime() / 1000)
+  },
+
+  // Milliseconds timestamp: 512969520900
+  'x': function (date, options) {
+    var originalDate = options._originalDate || date;
+    return originalDate.getTime()
+  },
+
+  // AM, PM
+  'A': function (date, options) {
+    return options.locale.localize.timeOfDay(date.getUTCHours(), {type: 'uppercase'})
+  },
+
+  // am, pm
+  'a': function (date, options) {
+    return options.locale.localize.timeOfDay(date.getUTCHours(), {type: 'lowercase'})
+  },
+
+  // a.m., p.m.
+  'aa': function (date, options) {
+    return options.locale.localize.timeOfDay(date.getUTCHours(), {type: 'long'})
+  }
+};
+
+function formatTimezone (offset, delimeter) {
+  delimeter = delimeter || '';
+  var sign = offset > 0 ? '-' : '+';
+  var absOffset = Math.abs(offset);
+  var hours = Math.floor(absOffset / 60);
+  var minutes = absOffset % 60;
+  return sign + addLeadingZeros(hours, 2) + delimeter + addLeadingZeros(minutes, 2)
+}
+
+function addLeadingZeros (number, targetLength) {
+  var output = Math.abs(number).toString();
+  while (output.length < targetLength) {
+    output = '0' + output;
+  }
+  return output
+}
+
+// This function will be a part of public API when UTC function will be implemented.
+// See issue: https://github.com/date-fns/date-fns/issues/376
+function addUTCMinutes (dirtyDate, dirtyAmount, dirtyOptions) {
+  var date = toDate(dirtyDate, dirtyOptions);
+  var amount = Number(dirtyAmount);
+  date.setUTCMinutes(date.getUTCMinutes() + amount);
+  return date
+}
+
+var longFormattingTokensRegExp = /(\[[^[]*])|(\\)?(LTS|LT|LLLL|LLL|LL|L|llll|lll|ll|l)/g;
+var defaultFormattingTokensRegExp = /(\[[^[]*])|(\\)?(x|ss|s|mm|m|hh|h|do|dddd|ddd|dd|d|aa|a|ZZ|Z|YYYY|YY|X|Wo|WW|W|SSS|SS|S|Qo|Q|Mo|MMMM|MMM|MM|M|HH|H|GGGG|GG|E|Do|DDDo|DDDD|DDD|DD|D|A|.)/g;
+
+/**
+ * @name format
+ * @category Common Helpers
+ * @summary Format the date.
+ *
+ * @description
+ * Return the formatted date string in the given format.
+ *
+ * Accepted tokens:
+ * | Unit                    | Token | Result examples                  |
+ * |-------------------------|-------|----------------------------------|
+ * | Month                   | M     | 1, 2, ..., 12                    |
+ * |                         | Mo    | 1st, 2nd, ..., 12th              |
+ * |                         | MM    | 01, 02, ..., 12                  |
+ * |                         | MMM   | Jan, Feb, ..., Dec               |
+ * |                         | MMMM  | January, February, ..., December |
+ * | Quarter                 | Q     | 1, 2, 3, 4                       |
+ * |                         | Qo    | 1st, 2nd, 3rd, 4th               |
+ * | Day of month            | D     | 1, 2, ..., 31                    |
+ * |                         | Do    | 1st, 2nd, ..., 31st              |
+ * |                         | DD    | 01, 02, ..., 31                  |
+ * | Day of year             | DDD   | 1, 2, ..., 366                   |
+ * |                         | DDDo  | 1st, 2nd, ..., 366th             |
+ * |                         | DDDD  | 001, 002, ..., 366               |
+ * | Day of week             | d     | 0, 1, ..., 6                     |
+ * |                         | do    | 0th, 1st, ..., 6th               |
+ * |                         | dd    | Su, Mo, ..., Sa                  |
+ * |                         | ddd   | Sun, Mon, ..., Sat               |
+ * |                         | dddd  | Sunday, Monday, ..., Saturday    |
+ * | Day of ISO week         | E     | 1, 2, ..., 7                     |
+ * | ISO week                | W     | 1, 2, ..., 53                    |
+ * |                         | Wo    | 1st, 2nd, ..., 53rd              |
+ * |                         | WW    | 01, 02, ..., 53                  |
+ * | Year                    | YY    | 00, 01, ..., 99                  |
+ * |                         | YYYY  | 1900, 1901, ..., 2099            |
+ * | ISO week-numbering year | GG    | 00, 01, ..., 99                  |
+ * |                         | GGGG  | 1900, 1901, ..., 2099            |
+ * | AM/PM                   | A     | AM, PM                           |
+ * |                         | a     | am, pm                           |
+ * |                         | aa    | a.m., p.m.                       |
+ * | Hour                    | H     | 0, 1, ... 23                     |
+ * |                         | HH    | 00, 01, ... 23                   |
+ * |                         | h     | 1, 2, ..., 12                    |
+ * |                         | hh    | 01, 02, ..., 12                  |
+ * | Minute                  | m     | 0, 1, ..., 59                    |
+ * |                         | mm    | 00, 01, ..., 59                  |
+ * | Second                  | s     | 0, 1, ..., 59                    |
+ * |                         | ss    | 00, 01, ..., 59                  |
+ * | 1/10 of second          | S     | 0, 1, ..., 9                     |
+ * | 1/100 of second         | SS    | 00, 01, ..., 99                  |
+ * | Millisecond             | SSS   | 000, 001, ..., 999               |
+ * | Timezone                | Z     | -01:00, +00:00, ... +12:00       |
+ * |                         | ZZ    | -0100, +0000, ..., +1200         |
+ * | Seconds timestamp       | X     | 512969520                        |
+ * | Milliseconds timestamp  | x     | 512969520900                     |
+ * | Long format             | LT    | 05:30 a.m.                       |
+ * |                         | LTS   | 05:30:15 a.m.                    |
+ * |                         | L     | 07/02/1995                       |
+ * |                         | l     | 7/2/1995                         |
+ * |                         | LL    | July 2 1995                      |
+ * |                         | ll    | Jul 2 1995                       |
+ * |                         | LLL   | July 2 1995 05:30 a.m.           |
+ * |                         | lll   | Jul 2 1995 05:30 a.m.            |
+ * |                         | LLLL  | Sunday, July 2 1995 05:30 a.m.   |
+ * |                         | llll  | Sun, Jul 2 1995 05:30 a.m.       |
+ *
+ * The characters wrapped in square brackets are escaped.
+ *
+ * The result may vary by locale.
+ *
+ * @param {Date|String|Number} date - the original date
+ * @param {String} format - the string of tokens
+ * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
+ * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
+ * @param {Locale} [options.locale=defaultLocale] - the locale object. See [Locale]{@link https://date-fns.org/docs/Locale}
+ * @returns {String} the formatted date string
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ * @throws {RangeError} `options.locale` must contain `localize` property
+ * @throws {RangeError} `options.locale` must contain `formatLong` property
+ *
+ * @example
+ * // Represent 11 February 2014 in middle-endian format:
+ * var result = format(
+ *   new Date(2014, 1, 11),
+ *   'MM/DD/YYYY'
+ * )
+ * //=> '02/11/2014'
+ *
+ * @example
+ * // Represent 2 July 2014 in Esperanto:
+ * import { eoLocale } from 'date-fns/locale/eo'
+ * var result = format(
+ *   new Date(2014, 6, 2),
+ *   'Do [de] MMMM YYYY',
+ *   {locale: eoLocale}
+ * )
+ * //=> '2-a de julio 2014'
+ */
+function format (dirtyDate, dirtyFormatStr, dirtyOptions) {
+  var formatStr = String(dirtyFormatStr);
+  var options = dirtyOptions || {};
+
+  var locale$$1 = options.locale || locale;
+
+  if (!locale$$1.localize) {
+    throw new RangeError('locale must contain localize property')
+  }
+
+  if (!locale$$1.formatLong) {
+    throw new RangeError('locale must contain formatLong property')
+  }
+
+  var localeFormatters = locale$$1.formatters || {};
+  var formattingTokensRegExp = locale$$1.formattingTokensRegExp || defaultFormattingTokensRegExp;
+  var formatLong = locale$$1.formatLong;
+
+  var originalDate = toDate(dirtyDate, options);
+
+  if (!isValid(originalDate, options)) {
+    return 'Invalid Date'
+  }
+
+  // Convert the date in system timezone to the same date in UTC+00:00 timezone.
+  // This ensures that when UTC functions will be implemented, locales will be compatible with them.
+  // See an issue about UTC functions: https://github.com/date-fns/date-fns/issues/376
+  var timezoneOffset = originalDate.getTimezoneOffset();
+  var utcDate = addUTCMinutes(originalDate, -timezoneOffset, options);
+
+  var formatterOptions = cloneObject(options);
+  formatterOptions.locale = locale$$1;
+  formatterOptions.formatters = formatters;
+
+  // When UTC functions will be implemented, options._originalDate will likely be a part of public API.
+  // Right now, please don't use it in locales. If you have to use an original date,
+  // please restore it from `date`, adding a timezone offset to it.
+  formatterOptions._originalDate = originalDate;
+
+  var result = formatStr
+    .replace(longFormattingTokensRegExp, function (substring) {
+      if (substring[0] === '[') {
+        return substring
+      }
+
+      if (substring[0] === '\\') {
+        return cleanEscapedString(substring)
+      }
+
+      return formatLong(substring)
+    })
+    .replace(formattingTokensRegExp, function (substring) {
+      var formatter = localeFormatters[substring] || formatters[substring];
+
+      if (formatter) {
+        return formatter(utcDate, formatterOptions)
+      } else {
+        return cleanEscapedString(substring)
+      }
+    });
+
+  return result
+}
+
+function cleanEscapedString (input) {
+  if (input.match(/\[[\s\S]/)) {
+    return input.replace(/^\[|]$/g, '')
+  }
+  return input.replace(/\\/g, '')
+}
+
+/**
+ * @name subMinutes
+ * @category Minute Helpers
+ * @summary Subtract the specified number of minutes from the given date.
+ *
+ * @description
+ * Subtract the specified number of minutes from the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of minutes to be subtracted
+ * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
+ * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
+ * @returns {Date} the new date with the mintues subtracted
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ *
+ * @example
+ * // Subtract 30 minutes from 10 July 2014 12:00:00:
+ * var result = subMinutes(new Date(2014, 6, 10, 12, 0), 30)
+ * //=> Thu Jul 10 2014 11:30:00
+ */
+function subMinutes (dirtyDate, dirtyAmount, dirtyOptions) {
+  var amount = Number(dirtyAmount);
+  return addMinutes(dirtyDate, -amount, dirtyOptions)
+}
+
+/**
+ * @name isAfter
+ * @category Common Helpers
+ * @summary Is the first date after the second one?
+ *
+ * @description
+ * Is the first date after the second one?
+ *
+ * @param {Date|String|Number} date - the date that should be after the other one to return true
+ * @param {Date|String|Number} dateToCompare - the date to compare with
+ * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
+ * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
+ * @returns {Boolean} the first date is after the second date
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ *
+ * @example
+ * // Is 10 July 1989 after 11 February 1987?
+ * var result = isAfter(new Date(1989, 6, 10), new Date(1987, 1, 11))
+ * //=> true
+ */
+function isAfter (dirtyDate, dirtyDateToCompare, dirtyOptions) {
+  var date = toDate(dirtyDate, dirtyOptions);
+  var dateToCompare = toDate(dirtyDateToCompare, dirtyOptions);
+  return date.getTime() > dateToCompare.getTime()
+}
+
+/**
+ * @name isBefore
+ * @category Common Helpers
+ * @summary Is the first date before the second one?
+ *
+ * @description
+ * Is the first date before the second one?
+ *
+ * @param {Date|String|Number} date - the date that should be before the other one to return true
+ * @param {Date|String|Number} dateToCompare - the date to compare with
+ * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
+ * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
+ * @returns {Boolean} the first date is before the second date
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ *
+ * @example
+ * // Is 10 July 1989 before 11 February 1987?
+ * var result = isBefore(new Date(1989, 6, 10), new Date(1987, 1, 11))
+ * //=> false
+ */
+function isBefore (dirtyDate, dirtyDateToCompare, dirtyOptions) {
+  var date = toDate(dirtyDate, dirtyOptions);
+  var dateToCompare = toDate(dirtyDateToCompare, dirtyOptions);
+  return date.getTime() < dateToCompare.getTime()
+}
+
+/**
+ * @name isEqual
+ * @category Common Helpers
+ * @summary Are the given dates equal?
+ *
+ * @description
+ * Are the given dates equal?
+ *
+ * @param {Date|String|Number} dateLeft - the first date to compare
+ * @param {Date|String|Number} dateRight - the second date to compare
+ * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
+ * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
+ * @returns {Boolean} the dates are equal
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ *
+ * @example
+ * // Are 2 July 2014 06:30:45.000 and 2 July 2014 06:30:45.500 equal?
+ * var result = isEqual(
+ *   new Date(2014, 6, 2, 6, 30, 45, 0)
+ *   new Date(2014, 6, 2, 6, 30, 45, 500)
+ * )
+ * //=> false
+ */
+function isEqual (dirtyLeftDate, dirtyRightDate, dirtyOptions) {
+  var dateLeft = toDate(dirtyLeftDate, dirtyOptions);
+  var dateRight = toDate(dirtyRightDate, dirtyOptions);
+  return dateLeft.getTime() === dateRight.getTime()
+}
+
+var patterns$1 = {
+  'M': /^(1[0-2]|0?\d)/, // 0 to 12
+  'D': /^(3[0-1]|[0-2]?\d)/, // 0 to 31
+  'DDD': /^(36[0-6]|3[0-5]\d|[0-2]?\d?\d)/, // 0 to 366
+  'W': /^(5[0-3]|[0-4]?\d)/, // 0 to 53
+  'YYYY': /^(\d{1,4})/, // 0 to 9999
+  'H': /^(2[0-3]|[0-1]?\d)/, // 0 to 23
+  'm': /^([0-5]?\d)/, // 0 to 59
+  'Z': /^([+-])(\d{2}):(\d{2})/,
+  'ZZ': /^([+-])(\d{2})(\d{2})/,
+  singleDigit: /^(\d)/,
+  twoDigits: /^(\d{2})/,
+  threeDigits: /^(\d{3})/,
+  fourDigits: /^(\d{4})/,
+  anyDigits: /^(\d+)/
+};
+
+function parseDecimal$1 (matchResult) {
+  return parseInt(matchResult[1], 10)
+}
+
+var parsers = {
+  // Year: 00, 01, ..., 99
+  'YY': {
+    unit: 'twoDigitYear',
+    match: patterns$1.twoDigits,
+    parse: function (matchResult) {
+      return parseDecimal$1(matchResult)
+    }
+  },
+
+  // Year: 1900, 1901, ..., 2099
+  'YYYY': {
+    unit: 'year',
+    match: patterns$1.YYYY,
+    parse: parseDecimal$1
+  },
+
+  // ISO week-numbering year: 00, 01, ..., 99
+  'GG': {
+    unit: 'isoYear',
+    match: patterns$1.twoDigits,
+    parse: function (matchResult) {
+      return parseDecimal$1(matchResult) + 1900
+    }
+  },
+
+  // ISO week-numbering year: 1900, 1901, ..., 2099
+  'GGGG': {
+    unit: 'isoYear',
+    match: patterns$1.YYYY,
+    parse: parseDecimal$1
+  },
+
+  // Quarter: 1, 2, 3, 4
+  'Q': {
+    unit: 'quarter',
+    match: patterns$1.singleDigit,
+    parse: parseDecimal$1
+  },
+
+  // Ordinal quarter
+  'Qo': {
+    unit: 'quarter',
+    match: function (string, options) {
+      return options.locale.match.ordinalNumbers(string, {unit: 'quarter'})
+    },
+    parse: function (matchResult, options) {
+      return options.locale.match.ordinalNumber(matchResult, {unit: 'quarter'})
+    }
+  },
+
+  // Month: 1, 2, ..., 12
+  'M': {
+    unit: 'month',
+    match: patterns$1.M,
+    parse: function (matchResult) {
+      return parseDecimal$1(matchResult) - 1
+    }
+  },
+
+  // Ordinal month
+  'Mo': {
+    unit: 'month',
+    match: function (string, options) {
+      return options.locale.match.ordinalNumbers(string, {unit: 'month'})
+    },
+    parse: function (matchResult, options) {
+      return options.locale.match.ordinalNumber(matchResult, {unit: 'month'}) - 1
+    }
+  },
+
+  // Month: 01, 02, ..., 12
+  'MM': {
+    unit: 'month',
+    match: patterns$1.twoDigits,
+    parse: function (matchResult) {
+      return parseDecimal$1(matchResult) - 1
+    }
+  },
+
+  // Month: Jan, Feb, ..., Dec
+  'MMM': {
+    unit: 'month',
+    match: function (string, options) {
+      return options.locale.match.months(string, {type: 'short'})
+    },
+    parse: function (matchResult, options) {
+      return options.locale.match.month(matchResult, {type: 'short'})
+    }
+  },
+
+  // Month: January, February, ..., December
+  'MMMM': {
+    unit: 'month',
+    match: function (string, options) {
+      return options.locale.match.months(string, {type: 'long'}) ||
+        options.locale.match.months(string, {type: 'short'})
+    },
+    parse: function (matchResult, options) {
+      var parseResult = options.locale.match.month(matchResult, {type: 'long'});
+
+      if (parseResult == null) {
+        parseResult = options.locale.match.month(matchResult, {type: 'short'});
+      }
+
+      return parseResult
+    }
+  },
+
+  // ISO week: 1, 2, ..., 53
+  'W': {
+    unit: 'isoWeek',
+    match: patterns$1.W,
+    parse: parseDecimal$1
+  },
+
+  // Ordinal ISO week
+  'Wo': {
+    unit: 'isoWeek',
+    match: function (string, options) {
+      return options.locale.match.ordinalNumbers(string, {unit: 'isoWeek'})
+    },
+    parse: function (matchResult, options) {
+      return options.locale.match.ordinalNumber(matchResult, {unit: 'isoWeek'})
+    }
+  },
+
+  // ISO week: 01, 02, ..., 53
+  'WW': {
+    unit: 'isoWeek',
+    match: patterns$1.twoDigits,
+    parse: parseDecimal$1
+  },
+
+  // Day of week: 0, 1, ..., 6
+  'd': {
+    unit: 'dayOfWeek',
+    match: patterns$1.singleDigit,
+    parse: parseDecimal$1
+  },
+
+  // Ordinal day of week
+  'do': {
+    unit: 'dayOfWeek',
+    match: function (string, options) {
+      return options.locale.match.ordinalNumbers(string, {unit: 'dayOfWeek'})
+    },
+    parse: function (matchResult, options) {
+      return options.locale.match.ordinalNumber(matchResult, {unit: 'dayOfWeek'})
+    }
+  },
+
+  // Day of week: Su, Mo, ..., Sa
+  'dd': {
+    unit: 'dayOfWeek',
+    match: function (string, options) {
+      return options.locale.match.weekdays(string, {type: 'narrow'})
+    },
+    parse: function (matchResult, options) {
+      return options.locale.match.weekday(matchResult, {type: 'narrow'})
+    }
+  },
+
+  // Day of week: Sun, Mon, ..., Sat
+  'ddd': {
+    unit: 'dayOfWeek',
+    match: function (string, options) {
+      return options.locale.match.weekdays(string, {type: 'short'}) ||
+        options.locale.match.weekdays(string, {type: 'narrow'})
+    },
+    parse: function (matchResult, options) {
+      var parseResult = options.locale.match.weekday(matchResult, {type: 'short'});
+
+      if (parseResult == null) {
+        parseResult = options.locale.match.weekday(matchResult, {type: 'narrow'});
+      }
+
+      return parseResult
+    }
+  },
+
+  // Day of week: Sunday, Monday, ..., Saturday
+  'dddd': {
+    unit: 'dayOfWeek',
+    match: function (string, options) {
+      return options.locale.match.weekdays(string, {type: 'long'}) ||
+        options.locale.match.weekdays(string, {type: 'short'}) ||
+        options.locale.match.weekdays(string, {type: 'narrow'})
+    },
+    parse: function (matchResult, options) {
+      var parseResult = options.locale.match.weekday(matchResult, {type: 'long'});
+
+      if (parseResult == null) {
+        parseResult = options.locale.match.weekday(matchResult, {type: 'short'});
+
+        if (parseResult == null) {
+          parseResult = options.locale.match.weekday(matchResult, {type: 'narrow'});
+        }
+      }
+
+      return parseResult
+    }
+  },
+
+  // Day of ISO week: 1, 2, ..., 7
+  'E': {
+    unit: 'dayOfISOWeek',
+    match: patterns$1.singleDigit,
+    parse: function (matchResult) {
+      return parseDecimal$1(matchResult)
+    }
+  },
+
+  // Day of month: 1, 2, ..., 31
+  'D': {
+    unit: 'dayOfMonth',
+    match: patterns$1.D,
+    parse: parseDecimal$1
+  },
+
+  // Ordinal day of month
+  'Do': {
+    unit: 'dayOfMonth',
+    match: function (string, options) {
+      return options.locale.match.ordinalNumbers(string, {unit: 'dayOfMonth'})
+    },
+    parse: function (matchResult, options) {
+      return options.locale.match.ordinalNumber(matchResult, {unit: 'dayOfMonth'})
+    }
+  },
+
+  // Day of month: 01, 02, ..., 31
+  'DD': {
+    unit: 'dayOfMonth',
+    match: patterns$1.twoDigits,
+    parse: parseDecimal$1
+  },
+
+  // Day of year: 1, 2, ..., 366
+  'DDD': {
+    unit: 'dayOfYear',
+    match: patterns$1.DDD,
+    parse: parseDecimal$1
+  },
+
+  // Ordinal day of year
+  'DDDo': {
+    unit: 'dayOfYear',
+    match: function (string, options) {
+      return options.locale.match.ordinalNumbers(string, {unit: 'dayOfYear'})
+    },
+    parse: function (matchResult, options) {
+      return options.locale.match.ordinalNumber(matchResult, {unit: 'dayOfYear'})
+    }
+  },
+
+  // Day of year: 001, 002, ..., 366
+  'DDDD': {
+    unit: 'dayOfYear',
+    match: patterns$1.threeDigits,
+    parse: parseDecimal$1
+  },
+
+  // AM, PM
+  'A': {
+    unit: 'timeOfDay',
+    match: function (string, options) {
+      return options.locale.match.timesOfDay(string, {type: 'short'})
+    },
+    parse: function (matchResult, options) {
+      return options.locale.match.timeOfDay(matchResult, {type: 'short'})
+    }
+  },
+
+  // a.m., p.m.
+  'aa': {
+    unit: 'timeOfDay',
+    match: function (string, options) {
+      return options.locale.match.timesOfDay(string, {type: 'long'}) ||
+        options.locale.match.timesOfDay(string, {type: 'short'})
+    },
+    parse: function (matchResult, options) {
+      var parseResult = options.locale.match.timeOfDay(matchResult, {type: 'long'});
+
+      if (parseResult == null) {
+        parseResult = options.locale.match.timeOfDay(matchResult, {type: 'short'});
+      }
+
+      return parseResult
+    }
+  },
+
+  // Hour: 0, 1, ... 23
+  'H': {
+    unit: 'hours',
+    match: patterns$1.H,
+    parse: parseDecimal$1
+  },
+
+  // Hour: 00, 01, ..., 23
+  'HH': {
+    unit: 'hours',
+    match: patterns$1.twoDigits,
+    parse: parseDecimal$1
+  },
+
+  // Hour: 1, 2, ..., 12
+  'h': {
+    unit: 'timeOfDayHours',
+    match: patterns$1.M,
+    parse: parseDecimal$1
+  },
+
+  // Hour: 01, 02, ..., 12
+  'hh': {
+    unit: 'timeOfDayHours',
+    match: patterns$1.twoDigits,
+    parse: parseDecimal$1
+  },
+
+  // Minute: 0, 1, ..., 59
+  'm': {
+    unit: 'minutes',
+    match: patterns$1.m,
+    parse: parseDecimal$1
+  },
+
+  // Minute: 00, 01, ..., 59
+  'mm': {
+    unit: 'minutes',
+    match: patterns$1.twoDigits,
+    parse: parseDecimal$1
+  },
+
+  // Second: 0, 1, ..., 59
+  's': {
+    unit: 'seconds',
+    match: patterns$1.m,
+    parse: parseDecimal$1
+  },
+
+  // Second: 00, 01, ..., 59
+  'ss': {
+    unit: 'seconds',
+    match: patterns$1.twoDigits,
+    parse: parseDecimal$1
+  },
+
+  // 1/10 of second: 0, 1, ..., 9
+  'S': {
+    unit: 'milliseconds',
+    match: patterns$1.singleDigit,
+    parse: function (matchResult) {
+      return parseDecimal$1(matchResult) * 100
+    }
+  },
+
+  // 1/100 of second: 00, 01, ..., 99
+  'SS': {
+    unit: 'milliseconds',
+    match: patterns$1.twoDigits,
+    parse: function (matchResult) {
+      return parseDecimal$1(matchResult) * 10
+    }
+  },
+
+  // Millisecond: 000, 001, ..., 999
+  'SSS': {
+    unit: 'milliseconds',
+    match: patterns$1.threeDigits,
+    parse: parseDecimal$1
+  },
+
+  // Timezone: -01:00, +00:00, ... +12:00
+  'Z': {
+    unit: 'timezone',
+    match: patterns$1.Z,
+    parse: function (matchResult) {
+      var sign = matchResult[1];
+      var hours = parseInt(matchResult[2], 10);
+      var minutes = parseInt(matchResult[3], 10);
+      var absoluteOffset = hours * 60 + minutes;
+      return (sign === '+') ? absoluteOffset : -absoluteOffset
+    }
+  },
+
+  // Timezone: -0100, +0000, ... +1200
+  'ZZ': {
+    unit: 'timezone',
+    match: patterns$1.ZZ,
+    parse: function (matchResult) {
+      var sign = matchResult[1];
+      var hours = parseInt(matchResult[2], 10);
+      var minutes = parseInt(matchResult[3], 10);
+      var absoluteOffset = hours * 60 + minutes;
+      return (sign === '+') ? absoluteOffset : -absoluteOffset
+    }
+  },
+
+  // Seconds timestamp: 512969520
+  'X': {
+    unit: 'timestamp',
+    match: patterns$1.anyDigits,
+    parse: function (matchResult) {
+      return parseDecimal$1(matchResult) * 1000
+    }
+  },
+
+  // Milliseconds timestamp: 512969520900
+  'x': {
+    unit: 'timestamp',
+    match: patterns$1.anyDigits,
+    parse: parseDecimal$1
+  }
+};
+
+parsers['a'] = parsers['A'];
+
+// This function will be a part of public API when UTC function will be implemented.
+// See issue: https://github.com/date-fns/date-fns/issues/376
+function setUTCDay (dirtyDate, dirtyDay, dirtyOptions) {
+  var options = dirtyOptions || {};
+  var locale = options.locale;
+  var localeWeekStartsOn = locale && locale.options && locale.options.weekStartsOn;
+  var defaultWeekStartsOn = localeWeekStartsOn === undefined ? 0 : Number(localeWeekStartsOn);
+  var weekStartsOn = options.weekStartsOn === undefined ? defaultWeekStartsOn : Number(options.weekStartsOn);
+
+  // Test if weekStartsOn is between 0 and 6 _and_ is not NaN
+  if (!(weekStartsOn >= 0 && weekStartsOn <= 6)) {
+    throw new RangeError('weekStartsOn must be between 0 and 6 inclusively')
+  }
+
+  var date = toDate(dirtyDate, dirtyOptions);
+  var day = Number(dirtyDay);
+
+  var currentDay = date.getUTCDay();
+
+  var remainder = day % 7;
+  var dayIndex = (remainder + 7) % 7;
+
+  var diff = (dayIndex < weekStartsOn ? 7 : 0) + day - currentDay;
+
+  date.setUTCDate(date.getUTCDate() + diff);
+  return date
+}
+
+// This function will be a part of public API when UTC function will be implemented.
+// See issue: https://github.com/date-fns/date-fns/issues/376
+function setUTCISODay (dirtyDate, dirtyDay, dirtyOptions) {
+  var day = Number(dirtyDay);
+
+  if (day % 7 === 0) {
+    day = day - 7;
+  }
+
+  var weekStartsOn = 1;
+  var date = toDate(dirtyDate, dirtyOptions);
+  var currentDay = date.getUTCDay();
+
+  var remainder = day % 7;
+  var dayIndex = (remainder + 7) % 7;
+
+  var diff = (dayIndex < weekStartsOn ? 7 : 0) + day - currentDay;
+
+  date.setUTCDate(date.getUTCDate() + diff);
+  return date
+}
+
+// This function will be a part of public API when UTC function will be implemented.
+// See issue: https://github.com/date-fns/date-fns/issues/376
+function setUTCISOWeek (dirtyDate, dirtyISOWeek, dirtyOptions) {
+  var date = toDate(dirtyDate, dirtyOptions);
+  var isoWeek = Number(dirtyISOWeek);
+  var diff = getUTCISOWeek(date, dirtyOptions) - isoWeek;
+  date.setUTCDate(date.getUTCDate() - diff * 7);
+  return date
+}
+
+var MILLISECONDS_IN_DAY$3 = 86400000;
+
+// This function will be a part of public API when UTC function will be implemented.
+// See issue: https://github.com/date-fns/date-fns/issues/376
+function setUTCISOWeekYear (dirtyDate, dirtyISOYear, dirtyOptions) {
+  var date = toDate(dirtyDate, dirtyOptions);
+  var isoYear = Number(dirtyISOYear);
+  var dateStartOfYear = startOfUTCISOWeekYear(date, dirtyOptions);
+  var diff = Math.floor((date.getTime() - dateStartOfYear.getTime()) / MILLISECONDS_IN_DAY$3);
+  var fourthOfJanuary = new Date(0);
+  fourthOfJanuary.setUTCFullYear(isoYear, 0, 4);
+  fourthOfJanuary.setUTCHours(0, 0, 0, 0);
+  date = startOfUTCISOWeekYear(fourthOfJanuary, dirtyOptions);
+  date.setUTCDate(date.getUTCDate() + diff);
+  return date
+}
+
+var MILLISECONDS_IN_MINUTE$7 = 60000;
+
+function setTimeOfDay (hours, timeOfDay) {
+  var isAM = timeOfDay === 0;
+
+  if (isAM) {
+    if (hours === 12) {
+      return 0
+    }
+  } else {
+    if (hours !== 12) {
+      return 12 + hours
+    }
+  }
+
+  return hours
+}
+
+var units = {
+  twoDigitYear: {
+    priority: 10,
+    set: function (dateValues, value) {
+      var century = Math.floor(dateValues.date.getUTCFullYear() / 100);
+      var year = century * 100 + value;
+      dateValues.date.setUTCFullYear(year, 0, 1);
+      dateValues.date.setUTCHours(0, 0, 0, 0);
+      return dateValues
+    }
+  },
+
+  year: {
+    priority: 10,
+    set: function (dateValues, value) {
+      dateValues.date.setUTCFullYear(value, 0, 1);
+      dateValues.date.setUTCHours(0, 0, 0, 0);
+      return dateValues
+    }
+  },
+
+  isoYear: {
+    priority: 10,
+    set: function (dateValues, value, options) {
+      dateValues.date = startOfUTCISOWeekYear(setUTCISOWeekYear(dateValues.date, value, options), options);
+      return dateValues
+    }
+  },
+
+  quarter: {
+    priority: 20,
+    set: function (dateValues, value) {
+      dateValues.date.setUTCMonth((value - 1) * 3, 1);
+      dateValues.date.setUTCHours(0, 0, 0, 0);
+      return dateValues
+    }
+  },
+
+  month: {
+    priority: 30,
+    set: function (dateValues, value) {
+      dateValues.date.setUTCMonth(value, 1);
+      dateValues.date.setUTCHours(0, 0, 0, 0);
+      return dateValues
+    }
+  },
+
+  isoWeek: {
+    priority: 40,
+    set: function (dateValues, value, options) {
+      dateValues.date = startOfUTCISOWeek(setUTCISOWeek(dateValues.date, value, options), options);
+      return dateValues
+    }
+  },
+
+  dayOfWeek: {
+    priority: 50,
+    set: function (dateValues, value, options) {
+      dateValues.date = setUTCDay(dateValues.date, value, options);
+      dateValues.date.setUTCHours(0, 0, 0, 0);
+      return dateValues
+    }
+  },
+
+  dayOfISOWeek: {
+    priority: 50,
+    set: function (dateValues, value, options) {
+      dateValues.date = setUTCISODay(dateValues.date, value, options);
+      dateValues.date.setUTCHours(0, 0, 0, 0);
+      return dateValues
+    }
+  },
+
+  dayOfMonth: {
+    priority: 50,
+    set: function (dateValues, value) {
+      dateValues.date.setUTCDate(value);
+      dateValues.date.setUTCHours(0, 0, 0, 0);
+      return dateValues
+    }
+  },
+
+  dayOfYear: {
+    priority: 50,
+    set: function (dateValues, value) {
+      dateValues.date.setUTCMonth(0, value);
+      dateValues.date.setUTCHours(0, 0, 0, 0);
+      return dateValues
+    }
+  },
+
+  timeOfDay: {
+    priority: 60,
+    set: function (dateValues, value, options) {
+      dateValues.timeOfDay = value;
+      return dateValues
+    }
+  },
+
+  hours: {
+    priority: 70,
+    set: function (dateValues, value, options) {
+      dateValues.date.setUTCHours(value, 0, 0, 0);
+      return dateValues
+    }
+  },
+
+  timeOfDayHours: {
+    priority: 70,
+    set: function (dateValues, value, options) {
+      var timeOfDay = dateValues.timeOfDay;
+      if (timeOfDay != null) {
+        value = setTimeOfDay(value, timeOfDay);
+      }
+      dateValues.date.setUTCHours(value, 0, 0, 0);
+      return dateValues
+    }
+  },
+
+  minutes: {
+    priority: 80,
+    set: function (dateValues, value) {
+      dateValues.date.setUTCMinutes(value, 0, 0);
+      return dateValues
+    }
+  },
+
+  seconds: {
+    priority: 90,
+    set: function (dateValues, value) {
+      dateValues.date.setUTCSeconds(value, 0);
+      return dateValues
+    }
+  },
+
+  milliseconds: {
+    priority: 100,
+    set: function (dateValues, value) {
+      dateValues.date.setUTCMilliseconds(value);
+      return dateValues
+    }
+  },
+
+  timezone: {
+    priority: 110,
+    set: function (dateValues, value) {
+      dateValues.date = new Date(dateValues.date.getTime() - value * MILLISECONDS_IN_MINUTE$7);
+      return dateValues
+    }
+  },
+
+  timestamp: {
+    priority: 120,
+    set: function (dateValues, value) {
+      dateValues.date = new Date(value);
+      return dateValues
+    }
+  }
+};
+
+var TIMEZONE_UNIT_PRIORITY = 110;
+var MILLISECONDS_IN_MINUTE$6 = 60000;
+
+var longFormattingTokensRegExp$1 = /(\[[^[]*])|(\\)?(LTS|LT|LLLL|LLL|LL|L|llll|lll|ll|l)/g;
+var defaultParsingTokensRegExp = /(\[[^[]*])|(\\)?(x|ss|s|mm|m|hh|h|do|dddd|ddd|dd|d|aa|a|ZZ|Z|YYYY|YY|X|Wo|WW|W|SSS|SS|S|Qo|Q|Mo|MMMM|MMM|MM|M|HH|H|GGGG|GG|E|Do|DDDo|DDDD|DDD|DD|D|A|.)/g;
+
+/**
+ * @name parse
+ * @category Common Helpers
+ * @summary Parse the date.
+ *
+ * @description
+ * Return the date parsed from string using the given format.
+ *
+ * Accepted format tokens:
+ * | Unit                    | Priority | Token | Input examples                   |
+ * |-------------------------|----------|-------|----------------------------------|
+ * | Year                    | 10       | YY    | 00, 01, ..., 99                  |
+ * |                         |          | YYYY  | 1900, 1901, ..., 2099            |
+ * | ISO week-numbering year | 10       | GG    | 00, 01, ..., 99                  |
+ * |                         |          | GGGG  | 1900, 1901, ..., 2099            |
+ * | Quarter                 | 20       | Q     | 1, 2, 3, 4                       |
+ * |                         |          | Qo    | 1st, 2nd, 3rd, 4th               |
+ * | Month                   | 30       | M     | 1, 2, ..., 12                    |
+ * |                         |          | Mo    | 1st, 2nd, ..., 12th              |
+ * |                         |          | MM    | 01, 02, ..., 12                  |
+ * |                         |          | MMM   | Jan, Feb, ..., Dec               |
+ * |                         |          | MMMM  | January, February, ..., December |
+ * | ISO week                | 40       | W     | 1, 2, ..., 53                    |
+ * |                         |          | Wo    | 1st, 2nd, ..., 53rd              |
+ * |                         |          | WW    | 01, 02, ..., 53                  |
+ * | Day of week             | 50       | d     | 0, 1, ..., 6                     |
+ * |                         |          | do    | 0th, 1st, ..., 6th               |
+ * |                         |          | dd    | Su, Mo, ..., Sa                  |
+ * |                         |          | ddd   | Sun, Mon, ..., Sat               |
+ * |                         |          | dddd  | Sunday, Monday, ..., Saturday    |
+ * | Day of ISO week         | 50       | E     | 1, 2, ..., 7                     |
+ * | Day of month            | 50       | D     | 1, 2, ..., 31                    |
+ * |                         |          | Do    | 1st, 2nd, ..., 31st              |
+ * |                         |          | DD    | 01, 02, ..., 31                  |
+ * | Day of year             | 50       | DDD   | 1, 2, ..., 366                   |
+ * |                         |          | DDDo  | 1st, 2nd, ..., 366th             |
+ * |                         |          | DDDD  | 001, 002, ..., 366               |
+ * | Time of day             | 60       | A     | AM, PM                           |
+ * |                         |          | a     | am, pm                           |
+ * |                         |          | aa    | a.m., p.m.                       |
+ * | Hour                    | 70       | H     | 0, 1, ... 23                     |
+ * |                         |          | HH    | 00, 01, ... 23                   |
+ * | Time of day hour        | 70       | h     | 1, 2, ..., 12                    |
+ * |                         |          | hh    | 01, 02, ..., 12                  |
+ * | Minute                  | 80       | m     | 0, 1, ..., 59                    |
+ * |                         |          | mm    | 00, 01, ..., 59                  |
+ * | Second                  | 90       | s     | 0, 1, ..., 59                    |
+ * |                         |          | ss    | 00, 01, ..., 59                  |
+ * | 1/10 of second          | 100      | S     | 0, 1, ..., 9                     |
+ * | 1/100 of second         | 100      | SS    | 00, 01, ..., 99                  |
+ * | Millisecond             | 100      | SSS   | 000, 001, ..., 999               |
+ * | Timezone                | 110      | Z     | -01:00, +00:00, ... +12:00       |
+ * |                         |          | ZZ    | -0100, +0000, ..., +1200         |
+ * | Seconds timestamp       | 120      | X     | 512969520                        |
+ * | Milliseconds timestamp  | 120      | x     | 512969520900                     |
+ *
+ * Values will be assigned to the date in the ascending order of its unit's priority.
+ * Units of an equal priority overwrite each other in the order of appearance.
+ *
+ * If no values of higher priority are parsed (e.g. when parsing string 'January 1st' without a year),
+ * the values will be taken from 3rd argument `baseDate` which works as a context of parsing.
+ *
+ * `baseDate` must be passed for correct work of the function.
+ * If you're not sure which `baseDate` to supply, create a new instance of Date:
+ * `parse('02/11/2014', 'MM/DD/YYYY', new Date())`
+ * In this case parsing will be done in the context of the current date.
+ * If `baseDate` is `Invalid Date` or a value not convertible to valid `Date`,
+ * then `Invalid Date` will be returned.
+ *
+ * Also, `parse` unfolds long formats like those in [format]{@link https://date-fns.org/docs/format}:
+ * | Token | Input examples                 |
+ * |-------|--------------------------------|
+ * | LT    | 05:30 a.m.                     |
+ * | LTS   | 05:30:15 a.m.                  |
+ * | L     | 07/02/1995                     |
+ * | l     | 7/2/1995                       |
+ * | LL    | July 2 1995                    |
+ * | ll    | Jul 2 1995                     |
+ * | LLL   | July 2 1995 05:30 a.m.         |
+ * | lll   | Jul 2 1995 05:30 a.m.          |
+ * | LLLL  | Sunday, July 2 1995 05:30 a.m. |
+ * | llll  | Sun, Jul 2 1995 05:30 a.m.     |
+ *
+ * The characters wrapped in square brackets in the format string are escaped.
+ *
+ * The result may vary by locale.
+ *
+ * If `formatString` matches with `dateString` but does not provides tokens, `baseDate` will be returned.
+ *
+ * If parsing failed, `Invalid Date` will be returned.
+ * Invalid Date is a Date, whose time value is NaN.
+ * Time value of Date: http://es5.github.io/#x15.9.1.1
+ *
+ * @param {String} dateString - the string to parse
+ * @param {String} formatString - the string of tokens
+ * @param {Date|String|Number} baseDate - the date to took the missing higher priority values from
+ * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
+ * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
+ * @param {Locale} [options.locale=defaultLocale] - the locale object. See [Locale]{@link https://date-fns.org/docs/Locale}
+ * @param {0|1|2|3|4|5|6} [options.weekStartsOn=0] - the index of the first day of the week (0 - Sunday)
+ * @returns {Date} the parsed date
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ * @throws {RangeError} `options.weekStartsOn` must be between 0 and 6
+ * @throws {RangeError} `options.locale` must contain `match` property
+ * @throws {RangeError} `options.locale` must contain `formatLong` property
+ *
+ * @example
+ * // Parse 11 February 2014 from middle-endian format:
+ * var result = parse(
+ *   '02/11/2014',
+ *   'MM/DD/YYYY',
+ *   new Date()
+ * )
+ * //=> Tue Feb 11 2014 00:00:00
+ *
+ * @example
+ * // Parse 28th of February in English locale in the context of 2010 year:
+ * import eoLocale from 'date-fns/locale/eo'
+ * var result = parse(
+ *   '28-a de februaro',
+ *   'Do [de] MMMM',
+ *   new Date(2010, 0, 1)
+ *   {locale: eoLocale}
+ * )
+ * //=> Sun Feb 28 2010 00:00:00
+ */
+function parse (dirtyDateString, dirtyFormatString, dirtyBaseDate, dirtyOptions) {
+  var dateString = String(dirtyDateString);
+  var options = dirtyOptions || {};
+
+  var weekStartsOn = options.weekStartsOn === undefined ? 0 : Number(options.weekStartsOn);
+
+  // Test if weekStartsOn is between 0 and 6 _and_ is not NaN
+  if (!(weekStartsOn >= 0 && weekStartsOn <= 6)) {
+    throw new RangeError('weekStartsOn must be between 0 and 6 inclusively')
+  }
+
+  var locale$$1 = options.locale || locale;
+  var localeParsers = locale$$1.parsers || {};
+  var localeUnits = locale$$1.units || {};
+
+  if (!locale$$1.match) {
+    throw new RangeError('locale must contain match property')
+  }
+
+  if (!locale$$1.formatLong) {
+    throw new RangeError('locale must contain formatLong property')
+  }
+
+  var formatString = String(dirtyFormatString)
+    .replace(longFormattingTokensRegExp$1, function (substring) {
+      if (substring[0] === '[') {
+        return substring
+      }
+
+      if (substring[0] === '\\') {
+        return cleanEscapedString$1(substring)
+      }
+
+      return locale$$1.formatLong(substring)
+    });
+
+  if (formatString === '') {
+    if (dateString === '') {
+      return toDate(dirtyBaseDate, options)
+    } else {
+      return new Date(NaN)
+    }
+  }
+
+  var subFnOptions = cloneObject(options);
+  subFnOptions.locale = locale$$1;
+
+  var tokens = formatString.match(locale$$1.parsingTokensRegExp || defaultParsingTokensRegExp);
+  var tokensLength = tokens.length;
+
+  // If timezone isn't specified, it will be set to the system timezone
+  var setters = [{
+    priority: TIMEZONE_UNIT_PRIORITY,
+    set: dateToSystemTimezone,
+    index: 0
+  }];
+
+  var i;
+  for (i = 0; i < tokensLength; i++) {
+    var token = tokens[i];
+    var parser = localeParsers[token] || parsers[token];
+    if (parser) {
+      var matchResult;
+
+      if (parser.match instanceof RegExp) {
+        matchResult = parser.match.exec(dateString);
+      } else {
+        matchResult = parser.match(dateString, subFnOptions);
+      }
+
+      if (!matchResult) {
+        return new Date(NaN)
+      }
+
+      var unitName = parser.unit;
+      var unit = localeUnits[unitName] || units[unitName];
+
+      setters.push({
+        priority: unit.priority,
+        set: unit.set,
+        value: parser.parse(matchResult, subFnOptions),
+        index: setters.length
+      });
+
+      var substring = matchResult[0];
+      dateString = dateString.slice(substring.length);
+    } else {
+      var head = tokens[i].match(/^\[.*]$/) ? tokens[i].replace(/^\[|]$/g, '') : tokens[i];
+      if (dateString.indexOf(head) === 0) {
+        dateString = dateString.slice(head.length);
+      } else {
+        return new Date(NaN)
+      }
+    }
+  }
+
+  var uniquePrioritySetters = setters
+    .map(function (setter) {
+      return setter.priority
+    })
+    .sort(function (a, b) {
+      return a - b
+    })
+    .filter(function (priority, index, array) {
+      return array.indexOf(priority) === index
+    })
+    .map(function (priority) {
+      return setters
+        .filter(function (setter) {
+          return setter.priority === priority
+        })
+        .reverse()
+    })
+    .map(function (setterArray) {
+      return setterArray[0]
+    });
+
+  var date = toDate(dirtyBaseDate, options);
+
+  if (isNaN(date)) {
+    return new Date(NaN)
+  }
+
+  // Convert the date in system timezone to the same date in UTC+00:00 timezone.
+  // This ensures that when UTC functions will be implemented, locales will be compatible with them.
+  // See an issue about UTC functions: https://github.com/date-fns/date-fns/issues/37
+  var utcDate = subMinutes(date, date.getTimezoneOffset());
+
+  var dateValues = {date: utcDate};
+
+  var settersLength = uniquePrioritySetters.length;
+  for (i = 0; i < settersLength; i++) {
+    var setter = uniquePrioritySetters[i];
+    dateValues = setter.set(dateValues, setter.value, subFnOptions);
+  }
+
+  return dateValues.date
+}
+
+function dateToSystemTimezone (dateValues) {
+  var date = dateValues.date;
+  var time = date.getTime();
+
+  // Get the system timezone offset at (moment of time - offset)
+  var offset = date.getTimezoneOffset();
+
+  // Get the system timezone offset at the exact moment of time
+  offset = new Date(time + offset * MILLISECONDS_IN_MINUTE$6).getTimezoneOffset();
+
+  // Convert date in timezone "UTC+00:00" to the system timezone
+  dateValues.date = new Date(time + offset * MILLISECONDS_IN_MINUTE$6);
+
+  return dateValues
+}
+
+function cleanEscapedString$1 (input) {
+  if (input.match(/\[[\s\S]/)) {
+    return input.replace(/^\[|]$/g, '')
+  }
+  return input.replace(/\\/g, '')
+}
+
+// This file is generated automatically by `scripts/build/indices.js`. Please, don't change it.
+
+/**
+ * Gets the data attribute. the name must be kebab-case.
+ */
+var getDataAttribute = function (el, name) { return el.getAttribute(("data-vv-" + name)); };
+
+/**
+ * Checks if an object path is defined globally.
+ */
+var isDefinedGlobally = function (prop) {
+  var globalObj = null;
+  if (typeof window !== 'undefined') {
+    globalObj = window;
+  }
+
+  if (typeof global !== 'undefined') {
+    globalObj = global;
+  }
+
+  if (globalObj && hasPath(prop, globalObj)) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
+ * Formates file size.
+ *
+ * @param {Number|String} size
+ */
+var formatFileSize = function (size) {
+  var units = ['Byte', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  var threshold = 1024;
+  size = Number(size) * threshold;
+  var i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(threshold));
+  return (((size / Math.pow(threshold, i)).toFixed(2) * 1) + " " + (units[i]));
+};
+
+/**
+ * Sets the data attribute.
+ * @param {*} el
+ * @param {String} name
+ * @param {String} value
+ */
+var setDataAttribute = function (el, name, value) { return el.setAttribute(("data-vv-" + name), value); };
+
+/**
+ * Custom parse behavior on top of date-fns parse function.
+ * @param {String} date
+ * @param {String} format
+ * @return {Date|null}
+ */
+var parseDate$1 = function (date, format$$1) {
+  var parsed = parse(date, format$$1, new Date());
+
+  // if date is not valid or the formatted output after parsing does not match
+  // the string value passed in (avoids overflows)
+  if (!isValid(parsed) || format(parsed, format$$1) !== date) {
+    return null;
+  }
+
+  return parsed;
+};
+
+var createProxy = function (target, handler) {
+  return new Proxy(target, handler);
+};
+
+var createFlags = function () { return ({
+  untouched: true,
+  touched: false,
+  dirty: false,
+  pristine: true,
+  valid: null,
+  invalid: null,
+  validated: false,
+  pending: false,
+  required: false
+}); };
+
+/**
+ * Shallow object comparison.
+ *
+ * @param {*} lhs 
+ * @param {*} rhs 
+ * @return {Boolean}
+ */
+var isEqual$1 = function (lhs, rhs) {
+  if (lhs instanceof RegExp && rhs instanceof RegExp) {
+    return isEqual$1(lhs.source, rhs.source) && isEqual$1(lhs.flags, rhs.flags);
+  }
+
+  if (Array.isArray(lhs) && Array.isArray(rhs)) {
+    if (lhs.length !== rhs.length) { return false; }
+
+    for (var i = 0; i < lhs.length; i++) {
+      if (!isEqual$1(lhs[i], rhs[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // if both are objects, compare each key recursively.
+  if (isObject(lhs) && isObject(rhs)) {
+    return Object.keys(lhs).every(function (key) {
+      return isEqual$1(lhs[key], rhs[key]);
+    }) && Object.keys(rhs).every(function (key) {
+      return isEqual$1(lhs[key], rhs[key]);
+    });
+  }
+
+  return lhs === rhs;
+};
+
+/**
+ * Determines the input field scope.
+ */
+var getScope = function (el) {
+  var scope = getDataAttribute(el, 'scope');
+  if (! scope && el.form) {
+    scope = getDataAttribute(el.form, 'scope');
+  }
+
+  return scope || null;
+};
+
+/**
+ * Gets the value in an object safely.
+ * @param {String} propPath
+ * @param {Object} target
+ * @param {*} def
+ */
+var getPath = function (propPath, target, def) {
+  if ( def === void 0 ) def = undefined;
+
+  if (!propPath || !target) { return def; }
+  var value = target;
+  propPath.split('.').every(function (prop) {
+    if (! Object.prototype.hasOwnProperty.call(value, prop) && value[prop] === undefined) {
+      value = def;
+
+      return false;
+    }
+
+    value = value[prop];
+
+    return true;
+  });
+
+  return value;
+};
+
+/**
+ * Checks if path exists within an object.
+ *
+ * @param {String} path
+ * @param {Object} target
+ */
+var hasPath = function (path, target) {
+  var obj = target;
+  return path.split('.').every(function (prop) {
+    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+
+    obj = obj[prop];
+
+    return true;
+  });
+};
+
+/**
+ * @param {String} rule
+ */
+var parseRule = function (rule) {
+  var params = [];
+  var name = rule.split(':')[0];
+
+  if (~rule.indexOf(':')) {
+    params = rule.split(':').slice(1).join(':').split(',');
+  }
+
+  return { name: name, params: params };
+};
+
+/**
+ * Normalizes the given rules expression.
+ *
+ * @param {Object|String} rules
+ */
+var normalizeRules = function (rules) {
+  // if falsy value return an empty object.
+  if (!rules) {
+    return {};
+  }
+
+  var validations = {};
+  if (isObject(rules)) {
+    Object.keys(rules).forEach(function (rule) {
+      var params = [];
+      if (rules[rule] === true) {
+        params = [];
+      } else if (Array.isArray(rules[rule])) {
+        params = rules[rule];
+      } else {
+        params = [rules[rule]];
+      }
+
+      if (rules[rule] !== false) {
+        validations[rule] = params;
+      }
+    });
+
+    return validations;
+  }
+
+  if (typeof rules !== 'string') {
+    warn('rules must be either a string or an object.');
+    return {};
+  }
+
+  rules.split('|').forEach(function (rule) {
+    var parsedRule = parseRule(rule);
+    if (! parsedRule.name) {
+      return;
+    }
+
+    validations[parsedRule.name] = parsedRule.params;
+  });
+
+  return validations;
+};
+
+/**
+ * Debounces a function.
+ */
+var debounce = function (fn, wait, immediate) {
+  if ( wait === void 0 ) wait = 0;
+  if ( immediate === void 0 ) immediate = false;
+
+  if (wait === 0) {
+    return fn;
+  }
+
+  var timeout;
+
+  return function () {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
+    var later = function () {
+      timeout = null;
+      if (!immediate) { fn.apply(void 0, args); }
+    };
+    /* istanbul ignore next */
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    /* istanbul ignore next */
+    if (callNow) { fn.apply(void 0, args); }
+  };
+};
+
+/**
+ * Emits a warning to the console.
+ */
+var warn = function (message) {
+  console.warn(("[vee-validate] " + message)); // eslint-disable-line
+};
+
+/**
+ * Creates a branded error object.
+ * @param {String} message
+ */
+var createError = function (message) { return new Error(("[vee-validate] " + message)); };
+
+/**
+ * Checks if the value is an object.
+ */
+var isObject = function (object) { return object !== null && object && typeof object === 'object' && ! Array.isArray(object); };
+
+/**
+ * Checks if a function is callable.
+ */
+var isCallable = function (func) { return typeof func === 'function'; };
+
+/**
+ * Check if element has the css class on it.
+ */
+var hasClass = function (el, className) {
+  if (el.classList) {
+    return el.classList.contains(className);
+  }
+
+  return !!el.className.match(new RegExp(("(\\s|^)" + className + "(\\s|$)")));
+};
+
+/**
+ * Adds the provided css className to the element.
+ */
+var addClass = function (el, className) {
+  if (el.classList) {
+    el.classList.add(className);
+    return;
+  }
+
+  if (!hasClass(el, className)) {
+    el.className += " " + className;
+  }
+};
+
+/**
+ * Remove the provided css className from the element.
+ */
+var removeClass = function (el, className) {
+  if (el.classList) {
+    el.classList.remove(className);
+    return;
+  }
+
+  if (hasClass(el, className)) {
+    var reg = new RegExp(("(\\s|^)" + className + "(\\s|$)"));
+    el.className = el.className.replace(reg, ' ');
+  }
+};
+
+/**
+ * Adds or removes a class name on the input depending on the status flag.
+ */
+var toggleClass = function (el, className, status) {
+  if (!el || !className) { return; }
+
+  if (status) {
+    return addClass(el, className);
+  }
+
+  removeClass(el, className);
+};
+
+/**
+ * Converts an array-like object to array.
+ * Simple polyfill for Array.from
+ */
+var toArray = function (arrayLike) {
+  if (isCallable(Array.from)) {
+    return Array.from(arrayLike);
+  }
+
+  var array = [];
+  var length = arrayLike.length;
+  for (var i = 0; i < length; i++) {
+    array.push(arrayLike[i]);
+  }
+
+  return array;
+};
+
+/**
+ * Assign polyfill from the mdn.
+ * @param {Object} target
+ * @return {Object}
+ */
+var assign = function (target) {
+  var others = [], len = arguments.length - 1;
+  while ( len-- > 0 ) others[ len ] = arguments[ len + 1 ];
+
+  /* istanbul ignore else */
+  if (isCallable(Object.assign)) {
+    return Object.assign.apply(Object, [ target ].concat( others ));
+  }
+
+  /* istanbul ignore next */
+  if (target == null) {
+    throw new TypeError('Cannot convert undefined or null to object');
+  }
+
+  /* istanbul ignore next */
+  var to = Object(target);
+  /* istanbul ignore next */
+  others.forEach(function (arg) {
+    // Skip over if undefined or null
+    if (arg != null) {
+      Object.keys(arg).forEach(function (key) {
+        to[key] = arg[key];
+      });
+    }
+  });
+  /* istanbul ignore next */
+  return to;
+};
+
+/**
+ * Generates a unique id.
+ * @return {String}
+ */
+var uniqId = function () { return ("_" + (Math.random().toString(36).substr(2, 9))); };
+
+/**
+ * polyfills array.find
+ * @param {Array} array
+ * @param {Function} predicate
+ */
+var find = function (array, predicate) {
+  if (isObject(array)) {
+    array = toArray(array);
+  }
+  if (array.find) {
+    return array.find(predicate);
+  }
+  var result;
+  array.some(function (item) {
+    if (predicate(item)) {
+      result = item;
+      return true;
+    }
+
+    return false;
+  });
+
+  return result;
+};
+
+var getInputEventName = function (el) {
+  if (el && (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type))) {
+    return 'change';
+  }
+
+  return 'input';
+};
+
+var after = function (value, ref) {
+  var otherValue = ref[0];
+  var inclusion = ref[1];
+  var format = ref[2];
+
+  if (typeof format === 'undefined') {
+    format = inclusion;
+    inclusion = false;
+  }
+  value = parseDate$1(value, format);
+  otherValue = parseDate$1(otherValue, format);
+
+  // if either is not valid.
+  if (!value || !otherValue) {
+    return false;
+  }
+
+  return isAfter(value, otherValue) || (inclusion && isEqual(value, otherValue));
+};
+
 /**
  * Some Alpha Regex helpers.
  * https://github.com/chriso/validator.js/blob/master/src/lib/alpha.js
  */
 
-const alpha$1 = {
+var alpha$1 = {
   en: /^[A-Z]*$/i,
   cs: /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]*$/i,
   da: /^[A-ZÆØÅ]*$/i,
@@ -28,7 +3041,7 @@ const alpha$1 = {
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/
 };
 
-const alphaSpaces = {
+var alphaSpaces = {
   en: /^[A-Z\s]*$/i,
   cs: /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s]*$/i,
   da: /^[A-ZÆØÅ\s]*$/i,
@@ -48,7 +3061,7 @@ const alphaSpaces = {
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ\s]*$/
 };
 
-const alphanumeric = {
+var alphanumeric = {
   en: /^[0-9A-Z]*$/i,
   cs: /^[0-9A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]*$/i,
   da: /^[0-9A-ZÆØÅ]$/i,
@@ -68,7 +3081,7 @@ const alphanumeric = {
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/
 };
 
-const alphaDash = {
+var alphaDash = {
   en: /^[0-9A-Z_-]*$/i,
   cs: /^[0-9A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ_-]*$/i,
   da: /^[0-9A-ZÆØÅ_-]*$/i,
@@ -88,67 +3101,102 @@ const alphaDash = {
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ_-]*$/
 };
 
-const validate = (value, [locale] = [null]) => {
+var validate = function (value, ref) {
+  if ( ref === void 0 ) ref = [null];
+  var locale = ref[0];
+
   if (Array.isArray(value)) {
-    return value.every(val => validate(val, [locale]));
+    return value.every(function (val) { return validate(val, [locale]); });
   }
 
   // Match at least one locale.
   if (! locale) {
-    return Object.keys(alpha$1).some(loc => alpha$1[loc].test(value));
+    return Object.keys(alpha$1).some(function (loc) { return alpha$1[loc].test(value); });
   }
 
   return (alpha$1[locale] || alpha$1.en).test(value);
 };
 
-const validate$1 = (value, [locale] = [null]) => {
+var validate$1 = function (value, ref) {
+  if ( ref === void 0 ) ref = [null];
+  var locale = ref[0];
+
   if (Array.isArray(value)) {
-    return value.every(val => validate$1(val, [locale]));
+    return value.every(function (val) { return validate$1(val, [locale]); });
   }
 
   // Match at least one locale.
   if (! locale) {
-    return Object.keys(alphaDash).some(loc => alphaDash[loc].test(value));
+    return Object.keys(alphaDash).some(function (loc) { return alphaDash[loc].test(value); });
   }
 
   return (alphaDash[locale] || alphaDash.en).test(value);
 };
 
-const validate$2 = (value, [locale] = [null]) => {
+var validate$2 = function (value, ref) {
+  if ( ref === void 0 ) ref = [null];
+  var locale = ref[0];
+
   if (Array.isArray(value)) {
-    return value.every(val => validate$2(val, [locale]));
+    return value.every(function (val) { return validate$2(val, [locale]); });
   }
 
   // Match at least one locale.
   if (! locale) {
-    return Object.keys(alphanumeric).some(loc => alphanumeric[loc].test(value));
+    return Object.keys(alphanumeric).some(function (loc) { return alphanumeric[loc].test(value); });
   }
 
   return (alphanumeric[locale] || alphanumeric.en).test(value);
 };
 
-const validate$3 = (value, [locale] = [null]) => {
+var validate$3 = function (value, ref) {
+  if ( ref === void 0 ) ref = [null];
+  var locale = ref[0];
+
   if (Array.isArray(value)) {
-    return value.every(val => validate$3(val, [locale]));
+    return value.every(function (val) { return validate$3(val, [locale]); });
   }
 
   // Match at least one locale.
   if (! locale) {
-    return Object.keys(alphaSpaces).some(loc => alphaSpaces[loc].test(value));
+    return Object.keys(alphaSpaces).some(function (loc) { return alphaSpaces[loc].test(value); });
   }
 
   return (alphaSpaces[locale] || alphaSpaces.en).test(value);
 };
 
-const validate$4 = (value, [min, max]) => {
+var before = function (value, ref) {
+  var otherValue = ref[0];
+  var inclusion = ref[1];
+  var format = ref[2];
+
+  if (typeof format === 'undefined') {
+    format = inclusion;
+    inclusion = false;
+  }
+  value = parseDate$1(value, format);
+  otherValue = parseDate$1(otherValue, format);
+
+  // if either is not valid.
+  if (!value || !otherValue) {
+    return false;
+  }
+
+  return isBefore(value, otherValue) || (inclusion && isEqual(value, otherValue));
+};
+
+var validate$4 = function (value, ref) {
+  var min = ref[0];
+  var max = ref[1];
+
   if (Array.isArray(value)) {
-    return value.every(val => validate$4(val, [min, max]));
+    return value.every(function (val) { return validate$4(val, [min, max]); });
   }
 
   return Number(min) <= value && Number(max) >= value;
 };
 
-var confirmed = (value, other) => String(value) === String(other);
+var confirmed = function (value, other) { return String(value) === String(other); };
 
 function unwrapExports (x) {
 	return x && x.__esModule ? x['default'] : x;
@@ -174,6 +3222,8 @@ function assertString(input) {
 }
 module.exports = exports['default'];
 });
+
+unwrapExports(assertString_1);
 
 var isCreditCard_1 = createCommonjsModule(function (module, exports) {
 'use strict';
@@ -225,12 +3275,12 @@ module.exports = exports['default'];
 
 var isCreditCard = unwrapExports(isCreditCard_1);
 
-var credit_card = (value) => isCreditCard(String(value));
+var credit_card = function (value) { return isCreditCard(String(value)); };
 
-const validate$5 = (value, params) => {
-  const decimals = Array.isArray(params) ? (params[0] || '*') : '*';
+var validate$5 = function (value, params) {
+  var decimals = Array.isArray(params) ? (params[0] || '*') : '*';
   if (Array.isArray(value)) {
-    return value.every(val => validate$5(val, params));
+    return value.every(function (val) { return validate$5(val, params); });
   }
 
   if (value === null || value === undefined || value === '') {
@@ -242,44 +3292,93 @@ const validate$5 = (value, params) => {
     return /^-?\d*$/.test(value);
   }
 
-  const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
-  const regex = new RegExp(`^-?\\d*(\\.\\d${regexPart})?$`);
+  var regexPart = decimals === '*' ? '+' : ("{1," + decimals + "}");
+  var regex = new RegExp(("^-?\\d*(\\.\\d" + regexPart + ")?$"));
 
   if (! regex.test(value)) {
     return false;
   }
 
-  const parsedValue = parseFloat(value);
+  var parsedValue = parseFloat(value);
 
   // eslint-disable-next-line
     return parsedValue === parsedValue;
 };
 
-const validate$6 = (value, [length]) => {
-  if (Array.isArray(value)) {
-    return value.every(val => validate$6(val, [length]));
+var date_between = function (value, params) {
+  var min;
+  var max;
+  var format;
+  var inclusivity = '()';
+
+  if (params.length > 3) {
+    var assign$$1;
+    (assign$$1 = params, min = assign$$1[0], max = assign$$1[1], inclusivity = assign$$1[2], format = assign$$1[3]);
+  } else {
+    var assign$1;
+    (assign$1 = params, min = assign$1[0], max = assign$1[1], format = assign$1[2]);
   }
-  const strVal = String(value);
+
+  var minDate = parseDate$1(min, format);
+  var maxDate = parseDate$1(max, format);
+  var dateVal = parseDate$1(value, format);
+
+  if (!minDate || !maxDate || !dateVal) {
+    return false;
+  }
+
+  if (inclusivity === '()') {
+    return isAfter(dateVal, minDate) && isBefore(dateVal, maxDate);
+  }
+
+  if (inclusivity === '(]') {
+    return isAfter(dateVal, minDate) && (isEqual(dateVal, maxDate) || isBefore(dateVal, maxDate));
+  }
+
+  if (inclusivity === '[)') {
+    return isBefore(dateVal, maxDate) && (isEqual(dateVal, minDate) || isAfter(dateVal, minDate));
+  }
+
+  return isEqual(dateVal, maxDate) || isEqual(dateVal, minDate) ||
+        (isBefore(dateVal, maxDate) && isAfter(dateVal, minDate));
+};
+
+var date_format = function (value, ref) {
+  var format = ref[0];
+
+  return !!parseDate$1(value, format);
+};
+
+var validate$6 = function (value, ref) {
+  var length = ref[0];
+
+  if (Array.isArray(value)) {
+    return value.every(function (val) { return validate$6(val, [length]); });
+  }
+  var strVal = String(value);
 
   return /^[0-9]*$/.test(strVal) && strVal.length === Number(length);
 };
 
-const validateImage = (file, width, height) => {
-  const URL = window.URL || window.webkitURL;
-  return new Promise(resolve => {
-    const image = new Image();
-    image.onerror = () => resolve({ valid: false });
-    image.onload = () => resolve({
+var validateImage = function (file, width, height) {
+  var URL = window.URL || window.webkitURL;
+  return new Promise(function (resolve) {
+    var image = new Image();
+    image.onerror = function () { return resolve({ valid: false }); };
+    image.onload = function () { return resolve({
       valid: image.width === Number(width) && image.height === Number(height)
-    });
+    }); };
 
     image.src = URL.createObjectURL(file);
   });
 };
 
-var dimensions = (files, [width, height]) => {
-  const list = [];
-  for (let i = 0; i < files.length; i++) {
+var dimensions = function (files, ref) {
+  var width = ref[0];
+  var height = ref[1];
+
+  var list = [];
+  for (var i = 0; i < files.length; i++) {
     // if file is not an image, reject.
     if (! /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
       return false;
@@ -288,7 +3387,7 @@ var dimensions = (files, [width, height]) => {
     list.push(files[i]);
   }
 
-  return Promise.all(list.map(file => validateImage(file, width, height)));
+  return Promise.all(list.map(function (file) { return validateImage(file, width, height); }));
 };
 
 var merge_1 = createCommonjsModule(function (module, exports) {
@@ -311,6 +3410,8 @@ function merge() {
 }
 module.exports = exports['default'];
 });
+
+unwrapExports(merge_1);
 
 var isByteLength_1 = createCommonjsModule(function (module, exports) {
 'use strict';
@@ -347,6 +3448,8 @@ function isByteLength(str, options) {
 }
 module.exports = exports['default'];
 });
+
+unwrapExports(isByteLength_1);
 
 var isFQDN = createCommonjsModule(function (module, exports) {
 'use strict';
@@ -412,6 +3515,8 @@ function isFDQN(str, options) {
 module.exports = exports['default'];
 });
 
+unwrapExports(isFQDN);
+
 var isEmail_1 = createCommonjsModule(function (module, exports) {
 'use strict';
 
@@ -447,7 +3552,7 @@ var default_email_options = {
 
 /* eslint-disable max-len */
 /* eslint-disable no-control-regex */
-var displayName = /^[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\.\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\.\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\s]*<(.+)>$/i;
+var displayName = /^[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\.\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\,\.\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\s]*<(.+)>$/i;
 var emailUserPart = /^[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~]+$/i;
 var quotedEmailUser = /^([\s\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e]|(\\[\x01-\x09\x0b\x0c\x0d-\x7f]))*$/i;
 var emailUserUtf8Part = /^[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+$/i;
@@ -506,31 +3611,30 @@ module.exports = exports['default'];
 
 var isEmail = unwrapExports(isEmail_1);
 
-const validate$7 = (value) => {
+var validate$7 = function (value) {
   if (Array.isArray(value)) {
-    return value.every(val => isEmail(String(val)));
+    return value.every(function (val) { return isEmail(String(val)); });
   }
 
   return isEmail(String(value));
 };
 
-var ext = (files, extensions) => {
-  const regex = new RegExp(`.(${extensions.join('|')})$`, 'i');
+var ext = function (files, extensions) {
+  var regex = new RegExp((".(" + (extensions.join('|')) + ")$"), 'i');
 
-  return files.every(file => regex.test(file.name));
+  return files.every(function (file) { return regex.test(file.name); });
 };
 
-var image = (files) => files.every(file =>
-  /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(file.name)
-);
+var image = function (files) { return files.every(function (file) { return /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(file.name); }
+); };
 
-const validate$8 = (value, options) => {
+var validate$8 = function (value, options) {
   if (Array.isArray(value)) {
-    return value.every(val => validate$8(val, options));
+    return value.every(function (val) { return validate$8(val, options); });
   }
 
   // eslint-disable-next-line
-  return !! options.filter(option => option == value).length;
+  return !! options.filter(function (option) { return option == value; }).length;
 };
 
 var isIP_1 = createCommonjsModule(function (module, exports) {
@@ -619,407 +3723,22 @@ module.exports = exports['default'];
 
 var isIP = unwrapExports(isIP_1);
 
-var ip = (value, [version] = [4]) => {
+var ip = function (value, ref) {
+  if ( ref === void 0 ) ref = [4];
+  var version = ref[0];
+
   if (Array.isArray(value)) {
-    return value.every(val => isIP(val, [version]));
+    return value.every(function (val) { return isIP(val, [version]); });
   }
 
   return isIP(value, version);
 };
 
 /**
- * Gets the data attribute. the name must be kebab-case.
- */
-const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
-
-/**
- * Checks if an object path is defined globally.
- */
-const isDefinedGlobally = (prop) => {
-  let globalObj = null;
-  if (typeof window !== 'undefined') {
-    globalObj = window;
-  }
-
-  if (typeof global !== 'undefined') {
-    globalObj = global;
-  }
-
-  if (globalObj && hasPath(prop, globalObj)) {
-    return true;
-  }
-
-  return false;
-};
-
-/**
- * Formates file size.
- *
- * @param {Number|String} size
- */
-const formatFileSize = (size) => {
-  const units = ['Byte', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  const threshold = 1024;
-  size = Number(size) * threshold;
-  const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(threshold));
-  return `${(size / Math.pow(threshold, i)).toFixed(2) * 1} ${units[i]}`;
-};
-
-/**
- * Sets the data attribute.
- * @param {*} el
- * @param {String} name
- * @param {String} value
- */
-const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
-
-/**
- * Shallow object comparison.
- *
- * @param {*} lhs 
- * @param {*} rhs 
- * @return {Boolean}
- */
-const isEqual = (lhs, rhs) => {
-  if (lhs instanceof RegExp && rhs instanceof RegExp) {
-    return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
-  }
-
-  if (Array.isArray(lhs) && Array.isArray(rhs)) {
-    if (lhs.length !== rhs.length) return false;
-
-    for (let i = 0; i < lhs.length; i++) {
-      if (!isEqual(lhs[i], rhs[i])) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  // if both are objects, compare each key recursively.
-  if (isObject(lhs) && isObject(rhs)) {
-    return Object.keys(lhs).every(key => {
-      return isEqual(lhs[key], rhs[key]);
-    }) && Object.keys(rhs).every(key => {
-      return isEqual(lhs[key], rhs[key]);
-    });
-  }
-
-  return lhs === rhs;
-};
-
-/**
- * Determines the input field scope.
- */
-const getScope = (el) => {
-  let scope = getDataAttribute(el, 'scope');
-  if (! scope && el.form) {
-    scope = getDataAttribute(el.form, 'scope');
-  }
-
-  return scope || null;
-};
-
-/**
- * Gets the value in an object safely.
- * @param {String} propPath
- * @param {Object} target
- * @param {*} def
- */
-const getPath = (propPath, target, def = undefined) => {
-  if (!propPath || !target) return def;
-  let value = target;
-  propPath.split('.').every(prop => {
-    if (! Object.prototype.hasOwnProperty.call(value, prop) && value[prop] === undefined) {
-      value = def;
-
-      return false;
-    }
-
-    value = value[prop];
-
-    return true;
-  });
-
-  return value;
-};
-
-/**
- * Checks if path exists within an object.
- *
- * @param {String} path
- * @param {Object} target
- */
-const hasPath = (path, target) => {
-  let obj = target;
-  return path.split('.').every(prop => {
-    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
-      return false;
-    }
-
-    obj = obj[prop];
-
-    return true;
-  });
-};
-
-/**
- * @param {String} rule
- */
-const parseRule = (rule) => {
-  let params = [];
-  const name = rule.split(':')[0];
-
-  if (~rule.indexOf(':')) {
-    params = rule.split(':').slice(1).join(':').split(',');
-  }
-
-  return { name, params };
-};
-
-/**
- * Normalizes the given rules expression.
- *
- * @param {Object|String} rules
- */
-const normalizeRules = (rules) => {
-  // if falsy value return an empty object.
-  if (!rules) {
-    return {};
-  }
-
-  const validations = {};
-  if (isObject(rules)) {
-    Object.keys(rules).forEach(rule => {
-      let params = [];
-      if (rules[rule] === true) {
-        params = [];
-      } else if (Array.isArray(rules[rule])) {
-        params = rules[rule];
-      } else {
-        params = [rules[rule]];
-      }
-
-      if (rules[rule] !== false) {
-        validations[rule] = params;
-      }
-    });
-
-    return validations;
-  }
-
-  if (typeof rules !== 'string') {
-    warn('rules must be either a string or an object.');
-    return {};
-  }
-
-  rules.split('|').forEach(rule => {
-    const parsedRule = parseRule(rule);
-    if (! parsedRule.name) {
-      return;
-    }
-
-    validations[parsedRule.name] = parsedRule.params;
-  });
-
-  return validations;
-};
-
-/**
- * Debounces a function.
- */
-const debounce = (fn, wait = 0, immediate = false) => {
-  if (wait === 0) {
-    return fn;
-  }
-
-  let timeout;
-
-  return (...args) => {
-    const later = () => {
-      timeout = null;
-      if (!immediate) fn(...args);
-    };
-    /* istanbul ignore next */
-    const callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    /* istanbul ignore next */
-    if (callNow) fn(...args);
-  };
-};
-
-/**
- * Emits a warning to the console.
- */
-const warn = (message) => {
-  console.warn(`[vee-validate] ${message}`); // eslint-disable-line
-};
-
-/**
- * Creates a branded error object.
- * @param {String} message
- */
-const createError = (message) => new Error(`[vee-validate] ${message}`);
-
-/**
- * Checks if the value is an object.
- */
-const isObject = (object) =>
-  object !== null && object && typeof object === 'object' && ! Array.isArray(object);
-
-/**
- * Checks if a function is callable.
- */
-const isCallable = (func) => typeof func === 'function';
-
-/**
- * Check if element has the css class on it.
- */
-const hasClass = (el, className) => {
-  if (el.classList) {
-    return el.classList.contains(className);
-  }
-
-  return !!el.className.match(new RegExp(`(\\s|^)${className}(\\s|$)`));
-};
-
-/**
- * Adds the provided css className to the element.
- */
-const addClass = (el, className) => {
-  if (el.classList) {
-    el.classList.add(className);
-    return;
-  }
-
-  if (!hasClass(el, className)) {
-    el.className += ` ${className}`;
-  }
-};
-
-/**
- * Remove the provided css className from the element.
- */
-const removeClass = (el, className) => {
-  if (el.classList) {
-    el.classList.remove(className);
-    return;
-  }
-
-  if (hasClass(el, className)) {
-    const reg = new RegExp(`(\\s|^)${className}(\\s|$)`);
-    el.className = el.className.replace(reg, ' ');
-  }
-};
-
-/**
- * Adds or removes a class name on the input depending on the status flag.
- */
-const toggleClass = (el, className, status) => {
-  if (!el || !className) return;
-
-  if (status) {
-    return addClass(el, className);
-  }
-
-  removeClass(el, className);
-};
-
-/**
- * Converts an array-like object to array.
- * Simple polyfill for Array.from
- */
-const toArray = (arrayLike) => {
-  if (isCallable(Array.from)) {
-    return Array.from(arrayLike);
-  }
-
-  const array = [];
-  const length = arrayLike.length;
-  for (let i = 0; i < length; i++) {
-    array.push(arrayLike[i]);
-  }
-
-  return array;
-};
-
-/**
- * Assign polyfill from the mdn.
- * @param {Object} target
- * @return {Object}
- */
-const assign = (target, ...others) => {
-  /* istanbul ignore else */
-  if (isCallable(Object.assign)) {
-    return Object.assign(target, ...others);
-  }
-
-  /* istanbul ignore next */
-  if (target == null) {
-    throw new TypeError('Cannot convert undefined or null to object');
-  }
-
-  /* istanbul ignore next */
-  const to = Object(target);
-  /* istanbul ignore next */
-  others.forEach(arg => {
-    // Skip over if undefined or null
-    if (arg != null) {
-      Object.keys(arg).forEach(key => {
-        to[key] = arg[key];
-      });
-    }
-  });
-  /* istanbul ignore next */
-  return to;
-};
-
-/**
- * Generates a unique id.
- * @return {String}
- */
-const uniqId = () => `_${Math.random().toString(36).substr(2, 9)}`;
-
-/**
- * polyfills array.find
- * @param {Array} array
- * @param {Function} predicate
- */
-const find = (array, predicate) => {
-  if (isObject(array)) {
-    array = toArray(array);
-  }
-  if (array.find) {
-    return array.find(predicate);
-  }
-  let result;
-  array.some(item => {
-    if (predicate(item)) {
-      result = item;
-      return true;
-    }
-
-    return false;
-  });
-
-  return result;
-};
-
-const getInputEventName = (el) => {
-  if (el && (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type))) {
-    return 'change';
-  }
-
-  return 'input';
-};
-
-/**
  * @param {Array} value 
  * @param {Number?} max 
  */
-const compare = (value, length, max) => {
+var compare = function (value, length, max) {
   if (max === undefined) {
     return value.length === length;
   }
@@ -1030,7 +3749,10 @@ const compare = (value, length, max) => {
   return value.length >= length && value.length <= max;
 };
 
-var length = (value, [length, max = undefined]) => {
+var length = function (value, ref) {
+  var length = ref[0];
+  var max = ref[1]; if ( max === void 0 ) max = undefined;
+
   if (value === undefined || value === null) {
     return false;
   }
@@ -1042,15 +3764,17 @@ var length = (value, [length, max = undefined]) => {
   return compare(value, length, max);
 };
 
-var integer = (value) => {
+var integer = function (value) {
   if (Array.isArray(value)) {
-    return value.every(val => /^-?[0-9]+$/.test(String(val)));
+    return value.every(function (val) { return /^-?[0-9]+$/.test(String(val)); });
   }
 
   return /^-?[0-9]+$/.test(String(value));
 };
 
-var max = (value, [length]) => {
+var max$1 = function (value, ref) {
+  var length = ref[0];
+
   if (value === undefined || value === null) {
     return length >= 0;
   }
@@ -1058,7 +3782,9 @@ var max = (value, [length]) => {
   return String(value).length <= length;
 };
 
-var max_value = (value, [max]) => {
+var max_value = function (value, ref) {
+  var max = ref[0];
+
   if (Array.isArray(value) || value === null || value === undefined || value === '') {
     return false;
   }
@@ -1066,20 +3792,24 @@ var max_value = (value, [max]) => {
   return Number(value) <= max;
 };
 
-var mimes = (files, mimes) => {
-  const regex = new RegExp(`${mimes.join('|').replace('*', '.+')}$`, 'i');
+var mimes = function (files, mimes) {
+  var regex = new RegExp(((mimes.join('|').replace('*', '.+')) + "$"), 'i');
 
-  return files.every(file => regex.test(file.type));
+  return files.every(function (file) { return regex.test(file.type); });
 };
 
-var min = (value, [length]) => {
+var min$1 = function (value, ref) {
+  var length = ref[0];
+
   if (value === undefined || value === null) {
     return false;
   }
   return String(value).length >= length;
 };
 
-var min_value = (value, [min]) => {
+var min_value = function (value, ref) {
+  var min = ref[0];
+
   if (Array.isArray(value) || value === null || value === undefined || value === '') {
     return false;
   }
@@ -1087,24 +3817,27 @@ var min_value = (value, [min]) => {
   return Number(value) >= min;
 };
 
-const validate$9 = (value, options) => {
+var validate$9 = function (value, options) {
   if (Array.isArray(value)) {
-    return value.every(val => validate$9(val, options));
+    return value.every(function (val) { return validate$9(val, options); });
   }
 
   // eslint-disable-next-line
-  return ! options.filter(option => option == value).length;
+  return ! options.filter(function (option) { return option == value; }).length;
 };
 
-var numeric = (value) => {
+var numeric = function (value) {
   if (Array.isArray(value)) {
-    return value.every(val => /^[0-9]+$/.test(String(val)));
+    return value.every(function (val) { return /^[0-9]+$/.test(String(val)); });
   }
 
   return /^[0-9]+$/.test(String(value));
 };
 
-var regex = (value, [regex, ...flags]) => {
+var regex = function (value, ref) {
+  var regex = ref[0];
+  var flags = ref.slice(1);
+
   if (regex instanceof RegExp) {
     return regex.test(value);
   }
@@ -1112,13 +3845,15 @@ var regex = (value, [regex, ...flags]) => {
   return new RegExp(regex, flags).test(String(value));
 };
 
-var required = (value, params = [false]) => {
+var required = function (value, params) {
+  if ( params === void 0 ) params = [false];
+
   if (Array.isArray(value)) {
     return !! value.length;
   }
 
   // incase a field considers `false` as an empty value like checkboxes.
-  const invalidateFalse = params[0];
+  var invalidateFalse = params[0];
   if (value === false && invalidateFalse) {
     return false;
   }
@@ -1130,13 +3865,15 @@ var required = (value, params = [false]) => {
   return !! String(value).trim().length;
 };
 
-var size = (files, [size]) => {
+var size = function (files, ref) {
+  var size = ref[0];
+
   if (isNaN(size)) {
     return false;
   }
 
-  const nSize = Number(size) * 1024;
-  for (let i = 0; i < files.length; i++) {
+  var nSize = Number(size) * 1024;
+  for (var i = 0; i < files.length; i++) {
     if (files[i].size > nSize) {
       return false;
     }
@@ -1297,10 +4034,13 @@ module.exports = exports['default'];
 
 var isURL = unwrapExports(isURL_1);
 
-var url = (value, [requireProtocol] = [true]) => {
-  const options = { require_protocol: !!requireProtocol, allow_underscores: true };
+var url = function (value, ref) {
+  if ( ref === void 0 ) ref = [true];
+  var requireProtocol = ref[0];
+
+  var options = { require_protocol: !!requireProtocol, allow_underscores: true };
   if (Array.isArray(value)) {
-    return value.every(val => isURL(val, options));
+    return value.every(function (val) { return isURL(val, options); });
   }
 
   return isURL(value, options);
@@ -1308,721 +4048,809 @@ var url = (value, [requireProtocol] = [true]) => {
 
 /* eslint-disable camelcase */
 var Rules = {
+  after: after,
   alpha_dash: validate$1,
   alpha_num: validate$2,
   alpha_spaces: validate$3,
   alpha: validate,
+  before: before,
   between: validate$4,
-  confirmed,
-  credit_card,
+  confirmed: confirmed,
+  credit_card: credit_card,
+  date_between: date_between,
+  date_format: date_format,
   decimal: validate$5,
   digits: validate$6,
-  dimensions,
+  dimensions: dimensions,
   email: validate$7,
-  ext,
-  image,
+  ext: ext,
+  image: image,
   in: validate$8,
-  integer,
-  length,
-  ip,
-  max,
-  max_value,
-  mimes,
-  min,
-  min_value,
+  integer: integer,
+  length: length,
+  ip: ip,
+  max: max$1,
+  max_value: max_value,
+  mimes: mimes,
+  min: min$1,
+  min_value: min_value,
   not_in: validate$9,
-  numeric,
-  regex,
-  required,
-  size,
-  url
+  numeric: numeric,
+  regex: regex,
+  required: required,
+  size: size,
+  url: url
 };
 
-class ErrorBag {
-  constructor () {
-    this.items = [];
-  }
+var ErrorBag = function ErrorBag () {
+  this.items = [];
+};
 
-  /**
-     * Adds an error to the internal array.
-     *
-     * @param {Object} error The error object.
-     */
-  add (error) {
-    // handle old signature.
-    if (arguments.length > 1) {
-      error = {
-        field: arguments[0],
-        msg: arguments[1],
-        rule: arguments[2],
-        scope: arguments[3] || null
-      };
-    }
-
-    error.scope = error.scope || null;
-    this.items.push(error);
-  }
-
-  /**
-   * Updates a field error with the new field scope.
+/**
+   * Adds an error to the internal array.
    *
-   * @param {String} id 
-   * @param {Object} error 
+   * @param {Object} error The error object.
    */
-  update (id, error) {
-    const item = find(this.items, i => i.id === id);
-    if (!item) {
+ErrorBag.prototype.add = function add (error) {
+  // handle old signature.
+  if (arguments.length > 1) {
+    error = {
+      field: arguments[0],
+      msg: arguments[1],
+      rule: arguments[2],
+      scope: arguments[3] || null
+    };
+  }
+
+  error.scope = error.scope || null;
+  this.items.push(error);
+};
+
+/**
+ * Updates a field error with the new field scope.
+ *
+ * @param {String} id 
+ * @param {Object} error 
+ */
+ErrorBag.prototype.update = function update (id, error) {
+  var item = find(this.items, function (i) { return i.id === id; });
+  if (!item) {
+    return;
+  }
+
+  var idx = this.items.indexOf(item);
+  this.items.splice(idx, 1);
+  item.scope = error.scope;
+  this.items.push(item);
+};
+
+/**
+   * Gets all error messages from the internal array.
+   *
+   * @param {String} scope The Scope name, optional.
+   * @return {Array} errors Array of all error messages.
+   */
+ErrorBag.prototype.all = function all (scope) {
+  if (! scope) {
+    return this.items.map(function (e) { return e.msg; });
+  }
+
+  return this.items.filter(function (e) { return e.scope === scope; }).map(function (e) { return e.msg; });
+};
+
+/**
+   * Checks if there are any errors in the internal array.
+   * @param {String} scope The Scope name, optional.
+   * @return {boolean} result True if there was at least one error, false otherwise.
+   */
+ErrorBag.prototype.any = function any (scope) {
+  if (! scope) {
+    return !! this.items.length;
+  }
+
+  return !! this.items.filter(function (e) { return e.scope === scope; }).length;
+};
+
+/**
+   * Removes all items from the internal array.
+   *
+   * @param {String} scope The Scope name, optional.
+   */
+ErrorBag.prototype.clear = function clear (scope) {
+    var this$1 = this;
+
+  if (! scope) {
+    scope = null;
+  }
+
+  var removeCondition = function (e) { return e.scope === scope; };
+
+  for (var i = 0; i < this.items.length; ++i) {
+    if (removeCondition(this$1.items[i])) {
+      this$1.items.splice(i, 1);
+      --i;
+    }
+  }
+};
+
+/**
+   * Collects errors into groups or for a specific field.
+   *
+   * @param{string} field The field name.
+   * @param{string} scope The scope name.
+   * @param {Boolean} map If it should map the errors to strings instead of objects.
+   * @return {Array} errors The errors for the specified field.
+   */
+ErrorBag.prototype.collect = function collect (field, scope, map) {
+    if ( map === void 0 ) map = true;
+
+  if (! field) {
+    var collection = {};
+    this.items.forEach(function (e) {
+      if (! collection[e.field]) {
+        collection[e.field] = [];
+      }
+
+      collection[e.field].push(map ? e.msg : e);
+    });
+
+    return collection;
+  }
+
+  if (! scope) {
+    return this.items.filter(function (e) { return e.field === field; }).map(function (e) { return (map ? e.msg : e); });
+  }
+
+  return this.items.filter(function (e) { return e.field === field && e.scope === scope; })
+    .map(function (e) { return (map ? e.msg : e); });
+};
+/**
+   * Gets the internal array length.
+   *
+   * @return {Number} length The internal array length.
+   */
+ErrorBag.prototype.count = function count () {
+  return this.items.length;
+};
+
+/**
+ * Finds and fetches the first error message for the specified field id.
+ *
+ * @param {String} id 
+ */
+ErrorBag.prototype.firstById = function firstById (id) {
+  var error = find(this.items, function (i) { return i.id === id; });
+
+  return error ? error.msg : null;
+};
+
+/**
+   * Gets the first error message for a specific field.
+   *
+   * @param{string} field The field name.
+   * @return {string|null} message The error message.
+   */
+ErrorBag.prototype.first = function first (field, scope) {
+    var this$1 = this;
+    if ( scope === void 0 ) scope = null;
+
+  var selector = this._selector(field);
+  var scoped = this._scope(field);
+
+  if (scoped) {
+    var result = this.first(scoped.name, scoped.scope);
+    // if such result exist, return it. otherwise it could be a field.
+    // with dot in its name.
+    if (result) {
+      return result;
+    }
+  }
+
+  if (selector) {
+    return this.firstByRule(selector.name, selector.rule, scope);
+  }
+
+  for (var i = 0; i < this.items.length; ++i) {
+    if (this$1.items[i].field === field && (this$1.items[i].scope === scope)) {
+      return this$1.items[i].msg;
+    }
+  }
+
+  return null;
+};
+
+/**
+   * Returns the first error rule for the specified field
+   *
+   * @param {string} field The specified field.
+   * @return {string|null} First error rule on the specified field if one is found, otherwise null
+   */
+ErrorBag.prototype.firstRule = function firstRule (field, scope) {
+  var errors = this.collect(field, scope, false);
+
+  return (errors.length && errors[0].rule) || null;
+};
+
+/**
+   * Checks if the internal array has at least one error for the specified field.
+   *
+   * @param{string} field The specified field.
+   * @return {Boolean} result True if at least one error is found, false otherwise.
+   */
+ErrorBag.prototype.has = function has (field, scope) {
+    if ( scope === void 0 ) scope = null;
+
+  return !! this.first(field, scope);
+};
+
+/**
+   * Gets the first error message for a specific field and a rule.
+   * @param {String} name The name of the field.
+   * @param {String} rule The name of the rule.
+   * @param {String} scope The name of the scope (optional).
+   */
+ErrorBag.prototype.firstByRule = function firstByRule (name, rule, scope) {
+  var error = this.collect(name, scope, false).filter(function (e) { return e.rule === rule; })[0];
+
+  return (error && error.msg) || null;
+};
+/**
+   * Gets the first error message for a specific field that not match the rule.
+   * @param {String} name The name of the field.
+   * @param {String} rule The name of the rule.
+   * @param {String} scope The name of the scope (optional).
+   */
+ErrorBag.prototype.firstNot = function firstNot (name, rule, scope) {
+    if ( rule === void 0 ) rule = 'required';
+
+  var error = this.collect(name, scope, false).filter(function (e) { return e.rule !== rule; })[0];
+
+  return (error && error.msg) || null;
+};
+
+/**
+ * Removes errors by matching against the id.
+ * @param {String} id 
+ */
+ErrorBag.prototype.removeById = function removeById (id) {
+    var this$1 = this;
+
+  for (var i = 0; i < this.items.length; ++i) {
+    if (this$1.items[i].id === id) {
+      this$1.items.splice(i, 1);
+      --i;
+    }
+  }
+};
+
+/**
+   * Removes all error messages associated with a specific field.
+   *
+   * @param{string} field The field which messages are to be removed.
+   * @param {String} scope The Scope name, optional.
+   */
+ErrorBag.prototype.remove = function remove (field, scope) {
+    var this$1 = this;
+
+  var removeCondition = scope ? function (e) { return e.field === field && e.scope === scope; }
+    : function (e) { return e.field === field && e.scope === null; };
+
+  for (var i = 0; i < this.items.length; ++i) {
+    if (removeCondition(this$1.items[i])) {
+      this$1.items.splice(i, 1);
+      --i;
+    }
+  }
+};
+
+/**
+   * Get the field attributes if there's a rule selector.
+   *
+   * @param{string} field The specified field.
+   * @return {Object|null}
+   */
+ErrorBag.prototype._selector = function _selector (field) {
+  if (field.indexOf(':') > -1) {
+    var ref = field.split(':');
+      var name = ref[0];
+      var rule = ref[1];
+
+    return { name: name, rule: rule };
+  }
+
+  return null;
+};
+
+/**
+   * Get the field scope if specified using dot notation.
+   *
+   * @param {string} field the specifie field.
+   * @return {Object|null}
+   */
+ErrorBag.prototype._scope = function _scope (field) {
+  if (field.indexOf('.') > -1) {
+    var ref = field.split('.');
+      var scope = ref[0];
+      var name = ref[1];
+
+    return { name: name, scope: scope };
+  }
+
+  return null;
+};
+
+var Dictionary = function Dictionary (dictionary) {
+  if ( dictionary === void 0 ) dictionary = {};
+
+  this.container = {};
+  this.merge(dictionary);
+};
+
+Dictionary.prototype.hasLocale = function hasLocale (locale) {
+  return !! this.container[locale];
+};
+
+Dictionary.prototype.setDateFormat = function setDateFormat (locale, format) {
+  if (!this.container[locale]) {
+    this.container[locale] = {};
+  }
+
+  this.container[locale].dateFormat = format;
+};
+
+Dictionary.prototype.getDateFormat = function getDateFormat (locale) {
+  if (!this.container[locale]) {
+    return undefined;
+  }
+
+  return this.container[locale].dateFormat;
+};
+
+Dictionary.prototype.getMessage = function getMessage (locale, key, fallback) {
+  if (! this.hasMessage(locale, key)) {
+    return fallback || this._getDefaultMessage(locale);
+  }
+
+  return this.container[locale].messages[key];
+};
+
+/**
+ * Gets a specific message for field. fallsback to the rule message.
+ *
+ * @param {String} locale
+ * @param {String} field
+ * @param {String} key
+ */
+Dictionary.prototype.getFieldMessage = function getFieldMessage (locale, field, key) {
+  if (! this.hasLocale(locale)) {
+    return this.getMessage(locale, key);
+  }
+
+  var dict = this.container[locale].custom && this.container[locale].custom[field];
+  if (! dict || ! dict[key]) {
+    return this.getMessage(locale, key);
+  }
+
+  return dict[key];
+};
+
+Dictionary.prototype._getDefaultMessage = function _getDefaultMessage (locale) {
+  if (this.hasMessage(locale, '_default')) {
+    return this.container[locale].messages._default;
+  }
+
+  return this.container.en.messages._default;
+};
+
+Dictionary.prototype.getAttribute = function getAttribute (locale, key, fallback) {
+    if ( fallback === void 0 ) fallback = '';
+
+  if (! this.hasAttribute(locale, key)) {
+    return fallback;
+  }
+
+  return this.container[locale].attributes[key];
+};
+
+Dictionary.prototype.hasMessage = function hasMessage (locale, key) {
+  return !! (
+    this.hasLocale(locale) &&
+          this.container[locale].messages &&
+          this.container[locale].messages[key]
+  );
+};
+
+Dictionary.prototype.hasAttribute = function hasAttribute (locale, key) {
+  return !! (
+    this.hasLocale(locale) &&
+          this.container[locale].attributes &&
+          this.container[locale].attributes[key]
+  );
+};
+
+Dictionary.prototype.merge = function merge (dictionary) {
+  this._merge(this.container, dictionary);
+};
+
+Dictionary.prototype.setMessage = function setMessage (locale, key, message) {
+  if (! this.hasLocale(locale)) {
+    this.container[locale] = {
+      messages: {},
+      attributes: {}
+    };
+  }
+
+  this.container[locale].messages[key] = message;
+};
+
+Dictionary.prototype.setAttribute = function setAttribute (locale, key, attribute) {
+  if (! this.hasLocale(locale)) {
+    this.container[locale] = {
+      messages: {},
+      attributes: {}
+    };
+  }
+
+  this.container[locale].attributes[key] = attribute;
+};
+
+Dictionary.prototype._merge = function _merge (target, source) {
+    var this$1 = this;
+
+  if (! (isObject(target) && isObject(source))) {
+    return target;
+  }
+
+  Object.keys(source).forEach(function (key) {
+    if (isObject(source[key])) {
+      if (! target[key]) {
+        assign(target, ( obj = {}, obj[key] = {}, obj ));
+          var obj;
+      }
+
+      this$1._merge(target[key], source[key]);
       return;
     }
 
-    const idx = this.items.indexOf(item);
-    this.items.splice(idx, 1);
-    item.scope = error.scope;
-    this.items.push(item);
-  }
+    assign(target, ( obj$1 = {}, obj$1[key] = source[key], obj$1 ));
+      var obj$1;
+  });
 
-  /**
-     * Gets all error messages from the internal array.
-     *
-     * @param {String} scope The Scope name, optional.
-     * @return {Array} errors Array of all error messages.
-     */
-  all (scope) {
-    if (! scope) {
-      return this.items.map(e => e.msg);
-    }
-
-    return this.items.filter(e => e.scope === scope).map(e => e.msg);
-  }
-
-  /**
-     * Checks if there are any errors in the internal array.
-     * @param {String} scope The Scope name, optional.
-     * @return {boolean} result True if there was at least one error, false otherwise.
-     */
-  any (scope) {
-    if (! scope) {
-      return !! this.items.length;
-    }
-
-    return !! this.items.filter(e => e.scope === scope).length;
-  }
-
-  /**
-     * Removes all items from the internal array.
-     *
-     * @param {String} scope The Scope name, optional.
-     */
-  clear (scope) {
-    if (! scope) {
-      scope = null;
-    }
-
-    const removeCondition = e => e.scope === scope;
-
-    for (let i = 0; i < this.items.length; ++i) {
-      if (removeCondition(this.items[i])) {
-        this.items.splice(i, 1);
-        --i;
-      }
-    }
-  }
-
-  /**
-     * Collects errors into groups or for a specific field.
-     *
-     * @param  {string} field The field name.
-     * @param  {string} scope The scope name.
-     * @param {Boolean} map If it should map the errors to strings instead of objects.
-     * @return {Array} errors The errors for the specified field.
-     */
-  collect (field, scope, map = true) {
-    if (! field) {
-      const collection = {};
-      this.items.forEach(e => {
-        if (! collection[e.field]) {
-          collection[e.field] = [];
-        }
-
-        collection[e.field].push(map ? e.msg : e);
-      });
-
-      return collection;
-    }
-
-    if (! scope) {
-      return this.items.filter(e => e.field === field).map(e => (map ? e.msg : e));
-    }
-
-    return this.items.filter(e => e.field === field && e.scope === scope)
-      .map(e => (map ? e.msg : e));
-  }
-  /**
-     * Gets the internal array length.
-     *
-     * @return {Number} length The internal array length.
-     */
-  count () {
-    return this.items.length;
-  }
-
-  /**
-   * Finds and fetches the first error message for the specified field id.
-   *
-   * @param {String} id 
-   */
-  firstById (id) {
-    const error = find(this.items, i => i.id === id);
-
-    return error ? error.msg : null;
-  }
-
-  /**
-     * Gets the first error message for a specific field.
-     *
-     * @param  {string} field The field name.
-     * @return {string|null} message The error message.
-     */
-  first (field, scope = null) {
-    const selector = this._selector(field);
-    const scoped = this._scope(field);
-
-    if (scoped) {
-      const result = this.first(scoped.name, scoped.scope);
-      // if such result exist, return it. otherwise it could be a field.
-      // with dot in its name.
-      if (result) {
-        return result;
-      }
-    }
-
-    if (selector) {
-      return this.firstByRule(selector.name, selector.rule, scope);
-    }
-
-    for (let i = 0; i < this.items.length; ++i) {
-      if (this.items[i].field === field && (this.items[i].scope === scope)) {
-        return this.items[i].msg;
-      }
-    }
-
-    return null;
-  }
-
-  /**
-     * Returns the first error rule for the specified field
-     *
-     * @param {string} field The specified field.
-     * @return {string|null} First error rule on the specified field if one is found, otherwise null
-     */
-  firstRule (field, scope) {
-    const errors = this.collect(field, scope, false);
-
-    return (errors.length && errors[0].rule) || null;
-  }
-
-  /**
-     * Checks if the internal array has at least one error for the specified field.
-     *
-     * @param  {string} field The specified field.
-     * @return {Boolean} result True if at least one error is found, false otherwise.
-     */
-  has (field, scope = null) {
-    return !! this.first(field, scope);
-  }
-
-  /**
-     * Gets the first error message for a specific field and a rule.
-     * @param {String} name The name of the field.
-     * @param {String} rule The name of the rule.
-     * @param {String} scope The name of the scope (optional).
-     */
-  firstByRule (name, rule, scope) {
-    const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
-
-    return (error && error.msg) || null;
-  }
-  /**
-     * Gets the first error message for a specific field that not match the rule.
-     * @param {String} name The name of the field.
-     * @param {String} rule The name of the rule.
-     * @param {String} scope The name of the scope (optional).
-     */
-  firstNot (name, rule = 'required', scope) {
-    const error = this.collect(name, scope, false).filter(e => e.rule !== rule)[0];
-
-    return (error && error.msg) || null;
-  }
-
-  /**
-   * Removes errors by matching against the id.
-   * @param {String} id 
-   */
-  removeById (id) {
-    for (let i = 0; i < this.items.length; ++i) {
-      if (this.items[i].id === id) {
-        this.items.splice(i, 1);
-        --i;
-      }
-    }
-  }
-
-  /**
-     * Removes all error messages associated with a specific field.
-     *
-     * @param  {string} field The field which messages are to be removed.
-     * @param {String} scope The Scope name, optional.
-     */
-  remove (field, scope) {
-    const removeCondition = scope ? e => e.field === field && e.scope === scope
-      : e => e.field === field && e.scope === null;
-
-    for (let i = 0; i < this.items.length; ++i) {
-      if (removeCondition(this.items[i])) {
-        this.items.splice(i, 1);
-        --i;
-      }
-    }
-  }
-
-  /**
-     * Get the field attributes if there's a rule selector.
-     *
-     * @param  {string} field The specified field.
-     * @return {Object|null}
-     */
-  _selector (field) {
-    if (field.indexOf(':') > -1) {
-      const [name, rule] = field.split(':');
-
-      return { name, rule };
-    }
-
-    return null;
-  }
-
-  /**
-     * Get the field scope if specified using dot notation.
-     *
-     * @param {string} field the specifie field.
-     * @return {Object|null}
-     */
-  _scope (field) {
-    if (field.indexOf('.') > -1) {
-      const [scope, name] = field.split('.');
-
-      return { name, scope };
-    }
-
-    return null;
-  }
-}
-
-class Dictionary {
-  constructor (dictionary = {}) {
-    this.container = {};
-    this.merge(dictionary);
-  }
-
-  hasLocale (locale) {
-    return !! this.container[locale];
-  }
-
-  setDateFormat (locale, format) {
-    if (!this.container[locale]) {
-      this.container[locale] = {};
-    }
-
-    this.container[locale].dateFormat = format;
-  }
-
-  getDateFormat (locale) {
-    if (!this.container[locale]) {
-      return undefined;
-    }
-
-    return this.container[locale].dateFormat;
-  }
-
-  getMessage (locale, key, fallback) {
-    if (! this.hasMessage(locale, key)) {
-      return fallback || this._getDefaultMessage(locale);
-    }
-
-    return this.container[locale].messages[key];
-  }
-
-  /**
-   * Gets a specific message for field. fallsback to the rule message.
-   *
-   * @param {String} locale
-   * @param {String} field
-   * @param {String} key
-   */
-  getFieldMessage (locale, field, key) {
-    if (! this.hasLocale(locale)) {
-      return this.getMessage(locale, key);
-    }
-
-    const dict = this.container[locale].custom && this.container[locale].custom[field];
-    if (! dict || ! dict[key]) {
-      return this.getMessage(locale, key);
-    }
-
-    return dict[key];
-  }
-
-  _getDefaultMessage (locale) {
-    if (this.hasMessage(locale, '_default')) {
-      return this.container[locale].messages._default;
-    }
-
-    return this.container.en.messages._default;
-  }
-
-  getAttribute (locale, key, fallback = '') {
-    if (! this.hasAttribute(locale, key)) {
-      return fallback;
-    }
-
-    return this.container[locale].attributes[key];
-  }
-
-  hasMessage (locale, key) {
-    return !! (
-      this.hasLocale(locale) &&
-            this.container[locale].messages &&
-            this.container[locale].messages[key]
-    );
-  }
-
-  hasAttribute (locale, key) {
-    return !! (
-      this.hasLocale(locale) &&
-            this.container[locale].attributes &&
-            this.container[locale].attributes[key]
-    );
-  }
-
-  merge (dictionary) {
-    this._merge(this.container, dictionary);
-  }
-
-  setMessage (locale, key, message) {
-    if (! this.hasLocale(locale)) {
-      this.container[locale] = {
-        messages: {},
-        attributes: {}
-      };
-    }
-
-    this.container[locale].messages[key] = message;
-  }
-
-  setAttribute (locale, key, attribute) {
-    if (! this.hasLocale(locale)) {
-      this.container[locale] = {
-        messages: {},
-        attributes: {}
-      };
-    }
-
-    this.container[locale].attributes[key] = attribute;
-  }
-
-  _merge (target, source) {
-    if (! (isObject(target) && isObject(source))) {
-      return target;
-    }
-
-    Object.keys(source).forEach(key => {
-      if (isObject(source[key])) {
-        if (! target[key]) {
-          assign(target, { [key]: {} });
-        }
-
-        this._merge(target[key], source[key]);
-        return;
-      }
-
-      assign(target, { [key]: source[key] });
-    });
-
-    return target;
-  }
-}
-
-const messages = {
-  _default: (field) => `The ${field} value is not valid.`,
-  alpha_dash: (field) => `The ${field} field may contain alpha-numeric characters as well as dashes and underscores.`,
-  alpha_num: (field) => `The ${field} field may only contain alpha-numeric characters.`,
-  alpha_spaces: (field) => `The ${field} field may only contain alphabetic characters as well as spaces.`,
-  alpha: (field) => `The ${field} field may only contain alphabetic characters.`,
-  between: (field, [min, max]) => `The ${field} field must be between ${min} and ${max}.`,
-  confirmed: (field) => `The ${field} confirmation does not match.`,
-  credit_card: (field) => `The ${field} field is invalid.`,
-  decimal: (field, [decimals] = ['*']) => `The ${field} field must be numeric and may contain ${!decimals || decimals === '*' ? '' : decimals} decimal points.`,
-  digits: (field, [length]) => `The ${field} field must be numeric and exactly contain ${length} digits.`,
-  dimensions: (field, [width, height]) => `The ${field} field must be ${width} pixels by ${height} pixels.`,
-  email: (field) => `The ${field} field must be a valid email.`,
-  ext: (field) => `The ${field} field must be a valid file.`,
-  image: (field) => `The ${field} field must be an image.`,
-  in: (field) => `The ${field} field must be a valid value.`,
-  integer: (field) => `The ${field} field must be an integer.`,
-  ip: (field) => `The ${field} field must be a valid ip address.`,
-  length: (field, [length, max]) => {
-    if (max) {
-      return `The ${field} length be between ${length} and ${max}.`;
-    }
-
-    return `The ${field} length must be ${length}.`;
-  },
-  max: (field, [length]) => `The ${field} field may not be greater than ${length} characters.`,
-  max_value: (field, [max]) => `The ${field} field must be ${max} or less.`,
-  mimes: (field) => `The ${field} field must have a valid file type.`,
-  min: (field, [length]) => `The ${field} field must be at least ${length} characters.`,
-  min_value: (field, [min]) => `The ${field} field must be ${min} or more.`,
-  not_in: (field) => `The ${field} field must be a valid value.`,
-  numeric: (field) => `The ${field} field may only contain numeric characters.`,
-  regex: (field) => `The ${field} field format is invalid.`,
-  required: (field) => `The ${field} field is required.`,
-  size: (field, [size]) => `The ${field} size must be less than ${formatFileSize(size)}.`,
-  url: (field) => `The ${field} field is not a valid URL.`
+  return target;
 };
 
-const locale = {
+var messages = {
+  _default: function (field) { return ("The " + field + " value is not valid."); },
+  after: function (field, ref) {
+    var target = ref[0];
+    var inclusion = ref[1];
+
+    return ("The " + field + " must be after " + (inclusion ? 'or equal to ' : '') + target + ".");
+},
+  alpha_dash: function (field) { return ("The " + field + " field may contain alpha-numeric characters as well as dashes and underscores."); },
+  alpha_num: function (field) { return ("The " + field + " field may only contain alpha-numeric characters."); },
+  alpha_spaces: function (field) { return ("The " + field + " field may only contain alphabetic characters as well as spaces."); },
+  alpha: function (field) { return ("The " + field + " field may only contain alphabetic characters."); },
+  before: function (field, ref) {
+    var target = ref[0];
+    var inclusion = ref[1];
+
+    return ("The " + field + " must be before " + (inclusion ? 'or equal to ' : '') + target + ".");
+},
+  between: function (field, ref) {
+    var min = ref[0];
+    var max = ref[1];
+
+    return ("The " + field + " field must be between " + min + " and " + max + ".");
+},
+  confirmed: function (field) { return ("The " + field + " confirmation does not match."); },
+  credit_card: function (field) { return ("The " + field + " field is invalid."); },
+  date_between: function (field, ref) {
+    var min = ref[0];
+    var max = ref[1];
+
+    return ("The " + field + " must be between " + min + " and " + max + ".");
+},
+  date_format: function (field, ref) {
+    var format = ref[0];
+
+    return ("The " + field + " must be in the format " + format + ".");
+},
+  decimal: function (field, ref) {
+    if ( ref === void 0 ) ref = ['*'];
+    var decimals = ref[0];
+
+    return ("The " + field + " field must be numeric and may contain " + (!decimals || decimals === '*' ? '' : decimals) + " decimal points.");
+},
+  digits: function (field, ref) {
+    var length = ref[0];
+
+    return ("The " + field + " field must be numeric and exactly contain " + length + " digits.");
+},
+  dimensions: function (field, ref) {
+    var width = ref[0];
+    var height = ref[1];
+
+    return ("The " + field + " field must be " + width + " pixels by " + height + " pixels.");
+},
+  email: function (field) { return ("The " + field + " field must be a valid email."); },
+  ext: function (field) { return ("The " + field + " field must be a valid file."); },
+  image: function (field) { return ("The " + field + " field must be an image."); },
+  in: function (field) { return ("The " + field + " field must be a valid value."); },
+  integer: function (field) { return ("The " + field + " field must be an integer."); },
+  ip: function (field) { return ("The " + field + " field must be a valid ip address."); },
+  length: function (field, ref) {
+    var length = ref[0];
+    var max = ref[1];
+
+    if (max) {
+      return ("The " + field + " length be between " + length + " and " + max + ".");
+    }
+
+    return ("The " + field + " length must be " + length + ".");
+  },
+  max: function (field, ref) {
+    var length = ref[0];
+
+    return ("The " + field + " field may not be greater than " + length + " characters.");
+},
+  max_value: function (field, ref) {
+    var max = ref[0];
+
+    return ("The " + field + " field must be " + max + " or less.");
+},
+  mimes: function (field) { return ("The " + field + " field must have a valid file type."); },
+  min: function (field, ref) {
+    var length = ref[0];
+
+    return ("The " + field + " field must be at least " + length + " characters.");
+},
+  min_value: function (field, ref) {
+    var min = ref[0];
+
+    return ("The " + field + " field must be " + min + " or more.");
+},
+  not_in: function (field) { return ("The " + field + " field must be a valid value."); },
+  numeric: function (field) { return ("The " + field + " field may only contain numeric characters."); },
+  regex: function (field) { return ("The " + field + " field format is invalid."); },
+  required: function (field) { return ("The " + field + " field is required."); },
+  size: function (field, ref) {
+    var size = ref[0];
+
+    return ("The " + field + " size must be less than " + (formatFileSize(size)) + ".");
+},
+  url: function (field) { return ("The " + field + " field is not a valid URL."); }
+};
+
+var locale$1 = {
   name: 'en',
-  messages,
+  messages: messages,
   attributes: {}
 };
 
 if (isDefinedGlobally('VeeValidate.Validator')) {
   // eslint-disable-next-line
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.addLocale(locale$1);
 }
 
 /**
  * Generates the options required to construct a field.
  */
-class Generator {
-  static generate (el, binding, vnode, options = {}) {
-    const model = Generator.resolveModel(binding, vnode);
+var Generator = function Generator () {};
 
-    return {
-      name: Generator.resolveName(el, vnode),
-      el: el,
-      listen: !binding.modifiers.disable,
-      scope: Generator.resolveScope(el, binding, vnode),
-      vm: Generator.makeVM(vnode.context),
-      expression: binding.value,
-      component: vnode.child,
-      classes: options.classes,
-      classNames: options.classNames,
-      getter: Generator.resolveGetter(el, vnode, model),
-      events: Generator.resolveEvents(el, vnode) || options.events,
-      model,
-      delay: Generator.resolveDelay(el, vnode, options),
-      rules: Generator.resolveRules(el, binding),
-      initial: !!binding.modifiers.initial,
-      alias: Generator.resolveAlias(el, vnode),
-      validity: options.validity,
-      aria: options.aria
-    };
+Generator.generate = function generate (el, binding, vnode, options) {
+    if ( options === void 0 ) options = {};
+
+  var model = Generator.resolveModel(binding, vnode);
+
+  return {
+    name: Generator.resolveName(el, vnode),
+    el: el,
+    listen: !binding.modifiers.disable,
+    scope: Generator.resolveScope(el, binding, vnode),
+    vm: Generator.makeVM(vnode.context),
+    expression: binding.value,
+    component: vnode.child,
+    classes: options.classes,
+    classNames: options.classNames,
+    getter: Generator.resolveGetter(el, vnode, model),
+    events: Generator.resolveEvents(el, vnode) || options.events,
+    model: model,
+    delay: Generator.resolveDelay(el, vnode, options),
+    rules: Generator.resolveRules(el, binding),
+    initial: !!binding.modifiers.initial,
+    alias: Generator.resolveAlias(el, vnode),
+    validity: options.validity,
+    aria: options.aria
+  };
+};
+
+/**
+ * 
+ * @param {*} el 
+ * @param {*} binding 
+ */
+Generator.resolveRules = function resolveRules (el, binding) {
+  if (!binding || !binding.expression) {
+    return getDataAttribute(el, 'rules');
   }
 
-  /**
-   * 
-   * @param {*} el 
-   * @param {*} binding 
-   */
-  static resolveRules (el, binding) {
-    if (!binding || !binding.expression) {
-      return getDataAttribute(el, 'rules');
-    }
-
-    if (typeof binding.value === 'string') {
-      return binding.value;
-    }
-
-    if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
-      return binding.value.rules;
-    }
-
+  if (typeof binding.value === 'string') {
     return binding.value;
   }
 
-  /**
-   * Creates a non-circular partial VM instance from a Vue instance.
-   * @param {*} vm 
-   */
-  static makeVM (vm) {
-    return {
-      get $el () {
-        return vm.$el;
-      },
-      get $refs () {
-        return vm.$refs;
-      },
-      $watch: vm.$watch ? vm.$watch.bind(vm) : () => {},
-      $validator: vm.$validator ? {
-        errors: vm.$validator.errors,
-        validate: vm.$validator.validate.bind(vm.$validator)
-      } : null
-    };
+  if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
+    return binding.value.rules;
   }
 
-  /**
-   * Resolves the delay value.
-   * @param {*} el
-   * @param {*} vnode
-   * @param {Object} options
-   */
-  static resolveDelay (el, vnode, options = {}) {
-    return getDataAttribute(el, 'delay') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-delay']) || options.delay;
-  }
-
-  /**
-   * Resolves the alias for the field.
-   * @param {*} el 
-   * @param {*} vnode 
-   */
-  static resolveAlias (el, vnode) {
-    return getDataAttribute(el, 'as') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-as']) || el.title || null;
-  }
-
-  /**
-   * Resolves the events to validate in response to.
-   * @param {*} el
-   * @param {*} vnode
-   */
-  static resolveEvents (el, vnode) {
-    if (vnode.child) {
-      return getDataAttribute(el, 'validate-on') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-validate-on']);
-    }
-
-    return getDataAttribute(el, 'validate-on');
-  }
-
-  /**
-   * Resolves the scope for the field.
-   * @param {*} el
-   * @param {*} binding
-   */
-  static resolveScope (el, binding, vnode = {}) {
-    let scope = null;
-    if (isObject(binding.value)) {
-      scope = binding.value.scope;
-    }
-
-    if (vnode.child && !scope) {
-      scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
-    }
-
-    return scope || getScope(el);
-  }
-
-  /**
-   * Checks if the node directives contains a v-model or a specified arg.
-   * Args take priority over models.
-   *
-   * @return {Object}
-   */
-  static resolveModel (binding, vnode) {
-    if (binding.arg) {
-      return binding.arg;
-    }
-
-    if (isObject(binding.value) && binding.value.arg) {
-      return binding.value.arg;
-    }
-
-    const model = vnode.data.model || find(vnode.data.directives, d => d.name === 'model');
-    if (!model) {
-      return null;
-    }
-
-    const watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression, vnode.context);
-
-    if (!watchable) {
-      return null;
-    }
-
-    return model.expression;
-  }
-
-  /**
-     * Resolves the field name to trigger validations.
-     * @return {String} The field name.
-     */
-  static resolveName (el, vnode) {
-    if (vnode.child) {
-      return getDataAttribute(el, 'name') || (vnode.child.$attrs && (vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'])) || vnode.child.name;
-    }
-
-    return getDataAttribute(el, 'name') || el.name;
-  }
-
-  /**
-   * Returns a value getter input type.
-   */
-  static resolveGetter (el, vnode, model) {
-    if (model) {
-      return () => {
-        return getPath(model, vnode.context);
-      };
-    }
-
-    if (vnode.child) {
-      return () => {
-        const path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
-        if (path) {
-          return getPath(path, vnode.child);
-        }
-        return vnode.child.value;
-      };
-    }
-
-    switch (el.type) {
-    case 'checkbox': return () => {
-      let els = document.querySelectorAll(`input[name="${el.name}"]`);
-
-      els = toArray(els).filter(el => el.checked);
-      if (!els.length) return undefined;
-
-      return els.map(checkbox => checkbox.value);
-    };
-    case 'radio': return () => {
-      const els = document.querySelectorAll(`input[name="${el.name}"]`);
-      const elm = find(els, el => el.checked);
-
-      return elm && elm.value;
-    };
-    case 'file': return (context) => {
-      return toArray(el.files);
-    };
-    case 'select-multiple': return () => {
-      return toArray(el.options).filter(opt => opt.selected).map(opt => opt.value);
-    };
-    default: return () => {
-      return el && el.value;
-    };
-    }
-  }
-}
-
-const DEFAULT_FLAGS = {
-  untouched: true,
-  touched: false,
-  dirty: false,
-  pristine: true,
-  valid: null,
-  invalid: null,
-  validated: false,
-  pending: false,
-  required: false
+  return binding.value;
 };
 
-const DEFAULT_OPTIONS = {
+/**
+ * Creates a non-circular partial VM instance from a Vue instance.
+ * @param {*} vm 
+ */
+Generator.makeVM = function makeVM (vm) {
+  return {
+    get $el () {
+      return vm.$el;
+    },
+    get $refs () {
+      return vm.$refs;
+    },
+    $watch: vm.$watch ? vm.$watch.bind(vm) : function () {},
+    $validator: vm.$validator ? {
+      errors: vm.$validator.errors,
+      validate: vm.$validator.validate.bind(vm.$validator),
+      update: vm.$validator.update.bind(vm.$validator)
+    } : null
+  };
+};
+
+/**
+ * Resolves the delay value.
+ * @param {*} el
+ * @param {*} vnode
+ * @param {Object} options
+ */
+Generator.resolveDelay = function resolveDelay (el, vnode, options) {
+    if ( options === void 0 ) options = {};
+
+  return getDataAttribute(el, 'delay') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-delay']) || options.delay;
+};
+
+/**
+ * Resolves the alias for the field.
+ * @param {*} el 
+ * @param {*} vnode 
+ * @return {Function} alias getter
+ */
+Generator.resolveAlias = function resolveAlias (el, vnode) {
+  return function () { return getDataAttribute(el, 'as') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-as']) || el.title || null; };
+};
+
+/**
+ * Resolves the events to validate in response to.
+ * @param {*} el
+ * @param {*} vnode
+ */
+Generator.resolveEvents = function resolveEvents (el, vnode) {
+  if (vnode.child) {
+    return getDataAttribute(el, 'validate-on') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-validate-on']);
+  }
+
+  return getDataAttribute(el, 'validate-on');
+};
+
+/**
+ * Resolves the scope for the field.
+ * @param {*} el
+ * @param {*} binding
+ */
+Generator.resolveScope = function resolveScope (el, binding, vnode) {
+    if ( vnode === void 0 ) vnode = {};
+
+  var scope = null;
+  if (isObject(binding.value)) {
+    scope = binding.value.scope;
+  }
+
+  if (vnode.child && !scope) {
+    scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
+  }
+
+  return scope || getScope(el);
+};
+
+/**
+ * Checks if the node directives contains a v-model or a specified arg.
+ * Args take priority over models.
+ *
+ * @return {Object}
+ */
+Generator.resolveModel = function resolveModel (binding, vnode) {
+  if (binding.arg) {
+    return binding.arg;
+  }
+
+  if (isObject(binding.value) && binding.value.arg) {
+    return binding.value.arg;
+  }
+
+  var model = vnode.data.model || find(vnode.data.directives, function (d) { return d.name === 'model'; });
+  if (!model) {
+    return null;
+  }
+
+  var watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression, vnode.context);
+
+  if (!watchable) {
+    return null;
+  }
+
+  return model.expression;
+};
+
+/**
+   * Resolves the field name to trigger validations.
+   * @return {String} The field name.
+   */
+Generator.resolveName = function resolveName (el, vnode) {
+  if (vnode.child) {
+    return getDataAttribute(el, 'name') || (vnode.child.$attrs && (vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'])) || vnode.child.name;
+  }
+
+  return getDataAttribute(el, 'name') || el.name;
+};
+
+/**
+ * Returns a value getter input type.
+ */
+Generator.resolveGetter = function resolveGetter (el, vnode, model) {
+  if (model) {
+    return function () {
+      return getPath(model, vnode.context);
+    };
+  }
+
+  if (vnode.child) {
+    return function () {
+      var path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
+      if (path) {
+        return getPath(path, vnode.child);
+      }
+      return vnode.child.value;
+    };
+  }
+
+  switch (el.type) {
+  case 'checkbox': return function () {
+    var els = document.querySelectorAll(("input[name=\"" + (el.name) + "\"]"));
+
+    els = toArray(els).filter(function (el) { return el.checked; });
+    if (!els.length) { return undefined; }
+
+    return els.map(function (checkbox) { return checkbox.value; });
+  };
+  case 'radio': return function () {
+    var els = document.querySelectorAll(("input[name=\"" + (el.name) + "\"]"));
+    var elm = find(els, function (el) { return el.checked; });
+
+    return elm && elm.value;
+  };
+  case 'file': return function (context) {
+    return toArray(el.files);
+  };
+  case 'select-multiple': return function () {
+    return toArray(el.options).filter(function (opt) { return opt.selected; }).map(function (opt) { return opt.value; });
+  };
+  default: return function () {
+    return el && el.value;
+  };
+  }
+};
+
+var DEFAULT_OPTIONS = {
   targetOf: null,
   initial: false,
   scope: null,
@@ -2047,1426 +4875,1423 @@ const DEFAULT_OPTIONS = {
   }
 };
 
-class Field {
-  constructor (el, options = {}) {
-    this.id = uniqId();
-    this.el = el;
-    this.updated = false;
-    this.dependencies = [];
+var Field = function Field (el, options) {
+  if ( options === void 0 ) options = {};
+
+  this.id = uniqId();
+  this.el = el;
+  this.updated = false;
+  this.dependencies = [];
+  this.watchers = [];
+  this.events = [];
+  this.rules = {};
+  if (!this.isHeadless && !(this.targetOf || options.targetOf)) {
+    setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
+  }
+  options = assign({}, DEFAULT_OPTIONS, options);
+  this.validity = options.validity;
+  this.aria = options.aria;
+  this.flags = createFlags();
+  this.vm = options.vm || this.vm;
+  this.component = options.component || this.component;
+  this.update(options);
+  this.updated = false;
+};
+
+var prototypeAccessors$1 = { isVue: {},validator: {},isRequired: {},isDisabled: {},isHeadless: {},displayName: {},value: {},rejectsFalse: {} };
+
+prototypeAccessors$1.isVue.get = function () {
+  return !!this.component;
+};
+
+prototypeAccessors$1.validator.get = function () {
+  if (!this.vm || !this.vm.$validator) {
+    warn('No validator instance detected.');
+    return { validate: function () {} };
+  }
+
+  return this.vm.$validator;
+};
+
+prototypeAccessors$1.isRequired.get = function () {
+  return !!this.rules.required;
+};
+
+prototypeAccessors$1.isDisabled.get = function () {
+  return (this.isVue && this.component.disabled) || (this.el && this.el.disabled);
+};
+
+prototypeAccessors$1.isHeadless.get = function () {
+  return !this.el;
+};
+
+/**
+ * Gets the display name (user-friendly name).
+ * @return {String}
+ */
+prototypeAccessors$1.displayName.get = function () {
+  return isCallable(this.alias) ? this.alias() : this.alias;
+};
+
+/**
+ * Gets the input value.
+ * @return {*}
+ */
+prototypeAccessors$1.value.get = function () {
+  if (!isCallable(this.getter)) {
+    return undefined;
+  }
+
+  return this.getter();
+};
+
+/**
+ * If the field rejects false as a valid value for the required rule. 
+ */
+prototypeAccessors$1.rejectsFalse.get = function () {
+  if (this.isVue || this.isHeadless) {
+    return false;
+  }
+
+  return this.el.type === 'checkbox';
+};
+
+/**
+ * Determines if the instance matches the options provided.
+ * @param {Object} options The matching options.
+ */
+Field.prototype.matches = function matches (options) {
+  if (options.id) {
+    return this.id === options.id;
+  }
+
+  if (options.name === undefined && options.scope === undefined) {
+    return true;
+  }
+
+  if (options.scope === undefined) {
+    return this.name === options.name;
+  }
+
+  if (options.name === undefined) {
+    return this.scope === options.scope;
+  }
+
+  return options.name === this.name && options.scope === this.scope;
+};
+
+/**
+ *
+ * @param {Object} options
+ */
+Field.prototype.update = function update (options) {
+  this.targetOf = options.targetOf || null;
+  this.initial = options.initial || this.initial || false;
+
+  // update errors scope if the field scope was changed.
+  if (options.scope && options.scope !== this.scope && isCallable(this.validator.update)) {
+    this.validator.update(this.id, { scope: options.scope });
+  }
+  this.scope = options.scope || this.scope || null;
+  this.name = options.name || this.name || null;
+  this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
+  this.model = options.model || this.model;
+  this.listen = options.listen !== undefined ? options.listen : this.listen;
+  this.classes = options.classes || this.classes || false;
+  this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
+  this.alias = options.alias || this.alias;
+  this.getter = isCallable(options.getter) ? options.getter : this.getter;
+  this.delay = options.delay || this.delay || 0;
+  this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
+  this.updateDependencies();
+  this.addActionListeners();
+
+  // update required flag flags
+  if (options.rules !== undefined) {
+    this.flags.required = this.isRequired;
+  }
+
+  // validate if it was validated before and field was updated and there was a rules mutation.
+  if (this.flags.validated && options.rules !== undefined && this.updated) {
+    this.validator.validate(("#" + (this.id)));
+  }
+
+  this.updated = true;
+
+  // no need to continue.
+  if (this.isHeadless) {
+    return;
+  }
+
+  this.updateClasses();
+  this.addValueListeners();
+  this.updateAriaAttrs();
+};
+
+/**
+ * Resets field flags and errors.
+ */
+Field.prototype.reset = function reset () {
+    var this$1 = this;
+
+  var def = createFlags();
+  Object.keys(this.flags).forEach(function (flag) {
+    this$1.flags[flag] = def[flag];
+  });
+
+  this.addActionListeners();
+  this.updateClasses();
+  if (this.validator.errors && isCallable(this.validator.errors.removeById)) {
+    this.validator.errors.removeById(this.id);
+  }
+};
+
+/**
+ * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
+ * @param {Object} flags 
+ */
+Field.prototype.setFlags = function setFlags (flags) {
+    var this$1 = this;
+
+  var negated = {
+    pristine: 'dirty',
+    dirty: 'pristine',
+    valid: 'invalid',
+    invalid: 'valid',
+    touched: 'untouched',
+    untouched: 'touched'
+  };
+
+  Object.keys(flags).forEach(function (flag) {
+    this$1.flags[flag] = flags[flag];
+    // if it has a negation and was not specified, set it as well.
+    if (negated[flag] && flags[negated[flag]] === undefined) {
+      this$1.flags[negated[flag]] = !flags[flag];
+    }
+  });
+
+  if (
+    flags.untouched !== undefined ||
+    flags.touched !== undefined ||
+    flags.dirty !== undefined ||
+    flags.pristine !== undefined
+  ) {
+    this.addActionListeners();
+  }
+  this.updateClasses();
+  this.updateAriaAttrs();
+  this.updateCustomValidity();
+};
+
+/**
+ * Determines if the field requires references to target fields.
+*/
+Field.prototype.updateDependencies = function updateDependencies () {
+    var this$1 = this;
+
+  // reset dependencies.
+  this.dependencies.forEach(function (d) { return d.field.destroy(); });
+  this.dependencies = [];
+
+  // we get the selectors for each field.
+  var fields = Object.keys(this.rules).reduce(function (prev, r) {
+    if (r === 'confirmed') {
+      prev.push({ selector: this$1.rules[r][0] || ((this$1.name) + "_confirmation"), name: r });
+    } else if (/after|before/.test(r)) {
+      prev.push({ selector: this$1.rules[r][0], name: r });
+    }
+
+    return prev;
+  }, []);
+
+  if (!fields.length || !this.vm || !this.vm.$el) { return; }
+
+  // must be contained within the same component, so we use the vm root element constrain our dom search.
+  fields.forEach(function (ref) {
+      var selector = ref.selector;
+      var name = ref.name;
+
+    var el = null;
+    // vue ref selector.
+    if (selector[0] === '$') {
+      el = this$1.vm.$refs[selector.slice(1)];
+    } else {
+      try {
+        // try query selector
+        el = this$1.vm.$el.querySelector(selector);
+      } catch (err) {
+        el = null;
+      }
+    }
+
+    if (!el) {
+      el = this$1.vm.$el.querySelector(("input[name=\"" + selector + "\"]"));
+    }
+
+    if (!el) {
+      return;
+    }
+
+    var options = {
+      vm: this$1.vm,
+      classes: this$1.classes,
+      classNames: this$1.classNames,
+      delay: this$1.delay,
+      scope: this$1.scope,
+      events: this$1.events.join('|'),
+      initial: this$1.initial,
+      targetOf: this$1.id
+    };
+
+    // probably a component.
+    if (isCallable(el.$watch)) {
+      options.component = el;
+      options.el = el.$el;
+      options.alias = Generator.resolveAlias(el.$el, { child: el });
+      options.getter = Generator.resolveGetter(el.$el, { child: el });
+    } else {
+      options.el = el;
+      options.alias = Generator.resolveAlias(el, {});
+      options.getter = Generator.resolveGetter(el, {});
+    }
+
+    this$1.dependencies.push({ name: name, field: new Field(options.el, options) });
+  });
+};
+
+/**
+ * Removes listeners.
+ * @param {RegExp} tag
+ */
+Field.prototype.unwatch = function unwatch (tag) {
+    if ( tag === void 0 ) tag = null;
+
+  if (!tag) {
+    this.watchers.forEach(function (w) { return w.unwatch(); });
     this.watchers = [];
-    this.events = [];
-    this.rules = {};
-    if (!this.isHeadless && !(this.targetOf || options.targetOf)) {
-      setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
-    }
-    options = assign({}, DEFAULT_OPTIONS, options);
-    this.validity = options.validity;
-    this.aria = options.aria;
-    this.flags = assign({}, DEFAULT_FLAGS);
-    this.vm = options.vm || this.vm;
-    this.component = options.component || this.component;
-    this.update(options);
-    this.updated = false;
+    return;
   }
+  this.watchers.filter(function (w) { return tag.test(w.tag); }).forEach(function (w) { return w.unwatch(); });
+  this.watchers = this.watchers.filter(function (w) { return !tag.test(w.tag); });
+};
 
-  get isVue () {
-    return !!this.component;
-  }
+/**
+ * Updates the element classes depending on each field flag status.
+ */
+Field.prototype.updateClasses = function updateClasses () {
+  if (!this.classes) { return; }
 
-  get validator () {
-    if (!this.vm || !this.vm.$validator) {
-      warn('No validator instance detected.');
-      return { validate: () => {} };
-    }
+  toggleClass(this.el, this.classNames.dirty, this.flags.dirty);
+  toggleClass(this.el, this.classNames.pristine, this.flags.pristine);
+  toggleClass(this.el, this.classNames.valid, !!this.flags.valid);
+  toggleClass(this.el, this.classNames.invalid, !!this.flags.invalid);
+  toggleClass(this.el, this.classNames.touched, this.flags.touched);
+  toggleClass(this.el, this.classNames.untouched, this.flags.untouched);
+};
 
-    return this.vm.$validator;
-  }
+/**
+ * Adds the listeners required for automatic classes and some flags.
+ */
+Field.prototype.addActionListeners = function addActionListeners () {
+    var this$1 = this;
 
-  get isRequired () {
-    return !!this.rules.required;
-  }
+  // remove previous listeners.
+  this.unwatch(/class/);
 
-  get isDisabled () {
-    return (this.isVue && this.component.disabled) || (this.el && this.el.disabled);
-  }
-
-  get isHeadless () {
-    return !this.el;
-  }
-
-  /**
-   * Gets the display name (user-friendly name).
-   * @return {String}
-   */
-  get displayName () {
-    return this.alias;
-  }
-
-  /**
-   * Gets the input value.
-   * @return {*}
-   */
-  get value () {
-    if (!isCallable(this.getter)) {
-      return undefined;
+  var onBlur = function () {
+    this$1.flags.touched = true;
+    this$1.flags.untouched = false;
+    if (this$1.classes) {
+      toggleClass(this$1.el, this$1.classNames.touched, true);
+      toggleClass(this$1.el, this$1.classNames.untouched, false);
     }
 
-    return this.getter();
-  }
+    // only needed once.
+    this$1.unwatch(/^class_blur$/);
+  };
 
-  /**
-   * If the field rejects false as a valid value for the required rule. 
-   */
-  get rejectsFalse () {
-    if (this.isVue || this.isHeadless) {
-      return false;
+  var inputEvent = getInputEventName(this.el);
+  var onInput = function () {
+    this$1.flags.dirty = true;
+    this$1.flags.pristine = false;
+    if (this$1.classes) {
+      toggleClass(this$1.el, this$1.classNames.pristine, false);
+      toggleClass(this$1.el, this$1.classNames.dirty, true);
     }
 
-    return this.el.type === 'checkbox';
-  }
+    // only needed once.
+    this$1.unwatch(/^class_input$/);
+  };
 
-  /**
-   * Determines if the instance matches the options provided.
-   * @param {Object} options The matching options.
-   */
-  matches (options) {
-    if (options.id) {
-      return this.id === options.id;
-    }
-
-    if (options.name === undefined && options.scope === undefined) {
-      return true;
-    }
-
-    if (options.scope === undefined) {
-      return this.name === options.name;
-    }
-
-    if (options.name === undefined) {
-      return this.scope === options.scope;
-    }
-
-    return options.name === this.name && options.scope === this.scope;
-  }
-
-  /**
-   *
-   * @param {Object} options
-   */
-  update (options) {
-    this.targetOf = options.targetOf || null;
-    this.initial = options.initial || this.initial || false;
-
-    // update errors scope if the field scope was changed.
-    if (options.scope && options.scope !== this.scope && this.validator.errors && isCallable(this.validator.errors.update)) {
-      this.validator.errors.update(this.id, { scope: options.scope });
-    }
-    this.scope = options.scope || this.scope || null;
-    this.name = options.name || this.name || null;
-    this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
-    this.model = options.model || this.model;
-    this.listen = options.listen !== undefined ? options.listen : this.listen;
-    this.classes = options.classes || this.classes || false;
-    this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
-    this.alias = options.alias || this.alias;
-    this.getter = isCallable(options.getter) ? options.getter : this.getter;
-    this.delay = options.delay || this.delay || 0;
-    this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
-    this.updateDependencies();
-    this.addActionListeners();
-
-    // update required flag flags
-    if (options.rules !== undefined) {
-      this.flags.required = this.isRequired;
-    }
-
-    // validate if it was validated before and field was updated and there was a rules mutation.
-    if (this.flags.validated && options.rules !== undefined && this.updated) {
-      this.validator.validate(`#${this.id}`);
-    }
-
-    this.updated = true;
-
-    // no need to continue.
-    if (this.isHeadless) {
-      return;
-    }
-
-    this.updateClasses();
-    this.addValueListeners();
-    this.updateAriaAttrs();
-  }
-
-  /**
-   * Resets field flags and errors.
-   */
-  reset () {
-    Object.keys(this.flags).forEach(flag => {
-      this.flags[flag] = DEFAULT_FLAGS[flag];
-    });
-
-    this.addActionListeners();
-    this.updateClasses();
-    if (this.validator.errors && isCallable(this.validator.errors.removeById)) {
-      this.validator.errors.removeById(this.id);
-    }
-  }
-
-  /**
-   * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
-   * @param {Object} flags 
-   */
-  setFlags (flags) {
-    const negated = {
-      pristine: 'dirty',
-      dirty: 'pristine',
-      valid: 'invalid',
-      invalid: 'valid',
-      touched: 'untouched',
-      untouched: 'touched'
-    };
-
-    Object.keys(flags).forEach(flag => {
-      this.flags[flag] = flags[flag];
-      // if it has a negation and was not specified, set it as well.
-      if (negated[flag] && flags[negated[flag]] === undefined) {
-        this.flags[negated[flag]] = !flags[flag];
-      }
-    });
-
-    if (
-      flags.untouched !== undefined ||
-      flags.touched !== undefined ||
-      flags.dirty !== undefined ||
-      flags.pristine !== undefined
-    ) {
-      this.addActionListeners();
-    }
-    this.updateClasses();
-    this.updateAriaAttrs();
-    this.updateCustomValidity();
-  }
-
-  /**
-   * Determines if the field requires references to target fields.
-  */
-  updateDependencies () {
-    // reset dependencies.
-    this.dependencies.forEach(d => d.field.destroy());
-    this.dependencies = [];
-
-    // we get the selectors for each field.
-    const fields = Object.keys(this.rules).reduce((prev, r) => {
-      if (r === 'confirmed') {
-        prev.push({ selector: this.rules[r][0] || `${this.name}_confirmation`, name: r });
-      } else if (/after|before/.test(r)) {
-        prev.push({ selector: this.rules[r][0], name: r });
-      }
-
-      return prev;
-    }, []);
-
-    if (!fields.length || !this.vm || !this.vm.$el) return;
-
-    // must be contained within the same component, so we use the vm root element constrain our dom search.
-    fields.forEach(({ selector, name }) => {
-      let el = null;
-      // vue ref selector.
-      if (selector[0] === '$') {
-        el = this.vm.$refs[selector.slice(1)];
-      } else {
-        try {
-          // try query selector
-          el = this.vm.$el.querySelector(selector);
-        } catch (err) {
-          el = null;
-        }
-      }
-
-      if (!el) {
-        el = this.vm.$el.querySelector(`input[name="${selector}"]`);
-      }
-
-      if (!el) {
-        return;
-      }
-
-      const options = {
-        vm: this.vm,
-        classes: this.classes,
-        classNames: this.classNames,
-        delay: this.delay,
-        scope: this.scope,
-        events: this.events.join('|'),
-        initial: this.initial,
-        targetOf: this.id
-      };
-
-      // probably a component.
-      if (isCallable(el.$watch)) {
-        options.component = el;
-        options.el = el.$el;
-        options.getter = Generator.resolveGetter(el.$el, { child: el });
-      } else {
-        options.el = el;
-        options.getter = Generator.resolveGetter(el, {});
-      }
-
-      this.dependencies.push({ name, field: new Field(options.el, options) });
-    });
-  }
-
-  /**
-   * Removes listeners.
-   * @param {RegExp} tag
-   */
-  unwatch (tag = null) {
-    if (!tag) {
-      this.watchers.forEach(w => w.unwatch());
-      this.watchers = [];
-      return;
-    }
-    this.watchers.filter(w => tag.test(w.tag)).forEach(w => w.unwatch());
-    this.watchers = this.watchers.filter(w => !tag.test(w.tag));
-  }
-
-  /**
-   * Updates the element classes depending on each field flag status.
-   */
-  updateClasses () {
-    if (!this.classes) return;
-
-    toggleClass(this.el, this.classNames.dirty, this.flags.dirty);
-    toggleClass(this.el, this.classNames.pristine, this.flags.pristine);
-    toggleClass(this.el, this.classNames.valid, !!this.flags.valid);
-    toggleClass(this.el, this.classNames.invalid, !!this.flags.invalid);
-    toggleClass(this.el, this.classNames.touched, this.flags.touched);
-    toggleClass(this.el, this.classNames.untouched, this.flags.untouched);
-  }
-
-  /**
-   * Adds the listeners required for automatic classes and some flags.
-   */
-  addActionListeners () {
-    // remove previous listeners.
-    this.unwatch(/class/);
-
-    const onBlur = () => {
-      this.flags.touched = true;
-      this.flags.untouched = false;
-      if (this.classes) {
-        toggleClass(this.el, this.classNames.touched, true);
-        toggleClass(this.el, this.classNames.untouched, false);
-      }
-
-      // only needed once.
-      this.unwatch(/^class_blur$/);
-    };
-
-    const inputEvent = getInputEventName(this.el);
-    const onInput = () => {
-      this.flags.dirty = true;
-      this.flags.pristine = false;
-      if (this.classes) {
-        toggleClass(this.el, this.classNames.pristine, false);
-        toggleClass(this.el, this.classNames.dirty, true);
-      }
-
-      // only needed once.
-      this.unwatch(/^class_input$/);
-    };
-
-    if (this.isVue && isCallable(this.component.$once)) {
-      this.component.$once('input', onInput);
-      this.component.$once('blur', onBlur);
-      this.watchers.push({
-        tag: 'class_input',
-        unwatch: () => {
-          this.component.$off('input', onInput);
-        }
-      });
-      this.watchers.push({
-        tag: 'class_blur',
-        unwatch: () => {
-          this.component.$off('blur', onBlur);
-        }
-      });
-      return;
-    }
-
-    if (this.isHeadless) return;
-
-    this.el.addEventListener(inputEvent, onInput);
-    // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
-    const blurEvent = ['radio', 'checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'click';
-    this.el.addEventListener(blurEvent, onBlur);
+  if (this.isVue && isCallable(this.component.$once)) {
+    this.component.$once('input', onInput);
+    this.component.$once('blur', onBlur);
     this.watchers.push({
       tag: 'class_input',
-      unwatch: () => {
-        this.el.removeEventListener(inputEvent, onInput);
+      unwatch: function () {
+        this$1.component.$off('input', onInput);
       }
     });
-
     this.watchers.push({
       tag: 'class_blur',
-      unwatch: () => {
-        this.el.removeEventListener(blurEvent, onBlur);
+      unwatch: function () {
+        this$1.component.$off('blur', onBlur);
       }
     });
+    return;
   }
 
-  /**
-   * Adds the listeners required for validation.
-   */
-  addValueListeners () {
-    this.unwatch(/^input_.+/);
-    if (!this.listen) return;
+  if (this.isHeadless) { return; }
 
-    let fn = null;
-    if (this.targetOf) {
-      fn = () => {
-        this.validator.validate(`#${this.targetOf}`);
-      };
-    } else {
-      fn = (...args) => {
-        if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event)) {
-          args[0] = this.value;
-        }
-        this.validator.validate(`#${this.id}`, args[0]);
-      };
+  this.el.addEventListener(inputEvent, onInput);
+  // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
+  var blurEvent = ['radio', 'checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'click';
+  this.el.addEventListener(blurEvent, onBlur);
+  this.watchers.push({
+    tag: 'class_input',
+    unwatch: function () {
+      this$1.el.removeEventListener(inputEvent, onInput);
     }
-    const validate = debounce(fn, this.delay);
+  });
 
-    const inputEvent = getInputEventName(this.el);
-    // replace input event with suitable one.
-    let events = this.events.map(e => {
-      return e === 'input' ? inputEvent : e;
+  this.watchers.push({
+    tag: 'class_blur',
+    unwatch: function () {
+      this$1.el.removeEventListener(blurEvent, onBlur);
+    }
+  });
+};
+
+/**
+ * Adds the listeners required for validation.
+ */
+Field.prototype.addValueListeners = function addValueListeners () {
+    var this$1 = this;
+
+  this.unwatch(/^input_.+/);
+  if (!this.listen) { return; }
+
+  var fn = this.targetOf ? function () {
+    this$1.validator.validate(("#" + (this$1.targetOf)));
+  } : function () {
+    this$1.validator.validate(("#" + (this$1.id)));
+  };
+
+  var validate = debounce(fn, this.delay);
+  var inputEvent = getInputEventName(this.el);
+  // replace input event with suitable one.
+  var events = this.events.map(function (e) {
+    return e === 'input' ? inputEvent : e;
+  });
+
+  // if there is a watchable model and an on input validation is requested.
+  if (this.model && events.indexOf(inputEvent) !== -1) {
+    var unwatch = this.vm.$watch(this.model, validate);
+    this.watchers.push({
+      tag: 'input_model',
+      unwatch: unwatch
     });
+    // filter out input event as it is already handled by the watcher API.
+    events = events.filter(function (e) { return e !== inputEvent; });
+  }
 
-    // if there is a watchable model and an on input validation is requested.
-    if (this.model && events.indexOf(inputEvent) !== -1) {
-      const unwatch = this.vm.$watch(this.model, validate);
-      this.watchers.push({
-        tag: 'input_model',
-        unwatch
+  // Add events.
+  events.forEach(function (e) {
+    if (this$1.isVue) {
+      this$1.component.$on(e, validate);
+      this$1.watchers.push({
+        tag: 'input_vue',
+        unwatch: function () {
+          this$1.component.$off(e, validate);
+        }
       });
-      // filter out input event as it is already handled by the watcher API.
-      events = events.filter(e => e !== inputEvent);
+      return;
     }
 
-    // Add events.
-    events.forEach(e => {
-      if (this.isVue) {
-        this.component.$on(e, validate);
-        this.watchers.push({
-          tag: 'input_vue',
-          unwatch: () => {
-            this.component.$off(e, validate);
+    if (~['radio', 'checkbox'].indexOf(this$1.el.type)) {
+      var els = document.querySelectorAll(("input[name=\"" + (this$1.el.name) + "\"]"));
+      toArray(els).forEach(function (el) {
+        el.addEventListener(e, validate);
+        this$1.watchers.push({
+          tag: 'input_native',
+          unwatch: function () {
+            el.removeEventListener(e, validate);
           }
         });
-        return;
-      }
-
-      if (~['radio', 'checkbox'].indexOf(this.el.type)) {
-        const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
-        toArray(els).forEach(el => {
-          el.addEventListener(e, validate);
-          this.watchers.push({
-            tag: 'input_native',
-            unwatch: () => {
-              el.removeEventListener(e, validate);
-            }
-          });
-        });
-
-        return;
-      }
-
-      this.el.addEventListener(e, validate);
-      this.watchers.push({
-        tag: 'input_native',
-        unwatch: () => {
-          this.el.removeEventListener(e, validate);
-        }
       });
+
+      return;
+    }
+
+    this$1.el.addEventListener(e, validate);
+    this$1.watchers.push({
+      tag: 'input_native',
+      unwatch: function () {
+        this$1.el.removeEventListener(e, validate);
+      }
     });
-  }
-
-  /**
-   * Updates aria attributes on the element.
-   */
-  updateAriaAttrs () {
-    if (!this.aria || this.isHeadless || !isCallable(this.el.setAttribute)) return;
-
-    this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
-    this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
-  }
-
-  /**
-   * Updates the custom validity for the field.
-   */
-  updateCustomValidity () {
-    if (!this.validity || this.isHeadless || !isCallable(this.el.setCustomValidity)) return;
-
-    this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
-  }
-
-  /**
-   * Removes all listeners.
-   */
-  destroy () {
-    this.watchers.forEach(w => w.unwatch());
-    this.watchers = [];
-    this.dependencies.forEach(d => d.field.destroy());
-    this.dependencies = [];
-  }
-}
-
-class FieldBag {
-  constructor () {
-    this.items = [];
-  }
-
-  /**
-   * @return {Number} The current collection length.
-   */
-  get length () {
-    return this.items.length;
-  }
-
-  /**
-   * Finds the first field that matches the provided matcher object.
-   * @param {Object} matcher
-   * @return {Field|undefined} The first matching item.
-   */
-  find (matcher) {
-    return find(this.items, item => item.matches(matcher));
-  }
-
-  /**
-   * @param {Object|Array} matcher
-   * @return {Array} Array of matching field items.
-   */
-  filter (matcher) {
-    // multiple matchers to be tried.
-    if (Array.isArray(matcher)) {
-      return this.items.filter(item => matcher.some(m => item.matches(m)));
-    }
-
-    return this.items.filter(item => item.matches(matcher));
-  }
-
-  /**
-   * Maps the field items using the mapping function.
-   *
-   * @param {Function} mapper
-   */
-  map (mapper) {
-    return this.items.map(mapper);
-  }
-
-  /**
-   * Finds and removes the first field that matches the provided matcher object, returns the removed item.
-   * @param {Object|Field} matcher
-   * @return {Field|null}
-   */
-  remove (matcher) {
-    let item = null;
-    if (matcher instanceof Field) {
-      item = matcher;
-    } else {
-      item = this.find(matcher);
-    }
-
-    if (!item) return null;
-
-    const index = this.items.indexOf(item);
-    this.items.splice(index, 1);
-
-    return item;
-  }
-
-  /**
-   * Adds a field item to the list.
-   *
-   * @param {Field} item
-   */
-  push (item) {
-    if (! (item instanceof Field)) {
-      throw createError('FieldBag only accepts instances of Field that has an id defined.');
-    }
-
-    if (!item.id) {
-      throw createError('Field id must be defined.');
-    }
-
-    if (this.find({ id: item.id })) {
-      throw createError(`Field with id ${item.id} is already added.`);
-    }
-
-    this.items.push(item);
-  }
-}
-
-var after = (moment) => (value, [other, inclusion, format]) => {
-  if (typeof format === 'undefined') {
-    format = inclusion;
-    inclusion = false;
-  }
-
-  const dateValue = moment(value, format, true);
-  const otherValue = moment(other, format, true);
-
-  // if either is not valid.
-  if (! dateValue.isValid() || ! otherValue.isValid()) {
-    return false;
-  }
-
-  return dateValue.isAfter(otherValue) || (inclusion && dateValue.isSame(otherValue));
+  });
 };
 
-var before = (moment) => (value, [other, inclusion, format]) => {
-  if (typeof format === 'undefined') {
-    format = inclusion;
-    inclusion = false;
-  }
-  const dateValue = moment(value, format, true);
-  const otherValue = moment(other, format, true);
+/**
+ * Updates aria attributes on the element.
+ */
+Field.prototype.updateAriaAttrs = function updateAriaAttrs () {
+  if (!this.aria || this.isHeadless || !isCallable(this.el.setAttribute)) { return; }
 
-  // if either is not valid.
-  if (! dateValue.isValid() || ! otherValue.isValid()) {
-    return false;
-  }
-
-  return dateValue.isBefore(otherValue) || (inclusion && dateValue.isSame(otherValue));
+  this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
+  this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
 };
 
-var date_format = (moment) => (value, [format]) => moment(value, format, true).isValid();
+/**
+ * Updates the custom validity for the field.
+ */
+Field.prototype.updateCustomValidity = function updateCustomValidity () {
+  if (!this.validity || this.isHeadless || !isCallable(this.el.setCustomValidity)) { return; }
 
-var date_between = (moment) => (value, params) => {
-  let min;
-  let max;
-  let format;
-  let inclusivity = '()';
+  this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
+};
 
-  if (params.length > 3) {
-    [min, max, inclusivity, format] = params;
+/**
+ * Removes all listeners.
+ */
+Field.prototype.destroy = function destroy () {
+  this.watchers.forEach(function (w) { return w.unwatch(); });
+  this.watchers = [];
+  this.dependencies.forEach(function (d) { return d.field.destroy(); });
+  this.dependencies = [];
+};
+
+Object.defineProperties( Field.prototype, prototypeAccessors$1 );
+
+var FieldBag = function FieldBag () {
+  this.items = [];
+};
+
+var prototypeAccessors$2 = { length: {} };
+
+/**
+ * @return {Number} The current collection length.
+ */
+prototypeAccessors$2.length.get = function () {
+  return this.items.length;
+};
+
+/**
+ * Finds the first field that matches the provided matcher object.
+ * @param {Object} matcher
+ * @return {Field|undefined} The first matching item.
+ */
+FieldBag.prototype.find = function find$1 (matcher) {
+  return find(this.items, function (item) { return item.matches(matcher); });
+};
+
+/**
+ * @param {Object|Array} matcher
+ * @return {Array} Array of matching field items.
+ */
+FieldBag.prototype.filter = function filter (matcher) {
+  // multiple matchers to be tried.
+  if (Array.isArray(matcher)) {
+    return this.items.filter(function (item) { return matcher.some(function (m) { return item.matches(m); }); });
+  }
+
+  return this.items.filter(function (item) { return item.matches(matcher); });
+};
+
+/**
+ * Maps the field items using the mapping function.
+ *
+ * @param {Function} mapper
+ */
+FieldBag.prototype.map = function map (mapper) {
+  return this.items.map(mapper);
+};
+
+/**
+ * Finds and removes the first field that matches the provided matcher object, returns the removed item.
+ * @param {Object|Field} matcher
+ * @return {Field|null}
+ */
+FieldBag.prototype.remove = function remove (matcher) {
+  var item = null;
+  if (matcher instanceof Field) {
+    item = matcher;
   } else {
-    [min, max, format] = params;
+    item = this.find(matcher);
   }
 
-  const minDate = moment(min, format, true);
-  const maxDate = moment(max, format, true);
-  const dateVal = moment(value, format, true);
+  if (!item) { return null; }
 
-  if (! (minDate.isValid() && maxDate.isValid() && dateVal.isValid())) {
-    return false;
+  var index = this.items.indexOf(item);
+  this.items.splice(index, 1);
+
+  return item;
+};
+
+/**
+ * Adds a field item to the list.
+ *
+ * @param {Field} item
+ */
+FieldBag.prototype.push = function push (item) {
+  if (! (item instanceof Field)) {
+    throw createError('FieldBag only accepts instances of Field that has an id defined.');
   }
 
-  return dateVal.isBetween(minDate, maxDate, 'days', inclusivity);
+  if (!item.id) {
+    throw createError('Field id must be defined.');
+  }
+
+  if (this.find({ id: item.id })) {
+    throw createError(("Field with id " + (item.id) + " is already added."));
+  }
+
+  this.items.push(item);
 };
 
-var messages$1 = {
-  after: (field, [target, inclusion]) => `The ${field} must be after ${inclusion ? 'or equal to ' : ''}${target}.`,
-  before: (field, [target, inclusion]) => `The ${field} must be before ${inclusion ? 'or equal to ' : ''}${target}.`,
-  date_between: (field, [min, max]) => `The ${field} must be between ${min} and ${max}.`,
-  date_format: (field, [format]) => `The ${field} must be in the format ${format}.`
-};
+Object.defineProperties( FieldBag.prototype, prototypeAccessors$2 );
 
-const installDate = ({ Validator }, { moment }) => {
-  if (installDate.installed) return;
-
-  Validator.extend('after', after(moment));
-  Validator.extend('before', before(moment));
-  Validator.extend('date_format', date_format(moment));
-  Validator.extend('date_between', date_between(moment));
-  Validator.updateDictionary({ en: { messages: messages$1 } });
-  installDate.installed = true;
-};
-
-installDate.installed = false;
-
-let LOCALE = 'en';
-let STRICT_MODE = true;
-const DICTIONARY = new Dictionary({
+var LOCALE = 'en';
+var STRICT_MODE = true;
+var DICTIONARY = new Dictionary({
   en: {
-    messages,
+    messages: messages,
     attributes: {},
     custom: {}
   }
 });
 
-class Validator {
-  constructor (validations, options = { vm: null, fastExit: true }) {
-    this.strict = STRICT_MODE;
-    this.errors = new ErrorBag();
-    this.fields = new FieldBag();
-    this.fieldBag = {};
-    this._createFields(validations);
-    this.paused = false;
-    this.fastExit = options.fastExit || false;
-    this.ownerId = options.vm && options.vm._uid;
-    // create it statically since we don't need constant access to the vm.
-    this.reset = options.vm && isCallable(options.vm.$nextTick) ? () => {
-      options.vm.$nextTick(() => {
-        this.fields.items.forEach(i => i.reset());
-        this.errors.clear();
-      });
-    } : () => {
-      this.fields.items.forEach(i => i.reset());
-      this.errors.clear();
-    };
-    /* istanbul ignore next */
-    this.clean = () => {
-      warn('validator.clean is marked for deprecation, please use validator.reset instead.');
-      this.reset();
-    };
+var Validator = function Validator (validations, options) {
+  var this$1 = this;
+  if ( options === void 0 ) options = { vm: null, fastExit: true };
 
-    // if momentjs is present, install the validators.
-    if (typeof moment === 'function') {
-      // eslint-disable-next-line
-      this.installDateTimeValidators(moment);
-    }
-  }
-
-  /**
-   * @return {Dictionary}
-   */
-  get dictionary () {
-    return DICTIONARY;
-  }
-
-  /**
-   * @return {Dictionary}
-   */
-  static get dictionary () {
-    return DICTIONARY;
-  }
-
-  /**
-   * @return {String}
-   */
-  get locale () {
-    return LOCALE;
-  }
-
-  /**
-   * @param {String} value
-   */
-  set locale (value) {
-    Validator.locale = value;
-  }
-
-  /**
-  * @return {String}
-  */
-  static get locale () {
-    return LOCALE;
-  }
-
-  /**
-   * @param {String} value
-   */
-  static set locale (value) {
-    /* istanbul ignore if */
-    if (!DICTIONARY.hasLocale(value)) {
-      // eslint-disable-next-line
-      warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
-    }
-
-    LOCALE = value;
-  }
-
-  /**
-   * @return {Object}
-   */
-  get rules () {
-    return Rules;
-  }
-
-  /**
-   * @return {Object}
-   */
-  static get rules () {
-    return Rules;
-  }
-
-  /**
-   * Static constructor.
-   *
-   * @param  {object} validations The validations object.
-   * @return {Validator} validator A validator object.
-   */
-  static create (validations, options) {
-    return new Validator(validations, options);
-  }
-
-  /**
-   * Adds a custom validator to the list of validation rules.
-   *
-   * @param  {string} name The name of the validator.
-   * @param  {object|function} validator The validator object/function.
-   */
-  static extend (name, validator) {
-    Validator._guardExtend(name, validator);
-    Validator._merge(name, validator);
-  }
-
-  /**
-   * Installs the datetime validators and the messages.
-   */
-  static installDateTimeValidators (moment) {
-    if (typeof moment !== 'function') {
-      warn('To use the date-time validators you must provide moment reference.');
-      return false;
-    }
-
-    installDate({ Validator }, { moment });
-
-    return true;
-  }
-
-  /**
-   * Removes a rule from the list of validators.
-   * @param {String} name The name of the validator/rule.
-   */
-  static remove (name) {
-    delete Rules[name];
-  }
-
-  /**
-   * Sets the default locale for all validators.
-   * @deprecated
-   * @param {String} language The locale id.
-   */
-  static setLocale (language = 'en') {
-    Validator.locale = language;
-  }
-
-  /**
-   * Sets the operating mode for all newly created validators.
-   * strictMode = true: Values without a rule are invalid and cause failure.
-   * strictMode = false: Values without a rule are valid and are skipped.
-   * @param {Boolean} strictMode.
-   */
-  static setStrictMode (strictMode = true) {
-    STRICT_MODE = strictMode;
-  }
-
-  /**
-   * Updates the dicitionary, overwriting existing values and adding new ones.
-   * @deprecated
-   * @param  {object} data The dictionary object.
-   */
-  static updateDictionary (data) {
-    DICTIONARY.merge(data);
-  }
-
-  /**
-   * Adds a locale object to the dictionary.
-   * @deprecated
-   * @param {Object} locale 
-   */
-  static addLocale (locale) {
-    if (! locale.name) {
-      warn('Your locale must have a name property');
-      return;
-    }
-
-    this.updateDictionary({
-      [locale.name]: locale
+  this.strict = STRICT_MODE;
+  this.errors = new ErrorBag();
+  this.fields = new FieldBag();
+  this.flags = {};
+  this._createFields(validations);
+  this.paused = false;
+  this.fastExit = options.fastExit || false;
+  this.ownerId = options.vm && options.vm._uid;
+  // create it statically since we don't need constant access to the vm.
+  this.reset = options.vm && isCallable(options.vm.$nextTick) ? function () {
+    options.vm.$nextTick(function () {
+      this$1.fields.items.forEach(function (i) { return i.reset(); });
+      this$1.errors.clear();
     });
-  }
+  } : function () {
+    this$1.fields.items.forEach(function (i) { return i.reset(); });
+    this$1.errors.clear();
+  };
+  /* istanbul ignore next */
+  this.clean = function () {
+    warn('validator.clean is marked for deprecation, please use validator.reset instead.');
+    this$1.reset();
+  };
+};
 
-  /**
-   * Adds a locale object to the dictionary.
-   * @deprecated
-   * @param {Object} locale 
-   */
-  addLocale (locale) {
-    Validator.addLocale(locale);
-  }
+var prototypeAccessors = { dictionary: {},locale: {},rules: {} };
+var staticAccessors = { dictionary: {},locale: {},rules: {} };
 
-  /**
-   * Adds and sets the current locale for the validator.
-   *
-   * @param {String} lang
-   * @param {Object} dictionary
-   */
-  localize (lang, dictionary) {
-    Validator.localize(lang, dictionary);
-  }
-
-  /**
-   * Adds and sets the current locale for the validator.
-   * 
-   * @param {String} lang
-   * @param {Object} dictionary
-   */
-  static localize (lang, dictionary) {
-    // merge the dictionary.
-    if (dictionary) {
-      dictionary = assign({}, dictionary, { name: lang });
-      Validator.addLocale(dictionary);
-    }
-
-    // set the locale.
-    Validator.locale = lang;
-  }
-
-  /**
-   * Registers a field to be validated.
-   *
-   * @param  {Field|Object} name The field name.
-   * @return {Field}
-   */
-  attach (field) {
-    // deprecate: handle old signature.
-    if (arguments.length > 1) {
-      field = assign({}, {
-        name: arguments[0],
-        rules: arguments[1]
-      }, arguments[2] || { vm: { $validator: this } });
-    }
-
-    if (!(field instanceof Field)) {
-      field = new Field(field.el || null, field);
-    }
-
-    this.fields.push(field);
-
-    // validate the field initially
-    if (field.initial) {
-      this.validate(`#${field.id}`, field.value);
-    } else {
-      this._validate(field, field.value, true).then(valid => {
-        field.flags.valid = valid;
-        field.flags.invalid = !valid;
-      });
-    }
-
-    if (!field.scope) {
-      this.fieldBag = assign({}, this.fieldBag, { [`${field.name}`]: field.flags });
-      return field;
-    }
-
-    const scopeObj = assign({}, this.fieldBag[`$${field.scope}`] || {}, { [`${field.name}`]: field.flags });
-    this.fieldBag = assign({}, this.fieldBag, { [`$${field.scope}`]: scopeObj });
-
-    return field;
-  }
-
-  /**
-   * Sets the flags on a field.
-   *
-   * @param {String} name
-   * @param {Object} flags
-   */
-  flag (name, flags) {
-    const field = this._resolveField(name);
-    if (! field || !flags) {
-      return;
-    }
-
-    field.setFlags(flags);
-  }
-
-  /**
-   * Removes a field from the validator.
-   *
-   * @param  {String} name The name of the field.
-   * @param {String} scope The name of the field scope.
-   */
-  detach (name, scope) {
-    let field = name instanceof Field ? name : this._resolveField(name, scope);
-    if (!field) return;
-
-    field.destroy();
-    this.errors.removeById(field.id);
-    this.fields.remove(field);
-    const flags = this.fieldBag;
-    if (field.scope) {
-      delete flags[`$${field.scope}`][field.name];
-    } else {
-      delete flags[field.name];
-    }
-    this.fieldBag = Object.assign({}, flags);
-  }
-
-  /**
-   * Adds a custom validator to the list of validation rules.
-   *
-   * @param  {string} name The name of the validator.
-   * @param  {object|function} validator The validator object/function.
-   */
-  extend (name, validator) {
-    Validator.extend(name, validator);
-  }
-
-  /**
-   * Just an alias to the static method for convienece.
-   */
-  installDateTimeValidators (moment) {
-    Validator.installDateTimeValidators(moment);
-  }
-
-  /**
-   * Removes a rule from the list of validators.
-   * @param {String} name The name of the validator/rule.
-   */
-  remove (name) {
-    Validator.remove(name);
-  }
-
-  /**
-   * Sets the validator current langauge.
-   *
-   * @param {string} language locale or language id.
-   */
-  setLocale (language) {
-    this.locale = language;
-  }
-
-  /**
-   * Updates the messages dicitionary, overwriting existing values and adding new ones.
-   * @deprecated
-   * @param  {object} data The messages object.
-   */
-  updateDictionary (data) {
-    Validator.updateDictionary(data);
-  }
-
-  /**
-   * Validates a value against a registered field validations.
-   *
-   * @param  {string} name the field name.
-   * @param  {*} value The value to be validated.
-   * @param {String} scope The scope of the field.
-   * @return {Promise}
-   */
-  validate (name, value, scope = null) {
-    if (this.paused) return Promise.resolve(true);
-
-    // overload to validate all.
-    if (arguments.length === 0) {
-      return this.validateScopes();
-    }
-
-    // overload to validate scopeless fields.
-    if (arguments.length === 1 && arguments[0] === '*') {
-      return this.validateAll();
-    }
-
-    // overload to validate a scope.
-    if (arguments.length === 1 && typeof arguments[0] === 'string' && /^(.+)\.\*$/.test(arguments[0])) {
-      const matched = arguments[0].match(/^(.+)\.\*$/)[1];
-      return this.validateAll(matched);
-    }
-
-    const field = this._resolveField(name, scope);
-    if (!field) {
-      return this._handleFieldNotFound(name, scope);
-    }
-    this.errors.removeById(field.id);
-
-    field.flags.pending = true;
-    if (arguments.length === 1) {
-      value = field.value;
-    }
-
-    return this._validate(field, value).then(result => {
-      field.setFlags({
-        pending: false,
-        valid: result,
-        validated: true
-      });
-
-      if (field.isDisabled) {
-        this.errors.removeById(field.id);
-        return Promise.resolve(true);
-      }
-
-      return result;
-    });
-  }
-
-  /**
-   * Pauses the validator.
-   *
-   * @return {Validator}
-   */
-  pause () {
-    this.paused = true;
-
-    return this;
-  }
-
-  /**
-   * Resumes the validator.
-   *
-   * @return {Validator}
-   */
-  resume () {
-    this.paused = false;
-
-    return this;
-  }
-
-  /**
-   * Validates each value against the corresponding field validations.
-   * @param  {Object|String} values The values to be validated.
-   * @return {Promise} Returns a promise with the validation result.
-   */
-  validateAll (values) {
-    if (this.paused) return Promise.resolve(true);
-
-    let matcher = null;
-    let providedValues = false;
-
-    if (typeof values === 'string') {
-      matcher = { scope: values };
-    } else if (isObject(values)) {
-      matcher = Object.keys(values).map(key => {
-        return { name: key, scope: arguments[1] || null };
-      });
-      providedValues = true;
-    } else if (arguments.length === 0) {
-      matcher = { scope: null }; // global scope.
-    }
-
-    const promises = this.fields.filter(matcher).map(field => this.validate(
-      `#${field.id}`,
-      providedValues ? values[field.name] : field.value
-    ));
-
-    return Promise.all(promises).then(results => results.every(t => t));
-  }
-
-  /**
-   * Validates all scopes.
-   *
-   * @returns {Promise} All promises resulted from each scope.
-   */
-  validateScopes () {
-    if (this.paused) return Promise.resolve(true);
-
-    const promises = this.fields.map(field => this.validate(
-      `#${field.id}`,
-      field.value
-    ));
-
-    return Promise.all(promises).then(results => results.every(t => t));
-  }
-
-  /**
- * Creates the fields to be validated.
- *
- * @param  {object} validations
- * @return {object} Normalized object.
+/**
+ * @return {Dictionary}
  */
-  _createFields (validations) {
-    if (!validations) return;
+prototypeAccessors.dictionary.get = function () {
+  return DICTIONARY;
+};
 
-    Object.keys(validations).forEach(field => {
-      const options = assign({}, { name: field, rules: validations[field] });
-      this.attach(options);
+/**
+ * @return {Dictionary}
+ */
+staticAccessors.dictionary.get = function () {
+  return DICTIONARY;
+};
+
+/**
+ * @return {String}
+ */
+prototypeAccessors.locale.get = function () {
+  return LOCALE;
+};
+
+/**
+ * @param {String} value
+ */
+prototypeAccessors.locale.set = function (value) {
+  Validator.locale = value;
+};
+
+/**
+* @return {String}
+*/
+staticAccessors.locale.get = function () {
+  return LOCALE;
+};
+
+/**
+ * @param {String} value
+ */
+staticAccessors.locale.set = function (value) {
+  /* istanbul ignore if */
+  if (!DICTIONARY.hasLocale(value)) {
+    // eslint-disable-next-line
+    warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+  }
+
+  LOCALE = value;
+};
+
+/**
+ * @return {Object}
+ */
+prototypeAccessors.rules.get = function () {
+  return Rules;
+};
+
+/**
+ * @return {Object}
+ */
+staticAccessors.rules.get = function () {
+  return Rules;
+};
+
+/**
+ * Static constructor.
+ *
+ * @param{object} validations The validations object.
+ * @return {Validator} validator A validator object.
+ */
+Validator.create = function create (validations, options) {
+  return new Validator(validations, options);
+};
+
+/**
+ * Adds a custom validator to the list of validation rules.
+ *
+ * @param{string} name The name of the validator.
+ * @param{object|function} validator The validator object/function.
+ */
+Validator.extend = function extend (name, validator) {
+  Validator._guardExtend(name, validator);
+  Validator._merge(name, validator);
+};
+
+/**
+ * Removes a rule from the list of validators.
+ * @param {String} name The name of the validator/rule.
+ */
+Validator.remove = function remove (name) {
+  delete Rules[name];
+};
+
+/**
+ * Sets the default locale for all validators.
+ * @deprecated
+ * @param {String} language The locale id.
+ */
+Validator.setLocale = function setLocale (language) {
+    if ( language === void 0 ) language = 'en';
+
+  Validator.locale = language;
+};
+
+/**
+ * @deprecated
+ */
+Validator.installDateTimeValidators = function installDateTimeValidators () {
+  /* istanbul ignore next */
+  warn('Date validations are now installed by default, you no longer need to install it.');
+};
+
+/**
+ * @deprecated
+ */
+Validator.prototype.installDateTimeValidators = function installDateTimeValidators () {
+  /* istanbul ignore next */
+  warn('Date validations are now installed by default, you no longer need to install it.');
+};
+
+/**
+ * Sets the operating mode for all newly created validators.
+ * strictMode = true: Values without a rule are invalid and cause failure.
+ * strictMode = false: Values without a rule are valid and are skipped.
+ * @param {Boolean} strictMode.
+ */
+Validator.setStrictMode = function setStrictMode (strictMode) {
+    if ( strictMode === void 0 ) strictMode = true;
+
+  STRICT_MODE = strictMode;
+};
+
+/**
+ * Updates the dicitionary, overwriting existing values and adding new ones.
+ * @deprecated
+ * @param{object} data The dictionary object.
+ */
+Validator.updateDictionary = function updateDictionary (data) {
+  DICTIONARY.merge(data);
+};
+
+/**
+ * Adds a locale object to the dictionary.
+ * @deprecated
+ * @param {Object} locale 
+ */
+Validator.addLocale = function addLocale (locale) {
+  if (! locale.name) {
+    warn('Your locale must have a name property');
+    return;
+  }
+
+  this.updateDictionary(( obj = {}, obj[locale.name] = locale, obj ));
+    var obj;
+};
+
+/**
+ * Adds a locale object to the dictionary.
+ * @deprecated
+ * @param {Object} locale 
+ */
+Validator.prototype.addLocale = function addLocale (locale) {
+  Validator.addLocale(locale);
+};
+
+/**
+ * Adds and sets the current locale for the validator.
+ *
+ * @param {String} lang
+ * @param {Object} dictionary
+ */
+Validator.prototype.localize = function localize (lang, dictionary) {
+  Validator.localize(lang, dictionary);
+};
+
+/**
+ * Adds and sets the current locale for the validator.
+ * 
+ * @param {String} lang
+ * @param {Object} dictionary
+ */
+Validator.localize = function localize (lang, dictionary) {
+  // merge the dictionary.
+  if (dictionary) {
+    dictionary = assign({}, dictionary, { name: lang });
+    Validator.addLocale(dictionary);
+  }
+
+  // set the locale.
+  Validator.locale = lang;
+};
+
+/**
+ * Registers a field to be validated.
+ *
+ * @param{Field|Object} name The field name.
+ * @return {Field}
+ */
+Validator.prototype.attach = function attach (field) {
+  // deprecate: handle old signature.
+  if (arguments.length > 1) {
+    field = assign({}, {
+      name: arguments[0],
+      rules: arguments[1]
+    }, arguments[2] || { vm: { $validator: this } });
+  }
+
+  if (!(field instanceof Field)) {
+    field = new Field(field.el || null, field);
+  }
+
+  this.fields.push(field);
+
+  // validate the field initially
+  if (field.initial) {
+    this.validate(("#" + (field.id)), field.value);
+  } else {
+    this._validate(field, field.value, true).then(function (valid) {
+      field.flags.valid = valid;
+      field.flags.invalid = !valid;
     });
   }
 
-  /**
-   * Date rules need the existance of a format, so date_format must be supplied.
-   * @param {String} name The rule name.
-   * @param {Array} validations the field validations.
-   */
-  _getDateFormat (validations) {
-    let format = null;
-    if (validations.date_format && Array.isArray(validations.date_format)) {
-      format = validations.date_format[0];
-    }
+  this._addFlag(field, field.scope);
+  return field;
+};
 
-    return format || this.dictionary.getDateFormat(this.locale);
+/**
+ * Sets the flags on a field.
+ *
+ * @param {String} name
+ * @param {Object} flags
+ */
+Validator.prototype.flag = function flag (name, flags) {
+  var field = this._resolveField(name);
+  if (! field || !flags) {
+    return;
   }
 
-  /**
-   * Checks if the passed rule is a date rule.
-   */
-  _isADateRule (rule) {
-    return !! ~['after', 'before', 'date_between', 'date_format'].indexOf(rule);
+  field.setFlags(flags);
+};
+
+/**
+ * Removes a field from the validator.
+ *
+ * @param{String} name The name of the field.
+ * @param {String} scope The name of the field scope.
+ */
+Validator.prototype.detach = function detach (name, scope) {
+  var field = name instanceof Field ? name : this._resolveField(name, scope);
+  if (!field) { return; }
+
+  field.destroy();
+  this.errors.removeById(field.id);
+  this.fields.remove(field);
+  var flags = this.flags;
+  if (field.scope) {
+    delete flags[("$" + (field.scope))][field.name];
+  } else {
+    delete flags[field.name];
+  }
+  this.flags = assign({}, flags);
+};
+
+/**
+ * Adds a custom validator to the list of validation rules.
+ *
+ * @param{string} name The name of the validator.
+ * @param{object|function} validator The validator object/function.
+ */
+Validator.prototype.extend = function extend (name, validator) {
+  Validator.extend(name, validator);
+};
+
+/**
+ * Updates a field, updating both errors and flags.
+ *
+ * @param {String} id 
+ * @param {Object} diff 
+ */
+Validator.prototype.update = function update (id, ref) {
+    var scope = ref.scope;
+
+  var field = this._resolveField(("#" + id));
+  this.errors.update(id, { scope: scope });
+
+  // remove old scope.
+  if (field.scope) {
+    delete this.flags[("$" + (field.scope))][field.name];
+  } else {
+    delete this.flags[field.name];
   }
 
-  /**
-   * Formats an error message for field and a rule.
-   *
-   * @param  {Field} field The field object.
-   * @param  {object} rule Normalized rule object.
-   * @param {object} data Additional Information about the validation result.
-   * @return {string} Formatted error message.
-   */
-  _formatErrorMessage (field, rule, data = {}) {
-    const name = this._getFieldDisplayName(field);
-    const params = this._getLocalizedParams(rule);
-    // Defaults to english message.
-    if (!this.dictionary.hasLocale(LOCALE)) {
-      const msg = this.dictionary.getFieldMessage('en', field.name, rule.name);
+  this._addFlag(field, scope);
+};
 
-      return isCallable(msg) ? msg(name, params, data) : msg;
-    }
+/**
+ * Removes a rule from the list of validators.
+ * @param {String} name The name of the validator/rule.
+ */
+Validator.prototype.remove = function remove (name) {
+  Validator.remove(name);
+};
 
-    const msg = this.dictionary.getFieldMessage(LOCALE, field.name, rule.name);
+/**
+ * Sets the validator current langauge.
+ *
+ * @param {string} language locale or language id.
+ */
+Validator.prototype.setLocale = function setLocale (language) {
+  this.locale = language;
+};
 
-    return isCallable(msg) ? msg(name, params, data) : msg;
+/**
+ * Updates the messages dicitionary, overwriting existing values and adding new ones.
+ * @deprecated
+ * @param{object} data The messages object.
+ */
+Validator.prototype.updateDictionary = function updateDictionary (data) {
+  Validator.updateDictionary(data);
+};
+
+/**
+ * Validates a value against a registered field validations.
+ *
+ * @param{string} name the field name.
+ * @param{*} value The value to be validated.
+ * @param {String} scope The scope of the field.
+ * @return {Promise}
+ */
+Validator.prototype.validate = function validate (name, value, scope) {
+    var this$1 = this;
+    if ( scope === void 0 ) scope = null;
+
+  if (this.paused) { return Promise.resolve(true); }
+
+  // overload to validate all.
+  if (arguments.length === 0) {
+    return this.validateScopes();
   }
 
-  /**
-   * Translates the parameters passed to the rule (mainly for target fields).
-   */
-  _getLocalizedParams (rule) {
-    if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
-      if (rule.params.length > 1) {
-        return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]), rule.params[1]];
-      } else {
-        return [this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0])];
-      }
-    }
-
-    return rule.params;
+  // overload to validate scopeless fields.
+  if (arguments.length === 1 && arguments[0] === '*') {
+    return this.validateAll();
   }
 
-  /**
-   * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
-   * Then the dictionary, then fallsback to field name.
-   * @param {Field} field The field object.
-   * @return {String} The name to be used in the errors.
-   */
-  _getFieldDisplayName (field) {
-    return field.displayName || this.dictionary.getAttribute(LOCALE, field.name, field.name);
+  // overload to validate a scope.
+  if (arguments.length === 1 && typeof arguments[0] === 'string' && /^(.+)\.\*$/.test(arguments[0])) {
+    var matched = arguments[0].match(/^(.+)\.\*$/)[1];
+    return this.validateAll(matched);
   }
 
-  /**
-   * Tests a single input value against a rule.
-   *
-   * @param  {Field} field The field under validation.
-   * @param  {*} value  the value of the field.
-   * @param  {object} rule the rule object.
-   * @return {boolean} Whether it passes the check.
-   */
-  _test (field, value, rule, silent) {
-    const validator = Rules[rule.name];
-    let params = Array.isArray(rule.params) ? toArray(rule.params) : [];
-    if (!validator || typeof validator !== 'function') {
-      throw createError(`No such validator '${rule.name}' exists.`);
-    }
+  var field = this._resolveField(name, scope);
+  if (!field) {
+    return this._handleFieldNotFound(name, scope);
+  }
+  this.errors.removeById(field.id);
 
-    // has field depenencies
-    if (/(confirmed|after|before)/.test(rule.name)) {
-      const target = find(field.dependencies, d => d.name === rule.name);
-      if (target) {
-        if (params.length > 1) {
-          params = [target.field.value, params[1]];
-        } else {
-          params = [target.field.value];
-        }
-      }
-    } else if (rule.name === 'required' && field.rejectsFalse) {
-      // invalidate false if no args were specified and the field rejects false by default.
-      params = params.length ? params : [true];
-    }
-
-    if (installDate.installed && this._isADateRule(rule.name)) {
-      const dateFormat = this._getDateFormat(field.rules);
-      if (rule.name !== 'date_format') {
-        params.push(dateFormat);
-      }
-    }
-
-    let result = validator(value, params);
-
-    // If it is a promise.
-    if (isCallable(result.then)) {
-      return result.then(values => {
-        let allValid = true;
-        let data = {};
-        if (Array.isArray(values)) {
-          allValid = values.every(t => (isObject(t) ? t.valid : t));
-        } else { // Is a single object/boolean.
-          allValid = isObject(values) ? values.valid : values;
-          data = values.data;
-        }
-
-        if (!allValid && !silent) {
-          this.errors.add({
-            id: field.id,
-            field: field.name,
-            msg: this._formatErrorMessage(field, rule, data),
-            rule: rule.name,
-            scope: field.scope
-          });
-        }
-
-        return allValid;
-      });
-    }
-
-    if (!isObject(result)) {
-      result = { valid: result, data: {} };
-    }
-
-    if (!result.valid && !silent) {
-      this.errors.add({
-        id: field.id,
-        field: field.name,
-        msg: this._formatErrorMessage(field, rule, result.data),
-        rule: rule.name,
-        scope: field.scope
-      });
-    }
-
-    return result.valid;
+  field.flags.pending = true;
+  if (arguments.length === 1) {
+    value = field.value;
   }
 
-  /**
-   * Merges a validator object into the Rules and Messages.
-   *
-   * @param  {string} name The name of the validator.
-   * @param  {function|object} validator The validator object.
-   */
-  static _merge (name, validator) {
-    if (isCallable(validator)) {
-      Rules[name] = validator;
-      return;
-    }
+  return this._validate(field, value).then(function (result) {
+    field.setFlags({
+      pending: false,
+      valid: result,
+      validated: true
+    });
 
-    Rules[name] = validator.validate;
-    if (isCallable(validator.getMessage)) {
-      DICTIONARY.setMessage(LOCALE, name, validator.getMessage);
-    }
-
-    if (validator.messages) {
-      DICTIONARY.merge(
-        Object.keys(validator.messages).reduce((prev, curr) => {
-          const dict = prev;
-          dict[curr] = {
-            messages: {
-              [name]: validator.messages[curr]
-            }
-          };
-
-          return dict;
-        }, {})
-      );
-    }
-  }
-
-  /**
-   * Guards from extnsion violations.
-   *
-   * @param  {string} name name of the validation rule.
-   * @param  {object} validator a validation rule object.
-   */
-  static _guardExtend (name, validator) {
-    if (isCallable(validator)) {
-      return;
-    }
-
-    if (!isCallable(validator.validate)) {
-      throw createError(
-        // eslint-disable-next-line
-        `Extension Error: The validator '${name}' must be a function or have a 'validate' method.`
-      );
-    }
-
-    if (!isCallable(validator.getMessage) && !isObject(validator.messages)) {
-      throw createError(
-        // eslint-disable-next-line
-        `Extension Error: The validator '${name}' must have a 'getMessage' method or have a 'messages' object.`
-      );
-    }
-  }
-
-  /**
-   * Tries different strategies to find a field.
-   * @param {String} name
-   * @param {String} scope
-   * @return {Field}
-   */
-  _resolveField (name, scope) {
-    if (scope) {
-      return this.fields.find({ name, scope });
-    }
-
-    if (name[0] === '#') {
-      return this.fields.find({ id: name.slice(1) });
-    }
-
-    if (name.indexOf('.') > -1) {
-      const parts = name.split('.');
-      const field = this.fields.find({ name: parts[1], scope: parts[0] });
-      if (field) {
-        return field;
-      }
-    }
-
-    return this.fields.find({ name, scope: null });
-  }
-
-  /**
-   * Handles when a field is not found depending on the strict flag.
-   *
-   * @param {String} name
-   * @param {String} scope
-   */
-  _handleFieldNotFound (name, scope) {
-    if (!this.strict) return Promise.resolve(true);
-
-    const fullName = scope ? name : `${scope ? scope + '.' : ''}${name}`;
-    throw createError(
-      `Validating a non-existant field: "${fullName}". Use "attach()" first.`
-    );
-  }
-
-  /**
-   * Starts the validation process.
-   *
-   * @param {Field} field
-   * @param {Promise} value
-   * @param {Boolean} silent
-   */
-  _validate (field, value, silent = false) {
-    if (!field.isRequired && ~[null, undefined, ''].indexOf(value)) {
+    if (field.isDisabled) {
+      this$1.errors.removeById(field.id);
       return Promise.resolve(true);
     }
 
-    const promises = [];
-    let isExitEarly = false;
-    // use of '.some()' is to break iteration in middle by returning true
-    Object.keys(field.rules).some(rule => {
-      const result = this._test(field, value, { name: rule, params: field.rules[rule] }, silent);
+    return result;
+  });
+};
 
-      if (isCallable(result.then)) {
-        promises.push(result);
-      } else if (this.fastExit && !result) {
-        isExitEarly = true;
-      } else {
-        const resultAsPromise = new Promise(resolve => {
-          resolve(result);
-        });
-        promises.push(resultAsPromise);
+/**
+ * Pauses the validator.
+ *
+ * @return {Validator}
+ */
+Validator.prototype.pause = function pause () {
+  this.paused = true;
+
+  return this;
+};
+
+/**
+ * Resumes the validator.
+ *
+ * @return {Validator}
+ */
+Validator.prototype.resume = function resume () {
+  this.paused = false;
+
+  return this;
+};
+
+/**
+ * Validates each value against the corresponding field validations.
+ * @param{Object|String} values The values to be validated.
+ * @return {Promise} Returns a promise with the validation result.
+ */
+Validator.prototype.validateAll = function validateAll (values) {
+    var arguments$1 = arguments;
+    var this$1 = this;
+
+  if (this.paused) { return Promise.resolve(true); }
+
+  var matcher = null;
+  var providedValues = false;
+
+  if (typeof values === 'string') {
+    matcher = { scope: values };
+  } else if (isObject(values)) {
+    matcher = Object.keys(values).map(function (key) {
+      return { name: key, scope: arguments$1[1] || null };
+    });
+    providedValues = true;
+  } else if (arguments.length === 0) {
+    matcher = { scope: null }; // global scope.
+  }
+
+  var promises = this.fields.filter(matcher).map(function (field) { return this$1.validate(
+    ("#" + (field.id)),
+    providedValues ? values[field.name] : field.value
+  ); });
+
+  return Promise.all(promises).then(function (results) { return results.every(function (t) { return t; }); });
+};
+
+/**
+ * Validates all scopes.
+ *
+ * @returns {Promise} All promises resulted from each scope.
+ */
+Validator.prototype.validateScopes = function validateScopes () {
+    var this$1 = this;
+
+  if (this.paused) { return Promise.resolve(true); }
+
+  var promises = this.fields.map(function (field) { return this$1.validate(
+    ("#" + (field.id)),
+    field.value
+  ); });
+
+  return Promise.all(promises).then(function (results) { return results.every(function (t) { return t; }); });
+};
+
+/**
+ * Creates the fields to be validated.
+ *
+ * @param{object} validations
+ * @return {object} Normalized object.
+ */
+Validator.prototype._createFields = function _createFields (validations) {
+    var this$1 = this;
+
+  if (!validations) { return; }
+
+  Object.keys(validations).forEach(function (field) {
+    var options = assign({}, { name: field, rules: validations[field] });
+    this$1.attach(options);
+  });
+};
+
+/**
+ * Date rules need the existance of a format, so date_format must be supplied.
+ * @param {String} name The rule name.
+ * @param {Array} validations the field validations.
+ */
+Validator.prototype._getDateFormat = function _getDateFormat (validations) {
+  var format = null;
+  if (validations.date_format && Array.isArray(validations.date_format)) {
+    format = validations.date_format[0];
+  }
+
+  return format || this.dictionary.getDateFormat(this.locale);
+};
+
+/**
+ * Checks if the passed rule is a date rule.
+ */
+Validator.prototype._isADateRule = function _isADateRule (rule) {
+  return !! ~['after', 'before', 'date_between', 'date_format'].indexOf(rule);
+};
+
+/**
+ * Formats an error message for field and a rule.
+ *
+ * @param{Field} field The field object.
+ * @param{object} rule Normalized rule object.
+ * @param {object} data Additional Information about the validation result.
+ * @return {string} Formatted error message.
+ */
+Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, rule, data, targetName) {
+    if ( data === void 0 ) data = {};
+    if ( targetName === void 0 ) targetName = null;
+
+  var name = this._getFieldDisplayName(field);
+  var params = this._getLocalizedParams(rule, targetName);
+  // Defaults to english message.
+  if (!this.dictionary.hasLocale(LOCALE)) {
+    var msg$1 = this.dictionary.getFieldMessage('en', field.name, rule.name);
+
+    return isCallable(msg$1) ? msg$1(name, params, data) : msg$1;
+  }
+
+  var msg = this.dictionary.getFieldMessage(LOCALE, field.name, rule.name);
+
+  return isCallable(msg) ? msg(name, params, data) : msg;
+};
+
+/**
+ * Translates the parameters passed to the rule (mainly for target fields).
+ */
+Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule, targetName) {
+    if ( targetName === void 0 ) targetName = null;
+
+  if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
+    var localizedName = targetName || this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]);
+    return [localizedName].concat(rule.params.slice(1));
+  }
+
+  return rule.params;
+};
+
+/**
+ * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
+ * Then the dictionary, then fallsback to field name.
+ * @param {Field} field The field object.
+ * @return {String} The name to be used in the errors.
+ */
+Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field) {
+  return field.displayName || this.dictionary.getAttribute(LOCALE, field.name, field.name);
+};
+
+/**
+ * Adds a field flags to the flags collection.
+ * @param {Field} field 
+ * @param {String|null} scope 
+ */
+Validator.prototype._addFlag = function _addFlag (field, scope) {
+    if ( scope === void 0 ) scope = null;
+
+  if (!scope) {
+    this.flags = assign({}, this.flags, ( obj = {}, obj[("" + (field.name))] = field.flags, obj ));
+      var obj;
+    return;
+  }
+
+  var scopeObj = assign({}, this.flags[("$" + scope)] || {}, ( obj$1 = {}, obj$1[("" + (field.name))] = field.flags, obj$1 ));
+    var obj$1;
+  this.flags = assign({}, this.flags, ( obj$2 = {}, obj$2[("$" + scope)] = scopeObj, obj$2 ));
+    var obj$2;
+};
+
+/**
+ * Tests a single input value against a rule.
+ *
+ * @param{Field} field The field under validation.
+ * @param{*} valuethe value of the field.
+ * @param{object} rule the rule object.
+ * @return {boolean} Whether it passes the check.
+ */
+Validator.prototype._test = function _test (field, value, rule, silent) {
+    var this$1 = this;
+
+  var validator = Rules[rule.name];
+  var params = Array.isArray(rule.params) ? toArray(rule.params) : [];
+  var targetName = null;
+  if (!validator || typeof validator !== 'function') {
+    throw createError(("No such validator '" + (rule.name) + "' exists."));
+  }
+
+  // has field depenencies
+  if (/(confirmed|after|before)/.test(rule.name)) {
+    var target = find(field.dependencies, function (d) { return d.name === rule.name; });
+    if (target) {
+      targetName = target.field.displayName;
+      params = [target.field.value].concat(params.slice(1));
+    }
+  } else if (rule.name === 'required' && field.rejectsFalse) {
+    // invalidate false if no args were specified and the field rejects false by default.
+    params = params.length ? params : [true];
+  }
+
+  if (this._isADateRule(rule.name)) {
+    var dateFormat = this._getDateFormat(field.rules);
+    if (rule.name !== 'date_format') {
+      params.push(dateFormat);
+    }
+  }
+
+  var result = validator(value, params);
+
+  // If it is a promise.
+  if (isCallable(result.then)) {
+    return result.then(function (values) {
+      var allValid = true;
+      var data = {};
+      if (Array.isArray(values)) {
+        allValid = values.every(function (t) { return (isObject(t) ? t.valid : t); });
+      } else { // Is a single object/boolean.
+        allValid = isObject(values) ? values.valid : values;
+        data = values.data;
       }
 
-      return isExitEarly;
+      if (!allValid && !silent) {
+        this$1.errors.add({
+          id: field.id,
+          field: field.name,
+          msg: this$1._formatErrorMessage(field, rule, data, targetName),
+          rule: rule.name,
+          scope: field.scope
+        });
+      }
+
+      return allValid;
     });
-
-    if (isExitEarly) return Promise.resolve(false);
-
-    return Promise.all(promises).then(values => values.every(t => t));
   }
-}
+
+  if (!isObject(result)) {
+    result = { valid: result, data: {} };
+  }
+
+  if (!result.valid && !silent) {
+    this.errors.add({
+      id: field.id,
+      field: field.name,
+      msg: this._formatErrorMessage(field, rule, result.data, targetName),
+      rule: rule.name,
+      scope: field.scope
+    });
+  }
+
+  return result.valid;
+};
+
+/**
+ * Merges a validator object into the Rules and Messages.
+ *
+ * @param{string} name The name of the validator.
+ * @param{function|object} validator The validator object.
+ */
+Validator._merge = function _merge (name, validator) {
+  if (isCallable(validator)) {
+    Rules[name] = validator;
+    return;
+  }
+
+  Rules[name] = validator.validate;
+  if (isCallable(validator.getMessage)) {
+    DICTIONARY.setMessage(LOCALE, name, validator.getMessage);
+  }
+
+  if (validator.messages) {
+    DICTIONARY.merge(
+      Object.keys(validator.messages).reduce(function (prev, curr) {
+        var dict = prev;
+        dict[curr] = {
+          messages: ( obj = {}, obj[name] = validator.messages[curr], obj )
+        };
+          var obj;
+
+        return dict;
+      }, {})
+    );
+  }
+};
+
+/**
+ * Guards from extnsion violations.
+ *
+ * @param{string} name name of the validation rule.
+ * @param{object} validator a validation rule object.
+ */
+Validator._guardExtend = function _guardExtend (name, validator) {
+  if (isCallable(validator)) {
+    return;
+  }
+
+  if (!isCallable(validator.validate)) {
+    throw createError(
+      // eslint-disable-next-line
+      ("Extension Error: The validator '" + name + "' must be a function or have a 'validate' method.")
+    );
+  }
+
+  if (!isCallable(validator.getMessage) && !isObject(validator.messages)) {
+    throw createError(
+      // eslint-disable-next-line
+      ("Extension Error: The validator '" + name + "' must have a 'getMessage' method or have a 'messages' object.")
+    );
+  }
+};
+
+/**
+ * Tries different strategies to find a field.
+ * @param {String} name
+ * @param {String} scope
+ * @return {Field}
+ */
+Validator.prototype._resolveField = function _resolveField (name, scope) {
+  if (scope) {
+    return this.fields.find({ name: name, scope: scope });
+  }
+
+  if (name[0] === '#') {
+    return this.fields.find({ id: name.slice(1) });
+  }
+
+  if (name.indexOf('.') > -1) {
+    var parts = name.split('.');
+    var field = this.fields.find({ name: parts[1], scope: parts[0] });
+    if (field) {
+      return field;
+    }
+  }
+
+  return this.fields.find({ name: name, scope: null });
+};
+
+/**
+ * Handles when a field is not found depending on the strict flag.
+ *
+ * @param {String} name
+ * @param {String} scope
+ */
+Validator.prototype._handleFieldNotFound = function _handleFieldNotFound (name, scope) {
+  if (!this.strict) { return Promise.resolve(true); }
+
+  var fullName = scope ? name : ("" + (scope ? scope + '.' : '') + name);
+  throw createError(
+    ("Validating a non-existant field: \"" + fullName + "\". Use \"attach()\" first.")
+  );
+};
+
+/**
+ * Starts the validation process.
+ *
+ * @param {Field} field
+ * @param {Promise} value
+ * @param {Boolean} silent
+ */
+Validator.prototype._validate = function _validate (field, value, silent) {
+    var this$1 = this;
+    if ( silent === void 0 ) silent = false;
+
+  if (!field.isRequired && ~[null, undefined, ''].indexOf(value)) {
+    return Promise.resolve(true);
+  }
+
+  var promises = [];
+  var isExitEarly = false;
+  // use of '.some()' is to break iteration in middle by returning true
+  Object.keys(field.rules).some(function (rule) {
+    var result = this$1._test(field, value, { name: rule, params: field.rules[rule] }, silent);
+
+    if (isCallable(result.then)) {
+      promises.push(result);
+    } else if (this$1.fastExit && !result) {
+      isExitEarly = true;
+    } else {
+      var resultAsPromise = new Promise(function (resolve) {
+        resolve(result);
+      });
+      promises.push(resultAsPromise);
+    }
+
+    return isExitEarly;
+  });
+
+  if (isExitEarly) { return Promise.resolve(false); }
+
+  return Promise.all(promises).then(function (values) { return values.every(function (t) { return t; }); });
+};
+
+Object.defineProperties( Validator.prototype, prototypeAccessors );
+Object.defineProperties( Validator, staticAccessors );
+
+var fakeFlags = createProxy({}, {
+  get: function get (target, key) {
+    // is a scope
+    if (String(key).indexOf('$') === 0) {
+      return fakeFlags;
+    }
+
+    return createFlags();
+  }
+});
 
 /**
  * Checks if a parent validator instance was requested.
  * @param {Object|Array} injections
  */
-const requestsValidator = (injections) => {
+var requestsValidator = function (injections) {
   if (! injections) {
     return false;
   }
@@ -3488,14 +6313,12 @@ const requestsValidator = (injections) => {
  * @param {Vue} vm
  * @param {Object} options
  */
-const createValidator = (vm, options) => new Validator(null, {
-  init: false,
-  vm,
-  fastExit: options.fastExit
-});
+var createValidator = function (vm, options) { return new Validator(null, { vm: vm, fastExit: options.fastExit }); };
 
-var makeMixin = (Vue, options = {}) => {
-  const mixin = {};
+var makeMixin = function (Vue, options) {
+  if ( options === void 0 ) options = {};
+
+  var mixin = {};
   mixin.provide = function providesValidator () {
     if (this.$validator) {
       return {
@@ -3512,7 +6335,7 @@ var makeMixin = (Vue, options = {}) => {
       this.$validator = createValidator(this, options);
     }
 
-    const requested = requestsValidator(this.$options.inject);
+    var requested = requestsValidator(this.$options.inject);
 
     // if automatic injection is enabled and no instance was requested.
     if (! this.$validator && options.inject && !requested) {
@@ -3527,7 +6350,7 @@ var makeMixin = (Vue, options = {}) => {
     // There is a validator but it isn't injected, mark as reactive.
     if (! requested && this.$validator) {
       Vue.util.defineReactive(this.$validator, 'errors', this.$validator.errors);
-      Vue.util.defineReactive(this.$validator, 'fieldBag', this.$validator.fieldBag);
+      Vue.util.defineReactive(this.$validator, 'flags', this.$validator.flags);
     }
 
     if (! this.$options.computed) {
@@ -3538,7 +6361,11 @@ var makeMixin = (Vue, options = {}) => {
       return this.$validator.errors;
     };
     this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
-      return this.$validator.fieldBag;
+      if (!Object.keys(this.$validator.flags).length) {
+        return fakeFlags;
+      }
+
+      return this.$validator.flags;
     };
   };
 
@@ -3575,7 +6402,7 @@ var config = {
  * @param {Object} context
  * @return {Field|null}
  */
-const findField = (el, context) => {
+var findField = function (el, context) {
   if (!context || !context.$validator) {
     return null;
   }
@@ -3583,57 +6410,59 @@ const findField = (el, context) => {
   return context.$validator.fields.find({ id: getDataAttribute(el, 'id') });
 };
 
-const createDirective = options => {
+var createDirective$1 = function (options) {
   options = assign({}, config, options);
 
   return {
-    bind (el, binding, vnode) {
-      const validator = vnode.context.$validator;
+    bind: function bind (el, binding, vnode) {
+      var validator = vnode.context.$validator;
       if (! validator) {
-        warn(`No validator instance is present on vm, did you forget to inject '$validator'?`);
+        warn("No validator instance is present on vm, did you forget to inject '$validator'?");
         return;
       }
-      const fieldOptions = Generator.generate(el, binding, vnode, options);
+      var fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted: (el, binding, vnode) => {
-      const field = findField(el, vnode.context);
-      const scope = Generator.resolveScope(el, binding, vnode);
+    inserted: function (el, binding, vnode) {
+      var field = findField(el, vnode.context);
+      var scope = Generator.resolveScope(el, binding, vnode);
 
       // skip if scope hasn't changed.
-      if (!field || scope === field.scope) return;
+      if (!field || scope === field.scope) { return; }
 
       // only update scope.
-      field.update({ scope });
+      field.update({ scope: scope });
 
       // allows the field to re-evaluated once more in the update hook.
       field.updated = false;
     },
-    update: (el, binding, vnode) => {
-      const field = findField(el, vnode.context);
+    update: function (el, binding, vnode) {
+      var field = findField(el, vnode.context);
 
       // make sure we don't do uneccessary work if no important change was done.
-      if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
-      const scope = Generator.resolveScope(el, binding, vnode);
-      const rules = Generator.resolveRules(el, binding);
+      if (!field || (field.updated && isEqual$1(binding.value, binding.oldValue))) { return; }
+      var scope = Generator.resolveScope(el, binding, vnode);
+      var rules = Generator.resolveRules(el, binding);
 
       field.update({
-        scope,
-        rules
+        scope: scope,
+        rules: rules
       });
     },
-    unbind (el, binding, { context }) {
-      const field = findField(el, context);
-      if (!field) return;
+    unbind: function unbind (el, binding, ref) {
+      var context = ref.context;
+
+      var field = findField(el, context);
+      if (!field) { return; }
 
       context.$validator.detach(field);
     }
   };
 };
 
-const normalize = (fields) => {
+var normalize = function (fields) {
   if (Array.isArray(fields)) {
-    return fields.reduce((prev, curr) => {
+    return fields.reduce(function (prev, curr) {
       if (~curr.indexOf('.')) {
         prev[curr.split('.')[1]] = curr;
       } else {
@@ -3652,38 +6481,42 @@ const normalize = (fields) => {
  *
  * @param {Array|Object} fields
  */
-const mapFields = (fields) => {
-  const normalized = normalize(fields);
-  return Object.keys(normalized).reduce((prev, curr) => {
-    const field = normalized[curr];
+var mapFields = function (fields) {
+  var normalized = normalize(fields);
+  return Object.keys(normalized).reduce(function (prev, curr) {
+    var field = normalized[curr];
     prev[curr] = function mappedField () {
       if (this.$validator.fieldBag[field]) {
         return this.$validator.fieldBag[field];
       }
 
-      const index = field.indexOf('.');
+      var index = field.indexOf('.');
       if (index <= 0) {
         return {};
       }
-      const [scope, name] = field.split('.');
+      var ref = field.split('.');
+      var scope = ref[0];
+      var name = ref[1];
 
-      return getPath(`$${scope}.${name}`, this.$validator.fieldBag, {});
+      return getPath(("$" + scope + "." + name), this.$validator.fieldBag, {});
     };
 
     return prev;
   }, {});
 };
 
-let Vue;
+var Vue;
 
-const install = (_Vue, options = {}) => {
+var install = function (_Vue, options) {
+  if ( options === void 0 ) options = {};
+
   if (Vue) {
     warn('already installed, Vue.use(VeeValidate) should only be called once.');
     return;
   }
 
   Vue = _Vue;
-  const config$$1 = assign({}, config, options);
+  var config$$1 = assign({}, config, options);
   if (config$$1.dictionary) {
     Validator.updateDictionary(config$$1.dictionary);
   }
@@ -3699,24 +6532,26 @@ const install = (_Vue, options = {}) => {
   }
 
   Vue.mixin(makeMixin(Vue, config$$1));
-  Vue.directive('validate', createDirective(config$$1));
+  Vue.directive('validate', createDirective$1(config$$1));
 };
 
-const use = (plugin, options = {}) => {
+var use = function (plugin, options) {
+  if ( options === void 0 ) options = {};
+
   if (!isCallable(plugin)) {
     return warn('The plugin must be a callable function');
   }
 
-  plugin({ Validator, ErrorBag, Rules }, options);
+  plugin({ Validator: Validator, ErrorBag: ErrorBag, Rules: Rules }, options);
 };
 
 var index = {
-  install,
-  use,
-  mapFields,
-  Validator,
-  ErrorBag,
-  Rules,
+  install: install,
+  use: use,
+  mapFields: mapFields,
+  Validator: Validator,
+  ErrorBag: ErrorBag,
+  Rules: Rules,
   version: '2.0.0-rc.14'
 };
 

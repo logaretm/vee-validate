@@ -5,3 +5,4 @@ coverage
 .idea
 .vscode
 .vs
+yarn-error.log
