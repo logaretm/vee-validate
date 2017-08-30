@@ -473,7 +473,7 @@ var default_email_options = {
 
 /* eslint-disable max-len */
 /* eslint-disable no-control-regex */
-var displayName = /^[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\.\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\.\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\s]*<(.+)>$/i;
+var displayName = /^[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\.\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\,\.\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\s]*<(.+)>$/i;
 var emailUserPart = /^[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~]+$/i;
 var quotedEmailUser = /^([\s\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e]|(\\[\x01-\x09\x0b\x0c\x0d-\x7f]))*$/i;
 var emailUserUtf8Part = /^[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+$/i;
@@ -2570,22 +2570,12 @@ Field.prototype.addValueListeners = function addValueListeners () {
   this.unwatch(/^input_.+/);
   if (!this.listen) { return; }
 
-  var fn = null;
-  if (this.targetOf) {
-    fn = function () {
+  var fn = this.targetOf ? function () {
       this$1.validator.validate(("#" + (this$1.targetOf)));
-    };
-  } else {
-    fn = function () {
-        var args = [], len = arguments.length;
-        while ( len-- ) args[ len ] = arguments[ len ];
+  } : function () {
+      this$1.validator.validate(("#" + (this$1.id)));
+  };
 
-      if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event)) {
-        args[0] = this$1.value;
-      }
-      this$1.validator.validate(("#" + (this$1.id)), args[0]);
-    };
-  }
   var validate = debounce(fn, this.delay);
 
   var inputEvent = getInputEventName(this.el);
