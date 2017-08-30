@@ -165,7 +165,7 @@ export const getPath = (propPath, target, def = undefined) => {
 export const hasPath = (path, target) => {
   let obj = target;
   return path.split('.').every(prop => {
-    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
+    if (! Object.prototype.hasOwnProperty.call(obj, prop) && obj[prop] === undefined) {
       return false;
     }
 
