@@ -38,11 +38,7 @@ const requestsValidator = (injections) => {
  * @param {Vue} vm
  * @param {Object} options
  */
-const createValidator = (vm, options) => new Validator(null, {
-  init: false,
-  vm,
-  fastExit: options.fastExit
-});
+const createValidator = (vm, options) => new Validator(null, { vm, fastExit: options.fastExit });
 
 export default (Vue, options = {}) => {
   const mixin = {};
