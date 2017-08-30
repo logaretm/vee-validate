@@ -94,10 +94,10 @@ test('resolves alias', () => {
   `;
   let el = document.querySelector('#el');
   const vnode = { child: { $attrs: { 'data-vv-as': 'alias' } } };
-  expect(Generator.resolveAlias(el, {})).toBe('myAlias');
+  expect(Generator.resolveAlias(el, {})()).toBe('myAlias');
   el = { getAttribute: () => null };
 
-  expect(Generator.resolveAlias(el, vnode)).toBe('alias'); 
+  expect(Generator.resolveAlias(el, vnode)()).toBe('alias'); 
 });
 
 describe('resolves the value getters', () => {
@@ -351,7 +351,6 @@ test('generates field options', () => {
     expression: 'required|max:3',
     rules: 'required|max:3',
     initial: false,
-    alias: null,
     el
   });
 });

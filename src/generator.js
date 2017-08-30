@@ -85,9 +85,10 @@ export default class Generator {
    * Resolves the alias for the field.
    * @param {*} el 
    * @param {*} vnode 
+   * @return {Function} alias getter
    */
   static resolveAlias (el, vnode) {
-    return getDataAttribute(el, 'as') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-as']) || el.title || null;
+    return () => getDataAttribute(el, 'as') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-as']) || el.title || null;
   }
 
   /**

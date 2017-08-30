@@ -78,7 +78,7 @@ export default class Field {
    * @return {String}
    */
   get displayName () {
-    return this.alias;
+    return isCallable(this.alias) ? this.alias() : this.alias;
   }
 
   /**
