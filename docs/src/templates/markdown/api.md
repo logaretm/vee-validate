@@ -1,7 +1,7 @@
 ## [v-validate Directive](#directive)
 
 The `v-validate` directive is the main way to validate your inputs, the directive accepts either a string or an object as a value.  
-If a string was passed it must be a valid rules string, that is the validation rules seperated by pipes '|'.
+If a string was passed it must be a valid rules string, that is the validation rules separated by pipes '|'.
 
 ```vue
   <input v-validate="'required|email'" name="field" type="text">
@@ -102,7 +102,7 @@ data-* attributes provide an alternate interface for the plugin to specify what 
         </tr>
         <tr>
             <td class="is-method-name">data-vv-validate-on</td>
-            <td>Used to specify a list of event names seperated by pipes, the default varies by the type of the input</td>
+            <td>Used to specify a list of event names separated by pipes, the default varies by the type of the input</td>
         </tr>
     </tbody>
 </table>
