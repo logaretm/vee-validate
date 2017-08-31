@@ -55,12 +55,12 @@ export default {
       this.errors.clear();
     }
   },
-  created() {
+  beforeCreate() {
     this.validator = new Validator({
       email: 'required|email',
       name: 'required|alpha|min:3'
     });
-    this.$set(this, 'errors', this.validator.errorBag);
+    this.$set(this, 'errors', this.validator.errors);
   }
 };
 </script>
