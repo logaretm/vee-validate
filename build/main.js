@@ -41,7 +41,47 @@ async function main () {
 }
 
 async function minimal () {
+  const bundle = await Rollup.rollup({
+    input: 'src/minimal.js',
+    plugins: [
+      replace({ __VERSION__: version }),
+      nodeResolve(),
+      commonjs(),
+      buble()
+    ],
+  });
 
+  const { code } = await bundle.generate({
+    format: 'umd',
+    name: 'VeeValidate',
+    banner:
+`/**
+ * vee-validate v${version}
+ * (c) ${new Date().getFullYear()} Abdelrahman Awad
+ * @license MIT
+ */`
+  });
+
+  let output = path.join(outputFolder, 'vee-validate.minimal.js');
+  fs.writeFileSync(output, code);
+  fs.writeFileSync(path.join(outputFolder, 'vee-validate.minimal.min.js'), Uglify.minify(code, {
+    compress: true,
+    mangle: true,
+  }).code);
+
+  const esm = await bundle.generate({
+    format: 'es',
+    name: 'VeeValidate',
+    banner:
+    `/**
+ * vee-validate v${version}
+ * (c) ${new Date().getFullYear()} Abdelrahman Awad
+ * @license MIT
+ */`
+  });
+
+  output = path.join(outputFolder, 'vee-validate.minimal.esm.js');
+  fs.writeFileSync(output, esm.code);
 }
 
 async function esm () {

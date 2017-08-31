@@ -1,4 +1,6 @@
-import Validator from './../src/validator';
+import plugin from './../src/index';
+
+const Validator = plugin.Validator;
 
 // some tests are required to be run serially.
 // since jest does not have test.serial yet

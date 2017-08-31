@@ -5458,6 +5458,7 @@ FieldBag.prototype.push = function push (item) {
 
 Object.defineProperties( FieldBag.prototype, prototypeAccessors$2 );
 
+var RULES = {};
 var LOCALE = 'en';
 var STRICT_MODE = true;
 var DICTIONARY = new Dictionary({
@@ -5552,14 +5553,14 @@ staticAccessors.locale.set = function (value) {
  * @return {Object}
  */
 prototypeAccessors.rules.get = function () {
-  return Rules;
+  return RULES;
 };
 
 /**
  * @return {Object}
  */
 staticAccessors.rules.get = function () {
-  return Rules;
+  return RULES;
 };
 
 /**
@@ -5588,7 +5589,7 @@ Validator.extend = function extend (name, validator) {
  * @param {String} name The name of the validator/rule.
  */
 Validator.remove = function remove (name) {
-  delete Rules[name];
+  delete RULES[name];
 };
 
 /**
@@ -6069,7 +6070,7 @@ Validator.prototype._addFlag = function _addFlag (field, scope) {
 Validator.prototype._test = function _test (field, value, rule, silent) {
     var this$1 = this;
 
-  var validator = Rules[rule.name];
+  var validator = RULES[rule.name];
   var params = Array.isArray(rule.params) ? toArray(rule.params) : [];
   var targetName = null;
   if (!validator || typeof validator !== 'function') {
@@ -6141,18 +6142,18 @@ Validator.prototype._test = function _test (field, value, rule, silent) {
 };
 
 /**
- * Merges a validator object into the Rules and Messages.
+ * Merges a validator object into the RULES and Messages.
  *
  * @param{string} name The name of the validator.
  * @param{function|object} validator The validator object.
  */
 Validator._merge = function _merge (name, validator) {
   if (isCallable(validator)) {
-    Rules[name] = validator;
+    RULES[name] = validator;
     return;
   }
 
-  Rules[name] = validator.validate;
+  RULES[name] = validator.validate;
   if (isCallable(validator.getMessage)) {
     DICTIONARY.setMessage(LOCALE, name, validator.getMessage);
   }
@@ -6548,19 +6549,30 @@ var use = function (plugin, options) {
     return warn('The plugin must be a callable function');
   }
 
-  plugin({ Validator: Validator, ErrorBag: ErrorBag, Rules: Rules }, options);
+  plugin({ Validator: Validator, ErrorBag: ErrorBag, Rules: Validator.rules }, options);
 };
 
-var index = {
+var minimal$1 = {
   install: install,
   use: use,
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  Rules: Rules,
   version: '2.0.0-rc.14'
 };
 
-return index;
+// rules plugin definition.
+var rulesPlugin = function (ref) {
+  var Validator = ref.Validator;
+
+  Object.keys(Rules).forEach(function (rule) {
+    Validator.extend(rule, Rules[rule]);
+  });
+};
+
+// install the rules via the plugin API.
+minimal$1.use(rulesPlugin);
+
+return minimal$1;
 
 })));

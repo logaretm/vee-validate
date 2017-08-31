@@ -2,7 +2,9 @@ import Vue from 'vue/dist/vue';
 import makeMixin from '../src/mixin';
 import ErrorBag from '../src/errorBag';
 import FieldBag from '../src/fieldBag';
-import Validator from '../src/validator';
+import plugin from './../src/index';
+
+const Validator = plugin.Validator;
 
 test('injects an errorBag instance', () => {
   const mixin = makeMixin(Vue);

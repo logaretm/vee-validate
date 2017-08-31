@@ -1,4 +1,3 @@
-import Rules from './rules';
 import ErrorBag from './errorBag';
 import Dictionary from './dictionary';
 import { messages } from '../locale/en';
@@ -6,6 +5,7 @@ import { isObject, isCallable, toArray, warn, createError, assign, find } from '
 import Field from './field';
 import FieldBag from './fieldBag';
 
+const RULES = {};
 let LOCALE = 'en';
 let STRICT_MODE = true;
 const DICTIONARY = new Dictionary({
@@ -95,14 +95,14 @@ export default class Validator {
    * @return {Object}
    */
   get rules () {
-    return Rules;
+    return RULES;
   }
 
   /**
    * @return {Object}
    */
   static get rules () {
-    return Rules;
+    return RULES;
   }
 
   /**
@@ -131,7 +131,7 @@ export default class Validator {
    * @param {String} name The name of the validator/rule.
    */
   static remove (name) {
-    delete Rules[name];
+    delete RULES[name];
   }
 
   /**
@@ -585,7 +585,7 @@ export default class Validator {
    * @return {boolean} Whether it passes the check.
    */
   _test (field, value, rule, silent) {
-    const validator = Rules[rule.name];
+    const validator = RULES[rule.name];
     let params = Array.isArray(rule.params) ? toArray(rule.params) : [];
     let targetName = null;
     if (!validator || typeof validator !== 'function') {
@@ -657,18 +657,18 @@ export default class Validator {
   }
 
   /**
-   * Merges a validator object into the Rules and Messages.
+   * Merges a validator object into the RULES and Messages.
    *
    * @param  {string} name The name of the validator.
    * @param  {function|object} validator The validator object.
    */
   static _merge (name, validator) {
     if (isCallable(validator)) {
-      Rules[name] = validator;
+      RULES[name] = validator;
       return;
     }
 
-    Rules[name] = validator.validate;
+    RULES[name] = validator.validate;
     if (isCallable(validator.getMessage)) {
       DICTIONARY.setMessage(LOCALE, name, validator.getMessage);
     }

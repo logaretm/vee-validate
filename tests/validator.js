@@ -1,6 +1,8 @@
-import Validator from './../src/validator';
 import Field from './../src/field';
 import helpers from './helpers';
+import plugin from './../src/index';
+
+const Validator = plugin.Validator;
 
 // Converts the value to a boolean and returns it in a promise.
 Validator.extend('promised', (value) => {
