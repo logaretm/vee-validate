@@ -24,9 +24,17 @@ export class Field {
     rules: any;
 }
 
+export class ErrorField {
+    field: string;
+    scope?: string;
+    rule: string;
+    msg: string;
+    id: string;
+}
+
 export class ErrorBag {
     constructor();
-    add(field: string, msg: string, rule: string, scope?: string): void;
+    add(error: ErrorField): void;
     all(scope?: string): string[];
     any(scope?: string): boolean;
     clear(scope?: string): void;
@@ -37,6 +45,9 @@ export class ErrorBag {
     firstRule(field: string, scope: string): string;
     has(field: string, scope?: string): boolean;
     remove(field: string, scope?: string): void;
+    removeById(id: string): void;
+    firstById(id: string): string;
+    update(id: string, diff: Object): void;
 }
 
 export class FieldBag {
