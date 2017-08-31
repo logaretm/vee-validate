@@ -36,12 +36,12 @@ async function main () {
 
   const output = path.join(outputFolder, 'vee-validate.js');
   fs.writeFileSync(output, code);
-  console.log(chalk.cyan('Output File:') + ' vee-validate.js');
+  console.log(chalk.green('Output File:') + ' vee-validate.js');
   fs.writeFileSync(path.join(outputFolder, 'vee-validate.min.js'), Uglify.minify(code, {
     compress: true,
     mangle: true,
   }).code);
-  console.log(chalk.cyan('Output File:') + ' vee-validate.min.js');
+  console.log(chalk.green('Output File:') + ' vee-validate.min.js');
 }
 
 async function minimal () {
@@ -70,12 +70,12 @@ async function minimal () {
 
   let output = path.join(outputFolder, 'vee-validate.minimal.js');
   fs.writeFileSync(output, code);
-  console.log(chalk.cyan('Output File:') + ' vee-validate.minimal.js');
+  console.log(chalk.green('Output File:') + ' vee-validate.minimal.js');
   fs.writeFileSync(path.join(outputFolder, 'vee-validate.minimal.min.js'), Uglify.minify(code, {
     compress: true,
     mangle: true,
   }).code);
-  console.log(chalk.cyan('Output File:') + ' vee-validate.minimal.min.js');
+  console.log(chalk.green('Output File:') + ' vee-validate.minimal.min.js');
 
   const esm = await bundle.generate({
     format: 'es',
@@ -90,7 +90,7 @@ async function minimal () {
 
   output = path.join(outputFolder, 'vee-validate.minimal.esm.js');
   fs.writeFileSync(output, esm.code);
-  console.log(chalk.cyan('Output File:') + ' vee-validate.minimal.esm.js');
+  console.log(chalk.green('Output File:') + ' vee-validate.minimal.esm.js');
 }
 
 async function esm () {
@@ -118,7 +118,7 @@ async function esm () {
 
   const output = path.join(outputFolder, 'vee-validate.esm.js');
   fs.writeFileSync(output, code);
-  console.log(chalk.cyan('Output File:') + ' vee-validate.esm.js');
+  console.log(chalk.green('Output File:') + ' vee-validate.esm.js');
 }
 
 async function build () {
