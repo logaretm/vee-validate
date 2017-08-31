@@ -96,7 +96,7 @@ Of course there is more to it than that, refer to the documentation for more det
 Read the [documentation and demos](http://vee-validate.logaretm.com/).
 
 
-### Compatability
+### Compatibility
 
 This library uses ES6 Promises so be sure to provide a polyfill for it for the browsers that does not support it.
 
