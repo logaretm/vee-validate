@@ -253,18 +253,16 @@ validator.validateAll({ email: 'foo@bar.com', name: 'John Snow' }).then(result =
 });
 ```
 
-Returns a `Promise` The ErrorBag will be populated with any errors encountered, Throws if any error has been encountered. You can access the `errorBag` property directly or using `getErrors()`.
+Returns a `Promise` The ErrorBag will be populated with any errors encountered, Throws if any error has been encountered. You can access the `errors` property directly which is an instance of the `ErrorBag`.
 
 ```js
-var errorBag = validator.errorBag;
-// or
-var errorBag = validator.getErrors();
+var errorBag = validator.errors;
 ```
 
 The validator instance can only generate messages for one locale at a time. But you need to use `setLocale` method to switch the validator locale. 
 
 ```js
-validator.setLocale('ar');
+validator.locale = 'ar';
 ```
 > All validators share the same locale configuration. so any locale changes will update all validator instances across your app. For more information about how to overwrite messages and add new ones, please refer to the [custom messages](rules.html#custom-messages) section.
 
@@ -274,9 +272,7 @@ import { Validator } from 'vee-validate';
 // Also exposed on the class.
 Validator.setLocale('ar'); // Set all validator locales to 'ar'.
 
-Validator.create().getLocale() // 'ar';
-
-Validator.setLocale(); // resets to english because no argument was passed, all validators will be switched to English.
+Validator.create().locale; // 'ar';
 ```
 
 Check the full API at [GitHub](https://github.com/logaretm/vee-validate/blob/master/src/validator.js)
