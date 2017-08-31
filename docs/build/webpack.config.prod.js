@@ -11,7 +11,7 @@ module.exports = {
     new ExtractTextPlugin('css/[name].css'),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      filename: 'js/vendor.js'
+      filename: 'js/vendor-[hash].js'
     }),
     new webpack.optimize.MinChunkSizePlugin({ minChunkSize: 51200 }),
     new webpack.optimize.UglifyJsPlugin({

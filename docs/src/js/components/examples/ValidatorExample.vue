@@ -31,11 +31,13 @@ import { Validator } from 'vee-validate';
 export default {
   name: 'validator-example',
   validator: null,
-  data: () => ({
-    email: '',
-    name: '',
-    errors: null
-  }),
+  data() {
+    return {
+      email: '',
+      name: '',
+      errors: null
+    };
+  },
   watch: {
     email(value) {
       this.validator.validate('email', value);
@@ -49,13 +51,21 @@ export default {
       this.validator.validateAll({
         email: this.email,
         name: this.name
+      }).then((result) => {
+        if (result) {
+          // eslint-disable-next-line
+          console.log('All is well');
+          return;
+        }
+        // eslint-disable-next-line
+        console.log('Oops!');
       });
     },
     clearErrors() {
       this.errors.clear();
     }
   },
-  beforeCreate() {
+  created() {
     this.validator = new Validator({
       email: 'required|email',
       name: 'required|alpha|min:3'

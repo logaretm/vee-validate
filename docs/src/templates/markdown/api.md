@@ -7,35 +7,12 @@ If a string was passed it must be a valid rules string, that is the validation r
   <input v-validate="'required|email'" name="field" type="text">
 ```  
 
-If an object was passed it must contain a rules property which can be either a rule string like above or an object, here is the valid directive expression values:
+If an object was passed it must contains properties of the rules to be used and the value would be their params in an array or a single value if it accepts a single parameter.
 
 ```js
 // String
 const expression = 'required|regex:^[0-9]+';
 
-// Object with rules as string.
-const expression = {
-  rules: 'required|regex:^[0-9]+', // required
-  scope: 'myscope', // optional
-  arg: 'form.email' // optional
-};
-
-// Object with rules as object.
-const expression = {
-  rules: {
-    // parameterless rules take a boolean value.
-    required: true,
-    // single parameter rules take a single value.
-    regex: /.(js|ts)$/,
-    // multiple paramter rules take a single array.
-    in: [1, 2, 3] 
-  },
-  scope: 'myscope', // optional
-  arg: 'from.email' // optional
-};
-
-// You can omit the omit nesting the rules in a property if you don't
-// need to provide other options.
 const expression = {
   // parameterless rules take a boolean value.
   required: true,
@@ -48,7 +25,7 @@ const expression = {
 
 ## [args](#directive-args)
 
-The directive also accepts an arg, that denotes the name of the vue model to validate.
+The directive also accepts an arg, that denotes the name of the vue model to validate, or a computed property.
 
 ```vue
   <input v-model="email" v-validate:email="'required|email'" name="field" type="text">
@@ -116,8 +93,9 @@ The single error must look like this:
 const error = {
   field: 'Field name',
   msg: 'Error message',
-  rule: 'Rule Name',
-  scope: 'Scope Name'
+  rule: 'Rule Name', // optional
+  scope: 'Scope Name', // optional
+  id: 'uniqueId' // optional
 };
 ```
 
@@ -147,9 +125,11 @@ bag.first('email:auth');
   <tbody>
     <tr>
       <td class="is-method-name">add</td>
-      <td>{String field}, {String msg}, {String ruleName}, {String scope?}</td>
-      <td>undefined</td>
-      <td>Adds an error to the errors object.</td>
+      <td>{error Object}</td>
+      <td>void</td>
+      <td>
+        Adds an error to the error bag, the error object must conform the object signature mentioned above.
+      </td>
     </tr>
     <tr>
       <td class="is-method-name">all</td>
@@ -188,6 +168,12 @@ bag.first('email:auth');
         <td>Returns the first error message associated with a specific field or specified by the selector, providing a scope will look for messages within that scope.</td>
     </tr>
     <tr>
+        <td class="is-method-name">firstById</td>
+        <td>{String id}</td>
+        <td>String</td>
+        <td>Returns the first error message for a field with the given id.</td>
+    </tr>
+    <tr>
         <td class="is-method-name">firstByRule</td>
         <td>{String field}, {String rule}, {String scope?}</td>
         <td>String</td>
@@ -202,8 +188,14 @@ bag.first('email:auth');
     <tr>
       <td class="is-method-name">remove</td>
       <td>{String field}, {String scope?}</td>
-      <td>undefined</td>
+      <td>void</td>
       <td>Removes all errors associated with a specific field, specifying a scope will remove messages only for that field and scope.</td>
+    </tr>
+    <tr>
+      <td class="is-method-name">update</td>
+      <td>{String id}, {Object diff}</td>
+      <td>void</td>
+      <td>Updates a specific field's erorr messages data, used internally to keep field errors scope up to date.</td>
     </tr>
   </tbody>
 </table>
@@ -230,7 +222,7 @@ import { Validator } from 'vee-validate';
 const validator = new Validator();
 
 validator.attach('email', 'required|email'); // attach field.
-validator.attach('name', 'required|alpha', { prettyName: 'Full Name' }); // attach field with display name for error generation.
+validator.attach('name', 'required|alpha', { alias: 'Full Name' }); // attach field with display name for errorsgeneration.
 validator.detach('email'); // you can also detach fields.
 ```
 After that you can validate values with `validate(field, value)` which should return a boolean if all validations pass. Like this:
