@@ -34,6 +34,7 @@ export class ErrorField {
 
 export class ErrorBag {
     constructor();
+    items: ErrorField[];
     add(error: ErrorField): void;
     all(scope?: string): string[];
     any(scope?: string): boolean;
