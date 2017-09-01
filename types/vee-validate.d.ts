@@ -1,5 +1,21 @@
 import Vue = require("vue")
 
+export class Configuration {
+    locale?: string;
+    delay?: number;
+    errorBagName?: string;
+    dictionary?: any;
+    strict?: boolean;
+    fieldsBagName?: string;
+    classes?: any;
+    classNames?: any;
+    events?: string;
+    inject?: boolean;
+    fastExit?: boolean;
+    aria?: boolean;
+    validity?: boolean;
+}
+
 export class FieldFlags {
     untouched: boolean;
     touched: boolean;
