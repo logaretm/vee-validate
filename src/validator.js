@@ -611,7 +611,7 @@ export default class Validator {
       }
     }
 
-    let result = validator(value, params);
+    let result = validator(value, params, field.name);
 
     // If it is a promise.
     if (isCallable(result.then)) {
