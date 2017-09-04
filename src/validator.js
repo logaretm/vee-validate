@@ -294,11 +294,12 @@ export default class Validator {
     this.errors.removeById(field.id);
     this.fields.remove(field);
     const flags = this.flags;
-    if (field.scope) {
+    if (field.scope && flags[`$${field.scope}`]) {
       delete flags[`$${field.scope}`][field.name];
-    } else {
+    } else if (!field.scope) {
       delete flags[field.name];
     }
+
     this.flags = assign({}, flags);
   }
 
@@ -323,9 +324,9 @@ export default class Validator {
     this.errors.update(id, { scope });
 
     // remove old scope.
-    if (field.scope) {
+    if (field.scope && this.flags[`$${field.scope}`]) {
       delete this.flags[`$${field.scope}`][field.name];
-    } else {
+    } else if (!field.scope) {
       delete this.flags[field.name];
     }
 
