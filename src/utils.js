@@ -66,7 +66,7 @@ export const parseDate = (date, format) => {
 
 export const createProxy = (target, handler) => {
   if (typeof Proxy === 'undefined') {
-    // TODO: Polyfill or simulate the behavior.
+    return target;
   }
 
   return new Proxy(target, handler);
