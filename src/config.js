@@ -11,5 +11,5 @@ export default {
   inject: true,
   fastExit: true,
   aria: true,
-  validity: true
+  validity: false
 };
