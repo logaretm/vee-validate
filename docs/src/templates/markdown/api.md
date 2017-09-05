@@ -106,7 +106,7 @@ import { ErrorBag } from 'vee-validate';
 
 const bag = new ErrorBag();
 
-// For example you may want to add an errror related to authentication:
+// For example you may want to add an error related to authentication:
 bag.add('email', 'Wrong Credentials', 'auth');
 
 // Display it like this:
