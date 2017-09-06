@@ -2635,6 +2635,10 @@ var parseDate$1 = function (date, format$$1) {
 };
 
 var createProxy = function (target, handler) {
+  if (typeof Proxy === 'undefined') {
+    return target;
+  }
+
   return new Proxy(target, handler);
 };
 
@@ -4995,7 +4999,7 @@ Field.prototype.update = function update (options) {
   this.initial = options.initial || this.initial || false;
 
   // update errors scope if the field scope was changed.
-  if (options.scope && options.scope !== this.scope && isCallable(this.validator.update)) {
+  if (this.updated && options.scope && options.scope !== this.scope && isCallable(this.validator.update)) {
     this.validator.update(this.id, { scope: options.scope });
   }
   this.scope = options.scope || this.scope || null;
@@ -5755,11 +5759,12 @@ Validator.prototype.detach = function detach (name, scope) {
   this.errors.removeById(field.id);
   this.fields.remove(field);
   var flags = this.flags;
-  if (field.scope) {
+  if (field.scope && flags[("$" + (field.scope))]) {
     delete flags[("$" + (field.scope))][field.name];
-  } else {
+  } else if (!field.scope) {
     delete flags[field.name];
   }
+
   this.flags = assign({}, flags);
 };
 
@@ -5786,9 +5791,9 @@ Validator.prototype.update = function update (id, ref) {
   this.errors.update(id, { scope: scope });
 
   // remove old scope.
-  if (field.scope) {
+  if (field.scope && this.flags[("$" + (field.scope))]) {
     delete this.flags[("$" + (field.scope))][field.name];
-  } else {
+  } else if (!field.scope) {
     delete this.flags[field.name];
   }
 
@@ -6399,7 +6404,7 @@ var config = {
   inject: true,
   fastExit: true,
   aria: true,
-  validity: true
+  validity: false
 };
 
 /**
