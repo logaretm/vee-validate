@@ -4237,8 +4237,8 @@ ErrorBag.prototype.firstById = function firstById (id) {
 /**
    * Gets the first error message for a specific field.
    *
-   * @param{string} field The field name.
-   * @return {string|null} message The error message.
+   * @param{String} field The field name.
+   * @return {String|null} message The error message.
    */
 ErrorBag.prototype.first = function first (field, scope) {
     var this$1 = this;
@@ -4360,6 +4360,7 @@ ErrorBag.prototype.remove = function remove (field, scope) {
    * @return {Object|null}
    */
 ErrorBag.prototype._selector = function _selector (field) {
+  field = String(field);
   if (field.indexOf(':') > -1) {
     var ref = field.split(':');
       var name = ref[0];
@@ -4378,6 +4379,7 @@ ErrorBag.prototype._selector = function _selector (field) {
    * @return {Object|null}
    */
 ErrorBag.prototype._scope = function _scope (field) {
+  field = String(field);
   if (field.indexOf('.') > -1) {
     var ref = field.split('.');
       var scope = ref[0];
