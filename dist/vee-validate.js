@@ -4207,6 +4207,7 @@ ErrorBag.prototype.collect = function collect (field, scope, map) {
     return collection;
   }
 
+  field = field ? String(field) : field;
   if (! scope) {
     return this.items.filter(function (e) { return e.field === field; }).map(function (e) { return (map ? e.msg : e); });
   }
@@ -4244,6 +4245,7 @@ ErrorBag.prototype.first = function first (field, scope) {
     var this$1 = this;
     if ( scope === void 0 ) scope = null;
 
+  field = field ? String(field) : field;
   var selector = this._selector(field);
   var scoped = this._scope(field);
 
@@ -4336,12 +4338,13 @@ ErrorBag.prototype.removeById = function removeById (id) {
 /**
    * Removes all error messages associated with a specific field.
    *
-   * @param{string} field The field which messages are to be removed.
+   * @param{String} field The field which messages are to be removed.
    * @param {String} scope The Scope name, optional.
    */
 ErrorBag.prototype.remove = function remove (field, scope) {
     var this$1 = this;
 
+  field = field ? String(field) : field;
   var removeCondition = scope ? function (e) { return e.field === field && e.scope === scope; }
     : function (e) { return e.field === field && e.scope === null; };
 
@@ -4356,11 +4359,10 @@ ErrorBag.prototype.remove = function remove (field, scope) {
 /**
    * Get the field attributes if there's a rule selector.
    *
-   * @param{string} field The specified field.
+   * @param{String} field The specified field.
    * @return {Object|null}
    */
 ErrorBag.prototype._selector = function _selector (field) {
-  field = String(field);
   if (field.indexOf(':') > -1) {
     var ref = field.split(':');
       var name = ref[0];
@@ -4375,11 +4377,10 @@ ErrorBag.prototype._selector = function _selector (field) {
 /**
    * Get the field scope if specified using dot notation.
    *
-   * @param {string} field the specifie field.
+   * @param {String} field the specifie field.
    * @return {Object|null}
    */
 ErrorBag.prototype._scope = function _scope (field) {
-  field = String(field);
   if (field.indexOf('.') > -1) {
     var ref = field.split('.');
       var scope = ref[0];
@@ -5005,7 +5006,7 @@ Field.prototype.update = function update (options) {
     this.validator.update(this.id, { scope: options.scope });
   }
   this.scope = options.scope || this.scope || null;
-  this.name = String(options.name) || this.name || null;
+  this.name = (options.name ? String(options.name) : options.name) || this.name || null;
   this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
   this.model = options.model || this.model;
   this.listen = options.listen !== undefined ? options.listen : this.listen;
