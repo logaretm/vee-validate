@@ -5838,7 +5838,6 @@ Validator.prototype.updateDictionary = function updateDictionary (data) {
  * @return {Promise}
  */
 Validator.prototype.validate = function validate (name, value, scope) {
-    var this$1 = this;
     if ( scope === void 0 ) scope = null;
 
   if (this.paused) { return Promise.resolve(true); }
@@ -5870,15 +5869,16 @@ Validator.prototype.validate = function validate (name, value, scope) {
     value = field.value;
   }
 
-  return this._validate(field, value).then(function (result) {
+  var silentRun = field.isDisabled;
+
+  return this._validate(field, value, silentRun).then(function (result) {
     field.setFlags({
       pending: false,
       valid: result,
       validated: true
     });
 
-    if (field.isDisabled) {
-      this$1.errors.removeById(field.id);
+    if (silentRun) {
       return Promise.resolve(true);
     }
 

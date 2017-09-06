@@ -397,15 +397,16 @@ export default class Validator {
       value = field.value;
     }
 
-    return this._validate(field, value).then(result => {
+    const silentRun = field.isDisabled;
+
+    return this._validate(field, value, silentRun).then(result => {
       field.setFlags({
         pending: false,
         valid: result,
         validated: true
       });
 
-      if (field.isDisabled) {
-        this.errors.removeById(field.id);
+      if (silentRun) {
         return Promise.resolve(true);
       }
 
