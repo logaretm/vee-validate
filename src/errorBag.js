@@ -112,6 +112,7 @@ export default class ErrorBag {
       return collection;
     }
 
+    field = field ? String(field) : field;
     if (! scope) {
       return this.items.filter(e => e.field === field).map(e => (map ? e.msg : e));
     }
@@ -142,10 +143,11 @@ export default class ErrorBag {
   /**
      * Gets the first error message for a specific field.
      *
-     * @param  {string} field The field name.
-     * @return {string|null} message The error message.
+     * @param  {String} field The field name.
+     * @return {String|null} message The error message.
      */
   first (field, scope = null) {
+    field = field ? String(field) : field;
     const selector = this._selector(field);
     const scoped = this._scope(field);
 
@@ -232,10 +234,11 @@ export default class ErrorBag {
   /**
      * Removes all error messages associated with a specific field.
      *
-     * @param  {string} field The field which messages are to be removed.
+     * @param  {String} field The field which messages are to be removed.
      * @param {String} scope The Scope name, optional.
      */
   remove (field, scope) {
+    field = field ? String(field) : field;
     const removeCondition = scope ? e => e.field === field && e.scope === scope
       : e => e.field === field && e.scope === null;
 
@@ -250,7 +253,7 @@ export default class ErrorBag {
   /**
      * Get the field attributes if there's a rule selector.
      *
-     * @param  {string} field The specified field.
+     * @param  {String} field The specified field.
      * @return {Object|null}
      */
   _selector (field) {
@@ -266,7 +269,7 @@ export default class ErrorBag {
   /**
      * Get the field scope if specified using dot notation.
      *
-     * @param {string} field the specifie field.
+     * @param {String} field the specifie field.
      * @return {Object|null}
      */
   _scope (field) {

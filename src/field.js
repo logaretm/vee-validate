@@ -137,11 +137,11 @@ export default class Field {
     this.initial = options.initial || this.initial || false;
 
     // update errors scope if the field scope was changed.
-    if (options.scope && options.scope !== this.scope && isCallable(this.validator.update)) {
+    if (this.updated && options.scope && options.scope !== this.scope && isCallable(this.validator.update)) {
       this.validator.update(this.id, { scope: options.scope });
     }
     this.scope = options.scope || this.scope || null;
-    this.name = options.name || this.name || null;
+    this.name = (options.name ? String(options.name) : options.name) || this.name || null;
     this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
     this.listen = options.listen !== undefined ? options.listen : this.listen;
