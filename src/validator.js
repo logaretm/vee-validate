@@ -1,7 +1,7 @@
 import ErrorBag from './errorBag';
 import Dictionary from './dictionary';
 import { messages } from '../locale/en';
-import { isObject, isCallable, toArray, warn, createError, assign, find } from './utils';
+import { isObject, isCallable, toArray, warn, createError, assign, find, isNullOrUndefined } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
 
@@ -766,7 +766,7 @@ export default class Validator {
    * @param {Boolean} silent
    */
   _validate (field, value, silent = false) {
-    if (!field.isRequired && ~[null, undefined, ''].indexOf(value)) {
+    if (!field.isRequired && (isNullOrUndefined(value) || value === '')) {
       return Promise.resolve(true);
     }
 
