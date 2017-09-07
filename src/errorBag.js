@@ -1,4 +1,4 @@
-import { find } from './utils';
+import { find, isNullOrUndefined } from './utils';
 
 export default class ErrorBag {
   constructor () {
@@ -112,7 +112,7 @@ export default class ErrorBag {
       return collection;
     }
 
-    field = [null, undefined].indexOf(field) === -1 ? String(field) : field;
+    field = !isNullOrUndefined(field) ? String(field) : field;
     if (! scope) {
       return this.items.filter(e => e.field === field).map(e => (map ? e.msg : e));
     }
@@ -147,7 +147,7 @@ export default class ErrorBag {
      * @return {String|null} message The error message.
      */
   first (field, scope = null) {
-    field = [null, undefined].indexOf(field) === -1 ? String(field) : field;
+    field = !isNullOrUndefined(field) ? String(field) : field;
     const selector = this._selector(field);
     const scoped = this._scope(field);
 
@@ -238,7 +238,7 @@ export default class ErrorBag {
      * @param {String} scope The Scope name, optional.
      */
   remove (field, scope) {
-    field = [null, undefined].indexOf(field) === -1 ? String(field) : field;
+    field = !isNullOrUndefined(field) ? String(field) : field;
     const removeCondition = scope ? e => e.field === field && e.scope === scope
       : e => e.field === field && e.scope === null;
 
