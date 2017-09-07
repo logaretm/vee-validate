@@ -85,7 +85,7 @@ export default class Validator {
     /* istanbul ignore if */
     if (!DICTIONARY.hasLocale(value)) {
       // eslint-disable-next-line
-      warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+      warn('You are setting the validator locale to a locale that is not defined in the dictionary. English messages may still be generated.');
     }
 
     LOCALE = value;
@@ -170,7 +170,7 @@ export default class Validator {
   }
 
   /**
-   * Updates the dicitionary, overwriting existing values and adding new ones.
+   * Updates the dictionary, overwriting existing values and adding new ones.
    * @deprecated
    * @param  {object} data The dictionary object.
    */
@@ -351,7 +351,7 @@ export default class Validator {
   }
 
   /**
-   * Updates the messages dicitionary, overwriting existing values and adding new ones.
+   * Updates the messages dictionary, overwriting existing values and adding new ones.
    * @deprecated
    * @param  {object} data The messages object.
    */
