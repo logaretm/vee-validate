@@ -2576,6 +2576,14 @@ function cleanEscapedString$1 (input) {
 var getDataAttribute = function (el, name) { return el.getAttribute(("data-vv-" + name)); };
 
 /**
+ * Checks if the value is either null or undefined.
+ * @param {*} value 
+ */
+var isNullOrUndefined = function (value) {
+  return value === null || value === undefined;
+};
+
+/**
  * Checks if an object path is defined globally.
  */
 var isDefinedGlobally = function (prop) {
@@ -4207,7 +4215,7 @@ ErrorBag.prototype.collect = function collect (field, scope, map) {
     return collection;
   }
 
-  field = field ? String(field) : field;
+  field = !isNullOrUndefined(field) ? String(field) : field;
   if (! scope) {
     return this.items.filter(function (e) { return e.field === field; }).map(function (e) { return (map ? e.msg : e); });
   }
@@ -4245,7 +4253,7 @@ ErrorBag.prototype.first = function first (field, scope) {
     var this$1 = this;
     if ( scope === void 0 ) scope = null;
 
-  field = field ? String(field) : field;
+  field = !isNullOrUndefined(field) ? String(field) : field;
   var selector = this._selector(field);
   var scoped = this._scope(field);
 
@@ -4344,7 +4352,7 @@ ErrorBag.prototype.removeById = function removeById (id) {
 ErrorBag.prototype.remove = function remove (field, scope) {
     var this$1 = this;
 
-  field = field ? String(field) : field;
+  field = !isNullOrUndefined(field) ? String(field) : field;
   var removeCondition = scope ? function (e) { return e.field === field && e.scope === scope; }
     : function (e) { return e.field === field && e.scope === null; };
 
@@ -4674,7 +4682,8 @@ Generator.generate = function generate (el, binding, vnode, options) {
     initial: !!binding.modifiers.initial,
     alias: Generator.resolveAlias(el, vnode),
     validity: options.validity,
-    aria: options.aria
+    aria: options.aria,
+    initialValue: Generator.resolveInitialValue(vnode)
   };
 };
 
@@ -4697,6 +4706,15 @@ Generator.resolveRules = function resolveRules (el, binding) {
   }
 
   return binding.value;
+};
+
+/**
+ * @param {*} vnode 
+ */
+Generator.resolveInitialValue = function resolveInitialValue (vnode) {
+  var model = vnode.data.model || find(vnode.data.directives, function (d) { return d.name === 'model'; });
+
+  return model && model.value;
 };
 
 /**
@@ -4898,15 +4916,15 @@ var Field = function Field (el, options) {
   this.watchers = [];
   this.events = [];
   this.rules = {};
-  if (!this.isHeadless && !(this.targetOf || options.targetOf)) {
+  if (!this.isHeadless && !options.targetOf) {
     setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
   }
   options = assign({}, DEFAULT_OPTIONS, options);
   this.validity = options.validity;
   this.aria = options.aria;
   this.flags = createFlags();
-  this.vm = options.vm || this.vm;
-  this.component = options.component || this.component;
+  this.vm = options.vm;
+  this.component = options.component;
   this.update(options);
   this.updated = false;
 };
@@ -5006,7 +5024,7 @@ Field.prototype.update = function update (options) {
     this.validator.update(this.id, { scope: options.scope });
   }
   this.scope = options.scope || this.scope || null;
-  this.name = (options.name ? String(options.name) : options.name) || this.name || null;
+  this.name = (!isNullOrUndefined(options.name) ? String(options.name) : options.name) || this.name || null;
   this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
   this.model = options.model || this.model;
   this.listen = options.listen !== undefined ? options.listen : this.listen;
@@ -5550,7 +5568,7 @@ staticAccessors.locale.set = function (value) {
   /* istanbul ignore if */
   if (!DICTIONARY.hasLocale(value)) {
     // eslint-disable-next-line
-    warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+    warn('You are setting the validator locale to a locale that is not defined in the dictionary. English messages may still be generated.');
   }
 
   LOCALE = value;
@@ -5639,7 +5657,7 @@ Validator.setStrictMode = function setStrictMode (strictMode) {
 };
 
 /**
- * Updates the dicitionary, overwriting existing values and adding new ones.
+ * Updates the dictionary, overwriting existing values and adding new ones.
  * @deprecated
  * @param{object} data The dictionary object.
  */
@@ -5713,6 +5731,8 @@ Validator.prototype.attach = function attach (field) {
     }, arguments[2] || { vm: { $validator: this } });
   }
 
+  // fixes initial value detection with v-model and select elements.
+  var value = field.initialValue;
   if (!(field instanceof Field)) {
     field = new Field(field.el || null, field);
   }
@@ -5721,9 +5741,9 @@ Validator.prototype.attach = function attach (field) {
 
   // validate the field initially
   if (field.initial) {
-    this.validate(("#" + (field.id)), field.value);
+    this.validate(("#" + (field.id)), value || field.value);
   } else {
-    this._validate(field, field.value, true).then(function (valid) {
+    this._validate(field, value || field.value, true).then(function (valid) {
       field.flags.valid = valid;
       field.flags.invalid = !valid;
     });
@@ -5821,7 +5841,7 @@ Validator.prototype.setLocale = function setLocale (language) {
 };
 
 /**
- * Updates the messages dicitionary, overwriting existing values and adding new ones.
+ * Updates the messages dictionary, overwriting existing values and adding new ones.
  * @deprecated
  * @param{object} data The messages object.
  */
@@ -6259,7 +6279,7 @@ Validator.prototype._validate = function _validate (field, value, silent) {
     var this$1 = this;
     if ( silent === void 0 ) silent = false;
 
-  if (!field.isRequired && ~[null, undefined, ''].indexOf(value)) {
+  if (!field.isRequired && (isNullOrUndefined(value) || value === '')) {
     return Promise.resolve(true);
   }
 

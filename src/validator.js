@@ -245,6 +245,8 @@ export default class Validator {
       }, arguments[2] || { vm: { $validator: this } });
     }
 
+    // fixes initial value detection with v-model and select elements.
+    const value = field.initialValue;
     if (!(field instanceof Field)) {
       field = new Field(field.el || null, field);
     }
@@ -253,9 +255,9 @@ export default class Validator {
 
     // validate the field initially
     if (field.initial) {
-      this.validate(`#${field.id}`, field.value);
+      this.validate(`#${field.id}`, value || field.value);
     } else {
-      this._validate(field, field.value, true).then(valid => {
+      this._validate(field, value || field.value, true).then(valid => {
         field.flags.valid = valid;
         field.flags.invalid = !valid;
       });
