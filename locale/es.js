@@ -1,15 +1,16 @@
 import { formatFileSize, isDefinedGlobally } from '../src/utils';
 
 const messages = {
-  after: (field, [target]) => `El campo ${field} debe ser posterior a ${target}.`,
+  _default: (field) => `El campo ${field} no es válido.`,
+  after: (field, [target, inclusion]) => `El campo ${field} debe ser posterior ${inclusion ? 'o igual ' : ''}a ${target}.`,
   alpha_dash: (field) => `El campo ${field} solo debe contener letras, números y guiones.`,
   alpha_num: (field) => `El campo ${field} solo debe contener letras y números.`,
   alpha_spaces: (field) => `El campo ${field} solo debe contener letras y espacios.`,
   alpha: (field) => `El campo ${field} solo debe contener letras.`,
-  before: (field, [target]) => `El campo ${field} debe ser anterior a ${target}.`,
+  before: (field, [target, inclusion]) => `El campo ${field} debe ser anterior ${inclusion ? 'o igual ' : ''}a ${target}.`,
   between: (field, [min, max]) => `El campo ${field} debe estar entre ${min} y ${max}.`,
-  confirmed: (field, [confirmedField]) => `El campo ${field} no coincide con ${confirmedField}.`,
-  credit_card: (field, [confirmedField]) => `El campo ${field} es inválido.`,
+  confirmed: (field) => `El campo ${field} no coincide.`,
+  credit_card: (field) => `El campo ${field} es inválido.`,
   date_between: (field, [min, max]) => `El campo ${field} debe estar entre ${min} y ${max}.`,
   date_format: (field, [format]) => `El campo ${field} debe tener formato formato ${format}.`,
   decimal: (field, [decimals] = ['*']) => `El campo ${field} debe ser númerico y contener ${decimals === '*' ? '' : decimals} puntos decimales.`,
@@ -19,12 +20,20 @@ const messages = {
   ext: (field) => `El campo ${field} debe ser un archivo válido.`,
   image: (field) => `El campo ${field} debe ser una imagen.`,
   in: (field) => `El campo ${field} debe ser un valor válido.`,
+  integer: (field) => `El campo ${field} debe ser un entero.`,
   ip: (field) => `El campo ${field} debe ser una dirección ip válida.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `El largo del campo ${field} debe estar entre ${length} y ${max}.`;
+    }
+
+    return `El largo del campo ${field} debe ser ${length}.`;
+  },
   max: (field, [length]) => `El campo ${field} no debe ser mayor a ${length} caracteres.`,
-  max_value: (field, [length]) => `El campo ${field} debe de ser ${length} o menor.`,
+  max_value: (field, [max]) => `El campo ${field} debe de ser ${max} o menor.`,
   mimes: (field) => `El campo ${field} debe ser un tipo de archivo válido.`,
   min: (field, [length]) => `El campo ${field} debe tener al menos ${length} caracteres.`,
-  min_value: (field, [length]) => `El campo ${field} debe ser ${length} o superior.`,
+  min_value: (field, [min]) => `El campo ${field} debe ser ${min} o superior.`,
   not_in: (field) => `El campo ${field} debe ser un valor válido.`,
   numeric: (field) => `El campo ${field} debe contener solo caracteres númericos.`,
   regex: (field) => `El formato del campo ${field} no es válido.`,
@@ -40,6 +49,7 @@ const locale = {
 };
 
 if (isDefinedGlobally('VeeValidate.Validator')) {
+  // eslint-disable-next-line
   VeeValidate.Validator.addLocale(locale);
 }
 
