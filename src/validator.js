@@ -1,7 +1,7 @@
 import ErrorBag from './errorBag';
 import Dictionary from './dictionary';
 import { messages } from '../locale/en';
-import { isObject, isCallable, toArray, warn, createError, assign, find } from './utils';
+import { isObject, isCallable, toArray, warn, createError, assign, find, isNullOrUndefined } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
 
@@ -245,6 +245,8 @@ export default class Validator {
       }, arguments[2] || { vm: { $validator: this } });
     }
 
+    // fixes initial value detection with v-model and select elements.
+    const value = field.initialValue;
     if (!(field instanceof Field)) {
       field = new Field(field.el || null, field);
     }
@@ -253,9 +255,9 @@ export default class Validator {
 
     // validate the field initially
     if (field.initial) {
-      this.validate(`#${field.id}`, field.value);
+      this.validate(`#${field.id}`, value || field.value);
     } else {
-      this._validate(field, field.value, true).then(valid => {
+      this._validate(field, value || field.value, true).then(valid => {
         field.flags.valid = valid;
         field.flags.invalid = !valid;
       });
@@ -397,15 +399,16 @@ export default class Validator {
       value = field.value;
     }
 
-    return this._validate(field, value).then(result => {
+    const silentRun = field.isDisabled;
+
+    return this._validate(field, value, silentRun).then(result => {
       field.setFlags({
         pending: false,
         valid: result,
         validated: true
       });
 
-      if (field.isDisabled) {
-        this.errors.removeById(field.id);
+      if (silentRun) {
         return Promise.resolve(true);
       }
 
@@ -765,7 +768,7 @@ export default class Validator {
    * @param {Boolean} silent
    */
   _validate (field, value, silent = false) {
-    if (!field.isRequired && ~[null, undefined, ''].indexOf(value)) {
+    if (!field.isRequired && (isNullOrUndefined(value) || value === '')) {
       return Promise.resolve(true);
     }
 

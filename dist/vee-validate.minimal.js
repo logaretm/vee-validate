@@ -773,6 +773,7 @@ ErrorBag.prototype.collect = function collect (field, scope, map) {
     return collection;
   }
 
+  field = field ? String(field) : field;
   if (! scope) {
     return this.items.filter(function (e) { return e.field === field; }).map(function (e) { return (map ? e.msg : e); });
   }
@@ -803,13 +804,14 @@ ErrorBag.prototype.firstById = function firstById (id) {
 /**
    * Gets the first error message for a specific field.
    *
-   * @param{string} field The field name.
-   * @return {string|null} message The error message.
+   * @param{String} field The field name.
+   * @return {String|null} message The error message.
    */
 ErrorBag.prototype.first = function first (field, scope) {
     var this$1 = this;
     if ( scope === void 0 ) scope = null;
 
+  field = field ? String(field) : field;
   var selector = this._selector(field);
   var scoped = this._scope(field);
 
@@ -902,12 +904,13 @@ ErrorBag.prototype.removeById = function removeById (id) {
 /**
    * Removes all error messages associated with a specific field.
    *
-   * @param{string} field The field which messages are to be removed.
+   * @param{String} field The field which messages are to be removed.
    * @param {String} scope The Scope name, optional.
    */
 ErrorBag.prototype.remove = function remove (field, scope) {
     var this$1 = this;
 
+  field = field ? String(field) : field;
   var removeCondition = scope ? function (e) { return e.field === field && e.scope === scope; }
     : function (e) { return e.field === field && e.scope === null; };
 
@@ -922,7 +925,7 @@ ErrorBag.prototype.remove = function remove (field, scope) {
 /**
    * Get the field attributes if there's a rule selector.
    *
-   * @param{string} field The specified field.
+   * @param{String} field The specified field.
    * @return {Object|null}
    */
 ErrorBag.prototype._selector = function _selector (field) {
@@ -940,7 +943,7 @@ ErrorBag.prototype._selector = function _selector (field) {
 /**
    * Get the field scope if specified using dot notation.
    *
-   * @param {string} field the specifie field.
+   * @param {String} field the specifie field.
    * @return {Object|null}
    */
 ErrorBag.prototype._scope = function _scope (field) {
@@ -1569,7 +1572,7 @@ Field.prototype.update = function update (options) {
     this.validator.update(this.id, { scope: options.scope });
   }
   this.scope = options.scope || this.scope || null;
-  this.name = options.name || this.name || null;
+  this.name = (options.name ? String(options.name) : options.name) || this.name || null;
   this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
   this.model = options.model || this.model;
   this.listen = options.listen !== undefined ? options.listen : this.listen;
@@ -2401,7 +2404,6 @@ Validator.prototype.updateDictionary = function updateDictionary (data) {
  * @return {Promise}
  */
 Validator.prototype.validate = function validate (name, value, scope) {
-    var this$1 = this;
     if ( scope === void 0 ) scope = null;
 
   if (this.paused) { return Promise.resolve(true); }
@@ -2433,15 +2435,16 @@ Validator.prototype.validate = function validate (name, value, scope) {
     value = field.value;
   }
 
-  return this._validate(field, value).then(function (result) {
+  var silentRun = field.isDisabled;
+
+  return this._validate(field, value, silentRun).then(function (result) {
     field.setFlags({
       pending: false,
       valid: result,
       validated: true
     });
 
-    if (field.isDisabled) {
-      this$1.errors.removeById(field.id);
+    if (silentRun) {
       return Promise.resolve(true);
     }
 

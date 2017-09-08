@@ -1,4 +1,4 @@
-import { uniqId, createFlags, assign, normalizeRules, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn, toArray } from './utils';
+import { uniqId, createFlags, assign, normalizeRules, isNullOrUndefined, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn, toArray } from './utils';
 import Generator from './generator';
 
 const DEFAULT_OPTIONS = {
@@ -35,15 +35,15 @@ export default class Field {
     this.watchers = [];
     this.events = [];
     this.rules = {};
-    if (!this.isHeadless && !(this.targetOf || options.targetOf)) {
+    if (!this.isHeadless && !options.targetOf) {
       setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
     }
     options = assign({}, DEFAULT_OPTIONS, options);
     this.validity = options.validity;
     this.aria = options.aria;
     this.flags = createFlags();
-    this.vm = options.vm || this.vm;
-    this.component = options.component || this.component;
+    this.vm = options.vm;
+    this.component = options.component;
     this.update(options);
     this.updated = false;
   }
@@ -141,7 +141,7 @@ export default class Field {
       this.validator.update(this.id, { scope: options.scope });
     }
     this.scope = options.scope || this.scope || null;
-    this.name = (options.name ? String(options.name) : options.name) || this.name || null;
+    this.name = (!isNullOrUndefined(options.name) ? String(options.name) : options.name) || this.name || null;
     this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
     this.listen = options.listen !== undefined ? options.listen : this.listen;

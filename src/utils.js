@@ -6,6 +6,14 @@ import { parse, isValid, format as formatDate } from 'date-fns';
 export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
 
 /**
+ * Checks if the value is either null or undefined.
+ * @param {*} value 
+ */
+export const isNullOrUndefined = (value) => {
+  return value === null || value === undefined;
+};
+
+/**
  * Checks if an object path is defined globally.
  */
 export const isDefinedGlobally = (prop) => {

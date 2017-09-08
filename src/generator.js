@@ -25,7 +25,8 @@ export default class Generator {
       initial: !!binding.modifiers.initial,
       alias: Generator.resolveAlias(el, vnode),
       validity: options.validity,
-      aria: options.aria
+      aria: options.aria,
+      initialValue: Generator.resolveInitialValue(vnode)
     };
   }
 
@@ -48,6 +49,15 @@ export default class Generator {
     }
 
     return binding.value;
+  }
+
+  /**
+   * @param {*} vnode 
+   */
+  static resolveInitialValue (vnode) {
+    const model = vnode.data.model || find(vnode.data.directives, d => d.name === 'model');
+
+    return model && model.value;
   }
 
   /**
