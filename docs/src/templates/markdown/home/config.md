@@ -98,7 +98,7 @@ Vue.use(VeeValidate, config);
         <tr>
             <td class="is-method-name">events</td>
             <td>input|blur</td>
-            <td>Pipe seperated list of the default event names that will be listened for to trigger validation, if empty string is provided it will disable all listeners.</td>
+            <td>Pipe separated list of the default event names that will be listened for to trigger validation, if empty string is provided it will disable all listeners.</td>
         </tr>
         <tr>
             <td class="is-method-name">inject</td>
