@@ -13,7 +13,7 @@ const messages = {
   date_between: (field, [min, max]) => `В полі ${field} повинна бути дата між ${min} та ${max}.`,
   date_format: (field, [format]) => `В полі ${field} повинна бути дата в форматі ${format}.`,
   decimal: (field, [decimals] = ['*']) => `Поле ${field} повинно бути числовим та може містити ${decimals === '*' ? 'знакі' : decimals + ' знаків'} після коми.`,
-  digits: (field, [length]) => `Поле ${field} повинно бути числовими та точно містити ${length} цифри.`,
+  digits: (field, [length]) => `Поле ${field} повинно бути числовим та точно містити ${length} цифри.`,
   dimensions: (field, [width, height]) => `Поле ${field} повинно бути ${width} пікселів на ${height} пікселів.`,
   email: (field) => `В полі ${field} повинна бути адреса електронної пошти.`,
   ext: (field) => `Поле ${field} повинно бути дійсним файлом.`,
