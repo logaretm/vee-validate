@@ -293,7 +293,7 @@ export default class Validator {
     if (!field) return;
 
     field.destroy();
-    this.errors.remove(field.name, field.scope);
+    this.errors.remove(field.name, field.scope, field.id);
     this.fields.remove(field);
     const flags = this.flags;
     if (field.scope && flags[`$${field.scope}`]) {
@@ -392,8 +392,8 @@ export default class Validator {
     if (!field) {
       return this._handleFieldNotFound(name, scope);
     }
-    this.errors.remove(field.name, field.scope);
 
+    this.errors.remove(field.name, field.scope, field.id);
     field.flags.pending = true;
     if (arguments.length === 1) {
       value = field.value;
