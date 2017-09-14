@@ -1,4 +1,5 @@
 import * as utils from '../src/utils';
+import * as i18Utils from '../locale/utils';
 
 test('gets the data attribute prefixed with the plugin', () => {
   document.body.innerHTML =
@@ -353,15 +354,15 @@ test('compares two values', () => {
 });
 
 test('formats file sizes', () => {
-  expect(utils.formatFileSize(1000)).toBe('1000 KB');
-  expect(utils.formatFileSize(1024)).toBe('1 MB');
-  expect(utils.formatFileSize(1050000)).toBe('1 GB');
+  expect(i18Utils.formatFileSize(1000)).toBe('1000 KB');
+  expect(i18Utils.formatFileSize(1024)).toBe('1 MB');
+  expect(i18Utils.formatFileSize(1050000)).toBe('1 GB');
 });
 
-test('checks for property existence in global scope', () => {
-  expect(utils.isDefinedGlobally('myobj.myprop')).toBe(false);
-  global.myobj = {
+test('checks if vee-validate is available globally.', () => {
+  expect(i18Utils.isDefinedGlobally()).toBe(false);
+  global.VeeValidate = {
     myprop: true
   };
-  expect(utils.isDefinedGlobally('myobj.myprop')).toBe(true);
+  expect(i18Utils.isDefinedGlobally()).toBe(true);
 });

@@ -1,4 +1,4 @@
-import { formatFileSize, isDefinedGlobally } from '../src/utils';
+import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   after: (field, [target]) => `${field} tulee olla jälkeen ${target}.`,
@@ -35,7 +35,7 @@ const locale = {
   attributes: {}
 };
 
-if (isDefinedGlobally('VeeValidate.Validator')) {
+if (isDefinedGlobally()) {
   VeeValidate.Validator.addLocale(locale);
 }
 

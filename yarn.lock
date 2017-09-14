@@ -2991,8 +2991,8 @@ vlq@^0.2.1:
   resolved "https://registry.yarnpkg.com/vlq/-/vlq-0.2.1.tgz#14439d711891e682535467f8587c5630e4222a6c"
 
 vue@^2.4.2:
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/vue/-/vue-2.4.2.tgz#a9855261f191c978cc0dc1150531b8d08149b58c"
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.4.4.tgz#ea9550b96a71465fd2b8b17b61673b3561861789"
 
 walker@~1.0.5:
   version "1.0.7"

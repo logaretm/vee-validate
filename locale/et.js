@@ -1,4 +1,4 @@
-import { formatFileSize, isDefinedGlobally } from '../src/utils';
+import { formatFileSize, isDefinedGlobally } from './utils';
 
 // http://stackoverflow.com/a/1026087/1470607
 function capitalizeFirstLetter (string) {
@@ -45,7 +45,7 @@ const locale = {
   attributes: {}
 };
 
-if (isDefinedGlobally('VeeValidate.Validator')) {
+if (isDefinedGlobally()) {
   VeeValidate.Validator.addLocale(locale);
 }
 

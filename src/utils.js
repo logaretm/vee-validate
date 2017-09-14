@@ -14,39 +14,6 @@ export const isNullOrUndefined = (value) => {
 };
 
 /**
- * Checks if an object path is defined globally.
- */
-export const isDefinedGlobally = (prop) => {
-  let globalObj = null;
-  if (typeof window !== 'undefined') {
-    globalObj = window;
-  }
-
-  if (typeof global !== 'undefined') {
-    globalObj = global;
-  }
-
-  if (globalObj && hasPath(prop, globalObj)) {
-    return true;
-  }
-
-  return false;
-};
-
-/**
- * Formates file size.
- *
- * @param {Number|String} size
- */
-export const formatFileSize = (size) => {
-  const units = ['Byte', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  const threshold = 1024;
-  size = Number(size) * threshold;
-  const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(threshold));
-  return `${(size / Math.pow(threshold, i)).toFixed(2) * 1} ${units[i]}`;
-};
-
-/**
  * Sets the data attribute.
  * @param {*} el
  * @param {String} name

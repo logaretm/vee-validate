@@ -1,4 +1,4 @@
-import { formatFileSize, isDefinedGlobally } from '../src/utils';
+import { formatFileSize, isDefinedGlobally } from './utils';
 
 export const messages = {
   _default: (field) => `The ${field} value is not valid.`,
@@ -48,7 +48,7 @@ const locale = {
   attributes: {}
 };
 
-if (isDefinedGlobally('VeeValidate.Validator')) {
+if (isDefinedGlobally()) {
   // eslint-disable-next-line
   VeeValidate.Validator.addLocale(locale);
 }

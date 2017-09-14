@@ -1,4 +1,4 @@
-import { formatFileSize, isDefinedGlobally } from '../src/utils';
+import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   after: (field, [target]) => `O campo ${field} deve estar depois do campo ${target}.`,
@@ -39,7 +39,7 @@ const locale = {
   attributes: {}
 };
 
-if (isDefinedGlobally('VeeValidate.Validator')) {
+if (isDefinedGlobally()) {
   VeeValidate.Validator.addLocale(locale);
 }
 

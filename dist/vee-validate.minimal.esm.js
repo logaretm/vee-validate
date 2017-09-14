@@ -240,39 +240,6 @@ var isNullOrUndefined = function (value) {
 };
 
 /**
- * Checks if an object path is defined globally.
- */
-var isDefinedGlobally = function (prop) {
-  var globalObj = null;
-  if (typeof window !== 'undefined') {
-    globalObj = window;
-  }
-
-  if (typeof global !== 'undefined') {
-    globalObj = global;
-  }
-
-  if (globalObj && hasPath(prop, globalObj)) {
-    return true;
-  }
-
-  return false;
-};
-
-/**
- * Formates file size.
- *
- * @param {Number|String} size
- */
-var formatFileSize = function (size) {
-  var units = ['Byte', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  var threshold = 1024;
-  size = Number(size) * threshold;
-  var i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(threshold));
-  return (((size / Math.pow(threshold, i)).toFixed(2) * 1) + " " + (units[i]));
-};
-
-/**
  * Sets the data attribute.
  * @param {*} el
  * @param {String} name
@@ -1110,6 +1077,26 @@ Dictionary.prototype._merge = function _merge (target, source) {
   return target;
 };
 
+/**
+ * Formates file size.
+ *
+ * @param {Number|String} size
+ */
+var formatFileSize = function (size) {
+  var units = ['Byte', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  var threshold = 1024;
+  size = Number(size) * threshold;
+  var i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(threshold));
+  return (((size / Math.pow(threshold, i)).toFixed(2) * 1) + " " + (units[i]));
+};
+
+/**
+ * Checks if vee-validate is defined globally.
+ */
+var isDefinedGlobally = function () {
+  return typeof VeeValidate !== 'undefined';
+};
+
 var messages = {
   _default: function (field) { return ("The " + field + " value is not valid."); },
   after: function (field, ref) {
@@ -1219,7 +1206,7 @@ var locale$1 = {
   attributes: {}
 };
 
-if (isDefinedGlobally('VeeValidate.Validator')) {
+if (isDefinedGlobally()) {
   // eslint-disable-next-line
   VeeValidate.Validator.addLocale(locale$1);
 }

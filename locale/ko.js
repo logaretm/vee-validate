@@ -1,4 +1,4 @@
-import { formatFileSize, isDefinedGlobally } from '../src/utils';
+import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   after: (field, [target]) => `${field}항목은 ${target}항목 뒤에 와야 합니다.`,
@@ -38,7 +38,7 @@ const locale = {
   attributes: {}
 };
 
-if (isDefinedGlobally('VeeValidate.Validator')) {
+if (isDefinedGlobally()) {
   VeeValidate.Validator.addLocale(locale);
 }
 

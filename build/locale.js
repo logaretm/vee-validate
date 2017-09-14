@@ -11,12 +11,16 @@ async function build () {
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
+
+    // ignore utils file.
+    if (/utils/.test(file)) continue;
+
     const input = path.join(__dirname, '../locale', file);
     const output = path.join(__dirname, '../dist/locale', file);
     const bundle = await rollup.rollup({
       cache,
       input,
-      external: ['VeeValidate', 'date-fns'],
+      external: ['VeeValidate'],
       plugins: [
         buble()
       ],
