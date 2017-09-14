@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.15
+ * vee-validate v2.0.0-rc.16
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -6571,7 +6571,7 @@ var mapFields = function (fields) {
   }, {});
 };
 
-var version = '2.0.0-rc.15';
+var version = '2.0.0-rc.16';
 
 var rulesPlugin = function (ref) {
   var Validator$$1 = ref.Validator;
