@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.14
+ * vee-validate v2.0.0-rc.15
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -4348,13 +4348,23 @@ ErrorBag.prototype.removeById = function removeById (id) {
    *
    * @param{String} field The field which messages are to be removed.
    * @param {String} scope The Scope name, optional.
+   * @param {String} id The field id, optional.
    */
-ErrorBag.prototype.remove = function remove (field, scope) {
+ErrorBag.prototype.remove = function remove (field, scope, id) {
     var this$1 = this;
 
   field = !isNullOrUndefined(field) ? String(field) : field;
-  var removeCondition = scope ? function (e) { return e.field === field && e.scope === scope; }
-    : function (e) { return e.field === field && e.scope === null; };
+  var removeCondition = function (e) {
+    if (e.id && id) {
+      return e.id === id;
+    }
+
+    if (scope) {
+      return e.field === field && e.scope === scope;
+    }
+
+    return e.field === field && e.scope === null;
+  };
 
   for (var i = 0; i < this.items.length; ++i) {
     if (removeCondition(this$1.items[i])) {
@@ -5779,7 +5789,7 @@ Validator.prototype.detach = function detach (name, scope) {
   if (!field) { return; }
 
   field.destroy();
-  this.errors.removeById(field.id);
+  this.errors.remove(field.name, field.scope, field.id);
   this.fields.remove(field);
   var flags = this.flags;
   if (field.scope && flags[("$" + (field.scope))]) {
@@ -5882,8 +5892,8 @@ Validator.prototype.validate = function validate (name, value, scope) {
   if (!field) {
     return this._handleFieldNotFound(name, scope);
   }
-  this.errors.removeById(field.id);
 
+  this.errors.remove(field.name, field.scope, field.id);
   field.flags.pending = true;
   if (arguments.length === 1) {
     value = field.value;
@@ -6586,7 +6596,7 @@ var minimal$1 = {
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.0-rc.14'
+  version: '2.0.0-rc.15'
 };
 
 // rules plugin definition.

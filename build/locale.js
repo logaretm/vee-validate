@@ -4,36 +4,36 @@ const buble = require('rollup-plugin-buble');
 const fs = require('fs');
 const UglifyJS = require('uglify-js');
 
-const localesDir = path.join(__dirname, '../locale');
+async function build () {
+  const localesDir = path.join(__dirname, '../locale');
+  const files = fs.readdirSync(localesDir);
+  let cache;
 
-const files = fs.readdirSync(localesDir);
-let cache;
-
-files.forEach(file => {
-  const entry = path.join(__dirname, '../locale', file);
-  const output = path.join(__dirname, '../dist/locale', file);
-  rollup.rollup({
-    entry,
-    plugins: [
-      buble()
-    ],
-    cache,
-  }).then(bundle => {
-    bundle.write({
-      format: 'umd',
-      external: ['VeeValidate'],
-      moduleName: `__vee_validate_locale__${file}`,
-      dest: output
-    }).then(() => {
-      fs.readFile(output, (err, data) => {
-        if (err) throw err;
-
-        const result = UglifyJS.minify(data.toString(), {
-          mangle: true,
-          compress: true
-        });
-        fs.writeFile(output, result.code, () => {});
-      });
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const input = path.join(__dirname, '../locale', file);
+    const output = path.join(__dirname, '../dist/locale', file);
+    const bundle = await rollup.rollup({
+      cache,
+      input,
+      external: ['VeeValidate', 'date-fns'],
+      plugins: [
+        buble()
+      ],
     });
-  });
-});
+
+    const { code } = await bundle.generate({
+      format: 'umd',
+      name: `__vee_validate_locale__${file}`,
+    });
+
+    const result = UglifyJS.minify(code, {
+      compress: true,
+      mangle: true,
+    });
+
+    fs.writeFileSync(output, result.code);
+  }
+}
+
+build();
