@@ -5,6 +5,7 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "noEmit": true,
+    "strict": true,
     "lib": [
       "es5",
       "dom",
