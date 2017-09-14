@@ -1,14 +1,12 @@
-import Validator from './validator';
 import makeMixin from './mixin';
+import Validator from './validator';
 import makeDirective from './directive';
-import ErrorBag from './errorBag';
-import { assign, warn, isCallable } from './utils';
 import defaultOptions from './config';
-import mapFields from './helpers';
+import { warn, assign } from './utils';
 
 let Vue;
 
-const install = (_Vue, options = {}) => {
+function install (_Vue, options = {}) {
   if (Vue) {
     warn('already installed, Vue.use(VeeValidate) should only be called once.');
     return;
@@ -34,19 +32,4 @@ const install = (_Vue, options = {}) => {
   Vue.directive('validate', makeDirective(config));
 };
 
-const use = (plugin, options = {}) => {
-  if (!isCallable(plugin)) {
-    return warn('The plugin must be a callable function');
-  }
-
-  plugin({ Validator, ErrorBag, Rules: Validator.rules }, options);
-};
-
-export default {
-  install,
-  use,
-  mapFields,
-  Validator,
-  ErrorBag,
-  version: '__VERSION__'
-};
+export default install;

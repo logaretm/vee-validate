@@ -1,5 +1,5 @@
 import Rules from './rules';
-import minimal from './minimal';
+import minimal from './index.minimal';
 
 // rules plugin definition.
 const rulesPlugin = ({ Validator }) => {

@@ -48,7 +48,7 @@ async function minimal () {
   console.log(chalk.cyan('Generating minimal builds...'));
 
   const bundle = await Rollup.rollup({
-    input: 'src/minimal.js',
+    input: 'src/index.minimal.js',
     plugins: [
       replace({ __VERSION__: version }),
       nodeResolve(),
@@ -76,6 +76,44 @@ async function minimal () {
     mangle: true,
   }).code);
   console.log(chalk.green('Output File:') + ' vee-validate.minimal.min.js');
+}
+
+async function esm () {
+  console.log(chalk.cyan('Generating esm builds...'));
+  let bundle = await Rollup.rollup({
+    input: 'src/index.esm.js',
+    plugins: [
+      replace({ __VERSION__: version }),
+      nodeResolve(),
+      commonjs(),
+      buble()
+    ],
+  });
+
+  let { code } = await bundle.generate({
+    format: 'es',
+    name: 'VeeValidate',
+    banner:
+    `/**
+ * vee-validate v${version}
+ * (c) ${new Date().getFullYear()} Abdelrahman Awad
+ * @license MIT
+ */`
+  });
+
+  let output = path.join(outputFolder, 'vee-validate.esm.js');
+  fs.writeFileSync(output, code);
+  console.log(chalk.green('Output File:') + ' vee-validate.esm.js');
+
+  bundle = await Rollup.rollup({
+    input: 'src/index.minimal.esm.js',
+    plugins: [
+      replace({ __VERSION__: version }),
+      nodeResolve(),
+      commonjs(),
+      buble()
+    ],
+  });
 
   const esm = await bundle.generate({
     format: 'es',
@@ -91,34 +129,6 @@ async function minimal () {
   output = path.join(outputFolder, 'vee-validate.minimal.esm.js');
   fs.writeFileSync(output, esm.code);
   console.log(chalk.green('Output File:') + ' vee-validate.minimal.esm.js');
-}
-
-async function esm () {
-  console.log(chalk.cyan('Generating esm builds...'));
-  const bundle = await Rollup.rollup({
-    input: 'src/index.js',
-    plugins: [
-      replace({ __VERSION__: version }),
-      nodeResolve(),
-      commonjs(),
-      buble()
-    ],
-  });
-
-  const { code } = await bundle.generate({
-    format: 'es',
-    name: 'VeeValidate',
-    banner:
-    `/**
- * vee-validate v${version}
- * (c) ${new Date().getFullYear()} Abdelrahman Awad
- * @license MIT
- */`
-  });
-
-  const output = path.join(outputFolder, 'vee-validate.esm.js');
-  fs.writeFileSync(output, code);
-  console.log(chalk.green('Output File:') + ' vee-validate.esm.js');
 }
 
 async function build () {
