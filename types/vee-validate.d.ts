@@ -96,7 +96,7 @@ export class Validator {
     flag(name: string, flags: Object): void;
     pause(): Validator;
     remove(name: string): void;
-    update(id: string, diff: Object);
+    update(id: string, diff: Object): void;
     resume(): Validator;
     setLocale(language?: string): void;
     localize(language: string, dictionary?: Object) :void;
