@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.16
+ * vee-validate v2.0.0-rc.17
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -3137,7 +3137,7 @@ var mapFields = function (fields) {
   }, {});
 };
 
-var version = '2.0.0-rc.16';
+var version = '2.0.0-rc.17';
 
 var index_minimal_esm = {
   install: install,
