@@ -1,15 +1,10 @@
 import 'bulma/css/bulma.css';
 import 'font-awesome/css/font-awesome.css';
 import Vue from 'vue';
-import VeeValidate, { Validator } from 'vee-validate';
+import VeeValidate from 'vee-validate';
 import hljs from 'highlight.js';
 import Components from './components';
 import '../stylus/app.styl';
-
-// eslint-disable-next-line
-import('moment').then(moment => {
-  Validator.installDateTimeValidators(moment);
-});
 
 if (! window.fetch) {
   // eslint-disable-next-line
