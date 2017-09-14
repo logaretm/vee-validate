@@ -3124,8 +3124,8 @@ var mapFields = function (fields) {
   return Object.keys(normalized).reduce(function (prev, curr) {
     var field = normalized[curr];
     prev[curr] = function mappedField () {
-      if (this.$validator.fieldBag[field]) {
-        return this.$validator.fieldBag[field];
+      if (this.$validator.flags[field]) {
+        return this.$validator.flags[field];
       }
 
       var index = field.indexOf('.');
@@ -3136,7 +3136,7 @@ var mapFields = function (fields) {
       var scope = ref[0];
       var name = ref[1];
 
-      return getPath(("$" + scope + "." + name), this.$validator.fieldBag, {});
+      return getPath(("$" + scope + "." + name), this.$validator.flags, {});
     };
 
     return prev;

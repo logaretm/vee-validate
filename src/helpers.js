@@ -26,8 +26,8 @@ const mapFields = (fields) => {
   return Object.keys(normalized).reduce((prev, curr) => {
     const field = normalized[curr];
     prev[curr] = function mappedField () {
-      if (this.$validator.fieldBag[field]) {
-        return this.$validator.fieldBag[field];
+      if (this.$validator.flags[field]) {
+        return this.$validator.flags[field];
       }
 
       const index = field.indexOf('.');
@@ -36,7 +36,7 @@ const mapFields = (fields) => {
       }
       const [scope, name] = field.split('.');
 
-      return getPath(`$${scope}.${name}`, this.$validator.fieldBag, {});
+      return getPath(`$${scope}.${name}`, this.$validator.flags, {});
     };
 
     return prev;
