@@ -1,8 +1,9 @@
 import { toArray } from '../utils';
 
 /**
- * @param {Array} value 
- * @param {Number?} max 
+ * @param {Array|String} value 
+ * @param {Number} length
+ * @param {Number} max 
  */
 const compare = (value, length, max) => {
   if (max === undefined) {
@@ -16,8 +17,13 @@ const compare = (value, length, max) => {
 };
 
 export default (value, [length, max = undefined]) => {
+  length = Number(length);
   if (value === undefined || value === null) {
     return false;
+  }
+
+  if (typeof value === 'number') {
+    value = String(value);
   }
 
   if (!value.length) {

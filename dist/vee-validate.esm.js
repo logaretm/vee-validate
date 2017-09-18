@@ -6169,8 +6169,9 @@ var ip = function (value, ref) {
 };
 
 /**
- * @param {Array} value 
- * @param {Number?} max 
+ * @param {Array|String} value 
+ * @param {Number} length
+ * @param {Number} max 
  */
 var compare = function (value, length, max) {
   if (max === undefined) {
@@ -6187,8 +6188,13 @@ var length = function (value, ref) {
   var length = ref[0];
   var max = ref[1]; if ( max === void 0 ) max = undefined;
 
+  length = Number(length);
   if (value === undefined || value === null) {
     return false;
+  }
+
+  if (typeof value === 'number') {
+    value = String(value);
   }
 
   if (!value.length) {
