@@ -61,16 +61,16 @@ Now you are all setup to use the plugin.
 
 ### Usage
 
-Just apply the `v-validate` directive on your input and pass a string value which is a list of validations separated by a pipe, for example we will use the `required` and the `email` validators:
+Just apply the `v-validate` directive on your input and pass a **string value** which is a list of validations separated by a pipe, for example we will use the `required` and the `email` validators:
 
 ```vue
 <input v-validate="'required|email'" type="text" name="email">
 ```
 
-You can also pass an object for more flexibility:
+Alternatively you can pass an object for more flexibility:
 
 ```vue
-<input v-validate="{ rules: { required: true, email: true } }" type="text" name="email">
+<input v-validate="{ required: true, email: true, regex: /[0-9]+/ }" type="text" name="email">
 ```
 
 Now every time the input changes, the validator will run the list of validations from left to right, populating the errors helper object whenever an input fails validation.
