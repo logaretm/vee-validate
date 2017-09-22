@@ -82,12 +82,14 @@ The field under validation must be a valid credit card.
 <input v-validate="'credit_card'" :class="{'input': true, 'is-danger': errors.has('credit_field') }" name="credit_field" type="text" placeholder="Enter A Credit Card Number">
 <span v-show="errors.has('credit_field')" class="help is-danger">{{ errors.first('credit_field') }}</span>
 
-### [date_between:{min,max}](#rule-date_between)
+### [date_between:{min,max},{inclusion?}](#rule-date_between)
 
 The field under validation must be a valid date between the two dates specified.
 
 - `min:`The minimum allowed value for date. Must be in the same format as the date_format rule.
 - `max:`The maximum allowed value for date. Must be in the same format as the date_format rule.
+- `inclusion`: Whether to include equal dates as a valid value, it is set to `()` (exclude) by default.  
+   (For further information check the [monentjs inclusion docs](https://momentjs.com/docs/#/query/is-between/). vee-validate switched to [date-fns](https://date-fns.org) but ported this functionality.
 
 <input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY betweem 10/09/2016 and 20/09/2016">
 <span v-show="errors.has('date_between_field')" class="help is-danger">{{ errors.first('date_between_field') }}</span>
