@@ -1,4 +1,4 @@
-import mapFields from '../src/helpers';
+import mapFields from '../src/core/helpers';
 
 test('it maps field names from array to object of functions', () => {
   const fields = mapFields(['email', 'name', 'scoped.phone']);

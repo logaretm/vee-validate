@@ -1,5 +1,5 @@
 import { isAfter, isBefore, isEqual } from 'date-fns';
-import { parseDate as parse } from '../utils';
+import { parseDate as parse } from '../core/utils';
 
 export default (value, params) => {
   let min;

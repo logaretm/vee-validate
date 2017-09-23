@@ -5430,6 +5430,16 @@ function install (_Vue, options) {
   Vue.directive('validate', createDirective$1(config$$1));
 }
 
+function use (plugin, options) {
+  if ( options === void 0 ) options = {};
+
+  if (!isCallable(plugin)) {
+    return warn('The plugin must be a callable function');
+  }
+
+  plugin({ Validator: Validator, ErrorBag: ErrorBag, Rules: Validator.rules }, options);
+}
+
 var after = function (value, ref) {
   var otherValue = ref[0];
   var inclusion = ref[1];
@@ -6522,16 +6532,6 @@ var Rules = {
   url: url
 };
 
-function use (plugin, options) {
-  if ( options === void 0 ) options = {};
-
-  if (!isCallable(plugin)) {
-    return warn('The plugin must be a callable function');
-  }
-
-  plugin({ Validator: Validator, ErrorBag: ErrorBag, Rules: Validator.rules }, options);
-}
-
 var normalize = function (fields) {
   if (Array.isArray(fields)) {
     return fields.reduce(function (prev, curr) {
@@ -6595,8 +6595,9 @@ var index_esm = {
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
+  Rules: Rules,
   version: version
 };
 
-export { install, use, mapFields, Validator, ErrorBag, version };
+export { install, use, mapFields, Validator, ErrorBag, Rules, version };
 export default index_esm;

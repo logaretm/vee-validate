@@ -1,9 +1,9 @@
-import Validator from './validator';
 import install from './install';
-import Rules from './rules';
 import use from './use';
-import ErrorBag from './errorBag';
-import mapFields from './helpers';
+import Rules from './rules';
+import mapFields from './core/helpers';
+import Validator from './core/validator';
+import ErrorBag from './core/errorBag';
 
 const version = '__VERSION__';
 
@@ -21,6 +21,7 @@ export {
   mapFields,
   Validator,
   ErrorBag,
+  Rules,
   version
 };
 
@@ -30,5 +31,6 @@ export default {
   mapFields,
   Validator,
   ErrorBag,
+  Rules,
   version
 };

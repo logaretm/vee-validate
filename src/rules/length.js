@@ -1,4 +1,4 @@
-import { toArray } from '../utils';
+import { toArray } from '../core/utils';
 
 /**
  * @param {Array|String} value 

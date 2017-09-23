@@ -1,6 +1,6 @@
-import Validator from './validator';
-import ErrorBag from './errorBag';
-import { warn, isCallable } from './utils';
+import Validator from './core/validator';
+import ErrorBag from './core/errorBag';
+import { warn, isCallable } from './core/utils';
 
 function use (plugin, options = {}) {
   if (!isCallable(plugin)) {

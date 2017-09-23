@@ -1,6 +1,6 @@
 import ErrorBag from './errorBag';
 import Dictionary from './dictionary';
-import { messages } from '../locale/en';
+import { messages } from '../../locale/en';
 import { isObject, isCallable, toArray, warn, createError, assign, find, isNullOrUndefined } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';

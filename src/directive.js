@@ -1,6 +1,6 @@
-import Generator from './generator';
+import Generator from './core/generator';
 import config from './config';
-import { getDataAttribute, isEqual, warn, assign } from './utils';
+import { getDataAttribute, isEqual, warn, assign } from './core/utils';
 
 /**
  * 

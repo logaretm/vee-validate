@@ -1,7 +1,7 @@
 import Vue from 'vue/dist/vue';
 import makeMixin from '../src/mixin';
-import ErrorBag from '../src/errorBag';
-import FieldBag from '../src/fieldBag';
+import ErrorBag from '../src/core/errorBag';
+import FieldBag from '../src/core/fieldBag';
 import plugin from './../src/index';
 
 const Validator = plugin.Validator;

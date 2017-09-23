@@ -1,8 +1,8 @@
-import Validator from './validator';
+import Validator from './core/validator';
 import install from './install';
 import use from './use';
-import ErrorBag from './errorBag';
-import mapFields from './helpers';
+import ErrorBag from './core/errorBag';
+import mapFields from './core/helpers';
 
 const version = '__VERSION__';
 

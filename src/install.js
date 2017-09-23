@@ -1,8 +1,8 @@
 import makeMixin from './mixin';
-import Validator from './validator';
 import makeDirective from './directive';
 import defaultOptions from './config';
-import { warn, assign } from './utils';
+import Validator from './core/validator';
+import { warn, assign } from './core/utils';
 
 let Vue;
 

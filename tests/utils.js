@@ -1,4 +1,4 @@
-import * as utils from '../src/utils';
+import * as utils from '../src/core/utils';
 import * as i18Utils from '../locale/utils';
 
 test('gets the data attribute prefixed with the plugin', () => {

@@ -1,5 +1,5 @@
-import { isObject, isCallable, createProxy, createFlags } from './utils';
-import Validator from './validator';
+import { isObject, isCallable, createProxy, createFlags } from './core/utils';
+import Validator from './core/validator';
 
 const fakeFlags = createProxy({}, {
   get (target, key) {

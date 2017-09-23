@@ -1,4 +1,4 @@
-import Generator from '../src/generator';
+import Generator from '../src/core/generator';
 
 test('resolves the bound model', () => {
   // watchable model.

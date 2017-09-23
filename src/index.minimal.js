@@ -1,8 +1,8 @@
-import Validator from './validator';
 import install from './install';
 import use from './use';
-import ErrorBag from './errorBag';
-import mapFields from './helpers';
+import Validator from './core/validator';
+import mapFields from './core/helpers';
+import ErrorBag from './core/errorBag';
 
 export default {
   install,

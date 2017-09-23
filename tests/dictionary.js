@@ -1,4 +1,4 @@
-import Dictionary from './../src/dictionary';
+import Dictionary from './../src/core/dictionary';
 
 test('does not merge if a non object is provided', () => {
   const dict = new Dictionary('a string');

@@ -1,5 +1,5 @@
-import FieldBag from '../src/fieldBag';
-import Field from '../src/field';
+import FieldBag from '../src/core/fieldBag';
+import Field from '../src/core/field';
 
 test('adds field items to the collection', () => {
   const bag = new FieldBag();
