@@ -4210,7 +4210,14 @@ Field.prototype.addValueListeners = function addValueListeners () {
   var fn = this.targetOf ? function () {
     this$1.validator.validate(("#" + (this$1.targetOf)));
   } : function () {
-    this$1.validator.validate(("#" + (this$1.id)));
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+    // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
+    if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event) || args[0].srcElement) {
+      args[0] = this$1.value;
+    }
+    this$1.validator.validate(("#" + (this$1.id)), args[0]);
   };
 
   var validate = debounce(fn, this.delay);

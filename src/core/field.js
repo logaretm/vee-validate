@@ -406,8 +406,12 @@ export default class Field {
 
     const fn = this.targetOf ? () => {
       this.validator.validate(`#${this.targetOf}`);
-    } : () => {
-      this.validator.validate(`#${this.id}`);
+    } : (...args) => {
+      // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
+      if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event) || args[0].srcElement) {
+        args[0] = this.value;
+      }
+      this.validator.validate(`#${this.id}`, args[0]);
     };
 
     const validate = debounce(fn, this.delay);
