@@ -80,12 +80,12 @@ test('it adds value listeners on the native inputs', () => {
   
   // test input event.
   el.dispatchEvent(new Event('input'));
-  expect(field.validator.validate).toHaveBeenCalledWith(`#${field.id}`);
+  expect(field.validator.validate).toHaveBeenCalledWith(`#${field.id}`, field.value);
 
   // blur event.
   el.dispatchEvent(new Event('blur'));
   expect(field.validator.validate).toHaveBeenCalledTimes(2);
-  expect(field.validator.validate).toHaveBeenLastCalledWith(`#${field.id}`);
+  expect(field.validator.validate).toHaveBeenLastCalledWith(`#${field.id}`, field.value);
 
   // test event removal
   field.unwatch(/input/);
