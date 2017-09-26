@@ -1,4 +1,4 @@
-import { getScope, getDataAttribute, isObject, toArray, find, getPath, hasPath } from './utils';
+import { getScope, getDataAttribute, isObject, toArray, find, getPath, hasPath, isNullOrUndefined } from './utils';
 
 /**
  * Generates the options required to construct a field.
@@ -31,9 +31,9 @@ export default class Generator {
   }
 
   /**
-   * 
-   * @param {*} el 
-   * @param {*} binding 
+   *
+   * @param {*} el
+   * @param {*} binding
    */
   static resolveRules (el, binding) {
     if (!binding || !binding.expression) {
@@ -52,7 +52,7 @@ export default class Generator {
   }
 
   /**
-   * @param {*} vnode 
+   * @param {*} vnode
    */
   static resolveInitialValue (vnode) {
     const model = vnode.data.model || find(vnode.data.directives, d => d.name === 'model');
@@ -62,7 +62,7 @@ export default class Generator {
 
   /**
    * Creates a non-circular partial VM instance from a Vue instance.
-   * @param {*} vm 
+   * @param {*} vm
    */
   static makeVM (vm) {
     return {
@@ -93,8 +93,8 @@ export default class Generator {
 
   /**
    * Resolves the alias for the field.
-   * @param {*} el 
-   * @param {*} vnode 
+   * @param {*} el
+   * @param {*} vnode
    * @return {Function} alias getter
    */
   static resolveAlias (el, vnode) {
@@ -129,7 +129,7 @@ export default class Generator {
       scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
     }
 
-    return scope || getScope(el);
+    return !isNullOrUndefined(scope) ? scope : getScope(el);
   }
 
   /**
