@@ -735,8 +735,8 @@ export default class Validator {
     }
 
     if (name.indexOf('.') > -1) {
-      const parts = name.split('.');
-      const field = this.fields.find({ name: parts[1], scope: parts[0] });
+      const [fieldScope, ...fieldName] = name.split('.');
+      const field = this.fields.find({ name: fieldName.join('.'), scope: fieldScope });
       if (field) {
         return field;
       }

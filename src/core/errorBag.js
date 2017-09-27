@@ -284,9 +284,9 @@ export default class ErrorBag {
      */
   _scope (field) {
     if (field.indexOf('.') > -1) {
-      const [scope, name] = field.split('.');
+      const [scope, ...name] = field.split('.');
 
-      return { name, scope };
+      return { name: name.join('.'), scope };
     }
 
     return null;

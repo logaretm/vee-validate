@@ -339,3 +339,13 @@ test('fetches both scoped names and names with dots', () => {
   expect(errors.first('example.name')).toBe('The name is really invalid');
 });
 
+test('fields with multiple dots in their names are matched correctly', () => {
+  const errors = new ErrorBag();
+  errors.add({
+    field: 'dot.name',
+    scope: 'very-long-scope',
+    msg: 'something is wrong'
+  });
+
+  expect(errors.has('very-long-scope.dot.name')).toBe(true);
+});
