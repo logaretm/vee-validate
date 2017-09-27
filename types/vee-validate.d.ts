@@ -42,10 +42,10 @@ export class Field {
 
 export class ErrorField {
     field: string;
-    scope?: string;
-    rule: string;
     msg: string;
-    id: string;
+    scope?: string;
+    rule?: string;
+    id?: string;
 }
 
 export class ErrorBag {
