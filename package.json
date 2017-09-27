@@ -10,7 +10,7 @@
   "repository": "https://github.com/baianat/vee-validate",
   "scripts": {
     "test": "npm run lint && jest",
-    "lint": "eslint ./src",
+    "lint": "eslint ./src --fix",
     "build:locale": "node build/locale.js",
     "build:bundle": "node build/main.js",
     "build": "node build/main.js && node build/locale.js",
