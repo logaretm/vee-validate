@@ -38,3 +38,7 @@ test('validates number of elements in an array', () => {
   expect(validate(['h', 'e', 'l', 'l', 'o'], [3, 5])).toBe(true);
   expect(validate(['h', 'e', 'l', 'l', 'o', ' ', 't', 'h', 'e', 'r', 'e'], [3, 5])).toBe(false);
 });
+
+test('validates strings consisting of numbers', () => {
+  expect(validate(123, [3])).toBe(true);
+});
