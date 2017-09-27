@@ -25,10 +25,10 @@ test('resolves the bound model', () => {
   // unwatchable model because it does not exist on the vm (context).
   vnode = { context: {}, data: { model: { expression: 'email' } } };
   expect(Generator.resolveModel({ arg: null, value: null }, vnode)).toBe(null);
-  
+
   // Part of a `v-for` cannot be watched by the $watch API.
   vnode = { context: {}, data: { model: { expression: 'emails[0]' } } };
-  expect(Generator.resolveModel({ arg: null, value: null }, vnode)).toBe(null);  
+  expect(Generator.resolveModel({ arg: null, value: null }, vnode)).toBe(null);
 });
 
 test('resolves the input scope', () => {
@@ -52,6 +52,9 @@ test('resolves the input scope', () => {
   // defined in expression.
   el = document.querySelector('#el');
   expect(Generator.resolveScope(el, { arg: null, value: { scope: 's3'} })).toBe('s3');
+
+  el = document.querySelector('#el');
+  expect(Generator.resolveScope(el, { arg: null, value: { scope: 0} })).toBe(0);
 
   // defined in a components $attrs.
   el = document.querySelector('#el');
@@ -85,7 +88,7 @@ test('resolves events', () => {
   expect(Generator.resolveEvents(el, {})).toBe('input');
   el = { getAttribute: () => null };
 
-  expect(Generator.resolveEvents(el, vnode)).toBe('focus');  
+  expect(Generator.resolveEvents(el, vnode)).toBe('focus');
 });
 
 test('resolves alias', () => {
@@ -97,7 +100,7 @@ test('resolves alias', () => {
   expect(Generator.resolveAlias(el, {})()).toBe('myAlias');
   el = { getAttribute: () => null };
 
-  expect(Generator.resolveAlias(el, vnode)()).toBe('alias'); 
+  expect(Generator.resolveAlias(el, vnode)()).toBe('alias');
 });
 
 describe('resolves the value getters', () => {
@@ -144,7 +147,7 @@ describe('resolves the value getters', () => {
       getter()
     ).toBe('other');
 
-    
+
     els[2].checked = true;
     expect(
       getter()
@@ -179,7 +182,7 @@ describe('resolves the value getters', () => {
     expect(
       getter()
     ).toEqual(['some', 'other']);
-    
+
     els[2].checked = true;
     expect(
       getter()
@@ -199,7 +202,7 @@ describe('resolves the value getters', () => {
     const getter = Generator.resolveGetter(el, vnode);
     expect(getter()).toBe('2');
   });
-  
+
   test('resolves for select multiple field', () => {
     document.body.innerHTML = `
       <select type="text" name="field" id="el" multiple>
@@ -254,7 +257,7 @@ describe('resolves the value getters', () => {
     vnode.child.value = 'changed';
     expect(getter()).toBe('changed');
     delete vnode.child.value;
-  
+
     vnode.child.$attrs = { 'data-vv-value-path': 'third' };
     expect(Generator.resolveGetter(el, vnode)()).toBe(33);
   });
