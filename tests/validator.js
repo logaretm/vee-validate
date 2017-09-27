@@ -147,7 +147,7 @@ test('can set strict mode on specific instances', async () => {
   const v = new Validator({
   imp: 'required'
   });
-  
+
   try {
     let result = await v.validateAll({
       imp: 'Tyrion Lannister',
@@ -248,7 +248,7 @@ test('fails when trying to validate a non-existant field when strict mode is tru
     content: 'required|max:20',
     tags: 'required|in:1,2,3,5'
   });
-  
+
   expect(() => v.validate('nonExistant', 'whatever')).toThrow();
 });
 
@@ -354,7 +354,7 @@ test('can add a custom validator with localized messages', async () => {
 
   v.setLocale('ar');
   expect(v.locale).toBe('ar');
-  
+
   expect(await v.validate('anotherField', 1)).toBe(false);
   expect(v.errors.first('anotherField')).toBe('Some Arabic Text');
 });
@@ -572,7 +572,7 @@ test('without promises', async () => {
   });
 
   v.attach('field', 'reason');
-  
+
     expect(await v.validate('field', 'wow')).toBe(false);
 
 
@@ -615,11 +615,11 @@ test('using promises', async () => {
     }
   });
   v.attach('reason_field', 'reason_test');
-  
+
     expect(await v.validate('reason_field', 'trigger')).toBe(false);
 
   expect(v.errors.first('reason_field')).toBe('Not this value');
-  
+
     expect(await v.validate('reason_field', false)).toBe(false);
 
   expect(v.errors.first('reason_field')).toBe('Something went wrong');
@@ -628,7 +628,7 @@ test('using promises', async () => {
 test('can remove rules from the list of validators', async () => {
   Validator.extend('dummy', (value) => !! value);
   const v1 = new Validator({ name: 'dummy'});
-  
+
     await v1.validate('name', false);
 
   v1.remove('dummy');
@@ -684,7 +684,7 @@ test('can fetch the values using getters for a specific scope when not specifyin
   v1.attach('name', 'required|alpha', { scope: 'scope2', getter:getter2 });
 
   expect(await v1.validateAll('scope1')).toBe(true);
-  expect(await v1.validateAll('scope2')).toBe(false);    
+  expect(await v1.validateAll('scope2')).toBe(false);
 });
 
 test('ignores empty rules', async () => {
@@ -710,7 +710,7 @@ test('validations can be paused and resumed', async () => {
   expect(await v.validate('name', '')).toBe(true);
   expect(await v.validateAll()).toBe(true);
   expect(await v.validateScopes()).toBe(true);
-  
+
   v.resume();
   expect(await v.validate('name', '')).toBe(false);
 
@@ -817,8 +817,10 @@ test('validate can resolve the value if it was not provided', async () => {
 
 test('resolves a field by name and scope', async () => {
   const v = new Validator();
-  const field = v.attach('field', 'alpha', { scope: 's1' });
+  let field = v.attach('field', 'alpha', { scope: 's1' });
   expect(v._resolveField('field', 's1')).toBe(field);
+  field = v.attach('field', 'alpha', { scope: 0 });
+  expect(v._resolveField('field', 0)).toBe(field);
 });
 
 test('handles unresolved fields when strict is false by returning true', async () => {

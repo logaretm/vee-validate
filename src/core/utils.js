@@ -7,7 +7,7 @@ export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`)
 
 /**
  * Checks if the value is either null or undefined.
- * @param {*} value 
+ * @param {*} value
  */
 export const isNullOrUndefined = (value) => {
   return value === null || value === undefined;
@@ -62,8 +62,8 @@ export const createFlags = () => ({
 /**
  * Shallow object comparison.
  *
- * @param {*} lhs 
- * @param {*} rhs 
+ * @param {*} lhs
+ * @param {*} rhs
  * @return {Boolean}
  */
 export const isEqual = (lhs, rhs) => {
@@ -100,11 +100,11 @@ export const isEqual = (lhs, rhs) => {
  */
 export const getScope = (el) => {
   let scope = getDataAttribute(el, 'scope');
-  if (! scope && el.form) {
+  if (isNullOrUndefined(scope) && el.form) {
     scope = getDataAttribute(el.form, 'scope');
   }
 
-  return scope || null;
+  return !isNullOrUndefined(scope) ? scope : null;
 };
 
 /**

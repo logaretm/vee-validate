@@ -17,19 +17,19 @@ export default class ErrorBag {
         field: arguments[0],
         msg: arguments[1],
         rule: arguments[2],
-        scope: arguments[3] || null
+        scope: !isNullOrUndefined(arguments[3]) ? arguments[3] : null
       };
     }
 
-    error.scope = error.scope || null;
+    error.scope = !isNullOrUndefined(error.scope) ? error.scope : null;
     this.items.push(error);
   }
 
   /**
    * Updates a field error with the new field scope.
    *
-   * @param {String} id 
-   * @param {Object} error 
+   * @param {String} id
+   * @param {Object} error
    */
   update (id, error) {
     const item = find(this.items, i => i.id === id);
@@ -50,7 +50,7 @@ export default class ErrorBag {
      * @return {Array} errors Array of all error messages.
      */
   all (scope) {
-    if (! scope) {
+    if (isNullOrUndefined(scope)) {
       return this.items.map(e => e.msg);
     }
 
@@ -63,7 +63,7 @@ export default class ErrorBag {
      * @return {boolean} result True if there was at least one error, false otherwise.
      */
   any (scope) {
-    if (! scope) {
+    if (isNullOrUndefined(scope)) {
       return !! this.items.length;
     }
 
@@ -76,7 +76,7 @@ export default class ErrorBag {
      * @param {String} scope The Scope name, optional.
      */
   clear (scope) {
-    if (! scope) {
+    if (isNullOrUndefined(scope)) {
       scope = null;
     }
 
@@ -113,7 +113,7 @@ export default class ErrorBag {
     }
 
     field = !isNullOrUndefined(field) ? String(field) : field;
-    if (! scope) {
+    if (isNullOrUndefined(scope)) {
       return this.items.filter(e => e.field === field).map(e => (map ? e.msg : e));
     }
 
@@ -132,7 +132,7 @@ export default class ErrorBag {
   /**
    * Finds and fetches the first error message for the specified field id.
    *
-   * @param {String} id 
+   * @param {String} id
    */
   firstById (id) {
     const error = find(this.items, i => i.id === id);
@@ -220,7 +220,7 @@ export default class ErrorBag {
 
   /**
    * Removes errors by matching against the id.
-   * @param {String} id 
+   * @param {String} id
    */
   removeById (id) {
     for (let i = 0; i < this.items.length; ++i) {
@@ -245,7 +245,7 @@ export default class ErrorBag {
         return e.id === id;
       }
 
-      if (scope) {
+      if (!isNullOrUndefined(scope)) {
         return e.field === field && e.scope === scope;
       }
 
