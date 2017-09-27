@@ -181,7 +181,7 @@ export default class Validator {
   /**
    * Adds a locale object to the dictionary.
    * @deprecated
-   * @param {Object} locale 
+   * @param {Object} locale
    */
   static addLocale (locale) {
     if (! locale.name) {
@@ -197,7 +197,7 @@ export default class Validator {
   /**
    * Adds a locale object to the dictionary.
    * @deprecated
-   * @param {Object} locale 
+   * @param {Object} locale
    */
   addLocale (locale) {
     Validator.addLocale(locale);
@@ -215,7 +215,7 @@ export default class Validator {
 
   /**
    * Adds and sets the current locale for the validator.
-   * 
+   *
    * @param {String} lang
    * @param {Object} dictionary
    */
@@ -296,9 +296,9 @@ export default class Validator {
     this.errors.remove(field.name, field.scope, field.id);
     this.fields.remove(field);
     const flags = this.flags;
-    if (field.scope && flags[`$${field.scope}`]) {
+    if (!isNullOrUndefined(field.scope) && flags[`$${field.scope}`]) {
       delete flags[`$${field.scope}`][field.name];
-    } else if (!field.scope) {
+    } else if (isNullOrUndefined(field.scope)) {
       delete flags[field.name];
     }
 
@@ -318,17 +318,17 @@ export default class Validator {
   /**
    * Updates a field, updating both errors and flags.
    *
-   * @param {String} id 
-   * @param {Object} diff 
+   * @param {String} id
+   * @param {Object} diff
    */
   update (id, { scope }) {
     const field = this._resolveField(`#${id}`);
     this.errors.update(id, { scope });
 
     // remove old scope.
-    if (field.scope && this.flags[`$${field.scope}`]) {
+    if (!isNullOrUndefined(field.scope) && this.flags[`$${field.scope}`]) {
       delete this.flags[`$${field.scope}`][field.name];
-    } else if (!field.scope) {
+    } else if (isNullOrUndefined(field.scope)) {
       delete this.flags[field.name];
     }
 
@@ -567,11 +567,11 @@ export default class Validator {
 
   /**
    * Adds a field flags to the flags collection.
-   * @param {Field} field 
-   * @param {String|null} scope 
+   * @param {Field} field
+   * @param {String|null} scope
    */
   _addFlag (field, scope = null) {
-    if (!scope) {
+    if (isNullOrUndefined(scope)) {
       this.flags = assign({}, this.flags, { [`${field.name}`]: field.flags });
       return;
     }
@@ -726,7 +726,7 @@ export default class Validator {
    * @return {Field}
    */
   _resolveField (name, scope) {
-    if (scope) {
+    if (!isNullOrUndefined(scope)) {
       return this.fields.find({ name, scope });
     }
 
@@ -754,7 +754,7 @@ export default class Validator {
   _handleFieldNotFound (name, scope) {
     if (!this.strict) return Promise.resolve(true);
 
-    const fullName = scope ? name : `${scope ? scope + '.' : ''}${name}`;
+    const fullName = isNullOrUndefined(scope) ? name : `${!isNullOrUndefined(scope) ? scope + '.' : ''}${name}`;
     throw createError(
       `Validating a non-existant field: "${fullName}". Use "attach()" first.`
     );

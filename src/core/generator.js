@@ -125,7 +125,7 @@ export default class Generator {
       scope = binding.value.scope;
     }
 
-    if (vnode.child && !scope) {
+    if (vnode.child && isNullOrUndefined(scope)) {
       scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
     }
 

@@ -77,7 +77,7 @@ test('it adds value listeners on the native inputs', () => {
   expect(field.watchers.length).toBe(4); // still 4
 
   field.vm = { $validator: { validate: jest.fn() } };
-  
+
   // test input event.
   el.dispatchEvent(new Event('input'));
   expect(field.validator.validate).toHaveBeenCalledWith(`#${field.id}`, field.value);
@@ -195,7 +195,7 @@ test('it adds class listeners on the input', () => {
   expect(field.flags.dirty).toBe(true);
   expect(el.classList.contains('pristine')).toBe(false);
   expect(field.flags.pristine).toBe(false);
-  
+
   el.dispatchEvent(new Event('blur'));
   expect(field.watchers.length).toBe(2); // 1 more down.
   expect(el.classList.contains('untouched')).toBe(false);
@@ -351,7 +351,7 @@ test('sets aria attributes on elements', async () => {
   expect(el.getAttribute('aria-invalid')).toBe('true');
   field.el = null; // headless
   field.updateAriaAttrs();
-  
+
   // unchanged.
   expect(el.getAttribute('aria-required')).toBe('false');
   expect(el.getAttribute('aria-invalid')).toBe('true');
@@ -395,6 +395,19 @@ test('calls the update method on the validator errors when updating scope', () =
   const field = new Field(el, { rules: 'required', vm });
   field.updated = true;
   field.update({ rules: 'min:3', scope: 'scope' });
+  expect(vm.$validator.update).toHaveBeenCalledTimes(1);
+});
+
+test('calls the update method on the validator errors when updating scope to 0', () => {
+  let el = document.createElement('input');
+  const vm = {
+    $validator: {
+      update: jest.fn()
+    }
+  };
+  const field = new Field(el, { rules: 'required', vm });
+  field.updated = true;
+  field.update({ rules: 'min:3', scope: 0 });
   expect(vm.$validator.update).toHaveBeenCalledTimes(1);
 });
 
@@ -556,4 +569,9 @@ test('sets the field flags', () => {
 
   expect(field.flags.touched).toBe(false);
   expect(field.flags.untouched).toBe(false);
+});
+
+test('field scope set to 0', () => {
+  const field = new Field(null, {scope:0});
+  expect(field.scope).toBe(0);
 });
