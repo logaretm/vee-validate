@@ -188,11 +188,13 @@ const someRuleObj = { in: [1, 2, 3, 4] };
 <p>The field under validation must be a valid credit card.</p>
 <input v-validate="'credit_card'" :class="{'input': true, 'is-danger': errors.has('credit_field') }" name="credit_field" type="text" placeholder="Enter A Credit Card Number">
 <span v-show="errors.has('credit_field')" class="help is-danger">{{ errors.first('credit_field') }}</span>
-<h3><a href="#rule-date_between">date_between:{min,max}</a></h3>
+<h3><a href="#rule-date_between">date_between:{min,max},{inclusion?}</a></h3>
 <p>The field under validation must be a valid date between the two dates specified.</p>
 <ul>
 <li><code>min:</code>The minimum allowed value for date. Must be in the same format as the date_format rule.</li>
 <li><code>max:</code>The maximum allowed value for date. Must be in the same format as the date_format rule.</li>
+<li><code>inclusion</code>: Whether to include equal dates as a valid value, it is set to <code>()</code> (exclude) by default.<br>
+(For further information check the <a href="https://momentjs.com/docs/#/query/is-between/">monentjs inclusion docs</a>. vee-validate switched to <a href="https://date-fns.org">date-fns</a> but ported this functionality.</li>
 </ul>
 <input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY betweem 10/09/2016 and 20/09/2016">
 <span v-show="errors.has('date_between_field')" class="help is-danger">{{ errors.first('date_between_field') }}</span>
@@ -516,4 +518,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor-5da333fd1d08a89ba90e.js"></script><script type="text/javascript" src="/assets/js/bundle-5da333fd1d08a89ba90e.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor-20c5f1c86c722943fe1d.js"></script><script type="text/javascript" src="/assets/js/bundle-20c5f1c86c722943fe1d.js"></script></body></html>

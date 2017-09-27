@@ -28,3 +28,5 @@ Validator.extend('unique', {
 ```
 
 The following demo shows how would it work in action, note that it will only trigger if the user entered a valid email since the validator early exits upon first failure.
+
+Since there is no real DB in this example, Its being simulated by a dynamic array.

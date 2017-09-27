@@ -8,6 +8,11 @@
           <span v-show="errors.has('email')" class="help is-danger">{{ errors.first('email') }}</span>
       </p>
     </div>
+    <div class="column is-12">
+      <p class="control">
+        <button class="button is-primary" type="button" @click="submit">Submit</button>
+      </p>
+    </div>
   </div>
 </template>
 
@@ -16,13 +21,16 @@ import { Validator } from 'vee-validate';
 
 export default {
   name: 'backend-example',
+  data: () => ({
+    // simulate emails database
+    emailsDB: [],
+    email: null
+  }),
   created() {
     // simulated DB.
-    const emailsDB = [];
     const isUnique = value => new Promise((resolve) => {
       setTimeout(() => {
-        if (emailsDB.indexOf(value) === -1) {
-          emailsDB.push(value);
+        if (this.emailsDB.indexOf(value) === -1) {
           return resolve({
             valid: true
           });
@@ -41,6 +49,15 @@ export default {
       validate: isUnique,
       getMessage: (field, params, data) => data.message
     });
+  },
+  methods: {
+    submit() {
+      this.emailsDB.push(this.email);
+      this.email = '';
+      this.$nextTick().then(() => {
+        this.$validator.reset();
+      });
+    }
   }
 };
 </script>

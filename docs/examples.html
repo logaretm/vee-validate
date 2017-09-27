@@ -733,17 +733,21 @@ Validator.extend('unique', {
 });
 </code></pre>
 <p>The following demo shows how would it work in action, note that it will only trigger if the user entered a valid email since the validator early exits upon first failure.</p>
+<p>Since there is no real DB in this example, Its being simulated by a dynamic array.</p>
 <code-example><div slot="example"><backend-example> </backend-example></div><div slot="js">import { Validator } from 'vee-validate';
 
 export default {
   name: 'backend-example',
+  data: () => ({
+    // simulate emails database
+    emailsDB: [],
+    email: null
+  }),
   created() {
     // simulated DB.
-    const emailsDB = [];
     const isUnique = value => new Promise((resolve) => {
       setTimeout(() => {
-        if (emailsDB.indexOf(value) === -1) {
-          emailsDB.push(value);
+        if (this.emailsDB.indexOf(value) === -1) {
           return resolve({
             valid: true
           });
@@ -762,6 +766,15 @@ export default {
       validate: isUnique,
       getMessage: (field, params, data) => data.message
     });
+  },
+  methods: {
+    submit() {
+      this.emailsDB.push(this.email);
+      this.email = '';
+      this.$nextTick().then(() => {
+        this.$validator.reset();
+      });
+    }
   }
 };
 </div><div slot="html">
@@ -772,6 +785,11 @@ export default {
         &lt;input name=&quot;email&quot; v-model=&quot;email&quot; v-validate=&quot;'required|email|unique'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;
         &lt;i v-show=&quot;errors.has('email')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
         &lt;span v-show=&quot;errors.has('email')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('email') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;column is-12&quot;&gt;
+    &lt;p class=&quot;control&quot;&gt;
+      &lt;button class=&quot;button is-primary&quot; type=&quot;button&quot; @click=&quot;submit&quot;&gt;Submit&lt;/button&gt;
     &lt;/p&gt;
   &lt;/div&gt;
 &lt;/div&gt;
@@ -795,4 +813,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor-5da333fd1d08a89ba90e.js"></script><script type="text/javascript" src="/assets/js/bundle-5da333fd1d08a89ba90e.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor-20c5f1c86c722943fe1d.js"></script><script type="text/javascript" src="/assets/js/bundle-20c5f1c86c722943fe1d.js"></script></body></html>
