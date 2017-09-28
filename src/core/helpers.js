@@ -1,5 +1,3 @@
-import { getPath } from './utils';
-
 const normalize = (fields) => {
   if (Array.isArray(fields)) {
     return fields.reduce((prev, curr) => {
