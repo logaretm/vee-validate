@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.17
+ * vee-validate v2.0.0-rc.18
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -233,7 +233,7 @@ var getDataAttribute = function (el, name) { return el.getAttribute(("data-vv-" 
 
 /**
  * Checks if the value is either null or undefined.
- * @param {*} value 
+ * @param {*} value
  */
 var isNullOrUndefined = function (value) {
   return value === null || value === undefined;
@@ -278,8 +278,8 @@ var createFlags = function () { return ({
 /**
  * Shallow object comparison.
  *
- * @param {*} lhs 
- * @param {*} rhs 
+ * @param {*} lhs
+ * @param {*} rhs
  * @return {Boolean}
  */
 var isEqual = function (lhs, rhs) {
@@ -316,11 +316,11 @@ var isEqual = function (lhs, rhs) {
  */
 var getScope = function (el) {
   var scope = getDataAttribute(el, 'scope');
-  if (! scope && el.form) {
+  if (isNullOrUndefined(scope) && el.form) {
     scope = getDataAttribute(el.form, 'scope');
   }
 
-  return scope || null;
+  return !isNullOrUndefined(scope) ? scope : null;
 };
 
 /**
@@ -643,19 +643,19 @@ ErrorBag.prototype.add = function add (error) {
       field: arguments[0],
       msg: arguments[1],
       rule: arguments[2],
-      scope: arguments[3] || null
+      scope: !isNullOrUndefined(arguments[3]) ? arguments[3] : null
     };
   }
 
-  error.scope = error.scope || null;
+  error.scope = !isNullOrUndefined(error.scope) ? error.scope : null;
   this.items.push(error);
 };
 
 /**
  * Updates a field error with the new field scope.
  *
- * @param {String} id 
- * @param {Object} error 
+ * @param {String} id
+ * @param {Object} error
  */
 ErrorBag.prototype.update = function update (id, error) {
   var item = find(this.items, function (i) { return i.id === id; });
@@ -676,7 +676,7 @@ ErrorBag.prototype.update = function update (id, error) {
    * @return {Array} errors Array of all error messages.
    */
 ErrorBag.prototype.all = function all (scope) {
-  if (! scope) {
+  if (isNullOrUndefined(scope)) {
     return this.items.map(function (e) { return e.msg; });
   }
 
@@ -689,7 +689,7 @@ ErrorBag.prototype.all = function all (scope) {
    * @return {boolean} result True if there was at least one error, false otherwise.
    */
 ErrorBag.prototype.any = function any (scope) {
-  if (! scope) {
+  if (isNullOrUndefined(scope)) {
     return !! this.items.length;
   }
 
@@ -704,7 +704,7 @@ ErrorBag.prototype.any = function any (scope) {
 ErrorBag.prototype.clear = function clear (scope) {
     var this$1 = this;
 
-  if (! scope) {
+  if (isNullOrUndefined(scope)) {
     scope = null;
   }
 
@@ -743,7 +743,7 @@ ErrorBag.prototype.collect = function collect (field, scope, map) {
   }
 
   field = !isNullOrUndefined(field) ? String(field) : field;
-  if (! scope) {
+  if (isNullOrUndefined(scope)) {
     return this.items.filter(function (e) { return e.field === field; }).map(function (e) { return (map ? e.msg : e); });
   }
 
@@ -762,7 +762,7 @@ ErrorBag.prototype.count = function count () {
 /**
  * Finds and fetches the first error message for the specified field id.
  *
- * @param {String} id 
+ * @param {String} id
  */
 ErrorBag.prototype.firstById = function firstById (id) {
   var error = find(this.items, function (i) { return i.id === id; });
@@ -857,7 +857,7 @@ ErrorBag.prototype.firstNot = function firstNot (name, rule, scope) {
 
 /**
  * Removes errors by matching against the id.
- * @param {String} id 
+ * @param {String} id
  */
 ErrorBag.prototype.removeById = function removeById (id) {
     var this$1 = this;
@@ -886,7 +886,7 @@ ErrorBag.prototype.remove = function remove (field, scope, id) {
       return e.id === id;
     }
 
-    if (scope) {
+    if (!isNullOrUndefined(scope)) {
       return e.field === field && e.scope === scope;
     }
 
@@ -929,9 +929,9 @@ ErrorBag.prototype._scope = function _scope (field) {
   if (field.indexOf('.') > -1) {
     var ref = field.split('.');
       var scope = ref[0];
-      var name = ref[1];
+      var name = ref.slice(1);
 
-    return { name: name, scope: scope };
+    return { name: name.join('.'), scope: scope };
   }
 
   return null;
@@ -1245,9 +1245,9 @@ Generator.generate = function generate (el, binding, vnode, options) {
 };
 
 /**
- * 
- * @param {*} el 
- * @param {*} binding 
+ *
+ * @param {*} el
+ * @param {*} binding
  */
 Generator.resolveRules = function resolveRules (el, binding) {
   if (!binding || !binding.expression) {
@@ -1266,7 +1266,7 @@ Generator.resolveRules = function resolveRules (el, binding) {
 };
 
 /**
- * @param {*} vnode 
+ * @param {*} vnode
  */
 Generator.resolveInitialValue = function resolveInitialValue (vnode) {
   var model = vnode.data.model || find(vnode.data.directives, function (d) { return d.name === 'model'; });
@@ -1276,7 +1276,7 @@ Generator.resolveInitialValue = function resolveInitialValue (vnode) {
 
 /**
  * Creates a non-circular partial VM instance from a Vue instance.
- * @param {*} vm 
+ * @param {*} vm
  */
 Generator.makeVM = function makeVM (vm) {
   return {
@@ -1309,8 +1309,8 @@ Generator.resolveDelay = function resolveDelay (el, vnode, options) {
 
 /**
  * Resolves the alias for the field.
- * @param {*} el 
- * @param {*} vnode 
+ * @param {*} el
+ * @param {*} vnode
  * @return {Function} alias getter
  */
 Generator.resolveAlias = function resolveAlias (el, vnode) {
@@ -1343,11 +1343,11 @@ Generator.resolveScope = function resolveScope (el, binding, vnode) {
     scope = binding.value.scope;
   }
 
-  if (vnode.child && !scope) {
+  if (vnode.child && isNullOrUndefined(scope)) {
     scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
   }
 
-  return scope || getScope(el);
+  return !isNullOrUndefined(scope) ? scope : getScope(el);
 };
 
 /**
@@ -1534,7 +1534,7 @@ prototypeAccessors$1.value.get = function () {
 };
 
 /**
- * If the field rejects false as a valid value for the required rule. 
+ * If the field rejects false as a valid value for the required rule.
  */
 prototypeAccessors$1.rejectsFalse.get = function () {
   if (this.isVue || this.isHeadless) {
@@ -1577,10 +1577,11 @@ Field.prototype.update = function update (options) {
   this.initial = options.initial || this.initial || false;
 
   // update errors scope if the field scope was changed.
-  if (this.updated && options.scope && options.scope !== this.scope && isCallable(this.validator.update)) {
+  if (this.updated && !isNullOrUndefined(options.scope) && options.scope !== this.scope && isCallable(this.validator.update)) {
     this.validator.update(this.id, { scope: options.scope });
   }
-  this.scope = options.scope || this.scope || null;
+  this.scope = !isNullOrUndefined(options.scope) ? options.scope
+    : !isNullOrUndefined(this.scope) ? this.scope : null;
   this.name = (!isNullOrUndefined(options.name) ? String(options.name) : options.name) || this.name || null;
   this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
   this.model = options.model || this.model;
@@ -1636,7 +1637,7 @@ Field.prototype.reset = function reset () {
 
 /**
  * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
- * @param {Object} flags 
+ * @param {Object} flags
  */
 Field.prototype.setFlags = function setFlags (flags) {
     var this$1 = this;
@@ -2232,7 +2233,7 @@ Validator.updateDictionary = function updateDictionary (data) {
 /**
  * Adds a locale object to the dictionary.
  * @deprecated
- * @param {Object} locale 
+ * @param {Object} locale
  */
 Validator.addLocale = function addLocale (locale) {
   if (! locale.name) {
@@ -2247,7 +2248,7 @@ Validator.addLocale = function addLocale (locale) {
 /**
  * Adds a locale object to the dictionary.
  * @deprecated
- * @param {Object} locale 
+ * @param {Object} locale
  */
 Validator.prototype.addLocale = function addLocale (locale) {
   Validator.addLocale(locale);
@@ -2265,7 +2266,7 @@ Validator.prototype.localize = function localize (lang, dictionary) {
 
 /**
  * Adds and sets the current locale for the validator.
- * 
+ *
  * @param {String} lang
  * @param {Object} dictionary
  */
@@ -2346,9 +2347,9 @@ Validator.prototype.detach = function detach (name, scope) {
   this.errors.remove(field.name, field.scope, field.id);
   this.fields.remove(field);
   var flags = this.flags;
-  if (field.scope && flags[("$" + (field.scope))]) {
+  if (!isNullOrUndefined(field.scope) && flags[("$" + (field.scope))]) {
     delete flags[("$" + (field.scope))][field.name];
-  } else if (!field.scope) {
+  } else if (isNullOrUndefined(field.scope)) {
     delete flags[field.name];
   }
 
@@ -2368,8 +2369,8 @@ Validator.prototype.extend = function extend (name, validator) {
 /**
  * Updates a field, updating both errors and flags.
  *
- * @param {String} id 
- * @param {Object} diff 
+ * @param {String} id
+ * @param {Object} diff
  */
 Validator.prototype.update = function update (id, ref) {
     var scope = ref.scope;
@@ -2378,9 +2379,9 @@ Validator.prototype.update = function update (id, ref) {
   this.errors.update(id, { scope: scope });
 
   // remove old scope.
-  if (field.scope && this.flags[("$" + (field.scope))]) {
+  if (!isNullOrUndefined(field.scope) && this.flags[("$" + (field.scope))]) {
     delete this.flags[("$" + (field.scope))][field.name];
-  } else if (!field.scope) {
+  } else if (isNullOrUndefined(field.scope)) {
     delete this.flags[field.name];
   }
 
@@ -2633,13 +2634,13 @@ Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field)
 
 /**
  * Adds a field flags to the flags collection.
- * @param {Field} field 
- * @param {String|null} scope 
+ * @param {Field} field
+ * @param {String|null} scope
  */
 Validator.prototype._addFlag = function _addFlag (field, scope) {
     if ( scope === void 0 ) scope = null;
 
-  if (!scope) {
+  if (isNullOrUndefined(scope)) {
     this.flags = assign({}, this.flags, ( obj = {}, obj[("" + (field.name))] = field.flags, obj ));
       var obj;
     return;
@@ -2798,7 +2799,7 @@ Validator._guardExtend = function _guardExtend (name, validator) {
  * @return {Field}
  */
 Validator.prototype._resolveField = function _resolveField (name, scope) {
-  if (scope) {
+  if (!isNullOrUndefined(scope)) {
     return this.fields.find({ name: name, scope: scope });
   }
 
@@ -2807,8 +2808,10 @@ Validator.prototype._resolveField = function _resolveField (name, scope) {
   }
 
   if (name.indexOf('.') > -1) {
-    var parts = name.split('.');
-    var field = this.fields.find({ name: parts[1], scope: parts[0] });
+    var ref = name.split('.');
+      var fieldScope = ref[0];
+      var fieldName = ref.slice(1);
+    var field = this.fields.find({ name: fieldName.join('.'), scope: fieldScope });
     if (field) {
       return field;
     }
@@ -2826,7 +2829,7 @@ Validator.prototype._resolveField = function _resolveField (name, scope) {
 Validator.prototype._handleFieldNotFound = function _handleFieldNotFound (name, scope) {
   if (!this.strict) { return Promise.resolve(true); }
 
-  var fullName = scope ? name : ("" + (scope ? scope + '.' : '') + name);
+  var fullName = isNullOrUndefined(scope) ? name : ("" + (!isNullOrUndefined(scope) ? scope + '.' : '') + name);
   throw createError(
     ("Validating a non-existant field: \"" + fullName + "\". Use \"attach()\" first.")
   );
@@ -3125,26 +3128,35 @@ var mapFields = function (fields) {
   return Object.keys(normalized).reduce(function (prev, curr) {
     var field = normalized[curr];
     prev[curr] = function mappedField () {
+      // if field exists
       if (this.$validator.flags[field]) {
         return this.$validator.flags[field];
       }
 
+      // if it has a scope defined
       var index = field.indexOf('.');
       if (index <= 0) {
         return {};
       }
+
       var ref = field.split('.');
       var scope = ref[0];
-      var name = ref[1];
+      var name = ref.slice(1);
+      scope = this.$validator.flags[("$" + scope)];
+      name = name.join('.');
 
-      return getPath(("$" + scope + "." + name), this.$validator.flags, {});
+      if (scope && scope[name]) {
+        return scope[name];
+      }
+
+      return {};
     };
 
     return prev;
   }, {});
 };
 
-var version = '2.0.0-rc.17';
+var version = '2.0.0-rc.18';
 
 var index_minimal_esm = {
   install: install,
