@@ -33,8 +33,9 @@
     ],
     "collectCoverageFrom": [
       "src/**/*.js",
-      "!src/index.js",
-      "!src/minimal.js",
+      "!src/index.*.js",
+      "!src/install.js",
+      "!src/use.js",
       "!src/messages.js",
       "!src/plugins/date/messages.js"
     ]
