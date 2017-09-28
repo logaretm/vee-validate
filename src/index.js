@@ -11,4 +11,6 @@ const rulesPlugin = ({ Validator }) => {
 // install the rules via the plugin API.
 minimal.use(rulesPlugin);
 
+minimal.Rules = Rules;
+
 export default minimal;
