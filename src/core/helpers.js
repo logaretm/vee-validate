@@ -26,17 +26,26 @@ const mapFields = (fields) => {
   return Object.keys(normalized).reduce((prev, curr) => {
     const field = normalized[curr];
     prev[curr] = function mappedField () {
+      // if field exists
       if (this.$validator.flags[field]) {
         return this.$validator.flags[field];
       }
 
+      // if it has a scope defined
       const index = field.indexOf('.');
       if (index <= 0) {
         return {};
       }
-      const [scope, name] = field.split('.');
 
-      return getPath(`$${scope}.${name}`, this.$validator.flags, {});
+      let [scope, ...name] = field.split('.');
+      scope = this.$validator.flags[`$${scope}`];
+      name = name.join('.');
+
+      if (scope && scope[name]) {
+        return scope[name];
+      }
+
+      return {};
     };
 
     return prev;
