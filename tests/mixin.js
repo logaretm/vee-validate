@@ -131,11 +131,17 @@ describe('components can have a definition object in the ctor options', () => {
       data: () => ({
         innerValue: '102'
       }),
+      props: {
+        name: String 
+      },
       inject: ['$validator'],
       $vee: {
         rejectsFalse: true,
         value: function () {
           return this.innerValue;
+        },
+        name: function () {
+          return this.name
         }
       }
     });
@@ -148,13 +154,13 @@ describe('components can have a definition object in the ctor options', () => {
       components: { Child },
       template: `
         <div>
-          <child v-validate="'required'" data-vv-name="field"></child>
+          <child v-validate="'required'" name="field"></child>
         </div>
       `
     });
   };
 
-  test('uses the value getters in the definition', () => {
+  test('uses the value getter in the definition', () => {
     const VM = createVM();
 
     const app = new VM().$mount();
@@ -165,6 +171,14 @@ describe('components can have a definition object in the ctor options', () => {
     expect(field.value).toBe('102');
     child.innerValue = 20;
     expect(field.value).toBe(20);
+  });
+
+  test('uses the name getter in the definition', () => {
+    const VM = createVM();
+
+    const app = new VM().$mount();
+    const field = app.$validator.fields.items[0];
+    expect(field.name).toBe('field');
   });
 
   test('components can reject the false value if provided in the required rule', async () => {

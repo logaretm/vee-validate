@@ -167,8 +167,13 @@ export default class Generator {
      * Resolves the field name to trigger validations.
      * @return {String} The field name.
      */
-  static resolveName (el, vnode) {
+  static resolveName (el, vnode, hasVeeConfig = false) {
     if (vnode.child) {
+      if (hasVeeConfig && isCallable(vnode.child.$options.$vee.name)) {
+        const boundGetter = vnode.child.$options.$vee.name.bind(vnode.child);
+        return boundGetter();
+      }
+
       return getDataAttribute(el, 'name') || (vnode.child.$attrs && (vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'])) || vnode.child.name;
     }
 
