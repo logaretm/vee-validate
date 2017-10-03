@@ -1,5 +1,6 @@
 import Vue from 'vue/dist/vue';
 import makeMixin from '../src/mixin';
+import makeDirective from '../src/directive';
 import ErrorBag from '../src/core/errorBag';
 import FieldBag from '../src/core/fieldBag';
 import plugin from './../src/index';
@@ -118,4 +119,63 @@ test('component pauses the validator before destroy if it owns it', () => {
   app = new VM();
   app.$destroy();
   expect(validator.pause).toHaveBeenCalledTimes(1);
+});
+
+describe('components can have a definition object in the ctor options', () => {
+  const createVM = () => {
+    const mixin = makeMixin(Vue, { inject: false });    
+    const Child = Vue.extend({
+      mixins: [mixin],
+      name: 'child',
+      template: `<div></div>`,
+      data: () => ({
+        innerValue: '102'
+      }),
+      inject: ['$validator'],
+      $vee: {
+        rejectsFalse: true,
+        value: function () {
+          return this.innerValue;
+        }
+      }
+    });
+
+    return Vue.extend({
+      mixins: [mixin],
+      directives: {
+        validate: makeDirective({ inject: false })
+      },
+      components: { Child },
+      template: `
+        <div>
+          <child v-validate="'required'" data-vv-name="field"></child>
+        </div>
+      `
+    });
+  };
+
+  test('uses the value getters in the definition', () => {
+    const VM = createVM();
+
+    const app = new VM().$mount();
+    const child = app.$children[0];
+    const field = app.$validator.fields.items[0];
+
+    // test value resolution.
+    expect(field.value).toBe('102');
+    child.innerValue = 20;
+    expect(field.value).toBe(20);
+  });
+
+  test('components can reject the false value if provided in the required rule', async () => {
+    const VM = createVM();
+
+    const app = new VM().$mount();
+    const child = app.$children[0];
+
+    expect(await app.$validator.validate('field')).toBe(true);
+    child.innerValue = false;
+
+    expect(await app.$validator.validate('field')).toBe(false);
+  });
 });

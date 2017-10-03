@@ -1,4 +1,4 @@
-import { uniqId, createFlags, assign, normalizeRules, isNullOrUndefined, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn, toArray } from './utils';
+import { uniqId, createFlags, assign, normalizeRules, isNullOrUndefined, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn, toArray, getPath } from './utils';
 import Generator from './generator';
 
 const DEFAULT_OPTIONS = {
@@ -9,6 +9,7 @@ const DEFAULT_OPTIONS = {
   name: null,
   active: true,
   required: false,
+  hasVeeOptions: false,
   rules: {},
   vm: null,
   classes: false,
@@ -43,6 +44,7 @@ export default class Field {
     this.aria = options.aria;
     this.flags = createFlags();
     this.vm = options.vm;
+    this.hasVeeConfig = options.hasVeeConfig;
     this.component = options.component;
     this.update(options);
     this.updated = false;
@@ -97,7 +99,11 @@ export default class Field {
    * If the field rejects false as a valid value for the required rule.
    */
   get rejectsFalse () {
-    if (this.isVue || this.isHeadless) {
+    if (this.isVue && this.hasVeeConfig) {
+      return getPath('$options.$vee.rejectsFalse', this.component, false);
+    }
+
+    if (this.isHeadless) {
       return false;
     }
 

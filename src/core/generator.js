@@ -1,4 +1,4 @@
-import { getScope, getDataAttribute, isObject, toArray, find, getPath, hasPath, isNullOrUndefined } from './utils';
+import { getScope, getDataAttribute, isObject, toArray, find, getPath, hasPath, isNullOrUndefined, isCallable } from './utils';
 
 /**
  * Generates the options required to construct a field.
@@ -6,6 +6,7 @@ import { getScope, getDataAttribute, isObject, toArray, find, getPath, hasPath, 
 export default class Generator {
   static generate (el, binding, vnode, options = {}) {
     const model = Generator.resolveModel(binding, vnode);
+    const hasVeeConfig = getPath('child.$options.$vee', vnode, false);
 
     return {
       name: Generator.resolveName(el, vnode),
@@ -17,7 +18,7 @@ export default class Generator {
       component: vnode.child,
       classes: options.classes,
       classNames: options.classNames,
-      getter: Generator.resolveGetter(el, vnode, model),
+      getter: Generator.resolveGetter(el, vnode, model, hasVeeConfig),
       events: Generator.resolveEvents(el, vnode) || options.events,
       model,
       delay: Generator.resolveDelay(el, vnode, options),
@@ -26,7 +27,8 @@ export default class Generator {
       alias: Generator.resolveAlias(el, vnode),
       validity: options.validity,
       aria: options.aria,
-      initialValue: Generator.resolveInitialValue(vnode)
+      initialValue: Generator.resolveInitialValue(vnode),
+      hasVeeConfig
     };
   }
 
@@ -176,7 +178,7 @@ export default class Generator {
   /**
    * Returns a value getter input type.
    */
-  static resolveGetter (el, vnode, model) {
+  static resolveGetter (el, vnode, model, hasVeeConfig = false) {
     if (model) {
       return () => {
         return getPath(model, vnode.context);
@@ -184,6 +186,14 @@ export default class Generator {
     }
 
     if (vnode.child) {
+      if (hasVeeConfig && isCallable(vnode.child.$options.$vee.value)) {
+        const boundGetter = vnode.child.$options.$vee.value.bind(vnode.child);
+
+        return () => {
+          return boundGetter();
+        };
+      }
+
       return () => {
         const path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
         if (path) {
