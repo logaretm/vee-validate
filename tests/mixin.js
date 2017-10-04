@@ -202,4 +202,42 @@ describe('components can have a definition object in the ctor options', () => {
 
     expect(await app.$validator.validate('field')).toBe(false);
   });
+
+  test('Creates a new instance when the validator option is set to new', () => {
+    const mixin = makeMixin(Vue, { inject: false });
+    const Child = Vue.extend({
+      mixins: [mixin],
+      name: 'child',
+      template: `<div></div>`,
+      $_veeValidate: {
+        validator: 'new'
+      }
+    });
+    const OtherChild = Vue.extend({
+      mixins: [mixin],
+      name: 'other-child',
+      template: `<div></div>`,
+      inject: ['$validator'],
+      computed: {
+        somval() { return 1 ;}
+      },
+      $_veeValidate: {
+        validator: 'inherit'
+      }
+    });
+    const VM = Vue.extend({
+      mixins: [mixin],
+      components: { Child, OtherChild },
+      template: `
+        <div>
+          <child></child>
+          <other-child></other-child>
+        </div>
+      `
+    });
+  
+    const app = new VM().$mount();
+    expect(app.$validator).not.toBe(app.$children[0].$validator); // got a different instance.
+    expect(app.$validator).toBe(app.$children[1].$validator); // got the parent's
+  });
 });

@@ -54,6 +54,7 @@ export default (Vue, options = {}) => {
 
   mixin.beforeCreate = function beforeCreate () {
     // TODO: Deprecate
+    /* istanbul ignore next */
     if (this.$options.$validates) {
       warn('The ctor $validates option has been deprecated please set the $_veeValidate.validator option to "new" instead');
       this.$validator = createValidator(this, options);
