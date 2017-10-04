@@ -115,16 +115,18 @@ export default class Generator {
    * @param {*} vnode
    */
   static resolveEvents (el, vnode) {
-    if (vnode.child) {
-      const config = Generator.getCtorConfig(vnode);
-      if (config && config.events) {
-        return config.events;
-      }
+    let events = getDataAttribute(el, 'validate-on');
 
-      return getDataAttribute(el, 'validate-on') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-validate-on']);
+    if (!events && vnode.child && vnode.child.$attrs) {
+      events = vnode.child.$attrs['data-vv-validate-on'];
     }
 
-    return getDataAttribute(el, 'validate-on');
+    if (!events && vnode.child) {
+      const config = Generator.getCtorConfig(vnode);
+      events = config.events;
+    }
+
+    return events;
   }
 
   /**
