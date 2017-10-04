@@ -216,6 +216,12 @@ export default class Generator {
     }
 
     if (vnode.child) {
+      const path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
+      if (path) {
+        return () => {
+          return getPath(path, vnode.child);
+        };
+      }
       const config = Generator.getCtorConfig(vnode);
       if (config && isCallable(config.value)) {
         const boundGetter = config.value.bind(vnode.child);
@@ -226,10 +232,6 @@ export default class Generator {
       }
 
       return () => {
-        const path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
-        if (path) {
-          return getPath(path, vnode.child);
-        }
         return vnode.child.value;
       };
     }
