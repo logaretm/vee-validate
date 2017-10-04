@@ -142,7 +142,8 @@ describe('components can have a definition object in the ctor options', () => {
         },
         name: function () {
           return this.name
-        }
+        },
+        events: 'blur'
       }
     });
 
@@ -179,6 +180,15 @@ describe('components can have a definition object in the ctor options', () => {
     const app = new VM().$mount();
     const field = app.$validator.fields.items[0];
     expect(field.name).toBe('field');
+  });
+
+  test('uses the events defined in the definition', () => {
+    const VM = createVM();
+
+    const app = new VM().$mount();
+    const field = app.$validator.fields.items[0];
+    expect(field.events).toEqual(['blur']);
+    expect(field.watchers).toHaveLength(3); // blur (flags), input (flags), blur (validate)
   });
 
   test('components can reject the false value if provided in the required rule', async () => {
