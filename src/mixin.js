@@ -60,7 +60,7 @@ export default (Vue, options = {}) => {
     }
 
     // if its a root instance, inject anyways, or if it requested a new instance.
-    if (!this.$parent || (this.$options.$_veeValidate && this.$options.$_veeValidate.validator === 'new')) {
+    if (!this.$parent || (this.$options.$_veeValidate && /new/.test(this.$options.$_veeValidate.validator))) {
       this.$validator = createValidator(this, options);
     }
 
