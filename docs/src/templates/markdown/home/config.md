@@ -26,7 +26,7 @@ const config = {
   },
   events: 'input|blur',
   inject: true,
-  validity: true,
+  validity: false,
   aria: true
 };
 
@@ -109,7 +109,7 @@ Vue.use(VeeValidate, config);
         </tr>
         <tr>
             <td class="is-method-name">validity</td>
-            <td>true</td>
+            <td>false</td>
             <td>
                 Set custom validity (Constraint validation)[https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation] on native HTML inputs.
             </td>
