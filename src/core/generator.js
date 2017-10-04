@@ -181,7 +181,17 @@ export default class Generator {
      * @return {String} The field name.
      */
   static resolveName (el, vnode) {
-    if (vnode.child) {
+    let name = getDataAttribute(el, 'name');
+
+    if (!name && !vnode.child) {
+      return el.name;
+    }
+
+    if (!name && vnode.child && vnode.child.$attrs) {
+      name = vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'];
+    }
+
+    if (!name && vnode.child) {
       const config = Generator.getCtorConfig(vnode);
       if (config && isCallable(config.name)) {
         const boundGetter = config.name.bind(vnode.child);
@@ -189,10 +199,10 @@ export default class Generator {
         return boundGetter();
       }
 
-      return getDataAttribute(el, 'name') || (vnode.child.$attrs && (vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'])) || vnode.child.name;
+      return vnode.child.name;
     }
 
-    return getDataAttribute(el, 'name') || el.name;
+    return name;
   }
 
   /**
