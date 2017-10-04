@@ -222,6 +222,7 @@ export default class Generator {
           return getPath(path, vnode.child);
         };
       }
+
       const config = Generator.getCtorConfig(vnode);
       if (config && isCallable(config.value)) {
         const boundGetter = config.value.bind(vnode.child);
