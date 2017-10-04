@@ -9,7 +9,6 @@ const DEFAULT_OPTIONS = {
   name: null,
   active: true,
   required: false,
-  hasVeeOptions: false,
   rules: {},
   vm: null,
   classes: false,
@@ -44,8 +43,8 @@ export default class Field {
     this.aria = options.aria;
     this.flags = createFlags();
     this.vm = options.vm;
-    this.hasVeeConfig = options.hasVeeConfig;
     this.component = options.component;
+    this.ctorConfig = this.component ? getPath('$options.$_veeValidate', this.component) : undefined;
     this.update(options);
     this.updated = false;
   }
@@ -99,8 +98,8 @@ export default class Field {
    * If the field rejects false as a valid value for the required rule.
    */
   get rejectsFalse () {
-    if (this.isVue && this.hasVeeConfig) {
-      return getPath('$options.$vee.rejectsFalse', this.component, false);
+    if (this.isVue && this.ctorConfig) {
+      return !!this.ctorConfig.rejectsFalse;
     }
 
     if (this.isHeadless) {

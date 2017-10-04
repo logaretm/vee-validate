@@ -6,7 +6,6 @@ import { getScope, getDataAttribute, isObject, toArray, find, getPath, hasPath, 
 export default class Generator {
   static generate (el, binding, vnode, options = {}) {
     const model = Generator.resolveModel(binding, vnode);
-    const hasVeeConfig = getPath('child.$options.$vee', vnode, false);
 
     return {
       name: Generator.resolveName(el, vnode),
@@ -18,7 +17,7 @@ export default class Generator {
       component: vnode.child,
       classes: options.classes,
       classNames: options.classNames,
-      getter: Generator.resolveGetter(el, vnode, model, hasVeeConfig),
+      getter: Generator.resolveGetter(el, vnode, model),
       events: Generator.resolveEvents(el, vnode) || options.events,
       model,
       delay: Generator.resolveDelay(el, vnode, options),
@@ -27,9 +26,16 @@ export default class Generator {
       alias: Generator.resolveAlias(el, vnode),
       validity: options.validity,
       aria: options.aria,
-      initialValue: Generator.resolveInitialValue(vnode),
-      hasVeeConfig
+      initialValue: Generator.resolveInitialValue(vnode)
     };
+  }
+
+  static getCtorConfig (vnode) {
+    if (!vnode.child) return null;
+
+    const config = getPath('child.$options.$_veeValidate', vnode);
+
+    return config;
   }
 
   /**
@@ -167,10 +173,12 @@ export default class Generator {
      * Resolves the field name to trigger validations.
      * @return {String} The field name.
      */
-  static resolveName (el, vnode, hasVeeConfig = false) {
+  static resolveName (el, vnode) {
     if (vnode.child) {
-      if (hasVeeConfig && isCallable(vnode.child.$options.$vee.name)) {
-        const boundGetter = vnode.child.$options.$vee.name.bind(vnode.child);
+      const config = Generator.getCtorConfig(vnode);
+      if (config && isCallable(config.name)) {
+        const boundGetter = config.name.bind(vnode.child);
+
         return boundGetter();
       }
 
@@ -183,7 +191,7 @@ export default class Generator {
   /**
    * Returns a value getter input type.
    */
-  static resolveGetter (el, vnode, model, hasVeeConfig = false) {
+  static resolveGetter (el, vnode, model) {
     if (model) {
       return () => {
         return getPath(model, vnode.context);
@@ -191,8 +199,9 @@ export default class Generator {
     }
 
     if (vnode.child) {
-      if (hasVeeConfig && isCallable(vnode.child.$options.$vee.value)) {
-        const boundGetter = vnode.child.$options.$vee.value.bind(vnode.child);
+      const config = Generator.getCtorConfig(vnode);
+      if (config && isCallable(config.value)) {
+        const boundGetter = config.value.bind(vnode.child);
 
         return () => {
           return boundGetter();

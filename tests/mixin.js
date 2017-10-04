@@ -135,7 +135,7 @@ describe('components can have a definition object in the ctor options', () => {
         name: String 
       },
       inject: ['$validator'],
-      $vee: {
+      $_veeValidate: {
         rejectsFalse: true,
         value: function () {
           return this.innerValue;
