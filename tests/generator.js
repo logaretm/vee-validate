@@ -246,13 +246,14 @@ describe('resolves the value getters', () => {
     `;
     let el = document.querySelector('#el');
     const vnode = { context: {}, child: { someval: 'test', value: 'test2', third: 33 }, data: {} };
-    const getter = Generator.resolveGetter(el, vnode);
+    let getter = Generator.resolveGetter(el, vnode);
     expect(getter()).toBe('test');
     vnode.child.someval = 'changed';
     expect(getter()).toBe('changed');
 
     // test fallback to value property.
     el.setAttribute('data-vv-value-path', '');
+    getter = Generator.resolveGetter(el, vnode);
     expect(getter()).toBe('test2');
     vnode.child.value = 'changed';
     expect(getter()).toBe('changed');

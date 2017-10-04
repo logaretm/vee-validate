@@ -1,4 +1,4 @@
-import { isObject, isCallable, createProxy, createFlags } from './core/utils';
+import { isObject, isCallable, createProxy, createFlags, warn } from './core/utils';
 import Validator from './core/validator';
 
 const fakeFlags = createProxy({}, {
@@ -53,8 +53,15 @@ export default (Vue, options = {}) => {
   };
 
   mixin.beforeCreate = function beforeCreate () {
+    // TODO: Deprecate
+    /* istanbul ignore next */
+    if (this.$options.$validates) {
+      warn('The ctor $validates option has been deprecated please set the $_veeValidate.validator option to "new" instead');
+      this.$validator = createValidator(this, options);
+    }
+
     // if its a root instance, inject anyways, or if it requested a new instance.
-    if (this.$options.$validates || !this.$parent) {
+    if (!this.$parent || (this.$options.$_veeValidate && /new/.test(this.$options.$_veeValidate.validator))) {
       this.$validator = createValidator(this, options);
     }
 

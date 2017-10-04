@@ -1,4 +1,4 @@
-import { getScope, getDataAttribute, isObject, toArray, find, getPath, hasPath, isNullOrUndefined } from './utils';
+import { getScope, getDataAttribute, isObject, toArray, find, getPath, hasPath, isNullOrUndefined, isCallable } from './utils';
 
 /**
  * Generates the options required to construct a field.
@@ -28,6 +28,14 @@ export default class Generator {
       aria: options.aria,
       initialValue: Generator.resolveInitialValue(vnode)
     };
+  }
+
+  static getCtorConfig (vnode) {
+    if (!vnode.child) return null;
+
+    const config = getPath('child.$options.$_veeValidate', vnode);
+
+    return config;
   }
 
   /**
@@ -107,11 +115,18 @@ export default class Generator {
    * @param {*} vnode
    */
   static resolveEvents (el, vnode) {
-    if (vnode.child) {
-      return getDataAttribute(el, 'validate-on') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-validate-on']);
+    let events = getDataAttribute(el, 'validate-on');
+
+    if (!events && vnode.child && vnode.child.$attrs) {
+      events = vnode.child.$attrs['data-vv-validate-on'];
     }
 
-    return getDataAttribute(el, 'validate-on');
+    if (!events && vnode.child) {
+      const config = Generator.getCtorConfig(vnode);
+      events = config.events;
+    }
+
+    return events;
   }
 
   /**
@@ -166,11 +181,28 @@ export default class Generator {
      * @return {String} The field name.
      */
   static resolveName (el, vnode) {
-    if (vnode.child) {
-      return getDataAttribute(el, 'name') || (vnode.child.$attrs && (vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'])) || vnode.child.name;
+    let name = getDataAttribute(el, 'name');
+
+    if (!name && !vnode.child) {
+      return el.name;
     }
 
-    return getDataAttribute(el, 'name') || el.name;
+    if (!name && vnode.child && vnode.child.$attrs) {
+      name = vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'];
+    }
+
+    if (!name && vnode.child) {
+      const config = Generator.getCtorConfig(vnode);
+      if (config && isCallable(config.name)) {
+        const boundGetter = config.name.bind(vnode.child);
+
+        return boundGetter();
+      }
+
+      return vnode.child.name;
+    }
+
+    return name;
   }
 
   /**
@@ -184,11 +216,23 @@ export default class Generator {
     }
 
     if (vnode.child) {
-      return () => {
-        const path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
-        if (path) {
+      const path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
+      if (path) {
+        return () => {
           return getPath(path, vnode.child);
-        }
+        };
+      }
+
+      const config = Generator.getCtorConfig(vnode);
+      if (config && isCallable(config.value)) {
+        const boundGetter = config.value.bind(vnode.child);
+
+        return () => {
+          return boundGetter();
+        };
+      }
+
+      return () => {
         return vnode.child.value;
       };
     }

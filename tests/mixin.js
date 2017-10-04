@@ -1,5 +1,6 @@
 import Vue from 'vue/dist/vue';
 import makeMixin from '../src/mixin';
+import makeDirective from '../src/directive';
 import ErrorBag from '../src/core/errorBag';
 import FieldBag from '../src/core/fieldBag';
 import plugin from './../src/index';
@@ -118,4 +119,125 @@ test('component pauses the validator before destroy if it owns it', () => {
   app = new VM();
   app.$destroy();
   expect(validator.pause).toHaveBeenCalledTimes(1);
+});
+
+describe('components can have a definition object in the ctor options', () => {
+  const createVM = () => {
+    const mixin = makeMixin(Vue, { inject: false });    
+    const Child = Vue.extend({
+      mixins: [mixin],
+      name: 'child',
+      template: `<div></div>`,
+      data: () => ({
+        innerValue: '102'
+      }),
+      props: {
+        name: String 
+      },
+      inject: ['$validator'],
+      $_veeValidate: {
+        rejectsFalse: true,
+        value: function () {
+          return this.innerValue;
+        },
+        name: function () {
+          return this.name
+        },
+        events: 'blur'
+      }
+    });
+
+    return Vue.extend({
+      mixins: [mixin],
+      directives: {
+        validate: makeDirective({ inject: false })
+      },
+      components: { Child },
+      template: `
+        <div>
+          <child v-validate="'required'" name="field"></child>
+        </div>
+      `
+    });
+  };
+
+  test('uses the value getter in the definition', () => {
+    const VM = createVM();
+
+    const app = new VM().$mount();
+    const child = app.$children[0];
+    const field = app.$validator.fields.items[0];
+
+    // test value resolution.
+    expect(field.value).toBe('102');
+    child.innerValue = 20;
+    expect(field.value).toBe(20);
+  });
+
+  test('uses the name getter in the definition', () => {
+    const VM = createVM();
+
+    const app = new VM().$mount();
+    const field = app.$validator.fields.items[0];
+    expect(field.name).toBe('field');
+  });
+
+  test('uses the events defined in the definition', () => {
+    const VM = createVM();
+
+    const app = new VM().$mount();
+    const field = app.$validator.fields.items[0];
+    expect(field.events).toEqual(['blur']);
+    expect(field.watchers).toHaveLength(3); // blur (flags), input (flags), blur (validate)
+  });
+
+  test('components can reject the false value if provided in the required rule', async () => {
+    const VM = createVM();
+
+    const app = new VM().$mount();
+    const child = app.$children[0];
+
+    expect(await app.$validator.validate('field')).toBe(true);
+    child.innerValue = false;
+
+    expect(await app.$validator.validate('field')).toBe(false);
+  });
+
+  test('Creates a new instance when the validator option is set to new', () => {
+    const mixin = makeMixin(Vue, { inject: false });
+    const Child = Vue.extend({
+      mixins: [mixin],
+      name: 'child',
+      template: `<div></div>`,
+      $_veeValidate: {
+        validator: 'new'
+      }
+    });
+    const OtherChild = Vue.extend({
+      mixins: [mixin],
+      name: 'other-child',
+      template: `<div></div>`,
+      inject: ['$validator'],
+      computed: {
+        somval() { return 1 ;}
+      },
+      $_veeValidate: {
+        validator: 'inherit'
+      }
+    });
+    const VM = Vue.extend({
+      mixins: [mixin],
+      components: { Child, OtherChild },
+      template: `
+        <div>
+          <child></child>
+          <other-child></other-child>
+        </div>
+      `
+    });
+  
+    const app = new VM().$mount();
+    expect(app.$validator).not.toBe(app.$children[0].$validator); // got a different instance.
+    expect(app.$validator).toBe(app.$children[1].$validator); // got the parent's
+  });
 });
