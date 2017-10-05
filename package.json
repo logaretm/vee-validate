@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "2.0.0-rc.19",
+  "version": "2.0.0-rc.18",
   "description": "Simple Vue.js input validation plugin",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -28,12 +28,10 @@
   ],
   "files": [
     "dist/*.js",
-    "dist/locale/*.js",
     "types/*.d.ts"
   ],
   "devDependencies": {
     "babel-jest": "^20.0.3",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "chalk": "^2.1.0",
     "cross-env": "^5.0.5",
@@ -44,6 +42,7 @@
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
+    "flow-bin": "^0.56.0",
     "jest": "^21.2.1",
     "regenerator-runtime": "^0.11.0",
     "rollup": "^0.49.2",
@@ -59,11 +58,7 @@
     "vue": ">= 2.2.0"
   },
   "dependencies": {},
-  "eslintIgnore": [
-    "tests",
-    "locale",
-    "dist"
-  ],
+  "eslintIgnore": ["tests", "locale", "dist"],  
   "jest": {
     "testMatch": [
       "**/tests/**/*.js"

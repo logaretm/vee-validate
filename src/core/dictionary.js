@@ -1,12 +1,13 @@
 import { isObject, assign } from './utils';
 
+// @flow
 export default class Dictionary {
   constructor (dictionary = {}) {
     this.container = {};
     this.merge(dictionary);
   }
 
-  hasLocale (locale) {
+  hasLocale (locale: string): boolean {
     return !! this.container[locale];
   }
 

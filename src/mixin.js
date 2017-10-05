@@ -16,7 +16,7 @@ const fakeFlags = createProxy({}, {
  * Checks if a parent validator instance was requested.
  * @param {Object|Array} injections
  */
-const requestsValidator = (injections) => {
+const requestsValidator = (injections: Object) => {
   if (! injections) {
     return false;
   }
