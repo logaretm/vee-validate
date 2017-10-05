@@ -270,7 +270,11 @@ export default class Field {
       }
 
       if (!el) {
-        el = this.vm.$el.querySelector(`input[name="${selector}"]`);
+        try {
+          el = this.vm.$el.querySelector(`input[name="${selector}"]`);
+        } catch (err) {
+          el = null;
+        }
       }
 
       if (!el) {
