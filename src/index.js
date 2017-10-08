@@ -1,10 +1,16 @@
 import Rules from './rules';
+import { messages } from '../locale/en';
 import minimal from './index.minimal';
 
 // rules plugin definition.
 const rulesPlugin = ({ Validator }) => {
   Object.keys(Rules).forEach(rule => {
     Validator.extend(rule, Rules[rule]);
+  });
+
+  // Merge the english messages.
+  Validator.localize('en', {
+    messages
   });
 };
 

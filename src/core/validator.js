@@ -1,6 +1,5 @@
 import ErrorBag from './errorBag';
 import Dictionary from './dictionary';
-import { messages } from '../../locale/en';
 import { isObject, isCallable, toArray, warn, createError, assign, find, isNullOrUndefined } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
@@ -10,7 +9,7 @@ let LOCALE = 'en';
 let STRICT_MODE = true;
 const DICTIONARY = new Dictionary({
   en: {
-    messages,
+    messages: {},
     attributes: {},
     custom: {}
   }

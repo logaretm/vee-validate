@@ -1,4 +1,5 @@
 import install from './install';
+import { messages } from '../locale/en';
 import use from './use';
 import Rules from './rules';
 import mapFields from './core/helpers';
@@ -10,6 +11,11 @@ const version = '__VERSION__';
 const rulesPlugin = ({ Validator }) => {
   Object.keys(Rules).forEach(rule => {
     Validator.extend(rule, Rules[rule]);
+  });
+
+  // Merge the english messages.
+  Validator.localize('en', {
+    messages
   });
 };
 
