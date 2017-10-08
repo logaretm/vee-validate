@@ -1,5 +1,6 @@
 const Rollup = require('rollup');
 const Uglify = require('uglify-js');
+const flow = require('rollup-plugin-flow');
 const fs = require('fs');
 const path = require('path');
 const buble = require('rollup-plugin-buble');
@@ -19,7 +20,8 @@ async function main () {
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
-      buble(),
+      flow(),
+      buble()
     ],
   });
 
@@ -53,6 +55,7 @@ async function minimal () {
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
+      flow(),
       buble()
     ],
   });
@@ -86,6 +89,7 @@ async function esm () {
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
+      flow(),
       buble()
     ],
   });
@@ -111,6 +115,7 @@ async function esm () {
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
+      flow(),
       buble()
     ],
   });
