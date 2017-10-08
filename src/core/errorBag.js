@@ -187,7 +187,7 @@ export default class ErrorBag {
   /**
    * Gets the first error message for a specific field that not match the rule.
    */
-  firstNot (name: string, rule: string, scope?: string | null = null) {
+  firstNot (name: string, rule?: string = 'required', scope?: string | null = null) {
     const error = this.collect(name, scope, false).filter(e => e.rule !== rule)[0];
 
     return (error && error.msg) || null;
