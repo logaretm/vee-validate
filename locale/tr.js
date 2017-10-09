@@ -13,7 +13,7 @@ const messages = {
   date_between: (field, [min, max]) => `${field} ${min} ile ${max} tarihleri arasında olmalıdır.`,
   date_format: (field, [format]) => `${field} ${format} formatında olmalıdır.`,
   decimal: (field, [decimals] = ['*']) => `${field} sayısal${decimals !== '*' ? `ve noktadan sonra ${decimals} basamaklı` : ''} olmalıdır.`,
-  digits: (field, [length]) => `${field} sayısal ve en fazla ${length} basamaklı olmalıdır.`,
+  digits: (field, [length]) => `${field} sayısal ve ${length} basamaklı olmalıdır.`,
   dimensions: (field, [width, height]) => `${field} alanı ${width} piksel ile ${height} piksel arasında olmalıdır.`,
   email: (field) => `${field} alanının geçerli bir e-posta olması gerekir.`,
   ext: (field) => `${field} alanı geçerli bir dosya olmalıdır.`,
