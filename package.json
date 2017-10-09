@@ -40,6 +40,10 @@
       "!src/plugins/date/messages.js"
     ]
   },
+  "files": [
+    "dist/*.js",
+    "types/*.d.ts"
+  ],
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
   "devDependencies": {
