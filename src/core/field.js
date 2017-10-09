@@ -1,6 +1,13 @@
 import { uniqId, createFlags, assign, normalizeRules, isNullOrUndefined, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn, toArray, getPath } from './utils';
 import Generator from './generator';
 
+// @flow
+
+type Watcher = {
+  tag: string,
+  unwatch: () => any
+};
+
 const DEFAULT_OPTIONS = {
   targetOf: null,
   initial: false,
@@ -27,7 +34,32 @@ const DEFAULT_OPTIONS = {
 };
 
 export default class Field {
-  constructor (el, options = {}) {
+  id: string;
+  el: ?HTMLInputElement;
+  updated: boolean;
+  dependencies: Array<{ name: string, field: Field }>;
+  watchers: Watcher[];
+  events: string[];
+  rules: { [string]: Object };
+  validity: boolean;
+  aria: boolean;
+  vm: Object | null;
+  component: Object | null;
+  ctorConfig: ?Object;
+  flags: { [string]: boolean };
+  alias: () => string | ?string;
+  getter: () => any;
+  name: string;
+  scope: string | null;
+  targetOf: ?string;
+  initial: boolean;
+  classes: boolean;
+  classNames: { [string]: string };
+  delay: number;
+  listen: boolean;
+  model: ?string;
+
+  constructor (el: HTMLInputElement | null, options = {}) {
     this.id = uniqId();
     this.el = el;
     this.updated = false;
@@ -49,10 +81,12 @@ export default class Field {
     this.updated = false;
   }
 
+  // $FlowFixMe
   get isVue () {
     return !!this.component;
   }
 
+  // $FlowFixMe
   get validator () {
     if (!this.vm || !this.vm.$validator) {
       warn('No validator instance detected.');
@@ -62,30 +96,33 @@ export default class Field {
     return this.vm.$validator;
   }
 
+  // $FlowFixMe
   get isRequired () {
     return !!this.rules.required;
   }
 
+  // $FlowFixMe
   get isDisabled () {
     return (this.isVue && this.component.disabled) || (this.el && this.el.disabled);
   }
 
+  // $FlowFixMe
   get isHeadless () {
     return !this.el;
   }
 
   /**
    * Gets the display name (user-friendly name).
-   * @return {String}
    */
-  get displayName () {
+  // $FlowFixMe
+  get displayName (): string {
     return isCallable(this.alias) ? this.alias() : this.alias;
   }
 
   /**
    * Gets the input value.
-   * @return {*}
    */
+  // $FlowFixMe
   get value () {
     if (!isCallable(this.getter)) {
       return undefined;
@@ -97,6 +134,7 @@ export default class Field {
   /**
    * If the field rejects false as a valid value for the required rule.
    */
+  // $FlowFixMe
   get rejectsFalse () {
     if (this.isVue && this.ctorConfig) {
       return !!this.ctorConfig.rejectsFalse;
@@ -111,9 +149,8 @@ export default class Field {
 
   /**
    * Determines if the instance matches the options provided.
-   * @param {Object} options The matching options.
    */
-  matches (options) {
+  matches (options: Object): boolean {
     if (options.id) {
       return this.id === options.id;
     }
@@ -134,10 +171,9 @@ export default class Field {
   }
 
   /**
-   *
-   * @param {Object} options
+   * Updates the field with changed data.
    */
-  update (options) {
+  update (options: Object) {
     this.targetOf = options.targetOf || null;
     this.initial = options.initial || this.initial || false;
 
@@ -200,9 +236,8 @@ export default class Field {
 
   /**
    * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
-   * @param {Object} flags
    */
-  setFlags (flags) {
+  setFlags (flags: { [string]: boolean }) {
     const negated = {
       pristine: 'dirty',
       dirty: 'pristine',
@@ -281,7 +316,7 @@ export default class Field {
         return;
       }
 
-      const options = {
+      const options: { [string]: any } = {
         vm: this.vm,
         classes: this.classes,
         classNames: this.classNames,
@@ -310,14 +345,14 @@ export default class Field {
 
   /**
    * Removes listeners.
-   * @param {RegExp} tag
    */
-  unwatch (tag = null) {
+  unwatch (tag?: ?RegExp = null) {
     if (!tag) {
       this.watchers.forEach(w => w.unwatch());
       this.watchers = [];
       return;
     }
+
     this.watchers.filter(w => tag.test(w.tag)).forEach(w => w.unwatch());
     this.watchers = this.watchers.filter(w => !tag.test(w.tag));
   }
