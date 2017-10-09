@@ -1,15 +1,19 @@
 import Generator from './core/generator';
+import Validator from './core/validator';
+import Field from './core/field';
 import config from './config';
 import { getDataAttribute, isEqual, warn, assign } from './core/utils';
 
+// @flow
+
+type ValidatingVM = {
+  $validator: Validator
+};
+
 /**
- * 
- * 
  * Finds the requested field by id from the context object.
- * @param {Object} context
- * @return {Field|null}
  */
-const findField = (el, context) => {
+const findField = (el: HTMLElement, context: ValidatingVM): ?Field => {
   if (!context || !context.$validator) {
     return null;
   }
@@ -17,11 +21,11 @@ const findField = (el, context) => {
   return context.$validator.fields.find({ id: getDataAttribute(el, 'id') });
 };
 
-const createDirective = options => {
+const createDirective = (options: Object) => {
   options = assign({}, config, options);
 
   return {
-    bind (el, binding, vnode) {
+    bind (el: HTMLElement, binding, vnode) {
       const validator = vnode.context.$validator;
       if (! validator) {
         warn(`No validator instance is present on vm, did you forget to inject '$validator'?`);
@@ -30,7 +34,7 @@ const createDirective = options => {
       const fieldOptions = Generator.generate(el, binding, vnode, options);
       validator.attach(fieldOptions);
     },
-    inserted: (el, binding, vnode) => {
+    inserted: (el: HTMLElement, binding, vnode) => {
       const field = findField(el, vnode.context);
       const scope = Generator.resolveScope(el, binding, vnode);
 
@@ -43,7 +47,7 @@ const createDirective = options => {
       // allows the field to re-evaluated once more in the update hook.
       field.updated = false;
     },
-    update: (el, binding, vnode) => {
+    update: (el: HTMLElement, binding, vnode) => {
       const field = findField(el, vnode.context);
 
       // make sure we don't do uneccessary work if no important change was done.
@@ -56,7 +60,7 @@ const createDirective = options => {
         rules
       });
     },
-    unbind (el, binding, { context }) {
+    unbind (el: HTMLElement, binding, { context }) {
       const field = findField(el, context);
       if (!field) return;
 

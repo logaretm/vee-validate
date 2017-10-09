@@ -1,6 +1,8 @@
 import { isObject, isCallable, createProxy, createFlags, warn } from './core/utils';
 import Validator from './core/validator';
 
+// @flow
+
 const fakeFlags = createProxy({}, {
   get (target, key) {
     // is a scope
@@ -14,9 +16,8 @@ const fakeFlags = createProxy({}, {
 
 /**
  * Checks if a parent validator instance was requested.
- * @param {Object|Array} injections
  */
-const requestsValidator = (injections) => {
+const requestsValidator = (injections: Object | string[]) => {
   if (! injections) {
     return false;
   }
@@ -35,12 +36,10 @@ const requestsValidator = (injections) => {
 
 /**
  * Creates a validator instance.
- * @param {Vue} vm
- * @param {Object} options
  */
-const createValidator = (vm, options) => new Validator(null, { vm, fastExit: options.fastExit });
+const createValidator = (vm: any, options: Object) => new Validator(null, { vm, fastExit: options.fastExit });
 
-export default (Vue, options = {}) => {
+export default (Vue: any, options?: Object = {}) => {
   const mixin = {};
   mixin.provide = function providesValidator () {
     if (this.$validator) {
