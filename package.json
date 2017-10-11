@@ -18,7 +18,7 @@
     "build:bundle": "node build/main.js",
     "build": "node build/main.js && node build/locale.js",
     "cover": "jest --coverage",
-    "precommit": "npm run lint && npm run flow && npm run test" 
+    "precommit": "npm run lint && npm run flow && npm run test"
   },
   "keywords": [
     "VueJS",
@@ -63,7 +63,12 @@
     "vue": ">= 2.2.0"
   },
   "dependencies": {},
-  "eslintIgnore": ["tests", "locale", "dist", "flow"],
+  "eslintIgnore": [
+    "tests",
+    "locale",
+    "dist",
+    "flow"
+  ],
   "jest": {
     "testMatch": [
       "**/tests/**/*.js"
