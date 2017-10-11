@@ -6,10 +6,10 @@ import FieldBag from './fieldBag';
 
 // @flow
 
-const RULES = {};
-let LOCALE = 'en';
-let STRICT_MODE = true;
-const DICTIONARY = new Dictionary({
+const RULES: { [string]: Rule } = {};
+let LOCALE: string = 'en';
+let STRICT_MODE: boolean = true;
+const DICTIONARY: Dictionary = new Dictionary({
   en: {
     messages: {},
     attributes: {},
@@ -18,7 +18,17 @@ const DICTIONARY = new Dictionary({
 });
 
 export default class Validator {
-  constructor (validations?: ?Object, options?: ?Object = { vm: null, fastExit: true }) {
+  strict: boolean;
+  errors: ErrorBag;
+  fields: FieldBag;
+  flags: MapObject;
+  fastExit: boolean;
+  paused: boolean;
+  ownerId: string | number;
+  clean: () => void;
+  reset: () => void;
+
+  constructor (validations?: MapObject, options?: MapObject = { vm: null, fastExit: true }) {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
     this.fields = new FieldBag();
@@ -444,7 +454,7 @@ export default class Validator {
   /**
    * Creates the fields to be validated.
    */
-  _createFields (validations: MapObject) {
+  _createFields (validations?: MapObject) {
     if (!validations) return;
 
     Object.keys(validations).forEach(field => {
