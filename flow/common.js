@@ -7,6 +7,5 @@ declare type ValidatingVM = {
 declare type PluginContext = {
   Validator: Validator,
   ErrorBag: ErrorBag,
-  Rules: Object,
-  VM: Vue
+  Rules: Object
 };
