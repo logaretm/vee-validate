@@ -81,13 +81,11 @@ export default class Field {
     this.updated = false;
   }
 
-  // $FlowFixMe
-  get isVue () {
+  get isVue (): boolean {
     return !!this.component;
   }
 
-  // $FlowFixMe
-  get validator () {
+  get validator (): any {
     if (!this.vm || !this.vm.$validator) {
       warn('No validator instance detected.');
       return { validate: () => {} };
@@ -96,25 +94,22 @@ export default class Field {
     return this.vm.$validator;
   }
 
-  // $FlowFixMe
-  get isRequired () {
+  get isRequired (): boolean {
     return !!this.rules.required;
   }
 
-  // $FlowFixMe
-  get isDisabled () {
-    return (this.isVue && this.component.disabled) || (this.el && this.el.disabled);
+  get isDisabled (): boolean {
+    return !!(this.component && this.component.disabled) || !!(this.el && this.el.disabled);
   }
 
-  // $FlowFixMe
-  get isHeadless () {
+  get isHeadless (): boolean {
     return !this.el;
   }
 
   /**
    * Gets the display name (user-friendly name).
    */
-  // $FlowFixMe
+
   get displayName (): string {
     return isCallable(this.alias) ? this.alias() : this.alias;
   }
@@ -122,8 +117,8 @@ export default class Field {
   /**
    * Gets the input value.
    */
-  // $FlowFixMe
-  get value () {
+
+  get value (): any {
     if (!isCallable(this.getter)) {
       return undefined;
     }
@@ -134,8 +129,8 @@ export default class Field {
   /**
    * If the field rejects false as a valid value for the required rule.
    */
-  // $FlowFixMe
-  get rejectsFalse () {
+
+  get rejectsFalse (): boolean {
     if (this.isVue && this.ctorConfig) {
       return !!this.ctorConfig.rejectsFalse;
     }
@@ -150,7 +145,7 @@ export default class Field {
   /**
    * Determines if the instance matches the options provided.
    */
-  matches (options: Object): boolean {
+  matches (options: { [string]: any }): boolean {
     if (options.id) {
       return this.id === options.id;
     }

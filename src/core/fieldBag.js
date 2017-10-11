@@ -13,7 +13,7 @@ export default class FieldBag {
   /**
    * Gets the current items length.
    */
-  // $FlowFixMe
+
   get length (): number {
     return this.items.length;
   }
