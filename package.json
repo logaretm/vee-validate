@@ -11,12 +11,14 @@
   "homepage": "http://vee-validate.logaretm.com",
   "repository": "https://github.com/baianat/vee-validate",
   "scripts": {
-    "test": "npm run lint && jest",
+    "test": "jest",
     "lint": "eslint ./src --fix",
+    "flow": "flow",
     "build:locale": "node build/locale.js",
     "build:bundle": "node build/main.js",
     "build": "node build/main.js && node build/locale.js",
-    "cover": "jest --coverage"
+    "cover": "jest --coverage",
+    "precommit": "npm run lint && npm run flow && npm run test" 
   },
   "keywords": [
     "VueJS",

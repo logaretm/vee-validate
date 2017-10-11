@@ -166,15 +166,17 @@ export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = f
 /**
  * Normalizes the given rules expression.
  */
-export const normalizeRules = (rules: string | Object) => {
+export const normalizeRules = (rules: string | { [string]: boolean | any[] }) => {
   // if falsy value return an empty object.
   if (!rules) {
     return {};
   }
 
   if (isObject(rules)) {
+    // $FlowFixMe
     return Object.keys(rules).reduce((prev, curr) => {
       let params = [];
+      // $FlowFixMe
       if (rules[curr] === true) {
         params = [];
       } else if (Array.isArray(rules[curr])) {
@@ -183,6 +185,7 @@ export const normalizeRules = (rules: string | Object) => {
         params = [rules[curr]];
       }
 
+      // $FlowFixMe
       if (rules[curr] !== false) {
         prev[curr] = params;
       }
@@ -285,7 +288,7 @@ export const toggleClass = (el: ?HTMLElement, className: ?string, status: boolea
 /**
  * Converts an array-like object to array, provides a simple polyfill for Array.from
  */
-export const toArray = (arrayLike: ArrayLike) => {
+export const toArray = (arrayLike: { length: number }) => {
   if (isCallable(Array.from)) {
     return Array.from(arrayLike);
   }
@@ -336,13 +339,13 @@ export const uniqId = (): string => `_${Math.random().toString(36).substr(2, 9)}
 /**
  * finds the first element that satisfies the predicate callback, polyfills array.find
  */
-export const find = (array: ArrayLike, predicate: (any) => boolean) => {
-  if (isObject(array)) {
-    array = toArray(array);
-  }
-  if (array.find) {
+export const find = (arrayLike: { length: number }, predicate: (any) => boolean) => {
+  const array = toArray(arrayLike);
+
+  if (isCallable(array.find)) {
     return array.find(predicate);
   }
+
   let result;
   array.some(item => {
     if (predicate(item)) {
