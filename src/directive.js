@@ -1,14 +1,9 @@
 import Generator from './core/generator';
-import Validator from './core/validator';
 import Field from './core/field';
 import config from './config';
 import { getDataAttribute, isEqual, warn, assign } from './core/utils';
 
 // @flow
-
-type ValidatingVM = {
-  $validator: Validator
-};
 
 /**
  * Finds the requested field by id from the context object.

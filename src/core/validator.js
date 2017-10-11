@@ -5,9 +5,6 @@ import Field from './field';
 import FieldBag from './fieldBag';
 
 // @flow
-type ResultObject = { valid: boolean, data: Object };
-type Rule = (value: any, params: Array) => boolean | ResultObject | Promise<boolean | ResultObject>;
-type MapObject = { [string]: any };
 
 const RULES = {};
 let LOCALE = 'en';

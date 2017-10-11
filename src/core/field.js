@@ -3,11 +3,6 @@ import Generator from './generator';
 
 // @flow
 
-type Watcher = {
-  tag: string,
-  unwatch: () => any
-};
-
 const DEFAULT_OPTIONS = {
   targetOf: null,
   initial: false,

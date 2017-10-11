@@ -2,14 +2,6 @@ import { find, isNullOrUndefined } from './utils';
 
 // @flow
 
-type FieldError = {
-  field: string,
-  msg: string,
-  scope: ?string,
-  id: ?string,
-  rule: ?string
-};
-
 export default class ErrorBag {
   items: Array<FieldError>;
 

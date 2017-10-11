@@ -2,17 +2,6 @@ import { isObject, assign } from './utils';
 
 // @flow
 
-type MessageGenerator = (...args: any[]) => string;
-
-type Locale = {
-  messages: Object | { [string]: MessageGenerator },
-  attributes: Object | { [string]: string },
-  custom: Object | { [string]: MessageGenerator },
-  dateFormat: ?string
-};
-
-type Dict = { [string]: Locale };
-
 export default class Dictionary {
   container: { [string]: Locale };
 

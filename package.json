@@ -63,7 +63,7 @@
     "vue": ">= 2.2.0"
   },
   "dependencies": {},
-  "eslintIgnore": ["tests", "locale", "dist"],  
+  "eslintIgnore": ["tests", "locale", "dist", "flow"],
   "jest": {
     "testMatch": [
       "**/tests/**/*.js"
