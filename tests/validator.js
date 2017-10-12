@@ -661,7 +661,7 @@ test('calling validate with a string ending with .* will validate the matched sc
   expect(v.validateAll).toHaveBeenCalledWith('scope-1');
 });
 
-test.only('caliing validateAll with array should validate only matching name', async () => {
+test('caliing validateAll with array should validate only matching name', async () => {
   const v = new Validator();
   v.attach('name', 'required', { getter: () => '123' })
   v.attach('lname', 'required|alpha', { getter: () => 'AAA' })
