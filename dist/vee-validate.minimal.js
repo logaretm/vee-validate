@@ -980,7 +980,7 @@ Generator.resolveEvents = function resolveEvents (el, vnode) {
 
   if (!events && vnode.child) {
     var config = Generator.getCtorConfig(vnode);
-    events = config.events;
+    events = config && config.events;
   }
 
   return events;

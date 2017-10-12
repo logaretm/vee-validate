@@ -123,7 +123,7 @@ export default class Generator {
 
     if (!events && vnode.child) {
       const config = Generator.getCtorConfig(vnode);
-      events = config.events;
+      events = config && config.events;
     }
 
     return events;
