@@ -28,6 +28,7 @@
   ],
   "files": [
     "dist/*.js",
+    "dist/locale/*.js",
     "types/*.d.ts"
   ],
   "devDependencies": {
