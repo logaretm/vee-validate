@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.18
+ * vee-validate v2.0.0-rc.19
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -847,140 +847,6 @@ Dictionary.prototype._merge = function _merge (target, source) {
 };
 
 /**
- * Formates file size.
- *
- * @param {Number|String} size
- */
-var formatFileSize = function (size) {
-  var units = ['Byte', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  var threshold = 1024;
-  size = Number(size) * threshold;
-  var i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(threshold));
-  return (((size / Math.pow(threshold, i)).toFixed(2) * 1) + " " + (units[i]));
-};
-
-/**
- * Checks if vee-validate is defined globally.
- */
-var isDefinedGlobally = function () {
-  return typeof VeeValidate !== 'undefined';
-};
-
-var messages = {
-  _default: function (field) { return ("The " + field + " value is not valid."); },
-  after: function (field, ref) {
-    var target = ref[0];
-    var inclusion = ref[1];
-
-    return ("The " + field + " must be after " + (inclusion ? 'or equal to ' : '') + target + ".");
-},
-  alpha_dash: function (field) { return ("The " + field + " field may contain alpha-numeric characters as well as dashes and underscores."); },
-  alpha_num: function (field) { return ("The " + field + " field may only contain alpha-numeric characters."); },
-  alpha_spaces: function (field) { return ("The " + field + " field may only contain alphabetic characters as well as spaces."); },
-  alpha: function (field) { return ("The " + field + " field may only contain alphabetic characters."); },
-  before: function (field, ref) {
-    var target = ref[0];
-    var inclusion = ref[1];
-
-    return ("The " + field + " must be before " + (inclusion ? 'or equal to ' : '') + target + ".");
-},
-  between: function (field, ref) {
-    var min = ref[0];
-    var max = ref[1];
-
-    return ("The " + field + " field must be between " + min + " and " + max + ".");
-},
-  confirmed: function (field) { return ("The " + field + " confirmation does not match."); },
-  credit_card: function (field) { return ("The " + field + " field is invalid."); },
-  date_between: function (field, ref) {
-    var min = ref[0];
-    var max = ref[1];
-
-    return ("The " + field + " must be between " + min + " and " + max + ".");
-},
-  date_format: function (field, ref) {
-    var format = ref[0];
-
-    return ("The " + field + " must be in the format " + format + ".");
-},
-  decimal: function (field, ref) {
-    if ( ref === void 0 ) ref = ['*'];
-    var decimals = ref[0];
-
-    return ("The " + field + " field must be numeric and may contain " + (!decimals || decimals === '*' ? '' : decimals) + " decimal points.");
-},
-  digits: function (field, ref) {
-    var length = ref[0];
-
-    return ("The " + field + " field must be numeric and exactly contain " + length + " digits.");
-},
-  dimensions: function (field, ref) {
-    var width = ref[0];
-    var height = ref[1];
-
-    return ("The " + field + " field must be " + width + " pixels by " + height + " pixels.");
-},
-  email: function (field) { return ("The " + field + " field must be a valid email."); },
-  ext: function (field) { return ("The " + field + " field must be a valid file."); },
-  image: function (field) { return ("The " + field + " field must be an image."); },
-  in: function (field) { return ("The " + field + " field must be a valid value."); },
-  integer: function (field) { return ("The " + field + " field must be an integer."); },
-  ip: function (field) { return ("The " + field + " field must be a valid ip address."); },
-  length: function (field, ref) {
-    var length = ref[0];
-    var max = ref[1];
-
-    if (max) {
-      return ("The " + field + " length be between " + length + " and " + max + ".");
-    }
-
-    return ("The " + field + " length must be " + length + ".");
-  },
-  max: function (field, ref) {
-    var length = ref[0];
-
-    return ("The " + field + " field may not be greater than " + length + " characters.");
-},
-  max_value: function (field, ref) {
-    var max = ref[0];
-
-    return ("The " + field + " field must be " + max + " or less.");
-},
-  mimes: function (field) { return ("The " + field + " field must have a valid file type."); },
-  min: function (field, ref) {
-    var length = ref[0];
-
-    return ("The " + field + " field must be at least " + length + " characters.");
-},
-  min_value: function (field, ref) {
-    var min = ref[0];
-
-    return ("The " + field + " field must be " + min + " or more.");
-},
-  not_in: function (field) { return ("The " + field + " field must be a valid value."); },
-  numeric: function (field) { return ("The " + field + " field may only contain numeric characters."); },
-  regex: function (field) { return ("The " + field + " field format is invalid."); },
-  required: function (field) { return ("The " + field + " field is required."); },
-  size: function (field, ref) {
-    var size = ref[0];
-
-    return ("The " + field + " size must be less than " + (formatFileSize(size)) + ".");
-},
-  url: function (field) { return ("The " + field + " field is not a valid URL."); }
-};
-
-var locale = {
-  name: 'en',
-  messages: messages,
-  attributes: {}
-};
-
-if (isDefinedGlobally()) {
-  // eslint-disable-next-line
-  VeeValidate.Validator.addLocale(locale);
-}
-
-/**
  * Generates the options required to construct a field.
  */
 var Generator = function Generator () {};
@@ -1011,6 +877,14 @@ Generator.generate = function generate (el, binding, vnode, options) {
     aria: options.aria,
     initialValue: Generator.resolveInitialValue(vnode)
   };
+};
+
+Generator.getCtorConfig = function getCtorConfig (vnode) {
+  if (!vnode.child) { return null; }
+
+  var config = getPath('child.$options.$_veeValidate', vnode);
+
+  return config;
 };
 
 /**
@@ -1092,11 +966,18 @@ Generator.resolveAlias = function resolveAlias (el, vnode) {
  * @param {*} vnode
  */
 Generator.resolveEvents = function resolveEvents (el, vnode) {
-  if (vnode.child) {
-    return getDataAttribute(el, 'validate-on') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-validate-on']);
+  var events = getDataAttribute(el, 'validate-on');
+
+  if (!events && vnode.child && vnode.child.$attrs) {
+    events = vnode.child.$attrs['data-vv-validate-on'];
   }
 
-  return getDataAttribute(el, 'validate-on');
+  if (!events && vnode.child) {
+    var config = Generator.getCtorConfig(vnode);
+    events = config.events;
+  }
+
+  return events;
 };
 
 /**
@@ -1153,11 +1034,28 @@ Generator.resolveModel = function resolveModel (binding, vnode) {
    * @return {String} The field name.
    */
 Generator.resolveName = function resolveName (el, vnode) {
-  if (vnode.child) {
-    return getDataAttribute(el, 'name') || (vnode.child.$attrs && (vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'])) || vnode.child.name;
+  var name = getDataAttribute(el, 'name');
+
+  if (!name && !vnode.child) {
+    return el.name;
   }
 
-  return getDataAttribute(el, 'name') || el.name;
+  if (!name && vnode.child && vnode.child.$attrs) {
+    name = vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'];
+  }
+
+  if (!name && vnode.child) {
+    var config = Generator.getCtorConfig(vnode);
+    if (config && isCallable(config.name)) {
+      var boundGetter = config.name.bind(vnode.child);
+
+      return boundGetter();
+    }
+
+    return vnode.child.name;
+  }
+
+  return name;
 };
 
 /**
@@ -1171,11 +1069,23 @@ Generator.resolveGetter = function resolveGetter (el, vnode, model) {
   }
 
   if (vnode.child) {
-    return function () {
-      var path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
-      if (path) {
+    var path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
+    if (path) {
+      return function () {
         return getPath(path, vnode.child);
-      }
+      };
+    }
+
+    var config = Generator.getCtorConfig(vnode);
+    if (config && isCallable(config.value)) {
+      var boundGetter = config.value.bind(vnode.child);
+
+      return function () {
+        return boundGetter();
+      };
+    }
+
+    return function () {
       return vnode.child.value;
     };
   }
@@ -1251,6 +1161,7 @@ var Field = function Field (el, options) {
   this.flags = createFlags();
   this.vm = options.vm;
   this.component = options.component;
+  this.ctorConfig = this.component ? getPath('$options.$_veeValidate', this.component) : undefined;
   this.update(options);
   this.updated = false;
 };
@@ -1306,7 +1217,11 @@ prototypeAccessors$1.value.get = function () {
  * If the field rejects false as a valid value for the required rule.
  */
 prototypeAccessors$1.rejectsFalse.get = function () {
-  if (this.isVue || this.isHeadless) {
+  if (this.isVue && this.ctorConfig) {
+    return !!this.ctorConfig.rejectsFalse;
+  }
+
+  if (this.isHeadless) {
     return false;
   }
 
@@ -1483,7 +1398,11 @@ Field.prototype.updateDependencies = function updateDependencies () {
     }
 
     if (!el) {
-      el = this$1.vm.$el.querySelector(("input[name=\"" + selector + "\"]"));
+      try {
+        el = this$1.vm.$el.querySelector(("input[name=\"" + selector + "\"]"));
+      } catch (err) {
+        el = null;
+      }
     }
 
     if (!el) {
@@ -1636,7 +1555,7 @@ Field.prototype.addValueListeners = function addValueListeners () {
       while ( len-- ) args[ len ] = arguments[ len ];
 
     // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
-    if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event) || args[0].srcElement) {
+    if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event) || (args[0] && args[0].srcElement)) {
       args[0] = this$1.value;
     }
     this$1.validator.validate(("#" + (this$1.id)), args[0]);
@@ -1822,7 +1741,7 @@ var LOCALE = 'en';
 var STRICT_MODE = true;
 var DICTIONARY = new Dictionary({
   en: {
-    messages: messages,
+    messages: {},
     attributes: {},
     custom: {}
   }
@@ -2701,8 +2620,15 @@ var makeMixin = function (Vue, options) {
   };
 
   mixin.beforeCreate = function beforeCreate () {
+    // TODO: Deprecate
+    /* istanbul ignore next */
+    if (this.$options.$validates) {
+      warn('The ctor $validates option has been deprecated please set the $_veeValidate.validator option to "new" instead');
+      this.$validator = createValidator(this, options);
+    }
+
     // if its a root instance, inject anyways, or if it requested a new instance.
-    if (this.$options.$validates || !this.$parent) {
+    if (!this.$parent || (this.$options.$_veeValidate && /new/.test(this.$options.$_veeValidate.validator))) {
       this.$validator = createValidator(this, options);
     }
 
@@ -2861,6 +2787,140 @@ function install (_Vue, options) {
   Vue.directive('validate', createDirective$1(config$$1));
 }
 
+/**
+ * Formates file size.
+ *
+ * @param {Number|String} size
+ */
+var formatFileSize = function (size) {
+  var units = ['Byte', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  var threshold = 1024;
+  size = Number(size) * threshold;
+  var i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(threshold));
+  return (((size / Math.pow(threshold, i)).toFixed(2) * 1) + " " + (units[i]));
+};
+
+/**
+ * Checks if vee-validate is defined globally.
+ */
+var isDefinedGlobally = function () {
+  return typeof VeeValidate !== 'undefined';
+};
+
+var messages = {
+  _default: function (field) { return ("The " + field + " value is not valid."); },
+  after: function (field, ref) {
+    var target = ref[0];
+    var inclusion = ref[1];
+
+    return ("The " + field + " must be after " + (inclusion ? 'or equal to ' : '') + target + ".");
+},
+  alpha_dash: function (field) { return ("The " + field + " field may contain alpha-numeric characters as well as dashes and underscores."); },
+  alpha_num: function (field) { return ("The " + field + " field may only contain alpha-numeric characters."); },
+  alpha_spaces: function (field) { return ("The " + field + " field may only contain alphabetic characters as well as spaces."); },
+  alpha: function (field) { return ("The " + field + " field may only contain alphabetic characters."); },
+  before: function (field, ref) {
+    var target = ref[0];
+    var inclusion = ref[1];
+
+    return ("The " + field + " must be before " + (inclusion ? 'or equal to ' : '') + target + ".");
+},
+  between: function (field, ref) {
+    var min = ref[0];
+    var max = ref[1];
+
+    return ("The " + field + " field must be between " + min + " and " + max + ".");
+},
+  confirmed: function (field) { return ("The " + field + " confirmation does not match."); },
+  credit_card: function (field) { return ("The " + field + " field is invalid."); },
+  date_between: function (field, ref) {
+    var min = ref[0];
+    var max = ref[1];
+
+    return ("The " + field + " must be between " + min + " and " + max + ".");
+},
+  date_format: function (field, ref) {
+    var format = ref[0];
+
+    return ("The " + field + " must be in the format " + format + ".");
+},
+  decimal: function (field, ref) {
+    if ( ref === void 0 ) ref = ['*'];
+    var decimals = ref[0];
+
+    return ("The " + field + " field must be numeric and may contain " + (!decimals || decimals === '*' ? '' : decimals) + " decimal points.");
+},
+  digits: function (field, ref) {
+    var length = ref[0];
+
+    return ("The " + field + " field must be numeric and exactly contain " + length + " digits.");
+},
+  dimensions: function (field, ref) {
+    var width = ref[0];
+    var height = ref[1];
+
+    return ("The " + field + " field must be " + width + " pixels by " + height + " pixels.");
+},
+  email: function (field) { return ("The " + field + " field must be a valid email."); },
+  ext: function (field) { return ("The " + field + " field must be a valid file."); },
+  image: function (field) { return ("The " + field + " field must be an image."); },
+  in: function (field) { return ("The " + field + " field must be a valid value."); },
+  integer: function (field) { return ("The " + field + " field must be an integer."); },
+  ip: function (field) { return ("The " + field + " field must be a valid ip address."); },
+  length: function (field, ref) {
+    var length = ref[0];
+    var max = ref[1];
+
+    if (max) {
+      return ("The " + field + " length be between " + length + " and " + max + ".");
+    }
+
+    return ("The " + field + " length must be " + length + ".");
+  },
+  max: function (field, ref) {
+    var length = ref[0];
+
+    return ("The " + field + " field may not be greater than " + length + " characters.");
+},
+  max_value: function (field, ref) {
+    var max = ref[0];
+
+    return ("The " + field + " field must be " + max + " or less.");
+},
+  mimes: function (field) { return ("The " + field + " field must have a valid file type."); },
+  min: function (field, ref) {
+    var length = ref[0];
+
+    return ("The " + field + " field must be at least " + length + " characters.");
+},
+  min_value: function (field, ref) {
+    var min = ref[0];
+
+    return ("The " + field + " field must be " + min + " or more.");
+},
+  not_in: function (field) { return ("The " + field + " field must be a valid value."); },
+  numeric: function (field) { return ("The " + field + " field may only contain numeric characters."); },
+  regex: function (field) { return ("The " + field + " field format is invalid."); },
+  required: function (field) { return ("The " + field + " field is required."); },
+  size: function (field, ref) {
+    var size = ref[0];
+
+    return ("The " + field + " size must be less than " + (formatFileSize(size)) + ".");
+},
+  url: function (field) { return ("The " + field + " field is not a valid URL."); }
+};
+
+var locale = {
+  name: 'en',
+  messages: messages,
+  attributes: {}
+};
+
+if (isDefinedGlobally()) {
+  // eslint-disable-next-line
+  VeeValidate.Validator.addLocale(locale);
+}
+
 function use (plugin, options) {
   if ( options === void 0 ) options = {};
 
@@ -2927,15 +2987,18 @@ var patterns = {
  * Function accepts complete ISO 8601 formats as well as partial implementations.
  * ISO 8601: http://en.wikipedia.org/wiki/ISO_8601
  *
+ * If the argument is null, it is treated as an invalid date.
+ *
  * If all above fails, the function passes the given argument to Date constructor.
  *
  * **Note**: *all* Date arguments passed to any *date-fns* function is processed by `toDate`.
  * All *date-fns* functions will throw `RangeError` if `options.additionalDigits` is not 0, 1, 2 or undefined.
  *
- * @param {Date|String|Number} argument - the value to convert
+ * @param {*} argument - the value to convert
  * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
  * @param {0|1|2} [options.additionalDigits=2] - the additional number of digits in the extended year format
  * @returns {Date} the parsed date in the local time zone
+ * @throws {TypeError} 1 argument required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
  * @example
@@ -2950,6 +3013,14 @@ var patterns = {
  * //=> Fri Apr 11 2014 00:00:00
  */
 function toDate (argument, dirtyOptions) {
+  if (arguments.length < 1) {
+    throw new TypeError('1 argument required, but only ' + arguments.length + ' present')
+  }
+
+  if (argument === null) {
+    return new Date(NaN)
+  }
+
   var options = dirtyOptions || {};
 
   var additionalDigits = options.additionalDigits === undefined ? DEFAULT_ADDITIONAL_DIGITS : Number(options.additionalDigits);
@@ -3206,6 +3277,7 @@ function dayOfISOYear (isoYear, week, day) {
  * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
  * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
  * @returns {Date} the new date with the milliseconds added
+ * @throws {TypeError} 2 arguments required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
  * @example
@@ -3214,6 +3286,10 @@ function dayOfISOYear (isoYear, week, day) {
  * //=> Thu Jul 10 2014 12:45:30.750
  */
 function addMilliseconds (dirtyDate, dirtyAmount, dirtyOptions) {
+  if (arguments.length < 2) {
+    throw new TypeError('2 arguments required, but only ' + arguments.length + ' present')
+  }
+
   var timestamp = toDate(dirtyDate, dirtyOptions).getTime();
   var amount = Number(dirtyAmount);
   return new Date(timestamp + amount)
@@ -3247,6 +3323,7 @@ var MILLISECONDS_IN_MINUTE$2 = 60000;
  * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
  * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
  * @returns {Date} the new date with the minutes added
+ * @throws {TypeError} 2 arguments required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
  * @example
@@ -3255,6 +3332,10 @@ var MILLISECONDS_IN_MINUTE$2 = 60000;
  * //=> Thu Jul 10 2014 12:30:00
  */
 function addMinutes (dirtyDate, dirtyAmount, dirtyOptions) {
+  if (arguments.length < 2) {
+    throw new TypeError('2 arguments required, but only ' + arguments.length + ' present')
+  }
+
   var amount = Number(dirtyAmount);
   return addMilliseconds(dirtyDate, amount * MILLISECONDS_IN_MINUTE$2, dirtyOptions)
 }
@@ -3271,10 +3352,11 @@ function addMinutes (dirtyDate, dirtyAmount, dirtyOptions) {
  *
  * Time value of Date: http://es5.github.io/#x15.9.1.1
  *
- * @param {Date|String|Number} date - the date to check
+ * @param {*} date - the date to check
  * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
  * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
  * @returns {Boolean} the date is valid
+ * @throws {TypeError} 1 argument required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
  * @example
@@ -3293,6 +3375,10 @@ function addMinutes (dirtyDate, dirtyAmount, dirtyOptions) {
  * //=> false
  */
 function isValid (dirtyDate, dirtyOptions) {
+  if (arguments.length < 1) {
+    throw new TypeError('1 argument required, but only ' + arguments.length + ' present')
+  }
+
   var date = toDate(dirtyDate, dirtyOptions);
   return !isNaN(date)
 }
@@ -4243,6 +4329,7 @@ var defaultFormattingTokensRegExp = /(\[[^[]*])|(\\)?(x|ss|s|mm|m|hh|h|do|dddd|d
  * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
  * @param {Locale} [options.locale=defaultLocale] - the locale object. See [Locale]{@link https://date-fns.org/docs/Locale}
  * @returns {String} the formatted date string
+ * @throws {TypeError} 2 arguments required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  * @throws {RangeError} `options.locale` must contain `localize` property
  * @throws {RangeError} `options.locale` must contain `formatLong` property
@@ -4266,6 +4353,10 @@ var defaultFormattingTokensRegExp = /(\[[^[]*])|(\\)?(x|ss|s|mm|m|hh|h|do|dddd|d
  * //=> '2-a de julio 2014'
  */
 function format (dirtyDate, dirtyFormatStr, dirtyOptions) {
+  if (arguments.length < 2) {
+    throw new TypeError('2 arguments required, but only ' + arguments.length + ' present')
+  }
+
   var formatStr = String(dirtyFormatStr);
   var options = dirtyOptions || {};
 
@@ -4349,6 +4440,7 @@ function cleanEscapedString (input) {
  * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
  * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
  * @returns {Date} the new date with the mintues subtracted
+ * @throws {TypeError} 2 arguments required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
  * @example
@@ -4357,6 +4449,10 @@ function cleanEscapedString (input) {
  * //=> Thu Jul 10 2014 11:30:00
  */
 function subMinutes (dirtyDate, dirtyAmount, dirtyOptions) {
+  if (arguments.length < 2) {
+    throw new TypeError('2 arguments required, but only ' + arguments.length + ' present')
+  }
+
   var amount = Number(dirtyAmount);
   return addMinutes(dirtyDate, -amount, dirtyOptions)
 }
@@ -4374,6 +4470,7 @@ function subMinutes (dirtyDate, dirtyAmount, dirtyOptions) {
  * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
  * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
  * @returns {Boolean} the first date is after the second date
+ * @throws {TypeError} 2 arguments required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
  * @example
@@ -4382,6 +4479,10 @@ function subMinutes (dirtyDate, dirtyAmount, dirtyOptions) {
  * //=> true
  */
 function isAfter (dirtyDate, dirtyDateToCompare, dirtyOptions) {
+  if (arguments.length < 2) {
+    throw new TypeError('2 arguments required, but only ' + arguments.length + ' present')
+  }
+
   var date = toDate(dirtyDate, dirtyOptions);
   var dateToCompare = toDate(dirtyDateToCompare, dirtyOptions);
   return date.getTime() > dateToCompare.getTime()
@@ -4400,6 +4501,7 @@ function isAfter (dirtyDate, dirtyDateToCompare, dirtyOptions) {
  * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
  * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
  * @returns {Boolean} the first date is before the second date
+ * @throws {TypeError} 2 arguments required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
  * @example
@@ -4408,6 +4510,10 @@ function isAfter (dirtyDate, dirtyDateToCompare, dirtyOptions) {
  * //=> false
  */
 function isBefore (dirtyDate, dirtyDateToCompare, dirtyOptions) {
+  if (arguments.length < 2) {
+    throw new TypeError('2 arguments required, but only ' + arguments.length + ' present')
+  }
+
   var date = toDate(dirtyDate, dirtyOptions);
   var dateToCompare = toDate(dirtyDateToCompare, dirtyOptions);
   return date.getTime() < dateToCompare.getTime()
@@ -4426,6 +4532,7 @@ function isBefore (dirtyDate, dirtyDateToCompare, dirtyOptions) {
  * @param {Options} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
  * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
  * @returns {Boolean} the dates are equal
+ * @throws {TypeError} 2 arguments required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
  * @example
@@ -4437,6 +4544,10 @@ function isBefore (dirtyDate, dirtyDateToCompare, dirtyOptions) {
  * //=> false
  */
 function isEqual$1 (dirtyLeftDate, dirtyRightDate, dirtyOptions) {
+  if (arguments.length < 2) {
+    throw new TypeError('2 arguments required, but only ' + arguments.length + ' present')
+  }
+
   var dateLeft = toDate(dirtyLeftDate, dirtyOptions);
   var dateRight = toDate(dirtyRightDate, dirtyOptions);
   return dateLeft.getTime() === dateRight.getTime()
@@ -5243,6 +5354,7 @@ var defaultParsingTokensRegExp = /(\[[^[]*])|(\\)?(x|ss|s|mm|m|hh|h|do|dddd|ddd|
  * @param {Locale} [options.locale=defaultLocale] - the locale object. See [Locale]{@link https://date-fns.org/docs/Locale}
  * @param {0|1|2|3|4|5|6} [options.weekStartsOn=0] - the index of the first day of the week (0 - Sunday)
  * @returns {Date} the parsed date
+ * @throws {TypeError} 3 arguments required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  * @throws {RangeError} `options.weekStartsOn` must be between 0 and 6
  * @throws {RangeError} `options.locale` must contain `match` property
@@ -5269,6 +5381,10 @@ var defaultParsingTokensRegExp = /(\[[^[]*])|(\\)?(x|ss|s|mm|m|hh|h|do|dddd|ddd|
  * //=> Sun Feb 28 2010 00:00:00
  */
 function parse (dirtyDateString, dirtyFormatString, dirtyBaseDate, dirtyOptions) {
+  if (arguments.length < 3) {
+    throw new TypeError('3 arguments required, but only ' + arguments.length + ' present')
+  }
+
   var dateString = String(dirtyDateString);
   var options = dirtyOptions || {};
 
@@ -6596,13 +6712,18 @@ var mapFields = function (fields) {
   }, {});
 };
 
-var version = '2.0.0-rc.18';
+var version = '2.0.0-rc.19';
 
 var rulesPlugin = function (ref) {
   var Validator$$1 = ref.Validator;
 
   Object.keys(Rules).forEach(function (rule) {
     Validator$$1.extend(rule, Rules[rule]);
+  });
+
+  // Merge the english messages.
+  Validator$$1.localize('en', {
+    messages: messages
   });
 };
 

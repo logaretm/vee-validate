@@ -1,6 +1,6 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
-export const messages = {
+const messages = {
   _default: (field) => `The ${field} value is not valid.`,
   after: (field, [target, inclusion]) => `The ${field} must be after ${inclusion ? 'or equal to ' : ''}${target}.`,
   alpha_dash: (field) => `The ${field} field may contain alpha-numeric characters as well as dashes and underscores.`,
@@ -40,6 +40,11 @@ export const messages = {
   required: (field) => `The ${field} field is required.`,
   size: (field, [size]) => `The ${field} size must be less than ${formatFileSize(size)}.`,
   url: (field) => `The ${field} field is not a valid URL.`
+};
+
+// You can ignore this export, locale maintainer!
+export {
+  messages
 };
 
 const locale = {

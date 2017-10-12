@@ -1,6 +1,6 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
-export const messages = {
+const messages = {
   _default: (field) => `${field} tidak sah.`,
   after: (field, [target, inclusion]) => `${field} perlulah selepas ${inclusion ? 'atau sama dengan ' : ''}${target}.`,
   alpha_dash: (field) => `${field} boleh mempunyai karakter angka-abjad, sengkang dan garis bawah.`,
