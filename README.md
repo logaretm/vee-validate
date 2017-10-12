@@ -9,7 +9,7 @@
 [![codecov](https://codecov.io/gh/baianat/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/baianat/vee-validate)
 [![Build Status](https://travis-ci.org/baianat/vee-validate.svg?branch=master)](https://travis-ci.org/baianat/vee-validate)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/baianat/vee-validate?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=baianat/vee-validate&amp;utm_campaign=Badge_Grade)
-[![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/2.0.0-rc.18)
+[![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/2.0.0-rc.19)
 [![npm](https://img.shields.io/npm/dm/vee-validate.svg)](https://npm-stat.com/charts.html?package=vee-validate)
 [![npm](https://img.shields.io/npm/v/vee-validate.svg)](https://www.npmjs.com/package/vee-validate)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/baianat/vee-validate.svg)](http://isitmaintained.com/project/baianat/vee-validate "Average time to resolve an issue")
@@ -111,7 +111,8 @@ You can find more information in the [contribution guide](contributing.md).
 
 - [Vue Multi Step Form](http://statemachine.davestewart.io/html/examples/vue/vue-sign-up.html) by [Dave Stewart](https://github.com/davestewart)
 - [Laravel 5.4 with Vue and Vee Validate (Windows)](https://medium.com/@kanokpit.skuberg/laravel-5-4-with-vue-and-vee-validate-windows-c3ff7f4cdabc) by [Noi Skuberg](https://medium.com/@kanokpit.skuberg)
-- [Vee-validate(Intro and Example)](https://medium.com/@ngLahin/vee-validate-intro-and-example-22d8b95e25e1) by [Hussain Muhammad Lahin](https://medium.com/@ngLahin)
+- [Vee-validate (Intro and Example)](https://medium.com/@ngLahin/vee-validate-intro-and-example-22d8b95e25e1) by [Hussain Muhammad Lahin](https://medium.com/@ngLahin)
+- [An imperative guide to forms in Vue.js](https://blog.logrocket.com/an-imperative-guide-to-forms-in-vue-js-7536bfa374e0) by [Olayinka Omole](https://blog.logrocket.com/@olayinka.omole).
 
 ### Credits
 - Some validations/test scenarios are provided/based on [validator.js](https://github.com/chriso/validator.js).
