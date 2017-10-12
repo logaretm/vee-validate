@@ -439,7 +439,7 @@ export default class Validator {
 
   /**
    * Validates each value against the corresponding field validations.
-   * @param  {Object|String} values The values to be validated.
+   * @param  {Object|String|Array} values The values to be validated.
    * @return {Promise} Returns a promise with the validation result.
    */
   validateAll (values) {
@@ -457,6 +457,10 @@ export default class Validator {
       providedValues = true;
     } else if (arguments.length === 0) {
       matcher = { scope: null }; // global scope.
+    } else if (Array.isArray(values)) {
+      matcher = values.map(key => {
+        return { name: key, scope: arguments[1] || null };
+      });
     }
 
     const promises = this.fields.filter(matcher).map(field => this.validate(

@@ -661,6 +661,15 @@ test('calling validate with a string ending with .* will validate the matched sc
   expect(v.validateAll).toHaveBeenCalledWith('scope-1');
 });
 
+test.only('caliing validateAll with array should validate only matching name', async () => {
+  const v = new Validator();
+  v.attach('name', 'required', { getter: () => '123' })
+  v.attach('lname', 'required|alpha', { getter: () => 'AAA' })
+  v.attach('age', 'required', { getter: () => '' })
+  expect(await v.validateAll(['name', 'lname'])).toBe(true);
+  expect(await v.validateAll(['name', 'age'])).toBe(false);
+});
+
 test('can fetch the values using getters when not specifying values in validateAll', async () => {
   const v = new Validator();
   let toggle = true;
