@@ -1,5 +1,6 @@
 const validate = (value, params) => {
   const decimals = Array.isArray(params) ? (params[0] || '*') : '*';
+  const separator = Array.isArray(params) ? (params[1] || '.') : '.';
   if (Array.isArray(value)) {
     return value.every(val => validate(val, params));
   }
@@ -14,7 +15,7 @@ const validate = (value, params) => {
   }
 
   const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
-  const regex = new RegExp(`^-?\\d*(\\.\\d${regexPart})?$`);
+  const regex = new RegExp(`^-?\\d*(\\${separator}\\d${regexPart})?$`);
 
   if (! regex.test(value)) {
     return false;
