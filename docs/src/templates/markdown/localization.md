@@ -68,7 +68,7 @@ A working example can be found [here](examples#locale-example)
 
 ## [Localized Files](#localized-files)
 
-In the [`locale`](https://github.com/logaretm/vee-validate/tree/master/locale) directory of this plugin, is a collection of localized files. If you can't find your locale, you could help this plugin by contributing a localized version to the [repo](https://github.com/logaretm/vee-validate). I will happily accept it.
+In the [`locale`](https://github.com/logaretm/vee-validate/tree/master/locale) directory of this plugin, is a collection of localized files. If you can't find your locale, you could help this plugin by contributing a localized version to the [repository](https://github.com/logaretm/vee-validate). I will happily accept it.
 
 You can import those locales like this:
 

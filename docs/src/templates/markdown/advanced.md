@@ -1,6 +1,6 @@
 ## [Component Injections](#injection)
 
-The default behavior for the plugin is to forcebly inject a validator instance for each component, which means each component has its own validator scope, that made sharing error messages between components relatively hard depending on your case.
+The default behavior for the plugin is to forcibly inject a validator instance for each component, which means each component has its own validator scope, that made sharing error messages between components relatively hard depending on your case.
 
 You can rely on Vue's [Provide/Inject API](https://vuejs.org/v2/api/#provide-inject) for this case, here is how it works:
 
