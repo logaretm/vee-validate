@@ -44,7 +44,7 @@ yarn add vee-validate
 
 vee-validate is also available on these cdns:
 
-- [jsdelivr cdn](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js)
+- [jsdelivr cdn](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js) [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/vee-validate/badge?style=rounded)](https://www.jsdelivr.com/package/npm/vee-validate)
 - [unpkg](https://unpkg.com/vee-validate)
 
 ### Getting Started
