@@ -38,17 +38,15 @@ export default {
   methods: {
     changeLocale() {
       this.locale = this.$validator.locale === 'ar' ? 'en' : 'ar';
-      this.$validator.setLocale(this.locale);
+      this.$validator.localize(this.locale);
     }
   },
   created() {
-    this.$validator.updateDictionary({
-      ar: {
-        messages: arabic.messages,
-        attributes: {
-          email: 'البريد الاليكتروني',
-          phone: 'رقم الهاتف'
-        }
+    this.$validator.localize('ar', {
+      messages: arabic.messages,
+      attributes: {
+        email: 'البريد الاليكتروني',
+        phone: 'رقم الهاتف'
       }
     });
   }

@@ -25,11 +25,14 @@ export default {
 > If the first parent isn't able to provide a validator instance, the API will traverse the tree upwards looking for a parent that can.
 
 
-Here is how to request a new validator instance for the component by setting a `$validates` property on the component constructor options:
+Here is how to request a new validator instance for the component by setting a `validator` property on the component's VeeValidate constructor options:
 
 ```js
 export default {
-  $validates: true,
+  // ...
+  $_veeValidate: {
+    validator: 'new' // give me a new validator each time.
+  },
   // ...
 };
 ```
@@ -43,6 +46,6 @@ import VeeValidate from 'vee-validate';
 Vue.use(VeeValidate, { inject: false });
 ```
 
-This will make the plugin stop instantiating a new validator for each component instance.
+This will make the plugin stop instantiating a new validator for each component instance, excluding the root instance.
 
 The `errorBag` and the `fields` objects will be also shared along with the validator, they will not be injected if the component does not have a validator instance.

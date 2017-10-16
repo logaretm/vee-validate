@@ -25,9 +25,12 @@ export default {
 <blockquote>
 <p>If the first parent isn't able to provide a validator instance, the API will traverse the tree upwards looking for a parent that can.</p>
 </blockquote>
-<p>Here is how to request a new validator instance for the component by setting a <code>$validates</code> property on the component constructor options:</p>
+<p>Here is how to request a new validator instance for the component by setting a <code>validator</code> property on the component's VeeValidate constructor options:</p>
 <pre><code class="highlight-js">export default {
-  $validates: true,
+  // ...
+  $_veeValidate: {
+    validator: 'new' // give me a new validator each time.
+  },
   // ...
 };
 </code></pre>
@@ -37,7 +40,7 @@ import VeeValidate from 'vee-validate';
 
 Vue.use(VeeValidate, { inject: false });
 </code></pre>
-<p>This will make the plugin stop instantiating a new validator for each component instance.</p>
+<p>This will make the plugin stop instantiating a new validator for each component instance, excluding the root instance.</p>
 <p>The <code>errorBag</code> and the <code>fields</code> objects will be also shared along with the validator, they will not be injected if the component does not have a validator instance.</p>
 </div></div></div></div></div></svg><script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script><script>Array.from(document.querySelectorAll('h2')).forEach(h => {
   h.classList.add('title');
@@ -59,4 +62,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor-1cf7a76476dd80c11346.js"></script><script type="text/javascript" src="/assets/js/bundle-1cf7a76476dd80c11346.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor-363136280b912218037d.js"></script><script type="text/javascript" src="/assets/js/bundle-363136280b912218037d.js"></script></body></html>

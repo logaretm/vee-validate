@@ -9,7 +9,7 @@ ga('send', 'pageview');
 <p>This plugin only comes with English messages to keep things small, but it was built with flexible message generation in mind.<br>
 The <a href="https://github.com/logaretm/vee-validate/blob/master/dist/locale/en.js">English messages file</a> is an example on how you would structure those messages. Then you may want to update the validator dictionary, which should happen once in your app startup. still you may update them whenever you want in any point of your app, check the <a href="#attributes-dictionary">dictionary</a> description below.</p>
 <blockquote>
-<p>The messages shown in the provided locale files contains mostly functions, however your messages can also be strings depending on your needs, the included locales make use of field names and paramaters provided, so they had to be functions.</p>
+<p>The messages shown in the provided locale files contains mostly functions, however your messages can also be strings depending on your needs, the included locales make use of field names and parameters provided, so they had to be functions.</p>
 </blockquote>
 <h2><a href="#attributes-data-vv-as">Attributes (data-vv-as)</a></h2>
 <p>Seeing 'first_name' in your error messages can't be very good for your user experience, this plugin offer a couple of solutions: You can use the <code>data-vv-as</code> attribute on your field and give it a better name for your users, it would look like this:</p>
@@ -17,7 +17,7 @@ The <a href="https://github.com/logaretm/vee-validate/blob/master/dist/locale/en
 </code></pre>
 <p>Now when any error message is generated for this input will use the <code>data-vv-as</code> value instead of the actual field name. This is also the same for binding expressions. While this is very useful for simple setups and displaying localized names, but it is only ideal for a single-locale page, for multi-localized pages and more advanced usages you might want to check the approach below.</p>
 <h2><a href="#attributes-dictionary">Attributes (Dictionary)</a></h2>
-<p>All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes, if the validator finds a localized attribute name for that field it will be used instead of the field name. Pretty much like <code>data-vv-as</code> but <code>data-vv-as</code> takes priorty if both are found.</p>
+<p>All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes, if the validator finds a localized attribute name for that field it will be used instead of the field name. Pretty much like <code>data-vv-as</code> but <code>data-vv-as</code> takes priority if both are found.</p>
 <p>Here is a little code example on how would you add support for your localized messages and attributes. Note that this is the entry point of your application.</p>
 <pre><code class="highlight-js">import Vue from 'vue';
 import VeeValidate from 'vee-validate';
@@ -44,14 +44,14 @@ new Vue({
 });
 </code></pre>
 <h2><a href="#switch-locale">Switching Locale</a></h2>
-<p>You can switch the local of all validators by calling <code>setLocale</code> on any instance available within any component, this ensures all validators are operating with the same locale configuration.</p>
+<p>You can switch the local of all validators by calling <code>localize</code> on any instance available within any component, this ensures all validators are operating with the same locale configuration.</p>
 <pre><code class="highlight-js">// Inside a component.
-this.$validator.setLocale('ar');
+this.$validator.localize('ar');
 
 import { Validator } from 'vee-validate';
 
-// Also avaiable on the prototype.
-Validator.setLocale('ar');
+// Also available on the prototype.
+Validator.localize('ar');
 </code></pre>
 <p>You will get a warning if you set the locale to one that has not been merged in the dictionary yet, any messages generated will fallback to English.</p>
 <p>A working example can be found <a href="examples#locale-example">here</a></p>
@@ -61,8 +61,8 @@ Validator.setLocale('ar');
 <pre><code class="highlight-js">import ar from 'vee-validate/dist/locale/ar';
 import VeeValidate, { Validator } from 'vee-validate';
 
-// Add locale helper.
-Validator.addLocale(ar);
+// Localize takes the locale object as the second argument (optional) and merges it.
+Validator.localize('ar', ar);
 
 // Install the Plugin and set the locale.
 Vue.use(VeeValidate, {
@@ -77,7 +77,7 @@ Vue.use(VeeValidate, {
   }
 };
 </code></pre>
-<p>Also note that if imported via script tags they will automatically installed if <code>VeeValidate</code> is avaliable globally.</p>
+<p>Also note that if imported via script tags they will automatically installed if <code>VeeValidate</code> is available globally.</p>
 </div></div></div></div></div></svg><script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script><script>Array.from(document.querySelectorAll('h2')).forEach(h => {
   h.classList.add('title');
   h.classList.add('is-4');
@@ -98,4 +98,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor-1cf7a76476dd80c11346.js"></script><script type="text/javascript" src="/assets/js/bundle-1cf7a76476dd80c11346.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor-363136280b912218037d.js"></script><script type="text/javascript" src="/assets/js/bundle-363136280b912218037d.js"></script></body></html>
