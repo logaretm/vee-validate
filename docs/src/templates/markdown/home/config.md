@@ -1,15 +1,15 @@
-Visit the [rules documentation](rules.html#available-rules) to learn more about how to use each rule, and how to [create your own](rules.html#custom-rules).
+Visit the [rules documentation](rules.html#available-rules) to learn more about how to use each rule and how to [create your own](rules.html#custom-rules).
 
 ## [Configuration](#configuration)
 
-You may need to configure some options to tweak some of the plugin internals, this is not required, but could cause conflicts. For example: if you are using a property called `errors` on your vue instance this may cause conflicts. Here is how you would set up the options along with the default values:
+You may need to configure some options to tweak some of the plugin internals. This is not required, but could cause conflicts. For example, using a property called `errors` on your vue instance may cause conflicts. Here is how you would set up the options, along with the default values:
 
 ```js
 import Vue from 'vue';
 import VeeValidate from 'vee-validate';
 
 const config = {
-  errorBagName: 'errors', // change if property conflicts.
+  errorBagName: 'errors', // change if property conflicts
   fieldsBagName: 'fields', 
   delay: 0, 
   locale: 'en', 
@@ -45,7 +45,7 @@ Vue.use(VeeValidate, config);
         <tr>
             <td class="is-method-name">errorBagName</td>
             <td>errors</td>
-            <td>The name of the ErrorBag object that will be injected in each of Vue's instances' data.</td>
+            <td>The name of the `ErrorBag` object that will be injected in each of Vue's instances' data.</td>
         </tr>
         <tr>
             <td class="is-method-name">fieldsBagName</td>
@@ -66,7 +66,7 @@ Vue.use(VeeValidate, config);
             <td class="is-method-name">dictionary</td>
             <td>null</td>
             <td>  
-              A dictionary to be merged with the validators dictionary, check [custom messages](rules.html#custom-messages) and [localization](localization.html) sections.
+              A dictionary to be merged with the validators dictionary. (Check the [custom messages](rules.html#custom-messages) and [localization](localization.html) sections.)
             </td>
         </tr>
         <tr>
@@ -87,7 +87,7 @@ Vue.use(VeeValidate, config);
                     touched: 'touched', // the control has been blurred
                     untouched: 'untouched', // the control hasn't been blurred
                     valid: 'valid', // model is valid
-                    invalid: 'invalid', // model is invalid
+                    invalid: 'invalid', // model is not valid
                     pristine: 'pristine', // control has not been interacted with
                     dirty: 'dirty' // control has been interacted with
                   }
@@ -98,13 +98,13 @@ Vue.use(VeeValidate, config);
         <tr>
             <td class="is-method-name">events</td>
             <td>input|blur</td>
-            <td>Pipe separated list of the default event names that will be listened for to trigger validation, if empty string is provided it will disable all listeners.</td>
+            <td>Pipe separated list of the default event names that will be listened to, to trigger validation. If an empty string is provided it will disable all listeners.</td>
         </tr>
         <tr>
             <td class="is-method-name">inject</td>
             <td>true</td>
             <td>
-              Specifies if a validator instance should be injected automatically for all components, check [Component Injections](advanced#injections) for more informatin.
+              Specifies if a validator instance should be injected automatically for all components. (See [Component Injections](advanced#injections) for more information.)
             </td>
         </tr>
         <tr>
