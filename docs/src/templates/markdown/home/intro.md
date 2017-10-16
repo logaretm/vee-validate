@@ -2,7 +2,7 @@
 
 This is a plugin for [Vue.js](https://vuejs.org/) that allows you to validate input fields, and display errors, in an easy and powerful way.
 
-You don't have to do anything fancy in your app, most of the work goes into the html. You only need to specify for each input what kind of validators should be used when the value changes. You will then get informed of the errors for each field.  
+You don't have to do anything fancy in your app: Most of the work goes into the html. You only need to specify, for each input, what kind of validators should be used when the value changes. You will then get informed of the errors for each field.  
 
 Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object.
 
@@ -46,4 +46,4 @@ Vue.use(VeeValidate);
 
 All you need is to add the `v-validate` directive to the input you wish to validate.  
 
-Then pass to the directive a `rules` string which contains a list of validation rules separated by a pipe '`|`'. For the following example the validation rules are straight forward, use `required` to indicate that the field is required. And `email` to indicate that the field must be an email. To combine both rules we assign the string value `required|email` to the `v-validate` expression value.
+Then, pass to the directive a `rules` string which contains a list of validation rules separated by a pipe '`|`'. For the following example the validation rules are straight forward. Use `required` to indicate that the field is required, and `email` to indicate that the field must be an email. To combine both rules we assign the string value `required|email` to the `v-validate` expression value.
