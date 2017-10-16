@@ -1,4 +1,6 @@
-const normalize = (fields) => {
+// @flow
+
+const normalize = (fields: Array<any> | Object): Object => {
   if (Array.isArray(fields)) {
     return fields.reduce((prev, curr) => {
       if (~curr.indexOf('.')) {
@@ -16,10 +18,8 @@ const normalize = (fields) => {
 
 /**
  * Maps fields to computed functions.
- *
- * @param {Array|Object} fields
  */
-const mapFields = (fields) => {
+const mapFields = (fields: Array<any> | Object): Object => {
   const normalized = normalize(fields);
   return Object.keys(normalized).reduce((prev, curr) => {
     const field = normalized[curr];

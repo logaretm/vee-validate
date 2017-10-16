@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.19
+ * vee-validate v2.0.0-rc.18
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -2626,13 +2626,12 @@ function cleanEscapedString$1 (input) {
 
 // This file is generated automatically by `scripts/build/indices.js`. Please, don't change it.
 
+// 
+
 /**
  * Custom parse behavior on top of date-fns parse function.
- * @param {String} date
- * @param {String} format
- * @return {Date|null}
  */
-var parseDate$1 = function (date, format$$1) {
+function parseDate$1 (date, format$$1) {
   var parsed = parse(date, format$$1, new Date());
 
   // if date is not valid or the formatted output after parsing does not match
@@ -2642,7 +2641,7 @@ var parseDate$1 = function (date, format$$1) {
   }
 
   return parsed;
-};
+}
 
 var after = function (value, ref) {
   var otherValue = ref[0];
@@ -2927,6 +2926,7 @@ var credit_card = function (value) { return isCreditCard(String(value)); };
 
 var validate$5 = function (value, params) {
   var decimals = Array.isArray(params) ? (params[0] || '*') : '*';
+  var separator = Array.isArray(params) ? (params[1] || '.') : '.';
   if (Array.isArray(value)) {
     return value.every(function (val) { return validate$5(val, params); });
   }
@@ -2941,7 +2941,7 @@ var validate$5 = function (value, params) {
   }
 
   var regexPart = decimals === '*' ? '+' : ("{1," + decimals + "}");
-  var regex = new RegExp(("^-?\\d*(\\.\\d" + regexPart + ")?$"));
+  var regex = new RegExp(("^-?\\d*(\\" + separator + "\\d" + regexPart + ")?$"));
 
   if (! regex.test(value)) {
     return false;
@@ -3382,6 +3382,8 @@ var ip = function (value, ref) {
   return isIP(value, version);
 };
 
+// 
+
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
@@ -3389,7 +3391,6 @@ var getDataAttribute = function (el, name) { return el.getAttribute(("data-vv-" 
 
 /**
  * Checks if the value is either null or undefined.
- * @param {*} value
  */
 var isNullOrUndefined = function (value) {
   return value === null || value === undefined;
@@ -3397,12 +3398,12 @@ var isNullOrUndefined = function (value) {
 
 /**
  * Sets the data attribute.
- * @param {*} el
- * @param {String} name
- * @param {String} value
  */
 var setDataAttribute = function (el, name, value) { return el.setAttribute(("data-vv-" + name), value); };
 
+/**
+ * Creates a proxy object if available in the environment.
+ */
 var createProxy = function (target, handler) {
   if (typeof Proxy === 'undefined') {
     return target;
@@ -3411,6 +3412,9 @@ var createProxy = function (target, handler) {
   return new Proxy(target, handler);
 };
 
+/**
+ * Creates the default flags object.
+ */
 var createFlags = function () { return ({
   untouched: true,
   touched: false,
@@ -3425,10 +3429,6 @@ var createFlags = function () { return ({
 
 /**
  * Shallow object comparison.
- *
- * @param {*} lhs
- * @param {*} rhs
- * @return {Boolean}
  */
 var isEqual$1 = function (lhs, rhs) {
   if (lhs instanceof RegExp && rhs instanceof RegExp) {
@@ -3473,16 +3473,14 @@ var getScope = function (el) {
 
 /**
  * Gets the value in an object safely.
- * @param {String} propPath
- * @param {Object} target
- * @param {*} def
  */
-var getPath = function (propPath, target, def) {
+var getPath = function (path, target, def) {
   if ( def === void 0 ) def = undefined;
 
-  if (!propPath || !target) { return def; }
+  if (!path || !target) { return def; }
+
   var value = target;
-  propPath.split('.').every(function (prop) {
+  path.split('.').every(function (prop) {
     if (! Object.prototype.hasOwnProperty.call(value, prop) && value[prop] === undefined) {
       value = def;
 
@@ -3499,9 +3497,6 @@ var getPath = function (propPath, target, def) {
 
 /**
  * Checks if path exists within an object.
- *
- * @param {String} path
- * @param {Object} target
  */
 var hasPath = function (path, target) {
   var obj = target;
@@ -3517,7 +3512,7 @@ var hasPath = function (path, target) {
 };
 
 /**
- * @param {String} rule
+ * Parses a rule string expression.
  */
 var parseRule = function (rule) {
   var params = [];
@@ -3528,54 +3523,6 @@ var parseRule = function (rule) {
   }
 
   return { name: name, params: params };
-};
-
-/**
- * Normalizes the given rules expression.
- *
- * @param {Object|String} rules
- */
-var normalizeRules = function (rules) {
-  // if falsy value return an empty object.
-  if (!rules) {
-    return {};
-  }
-
-  var validations = {};
-  if (isObject(rules)) {
-    Object.keys(rules).forEach(function (rule) {
-      var params = [];
-      if (rules[rule] === true) {
-        params = [];
-      } else if (Array.isArray(rules[rule])) {
-        params = rules[rule];
-      } else {
-        params = [rules[rule]];
-      }
-
-      if (rules[rule] !== false) {
-        validations[rule] = params;
-      }
-    });
-
-    return validations;
-  }
-
-  if (typeof rules !== 'string') {
-    warn('rules must be either a string or an object.');
-    return {};
-  }
-
-  rules.split('|').forEach(function (rule) {
-    var parsedRule = parseRule(rule);
-    if (! parsedRule.name) {
-      return;
-    }
-
-    validations[parsedRule.name] = parsedRule.params;
-  });
-
-  return validations;
 };
 
 /**
@@ -3609,6 +3556,53 @@ var debounce = function (fn, wait, immediate) {
 };
 
 /**
+ * Normalizes the given rules expression.
+ */
+var normalizeRules = function (rules) {
+  // if falsy value return an empty object.
+  if (!rules) {
+    return {};
+  }
+
+  if (isObject(rules)) {
+    // $FlowFixMe
+    return Object.keys(rules).reduce(function (prev, curr) {
+      var params = [];
+      // $FlowFixMe
+      if (rules[curr] === true) {
+        params = [];
+      } else if (Array.isArray(rules[curr])) {
+        params = rules[curr];
+      } else {
+        params = [rules[curr]];
+      }
+
+      // $FlowFixMe
+      if (rules[curr] !== false) {
+        prev[curr] = params;
+      }
+
+      return prev;
+    }, {});
+  }
+
+  if (typeof rules !== 'string') {
+    warn('rules must be either a string or an object.');
+    return {};
+  }
+
+  return rules.split('|').reduce(function (prev, rule) {
+    var parsedRule = parseRule(rule);
+    if (!parsedRule.name) {
+      return prev;
+    }
+
+    prev[parsedRule.name] = parsedRule.params;
+    return prev;
+  }, {});
+};
+
+/**
  * Emits a warning to the console.
  */
 var warn = function (message) {
@@ -3617,14 +3611,13 @@ var warn = function (message) {
 
 /**
  * Creates a branded error object.
- * @param {String} message
  */
 var createError = function (message) { return new Error(("[vee-validate] " + message)); };
 
 /**
  * Checks if the value is an object.
  */
-var isObject = function (object) { return object !== null && object && typeof object === 'object' && ! Array.isArray(object); };
+var isObject = function (obj) { return obj !== null && obj && typeof obj === 'object' && ! Array.isArray(obj); };
 
 /**
  * Checks if a function is callable.
@@ -3685,8 +3678,7 @@ var toggleClass = function (el, className, status) {
 };
 
 /**
- * Converts an array-like object to array.
- * Simple polyfill for Array.from
+ * Converts an array-like object to array, provides a simple polyfill for Array.from
  */
 var toArray = function (arrayLike) {
   if (isCallable(Array.from)) {
@@ -3704,8 +3696,6 @@ var toArray = function (arrayLike) {
 
 /**
  * Assign polyfill from the mdn.
- * @param {Object} target
- * @return {Object}
  */
 var assign = function (target) {
   var others = [], len = arguments.length - 1;
@@ -3738,22 +3728,19 @@ var assign = function (target) {
 
 /**
  * Generates a unique id.
- * @return {String}
  */
 var uniqId = function () { return ("_" + (Math.random().toString(36).substr(2, 9))); };
 
 /**
- * polyfills array.find
- * @param {Array} array
- * @param {Function} predicate
+ * finds the first element that satisfies the predicate callback, polyfills array.find
  */
-var find = function (array, predicate) {
-  if (isObject(array)) {
-    array = toArray(array);
-  }
-  if (array.find) {
+var find = function (arrayLike, predicate) {
+  var array = toArray(arrayLike);
+
+  if (isCallable(array.find)) {
     return array.find(predicate);
   }
+
   var result;
   array.some(function (item) {
     if (predicate(item)) {
@@ -3767,6 +3754,9 @@ var find = function (array, predicate) {
   return result;
 };
 
+/**
+ * Returns a suitable event name for the input element.
+ */
 var getInputEventName = function (el) {
   if (el && (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type))) {
     return 'change';
@@ -4263,15 +4253,15 @@ if (isDefinedGlobally()) {
   VeeValidate.Validator.addLocale(locale$1);
 }
 
+// 
+
 var ErrorBag = function ErrorBag () {
   this.items = [];
 };
 
 /**
-   * Adds an error to the internal array.
-   *
-   * @param {Object} error The error object.
-   */
+ * Adds an error to the internal array.
+ */
 ErrorBag.prototype.add = function add (error) {
   // handle old signature.
   if (arguments.length > 1) {
@@ -4289,9 +4279,6 @@ ErrorBag.prototype.add = function add (error) {
 
 /**
  * Updates a field error with the new field scope.
- *
- * @param {String} id
- * @param {Object} error
  */
 ErrorBag.prototype.update = function update (id, error) {
   var item = find(this.items, function (i) { return i.id === id; });
@@ -4306,11 +4293,8 @@ ErrorBag.prototype.update = function update (id, error) {
 };
 
 /**
-   * Gets all error messages from the internal array.
-   *
-   * @param {String} scope The Scope name, optional.
-   * @return {Array} errors Array of all error messages.
-   */
+ * Gets all error messages from the internal array.
+ */
 ErrorBag.prototype.all = function all (scope) {
   if (isNullOrUndefined(scope)) {
     return this.items.map(function (e) { return e.msg; });
@@ -4320,23 +4304,19 @@ ErrorBag.prototype.all = function all (scope) {
 };
 
 /**
-   * Checks if there are any errors in the internal array.
-   * @param {String} scope The Scope name, optional.
-   * @return {boolean} result True if there was at least one error, false otherwise.
-   */
+ * Checks if there are any errors in the internal array.
+ */
 ErrorBag.prototype.any = function any (scope) {
   if (isNullOrUndefined(scope)) {
-    return !! this.items.length;
+    return !!this.items.length;
   }
 
-  return !! this.items.filter(function (e) { return e.scope === scope; }).length;
+  return !!this.items.filter(function (e) { return e.scope === scope; }).length;
 };
 
 /**
-   * Removes all items from the internal array.
-   *
-   * @param {String} scope The Scope name, optional.
-   */
+ * Removes all items from the internal array.
+ */
 ErrorBag.prototype.clear = function clear (scope) {
     var this$1 = this;
 
@@ -4344,10 +4324,8 @@ ErrorBag.prototype.clear = function clear (scope) {
     scope = null;
   }
 
-  var removeCondition = function (e) { return e.scope === scope; };
-
   for (var i = 0; i < this.items.length; ++i) {
-    if (removeCondition(this$1.items[i])) {
+    if (this$1.items[i].scope === scope) {
       this$1.items.splice(i, 1);
       --i;
     }
@@ -4355,17 +4333,12 @@ ErrorBag.prototype.clear = function clear (scope) {
 };
 
 /**
-   * Collects errors into groups or for a specific field.
-   *
-   * @param{string} field The field name.
-   * @param{string} scope The scope name.
-   * @param {Boolean} map If it should map the errors to strings instead of objects.
-   * @return {Array} errors The errors for the specified field.
-   */
+ * Collects errors into groups or for a specific field.
+ */
 ErrorBag.prototype.collect = function collect (field, scope, map) {
     if ( map === void 0 ) map = true;
 
-  if (! field) {
+  if (!field) {
     var collection = {};
     this.items.forEach(function (e) {
       if (! collection[e.field]) {
@@ -4387,18 +4360,14 @@ ErrorBag.prototype.collect = function collect (field, scope, map) {
     .map(function (e) { return (map ? e.msg : e); });
 };
 /**
-   * Gets the internal array length.
-   *
-   * @return {Number} length The internal array length.
-   */
+ * Gets the internal array length.
+ */
 ErrorBag.prototype.count = function count () {
   return this.items.length;
 };
 
 /**
  * Finds and fetches the first error message for the specified field id.
- *
- * @param {String} id
  */
 ErrorBag.prototype.firstById = function firstById (id) {
   var error = find(this.items, function (i) { return i.id === id; });
@@ -4407,11 +4376,8 @@ ErrorBag.prototype.firstById = function firstById (id) {
 };
 
 /**
-   * Gets the first error message for a specific field.
-   *
-   * @param{String} field The field name.
-   * @return {String|null} message The error message.
-   */
+ * Gets the first error message for a specific field.
+ */
 ErrorBag.prototype.first = function first (field, scope) {
     var this$1 = this;
     if ( scope === void 0 ) scope = null;
@@ -4443,11 +4409,8 @@ ErrorBag.prototype.first = function first (field, scope) {
 };
 
 /**
-   * Returns the first error rule for the specified field
-   *
-   * @param {string} field The specified field.
-   * @return {string|null} First error rule on the specified field if one is found, otherwise null
-   */
+ * Returns the first error rule for the specified field
+ */
 ErrorBag.prototype.firstRule = function firstRule (field, scope) {
   var errors = this.collect(field, scope, false);
 
@@ -4455,36 +4418,31 @@ ErrorBag.prototype.firstRule = function firstRule (field, scope) {
 };
 
 /**
-   * Checks if the internal array has at least one error for the specified field.
-   *
-   * @param{string} field The specified field.
-   * @return {Boolean} result True if at least one error is found, false otherwise.
-   */
+ * Checks if the internal array has at least one error for the specified field.
+ */
 ErrorBag.prototype.has = function has (field, scope) {
     if ( scope === void 0 ) scope = null;
 
-  return !! this.first(field, scope);
+  return !!this.first(field, scope);
 };
 
 /**
-   * Gets the first error message for a specific field and a rule.
-   * @param {String} name The name of the field.
-   * @param {String} rule The name of the rule.
-   * @param {String} scope The name of the scope (optional).
-   */
+ * Gets the first error message for a specific field and a rule.
+ */
 ErrorBag.prototype.firstByRule = function firstByRule (name, rule, scope) {
+    if ( scope === void 0 ) scope = null;
+
   var error = this.collect(name, scope, false).filter(function (e) { return e.rule === rule; })[0];
 
   return (error && error.msg) || null;
 };
+
 /**
-   * Gets the first error message for a specific field that not match the rule.
-   * @param {String} name The name of the field.
-   * @param {String} rule The name of the rule.
-   * @param {String} scope The name of the scope (optional).
-   */
+ * Gets the first error message for a specific field that not match the rule.
+ */
 ErrorBag.prototype.firstNot = function firstNot (name, rule, scope) {
     if ( rule === void 0 ) rule = 'required';
+    if ( scope === void 0 ) scope = null;
 
   var error = this.collect(name, scope, false).filter(function (e) { return e.rule !== rule; })[0];
 
@@ -4493,7 +4451,6 @@ ErrorBag.prototype.firstNot = function firstNot (name, rule, scope) {
 
 /**
  * Removes errors by matching against the id.
- * @param {String} id
  */
 ErrorBag.prototype.removeById = function removeById (id) {
     var this$1 = this;
@@ -4507,12 +4464,8 @@ ErrorBag.prototype.removeById = function removeById (id) {
 };
 
 /**
-   * Removes all error messages associated with a specific field.
-   *
-   * @param{String} field The field which messages are to be removed.
-   * @param {String} scope The Scope name, optional.
-   * @param {String} id The field id, optional.
-   */
+ * Removes all error messages associated with a specific field.
+ */
 ErrorBag.prototype.remove = function remove (field, scope, id) {
     var this$1 = this;
 
@@ -4538,11 +4491,8 @@ ErrorBag.prototype.remove = function remove (field, scope, id) {
 };
 
 /**
-   * Get the field attributes if there's a rule selector.
-   *
-   * @param{String} field The specified field.
-   * @return {Object|null}
-   */
+ * Get the field attributes if there's a rule selector.
+ */
 ErrorBag.prototype._selector = function _selector (field) {
   if (field.indexOf(':') > -1) {
     var ref = field.split(':');
@@ -4556,11 +4506,8 @@ ErrorBag.prototype._selector = function _selector (field) {
 };
 
 /**
-   * Get the field scope if specified using dot notation.
-   *
-   * @param {String} field the specifie field.
-   * @return {Object|null}
-   */
+ * Get the field scope if specified using dot notation.
+ */
 ErrorBag.prototype._scope = function _scope (field) {
   if (field.indexOf('.') > -1) {
     var ref = field.split('.');
@@ -4573,6 +4520,8 @@ ErrorBag.prototype._scope = function _scope (field) {
   return null;
 };
 
+// 
+
 var Dictionary = function Dictionary (dictionary) {
   if ( dictionary === void 0 ) dictionary = {};
 
@@ -4581,7 +4530,7 @@ var Dictionary = function Dictionary (dictionary) {
 };
 
 Dictionary.prototype.hasLocale = function hasLocale (locale) {
-  return !! this.container[locale];
+  return !!this.container[locale];
 };
 
 Dictionary.prototype.setDateFormat = function setDateFormat (locale, format) {
@@ -4601,7 +4550,7 @@ Dictionary.prototype.getDateFormat = function getDateFormat (locale) {
 };
 
 Dictionary.prototype.getMessage = function getMessage (locale, key, fallback) {
-  if (! this.hasMessage(locale, key)) {
+  if (!this.hasMessage(locale, key)) {
     return fallback || this._getDefaultMessage(locale);
   }
 
@@ -4609,19 +4558,15 @@ Dictionary.prototype.getMessage = function getMessage (locale, key, fallback) {
 };
 
 /**
- * Gets a specific message for field. fallsback to the rule message.
- *
- * @param {String} locale
- * @param {String} field
- * @param {String} key
+ * Gets a specific message for field. falls back to the rule message.
  */
 Dictionary.prototype.getFieldMessage = function getFieldMessage (locale, field, key) {
-  if (! this.hasLocale(locale)) {
+  if (!this.hasLocale(locale)) {
     return this.getMessage(locale, key);
   }
 
   var dict = this.container[locale].custom && this.container[locale].custom[field];
-  if (! dict || ! dict[key]) {
+  if (!dict || !dict[key]) {
     return this.getMessage(locale, key);
   }
 
@@ -4639,7 +4584,7 @@ Dictionary.prototype._getDefaultMessage = function _getDefaultMessage (locale) {
 Dictionary.prototype.getAttribute = function getAttribute (locale, key, fallback) {
     if ( fallback === void 0 ) fallback = '';
 
-  if (! this.hasAttribute(locale, key)) {
+  if (!this.hasAttribute(locale, key)) {
     return fallback;
   }
 
@@ -4984,6 +4929,8 @@ Generator.resolveGetter = function resolveGetter (el, vnode, model) {
   }
 };
 
+// 
+
 var DEFAULT_OPTIONS = {
   targetOf: null,
   initial: false,
@@ -5053,7 +5000,7 @@ prototypeAccessors$1.isRequired.get = function () {
 };
 
 prototypeAccessors$1.isDisabled.get = function () {
-  return (this.isVue && this.component.disabled) || (this.el && this.el.disabled);
+  return !!(this.component && this.component.disabled) || !!(this.el && this.el.disabled);
 };
 
 prototypeAccessors$1.isHeadless.get = function () {
@@ -5062,16 +5009,16 @@ prototypeAccessors$1.isHeadless.get = function () {
 
 /**
  * Gets the display name (user-friendly name).
- * @return {String}
  */
+
 prototypeAccessors$1.displayName.get = function () {
   return isCallable(this.alias) ? this.alias() : this.alias;
 };
 
 /**
  * Gets the input value.
- * @return {*}
  */
+
 prototypeAccessors$1.value.get = function () {
   if (!isCallable(this.getter)) {
     return undefined;
@@ -5083,6 +5030,7 @@ prototypeAccessors$1.value.get = function () {
 /**
  * If the field rejects false as a valid value for the required rule.
  */
+
 prototypeAccessors$1.rejectsFalse.get = function () {
   if (this.isVue && this.ctorConfig) {
     return !!this.ctorConfig.rejectsFalse;
@@ -5097,7 +5045,6 @@ prototypeAccessors$1.rejectsFalse.get = function () {
 
 /**
  * Determines if the instance matches the options provided.
- * @param {Object} options The matching options.
  */
 Field.prototype.matches = function matches (options) {
   if (options.id) {
@@ -5120,8 +5067,7 @@ Field.prototype.matches = function matches (options) {
 };
 
 /**
- *
- * @param {Object} options
+ * Updates the field with changed data.
  */
 Field.prototype.update = function update (options) {
   this.targetOf = options.targetOf || null;
@@ -5188,7 +5134,6 @@ Field.prototype.reset = function reset () {
 
 /**
  * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
- * @param {Object} flags
  */
 Field.prototype.setFlags = function setFlags (flags) {
     var this$1 = this;
@@ -5305,7 +5250,6 @@ Field.prototype.updateDependencies = function updateDependencies () {
 
 /**
  * Removes listeners.
- * @param {RegExp} tag
  */
 Field.prototype.unwatch = function unwatch (tag) {
     if ( tag === void 0 ) tag = null;
@@ -5315,6 +5259,7 @@ Field.prototype.unwatch = function unwatch (tag) {
     this.watchers = [];
     return;
   }
+
   this.watchers.filter(function (w) { return tag.test(w.tag); }).forEach(function (w) { return w.unwatch(); });
   this.watchers = this.watchers.filter(function (w) { return !tag.test(w.tag); });
 };
@@ -5515,6 +5460,8 @@ Field.prototype.destroy = function destroy () {
 
 Object.defineProperties( Field.prototype, prototypeAccessors$1 );
 
+// 
+
 var FieldBag = function FieldBag () {
   this.items = [];
 };
@@ -5522,24 +5469,22 @@ var FieldBag = function FieldBag () {
 var prototypeAccessors$2 = { length: {} };
 
 /**
- * @return {Number} The current collection length.
+ * Gets the current items length.
  */
+
 prototypeAccessors$2.length.get = function () {
   return this.items.length;
 };
 
 /**
  * Finds the first field that matches the provided matcher object.
- * @param {Object} matcher
- * @return {Field|undefined} The first matching item.
  */
 FieldBag.prototype.find = function find$1 (matcher) {
   return find(this.items, function (item) { return item.matches(matcher); });
 };
 
 /**
- * @param {Object|Array} matcher
- * @return {Array} Array of matching field items.
+ * Filters the items down to the matched fields.
  */
 FieldBag.prototype.filter = function filter (matcher) {
   // multiple matchers to be tried.
@@ -5552,8 +5497,6 @@ FieldBag.prototype.filter = function filter (matcher) {
 
 /**
  * Maps the field items using the mapping function.
- *
- * @param {Function} mapper
  */
 FieldBag.prototype.map = function map (mapper) {
   return this.items.map(mapper);
@@ -5561,8 +5504,6 @@ FieldBag.prototype.map = function map (mapper) {
 
 /**
  * Finds and removes the first field that matches the provided matcher object, returns the removed item.
- * @param {Object|Field} matcher
- * @return {Field|null}
  */
 FieldBag.prototype.remove = function remove (matcher) {
   var item = null;
@@ -5582,8 +5523,6 @@ FieldBag.prototype.remove = function remove (matcher) {
 
 /**
  * Adds a field item to the list.
- *
- * @param {Field} item
  */
 FieldBag.prototype.push = function push (item) {
   if (! (item instanceof Field)) {
@@ -5602,6 +5541,8 @@ FieldBag.prototype.push = function push (item) {
 };
 
 Object.defineProperties( FieldBag.prototype, prototypeAccessors$2 );
+
+// 
 
 var RULES = {};
 var LOCALE = 'en';
@@ -5647,42 +5588,42 @@ var prototypeAccessors = { dictionary: {},locale: {},rules: {} };
 var staticAccessors = { dictionary: {},locale: {},rules: {} };
 
 /**
- * @return {Dictionary}
+ * Getter for the dictionary.
  */
 prototypeAccessors.dictionary.get = function () {
   return DICTIONARY;
 };
 
 /**
- * @return {Dictionary}
+ * Static Getter for the dictionary.
  */
 staticAccessors.dictionary.get = function () {
   return DICTIONARY;
 };
 
 /**
- * @return {String}
+ * Getter for the current locale.
  */
 prototypeAccessors.locale.get = function () {
   return LOCALE;
 };
 
 /**
- * @param {String} value
+ * Setter for the validator locale.
  */
 prototypeAccessors.locale.set = function (value) {
   Validator.locale = value;
 };
 
 /**
-* @return {String}
+* Static getter for the validator locale.
 */
 staticAccessors.locale.get = function () {
   return LOCALE;
 };
 
 /**
- * @param {String} value
+ * Static setter for the validator locale.
  */
 staticAccessors.locale.set = function (value) {
   /* istanbul ignore if */
@@ -5695,14 +5636,14 @@ staticAccessors.locale.set = function (value) {
 };
 
 /**
- * @return {Object}
+ * Getter for the rules object.
  */
 prototypeAccessors.rules.get = function () {
   return RULES;
 };
 
 /**
- * @return {Object}
+ * Static Getter for the rules object.
  */
 staticAccessors.rules.get = function () {
   return RULES;
@@ -5710,9 +5651,6 @@ staticAccessors.rules.get = function () {
 
 /**
  * Static constructor.
- *
- * @param{object} validations The validations object.
- * @return {Validator} validator A validator object.
  */
 Validator.create = function create (validations, options) {
   return new Validator(validations, options);
@@ -5720,9 +5658,6 @@ Validator.create = function create (validations, options) {
 
 /**
  * Adds a custom validator to the list of validation rules.
- *
- * @param{string} name The name of the validator.
- * @param{object|function} validator The validator object/function.
  */
 Validator.extend = function extend (name, validator) {
   Validator._guardExtend(name, validator);
@@ -5731,7 +5666,6 @@ Validator.extend = function extend (name, validator) {
 
 /**
  * Removes a rule from the list of validators.
- * @param {String} name The name of the validator/rule.
  */
 Validator.remove = function remove (name) {
   delete RULES[name];
@@ -5740,7 +5674,6 @@ Validator.remove = function remove (name) {
 /**
  * Sets the default locale for all validators.
  * @deprecated
- * @param {String} language The locale id.
  */
 Validator.setLocale = function setLocale (language) {
     if ( language === void 0 ) language = 'en';
@@ -5768,7 +5701,6 @@ Validator.prototype.installDateTimeValidators = function installDateTimeValidato
  * Sets the operating mode for all newly created validators.
  * strictMode = true: Values without a rule are invalid and cause failure.
  * strictMode = false: Values without a rule are valid and are skipped.
- * @param {Boolean} strictMode.
  */
 Validator.setStrictMode = function setStrictMode (strictMode) {
     if ( strictMode === void 0 ) strictMode = true;
@@ -5779,7 +5711,6 @@ Validator.setStrictMode = function setStrictMode (strictMode) {
 /**
  * Updates the dictionary, overwriting existing values and adding new ones.
  * @deprecated
- * @param{object} data The dictionary object.
  */
 Validator.updateDictionary = function updateDictionary (data) {
   DICTIONARY.merge(data);
@@ -5788,7 +5719,6 @@ Validator.updateDictionary = function updateDictionary (data) {
 /**
  * Adds a locale object to the dictionary.
  * @deprecated
- * @param {Object} locale
  */
 Validator.addLocale = function addLocale (locale) {
   if (! locale.name) {
@@ -5811,9 +5741,6 @@ Validator.prototype.addLocale = function addLocale (locale) {
 
 /**
  * Adds and sets the current locale for the validator.
- *
- * @param {String} lang
- * @param {Object} dictionary
  */
 Validator.prototype.localize = function localize (lang, dictionary) {
   Validator.localize(lang, dictionary);
@@ -5821,9 +5748,6 @@ Validator.prototype.localize = function localize (lang, dictionary) {
 
 /**
  * Adds and sets the current locale for the validator.
- *
- * @param {String} lang
- * @param {Object} dictionary
  */
 Validator.localize = function localize (lang, dictionary) {
   // merge the dictionary.
@@ -5838,9 +5762,6 @@ Validator.localize = function localize (lang, dictionary) {
 
 /**
  * Registers a field to be validated.
- *
- * @param{Field|Object} name The field name.
- * @return {Field}
  */
 Validator.prototype.attach = function attach (field) {
   // deprecate: handle old signature.
@@ -5875,9 +5796,6 @@ Validator.prototype.attach = function attach (field) {
 
 /**
  * Sets the flags on a field.
- *
- * @param {String} name
- * @param {Object} flags
  */
 Validator.prototype.flag = function flag (name, flags) {
   var field = this._resolveField(name);
@@ -5890,9 +5808,6 @@ Validator.prototype.flag = function flag (name, flags) {
 
 /**
  * Removes a field from the validator.
- *
- * @param{String} name The name of the field.
- * @param {String} scope The name of the field scope.
  */
 Validator.prototype.detach = function detach (name, scope) {
   var field = name instanceof Field ? name : this._resolveField(name, scope);
@@ -5913,9 +5828,6 @@ Validator.prototype.detach = function detach (name, scope) {
 
 /**
  * Adds a custom validator to the list of validation rules.
- *
- * @param{string} name The name of the validator.
- * @param{object|function} validator The validator object/function.
  */
 Validator.prototype.extend = function extend (name, validator) {
   Validator.extend(name, validator);
@@ -5923,9 +5835,6 @@ Validator.prototype.extend = function extend (name, validator) {
 
 /**
  * Updates a field, updating both errors and flags.
- *
- * @param {String} id
- * @param {Object} diff
  */
 Validator.prototype.update = function update (id, ref) {
     var scope = ref.scope;
@@ -5945,16 +5854,14 @@ Validator.prototype.update = function update (id, ref) {
 
 /**
  * Removes a rule from the list of validators.
- * @param {String} name The name of the validator/rule.
  */
 Validator.prototype.remove = function remove (name) {
   Validator.remove(name);
 };
 
 /**
- * Sets the validator current langauge.
- *
- * @param {string} language locale or language id.
+ * Sets the validator current language.
+ * @deprecated
  */
 Validator.prototype.setLocale = function setLocale (language) {
   this.locale = language;
@@ -5963,7 +5870,6 @@ Validator.prototype.setLocale = function setLocale (language) {
 /**
  * Updates the messages dictionary, overwriting existing values and adding new ones.
  * @deprecated
- * @param{object} data The messages object.
  */
 Validator.prototype.updateDictionary = function updateDictionary (data) {
   Validator.updateDictionary(data);
@@ -5971,11 +5877,6 @@ Validator.prototype.updateDictionary = function updateDictionary (data) {
 
 /**
  * Validates a value against a registered field validations.
- *
- * @param{string} name the field name.
- * @param{*} value The value to be validated.
- * @param {String} scope The scope of the field.
- * @return {Promise}
  */
 Validator.prototype.validate = function validate (name, value, scope) {
     if ( scope === void 0 ) scope = null;
@@ -5987,7 +5888,7 @@ Validator.prototype.validate = function validate (name, value, scope) {
     return this.validateScopes();
   }
 
-  // overload to validate scopeless fields.
+  // overload to validate scope-less fields.
   if (arguments.length === 1 && arguments[0] === '*') {
     return this.validateAll();
   }
@@ -6028,8 +5929,6 @@ Validator.prototype.validate = function validate (name, value, scope) {
 
 /**
  * Pauses the validator.
- *
- * @return {Validator}
  */
 Validator.prototype.pause = function pause () {
   this.paused = true;
@@ -6039,8 +5938,6 @@ Validator.prototype.pause = function pause () {
 
 /**
  * Resumes the validator.
- *
- * @return {Validator}
  */
 Validator.prototype.resume = function resume () {
   this.paused = false;
@@ -6050,8 +5947,6 @@ Validator.prototype.resume = function resume () {
 
 /**
  * Validates each value against the corresponding field validations.
- * @param{Object|String} values The values to be validated.
- * @return {Promise} Returns a promise with the validation result.
  */
 Validator.prototype.validateAll = function validateAll (values) {
     var arguments$1 = arguments;
@@ -6071,6 +5966,10 @@ Validator.prototype.validateAll = function validateAll (values) {
     providedValues = true;
   } else if (arguments.length === 0) {
     matcher = { scope: null }; // global scope.
+  } else if (Array.isArray(values)) {
+    matcher = values.map(function (key) {
+      return { name: key, scope: arguments$1[1] || null };
+    });
   }
 
   var promises = this.fields.filter(matcher).map(function (field) { return this$1.validate(
@@ -6083,8 +5982,6 @@ Validator.prototype.validateAll = function validateAll (values) {
 
 /**
  * Validates all scopes.
- *
- * @returns {Promise} All promises resulted from each scope.
  */
 Validator.prototype.validateScopes = function validateScopes () {
     var this$1 = this;
@@ -6101,9 +5998,6 @@ Validator.prototype.validateScopes = function validateScopes () {
 
 /**
  * Creates the fields to be validated.
- *
- * @param{object} validations
- * @return {object} Normalized object.
  */
 Validator.prototype._createFields = function _createFields (validations) {
     var this$1 = this;
@@ -6117,9 +6011,7 @@ Validator.prototype._createFields = function _createFields (validations) {
 };
 
 /**
- * Date rules need the existance of a format, so date_format must be supplied.
- * @param {String} name The rule name.
- * @param {Array} validations the field validations.
+ * Date rules need the existence of a format, so date_format must be supplied.
  */
 Validator.prototype._getDateFormat = function _getDateFormat (validations) {
   var format = null;
@@ -6139,11 +6031,6 @@ Validator.prototype._isADateRule = function _isADateRule (rule) {
 
 /**
  * Formats an error message for field and a rule.
- *
- * @param{Field} field The field object.
- * @param{object} rule Normalized rule object.
- * @param {object} data Additional Information about the validation result.
- * @return {string} Formatted error message.
  */
 Validator.prototype._formatErrorMessage = function _formatErrorMessage (field, rule, data, targetName) {
     if ( data === void 0 ) data = {};
@@ -6178,10 +6065,7 @@ Validator.prototype._getLocalizedParams = function _getLocalizedParams (rule, ta
 };
 
 /**
- * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
- * Then the dictionary, then fallsback to field name.
- * @param {Field} field The field object.
- * @return {String} The name to be used in the errors.
+ * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
  */
 Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field) {
   return field.displayName || this.dictionary.getAttribute(LOCALE, field.name, field.name);
@@ -6189,8 +6073,6 @@ Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field)
 
 /**
  * Adds a field flags to the flags collection.
- * @param {Field} field
- * @param {String|null} scope
  */
 Validator.prototype._addFlag = function _addFlag (field, scope) {
     if ( scope === void 0 ) scope = null;
@@ -6209,11 +6091,6 @@ Validator.prototype._addFlag = function _addFlag (field, scope) {
 
 /**
  * Tests a single input value against a rule.
- *
- * @param{Field} field The field under validation.
- * @param{*} valuethe value of the field.
- * @param{object} rule the rule object.
- * @return {boolean} Whether it passes the check.
  */
 Validator.prototype._test = function _test (field, value, rule, silent) {
     var this$1 = this;
@@ -6225,7 +6102,7 @@ Validator.prototype._test = function _test (field, value, rule, silent) {
     throw createError(("No such validator '" + (rule.name) + "' exists."));
   }
 
-  // has field depenencies
+  // has field dependencies.
   if (/(confirmed|after|before)/.test(rule.name)) {
     var target = find(field.dependencies, function (d) { return d.name === rule.name; });
     if (target) {
@@ -6291,9 +6168,6 @@ Validator.prototype._test = function _test (field, value, rule, silent) {
 
 /**
  * Merges a validator object into the RULES and Messages.
- *
- * @param{string} name The name of the validator.
- * @param{function|object} validator The validator object.
  */
 Validator._merge = function _merge (name, validator) {
   if (isCallable(validator)) {
@@ -6322,10 +6196,7 @@ Validator._merge = function _merge (name, validator) {
 };
 
 /**
- * Guards from extnsion violations.
- *
- * @param{string} name name of the validation rule.
- * @param{object} validator a validation rule object.
+ * Guards from extension violations.
  */
 Validator._guardExtend = function _guardExtend (name, validator) {
   if (isCallable(validator)) {
@@ -6349,9 +6220,6 @@ Validator._guardExtend = function _guardExtend (name, validator) {
 
 /**
  * Tries different strategies to find a field.
- * @param {String} name
- * @param {String} scope
- * @return {Field}
  */
 Validator.prototype._resolveField = function _resolveField (name, scope) {
   if (!isNullOrUndefined(scope)) {
@@ -6377,25 +6245,18 @@ Validator.prototype._resolveField = function _resolveField (name, scope) {
 
 /**
  * Handles when a field is not found depending on the strict flag.
- *
- * @param {String} name
- * @param {String} scope
  */
 Validator.prototype._handleFieldNotFound = function _handleFieldNotFound (name, scope) {
   if (!this.strict) { return Promise.resolve(true); }
 
   var fullName = isNullOrUndefined(scope) ? name : ("" + (!isNullOrUndefined(scope) ? scope + '.' : '') + name);
   throw createError(
-    ("Validating a non-existant field: \"" + fullName + "\". Use \"attach()\" first.")
+    ("Validating a non-existent field: \"" + fullName + "\". Use \"attach()\" first.")
   );
 };
 
 /**
  * Starts the validation process.
- *
- * @param {Field} field
- * @param {Promise} value
- * @param {Boolean} silent
  */
 Validator.prototype._validate = function _validate (field, value, silent) {
     var this$1 = this;
@@ -6433,6 +6294,8 @@ Validator.prototype._validate = function _validate (field, value, silent) {
 Object.defineProperties( Validator.prototype, prototypeAccessors );
 Object.defineProperties( Validator, staticAccessors );
 
+// 
+
 var fakeFlags = createProxy({}, {
   get: function get (target, key) {
     // is a scope
@@ -6446,7 +6309,6 @@ var fakeFlags = createProxy({}, {
 
 /**
  * Checks if a parent validator instance was requested.
- * @param {Object|Array} injections
  */
 var requestsValidator = function (injections) {
   if (! injections) {
@@ -6467,8 +6329,6 @@ var requestsValidator = function (injections) {
 
 /**
  * Creates a validator instance.
- * @param {Vue} vm
- * @param {Object} options
  */
 var createValidator = function (vm, options) { return new Validator(null, { vm: vm, fastExit: options.fastExit }); };
 
@@ -6559,12 +6419,10 @@ var config = {
   validity: false
 };
 
+// 
+
 /**
- * 
- * 
  * Finds the requested field by id from the context object.
- * @param {Object} context
- * @return {Field|null}
  */
 var findField = function (el, context) {
   if (!context || !context.$validator) {
@@ -6654,6 +6512,8 @@ function install (_Vue, options) {
   Vue.directive('validate', createDirective$1(config$$1));
 }
 
+// 
+
 function use (plugin, options) {
   if ( options === void 0 ) options = {};
 
@@ -6663,6 +6523,8 @@ function use (plugin, options) {
 
   plugin({ Validator: Validator, ErrorBag: ErrorBag, Rules: Validator.rules }, options);
 }
+
+// 
 
 var normalize = function (fields) {
   if (Array.isArray(fields)) {
@@ -6682,8 +6544,6 @@ var normalize = function (fields) {
 
 /**
  * Maps fields to computed functions.
- *
- * @param {Array|Object} fields
  */
 var mapFields = function (fields) {
   var normalized = normalize(fields);
@@ -6724,7 +6584,7 @@ var minimal$1 = {
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.0-rc.19'
+  version: '2.0.0-rc.18'
 };
 
 // rules plugin definition.

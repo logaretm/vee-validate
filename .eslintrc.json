@@ -4,10 +4,13 @@
         "commonjs": true,
         "es6": true
     },
-    "extends": "standard",
-    "parserOptions": {
-        "sourceType": "module"
-    },
+    "extends": [
+        "standard",
+        "plugin:flowtype/recommended"
+    ],
+    "plugins": [
+        "flowtype"
+    ],
     "rules": {
         "indent": [
             "error",

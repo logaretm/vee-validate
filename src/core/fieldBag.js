@@ -1,32 +1,34 @@
 import Field from './field';
 import { find, createError } from './utils';
 
+// @flow
+
 export default class FieldBag {
+  items: Array<Field>;
+
   constructor () {
     this.items = [];
   }
 
   /**
-   * @return {Number} The current collection length.
+   * Gets the current items length.
    */
-  get length () {
+
+  get length (): number {
     return this.items.length;
   }
 
   /**
    * Finds the first field that matches the provided matcher object.
-   * @param {Object} matcher
-   * @return {Field|undefined} The first matching item.
    */
-  find (matcher) {
+  find (matcher: Object): ?Field {
     return find(this.items, item => item.matches(matcher));
   }
 
   /**
-   * @param {Object|Array} matcher
-   * @return {Array} Array of matching field items.
+   * Filters the items down to the matched fields.
    */
-  filter (matcher) {
+  filter (matcher: Object | Array<any>): Array<Field> {
     // multiple matchers to be tried.
     if (Array.isArray(matcher)) {
       return this.items.filter(item => matcher.some(m => item.matches(m)));
@@ -37,19 +39,15 @@ export default class FieldBag {
 
   /**
    * Maps the field items using the mapping function.
-   *
-   * @param {Function} mapper
    */
-  map (mapper) {
+  map (mapper: (f: Field) => any): Array<Field> {
     return this.items.map(mapper);
   }
 
   /**
    * Finds and removes the first field that matches the provided matcher object, returns the removed item.
-   * @param {Object|Field} matcher
-   * @return {Field|null}
    */
-  remove (matcher) {
+  remove (matcher: Object | Field): Field | null {
     let item = null;
     if (matcher instanceof Field) {
       item = matcher;
@@ -67,10 +65,8 @@ export default class FieldBag {
 
   /**
    * Adds a field item to the list.
-   *
-   * @param {Field} item
    */
-  push (item) {
+  push (item: ?Field) {
     if (! (item instanceof Field)) {
       throw createError('FieldBag only accepts instances of Field that has an id defined.');
     }

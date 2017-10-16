@@ -1,5 +1,6 @@
 const Rollup = require('rollup');
 const Uglify = require('uglify-js');
+const flow = require('rollup-plugin-flow');
 const fs = require('fs');
 const path = require('path');
 const buble = require('rollup-plugin-buble');
@@ -16,10 +17,11 @@ async function main () {
   const bundle = await Rollup.rollup({
     input: 'src/index.js',
     plugins: [
+      flow({ pretty: true }),
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
-      buble(),
+      buble()
     ],
   });
 
@@ -50,6 +52,7 @@ async function minimal () {
   const bundle = await Rollup.rollup({
     input: 'src/index.minimal.js',
     plugins: [
+      flow({ pretty: true }),
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
@@ -83,6 +86,7 @@ async function esm () {
   let bundle = await Rollup.rollup({
     input: 'src/index.esm.js',
     plugins: [
+      flow({ pretty: true }),
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
@@ -108,6 +112,7 @@ async function esm () {
   bundle = await Rollup.rollup({
     input: 'src/index.minimal.esm.js',
     plugins: [
+      flow({ pretty: true }),
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),

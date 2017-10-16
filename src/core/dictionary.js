@@ -1,16 +1,20 @@
 import { isObject, assign } from './utils';
 
+// @flow
+
 export default class Dictionary {
-  constructor (dictionary = {}) {
+  container: { [string]: Locale };
+
+  constructor (dictionary?: Object = {}) {
     this.container = {};
     this.merge(dictionary);
   }
 
-  hasLocale (locale) {
-    return !! this.container[locale];
+  hasLocale (locale: string): boolean {
+    return !!this.container[locale];
   }
 
-  setDateFormat (locale, format) {
+  setDateFormat (locale: string, format: string) {
     if (!this.container[locale]) {
       this.container[locale] = {};
     }
@@ -18,7 +22,7 @@ export default class Dictionary {
     this.container[locale].dateFormat = format;
   }
 
-  getDateFormat (locale) {
+  getDateFormat (locale: string) {
     if (!this.container[locale]) {
       return undefined;
     }
@@ -26,8 +30,8 @@ export default class Dictionary {
     return this.container[locale].dateFormat;
   }
 
-  getMessage (locale, key, fallback) {
-    if (! this.hasMessage(locale, key)) {
+  getMessage (locale: string, key: string, fallback ?: string) {
+    if (!this.hasMessage(locale, key)) {
       return fallback || this._getDefaultMessage(locale);
     }
 
@@ -35,26 +39,22 @@ export default class Dictionary {
   }
 
   /**
-   * Gets a specific message for field. fallsback to the rule message.
-   *
-   * @param {String} locale
-   * @param {String} field
-   * @param {String} key
+   * Gets a specific message for field. falls back to the rule message.
    */
-  getFieldMessage (locale, field, key) {
-    if (! this.hasLocale(locale)) {
+  getFieldMessage (locale: string, field: string, key: string) {
+    if (!this.hasLocale(locale)) {
       return this.getMessage(locale, key);
     }
 
     const dict = this.container[locale].custom && this.container[locale].custom[field];
-    if (! dict || ! dict[key]) {
+    if (!dict || !dict[key]) {
       return this.getMessage(locale, key);
     }
 
     return dict[key];
   }
 
-  _getDefaultMessage (locale) {
+  _getDefaultMessage (locale: string) {
     if (this.hasMessage(locale, '_default')) {
       return this.container[locale].messages._default;
     }
@@ -62,15 +62,15 @@ export default class Dictionary {
     return this.container.en.messages._default;
   }
 
-  getAttribute (locale, key, fallback = '') {
-    if (! this.hasAttribute(locale, key)) {
+  getAttribute (locale: string, key: string, fallback?: string = '') {
+    if (!this.hasAttribute(locale, key)) {
       return fallback;
     }
 
     return this.container[locale].attributes[key];
   }
 
-  hasMessage (locale, key) {
+  hasMessage (locale: string, key: string) {
     return !! (
       this.hasLocale(locale) &&
             this.container[locale].messages &&
@@ -78,7 +78,7 @@ export default class Dictionary {
     );
   }
 
-  hasAttribute (locale, key) {
+  hasAttribute (locale: string, key: string) {
     return !! (
       this.hasLocale(locale) &&
             this.container[locale].attributes &&
@@ -86,11 +86,11 @@ export default class Dictionary {
     );
   }
 
-  merge (dictionary) {
+  merge (dictionary: Dict) {
     this._merge(this.container, dictionary);
   }
 
-  setMessage (locale, key, message) {
+  setMessage (locale: string, key: string, message: MessageGenerator | string) {
     if (! this.hasLocale(locale)) {
       this.container[locale] = {
         messages: {},
@@ -101,7 +101,7 @@ export default class Dictionary {
     this.container[locale].messages[key] = message;
   }
 
-  setAttribute (locale, key, attribute) {
+  setAttribute (locale: string, key: string, attribute: string) {
     if (! this.hasLocale(locale)) {
       this.container[locale] = {
         messages: {},
@@ -112,12 +112,12 @@ export default class Dictionary {
     this.container[locale].attributes[key] = attribute;
   }
 
-  _merge (target, source) {
+  _merge (target: Dict, source: Dict) {
     if (! (isObject(target) && isObject(source))) {
       return target;
     }
 
-    Object.keys(source).forEach(key => {
+    Object.keys(source).forEach((key: string) => {
       if (isObject(source[key])) {
         if (! target[key]) {
           assign(target, { [key]: {} });

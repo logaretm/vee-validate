@@ -1,0 +1,14 @@
+[ignore]
+.*/node_modules/.*
+.*/tests/.*
+.*/build/.*
+.*/dist/.*
+.*/locale/.*
+
+[include]
+
+[libs]
+flow
+
+[options]
+unsafe.enable_getters_and_setters=true

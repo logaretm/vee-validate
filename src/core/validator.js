@@ -4,10 +4,12 @@ import { isObject, isCallable, toArray, warn, createError, assign, find, isNullO
 import Field from './field';
 import FieldBag from './fieldBag';
 
-const RULES = {};
-let LOCALE = 'en';
-let STRICT_MODE = true;
-const DICTIONARY = new Dictionary({
+// @flow
+
+const RULES: { [string]: Rule } = {};
+let LOCALE: string = 'en';
+let STRICT_MODE: boolean = true;
+const DICTIONARY: Dictionary = new Dictionary({
   en: {
     messages: {},
     attributes: {},
@@ -16,7 +18,17 @@ const DICTIONARY = new Dictionary({
 });
 
 export default class Validator {
-  constructor (validations, options = { vm: null, fastExit: true }) {
+  strict: boolean;
+  errors: ErrorBag;
+  fields: FieldBag;
+  flags: MapObject;
+  fastExit: boolean;
+  paused: boolean;
+  ownerId: string | number;
+  clean: () => void;
+  reset: () => void;
+
+  constructor (validations?: MapObject, options?: MapObject = { vm: null, fastExit: true }) {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
     this.fields = new FieldBag();
@@ -43,44 +55,44 @@ export default class Validator {
   }
 
   /**
-   * @return {Dictionary}
+   * Getter for the dictionary.
    */
-  get dictionary () {
+  get dictionary (): Dictionary {
     return DICTIONARY;
   }
 
   /**
-   * @return {Dictionary}
+   * Static Getter for the dictionary.
    */
-  static get dictionary () {
+  static get dictionary (): Dictionary {
     return DICTIONARY;
   }
 
   /**
-   * @return {String}
+   * Getter for the current locale.
    */
-  get locale () {
+  get locale (): string {
     return LOCALE;
   }
 
   /**
-   * @param {String} value
+   * Setter for the validator locale.
    */
-  set locale (value) {
+  set locale (value: string) {
     Validator.locale = value;
   }
 
   /**
-  * @return {String}
+  * Static getter for the validator locale.
   */
   static get locale () {
     return LOCALE;
   }
 
   /**
-   * @param {String} value
+   * Static setter for the validator locale.
    */
-  static set locale (value) {
+  static set locale (value: string) {
     /* istanbul ignore if */
     if (!DICTIONARY.hasLocale(value)) {
       // eslint-disable-next-line
@@ -91,54 +103,46 @@ export default class Validator {
   }
 
   /**
-   * @return {Object}
+   * Getter for the rules object.
    */
-  get rules () {
+  get rules (): { [string]: Rule } {
     return RULES;
   }
 
   /**
-   * @return {Object}
+   * Static Getter for the rules object.
    */
-  static get rules () {
+  static get rules (): { [string]: Rule } {
     return RULES;
   }
 
   /**
    * Static constructor.
-   *
-   * @param  {object} validations The validations object.
-   * @return {Validator} validator A validator object.
    */
-  static create (validations, options) {
+  static create (validations?: MapObject, options?: MapObject): Validator {
     return new Validator(validations, options);
   }
 
   /**
    * Adds a custom validator to the list of validation rules.
-   *
-   * @param  {string} name The name of the validator.
-   * @param  {object|function} validator The validator object/function.
    */
-  static extend (name, validator) {
+  static extend (name: string, validator: Rule | Object) {
     Validator._guardExtend(name, validator);
     Validator._merge(name, validator);
   }
 
   /**
    * Removes a rule from the list of validators.
-   * @param {String} name The name of the validator/rule.
    */
-  static remove (name) {
+  static remove (name: string) {
     delete RULES[name];
   }
 
   /**
    * Sets the default locale for all validators.
    * @deprecated
-   * @param {String} language The locale id.
    */
-  static setLocale (language = 'en') {
+  static setLocale (language?: string = 'en') {
     Validator.locale = language;
   }
 
@@ -162,16 +166,14 @@ export default class Validator {
    * Sets the operating mode for all newly created validators.
    * strictMode = true: Values without a rule are invalid and cause failure.
    * strictMode = false: Values without a rule are valid and are skipped.
-   * @param {Boolean} strictMode.
    */
-  static setStrictMode (strictMode = true) {
+  static setStrictMode (strictMode?: boolean = true) {
     STRICT_MODE = strictMode;
   }
 
   /**
    * Updates the dictionary, overwriting existing values and adding new ones.
    * @deprecated
-   * @param  {object} data The dictionary object.
    */
   static updateDictionary (data) {
     DICTIONARY.merge(data);
@@ -180,7 +182,6 @@ export default class Validator {
   /**
    * Adds a locale object to the dictionary.
    * @deprecated
-   * @param {Object} locale
    */
   static addLocale (locale) {
     if (! locale.name) {
@@ -204,21 +205,15 @@ export default class Validator {
 
   /**
    * Adds and sets the current locale for the validator.
-   *
-   * @param {String} lang
-   * @param {Object} dictionary
    */
-  localize (lang, dictionary) {
+  localize (lang: string, dictionary?: MapObject) {
     Validator.localize(lang, dictionary);
   }
 
   /**
    * Adds and sets the current locale for the validator.
-   *
-   * @param {String} lang
-   * @param {Object} dictionary
    */
-  static localize (lang, dictionary) {
+  static localize (lang: string, dictionary?: MapObject) {
     // merge the dictionary.
     if (dictionary) {
       dictionary = assign({}, dictionary, { name: lang });
@@ -231,11 +226,8 @@ export default class Validator {
 
   /**
    * Registers a field to be validated.
-   *
-   * @param  {Field|Object} name The field name.
-   * @return {Field}
    */
-  attach (field) {
+  attach (field: MapObject | Field): Field {
     // deprecate: handle old signature.
     if (arguments.length > 1) {
       field = assign({}, {
@@ -268,11 +260,8 @@ export default class Validator {
 
   /**
    * Sets the flags on a field.
-   *
-   * @param {String} name
-   * @param {Object} flags
    */
-  flag (name, flags) {
+  flag (name: string, flags: { [string]: boolean }) {
     const field = this._resolveField(name);
     if (! field || !flags) {
       return;
@@ -283,11 +272,8 @@ export default class Validator {
 
   /**
    * Removes a field from the validator.
-   *
-   * @param  {String} name The name of the field.
-   * @param {String} scope The name of the field scope.
    */
-  detach (name, scope) {
+  detach (name: string, scope?: string | null) {
     let field = name instanceof Field ? name : this._resolveField(name, scope);
     if (!field) return;
 
@@ -306,21 +292,15 @@ export default class Validator {
 
   /**
    * Adds a custom validator to the list of validation rules.
-   *
-   * @param  {string} name The name of the validator.
-   * @param  {object|function} validator The validator object/function.
    */
-  extend (name, validator) {
+  extend (name: string, validator: Rule | MapObject) {
     Validator.extend(name, validator);
   }
 
   /**
    * Updates a field, updating both errors and flags.
-   *
-   * @param {String} id
-   * @param {Object} diff
    */
-  update (id, { scope }) {
+  update (id: string, { scope }) {
     const field = this._resolveField(`#${id}`);
     this.errors.update(id, { scope });
 
@@ -336,39 +316,31 @@ export default class Validator {
 
   /**
    * Removes a rule from the list of validators.
-   * @param {String} name The name of the validator/rule.
    */
-  remove (name) {
+  remove (name: string) {
     Validator.remove(name);
   }
 
   /**
-   * Sets the validator current langauge.
-   *
-   * @param {string} language locale or language id.
+   * Sets the validator current language.
+   * @deprecated
    */
-  setLocale (language) {
+  setLocale (language: string) {
     this.locale = language;
   }
 
   /**
    * Updates the messages dictionary, overwriting existing values and adding new ones.
    * @deprecated
-   * @param  {object} data The messages object.
    */
-  updateDictionary (data) {
+  updateDictionary (data: MapObject) {
     Validator.updateDictionary(data);
   }
 
   /**
    * Validates a value against a registered field validations.
-   *
-   * @param  {string} name the field name.
-   * @param  {*} value The value to be validated.
-   * @param {String} scope The scope of the field.
-   * @return {Promise}
    */
-  validate (name, value, scope = null) {
+  validate (name: string, value: any, scope?: string | null = null): Promise<boolean> {
     if (this.paused) return Promise.resolve(true);
 
     // overload to validate all.
@@ -376,7 +348,7 @@ export default class Validator {
       return this.validateScopes();
     }
 
-    // overload to validate scopeless fields.
+    // overload to validate scope-less fields.
     if (arguments.length === 1 && arguments[0] === '*') {
       return this.validateAll();
     }
@@ -417,10 +389,8 @@ export default class Validator {
 
   /**
    * Pauses the validator.
-   *
-   * @return {Validator}
    */
-  pause () {
+  pause (): Validator {
     this.paused = true;
 
     return this;
@@ -428,10 +398,8 @@ export default class Validator {
 
   /**
    * Resumes the validator.
-   *
-   * @return {Validator}
    */
-  resume () {
+  resume (): Validator {
     this.paused = false;
 
     return this;
@@ -439,10 +407,8 @@ export default class Validator {
 
   /**
    * Validates each value against the corresponding field validations.
-   * @param  {Object|String|Array} values The values to be validated.
-   * @return {Promise} Returns a promise with the validation result.
    */
-  validateAll (values) {
+  validateAll (values?: string | MapObject): Promise<boolean> {
     if (this.paused) return Promise.resolve(true);
 
     let matcher = null;
@@ -473,10 +439,8 @@ export default class Validator {
 
   /**
    * Validates all scopes.
-   *
-   * @returns {Promise} All promises resulted from each scope.
    */
-  validateScopes () {
+  validateScopes (): Promise<boolean> {
     if (this.paused) return Promise.resolve(true);
 
     const promises = this.fields.map(field => this.validate(
@@ -488,12 +452,9 @@ export default class Validator {
   }
 
   /**
- * Creates the fields to be validated.
- *
- * @param  {object} validations
- * @return {object} Normalized object.
- */
-  _createFields (validations) {
+   * Creates the fields to be validated.
+   */
+  _createFields (validations?: MapObject) {
     if (!validations) return;
 
     Object.keys(validations).forEach(field => {
@@ -503,11 +464,9 @@ export default class Validator {
   }
 
   /**
-   * Date rules need the existance of a format, so date_format must be supplied.
-   * @param {String} name The rule name.
-   * @param {Array} validations the field validations.
+   * Date rules need the existence of a format, so date_format must be supplied.
    */
-  _getDateFormat (validations) {
+  _getDateFormat (validations: Array<MapObject>): ?string {
     let format = null;
     if (validations.date_format && Array.isArray(validations.date_format)) {
       format = validations.date_format[0];
@@ -519,19 +478,14 @@ export default class Validator {
   /**
    * Checks if the passed rule is a date rule.
    */
-  _isADateRule (rule) {
+  _isADateRule (rule: string) {
     return !! ~['after', 'before', 'date_between', 'date_format'].indexOf(rule);
   }
 
   /**
    * Formats an error message for field and a rule.
-   *
-   * @param  {Field} field The field object.
-   * @param  {object} rule Normalized rule object.
-   * @param {object} data Additional Information about the validation result.
-   * @return {string} Formatted error message.
    */
-  _formatErrorMessage (field, rule, data = {}, targetName = null) {
+  _formatErrorMessage (field: Field, rule: MapObject, data?: MapObject = {}, targetName?: string | null = null) {
     const name = this._getFieldDisplayName(field);
     const params = this._getLocalizedParams(rule, targetName);
     // Defaults to english message.
@@ -549,7 +503,7 @@ export default class Validator {
   /**
    * Translates the parameters passed to the rule (mainly for target fields).
    */
-  _getLocalizedParams (rule, targetName = null) {
+  _getLocalizedParams (rule: MapObject, targetName?: string | null = null) {
     if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
       const localizedName = targetName || this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]);
       return [localizedName].concat(rule.params.slice(1));
@@ -559,21 +513,16 @@ export default class Validator {
   }
 
   /**
-   * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
-   * Then the dictionary, then fallsback to field name.
-   * @param {Field} field The field object.
-   * @return {String} The name to be used in the errors.
+   * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
    */
-  _getFieldDisplayName (field) {
+  _getFieldDisplayName (field: Field) {
     return field.displayName || this.dictionary.getAttribute(LOCALE, field.name, field.name);
   }
 
   /**
    * Adds a field flags to the flags collection.
-   * @param {Field} field
-   * @param {String|null} scope
    */
-  _addFlag (field, scope = null) {
+  _addFlag (field: Field, scope?: string | null = null) {
     if (isNullOrUndefined(scope)) {
       this.flags = assign({}, this.flags, { [`${field.name}`]: field.flags });
       return;
@@ -585,13 +534,8 @@ export default class Validator {
 
   /**
    * Tests a single input value against a rule.
-   *
-   * @param  {Field} field The field under validation.
-   * @param  {*} value  the value of the field.
-   * @param  {object} rule the rule object.
-   * @return {boolean} Whether it passes the check.
    */
-  _test (field, value, rule, silent) {
+  _test (field: Field, value: any, rule: MapObject, silent?: boolean) {
     const validator = RULES[rule.name];
     let params = Array.isArray(rule.params) ? toArray(rule.params) : [];
     let targetName = null;
@@ -599,7 +543,7 @@ export default class Validator {
       throw createError(`No such validator '${rule.name}' exists.`);
     }
 
-    // has field depenencies
+    // has field dependencies.
     if (/(confirmed|after|before)/.test(rule.name)) {
       const target = find(field.dependencies, d => d.name === rule.name);
       if (target) {
@@ -665,11 +609,8 @@ export default class Validator {
 
   /**
    * Merges a validator object into the RULES and Messages.
-   *
-   * @param  {string} name The name of the validator.
-   * @param  {function|object} validator The validator object.
    */
-  static _merge (name, validator) {
+  static _merge (name: string, validator: Rule) {
     if (isCallable(validator)) {
       RULES[name] = validator;
       return;
@@ -697,12 +638,9 @@ export default class Validator {
   }
 
   /**
-   * Guards from extnsion violations.
-   *
-   * @param  {string} name name of the validation rule.
-   * @param  {object} validator a validation rule object.
+   * Guards from extension violations.
    */
-  static _guardExtend (name, validator) {
+  static _guardExtend (name: string, validator: Rule) {
     if (isCallable(validator)) {
       return;
     }
@@ -724,11 +662,8 @@ export default class Validator {
 
   /**
    * Tries different strategies to find a field.
-   * @param {String} name
-   * @param {String} scope
-   * @return {Field}
    */
-  _resolveField (name, scope) {
+  _resolveField (name: string, scope: string | null): ?Field {
     if (!isNullOrUndefined(scope)) {
       return this.fields.find({ name, scope });
     }
@@ -750,27 +685,20 @@ export default class Validator {
 
   /**
    * Handles when a field is not found depending on the strict flag.
-   *
-   * @param {String} name
-   * @param {String} scope
    */
-  _handleFieldNotFound (name, scope) {
+  _handleFieldNotFound (name: string, scope?: string | null) {
     if (!this.strict) return Promise.resolve(true);
 
     const fullName = isNullOrUndefined(scope) ? name : `${!isNullOrUndefined(scope) ? scope + '.' : ''}${name}`;
     throw createError(
-      `Validating a non-existant field: "${fullName}". Use "attach()" first.`
+      `Validating a non-existent field: "${fullName}". Use "attach()" first.`
     );
   }
 
   /**
    * Starts the validation process.
-   *
-   * @param {Field} field
-   * @param {Promise} value
-   * @param {Boolean} silent
    */
-  _validate (field, value, silent = false) {
+  _validate (field: Field, value: any, silent?: boolean = false): Promise<boolean> {
     if (!field.isRequired && (isNullOrUndefined(value) || value === '')) {
       return Promise.resolve(true);
     }

@@ -1,26 +1,26 @@
+// @flow
 
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
-export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
+export const getDataAttribute = (el: HTMLElement, name: string) => el.getAttribute(`data-vv-${name}`);
 
 /**
  * Checks if the value is either null or undefined.
- * @param {*} value
  */
-export const isNullOrUndefined = (value) => {
+export const isNullOrUndefined = (value: mixed): boolean => {
   return value === null || value === undefined;
 };
 
 /**
  * Sets the data attribute.
- * @param {*} el
- * @param {String} name
- * @param {String} value
  */
-export const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
+export const setDataAttribute = (el: HTMLElement, name: string, value: string): void => el.setAttribute(`data-vv-${name}`, value);
 
-export const createProxy = (target, handler) => {
+/**
+ * Creates a proxy object if available in the environment.
+ */
+export const createProxy = (target: Object, handler: Object) => {
   if (typeof Proxy === 'undefined') {
     return target;
   }
@@ -28,7 +28,10 @@ export const createProxy = (target, handler) => {
   return new Proxy(target, handler);
 };
 
-export const createFlags = () => ({
+/**
+ * Creates the default flags object.
+ */
+export const createFlags = (): Object => ({
   untouched: true,
   touched: false,
   dirty: false,
@@ -42,12 +45,8 @@ export const createFlags = () => ({
 
 /**
  * Shallow object comparison.
- *
- * @param {*} lhs
- * @param {*} rhs
- * @return {Boolean}
  */
-export const isEqual = (lhs, rhs) => {
+export const isEqual = (lhs: any, rhs: any): boolean => {
   if (lhs instanceof RegExp && rhs instanceof RegExp) {
     return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
   }
@@ -79,7 +78,7 @@ export const isEqual = (lhs, rhs) => {
 /**
  * Determines the input field scope.
  */
-export const getScope = (el) => {
+export const getScope = (el: HTMLInputElement) => {
   let scope = getDataAttribute(el, 'scope');
   if (isNullOrUndefined(scope) && el.form) {
     scope = getDataAttribute(el.form, 'scope');
@@ -90,14 +89,12 @@ export const getScope = (el) => {
 
 /**
  * Gets the value in an object safely.
- * @param {String} propPath
- * @param {Object} target
- * @param {*} def
  */
-export const getPath = (propPath, target, def = undefined) => {
-  if (!propPath || !target) return def;
+export const getPath = (path: string, target: ?Object, def: any = undefined) => {
+  if (!path || !target) return def;
+
   let value = target;
-  propPath.split('.').every(prop => {
+  path.split('.').every(prop => {
     if (! Object.prototype.hasOwnProperty.call(value, prop) && value[prop] === undefined) {
       value = def;
 
@@ -114,11 +111,8 @@ export const getPath = (propPath, target, def = undefined) => {
 
 /**
  * Checks if path exists within an object.
- *
- * @param {String} path
- * @param {Object} target
  */
-export const hasPath = (path, target) => {
+export const hasPath = (path: string, target: Object) => {
   let obj = target;
   return path.split('.').every(prop => {
     if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
@@ -132,9 +126,9 @@ export const hasPath = (path, target) => {
 };
 
 /**
- * @param {String} rule
+ * Parses a rule string expression.
  */
-export const parseRule = (rule) => {
+export const parseRule = (rule: string): Object => {
   let params = [];
   const name = rule.split(':')[0];
 
@@ -146,64 +140,16 @@ export const parseRule = (rule) => {
 };
 
 /**
- * Normalizes the given rules expression.
- *
- * @param {Object|String} rules
- */
-export const normalizeRules = (rules) => {
-  // if falsy value return an empty object.
-  if (!rules) {
-    return {};
-  }
-
-  const validations = {};
-  if (isObject(rules)) {
-    Object.keys(rules).forEach(rule => {
-      let params = [];
-      if (rules[rule] === true) {
-        params = [];
-      } else if (Array.isArray(rules[rule])) {
-        params = rules[rule];
-      } else {
-        params = [rules[rule]];
-      }
-
-      if (rules[rule] !== false) {
-        validations[rule] = params;
-      }
-    });
-
-    return validations;
-  }
-
-  if (typeof rules !== 'string') {
-    warn('rules must be either a string or an object.');
-    return {};
-  }
-
-  rules.split('|').forEach(rule => {
-    const parsedRule = parseRule(rule);
-    if (! parsedRule.name) {
-      return;
-    }
-
-    validations[parsedRule.name] = parsedRule.params;
-  });
-
-  return validations;
-};
-
-/**
  * Debounces a function.
  */
-export const debounce = (fn, wait = 0, immediate = false) => {
+export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = false) => {
   if (wait === 0) {
     return fn;
   }
 
   let timeout;
 
-  return (...args) => {
+  return (...args: any[]) => {
     const later = () => {
       timeout = null;
       if (!immediate) fn(...args);
@@ -218,33 +164,78 @@ export const debounce = (fn, wait = 0, immediate = false) => {
 };
 
 /**
+ * Normalizes the given rules expression.
+ */
+export const normalizeRules = (rules: string | { [string]: boolean | any[] }) => {
+  // if falsy value return an empty object.
+  if (!rules) {
+    return {};
+  }
+
+  if (isObject(rules)) {
+    // $FlowFixMe
+    return Object.keys(rules).reduce((prev, curr) => {
+      let params = [];
+      // $FlowFixMe
+      if (rules[curr] === true) {
+        params = [];
+      } else if (Array.isArray(rules[curr])) {
+        params = rules[curr];
+      } else {
+        params = [rules[curr]];
+      }
+
+      // $FlowFixMe
+      if (rules[curr] !== false) {
+        prev[curr] = params;
+      }
+
+      return prev;
+    }, {});
+  }
+
+  if (typeof rules !== 'string') {
+    warn('rules must be either a string or an object.');
+    return {};
+  }
+
+  return rules.split('|').reduce((prev, rule) => {
+    const parsedRule = parseRule(rule);
+    if (!parsedRule.name) {
+      return prev;
+    }
+
+    prev[parsedRule.name] = parsedRule.params;
+    return prev;
+  }, {});
+};
+
+/**
  * Emits a warning to the console.
  */
-export const warn = (message) => {
+export const warn = (message: string) => {
   console.warn(`[vee-validate] ${message}`); // eslint-disable-line
 };
 
 /**
  * Creates a branded error object.
- * @param {String} message
  */
-export const createError = (message) => new Error(`[vee-validate] ${message}`);
+export const createError = (message: string): Error => new Error(`[vee-validate] ${message}`);
 
 /**
  * Checks if the value is an object.
  */
-export const isObject = (object) =>
-  object !== null && object && typeof object === 'object' && ! Array.isArray(object);
+export const isObject = (obj: any): boolean => obj !== null && obj && typeof obj === 'object' && ! Array.isArray(obj);
 
 /**
  * Checks if a function is callable.
  */
-export const isCallable = (func) => typeof func === 'function';
+export const isCallable = (func: any): boolean => typeof func === 'function';
 
 /**
  * Check if element has the css class on it.
  */
-export const hasClass = (el, className) => {
+export const hasClass = (el: HTMLElement, className: string) => {
   if (el.classList) {
     return el.classList.contains(className);
   }
@@ -255,7 +246,7 @@ export const hasClass = (el, className) => {
 /**
  * Adds the provided css className to the element.
  */
-export const addClass = (el, className) => {
+export const addClass = (el: HTMLElement, className: string) => {
   if (el.classList) {
     el.classList.add(className);
     return;
@@ -269,7 +260,7 @@ export const addClass = (el, className) => {
 /**
  * Remove the provided css className from the element.
  */
-export const removeClass = (el, className) => {
+export const removeClass = (el: HTMLElement, className: string) => {
   if (el.classList) {
     el.classList.remove(className);
     return;
@@ -284,7 +275,7 @@ export const removeClass = (el, className) => {
 /**
  * Adds or removes a class name on the input depending on the status flag.
  */
-export const toggleClass = (el, className, status) => {
+export const toggleClass = (el: ?HTMLElement, className: ?string, status: boolean) => {
   if (!el || !className) return;
 
   if (status) {
@@ -295,10 +286,9 @@ export const toggleClass = (el, className, status) => {
 };
 
 /**
- * Converts an array-like object to array.
- * Simple polyfill for Array.from
+ * Converts an array-like object to array, provides a simple polyfill for Array.from
  */
-export const toArray = (arrayLike) => {
+export const toArray = (arrayLike: { length: number }) => {
   if (isCallable(Array.from)) {
     return Array.from(arrayLike);
   }
@@ -314,10 +304,8 @@ export const toArray = (arrayLike) => {
 
 /**
  * Assign polyfill from the mdn.
- * @param {Object} target
- * @return {Object}
  */
-export const assign = (target, ...others) => {
+export const assign = (target: Object, ...others: any[]) => {
   /* istanbul ignore else */
   if (isCallable(Object.assign)) {
     return Object.assign(target, ...others);
@@ -345,22 +333,19 @@ export const assign = (target, ...others) => {
 
 /**
  * Generates a unique id.
- * @return {String}
  */
-export const uniqId = () => `_${Math.random().toString(36).substr(2, 9)}`;
+export const uniqId = (): string => `_${Math.random().toString(36).substr(2, 9)}`;
 
 /**
- * polyfills array.find
- * @param {Array} array
- * @param {Function} predicate
+ * finds the first element that satisfies the predicate callback, polyfills array.find
  */
-export const find = (array, predicate) => {
-  if (isObject(array)) {
-    array = toArray(array);
-  }
-  if (array.find) {
+export const find = (arrayLike: { length: number }, predicate: (any) => boolean) => {
+  const array = toArray(arrayLike);
+
+  if (isCallable(array.find)) {
     return array.find(predicate);
   }
+
   let result;
   array.some(item => {
     if (predicate(item)) {
@@ -374,7 +359,10 @@ export const find = (array, predicate) => {
   return result;
 };
 
-export const getInputEventName = (el) => {
+/**
+ * Returns a suitable event name for the input element.
+ */
+export const getInputEventName = (el: HTMLInputElement) => {
   if (el && (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type))) {
     return 'change';
   }
