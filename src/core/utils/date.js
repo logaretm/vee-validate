@@ -5,7 +5,11 @@ import { parse, isValid, format as formatDate } from 'date-fns';
 /**
  * Custom parse behavior on top of date-fns parse function.
  */
-export function parseDate (date: string, format: string): ?Date {
+export function parseDate (date: string | Date, format: string): ?Date {
+  if (typeof date !== 'string') {
+    return isValid(date) ? date : null;
+  }
+
   const parsed = parse(date, format, new Date());
 
   // if date is not valid or the formatted output after parsing does not match

@@ -1,4 +1,5 @@
 import * as utils from '../src/core/utils';
+import * as dateUtils from '../src/core/utils/date';
 import * as i18Utils from '../locale/utils';
 
 test('gets the data attribute prefixed with the plugin', () => {
@@ -373,4 +374,20 @@ test('creates a proxy if available', () => {
 
   // returns the same object if no proxy is detected.
   expect(utils.createProxy(obj, handler)  === obj).toBe(false);
+});
+
+describe('pareses date values', () => {
+  const format = 'DD-MM-YYYY';
+
+  test('parses string formatted dates without allowing overflows', () => {
+    expect(dateUtils.parseDate('11-12-2016', format)).toBeTruthy();
+    expect(dateUtils.parseDate('11-13-2016', format)).toBe(null);
+  });
+
+  test('date objects are checked if they are valid', () => {
+    expect(dateUtils.parseDate(new Date(2017, 12, 11), format)).toBeTruthy();
+    expect(dateUtils.parseDate(new Date(2017, 13, 11), format)).toBeTruthy();
+    expect(dateUtils.parseDate(Date.parse('foo'), format)).toBe(null);
+  });
+
 });
