@@ -49,6 +49,9 @@ export default {
         phone: 'رقم الهاتف'
       }
     });
+
+    // start with english locale.
+    this.$validator.localize('en');
   }
 };
 </script>
