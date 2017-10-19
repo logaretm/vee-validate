@@ -219,9 +219,8 @@ export default class Field {
 
     this.addActionListeners();
     this.updateClasses();
-    if (this.validator.errors && isCallable(this.validator.errors.removeById)) {
-      this.validator.errors.removeById(this.id);
-    }
+    this.updateAriaAttrs();
+    this.updateCustomValidity();
   }
 
   /**

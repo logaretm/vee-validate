@@ -538,6 +538,9 @@ test('set field custom validity if possible', () => {
 });
 
 test('resets field state', () => {
+  const el = document.createElement('input');
+  el.type = 'text';
+  el.name = 'field';
   const vm = {
     $validator: {
       errors: {
@@ -545,12 +548,13 @@ test('resets field state', () => {
       }
     }
   };
-  const field = new Field(null, { vm });
+  const field = new Field(el, { vm });
   field.flags.valid = true;
+  field.el.setAttribute('aria-invalid', 'true');
 
   field.reset();
   expect(field.flags.valid).toBe(null);
-  expect(vm.$validator.errors.removeById).toHaveBeenCalledWith(field.id);
+  expect(field.el.getAttribute('aria-invalid')).toBe('false');
 });
 
 test('sets the field flags', () => {
