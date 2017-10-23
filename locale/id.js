@@ -1,13 +1,16 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
+  _default: (field) => `Nilai ${field} tidak sah.`,
   after: (field, [target]) => `${field} harus sebelum ${target}.`,
   alpha_dash: (field) => `${field} boleh mengandung karakter alfanumerik, tanda hubung, dan garis bawah.`,
   alpha_num: (field) => `${field} hanya boleh mengandung karakter alfanumerik.`,
+  alpha_spaces: (field) => `${field} hanya boleh berisi karakter alfabet serta spasi.`,
   alpha: (field) => `${field} hanya boleh mengandung karakter alfabet.`,
   before: (field, [target]) => `${field} harus setelah ${target}.`,
   between: (field, [min, max]) => `${field} harus di antara ${min} dan ${max}.`,
   confirmed: (field, [confirmedField]) => `${field} tidak cocok dengan ${confirmedField}.`,
+  credit_card: (field) => `${field} tidak sah.`,
   date_between: (field, [min, max]) => `${field} harus di antara ${min} dan ${max}.`,
   date_format: (field, [format]) => `${field} harus dalam format ${format}.`,
   decimal: (field, [decimals] = ['*']) => `${field} harus berupa angka dan boleh mengandung ${decimals === '*' ? '' : decimals} titik desimal.`,
@@ -17,7 +20,15 @@ const messages = {
   ext: (field) => `${field} harus berupa berkas yang benar.`,
   image: (field) => `${field} harus berupa gambar.`,
   in: (field) => `${field} harus berupa nilai yang sah.`,
+  integer: (field) => `${field} harus berupa bilangan bulat.`,
   ip: (field) => `${field} harus berupa alamat ip yang sah.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `Panjang ${field} harus di antara ${length} dan ${max}.`;
+    }
+
+    return `Panjang ${field} harus tepat ${length}.`;
+  },
   max: (field, [length]) => `${field} tidak boleh lebih dari ${length} karakter.`,
   max_value: (field, [size]) => `Nilai ${field} tidak boleh lebih dari ${size}.`,
   mimes: (field) => `Tipe berkas ${field} harus benar.`,
