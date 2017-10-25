@@ -350,7 +350,7 @@ test('generates field options', () => {
     model: 'email',
     vm: {},
     component: undefined,
-    classes: undefined,
+    classes: false,
     classNames: undefined,
     expression: 'required|max:3',
     rules: 'required|max:3',

@@ -1,6 +1,6 @@
 import Vue from 'vue/dist/vue';
 import makeMixin from '../src/mixin';
-import makeDirective from '../src/directive';
+import directive from '../src/directive';
 import ErrorBag from '../src/core/errorBag';
 import FieldBag from '../src/core/fieldBag';
 import plugin from './../src/index';
@@ -148,9 +148,12 @@ describe('components can have a definition object in the ctor options', () => {
     });
 
     return Vue.extend({
+      $_veeValidate: {
+        inject: false
+      },
       mixins: [mixin],
       directives: {
-        validate: makeDirective({ inject: false })
+        validate: directive
       },
       components: { Child },
       template: `

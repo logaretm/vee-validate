@@ -1,5 +1,5 @@
 import makeMixin from './mixin';
-import makeDirective from './directive';
+import directive from './directive';
 import defaultOptions from './config';
 import Validator from './core/validator';
 import { warn, assign } from './core/utils';
@@ -29,7 +29,7 @@ function install (_Vue, options = {}) {
   }
 
   Vue.mixin(makeMixin(Vue, config));
-  Vue.directive('validate', makeDirective(config));
+  Vue.directive('validate', directive);
 };
 
 export default install;

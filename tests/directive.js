@@ -1,9 +1,9 @@
 import Vue from 'vue/dist/vue';
-import makeDirective from '../src/directive';
+import directive from '../src/directive';
 
 test('warns if no validator was found during binding', () => {
   let VM = Vue.extend({
-    directives: { validate: makeDirective() },
+    directives: { validate: directive },
     template: `
       <input v-validate>
     `
@@ -28,7 +28,7 @@ test('adds the field after binding', () => {
     }
   };
   const VM = Vue.extend({
-    directives: { validate: makeDirective() },
+    directives: { validate: directive },
     beforeCreate() {
       this.$validator = $validator
     },
@@ -63,7 +63,7 @@ test('evaluates field options after update', done => {
     data: () => ({
       value: ''
     }),
-    directives: { validate: makeDirective() },
+    directives: { validate: directive },
     beforeCreate() {
       this.$validator = $validator
     },
@@ -98,7 +98,7 @@ test('expression can contain an object containing the scope', done => {
     data: () => ({
       value: ''
     }),
-    directives: { validate: makeDirective() },
+    directives: { validate: directive },
     beforeCreate() {
       this.$validator = $validator
     },
@@ -129,7 +129,7 @@ test('cleans up after unbinding', () => {
     detach: jest.fn()
   };
   const VM = Vue.extend({
-    directives: { validate: makeDirective() },
+    directives: { validate: directive },
     beforeCreate() {
       this.$validator = $validator
     },
@@ -170,7 +170,7 @@ test('revises scope after inserted', async () => {
       value: '',
       name: 'some'
     }),
-    directives: { validate: makeDirective() },
+    directives: { validate: directive },
     beforeCreate() {
       this.$validator = $validator
     },

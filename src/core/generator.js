@@ -1,11 +1,23 @@
-import { getScope, getDataAttribute, isObject, toArray, find, getPath, hasPath, isNullOrUndefined, isCallable } from './utils';
+import {
+  getScope,
+  getPluginConfig,
+  getDataAttribute,
+  isObject,
+  toArray,
+  find,
+  getPath,
+  hasPath,
+  isNullOrUndefined,
+  isCallable
+} from './utils';
 
 /**
  * Generates the options required to construct a field.
  */
 export default class Generator {
-  static generate (el, binding, vnode, options = {}) {
+  static generate (el, binding, vnode) {
     const model = Generator.resolveModel(binding, vnode);
+    const options = getPluginConfig(vnode);
 
     return {
       name: Generator.resolveName(el, vnode),
