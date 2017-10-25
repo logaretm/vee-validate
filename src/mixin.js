@@ -1,4 +1,4 @@
-import { isObject, isCallable, createProxy, createFlags, warn } from './core/utils';
+import { isObject, isCallable, createProxy, createFlags, warn, getPluginConfig } from './core/utils';
 import Validator from './core/validator';
 
 // @flow
@@ -39,9 +39,8 @@ const requestsValidator = (injections: Object | string[]) => {
  */
 const createValidator = (vm: any, options: Object) => new Validator(null, { vm, fastExit: options.fastExit });
 
-export default (Vue: any, options?: Object = {}) => {
-  const mixin = {};
-  mixin.provide = function providesValidator () {
+export default {
+  provide () {
     if (this.$validator) {
       return {
         $validator: this.$validator
@@ -49,9 +48,10 @@ export default (Vue: any, options?: Object = {}) => {
     }
 
     return {};
-  };
-
-  mixin.beforeCreate = function beforeCreate () {
+  },
+  beforeCreate () {
+    const options = getPluginConfig({ context: this });
+    const Vue = this.$options._base; // the vue constructor.
     // TODO: Deprecate
     /* istanbul ignore next */
     if (this.$options.$validates) {
@@ -96,14 +96,12 @@ export default (Vue: any, options?: Object = {}) => {
 
       return this.$validator.flags;
     };
-  };
+  },
 
-  mixin.beforeDestroy = function beforeDestroy () {
+  beforeDestroy () {
     // mark the validator paused to prevent delayed validation.
     if (this.$validator && this.$validator.ownerId === this._uid && isCallable(this.$validator.pause)) {
       this.$validator.pause();
     }
-  };
-
-  return mixin;
+  }
 };
