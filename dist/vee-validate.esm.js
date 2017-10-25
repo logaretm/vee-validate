@@ -1260,9 +1260,8 @@ Field.prototype.reset = function reset () {
 
   this.addActionListeners();
   this.updateClasses();
-  if (this.validator.errors && isCallable(this.validator.errors.removeById)) {
-    this.validator.errors.removeById(this.id);
-  }
+  this.updateAriaAttrs();
+  this.updateCustomValidity();
 };
 
 /**
@@ -2703,8 +2702,8 @@ var messages = {
     return ("The " + field + " must be in the format " + format + ".");
 },
   decimal: function (field, ref) {
-    if ( ref === void 0 ) ref = ['*'];
-    var decimals = ref[0];
+    if ( ref === void 0 ) ref = [];
+    var decimals = ref[0]; if ( decimals === void 0 ) decimals = '*';
 
     return ("The " + field + " field must be numeric and may contain " + (!decimals || decimals === '*' ? '' : decimals) + " decimal points.");
 },
@@ -5414,6 +5413,10 @@ function cleanEscapedString$1 (input) {
  * Custom parse behavior on top of date-fns parse function.
  */
 function parseDate$1 (date, format$$1) {
+  if (typeof date !== 'string') {
+    return isValid(date) ? date : null;
+  }
+
   var parsed = parse(date, format$$1, new Date());
 
   // if date is not valid or the formatted output after parsing does not match
@@ -5531,8 +5534,8 @@ var alphaDash = {
 };
 
 var validate = function (value, ref) {
-  if ( ref === void 0 ) ref = [null];
-  var locale = ref[0];
+  if ( ref === void 0 ) ref = [];
+  var locale = ref[0]; if ( locale === void 0 ) locale = null;
 
   if (Array.isArray(value)) {
     return value.every(function (val) { return validate(val, [locale]); });
@@ -5547,8 +5550,8 @@ var validate = function (value, ref) {
 };
 
 var validate$1 = function (value, ref) {
-  if ( ref === void 0 ) ref = [null];
-  var locale = ref[0];
+  if ( ref === void 0 ) ref = [];
+  var locale = ref[0]; if ( locale === void 0 ) locale = null;
 
   if (Array.isArray(value)) {
     return value.every(function (val) { return validate$1(val, [locale]); });
@@ -5563,8 +5566,8 @@ var validate$1 = function (value, ref) {
 };
 
 var validate$2 = function (value, ref) {
-  if ( ref === void 0 ) ref = [null];
-  var locale = ref[0];
+  if ( ref === void 0 ) ref = [];
+  var locale = ref[0]; if ( locale === void 0 ) locale = null;
 
   if (Array.isArray(value)) {
     return value.every(function (val) { return validate$2(val, [locale]); });
@@ -5579,8 +5582,8 @@ var validate$2 = function (value, ref) {
 };
 
 var validate$3 = function (value, ref) {
-  if ( ref === void 0 ) ref = [null];
-  var locale = ref[0];
+  if ( ref === void 0 ) ref = [];
+  var locale = ref[0]; if ( locale === void 0 ) locale = null;
 
   if (Array.isArray(value)) {
     return value.every(function (val) { return validate$3(val, [locale]); });
@@ -5628,7 +5631,7 @@ var validate$4 = function (value, ref) {
 var confirmed = function (value, other) { return String(value) === String(other); };
 
 function unwrapExports (x) {
-	return x && x.__esModule ? x['default'] : x;
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
 
 function createCommonjsModule(fn, module) {
@@ -5706,11 +5709,13 @@ var isCreditCard = unwrapExports(isCreditCard_1);
 
 var credit_card = function (value) { return isCreditCard(String(value)); };
 
-var validate$5 = function (value, params) {
-  var decimals = Array.isArray(params) ? (params[0] || '*') : '*';
-  var separator = Array.isArray(params) ? (params[1] || '.') : '.';
+var validate$5 = function (value, ref) {
+  if ( ref === void 0 ) ref = [];
+  var decimals = ref[0]; if ( decimals === void 0 ) decimals = '*';
+  var separator = ref[1]; if ( separator === void 0 ) separator = '.';
+
   if (Array.isArray(value)) {
-    return value.every(function (val) { return validate$5(val, params); });
+    return value.every(function (val) { return validate$5(val, [decimals, separator]); });
   }
 
   if (value === null || value === undefined || value === '') {
@@ -6154,11 +6159,11 @@ module.exports = exports['default'];
 var isIP = unwrapExports(isIP_1);
 
 var ip = function (value, ref) {
-  if ( ref === void 0 ) ref = [4];
-  var version = ref[0];
+  if ( ref === void 0 ) ref = [];
+  var version = ref[0]; if ( version === void 0 ) version = 4;
 
   if (Array.isArray(value)) {
-    return value.every(function (val) { return isIP(val, [version]); });
+    return value.every(function (val) { return isIP(val, version); });
   }
 
   return isIP(value, version);
@@ -6281,15 +6286,15 @@ var regex = function (value, ref) {
   return new RegExp(regex, flags).test(String(value));
 };
 
-var required = function (value, params) {
-  if ( params === void 0 ) params = [false];
+var required = function (value, ref) {
+  if ( ref === void 0 ) ref = [];
+  var invalidateFalse = ref[0]; if ( invalidateFalse === void 0 ) invalidateFalse = false;
 
   if (Array.isArray(value)) {
     return !! value.length;
   }
 
   // incase a field considers `false` as an empty value like checkboxes.
-  var invalidateFalse = params[0];
   if (value === false && invalidateFalse) {
     return false;
   }
@@ -6471,8 +6476,8 @@ module.exports = exports['default'];
 var isURL = unwrapExports(isURL_1);
 
 var url = function (value, ref) {
-  if ( ref === void 0 ) ref = [true];
-  var requireProtocol = ref[0];
+  if ( ref === void 0 ) ref = [];
+  var requireProtocol = ref[0]; if ( requireProtocol === void 0 ) requireProtocol = true;
 
   var options = { require_protocol: !!requireProtocol, allow_underscores: true };
   if (Array.isArray(value)) {

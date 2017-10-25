@@ -1,10 +1,9 @@
-export default (value, params = [false]) => {
+export default (value, [invalidateFalse = false] = []) => {
   if (Array.isArray(value)) {
     return !! value.length;
   }
 
   // incase a field considers `false` as an empty value like checkboxes.
-  const invalidateFalse = params[0];
   if (value === false && invalidateFalse) {
     return false;
   }

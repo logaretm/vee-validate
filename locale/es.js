@@ -13,7 +13,7 @@ const messages = {
   credit_card: (field) => `El campo ${field} es inválido.`,
   date_between: (field, [min, max]) => `El campo ${field} debe estar entre ${min} y ${max}.`,
   date_format: (field, [format]) => `El campo ${field} debe tener formato formato ${format}.`,
-  decimal: (field, [decimals] = ['*']) => `El campo ${field} debe ser númerico y contener ${decimals === '*' ? '' : decimals} puntos decimales.`,
+  decimal: (field, [decimals = '*'] = []) => `El campo ${field} debe ser númerico y contener ${decimals === '*' ? '' : decimals} puntos decimales.`,
   digits: (field, [length]) => `El campo ${field} debe ser númerico y contener exactamente ${length} dígitos.`,
   dimensions: (field, [width, height]) => `El campo ${field} debe ser de ${width} pixeles por ${height} pixeles.`,
   email: (field) => `El campo ${field} debe ser un correo electrónico válido.`,

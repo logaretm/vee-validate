@@ -12,7 +12,7 @@ const messages = {
   credit_card: (field) => `${field} 的格式錯誤。`,
   date_between: (field, [min, max]) => `${field} 必須在 ${min} 和 ${max} 之間。`,
   date_format: (field, [format]) => `${field} 不符合 ${format} 的格式。`,
-  decimal: (field, [decimals] = ['*']) => `${field} 必須是數字，而且包含 ${decimals === '*' ? '' : decimals} 小數點。`,
+  decimal: (field, [decimals = '*'] = []) => `${field} 必須是數字，而且包含 ${decimals === '*' ? '' : decimals} 小數點。`,
   digits: (field, [length]) => `${field} 必須是 ${length} 位數字。`,
   dimensions: (field, [width, height]) => `${field} 圖片尺寸不正確。必須是 ${width} 像素到 ${height} 像素。`,
   email: (field) => `${field} 必須是有效的電子郵件地址。`,

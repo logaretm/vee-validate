@@ -13,7 +13,7 @@ const messages = {
   credit_card: (field) => `${field} tidak sah.`,
   date_between: (field, [min, max]) => `${field} perlulah di antara ${min} dan ${max}.`,
   date_format: (field, [format]) => `${field} perlulah dalam format ${format}.`,
-  decimal: (field, [decimals] = ['*']) => `${field} perlulah dalam bentuk angka dan boleh mempunyai ${!decimals || decimals === '*' ? '' : decimals} titik perpuluhan.`,
+  decimal: (field, [decimals = '*'] = []) => `${field} perlulah dalam bentuk angka dan boleh mempunyai ${!decimals || decimals === '*' ? '' : decimals} titik perpuluhan.`,
   digits: (field, [length]) => `${field} perlulah dalam bentuk angka dan mempunyai ${length} digit.`,
   dimensions: (field, [width, height]) => `${field} perlulah berdimensi ${width} pixel darab ${height} pixels.`,
   email: (field) => `${field} perlulah dalam format emel yang sah.`,

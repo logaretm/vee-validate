@@ -11,7 +11,7 @@ const messages = {
   confirmed: (field, [confirmedField]) => `${field}의 항목이 ${confirmedField}항목과 일치하지 않습니다.`,
   date_between: (field, [min, max]) => `${field}항목은 ${min}와 ${max} 사이의 날짜이어야 합니다.`,
   date_format: (field, [format]) => `${field}항목은 ${format} 형식이어야 합니다.`,
-  decimal: (field, [decimals] = ['*']) => `${field}항목은 숫자이어야 하고 ${decimals === '*' ? '' : decimals} 소숫점을 가질 수 있습니다.`,
+  decimal: (field, [decimals = '*'] = []) => `${field}항목은 숫자이어야 하고 ${decimals === '*' ? '' : decimals} 소숫점을 가질 수 있습니다.`,
   digits: (field, [length]) => `${field}항목은 숫자이며 ${length}글자를 필요합니다.`,
   dimensions: (field, [width, height]) => `${field}의 사진 크기는 ${width}px과 ${height}px 이어야 합니다.`,
   email: (field) => `${field}항목은 올바른 이메일 형식이어야 합니다.`,

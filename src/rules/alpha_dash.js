@@ -1,6 +1,6 @@
 import { alphaDash } from './alpha_helper';
 
-const validate = (value, [locale] = [null]) => {
+const validate = (value, [locale = null] = []) => {
   if (Array.isArray(value)) {
     return value.every(val => validate(val, [locale]));
   }

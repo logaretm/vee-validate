@@ -18,7 +18,7 @@ const messages = {
   credit_card: (field) => `${capitalizeFirstLetter(field)} ei oma sobivat väärtust.`,
   date_between: (field, [min, max]) => `${capitalizeFirstLetter(field)} peab olema vahemikus ${min} kuni ${max}.`,
   date_format: (field, [format]) => `${capitalizeFirstLetter(field)} peab olema kujul ${format}.`,
-  decimal: (field, [decimals] = ['*']) => `${capitalizeFirstLetter(field)} peab olema number ja võib sisaldada ${decimals === '*' ? 'komakohta' : `${decimals} numbrit pärast koma`}.`,
+  decimal: (field, [decimals = '*'] = []) => `${capitalizeFirstLetter(field)} peab olema number ja võib sisaldada ${decimals === '*' ? 'komakohta' : `${decimals} numbrit pärast koma`}.`,
   digits: (field, [length]) => `${capitalizeFirstLetter(field)} peab koosnema täpselt ${length}-st numbrist.`,
   dimensions: (field, [width, height]) => `${capitalizeFirstLetter(field)} peab olema ${width} korda ${height} pikslit suur.`,
   email: (field) => `${capitalizeFirstLetter(field)} peab olema e-maili aadress.`,
