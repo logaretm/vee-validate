@@ -18,9 +18,9 @@
 </p>
 <br>
 
-vee-validate is a plugin for [Vue.js](https://vuejs.org/) that allows you to validate input fields, and display errors.
+vee-validate is a plugin for [Vue.js](https://vuejs.org/) that allows you to validate input fields and display errors.
 
-You don't have to do anything fancy in your app, most of the work goes into the html, You only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated. The plugin offers [many validations out of the box](http://vee-validate.logaretm.com/rules).
+You don't have to do anything fancy in your app -- most of the work goes into the html. You only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated. The plugin offers [many validations out of the box](http://vee-validate.logaretm.com/rules).
 
 Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object. This plugin is built with localization in mind. Read the [docs](http://vee-validate.logaretm.com/) for more info.
 
@@ -61,7 +61,7 @@ Now you are all setup to use the plugin.
 
 ### Usage
 
-Just apply the `v-validate` directive on your input and pass a **string value** which is a list of validations separated by a pipe, for example we will use the `required` and the `email` validators:
+Just apply the `v-validate` directive on your input and pass a **string value** which is a list of validations separated by a pipe. For example, we will use the `required` and the `email` validators:
 
 ```vue
 <input v-validate="'required|email'" type="text" name="email">
@@ -83,13 +83,13 @@ this.$validator.errorBag;
 this.errors; // injected into $data by the plugin, you can customize the property name.
 ```
 
-so lets display the error for the email input we've created:
+Let's display the error for the email input we've created:
 ```html
 <!-- If it has an email error, display the first message associated with it. -->
 <span v-show="errors.has('email')">{{ errors.first('email') }}</span>
 ```
 
-Of course there is more to it than that, refer to the documentation for more details about the rules, and usage of this plugin.
+Of course there is more to it than that. Refer to the documentation for more details about the rules and usage of this plugin.
 
 ### Documentation
 
@@ -98,12 +98,12 @@ Read the [documentation and demos](http://vee-validate.logaretm.com/).
 
 ### Compatibility
 
-This library uses ES6 Promises so be sure to provide a polyfill for it for the browsers that does not support it.
+This library uses ES6 Promises so be sure to provide a polyfill for it for the browsers that do not support it.
 
 ### Contributing
 
-You are welcome to contribute to this repo with anything you think is useful. fixes are more than welcome.
-However if you are adding a new validation rule, it should have multiple uses or as generic as possible.
+You are welcome to contribute to this repo with anything you think is useful. Fixes are more than welcome.
+However if you are adding a new validation rule, it should have multiple uses or be as generic as possible.
 
 You can find more information in the [contribution guide](contributing.md).
 
