@@ -3,6 +3,7 @@ import mixin from '../src/mixin';
 import directive from '../src/directive';
 import ErrorBag from '../src/core/errorBag';
 import FieldBag from '../src/core/fieldBag';
+import Config from '../src/config';
 import plugin from './../src/index';
 
 const Validator = plugin.Validator;

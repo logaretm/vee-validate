@@ -351,7 +351,7 @@ test('generates field options', () => {
     vm: {},
     component: undefined,
     classes: false,
-    classNames: undefined,
+    classNames: null,
     expression: 'required|max:3',
     rules: 'required|max:3',
     initial: false,

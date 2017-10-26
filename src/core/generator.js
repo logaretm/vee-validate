@@ -1,6 +1,6 @@
+import Config from '../config';
 import {
   getScope,
-  getPluginConfig,
   getDataAttribute,
   isObject,
   toArray,
@@ -17,7 +17,7 @@ import {
 export default class Generator {
   static generate (el, binding, vnode) {
     const model = Generator.resolveModel(binding, vnode);
-    const options = getPluginConfig(vnode);
+    const options = Config.resolve(vnode.context);
 
     return {
       name: Generator.resolveName(el, vnode),

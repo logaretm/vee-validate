@@ -1,5 +1,4 @@
 // @flow
-import config from '../../config';
 
 /**
  * Gets the data attribute. the name must be kebab-case.
@@ -369,16 +368,4 @@ export const getInputEventName = (el: HTMLInputElement) => {
   }
 
   return 'input';
-};
-
-/**
- * Resolves a plugin config object for the current 
- */
-export const getPluginConfig = (vnode: { context: Object }): MapObject => {
-  if (!vnode.context) return config;
-
-  const rootConfig = getPath('$root.$options.$_veeValidate', vnode.context, {});
-  const selfConfig = getPath('$options.$_veeValidate', vnode.context, {});
-
-  return assign({}, config, rootConfig, selfConfig);
 };

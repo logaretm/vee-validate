@@ -1,5 +1,12 @@
-import { isObject, isCallable, createProxy, createFlags, warn, getPluginConfig } from './core/utils';
 import Validator from './core/validator';
+import Config from './config';
+import {
+  isObject,
+  isCallable,
+  createProxy,
+  createFlags,
+  warn
+} from './core/utils';
 
 // @flow
 
@@ -50,7 +57,12 @@ export default {
     return {};
   },
   beforeCreate () {
-    const options = getPluginConfig({ context: this });
+    // if its a root instance set the config if it exists.
+    if (!this.$parent) {
+      Config.merge(this.$options.$_veeValidate || {});
+    }
+
+    const options = Config.resolve(this);
     const Vue = this.$options._base; // the vue constructor.
     // TODO: Deprecate
     /* istanbul ignore next */
