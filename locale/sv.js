@@ -11,7 +11,7 @@ const messages = {
   confirmed: (field, [target]) => `Fältet ${field} matchar inte ${target}.`,
   date_between: (field, [min, max]) => `Fältet ${field} måste vara mellan ${min} och ${max}.`,
   date_format: (field, [target]) => `Fältet ${field} måste ha formatatet ${target}.`,
-  decimal: (field, [decimals] = ['*']) => `Fältet ${field} måste vara numeriskt och får innehålla ${(decimals === '*' ? '' : decimals)} decimaltecken.`,
+  decimal: (field, [decimals = '*'] = []) => `Fältet ${field} måste vara numeriskt och får innehålla ${(decimals === '*' ? '' : decimals)} decimaltecken.`,
   digits: (field, [length]) => `Fältet ${field} måste vara numeriskt och innehålla exakt ${length} siffor.`,
   dimensions: (field, [width, height]) => `Fältet ${field} måtste vara ${width} pixlar bred och ${height} pixlar hög.`,
   email: (field) => `Fältet ${field} måste vara en giltig e-postadress.`,

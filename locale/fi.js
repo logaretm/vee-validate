@@ -10,7 +10,7 @@ const messages = {
   confirmed: (field, [confirmedField]) => `${field} ei vastannut ${confirmedField}.`,
   date_between: (field, [min, max]) => `${field} tulee olla ${min} ja ${max} väliltä.`,
   date_format: (field, [format]) => `${field} tulee olla muodossa ${format}.`,
-  decimal: (field, [decimals] = ['*']) => `${field} tulee olla numeerinen ja voi sisältää ${decimals === '*' ? '' : decimals} desimaalia.`,
+  decimal: (field, [decimals = '*'] = []) => `${field} tulee olla numeerinen ja voi sisältää ${decimals === '*' ? '' : decimals} desimaalia.`,
   digits: (field, [length]) => `${field} tulee olla numeerinen ja tarkalleen ${length} merkkiä.`,
   dimensions: (field, [width, height]) => `${field} tulee olla ${width} pikseliä kertaa ${height} pikseliä.`,
   email: (field) => `${field} tulee olla kelvollinen sähköpostiosoite.`,

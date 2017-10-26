@@ -25,7 +25,7 @@ const messages = {
   credit_card: (field) => `${field} غیر معتبر است.`,
   date_between: (field, [min, max]) => `${field} باید بین تاریخ ${min} and ${max} باشد.`,
   date_format: (field, [format]) => `${field} باید در قالب ${format} باشد.`,
-  decimal: (field, [decimals] = ['*']) => `${field} باید یک مقدار عددی ${decimals === '*' ? '' : ' با حداکثر ' + decimals + ' اعشار'} باشد.`,
+  decimal: (field, [decimals = '*'] = []) => `${field} باید یک مقدار عددی ${decimals === '*' ? '' : ' با حداکثر ' + decimals + ' اعشار'} باشد.`,
   digits: (field, [length]) => `${field} باید یک مقدار عددی و دقیقاً ${length} رقم باشد.`,
   dimensions: (field, [width, height]) => `${field} باید در اندازه ${width} پیکسل عرض و ${height} پیکسل ارتفاع باشد.`,
   email: (field) => `${field} باید یک پست الکترونیک معتبر باشد.`,

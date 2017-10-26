@@ -9,7 +9,7 @@ const messages = {
   between: (field, [min, max]) => `Полето ${field} може да е между ${min} и ${max}.`,
   confirmed: (field) => `Потвърждението не съвпада за полето ${field}.`,
   credit_card: (field) => `Полето ${field} е навалидно.`,
-  decimal: (field, [decimals] = ['*']) => `Полето ${field} трябва да е числено ${!decimals || decimals === '*' ? '' : 'и може да съдържа ${decimals} знака'}`,
+  decimal: (field, [decimals = '*'] = []) => `Полето ${field} трябва да е числено ${!decimals || decimals === '*' ? '' : 'и може да съдържа ${decimals} знака'}`,
   digits: (field, [length]) => `Полето ${field} трябва да е цифрово и да съдържа точно ${length} цифри.`,
   dimensions: (field, [width, height]) => `Полето ${field} трябва да е ${width} пиксела по ${height} пиксела.`,
   email: (field) => `Полето ${field} трябва да е коректен Email адрес.`,

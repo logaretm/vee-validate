@@ -1,8 +1,6 @@
-const validate = (value, params) => {
-  const decimals = Array.isArray(params) ? (params[0] || '*') : '*';
-  const separator = Array.isArray(params) ? (params[1] || '.') : '.';
+const validate = (value, [decimals = '*', separator = '.'] = []) => {
   if (Array.isArray(value)) {
-    return value.every(val => validate(val, params));
+    return value.every(val => validate(val, [decimals, separator]));
   }
 
   if (value === null || value === undefined || value === '') {
