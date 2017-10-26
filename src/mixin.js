@@ -10,6 +10,7 @@ import {
 
 // @flow
 
+/* istanbul ignore next */
 const fakeFlags = createProxy({}, {
   get (target, key) {
     // is a scope
