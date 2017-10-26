@@ -40,8 +40,6 @@ export default class Config {
    * Resolves the working config from a Vue instance.
    */
   static resolve (context: Object): MapObject {
-    if (!context) return Config.current;
-
     const selfConfig = getPath('$options.$_veeValidate', context, {});
 
     return assign({}, Config.current, selfConfig);
