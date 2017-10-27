@@ -20,7 +20,15 @@ const messages = {
   ext: (field) => `${field} สกุลไฟล์ไม่ถูกต้อง`,
   image: (field) => `${field} ต้องเป็นรูปภาพเท่านั้น`,
   in: (field) => `${field} เป็นค่าทีไม่ถูกต้องตามเงื่อนไขที่กำหนด`,
+  integer: (field) => `${field} ต้องเป็นเลขจำนวนเต็ม`,
   ip: (field) => `${field} ไม่ถูกต้องตามรูปแบบ ip address`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `ความยาว ${field} อยู่ระหว่าง ${length} และ ${max}`;
+    }
+
+    return `${field} ต้องมีความยาว ${length}`;
+  },
   max: (field, [length]) => `${field} ต้องมีความยาวไม่เกิน ${length} ตัวอักษร`,
   max_value: (field, [max]) => `${field} ต้องมีค่าไม่เกิน ${max}`,
   mimes: (field) => `${field} ประเภทไฟล์ไม่ถูกต้อง`,
@@ -41,6 +49,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
+  // eslint-disable-next-line
   VeeValidate.Validator.addLocale(locale);
 }
 
