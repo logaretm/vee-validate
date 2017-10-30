@@ -105,7 +105,7 @@ This library uses ES6 Promises so be sure to provide a polyfill for it for the b
 You are welcome to contribute to this repo with anything you think is useful. Fixes are more than welcome.
 However if you are adding a new validation rule, it should have multiple uses or be as generic as possible.
 
-You can find more information in the [contribution guide](contributing.md).
+You can find more information in the [contribution guide](CONTRIBUTING.md).
 
 ### Tutorials and Examples
 
