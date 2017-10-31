@@ -18,7 +18,7 @@ const rulesPlugin = ({ Validator }) => {
     messages
   });
 };
-
+// middele
 use(rulesPlugin);
 
 export {
