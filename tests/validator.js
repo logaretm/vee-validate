@@ -788,6 +788,25 @@ test('resets errors on the next tick if available', () => {
   v.reset();
   expect(vm.$nextTick).toHaveBeenCalled();
   expect(v.errors.count()).toBe(0);
+});
+
+test('resets errors on the next tick if available, complete test asynchronously', (done) => {
+  // not available.
+  let v = new Validator();
+  const vm = { $nextTick: jest.fn(cb => cb()) };
+  v.attach(new Field(null, {}));
+  v.errors.add('some', 'message', 'by');
+  v.reset();
+  expect(v.errors.count()).toBe(0);
+
+  v = new Validator(null, { vm });
+  v.attach(new Field(null, {}));
+  v.errors.add('some', 'message', 'by');
+  v.reset().then(() => {
+    expect(vm.$nextTick).toHaveBeenCalled();
+    expect(v.errors.count()).toBe(0);
+    done();
+  });
 })
 
 test('it can handle mixed successes and errors from one field regardless of rules order', async () => {
