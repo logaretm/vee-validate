@@ -26,7 +26,7 @@ export default class Validator {
   paused: boolean;
   ownerId: string | number;
   clean: () => void;
-  reset: () => void;
+  reset: () => Promise;
 
   constructor (validations?: MapObject, options?: MapObject = { vm: null, fastExit: true }) {
     this.strict = STRICT_MODE;
@@ -39,13 +39,19 @@ export default class Validator {
     this.ownerId = options.vm && options.vm._uid;
     // create it statically since we don't need constant access to the vm.
     this.reset = options.vm && isCallable(options.vm.$nextTick) ? () => {
-      options.vm.$nextTick(() => {
+      return new Promise((resolve, reject) => {
+        options.vm.$nextTick(() => {
+          this.fields.items.forEach(i => i.reset());
+          this.errors.clear();
+          resolve();
+        });
+      })
+    } : () => {
+      return new Promise((resolve, reject) => {
         this.fields.items.forEach(i => i.reset());
         this.errors.clear();
-      });
-    } : () => {
-      this.fields.items.forEach(i => i.reset());
-      this.errors.clear();
+        resolve();
+      }); 
     };
     /* istanbul ignore next */
     this.clean = () => {
