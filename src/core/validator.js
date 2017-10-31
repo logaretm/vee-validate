@@ -45,13 +45,13 @@ export default class Validator {
           this.errors.clear();
           resolve();
         });
-      })
+      });
     } : () => {
       return new Promise((resolve, reject) => {
         this.fields.items.forEach(i => i.reset());
         this.errors.clear();
         resolve();
-      }); 
+      });
     };
     /* istanbul ignore next */
     this.clean = () => {
