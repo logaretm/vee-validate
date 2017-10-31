@@ -1,3 +1,4 @@
+//baianat//
 import Rules from './rules';
 import { messages } from '../locale/en';
 import minimal from './index.minimal';
@@ -8,13 +9,13 @@ const rulesPlugin = ({ Validator }) => {
     Validator.extend(rule, Rules[rule]);
   });
 
-  // Merge the english messages.
+ 
   Validator.localize('en', {
     messages
   });
 };
 
-// install the rules via the plugin API.
+// install the rules via plugin API.
 minimal.use(rulesPlugin);
 
 minimal.Rules = Rules;
