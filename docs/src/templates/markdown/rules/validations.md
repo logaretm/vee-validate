@@ -257,7 +257,12 @@ The field under validation must match the specified regular expression.
 <input v-validate="'regex:^([0-9]+)$'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('regex_field') }" name="regex_field" type="text" placeholder="Numbers only">
 <span v-show="errors.has('regex_field')" class="help is-danger">{{ errors.first('regex_field') }}</span>
 
-> You should not use the pipe '|' or commas ',' within your regular expression when using the string rules format as it will cause a conflict with how validators parsing work. You should use the object format of the rules instead, for example: `v-validate="{ rules: { regex: /.(js|ts)$/} }"`
+> You should not use the pipe '|' or commas ',' within your regular expression
+> when using the string rules format as it will cause a conflict with how
+> validators parsing work. You should use the object format of the rules
+> instead. Note that when using the object format in your HTML template you
+> need to escape all backslashes.
+> Example: `v-validate="{ required: true, regex: /\\.(js|ts)$/ }"`
 
 ### [required](#rule-required)
 
