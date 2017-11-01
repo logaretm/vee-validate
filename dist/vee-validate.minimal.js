@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.20
+ * vee-validate v2.0.0-rc.21
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -2779,7 +2779,7 @@ var index_minimal = {
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.0-rc.20'
+  version: '2.0.0-rc.21'
 };
 
 return index_minimal;

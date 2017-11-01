@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.20
+ * vee-validate v2.0.0-rc.21
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -5686,7 +5686,7 @@ var validate$4 = function (value, ref) {
 var confirmed = function (value, other) { return String(value) === String(other); };
 
 function unwrapExports (x) {
-	return x && x.__esModule ? x['default'] : x;
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
 
 function createCommonjsModule(fn, module) {
@@ -6632,7 +6632,7 @@ var mapFields = function (fields) {
   }, {});
 };
 
-var version = '2.0.0-rc.20';
+var version = '2.0.0-rc.21';
 
 var rulesPlugin = function (ref) {
   var Validator$$1 = ref.Validator;
