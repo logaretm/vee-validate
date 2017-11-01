@@ -1,4 +1,6 @@
 import Vue from 'vue/dist/vue';
+import { mount, createLocalVue } from 'vue-test-utils';
+import ChildComponent from './components/Child';
 import mixin from '../src/mixin';
 import directive from '../src/directive';
 import ErrorBag from '../src/core/errorBag';
@@ -247,24 +249,11 @@ describe('components can have a definition object in the ctor options', () => {
   });
 });
 
-test('built in components should not provide a validator', async (done) => {
-  let assertions = 0;
-  let validator;
-  let instances = [];
-  const testMixin = {
-    created () {
-      instances.push(this.$validator);
-    }
-  };
-  const Child = Vue.extend({
-    inject: ['$validator'],
-    mixins: [mixin, testMixin],
-    name: 'child',
-    template: `<div></div>`
-  });
-  const VM = Vue.extend({
-    mixins: [mixin],
-    components: { Child },
+test('built in components should not provide a validator', async () => {
+  const localVue = createLocalVue();
+  localVue.mixin(mixin);
+  const wrapper = mount({
+    components: { ChildComponent },
     template: `
       <div>
         <keep-alive>
@@ -275,12 +264,11 @@ test('built in components should not provide a validator', async (done) => {
         </transition>
       </div>
     `
-  });
+  }, { localVue });
 
-  const app = new VM().$mount();
-  validator = app.$validator;
-  expect(instances.length).toBe(2);
-  expect(instances[0]).toBe(validator);
-  expect(instances[1]).toBe(validator);
-  done();
+  const $validator = wrapper.vm.$validator;
+  const children = wrapper.findAll(ChildComponent);
+  for (let i = 0; i < children.length; i++) {
+    expect(children.at(i).vm.$validator).toBe($validator);
+  }
 });
