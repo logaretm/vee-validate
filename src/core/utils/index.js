@@ -369,3 +369,14 @@ export const getInputEventName = (el: HTMLInputElement) => {
 
   return 'input';
 };
+
+export const isBuiltInComponent = (vnode): boolean => {
+  if (!vnode) {
+    return false;
+  }
+
+  const tag = vnode.componentOptions.tag;
+
+  return /keep-alive|transition|transition-group/.test(tag);
+}
+;

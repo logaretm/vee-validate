@@ -5,7 +5,8 @@ import {
   isCallable,
   createProxy,
   createFlags,
-  warn
+  warn,
+  isBuiltInComponent
 } from './core/utils';
 
 // @flow
@@ -49,7 +50,7 @@ const createValidator = (vm: any, options: Object) => new Validator(null, { vm, 
 
 export default {
   provide () {
-    if (this.$validator) {
+    if (this.$validator && !isBuiltInComponent(this.$vnode)) {
       return {
         $validator: this.$validator
       };
@@ -58,6 +59,11 @@ export default {
     return {};
   },
   beforeCreate () {
+    // if built in do nothing.
+    if (isBuiltInComponent(this.$vnode)) {
+      return;
+    }
+
     // if its a root instance set the config if it exists.
     if (!this.$parent) {
       Config.merge(this.$options.$_veeValidate || {});
@@ -112,6 +118,8 @@ export default {
   },
 
   beforeDestroy () {
+    if (isBuiltInComponent(this.$vnode)) return;
+
     // mark the validator paused to prevent delayed validation.
     if (this.$validator && this.$validator.ownerId === this._uid && isCallable(this.$validator.pause)) {
       this.$validator.pause();

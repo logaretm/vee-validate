@@ -227,19 +227,6 @@ test('can display errors with custom field names', async () => {
   expect(v.errors.first('field')).toBe('The pretty field must be at least 5 characters.');
 });
 
-test.skip('attaching new rules to an existing field should overwrite the old rules', async () => {
-  const v = new Validator();
-  v.attach('someField', 'required|min:3');
-  expect(await v.validate('someField', 'wo')).toBe(false);
-
-  // does it overwrite the old rule?
-  v.attach('someField', 'min:1|max:3');
-  expect(v.errors.collect('someField').length).toBe(0); // are field errors cleared?
-  expect(await v.validate('someField', 'wo')).toBe(true);
-
-  expect(await v.validate('someField', 'woww')).toBe(false);
-});
-
 test('fails when trying to validate a non-existant field when strict mode is true.', async () => {
   const v = new Validator({
     email: 'required|email',

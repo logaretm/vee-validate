@@ -246,3 +246,41 @@ describe('components can have a definition object in the ctor options', () => {
     expect(app.$validator).toBe(app.$children[1].$validator); // got the parent's
   });
 });
+
+test('built in components should not provide a validator', async (done) => {
+  let assertions = 0;
+  let validator;
+  let instances = [];
+  const testMixin = {
+    created () {
+      instances.push(this.$validator);
+    }
+  };
+  const Child = Vue.extend({
+    inject: ['$validator'],
+    mixins: [mixin, testMixin],
+    name: 'child',
+    template: `<div></div>`
+  });
+  const VM = Vue.extend({
+    mixins: [mixin],
+    components: { Child },
+    template: `
+      <div>
+        <keep-alive>
+          <child />
+        </keep-alive>
+        <transition>
+          <child />
+        </transition>
+      </div>
+    `
+  });
+
+  const app = new VM().$mount();
+  validator = app.$validator;
+  expect(instances.length).toBe(2);
+  expect(instances[0]).toBe(validator);
+  expect(instances[1]).toBe(validator);
+  done();
+});
