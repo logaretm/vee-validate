@@ -1,8 +1,8 @@
-import makeMixin from './mixin';
-import makeDirective from './directive';
-import defaultOptions from './config';
+import mixin from './mixin';
+import directive from './directive';
+import Config from './config';
 import Validator from './core/validator';
-import { warn, assign } from './core/utils';
+import { warn } from './core/utils';
 
 let Vue;
 
@@ -13,9 +13,9 @@ function install (_Vue, options = {}) {
   }
 
   Vue = _Vue;
-  const config = assign({}, defaultOptions, options);
-  if (config.dictionary) {
-    Validator.updateDictionary(config.dictionary);
+  Config.merge(options);
+  if (Config.current.dictionary) {
+    Validator.updateDictionary(Config.current.dictionary);
   }
 
   if (options) {
@@ -24,12 +24,12 @@ function install (_Vue, options = {}) {
     }
 
     if (options.strict) {
-      Validator.setStrictMode(config.strict);
+      Validator.setStrictMode(Config.current.strict);
     }
   }
 
-  Vue.mixin(makeMixin(Vue, config));
-  Vue.directive('validate', makeDirective(config));
+  Vue.mixin(mixin);
+  Vue.directive('validate', directive);
 };
 
 export default install;

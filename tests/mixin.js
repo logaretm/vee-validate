@@ -1,28 +1,26 @@
 import Vue from 'vue/dist/vue';
-import makeMixin from '../src/mixin';
-import makeDirective from '../src/directive';
+import mixin from '../src/mixin';
+import directive from '../src/directive';
 import ErrorBag from '../src/core/errorBag';
 import FieldBag from '../src/core/fieldBag';
+import Config from '../src/config';
 import plugin from './../src/index';
 
 const Validator = plugin.Validator;
 
 test('injects an errorBag instance', () => {
-  const mixin = makeMixin(Vue);
   const VM = Vue.extend({ mixins: [mixin] });
   const app = new VM();
   expect(app.errors instanceof ErrorBag).toBe(true);
 });
 
 test('injects the flags collection', () => {
-  const mixin = makeMixin(Vue);
   const VM = Vue.extend({ mixins: [mixin] });
   const app = new VM();
   expect(typeof app.fields === 'object').toBe(true);
 });
 
 test('injects a validator instance', () => {
-  const mixin = makeMixin(Vue);
   const VM = Vue.extend({ mixins: [mixin] });
   const app = new VM();
   expect(app.$validator instanceof Validator).toBe(true);
@@ -30,7 +28,6 @@ test('injects a validator instance', () => {
 
 describe('provides validator instances using provide/inject API', () => {
   test('when auto inject is disabled', () => {
-    const mixin = makeMixin(Vue, { inject: false });
     const Child = Vue.extend({
       mixins: [mixin],
       name: 'child',
@@ -56,6 +53,9 @@ describe('provides validator instances using provide/inject API', () => {
       inject: []
     });
     const VM = Vue.extend({
+      $_veeValidate: {
+        inject: false
+      },
       mixins: [mixin],
       components: { Child, OtherChild, ThirdChild, FourthChild },
       template: `
@@ -74,7 +74,6 @@ describe('provides validator instances using provide/inject API', () => {
     expect(app.$children[2].$validator).toBe(undefined);
   });
   test('when auto inject is enabled', () => {
-    const mixin = makeMixin(Vue, { inject: true });
     const Child = Vue.extend({
       mixins: [mixin],
       name: 'child',
@@ -90,6 +89,9 @@ describe('provides validator instances using provide/inject API', () => {
       }
     });
     const VM = Vue.extend({
+      $_veeValidate: {
+        inject: false
+      },
       mixins: [mixin],
       components: { Child, OtherChild },
       template: `
@@ -107,7 +109,6 @@ describe('provides validator instances using provide/inject API', () => {
 });
 
 test('component pauses the validator before destroy if it owns it', () => {
-  const mixin = makeMixin(Vue);
   const VM = Vue.extend({ mixins: [mixin] });
   let app = new VM();
   const validator = app.$validator;
@@ -123,7 +124,6 @@ test('component pauses the validator before destroy if it owns it', () => {
 
 describe('components can have a definition object in the ctor options', () => {
   const createVM = () => {
-    const mixin = makeMixin(Vue, { inject: false });    
     const Child = Vue.extend({
       mixins: [mixin],
       name: 'child',
@@ -148,9 +148,12 @@ describe('components can have a definition object in the ctor options', () => {
     });
 
     return Vue.extend({
+      $_veeValidate: {
+        inject: false
+      },
       mixins: [mixin],
       directives: {
-        validate: makeDirective({ inject: false })
+        validate: directive
       },
       components: { Child },
       template: `
@@ -204,7 +207,6 @@ describe('components can have a definition object in the ctor options', () => {
   });
 
   test('Creates a new instance when the validator option is set to new', () => {
-    const mixin = makeMixin(Vue, { inject: false });
     const Child = Vue.extend({
       mixins: [mixin],
       name: 'child',
@@ -226,6 +228,9 @@ describe('components can have a definition object in the ctor options', () => {
       }
     });
     const VM = Vue.extend({
+      $_veeValidate: {
+        inject: false
+      },
       mixins: [mixin],
       components: { Child, OtherChild },
       template: `
