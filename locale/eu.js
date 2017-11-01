@@ -42,11 +42,6 @@ const messages = {
   url: (field) => `${field} eremua ez da baliozko URL bat.`
 };
 
-// You can ignore this export, locale maintainer!
-export {
-  messages
-};
-
 const locale = {
   name: 'eu',
   messages,

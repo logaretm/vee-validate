@@ -42,11 +42,6 @@ const messages = {
   url: (field) => `The ${field} field is not a valid URL.`
 };
 
-// You can ignore this export, locale maintainer!
-export {
-  messages
-};
-
 const locale = {
   name: 'en',
   messages,

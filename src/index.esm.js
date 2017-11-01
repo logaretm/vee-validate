@@ -1,5 +1,7 @@
 import install from './install';
-import { messages } from '../locale/en';
+import directive from './directive';
+import mixin from './mixin';
+import en from '../locale/en';
 import use from './use';
 import Rules from './rules';
 import mapFields from './core/helpers';
@@ -14,9 +16,7 @@ const rulesPlugin = ({ Validator }) => {
   });
 
   // Merge the english messages.
-  Validator.localize('en', {
-    messages
-  });
+  Validator.localize('en', en);
 };
 
 use(rulesPlugin);
@@ -24,6 +24,8 @@ use(rulesPlugin);
 export {
   install,
   use,
+  directive,
+  mixin,
   mapFields,
   Validator,
   ErrorBag,
@@ -34,6 +36,8 @@ export {
 export default {
   install,
   use,
+  directive,
+  mixin,
   mapFields,
   Validator,
   ErrorBag,

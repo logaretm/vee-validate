@@ -1,5 +1,5 @@
 /**
- * vee-validate v2.0.0-rc.18
+ * vee-validate v2.0.0-rc.20
  * (c) 2017 Abdelrahman Awad
  * @license MIT
  */
@@ -2850,7 +2850,7 @@ var validate$4 = function (value, ref) {
 var confirmed = function (value, other) { return String(value) === String(other); };
 
 function unwrapExports (x) {
-	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+	return x && x.__esModule ? x['default'] : x;
 }
 
 function createCommonjsModule(fn, module) {
@@ -3771,6 +3771,16 @@ var getInputEventName = function (el) {
   return 'input';
 };
 
+var isBuiltInComponent = function (vnode) {
+  if (!vnode) {
+    return false;
+  }
+
+  var tag = vnode.componentOptions.tag;
+
+  return /keep-alive|transition|transition-group/.test(tag);
+};
+
 /**
  * @param {Array|String} value 
  * @param {Number} length
@@ -4079,7 +4089,7 @@ var isURL = unwrapExports(isURL_1);
 
 var url = function (value, ref) {
   if ( ref === void 0 ) ref = [];
-  var requireProtocol = ref[0]; if ( requireProtocol === void 0 ) requireProtocol = true;
+  var requireProtocol = ref[0]; if ( requireProtocol === void 0 ) requireProtocol = false;
 
   var options = { require_protocol: !!requireProtocol, allow_underscores: true };
   if (Array.isArray(value)) {
@@ -4664,15 +4674,64 @@ Dictionary.prototype._merge = function _merge (target, source) {
   return target;
 };
 
+// 
+
+var defaultConfig = {
+  locale: 'en',
+  delay: 0,
+  errorBagName: 'errors',
+  dictionary: null,
+  strict: true,
+  fieldsBagName: 'fields',
+  classes: false,
+  classNames: null,
+  events: 'input|blur',
+  inject: true,
+  fastExit: true,
+  aria: true,
+  validity: false
+};
+
+var currentConfig = assign({}, defaultConfig);
+
+var Config = function Config () {};
+
+var staticAccessors$1 = { default: {},current: {} };
+
+staticAccessors$1.default.get = function () {
+  return defaultConfig;
+};
+
+staticAccessors$1.current.get = function () {
+  return currentConfig;
+};
+
+/**
+ * Merges the config with a new one.
+ */
+Config.merge = function merge (config) {
+  currentConfig = assign({}, currentConfig, config);
+};
+
+/**
+ * Resolves the working config from a Vue instance.
+ */
+Config.resolve = function resolve (context) {
+  var selfConfig = getPath('$options.$_veeValidate', context, {});
+
+  return assign({}, Config.current, selfConfig);
+};
+
+Object.defineProperties( Config, staticAccessors$1 );
+
 /**
  * Generates the options required to construct a field.
  */
 var Generator = function Generator () {};
 
-Generator.generate = function generate (el, binding, vnode, options) {
-    if ( options === void 0 ) options = {};
-
+Generator.generate = function generate (el, binding, vnode) {
   var model = Generator.resolveModel(binding, vnode);
+  var options = Config.resolve(vnode.context);
 
   return {
     name: Generator.resolveName(el, vnode),
@@ -5574,13 +5633,19 @@ var Validator = function Validator (validations, options) {
   this.ownerId = options.vm && options.vm._uid;
   // create it statically since we don't need constant access to the vm.
   this.reset = options.vm && isCallable(options.vm.$nextTick) ? function () {
-    options.vm.$nextTick(function () {
-      this$1.fields.items.forEach(function (i) { return i.reset(); });
-      this$1.errors.clear();
+    return new Promise(function (resolve, reject) {
+      options.vm.$nextTick(function () {
+        this$1.fields.items.forEach(function (i) { return i.reset(); });
+        this$1.errors.clear();
+        resolve();
+      });
     });
   } : function () {
-    this$1.fields.items.forEach(function (i) { return i.reset(); });
-    this$1.errors.clear();
+    return new Promise(function (resolve, reject) {
+      this$1.fields.items.forEach(function (i) { return i.reset(); });
+      this$1.errors.clear();
+      resolve();
+    });
   };
   /* istanbul ignore next */
   this.clean = function () {
@@ -6301,6 +6366,7 @@ Object.defineProperties( Validator, staticAccessors );
 
 // 
 
+/* istanbul ignore next */
 var fakeFlags = createProxy({}, {
   get: function get (target, key) {
     // is a scope
@@ -6337,21 +6403,29 @@ var requestsValidator = function (injections) {
  */
 var createValidator = function (vm, options) { return new Validator(null, { vm: vm, fastExit: options.fastExit }); };
 
-var makeMixin = function (Vue, options) {
-  if ( options === void 0 ) options = {};
-
-  var mixin = {};
-  mixin.provide = function providesValidator () {
-    if (this.$validator) {
+var mixin = {
+  provide: function provide () {
+    if (this.$validator && !isBuiltInComponent(this.$vnode)) {
       return {
         $validator: this.$validator
       };
     }
 
     return {};
-  };
+  },
+  beforeCreate: function beforeCreate () {
+    // if built in do nothing.
+    if (isBuiltInComponent(this.$vnode)) {
+      return;
+    }
 
-  mixin.beforeCreate = function beforeCreate () {
+    // if its a root instance set the config if it exists.
+    if (!this.$parent) {
+      Config.merge(this.$options.$_veeValidate || {});
+    }
+
+    var options = Config.resolve(this);
+    var Vue = this.$options._base; // the vue constructor.
     // TODO: Deprecate
     /* istanbul ignore next */
     if (this.$options.$validates) {
@@ -6396,32 +6470,16 @@ var makeMixin = function (Vue, options) {
 
       return this.$validator.flags;
     };
-  };
+  },
 
-  mixin.beforeDestroy = function beforeDestroy () {
+  beforeDestroy: function beforeDestroy () {
+    if (isBuiltInComponent(this.$vnode)) { return; }
+
     // mark the validator paused to prevent delayed validation.
     if (this.$validator && this.$validator.ownerId === this._uid && isCallable(this.$validator.pause)) {
       this.$validator.pause();
     }
-  };
-
-  return mixin;
-};
-
-var config = {
-  locale: 'en',
-  delay: 0,
-  errorBagName: 'errors',
-  dictionary: null,
-  strict: true,
-  fieldsBagName: 'fields',
-  classes: false,
-  classNames: undefined,
-  events: 'input|blur',
-  inject: true,
-  fastExit: true,
-  aria: true,
-  validity: false
+  }
 };
 
 // 
@@ -6437,54 +6495,51 @@ var findField = function (el, context) {
   return context.$validator.fields.find({ id: getDataAttribute(el, 'id') });
 };
 
-var createDirective$1 = function (options) {
-  options = assign({}, config, options);
-
-  return {
-    bind: function bind (el, binding, vnode) {
-      var validator = vnode.context.$validator;
-      if (! validator) {
-        warn("No validator instance is present on vm, did you forget to inject '$validator'?");
-        return;
-      }
-      var fieldOptions = Generator.generate(el, binding, vnode, options);
-      validator.attach(fieldOptions);
-    },
-    inserted: function (el, binding, vnode) {
-      var field = findField(el, vnode.context);
-      var scope = Generator.resolveScope(el, binding, vnode);
-
-      // skip if scope hasn't changed.
-      if (!field || scope === field.scope) { return; }
-
-      // only update scope.
-      field.update({ scope: scope });
-
-      // allows the field to re-evaluated once more in the update hook.
-      field.updated = false;
-    },
-    update: function (el, binding, vnode) {
-      var field = findField(el, vnode.context);
-
-      // make sure we don't do uneccessary work if no important change was done.
-      if (!field || (field.updated && isEqual$1(binding.value, binding.oldValue))) { return; }
-      var scope = Generator.resolveScope(el, binding, vnode);
-      var rules = Generator.resolveRules(el, binding);
-
-      field.update({
-        scope: scope,
-        rules: rules
-      });
-    },
-    unbind: function unbind (el, binding, ref) {
-      var context = ref.context;
-
-      var field = findField(el, context);
-      if (!field) { return; }
-
-      context.$validator.detach(field);
+var directive = {
+  bind: function bind (el, binding, vnode) {
+    var validator = vnode.context.$validator;
+    if (! validator) {
+      warn("No validator instance is present on vm, did you forget to inject '$validator'?");
+      return;
     }
-  };
+
+    var fieldOptions = Generator.generate(el, binding, vnode);
+    validator.attach(fieldOptions);
+  },
+  inserted: function (el, binding, vnode) {
+    var field = findField(el, vnode.context);
+    var scope = Generator.resolveScope(el, binding, vnode);
+
+    // skip if scope hasn't changed.
+    if (!field || scope === field.scope) { return; }
+
+    // only update scope.
+    field.update({ scope: scope });
+
+    // allows the field to re-evaluated once more in the update hook.
+    field.updated = false;
+  },
+  update: function (el, binding, vnode) {
+    var field = findField(el, vnode.context);
+
+    // make sure we don't do unneccasary work if no important change was done.
+    if (!field || (field.updated && isEqual$1(binding.value, binding.oldValue))) { return; }
+    var scope = Generator.resolveScope(el, binding, vnode);
+    var rules = Generator.resolveRules(el, binding);
+
+    field.update({
+      scope: scope,
+      rules: rules
+    });
+  },
+  unbind: function unbind (el, binding, ref) {
+    var context = ref.context;
+
+    var field = findField(el, context);
+    if (!field) { return; }
+
+    context.$validator.detach(field);
+  }
 };
 
 var Vue;
@@ -6498,9 +6553,9 @@ function install (_Vue, options) {
   }
 
   Vue = _Vue;
-  var config$$1 = assign({}, config, options);
-  if (config$$1.dictionary) {
-    Validator.updateDictionary(config$$1.dictionary);
+  Config.merge(options);
+  if (Config.current.dictionary) {
+    Validator.updateDictionary(Config.current.dictionary);
   }
 
   if (options) {
@@ -6509,12 +6564,12 @@ function install (_Vue, options) {
     }
 
     if (options.strict) {
-      Validator.setStrictMode(config$$1.strict);
+      Validator.setStrictMode(Config.current.strict);
     }
   }
 
-  Vue.mixin(makeMixin(Vue, config$$1));
-  Vue.directive('validate', createDirective$1(config$$1));
+  Vue.mixin(mixin);
+  Vue.directive('validate', directive);
 }
 
 // 
@@ -6586,10 +6641,12 @@ var mapFields = function (fields) {
 var minimal$1 = {
   install: install,
   use: use,
+  directive: directive,
+  mixin: mixin,
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.0-rc.18'
+  version: '2.0.0-rc.20'
 };
 
 // rules plugin definition.
@@ -6601,9 +6658,7 @@ var rulesPlugin = function (ref) {
   });
 
   // Merge the english messages.
-  Validator.localize('en', {
-    messages: messages
-  });
+  Validator.localize('en', locale$1);
 };
 
 // install the rules via the plugin API.
