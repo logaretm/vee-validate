@@ -32,7 +32,7 @@ export default class Generator {
       getter: Generator.resolveGetter(el, vnode, model),
       events: Generator.resolveEvents(el, vnode) || options.events,
       model,
-      delay: { input: Generator.resolveDelay(el, vnode, options) },
+      delay: Object.assign(options.delay, { input: Generator.resolveDelay(el, vnode, options) }),
       rules: Generator.resolveRules(el, binding),
       initial: !!binding.modifiers.initial,
       alias: Generator.resolveAlias(el, vnode),
