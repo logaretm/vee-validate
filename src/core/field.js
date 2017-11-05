@@ -448,7 +448,6 @@ export default class Field {
       this.validator.validate(`#${this.id}`, args[0]);
     };
 
-    const validate = debounce(fn, this.delay);
     const inputEvent = getInputEventName(this.el);
     // replace input event with suitable one.
     let events = this.events.map(e => {
@@ -457,7 +456,7 @@ export default class Field {
 
     // if there is a watchable model and an on input validation is requested.
     if (this.model && events.indexOf(inputEvent) !== -1) {
-      const unwatch = this.vm.$watch(this.model, validate);
+      const unwatch = this.vm.$watch(this.model, (typeof this.delay === 'object') ? this.delay['input'] : this.delay);
       this.watchers.push({
         tag: 'input_model',
         unwatch
@@ -468,12 +467,14 @@ export default class Field {
 
     // Add events.
     events.forEach(e => {
+      let validate = debounce(fn, (typeof this.delay === 'object') ? this.delay[e] : this.delay);
+
       if (this.isVue) {
-        this.component.$on(e, (e === 'blur') ? debounce(fn, 0) : validate);
+        this.component.$on(e, validate);
         this.watchers.push({
           tag: 'input_vue',
           unwatch: () => {
-            this.component.$off(e, (e === 'blur') ? debounce(fn, 0) : validate);
+            this.component.$off(e, validate);
           }
         });
         return;
@@ -482,11 +483,11 @@ export default class Field {
       if (~['radio', 'checkbox'].indexOf(this.el.type)) {
         const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
         toArray(els).forEach(el => {
-          el.addEventListener(e, (e === 'blur') ? debounce(fn, 0) : validate);
+          el.addEventListener(e, validate);
           this.watchers.push({
             tag: 'input_native',
             unwatch: () => {
-              el.removeEventListener(e, (e === 'blur') ? debounce(fn, 0) : validate);
+              el.removeEventListener(e, validate);
             }
           });
         });
@@ -494,11 +495,11 @@ export default class Field {
         return;
       }
 
-      this.el.addEventListener(e, (e === 'blur') ? debounce(fn, 0) : validate);
+      this.el.addEventListener(e, validate);
       this.watchers.push({
         tag: 'input_native',
         unwatch: () => {
-          this.el.removeEventListener(e, (e === 'blur') ? debounce(fn, 0) : validate);
+          this.el.removeEventListener(e, validate);
         }
       });
     });
