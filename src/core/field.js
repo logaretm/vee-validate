@@ -459,7 +459,7 @@ export default class Field {
 
     // Create a delay object that includes every event we have configured
     events.forEach(e => {
-      delayObject[e] = (typeof this.delay === 'object') ? this.delay[e] : this.delay;
+      delayObject[e] = (typeof this.delay === 'object') ? 0 : this.delay;
     });
 
     // If we got an object from delay configuration we merge it, if we got
