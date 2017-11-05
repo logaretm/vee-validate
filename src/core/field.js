@@ -454,9 +454,25 @@ export default class Field {
       return e === 'input' ? inputEvent : e;
     });
 
+    // Temporary object for delays since we always want a delay object
+    let delayObject = {};
+
+    // Create a delay object that includes every event we have configured
+    events.forEach(e => {
+      delayObject[e] = (typeof this.delay === 'object') ? this.delay[e] : this.delay;
+    });
+
+    // If we got an object from delay configuration we merge it, if we got
+    // a string we just replace it with our temporary object
+    if (typeof this.delay !== 'object') {
+      this.delay = delayObject;
+    } else {
+      this.delay = Object.assign(delayObject, this.delay);
+    }
+
     // if there is a watchable model and an on input validation is requested.
     if (this.model && events.indexOf(inputEvent) !== -1) {
-      const unwatch = this.vm.$watch(this.model, (typeof this.delay === 'object') ? this.delay['input'] : this.delay);
+      const unwatch = this.vm.$watch(this.model, this.delay[inputEvent]);
       this.watchers.push({
         tag: 'input_model',
         unwatch
@@ -467,7 +483,7 @@ export default class Field {
 
     // Add events.
     events.forEach(e => {
-      let validate = debounce(fn, (typeof this.delay === 'object') ? this.delay[e] : this.delay);
+      let validate = debounce(fn, this.delay[e]);
 
       if (this.isVue) {
         this.component.$on(e, validate);
