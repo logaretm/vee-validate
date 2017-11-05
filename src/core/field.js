@@ -467,7 +467,7 @@ export default class Field {
     if (typeof this.delay !== 'object') {
       this.delay = delayObject;
     } else {
-      this.delay = Object.assign(delayObject, this.delay);
+      this.delay = assign(delayObject, this.delay);
     }
 
     // if there is a watchable model and an on input validation is requested.
