@@ -469,11 +469,11 @@ export default class Field {
     // Add events.
     events.forEach(e => {
       if (this.isVue) {
-        this.component.$on(e, validate);
+        this.component.$on(e, (e === 'blur') ? debounce(fn, 0) : validate);
         this.watchers.push({
           tag: 'input_vue',
           unwatch: () => {
-            this.component.$off(e, validate);
+            this.component.$off(e, (e === 'blur') ? debounce(fn, 0) : validate);
           }
         });
         return;
@@ -482,11 +482,11 @@ export default class Field {
       if (~['radio', 'checkbox'].indexOf(this.el.type)) {
         const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
         toArray(els).forEach(el => {
-          el.addEventListener(e, validate);
+          el.addEventListener(e, (e === 'blur') ? debounce(fn, 0) : validate);
           this.watchers.push({
             tag: 'input_native',
             unwatch: () => {
-              el.removeEventListener(e, validate);
+              el.removeEventListener(e, (e === 'blur') ? debounce(fn, 0) : validate);
             }
           });
         });
@@ -494,11 +494,11 @@ export default class Field {
         return;
       }
 
-      this.el.addEventListener(e, validate);
+      this.el.addEventListener(e, (e === 'blur') ? debounce(fn, 0) : validate);
       this.watchers.push({
         tag: 'input_native',
         unwatch: () => {
-          this.el.removeEventListener(e, validate);
+          this.el.removeEventListener(e, (e === 'blur') ? debounce(fn, 0) : validate);
         }
       });
     });
