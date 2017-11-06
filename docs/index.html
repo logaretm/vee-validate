@@ -23,7 +23,7 @@ ga('send', 'pageview');
 <pre><code class="highlight-html">  &lt;script src=&quot;path/to/vue.js&quot;&gt;&lt;/script&gt;
   &lt;script src=&quot;path/to/vee-validate.js&quot;&gt;&lt;/script&gt;
   &lt;script&gt;
-    Vue.use(VeeValidate); // good to go. 
+    Vue.use(VeeValidate); // good to go.
   &lt;/script&gt;
 </code></pre>
 <p>or you may import it using <strong>ES6</strong>:</p>
@@ -63,7 +63,7 @@ Vue.use(VeeValidate);
 <h2><a href="#available-rules">Available Rules</a></h2>
 <p>There are more than 20 rules available to validate your inputs:</p>
 <div class="columns is-multiline">
-  <div class="column is-4"> 
+  <div class="column is-4">
 <ul>
 <li>
 <p><a href="rules.html#rule-after">after</a></p>
@@ -173,12 +173,12 @@ import VeeValidate from 'vee-validate';
 
 const config = {
   errorBagName: 'errors', // change if property conflicts
-  fieldsBagName: 'fields', 
-  delay: 0, 
-  locale: 'en', 
-  dictionary: null, 
-  strict: true, 
-  classes: false, 
+  fieldsBagName: 'fields',
+  delay: 0,
+  locale: 'en',
+  dictionary: null,
+  strict: true,
+  classes: false,
   classNames: {
     touched: 'touched', // the control has been blurred
     untouched: 'untouched', // the control hasn't been blurred
@@ -211,13 +211,13 @@ Vue.use(VeeValidate, config);
         </tr>
         <tr>
             <td class="is-method-name">fieldsBagName</td>
-            <td>fields</td>            
+            <td>fields</td>
             <td>The name of the Fields (flags) object that will be injected in each of Vue's instances' data.</td>
         </tr>
         <tr>
             <td class="is-method-name">delay</td>
             <td>0</td>
-            <td>The default debounce time for all inputs (only affects validations).</td>
+            <td>The default debounce time for all inputs (only affects validations). This can optionally contain an object in the form of { event: delay, ... } where delays can be specified on a per event basis.</td>
         </tr>
         <tr>
             <td class="is-method-name">locale</td>
@@ -227,7 +227,7 @@ Vue.use(VeeValidate, config);
         <tr>
             <td class="is-method-name">dictionary</td>
             <td>null</td>
-            <td>  
+            <td>
               A dictionary to be merged with the validators dictionary. (Check the [custom messages](rules.html#custom-messages) and [localization](localization.html) sections.)
             </td>
         </tr>
