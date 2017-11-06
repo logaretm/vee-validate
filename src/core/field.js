@@ -1,4 +1,20 @@
-import { uniqId, createFlags, assign, normalizeRules, isNullOrUndefined, setDataAttribute, toggleClass, getInputEventName, debounce, isCallable, warn, toArray, getPath } from './utils';
+import {
+  uniqId,
+  createFlags,
+  assign,
+  normalizeRules,
+  isNullOrUndefined,
+  setDataAttribute,
+  toggleClass,
+  getInputEventName,
+  debounce,
+  isCallable,
+  warn,
+  toArray,
+  getPath,
+  makeEventsArray,
+  makeDelayObject,
+} from './utils';
 import Generator from './generator';
 
 // @flow
@@ -50,7 +66,7 @@ export default class Field {
   initial: boolean;
   classes: boolean;
   classNames: { [string]: string };
-  delay: number;
+  delay: object;
   listen: boolean;
   model: ?string;
 
@@ -61,6 +77,7 @@ export default class Field {
     this.dependencies = [];
     this.watchers = [];
     this.events = [];
+    this.delay = 0;
     this.rules = {};
     if (!this.isHeadless && !options.targetOf) {
       setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
@@ -181,8 +198,8 @@ export default class Field {
     this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
     this.alias = options.alias || this.alias;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
-    this.delay = options.delay || this.delay || 0;
-    this.events = typeof options.events === 'string' && options.events.length ? options.events.split('|') : this.events;
+    this.events = (options.events) ? makeEventsArray(options.events) : this.events;
+    this.delay = (options.delay) ? makeDelayObject(this.events, options.delay) : makeDelayObject(this.events, this.delay);
     this.updateDependencies();
     this.addActionListeners();
 
@@ -453,22 +470,6 @@ export default class Field {
     let events = this.events.map(e => {
       return e === 'input' ? inputEvent : e;
     });
-
-    // Temporary object for delays since we always want a delay object
-    let delayObject = {};
-
-    // Create a delay object that includes every event we have configured
-    events.forEach(e => {
-      delayObject[e] = (typeof this.delay === 'object') ? 0 : this.delay;
-    });
-
-    // If we got an object from delay configuration we merge it, if we got
-    // a string we just replace it with our temporary object
-    if (typeof this.delay !== 'object') {
-      this.delay = delayObject;
-    } else {
-      this.delay = assign(delayObject, this.delay);
-    }
 
     // if there is a watchable model and an on input validation is requested.
     if (this.model && events.indexOf(inputEvent) !== -1) {

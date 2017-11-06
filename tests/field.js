@@ -10,7 +10,7 @@ test('constructs a headless field with default values', () => {
   expect(field.rules).toEqual({});
   expect(field.events).toEqual(['input', 'blur']);
   expect(field.watchers.length).toBe(0);
-  expect(field.delay).toBe(0);
+  expect(field.delay).toEqual({'input': 0, 'blur': 0});
   expect(field.flags).toEqual({
     untouched: true,
     touched: false,

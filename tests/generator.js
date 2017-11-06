@@ -72,11 +72,11 @@ test('resolves delay', () => {
   `;
   const vnode = { child: { $attrs: { 'data-vv-delay': '200' } } };
   let el = document.querySelector('#el');
-  expect(Generator.resolveDelay(el, {})).toBe('100');
+  expect(Generator.resolveDelay(el, {})).toEqual(expect.objectContaining({ local: { input: 100 } }));
 
   el = { getAttribute: () => null };
-  expect(Generator.resolveDelay(el, vnode)).toBe('200');
-  expect(Generator.resolveDelay(el, {}, { delay: '300' })).toBe('300');
+  expect(Generator.resolveDelay(el, vnode)).toEqual(expect.objectContaining({ local: { input: 200 } }));
+  expect(Generator.resolveDelay(el, {}, { delay: '300' })).toEqual({ global: 300 });
 })
 
 test('resolves events', () => {
@@ -85,10 +85,10 @@ test('resolves events', () => {
   `;
   let el = document.querySelector('#el');
   const vnode = { child: { $attrs: { 'data-vv-validate-on': 'focus' } } };
-  expect(Generator.resolveEvents(el, {})).toBe('input');
+  expect(Generator.resolveEvents(el, {})).toBe("input");
   el = { getAttribute: () => null };
 
-  expect(Generator.resolveEvents(el, vnode)).toBe('focus');
+  expect(Generator.resolveEvents(el, vnode)).toBe("focus");
 });
 
 test('resolves alias', () => {
