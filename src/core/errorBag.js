@@ -97,7 +97,7 @@ export default class ErrorBag {
       return collection;
     }
 
-    field = !isNullOrUndefined(field) ? String(field) : field;
+    field = String(field);
     if (isNullOrUndefined(scope)) {
       return this.items.filter(e => e.field === field).map(e => (map ? e.msg : e));
     }
@@ -125,7 +125,8 @@ export default class ErrorBag {
    * Gets the first error message for a specific field.
    */
   first (field: string, scope ?: ?string = null) {
-    field = !isNullOrUndefined(field) ? String(field) : field;
+    if (isNullOrUndefined(field)) return null;
+    field = String(field);
     const selector = this._selector(field);
     const scoped = this._scope(field);
 

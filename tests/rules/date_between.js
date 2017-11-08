@@ -20,6 +20,7 @@ test('checks if a date is between two other dates - left inclusive', () => {
   const format = 'DD/MM/YYYY';
 
   expect(validate('01/09/2016', ['01/09/2016', '20/09/2016', '[)', format])).toBe(true);
+  expect(validate('10/09/2016', ['01/09/2016', '20/09/2016', '[)', format])).toBe(true);
   expect(validate('20/09/2016', ['01/09/2016', '20/09/2016', '[)', format])).toBe(false);
 });
 
@@ -27,6 +28,7 @@ test('checks if a date is between two other dates - right inclusive', () => {
   const format = 'DD/MM/YYYY';
 
   expect(validate('01/09/2016', ['01/09/2016', '20/09/2016', '(]', format])).toBe(false);
+  expect(validate('10/09/2016', ['01/09/2016', '20/09/2016', '(]', format])).toBe(true);
   expect(validate('20/09/2016', ['01/09/2016', '20/09/2016', '(]', format])).toBe(true);
 });
 
@@ -35,5 +37,6 @@ test('checks if a date is between two other dates - all inclusive', () => {
   const format = 'DD/MM/YYYY';
 
   expect(validate('01/09/2016', ['01/09/2016', '20/09/2016', '[]', format])).toBe(true);
+  expect(validate('10/09/2016', ['01/09/2016', '20/09/2016', '[]', format])).toBe(true);
   expect(validate('20/09/2016', ['01/09/2016', '20/09/2016', '[]', format])).toBe(true);
 });

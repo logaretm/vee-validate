@@ -74,6 +74,8 @@ test('removes errors by matching against the field id', () => {
     scope: 's1'
   })
   expect(errors.count()).toBe(1);
+  errors.removeById('unknown');
+  expect(errors.count()).toBe(1);
   errors.removeById('myId');
   expect(errors.count()).toBe(0);
 });
@@ -177,6 +179,10 @@ test('fetches the first error message for a specific field', () => {
   errors.add('email', 'mah', 'rule2', 'scope2');
   expect(errors.first('scope1.email')).toBe('nah');
   expect(errors.first('scope2.email:rule2')).toBe('mah');
+
+  // no field given
+  expect(errors.first()).toBe(null);
+  expect(errors.first(null)).toBe(null);
 });
 
 test('fetches the first error message for a specific field that not match the rule', () => {
@@ -189,6 +195,7 @@ test('fetches the first error message for a specific field that not match the ru
   errors.add('email', 'This is the third rule', 'rule2');
   errors.add('email', 'This is the forth rule', 'rule2');
 
+  expect(errors.firstNot('unknown')).toBeNull();
   expect(errors.firstNot('email')).toBe('The email is invalid');
   expect(errors.firstNot('email', 'rule1')).toBe('The email is required');
 });
