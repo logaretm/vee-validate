@@ -8,7 +8,8 @@ import {
   getPath,
   hasPath,
   isNullOrUndefined,
-  isCallable
+  isCallable,
+  deepParseInt,
 } from './utils';
 
 /**
@@ -107,8 +108,15 @@ export default class Generator {
    * @param {*} vnode
    * @param {Object} options
    */
-  static resolveDelay (el, vnode, options = {}) {
-    return getDataAttribute(el, 'delay') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-delay']) || options.delay;
+  static resolveDelay (el, vnode, options) {
+    let delay = getDataAttribute(el, 'delay');
+    let globalDelay = (options && 'delay' in options) ? options.delay : 0;
+
+    if (!delay && vnode.child && vnode.child.$attrs) {
+      delay = vnode.child.$attrs['data-vv-delay'];
+    }
+
+    return (delay) ? { local: { input: parseInt(delay) }, global: deepParseInt(globalDelay) } : { global: deepParseInt(globalDelay) };
   }
 
   /**

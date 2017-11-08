@@ -378,5 +378,34 @@ export const isBuiltInComponent = (vnode): boolean => {
   const tag = vnode.componentOptions.tag;
 
   return /keep-alive|transition|transition-group/.test(tag);
-}
-;
+};
+
+export const makeEventsArray = (events: string) => {
+  return (typeof events === 'string' && events.length) ? events.split('|') : [];
+};
+
+export const makeDelayObject = (events: string[], delay: object | number) => {
+  let delayObject = {};
+
+  // We already have a valid delay object
+  if (typeof delay === 'object' && !('global' in delay) && !('local' in delay) && Object.keys(delay).length) return delay;
+
+  let globalDelay = (typeof delay === 'object' && 'global' in delay) ? delay.global : delay || 0;
+  let localDelay = (typeof delay === 'object' && 'local' in delay) ? delay.local : {};
+
+  events.forEach(e => {
+    delayObject[e] = (typeof globalDelay === 'object') ? localDelay[e] || globalDelay[e] || 0 : localDelay[e] || globalDelay;
+  });
+
+  return delayObject;
+};
+
+export const deepParseInt = (input: object | string) => {
+  if (typeof input === 'string') return parseInt(input);
+
+  for (const element in input) {
+    input[element] = parseInt(input[element]);
+  }
+
+  return input;
+};
