@@ -377,3 +377,9 @@ test('generates fake vm', () => {
   expect(vm.$el).toBe('this is an el');
   expect(vm.$refs.myref).toBe(1);
 });
+
+describe('getCtorConfig', () => {
+  test('it returns null if no child component is given', () => {
+    expect(Generator.getCtorConfig({})).toBeNull();
+  });
+});
