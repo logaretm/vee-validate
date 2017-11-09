@@ -30,7 +30,7 @@ test('constructs a headless field with default values', () => {
     pristine: 'pristine',
     dirty: 'dirty'
   });
-  expect(field.isHeadless).toBe(true);
+  expect(field.el).toBeFalsy();
   field.classNames = null; // make sure it resets to the default value.
   field.update({});
   expect(field.classNames).toEqual({
@@ -61,7 +61,6 @@ test('caches the field id on the element data attributes', () => {
 
   // check if id was cached.
   expect(el.getAttribute('data-vv-id')).toBe(field.id);
-  expect(field.isHeadless).toBe(false);
 });
 
 test('it adds value listeners on the native inputs', () => {
@@ -157,13 +156,6 @@ test('computes the display name', () => {
   expect(field.displayName).toBe(undefined);
   field.alias = 'aliased';
   expect(field.displayName).toBe('aliased');
-});
-
-test('it exposes a boolean to check wether it is a component or not', () => {
-  let field = new Field(null, { component: null });
-  expect(field.isVue).toBe(false);
-  field = new Field(null, { component: {} });
-  expect(field.isVue).toBe(true);
 });
 
 test('it adds class listeners on the input', () => {

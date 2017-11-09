@@ -58,7 +58,7 @@ export default class Field {
   component: Object | null;
   ctorConfig: ?Object;
   flags: { [string]: boolean };
-  alias: () => string | ?string;
+  alias: ?string | () => ?string;
   getter: () => any;
   name: string;
   scope: string | null;
@@ -66,7 +66,7 @@ export default class Field {
   initial: boolean;
   classes: boolean;
   classNames: { [string]: string };
-  delay: object;
+  delay: number | Object;
   listen: boolean;
   model: ?string;
 
@@ -79,7 +79,7 @@ export default class Field {
     this.events = [];
     this.delay = 0;
     this.rules = {};
-    if (!this.isHeadless && !options.targetOf) {
+    if (this.el && !options.targetOf) {
       setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
     }
     options = assign({}, DEFAULT_OPTIONS, options);
@@ -91,10 +91,6 @@ export default class Field {
     this.ctorConfig = this.component ? getPath('$options.$_veeValidate', this.component) : undefined;
     this.update(options);
     this.updated = false;
-  }
-
-  get isVue (): boolean {
-    return !!this.component;
   }
 
   get validator (): any {
@@ -114,15 +110,11 @@ export default class Field {
     return !!(this.component && this.component.disabled) || !!(this.el && this.el.disabled);
   }
 
-  get isHeadless (): boolean {
-    return !this.el;
-  }
-
   /**
    * Gets the display name (user-friendly name).
    */
 
-  get displayName (): string {
+  get displayName (): ?string {
     return isCallable(this.alias) ? this.alias() : this.alias;
   }
 
@@ -143,11 +135,11 @@ export default class Field {
    */
 
   get rejectsFalse (): boolean {
-    if (this.isVue && this.ctorConfig) {
+    if (this.component && this.ctorConfig) {
       return !!this.ctorConfig.rejectsFalse;
     }
 
-    if (this.isHeadless) {
+    if (!this.el) {
       return false;
     }
 
@@ -216,7 +208,7 @@ export default class Field {
     this.updated = true;
 
     // no need to continue.
-    if (this.isHeadless) {
+    if (!this.el) {
       return;
     };
 
@@ -409,7 +401,7 @@ export default class Field {
       this.unwatch(/^class_input$/);
     };
 
-    if (this.isVue && isCallable(this.component.$once)) {
+    if (this.component && isCallable(this.component.$once)) {
       this.component.$once('input', onInput);
       this.component.$once('blur', onBlur);
       this.watchers.push({
@@ -427,7 +419,7 @@ export default class Field {
       return;
     }
 
-    if (this.isHeadless) return;
+    if (!this.el) return;
 
     this.el.addEventListener(inputEvent, onInput);
     // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
@@ -486,7 +478,7 @@ export default class Field {
     events.forEach(e => {
       let validate = debounce(fn, this.delay[e]);
 
-      if (this.isVue) {
+      if (this.component) {
         this.component.$on(e, validate);
         this.watchers.push({
           tag: 'input_vue',
@@ -526,7 +518,7 @@ export default class Field {
    * Updates aria attributes on the element.
    */
   updateAriaAttrs () {
-    if (!this.aria || this.isHeadless || !isCallable(this.el.setAttribute)) return;
+    if (!this.aria || !this.el || !isCallable(this.el.setAttribute)) return;
 
     this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
     this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
@@ -536,7 +528,7 @@ export default class Field {
    * Updates the custom validity for the field.
    */
   updateCustomValidity () {
-    if (!this.validity || this.isHeadless || !isCallable(this.el.setCustomValidity)) return;
+    if (!this.validity || !this.el || !isCallable(this.el.setCustomValidity)) return;
 
     this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
   }
