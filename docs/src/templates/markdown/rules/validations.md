@@ -1,7 +1,5 @@
 > Date validators always require the `date_format` rule to be always present ([or globally set](https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.7)) and must preceed them in the rules order.
 
-> In the rule signature required parameters are enclosed within `{}` like this: `{param}`. Optional parameters have a `?` at the end: `{optional?}`. Lists are enclosed withn brackets `[]`. ex: `[list]`.
-
 ### [after:{target},{inclusion?}](#rule-after)
 
 The field under validation must have a valid date and is after the date value in the target field.
@@ -13,6 +11,8 @@ The field under validation must have a valid date and is after the date value in
 <span v-show="errors.has('after_field')" class="help is-danger">{{ errors.first('after_field') }}</span>
 
 <input name="after_field_target" :class="{'input': true, 'is-danger': errors.has('after_field') }" type="text" placeholder="DD/MM/YYYY">
+
+> Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but when targeting custom components the target field must have a `ref` attribute set and the confirmed paramter must be the same ref value prefixed with `$` sign to tell the validator that it should look for the target field in the component local `refs`. More  information are in the `RC.8` [release notes](https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.8).
 
 ### [alpha](#rule-alpha)
 
