@@ -177,7 +177,7 @@ export default class Field {
     this.initial = options.initial || this.initial || false;
 
     // update errors scope if the field scope was changed.
-    if (this.updated && !isNullOrUndefined(options.scope) && options.scope !== this.scope && isCallable(this.validator.update)) {
+    if (!isNullOrUndefined(options.scope) && options.scope !== this.scope && isCallable(this.validator.update)) {
       this.validator.update(this.id, { scope: options.scope });
     }
     this.scope = !isNullOrUndefined(options.scope) ? options.scope
