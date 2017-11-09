@@ -370,7 +370,6 @@ export default class Validator {
       return this._handleFieldNotFound(name, scope);
     }
 
-    this.errors.remove(field.name, field.scope, field.id);
     field.flags.pending = true;
     if (arguments.length === 1) {
       value = field.value;
@@ -381,15 +380,18 @@ export default class Validator {
     return this._validate(field, value, silentRun).then(result => {
       field.setFlags({
         pending: false,
-        valid: result,
+        valid: result.valid,
         validated: true
       });
 
+      this.errors.remove(field.name, field.scope, field.id);
       if (silentRun) {
         return Promise.resolve(true);
+      } else if (result.errors) {
+        result.errors.forEach(e => this.errors.add(e));
       }
 
-      return result;
+      return result.valid;
     });
   }
 
@@ -541,7 +543,7 @@ export default class Validator {
   /**
    * Tests a single input value against a rule.
    */
-  _test (field: Field, value: any, rule: MapObject, silent?: boolean) {
+  _test (field: Field, value: any, rule: MapObject): ValidationResult | Promise<ValidationResult> {
     const validator = RULES[rule.name];
     let params = Array.isArray(rule.params) ? toArray(rule.params) : [];
     let targetName = null;
@@ -582,17 +584,16 @@ export default class Validator {
           data = values.data;
         }
 
-        if (!allValid && !silent) {
-          this.errors.add({
+        return {
+          valid: allValid,
+          error: allValid ? undefined : {
             id: field.id,
             field: field.name,
             msg: this._formatErrorMessage(field, rule, data, targetName),
             rule: rule.name,
             scope: field.scope
-          });
-        }
-
-        return allValid;
+          }
+        };
       });
     }
 
@@ -600,17 +601,16 @@ export default class Validator {
       result = { valid: result, data: {} };
     }
 
-    if (!result.valid && !silent) {
-      this.errors.add({
+    return {
+      valid: result.valid,
+      error: result.valid ? undefined : {
         id: field.id,
         field: field.name,
         msg: this._formatErrorMessage(field, rule, result.data, targetName),
         rule: rule.name,
         scope: field.scope
-      });
-    }
-
-    return result.valid;
+      }
+    };
   }
 
   /**
@@ -704,33 +704,51 @@ export default class Validator {
   /**
    * Starts the validation process.
    */
-  _validate (field: Field, value: any, silent?: boolean = false): Promise<boolean> {
+  _validate (field: Field, value: any, silent?: boolean = false): Promise<ValidationResult> {
     if (!field.isRequired && (isNullOrUndefined(value) || value === '')) {
-      return Promise.resolve(true);
+      return Promise.resolve({ valid: true });
     }
 
     const promises = [];
+    const errors = [];
     let isExitEarly = false;
     // use of '.some()' is to break iteration in middle by returning true
     Object.keys(field.rules).some(rule => {
-      const result = this._test(field, value, { name: rule, params: field.rules[rule] }, silent);
-
+      const result = this._test(field, value, { name: rule, params: field.rules[rule] });
       if (isCallable(result.then)) {
         promises.push(result);
-      } else if (this.fastExit && !result) {
+      } else if (this.fastExit && !result.valid) {
+        errors.push(result.error);
         isExitEarly = true;
       } else {
-        const resultAsPromise = new Promise(resolve => {
+        // promisify the result.
+        promises.push(new Promise(resolve => {
           resolve(result);
-        });
-        promises.push(resultAsPromise);
+        }));
       }
 
       return isExitEarly;
     });
 
-    if (isExitEarly) return Promise.resolve(false);
+    if (isExitEarly) {
+      return Promise.resolve({
+        valid: false,
+        errors
+      });
+    }
 
-    return Promise.all(promises).then(values => values.every(t => t));
+    return Promise.all(promises).then(values => values.map(v => {
+      if (!v.valid) {
+        errors.push(v.error);
+      }
+
+      return v.valid;
+    }).every(t => t)
+    ).then(result => {
+      return {
+        valid: result,
+        errors
+      };
+    });
   }
 }
