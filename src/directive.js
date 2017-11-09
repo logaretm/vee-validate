@@ -41,12 +41,11 @@ export default {
   },
   update: (el: HTMLElement, binding, vnode) => {
     const field = findField(el, vnode.context);
-    const scope = Generator.resolveScope(el, binding, vnode);
-    const rulesChanged = isEqual(binding.value, binding.oldValue);
 
     // make sure we don't do unneccasary work if no important change was done.
-    if (!field || field.scope === scope || (field.updated && rulesChanged)) return;
-    const rules = rulesChanged ? Generator.resolveRules(el, binding) : undefined;
+    if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
+    const scope = Generator.resolveScope(el, binding, vnode);
+    const rules = Generator.resolveRules(el, binding);
 
     field.update({
       scope,
