@@ -191,7 +191,7 @@ export default class Field {
     this.alias = options.alias || this.alias;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this.events = (options.events) ? makeEventsArray(options.events) : this.events;
-    this.delay = (options.delay) ? makeDelayObject(this.events, options.delay) : makeDelayObject(this.events, this.delay);
+    this.delay = (options.delay) ? makeDelayObject(this.events, options.delay) : this.delay;
     this.updateDependencies();
     this.addActionListeners();
 
@@ -465,7 +465,7 @@ export default class Field {
 
     // if there is a watchable model and an on input validation is requested.
     if (this.model && events.indexOf(inputEvent) !== -1) {
-      const unwatch = this.vm.$watch(this.model, this.delay[inputEvent]);
+      const unwatch = this.vm.$watch(this.model, debounce(fn, this.delay[inputEvent]));
       this.watchers.push({
         tag: 'input_model',
         unwatch
