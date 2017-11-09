@@ -7,3 +7,9 @@ declare type ResultObject = {
 };
 
 declare type Rule = (value: any, params: any[]) => boolean | ResultObject | Promise<boolean | ResultObject>;
+
+declare type ValidationResult = {
+  valid: boolean,
+  error: ?MapObject,
+  errors: ?Array<FieldError>
+};

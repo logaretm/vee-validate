@@ -1,13 +1,7 @@
 import Validator from './core/validator';
 import Config from './config';
-import {
-  isObject,
-  isCallable,
-  createProxy,
-  createFlags,
-  warn,
-  isBuiltInComponent
-} from './core/utils';
+import { isPlainObject, isFunction } from 'lodash';
+import { createProxy, createFlags, warn, isBuiltInComponent } from './core/utils';
 
 // @flow
 
@@ -36,7 +30,7 @@ const requestsValidator = (injections: Object | string[]) => {
     return true;
   }
 
-  if (isObject(injections) && injections.$validator) {
+  if (isPlainObject(injections) && injections.$validator) {
     return true;
   }
 
@@ -121,7 +115,7 @@ export default {
     if (isBuiltInComponent(this.$vnode)) return;
 
     // mark the validator paused to prevent delayed validation.
-    if (this.$validator && this.$validator.ownerId === this._uid && isCallable(this.$validator.pause)) {
+    if (this.$validator && this.$validator.ownerId === this._uid && isFunction(this.$validator.pause)) {
       this.$validator.pause();
     }
   }

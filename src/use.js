@@ -1,11 +1,12 @@
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
-import { warn, isCallable } from './core/utils';
+import { isFunction } from 'lodash';
+import { warn } from './core/utils';
 
 // @flow
 
 function use (plugin: (ctx: PluginContext, options?: any) => any, options?: any = {}) {
-  if (!isCallable(plugin)) {
+  if (!isFunction(plugin)) {
     return warn('The plugin must be a callable function');
   }
 

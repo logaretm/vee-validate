@@ -1,17 +1,12 @@
+import { uniqueId, assign, debounce, isFunction, toArray, get } from 'lodash';
 import {
-  uniqId,
   createFlags,
-  assign,
   normalizeRules,
   isNullOrUndefined,
   setDataAttribute,
   toggleClass,
   getInputEventName,
-  debounce,
-  isCallable,
   warn,
-  toArray,
-  getPath,
   makeEventsArray,
   makeDelayObject,
 } from './utils';
@@ -58,7 +53,7 @@ export default class Field {
   component: Object | null;
   ctorConfig: ?Object;
   flags: { [string]: boolean };
-  alias: () => string | ?string;
+  alias: ?string | () => ?string;
   getter: () => any;
   name: string;
   scope: string | null;
@@ -66,12 +61,12 @@ export default class Field {
   initial: boolean;
   classes: boolean;
   classNames: { [string]: string };
-  delay: object;
+  delay: number | Object;
   listen: boolean;
   model: ?string;
 
   constructor (el: HTMLInputElement | null, options = {}) {
-    this.id = uniqId();
+    this.id = uniqueId();
     this.el = el;
     this.updated = false;
     this.dependencies = [];
@@ -79,7 +74,7 @@ export default class Field {
     this.events = [];
     this.delay = 0;
     this.rules = {};
-    if (!this.isHeadless && !options.targetOf) {
+    if (this.el && !options.targetOf) {
       setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
     }
     options = assign({}, DEFAULT_OPTIONS, options);
@@ -88,13 +83,9 @@ export default class Field {
     this.flags = createFlags();
     this.vm = options.vm;
     this.component = options.component;
-    this.ctorConfig = this.component ? getPath('$options.$_veeValidate', this.component) : undefined;
+    this.ctorConfig = this.component ? get(this.component, '$options.$_veeValidate') : undefined;
     this.update(options);
     this.updated = false;
-  }
-
-  get isVue (): boolean {
-    return !!this.component;
   }
 
   get validator (): any {
@@ -114,16 +105,12 @@ export default class Field {
     return !!(this.component && this.component.disabled) || !!(this.el && this.el.disabled);
   }
 
-  get isHeadless (): boolean {
-    return !this.el;
-  }
-
   /**
    * Gets the display name (user-friendly name).
    */
 
-  get displayName (): string {
-    return isCallable(this.alias) ? this.alias() : this.alias;
+  get displayName (): ?string {
+    return isFunction(this.alias) ? this.alias() : this.alias;
   }
 
   /**
@@ -131,7 +118,7 @@ export default class Field {
    */
 
   get value (): any {
-    if (!isCallable(this.getter)) {
+    if (!isFunction(this.getter)) {
       return undefined;
     }
 
@@ -143,11 +130,11 @@ export default class Field {
    */
 
   get rejectsFalse (): boolean {
-    if (this.isVue && this.ctorConfig) {
+    if (this.component && this.ctorConfig) {
       return !!this.ctorConfig.rejectsFalse;
     }
 
-    if (this.isHeadless) {
+    if (!this.el) {
       return false;
     }
 
@@ -185,7 +172,7 @@ export default class Field {
     this.initial = options.initial || this.initial || false;
 
     // update errors scope if the field scope was changed.
-    if (this.updated && !isNullOrUndefined(options.scope) && options.scope !== this.scope && isCallable(this.validator.update)) {
+    if (!isNullOrUndefined(options.scope) && options.scope !== this.scope && isFunction(this.validator.update)) {
       this.validator.update(this.id, { scope: options.scope });
     }
     this.scope = !isNullOrUndefined(options.scope) ? options.scope
@@ -197,9 +184,9 @@ export default class Field {
     this.classes = options.classes || this.classes || false;
     this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
     this.alias = options.alias || this.alias;
-    this.getter = isCallable(options.getter) ? options.getter : this.getter;
+    this.getter = isFunction(options.getter) ? options.getter : this.getter;
     this.events = (options.events) ? makeEventsArray(options.events) : this.events;
-    this.delay = (options.delay) ? makeDelayObject(this.events, options.delay) : makeDelayObject(this.events, this.delay);
+    this.delay = (options.delay) ? makeDelayObject(this.events, options.delay) : this.delay;
     this.updateDependencies();
     this.addActionListeners();
 
@@ -216,7 +203,7 @@ export default class Field {
     this.updated = true;
 
     // no need to continue.
-    if (this.isHeadless) {
+    if (!this.el) {
       return;
     };
 
@@ -334,7 +321,7 @@ export default class Field {
       };
 
       // probably a component.
-      if (isCallable(el.$watch)) {
+      if (isFunction(el.$watch)) {
         options.component = el;
         options.el = el.$el;
         options.alias = Generator.resolveAlias(el.$el, { child: el });
@@ -409,7 +396,7 @@ export default class Field {
       this.unwatch(/^class_input$/);
     };
 
-    if (this.isVue && isCallable(this.component.$once)) {
+    if (this.component && isFunction(this.component.$once)) {
       this.component.$once('input', onInput);
       this.component.$once('blur', onBlur);
       this.watchers.push({
@@ -427,7 +414,7 @@ export default class Field {
       return;
     }
 
-    if (this.isHeadless) return;
+    if (!this.el) return;
 
     this.el.addEventListener(inputEvent, onInput);
     // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
@@ -459,7 +446,7 @@ export default class Field {
       this.validator.validate(`#${this.targetOf}`);
     } : (...args) => {
       // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
-      if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event) || (args[0] && args[0].srcElement)) {
+      if (args.length === 0 || (isFunction(Event) && args[0] instanceof Event) || (args[0] && args[0].srcElement)) {
         args[0] = this.value;
       }
       this.validator.validate(`#${this.id}`, args[0]);
@@ -473,7 +460,7 @@ export default class Field {
 
     // if there is a watchable model and an on input validation is requested.
     if (this.model && events.indexOf(inputEvent) !== -1) {
-      const unwatch = this.vm.$watch(this.model, this.delay[inputEvent]);
+      const unwatch = this.vm.$watch(this.model, debounce(fn, this.delay[inputEvent]));
       this.watchers.push({
         tag: 'input_model',
         unwatch
@@ -486,7 +473,7 @@ export default class Field {
     events.forEach(e => {
       let validate = debounce(fn, this.delay[e]);
 
-      if (this.isVue) {
+      if (this.component) {
         this.component.$on(e, validate);
         this.watchers.push({
           tag: 'input_vue',
@@ -526,7 +513,7 @@ export default class Field {
    * Updates aria attributes on the element.
    */
   updateAriaAttrs () {
-    if (!this.aria || this.isHeadless || !isCallable(this.el.setAttribute)) return;
+    if (!this.aria || !this.el || !isFunction(this.el.setAttribute)) return;
 
     this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
     this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
@@ -536,7 +523,7 @@ export default class Field {
    * Updates the custom validity for the field.
    */
   updateCustomValidity () {
-    if (!this.validity || this.isHeadless || !isCallable(this.el.setCustomValidity)) return;
+    if (!this.validity || !this.el || !isFunction(this.el.setCustomValidity)) return;
 
     this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
   }

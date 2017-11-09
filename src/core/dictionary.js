@@ -1,4 +1,4 @@
-import { isObject, assign } from './utils';
+import { isPlainObject, assign } from 'lodash';
 
 // @flow
 
@@ -113,12 +113,12 @@ export default class Dictionary {
   }
 
   _merge (target: Dict, source: Dict) {
-    if (! (isObject(target) && isObject(source))) {
+    if (! (isPlainObject(target) && isPlainObject(source))) {
       return target;
     }
 
     Object.keys(source).forEach((key: string) => {
-      if (isObject(source[key])) {
+      if (isPlainObject(source[key])) {
         if (! target[key]) {
           assign(target, { [key]: {} });
         }

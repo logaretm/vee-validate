@@ -958,11 +958,11 @@ test('localize api', () => {
   expect(v.locale).toBe('ar');
 });
 
-test('updates existing field errors and flags to match the new scope', () => {
+test('updates existing field errors and flags to match the new scope', async () => {
   const v = new Validator();
   let field = v.attach({ name: 'email', rules: 'required|email' });
   expect(v.flags.email).toBeTruthy();
-  v.validate('email', 'someinvalid');
+  await v.validate('email', 'someinvalid');
   expect(v.errors.first('email')).toBeTruthy();
 
   // changed scope.
@@ -980,7 +980,7 @@ test('updates existing field errors and flags to match the new scope', () => {
   // test scoped fields.
   field = v.attach({ name: 'email', rules: 'required|email', scope: 's1' });
   expect(v.flags.$s1.email).toBeTruthy();
-  v.validate('s1.email', 'someinvalid');
+  await v.validate('s1.email', 'someinvalid');
   expect(v.errors.first('s1.email')).toBeTruthy();
 
   // changed scope.

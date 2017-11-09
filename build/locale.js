@@ -1,8 +1,20 @@
 const path = require('path');
 const rollup = require('rollup');
-const buble = require('rollup-plugin-buble');
+const babel = require('rollup-plugin-babel');
 const fs = require('fs');
 const UglifyJS = require('uglify-js');
+
+const babelConfig = {
+  babelrc: false,
+  exclude: 'node_modules/**',
+  presets: [ [ 'es2015', { modules: false } ] ],
+  plugins: [
+    'external-helpers',
+    'transform-async-to-generator',
+    'transform-flow-strip-types',
+    'lodash',
+  ]
+};
 
 async function build () {
   const localesDir = path.join(__dirname, '../locale');
@@ -22,7 +34,7 @@ async function build () {
       input,
       external: ['VeeValidate'],
       plugins: [
-        buble()
+        babel(babelConfig)
       ],
     });
 

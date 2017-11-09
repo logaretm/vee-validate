@@ -1,4 +1,4 @@
-import { assign, getPath } from './core/utils';
+import { assign, get } from 'lodash';
 
 // @flow
 
@@ -40,7 +40,7 @@ export default class Config {
    * Resolves the working config from a Vue instance.
    */
   static resolve (context: Object): MapObject {
-    const selfConfig = getPath('$options.$_veeValidate', context, {});
+    const selfConfig = get(context, '$options.$_veeValidate', {});
 
     return assign({}, Config.current, selfConfig);
   }

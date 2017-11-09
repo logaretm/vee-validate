@@ -1,6 +1,7 @@
 import Generator from './core/generator';
 import Field from './core/field';
-import { getDataAttribute, isEqual, warn } from './core/utils';
+import { isEqual } from 'lodash';
+import { getDataAttribute, warn } from './core/utils';
 
 // @flow
 
