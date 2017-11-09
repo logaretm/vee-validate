@@ -254,9 +254,9 @@ export default class Validator {
     if (field.initial) {
       this.validate(`#${field.id}`, value || field.value);
     } else {
-      this._validate(field, value || field.value, true).then(valid => {
-        field.flags.valid = valid;
-        field.flags.invalid = !valid;
+      this._validate(field, value || field.value, true).then(result => {
+        field.flags.valid = result.valid;
+        field.flags.invalid = !result.valid;
       });
     }
 
