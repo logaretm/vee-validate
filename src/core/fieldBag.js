@@ -1,5 +1,6 @@
 import Field from './field';
-import { find, createError } from './utils';
+import { find } from 'lodash';
+import { createError } from './utils';
 
 // @flow
 

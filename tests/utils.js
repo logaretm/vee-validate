@@ -43,53 +43,6 @@ test('gets the element scope from the element or from the owning form', () => {
   expect(utils.getScope(el)).toBe('form-scope');
 });
 
-test('checks if a value is an object', () => {
-  expect(utils.isObject(null)).toBe(false);
-  expect(utils.isObject([])).toBe(false);
-  expect(utils.isObject('someval')).toBe(false);
-  expect(utils.isObject({})).toBe(true);
-});
-
-test('returns first matching element from array', () => {
-  const find = utils.find;
-  // testing on a nodelist to check if it converts correctly.
-  document.body.innerHTML = `
-      <input class="class" name="i1" id="i1">
-      <input class="class" name="i2">
-      <input class="class" name="i3">
-  `;
-  const nodeList = document.querySelectorAll('.class');
-  const el = document.querySelector('#i1');
-  expect(find(nodeList, el => el.name === 'i1')).toBe(el);
-
-  // test polyfill.
-  let arr = Array.from(nodeList);
-  arr.find = undefined;
-  expect(find(arr, el => el.name === 'i1')).toBe(el);
-
-  // test not found
-  arr = [1, 2, 3];
-  arr.find = undefined;
-  expect(find(arr, i => i === 4)).toBe(undefined);
-});
-
-test('assigns objects', () => {
-  const o1 = { a: 1, b: 1, c: 1 };
-  const o2 = { b: 2, c: 2, d: { a: 1, b: 2 } };
-  const o3 = { c: 3 };
-  const result = { a: 1, b: 2, c: 3, d: { a: 1, b: 2 } };
-  expect(utils.assign({}, o1, o2, o3, null)).toEqual(result);
-  expect(() => {
-    utils.assign(null, o1);
-  }).toThrow();
-
-  // TODO: test polyfill.
-  expect(utils.assign({}, o1, o2, o3, null)).toEqual(result);
-  expect(() => {
-    utils.assign(null, o1);
-  }).toThrow();
-});
-
 test('removes classes', () => {
   document.body.innerHTML = '<input id="el" type="text" class="some class">';
   let el = document.querySelector('#el');
@@ -141,106 +94,10 @@ test('toggles classes', () => {
   }).not.toThrow();
 });
 
-test('converts array like objects to arrays', () => {
-  document.body.innerHTML = `
-        <div class="class"></div>
-        <div class="class"></div>
-        <div class="class"></div>
-    `;
-
-  const nodeList = document.querySelectorAll('.class');
-  expect(Array.isArray(nodeList)).toBe(false);
-
-  let array = utils.toArray(nodeList);
-  expect(Array.isArray(array)).toBe(true);
-
-  // test polyfill.
-  global.Array.from = undefined;
-  array = utils.toArray(nodeList);
-  expect(Array.isArray(array)).toBe(true);
-  expect(array.length).toBe(3);
-});
-
-
-test('checks if a value path with exists', () => {
-  const some = {
-    value: {
-      path: undefined,
-      val: 1
-    }
-  };
-
-  expect(utils.hasPath('value.val', some)).toBe(true); // exists.
-  expect(utils.hasPath('value.path', some)).toBe(true); // undefined but exists.
-  expect(utils.hasPath('value.not', some)).toBe(false); // does not.
-});
-
-test('gets the value path with a fallback value', () => {
-  const some = {
-    value: {
-      path: undefined,
-      val: 1
-    }
-  };
-
-  expect(utils.getPath(null, some)).toBe(undefined); // no path.
-  expect(utils.getPath('value.val', null)).toBe(undefined); // no object.
-
-  expect(utils.getPath('value.val', some)).toBe(1); // exists.
-  expect(utils.getPath('value.path', some)).toBe(undefined); // undefined but exists.
-  expect(utils.getPath('value.not', some, false)).toBe(false); // does not.
-});
-
-
-test('debounces the provided function', done => {
-  const [value, argument] = ['someval', 'somearg'];
-  expect.assertions(2);
-  const func = utils.debounce((val, arg) => {
-    expect(val).toBe(value);
-    expect(arg).toBe(argument);
-  }, 2);
-
-  func(value, argument);
-  setTimeout(() => {
-    done();
-  }, 3);
-});
-
-test('calls functions immediatly if time is 0', done => {
-  const [value, argument] = ['someval', 'somearg'];
-  expect.assertions(2);
-  const func = utils.debounce((val, arg) => {
-    expect(val).toBe(value);
-    expect(arg).toBe(argument);
-  }, 0);
-  // test default value.
-  const func2 = utils.debounce((val, arg) => {
-    expect(val).toBe(value);
-    expect(arg).toBe(argument);
-  });
-
-  func(value, argument);
-  expect.assertions(4);
-  func2(value, argument);
-  done();
-});
-
 test('warns with branded message', () => {
   global.console = { warn: jest.fn() }
   utils.warn('Something is not right');
   expect(console.warn).toBeCalledWith('[vee-validate] Something is not right');
-});
-
-test('it generates a unique id', () => {
-  // using ES6 Sets to test, FeelsGood.
-  const ids = new Set();
-  // test uniqueness on 1000 elements, more than that is unlikely to happen within the same validator.
-  for (let i = 0; i < 1000; i++) {
-    ids.add(utils.uniqId());
-  }
-
-  // 1000 unique entries.
-  expect(ids.size).toBe(1000);
 });
 
 describe('normalizes rules', () => {
@@ -297,61 +154,6 @@ test('creates branded errors', () => {
   expect(() => {
     throw utils.createError('My Error')
   }).toThrowError('[vee-validate] My Error');
-});
-
-test('checks if a value is a callable function', () => {
-  expect(utils.isCallable(null)).toBe(false);
-  expect(utils.isCallable(() => {})).toBe(true);
-});
-
-test('compares two values', () => {
-  expect(utils.isEqual(true, true)).toBe(true);
-  expect(utils.isEqual(true, false)).toBe(false);
-
-  expect(utils.isEqual(1, 1)).toBe(true);
-  expect(utils.isEqual(1, 2)).toBe(false);
-
-  expect(utils.isEqual('1', 1)).toBe(false);
-
-  expect(utils.isEqual('value', 'value')).toBe(true);
-  expect(utils.isEqual('value1', 'value')).toBe(false);
-
-  expect(utils.isEqual({}, {})).toBe(true);
-  expect(utils.isEqual({}, { new: null })).toBe(false);
-  // same effect.
-  expect(utils.isEqual({}, { new: undefined })).toBe(true);
-
-  //
-  expect(utils.isEqual({
-    foo: 1,
-    bar: 2,
-    baz: 'other'
-  }, {
-    foo: 1,
-    bar: '2',
-    baz: 'other'
-  })).toBe(false);
-
-  expect(utils.isEqual({
-    foo: /myregex/gi,
-    bar: 2
-  }, {
-    foo: /myregex/ig,
-    bar: 2
-  })).toBe(true);
-
-
-  expect(utils.isEqual({
-    foo: /myregx/g,
-    bar: 2
-  }, {
-    foo: /myregex/ig,
-    bar: 2
-  })).toBe(false);
-
-  expect(utils.isEqual([1, 2, 3], [1, 2, 3])).toBe(true);
-  expect(utils.isEqual([1, 2, 3], [1, 2])).toBe(false);
-  expect(utils.isEqual([1, 2, 3], [1, 2, '3'])).toBe(false);
 });
 
 test('formats file sizes', () => {

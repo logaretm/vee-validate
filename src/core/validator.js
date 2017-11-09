@@ -1,6 +1,7 @@
 import ErrorBag from './errorBag';
 import Dictionary from './dictionary';
-import { isObject, isCallable, toArray, warn, createError, assign, find, isNullOrUndefined } from './utils';
+import { isPlainObject, isFunction, toArray, assign, find } from 'lodash';
+import { warn, createError, isNullOrUndefined } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
 
@@ -38,7 +39,7 @@ export default class Validator {
     this.fastExit = options.fastExit || false;
     this.ownerId = options.vm && options.vm._uid;
     // create it statically since we don't need constant access to the vm.
-    this.reset = options.vm && isCallable(options.vm.$nextTick) ? () => {
+    this.reset = options.vm && isFunction(options.vm.$nextTick) ? () => {
       return new Promise((resolve, reject) => {
         options.vm.$nextTick(() => {
           this.fields.items.forEach(i => i.reset());
@@ -424,7 +425,7 @@ export default class Validator {
 
     if (typeof values === 'string') {
       matcher = { scope: values };
-    } else if (isObject(values)) {
+    } else if (isPlainObject(values)) {
       matcher = Object.keys(values).map(key => {
         return { name: key, scope: arguments[1] || null };
       });
@@ -500,12 +501,12 @@ export default class Validator {
     if (!this.dictionary.hasLocale(LOCALE)) {
       const msg = this.dictionary.getFieldMessage('en', field.name, rule.name);
 
-      return isCallable(msg) ? msg(name, params, data) : msg;
+      return isFunction(msg) ? msg(name, params, data) : msg;
     }
 
     const msg = this.dictionary.getFieldMessage(LOCALE, field.name, rule.name);
 
-    return isCallable(msg) ? msg(name, params, data) : msg;
+    return isFunction(msg) ? msg(name, params, data) : msg;
   }
 
   /**
@@ -573,14 +574,14 @@ export default class Validator {
     let result = validator(value, params);
 
     // If it is a promise.
-    if (isCallable(result.then)) {
+    if (isFunction(result.then)) {
       return result.then(values => {
         let allValid = true;
         let data = {};
         if (Array.isArray(values)) {
-          allValid = values.every(t => (isObject(t) ? t.valid : t));
+          allValid = values.every(t => (isPlainObject(t) ? t.valid : t));
         } else { // Is a single object/boolean.
-          allValid = isObject(values) ? values.valid : values;
+          allValid = isPlainObject(values) ? values.valid : values;
           data = values.data;
         }
 
@@ -597,7 +598,7 @@ export default class Validator {
       });
     }
 
-    if (!isObject(result)) {
+    if (!isPlainObject(result)) {
       result = { valid: result, data: {} };
     }
 
@@ -617,13 +618,13 @@ export default class Validator {
    * Merges a validator object into the RULES and Messages.
    */
   static _merge (name: string, validator: Rule) {
-    if (isCallable(validator)) {
+    if (isFunction(validator)) {
       RULES[name] = validator;
       return;
     }
 
     RULES[name] = validator.validate;
-    if (isCallable(validator.getMessage)) {
+    if (isFunction(validator.getMessage)) {
       DICTIONARY.setMessage(LOCALE, name, validator.getMessage);
     }
 
@@ -647,18 +648,18 @@ export default class Validator {
    * Guards from extension violations.
    */
   static _guardExtend (name: string, validator: Rule) {
-    if (isCallable(validator)) {
+    if (isFunction(validator)) {
       return;
     }
 
-    if (!isCallable(validator.validate)) {
+    if (!isFunction(validator.validate)) {
       throw createError(
         // eslint-disable-next-line
         `Extension Error: The validator '${name}' must be a function or have a 'validate' method.`
       );
     }
 
-    if (!isCallable(validator.getMessage) && !isObject(validator.messages)) {
+    if (!isFunction(validator.getMessage) && !isPlainObject(validator.messages)) {
       throw createError(
         // eslint-disable-next-line
         `Extension Error: The validator '${name}' must have a 'getMessage' method or have a 'messages' object.`
@@ -715,7 +716,7 @@ export default class Validator {
     // use of '.some()' is to break iteration in middle by returning true
     Object.keys(field.rules).some(rule => {
       const result = this._test(field, value, { name: rule, params: field.rules[rule] });
-      if (isCallable(result.then)) {
+      if (isFunction(result.then)) {
         promises.push(result);
       } else if (this.fastExit && !result.valid) {
         errors.push(result.error);

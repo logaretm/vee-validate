@@ -1,3 +1,5 @@
+import { isPlainObject } from 'lodash';
+
 // @flow
 
 /**
@@ -44,38 +46,6 @@ export const createFlags = (): Object => ({
 });
 
 /**
- * Shallow object comparison.
- */
-export const isEqual = (lhs: any, rhs: any): boolean => {
-  if (lhs instanceof RegExp && rhs instanceof RegExp) {
-    return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
-  }
-
-  if (Array.isArray(lhs) && Array.isArray(rhs)) {
-    if (lhs.length !== rhs.length) return false;
-
-    for (let i = 0; i < lhs.length; i++) {
-      if (!isEqual(lhs[i], rhs[i])) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  // if both are objects, compare each key recursively.
-  if (isObject(lhs) && isObject(rhs)) {
-    return Object.keys(lhs).every(key => {
-      return isEqual(lhs[key], rhs[key]);
-    }) && Object.keys(rhs).every(key => {
-      return isEqual(lhs[key], rhs[key]);
-    });
-  }
-
-  return lhs === rhs;
-};
-
-/**
  * Determines the input field scope.
  */
 export const getScope = (el: HTMLInputElement) => {
@@ -85,44 +55,6 @@ export const getScope = (el: HTMLInputElement) => {
   }
 
   return !isNullOrUndefined(scope) ? scope : null;
-};
-
-/**
- * Gets the value in an object safely.
- */
-export const getPath = (path: string, target: ?Object, def: any = undefined) => {
-  if (!path || !target) return def;
-
-  let value = target;
-  path.split('.').every(prop => {
-    if (! Object.prototype.hasOwnProperty.call(value, prop) && value[prop] === undefined) {
-      value = def;
-
-      return false;
-    }
-
-    value = value[prop];
-
-    return true;
-  });
-
-  return value;
-};
-
-/**
- * Checks if path exists within an object.
- */
-export const hasPath = (path: string, target: Object) => {
-  let obj = target;
-  return path.split('.').every(prop => {
-    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
-      return false;
-    }
-
-    obj = obj[prop];
-
-    return true;
-  });
 };
 
 /**
@@ -140,30 +72,6 @@ export const parseRule = (rule: string): Object => {
 };
 
 /**
- * Debounces a function.
- */
-export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = false) => {
-  if (wait === 0) {
-    return fn;
-  }
-
-  let timeout;
-
-  return (...args: any[]) => {
-    const later = () => {
-      timeout = null;
-      if (!immediate) fn(...args);
-    };
-    /* istanbul ignore next */
-    const callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    /* istanbul ignore next */
-    if (callNow) fn(...args);
-  };
-};
-
-/**
  * Normalizes the given rules expression.
  */
 export const normalizeRules = (rules: string | { [string]: boolean | any[] }) => {
@@ -172,7 +80,7 @@ export const normalizeRules = (rules: string | { [string]: boolean | any[] }) =>
     return {};
   }
 
-  if (isObject(rules)) {
+  if (isPlainObject(rules)) {
     // $FlowFixMe
     return Object.keys(rules).reduce((prev, curr) => {
       let params = [];
@@ -221,16 +129,6 @@ export const warn = (message: string) => {
  * Creates a branded error object.
  */
 export const createError = (message: string): Error => new Error(`[vee-validate] ${message}`);
-
-/**
- * Checks if the value is an object.
- */
-export const isObject = (obj: any): boolean => obj !== null && obj && typeof obj === 'object' && ! Array.isArray(obj);
-
-/**
- * Checks if a function is callable.
- */
-export const isCallable = (func: any): boolean => typeof func === 'function';
 
 /**
  * Check if element has the css class on it.
@@ -283,80 +181,6 @@ export const toggleClass = (el: ?HTMLElement, className: ?string, status: boolea
   }
 
   removeClass(el, className);
-};
-
-/**
- * Converts an array-like object to array, provides a simple polyfill for Array.from
- */
-export const toArray = (arrayLike: { length: number }) => {
-  if (isCallable(Array.from)) {
-    return Array.from(arrayLike);
-  }
-
-  const array = [];
-  const length = arrayLike.length;
-  for (let i = 0; i < length; i++) {
-    array.push(arrayLike[i]);
-  }
-
-  return array;
-};
-
-/**
- * Assign polyfill from the mdn.
- */
-export const assign = (target: Object, ...others: any[]) => {
-  /* istanbul ignore else */
-  if (isCallable(Object.assign)) {
-    return Object.assign(target, ...others);
-  }
-
-  /* istanbul ignore next */
-  if (target == null) {
-    throw new TypeError('Cannot convert undefined or null to object');
-  }
-
-  /* istanbul ignore next */
-  const to = Object(target);
-  /* istanbul ignore next */
-  others.forEach(arg => {
-    // Skip over if undefined or null
-    if (arg != null) {
-      Object.keys(arg).forEach(key => {
-        to[key] = arg[key];
-      });
-    }
-  });
-  /* istanbul ignore next */
-  return to;
-};
-
-/**
- * Generates a unique id.
- */
-export const uniqId = (): string => `_${Math.random().toString(36).substr(2, 9)}`;
-
-/**
- * finds the first element that satisfies the predicate callback, polyfills array.find
- */
-export const find = (arrayLike: { length: number }, predicate: (any) => boolean) => {
-  const array = toArray(arrayLike);
-
-  if (isCallable(array.find)) {
-    return array.find(predicate);
-  }
-
-  let result;
-  array.some(item => {
-    if (predicate(item)) {
-      result = item;
-      return true;
-    }
-
-    return false;
-  });
-
-  return result;
 };
 
 /**

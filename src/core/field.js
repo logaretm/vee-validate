@@ -1,17 +1,12 @@
+import { uniqueId, assign, debounce, isFunction, toArray, get } from 'lodash';
 import {
-  uniqId,
   createFlags,
-  assign,
   normalizeRules,
   isNullOrUndefined,
   setDataAttribute,
   toggleClass,
   getInputEventName,
-  debounce,
-  isCallable,
   warn,
-  toArray,
-  getPath,
   makeEventsArray,
   makeDelayObject,
 } from './utils';
@@ -71,7 +66,7 @@ export default class Field {
   model: ?string;
 
   constructor (el: HTMLInputElement | null, options = {}) {
-    this.id = uniqId();
+    this.id = uniqueId();
     this.el = el;
     this.updated = false;
     this.dependencies = [];
@@ -88,7 +83,7 @@ export default class Field {
     this.flags = createFlags();
     this.vm = options.vm;
     this.component = options.component;
-    this.ctorConfig = this.component ? getPath('$options.$_veeValidate', this.component) : undefined;
+    this.ctorConfig = this.component ? get(this.component, '$options.$_veeValidate') : undefined;
     this.update(options);
     this.updated = false;
   }
@@ -115,7 +110,7 @@ export default class Field {
    */
 
   get displayName (): ?string {
-    return isCallable(this.alias) ? this.alias() : this.alias;
+    return isFunction(this.alias) ? this.alias() : this.alias;
   }
 
   /**
@@ -123,7 +118,7 @@ export default class Field {
    */
 
   get value (): any {
-    if (!isCallable(this.getter)) {
+    if (!isFunction(this.getter)) {
       return undefined;
     }
 
@@ -177,7 +172,7 @@ export default class Field {
     this.initial = options.initial || this.initial || false;
 
     // update errors scope if the field scope was changed.
-    if (!isNullOrUndefined(options.scope) && options.scope !== this.scope && isCallable(this.validator.update)) {
+    if (!isNullOrUndefined(options.scope) && options.scope !== this.scope && isFunction(this.validator.update)) {
       this.validator.update(this.id, { scope: options.scope });
     }
     this.scope = !isNullOrUndefined(options.scope) ? options.scope
@@ -189,7 +184,7 @@ export default class Field {
     this.classes = options.classes || this.classes || false;
     this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
     this.alias = options.alias || this.alias;
-    this.getter = isCallable(options.getter) ? options.getter : this.getter;
+    this.getter = isFunction(options.getter) ? options.getter : this.getter;
     this.events = (options.events) ? makeEventsArray(options.events) : this.events;
     this.delay = (options.delay) ? makeDelayObject(this.events, options.delay) : this.delay;
     this.updateDependencies();
@@ -326,7 +321,7 @@ export default class Field {
       };
 
       // probably a component.
-      if (isCallable(el.$watch)) {
+      if (isFunction(el.$watch)) {
         options.component = el;
         options.el = el.$el;
         options.alias = Generator.resolveAlias(el.$el, { child: el });
@@ -401,7 +396,7 @@ export default class Field {
       this.unwatch(/^class_input$/);
     };
 
-    if (this.component && isCallable(this.component.$once)) {
+    if (this.component && isFunction(this.component.$once)) {
       this.component.$once('input', onInput);
       this.component.$once('blur', onBlur);
       this.watchers.push({
@@ -451,7 +446,7 @@ export default class Field {
       this.validator.validate(`#${this.targetOf}`);
     } : (...args) => {
       // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
-      if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event) || (args[0] && args[0].srcElement)) {
+      if (args.length === 0 || (isFunction(Event) && args[0] instanceof Event) || (args[0] && args[0].srcElement)) {
         args[0] = this.value;
       }
       this.validator.validate(`#${this.id}`, args[0]);
@@ -518,7 +513,7 @@ export default class Field {
    * Updates aria attributes on the element.
    */
   updateAriaAttrs () {
-    if (!this.aria || !this.el || !isCallable(this.el.setAttribute)) return;
+    if (!this.aria || !this.el || !isFunction(this.el.setAttribute)) return;
 
     this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
     this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
@@ -528,7 +523,7 @@ export default class Field {
    * Updates the custom validity for the field.
    */
   updateCustomValidity () {
-    if (!this.validity || !this.el || !isCallable(this.el.setCustomValidity)) return;
+    if (!this.validity || !this.el || !isFunction(this.el.setCustomValidity)) return;
 
     this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
   }

@@ -3,7 +3,7 @@ const Uglify = require('uglify-js');
 const flow = require('rollup-plugin-flow');
 const fs = require('fs');
 const path = require('path');
-const buble = require('rollup-plugin-buble');
+const babel = require('rollup-plugin-babel');
 const nodeResolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const replace = require('rollup-plugin-replace');
@@ -11,6 +11,17 @@ const chalk = require('chalk');
 const version = require('../package.json').version;
 
 const outputFolder = path.join(__dirname, '/../', 'dist');
+const babelConfig = {
+  babelrc: false,
+  exclude: 'node_modules/**',
+  presets: [ [ 'es2015', { modules: false } ] ],
+  plugins: [
+    'external-helpers',
+    'transform-async-to-generator',
+    'transform-flow-strip-types',
+    'lodash',
+  ]
+};
 
 async function main () {
   console.log(chalk.cyan('Generating main builds...'));
@@ -21,7 +32,7 @@ async function main () {
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
-      buble()
+      babel(babelConfig)
     ],
   });
 
@@ -56,7 +67,7 @@ async function minimal () {
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
-      buble()
+      babel(babelConfig)
     ],
   });
 
@@ -90,7 +101,7 @@ async function esm () {
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
-      buble()
+      babel(babelConfig)
     ],
   });
 
@@ -116,7 +127,7 @@ async function esm () {
       replace({ __VERSION__: version }),
       nodeResolve(),
       commonjs(),
-      buble()
+      babel(babelConfig)
     ],
   });
 

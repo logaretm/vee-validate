@@ -1,4 +1,4 @@
-import { assign } from './utils/index';
+import { assign } from 'lodash';
 
 // @flow
 

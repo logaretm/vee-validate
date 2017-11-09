@@ -1,4 +1,5 @@
 import Field from '../src/core/field';
+import Vue from 'vue';
 
 test('constructs a headless field with default values', () => {
   const field = new Field(null, {});
@@ -10,7 +11,7 @@ test('constructs a headless field with default values', () => {
   expect(field.rules).toEqual({});
   expect(field.events).toEqual(['input', 'blur']);
   expect(field.watchers.length).toBe(0);
-  expect(field.delay).toEqual({'input': 0, 'blur': 0});
+  expect(field.delay).toBe(0);
   expect(field.flags).toEqual({
     untouched: true,
     touched: false,
@@ -64,6 +65,8 @@ test('caches the field id on the element data attributes', () => {
 });
 
 test('it adds value listeners on the native inputs', () => {
+  jest.useFakeTimers();
+
   document.body.innerHTML = `
     <input name="name" id="name" value="10">
   `;
@@ -79,10 +82,12 @@ test('it adds value listeners on the native inputs', () => {
 
   // test input event.
   el.dispatchEvent(new Event('input'));
+  jest.runAllTimers();
   expect(field.validator.validate).toHaveBeenCalledWith(`#${field.id}`, field.value);
 
   // blur event.
   el.dispatchEvent(new Event('blur'));
+  jest.runAllTimers();
   expect(field.validator.validate).toHaveBeenCalledTimes(2);
   expect(field.validator.validate).toHaveBeenLastCalledWith(`#${field.id}`, field.value);
 
@@ -97,6 +102,8 @@ test('it adds value listeners on the native inputs', () => {
 });
 
 test('it adds value listeners on all radio inputs that have the same name', () => {
+  jest.useFakeTimers();
+
   document.body.innerHTML = `
     <input name="name" id="name" value="1" type="radio">
     <input name="name" value="2" type="radio">
@@ -108,6 +115,7 @@ test('it adds value listeners on all radio inputs that have the same name', () =
   field.vm = { $validator: { validate: jest.fn() } };
   el2.dispatchEvent(new Event('change'));
 
+  jest.runAllTimers();
   expect(field.validator.validate).toHaveBeenCalledTimes(1); // triggered.
   expect(field.watchers.length).toBe(8); // 4 for each field.
   field.unwatch();
@@ -462,6 +470,8 @@ describe('fields can track their dependencies', () => {
   });
 
   test('validation triggers on the parent/controller field', () => {
+    jest.useFakeTimers();
+
     document.body.innerHTML = `
       <input name="other" id="name" value="10" type="text">
     `;
@@ -475,6 +485,7 @@ describe('fields can track their dependencies', () => {
     });
 
     el.dispatchEvent(new Event('input'));
+    jest.runAllTimers();
     expect(field.dependencies[0].field.validator.validate).toHaveBeenCalledWith(`#${field.id}`);
   });
 

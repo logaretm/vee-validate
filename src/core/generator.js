@@ -1,16 +1,6 @@
 import Config from '../config';
-import {
-  getScope,
-  getDataAttribute,
-  isObject,
-  toArray,
-  find,
-  getPath,
-  hasPath,
-  isNullOrUndefined,
-  isCallable,
-  deepParseInt,
-} from './utils';
+import { isPlainObject, toArray, find, get, has, isFunction } from 'lodash';
+import { getScope, getDataAttribute, isNullOrUndefined, deepParseInt } from './utils';
 
 /**
  * Generates the options required to construct a field.
@@ -46,7 +36,7 @@ export default class Generator {
   static getCtorConfig (vnode) {
     if (!vnode.child) return null;
 
-    const config = getPath('child.$options.$_veeValidate', vnode);
+    const config = get(vnode, 'child.$options.$_veeValidate');
 
     return config;
   }
@@ -156,7 +146,7 @@ export default class Generator {
    */
   static resolveScope (el, binding, vnode = {}) {
     let scope = null;
-    if (isObject(binding.value)) {
+    if (isPlainObject(binding.value)) {
       scope = binding.value.scope;
     }
 
@@ -178,7 +168,7 @@ export default class Generator {
       return binding.arg;
     }
 
-    if (isObject(binding.value) && binding.value.arg) {
+    if (isPlainObject(binding.value) && binding.value.arg) {
       return binding.value.arg;
     }
 
@@ -187,7 +177,7 @@ export default class Generator {
       return null;
     }
 
-    const watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression, vnode.context);
+    const watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && has(vnode.context, model.expression);
 
     if (!watchable) {
       return null;
@@ -213,7 +203,7 @@ export default class Generator {
 
     if (!name && vnode.child) {
       const config = Generator.getCtorConfig(vnode);
-      if (config && isCallable(config.name)) {
+      if (config && isFunction(config.name)) {
         const boundGetter = config.name.bind(vnode.child);
 
         return boundGetter();
@@ -231,7 +221,7 @@ export default class Generator {
   static resolveGetter (el, vnode, model) {
     if (model) {
       return () => {
-        return getPath(model, vnode.context);
+        return get(vnode.context, model);
       };
     }
 
@@ -239,12 +229,12 @@ export default class Generator {
       const path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
       if (path) {
         return () => {
-          return getPath(path, vnode.child);
+          return get(vnode.child, path);
         };
       }
 
       const config = Generator.getCtorConfig(vnode);
-      if (config && isCallable(config.value)) {
+      if (config && isFunction(config.value)) {
         const boundGetter = config.value.bind(vnode.child);
 
         return () => {

@@ -1,4 +1,5 @@
-import { find, isNullOrUndefined } from './utils';
+import { find } from 'lodash';
+import { isNullOrUndefined } from './utils';
 
 // @flow
 
