@@ -28,7 +28,8 @@ const combine = (lhs: MapObject, rhs: MapObject): boolean => {
     valid: (lhs, rhs) => lhs && rhs,
     invalid: (lhs, rhs) => lhs || rhs,
     pending: (lhs, rhs) => lhs || rhs,
-    required: (lhs, rhs) => lhs || rhs
+    required: (lhs, rhs) => lhs || rhs,
+    validated: (lhs, rhs) => lhs && rhs
   };
 
   return Object.keys(mapper).reduce((flags, flag) => {
