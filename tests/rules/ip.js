@@ -39,3 +39,8 @@ test('validates that the string is a valid ipv6 address', () => {
         '::ffff:287.0.0.1',
     ], [6])).toBe(false);
 });
+
+test('normalizes undefined or null to empty strings', () => {
+    expect(validate(null)).toBe(false);
+    expect(validate(undefined)).toBe(false);
+});
