@@ -384,14 +384,14 @@ export const makeEventsArray = (events: string) => {
   return (typeof events === 'string' && events.length) ? events.split('|') : [];
 };
 
-export const makeDelayObject = (events: string[], delay: object | number) => {
-  let delayObject = {};
+export const makeDelayObject = (events: string[], delay: Object | number) => {
+  const delayObject = {};
 
   // We already have a valid delay object
   if (typeof delay === 'object' && !('global' in delay) && !('local' in delay) && Object.keys(delay).length) return delay;
 
-  let globalDelay = (typeof delay === 'object' && 'global' in delay) ? delay.global : delay || 0;
-  let localDelay = (typeof delay === 'object' && 'local' in delay) ? delay.local : {};
+  const globalDelay = (typeof delay === 'object' && 'global' in delay) ? delay.global : delay || 0;
+  const localDelay = (typeof delay === 'object' && 'local' in delay) ? delay.local : {};
 
   events.forEach(e => {
     delayObject[e] = (typeof globalDelay === 'object') ? localDelay[e] || globalDelay[e] || 0 : localDelay[e] || globalDelay;
