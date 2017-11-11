@@ -6,7 +6,7 @@ import path from 'path';
 import chalk from 'chalk';
 import config from './config';
 
-const localesDir = path.join(__dirname, '../locale');
+const localesDir = path.join(__dirname, '..', 'locale');
 const files = fs.readdirSync(localesDir);
 let cache;
 
@@ -21,8 +21,8 @@ async function build () {
     // ignore utils file.
     if (/utils/.test(file)) continue;
 
-    const input = path.join(__dirname, '../locale', file);
-    const output = path.join(config.outputFolder, '/locale', file);
+    const input = path.join(__dirname, '..', 'locale', file);
+    const output = path.join(config.outputFolder, 'locale', file);
 
     const bundle = await rollup({
       cache,

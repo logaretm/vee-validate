@@ -8,7 +8,7 @@ export default {
   * (c) ${new Date().getFullYear()} Abdelrahman Awad
   * @license MIT
   */`,
-  outputFolder: path.join(__dirname, '/../', 'dist'),
+  outputFolder: path.join(__dirname, '..', 'dist'),
   uglifyOptions: {
     compress: true,
     mangle: true,
