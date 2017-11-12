@@ -14,9 +14,13 @@
     "test": "jest",
     "lint": "eslint ./src --fix",
     "flow": "flow",
-    "build:locale": "node build/locale.js",
-    "build:bundle": "node build/main.js",
-    "build": "node build/main.js && node build/locale.js",
+    "build:locale": "babel-node build/locale.js",
+    "build:main": "babel-node build/main.js",
+    "build:minimal": "babel-node build/minimal.js",
+    "build:esm": "babel-node build/esm.js",
+    "build:minimal-esm": "babel-node build/minimal.esm.js",
+    "build:bundle": "npm run build:main && npm run build:minimal && npm run build:esm && npm run build:minimal-esm",
+    "build": "npm run build:bundle && npm run build:locale",
     "cover": "jest --coverage",
     "precommit": "npm run lint && npm run flow && npm run test"
   },
@@ -34,11 +38,12 @@
     "types/*.d.ts"
   ],
   "devDependencies": {
+    "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
     "babel-jest": "^21.2.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
     "chalk": "^2.1.0",
     "cross-env": "^5.0.5",
     "date-fns": "2.0.0-alpha.7",
@@ -68,7 +73,6 @@
   "peerDependencies": {
     "vue": ">= 2.2.0"
   },
-  "dependencies": {},
   "eslintIgnore": [
     "tests",
     "locale",

@@ -370,7 +370,7 @@ export const getInputEventName = (el: HTMLInputElement) => {
   return 'input';
 };
 
-export const isBuiltInComponent = (vnode): boolean => {
+export const isBuiltInComponent = (vnode: Object): boolean => {
   if (!vnode) {
     return false;
   }
@@ -400,7 +400,7 @@ export const makeDelayObject = (events: string[], delay: Object | number) => {
   return delayObject;
 };
 
-export const deepParseInt = (input: object | string) => {
+export const deepParseInt = (input: Object | string) => {
   if (typeof input === 'string') return parseInt(input);
 
   for (const element in input) {
