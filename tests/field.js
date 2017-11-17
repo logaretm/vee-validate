@@ -150,12 +150,29 @@ test('computes the disabled property', () => {
   expect(field.isDisabled).toBe(true);
 });
 
-test('computes the display name', () => {
-  const field = new Field(null, { name: 'email' });
-  // no alias was defined.
-  expect(field.displayName).toBe(undefined);
-  field.alias = 'aliased';
-  expect(field.displayName).toBe('aliased');
+describe('computes the display name', () => {
+  test('via update method', () => {
+    const field = new Field(null, { name: 'email' });
+    // no alias was defined.
+    expect(field.alias).toBe(null);
+    field.update({ alias: 'aliased' });
+    expect(field.alias).toBe('aliased');
+  });
+
+  test('via the data-vv-as attribute', () => {
+    document.body.innerHTML = `
+      <input type="text" name="field" id="el" v-model="email" data-vv-as="myAlias">
+    `;
+    let el = document.querySelector('#el');
+    const field = new Field(el);
+    expect(field.alias).toBe('myAlias');
+  });
+
+  test('via the component $attrs object', () => {
+    const component = { $attrs: { 'data-vv-as': 'alias' } };
+    const field = new Field(null, { component });
+    expect(field.alias).toBe('alias');
+  });
 });
 
 test('it adds class listeners on the input', () => {

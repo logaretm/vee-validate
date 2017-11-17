@@ -524,7 +524,7 @@ export default class Validator {
    * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
    */
   _getFieldDisplayName (field: Field) {
-    return field.displayName || this.dictionary.getAttribute(LOCALE, field.name, field.name);
+    return field.alias || this.dictionary.getAttribute(LOCALE, field.name, field.name);
   }
 
   /**
@@ -555,7 +555,7 @@ export default class Validator {
     if (/(confirmed|after|before)/.test(rule.name)) {
       const target = find(field.dependencies, d => d.name === rule.name);
       if (target) {
-        targetName = target.field.displayName;
+        targetName = target.field.alias;
         params = [target.field.value].concat(params.slice(1));
       }
     } else if (rule.name === 'required' && field.rejectsFalse) {

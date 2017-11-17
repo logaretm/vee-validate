@@ -36,7 +36,6 @@ export default class Generator {
       delay: Generator.resolveDelay(el, vnode, options),
       rules: Generator.resolveRules(el, binding),
       initial: !!binding.modifiers.initial,
-      alias: Generator.resolveAlias(el, vnode),
       validity: options.validity,
       aria: options.aria,
       initialValue: Generator.resolveInitialValue(vnode)
@@ -117,16 +116,6 @@ export default class Generator {
     }
 
     return (delay) ? { local: { input: parseInt(delay) }, global: deepParseInt(globalDelay) } : { global: deepParseInt(globalDelay) };
-  }
-
-  /**
-   * Resolves the alias for the field.
-   * @param {*} el
-   * @param {*} vnode
-   * @return {Function} alias getter
-   */
-  static resolveAlias (el, vnode) {
-    return () => getDataAttribute(el, 'as') || (vnode.child && vnode.child.$attrs && vnode.child.$attrs['data-vv-as']) || el.title || null;
   }
 
   /**

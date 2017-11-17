@@ -4,6 +4,7 @@ import {
   assign,
   normalizeRules,
   isNullOrUndefined,
+  getDataAttribute,
   setDataAttribute,
   toggleClass,
   getInputEventName,
@@ -58,7 +59,7 @@ export default class Field {
   component: Object | null;
   ctorConfig: ?Object;
   flags: { [string]: boolean };
-  alias: ?string | () => ?string;
+  alias: ?string;
   getter: () => any;
   name: string;
   scope: string | null;
@@ -69,6 +70,8 @@ export default class Field {
   delay: number | Object;
   listen: boolean;
   model: ?string;
+  value: any;
+  _alias: ?string;
 
   constructor (el: HTMLInputElement | null, options = {}) {
     this.id = uniqId();
@@ -113,9 +116,21 @@ export default class Field {
   /**
    * Gets the display name (user-friendly name).
    */
+  get alias (): ?string {
+    if (this._alias) {
+      return this._alias;
+    }
 
-  get displayName (): ?string {
-    return isCallable(this.alias) ? this.alias() : this.alias;
+    let alias = null;
+    if (this.el) {
+      alias = getDataAttribute(this.el, 'as');
+    }
+
+    if (!alias && this.component) {
+      return this.component.$attrs && this.component.$attrs['data-vv-as'];
+    }
+
+    return alias;
   }
 
   /**
@@ -188,8 +203,8 @@ export default class Field {
     this.listen = options.listen !== undefined ? options.listen : this.listen;
     this.classes = options.classes || this.classes || false;
     this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
-    this.alias = options.alias || this.alias;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
+    this._alias = options.alias || this._alias;
     this.events = (options.events) ? makeEventsArray(options.events) : this.events;
     this.delay = (options.delay) ? makeDelayObject(this.events, options.delay) : makeDelayObject(this.events, this.delay);
     this.updateDependencies();
@@ -329,11 +344,9 @@ export default class Field {
       if (isCallable(el.$watch)) {
         options.component = el;
         options.el = el.$el;
-        options.alias = Generator.resolveAlias(el.$el, { child: el });
         options.getter = Generator.resolveGetter(el.$el, { child: el });
       } else {
         options.el = el;
-        options.alias = Generator.resolveAlias(el, {});
         options.getter = Generator.resolveGetter(el, {});
       }
 
