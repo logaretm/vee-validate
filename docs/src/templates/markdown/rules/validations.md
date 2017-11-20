@@ -264,9 +264,11 @@ The field under validation must match the specified regular expression.
 > need to escape all backslashes.
 > Example: `v-validate="{ required: true, regex: /\\.(js|ts)$/ }"`
 
-### [required](#rule-required)
+### [required:{invalidateFalse?}](#rule-required)
 
-The field under validation must have a non-empty value. By default all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`.
+The field under validation must have a non-empty value. By default all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`. 
+
+By default, the boolean value of `false` will pass validate. Setting invalidateFalse to true will fail validation for false values. For example, using `v-validate="'required:true'"` is helpful to support pseudo-checkbox validations where the checkbox must be checked. Note that `<input type='checkbox' v-validate="'required'" />` automatically supports this scenario.
 
 <input v-validate="'required'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('required_field') }" name="required_field" type="text" placeholder="Is Required">
 <span v-show="errors.has('required_field')" class="help is-danger">{{ errors.first('required_field') }}</span>
