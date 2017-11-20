@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.0-rc.22
+  * vee-validate v2.0.0-rc.23
   * (c) 2017 Abdelrahman Awad
   * @license MIT
   */
@@ -6778,7 +6778,7 @@ var minimal$1 = {
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.0-rc.22'
+  version: '2.0.0-rc.23'
 };
 
 // rules plugin definition.

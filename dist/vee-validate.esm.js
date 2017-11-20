@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.0-rc.22
+  * vee-validate v2.0.0-rc.23
   * (c) 2017 Abdelrahman Awad
   * @license MIT
   */
@@ -2079,9 +2079,10 @@ Validator.prototype.update = function update (id, ref) {
     var scope = ref.scope;
 
   var field = this._resolveField(("#" + id));
-  this.errors.update(id, { scope: scope });
+  if (!field) { return; }
 
   // remove old scope.
+  this.errors.update(id, { scope: scope });
   if (!isNullOrUndefined(field.scope) && this.flags[("$" + (field.scope))]) {
     delete this.flags[("$" + (field.scope))][field.name];
   } else if (isNullOrUndefined(field.scope)) {
@@ -6763,7 +6764,7 @@ var mapFields = function (fields) {
   }, {});
 };
 
-var version = '2.0.0-rc.22';
+var version = '2.0.0-rc.23';
 
 var rulesPlugin = function (ref) {
   var Validator$$1 = ref.Validator;
