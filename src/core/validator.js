@@ -308,9 +308,10 @@ export default class Validator {
    */
   update (id: string, { scope }) {
     const field = this._resolveField(`#${id}`);
-    this.errors.update(id, { scope });
+    if (!field) return;
 
     // remove old scope.
+    this.errors.update(id, { scope });
     if (!isNullOrUndefined(field.scope) && this.flags[`$${field.scope}`]) {
       delete this.flags[`$${field.scope}`][field.name];
     } else if (isNullOrUndefined(field.scope)) {
