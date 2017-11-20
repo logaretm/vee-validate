@@ -478,7 +478,11 @@ export default class Field {
 
     // if there is a watchable model and an on input validation is requested.
     if (this.model && events.indexOf(inputEvent) !== -1) {
-      const unwatch = this.vm.$watch(this.model, debounce(fn, this.delay[inputEvent]));
+      const debouncedFn = debounce(fn, this.delay[inputEvent]);
+      const unwatch = this.vm.$watch(this.model, (...args) => {
+        this.flags.pending = true;
+        debouncedFn(...args);
+      });
       this.watchers.push({
         tag: 'input_model',
         unwatch
@@ -489,7 +493,11 @@ export default class Field {
 
     // Add events.
     events.forEach(e => {
-      let validate = debounce(fn, this.delay[e]);
+      const debouncedFn = debounce(fn, this.delay[e]);
+      const validate = (...args) => {
+        this.flags.pending = true;
+        debouncedFn(...args);
+      };
 
       if (this.component) {
         this.component.$on(e, validate);
