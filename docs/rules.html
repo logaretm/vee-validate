@@ -131,9 +131,6 @@ const someRuleObj = { in: [1, 2, 3, 4] };
 </div><div class="rules"><blockquote>
 <p>Date validators always require the <code>date_format</code> rule to be always present (<a href="https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.7">or globally set</a>) and must preceed them in the rules order.</p>
 </blockquote>
-<blockquote>
-<p>In the rule signature required parameters are enclosed within <code>{}</code> like this: <code>{param}</code>. Optional parameters have a <code>?</code> at the end: <code>{optional?}</code>. Lists are enclosed withn brackets <code>[]</code>. ex: <code>[list]</code>.</p>
-</blockquote>
 <h3><a href="#rule-after">after:{target},{inclusion?}</a></h3>
 <p>The field under validation must have a valid date and is after the date value in the target field.</p>
 <ul>
@@ -143,6 +140,9 @@ const someRuleObj = { in: [1, 2, 3, 4] };
 <input v-validate="'date_format:DD/MM/YYYY|after:after_field_target'" :class="{'input': true, 'is-danger': errors.has('after_field') }" name="after_field" type="text" placeholder="DD/MM/YYYY">
 <span v-show="errors.has('after_field')" class="help is-danger">{{ errors.first('after_field') }}</span>
 <input name="after_field_target" :class="{'input': true, 'is-danger': errors.has('after_field') }" type="text" placeholder="DD/MM/YYYY">
+<blockquote>
+<p>Target based rules like <code>after</code>, <code>before</code>, and <code>confirmed</code> can target custom components as well as native inputs, but when targeting custom components the target field must have a <code>ref</code> attribute set and the confirmed paramter must be the same ref value prefixed with <code>$</code> sign to tell the validator that it should look for the target field in the component local <code>refs</code>. More  information are in the <code>RC.8</code> <a href="https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.8">release notes</a>.</p>
+</blockquote>
 <h3><a href="#rule-alpha">alpha</a></h3>
 <p>The field under validation may only contain alphabetic characters.</p>
 <input v-validate="'alpha'" :class="{'input': true, 'is-danger': errors.has('alpha_field') }" name="alpha_field" type="text" placeholder="Enter Some Characters...">
@@ -327,7 +327,12 @@ The field under validation must have a string that is a valid ipv4 value.
 <input v-validate="'regex:^([0-9]+)$'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('regex_field') }" name="regex_field" type="text" placeholder="Numbers only">
 <span v-show="errors.has('regex_field')" class="help is-danger">{{ errors.first('regex_field') }}</span></p>
 <blockquote>
-<p>You should not use the pipe '|' or commas ',' within your regular expression when using the string rules format as it will cause a conflict with how validators parsing work. You should use the object format of the rules instead, for example: <code>v-validate=&quot;{ rules: { regex: /.(js|ts)$/} }&quot;</code></p>
+<p>You should not use the pipe '|' or commas ',' within your regular expression
+when using the string rules format as it will cause a conflict with how
+validators parsing work. You should use the object format of the rules
+instead. Note that when using the object format in your HTML template you
+need to escape all backslashes.
+Example: <code>v-validate=&quot;{ required: true, regex: /\\.(js|ts)$/ }&quot;</code></p>
 </blockquote>
 <h3><a href="#rule-required">required</a></h3>
 <p>The field under validation must have a non-empty value. By default all validators pass the validation if they have &quot;empty values&quot; unless they are required. Those empty values are: empty strings, <code>undefined</code>, <code>null</code>.</p>
@@ -518,4 +523,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor-80d381618c8ea8a97d06.js"></script><script type="text/javascript" src="/assets/js/bundle-80d381618c8ea8a97d06.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor-3b8c458f2e58aa7dd25e.js"></script><script type="text/javascript" src="/assets/js/bundle-3b8c458f2e58aa7dd25e.js"></script></body></html>

@@ -227,19 +227,6 @@ test('can display errors with custom field names', async () => {
   expect(v.errors.first('field')).toBe('The pretty field must be at least 5 characters.');
 });
 
-test.skip('attaching new rules to an existing field should overwrite the old rules', async () => {
-  const v = new Validator();
-  v.attach('someField', 'required|min:3');
-  expect(await v.validate('someField', 'wo')).toBe(false);
-
-  // does it overwrite the old rule?
-  v.attach('someField', 'min:1|max:3');
-  expect(v.errors.collect('someField').length).toBe(0); // are field errors cleared?
-  expect(await v.validate('someField', 'wo')).toBe(true);
-
-  expect(await v.validate('someField', 'woww')).toBe(false);
-});
-
 test('fails when trying to validate a non-existant field when strict mode is true.', async () => {
   const v = new Validator({
     email: 'required|email',
@@ -788,6 +775,25 @@ test('resets errors on the next tick if available', () => {
   v.reset();
   expect(vm.$nextTick).toHaveBeenCalled();
   expect(v.errors.count()).toBe(0);
+});
+
+test('resets errors on the next tick if available, complete test asynchronously', (done) => {
+  // not available.
+  let v = new Validator();
+  const vm = { $nextTick: jest.fn(cb => cb()) };
+  v.attach(new Field(null, {}));
+  v.errors.add('some', 'message', 'by');
+  v.reset();
+  expect(v.errors.count()).toBe(0);
+
+  v = new Validator(null, { vm });
+  v.attach(new Field(null, {}));
+  v.errors.add('some', 'message', 'by');
+  v.reset().then(() => {
+    expect(vm.$nextTick).toHaveBeenCalled();
+    expect(v.errors.count()).toBe(0);
+    done();
+  });
 })
 
 test('it can handle mixed successes and errors from one field regardless of rules order', async () => {
@@ -952,11 +958,11 @@ test('localize api', () => {
   expect(v.locale).toBe('ar');
 });
 
-test('updates existing field errors and flags to match the new scope', () => {
+test('updates existing field errors and flags to match the new scope', async () => {
   const v = new Validator();
   let field = v.attach({ name: 'email', rules: 'required|email' });
   expect(v.flags.email).toBeTruthy();
-  v.validate('email', 'someinvalid');
+  await v.validate('email', 'someinvalid');
   expect(v.errors.first('email')).toBeTruthy();
 
   // changed scope.
@@ -974,7 +980,7 @@ test('updates existing field errors and flags to match the new scope', () => {
   // test scoped fields.
   field = v.attach({ name: 'email', rules: 'required|email', scope: 's1' });
   expect(v.flags.$s1.email).toBeTruthy();
-  v.validate('s1.email', 'someinvalid');
+  await v.validate('s1.email', 'someinvalid');
   expect(v.errors.first('s1.email')).toBeTruthy();
 
   // changed scope.

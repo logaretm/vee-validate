@@ -13,14 +13,22 @@ const messages = {
   credit_card: (field) => `ข้อมูล ${field} ไม่ถูกต้อง`,
   date_between: (field, [min, max]) => `วันที่ ${field} ต้องอยู่ระหว่าง ${min} และ ${max}`,
   date_format: (field, [format]) => `วันที่ ${field} ต้องอยู่ในรูปแบบ ${format}`,
-  decimal: (field, [decimals] = ['*']) => `${field} ต้องเป็นตัวเลข และสามารถมีจุดทศนิยม ${decimals === '*' ? '' : decimals + ' จุด'}`,
+  decimal: (field, [decimals = '*'] = []) => `${field} ต้องเป็นตัวเลข และสามารถมีจุดทศนิยม ${decimals === '*' ? '' : decimals + ' จุด'}`,
   digits: (field, [length]) => `${field} ต้องเป็นตัวเลข ${length} หลักเท่านั้น`,
   dimensions: (field, [width, height]) => `${field} ต้องมีขนาด ${width} x ${height} px`,
   email: (field) => `${field} ต้องเป็นรูปแบบอีเมล`,
   ext: (field) => `${field} สกุลไฟล์ไม่ถูกต้อง`,
   image: (field) => `${field} ต้องเป็นรูปภาพเท่านั้น`,
   in: (field) => `${field} เป็นค่าทีไม่ถูกต้องตามเงื่อนไขที่กำหนด`,
+  integer: (field) => `${field} ต้องเป็นเลขจำนวนเต็ม`,
   ip: (field) => `${field} ไม่ถูกต้องตามรูปแบบ ip address`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `ความยาว ${field} อยู่ระหว่าง ${length} และ ${max}`;
+    }
+
+    return `${field} ต้องมีความยาว ${length}`;
+  },
   max: (field, [length]) => `${field} ต้องมีความยาวไม่เกิน ${length} ตัวอักษร`,
   max_value: (field, [max]) => `${field} ต้องมีค่าไม่เกิน ${max}`,
   mimes: (field) => `${field} ประเภทไฟล์ไม่ถูกต้อง`,
@@ -41,6 +49,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
+  // eslint-disable-next-line
   VeeValidate.Validator.addLocale(locale);
 }
 

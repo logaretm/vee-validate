@@ -13,7 +13,7 @@ const messages = {
   credit_card: (field) => `${field} eremua baliogabea da.`,
   date_between: (field, [min, max]) => `${field}(e)k ${min} eta ${max} artean egon behar du.`,
   date_format: (field, [format]) => `${field}(e)k ${format} formatuan egon behar du.`,
-  decimal: (field, [decimals] = ['*']) => `${field} eremuak zenbakizkoa izan behar du eta ${!decimals || decimals === '*' ? '' : decimals} dezimal izan ditzake.`,
+  decimal: (field, [decimals = '*'] = []) => `${field} eremuak zenbakizkoa izan behar du eta ${!decimals || decimals === '*' ? '' : decimals} dezimal izan ditzake.`,
   digits: (field, [length]) => `${field} eremuak zenbakizkoa izan behar du eta zehazki ${length} digitu izan behar ditu.`,
   dimensions: (field, [width, height]) => `${field} eremuak ${width} pixel bider ${height} pixel izan behar du.`,
   email: (field) => `${field} eremuak baliozko helbide elektroniko bat izan behar du.`,
@@ -40,11 +40,6 @@ const messages = {
   required: (field) => `${field} eremua derrigorrezkoa da.`,
   size: (field, [size]) => `${field}(e)n tamainak ${formatFileSize(size)} baino txikiagoa izan behar du.`,
   url: (field) => `${field} eremua ez da baliozko URL bat.`
-};
-
-// You can ignore this export, locale maintainer!
-export {
-  messages
 };
 
 const locale = {

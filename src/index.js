@@ -1,5 +1,5 @@
 import Rules from './rules';
-import { messages } from '../locale/en';
+import en from '../locale/en';
 import minimal from './index.minimal';
 
 // rules plugin definition.
@@ -9,9 +9,7 @@ const rulesPlugin = ({ Validator }) => {
   });
 
   // Merge the english messages.
-  Validator.localize('en', {
-    messages
-  });
+  Validator.localize('en', en);
 };
 
 // install the rules via the plugin API.

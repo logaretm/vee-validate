@@ -167,23 +167,23 @@ test('revises scope after inserted', async () => {
   };
   const VM = Vue.extend({
     data: () => ({
-      value: '',
-      name: 'some'
+      scope: null,
+      value: null
     }),
     directives: { validate: directive },
     beforeCreate() {
       this.$validator = $validator
     },
     template: `
-      <input v-validate="value" v-model="value" :name="name">
+      <input v-validate="'required'" v-model="value" name="name" :data-vv-scope="scope">
     `
   });
   const app = new VM().$mount();
-  app.value = 'new';
+  app.scope = 'new';
   await app.$nextTick(); // different expression.
   expect(field.update).toHaveBeenCalledTimes(1); // expression changed.
 
-  app.name = 'other'; 
+  app.scope = 'other'; 
   await app.$nextTick();
   expect(field.update).toHaveBeenCalledTimes(1); // no meaningful change was detected, so it didn't update.
 });

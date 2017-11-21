@@ -12,7 +12,7 @@ const messages = {
   credit_card: (field) => `${field}が正しくありません`,
   date_between: (field, [min, max]) => `${field}は${min}から${max}の間でなければなりません`,
   date_format: (field, [format]) => `${field}は${format}形式でなけれななりません`,
-  decimal: (field, [decimals] = ['*']) => `${field}は整数及び小数点以下${decimals === '*' ? '' : decimals}桁までの数字にしてください`,
+  decimal: (field, [decimals = '*'] = []) => `${field}は整数及び小数点以下${decimals === '*' ? '' : decimals}桁までの数字にしてください`,
   digits: (field, [length]) => `${field}は${length}桁の数字でなければなりません`,
   dimensions: (field, [width, height]) => `${field}は幅${width}px、高さ${height}px以内でなければなりません`,
   email: (field) => `${field}は有効なメールアドレスではありません`,

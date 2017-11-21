@@ -1,150 +1,45 @@
-const Rollup = require('rollup');
-const Uglify = require('uglify-js');
-const flow = require('rollup-plugin-flow');
-const fs = require('fs');
-const path = require('path');
-const buble = require('rollup-plugin-buble');
-const nodeResolve = require('rollup-plugin-node-resolve');
-const commonjs = require('rollup-plugin-commonjs');
-const replace = require('rollup-plugin-replace');
-const chalk = require('chalk');
-const version = require('../package.json').version;
+import { rollup } from 'rollup';
+import flow from 'rollup-plugin-flow';
+import buble from 'rollup-plugin-buble';
+import resolve from 'rollup-plugin-node-resolve';
+import commonjs from 'rollup-plugin-commonjs';
+import replace from 'rollup-plugin-replace';
+import uglify from 'uglify-js';
+import fs from 'fs';
+import path from 'path';
+import chalk from 'chalk';
+import config from './config';
+import { version } from '../package.json';
 
-const outputFolder = path.join(__dirname, '/../', 'dist');
-
-async function main () {
-  console.log(chalk.cyan('Generating main builds...'));
-  const bundle = await Rollup.rollup({
-    input: 'src/index.js',
-    plugins: [
-      flow({ pretty: true }),
-      replace({ __VERSION__: version }),
-      nodeResolve(),
-      commonjs(),
-      buble()
-    ],
-  });
-
-  const { code } = await bundle.generate({
-    format: 'umd',
-    name: 'VeeValidate',
-    banner:
-    `/**
- * vee-validate v${version}
- * (c) ${new Date().getFullYear()} Abdelrahman Awad
- * @license MIT
- */`
-  });
-
-  const output = path.join(outputFolder, 'vee-validate.js');
-  fs.writeFileSync(output, code);
-  console.log(chalk.green('Output File:') + ' vee-validate.js');
-  fs.writeFileSync(path.join(outputFolder, 'vee-validate.min.js'), Uglify.minify(code, {
-    compress: true,
-    mangle: true,
-  }).code);
-  console.log(chalk.green('Output File:') + ' vee-validate.min.js');
-}
-
-async function minimal () {
-  console.log(chalk.cyan('Generating minimal builds...'));
-
-  const bundle = await Rollup.rollup({
-    input: 'src/index.minimal.js',
-    plugins: [
-      flow({ pretty: true }),
-      replace({ __VERSION__: version }),
-      nodeResolve(),
-      commonjs(),
-      buble()
-    ],
-  });
-
-  const { code } = await bundle.generate({
-    format: 'umd',
-    name: 'VeeValidate',
-    banner:
-`/**
- * vee-validate v${version}
- * (c) ${new Date().getFullYear()} Abdelrahman Awad
- * @license MIT
- */`
-  });
-
-  let output = path.join(outputFolder, 'vee-validate.minimal.js');
-  fs.writeFileSync(output, code);
-  console.log(chalk.green('Output File:') + ' vee-validate.minimal.js');
-  fs.writeFileSync(path.join(outputFolder, 'vee-validate.minimal.min.js'), Uglify.minify(code, {
-    compress: true,
-    mangle: true,
-  }).code);
-  console.log(chalk.green('Output File:') + ' vee-validate.minimal.min.js');
-}
-
-async function esm () {
-  console.log(chalk.cyan('Generating esm builds...'));
-  let bundle = await Rollup.rollup({
-    input: 'src/index.esm.js',
-    plugins: [
-      flow({ pretty: true }),
-      replace({ __VERSION__: version }),
-      nodeResolve(),
-      commonjs(),
-      buble()
-    ],
-  });
-
-  let { code } = await bundle.generate({
-    format: 'es',
-    name: 'VeeValidate',
-    banner:
-    `/**
- * vee-validate v${version}
- * (c) ${new Date().getFullYear()} Abdelrahman Awad
- * @license MIT
- */`
-  });
-
-  let output = path.join(outputFolder, 'vee-validate.esm.js');
-  fs.writeFileSync(output, code);
-  console.log(chalk.green('Output File:') + ' vee-validate.esm.js');
-
-  bundle = await Rollup.rollup({
-    input: 'src/index.minimal.esm.js',
-    plugins: [
-      flow({ pretty: true }),
-      replace({ __VERSION__: version }),
-      nodeResolve(),
-      commonjs(),
-      buble()
-    ],
-  });
-
-  const esm = await bundle.generate({
-    format: 'es',
-    name: 'VeeValidate',
-    banner:
-    `/**
- * vee-validate v${version}
- * (c) ${new Date().getFullYear()} Abdelrahman Awad
- * @license MIT
- */`
-  });
-
-  output = path.join(outputFolder, 'vee-validate.minimal.esm.js');
-  fs.writeFileSync(output, esm.code);
-  console.log(chalk.green('Output File:') + ' vee-validate.minimal.esm.js');
-}
+const inputOptions = {
+  input: 'src/index.js',
+  plugins: [
+    flow({ pretty: true }),
+    replace({ __VERSION__: version }),
+    resolve(),
+    commonjs({
+      include: 'node_modules/validator/**',
+    }),
+    buble(),
+  ],
+};
+const outputOptions = {
+  format: 'umd',
+  name: 'VeeValidate',
+  banner: config.banner,
+};
 
 async function build () {
-  try {
-    await main();
-    await esm();
-    await minimal();
-  } catch (err) {
-    console.log(chalk.red(err));
-    throw err;
-  }
+  console.log(chalk.cyan('Generating main builds...'));
+
+  const bundle = await rollup(inputOptions);
+  const { code } = await bundle.generate(outputOptions);
+
+  fs.writeFileSync(path.join(config.outputFolder, 'vee-validate.js'), code);
+  console.log(chalk.green('Output File:') + ' vee-validate.js');
+
+  fs.writeFileSync(path.join(config.outputFolder, 'vee-validate.min.js'), uglify.minify(code, config.uglifyOptions).code);
+  console.log(chalk.green('Output File:') + ' vee-validate.min.js');
 }
 
 build();

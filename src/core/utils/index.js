@@ -369,3 +369,43 @@ export const getInputEventName = (el: HTMLInputElement) => {
 
   return 'input';
 };
+
+export const isBuiltInComponent = (vnode: Object): boolean => {
+  if (!vnode) {
+    return false;
+  }
+
+  const tag = vnode.componentOptions.tag;
+
+  return /keep-alive|transition|transition-group/.test(tag);
+};
+
+export const makeEventsArray = (events: string) => {
+  return (typeof events === 'string' && events.length) ? events.split('|') : [];
+};
+
+export const makeDelayObject = (events: string[], delay: Object | number) => {
+  const delayObject = {};
+
+  // We already have a valid delay object
+  if (typeof delay === 'object' && !('global' in delay) && !('local' in delay) && Object.keys(delay).length) return delay;
+
+  const globalDelay = (typeof delay === 'object' && 'global' in delay) ? delay.global : delay || 0;
+  const localDelay = (typeof delay === 'object' && 'local' in delay) ? delay.local : {};
+
+  events.forEach(e => {
+    delayObject[e] = (typeof globalDelay === 'object') ? localDelay[e] || globalDelay[e] || 0 : localDelay[e] || globalDelay;
+  });
+
+  return delayObject;
+};
+
+export const deepParseInt = (input: Object | string) => {
+  if (typeof input === 'string') return parseInt(input);
+
+  for (const element in input) {
+    input[element] = parseInt(input[element]);
+  }
+
+  return input;
+};

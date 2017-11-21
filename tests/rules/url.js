@@ -60,3 +60,9 @@ test('should validate urls', () => {
     expect(validate('google.com', [false])).toBe(true);
     expect(validate('https://google.com', [false])).toBe(true);
 });
+
+
+test('normalizes undefined and null to empty strings', () => {
+    expect(validate(null)).toBe(false);
+    expect(validate(undefined)).toBe(false);
+});

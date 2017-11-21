@@ -10,7 +10,7 @@ const messages = {
   confirmed: (field, [confirmedField]) => `Il campo ${field} non corrisponde con ${confirmedField}.`,
   date_between: (field, [min, max]) => `La ${field} deve essere compresa tra ${min} e ${max}.`,
   date_format: (field, [format]) => `La ${field} deve essere nel formato ${format}.`,
-  decimal: (field, [decimals] = ['*']) => `Il campo ${field} deve essere numerico e può contenere  ${decimals === '*' ? 'cm' : decimals} punti decimali.`,
+  decimal: (field, [decimals = '*'] = []) => `Il campo ${field} deve essere numerico e può contenere  ${decimals === '*' ? 'cm' : decimals} punti decimali.`,
   digits: (field, [length]) => `Il campo ${field} deve essere numerico e contenere esattamente ${length} cifre.`,
   dimensions: (field, [width, height]) => `Il campo ${field} deve essere ${width} x ${height}.`,
   email: (field) => `Il campo ${field} deve essere un indirizzo email valido.`,

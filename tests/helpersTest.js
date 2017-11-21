@@ -20,6 +20,85 @@ test('it maps field names to new names from objects', () => {
   expect(typeof fields.phone === 'function').toBe(true); // no special treatment for scoped fields.
 });
 
+test('it can map global flags for all fields', () => {
+  const flags = {
+    email: {
+      dirty: true,
+      valid: true
+    },
+    fullname: {
+      dirty: false,
+      valid: true
+    },
+    phone: {
+      dirty: false,
+      valid: false
+    }
+  };
+
+  const ctx = {
+    $validator: { flags },
+    allFlags: mapFields()
+  };
+
+  expect(ctx.allFlags().dirty).toBe(true);
+  expect(ctx.allFlags().valid).toBe(false);
+});
+
+test('it can map flags of fields inside a scope', () => {
+  const flags = {
+    $scope: {
+      phone: {
+        dirty: false,
+        valid: false
+      },
+      email: {
+        dirty: true,
+        valid: true
+      }
+    }
+  };
+
+  const ctx = {
+    $validator: { flags },
+    ...mapFields({
+      scopeFlags: 'scope.*'
+    })
+  };
+
+  expect(ctx.scopeFlags().dirty).toBe(true);
+  expect(ctx.scopeFlags().valid).toBe(false);
+});
+
+test('it can map flags of scopeless fields', () => {
+  const flags = {
+    email: {
+      dirty: false,
+      valid: true
+    },
+    fullname: {
+      dirty: false,
+      valid: true
+    },
+    $scope: {
+      phone: {
+        dirty: true,
+        valid: false
+      }
+    }
+  };
+
+  const ctx = {
+    $validator: { flags },
+    ...mapFields({
+      scopeless: '*'
+    })
+  };
+
+  expect(ctx.scopeless().dirty).toBe(false);
+  expect(ctx.scopeless().valid).toBe(true);
+});
+
 describe('the mapped function resolves the field flags object', () => {
   const fields = mapFields({
     email: 'email',

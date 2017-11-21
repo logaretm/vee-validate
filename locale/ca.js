@@ -13,7 +13,7 @@ const messages = {
   credit_card: (field, [confirmedField]) => `El camp ${field} és invàlid.`,
   date_between: (field, [min, max]) => `El camp ${field} ha d'estar entre ${min} i ${max}.`,
   date_format: (field, [format]) => `El camp ${field} ha de tenir el format ${format}.`,
-  decimal: (field, [decimals] = ['*']) => `El camp ${field} ha de ser numèric i contenir ${decimals === '*' ? '' : decimals} punts decimals.`,
+  decimal: (field, [decimals = '*'] = []) => `El camp ${field} ha de ser numèric i contenir ${decimals === '*' ? '' : decimals} punts decimals.`,
   digits: (field, [length]) => `El camp ${field} ha de ser numèric i contenir exactament ${length} dígits.`,
   dimensions: (field, [width, height]) => `El camp ${field} ha de ser de ${width} píxels per ${height} píxels.`,
   email: (field) => `El camp ${field} ha de ser un correu electrònic vàlid.`,

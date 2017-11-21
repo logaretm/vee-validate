@@ -267,7 +267,7 @@ Validator.setLocale('ar'); // Set all validator locales to 'ar'.
 Validator.create().locale; // 'ar';
 ```
 
-Check the full API at [GitHub](https://github.com/logaretm/vee-validate/blob/master/src/validator.js)
+Check the full API at [GitHub](https://github.com/logaretm/vee-validate/blob/master/src/core/validator.js)
 
 ## [Validator Example](#validator-example)
 

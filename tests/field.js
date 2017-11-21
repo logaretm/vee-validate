@@ -10,7 +10,7 @@ test('constructs a headless field with default values', () => {
   expect(field.rules).toEqual({});
   expect(field.events).toEqual(['input', 'blur']);
   expect(field.watchers.length).toBe(0);
-  expect(field.delay).toBe(0);
+  expect(field.delay).toEqual({'input': 0, 'blur': 0});
   expect(field.flags).toEqual({
     untouched: true,
     touched: false,
@@ -30,7 +30,7 @@ test('constructs a headless field with default values', () => {
     pristine: 'pristine',
     dirty: 'dirty'
   });
-  expect(field.isHeadless).toBe(true);
+  expect(field.el).toBeFalsy();
   field.classNames = null; // make sure it resets to the default value.
   field.update({});
   expect(field.classNames).toEqual({
@@ -61,7 +61,6 @@ test('caches the field id on the element data attributes', () => {
 
   // check if id was cached.
   expect(el.getAttribute('data-vv-id')).toBe(field.id);
-  expect(field.isHeadless).toBe(false);
 });
 
 test('it adds value listeners on the native inputs', () => {
@@ -151,19 +150,29 @@ test('computes the disabled property', () => {
   expect(field.isDisabled).toBe(true);
 });
 
-test('computes the display name', () => {
-  const field = new Field(null, { name: 'email' });
-  // no alias was defined.
-  expect(field.displayName).toBe(undefined);
-  field.alias = 'aliased';
-  expect(field.displayName).toBe('aliased');
-});
+describe('computes the display name', () => {
+  test('via update method', () => {
+    const field = new Field(null, { name: 'email' });
+    // no alias was defined.
+    expect(field.alias).toBe(null);
+    field.update({ alias: 'aliased' });
+    expect(field.alias).toBe('aliased');
+  });
 
-test('it exposes a boolean to check wether it is a component or not', () => {
-  let field = new Field(null, { component: null });
-  expect(field.isVue).toBe(false);
-  field = new Field(null, { component: {} });
-  expect(field.isVue).toBe(true);
+  test('via the data-vv-as attribute', () => {
+    document.body.innerHTML = `
+      <input type="text" name="field" id="el" v-model="email" data-vv-as="myAlias">
+    `;
+    let el = document.querySelector('#el');
+    const field = new Field(el);
+    expect(field.alias).toBe('myAlias');
+  });
+
+  test('via the component $attrs object', () => {
+    const component = { $attrs: { 'data-vv-as': 'alias' } };
+    const field = new Field(null, { component });
+    expect(field.alias).toBe('alias');
+  });
 });
 
 test('it adds class listeners on the input', () => {

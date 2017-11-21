@@ -1,7 +1,5 @@
 > Date validators always require the `date_format` rule to be always present ([or globally set](https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.7)) and must preceed them in the rules order.
 
-> In the rule signature required parameters are enclosed within `{}` like this: `{param}`. Optional parameters have a `?` at the end: `{optional?}`. Lists are enclosed withn brackets `[]`. ex: `[list]`.
-
 ### [after:{target},{inclusion?}](#rule-after)
 
 The field under validation must have a valid date and is after the date value in the target field.
@@ -13,6 +11,8 @@ The field under validation must have a valid date and is after the date value in
 <span v-show="errors.has('after_field')" class="help is-danger">{{ errors.first('after_field') }}</span>
 
 <input name="after_field_target" :class="{'input': true, 'is-danger': errors.has('after_field') }" type="text" placeholder="DD/MM/YYYY">
+
+> Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but when targeting custom components the target field must have a `ref` attribute set and the confirmed paramter must be the same ref value prefixed with `$` sign to tell the validator that it should look for the target field in the component local `refs`. More  information are in the `RC.8` [release notes](https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.8).
 
 ### [alpha](#rule-alpha)
 
@@ -257,11 +257,18 @@ The field under validation must match the specified regular expression.
 <input v-validate="'regex:^([0-9]+)$'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('regex_field') }" name="regex_field" type="text" placeholder="Numbers only">
 <span v-show="errors.has('regex_field')" class="help is-danger">{{ errors.first('regex_field') }}</span>
 
-> You should not use the pipe '|' or commas ',' within your regular expression when using the string rules format as it will cause a conflict with how validators parsing work. You should use the object format of the rules instead, for example: `v-validate="{ rules: { regex: /.(js|ts)$/} }"`
+> You should not use the pipe '|' or commas ',' within your regular expression
+> when using the string rules format as it will cause a conflict with how
+> validators parsing work. You should use the object format of the rules
+> instead. Note that when using the object format in your HTML template you
+> need to escape all backslashes.
+> Example: `v-validate="{ required: true, regex: /\\.(js|ts)$/ }"`
 
-### [required](#rule-required)
+### [required:{invalidateFalse?}](#rule-required)
 
-The field under validation must have a non-empty value. By default all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`.
+The field under validation must have a non-empty value. By default all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`. 
+
+By default, the boolean value of `false` will pass validate. Setting invalidateFalse to true will fail validation for false values. For example, using `v-validate="'required:true'"` is helpful to support pseudo-checkbox validations where the checkbox must be checked. Note that `<input type='checkbox' v-validate="'required'" />` automatically supports this scenario.
 
 <input v-validate="'required'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('required_field') }" name="required_field" type="text" placeholder="Is Required">
 <span v-show="errors.has('required_field')" class="help is-danger">{{ errors.first('required_field') }}</span>

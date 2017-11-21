@@ -11,7 +11,7 @@ const messages = {
   confirmed: (field, [confirmedField]) => `Поле ${field} не совпадает с ${confirmedField}.`,
   date_between: (field, [min, max]) => `Поле ${field} должно быть между ${min} и ${max}.`,
   date_format: (field, [format]) => `Поле ${field} должно быть в формате ${format}.`,
-  decimal: (field, [decimals] = ['*']) => `Поле ${field} должно быть числовым и может содержать ${decimals === '*' ? '' : decimals} десятичных числа.`,
+  decimal: (field, [decimals = '*'] = []) => `Поле ${field} должно быть числовым и может содержать ${decimals === '*' ? '' : decimals} десятичных числа.`,
   digits: (field, [length]) => `Поле ${field} должно быть числовым и точно содержать ${length} цифры.`,
   dimensions: (field, [width, height]) => `Поле ${field} должно быть ${width} пикселей на ${height} пикселей.`,
   email: (field) => `Поле ${field} должно быть действительным электронным адресом.`,

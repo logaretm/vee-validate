@@ -135,7 +135,7 @@ test('toggles classes', () => {
 
   utils.toggleClass(el, 'some', false);
   expect(utils.hasClass(el, 'some')).toBe(false);
-  
+
   expect(() => {
     utils.toggleClass(el, null, true);
   }).not.toThrow();
@@ -185,7 +185,7 @@ test('gets the value path with a fallback value', () => {
 
   expect(utils.getPath(null, some)).toBe(undefined); // no path.
   expect(utils.getPath('value.val', null)).toBe(undefined); // no object.
-  
+
   expect(utils.getPath('value.val', some)).toBe(1); // exists.
   expect(utils.getPath('value.path', some)).toBe(undefined); // undefined but exists.
   expect(utils.getPath('value.not', some, false)).toBe(false); // does not.
@@ -390,4 +390,66 @@ describe('pareses date values', () => {
     expect(dateUtils.parseDate(Date.parse('foo'), format)).toBe(null);
   });
 
+});
+
+describe('makeEventsArray', () => {
+  test('it creates valid event arrays', () => {
+    expect(utils.makeEventsArray('input|blur|change')).toEqual(['input', 'blur', 'change']);
+    expect(utils.makeEventsArray('focus')).toEqual(['focus'])
+  });
+
+  test('it handles empty event strings', () => {
+    expect(utils.makeEventsArray('')).toEqual([]);
+  });
+
+  test('it handles invalid event strings', () => {
+    expect(utils.makeEventsArray('input, focus')).not.toEqual(['input', 'focus']);
+    expect(utils.makeEventsArray('blur/change')).toEqual(['blur/change']);
+  });
+});
+
+describe('makeDelayObject', () => {
+  test('it handles delays from an object under the global key', () => {
+    expect(utils.makeDelayObject(['input', 'blur'], {global: {input: 100, blur: 200}})).toEqual({input: 100, blur: 200});
+    expect(utils.makeDelayObject(['change'], {global: {change: 100}})).toEqual({change: 100});
+  });
+
+  test('it handles delays from an object under the local key', () => {
+    expect(utils.makeDelayObject(['input'], {local: {input: 100}})).toEqual({input: 100});
+  });
+
+  test('it handles overwrites values from the global key with those from local key', () => {
+    expect(utils.makeDelayObject(['input'], {local: {input: 100}, global: {input: 500}})).toEqual({input: 100});
+    expect(utils.makeDelayObject(['input', 'blur'], {local: {input: 600}, global: {input: 200, blur: 400}})).toEqual({input: 600, blur: 400});
+  });
+
+  test('it handles all events and sets them to 0', () => {
+    expect(utils.makeDelayObject(['change', 'blur', 'focus'], {})).toEqual({change: 0, blur: 0, focus: 0});
+  });
+
+  test('it handles empty events', () => {
+    expect(utils.makeDelayObject([], {global: {input: 100}})).toEqual({});
+  });
+
+  test('it handles empty given objects', () => {
+    expect(utils.makeDelayObject(['input'], {})).toEqual({input: 0});
+  });
+
+  test('it handles empty events and empty given objects together', () => {
+    expect(utils.makeDelayObject([], {})).toEqual({});
+  });
+
+  test('it handles already valid delay objects', () => {
+    expect(utils.makeDelayObject(['input', 'blur'], {change: 200, focus: 800})).toEqual({change: 200, focus: 800});
+  });
+
+  test('it handles delay integers', () => {
+    expect(utils.makeDelayObject(['focus', 'input'], 600)).toEqual({focus: 600, input: 600});
+  });
+});
+
+describe('deepParseInt', () => {
+  test('it parses all values on the first level of an object to int', () => {
+    expect(utils.deepParseInt({ blur: "10", input: "400", focus: 300, change: "hello" })).toEqual({ blur: 10, input: 400, focus: 300, change: NaN });
+  });
 });
