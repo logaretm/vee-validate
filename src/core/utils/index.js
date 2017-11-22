@@ -400,7 +400,9 @@ export const makeDelayObject = (events: string[], delay: Object | number) => {
   return delayObject;
 };
 
-export const deepParseInt = (input: Object | string) => {
+export const deepParseInt = (input: Object | string | number) => {
+  if (typeof input === 'number') return input;
+
   if (typeof input === 'string') return parseInt(input);
 
   for (const element in input) {

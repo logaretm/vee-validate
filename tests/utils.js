@@ -449,6 +449,15 @@ describe('makeDelayObject', () => {
 });
 
 describe('deepParseInt', () => {
+  test('it parses numbers', () => {
+    expect(utils.deepParseInt(10)).toEqual(10);
+  });
+
+  test('it parses numeric strings', () => {
+    expect(utils.deepParseInt("10")).toEqual(10);
+    expect(utils.deepParseInt("hey")).toEqual(NaN);
+  });
+
   test('it parses all values on the first level of an object to int', () => {
     expect(utils.deepParseInt({ blur: "10", input: "400", focus: 300, change: "hello" })).toEqual({ blur: 10, input: 400, focus: 300, change: NaN });
   });
