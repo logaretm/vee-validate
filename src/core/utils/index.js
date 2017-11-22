@@ -405,9 +405,10 @@ export const deepParseInt = (input: Object | string | number) => {
 
   if (typeof input === 'string') return parseInt(input);
 
+  const map = {};
   for (const element in input) {
-    input[element] = parseInt(input[element]);
+    map[element] = parseInt(input[element]);
   }
 
-  return input;
+  return map;
 };
