@@ -331,10 +331,25 @@ export const assign = (target: Object, ...others: any[]) => {
   return to;
 };
 
+let id = 0;
+let idTemplate = '{id}';
+
 /**
  * Generates a unique id.
  */
-export const uniqId = (): string => `_${Math.random().toString(36).substr(2, 9)}`;
+export const uniqId = (): string => {
+  // handle too many uses of uniqId, although unlikely.
+  if (id >= 9999) {
+    id = 0;
+    // shift the template.
+    idTemplate.replace('{id}', '_{id}');
+  }
+
+  id++;
+  const newId = idTemplate.replace('{id}', String(id));
+
+  return newId;
+};
 
 /**
  * finds the first element that satisfies the predicate callback, polyfills array.find
