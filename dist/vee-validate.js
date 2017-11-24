@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.0-rc.24
+  * vee-validate v2.0.0-rc.25
   * (c) 2017 Abdelrahman Awad
   * @license MIT
   */
@@ -3732,7 +3732,7 @@ var uniqId = function () {
   if (id >= 9999) {
     id = 0;
     // shift the template.
-    idTemplate.replace('{id}', '_{id}');
+    idTemplate = idTemplate.replace('{id}', '_{id}');
   }
 
   id++;
@@ -6796,7 +6796,7 @@ var minimal$1 = {
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.0-rc.24'
+  version: '2.0.0-rc.25'
 };
 
 // rules plugin definition.

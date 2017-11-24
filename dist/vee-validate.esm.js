@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.0-rc.24
+  * vee-validate v2.0.0-rc.25
   * (c) 2017 Abdelrahman Awad
   * @license MIT
   */
@@ -358,7 +358,7 @@ var uniqId = function () {
   if (id >= 9999) {
     id = 0;
     // shift the template.
-    idTemplate.replace('{id}', '_{id}');
+    idTemplate = idTemplate.replace('{id}', '_{id}');
   }
 
   id++;
@@ -6782,7 +6782,7 @@ var mapFields = function (fields) {
   }, {});
 };
 
-var version = '2.0.0-rc.24';
+var version = '2.0.0-rc.25';
 
 var rulesPlugin = function (ref) {
   var Validator$$1 = ref.Validator;
