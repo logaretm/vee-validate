@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.0-rc.23
+  * vee-validate v2.0.0-rc.24
   * (c) 2017 Abdelrahman Awad
   * @license MIT
   */
@@ -347,10 +347,25 @@ var assign = function (target) {
   return to;
 };
 
+var id = 0;
+var idTemplate = '{id}';
+
 /**
  * Generates a unique id.
  */
-var uniqId = function () { return ("_" + (Math.random().toString(36).substr(2, 9))); };
+var uniqId = function () {
+  // handle too many uses of uniqId, although unlikely.
+  if (id >= 9999) {
+    id = 0;
+    // shift the template.
+    idTemplate.replace('{id}', '_{id}');
+  }
+
+  id++;
+  var newId = idTemplate.replace('{id}', String(id));
+
+  return newId;
+};
 
 /**
  * finds the first element that satisfies the predicate callback, polyfills array.find
@@ -417,13 +432,16 @@ var makeDelayObject = function (events, delay) {
 };
 
 var deepParseInt = function (input) {
+  if (typeof input === 'number') { return input; }
+
   if (typeof input === 'string') { return parseInt(input); }
 
+  var map = {};
   for (var element in input) {
-    input[element] = parseInt(input[element]);
+    map[element] = parseInt(input[element]);
   }
 
-  return input;
+  return map;
 };
 
 // 
@@ -2889,7 +2907,7 @@ var mapFields = function (fields) {
   }, {});
 };
 
-var version = '2.0.0-rc.23';
+var version = '2.0.0-rc.24';
 
 var index_minimal_esm = {
   install: install,
