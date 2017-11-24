@@ -234,13 +234,13 @@ test('warns with branded message', () => {
 test('it generates a unique id', () => {
   // using ES6 Sets to test, FeelsGood.
   const ids = new Set();
-  // test uniqueness on 1000 elements, more than that is unlikely to happen within the same validator.
-  for (let i = 0; i < 1000; i++) {
+  // test uniqueness on million elements, more than that is unlikely to happen within the same validator.
+  for (let i = 0; i < 1000000; i++) {
     ids.add(utils.uniqId());
   }
 
   // 1000 unique entries.
-  expect(ids.size).toBe(1000);
+  expect(ids.size).toBe(1000000);
 });
 
 describe('normalizes rules', () => {
