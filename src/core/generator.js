@@ -51,12 +51,10 @@ export default class Generator {
   }
 
   /**
-   *
-   * @param {*} el
-   * @param {*} binding
+   * Resolves the rules defined on an element.
    */
   static resolveRules (el, binding) {
-    if (!binding || !binding.expression) {
+    if (!binding.value && (!binding || !binding.expression)) {
       return getDataAttribute(el, 'rules');
     }
 
