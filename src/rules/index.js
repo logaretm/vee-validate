@@ -17,6 +17,7 @@ import email from './email';
 import ext from './ext';
 import image from './image';
 import In from './in';
+import is from './is';
 import ip from './ip';
 import length from './length';
 import integer from './integer';
@@ -54,6 +55,7 @@ export default {
   integer,
   length,
   ip,
+  is,
   max,
   max_value,
   mimes,
