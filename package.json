@@ -19,6 +19,7 @@
     "build:minimal": "babel-node build/minimal.js",
     "build:esm": "babel-node build/esm.js",
     "build:minimal-esm": "babel-node build/minimal.esm.js",
+    "build:plugins": "babel-node build/plugins.js",
     "build:bundle": "npm run build:main && npm run build:minimal && npm run build:esm && npm run build:minimal-esm",
     "build": "npm run build:bundle && npm run build:locale",
     "cover": "jest --coverage",
