@@ -14,19 +14,14 @@ function install (_Vue, options = {}) {
 
   Vue = _Vue;
   Config.merge(options);
-  if (Config.current.dictionary) {
-    Validator.updateDictionary(Config.current.dictionary);
-  }
+  const { locale, dictionary } = Config.current;
 
-  if (options) {
-    if (options.locale) {
-      Validator.locale = options.locale;
-    }
+  Object.keys(dictionary).forEach(loc => {
+    Validator.localize(loc, dictionary[loc]);
+  });
 
-    if (options.strict) {
-      Validator.setStrictMode(Config.current.strict);
-    }
-  }
+  Validator.localize(locale);
+  Validator.setStrictMode(Config.current.strict);
 
   Vue.mixin(mixin);
   Vue.directive('validate', directive);

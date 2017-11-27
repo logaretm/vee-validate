@@ -14,8 +14,7 @@ Validator.extend('promised', (value) => {
 });
 
 beforeEach(() => {
-  Validator.setLocale('en');
-  Validator.updateDictionary({ ar: undefined }); // reset the dictionary for other tests.
+  Validator.localize('en');
   Validator.setStrictMode(true);
 });
 
@@ -339,7 +338,7 @@ test('can add a custom validator with localized messages', async () => {
   expect(await v.validate('anotherField', 1)).toBe(false);
   expect(v.errors.first('anotherField')).toBe('The anotherField field value is not falsy.');
 
-  v.setLocale('ar');
+  v.localize('ar');
   expect(v.locale).toBe('ar');
 
   expect(await v.validate('anotherField', 1)).toBe(false);
@@ -347,14 +346,11 @@ test('can add a custom validator with localized messages', async () => {
 });
 
 test('can set the locale statically', async () => {
-  Validator.updateDictionary({
-    ar: {
-      messages: {
-        alpha: () => 'البتاعة لازم يكون حروف بس'
-      }
+  Validator.localize('ar', {
+    messages: {
+      alpha: () => 'البتاعة لازم يكون حروف بس'
     }
   });
-  Validator.setLocale('ar');
   const loc = new Validator();
   loc.attach('name', 'alpha');
   await loc.validate('name', '1234');
@@ -382,11 +378,9 @@ test('throws an exception when extending with an invalid validator', () => {
   }).not.toThrow();
 });
 
-test(
-  'defaults to english messages if no current locale counterpart is found',
-  async () => {
+test('defaults to english messages if no current locale counterpart is found', async () => {
     const loc = new Validator({ first_name: 'alpha' });
-    loc.setLocale('fr');
+    loc.localize('fr');
     loc.attach('first_name', 'alpha');
     await loc.validate('first_name', '0123');
     expect(loc.errors.first('first_name')).toBe('The first_name field may only contain alphabetic characters.');
@@ -395,21 +389,18 @@ test(
 
 test('can overwrite messages and add translated messages', async () => {
   const loc = new Validator({ first_name: 'alpha' });
-  Validator.updateDictionary({
-    ar: { messages: { alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.`} },
-    en: { messages: { alpha: (field) => `${field} is alphabetic.` } }
-  });
+  Validator.localize('ar', { messages: { alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.`} });
+  Validator.localize('en', { messages: { alpha: (field) => `${field} is alphabetic.` } });
+
   loc.attach('first_name', 'alpha');
   await loc.validate('first_name', '0123');
   expect(loc.errors.first('first_name')).toBe('first_name is alphabetic.');
 
-  loc.setLocale('ar');
+  loc.localize('ar');
   await loc.validate('first_name', '0123');
   expect(loc.errors.first('first_name')).toBe('first_name يجب ان يحتوي على حروف فقط.');
 
-  loc.updateDictionary({
-    ar: { messages: { alpha: () => 'My name is jeff' } }
-  });
+  loc.localize('ar', { messages: { alpha: () => 'My name is jeff' } });
   await loc.validate('first_name', '0123');
   expect(loc.errors.first('first_name')).toBe('My name is jeff');
 });
@@ -417,12 +408,10 @@ test('can overwrite messages and add translated messages', async () => {
 test('sets locale for all validators', async () => {
   const v1 = new Validator({ first_name: 'alpha' });
   const v2 = new Validator({ first_name: 'alpha' });
-  Validator.updateDictionary({
-    ar: { messages: { alpha: () => 'عايز حروف'} },
-    en: { messages: { alpha: () => 'is alphabetic' } }
-  });
+  Validator.localize('ar', { messages: { alpha: () => 'عايز حروف'} });
+  Validator.localize('en', { messages: { alpha: () => 'is alphabetic' } });
 
-  v1.setLocale('ar');
+  v1.locale = 'ar';
   await v1.validate('first_name', '213');
   expect(v1.errors.first('first_name')).toBe('عايز حروف');
 
@@ -430,7 +419,7 @@ test('sets locale for all validators', async () => {
   expect(v2.errors.first('first_name')).toBe('عايز حروف');
 
   // doesn't matter which instance sets the locale.
-  v2.setLocale('en');
+  v2.localize('en');
   await v1.validate('first_name', '213');
   expect(v1.errors.first('first_name')).toBe('is alphabetic');
   await v2.validate('first_name', '213');
@@ -462,11 +451,9 @@ test('can add custom names via the attributes dictionary', async () => {
     email: 'required|email'
   });
 
-  v.updateDictionary({
-    en: {
-      attributes: {
-        email: 'Email Address'
-      }
+  v.localize('en', {
+    attributes: {
+      email: 'Email Address'
     }
   });
 
@@ -512,12 +499,10 @@ test('can translate target field for field dependent validations', async () => {
     },
     rules: 'date_format:DD-MM-YYYY|after:birthday_min'
   });
-  v.updateDictionary({
-    en: {
-      attributes: {
-        birthday: 'Birthday',
-        birthday_min: 'Some Date'
-      }
+  v.localize('en', {
+    attributes: {
+      birthday: 'Birthday',
+      birthday_min: 'Some Date'
     }
   });
 
@@ -857,19 +842,6 @@ test('triggers initial validation for fields', async () => {
   v.validate = jest.fn();
   const field = v.attach('field', 'alpha', { el: document.createElement('input'), getter: () => '123', initial: true });
   expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123');
-});
-
-test('adds locale objects to dictionary', () => {
-  global.console.warn = jest.fn();
-  Validator.addLocale({});
-  expect(global.console.warn).toHaveBeenCalled();
-  const v = new Validator();
-  const locale = {
-    name: 'ar',
-    messages: {}
-  };
-  v.addLocale(locale);
-  expect(v.dictionary.container.ar).toEqual(locale);
 });
 
 test('validates multi-valued promises', async () => {

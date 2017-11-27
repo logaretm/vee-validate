@@ -145,68 +145,12 @@ export default class Validator {
   }
 
   /**
-   * Sets the default locale for all validators.
-   * @deprecated
-   */
-  static setLocale (language?: string = 'en') {
-    Validator.locale = language;
-  }
-
-  /**
-   * @deprecated
-   */
-  static installDateTimeValidators () {
-    /* istanbul ignore next */
-    warn('Date validations are now installed by default, you no longer need to install it.');
-  }
-
-  /**
-   * @deprecated
-   */
-  installDateTimeValidators () {
-    /* istanbul ignore next */
-    warn('Date validations are now installed by default, you no longer need to install it.');
-  }
-
-  /**
    * Sets the operating mode for all newly created validators.
    * strictMode = true: Values without a rule are invalid and cause failure.
    * strictMode = false: Values without a rule are valid and are skipped.
    */
   static setStrictMode (strictMode?: boolean = true) {
     STRICT_MODE = strictMode;
-  }
-
-  /**
-   * Updates the dictionary, overwriting existing values and adding new ones.
-   * @deprecated
-   */
-  static updateDictionary (data) {
-    DICTIONARY.merge(data);
-  }
-
-  /**
-   * Adds a locale object to the dictionary.
-   * @deprecated
-   */
-  static addLocale (locale) {
-    if (! locale.name) {
-      warn('Your locale must have a name property');
-      return;
-    }
-
-    this.updateDictionary({
-      [locale.name]: locale
-    });
-  }
-
-  /**
-   * Adds a locale object to the dictionary.
-   * @deprecated
-   * @param {Object} locale
-   */
-  addLocale (locale) {
-    Validator.addLocale(locale);
   }
 
   /**
@@ -222,12 +166,17 @@ export default class Validator {
   static localize (lang: string, dictionary?: MapObject) {
     // merge the dictionary.
     if (dictionary) {
-      dictionary = assign({}, dictionary, { name: lang });
-      Validator.addLocale(dictionary);
+      const locale = lang || dictionary.name;
+      dictionary = assign({}, dictionary);
+      DICTIONARY.merge({
+        [locale]: dictionary
+      });
     }
 
-    // set the locale.
-    Validator.locale = lang;
+    if (lang) {
+      // set the locale.
+      Validator.locale = lang;
+    }
   }
 
   /**
@@ -326,22 +275,6 @@ export default class Validator {
    */
   remove (name: string) {
     Validator.remove(name);
-  }
-
-  /**
-   * Sets the validator current language.
-   * @deprecated
-   */
-  setLocale (language: string) {
-    this.locale = language;
-  }
-
-  /**
-   * Updates the messages dictionary, overwriting existing values and adding new ones.
-   * @deprecated
-   */
-  updateDictionary (data: MapObject) {
-    Validator.updateDictionary(data);
   }
 
   /**
