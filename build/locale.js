@@ -12,7 +12,6 @@ let cache;
 
 async function build () {
   console.log(chalk.cyan('Building locales...'));
-  process.stdout.write(chalk.cyan('Test'));
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
