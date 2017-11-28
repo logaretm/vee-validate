@@ -14,7 +14,9 @@ test('it stores the default config', () => {
     inject: true,
     fastExit: true,
     aria: true,
-    validity: false
+    validity: false,
+    i18n: null,
+    i18nRootKey: 'validation'
   });
 });
 
