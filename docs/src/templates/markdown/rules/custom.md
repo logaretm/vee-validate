@@ -86,7 +86,7 @@ instance.attach('falseField', 'falsy');
 
 ## [Custom Messages](#custom-messages)
 
-Of course you might need to overwrite the error messages, or add new ones. The Validator class and its instances provide an `updateDictionary` method. which will merge the messages with the internal dictionary, overwriting any duplicates.
+You might need to overwrite the error messages, or add new ones. The Validator class and its instances provide an `localize` method. which will merge the messages with the internal dictionary, overwriting any duplicates.
 
 > Any merges will have an effect on all validator instances as the messages dictionary is shared.
 
@@ -105,17 +105,17 @@ const dictionary = {
   }
 };
 
-Validator.updateDictionary(dictionary);
+// Override and merge the dictionaries
+Validator.localize(dictionary);
 
 const validator = new Validator({ first_name: 'alpha' });
 
-validator.setLocale('ar'); // now this validator will generate messages in arabic.
+validator.localize('ar'); // now this validator will generate messages in arabic.
 ```
 
+> You must provide the messages in an object path like: `dictionary.locale.messages`.
 
 Usually you would stucture your language files for your app rather than adding hardcoded strings like the example above, check the [localization guide](localization.html) for more info.
-
-> You must provide the messages in an object path like: `dictionary.locale.messages`.
 
 ## [Custom Attributes](#custom-attributes)
 
@@ -138,7 +138,7 @@ const dictionary = {
   }
 };
 
-Validator.updateDictionary(dictionary);
+Validator.localize(dictionary);
 ```
 
  > If the attribute is not found for the current locale, it will fallback to the binding expression or the field name. If you use the [data-vv-as](localization.html#attributes-data-vv-as) attribute it will take precedence over the internal dictionary.
@@ -152,14 +152,12 @@ Validator.updateDictionary(dictionary);
 
 ```js
 const dict = {
-  en: {
-    custom: {
-      email: {
-        required: 'Your email is empty' // messages can be strings as well.
-      },
-      name: {
-        required: () => 'Your name is empty'
-      }
+  custom: {
+    email: {
+      required: 'Your email is empty' // messages can be strings as well.
+    },
+    name: {
+      required: () => 'Your name is empty'
     }
   }
 };
@@ -170,9 +168,9 @@ const dict = {
 Then you would need to add the dictionary we just constructed to the current validators dictionary like this:
 
 ```js
-Validator.updateDictionary(dict);
+Validator.localize('en', dict);
 // or use the instance method
-this.$validator.updateDictionary(dict);
+this.$validator.localize('en', dict);
 ```
 
 Thats it. One thing to keep in mind is to place any dictionary releated operations in your code before it actually needs it to avoid uneccessary merges, for example a good common place is in your app entry point or setup script, conversly, a poor choice would be a component lifecycle hook like `mounted` since the validator dictionary is kept globally for all instances.

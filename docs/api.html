@@ -60,10 +60,6 @@ const expression = {
             <td>Specifies a name for the field, used in components validation and as a fallback name for inputs.</td>
         </tr>
         <tr>
-            <td class="is-method-name">data-vv-rules [deprecated]</td>
-            <td>Specifies the list of validations to be run against the field value.</td>
-        </tr>
-        <tr>
             <td class="is-method-name">data-vv-value-path</td>
             <td>Specifies the value path within a component $data to retrive the component current value. Only used for components.</td>
         </tr>
@@ -74,7 +70,7 @@ const expression = {
     </tbody>
 </table>
 <h2><a href="#error-bag">ErrorBag</a></h2>
-<p>The single error must look like this:</p>
+<p>The single error structure looks like this:</p>
 <pre><code class="highlight-js">const error = {
   field: 'Field name',
   msg: 'Error message',
@@ -181,6 +177,7 @@ bag.first('email:auth');
   </tbody>
 </table>
 <h2><a href="#validator">Validator</a></h2>
+<h3><a href="#validator-fields">Adding Fields</a></h3>
 <p>The validator is injected to the Vue instance as <code>$validator</code> automatically. However it is also a standalone class and can be used separately for programmatically validating values. The constructor can optionally take an object to map each field name to a set of validations.</p>
 <pre><code class="highlight-js">import { Validator } from 'vee-validate';
 const validator = new Validator({
@@ -191,21 +188,26 @@ const validator = new Validator({
 // Or
 Validator.create();
 </code></pre>
-<p>But you can construct the object without passing anything and add the validation rules later.</p>
+<p>But you can construct the object without passing anything and add the validation rules later, using the <code>attach</code> method which takes <a href="https://github.com/baianat/vee-validate/blob/master/flow/validator.js#L17">FieldOptions</a> as its first parameter.</p>
 <pre><code class="highlight-js">import { Validator } from 'vee-validate';
 const validator = new Validator();
 
-validator.attach('email', 'required|email'); // attach field.
-validator.attach('name', 'required|alpha', { alias: 'Full Name' }); // attach field with display name for errorsgeneration.
+validator.attach({ name: 'email', rules: 'required|email' }); // attach field.
+ // attach field with display name for errors generation.
+validator.attach({ name: 'name', rules: 'required|alpha', alias: 'Full Name' });
+
 validator.detach('email'); // you can also detach fields.
 </code></pre>
-<p>After that you can validate values with <code>validate(field, value)</code> which should return a boolean if all validations pass. Like this:</p>
-<pre><code class="highlight-js">validator.validate('email', 'foo@bar.com'); // true
-validator.validate('email', 'foo@bar'); // false
+<h3><a href="#validator-validate">Validation</a></h3>
+<p>After that you can validate values with <code>validate(field, value)</code> which returns a promise that resolves to a boolean.</p>
+<pre><code class="highlight-js">validator.validate('email', 'foo@bar.com').then(result =&gt; {
+  console.log(result);  // true
+});
+
+validator.validate('email', 'foo@bar').then(result =&gt; {
+  console.log(result); // false
+});
 </code></pre>
-<blockquote>
-<p>Most validators return a Boolean, however some validators (very few) return a <code>Promise</code> The validator is aware of this and will only return a Promise if at least one validation yields a promise. the promise is resolved to boolean which you can later chain to check your fields.</p>
-</blockquote>
 <p>You can validate multiple values at the same time using <code>validateAll(obj)</code>:</p>
 <pre><code class="highlight-js">validator.validateAll({ email: 'foo@bar.com', name: 'John Snow' }).then(result =&gt; {
   if (!result) {
@@ -217,10 +219,19 @@ validator.validate('email', 'foo@bar'); // false
 });
 </code></pre>
 <p>Returns a <code>Promise</code> The ErrorBag will be populated with any errors encountered, Throws if any error has been encountered. You can access the <code>errors</code> property directly which is an instance of the <code>ErrorBag</code>.</p>
-<pre><code class="highlight-js">var errorBag = validator.errors;
+<pre><code class="highlight-js">const errorBag = validator.errors;
 </code></pre>
-<p>The validator instance can only generate messages for one locale at a time. But you need to use <code>setLocale</code> method to switch the validator locale.</p>
-<pre><code class="highlight-js">validator.locale = 'ar';
+<p>The more options you provide to <code>attach</code> method the greater the field capabilities increases, for example providing a <code>getter</code> function option will allow the validator the find the field value whenever it needs to, for example you will be able to call <code>validateAll</code> and <code>validate</code> without having to provide any values.</p>
+<pre><code class="highlight-js">this.$validator.validate('field');
+this.$validator.validateAll();
+</code></pre>
+<blockquote>
+<p>Most of these options are being handled by the <code>v-validate</code> directive and are provided for you automatically.</p>
+</blockquote>
+<h3><a href="#validator-localization">Localization</a></h3>
+<p>The validator instance can only generate messages for one locale at a time. But you need to use <code>localize</code> method or set the <code>locale</code> property to switch the validator locale.</p>
+<pre><code class="highlight-js">validator.localize('ar');
+validator.locale = 'ar';
 </code></pre>
 <blockquote>
 <p>All validators share the same locale configuration. so any locale changes will update all validator instances across your app. For more information about how to overwrite messages and add new ones, please refer to the <a href="rules.html#custom-messages">custom messages</a> section.</p>
@@ -228,11 +239,11 @@ validator.validate('email', 'foo@bar'); // false
 <pre><code class="highlight-js">import { Validator } from 'vee-validate'; 
 
 // Also exposed on the class.
-Validator.setLocale('ar'); // Set all validator locales to 'ar'.
+Validator.localize('ar'); // Set all validator locales to 'ar'.
 
 Validator.create().locale; // 'ar';
 </code></pre>
-<p>Check the full API at <a href="https://github.com/logaretm/vee-validate/blob/master/src/core/validator.js">GitHub</a></p>
+<p>Checkout the full API at <a href="https://github.com/logaretm/vee-validate/blob/master/src/core/validator.js">GitHub</a></p>
 <h2><a href="#validator-example">Validator Example</a></h2>
 <p>Here is an example of using the validator without the directive, which means you will be responsible for monitoring input changes on your own, and calling the API methods as you see fit. This example uses a Vue instance to simplify things, but it can be used in plain JavaScript as well.</p>
 <code-example><div slot="example"><validator-example></validator-example></div><div slot="js">import { Validator } from 'vee-validate';
@@ -327,4 +338,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor-3b8c458f2e58aa7dd25e.js"></script><script type="text/javascript" src="/assets/js/bundle-3b8c458f2e58aa7dd25e.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor-b954a9a56f027d21c380.js"></script><script type="text/javascript" src="/assets/js/bundle-b954a9a56f027d21c380.js"></script></body></html>

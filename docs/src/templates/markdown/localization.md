@@ -47,9 +47,30 @@ new Vue({
 });
 ```
 
-## [Switching Locale](#switch-locale)
+## [Localization API](#api)
 
-You can switch the local of all validators by calling `localize` on any instance available within any component, this ensures all validators are operating with the same locale configuration.
+The validator class offers a static `localize` method which is also available on the instances, which have three overloads:
+
+```js
+const dictionary = {
+  en: {
+    // attributes and messages
+  },
+  ar: {
+    // attributes and messages
+  }
+};
+
+validator.localize('en'); // changes the locale
+
+// Merges the English dictionary and sets the current locale to English.
+validator.localize('en', dictionary.en); 
+
+// Merge all defined languages in the dictionary but does not set the current locale.
+validator.localize(dictionary); 
+```
+
+All validators' locales are shared, calling `localize` on any instance available within any component will change the locale for all validators.
 
 ```js
 // Inside a component.
@@ -68,7 +89,7 @@ A working example can be found [here](examples#locale-example)
 
 ## [Localized Files](#localized-files)
 
-In the [`locale`](https://github.com/logaretm/vee-validate/tree/master/locale) directory of this plugin, is a collection of localized files. If you can't find your locale, you could help this plugin by contributing a localized version to the [repository](https://github.com/logaretm/vee-validate). I will happily accept it.
+In the [`locale`](https://github.com/logaretm/vee-validate/tree/master/locale) directory of this plugin, is a collection of localized files. If you can't find your locale, you could help this plugin by contributing a localized version to the [repository](https://github.com/logaretm/vee-validate). It will be happily accepted.
 
 You can import those locales like this:
 
@@ -79,10 +100,8 @@ import VeeValidate, { Validator } from 'vee-validate';
 // Localize takes the locale object as the second argument (optional) and merges it.
 Validator.localize('ar', ar);
 
-// Install the Plugin and set the locale.
-Vue.use(VeeValidate, {
-  locale: 'ar'
-});
+// Install the Plugin.
+Vue.use(VeeValidate);
 ```
 
 You must note that the locale files export the following object structure:

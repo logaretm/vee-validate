@@ -70,10 +70,6 @@ data-* attributes provide an alternate interface for the plugin to specify what 
             <td>Specifies a name for the field, used in components validation and as a fallback name for inputs.</td>
         </tr>
         <tr>
-            <td class="is-method-name">data-vv-rules [deprecated]</td>
-            <td>Specifies the list of validations to be run against the field value.</td>
-        </tr>
-        <tr>
             <td class="is-method-name">data-vv-value-path</td>
             <td>Specifies the value path within a component $data to retrive the component current value. Only used for components.</td>
         </tr>
@@ -87,7 +83,7 @@ data-* attributes provide an alternate interface for the plugin to specify what 
 
 ## [ErrorBag](#error-bag)
 
-The single error must look like this:
+The single error structure looks like this:
 
 ```js
 const error = {
@@ -202,6 +198,8 @@ bag.first('email:auth');
 
 ## [Validator](#validator)
 
+### [Adding Fields](#validator-fields)
+
 The validator is injected to the Vue instance as `$validator` automatically. However it is also a standalone class and can be used separately for programmatically validating values. The constructor can optionally take an object to map each field name to a set of validations.
 
 ```js
@@ -215,25 +213,35 @@ const validator = new Validator({
 Validator.create();
 ```
 
-But you can construct the object without passing anything and add the validation rules later.
+But you can construct the object without passing anything and add the validation rules later, using the `attach` method which takes [FieldOptions](https://github.com/baianat/vee-validate/blob/master/flow/validator.js#L17) as its first parameter.
 
 ```js
 import { Validator } from 'vee-validate';
 const validator = new Validator();
 
-validator.attach('email', 'required|email'); // attach field.
-validator.attach('name', 'required|alpha', { alias: 'Full Name' }); // attach field with display name for errorsgeneration.
+validator.attach({ name: 'email', rules: 'required|email' }); // attach field.
+ // attach field with display name for errors generation.
+validator.attach({ name: 'name', rules: 'required|alpha', alias: 'Full Name' });
+
 validator.detach('email'); // you can also detach fields.
 ```
-After that you can validate values with `validate(field, value)` which should return a boolean if all validations pass. Like this:
+
+### [Validation](#validator-validate)
+
+After that you can validate values with `validate(field, value)` which returns a promise that resolves to a boolean.
 
 ```js
-validator.validate('email', 'foo@bar.com'); // true
-validator.validate('email', 'foo@bar'); // false
+validator.validate('email', 'foo@bar.com').then(result => {
+  console.log(result);  // true
+});
+
+validator.validate('email', 'foo@bar').then(result => {
+  console.log(result); // false
+});
 ```
-> Most validators return a Boolean, however some validators (very few) return a `Promise` The validator is aware of this and will only return a Promise if at least one validation yields a promise. the promise is resolved to boolean which you can later chain to check your fields.
 
 You can validate multiple values at the same time using `validateAll(obj)`:
+
 ```js
 validator.validateAll({ email: 'foo@bar.com', name: 'John Snow' }).then(result => {
   if (!result) {
@@ -248,12 +256,24 @@ validator.validateAll({ email: 'foo@bar.com', name: 'John Snow' }).then(result =
 Returns a `Promise` The ErrorBag will be populated with any errors encountered, Throws if any error has been encountered. You can access the `errors` property directly which is an instance of the `ErrorBag`.
 
 ```js
-var errorBag = validator.errors;
+const errorBag = validator.errors;
 ```
 
-The validator instance can only generate messages for one locale at a time. But you need to use `setLocale` method to switch the validator locale. 
+The more options you provide to `attach` method the greater the field capabilities increases, for example providing a `getter` function option will allow the validator the find the field value whenever it needs to, for example you will be able to call `validateAll` and `validate` without having to provide any values.
 
 ```js
+this.$validator.validate('field');
+this.$validator.validateAll();
+```
+
+> Most of these options are being handled by the `v-validate` directive and are provided for you automatically.
+
+### [Localization](#validator-localization)
+
+The validator instance can only generate messages for one locale at a time. But you need to use `localize` method or set the `locale` property to switch the validator locale. 
+
+```js
+validator.localize('ar');
 validator.locale = 'ar';
 ```
 > All validators share the same locale configuration. so any locale changes will update all validator instances across your app. For more information about how to overwrite messages and add new ones, please refer to the [custom messages](rules.html#custom-messages) section.
@@ -262,12 +282,12 @@ validator.locale = 'ar';
 import { Validator } from 'vee-validate'; 
 
 // Also exposed on the class.
-Validator.setLocale('ar'); // Set all validator locales to 'ar'.
+Validator.localize('ar'); // Set all validator locales to 'ar'.
 
 Validator.create().locale; // 'ar';
 ```
 
-Check the full API at [GitHub](https://github.com/logaretm/vee-validate/blob/master/src/core/validator.js)
+Checkout the full API at [GitHub](https://github.com/logaretm/vee-validate/blob/master/src/core/validator.js)
 
 ## [Validator Example](#validator-example)
 
