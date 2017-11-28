@@ -182,7 +182,7 @@ export default class Validator {
   /**
    * Registers a field to be validated.
    */
-  attach (field: MapObject | Field): Field {
+  attach (field: FieldOptions | Field): Field {
     // deprecate: handle old signature.
     if (arguments.length > 1) {
       field = assign({}, {
