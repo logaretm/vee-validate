@@ -1,4 +1,6 @@
 import { assign, getPath } from './core/utils';
+import Dictionary from './core/localization/default';
+import I18nDictionary from './core/localization/i18n';
 
 // @flow
 
@@ -15,10 +17,21 @@ const defaultConfig = {
   inject: true,
   fastExit: true,
   aria: true,
-  validity: false
+  validity: false,
+  i18n: null,
+  i18nRootKey: 'validation'
 };
 
 let currentConfig = assign({}, defaultConfig);
+const dependencies = {
+  dictionary: new Dictionary({
+    en: {
+      messages: {},
+      attributes: {},
+      custom: {}
+    }
+  })
+};
 
 export default class Config {
   static get default () {
@@ -29,11 +42,24 @@ export default class Config {
     return currentConfig;
   }
 
+  static dependency (key) {
+    return dependencies[key];
+  }
+
   /**
    * Merges the config with a new one.
    */
   static merge (config) {
     currentConfig = assign({}, currentConfig, config);
+  }
+
+  /**
+   * Initializes dependencies.
+   */
+  static init () {
+    if (this.current.i18n) {
+      dependencies.dictionary = new I18nDictionary(this.current.i18n, this.current.i18nRootKey);
+    }
   }
 
   /**

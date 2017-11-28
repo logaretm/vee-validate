@@ -1,6 +1,8 @@
-import { isObject, assign } from './utils';
+import { isObject, assign, isCallable } from '../utils';
 
 // @flow
+
+let LOCALE: string = 'en';
 
 export default class Dictionary {
   container: { [string]: Locale };
@@ -8,6 +10,14 @@ export default class Dictionary {
   constructor (dictionary?: Object = {}) {
     this.container = {};
     this.merge(dictionary);
+  }
+
+  get locale () {
+    return LOCALE;
+  }
+
+  set locale (value) {
+    LOCALE = value || 'en';
   }
 
   hasLocale (locale: string): boolean {
@@ -30,28 +40,32 @@ export default class Dictionary {
     return this.container[locale].dateFormat;
   }
 
-  getMessage (locale: string, key: string, fallback ?: string) {
+  getMessage (locale: string, key: string, data: any[]) {
+    let message = null;
     if (!this.hasMessage(locale, key)) {
-      return fallback || this._getDefaultMessage(locale);
+      message = this._getDefaultMessage(locale);
+    } else {
+      message = this.container[locale].messages[key];
     }
 
-    return this.container[locale].messages[key];
+    return isCallable(message) ? message(...data) : message;
   }
 
   /**
    * Gets a specific message for field. falls back to the rule message.
    */
-  getFieldMessage (locale: string, field: string, key: string) {
+  getFieldMessage (locale: string, field: string, key: string, data: any[]) {
     if (!this.hasLocale(locale)) {
-      return this.getMessage(locale, key);
+      return this.getMessage(locale, key, data);
     }
 
     const dict = this.container[locale].custom && this.container[locale].custom[field];
     if (!dict || !dict[key]) {
-      return this.getMessage(locale, key);
+      return this.getMessage(locale, key, data);
     }
 
-    return dict[key];
+    const message = dict[key];
+    return isCallable(message) ? message(...data) : message;
   }
 
   _getDefaultMessage (locale: string) {
