@@ -9,6 +9,7 @@ const messages = {
   before: (field, [target]) => `В поле ${field} должна быть дата до ${target}.`,
   between: (field, [min, max]) => `Поле ${field} должно быть между ${min} и ${max}.`,
   confirmed: (field, [confirmedField]) => `Поле ${field} не совпадает с ${confirmedField}.`,
+  credit_card: (field) => `Поле ${field} должно быть действительным номером карты`,
   date_between: (field, [min, max]) => `Поле ${field} должно быть между ${min} и ${max}.`,
   date_format: (field, [format]) => `Поле ${field} должно быть в формате ${format}.`,
   decimal: (field, [decimals = '*'] = []) => `Поле ${field} должно быть числовым и может содержать ${decimals === '*' ? '' : decimals} десятичных числа.`,
