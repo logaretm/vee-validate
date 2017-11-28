@@ -408,8 +408,10 @@ test('can overwrite messages and add translated messages', async () => {
 test('sets locale for all validators', async () => {
   const v1 = new Validator({ first_name: 'alpha' });
   const v2 = new Validator({ first_name: 'alpha' });
-  Validator.localize('ar', { messages: { alpha: () => 'عايز حروف'} });
-  Validator.localize('en', { messages: { alpha: () => 'is alphabetic' } });
+  Validator.localize({
+    ar: { messages: { alpha: () => 'عايز حروف'} },
+    en: { messages: { alpha: () => 'is alphabetic' } }
+  });
 
   v1.locale = 'ar';
   await v1.validate('first_name', '213');

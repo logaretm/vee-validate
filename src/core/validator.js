@@ -163,7 +163,12 @@ export default class Validator {
   /**
    * Adds and sets the current locale for the validator.
    */
-  static localize (lang: string, dictionary?: MapObject) {
+  static localize (lang: string | MapObject, dictionary?: MapObject) {
+    if (isObject(lang)) {
+      DICTIONARY.merge(lang);
+      return;
+    }
+
     // merge the dictionary.
     if (dictionary) {
       const locale = lang || dictionary.name;

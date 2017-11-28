@@ -16,11 +16,11 @@ function install (_Vue, options = {}) {
   Config.merge(options);
   const { locale, dictionary } = Config.current;
 
-  Object.keys(dictionary).forEach(loc => {
-    Validator.localize(loc, dictionary[loc]);
-  });
+  if (dictionary) {
+    Validator.localize(dictionary); // merge the dictionary.
+  }
 
-  Validator.localize(locale);
+  Validator.localize(locale); // set the locale
   Validator.setStrictMode(Config.current.strict);
 
   Vue.mixin(mixin);
