@@ -27,7 +27,9 @@ declare type FieldOptions = {
     dirty: string
   },
   classes?: boolean, // if flags classes should be applied
+  component?: any, // The vue component that is validated/watched by this field instance
   delay?: number, // the debounce time (ms) for the validation
+  el?: HTMLElement, // The DOM element for this field
   events?: string, // a pipe seperated list of events that will be used to trigger validation
   getter?: () => any, // a getter function for the current field value, will be used to resolve the field value.
   initial?: boolean, // if it should be validated immediatly
@@ -37,5 +39,5 @@ declare type FieldOptions = {
   scope?: string | null, // the string name of the field scope
   targetOf?: string | null, // the id of the field that targets this one
   validity?: boolean, // if constrained validation API should be used (mdn)
-  vm?: null // the vue instance that owns this field
+  vm?: any // the vue instance that owns this field
 };

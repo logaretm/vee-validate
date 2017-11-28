@@ -71,7 +71,7 @@ export default class Field {
   value: any;
   _alias: ?string;
 
-  constructor (el: HTMLInputElement | null, options = {}) {
+  constructor (el: HTMLInputElement | null, options: FieldOptions | MapObject = {}) {
     this.id = uniqId();
     this.el = el;
     this.updated = false;
