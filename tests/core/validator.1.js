@@ -1,4 +1,4 @@
-import plugin from './../src/index';
+import plugin from './../../src/index';
 
 const Validator = plugin.Validator;
 

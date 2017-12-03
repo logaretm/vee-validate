@@ -1,21 +1,14 @@
 import ErrorBag from './errorBag';
-import Dictionary from './dictionary';
 import { isObject, isCallable, toArray, warn, createError, assign, find, isNullOrUndefined } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
+import Config from '../config';
 
 // @flow
 
 const RULES: { [string]: Rule } = {};
-let LOCALE: string = 'en';
 let STRICT_MODE: boolean = true;
-const DICTIONARY: Dictionary = new Dictionary({
-  en: {
-    messages: {},
-    attributes: {},
-    custom: {}
-  }
-});
+const DICTIONARY: Dictionary = Config.dependency('dictionary');
 
 export default class Validator {
   strict: boolean;
@@ -78,7 +71,7 @@ export default class Validator {
    * Getter for the current locale.
    */
   get locale (): string {
-    return LOCALE;
+    return DICTIONARY.locale;
   }
 
   /**
@@ -92,7 +85,7 @@ export default class Validator {
   * Static getter for the validator locale.
   */
   static get locale () {
-    return LOCALE;
+    return DICTIONARY.locale;
   }
 
   /**
@@ -105,7 +98,7 @@ export default class Validator {
       warn('You are setting the validator locale to a locale that is not defined in the dictionary. English messages may still be generated.');
     }
 
-    LOCALE = value;
+    DICTIONARY.locale = value;
   }
 
   /**
@@ -436,15 +429,11 @@ export default class Validator {
     const name = this._getFieldDisplayName(field);
     const params = this._getLocalizedParams(rule, targetName);
     // Defaults to english message.
-    if (!this.dictionary.hasLocale(LOCALE)) {
-      const msg = this.dictionary.getFieldMessage('en', field.name, rule.name);
-
-      return isCallable(msg) ? msg(name, params, data) : msg;
+    if (!this.dictionary.hasLocale(this.locale)) {
+      return this.dictionary.getFieldMessage('en', field.name, rule.name, [name, params, data]);
     }
 
-    const msg = this.dictionary.getFieldMessage(LOCALE, field.name, rule.name);
-
-    return isCallable(msg) ? msg(name, params, data) : msg;
+    return this.dictionary.getFieldMessage(this.locale, field.name, rule.name, [name, params, data]);
   }
 
   /**
@@ -452,7 +441,7 @@ export default class Validator {
    */
   _getLocalizedParams (rule: MapObject, targetName?: string | null = null) {
     if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
-      const localizedName = targetName || this.dictionary.getAttribute(LOCALE, rule.params[0], rule.params[0]);
+      const localizedName = targetName || this.dictionary.getAttribute(this.locale, rule.params[0], rule.params[0]);
       return [localizedName].concat(rule.params.slice(1));
     }
 
@@ -463,7 +452,7 @@ export default class Validator {
    * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
    */
   _getFieldDisplayName (field: Field) {
-    return field.alias || this.dictionary.getAttribute(LOCALE, field.name, field.name);
+    return field.alias || this.dictionary.getAttribute(this.locale, field.name, field.name);
   }
 
   /**
@@ -562,23 +551,8 @@ export default class Validator {
     }
 
     RULES[name] = validator.validate;
-    if (isCallable(validator.getMessage)) {
-      DICTIONARY.setMessage(LOCALE, name, validator.getMessage);
-    }
-
-    if (validator.messages) {
-      DICTIONARY.merge(
-        Object.keys(validator.messages).reduce((prev, curr) => {
-          const dict = prev;
-          dict[curr] = {
-            messages: {
-              [name]: validator.messages[curr]
-            }
-          };
-
-          return dict;
-        }, {})
-      );
+    if (validator.getMessage) {
+      DICTIONARY.setMessage(this.locale, name, validator.getMessage);
     }
   }
 
@@ -592,15 +566,13 @@ export default class Validator {
 
     if (!isCallable(validator.validate)) {
       throw createError(
-        // eslint-disable-next-line
         `Extension Error: The validator '${name}' must be a function or have a 'validate' method.`
       );
     }
 
-    if (!isCallable(validator.getMessage) && !isObject(validator.messages)) {
+    if (!isCallable(validator.getMessage) && typeof validator.getMessage !== 'string') {
       throw createError(
-        // eslint-disable-next-line
-        `Extension Error: The validator '${name}' must have a 'getMessage' method or have a 'messages' object.`
+        `Extension Error: The validator '${name}' object must have a 'getMessage' method or string.`
       );
     }
   }

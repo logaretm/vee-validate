@@ -3735,6 +3735,10 @@ vlq@^0.2.1:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/vlq/-/vlq-0.2.3.tgz#8f3e4328cf63b1540c0d67e1b2778386f8975b26"
 
+vue-i18n@^7.3.2:
+  version "7.3.2"
+  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-7.3.2.tgz#1205bb8811323fd5c44e57e4fd619beaf2f7a9a1"
+
 vue-jest@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/vue-jest/-/vue-jest-1.0.2.tgz#0c708734167c1febc8a812dca6df137a1fd8c4ae"

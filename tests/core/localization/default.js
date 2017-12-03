@@ -1,4 +1,4 @@
-import Dictionary from './../src/core/dictionary';
+import Dictionary from './../../../src/core/localization/default';
 
 test('does not merge if a non object is provided', () => {
   const dict = new Dictionary('a string');
@@ -61,13 +61,6 @@ test('can fetch an attribute', () => {
   });
 
   expect(dict.getAttribute('en', 'email')).toBe('Email Address');
-});
-
-test('can default to a fallback if message or attribute does not exist', () => {
-  const dict = new Dictionary();
-
-  expect(dict.getMessage('en', 'winter', 'Winter is still coming')).toBe('Winter is still coming');
-  expect(dict.getAttribute('en', 'john', 'Knows nothing')).toBe('Knows nothing');
 });
 
 test('can set messages', () => {

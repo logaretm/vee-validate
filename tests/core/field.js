@@ -1,4 +1,4 @@
-import Field from '../src/core/field';
+import Field from '../../src/core/field';
 
 test('constructs a headless field with default values', () => {
   const field = new Field(null, {});

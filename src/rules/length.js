@@ -1,9 +1,9 @@
 import { toArray } from '../core/utils';
 
 /**
- * @param {Array|String} value 
+ * @param {Array|String} value
  * @param {Number} length
- * @param {Number} max 
+ * @param {Number} max
  */
 const compare = (value, length, max) => {
   if (max === undefined) {

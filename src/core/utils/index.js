@@ -427,3 +427,24 @@ export const deepParseInt = (input: Object | string | number) => {
 
   return map;
 };
+
+export const merge = (target: MapObject, source: MapObject): MapObject => {
+  if (! (isObject(target) && isObject(source))) {
+    return target;
+  }
+
+  Object.keys(source).forEach((key: string) => {
+    if (isObject(source[key])) {
+      if (! target[key]) {
+        assign(target, { [key]: {} });
+      }
+
+      merge(target[key], source[key]);
+      return;
+    }
+
+    assign(target, { [key]: source[key] });
+  });
+
+  return target;
+};

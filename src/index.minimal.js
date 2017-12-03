@@ -3,7 +3,7 @@ import directive from './directive';
 import mixin from './mixin';
 import use from './use';
 import Validator from './core/validator';
-import mapFields from './core/helpers';
+import mapFields from './core/mapFields';
 import ErrorBag from './core/errorBag';
 
 export default {

@@ -1,6 +1,6 @@
-import Field from './../src/core/field';
-import helpers from './helpers';
-import plugin from './../src/index';
+import Field from './../../src/core/field';
+import helpers from './../helpers';
+import plugin from './../../src/index';
 
 const Validator = plugin.Validator;
 
@@ -321,28 +321,6 @@ test('can extend the validators for a validator instance', async () => {
   expect(await v.validate('anotherField', 1)).toBe(true);
   expect(await v.validate('anotherField', 0)).toBe(false);
   expect(v.errors.first('anotherField')).toBe('The anotherField field value is not truthy.');
-});
-
-test('can add a custom validator with localized messages', async () => {
-  const falsy = {
-    messages: {
-      en: (field) => `The ${field} field value is not falsy.`,
-      ar: () => 'Some Arabic Text'
-    },
-    validate: (value) => ! value
-  };
-
-  Validator.extend('falsy', falsy);
-  const v = new Validator();
-  v.attach('anotherField', 'falsy');
-  expect(await v.validate('anotherField', 1)).toBe(false);
-  expect(v.errors.first('anotherField')).toBe('The anotherField field value is not falsy.');
-
-  v.localize('ar');
-  expect(v.locale).toBe('ar');
-
-  expect(await v.validate('anotherField', 1)).toBe(false);
-  expect(v.errors.first('anotherField')).toBe('Some Arabic Text');
 });
 
 test('can set the locale statically', async () => {
