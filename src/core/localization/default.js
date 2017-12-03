@@ -1,4 +1,4 @@
-import { isObject, assign, isCallable } from '../utils';
+import { isObject, assign, isCallable, merge } from '../utils';
 
 // @flow
 
@@ -101,7 +101,7 @@ export default class Dictionary {
   }
 
   merge (dictionary: Dict) {
-    this._merge(this.container, dictionary);
+    merge(this.container, dictionary);
   }
 
   setMessage (locale: string, key: string, message: MessageGenerator | string) {
@@ -124,26 +124,5 @@ export default class Dictionary {
     }
 
     this.container[locale].attributes[key] = attribute;
-  }
-
-  _merge (target: Dict, source: Dict) {
-    if (! (isObject(target) && isObject(source))) {
-      return target;
-    }
-
-    Object.keys(source).forEach((key: string) => {
-      if (isObject(source[key])) {
-        if (! target[key]) {
-          assign(target, { [key]: {} });
-        }
-
-        this._merge(target[key], source[key]);
-        return;
-      }
-
-      assign(target, { [key]: source[key] });
-    });
-
-    return target;
   }
 }

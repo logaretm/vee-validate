@@ -1,22 +1,31 @@
-import { warn, isCallable } from '../utils';
+import { warn, isCallable, isObject, merge, getPath } from '../utils';
 
 // @flow
 
-const convertFormat = (locale: Locale) => {
-  const messages = Object.keys(locale.messages).reduce((prev, key) => {
-    if (isCallable(locale.messages[key])) {
-      prev[key] = locale.messages[key]('{0}', ['{1}', '{2}', '{3}']);
+const normalizeValue = (value: any) => {
+  if (isObject(value)) {
+    return Object.keys(value).reduce((prev, key) => {
+      prev[key] = normalizeValue(value[key]);
 
       return prev;
-    }
+    }, {});
+  }
 
-    prev[key] = locale.messages[key];
+  if (isCallable(value)) {
+    return value('{0}', ['{1}', '{2}', '{3}']);
+  }
 
-    return prev;
-  }, {});
+  return value;
+};
+
+const normalizeFormat = (locale: Locale) => {
+  // normalize messages
+  const messages = normalizeValue(locale.messages);
+  const custom = normalizeValue(locale.custom);
 
   return {
     messages,
+    custom,
     attributes: locale.attributes,
     dateFormat: locale.dateFormat
   };
@@ -39,8 +48,12 @@ export default class I18nDictionary {
     warn('Cannot set locale from the validator when using vue-i18n');
   }
 
-  getDateFormat (): string {
-    return this.i18n.getDateTimeFormat(this.locale);
+  getDateFormat (locale?: string): string {
+    return this.i18n.getDateTimeFormat(locale || this.locale);
+  }
+
+  setDateFormat (locale?: string, value: string) {
+    this.i18n.setDateTimeFormat(locale || this.locale, value);
   }
 
   getMessage (locale: string, key: string, data: any[]): string {
@@ -71,22 +84,22 @@ export default class I18nDictionary {
   }
 
   merge (dictionary) {
-    Object.keys(dictionary).forEach(key => {
-      const locale = convertFormat(dictionary[key]);
-      this.i18n.mergeLocaleMessage(key, { [this.rootKey]: locale });
+    Object.keys(dictionary).forEach(localeKey => {
+      // i18n doesn't deep merge
+      // first clone the existing locale (avoid mutations to locale)
+      const clone = merge({}, getPath(`${localeKey}.${this.rootKey}`, this.i18n.messages, {}));
+      // Merge cloned locale with new one
+      const locale = merge(clone, normalizeFormat(dictionary[localeKey]));
+      this.i18n.mergeLocaleMessage(localeKey, { [this.rootKey]: locale });
       if (locale.dateFormat) {
-        this.i18n.mergeDateTimeFormat(key, locale.dateFormat);
+        this.i18n.setDateTimeFormat(localeKey, locale.dateFormat);
       }
     });
   }
 
   setMessage (locale: string, key: string, value: () => string | string) {
-    if (isCallable(value)) {
-      value = value('{0}', ['{1}', '{2}', '{3}']);
-    }
-
-    this.i18n.mergeLocaleMessage(locale, {
-      [this.rootKey]: {
+    this.merge({
+      [locale]: {
         messages: {
           [key]: value
         }
@@ -95,8 +108,8 @@ export default class I18nDictionary {
   }
 
   setAttribute (locale: string, key: string, value: string) {
-    this.i18n.mergeLocaleMessage(locale, {
-      [this.rootKey]: {
+    this.merge({
+      [locale]: {
         attributes: {
           [key]: value
         }
