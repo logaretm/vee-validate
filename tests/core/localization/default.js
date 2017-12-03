@@ -1,4 +1,4 @@
-import Dictionary from './../src/core/localization/default';
+import Dictionary from './../../../src/core/localization/default';
 
 test('does not merge if a non object is provided', () => {
   const dict = new Dictionary('a string');

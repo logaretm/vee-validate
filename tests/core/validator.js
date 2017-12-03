@@ -1,6 +1,6 @@
-import Field from './../src/core/field';
-import helpers from './helpers';
-import plugin from './../src/index';
+import Field from './../../src/core/field';
+import helpers from './../helpers';
+import plugin from './../../src/index';
 
 const Validator = plugin.Validator;
 
