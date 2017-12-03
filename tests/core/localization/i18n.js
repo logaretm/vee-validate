@@ -38,6 +38,7 @@ test('gets messsages', () => {
       en: {
         validation: {
           messages: {
+            _default: '{0} is invalid',
             required: 'oops {0} is wrong'
           }
         }
@@ -46,6 +47,9 @@ test('gets messsages', () => {
   });
   const dictionary = new Dictionary(i18n, 'validation');
   expect(dictionary.getMessage('en', 'required', ['field'])).toBe('oops field is wrong');
+
+  // test default fallback
+  expect(dictionary.getMessage('en', 'alpha', ['field'])).toBe('field is invalid');
 });
 
 test('sets messsages', () => {
@@ -151,12 +155,15 @@ test('sets date format', () => {
   expect(dictionary.getDateFormat('en')).toBe('MM-DD-YYYY');
 });
 
-test('gets field specific messages', () => {
+describe('gets field specifc messages', () => {
   const i18n = new VueI18n({
     locale: 'en',
     messages: {
       en: {
         validation: {
+          messages: {
+            required: 'default required message'
+          },
           custom: {
             email: {
               required: 'EMAIL ADDRESS IS REQUIRED'
@@ -166,9 +173,15 @@ test('gets field specific messages', () => {
       }
     }
   });
-
   const dictionary = new Dictionary(i18n, 'validation');
-  expect(dictionary.getFieldMessage('en', 'email', 'required', [])).toBe('EMAIL ADDRESS IS REQUIRED');
+
+  test('if field exists', () => {
+    expect(dictionary.getFieldMessage('en', 'email', 'required', [])).toBe('EMAIL ADDRESS IS REQUIRED');
+  });
+
+  test('fallsback to the default message for the rule', () => {
+    expect(dictionary.getFieldMessage('en', 'name', 'required', [])).toBe('default required message');
+  })
 });
 
 test('merges dictionaries and locale messages', () => {
