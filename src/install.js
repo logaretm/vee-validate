@@ -14,7 +14,6 @@ function install (_Vue, options = {}) {
 
   Vue = _Vue;
   Config.merge(options);
-  Config.init();
   const { locale, dictionary } = Config.current;
 
   if (dictionary) {

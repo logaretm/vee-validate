@@ -1,4 +1,5 @@
 import Config from '../src/config';
+import Dictionary from '../src/core/localization/i18n';
 
 test('it stores the default config', () => {
   expect(Config.default).toEqual({
@@ -48,3 +49,19 @@ describe('resolves the working config from a vue instance', () => {
   });
   
 })
+
+test('can fetch/register dependencies', () => {
+  expect(Config.dependency('key')).toBe(undefined);
+  const myDep = {};
+  Config.register('key', myDep);
+  expect(Config.dependency('key')).toBe(myDep);
+});
+
+test('initializes i18n dictionary', () => {
+  expect(Config.dependency('dictionary') instanceof Dictionary).toBe(false);
+  Config.merge({
+    i18n: { locale: 'en' }
+  });
+
+  expect(Config.dependency('dictionary') instanceof Dictionary).toBe(true);
+});

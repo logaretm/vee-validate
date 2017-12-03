@@ -51,15 +51,16 @@ export default class Config {
    */
   static merge (config) {
     currentConfig = assign({}, currentConfig, config);
+    if (Config.current.i18n) {
+      Config.register('dictionary', new I18nDictionary(this.current.i18n, this.current.i18nRootKey));
+    }
   }
 
   /**
-   * Initializes dependencies.
+   * Registers a dependency.
    */
-  static init () {
-    if (this.current.i18n) {
-      dependencies.dictionary = new I18nDictionary(this.current.i18n, this.current.i18nRootKey);
-    }
+  static register (key: string, value: any) {
+    dependencies[key] = value;
   }
 
   /**
