@@ -38,6 +38,7 @@ export class Field {
     el: any;
     value: any;
     rules: any;
+    update(options:object): void;
 }
 
 export class ErrorField {
@@ -102,7 +103,7 @@ export class Validator {
     localize(language: string, dictionary?: Object) :void;
     setStrictMode(strictMode?: boolean): void;
     updateDictionary(data: Object): void;
-    validate(name: string, value: any, scope?: string): Promise<any>;
+    validate(name: string, value?: any, scope?: string): Promise<any>;
     validateAll(values?: Object, scope?: string): Promise<any>;
     validateScopes(): Promise<any>;
     static create(validations: Object, options: any): Validator;
