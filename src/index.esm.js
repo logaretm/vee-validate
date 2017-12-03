@@ -4,7 +4,7 @@ import mixin from './mixin';
 import en from '../locale/en';
 import use from './use';
 import Rules from './rules';
-import mapFields from './core/helpers';
+import mapFields from './core/mapFields';
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
 
