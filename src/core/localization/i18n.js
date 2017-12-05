@@ -31,7 +31,7 @@ const normalizeFormat = (locale: Locale) => {
   };
 };
 
-export default class I18nDictionary {
+export default class I18nDictionary implements IDictionary {
   rootKey: string;
   i18n: Object;
 
@@ -48,11 +48,11 @@ export default class I18nDictionary {
     warn('Cannot set locale from the validator when using vue-i18n');
   }
 
-  getDateFormat (locale?: string): string {
+  getDateFormat (locale: string): string {
     return this.i18n.getDateTimeFormat(locale || this.locale);
   }
 
-  setDateFormat (locale?: string, value: string) {
+  setDateFormat (locale: string, value: string) {
     this.i18n.setDateTimeFormat(locale || this.locale, value);
   }
 
