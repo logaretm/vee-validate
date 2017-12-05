@@ -1,9 +1,9 @@
-import { find, isNullOrUndefined } from './utils';
+import { find, isNullOrUndefined, assign, isCallable } from './utils';
 
 // @flow
 
 export default class ErrorBag {
-  items: Array<FieldError>;
+  items: FieldError[];
 
   constructor () {
     this.items = [];
@@ -19,12 +19,22 @@ export default class ErrorBag {
         field: arguments[0],
         msg: arguments[1],
         rule: arguments[2],
-        scope: !isNullOrUndefined(arguments[3]) ? arguments[3] : null
+        scope: !isNullOrUndefined(arguments[3]) ? arguments[3] : null,
+        regenerate: null
       };
     }
 
     error.scope = !isNullOrUndefined(error.scope) ? error.scope : null;
     this.items.push(error);
+  }
+
+  /**
+   * Regenrates error messages if they have a generator function.
+   */
+  regenerate (): void {
+    this.items.forEach(i => {
+      i.msg = isCallable(i.regenerate) ? i.regenerate() : i.msg;
+    });
   }
 
   /**
