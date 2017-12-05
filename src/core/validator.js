@@ -141,7 +141,12 @@ export default class Validator {
    * Adds and sets the current locale for the validator.
    */
   localize (lang: string, dictionary?: MapObject) {
+    const changed = this.locale !== lang;
     Validator.localize(lang, dictionary);
+
+    if (this.errors.count() && changed) {
+      this.errors.regenerate();
+    }
   }
 
   /**
