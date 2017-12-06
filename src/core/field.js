@@ -162,7 +162,7 @@ export default class Field {
   /**
    * Determines if the instance matches the options provided.
    */
-  matches (options: { [string]: any }): boolean {
+  matches (options: FieldMatchOptions): boolean {
     if (options.id) {
       return this.id === options.id;
     }
@@ -234,9 +234,9 @@ export default class Field {
    * Resets field flags and errors.
    */
   reset () {
-    const def = createFlags();
+    const defaults = createFlags();
     Object.keys(this.flags).forEach(flag => {
-      this.flags[flag] = def[flag];
+      this.flags[flag] = defaults[flag];
     });
 
     this.addActionListeners();

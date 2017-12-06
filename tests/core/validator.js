@@ -725,41 +725,33 @@ test('it can set flags for attached fields', () => {
   expect(field.updateClasses).toHaveBeenCalled();
 });
 
-test('resets errors on the next tick if available', () => {
-  // not available.
-  let v = new Validator();
-  const vm = { $nextTick: jest.fn(cb => cb()) };
-  v.attach(new Field(null, {}));
-  v.errors.add('some', 'message', 'by');
-  v.reset();
-  expect(v.errors.count()).toBe(0);
+describe('resets fields', () => {
+  test('resets fields matching the matcher options', () => {
+    const v = new Validator();
+    v.attach({ name: 'field' });
+    v.attach({ name: 'fieldTwo', scope: 's1' });
+    v.attach({ name: 'fieldThree', scope: 's1' });
 
-  v = new Validator(null, { vm });
-  v.attach(new Field(null, {}));
-  v.errors.add('some', 'message', 'by');
-  v.reset();
-  expect(vm.$nextTick).toHaveBeenCalled();
-  expect(v.errors.count()).toBe(0);
-});
+    v.errors.add({ field: 'field', msg: 'oops' });
+    v.errors.add({ field: 'fieldTwo', msg: 'oops', scope: 's1' });
+    v.errors.add({ field: 'fieldThree', msg: 'oops', scope: 's1' });
 
-test('resets errors on the next tick if available, complete test asynchronously', (done) => {
-  // not available.
-  let v = new Validator();
-  const vm = { $nextTick: jest.fn(cb => cb()) };
-  v.attach(new Field(null, {}));
-  v.errors.add('some', 'message', 'by');
-  v.reset();
-  expect(v.errors.count()).toBe(0);
+    v.reset({ name: 'field' });
+    expect(v.errors.count()).toBe(2);
+    v.reset({ scope: 's1' });
+    expect(v.errors.count()).toBe(0);
+  })
 
-  v = new Validator(null, { vm });
-  v.attach(new Field(null, {}));
-  v.errors.add('some', 'message', 'by');
-  v.reset().then(() => {
+  test('resets fields on nextTick if vm is provided', async () => {
+    const vm = { $nextTick: jest.fn(cb => cb()) };
+    const v = new Validator(null, { vm });
+    v.attach({ name: 'field' });
+    v.errors.add({ name: 'field', msg: 'oops' });
+    await v.reset();
     expect(vm.$nextTick).toHaveBeenCalled();
     expect(v.errors.count()).toBe(0);
-    done();
   });
-})
+});
 
 test('it can handle mixed successes and errors from one field regardless of rules order', async () => {
   const v = new Validator({

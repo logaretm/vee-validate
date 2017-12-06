@@ -31,26 +31,13 @@ export default class Validator {
     this.fastExit = options.fastExit || false;
     this.ownerId = options.vm && options.vm._uid;
     // create it statically since we don't need constant access to the vm.
-    this.reset = options.vm && isCallable(options.vm.$nextTick) ? () => {
-      return new Promise((resolve, reject) => {
+    this.reset = options.vm && isCallable(options.vm.$nextTick) ? (matcher) => {
+      return new Promise(resolve => {
         options.vm.$nextTick(() => {
-          this.fields.items.forEach(i => i.reset());
-          this.errors.clear();
-          resolve();
+          resolve(this._reset(matcher));
         });
       });
-    } : () => {
-      return new Promise((resolve, reject) => {
-        this.fields.items.forEach(i => i.reset());
-        this.errors.clear();
-        resolve();
-      });
-    };
-    /* istanbul ignore next */
-    this.clean = () => {
-      warn('validator.clean is marked for deprecation, please use validator.reset instead.');
-      this.reset();
-    };
+    } : this._reset;
   }
 
   /**
@@ -469,6 +456,26 @@ export default class Validator {
   }
 
   /**
+   * Resets fields that matches the matcher options or all fields if not specified.
+   */
+  _reset (matcher?: FieldMatchOptions): Promise<void> {
+    return new Promise(resolve => {
+      if (matcher) {
+        this.fields.filter(matcher).forEach(field => {
+          field.reset(); // reset field flags.
+          this.errors.remove(field.name, field.scope, field.id);
+        });
+
+        return resolve();
+      }
+
+      this.fields.items.forEach(i => i.reset());
+      this.errors.clear();
+      resolve();
+    });
+  }
+
+  /**
    * Tests a single input value against a rule.
    */
   _test (field: Field, value: any, rule: MapObject): ValidationResult | Promise<ValidationResult> {
@@ -514,13 +521,7 @@ export default class Validator {
 
         return {
           valid: allValid,
-          error: allValid ? undefined : {
-            id: field.id,
-            field: field.name,
-            msg: this._formatErrorMessage(field, rule, data, targetName),
-            rule: rule.name,
-            scope: field.scope
-          }
+          error: allValid ? undefined : this._createFieldError(field, rule, data, targetName)
         };
       });
     }
@@ -531,13 +532,7 @@ export default class Validator {
 
     return {
       valid: result.valid,
-      error: result.valid ? undefined : {
-        id: field.id,
-        field: field.name,
-        msg: this._formatErrorMessage(field, rule, result.data, targetName),
-        rule: rule.name,
-        scope: field.scope
-      }
+      error: result.valid ? undefined : this._createFieldError(field, rule, result.data, targetName)
     };
   }
 
@@ -575,6 +570,19 @@ export default class Validator {
         `Extension Error: The validator '${name}' object must have a 'getMessage' method or string.`
       );
     }
+  }
+
+  /**
+   * Creates a Field Error Object.
+   */
+  _createFieldError (field: Field, rule: MapObject, data: MapObject, targetName?: string): FieldError {
+    return {
+      id: field.id,
+      field: field.name,
+      msg: this._formatErrorMessage(field, rule, data, targetName),
+      rule: rule.name,
+      scope: field.scope
+    };
   }
 
   /**
