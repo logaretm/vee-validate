@@ -82,6 +82,7 @@ export default class Field {
     this.rules = {};
     this._cacheId(options);
     options = assign({}, DEFAULT_OPTIONS, options);
+    this._delay = typeof options.delay === 'number' ? options.delay : (options.delay && options.delay.global); // cache initial delay
     this.validity = options.validity;
     this.aria = options.aria;
     this.flags = createFlags();
@@ -211,7 +212,7 @@ export default class Field {
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this._alias = options.alias || this._alias;
     this.events = (options.events) ? makeEventsArray(options.events) : this.events;
-    this.delay = (options.delay) ? makeDelayObject(this.events, options.delay) : makeDelayObject(this.events, this.delay);
+    this.delay = (options.delay) ? makeDelayObject(this.events, options.delay, this._delay) : makeDelayObject(this.events, this.delay, this._delay);
     this.updateDependencies();
     this.addActionListeners();
 

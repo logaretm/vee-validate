@@ -107,7 +107,7 @@ export default class Generator {
    */
   static resolveDelay (el, vnode, options) {
     let delay = getDataAttribute(el, 'delay');
-    let globalDelay = (options && 'delay' in options) ? options.delay : 0;
+    const globalDelay = (options && 'delay' in options) ? options.delay : 0;
 
     if (!delay && vnode.child && vnode.child.$attrs) {
       delay = vnode.child.$attrs['data-vv-delay'];

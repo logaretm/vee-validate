@@ -399,20 +399,29 @@ export const makeEventsArray = (events: string) => {
   return (typeof events === 'string' && events.length) ? events.split('|') : [];
 };
 
-export const makeDelayObject = (events: string[], delay: Object | number) => {
-  const delayObject = {};
+export const makeDelayObject = (events: string[], delay: Object | number, delayConfig: Object | number) => {
+  if (typeof delay === 'number') {
+    return events.reduce((prev, e) => {
+      prev[e] = delay;
+      return prev;
+    }, {});
+  }
 
-  // We already have a valid delay object
-  if (typeof delay === 'object' && !('global' in delay) && !('local' in delay) && Object.keys(delay).length) return delay;
+  return events.reduce((prev, e) => {
+    if (typeof delay === 'object' && e in delay) {
+      prev[e] = delay[e];
+      return prev;
+    }
 
-  const globalDelay = (typeof delay === 'object' && 'global' in delay) ? delay.global : delay || 0;
-  const localDelay = (typeof delay === 'object' && 'local' in delay) ? delay.local : {};
+    if (typeof delayConfig === 'number') {
+      prev[e] = delayConfig;
+      return prev;
+    }
 
-  events.forEach(e => {
-    delayObject[e] = (typeof globalDelay === 'object') ? localDelay[e] || globalDelay[e] || 0 : localDelay[e] || globalDelay;
-  });
+    prev[e] = (delayConfig && delayConfig[e]) || 0;
 
-  return delayObject;
+    return prev;
+  }, {});
 };
 
 export const deepParseInt = (input: Object | string | number) => {

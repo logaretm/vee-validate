@@ -409,18 +409,18 @@ describe('makeEventsArray', () => {
 });
 
 describe('makeDelayObject', () => {
-  test('it handles delays from an object under the global key', () => {
-    expect(utils.makeDelayObject(['input', 'blur'], {global: {input: 100, blur: 200}})).toEqual({input: 100, blur: 200});
-    expect(utils.makeDelayObject(['change'], {global: {change: 100}})).toEqual({change: 100});
+  test('delays fallback to the global delays if not found', () => {
+    expect(utils.makeDelayObject(['input', 'blur'], {}, { input: 100, blur: 200 })).toEqual({input: 100, blur: 200});
+    expect(utils.makeDelayObject(['change'], {}, { change: 100 })).toEqual({change: 100});
   });
 
   test('it handles delays from an object under the local key', () => {
-    expect(utils.makeDelayObject(['input'], {local: {input: 100}})).toEqual({input: 100});
+    expect(utils.makeDelayObject(['input'], { input: 100 }, {})).toEqual({ input: 100 });
   });
 
   test('it handles overwrites values from the global key with those from local key', () => {
-    expect(utils.makeDelayObject(['input'], {local: {input: 100}, global: {input: 500}})).toEqual({input: 100});
-    expect(utils.makeDelayObject(['input', 'blur'], {local: {input: 600}, global: {input: 200, blur: 400}})).toEqual({input: 600, blur: 400});
+    expect(utils.makeDelayObject(['input'], {input: 100}, { input: 500 })).toEqual({input: 100});
+    expect(utils.makeDelayObject(['input', 'blur'], {input: 600}, {input: 200, blur: 400})).toEqual({input: 600, blur: 400});
   });
 
   test('it handles all events and sets them to 0', () => {
@@ -439,8 +439,8 @@ describe('makeDelayObject', () => {
     expect(utils.makeDelayObject([], {})).toEqual({});
   });
 
-  test('it handles already valid delay objects', () => {
-    expect(utils.makeDelayObject(['input', 'blur'], {change: 200, focus: 800})).toEqual({change: 200, focus: 800});
+  test('only outputs the requested events', () => {
+    expect(utils.makeDelayObject(['input', 'blur'], {change: 200, focus: 800})).toEqual({ blur: 0, input: 0});
   });
 
   test('it handles delay integers', () => {

@@ -588,3 +588,11 @@ test('field scope set to 0', () => {
   const field = new Field(null, {scope:0});
   expect(field.scope).toBe(0);
 });
+
+test('field delay resolution', () => {
+  // test global delay 
+  const field = new Field(null, { delay: 1000, events: 'blur' });
+  expect(field.delay.blur).toBe(1000);
+  field.update({ events: 'input' });
+  expect(field.delay.input).toBe(1000);
+});
