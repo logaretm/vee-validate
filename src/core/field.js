@@ -80,9 +80,7 @@ export default class Field {
     this.events = [];
     this.delay = 0;
     this.rules = {};
-    if (this.el && !options.targetOf) {
-      setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
-    }
+    this._cacheId(options);
     options = assign({}, DEFAULT_OPTIONS, options);
     this.validity = options.validity;
     this.aria = options.aria;
@@ -180,6 +178,15 @@ export default class Field {
     }
 
     return options.name === this.name && options.scope === this.scope;
+  }
+
+  /**
+   * Caches the field id.
+   */
+  _cacheId (options: FieldOptions): void {
+    if (this.el && !options.targetOf) {
+      setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
+    }
   }
 
   /**
