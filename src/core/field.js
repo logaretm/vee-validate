@@ -199,7 +199,7 @@ export default class Field {
     this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
     this.model = options.model || this.model;
     this.listen = options.listen !== undefined ? options.listen : this.listen;
-    this.classes = options.classes || this.classes || false;
+    this.classes = (options.classes || this.classes || false) && !this.component;
     this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this._alias = options.alias || this._alias;
