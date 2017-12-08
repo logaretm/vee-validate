@@ -14,6 +14,10 @@ declare type ValidationResult = {
   errors: ?Array<FieldError>
 };
 
+declare type ExtendOptions = {
+  hasTarget?: boolean
+};
+
 declare type FieldOptions = {
   name: string, // the name of the field (required)
   alias?: string, // the name that will be used in the error messages

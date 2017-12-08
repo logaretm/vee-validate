@@ -17,6 +17,7 @@ import {
   makeDelayObject,
 } from './utils';
 import Generator from './generator';
+import Validator from './validator';
 
 // @flow
 
@@ -299,7 +300,7 @@ export default class Field {
     const fields = Object.keys(this.rules).reduce((prev, r) => {
       if (r === 'confirmed') {
         prev.push({ selector: this.rules[r][0] || `${this.name}_confirmation`, name: r });
-      } else if (/after|before/.test(r)) {
+      } else if (Validator.isTargetRule(r)) {
         prev.push({ selector: this.rules[r][0], name: r });
       }
 

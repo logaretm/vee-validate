@@ -323,6 +323,27 @@ test('can extend the validators for a validator instance', async () => {
   expect(v.errors.first('anotherField')).toBe('The anotherField field value is not truthy.');
 });
 
+test('add rules than can target other fields', async () => {
+  const v = new Validator();
+  v.extend('isBigger', (value, [other]) => {
+    return value > other
+  }, { hasTarget: true });
+  document.body.innerHTML = `<input type="text" name="field" value="10" id="el">`;
+  const el = document.querySelector('#el');
+  v.attach({
+    name: 'otherField',
+    vm: {
+      $el: document.body
+    },
+    rules: 'isBigger:field'
+  });
+
+  el.value = 11;
+
+  expect(await v.validate('otherField', 10)).toBe(false);
+  expect(await v.validate('otherField', 12)).toBe(true);
+});
+
 test('can set the locale statically', async () => {
   Validator.localize('ar', {
     messages: {

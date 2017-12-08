@@ -8,6 +8,7 @@ import Config from '../config';
 
 const RULES: { [string]: Rule } = {};
 let STRICT_MODE: boolean = true;
+const TARGET_RULES = ['confirmed', 'after', 'before'];
 const ERRORS = []; // HOLD errors references to trigger regeneration.
 
 export default class Validator {
@@ -111,9 +112,12 @@ export default class Validator {
   /**
    * Adds a custom validator to the list of validation rules.
    */
-  static extend (name: string, validator: Rule | Object) {
+  static extend (name: string, validator: Rule | Object, options?: ExtendOptions = {}) {
     Validator._guardExtend(name, validator);
     Validator._merge(name, validator);
+    if (options && options.hasTarget) {
+      TARGET_RULES.push(name);
+    }
   }
 
   /**
@@ -128,6 +132,17 @@ export default class Validator {
    */
   static remove (name: string): void {
     delete RULES[name];
+    const idx = TARGET_RULES.indexOf(name);
+    if (idx === -1) return;
+
+    TARGET_RULES.splice(idx, 1);
+  }
+
+  /**
+   * Checks if the given rule name is a rule that targets other fields.
+   */
+  static isTargetRule (name: string): boolean {
+    return TARGET_RULES.indexOf(name) !== -1;
   }
 
   /**
@@ -239,8 +254,8 @@ export default class Validator {
   /**
    * Adds a custom validator to the list of validation rules.
    */
-  extend (name: string, validator: Rule | MapObject) {
-    Validator.extend(name, validator);
+  extend (name: string, validator: Rule | MapObject, options?: ExtendOptions = {}) {
+    Validator.extend(name, validator, options);
   }
 
   /**
@@ -440,7 +455,7 @@ export default class Validator {
    * Translates the parameters passed to the rule (mainly for target fields).
    */
   _getLocalizedParams (rule: MapObject, targetName?: string | null = null) {
-    if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
+    if (~TARGET_RULES.indexOf(rule.name) && rule.params && rule.params[0]) {
       const localizedName = targetName || this.dictionary.getAttribute(this.locale, rule.params[0], rule.params[0]);
       return [localizedName].concat(rule.params.slice(1));
     }
@@ -500,7 +515,7 @@ export default class Validator {
     }
 
     // has field dependencies.
-    if (/(confirmed|after|before)/.test(rule.name)) {
+    if (TARGET_RULES.indexOf(rule.name) !== -1) {
       const target = find(field.dependencies, d => d.name === rule.name);
       if (target) {
         targetName = target.field.alias;
