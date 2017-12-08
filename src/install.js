@@ -14,10 +14,16 @@ function install (_Vue, options = {}) {
 
   Vue = _Vue;
   Config.merge(options);
-  const { locale, dictionary } = Config.current;
+  const { locale, dictionary, i18n } = Config.current;
 
   if (dictionary) {
     Validator.localize(dictionary); // merge the dictionary.
+  }
+
+  if (i18n) {
+    i18n._vm.$watch('locale', () => {
+      Validator.regenerate();
+    });
   }
 
   Validator.localize(locale); // set the locale

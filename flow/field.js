@@ -14,5 +14,6 @@ declare type FieldError = {
   msg: string,
   scope: ?string,
   id: ?string,
-  rule: ?string
+  rule: ?string,
+  regenerate?: () => string // regenerates the error message.
 };

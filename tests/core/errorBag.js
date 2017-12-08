@@ -296,11 +296,11 @@ test('groups errors by field name', () => {
   });
   expect(errors.collect(null, undefined, false)).toEqual({
     email: [
-      { field: 'email', msg: 'The email is invalid', scope: null, rule: 'rule1' },
-      { field: 'email', msg: 'The email is shorter than 3 chars.', scope: null, rule: 'rule1' },
+      { field: 'email', msg: 'The email is invalid', scope: null, rule: 'rule1', regenerate: null },
+      { field: 'email', msg: 'The email is shorter than 3 chars.', scope: null, rule: 'rule1', regenerate: null },
     ],
     name: [
-      { field: 'name', msg: 'The name is invalid', scope: null, rule: 'rule1' },
+      { field: 'name', msg: 'The name is invalid', scope: null, rule: 'rule1', regenerate: null },
     ]
   });
 });
@@ -348,4 +348,29 @@ test('fields with multiple dots in their names are matched correctly', () => {
   });
 
   expect(errors.has('very-long-scope.dot.name')).toBe(true);
+});
+
+test('can regenerate error messages', () => {
+  const errors = new ErrorBag();
+  const fakeDictionary = {
+    toggle: true,
+    make () {
+      return 'Product is {0}'.replace('{0}', this.toggle ? 'Alpha' : 'Beta')
+    }
+  };
+
+  const generator = () => {
+    return fakeDictionary.make();
+  };
+
+  errors.add({
+    field: 'field',
+    msg: generator(),
+    regenerate: generator
+  });
+
+  fakeDictionary.toggle = false;
+  expect(errors.first('field')).toBe('Product is Alpha');
+  errors.regenerate();
+  expect(errors.first('field')).toBe('Product is Beta');
 });

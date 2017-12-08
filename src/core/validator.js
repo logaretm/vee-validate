@@ -1,5 +1,5 @@
 import ErrorBag from './errorBag';
-import { isObject, isCallable, toArray, warn, createError, assign, find, isNullOrUndefined } from './utils';
+import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
 import Config from '../config';
@@ -8,7 +8,7 @@ import Config from '../config';
 
 const RULES: { [string]: Rule } = {};
 let STRICT_MODE: boolean = true;
-const DICTIONARY: Dictionary = Config.dependency('dictionary');
+const ERRORS = []; // HOLD errors references to trigger regeneration.
 
 export default class Validator {
   strict: boolean;
@@ -19,11 +19,12 @@ export default class Validator {
   paused: boolean;
   ownerId: string | number;
   clean: () => void;
-  reset: () => Promise;
+  reset: () => Promise<void>;
 
   constructor (validations?: MapObject, options?: MapObject = { vm: null, fastExit: true }) {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
+    ERRORS.push(this.errors);
     this.fields = new FieldBag();
     this.flags = {};
     this._createFields(validations);
@@ -43,49 +44,47 @@ export default class Validator {
   /**
    * Getter for the dictionary.
    */
-  get dictionary (): Dictionary {
-    return DICTIONARY;
+  get dictionary (): IDictionary {
+    return Config.dependency('dictionary');
   }
 
   /**
    * Static Getter for the dictionary.
    */
-  static get dictionary (): Dictionary {
-    return DICTIONARY;
+  static get dictionary (): IDictionary {
+    return Config.dependency('dictionary');
   }
 
   /**
    * Getter for the current locale.
    */
   get locale (): string {
-    return DICTIONARY.locale;
+    return this.dictionary.locale;
   }
 
   /**
    * Setter for the validator locale.
    */
-  set locale (value: string) {
+  set locale (value: string): void {
     Validator.locale = value;
   }
 
   /**
   * Static getter for the validator locale.
   */
-  static get locale () {
-    return DICTIONARY.locale;
+  static get locale (): string {
+    return Validator.dictionary.locale;
   }
 
   /**
    * Static setter for the validator locale.
    */
-  static set locale (value: string) {
-    /* istanbul ignore if */
-    if (!DICTIONARY.hasLocale(value)) {
-      // eslint-disable-next-line
-      warn('You are setting the validator locale to a locale that is not defined in the dictionary. English messages may still be generated.');
+  static set locale (value: string): void {
+    const hasChanged = value !== Validator.dictionary.locale;
+    Validator.dictionary.locale = value;
+    if (hasChanged) {
+      Validator.regenerate();
     }
-
-    DICTIONARY.locale = value;
   }
 
   /**
@@ -118,9 +117,16 @@ export default class Validator {
   }
 
   /**
+   * Regenerates error messages across all validators.
+   */
+  static regenerate () {
+    ERRORS.forEach(errorBag => errorBag.regenerate());
+  }
+
+  /**
    * Removes a rule from the list of validators.
    */
-  static remove (name: string) {
+  static remove (name: string): void {
     delete RULES[name];
   }
 
@@ -136,7 +142,7 @@ export default class Validator {
   /**
    * Adds and sets the current locale for the validator.
    */
-  localize (lang: string, dictionary?: MapObject) {
+  localize (lang: string, dictionary?: MapObject): void {
     Validator.localize(lang, dictionary);
   }
 
@@ -145,7 +151,7 @@ export default class Validator {
    */
   static localize (lang: string | MapObject, dictionary?: MapObject) {
     if (isObject(lang)) {
-      DICTIONARY.merge(lang);
+      Validator.dictionary.merge(lang);
       return;
     }
 
@@ -153,7 +159,7 @@ export default class Validator {
     if (dictionary) {
       const locale = lang || dictionary.name;
       dictionary = assign({}, dictionary);
-      DICTIONARY.merge({
+      Validator.dictionary.merge({
         [locale]: dictionary
       });
     }
@@ -379,6 +385,17 @@ export default class Validator {
   }
 
   /**
+   * Perform cleanup.
+   */
+  destroy () {
+    // Remove ErrorBag instance.
+    const idx = ERRORS.indexOf(this.errors);
+    if (idx === -1) return;
+
+    ERRORS.splice(idx, 1);
+  }
+
+  /**
    * Creates the fields to be validated.
    */
   _createFields (validations?: MapObject) {
@@ -415,10 +432,6 @@ export default class Validator {
   _formatErrorMessage (field: Field, rule: MapObject, data?: MapObject = {}, targetName?: string | null = null) {
     const name = this._getFieldDisplayName(field);
     const params = this._getLocalizedParams(rule, targetName);
-    // Defaults to english message.
-    if (!this.dictionary.hasLocale(this.locale)) {
-      return this.dictionary.getFieldMessage('en', field.name, rule.name, [name, params, data]);
-    }
 
     return this.dictionary.getFieldMessage(this.locale, field.name, rule.name, [name, params, data]);
   }
@@ -547,7 +560,7 @@ export default class Validator {
 
     RULES[name] = validator.validate;
     if (validator.getMessage) {
-      DICTIONARY.setMessage(this.locale, name, validator.getMessage);
+      Validator.dictionary.setMessage(this.locale, name, validator.getMessage);
     }
   }
 
@@ -581,7 +594,10 @@ export default class Validator {
       field: field.name,
       msg: this._formatErrorMessage(field, rule, data, targetName),
       rule: rule.name,
-      scope: field.scope
+      scope: field.scope,
+      regenerate: () => {
+        return this._formatErrorMessage(field, rule, data, targetName);
+      }
     };
   }
 

@@ -4,7 +4,7 @@ import { isCallable, merge } from '../utils';
 
 let LOCALE: string = 'en';
 
-export default class Dictionary {
+export default class Dictionary implements IDictionary {
   container: { [string]: Locale };
 
   constructor (dictionary?: Object = {}) {
@@ -33,8 +33,8 @@ export default class Dictionary {
   }
 
   getDateFormat (locale: string) {
-    if (!this.container[locale]) {
-      return undefined;
+    if (!this.container[locale] || !this.container[locale].dateFormat) {
+      return null;
     }
 
     return this.container[locale].dateFormat;

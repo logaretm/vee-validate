@@ -151,5 +151,5 @@ test('able to get and set date format attributes', () => {
 
   expect(dict.getDateFormat('en')).toBe('MM/DD/YYYY');
   expect(dict.getDateFormat('ar')).toBe('DD/MM/YYYY');
-  expect(dict.getDateFormat('ru')).toBe(undefined);
+  expect(dict.getDateFormat('ru')).toBe(null);
 });
