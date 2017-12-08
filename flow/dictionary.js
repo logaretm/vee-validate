@@ -10,6 +10,7 @@ declare type Locale = {
 declare type PartialDictionary = { [string]: Locale };
 
 declare interface IDictionary {
+  locale: string;
   getMessage (locale: string, key: string, data: any[]): string;
   setMessage(locale: string, key: string, value: string | MessageGenerator): void;
   getAttribute(locale: string, key: string): string;

@@ -1,5 +1,5 @@
 import ErrorBag from './errorBag';
-import { isObject, isCallable, toArray, warn, createError, assign, find, isNullOrUndefined } from './utils';
+import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
 import Config from '../config';
@@ -9,6 +9,7 @@ import Config from '../config';
 const RULES: { [string]: Rule } = {};
 let STRICT_MODE: boolean = true;
 const DICTIONARY: IDictionary = Config.dependency('dictionary');
+const ERRORS = []; // HOLD errors references to trigger regeneration.
 
 export default class Validator {
   strict: boolean;
@@ -19,11 +20,12 @@ export default class Validator {
   paused: boolean;
   ownerId: string | number;
   clean: () => void;
-  reset: () => Promise;
+  reset: () => Promise<void>;
 
   constructor (validations?: MapObject, options?: MapObject = { vm: null, fastExit: true }) {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
+    ERRORS.push(this.errors);
     this.fields = new FieldBag();
     this.flags = {};
     this._createFields(validations);
@@ -50,7 +52,7 @@ export default class Validator {
   /**
    * Static Getter for the dictionary.
    */
-  static get dictionary (): Dictionary {
+  static get dictionary (): IDictionary {
     return DICTIONARY;
   }
 
@@ -64,32 +66,26 @@ export default class Validator {
   /**
    * Setter for the validator locale.
    */
-  set locale (value: string) {
-    const changed = this.locale !== value;
+  set locale (value: string): void {
     Validator.locale = value;
-    if (this.errors.count() && changed) {
-      this.errors.regenerate();
-    }
   }
 
   /**
   * Static getter for the validator locale.
   */
-  static get locale () {
+  static get locale (): string {
     return DICTIONARY.locale;
   }
 
   /**
    * Static setter for the validator locale.
    */
-  static set locale (value: string) {
-    /* istanbul ignore if */
-    if (!DICTIONARY.hasLocale(value)) {
-      // eslint-disable-next-line
-      warn('You are setting the validator locale to a locale that is not defined in the dictionary. English messages may still be generated.');
-    }
-
+  static set locale (value: string): void {
+    const hasChanged = value !== DICTIONARY.locale;
     DICTIONARY.locale = value;
+    if (hasChanged) {
+      ERRORS.forEach(errorBag => errorBag.regenerate());
+    }
   }
 
   /**
@@ -124,7 +120,7 @@ export default class Validator {
   /**
    * Removes a rule from the list of validators.
    */
-  static remove (name: string) {
+  static remove (name: string): void {
     delete RULES[name];
   }
 
@@ -140,13 +136,8 @@ export default class Validator {
   /**
    * Adds and sets the current locale for the validator.
    */
-  localize (lang: string, dictionary?: MapObject) {
-    const changed = this.locale !== lang;
+  localize (lang: string, dictionary?: MapObject): void {
     Validator.localize(lang, dictionary);
-
-    if (this.errors.count() && changed) {
-      this.errors.regenerate();
-    }
   }
 
   /**
@@ -385,6 +376,17 @@ export default class Validator {
     ));
 
     return Promise.all(promises).then(results => results.every(t => t));
+  }
+
+  /**
+   * Perform cleanup.
+   */
+  destroy () {
+    // Remove ErrorBag instance.
+    const idx = ERRORS.indexOf(this.errors);
+    if (idx === -1) return;
+
+    ERRORS.splice(idx, 1);
   }
 
   /**
