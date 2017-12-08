@@ -8,7 +8,6 @@ import Config from '../config';
 
 const RULES: { [string]: Rule } = {};
 let STRICT_MODE: boolean = true;
-const DICTIONARY: IDictionary = Config.dependency('dictionary');
 const ERRORS = []; // HOLD errors references to trigger regeneration.
 
 export default class Validator {
@@ -45,22 +44,22 @@ export default class Validator {
   /**
    * Getter for the dictionary.
    */
-  get dictionary (): Dictionary {
-    return DICTIONARY;
+  get dictionary (): IDictionary {
+    return Config.dependency('dictionary');
   }
 
   /**
    * Static Getter for the dictionary.
    */
   static get dictionary (): IDictionary {
-    return DICTIONARY;
+    return Config.dependency('dictionary');
   }
 
   /**
    * Getter for the current locale.
    */
   get locale (): string {
-    return DICTIONARY.locale;
+    return this.dictionary.locale;
   }
 
   /**
@@ -74,17 +73,17 @@ export default class Validator {
   * Static getter for the validator locale.
   */
   static get locale (): string {
-    return DICTIONARY.locale;
+    return Validator.dictionary.locale;
   }
 
   /**
    * Static setter for the validator locale.
    */
   static set locale (value: string): void {
-    const hasChanged = value !== DICTIONARY.locale;
-    DICTIONARY.locale = value;
+    const hasChanged = value !== Validator.dictionary.locale;
+    Validator.dictionary.locale = value;
     if (hasChanged) {
-      ERRORS.forEach(errorBag => errorBag.regenerate());
+      Validator.regenerate();
     }
   }
 
@@ -118,6 +117,13 @@ export default class Validator {
   }
 
   /**
+   * Regenerates error messages across all validators.
+   */
+  static regenerate () {
+    ERRORS.forEach(errorBag => errorBag.regenerate());
+  }
+
+  /**
    * Removes a rule from the list of validators.
    */
   static remove (name: string): void {
@@ -145,7 +151,7 @@ export default class Validator {
    */
   static localize (lang: string | MapObject, dictionary?: MapObject) {
     if (isObject(lang)) {
-      DICTIONARY.merge(lang);
+      Validator.dictionary.merge(lang);
       return;
     }
 
@@ -153,7 +159,7 @@ export default class Validator {
     if (dictionary) {
       const locale = lang || dictionary.name;
       dictionary = assign({}, dictionary);
-      DICTIONARY.merge({
+      Validator.dictionary.merge({
         [locale]: dictionary
       });
     }
@@ -426,10 +432,6 @@ export default class Validator {
   _formatErrorMessage (field: Field, rule: MapObject, data?: MapObject = {}, targetName?: string | null = null) {
     const name = this._getFieldDisplayName(field);
     const params = this._getLocalizedParams(rule, targetName);
-    // Defaults to english message.
-    if (!this.dictionary.hasLocale(this.locale)) {
-      return this.dictionary.getFieldMessage('en', field.name, rule.name, [name, params, data]);
-    }
 
     return this.dictionary.getFieldMessage(this.locale, field.name, rule.name, [name, params, data]);
   }
@@ -558,7 +560,7 @@ export default class Validator {
 
     RULES[name] = validator.validate;
     if (validator.getMessage) {
-      DICTIONARY.setMessage(this.locale, name, validator.getMessage);
+      Validator.dictionary.setMessage(this.locale, name, validator.getMessage);
     }
   }
 

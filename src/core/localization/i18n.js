@@ -45,7 +45,7 @@ export default class I18nDictionary implements IDictionary {
   }
 
   set locale (value: string) {
-    warn('Cannot set locale from the validator when using vue-i18n');
+    warn('Cannot set locale from the validator when using vue-i18n, use i18n.locale setter instead');
   }
 
   getDateFormat (locale: string): string {

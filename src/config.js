@@ -51,8 +51,8 @@ export default class Config {
    */
   static merge (config) {
     currentConfig = assign({}, currentConfig, config);
-    if (Config.current.i18n) {
-      Config.register('dictionary', new I18nDictionary(this.current.i18n, this.current.i18nRootKey));
+    if (currentConfig.i18n) {
+      Config.register('dictionary', new I18nDictionary(currentConfig.i18n, currentConfig.i18nRootKey));
     }
   }
 
