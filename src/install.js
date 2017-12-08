@@ -2,7 +2,7 @@ import mixin from './mixin';
 import directive from './directive';
 import Config from './config';
 import Validator from './core/validator';
-import { warn } from './core/utils';
+import { warn, isCallable } from './core/utils';
 
 let Vue;
 
@@ -20,7 +20,8 @@ function install (_Vue, options = {}) {
     Validator.localize(dictionary); // merge the dictionary.
   }
 
-  if (i18n) {
+  // try to watch locale changes.
+  if (i18n && i18n._vm && isCallable(i18n._vm.$watch)) {
     i18n._vm.$watch('locale', () => {
       Validator.regenerate();
     });
