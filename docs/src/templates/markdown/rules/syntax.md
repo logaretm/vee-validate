@@ -26,3 +26,5 @@ Some rules can have parameters, which are passed in a comma separated list witho
 const someRule = 'in:1,2,3,4';
 const someRuleObj = { in: [1, 2, 3, 4] };
 ```
+
+> In object form, rules keys accepts a single value **if the rule accepts a single argument**, if multiple arguments are passed you should pass them as an array in the same order.
