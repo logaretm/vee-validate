@@ -169,11 +169,23 @@ The field under validation must have a value that is in the specified list.
   </select>
 </span>
 <span v-show="errors.has('in_field')" class="help is-danger">{{ errors.first('in_field') }}</span>
+
 ### [ip](#rule-ip)
 The field under validation must have a string that is a valid ipv4 value.
 
 <input v-validate="'ip'" data-vv-as="ip" :class="{'input': true, 'is-danger': errors.has('ip_field') }" name="ip_field" type="text" placeholder="Your IP Address">
 <span v-show="errors.has('ip_field')" class="help is-danger">{{ errors.first('ip_field') }}</span>
+
+### [is:{value}](#rule-is)
+
+The field under validation must be equal to the first argument passed, uses `===` for equality checks. This rule is useful for confirming passwords when used in object form. Note that using the string format will cause any arguments to be parsed as strings, So use the object format when using this rule.
+
+- `value:` A value of anytype to be compared against the field value.
+
+```html
+<input v-validate="{ is: confirmation }" type="text" name="password">
+<input v-model="confirmation" type="text" name="password_confirmation">
+```
 
 ### [max:{length}](#rule-max)
 

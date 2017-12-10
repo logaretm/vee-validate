@@ -23,6 +23,9 @@ const multiple = {
 <pre><code class="highlight-js">const someRule = 'in:1,2,3,4';
 const someRuleObj = { in: [1, 2, 3, 4] };
 </code></pre>
+<blockquote>
+<p>In object form, rules keys accepts a single value if the rule accepts a single argument, if multiple arguments are passed you should pass them as an array in the same order.</p>
+</blockquote>
 <h2><a href="#available-rules">Available Rules</a></h2>
 <p>There are more than 20 rules available to validate your inputs:</p>
 <div class="columns is-multiline">
@@ -194,21 +197,21 @@ const someRuleObj = { in: [1, 2, 3, 4] };
 <li><code>min:</code>The minimum allowed value for date. Must be in the same format as the date_format rule.</li>
 <li><code>max:</code>The maximum allowed value for date. Must be in the same format as the date_format rule.</li>
 <li><code>inclusion</code>: Whether to include equal dates as a valid value, it is set to <code>()</code> (exclude) by default.<br>
-(For further information check the <a href="https://momentjs.com/docs/#/query/is-between/">monentjs inclusion docs</a>. vee-validate switched to <a href="https://date-fns.org">date-fns</a> but ported this functionality.</li>
+(For further information check the <a href="https://momentjs.com/docs/#/query/is-between/">monentjs inclusion docs</a>vee-validate uses <a href="https://date-fns.org">date-fns</a> but ported this functionality.</li>
 </ul>
 <input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY betweem 10/09/2016 and 20/09/2016">
 <span v-show="errors.has('date_between_field')" class="help is-danger">{{ errors.first('date_between_field') }}</span>
 <h3><a href="#rule-date_format">date_format:{format}</a></h3>
 <p>The field under validation must be a valid date in the specified format. This rule must be present when using any date rule.</p>
 <ul>
-<li><code>format:</code> The date format. See <a href="http://momentjs.com/docs/#/parsing/string-format/">momentjs parsing.</a></li>
+<li><code>format:</code> The date format. See <a href="https://date-fns.org/v2.0.0-alpha.7/docs/format">date-fns format</a></li>
 </ul>
 <input v-validate="'date_format:DD/MM/YYYY'" :class="{'input': true, 'is-danger': errors.has('date_format_field') }" name="date_format_field" type="text" placeholder="DD/MM/YYYY">
 <span v-show="errors.has('date_format_field')" class="help is-danger">{{ errors.first('date_format_field') }}</span>
 <h3><a href="#rule-decimal">decimal:{decimals?}</a></h3>
-<p>The field under validation must be numeric and may contain the specified amount of decmial point.</p>
+<p>The field under validation must be numeric and may contain the specified amount of decimal point.</p>
 <ul>
-<li><code>decmials:</code> The maximum allowed number of decimal point numbers. Not passing the decmials will accept numeric data which may or may not contain decimal point numbers.</li>
+<li><code>decimals:</code> The maximum allowed number of decimal point numbers. Not passing the decimals will accept numeric data which may or may not contain decimal point numbers.</li>
 </ul>
 <input v-validate="'decimal:3'" :class="{'input': true, 'is-danger': errors.has('decimal_field') }" name="decimal_field" type="text" placeholder="Numeric value with decimals">
 <span v-show="errors.has('decimal_field')" class="help is-danger">{{ errors.first('decimal_field') }}</span>
@@ -256,10 +259,18 @@ const someRuleObj = { in: [1, 2, 3, 4] };
   </select>
 </span>
 <span v-show="errors.has('in_field')" class="help is-danger">{{ errors.first('in_field') }}</span>
-### [ip](#rule-ip)
-The field under validation must have a string that is a valid ipv4 value.
+<h3><a href="#rule-ip">ip</a></h3>
+<p>The field under validation must have a string that is a valid ipv4 value.</p>
 <input v-validate="'ip'" data-vv-as="ip" :class="{'input': true, 'is-danger': errors.has('ip_field') }" name="ip_field" type="text" placeholder="Your IP Address">
 <span v-show="errors.has('ip_field')" class="help is-danger">{{ errors.first('ip_field') }}</span>
+<h3><a href="#rule-is">is:{value}</a></h3>
+<p>The field under validation must be equal to the first argument passed, uses <code>===</code> for equality checks. This rule is useful for confirming passwords when used in object form. Note that using the string format will cause any arguments to be parsed as strings, So use the object format when using this rule.</p>
+<ul>
+<li><code>value:</code> A value of anytype to be compared against the field value.</li>
+</ul>
+<pre><code class="highlight-html">&lt;input v-validate=&quot;{ is: confirmation }&quot; type=&quot;text&quot; name=&quot;password&quot;&gt;
+&lt;input v-model=&quot;confirmation&quot; type=&quot;text&quot; name=&quot;password_confirmation&quot;&gt;
+</code></pre>
 <h3><a href="#rule-max">max:{length}</a></h3>
 <p>The field under validation length may not exceed the specified length.</p>
 <ul>
@@ -523,4 +534,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor-b954a9a56f027d21c380.js"></script><script type="text/javascript" src="/assets/js/bundle-b954a9a56f027d21c380.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor-e3a702590a301a44d319.js"></script><script type="text/javascript" src="/assets/js/bundle-e3a702590a301a44d319.js"></script></body></html>

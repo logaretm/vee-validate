@@ -27,7 +27,9 @@ const config = {
   events: 'input|blur',
   inject: true,
   validity: false,
-  aria: true
+  aria: true,
+  i18n: null // the vue-i18n plugin instance,
+  i18nRootKey: 'validations' // the nested key under which the validation messsages will be located
 };
 
 Vue.use(VeeValidate, config);
@@ -119,6 +121,20 @@ Vue.use(VeeValidate, config);
             <td>true</td>
             <td>
                 Sets `aria-invalid` and `aria-required` on native HTML inputs.
+            </td>
+        </tr>
+        <tr>
+            <td class="is-method-name">i18n</td>
+            <td>null</td>
+            <td>
+                The `vue-i18n` instance, if provided will integrate vee-validate with the i18n plugin and will use it to produce the error messages instead of the built in dictionary.
+            </td>
+        </tr>
+        <tr>
+            <td class="is-method-name">i18nRootKey</td>
+            <td>validations</td>
+            <td>
+                The key name of the validation messages for each locale.
             </td>
         </tr>
     </tbody>
