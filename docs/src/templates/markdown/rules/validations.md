@@ -89,7 +89,7 @@ The field under validation must be a valid date between the two dates specified.
 - `min:`The minimum allowed value for date. Must be in the same format as the date_format rule.
 - `max:`The maximum allowed value for date. Must be in the same format as the date_format rule.
 - `inclusion`: Whether to include equal dates as a valid value, it is set to `()` (exclude) by default.  
-   (For further information check the [monentjs inclusion docs](https://momentjs.com/docs/#/query/is-between/). vee-validate switched to [date-fns](https://date-fns.org) but ported this functionality.
+   (For further information check the [monentjs inclusion docs](https://momentjs.com/docs/#/query/is-between/)vee-validate uses [date-fns](https://date-fns.org) but ported this functionality.
 
 <input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY betweem 10/09/2016 and 20/09/2016">
 <span v-show="errors.has('date_between_field')" class="help is-danger">{{ errors.first('date_between_field') }}</span>
@@ -98,7 +98,7 @@ The field under validation must be a valid date between the two dates specified.
 
 The field under validation must be a valid date in the specified format. This rule must be present when using any date rule.
 
-- `format:` The date format. See [momentjs parsing.](http://momentjs.com/docs/#/parsing/string-format/)
+- `format:` The date format. See [date-fns format](https://date-fns.org/v2.0.0-alpha.7/docs/format)
 
 <input v-validate="'date_format:DD/MM/YYYY'" :class="{'input': true, 'is-danger': errors.has('date_format_field') }" name="date_format_field" type="text" placeholder="DD/MM/YYYY">
 <span v-show="errors.has('date_format_field')" class="help is-danger">{{ errors.first('date_format_field') }}</span>
