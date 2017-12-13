@@ -27,7 +27,10 @@ function install (_Vue, options = {}) {
     });
   }
 
-  Validator.localize(locale); // set the locale
+  if (!i18n) {
+    Validator.localize(locale); // set the locale
+  }
+
   Validator.setStrictMode(Config.current.strict);
 
   Vue.mixin(mixin);

@@ -72,11 +72,17 @@ test('resolves delay', () => {
   `;
   const vnode = { child: { $attrs: { 'data-vv-delay': '200' } } };
   let el = document.querySelector('#el');
-  expect(Generator.resolveDelay(el, {})).toEqual(expect.objectContaining({ local: { input: 100 } }));
+  expect(Generator.resolveDelay(el, {})).toBe(100);
+
+  // fills the delay object if the global delay is an object of events.
+  expect(Generator.resolveDelay(el, {}, { delay: { input: 300, blur: 300 } })).toEqual({
+    blur: 300,
+    input: 100
+  });
 
   el = { getAttribute: () => null };
-  expect(Generator.resolveDelay(el, vnode)).toEqual(expect.objectContaining({ local: { input: 200 } }));
-  expect(Generator.resolveDelay(el, {}, { delay: '300' })).toEqual({ global: 300 });
+  expect(Generator.resolveDelay(el, vnode)).toBe(200);
+  expect(Generator.resolveDelay(el, {}, { delay: '300' })).toBe(300);
 })
 
 test('resolves events', () => {

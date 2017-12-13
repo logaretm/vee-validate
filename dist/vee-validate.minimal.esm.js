@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.0-rc.26
+  * vee-validate v2.0.0-rc.27
   * (c) 2017 Abdelrahman Awad
   * @license MIT
   */
@@ -1179,7 +1179,13 @@ Generator.resolveDelay = function resolveDelay (el, vnode, options) {
     delay = vnode.child.$attrs['data-vv-delay'];
   }
 
-  return (delay) ? { local: { input: parseInt(delay) }, global: deepParseInt(globalDelay) } : { global: deepParseInt(globalDelay) };
+  if (!isObject(globalDelay)) {
+    return deepParseInt(delay || globalDelay);
+  }
+
+  globalDelay.input = delay || 0;
+
+  return deepParseInt(globalDelay);
 };
 
 /**
@@ -1377,7 +1383,7 @@ var Field = function Field (el, options) {
   this.rules = {};
   this._cacheId(options);
   options = assign({}, DEFAULT_OPTIONS, options);
-  this._delay = typeof options.delay === 'number' ? options.delay : (options.delay && options.delay.global); // cache initial delay
+  this._delay = !isNullOrUndefined(options.delay) ? options.delay : 0; // cache initial delay
   this.validity = options.validity;
   this.aria = options.aria;
   this.flags = createFlags();
@@ -2916,7 +2922,10 @@ function install (_Vue, options) {
     });
   }
 
-  Validator.localize(locale); // set the locale
+  if (!i18n) {
+    Validator.localize(locale); // set the locale
+  }
+
   Validator.setStrictMode(Config.current.strict);
 
   Vue.mixin(mixin);
@@ -3051,7 +3060,7 @@ var mapFields = function (fields) {
   }, {});
 };
 
-var version = '2.0.0-rc.26';
+var version = '2.0.0-rc.27';
 
 var index_minimal_esm = {
   install: install,

@@ -71,6 +71,7 @@ export default class Field {
   model: ?string;
   value: any;
   _alias: ?string;
+  _delay: number | Object;
 
   constructor (el: HTMLInputElement | null, options: FieldOptions | MapObject = {}) {
     this.id = uniqId();
@@ -83,7 +84,7 @@ export default class Field {
     this.rules = {};
     this._cacheId(options);
     options = assign({}, DEFAULT_OPTIONS, options);
-    this._delay = typeof options.delay === 'number' ? options.delay : (options.delay && options.delay.global); // cache initial delay
+    this._delay = !isNullOrUndefined(options.delay) ? options.delay : 0; // cache initial delay
     this.validity = options.validity;
     this.aria = options.aria;
     this.flags = createFlags();

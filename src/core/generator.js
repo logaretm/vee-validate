@@ -113,7 +113,13 @@ export default class Generator {
       delay = vnode.child.$attrs['data-vv-delay'];
     }
 
-    return (delay) ? { local: { input: parseInt(delay) }, global: deepParseInt(globalDelay) } : { global: deepParseInt(globalDelay) };
+    if (!isObject(globalDelay)) {
+      return deepParseInt(delay || globalDelay);
+    }
+
+    globalDelay.input = delay || 0;
+
+    return deepParseInt(globalDelay);
   }
 
   /**
