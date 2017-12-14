@@ -149,10 +149,6 @@ export default class Generator {
    */
   static resolveScope (el, binding, vnode = {}) {
     let scope = null;
-    if (isObject(binding.value)) {
-      scope = binding.value.scope;
-    }
-
     if (vnode.child && isNullOrUndefined(scope)) {
       scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
     }
@@ -171,17 +167,12 @@ export default class Generator {
       return binding.arg;
     }
 
-    if (isObject(binding.value) && binding.value.arg) {
-      return binding.value.arg;
-    }
-
     const model = vnode.data.model || find(vnode.data.directives, d => d.name === 'model');
     if (!model) {
       return null;
     }
 
     const watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression, vnode.context);
-
     if (!watchable) {
       return null;
     }
