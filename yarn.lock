@@ -1644,6 +1644,10 @@ flow-remove-types@^1.1.0:
     babylon "^6.15.0"
     vlq "^0.2.1"
 
+flush-promises@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/flush-promises/-/flush-promises-1.0.0.tgz#8fd4d3aeb3f7f57a713aca40f1526ef25463fa23"
+
 for-in@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
