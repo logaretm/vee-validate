@@ -248,7 +248,7 @@ export default class Field {
    */
   reset () {
     const defaults = createFlags();
-    Object.keys(this.flags).forEach(flag => {
+    Object.keys(this.flags).filter(flag => flag !== 'required').forEach(flag => {
       this.flags[flag] = defaults[flag];
     });
 
