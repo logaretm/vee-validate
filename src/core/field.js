@@ -85,6 +85,7 @@ export default class Field {
     this.delay = 0;
     this.rules = {};
     this._cacheId(options);
+    this.classNames = assign({}, DEFAULT_OPTIONS.classNames);
     options = assign({}, DEFAULT_OPTIONS, options);
     this._delay = !isNullOrUndefined(options.delay) ? options.delay : 0; // cache initial delay
     this.validity = options.validity;
@@ -212,7 +213,7 @@ export default class Field {
     this.model = options.model || this.model;
     this.listen = options.listen !== undefined ? options.listen : this.listen;
     this.classes = (options.classes || this.classes || false) && !this.component;
-    this.classNames = isObject(options.classNames) ? merge(options.classNames, DEFAULT_OPTIONS.classNames) : this.classNames;
+    this.classNames = isObject(options.classNames) ? merge(this.classNames, options.classNames) : this.classNames;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this._alias = options.alias || this._alias;
     this.events = (options.events) ? makeEventsArray(options.events) : this.events;
