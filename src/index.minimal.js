@@ -1,4 +1,4 @@
-import install from './install';
+import { install, uninstall } from './install';
 import directive from './directive';
 import mixin from './mixin';
 import use from './use';
@@ -8,6 +8,7 @@ import ErrorBag from './core/errorBag';
 
 export default {
   install,
+  uninstall,
   use,
   directive,
   mixin,
