@@ -2,6 +2,7 @@ import { mount, createLocalVue } from 'vue-test-utils';
 import flushPromises from 'flush-promises';
 import VeeValidate from './../../src/index';
 import TestComponent from './components/Inject';
+import BuiltInsTestComponent from './components/BuiltIn';
 import ChildInject from './components/stubs/ChildWithParentValidatorInjection';
 import ChildNew from './components/stubs/ChildWithNewValidatorInjection';
 import ChildNone from './components/stubs/Input';
@@ -55,4 +56,17 @@ test('does not auto inject any validator instance unless requested', async () =>
 
   // should recieve the parent instance
   expect(wrapper.vm.$validator).toBe(childWithParentValidator.vm.$validator);
+});
+
+test('built in components should not provide a validator', () => {
+  VeeValidate.uninstall();
+  const Vue = createLocalVue();
+  Vue.use(VeeValidate);
+
+  const wrapper = mount(BuiltInsTestComponent, { localVue: Vue });
+  const $validator = wrapper.vm.$validator;
+  const children = wrapper.findAll(ChildInject);
+  for (let i = 0; i < children.length; i++) {
+    expect(children.at(i).vm.$validator).toBe($validator);
+  }
 });
