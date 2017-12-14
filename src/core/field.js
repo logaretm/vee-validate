@@ -15,6 +15,8 @@ import {
   getPath,
   makeEventsArray,
   makeDelayObject,
+  merge,
+  isObject
 } from './utils';
 import Generator from './generator';
 import Validator from './validator';
@@ -210,7 +212,7 @@ export default class Field {
     this.model = options.model || this.model;
     this.listen = options.listen !== undefined ? options.listen : this.listen;
     this.classes = (options.classes || this.classes || false) && !this.component;
-    this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
+    this.classNames = isObject(options.classNames) ? merge(options.classNames, DEFAULT_OPTIONS.classNames) : this.classNames;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this._alias = options.alias || this._alias;
     this.events = (options.events) ? makeEventsArray(options.events) : this.events;
