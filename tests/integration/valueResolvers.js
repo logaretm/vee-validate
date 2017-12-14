@@ -4,6 +4,7 @@ import HTMLInputsTestComponent from './components/Types';
 import ComponentsTestComponent from './components/Resolvers';
 import InputWithResolvers from './components/stubs/Input';
 import InputWithoutResolvers from './components/stubs/InputWithoutValueResolver';
+import InputWithoutProps from './components/stubs/InputWithoutProps';
 
 describe('resolves native HTML Inputs values', () => {
   const Vue = createLocalVue();
@@ -81,6 +82,15 @@ describe('resolves custom components values', () => {
       value: 'val'
     });
     expect(field.value).toBe('val');
+  });
+
+  test('uses the data-vv-value path attribute', () => {
+    const comp = wrapper.find(InputWithoutProps);
+    const field = wrapper.vm.$validator.fields.find({ name: 'no-props' });
+    // because it fetches the value from the component data.
+    expect(field.value).toBe(null);
+    comp.setData({ input: 'heya' });
+    expect(field.value).toBe('heya');
   });
 
   test('uses the defined resolver in component options', () => {
