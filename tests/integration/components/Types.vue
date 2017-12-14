@@ -8,9 +8,15 @@
     <input type="checkbox" name="checkboxField" value="1" id="cb1" v-validate="'required'">
     <input type="checkbox" name="checkboxField" value="2" id="cb2">
 
-    <input type="file" name="fileField" id="file">
+    <input type="file" name="fileField" v-validate="'required'" id="file">
 
     <select name="selectField" v-validate="'required'" id="select">
+      <option value="">0</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+    </select>
+
+    <select name="selectMulField" v-validate="'required'" id="selectMul" multiple>
       <option value="">0</option>
       <option value="1">1</option>
       <option value="2">2</option>

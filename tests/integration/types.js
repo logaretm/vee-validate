@@ -55,5 +55,27 @@ describe('handles native inputs with their respective events', () => {
     input.trigger('change');
     await flushPromises();
     expect(wrapper.vm.errors.has('selectField')).toBe(false);
-  })
+  });
+
+  test('select multiple fields', async () => {
+    const input = wrapper.find('#selectMul');
+    input.trigger('change');
+    await flushPromises();
+    expect(wrapper.vm.errors.has('selectMulField')).toBe(true);
+
+    Array.from(input.element.options).forEach(option => {
+      option.selected = true;
+    });
+
+    input.trigger('change');
+    await flushPromises();
+    expect(wrapper.vm.errors.has('selectMulField')).toBe(false);
+  });
+
+  test('file fields', async () => {
+    const input = wrapper.find('#file');
+    input.trigger('change');
+    await flushPromises();
+    expect(wrapper.vm.errors.has('fileField')).toBe(true);
+  });
 });
