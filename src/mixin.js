@@ -26,15 +26,6 @@ const fakeFlags = createProxy({}, {
  * Checks if a parent validator instance was requested.
  */
 const requestsValidator = (injections: Object | string[]) => {
-  if (! injections) {
-    return false;
-  }
-
-  /* istanbul ignore next */
-  if (Array.isArray(injections) && ~injections.indexOf('$validator')) {
-    return true;
-  }
-
   if (isObject(injections) && injections.$validator) {
     return true;
   }
@@ -115,7 +106,6 @@ export default {
       return this.$validator.flags;
     };
   },
-
   beforeDestroy () {
     if (isBuiltInComponent(this.$vnode)) return;
 

@@ -64,9 +64,9 @@ test('built in components should not provide a validator', () => {
   Vue.use(VeeValidate);
 
   const wrapper = mount(BuiltInsTestComponent, { localVue: Vue });
-  const $validator = wrapper.vm.$validator;
+  const validator = wrapper.vm.$validator;
   const children = wrapper.findAll(ChildInject);
   for (let i = 0; i < children.length; i++) {
-    expect(children.at(i).vm.$validator).toBe($validator);
+    expect(children.at(i).vm.$validator).toBe(validator);
   }
 });
