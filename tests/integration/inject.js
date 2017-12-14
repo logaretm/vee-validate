@@ -16,6 +16,8 @@ test('injects parent validator instances if requested otherwise new instances wi
   const childWithNewValidator = wrapper.find(ChildNew);
   const childWithoutPreference = wrapper.find(ChildNone);
 
+  wrapper.vm.$validator.destroy = jest.fn();
+
   // test if they all have a validator instance
   expect(childWithParentValidator.vm.$validator instanceof VeeValidate.Validator).toBe(true);
   expect(childWithNewValidator.vm.$validator instanceof VeeValidate.Validator).toBe(true);
@@ -28,6 +30,13 @@ test('injects parent validator instances if requested otherwise new instances wi
 
   // should recieve the parent instance
   expect(wrapper.vm.$validator).toBe(childWithParentValidator.vm.$validator);
+
+  // does not destroy the parent validator
+  childWithParentValidator.destroy();
+
+  expect(wrapper.vm.$validator.destroy).not.toHaveBeenCalled();
+  wrapper.destroy();
+  expect(wrapper.vm.$validator.destroy).toHaveBeenCalled();
 });
 
 test('does not auto inject any validator instance unless requested', async () => {
