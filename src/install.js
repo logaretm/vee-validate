@@ -14,7 +14,7 @@ function install (_Vue, options = {}) {
 
   Vue = _Vue;
   Config.merge(options);
-  const { locale, dictionary, i18n } = Config.current;
+  const { dictionary, i18n } = Config.current;
 
   if (dictionary) {
     Validator.localize(dictionary); // merge the dictionary.
@@ -27,8 +27,8 @@ function install (_Vue, options = {}) {
     });
   }
 
-  if (!i18n) {
-    Validator.localize(locale); // set the locale
+  if (!i18n && options.locale) {
+    Validator.localize(options.locale); // set the locale
   }
 
   Validator.setStrictMode(Config.current.strict);
