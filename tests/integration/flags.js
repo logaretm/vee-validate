@@ -72,3 +72,28 @@ test('field flags', async () => {
     validated: false
   });
 });
+
+test('adds listeners when field flag is manually set', async () => {
+  VeeValidate.uninstall();
+  const Vue = createLocalVue();
+  Vue.use(VeeValidate);
+
+  const wrapper = shallow(TestComponent, { localVue: Vue });
+  const input = wrapper.find('input');
+  const field = wrapper.vm.$validator.fields.find({ name: 'name' });
+
+  expect(field.flags.touched).toBe(false);
+  input.trigger('blur');
+  await flushPromises();
+  expect(field.flags.touched).toBe(true);
+  
+  field.setFlags({
+    untouched: true
+  });
+  expect(field.flags.touched).toBe(false);
+
+  // test if the listener was added again after resetting the touched flag.
+  input.trigger('blur');
+  await flushPromises();
+  expect(field.flags.touched).toBe(true);
+});
