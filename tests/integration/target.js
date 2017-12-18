@@ -85,3 +85,13 @@ test('custom components targeting via $refs', async () => {
   expect(wrapper.vm.$validator.errors.has('f7')).toBe(false);
   expect(wrapper.vm.$validator.flags.f7.valid).toBe(true);
 });
+
+test('fails silently if it cannot find the target field', async () => {
+  const wrapper = mount(TestComponent, { localVue: Vue });
+  const input = wrapper.find('#f9');
+  input.trigger('input');
+  await flushPromises();
+
+
+  expect(wrapper.vm.$validator.fields.find({ name: 'f9' }).dependencies.length).toBe(0);
+});

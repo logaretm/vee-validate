@@ -569,8 +569,7 @@ export default class Field {
    * Removes all listeners.
    */
   destroy () {
-    this.watchers.forEach(w => w.unwatch());
-    this.watchers = [];
+    this.unwatch();
     this.dependencies.forEach(d => d.field.destroy());
     this.dependencies = [];
   }

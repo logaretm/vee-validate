@@ -12,6 +12,7 @@
     <custom-input some-prop="f7" v-validate="'required|confirmed:$f8'" v-model="d1"></custom-input>
     <custom-input some-prop="f8" ref="f8" v-model="d2"></custom-input>
 
+    <input type="text" name="f9" v-validate="'required|confirmed:#f10'" id="f9">
   </div>
 </template>
 
