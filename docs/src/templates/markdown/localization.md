@@ -61,13 +61,13 @@ const dictionary = {
   }
 };
 
-validator.localize('en'); // changes the locale
+Validator.localize('en'); // changes the locale
 
 // Merges the English dictionary and sets the current locale to English.
-validator.localize('en', dictionary.en); 
+Validator.localize('en', dictionary.en); 
 
 // Merge all defined languages in the dictionary but does not set the current locale.
-validator.localize(dictionary); 
+Validator.localize(dictionary); 
 ```
 
 All validators' locales are shared, calling `localize` on any instance available within any component will change the locale for all validators.
