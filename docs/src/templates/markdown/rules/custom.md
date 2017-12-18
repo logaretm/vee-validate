@@ -64,7 +64,10 @@ let instance = new Validator({ trueField: 'truthy' });
 // Also there is an instance 'extend' method for convience.
 instance.extend('falsy', (value) => ! value);
 
-instance.attach('falseField', 'falsy');
+instance.attach({
+  name: 'falseField',
+  rules: 'falsy'
+});
 ```
 > Using any of the `extend` either on the class or on an instance will extend all validators with the new validation rule. extending a new rule that have the same name as an existing rule will throw a `ValidatorException` with an error message.
 

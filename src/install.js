@@ -7,8 +7,10 @@ import { warn, isCallable } from './core/utils';
 let Vue;
 
 function install (_Vue, options = {}) {
-  if (Vue) {
-    warn('already installed, Vue.use(VeeValidate) should only be called once.');
+  if (Vue && _Vue === Vue) {
+    if (process.env.NODE_ENV !== 'production') {
+      warn('already installed, Vue.use(VeeValidate) should only be called once.');
+    }
     return;
   }
 

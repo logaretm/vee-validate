@@ -55,7 +55,10 @@ export default {
         }, 500);
       })
     });
-    this.$validator.attach('coupon', 'required|verify_coupon');
+    this.$validator.attach({
+      name: 'coupon',
+      rules: 'required|verify_coupon'
+    });
   }
 };
 </script>

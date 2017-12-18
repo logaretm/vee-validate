@@ -1,5 +1,5 @@
 import ErrorBag from './errorBag';
-import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined } from './utils';
+import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined, warn } from './utils';
 import Field from './field';
 import FieldBag from './fieldBag';
 import Config from '../config';
@@ -191,6 +191,7 @@ export default class Validator {
   attach (field: FieldOptions | Field): Field {
     // deprecate: handle old signature.
     if (arguments.length > 1) {
+      warn('This signature of the attach method has been deprecated, please consult the docs.');
       field = assign({}, {
         name: arguments[0],
         rules: arguments[1]
@@ -318,18 +319,18 @@ export default class Validator {
     const silentRun = field.isDisabled;
 
     return this._validate(field, value, silentRun).then(result => {
-      field.setFlags({
-        pending: false,
-        valid: result.valid,
-        validated: true
-      });
-
       this.errors.remove(field.name, field.scope, field.id);
       if (silentRun) {
         return Promise.resolve(true);
       } else if (result.errors) {
         result.errors.forEach(e => this.errors.add(e));
       }
+
+      field.setFlags({
+        pending: false,
+        valid: result.valid,
+        validated: true
+      });
 
       return result.valid;
     });

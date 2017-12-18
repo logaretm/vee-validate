@@ -49,8 +49,7 @@ const mapScope = (scope: MapObject, deep: boolean = true): MapObject => {
     // scope.
     const isScope = field.indexOf('$') === 0;
     if (deep && isScope) {
-      flags = mapScope(scope[field]);
-      return flags;
+      return combine(mapScope(scope[field]), flags);
     } else if (!deep && isScope) {
       return flags;
     }

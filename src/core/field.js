@@ -15,6 +15,8 @@ import {
   getPath,
   makeEventsArray,
   makeDelayObject,
+  merge,
+  isObject
 } from './utils';
 import Generator from './generator';
 import Validator from './validator';
@@ -83,6 +85,7 @@ export default class Field {
     this.delay = 0;
     this.rules = {};
     this._cacheId(options);
+    this.classNames = assign({}, DEFAULT_OPTIONS.classNames);
     options = assign({}, DEFAULT_OPTIONS, options);
     this._delay = !isNullOrUndefined(options.delay) ? options.delay : 0; // cache initial delay
     this.validity = options.validity;
@@ -210,7 +213,7 @@ export default class Field {
     this.model = options.model || this.model;
     this.listen = options.listen !== undefined ? options.listen : this.listen;
     this.classes = (options.classes || this.classes || false) && !this.component;
-    this.classNames = options.classNames || this.classNames || DEFAULT_OPTIONS.classNames;
+    this.classNames = isObject(options.classNames) ? merge(this.classNames, options.classNames) : this.classNames;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this._alias = options.alias || this._alias;
     this.events = (options.events) ? makeEventsArray(options.events) : this.events;
@@ -245,7 +248,7 @@ export default class Field {
    */
   reset () {
     const defaults = createFlags();
-    Object.keys(this.flags).forEach(flag => {
+    Object.keys(this.flags).filter(flag => flag !== 'required').forEach(flag => {
       this.flags[flag] = defaults[flag];
     });
 
@@ -299,10 +302,13 @@ export default class Field {
 
     // we get the selectors for each field.
     const fields = Object.keys(this.rules).reduce((prev, r) => {
-      if (r === 'confirmed') {
-        prev.push({ selector: this.rules[r][0] || `${this.name}_confirmation`, name: r });
-      } else if (Validator.isTargetRule(r)) {
-        prev.push({ selector: this.rules[r][0], name: r });
+      if (Validator.isTargetRule(r)) {
+        let selector = this.rules[r][0];
+        if (r === 'confirmed' && !selector) {
+          selector = `${this.name}_confirmation`;
+        }
+
+        prev.push({ selector, name: r });
       }
 
       return prev;
@@ -337,7 +343,7 @@ export default class Field {
         return;
       }
 
-      const options: { [string]: any } = {
+      const options: FieldOptions = {
         vm: this.vm,
         classes: this.classes,
         classNames: this.classNames,
@@ -380,14 +386,20 @@ export default class Field {
    * Updates the element classes depending on each field flag status.
    */
   updateClasses () {
-    if (!this.classes) return;
+    if (!this.classes || this.isDisabled) return;
 
     toggleClass(this.el, this.classNames.dirty, this.flags.dirty);
     toggleClass(this.el, this.classNames.pristine, this.flags.pristine);
-    toggleClass(this.el, this.classNames.valid, !!this.flags.valid);
-    toggleClass(this.el, this.classNames.invalid, !!this.flags.invalid);
     toggleClass(this.el, this.classNames.touched, this.flags.touched);
     toggleClass(this.el, this.classNames.untouched, this.flags.untouched);
+    // make sure we don't set any classes if the state is undetermined.
+    if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
+      toggleClass(this.el, this.classNames.valid, this.flags.valid);
+    }
+
+    if (!isNullOrUndefined(this.flags.invalid) && this.flags.validated) {
+      toggleClass(this.el, this.classNames.invalid, this.flags.invalid);
+    }
   }
 
   /**
@@ -566,8 +578,7 @@ export default class Field {
    * Removes all listeners.
    */
   destroy () {
-    this.watchers.forEach(w => w.unwatch());
-    this.watchers = [];
+    this.unwatch();
     this.dependencies.forEach(d => d.field.destroy());
     this.dependencies = [];
   }
