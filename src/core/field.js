@@ -340,7 +340,7 @@ export default class Field {
         return;
       }
 
-      const options: { [string]: any } = {
+      const options: FieldOptions = {
         vm: this.vm,
         classes: this.classes,
         classNames: this.classNames,
