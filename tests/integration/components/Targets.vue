@@ -15,6 +15,9 @@
     <input type="text" name="f9" v-validate="'required|confirmed:#f10'" id="f9">
 
     <input type="text" name="f11" v-validate="'required|confirmed:%$selector'" id="f11">
+
+    <input type="text" name="f12" v-validate="'required|confirmed'" id="f12">
+    <input type="text" name="f12_confirmation" id="f13">
   </div>
 </template>
 

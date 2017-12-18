@@ -302,10 +302,13 @@ export default class Field {
 
     // we get the selectors for each field.
     const fields = Object.keys(this.rules).reduce((prev, r) => {
-      if (r === 'confirmed') {
-        prev.push({ selector: this.rules[r][0] || `${this.name}_confirmation`, name: r });
-      } else if (Validator.isTargetRule(r)) {
-        prev.push({ selector: this.rules[r][0], name: r });
+      if (Validator.isTargetRule(r)) {
+        let selector = this.rules[r][0];
+        if (r === 'confirmed' && !selector) {
+          selector = `${this.name}_confirmation`;
+        }
+
+        prev.push({ selector, name: r });
       }
 
       return prev;

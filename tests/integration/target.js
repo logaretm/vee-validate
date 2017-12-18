@@ -103,3 +103,23 @@ test('catches invalid selectors', async () => {
 
   expect(wrapper.vm.$validator.fields.find({ name: 'f11' }).dependencies.length).toBe(0);
 });
+
+test('has a fallback for the confirmed rule name selector', async () => {
+  const wrapper = mount(TestComponent, { localVue: Vue });
+  let input = wrapper.find('#f12');
+  let target = wrapper.find('#f13');
+
+  input.element.value = '10';
+  input.trigger('input');
+  await flushPromises();
+
+  expect(wrapper.vm.$validator.errors.first('f12')).toBe('The f12 confirmation does not match.');
+  target.element.value = '10';
+  target.trigger('input');
+  await flushPromises();
+
+  const field = wrapper.vm.$validator.fields.find({ name: 'f12' });
+
+  expect(wrapper.vm.$validator.errors.has('f12')).toBe(false);
+  expect(wrapper.vm.$validator.flags.f12.valid).toBe(true);
+});
