@@ -22,28 +22,12 @@ const validator = {
 };
 ```
 
-**Localized Object Form:** 
 
-```js
-const validator = {
-  messages: {
-    en: (field, args) => {
-      // Returns a message.
-    },
-    cn: (field, args) => {
-      // Returns a Chinese message.
-    }
-  },
-  validate(value, args) {
-    // Returns a Boolean or a Promise.
-  }
-};
-```
-This validator form must have a `validate` method, and either a `getMessage` method, or a `messages` object. The only difference that the latter will allow you to add localized messages, the former only adds it to the English dictionary.
+This validator object must have a `validate` method, and can contain a `getMessage` method which will be merged into the current dictionary locale. For multiple languages you should use the [localization API](localization.html).
 
-> Notice how the `messages` methods gets passed the `field` which is the name of the field under validation as a first parameter. And how the `validate` method gets passed the value as a first parameter. And both receive the `args` which are the parameters (arguments) that were configured with the validation rule. for example look at the [actual implementation of the min rule](https://github.com/logaretm/vee-validate/blob/master/src/rules/min.js).
+> Notice how the `getMessage` method receives the `field` which is the name of the field under validation as a first parameter. And how the `validate` method receives the value as a first parameter. And both receive the `args` array which contains the arguments that were configured with the validation rule. take a look at the [actual implementation of the min rule](https://github.com/logaretm/vee-validate/blob/master/src/rules/min.js) as an example.
 
-> As you can see a validation rule must implement one of the three forms discussed above. Not doing so will throw a `ValidatorException` with a suitable error message detailing what were you missing.
+> As you can see a validation rule must implement one of the three forms discussed above. Not doing so will throw an exception with a suitable error message detailing what were you missing.
 
 Additionally you may want to provide a reason for failing the validation that may change the error message. For example you may be using an external API and the error message is generated there.  
 
@@ -115,7 +99,7 @@ validator.localize('ar'); // now this validator will generate messages in arabic
 
 > You must provide the messages in an object path like: `dictionary.locale.messages`.
 
-Usually you would stucture your language files for your app rather than adding hardcoded strings like the example above, check the [localization guide](localization.html) for more info.
+Usually you would structure your language files for your app rather than adding hardcoded strings like the example above, check the [localization guide](localization.html) for more info.
 
 ## [Custom Attributes](#custom-attributes)
 

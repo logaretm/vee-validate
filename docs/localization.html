@@ -54,13 +54,13 @@ new Vue({
   }
 };
 
-validator.localize('en'); // changes the locale
+Validator.localize('en'); // changes the locale
 
 // Merges the English dictionary and sets the current locale to English.
-validator.localize('en', dictionary.en); 
+Validator.localize('en', dictionary.en); 
 
 // Merge all defined languages in the dictionary but does not set the current locale.
-validator.localize(dictionary); 
+Validator.localize(dictionary); 
 </code></pre>
 <p>All validators' locales are shared, calling <code>localize</code> on any instance available within any component will change the locale for all validators.</p>
 <pre><code class="highlight-js">// Inside a component.
@@ -114,4 +114,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor-269217e05c46678f532f.js"></script><script type="text/javascript" src="/assets/js/bundle-269217e05c46678f532f.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor-1bb79b58d6a0318b4854.js"></script><script type="text/javascript" src="/assets/js/bundle-1bb79b58d6a0318b4854.js"></script></body></html>

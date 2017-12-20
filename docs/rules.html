@@ -382,27 +382,12 @@ Example: <code>v-validate=&quot;{ required: true, regex: /\\.(js|ts)$/ }&quot;</
   }
 };
 </code></pre>
-<p><strong>Localized Object Form:</strong></p>
-<pre><code class="highlight-js">const validator = {
-  messages: {
-    en: (field, args) =&gt; {
-      // Returns a message.
-    },
-    cn: (field, args) =&gt; {
-      // Returns a Chinese message.
-    }
-  },
-  validate(value, args) {
-    // Returns a Boolean or a Promise.
-  }
-};
-</code></pre>
-<p>This validator form must have a <code>validate</code> method, and either a <code>getMessage</code> method, or a <code>messages</code> object. The only difference that the latter will allow you to add localized messages, the former only adds it to the English dictionary.</p>
+<p>This validator object must have a <code>validate</code> method, and can contain a <code>getMessage</code> method which will be merged into the current dictionary locale. For multiple languages you should use the <a href="localization.html">localization API</a>.</p>
 <blockquote>
-<p>Notice how the <code>messages</code> methods gets passed the <code>field</code> which is the name of the field under validation as a first parameter. And how the <code>validate</code> method gets passed the value as a first parameter. And both receive the <code>args</code> which are the parameters (arguments) that were configured with the validation rule. for example look at the <a href="https://github.com/logaretm/vee-validate/blob/master/src/rules/min.js">actual implementation of the min rule</a>.</p>
+<p>Notice how the <code>getMessage</code> method receives the <code>field</code> which is the name of the field under validation as a first parameter. And how the <code>validate</code> method receives the value as a first parameter. And both receive the <code>args</code> array which contains the arguments that were configured with the validation rule. take a look at the <a href="https://github.com/logaretm/vee-validate/blob/master/src/rules/min.js">actual implementation of the min rule</a> as an example.</p>
 </blockquote>
 <blockquote>
-<p>As you can see a validation rule must implement one of the three forms discussed above. Not doing so will throw a <code>ValidatorException</code> with a suitable error message detailing what were you missing.</p>
+<p>As you can see a validation rule must implement one of the three forms discussed above. Not doing so will throw an exception with a suitable error message detailing what were you missing.</p>
 </blockquote>
 <p>Additionally you may want to provide a reason for failing the validation that may change the error message. For example you may be using an external API and the error message is generated there.</p>
 <p>To acheive this, you need to return an <code>Object</code> instead of a <code>Boolean</code> this object should always contain a <code>valid</code> property and an optional <code>data</code> property, the data property will be passed to the message generator function as the third parameter, then you should use the passed data property to modify the output message. The same thing applies to promises as you resolve the promise with an object containg those properties. Here is a custom rule that does just that:</p>
@@ -467,7 +452,7 @@ validator.localize('ar'); // now this validator will generate messages in arabic
 <blockquote>
 <p>You must provide the messages in an object path like: <code>dictionary.locale.messages</code>.</p>
 </blockquote>
-<p>Usually you would stucture your language files for your app rather than adding hardcoded strings like the example above, check the <a href="localization.html">localization guide</a> for more info.</p>
+<p>Usually you would structure your language files for your app rather than adding hardcoded strings like the example above, check the <a href="localization.html">localization guide</a> for more info.</p>
 <h2><a href="#custom-attributes">Custom Attributes</a></h2>
 <p>Like the custom messages, the validators share a dictionary containing the attribute names, for example if you want to use &quot;Email Address&quot; instead of &quot;email&quot; in your error messages, this can be easily acheived by including an <code>attributes</code> object in the dictionary.</p>
 <p>Unlike messages, no attributes are included in the default dictionary.</p>
@@ -534,4 +519,4 @@ if (location.hash) {
   var hash = location.hash;
   location.hash = '';
   location.hash = hash;
-}</script><script type="text/javascript" src="/assets/js/vendor-269217e05c46678f532f.js"></script><script type="text/javascript" src="/assets/js/bundle-269217e05c46678f532f.js"></script></body></html>
+}</script><script type="text/javascript" src="/assets/js/vendor-1bb79b58d6a0318b4854.js"></script><script type="text/javascript" src="/assets/js/bundle-1bb79b58d6a0318b4854.js"></script></body></html>
