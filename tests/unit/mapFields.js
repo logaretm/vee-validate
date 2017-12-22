@@ -24,15 +24,25 @@ test('it can map global flags for all fields', () => {
   const flags = {
     email: {
       dirty: true,
-      valid: true
+      valid: true,
+      untouched: true
     },
     fullname: {
       dirty: false,
-      valid: true
+      valid: true,
+      untouched: true
     },
     phone: {
       dirty: false,
-      valid: false
+      valid: false,
+      untouched: true
+    },
+    $scope: {
+      title: {
+        dirty: false,
+        valid: true,
+        untouched: false
+      }
     }
   };
 
@@ -43,6 +53,7 @@ test('it can map global flags for all fields', () => {
 
   expect(ctx.allFlags().dirty).toBe(true);
   expect(ctx.allFlags().valid).toBe(false);
+  expect(ctx.allFlags().untouched).toBe(false);
 });
 
 test('it can map flags of fields inside a scope', () => {
