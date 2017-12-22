@@ -282,10 +282,10 @@ export default class ErrorBag {
    */
   _scope (field: string, context: any): { name: string, scope: string } | null {
     while (context) {
-      if (context.$parent.$vnode.componentOptions.tag === 'WForm') {
+      if (context.$parent.$vnode.componentInstance.$el.tagName === 'FORM') {
         return {
           name: field,
-          scope: context.$parent.$vnode.$attrs['data-vv-scope']
+          scope: context.$parent.$vnode.componentInstance.$el.getAttribute('data-vv-scope')
         };
       }
       context = context.$parent;

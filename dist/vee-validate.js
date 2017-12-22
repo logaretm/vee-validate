@@ -4669,10 +4669,10 @@ ErrorBag.prototype._selector = function _selector (field) {
  */
 ErrorBag.prototype._scope = function _scope (field, context) {
   while (context) {
-    if (context.$parent.$vnode.componentOptions.tag === 'WForm') {
+    if (context.$parent.$vnode.componentInstance.$el.tagName === 'FORM') {
       return {
         name: field,
-        scope: context.$parent.$vnode.$attrs['data-vv-scope']
+        scope: context.$parent.$vnode.componentInstance.$el.getAttribute('data-vv-scope')
       };
     }
     context = context.$parent;
