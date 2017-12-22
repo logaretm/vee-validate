@@ -58,10 +58,6 @@ export default class Generator {
       return getDataAttribute(el, 'rules');
     }
 
-    if (typeof binding.value === 'string') {
-      return binding.value;
-    }
-
     if (~['string', 'object'].indexOf(typeof binding.value.rules)) {
       return binding.value.rules;
     }
