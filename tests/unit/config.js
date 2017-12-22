@@ -1,5 +1,5 @@
-import Config from '../src/config';
-import Dictionary from '../src/core/localization/i18n';
+import Config from '../../src/config';
+import Dictionary from '../../src/core/localization/i18n';
 
 test('it stores the default config', () => {
   expect(Config.default).toEqual({

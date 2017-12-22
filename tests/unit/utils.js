@@ -1,6 +1,6 @@
-import * as utils from '../src/core/utils';
-import * as dateUtils from '../src/core/utils/date';
-import * as i18Utils from '../locale/utils';
+import * as utils from '../../src/core/utils';
+import * as dateUtils from '../../src/core/utils/date';
+import * as i18Utils from '../../locale/utils';
 
 test('gets the data attribute prefixed with the plugin', () => {
   document.body.innerHTML =
