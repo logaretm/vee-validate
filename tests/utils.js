@@ -446,6 +446,13 @@ describe('makeDelayObject', () => {
   test('it handles delay integers', () => {
     expect(utils.makeDelayObject(['focus', 'input'], 600)).toEqual({focus: 600, input: 600});
   });
+
+  test('patches unspecified events with the fallback delay config', () => {
+    expect(utils.makeDelayObject(['input', 'blur'], { input: 300 }, 500)).toEqual({
+      input: 300,
+      blur: 500
+    });
+  });
 });
 
 describe('deepParseInt', () => {

@@ -88,7 +88,6 @@ test('removes listeners on related radio buttons', async () => {
   const field = wrapper.vm.$validator.fields.find({ name: 'radioField' });
 
   // it has two watchers, one for it and one for its friend
-  console.log(field.watchers.map(w => w.tag));
   expect(field.watchers.filter(w => /input_native/.test(w.tag)).length).toBe(2);
   wrapper.destroy();
   // both should be removed.
