@@ -909,3 +909,13 @@ test('updates existing field errors and flags to match the new scope', async () 
   expect(v.flags.$s2.email).toBeTruthy();
   expect(v.errors.first('s2.email')).toBeTruthy();
 });
+
+test('removes target based rules from the internal collection', async () => {
+  const v = new Validator();
+  const rule = (val) => !!val;
+  v.extend('rule', rule, { hasTarget: true });
+  expect(Validator.isTargetRule('rule')).toBe(true);
+
+  v.remove('rule');
+  expect(Validator.isTargetRule('rule')).toBe(false);
+});

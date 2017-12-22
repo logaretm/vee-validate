@@ -37,6 +37,9 @@ test('finds the first field that matches a matcher object', () => {
   expect(bag.find({ name: 'email' })).toBe(field1);
   expect(bag.find({ name: 'email', scope: 's2' })).toBe(field2);
   expect(bag.find({ name: 'email', scope: null })).toBe(field3);
+
+  // empty matcher gets the first field.
+  expect(bag.find({})).toBe(field1);
 });
 
 test('filters the fields based on a matcher object', () => {
