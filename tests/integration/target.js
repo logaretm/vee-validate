@@ -104,6 +104,16 @@ test('catches invalid selectors', async () => {
   expect(wrapper.vm.$validator.fields.find({ name: 'f11' }).dependencies.length).toBe(0);
 });
 
+test('handles where a querySelector method is not available #870', async () => {
+  const wrapper = mount(TestComponent, { localVue: Vue });
+  const input = wrapper.find('#f11');
+  wrapper.vm.$validator.fields.find({ name: 'f11' }).vm = { $el: {} };
+  input.trigger('input');
+  await flushPromises();
+
+  expect(wrapper.vm.$validator.fields.find({ name: 'f11' }).dependencies.length).toBe(0);
+});
+
 test('has a fallback for the confirmed rule name selector', async () => {
   const wrapper = mount(TestComponent, { localVue: Vue });
   let input = wrapper.find('#f12');

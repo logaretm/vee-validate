@@ -79,3 +79,18 @@ describe('handles native inputs with their respective events', () => {
     expect(wrapper.vm.errors.has('fileField')).toBe(true);
   });
 });
+
+test('removes listeners on related radio buttons', async () => {
+  VeeValidate.uninstall();
+  const Vue = createLocalVue();
+  Vue.use(VeeValidate, { events: 'input' });
+  const wrapper = shallow(TestComponent, { localVue: Vue, attachToDocument: true });
+  const field = wrapper.vm.$validator.fields.find({ name: 'radioField' });
+
+  // it has two watchers, one for it and one for its friend
+  console.log(field.watchers.map(w => w.tag));
+  expect(field.watchers.filter(w => /input_native/.test(w.tag)).length).toBe(2);
+  wrapper.destroy();
+  // both should be removed.
+  expect(field.watchers.filter(w => /input_native/.test(w.tag)).length).toBe(0);
+});
