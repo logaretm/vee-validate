@@ -21,6 +21,7 @@ export const setDataAttribute = (el: HTMLElement, name: string, value: string): 
  * Creates a proxy object if available in the environment.
  */
 export const createProxy = (target: Object, handler: Object) => {
+  /* istanbul ignore next */
   if (typeof Proxy === 'undefined') {
     return target;
   }
@@ -354,24 +355,15 @@ export const uniqId = (): string => {
 /**
  * finds the first element that satisfies the predicate callback, polyfills array.find
  */
-export const find = (arrayLike: { length: number }, predicate: (any) => boolean) => {
-  const array = toArray(arrayLike);
-
-  if (isCallable(array.find)) {
-    return array.find(predicate);
+export const find = (arrayLike: { length: number }, predicate: (any) => boolean): any => {
+  const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
+  for (let i = 0; i < array.length; i++) {
+    if (predicate(array[i])) {
+      return array[i];
+    }
   }
 
-  let result;
-  array.some(item => {
-    if (predicate(item)) {
-      result = item;
-      return true;
-    }
-
-    return false;
-  });
-
-  return result;
+  return undefined;
 };
 
 /**

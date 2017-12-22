@@ -56,6 +56,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "flow-bin": "^0.56.0",
+    "flush-promises": "^1.0.0",
     "jest": "^21.2.1",
     "regenerator-runtime": "^0.11.0",
     "rollup": "^0.49.2",
