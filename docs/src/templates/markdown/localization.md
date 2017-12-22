@@ -97,11 +97,12 @@ You can import those locales like this:
 import ar from 'vee-validate/dist/locale/ar';
 import VeeValidate, { Validator } from 'vee-validate';
 
+// Install the Plugin.
+Vue.use(VeeValidate);
+
 // Localize takes the locale object as the second argument (optional) and merges it.
 Validator.localize('ar', ar);
 
-// Install the Plugin.
-Vue.use(VeeValidate);
 ```
 
 You must note that the locale files export the following object structure:
