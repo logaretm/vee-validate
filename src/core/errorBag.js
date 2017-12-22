@@ -206,7 +206,7 @@ export default class ErrorBag {
   }
 
   _has (context: any, scope?: ?string = null): boolean {
-    return !!this.first(context, scope);
+    return !!this._first(context, scope);
   }
 
   /**

@@ -4582,7 +4582,7 @@ ErrorBag.prototype.has = function has (field, scope) {
 ErrorBag.prototype._has = function _has (context, scope) {
     if ( scope === void 0 ) scope = null;
 
-  return !!this.first(context, scope);
+  return !!this._first(context, scope);
 };
 
 /**
