@@ -386,7 +386,7 @@ export default class Field {
    * Updates the element classes depending on each field flag status.
    */
   updateClasses () {
-    if (!this.classes) return;
+    if (!this.classes || this.isDisabled) return;
 
     toggleClass(this.el, this.classNames.dirty, this.flags.dirty);
     toggleClass(this.el, this.classNames.pristine, this.flags.pristine);
