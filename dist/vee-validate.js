@@ -4530,6 +4530,37 @@ ErrorBag.prototype.first = function first (field, scope) {
   return null;
 };
 
+ErrorBag.prototype._first = function _first (context, scope) {
+    var this$1 = this;
+    if ( scope === void 0 ) scope = null;
+
+  var field = context.name;
+  field = !isNullOrUndefined(field) ? String(field) : field;
+  var selector = this._selector(field);
+  var scoped = this._scope(field, context);
+
+  if (scoped) {
+    var result = this.first(scoped.name, scoped.scope);
+    // if such result exist, return it. otherwise it could be a field.
+    // with dot in its name.
+    if (result) {
+      return result;
+    }
+  }
+
+  if (selector) {
+    return this.firstByRule(selector.name, selector.rule, scope);
+  }
+
+  for (var i = 0; i < this.items.length; ++i) {
+    if (this$1.items[i].field === field && (this$1.items[i].scope === scope)) {
+      return this$1.items[i].msg;
+    }
+  }
+
+  return null;
+};
+
 /**
  * Returns the first error rule for the specified field
  */
@@ -4546,6 +4577,12 @@ ErrorBag.prototype.has = function has (field, scope) {
     if ( scope === void 0 ) scope = null;
 
   return !!this.first(field, scope);
+};
+
+ErrorBag.prototype._has = function _has (context, scope) {
+    if ( scope === void 0 ) scope = null;
+
+  return !!this.first(context, scope);
 };
 
 /**
@@ -4630,13 +4667,24 @@ ErrorBag.prototype._selector = function _selector (field) {
 /**
  * Get the field scope if specified using dot notation.
  */
-ErrorBag.prototype._scope = function _scope (field) {
-  if (field.indexOf('.') > -1) {
-    var ref = field.split('.');
-      var scope = ref[0];
-      var name = ref.slice(1);
+ErrorBag.prototype._scope = function _scope (field, context) {
+  while (context) {
+    if (context.$parent.$vnode.componentOptions.tag === 'WForm') {
+      return {
+        name: field,
+        scope: context.$parent.$vnode.$attrs['data-vv-scope']
+      };
+    }
+    context = context.$parent;
+  }
+  if (!context) {
+    if (field.indexOf('.') > -1) {
+      var ref = field.split('.');
+        var scope = ref[0];
+        var name = ref.slice(1);
 
-    return { name: name.join('.'), scope: scope };
+      return { name: name.join('.'), scope: scope };
+    }
   }
 
   return null;
@@ -6796,7 +6844,6 @@ function install (_Vue, options) {
   Vue = _Vue;
   Config.merge(options);
   var ref = Config.current;
-  var locale = ref.locale;
   var dictionary = ref.dictionary;
   var i18n = ref.i18n;
 
@@ -6811,8 +6858,8 @@ function install (_Vue, options) {
     });
   }
 
-  if (!i18n) {
-    Validator.localize(locale); // set the locale
+  if (!i18n && options.locale) {
+    Validator.localize(options.locale); // set the locale
   }
 
   Validator.setStrictMode(Config.current.strict);

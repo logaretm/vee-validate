@@ -161,6 +161,34 @@ export default class ErrorBag {
     return null;
   }
 
+  _first (context: any, scope ?: ?string = null) {
+    let field = context.name;
+    field = !isNullOrUndefined(field) ? String(field) : field;
+    const selector = this._selector(field);
+    const scoped = this._scope(field, context);
+
+    if (scoped) {
+      const result = this.first(scoped.name, scoped.scope);
+      // if such result exist, return it. otherwise it could be a field.
+      // with dot in its name.
+      if (result) {
+        return result;
+      }
+    }
+
+    if (selector) {
+      return this.firstByRule(selector.name, selector.rule, scope);
+    }
+
+    for (let i = 0; i < this.items.length; ++i) {
+      if (this.items[i].field === field && (this.items[i].scope === scope)) {
+        return this.items[i].msg;
+      }
+    }
+
+    return null;
+  }
+
   /**
    * Returns the first error rule for the specified field
    */
@@ -175,6 +203,10 @@ export default class ErrorBag {
    */
   has (field: string, scope?: ?string = null): boolean {
     return !!this.first(field, scope);
+  }
+
+  _has (context: any, scope?: ?string = null): boolean {
+    return !!this.first(context, scope);
   }
 
   /**
@@ -248,11 +280,22 @@ export default class ErrorBag {
   /**
    * Get the field scope if specified using dot notation.
    */
-  _scope (field: string): { name: string, scope: string } | null {
-    if (field.indexOf('.') > -1) {
-      const [scope, ...name] = field.split('.');
+  _scope (field: string, context: any): { name: string, scope: string } | null {
+    while (context) {
+      if (context.$parent.$vnode.componentOptions.tag === 'WForm') {
+        return {
+          name: field,
+          scope: context.$parent.$vnode.$attrs['data-vv-scope']
+        };
+      }
+      context = context.$parent;
+    }
+    if (!context) {
+      if (field.indexOf('.') > -1) {
+        const [scope, ...name] = field.split('.');
 
-      return { name: name.join('.'), scope };
+        return { name: name.join('.'), scope };
+      }
     }
 
     return null;
