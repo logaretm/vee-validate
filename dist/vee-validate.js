@@ -5572,12 +5572,12 @@ Field.prototype.updateClasses = function updateClasses () {
   toggleClass(this.el, this.classNames.touched, this.flags.touched);
   toggleClass(this.el, this.classNames.untouched, this.flags.untouched);
   // make sure we don't set any classes if the state is undetermined.
-  if (!isNullOrUndefined(this.flags.valid)) {
-    toggleClass(this.el, this.classNames.valid, !!this.flags.valid);
+  if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
+    toggleClass(this.el, this.classNames.valid, this.flags.valid);
   }
 
-  if (!isNullOrUndefined(this.flags.invalid)) {
-    toggleClass(this.el, this.classNames.invalid, !!this.flags.invalid);
+  if (!isNullOrUndefined(this.flags.invalid) && this.flags.validated) {
+    toggleClass(this.el, this.classNames.invalid, this.flags.invalid);
   }
 };
 
