@@ -100,9 +100,9 @@ export class Validator {
     update(id: string, diff: Object): void;
     resume(): Validator;
     setLocale(language?: string): void;
+    localize(rootDictionary?: Object) :void;
     localize(language: string, dictionary?: Object) :void;
     setStrictMode(strictMode?: boolean): void;
-    updateDictionary(data: Object): void;
     validate(name: string, value?: any, scope?: string): Promise<any>;
     validateAll(values?: Object, scope?: string): Promise<any>;
     validateScopes(): Promise<any>;
@@ -111,8 +111,7 @@ export class Validator {
     static remove(name: string): void;
     static setLocale(language?: string): void;
     static setStrictMode(strictMode?: boolean): void;
-    static updateDictionary(data: any): void;
-    static addLocale(local: Object): void;
+    static localize(rootDictionary: Object): void;
     static localize(language: string, dictionary?: Object): void;
 }
 
