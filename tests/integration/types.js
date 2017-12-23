@@ -81,7 +81,6 @@ describe('handles native inputs with their respective events', () => {
 });
 
 test('removes listeners on related radio buttons', async () => {
-  VeeValidate.uninstall();
   const Vue = createLocalVue();
   Vue.use(VeeValidate, { events: 'input' });
   const wrapper = shallow(TestComponent, { localVue: Vue, attachToDocument: true });

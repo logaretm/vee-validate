@@ -39,16 +39,4 @@ function install (_Vue, options = {}) {
   Vue.directive('validate', directive);
 };
 
-function uninstall () {
-  Vue = null;
-}
-
-export {
-  install,
-  uninstall
-};
-
-export default {
-  install,
-  uninstall
-};
+export default install;

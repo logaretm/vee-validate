@@ -20,7 +20,6 @@ test('provides fake flags proxy to prevent render errors', async () => {
 });
 
 test('field flags', async () => {
-  VeeValidate.uninstall();
   const Vue = createLocalVue();
   Vue.use(VeeValidate);
 
@@ -74,7 +73,6 @@ test('field flags', async () => {
 });
 
 test('adds listeners when field flag is manually set', async () => {
-  VeeValidate.uninstall();
   const Vue = createLocalVue();
   Vue.use(VeeValidate);
 

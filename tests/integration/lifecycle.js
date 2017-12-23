@@ -28,7 +28,6 @@ test('unbind: does not detach the field if it does not exist', () => {
 });
 
 test('destroy: the validator instance is destroyed when the owning component is destroyed', () => {
-  VeeValidate.uninstall();
   const Vue = createLocalVue();
   Vue.use(VeeValidate);
 
@@ -47,7 +46,6 @@ test('destroy: the validator instance is destroyed when the owning component is 
 });
 
 test('beforeDestroy: builtins do not execute beforeDestroy mixin event', () => {
-  VeeValidate.uninstall();
   const Vue = createLocalVue();
   Vue.use(VeeValidate);
 

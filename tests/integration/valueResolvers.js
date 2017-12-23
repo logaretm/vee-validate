@@ -67,7 +67,6 @@ describe('resolves native HTML Inputs values', () => {
 });
 
 describe('resolves custom components values', () => {
-  VeeValidate.uninstall();
   const Vue = createLocalVue();
   Vue.use(VeeValidate);
   const wrapper = mount(ComponentsTestComponent, { localVue: Vue });

@@ -32,7 +32,6 @@ test('injects parent validator instances if requested otherwise new instances wi
 });
 
 test('does not auto inject any validator instance unless requested', async () => {
-  VeeValidate.uninstall(); // reset plugin state.
   const Vue = createLocalVue();
   Vue.use(VeeValidate, {
     inject: false
@@ -59,7 +58,6 @@ test('does not auto inject any validator instance unless requested', async () =>
 });
 
 test('built in components should not provide a validator', () => {
-  VeeValidate.uninstall();
   const Vue = createLocalVue();
   Vue.use(VeeValidate);
 

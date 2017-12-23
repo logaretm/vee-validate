@@ -31,8 +31,6 @@ test('can customize validation trigger events via global config', async () => {
 });
 
 test('can customize events per field via data-vv-validate-on attribute', async () => {
-  VeeValidate.uninstall();
-
   const Vue = createLocalVue();
   Vue.use(VeeValidate);
 
