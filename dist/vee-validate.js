@@ -3291,13 +3291,6 @@ var validate$8 = function (value, options) {
   return !! options.filter(function (option) { return option == value; }).length;
 };
 
-var is = function (value, ref) {
-  if ( ref === void 0 ) ref = [];
-  var other = ref[0];
-
-  return value === other;
-};
-
 var isIP_1 = createCommonjsModule(function (module, exports) {
 'use strict';
 
@@ -3864,6 +3857,20 @@ var ip = function (value, ref) {
   return isIP(value, version);
 };
 
+var is = function (value, ref) {
+  if ( ref === void 0 ) ref = [];
+  var other = ref[0];
+
+  return value === other;
+};
+
+var is_not = function (value, ref) {
+  if ( ref === void 0 ) ref = [];
+  var other = ref[0];
+
+  return value !== other;
+};
+
 /**
  * @param {Array|String} value
  * @param {Number} length
@@ -4209,6 +4216,7 @@ var Rules = {
   integer: integer,
   length: length,
   ip: ip,
+  is_not: is_not,
   is: is,
   max: max$1,
   max_value: max_value,
