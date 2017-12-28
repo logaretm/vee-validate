@@ -232,6 +232,7 @@ export default class Field {
     }
 
     this.updated = true;
+    this.addValueListeners();
 
     // no need to continue.
     if (!this.el) {
@@ -239,7 +240,6 @@ export default class Field {
     };
 
     this.updateClasses();
-    this.addValueListeners();
     this.updateAriaAttrs();
   }
 
@@ -519,39 +519,47 @@ export default class Field {
         debouncedFn(...args);
       };
 
-      if (this.component) {
-        this.component.$on(e, validate);
+      this._addComponentEventListener(e, validate);
+      this._addHTMLEventListener(e, validate);
+    });
+  }
+
+  _addComponentEventListener (evt, validate) {
+    if (!this.component) return;
+
+    this.component.$on(evt, validate);
+    this.watchers.push({
+      tag: 'input_vue',
+      unwatch: () => {
+        this.component.$off(evt, validate);
+      }
+    });
+  }
+
+  _addHTMLEventListener (evt, validate) {
+    if (!this.el) return;
+
+    if (~['radio', 'checkbox'].indexOf(this.el.type)) {
+      const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+      toArray(els).forEach(el => {
+        el.addEventListener(evt, validate);
         this.watchers.push({
-          tag: 'input_vue',
+          tag: 'input_native',
           unwatch: () => {
-            this.component.$off(e, validate);
+            el.removeEventListener(evt, validate);
           }
         });
-        return;
-      }
-
-      if (~['radio', 'checkbox'].indexOf(this.el.type)) {
-        const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
-        toArray(els).forEach(el => {
-          el.addEventListener(e, validate);
-          this.watchers.push({
-            tag: 'input_native',
-            unwatch: () => {
-              el.removeEventListener(e, validate);
-            }
-          });
-        });
-
-        return;
-      }
-
-      this.el.addEventListener(e, validate);
-      this.watchers.push({
-        tag: 'input_native',
-        unwatch: () => {
-          this.el.removeEventListener(e, validate);
-        }
       });
+
+      return;
+    }
+
+    this.el.addEventListener(evt, validate);
+    this.watchers.push({
+      tag: 'input_native',
+      unwatch: () => {
+        this.el.removeEventListener(evt, validate);
+      }
     });
   }
 
