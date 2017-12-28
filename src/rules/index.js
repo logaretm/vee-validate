@@ -17,8 +17,9 @@ import email from './email';
 import ext from './ext';
 import image from './image';
 import In from './in';
-import is from './is';
 import ip from './ip';
+import is from './is';
+import is_not from './is_not';
 import length from './length';
 import integer from './integer';
 import max from './max';
@@ -55,6 +56,7 @@ export default {
   integer,
   length,
   ip,
+  is_not,
   is,
   max,
   max_value,
