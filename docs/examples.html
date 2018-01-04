@@ -1,0 +1,820 @@
+<!DOCTYPE html><html lang="en"><head><link rel="apple-touch-icon" sizes="57x57" href="favico/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="favico/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="favico/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="favico/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="favico/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="favico/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="favico/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="favico/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="favico/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192" href="favico/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="favico/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="favico/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="favico/favicon-16x16.png"><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/ms-icon-144x144.png"><meta name="theme-color" content="#41b883"><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:title" content="Examples | VeeValidate"><meta property="og:description" content="Usage and Examples"><meta property="og:image" content="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg"><meta name="description" content="Usage and Examples"><title>Examples | VeeValidate</title><link href="/assets/css/bundle.css" rel="stylesheet"></head><body><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-100131478-1', 'auto');
+ga('send', 'pageview');
+</script><svg style="display: none;"><symbol id="github" viewbox="0 0 16 16"><path d="M8 0C3.58 0 0 3.582 0 8c0 3.535 2.292 6.533 5.47 7.59.4.075.547-.172.547-.385 0-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056 1.225.824 1.225.824.714 1.223 1.873.87 2.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953 0-.873.31-1.587.823-2.147-.09-.202-.36-1.015.07-2.117 0 0 .67-.215 2.2.82.64-.178 1.32-.266 2-.27.68.004 1.36.092 2 .27 1.52-1.035 2.19-.82 2.19-.82.43 1.102.16 1.915.08 2.117.51.56.82 1.274.82 2.147 0 3.073-1.87 3.75-3.65 3.947.28.24.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.14.46.55.38C13.71 14.53 16 11.53 16 8c0-4.418-3.582-8-8-8"></path></symbol><symbol id="i-star" viewbox="0 0 32 32"><path d="M16 2 L20 12 30 12 22 19 25 30 16 23 7 30 10 19 2 12 12 12 Z"></path></symbol><div class="columns is-mobile" id="app"><button :class="{ 'button': true, 'sidebar-button': true, 'is-open': sidebarToggle }" @click="sidebarToggle = ! sidebarToggle" type="button"><span class="icon"><i class="fa fa-bars"></i></span></button><div class="column is-2 sidebar-container" :class="{ 'column is-2 sidebar-container': true, 'is-open': sidebarToggle }" v-cloak><aside class="menu sidebar"><animated-button link="https://github.com/logaretm/vee-validate"><div class="flex-div" slot="default"><svg class="icon"><use xlink:href="#github"></use></svg>Star</div><div class="flex-div" slot="hover"><svg class="icon"><use xlink:href="#i-star"></use></svg>{{ stars }}</div></animated-button><p class="menu-label">Getting Started</p><ul class="menu-list"><li><a href="index.html#about">Introduction</a></li><li><a href="index.html#installation">Installation</a><ul><li><a href="index.html#npm">npm</a></li><li><a href="index.html#cdn">CDN</a></li></ul></li><li><a href="index.html#basic-example">Basic Example</a></li><li><a href="index.html#render-errors">Rendering Errors</a></li><li><a href="index.html#available-rules">Available Validations</a></li><li><a href="index.html#configuration">Configuration</a></li></ul><p class="menu-label">Validation Rules</p><ul class="menu-list"><li><a href="rules.html#syntax">Syntax</a></li><li><a href="rules.html#available-validations">Available Validations</a></li><li><a href="rules.html#custom-rules">Custom Validations</a></li><li><a href="rules.html#custom-messages">Custom Messages</a></li><li><a href="rules.html#custom-attributes">Custom Attributes</a></li><li><a href="rules.html#field-sepecific-messages">Field-specific Custom Messages  </a></li></ul><p class="menu-label">Localization</p><ul class="menu-list"><li><a href="localization.html#translation">Translation</a></li><li><a href="localization.html#attributes-data-as">Attributes</a><ul><li><a href="localization.html#attributes-data-as">alias</a></li><li><a href="localization.html#attributes-dictionary">dictionary</a></li></ul></li><li><a href="localization.html#localized-files">Localized Files</a></li></ul><p class="menu-label">Advanced</p><ul class="menu-list"><li><a href="advanced.html#inject">Component Injections</a></li></ul><p class="menu-label">Examples</p><ul class="menu-list"><li><a href="examples.html#debounce-example">Debounce</a></li><li><a href="examples.html#reject-example">Reject Files</a></li><li><a href="examples.html#validate-data-example">Validating Models</a></li><li><a href="examples.html#initial-value">Initial Value Validation</a></li><li><a href="examples.html#validate-form">Form Validation</a></li><li><a href="examples.html#locale-example">Localized Messages</a></li><li><a href="examples.html#scope-example">Validation Scopes</a></li><li><a href="examples.html#coupon-example">Custom Validation: Coupon</a></li><li><a href="examples.html#radio-buttons-example">Radio Buttons Validation</a></li><li><a href="examples.html#checkbox-example">Checkbox Example</a></li><li><a href="examples.html#flags-example">Validation Flags</a></li><li><a href="examples.html#selectors-example">Error Selectors</a></li><li><a href="examples.html#component-example">Component Validation</a></li><li><a href="examples.html#event-bus-example">Event Bus</a></li></ul><p class="menu-label">API</p><ul class="menu-list"><li><a href="api.html#directive">v-validate</a></li><li><a href="api.html#data-attributes">data-* Attributes</a></li><li><a href="api.html#error-bag">Error Bag</a></li><li><a href="api.html#validator">Validator</a><ul><li><a href="api.html#validator">API</a></li><li><a href="api.html#validator-example">Example</a></li></ul></li></ul></aside></div><div class="column columns is-mobile main-container" @click="sidebarToggle = false"><div class="column is-12"><section class="hero"><div class="hero-body"><div class="container has-text-centered"><img width="150" alt="VeeValidate Logo" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg"><h1 class="title is-2">Examples </h1><h2 class="subtitle is-4">Usage and Examples</h2></div></div></section><div class="container"><div class="column content-container is-mobile"><h2><a href="#debounce-example">Delayed Validation (Debounced)</a></h2>
+<p>You can specify a delay to debounce the input event, a case scenario that you may want to wait for the user to stop typing then validate the field. This can be achieved by adding a <code>data-vv-delay</code> attribute on the field being validated, and assign it the number of milliseconds you want to wait for.</p>
+<code-example><div slot="example"><delay-example></delay-example></div><div slot="js">export default {
+  name: 'delay-example'
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-multiline&quot;&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Email (1s delay)&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input name=&quot;email&quot; v-validate=&quot;'required|email'&quot; data-vv-delay=&quot;1000&quot; :class=&quot;{'input': true, 'is-danger': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;
+            &lt;i v-show=&quot;errors.has('email')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('email')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('email') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Name (0.5s delay)&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input name=&quot;name&quot; v-validate=&quot;'required|alpha'&quot; data-vv-delay=&quot;500&quot; :class=&quot;{'input': true, 'is-danger': errors.has('name') }&quot; type=&quot;text&quot; placeholder=&quot;Name&quot;&gt;
+            &lt;i v-show=&quot;errors.has('name')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('name')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('name') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</div></code-example><h2><a href="#validate-model-example">Validate Models</a></h2>
+<p>The <code>v-validate</code> directive detects if the input has <code>v-model</code> bound to the same input, and watches for that value and validates it when it changes. But it can also listen for changes in computed properties by using the arg like this:</p>
+<pre><code class="language-html">&lt;input v-validate:name=&quot;'required|alpha_spaces'&quot; type=&quot;text&quot; name=&quot;name&quot;&gt;
+</code></pre>
+<pre><code class="language-js">export default {
+  data: () =&gt; ({
+    first_name: '',
+    last_name: ''
+  }),
+  computed: {
+    name() {
+      return this.first_name + ' ' + this.last_name;
+    }
+  }
+};
+</code></pre>
+<blockquote>
+<p>The expression for both the arg and the <code>v-model</code> directive must be a simple dot notation expression, and that expression must exist on the instance. For example having inputs in a loop bound by the iterator won't work properly and will instead use the traditional listeners.</p>
+</blockquote>
+<p>As you can see, the arg is <code>name</code> which tells <code>v-validate</code> to watch for whenever the name changes, this example might be a little bit silly, but you might need this functionality.</p>
+<blockquote>
+<p>You can debounce the validation using the <code>lazy</code> modifier on your v-model directive which will cause the validation to occur only when the user leaves the input.</p>
+</blockquote>
+<h2><a href="#initial-value">Initial Value Validation</a></h2>
+<p>In the next example, notice the usage of <code>.initial</code> modifier to force the validation of the field initial value.</p>
+<code-example><div slot="example"><data-example></data-example></div><div slot="js">export default {
+  name: 'data-example',
+  data: () => ({
+    email: '',
+    first_name: '',
+    last_name: ''
+  }),
+  computed: {
+    name() {
+      return `${this.first_name} ${this.last_name}`;
+    }
+  }
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-multiline&quot;&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Email&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input name=&quot;email&quot; v-model=&quot;email&quot; v-validate.initial=&quot;'required|email'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;
+            &lt;i v-show=&quot;errors.has('email')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('email')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('email') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;First Name&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input name=&quot;first_name&quot; v-model=&quot;first_name&quot; v-validate.initial=&quot;'required|alpha'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('first_name') }&quot; type=&quot;text&quot; placeholder=&quot;First Name&quot;&gt;
+            &lt;i v-show=&quot;errors.has('first_name')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('first_name')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('first_name') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Last Name&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input name=&quot;last_name&quot; v-model=&quot;last_name&quot; v-validate.initial=&quot;'required|alpha'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('last_name') }&quot; type=&quot;text&quot; placeholder=&quot;Last Name&quot;&gt;
+            &lt;i v-show=&quot;errors.has('last_name')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('last_name')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('last_name') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Full Name&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input :value=&quot;name&quot; name=&quot;name&quot; v-validate:name.initial=&quot;'required|alpha_spaces'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('name') }&quot; type=&quot;text&quot; placeholder=&quot;Full Name&quot;&gt;
+            &lt;i v-show=&quot;errors.has('name')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('name')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('name') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</div></code-example><h2><a href="#validate-form">Validate Form Before Submit</a></h2>
+<p>You may want to trigger all inputs validation before submitting a form, maybe display an alert or prevent form submission if any errors are detected. This can be easily acheived using <code>validateAll</code> method.</p>
+<code-example><div slot="example"><form-example></form-example></div><div slot="js">export default {
+  name: 'form-example',
+  data: () => ({
+    email: '',
+    name: '',
+    phone: '',
+    url: ''
+  }),
+  methods: {
+    validateBeforeSubmit() {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          // eslint-disable-next-line
+          alert('From Submitted!');
+          return;
+        }
+
+        alert('Correct them errors!');
+      });
+    }
+  }
+};
+</div><div slot="html">
+&lt;form @submit.prevent=&quot;validateBeforeSubmit&quot;&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Email&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input name=&quot;email&quot; v-model=&quot;email&quot; v-validate=&quot;'required|email'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;
+            &lt;i v-show=&quot;errors.has('email')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('email')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('email') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Name&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input name=&quot;name&quot; v-model=&quot;name&quot; v-validate=&quot;'required|alpha'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('name') }&quot; type=&quot;text&quot; placeholder=&quot;Name&quot;&gt;
+            &lt;i v-show=&quot;errors.has('name')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('name')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('name') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Phone&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input name=&quot;phone&quot; v-model=&quot;phone&quot; v-validate=&quot;'required|numeric'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('phone') }&quot; type=&quot;text&quot; placeholder=&quot;Phone&quot;&gt;
+            &lt;i v-show=&quot;errors.has('phone')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('phone')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('phone') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Website&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input name=&quot;url&quot; v-model=&quot;url&quot; v-validate=&quot;'required|url'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('url') }&quot; type=&quot;text&quot; placeholder=&quot;Website&quot;&gt;
+            &lt;i v-show=&quot;errors.has('url')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('url')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('url') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;p class=&quot;control&quot;&gt;
+            &lt;button class=&quot;button is-primary&quot; type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+&lt;/form&gt;
+</div></code-example><h2><a href="#locale-example">Localized Messages</a></h2>
+<p>You may want to display error messages in different languages, <code>vee-validate</code> offers a lot of flexibility for multi-language, here is an example on how you may do that</p>
+<p>The language below is Arabic (RTL):</p>
+<code-example><div slot="example"><locale-example></locale-example></div><div slot="js">import arabic from 'vee-validate/dist/locale/ar';
+
+export default {
+  name: 'locale-example',
+  data: () => ({
+    email: '',
+    phone: '',
+    locale: 'en',
+  }),
+  computed: {
+    nextLocale() {
+      return this.locale === 'en' ? 'Arabic' : 'English';
+    }
+  },
+  methods: {
+    changeLocale() {
+      this.locale = this.$validator.locale === 'ar' ? 'en' : 'ar';
+      this.$validator.localize(this.locale);
+    }
+  },
+  created() {
+    this.$validator.localize('ar', {
+      messages: arabic.messages,
+      attributes: {
+        email: 'البريد الاليكتروني',
+        phone: 'رقم الهاتف'
+      }
+    });
+
+    // start with english locale.
+    this.$validator.localize('en');
+  }
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-rtl is-multiline&quot;&gt;
+    &lt;button @click=&quot;changeLocale&quot; type=&quot;button&quot; class=&quot;button is-primary&quot;&gt;Change Locale To {{&quot;{&quot; + &quot;{ nextLocale }&quot; + &quot;}&quot;}}&lt;/button&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;البريد الاليكتروني (Email)&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-left&quot;&gt;
+            &lt;input name=&quot;email&quot; v-validate=&quot;'required|email'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;
+            &lt;i v-show=&quot;errors.has('email')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('email')&quot; class=&quot;help is-danger has-text-right&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('email') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;رقم الهاتف (Phone)&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-left&quot;&gt;
+            &lt;input name=&quot;phone&quot; v-validate=&quot;'required|numeric'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('phone') }&quot; type=&quot;text&quot; placeholder=&quot;Phone&quot;&gt;
+            &lt;i v-show=&quot;errors.has('phone')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('phone')&quot; class=&quot;help is-danger has-text-right&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('phone') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</div></code-example><h2><a href="#scope-example">Scopes</a></h2>
+<p>By default the scope of the validator is the same as the Vue instance that owns it, sometimes you may have multiple fields within the same component, they are in different forms and serve different purposes. The validator will then treat those two fields as the same field which will cause problems detecting the input and displaying the errors.</p>
+<p>You can tell the validator to scope the fields by adding a <code>data-vv-scope</code> attribute which tells the validator the name of the scope. Those fields will be then identified using their name and their scope, you can have inputs with the same name in different scopes, and you can display, clear and validate those scopes indepently.</p>
+<p>For convienece you may add the <code>data-vv-scope</code> attribute on the form that owns the inputs, you don't have to add the attribute on every input. You can also pass <code>scope</code> property to the validator expression.</p>
+<code-example><div slot="example"><scopes-example></scopes-example></div><div slot="js">export default {
+  name: 'scopes-example',
+  methods: {
+    validateForm(scope) {
+      this.$validator.validateAll(scope).then((result) => {
+        if (result) {
+          // eslint-disable-next-line
+          alert('Form Submitted!');
+        }
+      });
+    }
+  }
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-multiline&quot;&gt;
+    &lt;form @submit.prevent=&quot;validateForm('form-1')&quot; class=&quot;columns column is-multiline is-12&quot; data-vv-scope=&quot;form-1&quot;&gt;
+        &lt;legend&gt;Form 1&lt;/legend&gt;
+        &lt;div class=&quot;column is-12&quot;&gt;
+            &lt;label class=&quot;label&quot;&gt;Email&lt;/label&gt;
+            &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+                &lt;input name=&quot;email&quot; v-validate=&quot;'required|email'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('form-1.email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;
+                &lt;i v-show=&quot;errors.has('form-1.email')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+                &lt;span v-show=&quot;errors.has('form-1.email')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('form-1.email') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+            &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;column is-12&quot;&gt;
+            &lt;label class=&quot;label&quot;&gt;Password&lt;/label&gt;
+            &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+                &lt;input name=&quot;password&quot; v-validate=&quot;'required|min:6'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('form-1.password') }&quot; type=&quot;password&quot; placeholder=&quot;Password&quot;&gt;
+                &lt;i v-show=&quot;errors.has('form-1.password')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+                &lt;span v-show=&quot;errors.has('form-1.password')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('form-1.password') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+            &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;column is-12&quot;&gt;
+            &lt;p class=&quot;control&quot;&gt;
+                &lt;button class=&quot;button is-primary&quot; type=&quot;submit&quot; name=&quot;button&quot;&gt;Sign up&lt;/button&gt;
+                &lt;button class=&quot;button is-danger&quot; type=&quot;button&quot; name=&quot;button&quot; @click=&quot;errors.clear('form-1')&quot;&gt;Clear&lt;/button&gt;
+            &lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/form&gt;
+    &lt;form @submit.prevent=&quot;validateForm('form-2')&quot; class=&quot;columns column is-multiline is-12&quot; data-vv-scope=&quot;form-2&quot;&gt;
+        &lt;legend&gt;Form 2&lt;/legend&gt;
+        &lt;div class=&quot;column is-12&quot;&gt;
+            &lt;label class=&quot;label&quot;&gt;Email&lt;/label&gt;
+            &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+                &lt;input name=&quot;email&quot; v-validate=&quot;'required|email'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('form-2.email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;
+                &lt;i v-show=&quot;errors.has('form-2.email')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+                &lt;span v-show=&quot;errors.has('form-2.email')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('form-2.email') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+            &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;column is-12&quot;&gt;
+            &lt;label class=&quot;label&quot;&gt;Password&lt;/label&gt;
+            &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+                &lt;input name=&quot;password&quot; v-validate=&quot;'required|min:6'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('form-2.password') }&quot; type=&quot;password&quot; placeholder=&quot;Password&quot;&gt;
+                &lt;i v-show=&quot;errors.has('form-2.password')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+                &lt;span v-show=&quot;errors.has('form-2.password')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('form-2.password') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+            &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;column is-12&quot;&gt;
+            &lt;p class=&quot;control&quot;&gt;
+                &lt;button class=&quot;button is-primary&quot; type=&quot;submit&quot; name=&quot;button&quot;&gt;Sign up&lt;/button&gt;
+                &lt;button class=&quot;button is-danger&quot; type=&quot;button&quot; name=&quot;button&quot; @click=&quot;errors.clear('form-2')&quot;&gt;Clear&lt;/button&gt;
+            &lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+</div></code-example><h2><a href="#coupon-example">Async Validation</a></h2>
+<p>Let's say you want to validate something specific to your app domain that isn't provided by the default validators, for example lets validate a user coupon on checkout. If it is a valid coupon then you discount it for him, if not he pays the full price :(</p>
+<p>Here is a list of our valid coupons: <code>SUMMER2016</code>, <code>WINTER2016</code> and <code>FALL2016</code>.</p>
+<p>Each of which gives 20% off. The process of validation is as follows: we take the input and send it to backend, the response should determine if the coupon is valid which is up to you. here I'm simulating async behavior using <code>setTimeout</code>.</p>
+<p><code>Vee-Validate</code> allows the usage of async validators, but it requires them to return a promise that resolves with an object containing the property <code>valid</code> which should equal a boolean state of the validation status.</p>
+<code-example><div slot="example"><coupon-example></coupon-example></div><div slot="js">import { Validator } from 'vee-validate';
+
+export default {
+  name: 'coupon-example',
+  data: () => ({
+    coupon: '',
+    price: 100,
+    discounted: false
+  }),
+  computed: {
+    discountedPrice() {
+      return this.discounted ? this.price - (0.2 * this.price) : this.price;
+    }
+  },
+  methods: {
+    applyCoupon() {
+      this.$validator.validate('coupon', this.coupon).then((result) => {
+        this.discounted = result;
+      });
+    }
+  },
+  created() {
+    Validator.extend('verify_coupon', {
+      getMessage: field => `The ${field} is not a valid coupon.`,
+      validate: value => new Promise((resolve) => {
+        // API call or database access.
+        const validCoupons = ['SUMMER2016', 'WINTER2016', 'FALL2016'];
+
+        setTimeout(() => {
+          resolve({
+            valid: value && validCoupons.indexOf(value.toUpperCase()) !== -1
+          });
+        }, 500);
+      })
+    });
+    this.$validator.attach({
+      name: 'coupon',
+      rules: 'required|verify_coupon'
+    });
+  }
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-multiline&quot;&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;span :class=&quot;{ 'discounted': discounted }&quot;&gt;Price: {{&quot;{&quot; + &quot;{ price }&quot; + &quot;}&quot;}}$&lt;/span&gt;
+        &lt;span v-show=&quot;discounted&quot; class=&quot;SeemsGood&quot;&gt;{{&quot;{&quot; + &quot;{ discountedPrice }&quot; + &quot;}&quot;}}$&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;form @submit.prevent=&quot;applyCoupon&quot; class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Coupon&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input v-model=&quot;coupon&quot; name=&quot;coupon&quot; :class=&quot;{'input': true, 'is-danger': errors.has('coupon') }&quot; type=&quot;text&quot; placeholder=&quot;Enter Your Coupon&quot;&gt;
+            &lt;i v-show=&quot;errors.has('coupon')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('coupon')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('coupon') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+
+        &lt;p class=&quot;control&quot;&gt;
+            &lt;button type=&quot;submit&quot; class=&quot;button is-primary&quot; name=&quot;button&quot;&gt;Apply&lt;/button&gt;
+        &lt;/p&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+</div></code-example><h2><a href="#radio-buttons-example">Radio Buttons</a></h2>
+<p>vee-validate also supports validating radio buttons, you can use whatever rules you want on them but only few rules makes sense, like <code>required</code>. One thing to note in this example is that you only need to use the directive on one of the radio buttons, you don't need to attach it on every one, they all must share the same name though.</p>
+<p>In the following example, the third value is not included using the rule <code>in:1,2</code></p>
+<code-example><div slot="example"><radio-buttons-example></radio-buttons-example></div><div slot="js">export default {
+  name: 'radio-buttons-example',
+  data: () => ({
+    radio_group_2: '',
+  }),
+  methods: {
+    validateForm() {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          // eslint-disable-next-line
+          alert('All Passes!');
+          return;
+        }
+        alert('Oh NO!');
+      });
+    }
+  }
+};
+</div><div slot="html">
+&lt;form @submit.prevent=&quot;validateForm&quot;&gt;
+    &lt;div class=&quot;columns is-multiline&quot;&gt;
+        &lt;div class=&quot;column is-6&quot;&gt;
+            &lt;legend :class=&quot;{ 'error': errors.has('radio_group_1') }&quot;&gt;Radio Group 1&lt;/legend&gt;
+            &lt;p class=&quot;control&quot;&gt;
+                &lt;label class=&quot;radio&quot;&gt;
+                    &lt;input name=&quot;radio_group_1&quot; v-validate=&quot;'required|in:1,2'&quot; value=&quot;1&quot; type=&quot;radio&quot;&gt;
+                    Option 1
+                &lt;/label&gt;
+                &lt;label class=&quot;radio&quot;&gt;
+                    &lt;input name=&quot;radio_group_1&quot; value=&quot;2&quot; type=&quot;radio&quot;&gt;
+                    Option 2
+                &lt;/label&gt;
+                &lt;label class=&quot;radio&quot;&gt;
+                    &lt;input name=&quot;radio_group_1&quot; value=&quot;3&quot; type=&quot;radio&quot;&gt;
+                    Option 3
+                &lt;/label&gt;
+            &lt;/p&gt;
+            &lt;span class=&quot;help is-danger&quot; v-show=&quot;errors.has('radio_group_1')&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('radio_group_1') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;column is-6&quot;&gt;
+            &lt;legend :class=&quot;{ 'error': errors.has('radio_group_2') }&quot;&gt;Radio Group 2 (Bound)&lt;/legend&gt;
+            &lt;p class=&quot;control&quot;&gt;
+                &lt;label class=&quot;radio&quot;&gt;
+                    &lt;input v-model=&quot;radio_group_2&quot; v-validate=&quot;{ rules: 'required|in:1,2', arg: 'radio_group_2' }&quot; name=&quot;radio_group_2&quot; value=&quot;1&quot; type=&quot;radio&quot;&gt;
+                    Option 1
+                &lt;/label&gt;
+                &lt;label class=&quot;radio&quot;&gt;
+                    &lt;input v-model=&quot;radio_group_2&quot; name=&quot;radio_group_2&quot; value=&quot;2&quot; type=&quot;radio&quot;&gt;
+                    Option 2
+                &lt;/label&gt;
+                &lt;label class=&quot;radio&quot;&gt;
+                    &lt;input v-model=&quot;radio_group_2&quot; name=&quot;radio_group_2&quot; value=&quot;3&quot; type=&quot;radio&quot;&gt;
+                    Option 3
+                &lt;/label&gt;
+            &lt;/p&gt;
+            &lt;span class=&quot;help is-danger&quot; v-show=&quot;errors.has('radio_group_2')&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('radio_group_2') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;p class=&quot;control&quot;&gt;
+        &lt;button type=&quot;submit&quot; class=&quot;button is-primary&quot; name=&quot;button&quot;&gt;Apply&lt;/button&gt;
+    &lt;/p&gt;
+&lt;/form&gt;
+</div></code-example><h2><a href="#checkbox-example">Checkbox Example</a></h2>
+<p>vee-validate also supports validating checkboxes, however like radio buttons the extent of the support is limited by the input nature itself, but all rules work regardless. like the radio buttons you only have attach the validator directive and attributes on the checkbox under validation if there are multiple checkboxes (group) you only have to add the directive on one of them.<br>
+If multiple values are selected, the validator will apply the validations on each checkbox.</p>
+<p>In the following example, the most basic use of checkboxes validation is the terms and conditions agreement that nobody reads.</p>
+<code-example><div slot="example"><checkbox-example></checkbox-example></div><div slot="js">const terms = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit ';
+
+export default {
+  name: 'checkbox-example',
+  data: () => ({
+    terms: terms.repeat(20)
+  }),
+  methods: {
+    nextStep() {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          alert('You just agreed to conditions without reading it.');
+          return;
+        }
+        // eslint-disable-next-line
+        alert('You actually did not agree?');
+      });
+    }
+  }
+};
+</div><div slot="html">
+&lt;div&gt;
+    &lt;div class=&quot;terms&quot;&gt;
+        &lt;p&gt;
+            {{&quot;{&quot; + &quot;{ terms }&quot; + &quot;}&quot;}}
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+        &lt;p class=&quot;control&quot;&gt;
+            &lt;label class=&quot;checkbox&quot;&gt;
+                &lt;input name=&quot;terms&quot; v-validate=&quot;'required'&quot; type=&quot;checkbox&quot;&gt;
+                I agree to the terms and conditions.
+            &lt;/label&gt;
+            &lt;span class=&quot;help is-danger&quot; v-show=&quot;errors.has('terms')&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('terms') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;p class=&quot;control&quot;&gt;
+        &lt;button type=&quot;button&quot; class=&quot;button is-primary&quot; @click=&quot;nextStep&quot;&gt;Next&lt;/button&gt;
+    &lt;/p&gt;
+&lt;/div&gt;
+</div></code-example><h2><a href="#flags-example">Flags</a></h2>
+<p>vee-validate includes few flags that could help you improve your user experience, each field under validation has its own set of flags which are:</p>
+<ul>
+<li><code>touched</code>: indicates that the field has been touched or focused.</li>
+<li><code>untouched</code>: indicates that the field has not been touched nor focused.</li>
+<li><code>dirty</code>: indicates that the field has been manipluated.</li>
+<li><code>pristine</code>: indicates that the field has not been manipluated.</li>
+<li><code>valid</code>: indicates that the field has been validated at least once and that it passed the validation.</li>
+<li><code>invalid</code>: indicates that the field has been validated at least once and that it failed the validation.</li>
+</ul>
+<p>The flags are reactive objects, so you can build computed properties based on them. For example here is how you can tell if a form has been manipulated, say maybe to disable/enable a button.</p>
+<pre><code class="highlight-js">export default {
+  // ...
+  computed: {
+    isFormDirty() {
+      return Object.keys(this.fields).some(key =&gt; this.fields[key].dirty);
+    }
+  },
+  //...
+}
+</code></pre>
+<p>The global fields flags are accessed via objects like this:</p>
+<pre><code class="highlight-js">// Is the 'name' field dirty? 
+this.fields.name.dirty;
+</code></pre>
+<p>However, for the scoped fields the <strong>FieldBag</strong> will group those fields in an property name that is prefixed by a <code>$</code> to indicate that it is a scope object:</p>
+<pre><code class="highlight-js">// Is the 'name' field dirty? 
+this.fields.$myScope.name.dirty;
+
+// Is the 'name' field clean? 
+this.fields.$myScope.name.pristine; 
+</code></pre>
+<p>Here is what it would look like:</p>
+<pre><code class="highlight-html">&lt;div class=&quot;form-input&quot;&gt;
+  &lt;input type=&quot;text&quot; name=&quot;email&quot; v-validate=&quot;'required|email'&quot; placeholder=&quot;Email&quot;&gt;
+  &lt;span v-show=&quot;errors.has('field')&quot;&gt;{{ errors.first('field') }}&lt;/span&gt;
+  &lt;span v-show=&quot;fields.email &amp;&amp; fields.email.dirty&quot;&gt;I'm Dirty&lt;/span&gt;
+  &lt;span v-show=&quot;fields.email &amp;&amp; fields.email.touched&quot;&gt;I'm touched&lt;/span&gt;
+  &lt;span v-show=&quot;fields.email &amp;&amp; fields.email.valid&quot;&gt;I'm valid&lt;/span&gt;
+&lt;/div&gt;
+</code></pre>
+<pre><code class="highlight-html">&lt;div class=&quot;form-input&quot;&gt;
+  &lt;input data-vv-scope=&quot;scope&quot; type=&quot;text&quot; name=&quot;email&quot; v-validate=&quot;'required|email'&quot; placeholder=&quot;Email&quot;&gt;
+  &lt;span v-show=&quot;errors.has('scope.field')&quot;&gt;{{ errors.first('scope.field') }}&lt;/span&gt;
+  &lt;span v-show=&quot;fields.$scope &amp;&amp; fields.$scope.email &amp;&amp; fields.$scope.email.dirty&quot;&gt;I'm Dirty&lt;/span&gt;
+&lt;/div&gt;
+</code></pre>
+<p>Notice the additional checks before the actual flag check, this is because the flags aren't actually available until the <code>mounted()</code> life cycle event, so to avoid <code>created()</code> life cycle errors we need to add those checks.</p>
+<p>This can become quite tedious if you are referencing multiple flags, so It might be useful to use the <code>mapFields</code> helper, which is similair to Vuex's <code>mapGetters</code> and <code>mapActions</code> as it maps a field object to a computed property.</p>
+<pre><code class="highlight-js">import { mapFields } from 'vee-validate'
+
+export default {
+  // ...
+  computed: mapFields(['name', 'email', 'scope.email']),
+ // ...
+}
+</code></pre>
+<p>You can also provide an object to rename the mapped props:</p>
+<pre><code class="highlight-js">import { mapFields } from 'vee-validate'
+
+export default {
+  // ...
+  computed: mapFields({
+    fullname: 'name',
+    phone: 'scope.phone'
+  }),
+ // ...
+}
+</code></pre>
+<p>Note that scoped fields names in the array from is mapped to a non-nested name. and you can use the object spread operator to add the mapped fields to your existing computed components:</p>
+<pre><code class="highlight-js">import { mapFields } from 'vee-validate'
+
+export default {
+  // ...
+  computed: {
+    ...mapFields(['name', 'email', 'scope.phone']),
+    myProp() {
+       // ....
+    }
+  },
+ // ...
+}
+</code></pre>
+<p>Additionally, In case you want to set the flags manually, you can use the <code>Validator.flag(fieldName, flagsObj)</code> method:</p>
+<pre><code class="highlight-js">// flag the field as valid and dirty.
+this.$validator.flag('field', {
+  valid: false,
+  dirty: true
+});
+
+// set flags for scoped field.
+this.$validator.flag('scoped.field', {
+  touched: false,
+  dirty: false
+});
+</code></pre>
+<p>For custom components, in order for the flags to fully work reliably, you need to emit those events:</p>
+<p>The input event, which you probably already emit, will set the dirty and pristine flags.</p>
+<pre><code class="highlight-js">this.$emit('input', value); 
+
+// The focus event which will set the touched and untouched flags.
+this.$emit('focus'); 
+</code></pre>
+<p>Here is an example that displays those flags, intereact with the input and watch the flags change accordingly:</p>
+<code-example><div slot="example"><flags-example></flags-example></div><div slot="js">import { mapFields } from 'vee-validate';
+
+export default {
+  name: 'flags-example',
+  data: () => ({
+    email: ''
+  }),
+  computed: {
+    ...mapFields({
+      nameFlags: 'name'
+    })
+  }
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-multiline&quot;&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Name&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input name=&quot;name&quot; v-validate=&quot;'required|alpha'&quot; :class=&quot;{'input': true }&quot; type=&quot;text&quot; placeholder=&quot;Name&quot;&gt;
+        &lt;/p&gt;
+        &lt;pre&gt;{{&quot;{&quot; + &quot;{ nameFlags }&quot; + &quot;}&quot;}}&lt;/pre&gt;            
+    &lt;/div&gt;
+&lt;/div&gt;
+</div></code-example><h2><a href="#selectors-example">Error Selectors</a></h2>
+<p>The <code>errors.first</code> and <code>errors.has</code> methods don't only provide you with a way to fetch the first input for a specific field, they also allow you to filter it down further to a specific rule, using the following syntax <code>'field:rule'</code>, even more they allow you filter it down to a specific scope using <code>'scope.field'</code>, so if you want to display the first error for the email field in the newsletter form but only if the rule is email</p>
+<pre><code class="highlight-js">errors.first('newsletter.email:email');
+</code></pre>
+<p>In the example below, you have a collection of errors and you may use the input to filter down the errors, note that currently it is unlikely that the error bag will have multiple errors of the same input since it early exit upon first failure.</p>
+<code-example><div slot="example"><selectors-example></selectors-example></div><div slot="js">export default {
+  name: 'selectors-example',
+  data: () => ({
+    selector: ''
+  }),
+  computed: {
+    selectedError() {
+      if (! this.selector) {
+        return 'You did not select any error';
+      }
+
+      return this.errors.first(this.selector) || 'None Found';
+    }
+  },
+  created() {
+    this.errors.add('email', 'Newsletter Email is not valid', 'email', 'newsletter');
+    this.errors.add('email', 'Newsletter Email is required', 'required', 'newsletter');
+
+    this.errors.add('email', 'Email is not a valid email', 'email');
+    this.errors.add('name', 'name is required', 'required');
+  }
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-multiline&quot;&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Type the selector&lt;/label&gt;
+        &lt;p class=&quot;control&quot;&gt;
+            &lt;input v-model=&quot;selector&quot; class=&quot;input&quot; type=&quot;text&quot; placeholder=&quot;Rule Name&quot;&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label&gt;&lt;b&gt;Selected Error&lt;/b&gt;&lt;/label&gt;
+        &lt;p&gt;
+            {{&quot;{&quot; + &quot;{ selectedError }&quot; + &quot;}&quot;}}
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label&gt;&lt;b&gt;Available Errors:&lt;/b&gt;&lt;/label&gt;
+        &lt;pre&gt;{{&quot;{&quot; + &quot;{ errors }&quot; + &quot;}&quot;}}&lt;/pre&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</div></code-example><h2><a href="#component-example">Custom Component Validation</a></h2>
+<p>You might have a custom component that you want to treat it as an input, like a custom input field, it would have its own validator instance but you want to validate it in the parent scope, because it is simply just an input with some whistles on top. You can achieve this by using the directive normally like you would on a regular input element, but you must make sure that your component satisfies the following:</p>
+<ul>
+<li>Must emit an <code>input</code> event whenever the value changes.</li>
+<li>Should have a <code>data-vv-name</code> or a <code>name</code> attribute defined.</li>
+<li>Should have a <code>data-vv-value-path</code> attribute which denotes how to access the value from within that component (Needed for <code>validateAll</code> calls).</li>
+</ul>
+<code-example><div slot="example"><component-example></component-example></div><div slot="js">import CustomInput from '../CustomInput.vue';
+
+export default {
+  name: 'component-example',
+  components: {
+    CustomInput
+  },
+  methods: {
+    validate() {
+      this.$validator.validateAll().then((result) => {
+        // eslint-disable-next-line
+        alert(`Validation Result: ${result}`);
+      });
+    }
+  }
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-multiline&quot;&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;custom-input v-validate=&quot;'required|email'&quot; data-vv-value-path=&quot;innerValue&quot; data-vv-name=&quot;custom&quot; label=&quot;Email&quot; :has-error=&quot;errors.has('custom')&quot;&gt;
+        &lt;/custom-input&gt;
+        &lt;span v-show=&quot;errors.has('custom')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('custom') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;button @click=&quot;validate&quot; type=&quot;button&quot; class=&quot;button is-primary&quot;&gt;Validate All&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</div></code-example><h2><a href="#event-bus-example">Event Bus</a></h2>
+<p>There are situations where you need to 'transfer' or communicate errors from child components to their parent and vice versa. Although this is not related to the plugin, the need is common enough to require an example.</p>
+<p>This example uses Vue.js event bus to communicate errors with the parent component, the parent component can also clear, or force validate the child component. <a href="https://gist.github.com/sproogen/147d75db261505e8a558a7fd11a20551">Original example</a> was created by <a href="https://gist.github.com/sproogen">@sproogen</a>.</p>
+<p>There is a better approach introduced by using the <a href="advanced.html#injection">Provide/Inject API</a>.</p>
+<code-example><div slot="example"><event-bus-example> </event-bus-example></div><div slot="js">import bus from './bus';
+import ChildComponent from './EventBusChild.vue';
+
+export default {
+  name: 'event-bus-example',
+  components: {
+    ChildComponent
+  },
+  methods: {
+    validateChild() {
+      bus.$emit('validate');
+    },
+    clearChild() {
+      bus.$emit('clear');
+    }
+  },
+  created() {
+    bus.$on('errors-changed', (errors) => {
+      this.errors.clear();
+      errors.forEach((e) => {
+        this.errors.add(e.field, e.msg, e.rule, e.scope);
+      });
+    });
+  }
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-multiline&quot;&gt;
+    &lt;child-component&gt;&lt;/child-component&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;button class=&quot;button is-info&quot; type=&quot;button&quot; @click=&quot;validateChild&quot;&gt;Validate Child&lt;/button&gt;
+        &lt;button class=&quot;button is-danger&quot; type=&quot;button&quot; @click=&quot;clearChild&quot;&gt;Clear Child Errors&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</div></code-example><h2><a href="#backend-example">Backend Validation</a></h2>
+<p>You might need to also use your Laravel/Express or whatever backend as your validation provider for numerous reasons, like checking if an email is unique since it is hard to implement on the client-side, we can acheive this using a custom rule and the <code>reasoning</code> feature:</p>
+<pre><code class="highlight-js">import axios from 'axios'; // great ajax library.
+import { Validator } from 'vee-validate';
+
+const isUnique = (value) =&gt; {
+  return axios.post('/api/validate/email', { email: value }).then((response) =&gt; {
+    // Notice that we return an object containing both a valid property and a data property.
+    return {
+      valid: response.data.valid,
+      data: {
+        message: response.data.message
+      }
+    };
+  });
+};
+
+// The messages getter may also accept a third parameter that includes the data we returned earlier.
+Validator.extend('unique', {
+  validate: isUnique,
+  getMessage: (field, params, data) =&gt; {
+    return data.message;
+  }
+});
+</code></pre>
+<p>The following demo shows how would it work in action, note that it will only trigger if the user entered a valid email since the validator early exits upon first failure.</p>
+<p>Since there is no real DB in this example, Its being simulated by a dynamic array.</p>
+<code-example><div slot="example"><backend-example> </backend-example></div><div slot="js">import { Validator } from 'vee-validate';
+
+export default {
+  name: 'backend-example',
+  data: () => ({
+    // simulate emails database
+    emailsDB: [],
+    email: null
+  }),
+  created() {
+    // simulated DB.
+    const isUnique = value => new Promise((resolve) => {
+      setTimeout(() => {
+        if (this.emailsDB.indexOf(value) === -1) {
+          return resolve({
+            valid: true
+          });
+        }
+
+        return resolve({
+          valid: false,
+          data: {
+            message: `${value} is already taken.`
+          }
+        });
+      }, 200);
+    });
+
+    Validator.extend('unique', {
+      validate: isUnique,
+      getMessage: (field, params, data) => data.message
+    });
+  },
+  methods: {
+    submit() {
+      this.emailsDB.push(this.email);
+      this.email = '';
+      this.$nextTick().then(() => {
+        this.$validator.reset();
+      });
+    }
+  }
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-multiline&quot;&gt;
+  &lt;div class=&quot;column is-12&quot;&gt;
+    &lt;label class=&quot;label&quot;&gt;Email&lt;/label&gt;
+    &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+        &lt;input name=&quot;email&quot; v-model=&quot;email&quot; v-validate=&quot;'required|email|unique'&quot; :class=&quot;{'input': true, 'is-danger': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;
+        &lt;i v-show=&quot;errors.has('email')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+        &lt;span v-show=&quot;errors.has('email')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('email') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;column is-12&quot;&gt;
+    &lt;p class=&quot;control&quot;&gt;
+      &lt;button class=&quot;button is-primary&quot; type=&quot;button&quot; @click=&quot;submit&quot;&gt;Submit&lt;/button&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</div></code-example></div></div></div></div></div></svg><script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script><script>Array.from(document.querySelectorAll('h2')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-4');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+Array.from(document.querySelectorAll('h3')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-5');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+if (location.hash) {
+  var hash = location.hash;
+  location.hash = '';
+  location.hash = hash;
+}</script><script type="text/javascript" src="/assets/js/vendor-2a68a88f4c515c203766.js"></script><script type="text/javascript" src="/assets/js/bundle-2a68a88f4c515c203766.js"></script></body></html>

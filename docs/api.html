@@ -1,0 +1,341 @@
+<!DOCTYPE html><html lang="en"><head><link rel="apple-touch-icon" sizes="57x57" href="favico/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="favico/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="favico/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="favico/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="favico/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="favico/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="favico/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="favico/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="favico/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192" href="favico/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="favico/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="favico/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="favico/favicon-16x16.png"><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/ms-icon-144x144.png"><meta name="theme-color" content="#41b883"><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:title" content="API | VeeValidate"><meta property="og:description" content="Classes Public API"><meta property="og:image" content="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg"><meta name="description" content="Classes Public API"><title>API | VeeValidate</title><link href="/assets/css/bundle.css" rel="stylesheet"></head><body><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-100131478-1', 'auto');
+ga('send', 'pageview');
+</script><svg style="display: none;"><symbol id="github" viewbox="0 0 16 16"><path d="M8 0C3.58 0 0 3.582 0 8c0 3.535 2.292 6.533 5.47 7.59.4.075.547-.172.547-.385 0-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056 1.225.824 1.225.824.714 1.223 1.873.87 2.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953 0-.873.31-1.587.823-2.147-.09-.202-.36-1.015.07-2.117 0 0 .67-.215 2.2.82.64-.178 1.32-.266 2-.27.68.004 1.36.092 2 .27 1.52-1.035 2.19-.82 2.19-.82.43 1.102.16 1.915.08 2.117.51.56.82 1.274.82 2.147 0 3.073-1.87 3.75-3.65 3.947.28.24.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.14.46.55.38C13.71 14.53 16 11.53 16 8c0-4.418-3.582-8-8-8"></path></symbol><symbol id="i-star" viewbox="0 0 32 32"><path d="M16 2 L20 12 30 12 22 19 25 30 16 23 7 30 10 19 2 12 12 12 Z"></path></symbol><div class="columns is-mobile" id="app"><button :class="{ 'button': true, 'sidebar-button': true, 'is-open': sidebarToggle }" @click="sidebarToggle = ! sidebarToggle" type="button"><span class="icon"><i class="fa fa-bars"></i></span></button><div class="column is-2 sidebar-container" :class="{ 'column is-2 sidebar-container': true, 'is-open': sidebarToggle }" v-cloak><aside class="menu sidebar"><animated-button link="https://github.com/logaretm/vee-validate"><div class="flex-div" slot="default"><svg class="icon"><use xlink:href="#github"></use></svg>Star</div><div class="flex-div" slot="hover"><svg class="icon"><use xlink:href="#i-star"></use></svg>{{ stars }}</div></animated-button><p class="menu-label">Getting Started</p><ul class="menu-list"><li><a href="index.html#about">Introduction</a></li><li><a href="index.html#installation">Installation</a><ul><li><a href="index.html#npm">npm</a></li><li><a href="index.html#cdn">CDN</a></li></ul></li><li><a href="index.html#basic-example">Basic Example</a></li><li><a href="index.html#render-errors">Rendering Errors</a></li><li><a href="index.html#available-rules">Available Validations</a></li><li><a href="index.html#configuration">Configuration</a></li></ul><p class="menu-label">Validation Rules</p><ul class="menu-list"><li><a href="rules.html#syntax">Syntax</a></li><li><a href="rules.html#available-validations">Available Validations</a></li><li><a href="rules.html#custom-rules">Custom Validations</a></li><li><a href="rules.html#custom-messages">Custom Messages</a></li><li><a href="rules.html#custom-attributes">Custom Attributes</a></li><li><a href="rules.html#field-sepecific-messages">Field-specific Custom Messages  </a></li></ul><p class="menu-label">Localization</p><ul class="menu-list"><li><a href="localization.html#translation">Translation</a></li><li><a href="localization.html#attributes-data-as">Attributes</a><ul><li><a href="localization.html#attributes-data-as">alias</a></li><li><a href="localization.html#attributes-dictionary">dictionary</a></li></ul></li><li><a href="localization.html#localized-files">Localized Files</a></li></ul><p class="menu-label">Advanced</p><ul class="menu-list"><li><a href="advanced.html#inject">Component Injections</a></li></ul><p class="menu-label">Examples</p><ul class="menu-list"><li><a href="examples.html#debounce-example">Debounce</a></li><li><a href="examples.html#reject-example">Reject Files</a></li><li><a href="examples.html#validate-data-example">Validating Models</a></li><li><a href="examples.html#initial-value">Initial Value Validation</a></li><li><a href="examples.html#validate-form">Form Validation</a></li><li><a href="examples.html#locale-example">Localized Messages</a></li><li><a href="examples.html#scope-example">Validation Scopes</a></li><li><a href="examples.html#coupon-example">Custom Validation: Coupon</a></li><li><a href="examples.html#radio-buttons-example">Radio Buttons Validation</a></li><li><a href="examples.html#checkbox-example">Checkbox Example</a></li><li><a href="examples.html#flags-example">Validation Flags</a></li><li><a href="examples.html#selectors-example">Error Selectors</a></li><li><a href="examples.html#component-example">Component Validation</a></li><li><a href="examples.html#event-bus-example">Event Bus</a></li></ul><p class="menu-label">API</p><ul class="menu-list"><li><a href="api.html#directive">v-validate</a></li><li><a href="api.html#data-attributes">data-* Attributes</a></li><li><a href="api.html#error-bag">Error Bag</a></li><li><a href="api.html#validator">Validator</a><ul><li><a href="api.html#validator">API</a></li><li><a href="api.html#validator-example">Example</a></li></ul></li></ul></aside></div><div class="column columns is-mobile main-container" @click="sidebarToggle = false"><div class="column is-12"><section class="hero"><div class="hero-body"><div class="container has-text-centered"><img width="150" alt="VeeValidate Logo" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg"><h1 class="title is-2">API </h1><h2 class="subtitle is-4">Classes Public API</h2></div></div></section><div class="container"><div class="column content-container is-mobile"><h2><a href="#directive">v-validate Directive</a></h2>
+<p>The <code>v-validate</code> directive is the main way to validate your inputs, the directive accepts either a string or an object as a value.<br>
+If a string was passed it must be a valid rules string, that is the validation rules separated by pipes '|'.</p>
+<pre><code class="highlight-vue">  &lt;input v-validate=&quot;'required|email'&quot; name=&quot;field&quot; type=&quot;text&quot;&gt;
+</code></pre>
+<p>If an object was passed it must contains properties of the rules to be used and the value would be their params in an array or a single value if it accepts a single parameter.</p>
+<pre><code class="highlight-js">// String
+const expression = 'required|regex:^[0-9]+';
+
+const expression = {
+  // parameterless rules take a boolean value.
+  required: true,
+  // single parameter rules take a single value.
+  regex: /.(js|ts)$/,
+  // multiple paramter rules take a single array.
+  in: [1, 2, 3]
+};
+</code></pre>
+<h2><a href="#directive-args">args</a></h2>
+<p>The directive also accepts an arg, that denotes the name of the vue model to validate, or a computed property.</p>
+<pre><code class="highlight-vue">  &lt;input v-model=&quot;email&quot; v-validate:email=&quot;'required|email'&quot; name=&quot;field&quot; type=&quot;text&quot;&gt;
+</code></pre>
+<pre><code class="highlight-js">export default {
+  data: () =&gt; ({
+    email: ''
+  })
+};
+</code></pre>
+<p>However the arg is entirly optional, additionaly, <code>v-validate</code> checks if the input/component has <code>v-model</code> assigned to it, and treats that expression as the arg. But keep in mind that the arg must be a simple dot notation string, and it must be present on the vue instance.</p>
+<blockquote>
+<p>You might ask when to use arg at all? since <code>v-model</code> can be detected. A valid situation is when you need to validate a computed property.</p>
+</blockquote>
+<h2><a href="#data-attributes">data-* Attributes</a></h2>
+<p>data-* attributes provide an alternate interface for the plugin to specify what exactly should happen, providing a simple and Vue version-compatiable API. They are useful if you do not like to pass complex expressions to the directive.</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Attribute</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="is-method-name">data-vv-as</td>
+            <td>Specifies a pretty name for the field.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">data-vv-delay</td>
+            <td>Specifies the delay amount in milliseconds for triggering the validation.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">data-vv-name</td>
+            <td>Specifies a name for the field, used in components validation and as a fallback name for inputs.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">data-vv-value-path</td>
+            <td>Specifies the value path within a component $data to retrive the component current value. Only used for components.</td>
+        </tr>
+        <tr>
+            <td class="is-method-name">data-vv-validate-on</td>
+            <td>Used to specify a list of event names separated by pipes, the default varies by the type of the input</td>
+        </tr>
+    </tbody>
+</table>
+<h2><a href="#error-bag">ErrorBag</a></h2>
+<p>The single error structure looks like this:</p>
+<pre><code class="highlight-js">const error = {
+  field: 'Field name',
+  msg: 'Error message',
+  rule: 'Rule Name', // optional
+  scope: 'Scope Name', // optional
+  id: 'uniqueId' // optional
+};
+</code></pre>
+<p>The ErrorBag class is a wrapper around an array - a collection object -, it is standalone and has no dependencies, you can use it in your code for any reason:</p>
+<pre><code class="highlight-js">import { ErrorBag } from 'vee-validate';
+
+const bag = new ErrorBag();
+
+// For example you may want to add an error related to authentication:
+bag.add('email', 'Wrong Credentials', 'auth');
+
+// Display it like this:
+bag.first('email:auth');
+</code></pre>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Params</th>
+      <th>Return</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="is-method-name">add</td>
+      <td>{error Object}</td>
+      <td>void</td>
+      <td>
+        Adds an error to the error bag, the error object must conform the object signature mentioned above.
+      </td>
+    </tr>
+    <tr>
+      <td class="is-method-name">all</td>
+      <td>{String scope?}</td>
+      <td>Array</td>
+      <td>Gets all error messages in an array, specifying a scope will retrive the messages within that scope.</td>
+    </tr>
+    <tr>
+      <td class="is-method-name">any</td>
+      <td>{String scope?}</td>
+      <td>Boolean</td>
+      <td>Checks if any errors exist, specifying a scope will limit the check to within that scope.</td>
+    </tr>
+    <tr>
+      <td class="is-method-name">clear</td>
+      <td>{String scope?}</td>
+      <td>undefined</td>
+      <td>Clears (removes) all errors, specifying a scope will remove errors only associated with that scope.</td>
+    </tr>
+    <tr>
+      <td class="is-method-name">collect</td>
+      <td>{String name?},{String scope?}, {Boolean mapped?}</td>
+      <td>Array|Object</td>
+      <td>Collects errors associated with a specific field. not passing the field name will group all errors by field name instead. specifying a scope will limit the collecting behavior to a specific scope. You can optionally specify if the errors objects should be mapped to error messages or not,  providing false will return objects containing the full information about the error.</td>
+    </tr>
+    <tr>
+        <td class="is-method-name">count</td>
+        <td></td>
+        <td>Number</td>
+        <td>Returns the number of errors that are currently in the collection.</td>
+    </tr>
+    <tr>
+        <td class="is-method-name">first</td>
+        <td>{String field|selector}, {String scope?}</td>
+        <td>String</td>
+        <td>Returns the first error message associated with a specific field or specified by the selector, providing a scope will look for messages within that scope.</td>
+    </tr>
+    <tr>
+        <td class="is-method-name">firstById</td>
+        <td>{String id}</td>
+        <td>String</td>
+        <td>Returns the first error message for a field with the given id.</td>
+    </tr>
+    <tr>
+        <td class="is-method-name">firstByRule</td>
+        <td>{String field}, {String rule}, {String scope?}</td>
+        <td>String</td>
+        <td>Returns the first error message associated with a specific field and rule, providing a scope will look for messages within that scope.</td>
+    </tr>
+  <tr>
+      <td class="is-method-name">has</td>
+      <td>{String field|selector}, {String scope?}</td>
+      <td>Boolean</td>
+      <td>Checks if there is an error message associated with a specific field or specified by the selector, providing a scope will check for messages within that scope.</td>
+    </tr>
+    <tr>
+      <td class="is-method-name">remove</td>
+      <td>{String field}, {String scope?}</td>
+      <td>void</td>
+      <td>Removes all errors associated with a specific field, specifying a scope will remove messages only for that field and scope.</td>
+    </tr>
+    <tr>
+      <td class="is-method-name">update</td>
+      <td>{String id}, {Object diff}</td>
+      <td>void</td>
+      <td>Updates a specific field's erorr messages data, used internally to keep field errors scope up to date.</td>
+    </tr>
+  </tbody>
+</table>
+<h2><a href="#validator">Validator</a></h2>
+<h3><a href="#validator-fields">Adding Fields</a></h3>
+<p>The validator is injected to the Vue instance as <code>$validator</code> automatically. However it is also a standalone class and can be used separately for programmatically validating values. The constructor can optionally take an object to map each field name to a set of validations.</p>
+<pre><code class="highlight-js">import { Validator } from 'vee-validate';
+const validator = new Validator({
+  email: 'required|email',
+  name: 'required|alpha|min:3'
+});
+
+// Or
+Validator.create();
+</code></pre>
+<p>But you can construct the object without passing anything and add the validation rules later, using the <code>attach</code> method which takes <a href="https://github.com/baianat/vee-validate/blob/master/flow/validator.js#L17">FieldOptions</a> as its first parameter.</p>
+<pre><code class="highlight-js">import { Validator } from 'vee-validate';
+const validator = new Validator();
+
+validator.attach({ name: 'email', rules: 'required|email' }); // attach field.
+ // attach field with display name for errors generation.
+validator.attach({ name: 'name', rules: 'required|alpha', alias: 'Full Name' });
+
+validator.detach('email'); // you can also detach fields.
+</code></pre>
+<h3><a href="#validator-validate">Validation</a></h3>
+<p>After that you can validate values with <code>validate(field, value)</code> which returns a promise that resolves to a boolean.</p>
+<pre><code class="highlight-js">validator.validate('email', 'foo@bar.com').then(result =&gt; {
+  console.log(result);  // true
+});
+
+validator.validate('email', 'foo@bar').then(result =&gt; {
+  console.log(result); // false
+});
+</code></pre>
+<p>You can validate multiple values at the same time using <code>validateAll(obj)</code>:</p>
+<pre><code class="highlight-js">validator.validateAll({ email: 'foo@bar.com', name: 'John Snow' }).then(result =&gt; {
+  if (!result) {
+    // validation failed.
+  }
+  // success stuff.
+}).catch(() =&gt; {
+  // something went wrong (non-validation related).
+});
+</code></pre>
+<p>Returns a <code>Promise</code> The ErrorBag will be populated with any errors encountered, Throws if any error has been encountered. You can access the <code>errors</code> property directly which is an instance of the <code>ErrorBag</code>.</p>
+<pre><code class="highlight-js">const errorBag = validator.errors;
+</code></pre>
+<p>The more options you provide to <code>attach</code> method the greater the field capabilities increases, for example providing a <code>getter</code> function option will allow the validator the find the field value whenever it needs to, for example you will be able to call <code>validateAll</code> and <code>validate</code> without having to provide any values.</p>
+<pre><code class="highlight-js">this.$validator.validate('field');
+this.$validator.validateAll();
+</code></pre>
+<blockquote>
+<p>Most of these options are being handled by the <code>v-validate</code> directive and are provided for you automatically.</p>
+</blockquote>
+<h3><a href="#validator-localization">Localization</a></h3>
+<p>The validator instance can only generate messages for one locale at a time. But you need to use <code>localize</code> method or set the <code>locale</code> property to switch the validator locale.</p>
+<pre><code class="highlight-js">validator.localize('ar');
+validator.locale = 'ar';
+</code></pre>
+<blockquote>
+<p>All validators share the same locale configuration. so any locale changes will update all validator instances across your app. For more information about how to overwrite messages and add new ones, please refer to the <a href="rules.html#custom-messages">custom messages</a> section.</p>
+</blockquote>
+<pre><code class="highlight-js">import { Validator } from 'vee-validate'; 
+
+// Also exposed on the class.
+Validator.localize('ar'); // Set all validator locales to 'ar'.
+
+Validator.create().locale; // 'ar';
+</code></pre>
+<p>Checkout the full API at <a href="https://github.com/logaretm/vee-validate/blob/master/src/core/validator.js">GitHub</a></p>
+<h2><a href="#validator-example">Validator Example</a></h2>
+<p>Here is an example of using the validator without the directive, which means you will be responsible for monitoring input changes on your own, and calling the API methods as you see fit. This example uses a Vue instance to simplify things, but it can be used in plain JavaScript as well.</p>
+<code-example><div slot="example"><validator-example></validator-example></div><div slot="js">import { Validator } from 'vee-validate';
+
+export default {
+  name: 'validator-example',
+  validator: null,
+  data() {
+    return {
+      email: '',
+      name: '',
+      errors: null
+    };
+  },
+  watch: {
+    email(value) {
+      this.validator.validate('email', value);
+    },
+    name(value) {
+      this.validator.validate('name', value);
+    }
+  },
+  methods: {
+    validateForm() {
+      this.validator.validateAll({
+        email: this.email,
+        name: this.name
+      }).then((result) => {
+        if (result) {
+          // eslint-disable-next-line
+          console.log('All is well');
+          return;
+        }
+        // eslint-disable-next-line
+        console.log('Oops!');
+      });
+    },
+    clearErrors() {
+      this.errors.clear();
+    }
+  },
+  created() {
+    this.validator = new Validator({
+      email: 'required|email',
+      name: 'required|alpha|min:3'
+    });
+    this.$set(this, 'errors', this.validator.errors);
+  }
+};
+</div><div slot="html">
+&lt;div class=&quot;columns is-multiline&quot;&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Email&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input v-model=&quot;email&quot; name=&quot;email&quot; :class=&quot;{'input': true, 'is-danger': errors.has('email') }&quot; type=&quot;text&quot; placeholder=&quot;Email&quot;&gt;
+            &lt;i v-show=&quot;errors.has('email')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('email')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('email') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;label class=&quot;label&quot;&gt;Name&lt;/label&gt;
+        &lt;p class=&quot;control has-icon has-icon-right&quot;&gt;
+            &lt;input v-model=&quot;name&quot; name=&quot;name&quot; :class=&quot;{'input': true, 'is-danger': errors.has('name') }&quot; type=&quot;text&quot; placeholder=&quot;Name&quot;&gt;
+            &lt;i v-show=&quot;errors.has('name')&quot; class=&quot;fa fa-warning&quot;&gt;&lt;/i&gt;
+            &lt;span v-show=&quot;errors.has('name')&quot; class=&quot;help is-danger&quot;&gt;{{&quot;{&quot; + &quot;{ errors.first('name') }&quot; + &quot;}&quot;}}&lt;/span&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column is-12&quot;&gt;
+        &lt;p class=&quot;control&quot;&gt;
+            &lt;button class=&quot;button is-primary&quot; @click=&quot;validateForm&quot; type=&quot;button&quot; name=&quot;button&quot;&gt;Validate All&lt;/button&gt;
+            &lt;button class=&quot;button is-danger&quot; @click=&quot;clearErrors&quot; type=&quot;button&quot; name=&quot;button&quot;&gt;Clear&lt;/button&gt;
+        &lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</div></code-example></div></div></div></div></div></svg><script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script><script>Array.from(document.querySelectorAll('h2')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-4');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+Array.from(document.querySelectorAll('h3')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-5');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+if (location.hash) {
+  var hash = location.hash;
+  location.hash = '';
+  location.hash = hash;
+}</script><script type="text/javascript" src="/assets/js/vendor-2a68a88f4c515c203766.js"></script><script type="text/javascript" src="/assets/js/bundle-2a68a88f4c515c203766.js"></script></body></html>

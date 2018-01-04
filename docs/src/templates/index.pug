@@ -1,0 +1,14 @@
+extends layout/app.pug
+
+block content
+  include:markdown-it(linkify langPrefix='highlight-') markdown/home/intro.md
+  
+  +example('Basic')
+    basic-example
+
+  .flex-center
+    a(href="examples.html") More Examples
+
+  include:markdown-it(langPrefix='highlight-') markdown/home/errors.md
+  include:markdown-it(html=true) markdown/partials/_rules.md
+  include:markdown-it(langPrefix='highlight-' html=true) markdown/home/config.md

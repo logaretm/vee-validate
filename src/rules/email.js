@@ -1,1 +1,11 @@
-export default (value) => /^(([^<>()[\]\\.,;:#\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,6}))$/.test(value);
+import isEmail from 'validator/lib/isEmail';
+
+const validate = (value) => {
+  if (Array.isArray(value)) {
+    return value.every(val => isEmail(String(val)));
+  }
+
+  return isEmail(String(value));
+};
+
+export default validate;

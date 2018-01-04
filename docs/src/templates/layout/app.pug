@@ -1,0 +1,89 @@
+doctype html
+html(lang="en")
+  head
+    block vars
+      - const meta = {
+      -   title: 'VeeValidate',
+      -   description: 'Simple Vue.js Input Validation'
+      - };
+        meta(charset='utf-8')
+    link(rel="apple-touch-icon" sizes="57x57" href="favico/apple-icon-57x57.png")
+    link(rel="apple-touch-icon" sizes="60x60" href="favico/apple-icon-60x60.png")
+    link(rel="apple-touch-icon" sizes="72x72" href="favico/apple-icon-72x72.png")
+    link(rel="apple-touch-icon" sizes="76x76" href="favico/apple-icon-76x76.png")
+    link(rel="apple-touch-icon" sizes="114x114" href="favico/apple-icon-114x114.png")
+    link(rel="apple-touch-icon" sizes="120x120" href="favico/apple-icon-120x120.png")
+    link(rel="apple-touch-icon" sizes="144x144" href="favico/apple-icon-144x144.png")
+    link(rel="apple-touch-icon" sizes="152x152" href="favico/apple-icon-152x152.png")
+    link(rel="apple-touch-icon" sizes="180x180" href="favico/apple-icon-180x180.png")
+    link(rel="icon" type="image/png" sizes="192x192" href="favico/android-icon-192x192.png")
+    link(rel="icon" type="image/png" sizes="32x32" href="favico/favicon-32x32.png")
+    link(rel="icon" type="image/png" sizes="96x96" href="favico/favicon-96x96.png")
+    link(rel="icon" type="image/png" sizes="16x16" href="favico/favicon-16x16.png")
+    meta(name="msapplication-TileColor" content="#ffffff")
+    meta(name="msapplication-TileImage" content="/ms-icon-144x144.png")
+    meta(name="theme-color" content="#41b883")
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(property='og:title', content=meta.title)
+    meta(property='og:description', content=meta.description)
+    meta(property='og:image', content='https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg')
+    meta(name='description', content=meta.description)
+    title= meta.title
+
+  body
+    include _mixins.pug
+    script.
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-100131478-1', 'auto');
+      ga('send', 'pageview');
+
+    svg(style='display: none;')
+      symbol#github(viewbox='0 0 16 16')
+        path(d='M8 0C3.58 0 0 3.582 0 8c0 3.535 2.292 6.533 5.47 7.59.4.075.547-.172.547-.385 0-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056 1.225.824 1.225.824.714 1.223 1.873.87 2.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953 0-.873.31-1.587.823-2.147-.09-.202-.36-1.015.07-2.117 0 0 .67-.215 2.2.82.64-.178 1.32-.266 2-.27.68.004 1.36.092 2 .27 1.52-1.035 2.19-.82 2.19-.82.43 1.102.16 1.915.08 2.117.51.56.82 1.274.82 2.147 0 3.073-1.87 3.75-3.65 3.947.28.24.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.14.46.55.38C13.71 14.53 16 11.53 16 8c0-4.418-3.582-8-8-8')
+      symbol#i-star(viewbox='0 0 32 32')
+        path(d='M16 2 L20 12 30 12 22 19 25 30 16 23 7 30 10 19 2 12 12 12 Z')
+      #app.columns.is-mobile
+        button(:class="{ 'button': true, 'sidebar-button': true, 'is-open': sidebarToggle }", @click='sidebarToggle = ! sidebarToggle', type='button')
+          span.icon
+            i.fa.fa-bars
+        div(:class="{ 'column is-2 sidebar-container': true, 'is-open': sidebarToggle }" class="column is-2 sidebar-container" v-cloak)
+          include _sidemenu.pug
+        .column.columns.is-mobile.main-container(@click="sidebarToggle = false")
+          .column.is-12
+            section.hero
+              .hero-body
+                .container.has-text-centered
+                  img(width="150" alt="VeeValidate Logo" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg")
+                  h1(class="title is-2")= meta.title.replace('| VeeValidate', '')
+                  h2(class="subtitle is-4")= meta.description.replace('.', '')
+            .container
+              .column.content-container.is-mobile
+                block content
+
+    script(src='https://cdn.polyfill.io/v2/polyfill.min.js')
+    script.
+      Array.from(document.querySelectorAll('h2')).forEach(h => {
+        h.classList.add('title');
+        h.classList.add('is-4');
+        var a = h.querySelector('a');
+        if (a) {
+          h.id = a.href.substr(a.href.indexOf('#') + 1);
+        }
+      });
+      Array.from(document.querySelectorAll('h3')).forEach(h => {
+        h.classList.add('title');
+        h.classList.add('is-5');
+        var a = h.querySelector('a');
+        if (a) {
+          h.id = a.href.substr(a.href.indexOf('#') + 1);
+        }
+      });
+      if (location.hash) {
+        var hash = location.hash;
+        location.hash = '';
+        location.hash = hash;
+      }

@@ -1,0 +1,111 @@
+aside.menu.sidebar
+  animated-button(link='https://github.com/logaretm/vee-validate')
+    .flex-div(slot='default')
+      svg.icon
+        use(xlink:href='#github')
+      | Star
+    .flex-div(slot='hover')
+      svg.icon
+        use(xlink:href='#i-star')
+      | {{ stars }}
+  p.menu-label
+    | Getting Started
+  ul.menu-list
+    li
+      a(href="index.html#about") Introduction
+    li
+      a(href="index.html#installation") Installation
+      ul
+        li
+          a(href="index.html#npm") npm
+        li
+          a(href="index.html#cdn") CDN
+    li
+      a(href="index.html#basic-example") Basic Example
+    li
+      a(href="index.html#render-errors") Rendering Errors
+    li
+      a(href="index.html#available-rules") Available Validations
+    li
+      a(href="index.html#configuration") Configuration
+  p.menu-label
+    | Validation Rules
+  ul.menu-list
+    li
+      a(href="rules.html#syntax") Syntax
+    li
+      a(href="rules.html#available-validations") Available Validations
+    li
+      a(href="rules.html#custom-rules") Custom Validations
+    li
+      a(href="rules.html#custom-messages") Custom Messages
+    li
+      a(href="rules.html#custom-attributes") Custom Attributes
+    li
+      a(href="rules.html#field-sepecific-messages") Field-specific Custom Messages  
+  p.menu-label
+    | Localization
+  ul.menu-list
+    li
+      a(href="localization.html#translation") Translation
+    li
+      a(href="localization.html#attributes-data-as") Attributes
+      ul
+        li
+          a(href="localization.html#attributes-data-as") alias
+        li
+          a(href="localization.html#attributes-dictionary") dictionary
+    li
+      a(href="localization.html#localized-files") Localized Files
+  p.menu-label
+    | Advanced
+  ul.menu-list
+    li
+      a(href="advanced.html#inject") Component Injections
+  p.menu-label
+    | Examples
+  ul.menu-list
+    li
+      a(href="examples.html#debounce-example") Debounce
+    li
+      a(href="examples.html#reject-example") Reject Files
+    li
+      a(href="examples.html#validate-data-example") Validating Models
+    li
+      a(href="examples.html#initial-value") Initial Value Validation
+    li
+      a(href="examples.html#validate-form") Form Validation
+    li
+      a(href="examples.html#locale-example") Localized Messages
+    li
+      a(href="examples.html#scope-example") Validation Scopes
+    li
+      a(href="examples.html#coupon-example") Custom Validation: Coupon
+    li
+      a(href="examples.html#radio-buttons-example") Radio Buttons Validation
+    li
+      a(href="examples.html#checkbox-example") Checkbox Example
+    li
+      a(href="examples.html#flags-example") Validation Flags
+    li
+      a(href="examples.html#selectors-example") Error Selectors
+    li
+      a(href="examples.html#component-example") Component Validation
+    li
+      a(href="examples.html#event-bus-example") Event Bus
+  p.menu-label
+    | API
+  ul.menu-list
+    li
+      a(href="api.html#directive") v-validate
+    li
+      a(href="api.html#data-attributes") data-* Attributes
+    li
+      a(href="api.html#error-bag") Error Bag
+    li
+      a(href="api.html#validator") Validator
+      ul
+        li
+          a(href="api.html#validator") API
+        li
+          a(href="api.html#validator-example") Example

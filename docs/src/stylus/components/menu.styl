@@ -1,0 +1,44 @@
+.menu
+    padding-top: 20px
+    padding-left: 20px
+    &.sidebar
+        background-color: $background-color
+        bottom: 0
+        overflow-y: scroll
+        position: fixed
+        top: 0
+
+
+.sidebar-button
+    display: block
+    color: $vue-hover
+    left: 0
+    position: fixed
+    top: 0
+    transition: all .4s cubic-bezier(.4, 0, 0, 1)
+    z-index: 9999999
+    background-color: transparent
+    border-color: transparent
+    &:hover
+        background-color: transparent
+        border-color: transparent
+    &.is-open
+        display: none
+
+.sidebar-container
+    margin-left: -300px
+    transition: all .4s cubic-bezier(.4, 0, 0, 1)
+    width: 300px !important
+
+    &.is-open
+        margin-left: 0
+
+.menu-list
+    a
+        color: $vue-hover
+        &:hover
+            color: $vue-green
+        &.is-active
+            background-color: transparent
+            color: $vue-green
+            font-weight: bold

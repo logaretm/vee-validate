@@ -5,16 +5,16 @@
         "es6": true
     },
     "extends": [
-        "eslint:recommended",
-        "airbnb-base"
+        "standard",
+        "plugin:flowtype/recommended"
     ],
-    "parserOptions": {
-        "sourceType": "module"
-    },
+    "plugins": [
+        "flowtype"
+    ],
     "rules": {
         "indent": [
             "error",
-            4
+            2
         ],
         "linebreak-style": [
             "error",
@@ -32,6 +32,9 @@
         "no-unsafe-negation": 0,
         "import/no-named-as-default": 0,
         "import/no-named-as-default-member": 0,
-        "no-underscore-dangle": 0
+        "no-underscore-dangle": 0,
+        "no-param-reassign": 0,
+        "class-methods-use-this": 0,
+        "no-bitwise": 0
     }
 }

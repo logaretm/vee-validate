@@ -2,3 +2,7 @@ node_modules
 .nyc_output
 npm-debug.log
 coverage
+.idea
+.vscode
+.vs
+yarn-error.log

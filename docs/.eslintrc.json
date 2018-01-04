@@ -1,0 +1,41 @@
+{
+    "parser": "babel-eslint",
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "airbnb-base"
+    ],
+    "plugins": [
+        "html"
+    ],
+    "ecmaFeatures": {
+        "experimentalObjectRestSpread": true
+    },
+    "parserOptions": {
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": [
+            "error",
+            2
+        ],
+        "linebreak-style": 0,
+        "semi": [
+            "error",
+            "always"
+        ],
+        "comma-dangle": 0,
+        "space-unary-ops": 0,
+        "import/no-extraneous-dependencies": 0,
+        "no-new": 0,
+        "no-global-assign": 0,
+        "no-unsafe-negation": 0,
+        "import/no-named-as-default": 0,
+        "import/no-named-as-default-member": 0,
+        "no-alert": 0
+    }
+}

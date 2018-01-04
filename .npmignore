@@ -1,9 +1,0 @@
-.*
-node_modules
-coverage
-docs
-gh-pages
-src
-test
-rollup.config.dev.js
-rollup.config.prod.js

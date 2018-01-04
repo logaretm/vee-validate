@@ -1,11 +1,16 @@
-export default (value) => {
-    if (Array.isArray(value)) {
-        return !! value.length;
-    }
+export default (value, [invalidateFalse = false] = []) => {
+  if (Array.isArray(value)) {
+    return !! value.length;
+  }
 
-    if (value === undefined || value === null) {
-        return false;
-    }
+  // incase a field considers `false` as an empty value like checkboxes.
+  if (value === false && invalidateFalse) {
+    return false;
+  }
 
-    return !! String(value).trim().length;
+  if (value === undefined || value === null) {
+    return false;
+  }
+
+  return !! String(value).trim().length;
 };

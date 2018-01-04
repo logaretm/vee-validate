@@ -1,4 +1,14 @@
-// TODO: Maybe add ipv6 flag?
-export default (value) =>
-/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-.test(value);
+import isIP from 'validator/lib/isIP';
+import { isNullOrUndefined } from '../core/utils';
+
+export default (value, [version = 4] = []) => {
+  if (isNullOrUndefined(value)) {
+    value = '';
+  }
+
+  if (Array.isArray(value)) {
+    return value.every(val => isIP(val, version));
+  }
+
+  return isIP(value, version);
+};

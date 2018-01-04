@@ -1,0 +1,64 @@
+extends layout/app.pug
+
+block vars
+  - const meta = {
+  -   title: 'Examples | VeeValidate',
+  -   description: 'Usage and Examples'
+  - };
+  
+block content
+  include:markdown-it markdown/examples/debounce.md
+  +example('Delay')
+    delay-example
+  
+  //- include:markdown-it markdown/examples/reject.md
+  //- +example('FileReject')
+  //-   reject-example
+
+  include:markdown-it markdown/examples/data.md
+  +example('Data')
+    data-example
+  
+  include:markdown-it markdown/examples/form.md
+  +example('Form')
+    form-example
+
+  include:markdown-it markdown/examples/locale.md
+  +example('Locale')
+    locale-example
+
+  include:markdown-it markdown/examples/scopes.md
+  +example('Scopes')
+    scopes-example
+
+  include:markdown-it markdown/examples/async.md
+  +example('Coupon')
+    coupon-example
+
+  include:markdown-it markdown/examples/radio.md
+  +example('RadioButtons')
+    radio-buttons-example
+
+  include:markdown-it markdown/examples/checkbox.md
+  +example('Checkbox')
+    checkbox-example
+
+  include:markdown-it(langPrefix="highlight-") markdown/examples/flags.md
+  +example('Flags')
+    flags-example
+
+  include:markdown-it(langPrefix="highlight-") markdown/examples/selectors.md
+  +example('Selectors')
+    selectors-example
+
+  include:markdown-it(langPrefix="highlight-") markdown/examples/component.md
+  +example('Component')
+    component-example
+
+  include:markdown-it(langPrefix="highlight-") markdown/examples/eventBus.md
+  +example('EventBusParent')
+    event-bus-example 
+
+  include:markdown-it(langPrefix="highlight-") markdown/examples/backend.md
+  +example('Backend')
+    backend-example  

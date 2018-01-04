@@ -1,0 +1,10 @@
+extends layout/app.pug
+
+block vars
+  - const meta = {
+  -   title: 'Advanced | VeeValidate',
+  -   description: ''
+  - };
+
+block content
+  include:markdown-it(html=true langPrefix="highlight-") markdown/advanced.md

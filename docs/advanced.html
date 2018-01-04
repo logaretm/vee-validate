@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head><link rel="apple-touch-icon" sizes="57x57" href="favico/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="favico/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="favico/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="favico/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="favico/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="favico/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="favico/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="favico/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="favico/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192" href="favico/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="favico/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="favico/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="favico/favicon-16x16.png"><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/ms-icon-144x144.png"><meta name="theme-color" content="#41b883"><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:title" content="Advanced | VeeValidate"><meta property="og:description" content=""><meta property="og:image" content="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg"><meta name="description" content=""><title>Advanced | VeeValidate</title><link href="/assets/css/bundle.css" rel="stylesheet"></head><body><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-100131478-1', 'auto');
+ga('send', 'pageview');
+</script><svg style="display: none;"><symbol id="github" viewbox="0 0 16 16"><path d="M8 0C3.58 0 0 3.582 0 8c0 3.535 2.292 6.533 5.47 7.59.4.075.547-.172.547-.385 0-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056 1.225.824 1.225.824.714 1.223 1.873.87 2.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953 0-.873.31-1.587.823-2.147-.09-.202-.36-1.015.07-2.117 0 0 .67-.215 2.2.82.64-.178 1.32-.266 2-.27.68.004 1.36.092 2 .27 1.52-1.035 2.19-.82 2.19-.82.43 1.102.16 1.915.08 2.117.51.56.82 1.274.82 2.147 0 3.073-1.87 3.75-3.65 3.947.28.24.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.14.46.55.38C13.71 14.53 16 11.53 16 8c0-4.418-3.582-8-8-8"></path></symbol><symbol id="i-star" viewbox="0 0 32 32"><path d="M16 2 L20 12 30 12 22 19 25 30 16 23 7 30 10 19 2 12 12 12 Z"></path></symbol><div class="columns is-mobile" id="app"><button :class="{ 'button': true, 'sidebar-button': true, 'is-open': sidebarToggle }" @click="sidebarToggle = ! sidebarToggle" type="button"><span class="icon"><i class="fa fa-bars"></i></span></button><div class="column is-2 sidebar-container" :class="{ 'column is-2 sidebar-container': true, 'is-open': sidebarToggle }" v-cloak><aside class="menu sidebar"><animated-button link="https://github.com/logaretm/vee-validate"><div class="flex-div" slot="default"><svg class="icon"><use xlink:href="#github"></use></svg>Star</div><div class="flex-div" slot="hover"><svg class="icon"><use xlink:href="#i-star"></use></svg>{{ stars }}</div></animated-button><p class="menu-label">Getting Started</p><ul class="menu-list"><li><a href="index.html#about">Introduction</a></li><li><a href="index.html#installation">Installation</a><ul><li><a href="index.html#npm">npm</a></li><li><a href="index.html#cdn">CDN</a></li></ul></li><li><a href="index.html#basic-example">Basic Example</a></li><li><a href="index.html#render-errors">Rendering Errors</a></li><li><a href="index.html#available-rules">Available Validations</a></li><li><a href="index.html#configuration">Configuration</a></li></ul><p class="menu-label">Validation Rules</p><ul class="menu-list"><li><a href="rules.html#syntax">Syntax</a></li><li><a href="rules.html#available-validations">Available Validations</a></li><li><a href="rules.html#custom-rules">Custom Validations</a></li><li><a href="rules.html#custom-messages">Custom Messages</a></li><li><a href="rules.html#custom-attributes">Custom Attributes</a></li><li><a href="rules.html#field-sepecific-messages">Field-specific Custom Messages  </a></li></ul><p class="menu-label">Localization</p><ul class="menu-list"><li><a href="localization.html#translation">Translation</a></li><li><a href="localization.html#attributes-data-as">Attributes</a><ul><li><a href="localization.html#attributes-data-as">alias</a></li><li><a href="localization.html#attributes-dictionary">dictionary</a></li></ul></li><li><a href="localization.html#localized-files">Localized Files</a></li></ul><p class="menu-label">Advanced</p><ul class="menu-list"><li><a href="advanced.html#inject">Component Injections</a></li></ul><p class="menu-label">Examples</p><ul class="menu-list"><li><a href="examples.html#debounce-example">Debounce</a></li><li><a href="examples.html#reject-example">Reject Files</a></li><li><a href="examples.html#validate-data-example">Validating Models</a></li><li><a href="examples.html#initial-value">Initial Value Validation</a></li><li><a href="examples.html#validate-form">Form Validation</a></li><li><a href="examples.html#locale-example">Localized Messages</a></li><li><a href="examples.html#scope-example">Validation Scopes</a></li><li><a href="examples.html#coupon-example">Custom Validation: Coupon</a></li><li><a href="examples.html#radio-buttons-example">Radio Buttons Validation</a></li><li><a href="examples.html#checkbox-example">Checkbox Example</a></li><li><a href="examples.html#flags-example">Validation Flags</a></li><li><a href="examples.html#selectors-example">Error Selectors</a></li><li><a href="examples.html#component-example">Component Validation</a></li><li><a href="examples.html#event-bus-example">Event Bus</a></li></ul><p class="menu-label">API</p><ul class="menu-list"><li><a href="api.html#directive">v-validate</a></li><li><a href="api.html#data-attributes">data-* Attributes</a></li><li><a href="api.html#error-bag">Error Bag</a></li><li><a href="api.html#validator">Validator</a><ul><li><a href="api.html#validator">API</a></li><li><a href="api.html#validator-example">Example</a></li></ul></li></ul></aside></div><div class="column columns is-mobile main-container" @click="sidebarToggle = false"><div class="column is-12"><section class="hero"><div class="hero-body"><div class="container has-text-centered"><img width="150" alt="VeeValidate Logo" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg"><h1 class="title is-2">Advanced </h1><h2 class="subtitle is-4"></h2></div></div></section><div class="container"><div class="column content-container is-mobile"><h2><a href="#injection">Component Injections</a></h2>
+<p>The default behavior for the plugin is to forcibly inject a validator instance for each component, which means each component has its own validator scope, that made sharing error messages between components relatively hard depending on your case.</p>
+<p>You can rely on Vue's <a href="https://vuejs.org/v2/api/#provide-inject">Provide/Inject API</a> for this case, here is how it works:</p>
+<p>By default the root Vue instance will be the only one to have a <code>Validator</code> instance, child components can further choose to either inject the parents tree validator or request a new one.</p>
+<p>Here is how to request the parent's validator instance:</p>
+<pre><code class="highlight-js">export default {
+  inject: ['$validator'],
+  // ...
+};
+
+export default {
+  inject: {
+    $validator: '$validator'
+  },
+  // ...
+};
+</code></pre>
+<blockquote>
+<p>If the first parent isn't able to provide a validator instance, the API will traverse the tree upwards looking for a parent that can.</p>
+</blockquote>
+<p>Here is how to request a new validator instance for the component by setting a <code>validator</code> property on the component's VeeValidate constructor options:</p>
+<pre><code class="highlight-js">export default {
+  // ...
+  $_veeValidate: {
+    validator: 'new' // give me a new validator each time.
+  },
+  // ...
+};
+</code></pre>
+<p>You may also want to stop all automatic injections, and control when a components gets the ability to validate:</p>
+<pre><code class="highlight-js">import Vue from 'vue';
+import VeeValidate from 'vee-validate';
+
+Vue.use(VeeValidate, { inject: false });
+</code></pre>
+<p>This will make the plugin stop instantiating a new validator for each component instance, excluding the root instance.</p>
+<p>The <code>errorBag</code> and the <code>fields</code> objects will be also shared along with the validator, they will not be injected if the component does not have a validator instance.</p>
+</div></div></div></div></div></svg><script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script><script>Array.from(document.querySelectorAll('h2')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-4');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+Array.from(document.querySelectorAll('h3')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-5');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+if (location.hash) {
+  var hash = location.hash;
+  location.hash = '';
+  location.hash = hash;
+}</script><script type="text/javascript" src="/assets/js/vendor-2a68a88f4c515c203766.js"></script><script type="text/javascript" src="/assets/js/bundle-2a68a88f4c515c203766.js"></script></body></html>

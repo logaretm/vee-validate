@@ -1,18 +1,28 @@
-export default (value, [decimals] = ['*']) => {
-    if (Array.isArray(value)) {
-        return false;
-    }
+const validate = (value, [decimals = '*', separator = '.'] = []) => {
+  if (Array.isArray(value)) {
+    return value.every(val => validate(val, [decimals, separator]));
+  }
 
-    if (value === null || value === undefined || value === '') {
-        return true;
-    }
+  if (value === null || value === undefined || value === '') {
+    return true;
+  }
 
-    const regexPart = decimals === '*' ? '*' : `{0,${decimals}}`;
-    const regex = new RegExp(`^[0-9]*.?[0-9]${regexPart}$`);
+  // if is 0.
+  if (Number(decimals) === 0) {
+    return /^-?\d*$/.test(value);
+  }
 
-    if (! regex.test(value)) {
-        return false;
-    }
+  const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
+  const regex = new RegExp(`^-?\\d*(\\${separator}\\d${regexPart})?$`);
 
-    return ! Number.isNaN(parseFloat(value));
+  if (! regex.test(value)) {
+    return false;
+  }
+
+  const parsedValue = parseFloat(value);
+
+  // eslint-disable-next-line
+    return parsedValue === parsedValue;
 };
+
+export default validate;

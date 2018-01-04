@@ -1,0 +1,117 @@
+<!DOCTYPE html><html lang="en"><head><link rel="apple-touch-icon" sizes="57x57" href="favico/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="favico/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="favico/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="favico/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="favico/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="favico/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="favico/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="favico/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="favico/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192" href="favico/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="favico/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="favico/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="favico/favicon-16x16.png"><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/ms-icon-144x144.png"><meta name="theme-color" content="#41b883"><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:title" content="Localization | VeeValidate"><meta property="og:description" content="Translation and multi-language support."><meta property="og:image" content="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg"><meta name="description" content="Translation and multi-language support."><title>Localization | VeeValidate</title><link href="/assets/css/bundle.css" rel="stylesheet"></head><body><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-100131478-1', 'auto');
+ga('send', 'pageview');
+</script><svg style="display: none;"><symbol id="github" viewbox="0 0 16 16"><path d="M8 0C3.58 0 0 3.582 0 8c0 3.535 2.292 6.533 5.47 7.59.4.075.547-.172.547-.385 0-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056 1.225.824 1.225.824.714 1.223 1.873.87 2.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953 0-.873.31-1.587.823-2.147-.09-.202-.36-1.015.07-2.117 0 0 .67-.215 2.2.82.64-.178 1.32-.266 2-.27.68.004 1.36.092 2 .27 1.52-1.035 2.19-.82 2.19-.82.43 1.102.16 1.915.08 2.117.51.56.82 1.274.82 2.147 0 3.073-1.87 3.75-3.65 3.947.28.24.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.14.46.55.38C13.71 14.53 16 11.53 16 8c0-4.418-3.582-8-8-8"></path></symbol><symbol id="i-star" viewbox="0 0 32 32"><path d="M16 2 L20 12 30 12 22 19 25 30 16 23 7 30 10 19 2 12 12 12 Z"></path></symbol><div class="columns is-mobile" id="app"><button :class="{ 'button': true, 'sidebar-button': true, 'is-open': sidebarToggle }" @click="sidebarToggle = ! sidebarToggle" type="button"><span class="icon"><i class="fa fa-bars"></i></span></button><div class="column is-2 sidebar-container" :class="{ 'column is-2 sidebar-container': true, 'is-open': sidebarToggle }" v-cloak><aside class="menu sidebar"><animated-button link="https://github.com/logaretm/vee-validate"><div class="flex-div" slot="default"><svg class="icon"><use xlink:href="#github"></use></svg>Star</div><div class="flex-div" slot="hover"><svg class="icon"><use xlink:href="#i-star"></use></svg>{{ stars }}</div></animated-button><p class="menu-label">Getting Started</p><ul class="menu-list"><li><a href="index.html#about">Introduction</a></li><li><a href="index.html#installation">Installation</a><ul><li><a href="index.html#npm">npm</a></li><li><a href="index.html#cdn">CDN</a></li></ul></li><li><a href="index.html#basic-example">Basic Example</a></li><li><a href="index.html#render-errors">Rendering Errors</a></li><li><a href="index.html#available-rules">Available Validations</a></li><li><a href="index.html#configuration">Configuration</a></li></ul><p class="menu-label">Validation Rules</p><ul class="menu-list"><li><a href="rules.html#syntax">Syntax</a></li><li><a href="rules.html#available-validations">Available Validations</a></li><li><a href="rules.html#custom-rules">Custom Validations</a></li><li><a href="rules.html#custom-messages">Custom Messages</a></li><li><a href="rules.html#custom-attributes">Custom Attributes</a></li><li><a href="rules.html#field-sepecific-messages">Field-specific Custom Messages  </a></li></ul><p class="menu-label">Localization</p><ul class="menu-list"><li><a href="localization.html#translation">Translation</a></li><li><a href="localization.html#attributes-data-as">Attributes</a><ul><li><a href="localization.html#attributes-data-as">alias</a></li><li><a href="localization.html#attributes-dictionary">dictionary</a></li></ul></li><li><a href="localization.html#localized-files">Localized Files</a></li></ul><p class="menu-label">Advanced</p><ul class="menu-list"><li><a href="advanced.html#inject">Component Injections</a></li></ul><p class="menu-label">Examples</p><ul class="menu-list"><li><a href="examples.html#debounce-example">Debounce</a></li><li><a href="examples.html#reject-example">Reject Files</a></li><li><a href="examples.html#validate-data-example">Validating Models</a></li><li><a href="examples.html#initial-value">Initial Value Validation</a></li><li><a href="examples.html#validate-form">Form Validation</a></li><li><a href="examples.html#locale-example">Localized Messages</a></li><li><a href="examples.html#scope-example">Validation Scopes</a></li><li><a href="examples.html#coupon-example">Custom Validation: Coupon</a></li><li><a href="examples.html#radio-buttons-example">Radio Buttons Validation</a></li><li><a href="examples.html#checkbox-example">Checkbox Example</a></li><li><a href="examples.html#flags-example">Validation Flags</a></li><li><a href="examples.html#selectors-example">Error Selectors</a></li><li><a href="examples.html#component-example">Component Validation</a></li><li><a href="examples.html#event-bus-example">Event Bus</a></li></ul><p class="menu-label">API</p><ul class="menu-list"><li><a href="api.html#directive">v-validate</a></li><li><a href="api.html#data-attributes">data-* Attributes</a></li><li><a href="api.html#error-bag">Error Bag</a></li><li><a href="api.html#validator">Validator</a><ul><li><a href="api.html#validator">API</a></li><li><a href="api.html#validator-example">Example</a></li></ul></li></ul></aside></div><div class="column columns is-mobile main-container" @click="sidebarToggle = false"><div class="column is-12"><section class="hero"><div class="hero-body"><div class="container has-text-centered"><img width="150" alt="VeeValidate Logo" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg"><h1 class="title is-2">Localization </h1><h2 class="subtitle is-4">Translation and multi-language support</h2></div></div></section><div class="container"><div class="column content-container is-mobile"><h2><a href="#translation">Translation</a></h2>
+<p>This plugin only comes with English messages to keep things small, but it was built with flexible message generation in mind.<br>
+The <a href="https://github.com/logaretm/vee-validate/blob/master/dist/locale/en.js">English messages file</a> is an example on how you would structure those messages. Then you may want to update the validator dictionary, which should happen once in your app startup. still you may update them whenever you want in any point of your app, check the <a href="#attributes-dictionary">dictionary</a> description below.</p>
+<blockquote>
+<p>The messages shown in the provided locale files contains mostly functions, however your messages can also be strings depending on your needs, the included locales make use of field names and parameters provided, so they had to be functions.</p>
+</blockquote>
+<h2><a href="#attributes-data-vv-as">Attributes (data-vv-as)</a></h2>
+<p>Seeing 'first_name' in your error messages can't be very good for your user experience, this plugin offer a couple of solutions: You can use the <code>data-vv-as</code> attribute on your field and give it a better name for your users, it would look like this:</p>
+<pre><code class="highlight-html">  &lt;input v-validate data-vv-rules=&quot;alpha|min:3&quot; data-vv-as=&quot;First Name&quot; name=&quot;first_name&quot; type=&quot;text&quot;&gt;
+</code></pre>
+<p>Now when any error message is generated for this input will use the <code>data-vv-as</code> value instead of the actual field name. This is also the same for binding expressions. While this is very useful for simple setups and displaying localized names, but it is only ideal for a single-locale page, for multi-localized pages and more advanced usages you might want to check the approach below.</p>
+<h2><a href="#attributes-dictionary">Attributes (Dictionary)</a></h2>
+<p>All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes, if the validator finds a localized attribute name for that field it will be used instead of the field name. Pretty much like <code>data-vv-as</code> but <code>data-vv-as</code> takes priority if both are found.</p>
+<p>Here is a little code example on how would you add support for your localized messages and attributes. Note that this is the entry point of your application.</p>
+<pre><code class="highlight-js">import Vue from 'vue';
+import VeeValidate from 'vee-validate';
+import messagesAr from './strings/validator/messages/ar.js';
+import attributesAr from './strings/validator/attributes/ar.js';
+import attributesEn from './strings/validator/attributes/en.js';
+// Pass options to make all validators use the arabic language, also merge the english and arabic attributes with the internal dictionary.
+Vue.use(VeeValidate, {
+  locale: 'ar',
+  dictionary: {
+    en: { attributes: attributesEn },
+    ar: { messages: messagesAr, attributes: attributesAr }
+  }
+});
+
+new Vue({
+  el: '#app',
+  data: {
+    // Some Data ...
+  },
+  methods {
+    // Cool methods ...
+  }
+});
+</code></pre>
+<h2><a href="#api">Localization API</a></h2>
+<p>The validator class offers a static <code>localize</code> method which is also available on the instances, which have three overloads:</p>
+<pre><code class="highlight-js">const dictionary = {
+  en: {
+    // attributes and messages
+  },
+  ar: {
+    // attributes and messages
+  }
+};
+
+Validator.localize('en'); // changes the locale
+
+// Merges the English dictionary and sets the current locale to English.
+Validator.localize('en', dictionary.en); 
+
+// Merge all defined languages in the dictionary but does not set the current locale.
+Validator.localize(dictionary); 
+</code></pre>
+<p>All validators' locales are shared, calling <code>localize</code> on any instance available within any component will change the locale for all validators.</p>
+<pre><code class="highlight-js">// Inside a component.
+this.$validator.localize('ar');
+
+import { Validator } from 'vee-validate';
+
+// Also available on the prototype.
+Validator.localize('ar');
+</code></pre>
+<p>You will get a warning if you set the locale to one that has not been merged in the dictionary yet, any messages generated will fallback to English.</p>
+<p>A working example can be found <a href="examples#locale-example">here</a></p>
+<h2><a href="#localized-files">Localized Files</a></h2>
+<p>In the <a href="https://github.com/logaretm/vee-validate/tree/master/locale"><code>locale</code></a> directory of this plugin, is a collection of localized files. If you can't find your locale, you could help this plugin by contributing a localized version to the <a href="https://github.com/logaretm/vee-validate">repository</a>. It will be happily accepted.</p>
+<p>You can import those locales like this:</p>
+<pre><code class="highlight-js">import ar from 'vee-validate/dist/locale/ar';
+import VeeValidate, { Validator } from 'vee-validate';
+
+// Localize takes the locale object as the second argument (optional) and merges it.
+Validator.localize('ar', ar);
+
+// Install the Plugin.
+Vue.use(VeeValidate);
+</code></pre>
+<p>You must note that the locale files export the following object structure:</p>
+<pre><code class="highlight-js">export default {
+  name: '{locale}',
+  messages: {
+    // ...
+  }
+};
+</code></pre>
+<p>Also note that if imported via script tags they will automatically installed if <code>VeeValidate</code> is available globally.</p>
+</div></div></div></div></div></svg><script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script><script>Array.from(document.querySelectorAll('h2')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-4');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+Array.from(document.querySelectorAll('h3')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-5');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+if (location.hash) {
+  var hash = location.hash;
+  location.hash = '';
+  location.hash = hash;
+}</script><script type="text/javascript" src="/assets/js/vendor-2a68a88f4c515c203766.js"></script><script type="text/javascript" src="/assets/js/bundle-2a68a88f4c515c203766.js"></script></body></html>

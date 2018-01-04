@@ -1,0 +1,525 @@
+<!DOCTYPE html><html lang="en"><head><link rel="apple-touch-icon" sizes="57x57" href="favico/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="favico/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="favico/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="favico/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="favico/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="favico/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="favico/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="favico/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="favico/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192" href="favico/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="favico/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="favico/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="favico/favicon-16x16.png"><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/ms-icon-144x144.png"><meta name="theme-color" content="#41b883"><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:title" content="Validations | VeeValidate"><meta property="og:description" content="The available validation rules"><meta property="og:image" content="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg"><meta name="description" content="The available validation rules"><title>Validations | VeeValidate</title><link href="/assets/css/bundle.css" rel="stylesheet"></head><body><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-100131478-1', 'auto');
+ga('send', 'pageview');
+</script><svg style="display: none;"><symbol id="github" viewbox="0 0 16 16"><path d="M8 0C3.58 0 0 3.582 0 8c0 3.535 2.292 6.533 5.47 7.59.4.075.547-.172.547-.385 0-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056 1.225.824 1.225.824.714 1.223 1.873.87 2.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953 0-.873.31-1.587.823-2.147-.09-.202-.36-1.015.07-2.117 0 0 .67-.215 2.2.82.64-.178 1.32-.266 2-.27.68.004 1.36.092 2 .27 1.52-1.035 2.19-.82 2.19-.82.43 1.102.16 1.915.08 2.117.51.56.82 1.274.82 2.147 0 3.073-1.87 3.75-3.65 3.947.28.24.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.14.46.55.38C13.71 14.53 16 11.53 16 8c0-4.418-3.582-8-8-8"></path></symbol><symbol id="i-star" viewbox="0 0 32 32"><path d="M16 2 L20 12 30 12 22 19 25 30 16 23 7 30 10 19 2 12 12 12 Z"></path></symbol><div class="columns is-mobile" id="app"><button :class="{ 'button': true, 'sidebar-button': true, 'is-open': sidebarToggle }" @click="sidebarToggle = ! sidebarToggle" type="button"><span class="icon"><i class="fa fa-bars"></i></span></button><div class="column is-2 sidebar-container" :class="{ 'column is-2 sidebar-container': true, 'is-open': sidebarToggle }" v-cloak><aside class="menu sidebar"><animated-button link="https://github.com/logaretm/vee-validate"><div class="flex-div" slot="default"><svg class="icon"><use xlink:href="#github"></use></svg>Star</div><div class="flex-div" slot="hover"><svg class="icon"><use xlink:href="#i-star"></use></svg>{{ stars }}</div></animated-button><p class="menu-label">Getting Started</p><ul class="menu-list"><li><a href="index.html#about">Introduction</a></li><li><a href="index.html#installation">Installation</a><ul><li><a href="index.html#npm">npm</a></li><li><a href="index.html#cdn">CDN</a></li></ul></li><li><a href="index.html#basic-example">Basic Example</a></li><li><a href="index.html#render-errors">Rendering Errors</a></li><li><a href="index.html#available-rules">Available Validations</a></li><li><a href="index.html#configuration">Configuration</a></li></ul><p class="menu-label">Validation Rules</p><ul class="menu-list"><li><a href="rules.html#syntax">Syntax</a></li><li><a href="rules.html#available-validations">Available Validations</a></li><li><a href="rules.html#custom-rules">Custom Validations</a></li><li><a href="rules.html#custom-messages">Custom Messages</a></li><li><a href="rules.html#custom-attributes">Custom Attributes</a></li><li><a href="rules.html#field-sepecific-messages">Field-specific Custom Messages  </a></li></ul><p class="menu-label">Localization</p><ul class="menu-list"><li><a href="localization.html#translation">Translation</a></li><li><a href="localization.html#attributes-data-as">Attributes</a><ul><li><a href="localization.html#attributes-data-as">alias</a></li><li><a href="localization.html#attributes-dictionary">dictionary</a></li></ul></li><li><a href="localization.html#localized-files">Localized Files</a></li></ul><p class="menu-label">Advanced</p><ul class="menu-list"><li><a href="advanced.html#inject">Component Injections</a></li></ul><p class="menu-label">Examples</p><ul class="menu-list"><li><a href="examples.html#debounce-example">Debounce</a></li><li><a href="examples.html#reject-example">Reject Files</a></li><li><a href="examples.html#validate-data-example">Validating Models</a></li><li><a href="examples.html#initial-value">Initial Value Validation</a></li><li><a href="examples.html#validate-form">Form Validation</a></li><li><a href="examples.html#locale-example">Localized Messages</a></li><li><a href="examples.html#scope-example">Validation Scopes</a></li><li><a href="examples.html#coupon-example">Custom Validation: Coupon</a></li><li><a href="examples.html#radio-buttons-example">Radio Buttons Validation</a></li><li><a href="examples.html#checkbox-example">Checkbox Example</a></li><li><a href="examples.html#flags-example">Validation Flags</a></li><li><a href="examples.html#selectors-example">Error Selectors</a></li><li><a href="examples.html#component-example">Component Validation</a></li><li><a href="examples.html#event-bus-example">Event Bus</a></li></ul><p class="menu-label">API</p><ul class="menu-list"><li><a href="api.html#directive">v-validate</a></li><li><a href="api.html#data-attributes">data-* Attributes</a></li><li><a href="api.html#error-bag">Error Bag</a></li><li><a href="api.html#validator">Validator</a><ul><li><a href="api.html#validator">API</a></li><li><a href="api.html#validator-example">Example</a></li></ul></li></ul></aside></div><div class="column columns is-mobile main-container" @click="sidebarToggle = false"><div class="column is-12"><section class="hero"><div class="hero-body"><div class="container has-text-centered"><img width="150" alt="VeeValidate Logo" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg"><h1 class="title is-2">Validations </h1><h2 class="subtitle is-4">The available validation rules</h2></div></div></section><div class="container"><div class="column content-container is-mobile"><h2><a href="#syntax">Syntax</a></h2>
+<p>The validation rules have a simple syntax similar to <a href="https://laravel.com/docs/5.4/validation">Laravel validation syntax</a>.</p>
+<p>A validation expression is a string of a series of validators separated by a pipe <code>|</code>:</p>
+<pre><code class="highlight-js">const single = 'required'; // single rule.
+const multiple = 'required|numeric' // multiple rules.
+</code></pre>
+<p>Rules can also take on an object form for complex and more readable rules:</p>
+<pre><code class="highlight-js">const single = { required: true }; // required field.
+const multiple = {
+  required: true,
+  numeric: true,
+  email: true
+};
+</code></pre>
+<p>Some rules can have parameters, which are passed in a comma separated list without spaces.</p>
+<pre><code class="highlight-js">const someRule = 'in:1,2,3,4';
+const someRuleObj = { in: [1, 2, 3, 4] };
+</code></pre>
+<blockquote>
+<p>In object form, rules keys accepts a single value if the rule accepts a single argument, if multiple arguments are passed you should pass them as an array in the same order.</p>
+</blockquote>
+<h2><a href="#available-rules">Available Rules</a></h2>
+<p>There are more than 20 rules available to validate your inputs:</p>
+<div class="columns is-multiline">
+  <div class="column is-4"> 
+<ul>
+<li>
+<p><a href="rules.html#rule-after">after</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-alpha">alpha</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-alpha_dash">alpha_dash</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-alpha_num">alpha_num</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-alpha_spaces">alpha_spaces</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-before">before</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-between">between</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-confirmed">confirmed</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-credit_card">credit_card</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-date_between">date_between</a></p>
+</div>
+<div class="column is-4">
+</li>
+</ul>
+<ul>
+<li>
+<p><a href="rules.html#rule-date_format">date_format</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-decimal">decimal</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-digits">digits</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-dimensions">dimensions</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-email">email</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-ext">ext</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-image">image</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-in">in</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-ip">ip</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-max">max</a></p>
+</div>
+<div class="column is-4">
+</li>
+</ul>
+<ul>
+<li>
+<p><a href="rules.html#rule-max_value">max_value</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-mimes">mimes</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-min">min</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-min_value">min_value</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-not_in">not_in</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-numeric">numeric</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-regex">regex</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-required">required</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-size">size</a></p>
+</li>
+<li>
+<p><a href="rules.html#rule-url">url</a></p>
+</div>
+</li>
+</ul>
+</div><div class="rules"><blockquote>
+<p>Date validators always require the <code>date_format</code> rule to be always present (<a href="https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.7">or globally set</a>) and must preceed them in the rules order.</p>
+</blockquote>
+<h3><a href="#rule-after">after:{target},{inclusion?}</a></h3>
+<p>The field under validation must have a valid date and is after the date value in the target field.</p>
+<ul>
+<li><code>target:</code> The input name to be validated against. Must have the same format as the date_format rule. Can also be a date value of the same format.</li>
+<li><code>inclusion</code>: Whether to include equal dates as a valid value, setting it to any value will set it to true, it is false by default.</li>
+</ul>
+<input v-validate="'date_format:DD/MM/YYYY|after:after_field_target'" :class="{'input': true, 'is-danger': errors.has('after_field') }" name="after_field" type="text" placeholder="DD/MM/YYYY">
+<span v-show="errors.has('after_field')" class="help is-danger">{{ errors.first('after_field') }}</span>
+<input name="after_field_target" :class="{'input': true, 'is-danger': errors.has('after_field') }" type="text" placeholder="DD/MM/YYYY">
+<blockquote>
+<p>Target based rules like <code>after</code>, <code>before</code>, and <code>confirmed</code> can target custom components as well as native inputs, but when targeting custom components the target field must have a <code>ref</code> attribute set and the confirmed paramter must be the same ref value prefixed with <code>$</code> sign to tell the validator that it should look for the target field in the component local <code>refs</code>. More  information are in the <code>RC.8</code> <a href="https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.8">release notes</a>.</p>
+</blockquote>
+<h3><a href="#rule-alpha">alpha</a></h3>
+<p>The field under validation may only contain alphabetic characters.</p>
+<input v-validate="'alpha'" :class="{'input': true, 'is-danger': errors.has('alpha_field') }" name="alpha_field" type="text" placeholder="Enter Some Characters...">
+<span v-show="errors.has('alpha_field')" class="help is-danger">{{ errors.first('alpha_field') }}</span>
+<h3><a href="#rule-alpha_dash">alpha_dash</a></h3>
+<p>The field under validation may contain alphabetic characters, numbers, dashes or underscores.</p>
+<input v-validate="'alpha_dash'" :class="{'input': true, 'is-danger': errors.has('alpha_dash_field') }" name="alpha_dash_field" type="text" placeholder="Enter characters or dashes">
+<span v-show="errors.has('alpha_dash_field')" class="help is-danger">{{ errors.first('alpha_dash_field') }}</span>
+<h3><a href="#rule-alpha_num">alpha_num</a></h3>
+<p>The field under validation may contain alphabetic characters or numbers.</p>
+<input v-validate="'alpha_num'" :class="{'input': true, 'is-danger': errors.has('alpha_num_field') }" name="alpha_num_field" type="text" placeholder="Enter characters and numbers">
+<span v-show="errors.has('alpha_num_field')" class="help is-danger">{{ errors.first('alpha_num_field') }}</span>
+<h3><a href="#rule-alpha_spaces">alpha_spaces</a></h3>
+<p>The field under validation may contain alphabetic characters or spaces.</p>
+<input v-validate="'alpha_spaces'" :class="{'input': true, 'is-danger': errors.has('alpha_spaces_field') }" name="alpha_spaces_field" type="text" placeholder="Enter characters and spaces">
+<span v-show="errors.has('alpha_spaces_field')" class="help is-danger">{{ errors.first('alpha_spaces_field') }}</span>
+<h3><a href="#rule-before">before:{target},{inclusion?}</a></h3>
+<p>The field under validation must have a valid date and is before the date value in the target field.</p>
+<ul>
+<li><code>target</code>: The input name to be validated against. Must have the same format as the date_format rule. Can also be a date value of the same format.</li>
+<li><code>inclusion</code>: Whether to include equal dates as a valid value, setting it to any value will set it to true, it is false by default.</li>
+</ul>
+<input v-validate="'date_format:DD/MM/YYYY|before:before_field_target'" :class="{'input': true, 'is-danger': errors.has('before_field') }" name="before_field" type="text" placeholder="DD/MM/YYYY">
+<span v-show="errors.has('before_field')" class="help is-danger">{{ errors.first('before_field') }}</span>
+<input name="before_field_target" :class="{'input': true, 'is-danger': errors.has('alpha_field') }" type="text" placeholder="DD/MM/YYYY">
+<h3><a href="#rule-between">between:{min},{max}</a></h3>
+<p>The field under validation must have a numeric value bounded by a minimum value and a maximum value.</p>
+<ul>
+<li><code>min:</code> The minimum value.</li>
+<li><code>max:</code> The maximum value.</li>
+</ul>
+<input v-validate="'between:1,11'" :class="{'input': true, 'is-danger': errors.has('between_field') }" name="between_field" type="text" placeholder="Enter a number between 1 and 11">
+<span v-show="errors.has('between_field')" class="help is-danger">{{ errors.first('between_field') }}</span>
+<h3><a href="#rule-confirmed">confirmed:{target}</a></h3>
+<p>The field under validation must have the same value as the confirmation field.</p>
+<ul>
+<li><code>target:</code> The name of the confirmation field.</li>
+</ul>
+<input v-validate="'confirmed:pw_confirm'" :class="{'input': true, 'is-danger': errors.has('confirm_field') }" name="confirm_field" type="password" placeholder="Enter The Password">
+<span v-show="errors.has('confirm_field')" class="help is-danger">{{ errors.first('confirm_field') }}</span>
+<input name="pw_confirm" :class="{'input': true, 'is-danger': errors.has('confirm_field') }" type="password" placeholder="Confirm the password">
+<h3><a href="#rule-credit_card">credit_card</a></h3>
+<p>The field under validation must be a valid credit card.</p>
+<input v-validate="'credit_card'" :class="{'input': true, 'is-danger': errors.has('credit_field') }" name="credit_field" type="text" placeholder="Enter A Credit Card Number">
+<span v-show="errors.has('credit_field')" class="help is-danger">{{ errors.first('credit_field') }}</span>
+<h3><a href="#rule-date_between">date_between:{min,max},{inclusion?}</a></h3>
+<p>The field under validation must be a valid date between the two dates specified.</p>
+<ul>
+<li><code>min:</code>The minimum allowed value for date. Must be in the same format as the date_format rule.</li>
+<li><code>max:</code>The maximum allowed value for date. Must be in the same format as the date_format rule.</li>
+<li><code>inclusion</code>: Whether to include equal dates as a valid value, it is set to <code>()</code> (exclude) by default.<br>
+(For further information check the <a href="https://momentjs.com/docs/#/query/is-between/">monentjs inclusion docs</a>vee-validate uses <a href="https://date-fns.org">date-fns</a> but ported this functionality.</li>
+</ul>
+<input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY betweem 10/09/2016 and 20/09/2016">
+<span v-show="errors.has('date_between_field')" class="help is-danger">{{ errors.first('date_between_field') }}</span>
+<h3><a href="#rule-date_format">date_format:{format}</a></h3>
+<p>The field under validation must be a valid date in the specified format. This rule must be present when using any date rule.</p>
+<ul>
+<li><code>format:</code> The date format. See <a href="https://date-fns.org/v2.0.0-alpha.7/docs/format">date-fns format</a></li>
+</ul>
+<input v-validate="'date_format:DD/MM/YYYY'" :class="{'input': true, 'is-danger': errors.has('date_format_field') }" name="date_format_field" type="text" placeholder="DD/MM/YYYY">
+<span v-show="errors.has('date_format_field')" class="help is-danger">{{ errors.first('date_format_field') }}</span>
+<h3><a href="#rule-decimal">decimal:{decimals?}</a></h3>
+<p>The field under validation must be numeric and may contain the specified amount of decimal point.</p>
+<ul>
+<li><code>decimals:</code> The maximum allowed number of decimal point numbers. Not passing the decimals will accept numeric data which may or may not contain decimal point numbers.</li>
+</ul>
+<input v-validate="'decimal:3'" :class="{'input': true, 'is-danger': errors.has('decimal_field') }" name="decimal_field" type="text" placeholder="Numeric value with decimals">
+<span v-show="errors.has('decimal_field')" class="help is-danger">{{ errors.first('decimal_field') }}</span>
+<h3><a href="#rule-digits">digits:{length}</a></h3>
+<p>The field under validation must be numeric and have the specified number of digit.</p>
+<ul>
+<li><code>length:</code> The number of digits.</li>
+</ul>
+<input v-validate="'digits:3'" :class="{'input': true, 'is-danger': errors.has('digits_field') }" name="digits_field" type="text" placeholder="Enter 3 digit number">
+<span v-show="errors.has('digits_field')" class="help is-danger">{{ errors.first('digits_field') }}</span>
+<h3><a href="#rule-dimensions">dimensions:{width},{height}</a></h3>
+<p>The file added to the field under validation must be an image (jpg,svg,jpeg,png,bmp,gif) have the exact specified dimension.</p>
+<ul>
+<li><code>width:</code> The width of the image.</li>
+<li><code>height:</code> The height of the image.</li>
+</ul>
+<input v-validate="'dimensions:30,30'" data-vv-as="image" name="dimensions_field" type="file">
+<span v-show="errors.has('dimensions_field')" class="help is-danger">{{ errors.first('dimensions_field') }}</span>
+<h3><a href="#rule-email">email</a></h3>
+<p>The field under validation must be a valid email.</p>
+<input v-validate="'email'" data-vv-as="email" :class="{'input': true, 'is-danger': errors.has('email_field') }" name="email_field" type="text" placeholder="Your Email">
+<span v-show="errors.has('email_field')" class="help is-danger">{{ errors.first('email_field') }}</span>
+<h3><a href="#rule-ext">ext:[extensions]</a></h3>
+<p>The file added the field under validation must have one of the extensions specified.</p>
+<ul>
+<li><code>extensions:</code> Comma separated list of extensions. ex: `ext:jpg,png,bmp,svg</li>
+</ul>
+<input v-validate="'ext:jpeg,jpg'" data-vv-as="field" name="ext_field" type="file">
+<span v-show="errors.has('ext_field')" class="help is-danger">{{ errors.first('ext_field') }}</span>
+<h3><a href="#rule-image">image</a></h3>
+<p>The file added the field under validation must have an image mime type (image/*).</p>
+<input v-validate="'image'" data-vv-as="image" name="image_field" type="file">
+<span v-show="errors.has('image_field')" class="help is-danger">{{ errors.first('image_field') }}</span>
+<h3><a href="#rule-in">in:[list]</a></h3>
+<p>The field under validation must have a value that is in the specified list.</p>
+<ul>
+<li><code>list:</code> Comma separated list of values. ex <code>in:1,2,3</code></li>
+</ul>
+<span class="select">
+  <select v-validate="'in:1,2,3'" :class="{ 'is-danger': errors.has('in_field') }" name="in_field" data-vv-as="selected">
+    <option value="1">One</option>
+    <option value="2">Two</option>
+    <option value="3">Three</option>
+    <option value="4">Invalid</option>
+  </select>
+</span>
+<span v-show="errors.has('in_field')" class="help is-danger">{{ errors.first('in_field') }}</span>
+<h3><a href="#rule-ip">ip</a></h3>
+<p>The field under validation must have a string that is a valid ipv4 value.</p>
+<input v-validate="'ip'" data-vv-as="ip" :class="{'input': true, 'is-danger': errors.has('ip_field') }" name="ip_field" type="text" placeholder="Your IP Address">
+<span v-show="errors.has('ip_field')" class="help is-danger">{{ errors.first('ip_field') }}</span>
+<h3><a href="#rule-is">is:{value}</a></h3>
+<p>The field under validation must be equal to the first argument passed, uses <code>===</code> for equality checks. This rule is useful for confirming passwords when used in object form. Note that using the string format will cause any arguments to be parsed as strings, So use the object format when using this rule.</p>
+<ul>
+<li><code>value:</code> A value of anytype to be compared against the field value.</li>
+</ul>
+<pre><code class="highlight-html">&lt;input v-validate=&quot;{ is: confirmation }&quot; type=&quot;text&quot; name=&quot;password&quot;&gt;
+&lt;input v-model=&quot;confirmation&quot; type=&quot;text&quot; name=&quot;password_confirmation&quot;&gt;
+</code></pre>
+<h3><a href="#rule-max">max:{length}</a></h3>
+<p>The field under validation length may not exceed the specified length.</p>
+<ul>
+<li><code>length:</code> A numeric value representing the maximum number of characters.</li>
+</ul>
+<input v-validate="'max:11'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('max_field') }" name="max_field" type="text" placeholder="11 Characters or shorter">
+<span v-show="errors.has('max_field')" class="help is-danger">{{ errors.first('max_field') }}</span>
+<h3><a href="#rule-max_value">max_value:{value}</a></h3>
+<p>The field under validation must be numeric value and must not be greater than the specified value.</p>
+<ul>
+<li><code>value:</code> A numeric value representing the greatest value allowed.</li>
+</ul>
+<input v-validate="'max_value:9000'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('max_value_field') }" name="max_value_field" type="text" placeholder="Can you go over 9000?">
+<span v-show="errors.has('max_value_field')" class="help is-danger">{{ errors.first('max_value_field') }}</span>
+<h3><a href="#rule-mimes">mimes:[list]</a></h3>
+<p>The file type added to the field under validation should have one of the specified mime types.</p>
+<ul>
+<li><code>list:</code> List of comma separated mime types. <code>mimes:image/jpeg,image/png</code></li>
+</ul>
+<p><label class="label">Image File</label>
+<input v-validate="'mimes:image/*'" data-vv-as="image" name="mimes_field" type="file">
+<span v-show="errors.has('mimes_field')" class="help is-danger">{{ errors.first('mimes_field') }}</span></p>
+<blockquote>
+<p>You can use '*' to specify a wild card, something like <code>mimes:image/*</code> will accept all image types.</p>
+</blockquote>
+<h3><a href="#rule-min">min:{length}</a></h3>
+<p>The field under validation length should not be less than the specified length.</p>
+<ul>
+<li><code>length:</code> A numeric value representing the minimum number of characters.</li>
+</ul>
+<input v-validate="'min:3'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('min_field') }" name="min_field" type="text" placeholder="Min: 3">
+<span v-show="errors.has('min_field')" class="help is-danger">{{ errors.first('min_field') }}</span>
+<h3><a href="#rule-min_value">min_value:{value}</a></h3>
+<p>The field under validation must be numeric value and must not be less than the specified value.</p>
+<ul>
+<li><code>value:</code> A numeric value representing the lowest value allowed.</li>
+</ul>
+<input v-validate="'min_value:10'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('min_value_field') }" name="min_value_field" type="text" placeholder="What is bigger than 10?">
+<span v-show="errors.has('min_value_field')" class="help is-danger">{{ errors.first('min_value_field') }}</span>
+<h3><a href="#rule-not_in">not_in:[list]</a></h3>
+<p>The field under validation length should not have any value within the specified value.</p>
+<ul>
+<li><code>list:</code> Comma separated list of invalid values. ex: <code>not_in:1,2,3</code></li>
+</ul>
+<span class="select">
+  <select v-validate="'not_in:1,2,3'" :class="{ 'is-danger': errors.has('not_in_field') }" name="not_in_field" data-vv-as="selected">
+    <option value="1">One - Invalid</option>
+    <option value="2">Two - Invalid</option>
+    <option value="3">Three - Invalid</option>
+    <option value="4">Four - Valid</option>
+  </select>
+</span>
+<span v-show="errors.has('not_in_field')" class="help is-danger">{{ errors.first('not_in_field') }}</span>
+<h3><a href="#rule-numeric">numeric</a></h3>
+<p>The field under validation must only consist of numbers.</p>
+<input v-validate="'numeric'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('numeric_field') }" name="numeric_field" type="text" placeholder="Numbers only">
+<span v-show="errors.has('numeric_field')" class="help is-danger">{{ errors.first('numeric_field') }}</span>
+<h3><a href="#rule-regex">regex:{pattern}</a></h3>
+<p>The field under validation must match the specified regular expression.</p>
+<ul>
+<li><code>pattern:</code> A regular expression</li>
+<li><code>flags:</code> list of regular expression flags (optional)</li>
+</ul>
+<p><label class="label">Regex: ^([0-9]+)$</label>
+<input v-validate="'regex:^([0-9]+)$'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('regex_field') }" name="regex_field" type="text" placeholder="Numbers only">
+<span v-show="errors.has('regex_field')" class="help is-danger">{{ errors.first('regex_field') }}</span></p>
+<blockquote>
+<p>You should not use the pipe '|' or commas ',' within your regular expression
+when using the string rules format as it will cause a conflict with how
+validators parsing work. You should use the object format of the rules
+instead. Note that when using the object format in your HTML template you
+need to escape all backslashes.
+Example: <code>v-validate=&quot;{ required: true, regex: /\\.(js|ts)$/ }&quot;</code></p>
+</blockquote>
+<h3><a href="#rule-required">required:{invalidateFalse?}</a></h3>
+<p>The field under validation must have a non-empty value. By default all validators pass the validation if they have &quot;empty values&quot; unless they are required. Those empty values are: empty strings, <code>undefined</code>, <code>null</code>.</p>
+<p>By default, the boolean value of <code>false</code> will pass validate. Setting invalidateFalse to true will fail validation for false values. For example, using <code>v-validate=&quot;'required:true'&quot;</code> is helpful to support pseudo-checkbox validations where the checkbox must be checked. Note that <code>&lt;input type='checkbox' v-validate=&quot;'required'&quot; /&gt;</code> automatically supports this scenario.</p>
+<input v-validate="'required'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('required_field') }" name="required_field" type="text" placeholder="Is Required">
+<span v-show="errors.has('required_field')" class="help is-danger">{{ errors.first('required_field') }}</span>
+<h3><a href="#rule-size">size:{kb}</a></h3>
+<p>The file size added to the field under validation must not exceed the specified size in kilobytes.</p>
+<ul>
+<li><code>size:</code> The maximum file size in kilobytes.</li>
+</ul>
+<input v-validate="'size:10'" name="size_field" data-vv-as="file" type="file">
+<span class="help is-danger" v-show="errors.has('size_field')">{{ errors.first('size_field') }}</span>
+<h3><a href="#rule-url">url:{require_protocol?}</a></h3>
+<p>The field under validation must be a valid url. Protocols are not required by default.</p>
+<ul>
+<li><code>require_protocol:</code> If the protocol should be required, false by default. passing anything will require it.</li>
+</ul>
+<input v-validate="'url:require_protocol'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('url_field') }" name="url_field" type="text" placeholder="Enter a url">
+<span v-show="errors.has('url_field')" class="help is-danger">{{ errors.first('url_field') }}</span>
+</div><h2><a href="#custom-rules">Custom Rules</a></h2>
+<p>You can easily add custom rules to the validators, but your custom validation rules must adhere to a contract, or certain structure:</p>
+<p><strong>Function Form:</strong> This is the most basic custom validator form, it consists of only a function that returns either a Boolean or a promise. However it will have a default error message.</p>
+<pre><code class="highlight-js">const validator = (value, args) =&gt; {
+  // Return a Boolean or a Promise.
+};
+</code></pre>
+<p><strong>Object Form:</strong></p>
+<pre><code class="highlight-js">const validator = {
+  getMessage(field, args) {
+    // will be added to default English messages.
+    // Returns a message.
+  },
+  validate(value, args) {
+    // Returns a Boolean or a Promise.
+  }
+};
+</code></pre>
+<p>This validator object must have a <code>validate</code> method, and can contain a <code>getMessage</code> method which will be merged into the current dictionary locale. For multiple languages you should use the <a href="localization.html">localization API</a>.</p>
+<blockquote>
+<p>Notice how the <code>getMessage</code> method receives the <code>field</code> which is the name of the field under validation as a first parameter. And how the <code>validate</code> method receives the value as a first parameter. And both receive the <code>args</code> array which contains the arguments that were configured with the validation rule. take a look at the <a href="https://github.com/logaretm/vee-validate/blob/master/src/rules/min.js">actual implementation of the min rule</a> as an example.</p>
+</blockquote>
+<blockquote>
+<p>As you can see a validation rule must implement one of the three forms discussed above. Not doing so will throw an exception with a suitable error message detailing what were you missing.</p>
+</blockquote>
+<p>Additionally you may want to provide a reason for failing the validation that may change the error message. For example you may be using an external API and the error message is generated there.</p>
+<p>To acheive this, you need to return an <code>Object</code> instead of a <code>Boolean</code> this object should always contain a <code>valid</code> property and an optional <code>data</code> property, the data property will be passed to the message generator function as the third parameter, then you should use the passed data property to modify the output message. The same thing applies to promises as you resolve the promise with an object containg those properties. Here is a custom rule that does just that:</p>
+<pre><code class="highlight-js">const myRule = {
+  getMessage(field, params, data) {
+      return (data &amp;&amp; data.message) || 'Something went wrong';
+  },
+  validate(value) {
+    return new Promise(resolve =&gt; {
+      resolve({
+        valid: value === 'trigger' ? false : !! value,
+        data: value !== 'trigger' ? undefined : { message: 'Not this value' }
+      });
+    });
+  }
+};
+</code></pre>
+<p>After creating your custom rule, you can add it to the list of rules using <code>extend(name, validator)</code> method in the validator instance.</p>
+<pre><code class="highlight-js">import { Validator } from 'vee-validate';
+
+Validator.extend('truthy', {
+  getMessage: field =&gt; 'The ' + field + ' value is not truthy.',
+  validate: value =&gt; !! value
+});
+
+let instance = new Validator({ trueField: 'truthy' });
+
+// Also there is an instance 'extend' method for convience.
+instance.extend('falsy', (value) =&gt; ! value);
+
+instance.attach({
+  name: 'falseField',
+  rules: 'falsy'
+});
+</code></pre>
+<blockquote>
+<p>Using any of the <code>extend</code> either on the class or on an instance will extend all validators with the new validation rule. extending a new rule that have the same name as an existing rule will throw a <code>ValidatorException</code> with an error message.</p>
+</blockquote>
+<h2><a href="#custom-messages">Custom Messages</a></h2>
+<p>You might need to overwrite the error messages, or add new ones. The Validator class and its instances provide an <code>localize</code> method. which will merge the messages with the internal dictionary, overwriting any duplicates.</p>
+<blockquote>
+<p>Any merges will have an effect on all validator instances as the messages dictionary is shared.</p>
+</blockquote>
+<pre><code class="highlight-js">import { Validator } from 'vee-validate';
+const dictionary = {
+  en: {
+    messages:{
+      alpha: () =&gt; 'Some English Message'
+    }
+  },
+  ar: {
+    messages: {
+      alpha: () =&gt; 'Some Arabic Message'
+    }
+  }
+};
+
+// Override and merge the dictionaries
+Validator.localize(dictionary);
+
+const validator = new Validator({ first_name: 'alpha' });
+
+validator.localize('ar'); // now this validator will generate messages in arabic.
+</code></pre>
+<blockquote>
+<p>You must provide the messages in an object path like: <code>dictionary.locale.messages</code>.</p>
+</blockquote>
+<p>Usually you would structure your language files for your app rather than adding hardcoded strings like the example above, check the <a href="localization.html">localization guide</a> for more info.</p>
+<h2><a href="#custom-attributes">Custom Attributes</a></h2>
+<p>Like the custom messages, the validators share a dictionary containing the attribute names, for example if you want to use &quot;Email Address&quot; instead of &quot;email&quot; in your error messages, this can be easily acheived by including an <code>attributes</code> object in the dictionary.</p>
+<p>Unlike messages, no attributes are included in the default dictionary.</p>
+<pre><code class="highlight-js">import { Validator } from 'vee-validate';
+const dictionary = {
+  en: {
+    attributes: {
+      email: 'Email Address'
+    }
+  },
+  ar: {
+    attributes: {
+      email: 'البريد الاليكتروني'
+    }
+  }
+};
+
+Validator.localize(dictionary);
+</code></pre>
+<blockquote>
+<p>If the attribute is not found for the current locale, it will fallback to the binding expression or the field name. If you use the <a href="localization.html#attributes-data-vv-as">data-vv-as</a> attribute it will take precedence over the internal dictionary.</p>
+</blockquote>
+<h2><a href="#field-sepecific-messages">Field-specific Custom Messages</a></h2>
+<p>You might need to provide different messages for different fields, for example you might want to display an error message for the email field when its required, but a different messsage when the name is required. This allows you to give your users a flexible experience and context aware messages.</p>
+<p>To do this you would need to add an object to the dictionary called <code>custom</code> like this:</p>
+<pre><code class="highlight-js">const dict = {
+  custom: {
+    email: {
+      required: 'Your email is empty' // messages can be strings as well.
+    },
+    name: {
+      required: () =&gt; 'Your name is empty'
+    }
+  }
+};
+</code></pre>
+<blockquote>
+<p>Notice that the <code>custom</code> object contains properties that represent the field names, those field names objects contain properties that represent the validation rule that its value will be used instead of the default one.</p>
+</blockquote>
+<p>Then you would need to add the dictionary we just constructed to the current validators dictionary like this:</p>
+<pre><code class="highlight-js">Validator.localize('en', dict);
+// or use the instance method
+this.$validator.localize('en', dict);
+</code></pre>
+<p>Thats it. One thing to keep in mind is to place any dictionary releated operations in your code before it actually needs it to avoid uneccessary merges, for example a good common place is in your app entry point or setup script, conversly, a poor choice would be a component lifecycle hook like <code>mounted</code> since the validator dictionary is kept globally for all instances.</p>
+<p>By default, any unspecified rules for the specific field messages will fallback to the already included ones, so you only need to define the custom messages you only need.</p>
+</div></div></div></div></div></svg><script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script><script>Array.from(document.querySelectorAll('h2')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-4');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+Array.from(document.querySelectorAll('h3')).forEach(h => {
+  h.classList.add('title');
+  h.classList.add('is-5');
+  var a = h.querySelector('a');
+  if (a) {
+    h.id = a.href.substr(a.href.indexOf('#') + 1);
+  }
+});
+if (location.hash) {
+  var hash = location.hash;
+  location.hash = '';
+  location.hash = hash;
+}</script><script type="text/javascript" src="/assets/js/vendor-2a68a88f4c515c203766.js"></script><script type="text/javascript" src="/assets/js/bundle-2a68a88f4c515c203766.js"></script></body></html>
