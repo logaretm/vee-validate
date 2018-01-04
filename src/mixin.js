@@ -2,7 +2,6 @@ import Validator from './core/validator';
 import Config from './config';
 import {
   isObject,
-  isCallable,
   createProxy,
   createFlags,
   warn,
