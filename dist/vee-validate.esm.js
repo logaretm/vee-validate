@@ -1,6 +1,6 @@
 /**
   * vee-validate v2.0.0-rc.27
-  * (c) 2017 Abdelrahman Awad
+  * (c) 2018 Abdelrahman Awad
   * @license MIT
   */
 // 
@@ -780,7 +780,11 @@ ErrorBag.prototype._selector = function _selector (field) {
  */
 ErrorBag.prototype._scope = function _scope (field, context) {
   while (context) {
-    if (context.$parent.$vnode.componentInstance.$el.tagName === 'FORM') {
+    if (context.$parent &&
+      context.$parent.$vnode &&
+      context.$parent.$vnode.componentInstance &&
+      context.$parent.$vnode.componentInstance.$el &&
+      context.$parent.$vnode.componentInstance.$el.tagName === 'FORM') {
       return {
         name: field,
         scope: context.$parent.$vnode.componentInstance.$el.getAttribute('data-vv-scope')
