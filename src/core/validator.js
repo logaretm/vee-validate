@@ -36,7 +36,9 @@ export default class Validator {
     this.reset = options.vm && isCallable(options.vm.$nextTick) ? (matcher) => {
       return new Promise(resolve => {
         options.vm.$nextTick(() => {
-          resolve(this._reset(matcher));
+          options.vm.$nextTick(() => {
+            resolve(this._reset(matcher));
+          });
         });
       });
     } : this._reset;
