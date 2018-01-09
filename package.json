@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Simple Vue.js input validation plugin",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",

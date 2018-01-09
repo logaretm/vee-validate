@@ -1,6 +1,6 @@
 /**
-  * vee-validate v2.0.0
-  * (c) 2017 Abdelrahman Awad
+  * vee-validate v2.0.1
+  * (c) 2018 Abdelrahman Awad
   * @license MIT
   */
 (function (global, factory) {
@@ -5903,7 +5903,9 @@ var Validator = function Validator (validations, options) {
   this.reset = options.vm && isCallable(options.vm.$nextTick) ? function (matcher) {
     return new Promise(function (resolve) {
       options.vm.$nextTick(function () {
-        resolve(this$1._reset(matcher));
+        options.vm.$nextTick(function () {
+          resolve(this$1._reset(matcher));
+        });
       });
     });
   } : this._reset;
@@ -6957,7 +6959,7 @@ var minimal$1 = {
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.0'
+  version: '2.0.1'
 };
 
 // rules plugin definition.
