@@ -1,6 +1,6 @@
 import Vue = require("vue")
 
-export class Configuration {
+export interface Configuration {
     locale?: string;
     delay?: number;
     errorBagName?: string;
@@ -16,7 +16,7 @@ export class Configuration {
     validity?: boolean;
 }
 
-export class FieldFlags {
+export interface FieldFlags {
     untouched: boolean;
     touched: boolean;
     dirty: boolean;
@@ -41,7 +41,7 @@ export class Field {
     update(options:object): void;
 }
 
-export class ErrorField {
+export interface ErrorField {
     field: string;
     msg: string;
     scope?: string;
@@ -69,12 +69,20 @@ export class ErrorBag {
 }
 
 export class FieldBag {
+    items: Field[];
     filter(matcher: {name?: string, scope?: string, id?: string}): Field[];
     find(matcher: {name?: string, scope?: string, id?: string}): Field;
+    map(fn: Function): Field[];
 }
 
-export class FieldFlagsBag {
+export interface FieldFlagsBag {
     [field: string]: FieldFlags;
+}
+
+export interface FieldMatchOptions {
+    id?: string;
+    scope?: string;
+    name?: string;
 }
 
 export class Validator {
@@ -91,7 +99,7 @@ export class Validator {
 
     constructor(validations: any, options: any);
     attach(name: string, checks: string|Object, options?: Object): Field;
-    reset(): void;
+    reset(matcher: FieldMatchOptions): Promise<void>;
     detach(name: string, scope?: string): void;
     extend(name: string, validator: Object|Function): void;
     flag(name: string, flags: Object): void;
@@ -99,7 +107,6 @@ export class Validator {
     remove(name: string): void;
     update(id: string, diff: Object): void;
     resume(): Validator;
-    setLocale(language?: string): void;
     localize(rootDictionary?: Object) :void;
     localize(language: string, dictionary?: Object) :void;
     setStrictMode(strictMode?: boolean): void;
@@ -109,7 +116,6 @@ export class Validator {
     static create(validations: Object, options: any): Validator;
     static extend(name: string, validator: Object|Function): void;
     static remove(name: string): void;
-    static setLocale(language?: string): void;
     static setStrictMode(strictMode?: boolean): void;
     static localize(rootDictionary: Object): void;
     static localize(language: string, dictionary?: Object): void;
@@ -118,3 +124,7 @@ export class Validator {
 export const version: string;
 
 export const install: Vue.PluginFunction<never>
+
+export const directive: Vue.DirectiveOptions;
+
+export const mixin: Vue.ComponentOptions;

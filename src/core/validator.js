@@ -20,7 +20,7 @@ export default class Validator {
   paused: boolean;
   ownerId: string | number;
   clean: () => void;
-  reset: () => Promise<void>;
+  reset: (matcher) => Promise<void>;
 
   constructor (validations?: MapObject, options?: MapObject = { vm: null, fastExit: true }) {
     this.strict = STRICT_MODE;
