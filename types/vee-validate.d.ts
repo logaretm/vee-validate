@@ -99,7 +99,7 @@ export class Validator {
 
     constructor(validations: any, options: any);
     attach(name: string, checks: string|Object, options?: Object): Field;
-    reset(matcher: FieldMatchOptions): Promise<void>;
+    reset(matcher?: FieldMatchOptions): Promise<void>;
     detach(name: string, scope?: string): void;
     extend(name: string, validator: Object|Function): void;
     flag(name: string, flags: Object): void;
@@ -126,5 +126,3 @@ export const version: string;
 export const install: Vue.PluginFunction<never>
 
 export const directive: Vue.DirectiveOptions;
-
-export const mixin: Vue.ComponentOptions;
