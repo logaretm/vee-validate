@@ -321,7 +321,8 @@ export default class Field {
       let el = null;
       // vue ref selector.
       if (selector[0] === '$') {
-        el = this.vm.$refs[selector.slice(1)];
+        const ref = this.vm.$refs[selector.slice(1)];
+        el = Array.isArray(ref) ? ref[0] : ref;
       } else {
         try {
           // try query selector

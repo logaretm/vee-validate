@@ -72,7 +72,7 @@ test('custom components targeting via $refs', async () => {
   wrapper.setData({
     d1: '10'
   });
-  wrapper.find(InputComponent).trigger('input');
+  wrapper.findAll(InputComponent).at(0).trigger('input');
   await flushPromises();
 
   expect(wrapper.vm.$validator.errors.first('f7')).toBe('The f7 confirmation does not match.');
@@ -85,6 +85,37 @@ test('custom components targeting via $refs', async () => {
   expect(wrapper.vm.$validator.errors.has('f7')).toBe(false);
   expect(wrapper.vm.$validator.flags.f7.valid).toBe(true);
 });
+
+// tests #1107
+test('custom components targeting via $ref in a v-for', async () => {
+  const wrapper = mount(TestComponent, { localVue: Vue });
+  wrapper.setData({
+    d3: '10'
+  });
+  wrapper.findAll(InputComponent).at(2).trigger('input');
+  await flushPromises();
+
+
+  expect(wrapper.vm.$validator.errors.first('f7_1')).toBe('The f7_1 confirmation does not match.');
+  expect(wrapper.vm.$validator.errors.first('f7_2')).toBe('The f7_2 confirmation does not match.');
+  expect(wrapper.vm.$validator.errors.first('f7_3')).toBe('The f7_3 confirmation does not match.');
+
+  wrapper.setData({
+    d4: '10'
+  });
+  wrapper.findAll(InputComponent).at(3).trigger('input');
+  wrapper.findAll(InputComponent).at(5).trigger('input');
+  wrapper.findAll(InputComponent).at(7).trigger('input');
+  await flushPromises();
+
+  expect(wrapper.vm.$validator.errors.has('f7_1')).toBe(false);
+  expect(wrapper.vm.$validator.flags.f7_1.valid).toBe(true);
+  expect(wrapper.vm.$validator.errors.has('f7_2')).toBe(false);
+  expect(wrapper.vm.$validator.flags.f7_2.valid).toBe(true);
+  expect(wrapper.vm.$validator.errors.has('f7_3')).toBe(false);
+  expect(wrapper.vm.$validator.flags.f7_3.valid).toBe(true);
+});
+
 
 test('fails silently if it cannot find the target field', async () => {
   const wrapper = mount(TestComponent, { localVue: Vue });
