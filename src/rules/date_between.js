@@ -13,9 +13,9 @@ export default (value, params) => {
     [min, max, format] = params;
   }
 
-  const minDate = parse(min, format);
-  const maxDate = parse(max, format);
-  const dateVal = parse(value, format);
+  const minDate = parse(String(min), format);
+  const maxDate = parse(String(max), format);
+  const dateVal = parse(String(value), format);
 
   if (!minDate || !maxDate || !dateVal) {
     return false;

@@ -37,3 +37,11 @@ test('checks if a date is between two other dates - all inclusive', () => {
   expect(validate('01/09/2016', ['01/09/2016', '20/09/2016', '[]', format])).toBe(true);
   expect(validate('20/09/2016', ['01/09/2016', '20/09/2016', '[]', format])).toBe(true);
 });
+
+// tests #1104
+test('checks against integers', () => {
+  const format = 'YYYY';
+
+  expect(validate(2015, ['2000', '2016', '()', format])).toBe(true);
+  expect(validate(2016, ['2000', '2016', '()', format])).toBe(false);
+});
