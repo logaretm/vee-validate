@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.2
+  * vee-validate v2.0.3
   * (c) 2018 Abdelrahman Awad
   * @license MIT
   */
@@ -27,18 +27,6 @@ var isNullOrUndefined = function (value) {
  * Sets the data attribute.
  */
 var setDataAttribute = function (el, name, value) { return el.setAttribute(("data-vv-" + name), value); };
-
-/**
- * Creates a proxy object if available in the environment.
- */
-var createProxy = function (target, handler) {
-  /* istanbul ignore next */
-  if (typeof Proxy === 'undefined') {
-    return target;
-  }
-
-  return new Proxy(target, handler);
-};
 
 /**
  * Creates the default flags object.
@@ -1614,7 +1602,8 @@ Field.prototype.updateDependencies = function updateDependencies () {
     var el = null;
     // vue ref selector.
     if (selector[0] === '$') {
-      el = this$1.vm.$refs[selector.slice(1)];
+      var ref$1 = this$1.vm.$refs[selector.slice(1)];
+      el = Array.isArray(ref$1) ? ref$1[0] : ref$1;
     } else {
       try {
         // try query selector
@@ -2726,18 +2715,6 @@ Object.defineProperties( Validator, staticAccessors );
 
 // 
 
-/* istanbul ignore next */
-var fakeFlags = createProxy({}, {
-  get: function get (target, key) {
-    // is a scope
-    if (String(key).indexOf('$') === 0) {
-      return fakeFlags;
-    }
-
-    return createFlags();
-  }
-});
-
 /**
  * Checks if a parent validator instance was requested.
  */
@@ -2815,10 +2792,6 @@ var mixin = {
       return this.$validator.errors;
     };
     this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
-      if (!Object.keys(this.$validator.flags).length) {
-        return fakeFlags;
-      }
-
       return this.$validator.flags;
     };
   },
@@ -3067,7 +3040,7 @@ var index_minimal = {
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.2'
+  version: '2.0.3'
 };
 
 return index_minimal;
