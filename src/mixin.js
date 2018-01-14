@@ -1,26 +1,8 @@
 import Validator from './core/validator';
 import Config from './config';
-import {
-  isObject,
-  createProxy,
-  createFlags,
-  warn,
-  isBuiltInComponent
-} from './core/utils';
+import { isObject, warn, isBuiltInComponent } from './core/utils';
 
 // @flow
-
-/* istanbul ignore next */
-const fakeFlags = createProxy({}, {
-  get (target, key) {
-    // is a scope
-    if (String(key).indexOf('$') === 0) {
-      return fakeFlags;
-    }
-
-    return createFlags();
-  }
-});
 
 /**
  * Checks if a parent validator instance was requested.
@@ -99,10 +81,6 @@ export default {
       return this.$validator.errors;
     };
     this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
-      if (!Object.keys(this.$validator.flags).length) {
-        return fakeFlags;
-      }
-
       return this.$validator.flags;
     };
   },

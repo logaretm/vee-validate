@@ -368,14 +368,6 @@ test('checks if vee-validate is available globally.', () => {
   expect(i18Utils.isDefinedGlobally()).toBe(true);
 });
 
-test('creates a proxy if available', () => {
-  const obj = {};
-  const handler = {};
-
-  // returns the same object if no proxy is detected.
-  expect(utils.createProxy(obj, handler)  === obj).toBe(false);
-});
-
 describe('pareses date values', () => {
   const format = 'DD-MM-YYYY';
 

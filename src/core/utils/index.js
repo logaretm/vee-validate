@@ -18,18 +18,6 @@ export const isNullOrUndefined = (value: mixed): boolean => {
 export const setDataAttribute = (el: HTMLElement, name: string, value: string): void => el.setAttribute(`data-vv-${name}`, value);
 
 /**
- * Creates a proxy object if available in the environment.
- */
-export const createProxy = (target: Object, handler: Object) => {
-  /* istanbul ignore next */
-  if (typeof Proxy === 'undefined') {
-    return target;
-  }
-
-  return new Proxy(target, handler);
-};
-
-/**
  * Creates the default flags object.
  */
 export const createFlags = (): Object => ({
