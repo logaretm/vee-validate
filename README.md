@@ -113,6 +113,8 @@ You can find more information in the [contribution guide](CONTRIBUTING.md).
 - [Laravel 5.4 with Vue and Vee Validate (Windows)](https://medium.com/@kanokpit.skuberg/laravel-5-4-with-vue-and-vee-validate-windows-c3ff7f4cdabc) by [Noi Skuberg](https://medium.com/@kanokpit.skuberg)
 - [Vee-validate (Intro and Example)](https://medium.com/@ngLahin/vee-validate-intro-and-example-22d8b95e25e1) by [Hussain Muhammad Lahin](https://medium.com/@ngLahin)
 - [An imperative guide to forms in Vue.js](https://blog.logrocket.com/an-imperative-guide-to-forms-in-vue-js-7536bfa374e0) by [Olayinka Omole](https://blog.logrocket.com/@olayinka.omole).
+- [Template Driven Form Validation In Vue.js](https://scotch.io/tutorials/template-driven-form-validation-in-vuejs) by [Ogundipe Samuel Ayo](https://twitter.com/fucked_down)
+- [Make Validation Great Again! Vue form validation with vee validate](https://qiita.com/nickhall/items/d1043f3f9874c90b6f8e) by [Nick Hall](https://github.com/nickhall)
 
 ### Credits
 - Some validations/test scenarios are provided/based on [validator.js](https://github.com/chriso/validator.js).
