@@ -1,6 +1,7 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
+  _default: (field) => `${field} πρέπει να είναι έγκυρη τιμή.`,
   after: (field, [target]) => `${field} πρέπει να είναι μετά ${target}.`,
   alpha_dash: (field) => `${field} μπορεί να περιέχει αλφαριθμητικούς χαρακτήρες, παύλες και κάτω παύλες.`,
   alpha_num: (field) => `${field} πρέπει να περιέχει μόνο αλφαριθμητικούς χαρακτήρες.`,
@@ -19,7 +20,15 @@ const messages = {
   ext: (field) => `${field} πρέπει να είναι έγκυρο αρχείο.`,
   image: (field) => `${field} πρέπει να είναι εικόνα.`,
   in: (field) => `${field} πρέπει να είναι έγκυρη τιμή.`,
+  integer: (field) => `${field} πρέπει να είναι ακέραιος αριθμός.`,
   ip: (field) => `${field} πρέπει να είναι έγκυρη διεύθυνση IP.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `${field} πρέπει να είναι μεταξύ ${length} και ${max} χαρακτήρες.`;
+    }
+
+    return `${field} πρέπει να είναι ${length} χαρακτήρες.`;
+  },
   max: (field, [length]) => `${field} δεν πρέπει να υπερβαίνει τους ${length} χαρακτήρες.`,
   max_value: (field, [max]) => `${field} πρέπει να είναι ${max} ή λιγότερο.`,
   mimes: (field) => `${field} πρέπει να είναι έγκυρο αρχείο ΜΙΜΕ.`,
