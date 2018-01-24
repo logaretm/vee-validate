@@ -91,7 +91,7 @@ export class Validator {
 
     constructor(validations: any, options: any);
     attach(name: string, checks: string|Object, options?: Object): Field;
-    reset(): void;
+    reset(name: string): void;
     detach(name: string, scope?: string): void;
     extend(name: string, validator: Object|Function): void;
     flag(name: string, flags: Object): void;
