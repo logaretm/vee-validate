@@ -77,6 +77,11 @@ export class FieldFlagsBag {
     [field: string]: FieldFlags;
 }
 
+export interface FieldMatchOptions {
+    id?: string;
+    scope?: string;
+    name?: string;
+}
 export class Validator {
     errors: ErrorBag;
     fields: FieldBag;
@@ -91,7 +96,7 @@ export class Validator {
 
     constructor(validations: any, options: any);
     attach(name: string, checks: string|Object, options?: Object): Field;
-    reset(name: string): void;
+    reset(matcher: FieldMatchOptions): void;
     detach(name: string, scope?: string): void;
     extend(name: string, validator: Object|Function): void;
     flag(name: string, flags: Object): void;
