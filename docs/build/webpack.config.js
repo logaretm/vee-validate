@@ -44,6 +44,7 @@ let config = {
     page('rules'),
     page('localization'),
     page('advanced'),
+    page('configuration'),
     new FriendlyErrorsWebpackPlugin()
   ],
   module: {

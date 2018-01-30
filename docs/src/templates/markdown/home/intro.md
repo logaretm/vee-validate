@@ -42,7 +42,7 @@ import VeeValidate from 'vee-validate';
 Vue.use(VeeValidate);
 ```
 
-## [Basic Example](#basic-example)
+## [First Example](#first-example)
 
 All you need is to add the `v-validate` directive to the input you wish to validate.  
 

@@ -1,0 +1,13 @@
+extends layout/app.pug
+
+block vars
+  - const meta = {
+  -   title: 'Configuration | VeeValidate',
+  -   description: 'Customize VeeValidate behaviors'
+  - };
+
+block content
+  include:markdown-it(langPrefix='highlight-' html=true) markdown/configuration/config.md
+  include:markdown-it(langPrefix='highlight-') markdown/configuration/messages.md
+  include:markdown-it(langPrefix='highlight-') markdown/configuration/attributes.md
+

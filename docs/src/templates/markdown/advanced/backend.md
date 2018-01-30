@@ -1,6 +1,6 @@
 ## [Backend Validation](#backend-example)
 
-You might need to also use your Laravel/Express or whatever backend as your validation provider for numerous reasons, like checking if an email is unique since it is hard to implement on the client-side, we can acheive this using a custom rule and the `reasoning` feature:
+You might need to also use your Laravel/Express or whatever back-end as your validation provider for numerous reasons, like checking if an email is unique since it is hard to implement on the client-side, we can achieve this using a custom rule and the `reasoning` feature:
 
 ```js
 import axios from 'axios'; // great ajax library.
