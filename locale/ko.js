@@ -20,14 +20,14 @@ const messages = {
   ext: (field) => `${field}항목은 유효한 파일이어야 합니다.`,
   image: (field) => `${field}항목은 이미지 파일이어야 합니다.`,
   in: (field) => `${field}항목의 값은 유효한 값이어야 합니다.`,
-  integer: (field) => `${field}항목의 값은 정수이어야 합니다.`
+  integer: (field) => `${field}항목의 값은 정수이어야 합니다.`,
   ip: (field) => `${field}항목의 값은 유효한 IP(ipv4) 주소이어야 합니다.`,
   length: (field, [length, max]) => {
     if (max) {
       return `${field}항목의 값은 ${length}자에서 ${max}자이어야 합니다.`
     }
     return `${field}항목의 값은 ${length}자이어야 합니다.`
-  }
+  },
   max: (field, [length]) => `${field}항목의 값은 최대 ${length}글자이어야 합니다.`,
   max_value: (field, [max]) => `${field}항목의 값은 ${max} 이하이어야 합니다.`,
   mimes: (field) => `${field}는 유효한 파일 형식의 파일이어야 합니다.`,
@@ -38,7 +38,7 @@ const messages = {
   regex: (field) => `${field}항목은 형식에 맞지 않습니다.`,
   required: (field) => `${field}항목은 필수 정보입니다.`,
   size: (field, [size]) => `${field}항목의 크기는 ${formatFileSize(size)}보다 작아야 합니다.`,
-  url: (field) => `${field}항목의 값은 유효한 주소(URL)가 아닙니다.`
+  url: (field) => `${field}항목의 값은 유효한 주소(URL)가 아닙니다.`,
 };
 
 const locale = {
