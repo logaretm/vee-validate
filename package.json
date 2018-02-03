@@ -106,5 +106,8 @@
       "^.+\\.jsx?$": "babel-jest",
       ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest"
     }
+  },
+  "dependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.26.0"
   }
 }
