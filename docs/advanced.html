@@ -34,7 +34,7 @@ export default {
   // ...
 };
 </code></pre>
-<p>You may also want to stop all automatic injections, and control when a components gets the ability to validate:</p>
+<p>You may also want to stop all automatic injections, and control when a component gets the ability to validate:</p>
 <pre><code class="highlight-js">import Vue from 'vue';
 import VeeValidate from 'vee-validate';
 
@@ -104,8 +104,8 @@ Validator.extend('unique', {
   }
 });
 </code></pre>
-<p>The following demo shows how would it work in action, note that it will only trigger if the user entered a valid email since the validator early exits upon first failure.</p>
-<p>Since there is no real DB in this example, Its being simulated by a dynamic array.</p>
+<p>The following demo shows how it would work in action, note that it will only trigger if the user entered a valid email since the validator early exits upon first failure.</p>
+<p>Since there is no real DB in this example, it's being simulated by a dynamic array.</p>
 <code-example><div slot="example"><backend-example> </backend-example></div><div slot="js">import { Validator } from 'vee-validate';
 
 export default {

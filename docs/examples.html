@@ -46,7 +46,7 @@ ga('send', 'pageview');
 };
 </code></pre>
 <blockquote>
-<p>The expression for both the arg and the <code>v-model</code> directive must be a simple dot notation expression, and that expression must exist on the instance. For example having inputs in a loop bound by the iterator won't work properly and will instead use the traditional listeners.</p>
+<p>The expression for both the arg and the <code>v-model</code> directive must be a simple dot notation expression, and that expression must exist on the instance. For example, having inputs in a loop bound by the iterator won't work properly and will instead use the traditional listeners.</p>
 </blockquote>
 <p>As you can see, the arg is <code>name</code> which tells <code>v-validate</code> to watch for whenever the name changes, this example might be a little bit silly, but you might need this functionality.</p>
 <blockquote>
@@ -103,7 +103,7 @@ ga('send', 'pageview');
     &lt;/div&gt;
 &lt;/div&gt;
 </div></code-example><h2><a href="#validate-form">Validate Form Before Submit</a></h2>
-<p>You may want to trigger all inputs validation before submitting a form, maybe display an alert or prevent form submission if any errors are detected. This can be easily acheived using <code>validateAll</code> method.</p>
+<p>You may want to trigger all inputs validation before submitting a form, maybe display an alert or prevent form submission if any errors are detected. This can be easily achieved using <code>validateAll</code> method.</p>
 <code-example><div slot="example"><form-example></form-example></div><div slot="js">export default {
   name: 'form-example',
   data: () => ({
@@ -224,9 +224,9 @@ export default {
     &lt;/div&gt;
 &lt;/div&gt;
 </div></code-example><h2><a href="#scope-example">Scopes</a></h2>
-<p>By default the scope of the validator is the same as the Vue instance that owns it, sometimes you may have multiple fields within the same component, they are in different forms and serve different purposes. The validator will then treat those two fields as the same field which will cause problems detecting the input and displaying the errors.</p>
-<p>You can tell the validator to scope the fields by adding a <code>data-vv-scope</code> attribute which tells the validator the name of the scope. Those fields will be then identified using their name and their scope, you can have inputs with the same name in different scopes, and you can display, clear and validate those scopes indepently.</p>
-<p>For convienece you may add the <code>data-vv-scope</code> attribute on the form that owns the inputs, you don't have to add the attribute on every input. You can also pass <code>scope</code> property to the validator expression.</p>
+<p>By default, the scope of the validator is the same as the Vue instance that owns it. Sometimes you may have multiple fields within the same component, they are in different forms and serve different purposes. The validator will then treat those two fields as the same field which will cause problems detecting the input and displaying the errors.</p>
+<p>You can tell the validator to scope the fields by adding a <code>data-vv-scope</code> attribute which tells the validator the name of the scope. Those fields will be then identified using their name and their scope, you can have inputs with the same name in different scopes, and you can display, clear and validate those scopes independently.</p>
+<p>For convenience, you may add the <code>data-vv-scope</code> attribute on the form that owns the inputs, you don't have to add the attribute on every input. You can also pass <code>scope</code> property to the validator expression.</p>
 <code-example><div slot="example"><scopes-example></scopes-example></div><div slot="js">export default {
   name: 'scopes-example',
   methods: {
@@ -294,9 +294,9 @@ export default {
     &lt;/form&gt;
 &lt;/div&gt;
 </div></code-example><h2><a href="#coupon-example">Async Validation</a></h2>
-<p>Let's say you want to validate something specific to your app domain that isn't provided by the default validators, for example lets validate a user coupon on checkout. If it is a valid coupon then you discount it for him, if not he pays the full price :(</p>
+<p>Let's say you want to validate something specific to your app domain that isn't provided by the default validators. For example, lets validate a user coupon on checkout. If it is a valid coupon then you discount it for him, if not he pays the full price :(</p>
 <p>Here is a list of our valid coupons: <code>SUMMER2016</code>, <code>WINTER2016</code> and <code>FALL2016</code>.</p>
-<p>Each of which gives 20% off. The process of validation is as follows: we take the input and send it to backend, the response should determine if the coupon is valid which is up to you. here I'm simulating async behavior using <code>setTimeout</code>.</p>
+<p>Each of which gives 20% off. The process of validation is as follows: we take the input and send it to backend, the response should determine if the coupon is valid which is up to you. Here I'm simulating async behavior using <code>setTimeout</code>.</p>
 <p><code>Vee-Validate</code> allows the usage of async validators, but it requires them to return a promise that resolves with an object containing the property <code>valid</code> which should equal a boolean state of the validation status.</p>
 <code-example><div slot="example"><coupon-example></coupon-example></div><div slot="js">import { Validator } from 'vee-validate';
 
@@ -359,7 +359,7 @@ export default {
     &lt;/form&gt;
 &lt;/div&gt;
 </div></code-example><h2><a href="#radio-buttons-example">Radio Buttons</a></h2>
-<p>vee-validate also supports validating radio buttons, you can use whatever rules you want on them but only few rules makes sense, like <code>required</code>. One thing to note in this example is that you only need to use the directive on one of the radio buttons, you don't need to attach it on every one, they all must share the same name though.</p>
+<p>vee-validate also supports validating radio buttons, you can use whatever rules you want on them but only few rules make sense, like <code>required</code>. One thing to note in this example is that you only need to use the directive on one of the radio buttons, you don't need to attach it on every one, they all must share the same name though.</p>
 <p>In the following example, the third value is not included using the rule <code>in:1,2</code></p>
 <code-example><div slot="example"><radio-buttons-example></radio-buttons-example></div><div slot="js">export default {
   name: 'radio-buttons-example',
@@ -426,7 +426,7 @@ export default {
     &lt;/p&gt;
 &lt;/form&gt;
 </div></code-example><h2><a href="#checkbox-example">Checkbox Example</a></h2>
-<p>vee-validate also supports validating checkboxes, however like radio buttons the extent of the support is limited by the input nature itself, but all rules work regardless. like the radio buttons you only have attach the validator directive and attributes on the checkbox under validation if there are multiple checkboxes (group) you only have to add the directive on one of them.<br>
+<p>vee-validate also supports validating checkboxes. However, like radio buttons, the extent of the support is limited by the input nature itself, but all rules work regardless. Like for radio buttons, you only have to attach the validator directive and attributes on the checkbox under validation. If there are multiple checkboxes (group), you only have to add the directive on one of them.<br>
 If multiple values are selected, the validator will apply the validations on each checkbox.</p>
 <p>In the following example, the most basic use of checkboxes validation is the terms and conditions agreement that nobody reads.</p>
 <code-example><div slot="example"><checkbox-example></checkbox-example></div><div slot="js">const terms = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit ';
@@ -470,10 +470,10 @@ export default {
     &lt;/p&gt;
 &lt;/div&gt;
 </div></code-example><h2><a href="#selectors-example">Error Selectors</a></h2>
-<p>The <code>errors.first</code> and <code>errors.has</code> methods don't only provide you with a way to fetch the first input for a specific field, they also allow you to filter it down further to a specific rule, using the following syntax <code>'field:rule'</code>, even more they allow you filter it down to a specific scope using <code>'scope.field'</code>, so if you want to display the first error for the email field in the newsletter form but only if the rule is email</p>
+<p>The <code>errors.first</code> and <code>errors.has</code> methods don't only provide you with a way to fetch the first input for a specific field, they also allow you to filter it down further to a specific rule, using the following syntax <code>'field:rule'</code>, even more, they allow you to filter it down to a specific scope using <code>'scope.field'</code>, so if you want to display the first error for the email field in the newsletter form but only if the rule is email</p>
 <pre><code class="highlight-js">errors.first('newsletter.email:email');
 </code></pre>
-<p>In the example below, you have a collection of errors and you may use the input to filter down the errors, note that currently it is unlikely that the error bag will have multiple errors of the same input since it early exit upon first failure.</p>
+<p>In the example below, you have a collection of errors and you may use the input to filter down the errors. Note that it is currently unlikely that the error bag will have multiple errors of the same input since it exits early upon first failure.</p>
 <code-example><div slot="example"><selectors-example></selectors-example></div><div slot="js">export default {
   name: 'selectors-example',
   data: () => ({
@@ -516,7 +516,7 @@ export default {
     &lt;/div&gt;
 &lt;/div&gt;
 </div></code-example><h2><a href="#component-example">Custom Component Validation</a></h2>
-<p>You might have a custom component that you want to treat it as an input, like a custom input field, it would have its own validator instance but you want to validate it in the parent scope, because it is simply just an input with some whistles on top. You can achieve this by using the directive normally like you would on a regular input element, but you must make sure that your component satisfies the following:</p>
+<p>You might have a custom component that you want to treat as an input. Like a custom input field, it would have its own validator instance, but you want to validate it in the parent scope because it is simply just an input with some whistles on top. You can achieve this by using the directive normally like you would on a regular input element, but you must make sure that your component satisfies the following:</p>
 <ul>
 <li>Must emit an <code>input</code> event whenever the value changes.</li>
 <li>Should have a <code>data-vv-name</code> or a <code>name</code> attribute defined.</li>
