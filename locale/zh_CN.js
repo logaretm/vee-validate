@@ -11,7 +11,7 @@ const messages = {
   confirmed: (field, [confirmedField]) => ` ${field} 不能和${confirmedField}匹配.`,
   date_between: (field, [min, max]) => ` ${field}必须在${min}和${max}之间.`,
   date_format: (field, [format]) => ` ${field}必须在在${format}格式中.`,
-  decimal: (field, [decimals = '*'] = []) => ` ${field} 必须是数字的而且能够包含${decimals === '*' ? '' : decimals} 小数点.`,
+  decimal: (field, [decimals = '*'] = []) => ` ${field} 必须是数字的而且能够保留${decimals === '*' ? '' : decimals} 位小数.`,
   digits: (field, [length]) => ` ${field} 必须是数字，且精确到 ${length}数`,
   dimensions: (field, [width, height]) => ` ${field}必须是 ${width} 像素到 ${height} 像素.`,
   email: (field) => ` ${field} 必须是有效的邮箱.`,
