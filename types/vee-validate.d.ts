@@ -59,9 +59,11 @@ export class ErrorBag {
     collect(field?: string, scope?: string, map?: boolean): any;
     count(): number;
     first(field: string, scope?: string): string;
+    _first(field: any, scope?: string): string;
     firstByRule(name: string, rule: string, scope?: string): any;
     firstRule(field: string, scope: string): string;
     has(field: string, scope?: string): boolean;
+    _has(field: any, scope?: string): boolean;
     remove(field: string, scope?: string): void;
     removeById(id: string): void;
     firstById(id: string): string;
