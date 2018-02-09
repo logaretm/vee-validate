@@ -266,14 +266,12 @@ export const removeClass = (el: HTMLElement, className: string) => {
  */
 export const toggleClass = (el: ?HTMLElement, className: ?string | ?string[], status: boolean) => {
   if (!el || !className) return;
-  
+
   if (Array.isArray(className)) {
-      className.forEach(function (item) {
-        toggleClass(el, item, status);
-      });
-      return;
+    className.forEach(item => toggleClass(el, item, status));
+    return;
   }
-  
+
   if (status) {
     return addClass(el, className);
   }
