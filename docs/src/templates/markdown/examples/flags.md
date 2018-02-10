@@ -5,8 +5,8 @@ vee-validate includes few flags that could help you improve your user experience
 
 - `touched`: indicates that the field has been touched or focused.
 - `untouched`: indicates that the field has not been touched nor focused.
-- `dirty`: indicates that the field has been manipluated.
-- `pristine`: indicates that the field has not been manipluated.
+- `dirty`: indicates that the field has been manipulated.
+- `pristine`: indicates that the field has not been manipulated.
 - `valid`: indicates that the field has been validated at least once and that it passed the validation.
 - `invalid`: indicates that the field has been validated at least once and that it failed the validation.
 
