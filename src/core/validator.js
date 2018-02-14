@@ -28,7 +28,7 @@ export default class Validator {
 
     // We are running in SSR Mode. Do not keep a reference. It prevent garbage collection.
     if (typeof window !== 'undefined') {
-       ERRORS.push(this.errors);
+      ERRORS.push(this.errors);
     }
     this.fields = new FieldBag();
     this.flags = {};
