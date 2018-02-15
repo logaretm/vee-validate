@@ -49,6 +49,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
+  // eslint-disable-next-line
   VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 

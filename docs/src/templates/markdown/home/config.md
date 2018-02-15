@@ -10,12 +10,12 @@ import VeeValidate from 'vee-validate';
 
 const config = {
   errorBagName: 'errors', // change if property conflicts
-  fieldsBagName: 'fields', 
-  delay: 0, 
-  locale: 'en', 
-  dictionary: null, 
-  strict: true, 
-  classes: false, 
+  fieldsBagName: 'fields',
+  delay: 0,
+  locale: 'en',
+  dictionary: null,
+  strict: true,
+  classes: false,
   classNames: {
     touched: 'touched', // the control has been blurred
     untouched: 'untouched', // the control hasn't been blurred
@@ -28,7 +28,7 @@ const config = {
   inject: true,
   validity: false,
   aria: true,
-  i18n: null // the vue-i18n plugin instance,
+  i18n: null, // the vue-i18n plugin instance,
   i18nRootKey: 'validations' // the nested key under which the validation messsages will be located
 };
 

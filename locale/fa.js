@@ -4,8 +4,8 @@ const localizeSize = (size) => {
   const map = {
     Byte: 'بايت',
     KB: 'كيلوبايت',
-    GB: 'جيجابايت',
-    PB: 'بيتابايت'
+    GB: 'گیگابايت',
+    PB: 'پتابايت'
   };
 
   return formatFileSize(size).replace(/(Byte|KB|GB|PB)/, m => {
