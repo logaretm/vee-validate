@@ -8,8 +8,8 @@ const Vue = createLocalVue();
 Vue.use(VeeValidate, {
   classes: true,
   classNames: {
-    valid: 'is-valid',
-    invalid: 'is-invalid'
+    valid: ['is-valid', 'text-green'],
+    invalid: ['is-invalid', 'text-red']
   }
 });
 
@@ -32,7 +32,9 @@ test('watches input value on input and blur', async () => {
   expect(input.hasClass('dirty')).toBe(false);
 
   expect(input.hasClass('is-valid')).toBe(false); // triggered by blur
+  expect(input.hasClass('text-green')).toBe(false); // triggered by blur
   expect(input.hasClass('is-invalid')).toBe(true);
+  expect(input.hasClass('text-red')).toBe(true);
 
   input.trigger('input');
   await flushPromises();
@@ -41,12 +43,16 @@ test('watches input value on input and blur', async () => {
   expect(input.hasClass('dirty')).toBe(true);
 
   expect(input.hasClass('is-valid')).toBe(false); // triggered by blur
+  expect(input.hasClass('text-green')).toBe(false); // triggered by blur
   expect(input.hasClass('is-invalid')).toBe(true);
+  expect(input.hasClass('text-red')).toBe(true);
 
   input.element.value = '10';
   input.trigger('input');
   await flushPromises();
 
   expect(input.hasClass('is-valid')).toBe(true); // triggered by blur
+  expect(input.hasClass('text-green')).toBe(true); // triggered by blur
   expect(input.hasClass('is-invalid')).toBe(false);
+  expect(input.hasClass('text-red')).toBe(false);
 });

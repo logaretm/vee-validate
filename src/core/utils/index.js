@@ -264,8 +264,13 @@ export const removeClass = (el: HTMLElement, className: string) => {
 /**
  * Adds or removes a class name on the input depending on the status flag.
  */
-export const toggleClass = (el: ?HTMLElement, className: ?string, status: boolean) => {
+export const toggleClass = (el: ?HTMLElement, className: ?string | ?string[], status: boolean) => {
   if (!el || !className) return;
+
+  if (Array.isArray(className)) {
+    className.forEach(item => toggleClass(el, item, status));
+    return;
+  }
 
   if (status) {
     return addClass(el, className);
