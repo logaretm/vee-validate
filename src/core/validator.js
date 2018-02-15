@@ -25,7 +25,11 @@ export default class Validator {
   constructor (validations?: MapObject, options?: MapObject = { vm: null, fastExit: true }) {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
-    ERRORS.push(this.errors);
+
+    // We are running in SSR Mode. Do not keep a reference. It prevent garbage collection.
+    if (typeof window !== 'undefined') {
+      ERRORS.push(this.errors);
+    }
     this.fields = new FieldBag();
     this.flags = {};
     this._createFields(validations);
