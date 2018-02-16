@@ -1,5 +1,18 @@
 import Vue = require("vue")
 
+declare enum ValidatorResolveStrategy {
+    new = 'new',
+    inherit = 'inherit'
+}
+
+export interface VeeValidateComponentOptions {
+    validator?: ValidatorResolveStrategy;
+    name?: () => string;
+    value?: () => string;
+    rejectsFalse?: boolean;
+    events?: string;
+}
+
 export interface Configuration {
     locale?: string;
     delay?: number;
