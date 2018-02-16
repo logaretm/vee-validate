@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.3
+  * vee-validate v2.0.4
   * (c) 2018 Abdelrahman Awad
   * @license MIT
   */
@@ -279,6 +279,11 @@ var removeClass = function (el, className) {
  */
 var toggleClass = function (el, className, status) {
   if (!el || !className) { return; }
+
+  if (Array.isArray(className)) {
+    className.forEach(function (item) { return toggleClass(el, item, status); });
+    return;
+  }
 
   if (status) {
     return addClass(el, className);
@@ -595,7 +600,11 @@ ErrorBag.prototype.first = function first (field, scope) {
     var this$1 = this;
     if ( scope === void 0 ) scope = null;
 
-  field = !isNullOrUndefined(field) ? String(field) : field;
+  if (isNullOrUndefined(field)) {
+    return null;
+  }
+
+  field = String(field);
   var selector = this._selector(field);
   var scoped = this._scope(field);
 
@@ -1983,7 +1992,11 @@ var Validator = function Validator (validations, options) {
 
   this.strict = STRICT_MODE;
   this.errors = new ErrorBag();
-  ERRORS.push(this.errors);
+
+  // We are running in SSR Mode. Do not keep a reference. It prevent garbage collection.
+  if (typeof window !== 'undefined') {
+    ERRORS.push(this.errors);
+  }
   this.fields = new FieldBag();
   this.flags = {};
   this._createFields(validations);
@@ -6918,7 +6931,7 @@ var mapFields = function (fields) {
   }, {});
 };
 
-var version = '2.0.3';
+var version = '2.0.4';
 
 var rulesPlugin = function (ref) {
   var Validator$$1 = ref.Validator;
