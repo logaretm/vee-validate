@@ -1,4 +1,4 @@
-## [Flags](#flags-example)
+## [Flags](#flags)
 
 vee-validate includes few flags that could help you improve your user experience, each field under validation has its own set of flags which are:
 
@@ -136,4 +136,3 @@ this.$emit('input', value);
 this.$emit('focus'); 
 ```
 Here is an example that displays those flags, intereact with the input and watch the flags change accordingly:
-

@@ -6,30 +6,37 @@ You don't have to do anything fancy in your app: Most of the work goes into the 
 
 Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object.
 
-
 Currently there are over 20 validation rules available in the plugin. This plugin is inspired by [PHP Framework Laravel's validation syntax](https://laravel.com/).  
 
+## [Getting started](#getting-started)
 
-## [Installation](#installation)
+### [Installation](#installation)
 
 You can install this plugin via [npm](#npm) or via a [CDN](#cdn).
 
-### [npm](#npm)
+#### [npm](#npm)
 
 ```bash
 npm install vee-validate --save
 ```
 
-### [CDN](#cdn)
+#### [CDN](#cdn)
 
-- [jsdelivr cdn](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js)
-- [unpkg](https://unpkg.com/vee-validate@2.0.0-rc.7)
+```html
+  <!-- jsdelivr cdn -->
+  <script src="https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js"></script>
+
+  <!-- unpkg -->
+  <script src="https://unpkg.com/vee-validate@2.0.0-rc.7)"></script>
+```
+
+### [Usage](#usage)
 
 ```html
   <script src="path/to/vue.js"></script>
   <script src="path/to/vee-validate.js"></script>
   <script>
-    Vue.use(VeeValidate); // good to go. 
+    Vue.use(VeeValidate); // good to go.
   </script>
 ```
 
@@ -42,8 +49,8 @@ import VeeValidate from 'vee-validate';
 Vue.use(VeeValidate);
 ```
 
-## [Basic Example](#basic-example)
+### [Basic Example](#basic-example)
 
-All you need is to add the `v-validate` directive to the input you wish to validate.  
+All you need is to add the `v-validate` directive to the input you wish to validate.
 
 Then, pass to the directive a `rules` string which contains a list of validation rules separated by a pipe '`|`'. For the following example the validation rules are straight forward. Use `required` to indicate that the field is required, and `email` to indicate that the field must be an email. To combine both rules we assign the string value `required|email` to the `v-validate` expression value.

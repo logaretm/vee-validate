@@ -7,7 +7,11 @@ block vars
   - };
 
 block content
-  include:markdown-it(html=true langPrefix="highlight-") markdown/api.md
-  
+  include:markdown-it(html=true langPrefix="highlight-") markdown/api/v-validate.md
+  include:markdown-it(html=true langPrefix="highlight-") markdown/api/data-attributes.md
+  include:markdown-it(html=true langPrefix="highlight-") markdown/api/render-errors.md
+  include:markdown-it(html=true langPrefix="highlight-") markdown/api/error-bag.md
+
+  include:markdown-it(html=true langPrefix="highlight-") markdown/api/validator.md
   +example('ValidatorExample')
     validator-example

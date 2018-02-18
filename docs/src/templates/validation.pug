@@ -1,0 +1,18 @@
+extends layout/app.pug
+
+block vars
+  - const meta = {
+  -   title: 'Validations | VeeValidate',
+  -   description: 'The available validation rules'
+  - };
+
+block content
+  include:markdown-it(langPrefix="highlight-") markdown/validation/syntax.md
+  include:markdown-it(html=true) markdown/partials/_rules.md
+  .rules
+    include:markdown-it(html=true langPrefix="highlight-") markdown/validation/validations.md
+  include:markdown-it(langPrefix="highlight-") markdown/validation/custom.md
+
+  include:markdown-it(html=true langPrefix="highlight-") markdown/validation/flags.md
+  +example('Flags')
+    flags-example
