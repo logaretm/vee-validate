@@ -20,7 +20,7 @@ export default {
 };
 ```
 
-> The expression for both the arg and the `v-model` directive must be a simple dot notation expression, and that expression must exist on the instance. For example having inputs in a loop bound by the iterator won't work properly and will instead use the traditional listeners.
+> The expression for both the arg and the `v-model` directive must be a simple dot notation expression, and that expression must exist on the instance. For example, having inputs in a loop bound by the iterator won't work properly and will instead use the traditional listeners.
 
 As you can see, the arg is `name` which tells `v-validate` to watch for whenever the name changes, this example might be a little bit silly, but you might need this functionality.
 

@@ -1,4 +1,5 @@
-> Date validators always require the `date_format` rule to be always present ([or globally set](https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.7)) and must preceed them in the rules order.
+> Date validators require the `date_format` rule to always be present ([or globally set](https://github.com/baianat/vee-validate/releases/tag/2.0.0-rc.7)) and must preceed them in the rules order.
+
 
 ### [after:{target},{inclusion?}](#rule-after)
 
@@ -105,7 +106,7 @@ The field under validation must be a valid date in the specified format. This ru
 
 ### [decimal:{decimals?}](#rule-decimal)
 
-The field under validation must be numeric and may contain the specified amount of decimal point.
+The field under validation must be numeric and may contain the specified amount of decimal points.
 
 - `decimals:` The maximum allowed number of decimal point numbers. Not passing the decimals will accept numeric data which may or may not contain decimal point numbers.
 
@@ -114,7 +115,7 @@ The field under validation must be numeric and may contain the specified amount 
 
 ### [digits:{length}](#rule-digits)
 
-The field under validation must be numeric and have the specified number of digit.
+The field under validation must be numeric and have the specified number of digits.
 
 - `length:` The number of digits.
 
@@ -123,7 +124,7 @@ The field under validation must be numeric and have the specified number of digi
 
 ### [dimensions:{width},{height}](#rule-dimensions)
 
-The file added to the field under validation must be an image (jpg,svg,jpeg,png,bmp,gif) have the exact specified dimension.
+The file added to the field under validation must be an image (jpg,svg,jpeg,png,bmp,gif) having the exact specified dimension.
 
 - `width:` The width of the image.
 - `height:` The height of the image.
@@ -140,7 +141,7 @@ The field under validation must be a valid email.
 
 ### [ext:[extensions]](#rule-ext)
 
-The file added the field under validation must have one of the extensions specified.
+The file added to the field under validation must have one of the extensions specified.
 
 - `extensions:` Comma separated list of extensions. ex: `ext:jpg,png,bmp,svg
 
@@ -149,7 +150,7 @@ The file added the field under validation must have one of the extensions specif
 
 ### [image](#rule-image)
 
-The file added the field under validation must have an image mime type (image/*).
+The file added to the field under validation must have an image mime type (image/*).
 
 <input v-validate="'image'" data-vv-as="image" name="image_field" type="file">
 <span v-show="errors.has('image_field')" class="help is-danger">{{ errors.first('image_field') }}</span>
@@ -178,7 +179,7 @@ The field under validation must have a string that is a valid ipv4 value.
 
 ### [is:{value}](#rule-is)
 
-The field under validation must be equal to the first argument passed, uses `===` for equality checks. This rule is useful for confirming passwords when used in object form. Note that using the string format will cause any arguments to be parsed as strings, So use the object format when using this rule.
+The field under validation must be equal to the first argument passed, uses `===` for equality checks. This rule is useful for confirming passwords when used in object form. Note that using the string format will cause any arguments to be parsed as strings, so use the object format when using this rule.
 
 - `value:` A value of anytype to be compared against the field value.
 
@@ -198,7 +199,7 @@ The field under validation length may not exceed the specified length.
 
 ### [max_value:{value}](#rule-max_value)
 
-The field under validation must be numeric value and must not be greater than the specified value.
+The field under validation must be a numeric value and must not be greater than the specified value.
 
 - `value:` A numeric value representing the greatest value allowed.
 
@@ -228,7 +229,7 @@ The field under validation length should not be less than the specified length.
 
 ### [min_value:{value}](#rule-min_value)
 
-The field under validation must be numeric value and must not be less than the specified value.
+The field under validation must be a numeric value and must not be less than the specified value.
 
 - `value:` A numeric value representing the lowest value allowed.
 
@@ -271,14 +272,14 @@ The field under validation must match the specified regular expression.
 
 > You should not use the pipe '|' or commas ',' within your regular expression
 > when using the string rules format as it will cause a conflict with how
-> validators parsing work. You should use the object format of the rules
-> instead. Note that when using the object format in your HTML template you
+> validators parsing works. You should use the object format of the rules
+> instead. Note that when using the object format in your HTML template, you
 > need to escape all backslashes.
 > Example: `v-validate="{ required: true, regex: /\\.(js|ts)$/ }"`
 
 ### [required:{invalidateFalse?}](#rule-required)
 
-The field under validation must have a non-empty value. By default all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`. 
+The field under validation must have a non-empty value. By default, all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`. 
 
 By default, the boolean value of `false` will pass validate. Setting invalidateFalse to true will fail validation for false values. For example, using `v-validate="'required:true'"` is helpful to support pseudo-checkbox validations where the checkbox must be checked. Note that `<input type='checkbox' v-validate="'required'" />` automatically supports this scenario.
 
@@ -298,7 +299,7 @@ The file size added to the field under validation must not exceed the specified 
 
 The field under validation must be a valid url. Protocols are not required by default.
 
-- `require_protocol:` If the protocol should be required, false by default. passing anything will require it.
+- `require_protocol:` If the protocol should be required. It's set to false by default. Passing anything will require it.
 
 <input v-validate="'url:require_protocol'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('url_field') }" name="url_field" type="text" placeholder="Enter a url">
 <span v-show="errors.has('url_field')" class="help is-danger">{{ errors.first('url_field') }}</span>

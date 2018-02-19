@@ -2,7 +2,7 @@
 
 ### [Adding Fields](#validator-fields)
 
-The validator is injected to the Vue instance as `$validator` automatically. However it is also a standalone class and can be used separately for programmatically validating values. The constructor can optionally take an object to map each field name to a set of validations.
+The validator is injected to the Vue instance as `$validator` automatically. However, it is also a standalone class and can be used separately for programmatically validating values. The constructor can optionally take an object to map each field name to a set of validations.
 
 ```js
 import { Validator } from 'vee-validate';
@@ -30,7 +30,7 @@ validator.detach('email'); // you can also detach fields.
 
 ### [Validation](#validator-validate)
 
-After that you can validate values with `validate(field, value)` which returns a promise that resolves to a boolean.
+After that, you can validate values with `validate(field, value)` which returns a promise that resolves to a boolean.
 
 ```js
 validator.validate('email', 'foo@bar.com').then(result => {
@@ -55,13 +55,13 @@ validator.validateAll({ email: 'foo@bar.com', name: 'John Snow' }).then(result =
 });
 ```
 
-Returns a `Promise` The ErrorBag will be populated with any errors encountered, Throws if any error has been encountered. You can access the `errors` property directly which is an instance of the `ErrorBag`.
+Returns a `Promise` The ErrorBag will be populated with any errors encountered, throws if any error has been encountered. You can access the `errors` property directly which is an instance of the `ErrorBag`.
 
 ```js
 const errorBag = validator.errors;
 ```
 
-The more options you provide to `attach` method the greater the field capabilities increases, for example providing a `getter` function option will allow the validator the find the field value whenever it needs to, for example you will be able to call `validateAll` and `validate` without having to provide any values.
+The more options you provide to `attach` method, the greater the field capabilities increase. For example, providing a `getter` function option will allow the validator the find the field value whenever it needs to. So you will be able to call `validateAll` and `validate` without having to provide any values.
 
 ```js
 this.$validator.validate('field');
@@ -78,7 +78,7 @@ The validator instance can only generate messages for one locale at a time. But 
 validator.localize('ar');
 validator.locale = 'ar';
 ```
-> All validators share the same locale configuration. so any locale changes will update all validator instances across your app. For more information about how to overwrite messages and add new ones, please refer to the [custom messages](rules.html#custom-messages) section.
+> All validators share the same locale configuration. So any locale changes will update all validator instances across your app. For more information about how to overwrite messages and add new ones, please refer to the [custom messages](rules.html#custom-messages) section.
 
 ```js
 import { Validator } from 'vee-validate'; 

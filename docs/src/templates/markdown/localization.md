@@ -1,25 +1,25 @@
 ## [Translation](#translation)
 
 This plugin only comes with English messages to keep things small, but it was built with flexible message generation in mind.  
-The [English messages file](https://github.com/logaretm/vee-validate/blob/master/dist/locale/en.js) is an example on how you would structure those messages. Then you may want to update the validator dictionary, which should happen once in your app startup. still you may update them whenever you want in any point of your app, check the [dictionary](#attributes-dictionary) description below.
+The [English messages file](https://github.com/logaretm/vee-validate/blob/master/dist/locale/en.js) is an example on how you would structure those messages. Then you may want to update the validator dictionary, which should happen once in your app startup. Still, you may update them whenever you want at any point of your app, check the [dictionary](#attributes-dictionary) description below.
 
-> The messages shown in the provided locale files contains mostly functions, however your messages can also be strings depending on your needs, the included locales make use of field names and parameters provided, so they had to be functions.
+> The messages shown in the provided locale files contain mostly functions. However, your messages can also be strings depending on your needs, the included locales make use of field names and parameters provided, so they had to be functions.
 
 ## [Attributes (data-vv-as)](#attributes-data-vv-as)
 
-Seeing 'first_name' in your error messages can't be very good for your user experience, this plugin offer a couple of solutions: You can use the `data-vv-as` attribute on your field and give it a better name for your users, it would look like this:
+Seeing 'first_name' in your error messages can't be very good for your user experience, this plugin offers a couple of solutions: You can use the `data-vv-as` attribute on your field and give it a better name for your users, it would look like this:
 
 ```html
   <input v-validate data-vv-rules="alpha|min:3" data-vv-as="First Name" name="first_name" type="text">
 ```
 
-Now when any error message is generated for this input will use the `data-vv-as` value instead of the actual field name. This is also the same for binding expressions. While this is very useful for simple setups and displaying localized names, but it is only ideal for a single-locale page, for multi-localized pages and more advanced usages you might want to check the approach below.
+Now when any error message is generated for this input, it will use the `data-vv-as` value instead of the actual field name. This is also the same for binding expressions. While this is very useful for simple setups and displaying localized names, it is only ideal for a single-locale page. For multi-localized pages and more advanced usages you might want to check the approach below.
 
 ## [Attributes (Dictionary)](#attributes-dictionary)
 
-All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes, if the validator finds a localized attribute name for that field it will be used instead of the field name. Pretty much like `data-vv-as` but `data-vv-as` takes priority if both are found.
+All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes. If the validator finds a localized attribute name for that field, it will be used instead of the field name. Pretty much like `data-vv-as` but `data-vv-as` takes priority if both are found.
 
-Here is a little code example on how would you add support for your localized messages and attributes. Note that this is the entry point of your application.
+Here is a little code example on how you would add support for your localized messages and attributes. Note that this is the entry point of your application.
 
 ```js
 import Vue from 'vue';
@@ -66,7 +66,7 @@ Validator.localize('en'); // changes the locale
 // Merges the English dictionary and sets the current locale to English.
 Validator.localize('en', dictionary.en); 
 
-// Merge all defined languages in the dictionary but does not set the current locale.
+// Merges all defined languages in the dictionary but does not set the current locale.
 Validator.localize(dictionary); 
 ```
 
@@ -104,7 +104,7 @@ Validator.localize('ar', ar);
 Vue.use(VeeValidate);
 ```
 
-You must note that the locale files export the following object structure:
+You must note that the locale files exports the following object structure:
 
 ```js
 export default {
@@ -115,4 +115,4 @@ export default {
 };
 ```
 
-Also note that if imported via script tags they will automatically installed if `VeeValidate` is available globally.
+Also note that if imported via script tags, they will be automatically installed if `VeeValidate` is available globally.

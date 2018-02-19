@@ -25,11 +25,11 @@ data-* attributes provide an alternate interface for the plugin to specify what 
         </tr>
         <tr>
             <td class="is-method-name">data-vv-value-path</td>
-            <td>Specifies the value path within a component $data to retrive the component current value. Only used for components.</td>
+            <td>Specifies the value path within a component $data to retrieve the component current value. Only used for components.</td>
         </tr>
         <tr>
             <td class="is-method-name">data-vv-validate-on</td>
-            <td>Used to specify a list of event names separated by pipes, the default varies by the type of the input</td>
+            <td>Used to specify a list of event names separated by pipes, the default varies by the type of the input.</td>
         </tr>
     </tbody>
 </table>

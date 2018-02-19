@@ -28,7 +28,7 @@ const config = {
   inject: true,
   validity: false,
   aria: true,
-  i18n: null, // the vue-i18n plugin instance,
+  i18n: null, // the vue-i18n plugin instance
   i18nRootKey: 'validations' // the nested key under which the validation messsages will be located
 };
 
@@ -100,7 +100,7 @@ Vue.use(VeeValidate, config);
         <tr>
             <td class="is-method-name">events</td>
             <td>input|blur</td>
-            <td>Pipe separated list of the default event names that will be listened to, to trigger validation. If an empty string is provided it will disable all listeners.</td>
+            <td>Pipe separated list of the default event names that will be listened to, to trigger validation. If an empty string is provided, it will disable all listeners.</td>
         </tr>
         <tr>
             <td class="is-method-name">inject</td>

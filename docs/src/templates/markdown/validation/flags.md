@@ -11,7 +11,7 @@ vee-validate includes few flags that could help you improve your user experience
 - `invalid`: indicates that the field has been validated at least once and that it failed the validation.
 
 
-The flags are reactive objects, so you can build computed properties based on them. For example here is how you can tell if a form has been manipulated, say maybe to disable/enable a button.
+The flags are reactive objects, so you can build computed properties based on them. For example, here is how you can tell if a form has been manipulated, say maybe to disable/enable a button.
 
 ```js
 export default {
@@ -32,7 +32,8 @@ The global fields flags are accessed via objects like this:
 this.fields.name.dirty;
 ```
 
-However, for the scoped fields the **FieldBag** will group those fields in an property name that is prefixed by a `$` to indicate that it is a scope object:
+However, for the scoped fields, the **FieldBag** will group those fields in an property name that is prefixed by a `$` to indicate that it is a scope object:
+
 
 ```js
 // Is the 'name' field dirty? 
@@ -65,7 +66,7 @@ Here is what it would look like:
 
 Notice the additional checks before the actual flag check, this is because the flags aren't actually available until the `mounted()` life cycle event, so to avoid `created()` life cycle errors we need to add those checks.
 
-This can become quite tedious if you are referencing multiple flags, so It might be useful to use the `mapFields` helper, which is similair to Vuex's `mapGetters` and `mapActions` as it maps a field object to a computed property.
+This can become quite tedious if you are referencing multiple flags, so it might be useful to use the `mapFields` helper, which is similar to Vuex's `mapGetters` and `mapActions` as it maps a field object to a computed property.
 
 ```js
 import { mapFields } from 'vee-validate'
@@ -92,7 +93,7 @@ export default {
 }
 ```
 
-Note that scoped fields names in the array from is mapped to a non-nested name. and you can use the object spread operator to add the mapped fields to your existing computed components:
+Note that scoped fields names in the array from is mapped to a non-nested name, and you can use the object spread operator to add the mapped fields to your existing computed components:
 
 ```js
 import { mapFields } from 'vee-validate'
@@ -109,7 +110,7 @@ export default {
 }
 ```
 
-Additionally, In case you want to set the flags manually, you can use the `Validator.flag(fieldName, flagsObj)` method:
+Additionally, in case you want to set the flags manually, you can use the `Validator.flag(fieldName, flagsObj)` method:
 
 ```js
 // flag the field as valid and dirty.

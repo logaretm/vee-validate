@@ -2,7 +2,7 @@
 
 This is a plugin for [Vue.js](https://vuejs.org/) that allows you to validate input fields, and display errors, in an easy and powerful way.
 
-You don't have to do anything fancy in your app: Most of the work goes into the html. You only need to specify, for each input, what kind of validators should be used when the value changes. You will then get informed of the errors for each field.  
+You don't have to do anything fancy in your app. Most of the work goes into the html. You only need to specify, for each input, what kind of validators should be used when the value changes. You will then get informed of the errors for each field.
 
 Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object.
 
@@ -27,7 +27,7 @@ npm install vee-validate --save
   <script src="https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js"></script>
 
   <!-- unpkg -->
-  <script src="https://unpkg.com/vee-validate@2.0.0-rc.7)"></script>
+  <script src="https://unpkg.com/vee-validate@2.0.0-rc.7"></script>
 ```
 
 ### [Usage](#usage)

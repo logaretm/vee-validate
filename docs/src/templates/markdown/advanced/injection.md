@@ -37,7 +37,7 @@ export default {
 };
 ```
 
-You may also want to stop all automatic injections, and control when a components gets the ability to validate:
+You may also want to stop all automatic injections, and control when a component gets the ability to validate:
 
 ```js
 import Vue from 'vue';
