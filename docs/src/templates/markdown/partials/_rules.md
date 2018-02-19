@@ -5,16 +5,16 @@ There are more than 20 rules available to validate your inputs:
 <div class="columns is-multiline">
   <div class="column is-4"> 
 
-- [after](rules.html#rule-after)
-- [alpha](rules.html#rule-alpha)
-- [alpha_dash](rules.html#rule-alpha_dash)
-- [alpha_num](rules.html#rule-alpha_num)
-- [alpha_spaces](rules.html#rule-alpha_spaces)
-- [before](rules.html#rule-before)
-- [between](rules.html#rule-between)
-- [confirmed](rules.html#rule-confirmed)
-- [credit_card](rules.html#rule-credit_card)
-- [date_between](rules.html#rule-date_between)
+- [after](validation.html#rule-after)
+- [alpha](validation.html#rule-alpha)
+- [alpha_dash](validation.html#rule-alpha_dash)
+- [alpha_num](validation.html#rule-alpha_num)
+- [alpha_spaces](validation.html#rule-alpha_spaces)
+- [before](validation.html#rule-before)
+- [between](validation.html#rule-between)
+- [confirmed](validation.html#rule-confirmed)
+- [credit_card](validation.html#rule-credit_card)
+- [date_between](validation.html#rule-date_between)
 
   </div>
 
@@ -22,16 +22,16 @@ There are more than 20 rules available to validate your inputs:
 
 [comment]: #
 
-- [date_format](rules.html#rule-date_format)
-- [decimal](rules.html#rule-decimal)
-- [digits](rules.html#rule-digits)
-- [dimensions](rules.html#rule-dimensions)
-- [email](rules.html#rule-email)
-- [ext](rules.html#rule-ext)
-- [image](rules.html#rule-image)
-- [in](rules.html#rule-in)
-- [ip](rules.html#rule-ip)
-- [max](rules.html#rule-max)
+- [date_format](validation.html#rule-date_format)
+- [decimal](validation.html#rule-decimal)
+- [digits](validation.html#rule-digits)
+- [dimensions](validation.html#rule-dimensions)
+- [email](validation.html#rule-email)
+- [ext](validation.html#rule-ext)
+- [image](validation.html#rule-image)
+- [in](validation.html#rule-in)
+- [ip](validation.html#rule-ip)
+- [max](validation.html#rule-max)
 
 
   </div>
@@ -40,16 +40,16 @@ There are more than 20 rules available to validate your inputs:
 
 [comment]: #
 
-- [max_value](rules.html#rule-max_value)
-- [mimes](rules.html#rule-mimes)
-- [min](rules.html#rule-min)
-- [min_value](rules.html#rule-min_value)
-- [not_in](rules.html#rule-not_in)
-- [numeric](rules.html#rule-numeric)
-- [regex](rules.html#rule-regex)
-- [required](rules.html#rule-required)
-- [size](rules.html#rule-size)
-- [url](rules.html#rule-url)
+- [max_value](validation.html#rule-max_value)
+- [mimes](validation.html#rule-mimes)
+- [min](validation.html#rule-min)
+- [min_value](validation.html#rule-min_value)
+- [not_in](validation.html#rule-not_in)
+- [numeric](validation.html#rule-numeric)
+- [regex](validation.html#rule-regex)
+- [required](validation.html#rule-required)
+- [size](validation.html#rule-size)
+- [url](validation.html#rule-url)
 
 
   </div>
