@@ -160,7 +160,7 @@ export default class Generator {
    */
   static resolveModel (binding, vnode) {
     if (binding.arg) {
-      return binding.arg;
+      return { expression: binding.arg };
     }
 
     const model = vnode.data.model || find(vnode.data.directives, d => d.name === 'model');
@@ -169,17 +169,18 @@ export default class Generator {
     }
 
     const watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression, vnode.context);
+    const lazy = !!(model.modifiers && model.modifiers.lazy);
     if (!watchable) {
-      return null;
+      return { expression: null, lazy };
     }
 
-    return model.expression;
+    return { expression: model.expression, lazy };
   }
 
   /**
-     * Resolves the field name to trigger validations.
-     * @return {String} The field name.
-     */
+   * Resolves the field name to trigger validations.
+   * @return {String} The field name.
+   */
   static resolveName (el, vnode) {
     let name = getDataAttribute(el, 'name');
 
@@ -209,9 +210,9 @@ export default class Generator {
    * Returns a value getter input type.
    */
   static resolveGetter (el, vnode, model) {
-    if (model) {
+    if (model && model.expression) {
       return () => {
-        return getPath(model, vnode.context);
+        return getPath(model.expression, vnode.context);
       };
     }
 
