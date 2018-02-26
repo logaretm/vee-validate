@@ -27,7 +27,33 @@ export class FieldFlags {
     required: boolean;
     pending: boolean;
 }
-
+export interface FieldOptions {
+    name: string;
+    alias?: string;
+    aria?: boolean;
+    classNames?: {
+        touched: string;
+        untouched: string;
+        valid: string;
+        invalid: string;
+        pristine: string;
+        dirty: string;
+    };
+    classes?: boolean;
+    component?: any;
+    delay?: number;
+    el?: HTMLElement;
+    events?: string;
+    getter?: () => any;
+    initial?: boolean;
+    initialValue?: any;
+    listen?: boolean;
+    rules?: string | Object;
+    scope?: string | null;
+    targetOf?: string | null;
+    validity?: boolean;
+    vm?: any;
+}
 export class Field {
     id: string;
     name: string;
@@ -98,6 +124,7 @@ export class Validator {
 
     constructor(validations: any, options: any);
     attach(name: string, checks: string|Object, options?: Object): Field;
+    attach(options: FieldOptions): Field;
     reset(matcher: FieldMatchOptions): void;
     detach(name: string, scope?: string): void;
     extend(name: string, validator: Object|Function): void;
