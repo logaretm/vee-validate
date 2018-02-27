@@ -55,7 +55,7 @@ export default {
       this.$validator.validateAll().then((result) => {
         if (result) {
           // eslint-disable-next-line
-          alert('From Submitted!');
+          alert('Form Submitted!');
           return;
         }
 
