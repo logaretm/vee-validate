@@ -73,9 +73,6 @@
     "vue-template-compiler": "^2.5.2",
     "vue-test-utils": "^1.0.0-beta.4"
   },
-  "peerDependencies": {
-    "vue": ">= 2.2.0"
-  },
   "eslintIgnore": [
     "tests",
     "locale",
