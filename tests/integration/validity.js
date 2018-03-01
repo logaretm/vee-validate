@@ -1,4 +1,4 @@
-import { shallow, createLocalVue } from 'vue-test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import VeeValidate from './../../src/index';
 import TestComponent from './components/Validity';

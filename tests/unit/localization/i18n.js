@@ -1,6 +1,6 @@
 import Dictionary from './../../../src/core/localization/i18n';
 import VueI18n from 'vue-i18n';
-import { mount, createLocalVue } from 'vue-test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
 
 const localVue = createLocalVue();
 localVue.use(VueI18n);

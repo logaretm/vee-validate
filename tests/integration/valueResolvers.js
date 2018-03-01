@@ -1,4 +1,4 @@
-import { shallow, mount, createLocalVue } from 'vue-test-utils';
+import { shallow, mount, createLocalVue } from '@vue/test-utils';
 import VeeValidate from './../../src/index';
 import HTMLInputsTestComponent from './components/Types';
 import ComponentsTestComponent from './components/Resolvers';

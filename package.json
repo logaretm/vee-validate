@@ -70,8 +70,7 @@
     "vue": "^2.5.2",
     "vue-i18n": "^7.3.2",
     "vue-jest": "^1.0.0",
-    "vue-template-compiler": "^2.5.2",
-    "vue-test-utils": "^1.0.0-beta.4"
+    "vue-template-compiler": "^2.5.2"
   },
   "eslintIgnore": [
     "tests",
@@ -105,6 +104,7 @@
     }
   },
   "dependencies": {
+    "@vue/test-utils": "^1.0.0-beta.12",
     "babel-plugin-transform-object-rest-spread": "^6.26.0"
   }
 }
