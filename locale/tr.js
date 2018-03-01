@@ -2,7 +2,7 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   after: (field, [target]) => `${field} ${target} alanından ileri bir tarih olmalıdır.`,
-  alpha_dash: (field) => `${field} alanı harf ve tire (-) yada alttan tire (_) içerebilir.`,
+  alpha_dash: (field) => `${field} alanı harf ve tire (-) ya da alttan tire (_) içerebilir.`,
   alpha_num: (field) => `${field} yalnızca harf ve rakam içerebilir.`,
   alpha_spaces: (field) => `${field} yalnızca harf boşluk (space) içerebilir.`,
   alpha: (field) => `${field} yalnızca harf içerebilir.`,
@@ -21,10 +21,10 @@ const messages = {
   in: (field) => `${field} alanına geçerli bir değer giriniz.`,
   ip: (field) => `${field} alanı geçerli bir ip adresi olmalıdır.`,
   max: (field, [length]) => `${field} alanı ${length} karakterden fazla olmamalıdır.`,
-  max_value: (field, [max]) => `${field} alanı ${max} yada daha az bir değer olmalıdır.`,
+  max_value: (field, [max]) => `${field} alanı ${max} ya da daha az bir değer olmalıdır.`,
   mimes: (field) => `${field} geçerli bir dosya olmalıdır.`,
   min: (field, [length]) => `${field} alanına en az ${length} karakter girilmelidir.`,
-  min_value: (field, [min]) => `${field} alanı ${min} yada daha fazla bir değer olmalıdır.`,
+  min_value: (field, [min]) => `${field} alanı ${min} ya da daha fazla bir değer olmalıdır.`,
   not_in: (field) => `${field} alanına geçerli bir değer giriniz.`,
   numeric: (field) => `${field} alanına sayısal bir değer giriniz.`,
   regex: (field) => `${field} formatı geçersiz.`,
