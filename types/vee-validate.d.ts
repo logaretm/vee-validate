@@ -1,8 +1,8 @@
 import Vue = require("vue")
 
 declare enum ValidatorResolveStrategy {
-    new = 'new',
-    inherit = 'inherit'
+    new,
+    inherit
 }
 
 export interface VeeValidateComponentOptions {
