@@ -168,7 +168,8 @@ export default class Generator {
       return null;
     }
 
-    const watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression, vnode.context);
+    // https://github.com/vuejs/vue/blob/dev/src/core/util/lang.js#L26
+    const watchable = !/[^\w.$]/.test(model.expression) && hasPath(model.expression, vnode.context);
     const lazy = !!(model.modifiers && model.modifiers.lazy);
     if (!watchable) {
       return { expression: null, lazy };
