@@ -18,41 +18,36 @@ test('watches input value on input and blur', async () => {
 
   const input = wrapper.find('input');
 
-  expect(input.hasClass('untouched')).toBe(true); // hasn't been touched
-  expect(input.hasClass('touched')).toBe(false);
-  expect(input.hasClass('pristine')).toBe(true); // hasn't been changed yet.
-  expect(input.hasClass('dirty')).toBe(false);
+  expect(input.classes()).toContain('untouched'); // hasn't been touched
+  expect(input.classes()).not.toContain('touched');
+  expect(input.classes()).toContain('pristine'); // hasn't been changed yet.
+  expect(input.classes()).not.toContain('dirty');
 
   input.trigger('blur');
   await flushPromises();
 
-  expect(input.hasClass('untouched')).toBe(false); // has been touched
-  expect(input.hasClass('touched')).toBe(true);
-  expect(input.hasClass('pristine')).toBe(true); // hasn't been changed yet.
-  expect(input.hasClass('dirty')).toBe(false);
+  expect(input.classes()).not.toContain('untouched'); // has been touched
+  expect(input.classes()).toContain('touched');
+  expect(input.classes()).toContain('pristine'); // hasn't been changed yet.
+  expect(input.classes()).not.toContain('dirty');
 
-  expect(input.hasClass('is-valid')).toBe(false); // triggered by blur
-  expect(input.hasClass('text-green')).toBe(false); // triggered by blur
-  expect(input.hasClass('is-invalid')).toBe(true);
-  expect(input.hasClass('text-red')).toBe(true);
+  expect(input.classes()).toContain('text-red'); // triggered by blur
+  expect(input.classes()).not.toContain('text-green');
+  expect(input.classes()).toContain('is-invalid');
+  expect(input.classes()).not.toContain('is-valid');
 
   input.trigger('input');
   await flushPromises();
 
-  expect(input.hasClass('pristine')).toBe(false); // hasn't been changed yet.
-  expect(input.hasClass('dirty')).toBe(true);
-
-  expect(input.hasClass('is-valid')).toBe(false); // triggered by blur
-  expect(input.hasClass('text-green')).toBe(false); // triggered by blur
-  expect(input.hasClass('is-invalid')).toBe(true);
-  expect(input.hasClass('text-red')).toBe(true);
+  expect(input.classes()).not.toContain('pristine'); // has been changed.
+  expect(input.classes()).toContain('dirty');
 
   input.element.value = '10';
   input.trigger('input');
   await flushPromises();
 
-  expect(input.hasClass('is-valid')).toBe(true); // triggered by blur
-  expect(input.hasClass('text-green')).toBe(true); // triggered by blur
-  expect(input.hasClass('is-invalid')).toBe(false);
-  expect(input.hasClass('text-red')).toBe(false);
+  expect(input.classes()).not.toContain('text-red'); // triggered by blur
+  expect(input.classes()).toContain('text-green');
+  expect(input.classes()).not.toContain('is-invalid');
+  expect(input.classes()).toContain('is-valid');
 });
