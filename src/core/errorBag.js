@@ -9,6 +9,15 @@ export default class ErrorBag {
     this.items = [];
   }
 
+  [typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'] () {
+    let index = 0;
+    return {
+      next: () => {
+        return { value: this.items[index++], done: index > this.items.length };
+      }
+    };
+  }
+
   /**
    * Adds an error to the internal array.
    */
