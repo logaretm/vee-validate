@@ -7,6 +7,7 @@ import Rules from './rules';
 import mapFields from './core/mapFields';
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
+import { ErrorComponent } from './components';
 
 const version = '__VERSION__';
 
@@ -30,6 +31,7 @@ export {
   Validator,
   ErrorBag,
   Rules,
+  ErrorComponent,
   version
 };
 
@@ -41,6 +43,7 @@ export default {
   mapFields,
   Validator,
   ErrorBag,
+  ErrorComponent,
   Rules,
   version
 };
