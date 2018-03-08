@@ -123,7 +123,7 @@ export class Validator {
     static readonly dictionary: any;
 
     constructor(validations: any, options: any);
-    attach(name: string, checks: string|Object, options?: Object): Field;
+    attach(name: string, checks?: string|Object, options?: Object): Field;
     attach(options: FieldOptions): Field;
     reset(matcher: FieldMatchOptions): void;
     detach(name: string, scope?: string): void;
