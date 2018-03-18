@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.5
+  * vee-validate v2.0.6
   * (c) 2018 Abdelrahman Awad
   * @license MIT
   */
@@ -471,6 +471,17 @@ var merge = function (target, source) {
 
 var ErrorBag = function ErrorBag () {
   this.items = [];
+};
+
+ErrorBag.prototype[typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'] = function () {
+    var this$1 = this;
+
+  var index = 0;
+  return {
+    next: function () {
+      return { value: this$1.items[index++], done: index > this$1.items.length };
+    }
+  };
 };
 
 /**
@@ -1231,7 +1242,8 @@ Generator.resolveModel = function resolveModel (binding, vnode) {
     return null;
   }
 
-  var watchable = /^[a-z_]+[0-9]*(\w*\.[a-z_]\w*)*$/i.test(model.expression) && hasPath(model.expression, vnode.context);
+  // https://github.com/vuejs/vue/blob/dev/src/core/util/lang.js#L26
+  var watchable = !/[^\w.$]/.test(model.expression) && hasPath(model.expression, vnode.context);
   var lazy = !!(model.modifiers && model.modifiers.lazy);
   if (!watchable) {
     return { expression: null, lazy: lazy };
@@ -1912,6 +1924,17 @@ var FieldBag = function FieldBag () {
 };
 
 var prototypeAccessors$4 = { length: {} };
+
+FieldBag.prototype[typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'] = function () {
+    var this$1 = this;
+
+  var index = 0;
+  return {
+    next: function () {
+      return { value: this$1.items[index++], done: index > this$1.items.length };
+    }
+  };
+};
 
 /**
  * Gets the current items length.
@@ -3047,6 +3070,28 @@ var mapFields = function (fields) {
   }, {});
 };
 
+var ErrorComponent = {
+  name: 'vv-error',
+  inject: ['$validator'],
+  functional: true,
+  props: {
+    for: {
+      type: String,
+      required: true
+    },
+    tag: {
+      type: String,
+      default: 'span'
+    }
+  },
+  render: function render (createElement, ref) {
+    var props = ref.props;
+    var injections = ref.injections;
+
+    return createElement(props.tag, injections.$validator.errors.first(props.for));
+  }
+};
+
 var index_minimal = {
   install: install,
   use: use,
@@ -3055,7 +3100,8 @@ var index_minimal = {
   mapFields: mapFields,
   Validator: Validator,
   ErrorBag: ErrorBag,
-  version: '2.0.5'
+  ErrorComponent: ErrorComponent,
+  version: '2.0.6'
 };
 
 return index_minimal;
