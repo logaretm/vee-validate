@@ -30,11 +30,22 @@ const outputOptions = {
 async function build () {
   console.log(chalk.cyan('Generating esm build...'));
 
-  const bundle = await rollup(inputOptions);
-  const { code } = await bundle.generate(outputOptions);
+  let bundle = await rollup(inputOptions);
+  let { code } = await bundle.generate(outputOptions);
 
-  fs.writeFileSync(path.join(config.outputFolder, 'vee-validate.esm.js'), code);
-  console.log(chalk.green('Output File:') + ' vee-validate.esm.js');
+  let outputPath = path.join(config.outputFolder, 'vee-validate.esm.js');
+  fs.writeFileSync(outputPath, code);
+  let stats = config.utils.stats({ code, path: outputPath });
+  console.log(`${chalk.green('Output File:')} vee-validate.esm.js ${stats}`);
+
+  inputOptions.input = 'src/index.minimal.esm.js';
+  bundle = await rollup(inputOptions);
+  code = (await bundle.generate(outputOptions)).code;
+
+  outputPath = path.join(config.outputFolder, 'vee-validate.minimal.esm.js');
+  fs.writeFileSync(outputPath, code);
+  stats = config.utils.stats({ code, path: outputPath });
+  console.log(`${chalk.green('Output File:')} vee-validate.minimal.esm.js ${stats}`);
 }
 
 build();

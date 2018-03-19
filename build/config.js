@@ -1,4 +1,7 @@
 import path from 'path';
+import fs from 'fs';
+import filesize from 'filesize';
+import gzipSize from 'gzip-size';
 import { version } from '../package.json';
 
 export default {
@@ -13,4 +16,12 @@ export default {
     compress: true,
     mangle: true,
   },
+  utils: {
+    stats ({ path, code }) {
+      const { size } = fs.statSync(path);
+      const gzipped = gzipSize.sync(code);
+
+      return `| Size: ${filesize(size)} | Gzip: ${filesize(gzipped)}`;
+    }
+  }
 };
