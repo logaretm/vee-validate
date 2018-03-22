@@ -35,7 +35,7 @@ const messages = {
 };
 
 const locale = {
-  name: 'en',
+  name: 'lt',
   messages,
   attributes: {}
 };
