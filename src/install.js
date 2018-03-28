@@ -15,7 +15,9 @@ function install (_Vue, options = {}) {
   }
 
   Vue = _Vue;
+  Config.register('vm', new Vue());
   Config.merge(options);
+
   const { dictionary, i18n } = Config.current;
 
   if (dictionary) {

@@ -22,7 +22,7 @@ export default class Validator {
   clean: () => void;
   reset: (matcher) => Promise<void>;
 
-  constructor (validations?: MapObject, options?: MapObject = { vm: null, fastExit: true }) {
+  constructor (validations?: MapObject, options?: MapObject = { fastExit: true }) {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
 
@@ -32,20 +32,29 @@ export default class Validator {
     }
     this.fields = new FieldBag();
     this.flags = {};
+    this.reset = this._reset;
     this._createFields(validations);
     this.paused = false;
     this.fastExit = options.fastExit || false;
     this.ownerId = options.vm && options.vm._uid;
-    // create it statically since we don't need constant access to the vm.
-    this.reset = options.vm && isCallable(options.vm.$nextTick) ? (matcher) => {
+    this._localeListener = () => {
+      this.errors.regenerate();
+    };
+
+    if (!this._vm) {
+      return;
+    }
+
+    this._vm.$on('localeChanged', this._localeListener);
+    this.reset = (matcher) => {
       return new Promise(resolve => {
-        options.vm.$nextTick(() => {
-          options.vm.$nextTick(() => {
+        this._vm.$nextTick(() => {
+          this._vm.$nextTick(() => {
             resolve(this._reset(matcher));
           });
         });
       });
-    } : this._reset;
+    };
   }
 
   /**
@@ -53,6 +62,10 @@ export default class Validator {
    */
   get dictionary (): IDictionary {
     return Config.dependency('dictionary');
+  }
+
+  get _vm () {
+    return Config.dependency('vm');
   }
 
   /**
@@ -89,8 +102,8 @@ export default class Validator {
   static set locale (value: string): void {
     const hasChanged = value !== Validator.dictionary.locale;
     Validator.dictionary.locale = value;
-    if (hasChanged) {
-      Validator.regenerate();
+    if (hasChanged && this._vm) {
+      this._vm.$emit('localeChanged');
     }
   }
 
@@ -124,13 +137,6 @@ export default class Validator {
     if (options && options.hasTarget) {
       TARGET_RULES.push(name);
     }
-  }
-
-  /**
-   * Regenerates error messages across all validators.
-   */
-  static regenerate () {
-    ERRORS.forEach(errorBag => errorBag.regenerate());
   }
 
   /**
@@ -410,11 +416,7 @@ export default class Validator {
    * Perform cleanup.
    */
   destroy () {
-    // Remove ErrorBag instance.
-    const idx = ERRORS.indexOf(this.errors);
-    if (idx === -1) return;
-
-    ERRORS.splice(idx, 1);
+    this._vm.$off('localeChanged', this._localeListener);
   }
 
   /**

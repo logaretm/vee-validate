@@ -1,6 +1,12 @@
+import { createLocalVue } from '@vue/test-utils';
 import Field from '../../src/core/field'
 import helpers from '../helpers';
 import VeeValidate from '../../src/index';
+import Config from '../../src/config';
+
+const Vue = createLocalVue();
+
+Config.register('vm', new Vue());
 
 const Validator = VeeValidate.Validator;
 
@@ -696,32 +702,20 @@ test('it can set flags for attached fields', () => {
   expect(field.updateClasses).toHaveBeenCalled();
 });
 
-describe('resets fields', () => {
-  test('resets fields matching the matcher options', () => {
-    const v = new Validator();
-    v.attach({ name: 'field' });
-    v.attach({ name: 'fieldTwo', scope: 's1' });
-    v.attach({ name: 'fieldThree', scope: 's1' });
+test('resets fields matching the matcher options', async () => {
+  const v = new Validator();
+  v.attach({ name: 'field' });
+  v.attach({ name: 'fieldTwo', scope: 's1' });
+  v.attach({ name: 'fieldThree', scope: 's1' });
 
-    v.errors.add({ field: 'field', msg: 'oops' });
-    v.errors.add({ field: 'fieldTwo', msg: 'oops', scope: 's1' });
-    v.errors.add({ field: 'fieldThree', msg: 'oops', scope: 's1' });
+  v.errors.add({ field: 'field', msg: 'oops' });
+  v.errors.add({ field: 'fieldTwo', msg: 'oops', scope: 's1' });
+  v.errors.add({ field: 'fieldThree', msg: 'oops', scope: 's1' });
 
-    v.reset({ name: 'field' });
-    expect(v.errors.count()).toBe(2);
-    v.reset({ scope: 's1' });
-    expect(v.errors.count()).toBe(0);
-  })
-
-  test('resets fields on nextTick if vm is provided', async () => {
-    const vm = { $nextTick: jest.fn(cb => cb()) };
-    const v = new Validator(null, { vm });
-    v.attach({ name: 'field' });
-    v.errors.add({ name: 'field', msg: 'oops' });
-    await v.reset();
-    expect(vm.$nextTick).toHaveBeenCalled();
-    expect(v.errors.count()).toBe(0);
-  });
+  await v.reset({ name: 'field' });
+  expect(v.errors.count()).toBe(2);
+  await v.reset({ scope: 's1' });
+  expect(v.errors.count()).toBe(0);
 });
 
 test('it can handle mixed successes and errors from one field regardless of rules order', async () => {
