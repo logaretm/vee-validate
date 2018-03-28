@@ -207,7 +207,7 @@ export default class Validator {
     // fixes initial value detection with v-model and select elements.
     const value = field.initialValue;
     if (!(field instanceof Field)) {
-      field = new Field(field.el || null, field);
+      field = new Field(field);
     }
 
     this.fields.push(field);

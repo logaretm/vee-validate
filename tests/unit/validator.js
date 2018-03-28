@@ -696,7 +696,8 @@ test('it can set flags for attached fields', () => {
   }).not.toThrow();
 
   // calls update classes.
-  field = v.attach(new Field(document.createElement('input'), {
+  field = v.attach(new Field({
+    el: document.createElement('input'),
     name: 'somefield',
     rules: 'alpha',
     classes: true
