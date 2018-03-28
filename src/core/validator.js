@@ -9,7 +9,6 @@ import Config from '../config';
 const RULES: { [string]: Rule } = {};
 let STRICT_MODE: boolean = true;
 const TARGET_RULES = ['confirmed', 'after', 'before'];
-const ERRORS = []; // HOLD errors references to trigger regeneration.
 
 export default class Validator {
   strict: boolean;
@@ -25,11 +24,6 @@ export default class Validator {
   constructor (validations?: MapObject, options?: MapObject = { fastExit: true }) {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
-
-    // We are running in SSR Mode. Do not keep a reference. It prevent garbage collection.
-    if (typeof window !== 'undefined') {
-      ERRORS.push(this.errors);
-    }
     this.fields = new FieldBag();
     this.flags = {};
     this.reset = this._reset;
