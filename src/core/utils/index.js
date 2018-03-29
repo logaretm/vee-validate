@@ -20,6 +20,10 @@ export const addEventListener = (el, eventName, cb) => {
   el.addEventListener(eventName, cb, supportsPassive ? { passive: true } : false);
 };
 
+export const isTextInput = (el) => {
+  return ['text', 'number', 'password', 'search', 'email', 'tel', 'url', 'textarea'].indexOf(el.type) !== -1;
+};
+
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
@@ -377,17 +381,6 @@ export const find = (arrayLike: { length: number } | any[], predicate: (any) => 
   }
 
   return undefined;
-};
-
-/**
- * Returns a suitable event name for the input element.
- */
-export const getInputEventName = (el: HTMLInputElement) => {
-  if (el && (el.tagName === 'SELECT' || ~['radio', 'checkbox', 'file'].indexOf(el.type))) {
-    return 'change';
-  }
-
-  return 'input';
 };
 
 export const isBuiltInComponent = (vnode: Object): boolean => {

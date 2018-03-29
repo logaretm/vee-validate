@@ -7,7 +7,7 @@ import {
   getDataAttribute,
   setDataAttribute,
   toggleClass,
-  getInputEventName,
+  isTextInput,
   debounce,
   isCallable,
   warn,
@@ -419,6 +419,8 @@ export default class Field {
     // remove previous listeners.
     this.unwatch(/class/);
 
+    if (!this.el) return;
+
     const onBlur = () => {
       this.flags.touched = true;
       this.flags.untouched = false;
@@ -431,7 +433,7 @@ export default class Field {
       this.unwatch(/^class_blur$/);
     };
 
-    const inputEvent = getInputEventName(this.el);
+    const inputEvent = isTextInput(this.el) ? 'input' : 'change';
     const onInput = () => {
       this.flags.dirty = true;
       this.flags.pristine = false;
@@ -488,7 +490,7 @@ export default class Field {
    */
   addValueListeners () {
     this.unwatch(/^input_.+/);
-    if (!this.listen) return;
+    if (!this.listen || !this.el) return;
 
     const fn = this.targetOf ? () => {
       this.validator.validate(`#${this.targetOf}`);
@@ -501,11 +503,11 @@ export default class Field {
       this.validator.validate(`#${this.id}`, args[0]);
     };
 
-    const inputEvent = this.model && this.model.lazy ? 'change' : getInputEventName(this.el);
-    // replace input event with suitable one.
-    let events = this.events.map(e => {
-      return e === 'input' ? inputEvent : e;
-    });
+    let inputEvent = isTextInput(this.el) ? 'input' : 'change';
+    inputEvent = this.model && this.model.lazy ? 'change' : inputEvent;
+    // force change event for non-text type fields, otherwise use the configured.
+    // if no event is configured then respect the user choice.
+    let events = !this.events.length || isTextInput(this.el) ? this.events : ['change'];
 
     // if there is a watchable model and an on input validation is requested.
     if (this.model && this.model.expression && events.indexOf(inputEvent) !== -1) {
@@ -518,6 +520,7 @@ export default class Field {
         tag: 'input_model',
         unwatch
       });
+
       // filter out input event as it is already handled by the watcher API.
       events = events.filter(e => e !== inputEvent);
     }

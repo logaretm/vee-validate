@@ -279,20 +279,6 @@ describe('normalizes rules', () => {
   });
 });
 
-test('gets appropiate input event name for inputs', () => {
-  const text = { type: 'text' };
-  const select = { tagName: 'SELECT' };
-  const checkbox = { type: 'checkbox' };
-  const radio = { type: 'radio' };
-  const file = { type: 'file' };
-
-  expect(utils.getInputEventName(text)).toBe('input');
-  expect(utils.getInputEventName(select)).toBe('change');
-  expect(utils.getInputEventName(checkbox)).toBe('change');
-  expect(utils.getInputEventName(radio)).toBe('change');
-  expect(utils.getInputEventName(file)).toBe('change');
-});
-
 test('creates branded errors', () => {
   expect(() => {
     throw utils.createError('My Error')

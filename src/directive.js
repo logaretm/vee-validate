@@ -1,6 +1,6 @@
 import Generator from './core/generator';
 import Field from './core/field';
-import { getDataAttribute, isEqual, warn } from './core/utils';
+import { getDataAttribute, isEqual, warn, toArray } from './core/utils';
 
 // @flow
 
@@ -8,7 +8,7 @@ import { getDataAttribute, isEqual, warn } from './core/utils';
  * Finds the requested field by id from the context object.
  */
 const findField = (el: HTMLElement, context: ValidatingVM): ?Field => {
-  if (!context || !context.$validator) {
+  if (!context || !context.$validator || el._veeValidateGroupHandled) {
     return null;
   }
 
