@@ -34,11 +34,9 @@ export default class Validator {
       this.errors.regenerate();
     };
 
-    if (!this._vm) {
-      return;
+    if (this._vm) {
+      this._vm.$on('localeChanged', this._localeListener);
     }
-
-    this._vm.$on('localeChanged', this._localeListener);
   }
 
   /**
