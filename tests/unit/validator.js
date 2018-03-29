@@ -245,7 +245,7 @@ test('fails when trying to validate a non-existant field when strict mode is tru
     tags: 'required|in:1,2,3,5'
   });
 
-  expect(() => v.validate('nonExistant', 'whatever')).toThrow();
+  await expect(v.validate('nonExistant', 'whatever')).rejects.toBeTruthy();
 });
 
 test('can detach fields', () => {
@@ -566,9 +566,7 @@ test('can remove rules from the list of validators', async () => {
   await v1.validate('name', false);
 
   v1.remove('dummy');
-  expect(() => {
-    v1.validate('name', false)
-  }).toThrow();
+  await expect(v1.validate('name', false)).rejects.toBeTruthy();
 });
 
 test('calling validate without args will trigger validateAll', async () => {

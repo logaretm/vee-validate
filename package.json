@@ -65,6 +65,7 @@
     "rollup-plugin-commonjs": "^8.2.0",
     "rollup-plugin-flow": "^1.1.1",
     "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-nodent": "^0.2.2",
     "rollup-plugin-replace": "^1.1.1",
     "uglify-js": "^3.0.28",
     "validator": "^8.1.0",

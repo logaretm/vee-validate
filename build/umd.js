@@ -4,6 +4,7 @@ import buble from 'rollup-plugin-buble';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import replace from 'rollup-plugin-replace';
+import nodent from 'rollup-plugin-nodent';
 import uglify from 'uglify-js';
 import fs from 'fs';
 import path from 'path';
@@ -20,7 +21,8 @@ const inputOptions = {
     commonjs({
       include: 'node_modules/validator/**',
     }),
-    buble(),
+    nodent({ promises: true, noRuntime: true }),
+    buble()
   ],
 };
 const outputOptions = {

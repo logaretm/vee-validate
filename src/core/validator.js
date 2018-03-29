@@ -18,7 +18,6 @@ export default class Validator {
   fastExit: boolean;
   paused: boolean;
   ownerId: string | number;
-  clean: () => void;
   reset: (matcher) => Promise<void>;
 
   constructor (validations?: MapObject, options?: MapObject = { fastExit: true }) {
@@ -254,18 +253,14 @@ export default class Validator {
     Validator.extend(name, validator, options);
   }
 
-  reset (matcher) {
-    return new Promise(resolve => {
-      this._vm.$nextTick(() => {
-        this._vm.$nextTick(() => {
-          this.fields.filter(matcher).forEach(field => {
-            field.reset(); // reset field flags.
-            this.errors.remove(field.name, field.scope, field.id);
-          });
+  async reset (matcher) {
+    // two ticks
+    await this._vm.$nextTick();
+    await this._vm.$nextTick();
 
-          resolve();
-        });
-      });
+    this.fields.filter(matcher).forEach(field => {
+      field.reset(); // reset field flags.
+      this.errors.remove(field.name, field.scope, field.id);
     });
   }
 
@@ -297,7 +292,7 @@ export default class Validator {
   /**
    * Validates a value against a registered field validations.
    */
-  validate (name: string, value: any, scope?: string | null = null): Promise<boolean> {
+  async validate (name: string, value: any, scope?: string | null = null): Promise<boolean> {
     if (this.paused) return Promise.resolve(true);
 
     // overload to validate all.
@@ -328,22 +323,21 @@ export default class Validator {
 
     const silentRun = field.isDisabled;
 
-    return this._validate(field, value, silentRun).then(result => {
-      this.errors.remove(field.name, field.scope, field.id);
-      if (silentRun) {
-        return Promise.resolve(true);
-      } else if (result.errors) {
-        result.errors.forEach(e => this.errors.add(e));
-      }
+    const result = await this._validate(field, value, silentRun);
+    this.errors.remove(field.name, field.scope, field.id);
+    if (silentRun) {
+      return true;
+    } else if (result.errors) {
+      result.errors.forEach(e => this.errors.add(e));
+    }
 
-      field.setFlags({
-        pending: false,
-        valid: result.valid,
-        validated: true
-      });
-
-      return result.valid;
+    field.setFlags({
+      pending: false,
+      valid: result.valid,
+      validated: true
     });
+
+    return result.valid;
   }
 
   /**
@@ -367,8 +361,8 @@ export default class Validator {
   /**
    * Validates each value against the corresponding field validations.
    */
-  validateAll (values?: string | MapObject): Promise<boolean> {
-    if (this.paused) return Promise.resolve(true);
+  async validateAll (values?: string | MapObject): Promise<boolean> {
+    if (this.paused) return true;
 
     let matcher = null;
     let providedValues = false;
@@ -393,21 +387,25 @@ export default class Validator {
       providedValues ? values[field.name] : field.value
     ));
 
-    return Promise.all(promises).then(results => results.every(t => t));
+    const results = await Promise.all(promises);
+
+    return results.every(t => t);
   }
 
   /**
    * Validates all scopes.
    */
-  validateScopes (): Promise<boolean> {
-    if (this.paused) return Promise.resolve(true);
+  async validateScopes (): Promise<boolean> {
+    if (this.paused) return true;
 
     const promises = this.fields.map(field => this.validate(
       `#${field.id}`,
       field.value
     ));
 
-    return Promise.all(promises).then(results => results.every(t => t));
+    const results = await Promise.all(promises);
+
+    return results.every(t => t);
   }
 
   /**
@@ -630,7 +628,7 @@ export default class Validator {
    * Handles when a field is not found depending on the strict flag.
    */
   _handleFieldNotFound (name: string, scope?: string | null) {
-    if (!this.strict) return Promise.resolve(true);
+    if (!this.strict) return true;
 
     const fullName = isNullOrUndefined(scope) ? name : `${!isNullOrUndefined(scope) ? scope + '.' : ''}${name}`;
     throw createError(
@@ -641,9 +639,9 @@ export default class Validator {
   /**
    * Starts the validation process.
    */
-  _validate (field: Field, value: any, silent?: boolean = false): Promise<ValidationResult> {
+  async _validate (field: Field, value: any, silent?: boolean = false): Promise<ValidationResult> {
     if (!field.isRequired && (isNullOrUndefined(value) || value === '')) {
-      return Promise.resolve({ valid: true });
+      return { valid: true };
     }
 
     const promises = [];
@@ -659,33 +657,24 @@ export default class Validator {
         isExitEarly = true;
       } else {
         // promisify the result.
-        promises.push(new Promise(resolve => {
-          resolve(result);
-        }));
+        promises.push(new Promise(resolve => resolve(result)));
       }
 
       return isExitEarly;
     });
 
     if (isExitEarly) {
-      return Promise.resolve({
-        valid: false,
-        errors
-      });
+      return { valid: false, errors };
     }
 
-    return Promise.all(promises).then(values => values.map(v => {
+    return (await Promise.all(promises)).reduce((prev, v) => {
       if (!v.valid) {
-        errors.push(v.error);
+        prev.errors.push(v.error);
       }
 
-      return v.valid;
-    }).every(t => t)
-    ).then(result => {
-      return {
-        valid: result,
-        errors
-      };
-    });
+      prev.valid = prev.valid && v.valid;
+
+      return prev;
+    }, { valid: true, errors });
   }
 }
