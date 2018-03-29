@@ -21,8 +21,7 @@ export default class ErrorBag {
   /**
    * Adds an error to the internal array.
    */
-  add (error: FieldError) {
-    // handle old signature.
+  add (error: FieldError | FieldError[]) {
     if (arguments.length > 1) {
       error = {
         field: arguments[0],
@@ -33,8 +32,23 @@ export default class ErrorBag {
       };
     }
 
+    // handle old signature.
+    this.items.push(
+      ...this._normalizeError(error)
+    );
+  }
+
+  /**
+   * Normalizes passed errors to an error array.
+   */
+  _normalizeError (error: FieldError | FieldError[]): FieldError[] {
+    if (Array.isArray(error)) {
+      return error.map(e => this._normalizeError(e));
+    }
+
     error.scope = !isNullOrUndefined(error.scope) ? error.scope : null;
-    this.items.push(error);
+
+    return [error];
   }
 
   /**
