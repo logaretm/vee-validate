@@ -16,7 +16,8 @@ import {
   makeEventsArray,
   makeDelayObject,
   merge,
-  isObject
+  isObject,
+  addEventListener
 } from './utils';
 import Generator from './generator';
 import Validator from './validator';
@@ -463,10 +464,10 @@ export default class Field {
 
     if (!this.el) return;
 
-    this.el.addEventListener(inputEvent, onInput);
+    addEventListener(this.el, inputEvent, onInput);
     // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
     const blurEvent = ['radio', 'checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'click';
-    this.el.addEventListener(blurEvent, onBlur);
+    addEventListener(this.el, blurEvent, onBlur);
     this.watchers.push({
       tag: 'class_input',
       unwatch: () => {
@@ -552,7 +553,7 @@ export default class Field {
     if (~['radio', 'checkbox'].indexOf(this.el.type)) {
       const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
       toArray(els).forEach(el => {
-        el.addEventListener(evt, validate);
+        addEventListener(el, evt, validate);
         this.watchers.push({
           tag: 'input_native',
           unwatch: () => {
@@ -564,7 +565,7 @@ export default class Field {
       return;
     }
 
-    this.el.addEventListener(evt, validate);
+    addEventListener(this.el, evt, validate);
     this.watchers.push({
       tag: 'input_native',
       unwatch: () => {

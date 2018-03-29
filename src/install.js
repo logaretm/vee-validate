@@ -2,7 +2,7 @@ import mixin from './mixin';
 import directive from './directive';
 import Config from './config';
 import Validator from './core/validator';
-import { warn, isCallable } from './core/utils';
+import { warn, isCallable, detectPassiveSupport } from './core/utils';
 
 let Vue;
 
@@ -14,6 +14,7 @@ function install (_Vue, options = {}) {
     return;
   }
 
+  detectPassiveSupport();
   Vue = _Vue;
   Config.register('vm', new Vue());
   Config.merge(options);

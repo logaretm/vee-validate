@@ -1,5 +1,25 @@
 // @flow
 
+let supportsPassive = true;
+
+export const detectPassiveSupport = () => {
+  try {
+    const opts = Object.defineProperty({}, 'passive', {
+      get: function () {
+        supportsPassive = true;
+      }
+    });
+    window.addEventListener('testPassive', null, opts);
+    window.removeEventListener('testPassive', null, opts);
+  } catch (e) {
+    supportsPassive = false;
+  };
+};
+
+export const addEventListener = (el, eventName, cb) => {
+  el.addEventListener(eventName, cb, supportsPassive ? { passive: true } : false);
+};
+
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
