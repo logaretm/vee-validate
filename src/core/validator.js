@@ -9,7 +9,6 @@ import Config from '../config';
 const RULES: { [string]: Rule } = {};
 let STRICT_MODE: boolean = true;
 const TARGET_RULES = ['confirmed', 'after', 'before'];
-const ERRORS = []; // HOLD errors references to trigger regeneration.
 
 export default class Validator {
   strict: boolean;
@@ -22,30 +21,22 @@ export default class Validator {
   clean: () => void;
   reset: (matcher) => Promise<void>;
 
-  constructor (validations?: MapObject, options?: MapObject = { vm: null, fastExit: true }) {
+  constructor (validations?: MapObject, options?: MapObject = { fastExit: true }) {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
-
-    // We are running in SSR Mode. Do not keep a reference. It prevent garbage collection.
-    if (typeof window !== 'undefined') {
-      ERRORS.push(this.errors);
-    }
     this.fields = new FieldBag();
     this.flags = {};
     this._createFields(validations);
     this.paused = false;
     this.fastExit = options.fastExit || false;
     this.ownerId = options.vm && options.vm._uid;
-    // create it statically since we don't need constant access to the vm.
-    this.reset = options.vm && isCallable(options.vm.$nextTick) ? (matcher) => {
-      return new Promise(resolve => {
-        options.vm.$nextTick(() => {
-          options.vm.$nextTick(() => {
-            resolve(this._reset(matcher));
-          });
-        });
-      });
-    } : this._reset;
+    this._localeListener = () => {
+      this.errors.regenerate();
+    };
+
+    if (this._vm) {
+      this._vm.$on('localeChanged', this._localeListener);
+    }
   }
 
   /**
@@ -53,6 +44,10 @@ export default class Validator {
    */
   get dictionary (): IDictionary {
     return Config.dependency('dictionary');
+  }
+
+  get _vm () {
+    return Config.dependency('vm');
   }
 
   /**
@@ -89,8 +84,8 @@ export default class Validator {
   static set locale (value: string): void {
     const hasChanged = value !== Validator.dictionary.locale;
     Validator.dictionary.locale = value;
-    if (hasChanged) {
-      Validator.regenerate();
+    if (hasChanged && Config.dependency('vm')) {
+      Config.dependency('vm').$emit('localeChanged');
     }
   }
 
@@ -124,13 +119,6 @@ export default class Validator {
     if (options && options.hasTarget) {
       TARGET_RULES.push(name);
     }
-  }
-
-  /**
-   * Regenerates error messages across all validators.
-   */
-  static regenerate () {
-    ERRORS.forEach(errorBag => errorBag.regenerate());
   }
 
   /**
@@ -196,6 +184,7 @@ export default class Validator {
    */
   attach (field: FieldOptions | Field): Field {
     // deprecate: handle old signature.
+    /* istanbul ignore next */
     if (arguments.length > 1) {
       warn('This signature of the attach method has been deprecated, please consult the docs.');
       field = assign({}, {
@@ -207,7 +196,7 @@ export default class Validator {
     // fixes initial value detection with v-model and select elements.
     const value = field.initialValue;
     if (!(field instanceof Field)) {
-      field = new Field(field.el || null, field);
+      field = new Field(field);
     }
 
     this.fields.push(field);
@@ -263,6 +252,21 @@ export default class Validator {
    */
   extend (name: string, validator: Rule | MapObject, options?: ExtendOptions = {}) {
     Validator.extend(name, validator, options);
+  }
+
+  reset (matcher) {
+    return new Promise(resolve => {
+      this._vm.$nextTick(() => {
+        this._vm.$nextTick(() => {
+          this.fields.filter(matcher).forEach(field => {
+            field.reset(); // reset field flags.
+            this.errors.remove(field.name, field.scope, field.id);
+          });
+
+          resolve();
+        });
+      });
+    });
   }
 
   /**
@@ -410,11 +414,7 @@ export default class Validator {
    * Perform cleanup.
    */
   destroy () {
-    // Remove ErrorBag instance.
-    const idx = ERRORS.indexOf(this.errors);
-    if (idx === -1) return;
-
-    ERRORS.splice(idx, 1);
+    this._vm.$off('localeChanged', this._localeListener);
   }
 
   /**
@@ -488,26 +488,6 @@ export default class Validator {
 
     const scopeObj = assign({}, this.flags[`$${scope}`] || {}, { [`${field.name}`]: field.flags });
     this.flags = assign({}, this.flags, { [`$${scope}`]: scopeObj });
-  }
-
-  /**
-   * Resets fields that matches the matcher options or all fields if not specified.
-   */
-  _reset (matcher?: FieldMatchOptions): Promise<void> {
-    return new Promise(resolve => {
-      if (matcher) {
-        this.fields.filter(matcher).forEach(field => {
-          field.reset(); // reset field flags.
-          this.errors.remove(field.name, field.scope, field.id);
-        });
-
-        return resolve();
-      }
-
-      this.fields.items.forEach(i => i.reset());
-      this.errors.clear();
-      resolve();
-    });
   }
 
   /**

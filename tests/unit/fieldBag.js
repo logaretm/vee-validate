@@ -3,7 +3,7 @@ import Field from '../../src/core/field';
 
 test('adds field items to the collection', () => {
   const bag = new FieldBag();
-  const field = new Field(null);
+  const field = new Field({ el: null });
 
   bag.push(field);
   expect(bag.length).toBe(1);
@@ -26,9 +26,9 @@ test('adds field items to the collection', () => {
 
 test('finds the first field that matches a matcher object', () => {
   const bag = new FieldBag();
-  const field1 = new Field(null, { name: 'email', scope: 's1' });
-  const field2 = new Field(null, { name: 'email', scope: 's2' });
-  const field3 = new Field(null, { name: 'email' });
+  const field1 = new Field({ name: 'email', scope: 's1' });
+  const field2 = new Field({ name: 'email', scope: 's2' });
+  const field3 = new Field({ name: 'email' });
   bag.push(field1);
   bag.push(field2);
   bag.push(field3);
@@ -44,9 +44,9 @@ test('finds the first field that matches a matcher object', () => {
 
 test('filters the fields based on a matcher object', () => {
   const bag = new FieldBag();
-  const field1 = new Field(null, { name: 'email', scope: 's1' });
-  const field2 = new Field(null, { name: 'email', scope: 's2' });
-  const field3 = new Field(null, { name: 'email' });
+  const field1 = new Field({ name: 'email', scope: 's1' });
+  const field2 = new Field({ name: 'email', scope: 's2' });
+  const field3 = new Field({ name: 'email' });
   bag.push(field1);
   bag.push(field2);
   bag.push(field3);
@@ -65,9 +65,9 @@ test('filters the fields based on a matcher object', () => {
 
 test('proxies the map method to the underlying array', () => {
   const bag = new FieldBag();
-  const field1 = new Field(null, { name: 'email', scope: 's1' });
-  const field2 = new Field(null, { name: 'email', scope: 's2' });
-  const field3 = new Field(null, { name: 'email' });
+  const field1 = new Field({ name: 'email', scope: 's1' });
+  const field2 = new Field({ name: 'email', scope: 's2' });
+  const field3 = new Field({ name: 'email' });
   bag.push(field1);
   bag.push(field2);
   bag.push(field3);
@@ -76,9 +76,9 @@ test('proxies the map method to the underlying array', () => {
 
 test('removes the first field that matches a matcher object', () => {
   const bag = new FieldBag();
-  const field1 = new Field(null, { name: 'email', scope: 's1' });
-  const field2 = new Field(null, { name: 'email', scope: 's2' });
-  const field3 = new Field(null, { name: 'email' });
+  const field1 = new Field({ name: 'email', scope: 's1' });
+  const field2 = new Field({ name: 'email', scope: 's2' });
+  const field3 = new Field({ name: 'email' });
   bag.push(field1);
   bag.push(field2);
   bag.push(field3);
@@ -97,4 +97,22 @@ test('removes the first field that matches a matcher object', () => {
   // can remove fields directly.
   bag.remove(field3);
   expect(bag.length).toBe(0);
+});
+
+test('field bag instance is iterable', () => {
+  const bag = new FieldBag();
+  const field1 = new Field({ name: 'email', scope: 's1' });
+  const field2 = new Field({ name: 'email', scope: 's2' });
+  const field3 = new Field({ name: 'email' });
+  bag.push(field1);
+  bag.push(field2);
+  bag.push(field3);
+
+  let idx = 0;
+  for (const field of bag) {
+    expect(field.name).toBe(bag.items[idx].name);
+    idx++;
+  }
+
+  expect(idx).toBe(3);
 });

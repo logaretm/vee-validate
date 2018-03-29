@@ -75,9 +75,9 @@ export default class Field {
   _alias: ?string;
   _delay: number | Object;
 
-  constructor (el: HTMLInputElement | null, options: FieldOptions | MapObject = {}) {
+  constructor (options: FieldOptions | MapObject = {}) {
     this.id = uniqId();
-    this.el = el;
+    this.el = options.el;
     this.updated = false;
     this.dependencies = [];
     this.watchers = [];
@@ -166,7 +166,11 @@ export default class Field {
   /**
    * Determines if the instance matches the options provided.
    */
-  matches (options: FieldMatchOptions): boolean {
+  matches (options: FieldMatchOptions | null): boolean {
+    if (!options) {
+      return true;
+    }
+
     if (options.id) {
       return this.id === options.id;
     }
@@ -365,7 +369,7 @@ export default class Field {
         options.getter = Generator.resolveGetter(el, {});
       }
 
-      this.dependencies.push({ name, field: new Field(options.el, options) });
+      this.dependencies.push({ name, field: new Field(options) });
     });
   }
 

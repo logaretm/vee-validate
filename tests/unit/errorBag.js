@@ -17,6 +17,9 @@ test('adds errors to the collection', () => {
     scope: 's1'
   })
   expect(errors.first('name', 's1')).toBe('Hey');
+
+  // handles undefined params
+  expect(errors.first()).toBe(null);
 });
 
 test('updates error objects by matching against field id', () => {
@@ -373,4 +376,18 @@ test('can regenerate error messages', () => {
   expect(errors.first('field')).toBe('Product is Alpha');
   errors.regenerate();
   expect(errors.first('field')).toBe('Product is Beta');
+});
+
+test('error bag instance is iterable', () => {
+  const errors = new ErrorBag();
+  errors.add('name.example', 'The name is invalid', 'rule1');
+  errors.add('name', 'The name is really invalid', 'rule2', 'example');
+
+  let idx = 0;
+  for (const error of errors) {
+    expect(error.msg).toBe(errors.items[idx].msg);
+    idx++;
+  }
+
+  expect(idx).toBe(2);
 });
