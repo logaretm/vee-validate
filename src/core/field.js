@@ -553,10 +553,19 @@ export default class Field {
   _addHTMLEventListener (evt, validate) {
     if (!this.el || this.component) return;
 
+    // listen for the current element.
+    addEventListener(this.el, evt, validate);
+    this.watchers.push({
+      tag: 'input_native',
+      unwatch: () => {
+        this.el.removeEventListener(evt, validate);
+      }
+    });
+
     if (~['radio', 'checkbox'].indexOf(this.el.type)) {
       const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
       toArray(els).forEach(el => {
-        // skip if it is added by v-validate.
+        // skip if it is added by v-validate and is not the current element.
         if (getDataAttribute(el, 'id') && el !== this.el) {
           return;
         }
@@ -569,17 +578,7 @@ export default class Field {
           }
         });
       });
-
-      return;
     }
-
-    addEventListener(this.el, evt, validate);
-    this.watchers.push({
-      tag: 'input_native',
-      unwatch: () => {
-        this.el.removeEventListener(evt, validate);
-      }
-    });
   }
 
   /**
