@@ -556,6 +556,11 @@ export default class Field {
     if (~['radio', 'checkbox'].indexOf(this.el.type)) {
       const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
       toArray(els).forEach(el => {
+        // skip if it is added by v-validate.
+        if (getDataAttribute(el, 'id') && el !== this.el) {
+          return;
+        }
+
         addEventListener(el, evt, validate);
         this.watchers.push({
           tag: 'input_native',

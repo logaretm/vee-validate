@@ -8,7 +8,7 @@ import { getDataAttribute, isEqual, warn, toArray } from './core/utils';
  * Finds the requested field by id from the context object.
  */
 const findField = (el: HTMLElement, context: ValidatingVM): ?Field => {
-  if (!context || !context.$validator || el._veeValidateGroupHandled) {
+  if (!context || !context.$validator) {
     return null;
   }
 
@@ -18,7 +18,7 @@ const findField = (el: HTMLElement, context: ValidatingVM): ?Field => {
 export default {
   bind (el: HTMLElement, binding, vnode) {
     const validator = vnode.context.$validator;
-    if (! validator) {
+    if (!validator) {
       warn(`No validator instance is present on vm, did you forget to inject '$validator'?`);
       return;
     }
