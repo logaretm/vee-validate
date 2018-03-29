@@ -724,6 +724,21 @@ test('resets fields matching the matcher options', async () => {
   expect(v.errors.count()).toBe(0);
 });
 
+test('resets all fields', async () => {
+  const v = new Validator();
+  v.attach({ name: 'field' });
+  v.attach({ name: 'fieldTwo', scope: 's1' });
+  v.attach({ name: 'fieldThree', scope: 's1' });
+
+  v.errors.add({ field: 'field', msg: 'oops' });
+  v.errors.add({ field: 'fieldTwo', msg: 'oops', scope: 's1' });
+  v.errors.add({ field: 'fieldThree', msg: 'oops', scope: 's1' });
+
+  expect(v.errors.count()).toBe(3);
+  await v.reset();
+  expect(v.errors.count()).toBe(0);
+})
+
 test('it can handle mixed successes and errors from one field regardless of rules order', async () => {
   const v = new Validator({
     string1: 'alpha|min:3',

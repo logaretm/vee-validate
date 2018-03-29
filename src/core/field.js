@@ -166,7 +166,11 @@ export default class Field {
   /**
    * Determines if the instance matches the options provided.
    */
-  matches (options: FieldMatchOptions): boolean {
+  matches (options: FieldMatchOptions | null): boolean {
+    if (!options) {
+      return true;
+    }
+
     if (options.id) {
       return this.id === options.id;
     }

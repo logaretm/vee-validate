@@ -98,3 +98,21 @@ test('removes the first field that matches a matcher object', () => {
   bag.remove(field3);
   expect(bag.length).toBe(0);
 });
+
+test('field bag instance is iterable', () => {
+  const bag = new FieldBag();
+  const field1 = new Field({ name: 'email', scope: 's1' });
+  const field2 = new Field({ name: 'email', scope: 's2' });
+  const field3 = new Field({ name: 'email' });
+  bag.push(field1);
+  bag.push(field2);
+  bag.push(field3);
+
+  let idx = 0;
+  for (const field of bag) {
+    expect(field.name).toBe(bag.items[idx].name);
+    idx++;
+  }
+
+  expect(idx).toBe(3);
+});

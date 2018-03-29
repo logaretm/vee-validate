@@ -26,7 +26,6 @@ export default class Validator {
     this.errors = new ErrorBag();
     this.fields = new FieldBag();
     this.flags = {};
-    this.reset = this._reset;
     this._createFields(validations);
     this.paused = false;
     this.fastExit = options.fastExit || false;
@@ -40,15 +39,6 @@ export default class Validator {
     }
 
     this._vm.$on('localeChanged', this._localeListener);
-    this.reset = (matcher) => {
-      return new Promise(resolve => {
-        this._vm.$nextTick(() => {
-          this._vm.$nextTick(() => {
-            resolve(this._reset(matcher));
-          });
-        });
-      });
-    };
   }
 
   /**
@@ -96,8 +86,8 @@ export default class Validator {
   static set locale (value: string): void {
     const hasChanged = value !== Validator.dictionary.locale;
     Validator.dictionary.locale = value;
-    if (hasChanged && this._vm) {
-      this._vm.$emit('localeChanged');
+    if (hasChanged && Config.dependency('vm')) {
+      Config.dependency('vm').$emit('localeChanged');
     }
   }
 
@@ -196,6 +186,7 @@ export default class Validator {
    */
   attach (field: FieldOptions | Field): Field {
     // deprecate: handle old signature.
+    /* istanbul ignore next */
     if (arguments.length > 1) {
       warn('This signature of the attach method has been deprecated, please consult the docs.');
       field = assign({}, {
@@ -263,6 +254,21 @@ export default class Validator {
    */
   extend (name: string, validator: Rule | MapObject, options?: ExtendOptions = {}) {
     Validator.extend(name, validator, options);
+  }
+
+  reset (matcher) {
+    return new Promise(resolve => {
+      this._vm.$nextTick(() => {
+        this._vm.$nextTick(() => {
+          this.fields.filter(matcher).forEach(field => {
+            field.reset(); // reset field flags.
+            this.errors.remove(field.name, field.scope, field.id);
+          });
+
+          resolve();
+        });
+      });
+    });
   }
 
   /**
@@ -484,26 +490,6 @@ export default class Validator {
 
     const scopeObj = assign({}, this.flags[`$${scope}`] || {}, { [`${field.name}`]: field.flags });
     this.flags = assign({}, this.flags, { [`$${scope}`]: scopeObj });
-  }
-
-  /**
-   * Resets fields that matches the matcher options or all fields if not specified.
-   */
-  _reset (matcher?: FieldMatchOptions): Promise<void> {
-    return new Promise(resolve => {
-      if (matcher) {
-        this.fields.filter(matcher).forEach(field => {
-          field.reset(); // reset field flags.
-          this.errors.remove(field.name, field.scope, field.id);
-        });
-
-        return resolve();
-      }
-
-      this.fields.items.forEach(i => i.reset());
-      this.errors.clear();
-      resolve();
-    });
   }
 
   /**
