@@ -49,3 +49,5 @@ Vue.use(VeeValidate, { inject: false });
 This will make the plugin stop instantiating a new validator for each component instance, excluding the root instance.
 
 The `errorBag` and the `fields` objects will be also shared along with the validator, they will not be injected if the component does not have a validator instance.
+
+> With SSR Frameworks like Nuxt, it is recommended to disable automatic injection since it may cause memory leaks due to all the validator instances being created for every component, which is not the intended behavior.

@@ -3,7 +3,7 @@ extends layout/app.pug
 block vars
   - const meta = {
   -   title: 'Advanced | VeeValidate',
-  -   description: ''
+  -   description: 'Advanced configs and tips for vee-validate'
   - };
 
 block content
@@ -11,8 +11,10 @@ block content
 
   include:markdown-it(langPrefix="highlight-") markdown/advanced/bus.md
   +example('EventBusParent')
-    event-bus-example 
+    event-bus-example
 
   include:markdown-it(langPrefix="highlight-") markdown/advanced/backend.md
   +example('Backend')
-    backend-example 
+    backend-example
+
+  include:markdown-it(langPrefix="highlight-" html=true) markdown/advanced/ctor.md
