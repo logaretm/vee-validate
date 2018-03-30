@@ -322,20 +322,7 @@ export default class Validator {
     }
 
     const result = await this._validate(field, value, silent);
-    if (silent) return result.valid;
-
-    this.errors.remove(field.name, field.scope, field.id);
-    if (field.isDisabled) {
-      return true;
-    } else if (result.errors) {
-      result.errors.forEach(e => this.errors.add(e));
-    }
-
-    field.setFlags({
-      pending: false,
-      valid: result.valid,
-      validated: true
-    });
+    this._handleValidationResults([result], silent);
 
     return result.valid;
   }
@@ -382,16 +369,13 @@ export default class Validator {
       matcher = { scope };
     }
 
-    const promises = this.fields.filter(matcher).map(field => this.validate(
-      `#${field.id}`,
-      providedValues ? values[field.name] : field.value,
-      null,
-      silent
-    ));
+    const results = await Promise.all(
+      this.fields.filter(matcher).map(field => this._validate(field, providedValues ? values[field.name] : field.value))
+    );
 
-    const results = await Promise.all(promises);
+    this._handleValidationResults(results);
 
-    return results.every(t => t);
+    return results.every(t => t.valid);
   }
 
   /**
@@ -400,16 +384,13 @@ export default class Validator {
   async validateScopes (silent?: boolean = false): Promise<boolean> {
     if (this.paused) return true;
 
-    const promises = this.fields.map(field => this.validate(
-      `#${field.id}`,
-      field.value,
-      null,
-      silent
-    ));
+    const results = await Promise.all(
+      this.fields.map(field => this._validate(field, field.value))
+    );
 
-    const results = await Promise.all(promises);
+    this._handleValidationResults(results);
 
-    return results.every(t => t);
+    return results.every(t => t.valid);
   }
 
   /**
@@ -538,7 +519,7 @@ export default class Validator {
 
         return {
           valid: allValid,
-          error: allValid ? undefined : this._createFieldError(field, rule, data, targetName)
+          errors: allValid ? [] : [this._createFieldError(field, rule, data, targetName)]
         };
       });
     }
@@ -549,7 +530,7 @@ export default class Validator {
 
     return {
       valid: result.valid,
-      error: result.valid ? undefined : this._createFieldError(field, rule, result.data, targetName)
+      errors: result.valid ? [] : [this._createFieldError(field, rule, result.data, targetName)]
     };
   }
 
@@ -640,12 +621,37 @@ export default class Validator {
     );
   }
 
+  _handleValidationResults (results, silent) {
+    const matchers = results.map(result => ({ id: result.id }));
+
+    this.errors.removeById(matchers.map(m => m.id));
+    if (!silent) {
+      const allErrors = results.reduce((prev, curr) => {
+        prev.push(...curr.errors);
+
+        return prev;
+      }, []);
+
+      this.errors.add(allErrors);
+    }
+
+    // handle flags.
+    this.fields.filter(matchers).forEach(field => {
+      const result = find(results, r => r.id === field.id);
+      field.setFlags({
+        pending: false,
+        valid: result.valid,
+        validated: true
+      });
+    });
+  }
+
   /**
    * Starts the validation process.
    */
   async _validate (field: Field, value: any, silent?: boolean = false): Promise<ValidationResult> {
     if (!field.isRequired && (isNullOrUndefined(value) || value === '')) {
-      return { valid: true };
+      return { valid: true, id: field.id, errors: [] };
     }
 
     const promises = [];
@@ -657,7 +663,7 @@ export default class Validator {
       if (isCallable(result.then)) {
         promises.push(result);
       } else if (this.fastExit && !result.valid) {
-        errors.push(result.error);
+        errors.push(...result.errors);
         isExitEarly = true;
       } else {
         // promisify the result.
@@ -668,17 +674,17 @@ export default class Validator {
     });
 
     if (isExitEarly) {
-      return { valid: false, errors };
+      return { valid: false, errors, id: field.id };
     }
 
     return (await Promise.all(promises)).reduce((prev, v) => {
       if (!v.valid) {
-        prev.errors.push(v.error);
+        prev.errors.push(...v.errors);
       }
 
       prev.valid = prev.valid && v.valid;
 
       return prev;
-    }, { valid: true, errors });
+    }, { valid: true, errors, id: field.id });
   }
 }
