@@ -147,9 +147,9 @@ export class Validator {
     localize(rootDictionary?: Object) :void;
     localize(language: string, dictionary?: Object) :void;
     setStrictMode(strictMode?: boolean): void;
-    validate(name: string, value?: any, scope?: string): Promise<any>;
-    validateAll(values?: Object, scope?: string): Promise<any>;
-    validateScopes(): Promise<any>;
+    validate(name: string, value?: any, scope?: string, silent?: boolean): Promise<any>;
+    validateAll(values?: Object, scope?: string, silent?: boolean): Promise<any>;
+    validateScopes(silent?: boolean): Promise<any>;
     static create(validations: Object, options: any): Validator;
     static extend(name: string, validator: Object|Function): void;
     static remove(name: string): void;

@@ -292,7 +292,7 @@ export default class Validator {
   /**
    * Validates a value against a registered field validations.
    */
-  async validate (name: string, value: any, scope?: string | null = null): Promise<boolean> {
+  async validate (name: string, value: any, scope?: string | null = null, silent?: boolean = false): Promise<boolean> {
     if (this.paused) return Promise.resolve(true);
 
     // overload to validate all.
@@ -316,16 +316,16 @@ export default class Validator {
       return this._handleFieldNotFound(name, scope);
     }
 
-    field.flags.pending = true;
+    if (!silent) field.flags.pending = true;
     if (arguments.length === 1) {
       value = field.value;
     }
 
-    const silentRun = field.isDisabled;
+    const result = await this._validate(field, value, silent);
+    if (silent) return result.valid;
 
-    const result = await this._validate(field, value, silentRun);
     this.errors.remove(field.name, field.scope, field.id);
-    if (silentRun) {
+    if (field.isDisabled) {
       return true;
     } else if (result.errors) {
       result.errors.forEach(e => this.errors.add(e));
@@ -361,7 +361,7 @@ export default class Validator {
   /**
    * Validates each value against the corresponding field validations.
    */
-  async validateAll (values?: string | MapObject): Promise<boolean> {
+  async validateAll (values?: string | MapObject, scope?: string | null = null, silent?: boolean = false): Promise<boolean> {
     if (this.paused) return true;
 
     let matcher = null;
@@ -371,20 +371,22 @@ export default class Validator {
       matcher = { scope: values };
     } else if (isObject(values)) {
       matcher = Object.keys(values).map(key => {
-        return { name: key, scope: arguments[1] || null };
+        return { name: key, scope };
       });
       providedValues = true;
-    } else if (arguments.length === 0) {
-      matcher = { scope: null }; // global scope.
     } else if (Array.isArray(values)) {
       matcher = values.map(key => {
-        return { name: key, scope: arguments[1] || null };
+        return { name: key, scope };
       });
+    } else {
+      matcher = { scope };
     }
 
     const promises = this.fields.filter(matcher).map(field => this.validate(
       `#${field.id}`,
-      providedValues ? values[field.name] : field.value
+      providedValues ? values[field.name] : field.value,
+      null,
+      silent
     ));
 
     const results = await Promise.all(promises);
@@ -395,12 +397,14 @@ export default class Validator {
   /**
    * Validates all scopes.
    */
-  async validateScopes (): Promise<boolean> {
+  async validateScopes (silent?: boolean = false): Promise<boolean> {
     if (this.paused) return true;
 
     const promises = this.fields.map(field => this.validate(
       `#${field.id}`,
-      field.value
+      field.value,
+      null,
+      silent
     ));
 
     const results = await Promise.all(promises);
