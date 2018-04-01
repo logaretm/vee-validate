@@ -569,7 +569,7 @@ test('can remove rules from the list of validators', async () => {
   await expect(v1.validate('name', false)).rejects.toBeTruthy();
 });
 
-test('calling validate without args will trigger validateAll', async () => {
+test('calling validate without args will trigger validateScopes', async () => {
   const v = new Validator();
   v.validateScopes = jest.fn(async () => {});
 
@@ -577,7 +577,7 @@ test('calling validate without args will trigger validateAll', async () => {
   expect(v.validateScopes).toHaveBeenCalled();
 });
 
-test('calling validate with * will trigger validateScopes', async () => {
+test('calling validate with * will trigger validateAll', async () => {
   const v = new Validator();
   v.validateAll = jest.fn(async () => { });
 
@@ -658,6 +658,83 @@ test('validations can be paused and resumed', async () => {
   expect(await v.validateAll({
     name: ''
   })).toBe(false);
+});
+
+test('errors will not be added on silent validate', async () => {
+  const v = new Validator({
+    name: 'alpha|min:3'
+  }, { fastExit: false });
+  expect(await v.validate('name', '2', null, true)).toBe(false);
+  expect(v.errors.count()).toBe(0);
+});
+
+test('errors will not be removed on silent validate', async () => {
+  const v = new Validator({
+    name: 'alpha|min:3'
+  }, { fastExit: false });
+  expect(await v.validate('name', '2', null, false)).toBe(false);
+  expect(await v.validate('name', '2', null, true)).toBe(false);
+  expect(v.errors.count()).toBe(2);
+});
+
+test('flags will not be modified on silent validate', async () => {
+  const v = new Validator({}, { fastExit: false });
+  const field = v.attach({ name: 'name', rules: 'alpha|min:3' });
+  expect(field.flags.pending).toBe(false);
+  expect(field.flags.validated).toBe(false);
+  expect(await v.validate('name', '2', null, true)).toBe(false);
+  expect(field.flags.pending).toBe(false);
+  expect(field.flags.validated).toBe(false);
+});
+
+test('errors will not be added on silent validateScopes', async () => {
+  const v = new Validator({}, { fastExit: false });
+  v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
+  expect(await v.validateScopes(true)).toBe(false);
+  expect(v.errors.count()).toBe(0);
+});
+
+test('errors will not be removed on silent validateScopes', async () => {
+  const v = new Validator({}, { fastExit: false });
+  v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
+  expect(await v.validateScopes(false)).toBe(false);
+  expect(await v.validateScopes(true)).toBe(false);
+  expect(v.errors.count()).toBe(2);
+});
+
+test('flags will not be modified on silent validateScopes', async () => {
+  const v = new Validator({}, { fastExit: false });
+  const field = v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
+  expect(field.flags.pending).toBe(false);
+  expect(field.flags.validated).toBe(false);
+  expect(await v.validateScopes(true)).toBe(false);
+  expect(field.flags.pending).toBe(false);
+  expect(field.flags.validated).toBe(false);
+});
+
+test('errors will not be added on silent validateAll', async () => {
+  const v = new Validator({}, { fastExit: false });
+  v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
+  expect(await v.validateAll(null, null, true)).toBe(false);
+  expect(v.errors.count()).toBe(0);
+});
+
+test('errors will not be removed on silent validateAll', async () => {
+  const v = new Validator({}, { fastExit: false });
+  v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
+  expect(await v.validateAll(null, null, false)).toBe(false);
+  expect(await v.validateAll(null, null, true)).toBe(false);
+  expect(v.errors.count()).toBe(2);
+});
+
+test('flags will not be modified on silent validateAll', async () => {
+  const v = new Validator({}, { fastExit: false });
+  const field = v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
+  expect(field.flags.pending).toBe(false);
+  expect(field.flags.validated).toBe(false);
+  expect(await v.validateAll(null, null, true)).toBe(false);
+  expect(field.flags.pending).toBe(false);
+  expect(field.flags.validated).toBe(false);
 });
 
 test('it can hold multiple errors for one field', async () => {
