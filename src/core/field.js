@@ -547,7 +547,7 @@ export default class Field {
   }
 
   _addHTMLEventListener (evt, validate) {
-    if (!this.el) return;
+    if (!this.el || this.component) return;
 
     if (~['radio', 'checkbox'].indexOf(this.el.type)) {
       const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
