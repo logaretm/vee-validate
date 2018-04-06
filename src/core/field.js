@@ -225,6 +225,10 @@ export default class Field {
     this.updateDependencies();
     this.addActionListeners();
 
+    if (!this.name) {
+      warn('A field is missing a "name" or "data-vv-name" attribute');
+    }
+
     // update required flag flags
     if (options.rules !== undefined) {
       this.flags.required = this.isRequired;
