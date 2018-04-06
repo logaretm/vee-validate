@@ -6,7 +6,7 @@ You don't have to do anything fancy in your app. Most of the work goes into the 
 
 Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object.
 
-Currently there are over 20 validation rules available in the plugin. This plugin is inspired by [PHP Framework Laravel's validation syntax](https://laravel.com/).  
+Currently there are over 20 validation rules available in the plugin. This plugin is inspired by [PHP Framework Laravel's validation syntax](https://laravel.com/).
 
 ## [Getting started](#getting-started)
 
@@ -51,6 +51,6 @@ Vue.use(VeeValidate);
 
 ### [Basic Example](#basic-example)
 
-All you need is to add the `v-validate` directive to the input you wish to validate.
+All you need is to add the `v-validate` directive to the input you wish to validate, and make sure your input has a `name` attribute for error messages generation.
 
 Then, pass to the directive a `rules` string which contains a list of validation rules separated by a pipe '`|`'. For the following example the validation rules are straight forward. Use `required` to indicate that the field is required, and `email` to indicate that the field must be an email. To combine both rules we assign the string value `required|email` to the `v-validate` expression value.
