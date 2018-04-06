@@ -201,6 +201,17 @@ export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = f
   };
 };
 
+export const appendRule = (rule, rules) => {
+  if (typeof rules === 'string') {
+    return `${rules}|${rule}`;
+  }
+
+  return {
+    ...rules,
+    ...normalizeRules(rule)
+  };
+};
+
 /**
  * Normalizes the given rules expression.
  */
