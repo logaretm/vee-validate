@@ -201,15 +201,19 @@ export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = f
   };
 };
 
-export const appendRule = (rule, rules) => {
+/**
+ * Appends a rule definition to a list of rules.
+ */
+export const appendRule = (rule: string, rules: string | { [string]: boolean | any[] }) => {
+  if (!rules) {
+    return rule;
+  }
+
   if (typeof rules === 'string') {
     return `${rules}|${rule}`;
   }
 
-  return {
-    ...rules,
-    ...normalizeRules(rule)
-  };
+  return assign({}, rules, normalizeRules(rule));
 };
 
 /**
