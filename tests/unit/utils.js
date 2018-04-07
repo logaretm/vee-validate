@@ -447,3 +447,7 @@ describe('deepParseInt', () => {
     expect(utils.deepParseInt({ blur: "10", input: "400", focus: 300, change: "hello" })).toEqual({ blur: 10, input: 400, focus: 300, change: NaN });
   });
 });
+
+test('detects passive events support', () => {
+  expect(utils.detectPassiveSupport()).toBe(true);
+});

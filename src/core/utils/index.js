@@ -14,6 +14,8 @@ export const detectPassiveSupport = () => {
   } catch (e) {
     supportsPassive = false;
   };
+
+  return supportsPassive;
 };
 
 export const addEventListener = (el, eventName, cb) => {
