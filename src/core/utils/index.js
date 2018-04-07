@@ -5,7 +5,7 @@ let supportsPassive = true;
 export const detectPassiveSupport = () => {
   try {
     const opts = Object.defineProperty({}, 'passive', {
-      get: function () {
+      get () {
         supportsPassive = true;
       }
     });

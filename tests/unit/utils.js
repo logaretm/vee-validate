@@ -450,4 +450,23 @@ describe('deepParseInt', () => {
 
 test('detects passive events support', () => {
   expect(utils.detectPassiveSupport()).toBe(true);
+
+  const addEvt = window.addEventListener;
+  window.addEventListener = (evt, cb, opts) => {
+    if (opts.passive) {
+      return 'yay!';
+    }
+  }
+
+  expect(utils.detectPassiveSupport()).toBe(true);
+
+  window.addEventListener = (evt, cb, opts) => {
+    if (typeof opts === 'object') {
+      throw new Error('Should not pass an object');
+    }
+  }
+
+  expect(utils.detectPassiveSupport()).toBe(false);
+
+  window.addEventListener = addEvt;
 });
