@@ -22,6 +22,17 @@ test('adds errors to the collection', () => {
   expect(errors.first()).toBe(null);
 });
 
+test('accepts an array of errors', () => {
+  const errors = new ErrorBag();
+
+  errors.add([
+    { field: 'name', msg: 'The scoped name is invalid', rule: 'rule1' },
+    { field: 'name', msg: 'The scoped name is invalid', rule: 'rule1' },
+  ]);
+
+  expect(errors.count()).toBe(2);
+});
+
 test('updates error objects by matching against field id', () => {
   const errors = new ErrorBag();
   errors.add({
@@ -391,3 +402,4 @@ test('error bag instance is iterable', () => {
 
   expect(idx).toBe(2);
 });
+

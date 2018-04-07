@@ -7,7 +7,7 @@ import {
   getDataAttribute,
   setDataAttribute,
   toggleClass,
-  getInputEventName,
+  isTextInput,
   debounce,
   isCallable,
   warn,
@@ -16,7 +16,8 @@ import {
   makeEventsArray,
   makeDelayObject,
   merge,
-  isObject
+  isObject,
+  addEventListener
 } from './utils';
 import Generator from './generator';
 import Validator from './validator';
@@ -418,6 +419,8 @@ export default class Field {
     // remove previous listeners.
     this.unwatch(/class/);
 
+    if (!this.el) return;
+
     const onBlur = () => {
       this.flags.touched = true;
       this.flags.untouched = false;
@@ -430,7 +433,7 @@ export default class Field {
       this.unwatch(/^class_blur$/);
     };
 
-    const inputEvent = getInputEventName(this.el);
+    const inputEvent = isTextInput(this.el) ? 'input' : 'change';
     const onInput = () => {
       this.flags.dirty = true;
       this.flags.pristine = false;
@@ -463,10 +466,10 @@ export default class Field {
 
     if (!this.el) return;
 
-    this.el.addEventListener(inputEvent, onInput);
+    addEventListener(this.el, inputEvent, onInput);
     // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
     const blurEvent = ['radio', 'checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'click';
-    this.el.addEventListener(blurEvent, onBlur);
+    addEventListener(this.el, blurEvent, onBlur);
     this.watchers.push({
       tag: 'class_input',
       unwatch: () => {
@@ -487,7 +490,7 @@ export default class Field {
    */
   addValueListeners () {
     this.unwatch(/^input_.+/);
-    if (!this.listen) return;
+    if (!this.listen || !this.el) return;
 
     const fn = this.targetOf ? () => {
       this.validator.validate(`#${this.targetOf}`);
@@ -500,11 +503,11 @@ export default class Field {
       this.validator.validate(`#${this.id}`, args[0]);
     };
 
-    const inputEvent = this.model && this.model.lazy ? 'change' : getInputEventName(this.el);
-    // replace input event with suitable one.
-    let events = this.events.map(e => {
-      return e === 'input' ? inputEvent : e;
-    });
+    let inputEvent = isTextInput(this.el) ? 'input' : 'change';
+    inputEvent = this.model && this.model.lazy ? 'change' : inputEvent;
+    // force change event for non-text type fields, otherwise use the configured.
+    // if no event is configured then respect the user choice.
+    let events = !this.events.length || isTextInput(this.el) ? this.events : ['change'];
 
     // if there is a watchable model and an on input validation is requested.
     if (this.model && this.model.expression && events.indexOf(inputEvent) !== -1) {
@@ -517,6 +520,7 @@ export default class Field {
         tag: 'input_model',
         unwatch
       });
+
       // filter out input event as it is already handled by the watcher API.
       events = events.filter(e => e !== inputEvent);
     }
@@ -549,10 +553,24 @@ export default class Field {
   _addHTMLEventListener (evt, validate) {
     if (!this.el || this.component) return;
 
+    // listen for the current element.
+    addEventListener(this.el, evt, validate);
+    this.watchers.push({
+      tag: 'input_native',
+      unwatch: () => {
+        this.el.removeEventListener(evt, validate);
+      }
+    });
+
     if (~['radio', 'checkbox'].indexOf(this.el.type)) {
       const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
       toArray(els).forEach(el => {
-        el.addEventListener(evt, validate);
+        // skip if it is added by v-validate and is not the current element.
+        if (getDataAttribute(el, 'id') && el !== this.el) {
+          return;
+        }
+
+        addEventListener(el, evt, validate);
         this.watchers.push({
           tag: 'input_native',
           unwatch: () => {
@@ -560,17 +578,7 @@ export default class Field {
           }
         });
       });
-
-      return;
     }
-
-    this.el.addEventListener(evt, validate);
-    this.watchers.push({
-      tag: 'input_native',
-      unwatch: () => {
-        this.el.removeEventListener(evt, validate);
-      }
-    });
   }
 
   /**

@@ -1,6 +1,6 @@
 import Generator from './core/generator';
 import Field from './core/field';
-import { getDataAttribute, isEqual, warn } from './core/utils';
+import { getDataAttribute, isEqual, warn, toArray } from './core/utils';
 
 // @flow
 
@@ -18,7 +18,7 @@ const findField = (el: HTMLElement, context: ValidatingVM): ?Field => {
 export default {
   bind (el: HTMLElement, binding, vnode) {
     const validator = vnode.context.$validator;
-    if (! validator) {
+    if (!validator) {
       warn(`No validator instance is present on vm, did you forget to inject '$validator'?`);
       return;
     }

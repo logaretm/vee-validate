@@ -279,20 +279,6 @@ describe('normalizes rules', () => {
   });
 });
 
-test('gets appropiate input event name for inputs', () => {
-  const text = { type: 'text' };
-  const select = { tagName: 'SELECT' };
-  const checkbox = { type: 'checkbox' };
-  const radio = { type: 'radio' };
-  const file = { type: 'file' };
-
-  expect(utils.getInputEventName(text)).toBe('input');
-  expect(utils.getInputEventName(select)).toBe('change');
-  expect(utils.getInputEventName(checkbox)).toBe('change');
-  expect(utils.getInputEventName(radio)).toBe('change');
-  expect(utils.getInputEventName(file)).toBe('change');
-});
-
 test('creates branded errors', () => {
   expect(() => {
     throw utils.createError('My Error')
@@ -460,4 +446,27 @@ describe('deepParseInt', () => {
   test('it parses all values on the first level of an object to int', () => {
     expect(utils.deepParseInt({ blur: "10", input: "400", focus: 300, change: "hello" })).toEqual({ blur: 10, input: 400, focus: 300, change: NaN });
   });
+});
+
+test('detects passive events support', () => {
+  expect(utils.detectPassiveSupport()).toBe(true);
+
+  const addEvt = window.addEventListener;
+  window.addEventListener = (evt, cb, opts) => {
+    if (opts.passive) {
+      return 'yay!';
+    }
+  }
+
+  expect(utils.detectPassiveSupport()).toBe(true);
+
+  window.addEventListener = (evt, cb, opts) => {
+    if (typeof opts === 'object') {
+      throw new Error('Should not pass an object');
+    }
+  }
+
+  expect(utils.detectPassiveSupport()).toBe(false);
+
+  window.addEventListener = addEvt;
 });

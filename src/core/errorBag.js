@@ -21,7 +21,7 @@ export default class ErrorBag {
   /**
    * Adds an error to the internal array.
    */
-  add (error: FieldError) {
+  add (error: FieldError | FieldError[]) {
     // handle old signature.
     if (arguments.length > 1) {
       error = {
@@ -33,8 +33,26 @@ export default class ErrorBag {
       };
     }
 
+    this.items.push(
+      ...this._normalizeError(error)
+    );
+  }
+
+  /**
+   * Normalizes passed errors to an error array.
+   */
+  _normalizeError (error: FieldError | FieldError[]): FieldError[] {
+    if (Array.isArray(error)) {
+      return error.map(e => {
+        e.scope = !isNullOrUndefined(e.scope) ? e.scope : null;
+
+        return e;
+      });
+    }
+
     error.scope = !isNullOrUndefined(error.scope) ? error.scope : null;
-    this.items.push(error);
+
+    return [error];
   }
 
   /**
@@ -209,9 +227,15 @@ export default class ErrorBag {
   }
 
   /**
-   * Removes errors by matching against the id.
+   * Removes errors by matching against the id or ids.
    */
-  removeById (id: string) {
+  removeById (id: string | string[]) {
+    if (Array.isArray(id)) {
+      // filter out the non-matching fields.
+      this.items = this.items.filter(i => id.indexOf(i.id) === -1);
+      return;
+    }
+
     for (let i = 0; i < this.items.length; ++i) {
       if (this.items[i].id === id) {
         this.items.splice(i, 1);
@@ -223,13 +247,9 @@ export default class ErrorBag {
   /**
    * Removes all error messages associated with a specific field.
    */
-  remove (field: string, scope: ?string, id?: string) {
+  remove (field: string, scope: ?string) {
     field = !isNullOrUndefined(field) ? String(field) : field;
     const removeCondition = (e: FieldError) => {
-      if (e.id && id) {
-        return e.id === id;
-      }
-
       if (!isNullOrUndefined(scope)) {
         return e.field === field && e.scope === scope;
       }
