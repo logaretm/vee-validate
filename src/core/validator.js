@@ -321,8 +321,14 @@ export default class Validator {
       value = field.value;
     }
 
-    const result = await this._validate(field, value, silent);
-    this._handleValidationResults([result], silent);
+    if (field.isDisabled) {
+      return true;
+    }
+
+    const result = await this._validate(field, value);
+    if (!silent) {
+      this._handleValidationResults([result]);
+    }
 
     return result.valid;
   }
@@ -373,7 +379,9 @@ export default class Validator {
       this.fields.filter(matcher).map(field => this._validate(field, providedValues ? values[field.name] : field.value))
     );
 
-    this._handleValidationResults(results);
+    if (!silent) {
+      this._handleValidationResults(results);
+    }
 
     return results.every(t => t.valid);
   }
@@ -388,7 +396,9 @@ export default class Validator {
       this.fields.map(field => this._validate(field, field.value))
     );
 
-    this._handleValidationResults(results);
+    if (!silent) {
+      this._handleValidationResults(results);
+    }
 
     return results.every(t => t.valid);
   }
@@ -621,19 +631,16 @@ export default class Validator {
     );
   }
 
-  _handleValidationResults (results, silent) {
+  _handleValidationResults (results) {
     const matchers = results.map(result => ({ id: result.id }));
-
     this.errors.removeById(matchers.map(m => m.id));
-    if (!silent) {
-      const allErrors = results.reduce((prev, curr) => {
-        prev.push(...curr.errors);
+    const allErrors = results.reduce((prev, curr) => {
+      prev.push(...curr.errors);
 
-        return prev;
-      }, []);
+      return prev;
+    }, []);
 
-      this.errors.add(allErrors);
-    }
+    this.errors.add(allErrors);
 
     // handle flags.
     this.fields.filter(matchers).forEach(field => {
@@ -649,7 +656,7 @@ export default class Validator {
   /**
    * Starts the validation process.
    */
-  async _validate (field: Field, value: any, silent?: boolean = false): Promise<ValidationResult> {
+  async _validate (field: Field, value: any): Promise<ValidationResult> {
     if (!field.isRequired && (isNullOrUndefined(value) || value === '')) {
       return { valid: true, id: field.id, errors: [] };
     }
