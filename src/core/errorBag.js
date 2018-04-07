@@ -247,13 +247,9 @@ export default class ErrorBag {
   /**
    * Removes all error messages associated with a specific field.
    */
-  remove (field: string, scope: ?string, id?: string) {
+  remove (field: string, scope: ?string) {
     field = !isNullOrUndefined(field) ? String(field) : field;
     const removeCondition = (e: FieldError) => {
-      if (e.id && id) {
-        return e.id === id;
-      }
-
       if (!isNullOrUndefined(scope)) {
         return e.field === field && e.scope === scope;
       }

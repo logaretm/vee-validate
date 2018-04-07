@@ -402,3 +402,4 @@ test('error bag instance is iterable', () => {
 
   expect(idx).toBe(2);
 });
+
