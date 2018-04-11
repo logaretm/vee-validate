@@ -487,6 +487,15 @@ export default class Field {
     });
   }
 
+  checkValueChanged () {
+    // handle some people initialize the value to null, since text inputs have empty string value.
+    if (this.initialValue === null && this.value === '' && isTextInput(this.el)) {
+      return false;
+    }
+
+    return this.value !== this.initialValue;
+  }
+
   /**
    * Adds the listeners required for validation.
    */
@@ -495,7 +504,7 @@ export default class Field {
     if (!this.listen || !this.el) return;
 
     const fn = this.targetOf ? () => {
-      this.flags.changed = this.value !== this.initialValue;
+      this.flags.changed = this.checkValueChanged(); ;
       this.validator.validate(`#${this.targetOf}`);
     } : (...args) => {
       // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
@@ -503,7 +512,7 @@ export default class Field {
         args[0] = this.value;
       }
 
-      this.flags.changed = this.value !== this.initialValue;
+      this.flags.changed = this.checkValueChanged();
       this.validator.validate(`#${this.id}`, args[0]);
     };
 
