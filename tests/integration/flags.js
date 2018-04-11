@@ -38,14 +38,32 @@ test('field flags', async () => {
     pristine: true,
     dirty: false,
     pending: false,
-    validated: false
+    validated: false,
+    changed: false
+  });
+
+  input.trigger('input');
+  input.trigger('blur');
+
+  await flushPromises();
+  expect(field.flags).toEqual({
+    required: true,
+    valid: false,
+    invalid: true,
+    untouched: false,
+    touched: true,
+    pristine: false,
+    dirty: true,
+    pending: false,
+    validated: true,
+    changed: false
   });
 
   input.element.value = '123';
   input.trigger('input');
   input.trigger('blur');
-
   await flushPromises();
+
   expect(field.flags).toEqual({
     required: true,
     valid: true,
@@ -55,7 +73,8 @@ test('field flags', async () => {
     pristine: false,
     dirty: true,
     pending: false,
-    validated: true
+    validated: true,
+    changed: true
   });
 
   field.reset();
@@ -68,7 +87,8 @@ test('field flags', async () => {
     pristine: true,
     dirty: false,
     pending: false,
-    validated: false
+    validated: false,
+    changed: false
   });
 });
 
@@ -84,7 +104,7 @@ test('adds listeners when field flag is manually set', async () => {
   input.trigger('blur');
   await flushPromises();
   expect(field.flags.touched).toBe(true);
-  
+
   field.setFlags({
     untouched: true
   });

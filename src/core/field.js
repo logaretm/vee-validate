@@ -96,6 +96,8 @@ export default class Field {
     this.component = options.component;
     this.ctorConfig = this.component ? getPath('$options.$_veeValidate', this.component) : undefined;
     this.update(options);
+    // set initial value.
+    this.initialValue = this.value;
     this.updated = false;
   }
 
@@ -493,6 +495,7 @@ export default class Field {
     if (!this.listen || !this.el) return;
 
     const fn = this.targetOf ? () => {
+      this.flags.changed = this.value !== this.initialValue;
       this.validator.validate(`#${this.targetOf}`);
     } : (...args) => {
       // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
@@ -500,6 +503,7 @@ export default class Field {
         args[0] = this.value;
       }
 
+      this.flags.changed = this.value !== this.initialValue;
       this.validator.validate(`#${this.id}`, args[0]);
     };
 
