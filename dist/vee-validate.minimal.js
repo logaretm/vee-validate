@@ -9,6 +9,29 @@
 	(global.VeeValidate = factory());
 }(this, (function () { 'use strict';
 
+var supportsPassive = true;
+var detectPassiveSupport = function () {
+    try {
+        var opts = Object.defineProperty({}, 'passive', {
+            get: function get() {
+                supportsPassive = true;
+            }
+        });
+        window.addEventListener('testPassive', null, opts);
+        window.removeEventListener('testPassive', null, opts);
+    } catch (e) {
+        supportsPassive = false;
+    }
+    
+    return supportsPassive;
+};
+var addEventListener = function (el, eventName, cb) {
+    el.addEventListener(eventName, cb, supportsPassive ? {
+        passive: true
+    } : false);
+};
+var isTextInput = function (el) { return ['text','number','password','search','email','tel',
+    'url','textarea'].indexOf(el.type) !== -1; };
 var getDataAttribute = function (el, name) { return el.getAttribute(("data-vv-" + name)); };
 var isNullOrUndefined = function (value) { return value === null || value === undefined; };
 var setDataAttribute = function (el, name, value) { return el.setAttribute(("data-vv-" + name), value); };
@@ -21,7 +44,8 @@ var createFlags = function () { return ({
     invalid: null,
     validated: false,
     pending: false,
-    required: false
+    required: false,
+    changed: false
 }); };
 var isEqual = function (lhs, rhs) {
     if (lhs instanceof RegExp && rhs instanceof RegExp) {
@@ -237,12 +261,6 @@ var find = function (arrayLike, predicate) {
     }
     return undefined;
 };
-var getInputEventName = function (el) {
-    if (el && (el.tagName === 'SELECT' || ~['radio','checkbox','file'].indexOf(el.type))) {
-        return 'change';
-    }
-    return 'input';
-};
 var isBuiltInComponent = function (vnode) {
     if (!vnode) {
         return false;
@@ -325,8 +343,18 @@ ErrorBag.prototype.add = function add (error) {
             regenerate: null
         };
     }
+    (ref = this.items).push.apply(ref, this._normalizeError(error));
+        var ref;
+};
+ErrorBag.prototype._normalizeError = function _normalizeError (error) {
+    if (Array.isArray(error)) {
+        return error.map(function (e) {
+            e.scope = !isNullOrUndefined(e.scope) ? e.scope : null;
+            return e;
+        });
+    }
     error.scope = !isNullOrUndefined(error.scope) ? error.scope : null;
-    this.items.push(error);
+    return [error];
 };
 ErrorBag.prototype.regenerate = function regenerate () {
     this.items.forEach(function (i) {
@@ -445,6 +473,10 @@ ErrorBag.prototype.firstNot = function firstNot (name, rule, scope) {
 ErrorBag.prototype.removeById = function removeById (id) {
         var this$1 = this;
 
+    if (Array.isArray(id)) {
+        this.items = this.items.filter(function (i) { return id.indexOf(i.id) === -1; });
+        return;
+    }
     for (var i = 0;i < this.items.length; ++i) {
         if (this$1.items[i].id === id) {
             this$1.items.splice(i, 1);
@@ -452,14 +484,11 @@ ErrorBag.prototype.removeById = function removeById (id) {
         }
     }
 };
-ErrorBag.prototype.remove = function remove (field, scope, id) {
+ErrorBag.prototype.remove = function remove (field, scope) {
         var this$1 = this;
 
     field = !isNullOrUndefined(field) ? String(field) : field;
     var removeCondition = function (e) {
-        if (e.id && id) {
-            return e.id === id;
-        }
         if (!isNullOrUndefined(scope)) {
             return e.field === field && e.scope === scope;
         }
@@ -958,6 +987,7 @@ var Field = function Field(options) {
     this.component = options.component;
     this.ctorConfig = this.component ? getPath('$options.$_veeValidate', this.component) : undefined;
     this.update(options);
+    this.initialValue = this.value;
     this.updated = false;
 };
 
@@ -1203,6 +1233,8 @@ Field.prototype.addActionListeners = function addActionListeners () {
         var this$1 = this;
 
     this.unwatch(/class/);
+    if (!this.el) 
+        { return; }
     var onBlur = function () {
         this$1.flags.touched = true;
         this$1.flags.untouched = false;
@@ -1212,7 +1244,7 @@ Field.prototype.addActionListeners = function addActionListeners () {
         }
         this$1.unwatch(/^class_blur$/);
     };
-    var inputEvent = getInputEventName(this.el);
+    var inputEvent = isTextInput(this.el) ? 'input' : 'change';
     var onInput = function () {
         this$1.flags.dirty = true;
         this$1.flags.pristine = false;
@@ -1241,9 +1273,9 @@ Field.prototype.addActionListeners = function addActionListeners () {
     }
     if (!this.el) 
         { return; }
-    this.el.addEventListener(inputEvent, onInput);
+    addEventListener(this.el, inputEvent, onInput);
     var blurEvent = ['radio','checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'click';
-    this.el.addEventListener(blurEvent, onBlur);
+    addEventListener(this.el, blurEvent, onBlur);
     this.watchers.push({
         tag: 'class_input',
         unwatch: function () {
@@ -1257,13 +1289,21 @@ Field.prototype.addActionListeners = function addActionListeners () {
         }
     });
 };
+Field.prototype.checkValueChanged = function checkValueChanged () {
+    if (this.initialValue === null && this.value === '' && isTextInput(this.el)) {
+        return false;
+    }
+    return this.value !== this.initialValue;
+};
 Field.prototype.addValueListeners = function addValueListeners () {
         var this$1 = this;
 
     this.unwatch(/^input_.+/);
-    if (!this.listen) 
+    if (!this.listen || !this.el) 
         { return; }
     var fn = this.targetOf ? function () {
+        this$1.flags.changed = this$1.checkValueChanged();
+        
         this$1.validator.validate(("#" + (this$1.targetOf)));
     } : function () {
             var args = [], len = arguments.length;
@@ -1272,10 +1312,12 @@ Field.prototype.addValueListeners = function addValueListeners () {
         if (args.length === 0 || isCallable(Event) && args[0] instanceof Event || args[0] && args[0].srcElement) {
             args[0] = this$1.value;
         }
+        this$1.flags.changed = this$1.checkValueChanged();
         this$1.validator.validate(("#" + (this$1.id)), args[0]);
     };
-    var inputEvent = this.model && this.model.lazy ? 'change' : getInputEventName(this.el);
-    var events = this.events.map(function (e) { return e === 'input' ? inputEvent : e; });
+    var inputEvent = isTextInput(this.el) ? 'input' : 'change';
+    inputEvent = this.model && this.model.lazy ? 'change' : inputEvent;
+    var events = !this.events.length || isTextInput(this.el) ? this.events : ['change'];
     if (this.model && this.model.expression && events.indexOf(inputEvent) !== -1) {
         var debouncedFn = debounce(fn, this.delay[inputEvent]);
         var unwatch = this.vm.$watch(this.model.expression, function () {
@@ -1322,10 +1364,20 @@ Field.prototype._addHTMLEventListener = function _addHTMLEventListener (evt, val
 
     if (!this.el || this.component) 
         { return; }
+    addEventListener(this.el, evt, validate);
+    this.watchers.push({
+        tag: 'input_native',
+        unwatch: function () {
+            this$1.el.removeEventListener(evt, validate);
+        }
+    });
     if (~['radio','checkbox'].indexOf(this.el.type)) {
         var els = document.querySelectorAll(("input[name=\"" + (this.el.name) + "\"]"));
         toArray(els).forEach(function (el) {
-            el.addEventListener(evt, validate);
+            if (getDataAttribute(el, 'id') && el !== this$1.el) {
+                return;
+            }
+            addEventListener(el, evt, validate);
             this$1.watchers.push({
                 tag: 'input_native',
                 unwatch: function () {
@@ -1333,15 +1385,7 @@ Field.prototype._addHTMLEventListener = function _addHTMLEventListener (evt, val
                 }
             });
         });
-        return;
     }
-    this.el.addEventListener(evt, validate);
-    this.watchers.push({
-        tag: 'input_native',
-        unwatch: function () {
-            this$1.el.removeEventListener(evt, validate);
-        }
-    });
 };
 Field.prototype.updateAriaAttrs = function updateAriaAttrs () {
     if (!this.aria || !this.el || !isCallable(this.el.setAttribute)) 
@@ -1651,24 +1695,15 @@ Validator.prototype.validate = function validate (name, value, scope, silent) {
         if ($args.length === 1) {
             value = field.value;
         }
-        return this._validate(field, value, silent).then((function ($await_3) {
-                var this$1 = this;
-
+        if (field.isDisabled) {
+            return $return(true);
+        }
+        return this._validate(field, value).then((function ($await_3) {
             try {
                 result = $await_3;
-                if (silent) 
-                    { return $return(result.valid); }
-                this.errors.remove(field.name, field.scope, field.id);
-                if (field.isDisabled) {
-                    return $return(true);
-                } else if (result.errors) {
-                    result.errors.forEach(function (e) { return this$1.errors.add(e); });
+                if (!silent) {
+                    this._handleValidationResults([result]);
                 }
-                field.setFlags({
-                    pending: false,
-                    valid: result.valid,
-                    validated: true
-                });
                 return $return(result.valid);
             } catch ($boundEx) {
                 return $error($boundEx);
@@ -1691,7 +1726,7 @@ Validator.prototype.validateAll = function validateAll (values, scope, silent) {
     return new Promise((function ($return, $error) {
             var this$1 = this;
 
-        var promises, results;
+        var results;
         var matcher, providedValues;
         if (this.paused) 
             { return $return(true); }
@@ -1717,11 +1752,13 @@ Validator.prototype.validateAll = function validateAll (values, scope, silent) {
                 scope: scope
             };
         }
-        promises = this.fields.filter(matcher).map(function (field) { return this$1.validate(("#" + (field.id)), providedValues ? values[field.name] : field.value, null, silent); });
-        return Promise.all(promises).then((function ($await_4) {
+        return Promise.all(this.fields.filter(matcher).map(function (field) { return this$1._validate(field, providedValues ? values[field.name] : field.value); })).then((function ($await_4) {
             try {
                 results = $await_4;
-                return $return(results.every(function (t) { return t; }));
+                if (!silent) {
+                    this._handleValidationResults(results);
+                }
+                return $return(results.every(function (t) { return t.valid; }));
             } catch ($boundEx) {
                 return $error($boundEx);
             }
@@ -1734,14 +1771,16 @@ Validator.prototype.validateScopes = function validateScopes (silent) {
     return new Promise((function ($return, $error) {
             var this$1 = this;
 
-        var promises, results;
+        var results;
         if (this.paused) 
             { return $return(true); }
-        promises = this.fields.map(function (field) { return this$1.validate(("#" + (field.id)), field.value, null, silent); });
-        return Promise.all(promises).then((function ($await_5) {
+        return Promise.all(this.fields.map(function (field) { return this$1._validate(field, field.value); })).then((function ($await_5) {
             try {
                 results = $await_5;
-                return $return(results.every(function (t) { return t; }));
+                if (!silent) {
+                    this._handleValidationResults(results);
+                }
+                return $return(results.every(function (t) { return t.valid; }));
             } catch ($boundEx) {
                 return $error($boundEx);
             }
@@ -1845,7 +1884,7 @@ Validator.prototype._test = function _test (field, value, rule) {
             }
             return {
                 valid: allValid,
-                error: allValid ? undefined : this$1._createFieldError(field, rule, data, targetName)
+                errors: allValid ? [] : [this$1._createFieldError(field, rule, data, targetName)]
             };
         });
     }
@@ -1857,7 +1896,7 @@ Validator.prototype._test = function _test (field, value, rule) {
     }
     return {
         valid: result.valid,
-        error: result.valid ? undefined : this._createFieldError(field, rule, result.data, targetName)
+        errors: result.valid ? [] : [this._createFieldError(field, rule, result.data, targetName)]
     };
 };
 Validator._merge = function _merge (name, validator) {
@@ -1876,9 +1915,6 @@ Validator._guardExtend = function _guardExtend (name, validator) {
     }
     if (!isCallable(validator.validate)) {
         throw createError(("Extension Error: The validator '" + name + "' must be a function or have a 'validate' method."));
-    }
-    if (!isCallable(validator.getMessage) && typeof validator.getMessage !== 'string') {
-        throw createError(("Extension Error: The validator '" + name + "' object must have a 'getMessage' method or string."));
     }
 };
 Validator.prototype._createFieldError = function _createFieldError (field, rule, data, targetName) {
@@ -1928,9 +1964,26 @@ Validator.prototype._handleFieldNotFound = function _handleFieldNotFound (name, 
     var fullName = isNullOrUndefined(scope) ? name : ("" + (!isNullOrUndefined(scope) ? scope + '.' : '') + name);
     throw createError(("Validating a non-existent field: \"" + fullName + "\". Use \"attach()\" first."));
 };
-Validator.prototype._validate = function _validate (field, value, silent) {
-        if ( silent === void 0 ) silent = false;
-
+Validator.prototype._handleValidationResults = function _handleValidationResults (results) {
+    var matchers = results.map(function (result) { return ({
+        id: result.id
+    }); });
+    this.errors.removeById(matchers.map(function (m) { return m.id; }));
+    var allErrors = results.reduce(function (prev, curr) {
+        prev.push.apply(prev, curr.errors);
+        return prev;
+    }, []);
+    this.errors.add(allErrors);
+    this.fields.filter(matchers).forEach(function (field) {
+        var result = find(results, function (r) { return r.id === field.id; });
+        field.setFlags({
+            pending: false,
+            valid: result.valid,
+            validated: true
+        });
+    });
+};
+Validator.prototype._validate = function _validate (field, value) {
     return new Promise((function ($return, $error) {
             var this$1 = this;
 
@@ -1938,7 +1991,9 @@ Validator.prototype._validate = function _validate (field, value, silent) {
         var isExitEarly;
         if (!field.isRequired && (isNullOrUndefined(value) || value === '')) {
             return $return({
-                valid: true
+                valid: true,
+                id: field.id,
+                errors: []
             });
         }
         promises = [];
@@ -1952,7 +2007,7 @@ Validator.prototype._validate = function _validate (field, value, silent) {
             if (isCallable(result.then)) {
                 promises.push(result);
             } else if (this$1.fastExit && !result.valid) {
-                errors.push(result.error);
+                errors.push.apply(errors, result.errors);
                 isExitEarly = true;
             } else {
                 promises.push(new Promise(function (resolve) { return resolve(result); }));
@@ -1962,20 +2017,23 @@ Validator.prototype._validate = function _validate (field, value, silent) {
         if (isExitEarly) {
             return $return({
                 valid: false,
-                errors: errors
+                errors: errors,
+                id: field.id
             });
         }
         return Promise.all(promises).then((function ($await_6) {
             try {
                 return $return($await_6.reduce(function (prev, v) {
                     if (!v.valid) {
-                        prev.errors.push(v.error);
+                        (ref = prev.errors).push.apply(ref, v.errors);
                     }
                     prev.valid = prev.valid && v.valid;
                     return prev;
+                        var ref;
                 }, {
                     valid: true,
-                    errors: errors
+                    errors: errors,
+                    id: field.id
                 }));
             } catch ($boundEx) {
                 return $error($boundEx);
@@ -2112,6 +2170,7 @@ function install(_Vue, options) {
         }
         return;
     }
+    detectPassiveSupport();
     Vue = _Vue;
     Config.register('vm', new Vue());
     Config.merge(options);
