@@ -379,10 +379,6 @@ test('throws an exception when extending with an invalid validator', () => {
   expect(() => {
     Validator.extend('fail', { getMessage: name => name });
   }).toThrow();
-  // No getMessage method.
-  expect(() => {
-    Validator.extend('fail', { validate: () => true });
-  }).toThrow();
   // numeric is already registered.
   expect(() => {
     Validator.extend('numeric', { getMessage: name => name, validate: () => true });

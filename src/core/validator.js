@@ -572,12 +572,6 @@ export default class Validator {
         `Extension Error: The validator '${name}' must be a function or have a 'validate' method.`
       );
     }
-
-    if (!isCallable(validator.getMessage) && typeof validator.getMessage !== 'string') {
-      throw createError(
-        `Extension Error: The validator '${name}' object must have a 'getMessage' method or string.`
-      );
-    }
   }
 
   /**
