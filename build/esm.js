@@ -48,6 +48,15 @@ async function build () {
   fs.writeFileSync(outputPath, code);
   stats = config.utils.stats({ code, path: outputPath });
   console.log(`${chalk.green('Output File:')} vee-validate.minimal.esm.js ${stats}`);
+
+  inputOptions.input = 'src/rules/index.js';
+  bundle = await rollup(inputOptions);
+  code = (await bundle.generate(outputOptions)).code;
+  outputPath = path.join(config.outputFolder, 'rules.esm.js');
+  fs.writeFileSync(outputPath, code);
+
+  stats = config.utils.stats({ code, path: outputPath });
+  console.log(`${chalk.green('Output File:')} rules.esm.js ${stats}`);
 }
 
 build();
