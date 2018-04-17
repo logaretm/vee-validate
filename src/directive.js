@@ -1,6 +1,6 @@
 import Generator from './core/generator';
 import Field from './core/field';
-import { getDataAttribute, isEqual, warn, toArray } from './core/utils';
+import { getDataAttribute, isEqual, warn } from './core/utils';
 
 // @flow
 
