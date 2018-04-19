@@ -7,10 +7,10 @@ import I18nDictionary from './core/localization/i18n';
 const defaultConfig = {
   locale: 'en',
   delay: 0,
-  errorBagName: 'errors',
+  errorBagName: 'veeErrors',
   dictionary: null,
   strict: true,
-  fieldsBagName: 'fields',
+  fieldsBagName: 'veeFields',
   classes: false,
   classNames: null,
   events: 'input|blur',

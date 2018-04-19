@@ -77,10 +77,10 @@ export default {
       this.$options.computed = {};
     }
 
-    this.$options.computed[options.errorBagName || 'errors'] = function errorBagGetter () {
+    this.$options.computed[options.errorBagName || 'veeErrors'] = function errorBagGetter () {
       return this.$validator.errors;
     };
-    this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
+    this.$options.computed[options.fieldsBagName || 'veeFields'] = function fieldBagGetter () {
       return this.$validator.flags;
     };
   },
