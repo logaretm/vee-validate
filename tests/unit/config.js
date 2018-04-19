@@ -5,10 +5,10 @@ test('it stores the default config', () => {
   expect(Config.default).toEqual({
     locale: 'en',
     delay: 0,
-    errorBagName: 'errors',
+    errorBagName: 'veeErrors',
     dictionary: null,
     strict: true,
-    fieldsBagName: 'fields',
+    fieldsBagName: 'veeFields',
     classes: false,
     classNames: null,
     events: 'input|blur',
