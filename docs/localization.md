@@ -5,7 +5,9 @@ The [English messages file](https://github.com/baianat/vee-validate/blob/master/
 
 > The messages shown in the provided locale files contain mostly functions. However, your messages can also be strings depending on your needs, the included locales make use of field names and parameters provided, so they had to be functions.
 
-## [Attributes (data-vv-as)](#attributes-data-vv-as)
+## Attributes
+
+### using data-vv-as
 
 Seeing 'first_name' in your error messages can't be very good for your user experience, this plugin offers a couple of solutions: You can use the `data-vv-as` attribute on your field and give it a better name for your users, it would look like this:
 
@@ -15,7 +17,7 @@ Seeing 'first_name' in your error messages can't be very good for your user expe
 
 Now when any error message is generated for this input, it will use the `data-vv-as` value instead of the actual field name. This is also the same for binding expressions. While this is very useful for simple setups and displaying localized names, it is only ideal for a single-locale page. For multi-localized pages and more advanced usages you might want to check the approach below.
 
-## [Attributes (Dictionary)](#attributes-dictionary)
+### using the dictionary API
 
 All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes. If the validator finds a localized attribute name for that field, it will be used instead of the field name. Pretty much like `data-vv-as` but `data-vv-as` takes priority if both are found.
 
@@ -47,7 +49,7 @@ new Vue({
 });
 ```
 
-## [Localization API](#api)
+## Localization API
 
 The validator class offers a static `localize` method which is also available on the instances, which have three overloads:
 
@@ -86,9 +88,9 @@ You will get a warning if you set the locale to one that has not been merged in 
 
 A working example can be found [here](examples#locale-example)
 
-## [Localized Files](#localized-files)
+## Localized Files
 
-In the [`locale`](https://github.com/logaretm/vee-validate/tree/master/locale) directory of this plugin, is a collection of localized files. If you can't find your locale, you could help this plugin by contributing a localized version to the [repository](https://github.com/logaretm/vee-validate). It will be happily accepted.
+In the [`locale`](https://github.com/baianat/vee-validate/tree/master/locale) directory of this plugin, is a collection of localized files. If you can't find your locale, you could help this plugin by contributing a localized version to the [repository](https://github.com/baianat/vee-validate). It will be happily accepted.
 
 You can import those locales like this:
 
@@ -116,7 +118,7 @@ export default {
 
 Also note that if imported via script tags, they will be automatically installed if `VeeValidate` is available globally.
 
-## [Custom Attributes](#custom-attributes)
+## Custom Attributes
 
 Like the custom messages, the validators share a dictionary containing the attribute names, for example if you want to use "Email Address" instead of "email" in your error messages, this can be easily achieved by including an `attributes` object in the dictionary.
 
@@ -140,9 +142,11 @@ const dictionary = {
 Validator.localize(dictionary);
 ```
 
- > If the attribute is not found for the current locale, it will fallback to the binding expression or the field name. If you use the [data-vv-as](localization.html#attributes-data-vv-as) attribute, it will take precedence over the internal dictionary.
+::: tip
+If the attribute is not found for the current locale, it will fallback to the binding expression or the field name. If you use the [data-vv-as](localization.html#using-data-vv-as) attribute, it will take precedence over the internal dictionary.
+:::
 
-## [Field-specific Custom Messages](#field-sepecific-messages)
+## Field-specific Custom Messages
 
  You might need to provide different messages for different fields, for example you might want to display an error message for the email field when it's required, but a different messsage when the name is required. This allows you to give your users a flexible experience and context aware messages.
 
@@ -161,7 +165,9 @@ const dict = {
 };
 ```
 
-> Notice that the `custom` object contains properties that represent the field names, those field names objects contain properties that represent the validation rule that its value will be used instead of the default one.
+::: warning
+Notice that the `custom` object contains properties that represent the field names, those field names objects contain properties that represent the validation rule that its value will be used instead of the default one.
+:::
 
 Then you would need to add the dictionary we just constructed to the current validators dictionary like this:
 
