@@ -72,7 +72,8 @@
     "vue": "^2.5.2",
     "vue-i18n": "^7.6.0",
     "vue-jest": "^1.0.0",
-    "vue-template-compiler": "^2.5.2"
+    "vue-template-compiler": "^2.5.2",
+    "vuepress": "^0.7.0"
   },
   "eslintIgnore": [
     "tests",
