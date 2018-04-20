@@ -28,11 +28,11 @@ module.exports = {
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Guide', link: '/guide/' },
-      { text: 'Validation', link: '/localization/' },
-      { text: 'Localization', link: '/localization/' },
-      { text: 'Examples', link: '/localization/' },
-      { text: 'API', link: '/api/' }
+      { text: 'Guide', link: '/guide.md' },
+      { text: 'Validation', link: '/localization.md' },
+      { text: 'Localization', link: '/localization.md' },
+      { text: 'Examples', link: '/localization.md' },
+      { text: 'API', link: '/api.md' }
     ]
   }
 };

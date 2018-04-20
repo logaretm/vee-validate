@@ -4,7 +4,7 @@ lang: en-US
 home: true
 heroImage: https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg
 actionText: Get Started →
-actionLink: /guide/
+actionLink: /guide.md
 features:
 - title: Simple and Declarative
   details: Template based validation that is both familiar and easy to setup.
