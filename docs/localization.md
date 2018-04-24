@@ -5,7 +5,7 @@ The [English messages file](https://github.com/baianat/vee-validate/blob/master/
 
 > The messages shown in the provided locale files contain mostly functions. However, your messages can also be strings depending on your needs, the included locales make use of field names and parameters provided, so they had to be functions.
 
-## Attributes
+## Field Names
 
 ### using data-vv-as
 
@@ -15,13 +15,13 @@ Seeing 'first_name' in your error messages can't be very good for your user expe
   <input v-validate data-vv-rules="alpha|min:3" data-vv-as="First Name" name="first_name" type="text">
 ```
 
-Now when any error message is generated for this input, it will use the `data-vv-as` value instead of the actual field name. This is also the same for binding expressions. While this is very useful for simple setups and displaying localized names, it is only ideal for a single-locale page. For multi-localized pages and more advanced usages you might want to check the approach below.
+Now when any error message is generated for this input, it will use the `data-vv-as` value instead of the actual field name. While this is very useful for simple setups and displaying localized names, it is only ideal for a single-locale page. For multi-localized pages and more advanced usages you might want to check the [dictionary API](#using-the-dictionary-api).
 
 ### using the dictionary API
 
 All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes. If the validator finds a localized attribute name for that field, it will be used instead of the field name. Pretty much like `data-vv-as` but `data-vv-as` takes priority if both are found.
 
-Here is a little code example on how you would add support for your localized messages and attributes. Note that this is the entry point of your application.
+Here is a little code example on how you would add support for your localized messages and attributes.
 
 ```js
 import Vue from 'vue';
@@ -29,6 +29,7 @@ import VeeValidate from 'vee-validate';
 import messagesAr from './strings/validator/messages/ar.js';
 import attributesAr from './strings/validator/attributes/ar.js';
 import attributesEn from './strings/validator/attributes/en.js';
+
 // Pass options to make all validators use the arabic language, also merge the english and arabic attributes with the internal dictionary.
 Vue.use(VeeValidate, {
   locale: 'ar',
@@ -48,6 +49,10 @@ new Vue({
   }
 });
 ```
+
+::: warning
+Your localization Logic should happen at the entry point of your application as it should be only executed once.
+:::
 
 ## Localization API
 
@@ -86,7 +91,7 @@ Validator.localize('ar');
 
 You will get a warning if you set the locale to one that has not been merged in the dictionary yet, any messages generated will fallback to English.
 
-A working example can be found [here](examples#locale-example)
+A working example can be found [here](examples.md#locale-example)
 
 ## Localized Files
 
@@ -118,102 +123,22 @@ export default {
 
 Also note that if imported via script tags, they will be automatically installed if `VeeValidate` is available globally.
 
-## Custom Attributes
+## Async Localization
 
-Like the custom messages, the validators share a dictionary containing the attribute names, for example if you want to use "Email Address" instead of "email" in your error messages, this can be easily achieved by including an `attributes` object in the dictionary.
-
-Unlike messages, no attributes are included in the default dictionary.
+Loading every locale in your app bundle is not very friendly for your user's bandwidth, especially since only one locale will be used. With a little bit of [Webpack `import()` magic](https://webpack.js.org/guides/code-splitting/#dynamic-imports) we can get an async localization setup easily:
 
 ```js
+import Vue from 'vue';
 import { Validator } from 'vee-validate';
-const dictionary = {
-  en: {
-    attributes: {
-      email: 'Email Address'
-    }
-  },
-  ar: {
-    attributes: {
-      email: 'البريد الاليكتروني'
-    }
+
+Vue.mixin({
+  localize (localeName) {
+    // localize your app here, like i18n plugin.
+    // asynchonously load the locale file then localize the validator with it.
+    import(`./path/to/vee-validate-locales/${localeName}`).then(locale => {
+      Validator.localize(localeName, locale);
+    });
   }
-};
+});
 
-Validator.localize(dictionary);
 ```
-
-::: tip
-If the attribute is not found for the current locale, it will fallback to the binding expression or the field name. If you use the [data-vv-as](localization.html#using-data-vv-as) attribute, it will take precedence over the internal dictionary.
-:::
-
-## Field-specific Custom Messages
-
- You might need to provide different messages for different fields, for example you might want to display an error message for the email field when it's required, but a different messsage when the name is required. This allows you to give your users a flexible experience and context aware messages.
-
- To do this you would need to add an object to the dictionary called `custom` like this:
-
-```js
-const dict = {
-  custom: {
-    email: {
-      required: 'Your email is empty' // messages can be strings as well.
-    },
-    name: {
-      required: () => 'Your name is empty'
-    }
-  }
-};
-```
-
-::: warning
-Notice that the `custom` object contains properties that represent the field names, those field names objects contain properties that represent the validation rule that its value will be used instead of the default one.
-:::
-
-Then you would need to add the dictionary we just constructed to the current validators dictionary like this:
-
-```js
-Validator.localize('en', dict);
-// or use the instance method
-this.$validator.localize('en', dict);
-```
-
-That's it. One thing to keep in mind is to place any dictionary related operations in your code before it actually needs it to avoid uneccessary merges. For example, a good common place is in your app entry point or setup script, conversly, a poor choice would be a component lifecycle hook like `mounted` since the validator dictionary is kept globally for all instances.
-
-By default, any unspecified rules for the specific field messages will fallback to the already included ones, so you only need to define the custom messages you only need.
-
-## Custom Messages
-
-You might need to overwrite the error messages, or add new ones. The Validator class and its instances provide a `localize` method, which will merge the messages with the internal dictionary, overwriting any duplicates.
-
-::: tip
-  Any merges will have an effect on all validator instances as the messages dictionary is shared.
-:::
-
-```js
-import { Validator } from 'vee-validate';
-const dictionary = {
-  en: {
-    messages:{
-      alpha: () => 'Some English Message'
-    }
-  },
-  ar: {
-    messages: {
-      alpha: () => 'Some Arabic Message'
-    }
-  }
-};
-
-// Override and merge the dictionaries
-Validator.localize(dictionary);
-
-const validator = new Validator({ first_name: 'alpha' });
-
-validator.localize('ar'); // now this validator will generate messages in Arabic.
-```
-
-::: tip
-  You must provide the messages in an object path like: `dictionary.locale.messages`.
-:::
-
-Usually, you would structure your language files for your app rather than adding hardcoded strings like the example above, check the [localization guide](localization.md) for more info.
