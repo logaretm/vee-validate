@@ -30,10 +30,12 @@ module.exports = {
       { text: 'Home', link: '/' },
       { text: 'Guide', link: '/guide.md' },
       { text: 'Validation', link: '/validation.md' },
+      { text: 'Customization', link: '/customization.md' },
       { text: 'Localization', link: '/localization.md' },
       { text: 'Examples', link: '/examples.md' },
-      { text: 'API', link: '/api.md' },
-      { text: 'Advanced', link: '/advanced.md' }
+      { text: 'Advanced', link: '/advanced.md' },
+      { text: 'API', link: '/api.md' }
+      { text: 'GitHub', link: 'https://github.com/baianat/vee-validate' }
     ]
   }
 };
