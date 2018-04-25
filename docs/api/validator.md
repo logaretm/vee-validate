@@ -20,6 +20,8 @@ The validator offers an API to add new fields and trigger validations.
 | validate(selector?: String) | `Promise<boolean>` | Validates the matching fields of the provided [selector](#selector-api). |
 | pause() | `void` | Disables validation. |
 | resume() | `void` | Enables validation. |
+| detach(name: string, scope?: string) | `void` | Detaches the field that matches the name and the scope of the provided values. |
+| extend(name: string, rule: Rule) | `void` | Adds a new validation rule. The provided rule param must be a [valid Rule function or object](/validation.md#custom-rules). |
 
 ### Selector API
 
