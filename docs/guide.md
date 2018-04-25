@@ -36,7 +36,7 @@ npm install vee-validate --save
 ## Usage
 
 ::: tip
-    Examples use the ES2015 syntax, make sure to brush up on ES2015 if you haven't already.
+  Examples use the ES2015 syntax, make sure to brush up on ES2015 if you haven't already.
 :::
 
 ```js
