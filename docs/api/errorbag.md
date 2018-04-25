@@ -1,7 +1,5 @@
 # ErrorBag
 
-## Description
-
 The ErrorBag class is a wrapper around an array - a collection object -, it is standalone and has no dependencies, you can use it in your code for any purpose:
 
 ```js
