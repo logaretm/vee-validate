@@ -1,3 +1,7 @@
+---
+sidebar: auto
+---
+
 # Advanced
 
 These are some tips for advanced VeeValidate usage.

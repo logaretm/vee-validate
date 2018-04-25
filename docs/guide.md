@@ -3,6 +3,7 @@ title: Getting Started
 lang: en-US
 footer: MIT Licensed | Copyright © 2018-present Baianat
 description: Getting started with VeeValidate
+sidebar: auto
 meta:
   - name: og:title
     content: Getting Started
