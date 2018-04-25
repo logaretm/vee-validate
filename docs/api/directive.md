@@ -1,4 +1,4 @@
-## [v-validate Directive](#directive)
+# v-validate directive
 
 The `v-validate` directive is the main way to validate your inputs, the directive accepts either a string or an object as a value.
 
@@ -24,7 +24,7 @@ const expression = {
 };
 ```
 
-## [args](#directive-args)
+## directive args
 
 The directive also accepts an arg, that denotes the name of the vue model to validate, or a computed property.
 
@@ -42,9 +42,11 @@ export default {
 
 However the arg is entirely optional. Additionaly, `v-validate` checks if the input/component has `v-model` assigned to it, and treats that expression as the arg. But keep in mind that the arg must be a simple dot notation string, and it must be present on the vue instance.
 
-> You might ask when to use arg at all? since `v-model` can be detected. A valid situation is when you need to validate a computed property.
+::: tip
+  You might ask when to use arg at all? since `v-model` can be detected. A valid situation is when you need to validate a computed property.
+:::
 
-## [modifiers](#directive-modifiers)
+## directive modifiers
 
 You can use `.initial` modifier to force the validation of the field initial value.
 

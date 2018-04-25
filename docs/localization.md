@@ -1,7 +1,3 @@
----
-sidebar: auto
----
-
 # Localization
 
 This plugin only comes with English messages to keep things small, but it was built with flexible message generation in mind.

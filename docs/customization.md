@@ -1,7 +1,3 @@
----
-sidebar: auto
----
-
 # Customization
 
 VeeValidate comes with generic error messages, you may need to overwrite, or change the behavior of message generation, or assign specific messages for specific fields.

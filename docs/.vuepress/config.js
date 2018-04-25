@@ -39,6 +39,24 @@ module.exports = {
       { text: 'Examples', link: '/examples.md' },
       { text: 'Advanced', link: '/advanced.md' },
       { text: 'API', link: '/api.md' }
-    ]
+    ],
+    sidebar: {
+      '/api/': [
+        'directive',
+        'mixin',
+        'data-attrs',
+        'errorbag'
+      ],
+      '/': [
+        '',
+        'guide',
+        'configuration',
+        'validation',
+        'customization',
+        'localization',
+        'advanced',
+        'api'
+      ]
+    }
   }
 };
