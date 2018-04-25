@@ -9,7 +9,7 @@ module.exports = {
     ['meta', { name: "msapplication-TileColor", content: "#ffffff" }],
     ['meta', { name: "msapplication-TileImage", content: "/img/ms-icon-144x144.png" }],
     ['meta', { name: "theme-color", content: "#41b883" }],
-    ['meta', { name: 'viewport', content: 'widt:device-width, initial-scal:1' }],
+    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1' }],
     ['meta', { property: 'og:image', content: 'https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg' }],
     ['link', { rel: "apple-touch-icon", sizes: "57x57", href: "/img/apple-icon-57x57.png" }],
     ['link', { rel: "apple-touch-icon", sizes: "60x60", href: "/img/apple-icon-60x60.png" }],
@@ -27,14 +27,13 @@ module.exports = {
   ],
   themeConfig: {
     nav: [
-      { text: 'Home', link: '/' },
       { text: 'Guide', link: '/guide.md' },
       { text: 'Validation', link: '/validation.md' },
       { text: 'Customization', link: '/customization.md' },
       { text: 'Localization', link: '/localization.md' },
       { text: 'Examples', link: '/examples.md' },
       { text: 'Advanced', link: '/advanced.md' },
-      { text: 'API', link: '/api.md' }
+      { text: 'API', link: '/api.md' },
       { text: 'GitHub', link: 'https://github.com/baianat/vee-validate' }
     ]
   }
