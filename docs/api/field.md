@@ -2,6 +2,10 @@
 
 VeeValidate maps HTML elements and Vue components that are under validation to instances of `fields`, while this class not exposed to be used publicly you can find Its API very useful if you are planning to do some lower-level actions.
 
+::: warning
+  Any undocumented properties/methods are not intended for public use.
+:::
+
 ## Getting the field instance
 
 Getting a field instance is straightforward, you can use the `Validator.fields.find` method to get the field instance.
@@ -18,6 +22,12 @@ const field = this.$validator.fields.find({ id: 'fieldId' });
 ```
 
 ## API
+
+::: danger
+  Careful when using the field API, as it may disrupt the validator operations and may produce unintended results.
+:::
+
+### Constructor
 
 ### Properties
 
@@ -54,3 +64,14 @@ const field = this.$validator.fields.find({ id: 'fieldId' });
 
 ### Methods
 
+|Signature  |Return Type  | Description |
+|---------|---------|---------|
+|matches(options: FieldMatchOptions) | `boolean` | Checks if the field matches the specified matching object criteria. |
+|update(options: FieldOptions) | `void` | Updates the field properties and re-adds the listeners and syncs the classes applied. |
+|reset() | `void` | Resets the field flags to their initial state. |
+|setFlags(flags: { [string]: boolean }) | `void` | Updates the field flags and also updates the specified field counterparts eg. valid/invalid. |
+|unwatch(tag?: RegExp) | `void` | Removes the listeners that has a matching tag or removes all if none is provided. |
+| updateClasses() | `void` | Syncs the classes being applied on the element with the flags if enabled.|
+| updateAriaAttrs() | `void` | Syncs the aria attributes applied on the element with the flags if enabled. |
+| updateCustomValidity() | `void` | Syncs the constrained API validation message with the first error message for this field. |
+| destroy() | `void` | Removes all listeners and dependencies of the field. |
