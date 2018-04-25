@@ -26,6 +26,11 @@ module.exports = {
     ['link', { rel: "icon", type: "image/png", sizes: "16x16", href: "/img/favicon-16x16.png" }]
   ],
   themeConfig: {
+    repo: 'baianat/vee-validate',
+    docsRepo: 'baianat/vee-validate',
+    docsDir: 'docs',
+    editLinks: true,
+    editLinkText: 'Help us improve this page!',
     nav: [
       { text: 'Guide', link: '/guide.md' },
       { text: 'Validation', link: '/validation.md' },
@@ -33,8 +38,7 @@ module.exports = {
       { text: 'Localization', link: '/localization.md' },
       { text: 'Examples', link: '/examples.md' },
       { text: 'Advanced', link: '/advanced.md' },
-      { text: 'API', link: '/api.md' },
-      { text: 'GitHub', link: 'https://github.com/baianat/vee-validate' }
+      { text: 'API', link: '/api.md' }
     ]
   }
 };
