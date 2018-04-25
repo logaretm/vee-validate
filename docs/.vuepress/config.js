@@ -56,6 +56,7 @@ module.exports = {
             'api/mixin',
             'api/data-attrs',
             'api/errorbag',
+            'api/field'
           ]
         }
       ]
