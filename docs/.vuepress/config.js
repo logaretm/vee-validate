@@ -41,12 +41,6 @@ module.exports = {
       { text: 'API', link: '/api.md' }
     ],
     sidebar: {
-      '/api/': [
-        'directive',
-        'mixin',
-        'data-attrs',
-        'errorbag'
-      ],
       '/': [
         '',
         'guide',
@@ -55,7 +49,15 @@ module.exports = {
         'customization',
         'localization',
         'advanced',
-        'api'
+        {
+          title: 'API',
+          children: [
+            'api/directive',
+            'api/mixin',
+            'api/data-attrs',
+            'api/errorbag',
+          ]
+        }
       ]
     }
   }
