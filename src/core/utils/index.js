@@ -158,7 +158,7 @@ export const parseRule = (rule: string): Object => {
 /**
  * Debounces a function.
  */
-export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = false, token) => {
+export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = false, token = { cancelled: false }) => {
   if (wait === 0) {
     return fn;
   }
