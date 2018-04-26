@@ -224,7 +224,7 @@ export default class Field {
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this._alias = options.alias || this._alias;
     this.events = (options.events) ? makeEventsArray(options.events) : this.events;
-    this.delay = (options.delay) ? makeDelayObject(this.events, options.delay, this._delay) : makeDelayObject(this.events, this.delay, this._delay);
+    this.delay = makeDelayObject(this.events, options.delay || this.delay, this._delay);
     this.updateDependencies();
     this.addActionListeners();
 

@@ -4,7 +4,7 @@ test('resolves delay', () => {
   document.body.innerHTML = `
     <input type="text" name="field" id="el" v-model="email" data-vv-delay="100">
   `;
-  const vnode = { child: { $attrs: { 'data-vv-delay': '200' } } };
+  const vnode = { componentInstance: { $attrs: { 'data-vv-delay': '200' } } };
   let el = document.querySelector('#el');
   expect(Generator.resolveDelay(el, {})).toBe(100);
 
@@ -46,7 +46,7 @@ describe('resolves the rules', () => {
         }
       }
     };
-  
+
     expect(Generator.resolveRules(el, directive)).toEqual({
       required: true,
       email: true

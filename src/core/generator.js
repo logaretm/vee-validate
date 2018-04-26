@@ -27,7 +27,7 @@ export default class Generator {
       scope: Generator.resolveScope(el, binding, vnode),
       vm: Generator.makeVM(vnode.context),
       expression: binding.value,
-      component: vnode.child,
+      component: vnode.componentInstance,
       classes: options.classes,
       classNames: options.classNames,
       getter: Generator.resolveGetter(el, vnode, model),
@@ -43,7 +43,7 @@ export default class Generator {
   }
 
   static getCtorConfig (vnode) {
-    if (!vnode.child) return null;
+    if (!vnode.componentInstance) return null;
 
     const config = getPath('child.$options.$_veeValidate', vnode);
 
@@ -105,8 +105,8 @@ export default class Generator {
     let delay = getDataAttribute(el, 'delay');
     const globalDelay = (options && 'delay' in options) ? options.delay : 0;
 
-    if (!delay && vnode.child && vnode.child.$attrs) {
-      delay = vnode.child.$attrs['data-vv-delay'];
+    if (!delay && vnode.componentInstance && vnode.componentInstance.$attrs) {
+      delay = vnode.componentInstance.$attrs['data-vv-delay'];
     }
 
     if (!isObject(globalDelay)) {
@@ -126,11 +126,11 @@ export default class Generator {
   static resolveEvents (el, vnode) {
     let events = getDataAttribute(el, 'validate-on');
 
-    if (!events && vnode.child && vnode.child.$attrs) {
-      events = vnode.child.$attrs['data-vv-validate-on'];
+    if (!events && vnode.componentInstance && vnode.componentInstance.$attrs) {
+      events = vnode.componentInstance.$attrs['data-vv-validate-on'];
     }
 
-    if (!events && vnode.child) {
+    if (!events && vnode.componentInstance) {
       const config = Generator.getCtorConfig(vnode);
       events = config && config.events;
     }
@@ -145,8 +145,8 @@ export default class Generator {
    */
   static resolveScope (el, binding, vnode = {}) {
     let scope = null;
-    if (vnode.child && isNullOrUndefined(scope)) {
-      scope = vnode.child.$attrs && vnode.child.$attrs['data-vv-scope'];
+    if (vnode.componentInstance && isNullOrUndefined(scope)) {
+      scope = vnode.componentInstance.$attrs && vnode.componentInstance.$attrs['data-vv-scope'];
     }
 
     return !isNullOrUndefined(scope) ? scope : getScope(el);
@@ -185,23 +185,23 @@ export default class Generator {
   static resolveName (el, vnode) {
     let name = getDataAttribute(el, 'name');
 
-    if (!name && !vnode.child) {
+    if (!name && !vnode.componentInstance) {
       return el.name;
     }
 
-    if (!name && vnode.child && vnode.child.$attrs) {
-      name = vnode.child.$attrs['data-vv-name'] || vnode.child.$attrs['name'];
+    if (!name && vnode.componentInstance && vnode.componentInstance.$attrs) {
+      name = vnode.componentInstance.$attrs['data-vv-name'] || vnode.componentInstance.$attrs['name'];
     }
 
-    if (!name && vnode.child) {
+    if (!name && vnode.componentInstance) {
       const config = Generator.getCtorConfig(vnode);
       if (config && isCallable(config.name)) {
-        const boundGetter = config.name.bind(vnode.child);
+        const boundGetter = config.name.bind(vnode.componentInstance);
 
         return boundGetter();
       }
 
-      return vnode.child.name;
+      return vnode.componentInstance.name;
     }
 
     return name;
@@ -217,17 +217,17 @@ export default class Generator {
       };
     }
 
-    if (vnode.child) {
-      const path = getDataAttribute(el, 'value-path') || (vnode.child.$attrs && vnode.child.$attrs['data-vv-value-path']);
+    if (vnode.componentInstance) {
+      const path = getDataAttribute(el, 'value-path') || (vnode.componentInstance.$attrs && vnode.componentInstance.$attrs['data-vv-value-path']);
       if (path) {
         return () => {
-          return getPath(path, vnode.child);
+          return getPath(path, vnode.componentInstance);
         };
       }
 
       const config = Generator.getCtorConfig(vnode);
       if (config && isCallable(config.value)) {
-        const boundGetter = config.value.bind(vnode.child);
+        const boundGetter = config.value.bind(vnode.componentInstance);
 
         return () => {
           return boundGetter();
@@ -235,7 +235,7 @@ export default class Generator {
       }
 
       return () => {
-        return vnode.child.value;
+        return vnode.componentInstance.value;
       };
     }
 
