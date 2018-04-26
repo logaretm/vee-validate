@@ -113,7 +113,7 @@ export default class Generator {
       return deepParseInt(delay || globalDelay);
     }
 
-    globalDelay.input = delay || 0;
+    globalDelay.input = globalDelay.input || delay || 0;
 
     return deepParseInt(globalDelay);
   }
