@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.6
+  * vee-validate v2.0.7
   * (c) 2018 Abdelrahman Awad
   * @license MIT
   */
@@ -16,7 +16,6 @@ var detectPassiveSupport = function () {
     } catch (e) {
         supportsPassive = false;
     }
-    
     return supportsPassive;
 };
 var addEventListener = function (el, eventName, cb) {
@@ -299,16 +298,16 @@ var merge = function (target, source) {
         return target;
     }
     Object.keys(source).forEach(function (key) {
+        var obj, obj$1;
+
         if (isObject(source[key])) {
             if (!target[key]) {
                 assign(target, ( obj = {}, obj[key] = {}, obj ));
-                var obj;
             }
             merge(target[key], source[key]);
             return;
         }
         assign(target, ( obj$1 = {}, obj$1[key] = source[key], obj$1 ));
-        var obj$1;
     });
     return target;
 };
@@ -328,6 +327,8 @@ ErrorBag.prototype[typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'
     };
 };
 ErrorBag.prototype.add = function add (error) {
+        var ref;
+
     if (arguments.length > 1) {
         error = {
             field: arguments[0],
@@ -338,7 +339,6 @@ ErrorBag.prototype.add = function add (error) {
         };
     }
     (ref = this.items).push.apply(ref, this._normalizeError(error));
-        var ref;
 };
 ErrorBag.prototype._normalizeError = function _normalizeError (error) {
     if (Array.isArray(error)) {
@@ -528,11 +528,11 @@ var Dictionary = function Dictionary(dictionary) {
     this.merge(dictionary);
 };
 
-var prototypeAccessors$2 = { locale: {} };
-prototypeAccessors$2.locale.get = function () {
+var prototypeAccessors = { locale: { configurable: true } };
+prototypeAccessors.locale.get = function () {
     return LOCALE;
 };
-prototypeAccessors$2.locale.set = function (value) {
+prototypeAccessors.locale.set = function (value) {
     LOCALE = value || 'en';
 };
 Dictionary.prototype.hasLocale = function hasLocale (locale) {
@@ -612,7 +612,7 @@ Dictionary.prototype.setAttribute = function setAttribute (locale, key, attribut
     this.container[locale].attributes[key] = attribute;
 };
 
-Object.defineProperties( Dictionary.prototype, prototypeAccessors$2 );
+Object.defineProperties( Dictionary.prototype, prototypeAccessors );
 
 var normalizeValue = function (value) {
     if (isObject(value)) {
@@ -641,11 +641,11 @@ var I18nDictionary = function I18nDictionary(i18n, rootKey) {
     this.rootKey = rootKey;
 };
 
-var prototypeAccessors$3 = { locale: {} };
-prototypeAccessors$3.locale.get = function () {
+var prototypeAccessors$1 = { locale: { configurable: true } };
+prototypeAccessors$1.locale.get = function () {
     return this.i18n.locale;
 };
-prototypeAccessors$3.locale.set = function (value) {
+prototypeAccessors$1.locale.set = function (value) {
     warn('Cannot set locale from the validator when using vue-i18n, use i18n.locale setter instead');
 };
 I18nDictionary.prototype.getDateFormat = function getDateFormat (locale) {
@@ -681,31 +681,32 @@ I18nDictionary.prototype.merge = function merge$1 (dictionary) {
         var this$1 = this;
 
     Object.keys(dictionary).forEach(function (localeKey) {
+            var obj;
+
         var clone = merge({}, getPath((localeKey + "." + (this$1.rootKey)), this$1.i18n.messages, {}));
         var locale = merge(clone, normalizeFormat(dictionary[localeKey]));
         this$1.i18n.mergeLocaleMessage(localeKey, ( obj = {}, obj[this$1.rootKey] = locale, obj ));
-            var obj;
         if (locale.dateFormat) {
             this$1.i18n.setDateTimeFormat(localeKey, locale.dateFormat);
         }
     });
 };
 I18nDictionary.prototype.setMessage = function setMessage (locale, key, value) {
+        var obj, obj$1;
+
     this.merge(( obj$1 = {}, obj$1[locale] = {
             messages: ( obj = {}, obj[key] = value, obj )
         }, obj$1 ));
-        var obj;
-        var obj$1;
 };
 I18nDictionary.prototype.setAttribute = function setAttribute (locale, key, value) {
+        var obj, obj$1;
+
     this.merge(( obj$1 = {}, obj$1[locale] = {
             attributes: ( obj = {}, obj[key] = value, obj )
         }, obj$1 ));
-        var obj;
-        var obj$1;
 };
 
-Object.defineProperties( I18nDictionary.prototype, prototypeAccessors$3 );
+Object.defineProperties( I18nDictionary.prototype, prototypeAccessors$1 );
 
 var defaultConfig = {
     locale: 'en',
@@ -736,12 +737,12 @@ var dependencies = {
 };
 var Config = function Config () {};
 
-var staticAccessors$1 = { default: {},current: {} };
+var staticAccessors = { default: { configurable: true },current: { configurable: true } };
 
-staticAccessors$1.default.get = function () {
+staticAccessors.default.get = function () {
     return defaultConfig;
 };
-staticAccessors$1.current.get = function () {
+staticAccessors.current.get = function () {
     return currentConfig;
 };
 Config.dependency = function dependency (key) {
@@ -761,7 +762,7 @@ Config.resolve = function resolve (context) {
     return assign({}, Config.current, selfConfig);
 };
 
-Object.defineProperties( Config, staticAccessors$1 );
+Object.defineProperties( Config, staticAccessors );
 
 var Generator = function Generator () {};
 
@@ -985,8 +986,8 @@ var Field = function Field(options) {
     this.updated = false;
 };
 
-var prototypeAccessors$1 = { validator: {},isRequired: {},isDisabled: {},alias: {},value: {},rejectsFalse: {} };
-prototypeAccessors$1.validator.get = function () {
+var prototypeAccessors$2 = { validator: { configurable: true },isRequired: { configurable: true },isDisabled: { configurable: true },alias: { configurable: true },value: { configurable: true },rejectsFalse: { configurable: true } };
+prototypeAccessors$2.validator.get = function () {
     if (!this.vm || !this.vm.$validator) {
         warn('No validator instance detected.');
         return {
@@ -995,13 +996,13 @@ prototypeAccessors$1.validator.get = function () {
     }
     return this.vm.$validator;
 };
-prototypeAccessors$1.isRequired.get = function () {
+prototypeAccessors$2.isRequired.get = function () {
     return !(!this.rules.required);
 };
-prototypeAccessors$1.isDisabled.get = function () {
+prototypeAccessors$2.isDisabled.get = function () {
     return !(!(this.component && this.component.disabled)) || !(!(this.el && this.el.disabled));
 };
-prototypeAccessors$1.alias.get = function () {
+prototypeAccessors$2.alias.get = function () {
     if (this._alias) {
         return this._alias;
     }
@@ -1014,13 +1015,13 @@ prototypeAccessors$1.alias.get = function () {
     }
     return alias;
 };
-prototypeAccessors$1.value.get = function () {
+prototypeAccessors$2.value.get = function () {
     if (!isCallable(this.getter)) {
         return undefined;
     }
     return this.getter();
 };
-prototypeAccessors$1.rejectsFalse.get = function () {
+prototypeAccessors$2.rejectsFalse.get = function () {
     if (this.component && this.ctorConfig) {
         return !(!this.ctorConfig.rejectsFalse);
     }
@@ -1087,7 +1088,6 @@ Field.prototype.update = function update (options) {
     if (!this.el) {
         return;
     }
-    
     this.updateClasses();
     this.updateAriaAttrs();
 };
@@ -1297,7 +1297,6 @@ Field.prototype.addValueListeners = function addValueListeners () {
         { return; }
     var fn = this.targetOf ? function () {
         this$1.flags.changed = this$1.checkValueChanged();
-        
         this$1.validator.validate(("#" + (this$1.targetOf)));
     } : function () {
             var args = [], len = arguments.length;
@@ -1398,13 +1397,13 @@ Field.prototype.destroy = function destroy () {
     this.dependencies = [];
 };
 
-Object.defineProperties( Field.prototype, prototypeAccessors$1 );
+Object.defineProperties( Field.prototype, prototypeAccessors$2 );
 
 var FieldBag = function FieldBag() {
     this.items = [];
 };
 
-var prototypeAccessors$4 = { length: {} };
+var prototypeAccessors$3 = { length: { configurable: true } };
 FieldBag.prototype[typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'] = function () {
         var this$1 = this;
 
@@ -1416,7 +1415,7 @@ FieldBag.prototype[typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'
         }); }
     };
 };
-prototypeAccessors$4.length.get = function () {
+prototypeAccessors$3.length.get = function () {
     return this.items.length;
 };
 FieldBag.prototype.find = function find$1 (matcher) {
@@ -1459,7 +1458,7 @@ FieldBag.prototype.push = function push (item) {
     this.items.push(item);
 };
 
-Object.defineProperties( FieldBag.prototype, prototypeAccessors$4 );
+Object.defineProperties( FieldBag.prototype, prototypeAccessors$3 );
 
 var RULES = {};
 var STRICT_MODE = true;
@@ -1486,37 +1485,37 @@ var Validator = function Validator(validations, options) {
     }
 };
 
-var prototypeAccessors = { dictionary: {},_vm: {},locale: {},rules: {} };
-var staticAccessors = { dictionary: {},locale: {},rules: {} };
-prototypeAccessors.dictionary.get = function () {
+var prototypeAccessors$4 = { dictionary: { configurable: true },_vm: { configurable: true },locale: { configurable: true },rules: { configurable: true } };
+var staticAccessors$1 = { dictionary: { configurable: true },locale: { configurable: true },rules: { configurable: true } };
+prototypeAccessors$4.dictionary.get = function () {
     return Config.dependency('dictionary');
 };
-prototypeAccessors._vm.get = function () {
+prototypeAccessors$4._vm.get = function () {
     return Config.dependency('vm');
 };
-staticAccessors.dictionary.get = function () {
+staticAccessors$1.dictionary.get = function () {
     return Config.dependency('dictionary');
 };
-prototypeAccessors.locale.get = function () {
+prototypeAccessors$4.locale.get = function () {
     return this.dictionary.locale;
 };
-prototypeAccessors.locale.set = function (value) {
+prototypeAccessors$4.locale.set = function (value) {
     Validator.locale = value;
 };
-staticAccessors.locale.get = function () {
+staticAccessors$1.locale.get = function () {
     return Validator.dictionary.locale;
 };
-staticAccessors.locale.set = function (value) {
+staticAccessors$1.locale.set = function (value) {
     var hasChanged = value !== Validator.dictionary.locale;
     Validator.dictionary.locale = value;
     if (hasChanged && Config.dependency('vm')) {
         Config.dependency('vm').$emit('localeChanged');
     }
 };
-prototypeAccessors.rules.get = function () {
+prototypeAccessors$4.rules.get = function () {
     return RULES;
 };
-staticAccessors.rules.get = function () {
+staticAccessors$1.rules.get = function () {
     return RULES;
 };
 Validator.create = function create (validations, options) {
@@ -1550,6 +1549,8 @@ Validator.prototype.localize = function localize (lang, dictionary) {
     Validator.localize(lang, dictionary);
 };
 Validator.localize = function localize (lang, dictionary) {
+        var obj;
+
     if (isObject(lang)) {
         Validator.dictionary.merge(lang);
         return;
@@ -1558,7 +1559,6 @@ Validator.localize = function localize (lang, dictionary) {
         var locale = lang || dictionary.name;
         dictionary = assign({}, dictionary);
         Validator.dictionary.merge(( obj = {}, obj[locale] = dictionary, obj ));
-            var obj;
     }
     if (lang) {
         Validator.locale = lang;
@@ -1829,17 +1829,15 @@ Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field)
     return field.alias || this.dictionary.getAttribute(this.locale, field.name, field.name);
 };
 Validator.prototype._addFlag = function _addFlag (field, scope) {
-        if ( scope === void 0 ) scope = null;
+        var obj, obj$1, obj$2;
 
+        if ( scope === void 0 ) scope = null;
     if (isNullOrUndefined(scope)) {
         this.flags = assign({}, this.flags, ( obj = {}, obj[("" + (field.name))] = field.flags, obj ));
-            var obj;
         return;
     }
     var scopeObj = assign({}, this.flags[("$" + scope)] || {}, ( obj$1 = {}, obj$1[("" + (field.name))] = field.flags, obj$1 ));
-        var obj$1;
     this.flags = assign({}, this.flags, ( obj$2 = {}, obj$2[("$" + scope)] = scopeObj, obj$2 ));
-        var obj$2;
 };
 Validator.prototype._test = function _test (field, value, rule) {
         var this$1 = this;
@@ -2018,12 +2016,13 @@ Validator.prototype._validate = function _validate (field, value) {
         return Promise.all(promises).then((function ($await_6) {
             try {
                 return $return($await_6.reduce(function (prev, v) {
+                        var ref;
+
                     if (!v.valid) {
                         (ref = prev.errors).push.apply(ref, v.errors);
                     }
                     prev.valid = prev.valid && v.valid;
                     return prev;
-                        var ref;
                 }, {
                     valid: true,
                     errors: errors,
@@ -2036,8 +2035,8 @@ Validator.prototype._validate = function _validate (field, value) {
     }).bind(this));
 };
 
-Object.defineProperties( Validator.prototype, prototypeAccessors );
-Object.defineProperties( Validator, staticAccessors );
+Object.defineProperties( Validator.prototype, prototypeAccessors$4 );
+Object.defineProperties( Validator, staticAccessors$1 );
 
 var requestsValidator = function (injections) {
     if (isObject(injections) && injections.$validator) {
@@ -2103,7 +2102,7 @@ var mixin = {
             this.$validator.destroy();
         }
     }
-};
+}
 
 var findField = function (el, context) {
     if (!context || !context.$validator) {
@@ -2152,7 +2151,7 @@ var directive = {
             { return; }
         context.$validator.detach(field);
     }
-};
+}
 
 var Vue;
 function install(_Vue, options) {
@@ -2196,6 +2195,7 @@ var formatFileSize = function (size) {
 };
 var isDefinedGlobally = function () { return typeof VeeValidate !== 'undefined'; };
 
+var obj;
 var messages = {
     _default: function (field) { return ("The " + field + " value is not valid."); },
     after: function (field, ref) {
@@ -2304,7 +2304,6 @@ var locale = {
 };
 if (isDefinedGlobally()) {
     VeeValidate.Validator.localize(( obj = {}, obj[locale.name] = locale, obj ));
-    var obj;
 }
 
 function use(plugin, options) {
@@ -3647,7 +3646,7 @@ function setUTCISOWeekYear(dirtyDate, dirtyISOYear, dirtyOptions) {
     return date;
 }
 
-var MILLISECONDS_IN_MINUTE$7 = 60000;
+var MILLISECONDS_IN_MINUTE$6 = 60000;
 function setTimeOfDay(hours, timeOfDay) {
     var isAM = timeOfDay === 0;
     if (isAM) {
@@ -3792,7 +3791,7 @@ var units = {
     timezone: {
         priority: 110,
         set: function (dateValues, value) {
-            dateValues.date = new Date(dateValues.date.getTime() - value * MILLISECONDS_IN_MINUTE$7);
+            dateValues.date = new Date(dateValues.date.getTime() - value * MILLISECONDS_IN_MINUTE$6);
             return dateValues;
         }
     },
@@ -3806,7 +3805,7 @@ var units = {
 };
 
 var TIMEZONE_UNIT_PRIORITY = 110;
-var MILLISECONDS_IN_MINUTE$6 = 60000;
+var MILLISECONDS_IN_MINUTE$7 = 60000;
 var longFormattingTokensRegExp$1 = /(\[[^[]*])|(\\)?(LTS|LT|LLLL|LLL|LL|L|llll|lll|ll|l)/g;
 var defaultParsingTokensRegExp = /(\[[^[]*])|(\\)?(x|ss|s|mm|m|hh|h|do|dddd|ddd|dd|d|aa|a|ZZ|Z|YYYY|YY|X|Wo|WW|W|SSS|SS|S|Qo|Q|Mo|MMMM|MMM|MM|M|HH|H|GGGG|GG|E|Do|DDDo|DDDD|DDD|DD|D|A|.)/g;
 function parse(dirtyDateString, dirtyFormatString, dirtyBaseDate, dirtyOptions) {
@@ -3919,8 +3918,8 @@ function dateToSystemTimezone(dateValues) {
     var date = dateValues.date;
     var time = date.getTime();
     var offset = date.getTimezoneOffset();
-    offset = new Date(time + offset * MILLISECONDS_IN_MINUTE$6).getTimezoneOffset();
-    dateValues.date = new Date(time + offset * MILLISECONDS_IN_MINUTE$6);
+    offset = new Date(time + offset * MILLISECONDS_IN_MINUTE$7).getTimezoneOffset();
+    dateValues.date = new Date(time + offset * MILLISECONDS_IN_MINUTE$7);
     return dateValues;
 }
 
@@ -3942,24 +3941,24 @@ function parseDate$1(date, format$$1) {
     return parsed;
 }
 
-var after = function (value, ref) {
+function after (value, ref) {
     var otherValue = ref[0];
     var inclusion = ref[1];
-    var format = ref[2];
+    var format$$1 = ref[2];
 
-    if (typeof format === 'undefined') {
-        format = inclusion;
+    if (typeof format$$1 === 'undefined') {
+        format$$1 = inclusion;
         inclusion = false;
     }
-    value = parseDate$1(value, format);
-    otherValue = parseDate$1(otherValue, format);
+    value = parseDate$1(value, format$$1);
+    otherValue = parseDate$1(otherValue, format$$1);
     if (!value || !otherValue) {
         return false;
     }
     return isAfter(value, otherValue) || inclusion && isEqual$1(value, otherValue);
-};
+}
 
-var alpha$1 = {
+var alpha = {
     en: /^[A-Z]*$/i,
     cs: /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]*$/i,
     da: /^[A-ZÆØÅ]*$/i,
@@ -4044,9 +4043,9 @@ var validate = function (value, ref) {
         return value.every(function (val) { return validate(val, [locale]); });
     }
     if (!locale) {
-        return Object.keys(alpha$1).some(function (loc) { return alpha$1[loc].test(value); });
+        return Object.keys(alpha).some(function (loc) { return alpha[loc].test(value); });
     }
-    return (alpha$1[locale] || alpha$1.en).test(value);
+    return (alpha[locale] || alpha.en).test(value);
 };
 
 var validate$1 = function (value, ref) {
@@ -4088,22 +4087,22 @@ var validate$3 = function (value, ref) {
     return (alphaSpaces[locale] || alphaSpaces.en).test(value);
 };
 
-var before = function (value, ref) {
+function before (value, ref) {
     var otherValue = ref[0];
     var inclusion = ref[1];
-    var format = ref[2];
+    var format$$1 = ref[2];
 
-    if (typeof format === 'undefined') {
-        format = inclusion;
+    if (typeof format$$1 === 'undefined') {
+        format$$1 = inclusion;
         inclusion = false;
     }
-    value = parseDate$1(value, format);
-    otherValue = parseDate$1(otherValue, format);
+    value = parseDate$1(value, format$$1);
+    otherValue = parseDate$1(otherValue, format$$1);
     if (!value || !otherValue) {
         return false;
     }
     return isBefore(value, otherValue) || inclusion && isEqual$1(value, otherValue);
-};
+}
 
 var validate$4 = function (value, ref) {
     var min = ref[0];
@@ -4115,7 +4114,7 @@ var validate$4 = function (value, ref) {
     return Number(min) <= value && Number(max) >= value;
 };
 
-var confirmed = function (value, other) { return String(value) === String(other); };
+function confirmed (value, other) { return String(value) === String(other); }
 
 function unwrapExports (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -4126,7 +4125,6 @@ function createCommonjsModule(fn, module) {
 }
 
 var assertString_1 = createCommonjsModule(function (module, exports) {
-    'use strict';
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
@@ -4140,15 +4138,21 @@ var assertString_1 = createCommonjsModule(function (module, exports) {
     
     module.exports = exports['default'];
 });
-unwrapExports(assertString_1)
+var assertString = unwrapExports(assertString_1)
+
+var assertString$1 = /*#__PURE__*/Object.freeze({
+  default: assertString,
+  __moduleExports: assertString_1
+});
+
+var _assertString = ( assertString$1 && assertString ) || assertString$1;
 
 var isCreditCard_1 = createCommonjsModule(function (module, exports) {
-    'use strict';
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
     exports.default = isCreditCard;
-    var _assertString2 = _interopRequireDefault(assertString_1);
+    var _assertString2 = _interopRequireDefault(_assertString);
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
             default: obj
@@ -4186,9 +4190,9 @@ var isCreditCard_1 = createCommonjsModule(function (module, exports) {
     
     module.exports = exports['default'];
 });
-var isCreditCard = unwrapExports(isCreditCard_1);
+var isCreditCard = unwrapExports(isCreditCard_1)
 
-var credit_card = function (value) { return isCreditCard(String(value)); };
+function credit_card (value) { return isCreditCard(String(value)); }
 
 var validate$5 = function (value, ref) {
     if ( ref === void 0 ) ref = [];
@@ -4213,21 +4217,21 @@ var validate$5 = function (value, ref) {
     return parsedValue === parsedValue;
 };
 
-var date_between = function (value, params) {
-    var min;
-    var max;
-    var format;
+function date_between (value, params) {
+    var assign, assign$1;
+
+    var min$$1;
+    var max$$1;
+    var format$$1;
     var inclusivity = '()';
     if (params.length > 3) {
-        var assign;
-        (assign = params, min = assign[0], max = assign[1], inclusivity = assign[2], format = assign[3]);
+        (assign = params, min$$1 = assign[0], max$$1 = assign[1], inclusivity = assign[2], format$$1 = assign[3]);
     } else {
-        var assign$1;
-        (assign$1 = params, min = assign$1[0], max = assign$1[1], format = assign$1[2]);
+        (assign$1 = params, min$$1 = assign$1[0], max$$1 = assign$1[1], format$$1 = assign$1[2]);
     }
-    var minDate = parseDate$1(String(min), format);
-    var maxDate = parseDate$1(String(max), format);
-    var dateVal = parseDate$1(String(value), format);
+    var minDate = parseDate$1(String(min$$1), format$$1);
+    var maxDate = parseDate$1(String(max$$1), format$$1);
+    var dateVal = parseDate$1(String(value), format$$1);
     if (!minDate || !maxDate || !dateVal) {
         return false;
     }
@@ -4241,13 +4245,13 @@ var date_between = function (value, params) {
         return isBefore(dateVal, maxDate) && (isEqual$1(dateVal, minDate) || isAfter(dateVal, minDate));
     }
     return isEqual$1(dateVal, maxDate) || isEqual$1(dateVal, minDate) || isBefore(dateVal, maxDate) && isAfter(dateVal, minDate);
-};
+}
 
-var date_format = function (value, ref) {
+function date_format (value, ref) {
 	var format = ref[0];
 
 	return !(!parseDate$1(value, format));
-};
+}
 
 var validate$6 = function (value, ref) {
     var length = ref[0];
@@ -4272,7 +4276,7 @@ var validateImage = function (file, width, height) {
         image.src = URL.createObjectURL(file);
     });
 };
-var dimensions = function (files, ref) {
+function dimensions (files, ref) {
     var width = ref[0];
     var height = ref[1];
 
@@ -4284,10 +4288,9 @@ var dimensions = function (files, ref) {
         list.push(files[i]);
     }
     return Promise.all(list.map(function (file) { return validateImage(file, width, height); }));
-};
+}
 
 var merge_1 = createCommonjsModule(function (module, exports) {
-    'use strict';
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
@@ -4305,10 +4308,14 @@ var merge_1 = createCommonjsModule(function (module, exports) {
     
     module.exports = exports['default'];
 });
-unwrapExports(merge_1)
+var merge$1 = unwrapExports(merge_1)
+
+var merge$2 = /*#__PURE__*/Object.freeze({
+  default: merge$1,
+  __moduleExports: merge_1
+});
 
 var isByteLength_1 = createCommonjsModule(function (module, exports) {
-    'use strict';
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
@@ -4318,7 +4325,7 @@ var isByteLength_1 = createCommonjsModule(function (module, exports) {
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
     exports.default = isByteLength;
-    var _assertString2 = _interopRequireDefault(assertString_1);
+    var _assertString2 = _interopRequireDefault(_assertString);
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
             default: obj
@@ -4342,16 +4349,22 @@ var isByteLength_1 = createCommonjsModule(function (module, exports) {
     
     module.exports = exports['default'];
 });
-unwrapExports(isByteLength_1)
+var isByteLength = unwrapExports(isByteLength_1)
 
-var isFQDN = createCommonjsModule(function (module, exports) {
-    'use strict';
+var isByteLength$1 = /*#__PURE__*/Object.freeze({
+  default: isByteLength,
+  __moduleExports: isByteLength_1
+});
+
+var _merge = ( merge$2 && merge$1 ) || merge$2;
+
+var isFQDN_1 = createCommonjsModule(function (module, exports) {
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    exports.default = isFDQN;
-    var _assertString2 = _interopRequireDefault(assertString_1);
-    var _merge2 = _interopRequireDefault(merge_1);
+    exports.default = isFQDN;
+    var _assertString2 = _interopRequireDefault(_assertString);
+    var _merge2 = _interopRequireDefault(_merge);
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
             default: obj
@@ -4363,7 +4376,7 @@ var isFQDN = createCommonjsModule(function (module, exports) {
         allow_underscores: false,
         allow_trailing_dot: false
     };
-    function isFDQN(str, options) {
+    function isFQDN(str, options) {
         (0, _assertString2.default)(str);
         options = (0, _merge2.default)(options, default_fqdn_options);
         if (options.allow_trailing_dot && str[str.length - 1] === '.') {
@@ -4399,18 +4412,26 @@ var isFQDN = createCommonjsModule(function (module, exports) {
     
     module.exports = exports['default'];
 });
-unwrapExports(isFQDN)
+var isFQDN = unwrapExports(isFQDN_1)
+
+var isFQDN$1 = /*#__PURE__*/Object.freeze({
+  default: isFQDN,
+  __moduleExports: isFQDN_1
+});
+
+var _isByteLength = ( isByteLength$1 && isByteLength ) || isByteLength$1;
+
+var _isFQDN = ( isFQDN$1 && isFQDN ) || isFQDN$1;
 
 var isEmail_1 = createCommonjsModule(function (module, exports) {
-    'use strict';
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
     exports.default = isEmail;
-    var _assertString2 = _interopRequireDefault(assertString_1);
-    var _merge2 = _interopRequireDefault(merge_1);
-    var _isByteLength2 = _interopRequireDefault(isByteLength_1);
-    var _isFQDN2 = _interopRequireDefault(isFQDN);
+    var _assertString2 = _interopRequireDefault(_assertString);
+    var _merge2 = _interopRequireDefault(_merge);
+    var _isByteLength2 = _interopRequireDefault(_isByteLength);
+    var _isFQDN2 = _interopRequireDefault(_isFQDN);
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
             default: obj
@@ -4474,7 +4495,7 @@ var isEmail_1 = createCommonjsModule(function (module, exports) {
     
     module.exports = exports['default'];
 });
-var isEmail = unwrapExports(isEmail_1);
+var isEmail = unwrapExports(isEmail_1)
 
 var validate$7 = function (value) {
     if (Array.isArray(value)) {
@@ -4483,12 +4504,12 @@ var validate$7 = function (value) {
     return isEmail(String(value));
 };
 
-var ext = function (files, extensions) {
+function ext (files, extensions) {
     var regex = new RegExp((".(" + (extensions.join('|')) + ")$"), 'i');
     return files.every(function (file) { return regex.test(file.name); });
-};
+}
 
-var image = function (files) { return files.every(function (file) { return /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(file.name); }); };
+function image (files) { return files.every(function (file) { return /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(file.name); }); }
 
 var validate$8 = function (value, options) {
     if (Array.isArray(value)) {
@@ -4498,12 +4519,11 @@ var validate$8 = function (value, options) {
 };
 
 var isIP_1 = createCommonjsModule(function (module, exports) {
-    'use strict';
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
     exports.default = isIP;
-    var _assertString2 = _interopRequireDefault(assertString_1);
+    var _assertString2 = _interopRequireDefault(_assertString);
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
             default: obj
@@ -4551,7 +4571,7 @@ var isIP_1 = createCommonjsModule(function (module, exports) {
                         return false;
                     }
                     foundOmissionBlock = true;
-                } else if (foundIPv4TransitionBlock && i === blocks.length - 1) {} else if (!ipv6Block.test(blocks[i])) {
+                } else if (foundIPv4TransitionBlock && i === blocks.length - 1) ; else if (!ipv6Block.test(blocks[i])) {
                     return false;
                 }
             }
@@ -4565,9 +4585,9 @@ var isIP_1 = createCommonjsModule(function (module, exports) {
     
     module.exports = exports['default'];
 });
-var isIP = unwrapExports(isIP_1);
+var isIP = unwrapExports(isIP_1)
 
-var ip = function (value, ref) {
+function ip (value, ref) {
     if ( ref === void 0 ) ref = [];
     var version = ref[0]; if ( version === void 0 ) version = 4;
 
@@ -4578,21 +4598,21 @@ var ip = function (value, ref) {
         return value.every(function (val) { return isIP(val, version); });
     }
     return isIP(value, version);
-};
+}
 
-var is = function (value, ref) {
+function is (value, ref) {
 	if ( ref === void 0 ) ref = [];
 	var other = ref[0];
 
 	return value === other;
-};
+}
 
-var is_not = function (value, ref) {
+function is_not (value, ref) {
 	if ( ref === void 0 ) ref = [];
 	var other = ref[0];
 
 	return value !== other;
-};
+}
 
 var compare = function (value, length, max) {
     if (max === undefined) {
@@ -4601,7 +4621,7 @@ var compare = function (value, length, max) {
     max = Number(max);
     return value.length >= length && value.length <= max;
 };
-var length = function (value, ref) {
+function length (value, ref) {
     var length = ref[0];
     var max = ref[1]; if ( max === void 0 ) max = undefined;
 
@@ -4616,55 +4636,55 @@ var length = function (value, ref) {
         value = toArray(value);
     }
     return compare(value, length, max);
-};
+}
 
-var integer = function (value) {
+function integer (value) {
     if (Array.isArray(value)) {
         return value.every(function (val) { return /^-?[0-9]+$/.test(String(val)); });
     }
     return /^-?[0-9]+$/.test(String(value));
-};
+}
 
-var max$1 = function (value, ref) {
+function max$1 (value, ref) {
     var length = ref[0];
 
     if (value === undefined || value === null) {
         return length >= 0;
     }
     return String(value).length <= length;
-};
+}
 
-var max_value = function (value, ref) {
+function max_value (value, ref) {
     var max = ref[0];
 
     if (Array.isArray(value) || value === null || value === undefined || value === '') {
         return false;
     }
     return Number(value) <= max;
-};
+}
 
-var mimes = function (files, mimes) {
+function mimes (files, mimes) {
     var regex = new RegExp(((mimes.join('|').replace('*', '.+')) + "$"), 'i');
     return files.every(function (file) { return regex.test(file.type); });
-};
+}
 
-var min$1 = function (value, ref) {
+function min$1 (value, ref) {
     var length = ref[0];
 
     if (value === undefined || value === null) {
         return false;
     }
     return String(value).length >= length;
-};
+}
 
-var min_value = function (value, ref) {
+function min_value (value, ref) {
     var min = ref[0];
 
     if (Array.isArray(value) || value === null || value === undefined || value === '') {
         return false;
     }
     return Number(value) >= min;
-};
+}
 
 var validate$9 = function (value, options) {
     if (Array.isArray(value)) {
@@ -4673,14 +4693,14 @@ var validate$9 = function (value, options) {
     return !options.filter(function (option) { return option == value; }).length;
 };
 
-var numeric = function (value) {
+function numeric (value) {
     if (Array.isArray(value)) {
         return value.every(function (val) { return /^[0-9]+$/.test(String(val)); });
     }
     return /^[0-9]+$/.test(String(value));
-};
+}
 
-var regex = function (value, ref) {
+function regex (value, ref) {
     var regex = ref[0];
     var flags = ref.slice(1);
 
@@ -4688,9 +4708,9 @@ var regex = function (value, ref) {
         return regex.test(value);
     }
     return new RegExp(regex, flags).test(String(value));
-};
+}
 
-var required = function (value, ref) {
+function required (value, ref) {
     if ( ref === void 0 ) ref = [];
     var invalidateFalse = ref[0]; if ( invalidateFalse === void 0 ) invalidateFalse = false;
 
@@ -4704,9 +4724,9 @@ var required = function (value, ref) {
         return false;
     }
     return !(!String(value).trim().length);
-};
+}
 
-var size = function (files, ref) {
+function size (files, ref) {
     var size = ref[0];
 
     if (isNaN(size)) {
@@ -4719,18 +4739,17 @@ var size = function (files, ref) {
         }
     }
     return true;
-};
+}
 
 var isURL_1 = createCommonjsModule(function (module, exports) {
-    'use strict';
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
     exports.default = isURL;
-    var _assertString2 = _interopRequireDefault(assertString_1);
-    var _isFQDN2 = _interopRequireDefault(isFQDN);
+    var _assertString2 = _interopRequireDefault(_assertString);
+    var _isFQDN2 = _interopRequireDefault(_isFQDN);
     var _isIP2 = _interopRequireDefault(isIP_1);
-    var _merge2 = _interopRequireDefault(merge_1);
+    var _merge2 = _interopRequireDefault(_merge);
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
             default: obj
@@ -4839,9 +4858,9 @@ var isURL_1 = createCommonjsModule(function (module, exports) {
     
     module.exports = exports['default'];
 });
-var isURL = unwrapExports(isURL_1);
+var isURL = unwrapExports(isURL_1)
 
-var url = function (value, ref) {
+function url (value, ref) {
     if ( ref === void 0 ) ref = [];
     var requireProtocol = ref[0]; if ( requireProtocol === void 0 ) requireProtocol = false;
 
@@ -4856,7 +4875,7 @@ var url = function (value, ref) {
         return value.every(function (val) { return isURL(val, options); });
     }
     return isURL(value, options);
-};
+}
 
 var Rules = {
     after: after,
@@ -4893,7 +4912,7 @@ var Rules = {
     required: required,
     size: size,
     url: url
-};
+}
 
 var normalize = function (fields) {
     if (Array.isArray(fields)) {
@@ -5002,7 +5021,7 @@ var ErrorComponent = {
     }
 };
 
-var version = '2.0.6';
+var version = '2.0.7';
 var rulesPlugin = function (ref) {
     var Validator$$1 = ref.Validator;
 
@@ -5023,7 +5042,7 @@ var index_esm = {
     ErrorComponent: ErrorComponent,
     Rules: Rules,
     version: version
-};
+}
 
-export { install, use, directive, mixin, mapFields, Validator, ErrorBag, Rules, ErrorComponent, version };
 export default index_esm;
+export { install, use, directive, mixin, mapFields, Validator, ErrorBag, Rules, ErrorComponent, version };

@@ -1,5 +1,5 @@
 /**
-  * vee-validate v2.0.6
+  * vee-validate v2.0.7
   * (c) 2018 Abdelrahman Awad
   * @license MIT
   */
@@ -16,7 +16,6 @@ var detectPassiveSupport = function () {
     } catch (e) {
         supportsPassive = false;
     }
-    
     return supportsPassive;
 };
 var addEventListener = function (el, eventName, cb) {
@@ -299,16 +298,16 @@ var merge = function (target, source) {
         return target;
     }
     Object.keys(source).forEach(function (key) {
+        var obj, obj$1;
+
         if (isObject(source[key])) {
             if (!target[key]) {
                 assign(target, ( obj = {}, obj[key] = {}, obj ));
-                var obj;
             }
             merge(target[key], source[key]);
             return;
         }
         assign(target, ( obj$1 = {}, obj$1[key] = source[key], obj$1 ));
-        var obj$1;
     });
     return target;
 };
@@ -328,6 +327,8 @@ ErrorBag.prototype[typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'
     };
 };
 ErrorBag.prototype.add = function add (error) {
+        var ref;
+
     if (arguments.length > 1) {
         error = {
             field: arguments[0],
@@ -338,7 +339,6 @@ ErrorBag.prototype.add = function add (error) {
         };
     }
     (ref = this.items).push.apply(ref, this._normalizeError(error));
-        var ref;
 };
 ErrorBag.prototype._normalizeError = function _normalizeError (error) {
     if (Array.isArray(error)) {
@@ -528,11 +528,11 @@ var Dictionary = function Dictionary(dictionary) {
     this.merge(dictionary);
 };
 
-var prototypeAccessors$2 = { locale: {} };
-prototypeAccessors$2.locale.get = function () {
+var prototypeAccessors = { locale: { configurable: true } };
+prototypeAccessors.locale.get = function () {
     return LOCALE;
 };
-prototypeAccessors$2.locale.set = function (value) {
+prototypeAccessors.locale.set = function (value) {
     LOCALE = value || 'en';
 };
 Dictionary.prototype.hasLocale = function hasLocale (locale) {
@@ -612,7 +612,7 @@ Dictionary.prototype.setAttribute = function setAttribute (locale, key, attribut
     this.container[locale].attributes[key] = attribute;
 };
 
-Object.defineProperties( Dictionary.prototype, prototypeAccessors$2 );
+Object.defineProperties( Dictionary.prototype, prototypeAccessors );
 
 var normalizeValue = function (value) {
     if (isObject(value)) {
@@ -641,11 +641,11 @@ var I18nDictionary = function I18nDictionary(i18n, rootKey) {
     this.rootKey = rootKey;
 };
 
-var prototypeAccessors$3 = { locale: {} };
-prototypeAccessors$3.locale.get = function () {
+var prototypeAccessors$1 = { locale: { configurable: true } };
+prototypeAccessors$1.locale.get = function () {
     return this.i18n.locale;
 };
-prototypeAccessors$3.locale.set = function (value) {
+prototypeAccessors$1.locale.set = function (value) {
     warn('Cannot set locale from the validator when using vue-i18n, use i18n.locale setter instead');
 };
 I18nDictionary.prototype.getDateFormat = function getDateFormat (locale) {
@@ -681,31 +681,32 @@ I18nDictionary.prototype.merge = function merge$1 (dictionary) {
         var this$1 = this;
 
     Object.keys(dictionary).forEach(function (localeKey) {
+            var obj;
+
         var clone = merge({}, getPath((localeKey + "." + (this$1.rootKey)), this$1.i18n.messages, {}));
         var locale = merge(clone, normalizeFormat(dictionary[localeKey]));
         this$1.i18n.mergeLocaleMessage(localeKey, ( obj = {}, obj[this$1.rootKey] = locale, obj ));
-            var obj;
         if (locale.dateFormat) {
             this$1.i18n.setDateTimeFormat(localeKey, locale.dateFormat);
         }
     });
 };
 I18nDictionary.prototype.setMessage = function setMessage (locale, key, value) {
+        var obj, obj$1;
+
     this.merge(( obj$1 = {}, obj$1[locale] = {
             messages: ( obj = {}, obj[key] = value, obj )
         }, obj$1 ));
-        var obj;
-        var obj$1;
 };
 I18nDictionary.prototype.setAttribute = function setAttribute (locale, key, value) {
+        var obj, obj$1;
+
     this.merge(( obj$1 = {}, obj$1[locale] = {
             attributes: ( obj = {}, obj[key] = value, obj )
         }, obj$1 ));
-        var obj;
-        var obj$1;
 };
 
-Object.defineProperties( I18nDictionary.prototype, prototypeAccessors$3 );
+Object.defineProperties( I18nDictionary.prototype, prototypeAccessors$1 );
 
 var defaultConfig = {
     locale: 'en',
@@ -736,12 +737,12 @@ var dependencies = {
 };
 var Config = function Config () {};
 
-var staticAccessors$1 = { default: {},current: {} };
+var staticAccessors = { default: { configurable: true },current: { configurable: true } };
 
-staticAccessors$1.default.get = function () {
+staticAccessors.default.get = function () {
     return defaultConfig;
 };
-staticAccessors$1.current.get = function () {
+staticAccessors.current.get = function () {
     return currentConfig;
 };
 Config.dependency = function dependency (key) {
@@ -761,7 +762,7 @@ Config.resolve = function resolve (context) {
     return assign({}, Config.current, selfConfig);
 };
 
-Object.defineProperties( Config, staticAccessors$1 );
+Object.defineProperties( Config, staticAccessors );
 
 var Generator = function Generator () {};
 
@@ -985,8 +986,8 @@ var Field = function Field(options) {
     this.updated = false;
 };
 
-var prototypeAccessors$1 = { validator: {},isRequired: {},isDisabled: {},alias: {},value: {},rejectsFalse: {} };
-prototypeAccessors$1.validator.get = function () {
+var prototypeAccessors$2 = { validator: { configurable: true },isRequired: { configurable: true },isDisabled: { configurable: true },alias: { configurable: true },value: { configurable: true },rejectsFalse: { configurable: true } };
+prototypeAccessors$2.validator.get = function () {
     if (!this.vm || !this.vm.$validator) {
         warn('No validator instance detected.');
         return {
@@ -995,13 +996,13 @@ prototypeAccessors$1.validator.get = function () {
     }
     return this.vm.$validator;
 };
-prototypeAccessors$1.isRequired.get = function () {
+prototypeAccessors$2.isRequired.get = function () {
     return !(!this.rules.required);
 };
-prototypeAccessors$1.isDisabled.get = function () {
+prototypeAccessors$2.isDisabled.get = function () {
     return !(!(this.component && this.component.disabled)) || !(!(this.el && this.el.disabled));
 };
-prototypeAccessors$1.alias.get = function () {
+prototypeAccessors$2.alias.get = function () {
     if (this._alias) {
         return this._alias;
     }
@@ -1014,13 +1015,13 @@ prototypeAccessors$1.alias.get = function () {
     }
     return alias;
 };
-prototypeAccessors$1.value.get = function () {
+prototypeAccessors$2.value.get = function () {
     if (!isCallable(this.getter)) {
         return undefined;
     }
     return this.getter();
 };
-prototypeAccessors$1.rejectsFalse.get = function () {
+prototypeAccessors$2.rejectsFalse.get = function () {
     if (this.component && this.ctorConfig) {
         return !(!this.ctorConfig.rejectsFalse);
     }
@@ -1087,7 +1088,6 @@ Field.prototype.update = function update (options) {
     if (!this.el) {
         return;
     }
-    
     this.updateClasses();
     this.updateAriaAttrs();
 };
@@ -1297,7 +1297,6 @@ Field.prototype.addValueListeners = function addValueListeners () {
         { return; }
     var fn = this.targetOf ? function () {
         this$1.flags.changed = this$1.checkValueChanged();
-        
         this$1.validator.validate(("#" + (this$1.targetOf)));
     } : function () {
             var args = [], len = arguments.length;
@@ -1398,13 +1397,13 @@ Field.prototype.destroy = function destroy () {
     this.dependencies = [];
 };
 
-Object.defineProperties( Field.prototype, prototypeAccessors$1 );
+Object.defineProperties( Field.prototype, prototypeAccessors$2 );
 
 var FieldBag = function FieldBag() {
     this.items = [];
 };
 
-var prototypeAccessors$4 = { length: {} };
+var prototypeAccessors$3 = { length: { configurable: true } };
 FieldBag.prototype[typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'] = function () {
         var this$1 = this;
 
@@ -1416,7 +1415,7 @@ FieldBag.prototype[typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'
         }); }
     };
 };
-prototypeAccessors$4.length.get = function () {
+prototypeAccessors$3.length.get = function () {
     return this.items.length;
 };
 FieldBag.prototype.find = function find$1 (matcher) {
@@ -1459,7 +1458,7 @@ FieldBag.prototype.push = function push (item) {
     this.items.push(item);
 };
 
-Object.defineProperties( FieldBag.prototype, prototypeAccessors$4 );
+Object.defineProperties( FieldBag.prototype, prototypeAccessors$3 );
 
 var RULES = {};
 var STRICT_MODE = true;
@@ -1486,37 +1485,37 @@ var Validator = function Validator(validations, options) {
     }
 };
 
-var prototypeAccessors = { dictionary: {},_vm: {},locale: {},rules: {} };
-var staticAccessors = { dictionary: {},locale: {},rules: {} };
-prototypeAccessors.dictionary.get = function () {
+var prototypeAccessors$4 = { dictionary: { configurable: true },_vm: { configurable: true },locale: { configurable: true },rules: { configurable: true } };
+var staticAccessors$1 = { dictionary: { configurable: true },locale: { configurable: true },rules: { configurable: true } };
+prototypeAccessors$4.dictionary.get = function () {
     return Config.dependency('dictionary');
 };
-prototypeAccessors._vm.get = function () {
+prototypeAccessors$4._vm.get = function () {
     return Config.dependency('vm');
 };
-staticAccessors.dictionary.get = function () {
+staticAccessors$1.dictionary.get = function () {
     return Config.dependency('dictionary');
 };
-prototypeAccessors.locale.get = function () {
+prototypeAccessors$4.locale.get = function () {
     return this.dictionary.locale;
 };
-prototypeAccessors.locale.set = function (value) {
+prototypeAccessors$4.locale.set = function (value) {
     Validator.locale = value;
 };
-staticAccessors.locale.get = function () {
+staticAccessors$1.locale.get = function () {
     return Validator.dictionary.locale;
 };
-staticAccessors.locale.set = function (value) {
+staticAccessors$1.locale.set = function (value) {
     var hasChanged = value !== Validator.dictionary.locale;
     Validator.dictionary.locale = value;
     if (hasChanged && Config.dependency('vm')) {
         Config.dependency('vm').$emit('localeChanged');
     }
 };
-prototypeAccessors.rules.get = function () {
+prototypeAccessors$4.rules.get = function () {
     return RULES;
 };
-staticAccessors.rules.get = function () {
+staticAccessors$1.rules.get = function () {
     return RULES;
 };
 Validator.create = function create (validations, options) {
@@ -1550,6 +1549,8 @@ Validator.prototype.localize = function localize (lang, dictionary) {
     Validator.localize(lang, dictionary);
 };
 Validator.localize = function localize (lang, dictionary) {
+        var obj;
+
     if (isObject(lang)) {
         Validator.dictionary.merge(lang);
         return;
@@ -1558,7 +1559,6 @@ Validator.localize = function localize (lang, dictionary) {
         var locale = lang || dictionary.name;
         dictionary = assign({}, dictionary);
         Validator.dictionary.merge(( obj = {}, obj[locale] = dictionary, obj ));
-            var obj;
     }
     if (lang) {
         Validator.locale = lang;
@@ -1829,17 +1829,15 @@ Validator.prototype._getFieldDisplayName = function _getFieldDisplayName (field)
     return field.alias || this.dictionary.getAttribute(this.locale, field.name, field.name);
 };
 Validator.prototype._addFlag = function _addFlag (field, scope) {
-        if ( scope === void 0 ) scope = null;
+        var obj, obj$1, obj$2;
 
+        if ( scope === void 0 ) scope = null;
     if (isNullOrUndefined(scope)) {
         this.flags = assign({}, this.flags, ( obj = {}, obj[("" + (field.name))] = field.flags, obj ));
-            var obj;
         return;
     }
     var scopeObj = assign({}, this.flags[("$" + scope)] || {}, ( obj$1 = {}, obj$1[("" + (field.name))] = field.flags, obj$1 ));
-        var obj$1;
     this.flags = assign({}, this.flags, ( obj$2 = {}, obj$2[("$" + scope)] = scopeObj, obj$2 ));
-        var obj$2;
 };
 Validator.prototype._test = function _test (field, value, rule) {
         var this$1 = this;
@@ -2018,12 +2016,13 @@ Validator.prototype._validate = function _validate (field, value) {
         return Promise.all(promises).then((function ($await_6) {
             try {
                 return $return($await_6.reduce(function (prev, v) {
+                        var ref;
+
                     if (!v.valid) {
                         (ref = prev.errors).push.apply(ref, v.errors);
                     }
                     prev.valid = prev.valid && v.valid;
                     return prev;
-                        var ref;
                 }, {
                     valid: true,
                     errors: errors,
@@ -2036,8 +2035,8 @@ Validator.prototype._validate = function _validate (field, value) {
     }).bind(this));
 };
 
-Object.defineProperties( Validator.prototype, prototypeAccessors );
-Object.defineProperties( Validator, staticAccessors );
+Object.defineProperties( Validator.prototype, prototypeAccessors$4 );
+Object.defineProperties( Validator, staticAccessors$1 );
 
 var findField = function (el, context) {
     if (!context || !context.$validator) {
@@ -2086,7 +2085,7 @@ var directive = {
             { return; }
         context.$validator.detach(field);
     }
-};
+}
 
 var requestsValidator = function (injections) {
     if (isObject(injections) && injections.$validator) {
@@ -2152,7 +2151,7 @@ var mixin = {
             this.$validator.destroy();
         }
     }
-};
+}
 
 var Vue;
 function install(_Vue, options) {
@@ -2307,7 +2306,7 @@ var ErrorComponent = {
     }
 };
 
-var version = '2.0.6';
+var version = '2.0.7';
 var index_minimal_esm = {
     install: install,
     use: use,
@@ -2318,7 +2317,7 @@ var index_minimal_esm = {
     ErrorBag: ErrorBag,
     ErrorComponent: ErrorComponent,
     version: version
-};
+}
 
-export { install, use, directive, mixin, mapFields, Validator, ErrorBag, version, ErrorComponent };
 export default index_minimal_esm;
+export { install, use, directive, mixin, mapFields, Validator, ErrorBag, version, ErrorComponent };
