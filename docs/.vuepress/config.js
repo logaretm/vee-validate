@@ -55,8 +55,9 @@ module.exports = {
             'api/directive',
             'api/mixin',
             'api/data-attrs',
+            'api/validator',
             'api/errorbag',
-            'api/field'
+            'api/field',
           ]
         }
       ]
