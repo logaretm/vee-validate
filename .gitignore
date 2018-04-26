@@ -6,3 +6,4 @@ coverage
 .vscode
 .vs
 yarn-error.log
+dist
