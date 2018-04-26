@@ -58,7 +58,7 @@ This will make the plugin stop instantiating a new validator for each component 
 The `errorBag` and the `fields` objects will be also shared along with the validator, they will not be injected if the component does not have a validator instance.
 
 ::: warning
-    With SSR Frameworks like Nuxt, it is recommended to disable automatic injection since it may cause memory leaks due to all the validator instances being created for every component, which will slow down your site.
+  With SSR Frameworks like Nuxt, it is recommended to disable automatic injection since it may cause memory leaks due to all the validator instances being created for every component, which will slow down your site.
 :::
 
 ## Component Constructor Options
