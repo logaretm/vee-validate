@@ -258,6 +258,11 @@ export default class Field {
    * Resets field flags and errors.
    */
   reset () {
+    if (this._cancellationToken) {
+      this._cancellationToken.cancelled = true;
+      delete this._cancellationToken;
+    }
+
     const defaults = createFlags();
     Object.keys(this.flags).filter(flag => flag !== 'required').forEach(flag => {
       this.flags[flag] = defaults[flag];
@@ -503,6 +508,7 @@ export default class Field {
     this.unwatch(/^input_.+/);
     if (!this.listen || !this.el) return;
 
+    const token = { cancelled: false };
     const fn = this.targetOf ? () => {
       this.flags.changed = this.checkValueChanged(); ;
       this.validator.validate(`#${this.targetOf}`);
@@ -524,9 +530,10 @@ export default class Field {
 
     // if there is a watchable model and an on input validation is requested.
     if (this.model && this.model.expression && events.indexOf(inputEvent) !== -1) {
-      const debouncedFn = debounce(fn, this.delay[inputEvent]);
+      const debouncedFn = debounce(fn, this.delay[inputEvent], false, token);
       const unwatch = this.vm.$watch(this.model.expression, (...args) => {
         this.flags.pending = true;
+        this._cancellationToken = token;
         debouncedFn(...args);
       });
       this.watchers.push({
@@ -540,9 +547,10 @@ export default class Field {
 
     // Add events.
     events.forEach(e => {
-      const debouncedFn = debounce(fn, this.delay[e]);
+      const debouncedFn = debounce(fn, this.delay[e], false, token);
       const validate = (...args) => {
         this.flags.pending = true;
+        this._cancellationToken = token;
         debouncedFn(...args);
       };
 

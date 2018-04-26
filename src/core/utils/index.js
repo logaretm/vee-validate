@@ -158,7 +158,7 @@ export const parseRule = (rule: string): Object => {
 /**
  * Debounces a function.
  */
-export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = false) => {
+export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = false, token) => {
   if (wait === 0) {
     return fn;
   }
@@ -168,7 +168,8 @@ export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = f
   return (...args: any[]) => {
     const later = () => {
       timeout = null;
-      if (!immediate) fn(...args);
+
+      if (!immediate && !token.cancelled) fn(...args);
     };
     /* istanbul ignore next */
     const callNow = immediate && !timeout;
