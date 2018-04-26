@@ -470,7 +470,7 @@ export default class Field {
 
     addEventListener(this.el, inputEvent, onInput);
     // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
-    const blurEvent = ['radio', 'checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'click';
+    const blurEvent = ['radio', 'checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'change';
     addEventListener(this.el, blurEvent, onBlur);
     this.watchers.push({
       tag: 'class_input',
