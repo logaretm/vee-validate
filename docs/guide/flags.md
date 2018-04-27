@@ -1,5 +1,7 @@
 # Flags
 
+## Introduction
+
 vee-validate includes few flags that could help you improve your user experience, each field under validation has its own set of flags which are:
 
 - `touched`: indicates that the field has been touched or focused.
@@ -67,7 +69,9 @@ Here is what it would look like:
   Notice the additional checks before the actual flag check, this is because the flags aren't actually available until the `mounted()` life cycle event, so to avoid `created()` life cycle errors we need to add those checks.
 :::
 
-This can become quite tedious if you are referencing multiple flags, so it might be useful to use the `mapFields` helper, which is similar to Vuex's `mapGetters` and `mapActions` as it maps a field object to a computed property.
+## mapFields helper
+
+These checks can become quite tedious if you are referencing multiple flags, so it might be useful to use the `mapFields` helper, which is similar to Vuex's `mapGetters` and `mapActions` as it maps a field object to a computed property.
 
 ```js
 import { mapFields } from 'vee-validate'
@@ -141,5 +145,7 @@ this.$emit('input', value);
 // The focus event which will set the touched and untouched flags.
 this.$emit('focus');
 ```
+
+## Demo
 
 Here is an example that displays those flags, intereact with the input and watch the flags change accordingly:
