@@ -21,6 +21,19 @@ const sidebars = {
     '',
     'ctor',
     'backend'
+  ],
+  examples: [
+    '',
+    'debounce',
+    'async-backend-validation',
+    'using-v-model',
+    'initial-value',
+    'radio',
+    'checkboxes',
+    'scopes',
+    'selecting-errors',
+    'custom-component',
+    'locale'
   ]
 };
 
