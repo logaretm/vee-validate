@@ -8,15 +8,41 @@ actionLink: /guide.md
 features:
 - title: Simple and Declarative
   details: Template based validation that is both familiar and easy to setup.
-- title: Rich
+- title: Flexible
   details: Validate HTML inputs and Vue components, generate localized errors, Extendable, We have it all.
 - title: Configurable
   details: Config that doesn't get into your way, everything is optional.
 footer: MIT Licensed | Copyright © 2018-present Baianat
-description: Rich input validation framework for Vue.js
+description: Input validation for Vue.js
 meta:
   - name: og:title
     content: VeeValidate
   - name: og:description
-    content: Rich input validation framework for Vue.js
+    content: Input validation for Vue.js
 ---
+# Quick Setup
+
+## install
+
+```bash
+# install with npm
+npm install vee-validate
+
+# install with yarn
+yarn add vee-validate
+```
+
+## Use
+
+In your html
+
+```html
+<input v-validate="'required'" name="myinput" type="text">
+<span>{{ errors.first('myinput') }}</span>
+```
+
+And in your JavaScript:
+
+```js
+Vue.use(VeeValidate);
+```

@@ -49,7 +49,7 @@ function genSidebarConfig(title) {
 
 module.exports = {
   title: 'VeeValidate',
-  description: 'Rich input validation framework for Vue.js',
+  description: 'Input validation for Vue.js',
   ga: 'UA-100131478-1',
   serviceWorker: true,
   base: '/vee-validate/',
@@ -78,7 +78,7 @@ module.exports = {
     '/': {
       lang: 'en-US',
       title: 'VeeValidate',
-      description: 'Rich input validation framework for Vue.js'
+      description: 'Input validation for Vue.js'
     }
   },
   themeConfig: {
