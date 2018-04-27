@@ -6,8 +6,6 @@ meta:
     content: Getting Started
   - name: og:description
     content: Getting started with VeeValidate
-prev: ./index.md
-next: ./syntax.md
 ---
 # Getting started
 

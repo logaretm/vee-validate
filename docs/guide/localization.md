@@ -1,7 +1,7 @@
 # Localization
 
 This plugin only comes with English messages to keep things small, but it was built with flexible message generation in mind.
-The [English messages file](https://github.com/baianat/vee-validate/blob/master/dist/locale/en.js) is an example on how you would structure those messages. Then you may want to update the validator dictionary, which should happen once in your app startup. Still, you may update them whenever you want at any point of your app, check the [dictionary](#attributes-dictionary) description below.
+The [English messages file](https://github.com/baianat/vee-validate/blob/master/dist/locale/en.js) is an example on how you would structure those messages. Then you may want to update the validator dictionary, which should happen once in your app startup. Still, you may update them whenever you want at any point of your app, check the [dictionary](#using-the-dictionary-api) section below.
 
 ## Aliases
 
@@ -91,7 +91,7 @@ Validator.localize('ar');
 
 You will get a warning if you set the locale to one that has not been merged in the dictionary yet, any messages generated will fallback to English.
 
-A working example can be found [here](examples.md#locale-example)
+A working example can be found [here](/examples/locale.md)
 
 ## Localized Files
 

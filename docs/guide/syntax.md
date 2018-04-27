@@ -1,7 +1,3 @@
----
-prev: ./getting-started.md
-next: ./rules.md
----
 # Syntax
 
 The validation rules have a simple syntax similar to [Laravel validation syntax](https://laravel.com/docs/5.4/validation).

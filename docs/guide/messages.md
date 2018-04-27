@@ -1,7 +1,3 @@
----
-prev: custom-rules.md
-next: localization.md
----
 # Error Messages
 
 VeeValidate comes with generic error messages, which can be overwritten, or assign specific messages for specific fields.
@@ -54,7 +50,7 @@ validator.localize('ar'); // now this validator will generate messages in Arabic
   You must provide the messages in an object path like: `dictionary.locale.messages`.
 :::
 
-Usually, you would structure your language files for your app rather than adding hardcoded strings like the example above, check the [localization guide](localization.md) for more info. By default, any unspecified rules for the specific field messages will fallback to the already included ones, so you only need to define the custom messages you only need.
+Usually, you would structure your language files for your app rather than adding hardcoded strings like the example above, check the [localization guide](./localization.md) for more info. By default, any unspecified rules for the specific field messages will fallback to the already included ones, so you only need to define the custom messages you only need.
 
 ## Field Names
 

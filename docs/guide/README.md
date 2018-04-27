@@ -11,7 +11,7 @@ It is also build with localization in mind, in fact we have about 44 languages s
 ## Features
 
 - Template based validation.
-- [Many validation rules are provided out of the box](validation#available-rules).
-- [First Class Localization Support](/localization.md).
+- [Many validation rules are provided out of the box](./rules.md).
+- [First Class Localization Support](./localization.md).
 - Validates HTML5 inputs and custom Vue components.
-- [Custom Rules and error messages](customization.md).
+- [Custom Rules](./custom-rules.md) and [error messages](./messages.md).
