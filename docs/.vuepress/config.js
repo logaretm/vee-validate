@@ -20,7 +20,8 @@ const sidebars = {
   advanced: [
     '',
     'ctor',
-    'backend'
+    'backend',
+    'bundle-size'
   ],
   examples: [
     '',

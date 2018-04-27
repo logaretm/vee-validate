@@ -6,7 +6,7 @@ heroImage: https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg
 actionText: Get Started →
 actionLink: /guide.md
 features:
-- title: Simple and Declarative
+- title: Simple
   details: Template based validation that is both familiar and easy to setup.
 - title: Flexible
   details: Validate HTML inputs and Vue components, generate localized errors, Extendable, We have it all.
