@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://vee-validate.logaretm.com" target="_blank">
+  <a href="https://baianat.github.io/vee-validate/" target="_blank">
     <img width="200" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg">
   </a>
 </p>
@@ -20,9 +20,9 @@
 
 vee-validate is a plugin for [Vue.js](https://vuejs.org/) that allows you to validate input fields and display errors.
 
-You don't have to do anything fancy in your app -- most of the work goes into the html. You only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated. The plugin offers [many validations out of the box](http://vee-validate.logaretm.com/rules).
+You don't have to do anything fancy in your app -- most of the work goes into the html. You only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated. The plugin offers [many validations out of the box](https://baianat.github.io/vee-validate/guide/rules.html).
 
-Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object. This plugin is built with localization in mind. Read the [docs](http://vee-validate.logaretm.com/) for more info.
+Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object. This plugin is built with localization in mind. Read the [docs](https://baianat.github.io/vee-validate/) for more info.
 
 This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.com/).
 
@@ -93,8 +93,7 @@ Of course there is more to it than that. Refer to the documentation for more det
 
 ### Documentation
 
-Read the [documentation and demos](http://vee-validate.logaretm.com/).
-
+Read the [documentation and demos](https://baianat.github.io/vee-validate/).
 
 ### Compatibility
 
@@ -117,6 +116,7 @@ You can find more information in the [contribution guide](CONTRIBUTING.md).
 - [Make Validation Great Again! Vue form validation with vee validate](https://qiita.com/nickhall/items/d1043f3f9874c90b6f8e) by [Nick Hall](https://github.com/nickhall)
 
 ### Credits
+
 - Some validations/test scenarios are provided/based on [validator.js](https://github.com/chriso/validator.js).
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
 - Logo by [Abdelrahman Ismail](https://github.com/Abdelrahman3D)
