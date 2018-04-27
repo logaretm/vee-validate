@@ -15,6 +15,11 @@ const sidebars = {
     'errorbag',
     'field',
     'validator'
+  ],
+  advanced: [
+    '',
+    'ctor',
+    'backend'
   ]
 };
 
@@ -81,7 +86,8 @@ module.exports = {
         ],
         sidebar: {
           '/guide/': genSidebarConfig('Guide'),
-          '/api/': genSidebarConfig('API')
+          '/api/': genSidebarConfig('API'),
+          '/advanced/': genSidebarConfig('Advanced')
         }
       }
     }
