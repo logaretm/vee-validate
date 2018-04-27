@@ -21,6 +21,8 @@ const multiple = {
 };
 ```
 
+## Rules Parameters
+
 Some rules can have parameters, which are passed in a comma separated list without spaces or an array for the object form:
 
 ```js
