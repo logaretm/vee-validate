@@ -78,3 +78,7 @@ Here is the basic example in action
 </div>
 
 [More Examples](/examples/)
+
+::: warning
+  Client-side validation is never a subsitute for server-side validation, make sure to validate any input from the user on your backend as well.
+:::
