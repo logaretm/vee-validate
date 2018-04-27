@@ -1,8 +1,24 @@
-# Customization
+---
+prev: custom-rules.md
+next: localization.md
+---
+# Error Messages
 
-VeeValidate comes with generic error messages, you may need to overwrite, or change the behavior of message generation, or assign specific messages for specific fields.
+VeeValidate comes with generic error messages, which can be overwritten, or assign specific messages for specific fields.
 
-## Custom Messages
+## Message Generators
+
+Messages lives inside an internal dictionary, they can be either strings or functions that return a string called _generators_ those generators have the following signature:
+
+```ts
+function rule (fieldName: string, params: any[], data?: any): string {
+  return `Some error message for the ${fieldName} field.`;
+}
+```
+
+It recieves the field name or an alias for it as the first parameter, as well as the params used to validate the field. The third optional parameter is any additonal data returned by the validation rule which can [provide more info](./custom-rules#reasoning) for the generator to make it more flexible.
+
+## Overwriting Messages
 
 The Validator class and its instances provide a `localize` method, which will merge the provided messages with the internal dictionary, overwriting any duplicates.
 
@@ -21,7 +37,7 @@ const dictionary = {
   },
   ar: {
     messages: {
-      alpha: () => 'Some Arabic Message'
+      alpha: 'حاجة عربي'
     }
   }
 };
@@ -40,7 +56,7 @@ validator.localize('ar'); // now this validator will generate messages in Arabic
 
 Usually, you would structure your language files for your app rather than adding hardcoded strings like the example above, check the [localization guide](localization.md) for more info. By default, any unspecified rules for the specific field messages will fallback to the already included ones, so you only need to define the custom messages you only need.
 
-## Custom Attributes
+## Field Names
 
 Like the custom messages, the validators share a dictionary containing the attribute names, for example if you want to use _"Email Address"_ instead of _"email"_ in your error messages, this can be easily achieved by including an `attributes` object in the dictionary.
 
@@ -65,7 +81,7 @@ Validator.localize(dictionary);
 ```
 
 ::: tip
-If the attribute is not found for the current locale, it will fallback to the binding expression or the field name. If you use the [data-vv-as](localization.md#using-data-vv-as) attribute, it will take precedence over the internal dictionary.
+If the attribute is not found for the current locale, it will fallback to the binding expression or the field name. If you use the [data-vv-as](./localization.md#using-data-vv-as) attribute, it will take precedence over the internal dictionary.
 :::
 
 ## Field-specific Custom Messages
@@ -74,15 +90,11 @@ If the attribute is not found for the current locale, it will fallback to the bi
 
  To do this you would need to add an object to the dictionary called `custom` like this:
 
-::: warning
-Notice that the `custom` object contains properties that represent the field names, those field names objects contain properties that represent the validation rule that its value will be used instead of the default one.
-:::
-
 ```js
 const dict = {
   custom: {
     email: {
-      required: 'Your email is empty' // messages can be strings as well.
+      required: 'Your email is empty'
     },
     name: {
       required: () => 'Your name is empty'
@@ -95,6 +107,6 @@ Validator.localize('en', dict);
 this.$validator.localize('en', dict);
 ```
 
-:: tip
+::: tip
   One thing to keep in mind is to place any dictionary related operations in your code before it actually needs it to avoid uneccessary merges. For example, a good common place is in your app entry point or setup script, conversly, a poor choice would be a child component lifecycle hook like `mounted` since the validator dictionary is kept globally for all instances.
 :::

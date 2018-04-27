@@ -1,3 +1,33 @@
+const sidebars = {
+  guide: [
+    '',
+    'getting-started',
+    'syntax',
+    'rules',
+    'custom-rules',
+    'messages',
+    'localization'
+  ],
+  api: [
+    'directive',
+    'mixin',
+    'data-attrs',
+    'errorbag',
+    'field',
+    'validator'
+  ]
+};
+
+function genSidebarConfig(title) {
+  return [
+    {
+      title,
+      collapsable: false,
+      children: sidebars[title.toLowerCase()]
+    }
+  ]
+}
+
 module.exports = {
   title: 'VeeValidate',
   description: 'Rich input validation framework for Vue.js',
@@ -25,42 +55,35 @@ module.exports = {
     ['link', { rel: "icon", type: "image/png", sizes: "96x96", href: "/img/favicon-96x96.png" }],
     ['link', { rel: "icon", type: "image/png", sizes: "16x16", href: "/img/favicon-16x16.png" }]
   ],
+  locales: {
+    '/': {
+      lang: 'en-US',
+      title: 'VeeValidate',
+      description: 'Rich input validation framework for Vue.js'
+    }
+  },
   themeConfig: {
     repo: 'baianat/vee-validate',
     docsRepo: 'baianat/vee-validate',
     docsDir: 'docs',
     editLinks: true,
-    editLinkText: 'Help us improve this page!',
-    nav: [
-      { text: 'Guide', link: '/guide.md' },
-      { text: 'Validation', link: '/validation.md' },
-      { text: 'Customization', link: '/customization.md' },
-      { text: 'Localization', link: '/localization.md' },
-      { text: 'Examples', link: '/examples.md' },
-      { text: 'Advanced', link: '/advanced.md' },
-      { text: 'API', link: '/api.md' }
-    ],
-    sidebar: {
-      '/': [
-        '',
-        'guide',
-        'configuration',
-        'validation',
-        'customization',
-        'localization',
-        'advanced',
-        {
-          title: 'API',
-          children: [
-            'api/directive',
-            'api/mixin',
-            'api/data-attrs',
-            'api/validator',
-            'api/errorbag',
-            'api/field',
-          ]
+    locales: {
+      '/': {
+        label: 'English',
+        selectText: 'Languages',
+        editLinkText: 'Help us improve this page!',
+        nav: [
+          { text: 'Guide', link: '/guide/' },
+          { text: 'Config', link: '/configuration' },
+          { text: 'Advanced', link: '/advanced/' },
+          { text: 'Examples', link: '/examples/' },
+          { text: 'API', link: '/api/' }
+        ],
+        sidebar: {
+          '/guide/': genSidebarConfig('Guide'),
+          '/api/': genSidebarConfig('API')
         }
-      ]
+      }
     }
   }
 };

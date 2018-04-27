@@ -3,19 +3,21 @@
 This plugin only comes with English messages to keep things small, but it was built with flexible message generation in mind.
 The [English messages file](https://github.com/baianat/vee-validate/blob/master/dist/locale/en.js) is an example on how you would structure those messages. Then you may want to update the validator dictionary, which should happen once in your app startup. Still, you may update them whenever you want at any point of your app, check the [dictionary](#attributes-dictionary) description below.
 
-## Field Names
+## Aliases
 
-### using data-vv-as
+Not only can you create and overwrite messages but you can also provide an alias for a field that to be used in the message instead of its original name, Seeing 'first_name' in your error messages can't be very good for your users experience. There is a couple of solutions.
 
-Seeing 'first_name' in your error messages can't be very good for your user experience, this plugin offers a couple of solutions: You can use the `data-vv-as` attribute on your field and give it a better name for your users, it would look like this:
+### Using data-vv-as
+
+You can use the `data-vv-as` attribute on your field, like this:
 
 ```html
-  <input v-validate data-vv-rules="alpha|min:3" data-vv-as="First Name" name="first_name" type="text">
+  <input v-validate="'alpha'" data-vv-as="First Name" name="first_name" type="text">
 ```
 
-Now when any error message is generated for this input, it will use the `data-vv-as` value instead of the actual field name. While this is very useful for simple setups and displaying localized names, it is only ideal for a single-locale page. For multi-localized pages and more advanced usages you might want to check the [dictionary API](#using-the-dictionary-api).
+Now when any error message is generated for this input, it will use the `data-vv-as` value instead of the actual field name. While this is very useful for simple setups and displaying localized names, it is only ideal for a single-locale page. For multi-localized pages and more advanced usages you might want to check the dictionary API.
 
-### using the dictionary API
+### Using the dictionary API
 
 All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes. If the validator finds a localized attribute name for that field, it will be used instead of the field name. Pretty much like `data-vv-as` but `data-vv-as` takes priority if both are found.
 
@@ -123,7 +125,7 @@ Also note that if imported via script tags, they will be automatically installed
 
 ## Async Localization
 
-Loading every locale in your app bundle is not very friendly for your user's bandwidth, especially since only one locale will be used. With a little bit of [Webpack `import()` magic](https://webpack.js.org/guides/code-splitting/#dynamic-imports) we can get an async localization setup easily:
+Loading every locale in your app bundle is not very friendly for your user's bandwidth, especially since only one locale will be used. With a little bit of [Webpack import() magic](https://webpack.js.org/guides/code-splitting/#dynamic-imports) we can get an async localization setup easily:
 
 ```js
 import Vue from 'vue';
