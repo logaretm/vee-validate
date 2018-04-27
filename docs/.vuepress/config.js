@@ -25,11 +25,11 @@ const sidebars = {
   examples: [
     '',
     'debounce',
-    'async-backend-validation',
     'using-v-model',
     'initial-value',
     'radio',
     'checkboxes',
+    'async-backend-validation',
     'scopes',
     'selecting-errors',
     'custom-component',
@@ -100,8 +100,9 @@ module.exports = {
         ],
         sidebar: {
           '/guide/': genSidebarConfig('Guide'),
+          '/advanced/': genSidebarConfig('Advanced'),
+          '/examples/': genSidebarConfig('Examples'),
           '/api/': genSidebarConfig('API'),
-          '/advanced/': genSidebarConfig('Advanced')
         }
       }
     }
