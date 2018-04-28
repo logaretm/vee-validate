@@ -321,10 +321,6 @@ export default class Validator {
       value = field.value;
     }
 
-    if (field.isDisabled) {
-      return true;
-    }
-
     const result = await this._validate(field, value);
     if (!silent) {
       this._handleValidationResults([result]);
@@ -651,7 +647,8 @@ export default class Validator {
    * Starts the validation process.
    */
   async _validate (field: Field, value: any): Promise<ValidationResult> {
-    if (!field.isRequired && (isNullOrUndefined(value) || value === '')) {
+    // if field is disabled and is not required.
+    if (field.isDisabled || (!field.isRequired && (isNullOrUndefined(value) || value === ''))) {
       return { valid: true, id: field.id, errors: [] };
     }
 
