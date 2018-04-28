@@ -405,19 +405,28 @@ export default class Field {
    */
   updateClasses () {
     if (!this.classes || this.isDisabled) return;
+    const applyClasses = (el) => {
+      toggleClass(el, this.classNames.dirty, this.flags.dirty);
+      toggleClass(el, this.classNames.pristine, this.flags.pristine);
+      toggleClass(el, this.classNames.touched, this.flags.touched);
+      toggleClass(el, this.classNames.untouched, this.flags.untouched);
+      // make sure we don't set any classes if the state is undetermined.
+      if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
+        toggleClass(el, this.classNames.valid, this.flags.valid);
+      }
 
-    toggleClass(this.el, this.classNames.dirty, this.flags.dirty);
-    toggleClass(this.el, this.classNames.pristine, this.flags.pristine);
-    toggleClass(this.el, this.classNames.touched, this.flags.touched);
-    toggleClass(this.el, this.classNames.untouched, this.flags.untouched);
-    // make sure we don't set any classes if the state is undetermined.
-    if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
-      toggleClass(this.el, this.classNames.valid, this.flags.valid);
+      if (!isNullOrUndefined(this.flags.invalid) && this.flags.validated) {
+        toggleClass(el, this.classNames.invalid, this.flags.invalid);
+      }
+    };
+
+    if (!isCheckboxOrRadioInput(this.el)) {
+      applyClasses(this.el);
+      return;
     }
 
-    if (!isNullOrUndefined(this.flags.invalid) && this.flags.validated) {
-      toggleClass(this.el, this.classNames.invalid, this.flags.invalid);
-    }
+    const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+    toArray(els).forEach(applyClasses);
   }
 
   /**
@@ -576,31 +585,30 @@ export default class Field {
     if (!this.el || this.component) return;
 
     // listen for the current element.
-    addEventListener(this.el, evt, validate);
-    this.watchers.push({
-      tag: 'input_native',
-      unwatch: () => {
-        this.el.removeEventListener(evt, validate);
-      }
-    });
-
-    if (isCheckboxOrRadioInput(this.el)) {
-      const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
-      toArray(els).forEach(el => {
-        // skip if it is added by v-validate and is not the current element.
-        if (getDataAttribute(el, 'id') && el !== this.el) {
-          return;
+    const addListener = (el) => {
+      addEventListener(el, evt, validate);
+      this.watchers.push({
+        tag: 'input_native',
+        unwatch: () => {
+          el.removeEventListener(evt, validate);
         }
-
-        addEventListener(el, evt, validate);
-        this.watchers.push({
-          tag: 'input_native',
-          unwatch: () => {
-            el.removeEventListener(evt, validate);
-          }
-        });
       });
+    };
+
+    addListener(this.el);
+    if (!isCheckboxOrRadioInput(this.el)) {
+      return;
     }
+
+    const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+    toArray(els).forEach(el => {
+      // skip if it is added by v-validate and is not the current element.
+      if (getDataAttribute(el, 'id') && el !== this.el) {
+        return;
+      }
+
+      addListener(el);
+    });
   }
 
   /**
@@ -609,8 +617,18 @@ export default class Field {
   updateAriaAttrs () {
     if (!this.aria || !this.el || !isCallable(this.el.setAttribute)) return;
 
-    this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
-    this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
+    const applyAriaAttrs = (el) => {
+      el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
+      el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
+    };
+
+    if (!isCheckboxOrRadioInput(this.el)) {
+      applyAriaAttrs(this.el);
+      return;
+    }
+
+    const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+    toArray(els).forEach(applyAriaAttrs);
   }
 
   /**
