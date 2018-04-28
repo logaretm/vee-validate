@@ -17,7 +17,8 @@ import {
   makeDelayObject,
   merge,
   isObject,
-  addEventListener
+  addEventListener,
+  isCheckboxOrRadioInput
 } from './utils';
 import Generator from './generator';
 import Validator from './validator';
@@ -475,7 +476,7 @@ export default class Field {
 
     addEventListener(this.el, inputEvent, onInput);
     // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
-    const blurEvent = ['radio', 'checkbox'].indexOf(this.el.type) === -1 ? 'blur' : 'change';
+    const blurEvent = isCheckboxOrRadioInput(this.el) ? 'change' : 'blur';
     addEventListener(this.el, blurEvent, onBlur);
     this.watchers.push({
       tag: 'class_input',
@@ -583,7 +584,7 @@ export default class Field {
       }
     });
 
-    if (~['radio', 'checkbox'].indexOf(this.el.type)) {
+    if (isCheckboxOrRadioInput(this.el)) {
       const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
       toArray(els).forEach(el => {
         // skip if it is added by v-validate and is not the current element.

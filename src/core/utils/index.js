@@ -26,6 +26,10 @@ export const isTextInput = (el) => {
   return ['text', 'number', 'password', 'search', 'email', 'tel', 'url', 'textarea'].indexOf(el.type) !== -1;
 };
 
+export const isCheckboxOrRadioInput = el => {
+  return ['radio', 'checkbox'].indexOf(el.type) !== -1;
+};
+
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
