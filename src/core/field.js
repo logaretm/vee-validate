@@ -228,7 +228,7 @@ export default class Field {
     this.updateDependencies();
     this.addActionListeners();
 
-    if (!this.name) {
+    if (!this.name && !this.targetOf) {
       warn('A field is missing a "name" or "data-vv-name" attribute');
     }
 

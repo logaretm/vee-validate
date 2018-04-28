@@ -45,7 +45,7 @@ export default class Generator {
   static getCtorConfig (vnode) {
     if (!vnode.componentInstance) return null;
 
-    const config = getPath('child.$options.$_veeValidate', vnode);
+    const config = getPath('componentInstance.$options.$_veeValidate', vnode);
 
     return config;
   }
