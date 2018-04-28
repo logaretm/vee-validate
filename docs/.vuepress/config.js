@@ -28,6 +28,7 @@ const sidebars = {
     'debounce',
     'using-v-model',
     'initial-value',
+    'vuex',
     'radio',
     'checkboxes',
     'async-backend-validation',
