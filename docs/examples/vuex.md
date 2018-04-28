@@ -1,4 +1,4 @@
-# Validating Veux State
+# Validating Vuex State
 
 Validating vuex states can be tricky, since in order for the state to change you have to trigger a mutation. Your first try may look like this:
 
