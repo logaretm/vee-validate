@@ -635,7 +635,7 @@ export default class Field {
    * Updates the custom validity for the field.
    */
   updateCustomValidity () {
-    if (!this.validity || !this.el || !isCallable(this.el.setCustomValidity)) return;
+    if (!this.validity || !this.el || !isCallable(this.el.setCustomValidity) || !this.validator.errors) return;
 
     this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
   }

@@ -153,12 +153,6 @@ test('converts array like objects to arrays', () => {
 
   let array = utils.toArray(nodeList);
   expect(Array.isArray(array)).toBe(true);
-
-  // test polyfill.
-  global.Array.from = undefined;
-  array = utils.toArray(nodeList);
-  expect(Array.isArray(array)).toBe(true);
-  expect(array.length).toBe(3);
 });
 
 
