@@ -5,7 +5,6 @@ import {
   normalizeRules,
   isNullOrUndefined,
   getDataAttribute,
-  setDataAttribute,
   toggleClass,
   isTextInput,
   debounce,
@@ -199,7 +198,7 @@ export default class Field {
    */
   _cacheId (options: FieldOptions): void {
     if (this.el && !options.targetOf) {
-      setDataAttribute(this.el, 'id', this.id); // cache field id if it is independent and has a root element.
+      this.el._veeValidateId = this.id;
     }
   }
 
@@ -603,7 +602,7 @@ export default class Field {
     const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
     toArray(els).forEach(el => {
       // skip if it is added by v-validate and is not the current element.
-      if (getDataAttribute(el, 'id') && el !== this.el) {
+      if (el._veeValidateId && el !== this.el) {
         return;
       }
 

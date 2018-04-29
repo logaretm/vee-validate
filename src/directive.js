@@ -1,18 +1,18 @@
 import Generator from './core/generator';
 import Field from './core/field';
-import { getDataAttribute, isEqual, warn } from './core/utils';
+import { isEqual, warn } from './core/utils';
 
 // @flow
 
 /**
  * Finds the requested field by id from the context object.
  */
-const findField = (el: HTMLElement, context: ValidatingVM): ?Field => {
+function findField (el: HTMLElement, context: ValidatingVM): ?Field {
   if (!context || !context.$validator) {
     return null;
   }
 
-  return context.$validator.fields.find({ id: getDataAttribute(el, 'id') });
+  return context.$validator.fields.find({ id: el._veeValidateId });
 };
 
 export default {
@@ -26,7 +26,7 @@ export default {
     const fieldOptions = Generator.generate(el, binding, vnode);
     validator.attach(fieldOptions);
   },
-  inserted: (el: HTMLElement, binding, vnode) => {
+  inserted (el: HTMLElement, binding, vnode) {
     const field = findField(el, vnode.context);
     const scope = Generator.resolveScope(el, binding, vnode);
 
@@ -39,7 +39,7 @@ export default {
     // allows the field to re-evaluated once more in the update hook.
     field.updated = false;
   },
-  update: (el: HTMLElement, binding, vnode) => {
+  update (el: HTMLElement, binding, vnode) {
     const field = findField(el, vnode.context);
 
     // make sure we don't do unneccasary work if no important change was done.
