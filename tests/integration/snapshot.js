@@ -2,7 +2,6 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import VeeValidate from './../../src/index';
 import TestComponent from './components/Snapshot';
-import { endOfSecondWithOptions } from 'date-fns/esm/fp';
 
 const Vue = createLocalVue();
 Vue.use(VeeValidate);
