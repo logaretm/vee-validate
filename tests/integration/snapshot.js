@@ -1,0 +1,16 @@
+import { shallow, createLocalVue } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
+import VeeValidate from './../../src/index';
+import TestComponent from './components/Snapshot';
+import { endOfSecondWithOptions } from 'date-fns/esm/fp';
+
+const Vue = createLocalVue();
+Vue.use(VeeValidate);
+
+test('snapshots should match', () => {
+  const first = shallow(TestComponent, { localVue: Vue });
+  const second = shallow(TestComponent, { localVue: Vue });
+
+  // same component, no props, should match in UI and in HTML.
+  expect(first.html()).toBe(second.html());
+});
