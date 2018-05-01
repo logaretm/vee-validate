@@ -43,6 +43,48 @@ test('gets the element scope from the element or from the owning form', () => {
   expect(utils.getScope(el)).toBe('form-scope');
 });
 
+test('gets the element scope from div tag', () => {
+  document.body.innerHTML =
+      `<div>
+          <div id="el" type="text" name="field" data-vv-scope="scope1">
+          </div>
+      </div>`;
+  let el = document.querySelector('#el');
+  expect(utils.getScope(el)).toBe('scope1');
+
+  document.body.innerHTML =
+      `<form data-vv-scope="form-scope">
+        <div id="el" type="text" name="field">
+        </div>
+      </form>`;
+  el = document.querySelector('#el');
+  expect(utils.getScope(el)).toBe('form-scope');
+});
+
+test('gets the element closest form', () => {
+  document.body.innerHTML =
+      `<div>
+          <input id="el" type="text" name="field" data-vv-scope="scope1">
+      </div>`;
+  let el = document.querySelector('#el');
+  expect(utils.getForm(el)).toBe(null);
+
+  document.body.innerHTML =
+      `<form id='test'>
+          <input id="el" type="text" name="field">
+      </form>`;
+  el = document.querySelector('#el');
+  expect(utils.getForm(el).id).toBe('test');
+
+  document.body.innerHTML =
+      `<form id='test'>
+          <div id="el">
+          </div>
+      </form>`;
+  el = document.querySelector('#el');
+  expect(utils.getForm(el).id).toBe('test');
+});
+
 test('checks if a value is an object', () => {
   expect(utils.isObject(null)).toBe(false);
   expect(utils.isObject([])).toBe(false);
