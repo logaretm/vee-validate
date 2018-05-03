@@ -16,7 +16,8 @@ function install (_Vue, options = {}) {
 
   detectPassiveSupport();
   Vue = _Vue;
-  Config.register('vm', new Vue());
+  const localVue = new Vue();
+  Config.register('vm', localVue);
   Config.merge(options);
 
   const { dictionary, i18n } = Config.current;
@@ -28,7 +29,7 @@ function install (_Vue, options = {}) {
   // try to watch locale changes.
   if (i18n && i18n._vm && isCallable(i18n._vm.$watch)) {
     i18n._vm.$watch('locale', () => {
-      Validator.regenerate();
+      localVue.$emit('localeChanged');
     });
   }
 
