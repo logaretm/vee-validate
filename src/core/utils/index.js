@@ -100,11 +100,31 @@ export const isEqual = (lhs: any, rhs: any): boolean => {
  */
 export const getScope = (el: HTMLInputElement) => {
   let scope = getDataAttribute(el, 'scope');
-  if (isNullOrUndefined(scope) && el.form) {
-    scope = getDataAttribute(el.form, 'scope');
+  if (isNullOrUndefined(scope)) {
+    let form = getForm(el);
+
+    if(form) {
+      scope = getDataAttribute(form, 'scope');
+    }
   }
 
   return !isNullOrUndefined(scope) ? scope : null;
+};
+
+/**
+ * Get the closest form element.
+ */
+export const getForm = (el: HTMLInputElement) => {
+  if (isNullOrUndefined(el))
+      return null;
+
+  if (el.tagName === "FORM")
+      return el;
+
+  if (!isNullOrUndefined(el.form))
+      return el.form
+
+  return !isNullOrUndefined(el.parentNode) ? getForm(el.parentNode) : null;
 };
 
 /**
