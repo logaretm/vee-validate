@@ -7,7 +7,8 @@ const sidebars = {
     'custom-rules',
     'messages',
     'localization',
-    'flags'
+    'flags',
+    'events'
   ],
   api: [
     'directive',
