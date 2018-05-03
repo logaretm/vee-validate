@@ -531,11 +531,11 @@ export default class Field {
       this.validator.validate(`#${this.id}`, args[0]);
     };
 
-    let inputEvent = isTextInput(this.el) ? 'input' : 'change';
+    let inputEvent = this.component || isTextInput(this.el) ? 'input' : 'change';
     inputEvent = this.model && this.model.lazy ? 'change' : inputEvent;
     // force change event for non-text type fields, otherwise use the configured.
     // if no event is configured then respect the user choice.
-    let events = !this.events.length || isTextInput(this.el) ? this.events : ['change'];
+    let events = !this.events.length || this.component || isTextInput(this.el) ? this.events : ['change'];
 
     // if there is a watchable model and an on input validation is requested.
     if (this.model && this.model.expression && events.indexOf(inputEvent) !== -1) {
