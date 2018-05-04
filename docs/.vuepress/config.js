@@ -8,7 +8,8 @@ const sidebars = {
     'messages',
     'localization',
     'flags',
-    'events'
+    'events',
+    'conditional-and-looping-inputs'
   ],
   api: [
     'directive',
