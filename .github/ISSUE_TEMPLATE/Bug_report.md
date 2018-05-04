@@ -1,12 +1,13 @@
 ---
-name: Bug report
+name:🐛 Bug report
 about: Create a report to help us improve
 
 ---
 
 **Versions**
-vee-validate: #.#.#
-vue: #.#.#
+
+- vee-validate: 2.0.#
+- vue: 2.#.#
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -21,8 +22,8 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Demo Link**
+If applicable, add a minimal demo link to help explain your problem. You can use [jsfiddle](https://jsfiddle.net/) or [Codesandbox](https://codesandbox.io/).
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
