@@ -34,7 +34,7 @@ When attempting the validate those inputs, it would seem that vee-validate think
 </template>
 ```
 
-Validating those fields now will behave as expected, just remeber that the key attribute should be unique to its respective field.
+Validating those fields now will behave as expected, just remember that the key attribute should be unique to its respective field.
 
 ## Handling v-for
 
