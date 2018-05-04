@@ -1,6 +1,6 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
-const messages = { 
+const messages = {
   _default: (field) => `Il valore del campo ${field} non è valido.`,
   after: (field, [target]) => `Il ${field} deve essere dopo ${target}.`,
   alpha_dash: (field) => `Il campo ${field} può contenere caratteri alfa-numerici così come lineette e trattini di sottolineatura.`,
@@ -23,7 +23,7 @@ const messages = {
   ip: (field) => `Il campo ${field} deve essere un indirizzo IP valido.`,
   length: (field, [length, max]) => {
     if (max) {
-      return `La lunghezza del campo ${field} deve essere compreso tra ${length} e ${max}.`,
+      return `La lunghezza del campo ${field} deve essere compreso tra ${length} e ${max}.`;
     }
 
     return `La lunghezza del campo ${field} deve essere ${length}.`;
