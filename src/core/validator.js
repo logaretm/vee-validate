@@ -624,6 +624,10 @@ export default class Validator {
   _handleValidationResults (results) {
     const matchers = results.map(result => ({ id: result.id }));
     this.errors.removeById(matchers.map(m => m.id));
+    // remove by name and scope to remove any custom errors added.
+    results.forEach(result => {
+      this.errors.remove(result.field, result.scope);
+    });
     const allErrors = results.reduce((prev, curr) => {
       prev.push(...curr.errors);
 
@@ -649,7 +653,7 @@ export default class Validator {
   async _validate (field: Field, value: any): Promise<ValidationResult> {
     // if field is disabled and is not required.
     if (field.isDisabled || (!field.isRequired && (isNullOrUndefined(value) || value === ''))) {
-      return { valid: true, id: field.id, errors: [] };
+      return { valid: true, id: field.id, field: field.name, scope: field.scope, errors: [] };
     }
 
     const promises = [];
@@ -672,7 +676,7 @@ export default class Validator {
     });
 
     if (isExitEarly) {
-      return { valid: false, errors, id: field.id };
+      return { valid: false, errors, id: field.id, field: field.name, scope: field.scope };
     }
 
     return (await Promise.all(promises)).reduce((prev, v) => {
@@ -683,6 +687,6 @@ export default class Validator {
       prev.valid = prev.valid && v.valid;
 
       return prev;
-    }, { valid: true, errors, id: field.id });
+    }, { valid: true, errors, id: field.id, field: field.name, scope: field.scope });
   }
 }
