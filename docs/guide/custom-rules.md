@@ -1,10 +1,10 @@
 # Custom Rules
 
-You can easily add custom rules to VeeValidate, but your custom rules must adhere to a contract, or certain structure:
+You can easily add custom rules to VeeValidate, but your custom rules must adhere to a contract or certain structure:
 
 ## Function Form
 
-This is the most basic custom validator form, it consists of only a function that returns either a Boolean or a promise. However, it will have a default error message.
+This is the most basic custom validator form. It consists of only a function that returns either a Boolean or a promise. However, it will have a default error message.
 
 ```js
 const validator = (value, args) => {
@@ -26,10 +26,10 @@ const validator = {
 };
 ```
 
-This validator object must have a `validate` method, and can contain a `getMessage` method which will be merged into the current dictionary locale. For multiple languages, you should use the [localization API](./localization.md).
+This validator object must have a `validate` method and can contain a `getMessage` method which will be merged into the current dictionary locale. For multiple languages, you should use the [localization API](./localization.md).
 
 ::: tip
-  Notice how the `getMessage` method receives the `field` which is the name of the field under validation as a first parameter. And how the `validate` method receives the value as a first parameter. And both receive the `args` array which contains the arguments that were configured with the validation rule. take a look at the [actual implementation of the min rule](https://github.com/baianat/vee-validate/blob/master/src/rules/min.js) as an example.
+  Notice how the `getMessage` method receives the `field`, which is the name of the field under validation as a first parameter, and how the `validate` method receives the value as a first parameter. Both receive the `args` array which contains the arguments that were configured with the validation rule. Take a look at the [actual implementation of the min rule](https://github.com/baianat/vee-validate/blob/master/src/rules/min.js) as an example.
 :::
 
 ::: warning
@@ -40,7 +40,7 @@ This validator object must have a `validate` method, and can contain a `getMessa
 
 Additionally, you may want to provide a reason for failing the validation that may change the error message. For example, you may be using an external API and the error message is generated there.
 
-To achieve this, your validator function should return an `Object` instead of a `Boolean` this object should always contain a `valid` property and an optional `data` property, the data property will be passed to the message generator function as the third parameter, then you should use the passed data property to modify the output message. The same thing applies to promises as you resolve the promise with an object containing these properties. Here is a custom rule that does just that:
+To achieve this, your validator function should return an `Object` instead of a `Boolean`. This object should always contain a `valid` property and an optional `data` property. The data property will be passed to the message generator function as the third parameter, then you should use the passed data property to modify the output message. The same thing applies to promises as you resolve the promise with an object containing these properties. Here is a custom rule that does just that:
 
 ```js
 const myRule = {

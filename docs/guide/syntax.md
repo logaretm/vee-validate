@@ -37,7 +37,7 @@ const someRuleObj = { in: [1, 2, 3, 4] };
 
 ## Rules in practice
 
-Putting what we've learned to practice lets create our fields in both expression forms with the following specifications:
+Putting what we've learned to practice, let's create our fields in both expression forms with the following specifications:
 
 - A required `email` field.
 
@@ -64,5 +64,5 @@ Putting what we've learned to practice lets create our fields in both expression
 ```
 
 ::: tip
-  Note that the string expression has single quotes around it, this is because directives in Vue evaluate the given expression and since we want it to be evaluated as a string, we surround it with single quotes. Meaning this `v-validate="required"` will fail because it will try to evaluate a `required` prop or method on the Vue instance which probably doesn't exist.
+  Note that the string expression has single quotes around it. This is because directives in Vue evaluate the given expression and, since we want it to be evaluated as a string, we surround it with single quotes, which means this `v-validate="required"` will fail because it will try to evaluate a `required` prop or method on the Vue instance which probably doesn't exist.
 :::
