@@ -115,11 +115,11 @@ export const getScope = (el: HTMLInputElement) => {
  * Get the closest form element.
  */
 export const getForm = (el: HTMLInputElement) => {
-  if (isNullOrUndefined(el)) { return null; }
+  if (isNullOrUndefined(el)) return null;
 
-  if (el.tagName === 'FORM') { return el; }
+  if (el.tagName === 'FORM') return el;
 
-  if (!isNullOrUndefined(el.form)) { return el.form; };
+  if (!isNullOrUndefined(el.form)) return el.form;
 
   return !isNullOrUndefined(el.parentNode) ? getForm(el.parentNode) : null;
 };
