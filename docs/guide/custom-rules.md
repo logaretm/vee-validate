@@ -2,7 +2,9 @@
 
 You can easily add custom rules to VeeValidate, but your custom rules must adhere to a contract or certain structure:
 
-## Function Form
+## Creating A Custom Rule
+
+### Function Form
 
 This is the most basic custom validator form. It consists of only a function that returns either a Boolean or a promise. However, it will have a default error message.
 
@@ -12,7 +14,7 @@ const validator = (value, args) => {
 };
 ```
 
-## Object Form
+### Object Form
 
 ```js
 const validator = {
@@ -36,27 +38,7 @@ This validator object must have a `validate` method and can contain a `getMessag
   As you can see, a validation rule must implement one of the two forms discussed above. Not doing so will throw an exception with a suitable error message detailing what you were missing.
 :::
 
-## Reasoning
-
-Additionally, you may want to provide a reason for failing the validation that may change the error message. For example, you may be using an external API and the error message is generated there.
-
-To achieve this, your validator function should return an `Object` instead of a `Boolean`. This object should always contain a `valid` property and an optional `data` property. The data property will be passed to the message generator function as the third parameter, then you should use the passed data property to modify the output message. The same thing applies to promises as you resolve the promise with an object containing these properties. Here is a custom rule that does just that:
-
-```js
-const myRule = {
-  getMessage(field, params, data) {
-      return (data && data.message) || 'Something went wrong';
-  },
-  validate(value) {
-    return new Promise(resolve => {
-      resolve({
-        valid: value === 'trigger' ? false : !! value,
-        data: value !== 'trigger' ? undefined : { message: 'Not this value' }
-      });
-    });
-  }
-};
-```
+## Using The Custom Rule
 
 After creating your custom rule, you can add it to the list of rules using `extend(name, validator)` method in the validator instance.
 
@@ -80,5 +62,37 @@ instance.attach({
 ```
 
 ::: tip
-  Using any of the `extend` either on the class or on an instance will extend all validators with the new validation rule. Extending a new rule that has the same name as an existing rule will throw a `ValidatorException` with an error message.
+  Using any of the `extend` either on the class or on an instance will extend all validators with the new validation rule. Extending a new rule that has the same name as an existing rule will silently overwrite it.
 :::
+
+Then you can use your rule like any other rule:
+
+```html
+<input type="text" name="field" v-validate="'falsy'">
+```
+
+::: warning
+  When the field under validation is __not__ required, your rule may not be executed at all. This is because VeeValidate skips validation for empty fields if they are not required.
+:::
+
+## Reasoning
+
+Additionally, you may want to provide a reason for failing the validation that may change the error message. For example, you may be using an external API and the error message is generated there.
+
+To achieve this, your validator function should return an `Object` instead of a `Boolean`. This object should always contain a `valid` property and an optional `data` property. The data property will be passed to the message generator function as the third parameter, then you should use the passed data property to modify the output message. The same thing applies to promises as you resolve the promise with an object containing these properties. Here is a custom rule that does just that:
+
+```js
+const myRule = {
+  getMessage(field, params, data) {
+      return (data && data.message) || 'Something went wrong';
+  },
+  validate(value) {
+    return new Promise(resolve => {
+      resolve({
+        valid: value === 'trigger' ? false : !! value,
+        data: value !== 'trigger' ? undefined : { message: 'Not this value' }
+      });
+    });
+  }
+};
+```
