@@ -345,7 +345,10 @@ test('add rules than can target other fields', async () => {
   v.attach({
     name: 'otherField',
     vm: {
-      $el: document.body
+      $el: document.body,
+      $refs: {
+        field: el
+      }
     },
     rules: 'isBigger:field'
   });
@@ -495,7 +498,10 @@ test('can translate target field for field dependent validations', async () => {
   v.attach({
     name: 'birthday',
     vm: {
-      $el: document.body
+      $el: document.body,
+      $refs: {
+        birthday_min: el
+      }
     },
     rules: 'date_format:DD-MM-YYYY|after:birthday_min'
   });
@@ -895,7 +901,10 @@ test('it should pass the after/before inclusion parameters correctly', async () 
   v.attach({
     name: 'birthday',
     vm: {
-      $el: document.body
+      $el: document.body,
+      $refs: {
+        field: el
+      }
     },
     rules: 'date_format:DD/MM/YYYY|after:field,true'
   });
