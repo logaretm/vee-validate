@@ -132,15 +132,15 @@ export const getPath = (path: string, target: ?Object, def: any = undefined) => 
 
   let value = target;
   path.split('.').every(prop => {
-    if (! Object.prototype.hasOwnProperty.call(value, prop) && value[prop] === undefined) {
-      value = def;
+    if (prop in value) {
+      value = value[prop];
 
-      return false;
+      return true;
     }
 
-    value = value[prop];
+    value = def;
 
-    return true;
+    return false;
   });
 
   return value;
