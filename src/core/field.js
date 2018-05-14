@@ -375,7 +375,7 @@ export default class Field {
       if (isCallable(el.$watch)) {
         options.component = el;
         options.el = el.$el;
-        options.getter = Generator.resolveGetter(el.$el, { child: el });
+        options.getter = Generator.resolveGetter(el.$el, el.$vnode);
       } else {
         options.el = el;
         options.getter = Generator.resolveGetter(el, {});
