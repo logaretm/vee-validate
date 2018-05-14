@@ -1,5 +1,1 @@
-export default (value, other) => {
-  console.log(value, other);
-
-  return String(value) === String(other);
-};
+export default (value, other) => String(value) === String(other);
