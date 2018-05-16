@@ -297,6 +297,17 @@ test('collects errors for a specific field and scope', () => {
   ).toBeTruthy();
 });
 
+test('collects dotted field names', () => {
+  const errors = new ErrorBag();
+  errors.add('scope.email', 'The email is not email', 'rule1');
+  errors.add('scope.email', 'The email is invalid', 'rule1');
+
+  expect(errors.collect('scope.email')).toEqual([
+    'The email is not email',
+    'The email is invalid',
+  ]);
+});
+
 test('groups errors by field name', () => {
   const errors = new ErrorBag();
   errors.add('name', 'The name is invalid', 'rule1');
