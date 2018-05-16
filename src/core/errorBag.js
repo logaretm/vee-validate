@@ -140,15 +140,21 @@ export default class ErrorBag {
     }
 
     const selector = isNullOrUndefined(scope) ? String(field) : `${scope}.${field}`;
-    const { isPrimary } = this._makeCandidateFilters(selector);
+    const { isPrimary, isAlt } = this._makeCandidateFilters(selector);
 
-    return this.items.reduce((prev, curr) => {
+    const collected = this.items.reduce((prev, curr) => {
       if (isPrimary(curr)) {
-        prev.push(map ? curr.msg : curr);
+        prev.primary.push(map ? curr.msg : curr);
+      }
+
+      if (isAlt(curr)) {
+        prev.alt.push(map ? curr.msg : curr);
       }
 
       return prev;
-    }, []);
+    }, { primary: [], alt: [] });
+
+    return collected.primary.length ? collected.primary : collected.alt;
   }
 
   /**
