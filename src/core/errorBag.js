@@ -122,7 +122,7 @@ export default class ErrorBag {
    * Collects errors into groups or for a specific field.
    */
   collect (field?: string, scope?: string | null, map?: boolean = true) {
-    if (!field) {
+    if (isNullOrUndefined(field)) {
       const collection = {};
       this.items.forEach(e => {
         if (! collection[e.field]) {
@@ -133,10 +133,6 @@ export default class ErrorBag {
       });
 
       return collection;
-    }
-
-    if (isNullOrUndefined(field)) {
-      return [];
     }
 
     const selector = isNullOrUndefined(scope) ? String(field) : `${scope}.${field}`;
