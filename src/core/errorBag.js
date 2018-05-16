@@ -1,4 +1,4 @@
-import { find, isNullOrUndefined, isCallable } from './utils';
+import { find, isNullOrUndefined, isCallable, warn } from './utils';
 
 // @flow
 
@@ -24,6 +24,7 @@ export default class ErrorBag {
   add (error: FieldError | FieldError[]) {
     // handle old signature.
     if (arguments.length > 1) {
+      warn('This usage of "errors.add()" is deprecated, please consult the docs for the new signature.');
       error = {
         field: arguments[0],
         msg: arguments[1],
@@ -121,7 +122,7 @@ export default class ErrorBag {
    * Collects errors into groups or for a specific field.
    */
   collect (field?: string, scope?: string | null, map?: boolean = true) {
-    if (!field) {
+    if (isNullOrUndefined(field)) {
       const collection = {};
       this.items.forEach(e => {
         if (! collection[e.field]) {
@@ -134,14 +135,24 @@ export default class ErrorBag {
       return collection;
     }
 
-    field = !isNullOrUndefined(field) ? String(field) : field;
-    if (isNullOrUndefined(scope)) {
-      return this.items.filter(e => e.field === field).map(e => (map ? e.msg : e));
-    }
+    const selector = isNullOrUndefined(scope) ? String(field) : `${scope}.${field}`;
+    const { isPrimary, isAlt } = this._makeCandidateFilters(selector);
 
-    return this.items.filter(e => e.field === field && e.scope === scope)
-      .map(e => (map ? e.msg : e));
+    const collected = this.items.reduce((prev, curr) => {
+      if (isPrimary(curr)) {
+        prev.primary.push(map ? curr.msg : curr);
+      }
+
+      if (isAlt(curr)) {
+        prev.alt.push(map ? curr.msg : curr);
+      }
+
+      return prev;
+    }, { primary: [], alt: [] });
+
+    return collected.primary.length ? collected.primary : collected.alt;
   }
+
   /**
    * Gets the internal array length.
    */
@@ -155,41 +166,17 @@ export default class ErrorBag {
   firstById (id: string): string | null {
     const error = find(this.items, i => i.id === id);
 
-    return error ? error.msg : null;
+    return error ? error.msg : undefined;
   }
 
   /**
    * Gets the first error message for a specific field.
    */
   first (field: string, scope ?: ?string = null) {
-    if (isNullOrUndefined(field)) {
-      return null;
-    }
+    const selector = isNullOrUndefined(scope) ? field : `${scope}.${field}`;
+    const match = this._match(selector);
 
-    field = String(field);
-    const selector = this._selector(field);
-    const scoped = this._scope(field);
-
-    if (scoped) {
-      const result = this.first(scoped.name, scoped.scope);
-      // if such result exist, return it. otherwise it could be a field.
-      // with dot in its name.
-      if (result) {
-        return result;
-      }
-    }
-
-    if (selector) {
-      return this.firstByRule(selector.name, selector.rule, scope);
-    }
-
-    for (let i = 0; i < this.items.length; ++i) {
-      if (this.items[i].field === field && (this.items[i].scope === scope)) {
-        return this.items[i].msg;
-      }
-    }
-
-    return null;
+    return match && match.msg;
   }
 
   /**
@@ -198,7 +185,7 @@ export default class ErrorBag {
   firstRule (field: string, scope ?: string): string | null {
     const errors = this.collect(field, scope, false);
 
-    return (errors.length && errors[0].rule) || null;
+    return (errors.length && errors[0].rule) || undefined;
   }
 
   /**
@@ -214,7 +201,7 @@ export default class ErrorBag {
   firstByRule (name: string, rule: string, scope?: string | null = null) {
     const error = this.collect(name, scope, false).filter(e => e.rule === rule)[0];
 
-    return (error && error.msg) || null;
+    return (error && error.msg) || undefined;
   }
 
   /**
@@ -223,7 +210,7 @@ export default class ErrorBag {
   firstNot (name: string, rule?: string = 'required', scope?: string | null = null) {
     const error = this.collect(name, scope, false).filter(e => e.rule !== rule)[0];
 
-    return (error && error.msg) || null;
+    return (error && error.msg) || undefined;
   }
 
   /**
@@ -248,46 +235,95 @@ export default class ErrorBag {
    * Removes all error messages associated with a specific field.
    */
   remove (field: string, scope: ?string) {
-    field = !isNullOrUndefined(field) ? String(field) : field;
-    const removeCondition = (e: FieldError) => {
-      if (!isNullOrUndefined(scope)) {
-        return e.field === field && e.scope === scope;
-      }
+    if (isNullOrUndefined(field)) {
+      return;
+    }
 
-      return e.field === field && e.scope === null;
-    };
+    const selector = isNullOrUndefined(scope) ? String(field) : `${scope}.${field}`;
+    const { isPrimary } = this._makeCandidateFilters(selector);
 
     for (let i = 0; i < this.items.length; ++i) {
-      if (removeCondition(this.items[i])) {
+      if (isPrimary(this.items[i])) {
         this.items.splice(i, 1);
         --i;
       }
     }
   }
 
-  /**
-   * Get the field attributes if there's a rule selector.
-   */
-  _selector (field: string): { name: string, rule: string } | null {
-    if (field.indexOf(':') > -1) {
-      const [name, rule] = field.split(':');
+  _makeCandidateFilters (selector) {
+    let matchesRule = () => true;
+    let matchesScope = () => true;
+    let matchesName = () => true;
 
-      return { name, rule };
+    let [, scope, name, rule] = selector.match(/((?:[\w-])+\.)?((?:[\w-.])+)(:\w+)?/);
+    if (rule) {
+      rule = rule.replace(':', '');
+      matchesRule = (item) => item.rule === rule;
     }
 
-    return null;
-  }
-
-  /**
-   * Get the field scope if specified using dot notation.
-   */
-  _scope (field: string): { name: string, scope: string } | null {
-    if (field.indexOf('.') > -1) {
-      const [scope, ...name] = field.split('.');
-
-      return { name: name.join('.'), scope };
+    // match by id, can be combined with rule selection.
+    if (selector.startsWith('#')) {
+      return {
+        isPrimary: item => matchesRule(item) && (item => selector.slice(1).startsWith(item.id)),
+        isAlt: () => false
+      };
     }
 
-    return null;
+    if (isNullOrUndefined(scope)) {
+      // if no scope specified, make sure the found error has no scope.
+      matchesScope = item => isNullOrUndefined(item.scope);
+    } else {
+      scope = scope.replace('.', '');
+      matchesScope = item => item.scope === scope;
+    }
+
+    if (!(isNullOrUndefined(name))) {
+      matchesName = item => item.field === name;
+    }
+
+    // matches the first candidate.
+    const isPrimary = (item) => {
+      return matchesName(item) && matchesRule(item) && matchesScope(item);
+    };
+
+    // matches a second candidate, which is a field with a name containing the '.' character.
+    const isAlt = (item) => {
+      return matchesRule(item) && item.field === `${scope}.${name}`;
+    };
+
+    return {
+      isPrimary,
+      isAlt
+    };
   }
+
+  _match (selector: string) {
+    if (isNullOrUndefined(selector)) {
+      return undefined;
+    }
+
+    const { isPrimary, isAlt } = this._makeCandidateFilters(selector);
+
+    return this.items.reduce((prev, item, idx, arr) => {
+      const isLast = idx === arr.length - 1;
+      if (prev.primary) {
+        return isLast ? prev.primary : prev;
+      }
+
+      if (isPrimary(item)) {
+        prev.primary = item;
+      }
+
+      if (isAlt(item)) {
+        prev.alt = item;
+      }
+
+      // keep going.
+      if (!isLast) {
+        return prev;
+      }
+
+      return prev.primary || prev.alt;
+    }, {});
+  };
 }
