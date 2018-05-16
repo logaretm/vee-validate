@@ -19,7 +19,7 @@ test('adds errors to the collection', () => {
   expect(errors.first('name', 's1')).toBe('Hey');
 
   // handles undefined params
-  expect(errors.first()).toBe(null);
+  expect(errors.first()).toBe(undefined);
 });
 
 test('accepts an array of errors', () => {
@@ -61,7 +61,7 @@ test('finds error messages by matching against field id', () => {
     rule: 'r1',
     scope: 's1'
   });
-  expect(errors.firstById('someId')).toBe(null);
+  expect(errors.firstById('someId')).toBe(undefined);
   expect(errors.firstById('myId')).toBe('Hey');
 });
 
@@ -132,14 +132,6 @@ test('clears the errors within a scope', () => {
   expect(errors.count()).toBe(1);
 });
 
-test('checks for field selector existence', () => {
-  const errors = new ErrorBag();
-
-  expect(errors._selector('name:rule').name).toBe('name');
-  expect(errors._selector('name:rule').rule).toBe('rule');
-  expect(errors._selector('name')).toBe(null);
-});
-
 test('checks for field error existence', () => {
   const errors = new ErrorBag();
   errors.add('name', 'The name is invalid', 'rule1');
@@ -183,7 +175,7 @@ test('fetches the first error message for a specific field', () => {
   errors.add('email', 'The email is shorter than 3 chars.', 'rule1');
 
   expect(errors.first('email')).toBe('The email is shorter than 3 chars.');
-  expect(errors.first('name')).toBe(null);
+  expect(errors.first('name')).toBe(undefined);
 
   // test dot notation.
   errors.add('email', 'nah', 'rule2', 'scope1');
@@ -214,8 +206,8 @@ test('fetches the first error rule for a specific field', () => {
 
   expect(errors.firstRule('email')).toBe('rule1');
   expect(errors.firstRule('name')).toBe('rule2');
-  expect(errors.firstRule('email', 'scope3')).toBe(null);
-  expect(errors.firstRule('password')).toBe(null);
+  expect(errors.firstRule('email', 'scope3')).toBe(undefined);
+  expect(errors.firstRule('password')).toBe(undefined);
 });
 
 test('fetches the first error message for a specific scoped field', () => {
@@ -225,7 +217,7 @@ test('fetches the first error message for a specific scoped field', () => {
 
   expect(errors.first('email', 'scope1')).toBe('The email is invalid');
   expect(errors.first('email', 'scope2')).toBe('The email is shorter than 3 chars.');
-  expect(errors.first('email', 'scope3')).toBe(null);
+  expect(errors.first('email', 'scope3')).toBe(undefined);
 });
 
 test('returns all errors in an array', () => {
@@ -342,7 +334,7 @@ test('can get a specific error message for a specific rule', () => {
 
   expect(errors.firstByRule('name', 'rule1')).toBe('The name is invalid');
   expect(errors.firstByRule('name', 'rule2')).toBe('The name is really invalid');
-  expect(errors.firstByRule('email', 'rule1')).toBe(null);
+  expect(errors.firstByRule('email', 'rule1')).toBe(undefined);
 });
 
 test('fetches both scoped names and names with dots', () => {
