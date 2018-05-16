@@ -260,14 +260,16 @@ test('collects errors for a specific field in an array', () => {
   expect(~errors.collect('name').indexOf('The name is invalid')).toBeTruthy();
 });
 
-test('collects all errors across scopes if no scope is defined', () => {
+test('exactly matches the collected field name', () => {
   const errors = new ErrorBag();
-  errors.add('name', 'The name is invalid', 'rule1');
+  errors.add('name', 'The name is invalid', 'rule1'); // no scope
   errors.add('name', 'The name is invalid', 'rule1', 'scope1');
+  errors.add('name', 'The name is invalid', 'rule2', 'scope1');
   errors.add('name', 'The name is invalid', 'rule1', 'scope2');
 
-  expect(errors.collect('name').length).toBe(3);
+  expect(errors.collect('name').length).toBe(1); // should find the non-scoped one.
   expect(errors.collect('name', 'scope2').length).toBe(1);
+  expect(errors.collect('scope1.name').length).toBe(2); // supports selectors.
 });
 
 test('collects errors for a specific field and scope', () => {
