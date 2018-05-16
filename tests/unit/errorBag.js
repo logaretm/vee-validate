@@ -61,8 +61,18 @@ test('finds error messages by matching against field id', () => {
     rule: 'r1',
     scope: 's1'
   });
+  errors.add({
+    id: 'myId',
+    field: 'name',
+    msg: 'There',
+    rule: 'r2',
+    scope: 's1'
+  });
   expect(errors.firstById('someId')).toBe(undefined);
   expect(errors.firstById('myId')).toBe('Hey');
+
+  expect(errors.first('#myId:r1')).toBe('Hey');
+  expect(errors.first('#myId:r2')).toBe('There');
 });
 
 test('removes errors for a specific field', () => {
