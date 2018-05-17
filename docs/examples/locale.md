@@ -1,6 +1,6 @@
 # Localized Messages
 
-You may want to display error messages in different languages, `vee-validate` offers a flexable multi-language support, here is an example on how you may do that
+You may want to display error messages in different languages. `vee-validate` offers a flexible multi-language support. Here is an example on how you may do that.
 
 The language below is Arabic (RTL):
 
