@@ -20,7 +20,7 @@ methods: {
 }
 ```
 
-But that doesn't work very well for `input` events, this is because the handlers for validator and the `updateMessage` method don't sync up, to fix this issue we need to enable [two way binding for Vuex state](https://vuex.vuejs.org/en/forms.html) which is easy to acheive using [setters for computed properties](https://vuejs.org/v2/guide/computed.html#Computed-Setter) and allows us to use `v-model` on our inputs.
+But that doesn't work very well for `input` events. This is because the handlers for validator and the `updateMessage` method don't sync up. To fix this issue we need to enable [two way binding for Vuex state](https://vuex.vuejs.org/en/forms.html) which is easy to achieve using [setters for computed properties](https://vuejs.org/v2/guide/computed.html#Computed-Setter) and allows us to use `v-model` on our inputs.
 
 So our code will look like this:
 
