@@ -103,7 +103,7 @@ export const getScope = (el: HTMLInputElement) => {
   if (isNullOrUndefined(scope)) {
     let form = getForm(el);
 
-    if(form) {
+    if (form) {
       scope = getDataAttribute(form, 'scope');
     }
   }
@@ -115,14 +115,11 @@ export const getScope = (el: HTMLInputElement) => {
  * Get the closest form element.
  */
 export const getForm = (el: HTMLInputElement) => {
-  if (isNullOrUndefined(el))
-      return null;
+  if (isNullOrUndefined(el)) return null;
 
-  if (el.tagName === "FORM")
-      return el;
+  if (el.tagName === 'FORM') return el;
 
-  if (!isNullOrUndefined(el.form))
-      return el.form
+  if (!isNullOrUndefined(el.form)) return el.form;
 
   return !isNullOrUndefined(el.parentNode) ? getForm(el.parentNode) : null;
 };
@@ -135,15 +132,15 @@ export const getPath = (path: string, target: ?Object, def: any = undefined) => 
 
   let value = target;
   path.split('.').every(prop => {
-    if (! Object.prototype.hasOwnProperty.call(value, prop) && value[prop] === undefined) {
-      value = def;
+    if (prop in value) {
+      value = value[prop];
 
-      return false;
+      return true;
     }
 
-    value = value[prop];
+    value = def;
 
-    return true;
+    return false;
   });
 
   return value;
@@ -155,13 +152,13 @@ export const getPath = (path: string, target: ?Object, def: any = undefined) => 
 export const hasPath = (path: string, target: Object) => {
   let obj = target;
   return path.split('.').every(prop => {
-    if (! Object.prototype.hasOwnProperty.call(obj, prop)) {
-      return false;
+    if (prop in obj) {
+      obj = obj[prop];
+
+      return true;
     }
 
-    obj = obj[prop];
-
-    return true;
+    return false;
   });
 };
 

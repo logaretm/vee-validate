@@ -8,8 +8,12 @@ import nodent from 'rollup-plugin-nodent';
 import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
+import mkdirpNode from 'mkdirp';
+import { promisify } from 'util';
 import config from './config';
 import { version } from '../package.json';
+
+const mkdirp = promisify(mkdirpNode);
 
 const inputOptions = {
   input: 'src/index.esm.js',
@@ -30,6 +34,7 @@ const outputOptions = {
 };
 
 async function build () {
+  await mkdirp(config.outputFolder);
   console.log(chalk.cyan('Generating esm build...'));
 
   let bundle = await rollup(inputOptions);

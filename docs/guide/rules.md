@@ -251,6 +251,32 @@ The field under validation must be equal to the first argument passed, uses `===
 <input v-model="confirmation" type="text" name="password_confirmation">
 ```
 
+## is_not
+
+A negated version of [is](#is) rule, also uses the `===` for equality checks.
+
+### is_not params
+
+- `value:` A value of anytype to be compared against the field value.
+
+```html
+<input v-validate="{ is_not: duplicate }" type="text" name="field">
+<input v-model="duplicate" type="text" name="not_again">
+```
+
+## length
+
+The field under validation must be an iterable and/or have a length property of the specified amount. If another value is provided it forces the length check to be between those values in a min/max fashion.
+
+### length params
+
+- `len:` The length the iterable should exactly have. If max is provided it will act as a `min` length check.
+- `max:` The maximum length the iterable should have. Optional.
+
+```html
+<input v-validate="'length:5'" type="text" name="field">
+```
+
 ## max
 
 The field under validation length may not exceed the specified length.

@@ -9,6 +9,8 @@ import uglify from 'uglify-js';
 import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
+import mkdirpNode from 'mkdirp';
+import { promisify } from 'util';
 import config from './config';
 import { version } from '../package.json';
 
@@ -31,7 +33,10 @@ const outputOptions = {
   banner: config.banner,
 };
 
+const mkdirp = promisify(mkdirpNode);
+
 async function build () {
+  await mkdirp(config.outputFolder);
   console.log(chalk.cyan('Generating main builds...'));
 
   let bundle = await rollup(inputOptions);

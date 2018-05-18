@@ -1,11 +1,11 @@
 # Localization
 
 This plugin only comes with English messages to keep things small, but it was built with flexible message generation in mind.
-The [English messages file](https://github.com/baianat/vee-validate/blob/master/dist/locale/en.js) is an example on how you would structure those messages. Then you may want to update the validator dictionary, which should happen once in your app startup. Still, you may update them whenever you want at any point of your app, check the [dictionary](#using-the-dictionary-api) section below.
+The [English messages file](https://github.com/baianat/vee-validate/blob/master/dist/locale/en.js) is an example on how you would structure those messages. Then, you may want to update the validator dictionary, which should happen once in your app startup. Still, you may update them whenever you want at any point of your app. Check the [dictionary](#using-the-dictionary-api) section below.
 
 ## Aliases
 
-Not only can you create and overwrite messages but you can also provide an alias for a field that to be used in the message instead of its original name, Seeing 'first_name' in your error messages can't be very good for your users experience. There is a couple of solutions.
+Not only can you create and overwrite messages but you can also provide an alias for a field that to be used in the message instead of it's original name. Seeing 'first_name' in your error messages can't be very good for your users experience. There is a couple of solutions.
 
 ### Using data-vv-as
 
@@ -19,7 +19,7 @@ Now when any error message is generated for this input, it will use the `data-vv
 
 ### Using the dictionary API
 
-All validators have access to a simple dictionary that is shared between all of them, this dictionary contains localized error messages and attributes. If the validator finds a localized attribute name for that field, it will be used instead of the field name. Pretty much like `data-vv-as` but `data-vv-as` takes priority if both are found.
+All validators have access to a simple dictionary that is shared between all of them. This dictionary contains localized error messages and attributes. If the validator finds a localized attribute name for that field, it will be used instead of the field name, pretty much like `data-vv-as` but `data-vv-as` takes priority if both are found.
 
 Here is a little code example on how you would add support for your localized messages and attributes.
 
@@ -51,7 +51,7 @@ new Vue({
 ```
 
 ::: warning
-Your localization Logic should happen at the entry point of your application as it should be only executed once.
+Your localization logic should happen at the entry point of your application as it should be only executed once.
 :::
 
 ## Localization API
@@ -77,7 +77,7 @@ Validator.localize('en', dictionary.en);
 Validator.localize(dictionary);
 ```
 
-All validators' locales are shared, calling `localize` on any instance available within any component will change the locale for all validators.
+All validators' locales are shared. Calling `localize` on any instance available within any component will change the locale for all validators.
 
 ```js
 // Inside a component.
@@ -89,9 +89,9 @@ import { Validator } from 'vee-validate';
 Validator.localize('ar');
 ```
 
-You will get a warning if you set the locale to one that has not been merged in the dictionary yet, any messages generated will fallback to English.
+You will get a warning if you set the locale to one that has not been merged in the dictionary yet. Any messages generated will fallback to English.
 
-A working example can be found [here](/examples/locale.md)
+A working example can be found [here](/examples/locale.md).
 
 ## Localized Files
 
