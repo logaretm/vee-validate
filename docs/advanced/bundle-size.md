@@ -9,18 +9,26 @@ Implementing a custom solution or with a more lightweight library to acheive the
 There is a bundle stripped of all validation rules and messages, this bundle is about half the size of the full one. Taking about 15kb gzipped but you would need to pick the rules that you need from the provided rules bundle and also their messages from the localized bundles, here is a small example:
 
 ```js
-import { Validator } from 'vee-validate/dist/vee-validate.minimal.esm.js';
+import Vue from 'vue';
+import { Validator, install as VeeValidate } from 'vee-validate/dist/vee-validate.minimal.esm.js';
 import { required, min, max } from 'vee-validate/dist/rules.esm.js';
 import veeEn from 'vee-validate/dist/locale/en';
 
-// Add the rules.
+// Add the rules you need.
 Validator.extend('required', required);
 Validator.extend('min', min);
 Validator.extend('max', max);
 
 // Merge the messages.
 Validator.localize('en', veeEn);
+
+// install the plugin
+Vue.use(VeeValidate);
 ```
+
+::: tip
+Rules are maintained internally as a singleton object, meaning any rule you add to a validator at any place of your code will be available for all other validator instances throughout your app. Still to avoid side effects it is recommended to add the rules at the entry file of your app.
+:::
 
 ## Modular Approach
 
