@@ -19,7 +19,7 @@ const messages = {
   email: (field) => `Il campo ${field} deve essere un indirizzo email valido.`,
   ext: (field) => `Il campo ${field} deve essere un file valido.`,
   image: (field) => `Il campo ${field} deve essere un'immagine.`,
-  in: (field) => `Il campo ${field} deve avere un valore valido.`,
+  included: (field) => `Il campo ${field} deve avere un valore valido.`,
   ip: (field) => `Il campo ${field} deve essere un indirizzo IP valido.`,
   length: (field, [length, max]) => {
     if (max) {
@@ -33,7 +33,7 @@ const messages = {
   mimes: (field) => `Il campo ${field} deve avere un tipo di file valido.`,
   min: (field, [length]) => `Il campo ${field} deve avere almeno ${length} caratteri.`,
   min_value: (field, [min]) => `Il campo ${field} deve essere maggiore o uguale a ${min}`,
-  not_in: (field) => `Il campo ${field} deve avere un valore valido.`,
+  excluded: (field) => `Il campo ${field} deve avere un valore valido.`,
   numeric: (field) => `Il campo ${field} può contenere solo caratteri numerici.`,
   regex: (field) => `Il campo ${field} non ha un formato valido.`,
   required: (field) => `Il campo ${field} è richiesto.`,

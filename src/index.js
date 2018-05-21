@@ -1,4 +1,4 @@
-import Rules from './rules';
+import * as Rules from './rules';
 import en from '../locale/en';
 import minimal from './index.minimal';
 

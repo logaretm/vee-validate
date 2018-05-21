@@ -89,7 +89,7 @@ test('accepts rules as an object', async () => {
       required: true, // test boolean.
       regex: /.(js|ts)$/, // test single value.
       min: 5, // test single value.
-      in: ['blabla.js', 'blabla.ts'] // test params
+      included: ['blabla.js', 'blabla.ts'] // test params
     }
   });
 
@@ -107,7 +107,7 @@ test('validates multiple values', async () => {
     name: 'required|min:3',
     title: 'required|min:3|max:255',
     content: 'required|max:20',
-    tags: 'required|in:1,2,3,5'
+    tags: 'required|included:1,2,3,5'
   });
 
   expect(await v.validateAll({
@@ -126,7 +126,7 @@ test('fails validation on a one-of-many failure', async () => {
     name: 'required|min:3',
     title: 'required|min:3|max:255',
     content: 'required|max:20',
-    tags: 'required|in:1,2,3,5'
+    tags: 'required|included:1,2,3,5'
   });
   expect(await v.validateAll({
     email: 'foo@bar.com',
@@ -193,7 +193,7 @@ test('formats error messages', async () => {
     name: 'required|min:3',
     title: 'required|min:3|max:255',
     content: 'required|max:20',
-    tags: 'required|in:1,2,3,5'
+    tags: 'required|included:1,2,3,5'
   });
   expect(await v.validateAll({
     email: 'foo@bar.c',
@@ -242,7 +242,7 @@ test('fails when trying to validate a non-existant field when strict mode is tru
     name: 'required|min:3',
     title: 'required|min:3|max:255',
     content: 'required|max:20',
-    tags: 'required|in:1,2,3,5'
+    tags: 'required|included:1,2,3,5'
   });
 
   await expect(v.validate('nonExistant', 'whatever')).rejects.toBeTruthy();

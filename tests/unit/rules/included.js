@@ -1,4 +1,4 @@
-import validate from './../../../src/rules/in';
+import validate from './../../../src/rules/included';
 
 test('validates that the value exists within a list', () => {
     const list = [1, 2, 3, 4, 5];
