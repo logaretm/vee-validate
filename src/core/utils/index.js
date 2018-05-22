@@ -30,6 +30,10 @@ export const isCheckboxOrRadioInput = (el: HTMLInputElement) => {
   return ['radio', 'checkbox'].indexOf(el.type) !== -1;
 };
 
+export const isDateInput = (el: HTMLInputElement) => {
+  return ['date', 'week', 'month', 'datetime-local', 'time'].indexOf(el.type) !== -1;
+};
+
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
@@ -530,26 +534,28 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
     return rules;
   }
 
-  if (el.type === 'date') {
-    return appendRule('date_format:YYYY-MM-DD', rules);
-  }
+  if (isDateInput(el)) {
+    const timeFormat = el.step && Number(el.step) < 60 ? 'hh:mm:ss' : 'hh:mm';
 
-  if (el.type === 'datetime-local') {
-    return appendRule('date_format:YYYY-MM-DDThh:mm', rules);
-  }
+    if (el.type === 'date') {
+      return appendRule('date_format:YYYY-MM-DD', rules);
+    }
 
-  if (el.type === 'month') {
-    return appendRule('date_format:YYYY-MM', rules);
-  }
+    if (el.type === 'datetime-local') {
+      return appendRule(`date_format:YYYY-MM-DDT${timeFormat}`, rules);
+    }
 
-  if (el.type === 'week') {
-    return appendRule('date_format:YYYY-Www', rules);
-  }
+    if (el.type === 'month') {
+      return appendRule('date_format:YYYY-MM', rules);
+    }
 
-  if (el.type === 'time') {
-    const format = el.step && Number(el.step) < 60 ? 'hh:mm:ss' : 'hh:mm';
+    if (el.type === 'week') {
+      return appendRule('date_format:YYYY-Www', rules);
+    }
 
-    return appendRule(`date_format:${format}`, rules);
+    if (el.type === 'time') {
+      return appendRule(`date_format:${timeFormat}`, rules);
+    }
   }
 
   return rules;
