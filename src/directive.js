@@ -19,7 +19,10 @@ export default {
   bind (el: HTMLElement, binding, vnode) {
     const validator = vnode.context.$validator;
     if (!validator) {
-      warn(`No validator instance is present on vm, did you forget to inject '$validator'?`);
+      if (process.env.NODE_ENV !== 'production') {
+        warn(`No validator instance is present on vm, did you forget to inject '$validator'?`);
+      }
+
       return;
     }
 

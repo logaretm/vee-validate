@@ -23,7 +23,7 @@ export default class ErrorBag {
    */
   add (error: FieldError | FieldError[]) {
     // handle old signature.
-    if (arguments.length > 1) {
+    if (process.env.NODE_ENV !== 'production' && arguments.length > 1) {
       warn('This usage of "errors.add()" is deprecated, please consult the docs for the new signature.');
       error = {
         field: arguments[0],

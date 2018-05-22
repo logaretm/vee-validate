@@ -185,7 +185,10 @@ export default class Validator {
     // deprecate: handle old signature.
     /* istanbul ignore next */
     if (arguments.length > 1) {
-      warn('This signature of the attach method has been deprecated, please consult the docs.');
+      if (process.env.NODE_ENV !== 'production') {
+        warn('This signature of the attach method has been deprecated, please consult the docs.');
+      }
+
       field = assign({}, {
         name: arguments[0],
         rules: arguments[1]

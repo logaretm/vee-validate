@@ -103,7 +103,10 @@ export default class Field {
 
   get validator (): any {
     if (!this.vm || !this.vm.$validator) {
-      warn('No validator instance detected.');
+      if (process.env.NODE_ENV !== 'production') {
+        warn('No validator instance detected.');
+      }
+
       return { validate: () => {} };
     }
 
@@ -228,7 +231,7 @@ export default class Field {
     this.updateDependencies();
     this.addActionListeners();
 
-    if (!this.name && !this.targetOf) {
+    if (process.env.NODE_ENV !== 'production' && !this.name && !this.targetOf) {
       warn('A field is missing a "name" or "data-vv-name" attribute');
     }
 
