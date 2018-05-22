@@ -55,15 +55,34 @@ describe('resolves the rules', () => {
 
   test('using HTML5 validation Attributes', () => {
     const input = document.createElement('input');
+    const resolve = (el) => Generator.resolveRules(el, {})
     input.type = 'email';
     input.required = true;
 
-    expect(Generator.resolveRules(input, {})).toBe('required|email');
+    expect(resolve(input)).toBe('required|email');
 
     input.type = 'number';
     input.required = false;
     input.min = 10;
     input.max = 20;
-    expect(Generator.resolveRules(input, {})).toBe('decimal|min_value:10|max_value:20');
+    expect(resolve(input)).toBe('decimal|min_value:10|max_value:20');
+
+    input.type = 'date';
+    expect(resolve(input)).toBe('date_format:YYYY-MM-DD');
+
+    input.type = 'datetime-local';
+    expect(resolve(input)).toBe('date_format:YYYY-MM-DDThh:mm');
+
+    input.type = 'week';
+    expect(resolve(input)).toBe('date_format:YYYY-Www');
+
+    input.type = 'month';
+    expect(resolve(input)).toBe('date_format:YYYY-MM');
+
+    input.type = 'time';
+    expect(resolve(input)).toBe('date_format:hh:mm');
+
+    input.step = 10;
+    expect(resolve(input)).toBe('date_format:hh:mm:ss');
   });
 });

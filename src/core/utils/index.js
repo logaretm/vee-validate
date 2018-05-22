@@ -531,11 +531,11 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
   }
 
   if (el.type === 'date') {
-    return appendRule('date_format:YYYY-MM-dd', rules);
+    return appendRule('date_format:YYYY-MM-DD', rules);
   }
 
   if (el.type === 'datetime-local') {
-    return appendRule('date_format:YYYY-MM-ddThh:mm', rules);
+    return appendRule('date_format:YYYY-MM-DDThh:mm', rules);
   }
 
   if (el.type === 'month') {
@@ -547,7 +547,7 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
   }
 
   if (el.type === 'time') {
-    const format = Number(el.step) < 60 ? 'hh:mm:ss' : 'hh:mm';
+    const format = el.step && Number(el.step) < 60 ? 'hh:mm:ss' : 'hh:mm';
 
     return appendRule(`date_format:${format}`, rules);
   }
