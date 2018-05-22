@@ -10,8 +10,7 @@ import {
   isNullOrUndefined,
   isCallable,
   deepParseInt,
-  appendRule,
-  isTextInput,
+  fillRulesFromElement,
 } from './utils';
 
 /**
@@ -67,33 +66,7 @@ export default class Generator {
       rules = binding.value;
     }
 
-    // Resolve HTML Rules.
-    if (el.required) {
-      rules = appendRule('required', rules);
-    }
-
-    if (isTextInput(el)) {
-      if (el.type === 'email') {
-        rules = appendRule('email', rules);
-      }
-
-      if (el.pattern === 'pattern') {
-        rules = appendRule(`regex:${el.pattern}`, rules);
-      }
-    }
-
-    if (el.type === 'number') {
-      rules = appendRule('decimal', rules);
-      if (el.min !== '') {
-        rules = appendRule(`min_value:${el.min}`, rules);
-      }
-
-      if (el.max !== '') {
-        rules = appendRule(`max_value:${el.max}`, rules);
-      }
-    }
-
-    return rules;
+    return fillRulesFromElement(el, rules);
   }
 
   /**
