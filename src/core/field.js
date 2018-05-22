@@ -319,12 +319,7 @@ export default class Field {
     // we get the selectors for each field.
     const fields = Object.keys(this.rules).reduce((prev, r) => {
       if (Validator.isTargetRule(r)) {
-        let selector = this.rules[r][0];
-        if (r === 'confirmed' && !selector) {
-          selector = `${this.name}_confirmation`;
-        }
-
-        prev.push({ selector, name: r });
+        prev.push({ selector: this.rules[r][0], name: r });
       }
 
       return prev;
@@ -334,28 +329,8 @@ export default class Field {
 
     // must be contained within the same component, so we use the vm root element constrain our dom search.
     fields.forEach(({ selector, name }) => {
-      let el = null;
-      // vue ref selector.
-      if (selector[0] === '$') {
-        const ref = this.vm.$refs[selector.slice(1)];
-        el = Array.isArray(ref) ? ref[0] : ref;
-      } else {
-        try {
-          // try query selector
-          el = this.vm.$el.querySelector(selector);
-        } catch (err) {
-          el = null;
-        }
-      }
-
-      if (!el) {
-        try {
-          el = this.vm.$el.querySelector(`input[name="${selector}"]`);
-        } catch (err) {
-          el = null;
-        }
-      }
-
+      const ref = this.vm.$refs[selector];
+      const el = Array.isArray(ref) ? ref[0] : ref;
       if (!el) {
         return;
       }

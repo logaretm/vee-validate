@@ -345,7 +345,10 @@ test('add rules than can target other fields', async () => {
   v.attach({
     name: 'otherField',
     vm: {
-      $el: document.body
+      $el: document.body,
+      $refs: {
+        field: el
+      }
     },
     rules: 'isBigger:field'
   });
@@ -495,7 +498,10 @@ test('can translate target field for field dependent validations', async () => {
   v.attach({
     name: 'birthday',
     vm: {
-      $el: document.body
+      $el: document.body,
+      $refs: {
+        birthday_min: el
+      }
     },
     rules: 'date_format:DD-MM-YYYY|after:birthday_min'
   });
@@ -873,6 +879,34 @@ test('triggers initial validation for fields', async () => {
   expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123');
 });
 
+test('updates classes on related radio input fields', async () => {
+  function createRadio (val) {
+    const el = document.createElement('input');
+    el.name = 'myinput';
+    el.type = 'radio';
+    el.value = val;
+
+    document.body.appendChild(el);
+    return el;
+  }
+  const v = new Validator();
+  const el = createRadio('1');
+  const el2 = createRadio('2');
+  const el3 = createRadio('3');
+
+  const field = v.attach({ name: 'field', rules: 'required', el, classes: true });
+  expect(await v.validate(`#${field.id}`)).toBe(false);
+  expect(el.classList.contains('invalid')).toBe(true);
+  expect(el2.classList.contains('invalid')).toBe(true);
+  expect(el3.classList.contains('invalid')).toBe(true);
+
+  el.checked = true;
+  expect(await v.validate(`#${field.id}`, '1')).toBe(true);
+  expect(el.classList.contains('valid')).toBe(true);
+  expect(el2.classList.contains('valid')).toBe(true);
+  expect(el3.classList.contains('valid')).toBe(true);
+});
+
 test('validates multi-valued promises', async () => {
   Validator.extend('many_promise', () => {
     return new Promise(resolve => {
@@ -895,7 +929,10 @@ test('it should pass the after/before inclusion parameters correctly', async () 
   v.attach({
     name: 'birthday',
     vm: {
-      $el: document.body
+      $el: document.body,
+      $refs: {
+        field: el
+      }
     },
     rules: 'date_format:DD/MM/YYYY|after:field,true'
   });
