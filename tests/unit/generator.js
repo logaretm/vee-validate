@@ -84,5 +84,9 @@ describe('resolves the rules', () => {
 
     input.step = 10;
     expect(resolve(input)).toBe('date_format:hh:mm:ss');
+
+    input.type = 'text';
+    input.pattern = '^[0-9]+$';
+    expect(resolve(input)).toBe('regex:^[0-9]+$');
   });
 });

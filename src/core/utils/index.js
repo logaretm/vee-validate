@@ -514,7 +514,7 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
       rules = appendRule('email', rules);
     }
 
-    if (el.pattern === 'pattern') {
+    if (el.pattern) {
       rules = appendRule(`regex:${el.pattern}`, rules);
     }
 
