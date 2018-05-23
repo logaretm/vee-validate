@@ -415,7 +415,7 @@ export const isBuiltInComponent = (vnode: Object): boolean => {
 
   const tag = vnode.componentOptions.tag;
 
-  return /keep-alive|transition|transition-group/.test(tag);
+  return /^(keep-alive|transition|transition-group)$/.test(tag);
 };
 
 export const makeEventsArray = (events: string) => {
