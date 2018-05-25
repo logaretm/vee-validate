@@ -1,8 +1,6 @@
 {
-  "presets": ["env"],
+  "presets": ["@babel/preset-env"],
   "plugins": [
-    "transform-async-to-generator",
-    "transform-flow-strip-types",
-    "transform-object-rest-spread"
+    "@babel/plugin-transform-flow-strip-types"
   ]
 }
