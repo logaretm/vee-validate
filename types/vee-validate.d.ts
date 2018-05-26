@@ -138,7 +138,7 @@ export class Validator {
     attach(options: FieldOptions): Field;
     reset(matcher?: FieldMatchOptions): Promise<void>;
     detach(name: string, scope?: string): void;
-    extend(name: string, validator: Object|Function): void;
+    extend(name: string, validator: Object|Function, options?:ExtendOptions): void;
     flag(name: string, flags: Object): void;
     pause(): Validator;
     remove(name: string): void;
@@ -151,12 +151,16 @@ export class Validator {
     validateAll(values?: Object, scope?: string, silent?: boolean): Promise<any>;
     validateScopes(silent?: boolean): Promise<any>;
     static create(validations: Object, options: any): Validator;
-    static extend(name: string, validator: Object|Function): void;
+    static extend(name: string, validator: Object|Function, options?:ExtendOptions): void;
     static remove(name: string): void;
     static setStrictMode(strictMode?: boolean): void;
     static localize(rootDictionary: Object): void;
     static localize(language: string, dictionary?: Object): void;
 }
+
+export class ExtendOptions  {
+  hasTarget?: boolean
+};
 
 export const version: string;
 
