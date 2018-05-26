@@ -544,7 +544,7 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
   }
 
   if (isDateInput(el)) {
-    const timeFormat = el.step && Number(el.step) < 60 ? 'hh:mm:ss' : 'hh:mm';
+    const timeFormat = el.step && Number(el.step) < 60 ? 'HH:mm:ss' : 'HH:mm';
 
     if (el.type === 'date') {
       return appendRule('date_format:YYYY-MM-DD', rules);
@@ -559,7 +559,7 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
     }
 
     if (el.type === 'week') {
-      return appendRule('date_format:YYYY-Www', rules);
+      return appendRule('date_format:YYYY-[W]WW', rules);
     }
 
     if (el.type === 'time') {
