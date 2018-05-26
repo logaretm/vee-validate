@@ -511,11 +511,19 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
 
   if (isTextInput(el)) {
     if (el.type === 'email') {
-      rules = appendRule('email', rules);
+      rules = appendRule(`email${el.multiple ? ':multiple' : ''}`, rules);
     }
 
     if (el.pattern) {
       rules = appendRule(`regex:${el.pattern}`, rules);
+    }
+
+    if (el.maxlength && el.maxlength > 0) {
+      rules = appendRule(`max:${el.maxlength}`, rules);
+    }
+
+    if (el.minlength) {
+      rules = appendRule(`min:${el.minlength}`, rules);
     }
 
     return rules;
