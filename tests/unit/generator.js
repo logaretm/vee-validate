@@ -26,7 +26,7 @@ describe('resolves the rules', () => {
   const el = document.querySelector('#el');
 
   test('using data-vv-rules attribute', () => {
-    expect(Generator.resolveRules(el, {})).toBe('required|email');
+    expect(Generator.resolveRules(el, {}, {})).toBe('required|email');
   });
 
   test('using directive expression', () => {
@@ -34,7 +34,7 @@ describe('resolves the rules', () => {
       value: 'required|email'
     };
 
-    expect(Generator.resolveRules(el, directive)).toBe('required|email');
+    expect(Generator.resolveRules(el, directive, {})).toBe('required|email');
   });
 
   test('using nested rules in directive expression', () => {
@@ -47,7 +47,7 @@ describe('resolves the rules', () => {
       }
     };
 
-    expect(Generator.resolveRules(el, directive)).toEqual({
+    expect(Generator.resolveRules(el, directive, {})).toEqual({
       required: true,
       email: true
     });
@@ -55,7 +55,7 @@ describe('resolves the rules', () => {
 
   test('using HTML5 validation Attributes', () => {
     const input = document.createElement('input');
-    const resolve = (el) => Generator.resolveRules(el, {})
+    const resolve = (el) => Generator.resolveRules(el, {}, {})
     input.type = 'email';
     input.required = true;
 

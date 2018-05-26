@@ -518,11 +518,12 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
       rules = appendRule(`regex:${el.pattern}`, rules);
     }
 
-    if (el.maxLength >= 0) {
+    // 524288 is the max on some browsers and test environments.
+    if (el.maxLength >= 0 && el.maxLength < 524288) {
       rules = appendRule(`max:${el.maxLength}`, rules);
     }
 
-    if (el.minLength >= 0) {
+    if (el.minLength > 0) {
       rules = appendRule(`min:${el.minLength}`, rules);
     }
 

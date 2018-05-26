@@ -35,7 +35,7 @@ export default class Generator {
       events: Generator.resolveEvents(el, vnode) || options.events,
       model,
       delay: Generator.resolveDelay(el, vnode, options),
-      rules: Generator.resolveRules(el, binding),
+      rules: Generator.resolveRules(el, binding, vnode),
       initial: !!binding.modifiers.initial,
       validity: options.validity,
       aria: options.aria,
@@ -54,7 +54,7 @@ export default class Generator {
   /**
    * Resolves the rules defined on an element.
    */
-  static resolveRules (el, binding) {
+  static resolveRules (el, binding, vnode) {
     let rules = '';
     if (!binding.value && (!binding || !binding.expression)) {
       rules = getDataAttribute(el, 'rules');
@@ -64,6 +64,10 @@ export default class Generator {
       rules = binding.value.rules;
     } else if (binding.value) {
       rules = binding.value;
+    }
+
+    if (vnode.componentInstance) {
+      return rules;
     }
 
     return fillRulesFromElement(el, rules);

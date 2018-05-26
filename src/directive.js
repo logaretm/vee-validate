@@ -48,7 +48,7 @@ export default {
     // make sure we don't do unneccasary work if no important change was done.
     if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
     const scope = Generator.resolveScope(el, binding, vnode);
-    const rules = Generator.resolveRules(el, binding);
+    const rules = Generator.resolveRules(el, binding, vnode);
 
     field.update({
       scope,
