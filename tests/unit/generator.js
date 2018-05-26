@@ -71,7 +71,7 @@ describe('resolves the rules', () => {
     expect(resolve(input)).toBe('date_format:YYYY-MM-DD');
 
     input.type = 'datetime-local';
-    expect(resolve(input)).toBe('date_format:YYYY-MM-DDThh:mm');
+    expect(resolve(input)).toBe('date_format:YYYY-MM-DDTHH:mm');
 
     input.type = 'week';
     expect(resolve(input)).toBe('date_format:YYYY-Www');
@@ -80,10 +80,10 @@ describe('resolves the rules', () => {
     expect(resolve(input)).toBe('date_format:YYYY-MM');
 
     input.type = 'time';
-    expect(resolve(input)).toBe('date_format:hh:mm');
+    expect(resolve(input)).toBe('date_format:HH:mm');
 
     input.step = 10;
-    expect(resolve(input)).toBe('date_format:hh:mm:ss');
+    expect(resolve(input)).toBe('date_format:HH:mm:ss');
 
     input.type = 'text';
     input.pattern = '^[0-9]+$';
