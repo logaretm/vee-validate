@@ -1,4 +1,4 @@
-import validate from './../../../src/rules/max';
+import validate from '@/rules/max';
 
 const valid = [
     123,

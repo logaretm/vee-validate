@@ -1,4 +1,4 @@
-import validate from './../../../src/rules/before';
+import validate from '@/rules/before';
 import helpers from './../../helpers';
 
 test('sets the format and inclusion params if not passed', () => {

@@ -1,4 +1,4 @@
-import validate from './../../../src/rules/required';
+import validate from '@/rules/required';
 
 const valid = [
   'asjdj',
@@ -26,6 +26,6 @@ test('validates required', () => {
 });
 
 test('false value can be invalidated', () => {
-  expect(validate(false)).toBe(true);  
+  expect(validate(false)).toBe(true);
   expect(validate(false, [true])).toBe(false);
 });

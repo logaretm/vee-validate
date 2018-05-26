@@ -1,4 +1,4 @@
-import validate from './../../../src/rules/confirmed';
+import validate from '@/rules/confirmed';
 import helpers from './../../helpers';
 
 test('validates a field confirmation', () => {

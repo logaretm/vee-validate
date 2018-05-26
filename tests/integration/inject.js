@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
-import VeeValidate from './../../src/index';
+import VeeValidate from '@/index';
 import TestComponent from './components/Inject';
 import BuiltInsTestComponent from './components/BuiltIn';
 import ChildInject from './components/stubs/ChildWithParentValidatorInjection';
@@ -21,7 +21,7 @@ test('injects parent validator instances if requested otherwise new instances wi
   expect(childWithParentValidator.vm.$validator instanceof VeeValidate.Validator).toBe(true);
   expect(childWithNewValidator.vm.$validator instanceof VeeValidate.Validator).toBe(true);
   expect(childWithoutPreference.vm.$validator instanceof VeeValidate.Validator).toBe(true);
-  
+
   // without preference, a new validator should be injected.
   expect(wrapper.vm.$validator).not.toBe(childWithoutPreference.vm.$validator);
   // with new perference, it should not inherit it.
@@ -49,7 +49,7 @@ test('does not auto inject any validator instance unless requested', async () =>
 
   // was not injected because auto inject is disbaled.
   expect(childWithoutPreference.vm.$validator).toBe(undefined);
-  
+
   // with new perference, it should have a new instance.
   expect(wrapper.vm.$validator).not.toBe(childWithNewValidator.vm.$validator);
 

@@ -1,4 +1,4 @@
-import validate from './../../../src/rules/url';
+import validate from '@/rules/url';
 
 /**
  * most test cases are from https://mathiasbynens.be/demo/url-regex.

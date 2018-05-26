@@ -1,4 +1,4 @@
-import Generator from '../../src/core/generator';
+import Generator from '@/core/generator';
 
 test('resolves delay', () => {
   document.body.innerHTML = `

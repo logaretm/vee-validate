@@ -1,10 +1,10 @@
-import validate from './../../../src/rules/length';
+import validate from '@/rules/length';
 
 test('validates number of characters in a string', () => {
   // exact length
   expect(validate('hey', [3])).toBe(true);
   expect(validate('hello', [3])).toBe(false);
-  
+
   // min-max
   expect(validate('hey', [4, 5])).toBe(false);
   expect(validate('hello', [3, 5])).toBe(true);
