@@ -74,7 +74,7 @@ describe('resolves the rules', () => {
     expect(resolve(input)).toBe('date_format:YYYY-MM-DDTHH:mm');
 
     input.type = 'week';
-    expect(resolve(input)).toBe('date_format:YYYY-Www');
+    expect(resolve(input)).toBe('date_format:YYYY-[W]WW');
 
     input.type = 'month';
     expect(resolve(input)).toBe('date_format:YYYY-MM');
