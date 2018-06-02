@@ -45,3 +45,30 @@ test('detects the model config on the component ctor options', async () => {
   expect(field.events).toEqual(['change']);
 });
 
+test('watches the model from the child context if it cannot be watched from the parent', async () => {
+  const wrapper = mount(TestComponent, { localVue: Vue });
+  const field = wrapper.vm.$validator.fields.find({ name: 'loop[0]' });
+
+  expect(field.events).toEqual(['change']);
+  wrapper.setData({
+    values: [
+      { value: 'someval' }
+    ]
+  });
+
+  await flushPromises();
+
+  // check resolving
+  expect(field.value).toBe('someval');
+  expect(wrapper.vm.$validator.errors.count()).toBe(0);
+
+  // check watchers
+  wrapper.setData({
+    values: [
+      { value: '' }
+    ]
+  });
+  await flushPromises();
+  expect(wrapper.vm.$validator.errors.count()).toBe(1);
+});
+
