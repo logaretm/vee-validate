@@ -1,12 +1,12 @@
-import { rollup } from 'rollup';
-import buble from 'rollup-plugin-buble';
-import uglify from 'uglify-js';
-import fs from 'fs';
-import path from 'path';
-import mkdirpNode from 'mkdirp';
-import { promisify } from 'util';
-import chalk from 'chalk';
-import config from './config';
+const { rollup } = require('rollup');
+const buble = require('rollup-plugin-buble');
+const uglify = require('uglify-js');
+const fs = require('fs');
+const path = require('path');
+const mkdirpNode = require('mkdirp');
+const { promisify } = require('util');
+const chalk = require('chalk');
+const config = require('./config');
 
 const localesDir = path.join(__dirname, '..', 'locale');
 const files = fs.readdirSync(localesDir);
