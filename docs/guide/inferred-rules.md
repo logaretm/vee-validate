@@ -20,6 +20,11 @@ It would be redundant to specify `v-validate="'required|email'"`. vee-validate w
   v-validate
 >
 ```
+## Demo
+
+<iframe src="https://codesandbox.io/embed/y3504yr0l1?initialpath=%2Finfer&module=%2Fsrc%2Fcomponents%2FInfer.vue" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+
+[![Edit VeeValidate Examples](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/y3504yr0l1?initialpath=%2Finfer&module=%2Fsrc%2Fcomponents%2FInfer.vue)
 
 ## Inferred Rules Reference
 
@@ -41,3 +46,4 @@ This is a table of HTML attributes that is inferred as rules.
 ::: tip
   This feature does not work on custom components, only HTML5 inputs can take advantage from this feature.
 :::
+
