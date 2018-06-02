@@ -256,14 +256,15 @@ export default class Validator {
     Validator.extend(name, validator, options);
   }
 
-  async reset (matcher) {
+  reset (matcher) {
     // two ticks
-    await this._vm.$nextTick();
-    await this._vm.$nextTick();
-
-    this.fields.filter(matcher).forEach(field => {
-      field.reset(); // reset field flags.
-      this.errors.remove(field.name, field.scope, field.id);
+    return this._vm.$nextTick().then(() => {
+      return this._vm.$nextTick();
+    }).then(() => {
+      this.fields.filter(matcher).forEach(field => {
+        field.reset(); // reset field flags.
+        this.errors.remove(field.name, field.scope, field.id);
+      });
     });
   }
 
@@ -295,7 +296,7 @@ export default class Validator {
   /**
    * Validates a value against a registered field validations.
    */
-  async validate (name: string, value: any, scope?: string | null = null, silent?: boolean = false): Promise<boolean> {
+  validate (name: string, value: any, scope?: string | null = null, silent?: boolean = false): Promise<boolean> {
     if (this.paused) return Promise.resolve(true);
 
     // overload to validate all.
@@ -324,12 +325,13 @@ export default class Validator {
       value = field.value;
     }
 
-    const result = await this._validate(field, value);
-    if (!silent) {
-      this._handleValidationResults([result]);
-    }
+    return this._validate(field, value).then(result => {
+      if (!silent) {
+        this._handleValidationResults([result]);
+      }
 
-    return result.valid;
+      return result.valid;
+    });
   }
 
   /**
@@ -353,8 +355,8 @@ export default class Validator {
   /**
    * Validates each value against the corresponding field validations.
    */
-  async validateAll (values?: string | MapObject, scope?: string | null = null, silent?: boolean = false): Promise<boolean> {
-    if (this.paused) return true;
+  validateAll (values?: string | MapObject, scope?: string | null = null, silent?: boolean = false): Promise<boolean> {
+    if (this.paused) return Promise.resolve(true);
 
     let matcher = null;
     let providedValues = false;
@@ -374,32 +376,32 @@ export default class Validator {
       matcher = { scope };
     }
 
-    const results = await Promise.all(
+    return Promise.all(
       this.fields.filter(matcher).map(field => this._validate(field, providedValues ? values[field.name] : field.value))
-    );
+    ).then(results => {
+      if (!silent) {
+        this._handleValidationResults(results);
+      }
 
-    if (!silent) {
-      this._handleValidationResults(results);
-    }
-
-    return results.every(t => t.valid);
+      return results.every(t => t.valid);
+    });
   }
 
   /**
    * Validates all scopes.
    */
-  async validateScopes (silent?: boolean = false): Promise<boolean> {
-    if (this.paused) return true;
+  validateScopes (silent?: boolean = false): Promise<boolean> {
+    if (this.paused) return Promise.resolve(true);
 
-    const results = await Promise.all(
+    return Promise.all(
       this.fields.map(field => this._validate(field, field.value))
-    );
+    ).then(results => {
+      if (!silent) {
+        this._handleValidationResults(results);
+      }
 
-    if (!silent) {
-      this._handleValidationResults(results);
-    }
-
-    return results.every(t => t.valid);
+      return results.every(t => t.valid);
+    });
   }
 
   /**
@@ -490,7 +492,7 @@ export default class Validator {
     let params = Array.isArray(rule.params) ? toArray(rule.params) : [];
     let targetName = null;
     if (!validator || typeof validator !== 'function') {
-      throw createError(`No such validator '${rule.name}' exists.`);
+      return Promise.reject(createError(`No such validator '${rule.name}' exists.`));
     }
 
     // has field dependencies.
@@ -616,12 +618,13 @@ export default class Validator {
    * Handles when a field is not found depending on the strict flag.
    */
   _handleFieldNotFound (name: string, scope?: string | null) {
-    if (!this.strict) return true;
+    if (!this.strict) return Promise.resolve(true);
 
     const fullName = isNullOrUndefined(scope) ? name : `${!isNullOrUndefined(scope) ? scope + '.' : ''}${name}`;
-    throw createError(
+
+    return Promise.reject(createError(
       `Validating a non-existent field: "${fullName}". Use "attach()" first.`
-    );
+    ));
   }
 
   _handleValidationResults (results) {
@@ -653,10 +656,10 @@ export default class Validator {
   /**
    * Starts the validation process.
    */
-  async _validate (field: Field, value: any): Promise<ValidationResult> {
+  _validate (field: Field, value: any): Promise<ValidationResult> {
     // if field is disabled and is not required.
     if (field.isDisabled || (!field.isRequired && (isNullOrUndefined(value) || value === ''))) {
-      return { valid: true, id: field.id, field: field.name, scope: field.scope, errors: [] };
+      return Promise.resolve({ valid: true, id: field.id, field: field.name, scope: field.scope, errors: [] });
     }
 
     const promises = [];
@@ -679,17 +682,19 @@ export default class Validator {
     });
 
     if (isExitEarly) {
-      return { valid: false, errors, id: field.id, field: field.name, scope: field.scope };
+      return Promise.resolve({ valid: false, errors, id: field.id, field: field.name, scope: field.scope });
     }
 
-    return (await Promise.all(promises)).reduce((prev, v) => {
-      if (!v.valid) {
-        prev.errors.push(...v.errors);
-      }
+    return Promise.all(promises).then(results => {
+      return results.reduce((prev, v) => {
+        if (!v.valid) {
+          prev.errors.push(...v.errors);
+        }
 
-      prev.valid = prev.valid && v.valid;
+        prev.valid = prev.valid && v.valid;
 
-      return prev;
-    }, { valid: true, errors, id: field.id, field: field.name, scope: field.scope });
+        return prev;
+      }, { valid: true, errors, id: field.id, field: field.name, scope: field.scope });
+    });
   }
 }

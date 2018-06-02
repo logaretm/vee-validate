@@ -1,10 +1,10 @@
-import path from 'path';
-import fs from 'fs';
-import filesize from 'filesize';
-import gzipSize from 'gzip-size';
-import { version } from '../package.json';
+const path = require('path');
+const fs = require('fs');
+const filesize = require('filesize');
+const gzipSize = require('gzip-size');
+const { version } = require('../package.json');
 
-export default {
+module.exports = {
   banner:
   `/**
   * vee-validate v${version}
