@@ -5,6 +5,7 @@ const sidebars = {
     'syntax',
     'rules',
     'custom-rules',
+    'inferred-rules',
     'messages',
     'localization',
     'flags',
