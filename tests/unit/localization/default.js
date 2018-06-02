@@ -1,4 +1,4 @@
-import Dictionary from './../../../src/core/localization/default';
+import Dictionary from '@/core/localization/default';
 
 test('does not merge if a non object is provided', () => {
   const dict = new Dictionary('a string');
@@ -80,7 +80,7 @@ test('can set attributes', () => {
   dict.setAttribute('en', 'email', 'Email Address');
 
   expect(dict.getAttribute('en', 'email')).toBe('Email Address');
-  
+
   // test graceful population of non-existant directories.
   dict.setAttribute('fr', 'email', 'address');
   expect(dict.container.fr).toEqual({

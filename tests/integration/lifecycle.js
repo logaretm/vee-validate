@@ -1,6 +1,6 @@
 import { mount, shallow, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
-import VeeValidate from './../../src/index';
+import VeeValidate from '@/index';
 import BasicComponent from './components/Basic';
 import BuiltInsTestComponent from './components/BuiltIn';
 import InjectComponent from './components/Inject';

@@ -1,8 +1,8 @@
 import { createLocalVue } from '@vue/test-utils';
-import Field from '../../src/core/field'
+import Field from '@/core/field'
 import helpers from '../helpers';
-import VeeValidate from '../../src/index';
-import Config from '../../src/config';
+import VeeValidate from '@/index';
+import Config from '@/config';
 
 const Vue = createLocalVue();
 

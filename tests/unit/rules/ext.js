@@ -1,4 +1,4 @@
-import validate from './../../../src/rules/ext';
+import validate from '@/rules/ext';
 import helpers from './../../helpers';
 
 

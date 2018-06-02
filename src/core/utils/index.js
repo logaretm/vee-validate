@@ -18,16 +18,20 @@ export const detectPassiveSupport = () => {
   return supportsPassive;
 };
 
-export const addEventListener = (el, eventName, cb) => {
+export const addEventListener = (el: HTMLElement, eventName: string, cb: Function) => {
   el.addEventListener(eventName, cb, supportsPassive ? { passive: true } : false);
 };
 
-export const isTextInput = (el) => {
-  return ['text', 'number', 'password', 'search', 'email', 'tel', 'url', 'textarea'].indexOf(el.type) !== -1;
+export const isTextInput = (el: HTMLInputElement) => {
+  return ['text', 'password', 'search', 'email', 'tel', 'url', 'textarea'].indexOf(el.type) !== -1;
 };
 
-export const isCheckboxOrRadioInput = el => {
+export const isCheckboxOrRadioInput = (el: HTMLInputElement) => {
   return ['radio', 'checkbox'].indexOf(el.type) !== -1;
+};
+
+export const isDateInput = (el: HTMLInputElement) => {
+  return ['date', 'week', 'month', 'datetime-local', 'time'].indexOf(el.type) !== -1;
 };
 
 /**
@@ -179,7 +183,7 @@ export const parseRule = (rule: string): Object => {
 /**
  * Debounces a function.
  */
-export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = false, token = { cancelled: false }) => {
+export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = false, token: { cancelled: boolean } = { cancelled: false }) => {
   if (wait === 0) {
     return fn;
   }
@@ -199,6 +203,25 @@ export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = f
     /* istanbul ignore next */
     if (callNow) fn(...args);
   };
+};
+
+/**
+ * Appends a rule definition to a list of rules.
+ */
+export const appendRule = (rule: string, rules: string | { [string]: boolean | any[] }) => {
+  if (!rules) {
+    return rule;
+  }
+
+  if (!rule) {
+    return rules;
+  }
+
+  if (typeof rules === 'string') {
+    return `${rules}|${rule}`;
+  }
+
+  return assign({}, rules, normalizeRules(rule));
 };
 
 /**
@@ -479,4 +502,70 @@ export const merge = (target: MapObject, source: MapObject): MapObject => {
   });
 
   return target;
+};
+
+export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [string]: boolean | any[] }) => {
+  if (el.required) {
+    rules = appendRule('required', rules);
+  }
+
+  if (isTextInput(el)) {
+    if (el.type === 'email') {
+      rules = appendRule(`email${el.multiple ? ':multiple' : ''}`, rules);
+    }
+
+    if (el.pattern) {
+      rules = appendRule(`regex:${el.pattern}`, rules);
+    }
+
+    // 524288 is the max on some browsers and test environments.
+    if (el.maxLength >= 0 && el.maxLength < 524288) {
+      rules = appendRule(`max:${el.maxLength}`, rules);
+    }
+
+    if (el.minLength > 0) {
+      rules = appendRule(`min:${el.minLength}`, rules);
+    }
+
+    return rules;
+  }
+
+  if (el.type === 'number') {
+    rules = appendRule('decimal', rules);
+    if (el.min !== '') {
+      rules = appendRule(`min_value:${el.min}`, rules);
+    }
+
+    if (el.max !== '') {
+      rules = appendRule(`max_value:${el.max}`, rules);
+    }
+
+    return rules;
+  }
+
+  if (isDateInput(el)) {
+    const timeFormat = el.step && Number(el.step) < 60 ? 'HH:mm:ss' : 'HH:mm';
+
+    if (el.type === 'date') {
+      return appendRule('date_format:YYYY-MM-DD', rules);
+    }
+
+    if (el.type === 'datetime-local') {
+      return appendRule(`date_format:YYYY-MM-DDT${timeFormat}`, rules);
+    }
+
+    if (el.type === 'month') {
+      return appendRule('date_format:YYYY-MM', rules);
+    }
+
+    if (el.type === 'week') {
+      return appendRule('date_format:YYYY-[W]WW', rules);
+    }
+
+    if (el.type === 'time') {
+      return appendRule(`date_format:${timeFormat}`, rules);
+    }
+  }
+
+  return rules;
 };

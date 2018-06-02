@@ -1,4 +1,4 @@
-import validate from './../../../src/rules/decimal';
+import validate from '@/rules/decimal';
 
 test('validates numerics with decmial numbers', () => {
     const params = [2];

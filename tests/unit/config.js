@@ -1,5 +1,5 @@
-import Config from '../../src/config';
-import Dictionary from '../../src/core/localization/i18n';
+import Config from '@/config';
+import Dictionary from '@/core/localization/i18n';
 
 test('it stores the default config', () => {
   expect(Config.default).toEqual({
@@ -44,10 +44,10 @@ describe('resolves the working config from a vue instance', () => {
         }
       }
     });
-  
+
     expect(conf.validity).toBe(true);
   });
-  
+
 })
 
 test('can fetch/register dependencies', () => {

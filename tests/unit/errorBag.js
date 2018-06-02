@@ -1,4 +1,4 @@
-import ErrorBag from './../../src/core/errorBag';
+import ErrorBag from '@/core/errorBag';
 
 test('adds errors to the collection', () => {
   const errors = new ErrorBag();

@@ -1,4 +1,4 @@
-import Generator from '../../src/core/generator';
+import Generator from '@/core/generator';
 
 test('resolves delay', () => {
   document.body.innerHTML = `
@@ -26,7 +26,7 @@ describe('resolves the rules', () => {
   const el = document.querySelector('#el');
 
   test('using data-vv-rules attribute', () => {
-    expect(Generator.resolveRules(el, {})).toBe('required|email');
+    expect(Generator.resolveRules(el, {}, {})).toBe('required|email');
   });
 
   test('using directive expression', () => {
@@ -34,7 +34,7 @@ describe('resolves the rules', () => {
       value: 'required|email'
     };
 
-    expect(Generator.resolveRules(el, directive)).toBe('required|email');
+    expect(Generator.resolveRules(el, directive, {})).toBe('required|email');
   });
 
   test('using nested rules in directive expression', () => {
@@ -47,9 +47,54 @@ describe('resolves the rules', () => {
       }
     };
 
-    expect(Generator.resolveRules(el, directive)).toEqual({
+    expect(Generator.resolveRules(el, directive, {})).toEqual({
       required: true,
       email: true
     });
+  });
+
+  test('using HTML5 validation Attributes', () => {
+    const input = document.createElement('input');
+    const resolve = (el) => Generator.resolveRules(el, {}, {})
+    input.type = 'email';
+    input.required = true;
+
+    expect(resolve(input)).toBe('required|email');
+
+    input.type = 'number';
+    input.required = false;
+    input.min = 10;
+    input.max = 20;
+    expect(resolve(input)).toBe('decimal|min_value:10|max_value:20');
+
+    input.type = 'date';
+    expect(resolve(input)).toBe('date_format:YYYY-MM-DD');
+
+    input.type = 'datetime-local';
+    expect(resolve(input)).toBe('date_format:YYYY-MM-DDTHH:mm');
+
+    input.type = 'week';
+    expect(resolve(input)).toBe('date_format:YYYY-[W]WW');
+
+    input.type = 'month';
+    expect(resolve(input)).toBe('date_format:YYYY-MM');
+
+    input.type = 'time';
+    expect(resolve(input)).toBe('date_format:HH:mm');
+
+    input.step = 10;
+    expect(resolve(input)).toBe('date_format:HH:mm:ss');
+
+    input.type = 'text';
+    input.pattern = '^[0-9]+$';
+    expect(resolve(input)).toBe('regex:^[0-9]+$');
+    input.pattern = '';
+
+    input.maxLength = 10;
+    input.type = 'text';
+    expect(resolve(input)).toBe('max:10');
+
+    input.minLength = 2;
+    expect(resolve(input)).toBe('max:10|min:2');
   });
 });

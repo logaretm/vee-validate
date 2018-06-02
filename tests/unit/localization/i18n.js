@@ -1,4 +1,4 @@
-import Dictionary from './../../../src/core/localization/i18n';
+import Dictionary from '@/core/localization/i18n';
 import VueI18n from 'vue-i18n';
 import { mount, createLocalVue } from '@vue/test-utils';
 
@@ -106,7 +106,7 @@ test('gets attributes', () => {
 
   // test fallback attribute
   expect(dictionary.getAttribute('en', 'email', 'fallback')).toBe('fallback');
-  
+
   // test different locale
   expect(dictionary.getAttribute('fr', 'name')).toBe('prenom');
 });

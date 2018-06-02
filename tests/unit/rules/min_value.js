@@ -1,4 +1,4 @@
-import validate from './../../../src/rules/min_value';
+import validate from '@/rules/min_value';
 
 const valid = [
     -1,

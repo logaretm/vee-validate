@@ -1,4 +1,4 @@
-import mapFields from '../../src/core/mapFields';
+import mapFields from '@/core/mapFields';
 
 test('it maps field names from array to object of functions', () => {
   const fields = mapFields(['email', 'name', 'scoped.phone']);
@@ -128,7 +128,7 @@ describe('the mapped function resolves the field flags object', () => {
           phone: { valid: 'phone' },
           'dotted.name': { valid: 'dotted' }
         },
-        'multiple.dotted.field.name': { valid: 'multiple' } 
+        'multiple.dotted.field.name': { valid: 'multiple' }
       }
     }
   });
