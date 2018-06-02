@@ -19,7 +19,7 @@ VeeValidate comes with a bunch of validation rules out of the box and they are a
 - [email](#email)
 - [ext](#ext)
 - [image](#image)
-- [in](#in)
+- [included](#included)
 - [integer](#integer)
 - [ip](#ip)
 - [is](#is)
@@ -30,7 +30,7 @@ VeeValidate comes with a bunch of validation rules out of the box and they are a
 - [mimes](#mimes)
 - [min](#min)
 - [min_value](#min_value)
-- [not_in](#not_in)
+- [excluded](#excluded)
 - [numeric](#numeric)
 - [regex](#regex)
 - [required](#required)
@@ -213,16 +213,16 @@ The file added to the field under validation must have an image mime type (image
 <input v-validate="'image'" data-vv-as="image" name="image_field" type="file">
 <span v-show="errors.has('image_field')" class="help is-danger">{{ errors.first('image_field') }}</span>
 
-## in
+## included
 
 The field under validation must have a value that is in the specified list.
 
-### in params
+### included params
 
-- `list:` Comma separated list of values. ex `in:1,2,3`
+- `list:` An iterable, like arrays or sets or strings containing the allowed list of values. in string format it should be a comma seperated list. i.e: `included:1,2,3`.
 
 <span class="select">
-  <select v-validate="'in:1,2,3'" :class="{ 'is-danger': errors.has('in_field') }" name="in_field" data-vv-as="selected">
+  <select v-validate="'included:1,2,3'" :class="{ 'is-danger': errors.has('in_field') }" name="in_field" data-vv-as="selected">
     <option value="1">One</option>
     <option value="2">Two</option>
     <option value="3">Three</option>
@@ -337,16 +337,16 @@ The field under validation must be a numeric value and must not be less than the
 <input v-validate="'min_value:10'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('min_value_field') }" name="min_value_field" type="text" placeholder="What is bigger than 10?">
 <span v-show="errors.has('min_value_field')" class="help is-danger">{{ errors.first('min_value_field') }}</span>
 
-## not_in
+## excluded
 
-The field under validation length should not have any value within the specified value.
+The field under validation value should not be in the specified list.
 
-### not_in params
+### excluded params
 
-- `list:` Comma separated list of invalid values. ex: `not_in:1,2,3`
+- `list:` an iterable, like arrays or sets or strings. in string format it should be a comma separated list of invalid values. ex: `excluded:1,2,3`
 
 <span class="select">
-  <select v-validate="'not_in:1,2,3'" :class="{ 'is-danger': errors.has('not_in_field') }" name="not_in_field" data-vv-as="selected">
+  <select v-validate="'excluded:1,2,3'" :class="{ 'is-danger': errors.has('not_in_field') }" name="not_in_field" data-vv-as="selected">
     <option value="1">One - Invalid</option>
     <option value="2">Two - Invalid</option>
     <option value="3">Three - Invalid</option>
