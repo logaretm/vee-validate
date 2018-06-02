@@ -1,18 +1,18 @@
-import { rollup } from 'rollup';
-import flow from 'rollup-plugin-flow';
-import buble from 'rollup-plugin-buble';
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
-import replace from 'rollup-plugin-replace';
-import nodent from 'rollup-plugin-nodent';
-import uglify from 'uglify-js';
-import fs from 'fs';
-import path from 'path';
-import chalk from 'chalk';
-import mkdirpNode from 'mkdirp';
-import { promisify } from 'util';
-import config from './config';
-import { version } from '../package.json';
+const { rollup } = require('rollup');
+const flow = require('rollup-plugin-flow');
+const buble = require('rollup-plugin-buble');
+const resolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
+const replace = require('rollup-plugin-replace');
+const nodent = require('rollup-plugin-nodent');
+const uglify = require('uglify-js');
+const fs = require('fs');
+const path = require('path');
+const chalk = require('chalk');
+const mkdirpNode = require('mkdirp');
+const { promisify } = require('util');
+const config = require('./config');
+const { version } = require('../package.json');
 
 const inputOptions = {
   input: 'src/index.js',
