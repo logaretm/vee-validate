@@ -88,5 +88,13 @@ describe('resolves the rules', () => {
     input.type = 'text';
     input.pattern = '^[0-9]+$';
     expect(resolve(input)).toBe('regex:^[0-9]+$');
+    input.pattern = '';
+
+    input.maxLength = 10;
+    input.type = 'text';
+    expect(resolve(input)).toBe('max:10');
+
+    input.minLength = 2;
+    expect(resolve(input)).toBe('max:10|min:2');
   });
 });
