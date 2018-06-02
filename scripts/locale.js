@@ -6,7 +6,7 @@ const path = require('path');
 const mkdirpNode = require('mkdirp');
 const { promisify } = require('util');
 const chalk = require('chalk');
-const config = require('./config');
+const { paths, uglifyOptions } = require('./config');
 
 const localesDir = path.join(__dirname, '..', 'locale');
 const files = fs.readdirSync(localesDir);
@@ -15,7 +15,7 @@ let cache;
 const mkdirp = promisify(mkdirpNode);
 
 async function build () {
-  await mkdirp(path.join(config.outputFolder, 'locale'));
+  await mkdirp(path.join(paths.dist, 'locale'));
   console.log(chalk.cyan('Building locales...'));
 
   for (let i = 0; i < files.length; i++) {
@@ -26,7 +26,7 @@ async function build () {
     if (/utils/.test(file)) continue;
 
     const input = path.join(__dirname, '..', 'locale', file);
-    const output = path.join(config.outputFolder, 'locale', file);
+    const output = path.join(paths.dist, 'locale', file);
 
     const bundle = await rollup({
       cache,
@@ -39,7 +39,7 @@ async function build () {
       name: `__vee_validate_locale__${file}`,
     });
 
-    fs.writeFileSync(output, uglify.minify(code, config.uglifyOptions).code);
+    fs.writeFileSync(output, uglify.minify(code, uglifyOptions).code);
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
   }
