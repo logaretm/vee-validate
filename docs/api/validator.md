@@ -9,7 +9,7 @@ The validator offers an API to add new fields and trigger validations.
 |Name  | Type  | Description  |
 |---------|---------|---------|
 | errors | [`ErrorBag`](/api/errorbag.md)| Instance of the ErrorBag class to manage errors. |
-| fields     | [`FieldBag`](/api/fieldbag.md)| Instance of the FieldBag class to manage fields. |
+| fields     | [`FieldBag`](https://github.com/baianat/vee-validate/blob/master/src/core/fieldBag.js)| Instance of the FieldBag class to manage fields. |
 | locale | `string` | The Currently activated locale. |
 
 ### Methods
@@ -21,7 +21,7 @@ The validator offers an API to add new fields and trigger validations.
 | pause() | `void` | Disables validation. |
 | resume() | `void` | Enables validation. |
 | detach(name: string, scope?: string) | `void` | Detaches the field that matches the name and the scope of the provided values. |
-| extend(name: string, rule: Rule) | `void` | Adds a new validation rule. The provided rule param must be a [valid Rule function or object](/validation.md#custom-rules). |
+| extend(name: string, rule: Rule) | `void` | Adds a new validation rule. The provided rule param must be a [valid Rule function or object](/guide.md/custom-rules). |
 
 ### Selector API
 
