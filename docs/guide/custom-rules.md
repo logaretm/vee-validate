@@ -75,6 +75,27 @@ Then you can use your rule like any other rule:
   When the field under validation is __not__ required, your rule may not be executed at all. This is because VeeValidate skips validation for empty fields if they are not required.
 :::
 
+## Target Dependant Rules
+
+Sometimes your rules may need to compare the field value against another field value, some built in rules like `confirmed`, `before` and `after` need a target field to compare against.
+
+You can create custom rules that do this as well by setting the `hasTarget` property on the extend options object which is the third parameter.
+
+```js{3}
+validator.extend('isBigger', (value, [otherValue]) => {
+  return value >= otherValue;
+}, { hasTarget: true });
+```
+
+Notice that the other field value will be injected as the first item in the parameter list.
+
+These rules require at least one argument and the target field must have a matching `ref` value.
+
+```html
+<input v-validate="'confirmed:confirmation'" name="password" type="password" >
+<input name="passwordConfirmation" ref="confirmation" type="password" placeholder="Confirm the password">
+```
+
 ## Reasoning
 
 Additionally, you may want to provide a reason for failing the validation that may change the error message. For example, you may be using an external API and the error message is generated there.
