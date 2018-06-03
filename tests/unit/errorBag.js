@@ -158,6 +158,9 @@ test('checks for scoped field error existence', () => {
   expect(errors.has('name')).toBe(false);
   expect(errors.has('name', 'scope1')).toBe(true);
   expect(errors.has('name', 'scope2')).toBe(false); // no such scoped field.
+
+  expect(errors.has('scope1.*')).toBe(true);
+  expect(errors.has('scope2.*')).toBe(false);
 });
 
 test('fetches the errors count/length', () => {
