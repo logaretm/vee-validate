@@ -308,6 +308,21 @@ test('collects dotted field names', () => {
   ]);
 });
 
+test('collects errors for a given scope', () => {
+  const errors = new ErrorBag();
+  errors.add({ field: 'email', msg: 'The email is not email', scope: 'scope' });
+  errors.add({ field: 'name', msg: 'The name is invalid', scope: 'scope' });
+
+  expect(errors.collect('scope.*')).toEqual({
+    email: [
+      'The email is not email'
+    ],
+    name: [
+      'The name is invalid'
+    ]
+  });
+});
+
 test('groups errors by field name', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1' });

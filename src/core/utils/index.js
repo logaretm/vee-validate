@@ -569,3 +569,11 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
 
   return rules;
 };
+
+export const values = (obj) => {
+  if (isCallable(Object.values)) {
+    return Object.values(obj);
+  }
+
+  return obj[Object.keys(obj)[0]];
+};

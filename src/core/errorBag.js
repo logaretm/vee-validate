@@ -1,4 +1,4 @@
-import { find, isNullOrUndefined, isCallable, warn } from './utils';
+import { find, isNullOrUndefined, isCallable, warn, values } from './utils';
 
 // @flow
 
@@ -125,35 +125,49 @@ export default class ErrorBag {
    * Collects errors into groups or for a specific field.
    */
   collect (field?: string, scope?: string | null, map?: boolean = true) {
-    if (isNullOrUndefined(field)) {
-      const collection = {};
-      this.items.forEach(e => {
-        if (! collection[e.field]) {
-          collection[e.field] = [];
+    const groupErrors = items => {
+      let fieldsCount = 0;
+      const errors = items.reduce((collection, error) => {
+        if (!collection[error.field]) {
+          collection[error.field] = [];
+          fieldsCount++;
         }
 
-        collection[e.field].push(map ? e.msg : e);
-      });
+        collection[error.field].push(map ? error.msg : error);
 
-      return collection;
+        return collection;
+      }, {});
+
+      // reduce the collection to be a single array.
+      if (fieldsCount <= 1) {
+        return values(errors)[0] || [];
+      }
+
+      return errors;
+    };
+
+    if (isNullOrUndefined(field)) {
+      return groupErrors(this.items);
     }
 
     const selector = isNullOrUndefined(scope) ? String(field) : `${scope}.${field}`;
     const { isPrimary, isAlt } = this._makeCandidateFilters(selector);
 
-    const collected = this.items.reduce((prev, curr) => {
+    let collected = this.items.reduce((prev, curr) => {
       if (isPrimary(curr)) {
-        prev.primary.push(map ? curr.msg : curr);
+        prev.primary.push(curr);
       }
 
       if (isAlt(curr)) {
-        prev.alt.push(map ? curr.msg : curr);
+        prev.alt.push(curr);
       }
 
       return prev;
     }, { primary: [], alt: [] });
 
-    return collected.primary.length ? collected.primary : collected.alt;
+    collected = collected.primary.length ? collected.primary : collected.alt;
+
+    return groupErrors(collected);
   }
 
   /**
@@ -258,7 +272,7 @@ export default class ErrorBag {
     let matchesScope = () => true;
     let matchesName = () => true;
 
-    let [, scope, name, rule] = selector.match(/((?:[\w-])+\.)?((?:[\w-.])+)(:\w+)?/);
+    let [, scope, name, rule] = selector.match(/((?:[\w-])+\.)?((?:[\w-.*])+)(:\w+)?/);
     if (rule) {
       rule = rule.replace(':', '');
       matchesRule = (item) => item.rule === rule;
@@ -280,7 +294,7 @@ export default class ErrorBag {
       matchesScope = item => item.scope === scope;
     }
 
-    if (!(isNullOrUndefined(name))) {
+    if (!isNullOrUndefined(name) && name !== '*') {
       matchesName = item => item.field === name;
     }
 
