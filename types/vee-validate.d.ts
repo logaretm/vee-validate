@@ -160,7 +160,7 @@ export class Validator {
 
 export class ExtendOptions  {
   hasTarget?: boolean
-};
+}
 
 export const version: string;
 
