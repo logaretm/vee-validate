@@ -134,15 +134,24 @@ export default class Generator {
    * @param {*} vnode
    */
   static resolveEvents (el, vnode) {
+    // resolve it from the root element.
     let events = getDataAttribute(el, 'validate-on');
 
+    // resolve from data-vv-validate-on if its a vue component.
     if (!events && vnode.componentInstance && vnode.componentInstance.$attrs) {
       events = vnode.componentInstance.$attrs['data-vv-validate-on'];
     }
 
+    // resolve it from $_veeValidate options.
     if (!events && vnode.componentInstance) {
       const config = Generator.getCtorConfig(vnode);
       events = config && config.events;
+    }
+
+    // resolve the model event if its configured for custom components.
+    if (!events && vnode.componentInstance) {
+      const { event } = vnode.componentInstance.$options.model || { event: 'input' };
+      events = event;
     }
 
     return events;
@@ -181,6 +190,7 @@ export default class Generator {
     // https://github.com/vuejs/vue/blob/dev/src/core/util/lang.js#L26
     const watchable = !/[^\w.$]/.test(model.expression) && hasPath(model.expression, vnode.context);
     const lazy = !!(model.modifiers && model.modifiers.lazy);
+
     if (!watchable) {
       return { expression: null, lazy };
     }
@@ -244,8 +254,10 @@ export default class Generator {
         };
       }
 
+      const { prop } = vnode.componentInstance.$options.model || { prop: 'value' };
+
       return () => {
-        return vnode.componentInstance.value;
+        return vnode.componentInstance[prop];
       };
     }
 

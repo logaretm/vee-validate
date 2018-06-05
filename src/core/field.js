@@ -507,25 +507,45 @@ export default class Field {
 
     let inputEvent = this.component || isTextInput(this.el) ? 'input' : 'change';
     inputEvent = this.model && this.model.lazy ? 'change' : inputEvent;
+    if (this.component && this.component.$options.model) {
+      inputEvent = this.component.$options.model.event;
+    }
+
     // force change event for non-text type fields, otherwise use the configured.
     // if no event is configured then respect the user choice.
     let events = !this.events.length || this.component || isTextInput(this.el) ? this.events : ['change'];
 
-    // if there is a watchable model and an on input validation is requested.
-    if (this.model && this.model.expression && events.indexOf(inputEvent) !== -1) {
-      const debouncedFn = debounce(fn, this.delay[inputEvent], false, token);
-      const unwatch = this.vm.$watch(this.model.expression, (...args) => {
-        this.flags.pending = true;
-        this._cancellationToken = token;
-        debouncedFn(...args);
-      });
-      this.watchers.push({
-        tag: 'input_model',
-        unwatch
-      });
+    // if there is a model and an on input validation is requested.
+    if (this.model && events.indexOf(inputEvent) !== -1) {
+      let ctx = null;
+      let expression = this.model.expression;
+      // if its watchable from the context vm.
+      if (this.model.expression) {
+        ctx = this.vm;
+        expression = this.model.expression;
+      }
 
-      // filter out input event as it is already handled by the watcher API.
-      events = events.filter(e => e !== inputEvent);
+      // watch it from the custom component vm instead.
+      if (!expression && this.component && this.component.$options.model) {
+        ctx = this.component;
+        expression = this.component.$options.model.prop || 'value';
+      }
+
+      if (ctx && expression) {
+        const debouncedFn = debounce(fn, this.delay[inputEvent], false, token);
+        const unwatch = ctx.$watch(expression, (...args) => {
+          this.flags.pending = true;
+          this._cancellationToken = token;
+          debouncedFn(...args);
+        });
+        this.watchers.push({
+          tag: 'input_model',
+          unwatch
+        });
+
+        // filter out input event as it is already handled by the watcher API.
+        events = events.filter(e => e !== inputEvent);
+      }
     }
 
     // Add events.
