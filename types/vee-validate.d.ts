@@ -61,7 +61,7 @@ export interface FieldOptions {
     scope?: string | null;
     targetOf?: string | null;
     validity?: boolean;
-    vm?: any; 
+    vm?: any;
 }
 
 export class Field {
@@ -96,7 +96,7 @@ export class ErrorBag {
     count(): number;
     first(field: string, scope?: string): string;
     firstByRule(name: string, rule: string, scope?: string): any;
-    firstRule(field: string, scope: string): string;
+    firstRule(field: string, scope?: string): string;
     has(field: string, scope?: string): boolean;
     remove(field: string, scope?: string): void;
     removeById(id: string): void;
