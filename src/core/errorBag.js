@@ -272,7 +272,7 @@ export default class ErrorBag {
     let matchesScope = () => true;
     let matchesName = () => true;
 
-    let [, scope, name, rule] = selector.match(/((?:[\w-])+\.)?((?:[\w-.*])+)(:\w+)?/);
+    let [, scope, name, rule] = selector.match(/((?:[\w-\s])+\.)?((?:[\w-.*\s])+)(:\w+)?/);
     if (rule) {
       rule = rule.replace(':', '');
       matchesRule = (item) => item.rule === rule;

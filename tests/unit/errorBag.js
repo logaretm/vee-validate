@@ -149,7 +149,14 @@ test('checks for field error existence', () => {
   expect(errors.has('name:rule1')).toBe(true);
   expect(errors.has('name:rule2')).toBe(false);
   expect(errors.has('email')).toBe(false);
+
+  errors.clear();
+
+  // test spaced names #1367
+  errors.add({ field: 'name spaced', msg: 'The name is invalid', rule: 'rule1' });
+  expect(errors.has('name spaced')).toBe(true);
 });
+
 
 test('checks for scoped field error existence', () => {
   const errors = new ErrorBag();
