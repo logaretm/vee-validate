@@ -40,10 +40,12 @@ export const isDateInput = (el: HTMLInputElement) => {
 export const getDataAttribute = (el: HTMLElement, name: string) => el.getAttribute(`data-vv-${name}`);
 
 /**
- * Checks if the value is either null or undefined.
+ * Checks if the values are either null or undefined.
  */
-export const isNullOrUndefined = (value: mixed): boolean => {
-  return value === null || value === undefined;
+export const isNullOrUndefined = (...values): boolean => {
+  return values.every(value => {
+    return value === null || value === undefined;
+  });
 };
 
 /**

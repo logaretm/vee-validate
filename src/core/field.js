@@ -81,6 +81,7 @@ export default class Field {
     this.el = options.el;
     this.updated = false;
     this.dependencies = [];
+    this.vmId = options.vmId;
     this.watchers = [];
     this.events = [];
     this.delay = 0;
@@ -175,6 +176,11 @@ export default class Field {
 
     if (options.id) {
       return this.id === options.id;
+    }
+
+    let matchesComponentId = isNullOrUndefined(options.vmId) ? () => true : (id) => id === this.vmId;
+    if (!matchesComponentId(options.vmId)) {
+      return false;
     }
 
     if (options.name === undefined && options.scope === undefined) {

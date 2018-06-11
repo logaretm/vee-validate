@@ -1,4 +1,3 @@
-import Validator from './core/validator';
 import Config from './config';
 import { isObject, isBuiltInComponent } from './core/utils';
 
@@ -14,11 +13,6 @@ const requestsValidator = (injections: Object | string[]) => {
 
   return false;
 };
-
-/**
- * Creates a validator instance.
- */
-const createValidator = (vm: any, options: Object) => new Validator(null, { vm, fastExit: options.fastExit });
 
 export default {
   provide () {
@@ -46,14 +40,14 @@ export default {
 
     // if its a root instance, inject anyways, or if it requested a new instance.
     if (!this.$parent || (this.$options.$_veeValidate && /new/.test(this.$options.$_veeValidate.validator))) {
-      this.$validator = createValidator(this, options);
+      this.$validator = Config.dependency('validator');
     }
 
     const requested = requestsValidator(this.$options.inject);
 
     // if automatic injection is enabled and no instance was requested.
     if (! this.$validator && options.inject && !requested) {
-      this.$validator = createValidator(this, options);
+      this.$validator = Config.dependency('validator');
     }
 
     // don't inject errors or fieldBag as no validator was resolved.
@@ -77,14 +71,5 @@ export default {
     this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
       return this.$validator.flags;
     };
-  },
-  beforeDestroy () {
-    if (isBuiltInComponent(this.$vnode)) return;
-
-    // mark the validator paused to prevent delayed validation.
-    if (this.$validator && this.$validator.ownerId === this._uid) {
-      this.$validator.pause();
-      this.$validator.destroy();
-    }
   }
 };
