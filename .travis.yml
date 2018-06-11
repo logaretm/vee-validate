@@ -8,5 +8,5 @@ install:
   - npm install -g codecov
   - yarn
 after_success:
-  - yarn cover
+  - yarn cover --maxWorkers=$(nproc)
   - bash <(curl -s https://codecov.io/bash)
