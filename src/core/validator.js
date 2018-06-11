@@ -33,7 +33,8 @@ export default class Validator {
       this.errors.regenerate();
     };
 
-    if (this._vm) {
+    // skip listening in SSR
+    if (this._vm && typeof window !== 'undefined') {
       this._vm.$on('localeChanged', this._localeListener);
     }
   }
