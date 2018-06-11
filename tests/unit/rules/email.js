@@ -32,9 +32,9 @@ test('validates that the string is a valid email address', () => {
 });
 
 test('validates multiple emails', () => {
-  const validList = 'email@gmail.com, myemail@gmail.com, wow@email.com';
+  const validList = 'emaisadasdl@gmail.com, myemasdasdadail@gmail.com, woasdadadaw@email.com';
   expect(validate(validList, [true])).toBe(true);
 
-  const invalidList = 'email@gmail.com, myemail@gmail.c, wow@email.com';
+  const invalidList = 'emaadasdasdil@gmail.com, myemdasdasdadail@gmail.c, woasdasdasw@email.com';
   expect(validate(invalidList, [true])).toBe(false);
 });
