@@ -1,6 +1,7 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
+  _default: (field) => 'A(z) ${field} értéke nem megfelelő.',
   after: (field, [target]) => `A(z) ${field} legalább ${target} utáni dátum kell, hogy legyen.`,
   alpha_dash: (field) => `A(z) ${field} kizárólag betűket, számokat, kötőjeleket és alulvonásokat tartalmazhat.`,
   alpha_num: (field) => `A(z) ${field} kizárólag betűket és számokat tartalmazhat.`,
