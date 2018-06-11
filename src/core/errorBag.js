@@ -25,7 +25,7 @@ export default class ErrorBag {
     // handle old signature.
     if (arguments.length > 1) {
       if (process.env.NODE_ENV !== 'production') {
-        warn('This usage of "errors.add()" is deprecated, please consult the docs for the new signature.');
+        warn('This usage of "errors.add()" is deprecated, please consult the docs for the new signature. https://baianat.github.io/vee-validate/api/errorbag.html#api');
       }
 
       error = {
