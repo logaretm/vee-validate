@@ -1,6 +1,7 @@
 import ErrorBag from './errorBag';
 import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined, warn } from './utils';
 import FieldBag from './fieldBag';
+import Field from './field';
 import Config from '../config';
 
 // @flow
@@ -32,6 +33,10 @@ export default class Validator {
    * Getter for the dictionary.
    */
   get dictionary (): IDictionary {
+    return Config.dependency('dictionary');
+  }
+
+  static get dictionary () {
     return Config.dependency('dictionary');
   }
 
@@ -137,19 +142,6 @@ export default class Validator {
    * Registers a field to be validated.
    */
   attach (fieldOpts: FieldOptions): Field {
-    // deprecate: handle old signature.
-    /* istanbul ignore next */
-    if (arguments.length > 1) {
-      if (process.env.NODE_ENV !== 'production') {
-        warn('This signature of the attach method has been deprecated, please consult the docs.');
-      }
-
-      fieldOpts = assign({}, {
-        name: arguments[0],
-        rules: arguments[1]
-      }, arguments[2] || { vm: { $validator: this } });
-    }
-
     // fixes initial value detection with v-model and select elements.
     const value = fieldOpts.initialValue;
     const field = new Field(fieldOpts);

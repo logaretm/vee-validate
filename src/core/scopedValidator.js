@@ -1,10 +1,32 @@
 import { assign } from './utils';
+import Config from '../config';
 
 export default class ScopedValidator {
   constructor (base, vm) {
     this.id = vm._uid;
     this.base = base;
-    this.errors =
+    this.fields = this.base.fields;
+    this.errors = this.base.errors;
+  }
+
+  get flags () {
+    return this.base.flags;
+  }
+
+  get dictionary () {
+    return this.base.dictionary;
+  }
+
+  static get dictionary () {
+    return Config.dependency('dictionary');
+  }
+
+  localize (...args) {
+    return this.base.localize(...args);
+  }
+
+  update (...args) {
+    return this.base.update(...args);
   }
 
   attach (opts) {

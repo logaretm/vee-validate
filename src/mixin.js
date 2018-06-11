@@ -1,4 +1,5 @@
 import Config from './config';
+import ScopedValidator from './core/scopedValidator';
 import { isObject, isBuiltInComponent } from './core/utils';
 
 // @flow
@@ -40,14 +41,14 @@ export default {
 
     // if its a root instance, inject anyways, or if it requested a new instance.
     if (!this.$parent || (this.$options.$_veeValidate && /new/.test(this.$options.$_veeValidate.validator))) {
-      this.$validator = Config.dependency('validator');
+      this.$validator = new ScopedValidator(Config.dependency('validator'), this);
     }
 
     const requested = requestsValidator(this.$options.inject);
 
     // if automatic injection is enabled and no instance was requested.
     if (! this.$validator && options.inject && !requested) {
-      this.$validator = Config.dependency('validator');
+      this.$validator = new ScopedValidator(Config.dependency('validator'), this);
     }
 
     // don't inject errors or fieldBag as no validator was resolved.

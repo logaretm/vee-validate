@@ -34,7 +34,9 @@ function install (_Vue, options = {}) {
 
   // watch locale changes using localVue instance or i18n.
   if (!i18n) {
-    localVue.$on('localeChanged', onLocaleChanged);
+    if (typeof window !== 'undefined') {
+      localVue.$on('localeChanged', onLocaleChanged);
+    }
   } else {
     i18n._vm.$watch('locale', onLocaleChanged);
   }
@@ -43,7 +45,7 @@ function install (_Vue, options = {}) {
     validator.localize(options.locale); // set the locale
   }
 
-  validator.setStrictMode(Config.current.strict);
+  Validator.setStrictMode(Config.current.strict);
 
   Vue.mixin(mixin);
   Vue.directive('validate', directive);

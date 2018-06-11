@@ -6,14 +6,22 @@ export default class ErrorBag {
   items: FieldError[];
 
   constructor () {
-    this.items = [];
+    this.items = {};
+    this.length = 0;
+    // LOOKS LIKE THIS:
+    /**
+     * items: {
+     *  [fieldId]: [ERRORS]
+     * }
+    */
   }
 
   [typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'] () {
     let index = 0;
+    let flat = this.flatten();
     return {
       next: () => {
-        return { value: this.items[index++], done: index > this.items.length };
+        return { value: flat[index++], done: index > flat.length };
       }
     };
   }
@@ -37,9 +45,18 @@ export default class ErrorBag {
       };
     }
 
-    this.items.push(
+    if (!this.items[error.id]) {
+      this.items = assign({}, this.items, {
+        [error.id]: []
+      });
+    }
+
+    const oldLength = this.items[error.id].length;
+    this.items[error.id].push(
       ...this._normalizeError(error)
     );
+    const newLength = this.items[error.id].length;
+    this.length += newLength - oldLength;
   }
 
   /**
@@ -63,8 +80,10 @@ export default class ErrorBag {
    * Regenrates error messages if they have a generator function.
    */
   regenerate (): void {
-    this.items.forEach(i => {
-      i.msg = isCallable(i.regenerate) ? i.regenerate() : i.msg;
+    values(this.items).forEach(errors => {
+      errors.forEach(i => {
+        i.msg = isCallable(i.regenerate) ? i.regenerate() : i.msg;
+      });
     });
   }
 
@@ -72,15 +91,14 @@ export default class ErrorBag {
    * Updates a field error with the new field scope.
    */
   update (id: string, error: FieldError) {
-    const item = find(this.items, i => i.id === id);
-    if (!item) {
+    const errors = this.items[id];
+    if (!errors) {
       return;
     }
 
-    const idx = this.items.indexOf(item);
-    this.items.splice(idx, 1);
-    item.scope = error.scope;
-    this.items.push(item);
+    errors.forEach(e => {
+      e.scope = error.scope;
+    });
   }
 
   /**
@@ -88,10 +106,18 @@ export default class ErrorBag {
    */
   all (scope: string): Array<string> {
     if (isNullOrUndefined(scope)) {
-      return this.items.map(e => e.msg);
+      return this.flatten().map(e => e.msg);
     }
 
-    return this.items.filter(e => e.scope === scope).map(e => e.msg);
+    return this.flatten().filter(e => e.scope === scope).map(e => e.msg);
+  }
+
+  flatten () {
+    return values(this.items).reduce((flat, errors) => {
+      flat.push(...errors);
+
+      return flat;
+    }, []);
   }
 
   /**
@@ -99,10 +125,10 @@ export default class ErrorBag {
    */
   any (scope: ?string): boolean {
     if (isNullOrUndefined(scope)) {
-      return !!this.items.length;
+      return !!this.length;
     }
 
-    return !!this.items.filter(e => e.scope === scope).length;
+    return !!this.flatten().filter(e => e.scope === scope).length;
   }
 
   /**
@@ -113,12 +139,9 @@ export default class ErrorBag {
       scope = null;
     }
 
-    for (let i = 0; i < this.items.length; ++i) {
-      if (this.items[i].scope === scope) {
-        this.items.splice(i, 1);
-        --i;
-      }
-    }
+    values(this.items).forEach((_, idx) => {
+      this.items[idx] = [];
+    });
   }
 
   /**
@@ -153,7 +176,7 @@ export default class ErrorBag {
     const selector = isNullOrUndefined(scope) ? String(field) : `${scope}.${field}`;
     const { isPrimary, isAlt } = this._makeCandidateFilters(selector);
 
-    let collected = this.items.reduce((prev, curr) => {
+    let collected = this.flatten().reduce((prev, curr) => {
       if (isPrimary(curr)) {
         prev.primary.push(curr);
       }
@@ -174,14 +197,14 @@ export default class ErrorBag {
    * Gets the internal array length.
    */
   count (): number {
-    return this.items.length;
+    return this.length;
   }
 
   /**
    * Finds and fetches the first error message for the specified field id.
    */
   firstById (id: string): string | null {
-    const error = find(this.items, i => i.id === id);
+    const error = this.items[id];
 
     return error ? error.msg : undefined;
   }
@@ -234,18 +257,17 @@ export default class ErrorBag {
    * Removes errors by matching against the id or ids.
    */
   removeById (id: string | string[]) {
-    if (Array.isArray(id)) {
-      // filter out the non-matching fields.
-      this.items = this.items.filter(i => id.indexOf(i.id) === -1);
+    if (!Array.isArray(id)) {
+      const removed = this.items[id].length;
+      this.items[id] = [];
+      this.length -= removed;
+
       return;
     }
 
-    for (let i = 0; i < this.items.length; ++i) {
-      if (this.items[i].id === id) {
-        this.items.splice(i, 1);
-        --i;
-      }
-    }
+    id.forEach(e => {
+      this.removeById(e);
+    });
   }
 
   /**
@@ -259,12 +281,12 @@ export default class ErrorBag {
     const selector = isNullOrUndefined(scope) ? String(field) : `${scope}.${field}`;
     const { isPrimary } = this._makeCandidateFilters(selector);
 
-    for (let i = 0; i < this.items.length; ++i) {
-      if (isPrimary(this.items[i])) {
-        this.items.splice(i, 1);
-        --i;
+    this.flatten().forEach(item => {
+      if (isPrimary(item)) {
+        this.items[item.id].splice(item, 1);
+        this.length--;
       }
-    }
+    });
   }
 
   _makeCandidateFilters (selector) {
@@ -320,7 +342,7 @@ export default class ErrorBag {
 
     const { isPrimary, isAlt } = this._makeCandidateFilters(selector);
 
-    return this.items.reduce((prev, item, idx, arr) => {
+    return this.flatten().reduce((prev, item, idx, arr) => {
       const isLast = idx === arr.length - 1;
       if (prev.primary) {
         return isLast ? prev.primary : prev;
