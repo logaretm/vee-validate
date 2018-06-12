@@ -26,3 +26,17 @@ test('unbind: does not detach the field if it does not exist', () => {
   wrapper.destroy();
   expect(validator.detach).not.toHaveBeenCalled();
 });
+
+test('destroy: removes vm associated errors when the vm is destroyed', async () => {
+  const Vue = createLocalVue();
+  Vue.use(VeeValidate);
+  const wrapper = shallow(BasicComponent, { localVue: Vue });
+  const input = wrapper.find('input');
+  input.value = '';
+  await wrapper.vm.$validator.validate();
+  const validator = wrapper.vm.$validator
+
+  expect(validator.errors.count()).toBe(1);
+  wrapper.destroy();
+  expect(validator.errors.count()).toBe(0); // should be removed.
+});
