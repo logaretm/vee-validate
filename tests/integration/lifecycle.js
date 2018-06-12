@@ -26,34 +26,3 @@ test('unbind: does not detach the field if it does not exist', () => {
   wrapper.destroy();
   expect(validator.detach).not.toHaveBeenCalled();
 });
-
-test('destroy: the validator instance is destroyed when the owning component is destroyed', () => {
-  const Vue = createLocalVue();
-  Vue.use(VeeValidate);
-
-  const wrapper = mount(InjectComponent, { localVue: Vue });
-  const childWithParentValidator = wrapper.find(ChildInject);
-  const childWithNewValidator = wrapper.find(ChildNew);
-
-  const validator = wrapper.vm.$validator;
-  const destroy = validator.destroy.bind(validator);
-  validator.destroy = jest.fn(destroy);
-
-  childWithParentValidator.destroy();
-  expect(validator.destroy).not.toHaveBeenCalled();
-  wrapper.destroy();
-  expect(validator.destroy).toHaveBeenCalled();
-});
-
-test('beforeDestroy: builtins do not execute beforeDestroy mixin event', () => {
-  const Vue = createLocalVue();
-  Vue.use(VeeValidate);
-
-  const wrapper = mount(BuiltInsTestComponent, { localVue: Vue });
-
-  const validator = wrapper.vm.$validator;
-  const destroy = validator.destroy.bind(validator);
-  validator.destroy = jest.fn(destroy);
-  wrapper.destroy();
-  expect(validator.destroy).toHaveBeenCalled();
-});

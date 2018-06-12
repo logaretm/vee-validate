@@ -276,11 +276,10 @@ test('can validate specific scopes', async () => {
   v.attach({ name: 'field', rules: 'alpha', scope: 'myscope', getter: () => '123' });
   v.attach({ name: 'field', rules: 'alpha', scope: 'otherscope', getter: () => '123' });
 
-  // only '__global__' scope got validated.
-  expect(await v.validateAll()).toBe(false);
+  expect(await v.validate('*')).toBe(false);
   expect(v.errors.count()).toBe(1);
   // the second scope too.
-  expect(await v.validateAll('myscope')).toBe(false);
+  expect(await v.validate('myscope.*')).toBe(false);
   expect(v.errors.count()).toBe(2);
   v.errors.clear();
   expect(await v.validateScopes()).toBe(false);
@@ -298,11 +297,6 @@ test('can validate specific scopes on an object', async () => {
   // only global scope got validated.
   expect(await v.validateAll({ field: null })).toBe(false);
   expect(v.errors.count()).toBe(1);
-
-  // this time only 'myscope' got validated.
-  v.errors.clear();
-  expect(await v.validateAll({ field: null, anotherfield: null }, 'myscope')).toBe(false);
-  expect(v.errors.count()).toBe(2);
 });
 
 test('can find errors by field and rule', async () => {
@@ -321,7 +315,7 @@ test('can extend the validator with a validator function', async () => {
   expect(v.errors.first('anotherField')).toBe('The anotherField value is not valid.');
 });
 
-test('can extend the validators for a validator instance', async () => {
+test('can extend the validators with a validator instance', async () => {
   const truthy = {
     getMessage: (field) => `The ${field} field value is not truthy.`,
     validate: (value) => !! value
@@ -365,11 +359,11 @@ test('can set the locale statically', async () => {
       alpha: () => 'البتاعة لازم يكون حروف بس'
     }
   });
-  const loc = new Validator();
-  loc.attach({ name: 'name', rules: 'alpha' });
-  await loc.validate('name', '1234');
-  expect(loc.locale).toBe('ar');
-  expect(loc.errors.first('name')).toBe('البتاعة لازم يكون حروف بس');
+  const v = new Validator();
+  expect(v.locale).toBe('ar');
+  v.attach({ name: 'name', rules: 'alpha' });
+  await v.validate('name', '1234');
+  expect(v.errors.first('name')).toBe('البتاعة لازم يكون حروف بس');
 });
 
 test('throws an exception when extending with an invalid validator', () => {
@@ -666,7 +660,7 @@ test('errors will not be added on silent validate', async () => {
   const v = new Validator({
     name: 'alpha|min:3'
   }, { fastExit: false });
-  expect(await v.validate('name', '2', null, true)).toBe(false);
+  expect(await v.validate('name', '2', { silent: true })).toBe(false);
   expect(v.errors.count()).toBe(0);
 });
 
@@ -674,8 +668,8 @@ test('errors will not be removed on silent validate', async () => {
   const v = new Validator({
     name: 'alpha|min:3'
   }, { fastExit: false });
-  expect(await v.validate('name', '2', null, false)).toBe(false);
-  expect(await v.validate('name', '2', null, true)).toBe(false);
+  expect(await v.validate('name', '2', { silent: false })).toBe(false);
+  expect(await v.validate('name', '2', { silent: true })).toBe(false);
   expect(v.errors.count()).toBe(2);
 });
 
@@ -684,7 +678,7 @@ test('flags will not be modified on silent validate', async () => {
   const field = v.attach({ name: 'name', rules: 'alpha|min:3' });
   expect(field.flags.pending).toBe(false);
   expect(field.flags.validated).toBe(false);
-  expect(await v.validate('name', '2', null, true)).toBe(false);
+  expect(await v.validate('name', '2', { silent: true })).toBe(false);
   expect(field.flags.pending).toBe(false);
   expect(field.flags.validated).toBe(false);
 });
@@ -692,15 +686,15 @@ test('flags will not be modified on silent validate', async () => {
 test('errors will not be added on silent validateScopes', async () => {
   const v = new Validator({}, { fastExit: false });
   v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
-  expect(await v.validateScopes(true)).toBe(false);
+  expect(await v.validateScopes({ silent: true })).toBe(false);
   expect(v.errors.count()).toBe(0);
 });
 
 test('errors will not be removed on silent validateScopes', async () => {
   const v = new Validator({}, { fastExit: false });
   v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
-  expect(await v.validateScopes(false)).toBe(false);
-  expect(await v.validateScopes(true)).toBe(false);
+  expect(await v.validateScopes({ silent: false })).toBe(false);
+  expect(await v.validateScopes({ silent: true })).toBe(false);
   expect(v.errors.count()).toBe(2);
 });
 
@@ -709,7 +703,7 @@ test('flags will not be modified on silent validateScopes', async () => {
   const field = v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
   expect(field.flags.pending).toBe(false);
   expect(field.flags.validated).toBe(false);
-  expect(await v.validateScopes(true)).toBe(false);
+  expect(await v.validateScopes({ silent: true })).toBe(false);
   expect(field.flags.pending).toBe(false);
   expect(field.flags.validated).toBe(false);
 });
@@ -717,15 +711,15 @@ test('flags will not be modified on silent validateScopes', async () => {
 test('errors will not be added on silent validateAll', async () => {
   const v = new Validator({}, { fastExit: false });
   v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
-  expect(await v.validateAll(null, null, true)).toBe(false);
+  expect(await v.validateAll(null, { silent: true })).toBe(false);
   expect(v.errors.count()).toBe(0);
 });
 
 test('errors will not be removed on silent validateAll', async () => {
   const v = new Validator({}, { fastExit: false });
   v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
-  expect(await v.validateAll(null, null, false)).toBe(false);
-  expect(await v.validateAll(null, null, true)).toBe(false);
+  expect(await v.validateAll(null, { silent: false })).toBe(false);
+  expect(await v.validateAll(null, { silent: true })).toBe(false);
   expect(v.errors.count()).toBe(2);
 });
 
@@ -734,7 +728,7 @@ test('flags will not be modified on silent validateAll', async () => {
   const field = v.attach({ name: 'field', rules: 'alpha|min:3', getter: () => '2' });
   expect(field.flags.pending).toBe(false);
   expect(field.flags.validated).toBe(false);
-  expect(await v.validateAll(null, null, true)).toBe(false);
+  expect(await v.validateAll(null, { silent: true })).toBe(false);
   expect(field.flags.pending).toBe(false);
   expect(field.flags.validated).toBe(false);
 });

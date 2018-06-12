@@ -1,5 +1,5 @@
 import ErrorBag from './errorBag';
-import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined, warn } from './utils';
+import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined } from './utils';
 import FieldBag from './fieldBag';
 import Field from './field';
 import Config from '../config';
@@ -29,6 +29,14 @@ export default class Validator {
     this.fastExit = options.fastExit || false;
   }
 
+  static get rules () {
+    return RULES;
+  }
+
+  get rules () {
+    return RULES;
+  }
+
   /**
    * Getter for the dictionary.
    */
@@ -48,13 +56,24 @@ export default class Validator {
    * Getter for the current locale.
    */
   get locale (): string {
-    return this.dictionary.locale;
+    return Validator.locale;
   }
 
   /**
    * Setter for the validator locale.
    */
   set locale (value: string): void {
+    Validator.locale = value;
+  }
+
+  static get locale () {
+    return this.dictionary.locale;
+  }
+
+  /**
+   * Setter for the validator locale.
+   */
+  static set locale (value) {
     const hasChanged = value !== Validator.dictionary.locale;
     Validator.dictionary.locale = value;
     if (hasChanged && Config.dependency('vm')) {
@@ -246,22 +265,28 @@ export default class Validator {
   /**
    * Validates a value against a registered field validations.
    */
-  validate ({ name, value, scope, silent, uid } = {}): Promise<boolean> {
+  validate (fieldDescriptor: string, value?: any, { silent, vmId } = {}): Promise<boolean> {
     if (this.paused) return Promise.resolve(true);
 
     // overload to validate all.
-    if (isNullOrUndefined(name, value, scope) && !isNullOrUndefined(uid)) {
-      return this.validateScopes({ silent, uid });
+    if (isNullOrUndefined(fieldDescriptor)) {
+      return this.validateScopes({ silent, vmId });
     }
 
     // overload to validate scope-less fields.
-    if (name === '*') {
-      return this.validateAll({ uid });
+    if (fieldDescriptor === '*') {
+      return this.validateAll(undefined, { silent, vmId });
     }
 
-    const field = this._resolveField(name, scope, uid);
+    // if scope validation was requested.
+    if (/^(.+)\.\*$/.test(fieldDescriptor)) {
+      const matched = fieldDescriptor.match(/^(.+)\.\*$/)[1];
+      return this.validateAll(matched);
+    }
+
+    const field = this._resolveField(fieldDescriptor);
     if (!field) {
-      return this._handleFieldNotFound(name, scope);
+      return this._handleFieldNotFound(name);
     }
 
     if (!silent) field.flags.pending = true;
@@ -299,25 +324,25 @@ export default class Validator {
   /**
    * Validates each value against the corresponding field validations.
    */
-  validateAll (values?: string | MapObject, scope?: string | null = null, silent?: boolean = false, uid): Promise<boolean> {
+  validateAll (values?: string | MapObject, { silent, vmId } = {}): Promise<boolean> {
     if (this.paused) return Promise.resolve(true);
 
     let matcher = null;
     let providedValues = false;
 
     if (typeof values === 'string') {
-      matcher = { scope: values, uid };
+      matcher = { scope: values, vmId };
     } else if (isObject(values)) {
       matcher = Object.keys(values).map(key => {
-        return { name: key, scope, vmId: uid };
+        return { name: key, vmId: vmId, scope: null };
       });
       providedValues = true;
     } else if (Array.isArray(values)) {
       matcher = values.map(key => {
-        return { name: key, scope, vmId: uid };
+        return { name: key, vmId: vmId };
       });
     } else {
-      matcher = { scope, vmId: uid };
+      matcher = { scope: null, vmId: vmId };
     }
 
     return Promise.all(
@@ -334,11 +359,11 @@ export default class Validator {
   /**
    * Validates all scopes.
    */
-  validateScopes (silent?: boolean = false, uid): Promise<boolean> {
+  validateScopes ({ silent, vmId } = {}): Promise<boolean> {
     if (this.paused) return Promise.resolve(true);
 
     return Promise.all(
-      this.fields.filter({ vmId: uid }).map(field => this._validate(field, field.value))
+      this.fields.filter({ vmId }).map(field => this._validate(field, field.value))
     ).then(results => {
       if (!silent) {
         this._handleValidationResults(results);
@@ -500,7 +525,7 @@ export default class Validator {
 
     RULES[name] = validator.validate;
     if (validator.getMessage) {
-      Validator.dictionary.setMessage(this.locale, name, validator.getMessage);
+      Validator.dictionary.setMessage(Validator.locale, name, validator.getMessage);
     }
   }
 
