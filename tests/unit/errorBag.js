@@ -451,3 +451,18 @@ test('error bag instance is iterable', () => {
   expect(idx).toBe(2);
 });
 
+test('error bag can mirror another bag', () => {
+  const errors = new ErrorBag();
+  const mirror = new ErrorBag(errors);
+
+  expect(errors.items).toBe(mirror.items);
+
+  errors.add({ field: 'name', msg: 'The scoped name is invalid', rule: 'rule1', id: 0 });
+
+  expect(errors.count()).toBe(1);
+  expect(mirror.count()).toBe(1);
+
+  mirror.removeById(0);
+
+  expect(errors.count()).toBe(0);
+});

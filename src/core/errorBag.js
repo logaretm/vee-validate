@@ -1,12 +1,18 @@
-import { find, isNullOrUndefined, isCallable, warn, values, parseSelector } from './utils';
+import { find, isNullOrUndefined, isCallable, values, parseSelector } from './utils';
 
 // @flow
 
 export default class ErrorBag {
   items: FieldError[];
 
-  constructor () {
-    this.items = [];
+  constructor (errorBag = null, id = null) {
+    this.vmId = id || null;
+    // make this bag a mirror of the provided one, sharing the same items reference.
+    if (errorBag && errorBag instanceof ErrorBag) {
+      this.items = errorBag.items;
+    } else {
+      this.items = [];
+    }
   }
 
   [typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'] () {
@@ -22,21 +28,6 @@ export default class ErrorBag {
    * Adds an error to the internal array.
    */
   add (error: FieldError | FieldError[]) {
-    // handle old signature.
-    if (arguments.length > 1) {
-      if (process.env.NODE_ENV !== 'production') {
-        warn('This usage of "errors.add()" is deprecated, please consult the docs for the new signature. https://baianat.github.io/vee-validate/api/errorbag.html#api');
-      }
-
-      error = {
-        field: arguments[0],
-        msg: arguments[1],
-        rule: arguments[2],
-        scope: !isNullOrUndefined(arguments[3]) ? arguments[3] : null,
-        regenerate: null
-      };
-    }
-
     this.items.push(
       ...this._normalizeError(error)
     );
@@ -49,6 +40,7 @@ export default class ErrorBag {
     if (Array.isArray(error)) {
       return error.map(e => {
         e.scope = !isNullOrUndefined(e.scope) ? e.scope : null;
+        e.vmId = !isNullOrUndefined(e.vmId) ? e.vmId : (this.vmId || null);
 
         return e;
       });
@@ -87,34 +79,55 @@ export default class ErrorBag {
    * Gets all error messages from the internal array.
    */
   all (scope: string): Array<string> {
-    if (isNullOrUndefined(scope)) {
-      return this.items.map(e => e.msg);
-    }
+    const filterFn = (item) => {
+      let matchesScope = true;
+      let matchesVM = true;
+      if (!isNullOrUndefined(scope)) {
+        matchesScope = item.scope === scope;
+      }
 
-    return this.items.filter(e => e.scope === scope).map(e => e.msg);
+      if (!isNullOrUndefined(this.vmId)) {
+        matchesScope = item.vmId === this.vmId;
+      }
+
+      return matchesVM && matchesScope;
+    };
+
+    return this.items.filter(filterFn).map(e => e.msg);
   }
 
   /**
    * Checks if there are any errors in the internal array.
    */
   any (scope: ?string): boolean {
-    if (isNullOrUndefined(scope)) {
-      return !!this.items.length;
-    }
+    const filterFn = (item) => {
+      let matchesScope = true;
+      let matchesVM = true;
+      if (!isNullOrUndefined(scope)) {
+        matchesScope = item.scope === scope;
+      }
 
-    return !!this.items.filter(e => e.scope === scope).length;
+      if (!isNullOrUndefined(this.vmId)) {
+        matchesScope = item.vmId === this.vmId;
+      }
+
+      return matchesVM && matchesScope;
+    };
+
+    return !!this.items.filter(filterFn).length;
   }
 
   /**
    * Removes all items from the internal array.
    */
   clear (scope?: ?string) {
+    let matchesVM = isNullOrUndefined(this.id) ? () => true : (i) => i.vmId === this.vmId;
     if (isNullOrUndefined(scope)) {
       scope = null;
     }
 
     for (let i = 0; i < this.items.length; ++i) {
-      if (this.items[i].scope === scope) {
+      if (matchesVM(this.items[i]) && this.items[i].scope === scope) {
         this.items.splice(i, 1);
         --i;
       }
@@ -234,14 +247,13 @@ export default class ErrorBag {
    * Removes errors by matching against the id or ids.
    */
   removeById (id: string | string[]) {
+    let condition = (item) => item.id === id;
     if (Array.isArray(id)) {
-      // filter out the non-matching fields.
-      this.items = this.items.filter(i => id.indexOf(i.id) === -1);
-      return;
+      condition = (item) => id.indexOf(item.id) !== -1;
     }
 
     for (let i = 0; i < this.items.length; ++i) {
-      if (this.items[i].id === id) {
+      if (condition(this.items[i])) {
         this.items.splice(i, 1);
         --i;
       }
@@ -271,6 +283,7 @@ export default class ErrorBag {
     let matchesRule = () => true;
     let matchesScope = () => true;
     let matchesName = () => true;
+    let matchesVM = () => true;
 
     const { id, rule, scope, name } = parseSelector(selector);
 
@@ -297,14 +310,18 @@ export default class ErrorBag {
       matchesName = item => item.field === name;
     }
 
+    if (!isNullOrUndefined(this.vmId)) {
+      matchesVM = (item) => item.vmId === this.vmId;
+    }
+
     // matches the first candidate.
     const isPrimary = (item) => {
-      return matchesName(item) && matchesRule(item) && matchesScope(item);
+      return matchesVM(item) && matchesName(item) && matchesRule(item) && matchesScope(item);
     };
 
     // matches a second candidate, which is a field with a name containing the '.' character.
     const isAlt = (item) => {
-      return matchesRule(item) && item.field === `${scope}.${name}`;
+      return matchesVM(item) && matchesRule(item) && item.field === `${scope}.${name}`;
     };
 
     return {

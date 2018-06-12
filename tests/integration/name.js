@@ -13,6 +13,7 @@ test('resolves field name from name attribute and data-vv-name on HTML inputs', 
     second: '',
   });
 
+
   await flushPromises();
   expect(wrapper.vm.errors.all()).toEqual([
     'The first field is required.',
