@@ -42,6 +42,7 @@ This is a table of HTML attributes that is inferred as rules.
 | min | val |  min_value: val |
 | max | val | max_value: val |
 | pattern | rgx | regex: rgx |
+| required | _none_ | required |
 
 ::: tip
   This feature does not work on custom components, only HTML5 inputs can take advantage from this feature.
