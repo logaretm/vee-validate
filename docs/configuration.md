@@ -18,7 +18,7 @@ const config = {
   events: 'input|blur',
   fieldsBagName: 'fields',
   i18n: null, // the vue-i18n plugin instance
-  i18nRootKey: 'validations' // the nested key under which the validation messsages will be located
+  i18nRootKey: 'validations', // the nested key under which the validation messsages will be located
   inject: true,
   locale: 'en',
   strict: true,
