@@ -32,7 +32,7 @@ The selector passed to the `validate` method can have the following forms:
 validator.validate();
 
 // validate a field that has a matching name with the provided selector.
-validator.validate('field', value);
+validator.validate('field');
 
 // validate a field within a scope.
 validator.validate('scope.field');
@@ -42,4 +42,7 @@ validator.validate('scope.*');
 
 // validate all fields without a scope.
 validator.validate('*');
+
+// You can optionally validate the selected field against a value
+validator.validate('selector', value)
 ```
