@@ -12,7 +12,7 @@ function rule (fieldName: string, params: any[], data?: any): string {
 }
 ```
 
-It receives the field name or an alias for it as the first parameter, as well as the params used to validate the field. The third optional parameter is any additonal data returned by the validation rule which can [provide more info](./custom-rules#reasoning) for the generator to make it more flexible.
+It receives the field name or an alias for it as the first parameter, as well as the params used to validate the field. The third optional parameter is any additonal data returned by the validation rule which can [provide more info](./custom-rules.html#reasoning) for the generator to make it more flexible.
 
 ## Overwriting Messages
 
