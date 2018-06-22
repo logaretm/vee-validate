@@ -241,6 +241,11 @@ export default class Validator {
     this.errors.remove(field.name, field.scope, field.id);
     this.fields.remove(field);
     const flags = this.flags;
+    const otherFields = this.fields.filter({ name: field.name, scope: field.scope });
+    if (otherFields.length) {
+      return;
+    }
+
     if (!isNullOrUndefined(field.scope) && flags[`$${field.scope}`]) {
       delete flags[`$${field.scope}`][field.name];
     } else if (isNullOrUndefined(field.scope)) {
