@@ -42,4 +42,7 @@ validator.validate('scope.*');
 
 // validate all fields without a scope.
 validator.validate('*');
+
+// You can optionally validate the selected field against a value
+validator.validate('selector', value)
 ```
