@@ -279,9 +279,9 @@ export default class ErrorBag {
     }
 
     // match by id, can be combined with rule selection.
-    if (selector.startsWith('#')) {
+    if (selector[0] === '#') {
       return {
-        isPrimary: item => matchesRule(item) && (item => selector.slice(1).startsWith(item.id)),
+        isPrimary: item => matchesRule(item) && (item => selector.slice(1) === item.id),
         isAlt: () => false
       };
     }
