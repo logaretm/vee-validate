@@ -20,9 +20,10 @@ const sidebars = {
     'field',
     'validator'
   ],
-  advanced: [
+  concepts: [
     '',
-    'ctor',
+    'components',
+    'injections',
     'backend',
     'bundle-size'
   ],
@@ -99,13 +100,13 @@ module.exports = {
         nav: [
           { text: 'Guide', link: '/guide/' },
           { text: 'Config', link: '/configuration' },
-          { text: 'Advanced', link: '/advanced/' },
+          { text: 'Concepts', link: '/concepts/' },
           { text: 'Examples', link: '/examples/' },
           { text: 'API', link: '/api/' }
         ],
         sidebar: {
           '/guide/': genSidebarConfig('Guide'),
-          '/advanced/': genSidebarConfig('Advanced'),
+          '/concepts/': genSidebarConfig('Concepts'),
           '/examples/': genSidebarConfig('Examples'),
           '/api/': genSidebarConfig('API'),
         }
