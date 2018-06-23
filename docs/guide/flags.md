@@ -149,3 +149,7 @@ this.$emit('focus');
 ## Demo
 
 Here is an example that displays those flags, intereact with the input and watch the flags change accordingly:
+
+<iframe src="https://codesandbox.io/embed/y3504yr0l1?initialpath=%2Fflags&module=%2Fsrc%2Fcomponents%2FFlags.vue&view=preview" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+
+[![Edit VeeValidate Examples](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/y3504yr0l1?initialpath=%2Fflags&module=%2Fsrc%2Fcomponents%2FFlags.vue)
