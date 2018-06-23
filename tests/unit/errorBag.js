@@ -22,6 +22,14 @@ test('adds errors to the collection', () => {
   expect(errors.first()).toBe(undefined);
 });
 
+test('matches brackets as field names', () => {
+  const errors = new ErrorBag();
+  errors.add({ field: 'names[1]', msg: 'The name is invalid', rule: 'rule1' });
+  expect(errors.first('names[1]')).toBe('The name is invalid');
+  expect(errors.first('names[1]:rule1')).toBe('The name is invalid');
+
+});
+
 test('accepts an array of errors', () => {
   const errors = new ErrorBag();
 

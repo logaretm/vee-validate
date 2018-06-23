@@ -1,4 +1,4 @@
-import { find, isNullOrUndefined, isCallable, warn, values } from './utils';
+import { find, isNullOrUndefined, isCallable, warn, values, parseSelector } from './utils';
 
 // @flow
 
@@ -272,16 +272,16 @@ export default class ErrorBag {
     let matchesScope = () => true;
     let matchesName = () => true;
 
-    let [, scope, name, rule] = selector.match(/((?:[\w-\s])+\.)?((?:[\w-.*\s])+)(:\w+)?/);
+    const { id, rule, scope, name } = parseSelector(selector);
+
     if (rule) {
-      rule = rule.replace(':', '');
       matchesRule = (item) => item.rule === rule;
     }
 
     // match by id, can be combined with rule selection.
-    if (selector[0] === '#') {
+    if (id) {
       return {
-        isPrimary: item => matchesRule(item) && (item => selector.slice(1) === item.id),
+        isPrimary: item => matchesRule(item) && (item => id === item.id),
         isAlt: () => false
       };
     }
@@ -290,7 +290,6 @@ export default class ErrorBag {
       // if no scope specified, make sure the found error has no scope.
       matchesScope = item => isNullOrUndefined(item.scope);
     } else {
-      scope = scope.replace('.', '');
       matchesScope = item => item.scope === scope;
     }
 

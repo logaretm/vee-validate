@@ -577,3 +577,35 @@ export const values = (obj) => {
 
   return obj[Object.keys(obj)[0]];
 };
+
+export const parseSelector = (selector) => {
+  let rule = null;
+  if (selector.indexOf(':') !== -1) {
+    rule = selector.split(':').pop();
+    selector = selector.replace(`:${rule}`, '');
+  }
+
+  if (selector[0] === '#') {
+    return {
+      id: selector.slice(1),
+      rule,
+      name: null,
+      scope: null
+    };
+  }
+
+  let scope = null;
+  let name = selector;
+  if (selector.indexOf('.') !== -1) {
+    const parts = selector.split('.');
+    scope = parts[0];
+    name = parts.slice(1).join('.');
+  }
+
+  return {
+    id: null,
+    scope,
+    name,
+    rule
+  };
+};
