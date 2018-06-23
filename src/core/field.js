@@ -485,6 +485,45 @@ export default class Field {
   }
 
   /**
+   * Determines the suitable primary event to listen for.
+   */
+  _determineInputEvent () {
+    // if its a custom component, use the customized model event or the input event.
+    if (this.component) {
+      return (this.component.$options.model && this.component.$options.model.event) || 'input';
+    }
+
+    if (this.model) {
+      return this.model.lazy ? 'change' : 'input';
+    }
+
+    if (isTextInput(this.el)) {
+      return 'input';
+    }
+
+    return 'change';
+  }
+
+  /**
+   * Determines the list of events to listen to.
+   */
+  _determineEventList (defaultInputEvent) {
+    // if no event is configured, or it is a component or a text input then respect the user choice.
+    if (!this.events.length || this.component || isTextInput(this.el)) {
+      return [...this.events];
+    }
+
+    // force suitable event for non-text type fields.
+    return this.events.map(e => {
+      if (e === 'input') {
+        return defaultInputEvent;
+      }
+
+      return e;
+    });
+  }
+
+  /**
    * Adds the listeners required for validation.
    */
   addValueListeners () {
@@ -505,15 +544,8 @@ export default class Field {
       this.validator.validate(`#${this.id}`, args[0]);
     };
 
-    let inputEvent = this.component || isTextInput(this.el) ? 'input' : 'change';
-    inputEvent = this.model && this.model.lazy ? 'change' : inputEvent;
-    if (this.component && this.component.$options.model) {
-      inputEvent = this.component.$options.model.event;
-    }
-
-    // force change event for non-text type fields, otherwise use the configured.
-    // if no event is configured then respect the user choice.
-    let events = !this.events.length || this.component || isTextInput(this.el) ? this.events : ['change'];
+    const inputEvent = this._determineInputEvent();
+    let events = this._determineEventList(inputEvent);
 
     // if there is a model and an on input validation is requested.
     if (this.model && events.indexOf(inputEvent) !== -1) {
