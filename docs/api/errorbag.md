@@ -8,10 +8,13 @@ import { ErrorBag } from 'vee-validate';
 const bag = new ErrorBag();
 
 // For example, you may want to add an error related to authentication:
-bag.add('email', 'Wrong Credentials', 'auth');
+bag.add({
+  field: 'auth',
+  msg: 'Wrong Credentials'
+});
 
 // Display it like this:
-bag.first('email:auth');
+bag.first('auth');
 ```
 
 The single error object looks like this:
@@ -44,4 +47,3 @@ const error = {
 | remove(field: string, scope?: string) | `void`| Removes all errors associated with a specific field, specifying a scope will remove messages only for that field and scope.|
 | removeById(id: string) | `void` | Removes a field which matches the provided id.
 | update(id: string, diff: ErrorObject) | `void` | Updates a specific field's erorr messages data, used internally to keep field errors scope up to date.|
-
