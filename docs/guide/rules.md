@@ -201,7 +201,7 @@ The file added to the field under validation must have one of the extensions spe
 
 ### ext params
 
-- `extensions:` Comma separated list of extensions. ex: `ext:jpg,png,bmp,svg
+- `extensions:` list of extensions. ex: `ext:jpg,png,bmp,svg
 
 <input v-validate="'ext:jpeg,jpg'" data-vv-as="field" name="ext_field" type="file">
 <span v-show="errors.has('ext_field')" class="help is-danger">{{ errors.first('ext_field') }}</span>
@@ -305,7 +305,7 @@ The file type added to the field under validation should have one of the specifi
 
 ### mimes params
 
-- `list:` List of comma separated mime types. `mimes:image/jpeg,image/png`
+- `list:` List of mime types. In string format it should be a comma separated list of mime types `mimes:image/jpeg,image/png`. In object form it should be an array of string values: `{ mimes: ['image/jpeg', 'image/png'] }`.
 
 <label class="label">Image File</label>
 <input v-validate="'mimes:image/*'" data-vv-as="image" name="mimes_field" type="file">
