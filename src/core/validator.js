@@ -9,6 +9,8 @@ import Config from '../config';
 const RULES: { [string]: Rule } = {};
 let STRICT_MODE: boolean = true;
 const TARGET_RULES = ['confirmed', 'after', 'before'];
+// rules to skip when validating initially.
+const SKIP_INITIAL = [];
 
 export default class Validator {
   strict: boolean;
@@ -94,8 +96,16 @@ export default class Validator {
   static extend (name: string, validator: Rule | Object, options?: ExtendOptions = {}) {
     Validator._guardExtend(name, validator);
     Validator._merge(name, validator);
-    if (options && options.hasTarget) {
-      TARGET_RULES.push(name);
+    if (options) {
+      // rule needs another target field value for comparison
+      if (options.hasTarget) {
+        TARGET_RULES.push(name);
+      }
+
+      // rule should not execute on initial validation
+      if (options.initial === false) {
+        SKIP_INITIAL.push(name);
+      }
     }
   }
 
@@ -168,9 +178,9 @@ export default class Validator {
 
     // validate the field initially
     if (field.initial) {
-      this.validate(`#${field.id}`, value || field.value);
+      this.validate(`#${field.id}`, value || field.value, { initial: true });
     } else {
-      this._validate(field, value || field.value, true).then(result => {
+      this._validate(field, value || field.value, { initial: true }).then(result => {
         field.flags.valid = result.valid;
         field.flags.invalid = !result.valid;
       });
@@ -629,7 +639,7 @@ export default class Validator {
   /**
    * Starts the validation process.
    */
-  _validate (field: Field, value: any): Promise<ValidationResult> {
+  _validate (field: Field, value: any, { initial } = {}): Promise<ValidationResult> {
     // if field is disabled and is not required.
     if (field.isDisabled || (!field.isRequired && (isNullOrUndefined(value) || value === ''))) {
       return Promise.resolve({ valid: true, id: field.id, field: field.name, scope: field.scope, errors: [] });
@@ -639,7 +649,11 @@ export default class Validator {
     const errors = [];
     let isExitEarly = false;
     // use of '.some()' is to break iteration in middle by returning true
-    Object.keys(field.rules).some(rule => {
+    Object.keys(field.rules).filter(rule => {
+      if (!initial) return true;
+
+      return SKIP_INITIAL.indexOf(rule) === -1;
+    }).some(rule => {
       const result = this._test(field, value, { name: rule, params: field.rules[rule] });
       if (isCallable(result.then)) {
         promises.push(result);

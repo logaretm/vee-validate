@@ -16,7 +16,8 @@ declare type ValidationResult = {
 };
 
 declare type ExtendOptions = {
-  hasTarget?: boolean
+  hasTarget?: boolean,
+  initial?: boolean
 };
 
 declare type FieldOptions = {

@@ -870,7 +870,20 @@ test('triggers initial validation for fields', async () => {
   const v = new Validator();
   v.validate = jest.fn();
   const field = v.attach({ name: 'field', rules: 'alpha', el: document.createElement('input'), getter: () => '123', initial: true });
-  expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123');
+  expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123', { initial: true });
+});
+
+test('rules can be skipped on initial validation', async () => {
+  const v = new Validator();
+  const validateSkip = jest.fn(() => true);
+  const validateUnskipped = jest.fn(() => true);
+
+  v.extend('backend', validateSkip, { initial: false });
+  v.extend('backendUnskipped', validateUnskipped);
+
+  const field = v.attach({ name: 'field', rules: 'required|backend|backendUnskipped', el: document.createElement('input'), getter: () => '123' });
+  expect(validateSkip).not.toHaveBeenCalled();
+  expect(validateUnskipped).toHaveBeenCalled();
 });
 
 test('updates classes on related radio input fields', async () => {
