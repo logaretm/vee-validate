@@ -97,7 +97,6 @@ export default class I18nDictionary implements IDictionary {
       // i18n doesn't deep merge
       // first clone the existing locale (avoid mutations to locale)
       const clone = merge({}, getPath(`${localeKey}.${this.rootKey}`, this.i18n.messages, {}));
-      console.log(clone);
       // Merge cloned locale with new one
       const locale = merge(clone, normalizeFormat(dictionary[localeKey]));
       this.i18n.mergeLocaleMessage(localeKey, { [this.rootKey]: locale });
