@@ -1,4 +1,4 @@
-import { warn, isCallable, isObject, merge, getPath } from '../utils';
+import { warn, isCallable, isObject, merge, getPath, isNullOrUndefined } from '../utils';
 
 // @flow
 
@@ -20,15 +20,24 @@ const normalizeValue = (value: any) => {
 
 const normalizeFormat = (locale: Locale) => {
   // normalize messages
-  const messages = normalizeValue(locale.messages);
-  const custom = normalizeValue(locale.custom);
+  const dictionary = {};
+  if (locale.messages) {
+    dictionary.messages = normalizeValue(locale.messages);
+  }
 
-  return {
-    messages,
-    custom,
-    attributes: locale.attributes,
-    dateFormat: locale.dateFormat
-  };
+  if (locale.custom) {
+    dictionary.custom = normalizeValue(locale.custom);
+  }
+
+  if (locale.attributes) {
+    dictionary.attributes = locale.attributes;
+  }
+
+  if (!isNullOrUndefined(locale.dateFormat)) {
+    dictionary.dateFormat = locale.dateFormat;
+  }
+
+  return dictionary;
 };
 
 export default class I18nDictionary implements IDictionary {
@@ -88,6 +97,7 @@ export default class I18nDictionary implements IDictionary {
       // i18n doesn't deep merge
       // first clone the existing locale (avoid mutations to locale)
       const clone = merge({}, getPath(`${localeKey}.${this.rootKey}`, this.i18n.messages, {}));
+      console.log(clone);
       // Merge cloned locale with new one
       const locale = merge(clone, normalizeFormat(dictionary[localeKey]));
       this.i18n.mergeLocaleMessage(localeKey, { [this.rootKey]: locale });
