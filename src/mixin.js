@@ -1,5 +1,5 @@
 import Config from './config';
-import Validator from './core/componentValidator';
+import Validator from './core/validatorDecorator';
 import { isObject, isBuiltInComponent } from './core/utils';
 
 // @flow
@@ -37,7 +37,6 @@ export default {
     }
 
     const options = Config.resolve(this);
-    const Vue = this.$options._base; // the vue constructor.
 
     // if its a root instance, inject anyways, or if it requested a new instance.
     if (!this.$parent || (this.$options.$_veeValidate && /new/.test(this.$options.$_veeValidate.validator))) {
