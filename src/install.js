@@ -16,11 +16,14 @@ function install (_Vue, options = {}) {
 
   detectPassiveSupport();
   Vue = _Vue;
-  const localVue = new Vue();
-  Config.register('vm', localVue);
   const validator = new Validator(options);
-  Vue.util.defineReactive(validator, 'errors', validator.errors);
-  Vue.util.defineReactive(validator, 'fields', validator.fields);
+  const localVue = new Vue({
+    data: () => ({
+      errors: validator.errors,
+      fields: validator.fields
+    })
+  });
+  Config.register('vm', localVue);
   Config.register('validator', validator);
   Config.merge(options);
 
