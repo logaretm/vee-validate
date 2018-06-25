@@ -2,8 +2,6 @@ import { assign } from './utils';
 import ErrorBag from './errorBag';
 import FieldBag from './fieldBag';
 
-import Config from '../config';
-
 export default class ScopedValidator {
   constructor (base, vm) {
     this.id = vm._uid;
@@ -41,16 +39,16 @@ export default class ScopedValidator {
     return this._base.dictionary;
   }
 
-  static get dictionary () {
-    return Config.dependency('dictionary');
+  get locale () {
+    return this._base.locale;
+  }
+
+  set locale (val) {
+    this._base.locale = val;
   }
 
   localize (...args) {
     return this._base.localize(...args);
-  }
-
-  static localize (...args) {
-    return Config.dependency('validator').localize(...args);
   }
 
   update (...args) {
@@ -93,7 +91,7 @@ export default class ScopedValidator {
   }
 
   reset (matcher) {
-    return this._base.reset(matcher, this.id);
+    return this._base.reset(Object.assign({}, matcher || {}, { vmId: this.id }));
   }
 
   flag (...args) {
