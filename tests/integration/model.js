@@ -61,6 +61,7 @@ test('watches the model from the child context if it cannot be watched from the 
   // check resolving
   expect(field.value).toBe('someval');
   expect(wrapper.vm.$validator.errors.count()).toBe(0);
+  expect(wrapper.vm.errors.any()).toBe(false);
 
   // check watchers
   wrapper.setData({
@@ -70,5 +71,6 @@ test('watches the model from the child context if it cannot be watched from the 
   });
   await flushPromises();
   expect(wrapper.vm.$validator.errors.count()).toBe(1);
+  expect(wrapper.vm.errors.any()).toBe(true);
 });
 
