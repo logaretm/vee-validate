@@ -1,4 +1,4 @@
-import validate from '@/rules/image';
+import { validate } from '@/rules/image';
 import helpers from './../../helpers';
 
 test('validates image files', () => {

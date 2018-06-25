@@ -1,4 +1,4 @@
-import validate from '@/rules/numeric';
+import { validate } from '@/rules/numeric';
 
 const valid = [
   '1234567890',

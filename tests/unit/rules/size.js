@@ -1,4 +1,4 @@
-import validate from '@/rules/size';
+import { validate } from '@/rules/size';
 import helpers from './../../helpers';
 
 test('validates file size', () => {

@@ -1,4 +1,4 @@
-import validate from '@/rules/confirmed';
+import { validate } from '@/rules/confirmed';
 
 test('validates a field confirmation', () => {
   expect(validate('p@$$word', 'p@$$word')).toBe(true);

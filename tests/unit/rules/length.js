@@ -1,4 +1,4 @@
-import validate from '@/rules/length';
+import { validate } from '@/rules/length';
 
 test('validates number of characters in a string', () => {
   // exact length

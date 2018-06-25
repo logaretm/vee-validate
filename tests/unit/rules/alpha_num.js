@@ -1,4 +1,4 @@
-import validate from '@/rules/alpha_num';
+import { validate } from '@/rules/alpha_num';
 
 const valid = [
   'a',

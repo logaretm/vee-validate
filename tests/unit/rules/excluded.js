@@ -1,4 +1,4 @@
-import validate from '@/rules/excluded';
+import { validate } from '@/rules/excluded';
 
 test('validates that the value does not exist within a list', () => {
   const list = [1, 2, 3, 4, 5];

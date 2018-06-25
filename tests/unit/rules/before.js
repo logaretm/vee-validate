@@ -1,4 +1,4 @@
-import validate from '@/rules/before';
+import { validate } from '@/rules/before';
 
 test('sets the format and inclusion params if not passed', () => {
   const format = 'DD/MM/YYYY';

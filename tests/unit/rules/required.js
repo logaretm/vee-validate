@@ -1,4 +1,4 @@
-import validate from '@/rules/required';
+import { validate } from '@/rules/required';
 
 const valid = [
   'asjdj',

@@ -1,4 +1,4 @@
-import validate from '@/rules/date_between';
+import { validate } from '@/rules/date_between';
 
 test('checks if a date is between two other dates - exclusive', () => {
   const format = 'DD/MM/YYYY';

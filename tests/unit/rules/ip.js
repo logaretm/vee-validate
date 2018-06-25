@@ -1,4 +1,4 @@
-import validate from '@/rules/ip';
+import { validate } from '@/rules/ip';
 
 test('validates that the string is a valid ipv4 address', () => {
   // valid.

@@ -1,4 +1,4 @@
-import validate from '@/rules/alpha';
+import { validate } from '@/rules/alpha';
 
 const valid = [
   'abcdefgHijklMnOpqRsTUVwxYZ',

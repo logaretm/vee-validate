@@ -1,4 +1,4 @@
-import validate from '@/rules/credit_card';
+import { validate } from '@/rules/credit_card';
 
 const valid = [
   '4111111111111111',
