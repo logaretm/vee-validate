@@ -19,6 +19,8 @@ function install (_Vue, options = {}) {
   const localVue = new Vue();
   Config.register('vm', localVue);
   const validator = new Validator(options);
+  Vue.util.defineReactive(validator, 'errors', validator.errors);
+  Vue.util.defineReactive(validator, 'fields', validator.fields);
   Config.register('validator', validator);
   Config.merge(options);
 

@@ -187,6 +187,10 @@ export default class ErrorBag {
    * Gets the internal array length.
    */
   count (): number {
+    if (this.vmId) {
+      return this.items.filter(e => e.vmId === this.vmId).length;
+    }
+
     return this.items.length;
   }
 

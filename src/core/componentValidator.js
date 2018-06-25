@@ -1,5 +1,7 @@
 import { assign } from './utils';
 import ErrorBag from './errorBag';
+import FieldBag from './fieldBag';
+
 import Config from '../config';
 
 export default class ScopedValidator {
@@ -11,16 +13,28 @@ export default class ScopedValidator {
     this.errors = new ErrorBag(base.errors, this.id);
   }
 
+  get flags () {
+    return this._base.fields.items.filter(f => f.vmId === this.id).reduce((acc, field) => {
+      if (field.scope) {
+        acc[`$${field.scope}`] = {
+          [field.name]: field.flags
+        };
+
+        return acc;
+      }
+
+      acc[field.name] = field.flags;
+
+      return acc;
+    }, {});
+  }
+
   get rules () {
     return this._base.rules;
   }
 
   get fields () {
-    return this._base.fields;
-  }
-
-  get flags () {
-    return this._base.flags;
+    return new FieldBag(this._base.fields.filter({ vmId: this.id }));
   }
 
   get dictionary () {
@@ -61,16 +75,16 @@ export default class ScopedValidator {
     return this._base.extend(...args);
   }
 
-  validate (descriptor, value, { silent } = {}) {
-    return this._base.validate(descriptor, value, { silent, vmId: this.id });
+  validate (descriptor, value, opts = {}) {
+    return this._base.validate(descriptor, value, assign({}, { vmId: this.id }, opts || {}));
   }
 
-  validateAll (values, { silent } = {}) {
-    return this._base.validateAll(values, { silent, vmId: this.id });
+  validateAll (values, opts = {}) {
+    return this._base.validateAll(values, assign({}, { vmId: this.id }, opts || {}));
   }
 
   validateScopes (opts = {}) {
-    return this._base.validateScopes({ vmId: this.id, silent: opts && opts.silent });
+    return this._base.validateScopes(assign({}, { vmId: this.id }, opts || {}));
   }
 
   destroy () {

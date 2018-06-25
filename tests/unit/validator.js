@@ -1033,7 +1033,7 @@ test('updates existing field errors and flags to match the new scope', async () 
 
   field.scope = 's2';
   // test removal
-  expect(v.flags.$s1.email).toBeFalsy();
+  expect(v.flags.$s1).toBeFalsy();
 
   // test flag and errors updates.
   expect(v.flags.$s2.email).toBeTruthy();

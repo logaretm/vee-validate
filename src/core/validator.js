@@ -25,7 +25,6 @@ export default class Validator {
     this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
     this.fields = new FieldBag();
-    this.flags = {};
     this._createFields(validations);
     this.paused = false;
     this.fastExit = options.fastExit || false;
@@ -37,6 +36,22 @@ export default class Validator {
 
   get rules () {
     return RULES;
+  }
+
+  get flags () {
+    return this.fields.items.reduce((acc, field) => {
+      if (field.scope) {
+        acc[`$${field.scope}`] = {
+          [field.name]: field.flags
+        };
+
+        return acc;
+      }
+
+      acc[field.name] = field.flags;
+
+      return acc;
+    }, {});
   }
 
   /**
@@ -186,8 +201,6 @@ export default class Validator {
       });
     }
 
-    this._addFlag(field, field.scope);
-
     return field;
   }
 
@@ -213,19 +226,6 @@ export default class Validator {
     field.destroy();
     this.errors.remove(field.name, field.scope, field.id);
     this.fields.remove(field);
-    const flags = this.flags;
-    const otherFields = this.fields.filter({ name: field.name, scope: field.scope });
-    if (otherFields.length) {
-      return;
-    }
-
-    if (!isNullOrUndefined(field.scope) && flags[`$${field.scope}`]) {
-      delete flags[`$${field.scope}`][field.name];
-    } else if (isNullOrUndefined(field.scope)) {
-      delete flags[field.name];
-    }
-
-    this.flags = assign({}, flags);
   }
 
   /**
@@ -256,13 +256,6 @@ export default class Validator {
 
     // remove old scope.
     this.errors.update(id, { scope });
-    if (!isNullOrUndefined(field.scope) && this.flags[`$${field.scope}`]) {
-      delete this.flags[`$${field.scope}`][field.name];
-    } else if (isNullOrUndefined(field.scope)) {
-      delete this.flags[field.name];
-    }
-
-    this._addFlag(field, scope);
   }
 
   /**
@@ -448,19 +441,6 @@ export default class Validator {
    */
   _getFieldDisplayName (field: Field) {
     return field.alias || this.dictionary.getAttribute(this.locale, field.name, field.name);
-  }
-
-  /**
-   * Adds a field flags to the flags collection.
-   */
-  _addFlag (field: Field, scope?: string | null = null) {
-    if (isNullOrUndefined(scope)) {
-      this.flags = assign({}, this.flags, { [`${field.name}`]: field.flags });
-      return;
-    }
-
-    const scopeObj = assign({}, this.flags[`$${scope}`] || {}, { [`${field.name}`]: field.flags });
-    this.flags = assign({}, this.flags, { [`$${scope}`]: scopeObj });
   }
 
   /**

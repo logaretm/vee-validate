@@ -54,7 +54,7 @@ test('watches the model from the child context if it cannot be watched from the 
     values: [
       { value: 'someval' }
     ]
-  });
+  })
 
   await flushPromises();
 
