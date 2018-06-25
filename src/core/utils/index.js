@@ -363,10 +363,12 @@ export const toArray = (arrayLike: { length: number }) => {
 
   const array = [];
   const length = arrayLike.length;
+  /* istanbul ignore next */
   for (let i = 0; i < length; i++) {
     array.push(arrayLike[i]);
   }
 
+  /* istanbul ignore next */
   return array;
 };
 
@@ -577,6 +579,8 @@ export const values = (obj) => {
     return Object.values(obj);
   }
 
+  // fallback to keys()
+  /* istanbul ignore next */
   return obj[Object.keys(obj)[0]];
 };
 

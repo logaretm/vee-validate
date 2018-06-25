@@ -506,3 +506,54 @@ test('detects passive events support', () => {
 
   window.addEventListener = addEvt;
 });
+
+test('tells if the input is textual input', () => {
+  const inputs = [
+    { type: 'text', isValid: true },
+    { type: 'url', isValid: true },
+    { type: 'password', isValid: true },
+    { type: 'email', isValid: true },
+    { type: 'tel', isValid: true },
+    { type: 'textarea', isValid: true },
+    { type: 'search', isValid: true },
+    { type: 'checkbox', isValid: false }
+  ];
+
+  inputs.forEach(input => {
+    let el = document.createElement('input');
+    el.type = input.type;
+    expect(utils.isTextInput(el)).toBe(input.isValid);
+  });
+});
+
+test('tells if the input is radio or checkbox inputs', () => {
+  const inputs = [
+    { type: 'text', isValid: false },
+    { type: 'checkbox', isValid: true },
+    { type: 'radio', isValid: true }
+  ];
+
+  inputs.forEach(input => {
+    let el = document.createElement('input');
+    el.type = input.type;
+    expect(utils.isCheckboxOrRadioInput(el)).toBe(input.isValid);
+  });
+});
+
+test('tells if the input is a date input', () => {
+  const inputs = [
+    { type: 'text', isValid: false },
+    { type: 'date', isValid: true },
+    { type: 'week', isValid: true },
+    { type: 'month', isValid: true },
+    { type: 'datetime-local', isValid: true },
+    { type: 'time', isValid: true },
+    { type: 'radio', isValid: false }
+  ];
+
+  inputs.forEach(input => {
+    let el = document.createElement('input');
+    el.type = input.type;
+    expect(utils.isDateInput(el)).toBe(input.isValid);
+  });
+});
