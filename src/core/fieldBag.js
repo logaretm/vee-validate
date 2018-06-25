@@ -6,8 +6,8 @@ import { find, createError } from './utils';
 export default class FieldBag {
   items: Array<Field>;
 
-  constructor () {
-    this.items = [];
+  constructor (items = []) {
+    this.items = items || [];
   }
 
   [typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'] () {

@@ -1,3 +1,5 @@
+import Resolver from './resolver';
+import Validator from './validator';
 import {
   uniqId,
   createFlags,
@@ -19,14 +21,12 @@ import {
   addEventListener,
   isCheckboxOrRadioInput
 } from './utils';
-import Generator from './generator';
-import Validator from './validator';
 
 // @flow
 
 const DEFAULT_OPTIONS = {
   targetOf: null,
-  initial: false,
+  immediate: false,
   scope: null,
   listen: true,
   name: null,
@@ -66,7 +66,7 @@ export default class Field {
   name: string;
   scope: string | null;
   targetOf: ?string;
-  initial: boolean;
+  immediate: boolean;
   classes: boolean;
   classNames: { [string]: string };
   delay: number | Object;
@@ -81,6 +81,7 @@ export default class Field {
     this.el = options.el;
     this.updated = false;
     this.dependencies = [];
+    this.vmId = options.vmId;
     this.watchers = [];
     this.events = [];
     this.delay = 0;
@@ -177,6 +178,11 @@ export default class Field {
       return this.id === options.id;
     }
 
+    let matchesComponentId = isNullOrUndefined(options.vmId) ? () => true : (id) => id === this.vmId;
+    if (!matchesComponentId(options.vmId)) {
+      return false;
+    }
+
     if (options.name === undefined && options.scope === undefined) {
       return true;
     }
@@ -206,7 +212,7 @@ export default class Field {
    */
   update (options: Object) {
     this.targetOf = options.targetOf || null;
-    this.initial = options.initial || this.initial || false;
+    this.immediate = options.immediate || this.immediate || false;
 
     // update errors scope if the field scope was changed.
     if (!isNullOrUndefined(options.scope) && options.scope !== this.scope && isCallable(this.validator.update)) {
@@ -341,7 +347,7 @@ export default class Field {
         delay: this.delay,
         scope: this.scope,
         events: this.events.join('|'),
-        initial: this.initial,
+        immediate: this.immediate,
         targetOf: this.id
       };
 
@@ -349,10 +355,10 @@ export default class Field {
       if (isCallable(el.$watch)) {
         options.component = el;
         options.el = el.$el;
-        options.getter = Generator.resolveGetter(el.$el, el.$vnode);
+        options.getter = Resolver.resolveGetter(el.$el, el.$vnode);
       } else {
         options.el = el;
-        options.getter = Generator.resolveGetter(el, {});
+        options.getter = Resolver.resolveGetter(el, {});
       }
 
       this.dependencies.push({ name, field: new Field(options) });

@@ -12,4 +12,10 @@ const validate = (value, [multiple = false] = []) => {
   return isEmail(String(value));
 };
 
-export default validate;
+export {
+  validate
+};
+
+export default {
+  validate
+};

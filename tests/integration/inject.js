@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
 import VeeValidate from '@/index';
+import ScopedValidator from '@/core/validatorDecorator';
 import TestComponent from './components/Inject';
 import BuiltInsTestComponent from './components/BuiltIn';
 import ChildInject from './components/stubs/ChildWithParentValidatorInjection';
@@ -18,16 +18,16 @@ test('injects parent validator instances if requested otherwise new instances wi
   const childWithoutPreference = wrapper.find(ChildNone);
 
   // test if they all have a validator instance
-  expect(childWithParentValidator.vm.$validator instanceof VeeValidate.Validator).toBe(true);
-  expect(childWithNewValidator.vm.$validator instanceof VeeValidate.Validator).toBe(true);
-  expect(childWithoutPreference.vm.$validator instanceof VeeValidate.Validator).toBe(true);
+  expect(childWithParentValidator.vm.$validator instanceof ScopedValidator).toBe(true);
+  expect(childWithNewValidator.vm.$validator instanceof ScopedValidator).toBe(true);
+  expect(childWithoutPreference.vm.$validator instanceof ScopedValidator).toBe(true);
 
   // without preference, a new validator should be injected.
   expect(wrapper.vm.$validator).not.toBe(childWithoutPreference.vm.$validator);
-  // with new perference, it should not inherit it.
+  // with new preference, it should not inherit it.
   expect(wrapper.vm.$validator).not.toBe(childWithNewValidator.vm.$validator);
 
-  // should recieve the parent instance
+  // should receive the parent instance
   expect(wrapper.vm.$validator).toBe(childWithParentValidator.vm.$validator);
 });
 
@@ -44,16 +44,16 @@ test('does not auto inject any validator instance unless requested', async () =>
   const childWithoutPreference = wrapper.find(ChildNone);
 
   // test if they all have a validator instance
-  expect(childWithParentValidator.vm.$validator instanceof VeeValidate.Validator).toBe(true);
-  expect(childWithNewValidator.vm.$validator instanceof VeeValidate.Validator).toBe(true);
+  expect(childWithParentValidator.vm.$validator instanceof ScopedValidator).toBe(true);
+  expect(childWithNewValidator.vm.$validator instanceof ScopedValidator).toBe(true);
 
   // was not injected because auto inject is disbaled.
   expect(childWithoutPreference.vm.$validator).toBe(undefined);
 
-  // with new perference, it should have a new instance.
+  // with new preference, it should have a new instance.
   expect(wrapper.vm.$validator).not.toBe(childWithNewValidator.vm.$validator);
 
-  // should recieve the parent instance
+  // should receive the parent instance
   expect(wrapper.vm.$validator).toBe(childWithParentValidator.vm.$validator);
 });
 

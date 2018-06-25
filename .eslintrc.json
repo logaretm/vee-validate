@@ -2,14 +2,17 @@
     "env": {
         "browser": true,
         "commonjs": true,
-        "es6": true
+        "es6": true,
+        "jest/globals": true
     },
     "extends": [
         "standard",
-        "plugin:flowtype/recommended"
+        "plugin:flowtype/recommended",
+        "plugin:jest/recommended"
     ],
     "plugins": [
-        "flowtype"
+        "flowtype",
+        "jest"
     ],
     "rules": {
         "indent": [

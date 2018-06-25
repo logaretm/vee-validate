@@ -1,6 +1,6 @@
 import Dictionary from '@/core/localization/i18n';
 import VueI18n from 'vue-i18n';
-import { mount, createLocalVue } from '@vue/test-utils';
+import { createLocalVue } from '@vue/test-utils';
 
 const localVue = createLocalVue();
 localVue.use(VueI18n);
@@ -72,7 +72,7 @@ test('sets messsages', () => {
 
   // sets them in vee-validate format
   dictionary.setMessage('en', 'required', (field, [param]) => {
-    return `OOPS ${field} is invalid because ${param}`
+    return `OOPS ${field} is invalid because ${param}`;
   });
   expect(
     dictionary.getMessage('en', 'required', ['field', ['val']])
@@ -181,7 +181,7 @@ describe('gets field specifc messages', () => {
 
   test('fallsback to the default message for the rule', () => {
     expect(dictionary.getFieldMessage('en', 'name', 'required', [])).toBe('default required message');
-  })
+  });
 });
 
 test('merges dictionaries and locale messages', () => {

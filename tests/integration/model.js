@@ -14,7 +14,7 @@ test('watches input value on model change', async () => {
   expect(wrapper.vm.errors.has('field')).toBe(true);
 });
 
-test('model can be watched via the directive arg', async() => {
+test('model can be watched via the directive arg', async () => {
   const wrapper = mount(TestComponent, { localVue: Vue });
   expect(wrapper.vm.errors.has('argField')).toBe(false);
   wrapper.setData({ input: '' });
@@ -22,7 +22,7 @@ test('model can be watched via the directive arg', async() => {
   expect(wrapper.vm.errors.has('argField')).toBe(true);
 });
 
-test('falls back to DOM events if the model is unwatchable', async() => {
+test('falls back to DOM events if the model is unwatchable', async () => {
   const wrapper = mount(TestComponent, { localVue: Vue });
   expect(wrapper.vm.errors.count()).toBe(0);
   wrapper.setData({
@@ -61,6 +61,7 @@ test('watches the model from the child context if it cannot be watched from the 
   // check resolving
   expect(field.value).toBe('someval');
   expect(wrapper.vm.$validator.errors.count()).toBe(0);
+  expect(wrapper.vm.errors.any()).toBe(false);
 
   // check watchers
   wrapper.setData({
@@ -70,5 +71,5 @@ test('watches the model from the child context if it cannot be watched from the 
   });
   await flushPromises();
   expect(wrapper.vm.$validator.errors.count()).toBe(1);
+  expect(wrapper.vm.errors.any()).toBe(true);
 });
-

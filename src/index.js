@@ -5,7 +5,7 @@ import minimal from './index.minimal';
 // rules plugin definition.
 const rulesPlugin = ({ Validator }) => {
   Object.keys(Rules).forEach(rule => {
-    Validator.extend(rule, Rules[rule]);
+    Validator.extend(rule, Rules[rule].validate, Rules[rule].options);
   });
 
   // Merge the english messages.

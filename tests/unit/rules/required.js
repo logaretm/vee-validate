@@ -1,4 +1,4 @@
-import validate from '@/rules/required';
+import { validate } from '@/rules/required';
 
 const valid = [
   'asjdj',
@@ -13,7 +13,7 @@ const valid = [
 const invalid = [
   '',
   ' ',
-    [],
+  [],
   undefined,
   null
 ];

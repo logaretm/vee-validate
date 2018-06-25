@@ -6,4 +6,10 @@ const validate = (value, [min, max]) => {
   return Number(min) <= value && Number(max) >= value;
 };
 
-export default validate;
+export {
+  validate
+};
+
+export default {
+  validate
+};

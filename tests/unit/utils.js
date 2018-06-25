@@ -197,7 +197,6 @@ test('converts array like objects to arrays', () => {
   expect(Array.isArray(array)).toBe(true);
 });
 
-
 test('checks if a value path with exists', () => {
   const some = {
     value: {
@@ -226,7 +225,6 @@ test('gets the value path with a fallback value', () => {
   expect(utils.getPath('value.path', some)).toBe(undefined); // undefined but exists.
   expect(utils.getPath('value.not', some, false)).toBe(false); // does not.
 });
-
 
 test('debounces the provided function', done => {
   const [value, argument] = ['someval', 'somearg'];
@@ -262,7 +260,7 @@ test('calls functions immediatly if time is 0', done => {
 });
 
 test('warns with branded message', () => {
-  global.console = { warn: jest.fn() }
+  global.console = { warn: jest.fn() };
   utils.warn('Something is not right');
   expect(console.warn).toBeCalledWith('[vee-validate] Something is not right');
 });
@@ -317,7 +315,7 @@ describe('normalizes rules', () => {
 
 test('creates branded errors', () => {
   expect(() => {
-    throw utils.createError('My Error')
+    throw utils.createError('My Error');
   }).toThrowError('[vee-validate] My Error');
 });
 
@@ -362,7 +360,6 @@ test('compares two values', () => {
     bar: 2
   })).toBe(true);
 
-
   expect(utils.isEqual({
     foo: /myregx/g,
     bar: 2
@@ -403,13 +400,12 @@ describe('pareses date values', () => {
     expect(dateUtils.parseDate(new Date(2017, 13, 11), format)).toBeTruthy();
     expect(dateUtils.parseDate(Date.parse('foo'), format)).toBe(null);
   });
-
 });
 
 describe('makeEventsArray', () => {
   test('it creates valid event arrays', () => {
     expect(utils.makeEventsArray('input|blur|change')).toEqual(['input', 'blur', 'change']);
-    expect(utils.makeEventsArray('focus')).toEqual(['focus'])
+    expect(utils.makeEventsArray('focus')).toEqual(['focus']);
   });
 
   test('it handles empty event strings', () => {
@@ -454,7 +450,7 @@ describe('makeDelayObject', () => {
   });
 
   test('only outputs the requested events', () => {
-    expect(utils.makeDelayObject(['input', 'blur'], {change: 200, focus: 800})).toEqual({ blur: 0, input: 0});
+    expect(utils.makeDelayObject(['input', 'blur'], {change: 200, focus: 800})).toEqual({ blur: 0, input: 0 });
   });
 
   test('it handles delay integers', () => {
@@ -475,12 +471,12 @@ describe('deepParseInt', () => {
   });
 
   test('it parses numeric strings', () => {
-    expect(utils.deepParseInt("10")).toEqual(10);
-    expect(utils.deepParseInt("hey")).toEqual(NaN);
+    expect(utils.deepParseInt('10')).toEqual(10);
+    expect(utils.deepParseInt('hey')).toEqual(NaN);
   });
 
   test('it parses all values on the first level of an object to int', () => {
-    expect(utils.deepParseInt({ blur: "10", input: "400", focus: 300, change: "hello" })).toEqual({ blur: 10, input: 400, focus: 300, change: NaN });
+    expect(utils.deepParseInt({ blur: '10', input: '400', focus: 300, change: 'hello' })).toEqual({ blur: 10, input: 400, focus: 300, change: NaN });
   });
 });
 
@@ -492,7 +488,7 @@ test('detects passive events support', () => {
     if (opts.passive) {
       return 'yay!';
     }
-  }
+  };
 
   expect(utils.detectPassiveSupport()).toBe(true);
 
@@ -500,9 +496,60 @@ test('detects passive events support', () => {
     if (typeof opts === 'object') {
       throw new Error('Should not pass an object');
     }
-  }
+  };
 
   expect(utils.detectPassiveSupport()).toBe(false);
 
   window.addEventListener = addEvt;
+});
+
+test('tells if the input is textual input', () => {
+  const inputs = [
+    { type: 'text', isValid: true },
+    { type: 'url', isValid: true },
+    { type: 'password', isValid: true },
+    { type: 'email', isValid: true },
+    { type: 'tel', isValid: true },
+    { type: 'textarea', isValid: true },
+    { type: 'search', isValid: true },
+    { type: 'checkbox', isValid: false }
+  ];
+
+  inputs.forEach(input => {
+    let el = document.createElement('input');
+    el.type = input.type;
+    expect(utils.isTextInput(el)).toBe(input.isValid);
+  });
+});
+
+test('tells if the input is radio or checkbox inputs', () => {
+  const inputs = [
+    { type: 'text', isValid: false },
+    { type: 'checkbox', isValid: true },
+    { type: 'radio', isValid: true }
+  ];
+
+  inputs.forEach(input => {
+    let el = document.createElement('input');
+    el.type = input.type;
+    expect(utils.isCheckboxOrRadioInput(el)).toBe(input.isValid);
+  });
+});
+
+test('tells if the input is a date input', () => {
+  const inputs = [
+    { type: 'text', isValid: false },
+    { type: 'date', isValid: true },
+    { type: 'week', isValid: true },
+    { type: 'month', isValid: true },
+    { type: 'datetime-local', isValid: true },
+    { type: 'time', isValid: true },
+    { type: 'radio', isValid: false }
+  ];
+
+  inputs.forEach(input => {
+    let el = document.createElement('input');
+    el.type = input.type;
+    expect(utils.isDateInput(el)).toBe(input.isValid);
+  });
 });

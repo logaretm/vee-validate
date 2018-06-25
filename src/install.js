@@ -2,7 +2,7 @@ import mixin from './mixin';
 import directive from './directive';
 import Config from './config';
 import Validator from './core/validator';
-import { warn, isCallable, detectPassiveSupport } from './core/utils';
+import { warn, detectPassiveSupport } from './core/utils';
 
 let Vue;
 
@@ -18,23 +18,33 @@ function install (_Vue, options = {}) {
   Vue = _Vue;
   const localVue = new Vue();
   Config.register('vm', localVue);
+  const validator = new Validator(options);
+  Vue.util.defineReactive(validator, 'errors', validator.errors);
+  Vue.util.defineReactive(validator, 'fields', validator.fields);
+  Config.register('validator', validator);
   Config.merge(options);
 
   const { dictionary, i18n } = Config.current;
 
   if (dictionary) {
-    Validator.localize(dictionary); // merge the dictionary.
+    validator.localize(dictionary); // merge the dictionary.
   }
 
-  // try to watch locale changes.
-  if (i18n && i18n._vm && isCallable(i18n._vm.$watch)) {
-    i18n._vm.$watch('locale', () => {
-      localVue.$emit('localeChanged');
-    });
+  const onLocaleChanged = () => {
+    validator.errors.regenerate();
+  };
+
+  // watch locale changes using localVue instance or i18n.
+  if (!i18n) {
+    if (typeof window !== 'undefined') {
+      localVue.$on('localeChanged', onLocaleChanged);
+    }
+  } else {
+    i18n._vm.$watch('locale', onLocaleChanged);
   }
 
   if (!i18n && options.locale) {
-    Validator.localize(options.locale); // set the locale
+    validator.localize(options.locale); // set the locale
   }
 
   Validator.setStrictMode(Config.current.strict);

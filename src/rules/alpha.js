@@ -13,4 +13,10 @@ const validate = (value, [locale = null] = []) => {
   return (alpha[locale] || alpha.en).test(value);
 };
 
-export default validate;
+export {
+  validate
+};
+
+export default {
+  validate
+};

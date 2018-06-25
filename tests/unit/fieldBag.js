@@ -6,7 +6,7 @@ test('adds field items to the collection', () => {
   const field = new Field({ el: null });
 
   bag.push(field);
-  expect(bag.length).toBe(1);
+  expect(bag).toHaveLength(1);
 
   // does not allow duplicates.
   expect(() => {
@@ -83,20 +83,20 @@ test('removes the first field that matches a matcher object', () => {
   bag.push(field2);
   bag.push(field3);
 
-  expect(bag.length).toBe(3);
+  expect(bag).toHaveLength(3);
   // returns removed item.
   expect(bag.remove({ id: field1.id })).toBe(field1);
-  expect(bag.length).toBe(2);
+  expect(bag).toHaveLength(2);
   bag.remove({ name: 'email' });
-  expect(bag.length).toBe(1);
+  expect(bag).toHaveLength(1);
 
   // no such field.
   expect(bag.remove({ name: 'email', scope: 's2' })).toBe(null);
-  expect(bag.length).toBe(1);
+  expect(bag).toHaveLength(1);
 
   // can remove fields directly.
   bag.remove(field3);
-  expect(bag.length).toBe(0);
+  expect(bag).toHaveLength(0);
 });
 
 test('field bag instance is iterable', () => {

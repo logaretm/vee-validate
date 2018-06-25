@@ -3,7 +3,7 @@ import flushPromises from 'flush-promises';
 import VeeValidate from '@/index';
 import TestComponent from './components/Flags';
 
-test('provides fake flags proxy to prevent render errors', async () => {
+test('flags are reactive', async () => {
   const Vue = createLocalVue();
   Vue.use(VeeValidate);
 
@@ -114,4 +114,27 @@ test('adds listeners when field flag is manually set', async () => {
   input.trigger('blur');
   await flushPromises();
   expect(field.flags.touched).toBe(true);
+});
+
+test('scoped field flags', async () => {
+  const Vue = createLocalVue();
+  Vue.use(VeeValidate);
+
+  const wrapper = shallow(TestComponent, { localVue: Vue });
+  wrapper.vm.$validator.fields.find({ name: 'scoped', scope: 's1' });
+  // wait for the silent validation to finish.
+  await flushPromises();
+
+  expect(wrapper.vm.fields.$s1.scoped).toEqual({
+    required: true,
+    valid: false,
+    invalid: true,
+    untouched: true,
+    touched: false,
+    pristine: true,
+    dirty: false,
+    pending: false,
+    validated: false,
+    changed: false
+  });
 });

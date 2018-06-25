@@ -1,4 +1,4 @@
-import validate from '@/rules/alpha_num';
+import { validate } from '@/rules/alpha_num';
 
 const valid = [
   'a',
@@ -26,10 +26,10 @@ const invalid = [
 
 test('validates that the string may only contain alphabetic and numeric characters', () => {
   expect.assertions(18);
-    // valid.
+  // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
 
-    // invalid
+  // invalid
   invalid.forEach(value => expect(validate(value)).toBe(false));
 });
 

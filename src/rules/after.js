@@ -1,7 +1,7 @@
 import { isAfter, isEqual } from 'date-fns';
 import { parseDate as parse } from '../core/utils/date';
 
-export default (value, [otherValue, inclusion, format]) => {
+const afterValidator = (value, [otherValue, inclusion, format]) => {
   if (typeof format === 'undefined') {
     format = inclusion;
     inclusion = false;
@@ -15,4 +15,19 @@ export default (value, [otherValue, inclusion, format]) => {
   }
 
   return isAfter(value, otherValue) || (inclusion && isEqual(value, otherValue));
+};
+
+const options = {
+  hasTarget: true,
+  isDate: true
+};
+
+export {
+  afterValidator as validate,
+  options
+};
+
+export default {
+  validate: afterValidator,
+  options
 };

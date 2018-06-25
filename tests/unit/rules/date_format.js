@@ -1,4 +1,4 @@
-import validate from '@/rules/date_format';
+import { validate } from '@/rules/date_format';
 
 test('validates a date format', () => {
   expect(validate('2010-10-20 04:30', ['YYYY-MM-DD HH:mm'])).toBe(true);

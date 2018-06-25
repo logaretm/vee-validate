@@ -15,11 +15,11 @@ If an object was passed, it must contains properties of the rules to be used and
 const expression = 'required|regex:^[0-9]+';
 
 const expression = {
-  // parameterless rules take a boolean value.
+  // parameter-less rules take a boolean value.
   required: true,
   // single parameter rules take a single value.
   regex: /.(js|ts)$/,
-  // multiple paramter rules take a single array.
+  // multiple parameter rules take a single array.
   in: [1, 2, 3]
 };
 ```
@@ -40,7 +40,7 @@ export default {
 };
 ```
 
-However the arg is entirely optional. Additionaly, `v-validate` checks if the input/component has `v-model` assigned to it, and treats that expression as the arg. But keep in mind that the arg must be a simple dot notation string, and it must be present on the vue instance.
+However the arg is entirely optional. Additionally, `v-validate` checks if the input/component has `v-model` assigned to it, and treats that expression as the arg. But keep in mind that the arg must be a simple dot notation string, and it must be present on the vue instance.
 
 ::: tip
   You might ask when to use arg at all? since `v-model` can be detected. A valid situation is when you need to validate a computed property.
@@ -48,16 +48,20 @@ However the arg is entirely optional. Additionaly, `v-validate` checks if the in
 
 ## directive modifiers
 
-You can use `.initial` modifier to force the validation of the field initial value.
+### immediate
+
+You can use `.immediate` modifier to immediately validate the field as soon as the page loads.
 
 ```vue
-  <input v-model="email" v-validate.initial="'required|email'" name="field" type="text">
-```
+<template>
+  <input v-model="email" v-validate.immediate="'required|email'" name="field" type="text">
+</template>
 
-```js
+<script>
 export default {
   data: () => ({
     email: ''
   })
 };
+</script>
 ```

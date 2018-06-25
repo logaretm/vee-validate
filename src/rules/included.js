@@ -11,4 +11,10 @@ const validate = (value, options) => {
   });
 };
 
-export default validate;
+export {
+  validate
+};
+
+export default {
+  validate
+};

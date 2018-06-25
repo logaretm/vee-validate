@@ -47,8 +47,7 @@ describe('resolves the working config from a vue instance', () => {
 
     expect(conf.validity).toBe(true);
   });
-
-})
+});
 
 test('can fetch/register dependencies', () => {
   expect(Config.dependency('key')).toBe(undefined);

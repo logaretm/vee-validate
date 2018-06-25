@@ -1,23 +1,23 @@
-import validate from '@/rules/dimensions';
+import { validate } from '@/rules/dimensions';
 import helpers from './../../helpers';
 
 let fails = false;
 
 beforeEach(() => {
   global.window.URL = {
-    createObjectURL() {
+    createObjectURL () {
       return 'data:image/png;base64,AAAAAAA';
     }
   };
 
   global.window.webkitURL = {
-    createObjectURL() {
+    createObjectURL () {
       return 'data:image/png;base64,AAAAAAA';
     }
   };
 
   global.Image = class Image {
-    set src(value) {
+    set src (value) {
       this.width = 150;
       this.height = 100;
 
@@ -25,7 +25,6 @@ beforeEach(() => {
     }
   };
 });
-
 
 // eslint-disable-next-line
 test('validates image dimensions', async () => {

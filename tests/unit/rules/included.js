@@ -1,13 +1,13 @@
-import validate from '@/rules/included';
+import { validate } from '@/rules/included';
 
 test('validates that the value exists within a list', () => {
-    const list = [1, 2, 3, 4, 5];
+  const list = [1, 2, 3, 4, 5];
 
-    // valid.
-    list.forEach(value => expect(validate(value, list)).toBe(true));
-    expect(validate([1, 2, 3], list)).toBe(true);
+  // valid.
+  list.forEach(value => expect(validate(value, list)).toBe(true));
+  expect(validate([1, 2, 3], list)).toBe(true);
 
-    // invalid
-    [0, 6].forEach(value => expect(validate(value, list)).toBe(false));
-    expect(validate([6], list)).toBe(false);
+  // invalid
+  [0, 6].forEach(value => expect(validate(value, list)).toBe(false));
+  expect(validate([6], list)).toBe(false);
 });

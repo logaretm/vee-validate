@@ -1,6 +1,6 @@
-export default (value, [invalidateFalse = false] = []) => {
+const validate = (value, [invalidateFalse = false] = []) => {
   if (Array.isArray(value)) {
-    return !! value.length;
+    return !!value.length;
   }
 
   // incase a field considers `false` as an empty value like checkboxes.
@@ -12,5 +12,13 @@ export default (value, [invalidateFalse = false] = []) => {
     return false;
   }
 
-  return !! String(value).trim().length;
+  return !!String(value).trim().length;
+};
+
+export {
+  validate
+};
+
+export default {
+  validate
 };

@@ -1,5 +1,13 @@
-import includes from './included';
+import { validate as includes } from './included';
 
-export default (...args) => {
+const validate = (...args) => {
   return !includes(...args);
+};
+
+export {
+  validate
+};
+
+export default {
+  validate
 };

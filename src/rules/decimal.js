@@ -25,4 +25,10 @@ const validate = (value, [decimals = '*', separator = '.'] = []) => {
     return parsedValue === parsedValue;
 };
 
-export default validate;
+export {
+  validate
+};
+
+export default {
+  validate
+};

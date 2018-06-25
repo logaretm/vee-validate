@@ -1,5 +1,5 @@
 <template>
-  <input type="text" name="field" v-validate.initial="'required'">
+  <input type="text" name="field" v-validate.immediate="'required'">
 </template>
 
 <script>

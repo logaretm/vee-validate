@@ -40,10 +40,12 @@ export const isDateInput = (el: HTMLInputElement) => {
 export const getDataAttribute = (el: HTMLElement, name: string) => el.getAttribute(`data-vv-${name}`);
 
 /**
- * Checks if the value is either null or undefined.
+ * Checks if the values are either null or undefined.
  */
-export const isNullOrUndefined = (value: mixed): boolean => {
-  return value === null || value === undefined;
+export const isNullOrUndefined = (...values): boolean => {
+  return values.every(value => {
+    return value === null || value === undefined;
+  });
 };
 
 /**
@@ -361,10 +363,12 @@ export const toArray = (arrayLike: { length: number }) => {
 
   const array = [];
   const length = arrayLike.length;
+  /* istanbul ignore next */
   for (let i = 0; i < length; i++) {
     array.push(arrayLike[i]);
   }
 
+  /* istanbul ignore next */
   return array;
 };
 
@@ -575,6 +579,8 @@ export const values = (obj) => {
     return Object.values(obj);
   }
 
+  // fallback to keys()
+  /* istanbul ignore next */
   return obj[Object.keys(obj)[0]];
 };
 

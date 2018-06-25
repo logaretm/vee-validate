@@ -60,7 +60,6 @@ describe('resolves native HTML Inputs values', () => {
   });
 
   test('file fields', () => {
-    const input = wrapper.find('#file');
     const field = wrapper.vm.$validator.fields.find({ name: 'fileField' });
     expect(field.value).toEqual([]); // empty list of inputs
   });

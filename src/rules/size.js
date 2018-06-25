@@ -1,4 +1,4 @@
-export default (files, [size]) => {
+const validate = (files, [size]) => {
   if (isNaN(size)) {
     return false;
   }
@@ -11,4 +11,12 @@ export default (files, [size]) => {
   }
 
   return true;
+};
+
+export {
+  validate
+};
+
+export default {
+  validate
 };
