@@ -867,8 +867,8 @@ test('updates classes after validating a field', async () => {
 test('triggers initial validation for fields', async () => {
   const v = new Validator();
   v.validate = jest.fn();
-  const field = v.attach({ name: 'field', rules: 'alpha', el: document.createElement('input'), getter: () => '123', initial: true });
-  expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123', { initial: true });
+  const field = v.attach({ name: 'field', rules: 'alpha', el: document.createElement('input'), getter: () => '123', immediate: true });
+  expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123');
 });
 
 test('rules can be skipped on initial validation', async () => {
@@ -876,7 +876,7 @@ test('rules can be skipped on initial validation', async () => {
   const validateSkip = jest.fn(() => true);
   const validateUnskipped = jest.fn(() => true);
 
-  v.extend('backend', validateSkip, { initial: false });
+  v.extend('backend', validateSkip, { immediate: false });
   v.extend('backendUnskipped', validateUnskipped);
 
   v.attach({ name: 'field', rules: 'required|backend|backendUnskipped', el: document.createElement('input'), getter: () => '123' });

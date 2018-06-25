@@ -109,7 +109,7 @@ export default class Validator {
     Validator._guardExtend(name, validator);
     Validator._merge(name, {
       validator,
-      options: assign({}, { hasTarget: false, initial: true }, options || {})
+      options: assign({}, { hasTarget: false, immediate: true }, options || {})
     });
   }
 
@@ -177,8 +177,8 @@ export default class Validator {
     this.fields.push(field);
 
     // validate the field initially
-    if (field.initial) {
-      this.validate(`#${field.id}`, value || field.value, { initial: true });
+    if (field.immediate) {
+      this.validate(`#${field.id}`, value || field.value);
     } else {
       this._validate(field, value || field.value, { initial: true }).then(result => {
         field.flags.valid = result.valid;
@@ -610,7 +610,7 @@ export default class Validator {
     Object.keys(field.rules).filter(rule => {
       if (!initial) return true;
 
-      return RULES[rule].options.initial;
+      return RULES[rule].options.immediate;
     }).some(rule => {
       const ruleOptions = RULES[rule] ? RULES[rule].options : {};
       const result = this._test(field, value, { name: rule, params: field.rules[rule], options: ruleOptions });

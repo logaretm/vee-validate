@@ -26,7 +26,7 @@ import {
 
 const DEFAULT_OPTIONS = {
   targetOf: null,
-  initial: false,
+  immediate: false,
   scope: null,
   listen: true,
   name: null,
@@ -66,7 +66,7 @@ export default class Field {
   name: string;
   scope: string | null;
   targetOf: ?string;
-  initial: boolean;
+  immediate: boolean;
   classes: boolean;
   classNames: { [string]: string };
   delay: number | Object;
@@ -212,7 +212,7 @@ export default class Field {
    */
   update (options: Object) {
     this.targetOf = options.targetOf || null;
-    this.initial = options.initial || this.initial || false;
+    this.immediate = options.immediate || this.immediate || false;
 
     // update errors scope if the field scope was changed.
     if (!isNullOrUndefined(options.scope) && options.scope !== this.scope && isCallable(this.validator.update)) {
@@ -347,7 +347,7 @@ export default class Field {
         delay: this.delay,
         scope: this.scope,
         events: this.events.join('|'),
-        initial: this.initial,
+        immediate: this.immediate,
         targetOf: this.id
       };
 
