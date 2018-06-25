@@ -52,7 +52,7 @@ The field under validation must have a valid date and is after the date value in
 <input name="after_field_target" ref="afterTarget" :class="{'input': true, 'is-danger': errors.has('after_field') }" type="text" placeholder="DD/MM/YYYY">
 
 ::: tip
-  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed paramter must be the same ref value.
+  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
 :::
 
 ## alpha
@@ -140,7 +140,7 @@ The field under validation must be a valid date between the two dates specified.
 - `inclusion`: Whether to include equal dates as a valid value, it is set to `()` (exclude) by default.
    (For further information check the [monentjs inclusion docs](https://momentjs.com/docs/#/query/is-between/)vee-validate uses [date-fns](https://date-fns.org) but ported this functionality.
 
-<input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY betweem 10/09/2016 and 20/09/2016">
+<input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY between 10/09/2016 and 20/09/2016">
 <span v-show="errors.has('date_between_field')" class="help is-danger">{{ errors.first('date_between_field') }}</span>
 
 ## date_format
@@ -219,7 +219,7 @@ The field under validation must have a value that is in the specified list.
 
 ### included params
 
-- `list:` An iterable, like arrays or sets or strings containing the allowed list of values. in string format it should be a comma seperated list. i.e: `included:1,2,3`.
+- `list:` An iterable, like arrays or sets or strings containing the allowed list of values. in string format it should be a comma separated list. i.e: `included:1,2,3`.
 
 <span class="select">
   <select v-validate="'included:1,2,3'" :class="{ 'is-danger': errors.has('in_field') }" name="in_field" data-vv-as="selected">
@@ -244,7 +244,7 @@ The field under validation must be equal to the first argument passed, uses `===
 
 ### is params
 
-- `value:` A value of anytype to be compared against the field value.
+- `value:` A value of any type to be compared against the field value.
 
 ```html
 <input v-validate="{ is: confirmation }" type="text" name="password">
@@ -257,7 +257,7 @@ A negated version of [is](#is) rule, also uses the `===` for equality checks.
 
 ### is_not params
 
-- `value:` A value of anytype to be compared against the field value.
+- `value:` A value of any type to be compared against the field value.
 
 ```html
 <input v-validate="{ is_not: duplicate }" type="text" name="field">

@@ -2,7 +2,7 @@
 
 VeeValidate does a lot of heavy lifting and offers plenty of features, that comes with the cost of a large bundle size, in production vee-validate gzipped would take about 30kb with all of its features intact.
 
-Implementing a custom solution or with a more lightweight library to acheive the same features will also add up to your bundle size. Remember that vee-validate doesn't only validate, but also it generates error messages and offers most of the validation rules you would need out of the box.
+Implementing a custom solution or with a more lightweight library to achieve the same features will also add up to your bundle size. Remember that vee-validate doesn't only validate, but also it generates error messages and offers most of the validation rules you would need out of the box.
 
 ## Minimal Bundle
 

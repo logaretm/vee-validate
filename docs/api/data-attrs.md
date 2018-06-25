@@ -1,6 +1,6 @@
 # data-* Attributes
 
-data-* attributes provide an alternate interface for the plugin to specify what exactly should happen, providing a simple and Vue version-compatiable API. They are useful if you do not like to pass complex expressions to the directive.
+data-* attributes provide an alternate interface for the plugin to specify what exactly should happen, providing a simple and Vue version-compatible API. They are useful if you do not like to pass complex expressions to the directive.
 
 |Attribute|Description|
 |:---|:--- |

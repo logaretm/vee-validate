@@ -12,7 +12,7 @@ function rule (fieldName: string, params: any[], data?: any): string {
 }
 ```
 
-It receives the field name or an alias for it as the first parameter, as well as the params used to validate the field. The third optional parameter is any additonal data returned by the validation rule which can [provide more info](./custom-rules.html#reasoning) for the generator to make it more flexible.
+It receives the field name or an alias for it as the first parameter, as well as the params used to validate the field. The third optional parameter is any additional data returned by the validation rule which can [provide more info](./custom-rules.html#reasoning) for the generator to make it more flexible.
 
 ## Overwriting Messages
 
@@ -82,7 +82,7 @@ If the attribute is not found for the current locale, it will fallback to the bi
 
 ## Field-specific Custom Messages
 
- You might need to provide different messages for different fields. For example, you might want to display an error message for the email field when it's required, but a different messsage when the name is required. This allows you to give your users a flexible experience and context aware messages.
+ You might need to provide different messages for different fields. For example, you might want to display an error message for the email field when it's required, but a different message when the name is required. This allows you to give your users a flexible experience and context aware messages.
 
  To do this you would need to add an object to the dictionary called `custom` like this:
 
@@ -104,5 +104,5 @@ this.$validator.localize('en', dict);
 ```
 
 ::: tip
-  One thing to keep in mind is to place any dictionary related operations in your code before it actually needs it to avoid uneccessary merges. For example, a good common place is in your app entry point or setup script. Conversely, a poor choice would be a child component lifecycle hook like `mounted` since the validator dictionary is kept globally for all instances.
+  One thing to keep in mind is to place any dictionary related operations in your code before it actually needs it to avoid unnecessary merges. For example, a good common place is in your app entry point or setup script. Conversely, a poor choice would be a child component lifecycle hook like `mounted` since the validator dictionary is kept globally for all instances.
 :::

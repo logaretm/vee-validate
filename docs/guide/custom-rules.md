@@ -52,7 +52,7 @@ Validator.extend('truthy', {
 
 let instance = new Validator({ trueField: 'truthy' });
 
-// Also there is an instance 'extend' method for convience.
+// Also there is an instance 'extend' method for convenience.
 instance.extend('falsy', (value) => ! value);
 
 instance.attach({

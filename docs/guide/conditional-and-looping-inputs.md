@@ -38,7 +38,7 @@ Validating those fields now will behave as expected, just remember that the key 
 
 ## Handling v-for
 
-Using indexes in `v-for` as the key is not sufficient as adding/removing items will make some fields assume others' keys. So the following wouldn't work in a senario where fields are added/removed by the user intereaction.
+Using indexes in `v-for` as the key is not sufficient as adding/removing items will make some fields assume others' keys. So the following wouldn't work in a scenario where fields are added/removed by the user interaction.
 
 ```html
   <div v-for="(input, idx) in inputs" :key="idx">

@@ -134,7 +134,7 @@ import { Validator } from 'vee-validate';
 Vue.mixin({
   localize (localeName) {
     // localize your app here, like i18n plugin.
-    // asynchonously load the locale file then localize the validator with it.
+    // asynchronously load the locale file then localize the validator with it.
     import(`./path/to/vee-validate-locales/${localeName}`).then(locale => {
       Validator.localize(localeName, locale);
     });

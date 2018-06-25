@@ -16,7 +16,7 @@ This covers most cases, except the case where your component does not use `v-mod
 
 ## Component Constructor Options
 
-For your custom components that act as inputs you could customize the way the validator intereacts with your components, reducing greatly the number of needed attributes to make your component validatable.
+For your custom components that act as inputs you could customize the way the validator interacts with your components, reducing greatly the number of needed attributes to make your component validatable.
 
 You can use it by defining a `$_veeValidate` field in your component options definition:
 

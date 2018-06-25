@@ -46,4 +46,4 @@ const error = {
 | has(field: string, scope?: string) | `boolean` |Checks if there is an error message associated with a specific field or specified by the selector, providing a scope will check for messages within that scope.|
 | remove(field: string, scope?: string) | `void`| Removes all errors associated with a specific field, specifying a scope will remove messages only for that field and scope.|
 | removeById(id: string) | `void` | Removes a field which matches the provided id.
-| update(id: string, diff: ErrorObject) | `void` | Updates a specific field's erorr messages data, used internally to keep field errors scope up to date.|
+| update(id: string, diff: ErrorObject) | `void` | Updates a specific field's error messages data, used internally to keep field errors scope up to date.|

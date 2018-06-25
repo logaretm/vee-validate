@@ -18,7 +18,7 @@ const config = {
   events: 'input|blur',
   fieldsBagName: 'fields',
   i18n: null, // the vue-i18n plugin instance
-  i18nRootKey: 'validations', // the nested key under which the validation messsages will be located
+  i18nRootKey: 'validations', // the nested key under which the validation messages will be located
   inject: true,
   locale: 'en',
   strict: true,
@@ -42,5 +42,5 @@ Vue.use(VeeValidate, config);
 | i18nRootKey   | `string` | `'validations'` | The key name of the validation messages for each locale. |
 | inject        | `boolean` | `true` | Specifies if a validator instance should be injected automatically for all components. (See [Component Injections](advanced/#component-injections) for more information.) |
 | locale        | `string` | `'en'` | The default language for the validation messages. |
-| strict        | `boolean` | `true`    | Validation attempt on non-existant fields will result in an invalid state |
+| strict        | `boolean` | `true`    | Validation attempt on non-existent fields will result in an invalid state |
 | validity      | `boolean` | `false` | Set custom validity [Constraint validation](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation) on native HTML inputs. |

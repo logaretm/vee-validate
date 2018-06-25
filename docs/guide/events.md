@@ -12,7 +12,7 @@ Vue.use(VeeValidate, {
 });
 ```
 
-If you want to listen for multiple events, including custom ones. Just use a pipe seperated list of event names:
+If you want to listen for multiple events, including custom ones. Just use a pipe separated list of event names:
 
 ```js
 Vue.use(VeeValidate, {

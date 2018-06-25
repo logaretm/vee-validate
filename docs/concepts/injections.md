@@ -12,7 +12,7 @@ export default {
   // ...
 };
 
-// OR use object synatx
+// OR use object syntax
 
 export default {
   inject: {
