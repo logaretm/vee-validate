@@ -1,3 +1,11 @@
 import isCreditCard from 'validator/lib/isCreditCard';
 
-export default (value) => isCreditCard(String(value));
+const validate = (value) => isCreditCard(String(value));
+
+export {
+  validate
+};
+
+export default {
+  validate
+};

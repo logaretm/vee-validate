@@ -1,7 +1,7 @@
 import { isAfter, isBefore, isEqual } from 'date-fns';
 import { parseDate as parse } from '../core/utils/date';
 
-export default (value, params) => {
+const validate = (value, params) => {
   let min;
   let max;
   let format;
@@ -34,5 +34,19 @@ export default (value, params) => {
   }
 
   return isEqual(dateVal, maxDate) || isEqual(dateVal, minDate) ||
-        (isBefore(dateVal, maxDate) && isAfter(dateVal, minDate));
+    (isBefore(dateVal, maxDate) && isAfter(dateVal, minDate));
+};
+
+const options = {
+  isDate: true
+};
+
+export {
+  validate,
+  options
+};
+
+export default {
+  validate,
+  options
 };

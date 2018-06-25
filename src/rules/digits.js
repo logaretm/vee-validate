@@ -7,4 +7,10 @@ const validate = (value, [length]) => {
   return /^[0-9]*$/.test(strVal) && strVal.length === Number(length);
 };
 
-export default validate;
+export {
+  validate
+};
+
+export default {
+  validate
+};

@@ -8,9 +8,6 @@ import Config from '../config';
 
 const RULES: { [string]: Rule } = {};
 let STRICT_MODE: boolean = true;
-const TARGET_RULES = ['confirmed', 'after', 'before'];
-// rules to skip when validating initially.
-const SKIP_INITIAL = [];
 
 export default class Validator {
   strict: boolean;
@@ -110,18 +107,10 @@ export default class Validator {
    */
   static extend (name: string, validator: Rule | Object, options?: ExtendOptions = {}) {
     Validator._guardExtend(name, validator);
-    Validator._merge(name, validator);
-    if (options) {
-      // rule needs another target field value for comparison
-      if (options.hasTarget) {
-        TARGET_RULES.push(name);
-      }
-
-      // rule should not execute on initial validation
-      if (options.initial === false) {
-        SKIP_INITIAL.push(name);
-      }
-    }
+    Validator._merge(name, {
+      validator,
+      options: assign({}, { hasTarget: false, initial: true }, options || {})
+    });
   }
 
   /**
@@ -129,17 +118,13 @@ export default class Validator {
    */
   static remove (name: string): void {
     delete RULES[name];
-    const idx = TARGET_RULES.indexOf(name);
-    if (idx === -1) return;
-
-    TARGET_RULES.splice(idx, 1);
   }
 
   /**
    * Checks if the given rule name is a rule that targets other fields.
    */
   static isTargetRule (name: string): boolean {
-    return TARGET_RULES.indexOf(name) !== -1;
+    return !!RULES[name] && RULES[name].options.hasTarget;
   }
 
   /**
@@ -408,13 +393,6 @@ export default class Validator {
   }
 
   /**
-   * Checks if the passed rule is a date rule.
-   */
-  _isADateRule (rule: string) {
-    return !! ~['after', 'before', 'date_between', 'date_format'].indexOf(rule);
-  }
-
-  /**
    * Formats an error message for field and a rule.
    */
   _formatErrorMessage (field: Field, rule: MapObject, data?: MapObject = {}, targetName?: string | null = null) {
@@ -428,7 +406,7 @@ export default class Validator {
    * Translates the parameters passed to the rule (mainly for target fields).
    */
   _getLocalizedParams (rule: MapObject, targetName?: string | null = null) {
-    if (~TARGET_RULES.indexOf(rule.name) && rule.params && rule.params[0]) {
+    if (rule.options.hasTarget && rule.params && rule.params[0]) {
       const localizedName = targetName || this.dictionary.getAttribute(this.locale, rule.params[0], rule.params[0]);
       return [localizedName].concat(rule.params.slice(1));
     }
@@ -447,7 +425,7 @@ export default class Validator {
    * Tests a single input value against a rule.
    */
   _test (field: Field, value: any, rule: MapObject): ValidationResult | Promise<ValidationResult> {
-    const validator = RULES[rule.name];
+    const validator = RULES[rule.name] ? RULES[rule.name].validate : null;
     let params = Array.isArray(rule.params) ? toArray(rule.params) : [];
     let targetName = null;
     if (!validator || typeof validator !== 'function') {
@@ -455,7 +433,7 @@ export default class Validator {
     }
 
     // has field dependencies.
-    if (TARGET_RULES.indexOf(rule.name) !== -1) {
+    if (rule.options.hasTarget) {
       const target = find(field.dependencies, d => d.name === rule.name);
       if (target) {
         targetName = target.field.alias;
@@ -466,7 +444,7 @@ export default class Validator {
       params = params.length ? params : [true];
     }
 
-    if (this._isADateRule(rule.name)) {
+    if (rule.options.isDate) {
       const dateFormat = this._getDateFormat(field.rules);
       if (rule.name !== 'date_format') {
         params.push(dateFormat);
@@ -507,16 +485,16 @@ export default class Validator {
   /**
    * Merges a validator object into the RULES and Messages.
    */
-  static _merge (name: string, validator: Rule) {
-    if (isCallable(validator)) {
-      RULES[name] = validator;
-      return;
-    }
-
-    RULES[name] = validator.validate;
+  static _merge (name: string, { validator, options }) {
+    const validate = isCallable(validator) ? validator : validator.validate;
     if (validator.getMessage) {
       Validator.dictionary.setMessage(Validator.locale, name, validator.getMessage);
     }
+
+    RULES[name] = {
+      validate,
+      options
+    };
   }
 
   /**
@@ -632,9 +610,10 @@ export default class Validator {
     Object.keys(field.rules).filter(rule => {
       if (!initial) return true;
 
-      return SKIP_INITIAL.indexOf(rule) === -1;
+      return RULES[rule].options.initial;
     }).some(rule => {
-      const result = this._test(field, value, { name: rule, params: field.rules[rule] });
+      const ruleOptions = RULES[rule] ? RULES[rule].options : {};
+      const result = this._test(field, value, { name: rule, params: field.rules[rule], options: ruleOptions });
       if (isCallable(result.then)) {
         promises.push(result);
       } else if (this.fastExit && !result.valid) {
