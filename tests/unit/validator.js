@@ -1049,3 +1049,21 @@ test('removes target based rules from the internal collection', async () => {
   v.remove('rule');
   expect(Validator.isTargetRule('rule')).toBe(false);
 });
+
+test('creates regeneratable messages', async () => {
+  const v = new Validator();
+  const field = v.attach({ name: 'email', rules: 'required|email' });
+
+  await v.validate('email', null);
+  const error = v.errors.items[0];
+  expect(error.regenerate()).toBe(error.msg);
+});
+
+test('removes the vm localeChanged listener when the validator is destroyed', () => {
+  const v = new Validator();
+  v._vm.$off = jest.fn();
+
+  v.destroy();
+
+  expect(v._vm.$off).toHaveBeenCalled();
+});
