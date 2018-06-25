@@ -1,4 +1,4 @@
-import Generator from './core/generator';
+import Resolver from './core/resolver';
 import Field from './core/field';
 import { isEqual, warn } from './core/utils';
 
@@ -26,12 +26,12 @@ export default {
       return;
     }
 
-    const fieldOptions = Generator.generate(el, binding, vnode);
+    const fieldOptions = Resolver.generate(el, binding, vnode);
     validator.attach(fieldOptions);
   },
   inserted (el: HTMLElement, binding, vnode) {
     const field = findField(el, vnode.context);
-    const scope = Generator.resolveScope(el, binding, vnode);
+    const scope = Resolver.resolveScope(el, binding, vnode);
 
     // skip if scope hasn't changed.
     if (!field || scope === field.scope) return;
@@ -47,8 +47,8 @@ export default {
 
     // make sure we don't do unneccasary work if no important change was done.
     if (!field || (field.updated && isEqual(binding.value, binding.oldValue))) return;
-    const scope = Generator.resolveScope(el, binding, vnode);
-    const rules = Generator.resolveRules(el, binding, vnode);
+    const scope = Resolver.resolveScope(el, binding, vnode);
+    const rules = Resolver.resolveRules(el, binding, vnode);
 
     field.update({
       scope,

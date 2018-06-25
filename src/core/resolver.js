@@ -16,30 +16,30 @@ import {
 /**
  * Generates the options required to construct a field.
  */
-export default class Generator {
+export default class Resolver {
   static generate (el, binding, vnode) {
-    const model = Generator.resolveModel(binding, vnode);
+    const model = Resolver.resolveModel(binding, vnode);
     const options = Config.resolve(vnode.context);
 
     return {
-      name: Generator.resolveName(el, vnode),
+      name: Resolver.resolveName(el, vnode),
       el: el,
       listen: !binding.modifiers.disable,
-      scope: Generator.resolveScope(el, binding, vnode),
-      vm: Generator.makeVM(vnode.context),
+      scope: Resolver.resolveScope(el, binding, vnode),
+      vm: Resolver.makeVM(vnode.context),
       expression: binding.value,
       component: vnode.componentInstance,
       classes: options.classes,
       classNames: options.classNames,
-      getter: Generator.resolveGetter(el, vnode, model),
-      events: Generator.resolveEvents(el, vnode) || options.events,
+      getter: Resolver.resolveGetter(el, vnode, model),
+      events: Resolver.resolveEvents(el, vnode) || options.events,
       model,
-      delay: Generator.resolveDelay(el, vnode, options),
-      rules: Generator.resolveRules(el, binding, vnode),
+      delay: Resolver.resolveDelay(el, vnode, options),
+      rules: Resolver.resolveRules(el, binding, vnode),
       initial: !!binding.modifiers.initial,
       validity: options.validity,
       aria: options.aria,
-      initialValue: Generator.resolveInitialValue(vnode)
+      initialValue: Resolver.resolveInitialValue(vnode)
     };
   }
 
@@ -144,7 +144,7 @@ export default class Generator {
 
     // resolve it from $_veeValidate options.
     if (!events && vnode.componentInstance) {
-      const config = Generator.getCtorConfig(vnode);
+      const config = Resolver.getCtorConfig(vnode);
       events = config && config.events;
     }
 
@@ -214,7 +214,7 @@ export default class Generator {
     }
 
     if (!name && vnode.componentInstance) {
-      const config = Generator.getCtorConfig(vnode);
+      const config = Resolver.getCtorConfig(vnode);
       if (config && isCallable(config.name)) {
         const boundGetter = config.name.bind(vnode.componentInstance);
 
@@ -245,7 +245,7 @@ export default class Generator {
         };
       }
 
-      const config = Generator.getCtorConfig(vnode);
+      const config = Resolver.getCtorConfig(vnode);
       if (config && isCallable(config.value)) {
         const boundGetter = config.value.bind(vnode.componentInstance);
 

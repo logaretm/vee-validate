@@ -1,3 +1,5 @@
+import Resolver from './resolver';
+import Validator from './validator';
 import {
   uniqId,
   createFlags,
@@ -19,8 +21,6 @@ import {
   addEventListener,
   isCheckboxOrRadioInput
 } from './utils';
-import Generator from './generator';
-import Validator from './validator';
 
 // @flow
 
@@ -355,10 +355,10 @@ export default class Field {
       if (isCallable(el.$watch)) {
         options.component = el;
         options.el = el.$el;
-        options.getter = Generator.resolveGetter(el.$el, el.$vnode);
+        options.getter = Resolver.resolveGetter(el.$el, el.$vnode);
       } else {
         options.el = el;
-        options.getter = Generator.resolveGetter(el, {});
+        options.getter = Resolver.resolveGetter(el, {});
       }
 
       this.dependencies.push({ name, field: new Field(options) });

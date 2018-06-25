@@ -1,4 +1,4 @@
-import Generator from '@/core/generator';
+import Resolver from '@/core/resolver';
 
 test('resolves delay', () => {
   document.body.innerHTML = `
@@ -6,17 +6,17 @@ test('resolves delay', () => {
   `;
   const vnode = { componentInstance: { $attrs: { 'data-vv-delay': '200' } } };
   let el = document.querySelector('#el');
-  expect(Generator.resolveDelay(el, {})).toBe(100);
+  expect(Resolver.resolveDelay(el, {})).toBe(100);
 
   // fills the delay object if the global delay is an object of events.
-  expect(Generator.resolveDelay(el, {}, { delay: { input: 300, blur: 300 } })).toEqual({
+  expect(Resolver.resolveDelay(el, {}, { delay: { input: 300, blur: 300 } })).toEqual({
     blur: 300,
     input: 100
   });
 
   el = { getAttribute: () => null };
-  expect(Generator.resolveDelay(el, vnode)).toBe(200);
-  expect(Generator.resolveDelay(el, {}, { delay: '300' })).toBe(300);
+  expect(Resolver.resolveDelay(el, vnode)).toBe(200);
+  expect(Resolver.resolveDelay(el, {}, { delay: '300' })).toBe(300);
 })
 
 describe('resolves the rules', () => {
@@ -26,7 +26,7 @@ describe('resolves the rules', () => {
   const el = document.querySelector('#el');
 
   test('using data-vv-rules attribute', () => {
-    expect(Generator.resolveRules(el, {}, {})).toBe('required|email');
+    expect(Resolver.resolveRules(el, {}, {})).toBe('required|email');
   });
 
   test('using directive expression', () => {
@@ -34,7 +34,7 @@ describe('resolves the rules', () => {
       value: 'required|email'
     };
 
-    expect(Generator.resolveRules(el, directive, {})).toBe('required|email');
+    expect(Resolver.resolveRules(el, directive, {})).toBe('required|email');
   });
 
   test('using nested rules in directive expression', () => {
@@ -47,7 +47,7 @@ describe('resolves the rules', () => {
       }
     };
 
-    expect(Generator.resolveRules(el, directive, {})).toEqual({
+    expect(Resolver.resolveRules(el, directive, {})).toEqual({
       required: true,
       email: true
     });
@@ -55,7 +55,7 @@ describe('resolves the rules', () => {
 
   test('using HTML5 validation Attributes', () => {
     const input = document.createElement('input');
-    const resolve = (el) => Generator.resolveRules(el, {}, {})
+    const resolve = (el) => Resolver.resolveRules(el, {}, {})
     input.type = 'email';
     input.required = true;
 
