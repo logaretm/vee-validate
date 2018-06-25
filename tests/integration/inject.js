@@ -25,10 +25,10 @@ test('injects parent validator instances if requested otherwise new instances wi
 
   // without preference, a new validator should be injected.
   expect(wrapper.vm.$validator).not.toBe(childWithoutPreference.vm.$validator);
-  // with new perference, it should not inherit it.
+  // with new preference, it should not inherit it.
   expect(wrapper.vm.$validator).not.toBe(childWithNewValidator.vm.$validator);
 
-  // should recieve the parent instance
+  // should receive the parent instance
   expect(wrapper.vm.$validator).toBe(childWithParentValidator.vm.$validator);
 });
 
@@ -51,10 +51,10 @@ test('does not auto inject any validator instance unless requested', async () =>
   // was not injected because auto inject is disbaled.
   expect(childWithoutPreference.vm.$validator).toBe(undefined);
 
-  // with new perference, it should have a new instance.
+  // with new preference, it should have a new instance.
   expect(wrapper.vm.$validator).not.toBe(childWithNewValidator.vm.$validator);
 
-  // should recieve the parent instance
+  // should receive the parent instance
   expect(wrapper.vm.$validator).toBe(childWithParentValidator.vm.$validator);
 });
 
