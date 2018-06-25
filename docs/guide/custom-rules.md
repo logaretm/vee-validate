@@ -84,7 +84,9 @@ You can create custom rules that do this as well by setting the `hasTarget` prop
 ```js{3}
 validator.extend('isBigger', (value, [otherValue]) => {
   return value >= otherValue;
-}, { hasTarget: true });
+}, {
+  hasTarget: true
+});
 ```
 
 Notice that the other field value will be injected as the first item in the parameter list.
@@ -95,6 +97,22 @@ These rules require at least one argument and the target field must have a match
 <input v-validate="'confirmed:confirmation'" name="password" type="password" >
 <input name="passwordConfirmation" ref="confirmation" type="password" placeholder="Confirm the password">
 ```
+
+## Non-immediate Rules
+
+VeeValidate triggers initial validation regardless if you used the [immediate modifier](/api/directive.md#immediate) or not, the difference being if the immediate modifier is set, the errors and flags will be updated.
+
+Sometimes you don't want your rule to be executed, consider a rule that calls to a remote API. Unless the `immediate` modifier is set, you don't want the rule to be executed. This can be done by adding `immediate` boolean to your extend options.
+
+```js
+validator.extend('remote', (value, [otherValue]) => {
+  // do something
+}, {
+  immediate: false
+});
+```
+
+This will skip the rule on the initial validation when the `immediate` modifier is not set.
 
 ## Reasoning
 

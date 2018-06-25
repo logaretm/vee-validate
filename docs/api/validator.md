@@ -17,18 +17,22 @@ The validator offers an API to add new fields and trigger validations.
 |Name  | Return Type  |Description  |
 |---------|---------|---------|
 |attach(field: Field | FieldOptions) | `Field` | attaches a new field to the validator. |
-| validate(selector?: String) | `Promise<boolean>` | Validates the matching fields of the provided [selector](#selector-api). |
+| validate(descriptor?: String, value?: any, options?: Object) | `Promise<boolean>` | Validates the matching fields of the provided [descriptor](#field-descriptor). |
 | pause() | `void` | Disables validation. |
 | resume() | `void` | Enables validation. |
 | detach(name: string, scope?: string) | `void` | Detaches the field that matches the name and the scope of the provided values. |
-| extend(name: string, rule: Rule) | `void` | Adds a new validation rule. The provided rule param must be a [valid Rule function or object](/guide.md/custom-rules). |
+| extend(name: string, rule: Rule, options?: ExtendOptions) | `void` | Adds a new validation rule. The provided rule param must be a [valid Rule function or object](/guide/custom-rules.md). |
 
-### Selector API
+### Validate API
 
-The selector passed to the `validate` method can have the following forms:
+The validate method is the primary way to trigger validation, all arguments are optional but that will produce different results depending on which arguments you did provide.
+
+#### Field Descriptor
+
+The field descriptor is a string that can have the following forms:
 
 ```js
-// validate all fields within the context component.
+// validate all fields.
 validator.validate();
 
 // validate a field that has a matching name with the provided selector.
@@ -42,7 +46,17 @@ validator.validate('scope.*');
 
 // validate all fields without a scope.
 validator.validate('*');
-
-// You can optionally validate the selected field against a value
-validator.validate('selector', value)
 ```
+
+#### Value
+
+The value argument is optional, if the value is not passed to the `validate()` method, it will try to resolve it using the internal value resolution algorithm. When the value is passed, the algorithm will be skipped and that value will be used instead.
+
+#### Validation Options
+
+You can pass the options to modify the behavior of the validation, the options is an object that can contain the following:
+
+|Property |Type       |Default    |Description  |
+|---------|:---------:|:---------:|-------------|
+|silent   | Boolean   | `false`   | If true the validate method will return the validation result without modifying the errors or the flags. |
+|initial  | Boolean   | `false`   | If true the rules marked as [non-immediate](/guide/custom-rules.md#non-immediate-rules) will be skipped during this call, used to prevent initial validation from triggering backend calls. |
