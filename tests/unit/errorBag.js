@@ -15,7 +15,7 @@ test('adds errors to the collection', () => {
     msg: 'Hey',
     rule: 'r1',
     scope: 's1'
-  })
+  });
   expect(errors.first('name', 's1')).toBe('Hey');
 
   // handles undefined params
@@ -27,7 +27,6 @@ test('matches brackets as field names', () => {
   errors.add({ field: 'names[1]', msg: 'The name is invalid', rule: 'rule1' });
   expect(errors.first('names[1]')).toBe('The name is invalid');
   expect(errors.first('names[1]:rule1')).toBe('The name is invalid');
-
 });
 
 test('accepts an array of errors', () => {
@@ -104,7 +103,7 @@ test('removes errors by matching against the field id', () => {
     msg: 'Hey',
     rule: 'r1',
     scope: 's1'
-  })
+  });
   expect(errors.count()).toBe(1);
   errors.removeById('myId');
   expect(errors.count()).toBe(0);
@@ -164,7 +163,6 @@ test('checks for field error existence', () => {
   errors.add({ field: 'name spaced', msg: 'The name is invalid', rule: 'rule1' });
   expect(errors.has('name spaced')).toBe(true);
 });
-
 
 test('checks for scoped field error existence', () => {
   const errors = new ErrorBag();
@@ -295,9 +293,9 @@ test('exactly matches the collected field name', () => {
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule2', scope: 'scope1' });
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1', scope: 'scope2' });
 
-  expect(errors.collect('name').length).toBe(1); // should find the non-scoped one.
-  expect(errors.collect('name', 'scope2').length).toBe(1);
-  expect(errors.collect('scope1.name').length).toBe(2); // supports selectors.
+  expect(errors.collect('name')).toHaveLength(1); // should find the non-scoped one.
+  expect(errors.collect('name', 'scope2')).toHaveLength(1);
+  expect(errors.collect('scope1.name')).toHaveLength(2); // supports selectors.
 });
 
 test('collects errors for a specific field and scope', () => {
@@ -417,7 +415,7 @@ test('can regenerate error messages', () => {
   const fakeDictionary = {
     toggle: true,
     make () {
-      return 'Product is {0}'.replace('{0}', this.toggle ? 'Alpha' : 'Beta')
+      return 'Product is {0}'.replace('{0}', this.toggle ? 'Alpha' : 'Beta');
     }
   };
 

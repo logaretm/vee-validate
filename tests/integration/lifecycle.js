@@ -1,17 +1,12 @@
-import { mount, shallow, createLocalVue } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { shallow, createLocalVue } from '@vue/test-utils';
 import VeeValidate from '@/index';
 import BasicComponent from './components/Basic';
-import BuiltInsTestComponent from './components/BuiltIn';
-import InjectComponent from './components/Inject';
-import ChildInject from './components/stubs/ChildWithParentValidatorInjection';
-import ChildNew from './components/stubs/ChildWithNewValidatorInjection';
 
 test('bind: warns if no validator instance was found in the directive context', () => {
   global.console.warn = jest.fn();
   const Vue = createLocalVue();
   Vue.directive('validate', VeeValidate.directive);
-  const wrapper = shallow(BasicComponent, { localVue: Vue });
+  shallow(BasicComponent, { localVue: Vue });
   expect(global.console.warn).toHaveBeenCalled();
 });
 
@@ -34,7 +29,7 @@ test('destroy: removes vm associated errors when the vm is destroyed', async () 
   const input = wrapper.find('input');
   input.value = '';
   await wrapper.vm.$validator.validate();
-  const validator = wrapper.vm.$validator
+  const validator = wrapper.vm.$validator;
 
   expect(validator.errors.count()).toBe(1);
   wrapper.destroy();

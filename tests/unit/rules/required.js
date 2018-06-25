@@ -13,7 +13,7 @@ const valid = [
 const invalid = [
   '',
   ' ',
-    [],
+  [],
   undefined,
   null
 ];

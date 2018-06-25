@@ -1,5 +1,4 @@
 import validate from '@/rules/after';
-import helpers from './../../helpers';
 
 test('sets the format and inclusion params if not passed', () => {
   const format = 'DD/MM/YYYY';

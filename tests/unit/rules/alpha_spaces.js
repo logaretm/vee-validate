@@ -17,7 +17,7 @@ const valid = [
 
 const invalid = [
   '123-abc',
-    {},
+  {},
   '1234567890',
   'abc123',
   123,
@@ -26,10 +26,10 @@ const invalid = [
 
 test('validates that the string may only contain alphabetic characters and spaces', () => {
   expect.assertions(18);
-    // valid.
+  // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
 
-    // invalid
+  // invalid
   invalid.forEach(value => expect(validate(value)).toBe(false));
 });
 

@@ -21,7 +21,7 @@ test('native HTML elements targeting', async () => {
   target.trigger('input');
   await flushPromises();
 
-  const field = wrapper.vm.$validator.fields.find({ name: 'f1' });
+  wrapper.vm.$validator.fields.find({ name: 'f1' });
 
   expect(wrapper.vm.$validator.errors.has('f1')).toBe(false);
   expect(wrapper.vm.$validator.flags.f1.valid).toBe(true);
@@ -55,7 +55,6 @@ test('refs with v-for loops', async () => {
   wrapper.findAll(InputComponent).at(2).trigger('input');
   await flushPromises();
 
-
   expect(wrapper.vm.$validator.errors.first('f7_1')).toBe('The f7_1 confirmation does not match.');
   expect(wrapper.vm.$validator.errors.first('f7_2')).toBe('The f7_2 confirmation does not match.');
   expect(wrapper.vm.$validator.errors.first('f7_3')).toBe('The f7_3 confirmation does not match.');
@@ -76,12 +75,11 @@ test('refs with v-for loops', async () => {
   expect(wrapper.vm.$validator.flags.f7_3.valid).toBe(true);
 });
 
-
 test('fails silently if it cannot find the target field', async () => {
   const wrapper = mount(TestComponent, { localVue: Vue });
   const input = wrapper.find('#f3');
   input.trigger('input');
   await flushPromises();
 
-  expect(wrapper.vm.$validator.fields.find({ name: 'f3' }).dependencies.length).toBe(0);
+  expect(wrapper.vm.$validator.fields.find({ name: 'f3' }).dependencies).toHaveLength(0);
 });

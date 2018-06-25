@@ -7,7 +7,6 @@ test('checks if a date is between two other dates - exclusive', () => {
   expect(validate('16/09/2016', ['01/9/2016', '15/09/2016', format])).toBe(false);
 });
 
-
 test('fails the valiadation if any date is in incorrect format', () => {
   const format = 'DD/MM/YYYY';
 
@@ -29,7 +28,6 @@ test('checks if a date is between two other dates - right inclusive', () => {
   expect(validate('01/09/2016', ['01/09/2016', '20/09/2016', '(]', format])).toBe(false);
   expect(validate('20/09/2016', ['01/09/2016', '20/09/2016', '(]', format])).toBe(true);
 });
-
 
 test('checks if a date is between two other dates - all inclusive', () => {
   const format = 'DD/MM/YYYY';

@@ -28,13 +28,12 @@ const invalid = [
 // eslint-disable-next-line
 test('validates that the string may only contain alpha-numeric characters as well as dashes and spaces', () => {
   expect.assertions(19);
-    // valid.
+  // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
 
-    // invalid
+  // invalid
   invalid.forEach(value => expect(validate(value)).toBe(false));
 });
-
 
 test('validates the string contains alphabetic chars from other locales', () => {
   // any locale.

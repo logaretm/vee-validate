@@ -121,8 +121,7 @@ test('scoped field flags', async () => {
   Vue.use(VeeValidate);
 
   const wrapper = shallow(TestComponent, { localVue: Vue });
-  const input = wrapper.findAll('input').at(1);
-  const field = wrapper.vm.$validator.fields.find({ name: 'scoped', scope: 's1' });
+  wrapper.vm.$validator.fields.find({ name: 'scoped', scope: 's1' });
   // wait for the silent validation to finish.
   await flushPromises();
 

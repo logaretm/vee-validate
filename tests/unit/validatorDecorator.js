@@ -29,7 +29,6 @@ test('decorates validateScopes()', () => {
   expect(base.validateScopes).toHaveBeenCalled();
 });
 
-
 test('decorates reset()', () => {
   const vm = { _uid: 0 };
   const base = new Validator();
@@ -67,7 +66,7 @@ test('calls extend()', () => {
   const v = new Decorator(base, vm);
 
   base.extend = jest.fn();
-  const validator =  () => {};
+  const validator = () => {};
   v.extend('rule', validator);
 
   expect(base.extend).toHaveBeenCalledWith('rule', validator);
@@ -93,7 +92,6 @@ test('calls remove()', () => {
   expect(base.remove).toHaveBeenCalledWith('rule');
 });
 
-
 test('fields are scoped to the specific component id', () => {
   const base = new Validator();
   const v1 = new Decorator(base, { _uid: 0 });
@@ -101,11 +99,11 @@ test('fields are scoped to the specific component id', () => {
 
   v1.attach({ name: 'name' });
   v2.attach({ name: 'email' });
-  v2.attach({ name: 'field', scope: 'scope' })
+  v2.attach({ name: 'field', scope: 'scope' });
 
-  expect(base.fields.items.length).toBe(3);
-  expect(v1.fields.items.length).toBe(1);
-  expect(v2.fields.items.length).toBe(2);
+  expect(base.fields.items).toHaveLength(3);
+  expect(v1.fields.items).toHaveLength(1);
+  expect(v2.fields.items).toHaveLength(2);
 
   expect(v1.flags.email).toBe(undefined);
   expect(v1.flags.$scope).toBe(undefined);
@@ -146,7 +144,6 @@ test('rules getter', () => {
 
   expect(v1.rules).toBe(base.rules);
 });
-
 
 test('removes base instance when destroyed', () => {
   const vm = { _uid: 0 };

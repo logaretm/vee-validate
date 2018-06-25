@@ -12,7 +12,7 @@
   "repository": "https://github.com/baianat/vee-validate",
   "scripts": {
     "test": "jest",
-    "lint": "eslint ./src --fix",
+    "lint": "eslint src tests --fix",
     "flow": "flow",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
@@ -54,6 +54,7 @@
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-flowtype": "^2.49.3",
     "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jest": "^21.17.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.1.0",
@@ -79,7 +80,6 @@
     "vuepress": "^0.10.2"
   },
   "eslintIgnore": [
-    "tests",
     "locale",
     "dist",
     "flow"

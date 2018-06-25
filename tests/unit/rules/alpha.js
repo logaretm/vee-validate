@@ -22,10 +22,10 @@ const invalid = [
 
 test('validates that the string may only contains alphabetic characters', () => {
   expect.assertions(14);
-    // valid.
+  // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
 
-    // invalid
+  // invalid
   invalid.forEach(value => expect(validate(value)).toBe(false));
 });
 

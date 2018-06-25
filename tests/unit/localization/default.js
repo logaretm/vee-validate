@@ -108,7 +108,6 @@ test('returns the default message for the given locale when no fallback is provi
     }
   });
 
-
   // default for locale
   expect(dict.getMessage('ar', 'any')).toBe('رسالة افتراضية');
 

@@ -33,7 +33,7 @@ describe('handles native inputs with their respective events', () => {
     expect(wrapper.vm.errors.has('radioField')).toBe(false);
   });
 
-  test('checkbox fields',  async () => {
+  test('checkbox fields', async () => {
     const input = wrapper.find('#cb1');
     input.trigger('change');
     await flushPromises();
@@ -51,7 +51,7 @@ describe('handles native inputs with their respective events', () => {
     await flushPromises();
     expect(wrapper.vm.errors.has('selectField')).toBe(true);
 
-    input.element.value = "1";
+    input.element.value = '1';
     input.trigger('change');
     await flushPromises();
     expect(wrapper.vm.errors.has('selectField')).toBe(false);
@@ -87,8 +87,8 @@ test('removes listeners on related radio buttons', async () => {
   const field = wrapper.vm.$validator.fields.find({ name: 'radioField' });
 
   // it has two watchers, one for it and one for its friend
-  expect(field.watchers.filter(w => /input_native/.test(w.tag)).length).toBe(2);
+  expect(field.watchers.filter(w => /input_native/.test(w.tag))).toHaveLength(2);
   wrapper.destroy();
   // both should be removed.
-  expect(field.watchers.filter(w => /input_native/.test(w.tag)).length).toBe(0);
+  expect(field.watchers.filter(w => /input_native/.test(w.tag))).toHaveLength(0);
 });

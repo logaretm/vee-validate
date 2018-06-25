@@ -1,6 +1,5 @@
 import { createLocalVue } from '@vue/test-utils';
-import Field from '@/core/field'
-import helpers from '../helpers';
+import Field from '@/core/field';
 import VeeValidate from '@/index';
 import Config from '@/config';
 
@@ -44,7 +43,6 @@ test('empty values pass validation unless they are required', async () => {
   expect(await v.validate('email', 'loga')).toBe(false);
   expect(await v.validate('name', 'no')).toBe(false);
   expect(await v.validate('title', 'no')).toBe(false);
-
 });
 
 test('can validate single values', async () => {
@@ -138,9 +136,9 @@ test('fails validation on a one-of-many failure', async () => {
 });
 
 test('bypasses values without rules in strictMode = off', async () => {
-  Validator.setStrictMode(false)
+  Validator.setStrictMode(false);
   const v = new Validator({
-  imp: 'required'
+    imp: 'required'
   });
   const result = await v.validateAll({
     imp: 'Tyrion Lannister',
@@ -153,11 +151,11 @@ test('bypasses values without rules in strictMode = off', async () => {
 
 test('can set strict mode on specific instances', async () => {
   const v = new Validator({
-  imp: 'required'
+    imp: 'required'
   });
 
   try {
-    let result = await v.validateAll({
+    await v.validateAll({
       imp: 'Tyrion Lannister',
       headless: 'Ned Stark'
     });
@@ -291,8 +289,8 @@ test('can validate specific scopes on an object', async () => {
     'field': 'required'
   });
 
-  v.attach({ name: 'field', rules: 'required', scope: 'myscope' })
-  v.attach({ name: 'anotherfield', rules: 'required', scope: 'myscope' })
+  v.attach({ name: 'field', rules: 'required', scope: 'myscope' });
+  v.attach({ name: 'anotherfield', rules: 'required', scope: 'myscope' });
 
   // only global scope got validated.
   expect(await v.validateAll({ field: null })).toBe(false);
@@ -332,7 +330,7 @@ test('can extend the validators with a validator instance', async () => {
 test('add rules than can target other fields', async () => {
   const v = new Validator();
   v.extend('isBigger', (value, [other]) => {
-    return value > other
+    return value > other;
   }, { hasTarget: true });
   document.body.innerHTML = `<input type="text" name="field" value="10" id="el">`;
   const el = document.querySelector('#el');
@@ -384,7 +382,7 @@ test('throws an exception when extending with an invalid validator', () => {
 
 test('can overwrite messages and add translated messages', async () => {
   const loc = new Validator({ first_name: 'alpha' });
-  Validator.localize('ar', { messages: { alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.`} });
+  Validator.localize('ar', { messages: { alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.` } });
   Validator.localize('en', { messages: { alpha: (field) => `${field} is alphabetic.` } });
 
   loc.attach({ name: 'first_name', rules: 'alpha' });
@@ -404,7 +402,7 @@ test('sets locale for all validators', async () => {
   const v1 = new Validator({ first_name: 'alpha' });
   const v2 = new Validator({ first_name: 'alpha' });
   Validator.localize({
-    ar: { messages: { alpha: () => 'عايز حروف'} },
+    ar: { messages: { alpha: () => 'عايز حروف' } },
     en: { messages: { alpha: () => 'is alphabetic' } }
   });
 
@@ -514,14 +512,14 @@ test('can translate target field for field dependent validations', async () => {
 test('rules can return objects to provide context to the error message', async () => {
   const v = new Validator();
   v.extend('reason', {
-    getMessage(field, params, data) {
+    getMessage (field, params, data) {
       return data;
     },
-    validate(value, params) {
+    validate (value, params) {
       return {
         valid: false,
         data: 'Not correct'
-      }
+      };
     }
   });
 
@@ -534,10 +532,10 @@ test('rules can return a promise that resolves to an object to provide context t
   const v = new Validator();
 
   v.extend('reason_test_promise', {
-    getMessage(field, params, data) {
+    getMessage (field, params, data) {
       return (data && data.message) || 'Something went wrong';
     },
-    validate(value) {
+    validate (value) {
       return new Promise(resolve => {
         resolve({
           valid: value === 'trigger' ? false : !! value,
@@ -545,7 +543,7 @@ test('rules can return a promise that resolves to an object to provide context t
             message: 'Not this value'
           }
         });
-      })
+      });
     }
   });
 
@@ -558,7 +556,7 @@ test('rules can return a promise that resolves to an object to provide context t
 
 test('can remove rules from the list of validators', async () => {
   Validator.extend('dummy', (value) => !! value);
-  const v1 = new Validator({ name: 'dummy'});
+  const v1 = new Validator({ name: 'dummy' });
   await v1.validate('name', false);
 
   v1.remove('dummy');
@@ -591,9 +589,9 @@ test('calling validate with a string ending with .* will validate the matched sc
 
 test('caliing validateAll with array should validate only matching name', async () => {
   const v = new Validator();
-  v.attach({ name: 'name', rules: 'required', getter: () => '123' })
-  v.attach({ name: 'lname', rules: 'required|alpha', getter: () => 'AAA' })
-  v.attach({ name: 'age', rules: 'required', getter: () => '' })
+  v.attach({ name: 'name', rules: 'required', getter: () => '123' });
+  v.attach({ name: 'lname', rules: 'required|alpha', getter: () => 'AAA' });
+  v.attach({ name: 'age', rules: 'required', getter: () => '' });
   expect(await v.validateAll(['name', 'lname'])).toBe(true);
   expect(await v.validateAll(['name', 'age'])).toBe(false);
 });
@@ -605,7 +603,7 @@ test('can fetch the values using getters when not specifying values in validateA
     return toggle ? 'valid' : '123';
   };
 
-  v.attach({ name: 'name', rules: 'required|alpha',  getter });
+  v.attach({ name: 'name', rules: 'required|alpha', getter });
 
   expect(await v.validateAll()).toBe(true);
   toggle = !toggle;
@@ -808,7 +806,7 @@ test('resets all fields', async () => {
   expect(v.errors.count()).toBe(3);
   await v.reset();
   expect(v.errors.count()).toBe(0);
-})
+});
 
 test('it can handle mixed successes and errors from one field regardless of rules order', async () => {
   const v = new Validator({
@@ -881,7 +879,7 @@ test('rules can be skipped on initial validation', async () => {
   v.extend('backend', validateSkip, { initial: false });
   v.extend('backendUnskipped', validateUnskipped);
 
-  const field = v.attach({ name: 'field', rules: 'required|backend|backendUnskipped', el: document.createElement('input'), getter: () => '123' });
+  v.attach({ name: 'field', rules: 'required|backend|backendUnskipped', el: document.createElement('input'), getter: () => '123' });
   expect(validateSkip).not.toHaveBeenCalled();
   expect(validateUnskipped).toHaveBeenCalled();
 });
@@ -965,15 +963,15 @@ test('it does not validate disabled fields', async () => {
 
 test('some fields can blacklist false as a non-empty value', async () => {
   const el = document.createElement('input');
-  el.type = "checkbox";
-  el.name = "field";
+  el.type = 'checkbox';
+  el.name = 'field';
   let val = true;
   const v = new Validator();
   const field = v.attach({
     el,
     rules: 'required',
     getter: () => {
-      return val
+      return val;
     }
   });
   expect(await v.validate(`#${field.id}`)).toBe(true);
@@ -1052,7 +1050,7 @@ test('removes target based rules from the internal collection', async () => {
 
 test('creates regeneratable messages', async () => {
   const v = new Validator();
-  const field = v.attach({ name: 'email', rules: 'required|email' });
+  v.attach({ name: 'email', rules: 'required|email' });
 
   await v.validate('email', null);
   const error = v.errors.items[0];
