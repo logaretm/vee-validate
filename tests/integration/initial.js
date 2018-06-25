@@ -6,7 +6,7 @@ import TestComponent from './components/Initial';
 const Vue = createLocalVue();
 Vue.use(VeeValidate);
 
-test('validates input initially when .initial modifier is set', async () => {
+test('validates input initially when .immediate modifier is set', async () => {
   const wrapper = shallow(TestComponent, { localVue: Vue });
 
   await flushPromises();

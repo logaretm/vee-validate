@@ -14,7 +14,7 @@ VeeValidate.Validator.localize('en', {
   }
 });
 
-test('validates input initially when .initial modifier is set', async () => {
+test('validates input initially when .immediate modifier is set', async () => {
   const wrapper = shallow(TestComponent, { localVue: Vue });
 
   wrapper.setData({
