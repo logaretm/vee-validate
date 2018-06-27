@@ -16,7 +16,7 @@ const messages = {
   decimal: (field, [decimals = '*'] = []) => `${field} moet een nummer zijn en mag ${decimals === '*' ? '' : decimals} decimalen bevatten.`,
   digits: (field, [length]) => `${field} moet een nummer zijn en exact ${length} tekens bevatten.`,
   dimensions: (field, [width, height]) => `${field} moet ${width} pixels breed zijn en ${height} pixels hoog.`,
-  email: (field) => `${field} moet een geldig emailadres zijn`,
+  email: (field) => `${field} moet een geldig emailadres zijn.`,
   ext: (field) => `${field} moet een geldig bestand zijn.`,
   image: (field) => `${field} moet een afbeelding zijn.`,
   included: (field) => `${field} moet een geldige waarde zijn.`,
