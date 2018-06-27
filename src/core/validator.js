@@ -608,7 +608,7 @@ export default class Validator {
     let isExitEarly = false;
     // use of '.some()' is to break iteration in middle by returning true
     Object.keys(field.rules).filter(rule => {
-      if (!initial) return true;
+      if (!initial || !RULES[rule]) return true;
 
       return RULES[rule].options.immediate;
     }).some(rule => {
