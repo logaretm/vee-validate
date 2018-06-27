@@ -14,11 +14,11 @@ export default class ScopedValidator {
   get flags () {
     return this._base.fields.items.filter(f => f.vmId === this.id).reduce((acc, field) => {
       if (field.scope) {
-        acc[`$${field.scope}`] = {
-          [field.name]: field.flags
-        };
+        if (!acc[`$${field.scope}`]) {
+          acc[`$${field.scope}`] = {};
+        }
 
-        return acc;
+        acc[`$${field.scope}`][field.name] = field.flags;
       }
 
       acc[field.name] = field.flags;

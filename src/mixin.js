@@ -65,9 +65,11 @@ export default {
     this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
       return this.$validator.fields.items.reduce((acc, field) => {
         if (field.scope) {
-          acc[`$${field.scope}`] = {
-            [field.name]: field.flags
-          };
+          if (!acc[`$${field.scope}`]) {
+            acc[`$${field.scope}`] = {};
+          }
+
+          acc[`$${field.scope}`][field.name] = field.flags;
 
           return acc;
         }
