@@ -356,11 +356,11 @@ test('groups errors by field name', () => {
   });
   expect(errors.collect(null, undefined, false)).toEqual({
     email: [
-      { field: 'email', msg: 'The email is invalid', scope: null, rule: 'rule1' },
-      { field: 'email', msg: 'The email is shorter than 3 chars.', scope: null, rule: 'rule1' },
+      { field: 'email', msg: 'The email is invalid', scope: null, rule: 'rule1', vmId: null },
+      { field: 'email', msg: 'The email is shorter than 3 chars.', scope: null, rule: 'rule1', vmId: null },
     ],
     name: [
-      { field: 'name', msg: 'The name is invalid', scope: null, rule: 'rule1' },
+      { field: 'name', msg: 'The name is invalid', scope: null, rule: 'rule1', vmId: null },
     ]
   });
 });
