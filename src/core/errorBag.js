@@ -47,6 +47,7 @@ export default class ErrorBag {
     }
 
     error.scope = !isNullOrUndefined(error.scope) ? error.scope : null;
+    error.vmId = !isNullOrUndefined(error.vmId) ? error.vmId : (this.vmId || null);
 
     return [error];
   }
