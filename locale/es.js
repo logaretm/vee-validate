@@ -15,7 +15,7 @@ const messages = {
   date_format: (field, [format]) => `El campo ${field} debe tener formato formato ${format}.`,
   decimal: (field, [decimals = '*'] = []) => `El campo ${field} debe ser numérico y contener ${decimals === '*' ? '' : decimals} puntos decimales.`,
   digits: (field, [length]) => `El campo ${field} debe ser numérico y contener exactamente ${length} dígitos.`,
-  dimensions: (field, [width, height]) => `El campo ${field} debe ser de ${width} pixeles por ${height} pixeles.`,
+  dimensions: (field, [width, height]) => `El campo ${field} debe ser de ${width} píxeles por ${height} píxeles.`,
   email: (field) => `El campo ${field} debe ser un correo electrónico válido.`,
   ext: (field) => `El campo ${field} debe ser un archivo válido.`,
   image: (field) => `El campo ${field} debe ser una imagen.`,
