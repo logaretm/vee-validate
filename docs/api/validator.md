@@ -22,6 +22,17 @@ The validator offers an API to add new fields and trigger validations.
 | resume() | `void` | Enables validation. |
 | detach(name: string, scope?: string) | `void` | Detaches the field that matches the name and the scope of the provided values. |
 | extend(name: string, rule: Rule, options?: ExtendOptions) | `void` | Adds a new validation rule. The provided rule param must be a [valid Rule function or object](/guide/custom-rules.md). |
+| reset(matcher?: Object) | `void` | Resets field flags for all scoped fields. Resets all fields if no scope is provided. |
+
+#### Scoped Reset() Usage
+```js
+let matcher = {
+    scope: 'form-1',
+    vmId: this.$validator.id
+}
+
+this.$validator.reset(matcher);
+```
 
 ### Validate API
 
