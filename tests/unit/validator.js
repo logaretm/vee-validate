@@ -1065,3 +1065,19 @@ test('removes the vm localeChanged listener when the validator is destroyed', ()
 
   expect(v._vm.$off).toHaveBeenCalled();
 });
+
+test('fields can be configured to bail or to continue after first failure', async () => {
+  const v = new Validator({
+    email: 'continues|min:3|email', // forces the validator to continue through the pipeline even if the field is not required.
+    name: 'min:3|alpha',
+    password: 'required|min:3|max:4',
+    another: 'continues|required|min:3|is:3'
+  });
+
+  await v.validate();
+
+  expect(v.errors.collect('email').length).toBe(2); // two errors generated.
+  expect(v.errors.collect('name').length).toBe(0); // none because the field isn't required.
+  expect(v.errors.collect('password').length).toBe(1); // the required field error.
+  expect(v.errors.collect('another').length).toBe(3); // the required field error.
+});

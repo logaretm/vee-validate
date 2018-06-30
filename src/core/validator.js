@@ -594,12 +594,27 @@ export default class Validator {
     });
   }
 
+  _shouldSkip (field, value) {
+    // field is configured to run throught the pipeline regardless
+    if (!field.bails) {
+      return false;
+    }
+
+    // disabled fields are skipped
+    if (field.isDisabled) {
+      return true;
+    }
+
+    // skip if the field is not required and has an empty value.
+    return !field.isRequired && (isNullOrUndefined(value) || value === '');
+  }
+
   /**
    * Starts the validation process.
    */
   _validate (field: Field, value: any, { initial } = {}): Promise<ValidationResult> {
     // if field is disabled and is not required.
-    if (field.isDisabled || (!field.isRequired && (isNullOrUndefined(value) || value === ''))) {
+    if (this._shouldSkip(field, value)) {
       return Promise.resolve({ valid: true, id: field.id, field: field.name, scope: field.scope, errors: [] });
     }
 
@@ -616,7 +631,7 @@ export default class Validator {
       const result = this._test(field, value, { name: rule, params: field.rules[rule], options: ruleOptions });
       if (isCallable(result.then)) {
         promises.push(result);
-      } else if (this.fastExit && !result.valid) {
+      } else if (this.fastExit && field.bails && !result.valid) {
         errors.push(...result.errors);
         isExitEarly = true;
       } else {

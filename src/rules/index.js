@@ -7,6 +7,7 @@ import alpha_spaces from './alpha_spaces';
 import before from './before';
 import between from './between';
 import confirmed from './confirmed';
+import continues from './continues';
 import credit_card from './credit_card';
 import date_between from './date_between';
 import date_format from './date_format';
@@ -43,6 +44,7 @@ export {
   before,
   between,
   confirmed,
+  continues,
   credit_card,
   date_between,
   date_format,

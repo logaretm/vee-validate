@@ -150,6 +150,10 @@ export default class Field {
     return this.getter();
   }
 
+  get bails () {
+    return !this.rules.continues;
+  }
+
   /**
    * If the field rejects false as a valid value for the required rule.
    */
