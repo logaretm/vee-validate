@@ -151,7 +151,15 @@ export default class Field {
   }
 
   get bails () {
-    return !this.rules.continues;
+    if (this.rules.bails) {
+      return true;
+    }
+
+    if (this.rules.continues) {
+      return false;
+    }
+
+    return undefined;
   }
 
   /**

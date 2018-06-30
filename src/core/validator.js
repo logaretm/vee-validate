@@ -596,7 +596,7 @@ export default class Validator {
 
   _shouldSkip (field, value) {
     // field is configured to run throught the pipeline regardless
-    if (!field.bails) {
+    if (field.bails === false) {
       return false;
     }
 
@@ -629,9 +629,10 @@ export default class Validator {
     }).some(rule => {
       const ruleOptions = RULES[rule] ? RULES[rule].options : {};
       const result = this._test(field, value, { name: rule, params: field.rules[rule], options: ruleOptions });
+      const bails = field.bails !== undefined ? field.bails : this.fastExit;
       if (isCallable(result.then)) {
         promises.push(result);
-      } else if (this.fastExit && field.bails && !result.valid) {
+      } else if (bails && !result.valid) {
         errors.push(...result.errors);
         isExitEarly = true;
       } else {

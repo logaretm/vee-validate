@@ -1081,3 +1081,17 @@ test('fields can be configured to bail or to continue after first failure', asyn
   expect(v.errors.collect('password').length).toBe(1); // the required field error.
   expect(v.errors.collect('another').length).toBe(3); // the required field error.
 });
+
+test('fields can be configured to bail if the fastExit is disabled', async () => {
+  const v = new Validator({
+    name: 'bails|required|min:3|is:3',
+    email: 'required|min:3|is:3'
+  }, { fastExit: false });
+
+  await v.validate('name', '');
+  await v.validate('email', '1');
+
+  expect(v.errors.collect('name').length).toBe(1); // bailed on required
+  expect(v.errors.collect('email').length).toBe(2); // did not bail
+
+});

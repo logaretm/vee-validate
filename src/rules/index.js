@@ -4,6 +4,7 @@ import alpha from './alpha';
 import alpha_dash from './alpha_dash';
 import alpha_num from './alpha_num';
 import alpha_spaces from './alpha_spaces';
+import bails from './bails';
 import before from './before';
 import between from './between';
 import confirmed from './confirmed';
@@ -41,6 +42,7 @@ export {
   alpha_num,
   alpha_spaces,
   alpha,
+  bails,
   before,
   between,
   confirmed,
