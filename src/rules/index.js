@@ -4,11 +4,9 @@ import alpha from './alpha';
 import alpha_dash from './alpha_dash';
 import alpha_num from './alpha_num';
 import alpha_spaces from './alpha_spaces';
-import bails from './bails';
 import before from './before';
 import between from './between';
 import confirmed from './confirmed';
-import continues from './continues';
 import credit_card from './credit_card';
 import date_between from './date_between';
 import date_format from './date_format';
@@ -42,11 +40,9 @@ export {
   alpha_num,
   alpha_spaces,
   alpha,
-  bails,
   before,
   between,
   confirmed,
-  continues,
   credit_card,
   date_between,
   date_format,

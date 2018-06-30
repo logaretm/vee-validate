@@ -151,15 +151,7 @@ export default class Field {
   }
 
   get bails () {
-    if (this.rules.bails) {
-      return true;
-    }
-
-    if (this.rules.continues) {
-      return false;
-    }
-
-    return undefined;
+    return this._bails;
   }
 
   /**
@@ -234,6 +226,7 @@ export default class Field {
       : !isNullOrUndefined(this.scope) ? this.scope : null;
     this.name = (!isNullOrUndefined(options.name) ? String(options.name) : options.name) || this.name || null;
     this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
+    this._bails = options.bails !== undefined ? options.bails : this._bails;
     this.model = options.model || this.model;
     this.listen = options.listen !== undefined ? options.listen : this.listen;
     this.classes = (options.classes || this.classes || false) && !this.component;
