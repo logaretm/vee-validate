@@ -1,12 +1,13 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
-  after: (field, [target]) => `В поле ${field} должна быть дата после ${target}.`,
+  _default: (field) => `Значение поля ${field} недопустимо.`,
+  after: (field, [target, inclusion]) => `В поле ${field} должна быть дата после ${inclusion ? 'или равная ' : ''}${target}.`,
   alpha_dash: (field) => `Поле ${field} может содержать только буквы, цифры и дефис.`,
   alpha_num: (field) => `Поле ${field} может содержать только буквы и цифры.`,
   alpha_spaces: (field) => `Поле ${field} может содержать только буквы и пробелы.`,
   alpha: (field) => `Поле ${field} может содержать только буквы.`,
-  before: (field, [target]) => `В поле ${field} должна быть дата до ${target}.`,
+  before: (field, [target, inclusion]) => `В поле ${field} должна быть дата до ${inclusion ? 'или равная ' : ''}${target}.`,
   between: (field, [min, max]) => `Поле ${field} должно быть между ${min} и ${max}.`,
   confirmed: (field, [confirmedField]) => `Поле ${field} не совпадает с ${confirmedField}.`,
   credit_card: (field) => `Поле ${field} должно быть действительным номером карты`,
@@ -19,10 +20,18 @@ const messages = {
   ext: (field, [...args]) => `Поле ${field} должно быть действительным файлом. (${args})`,
   image: (field) => `Поле ${field} должно быть изображением.`,
   included: (field) => `Поле ${field} должно быть допустимым значением.`,
+  integer: (field) => `Поле ${field} должно быть целым числом.`,
   ip: (field) => `Поле ${field} должно быть действительным IP-адресом.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `Длина поля ${field} должна быть между ${length} и ${max}.`;
+    }
+
+    return `Длина поля ${field} должна быть ${length}.`;
+  },
   max: (field, [length]) => `Поле ${field} не может быть более ${length} символов.`,
   max_value: (field, [max]) => `Поле ${field} должно быть ${max} или менее.`,
-  mimes: (field, [...args]) => `Поле ${field} должно иметь действительный тип файла. (${args})`,
+  mimes: (field, [...args]) => `Поле ${field} должно иметь допустимый тип файла. (${args})`,
   min: (field, [length]) => `Поле ${field} должно быть не менее ${length} символов.`,
   min_value: (field, [min]) => `Поле ${field} должно быть ${min} или больше.`,
   excluded: (field) => `Поле ${field} должно быть допустимым значением.`,
@@ -40,6 +49,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
+  // eslint-disable-next-line
   VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
