@@ -99,7 +99,7 @@ You can [configure](/configuration.md) `fastExit` option to `false` to enable th
 
 ### bails
 
-Inversly if you have configured `fastExit` to be `false` then you could make specific fields bail or stop testing the validation rules after the first failure.
+Inversely if you have configured `fastExit` to be `false` then you could make specific fields bail or stop testing the validation rules after the first failure.
 
 ```vue
 <template>
