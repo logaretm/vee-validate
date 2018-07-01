@@ -93,6 +93,10 @@ export default {
 
 You can [configure](/configuration.md) `fastExit` option to `false` to enable this behavior for all the fields.
 
+::: tip
+  `.continues` modifier has also another use, it disables the `required` rule check, meaning the fields that are not required but have an empty value will not be skipped. So make sure your custom rules are able to handle empty values as well.
+:::
+
 ### bails
 
 Inversly if you have configured `fastExit` to be `false` then you could make specific fields bail or stop testing the validation rules after the first failure.
