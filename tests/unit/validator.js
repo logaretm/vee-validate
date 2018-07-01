@@ -1065,3 +1065,4 @@ test('removes the vm localeChanged listener when the validator is destroyed', ()
 
   expect(v._vm.$off).toHaveBeenCalled();
 });
+

@@ -25,6 +25,7 @@ export default class Resolver {
       name: Resolver.resolveName(el, vnode),
       el: el,
       listen: !binding.modifiers.disable,
+      bails: binding.modifiers.bails ? true : (binding.modifiers.continues === true ? false : undefined),
       scope: Resolver.resolveScope(el, binding, vnode),
       vm: Resolver.makeVM(vnode.context),
       expression: binding.value,

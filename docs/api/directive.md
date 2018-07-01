@@ -65,3 +65,55 @@ export default {
 };
 </script>
 ```
+
+### continues
+
+By default vee-validate uses a `fastExit` strategy when testing the field rules, meaning when the first rule fails it will stop and will not test the rest of the rules. You can use the `.continues` modifier to force this behavior to test all rules regardless of their result.
+
+This snippet uses the modifier to display all errors for a field which is a common UI practice.
+
+```vue
+<template>
+  <div>
+    <input v-model="email" v-validate.continues="'required|email'" name="field" type="text">
+    <ul>
+      <li v-for="error in errors.collect('field')">{{ error }}</li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    email: ''
+  })
+};
+</script>
+```
+
+You can [configure](/configuration.md) `fastExit` option to `false` to enable this behavior for all the fields.
+
+::: tip
+  `.continues` modifier has also another use, it disables the `required` rule check, meaning the fields that are not required but have an empty value will not be skipped. So make sure your custom rules are able to handle empty values as well.
+:::
+
+### bails
+
+Inversely if you have configured `fastExit` to be `false` then you could make specific fields bail or stop testing the validation rules after the first failure.
+
+```vue
+<template>
+  <div>
+    <input v-model="email" v-validate.bails="'required|email'" name="field" type="text">
+    <span>{{ errors.first('email') }}</span>
+  </div>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    email: ''
+  })
+};
+</script>
+```
