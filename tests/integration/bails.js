@@ -28,3 +28,15 @@ test('fields can be configured to bail if the fastExit is disabled with the .bai
   expect(wrapper.vm.errors.collect('bails')).toHaveLength(1);
   expect(wrapper.vm.errors.collect('undefined')).toHaveLength(1); // unconfigured field follows the global fastExit = false which still respects the required rule.
 });
+
+test('continues modifier can be used to skip the required rule empty value check', async () => {
+  const Vue = createLocalVue();
+  Vue.use(VeeValidate);
+
+  const wrapper = shallow(TestComponent, { localVue: Vue });
+
+  await wrapper.vm.$validator.validate();
+  await flushPromises();
+
+  expect(wrapper.vm.errors.collect('notRequired')).toHaveLength(2); // is and min should fail.
+});
