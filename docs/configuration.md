@@ -38,6 +38,7 @@ Vue.use(VeeValidate, config);
 | errorBagName  | `string`  | `'errors'` | The name of the `ErrorBag` object that will be injected in each of Vue's instances' data. Used to avoid conflicts with other plugins. |
 | events        | `string` | `'input|blur'` | Pipe separated list of the default event names that will be listened to, to trigger validation. If an empty string is provided, it will disable all listeners. |
 | fieldsBagName | `string` |  `'fields'` | The name of the Fields (flags) object that will be injected in each of Vue's instances' data. |
+| fastExit      | `boolean`|  `true`     | Whether the validation should stop after the first failure for each field, you can opt in or out from either settings by using the [continues](/api/directive.md#continues) and the [bails](/api/directive.md#bails) modifiers. |
 | i18n          | `VueI18n | null` | `null` | The `vue-i18n` instance, if provided will integrate vee-validate with the i18n plugin and will use it to produce the error messages instead of the built in dictionary. |
 | i18nRootKey   | `string` | `'validations'` | The key name of the validation messages for each locale. |
 | inject        | `boolean` | `true` | Specifies if a validator instance should be injected automatically for all components. (See [Component Injections](advanced/#component-injections) for more information.) |
