@@ -393,6 +393,10 @@ By default, the boolean value of `false` will pass validate. Setting invalidateF
 <input v-validate="'required'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('required_field') }" name="required_field" type="text" placeholder="Is Required">
 <span v-show="errors.has('required_field')" class="help is-danger">{{ errors.first('required_field') }}</span>
 
+::: tip
+  The `required` rule is special, by default the validator skips the validation for non-required fields that have an empty value. If you wish to force validation for non-required fields, use the [`continues` modifier](/api/directive.md#continues).
+:::
+
 ## size
 
 The file size added to the field under validation must not exceed the specified size in kilobytes.
