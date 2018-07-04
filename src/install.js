@@ -16,7 +16,8 @@ function install (_Vue, options = {}) {
 
   detectPassiveSupport();
   Vue = _Vue;
-  const validator = new Validator(options);
+  console.log(options);
+  const validator = new Validator(null, options);
   const localVue = new Vue({
     data: () => ({
       errors: validator.errors,
