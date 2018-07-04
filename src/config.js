@@ -13,7 +13,7 @@ const defaultConfig = {
   fieldsBagName: 'fields',
   classes: false,
   classNames: null,
-  events: 'input|blur',
+  events: 'input',
   inject: true,
   fastExit: true,
   aria: true,
