@@ -94,8 +94,8 @@ export default class Field {
     this.aria = options.aria;
     this.flags = createFlags();
     this.vm = options.vm;
-    this.component = options.component;
-    this.ctorConfig = this.component ? getPath('$options.$_veeValidate', this.component) : undefined;
+    this.componentInstance = options.component;
+    this.ctorConfig = this.componentInstance ? getPath('$options.$_veeValidate', this.componentInstance) : undefined;
     this.update(options);
     // set initial value.
     this.initialValue = this.value;
@@ -115,7 +115,7 @@ export default class Field {
   }
 
   get isDisabled (): boolean {
-    return !!(this.component && this.component.disabled) || !!(this.el && this.el.disabled);
+    return !!(this.componentInstance && this.componentInstance.disabled) || !!(this.el && this.el.disabled);
   }
 
   /**
@@ -131,8 +131,8 @@ export default class Field {
       alias = getDataAttribute(this.el, 'as');
     }
 
-    if (!alias && this.component) {
-      return this.component.$attrs && this.component.$attrs['data-vv-as'];
+    if (!alias && this.componentInstance) {
+      return this.componentInstance.$attrs && this.componentInstance.$attrs['data-vv-as'];
     }
 
     return alias;
@@ -159,7 +159,7 @@ export default class Field {
    */
 
   get rejectsFalse (): boolean {
-    if (this.component && this.ctorConfig) {
+    if (this.componentInstance && this.ctorConfig) {
       return !!this.ctorConfig.rejectsFalse;
     }
 
@@ -229,7 +229,7 @@ export default class Field {
     this._bails = options.bails !== undefined ? options.bails : this._bails;
     this.model = options.model || this.model;
     this.listen = options.listen !== undefined ? options.listen : this.listen;
-    this.classes = (options.classes || this.classes || false) && !this.component;
+    this.classes = (options.classes || this.classes || false) && !this.componentInstance;
     this.classNames = isObject(options.classNames) ? merge(this.classNames, options.classNames) : this.classNames;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this._alias = options.alias || this._alias;
@@ -447,19 +447,19 @@ export default class Field {
       this.unwatch(/^class_input$/);
     };
 
-    if (this.component && isCallable(this.component.$once)) {
-      this.component.$once('input', onInput);
-      this.component.$once('blur', onBlur);
+    if (this.componentInstance && isCallable(this.componentInstance.$once)) {
+      this.componentInstance.$once('input', onInput);
+      this.componentInstance.$once('blur', onBlur);
       this.watchers.push({
         tag: 'class_input',
         unwatch: () => {
-          this.component.$off('input', onInput);
+          this.componentInstance.$off('input', onInput);
         }
       });
       this.watchers.push({
         tag: 'class_blur',
         unwatch: () => {
-          this.component.$off('blur', onBlur);
+          this.componentInstance.$off('blur', onBlur);
         }
       });
       return;
@@ -500,8 +500,8 @@ export default class Field {
    */
   _determineInputEvent () {
     // if its a custom component, use the customized model event or the input event.
-    if (this.component) {
-      return (this.component.$options.model && this.component.$options.model.event) || 'input';
+    if (this.componentInstance) {
+      return (this.componentInstance.$options.model && this.componentInstance.$options.model.event) || 'input';
     }
 
     if (this.model) {
@@ -520,7 +520,7 @@ export default class Field {
    */
   _determineEventList (defaultInputEvent) {
     // if no event is configured, or it is a component or a text input then respect the user choice.
-    if (!this.events.length || this.component || isTextInput(this.el)) {
+    if (!this.events.length || this.componentInstance || isTextInput(this.el)) {
       return [...this.events];
     }
 
@@ -569,9 +569,9 @@ export default class Field {
       }
 
       // watch it from the custom component vm instead.
-      if (!expression && this.component && this.component.$options.model) {
-        ctx = this.component;
-        expression = this.component.$options.model.prop || 'value';
+      if (!expression && this.componentInstance && this.componentInstance.$options.model) {
+        ctx = this.componentInstance;
+        expression = this.componentInstance.$options.model.prop || 'value';
       }
 
       if (ctx && expression) {
@@ -606,19 +606,19 @@ export default class Field {
   }
 
   _addComponentEventListener (evt, validate) {
-    if (!this.component) return;
+    if (!this.componentInstance) return;
 
-    this.component.$on(evt, validate);
+    this.componentInstance.$on(evt, validate);
     this.watchers.push({
       tag: 'input_vue',
       unwatch: () => {
-        this.component.$off(evt, validate);
+        this.componentInstance.$off(evt, validate);
       }
     });
   }
 
   _addHTMLEventListener (evt, validate) {
-    if (!this.el || this.component) return;
+    if (!this.el || this.componentInstance) return;
 
     // listen for the current element.
     const addListener = (el) => {
