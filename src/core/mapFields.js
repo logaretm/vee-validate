@@ -1,11 +1,11 @@
-import { assign } from './utils/index';
+import { assign, includes } from './utils/index';
 
 // @flow
 
 const normalize = (fields: Array<any> | Object): Object => {
   if (Array.isArray(fields)) {
     return fields.reduce((prev, curr) => {
-      if (~curr.indexOf('.')) {
+      if (includes(curr, '.')) {
         prev[curr.split('.')[1]] = curr;
       } else {
         prev[curr] = curr;

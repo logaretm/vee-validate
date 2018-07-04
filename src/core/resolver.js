@@ -11,6 +11,7 @@ import {
   isCallable,
   deepParseInt,
   fillRulesFromElement,
+  includes
 } from './utils';
 
 /**
@@ -61,7 +62,7 @@ export default class Resolver {
       rules = getDataAttribute(el, 'rules');
     }
 
-    if (binding.value && ~['string', 'object'].indexOf(typeof binding.value.rules)) {
+    if (binding.value && includes(['string', 'object'], typeof binding.value.rules)) {
       rules = binding.value.rules;
     } else if (binding.value) {
       rules = binding.value;
@@ -154,7 +155,7 @@ export default class Resolver {
     }
 
     // resolve the model event if its configured for custom components.
-    if (events && vnode.componentInstance && events.includes('input')) {
+    if (events && vnode.componentInstance && includes(events, 'input')) {
       const { event } = vnode.componentInstance.$options.model || { event: 'input' };
       events = events.replace('input', event);
     }

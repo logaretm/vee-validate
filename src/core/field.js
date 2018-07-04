@@ -19,7 +19,8 @@ import {
   merge,
   isObject,
   addEventListener,
-  isCheckboxOrRadioInput
+  isCheckboxOrRadioInput,
+  includes
 } from './utils';
 
 // @flow
@@ -559,7 +560,7 @@ export default class Field {
     let events = this._determineEventList(inputEvent);
 
     // if there is a model and an on input validation is requested.
-    if (this.model && events.indexOf(inputEvent) !== -1) {
+    if (this.model && includes(events, inputEvent)) {
       let ctx = null;
       let expression = this.model.expression;
       // if its watchable from the context vm.

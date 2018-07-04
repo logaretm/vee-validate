@@ -23,15 +23,15 @@ export const addEventListener = (el: HTMLElement, eventName: string, cb: Functio
 };
 
 export const isTextInput = (el: HTMLInputElement) => {
-  return ['text', 'password', 'search', 'email', 'tel', 'url', 'textarea'].indexOf(el.type) !== -1;
+  return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'textarea'], el.type);
 };
 
 export const isCheckboxOrRadioInput = (el: HTMLInputElement) => {
-  return ['radio', 'checkbox'].indexOf(el.type) !== -1;
+  return includes(['radio', 'checkbox'], el.type);
 };
 
 export const isDateInput = (el: HTMLInputElement) => {
-  return ['date', 'week', 'month', 'datetime-local', 'time'].indexOf(el.type) !== -1;
+  return includes(['date', 'week', 'month', 'datetime-local', 'time'], el.type);
 };
 
 /**
@@ -175,7 +175,7 @@ export const parseRule = (rule: string): Object => {
   let params = [];
   const name = rule.split(':')[0];
 
-  if (~rule.indexOf(':')) {
+  if (includes(rule, ':')) {
     params = rule.split(':').slice(1).join(':').split(',');
   }
 
@@ -586,7 +586,7 @@ export const values = (obj) => {
 
 export const parseSelector = (selector) => {
   let rule = null;
-  if (selector.indexOf(':') !== -1) {
+  if (includes(selector, ':')) {
     rule = selector.split(':').pop();
     selector = selector.replace(`:${rule}`, '');
   }
@@ -602,7 +602,7 @@ export const parseSelector = (selector) => {
 
   let scope = null;
   let name = selector;
-  if (selector.indexOf('.') !== -1) {
+  if (includes(selector, '.')) {
     const parts = selector.split('.');
     scope = parts[0];
     name = parts.slice(1).join('.');
@@ -614,4 +614,8 @@ export const parseSelector = (selector) => {
     name,
     rule
   };
+};
+
+export const includes = (collection: String | any[], item: any) => {
+  return collection.indexOf(item) !== -1;
 };

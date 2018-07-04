@@ -1,5 +1,5 @@
 import ErrorBag from './errorBag';
-import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined } from './utils';
+import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined, includes } from './utils';
 import FieldBag from './fieldBag';
 import Field from './field';
 import Config from '../config';
@@ -541,7 +541,7 @@ export default class Validator {
       return this.fields.find({ name, scope, vmId: uid });
     }
 
-    if (name.indexOf('.') > -1) {
+    if (includes(name, '.')) {
       const [fieldScope, ...fieldName] = name.split('.');
       const field = this.fields.find({ name: fieldName.join('.'), scope: fieldScope, vmId: uid });
       if (field) {
