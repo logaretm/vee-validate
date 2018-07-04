@@ -149,10 +149,14 @@ export default class Resolver {
       events = config && config.events;
     }
 
+    if (Config.current.events) {
+      events = Config.current.events;
+    }
+
     // resolve the model event if its configured for custom components.
-    if (!events && vnode.componentInstance) {
+    if (events && vnode.componentInstance && events.includes('input')) {
       const { event } = vnode.componentInstance.$options.model || { event: 'input' };
-      events = event;
+      events = events.replace('input', event);
     }
 
     return events;
