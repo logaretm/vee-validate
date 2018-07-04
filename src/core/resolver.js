@@ -149,7 +149,7 @@ export default class Resolver {
       events = config && config.events;
     }
 
-    if (Config.current.events) {
+    if (!events && Config.current.events) {
       events = Config.current.events;
     }
 
