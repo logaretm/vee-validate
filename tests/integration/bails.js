@@ -26,7 +26,7 @@ test('fields can be configured to bail if the fastExit is disabled with the .bai
   await flushPromises();
 
   expect(wrapper.vm.errors.collect('bails')).toHaveLength(1);
-  expect(wrapper.vm.errors.collect('undefined')).toHaveLength(1); // unconfigured field follows the global fastExit = false which still respects the required rule.
+  expect(wrapper.vm.errors.collect('undefined')).toHaveLength(3); // unconfigured field follows the global fastExit = false which still acts like .continues modifier.
 });
 
 test('continues modifier can be used to skip the required rule empty value check', async () => {

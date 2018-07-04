@@ -24,7 +24,7 @@ export default class Validator {
     this.fields = new FieldBag();
     this._createFields(validations);
     this.paused = false;
-    this.fastExit = options.fastExit || false;
+    this.fastExit = !isNullOrUndefined(options && options.fastExit) ? options.fastExit : true;
   }
 
   static get rules () {
@@ -595,7 +595,7 @@ export default class Validator {
   }
 
   _shouldSkip (field, value) {
-    // field is configured to run throught the pipeline regardless
+    // field is configured to run through the pipeline regardless
     if (field.bails === false) {
       return false;
     }
@@ -609,11 +609,19 @@ export default class Validator {
     return !field.isRequired && (isNullOrUndefined(value) || value === '');
   }
 
+  _shouldBail (field, value) {
+    // if the field was configured explicitly.
+    if (field.bails !== undefined) {
+      return field.bails;
+    }
+
+    return this.fastExit;
+  }
+
   /**
    * Starts the validation process.
    */
   _validate (field: Field, value: any, { initial } = {}): Promise<ValidationResult> {
-    // if field is disabled and is not required.
     if (this._shouldSkip(field, value)) {
       return Promise.resolve({ valid: true, id: field.id, field: field.name, scope: field.scope, errors: [] });
     }
@@ -629,10 +637,9 @@ export default class Validator {
     }).some(rule => {
       const ruleOptions = RULES[rule] ? RULES[rule].options : {};
       const result = this._test(field, value, { name: rule, params: field.rules[rule], options: ruleOptions });
-      const bails = field.bails !== undefined ? field.bails : this.fastExit;
       if (isCallable(result.then)) {
         promises.push(result);
-      } else if (bails && !result.valid) {
+      } else if (!result.valid && this._shouldBail(field, value)) {
         errors.push(...result.errors);
         isExitEarly = true;
       } else {
