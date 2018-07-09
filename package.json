@@ -43,6 +43,7 @@
     "@babel/node": "^7.0.0-beta.51",
     "@babel/plugin-transform-flow-strip-types": "^7.0.0-beta.51",
     "@babel/preset-env": "^7.0.0-beta.51",
+    "@commitlint/cli": "^7.0.0",
     "@vue/test-utils": "1.0.0-beta.12",
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^8.2.5",
@@ -62,7 +63,9 @@
     "flow-bin": "^0.75.0",
     "flush-promises": "^1.0.0",
     "gzip-size": "^4.1.0",
+    "husky": "^1.0.0-rc.13",
     "jest": "^23.3.0",
+    "lint-staged": "^7.2.0",
     "mkdirp": "^0.5.1",
     "regenerator-runtime": "^0.12.0",
     "rollup": "^0.62.0",
@@ -111,6 +114,18 @@
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
     }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "jest --maxWorkers=1 && lint-staged",
+      "commit-msg": "commitlint $HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "dependencies": {}
 }
