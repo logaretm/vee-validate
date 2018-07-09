@@ -118,7 +118,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "jest --maxWorkers=1 && lint-staged",
-      "commit-msg": "commitlint $HUSKY_GIT_PARAMS"
+      "commit-msg": "commitlint --edit $HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {
