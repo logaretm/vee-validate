@@ -117,12 +117,13 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "jest --maxWorkers=1 && lint-staged",
-      "commit-msg": "commitlint --edit $HUSKY_GIT_PARAMS"
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint --edit -E HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {
     "*.js": [
+      "jest --maxWorkers=1",
       "eslint --fix",
       "git add"
     ]
