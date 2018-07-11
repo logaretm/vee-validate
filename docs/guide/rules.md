@@ -43,7 +43,7 @@ The field under validation must have a valid date and is after the date value in
 
 ### after params
 
-- `target:` The input name to be validated against. Must have the same format as the date_format rule. Can also be a date value of the same format.
+- `target:` The other field's ref to be validated against. Must have the same format as the date_format rule. Can also be a date value of the same format.
 - `inclusion`: Whether to include equal dates as a valid value, setting it to any value will set it to true, it is false by default.
 
 <input v-validate="'date_format:DD/MM/YYYY|after:afterTarget'" :class="{'input': true, 'is-danger': errors.has('after_field') }" name="after_field" type="text" placeholder="DD/MM/YYYY">
@@ -89,13 +89,17 @@ The field under validation must have a valid date and is before the date value i
 
 ### before params
 
-- `target`: The input name to be validated against. Must have the same format as the date_format rule. Can also be a date value of the same format.
+- `target`: The other field's ref to be validated against. Must have the same format as the date_format rule. Can also be a date value of the same format.
 - `inclusion`: Whether to include equal dates as a valid value, setting it to any value will set it to true, it is false by default.
 
 <input v-validate="'date_format:DD/MM/YYYY|before:beforeTarget'" :class="{'input': true, 'is-danger': errors.has('before_field') }" name="before_field" type="text" placeholder="DD/MM/YYYY">
 <span v-show="errors.has('before_field')" class="help is-danger">{{ errors.first('before_field') }}</span>
 
 <input name="before_field_target" ref="beforeTarget" :class="{'input': true, 'is-danger': errors.has('alpha_field') }" type="text" placeholder="DD/MM/YYYY">
+
+::: tip
+  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
+:::
 
 ## between
 
@@ -115,12 +119,16 @@ The field under validation must have the same value as the confirmation field.
 
 ### confirmed params
 
-- `target:` The name of the confirmation field.
+- `target:` The ref of the confirmation field.
 
 <input v-validate="'confirmed:pw_confirm'" :class="{'input': true, 'is-danger': errors.has('confirm_field') }" name="confirm_field" type="password" placeholder="Enter The Password">
 <span v-show="errors.has('confirm_field')" class="help is-danger">{{ errors.first('confirm_field') }}</span>
 
 <input name="pw_confirm" ref="pw_confirm" :class="{'input': true, 'is-danger': errors.has('confirm_field') }" type="password" placeholder="Confirm the password">
+
+::: tip
+  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
+:::
 
 ## credit_card
 
