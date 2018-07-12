@@ -142,6 +142,10 @@ export default class ErrorBag {
     const isSingleField = !isNullOrUndefined(field) && !field.includes('*');
     const groupErrors = items => {
       const errors = items.reduce((collection, error) => {
+        if (!isNullOrUndefined(this.vmId) && error.vmId !== this.vmId) {
+          return collection;
+        }
+
         if (!collection[error.field]) {
           collection[error.field] = [];
         }

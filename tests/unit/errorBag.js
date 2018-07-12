@@ -480,3 +480,13 @@ test('error bag can mirror another bag', () => {
 
   expect(errors.count()).toBe(0);
 });
+
+test('collect() is scoped by vmId', () => {
+  const errors = new ErrorBag();
+  const mirror = new ErrorBag(errors, 1);
+  const mirror2 = new ErrorBag(errors, 2);
+
+  mirror.add({ field: 'field', msg: 'nope' });
+  expect(mirror2.collect()).toEqual({});
+  expect(mirror.collect()).toEqual({ field: ['nope'] });
+});
