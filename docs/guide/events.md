@@ -1,6 +1,6 @@
 # Validation Events
 
-vee-validate listens on your inputs for a set of specific events that once triggered will fire a validation on that field. by default vee-validate listens for the `input` and `blur` events. The only exception is the `radio`, and `checkbox`, and `select` input types which use the `change` and `blur` events.
+vee-validate listens on your inputs for a set of specific events that once triggered will fire a validation on that field. by default vee-validate listens for the `input` event.
 
 If `input` event validation is too aggressive for your users, you can choose to fire validation based on other triggers like `change`. You can configure the default events vee-validate listens for or even designate specific events for specific fields.
 
