@@ -489,4 +489,5 @@ test('collect() is scoped by vmId', () => {
   mirror.add({ field: 'field', msg: 'nope' });
   expect(mirror2.collect()).toEqual({});
   expect(mirror.collect()).toEqual({ field: ['nope'] });
+  expect(errors.collect()).toEqual({ field: ['nope'] });
 });
