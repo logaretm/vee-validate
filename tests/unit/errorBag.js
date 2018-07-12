@@ -40,6 +40,22 @@ test('accepts an array of errors', () => {
   expect(errors.count()).toBe(2);
 });
 
+test('collect() should not reduce the errors to array when a single error exists', () => {
+  const errors = new ErrorBag();
+  errors.add([
+    { field: 'name', msg: 'The scoped name is invalid', rule: 'rule1' }
+  ]);
+
+  expect(errors.collect()).toEqual({
+    name: ['The scoped name is invalid']
+  });
+
+  expect(errors.collect('name')).toEqual(['The scoped name is invalid']);
+
+  expect(errors.collect('scope.*')).toEqual({});
+  expect(errors.collect('*')).toEqual({ name: ['The scoped name is invalid'] });
+});
+
 test('updates error objects by matching against field id', () => {
   const errors = new ErrorBag();
   errors.add({

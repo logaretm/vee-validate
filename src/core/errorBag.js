@@ -139,12 +139,11 @@ export default class ErrorBag {
    * Collects errors into groups or for a specific field.
    */
   collect (field?: string, scope?: string | null, map?: boolean = true) {
+    const isSingleField = !isNullOrUndefined(field) && !field.includes('*');
     const groupErrors = items => {
-      let fieldsCount = 0;
       const errors = items.reduce((collection, error) => {
         if (!collection[error.field]) {
           collection[error.field] = [];
-          fieldsCount++;
         }
 
         collection[error.field].push(map ? error.msg : error);
@@ -153,7 +152,7 @@ export default class ErrorBag {
       }, {});
 
       // reduce the collection to be a single array.
-      if (fieldsCount <= 1) {
+      if (isSingleField) {
         return values(errors)[0] || [];
       }
 
