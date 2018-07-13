@@ -16,7 +16,7 @@ The validator offers an API to add new fields and trigger validations.
 
 |Name  | Return Type  |Description  |
 |---------|---------|---------|
-|attach(field: Field | FieldOptions) | `Field` | attaches a new field to the validator. |
+| attach(field: FieldOptions) | `Field` | attaches a new field to the validator. |
 | validate(descriptor?: String, value?: any, options?: Object) | `Promise<boolean>` | Validates the matching fields of the provided [descriptor](#field-descriptor). |
 | pause() | `void` | Disables validation. |
 | resume() | `void` | Enables validation. |
