@@ -681,6 +681,11 @@ export default class Field {
    * Removes all listeners.
    */
   destroy () {
+    // ignore the result of any ongoing validation.
+    if (this._cancellationToken) {
+      this._cancellationToken.cancelled = true;
+    }
+
     this.unwatch();
     this.dependencies.forEach(d => d.field.destroy());
     this.dependencies = [];
