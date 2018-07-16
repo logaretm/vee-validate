@@ -22,7 +22,6 @@
     "build:esm": "node scripts/esm.js",
     "build": "npm run build:umd && npm run build:esm && npm run build:locale",
     "cover": "jest --coverage",
-    "precommit": "npm run lint && npm run flow && npm run test",
     "release": "./scripts/release.sh"
   },
   "keywords": [
