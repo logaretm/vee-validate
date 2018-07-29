@@ -86,7 +86,7 @@ export default class I18nDictionary implements IDictionary {
   getFieldMessage (locale: string, field: string, key: string, data: any[]) {
     const path = `${this.rootKey}.custom.${field}.${key}`;
     if (this.i18n.te(path)) {
-      return this.i18n.t(path);
+      return this.i18n.t(path, locale, data);
     }
 
     return this.getMessage(locale, key, data);
