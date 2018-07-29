@@ -6,6 +6,7 @@ export default class ScopedValidator {
   constructor (base, vm) {
     this.id = vm._uid;
     this._base = base;
+    this._paused = false;
 
     // create a mirror bag with limited component scope.
     this.errors = new ErrorBag(base.errors, this.id);
@@ -61,6 +62,14 @@ export default class ScopedValidator {
     return this._base.attach(attachOpts);
   }
 
+  pause () {
+    this._paused = true;
+  }
+
+  resume () {
+    this._paused = false;
+  }
+
   remove (ruleName) {
     return this._base.remove(ruleName);
   }
@@ -74,14 +83,20 @@ export default class ScopedValidator {
   }
 
   validate (descriptor, value, opts = {}) {
+    if (this._paused) return Promise.resolve(true);
+
     return this._base.validate(descriptor, value, assign({}, { vmId: this.id }, opts || {}));
   }
 
   validateAll (values, opts = {}) {
+    if (this._paused) return Promise.resolve(true);
+
     return this._base.validateAll(values, assign({}, { vmId: this.id }, opts || {}));
   }
 
   validateScopes (opts = {}) {
+    if (this._paused) return Promise.resolve(true);
+
     return this._base.validateScopes(assign({}, { vmId: this.id }, opts || {}));
   }
 
