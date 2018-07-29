@@ -92,6 +92,9 @@ module.exports = {
     docsRepo: 'baianat/vee-validate',
     docsDir: 'docs',
     editLinks: true,
+    serviceWorker: {
+      updatePopup: { message: "New content is available.", buttonText: "Refresh" }
+    },
     locales: {
       '/': {
         label: 'English',
