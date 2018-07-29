@@ -55,12 +55,23 @@ The field under validation must have a valid date and is after the date value in
   Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
 :::
 
+```html
+<input v-validate="'date_format:DD/MM/YYYY|after:afterTarget'" name="after_field" type="text">
+
+<input name="after_field_target" ref="afterTarget" type="text">
+
+```
+
 ## alpha
 
 The field under validation may only contain alphabetic characters.
 
 <input v-validate="'alpha'" :class="{'input': true, 'is-danger': errors.has('alpha_field') }" name="alpha_field" type="text" placeholder="Enter Some Characters...">
 <span v-show="errors.has('alpha_field')" class="help is-danger">{{ errors.first('alpha_field') }}</span>
+
+```html
+<input v-validate="'alpha'" name="alpha_field" type="text">
+```
 
 ## alpha_dash
 
@@ -69,6 +80,10 @@ The field under validation may contain alphabetic characters, numbers, dashes or
 <input v-validate="'alpha_dash'" :class="{'input': true, 'is-danger': errors.has('alpha_dash_field') }" name="alpha_dash_field" type="text" placeholder="Enter characters or dashes">
 <span v-show="errors.has('alpha_dash_field')" class="help is-danger">{{ errors.first('alpha_dash_field') }}</span>
 
+```html
+<input v-validate="'alpha_dash'" name="alpha_dash_field" type="text">
+```
+
 ## alpha_num
 
 The field under validation may contain alphabetic characters or numbers.
@@ -76,12 +91,20 @@ The field under validation may contain alphabetic characters or numbers.
 <input v-validate="'alpha_num'" :class="{'input': true, 'is-danger': errors.has('alpha_num_field') }" name="alpha_num_field" type="text" placeholder="Enter characters and numbers">
 <span v-show="errors.has('alpha_num_field')" class="help is-danger">{{ errors.first('alpha_num_field') }}</span>
 
+```html
+<input v-validate="'alpha_num'" name="alpha_num_field" type="text">
+```
+
 ## alpha_spaces
 
 The field under validation may contain alphabetic characters or spaces.
 
 <input v-validate="'alpha_spaces'" :class="{'input': true, 'is-danger': errors.has('alpha_spaces_field') }" name="alpha_spaces_field" type="text" placeholder="Enter characters and spaces">
 <span v-show="errors.has('alpha_spaces_field')" class="help is-danger">{{ errors.first('alpha_spaces_field') }}</span>
+
+```html
+<input v-validate="'alpha_spaces'" name="alpha_spaces_field" type="text">
+```
 
 ## before
 
@@ -101,6 +124,12 @@ The field under validation must have a valid date and is before the date value i
   Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
 :::
 
+```html
+<input v-validate="'date_format:DD/MM/YYYY|before:beforeTarget'" name="before_field" type="text">
+
+<input name="before_field_target" ref="beforeTarget" type="text">
+```
+
 ## between
 
 The field under validation must have a numeric value bounded by a minimum value and a maximum value.
@@ -112,6 +141,10 @@ The field under validation must have a numeric value bounded by a minimum value 
 
 <input v-validate="'between:1,11'" :class="{'input': true, 'is-danger': errors.has('between_field') }" name="between_field" type="text" placeholder="Enter a number between 1 and 11">
 <span v-show="errors.has('between_field')" class="help is-danger">{{ errors.first('between_field') }}</span>
+
+```html
+<input v-validate="'between:1,11'" name="between_field" type="text">
+```
 
 ## confirmed
 
@@ -130,12 +163,22 @@ The field under validation must have the same value as the confirmation field.
   Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
 :::
 
+```html
+<input v-validate="'confirmed:pw_confirm'" name="confirm_field" type="password">
+
+<input name="pw_confirm" ref="pw_confirm" type="password">
+```
+
 ## credit_card
 
 The field under validation must be a valid credit card.
 
 <input v-validate="'credit_card'" :class="{'input': true, 'is-danger': errors.has('credit_field') }" name="credit_field" type="text" placeholder="Enter A Credit Card Number">
 <span v-show="errors.has('credit_field')" class="help is-danger">{{ errors.first('credit_field') }}</span>
+
+```html
+<input v-validate="'credit_card'" name="credit_field" type="text">
+```
 
 ## date_between
 
@@ -151,6 +194,10 @@ The field under validation must be a valid date between the two dates specified.
 <input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY between 10/09/2016 and 20/09/2016">
 <span v-show="errors.has('date_between_field')" class="help is-danger">{{ errors.first('date_between_field') }}</span>
 
+```html
+<input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" name="date_between_field" type="text">
+```
+
 ## date_format
 
 The field under validation must be a valid date in the specified format. This rule must be present when using any date rule.
@@ -161,6 +208,10 @@ The field under validation must be a valid date in the specified format. This ru
 
 <input v-validate="'date_format:DD/MM/YYYY'" :class="{'input': true, 'is-danger': errors.has('date_format_field') }" name="date_format_field" type="text" placeholder="DD/MM/YYYY">
 <span v-show="errors.has('date_format_field')" class="help is-danger">{{ errors.first('date_format_field') }}</span>
+
+```html
+<input v-validate="'date_format:DD/MM/YYYY'" name="date_format_field" type="text">
+```
 
 ## decimal
 
@@ -173,6 +224,10 @@ The field under validation must be numeric and may contain the specified amount 
 <input v-validate="'decimal:3'" :class="{'input': true, 'is-danger': errors.has('decimal_field') }" name="decimal_field" type="text" placeholder="Numeric value with decimals">
 <span v-show="errors.has('decimal_field')" class="help is-danger">{{ errors.first('decimal_field') }}</span>
 
+```html
+<input v-validate="'decimal:3'" name="decimal_field" type="text">
+```
+
 ## digits
 
 The field under validation must be numeric and have the specified number of digits.
@@ -183,6 +238,10 @@ The field under validation must be numeric and have the specified number of digi
 
 <input v-validate="'digits:3'" :class="{'input': true, 'is-danger': errors.has('digits_field') }" name="digits_field" type="text" placeholder="Enter 3 digit number">
 <span v-show="errors.has('digits_field')" class="help is-danger">{{ errors.first('digits_field') }}</span>
+
+```html
+<input v-validate="'digits:3'" name="digits_field" type="text">
+```
 
 ## dimensions
 
@@ -196,12 +255,20 @@ The file added to the field under validation must be an image (jpg,svg,jpeg,png,
 <input v-validate="'dimensions:30,30'" data-vv-as="image" name="dimensions_field" type="file">
 <span v-show="errors.has('dimensions_field')" class="help is-danger">{{ errors.first('dimensions_field') }}</span>
 
+```html
+<input v-validate="'dimensions:30,30'" data-vv-as="image" name="dimensions_field" type="file">
+```
+
 ## email
 
 The field under validation must be a valid email.
 
 <input v-validate="'email'" data-vv-as="email" :class="{'input': true, 'is-danger': errors.has('email_field') }" name="email_field" type="text" placeholder="Your Email">
 <span v-show="errors.has('email_field')" class="help is-danger">{{ errors.first('email_field') }}</span>
+
+```html
+<input v-validate="'email'" data-vv-as="email" name="email_field" type="text">
+```
 
 ## ext
 
@@ -214,12 +281,20 @@ The file added to the field under validation must have one of the extensions spe
 <input v-validate="'ext:jpeg,jpg'" data-vv-as="field" name="ext_field" type="file">
 <span v-show="errors.has('ext_field')" class="help is-danger">{{ errors.first('ext_field') }}</span>
 
+```html
+<input v-validate="'ext:jpeg,jpg'" data-vv-as="field" name="ext_field" type="file">
+```
+
 ## image
 
 The file added to the field under validation must have an image mime type (image/*).
 
 <input v-validate="'image'" data-vv-as="image" name="image_field" type="file">
 <span v-show="errors.has('image_field')" class="help is-danger">{{ errors.first('image_field') }}</span>
+
+```html
+<input v-validate="'image'" data-vv-as="image" name="image_field" type="file">
+```
 
 ## included
 
@@ -239,12 +314,27 @@ The field under validation must have a value that is in the specified list.
 </span>
 <span v-show="errors.has('in_field')" class="help is-danger">{{ errors.first('in_field') }}</span>
 
+```html
+<span class="select">
+  <select v-validate="'included:1,2,3'" name="in_field" data-vv-as="selected">
+    <option value="1">One</option>
+    <option value="2">Two</option>
+    <option value="3">Three</option>
+    <option value="4">Invalid</option>
+  </select>
+</span>
+```
+
 ## ip
 
 The field under validation must have a string that is a valid ipv4 value.
 
 <input v-validate="'ip'" data-vv-as="ip" :class="{'input': true, 'is-danger': errors.has('ip_field') }" name="ip_field" type="text" placeholder="Your IP Address">
 <span v-show="errors.has('ip_field')" class="help is-danger">{{ errors.first('ip_field') }}</span>
+
+```html
+<input v-validate="'ip'" data-vv-as="ip" name="ip_field" type="text">
+```
 
 ## is
 
@@ -296,6 +386,10 @@ The field under validation length may not exceed the specified length.
 <input v-validate="'max:11'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('max_field') }" name="max_field" type="text" placeholder="11 Characters or shorter">
 <span v-show="errors.has('max_field')" class="help is-danger">{{ errors.first('max_field') }}</span>
 
+```html
+<input v-validate="'max:11'" data-vv-as="field" name="max_field" type="text">
+```
+
 ## max_value
 
 The field under validation must be a numeric value and must not be greater than the specified value.
@@ -306,6 +400,10 @@ The field under validation must be a numeric value and must not be greater than 
 
 <input v-validate="'max_value:9000'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('max_value_field') }" name="max_value_field" type="text" placeholder="Can you go over 9000?">
 <span v-show="errors.has('max_value_field')" class="help is-danger">{{ errors.first('max_value_field') }}</span>
+
+```html
+<input v-validate="'max_value:9000'" data-vv-as="field" name="max_value_field" type="text">
+```
 
 ## mimes
 
@@ -323,6 +421,10 @@ The file type added to the field under validation should have one of the specifi
   You can use '*' to specify a wild card, something like `mimes:image/*` will accept all image types.
 :::
 
+```html
+<input v-validate="'mimes:image/*'" data-vv-as="image" name="mimes_field" type="file">
+```
+
 ## min
 
 The field under validation length should not be less than the specified length.
@@ -334,6 +436,10 @@ The field under validation length should not be less than the specified length.
 <input v-validate="'min:3'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('min_field') }" name="min_field" type="text" placeholder="Min: 3">
 <span v-show="errors.has('min_field')" class="help is-danger">{{ errors.first('min_field') }}</span>
 
+```html
+<input v-validate="'min:3'" data-vv-as="field" name="min_field" type="text">
+```
+
 ## min_value
 
 The field under validation must be a numeric value and must not be less than the specified value.
@@ -344,6 +450,10 @@ The field under validation must be a numeric value and must not be less than the
 
 <input v-validate="'min_value:10'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('min_value_field') }" name="min_value_field" type="text" placeholder="What is bigger than 10?">
 <span v-show="errors.has('min_value_field')" class="help is-danger">{{ errors.first('min_value_field') }}</span>
+
+```html
+<input v-validate="'min_value:10'" data-vv-as="field" name="min_value_field" type="text">
+```
 
 ## excluded
 
@@ -363,12 +473,27 @@ The field under validation value should not be in the specified list.
 </span>
 <span v-show="errors.has('not_in_field')" class="help is-danger">{{ errors.first('not_in_field') }}</span>
 
+```html
+<span class="select">
+  <select v-validate="'excluded:1,2,3'" name="not_in_field" data-vv-as="selected">
+    <option value="1">One - Invalid</option>
+    <option value="2">Two - Invalid</option>
+    <option value="3">Three - Invalid</option>
+    <option value="4">Four - Valid</option>
+  </select>
+</span>
+```
+
 ## numeric
 
 The field under validation must only consist of numbers.
 
 <input v-validate="'numeric'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('numeric_field') }" name="numeric_field" type="text" placeholder="Numbers only">
 <span v-show="errors.has('numeric_field')" class="help is-danger">{{ errors.first('numeric_field') }}</span>
+
+```html
+<input v-validate="'numeric'" data-vv-as="field" name="numeric_field" type="text">
+```
 
 ## regex
 
@@ -405,6 +530,10 @@ By default, the boolean value of `false` will pass validate. Setting invalidateF
   The `required` rule is special, by default the validator skips the validation for non-required fields that have an empty value. If you wish to force validation for non-required fields, use the [`continues` modifier](/api/directive.md#continues).
 :::
 
+```html
+<input v-validate="'required'" data-vv-as="field" name="required_field" type="text">
+```
+
 ## size
 
 The file size added to the field under validation must not exceed the specified size in kilobytes.
@@ -416,6 +545,10 @@ The file size added to the field under validation must not exceed the specified 
 <input v-validate="'size:10'" name="size_field" data-vv-as="file" type="file">
 <span class="help is-danger" v-show="errors.has('size_field')">{{ errors.first('size_field') }}</span>
 
+```html
+<input v-validate="'size:10'" name="size_field" data-vv-as="file" type="file">
+```
+
 ## url
 
 The field under validation must be a valid url. Protocols are not required by default.
@@ -426,3 +559,7 @@ The field under validation must be a valid url. Protocols are not required by de
 
 <input v-validate="'url:require_protocol'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('url_field') }" name="url_field" type="text" placeholder="Enter a url">
 <span v-show="errors.has('url_field')" class="help is-danger">{{ errors.first('url_field') }}</span>
+
+```html
+<input v-validate="'url:require_protocol'" data-vv-as="field" name="url_field" type="text">
+```
