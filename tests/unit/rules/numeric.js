@@ -13,8 +13,7 @@ const invalid = [
   true,
   false,
   {},
-  '+123',
-  '-123'
+  '+123'
 ];
 
 test('validates that the string only contains numeric characters', () => {
