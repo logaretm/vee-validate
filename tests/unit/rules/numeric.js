@@ -2,7 +2,8 @@ import { validate } from '@/rules/numeric';
 
 const valid = [
   '1234567890',
-  123
+  123,
+  '-123'
 ];
 
 const invalid = [
