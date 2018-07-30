@@ -2,7 +2,8 @@ import { validate } from '@/rules/numeric';
 
 const valid = [
   '1234567890',
-  123
+  123,
+  '-123'
 ];
 
 const invalid = [
@@ -13,8 +14,7 @@ const invalid = [
   true,
   false,
   {},
-  '+123',
-  '-123'
+  '+123'
 ];
 
 test('validates that the string only contains numeric characters', () => {
