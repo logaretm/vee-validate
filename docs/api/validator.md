@@ -18,6 +18,7 @@ The validator offers an API to add new fields and trigger validations.
 |---------|---------|---------|
 | attach(field: FieldOptions) | `Field` | attaches a new field to the validator. |
 | validate(descriptor?: String, value?: any, options?: Object) | `Promise<boolean>` | Validates the matching fields of the provided [descriptor](#field-descriptor). when validation is done, the Promise resolves a boolean indicating whether the selected was valid or not. |
+| validateAll(fields?: String or Object) | `Promise<boolean>` | Validates each value against the corresponding field validations. |
 | pause() | `void` | Disables validation. |
 | resume() | `void` | Enables validation. |
 | detach(name: string, scope?: string) | `void` | Detaches the field that matches the name and the scope of the provided values. |
