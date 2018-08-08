@@ -20,7 +20,15 @@ const messages = {
   ext: (field) => `Le champ ${field} doit être un fichier valide.`,
   image: (field) => `Le champ ${field} doit être une image.`,
   included: (field) => `Le champ ${field} doit être une valeur valide.`,
+  integer: (field) => `Le champ ${field} doit être un entier.`,
   ip: (field) => `Le champ ${field} doit être une adresse IP.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `Le champ ${field} doit contenir entre ${length} et ${max} caractères.`;
+    }
+
+    return `Le champ ${field} doit contenir ${length} caractères.`;
+  },
   max: (field, [length]) => `Le champ ${field} ne peut pas contenir plus de ${length} caractères.`,
   max_value: (field, [max]) => `Le champ ${field} doit avoir une valeur de ${max} ou moins.`,
   mimes: (field) => `Le champ ${field} doit avoir un type MIME valide.`,
