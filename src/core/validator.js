@@ -178,7 +178,7 @@ export default class Validator {
 
     // validate the field initially
     if (field.immediate) {
-      this.validate(`#${field.id}`, value || field.value);
+      this.validate(`#${field.id}`, value || field.value, { vmId: fieldOpts.vmId });
     } else {
       this._validate(field, value || field.value, { initial: true }).then(result => {
         field.flags.valid = result.valid;
@@ -209,7 +209,7 @@ export default class Validator {
     if (!field) return;
 
     field.destroy();
-    this.errors.remove(field.name, field.scope, field.id);
+    this.errors.remove(field.name, field.scope, field.vmId);
     this.fields.remove(field);
   }
 
@@ -227,7 +227,7 @@ export default class Validator {
     }).then(() => {
       this.fields.filter(matcher).forEach(field => {
         field.reset(); // reset field flags.
-        this.errors.remove(field.name, field.scope, field.id);
+        this.errors.remove(field.name, field.scope);
       });
     });
   }
@@ -284,7 +284,7 @@ export default class Validator {
 
     return this._validate(field, value).then(result => {
       if (!silent) {
-        this._handleValidationResults([result]);
+        this._handleValidationResults([result], vmId);
       }
 
       return result.valid;
@@ -337,7 +337,7 @@ export default class Validator {
       this.fields.filter(matcher).map(field => this._validate(field, providedValues ? values[field.name] : field.value))
     ).then(results => {
       if (!silent) {
-        this._handleValidationResults(results);
+        this._handleValidationResults(results, vmId);
       }
 
       return results.every(t => t.valid);
@@ -354,7 +354,7 @@ export default class Validator {
       this.fields.filter({ vmId }).map(field => this._validate(field, field.value))
     ).then(results => {
       if (!silent) {
-        this._handleValidationResults(results);
+        this._handleValidationResults(results, vmId);
       }
 
       return results.every(t => t.valid);
@@ -579,12 +579,12 @@ export default class Validator {
   /**
    * Handles validation results.
    */
-  _handleValidationResults (results) {
+  _handleValidationResults (results, vmId) {
     const matchers = results.map(result => ({ id: result.id }));
     this.errors.removeById(matchers.map(m => m.id));
     // remove by name and scope to remove any custom errors added.
     results.forEach(result => {
-      this.errors.remove(result.field, result.scope);
+      this.errors.remove(result.field, result.scope, vmId);
     });
     const allErrors = results.reduce((prev, curr) => {
       prev.push(...curr.errors);

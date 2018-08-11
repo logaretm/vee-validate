@@ -271,16 +271,21 @@ export default class ErrorBag {
   /**
    * Removes all error messages associated with a specific field.
    */
-  remove (field: string, scope: ?string) {
+  remove (field: string, scope: ?string, vmId: any) {
     if (isNullOrUndefined(field)) {
       return;
     }
 
     const selector = isNullOrUndefined(scope) ? String(field) : `${scope}.${field}`;
     const { isPrimary } = this._makeCandidateFilters(selector);
+    const shouldRemove = (item) => {
+      if (isNullOrUndefined(vmId)) return isPrimary(item);
+
+      return isPrimary(item) && item.vmId === vmId;
+    };
 
     for (let i = 0; i < this.items.length; ++i) {
-      if (isPrimary(this.items[i])) {
+      if (shouldRemove(this.items[i])) {
         this.items.splice(i, 1);
         --i;
       }

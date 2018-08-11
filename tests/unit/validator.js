@@ -868,7 +868,7 @@ test('triggers initial validation for fields', async () => {
   const v = new Validator();
   v.validate = jest.fn();
   const field = v.attach({ name: 'field', rules: 'alpha', el: document.createElement('input'), getter: () => '123', immediate: true });
-  expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123');
+  expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123', { vmId: undefined });
 });
 
 test('rules can be skipped on initial validation', async () => {
