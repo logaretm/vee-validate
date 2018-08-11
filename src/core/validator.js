@@ -1,5 +1,5 @@
 import ErrorBag from './errorBag';
-import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined, includes } from './utils';
+import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined, includes, normalizeRules } from './utils';
 import FieldBag from './fieldBag';
 import Field from './field';
 import Config from '../config';
@@ -358,6 +358,17 @@ export default class Validator {
       }
 
       return results.every(t => t.valid);
+    });
+  }
+
+  /**
+   * Validates a value against the rules.
+   */
+  verify (value: any, rules: string | MapObject) {
+    const field = { name: '{field}', rules: normalizeRules(rules) };
+
+    return this._validate(field, value).then(result => {
+      return { valid: result.valid, errors: result.errors.map(e => e.msg) };
     });
   }
 

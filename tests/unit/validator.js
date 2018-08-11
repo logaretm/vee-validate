@@ -1065,3 +1065,10 @@ test('removes the vm localeChanged listener when the validator is destroyed', ()
 
   expect(v._vm.$off).toHaveBeenCalled();
 });
+
+test('validates values without adding fields', async () => {
+  const v = new Validator();
+  expect(await v.verify('test', 'max:3')).toEqual({ 'errors': ['The {field} field may not be greater than 3 characters.'], 'valid': false });
+  expect(v.errors.count()).toBe(0); // Errors not added.
+  expect(await v.verify('tst', 'max:3')).toEqual({ valid: true, errors: [] });
+});
