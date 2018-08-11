@@ -21,6 +21,7 @@ The validator offers an API to add new fields and trigger validations.
 | validateAll(fields?: String or Object) | `Promise<boolean>` | Validates each value against the corresponding field validations. |
 | pause() | `void` | Disables validation. |
 | resume() | `void` | Enables validation. |
+| verify(value: any, rules: string | Object) | { errors: string[], valid: boolean } | [verify method](#verify) |
 | detach(name: string, scope?: string) | `void` | Detaches the field that matches the name and the scope of the provided values. |
 | extend(name: string, rule: Rule, options?: ExtendOptions) | `void` | Adds a new validation rule. The provided rule param must be a [valid Rule function or object](/guide/custom-rules.md). |
 
@@ -61,3 +62,24 @@ You can pass the options to modify the behavior of the validation, the options i
 |---------|:---------:|:---------:|-------------|
 |silent   | Boolean   | `false`   | If true the validate method will return the validation result without modifying the errors or the flags. |
 |initial  | Boolean   | `false`   | If true the rules marked as [non-immediate](/guide/custom-rules.md#non-immediate-rules) will be skipped during this call, used to prevent initial validation from triggering backend calls. |
+
+### Verify
+
+The `Validator.verify` method validates a value against the specified rules, allowing you to use the validator programatically in your code without having to register fields using the `v-validate` directive, this is useful if you want to validate values rather than input fields, for example in a Vuex action.
+
+```js
+import { Validator } from 'vee-validate';
+
+const v = new Validator();
+const { valid, errors } = await v.verify('test', 'max:3');
+
+// the valid prop indicates the result of validation.
+console.log(valid); // false
+
+// The `errors` is an array of error strings.
+console.log(errors); // ["The {field} field may not be greater than 3 characters."]
+```
+
+:::tip
+  Note that the messages returned will have {field} as the field name so you can replace it easily if you need to.
+:::
