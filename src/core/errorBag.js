@@ -122,7 +122,7 @@ export default class ErrorBag {
    * Removes all items from the internal array.
    */
   clear (scope?: ?string) {
-    let matchesVM = isNullOrUndefined(this.id) ? () => true : (i) => i.vmId === this.vmId;
+    let matchesVM = isNullOrUndefined(this.vmId) ? () => true : (i) => i.vmId === this.vmId;
     if (isNullOrUndefined(scope)) {
       scope = null;
     }
