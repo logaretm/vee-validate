@@ -78,6 +78,7 @@
     "vue": "^2.5.17",
     "vue-i18n": "^8.0.0",
     "vue-jest": "^2.6.0",
+    "vue-server-renderer": "^2.5.17",
     "vue-template-compiler": "^2.5.17",
     "vuepress": "^0.14.1"
   },
