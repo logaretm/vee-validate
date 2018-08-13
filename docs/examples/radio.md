@@ -4,6 +4,6 @@ vee-validate also supports validating radio buttons You can use whatever rules y
 
 In the following example, the third value is not included using the rule `in:1,2`
 
-<iframe src="https://codesandbox.io/embed/y3504yr0l1?initialpath=%2Fradio&module=%2Fsrc%2Fcomponents%2FRadio.vue&view=preview" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+<iframe src="https://codesandbox.io/embed/y3504yr0l1?initialpath=%2F%23%2Fradio&module=%2Fsrc%2Fcomponents%2FRadio.vue&view=preview" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
 
-[![Edit VeeValidate Examples](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/y3504yr0l1?initialpath=%2Fradio&module=%2Fsrc%2Fcomponents%2FRadio.vue)
+[![Edit VeeValidate Examples](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/y3504yr0l1?initialpath=%2F%23%2Fradio&module=%2Fsrc%2Fcomponents%2FRadio.vue)

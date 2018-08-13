@@ -6,6 +6,6 @@ If multiple values are selected, the validator will apply the validations on eac
 
 In the following example, the most basic use of checkboxes validation is the terms and conditions agreement that nobody reads.
 
-<iframe src="https://codesandbox.io/embed/y3504yr0l1?initialpath=%2Fcheckboxes&module=%2Fsrc%2Fcomponents%2FCheckbox.vue&view=preview" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+<iframe src="https://codesandbox.io/embed/y3504yr0l1?initialpath=%2F%23%2Fcheckboxes&module=%2Fsrc%2Fcomponents%2FCheckbox.vue&view=preview" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
 
-[![Edit VeeValidate Examples](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/y3504yr0l1?initialpath=%2Fcheckboxes&module=%2Fsrc%2Fcomponents%2FCheckbox.vue)
+[![Edit VeeValidate Examples](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/y3504yr0l1?initialpath=%2F%23%2Fcheckboxes&module=%2Fsrc%2Fcomponents%2FCheckbox.vue)

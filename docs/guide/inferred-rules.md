@@ -22,9 +22,9 @@ It would be redundant to specify `v-validate="'required|email'"`. vee-validate w
 ```
 ## Demo
 
-<iframe src="https://codesandbox.io/embed/y3504yr0l1?initialpath=%2Finfer&module=%2Fsrc%2Fcomponents%2FInfer.vue" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+<iframe src="https://codesandbox.io/embed/y3504yr0l1?initialpath=%2F%23%2Finfer&module=%2Fsrc%2Fcomponents%2FInfer.vue" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
 
-[![Edit VeeValidate Examples](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/y3504yr0l1?initialpath=%2Finfer&module=%2Fsrc%2Fcomponents%2FInfer.vue)
+[![Edit VeeValidate Examples](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/y3504yr0l1?initialpath=%2F%23%2Finfer&module=%2Fsrc%2Fcomponents%2FInfer.vue)
 
 ## Inferred Rules Reference
 
