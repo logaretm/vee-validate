@@ -80,6 +80,10 @@ console.log(valid); // false
 console.log(errors); // ["The {field} field may not be greater than 3 characters."]
 ```
 
-:::tip
+::: tip
   Note that the messages returned will have {field} as the field name so you can replace it easily if you need to.
+:::
+
+::: danger
+  Note that [Target Dependant Rules](/guide/custom-rules.md#target-dependant-rules) won't work as they require a target field being tracked which cannot be done without using the `v-validate` directive.
 :::
