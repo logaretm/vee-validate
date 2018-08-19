@@ -366,6 +366,7 @@ export default class Validator {
    */
   verify (value: any, rules: string | MapObject) {
     const field = { name: '{field}', rules: normalizeRules(rules) };
+    field.isRequired = field.rules.required;
 
     return this._validate(field, value).then(result => {
       return { valid: result.valid, errors: result.errors.map(e => e.msg) };

@@ -1071,4 +1071,7 @@ test('validates values without adding fields', async () => {
   expect(await v.verify('test', 'max:3')).toEqual({ 'errors': ['The {field} field may not be greater than 3 characters.'], 'valid': false });
   expect(v.errors.count()).toBe(0); // Errors not added.
   expect(await v.verify('tst', 'max:3')).toEqual({ valid: true, errors: [] });
+
+  // test required rule
+  expect(await v.verify('', 'required')).toEqual({ 'errors': ['The {field} field is required.'], 'valid': false });
 });
