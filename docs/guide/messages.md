@@ -4,7 +4,7 @@ VeeValidate comes with generic error messages, which can be overwritten or assig
 
 ## Message Generators
 
-Messages lives inside an internal dictionary. They can be either strings or functions that return a string called _generators_. Those generators have the following signature:
+Messages live inside the internal dictionary. They can be either strings or functions that return a string called _generators_. Those generators have the following signature:
 
 ```ts
 function rule (fieldName: string, params: any[], data?: any): string {
