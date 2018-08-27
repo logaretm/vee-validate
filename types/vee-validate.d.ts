@@ -3,7 +3,7 @@ import Vue = require("vue")
 export interface VeeValidateComponentOptions {
     validator?: 'new' | 'inherit';
     name?: () => string;
-    value?: () => string;
+    value?: () => any;
     rejectsFalse?: boolean;
     events?: string;
 }
