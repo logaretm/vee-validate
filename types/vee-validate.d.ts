@@ -164,6 +164,6 @@ export class ExtendOptions  {
 
 export const version: string;
 
-export const install: Vue.PluginFunction<never>
+export const install: Vue.PluginFunction<Configuration>
 
 export const directive: Vue.DirectiveOptions;
