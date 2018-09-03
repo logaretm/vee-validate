@@ -27,3 +27,9 @@ test('validates number maximum value', () => {
   // invalid
   invalid.forEach(value => expect(validate(value, [max])).toBe(false));
 });
+
+test('handles array of values', () => {
+  expect(validate(valid, [10])).toBe(true);
+
+  expect(validate(invalid, [10])).toBe(false);
+});

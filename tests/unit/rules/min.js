@@ -25,3 +25,9 @@ test('validates minimum number of characters in a string', () => {
   // invalid
   invalid.forEach(value => expect(validate(value, [limit])).toBe(false));
 });
+
+test('handles array of values', () => {
+  expect(validate(valid, [3])).toBe(true);
+
+  expect(validate(invalid, [3])).toBe(false);
+});

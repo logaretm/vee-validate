@@ -27,3 +27,9 @@ test('validates number minimum value', () => {
   // invalid
   invalid.forEach(value => expect(validate(value, [min])).toBe(false));
 });
+
+test('handles array of values', () => {
+  expect(validate(valid, [-1])).toBe(true);
+
+  expect(validate(invalid, [-1])).toBe(false);
+});

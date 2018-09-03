@@ -3,6 +3,10 @@ const validate = (value, [length]) => {
     return length >= 0;
   }
 
+  if (Array.isArray(value)) {
+    return value.every(val => validate(val, [length]));
+  }
+
   return String(value).length <= length;
 };
 
