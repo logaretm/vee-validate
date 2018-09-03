@@ -1,17 +1,53 @@
-export const ValidationProvider = {
-  data: () => ({
-    name: '',
+import Config from './config';
+import { createFlags } from './core/utils';
 
+let $validator = null;
+
+export const ValidationProvider = {
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    alias: {
+      type: String
+    },
+    events: {
+      type: [Array, String]
+    },
+    rules: {
+      type: [Object, String]
+    }
+  },
+  data: () => ({
+    errors: [],
+    flags: createFlags()
   }),
-  beforeCreate () {
-    // TODO: Initialize the field and attach it to the validator here.
+  computed: {
+    classes () {
+      const names = Config.current.classNames;
+      return Object.keys(this.flags).reduce((flag, classes) => {
+        if (names[flag]) {
+          classes[names[flag]] = this.flags[flag];
+        }
+
+        return classes;
+      }, {});
+    }
   },
   render () {
-    const field = this.$validator.fields.find({ name: this.name });
+    if (!$validator) {
+      $validator = Config.dependency('validator');
+    }
 
-    return this.$scopedSlots.default({
-      errors: this.$validator.errors.collect(this.name),
-      flags: field ? field.flags : {}
-    });
+    const ctx = {
+      errors: this.errors,
+      flags: this.flags,
+      classes: this.classes
+    };
+
+    const vnode = this.$scopedSlots.default(ctx);
+
+    return vnode;
   }
 };
