@@ -59,42 +59,42 @@ describe('resolves the rules', () => {
     input.type = 'email';
     input.required = true;
 
-    expect(resolve(input)).toBe('required|email');
+    expect(resolve(input)).toEqual({ required: [], email: [] });
 
     input.type = 'number';
     input.required = false;
     input.min = 10;
     input.max = 20;
-    expect(resolve(input)).toBe('decimal|min_value:10|max_value:20');
+    expect(resolve(input)).toEqual({ min_value: ['10'], max_value: ['20'], decimal: [] });
 
     input.type = 'date';
-    expect(resolve(input)).toBe('date_format:YYYY-MM-DD');
+    expect(resolve(input)).toEqual({ date_format: ['YYYY-MM-DD'] });
 
     input.type = 'datetime-local';
-    expect(resolve(input)).toBe('date_format:YYYY-MM-DDTHH:mm');
+    expect(resolve(input)).toEqual({ date_format: ['YYYY-MM-DDTHH:mm'] });
 
     input.type = 'week';
-    expect(resolve(input)).toBe('date_format:YYYY-[W]WW');
+    expect(resolve(input)).toEqual({ date_format: ['YYYY-[W]WW'] });
 
     input.type = 'month';
-    expect(resolve(input)).toBe('date_format:YYYY-MM');
+    expect(resolve(input)).toEqual({ date_format: ['YYYY-MM'] });
 
     input.type = 'time';
-    expect(resolve(input)).toBe('date_format:HH:mm');
+    expect(resolve(input)).toEqual({ date_format: ['HH:mm'] });
 
     input.step = 10;
-    expect(resolve(input)).toBe('date_format:HH:mm:ss');
+    expect(resolve(input)).toEqual({ date_format: ['HH:mm:ss'] });
 
     input.type = 'text';
-    input.pattern = '^[0-9]+$';
-    expect(resolve(input)).toBe('regex:^[0-9]+$');
+    input.pattern = '(^[0-9]+|s)$';
+    expect(resolve(input)).toEqual({ regex: ['(^[0-9]+|s)$'] });
     input.pattern = '';
 
     input.maxLength = 10;
     input.type = 'text';
-    expect(resolve(input)).toBe('max:10');
+    expect(resolve(input)).toEqual({ max: ['10'] });
 
     input.minLength = 2;
-    expect(resolve(input)).toBe('max:10|min:2');
+    expect(resolve(input)).toEqual({ max: ['10'], min: ['2'] });
   });
 });

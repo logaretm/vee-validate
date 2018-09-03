@@ -212,15 +212,15 @@ export const debounce = (fn: () => any, wait: number = 0, immediate: boolean = f
  */
 export const appendRule = (rule: string, rules: string | { [string]: boolean | any[] }) => {
   if (!rules) {
-    return rule;
+    return normalizeRules(rule);
   }
 
   if (!rule) {
-    return rules;
+    return normalizeRules(rules);
   }
 
   if (typeof rules === 'string') {
-    return `${rules}|${rule}`;
+    rules = normalizeRules(rules);
   }
 
   return assign({}, rules, normalizeRules(rule));
@@ -519,7 +519,7 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
     }
 
     if (el.pattern) {
-      rules = appendRule(`regex:${el.pattern}`, rules);
+      rules = appendRule({ regex: el.pattern }, rules);
     }
 
     // 524288 is the max on some browsers and test environments.
