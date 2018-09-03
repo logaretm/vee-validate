@@ -505,8 +505,8 @@ export default class Field {
       return (this.componentInstance.$options.model && this.componentInstance.$options.model.event) || 'input';
     }
 
-    if (this.model) {
-      return this.model.lazy ? 'change' : 'input';
+    if (this.model && this.model.lazy) {
+      return 'change';
     }
 
     if (isTextInput(this.el)) {
