@@ -91,8 +91,7 @@ export const ValidationProvider = {
   },
   data: () => ({
     errors: [],
-    flags: createFlags(),
-    hooked: false
+    flags: createFlags()
   }),
   computed: {
     classes () {
