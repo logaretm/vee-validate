@@ -47,6 +47,7 @@ export const ValidationProvider = {
     };
 
     const vnode = this.$scopedSlots.default(ctx);
+    console.log(vnode);
 
     return vnode;
   }
