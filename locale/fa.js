@@ -14,6 +14,7 @@ const localizeSize = (size) => {
 };
 
 const messages = {
+  _default: (field) => `مقدار ${field} معتبر نیست.`,
   after: (field, [target]) => `${field} باید بعد از تاریخ ${target} باشد.`,
   alpha_dash: (field) => `${field} فقط می تواند از حروف، اعداد، خط فاصله و زیرخط تشکیل شود.`,
   alpha_num: (field) => `${field} فقط میتواند از حروف و اعداد تشکیل شود.`,
