@@ -416,15 +416,38 @@ export default class Validator {
   }
 
   /**
+   * We need to convert any object param to an array format since the locales do not handle params as objects yet.
+   */
+  _convertParamObjectToArray (obj, ruleName) {
+    if (Array.isArray(obj)) {
+      return obj;
+    }
+
+    const paramNames = RULES[ruleName] && RULES[ruleName].paramNames;
+    if (!paramNames || !isObject(obj)) {
+      return obj;
+    }
+
+    return paramNames.reduce((prev, paramName) => {
+      if (paramName in obj) {
+        prev.push(obj[paramName]);
+      }
+
+      return prev;
+    }, []);
+  }
+
+  /**
    * Translates the parameters passed to the rule (mainly for target fields).
    */
   _getLocalizedParams (rule: MapObject, targetName?: string | null = null) {
-    if (rule.options.hasTarget && rule.params && rule.params[0]) {
-      const localizedName = targetName || this.dictionary.getAttribute(this.locale, rule.params[0], rule.params[0]);
-      return [localizedName].concat(rule.params.slice(1));
+    let params = this._convertParamObjectToArray(rule.params, rule.name);
+    if (rule.options.hasTarget && params && params[0]) {
+      const localizedName = targetName || this.dictionary.getAttribute(this.locale, params[0], params[0]);
+      return [localizedName].concat(params.slice(1));
     }
 
-    return rule.params;
+    return params;
   }
 
   /**
@@ -445,8 +468,14 @@ export default class Validator {
       return params;
     }
 
-    // Wrap the object in an array.
     if (isObject(params)) {
+      // check if the object is either a config object or a single parameter that is an object.
+      const hasKeys = paramNames.some(name => Object.keys(params).indexOf(name) !== -1);
+      // if it has some of the keys, return it as is.
+      if (hasKeys) {
+        return params;
+      }
+      // otherwise wrap the object in an array.
       params = [params];
     }
 

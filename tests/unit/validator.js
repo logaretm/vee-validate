@@ -1079,3 +1079,10 @@ test('validates values without adding fields', async () => {
   expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: true } })).toEqual({ valid: true, errors: [] });
   expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: false } })).toEqual({ valid: false, errors: ['The {field} field must be a valid email.'] });
 });
+
+test('maps rules params array to an object', async () => {
+  const v = new Validator();
+
+  expect((await v.verify('11.222', 'decimal:2')).valid).toBe(false);
+  expect((await v.verify('11.222', { decimal: { decimals: 2 } })).valid).toBe(false);
+});
