@@ -1074,4 +1074,8 @@ test('validates values without adding fields', async () => {
 
   // test required rule
   expect(await v.verify('', 'required')).toEqual({ 'errors': ['The {field} field is required.'], 'valid': false });
+
+  // test #1353
+  expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: true } })).toEqual({ valid: true, errors: [] });
+  expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: false } })).toEqual({ valid: false, errors: ['The {field} field must be a valid email.'] });
 });

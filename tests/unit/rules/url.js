@@ -55,10 +55,10 @@ test('should validate urls', () => {
   expect(validate(invalid)).toBe(false);
 
   // test require protocol.
-  expect(validate('google.com', [true])).toBe(false);
-  expect(validate('https://google.com', [true])).toBe(true);
-  expect(validate('google.com', [false])).toBe(true);
-  expect(validate('https://google.com', [false])).toBe(true);
+  expect(validate('google.com', { require_protocol: true })).toBe(false);
+  expect(validate('https://google.com', { require_protocol: true })).toBe(true);
+  expect(validate('google.com', { require_protocol: false })).toBe(true);
+  expect(validate('https://google.com', { require_protocol: false })).toBe(true);
 });
 
 test('normalizes undefined and null to empty strings', () => {

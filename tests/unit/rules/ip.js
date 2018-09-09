@@ -16,12 +16,12 @@ test('validates that the string is a valid ipv6 address', () => {
     '::1',
     '2001:db8:0000:1:1:1:1:1',
     '::ffff:127.0.0.1'
-  ].forEach(value => expect(validate(value, [6])).toBe(true));
+  ].forEach(value => expect(validate(value, { version: 6 })).toBe(true));
   expect(validate([
     '::1',
     '2001:db8:0000:1:1:1:1:1',
     '::ffff:127.0.0.1'
-  ], [6])).toBe(true);
+  ], { version: 6 })).toBe(true);
 
   // invalid
   [
@@ -30,14 +30,14 @@ test('validates that the string is a valid ipv6 address', () => {
     '255.255.255.255',
     '1.2.3.4',
     '::ffff:287.0.0.1',
-  ].forEach(value => expect(validate(value, [6])).toBe(false));
+  ].forEach(value => expect(validate(value, { version: 6 })).toBe(false));
   expect(validate([
     '127.0.0.1',
     '0.0.0.0',
     '255.255.255.255',
     '1.2.3.4',
     '::ffff:287.0.0.1',
-  ], [6])).toBe(false);
+  ], { version: 6 })).toBe(false);
 });
 
 test('normalizes undefined or null to empty strings', () => {

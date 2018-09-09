@@ -39,10 +39,10 @@ test('validates the string contains alphabetic chars from other locales', () => 
   expect(validate('Привет12')).toBe(true);
 
   // specfic locale
-  expect(validate('peace', ['ar'])).toBe(false);
-  expect(validate('peace', ['ru'])).toBe(false);
+  expect(validate('peace', { locale: 'ar' })).toBe(false);
+  expect(validate('peace', { locale: 'ru' })).toBe(false);
 
   // non-existant locale defaults to english validation.
-  expect(validate('peace', ['blah'])).toBe(true);
-  expect(validate('اين اشيائي', ['blah'])).toBe(false); // non english characters.
+  expect(validate('peace', { locale: 'blah' })).toBe(true);
+  expect(validate('اين اشيائي', { locale: 'blah' })).toBe(false); // non english characters.
 });
