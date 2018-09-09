@@ -244,6 +244,8 @@ export const normalizeRules = (rules: string | { [string]: boolean | any[] }) =>
         params = [];
       } else if (Array.isArray(rules[curr])) {
         params = rules[curr];
+      } else if (isObject(rules[curr])) {
+        params = rules[curr];
       } else {
         params = [rules[curr]];
       }

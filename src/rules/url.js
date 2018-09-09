@@ -1,8 +1,7 @@
 import isURL from 'validator/lib/isURL';
 import { isNullOrUndefined } from '../core/utils';
 
-const validate = (value, [requireProtocol = false] = []) => {
-  const options = { require_protocol: !!requireProtocol, allow_underscores: true };
+const validate = (value, options = {}) => {
   if (isNullOrUndefined(value)) {
     value = '';
   }

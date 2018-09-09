@@ -109,6 +109,7 @@ export default class Validator {
     Validator._guardExtend(name, validator);
     Validator._merge(name, {
       validator,
+      paramNames: options && options.paramNames,
       options: assign({}, { hasTarget: false, immediate: true }, options || {})
     });
   }
@@ -434,11 +435,39 @@ export default class Validator {
   }
 
   /**
+   * Converts an array of params to an object with named properties.
+   * Only works if the rule is configured with a paramNames array.
+   * Returns the same params if it cannot convert it.
+   */
+  _convertParamArrayToObj (params, ruleName): MapObject | Array {
+    const paramNames = RULES[ruleName] && RULES[ruleName].paramNames;
+    if (!paramNames) {
+      return params;
+    }
+
+    // Wrap the object in an array.
+    if (isObject(params)) {
+      params = [params];
+    }
+
+    // Reduce the paramsNames to a param object.
+    return params.reduce((prev, value, idx) => {
+      prev[paramNames[idx]] = value;
+
+      return prev;
+    }, {});
+  }
+
+  /**
    * Tests a single input value against a rule.
    */
   _test (field: Field, value: any, rule: MapObject): ValidationResult | Promise<ValidationResult> {
     const validator = RULES[rule.name] ? RULES[rule.name].validate : null;
-    let params = Array.isArray(rule.params) ? toArray(rule.params) : [];
+    let params = Array.isArray(rule.params) ? toArray(rule.params) : rule.params;
+    if (!params) {
+      params = [];
+    }
+
     let targetName = null;
     if (!validator || typeof validator !== 'function') {
       return Promise.reject(createError(`No such validator '${rule.name}' exists.`));
@@ -463,7 +492,7 @@ export default class Validator {
       }
     }
 
-    let result = validator(value, params);
+    let result = validator(value, this._convertParamArrayToObj(params, rule.name));
 
     // If it is a promise.
     if (isCallable(result.then)) {
@@ -497,7 +526,7 @@ export default class Validator {
   /**
    * Merges a validator object into the RULES and Messages.
    */
-  static _merge (name: string, { validator, options }) {
+  static _merge (name: string, { validator, options, paramNames }) {
     const validate = isCallable(validator) ? validator : validator.validate;
     if (validator.getMessage) {
       Validator.dictionary.setMessage(Validator.locale, name, validator.getMessage);
@@ -505,7 +534,8 @@ export default class Validator {
 
     RULES[name] = {
       validate,
-      options
+      options,
+      paramNames
     };
   }
 

@@ -1,11 +1,12 @@
 import * as Rules from './rules';
 import en from '../locale/en';
 import minimal from './index.minimal';
+import { assign } from './core/utils';
 
 // rules plugin definition.
 const rulesPlugin = ({ Validator }) => {
   Object.keys(Rules).forEach(rule => {
-    Validator.extend(rule, Rules[rule].validate, Rules[rule].options);
+    Validator.extend(rule, Rules[rule].validate, assign({}, Rules[rule].options, { paramNames: Rules[rule].paramNames }));
   });
 
   // Merge the english messages.

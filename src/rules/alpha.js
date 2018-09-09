@@ -1,6 +1,6 @@
 import { alpha } from './alpha_helper';
 
-const validate = (value, [locale = null] = []) => {
+const validate = (value, { locale } = {}) => {
   if (Array.isArray(value)) {
     return value.every(val => validate(val, [locale]));
   }
@@ -13,10 +13,14 @@ const validate = (value, [locale = null] = []) => {
   return (alpha[locale] || alpha.en).test(value);
 };
 
+const paramNames = ['locale'];
+
 export {
-  validate
+  validate,
+  paramNames
 };
 
 export default {
-  validate
+  validate,
+  paramNames
 };

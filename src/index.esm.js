@@ -8,12 +8,13 @@ import mapFields from './core/mapFields';
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
 import { ErrorComponent } from './components';
+import { assign } from './core/utils';
 
 const version = '__VERSION__';
 
 const rulesPlugin = ({ Validator }) => {
   Object.keys(Rules).forEach(rule => {
-    Validator.extend(rule, Rules[rule].validate, Rules[rule].options);
+    Validator.extend(rule, Rules[rule].validate, assign({}, Rules[rule].options, { paramNames: Rules[rule].paramNames }));
   });
 
   // Merge the english messages.

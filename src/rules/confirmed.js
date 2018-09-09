@@ -1,14 +1,18 @@
-const validate = (value, other) => String(value) === String(other);
+const validate = (value, { targetValue }) => String(value) === String(targetValue);
 const options = {
   hasTarget: true
 };
 
+const paramNames = ['targetValue'];
+
 export {
   validate,
-  options
+  options,
+  paramNames
 };
 
 export default {
   validate,
-  options
+  options,
+  paramNames
 };

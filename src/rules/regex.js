@@ -1,15 +1,19 @@
-const validate = (value, [regex, ...flags]) => {
-  if (regex instanceof RegExp) {
-    return regex.test(value);
+const validate = (value, { expression }) => {
+  if (typeof expression === 'string') {
+    expression = new RegExp(expression);
   }
 
-  return new RegExp(regex, flags).test(String(value));
+  return expression.test(String(value));
 };
 
+const paramNames = ['expression'];
+
 export {
-  validate
+  validate,
+  paramNames
 };
 
 export default {
-  validate
+  validate,
+  paramNames
 };

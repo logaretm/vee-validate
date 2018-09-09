@@ -1,20 +1,21 @@
 import { isBefore, isEqual } from 'date-fns';
 import { parseDate as parse } from '../core/utils/date';
 
-const validate = (value, [otherValue, inclusion, format]) => {
+const validate = (value, { targetValue, inclusion = false, format } = {}) => {
   if (typeof format === 'undefined') {
     format = inclusion;
     inclusion = false;
   }
+
   value = parse(value, format);
-  otherValue = parse(otherValue, format);
+  targetValue = parse(targetValue, format);
 
   // if either is not valid.
-  if (!value || !otherValue) {
+  if (!value || !targetValue) {
     return false;
   }
 
-  return isBefore(value, otherValue) || (inclusion && isEqual(value, otherValue));
+  return isBefore(value, targetValue) || (inclusion && isEqual(value, targetValue));
 };
 
 const options = {
@@ -22,12 +23,16 @@ const options = {
   isDate: true
 };
 
+const paramNames = ['targetValue', 'inclusion', 'format'];
+
 export {
   validate,
-  options
+  options,
+  paramNames
 };
 
 export default {
   validate,
-  options
+  options,
+  paramNames
 };

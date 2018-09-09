@@ -1,7 +1,7 @@
 import isIP from 'validator/lib/isIP';
 import { isNullOrUndefined } from '../core/utils';
 
-const validate = (value, [version = 4] = []) => {
+const validate = (value, { version = 4 } = {}) => {
   if (isNullOrUndefined(value)) {
     value = '';
   }
@@ -13,10 +13,14 @@ const validate = (value, [version = 4] = []) => {
   return isIP(value, version);
 };
 
+const paramNames = ['version'];
+
 export {
-  validate
+  validate,
+  paramNames
 };
 
 export default {
-  validate
+  validate,
+  paramNames
 };
