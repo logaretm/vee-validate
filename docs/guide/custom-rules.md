@@ -75,6 +75,39 @@ Then you can use your rule like any other rule:
   When the field under validation is __not__ required, your rule may not be executed at all. This is because VeeValidate skips validation for empty fields if they are not required.
 :::
 
+## Args and Rule Configuration
+
+Your rule may provide different results/behavior depending on some configuration, as mentioned before they are passed as an array of values to the validator function, which may not always be optimal, for example a rule with 3 optional parameters would need to recieve all 3 parameters each time just to specify the third parameter.
+
+You can recieve an object instead of an array for your validation rule by providing a `paramNames` array in the extend options (third parameter). Which names the params in the array you would normally recieve.
+
+For an example take a look at a basic __value between__ rule implementation:
+
+```js
+const isBetween = (value, { min, max } = {}) => {
+  return Number(min) <= value && Number(max) >= value;
+};
+
+// The first param is called 'min', and the second is called 'max'.
+const paramNames = ['min', 'max'];
+
+Validator.extend('between', isBetween, {
+  paramNames //  pass it in the extend options.
+});
+```
+
+The paramNames isn't really required, but it allows your rule to work in both string/object formats. since there is no way in the string format to pass the named parameters:
+
+```
+between:10,20
+```
+
+The order is what controls the param names in that case. The validator will use the `paramNames` to convert the array of strings to an object containing the named parameters as keys with the correct param value. Make sure to order the `paramNames` in the same order that the params will be specified in the string format.
+
+::: danger
+Locale methods will still recieve the array of args, it will not convert it to an object at the time being due to the possible breaking changes in locale files.
+:::
+
 ## Target Dependant Rules
 
 Sometimes your rules may need to compare the field value against another field value, some built in rules like `confirmed`, `before` and `after` need a target field to compare against.

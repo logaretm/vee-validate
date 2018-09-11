@@ -23,12 +23,25 @@ const multiple = {
 
 ## Rules Parameters
 
-Some rules can have parameters, which are passed in a comma separated list without spaces or an array for the object form:
+Some rules can have parameters, which can be specified in multiple ways for convience:
+
+- As a comma seperated list which is suitable for the string format.
+- An array containing the params values (Suitable for the object format).
+- An object (Provides more complex configuration for the rules in object format), but with a [caveat](/guide/custom-rules.md#args-and-rule-configuration).
 
 ```js
-const someRule = 'in:1,2,3,4';
+// Params as a string
+const someRule = 'included:1,2,3,4';
 
-const someRuleObj = { in: [1, 2, 3, 4] };
+// Params as an array.
+const someRuleObj = { included: [1, 2, 3, 4] };
+
+// Params as an object.
+const someCplxObj = {
+  email: {
+    allow_utf8_local_part: true
+  }
+};
 ```
 
 ::: tip
