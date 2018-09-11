@@ -263,6 +263,10 @@ The file added to the field under validation must be an image (jpg,svg,jpeg,png,
 
 The field under validation must be a valid email.
 
+### email params
+
+Email rule can recieve any args from [validator.js isEmail](https://github.com/chriso/validator.js) validator. Note that to be able to configure it you need to use the object format.
+
 <input v-validate="'email'" data-vv-as="email" :class="{'input': true, 'is-danger': errors.has('email_field') }" name="email_field" type="text" placeholder="Your Email">
 <span v-show="errors.has('email_field')" class="help is-danger">{{ errors.first('email_field') }}</span>
 
@@ -555,7 +559,7 @@ The field under validation must be a valid url. Protocols are not required by de
 
 ### url params
 
-- `require_protocol:` If the protocol should be required. It's set to false by default. Passing anything will require it.
+This rule can recieve any args from [validator.js isURL](https://github.com/chriso/validator.js) validator. Note that to be able to configure it you need to use the object format and pass the params as an object.
 
 <input v-validate="'url:require_protocol'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('url_field') }" name="url_field" type="text" placeholder="Enter a url">
 <span v-show="errors.has('url_field')" class="help is-danger">{{ errors.first('url_field') }}</span>
