@@ -7,6 +7,8 @@ test('validates regular expressions', () => {
   expect(validate('abc-123', { expression })).toBe(false);
   expect(validate('1234abc5', { expression })).toBe(false);
   expect(validate('', { expression })).toBe(false);
+  expect(validate(['1234567890', '321'], { expression })).toBe(true);
+  expect(validate(['1234567890', 'abc'], { expression })).toBe(false);
 });
 
 test('validates with strings as regular expressions', () => {
@@ -16,4 +18,6 @@ test('validates with strings as regular expressions', () => {
   expect(validate('abc-123', { expression })).toBe(false);
   expect(validate('1234abc5', { expression })).toBe(false);
   expect(validate('', { expression })).toBe(false);
+  expect(validate(['1234567890', '321'], { expression })).toBe(true);
+  expect(validate(['1234567890', 'abc'], { expression })).toBe(false);
 });

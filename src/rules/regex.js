@@ -3,6 +3,10 @@ const validate = (value, { expression }) => {
     expression = new RegExp(expression);
   }
 
+  if (Array.isArray(value)) {
+    return value.every(val => validate(val, { expression }));
+  }
+
   return expression.test(String(value));
 };
 
