@@ -9,6 +9,10 @@ function hasModel (vnode) {
 }
 
 function getModel (vnode) {
+  if (!vnode.data) {
+    return null;
+  }
+
   return find(vnode.data.directives, d => d.name === 'model');
 }
 
@@ -28,6 +32,46 @@ function findModelNode (vnode) {
   }
 
   return null;
+}
+
+function watchModel (node) {
+  if (!node) {
+    return false;
+  }
+
+  const model = getModel(node);
+  if (!model) {
+    return false;
+  }
+
+  this.$parent.$watch(model.expression, (val) => {
+    $validator.verify(val, this.rules).then(({ errors }) => {
+      this.errors = errors;
+
+      // TODO: Set ALL FLAGS
+      this.flags = assign({}, this.flags, {
+        valid: !errors.length,
+        invalid: !!errors.length,
+        validated: true
+      });
+    });
+  });
+
+  return true;
+}
+
+function searchNodesRecursive (nodes) {
+  if (Array.isArray(nodes)) {
+    return toArray(nodes).reduce((candidate, node) => {
+      if (candidate) {
+        return candidate;
+      }
+
+      return findModelNode(node);
+    }, null);
+  }
+
+  return findModelNode(nodes);
 }
 
 export const ValidationProvider = {
@@ -74,24 +118,12 @@ export const ValidationProvider = {
       classes: this.classes
     };
 
-    const render = h('div', [this.$scopedSlots.default(ctx)]);
+    const nodes = h('div', this.$scopedSlots.default(ctx));
     if (!this.hooked) {
-      const nodeWithModel = findModelNode(render);
-      const model = getModel(nodeWithModel);
-      this.$parent.$watch(model.expression, (val) => {
-        $validator.verify(val, this.rules).then(({ errors }) => {
-          this.errors = errors;
-
-          // TODO: Set ALL FLAGS
-          this.flags = assign({}, this.flags, {
-            valid: !errors.length,
-            invalid: !!errors.length
-          });
-        });
-      });
-      this.hooked = true;
+      const nodeWithModel = searchNodesRecursive(nodes);
+      this.hooked = watchModel.call(this, nodeWithModel);
     }
 
-    return render;
+    return nodes;
   }
 };
