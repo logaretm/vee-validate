@@ -1086,3 +1086,13 @@ test('maps rules params array to an object', async () => {
   expect((await v.verify('11.222', 'decimal:2')).valid).toBe(false);
   expect((await v.verify('11.222', { decimal: { decimals: 2 } })).valid).toBe(false);
 });
+
+test('provides access to the validation context as the third argument for rules', async () => {
+  const v = new Validator();
+  const rule = jest.fn(() => true);
+  v.extend('ctx', rule);
+
+  await v.verify('11', 'ctx');
+
+  expect(rule).toHaveBeenCalledWith('11', [], { validator: v, el: undefined, vm: undefined });
+});

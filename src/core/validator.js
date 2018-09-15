@@ -521,7 +521,14 @@ export default class Validator {
       }
     }
 
-    let result = validator(value, this._convertParamArrayToObj(params, rule.name));
+    // Validation context
+    const ctx = {
+      validator: this,
+      vm: field.vm,
+      el: field.el
+    };
+
+    let result = validator(value, this._convertParamArrayToObj(params, rule.name), ctx);
 
     // If it is a promise.
     if (isCallable(result.then)) {
