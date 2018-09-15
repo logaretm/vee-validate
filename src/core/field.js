@@ -213,6 +213,19 @@ export default class Field {
   }
 
   /**
+   * Keeps a reference of the most current validation run.
+   */
+  waitFor (pendingPromise) {
+    console.log('setting waiting', pendingPromise);
+    this._waitingFor = pendingPromise;
+  }
+
+  isWaitingFor (promise) {
+    console.log('checking waiting', promise);
+    return this._waitingFor === promise;
+  }
+
+  /**
    * Updates the field with changed data.
    */
   update (options: Object) {

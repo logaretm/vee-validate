@@ -283,8 +283,13 @@ export default class Validator {
       value = field.value;
     }
 
-    return this._validate(field, value).then(result => {
-      if (!silent) {
+    const validationPromise = this._validate(field, value);
+    field.waitFor(validationPromise);
+
+    return validationPromise.then(result => {
+      if (!silent && field.isWaitingFor(validationPromise)) {
+        // allow next validation to mutate the state.
+        field.waitFor(null);
         this._handleValidationResults([result], vmId);
       }
 
