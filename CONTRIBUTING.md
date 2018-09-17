@@ -35,7 +35,21 @@ As you can see we have:
 - `locale` contains the localized messages files.
 - `tests` contains the test files for the project, it uses [jest](https://github.com/facebook/jest) for testing. it contains a similar folder structure as the `src` folder.
 
+### Contributing To The Docs
+
 If you want to contribute to the docs you can find it in the `docs` folder.
+
+Our docs require `./dist/vee-validate.esm` as dependency to run successfully in your local machine. You can generate this dependency by executing the following command from the root of the repository:
+
+```
+npm run build:esm
+```
+
+And then you can run vuepress by typing:
+
+```
+npm run docs:dev
+```
 
 ### Pull Requests
 
