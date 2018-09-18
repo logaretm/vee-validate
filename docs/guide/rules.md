@@ -379,6 +379,13 @@ The field under validation must be an iterable and/or have a length property of 
 <input v-validate="'length:5'" type="text" name="field">
 ```
 
+Specifying both len and max:
+
+```html
+<input v-validate="'length:[2, 3]'" type="checkbox" name="field">
+```
+The above example will make sure at least 2 checkboxes are selected and at most 3 are selected.
+
 ## max
 
 The field under validation length may not exceed the specified length.
@@ -393,12 +400,6 @@ The field under validation length may not exceed the specified length.
 ```html
 <input v-validate="'max:11'" data-vv-as="field" name="max_field" type="text">
 ```
-Specifying both len and max:
-
-```html
-<input v-validate="'length:[2, 3]'" type="checkbox" name="field">
-```
-The above example will make sure at least 2 checkboxes are selected and at most 3 are selected.
 
 ## max_value
 
