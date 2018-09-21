@@ -107,7 +107,7 @@ export class ErrorBag {
 export class FieldBag {
     items: Field[];
     filter(matcher: {name?: string, scope?: string, id?: string}): Field[];
-    find(matcher: {name?: string, scope?: string, id?: string}): Field;
+    find(matcher: {name?: string, scope?: string, id?: string}): Field | undefined;
     map(fn: Function): Field[];
 }
 
