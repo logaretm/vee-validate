@@ -1,12 +1,12 @@
 import Config from './config';
 import Validator from './core/validator';
-import { createFlags, find, toArray, assign } from './utils';
+import { createFlags, find, assign, isCallable, isNullOrUndefined } from './utils';
 
 let $validator = null;
 
-function hasModel (vnode) {
-  return !!(vnode.data && vnode.data.directives && find(vnode.data.directives, d => d.name === 'model'));
-}
+// function hasModel (vnode) {
+//   return !!(vnode.data && vnode.data.directives && find(vnode.data.directives, d => d.name === 'model'));
+// }
 
 function getModel (vnode) {
   if (!vnode.data) {
@@ -16,25 +16,46 @@ function getModel (vnode) {
   return find(vnode.data.directives, d => d.name === 'model');
 }
 
-function findModelNode (vnode) {
-  if (hasModel(vnode)) {
-    return vnode;
+// function findModelNode (vnode) {
+//   if (hasModel(vnode)) {
+//     return vnode;
+//   }
+
+//   if (vnode.children && vnode.children.length) {
+//     return toArray(vnode.children).reduce((candidate, node) => {
+//       if (candidate) {
+//         return candidate;
+//       }
+
+//       return findModelNode(node);
+//     }, null);
+//   }
+
+//   return null;
+// }
+
+function addListenerToNode (node, eventName, handler) {
+  const listeners = node.data.on;
+
+  // Has a single listener.
+  if (isCallable(listeners[eventName])) {
+    const prevHandler = listeners[eventName];
+    listeners[eventName] = [prevHandler];
   }
 
-  if (vnode.children && vnode.children.length) {
-    return toArray(vnode.children).reduce((candidate, node) => {
-      if (candidate) {
-        return candidate;
-      }
-
-      return findModelNode(node);
-    }, null);
+  // has other listeners.
+  if (Array.isArray(listeners[eventName])) {
+    listeners[eventName].push(handler);
+    return;
   }
 
-  return null;
+  // no listener at all.
+  if (isNullOrUndefined(listeners[eventName])) {
+    listeners[eventName] = handler;
+  }
 }
 
-function watchModel (node) {
+function addListener (node) {
   if (!node) {
     return false;
   }
@@ -44,10 +65,11 @@ function watchModel (node) {
     return false;
   }
 
-  this.$parent.$watch(model.expression, (val) => {
-    $validator.verify(val, this.rules).then(({ errors }) => {
-      this.errors = errors;
-
+  let eventName = model.modifiers && model.modifiers.lazy ? 'change' : 'input';
+  // TODO: Handle other input types like select, custom components, etc...
+  addListenerToNode(node, eventName, e => {
+    $validator.verify(e.target.value, this.rules).then(({ errors }) => {
+      this.messages = errors;
       // TODO: Set ALL FLAGS
       this.flags = assign({}, this.flags, {
         valid: !errors.length,
@@ -60,19 +82,19 @@ function watchModel (node) {
   return true;
 }
 
-function searchNodesRecursive (nodes) {
-  if (Array.isArray(nodes)) {
-    return toArray(nodes).reduce((candidate, node) => {
-      if (candidate) {
-        return candidate;
-      }
+// function searchNodesRecursive (nodes) {
+//   if (Array.isArray(nodes)) {
+//     return toArray(nodes).reduce((candidate, node) => {
+//       if (candidate) {
+//         return candidate;
+//       }
 
-      return findModelNode(node);
-    }, null);
-  }
+//       return findModelNode(node);
+//     }, null);
+//   }
 
-  return findModelNode(nodes);
-}
+//   return findModelNode(nodes);
+// }
 
 export const ValidationProvider = {
   props: {
@@ -90,7 +112,7 @@ export const ValidationProvider = {
     }
   },
   data: () => ({
-    errors: [],
+    messages: [],
     flags: createFlags()
   }),
   computed: {
@@ -112,17 +134,16 @@ export const ValidationProvider = {
     }
 
     const ctx = {
-      errors: this.errors,
+      errors: this.messages,
       flags: this.flags,
       classes: this.classes
     };
 
-    const nodes = h('div', this.$scopedSlots.default(ctx));
-    if (!this.hooked) {
-      const nodeWithModel = searchNodesRecursive(nodes);
-      this.hooked = watchModel.call(this, nodeWithModel);
-    }
+    const scope = this.$scopedSlots.default(ctx);
+    // Add the listener on the vnode
+    // TODO: Decide which node to place the events on.
+    addListener.call(this, scope[0]); // Temporary setup
 
-    return nodes;
+    return h('div', scope);
   }
 };
