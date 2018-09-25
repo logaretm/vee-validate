@@ -1,12 +1,12 @@
 import Config from './config';
 import Validator from './core/validator';
-import { createFlags, find, assign, isCallable, isNullOrUndefined } from './utils';
+import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTextInput } from './utils';
 
 let $validator = null;
 
-// function hasModel (vnode) {
-//   return !!(vnode.data && vnode.data.directives && find(vnode.data.directives, d => d.name === 'model'));
-// }
+function hasModel (vnode) {
+  return !!(vnode.data && vnode.data.directives && find(vnode.data.directives, d => d.name === 'model'));
+}
 
 function getModel (vnode) {
   if (!vnode.data) {
@@ -16,27 +16,27 @@ function getModel (vnode) {
   return find(vnode.data.directives, d => d.name === 'model');
 }
 
-// function findModelNode (vnode) {
-//   if (hasModel(vnode)) {
-//     return vnode;
-//   }
+function findModelNodes (vnode) {
+  if (hasModel(vnode)) {
+    return [vnode];
+  }
 
-//   if (vnode.children && vnode.children.length) {
-//     return toArray(vnode.children).reduce((candidate, node) => {
-//       if (candidate) {
-//         return candidate;
-//       }
+  if (vnode.children && vnode.children.length) {
+    return toArray(vnode.children).reduce((nodes, node) => {
+      const candidates = [...findModelNodes(node)];
+      if (candidates.length) {
+        nodes.push(...candidates);
+      }
 
-//       return findModelNode(node);
-//     }, null);
-//   }
+      return nodes;
+    }, []);
+  }
 
-//   return null;
-// }
+  return [];
+}
 
 function addListenerToNode (node, eventName, handler) {
   const listeners = node.data.on;
-
   // Has a single listener.
   if (isCallable(listeners[eventName])) {
     const prevHandler = listeners[eventName];
@@ -66,7 +66,10 @@ function addListener (node) {
   }
 
   let eventName = model.modifiers && model.modifiers.lazy ? 'change' : 'input';
-  // TODO: Handle other input types like select, custom components, etc...
+  if (node.tag === 'select' || !isTextInput({ type: node.data.attrs.type })) {
+    eventName = 'change';
+  }
+
   addListenerToNode(node, eventName, e => {
     $validator.verify(e.target.value, this.rules).then(({ errors }) => {
       this.messages = errors;
@@ -81,20 +84,6 @@ function addListener (node) {
 
   return true;
 }
-
-// function searchNodesRecursive (nodes) {
-//   if (Array.isArray(nodes)) {
-//     return toArray(nodes).reduce((candidate, node) => {
-//       if (candidate) {
-//         return candidate;
-//       }
-
-//       return findModelNode(node);
-//     }, null);
-//   }
-
-//   return findModelNode(nodes);
-// }
 
 export const ValidationProvider = {
   props: {
@@ -139,11 +128,15 @@ export const ValidationProvider = {
       classes: this.classes
     };
 
-    const scope = this.$scopedSlots.default(ctx);
+    const nodes = this.$scopedSlots.default(ctx);
+    // Handle multi-root slot.
+    const inputs = findModelNodes(Array.isArray(nodes) ? { children: nodes } : nodes);
     // Add the listener on the vnode
     // TODO: Decide which node to place the events on.
-    addListener.call(this, scope[0]); // Temporary setup
+    inputs.forEach(input => {
+      addListener.call(this, input); // Temporary setup
+    });
 
-    return h('div', scope);
+    return h('div', nodes);
   }
 };
