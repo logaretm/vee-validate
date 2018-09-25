@@ -5,12 +5,22 @@ import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTe
 let $validator = null;
 
 function hasModel (vnode) {
-  return !!(vnode.data && vnode.data.directives && find(vnode.data.directives, d => d.name === 'model'));
+  if (!vnode.data) return false;
+
+  if (vnode.data.model) {
+    return true;
+  }
+
+  return !!(vnode.data.directives && find(vnode.data.directives, d => d.name === 'model'));
 }
 
 function getModel (vnode) {
   if (!vnode.data) {
     return null;
+  }
+
+  if (vnode.data.model) {
+    return vnode.data.model;
   }
 
   return find(vnode.data.directives, d => d.name === 'model');
@@ -36,6 +46,10 @@ function findModelNodes (vnode) {
 }
 
 function addListenerToNode (node, eventName, handler) {
+  if (isNullOrUndefined(node.data.on)) {
+    node.data.on = {};
+  }
+
   const listeners = node.data.on;
   // Has a single listener.
   if (isCallable(listeners[eventName])) {
@@ -66,7 +80,7 @@ function addListener (node) {
   }
 
   let eventName = model.modifiers && model.modifiers.lazy ? 'change' : 'input';
-  if (node.tag === 'select' || !isTextInput({ type: node.data.attrs.type })) {
+  if (node.tag === 'select' || (node.data.attrs && !isTextInput({ type: node.data.attrs.type }))) {
     eventName = 'change';
   }
 
