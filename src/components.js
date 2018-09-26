@@ -65,8 +65,32 @@ function addListenerToNode (node, eventName, handler) {
 
   // no listener at all.
   if (isNullOrUndefined(listeners[eventName])) {
-    listeners[eventName] = handler;
+    listeners[eventName] = [handler];
   }
+}
+
+function shouldUseOnChange (vnode, model) {
+  // Is a component.
+  if (vnode.componentOptions) {
+    return false;
+  }
+
+  // Lazy Models typically use lazy modifiers.
+  if (model && model.modifiers && model.modifiers.lazy) {
+    return true;
+  }
+
+  // Is a select input.
+  if (vnode.tag === 'select') {
+    return true;
+  }
+
+  // Not a textual-type input.
+  if (vnode.data.attrs && !isTextInput({ type: vnode.data.attrs.type })) {
+    return true;
+  }
+
+  return true;
 }
 
 function addListener (node) {
@@ -79,12 +103,9 @@ function addListener (node) {
     return false;
   }
 
-  let eventName = model.modifiers && model.modifiers.lazy ? 'change' : 'input';
-  if (node.tag === 'select' || (node.data.attrs && !isTextInput({ type: node.data.attrs.type }))) {
-    eventName = 'change';
-  }
+  const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
 
-  addListenerToNode(node, eventName, e => {
+  const validate = e => {
     $validator.verify(e.target.value, this.rules).then(({ errors }) => {
       this.messages = errors;
       // TODO: Set ALL FLAGS
@@ -94,7 +115,9 @@ function addListener (node) {
         validated: true
       });
     });
-  });
+  };
+
+  addListenerToNode(node, eventName, validate);
 
   return true;
 }
@@ -146,7 +169,6 @@ export const ValidationProvider = {
     // Handle multi-root slot.
     const inputs = findModelNodes(Array.isArray(nodes) ? { children: nodes } : nodes);
     // Add the listener on the vnode
-    // TODO: Decide which node to place the events on.
     inputs.forEach(input => {
       addListener.call(this, input); // Temporary setup
     });
