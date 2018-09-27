@@ -1,6 +1,7 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
+  _default: (field) => `${field}の値が不正です`,
   after: (field, [target]) => `${field}は${target}の後でなければなりません`,
   alpha_dash: (field) => `${field}は英数字とハイフン、アンダースコアのみ使用できます`,
   alpha_num: (field) => `${field}は英数字のみ使用できます`,
@@ -20,6 +21,14 @@ const messages = {
   image: (field) => `${field}は有効な画像形式ではありません`,
   included: (field) => `${field}は有効な値ではありません`,
   ip: (field) => `${field}は有効なIPアドレスではありません`,
+  is: (field) => `${field}が一致しません`,
+  is_not: (field) => `${field}が一致しています`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `${field}は${length}文字以上${max}文字以下でなければなりません`;
+    }
+    return `${field}は${length}文字でなければなりません`;
+  },
   max: (field, [length]) => `${field}は${length}文字以内にしてください`,
   max_value: (field, [max]) => `${field}は${max}以下でなければなりません`,
   mimes: (field) => `${field}は有効なファイル形式ではありません`,
@@ -27,10 +36,10 @@ const messages = {
   min_value: (field, [min]) => `${field}は${min}以上でなければなりません`,
   excluded: (field) => `${field}は不正な値です`,
   numeric: (field) => `${field}は数字のみ使用できます`,
-  regex: (field) => `${field}が正しくありません`,
+  regex: (field) => `${field}のフォーマットが正しくありません`,
   required: (field) => `${field}は必須項目です`,
   size: (field, [size]) => `${field}は${formatFileSize(size)}以内でなければなりません`,
-  url: (field) => `${field}が正しくありません`
+  url: (field) => `${field}は有効なURLではありません`
 };
 
 const locale = {
