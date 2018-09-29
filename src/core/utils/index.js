@@ -621,3 +621,7 @@ export const parseSelector = (selector) => {
 export const includes = (collection: String | any[], item: any) => {
   return collection.indexOf(item) !== -1;
 };
+
+export const isEmptyArray = (arr: any): boolean => {
+  return Array.isArray(arr) && arr.length === 0;
+};

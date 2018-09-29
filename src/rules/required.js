@@ -1,6 +1,8 @@
+import { isEmptyArray } from '../core/utils';
+
 const validate = (value, [invalidateFalse = false] = []) => {
-  if (Array.isArray(value)) {
-    return !!value.length;
+  if (isEmptyArray(value)) {
+    return false;
   }
 
   // incase a field considers `false` as an empty value like checkboxes.

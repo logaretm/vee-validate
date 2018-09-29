@@ -1,5 +1,5 @@
 import ErrorBag from './errorBag';
-import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined, includes, normalizeRules } from './utils';
+import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined, includes, normalizeRules, isEmptyArray } from './utils';
 import FieldBag from './fieldBag';
 import Field from './field';
 import Config from '../config';
@@ -682,7 +682,7 @@ export default class Validator {
     }
 
     // skip if the field is not required and has an empty value.
-    return !field.isRequired && (isNullOrUndefined(value) || value === '');
+    return !field.isRequired && (isNullOrUndefined(value) || value === '' || isEmptyArray(value));
   }
 
   _shouldBail (field, value) {

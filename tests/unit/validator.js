@@ -39,6 +39,7 @@ test('empty values pass validation unless they are required', async () => {
   expect(await v.validate('title', undefined)).toBe(true);
   expect(await v.validate('content', 'works')).toBe(true);
 
+  expect(await v.validate('content', [])).toBe(false);
   expect(await v.validate('content', '')).toBe(false);
   expect(await v.validate('email', 'loga')).toBe(false);
   expect(await v.validate('name', 'no')).toBe(false);
