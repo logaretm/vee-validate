@@ -4,7 +4,7 @@ const messages = {
   after: (field, [target]) => `${field}-feltet må være etter ${target}.`,
   alpha_dash: (field) => `${field}-feltet kan bare inneholde alfa-numeriske tegn, samt bindestrek og understrek.`,
   alpha_num: (field) => `${field} kan bare inneholde alfanumeriske tegn.`,
-  alpha_spaces: (field) => `${field}-feltet kan bare inneholde alfa-numeriske teng og mellomrom.`,
+  alpha_spaces: (field) => `${field}-feltet kan bare inneholde alfa-numeriske tegn og mellomrom.`,
   alpha: (field) => `${field}-feltet kan bare inneholde bokstaver.`,
   before: (field, [target]) => `${field}-feltet må være før ${target}.`,
   between: (field, [min, max]) => `${field}-feltet må være imellom ${min} og ${max}.`,
@@ -19,7 +19,7 @@ const messages = {
   ext: (field) => `${field}-feltet må være en gyldig fil.`,
   image: (field) => `${field}-feltet må være et bilde.`,
   included: (field) => `${field}-feltet må være en gyldig verdi.`,
-  ip: (field) => `${field}-feltet må være en gyldig IP Adresse.`,
+  ip: (field) => `${field}-feltet må være en gyldig IP-adresse.`,
   max: (field, [length]) => `${field}-feltet kan ikke være lengre enn ${length} tegn.`,
   max_value: (field, [max]) => `${field}-feltet må være ${max} eller mindre.`,
   mimes: (field) => `${field}-feltet må ha en gyldig filtype.`,
@@ -30,7 +30,7 @@ const messages = {
   regex: (field) => `${field}-feltet sin formatering er ugyldig.`,
   required: (field) => `${field}-feltet er obligatorisk.`,
   size: (field, [size]) => `${field}-feltet må være mindre enn ${formatFileSize(size)}.`,
-  url: (field) => `${field}-feltet er ikkje en gyldig URL.`
+  url: (field) => `${field}-feltet er ikke en gyldig URL.`
 };
 
 const locale = {
