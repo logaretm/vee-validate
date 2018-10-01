@@ -21,7 +21,7 @@ const messages = {
   ip: (field) => `${field}不是一个有效的地址`,
   length: (field, [length, max]) => {
     if (max) {
-      `${field}长度必须在${length}到${max}之间`
+      return `${field}长度必须在${length}到${max}之间`
     }
 
     return `${field}长度必须为${length}`
