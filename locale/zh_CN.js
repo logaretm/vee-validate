@@ -19,7 +19,13 @@ const messages = {
   image: (field) => `${field}不是一张有效的图片`,
   included: (field) => `${field}不是一个有效值`,
   ip: (field) => `${field}不是一个有效的地址`,
-  length: (field, [minLength, maxLength]) => `${field}长度必须在${minLength}到${maxLength}之间`,
+  length: (field, [length, max]) => {
+    if (max) {
+      `${field}长度必须在${length}到${max}之间`
+    }
+
+    return `${field}长度必须为${length}`
+  },
   max: (field, [length]) => `${field}不能超过${length}个字符`,
   max_value: (field, [max]) => `${field}必须小于或等于${max}`,
   mimes: (field) => `${field}不是一个有效的文件类型`,
