@@ -623,3 +623,7 @@ export const includes = (collection: String | any[], item: any) => {
 export const isEmptyArray = (arr: any): boolean => {
   return Array.isArray(arr) && arr.length === 0;
 };
+
+export const isEvent = (evt: any): boolean => {
+  return (isCallable(Event) && evt instanceof Event) || (evt && evt.srcElement);
+};

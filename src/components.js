@@ -1,6 +1,6 @@
 import Config from './config';
 import Validator from './core/validator';
-import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTextInput } from './utils';
+import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTextInput, isEvent } from './utils';
 
 let $validator = null;
 
@@ -69,6 +69,26 @@ function addListenerToNode (node, eventName, handler) {
   }
 }
 
+function addListenerToComponentNode (node, eventName, handler) {
+  const listeners = node.componentOptions.listeners;
+  // Has a single listener.
+  if (isCallable(listeners[eventName])) {
+    const prevHandler = listeners[eventName];
+    listeners[eventName] = [prevHandler];
+  }
+
+  // has other listeners.
+  if (Array.isArray(listeners[eventName])) {
+    listeners[eventName].push(handler);
+    return;
+  }
+
+  // no listener at all.
+  if (isNullOrUndefined(listeners[eventName])) {
+    listeners[eventName] = [handler];
+  }
+}
+
 function shouldUseOnChange (vnode, model) {
   // Is a component.
   if (vnode.componentOptions) {
@@ -80,14 +100,9 @@ function shouldUseOnChange (vnode, model) {
     return true;
   }
 
-  // Is a select input.
-  if (vnode.tag === 'select') {
-    return true;
-  }
-
-  // Not a textual-type input.
-  if (vnode.data.attrs && !isTextInput({ type: vnode.data.attrs.type })) {
-    return true;
+  // is a textual-type input.
+  if (vnode.data.attrs && isTextInput({ type: vnode.data.attrs.type })) {
+    return false;
   }
 
   return true;
@@ -106,7 +121,8 @@ function addListener (node) {
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
 
   const validate = e => {
-    $validator.verify(e.target.value, this.rules).then(({ errors }) => {
+    const value = isEvent(e) ? e.target.value : e;
+    $validator.verify(value, this.rules).then(({ errors }) => {
       this.messages = errors;
       // TODO: Set ALL FLAGS
       this.flags = assign({}, this.flags, {
@@ -117,7 +133,12 @@ function addListener (node) {
     });
   };
 
-  addListenerToNode(node, eventName, validate);
+  if (node.componentOptions) {
+    addListenerToComponentNode(node, eventName, validate);
+  } else {
+    addListenerToNode(node, eventName, validate);
+  }
+  console.log(node);
 
   return true;
 }
