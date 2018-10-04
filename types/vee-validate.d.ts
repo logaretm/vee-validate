@@ -121,6 +121,11 @@ export interface FieldMatchOptions {
     name?: string;
 }
 
+export interface VerifyResult {
+    valid: boolean;
+    errors: string[];
+}
+
 export class Validator {
     errors: ErrorBag;
     fields: FieldBag;
@@ -150,6 +155,7 @@ export class Validator {
     validate(name: string, value?: any, scope?: string, silent?: boolean): Promise<any>;
     validateAll(values?: Object, scope?: string, silent?: boolean): Promise<any>;
     validateScopes(silent?: boolean): Promise<any>;
+    verify(value: any, rules: string|Object): Promise<VerifyResult>;
     static create(validations: Object, options: any): Validator;
     static extend(name: string, validator: Object|Function, options?:ExtendOptions): void;
     static remove(name: string): void;
