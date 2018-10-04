@@ -2,7 +2,7 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   _default: (field) => `Laukā ${field} ievadītā vērtība nav korekta.`,
-  after: (field, [target, inclusion]) => `Lauka ${field} vērtībai jāatrodas pēc ${inclusion ? 'vai jābūt vienādai ar ' : ''}${target}.`,
+  after: (field, [target, inclusion]) => `Lauka ${field} vērtībai jābūt lielākai par ${inclusion ? 'vai vienādai ar ' : ''}${target}.`,
   alpha_dash: (field) => `Laukā ${field} var ievadīt tikai burtus, ciparus, domuzīmes un pasvītras.`,
   alpha_num: (field) => `Laukā ${field} var ievadīt tikai burtus un ciparus.`,
   alpha_spaces: (field) => `Laukā ${field} var ievadīt tikai burtus un atstarpes.`,
@@ -16,12 +16,12 @@ const messages = {
   decimal: (field, [decimals = '*'] = []) => `Laukā ${field} var ievadīt ciparus un drīkst izmantot ${!decimals || decimals === '*' ? '' : decimals} decimālpunktus.`,
   digits: (field, [length]) => `Lauka ${field} vērtību veido precīzs ${length} ciparu skaits`,
   dimensions: (field, [width, height]) => `Lauka  ${field} izmērs ir ${width} pikseļu  platumā un ${height} pikseļu augstumā.`,
-  email: (field) => `Kā lauka ${field} vērtību izmanto spēkā esošu epastu.`,
-  ext: (field) => `Kā lauka ${field} vērtību izmanto failu.`,
-  image: (field) => `Kā lauka ${field} vērtību izmanto attēlu.`,
+  email: (field) => `Lauka ${field} vērtībai jābūt derīgai e-pasta adresei.`,
+  ext: (field) => `Lauka ${field} vērtībai jābūt failam.`,
+  image: (field) => `Lauka ${field} vērtībai jābūt attēlam.`,
   included: (field) => `Lauka ${field} vērtībai jābūt derīgai.`,
-  integer: (field) => `Kā lauka ${field} vērtību izmanto veselu skaitli.`,
-  ip: (field) => `Kā lauka ${field} vērtību izmanto IP adresi.`,
+  integer: (field) => `Lauka ${field} vērtībai jābūt veselam skaitlim.`,
+  ip: (field) => `Kā ${field} vērtībai jābūt IP adresei.`,
   length: (field, [length, max]) => {
     if (max) {
       return `Lauka ${field} garumam jābūt intervālā starp ${length} un ${max}.`;
@@ -31,7 +31,7 @@ const messages = {
   },
   max: (field, [length]) => `Laukā ${field} nevar ievadīt vairāk nekā ${length} rakstzīmes.`,
   max_value: (field, [max]) => `Lauka ${field} vērtībai jābūt ${max} vai mazākai.`,
-  mimes: (field) => `Kā lauka ${field} vērtību izmanto faila tipu.`,
+  mimes: (field) => `Lauka ${field} vērtībai jābūt failam.`,
   min: (field, [length]) => `Laukā ${field} jāievada vismaz ${length} rakstzīmes.`,
   min_value: (field, [min]) => `Laukā ${field} izmanto minimālo vērtību ${min} vai lielāku.`,
   excluded: (field) => `Laukā ${field} jāievada derīga vērtība.`,
