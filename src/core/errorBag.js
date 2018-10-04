@@ -109,7 +109,7 @@ export default class ErrorBag {
       }
 
       if (!isNullOrUndefined(this.vmId)) {
-        matchesScope = item.vmId === this.vmId;
+        matchesVM = item.vmId === this.vmId;
       }
 
       return matchesVM && matchesScope;
