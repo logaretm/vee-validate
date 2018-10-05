@@ -1,6 +1,7 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
+  _default: (field) => `${field} 無效。`,
   after: (field, [target]) => `${field} 必須要晚於 ${target}。`,
   alpha_dash: (field) => `${field} 只能以字母、數字及斜線組成。`,
   alpha_num: (field) => `${field} 只能以字母及數字組成。`,
@@ -19,7 +20,15 @@ const messages = {
   ext: (field) => `${field} 必須是有效的檔案。`,
   image: (field) => `${field} 必須是一張圖片。`,
   included: (field) => `所選擇的 ${field} 選項無效。`,
+  integer: (field) => `${field} 必須是整數。`,
   ip: (field) => `${field} 必須是一個有效的 IP 位址。`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `${field} 的長度必須在 ${length} 到 ${max} 之間。`;
+    }
+
+    return `${field} 的長度必須為 ${length}。`;
+  },
   max: (field, [length]) => `${field} 不能大於 ${length} 個字元。`,
   max_value: (field, [max]) => `${field} 不得大於 ${max}。`,
   mimes: (field) => `${field} 必須是有效的檔案類型.`,
