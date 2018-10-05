@@ -126,6 +126,12 @@ export interface VerifyResult {
     errors: string[];
 }
 
+export interface VerifyOptions {
+    bails: boolean;
+    name: string;
+    values: { [x: string]: any };
+}
+
 export class Validator {
     errors: ErrorBag;
     fields: FieldBag;
@@ -155,7 +161,7 @@ export class Validator {
     validate(name: string, value?: any, scope?: string, silent?: boolean): Promise<any>;
     validateAll(values?: Object, scope?: string, silent?: boolean): Promise<any>;
     validateScopes(silent?: boolean): Promise<any>;
-    verify(value: any, rules: string|Object): Promise<VerifyResult>;
+    verify(value: any, rules: string|Object, options?: VerifyOptions): Promise<VerifyResult>;
     static create(validations: Object, options: any): Validator;
     static extend(name: string, validator: Object|Function, options?:ExtendOptions): void;
     static remove(name: string): void;
