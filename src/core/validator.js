@@ -1,5 +1,5 @@
 import ErrorBag from './errorBag';
-import { isObject, isCallable, toArray, createError, assign, find, isNullOrUndefined, includes, normalizeRules, isEmptyArray } from './utils';
+import { isObject, getPath, isCallable, toArray, createError, assign, find, isNullOrUndefined, includes, normalizeRules, isEmptyArray } from './utils';
 import FieldBag from './fieldBag';
 import Field from './field';
 import Config from '../config';
@@ -370,9 +370,22 @@ export default class Validator {
   /**
    * Validates a value against the rules.
    */
-  verify (value: any, rules: string | MapObject) {
-    const field = { name: '{field}', rules: normalizeRules(rules) };
+  verify (value: any, rules: string | MapObject, options?: VerifyOptions = {}): Promise<VerifyOptions> {
+    const field = {
+      name: (options && options.name) || '{field}',
+      rules: normalizeRules(rules),
+      bails: getPath('bails', options, true)
+    };
+
     field.isRequired = field.rules.required;
+    const targetRules = Object.keys(field.rules).filter(Validator.isTargetRule);
+    if (targetRules.length && options && isObject(options.values)) {
+      // patch the field params with the targets' values.
+      targetRules.forEach(rule => {
+        const [first, ...rest] = field.rules[rule];
+        field.rules[rule] = [options.values[first], ...rest];
+      });
+    }
 
     return this._validate(field, value).then(result => {
       return { valid: result.valid, errors: result.errors.map(e => e.msg) };
@@ -508,7 +521,7 @@ export default class Validator {
     }
 
     // has field dependencies.
-    if (rule.options.hasTarget) {
+    if (rule.options.hasTarget && field.dependencies) {
       const target = find(field.dependencies, d => d.name === rule.name);
       if (target) {
         targetName = target.field.alias;
@@ -685,7 +698,7 @@ export default class Validator {
     return !field.isRequired && (isNullOrUndefined(value) || value === '' || isEmptyArray(value));
   }
 
-  _shouldBail (field, value) {
+  _shouldBail (field) {
     // if the field was configured explicitly.
     if (field.bails !== undefined) {
       return field.bails;
@@ -715,7 +728,7 @@ export default class Validator {
       const result = this._test(field, value, { name: rule, params: field.rules[rule], options: ruleOptions });
       if (isCallable(result.then)) {
         promises.push(result);
-      } else if (!result.valid && this._shouldBail(field, value)) {
+      } else if (!result.valid && this._shouldBail(field)) {
         errors.push(...result.errors);
         isExitEarly = true;
       } else {

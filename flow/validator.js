@@ -47,3 +47,9 @@ declare type FieldOptions = {
   validity?: boolean, // if constrained validation API should be used (mdn)
   vm?: any // the vue instance that owns this field
 };
+
+declare type VerifyOptions = {
+  name?: string,
+  values?: MapObject,
+  bails?: boolean
+};
