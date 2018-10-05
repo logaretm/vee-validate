@@ -1067,18 +1067,52 @@ test('removes the vm localeChanged listener when the validator is destroyed', ()
   expect(v._vm.$off).toHaveBeenCalled();
 });
 
-test('validates values without adding fields', async () => {
-  const v = new Validator();
-  expect(await v.verify('test', 'max:3')).toEqual({ 'errors': ['The {field} field may not be greater than 3 characters.'], 'valid': false });
-  expect(v.errors.count()).toBe(0); // Errors not added.
-  expect(await v.verify('tst', 'max:3')).toEqual({ valid: true, errors: [] });
+describe('Verify API', () => {
+  test('passing values and results', async () => {
+    const v = new Validator();
+    expect(await v.verify('test', 'max:3')).toEqual({ 'errors': ['The {field} field may not be greater than 3 characters.'], 'valid': false });
+    expect(v.errors.count()).toBe(0); // Errors not added.
+    expect(await v.verify('tst', 'max:3')).toEqual({ valid: true, errors: [] });
+    // test required rule
+    expect(await v.verify('', 'required')).toEqual({ 'errors': ['The {field} field is required.'], 'valid': false });
+    // test #1353
+    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: true } })).toEqual({ valid: true, errors: [] });
+    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: false } })).toEqual({ valid: false, errors: ['The {field} field must be a valid email.'] });
+  });
 
-  // test required rule
-  expect(await v.verify('', 'required')).toEqual({ 'errors': ['The {field} field is required.'], 'valid': false });
+  test('target rules validation using options.values', async () => {
+    const v = new Validator();
+    let result = await v.verify('test', 'confirmed:pass', {
+      values: {
+        pass: 'tes'
+      }
+    });
+    expect(result.valid).toBe(false);
+    result = await v.verify('test', 'confirmed:pass', {
+      values: {
+        pass: 'test'
+      }
+    });
+    expect(result.valid).toBe(true);
+  });
 
-  // test #1353
-  expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: true } })).toEqual({ valid: true, errors: [] });
-  expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: false } })).toEqual({ valid: false, errors: ['The {field} field must be a valid email.'] });
+  test('bailing using options.bail', async () => {
+    const v = new Validator();
+    let { errors } = await v.verify('', 'required|min:3', {
+      bails: false
+    });
+    expect(errors).toHaveLength(2);
+    expect(errors).toEqual([
+      'The {field} field is required.',
+      'The {field} field must be at least 3 characters.'
+    ]);
+  });
+
+  test('customize field name using options.name', async () => {
+    const v = new Validator();
+    const { errors } = await v.verify('', 'required', { name: 'username' });
+    expect(errors).toEqual(['The username field is required.']);
+  });
 });
 
 test('maps rules params array to an object', async () => {
