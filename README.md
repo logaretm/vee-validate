@@ -106,6 +106,12 @@ However if you are adding a new validation rule, it should have multiple uses or
 
 You can find more information in the [contribution guide](CONTRIBUTING.md).
 
+### UI Integrations
+
+These libraries/projects make it a breeze integrating vee-validate into your favorite UI library/framework.
+
+- [vee-element](https://github.com/davestewart/vee-element) for [Element](https://github.com/ElemeFE/element)
+
 ### Tutorials and Examples
 
 - [Vue Multi Step Form](http://statemachine.davestewart.io/html/examples/vue/vue-sign-up.html) by [Dave Stewart](https://github.com/davestewart)

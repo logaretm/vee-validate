@@ -10,7 +10,8 @@ const sidebars = {
     'localization',
     'flags',
     'events',
-    'conditional-and-looping-inputs'
+    'conditional-and-looping-inputs',
+    'ui-integrations'
   ],
   api: [
     'directive',
