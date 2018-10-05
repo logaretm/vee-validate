@@ -1,6 +1,7 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
+  _default: (field) => `${field}的值无效`,
   after: (field, [target]) => `${field}必须在${target}之后`,
   alpha_dash: (field) => `${field}能够包含字母数字字符、破折号和下划线`,
   alpha_num: (field) => `${field}只能包含字母数字字符`,
@@ -9,6 +10,7 @@ const messages = {
   before: (field, [target]) => `${field}必须在${target}之前`,
   between: (field, [min, max]) => `${field}必须在${min}与${max}之间`,
   confirmed: (field, [confirmedField]) => `${field}不能和${confirmedField}匹配`,
+  credit_card: (field) => `${field}的格式错误`,
   date_between: (field, [min, max]) => `${field}必须在${min}和${max}之间`,
   date_format: (field, [format]) => `${field}必须符合${format}格式`,
   decimal: (field, [decimals = '*'] = []) => `${field}必须是数字，且能够保留${decimals === '*' ? '' : decimals}位小数`,
@@ -18,6 +20,7 @@ const messages = {
   ext: (field) => `${field}不是一个有效的文件`,
   image: (field) => `${field}不是一张有效的图片`,
   included: (field) => `${field}不是一个有效值`,
+  integer: (field) => `${field}必须是整数`,
   ip: (field) => `${field}不是一个有效的地址`,
   length: (field, [length, max]) => {
     if (max) {
