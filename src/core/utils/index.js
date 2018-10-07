@@ -23,7 +23,7 @@ export const addEventListener = (el: HTMLElement, eventName: string, cb: Functio
 };
 
 export const isTextInput = (el: HTMLInputElement) => {
-  return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'textarea'], el.type);
+  return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'textarea', 'number'], el.type);
 };
 
 export const isCheckboxOrRadioInput = (el: HTMLInputElement) => {
