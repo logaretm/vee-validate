@@ -119,26 +119,45 @@ function addListener (node) {
   }
 
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
+  this.value = model.value; // initially track the value.
 
   const validate = e => {
     const value = isEvent(e) ? e.target.value : e;
-    $validator.verify(value, this.rules).then(({ errors }) => {
-      this.messages = errors;
-      // TODO: Set ALL FLAGS
-      this.flags = assign({}, this.flags, {
-        valid: !errors.length,
-        invalid: !!errors.length,
-        validated: true
-      });
-    });
+    this.value = value;
+    return $validator.verify(value, this.rules);
   };
 
-  if (node.componentOptions) {
-    addListenerToComponentNode(node, eventName, validate);
-  } else {
-    addListenerToNode(node, eventName, validate);
+  const validationHandler = e => validate(e).then(({ errors }) => {
+    this.messages = errors;
+    // TODO: Set ALL FLAGS
+    this.flags = assign({}, this.flags, {
+      valid: !errors.length,
+      invalid: !!errors.length,
+      validated: true
+    });
+  });
+
+  // initially assign the valid/invalid flags.
+  if (!this.wasValidatedInitially) {
+    if (!this.immediate) {
+      validate(this.value).then(({ valid }) => {
+        this.flags = assign({}, this.flags, {
+          valid,
+          invalid: !valid
+        });
+      });
+    } else {
+      validationHandler(this.value);
+    }
+
+    this.wasValidatedInitially = true;
   }
-  console.log(node);
+
+  if (node.componentOptions) {
+    addListenerToComponentNode(node, eventName, validationHandler);
+  } else {
+    addListenerToNode(node, eventName, validationHandler);
+  }
 
   return true;
 }
@@ -146,20 +165,30 @@ function addListener (node) {
 export const ValidationProvider = {
   props: {
     name: {
-      type: String
+      type: String,
+      default: null
     },
     alias: {
-      type: String
+      type: String,
+      default: null
     },
     events: {
-      type: [Array, String]
+      type: [Array, String],
+      default: []
     },
     rules: {
-      type: [Object, String]
+      type: [Object, String],
+      default: null
+    },
+    immediate: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
     messages: [],
+    value: undefined,
+    wasValidatedInitially: false,
     flags: createFlags()
   }),
   computed: {
