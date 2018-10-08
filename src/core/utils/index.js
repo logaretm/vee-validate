@@ -533,17 +533,15 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
       rules = appendRule(`min:${el.minLength}`, rules);
     }
 
-    return rules;
-  }
+    if (el.type === 'number') {
+      rules = appendRule('decimal', rules);
+      if (el.min !== '') {
+        rules = appendRule(`min_value:${el.min}`, rules);
+      }
 
-  if (el.type === 'number') {
-    rules = appendRule('decimal', rules);
-    if (el.min !== '') {
-      rules = appendRule(`min_value:${el.min}`, rules);
-    }
-
-    if (el.max !== '') {
-      rules = appendRule(`max_value:${el.max}`, rules);
+      if (el.max !== '') {
+        rules = appendRule(`max_value:${el.max}`, rules);
+      }
     }
 
     return rules;
