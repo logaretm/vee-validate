@@ -26,6 +26,12 @@ function getModel (vnode) {
   return find(vnode.data.directives, d => d.name === 'model');
 }
 
+function findModelConfig (vnode) {
+  if (!vnode.componentOptions) return null;
+
+  return assign({}, { event: 'input', prop: 'value' }, vnode.componentOptions.Ctor.options.model);
+}
+
 function findModelNodes (vnode) {
   if (hasModel(vnode)) {
     return [vnode];
@@ -71,21 +77,22 @@ function addListenerToNode (node, eventName, handler) {
 
 function addListenerToComponentNode (node, eventName, handler) {
   const listeners = node.componentOptions.listeners;
+  const { event } = findModelConfig(node) || { event: eventName, prop: 'value' };
   // Has a single listener.
-  if (isCallable(listeners[eventName])) {
-    const prevHandler = listeners[eventName];
-    listeners[eventName] = [prevHandler];
+  if (isCallable(listeners[event])) {
+    const prevHandler = listeners[event];
+    listeners[event] = [prevHandler];
   }
 
   // has other listeners.
-  if (Array.isArray(listeners[eventName])) {
-    listeners[eventName].push(handler);
+  if (Array.isArray(listeners[event])) {
+    listeners[event].push(handler);
     return;
   }
 
   // no listener at all.
-  if (isNullOrUndefined(listeners[eventName])) {
-    listeners[eventName] = [handler];
+  if (isNullOrUndefined(listeners[event])) {
+    listeners[event] = [handler];
   }
 }
 
@@ -174,7 +181,7 @@ export const ValidationProvider = {
     },
     events: {
       type: [Array, String],
-      default: []
+      default: () => []
     },
     rules: {
       type: [Object, String],
