@@ -1,5 +1,6 @@
 import ErrorBag from './errorBag';
 import FieldBag from './fieldBag';
+import RuleContainer from './ruleContainer';
 import Field from './field';
 import Config from '../config';
 import {
@@ -18,7 +19,6 @@ import {
 
 // @flow
 
-const RULES: { [string]: Rule } = {};
 let STRICT_MODE: boolean = true;
 
 export default class Validator {
@@ -40,11 +40,11 @@ export default class Validator {
   }
 
   static get rules () {
-    return RULES;
+    return RuleContainer.rules;
   }
 
   get rules () {
-    return RULES;
+    return RuleContainer.rules;
   }
 
   get flags () {
@@ -130,14 +130,14 @@ export default class Validator {
    * Removes a rule from the list of validators.
    */
   static remove (name: string): void {
-    delete RULES[name];
+    RuleContainer.remove(name);
   }
 
   /**
    * Checks if the given rule name is a rule that targets other fields.
    */
   static isTargetRule (name: string): boolean {
-    return !!RULES[name] && RULES[name].options.hasTarget;
+    return RuleContainer.isTargetRule(name);
   }
 
   /**
@@ -453,7 +453,7 @@ export default class Validator {
       return obj;
     }
 
-    const paramNames = RULES[ruleName] && RULES[ruleName].paramNames;
+    const paramNames = RuleContainer.getParamNames(ruleName);
     if (!paramNames || !isObject(obj)) {
       return obj;
     }
@@ -493,7 +493,7 @@ export default class Validator {
    * Returns the same params if it cannot convert it.
    */
   _convertParamArrayToObj (params, ruleName): MapObject | Array {
-    const paramNames = RULES[ruleName] && RULES[ruleName].paramNames;
+    const paramNames = RuleContainer.getParamNames(ruleName);
     if (!paramNames) {
       return params;
     }
@@ -521,7 +521,7 @@ export default class Validator {
    * Tests a single input value against a rule.
    */
   _test (field: Field, value: any, rule: MapObject): ValidationResult | Promise<ValidationResult> {
-    const validator = RULES[rule.name] ? RULES[rule.name].validate : null;
+    const validator = RuleContainer.getValidatorMethod(rule.name);
     let params = Array.isArray(rule.params) ? toArray(rule.params) : rule.params;
     if (!params) {
       params = [];
@@ -591,11 +591,11 @@ export default class Validator {
       Validator.dictionary.setMessage(Validator.locale, name, validator.getMessage);
     }
 
-    RULES[name] = {
+    RuleContainer.add(name, {
       validate,
       options,
       paramNames
-    };
+    });
   }
 
   /**
@@ -732,11 +732,11 @@ export default class Validator {
     let isExitEarly = false;
     // use of '.some()' is to break iteration in middle by returning true
     Object.keys(field.rules).filter(rule => {
-      if (!initial || !RULES[rule]) return true;
+      if (!initial || !RuleContainer.has(rule)) return true;
 
-      return RULES[rule].options.immediate;
+      return RuleContainer.isImmediate(rule);
     }).some(rule => {
-      const ruleOptions = RULES[rule] ? RULES[rule].options : {};
+      const ruleOptions = RuleContainer.getOptions(rule);
       const result = this._test(field, value, { name: rule, params: field.rules[rule], options: ruleOptions });
       if (isCallable(result.then)) {
         promises.push(result);

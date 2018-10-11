@@ -1,5 +1,5 @@
 import Resolver from './resolver';
-import Validator from './validator';
+import RuleContainer from './ruleContainer';
 import {
   uniqId,
   createFlags,
@@ -340,7 +340,7 @@ export default class Field {
 
     // we get the selectors for each field.
     const fields = Object.keys(this.rules).reduce((prev, r) => {
-      if (Validator.isTargetRule(r)) {
+      if (RuleContainer.isTargetRule(r)) {
         prev.push({ selector: this.rules[r][0], name: r });
       }
 
