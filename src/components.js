@@ -51,49 +51,40 @@ function findModelNodes (vnode) {
   return [];
 }
 
+function addListenerToListenersObject (obj, eventName, handler) {
+  // Has a single listener.
+  if (isCallable(obj[eventName])) {
+    const prevHandler = obj[eventName];
+    obj[eventName] = [prevHandler];
+  }
+
+  // has other listeners.
+  if (Array.isArray(obj[eventName])) {
+    obj[eventName].push(handler);
+    return;
+  }
+
+  // no listener at all.
+  if (isNullOrUndefined(obj[eventName])) {
+    obj[eventName] = [handler];
+  }
+}
+
 function addListenerToNode (node, eventName, handler) {
   if (isNullOrUndefined(node.data.on)) {
     node.data.on = {};
   }
 
-  const listeners = node.data.on;
-  // Has a single listener.
-  if (isCallable(listeners[eventName])) {
-    const prevHandler = listeners[eventName];
-    listeners[eventName] = [prevHandler];
-  }
-
-  // has other listeners.
-  if (Array.isArray(listeners[eventName])) {
-    listeners[eventName].push(handler);
-    return;
-  }
-
-  // no listener at all.
-  if (isNullOrUndefined(listeners[eventName])) {
-    listeners[eventName] = [handler];
-  }
+  addListenerToListenersObject(node.data.on, eventName, handler);
 }
 
 function addListenerToComponentNode (node, eventName, handler) {
-  const listeners = node.componentOptions.listeners;
+  if (!node.componentOptions.listeners) {
+    node.componentOptions.listeners = {};
+  }
+
   const { event } = findModelConfig(node) || { event: eventName, prop: 'value' };
-  // Has a single listener.
-  if (isCallable(listeners[event])) {
-    const prevHandler = listeners[event];
-    listeners[event] = [prevHandler];
-  }
-
-  // has other listeners.
-  if (Array.isArray(listeners[event])) {
-    listeners[event].push(handler);
-    return;
-  }
-
-  // no listener at all.
-  if (isNullOrUndefined(listeners[event])) {
-    listeners[event] = [handler];
-  }
+  addListenerToListenersObject(node.componentOptions.listeners, event, handler);
 }
 
 function shouldUseOnChange (vnode, model) {
