@@ -1,6 +1,6 @@
 # Configuration
 
-## Installation Config
+## Config
 
 You may need to configure some options to tweak some of the plugin internals. This is not required, but could cause conflicts. For example, using a property called `errors` on your vue instance may cause conflicts. Here is how you would set up the options, along with the default values:
 
@@ -38,8 +38,34 @@ Vue.use(VeeValidate, config);
 | events        | `string` | `'input|blur'` | Pipe separated list of the default event names that will be listened to, to trigger validation. If an empty string is provided, it will disable all listeners. |
 | fieldsBagName | `string` |  `'fields'` | The name of the Fields (flags) object that will be injected in each of Vue's instances' data. |
 | fastExit      | `boolean`|  `true`     | Whether the validation should stop after the first failure for each field, you can opt in or out from either settings by using the [continues](/api/directive.md#continues) and the [bails](/api/directive.md#bails) modifiers. |
-| i18n          | `VueI18n | null` | `null` | The `vue-i18n` instance, if provided will integrate vee-validate with the i18n plugin and will use it to produce the error messages instead of the built in dictionary. |
+| i18n          | `VueI18n | null` | `null` | The `vue-i18n` instance, if provided will integrate vee-validate with the i18n plugin and will use it to produce the error messages instead of the built in dictionary. [More about that here](/guide/localization.md#vuei18n-integration). |
 | i18nRootKey   | `string` | `'validations'` | The key name of the validation messages for each locale. |
 | inject        | `boolean` | `true` | Specifies if a validator instance should be injected automatically for all components. (See [Component Injections](advanced/#component-injections) for more information.) |
 | locale        | `string` | `'en'` | The default language for the validation messages. |
 | validity      | `boolean` | `false` | Set custom validity [Constraint validation](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation) on native HTML inputs. |
+
+## Installation
+
+### Vue Plugin API
+
+You can install vee-validate using Vue's plugin API.
+
+```js
+import Vue from 'vue';
+import VeeValidate from 'vee-validate';
+
+Vue.use(VeeValidate, config);
+```
+
+### Manual Installation
+
+You might be interested in using VeeValidate exposed components as you see fit without having to install the plugin, you can do this by creating an instance of the VeeValidate plugin.
+
+```js
+import Vue from 'vue';
+import VeeValidate from 'vee-validate';
+
+const vee = new VeeValidate(config, Vue);
+```
+
+Using this method __will not__ add any directives, mixins, or components to your app, instead it passes everything vee-validate needs to set itself up and you will be responsible for using the plugin manually which is helpful if you are only planning to use standalone features like the [Validator.verify API](/api/validator.md#verify).
