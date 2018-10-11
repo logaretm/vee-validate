@@ -1,8 +1,7 @@
-import install from './install';
+import VeeValidate from './plugin';
 import directive from './directive';
 import mixin from './mixin';
 import en from '../locale/en';
-import use from './use';
 import * as Rules from './rules';
 import mapFields from './core/mapFields';
 import Validator from './core/validator';
@@ -21,11 +20,11 @@ const rulesPlugin = ({ Validator }) => {
   Validator.localize('en', en);
 };
 
-use(rulesPlugin);
+const install = VeeValidate.install;
+VeeValidate.use(rulesPlugin);
 
 export {
   install,
-  use,
   directive,
   mixin,
   mapFields,
@@ -36,15 +35,4 @@ export {
   version
 };
 
-export default {
-  install,
-  use,
-  directive,
-  mixin,
-  mapFields,
-  Validator,
-  ErrorBag,
-  ErrorComponent,
-  Rules,
-  version
-};
+export default VeeValidate;

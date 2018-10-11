@@ -1,7 +1,7 @@
 import * as Rules from './rules';
-import en from '../locale/en';
-import minimal from './index.minimal';
+import VeeValidate from './plugin';
 import { assign } from './utils';
+import en from '../locale/en';
 
 // rules plugin definition.
 const rulesPlugin = ({ Validator }) => {
@@ -13,9 +13,7 @@ const rulesPlugin = ({ Validator }) => {
   Validator.localize('en', en);
 };
 
-// install the rules via the plugin API.
-minimal.use(rulesPlugin);
+VeeValidate.use(rulesPlugin);
+VeeValidate.Rules = Rules;
 
-minimal.Rules = Rules;
-
-export default minimal;
+export default VeeValidate;

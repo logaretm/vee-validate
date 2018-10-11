@@ -1,13 +1,10 @@
 import { createLocalVue } from '@vue/test-utils';
 import Field from '@/core/field';
 import VeeValidate from '@/index';
-import Config from '@/config';
 
 const Vue = createLocalVue();
-
-Config.register('vm', new Vue());
-
 const Validator = VeeValidate.Validator;
+VeeValidate.install(Vue);
 
 // Converts the value to a boolean and returns it in a promise.
 Validator.extend('promised', (value) => {
@@ -20,7 +17,6 @@ Validator.extend('promised', (value) => {
 
 beforeEach(() => {
   Validator.localize('en');
-  Validator.setStrictMode(true);
 });
 
 // All tests are serial because the locale is shared across all validators
@@ -136,56 +132,6 @@ test('fails validation on a one-of-many failure', async () => {
   })).toBe(false);
 });
 
-test('bypasses values without rules in strictMode = off', async () => {
-  Validator.setStrictMode(false);
-  const v = new Validator({
-    imp: 'required'
-  });
-  const result = await v.validateAll({
-    imp: 'Tyrion Lannister',
-    headless: 'Ned Stark'
-  });
-
-  expect(result).toBe(true);
-  expect(v.errors.all()).toEqual([]);
-});
-
-test('can set strict mode on specific instances', async () => {
-  const v = new Validator({
-    imp: 'required'
-  });
-
-  try {
-    await v.validateAll({
-      imp: 'Tyrion Lannister',
-      headless: 'Ned Stark'
-    });
-  } catch (error) {
-    expect(error.message).toBe(
-      `[vee-validate] Validating a non-existant field: "headless". Use "attach()" first.`
-    );
-  }
-
-  v.strict = false;
-  let result = await v.validateAll({
-    imp: 'Tyrion Lannister',
-    headless: 'Ned Stark'
-  });
-
-  expect(result).toBe(true); // strict = false.
-
-  try {
-    await (new Validator({ imp: 'required' }).validateAll({
-      imp: 'Tyrion Lannister',
-      headless: 'Ned Stark'
-    })); // strict = true because this is a different instance.
-  } catch (error) {
-    expect(error.message).toBe(
-      `[vee-validate] Validating a non-existant field: "headless". Use "attach()" first.`
-    );
-  }
-});
-
 test('formats error messages', async () => {
   const v = new Validator({
     email: 'required|email',
@@ -235,7 +181,7 @@ test('can display errors with custom field names', async () => {
   expect(v.errors.first('field')).toBe('The pretty field must be at least 5 characters.');
 });
 
-test('fails when trying to validate a non-existant field when strict mode is true.', async () => {
+test('fails when trying to validate a non-existant field.', async () => {
   const v = new Validator({
     email: 'required|email',
     name: 'required|min:3',
@@ -849,12 +795,6 @@ test('resolves a field by name and scope', async () => {
   expect(v._resolveField('field', 's1')).toBe(field);
   field = v.attach({ rules: 'alpha', name: 'field', scope: 0 });
   expect(v._resolveField('field', 0)).toBe(field);
-});
-
-test('handles unresolved fields when strict is false by returning true', async () => {
-  const v = new Validator();
-  v.strict = false;
-  expect(await v.validate('#plasd')).toBe(true);
 });
 
 test('updates classes after validating a field', async () => {

@@ -1,4 +1,4 @@
-import Config from './config';
+import { pluginInstance as VeeValidate } from './plugin';
 import Validator from './core/validatorDecorator';
 import { isObject, isBuiltInComponent } from './utils';
 
@@ -33,21 +33,21 @@ export default {
 
     // if its a root instance set the config if it exists.
     if (!this.$parent) {
-      Config.merge(this.$options.$_veeValidate || {});
+      VeeValidate.configure(this.$options.$_veeValidate || {});
     }
 
-    const options = Config.resolve(this);
+    const options = VeeValidate.resolveConfig(this);
 
     // if its a root instance, inject anyways, or if it requested a new instance.
     if (!this.$parent || (this.$options.$_veeValidate && /new/.test(this.$options.$_veeValidate.validator))) {
-      this.$validator = new Validator(Config.dependency('validator'), this);
+      this.$validator = new Validator(VeeValidate._validator, this);
     }
 
     const requested = requestsValidator(this.$options.inject);
 
     // if automatic injection is enabled and no instance was requested.
     if (! this.$validator && options.inject && !requested) {
-      this.$validator = new Validator(Config.dependency('validator'), this);
+      this.$validator = new Validator(VeeValidate._validator, this);
     }
 
     // don't inject errors or fieldBag as no validator was resolved.
