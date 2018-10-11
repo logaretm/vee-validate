@@ -533,7 +533,13 @@ export default class Field {
   _determineEventList (defaultInputEvent) {
     // if no event is configured, or it is a component or a text input then respect the user choice.
     if (!this.events.length || this.componentInstance || isTextInput(this.el)) {
-      return [...this.events];
+      return [...this.events].map(evt => {
+        if (evt === 'input' && this.model && this.model.lazy) {
+          return 'change';
+        }
+
+        return evt;
+      });
     }
 
     // force suitable event for non-text type fields.
