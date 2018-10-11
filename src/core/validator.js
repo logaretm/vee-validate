@@ -70,10 +70,6 @@ export default class Validator {
     return VeeValidate.i18nDriver;
   }
 
-  get _vm () {
-    return VeeValidate._vm;
-  }
-
   /**
    * Getter for the current locale.
    */
@@ -98,8 +94,8 @@ export default class Validator {
   static set locale (value) {
     const hasChanged = value !== Validator.dictionary.locale;
     Validator.dictionary.locale = value;
-    if (hasChanged && this._vm) {
-      this._vm.$emit('localeChanged');
+    if (hasChanged && VeeValidate._vm) {
+      VeeValidate._vm.$emit('localeChanged');
     }
   }
 
@@ -222,8 +218,8 @@ export default class Validator {
 
   reset (matcher) {
     // two ticks
-    return this._vm.$nextTick().then(() => {
-      return this._vm.$nextTick();
+    return VeeValidate._vm.$nextTick().then(() => {
+      return VeeValidate._vm.$nextTick();
     }).then(() => {
       this.fields.filter(matcher).forEach(field => {
         field.reset(); // reset field flags.
@@ -395,7 +391,7 @@ export default class Validator {
    * Perform cleanup.
    */
   destroy () {
-    this._vm.$off('localeChanged');
+    VeeValidate._vm.$off('localeChanged');
   }
 
   /**

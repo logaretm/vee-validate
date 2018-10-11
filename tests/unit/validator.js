@@ -998,15 +998,6 @@ test('creates regeneratable messages', async () => {
   expect(error.regenerate()).toBe(error.msg);
 });
 
-test('removes the vm localeChanged listener when the validator is destroyed', () => {
-  const v = new Validator();
-  v._vm.$off = jest.fn();
-
-  v.destroy();
-
-  expect(v._vm.$off).toHaveBeenCalled();
-});
-
 describe('Verify API', () => {
   test('passing values and results', async () => {
     const v = new Validator();
