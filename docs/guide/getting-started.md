@@ -79,6 +79,10 @@ Here is the basic example in action
 
 [More Examples](/examples/)
 
-::: warning
+::: danger
   Client-side validation is never a substitute for server-side validation. Make sure to validate any input from the user on your backend as well.
+:::
+
+::: tip
+  There are other ways to install the plugin, [check them out](/configuration.md#installation).
 :::
