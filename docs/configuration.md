@@ -40,7 +40,7 @@ Vue.use(VeeValidate, config);
 | fastExit      | `boolean`|  `true`     | Whether the validation should stop after the first failure for each field, you can opt in or out from either settings by using the [continues](/api/directive.md#continues) and the [bails](/api/directive.md#bails) modifiers. |
 | i18n          | `VueI18n | null` | `null` | The `vue-i18n` instance, if provided will integrate vee-validate with the i18n plugin and will use it to produce the error messages instead of the built in dictionary. [More about that here](/guide/localization.md#vuei18n-integration). |
 | i18nRootKey   | `string` | `'validations'` | The key name of the validation messages for each locale. |
-| inject        | `boolean` | `true` | Specifies if a validator instance should be injected automatically for all components. (See [Component Injections](advanced/#component-injections) for more information.) |
+| inject        | `boolean` | `true` | Specifies if a validator instance should be injected automatically for all components. (See [Component Injections](/concepts/injections.md) for more information.) |
 | locale        | `string` | `'en'` | The default language for the validation messages. |
 | validity      | `boolean` | `false` | Set custom validity [Constraint validation](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation) on native HTML inputs. |
 
