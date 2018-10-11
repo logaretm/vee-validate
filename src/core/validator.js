@@ -2,7 +2,7 @@ import ErrorBag from './errorBag';
 import FieldBag from './fieldBag';
 import RuleContainer from './ruleContainer';
 import Field from './field';
-import Config from '../config';
+import { pluginInstance as VeeValidate } from '../plugin';
 import {
   isObject,
   getPath,
@@ -19,10 +19,7 @@ import {
 
 // @flow
 
-let STRICT_MODE: boolean = true;
-
 export default class Validator {
-  strict: boolean;
   errors: ErrorBag;
   fields: FieldBag;
   flags: MapObject;
@@ -31,7 +28,6 @@ export default class Validator {
   reset: (matcher) => Promise<void>;
 
   constructor (validations?: MapObject, options?: MapObject = { fastExit: true }) {
-    this.strict = STRICT_MODE;
     this.errors = new ErrorBag();
     this.fields = new FieldBag();
     this._createFields(validations);
@@ -67,15 +63,15 @@ export default class Validator {
    * Getter for the dictionary.
    */
   get dictionary (): IDictionary {
-    return Config.dependency('dictionary');
+    return VeeValidate.i18nDriver;
   }
 
   static get dictionary () {
-    return Config.dependency('dictionary');
+    return VeeValidate.i18nDriver;
   }
 
   get _vm () {
-    return Config.dependency('vm');
+    return VeeValidate._vm;
   }
 
   /**
@@ -102,8 +98,8 @@ export default class Validator {
   static set locale (value) {
     const hasChanged = value !== Validator.dictionary.locale;
     Validator.dictionary.locale = value;
-    if (hasChanged && Config.dependency('vm')) {
-      Config.dependency('vm').$emit('localeChanged');
+    if (hasChanged && this._vm) {
+      this._vm.$emit('localeChanged');
     }
   }
 
@@ -138,15 +134,6 @@ export default class Validator {
    */
   static isTargetRule (name: string): boolean {
     return RuleContainer.isTargetRule(name);
-  }
-
-  /**
-   * Sets the operating mode for all newly created validators.
-   * strictMode = true: Values without a rule are invalid and cause failure.
-   * strictMode = false: Values without a rule are valid and are skipped.
-   */
-  static setStrictMode (strictMode?: boolean = true) {
-    STRICT_MODE = strictMode;
   }
 
   /**
@@ -654,11 +641,9 @@ export default class Validator {
   }
 
   /**
-   * Handles when a field is not found depending on the strict flag.
+   * Handles when a field is not found.
    */
   _handleFieldNotFound (name: string, scope?: string | null) {
-    if (!this.strict) return Promise.resolve(true);
-
     const fullName = isNullOrUndefined(scope) ? name : `${!isNullOrUndefined(scope) ? scope + '.' : ''}${name}`;
 
     return Promise.reject(createError(

@@ -1,13 +1,14 @@
-import Validator from './core/validator';
+import VeeValidate from './plugin';
 import directive from './directive';
 import mixin from './mixin';
-import install from './install';
-import use from './use';
+import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
 import mapFields from './core/mapFields';
 import { ErrorComponent } from './components';
 
 const version = '__VERSION__';
+const install = VeeValidate.install;
+const use = VeeValidate.use;
 
 export {
   install,
@@ -21,14 +22,4 @@ export {
   ErrorComponent
 };
 
-export default {
-  install,
-  use,
-  directive,
-  mixin,
-  mapFields,
-  Validator,
-  ErrorBag,
-  ErrorComponent,
-  version
-};
+export default VeeValidate;

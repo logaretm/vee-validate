@@ -1,5 +1,11 @@
+import { createLocalVue } from '@vue/test-utils';
 import Validator from '@/core/validator';
+import VeeValidate from '@/plugin';
 import Decorator from '@/core/validatorDecorator';
+
+const Vue = createLocalVue();
+
+VeeValidate.install(Vue);
 
 test('decorates validateAll()', () => {
   const vm = { _uid: 0 };

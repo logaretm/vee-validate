@@ -1,4 +1,4 @@
-import Config from '../config';
+import { pluginInstance as VeeValidate } from '../plugin';
 import {
   getScope,
   getDataAttribute,
@@ -20,7 +20,7 @@ import {
 export default class Resolver {
   static generate (el, binding, vnode) {
     const model = Resolver.resolveModel(binding, vnode);
-    const options = Config.resolve(vnode.context);
+    const options = VeeValidate.resolveConfig(vnode.context);
 
     return {
       name: Resolver.resolveName(el, vnode),
@@ -150,8 +150,8 @@ export default class Resolver {
       events = config && config.events;
     }
 
-    if (!events && Config.current.events) {
-      events = Config.current.events;
+    if (!events && VeeValidate.config.events) {
+      events = VeeValidate.config.events;
     }
 
     // resolve the model event if its configured for custom components.
