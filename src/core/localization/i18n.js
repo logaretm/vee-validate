@@ -65,31 +65,34 @@ export default class I18nDictionary implements IDictionary {
     this.i18n.setDateTimeFormat(locale || this.locale, value);
   }
 
-  getMessage (locale: string, key: string, data: any[]): string {
+  getMessage (_, key: string, data: any[]): string {
     const path = `${this.rootKey}.messages.${key}`;
-    if (!this.i18n.te(path)) {
-      return this.i18n.t(`${this.rootKey}.messages._default`, locale, data);
+    const result = this.i18n.t(path, data);
+    if (result !== path) {
+      return result;
     }
 
-    return this.i18n.t(path, locale, data);
+    return this.i18n.t(`${this.rootKey}.messages._default`, data);
   }
 
-  getAttribute (locale: string, key: string, fallback?: string = ''): string {
+  getAttribute (_, key: string, fallback?: string = ''): string {
     const path = `${this.rootKey}.attributes.${key}`;
-    if (!this.i18n.te(path)) {
-      return fallback;
+    const result = this.i18n.t(path);
+    if (result !== path) {
+      return result;
     }
 
-    return this.i18n.t(path, locale);
+    return fallback;
   }
 
-  getFieldMessage (locale: string, field: string, key: string, data: any[]) {
+  getFieldMessage (_, field: string, key: string, data: any[]) {
     const path = `${this.rootKey}.custom.${field}.${key}`;
-    if (this.i18n.te(path)) {
-      return this.i18n.t(path, locale, data);
+    const result = this.i18n.t(path, data);
+    if (result !== path) {
+      return result;
     }
 
-    return this.getMessage(locale, key, data);
+    return this.getMessage(_, key, data);
   }
 
   merge (dictionary) {

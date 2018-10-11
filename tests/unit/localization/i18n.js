@@ -102,13 +102,14 @@ test('gets attributes', () => {
 
   const dictionary = new Dictionary(i18n, 'validation');
   // sets them in vue-18n list format
-  expect(dictionary.getAttribute('en', 'name')).toBe('Full Name');
+  expect(dictionary.getAttribute(null, 'name')).toBe('Full Name');
 
   // test fallback attribute
-  expect(dictionary.getAttribute('en', 'email', 'fallback')).toBe('fallback');
+  expect(dictionary.getAttribute(null, 'email', 'fallback')).toBe('fallback');
 
   // test different locale
-  expect(dictionary.getAttribute('fr', 'name')).toBe('prenom');
+  i18n.locale = 'fr';
+  expect(dictionary.getAttribute(null, 'name')).toBe('prenom');
 });
 
 test('sets attributes', () => {
@@ -223,10 +224,32 @@ test('merges dictionaries and locale messages', () => {
   const dictionary = new Dictionary(i18n, 'validation');
   dictionary.merge(dict);
 
-  expect(dictionary.getMessage('en', 'required', [])).toBe('required');
-  expect(dictionary.getMessage('ar', 'required', [])).toBe('matloub');
-  expect(dictionary.getMessage('en', 'alpha', [])).toBe('Must be alpha DendiFace');
-  expect(dictionary.getFieldMessage('en', 'email', 'required', [])).toBe('email is required');
-  expect(dictionary.getAttribute('en', 'email')).toBe('Email address');
-  expect(dictionary.getDateFormat('en')).toBe('dd-mm-yyyy');
+  expect(dictionary.getMessage(null, 'required', [])).toBe('required');
+  i18n.locale = 'ar';
+  expect(dictionary.getMessage(null, 'required', [])).toBe('matloub');
+  i18n.locale = 'en';
+  expect(dictionary.getMessage(null, 'alpha', [])).toBe('Must be alpha DendiFace');
+  expect(dictionary.getFieldMessage(null, 'email', 'required', [])).toBe('email is required');
+  expect(dictionary.getAttribute(null, 'email')).toBe('Email address');
+  expect(dictionary.getDateFormat(null)).toBe('dd-mm-yyyy');
+});
+
+test('fallback locale', () => {
+  const dict = {
+    ar: {
+      messages: {
+        required: 'مطلوب'
+      }
+    }
+  };
+
+  const i18n = new VueI18n({
+    locale: 'en',
+    fallbackLocale: 'ar'
+  });
+
+  const dictionary = new Dictionary(i18n, 'validation');
+  dictionary.merge(dict);
+
+  expect(dictionary.getMessage('en', 'required')).toBe('مطلوب');
 });
