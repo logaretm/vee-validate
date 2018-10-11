@@ -122,7 +122,9 @@ function addListeners (node) {
     this.setFlags({ pending: true });
     const value = isEvent(e) ? e.target.value : e;
     this.value = value;
-    return $validator.verify(value, this.rules).then(result => {
+    return $validator.verify(value, this.rules, {
+      name: this.name
+    }).then(result => {
       this.setFlags({ pending: false });
 
       return result;
@@ -179,10 +181,6 @@ function addListeners (node) {
 export const ValidationProvider = {
   props: {
     name: {
-      type: String,
-      default: null
-    },
-    alias: {
       type: String,
       default: null
     },
