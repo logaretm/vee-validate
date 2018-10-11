@@ -126,12 +126,16 @@ function addListener (node) {
   }
 
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
-  this.value = model.value; // initially track the value.
-
+  this.value = this.initialValue = model.value; // start tracking the value.
   const validate = e => {
+    this.flags = assign({}, this.flags, { pending: true });
     const value = isEvent(e) ? e.target.value : e;
     this.value = value;
-    return $validator.verify(value, this.rules);
+    return $validator.verify(value, this.rules).then(result => {
+      this.flags = assign({}, this.flags, { pending: false });
+
+      return result;
+    });
   };
 
   const validationHandler = e => validate(e).then(({ errors }) => {
@@ -139,6 +143,7 @@ function addListener (node) {
     // TODO: Set ALL FLAGS
     this.flags = assign({}, this.flags, {
       valid: !errors.length,
+      changed: this.value !== this.initialValue,
       invalid: !!errors.length,
       validated: true
     });
@@ -195,6 +200,7 @@ export const ValidationProvider = {
   data: () => ({
     messages: [],
     value: undefined,
+    initialValue: undefined,
     wasValidatedInitially: false,
     flags: createFlags()
   }),
