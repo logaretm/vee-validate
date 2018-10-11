@@ -106,7 +106,7 @@ function shouldUseOnChange (vnode, model) {
   return true;
 }
 
-function addListener (node) {
+function addListeners (node) {
   if (!node) {
     return false;
   }
@@ -119,11 +119,11 @@ function addListener (node) {
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
   this.value = this.initialValue = model.value; // start tracking the value.
   const validate = e => {
-    this.flags = assign({}, this.flags, { pending: true });
+    this.setFlags({ pending: true });
     const value = isEvent(e) ? e.target.value : e;
     this.value = value;
     return $validator.verify(value, this.rules).then(result => {
-      this.flags = assign({}, this.flags, { pending: false });
+      this.setFlags({ pending: false });
 
       return result;
     });
@@ -131,8 +131,7 @@ function addListener (node) {
 
   const validationHandler = e => validate(e).then(({ errors }) => {
     this.messages = errors;
-    // TODO: Set ALL FLAGS
-    this.flags = assign({}, this.flags, {
+    this.setFlags({
       valid: !errors.length,
       changed: this.value !== this.initialValue,
       invalid: !!errors.length,
@@ -144,7 +143,7 @@ function addListener (node) {
   if (!this.wasValidatedInitially) {
     if (!this.immediate) {
       validate(this.value).then(({ valid }) => {
-        this.flags = assign({}, this.flags, {
+        this.setFlags({
           valid,
           invalid: !valid
         });
@@ -156,10 +155,22 @@ function addListener (node) {
     this.wasValidatedInitially = true;
   }
 
+  const inputHandler = () => {
+    this.setFlags({ dirty: true, pristine: false });
+  };
+
+  const blurHandler = () => {
+    this.setFlags({ touched: true, untouched: false });
+  };
+
   if (node.componentOptions) {
     addListenerToComponentNode(node, eventName, validationHandler);
+    addListenerToComponentNode(node, eventName, inputHandler);
+    addListenerToComponentNode(node, 'blur', blurHandler);
   } else {
     addListenerToNode(node, eventName, validationHandler);
+    addListenerToNode(node, eventName, inputHandler);
+    addListenerToNode(node, eventName, blurHandler);
   }
 
   return true;
@@ -195,6 +206,11 @@ export const ValidationProvider = {
     wasValidatedInitially: false,
     flags: createFlags()
   }),
+  methods: {
+    setFlags (flags) {
+      this.flags = assign({}, this.flags, flags);
+    }
+  },
   computed: {
     classes () {
       const names = Config.current.classNames;
@@ -224,7 +240,7 @@ export const ValidationProvider = {
     const inputs = findModelNodes(Array.isArray(nodes) ? { children: nodes } : nodes);
     // Add the listener on the vnode
     inputs.forEach(input => {
-      addListener.call(this, input); // Temporary setup
+      addListeners.call(this, input); // Temporary setup
     });
 
     return h('div', nodes);
