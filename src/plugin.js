@@ -38,9 +38,12 @@ class VeeValidate {
 
   _vm: any
 
-  constructor (config) {
+  constructor (config, _Vue) {
     this.configure(config);
     pluginInstance = this;
+    if (_Vue) {
+      Vue = _Vue;
+    }
     this._validator = new Validator(null, { fastExit: config && config.fastExit });
     this._initVM(this.config);
     this._initI18n(this.config);
