@@ -142,3 +142,40 @@ Vue.mixin({
 });
 
 ```
+
+## VueI18n Integration
+
+VeeValidate ships with support for [vue-i18n plugin](https://github.com/kazupon/vue-i18n/) considering it is the most popular among the localization solutions for Vue.js You can integrate vee-validate with VueI18n by passing the i18n instance to vee-validate config:
+
+```js
+import VeeValidate from 'vee-validate';
+import Vue from 'vue';
+import VueI18n from 'vue-i18n';
+import validationMessages from 'vee-validat/dist/locale/en';
+
+Vue.use(VueI18n);
+
+const i18n = new VueI18n();
+
+Vue.use(VeeValidate, {
+   i18nRootKey: 'validations', // customize the root path for validation messages.
+   i18n,
+   dictionary: {
+    en: validationMessages
+   }
+});
+```
+
+When you pass a dictionary to config it gets merged with your i18n locale messages. After installing the plugin you should only set the locale using the `i18n` instance, meaning:
+
+```js
+// fails and will log a warning.
+this.$validator.locale = 'ar';
+
+// works and will regenerate the error messages.
+this.$i18n.locale = 'ar';
+```
+
+::: warning
+  You might encounter warnings when using vee-validate with i18n, this happens because vee-validate leaverages the fallback mechanism for the I18n plugin you can safely ignore the warnings. You can instead silence them by setting [i18n's silentTranslationWarn config](https://kazupon.github.io/vue-i18n/api/#silenttranslationwarn).
+:::
