@@ -1,6 +1,6 @@
 import Resolver from './core/resolver';
 import Field from './core/field';
-import { isEqual, warn } from './core/utils';
+import { isEqual, warn } from './utils';
 
 // @flow
 

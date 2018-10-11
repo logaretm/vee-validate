@@ -1,8 +1,20 @@
 import ErrorBag from './errorBag';
-import { isObject, getPath, isCallable, toArray, createError, assign, find, isNullOrUndefined, includes, normalizeRules, isEmptyArray } from './utils';
 import FieldBag from './fieldBag';
 import Field from './field';
 import Config from '../config';
+import {
+  isObject,
+  getPath,
+  isCallable,
+  toArray,
+  createError,
+  assign,
+  find,
+  isNullOrUndefined,
+  includes,
+  normalizeRules,
+  isEmptyArray
+} from '../utils';
 
 // @flow
 

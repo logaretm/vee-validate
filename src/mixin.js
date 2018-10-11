@@ -1,6 +1,6 @@
 import Config from './config';
 import Validator from './core/validatorDecorator';
-import { isObject, isBuiltInComponent } from './core/utils';
+import { isObject, isBuiltInComponent } from './utils';
 
 // @flow
 

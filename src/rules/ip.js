@@ -1,5 +1,5 @@
 import isIP from 'validator/lib/isIP';
-import { isNullOrUndefined } from '../core/utils';
+import { isNullOrUndefined } from '../utils';
 
 const validate = (value, { version = 4 } = {}) => {
   if (isNullOrUndefined(value)) {

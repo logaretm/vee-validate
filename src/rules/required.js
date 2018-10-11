@@ -1,4 +1,4 @@
-import { isEmptyArray } from '../core/utils';
+import { isEmptyArray } from '../utils';
 
 const validate = (value, [invalidateFalse = false] = []) => {
   if (isEmptyArray(value)) {

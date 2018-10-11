@@ -1,4 +1,4 @@
-import { assign, includes } from './utils/index';
+import { assign, includes } from '../utils';
 
 // @flow
 

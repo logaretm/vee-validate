@@ -1,7 +1,7 @@
 import * as Rules from './rules';
 import en from '../locale/en';
 import minimal from './index.minimal';
-import { assign } from './core/utils';
+import { assign } from './utils';
 
 // rules plugin definition.
 const rulesPlugin = ({ Validator }) => {

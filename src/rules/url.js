@@ -1,5 +1,5 @@
 import isURL from 'validator/lib/isURL';
-import { isNullOrUndefined } from '../core/utils';
+import { isNullOrUndefined } from '../utils';
 
 const validate = (value, options = {}) => {
   if (isNullOrUndefined(value)) {

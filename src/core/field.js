@@ -21,7 +21,7 @@ import {
   addEventListener,
   isCheckboxOrRadioInput,
   includes
-} from './utils';
+} from '../utils';
 
 // @flow
 

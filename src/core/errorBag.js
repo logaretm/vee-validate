@@ -1,4 +1,4 @@
-import { find, isNullOrUndefined, isCallable, values, parseSelector } from './utils';
+import { find, isNullOrUndefined, isCallable, values, parseSelector } from '../utils';
 
 // @flow
 

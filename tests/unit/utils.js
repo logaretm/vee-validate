@@ -1,5 +1,5 @@
-import * as utils from '@/core/utils';
-import * as dateUtils from '@/core/utils/date';
+import * as utils from '@/utils';
+import * as dateUtils from '@/utils/date';
 import * as i18Utils from '../../locale/utils';
 
 test('gets the data attribute prefixed with the plugin', () => {
@@ -420,8 +420,8 @@ describe('makeEventsArray', () => {
 
 describe('makeDelayObject', () => {
   test('delays fallback to the global delays if not found', () => {
-    expect(utils.makeDelayObject(['input', 'blur'], {}, { input: 100, blur: 200 })).toEqual({input: 100, blur: 200});
-    expect(utils.makeDelayObject(['change'], {}, { change: 100 })).toEqual({change: 100});
+    expect(utils.makeDelayObject(['input', 'blur'], {}, { input: 100, blur: 200 })).toEqual({ input: 100, blur: 200 });
+    expect(utils.makeDelayObject(['change'], {}, { change: 100 })).toEqual({ change: 100 });
   });
 
   test('it handles delays from an object under the local key', () => {
@@ -429,20 +429,20 @@ describe('makeDelayObject', () => {
   });
 
   test('it handles overwrites values from the global key with those from local key', () => {
-    expect(utils.makeDelayObject(['input'], {input: 100}, { input: 500 })).toEqual({input: 100});
-    expect(utils.makeDelayObject(['input', 'blur'], {input: 600}, {input: 200, blur: 400})).toEqual({input: 600, blur: 400});
+    expect(utils.makeDelayObject(['input'], { input: 100 }, { input: 500 })).toEqual({ input: 100 });
+    expect(utils.makeDelayObject(['input', 'blur'], { input: 600 }, { input: 200, blur: 400 })).toEqual({ input: 600, blur: 400 });
   });
 
   test('it handles all events and sets them to 0', () => {
-    expect(utils.makeDelayObject(['change', 'blur', 'focus'], {})).toEqual({change: 0, blur: 0, focus: 0});
+    expect(utils.makeDelayObject(['change', 'blur', 'focus'], {})).toEqual({ change: 0, blur: 0, focus: 0 });
   });
 
   test('it handles empty events', () => {
-    expect(utils.makeDelayObject([], {global: {input: 100}})).toEqual({});
+    expect(utils.makeDelayObject([], { global: { input: 100 } })).toEqual({});
   });
 
   test('it handles empty given objects', () => {
-    expect(utils.makeDelayObject(['input'], {})).toEqual({input: 0});
+    expect(utils.makeDelayObject(['input'], {})).toEqual({ input: 0 });
   });
 
   test('it handles empty events and empty given objects together', () => {
@@ -450,11 +450,11 @@ describe('makeDelayObject', () => {
   });
 
   test('only outputs the requested events', () => {
-    expect(utils.makeDelayObject(['input', 'blur'], {change: 200, focus: 800})).toEqual({ blur: 0, input: 0 });
+    expect(utils.makeDelayObject(['input', 'blur'], { change: 200, focus: 800 })).toEqual({ blur: 0, input: 0 });
   });
 
   test('it handles delay integers', () => {
-    expect(utils.makeDelayObject(['focus', 'input'], 600)).toEqual({focus: 600, input: 600});
+    expect(utils.makeDelayObject(['focus', 'input'], 600)).toEqual({ focus: 600, input: 600 });
   });
 
   test('patches unspecified events with the fallback delay config', () => {

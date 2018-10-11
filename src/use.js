@@ -1,6 +1,6 @@
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
-import { warn, isCallable } from './core/utils';
+import { warn, isCallable } from './utils';
 
 // @flow
 

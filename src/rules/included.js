@@ -1,4 +1,4 @@
-import { toArray } from '../core/utils';
+import { toArray } from '../utils';
 
 const validate = (value, options) => {
   if (Array.isArray(value)) {

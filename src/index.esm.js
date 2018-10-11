@@ -8,7 +8,7 @@ import mapFields from './core/mapFields';
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
 import { ErrorComponent } from './components';
-import { assign } from './core/utils';
+import { assign } from './utils';
 
 const version = '__VERSION__';
 

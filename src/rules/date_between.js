@@ -1,5 +1,5 @@
 import { isAfter, isBefore, isEqual } from 'date-fns';
-import { parseDate as parse } from '../core/utils/date';
+import { parseDate as parse } from '../utils/date';
 
 const validate = (value, { min, max, inclusivity = '()', format } = {}) => {
   if (typeof format === 'undefined') {

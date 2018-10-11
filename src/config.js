@@ -1,4 +1,4 @@
-import { assign, getPath } from './core/utils';
+import { assign, getPath } from './utils';
 import Dictionary from './core/localization/default';
 import I18nDictionary from './core/localization/i18n';
 

@@ -2,7 +2,7 @@ import mixin from './mixin';
 import directive from './directive';
 import Config from './config';
 import Validator from './core/validator';
-import { warn, detectPassiveSupport } from './core/utils';
+import { warn, detectPassiveSupport } from './utils';
 
 let Vue;
 

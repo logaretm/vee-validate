@@ -1,4 +1,4 @@
-import { isCallable, merge } from '../utils';
+import { isCallable, merge } from '../../utils';
 
 // @flow
 

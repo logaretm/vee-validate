@@ -12,7 +12,7 @@ import {
   deepParseInt,
   fillRulesFromElement,
   includes
-} from './utils';
+} from '../utils';
 
 /**
  * Generates the options required to construct a field.
