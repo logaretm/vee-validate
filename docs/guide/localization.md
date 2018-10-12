@@ -179,3 +179,26 @@ this.$i18n.locale = 'ar';
 ::: warning
   You might encounter warnings when using vee-validate with i18n, this happens because vee-validate leaverages the fallback mechanism for the I18n plugin you can safely ignore the warnings. You can instead silence them by setting [i18n's silentTranslationWarn config](https://kazupon.github.io/vue-i18n/api/#silenttranslationwarn).
 :::
+
+## Custom i18n Driver
+
+You might have a different i18n system for your app, vee-validate internally uses drivers to generate its messages. To avoid having to maintain two different localization drivers you can easily integrate your custom driver into vee-validate.
+
+You will need to create an object that implements the [IDictionary interface](https://github.com/baianat/vee-validate/blob/master/flow/dictionary.js#L12). And after installing the plugin you can apply the new driver to vee-validate.
+
+```js
+import Vue from 'vue';
+import VeeValidate from 'vee-validate';
+
+Vue.use(VeeValidate);
+
+const dictionary = {
+  // your implementation.
+};
+
+VeeValidate.setI18nDriver('custom', dictionary);
+```
+
+Checkout this example on codesandbox.io that partially implements a [LingUI](https://github.com/lingui/js-lingui) driver.
+
+[![Edit VeeValidate - LingUI](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/q84p09y7p6)
