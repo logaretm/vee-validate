@@ -1,4 +1,3 @@
-import Config from './config';
 import Validator from './core/validator';
 import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTextInput, isEvent } from './utils';
 
@@ -165,15 +164,14 @@ function addListeners (node) {
     this.setFlags({ touched: true, untouched: false });
   };
 
-  if (node.componentOptions) {
-    addListenerToComponentNode(node, eventName, validationHandler);
-    addListenerToComponentNode(node, eventName, inputHandler);
-    addListenerToComponentNode(node, 'blur', blurHandler);
-  } else {
-    addListenerToNode(node, eventName, validationHandler);
-    addListenerToNode(node, eventName, inputHandler);
-    addListenerToNode(node, eventName, blurHandler);
-  }
+  // determine how to add the listener.
+  const addListenerFn = node.componentOptions ? addListenerToComponentNode : addListenerToNode;
+  // add validation listener.
+  addListenerFn(node, eventName, validationHandler);
+  // dirty, pristene flags listener.
+  addListenerFn(node, eventName, inputHandler);
+  // touched, untouched flags listener.
+  addListenerFn(node, 'blur', blurHandler);
 
   return true;
 }
@@ -211,7 +209,9 @@ export const ValidationProvider = {
   },
   computed: {
     classes () {
-      const names = Config.current.classNames;
+      let names;
+      // TODO: Resolve class names using root-config.
+      // const names = VeeValidate.current.classNames;
       return Object.keys(this.flags).reduce((classes, flag) => {
         const className = (names && names[flag]) || flag;
         if (className) {
