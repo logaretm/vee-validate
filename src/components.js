@@ -3,6 +3,7 @@ import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTe
 
 let $validator = null;
 
+// Determines if the VNode has a model bound to it.
 function hasModel (vnode) {
   if (!vnode.data) return false;
 
@@ -13,6 +14,7 @@ function hasModel (vnode) {
   return !!(vnode.data.directives && find(vnode.data.directives, d => d.name === 'model'));
 }
 
+// Gets the model object bound to the vnode.
 function getModel (vnode) {
   if (!vnode.data) {
     return null;
@@ -25,12 +27,14 @@ function getModel (vnode) {
   return find(vnode.data.directives, d => d.name === 'model');
 }
 
+// Resolves v-model config if exists.
 function findModelConfig (vnode) {
   if (!vnode.componentOptions) return null;
 
   return assign({}, { event: 'input', prop: 'value' }, vnode.componentOptions.Ctor.options.model);
 }
 
+// Finds nodes that have v-model bound to it.
 function findModelNodes (vnode) {
   if (hasModel(vnode)) {
     return [vnode];
@@ -50,6 +54,7 @@ function findModelNodes (vnode) {
   return [];
 }
 
+// Adds a listener to vnode listener object.
 function addListenerToListenersObject (obj, eventName, handler) {
   // Has a single listener.
   if (isCallable(obj[eventName])) {
@@ -69,6 +74,7 @@ function addListenerToListenersObject (obj, eventName, handler) {
   }
 }
 
+// Adds a listener to a native HTML vnode.
 function addListenerToNode (node, eventName, handler) {
   if (isNullOrUndefined(node.data.on)) {
     node.data.on = {};
@@ -77,6 +83,7 @@ function addListenerToNode (node, eventName, handler) {
   addListenerToListenersObject(node.data.on, eventName, handler);
 }
 
+// Adds a listener to a Vue component vnode.
 function addListenerToComponentNode (node, eventName, handler) {
   if (!node.componentOptions.listeners) {
     node.componentOptions.listeners = {};
@@ -86,6 +93,7 @@ function addListenerToComponentNode (node, eventName, handler) {
   addListenerToListenersObject(node.componentOptions.listeners, event, handler);
 }
 
+// Determines if `change` should be used over `input` for listeners.
 function shouldUseOnChange (vnode, model) {
   // Is a component.
   if (vnode.componentOptions) {
@@ -105,6 +113,7 @@ function shouldUseOnChange (vnode, model) {
   return true;
 }
 
+// Adds all plugin listeners to the vnode.
 function addListeners (node) {
   if (!node) {
     return false;
@@ -228,13 +237,14 @@ export const ValidationProvider = {
   },
   computed: {
     values () {
-      if (!this.$parent.$_veeValidate) {
+      let providers = this.$parent.$_veeValidate;
+      if (!providers) {
         return {};
       }
 
-      return Object.keys(this.$parent.$_veeValidate).reduce((acc, key) => {
-        acc[key] = this.$parent.$_veeValidate[key].value;
-        const unwatch = this.$parent.$_veeValidate[key].$watch('value', () => {
+      return Object.keys(providers).reduce((acc, key) => {
+        acc[key] = providers[key].value;
+        const unwatch = providers[key].$watch('value', () => {
           this.validationHandler(this.value);
           unwatch();
         });
