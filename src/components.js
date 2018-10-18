@@ -1,5 +1,6 @@
 import Validator from './core/validator';
-import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTextInput, isEvent } from './utils';
+import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTextInput, isEvent, normalizeRules } from './utils';
+import RuleContainer from './core/ruleContainer';
 
 let $validator = null;
 
@@ -236,18 +237,27 @@ export const ValidationProvider = {
     }
   },
   computed: {
+    fieldDeps () {
+      const rules = normalizeRules(this.rules);
+
+      return Object.keys(rules).filter(RuleContainer.isTargetRule).map(rule => {
+        return rules[rule][0];
+      });
+    },
     values () {
       let providers = this.$parent.$_veeValidate;
       if (!providers) {
         return {};
       }
 
-      return Object.keys(providers).reduce((acc, key) => {
-        acc[key] = providers[key].value;
-        const unwatch = providers[key].$watch('value', () => {
-          this.validationHandler(this.value);
-          unwatch();
-        });
+      return this.fieldDeps.reduce((acc, depName) => {
+        if (providers[depName]) {
+          acc[depName] = providers[depName].value;
+          const unwatch = providers[depName].$watch('value', () => {
+            this.validationHandler(this.value);
+            unwatch();
+          });
+        }
 
         return acc;
       }, {});
