@@ -117,40 +117,18 @@ function addListeners (node) {
 
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
   this.value = this.initialValue = model.value; // start tracking the value.
-  const validate = e => {
-    this.setFlags({ pending: true });
-    const value = isEvent(e) ? e.target.value : e;
-    this.value = value;
-    return $validator.verify(value, this.rules, {
-      name: this.name
-    }).then(result => {
-      this.setFlags({ pending: false });
-
-      return result;
-    });
-  };
-
-  const validationHandler = e => validate(e).then(({ errors }) => {
-    this.messages = errors;
-    this.setFlags({
-      valid: !errors.length,
-      changed: this.value !== this.initialValue,
-      invalid: !!errors.length,
-      validated: true
-    });
-  });
 
   // initially assign the valid/invalid flags.
   if (!this.wasValidatedInitially) {
     if (!this.immediate) {
-      validate(this.value).then(({ valid }) => {
+      this.validate(this.value).then(({ valid }) => {
         this.setFlags({
           valid,
           invalid: !valid
         });
       });
     } else {
-      validationHandler(this.value);
+      this.validationHandler(this.value);
     }
 
     this.wasValidatedInitially = true;
@@ -167,7 +145,7 @@ function addListeners (node) {
   // determine how to add the listener.
   const addListenerFn = node.componentOptions ? addListenerToComponentNode : addListenerToNode;
   // add validation listener.
-  addListenerFn(node, eventName, validationHandler);
+  addListenerFn(node, eventName, this.validationHandler);
   // dirty, pristene flags listener.
   addListenerFn(node, eventName, inputHandler);
   // touched, untouched flags listener.
@@ -175,6 +153,8 @@ function addListeners (node) {
 
   return true;
 }
+
+let id = 0;
 
 export const ValidationProvider = {
   props: {
@@ -200,14 +180,68 @@ export const ValidationProvider = {
     value: undefined,
     initialValue: undefined,
     wasValidatedInitially: false,
-    flags: createFlags()
+    flags: createFlags(),
+    id: null
   }),
   methods: {
     setFlags (flags) {
       this.flags = assign({}, this.flags, flags);
+    },
+    validate (e) {
+      this.setFlags({ pending: true });
+      const value = isEvent(e) ? e.target.value : e;
+      this.value = value;
+
+      return $validator.verify(value, this.rules, {
+        name: this.name,
+        values: this.values
+      }).then(result => {
+        this.setFlags({ pending: false });
+
+        return result;
+      });
+    },
+    validationHandler (e) {
+      this.validate(e).then(({ errors }) => {
+        this.messages = errors;
+        this.setFlags({
+          valid: !errors.length,
+          changed: this.value !== this.initialValue,
+          invalid: !!errors.length,
+          validated: true
+        });
+      });
+    },
+    registerField () {
+      if (this.id) {
+        return;
+      }
+
+      if (!this.$parent.$_veeValidate) {
+        this.$parent.$_veeValidate = {};
+      }
+
+      this.id = this.name || id++;
+
+      this.$parent.$_veeValidate[this.id] = this;
     }
   },
   computed: {
+    values () {
+      if (!this.$parent.$_veeValidate) {
+        return {};
+      }
+
+      return Object.keys(this.$parent.$_veeValidate).reduce((acc, key) => {
+        acc[key] = this.$parent.$_veeValidate[key].value;
+        const unwatch = this.$parent.$_veeValidate[key].$watch('value', () => {
+          this.validationHandler(this.value);
+          unwatch();
+        });
+
+        return acc;
+      }, {});
+    },
     classes () {
       let names;
       // TODO: Resolve class names using root-config.
@@ -227,6 +261,8 @@ export const ValidationProvider = {
       $validator = new Validator(null);
     }
 
+    this.registerField();
+
     const ctx = {
       errors: this.messages,
       flags: this.flags,
@@ -242,5 +278,13 @@ export const ValidationProvider = {
     });
 
     return h('div', nodes);
+  },
+  beforeDestroy () {
+    if (!this.$parent.$_veeValidate) {
+      return;
+    }
+
+    // cleanup reference.
+    delete this.$parent.$_veeValidate[this.id];
   }
 };
