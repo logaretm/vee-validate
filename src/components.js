@@ -183,6 +183,10 @@ export const ValidationProvider = {
     immediate: {
       type: Boolean,
       default: false
+    },
+    tag: {
+      type: String,
+      default: 'span'
     }
   },
   data: () => ({
@@ -297,7 +301,7 @@ export const ValidationProvider = {
       addListeners.call(this, input); // Temporary setup
     });
 
-    return h('div', nodes);
+    return h(this.tag, nodes);
   },
   beforeDestroy () {
     if (!this.$parent.$_veeValidate) {
