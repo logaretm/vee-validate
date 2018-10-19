@@ -248,6 +248,11 @@ export const ValidationProvider = {
         return rules[rule][0];
       });
     },
+    isRequired () {
+      const rules = normalizeRules(this.rules);
+
+      return !!rules.required;
+    },
     values () {
       let providers = this.$parent.$_veeValidate;
       if (!providers) {
@@ -290,7 +295,11 @@ export const ValidationProvider = {
     const ctx = {
       errors: this.messages,
       flags: this.flags,
-      classes: this.classes
+      classes: this.classes,
+      aria: {
+        'aria-invalid': this.flags.invalid,
+        'aria-required': this.flags.required
+      }
     };
 
     // Graceful handle no scoped slots.
