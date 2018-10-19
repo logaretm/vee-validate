@@ -1,5 +1,5 @@
 import Validator from './core/validator';
-import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTextInput, isEvent, normalizeRules } from './utils';
+import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTextInput, isEvent, normalizeRules, warn } from './utils';
 import RuleContainer from './core/ruleContainer';
 
 let $validator = null;
@@ -292,6 +292,15 @@ export const ValidationProvider = {
       flags: this.flags,
       classes: this.classes
     };
+
+    // Graceful handle no scoped slots.
+    if (!this.$scopedSlots.default) {
+      if (process.env.NODE_ENV !== 'production') {
+        warn('ValidationProvider needs a scoped slot to work properly.');
+      }
+
+      return h(this.tag);
+    }
 
     const nodes = this.$scopedSlots.default(ctx);
     // Handle multi-root slot.
