@@ -31,6 +31,63 @@ describe('Validation Provider Component', () => {
     expect(wrapper.html()).toBe(`<div><div></div></div>`);
   });
 
+  test('validates lazy models', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <div>
+          <ValidationProvider ref="provider" rules="required">
+            <template slot-scope="{ errors }">
+              <input v-model.lazy="value" type="text">
+            </template>
+          </ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue });
+
+    wrapper.find('input').trigger('input', 'val');
+    await flushPromises();
+    // did not validate on input.
+    expect(wrapper.vm.$refs.provider.messages).toHaveLength(0);
+
+    wrapper.find('input').trigger('change', 'val');
+    await flushPromises();
+    // validation triggered on change.
+    expect(wrapper.vm.$refs.provider.messages).toHaveLength(1);
+  });
+
+  test('uses appropiate events for different input types', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <div>
+          <ValidationProvider ref="provider" rules="required">
+            <template slot-scope="{ errors }">
+              <select v-model="value">
+                <option value="">0</option>
+                <option value="1">1</option>
+              </select>
+            </template>
+          </ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue });
+
+    wrapper.find('select').trigger('input', 'val');
+    await flushPromises();
+    // did not validate on input.
+    expect(wrapper.vm.$refs.provider.messages).toHaveLength(0);
+
+    wrapper.find('select').trigger('change', 'val');
+    await flushPromises();
+    // validation triggered on change.
+    expect(wrapper.vm.$refs.provider.messages).toHaveLength(1);
+  });
+
   test('validates fields initially using the immediate prop', async () => {
     const wrapper = mount({
       data: () => ({

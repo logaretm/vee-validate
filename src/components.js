@@ -116,15 +116,7 @@ function shouldUseOnChange (vnode, model) {
 
 // Adds all plugin listeners to the vnode.
 function addListeners (node) {
-  if (!node) {
-    return false;
-  }
-
   const model = getModel(node);
-  if (!model) {
-    return false;
-  }
-
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
   this.value = this.initialValue = model.value; // start tracking the value.
 
@@ -255,9 +247,6 @@ export const ValidationProvider = {
     },
     values () {
       let providers = this.$parent.$_veeValidate;
-      if (!providers) {
-        return {};
-      }
 
       return this.fieldDeps.reduce((acc, depName) => {
         if (providers[depName]) {
@@ -322,7 +311,7 @@ export const ValidationProvider = {
     return h(this.tag, nodes);
   },
   beforeDestroy () {
-    if (!this.$parent.$_veeValidate) {
+    if (!this.id) {
       return;
     }
 
