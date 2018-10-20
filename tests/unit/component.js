@@ -152,4 +152,19 @@ describe('Validation Provider Component', () => {
     await flushPromises();
     expect(wrapper.vm.$refs.provider.messages).toHaveLength(0);
   });
+
+  test('removes the provider reference at destroy', () => {
+    const wrapper = mount({
+      template: `
+        <div>
+          <ValidationProvider name="named" ref="provider"></ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue });
+
+    const providersMap = wrapper.vm.$_veeValidate;
+    expect(providersMap.named).toBe(wrapper.vm.$refs.provider);
+    wrapper.destroy();
+    expect(providersMap.named).toBeUndefined();
+  });
 });
