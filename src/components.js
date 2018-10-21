@@ -107,7 +107,7 @@ function shouldUseOnChange (vnode, model) {
   }
 
   // is a textual-type input.
-  if (vnode.data.attrs && isTextInput({ type: vnode.data.attrs.type })) {
+  if (vnode.data.attrs && isTextInput({ type: vnode.data.attrs.type || 'text' })) {
     return false;
   }
 
