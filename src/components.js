@@ -118,7 +118,7 @@ function shouldUseOnChange (vnode, model) {
 function addListeners (node) {
   const model = getModel(node);
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
-  this.value = this.initialValue = model.value; // start tracking the value.
+  this.value = this.initialValue = model.value; // update the value reference.
 
   // initially assign the valid/invalid flags.
   if (!this.wasValidatedInitially) {
@@ -191,7 +191,9 @@ export const ValidationProvider = {
   }),
   methods: {
     setFlags (flags) {
-      this.flags = assign({}, this.flags, flags);
+      Object.keys(flags).forEach(flag => {
+        this.flags[flag] = flags[flag];
+      });
     },
     validate (e) {
       this.setFlags({ pending: true });
@@ -305,7 +307,7 @@ export const ValidationProvider = {
     const inputs = findModelNodes(Array.isArray(nodes) ? { children: nodes } : nodes);
     // Add the listener on the vnode
     inputs.forEach(input => {
-      addListeners.call(this, input); // Temporary setup
+      addListeners.call(this, input);
     });
 
     return h(this.tag, nodes);
