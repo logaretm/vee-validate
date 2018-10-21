@@ -119,11 +119,10 @@ function addListeners (node) {
   const model = getModel(node);
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
   this.value = this.initialValue = model.value; // update the value reference.
-  const validationHandler = (e) => this.validate(e).then(this.applyResult);
 
-  // initially assign the valid/invalid flags.
   if (!this.wasValidatedInitially) {
     const silentHandler = ({ valid }) => {
+      // initially assign the valid/invalid flags.
       this.setFlags({
         valid,
         invalid: !valid
@@ -134,22 +133,22 @@ function addListeners (node) {
     this.wasValidatedInitially = true;
   }
 
-  const inputHandler = () => {
+  // dirty, pristene flags listener.
+  const setFlagsAfterInput = () => {
     this.setFlags({ dirty: true, pristine: false });
   };
 
-  const blurHandler = () => {
+  // touched, untouched flags listener.
+  const setFlagsAfterBlur = () => {
     this.setFlags({ touched: true, untouched: false });
   };
 
   // determine how to add the listener.
   const addListenerFn = node.componentOptions ? addListenerToComponentNode : addListenerToNode;
   // add validation listener.
-  addListenerFn(node, eventName, validationHandler);
-  // dirty, pristene flags listener.
-  addListenerFn(node, eventName, inputHandler);
-  // touched, untouched flags listener.
-  addListenerFn(node, 'blur', blurHandler);
+  addListenerFn(node, eventName, e => this.validate(e).then(this.applyResult));
+  addListenerFn(node, eventName, setFlagsAfterInput);
+  addListenerFn(node, 'blur', setFlagsAfterBlur);
 
   return true;
 }
