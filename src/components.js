@@ -119,20 +119,18 @@ function addListeners (node) {
   const model = getModel(node);
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
   this.value = this.initialValue = model.value; // update the value reference.
+  const validationHandler = (e) => this.validate(e).then(this.applyResult);
 
   // initially assign the valid/invalid flags.
   if (!this.wasValidatedInitially) {
-    if (!this.immediate) {
-      this.validate(this.value).then(({ valid }) => {
-        this.setFlags({
-          valid,
-          invalid: !valid
-        });
+    const silentHandler = ({ valid }) => {
+      this.setFlags({
+        valid,
+        invalid: !valid
       });
-    } else {
-      this.validationHandler(this.value);
-    }
+    };
 
+    this.validate(this.value).then(this.immediate ? this.applyResult : silentHandler);
     this.wasValidatedInitially = true;
   }
 
@@ -147,7 +145,7 @@ function addListeners (node) {
   // determine how to add the listener.
   const addListenerFn = node.componentOptions ? addListenerToComponentNode : addListenerToNode;
   // add validation listener.
-  addListenerFn(node, eventName, this.validationHandler);
+  addListenerFn(node, eventName, validationHandler);
   // dirty, pristene flags listener.
   addListenerFn(node, eventName, inputHandler);
   // touched, untouched flags listener.
@@ -209,15 +207,13 @@ export const ValidationProvider = {
         return result;
       });
     },
-    validationHandler (e) {
-      this.validate(e).then(({ errors }) => {
-        this.messages = errors;
-        this.setFlags({
-          valid: !errors.length,
-          changed: this.value !== this.initialValue,
-          invalid: !!errors.length,
-          validated: true
-        });
+    applyResult ({ errors }) {
+      this.messages = errors;
+      this.setFlags({
+        valid: !errors.length,
+        changed: this.value !== this.initialValue,
+        invalid: !!errors.length,
+        validated: true
       });
     },
     registerField () {
@@ -254,7 +250,7 @@ export const ValidationProvider = {
         if (providers[depName]) {
           acc[depName] = providers[depName].value;
           const unwatch = providers[depName].$watch('value', () => {
-            this.validationHandler(this.value);
+            this.validate(this.value).then(this.applyResult);
             unwatch();
           });
         }
