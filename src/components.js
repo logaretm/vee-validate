@@ -118,9 +118,13 @@ function shouldUseOnChange (vnode, model) {
 function addListeners (node) {
   const model = getModel(node);
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
-  this.value = this.initialValue = model.value; // update the value reference.
+  let validateNow = this.value !== model.value;
+  let shouldRevalidate = this.flags.validated;
+  if (!this.initialized) {
+    this.initialValue = model.value;
+  }
 
-  if (!this.wasValidatedInitially) {
+  if (validateNow) {
     const silentHandler = ({ valid }) => {
       // initially assign the valid/invalid flags.
       this.setFlags({
@@ -129,8 +133,7 @@ function addListeners (node) {
       });
     };
 
-    this.validate(this.value).then(this.immediate ? this.applyResult : silentHandler);
-    this.wasValidatedInitially = true;
+    this.validate(model.value).then(this.immediate || shouldRevalidate ? this.applyResult : silentHandler);
   }
 
   // dirty, pristene flags listener.
@@ -150,7 +153,7 @@ function addListeners (node) {
   addListenerFn(node, eventName, setFlagsAfterInput);
   addListenerFn(node, 'blur', setFlagsAfterBlur);
 
-  return true;
+  this.initialized = true;
 }
 
 let id = 0;
@@ -181,8 +184,8 @@ export const ValidationProvider = {
   data: () => ({
     messages: [],
     value: undefined,
+    initialized: false,
     initialValue: undefined,
-    wasValidatedInitially: false,
     flags: createFlags(),
     id: null
   }),
