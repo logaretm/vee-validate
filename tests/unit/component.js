@@ -198,14 +198,12 @@ describe('Validation Provider Component', () => {
       password: '',
       confirmation: 'val'
     });
-    wrapper.find({ ref: 'confirmInput' }).trigger('input', 'val');
     await flushPromises();
     expect(wrapper.vm.$refs.provider.messages).toHaveLength(1);
     wrapper.setData({
       password: 'val',
       confirmation: 'val'
     });
-    wrapper.find({ ref: 'input' }).trigger('input', 'val');
     await flushPromises();
     expect(wrapper.vm.$refs.provider.messages).toHaveLength(0);
   });
