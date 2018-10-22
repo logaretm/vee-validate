@@ -222,6 +222,7 @@ export default class Validator {
       return VeeValidate._vm.$nextTick();
     }).then(() => {
       this.fields.filter(matcher).forEach(field => {
+        field.waitFor(null);
         field.reset(); // reset field flags.
         this.errors.remove(field.name, field.scope);
       });

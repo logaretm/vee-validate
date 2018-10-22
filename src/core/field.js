@@ -290,6 +290,7 @@ export default class Field {
       this.flags[flag] = defaults[flag];
     });
 
+    this.addValueListeners();
     this.addActionListeners();
     this.updateClasses();
     this.updateAriaAttrs();
