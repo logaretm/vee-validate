@@ -103,11 +103,11 @@ You can import those locales like this:
 import ar from 'vee-validate/dist/locale/ar';
 import VeeValidate, { Validator } from 'vee-validate';
 
-// Localize takes the locale object as the second argument (optional) and merges it.
-Validator.localize('ar', ar);
-
 // Install the Plugin.
 Vue.use(VeeValidate);
+
+// Localize takes the locale object as the second argument (optional) and merges it.
+Validator.localize('ar', ar);
 ```
 
 You must note that the locale files exports the following object structure:
@@ -151,7 +151,7 @@ VeeValidate ships with support for [vue-i18n plugin](https://github.com/kazupon/
 import VeeValidate from 'vee-validate';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import validationMessages from 'vee-validate/dist/locale/en';
+import validationMessages from 'vee-validat/dist/locale/en';
 
 Vue.use(VueI18n);
 
