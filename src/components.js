@@ -298,15 +298,26 @@ export const ValidationProvider = {
   // Creates an HoC with validation capablities.
   wrap (component) {
     const options = isCallable(component) ? component.options : component;
-    const mixin = {
+    const hocMixin = {
       props: assign({}, this.props),
-      data: this.data,
+      data: isCallable(options.data) ? () => assign(options.data(), this.data()) : this.data,
       computed: assign({}, this.computed),
-      methods: assign({}, this.methods),
+      methods: assign({}, options.methods || {}, this.methods),
     };
 
-    mixin.computed.vctx = function () {
-      return {
+    const eventName = (options.model && options.model.event) || 'input';
+    const hoc = {
+      name: `${options.name || 'AnonymousHoc'}WithValidation`,
+      mixins: [hocMixin]
+    };
+
+    hoc.render = function (h) {
+      if (!$validator) {
+        $validator = new Validator(null);
+      }
+
+      this.registerField();
+      const vctx = {
         errors: this.messages,
         flags: this.flags,
         classes: this.classes,
@@ -315,24 +326,22 @@ export const ValidationProvider = {
           'aria-required': this.flags.required
         }
       };
-    };
 
-    const eventName = (options.model && options.model.event) || 'input';
-    mixin.beforeCreate = function () {
-      if (!$validator) {
-        $validator = new Validator(null);
-      }
-    };
-
-    mixin.created = function () {
-      this.registerField();
-      this.$on(eventName, e => {
+      const listeners = assign({}, this.$listeners);
+      addListenerToListenersObject(listeners, eventName, (e) => {
         this.validate(e).then(this.applyResult);
+      });
+
+      return h(component, {
+        attrs: this.$attrs,
+        props: assign({}, this.$props, {
+          errors: vctx.errors,
+          classes: vctx.classes
+        }),
+        on: listeners
       });
     };
 
-    options.mixins = [...(options.mixins || []), mixin];
-
-    return options;
+    return hoc;
   }
 };
