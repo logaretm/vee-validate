@@ -143,6 +143,7 @@ function addListeners (node) {
 let id = 0;
 
 export const ValidationProvider = {
+  $__veeInject: false,
   props: {
     name: {
       type: String,
@@ -311,6 +312,7 @@ export const ValidationProvider = {
       data: this.data,
       computed: assign({}, this.computed),
       methods: assign({}, this.methods),
+      $__veeInject: false
     };
 
     const eventName = (options.model && options.model.event) || 'input';
