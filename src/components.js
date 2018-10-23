@@ -308,7 +308,7 @@ export const ValidationProvider = {
     const options = isCallable(component) ? component.options : component;
     const hoc = {
       name: `${options.name || 'AnonymousHoc'}WithValidation`,
-      props: assign({}, (options.props || {}), this.props),
+      props: assign({}, this.props),
       data: this.data,
       computed: assign({}, this.computed),
       methods: assign({}, this.methods),
@@ -316,7 +316,6 @@ export const ValidationProvider = {
     };
 
     const eventName = (options.model && options.model.event) || 'input';
-    const veeProps = this.props;
     hoc.render = function (h) {
       if (!$validator) {
         $validator = new Validator(null);
@@ -343,19 +342,9 @@ export const ValidationProvider = {
         this.validate(e).then(this.applyResult);
       });
 
-      const getProps = function (props) {
-        return Object.keys(props).reduce((newProps, key) => {
-          if (!veeProps[key]) {
-            newProps[key] = props[key];
-          }
-
-          return newProps;
-        }, {});
-      };
-
       onRenderUpdate.call(this, findModel(this.$vnode));
 
-      const props = assign(getProps(this.$props), this.$attrs, ctxToProps(vctx));
+      const props = assign({}, this.$attrs, ctxToProps(vctx));
       return h(options, {
         attrs: this.$attrs,
         props,
