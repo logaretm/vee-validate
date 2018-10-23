@@ -294,5 +294,45 @@ export const ValidationProvider = {
 
     // cleanup reference.
     delete this.$parent.$_veeValidate[this.id];
+  },
+  // Creates an HoC with validation capablities.
+  wrap (component) {
+    const options = isCallable(component) ? component.options : component;
+    const mixin = {
+      props: assign({}, this.props),
+      data: this.data,
+      computed: assign({}, this.computed),
+      methods: assign({}, this.methods),
+    };
+
+    mixin.computed.vctx = function () {
+      return {
+        errors: this.messages,
+        flags: this.flags,
+        classes: this.classes,
+        aria: {
+          'aria-invalid': this.flags.invalid,
+          'aria-required': this.flags.required
+        }
+      };
+    };
+
+    const eventName = (options.model && options.model.event) || 'input';
+    mixin.beforeCreate = function () {
+      if (!$validator) {
+        $validator = new Validator(null);
+      }
+    };
+
+    mixin.created = function () {
+      this.registerField();
+      this.$on(eventName, e => {
+        this.validate(e).then(this.applyResult);
+      });
+    };
+
+    options.mixins = [...(options.mixins || []), mixin];
+
+    return options;
   }
 };
