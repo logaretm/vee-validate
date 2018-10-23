@@ -4,17 +4,6 @@ import RuleContainer from './core/ruleContainer';
 
 let $validator = null;
 
-// Determines if the VNode has a model bound to it.
-function hasModel (vnode) {
-  if (!vnode.data) return false;
-
-  if (vnode.data.model) {
-    return true;
-  }
-
-  return !!(vnode.data.directives && find(vnode.data.directives, d => d.name === 'model'));
-}
-
 // Gets the model object bound to the vnode.
 function getModel (vnode) {
   if (!vnode.data) {
@@ -25,7 +14,7 @@ function getModel (vnode) {
     return vnode.data.model;
   }
 
-  return find(vnode.data.directives, d => d.name === 'model');
+  return !!(vnode.data.directives) && find(vnode.data.directives, d => d.name === 'model');
 }
 
 // Resolves v-model config if exists.
@@ -37,7 +26,7 @@ function findModelConfig (vnode) {
 
 // Finds nodes that have v-model bound to it.
 function findModelNodes (vnode) {
-  if (hasModel(vnode)) {
+  if (getModel(vnode)) {
     return [vnode];
   }
 
