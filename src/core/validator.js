@@ -2,7 +2,7 @@ import ErrorBag from './errorBag';
 import FieldBag from './fieldBag';
 import RuleContainer from './ruleContainer';
 import Field from './field';
-import VeeValidate, { pluginInstance as Vee } from '../plugin';
+import VeeValidate from '../plugin';
 import {
   isObject,
   getPath,
@@ -91,8 +91,8 @@ export default class Validator {
   static set locale (value) {
     const hasChanged = value !== VeeValidate.i18nDriver.locale;
     VeeValidate.i18nDriver.locale = value;
-    if (hasChanged && Vee._vm) {
-      Vee._vm.$emit('localeChanged');
+    if (hasChanged && VeeValidate.instance._vm) {
+      VeeValidate.instance._vm.$emit('localeChanged');
     }
   }
 
@@ -215,8 +215,8 @@ export default class Validator {
 
   reset (matcher) {
     // two ticks
-    return Vee._vm.$nextTick().then(() => {
-      return Vee._vm.$nextTick();
+    return VeeValidate.instance._vm.$nextTick().then(() => {
+      return VeeValidate.instance._vm.$nextTick();
     }).then(() => {
       this.fields.filter(matcher).forEach(field => {
         field.waitFor(null);
@@ -389,7 +389,7 @@ export default class Validator {
    * Perform cleanup.
    */
   destroy () {
-    Vee._vm.$off('localeChanged');
+    VeeValidate.instance._vm.$off('localeChanged');
   }
 
   /**

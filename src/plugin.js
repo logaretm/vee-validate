@@ -97,6 +97,10 @@ class VeeValidate {
     }
   }
 
+  static get instance () {
+    return pluginInstance;
+  }
+
   get i18nDriver (): IDictionary {
     return dictionary.getDriver();
   }
