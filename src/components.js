@@ -296,21 +296,17 @@ export const ValidationProvider = {
     delete this.$parent.$_veeValidate[this.id];
   },
   // Creates an HoC with validation capablities.
-  wrap (component) {
+  wrap (component, ctxToProps = null) {
     const options = isCallable(component) ? component.options : component;
-    const hocMixin = {
+    const hoc = {
+      name: `${options.name || 'AnonymousHoc'}WithValidation`,
       props: assign({}, this.props),
-      data: isCallable(options.data) ? () => assign(options.data(), this.data()) : this.data,
+      data: this.data,
       computed: assign({}, this.computed),
-      methods: assign({}, options.methods || {}, this.methods),
+      methods: assign({}, this.methods),
     };
 
     const eventName = (options.model && options.model.event) || 'input';
-    const hoc = {
-      name: `${options.name || 'AnonymousHoc'}WithValidation`,
-      mixins: [hocMixin]
-    };
-
     hoc.render = function (h) {
       if (!$validator) {
         $validator = new Validator(null);
@@ -327,6 +323,16 @@ export const ValidationProvider = {
         }
       };
 
+      if (!ctxToProps) {
+        ctxToProps = ctx => {
+          return Object.keys(ctx).reduce((props, key) => {
+            props[key] = ctx[key];
+
+            return props;
+          }, {});
+        };
+      }
+
       const listeners = assign({}, this.$listeners);
       addListenerToListenersObject(listeners, eventName, (e) => {
         this.validate(e).then(this.applyResult);
@@ -334,10 +340,7 @@ export const ValidationProvider = {
 
       return h(component, {
         attrs: this.$attrs,
-        props: assign({}, this.$props, {
-          errors: vctx.errors,
-          classes: vctx.classes
-        }),
+        props: assign({}, this.$props, ctxToProps(vctx)),
         on: listeners
       });
     };
