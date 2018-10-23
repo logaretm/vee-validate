@@ -1,4 +1,5 @@
 import Validator from './core/validator';
+import VeeValidate from './plugin';
 import { createFlags, assign, isCallable, toArray, isNullOrUndefined, isTextInput, isEvent, normalizeRules, warn } from './utils';
 import { findModel } from './utils/vnode';
 import RuleContainer from './core/ruleContainer';
@@ -246,9 +247,7 @@ export const ValidationProvider = {
       }, {});
     },
     classes () {
-      let names;
-      // TODO: Resolve class names using root-config.
-      // const names = VeeValidate.current.classNames;
+      const names = VeeValidate.config.classNames;
       return Object.keys(this.flags).reduce((classes, flag) => {
         const className = (names && names[flag]) || flag;
         if (className) {

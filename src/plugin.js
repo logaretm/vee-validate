@@ -115,6 +115,10 @@ class VeeValidate {
     return currentConfig;
   }
 
+  static get config () {
+    return currentConfig;
+  }
+
   _initVM (config) {
     this._vm = new Vue({
       data: () => ({
