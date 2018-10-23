@@ -1,6 +1,7 @@
 import * as utils from '@/utils';
 import * as dateUtils from '@/utils/date';
 import * as i18Utils from '../../locale/utils';
+import * as eventUtils from '@/utils/events';
 
 test('gets the data attribute prefixed with the plugin', () => {
   document.body.innerHTML =
@@ -481,7 +482,7 @@ describe('deepParseInt', () => {
 });
 
 test('detects passive events support', () => {
-  expect(utils.detectPassiveSupport()).toBe(true);
+  expect(eventUtils.detectPassiveSupport()).toBe(true);
 
   const addEvt = window.addEventListener;
   window.addEventListener = (evt, cb, opts) => {
@@ -490,7 +491,7 @@ test('detects passive events support', () => {
     }
   };
 
-  expect(utils.detectPassiveSupport()).toBe(true);
+  expect(eventUtils.detectPassiveSupport()).toBe(true);
 
   window.addEventListener = (evt, cb, opts) => {
     if (typeof opts === 'object') {
@@ -498,7 +499,7 @@ test('detects passive events support', () => {
     }
   };
 
-  expect(utils.detectPassiveSupport()).toBe(false);
+  expect(eventUtils.detectPassiveSupport()).toBe(false);
 
   window.addEventListener = addEvt;
 });
