@@ -1,4 +1,5 @@
 import { pluginInstance as VeeValidate } from '../plugin';
+import { findModel } from '../utils/vnode';
 import {
   getScope,
   getDataAttribute,
@@ -193,7 +194,7 @@ export default class Resolver {
       return { expression: binding.arg };
     }
 
-    const model = vnode.data.model || find(vnode.data.directives, d => d.name === 'model');
+    const model = findModel(vnode);
     if (!model) {
       return null;
     }

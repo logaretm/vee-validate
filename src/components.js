@@ -1,21 +1,9 @@
 import Validator from './core/validator';
-import { createFlags, find, assign, isCallable, toArray, isNullOrUndefined, isTextInput, isEvent, normalizeRules, warn } from './utils';
+import { createFlags, assign, isCallable, toArray, isNullOrUndefined, isTextInput, isEvent, normalizeRules, warn } from './utils';
+import { findModel } from './utils/vnode';
 import RuleContainer from './core/ruleContainer';
 
 let $validator = null;
-
-// Gets the model object bound to the vnode.
-function getModel (vnode) {
-  if (!vnode.data) {
-    return null;
-  }
-
-  if (vnode.data.model) {
-    return vnode.data.model;
-  }
-
-  return !!(vnode.data.directives) && find(vnode.data.directives, d => d.name === 'model');
-}
 
 // Resolves v-model config if exists.
 function findModelConfig (vnode) {
@@ -26,7 +14,7 @@ function findModelConfig (vnode) {
 
 // Finds nodes that have v-model bound to it.
 function findModelNodes (vnode) {
-  if (getModel(vnode)) {
+  if (findModel(vnode)) {
     return [vnode];
   }
 
@@ -65,7 +53,7 @@ function addListenerToListenersObject (obj, eventName, handler) {
 }
 
 // Adds a listener to a native HTML vnode.
-function addListenerToNode (node, eventName, handler) {
+function addListenerToHTMLNode (node, eventName, handler) {
   if (isNullOrUndefined(node.data.on)) {
     node.data.on = {};
   }
@@ -105,7 +93,7 @@ function shouldUseOnChange (vnode, model) {
 
 // Adds all plugin listeners to the vnode.
 function addListeners (node) {
-  const model = getModel(node);
+  const model = findModel(node);
   const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
   let validateNow = this.value !== model.value;
   let shouldRevalidate = this.flags.validated;
@@ -136,11 +124,11 @@ function addListeners (node) {
   };
 
   // determine how to add the listener.
-  const addListenerFn = node.componentOptions ? addListenerToComponentNode : addListenerToNode;
+  const addListenerToNode = node.componentOptions ? addListenerToComponentNode : addListenerToHTMLNode;
   // add validation listener.
-  addListenerFn(node, eventName, e => this.validate(e).then(this.applyResult));
-  addListenerFn(node, eventName, setFlagsAfterInput);
-  addListenerFn(node, 'blur', setFlagsAfterBlur);
+  addListenerToNode(node, eventName, e => this.validate(e).then(this.applyResult));
+  addListenerToNode(node, eventName, setFlagsAfterInput);
+  addListenerToNode(node, 'blur', setFlagsAfterBlur);
 
   this.initialized = true;
 }
