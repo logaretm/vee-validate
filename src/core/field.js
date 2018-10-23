@@ -1,5 +1,6 @@
 import Resolver from './resolver';
 import RuleContainer from './ruleContainer';
+import { isEvent, addEventListener } from '../utils/events';
 import {
   uniqId,
   createFlags,
@@ -18,10 +19,8 @@ import {
   makeDelayObject,
   merge,
   isObject,
-  addEventListener,
   isCheckboxOrRadioInput,
-  includes,
-  isEvent
+  includes
 } from '../utils';
 
 // @flow
