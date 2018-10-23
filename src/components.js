@@ -300,7 +300,7 @@ export const ValidationProvider = {
     const options = isCallable(component) ? component.options : component;
     const hoc = {
       name: `${options.name || 'AnonymousHoc'}WithValidation`,
-      props: assign({}, this.props),
+      props: assign({}, (options.props || {}), this.props),
       data: this.data,
       computed: assign({}, this.computed),
       methods: assign({}, this.methods),
@@ -344,9 +344,10 @@ export const ValidationProvider = {
         }, {});
       };
 
+      const props = assign(getProps(this.$props), this.$attrs, ctxToProps(vctx));
       return h(options, {
         attrs: this.$attrs,
-        props: assign({}, getProps(this.$props), ctxToProps(vctx)),
+        props,
         on: listeners
       }, this.$children || []);
     };
