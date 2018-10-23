@@ -1,96 +1,22 @@
-import Validator from './core/validator';
 import VeeValidate from './plugin';
-import { createFlags, assign, isCallable, toArray, isNullOrUndefined, isTextInput, normalizeRules, warn } from './utils';
-import { findModel } from './utils/vnode';
-import { normalizeEvents, isEvent } from './utils/events';
+import Validator from './core/validator';
 import RuleContainer from './core/ruleContainer';
+import { normalizeEvents, isEvent } from './utils/events';
+import { createFlags, assign, isCallable, normalizeRules, warn } from './utils';
+import { findModel, findModelNodes, findModelConfig, addListenerToVNode, addListenerToObject, getInputEventName, normalizeSlots } from './utils/vnode';
 
 let $validator = null;
 
-// Resolves v-model config if exists.
-function findModelConfig (vnode) {
-  if (!vnode.componentOptions) return null;
-
-  return assign({}, { event: 'input', prop: 'value' }, vnode.componentOptions.Ctor.options.model);
-}
-
-// Finds nodes that have v-model bound to it.
-function findModelNodes (vnode) {
-  if (findModel(vnode)) {
-    return [vnode];
-  }
-
-  if (vnode.children && vnode.children.length) {
-    return toArray(vnode.children).reduce((nodes, node) => {
-      const candidates = [...findModelNodes(node)];
-      if (candidates.length) {
-        nodes.push(...candidates);
-      }
-
-      return nodes;
-    }, []);
-  }
-
-  return [];
-}
-
-// Adds a listener to vnode listener object.
-function addListenerToListenersObject (obj, eventName, handler) {
-  // Has a single listener.
-  if (isCallable(obj[eventName])) {
-    const prevHandler = obj[eventName];
-    obj[eventName] = [prevHandler];
-  }
-
-  // has other listeners.
-  if (Array.isArray(obj[eventName])) {
-    obj[eventName].push(handler);
-    return;
-  }
-
-  // no listener at all.
-  if (isNullOrUndefined(obj[eventName])) {
-    obj[eventName] = [handler];
-  }
-}
-
-// Adds a listener to a native HTML vnode.
-function addListenerToHTMLNode (node, eventName, handler) {
-  if (isNullOrUndefined(node.data.on)) {
-    node.data.on = {};
-  }
-
-  addListenerToListenersObject(node.data.on, eventName, handler);
-}
-
-// Adds a listener to a Vue component vnode.
-function addListenerToComponentNode (node, eventName, handler) {
-  if (!node.componentOptions.listeners) {
-    node.componentOptions.listeners = {};
-  }
-
-  const { event } = findModelConfig(node) || { event: eventName, prop: 'value' };
-  addListenerToListenersObject(node.componentOptions.listeners, event, handler);
-}
-
-// Determines if `change` should be used over `input` for listeners.
-function shouldUseOnChange (vnode, model) {
-  // Is a component.
-  if (vnode.componentOptions) {
-    return false;
-  }
-
-  // Lazy Models typically use lazy modifiers.
-  if (model && model.modifiers && model.modifiers.lazy) {
-    return true;
-  }
-
-  // is a textual-type input.
-  if (vnode.data.attrs && isTextInput({ type: vnode.data.attrs.type || 'text' })) {
-    return false;
-  }
-
-  return true;
+function createValidationCtx (ctx) {
+  return {
+    errors: ctx.messages,
+    flags: ctx.flags,
+    classes: ctx.classes,
+    aria: {
+      'aria-invalid': ctx.flags.invalid,
+      'aria-required': ctx.flags.required
+    }
+  };
 }
 
 function onRenderUpdate (model) {
@@ -121,7 +47,9 @@ function onRenderUpdate (model) {
 // Adds all plugin listeners to the vnode.
 function addListeners (node) {
   const model = findModel(node);
-  const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
+  // cache the input eventName.
+  this._inputEventName = this._inputEventName || getInputEventName(node, findModel(node));
+
   onRenderUpdate.call(this, model);
   // dirty, pristene flags listener.
   const setFlagsAfterInput = () => {
@@ -133,26 +61,17 @@ function addListeners (node) {
     this.setFlags({ touched: true, untouched: false });
   };
 
-  // determine how to add the listener.
-  const addListenerToNode = node.componentOptions ? addListenerToComponentNode : addListenerToHTMLNode;
   // add validation listener.
-
   // track and keep the value updated.
-  addListenerToNode(node, eventName, e => this.syncValue(e));
+  addListenerToVNode(node, this._inputEventName, e => this.syncValue(e));
 
   // add the validation listeners.
-  normalizeEvents(this.events).map(e => {
-    if (e === 'input') {
-      return eventName;
-    }
-
-    return e;
-  }).forEach(evt => {
-    addListenerToNode(node, evt, () => this.validate().then(this.applyResult));
+  this.normalizedEvents.forEach(evt => {
+    addListenerToVNode(node, evt, () => this.validate().then(this.applyResult));
   });
 
-  addListenerToNode(node, eventName, setFlagsAfterInput);
-  addListenerToNode(node, 'blur', setFlagsAfterBlur);
+  addListenerToVNode(node, this._inputEventName, setFlagsAfterInput);
+  addListenerToVNode(node, 'blur', setFlagsAfterBlur);
 
   this.initialized = true;
 }
@@ -245,6 +164,15 @@ export const ValidationProvider = {
         return rules[rule][0];
       });
     },
+    normalizedEvents () {
+      return normalizeEvents(this.events).map(e => {
+        if (e === 'input') {
+          return this._inputEventName;
+        }
+
+        return e;
+      });
+    },
     isRequired () {
       const rules = normalizeRules(this.rules);
 
@@ -278,21 +206,14 @@ export const ValidationProvider = {
     }
   },
   render (h) {
+    // cache the default input event.
     if (!$validator) {
       $validator = new Validator(null);
     }
 
     this.registerField();
 
-    const ctx = {
-      errors: this.messages,
-      flags: this.flags,
-      classes: this.classes,
-      aria: {
-        'aria-invalid': this.flags.invalid,
-        'aria-required': this.flags.required
-      }
-    };
+    const ctx = createValidationCtx(this);
 
     // Graceful handle no scoped slots.
     if (!this.$scopedSlots.default) {
@@ -333,6 +254,11 @@ export const ValidationProvider = {
       $__veeInject: false
     };
 
+    // Default ctx converts ctx props to component props.
+    if (!ctxToProps) {
+      ctxToProps = ctx => ctx;
+    }
+
     const eventName = (options.model && options.model.event) || 'input';
     hoc.render = function (h) {
       if (!$validator) {
@@ -340,46 +266,30 @@ export const ValidationProvider = {
       }
 
       this.registerField();
-      const vctx = {
-        errors: this.messages,
-        flags: this.flags,
-        classes: this.classes,
-        aria: {
-          'aria-invalid': this.flags.invalid,
-          'aria-required': this.flags.required
-        }
-      };
-
-      // Default ctx converts them to props.
-      if (!ctxToProps) {
-        ctxToProps = ctx => ctx;
-      }
-
+      const vctx = createValidationCtx(this);
       const listeners = assign({}, this.$listeners);
-      addListenerToListenersObject(listeners, eventName, (e) => {
+      addListenerToObject(listeners, eventName, (e) => {
         this.syncValue(e);
       });
-      normalizeEvents(this.events).map(e => {
-        if (e === 'input') {
-          return eventName;
-        }
-
-        return e;
-      }).forEach((evt, idx) => {
-        addListenerToListenersObject(listeners, evt, (e) => {
+      this.normalizedEvents.forEach((evt, idx) => {
+        addListenerToObject(listeners, evt, (e) => {
           this.validate().then(this.applyResult);
         });
       });
 
       const model = findModel(this.$vnode);
       onRenderUpdate.call(this, model);
+
+      // Props are any attrs not associated with ValidationProvider Plus the model prop.
+      // WARNING: Accidental prop overwrite will probably happen.
       const { prop } = findModelConfig(this.$vnode);
       const props = assign({}, this.$attrs, { [prop]: model.value }, ctxToProps(vctx));
+
       return h(options, {
         attrs: this.$attrs,
         props,
         on: listeners
-      }, this.$children || []);
+      }, normalizeSlots(this.$slots, this.$vnode.context));
     };
 
     return hoc;
