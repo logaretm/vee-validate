@@ -371,9 +371,10 @@ export const ValidationProvider = {
         });
       });
 
-      onRenderUpdate.call(this, findModel(this.$vnode));
-
-      const props = assign({}, this.$attrs, ctxToProps(vctx));
+      const model = findModel(this.$vnode);
+      onRenderUpdate.call(this, model);
+      const { prop } = findModelConfig(this.$vnode);
+      const props = assign({}, this.$attrs, { [prop]: model.value }, ctxToProps(vctx));
       return h(options, {
         attrs: this.$attrs,
         props,
