@@ -91,10 +91,11 @@ function shouldUseOnChange (vnode, model) {
   return true;
 }
 
-// Adds all plugin listeners to the vnode.
-function addListeners (node) {
-  const model = findModel(node);
-  const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
+function onRenderUpdate (model) {
+  if (!model) {
+    return;
+  }
+
   let validateNow = this.value !== model.value;
   let shouldRevalidate = this.flags.validated;
   if (!this.initialized) {
@@ -112,7 +113,13 @@ function addListeners (node) {
 
     this.validate(model.value).then(this.immediate || shouldRevalidate ? this.applyResult : silentHandler);
   }
+}
 
+// Adds all plugin listeners to the vnode.
+function addListeners (node) {
+  const model = findModel(node);
+  const eventName = shouldUseOnChange(node, model) ? 'change' : 'input';
+  onRenderUpdate.call(this, model);
   // dirty, pristene flags listener.
   const setFlagsAfterInput = () => {
     this.setFlags({ dirty: true, pristine: false });
@@ -343,6 +350,8 @@ export const ValidationProvider = {
           return newProps;
         }, {});
       };
+
+      onRenderUpdate.call(this, findModel(this.$vnode));
 
       const props = assign(getProps(this.$props), this.$attrs, ctxToProps(vctx));
       return h(options, {
