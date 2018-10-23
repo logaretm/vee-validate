@@ -307,6 +307,7 @@ export const ValidationProvider = {
     };
 
     const eventName = (options.model && options.model.event) || 'input';
+    const veeProps = this.props;
     hoc.render = function (h) {
       if (!$validator) {
         $validator = new Validator(null);
@@ -323,14 +324,9 @@ export const ValidationProvider = {
         }
       };
 
+      // Default ctx converts them to props.
       if (!ctxToProps) {
-        ctxToProps = ctx => {
-          return Object.keys(ctx).reduce((props, key) => {
-            props[key] = ctx[key];
-
-            return props;
-          }, {});
-        };
+        ctxToProps = ctx => ctx;
       }
 
       const listeners = assign({}, this.$listeners);
@@ -338,11 +334,21 @@ export const ValidationProvider = {
         this.validate(e).then(this.applyResult);
       });
 
-      return h(component, {
+      const getProps = function (props) {
+        return Object.keys(props).reduce((newProps, key) => {
+          if (!veeProps[key]) {
+            newProps[key] = props[key];
+          }
+
+          return newProps;
+        }, {});
+      };
+
+      return h(options, {
         attrs: this.$attrs,
-        props: assign({}, this.$props, ctxToProps(vctx)),
+        props: assign({}, getProps(this.$props), ctxToProps(vctx)),
         on: listeners
-      });
+      }, this.$children || []);
     };
 
     return hoc;
