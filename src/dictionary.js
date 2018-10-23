@@ -16,7 +16,7 @@ let currentDriver = 'default';
 export default class DictionaryResolver {
   static _checkDriverName (driver) {
     if (!driver) {
-      throw createError('you must provide a name to the dictionary drive');
+      throw createError('you must provide a name to the dictionary driver');
     }
   }
 
@@ -26,7 +26,7 @@ export default class DictionaryResolver {
       drivers[driver] = implementation;
     }
 
-    currentDriver = driver || 'default';
+    currentDriver = driver;
   }
 
   static getDriver () {
