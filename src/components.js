@@ -1,7 +1,8 @@
 import Validator from './core/validator';
 import VeeValidate from './plugin';
-import { createFlags, assign, isCallable, toArray, isNullOrUndefined, isTextInput, isEvent, normalizeRules, warn } from './utils';
+import { createFlags, assign, isCallable, toArray, isNullOrUndefined, isTextInput, normalizeRules, warn } from './utils';
 import { findModel } from './utils/vnode';
+import { normalizeEvents, isEvent } from './utils/events';
 import RuleContainer from './core/ruleContainer';
 
 let $validator = null;
@@ -112,7 +113,8 @@ function onRenderUpdate (model) {
       });
     };
 
-    this.validate(model.value).then(this.immediate || shouldRevalidate ? this.applyResult : silentHandler);
+    this.syncValue(model.value);
+    this.validate().then(this.immediate || shouldRevalidate ? this.applyResult : silentHandler);
   }
 }
 
@@ -134,7 +136,21 @@ function addListeners (node) {
   // determine how to add the listener.
   const addListenerToNode = node.componentOptions ? addListenerToComponentNode : addListenerToHTMLNode;
   // add validation listener.
-  addListenerToNode(node, eventName, e => this.validate(e).then(this.applyResult));
+
+  // track and keep the value updated.
+  addListenerToNode(node, eventName, e => this.syncValue(e));
+
+  // add the validation listeners.
+  normalizeEvents(this.events).map(e => {
+    if (e === 'input') {
+      return eventName;
+    }
+
+    return e;
+  }).forEach(evt => {
+    addListenerToNode(node, evt, () => this.validate().then(this.applyResult));
+  });
+
   addListenerToNode(node, eventName, setFlagsAfterInput);
   addListenerToNode(node, 'blur', setFlagsAfterBlur);
 
@@ -152,7 +168,7 @@ export const ValidationProvider = {
     },
     events: {
       type: [Array, String],
-      default: () => []
+      default: () => ['input']
     },
     rules: {
       type: [Object, String],
@@ -181,12 +197,15 @@ export const ValidationProvider = {
         this.flags[flag] = flags[flag];
       });
     },
-    validate (e) {
-      this.setFlags({ pending: true });
+    syncValue (e) {
       const value = isEvent(e) ? e.target.value : e;
-      this.value = value;
 
-      return $validator.verify(value, this.rules, {
+      this.value = value;
+    },
+    validate () {
+      this.setFlags({ pending: true });
+
+      return $validator.verify(this.value, this.rules, {
         name: this.name,
         values: this.values
       }).then(result => {
@@ -338,7 +357,18 @@ export const ValidationProvider = {
 
       const listeners = assign({}, this.$listeners);
       addListenerToListenersObject(listeners, eventName, (e) => {
-        this.validate(e).then(this.applyResult);
+        this.syncValue(e);
+      });
+      normalizeEvents(this.events).map(e => {
+        if (e === 'input') {
+          return eventName;
+        }
+
+        return e;
+      }).forEach((evt, idx) => {
+        addListenerToListenersObject(listeners, evt, (e) => {
+          this.validate().then(this.applyResult);
+        });
       });
 
       onRenderUpdate.call(this, findModel(this.$vnode));
