@@ -37,6 +37,7 @@ class VeeValidate {
   static Validator: Function<Validator>
 
   _vm: any
+  _validator: Validator
 
   constructor (config, _Vue) {
     this.configure(config);
