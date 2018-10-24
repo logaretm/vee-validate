@@ -1,5 +1,6 @@
 import Resolver from './resolver';
 import RuleContainer from './ruleContainer';
+import { isEvent, addEventListener } from '../utils/events';
 import {
   uniqId,
   createFlags,
@@ -18,7 +19,6 @@ import {
   makeDelayObject,
   merge,
   isObject,
-  addEventListener,
   isCheckboxOrRadioInput,
   includes
 } from '../utils';
@@ -566,7 +566,7 @@ export default class Field {
       this.validator.validate(`#${this.targetOf}`);
     } : (...args) => {
       // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
-      if (args.length === 0 || (isCallable(Event) && args[0] instanceof Event) || (args[0] && args[0].srcElement)) {
+      if (args.length === 0 || isEvent(args[0])) {
         args[0] = this.value;
       }
 

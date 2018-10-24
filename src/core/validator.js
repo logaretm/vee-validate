@@ -91,7 +91,7 @@ export default class Validator {
   static set locale (value) {
     const hasChanged = value !== VeeValidate.i18nDriver.locale;
     VeeValidate.i18nDriver.locale = value;
-    if (hasChanged && VeeValidate.instance._vm) {
+    if (hasChanged && VeeValidate.instance && VeeValidate.instance._vm) {
       VeeValidate.instance._vm.$emit('localeChanged');
     }
   }

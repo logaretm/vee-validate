@@ -1,27 +1,5 @@
 // @flow
 
-let supportsPassive = true;
-
-export const detectPassiveSupport = () => {
-  try {
-    const opts = Object.defineProperty({}, 'passive', {
-      get () {
-        supportsPassive = true;
-      }
-    });
-    window.addEventListener('testPassive', null, opts);
-    window.removeEventListener('testPassive', null, opts);
-  } catch (e) {
-    supportsPassive = false;
-  };
-
-  return supportsPassive;
-};
-
-export const addEventListener = (el: HTMLElement, eventName: string, cb: Function) => {
-  el.addEventListener(eventName, cb, supportsPassive ? { passive: true } : false);
-};
-
 export const isTextInput = (el: HTMLInputElement) => {
   return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'textarea', 'number'], el.type);
 };

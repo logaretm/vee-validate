@@ -1,11 +1,13 @@
 import dictionary from './dictionary';
 import mixin from './mixin';
 import directive from './directive';
-import { assign, getPath, warn, isCallable, detectPassiveSupport } from './utils';
+import { assign, getPath, warn, isCallable } from './utils';
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
 import mapFields from './core/mapFields';
+import { ValidationProvider } from './components';
 import I18nDictionary from './core/localization/i18n';
+import { detectPassiveSupport } from './utils/events';
 
 // @flow
 
@@ -37,6 +39,7 @@ class VeeValidate {
   static Validator: Function<Validator>
 
   _vm: any
+  _validator: Validator
 
   constructor (config, _Vue) {
     this.configure(config);
@@ -113,6 +116,10 @@ class VeeValidate {
     return currentConfig;
   }
 
+  static get config () {
+    return currentConfig;
+  }
+
   _initVM (config) {
     this._vm = new Vue({
       data: () => ({
@@ -162,5 +169,6 @@ VeeValidate.directive = directive;
 VeeValidate.Validator = Validator;
 VeeValidate.ErrorBag = ErrorBag;
 VeeValidate.mapFields = mapFields;
+VeeValidate.ValidationProvider = ValidationProvider;
 
 export default VeeValidate;
