@@ -4,6 +4,7 @@ import mixin from './mixin';
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
 import mapFields from './core/mapFields';
+import { ValidationProvider } from './components';
 
 const version = '__VERSION__';
 const install = VeeValidate.install;
@@ -18,6 +19,7 @@ export {
   Validator,
   ErrorBag,
   version,
+  ValidationProvider
 };
 
 export default VeeValidate;

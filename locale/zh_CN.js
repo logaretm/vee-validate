@@ -2,12 +2,12 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   _default: (field) => `${field}的值无效`,
-  after: (field, [target]) => `${field}必须在${target}之后`,
+  after: (field, [target, inclusion]) => `${field}必须在${target}之后${inclusion ? '或等于' + target : ''}`,
   alpha_dash: (field) => `${field}能够包含字母数字字符、破折号和下划线`,
   alpha_num: (field) => `${field}只能包含字母数字字符`,
   alpha_spaces: (field) => `${field}只能包含字母字符和空格`,
   alpha: (field) => `${field}只能包含字母字符`,
-  before: (field, [target]) => `${field}必须在${target}之前`,
+  before: (field, [target, inclusion]) => `${field}必须在${target}之前${inclusion ? '或等于' + target : ''}`,
   between: (field, [min, max]) => `${field}必须在${min}与${max}之间`,
   confirmed: (field, [confirmedField]) => `${field}不能和${confirmedField}匹配`,
   credit_card: (field) => `${field}的格式错误`,

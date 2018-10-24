@@ -1,4 +1,7 @@
 const sidebars = {
+  components: [
+    '/guide/components'
+  ],
   guide: [
     '',
     'getting-started',
@@ -44,14 +47,14 @@ const sidebars = {
   ]
 };
 
-function genSidebarConfig(title) {
-  return [
-    {
-      title,
+function genSidebarConfig(...names) {
+  return names.map(t => {
+    return {
+      title: t,
       collapsable: false,
-      children: sidebars[title.toLowerCase()]
+      children: sidebars[t.toLowerCase()]
     }
-  ]
+  });
 }
 
 module.exports = {
@@ -108,8 +111,9 @@ module.exports = {
           { text: 'Examples', link: '/examples/' },
           { text: 'API', link: '/api/' }
         ],
+        sidebarDepth: 3,
         sidebar: {
-          '/guide/': genSidebarConfig('Guide'),
+          '/guide/': genSidebarConfig('Guide', 'Components'),
           '/concepts/': genSidebarConfig('Concepts'),
           '/examples/': genSidebarConfig('Examples'),
           '/api/': genSidebarConfig('API'),

@@ -27,7 +27,7 @@ export default {
   },
   beforeCreate () {
     // if built in do nothing.
-    if (isBuiltInComponent(this.$vnode)) {
+    if (isBuiltInComponent(this.$vnode) || this.$options.$__veeInject === false) {
       return;
     }
 
