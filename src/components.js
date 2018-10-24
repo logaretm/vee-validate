@@ -22,7 +22,7 @@ function createValidationCtx (ctx) {
 }
 
 function onRenderUpdate (model) {
-  let validateNow = this.value !== model.value;
+  let validateNow = this.value !== model.value || this._needsValidation;
   let shouldRevalidate = this.flags.validated;
   if (!this.initialized) {
     this.initialValue = model.value;
@@ -40,6 +40,8 @@ function onRenderUpdate (model) {
     this.syncValue(model.value);
     this.validate().then(this.immediate || shouldRevalidate ? this.applyResult : silentHandler);
   }
+
+  this._needsValidation = false;
 }
 
 // Adds all plugin listeners to the vnode.
@@ -134,6 +136,14 @@ export const ValidationProvider = {
     tag: {
       type: String,
       default: 'span'
+    }
+  },
+  watch: {
+    rules: {
+      deep: true,
+      handler () {
+        this._needsValidation = true;
+      }
     }
   },
   data: () => ({
