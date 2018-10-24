@@ -1,5 +1,4 @@
 import VeeValidate from './plugin';
-import Validator from './core/validator';
 import RuleContainer from './core/ruleContainer';
 import { normalizeEvents, isEvent } from './utils/events';
 import { createFlags, assign, isCallable, normalizeRules, warn } from './utils';
@@ -139,6 +138,17 @@ export const ValidationProvider = {
       });
     },
     registerField () {
+      if (!$validator) {
+        /* istanbul ignore next */
+        if (process.env.NODE_ENV !== 'production') {
+          if (!VeeValidate.instance) {
+            warn('You must install vee-validate first before using this component.');
+          }
+        }
+
+        $validator = VeeValidate.instance._validator;
+      }
+
       if (this.id) {
         return;
       }
@@ -205,13 +215,7 @@ export const ValidationProvider = {
     }
   },
   render (h) {
-    // cache the default input event.
-    if (!$validator) {
-      $validator = new Validator(null);
-    }
-
     this.registerField();
-
     const ctx = createValidationCtx(this);
 
     // Graceful handle no scoped slots.
@@ -234,10 +238,6 @@ export const ValidationProvider = {
     return h(this.tag, nodes);
   },
   beforeDestroy () {
-    if (!this.id) {
-      return;
-    }
-
     // cleanup reference.
     delete this.$parent.$_veeValidate[this.id];
   },
@@ -262,10 +262,6 @@ export const ValidationProvider = {
     const eventName = (options.model && options.model.event) || 'input';
 
     hoc.render = function (h) {
-      if (!$validator) {
-        $validator = new Validator(null);
-      }
-
       this.registerField();
       const vctx = createValidationCtx(this);
       const listeners = assign({}, this.$listeners);
