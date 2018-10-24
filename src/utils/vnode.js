@@ -38,7 +38,7 @@ export function findModelNodes (vnode) {
 export function findModelConfig (vnode) {
   if (!vnode.componentOptions) return null;
 
-  return vnode.componentOptions.Ctor.options.model || {};
+  return vnode.componentOptions.Ctor.options.model;
 };
 
 // Adds a listener to vnode listener object.

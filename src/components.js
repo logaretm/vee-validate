@@ -153,6 +153,9 @@ export const ValidationProvider = {
     }
   },
   computed: {
+    isValid () {
+      return this.flags.valid;
+    },
     fieldDeps () {
       const rules = normalizeRules(this.rules);
 
@@ -281,7 +284,7 @@ export const ValidationProvider = {
 
       // Props are any attrs not associated with ValidationProvider Plus the model prop.
       // WARNING: Accidental prop overwrite will probably happen.
-      const { prop } = findModelConfig(this.$vnode);
+      const { prop } = findModelConfig(this.$vnode) || { prop: 'value' };
       const props = assign({}, this.$attrs, { [prop]: model.value }, ctxToProps(vctx));
 
       return h(options, {

@@ -138,10 +138,10 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toContain(DEFAULT_REQUIRED_MESSAGE);
   });
 
-  test.skip('validates components on input by default', async () => {
+  test('validates components on input by default', async () => {
     const wrapper = mount({
       data: () => ({
-        value: 'hi'
+        value: ''
       }),
       components: {
         TextInput: {
@@ -166,23 +166,18 @@ describe('Validation Provider Component', () => {
     }, { localVue: Vue, attachToDocument: true, sync: false });
 
     const error = wrapper.find('#error');
-    const input = wrapper.find({ ref: 'input' });
-    const inputEl = wrapper.find('#input');
+    const input = wrapper.find('#input');
 
     expect(error.text()).toBe('');
-    wrapper.setData({
-      value: ''
-    });
 
-    inputEl.element.value = '';
-    inputEl.trigger('input');
-    input.vm.$emit('input', '');
+    input.element.value = '';
+    input.trigger('input');
     await flushPromises();
-    console.log(wrapper.vm.$refs.provider.messages, JSON.stringify(wrapper.vm.$refs.provider.flags));
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
-    input.vm.$emit('input', 'hello');
+    input.element.value = 'val';
+    input.trigger('input');
     await flushPromises();
     expect(error.text()).toBe('');
   });
@@ -320,7 +315,7 @@ describe('Validation Provider Component', () => {
     expect(providersMap.named).toBeUndefined();
   });
 
-  test.skip('creates HOCs from other components', async () => {
+  test('creates HOCs from other components', async () => {
     const WithValidation = VeeValidate.ValidationProvider.wrap(InputWithoutValidation);
 
     const wrapper = mount({
