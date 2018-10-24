@@ -1,10 +1,13 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import VeeValidate from '@/index';
 import flushPromises from 'flush-promises';
+import InputWithoutValidation from './components/Input';
 
 const Vue = createLocalVue();
-Vue.use(VeeValidate);
+Vue.use(VeeValidate, { inject: false });
 Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
+
+const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required.';
 
 describe('Validation Provider Component', () => {
   test('renders a span by default', () => {
@@ -38,24 +41,35 @@ describe('Validation Provider Component', () => {
       }),
       template: `
         <div>
-          <ValidationProvider ref="provider" rules="required">
+          <ValidationProvider rules="required">
             <template slot-scope="{ errors }">
               <input v-model.lazy="value" type="text">
+              <span id="error">{{ errors[0] }}</span>
             </template>
           </ValidationProvider>
         </div>
       `
     }, { localVue: Vue });
 
-    wrapper.find('input').trigger('input', 'val');
+    const input = wrapper.find('input');
+    const error = wrapper.find('#error');
+
+    input.element.value = '';
+    input.trigger('input');
     await flushPromises();
     // did not validate on input.
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(0);
+    expect(error.text()).toBe('');
 
-    wrapper.find('input').trigger('change', 'val');
+    input.trigger('change');
     await flushPromises();
     // validation triggered on change.
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(1);
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+    input.element.value = 'text';
+    input.trigger('change');
+    await flushPromises();
+    // validation triggered on change.
+    expect(error.text()).toBe('');
   });
 
   test('uses appropiate events for different input types', async () => {
@@ -71,21 +85,32 @@ describe('Validation Provider Component', () => {
                 <option value="">0</option>
                 <option value="1">1</option>
               </select>
+              <span id="error">{{ errors[0] }}</span>
             </template>
           </ValidationProvider>
         </div>
       `
     }, { localVue: Vue });
 
-    wrapper.find('select').trigger('input', 'val');
+    const select = wrapper.find('select');
+    const error = wrapper.find('#error');
+
+    select.trigger('input');
     await flushPromises();
     // did not validate on input.
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(0);
+    expect(error.text()).toBe('');
 
-    wrapper.find('select').trigger('change', 'val');
+    select.trigger('change');
+    select.element.value = '';
     await flushPromises();
     // validation triggered on change.
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(1);
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+    select.element.value = '1';
+    wrapper.find('select').trigger('change');
+    await flushPromises();
+
+    expect(error.text()).toBe('');
   });
 
   test('validates fields initially using the immediate prop', async () => {
@@ -105,11 +130,12 @@ describe('Validation Provider Component', () => {
       `
     }, { localVue: Vue });
 
+    const error = wrapper.find('#error');
+
     // flush the pending validation.
     await flushPromises();
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(1);
-    expect(wrapper.vm.$refs.provider.messages).toContain('The {field} field is required.');
-    expect(wrapper.find('#error').text()).toBe('The {field} field is required.');
+
+    expect(error.text()).toContain(DEFAULT_REQUIRED_MESSAGE);
   });
 
   test('validates components on input by default', async () => {
@@ -119,25 +145,37 @@ describe('Validation Provider Component', () => {
       }),
       components: {
         TextInput: {
-          props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)">`
+          props: ['value', 'errors'],
+          template: `
+            <div>
+              <input id="input" :value="value" @input="$emit('input', $event.target.value)">
+            </div>
+          `
         }
       },
       template: `
         <div>
-          <ValidationProvider ref="provider" rules="required">
+          <ValidationProvider rules="required">
             <template slot-scope="{ errors }">
               <TextInput v-model="value" ref="input"></TextInput>
+              <span id="error">{{ errors && errors[0] }}</span>
             </template>
           </ValidationProvider>
         </div>
       `
     }, { localVue: Vue });
 
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(0);
-    wrapper.find({ ref: 'input' }).trigger('input', 'val');
+    const error = wrapper.find('#error');
+    const input = wrapper.find({ ref: 'input' });
+
+    expect(error.text()).toBe('');
+    input.vm.$emit('input', '');
     await flushPromises();
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(1);
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+    input.vm.$emit('input', 'hello');
+    await flushPromises();
+    expect(error.text()).toBe('');
   });
 
   test('validates components on configured model event', async () => {
@@ -159,16 +197,60 @@ describe('Validation Provider Component', () => {
           <ValidationProvider ref="provider" rules="required">
             <template slot-scope="{ errors }">
               <TextInput v-model="value" ref="input"></TextInput>
+              <span id="error">{{ errors[0] }}</span>
             </template>
           </ValidationProvider>
         </div>
       `
     }, { localVue: Vue });
 
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(0);
-    wrapper.find({ ref: 'input' }).trigger('change', 'val');
+    const error = wrapper.find('#error');
+    const input = wrapper.find({ ref: 'input' });
+
+    expect(error.text()).toBe('');
+    input.vm.$emit('change', '');
     await flushPromises();
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(1);
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+    input.vm.$emit('change', 'txt');
+    await flushPromises();
+    expect(error.text()).toBe('');
+  });
+
+  test('validates on custom events', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      components: {
+        TextInput: {
+          props: ['value'],
+          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+        }
+      },
+      template: `
+        <div>
+          <ValidationProvider rules="required" events="blur">
+            <template slot-scope="{ errors }">
+              <TextInput v-model="value"></TextInput>
+              <span id="error">{{ errors[0] }}</span>
+            </template>
+          </ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue });
+    const error = wrapper.find('#error');
+    const input = wrapper.find('input');
+
+    expect(error.text()).toBe('');
+    input.element.value = '';
+    input.trigger('input');
+    await flushPromises();
+    // did not validate.
+    expect(error.text()).toBe('');
+    input.trigger('blur');
+    await flushPromises();
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   });
 
   test('validates target dependant fields', async () => {
@@ -179,33 +261,35 @@ describe('Validation Provider Component', () => {
       }),
       template: `
         <div>
-          <ValidationProvider ref="confirmation" rules="required" name="confirmation">
+          <ValidationProvider rules="required" name="confirmation">
             <template slot-scope="ctx">
               <input type="password" v-model="confirmation" ref="confirmInput">
             </template>
           </ValidationProvider>
-          <ValidationProvider ref="provider" rules="required|confirmed:confirmation">
-            <template slot-scope="ctx">
+          <ValidationProvider  rules="required|confirmed:confirmation">
+            <template slot-scope="{ errors }">
               <input type="password" v-model="password" ref="input">
+              <span id="err1">{{ errors[0] }}</span>
             </template>
           </ValidationProvider>
         </div>
       `
     }, { localVue: Vue });
 
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(0);
+    const error = wrapper.find('#err1');
+
+    expect(error.text()).toBeFalsy();
     wrapper.setData({
       password: '',
       confirmation: 'val'
     });
     await flushPromises();
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(1);
+    expect(error.text()).toBeTruthy();
     wrapper.setData({
-      password: 'val',
-      confirmation: 'val'
+      password: 'val'
     });
     await flushPromises();
-    expect(wrapper.vm.$refs.provider.messages).toHaveLength(0);
+    expect(error.text()).toBeFalsy();
   });
 
   test('removes the provider reference at destroy', () => {
@@ -221,5 +305,37 @@ describe('Validation Provider Component', () => {
     expect(providersMap.named).toBe(wrapper.vm.$refs.provider);
     wrapper.destroy();
     expect(providersMap.named).toBeUndefined();
+  });
+
+  test('creates HOCs from other components', async () => {
+    const WithValidation = VeeValidate.ValidationProvider.wrap(InputWithoutValidation);
+
+    const wrapper = mount({
+      template: `
+        <div>
+          <InputWithValidation v-model="value" rules="required"></InputWithValidation>
+        </div>
+      `,
+      data: () => ({ value: '' }),
+      components: {
+        InputWithValidation: WithValidation
+      }
+    }, { localVue: Vue });
+
+    const error = wrapper.find('#error');
+    const input = wrapper.find('#input');
+
+    expect(error.text()).toBe('');
+    input.element.value = '';
+    input.trigger('input');
+
+    await flushPromises();
+
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+    input.element.value = 'txt';
+    input.trigger('input');
+    await flushPromises();
+    expect(error.text()).toBe('');
   });
 });
