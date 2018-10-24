@@ -15,7 +15,7 @@
 <script>
 
 export default {
-  name: 'Input',
+  name: 'TextInput',
   props: {
     errors: Array
   }
