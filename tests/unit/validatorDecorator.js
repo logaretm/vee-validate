@@ -151,6 +151,16 @@ test('rules getter', () => {
   expect(v1.rules).toBe(base.rules);
 });
 
+test('pauses and resumes', () => {
+  const base = new Validator();
+  const v1 = new Decorator(base, { _uid: 0 });
+
+  v1.pause();
+  expect(v1._paused).toBe(true);
+  v1.resume();
+  expect(v1._paused).toBe(false);
+});
+
 test('removes base instance when destroyed', () => {
   const vm = { _uid: 0 };
   const base = new Validator();
