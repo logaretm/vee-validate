@@ -20,10 +20,6 @@ function createValidationCtx (ctx) {
 }
 
 function onRenderUpdate (model) {
-  if (!model) {
-    return;
-  }
-
   let validateNow = this.value !== model.value;
   let shouldRevalidate = this.flags.validated;
   if (!this.initialized) {
@@ -48,29 +44,29 @@ function onRenderUpdate (model) {
 function addListeners (node) {
   const model = findModel(node);
   // cache the input eventName.
-  this._inputEventName = this._inputEventName || getInputEventName(node, findModel(node));
+  this._inputEventName = this._inputEventName || getInputEventName(node, model);
 
   onRenderUpdate.call(this, model);
-  // dirty, pristene flags listener.
-  const setFlagsAfterInput = () => {
+
+  const onInput = (e) => {
+    // track and keep the value updated.
+    this.syncValue(e);
+    // set the flags.
     this.setFlags({ dirty: true, pristine: false });
   };
 
-  // touched, untouched flags listener.
-  const setFlagsAfterBlur = () => {
-    this.setFlags({ touched: true, untouched: false });
-  };
-
-  // add validation listener.
-  // track and keep the value updated.
-  addListenerToVNode(node, this._inputEventName, e => this.syncValue(e));
+  addListenerToVNode(node, this._inputEventName, onInput);
 
   // add the validation listeners.
   this.normalizedEvents.forEach(evt => {
     addListenerToVNode(node, evt, () => this.validate().then(this.applyResult));
   });
 
-  addListenerToVNode(node, this._inputEventName, setFlagsAfterInput);
+  // touched, untouched flags listener.
+  const setFlagsAfterBlur = () => {
+    this.setFlags({ touched: true, untouched: false });
+  };
+
   addListenerToVNode(node, 'blur', setFlagsAfterBlur);
 
   this.initialized = true;
@@ -245,6 +241,7 @@ export const ValidationProvider = {
   // Creates an HoC with validation capablities.
   wrap (component, ctxToProps = null) {
     const options = isCallable(component) ? component.options : component;
+    options.$__veeInject = false;
     const hoc = {
       name: `${options.name || 'AnonymousHoc'}WithValidation`,
       props: assign({}, this.props),
@@ -260,6 +257,7 @@ export const ValidationProvider = {
     }
 
     const eventName = (options.model && options.model.event) || 'input';
+
     hoc.render = function (h) {
       if (!$validator) {
         $validator = new Validator(null);
@@ -268,6 +266,10 @@ export const ValidationProvider = {
       this.registerField();
       const vctx = createValidationCtx(this);
       const listeners = assign({}, this.$listeners);
+
+      const model = findModel(this.$vnode);
+      this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
+      onRenderUpdate.call(this, model);
       addListenerToObject(listeners, eventName, (e) => {
         this.syncValue(e);
       });
@@ -276,9 +278,6 @@ export const ValidationProvider = {
           this.validate().then(this.applyResult);
         });
       });
-
-      const model = findModel(this.$vnode);
-      onRenderUpdate.call(this, model);
 
       // Props are any attrs not associated with ValidationProvider Plus the model prop.
       // WARNING: Accidental prop overwrite will probably happen.
