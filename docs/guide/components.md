@@ -6,7 +6,7 @@
 
 VeeValidate ships with components for more advanced use cases. The `ValidationProvider` component is a regular component that wraps your inputs and provides validation using the [scoped slots feature](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
 
-Using the ValidationProvider component offers isolated scope for each field validation state, and does not inject/mutate anything in your template or the Vue instance. And you can import it and use whenever you need it, unlike the directive which needs to be installed globally.
+Using the ValidationProvider component offers isolated scope for each field validation state, and does not inject/mutate anything in your template or the Vue instance. And you can import it and use whenever you need it. Using the validation context will allow you to apply classes, flags and pass state to your template.
 
 Here is a quick example:
 
