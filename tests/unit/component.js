@@ -265,7 +265,7 @@ describe('Validation Provider Component', () => {
       }),
       template: `
         <div>
-          <ValidationProvider rules="required" name="confirmation">
+          <ValidationProvider rules="required" vid="confirmation">
             <template slot-scope="ctx">
               <input type="password" v-model="confirmation" ref="confirmInput">
             </template>
@@ -300,7 +300,7 @@ describe('Validation Provider Component', () => {
     const wrapper = mount({
       template: `
         <div>
-          <ValidationProvider name="named" ref="provider">
+          <ValidationProvider vid="named" ref="provider">
             <template slot-scope="ctx">
               <span></span>
             </template>

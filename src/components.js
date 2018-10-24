@@ -11,9 +11,12 @@ function createValidationCtx (ctx) {
     errors: ctx.messages,
     flags: ctx.flags,
     classes: ctx.classes,
+    get valid () {
+      return ctx.isValid;
+    },
     aria: {
-      'aria-invalid': ctx.flags.invalid,
-      'aria-required': ctx.flags.required
+      'aria-invalid': ctx.flags.invalid ? 'true' : 'false',
+      'aria-required': ctx.isRequired ? 'true' : 'false'
     }
   };
 }
@@ -71,11 +74,47 @@ function addListeners (node) {
   this.initialized = true;
 }
 
+function createValuesLookup (ctx) {
+  let providers = ctx.$parent.$_veeValidate;
+
+  return ctx.fieldDeps.reduce((acc, depName) => {
+    if (providers[depName]) {
+      acc[depName] = providers[depName].value;
+      const unwatch = providers[depName].$watch('value', () => {
+        ctx.validate(ctx.value).then(ctx.applyResult);
+        unwatch();
+      });
+    }
+
+    return acc;
+  }, {});
+}
+
+function updateParentReference (ctx) {
+  const { id, vid, $parent } = ctx;
+  // Nothing has changed.
+  if (id === vid && $parent.$_veeValidate[id]) {
+    return;
+  }
+
+  // vid was changed.
+  if (id !== vid && $parent.$_veeValidate[id] === ctx) {
+    delete $parent.$_veeValidate[id];
+  }
+
+  $parent.$_veeValidate[vid] = ctx;
+  ctx.id = vid;
+}
+
 let id = 0;
 
 export const ValidationProvider = {
   $__veeInject: false,
   props: {
+    vid: {
+      type: [String, Number],
+      default: id++,
+    },
     name: {
       type: String,
       default: null
@@ -121,7 +160,7 @@ export const ValidationProvider = {
 
       return $validator.verify(this.value, this.rules, {
         name: this.name,
-        values: this.values
+        values: createValuesLookup(this)
       }).then(result => {
         this.setFlags({ pending: false });
 
@@ -149,17 +188,11 @@ export const ValidationProvider = {
         $validator = VeeValidate.instance._validator;
       }
 
-      if (this.id) {
-        return;
-      }
-
       if (!this.$parent.$_veeValidate) {
         this.$parent.$_veeValidate = {};
       }
 
-      this.id = this.name || id++;
-
-      this.$parent.$_veeValidate[this.id] = this;
+      updateParentReference(this);
     }
   },
   computed: {
@@ -186,21 +219,6 @@ export const ValidationProvider = {
       const rules = normalizeRules(this.rules);
 
       return !!rules.required;
-    },
-    values () {
-      let providers = this.$parent.$_veeValidate;
-
-      return this.fieldDeps.reduce((acc, depName) => {
-        if (providers[depName]) {
-          acc[depName] = providers[depName].value;
-          const unwatch = providers[depName].$watch('value', () => {
-            this.validate(this.value).then(this.applyResult);
-            unwatch();
-          });
-        }
-
-        return acc;
-      }, {});
     },
     classes () {
       const names = VeeValidate.config.classNames;
@@ -239,7 +257,7 @@ export const ValidationProvider = {
   },
   beforeDestroy () {
     // cleanup reference.
-    delete this.$parent.$_veeValidate[this.id];
+    delete this.$parent.$_veeValidate[this.vid];
   },
   // Creates an HoC with validation capablities.
   wrap (component, ctxToProps = null) {
