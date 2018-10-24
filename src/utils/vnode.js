@@ -1,5 +1,5 @@
 // VNode Utils
-import { find, assign, isCallable, isNullOrUndefined, isTextInput } from './index';
+import { find, isCallable, isNullOrUndefined, isTextInput } from './index';
 
 // Gets the model object on the vnode.
 export function findModel (vnode) {
@@ -38,7 +38,7 @@ export function findModelNodes (vnode) {
 export function findModelConfig (vnode) {
   if (!vnode.componentOptions) return null;
 
-  return assign({ event: 'input', prop: 'value' }, vnode.componentOptions.Ctor.options.model);
+  return vnode.componentOptions.Ctor.options.model || {};
 };
 
 // Adds a listener to vnode listener object.
@@ -77,8 +77,7 @@ function addListenerToComponentNode (node, eventName, handler) {
     node.componentOptions.listeners = {};
   }
 
-  const { event } = findModelConfig(node) || { event: eventName, prop: 'value' };
-  addListenerToObject(node.componentOptions.listeners, event, handler);
+  addListenerToObject(node.componentOptions.listeners, eventName, handler);
 };
 
 export function addListenerToVNode (vnode, eventName, handler) {
@@ -93,10 +92,12 @@ export function addListenerToVNode (vnode, eventName, handler) {
 export function getInputEventName (vnode, model) {
   // Is a component.
   if (vnode.componentOptions) {
-    return 'input';
+    const { event } = findModelConfig(vnode) || { event: 'input' };
+
+    return event;
   }
 
-  // Lazy Models typically use lazy modifiers.
+  // Lazy Models typically use change event
   if (model && model.modifiers && model.modifiers.lazy) {
     return 'change';
   }
