@@ -14,6 +14,16 @@ test('watches input value on model change', async () => {
   expect(wrapper.vm.errors.has('field')).toBe(true);
 });
 
+test('watches input value on lazy model change', async () => {
+  const wrapper = mount(TestComponent, { localVue: Vue });
+  const input = wrapper.find('#lazy');
+  expect(wrapper.vm.errors.count()).toBe(0);
+  wrapper.setData({ value: '' });
+  input.trigger('change');
+  await flushPromises();
+  expect(wrapper.vm.errors.has('lazy')).toBe(true);
+});
+
 test('model can be watched via the directive arg', async () => {
   const wrapper = mount(TestComponent, { localVue: Vue });
   expect(wrapper.vm.errors.has('argField')).toBe(false);
