@@ -2,6 +2,7 @@ import { mount, createLocalVue } from '@vue/test-utils';
 import VeeValidate from '@/index';
 import flushPromises from 'flush-promises';
 import InputWithoutValidation from './components/Input';
+import SelectWithoutValidation from './components/Select';
 
 const Vue = createLocalVue();
 Vue.use(VeeValidate, { inject: false });
@@ -344,6 +345,27 @@ describe('Validation Provider Component', () => {
     input.element.value = 'txt';
     input.trigger('input');
     await flushPromises();
+    await flushPromises();
     expect(error.text()).toBe('');
+  });
+
+  test('renders slots', async () => {
+    const WithValidation = VeeValidate.ValidationProvider.wrap(SelectWithoutValidation);
+    const wrapper = mount({
+      data: () => ({ value: '' }),
+      template: `
+        <div>
+          <SelectWithValidation v-model="value" rules="required">
+            <option value="">0</option>
+            <option value="1">1</option>
+          </SelectWithValidation>
+        </div>
+      `,
+      components: {
+        SelectWithValidation: WithValidation
+      }
+    }, { localVue: Vue });
+
+    expect(wrapper.html()).toBe(`<div><div><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div></div>`);
   });
 });
