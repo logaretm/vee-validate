@@ -1,5 +1,5 @@
 import DictionaryResolver from '@/dictionary';
-import DefaultDictionary from '@/core/localization/default';
+import DefaultDictionary from '@/localization/default';
 
 test('uses the default i18n driver', () => {
   expect(DictionaryResolver.getDriver()).toBeInstanceOf(DefaultDictionary);

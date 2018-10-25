@@ -1,5 +1,5 @@
 import { createError } from './utils';
-import DefaultDictionary from './core/localization/default';
+import DefaultDictionary from './localization/default';
 
 const drivers = {
   default: new DefaultDictionary({

@@ -1,4 +1,4 @@
-import Dictionary from '@/core/localization/i18n';
+import Dictionary from '@/localization/i18n';
 import VueI18n from 'vue-i18n';
 import { createLocalVue } from '@vue/test-utils';
 

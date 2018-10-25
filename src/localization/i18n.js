@@ -1,4 +1,4 @@
-import { warn, isCallable, isObject, merge, getPath, isNullOrUndefined } from '../../utils';
+import { warn, isCallable, isObject, merge, getPath, isNullOrUndefined } from '../utils';
 
 // @flow
 

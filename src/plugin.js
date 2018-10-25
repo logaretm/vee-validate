@@ -6,7 +6,7 @@ import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
 import mapFields from './core/mapFields';
 import { ValidationProvider } from './components';
-import I18nDictionary from './core/localization/i18n';
+import I18nDictionary from './localization/i18n';
 import { detectPassiveSupport } from './utils/events';
 
 // @flow
