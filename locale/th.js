@@ -24,7 +24,7 @@ const messages = {
   ip: (field) => `${field} ไม่ถูกต้องตามรูปแบบ IP address`,
   length: (field, [length, max]) => {
     if (max) {
-      return `ความยาวของ ${field} ต้องอยู่ระหว่าง ${length} และ ${max}`;
+      return `${field} ต้องมีความยาวระหว่าง ${length} และ ${max}`;
     }
 
     return `${field} ต้องมีความยาว ${length}`;
