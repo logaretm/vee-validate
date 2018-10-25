@@ -92,19 +92,19 @@ function createValuesLookup (ctx) {
   }, {});
 }
 
-function updateParentReference (ctx) {
-  const { id, vid, $parent } = ctx;
+function updateRenderingContextReference (ctx) {
+  const { id, vid, $vnode } = ctx;
   // Nothing has changed.
-  if (id === vid && $parent.$_veeValidate[id]) {
+  if (id === vid && $vnode.context.$_veeValidate[id]) {
     return;
   }
 
   // vid was changed.
-  if (id !== vid && $parent.$_veeValidate[id] === ctx) {
-    delete $parent.$_veeValidate[id];
+  if (id !== vid && $vnode.context.$_veeValidate[id] === ctx) {
+    delete $vnode.context.$_veeValidate[id];
   }
 
-  $parent.$_veeValidate[vid] = ctx;
+  $vnode.context.$_veeValidate[vid] = ctx;
   ctx.id = vid;
 }
 
@@ -198,11 +198,11 @@ export const ValidationProvider = {
         $validator = VeeValidate.instance._validator;
       }
 
-      if (!this.$parent.$_veeValidate) {
-        this.$parent.$_veeValidate = {};
+      if (!this.$vnode.context.$_veeValidate) {
+        this.$vnode.context.$_veeValidate = {};
       }
 
-      updateParentReference(this);
+      updateRenderingContextReference(this);
     }
   },
   computed: {
@@ -267,7 +267,7 @@ export const ValidationProvider = {
   },
   beforeDestroy () {
     // cleanup reference.
-    delete this.$parent.$_veeValidate[this.vid];
+    delete this.$vnode.context.$_veeValidate[this.vid];
   },
   // Creates an HoC with validation capablities.
   wrap (component, ctxToProps = null) {
@@ -297,13 +297,20 @@ export const ValidationProvider = {
       const model = findModel(this.$vnode);
       this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
       onRenderUpdate.call(this, model);
+
       addListenerToObject(listeners, eventName, (e) => {
         this.syncValue(e);
+        this.setFlags({ dirty: true, pristine: false });
       });
+
       this.normalizedEvents.forEach((evt, idx) => {
         addListenerToObject(listeners, evt, (e) => {
           this.validate().then(this.applyResult);
         });
+      });
+
+      addListenerToObject(listeners, 'blur', () => {
+        this.setFlags({ touched: true, untouched: false });
       });
 
       // Props are any attrs not associated with ValidationProvider Plus the model prop.
