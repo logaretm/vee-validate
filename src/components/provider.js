@@ -1,8 +1,8 @@
-import VeeValidate from './plugin';
-import RuleContainer from './core/ruleContainer';
-import { normalizeEvents, isEvent } from './utils/events';
-import { createFlags, assign, isCallable, normalizeRules, warn } from './utils';
-import { findModel, findModelNodes, findModelConfig, addListenerToVNode, addListenerToObject, getInputEventName, normalizeSlots } from './utils/vnode';
+import VeeValidate from '../plugin';
+import RuleContainer from '../core/ruleContainer';
+import { normalizeEvents, isEvent } from '../utils/events';
+import { createFlags, assign, isCallable, normalizeRules, warn } from '../utils';
+import { findModel, findModelNodes, findModelConfig, addListenerToVNode, addListenerToObject, getInputEventName, normalizeSlots } from '../utils/vnode';
 
 let $validator = null;
 
@@ -77,7 +77,7 @@ function addListeners (node) {
 }
 
 function createValuesLookup (ctx) {
-  let providers = ctx.$parent.$_veeValidate;
+  let providers = ctx.$parent.$_veeObserver.refs;
 
   return ctx.fieldDeps.reduce((acc, depName) => {
     if (providers[depName]) {
@@ -92,30 +92,58 @@ function createValuesLookup (ctx) {
   }, {});
 }
 
-function updateRenderingContextReference (ctx) {
-  const { id, vid, $vnode } = ctx;
+function updateRenderingContextRefs (ctx) {
+  const { id, vid } = ctx;
+
   // Nothing has changed.
-  if (id === vid && $vnode.context.$_veeValidate[id]) {
+  if (id === vid && ctx.$_veeObserver.refs[id]) {
     return;
   }
 
   // vid was changed.
-  if (id !== vid && $vnode.context.$_veeValidate[id] === ctx) {
-    delete $vnode.context.$_veeValidate[id];
+  if (id !== vid && ctx.$_veeObserver.refs[id] === ctx) {
+    ctx.$_veeObserver.$unsubscribe(ctx);
   }
 
-  $vnode.context.$_veeValidate[vid] = ctx;
+  ctx.$_veeObserver.$subscribe(ctx);
   ctx.id = vid;
+}
+
+function createObserver () {
+  return {
+    refs: {},
+    $subscribe (ctx) {
+      this.refs[ctx.vid] = ctx;
+    },
+    $unsubscribe (ctx) {
+      delete this.refs[ctx.vid];
+    }
+  };
 }
 
 let id = 0;
 
 export const ValidationProvider = {
   $__veeInject: false,
+  inject: {
+    $_veeObserver: {
+      from: '$_veeObserver',
+      default () {
+        if (!this.$vnode.context.$_veeObserver) {
+          this.$vnode.context.$_veeObserver = createObserver();
+        }
+
+        return this.$vnode.context.$_veeObserver;
+      }
+    }
+  },
   props: {
     vid: {
       type: [String, Number],
-      default: id++,
+      default: () => {
+        id++;
+        return id;
+      }
     },
     name: {
       type: String,
@@ -198,11 +226,7 @@ export const ValidationProvider = {
         $validator = VeeValidate.instance._validator;
       }
 
-      if (!this.$vnode.context.$_veeValidate) {
-        this.$vnode.context.$_veeValidate = {};
-      }
-
-      updateRenderingContextReference(this);
+      updateRenderingContextRefs(this);
     }
   },
   computed: {
@@ -267,7 +291,7 @@ export const ValidationProvider = {
   },
   beforeDestroy () {
     // cleanup reference.
-    delete this.$vnode.context.$_veeValidate[this.vid];
+    this.$_veeObserver.$unsubscribe(this);
   },
   // Creates an HoC with validation capablities.
   wrap (component, ctxToProps = null) {
@@ -279,7 +303,8 @@ export const ValidationProvider = {
       data: this.data,
       computed: assign({}, this.computed),
       methods: assign({}, this.methods),
-      $__veeInject: false
+      $__veeInject: false,
+      inject: this.inject
     };
 
     // Default ctx converts ctx props to component props.

@@ -310,7 +310,7 @@ describe('Validation Provider Component', () => {
       `
     }, { localVue: Vue });
 
-    const providersMap = wrapper.vm.$_veeValidate;
+    const providersMap = wrapper.vm.$_veeObserver.refs;
     expect(providersMap.named).toBe(wrapper.vm.$refs.provider);
     wrapper.destroy();
     expect(providersMap.named).toBeUndefined();

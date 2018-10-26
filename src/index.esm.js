@@ -7,7 +7,7 @@ import mapFields from './core/mapFields';
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
 import { assign } from './utils';
-import { ValidationProvider } from './components';
+import { ValidationProvider, ValidationObserver } from './components';
 
 const version = '__VERSION__';
 
@@ -32,7 +32,8 @@ export {
   ErrorBag,
   Rules,
   version,
-  ValidationProvider
+  ValidationProvider,
+  ValidationObserver
 };
 
 export default VeeValidate;
