@@ -194,6 +194,13 @@ export const ValidationProvider = {
 
       this.value = value;
     },
+    reset () {
+      this.messages = [];
+      this.initialValue = this.value;
+      const flags = createFlags();
+      flags.changed = false;
+      this.setFlags(flags);
+    },
     validate () {
       this.setFlags({ pending: true });
 

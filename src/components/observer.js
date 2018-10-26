@@ -44,6 +44,11 @@ export const ValidationObserver = {
           return result;
         });
       })).then(results => results.every(r => r.valid));
+    },
+    reset () {
+      return Object.keys(this.refs).forEach(ref => {
+        this.refs[ref].reset();
+      });
     }
   },
   computed: {
