@@ -1,3 +1,6 @@
+import { normalizeSlots } from '../utils/vnode';
+import { isCallable } from '../utils';
+
 const flagMergingStrategy = {
   pristine: 'every',
   dirty: 'some',
@@ -54,6 +57,11 @@ export const ValidationObserver = {
     }
   },
   render (h) {
-    return h(this.tag, this.$scopedSlots.default(this.ctx));
+    let slots = this.$scopedSlots.default;
+    if (!isCallable(slots)) {
+      slots = () => normalizeSlots(this.$slots, this.$vnode.context);
+    }
+
+    return h(this.tag, slots(this.ctx));
   }
 };
