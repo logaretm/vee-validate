@@ -1,4 +1,3 @@
-// TODO.
 const flagMergingStrategy = {
   pristine: 'every',
   dirty: 'some',
@@ -16,6 +15,12 @@ export const ValidationObserver = {
     return {
       $_veeObserver: this
     };
+  },
+  props: {
+    tag: {
+      type: String,
+      default: 'span'
+    }
   },
   data: () => ({
     refs: {}
@@ -49,6 +54,6 @@ export const ValidationObserver = {
     }
   },
   render (h) {
-    return h('div', this.$scopedSlots.default(this.ctx));
+    return h(this.tag, this.$scopedSlots.default(this.ctx));
   }
 };
