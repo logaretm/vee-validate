@@ -7,6 +7,7 @@ import SelectWithoutValidation from './components/Select';
 const Vue = createLocalVue();
 Vue.use(VeeValidate, { inject: false });
 Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
+Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
 
 const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required.';
 
@@ -80,7 +81,7 @@ describe('Validation Provider Component', () => {
       }),
       template: `
         <div>
-          <ValidationProvider ref="provider" rules="required">
+          <ValidationProvider rules="required">
             <template slot-scope="{ errors }">
               <select v-model="value">
                 <option value="">0</option>
@@ -121,7 +122,7 @@ describe('Validation Provider Component', () => {
       }),
       template: `
         <div>
-          <ValidationProvider ref="provider" :immediate="true" rules="required">
+          <ValidationProvider :immediate="true" rules="required">
             <template slot-scope="{ errors }">
               <input v-model="value" type="text">
               <span id="error">{{ errors[0] }}</span>
@@ -156,7 +157,7 @@ describe('Validation Provider Component', () => {
       },
       template: `
         <div>
-          <ValidationProvider rules="required" ref="provider">
+          <ValidationProvider rules="required">
             <template slot-scope="{ errors }">
               <TextInput v-model="value" ref="input"></TextInput>
               <span id="error">{{ errors && errors[0] }}</span>
@@ -199,7 +200,7 @@ describe('Validation Provider Component', () => {
       },
       template: `
         <div>
-          <ValidationProvider ref="provider" rules="required">
+          <ValidationProvider rules="required">
             <template slot-scope="{ errors }">
               <TextInput v-model="value" ref="input"></TextInput>
               <span id="error">{{ errors[0] }}</span>
@@ -268,12 +269,12 @@ describe('Validation Provider Component', () => {
         <div>
           <ValidationProvider rules="required" vid="confirmation">
             <template slot-scope="ctx">
-              <input type="password" v-model="confirmation" ref="confirmInput">
+              <input type="password" v-model="confirmation">
             </template>
           </ValidationProvider>
-          <ValidationProvider  rules="required|confirmed:confirmation">
+          <ValidationProvider rules="required|confirmed:confirmation">
             <template slot-scope="{ errors }">
-              <input type="password" v-model="password" ref="input">
+              <input type="password" v-model="password">
               <span id="err1">{{ errors[0] }}</span>
             </template>
           </ValidationProvider>
@@ -310,7 +311,7 @@ describe('Validation Provider Component', () => {
       `
     }, { localVue: Vue });
 
-    const providersMap = wrapper.vm.$_veeValidate;
+    const providersMap = wrapper.vm.$_veeObserver.refs;
     expect(providersMap.named).toBe(wrapper.vm.$refs.provider);
     wrapper.destroy();
     expect(providersMap.named).toBeUndefined();
@@ -367,5 +368,193 @@ describe('Validation Provider Component', () => {
     }, { localVue: Vue });
 
     expect(wrapper.html()).toBe(`<div><div><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div></div>`);
+  });
+
+  test('resets validation state', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      components: {
+        TextInput: {
+          props: ['value'],
+          template: `
+            <div>
+              <input id="input" :value="value" @input="$emit('input', $event.target.value)">
+            </div>
+          `
+        }
+      },
+      template: `
+        <div>
+          <ValidationProvider rules="required" ref="provider">
+            <template slot-scope="{ errors }">
+              <TextInput v-model="value" ref="input"></TextInput>
+              <span id="error">{{ errors && errors[0] }}</span>
+            </template>
+          </ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue, attachToDocument: true, sync: false });
+
+    const error = wrapper.find('#error');
+    const input = wrapper.find('#input');
+
+    expect(error.text()).toBe('');
+
+    input.element.value = '';
+    input.trigger('input');
+    await flushPromises();
+
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+    wrapper.vm.$refs.provider.reset();
+    await flushPromises();
+    expect(error.text()).toBe('');
+  });
+});
+
+describe('Validation Observer Component', () => {
+  test('renders the tag prop', () => {
+    const wrapper = mount({
+      template: `
+        <ValidationObserver></ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    expect(wrapper.html()).toBe(`<span></span>`);
+  });
+
+  test('observes the current state of providers', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationObserver>
+          <template slot-scope="{ valid }">
+            <ValidationProvider rules="required">
+              <template slot-scope="ctx">
+                <input v-model="value" type="text">
+              </template>
+            </ValidationProvider>
+
+            <span id="state">{{ valid }}</span>
+          </template>
+        </ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    const stateSpan = wrapper.find('#state');
+    const input = wrapper.find('input');
+
+    await flushPromises();
+    expect(stateSpan.text()).toBe('false');
+
+    input.element.value = 'value';
+    input.trigger('input');
+    await flushPromises();
+
+    expect(stateSpan.text()).toBe('true');
+  });
+
+  test('triggers validation manually on its children providers', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationObserver ref="obs">
+          <template slot-scope="ctx">
+
+            <ValidationProvider rules="required">
+
+              <template slot-scope="{ errors }">
+                <input v-model="value" type="text">
+                <span id="error">{{ errors[0] }}</span>
+              </template>
+
+            </ValidationProvider>
+
+          </template>
+        </ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    const error = wrapper.find('#error');
+    await flushPromises();
+    expect(error.text()).toBe('');
+
+    await wrapper.vm.$refs.obs.validate();
+
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+  });
+
+  test('removes child ref when the child is destroyed', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationObserver ref="obs">
+          <template slot-scope="ctx">
+
+            <ValidationProvider rules="required" vid="id">
+
+              <template slot-scope="{ errors }">
+                <input v-model="value" type="text">
+                <span id="error">{{ errors[0] }}</span>
+              </template>
+
+            </ValidationProvider>
+
+          </template>
+        </ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    const obs = wrapper.vm.$refs.obs;
+    expect(obs.refs).toHaveProperty('id');
+
+    wrapper.destroy();
+
+    expect(obs.refs).not.toHaveProperty('id');
+  });
+
+  test('resets child refs', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationObserver ref="obs">
+          <template slot-scope="ctx">
+
+            <ValidationProvider rules="required">
+
+              <template slot-scope="{ errors }">
+                <input v-model="value" type="text">
+                <span id="error">{{ errors[0] }}</span>
+              </template>
+
+            </ValidationProvider>
+
+          </template>
+        </ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    const error = wrapper.find('#error');
+    await flushPromises();
+    expect(error.text()).toBe('');
+
+    await wrapper.vm.$refs.obs.validate();
+
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+    wrapper.vm.$refs.obs.reset();
+    await flushPromises();
+
+    expect(error.text()).toBe('');
   });
 });

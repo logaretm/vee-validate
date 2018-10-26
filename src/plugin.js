@@ -5,7 +5,7 @@ import { assign, getPath, warn, isCallable } from './utils';
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
 import mapFields from './core/mapFields';
-import { ValidationProvider } from './components';
+import { ValidationProvider, ValidationObserver } from './components';
 import I18nDictionary from './localization/i18n';
 import { detectPassiveSupport } from './utils/events';
 
@@ -170,5 +170,6 @@ VeeValidate.Validator = Validator;
 VeeValidate.ErrorBag = ErrorBag;
 VeeValidate.mapFields = mapFields;
 VeeValidate.ValidationProvider = ValidationProvider;
+VeeValidate.ValidationObserver = ValidationObserver;
 
 export default VeeValidate;

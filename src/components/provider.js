@@ -1,8 +1,8 @@
-import VeeValidate from './plugin';
-import RuleContainer from './core/ruleContainer';
-import { normalizeEvents, isEvent } from './utils/events';
-import { createFlags, assign, isCallable, normalizeRules, warn } from './utils';
-import { findModel, findModelNodes, findModelConfig, addListenerToVNode, addListenerToObject, getInputEventName, normalizeSlots } from './utils/vnode';
+import VeeValidate from '../plugin';
+import RuleContainer from '../core/ruleContainer';
+import { normalizeEvents, isEvent } from '../utils/events';
+import { createFlags, assign, isCallable, normalizeRules, warn } from '../utils';
+import { findModel, findModelNodes, findModelConfig, addListenerToVNode, addListenerToObject, getInputEventName, normalizeSlots } from '../utils/vnode';
 
 let $validator = null;
 
@@ -11,9 +11,7 @@ function createValidationCtx (ctx) {
     errors: ctx.messages,
     flags: ctx.flags,
     classes: ctx.classes,
-    get valid () {
-      return ctx.isValid;
-    },
+    valid: ctx.isValid,
     aria: {
       'aria-invalid': ctx.flags.invalid ? 'true' : 'false',
       'aria-required': ctx.isRequired ? 'true' : 'false'
@@ -44,6 +42,21 @@ function onRenderUpdate (model) {
   this._needsValidation = false;
 }
 
+// Creates the common listeners for a validatable context.
+function createCommonListeners (ctx) {
+  const onInput = (e) => {
+    ctx.syncValue(e); // track and keep the value updated.
+    ctx.setFlags({ dirty: true, pristine: false });
+  };
+
+  // Blur event listener.
+  const onBlur = () => {
+    ctx.setFlags({ touched: true, untouched: false });
+  };
+
+  return { onInput, onBlur };
+}
+
 // Adds all plugin listeners to the vnode.
 function addListeners (node) {
   const model = findModel(node);
@@ -52,32 +65,20 @@ function addListeners (node) {
 
   onRenderUpdate.call(this, model);
 
-  const onInput = (e) => {
-    // track and keep the value updated.
-    this.syncValue(e);
-    // set the flags.
-    this.setFlags({ dirty: true, pristine: false });
-  };
-
+  const { onInput, onBlur } = createCommonListeners(this);
   addListenerToVNode(node, this._inputEventName, onInput);
+  addListenerToVNode(node, 'blur', onBlur);
 
   // add the validation listeners.
   this.normalizedEvents.forEach(evt => {
     addListenerToVNode(node, evt, () => this.validate().then(this.applyResult));
   });
 
-  // touched, untouched flags listener.
-  const setFlagsAfterBlur = () => {
-    this.setFlags({ touched: true, untouched: false });
-  };
-
-  addListenerToVNode(node, 'blur', setFlagsAfterBlur);
-
   this.initialized = true;
 }
 
 function createValuesLookup (ctx) {
-  let providers = ctx.$parent.$_veeValidate;
+  let providers = ctx.$_veeObserver.refs;
 
   return ctx.fieldDeps.reduce((acc, depName) => {
     if (providers[depName]) {
@@ -92,30 +93,58 @@ function createValuesLookup (ctx) {
   }, {});
 }
 
-function updateRenderingContextReference (ctx) {
-  const { id, vid, $vnode } = ctx;
+function updateRenderingContextRefs (ctx) {
+  const { id, vid } = ctx;
+
   // Nothing has changed.
-  if (id === vid && $vnode.context.$_veeValidate[id]) {
+  if (id === vid && ctx.$_veeObserver.refs[id]) {
     return;
   }
 
   // vid was changed.
-  if (id !== vid && $vnode.context.$_veeValidate[id] === ctx) {
-    delete $vnode.context.$_veeValidate[id];
+  if (id !== vid && ctx.$_veeObserver.refs[id] === ctx) {
+    ctx.$_veeObserver.$unsubscribe(ctx);
   }
 
-  $vnode.context.$_veeValidate[vid] = ctx;
+  ctx.$_veeObserver.$subscribe(ctx);
   ctx.id = vid;
+}
+
+function createObserver () {
+  return {
+    refs: {},
+    $subscribe (ctx) {
+      this.refs[ctx.vid] = ctx;
+    },
+    $unsubscribe (ctx) {
+      delete this.refs[ctx.vid];
+    }
+  };
 }
 
 let id = 0;
 
 export const ValidationProvider = {
   $__veeInject: false,
+  inject: {
+    $_veeObserver: {
+      from: '$_veeObserver',
+      default () {
+        if (!this.$vnode.context.$_veeObserver) {
+          this.$vnode.context.$_veeObserver = createObserver();
+        }
+
+        return this.$vnode.context.$_veeObserver;
+      }
+    }
+  },
   props: {
     vid: {
       type: [String, Number],
-      default: id++,
+      default: () => {
+        id++;
+        return id;
+      }
     },
     name: {
       type: String,
@@ -165,6 +194,13 @@ export const ValidationProvider = {
 
       this.value = value;
     },
+    reset () {
+      this.messages = [];
+      this.initialValue = this.value;
+      const flags = createFlags();
+      flags.changed = false;
+      this.setFlags(flags);
+    },
     validate () {
       this.setFlags({ pending: true });
 
@@ -198,11 +234,7 @@ export const ValidationProvider = {
         $validator = VeeValidate.instance._validator;
       }
 
-      if (!this.$vnode.context.$_veeValidate) {
-        this.$vnode.context.$_veeValidate = {};
-      }
-
-      updateRenderingContextReference(this);
+      updateRenderingContextRefs(this);
     }
   },
   computed: {
@@ -267,7 +299,7 @@ export const ValidationProvider = {
   },
   beforeDestroy () {
     // cleanup reference.
-    delete this.$vnode.context.$_veeValidate[this.vid];
+    this.$_veeObserver.$unsubscribe(this);
   },
   // Creates an HoC with validation capablities.
   wrap (component, ctxToProps = null) {
@@ -279,7 +311,8 @@ export const ValidationProvider = {
       data: this.data,
       computed: assign({}, this.computed),
       methods: assign({}, this.methods),
-      $__veeInject: false
+      $__veeInject: false,
+      inject: this.inject
     };
 
     // Default ctx converts ctx props to component props.
@@ -298,19 +331,15 @@ export const ValidationProvider = {
       this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
       onRenderUpdate.call(this, model);
 
-      addListenerToObject(listeners, eventName, (e) => {
-        this.syncValue(e);
-        this.setFlags({ dirty: true, pristine: false });
-      });
+      const { onInput, onBlur } = createCommonListeners(this);
+
+      addListenerToObject(listeners, eventName, onInput);
+      addListenerToObject(listeners, 'blur', onBlur);
 
       this.normalizedEvents.forEach((evt, idx) => {
         addListenerToObject(listeners, evt, (e) => {
           this.validate().then(this.applyResult);
         });
-      });
-
-      addListenerToObject(listeners, 'blur', () => {
-        this.setFlags({ touched: true, untouched: false });
       });
 
       // Props are any attrs not associated with ValidationProvider Plus the model prop.

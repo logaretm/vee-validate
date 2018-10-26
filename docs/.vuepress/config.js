@@ -1,6 +1,8 @@
 const sidebars = {
   components: [
-    '/guide/components'
+    'components',
+    'components/validation-provider',
+    'components/validation-observer'
   ],
   guide: [
     '',
