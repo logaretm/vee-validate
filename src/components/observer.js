@@ -43,7 +43,7 @@ export const ValidationObserver = {
 
           return result;
         });
-      }));
+      })).then(results => results.every(r => r.valid));
     }
   },
   computed: {
