@@ -19,14 +19,14 @@ const messages = {
   email: (field) => `${field} phải là một địa chỉ email hợp lệ.`,
   ext: (field) => `${field} phải là một tệp.`,
   image: (field) => `Trường ${field} phải là một ảnh.`,
-  in: (field) => `${field} phải là một giá trị.`,
+  included: (field) => `${field} phải là một giá trị.`,
   ip: (field) => `${field} phải là một địa chỉ ip hợp lệ.`,
   max: (field, [length]) => `${field} không thể có nhiều hơn ${length} kí tự.`,
   max_value: (field, [max]) => `${field} phải nhỏ hơn hoặc bằng ${max}.`,
   mimes: (field) => `${field} phải chứa kiểu tệp phù hợp.`,
   min: (field, [length]) => `${field} phải chứa ít nhất ${length} kí tự.`,
   min_value: (field, [min]) => `${field} phải lớn hơn hoặc bằng ${min}.`,
-  not_in: (field) => `${field} phải chứa một giá trị hợp lệ.`,
+  excluded: (field) => `${field} phải chứa một giá trị hợp lệ.`,
   numeric: (field) => `${field} chỉ có thể có các kí tự số.`,
   regex: (field) => `${field} có định dạng không đúng.`,
   required: (field) => `${field} là bắt buộc.`,
@@ -41,7 +41,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

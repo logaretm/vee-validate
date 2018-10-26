@@ -16,17 +16,17 @@ const messages = {
   decimal: (field, [decimals = '*'] = []) => `${field} moet een nummer zijn en mag ${decimals === '*' ? '' : decimals} decimalen bevatten.`,
   digits: (field, [length]) => `${field} moet een nummer zijn en exact ${length} tekens bevatten.`,
   dimensions: (field, [width, height]) => `${field} moet ${width} pixels breed zijn en ${height} pixels hoog.`,
-  email: (field) => `${field} moet een geldig emailadres zijn`,
+  email: (field) => `${field} moet een geldig e-mailadres zijn.`,
   ext: (field) => `${field} moet een geldig bestand zijn.`,
   image: (field) => `${field} moet een afbeelding zijn.`,
-  in: (field) => `${field} moet een geldige waarde zijn.`,
+  included: (field) => `${field} moet een geldige waarde zijn.`,
   ip: (field) => `${field} moet een geldig IP-adres zijn.`,
   max: (field, [length]) => `${field} mag niet groter zijn dan ${length} karakters.`,
   max_value: (field, [max]) => `${field} mag maximaal ${max} zijn.`,
   mimes: (field) => `${field} moet een geldig bestandstype hebben.`,
   min: (field, [length]) => `${field} moet minimaal ${length} karakters zijn.`,
   min_value: (field, [min]) => `${field} moet minimaal ${min} zijn.`,
-  not_in: (field) => `${field} is ongeldig.`,
+  excluded: (field) => `${field} is ongeldig.`,
   numeric: (field) => `${field} mag alleen nummers bevatten`,
   regex: (field) => `${field} formaat is ongeldig.`,
   required: (field) => `${field} is verplicht.`,
@@ -41,7 +41,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

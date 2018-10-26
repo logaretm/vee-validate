@@ -1,6 +1,7 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
+  _default: (field) => 'A(z) ${field} értéke nem megfelelő.',
   after: (field, [target]) => `A(z) ${field} legalább ${target} utáni dátum kell, hogy legyen.`,
   alpha_dash: (field) => `A(z) ${field} kizárólag betűket, számokat, kötőjeleket és alulvonásokat tartalmazhat.`,
   alpha_num: (field) => `A(z) ${field} kizárólag betűket és számokat tartalmazhat.`,
@@ -18,14 +19,14 @@ const messages = {
   email: (field) => `A(z) ${field} nem érvényes email formátum.`,
   ext: (field) => `A(z) ${field} nem érvényes fájl.`,
   image: (field) => `A(z) ${field} képfálj kell, hogy legyen.`,
-  in: (field) => `A kiválaszott ${field} érvénytelen.`,
+  included: (field) => `A kiválaszott ${field} érvénytelen.`,
   ip: (field) => `A(z) ${field} érvényes IP cím kell, hogy legyen.`,
-  max: (field, [length]) => `A(z) ${field} értéke nem lehet nagyobb mint ${length}.`,
+  max: (field, [length]) => `A(z) ${field} értéke nem lehet hosszabb mint ${length}.`,
   max_value: (field, [max]) => `A(z) ${field} értéke ${max} vagy kevesebb lehet.`,
   mimes: (field) => `A(z) ${field} kizárólag érvényes fájlformátumok egyike lehet.`,
-  min: (field, [length]) => `A(z) ${field} értéke nem lehet kisebb mint ${length}.`,
+  min: (field, [length]) => `A(z) ${field} értéke nem lehet rövidebb mint ${length}.`,
   min_value: (field, [min]) => `A(z) ${field} értéke ${min} vagy több lehet.`,
-  not_in: (field) => `A(z) ${field} értéke érvénytelen.`,
+  excluded: (field) => `A(z) ${field} értéke érvénytelen.`,
   numeric: (field) => `A(z) ${field} értéke szám kell, hogy legyen.`,
   regex: (field) => `A(z) ${field} formátuma érvénytelen.`,
   required: (field) => `A(z) ${field} megadása kötelező.`,
@@ -40,7 +41,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

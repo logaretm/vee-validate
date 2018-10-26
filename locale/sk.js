@@ -18,14 +18,14 @@ const messages = {
   email: (field) => `Položka ${field} musí obsahovať správnu emailovú adresu.`,
   ext: (field) => `${field} nie je platný súbor.`,
   image: (field) => `${field} nie je obrázok.`,
-  in: (field) => `Položka ${field} má nesprávnu hodnotu.`,
+  included: (field) => `Položka ${field} má nesprávnu hodnotu.`,
   ip: (field) => `Položka ${field} nie je platná IP adresa.`,
   max: (field, [length]) => `Položka ${field} môže obsahovať najviac ${length} znakov.`,
   max_value: (field, [max]) => `Položka ${field} musí byť maximálne ${max}.`,
   mimes: (field) => `Položka ${field} obsahuje nesprávny typ súboru.`,
   min: (field, [length]) => `Položka ${field} musí obsahovať minimálne ${length} ${length < 4 ? 'znaky' : 'znakov'}.`,
   min_value: (field, [min]) => `Položka ${field} musí byť minimálne ${min}.`,
-  not_in: (field) => `Položka ${field} má nesprávnu hodnotu.`,
+  excluded: (field) => `Položka ${field} má nesprávnu hodnotu.`,
   numeric: (field) => `Položka ${field} môže obsahovať len číslice.`,
   regex: (field) => `Formát položky ${field} je nesprávny.`,
   required: (field) => `Položka ${field} je povinná.`,
@@ -40,7 +40,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

@@ -1,13 +1,22 @@
 import Field from './field';
-import { find, createError } from './utils';
+import { find, createError } from '../utils';
 
 // @flow
 
 export default class FieldBag {
   items: Array<Field>;
 
-  constructor () {
-    this.items = [];
+  constructor (items = []) {
+    this.items = items || [];
+  }
+
+  [typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'] () {
+    let index = 0;
+    return {
+      next: () => {
+        return { value: this.items[index++], done: index > this.items.length };
+      }
+    };
   }
 
   /**

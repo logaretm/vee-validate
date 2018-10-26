@@ -15,7 +15,7 @@ const messages = {
   email: (field) => `Полето ${field} трябва да е коректен Email адрес.`,
   ext: (field) => `Полето ${field} трябва да е валиден файл.`,
   image: (field) => `Полето ${field} трябва да е снимка.`,
-  in: (field) => `Полето ${field} трябва да е валидна стойност.`,
+  included: (field) => `Полето ${field} трябва да е валидна стойност.`,
   integer: (field) => `Полето ${field} трябва да е цяло число.`,
   ip: (field) => `Полето ${field} трябва да е валиден IP адрес.`,
   length: (field, [length, max]) => {
@@ -29,8 +29,8 @@ const messages = {
   max_value: (field, [max]) => `Полето ${field} трябва да бъде ${max} или по-малко.`,
   mimes: (field) => `Полето ${field} трябва да е валиден тип файл.`,
   min: (field, [length]) => `Полето ${field} трябва да съдържа минимум ${length} символа.`,
-  min_value: (field, [min]) => `Полето ${field} трябва да минимум ${min} или повече.`,
-  not_in: (field) => `Полето ${field} трябва да е с валидна стойност.`,
+  min_value: (field, [min]) => `Полето ${field} трябва да бъде минимум ${min} или повече.`,
+  excluded: (field) => `Полето ${field} трябва да е с валидна стойност.`,
   numeric: (field) => `Полето ${field} може да съдържа само цифри.`,
   regex: (field) => `Полето ${field} съдържа невалиден формат.`,
   required: (field) => `Полето ${field} е задължително.`,
@@ -46,7 +46,7 @@ const locale = {
 
 if (isDefinedGlobally()) {
   // eslint-disable-next-line
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

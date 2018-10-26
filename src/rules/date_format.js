@@ -1,5 +1,23 @@
-import { parseDate as parse } from '../core/utils/date';
+import { parseDate as parse } from '../utils/date';
 
-export default (value, [format]) => {
+const validate = (value, { format }) => {
   return !!parse(value, format);
+};
+
+const options = {
+  isDate: true
+};
+
+const paramNames = ['format'];
+
+export {
+  validate,
+  options,
+  paramNames
+};
+
+export default {
+  validate,
+  options,
+  paramNames
 };

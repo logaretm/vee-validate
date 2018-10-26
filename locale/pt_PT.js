@@ -18,14 +18,14 @@ const messages = {
   email: (field) => `O campo ${field} deve ser um email válido.`,
   ext: (field) => `O campo ${field} deve ser um ficheiro válido.`,
   image: (field) => `O campo ${field} deve ser uma imagem.`,
-  in: (field) => `O campo ${field} deve ter um valor válido.`,
+  included: (field) => `O campo ${field} deve ter um valor válido.`,
   ip: (field) => `O campo ${field} deve ser um endereço IP válido.`,
   max: (field, [length]) => `O campo ${field} não deve ter mais que ${length} caracteres.`,
   max_value: (field, [max]) => `O campo ${field} precisa ser ${max} ou menor.`,
   mimes: (field) => `O campo ${field} deve ser um tipo de ficheiro válido.`,
   min: (field, [length]) => `O campo ${field} deve conter pelo menos ${length} caracteres.`,
   min_value: (field, [min]) => `O campo ${field} precisa ser ${min} ou maior.`,
-  not_in: (field) => `O campo ${field} deve ser um valor válido.`,
+  excluded: (field) => `O campo ${field} deve ser um valor válido.`,
   numeric: (field) => `O campo ${field} deve conter apenas números`,
   regex: (field) => `O campo ${field} possui um formato inválido.`,
   required: (field) => `O campo ${field} é obrigatório.`,
@@ -40,7 +40,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

@@ -1,18 +1,39 @@
 import { isAfter, isEqual } from 'date-fns';
-import { parseDate as parse } from '../core/utils/date';
+import { parseDate as parse } from '../utils/date';
 
-export default (value, [otherValue, inclusion, format]) => {
+const afterValidator = (value, { targetValue, inclusion = false, format } = {}) => {
   if (typeof format === 'undefined') {
     format = inclusion;
     inclusion = false;
   }
+
   value = parse(value, format);
-  otherValue = parse(otherValue, format);
+  targetValue = parse(targetValue, format);
 
   // if either is not valid.
-  if (!value || !otherValue) {
+  if (!value || !targetValue) {
     return false;
   }
 
-  return isAfter(value, otherValue) || (inclusion && isEqual(value, otherValue));
+  return isAfter(value, targetValue) || (inclusion && isEqual(value, targetValue));
+};
+
+const options = {
+  hasTarget: true,
+  isDate: true
+};
+
+// required to convert from a list of array values to an object.
+const paramNames = ['targetValue', 'inclusion', 'format'];
+
+export {
+  afterValidator as validate,
+  options,
+  paramNames
+};
+
+export default {
+  validate: afterValidator,
+  options,
+  paramNames
 };

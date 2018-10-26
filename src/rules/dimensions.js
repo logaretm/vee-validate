@@ -11,7 +11,7 @@ const validateImage = (file, width, height) => {
   });
 };
 
-export default (files, [width, height]) => {
+const validate = (files, [width, height]) => {
   const list = [];
   for (let i = 0; i < files.length; i++) {
     // if file is not an image, reject.
@@ -23,4 +23,12 @@ export default (files, [width, height]) => {
   }
 
   return Promise.all(list.map(file => validateImage(file, width, height)));
+};
+
+export {
+  validate
+};
+
+export default {
+  validate
 };

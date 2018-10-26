@@ -18,12 +18,12 @@ const messages = {
   email: (field) => `${field} skal være en gyldig email.`,
   ext: (field) => `${field} skal være en gyldig filtype.`,
   image: (field) => `${field} skal være et billede.`,
-  in: (field) => `${field} skal være en gyldig værdi.`,
+  included: (field) => `${field} skal være en gyldig værdi.`,
   ip: (field) => `${field} skal være en gyldig ip-adresse.`,
   max: (field, [length]) => `${field} må maksimalt være ${length} karakterer.`,
   mimes: (field) => `${field} skal være en gyldig filtype.`,
   min: (field, [length]) => `${field} skal minimum være ${length} karakterer.`,
-  not_in: (field) => `${field} skal være en gyldig værdi.`,
+  excluded: (field) => `${field} skal være en gyldig værdi.`,
   numeric: (field) => `${field} skal være numerisk.`,
   regex: (field) => `${field} skal have et gyldigt format.`,
   required: (field) => `${field} skal udfyldes.`,
@@ -38,7 +38,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

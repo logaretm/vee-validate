@@ -19,14 +19,14 @@ const messages = {
   email: (field) => `Laukelis ${field} turi būti teisinga el. pašto adresas.`,
   ext: (field) => `${field} turi būti tinkamas failas.`,
   image: (field) => `${field} turi būti paveikslėlis.`,
-  in: (field) => `${field} reikšmė nėra leidžiama.`,
+  included: (field) => `${field} reikšmė nėra leidžiama.`,
   ip: (field) => `${field} turi būti ip adresas.`,
   max: (field, [length]) => `${field} negali būti ilgesnis nei ${length}.`,
   max_value: (field, [max]) => `${field} turi būti ${max} arba mažiau.`,
   mimes: (field) => `${field} privalo turėti tinkmą failo tipą.`,
   min: (field, [length]) => `${field} ilgis privalo būti bent ${length}.`,
   min_value: (field, [min]) => `${field} turi būti ${min} arba daugiau.`,
-  not_in: (field) => `${field} reikšmė nėra leidžiama.`,
+  excluded: (field) => `${field} reikšmė nėra leidžiama.`,
   numeric: (field) => `${field} turi būti tik skaitmenys.`,
   regex: (field) => `Laukelio ${field} formatas netinkamas.`,
   required: (field) => `Laukelis ${field} privalomas.`,
@@ -35,13 +35,13 @@ const messages = {
 };
 
 const locale = {
-  name: 'en',
+  name: 'lt',
   messages,
   attributes: {}
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

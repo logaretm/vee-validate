@@ -1,7 +1,15 @@
 {
-  "presets": ["es2015"],
+  "presets": [
+    ["@babel/preset-env", { "modules": false }]
+  ],
   "plugins": [
-    "transform-async-to-generator",
-    "transform-flow-strip-types"
-  ]
+    "@babel/plugin-transform-flow-strip-types"
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        "@babel/preset-env"
+      ]
+    }
+  }
 }

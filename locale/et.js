@@ -24,14 +24,14 @@ const messages = {
   email: (field) => `${capitalizeFirstLetter(field)} peab olema e-maili aadress.`,
   ext: (field) => `${capitalizeFirstLetter(field)} peab olema sobiv fail.`,
   image: (field) => `${capitalizeFirstLetter(field)} peab olema pilt.`,
-  in: (field) => `${capitalizeFirstLetter(field)} ei oma sobivat väärtust.`,
+  included: (field) => `${capitalizeFirstLetter(field)} ei oma sobivat väärtust.`,
   ip: (field) => `${capitalizeFirstLetter(field)} peab olema IP-aadress.`,
   max: (field, [length]) => `${capitalizeFirstLetter(field)} ei tohi olla pikem kui ${length} tähemärki.`,
   max_value: (field, [max]) => `${capitalizeFirstLetter(field)} peab olema ${max} või väisem.`,
   mimes: (field) => `${capitalizeFirstLetter(field)} peab olema sobivat tüüpi fail.`,
   min: (field, [length]) => `${capitalizeFirstLetter(field)} peab olema vähemalt ${length} tähemärki pikk.`,
   min_value: (field, [min]) => `${capitalizeFirstLetter(field)} peab olema ${min} või suurem.`,
-  not_in: (field) => `${capitalizeFirstLetter(field)} ei oma sobivat väärtust.`,
+  excluded: (field) => `${capitalizeFirstLetter(field)} ei oma sobivat väärtust.`,
   numeric: (field) => `${capitalizeFirstLetter(field)} võib sisaldada ainult numbreid.`,
   regex: (field) => `${capitalizeFirstLetter(field)} pole sobival kujul.`,
   required: (field) => `${capitalizeFirstLetter(field)} on nõutud väli.`,
@@ -46,7 +46,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

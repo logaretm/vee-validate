@@ -1,6 +1,14 @@
 import Vue = require("vue")
 
-export class Configuration {
+export interface VeeValidateComponentOptions {
+    validator?: 'new' | 'inherit';
+    name?: () => string;
+    value?: () => any;
+    rejectsFalse?: boolean;
+    events?: string;
+}
+
+export interface Configuration {
     locale?: string;
     delay?: number;
     errorBagName?: string;
@@ -16,7 +24,7 @@ export class Configuration {
     validity?: boolean;
 }
 
-export class FieldFlags {
+export interface FieldFlags {
     untouched: boolean;
     touched: boolean;
     dirty: boolean;
@@ -26,6 +34,34 @@ export class FieldFlags {
     validated: boolean;
     required: boolean;
     pending: boolean;
+}
+
+export interface FieldOptions {
+    name: string;
+    alias?: string;
+    aria?: boolean;
+    classNames?: {
+        touched: string;
+        untouched: string;
+        valid: string;
+        invalid: string;
+        pristine: string;
+        dirty: string;
+    };
+    classes?: boolean;
+    component?: any;
+    delay?: number;
+    el?: HTMLElement;
+    events?: string;
+    getter?: () => any;
+    initial?: boolean;
+    initialValue?: any;
+    listen?: boolean;
+    rules?: string | Object;
+    scope?: string | null;
+    targetOf?: string | null;
+    validity?: boolean;
+    vm?: any;
 }
 
 export class Field {
@@ -38,9 +74,10 @@ export class Field {
     el: any;
     value: any;
     rules: any;
+    update(options:object): void;
 }
 
-export class ErrorField {
+export interface ErrorField {
     field: string;
     msg: string;
     scope?: string;
@@ -59,7 +96,7 @@ export class ErrorBag {
     count(): number;
     first(field: string, scope?: string): string;
     firstByRule(name: string, rule: string, scope?: string): any;
-    firstRule(field: string, scope: string): string;
+    firstRule(field: string, scope?: string): string;
     has(field: string, scope?: string): boolean;
     remove(field: string, scope?: string): void;
     removeById(id: string): void;
@@ -68,12 +105,31 @@ export class ErrorBag {
 }
 
 export class FieldBag {
+    items: Field[];
     filter(matcher: {name?: string, scope?: string, id?: string}): Field[];
-    find(matcher: {name?: string, scope?: string, id?: string}): Field;
+    find(matcher: {name?: string, scope?: string, id?: string}): Field | undefined;
+    map(fn: Function): Field[];
 }
 
-export class FieldFlagsBag {
+export interface FieldFlagsBag {
     [field: string]: FieldFlags;
+}
+
+export interface FieldMatchOptions {
+    id?: string;
+    scope?: string;
+    name?: string;
+}
+
+export interface VerifyResult {
+    valid: boolean;
+    errors: string[];
+}
+
+export interface VerifyOptions {
+    bails: boolean;
+    name: string;
+    values: { [x: string]: any };
 }
 
 export class Validator {
@@ -90,31 +146,36 @@ export class Validator {
 
     constructor(validations: any, options: any);
     attach(name: string, checks: string|Object, options?: Object): Field;
-    reset(): void;
+    attach(options: FieldOptions): Field;
+    reset(matcher?: FieldMatchOptions): Promise<void>;
     detach(name: string, scope?: string): void;
-    extend(name: string, validator: Object|Function): void;
+    extend(name: string, validator: Object|Function, options?:ExtendOptions): void;
     flag(name: string, flags: Object): void;
     pause(): Validator;
     remove(name: string): void;
     update(id: string, diff: Object): void;
     resume(): Validator;
-    setLocale(language?: string): void;
+    localize(rootDictionary?: Object) :void;
     localize(language: string, dictionary?: Object) :void;
     setStrictMode(strictMode?: boolean): void;
-    updateDictionary(data: Object): void;
-    validate(name: string, value: any, scope?: string): Promise<any>;
-    validateAll(values?: Object, scope?: string): Promise<any>;
-    validateScopes(): Promise<any>;
+    validate(name: string, value?: any, scope?: string, silent?: boolean): Promise<any>;
+    validateAll(values?: Object, scope?: string, silent?: boolean): Promise<any>;
+    validateScopes(silent?: boolean): Promise<any>;
+    verify(value: any, rules: string|Object, options?: VerifyOptions): Promise<VerifyResult>;
     static create(validations: Object, options: any): Validator;
-    static extend(name: string, validator: Object|Function): void;
+    static extend(name: string, validator: Object|Function, options?:ExtendOptions): void;
     static remove(name: string): void;
-    static setLocale(language?: string): void;
     static setStrictMode(strictMode?: boolean): void;
-    static updateDictionary(data: any): void;
-    static addLocale(local: Object): void;
+    static localize(rootDictionary: Object): void;
     static localize(language: string, dictionary?: Object): void;
+}
+
+export class ExtendOptions  {
+  hasTarget?: boolean
 }
 
 export const version: string;
 
-export const install: Vue.PluginFunction<never>
+export const install: Vue.PluginFunction<Configuration>
+
+export const directive: Vue.DirectiveOptions;

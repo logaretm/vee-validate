@@ -19,14 +19,14 @@ const messages = {
   email: (field) => `Поље ${field} мора бити валидан имејл.`,
   ext: (field) => `Поље ${field} мора бити валидан фајл.`,
   image: (field) => `Поље ${field} мора бити слика.`,
-  in: (field) => `Поље ${field} мора бити валидна вредност.`,
+  included: (field) => `Поље ${field} мора бити валидна вредност.`,
   ip: (field) => `Поље ${field} мора бити валидна "ај пи" адреса.`,
   max: (field, [length]) => `Поље ${field} не сме бити дуже од ${length} карактера.`,
   max_value: (field, [max]) => `Поље ${field} не сме бити веће од ${max}.`,
   mimes: (field) => `Поље ${field} мора бити валидан тип фајла.`,
   min: (field, [length]) => `Поље ${field} мора садржати најмање ${length} карактера.`,
   min_value: (field, [min]) => `Поље ${field} не сме бити мање од ${min}.`,
-  not_in: (field) => `Поље ${field} мора имати валидну вредност.`,
+  excluded: (field) => `Поље ${field} мора имати валидну вредност.`,
   numeric: (field) => `Поље ${field} мора бити број.`,
   regex: (field) => `Формат поља ${field} није валидан.`,
   required: (field) => `Поље ${field} је обавезно.`,
@@ -41,7 +41,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

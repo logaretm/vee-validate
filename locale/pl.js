@@ -1,14 +1,16 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
+  _default: (field) => `Pole ${field} jest nieprawidłowe.`,
   after: (field, [target]) => `Pole ${field} musi być po polu ${target}.`,
   alpha_dash: (field) => `Pole ${field} może zawierać litery, cyfry oraz myślnik lub podkreślnik.`,
   alpha_num: (field) => `Pole ${field} może zawierać tylko litery i cyfry.`,
-  alpha_spaces: (field) => `Pole ${field} może zawierać tylko litery, cyfry oraz spacje.`,
+  alpha_spaces: (field) => `Pole ${field} może zawierać tylko litery oraz spacje.`,
   alpha: (field) => `Pole ${field} może zawierać tylko litery.`,
   before: (field, [target]) => `Pole ${field} musi być przed ${target}.`,
-  between: (field, [min, max]) => `Pole ${field} must be between ${min} and ${max}.`,
+  between: (field, [min, max]) => `Pole ${field} musi być pomiędzy ${min} oraz ${max}.`,
   confirmed: (field, [confirmedField]) => `Pole ${field} nie zgadza się z polem potwierdzającym ${confirmedField}.`,
+  credit_card: (field) => `Pole ${field} musi być poprawnym numerem karty kredytowej.`,
   date_between: (field, [min, max]) => `Pole ${field} musi zawierać się między ${min} a ${max}.`,
   date_format: (field, [format]) => `Pole ${field} musi pasować do formatu ${format}.`,
   decimal: (field, [decimals = '*'] = []) => `Pole ${field} musi być liczbą i może zawierać ${decimals === '*' ? '' : decimals} miejsca po przecinku.`,
@@ -17,12 +19,22 @@ const messages = {
   email: (field) => `Pole ${field} musi być poprawnym adresem email.`,
   ext: (field) => `Plik ${field} musi być poprawnym plikiem.`,
   image: (field) => `Pole ${field} musi być obrazem.`,
-  in: (field) => `Pole ${field} musi być poprawną wartością.`,
+  included: (field) => `Pole ${field} musi być poprawną wartością.`,
+  integer: (field) => `Pole ${field} musi być liczbą całkowitą.`,
   ip: (field) => `Pole ${field} musi być poprawnym adresem IP.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `Pole ${field} musi mieć długość od ${length} do ${max} znaków.`;
+    }
+
+    return `Pole ${field} musi mieć długość ${length} znaków.`;
+  },
   max: (field, [length]) => `Pole ${field} nie może być dłuższe niż ${length} znaków.`,
+  max_value: (field, [max]) => `Pole ${field} musi mieć maksymalną wartość ${max}.`,
   mimes: (field) => `Plik ${field} musi posiadać poprawne rozszerzenie.`,
   min: (field, [length]) => `Pole ${field} musi być długie na co najmniej ${length} znaków.`,
-  not_in: (field) => `Pole ${field} musi być poprawną wartością.`,
+  min_value: (field, [min]) => `Pole ${field} musi mieć minimalną wartość ${min}.`,
+  excluded: (field) => `Pole ${field} musi być poprawną wartością.`,
   numeric: (field) => `Pole ${field} może zawierać tylko cyfry.`,
   regex: (field) => `Format pola ${field} jest nieodpowiedni.`,
   required: (field) => `Pole ${field} jest wymagane.`,
@@ -37,7 +49,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

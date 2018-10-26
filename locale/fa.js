@@ -4,8 +4,8 @@ const localizeSize = (size) => {
   const map = {
     Byte: 'بايت',
     KB: 'كيلوبايت',
-    GB: 'جيجابايت',
-    PB: 'بيتابايت'
+    GB: 'گیگابايت',
+    PB: 'پتابايت'
   };
 
   return formatFileSize(size).replace(/(Byte|KB|GB|PB)/, m => {
@@ -14,6 +14,7 @@ const localizeSize = (size) => {
 };
 
 const messages = {
+  _default: (field) => `مقدار ${field} معتبر نیست.`,
   after: (field, [target]) => `${field} باید بعد از تاریخ ${target} باشد.`,
   alpha_dash: (field) => `${field} فقط می تواند از حروف، اعداد، خط فاصله و زیرخط تشکیل شود.`,
   alpha_num: (field) => `${field} فقط میتواند از حروف و اعداد تشکیل شود.`,
@@ -31,14 +32,14 @@ const messages = {
   email: (field) => `${field} باید یک پست الکترونیک معتبر باشد.`,
   ext: (field) => `${field} باید یک فایل معتبر باشد.`,
   image: (field) => `${field} باید یک تصویر باشد.`,
-  in: (field) => `${field} باید یک مقدار معتبر باشد.`,
+  included: (field) => `${field} باید یک مقدار معتبر باشد.`,
   ip: (field) => `${field} باید یک آدرس آی پی معتبر باشد.`,
   max: (field, [length]) => `${field} نباید بیشتر از ${length} کارکتر باشد.`,
   max_value: (field, [max]) => `مقدار ${field} باید ${max} یا کمتر باشد.`,
   mimes: (field) => `${field} باید از نوع معتبر باشد.`,
   min: (field, [length]) => `${field} باید حداقل ${length} کارکتر باشد.`,
   min_value: (field, [min]) => `مقدار ${field} باید ${min} یا بیشتر باشد.`,
-  not_in: (field) => `${field}باید یک مقدار معتبر باشد.`,
+  excluded: (field) => `${field}باید یک مقدار معتبر باشد.`,
   numeric: (field) => `${field} فقط می تواند عددی باشد.`,
   regex: (field) => `قالب ${field} قابل قبول نیست.`,
   required: (field) => `${field} الزامی است.`,
@@ -53,7 +54,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

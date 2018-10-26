@@ -17,14 +17,14 @@ const messages = {
   email: (field) => `${field}-ს უნდა ჰქონდეს ელ-ფოსტის სწორი ფორმატი.`,
   ext: (field) => `${field} უნდა იყოს ფაილი.`,
   image: (field) => `${field} უნდა იყოს სურათი.`,
-  in: (field) => `${field} უნდა იყოს სწორი მნიშვნელობა.`,
+  included: (field) => `${field} უნდა იყოს სწორი მნიშვნელობა.`,
   ip: (field) => `${field} უნდა იყოს სწორი ip მისამართი.`,
   max: (field, [length]) => `${field} არ უნდა იყოს ${length} სიმბოლოზე მეტი.`,
   max_value: (field, [max]) => `${field} უნდა შეიცავდეს ${max} სიმბოლოს ან ნაკლებს.`,
   mimes: (field) => `${field}ს უნდა ჰქონდეს სწორი ფაილის ფორმატი.`,
   min: (field, [length]) => `${field} უნდა შეიცავდეს მინიმუმ ${length} სიმბოლოს.`,
   min_value: (field, [min]) => `${field} უნდა შეიცავდეს ${min} ან მეტ სიმბოლოს.`,
-  not_in: (field) => `${field} უნდა იყოს სწორი მნიშვნელობა.`,
+  excluded: (field) => `${field} უნდა იყოს სწორი მნიშვნელობა.`,
   numeric: (field) => `${field} უნდა შეიცავდეს ციფრებს.`,
   regex: (field) => `${field}-(ი)ს ფორმატი არასწორია.`,
   required: (field) => `${field} აუცილებელია.`,
@@ -39,7 +39,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

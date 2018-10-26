@@ -19,7 +19,7 @@ const messages = {
   email: (field) => `${field} harus berupa alamat surel yang benar.`,
   ext: (field) => `${field} harus berupa berkas yang benar.`,
   image: (field) => `${field} harus berupa gambar.`,
-  in: (field) => `${field} harus berupa nilai yang sah.`,
+  included: (field) => `${field} harus berupa nilai yang sah.`,
   integer: (field) => `${field} harus berupa bilangan bulat.`,
   ip: (field) => `${field} harus berupa alamat ip yang sah.`,
   length: (field, [length, max]) => {
@@ -34,7 +34,7 @@ const messages = {
   mimes: (field) => `Tipe berkas ${field} harus benar.`,
   min: (field, [length]) => `${field} minimal mengandung ${length} karakter.`,
   min_value: (field, [size]) => `Nilai ${field} tidak boleh kurang dari ${size}.`,
-  not_in: (field) => `${field} harus berupa nilai yang sah.`,
+  excluded: (field) => `${field} harus berupa nilai yang sah.`,
   numeric: (field) => `${field} harus berupa angka.`,
   regex: (field) => `Format ${field} salah.`,
   required: (field) => `${field} harus diisi.`,
@@ -49,7 +49,7 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

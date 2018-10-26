@@ -19,7 +19,7 @@ const messages = {
   email: (field) => `${field} eremuak baliozko helbide elektroniko bat izan behar du.`,
   ext: (field) => `${field} eremuak baliozko fitxategi bat izan behar du.`,
   image: (field) => `${field} eremuak irudi bat izan behar du.`,
-  in: (field) => `${field} eremuak baliozko balio bat izan behar du.`,
+  included: (field) => `${field} eremuak baliozko balio bat izan behar du.`,
   integer: (field) => `${field} eremuak zenbaki oso bat izan behar du.`,
   ip: (field) => `${field} eremuak baliozko IP helbide bat izan behar du.`,
   length: (field, [length, max]) => {
@@ -34,17 +34,12 @@ const messages = {
   mimes: (field) => `${field} eremuak baliozko fitxategi-mota bat izan behar du.`,
   min: (field, [length]) => `${field} eremuak gutxienez ${length} karaktere izan behar ditu.`,
   min_value: (field, [min]) => `${field} eremuak ${min} edo gehiago izan behar du.`,
-  not_in: (field) => `${field} eremuak baliozko balio bat izan behar du.`,
+  excluded: (field) => `${field} eremuak baliozko balio bat izan behar du.`,
   numeric: (field) => `${field} eremuak zenbakizko karaktereak soilik izan ditzake.`,
   regex: (field) => `${field} eremuaren formatua baliogabea da.`,
   required: (field) => `${field} eremua derrigorrezkoa da.`,
   size: (field, [size]) => `${field}(e)n tamainak ${formatFileSize(size)} baino txikiagoa izan behar du.`,
   url: (field) => `${field} eremua ez da baliozko URL bat.`
-};
-
-// You can ignore this export, locale maintainer!
-export {
-  messages
 };
 
 const locale = {
@@ -55,7 +50,7 @@ const locale = {
 
 if (isDefinedGlobally()) {
   // eslint-disable-next-line
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

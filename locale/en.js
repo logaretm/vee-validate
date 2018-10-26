@@ -19,12 +19,12 @@ const messages = {
   email: (field) => `The ${field} field must be a valid email.`,
   ext: (field) => `The ${field} field must be a valid file.`,
   image: (field) => `The ${field} field must be an image.`,
-  in: (field) => `The ${field} field must be a valid value.`,
+  included: (field) => `The ${field} field must be a valid value.`,
   integer: (field) => `The ${field} field must be an integer.`,
   ip: (field) => `The ${field} field must be a valid ip address.`,
   length: (field, [length, max]) => {
     if (max) {
-      return `The ${field} length be between ${length} and ${max}.`;
+      return `The ${field} length must be between ${length} and ${max}.`;
     }
 
     return `The ${field} length must be ${length}.`;
@@ -34,17 +34,12 @@ const messages = {
   mimes: (field) => `The ${field} field must have a valid file type.`,
   min: (field, [length]) => `The ${field} field must be at least ${length} characters.`,
   min_value: (field, [min]) => `The ${field} field must be ${min} or more.`,
-  not_in: (field) => `The ${field} field must be a valid value.`,
+  excluded: (field) => `The ${field} field must be a valid value.`,
   numeric: (field) => `The ${field} field may only contain numeric characters.`,
   regex: (field) => `The ${field} field format is invalid.`,
   required: (field) => `The ${field} field is required.`,
   size: (field, [size]) => `The ${field} size must be less than ${formatFileSize(size)}.`,
   url: (field) => `The ${field} field is not a valid URL.`
-};
-
-// You can ignore this export, locale maintainer!
-export {
-  messages
 };
 
 const locale = {
@@ -55,7 +50,7 @@ const locale = {
 
 if (isDefinedGlobally()) {
   // eslint-disable-next-line
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

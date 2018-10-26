@@ -13,13 +13,13 @@ const messages = {
   credit_card: (field) => `El campo ${field} es inválido.`,
   date_between: (field, [min, max]) => `El campo ${field} debe estar entre ${min} y ${max}.`,
   date_format: (field, [format]) => `El campo ${field} debe tener formato formato ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `El campo ${field} debe ser númerico y contener ${decimals === '*' ? '' : decimals} puntos decimales.`,
-  digits: (field, [length]) => `El campo ${field} debe ser númerico y contener exactamente ${length} dígitos.`,
-  dimensions: (field, [width, height]) => `El campo ${field} debe ser de ${width} pixeles por ${height} pixeles.`,
+  decimal: (field, [decimals = '*'] = []) => `El campo ${field} debe ser numérico y contener ${decimals === '*' ? '' : decimals} puntos decimales.`,
+  digits: (field, [length]) => `El campo ${field} debe ser numérico y contener exactamente ${length} dígitos.`,
+  dimensions: (field, [width, height]) => `El campo ${field} debe ser de ${width} píxeles por ${height} píxeles.`,
   email: (field) => `El campo ${field} debe ser un correo electrónico válido.`,
   ext: (field) => `El campo ${field} debe ser un archivo válido.`,
   image: (field) => `El campo ${field} debe ser una imagen.`,
-  in: (field) => `El campo ${field} debe ser un valor válido.`,
+  included: (field) => `El campo ${field} debe ser un valor válido.`,
   integer: (field) => `El campo ${field} debe ser un entero.`,
   ip: (field) => `El campo ${field} debe ser una dirección ip válida.`,
   length: (field, [length, max]) => {
@@ -34,8 +34,8 @@ const messages = {
   mimes: (field) => `El campo ${field} debe ser un tipo de archivo válido.`,
   min: (field, [length]) => `El campo ${field} debe tener al menos ${length} caracteres.`,
   min_value: (field, [min]) => `El campo ${field} debe ser ${min} o superior.`,
-  not_in: (field) => `El campo ${field} debe ser un valor válido.`,
-  numeric: (field) => `El campo ${field} debe contener solo caracteres númericos.`,
+  excluded: (field) => `El campo ${field} debe ser un valor válido.`,
+  numeric: (field) => `El campo ${field} debe contener solo caracteres numéricos.`,
   regex: (field) => `El formato del campo ${field} no es válido.`,
   required: (field) => `El campo ${field} es obligatorio.`,
   size: (field, [size]) => `El campo ${field} debe ser menor a ${formatFileSize(size)}.`,
@@ -50,7 +50,7 @@ const locale = {
 
 if (isDefinedGlobally()) {
   // eslint-disable-next-line
-  VeeValidate.Validator.addLocale(locale);
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

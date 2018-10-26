@@ -1,10 +1,10 @@
-const validate = (value, [decimals = '*', separator = '.'] = []) => {
+const validate = (value, { decimals = '*', separator = '.' } = {}) => {
   if (Array.isArray(value)) {
-    return value.every(val => validate(val, [decimals, separator]));
+    return value.every(val => validate(val, { decimals, separator }));
   }
 
   if (value === null || value === undefined || value === '') {
-    return true;
+    return false;
   }
 
   // if is 0.
@@ -13,7 +13,7 @@ const validate = (value, [decimals = '*', separator = '.'] = []) => {
   }
 
   const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
-  const regex = new RegExp(`^-?\\d*(\\${separator}\\d${regexPart})?$`);
+  const regex = new RegExp(`^[-+]?\\d*(\\${separator}\\d${regexPart})?$`);
 
   if (! regex.test(value)) {
     return false;
@@ -25,4 +25,14 @@ const validate = (value, [decimals = '*', separator = '.'] = []) => {
     return parsedValue === parsedValue;
 };
 
-export default validate;
+const paramNames = ['decimals', 'separator'];
+
+export {
+  validate,
+  paramNames
+};
+
+export default {
+  validate,
+  paramNames
+};

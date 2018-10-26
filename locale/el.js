@@ -1,6 +1,7 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
+  _default: (field) => `${field} πρέπει να είναι έγκυρη τιμή.`,
   after: (field, [target]) => `${field} πρέπει να είναι μετά ${target}.`,
   alpha_dash: (field) => `${field} μπορεί να περιέχει αλφαριθμητικούς χαρακτήρες, παύλες και κάτω παύλες.`,
   alpha_num: (field) => `${field} πρέπει να περιέχει μόνο αλφαριθμητικούς χαρακτήρες.`,
@@ -18,14 +19,22 @@ const messages = {
   email: (field) => `${field} πρέπει να είναι έγκυρο email.`,
   ext: (field) => `${field} πρέπει να είναι έγκυρο αρχείο.`,
   image: (field) => `${field} πρέπει να είναι εικόνα.`,
-  in: (field) => `${field} πρέπει να είναι έγκυρη τιμή.`,
+  included: (field) => `${field} πρέπει να είναι έγκυρη τιμή.`,
+  integer: (field) => `${field} πρέπει να είναι ακέραιος αριθμός.`,
   ip: (field) => `${field} πρέπει να είναι έγκυρη διεύθυνση IP.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `${field} πρέπει να είναι μεταξύ ${length} και ${max} χαρακτήρες.`;
+    }
+
+    return `${field} πρέπει να είναι ${length} χαρακτήρες.`;
+  },
   max: (field, [length]) => `${field} δεν πρέπει να υπερβαίνει τους ${length} χαρακτήρες.`,
   max_value: (field, [max]) => `${field} πρέπει να είναι ${max} ή λιγότερο.`,
   mimes: (field) => `${field} πρέπει να είναι έγκυρο αρχείο ΜΙΜΕ.`,
   min: (field, [length]) => `${field} πρέπει να είναι τουλάχιστον ${length} χαρακτήρες.`,
   min_value: (field, [min]) => `${field} πρέπει να είναι ${min} ή περισσότερο.`,
-  not_in: (field) => `${field} πρέπει να είναι έγκυρη τιμή.`,
+  excluded: (field) => `${field} πρέπει να είναι έγκυρη τιμή.`,
   numeric: (field) => `${field} πρέπει να περιέχει μόνο αριθμούς.`,
   regex: (field) => `${field} δεν είναι έγκυρο.`,
   required: (field) => `${field} δεν έχει συμπληρωθεί.`,
@@ -40,7 +49,8 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  // eslint-disable-next-line
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;

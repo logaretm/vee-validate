@@ -1,9 +1,9 @@
-import { toArray } from '../core/utils';
+import { toArray } from '../utils';
 
 /**
- * @param {Array|String} value 
+ * @param {Array|String} value
  * @param {Number} length
- * @param {Number} max 
+ * @param {Number} max
  */
 const compare = (value, length, max) => {
   if (max === undefined) {
@@ -16,7 +16,7 @@ const compare = (value, length, max) => {
   return value.length >= length && value.length <= max;
 };
 
-export default (value, [length, max = undefined]) => {
+const validate = (value, [length, max = undefined]) => {
   length = Number(length);
   if (value === undefined || value === null) {
     return false;
@@ -31,4 +31,12 @@ export default (value, [length, max = undefined]) => {
   }
 
   return compare(value, length, max);
+};
+
+export {
+  validate
+};
+
+export default {
+  validate
 };

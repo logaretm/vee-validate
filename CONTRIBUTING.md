@@ -25,16 +25,31 @@ Check the `scripts` section of `package.json` for any npm scripts that might fin
 ### Folder Structure
 
 As you can see we have:
+
 - `src` contains the working code for the repository:
-    - `plugins`: contains any sort of add-on behavior and rules, that may or not may be available at all times.
-    - `rules`: contains validation rules that are available to the validator instances.
-    - `utils`: contains small utility functions.
+  - `plugins`: contains any sort of add-on behavior and rules, that may or not may be available at all times.
+  - `rules`: contains validation rules that are available to the validator instances.
+  - `utils`: contains small utility functions.
 - `dist` contains the unminified and the minified build of the repository.
-- `docs` contains the src and built files for the documentation.
+- `docs` contains the src and built files for the documentation, we use [vuepress](https://vuepress.vuejs.org/) to generate the docs content.
 - `locale` contains the localized messages files.
 - `tests` contains the test files for the project, it uses [jest](https://github.com/facebook/jest) for testing. it contains a similar folder structure as the `src` folder.
 
+### Contributing To The Docs
+
 If you want to contribute to the docs you can find it in the `docs` folder.
+
+Our docs require `./dist/vee-validate.esm` as dependency to run successfully in your local machine. You can generate this dependency by executing the following command from the root of the repository:
+
+```
+npm run build:esm
+```
+
+And then you can run vuepress by typing:
+
+```
+npm run docs:dev
+```
 
 ### Pull Requests
 
@@ -76,5 +91,5 @@ To make sure your issues are addressed as fast as possible, follow the issue tem
 
 - A clear details of what is happening and your comments on them.
 
-- An example that demonstrates the issue clearly, you should make sure that it has no other issues except the one you are reporting. 
+- An example that demonstrates the issue clearly, you should make sure that it has no other issues except the one you are reporting.
 

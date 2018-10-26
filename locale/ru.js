@@ -1,14 +1,16 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
-  after: (field, [target]) => `В поле ${field} должна быть дата после ${target}.`,
+  _default: (field) => `Значение поля ${field} недопустимо.`,
+  after: (field, [target, inclusion]) => `В поле ${field} должна быть дата после ${inclusion ? 'или равная ' : ''}${target}.`,
   alpha_dash: (field) => `Поле ${field} может содержать только буквы, цифры и дефис.`,
   alpha_num: (field) => `Поле ${field} может содержать только буквы и цифры.`,
   alpha_spaces: (field) => `Поле ${field} может содержать только буквы и пробелы.`,
   alpha: (field) => `Поле ${field} может содержать только буквы.`,
-  before: (field, [target]) => `В поле ${field} должна быть дата до ${target}.`,
+  before: (field, [target, inclusion]) => `В поле ${field} должна быть дата до ${inclusion ? 'или равная ' : ''}${target}.`,
   between: (field, [min, max]) => `Поле ${field} должно быть между ${min} и ${max}.`,
   confirmed: (field, [confirmedField]) => `Поле ${field} не совпадает с ${confirmedField}.`,
+  credit_card: (field) => `Поле ${field} должно быть действительным номером карты`,
   date_between: (field, [min, max]) => `Поле ${field} должно быть между ${min} и ${max}.`,
   date_format: (field, [format]) => `Поле ${field} должно быть в формате ${format}.`,
   decimal: (field, [decimals = '*'] = []) => `Поле ${field} должно быть числовым и может содержать ${decimals === '*' ? '' : decimals} десятичных числа.`,
@@ -17,14 +19,22 @@ const messages = {
   email: (field) => `Поле ${field} должно быть действительным электронным адресом.`,
   ext: (field, [...args]) => `Поле ${field} должно быть действительным файлом. (${args})`,
   image: (field) => `Поле ${field} должно быть изображением.`,
-  in: (field) => `Поле ${field} должно быть допустимым значением.`,
+  included: (field) => `Поле ${field} должно быть допустимым значением.`,
+  integer: (field) => `Поле ${field} должно быть целым числом.`,
   ip: (field) => `Поле ${field} должно быть действительным IP-адресом.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `Длина поля ${field} должна быть между ${length} и ${max}.`;
+    }
+
+    return `Длина поля ${field} должна быть ${length}.`;
+  },
   max: (field, [length]) => `Поле ${field} не может быть более ${length} символов.`,
   max_value: (field, [max]) => `Поле ${field} должно быть ${max} или менее.`,
-  mimes: (field, [...args]) => `Поле ${field} должно иметь действительный тип файла. (${args})`,
+  mimes: (field, [...args]) => `Поле ${field} должно иметь допустимый тип файла. (${args})`,
   min: (field, [length]) => `Поле ${field} должно быть не менее ${length} символов.`,
   min_value: (field, [min]) => `Поле ${field} должно быть ${min} или больше.`,
-  not_in: (field) => `Поле ${field} должно быть допустимым значением.`,
+  excluded: (field) => `Поле ${field} должно быть допустимым значением.`,
   numeric: (field) => `Поле ${field} должно быть числом.`,
   regex: (field) => `Поле ${field} имеет ошибочный формат.`,
   required: (field) => `Поле ${field} обязательно для заполнения.`,
@@ -39,7 +49,8 @@ const locale = {
 };
 
 if (isDefinedGlobally()) {
-  VeeValidate.Validator.addLocale(locale);
+  // eslint-disable-next-line
+  VeeValidate.Validator.localize({ [locale.name]: locale });
 }
 
 export default locale;
