@@ -77,7 +77,7 @@ function addListeners (node) {
 }
 
 function createValuesLookup (ctx) {
-  let providers = ctx.$parent.$_veeObserver.refs;
+  let providers = ctx.$_veeObserver.refs;
 
   return ctx.fieldDeps.reduce((acc, depName) => {
     if (providers[depName]) {
