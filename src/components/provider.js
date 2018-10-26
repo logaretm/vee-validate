@@ -11,9 +11,7 @@ function createValidationCtx (ctx) {
     errors: ctx.messages,
     flags: ctx.flags,
     classes: ctx.classes,
-    get valid () {
-      return ctx.isValid;
-    },
+    valid: ctx.isValid,
     aria: {
       'aria-invalid': ctx.flags.invalid ? 'true' : 'false',
       'aria-required': ctx.isRequired ? 'true' : 'false'
