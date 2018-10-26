@@ -67,6 +67,10 @@ export default {
 </script>
 ```
 
+::: tip
+  Using the same approach you can reset validation state for all providers using the public method `reset()`.
+:::
+
 ### Scopes And Groups
 
 The Validation Components API does not implement scopes and won't be, you can use the __ValidationObserver__ to group your fields without the complexties of the scopes API by using multiple observers and refs.
@@ -119,6 +123,7 @@ Those are the only methods meant for public usage, other methods that may exist 
 |Method       | Args    | Return Value                  | Description                                                     |
 |-------------|:-------:|:-----------------------------:|-----------------------------------------------------------------|
 | validate    | `void`  | `Promise<boolean>`            | Validates all the child providers and also mutates their state. |
+| reset       | `void`  | `void`                        | Resets validation state for all child providers.                |
 
 ### Events
 

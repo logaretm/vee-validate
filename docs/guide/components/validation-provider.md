@@ -101,6 +101,10 @@ export default {
 </script>
 ```
 
+::: tip
+  Using the same approach you can reset validation state for the provider using the public method `reset()`.
+:::
+
 ### Confirmed/Target based Validation
 
 When using the directive, the `confirmed` rule targets the other field that has a match ref. Using the ValidationProvider is slightly diffrent as it looks for provider components that has a matching `vid` prop which can be either a number or a string.
@@ -228,6 +232,7 @@ Those are the only methods meant for public usage, other methods that may exist 
 |-------------|:-------:|:---------------------------:|-------------------------------------------------------------------------------------------------------------|
 | validate    | `void`  | `Promise<ValidationResult>` | Runs a validation of the current value against the rules defined. __does not mutate the validation state.__ |
 | applyResult | `ValidationResult` | `void`           | Takes a __validation result__ object and applies it on the current state.                                   |
+| reset       | `void`  | `void`                      | Resets validation state.                                                                                    |
 
 ### Events
 
