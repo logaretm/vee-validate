@@ -44,6 +44,21 @@ function onRenderUpdate (model) {
   this._needsValidation = false;
 }
 
+// Creates the common listeners for a validatable context.
+function createCommonListeners (ctx) {
+  const onInput = (e) => {
+    ctx.syncValue(e); // track and keep the value updated.
+    ctx.setFlags({ dirty: true, pristine: false });
+  };
+
+  // Blur event listener.
+  const onBlur = () => {
+    ctx.setFlags({ touched: true, untouched: false });
+  };
+
+  return { onInput, onBlur };
+}
+
 // Adds all plugin listeners to the vnode.
 function addListeners (node) {
   const model = findModel(node);
@@ -52,26 +67,14 @@ function addListeners (node) {
 
   onRenderUpdate.call(this, model);
 
-  const onInput = (e) => {
-    // track and keep the value updated.
-    this.syncValue(e);
-    // set the flags.
-    this.setFlags({ dirty: true, pristine: false });
-  };
-
+  const { onInput, onBlur } = createCommonListeners(this);
   addListenerToVNode(node, this._inputEventName, onInput);
+  addListenerToVNode(node, 'blur', onBlur);
 
   // add the validation listeners.
   this.normalizedEvents.forEach(evt => {
     addListenerToVNode(node, evt, () => this.validate().then(this.applyResult));
   });
-
-  // touched, untouched flags listener.
-  const setFlagsAfterBlur = () => {
-    this.setFlags({ touched: true, untouched: false });
-  };
-
-  addListenerToVNode(node, 'blur', setFlagsAfterBlur);
 
   this.initialized = true;
 }
@@ -323,19 +326,15 @@ export const ValidationProvider = {
       this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
       onRenderUpdate.call(this, model);
 
-      addListenerToObject(listeners, eventName, (e) => {
-        this.syncValue(e);
-        this.setFlags({ dirty: true, pristine: false });
-      });
+      const { onInput, onBlur } = createCommonListeners(this);
+
+      addListenerToObject(listeners, eventName, onInput);
+      addListenerToObject(listeners, 'blur', onBlur);
 
       this.normalizedEvents.forEach((evt, idx) => {
         addListenerToObject(listeners, evt, (e) => {
           this.validate().then(this.applyResult);
         });
-      });
-
-      addListenerToObject(listeners, 'blur', () => {
-        this.setFlags({ touched: true, untouched: false });
       });
 
       // Props are any attrs not associated with ValidationProvider Plus the model prop.
