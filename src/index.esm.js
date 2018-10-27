@@ -11,17 +11,14 @@ import { ValidationProvider, ValidationObserver } from './components';
 
 const version = '__VERSION__';
 
-const rulesPlugin = ({ Validator }) => {
-  Object.keys(Rules).forEach(rule => {
-    Validator.extend(rule, Rules[rule].validate, assign({}, Rules[rule].options, { paramNames: Rules[rule].paramNames }));
-  });
+Object.keys(Rules).forEach(rule => {
+  Validator.extend(rule, Rules[rule].validate, assign({}, Rules[rule].options, { paramNames: Rules[rule].paramNames }));
+});
 
-  // Merge the english messages.
-  Validator.localize('en', en);
-};
+// Merge the english messages.
+Validator.localize({ en });
 
 const install = VeeValidate.install;
-VeeValidate.use(rulesPlugin);
 
 export {
   install,

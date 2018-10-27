@@ -4,16 +4,16 @@ import { assign } from './utils';
 import en from '../locale/en';
 
 // rules plugin definition.
-const rulesPlugin = ({ Validator }) => {
-  Object.keys(Rules).forEach(rule => {
-    Validator.extend(rule, Rules[rule].validate, assign({}, Rules[rule].options, { paramNames: Rules[rule].paramNames }));
-  });
 
-  // Merge the english messages.
-  Validator.localize('en', en);
-};
+Object.keys(Rules).forEach(rule => {
+  VeeValidate.Validator.extend(rule, Rules[rule].validate, assign({}, Rules[rule].options, { paramNames: Rules[rule].paramNames }));
+});
 
-VeeValidate.use(rulesPlugin);
+// Merge the english messages.
+VeeValidate.Validator.localize({
+  en
+});
+
 VeeValidate.Rules = Rules;
 
 export default VeeValidate;
