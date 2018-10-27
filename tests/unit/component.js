@@ -318,7 +318,7 @@ describe('Validation Provider Component', () => {
   });
 
   test('creates HOCs from other components', async () => {
-    const WithValidation = VeeValidate.ValidationProvider.wrap(InputWithoutValidation);
+    const InputWithValidation = VeeValidate.withValidation(InputWithoutValidation);
 
     const wrapper = mount({
       template: `
@@ -328,7 +328,7 @@ describe('Validation Provider Component', () => {
       `,
       data: () => ({ value: '' }),
       components: {
-        InputWithValidation: WithValidation
+        InputWithValidation
       }
     }, { localVue: Vue });
 
@@ -351,7 +351,7 @@ describe('Validation Provider Component', () => {
   });
 
   test('renders slots', async () => {
-    const WithValidation = VeeValidate.ValidationProvider.wrap(SelectWithoutValidation);
+    const WithValidation = VeeValidate.withValidation(SelectWithoutValidation);
     const wrapper = mount({
       data: () => ({ value: '' }),
       template: `

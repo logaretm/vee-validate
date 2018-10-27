@@ -1,12 +1,12 @@
 import VeeValidate from '../plugin';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
-import { createFlags, assign, isCallable, normalizeRules, warn } from '../utils';
-import { findModel, findModelNodes, findModelConfig, addListenerToVNode, addListenerToObject, getInputEventName, normalizeSlots } from '../utils/vnode';
+import { createFlags, normalizeRules, warn } from '../utils';
+import { findModel, findModelNodes, addListenerToVNode, getInputEventName } from '../utils/vnode';
 
 let $validator = null;
 
-function createValidationCtx (ctx) {
+export function createValidationCtx (ctx) {
   return {
     errors: ctx.messages,
     flags: ctx.flags,
@@ -19,7 +19,7 @@ function createValidationCtx (ctx) {
   };
 }
 
-function onRenderUpdate (model) {
+export function onRenderUpdate (model) {
   let validateNow = this.value !== model.value || this._needsValidation;
   let shouldRevalidate = this.flags.validated;
   if (!this.initialized) {
@@ -43,7 +43,7 @@ function onRenderUpdate (model) {
 }
 
 // Creates the common listeners for a validatable context.
-function createCommonListeners (ctx) {
+export function createCommonListeners (ctx) {
   const onInput = (e) => {
     ctx.syncValue(e); // track and keep the value updated.
     ctx.setFlags({ dirty: true, pristine: false });
@@ -300,60 +300,5 @@ export const ValidationProvider = {
   beforeDestroy () {
     // cleanup reference.
     this.$_veeObserver.$unsubscribe(this);
-  },
-  // Creates an HoC with validation capablities.
-  wrap (component, ctxToProps = null) {
-    const options = isCallable(component) ? component.options : component;
-    options.$__veeInject = false;
-    const hoc = {
-      name: `${options.name || 'AnonymousHoc'}WithValidation`,
-      props: assign({}, this.props),
-      data: this.data,
-      computed: assign({}, this.computed),
-      methods: assign({}, this.methods),
-      $__veeInject: false,
-      inject: this.inject
-    };
-
-    // Default ctx converts ctx props to component props.
-    if (!ctxToProps) {
-      ctxToProps = ctx => ctx;
-    }
-
-    const eventName = (options.model && options.model.event) || 'input';
-
-    hoc.render = function (h) {
-      this.registerField();
-      const vctx = createValidationCtx(this);
-      const listeners = assign({}, this.$listeners);
-
-      const model = findModel(this.$vnode);
-      this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
-      onRenderUpdate.call(this, model);
-
-      const { onInput, onBlur } = createCommonListeners(this);
-
-      addListenerToObject(listeners, eventName, onInput);
-      addListenerToObject(listeners, 'blur', onBlur);
-
-      this.normalizedEvents.forEach((evt, idx) => {
-        addListenerToObject(listeners, evt, (e) => {
-          this.validate().then(this.applyResult);
-        });
-      });
-
-      // Props are any attrs not associated with ValidationProvider Plus the model prop.
-      // WARNING: Accidental prop overwrite will probably happen.
-      const { prop } = findModelConfig(this.$vnode) || { prop: 'value' };
-      const props = assign({}, this.$attrs, { [prop]: model.value }, ctxToProps(vctx));
-
-      return h(options, {
-        attrs: this.$attrs,
-        props,
-        on: listeners
-      }, normalizeSlots(this.$slots, this.$vnode.context));
-    };
-
-    return hoc;
   }
 };
