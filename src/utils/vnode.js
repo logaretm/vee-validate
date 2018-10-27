@@ -20,18 +20,19 @@ export function findModelNodes (vnode) {
     return [vnode];
   }
 
-  if (Array.isArray(vnode.children)) {
-    return vnode.children.reduce((nodes, node) => {
-      const candidates = [...findModelNodes(node)];
-      if (candidates.length) {
-        nodes.push(...candidates);
-      }
-
-      return nodes;
-    }, []);
+  const children = Array.isArray(vnode) ? vnode : vnode.children;
+  if (!Array.isArray(children)) {
+    return [];
   }
 
-  return [];
+  return children.reduce((nodes, node) => {
+    const candidates = findModelNodes(node);
+    if (candidates.length) {
+      nodes.push(...candidates);
+    }
+
+    return nodes;
+  }, []);
 }
 
 // Resolves v-model config if exists.
