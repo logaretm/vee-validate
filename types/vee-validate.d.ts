@@ -158,7 +158,7 @@ export class Validator {
     localize(rootDictionary?: Object) :void;
     localize(language: string, dictionary?: Object) :void;
     setStrictMode(strictMode?: boolean): void;
-    validate(name: string, value?: any, scope?: string, silent?: boolean): Promise<any>;
+    validate(name?: string, value?: any, scope?: string, silent?: boolean): Promise<any>;
     validateAll(values?: Object, scope?: string, silent?: boolean): Promise<any>;
     validateScopes(silent?: boolean): Promise<any>;
     verify(value: any, rules: string|Object, options?: VerifyOptions): Promise<VerifyResult>;
