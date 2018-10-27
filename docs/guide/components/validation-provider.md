@@ -55,7 +55,7 @@ The previous quick sample validates simple HTML inputs, lets take this up a notc
 
 ### Basic Example
 
-This example wraps and passes error messages down to Vuetify's text field component.
+This passes error messages down to Vuetify's text field component.
 
 ```vue
 <ValidationProvider rules="required">
@@ -127,17 +127,17 @@ When using the directive, the `confirmed` rule targets the other field that has 
 
 The ValidationProvider while have its advantages, it is more verbose than using the directive, and can be very annoying when creating large forms, there are a couple of ways to address this issue.
 
-### Creating High Order Components
+### Creating Higher-Order Components
 
-A common pattern in React is to use higher order components to produce new components with slightly different behavior, It is similair to creating a wrapper or a mixin for our component except it uses props/events to communicate state.
+A common pattern in React is to use higher-order components to produce new components with slightly different behavior, It is similair to creating a wrapper or a mixin for our component except it uses props/events to communicate state.
 
-The ValidationProvider provides a `wrap` method which takes in a component and outputs another with the validation behavior enabled. Lets create a `VTextFieldWithValidation` using this method:
+The `withValidation` method takes in a component and creates a new one with the validation behavior enabled. Lets create a `VTextFieldWithValidation` using this method:
 
 ```js
-import { ValidationProvider } from 'vee-validate';
+import { withValidation } from 'vee-validate';
 import { VTextField } from 'vuetify/lib';
 
-const VTextFieldWithValidation = ValidationProvider.wrap(VTextField, ({ errors }) => ({
+const VTextFieldWithValidation = withValidation(VTextField, ({ errors }) => ({
   'error-messages': errors
 }));
 
