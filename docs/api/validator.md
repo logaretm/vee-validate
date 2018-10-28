@@ -95,6 +95,29 @@ console.log(errors); // ["The {field} field may not be greater than 3 characters
   Note that the messages returned will have {field} as the field name so you can replace it easily if you need to.
 :::
 
-::: danger
-  Note that [Target Dependant Rules](/guide/custom-rules.md#target-dependant-rules) won't work as they require a target field being tracked which cannot be done without using the `v-validate` directive.
-:::
+#### Verify Options
+
+Verify accepts a third parameter that is used to configure the validation and messages.
+
+```js
+v.verify(value, rules, opts);
+```
+
+|Prop     |Type       | Default Value | Description                                                                  |
+|:--------|:---------:|:-------------:|:-----------------------------------------------------------------------------|
+|name     | `string`  | `{field}`     | A string representing the field name used in error messages.                 |
+|bails    | `boolean` |  `true`       | If true, stops validation on the first failing rule.                         |
+|values   | `object`  |    `{}`       | An object mapping the values of other fields required for cross-field rules. |
+
+#### Cross-Field Rules
+
+Target dependant rules can be also used, you would need to pass the `values` object in the third parameter containing the other values keyed by target name.
+
+```js
+v.verify('pass', 'confirmed:conf', {
+  values: {
+    // target fields.
+    conf: 'p@$$'
+  }
+});
+```
