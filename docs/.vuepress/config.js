@@ -45,7 +45,8 @@ const sidebars = {
     'scopes',
     'selecting-errors',
     'custom-component',
-    'locale'
+    'locale',
+    'validation-providers'
   ]
 };
 

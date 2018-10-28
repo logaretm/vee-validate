@@ -123,6 +123,8 @@ When using the directive, the `confirmed` rule targets the other field that has 
 </ValidationProvider>
 ```
 
+[You can see providers in action here](/examples/validation-providers.md)
+
 ## Refactoring Validation Providers
 
 The ValidationProvider while have its advantages, it is more verbose than using the directive, and can be very annoying when creating large forms, there are a couple of ways to address this issue.
