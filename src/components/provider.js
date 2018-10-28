@@ -1,8 +1,8 @@
 import VeeValidate from '../plugin';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
-import { createFlags, normalizeRules, warn } from '../utils';
-import { findModel, findModelNodes, addListenerToVNode, getInputEventName } from '../utils/vnode';
+import { createFlags, normalizeRules, warn, isCallable } from '../utils';
+import { findModel, findModelNodes, addListenerToVNode, getInputEventName, normalizeSlots } from '../utils/vnode';
 
 let $validator = null;
 
@@ -278,20 +278,19 @@ export const ValidationProvider = {
     this.registerField();
     const ctx = createValidationCtx(this);
 
-    // Graceful handle no scoped slots.
-    if (!this.$scopedSlots.default) {
+    // Gracefully handle non-existent scoped slots.
+    let slots = this.$scopedSlots.default;
+    if (!isCallable(slots)) {
       if (process.env.NODE_ENV !== 'production') {
-        warn('ValidationProvider needs a scoped slot to work properly.');
+        warn('Did you forget to add a scoped slot to the ValidationProvider?');
       }
 
-      return h(this.tag);
+      slots = () => normalizeSlots(this.$slots, this.$vnode.context);
     }
 
-    const nodes = this.$scopedSlots.default(ctx);
+    const nodes = slots(ctx);
     // Handle multi-root slot.
-    const inputs = findModelNodes(Array.isArray(nodes) ? { children: nodes } : nodes);
-    // Add the listener on the vnode
-    inputs.forEach(input => {
+    findModelNodes(Array.isArray(nodes) ? { children: nodes } : nodes).forEach(input => {
       addListeners.call(this, input);
     });
 
