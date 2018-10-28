@@ -295,7 +295,9 @@ export const ValidationProvider = {
       addListeners.call(this, input);
     });
 
-    return h(this.tag, nodes);
+    return h(this.tag, {
+      attrs: this.$attrs
+    }, nodes);
   },
   beforeDestroy () {
     // cleanup reference.

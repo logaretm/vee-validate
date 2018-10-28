@@ -67,6 +67,9 @@ export const ValidationObserver = {
       slots = () => normalizeSlots(this.$slots, this.$vnode.context);
     }
 
-    return h(this.tag, slots(this.ctx));
+    return h(this.tag, {
+      attrs: this.$attrs,
+      on: this.$listeners
+    }, slots(this.ctx));
   }
 };

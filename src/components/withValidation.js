@@ -12,6 +12,7 @@ export function withValidation (component, ctxToProps = null) {
     computed: assign({}, ValidationProvider.computed),
     methods: assign({}, ValidationProvider.methods),
     $__veeInject: false,
+    beforeDestroy: ValidationProvider.beforeDestroy,
     inject: ValidationProvider.inject
   };
 
