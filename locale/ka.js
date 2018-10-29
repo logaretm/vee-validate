@@ -2,10 +2,10 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   after: (field, [target]) => `${field} უნდა იყოს ${target}(ი)ს შემდეგ.`,
+  alpha: (field) => `${field} უნდა შეიცავდეს მხოლოდ ასოებს.`,
   alpha_dash: (field) => `${field} უნდა შესაძლებელია შეიცავდეს ციფრებს, ასოებს და პუნქტუაციის ნიშნებს.`,
   alpha_num: (field) => `${field} უნდა შეიცავდეს მხოლოდ ციფრებს.`,
   alpha_spaces: (field) => `${field} უნდა შეიცავდეს მხოლოდ ასოებსა და ცარიელ სივრცეებს.`,
-  alpha: (field) => `${field} უნდა შეიცავდეს მხოლოდ ასოებს.`,
   before: (field, [target]) => `${field} უნდა იყოს ${target}მდე.`,
   between: (field, [min, max]) => `${field} უნდა იყოს ${min} და ${max}ს შორის.`,
   confirmed: (field, [confirmedField]) => `${field} არ ემთხვევა ${confirmedField}(ი)ს.`,
@@ -15,6 +15,7 @@ const messages = {
   digits: (field, [length]) => `${field} უნდა შეიცავდეს ციფრებს და უნდა იყოს ზუსტად ${length}-ნიშნა.`,
   dimensions: (field, [width, height]) => `${field} უნდა იყოს ${width}x${height} ზომის (pixel).`,
   email: (field) => `${field}-ს უნდა ჰქონდეს ელ-ფოსტის სწორი ფორმატი.`,
+  excluded: (field) => `${field} უნდა იყოს სწორი მნიშვნელობა.`,
   ext: (field) => `${field} უნდა იყოს ფაილი.`,
   image: (field) => `${field} უნდა იყოს სურათი.`,
   included: (field) => `${field} უნდა იყოს სწორი მნიშვნელობა.`,
@@ -24,7 +25,6 @@ const messages = {
   mimes: (field) => `${field}ს უნდა ჰქონდეს სწორი ფაილის ფორმატი.`,
   min: (field, [length]) => `${field} უნდა შეიცავდეს მინიმუმ ${length} სიმბოლოს.`,
   min_value: (field, [min]) => `${field} უნდა შეიცავდეს ${min} ან მეტ სიმბოლოს.`,
-  excluded: (field) => `${field} უნდა იყოს სწორი მნიშვნელობა.`,
   numeric: (field) => `${field} უნდა შეიცავდეს ციფრებს.`,
   regex: (field) => `${field}-(ი)ს ფორმატი არასწორია.`,
   required: (field) => `${field} აუცილებელია.`,

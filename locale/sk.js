@@ -2,10 +2,10 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   after: (field, [target, inclusion]) => `Položka ${field} musí byť vačšia ${inclusion ? 'alebo rovná ' : ''} ako položka ${target}.`,
+  alpha: (field) => `${field} môže obsahovať len písmená.`,
   alpha_dash: (field) => `${field} môže obsahovať len písmená, číslice, bodky a podčiarknutie.`,
   alpha_num: (field) => `${field} môže obsahovať len písmená a číslice.`,
   alpha_spaces: (field) => `${field} môže obsahovať len písmená, číslice a medzery.`,
-  alpha: (field) => `${field} môže obsahovať len písmená.`,
   before: (field, [target, inclusion]) => `Položka ${field} musí byť menšia ${inclusion ? 'alebo rovná ' : ''} ako položka ${target}.`,
   between: (field, [min, max]) => `Položka ${field} musí byť medzi ${min} a ${max}.`,
   confirmed: (field) => `Hodnota položky ${field} nie je rovnaká.`,
@@ -16,6 +16,7 @@ const messages = {
   digits: (field, [length]) => `Položka ${field} musí obsahovať ${length} ${length < 5 ? 'čísla' : 'čísiel'}.`,
   dimensions: (field, [width, height]) => `Položka ${field} musí mať ${width} x ${height} pixlov.`,
   email: (field) => `Položka ${field} musí obsahovať správnu emailovú adresu.`,
+  excluded: (field) => `Položka ${field} má nesprávnu hodnotu.`,
   ext: (field) => `${field} nie je platný súbor.`,
   image: (field) => `${field} nie je obrázok.`,
   included: (field) => `Položka ${field} má nesprávnu hodnotu.`,
@@ -25,7 +26,6 @@ const messages = {
   mimes: (field) => `Položka ${field} obsahuje nesprávny typ súboru.`,
   min: (field, [length]) => `Položka ${field} musí obsahovať minimálne ${length} ${length < 4 ? 'znaky' : 'znakov'}.`,
   min_value: (field, [min]) => `Položka ${field} musí byť minimálne ${min}.`,
-  excluded: (field) => `Položka ${field} má nesprávnu hodnotu.`,
   numeric: (field) => `Položka ${field} môže obsahovať len číslice.`,
   regex: (field) => `Formát položky ${field} je nesprávny.`,
   required: (field) => `Položka ${field} je povinná.`,

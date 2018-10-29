@@ -2,9 +2,9 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   after: (field, [target]) => `${field} tulee olla jälkeen ${target}.`,
+  alpha: (field) => `${field} voi sisältää vain kirjaimia.`,
   alpha_dash: (field) => `${field} voi sisältää vain kirajimia, numeroita, ja tavu-, tai alaviivoja.`,
   alpha_num: (field) => `${field} voi sisältää vain kirjaimia ja numeroita.`,
-  alpha: (field) => `${field} voi sisältää vain kirjaimia.`,
   before: (field, [target]) => `${field} tulee olla ennen ${target}.`,
   between: (field, [min, max]) => `Kentän ${field} tulee olla ${min} ja ${max} väliltä.`,
   confirmed: (field, [confirmedField]) => `${field} ei vastannut ${confirmedField}.`,
@@ -14,6 +14,7 @@ const messages = {
   digits: (field, [length]) => `${field} tulee olla numeerinen ja tarkalleen ${length} merkkiä.`,
   dimensions: (field, [width, height]) => `${field} tulee olla ${width} pikseliä kertaa ${height} pikseliä.`,
   email: (field) => `${field} tulee olla kelvollinen sähköpostiosoite.`,
+  excluded: (field) => `${field} tulee olla kelvollinen arvo.`,
   ext: (field) => `${field} tulee olla kelvollinen tiedosto.`,
   image: (field) => `${field} tulee olla kelvollinen kuva.`,
   included: (field) => `${field} tulee olla kelvollinen arvo.`,
@@ -21,7 +22,6 @@ const messages = {
   max: (field, [length]) => `${field} ei saa olla pidempi kuin ${length} merkkiä.`,
   mimes: (field) => `${field} tulee olla kelvollinen tiedostotyyppi.`,
   min: (field, [length]) => `${field} tulee olla vähintään ${length} merkkiä.`,
-  excluded: (field) => `${field} tulee olla kelvollinen arvo.`,
   numeric: (field) => `${field} voi sisältää vain numeroita.`,
   regex: (field) => `${field} tulee olla kelvollinen säännöllinen lauseke.`,
   required: (field) => `${field} on pakollinen kenttä.`,
