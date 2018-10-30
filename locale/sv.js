@@ -2,10 +2,10 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   after: (field, [target]) => `Fältet ${field} måste vara efter ${target}.`,
+  alpha: (field) => `Fältet ${field} får bara innehålla alfabetiska tecken.`,
   alpha_dash: (field) => `Fältet ${field} får bara innehålla alfanumeriska tecken såväl som snedstreck och understreck.`,
   alpha_num: (field) => `Fältet ${field} får bara innehålla alfanumeriska tecken.`,
   alpha_spaces: (field) => `Fältet ${field} får bara innehålla alfabetiska tecken och mellanslag.`,
-  alpha: (field) => `Fältet ${field} får bara innehålla alfabetiska tecken.`,
   before: (field, [target]) => `Fältet ${field} måste vara tidigare än ${target}.`,
   between: (field, [min, max]) => `Fältet ${field} måste vara mellan ${min} och ${max}.`,
   confirmed: (field, [target]) => `Fältet ${field} matchar inte ${target}.`,
@@ -15,6 +15,7 @@ const messages = {
   digits: (field, [length]) => `Fältet ${field} måste vara numeriskt och innehålla exakt ${length} siffor.`,
   dimensions: (field, [width, height]) => `Fältet ${field} måste vara ${width} pixlar bred och ${height} pixlar hög.`,
   email: (field) => `Fältet ${field} måste vara en giltig e-postadress.`,
+  excluded: (field) => `Fältet ${field} måste vara ett godkänt alternativ.`,
   ext: (field) => `Fältet ${field} måste vara en godkänd fil.`,
   image: (field) => `Fältet ${field} måste vara en bildfil.`,
   included: (field) => `Fältet ${field} måste vara ett godkänt alternativ.`,
@@ -22,7 +23,6 @@ const messages = {
   max: (field, [max]) => `Fältet ${field} får inte vara längre än ${max} tecken.`,
   mimes: (field) => `Fältet ${field} måste ha en filändelse.`,
   min: (field, [min]) => `Fältet ${field} måste minst vara ${min} tecken.`,
-  excluded: (field) => `Fältet ${field} måste vara ett godkänt alternativ.`,
   numeric: (field) => `Fältet ${field} får bara innehålla numeriska tecken.`,
   regex: (field) => `Fältet ${field} har en felaktig formatering.`,
   required: (field) => `Fältet ${field} är obligatoriskt.`,

@@ -2,10 +2,10 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   _default: (field) => `Полето ${field} е с невалидна стойност.`,
+  alpha: (field) => `Полето ${field} може да съдържа само азбучни знаци.`,
   alpha_dash: (field) => `Полето ${field} може да съдържа буквено-цифрови знаци, както и тирета и долни черти.`,
   alpha_num: (field) => `Полето ${field} може да съдържа само буквено-цифрови символи.`,
   alpha_spaces: (field) => `Полето ${field} може да съдържа само азбучни знаци, както и интервали.`,
-  alpha: (field) => `Полето ${field} може да съдържа само азбучни знаци.`,
   between: (field, [min, max]) => `Полето ${field} може да е между ${min} и ${max}.`,
   confirmed: (field) => `Потвърждението не съвпада за полето ${field}.`,
   credit_card: (field) => `Полето ${field} е навалидно.`,
@@ -13,6 +13,7 @@ const messages = {
   digits: (field, [length]) => `Полето ${field} трябва да е цифрово и да съдържа точно ${length} цифри.`,
   dimensions: (field, [width, height]) => `Полето ${field} трябва да е ${width} пиксела по ${height} пиксела.`,
   email: (field) => `Полето ${field} трябва да е коректен Email адрес.`,
+  excluded: (field) => `Полето ${field} трябва да е с валидна стойност.`,
   ext: (field) => `Полето ${field} трябва да е валиден файл.`,
   image: (field) => `Полето ${field} трябва да е снимка.`,
   included: (field) => `Полето ${field} трябва да е валидна стойност.`,
@@ -30,7 +31,6 @@ const messages = {
   mimes: (field) => `Полето ${field} трябва да е валиден тип файл.`,
   min: (field, [length]) => `Полето ${field} трябва да съдържа минимум ${length} символа.`,
   min_value: (field, [min]) => `Полето ${field} трябва да бъде минимум ${min} или повече.`,
-  excluded: (field) => `Полето ${field} трябва да е с валидна стойност.`,
   numeric: (field) => `Полето ${field} може да съдържа само цифри.`,
   regex: (field) => `Полето ${field} съдържа невалиден формат.`,
   required: (field) => `Полето ${field} е задължително.`,

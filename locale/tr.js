@@ -2,10 +2,10 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   after: (field, [target]) => `${field} ${target} alanından ileri bir tarih olmalıdır.`,
+  alpha: (field) => `${field} yalnızca harf içerebilir.`,
   alpha_dash: (field) => `${field} alanı harf ve tire (-) ya da alttan tire (_) içerebilir.`,
   alpha_num: (field) => `${field} yalnızca harf ve rakam içerebilir.`,
   alpha_spaces: (field) => `${field} yalnızca harf boşluk (space) içerebilir.`,
-  alpha: (field) => `${field} yalnızca harf içerebilir.`,
   before: (field, [target]) => `${field} ${target} alanından önce bir tarih olmalıdır.`,
   between: (field, [min, max]) => `${field} ${min} ile ${max} aralığında olmalıdır.`,
   confirmed: (field) => `${field} doğrulaması hatalı.`,
@@ -16,6 +16,7 @@ const messages = {
   digits: (field, [length]) => `${field} sayısal ve ${length} basamaklı olmalıdır.`,
   dimensions: (field, [width, height]) => `${field} alanı ${width} piksel ile ${height} piksel arasında olmalıdır.`,
   email: (field) => `${field} alanının geçerli bir e-posta olması gerekir.`,
+  excluded: (field) => `${field} alanına geçerli bir değer giriniz.`,
   ext: (field) => `${field} alanı geçerli bir dosya olmalıdır.`,
   image: (field) => `${field} alanı resim dosyası olmalıdır.`,
   included: (field) => `${field} alanına geçerli bir değer giriniz.`,
@@ -25,7 +26,6 @@ const messages = {
   mimes: (field) => `${field} geçerli bir dosya olmalıdır.`,
   min: (field, [length]) => `${field} alanına en az ${length} karakter girilmelidir.`,
   min_value: (field, [min]) => `${field} alanı ${min} ya da daha fazla bir değer olmalıdır.`,
-  excluded: (field) => `${field} alanına geçerli bir değer giriniz.`,
   numeric: (field) => `${field} alanına sayısal bir değer giriniz.`,
   regex: (field) => `${field} formatı geçersiz.`,
   required: (field) => `${field} alanı gereklidir.`,

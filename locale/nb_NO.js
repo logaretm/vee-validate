@@ -2,10 +2,10 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   after: (field, [target]) => `${field}-feltet må være etter ${target}.`,
+  alpha: (field) => `${field}-feltet kan bare inneholde bokstaver.`,
   alpha_dash: (field) => `${field}-feltet kan bare inneholde alfa-numeriske tegn, samt bindestrek og understrek.`,
   alpha_num: (field) => `${field} kan bare inneholde alfanumeriske tegn.`,
   alpha_spaces: (field) => `${field}-feltet kan bare inneholde alfa-numeriske tegn og mellomrom.`,
-  alpha: (field) => `${field}-feltet kan bare inneholde bokstaver.`,
   before: (field, [target]) => `${field}-feltet må være før ${target}.`,
   between: (field, [min, max]) => `${field}-feltet må være imellom ${min} og ${max}.`,
   confirmed: (field) => `${field}-feltet kan ikke bekreftes.`,
@@ -16,6 +16,7 @@ const messages = {
   digits: (field, [length]) => `${field}-feltet må være numerisk og inneholde nøyaktig ${length} siffer.`,
   dimensions: (field, [width, height]) => `${field}-feltet må være ${width} ganger ${height} piksler.`,
   email: (field) => `${field}-feltet må være en gyldig E-post adresse.`,
+  excluded: (field) => `${field}-feltet må være en gyldig verdi.`,
   ext: (field) => `${field}-feltet må være en gyldig fil.`,
   image: (field) => `${field}-feltet må være et bilde.`,
   included: (field) => `${field}-feltet må være en gyldig verdi.`,
@@ -25,7 +26,6 @@ const messages = {
   mimes: (field) => `${field}-feltet må ha en gyldig filtype.`,
   min: (field, [length]) => `${field}-feltet må være minst ${length} tegn.`,
   min_value: (field, [min]) => `${field}-feltet må være ${min} eller mer.`,
-  excluded: (field) => `${field}-feltet må være en gyldig verdi.`,
   numeric: (field) => `${field}-feltet kan bare inneholde nummer.`,
   regex: (field) => `${field}-feltet sin formatering er ugyldig.`,
   required: (field) => `${field}-feltet er obligatorisk.`,
