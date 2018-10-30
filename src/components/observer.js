@@ -1,5 +1,5 @@
 import { normalizeSlots } from '../utils/vnode';
-import { isCallable } from '../utils';
+import { isCallable, values } from '../utils';
 
 const flagMergingStrategy = {
   pristine: 'every',
@@ -32,22 +32,22 @@ export const ValidationObserver = {
     $subscribe (provider) {
       this.refs = Object.assign({}, this.refs, { [provider.vid]: provider });
     },
-    $unsubscribe (provider) {
-      delete this.refs[provider.vid];
+    $unsubscribe ({ vid }) {
+      delete this.refs[vid];
       this.refs = Object.assign({}, this.refs);
     },
     validate () {
-      return Promise.all(Object.keys(this.refs).map(ref => {
-        return this.refs[ref].validate().then(result => {
-          this.refs[ref].applyResult(result);
+      return Promise.all(values(this.refs).map(ref => {
+        return ref.validate().then(result => {
+          ref.applyResult(result);
 
           return result;
         });
       })).then(results => results.every(r => r.valid));
     },
     reset () {
-      return Object.keys(this.refs).forEach(ref => {
-        this.refs[ref].reset();
+      return values(this.refs).forEach(ref => {
+        ref.reset();
       });
     }
   },
@@ -55,7 +55,7 @@ export const ValidationObserver = {
     ctx () {
       return Object.keys(flagMergingStrategy).reduce((acc, flag) => {
         const strategy = flagMergingStrategy[flag];
-        acc[flag] = Object.keys(this.refs)[strategy](p => this.refs[p].flags[flag]);
+        acc[flag] = values(this.refs)[strategy](p => p.flags[flag]);
 
         return acc;
       }, {});

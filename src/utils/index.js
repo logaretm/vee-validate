@@ -559,7 +559,7 @@ export const values = (obj) => {
 
   // fallback to keys()
   /* istanbul ignore next */
-  return obj[Object.keys(obj)[0]];
+  return Object.keys(obj).map(k => obj[k]);
 };
 
 export const parseSelector = (selector) => {
