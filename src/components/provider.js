@@ -42,8 +42,8 @@ export function onRenderUpdate (model) {
   this._needsValidation = false;
 }
 
-// Creates the common listeners for a validatable context.
-export function createCommonListeners (ctx) {
+// Creates the common handlers for a validatable context.
+export function createCommonHandlers (ctx) {
   const onInput = (e) => {
     ctx.syncValue(e); // track and keep the value updated.
     ctx.setFlags({ dirty: true, pristine: false });
@@ -65,7 +65,7 @@ function addListeners (node) {
 
   onRenderUpdate.call(this, model);
 
-  const { onInput, onBlur } = createCommonListeners(this);
+  const { onInput, onBlur } = createCommonHandlers(this);
   addVNodeListener(node, this._inputEventName, onInput);
   addVNodeListener(node, 'blur', onBlur);
 

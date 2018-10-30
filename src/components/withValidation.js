@@ -1,4 +1,4 @@
-import { ValidationProvider, createValidationCtx, createCommonListeners, onRenderUpdate } from './provider';
+import { ValidationProvider, createValidationCtx, createCommonHandlers, onRenderUpdate } from './provider';
 import { assign, isCallable } from '../utils';
 import { findModel, findModelConfig, mergeVNodeListeners, getInputEventName, normalizeSlots } from '../utils/vnode';
 
@@ -32,7 +32,7 @@ export function withValidation (component, ctxToProps = null) {
     this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
     onRenderUpdate.call(this, model);
 
-    const { onInput, onBlur } = createCommonListeners(this);
+    const { onInput, onBlur } = createCommonHandlers(this);
 
     mergeVNodeListeners(listeners, eventName, onInput);
     mergeVNodeListeners(listeners, 'blur', onBlur);
