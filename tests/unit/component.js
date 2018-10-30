@@ -557,4 +557,40 @@ describe('Validation Observer Component', () => {
 
     expect(error.text()).toBe('');
   });
+
+  test('collects errors from child providers', async () => {
+    const wrapper = mount({
+      data: () => ({
+        email: '',
+        name: ''
+      }),
+      template: `
+        <ValidationObserver ref="obs">
+          <template slot-scope="{ errors }">
+            <ValidationProvider vid="name" rules="required">
+              <template slot-scope="ctx">
+                <input v-model="name" type="text">
+              </template>
+            </ValidationProvider>
+            <ValidationProvider vid="email" rules="required">
+              <template slot-scope="ctx">
+                <input v-model="email" type="text">
+              </template>
+            </ValidationProvider>
+
+            <p v-for="fieldErrors in errors">{{ fieldErrors[0] }}</p>
+          </template>
+        </ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    await flushPromises();
+
+    await wrapper.vm.$refs.obs.validate();
+
+    const errors = wrapper.findAll('p');
+    expect(errors).toHaveLength(2); // 2 fields.
+    expect(errors.at(0).text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+    expect(errors.at(1).text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+  });
 });

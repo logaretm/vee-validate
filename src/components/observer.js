@@ -12,6 +12,12 @@ const flagMergingStrategy = {
   validated: 'every'
 };
 
+function mergeFlags (lhs, rhs, strategy) {
+  const stratName = flagMergingStrategy[strategy];
+
+  return [lhs, rhs][stratName](f => f);
+}
+
 export const ValidationObserver = {
   name: 'ValidationObserver',
   provide () {
@@ -53,12 +59,20 @@ export const ValidationObserver = {
   },
   computed: {
     ctx () {
-      return Object.keys(flagMergingStrategy).reduce((acc, flag) => {
-        const strategy = flagMergingStrategy[flag];
-        acc[flag] = values(this.refs)[strategy](p => p.flags[flag]);
+      return values(this.refs).reduce((acc, provider) => {
+        Object.keys(flagMergingStrategy).forEach(flag => {
+          if (!(flag in acc)) {
+            acc[flag] = provider.flags[flag];
+            return;
+          }
+
+          acc[flag] = mergeFlags(acc[flag], provider.flags[flag], flag);
+        });
+
+        acc.errors[provider.vid] = provider.messages;
 
         return acc;
-      }, {});
+      }, { errors: {} });
     }
   },
   render (h) {
