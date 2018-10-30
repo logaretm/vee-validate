@@ -171,7 +171,8 @@ export class Validator {
 }
 
 export class ExtendOptions  {
-  hasTarget?: boolean
+  hasTarget?: boolean;
+  paramNames?: string[];
 }
 
 export const version: string;
