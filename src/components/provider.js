@@ -2,7 +2,7 @@ import VeeValidate from '../plugin';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable } from '../utils';
-import { findModel, findModelNodes, addListenerToVNode, getInputEventName, normalizeSlots } from '../utils/vnode';
+import { findModel, extractVNodes, addVNodeListener, getInputEventName, normalizeSlots } from '../utils/vnode';
 
 let $validator = null;
 
@@ -66,12 +66,12 @@ function addListeners (node) {
   onRenderUpdate.call(this, model);
 
   const { onInput, onBlur } = createCommonListeners(this);
-  addListenerToVNode(node, this._inputEventName, onInput);
-  addListenerToVNode(node, 'blur', onBlur);
+  addVNodeListener(node, this._inputEventName, onInput);
+  addVNodeListener(node, 'blur', onBlur);
 
   // add the validation listeners.
   this.normalizedEvents.forEach(evt => {
-    addListenerToVNode(node, evt, () => this.validate().then(this.applyResult));
+    addVNodeListener(node, evt, () => this.validate().then(this.applyResult));
   });
 
   this.initialized = true;
@@ -290,7 +290,7 @@ export const ValidationProvider = {
 
     const nodes = slots(ctx);
     // Handle multi-root slot.
-    findModelNodes(Array.isArray(nodes) ? { children: nodes } : nodes).forEach(input => {
+    extractVNodes(Array.isArray(nodes) ? { children: nodes } : nodes).forEach(input => {
       addListeners.call(this, input);
     });
 

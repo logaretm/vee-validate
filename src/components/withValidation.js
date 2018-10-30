@@ -1,6 +1,6 @@
 import { ValidationProvider, createValidationCtx, createCommonListeners, onRenderUpdate } from './provider';
 import { assign, isCallable } from '../utils';
-import { findModel, findModelConfig, addListenerToObject, getInputEventName, normalizeSlots } from '../utils/vnode';
+import { findModel, findModelConfig, mergeVNodeListeners, getInputEventName, normalizeSlots } from '../utils/vnode';
 
 export function withValidation (component, ctxToProps = null) {
   const options = isCallable(component) ? component.options : component;
@@ -34,11 +34,11 @@ export function withValidation (component, ctxToProps = null) {
 
     const { onInput, onBlur } = createCommonListeners(this);
 
-    addListenerToObject(listeners, eventName, onInput);
-    addListenerToObject(listeners, 'blur', onBlur);
+    mergeVNodeListeners(listeners, eventName, onInput);
+    mergeVNodeListeners(listeners, 'blur', onBlur);
 
     this.normalizedEvents.forEach((evt, idx) => {
-      addListenerToObject(listeners, evt, (e) => {
+      mergeVNodeListeners(listeners, evt, (e) => {
         this.validate().then(this.applyResult);
       });
     });

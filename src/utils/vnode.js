@@ -15,7 +15,7 @@ export function findModel (vnode) {
   return !!(vnode.data.directives) && find(vnode.data.directives, d => d.name === 'model');
 }
 
-export function findModelNodes (vnode) {
+export function extractVNodes (vnode) {
   if (findModel(vnode)) {
     return [vnode];
   }
@@ -26,7 +26,7 @@ export function findModelNodes (vnode) {
   }
 
   return children.reduce((nodes, node) => {
-    const candidates = findModelNodes(node);
+    const candidates = extractVNodes(node);
     if (candidates.length) {
       nodes.push(...candidates);
     }
@@ -43,7 +43,7 @@ export function findModelConfig (vnode) {
 };
 
 // Adds a listener to vnode listener object.
-export function addListenerToObject (obj, eventName, handler) {
+export function mergeVNodeListeners (obj, eventName, handler) {
   // Has a single listener.
   if (isCallable(obj[eventName])) {
     const prevHandler = obj[eventName];
@@ -63,30 +63,30 @@ export function addListenerToObject (obj, eventName, handler) {
 }
 
 // Adds a listener to a native HTML vnode.
-function addListenerToHTMLNode (node, eventName, handler) {
+function addNativeNodeListener (node, eventName, handler) {
   if (isNullOrUndefined(node.data.on)) {
     node.data.on = {};
   }
 
-  addListenerToObject(node.data.on, eventName, handler);
+  mergeVNodeListeners(node.data.on, eventName, handler);
 }
 
 // Adds a listener to a Vue component vnode.
-function addListenerToComponentNode (node, eventName, handler) {
+function addComponentNodeListener (node, eventName, handler) {
   /* istanbul ignore next */
   if (!node.componentOptions.listeners) {
     node.componentOptions.listeners = {};
   }
 
-  addListenerToObject(node.componentOptions.listeners, eventName, handler);
+  mergeVNodeListeners(node.componentOptions.listeners, eventName, handler);
 };
 
-export function addListenerToVNode (vnode, eventName, handler) {
+export function addVNodeListener (vnode, eventName, handler) {
   if (vnode.componentOptions) {
-    addListenerToComponentNode(vnode, eventName, handler);
+    addComponentNodeListener(vnode, eventName, handler);
   }
 
-  addListenerToHTMLNode(vnode, eventName, handler);
+  addNativeNodeListener(vnode, eventName, handler);
 };
 
 // Determines if `change` should be used over `input` for listeners.
