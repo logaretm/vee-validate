@@ -165,6 +165,10 @@ export const ValidationProvider = {
     tag: {
       type: String,
       default: 'span'
+    },
+    bails: {
+      type: Boolean,
+      default: () => VeeValidate.config.fastExit
     }
   },
   watch: {
@@ -206,7 +210,8 @@ export const ValidationProvider = {
 
       return $validator.verify(this.value, this.rules, {
         name: this.name,
-        values: createValuesLookup(this)
+        values: createValuesLookup(this),
+        bails: this.bails
       }).then(result => {
         this.setFlags({ pending: false });
 

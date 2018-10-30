@@ -412,6 +412,35 @@ describe('Validation Provider Component', () => {
     await flushPromises();
     expect(error.text()).toBe('');
   });
+
+  test('setting bails prop to false disables fast exit', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <div>
+          <ValidationProvider :bails="false" rules="email|min:3">
+            <template slot-scope="{ errors }">
+              <input v-model="value" type="text">
+              <p v-for="error in errors">{{ error }}</p>
+            </template>
+          </ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue });
+
+    const input = wrapper.find('input');
+
+    input.element.value = '';
+    input.trigger('input');
+    await flushPromises();
+
+    const errors = wrapper.findAll('p');
+    expect(errors).toHaveLength(2);
+    expect(errors.at(0).text()).toBe('The {field} field must be a valid email.');
+    expect(errors.at(1).text()).toBe('The {field} field must be at least 3 characters.');
+  });
 });
 
 describe('Validation Observer Component', () => {
