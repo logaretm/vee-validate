@@ -594,7 +594,7 @@ export default class Field {
       }
 
       if (ctx && expression) {
-        const debouncedFn = debounce(fn, this.delay[inputEvent], false, token);
+        const debouncedFn = debounce(fn, this.delay[inputEvent], token);
         const unwatch = ctx.$watch(expression, (...args) => {
           this.flags.pending = true;
           this._cancellationToken = token;
