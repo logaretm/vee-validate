@@ -239,6 +239,7 @@ All the following props are optional.
 | events    | `string[]`| `['input']`           | Events that will trigger validation.                                         |
 | name      | `string`  | `undefined`           | a String that will be used to replace `{field}` in error messages.           |
 | tag       | `string`  | `span`                | The default HTML tag to be used to render the root element of the component. |
+| bails     | `boolean` | `true`                | If true the validation will stop on the first failing rule.                  |
 
 ## Methods
 
