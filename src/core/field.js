@@ -128,7 +128,11 @@ export default class Field {
     }
 
     let alias = null;
-    if (this.el) {
+    if (this.ctorConfig && this.ctorConfig.alias) {
+      alias = isCallable(this.ctorConfig.alias) ? this.ctorConfig.alias.call(this.componentInstance) : this.ctorConfig.alias;
+    }
+
+    if (!alias && this.el) {
       alias = getDataAttribute(this.el, 'as');
     }
 
