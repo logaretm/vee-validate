@@ -105,6 +105,20 @@ export default {
   Using the same approach you can reset validation state for the provider using the public method `reset()`.
 :::
 
+### Input Groups
+
+Like radio inputs and checkboxes (sometimes), some inputs behave as a single input entity. You can wrap the whole group of inputs __given that they have the same `v-model`__ in a single Validation Provider component. You can group as many inputs as you want inside the Provider component. 
+
+```vue
+<ValidationProvider rules="required">
+  <template slot-scope="{ errors }">
+    <input type="radio" v-model="drink" value="">
+    <input type="radio" v-model="drink" value="coffe">
+    <input type="radio" v-model="drink" value="coke">
+  </template>
+</ValidationProvider>
+```
+
 ### Confirmed/Target based Validation
 
 When using the directive, the `confirmed` rule targets the other field that has a match ref. Using the ValidationProvider is slightly diffrent as it looks for provider components that has a matching `vid` prop which can be either a number or a string.
