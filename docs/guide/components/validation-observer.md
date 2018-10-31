@@ -22,15 +22,16 @@ Here is a small example, again with Vuetify components wrapped by the [Provider'
 
 The scoped slot is passed an object containing a flags object representing the merged state of all providers registered under the observer. It contains the following properties:
 
-| Name      | Type       |  Description                                                        |
-|:----------|:----------:|:--------------------------------------------------------------------|
-| dirty     | `boolean`  | True if at least one field is dirty.                                |
-| pristine  | `boolean`  | True if all fields are pristine (not dirty).                        |
-| valid     | `boolean`  | True if all fields are valid.                                       |
-| invalid   | `boolean`  | True if at least one field is invalid.                              |
-| pending   | `boolean`  | True if at least one field's validation is in progress.             |
-| touched   | `boolean`  | True if at least one field has been touched (blurred).              |
-| untouched | `boolean`  | True if all fields hasn't been tocuhed (blurred).                   |
+| Name      | Type                        |  Description                                                                                |
+|:----------|:---------------------------:|:--------------------------------------------------------------------------------------------|
+| dirty     | `boolean`                   | True if at least one field is dirty.                                                        |
+| pristine  | `boolean`                   | True if all fields are pristine (not dirty).                                                |
+| valid     | `boolean`                   | True if all fields are valid.                                                               |
+| invalid   | `boolean`                   | True if at least one field is invalid.                                                      |
+| pending   | `boolean`                   | True if at least one field's validation is in progress.                                     |
+| touched   | `boolean`                   | True if at least one field has been touched (blurred).                                      |
+| untouched | `boolean`                   | True if all fields hasn't been tocuhed (blurred).                                           |
+| errors    | `{ [x: string]: string[] }` | An object containing reference to each field errors, each field is keyed by its `vid` prop. |
 
 ## Examples
 
