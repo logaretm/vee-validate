@@ -54,7 +54,22 @@ export function createCommonHandlers (ctx) {
     ctx.setFlags({ touched: true, untouched: false });
   };
 
-  return { onInput, onBlur };
+  const onValidate = debounce(
+    () => {
+      const pendingPromise = ctx.validate();
+      // avoids race conditions between successive validations.
+      ctx._waiting = pendingPromise;
+      pendingPromise.then(result => {
+        if (pendingPromise === ctx._waiting) {
+          ctx.applyResult(result);
+          ctx._waiting = null;
+        }
+      });
+    },
+    ctx.debounce
+  );
+
+  return { onInput, onBlur, onValidate };
 }
 
 // Adds all plugin listeners to the vnode.
@@ -65,18 +80,13 @@ function addListeners (node) {
 
   onRenderUpdate.call(this, model);
 
-  const { onInput, onBlur } = createCommonHandlers(this);
+  const { onInput, onBlur, onValidate } = createCommonHandlers(this);
   addVNodeListener(node, this._inputEventName, onInput);
   addVNodeListener(node, 'blur', onBlur);
 
-  const debouncedHandler = debounce(
-    () => this.validate().then(this.applyResult),
-    this.debounce
-  );
-
   // add the validation listeners.
   this.normalizedEvents.forEach(evt => {
-    addVNodeListener(node, evt, debouncedHandler);
+    addVNodeListener(node, evt, onValidate);
   });
 
   this.initialized = true;
@@ -209,6 +219,7 @@ export const ValidationProvider = {
     },
     reset () {
       this.messages = [];
+      this._waiting = null;
       this.initialValue = this.value;
       const flags = createFlags();
       flags.changed = false;

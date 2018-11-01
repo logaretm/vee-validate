@@ -32,15 +32,12 @@ export function withValidation (component, ctxToProps = null) {
     this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
     onRenderUpdate.call(this, model);
 
-    const { onInput, onBlur } = createCommonHandlers(this);
+    const { onInput, onBlur, onValidate } = createCommonHandlers(this);
 
     mergeVNodeListeners(listeners, eventName, onInput);
     mergeVNodeListeners(listeners, 'blur', onBlur);
-
     this.normalizedEvents.forEach((evt, idx) => {
-      mergeVNodeListeners(listeners, evt, (e) => {
-        this.validate().then(this.applyResult);
-      });
+      mergeVNodeListeners(listeners, evt, onValidate);
     });
 
     // Props are any attrs not associated with ValidationProvider Plus the model prop.

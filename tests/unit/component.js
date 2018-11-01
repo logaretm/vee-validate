@@ -442,8 +442,8 @@ describe('Validation Provider Component', () => {
     expect(errors.at(1).text()).toBe('The {field} field must be at least 3 characters.');
   });
 
+  const sleep = (wait) => new Promise(resolve => setTimeout(resolve, wait));
   test('validation can be debounced', async () => {
-    const sleep = (wait) => new Promise(resolve => setTimeout(resolve, wait));
     const wrapper = mount({
       data: () => ({
         value: ''
@@ -469,6 +469,53 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toBe('');
     await sleep(10);
     await flushPromises();
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+  });
+
+  test('avoids race conditions between successive validations', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <div>
+          <ValidationProvider rules="required|longRunning" :debounce="10">
+            <template slot-scope="{ errors }">
+              <input v-model="value" type="text">
+              <p>{{ errors[0] }}</p>
+            </template>
+          </ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue });
+
+    // A decreasing timeout (the most recent validation will finish before new ones).
+    VeeValidate.Validator.extend('longRunning', {
+      getMessage: (_, __, data) => data,
+      validate: (value) => {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve({
+              valid: value === 42,
+              data: 'Lost in time'
+            });
+          }, 20);
+        });
+      }
+    });
+
+    const input = wrapper.find('input');
+    const error = wrapper.find('p');
+
+    input.element.value = '123';
+    input.trigger('input');
+    input.element.value = '123';
+    input.trigger('input');
+    input.element.value = '';
+    input.trigger('input');
+    await sleep(100);
+    await flushPromises();
+    // LAST message should be the required one.
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   });
 });

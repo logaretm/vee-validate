@@ -55,7 +55,6 @@ test('alias can be set with the ctor options', async () => {
   }, { localVue: Vue });
 
   await wrapper.vm.$validator.validate();
-  console.log(wrapper.vm.errors.items.map(e => e.msg));
 
   expect(wrapper.vm.errors.first('bar')).toBe('The foo field is required.');
 });
