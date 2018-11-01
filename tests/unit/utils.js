@@ -403,19 +403,19 @@ describe('pareses date values', () => {
   });
 });
 
-describe('makeEventsArray', () => {
+describe('normalizeEvents', () => {
   test('it creates valid event arrays', () => {
-    expect(utils.makeEventsArray('input|blur|change')).toEqual(['input', 'blur', 'change']);
-    expect(utils.makeEventsArray('focus')).toEqual(['focus']);
+    expect(eventUtils.normalizeEvents('input|blur|change')).toEqual(['input', 'blur', 'change']);
+    expect(eventUtils.normalizeEvents('focus')).toEqual(['focus']);
   });
 
   test('it handles empty event strings', () => {
-    expect(utils.makeEventsArray('')).toEqual([]);
+    expect(eventUtils.normalizeEvents('')).toEqual([]);
   });
 
   test('it handles invalid event strings', () => {
-    expect(utils.makeEventsArray('input, focus')).not.toEqual(['input', 'focus']);
-    expect(utils.makeEventsArray('blur/change')).toEqual(['blur/change']);
+    expect(eventUtils.normalizeEvents('input, focus')).not.toEqual(['input', 'focus']);
+    expect(eventUtils.normalizeEvents('blur/change')).toEqual(['blur/change']);
   });
 });
 

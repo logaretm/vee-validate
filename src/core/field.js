@@ -1,6 +1,6 @@
 import Resolver from './resolver';
 import RuleContainer from './ruleContainer';
-import { isEvent, addEventListener } from '../utils/events';
+import { isEvent, addEventListener, normalizeEvents } from '../utils/events';
 import {
   uniqId,
   createFlags,
@@ -15,7 +15,6 @@ import {
   warn,
   toArray,
   getPath,
-  makeEventsArray,
   makeDelayObject,
   merge,
   isObject,
@@ -249,7 +248,7 @@ export default class Field {
     this.classNames = isObject(options.classNames) ? merge(this.classNames, options.classNames) : this.classNames;
     this.getter = isCallable(options.getter) ? options.getter : this.getter;
     this._alias = options.alias || this._alias;
-    this.events = (options.events) ? makeEventsArray(options.events) : this.events;
+    this.events = (options.events) ? normalizeEvents(options.events) : this.events;
     this.delay = makeDelayObject(this.events, options.delay || this.delay, this._delay);
     this.updateDependencies();
     this.addActionListeners();

@@ -424,10 +424,6 @@ export const isBuiltInComponent = (vnode: Object): boolean => {
   return /^(keep-alive|transition|transition-group)$/.test(tag);
 };
 
-export const makeEventsArray = (events: string) => {
-  return (typeof events === 'string' && events.length) ? events.split('|') : [];
-};
-
 export const makeDelayObject = (events: string[], delay: Object | number, delayConfig: Object | number) => {
   if (typeof delay === 'number') {
     return events.reduce((prev, e) => {

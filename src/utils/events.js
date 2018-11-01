@@ -6,6 +6,8 @@ export const isEvent = (evt: any): boolean => {
 };
 
 export const normalizeEvents = (evts: string | string[]): string[] => {
+  if (!evts) return [];
+
   return (typeof evts === 'string' ? evts.split('|') : evts);
 };
 
