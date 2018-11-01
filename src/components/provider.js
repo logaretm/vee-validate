@@ -1,7 +1,7 @@
 import VeeValidate from '../plugin';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
-import { createFlags, normalizeRules, warn, isCallable } from '../utils';
+import { createFlags, normalizeRules, warn, isCallable, debounce } from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName, normalizeSlots } from '../utils/vnode';
 
 let $validator = null;
@@ -69,9 +69,14 @@ function addListeners (node) {
   addVNodeListener(node, this._inputEventName, onInput);
   addVNodeListener(node, 'blur', onBlur);
 
+  const debouncedHandler = debounce(
+    () => this.validate().then(this.applyResult),
+    this.debounce
+  );
+
   // add the validation listeners.
   this.normalizedEvents.forEach(evt => {
-    addVNodeListener(node, evt, () => this.validate().then(this.applyResult));
+    addVNodeListener(node, evt, debouncedHandler);
   });
 
   this.initialized = true;
@@ -169,6 +174,10 @@ export const ValidationProvider = {
     bails: {
       type: Boolean,
       default: () => VeeValidate.config.fastExit
+    },
+    debounce: {
+      type: Number,
+      default: () => VeeValidate.config.delay || 0
     }
   },
   watch: {
