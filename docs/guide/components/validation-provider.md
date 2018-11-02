@@ -65,6 +65,14 @@ This passes error messages down to Vuetify's text field component.
 </ValidationProvider>
 ```
 
+You also can skip the template tag if your slot has a __single root element__:
+
+```vue
+<ValidationProvider rules="required">
+  <VTextField slot-scope="{ errors }" v-model="value" :error-messages="errors" />
+</ValidationProvider>
+```
+
 ### Manual Validation
 
 Triggering validation on any of the providers is simple, but it is opt-in. Meaning you need to explicity call the validation on the provider instance. Using [refs](https://vuejs.org/v2/api/#ref) and the [public methods](#methods) `validate` and `applyResult` makes it a breeze.
