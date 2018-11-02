@@ -2,7 +2,7 @@
 import { isCallable } from './index';
 
 export const isEvent = (evt: any): boolean => {
-  return (isCallable(Event) && evt instanceof Event) || (evt && evt.srcElement);
+  return (typeof Event !== 'undefined' && isCallable(Event) && evt instanceof Event) || (evt && evt.srcElement);
 };
 
 export const normalizeEvents = (evts: string | string[]): string[] => {
