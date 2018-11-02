@@ -304,18 +304,19 @@ export const ValidationProvider = {
     const ctx = createValidationCtx(this);
 
     // Gracefully handle non-existent scoped slots.
-    let slots = this.$scopedSlots.default;
-    if (!isCallable(slots)) {
+    let slot = this.$scopedSlots.default;
+    if (!isCallable(slot)) {
       if (process.env.NODE_ENV !== 'production') {
         warn('Did you forget to add a scoped slot to the ValidationProvider?');
       }
 
-      slots = () => normalizeSlots(this.$slots, this.$vnode.context);
+      slot = () => normalizeSlots(this.$slots, this.$vnode.context);
     }
 
-    const nodes = slots(ctx);
-    // Handle multi-root slot.
-    extractVNodes(Array.isArray(nodes) ? { children: nodes } : nodes).forEach(input => {
+    let nodes = slot(ctx);
+    // Handle single-root slot.
+    nodes = Array.isArray(nodes) ? nodes : [nodes];
+    extractVNodes({ children: nodes }).forEach(input => {
       addListeners.call(this, input);
     });
 
