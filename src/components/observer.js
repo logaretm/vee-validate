@@ -81,9 +81,11 @@ export const ValidationObserver = {
       slots = () => normalizeSlots(this.$slots, this.$vnode.context);
     }
 
+    const nodes = slots(this.ctx);
+
     return h(this.tag, {
       attrs: this.$attrs,
       on: this.$listeners
-    }, slots(this.ctx));
+    }, Array.isArray(nodes) ? nodes : [nodes]);
   }
 };
