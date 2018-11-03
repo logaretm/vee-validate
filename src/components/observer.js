@@ -73,7 +73,7 @@ export const ValidationObserver = {
     let slots = this.$scopedSlots.default;
     if (!isCallable(slots)) {
       if (process.env.NODE_ENV !== 'production') {
-        warn('Did you forget to add a scoped slot to the ValidationObserver?');
+        warn('ValidationObserver expects a scoped slot. Did you forget to add "slot-scope" to your slot?');
       }
 
       return createRenderless(h, this.$slots.default);

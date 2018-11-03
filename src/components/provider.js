@@ -303,7 +303,7 @@ export const ValidationProvider = {
     let slot = this.$scopedSlots.default;
     if (!isCallable(slot)) {
       if (process.env.NODE_ENV !== 'production') {
-        warn('Did you forget to add a scoped slot to the ValidationProvider?');
+        warn('ValidationProvider expects a scoped slot. Did you forget to add "slot-scope" to your slot?');
       }
 
       return createRenderless(h, this.$slots.default);
