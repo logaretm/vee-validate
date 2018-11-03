@@ -10,10 +10,10 @@ Here is a quick example:
 <template>
   <div>
     <ValidationProvider rules="required">
-      <template slot-scope="{ errors }">
+      <div slot-scope="{ errors }">
         <input v-model="value" type="text">
         <span id="error">{{ errors[0] }}</span>
-      </template>
+      </div>
     </ValidationProvider>
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
 It also works for custom components and solves the issue of authoring __self validated__ components which are hard to achieve normally because of the directive limitations.
 
 ::: tip
-The fields being validated __must have__ a `v-model` so the component can correctly identify the element/component being validated.
+  The fields being validated __must have__ a `v-model` so the component can correctly identify the element/component being validated.
 :::
 
 ## Scoped Slot Data
@@ -59,19 +59,13 @@ This passes error messages down to Vuetify's text field component.
 
 ```vue
 <ValidationProvider rules="required">
-  <template slot-scope="{ errors }">
-    <VTextField v-model="value" :error-messages="errors" />
-  </template>
-</ValidationProvider>
-```
-
-You also can skip the template tag if your slot has a __single root element__:
-
-```vue
-<ValidationProvider rules="required">
   <VTextField slot-scope="{ errors }" v-model="value" :error-messages="errors" />
 </ValidationProvider>
 ```
+
+::: tip
+  ValidationProvider is a __renderless__ component, meaning it does not render anything of its own. It only renders its slot, as such you need to have __only one root element__ in your slot, if you use `template` tag it will instead be replaced by a `span` tag to keep your slot contained within a single root element.
+:::
 
 ### Manual Validation
 
@@ -81,9 +75,7 @@ Triggering validation on any of the providers is simple, but it is opt-in. Meani
 <template>
   <div>
     <ValidationProvider rules="required" ref="myinput">
-      <template slot-scope="{ errors }">
-        <VTextField v-model="value" :error-messages="errors" />
-      </template>
+      <VTextField slot-scope="{ errors }" v-model="value" :error-messages="errors" />
     </ValidationProvider>
 
     <v-btn @click="validateField('myinput')" >Submit</v-btn>
@@ -119,11 +111,11 @@ Like radio inputs and checkboxes (sometimes), some inputs behave as a single inp
 
 ```vue
 <ValidationProvider rules="required">
-  <template slot-scope="{ errors }">
+  <div slot-scope="{ errors }">
     <input type="radio" v-model="drink" value="">
     <input type="radio" v-model="drink" value="coffe">
     <input type="radio" v-model="drink" value="coke">
-  </template>
+  </div>
 </ValidationProvider>
 ```
 
@@ -133,15 +125,11 @@ When using the directive, the `confirmed` rule targets the other field that has 
 
 ```vue
 <ValidationProvider rules="required|confirmed:confirm">
-  <template slot-scope="{ errors }">
-    <VTextField v-model="password" type="password" :error-messages="errors" />
-  </template>
+  <VTextField slot-scope="{ errors }" v-model="password" type="password" :error-messages="errors" />
 </ValidationProvider>
 
 <ValidationProvider vid="confirm" rules="required">
-  <template slot-scope="{ errors }">
-    <VTextField v-model="passwordConfirm" type="password" :error-messages="errors" />
-  </template>
+  <VTextField slot-scope="{ errors }" v-model="passwordConfirm" type="password" :error-messages="errors" />
 </ValidationProvider>
 ```
 
@@ -197,9 +185,7 @@ Consider this new `VTextFieldWithValidation` component.
 ```vue
 <template>
   <ValidationProvider :rules="rules">
-    <template slot-scope="{ errors }">
-      <VTextField v-model="innerValue" :error-messages="errors" />
-    </template>
+    <VTextField slot-scope="{ errors }" v-model="innerValue" :error-messages="errors" />
   </ValidationProvider>
 </template>
 

@@ -8,15 +8,19 @@ Here is a small example, again with Vuetify components wrapped by the [Provider'
 
 ```vue
 <ValidationObserver>
-  <template slot-scope="{ invalid }">
+  <form slot-scope="{ invalid }" @submit.prevent="submit">
     <InputWithValidation rules="required" v-model="first" :error-messages="errors" />
 
     <InputWithValidation rules="required" v-model="second" :error-messages="errors" />
 
-    <v-btn :disabled="invalid" @click="submit()">Submit</v-btn>
-  </template>
+    <v-btn :disabled="invalid">Submit</v-btn>
+  </form>
 </ValidationObserver>
 ```
+
+::: tip
+  ValidationObserver is a __renderless__ component, meaning it does not render anything of its own. It only renders its slot, as such you need to have __only one root element__ in your slot, if you use `template` tag it will instead be replaced by a `span` tag to keep your slot contained within a single root element.
+:::
 
 ## Scoped Slot Data
 
@@ -42,13 +46,13 @@ Validating before submit is even easier than the old way, using the [public meth
 ```vue
 <template>
   <ValidationObserver ref="observer">
-    <template slot-scope="{ invalid }">
+    <form slot-scope="{ invalid }" @submit.prevent="submit()">
       <InputWithValidation rules="required" v-model="first" :error-messages="errors" />
 
       <InputWithValidation rules="required" v-model="second" :error-messages="errors" />
 
-      <v-btn :disabled="invalid" @click="submit()">Submit</v-btn>
-    </template>
+      <v-btn :disabled="invalid">Submit</v-btn>
+    </form>
   </ValidationObserver>
 </template>
 
@@ -82,15 +86,15 @@ The Validation Components API does not implement scopes and won't be, you can us
 <template>
   <div>
     <ValidationObserver ref="obs1">
-      <template slot-scope="{ invalid }">
+      <div slot-scope="{ invalid }">
         <!-- Fields -->
-      </template>
+      </div>
     </ValidationObserver>
 
     <ValidationObserver ref="obs2">
-      <template slot-scope="{ invalid }">
+      <div slot-scope="{ invalid }">
         <!-- Fields -->
-      </template>
+      </div>
     </ValidationObserver>
   </div>
 </template>
@@ -113,11 +117,7 @@ Below is the reference of the ValidationObserver public API.
 
 ### Props
 
-All the following props are optional.
-
-|Prop       | Type      | Default Value         | Description                                                                  |
-|-----------|-----------|-----------------------|------------------------------------------------------------------------------|
-| tag       | `string`  | `span`                | The default HTML tag to be used to render the root element of the component. |
+The validation observer does not accept any props.
 
 ## Methods
 
