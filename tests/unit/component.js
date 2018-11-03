@@ -1,4 +1,4 @@
-import { mount, createLocalVue } from '@vue/test-utils';
+import { mount, createLocalVue, renderToString } from '@vue/test-utils';
 import VeeValidate from '@/index';
 import flushPromises from 'flush-promises';
 import InputWithoutValidation from './components/Input';
@@ -34,6 +34,18 @@ describe('Validation Provider Component', () => {
     }, { localVue: Vue });
 
     expect(wrapper.html()).toBe(`<p></p>`);
+  });
+
+  test('SSR: render single root slot', () => {
+    const output = renderToString({
+      template: `
+        <ValidationProvider>
+          <p slot-scope="ctx"></p>
+        </ValidationProvider>
+      `
+    }, { localVue: Vue });
+
+    expect(output).toBe('<p data-server-rendered="true"></p>');
   });
 
   test('validates lazy models', async () => {
@@ -511,14 +523,28 @@ describe('Validation Provider Component', () => {
 });
 
 describe('Validation Observer Component', () => {
-  test('renders the tag prop', () => {
+  test('renders the slot', () => {
     const wrapper = mount({
       template: `
-        <ValidationObserver></ValidationObserver>
+        <ValidationObserver>
+          <form slot-scope="ctx"></form>
+        </ValidationObserver>
       `
     }, { localVue: Vue });
 
-    expect(wrapper.html()).toBe(`<span></span>`);
+    expect(wrapper.html()).toBe(`<form></form>`);
+  });
+
+  test('SSR: renders the slot', () => {
+    const output = renderToString({
+      template: `
+        <ValidationObserver>
+          <form slot-scope="ctx"></form>
+        </ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    expect(output).toBe(`<form data-server-rendered="true"></form>`);
   });
 
   test('observes the current state of providers', async () => {
