@@ -35,7 +35,7 @@ export function onRenderUpdate (model) {
       });
     };
 
-    this.syncValue(model.value);
+    this.value = model.value;
     this.validate().then(this.immediate || shouldRevalidate ? this.applyResult : silentHandler);
   }
 
