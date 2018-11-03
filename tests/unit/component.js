@@ -535,11 +535,23 @@ describe('Validation Observer Component', () => {
     expect(wrapper.html()).toBe(`<form></form>`);
   });
 
-  test('SSR: renders the slot', () => {
+  test('renders the scoped slot in SSR', () => {
     const output = renderToString({
       template: `
         <ValidationObserver>
           <form slot-scope="ctx"></form>
+        </ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    expect(output).toBe(`<form data-server-rendered="true"></form>`);
+  });
+
+  test('renders the default slot if no scoped slots in SSR', () => {
+    const output = renderToString({
+      template: `
+        <ValidationObserver>
+          <form></form>
         </ValidationObserver>
       `
     }, { localVue: Vue });

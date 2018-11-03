@@ -1,5 +1,5 @@
-import { normalizeSlots, createRenderless } from '../utils/vnode';
-import { isCallable, values } from '../utils';
+import { createRenderless } from '../utils/vnode';
+import { isCallable, values, warn } from '../utils';
 
 const flagMergingStrategy = {
   pristine: 'every',
@@ -72,7 +72,11 @@ export const ValidationObserver = {
   render (h) {
     let slots = this.$scopedSlots.default;
     if (!isCallable(slots)) {
-      slots = () => normalizeSlots(this.$slots, this.$vnode.context);
+      if (process.env.NODE_ENV !== 'production') {
+        warn('Did you forget to add a scoped slot to the ValidationObserver?');
+      }
+
+      return createRenderless(h, this.$slots.default);
     }
 
     return createRenderless(h, slots(this.ctx));

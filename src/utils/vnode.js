@@ -128,14 +128,18 @@ export function normalizeSlots (slots, ctx) {
 }
 
 export function createRenderless (h, vnode) {
-  // template used, replace it with a span tag.
-  if (Array.isArray(vnode)) {
-    if (process.env.NODE_ENV !== 'production') {
-      warn('Your slot should have one root element. Rendering a span as the root.');
-    }
-
-    return h('span', vnode);
+  // a single-root slot yay!
+  if (!Array.isArray(vnode)) {
+    return vnode;
   }
 
-  return vnode;
+  if (process.env.NODE_ENV !== 'production') {
+    warn('Your slot should have one root element. Rendering a span as the root.');
+  }
+
+  if (vnode.length === 1) {
+    return vnode[0];
+  }
+
+  return h('span', vnode);
 };

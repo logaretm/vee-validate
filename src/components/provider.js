@@ -2,7 +2,7 @@ import VeeValidate from '../plugin';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable, debounce } from '../utils';
-import { findModel, extractVNodes, addVNodeListener, getInputEventName, normalizeSlots, createRenderless } from '../utils/vnode';
+import { findModel, extractVNodes, addVNodeListener, getInputEventName, createRenderless } from '../utils/vnode';
 
 let $validator = null;
 
@@ -306,7 +306,7 @@ export const ValidationProvider = {
         warn('Did you forget to add a scoped slot to the ValidationProvider?');
       }
 
-      slot = () => normalizeSlots(this.$slots, this.$vnode.context);
+      return createRenderless(h, this.$slots.default);
     }
 
     const nodes = slot(ctx);
