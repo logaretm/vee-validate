@@ -12,28 +12,28 @@ Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
 const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required.';
 
 describe('Validation Provider Component', () => {
-  test('renders a span by default', () => {
+  test('renders a span if the slot does not have a single root.', () => {
     const wrapper = mount({
       template: `
-        <div>
-          <ValidationProvider></ValidationProvider>
-        </div>
+        <ValidationProvider>
+          <template slot-scope="ctx"><p></p><p></p></template>
+        </ValidationProvider>
       `
     }, { localVue: Vue });
 
-    expect(wrapper.html()).toBe(`<div><span></span></div>`);
+    expect(wrapper.html()).toBe(`<span><p></p><p></p></span>`);
   });
 
-  test('renders the root element using the tag prop', () => {
+  test('renders its slot', () => {
     const wrapper = mount({
       template: `
-        <div>
-          <ValidationProvider tag="div"></ValidationProvider>
-        </div>
+        <ValidationProvider>
+          <p slot-scope="ctx"></p>
+        </ValidationProvider>
       `
     }, { localVue: Vue });
 
-    expect(wrapper.html()).toBe(`<div><div></div></div>`);
+    expect(wrapper.html()).toBe(`<p></p>`);
   });
 
   test('validates lazy models', async () => {
@@ -42,14 +42,12 @@ describe('Validation Provider Component', () => {
         value: ''
       }),
       template: `
-        <div>
-          <ValidationProvider rules="required">
-            <template slot-scope="{ errors }">
-              <input v-model.lazy="value" type="text">
-              <span id="error">{{ errors[0] }}</span>
-            </template>
-          </ValidationProvider>
-        </div>
+        <ValidationProvider rules="required">
+          <div slot-scope="{ errors }">
+            <input v-model.lazy="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </div>
+        </ValidationProvider>
       `
     }, { localVue: Vue });
 
@@ -82,13 +80,13 @@ describe('Validation Provider Component', () => {
       template: `
         <div>
           <ValidationProvider rules="required">
-            <template slot-scope="{ errors }">
+            <div slot-scope="{ errors }">
               <select v-model="value">
                 <option value="">0</option>
                 <option value="1">1</option>
               </select>
               <span id="error">{{ errors[0] }}</span>
-            </template>
+            </div>
           </ValidationProvider>
         </div>
       `
@@ -123,10 +121,10 @@ describe('Validation Provider Component', () => {
       template: `
         <div>
           <ValidationProvider :immediate="true" rules="required">
-            <template slot-scope="{ errors }">
+            <div slot-scope="{ errors }">
               <input v-model="value" type="text">
               <span id="error">{{ errors[0] }}</span>
-            </template>
+            </div>
           </ValidationProvider>
         </div>
       `
@@ -158,10 +156,10 @@ describe('Validation Provider Component', () => {
       template: `
         <div>
           <ValidationProvider rules="required">
-            <template slot-scope="{ errors }">
+            <div slot-scope="{ errors }">
               <TextInput v-model="value" ref="input"></TextInput>
               <span id="error">{{ errors && errors[0] }}</span>
-            </template>
+            </div>
           </ValidationProvider>
         </div>
       `
@@ -201,10 +199,10 @@ describe('Validation Provider Component', () => {
       template: `
         <div>
           <ValidationProvider rules="required">
-            <template slot-scope="{ errors }">
+            <div slot-scope="{ errors }">
               <TextInput v-model="value" ref="input"></TextInput>
               <span id="error">{{ errors[0] }}</span>
-            </template>
+            </div>
           </ValidationProvider>
         </div>
       `
@@ -268,15 +266,15 @@ describe('Validation Provider Component', () => {
       template: `
         <div>
           <ValidationProvider rules="required" vid="confirmation">
-            <template slot-scope="ctx">
+            <div slot-scope="ctx">
               <input type="password" v-model="confirmation">
-            </template>
+            </div>
           </ValidationProvider>
           <ValidationProvider rules="required|confirmed:confirmation">
-            <template slot-scope="{ errors }">
+            <div slot-scope="{ errors }">
               <input type="password" v-model="password">
               <span id="err1">{{ errors[0] }}</span>
-            </template>
+            </div>
           </ValidationProvider>
         </div>
       `
@@ -303,9 +301,9 @@ describe('Validation Provider Component', () => {
       template: `
         <div>
           <ValidationProvider vid="named" ref="provider">
-            <template slot-scope="ctx">
+            <div slot-scope="ctx">
               <span></span>
-            </template>
+            </div>
           </ValidationProvider>
         </div>
       `
@@ -355,19 +353,17 @@ describe('Validation Provider Component', () => {
     const wrapper = mount({
       data: () => ({ value: '' }),
       template: `
-        <div>
-          <SelectWithValidation v-model="value" rules="required">
-            <option value="">0</option>
-            <option value="1">1</option>
-          </SelectWithValidation>
-        </div>
+        <SelectWithValidation v-model="value" rules="required">
+          <option value="">0</option>
+          <option value="1">1</option>
+        </SelectWithValidation>
       `,
       components: {
         SelectWithValidation: WithValidation
       }
     }, { localVue: Vue });
 
-    expect(wrapper.html()).toBe(`<div><div><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div></div>`);
+    expect(wrapper.html()).toBe(`<div><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div>`);
   });
 
   test('resets validation state', async () => {
@@ -388,10 +384,10 @@ describe('Validation Provider Component', () => {
       template: `
         <div>
           <ValidationProvider rules="required" ref="provider">
-            <template slot-scope="{ errors }">
+            <div slot-scope="{ errors }">
               <TextInput v-model="value" ref="input"></TextInput>
               <span id="error">{{ errors && errors[0] }}</span>
-            </template>
+            </div>
           </ValidationProvider>
         </div>
       `
@@ -419,14 +415,12 @@ describe('Validation Provider Component', () => {
         value: ''
       }),
       template: `
-        <div>
-          <ValidationProvider :bails="false" rules="email|min:3">
-            <template slot-scope="{ errors }">
-              <input v-model="value" type="text">
-              <p v-for="error in errors">{{ error }}</p>
-            </template>
-          </ValidationProvider>
-        </div>
+        <ValidationProvider :bails="false" rules="email|min:3">
+          <div slot-scope="{ errors }">
+            <input v-model="value" type="text">
+            <p v-for="error in errors">{{ error }}</p>
+          </div>
+        </ValidationProvider>
       `
     }, { localVue: Vue });
 
@@ -449,14 +443,12 @@ describe('Validation Provider Component', () => {
         value: ''
       }),
       template: `
-        <div>
-          <ValidationProvider rules="required" :debounce="50">
-            <template slot-scope="{ errors }">
-              <input v-model="value" type="text">
-              <p>{{ errors[0] }}</p>
-            </template>
-          </ValidationProvider>
-        </div>
+        <ValidationProvider rules="required" :debounce="50">
+          <div slot-scope="{ errors }">
+            <input v-model="value" type="text">
+            <p>{{ errors[0] }}</p>
+          </div>
+        </ValidationProvider>
       `
     }, { localVue: Vue });
 
@@ -478,14 +470,12 @@ describe('Validation Provider Component', () => {
         value: ''
       }),
       template: `
-        <div>
-          <ValidationProvider rules="required|longRunning" :debounce="10">
-            <template slot-scope="{ errors }">
-              <input v-model="value" type="text">
-              <p>{{ errors[0] }}</p>
-            </template>
-          </ValidationProvider>
-        </div>
+        <ValidationProvider rules="required|longRunning" :debounce="10">
+          <div slot-scope="{ errors }">
+            <input v-model="value" type="text">
+            <p>{{ errors[0] }}</p>
+          </div>
+        </ValidationProvider>
       `
     }, { localVue: Vue });
 
@@ -538,15 +528,15 @@ describe('Validation Observer Component', () => {
       }),
       template: `
         <ValidationObserver>
-          <template slot-scope="{ valid }">
+          <div slot-scope="{ valid }">
             <ValidationProvider rules="required">
-              <template slot-scope="ctx">
+              <div slot-scope="ctx">
                 <input v-model="value" type="text">
-              </template>
+              </div>
             </ValidationProvider>
 
             <span id="state">{{ valid }}</span>
-          </template>
+          </div>
         </ValidationObserver>
       `
     }, { localVue: Vue });
@@ -571,18 +561,18 @@ describe('Validation Observer Component', () => {
       }),
       template: `
         <ValidationObserver ref="obs">
-          <template slot-scope="ctx">
+          <div slot-scope="ctx">
 
             <ValidationProvider rules="required">
 
-              <template slot-scope="{ errors }">
+              <div slot-scope="{ errors }">
                 <input v-model="value" type="text">
                 <span id="error">{{ errors[0] }}</span>
-              </template>
+              </div>
 
             </ValidationProvider>
 
-          </template>
+          </div>
         </ValidationObserver>
       `
     }, { localVue: Vue });
@@ -603,18 +593,18 @@ describe('Validation Observer Component', () => {
       }),
       template: `
         <ValidationObserver ref="obs">
-          <template slot-scope="ctx">
+          <div slot-scope="ctx">
 
             <ValidationProvider rules="required" vid="id">
 
-              <template slot-scope="{ errors }">
+              <div slot-scope="{ errors }">
                 <input v-model="value" type="text">
                 <span id="error">{{ errors[0] }}</span>
-              </template>
+              </div>
 
             </ValidationProvider>
 
-          </template>
+          </div>
         </ValidationObserver>
       `
     }, { localVue: Vue });
@@ -634,18 +624,18 @@ describe('Validation Observer Component', () => {
       }),
       template: `
         <ValidationObserver ref="obs">
-          <template slot-scope="ctx">
+          <div slot-scope="ctx">
 
             <ValidationProvider rules="required">
 
-              <template slot-scope="{ errors }">
+              <div slot-scope="{ errors }">
                 <input v-model="value" type="text">
                 <span id="error">{{ errors[0] }}</span>
-              </template>
+              </div>
 
             </ValidationProvider>
 
-          </template>
+          </div>
         </ValidationObserver>
       `
     }, { localVue: Vue });
@@ -672,20 +662,20 @@ describe('Validation Observer Component', () => {
       }),
       template: `
         <ValidationObserver ref="obs">
-          <template slot-scope="{ errors }">
+          <div slot-scope="{ errors }">
             <ValidationProvider vid="name" rules="required">
-              <template slot-scope="ctx">
+              <div slot-scope="ctx">
                 <input v-model="name" type="text">
-              </template>
+              </div>
             </ValidationProvider>
             <ValidationProvider vid="email" rules="required">
-              <template slot-scope="ctx">
+              <div slot-scope="ctx">
                 <input v-model="email" type="text">
-              </template>
+              </div>
             </ValidationProvider>
 
             <p v-for="fieldErrors in errors">{{ fieldErrors[0] }}</p>
-          </template>
+          </div>
         </ValidationObserver>
       `
     }, { localVue: Vue });

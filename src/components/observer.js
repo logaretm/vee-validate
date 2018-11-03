@@ -1,4 +1,4 @@
-import { normalizeSlots } from '../utils/vnode';
+import { normalizeSlots, createRenderless } from '../utils/vnode';
 import { isCallable, values } from '../utils';
 
 const flagMergingStrategy = {
@@ -24,12 +24,6 @@ export const ValidationObserver = {
     return {
       $_veeObserver: this
     };
-  },
-  props: {
-    tag: {
-      type: String,
-      default: 'span'
-    }
   },
   data: () => ({
     refs: {}
@@ -81,11 +75,6 @@ export const ValidationObserver = {
       slots = () => normalizeSlots(this.$slots, this.$vnode.context);
     }
 
-    const nodes = slots(this.ctx);
-
-    return h(this.tag, {
-      attrs: this.$attrs,
-      on: this.$listeners
-    }, Array.isArray(nodes) ? nodes : [nodes]);
+    return createRenderless(h, slots(this.ctx));
   }
 };

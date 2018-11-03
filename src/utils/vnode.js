@@ -1,5 +1,5 @@
 // VNode Utils
-import { find, isCallable, isNullOrUndefined, isTextInput } from './index';
+import { find, isCallable, isNullOrUndefined, isTextInput, warn } from './index';
 
 // Gets the model object on the vnode.
 export function findModel (vnode) {
@@ -126,3 +126,16 @@ export function normalizeSlots (slots, ctx) {
     return arr.concat(slots[key]);
   }, []);
 }
+
+export function createRenderless (h, vnode) {
+  // template used, replace it with a span tag.
+  if (Array.isArray(vnode)) {
+    if (process.env.NODE_ENV !== 'production') {
+      warn('Your slot should have one root element. Rendering a span as the root.');
+    }
+
+    return h('span', vnode);
+  }
+
+  return vnode;
+};

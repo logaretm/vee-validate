@@ -2,7 +2,7 @@ import VeeValidate from '../plugin';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable, debounce } from '../utils';
-import { findModel, extractVNodes, addVNodeListener, getInputEventName, normalizeSlots } from '../utils/vnode';
+import { findModel, extractVNodes, addVNodeListener, getInputEventName, normalizeSlots, createRenderless } from '../utils/vnode';
 
 let $validator = null;
 
@@ -177,10 +177,6 @@ export const ValidationProvider = {
       type: Boolean,
       default: false
     },
-    tag: {
-      type: String,
-      default: 'span'
-    },
     bails: {
       type: Boolean,
       default: () => VeeValidate.config.fastExit
@@ -313,16 +309,13 @@ export const ValidationProvider = {
       slot = () => normalizeSlots(this.$slots, this.$vnode.context);
     }
 
-    let nodes = slot(ctx);
+    const nodes = slot(ctx);
     // Handle single-root slot.
-    nodes = Array.isArray(nodes) ? nodes : [nodes];
-    extractVNodes({ children: nodes }).forEach(input => {
+    extractVNodes(nodes).forEach(input => {
       addListeners.call(this, input);
     });
 
-    return h(this.tag, {
-      attrs: this.$attrs
-    }, nodes);
+    return createRenderless(h, nodes);
   },
   beforeDestroy () {
     // cleanup reference.
