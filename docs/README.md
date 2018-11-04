@@ -13,12 +13,12 @@ features:
 - title: Configurable
   details: Config that doesn't get into your way, everything is optional.
 footer: MIT Licensed | Copyright © 2018-present Baianat
-description: Input validation for Vue.js
+description: Template Based Validation Framework for Vue.js
 meta:
   - name: og:title
     content: VeeValidate
   - name: og:description
-    content: Input validation for Vue.js
+    content: Template Based Validation Framework for Vue.js
 ---
 # Quick Setup
 

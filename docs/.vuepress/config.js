@@ -62,7 +62,7 @@ function genSidebarConfig(...names) {
 
 module.exports = {
   title: 'VeeValidate',
-  description: 'Input validation for Vue.js',
+  description: 'Template Based Validation Framework for Vue.js',
   ga: 'UA-100131478-1',
   serviceWorker: true,
   base: '/vee-validate/',
