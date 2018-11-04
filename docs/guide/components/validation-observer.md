@@ -19,7 +19,7 @@ Here is a small example, again with Vuetify components wrapped by the [Provider'
 ```
 
 ::: tip
-  ValidationObserver is a __renderless__ component, meaning it does not render anything of its own. It only renders its slot, as such you need to have __only one root element__ in your slot, if you use `template` tag it will instead be replaced by a `span` tag to keep your slot contained within a single root element.
+  ValidationObserver is a __renderless__ component, meaning it does not render anything of its own. It only renders its slot, as such you need to have __only one root element__ in your slot, if you use the `template` tag it might cause render errors.
 :::
 
 ## Scoped Slot Data
