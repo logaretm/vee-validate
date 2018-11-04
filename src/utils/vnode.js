@@ -133,13 +133,14 @@ export function createRenderless (h, vnode) {
     return vnode;
   }
 
-  if (process.env.NODE_ENV !== 'production') {
-    warn('Your slot should have one root element. Rendering a span as the root.');
-  }
-
   if (vnode.length === 1) {
     return vnode[0];
   }
 
-  return h('span', vnode);
+  if (process.env.NODE_ENV !== 'production') {
+    warn('Your slot should have one root element. Rendering a span as the root.');
+  }
+
+  // Renders a multi-root node, should throw a Vue error.
+  return vnode;
 };

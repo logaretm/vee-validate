@@ -12,18 +12,6 @@ Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
 const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required.';
 
 describe('Validation Provider Component', () => {
-  test('renders a span if the slot does not have a single root.', () => {
-    const wrapper = mount({
-      template: `
-        <ValidationProvider>
-          <template slot-scope="ctx"><p></p><p></p></template>
-        </ValidationProvider>
-      `
-    }, { localVue: Vue });
-
-    expect(wrapper.html()).toBe(`<span><p></p><p></p></span>`);
-  });
-
   test('renders its slot', () => {
     const wrapper = mount({
       template: `
@@ -247,10 +235,10 @@ describe('Validation Provider Component', () => {
       template: `
         <div>
           <ValidationProvider rules="required" events="blur">
-            <template slot-scope="{ errors }">
+            <div slot-scope="{ errors }">
               <TextInput v-model="value"></TextInput>
               <span id="error">{{ errors[0] }}</span>
-            </template>
+            </div>
           </ValidationProvider>
         </div>
       `
