@@ -1,18 +1,17 @@
 ---
 name: 🐛 Bug report
-about: Create a report to help us improve
-
+about: Create a report to help us improve.
 ---
 
 **Versions**
 
-- vee-validate: 2.0.#
+- vee-validate: 2.#.#
 - vue: 2.#.#
 
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+**To reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -22,8 +21,8 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Demo Link**
-If applicable, add a minimal demo link to help explain your problem. You can use [jsfiddle](https://jsfiddle.net/) or [Codesandbox](https://codesandbox.io/).
+**Demo link**
+If applicable, add a minimal demo link to help explain your problem. You can use [JSFiddle](https://jsfiddle.net/) or [Codesandbox](https://codesandbox.io/).
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
