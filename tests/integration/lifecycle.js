@@ -17,7 +17,7 @@ test('unbind: does not detach the field if it does not exist', () => {
   const validator = wrapper.vm.$validator;
   const detach = validator.detach.bind(validator);
   validator.detach = jest.fn(detach);
-  validator.fields.items[0].id = 'jadja'; // mess up the id.
+  validator.fields[0].id = 'jadja'; // mess up the id.
   wrapper.destroy();
   expect(validator.detach).not.toHaveBeenCalled();
 });

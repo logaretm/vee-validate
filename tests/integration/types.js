@@ -84,7 +84,7 @@ test('removes listeners on related radio buttons', async () => {
   const Vue = createLocalVue();
   Vue.use(VeeValidate, { events: 'input' });
   const wrapper = shallow(TestComponent, { localVue: Vue, attachToDocument: true });
-  const field = wrapper.vm.$validator.fields.find({ name: 'radioField' });
+  const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'radioField' }));
 
   // it has two watchers, one for it and one for its friend
   expect(field.watchers.filter(w => /input_native/.test(w.tag))).toHaveLength(2);

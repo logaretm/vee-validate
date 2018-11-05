@@ -3,22 +3,22 @@
 VeeValidate maps HTML elements and Vue components that are under validation to instances of `fields`, while this class not exposed to be used publicly you can find Its API very useful if you are planning to do some lower-level actions.
 
 ::: warning
-  Any undocumented properties/methods are not intended for public use.
+  This API is not stable and should not be used. Any undocumented properties/methods are not intended for public use.
 :::
 
 ## Getting the field instance
 
-Getting a field instance is straightforward, you can use the `Validator.fields.find` method to get the field instance.
+Getting a field instance is straightforward, you can use the `Validator.fields.find` and `Field.matches` methods to get the field instance.
 
 ```js
 // find the field which has a matching name of 'email'
-const field = this.$validator.fields.find({ name: 'email' }));
+const field = this.$validator.fields.find(f => f.matches({ name: 'email' })));
 
 // find the field which has a name of email and is in the 'newsletter' scope.
-const field = this.$validator.fields.find({ name: 'email', scope: 'newsletter' });
+const field = this.$validator.fields.find(f => f.matches({ name: 'email', scope: 'newsletter' }));
 
 // or use the id to find the field if it is known to you.
-const field = this.$validator.fields.find({ id: 'fieldId' });
+const field = this.$validator.fields.find(f => f.matches({ id: 'fieldId' }));
 ```
 
 ## API
@@ -26,8 +26,6 @@ const field = this.$validator.fields.find({ id: 'fieldId' });
 ::: danger
   Careful when using the field API, as it may disrupt the validator operations and may produce unintended results.
 :::
-
-### Constructor
 
 ### Properties
 

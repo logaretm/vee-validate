@@ -1,6 +1,5 @@
 import { assign } from '../utils';
 import ErrorBag from './errorBag';
-import FieldBag from './fieldBag';
 
 export default class ScopedValidator {
   constructor (base, vm) {
@@ -13,7 +12,7 @@ export default class ScopedValidator {
   }
 
   get flags () {
-    return this._base.fields.items.filter(f => f.vmId === this.id).reduce((acc, field) => {
+    return this.fields.reduce((acc, field) => {
       if (field.scope) {
         if (!acc[`$${field.scope}`]) {
           acc[`$${field.scope}`] = {};
@@ -33,7 +32,7 @@ export default class ScopedValidator {
   }
 
   get fields () {
-    return new FieldBag(this._base.fields.filter({ vmId: this.id }));
+    return this._base.fields.filter(f => f.matches({ vmId: this.id }));
   }
 
   get dictionary () {

@@ -1,6 +1,6 @@
 import Resolver from './core/resolver';
 import Field from './core/field';
-import { isEqual, warn } from './utils';
+import { isEqual, warn, find } from './utils';
 
 // @flow
 
@@ -12,7 +12,7 @@ function findField (el: HTMLElement, context: ValidatingVM): ?Field {
     return null;
   }
 
-  return context.$validator.fields.find({ id: el._veeValidateId });
+  return find(context.$validator.fields, f => f.matches({ id: el._veeValidateId }));
 };
 
 export default {

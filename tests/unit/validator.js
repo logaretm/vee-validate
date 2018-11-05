@@ -168,9 +168,9 @@ test('formats error messages', async () => {
 test('can manually attach new fields', async () => {
   const v = new Validator();
 
-  expect(v.fields.find({ name: 'field' })).toBeFalsy();
+  expect(v.fields.find(f => f.matches({ name: 'field' }))).toBeFalsy();
   v.attach({ name: 'field', rules: 'required|min:5' });
-  expect(v.fields.find({ name: 'field' })).toBeTruthy();
+  expect(v.fields.find(f => f.matches({ name: 'field' }))).toBeTruthy();
   expect(await v.validate('field', 'less')).toBe(false);
   expect(await v.validate('field', 'not less')).toBe(true);
 });
@@ -198,9 +198,9 @@ test('can detach fields', () => {
   const v = new Validator();
 
   v.attach({ name: 'field', rules: 'required' });
-  expect(v.fields.find({ name: 'field' })).toBeTruthy();
+  expect(v.fields.find(f => f.matches({ name: 'field' }))).toBeTruthy();
   v.detach('field');
-  expect(v.fields.find({ name: 'field' })).toBeFalsy();
+  expect(v.fields.find(f => f.matches({ name: 'field' }))).toBeFalsy();
   // Silently fails if the field does not exist.
   expect(() => {
     v.detach('someOtherField');
@@ -212,7 +212,7 @@ test('can detach fields', () => {
     scope: 'myscope'
   });
   v.detach('myscope.field');
-  expect(v.fields.find({ name: 'field', scope: 'myscope' })).toBeFalsy();
+  expect(v.fields.find(f => f.matches({ name: 'field', scope: 'myscope' }))).toBeFalsy();
 });
 
 test('can validate specific scopes', async () => {
@@ -241,7 +241,7 @@ test('can validate specific scopes on an object', async () => {
   v.attach({ name: 'anotherfield', rules: 'required', scope: 'myscope' });
 
   // only global scope got validated.
-  expect(await v.validateAll({ field: null })).toBe(false);
+  expect(await v.validateAll()).toBe(false);
   expect(v.errors.count()).toBe(1);
 });
 

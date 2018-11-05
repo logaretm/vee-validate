@@ -50,14 +50,14 @@ test('falls back to DOM events if the model is unwatchable', async () => {
 
 test('detects the model config on the component ctor options', async () => {
   const wrapper = mount(TestComponent, { localVue: Vue });
-  const field = wrapper.vm.$validator.fields.find({ name: 'customModel' });
+  const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'customModel' }));
 
   expect(field.events).toEqual(['change']);
 });
 
 test('watches the model from the child context if it cannot be watched from the parent', async () => {
   const wrapper = mount(TestComponent, { localVue: Vue });
-  const field = wrapper.vm.$validator.fields.find({ name: 'loop[0]' });
+  const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'loop[0]' }));
 
   expect(field.events).toEqual(['change']);
   wrapper.setData({

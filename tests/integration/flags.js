@@ -25,7 +25,7 @@ test('field flags', async () => {
 
   const wrapper = shallow(TestComponent, { localVue: Vue });
   const input = wrapper.find('input');
-  const field = wrapper.vm.$validator.fields.find({ name: 'name' });
+  const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'name' }));
   // wait for the silent validation to finish.
   await flushPromises();
 
@@ -98,7 +98,7 @@ test('adds listeners when field flag is manually set', async () => {
 
   const wrapper = shallow(TestComponent, { localVue: Vue });
   const input = wrapper.find('input');
-  const field = wrapper.vm.$validator.fields.find({ name: 'name' });
+  const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'name' }));
 
   expect(field.flags.touched).toBe(false);
   input.trigger('blur');
@@ -121,7 +121,7 @@ test('scoped field flags', async () => {
   Vue.use(VeeValidate);
 
   const wrapper = shallow(TestComponent, { localVue: Vue });
-  wrapper.vm.$validator.fields.find({ name: 'scoped', scope: 's1' });
+  wrapper.vm.$validator.fields.find(f => f.matches({ name: 'scoped', scope: 's1' }));
   // wait for the silent validation to finish.
   await flushPromises();
 

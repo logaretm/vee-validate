@@ -1,5 +1,4 @@
 import ErrorBag from './errorBag';
-import FieldBag from './fieldBag';
 import RuleContainer from './ruleContainer';
 import Field from './field';
 import VeeValidate from '../plugin';
@@ -21,7 +20,7 @@ import {
 
 export default class Validator {
   errors: ErrorBag;
-  fields: FieldBag;
+  fields: Field[];
   flags: MapObject;
   fastExit: boolean;
   paused: boolean;
@@ -29,7 +28,7 @@ export default class Validator {
 
   constructor (validations?: MapObject, options?: MapObject = { fastExit: true }) {
     this.errors = new ErrorBag();
-    this.fields = new FieldBag();
+    this.fields = [];
     this._createFields(validations);
     this.paused = false;
     this.fastExit = !isNullOrUndefined(options && options.fastExit) ? options.fastExit : true;
@@ -52,7 +51,7 @@ export default class Validator {
   }
 
   get flags () {
-    return this.fields.items.reduce((acc, field) => {
+    return this.fields.reduce((acc, field) => {
       if (field.scope) {
         acc[`$${field.scope}`] = {
           [field.name]: field.flags
@@ -203,7 +202,10 @@ export default class Validator {
 
     field.destroy();
     this.errors.remove(field.name, field.scope, field.vmId);
-    this.fields.remove(field);
+    const idx = this.fields.indexOf(field);
+    if (idx !== -1) {
+      this.fields.splice(idx, 1);
+    }
   }
 
   /**
@@ -218,7 +220,7 @@ export default class Validator {
     return VeeValidate.instance._vm.$nextTick().then(() => {
       return VeeValidate.instance._vm.$nextTick();
     }).then(() => {
-      this.fields.filter(matcher).forEach(field => {
+      this.fields.filter(f => f.matches(matcher)).forEach(field => {
         field.waitFor(null);
         field.reset(); // reset field flags.
         this.errors.remove(field.name, field.scope);
@@ -332,8 +334,10 @@ export default class Validator {
       matcher = { scope: null, vmId: vmId };
     }
 
+    const filterFn = Array.isArray(matcher) ? f => matcher.some(m => f.matches(m)) : f => f.matches(matcher);
+
     return Promise.all(
-      this.fields.filter(matcher).map(field => this._validate(field, providedValues ? values[field.name] : field.value))
+      this.fields.filter(filterFn).map(field => this._validate(field, providedValues ? values[field.name] : field.value))
     ).then(results => {
       if (!silent) {
         this._handleValidationResults(results, vmId);
@@ -350,7 +354,7 @@ export default class Validator {
     if (this.paused) return Promise.resolve(true);
 
     return Promise.all(
-      this.fields.filter({ vmId }).map(field => this._validate(field, field.value))
+      this.fields.filter(f => f.matches({ vmId })).map(field => this._validate(field, field.value))
     ).then(results => {
       if (!silent) {
         this._handleValidationResults(results, vmId);
@@ -616,22 +620,22 @@ export default class Validator {
    */
   _resolveField (name: string, scope: string | null, uid): ?Field {
     if (name[0] === '#') {
-      return this.fields.find({ id: name.slice(1) });
+      return find(this.fields, f => f.matches({ id: name.slice(1) }));
     }
 
     if (!isNullOrUndefined(scope)) {
-      return this.fields.find({ name, scope, vmId: uid });
+      return find(this.fields, f => f.matches({ name, scope, vmId: uid }));
     }
 
     if (includes(name, '.')) {
       const [fieldScope, ...fieldName] = name.split('.');
-      const field = this.fields.find({ name: fieldName.join('.'), scope: fieldScope, vmId: uid });
+      const field = find(this.fields, f => f.matches({ name: fieldName.join('.'), scope: fieldScope, vmId: uid }));
       if (field) {
         return field;
       }
     }
 
-    return this.fields.find({ name, scope: null, vmId: uid });
+    return find(this.fields, f => f.matches({ name, scope: null, vmId: uid }));
   }
 
   /**
@@ -664,7 +668,7 @@ export default class Validator {
     this.errors.add(allErrors);
 
     // handle flags.
-    this.fields.filter(matchers).forEach(field => {
+    this.fields.filter(f => matchers.some(m => f.matches(m))).forEach(field => {
       const result = find(results, r => r.id === field.id);
       field.setFlags({
         pending: false,

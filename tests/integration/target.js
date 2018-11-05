@@ -21,7 +21,7 @@ test('native HTML elements targeting', async () => {
   target.trigger('input');
   await flushPromises();
 
-  wrapper.vm.$validator.fields.find({ name: 'f1' });
+  wrapper.vm.$validator.fields.find(f => f.matches({ name: 'f1' }));
 
   expect(wrapper.vm.$validator.errors.has('f1')).toBe(false);
   expect(wrapper.vm.$validator.flags.f1.valid).toBe(true);
@@ -81,5 +81,5 @@ test('fails silently if it cannot find the target field', async () => {
   input.trigger('input');
   await flushPromises();
 
-  expect(wrapper.vm.$validator.fields.find({ name: 'f3' }).dependencies).toHaveLength(0);
+  expect(wrapper.vm.$validator.fields.find(f => f.matches({ name: 'f3' })).dependencies).toHaveLength(0);
 });

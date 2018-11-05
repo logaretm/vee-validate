@@ -68,22 +68,11 @@ export default {
     this.$options.computed[options.errorBagName || 'errors'] = function errorBagGetter () {
       return this.$validator.errors;
     };
-    this.$options.computed[options.fieldsBagName || 'fields'] = function fieldBagGetter () {
-      return this.$validator.fields.items.reduce((acc, field) => {
-        if (field.scope) {
-          if (!acc[`$${field.scope}`]) {
-            acc[`$${field.scope}`] = {};
-          }
-
-          acc[`$${field.scope}`][field.name] = field.flags;
-
-          return acc;
-        }
-
-        acc[field.name] = field.flags;
-
-        return acc;
-      }, {});
+    this.$options.computed[options.fieldsBagName || 'fields'] = {
+      cache: false,
+      get: function fieldBagGetter () {
+        return this.$validator.flags;
+      }
     };
   },
   beforeDestroy () {

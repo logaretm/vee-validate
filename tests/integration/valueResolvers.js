@@ -13,7 +13,7 @@ describe('resolves native HTML Inputs values', () => {
 
   test('text fields', () => {
     const input = wrapper.find('#text');
-    const field = wrapper.vm.$validator.fields.find({ name: 'textField' });
+    const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'textField' }));
     expect(field.value).toBe('');
     input.element.value = 'hey';
     expect(field.value).toBe('hey');
@@ -21,7 +21,7 @@ describe('resolves native HTML Inputs values', () => {
 
   test('radio buttons fields', () => {
     const input = wrapper.find('#rad1');
-    const field = wrapper.vm.$validator.fields.find({ name: 'radioField' });
+    const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'radioField' }));
     expect(field.value).toBe(undefined);
     // we need to set the element attribute
     input.element.checked = true;
@@ -30,7 +30,7 @@ describe('resolves native HTML Inputs values', () => {
 
   test('checkbox fields', () => {
     const input = wrapper.find('#cb1');
-    const field = wrapper.vm.$validator.fields.find({ name: 'checkboxField' });
+    const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'checkboxField' }));
     expect(field.value).toBe(undefined);
 
     // we need to set the element attribute
@@ -40,7 +40,7 @@ describe('resolves native HTML Inputs values', () => {
 
   test('select fields', () => {
     const input = wrapper.find('#select');
-    const field = wrapper.vm.$validator.fields.find({ name: 'selectField' });
+    const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'selectField' }));
     expect(field.value).toBe('');
     // we need to set the element attribute
     input.element.selectedIndex = 1;
@@ -49,7 +49,7 @@ describe('resolves native HTML Inputs values', () => {
 
   test('select multiple fields', () => {
     const input = wrapper.find('#selectMul');
-    const field = wrapper.vm.$validator.fields.find({ name: 'selectMulField' });
+    const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'selectMulField' }));
     expect(field.value).toEqual([]);
 
     Array.from(input.element.options).forEach(option => {
@@ -60,7 +60,7 @@ describe('resolves native HTML Inputs values', () => {
   });
 
   test('file fields', () => {
-    const field = wrapper.vm.$validator.fields.find({ name: 'fileField' });
+    const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'fileField' }));
     expect(field.value).toEqual([]); // empty list of inputs
   });
 });
@@ -72,7 +72,7 @@ describe('resolves custom components values', () => {
 
   test('uses the default value prop resolver', () => {
     const comp = wrapper.find(InputWithoutResolvers);
-    const field = wrapper.vm.$validator.fields.find({ name: 'no-resolver' });
+    const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'no-resolver' }));
     // because it fetches the value from the props.
     expect(field.value).toBe(undefined);
 
@@ -84,7 +84,7 @@ describe('resolves custom components values', () => {
 
   test('uses the data-vv-value path attribute', () => {
     const comp = wrapper.find(InputWithoutProps);
-    const field = wrapper.vm.$validator.fields.find({ name: 'no-props' });
+    const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'no-props' }));
     // because it fetches the value from the component data.
     expect(field.value).toBe(null);
     comp.setData({ input: 'heya' });
@@ -93,7 +93,7 @@ describe('resolves custom components values', () => {
 
   test('uses the defined resolver in component options', () => {
     const comp = wrapper.find(InputWithResolvers);
-    const field = wrapper.vm.$validator.fields.find({ name: 'with-resolver' });
+    const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'with-resolver' }));
     // because it fetches the value from the input element.
     expect(field.value).toBe('');
 
