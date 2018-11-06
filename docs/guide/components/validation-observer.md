@@ -16,6 +16,16 @@ Here is a small example, again with Vuetify components wrapped by the [Provider'
     <v-btn :disabled="invalid">Submit</v-btn>
   </form>
 </ValidationObserver>
+
+<script>
+import { ValidationObserver } from 'vee-validate';
+
+export default {
+  components: {
+    ValidationObserver
+  }
+};
+</script>
 ```
 
 ::: tip
@@ -75,8 +85,6 @@ export default {
 ::: tip
   Using the same approach you can reset validation state for all providers using the public method `reset()`.
 :::
-
-[You can see observers in action here](/examples/validation-providers.md)
 
 ### Scopes And Groups
 
