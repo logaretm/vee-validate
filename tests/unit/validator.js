@@ -444,7 +444,7 @@ test('can translate target field for field dependent validations', async () => {
         birthday_min: el
       }
     },
-    rules: 'date_format:DD-MM-YYYY|after:birthday_min'
+    rules: 'date_format:dd-MM-yyyy|after:birthday_min'
   });
   v.localize('en', {
     attributes: {
@@ -895,7 +895,7 @@ test('it should pass the after/before inclusion parameters correctly', async () 
         field: el
       }
     },
-    rules: 'date_format:DD/MM/YYYY|after:field,true'
+    rules: 'date_format:dd/MM/yyyy|after:field,true'
   });
 
   el.value = '01/12/2008';
