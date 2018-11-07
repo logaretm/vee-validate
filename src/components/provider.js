@@ -96,11 +96,16 @@ function createValuesLookup (ctx) {
   let providers = ctx.$_veeObserver.refs;
 
   return ctx.fieldDeps.reduce((acc, depName) => {
-    if (providers[depName]) {
-      acc[depName] = providers[depName].value;
-      const unwatch = providers[depName].$watch('value', () => {
+    if (!providers[depName]) {
+      return acc;
+    }
+
+    acc[depName] = providers[depName].value;
+    const watcherName = `$__${depName}`;
+    if (!isCallable(ctx[watcherName])) {
+      ctx[watcherName] = providers[depName].$watch('value', () => {
         ctx.validate(ctx.value).then(ctx.applyResult);
-        unwatch();
+        ctx[watcherName]();
       });
     }
 
