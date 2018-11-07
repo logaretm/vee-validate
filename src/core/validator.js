@@ -171,7 +171,7 @@ export default class Validator {
 
     // validate the field initially
     if (field.immediate) {
-      this.validate(`#${field.id}`, value || field.value, { vmId: fieldOpts.vmId });
+      VeeValidate.instance._vm.$nextTick(() => this.validate(`#${field.id}`, value || field.value, { vmId: fieldOpts.vmId }));
     } else {
       this._validate(field, value || field.value, { initial: true }).then(result => {
         field.flags.valid = result.valid;

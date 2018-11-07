@@ -1,6 +1,7 @@
 import { createLocalVue } from '@vue/test-utils';
 import Field from '@/core/field';
 import VeeValidate from '@/index';
+import flushPromises from 'flush-promises';
 
 const Vue = createLocalVue();
 const Validator = VeeValidate.Validator;
@@ -809,6 +810,7 @@ test('triggers initial validation for fields', async () => {
   const v = new Validator();
   v.validate = jest.fn();
   const field = v.attach({ name: 'field', rules: 'alpha', el: document.createElement('input'), getter: () => '123', immediate: true });
+  await flushPromises();
   expect(v.validate).toHaveBeenCalledWith(`#${field.id}`, '123', { vmId: undefined });
 });
 
