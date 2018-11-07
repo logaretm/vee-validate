@@ -88,11 +88,13 @@
     "flow"
   ],
   "jest": {
+    "setupTestFrameworkScriptFile": "<rootDir>/tests/setup.js",
     "testMatch": [
       "**/tests/**/*.js"
     ],
     "testPathIgnorePatterns": [
-      "/helpers/"
+      "/helpers/",
+      "/setup.js"
     ],
     "collectCoverageFrom": [
       "src/**/*.js",

@@ -1,21 +1,71 @@
-import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import { createLocalVue, mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import VeeValidate from '@/index';
-import TestComponent from './components/Aliases';
 
-const Vue = createLocalVue();
-Vue.use(VeeValidate);
-VeeValidate.Validator.localize('en', {
-  messages: {
-    confirmed: (field, [targetName]) => `The ${field} and ${targetName} do not match`
-  },
-  attributes: {
-    confirm: 'Password Confirmation'
-  }
+const localVue = createLocalVue();
+localVue.use(VeeValidate);
+
+test('aliases can be specified with data-vv-as attr', async () => {
+  const wrapper = mount({
+    template: `
+      <div>
+        <input name="aliasTest" v-model="value" v-validate.immediate="'required'" data-vv-as="Alias">
+        <span>{{ errors.first('aliasTest') }}</span>
+      </div>
+    `,
+    data: () => ({ value: '' })
+  }, { localVue });
+
+  await flushPromises();
+
+  expect(wrapper.find('span').text()).toBe('The Alias field is required.');
 });
 
-test('validates input initially when .immediate modifier is set', async () => {
-  const wrapper = shallow(TestComponent, { localVue: Vue });
+test('aliases can be specified with dictionary API', async () => {
+  const wrapper = mount({
+    template: `
+      <div>
+        <input name="aliasTest" v-model="value" v-validate.immediate="'required'">
+        <span>{{ errors.first('aliasTest') }}</span>
+      </div>
+    `,
+    data: () => ({ value: '' })
+  }, { localVue });
+
+  wrapper.vm.$validator.localize({
+    en: {
+      attributes: {
+        aliasTest: 'Alias'
+      }
+    }
+  });
+
+  await flushPromises();
+
+  expect(wrapper.find('span').text()).toBe('The Alias field is required.');
+});
+
+test('aliases are aware of cross field validation messages', async () => {
+  const wrapper = mount({
+    template: `
+      <div>
+        <input type="password" name="password" v-model="password" v-validate.immediate="'required|confirmed:confirm'" data-vv-as="Password">
+        <input type="password" name="confirm" v-model="confirm" v-validate.immediate="'required'">
+        <span id="pwError">{{ errors.first('password') }}</span>
+        <span id="confirmError">{{ errors.first('confirm') }}</span>
+      </div>
+    `,
+    data: () => ({ password: '', confirm: '' })
+  }, { localVue });
+
+  wrapper.vm.$validator.localize('en', {
+    messages: {
+      confirmed: (field, [targetName]) => `The ${field} and ${targetName} do not match`
+    },
+    attributes: {
+      confirm: 'Password Confirmation'
+    }
+  });
 
   wrapper.setData({
     password: '',
@@ -23,17 +73,18 @@ test('validates input initially when .immediate modifier is set', async () => {
   });
   await flushPromises();
 
-  expect(wrapper.vm.errors.first('password')).toBe('The Password field is required.');
-  expect(wrapper.vm.errors.first('confirm')).toBe('The Password Confirmation field is required.');
+  expect(wrapper.find('#pwError').text()).toBe('The Password field is required.');
+  expect(wrapper.find('#confirmError').text()).toBe('The Password Confirmation field is required.');
 
   wrapper.setData({
     password: '12345'
   });
+
   await flushPromises();
-  expect(wrapper.vm.errors.first('password')).toBe('The Password and Password Confirmation do not match');
+  expect(wrapper.find('#pwError').text()).toBe('The Password and Password Confirmation do not match');
 });
 
-test('alias can be set with the ctor options', async () => {
+test('aliases can be set with the ctor options', async () => {
   const wrapper = mount({
     template: `<TextInput v-model="value" v-validate="'required'" name="bar" label="foo"></TextInput>`,
     data: () => ({
@@ -52,7 +103,7 @@ test('alias can be set with the ctor options', async () => {
         }
       }
     }
-  }, { localVue: Vue });
+  }, { localVue });
 
   await wrapper.vm.$validator.validate();
 

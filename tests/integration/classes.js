@@ -1,20 +1,20 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import VeeValidate from '@/index';
-import TestComponent from './components/Basic';
 
-const Vue = createLocalVue();
+test('automatic classes applied on inputs', async () => {
+  const Vue = createLocalVue();
+  Vue.use(VeeValidate, {
+    classes: true,
+    classNames: {
+      valid: ['is-valid', 'text-green'],
+      invalid: ['is-invalid', 'text-red']
+    }
+  });
 
-Vue.use(VeeValidate, {
-  classes: true,
-  classNames: {
-    valid: ['is-valid', 'text-green'],
-    invalid: ['is-invalid', 'text-red']
-  }
-});
-
-test('watches input value on input and blur', async () => {
-  const wrapper = shallow(TestComponent, { localVue: Vue });
+  const wrapper = mount({
+    template: `<input type="text" name="field" v-validate="'required'">`
+  }, { localVue: Vue });
 
   const input = wrapper.find('input');
 
