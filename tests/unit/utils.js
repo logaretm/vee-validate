@@ -389,7 +389,7 @@ test('checks if vee-validate is available globally.', () => {
 });
 
 describe('pareses date values', () => {
-  const format = 'DD-MM-YYYY';
+  const format = 'dd-MM-yyyy';
 
   test('parses string formatted dates without allowing overflows', () => {
     expect(dateUtils.parseDate('11-12-2016', format)).toBeTruthy();

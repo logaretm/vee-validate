@@ -49,7 +49,7 @@
     "babel-jest": "^23.4.2",
     "chalk": "^2.4.1",
     "cross-env": "^5.2.0",
-    "date-fns": "2.0.0-alpha.7",
+    "date-fns": "2.0.0-alpha.25",
     "eslint": "^5.8.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-flowtype": "^3.2.0",
