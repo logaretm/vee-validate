@@ -35,7 +35,7 @@ Vue.use(VeeValidate, config);
 | delay         | `number`  | `0`       | The default debounce time for all inputs (only affects validations). |
 | dictionary    | `object|null` |      `null`    | A dictionary to be merged with the internal dictionary. (Check the [Error Messages](guide/messages.md) and [Localization](guide/localization.md) sections.)      |
 | errorBagName  | `string`  | `'errors'` | The name of the `ErrorBag` object that will be injected in each of Vue's instances' data. Used to avoid conflicts with other plugins. |
-| events        | `string` | `'input|blur'` | Pipe separated list of the default event names that will be listened to, to trigger validation. If an empty string is provided, it will disable all listeners. |
+| events        | `string` | `'input'` | Pipe separated list of the default event names that will be listened to, to trigger validation. If an empty string is provided, it will disable all listeners. |
 | fieldsBagName | `string` |  `'fields'` | The name of the Fields (flags) object that will be injected in each of Vue's instances' data. |
 | fastExit      | `boolean`|  `true`     | Whether the validation should stop after the first failure for each field, you can opt in or out from either settings by using the [continues](/api/directive.md#continues) and the [bails](/api/directive.md#bails) modifiers. |
 | i18n          | `VueI18n | null` | `null` | The `vue-i18n` instance, if provided will integrate vee-validate with the i18n plugin and will use it to produce the error messages instead of the built in dictionary. [More about that here](/guide/localization.md#vuei18n-integration). |
