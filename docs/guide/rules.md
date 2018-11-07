@@ -46,17 +46,17 @@ The field under validation must have a valid date and is after the date value in
 - `target:` The other field's ref to be validated against. Must have the same format as the date_format rule. Can also be a date value of the same format.
 - `inclusion`: Whether to include equal dates as a valid value, setting it to any value will set it to true, it is false by default.
 
-<input v-validate="'date_format:DD/MM/YYYY|after:afterTarget'" :class="{'input': true, 'is-danger': errors.has('after_field') }" name="after_field" type="text" placeholder="DD/MM/YYYY">
+<input v-validate="'date_format:dd/MM/yyyy|after:afterTarget'" :class="{'input': true, 'is-danger': errors.has('after_field') }" name="after_field" type="text" placeholder="dd/MM/yyyy">
 <span v-show="errors.has('after_field')" class="help is-danger">{{ errors.first('after_field') }}</span>
 
-<input name="after_field_target" ref="afterTarget" :class="{'input': true, 'is-danger': errors.has('after_field') }" type="text" placeholder="DD/MM/YYYY">
+<input name="after_field_target" ref="afterTarget" :class="{'input': true, 'is-danger': errors.has('after_field') }" type="text" placeholder="dd/MM/yyyy">
 
 ::: tip
   Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
 :::
 
 ```html
-<input v-validate="'date_format:DD/MM/YYYY|after:afterTarget'" name="after_field" type="text">
+<input v-validate="'date_format:dd/MM/yyyy|after:afterTarget'" name="after_field" type="text">
 
 <input name="after_field_target" ref="afterTarget" type="text">
 
@@ -115,17 +115,17 @@ The field under validation must have a valid date and is before the date value i
 - `target`: The other field's ref to be validated against. Must have the same format as the date_format rule. Can also be a date value of the same format.
 - `inclusion`: Whether to include equal dates as a valid value, setting it to any value will set it to true, it is false by default.
 
-<input v-validate="'date_format:DD/MM/YYYY|before:beforeTarget'" :class="{'input': true, 'is-danger': errors.has('before_field') }" name="before_field" type="text" placeholder="DD/MM/YYYY">
+<input v-validate="'date_format:dd/MM/yyyy|before:beforeTarget'" :class="{'input': true, 'is-danger': errors.has('before_field') }" name="before_field" type="text" placeholder="dd/MM/yyyy">
 <span v-show="errors.has('before_field')" class="help is-danger">{{ errors.first('before_field') }}</span>
 
-<input name="before_field_target" ref="beforeTarget" :class="{'input': true, 'is-danger': errors.has('alpha_field') }" type="text" placeholder="DD/MM/YYYY">
+<input name="before_field_target" ref="beforeTarget" :class="{'input': true, 'is-danger': errors.has('alpha_field') }" type="text" placeholder="dd/MM/yyyy">
 
 ::: tip
   Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
 :::
 
 ```html
-<input v-validate="'date_format:DD/MM/YYYY|before:beforeTarget'" name="before_field" type="text">
+<input v-validate="'date_format:dd/MM/yyyy|before:beforeTarget'" name="before_field" type="text">
 
 <input name="before_field_target" ref="beforeTarget" type="text">
 ```
@@ -197,11 +197,11 @@ The field under validation must be a valid date between the two dates specified.
 - `inclusion`: Whether to include equal dates as a valid value, it is set to `()` (exclude) by default.
    (For further information check the [monentjs inclusion docs](https://momentjs.com/docs/#/query/is-between/)vee-validate uses [date-fns](https://date-fns.org) but ported this functionality.
 
-<input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="DD/MM/YYYY between 10/09/2016 and 20/09/2016">
+<input v-validate="'date_format:dd/MM/yyyy|date_between:10/09/2016,20/09/2016'" :class="{'input': true, 'is-danger': errors.has('date_between_field') }" name="date_between_field" type="text" placeholder="dd/MM/yyyy between 10/09/2016 and 20/09/2016">
 <span v-show="errors.has('date_between_field')" class="help is-danger">{{ errors.first('date_between_field') }}</span>
 
 ```html
-<input v-validate="'date_format:DD/MM/YYYY|date_between:10/09/2016,20/09/2016'" name="date_between_field" type="text">
+<input v-validate="'date_format:dd/MM/yyyy|date_between:10/09/2016,20/09/2016'" name="date_between_field" type="text">
 ```
 
 ## date_format
@@ -212,11 +212,11 @@ The field under validation must be a valid date in the specified format. This ru
 
 - `format:` The date format. See [date-fns format](https://date-fns.org/v2.0.0-alpha.7/docs/format)
 
-<input v-validate="'date_format:DD/MM/YYYY'" :class="{'input': true, 'is-danger': errors.has('date_format_field') }" name="date_format_field" type="text" placeholder="DD/MM/YYYY">
+<input v-validate="'date_format:dd/MM/yyyy'" :class="{'input': true, 'is-danger': errors.has('date_format_field') }" name="date_format_field" type="text" placeholder="dd/MM/yyyy">
 <span v-show="errors.has('date_format_field')" class="help is-danger">{{ errors.first('date_format_field') }}</span>
 
 ```html
-<input v-validate="'date_format:DD/MM/YYYY'" name="date_format_field" type="text">
+<input v-validate="'date_format:dd/MM/yyyy'" name="date_format_field" type="text">
 ```
 
 ## decimal
