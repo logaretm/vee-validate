@@ -8,10 +8,10 @@ vee-validate includes few flags that could help you improve your user experience
 - `untouched`: indicates that the field has not been touched nor focused.
 - `dirty`: indicates that the field has been manipulated.
 - `pristine`: indicates that the field has not been manipulated.
-- `valid`: indicates that the field has been validated at least once and that it passed the validation.
-- `invalid`: indicates that the field has been validated at least once and that it failed the validation.
+- `valid`: indicates that the field has passed the validation.
+- `invalid`: indicates that the field has failed the validation.
 - `pending`: indicates that the field validation is in progress.
-- `validated`: indicates that the field has been validated at least once.
+- `validated`: indicates that the field has been validated at least once by an event or manually using `validate()` or `validateAll()`.
 - `changed`: indicates that the field value has been changed (strict check).
 
 The flags are reactive objects, so you can build computed properties based on them. For example, here is how you can tell if a form has been manipulated, say maybe to disable/enable a button.
