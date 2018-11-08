@@ -68,6 +68,7 @@ describe('Validation Provider Component', () => {
     input.element.value = 'text';
     input.trigger('change');
     await flushPromises();
+    await Vue.nextTick();
     // validation triggered on change.
     expect(error.text()).toBe('');
   });
@@ -109,6 +110,7 @@ describe('Validation Provider Component', () => {
     select.element.value = '1';
     wrapper.find('select').trigger('change');
     await flushPromises();
+    await Vue.nextTick();
 
     expect(error.text()).toBe('');
   });
@@ -254,6 +256,7 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toBe('');
     input.trigger('blur');
     await flushPromises();
+    await Vue.nextTick();
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   });
 
@@ -293,6 +296,8 @@ describe('Validation Provider Component', () => {
       password: 'val'
     });
     await flushPromises();
+    await Vue.nextTick();
+
     expect(error.text()).toBeFalsy();
   });
 
@@ -344,7 +349,7 @@ describe('Validation Provider Component', () => {
     input.element.value = 'txt';
     input.trigger('input');
     await flushPromises();
-    await flushPromises();
+    await Vue.nextTick();
     expect(error.text()).toBe('');
   });
 
@@ -576,6 +581,7 @@ describe('Validation Observer Component', () => {
     input.element.value = 'value';
     input.trigger('input');
     await flushPromises();
+    await Vue.nextTick();
 
     expect(stateSpan.text()).toBe('true');
   });

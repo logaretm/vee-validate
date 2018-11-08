@@ -110,17 +110,6 @@ test('fields are scoped to the specific component id', () => {
   expect(base.fields).toHaveLength(3);
   expect(v1.fields).toHaveLength(1);
   expect(v2.fields).toHaveLength(2);
-
-  expect(v1.flags.email).toBe(undefined);
-  expect(v1.flags.$scope).toBe(undefined);
-  expect(v1.flags.name).toBeTruthy();
-  expect(v2.flags.name).toBe(undefined);
-  expect(v2.flags.email).toBeTruthy();
-  expect(v2.flags.$scope.field).toBeTruthy();
-
-  expect(base.flags.email).toBeTruthy();
-  expect(base.flags.name).toBeTruthy();
-  expect(base.flags.$scope.field).toBeTruthy();
 });
 
 test('dictionary getter', () => {

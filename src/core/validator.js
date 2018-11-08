@@ -206,6 +206,8 @@ export default class Validator {
     if (idx !== -1) {
       this.fields.splice(idx, 1);
     }
+
+    return field;
   }
 
   /**

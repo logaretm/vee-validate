@@ -9,30 +9,11 @@ export default class ScopedValidator {
 
     // create a mirror bag with limited component scope.
     this.errors = new ErrorBag(base.errors, this.id);
-  }
-
-  get flags () {
-    return this.fields.reduce((acc, field) => {
-      if (field.scope) {
-        if (!acc[`$${field.scope}`]) {
-          acc[`$${field.scope}`] = {};
-        }
-
-        acc[`$${field.scope}`][field.name] = field.flags;
-      }
-
-      acc[field.name] = field.flags;
-
-      return acc;
-    }, {});
+    this.fields = [];
   }
 
   get rules () {
     return this._base.rules;
-  }
-
-  get fields () {
-    return this._base.fields.filter(f => f.matches({ vmId: this.id }));
   }
 
   get dictionary () {
@@ -58,7 +39,10 @@ export default class ScopedValidator {
   attach (opts) {
     const attachOpts = assign({}, opts, { vmId: this.id });
 
-    return this._base.attach(attachOpts);
+    const field = this._base.attach(attachOpts);
+    this.fields.push(field);
+
+    return field;
   }
 
   pause () {
@@ -74,7 +58,13 @@ export default class ScopedValidator {
   }
 
   detach (...args) {
-    return this._base.detach(...args, this.id);
+    const field = this._base.detach(...args, this.id);
+    const idx = this.fields.indexOf(field);
+    if (idx !== -1) {
+      this.fields.splice(idx, 1);
+    }
+
+    return field;
   }
 
   extend (...args) {

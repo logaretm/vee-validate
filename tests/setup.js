@@ -1,7 +1,9 @@
 expect.extend({
   toHaveElement (wrapper, selector) {
+    const exists = wrapper.find(selector).exists();
+
     return {
-      pass: wrapper.find(selector).exists() === !this.isNot,
+      pass: exists,
       message: () => `The element ${!this.isNot ? 'does not' : 'does'} exist.`
     };
   }

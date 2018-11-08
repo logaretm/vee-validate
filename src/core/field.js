@@ -591,9 +591,9 @@ export default class Field {
       }
 
       // watch it from the custom component vm instead.
-      if (!expression && this.componentInstance && this.componentInstance.$options.model) {
+      if (!expression && this.componentInstance) {
         ctx = this.componentInstance;
-        expression = this.componentInstance.$options.model.prop || 'value';
+        expression = (this.componentInstance.$options.model && this.componentInstance.$options.model.prop) || 'value';
       }
 
       if (ctx && expression) {
@@ -609,7 +609,7 @@ export default class Field {
         });
 
         // filter out input event as it is already handled by the watcher API.
-        events = events.filter(e => e !== inputEvent);
+        events = !this.componentInstance ? events.filter(e => e !== inputEvent) : events;
       }
     }
 
