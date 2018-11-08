@@ -107,7 +107,7 @@ export default {
 
 ### Input Groups
 
-Like radio inputs and checkboxes (sometimes), some inputs behave as a single input entity. You can wrap the whole group of inputs __given that they have the same `v-model`__ in a single Validation Provider component. You can group as many inputs as you want inside the Provider component. 
+Like radio inputs and checkboxes (sometimes), some inputs behave as a single input entity. You can wrap the whole group of inputs __given that they have the same `v-model`__ in a single Validation Provider component. You can group as many inputs as you want inside the Provider component.
 
 ```vue
 <ValidationProvider rules="required">
@@ -228,13 +228,13 @@ All the following props are optional.
 |Prop       | Type      | Default Value         | Description                                                                  |
 |-----------|-----------|-----------------------|------------------------------------------------------------------------------|
 | rules     | `string`  | `undefined`           | The validation rules.                                                        |
-| vid       | `string`  | auto increment number | Identifier used for target based rules.                                      |
+| vid       | `string`  | auto increment number | Identifier used for target/cross-field based rules.                          |
 | immediate | `boolean` | `false`               | If the field should be validated immediatly after render (initially).        |
 | events    | `string[]`| `['input']`           | Events that will trigger validation.                                         |
-| name      | `string`  | `undefined`           | a String that will be used to replace `{field}` in error messages.           |
+| name      | `string`  | `undefined`           | A string that will be used to replace `{field}` in error messages and for [custom error messages](/guide/messages.md#field-specific-custom-messages). |
 | tag       | `string`  | `span`                | The default HTML tag to be used to render the root element of the component. |
 | bails     | `boolean` | `true`                | If true the validation will stop on the first failing rule.                  |
-| debounce  | `number`  | `0`                   | Debounces the validation for the specified amount of milliseconds.           | 
+| debounce  | `number`  | `0`                   | Debounces the validation for the specified amount of milliseconds.           |
 
 ## Methods
 
