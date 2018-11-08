@@ -151,7 +151,7 @@ VeeValidate ships with support for [vue-i18n plugin](https://github.com/kazupon/
 import VeeValidate from 'vee-validate';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import validationMessages from 'vee-validat/dist/locale/en';
+import validationMessages from 'vee-validate/dist/locale/en';
 
 Vue.use(VueI18n);
 
