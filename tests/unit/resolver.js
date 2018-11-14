@@ -26,7 +26,10 @@ describe('resolves the rules', () => {
   const el = document.querySelector('#el');
 
   test('using data-vv-rules attribute', () => {
-    expect(Resolver.resolveRules(el, {}, {})).toBe('required|email');
+    expect(Resolver.resolveRules(el, {}, {})).toEqual({
+      required: [],
+      email: []
+    });
   });
 
   test('using directive expression', () => {
@@ -34,7 +37,10 @@ describe('resolves the rules', () => {
       value: 'required|email'
     };
 
-    expect(Resolver.resolveRules(el, directive, {})).toBe('required|email');
+    expect(Resolver.resolveRules(el, directive, {})).toEqual({
+      required: [],
+      email: []
+    });
   });
 
   test('using nested rules in directive expression', () => {
@@ -48,9 +54,18 @@ describe('resolves the rules', () => {
     };
 
     expect(Resolver.resolveRules(el, directive, {})).toEqual({
-      required: true,
-      email: true
+      required: [],
+      email: []
     });
+  });
+
+  // tests #1706
+  test('directive rules take precendence over HTML5 validation attrs', () => {
+    const input = document.createElement('input');
+    input.type = 'number';
+    const resolve = (el) => Resolver.resolveRules(el, { value: 'decimal:4' }, {});
+
+    expect(resolve(input)).toEqual({ decimal: ['4'] });
   });
 
   test('using HTML5 validation Attributes', () => {

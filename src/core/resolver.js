@@ -12,7 +12,9 @@ import {
   isCallable,
   deepParseInt,
   fillRulesFromElement,
-  includes
+  includes,
+  normalizeRules,
+  assign
 } from '../utils';
 
 /**
@@ -73,7 +75,10 @@ export default class Resolver {
       return rules;
     }
 
-    return fillRulesFromElement(el, rules);
+    const elRules = fillRulesFromElement(el, {});
+    const directiveRules = normalizeRules(rules);
+
+    return assign({}, elRules, directiveRules);
   }
 
   /**
