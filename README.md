@@ -18,29 +18,27 @@
 </p>
 <br>
 
-vee-validate is a plugin for [Vue.js](https://vuejs.org/) that allows you to validate input fields and display errors.
+vee-validate is a template-based validation framework for [Vue.js](https://vuejs.org/) that allows you to validate input fields and display errors.
 
-You don't have to do anything fancy in your app -- most of the work goes into the html. You only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated. The plugin offers [many validations out of the box](https://baianat.github.io/vee-validate/guide/rules.html).
-
-Although most of the validations occur automatically, you can use the validator however you see fit. The validator object has no dependencies and is a standalone object. This plugin is built with localization in mind. Read the [docs](https://baianat.github.io/vee-validate/) for more info.
+Being template-based you only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated with 40+ locales supported. [Many rules are available out of the box](https://baianat.github.io/vee-validate/guide/rules.html).
 
 This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.com/).
 
 ### Installation
 
-#### npm
-
-```
-npm install vee-validate --save
-```
-
-### yarn
+#### yarn
 
 ```
 yarn add vee-validate
 ```
 
-### CDN
+#### npm
+
+```
+npm i vee-validate --save
+```
+
+#### CDN
 
 vee-validate is also available on these cdns:
 
@@ -61,23 +59,21 @@ Now you are all setup to use the plugin.
 
 ### Usage
 
+There are two ways to use vee-validate, Using `v-validate` directive or using `Validation*` components.
+
+#### Using directive
+
 Just apply the `v-validate` directive on your input and pass a **string value** which is a list of validations separated by a pipe. For example, we will use the `required` and the `email` validators:
 
 ```vue
 <input v-validate="'required|email'" type="text" name="email">
 ```
 
-Alternatively you can pass an object for more flexibility:
-
-```vue
-<input v-validate="{ required: true, email: true, regex: /[0-9]+/ }" type="text" name="email">
-```
-
 Now every time the input changes, the validator will run the list of validations from left to right, populating the errors helper object whenever an input fails validation.
 
 To access the errors object (in your vue instance):
 
-```javascript
+```js
 this.$validator.errorBag;
 // or
 this.errors; // injected into $data by the plugin, you can customize the property name.
@@ -89,7 +85,35 @@ Let's display the error for the email input we've created:
 <span v-show="errors.has('email')">{{ errors.first('email') }}</span>
 ```
 
-Of course there is more to it than that. Refer to the documentation for more details about the rules and usage of this plugin.
+#### Using Components
+
+Validation components uses the [scoped slots feature](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
+
+```vue
+<template>
+  <div>
+    <ValidationProvider rules="required|email">
+      <div slot-scope="{ errors }">
+        <input v-model="value">
+        <p>{{ errors[0] }}</p>
+      </div>
+    </ValidationProvider>
+  </div>
+</template>
+
+<script>
+import { ValidationProvider } from 'vee-validate';
+
+export default {
+  data: () => ({
+    value: ''
+  }),
+  components: {
+    ValidationProvider
+  }
+}
+</script>
+```
 
 ### Documentation
 
