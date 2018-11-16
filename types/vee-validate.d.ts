@@ -175,6 +175,12 @@ export class ExtendOptions  {
   paramNames?: string[];
 }
 
+/**
+ * `mapFields` helper, which is similar to Vuex's `mapGetters` and `mapActions`
+ * as it maps a field object to a computed property.
+ */
+export function mapFields(fields?: string[]|{[key: string]: string}): any;
+
 export const version: string;
 
 export const install: Vue.PluginFunction<Configuration>
