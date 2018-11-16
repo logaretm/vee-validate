@@ -144,7 +144,7 @@ export class Validator {
     static readonly rules: Object;
     static readonly dictionary: any;
 
-    constructor(validations: any, options: any);
+    constructor(validations?: any, options?: any);
     attach(name: string, checks: string|Object, options?: Object): Field;
     attach(options: FieldOptions): Field;
     reset(matcher?: FieldMatchOptions): Promise<void>;
