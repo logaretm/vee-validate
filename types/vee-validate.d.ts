@@ -181,6 +181,20 @@ export class ExtendOptions  {
  */
 export function mapFields(fields?: string[]|{[key: string]: string}): any;
 
+/**
+ * The `ValidationObserver` is a convenient component that uses the `scoped slots` feature
+ * to communicate the current state of your inputs as a whole.
+ * Note that this component is renderless.
+ */
+export const ValidationObserver: Vue.Component;
+
+/**
+ * The `ValidationProvider` component is a regular component
+ * that wraps your inputs and provides validation state using `scoped slots`.
+ * Note that this component is renderless.
+ */
+export const ValidationProvider: Vue.Component;
+
 export const version: string;
 
 export const install: Vue.PluginFunction<Configuration>
