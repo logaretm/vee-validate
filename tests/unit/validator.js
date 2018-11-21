@@ -741,6 +741,18 @@ test('resets fields matching the matcher options', async () => {
   expect(v.errors.count()).toBe(0);
 });
 
+test('resets errors scoped by vmId', async () => {
+  const v = new Validator();
+  v.attach({ name: 'field', vmId: 123 });
+  v.attach({ name: 'field', vmId: 456 });
+
+  v.errors.add({ field: 'field', msg: 'oops', vmId: 123 });
+  v.errors.add({ field: 'field', msg: 'oops', vmId: 456 });
+
+  await v.reset({ name: 'field', vmId: 123 });
+  expect(v.errors.count()).toBe(1);
+});
+
 test('resets all fields', async () => {
   const v = new Validator();
   v.attach({ name: 'field' });
