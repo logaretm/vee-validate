@@ -1,4 +1,9 @@
 import Resolver from '@/core/resolver';
+import { createLocalVue } from '@vue/test-utils';
+import VeeValidate from '@/index';
+
+const Vue = createLocalVue();
+Vue.use(VeeValidate, { inject: false, validity: true });
 
 test('resolves delay', () => {
   document.body.innerHTML = `
@@ -66,6 +71,16 @@ describe('resolves the rules', () => {
     const resolve = (el) => Resolver.resolveRules(el, { value: 'decimal:4' }, {});
 
     expect(resolve(input)).toEqual({ decimal: ['4'] });
+  });
+
+  test('rule inference can be disabled with validity option', () => {
+    const input = document.createElement('input');
+    input.type = 'number';
+    VeeValidate.configure({ validity: false });
+    const resolve = (el) => Resolver.resolveRules(el, { value: 'required' }, {});
+
+    expect(resolve(input)).toEqual({ required: [] });
+    VeeValidate.configure({ validity: true });
   });
 
   test('using HTML5 validation Attributes', () => {

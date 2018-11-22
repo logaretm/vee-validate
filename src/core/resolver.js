@@ -75,10 +75,13 @@ export default class Resolver {
       return rules;
     }
 
-    const elRules = fillRulesFromElement(el, {});
-    const directiveRules = normalizeRules(rules);
+    // If validity is disabled, ignore field rules.
+    const normalized = normalizeRules(rules);
+    if (!VeeValidate.config.validity) {
+      return normalized;
+    }
 
-    return assign({}, elRules, directiveRules);
+    return assign({}, fillRulesFromElement(el, {}), normalized);
   }
 
   /**
