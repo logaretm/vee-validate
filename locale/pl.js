@@ -1,4 +1,7 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
+import { polishPlurals } from 'polish-plurals';
+
+const characterLabel = polishPlurals.bind(null, 'znak', 'znaki', 'znaków');
 
 const messages = {
   _default: (field) => `Pole ${field} jest nieprawidłowe.`,
@@ -28,12 +31,12 @@ const messages = {
       return `Pole ${field} musi mieć długość od ${length} do ${max} znaków.`;
     }
 
-    return `Pole ${field} musi mieć długość ${length} znaków.`;
+    return `Pole ${field} musi mieć długość ${length} ${characterLabel(length)}.`;
   },
-  max: (field, [length]) => `Pole ${field} nie może być dłuższe niż ${length} znaków.`,
+  max: (field, [length]) => `Pole ${field} nie może być dłuższe niż ${length} ${characterLabel(length)}.`,
   max_value: (field, [max]) => `Pole ${field} musi mieć maksymalną wartość ${max}.`,
   mimes: (field) => `Plik ${field} musi posiadać poprawne rozszerzenie.`,
-  min: (field, [length]) => `Pole ${field} musi być długie na co najmniej ${length} znaków.`,
+  min: (field, [length]) => `Pole ${field} musi być długie na co najmniej ${length} ${characterLabel(length)}.`,
   min_value: (field, [min]) => `Pole ${field} musi mieć minimalną wartość ${min}.`,
   numeric: (field) => `Pole ${field} może zawierać tylko cyfry.`,
   regex: (field) => `Format pola ${field} jest nieodpowiedni.`,
