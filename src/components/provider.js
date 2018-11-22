@@ -26,6 +26,10 @@ export function onRenderUpdate (model) {
     this.initialValue = model.value;
   }
 
+  if (!this.initialized && model.value === undefined) {
+    validateNow = true;
+  }
+
   if (validateNow) {
     const silentHandler = ({ valid }) => {
       // initially assign the valid/invalid flags.
