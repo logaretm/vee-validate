@@ -66,6 +66,7 @@
     "jest": "^23.5.0",
     "lint-staged": "^8.0.4",
     "mkdirp": "^0.5.1",
+    "polish-plurals": "^1.1.0",
     "regenerator-runtime": "^0.12.1",
     "rollup": "^0.67.0",
     "rollup-plugin-buble": "^0.19.4",
