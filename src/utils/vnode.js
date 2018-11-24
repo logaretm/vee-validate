@@ -137,6 +137,7 @@ export function createRenderless (h, vnode) {
     return vnode[0];
   }
 
+  /* istanbul ignore next */
   if (process.env.NODE_ENV !== 'production') {
     warn('Your slot should have one root element. Rendering a span as the root.');
   }
