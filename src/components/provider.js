@@ -221,6 +221,7 @@ export const ValidationProvider = {
       const value = isEvent(e) ? e.target.value : e;
 
       this.value = value;
+      this.flags.changed = this.initialValue === value;
     },
     reset () {
       this.messages = [];
