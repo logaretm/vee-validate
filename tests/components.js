@@ -36,6 +36,18 @@ describe('Validation Provider Component', () => {
     expect(output).toBe('<p data-server-rendered="true"></p>');
   });
 
+  test('fallsback to rendering the default slot if no slot scope is found', () => {
+    const output = renderToString({
+      template: `
+        <ValidationProvider>
+          <p></p>
+        </ValidationProvider>
+      `
+    }, { localVue: Vue });
+
+    expect(output).toBe('<p data-server-rendered="true"></p>');
+  });
+
   test('validates lazy models', async () => {
     const wrapper = mount({
       data: () => ({
@@ -299,6 +311,51 @@ describe('Validation Provider Component', () => {
     await Vue.nextTick();
 
     expect(error.text()).toBeFalsy();
+  });
+
+  test('unresolved target dependant fields will be always invalid', async () => {
+    const wrapper = mount({
+      data: () => ({
+        password: '',
+        confirmation: ''
+      }),
+      template: `
+        <div>
+          <ValidationProvider rules="required">
+            <div slot-scope="ctx">
+              <input type="password" v-model="confirmation">
+            </div>
+          </ValidationProvider>
+          <ValidationProvider rules="required|confirmed:confirmation">
+            <div slot-scope="{ errors }">
+              <input type="password" v-model="password" id="pass">
+              <span id="err1">{{ errors[0] }}</span>
+            </div>
+          </ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue });
+
+    const error = wrapper.find('#err1');
+
+    expect(error.text()).toBeFalsy();
+    wrapper.setData({
+      password: '',
+      confirmation: 'val'
+    });
+    await flushPromises();
+    // validation did not trigger.
+    expect(error.text()).toBeFalsy();
+    const input = wrapper.find('#pass');
+    input.element.value = 'val';
+    input.trigger('input');
+    await flushPromises();
+    await Vue.nextTick();
+
+    expect(wrapper.vm.password).toEqual(wrapper.vm.confirmation);
+
+    // validation triggered but comparison failed since the other field is unresolved.
+    expect(error.text()).toBeTruthy();
   });
 
   test('removes the provider reference at destroy', () => {

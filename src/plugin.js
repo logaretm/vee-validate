@@ -78,6 +78,7 @@ class VeeValidate {
   };
 
   static install (_Vue, opts) {
+    /* istanbul ignore next */
     if (Vue && _Vue === Vue) {
       if (process.env.NODE_ENV !== 'production') {
         warn('already installed, Vue.use(VeeValidate) should only be called once.');
