@@ -1,7 +1,7 @@
 import dictionary from './dictionary';
 import mixin from './mixin';
 import directive from './directive';
-import { assign, getPath, warn, isCallable } from './utils';
+import { assign, getPath, warn } from './utils';
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
 import mapFields from './core/mapFields';
@@ -29,7 +29,6 @@ const defaultConfig = {
 };
 
 let Vue;
-let pendingPlugins;
 export let currentConfig = assign({}, defaultConfig);
 export let pluginInstance;
 
@@ -47,6 +46,7 @@ class VeeValidate {
     if (_Vue) {
       Vue = _Vue;
     }
+
     this._validator = new Validator(null, { fastExit: config && config.fastExit });
     this._initVM(this.config);
     this._initI18n(this.config);
@@ -60,23 +60,6 @@ class VeeValidate {
     currentConfig = assign({}, currentConfig, cfg);
   }
 
-  static use (plugin: (ctx: PluginContext, options?: any) => any, options?: any = {}) {
-    if (!isCallable(plugin)) {
-      return warn('The plugin must be a callable function');
-    }
-
-    // Don't install plugins until vee-validate is installed.
-    if (!pluginInstance) {
-      if (!pendingPlugins) {
-        pendingPlugins = [];
-      }
-      pendingPlugins.push({ plugin, options });
-      return;
-    }
-
-    plugin({ Validator, ErrorBag, Rules: Validator.rules }, options);
-  };
-
   static install (_Vue, opts) {
     /* istanbul ignore next */
     if (Vue && _Vue === Vue) {
@@ -86,19 +69,11 @@ class VeeValidate {
       return;
     }
 
-    Vue = _Vue;
-    pluginInstance = new VeeValidate(opts);
-
+    pluginInstance = new VeeValidate(opts, _Vue);
     detectPassiveSupport();
 
     Vue.mixin(mixin);
     Vue.directive('validate', directive);
-    if (pendingPlugins) {
-      pendingPlugins.forEach(({ plugin, options }) => {
-        VeeValidate.use(plugin, options);
-      });
-      pendingPlugins = null;
-    }
   }
 
   static get instance () {

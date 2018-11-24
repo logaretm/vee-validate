@@ -8,11 +8,9 @@ import { ValidationProvider, ValidationObserver, withValidation } from './compon
 
 const version = '__VERSION__';
 const install = VeeValidate.install;
-const use = VeeValidate.use;
 
 export {
   install,
-  use,
   directive,
   mixin,
   mapFields,
