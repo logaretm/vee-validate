@@ -79,7 +79,7 @@ If you plan to trigger validation from the template without using `refs` you can
 ```vue
 <template>
   <ValidationObserver>
-    <form slot-scope="{ invalid, validate }" @submit.prevent="validate().then(submit)">
+    <form slot-scope="{ invalid, validate }" @submit.prevent="validate(submit)">
       <InputWithValidation rules="required" v-model="first" :error-messages="errors" />
 
       <InputWithValidation rules="required" v-model="second" :error-messages="errors" />
@@ -89,6 +89,8 @@ If you plan to trigger validation from the template without using `refs` you can
   </ValidationObserver>
 </template>
 ```
+
+As you have guessed, the `validate` method on the Observer's slot-scope takes a callback that runs after the validation passes.
 
 ::: tip
   Using the same approach you can reset validation state for all providers using the public method `reset()`.
