@@ -46,6 +46,7 @@ The object passed down to the slot scope is called the __validation context__ it
 | flags   | `{ [x: string]: boolean }` | The flags map object state.                                         |
 | aria    | `{ [x: string]: string }`  | Map object of aria attributes for accessibility.                    |
 | classes | `{ [x: string]: boolean }` | Map object of the classes configured based on the validation state. |
+| validate| `(e: any) => Promise`      | A function that can be used as an event handler to trigger validation. Useful for input that do not use v-model. 
 
 Since slot scopes can take advantage of ES6 destructing; you can opt-in for any of those properties and pass down to your slot template as you see fit. The example above only needed the `errors` array.
 

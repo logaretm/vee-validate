@@ -12,6 +12,11 @@ export function createValidationCtx (ctx) {
     flags: ctx.flags,
     classes: ctx.classes,
     valid: ctx.isValid,
+    validate: (e) => {
+      ctx.syncValue(e);
+
+      return ctx.validate().then(ctx.applyResult);
+    },
     aria: {
       'aria-invalid': ctx.flags.invalid ? 'true' : 'false',
       'aria-required': ctx.isRequired ? 'true' : 'false'

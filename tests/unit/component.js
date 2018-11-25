@@ -508,6 +508,33 @@ describe('Validation Provider Component', () => {
     // LAST message should be the required one.
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   });
+
+  test('validates manually using the validate event handler', async () => {
+    const wrapper = mount({
+      template: `
+        <ValidationProvider rules="required">
+          <div slot-scope="{ validate, errors }">
+            <input type="text" @input="validate">
+            <p id="error">{{ errors[0] }}</p>  
+          </div>
+        </ValidationProvider>
+      `
+    }, { localVue: Vue });
+
+    const input = wrapper.find('input');
+    input.element.value = '';
+    input.trigger('input');
+    await flushPromises();
+
+    const error = wrapper.find('#error');
+    expect(error.text()).toBeTruthy();
+
+    input.element.value = '123';
+    input.trigger('input');
+    await flushPromises();
+
+    expect(error.text()).toBeFalsy();
+  });
 });
 
 describe('Validation Observer Component', () => {
