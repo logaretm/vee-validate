@@ -641,7 +641,7 @@ describe('Validation Observer Component', () => {
     expect(stateSpan.text()).toBe('true');
   });
 
-  test('triggers validation manually on its children providers', async () => {
+  test('triggers validation manually on its children providers using refs', async () => {
     const wrapper = mount({
       data: () => ({
         value: ''
@@ -669,6 +669,39 @@ describe('Validation Observer Component', () => {
     expect(error.text()).toBe('');
 
     await wrapper.vm.$refs.obs.validate();
+
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+  });
+
+  test('triggers validation manually on its children providers using validate on slot-scope', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationObserver>
+          <div slot-scope="ctx">
+
+            <ValidationProvider rules="required">
+
+              <div slot-scope="{ errors }">
+                <input v-model="value" type="text">
+                <span id="error">{{ errors[0] }}</span>
+              </div>
+
+            </ValidationProvider>
+            <button @click="ctx.validate()">Validate</button>
+          </div>
+        </ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    const error = wrapper.find('#error');
+    await flushPromises();
+    expect(error.text()).toBe('');
+
+    wrapper.find('button').trigger('click');
+    await flushPromises();
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   });
@@ -736,6 +769,45 @@ describe('Validation Observer Component', () => {
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
     wrapper.vm.$refs.obs.reset();
+    await flushPromises();
+
+    expect(error.text()).toBe('');
+  });
+
+  test('resets child refs using reset on the slot-scope data', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationObserver ref="obs">
+          <div slot-scope="ctx">
+
+            <ValidationProvider rules="required">
+
+              <div slot-scope="{ errors }">
+                <input v-model="value" type="text">
+                <span id="error">{{ errors[0] }}</span>
+              </div>
+
+            </ValidationProvider>
+
+            <button @click="ctx.reset()">Reset</button>
+          </div>
+        </ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    const error = wrapper.find('#error');
+    await flushPromises();
+    expect(error.text()).toBe('');
+
+    wrapper.vm.$refs.obs.validate();
+    await flushPromises();
+
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+    await wrapper.find('button').trigger('click');
     await flushPromises();
 
     expect(error.text()).toBe('');

@@ -53,6 +53,12 @@ export const ValidationObserver = {
   },
   computed: {
     ctx () {
+      const ctx = {
+        errors: {},
+        validate: () => this.validate(),
+        reset: () => this.reset()
+      };
+
       return values(this.refs).reduce((acc, provider) => {
         Object.keys(flagMergingStrategy).forEach(flag => {
           if (!(flag in acc)) {
@@ -66,7 +72,7 @@ export const ValidationObserver = {
         acc.errors[provider.vid] = provider.messages;
 
         return acc;
-      }, { errors: {} });
+      }, ctx);
     }
   },
   render (h) {
