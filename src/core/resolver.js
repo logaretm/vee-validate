@@ -275,7 +275,7 @@ export default class Resolver {
 
     switch (el.type) {
     case 'checkbox': return () => {
-      let els = document.querySelectorAll(`input[name="${el.name}"]`);
+      let els = vnode.context.$el.querySelectorAll(`input[name="${el.name}"]`);
 
       els = toArray(els).filter(el => el.checked);
       if (!els.length) return undefined;
@@ -283,7 +283,7 @@ export default class Resolver {
       return els.map(checkbox => checkbox.value);
     };
     case 'radio': return () => {
-      const els = document.querySelectorAll(`input[name="${el.name}"]`);
+      const els = vnode.context.$el.querySelectorAll(`input[name="${el.name}"]`);
       const elm = find(els, el => el.checked);
 
       return elm && elm.value;

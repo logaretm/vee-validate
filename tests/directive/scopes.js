@@ -39,4 +39,25 @@ describe('Scopes', () => {
     expect(validator.fields.filter(f => f.matches({ scope: 'third' }))).toHaveLength(0);
     expect(validator.fields.filter(f => f.matches({ scope: 'notThird' }))).toHaveLength(2);
   });
+
+  test('assigns scopes to custom components', async () => {
+    const Vue = createLocalVue();
+    Vue.use(VeeValidate);
+
+    const wrapper = mount({
+      components: {
+        TextInput: {
+          template: `<div></div>`
+        }
+      },
+      template: `
+        <div>
+          <input type="text" v-validate="'required'" data-vv-scope="s1">
+        </div>
+      `
+    }, { localVue: Vue });
+
+    const validator = wrapper.vm.$validator;
+    expect(validator.fields.filter(f => f.matches({ scope: 's1' }))).toHaveLength(1);
+  });
 });

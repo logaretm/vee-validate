@@ -1,4 +1,4 @@
-import { mount, createLocalVue } from '@vue/test-utils';
+import { mount, shallow, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import VeeValidate from '@/index';
 
@@ -56,8 +56,8 @@ describe('HTML Inputs Validation', () => {
     expect(error.text()).toBeFalsy();
   });
 
-  test.skip('checkbox fields', async () => {
-    const wrapper = mount({
+  test('checkbox fields', async () => {
+    const wrapper = shallow({
       template: `
       <div>
         <input type="checkbox" value="1" id="cb1" name="input" v-validate="'required'">
@@ -70,21 +70,17 @@ describe('HTML Inputs Validation', () => {
     const inputs = wrapper.findAll('input');
     const error = wrapper.find('span');
 
-    inputs.at(0).element.checked = false;
-    inputs.at(1).element.checked = false;
-    inputs.trigger('click');
-    inputs.trigger('change');
+    inputs.at(0).element.checked = true;
+    inputs.at(0).trigger('click');
+    inputs.at(0).trigger('change');
     await flushPromises();
-    await Vue.nextTick();
 
     expect(error.text()).toBeTruthy();
 
-    inputs.at(0).element.checked = true;
-    inputs.at(1).element.checked = false;
-    inputs.trigger('click');
-    inputs.trigger('change');
+    inputs.at(0).element.checked = false;
+    inputs.at(0).trigger('click');
+    inputs.at(0).trigger('change');
     await flushPromises();
-    await Vue.nextTick();
 
     expect(error.text()).toBeFalsy();
   });
