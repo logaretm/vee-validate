@@ -36,6 +36,8 @@ The scoped slot is passed an object containing a flags object representing the m
 | touched   | `boolean`                   | True if at least one field has been touched (blurred).                                      |
 | untouched | `boolean`                   | True if all fields hasn't been tocuhed (blurred).                                           |
 | errors    | `{ [x: string]: string[] }` | An object containing reference to each field errors, each field is keyed by its `vid` prop. |
+| validate  | `() => Promise<boolean>`    | A method that triggers validation for all providers. |
+| reset     | `() => void`                | A method that resets validation state for all providers. |
 
 ## Examples
 
@@ -70,6 +72,22 @@ export default {
   }
 };
 </script>
+```
+
+If you plan to trigger validation from the template without using `refs` you can use the `validate` method present in the slot-scope data.
+
+```vue
+<template>
+  <ValidationObserver>
+    <form slot-scope="{ invalid, validate }" @submit.prevent="validate().then(submit)">
+      <InputWithValidation rules="required" v-model="first" :error-messages="errors" />
+
+      <InputWithValidation rules="required" v-model="second" :error-messages="errors" />
+
+      <v-btn :disabled="invalid">Submit</v-btn>
+    </form>
+  </ValidationObserver>
+</template>
 ```
 
 ::: tip

@@ -46,7 +46,8 @@ The object passed down to the slot scope is called the __validation context__ it
 | flags   | `{ [x: string]: boolean }` | The flags map object state.                                         |
 | aria    | `{ [x: string]: string }`  | Map object of aria attributes for accessibility.                    |
 | classes | `{ [x: string]: boolean }` | Map object of the classes configured based on the validation state. |
-| validate| `(e: any) => Promise`      | A function that can be used as an event handler to trigger validation. Useful for input that do not use v-model. 
+| validate| `(e: any) => Promise`      | A function that is used as an event handler to trigger validation. Useful for fields that do not use v-model. |
+| reset   | `() => void`               | A function that resets the validation state on the provider.        |
 
 Since slot scopes can take advantage of ES6 destructing; you can opt-in for any of those properties and pass down to your slot template as you see fit. The example above only needed the `errors` array.
 
@@ -102,8 +103,31 @@ export default {
 </script>
 ```
 
+If you only plan to trigger manual validation using the UI, you can use the `validate` handler on the slot-scope data to trigger validation without having to use `refs`.
+
+
+```vue
+<ValidationProvider rules="required">
+  <div slot-scope="{ validate, errors }">
+    <input type="text" @input="validate">
+    <p id="error">{{ errors[0] }}</p>  
+  </div>
+</ValidationProvider>
+```
+
+Note that the validate is an event handler, it should not be called without arguments, you can use the `$event` in the Vue template to reference the event arg that is emitted with the event if your handlers are more complex.
+
+```vue
+<ValidationProvider rules="required">
+  <div slot-scope="{ validate, errors }">
+    <input type="text" @input="syncVuex($event.target.value) && validate($event)">
+    <p id="error">{{ errors[0] }}</p>  
+  </div>
+</ValidationProvider>
+```
+
 ::: tip
-  Using the same approach you can reset validation state for the provider using the public method `reset()`.
+  Using the same approach you can reset validation state for the provider using the public method `reset()` and the slot scope method of the same name.
 :::
 
 ### Input Groups

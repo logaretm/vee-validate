@@ -678,6 +678,9 @@ describe('Validation Observer Component', () => {
       data: () => ({
         value: ''
       }),
+      methods: {
+        submit: () => {}
+      },
       template: `
         <ValidationObserver>
           <div slot-scope="ctx">
@@ -690,11 +693,13 @@ describe('Validation Observer Component', () => {
               </div>
 
             </ValidationProvider>
-            <button @click="ctx.validate()">Validate</button>
+            <button @click="ctx.validate(submit)">Validate</button>
           </div>
         </ValidationObserver>
       `
     }, { localVue: Vue });
+
+    wrapper.vm.submit = jest.fn();
 
     const error = wrapper.find('#error');
     await flushPromises();
@@ -704,6 +709,12 @@ describe('Validation Observer Component', () => {
     await flushPromises();
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+    wrapper.setData({ value: '12' });
+    wrapper.find('button').trigger('click');
+    await flushPromises();
+
+    expect(error.text()).toBe('');
+    expect(wrapper.vm.submit).toHaveBeenCalledTimes(1);
   });
 
   test('removes child ref when the child is destroyed', async () => {

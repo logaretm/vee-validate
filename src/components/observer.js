@@ -55,7 +55,13 @@ export const ValidationObserver = {
     ctx () {
       const ctx = {
         errors: {},
-        validate: () => this.validate(),
+        validate: (then) => {
+          this.validate().then(result => {
+            if (result && isCallable(then)) {
+              then();
+            }
+          });
+        },
         reset: () => this.reset()
       };
 
