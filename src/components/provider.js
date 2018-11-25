@@ -12,6 +12,7 @@ export function createValidationCtx (ctx) {
     flags: ctx.flags,
     classes: ctx.classes,
     valid: ctx.isValid,
+    reset: () => ctx.reset(),
     validate: (e) => {
       ctx.syncValue(e);
 

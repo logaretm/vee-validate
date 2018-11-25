@@ -535,6 +535,40 @@ describe('Validation Provider Component', () => {
 
     expect(error.text()).toBeFalsy();
   });
+
+  test('resets validation state using reset method in slot scope data', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <div>
+          <ValidationProvider rules="required">
+            <div slot-scope="{ errors, reset }">
+              <input type="text" v-model="value">
+              <span id="error">{{ errors && errors[0] }}</span>
+              <button @click="reset">Reset</button>
+            </div>
+          </ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue });
+
+    const error = wrapper.find('#error');
+    const input = wrapper.find('input');
+
+    expect(error.text()).toBe('');
+
+    input.element.value = '';
+    input.trigger('input');
+    await flushPromises();
+
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+    wrapper.find('button').trigger('click');
+    await flushPromises();
+    expect(error.text()).toBe('');
+  });
 });
 
 describe('Validation Observer Component', () => {
