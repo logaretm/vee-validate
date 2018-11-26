@@ -693,7 +693,7 @@ describe('Validation Observer Component', () => {
               </div>
 
             </ValidationProvider>
-            <button @click="ctx.validate(submit)">Validate</button>
+            <button @click="ctx.validate().then(submit)">Validate</button>
           </div>
         </ValidationObserver>
       `

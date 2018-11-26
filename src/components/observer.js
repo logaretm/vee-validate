@@ -55,12 +55,20 @@ export const ValidationObserver = {
     ctx () {
       const ctx = {
         errors: {},
-        validate: (then) => {
-          this.validate().then(result => {
-            if (result && isCallable(then)) {
-              then();
+        validate: () => {
+          const promise = this.validate();
+
+          return {
+            then (thenable) {
+              promise.then(success => {
+                if (success && isCallable(thenable)) {
+                  return Promise.resolve(thenable());
+                }
+
+                return Promise.resolve(success);
+              });
             }
-          });
+          };
         },
         reset: () => this.reset()
       };

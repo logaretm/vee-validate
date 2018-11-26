@@ -36,7 +36,7 @@ The scoped slot is passed an object containing a flags object representing the m
 | touched   | `boolean`                   | True if at least one field has been touched (blurred).                                      |
 | untouched | `boolean`                   | True if all fields hasn't been tocuhed (blurred).                                           |
 | errors    | `{ [x: string]: string[] }` | An object containing reference to each field errors, each field is keyed by its `vid` prop. |
-| validate  | `() => Promise<boolean>`    | A method that triggers validation for all providers. |
+| validate  | `() => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after successful validation. |
 | reset     | `() => void`                | A method that resets validation state for all providers. |
 
 ## Examples
@@ -79,7 +79,7 @@ If you plan to trigger validation from the template without using `refs` you can
 ```vue
 <template>
   <ValidationObserver>
-    <form slot-scope="{ invalid, validate }" @submit.prevent="validate(submit)">
+    <form slot-scope="{ invalid, validate }" @submit.prevent="validate().then(submit)">
       <InputWithValidation rules="required" v-model="first" :error-messages="errors" />
 
       <InputWithValidation rules="required" v-model="second" :error-messages="errors" />
@@ -90,7 +90,7 @@ If you plan to trigger validation from the template without using `refs` you can
 </template>
 ```
 
-As you have guessed, the `validate` method on the Observer's slot-scope takes a callback that runs after the validation passes.
+As you have guessed, the `validate` method on the Observer's slot-scope is thenable, meaning you can chain another method to run after the validation passes like the form submission handler. Note that the `validate` method does not return a promise, but a promise-like object that has a `then` method for convenience, which can be also chained further.
 
 ::: tip
   Using the same approach you can reset validation state for all providers using the public method `reset()`.
