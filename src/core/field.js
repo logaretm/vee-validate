@@ -615,7 +615,7 @@ export default class Field {
 
     // Add events.
     events.forEach(e => {
-      const debouncedFn = debounce(fn, this.delay[e], false, token);
+      const debouncedFn = debounce(fn, this.delay[e], token);
       const validate = (...args) => {
         this.flags.pending = true;
         this._cancellationToken = token;
