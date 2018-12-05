@@ -6,6 +6,7 @@ const path = require('path');
 const mkdirpNode = require('mkdirp');
 const { promisify } = require('util');
 const chalk = require('chalk');
+const resolve = require('rollup-plugin-node-resolve');
 const { paths, uglifyOptions } = require('./config');
 
 const localesDir = path.join(__dirname, '..', 'locale');
@@ -32,7 +33,7 @@ async function build () {
       cache,
       input,
       external: ['VeeValidate'],
-      plugins: [ buble() ],
+      plugins: [buble(), resolve()],
     });
     const { code } = await bundle.generate({
       format: 'umd',
