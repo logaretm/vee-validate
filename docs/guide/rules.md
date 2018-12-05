@@ -152,28 +152,21 @@ The field under validation must have the same value as the confirmation field.
 
 ### confirmed params
 
-- `target:` The ref of the password field.
+- `targetValue:` The value of the password field.
 
-<input v-validate="'required'" :class="{'input': true, 'is-danger': errors.has('password_field') }" name="password" type="password" placeholder="Enter The Password" ref="password">
-<span v-show="errors.has('password_field')" class="help is-danger">{{ errors.first('password_field') }}</span>&nbsp;
+<input v-validate="'required'" v-model="password" type="password" name="password_field" placeholder="Enter the password">
+<span v-show="errors.has('password_field')">{{ errors.first('password_field') }}</span>
 
-<input v-validate="'required|confirmed:password'" name="pw_confirm" :class="{'input': true, 'is-danger': errors.has('pw_confirm_field') }" type="password" placeholder="Confirm the password">
-<span v-show="errors.has('pw_confirm_field')" class="help is-danger">{{ errors.first('pw_confirm_field') }}</span>
-
-::: tip
-  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
-:::
+<input v-validate="`required|confirmed:${password}`" name="password_confirm_field" type="password" placeholder="Confirm the password">
+<span v-show="errors.has('password_confirm_field')">{{ errors.first('password_confirm_field') }}</span>
 
 ```html
-<input v-validate="'required'" name="password" type="password" :class="{'is-danger': errors.has('password')}" placeholder="Password" ref="password">
-<span v-show="errors.has('password')" class="help is-danger">{{ errors.first('password') }}</span>
+<input v-validate="'required'" v-model="password" type="password" name="password_field" placeholder="Enter the password">
+<span v-show="errors.has('password_field')">{{ errors.first('password_field') }}</span>
 
-<input v-validate="'required|confirmed:password'" name="password_confirmation" type="password" :class="{'is-danger': errors.has('password_confirmation')}" placeholder="Password, Again" data-vv-as="password">
+<input v-validate="`required|confirmed:${password}`" name="password_confirm_field" type="password" placeholder="Confirm the password">
+<span v-show="errors.has('password_confirm_field')">{{ errors.first('password_confirm_field') }}</span>
 ```
-
-::: tip
-Make use of the `data-vv-as="password"` attribute for the confirmation field. The value input for this attribute is used as the field label in the error message. This way you can reuse the `password` name to show either an error with the password or password_confirmation field.
-:::
 
 ## credit_card
 
