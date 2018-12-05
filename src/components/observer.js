@@ -1,5 +1,5 @@
 import { createRenderless } from '../utils/vnode';
-import { isCallable, values, warn } from '../utils';
+import { isCallable, values } from '../utils';
 
 const flagMergingStrategy = {
   pristine: 'every',
@@ -92,10 +92,6 @@ export const ValidationObserver = {
   render (h) {
     let slots = this.$scopedSlots.default;
     if (!isCallable(slots)) {
-      if (process.env.NODE_ENV !== 'production') {
-        warn('ValidationObserver expects a scoped slot. Did you forget to add "slot-scope" to your slot?');
-      }
-
       return createRenderless(h, this.$slots.default);
     }
 
