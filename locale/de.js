@@ -6,9 +6,11 @@ const messages = {
   alpha: (field) => `${field} darf nur alphabetische Zeichen enthalten.`,
   alpha_dash: (field) => `${field} darf alphanumerische Zeichen sowie Striche und Unterstriche enthalten.`,
   alpha_num: (field) => `${field} darf nur alphanumerische Zeichen enthalten.`,
+  alpha_spaces: (field) => `${field} darf nur alphanumerische Zeichen und Leerzeichen enthalten.`,
   before: (field, [target]) => `${field} muss vor ${target} liegen.`,
   between: (field, [min, max]) => `${field} muss zwischen ${min} und ${max} liegen.`,
   confirmed: (field, [confirmedField]) => `${field} passt nicht zum Inhalt von ${confirmedField}.`,
+  credit_card: (field) => `${field} ist keine gültiger Wert für Kreditkarten.`,
   date_between: (field, [min, max]) => `${field} muss zwischen ${min} und ${max} liegen.`,
   date_format: (field, [format]) => `${field} muss das Format ${format} haben.`,
   decimal: (field, [decimals = '*'] = []) => `${field} muss numerisch sein und darf ${decimals === '*' ? '' : decimals} Dezimalpunkte enthalten.`,
@@ -19,10 +21,20 @@ const messages = {
   ext: (field) => `${field} muss eine gültige Datei sein.`,
   image: (field) => `${field} muss eine Grafik sein.`,
   included: (field) => `${field} muss ein gültiger Wert sein.`,
+  integer: (field) => `${field} muss eine ganze Zahl sein.`,
   ip: (field) => `${field} muss eine gültige IP-Adresse sein.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `Die Länge von ${field} muss zwischen ${length} und ${max} liegen.`;
+    }
+
+    return `Die Länge von ${field} muss ${length} sein.`;
+  },
   max: (field, [length]) => `${field} darf nicht länger als ${length} Zeichen sein.`,
+  max_value: (field, [max]) => `${field} darf maximal ${max} sein.`,
   mimes: (field) => `${field} muss einen gültigen Dateityp haben.`,
   min: (field, [length]) => `${field} muss mindestens ${length} Zeichen lang sein.`,
+  min_value: (field, [min]) => `${field} muss mindestens ${min} sein.`,
   numeric: (field) => `${field} darf nur numerische Zeichen enthalten.`,
   regex: (field) => `Das Format von ${field} ist ungültig.`,
   required: (field) => `${field} ist ein Pflichtfeld.`,
