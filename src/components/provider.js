@@ -234,7 +234,6 @@ export const ValidationProvider = {
       this._waiting = null;
       this.initialValue = this.value;
       const flags = createFlags();
-      flags.changed = false;
       this.setFlags(flags);
     },
     validate () {
