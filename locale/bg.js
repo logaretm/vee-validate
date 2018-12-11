@@ -21,10 +21,10 @@ const messages = {
   ip: (field) => `Полето ${field} трябва да е валиден IP адрес.`,
   length: (field, [length, max]) => {
     if (max) {
-      return `Полето ${field} трябва да е между ${length} и ${max}.`;
+      return `Полето ${field} трябва да е с дължина между ${length} и ${max} знака.`;
     }
 
-    return `Полето ${field} трябва да е ${length}.`;
+    return `Полето ${field} трябва да е с дължилна ${length} знака.`;
   },
   max: (field, [length]) => `Полето ${field} не може да бъде по-голямо от ${length} знака.`,
   max_value: (field, [max]) => `Полето ${field} трябва да бъде ${max} или по-малко.`,
