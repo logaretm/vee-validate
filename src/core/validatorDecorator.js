@@ -74,8 +74,8 @@ export default class ScopedValidator {
     return this._base.remove(ruleName);
   }
 
-  detach (...args) {
-    return this._base.detach(...args, this.id);
+  detach (name, scope) {
+    return this._base.detach(name, scope, this.id);
   }
 
   extend (...args) {
