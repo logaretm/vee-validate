@@ -8,6 +8,7 @@ const sidebars = {
     '',
     'getting-started',
     'syntax',
+    'displaying-errors',
     'rules',
     'custom-rules',
     'inferred-rules',
