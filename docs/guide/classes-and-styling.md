@@ -106,6 +106,8 @@ input[aria-invalid="false"] {
   Like the validity feature, this also have the caveat of having only binary states for the inputs which may result in a poor UX experience, you may use this approach coupled with css classes to further constrain the styling applied on your inputs.
 :::
 
+A [live example can be found here](https://codesandbox.io/s/n35q1rnq00)
+
 ## Styling custom components
 
 The features mentioned above only work for native HTML5 inputs. As for components, you should always design your components around using props/state to control their visual representation.
