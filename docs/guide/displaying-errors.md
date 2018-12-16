@@ -22,7 +22,7 @@ Typically you would want to display one error at a time for your fields, you can
 Another use-case is that you might want to dispaly all the errors for an input, typically to allow the user to fix multiple input errors at once. The `errors.collect('fieldName')` method collects all error messages for a specific field into an array.
 
 ```html
-<input type="text" name="fieldName" v-validate="'required'">
+<input type="text" name="fieldName" v-validate.continues="'required|alpha|min:5'">
 <ul>
   <li v-for="error in errors.collect('fieldName')">{{ error }}</li>
 </ul>
@@ -37,9 +37,9 @@ Sometimes you need to display all fields errors on top of a form, especially for
 You can use `errors.all()` to collect all fields errors into a single flat array.
 
 ```html
-<input type="text" name="first" v-validate="'required'">
+<input type="text" name="first" v-validate.continues="'required|alpha|min:5'">
 
-<input type="text" name="second" v-validate="'required'">
+<input type="text" name="second" v-validate.continues="'required|alpha|min:5'">
 
 <ul>
   <li v-for="error in errors.all()">{{ error }}</li>
@@ -51,9 +51,9 @@ You can use `errors.all()` to collect all fields errors into a single flat array
 Use `errors.collect()` without providing a field name to collect all errors into an object which keys are field names and the values are arrays of error messages for each field. In other words it groups error messages by field name.
 
 ```html
-<input type="text" name="first" v-validate="'required'">
+<input type="text" name="first" v-validate.continues="'required|alpha|min:5'">
 
-<input type="text" name="second" v-validate="'required'">
+<input type="text" name="second" v-validate.continues="'required|alpha|min:5'">
 
 <ul>
   <li v-for="group in errors.collect()">
