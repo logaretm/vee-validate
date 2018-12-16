@@ -200,3 +200,11 @@ export const version: string;
 export const install: Vue.PluginFunction<Configuration>
 
 export const directive: Vue.DirectiveOptions;
+
+export const Rules: {
+    [key: string]: {
+        validate (value: any, args: Object | any[], data?: any): boolean | Promise<boolean>;
+        options?: object;
+        paramNames?: string[];
+    }
+}
