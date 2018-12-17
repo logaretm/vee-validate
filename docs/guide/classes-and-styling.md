@@ -81,7 +81,7 @@ VeeValidate also applies a couple of aria attributes on your HTML inputs:
 
 You could use these attributes for CSS selectors to apply specific styling to fields applied with those aria attributes.
 
-This feature is __enabled__ by default and can be disabled by setting the `aria` option to true in the plugin configuration.
+This feature is __enabled__ by default and can be disabled by setting the `aria` option to `false` in the plugin configuration.
 
 ```js
 import Vue from 'vue';
