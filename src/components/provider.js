@@ -304,6 +304,18 @@ export const ValidationProvider = {
       const names = VeeValidate.config.classNames;
       return Object.keys(this.flags).reduce((classes, flag) => {
         const className = (names && names[flag]) || flag;
+        if (flag === 'invalid') {
+          classes[className] = !!this.messages.length;
+
+          return classes;
+        }
+
+        if (flag === 'valid') {
+          classes[className] = !this.messages.length;
+
+          return classes;
+        }
+
         if (className) {
           classes[className] = this.flags[flag];
         }
