@@ -277,11 +277,12 @@ export default class ErrorBag {
     }
 
     const selector = isNullOrUndefined(scope) ? String(field) : `${scope}.${field}`;
-    const { isPrimary } = this._makeCandidateFilters(selector);
+    const { isPrimary, isAlt } = this._makeCandidateFilters(selector);
+    const matches = item => isPrimary(item) || isAlt(item);
     const shouldRemove = (item) => {
-      if (isNullOrUndefined(vmId)) return isPrimary(item);
+      if (isNullOrUndefined(vmId)) return matches(item);
 
-      return isPrimary(item) && item.vmId === vmId;
+      return matches(item) && item.vmId === vmId;
     };
 
     for (let i = 0; i < this.items.length; ++i) {
