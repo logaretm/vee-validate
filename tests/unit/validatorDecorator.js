@@ -66,6 +66,22 @@ test('decorates flag()', () => {
   expect(base.flag).toHaveBeenCalledWith('name', { valid: false }, 0);
 });
 
+test('decorates detach()', () => {
+  const base = new Validator();
+  const decorator = new Decorator(base, { _uid: 0 });
+
+  decorator.attach({ name: 'email1' });
+  decorator.attach({ name: 'email2' });
+  decorator.attach({ name: 'email3', scope: 'scope' });
+
+  decorator.detach('email1');
+  decorator.detach('email2', null);
+  decorator.detach('email3', 'scope');
+
+  expect(base.fields.items).toHaveLength(0);
+  expect(decorator.fields.items).toHaveLength(0);
+});
+
 test('calls extend()', () => {
   const vm = { _uid: 0 };
   const base = new Validator();
