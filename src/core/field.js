@@ -295,7 +295,7 @@ export default class Field {
 
     this.addValueListeners();
     this.addActionListeners();
-    this.updateClasses();
+    this.updateClasses(true);
     this.updateAriaAttrs();
     this.updateCustomValidity();
   }
@@ -403,13 +403,20 @@ export default class Field {
   /**
    * Updates the element classes depending on each field flag status.
    */
-  updateClasses () {
+  updateClasses (isReset = false) {
     if (!this.classes || this.isDisabled) return;
     const applyClasses = (el) => {
       toggleClass(el, this.classNames.dirty, this.flags.dirty);
       toggleClass(el, this.classNames.pristine, this.flags.pristine);
       toggleClass(el, this.classNames.touched, this.flags.touched);
       toggleClass(el, this.classNames.untouched, this.flags.untouched);
+
+      // remove valid/invalid classes on reset.
+      if (isReset) {
+        toggleClass(el, this.classNames.valid, false);
+        toggleClass(el, this.classNames.invalid, false);
+      }
+
       // make sure we don't set any classes if the state is undetermined.
       if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
         toggleClass(el, this.classNames.valid, this.flags.valid);
