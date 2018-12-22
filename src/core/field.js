@@ -355,9 +355,9 @@ export default class Field {
 
     // must be contained within the same component, so we use the vm root element constrain our dom search.
     fields.forEach(({ selector, name }) => {
-      const ref = this.vm.$refs[selector];
-      const el = Array.isArray(ref) ? ref[0] : ref;
-      if (!el) {
+      let ref = this.vm.$refs[selector];
+      ref = Array.isArray(ref) ? ref[0] : ref;
+      if (!ref) {
         return;
       }
 
@@ -373,13 +373,13 @@ export default class Field {
       };
 
       // probably a component.
-      if (isCallable(el.$watch)) {
-        options.component = el;
-        options.el = el.$el;
-        options.getter = Resolver.resolveGetter(el.$el, el.$vnode);
+      if (isCallable(ref.$watch)) {
+        options.component = ref;
+        options.el = ref.$el;
+        options.getter = Resolver.resolveGetter(ref.$el, ref.$vnode, Resolver.resolveModel({}, ref.$vnode));
       } else {
-        options.el = el;
-        options.getter = Resolver.resolveGetter(el, {});
+        options.el = ref;
+        options.getter = Resolver.resolveGetter(ref, {});
       }
 
       this.dependencies.push({ name, field: new Field(options) });
