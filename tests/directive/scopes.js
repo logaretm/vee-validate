@@ -1,4 +1,5 @@
 import { mount, createLocalVue } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import VeeValidate from '@/index';
 
 describe('Scopes', () => {
@@ -35,6 +36,7 @@ describe('Scopes', () => {
       scope: 'notThird'
     });
 
+    await flushPromises();
     // test scope update
     expect(validator.fields.filter(f => f.matches({ scope: 'third' }))).toHaveLength(0);
     expect(validator.fields.filter(f => f.matches({ scope: 'notThird' }))).toHaveLength(2);

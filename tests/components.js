@@ -1,4 +1,5 @@
-import { mount, createLocalVue, renderToString } from '@vue/test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
+import { renderToString } from '@vue/server-test-utils';
 import VeeValidate from '@/index';
 import flushPromises from 'flush-promises';
 import InputWithoutValidation from './components/Input';
@@ -19,7 +20,7 @@ describe('Validation Provider Component', () => {
           <p slot-scope="ctx"></p>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(wrapper.html()).toBe(`<p></p>`);
   });
@@ -31,7 +32,7 @@ describe('Validation Provider Component', () => {
           <p slot-scope="ctx"></p>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(output).toBe('<p data-server-rendered="true"></p>');
   });
@@ -43,7 +44,7 @@ describe('Validation Provider Component', () => {
           <p></p>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(output).toBe('<p data-server-rendered="true"></p>');
   });
@@ -61,13 +62,12 @@ describe('Validation Provider Component', () => {
           </div>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
     const error = wrapper.find('#error');
 
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
     // did not validate on input.
     expect(error.text()).toBe('');
@@ -77,7 +77,7 @@ describe('Validation Provider Component', () => {
     // validation triggered on change.
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
-    input.element.value = 'text';
+    input.setValue('text');
     input.trigger('change');
     await flushPromises();
     await Vue.nextTick();
@@ -103,7 +103,7 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const select = wrapper.find('select');
     const error = wrapper.find('#error');
@@ -114,12 +114,12 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toBe('');
 
     select.trigger('change');
-    select.element.value = '';
+    select.setValue('');
     await flushPromises();
     // validation triggered on change.
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
-    select.element.value = '1';
+    select.setValue('1');
     wrapper.find('select').trigger('change');
     await flushPromises();
     await Vue.nextTick();
@@ -142,7 +142,7 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
 
@@ -178,20 +178,19 @@ describe('Validation Provider Component', () => {
         </div>
       `
     }, { localVue: Vue, attachToDocument: true, sync: false });
+    await Vue.nextTick();
 
     const error = wrapper.find('#error');
     const input = wrapper.find('#input');
 
     expect(error.text()).toBe('');
 
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
-    input.element.value = 'val';
-    input.trigger('input');
+    input.setValue('val');
     await flushPromises();
     expect(error.text()).toBe('');
   });
@@ -220,7 +219,7 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
     const input = wrapper.find({ ref: 'input' });
@@ -256,13 +255,12 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
     const error = wrapper.find('#error');
     const input = wrapper.find('input');
 
     expect(error.text()).toBe('');
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
     // did not validate.
     expect(error.text()).toBe('');
@@ -293,7 +291,7 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#err1');
 
@@ -334,7 +332,7 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#err1');
 
@@ -347,8 +345,7 @@ describe('Validation Provider Component', () => {
     // validation did not trigger.
     expect(error.text()).toBeFalsy();
     const input = wrapper.find('#pass');
-    input.element.value = 'val';
-    input.trigger('input');
+    input.setValue('val');
     await flushPromises();
     await Vue.nextTick();
 
@@ -369,7 +366,7 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const providersMap = wrapper.vm.$_veeObserver.refs;
     expect(providersMap.named).toBe(wrapper.vm.$refs.provider);
@@ -390,21 +387,19 @@ describe('Validation Provider Component', () => {
       components: {
         InputWithValidation
       }
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
     const input = wrapper.find('#input');
 
     expect(error.text()).toBe('');
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
 
     await flushPromises();
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
-    input.element.value = 'txt';
-    input.trigger('input');
+    input.setValue('txt');
     await flushPromises();
     await Vue.nextTick();
     expect(error.text()).toBe('');
@@ -423,7 +418,7 @@ describe('Validation Provider Component', () => {
       components: {
         SelectWithValidation: WithValidation
       }
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(wrapper.html()).toBe(`<div><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div>`);
   });
@@ -454,14 +449,14 @@ describe('Validation Provider Component', () => {
         </div>
       `
     }, { localVue: Vue, attachToDocument: true, sync: false });
+    await Vue.nextTick();
 
     const error = wrapper.find('#error');
     const input = wrapper.find('#input');
 
     expect(error.text()).toBe('');
 
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
@@ -484,12 +479,11 @@ describe('Validation Provider Component', () => {
           </div>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
 
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
 
     const errors = wrapper.findAll('p');
@@ -512,13 +506,12 @@ describe('Validation Provider Component', () => {
           </div>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
     const error = wrapper.find('p');
 
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await sleep(40);
     expect(error.text()).toBe('');
     await sleep(10);
@@ -539,7 +532,7 @@ describe('Validation Provider Component', () => {
           </div>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     // A decreasing timeout (the most recent validation will finish before new ones).
     VeeValidate.Validator.extend('longRunning', {
@@ -559,12 +552,9 @@ describe('Validation Provider Component', () => {
     const input = wrapper.find('input');
     const error = wrapper.find('p');
 
-    input.element.value = '123';
-    input.trigger('input');
-    input.element.value = '123';
-    input.trigger('input');
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('123');
+    input.setValue('123');
+    input.setValue('');
     await sleep(100);
     await flushPromises();
     // LAST message should be the required one.
@@ -580,7 +570,7 @@ describe('Validation Observer Component', () => {
           <form slot-scope="ctx"></form>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(wrapper.html()).toBe(`<form></form>`);
   });
@@ -592,7 +582,7 @@ describe('Validation Observer Component', () => {
           <form slot-scope="ctx"></form>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(output).toBe(`<form data-server-rendered="true"></form>`);
   });
@@ -604,7 +594,7 @@ describe('Validation Observer Component', () => {
           <form></form>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(output).toBe(`<form data-server-rendered="true"></form>`);
   });
@@ -627,7 +617,7 @@ describe('Validation Observer Component', () => {
           </div>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const stateSpan = wrapper.find('#state');
     const input = wrapper.find('input');
@@ -635,8 +625,7 @@ describe('Validation Observer Component', () => {
     await flushPromises();
     expect(stateSpan.text()).toBe('false');
 
-    input.element.value = 'value';
-    input.trigger('input');
+    input.setValue('value');
     await flushPromises();
     await Vue.nextTick();
 
@@ -664,7 +653,7 @@ describe('Validation Observer Component', () => {
           </div>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
     await flushPromises();
@@ -696,7 +685,7 @@ describe('Validation Observer Component', () => {
           </div>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const obs = wrapper.vm.$refs.obs;
     expect(obs.refs).toHaveProperty('id');
@@ -727,7 +716,7 @@ describe('Validation Observer Component', () => {
           </div>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
     await flushPromises();
@@ -767,7 +756,7 @@ describe('Validation Observer Component', () => {
           </div>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await flushPromises();
 

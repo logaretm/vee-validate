@@ -20,7 +20,7 @@ describe('Injections', () => {
           template: `<p id="error">{{ errors.first('test') }}</p>`
         }
       }
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await flushPromises();
     expect(wrapper.find('#error').text()).toBeTruthy();
@@ -36,7 +36,7 @@ describe('Injections', () => {
         validator: 'new'
       },
       template: `<p>{{ errors.count() }}</p>`
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(wrapper.find('p').text()).toBe('0');
   });
@@ -62,9 +62,9 @@ describe('Injections', () => {
           template: `<p id="error">{{ errors.first('test') }}</p>`
         }
       }
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await flushPromises();
-    expect(wrapper.find('#error').text()).toBeTruthy();
+    expect(wrapper.find('#error').text()).toBeFalsy();
   });
 });

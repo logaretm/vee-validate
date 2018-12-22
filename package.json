@@ -44,6 +44,7 @@
     "@babel/polyfill": "^7.2.3",
     "@babel/preset-env": "^7.2.3",
     "@commitlint/cli": "^7.2.1",
+    "@vue/server-test-utils": "^1.0.0-beta.27",
     "@vue/test-utils": "1.0.0-beta.27",
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^10.0.1",

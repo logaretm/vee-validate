@@ -51,8 +51,7 @@ test('fetches error messages from i18n messages', async () => {
   }, { localVue: Vue });
 
   const input = wrapper.find('input');
-  input.element.value = '';
-  input.trigger('input');
+  input.setValue('');
   await flushPromises();
 
   expect(wrapper.find('p').text()).toBe('This is required');
@@ -75,8 +74,7 @@ test('fetches field names from i18n', async () => {
   }, { localVue: Vue });
 
   const input = wrapper.find('input');
-  input.element.value = '12';
-  input.trigger('input');
+  input.setValue('12');
   await flushPromises();
 
   expect(wrapper.find('p').text()).toContain('Full Name');

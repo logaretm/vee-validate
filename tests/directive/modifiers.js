@@ -15,7 +15,7 @@ describe('directive modifiers', () => {
         <p v-for="error in errors.collect('bails')">{{ error }}</p>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await wrapper.vm.$validator.validate();
     await flushPromises();
@@ -34,7 +34,7 @@ describe('directive modifiers', () => {
         <p v-for="error in errors.collect('bails')">{{ error }}</p>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await wrapper.vm.$validator.validate();
     await flushPromises();
@@ -53,7 +53,7 @@ describe('directive modifiers', () => {
         <p>{{ errors.first('field') }}</p>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await flushPromises();
     expect(wrapper.find('p').text()).toBe('The field field is required.');

@@ -26,7 +26,7 @@ describe('lifecycle hooks', () => {
       </div>
     `,
       data: () => ({ rules: 'required' })
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
     const error = wrapper.find('span');
@@ -46,7 +46,7 @@ describe('lifecycle hooks', () => {
   test('unbind: does not detach the field if it does not exist', () => {
     const Vue = createLocalVue();
     Vue.use(VeeValidate);
-    const wrapper = mount(BasicComponent, { localVue: Vue });
+    const wrapper = mount(BasicComponent, { localVue: Vue, sync: false });
     const validator = wrapper.vm.$validator;
     const detach = validator.detach.bind(validator);
     validator.detach = jest.fn(detach);
@@ -58,7 +58,7 @@ describe('lifecycle hooks', () => {
   test('destroy: removes vm associated errors when the vm is destroyed', async () => {
     const Vue = createLocalVue();
     Vue.use(VeeValidate);
-    const wrapper = mount(BasicComponent, { localVue: Vue });
+    const wrapper = mount(BasicComponent, { localVue: Vue, sync: false });
     const input = wrapper.find('input');
     input.value = '';
     await wrapper.vm.$validator.validate();

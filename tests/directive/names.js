@@ -32,8 +32,7 @@ describe('Field name resolution', () => {
       `
     }, { localVue: Vue, sync: false });
 
-    wrapper.find('input').trigger('input');
-
+    wrapper.find('input').setValue('');
     await flushPromises();
     expect(wrapper.find('span').text()).toContain('__fieldName__');
   });
@@ -43,20 +42,18 @@ describe('Field name resolution', () => {
       data: () => ({ value: '123' }),
       components: {
         Child: {
-          template: '<div></div>'
+          template: '<input @input="$emit(`input`, $event.target.value)">'
         }
       },
       template: `
         <div>
-          <child v-validate="'required'" data-vv-name="__fieldName__" v-model="value"></child>
+          <child ref="input" v-validate="'required'" data-vv-name="__fieldName__" v-model="value"></child>
           <span>{{ errors.first('__fieldName__') }}</span>
         </div>
       `
     }, { localVue: Vue, sync: false });
 
-    wrapper.setData({
-      value: ''
-    });
+    wrapper.find('input').setValue('');
 
     await flushPromises();
     expect(wrapper.find('span').text()).toContain('__fieldName__');
@@ -68,7 +65,7 @@ describe('Field name resolution', () => {
       components: {
         Child: {
           props: ['name'],
-          template: '<div></div>'
+          template: '<input @input="$emit(`input`, $event.target.value)">'
         }
       },
       template: `
@@ -79,10 +76,7 @@ describe('Field name resolution', () => {
       `
     }, { localVue: Vue, sync: false });
 
-    wrapper.setData({
-      value: ''
-    });
-
+    wrapper.find('input').setValue('');
     await flushPromises();
     expect(wrapper.find('span').text()).toContain('__fieldName__');
   });
@@ -96,7 +90,7 @@ describe('Field name resolution', () => {
             name: () => '__fieldName__'
           },
           props: ['name'],
-          template: '<div></div>'
+          template: '<input @input="$emit(`input`, $event.target.value)">'
         }
       },
       template: `
@@ -107,10 +101,7 @@ describe('Field name resolution', () => {
       `
     }, { localVue: Vue, sync: false });
 
-    wrapper.setData({
-      value: ''
-    });
-
+    wrapper.find('input').setValue('');
     await flushPromises();
     expect(wrapper.find('span').text()).toContain('__fieldName__');
   });

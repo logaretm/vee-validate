@@ -17,7 +17,7 @@ describe('v-model integration', () => {
           <span>{{ errors.first('field') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('span');
 
@@ -38,7 +38,7 @@ describe('v-model integration', () => {
           <span>{{ errors.first('field') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('span');
 
@@ -59,7 +59,7 @@ describe('v-model integration', () => {
           <span>{{ errors.first('field') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('span');
     expect(error.text()).toBeFalsy();
@@ -79,7 +79,7 @@ describe('v-model integration', () => {
           <span>{{ errors.first('field') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('span');
     expect(wrapper.vm.errors.count()).toBe(0);
@@ -115,7 +115,7 @@ describe('v-model integration', () => {
           <span>{{ errors.first('field') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
     const error = wrapper.find('span');
@@ -145,7 +145,7 @@ describe('v-model integration', () => {
           <span>{{ errors.first('field') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('span');
 

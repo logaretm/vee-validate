@@ -14,7 +14,7 @@ describe('HTML Inputs Validation', () => {
         <span>{{ errors.first('input') }}</span>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
     const input = wrapper.find('input');
     const error = wrapper.find('span');
 
@@ -35,21 +35,17 @@ describe('HTML Inputs Validation', () => {
         <span>{{ errors.first('input') }}</span>
       </div>
     `
-    }, { localVue: Vue, attachToDocument: true });
-    let input = wrapper.find('#rd1');
+    }, { localVue: Vue, attachToDocument: true, sync: false });
+    const rd1 = wrapper.find('#rd1');
     const error = wrapper.find('span');
 
-    input.element.checked = true;
-    input.trigger('change');
+    rd1.setChecked();
     await flushPromises();
     expect(error.text()).toBeTruthy();
 
     // we need to set the element attribute
-    input.element.checked = false;
-    input = wrapper.find('#rd2');
-    input.element.checked = true;
-
-    input.trigger('change');
+    const rd2 = wrapper.find('#rd2');
+    rd2.setChecked();
     await Vue.nextTick();
     await flushPromises();
 
@@ -66,23 +62,19 @@ describe('HTML Inputs Validation', () => {
         <span>{{ errors.first('input') }}</span>
       </div>
     `
-    }, { localVue: Vue, attachToDocument: true });
+    }, { localVue: Vue, attachToDocument: true, sync: false });
     const inputs = wrapper.findAll('input');
     const error = wrapper.find('span');
 
-    inputs.at(0).element.checked = true;
-    inputs.at(0).trigger('click');
-    inputs.at(0).trigger('change');
-    await flushPromises();
-
-    expect(error.text()).toBeTruthy();
-
-    inputs.at(0).element.checked = false;
-    inputs.at(0).trigger('click');
-    inputs.at(0).trigger('change');
+    inputs.at(0).setChecked();
     await flushPromises();
 
     expect(error.text()).toBeFalsy();
+
+    inputs.at(0).setChecked(false);
+    await flushPromises();
+
+    expect(error.text()).toBeTruthy();
   });
 
   test('select fields', async () => {
@@ -96,7 +88,7 @@ describe('HTML Inputs Validation', () => {
         <span>{{ errors.first('input') }}</span>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
     const input = wrapper.find('select');
     const error = wrapper.find('span');
 
@@ -121,7 +113,7 @@ describe('HTML Inputs Validation', () => {
         <span>{{ errors.first('input') }}</span>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
     const input = wrapper.find('select');
     const error = wrapper.find('span');
 
@@ -146,7 +138,7 @@ describe('HTML Inputs Validation', () => {
         <span>{{ errors.first('input') }}</span>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
     const input = wrapper.find('input');
     const error = wrapper.find('span');
 
