@@ -44,7 +44,7 @@
     "@babel/polyfill": "^7.2.3",
     "@babel/preset-env": "^7.2.3",
     "@commitlint/cli": "^7.2.1",
-    "@vue/test-utils": "1.0.0-beta.12",
+    "@vue/test-utils": "1.0.0-beta.27",
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.4.2",
@@ -78,7 +78,7 @@
     "validator": "^10.8.0",
     "vue": "^2.5.17",
     "vue-i18n": "^8.3.0",
-    "vue-jest": "^3.0.0",
+    "vue-jest": "^3.0.2",
     "vue-server-renderer": "^2.5.17",
     "vue-template-compiler": "^2.5.17",
     "vuepress": "^0.14.4"
