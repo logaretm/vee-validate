@@ -15,7 +15,7 @@ describe('Fields can be given an alias for messages', () => {
       </div>
     `,
       data: () => ({ value: '' })
-    }, { localVue });
+    }, { localVue, sync: false });
 
     await flushPromises();
 
@@ -31,7 +31,7 @@ describe('Fields can be given an alias for messages', () => {
       </div>
     `,
       data: () => ({ value: '' })
-    }, { localVue });
+    }, { localVue, sync: false });
 
     wrapper.vm.$validator.localize({
       en: {
@@ -65,7 +65,7 @@ describe('Fields can be given an alias for messages', () => {
           }
         }
       }
-    }, { localVue });
+    }, { localVue, sync: false });
 
     await wrapper.vm.$validator.validate();
 

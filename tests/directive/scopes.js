@@ -21,7 +21,7 @@ describe('Scopes', () => {
         <input type="text" v-validate="'required'" name="fourthField" :data-vv-scope="scope">
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const validator = wrapper.vm.$validator;
     expect(validator.fields).toHaveLength(4);
@@ -55,7 +55,7 @@ describe('Scopes', () => {
           <input type="text" v-validate="'required'" data-vv-scope="s1">
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const validator = wrapper.vm.$validator;
     expect(validator.fields.filter(f => f.matches({ scope: 's1' }))).toHaveLength(1);

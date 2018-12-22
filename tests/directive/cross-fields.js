@@ -13,32 +13,26 @@ describe('Cross Field Validation', () => {
     const wrapper = mount({
       template: `
       <div>
-        <input type="password" name="password" v-model="password" v-validate="'required|confirmed:confirm'" data-vv-as="Password">
-        <input type="password" name="confirm" v-model="confirm" v-validate="'required'" ref="confirm">
+        <input type="password" name="password" v-validate="'required|confirmed:confirm'">
+        <input type="password" name="confirm" v-validate="'required'" ref="confirm">
         <span id="pwError">{{ errors.first('password') }}</span>
         <span id="confirmError">{{ errors.first('confirm') }}</span>
       </div>
-    `,
-      data: () => ({ password: '12', confirm: '12' })
-    }, { localVue });
+    `
+    }, { localVue, sync: false });
 
-    wrapper.setData({
-      password: '',
-      confirm: ''
-    });
+    const input = wrapper.find('input[name="password"]');
+    const confirm = wrapper.find('input[name="confirm"]');
 
+    input.setValue('123');
     await flushPromises();
 
     expect(wrapper.find('#pwError').text()).toBeTruthy();
-    expect(wrapper.find('#confirmError').text()).toBeTruthy();
 
-    wrapper.setData({
-      password: '12345',
-      confirm: '11'
-    });
+    confirm.setValue('123');
 
     await flushPromises();
-    expect(wrapper.find('#pwError').text()).toBeTruthy();
+    expect(wrapper.find('#pwError').text()).toBeFalsy();
     expect(wrapper.find('#confirmError').text()).toBeFalsy();
   });
 
@@ -47,13 +41,13 @@ describe('Cross Field Validation', () => {
       components: {
         InputField: {
           props: ['name', 'value'],
-          template: `<input type="text" :value="value" @change="$emit('change', $event.target.value)">`,
+          template: `<input type="text" :name="name" :value="value" @input="$emit('input', $event.target.value)">`,
           model: {
-            event: 'change'
+            event: 'input'
           }
         }
       },
-      data: () => ({ password: '12', confirm: '12' }),
+      data: () => ({ password: '', confirm: '' }),
       template: `
         <div>
           <input-field name="password" v-model="password" v-validate="'required|confirmed:confirm'"></input-field>
@@ -62,25 +56,18 @@ describe('Cross Field Validation', () => {
           <span id="confirmError">{{ errors.first('confirm') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
-    wrapper.setData({
-      password: '',
-      confirm: ''
-    });
+    wrapper.find('input[name="password"]').setValue('12');
 
     await flushPromises();
 
     expect(wrapper.find('#pwError').text()).toBeTruthy();
-    expect(wrapper.find('#confirmError').text()).toBeTruthy();
-
-    wrapper.setData({
-      password: '12345',
-      confirm: '12'
-    });
+    wrapper.find('input[name="confirm"]').setValue('12');
 
     await flushPromises();
-    expect(wrapper.find('#pwError').text()).toBeTruthy();
+
+    expect(wrapper.find('#pwError').text()).toBeFalsy();
     expect(wrapper.find('#confirmError').text()).toBeFalsy();
   });
 
@@ -88,20 +75,16 @@ describe('Cross Field Validation', () => {
     const wrapper = mount({
       template: `
       <div>
-        <input type="password" name="password" v-model="password" v-validate="'required|confirmed:confirm'">
-        <input type="password" name="confirm" v-model="confirm" v-validate="'required'">
+        <input type="password" name="password" v-validate="'required|confirmed:confirm'">
+        <input type="password" name="confirm" v-validate="'required'">
         <span id="pwError">{{ errors.first('password') }}</span>
         <span id="confirmError">{{ errors.first('confirm') }}</span>
       </div>
-    `,
-      data: () => ({ password: '12', confirm: '12' })
-    }, { localVue: Vue });
+    `
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
-    input.trigger('input');
-    wrapper.setData({
-      password: ''
-    });
+    input.setValue('123');
     await flushPromises();
 
     expect(wrapper.find('#pwError').text()).toBeTruthy();
@@ -118,7 +101,7 @@ describe('Cross Field Validation', () => {
       </div>
     `,
       data: () => ({ password: '', confirm: '' })
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     wrapper.vm.$validator.localize('en', {
       messages: {

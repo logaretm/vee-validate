@@ -9,8 +9,8 @@ test('does not modify the DOM rendering', () => {
     template: `<input type="text" name="field" v-validate="'required'">`
   };
 
-  const first = mount(component, { localVue: Vue });
-  const second = mount(component, { localVue: Vue });
+  const first = mount(component, { localVue: Vue, sync: false });
+  const second = mount(component, { localVue: Vue, sync: false });
 
   // same component, should match in UI and in rendered HTML.
   expect(first.html()).toBe(second.html());

@@ -16,7 +16,7 @@ describe('Setting custom events for validation', () => {
         <span>{{ errors.count() }}</span>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
     const count = wrapper.find('span');
@@ -42,7 +42,7 @@ describe('Setting custom events for validation', () => {
         <span>{{ errors.count() }}</span>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
     const count = wrapper.find('span');

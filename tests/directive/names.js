@@ -14,7 +14,7 @@ describe('Field name resolution', () => {
           <span>{{ errors.first('__fieldName__') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     wrapper.find('input').trigger('input');
 
@@ -30,7 +30,7 @@ describe('Field name resolution', () => {
           <span>{{ errors.first('__fieldName__') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     wrapper.find('input').trigger('input');
 
@@ -52,7 +52,7 @@ describe('Field name resolution', () => {
           <span>{{ errors.first('__fieldName__') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     wrapper.setData({
       value: ''
@@ -77,7 +77,7 @@ describe('Field name resolution', () => {
           <span>{{ errors.first('__fieldName__') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     wrapper.setData({
       value: ''
@@ -105,7 +105,7 @@ describe('Field name resolution', () => {
           <span>{{ errors.first('__fieldName__') }}</span>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     wrapper.setData({
       value: ''

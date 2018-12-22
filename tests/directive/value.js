@@ -27,7 +27,7 @@ test('value resolution using ctor options', async () => {
         <button @click="$validator.validate()">Validate</button>
       </div>  
     `
-  }, { localVue: Vue });
+  }, { localVue: Vue, sync: false });
 
   wrapper.find('button').trigger('click');
   await flushPromises();
@@ -59,7 +59,7 @@ test('value resolution using data-vv-value-path attr', async () => {
         <button @click="$validator.validate()">Validate</button>
       </div>  
     `
-  }, { localVue: Vue });
+  }, { localVue: Vue, sync: false });
 
   wrapper.find('button').trigger('click');
   await flushPromises();

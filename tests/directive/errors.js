@@ -14,7 +14,7 @@ describe('Field Selectors', () => {
         <p id="error" v-show="errors.has('#1')">{{ errors.first('#1') }}</p>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await flushPromises();
 
@@ -33,7 +33,7 @@ describe('Field Selectors', () => {
         <p id="error">{{ errors.firstByRule('field', 'min') }}</p>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await flushPromises();
 
@@ -52,7 +52,7 @@ describe('Field Selectors', () => {
         <p id="error">{{ errors.firstRule('field') }}</p>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await flushPromises();
 
@@ -71,7 +71,7 @@ describe('Field Selectors', () => {
         <p id="error">{{ errors.firstNot('field', 'required') }}</p>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await flushPromises();
 
@@ -92,8 +92,7 @@ describe('Field Selectors', () => {
         </ul>
       </div>
     `
-    }, { localVue: Vue });
-
+    }, { localVue: Vue, sync: false });
     await flushPromises();
     const errors = wrapper.find('#errors');
     expect(errors.element.children).toHaveLength(2);
@@ -117,7 +116,7 @@ describe('Field Selectors', () => {
         </ul>
       </div>
     `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await flushPromises();
     const errors = wrapper.find('#errors');

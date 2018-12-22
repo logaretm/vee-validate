@@ -15,7 +15,7 @@ describe('Automatic Classes', () => {
 
     const wrapper = mount({
       template: `<input type="text" name="field" v-validate="'required'">`
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
 
@@ -38,8 +38,7 @@ describe('Automatic Classes', () => {
     expect(input.classes()).not.toContain('pristine'); // has been changed.
     expect(input.classes()).toContain('dirty');
 
-    input.element.value = '10';
-    input.trigger('input');
+    input.setValue('10');
     await flushPromises();
 
     expect(input.classes()).not.toContain('text-red'); // triggered by blur

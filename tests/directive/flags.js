@@ -21,7 +21,7 @@ describe('Field Flags', () => {
           return Object.keys(this.fields.name).map(f => ({ id: f, value: this.fields.name[f] }));
         },
       }
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
     await flushPromises();
@@ -47,12 +47,12 @@ describe('Field Flags', () => {
     expect(wrapper).toHaveElement('#validated');
 
     input.trigger('blur');
+    await flushPromises();
 
     expect(wrapper).not.toHaveElement('#untouched');
     expect(wrapper).toHaveElement('#touched');
 
-    input.element.value = '123';
-    input.trigger('input');
+    input.setValue('123');
     await flushPromises();
 
     expect(wrapper).toHaveElement('#valid');
@@ -66,7 +66,7 @@ describe('Field Flags', () => {
 
     const wrapper = mount({
       template: `<input type="text" name="name" id="name" v-validate="'required'">`
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
     const field = wrapper.vm.$validator.fields.find(f => f.matches({ name: 'name' }));
@@ -93,7 +93,7 @@ describe('Field Flags', () => {
 
     const wrapper = mount({
       template: `<input type="text" name="name" id="name" v-validate="'required'" data-vv-scope="s1">`
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     // wait for the silent validation to finish.
     await flushPromises();
