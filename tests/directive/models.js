@@ -9,7 +9,7 @@ describe('v-model integration', () => {
   test('watches input value on model change', async () => {
     const wrapper = mount({
       data: () => ({
-        value: '12'
+        value: ''
       }),
       template: `
         <div>
@@ -22,6 +22,8 @@ describe('v-model integration', () => {
     const error = wrapper.find('span');
 
     expect(error.text()).toBeFalsy();
+    wrapper.setData({ value: '1' });
+    await flushPromises();
     wrapper.setData({ value: '' });
     await flushPromises();
     expect(error.text()).toBeTruthy();
@@ -30,7 +32,7 @@ describe('v-model integration', () => {
   test('watches input value on lazy model change', async () => {
     const wrapper = mount({
       data: () => ({
-        value: '12'
+        value: ''
       }),
       template: `
         <div>
@@ -43,15 +45,18 @@ describe('v-model integration', () => {
     const error = wrapper.find('span');
 
     expect(error.text()).toBeFalsy();
+    wrapper.setData({ value: '12' });
+    await flushPromises();
     wrapper.setData({ value: '' });
     await flushPromises();
+
     expect(error.text()).toBeTruthy();
   });
 
   test('model can be watched via the directive arg', async () => {
     const wrapper = mount({
       data: () => ({
-        input: '12'
+        input: ''
       }),
       template: `
         <div>
@@ -63,8 +68,11 @@ describe('v-model integration', () => {
 
     const error = wrapper.find('span');
     expect(error.text()).toBeFalsy();
+    wrapper.setData({ input: '1' });
+    await flushPromises();
     wrapper.setData({ input: '' });
     await flushPromises();
+
     expect(error.text()).toBeTruthy();
   });
 
@@ -108,7 +116,7 @@ describe('v-model integration', () => {
           }
         }
       },
-      data: () => ({ input: '12' }),
+      data: () => ({ input: '' }),
       template: `
         <div>
           <child data-vv-name="field" v-model="input" v-validate="'required'"></child>
@@ -123,9 +131,13 @@ describe('v-model integration', () => {
     await flushPromises();
     expect(error.text()).toBeFalsy();
 
+    input.element.value = '1';
+    input.trigger('change');
+    await flushPromises();
     input.element.value = '';
     input.trigger('change');
     await flushPromises();
+    await Vue.nextTick();
 
     expect(error.text()).toBeTruthy();
   });
