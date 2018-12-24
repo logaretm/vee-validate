@@ -71,7 +71,7 @@ This passes error messages down to Vuetify's text field component.
 
 ### Manual Validation
 
-Triggering validation on any of the providers is simple, but it is opt-in. Meaning you need to explicity call the validation on the provider instance. Using [refs](https://vuejs.org/v2/api/#ref) and the [public methods](#methods) `validate` and `applyResult` makes it a breeze.
+Triggering validation on any of the providers is simple, but it is opt-in. Meaning you need to explicity call the validation on the provider instance. Using [refs](https://vuejs.org/v2/api/#ref) and the [public method](#methods) `validate` makes it straight forward.
 
 ```vue
 <template>
@@ -91,11 +91,8 @@ export default {
     validateField (field) {
       const provider = this.$refs[field];
 
-      // validates the field, but does not mutate its state.
-      provider.validate().then(
-        // mutates state.
-        provider.applyResult
-      );
+      // Validate the field
+      return provider.validate();
     }
   },
   // ..
@@ -105,23 +102,22 @@ export default {
 
 If you only plan to trigger manual validation using the UI, you can use the `validate` handler on the slot-scope data to trigger validation without having to use `refs`.
 
-
 ```vue
 <ValidationProvider rules="required">
   <div slot-scope="{ validate, errors }">
     <input type="text" @input="validate">
-    <p id="error">{{ errors[0] }}</p>  
+    <p id="error">{{ errors[0] }}</p>
   </div>
 </ValidationProvider>
 ```
 
-Note that the validate is an event handler, it should not be called without arguments, you can use the `$event` in the Vue template to reference the event arg that is emitted with the event if your handlers are more complex.
+Note that the `validate` method on the validation handler, you can use the `$event` in the Vue template to reference the event arg that is emitted with the event if your handlers are more complex.
 
 ```vue
 <ValidationProvider rules="required">
   <div slot-scope="{ validate, errors }">
-    <input type="text" @input="syncVuex($event.target.value) && validate($event)">
-    <p id="error">{{ errors[0] }}</p>  
+    <input type="text" @input="syncVuex($event.target.value) || validate($event)">
+    <p id="error">{{ errors[0] }}</p>
   </div>
 </ValidationProvider>
 ```
@@ -130,7 +126,20 @@ Note that the validate is an event handler, it should not be called without argu
   Using the same approach you can reset validation state for the provider using the public method `reset()` and the slot scope method of the same name.
 :::
 
-### Input Groups
+### File Validation
+
+`v-model` is pretty much required to use the ValidationProvider, but some inputs like `file` do not benefit from having `v-model` and is usually not used at all. We can use the manual validation to avoid having to use `v-model`.
+
+```vue
+<ValidationProvider rules="required">
+  <div slot-scope="{ validate, errors }">
+    <input type="file" @change="handleFileChange($event) || validate($event)">
+    <p id="error">{{ errors[0] }}</p>
+  </div>
+</ValidationProvider>
+```
+
+### Input Groups (Checkbox/Radio)
 
 Like radio inputs and checkboxes (sometimes), some inputs behave as a single input entity. You can wrap the whole group of inputs __given that they have the same `v-model`__ in a single Validation Provider component. You can group as many inputs as you want inside the Provider component.
 
@@ -266,7 +275,8 @@ Those are the only methods meant for public usage, other methods that may exist 
 
 |Method       | Args    | Return Value                | Description                                                                                                 |
 |-------------|:-------:|:---------------------------:|-------------------------------------------------------------------------------------------------------------|
-| validate    | `void`  | `Promise<ValidationResult>` | Runs a validation of the current value against the rules defined. __does not mutate the validation state.__ |
+| validate    | `value?: any`  | `Promise<ValidationResult>` | Runs a validation of the current value against the rules defined. If a value is provided, it is used as the current value and validates it. |
+| validateSilent | `void`  | `Promise<ValidationResult>` | Runs a validation of the current value against the rules defined. __does not mutate the validation state.__  |
 | applyResult | `ValidationResult` | `void`           | Takes a __validation result__ object and applies it on the current state.                                   |
 | reset       | `void`  | `void`                      | Resets validation state.                                                                                    |
 

@@ -37,18 +37,12 @@ export const ValidationObserver = {
       this.refs = Object.assign({}, this.refs);
     },
     validate () {
-      return Promise.all(values(this.refs).map(ref => {
-        return ref.validate().then(result => {
-          ref.applyResult(result);
-
-          return result;
-        });
-      })).then(results => results.every(r => r.valid));
+      return Promise.all(
+        values(this.refs).map(ref => ref.validate())
+      ).then(results => results.every(r => r.valid));
     },
     reset () {
-      return values(this.refs).forEach(ref => {
-        ref.reset();
-      });
+      return values(this.refs).forEach(ref => ref.reset());
     }
   },
   computed: {
