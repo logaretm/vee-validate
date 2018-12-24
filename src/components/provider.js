@@ -1,10 +1,12 @@
 import VeeValidate from '../plugin';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
-import { createFlags, normalizeRules, warn, isCallable, debounce } from '../utils';
+import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined } from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName, createRenderless } from '../utils/vnode';
 
 let $validator = null;
+
+let PROVIDER_COUNTER = 0;
 
 export function createValidationCtx (ctx) {
   return {
@@ -113,8 +115,13 @@ function createValuesLookup (ctx) {
 }
 
 function updateRenderingContextRefs (ctx) {
-  const { id, vid } = ctx;
+  // IDs should not be nullable.
+  if (isNullOrUndefined(ctx.id) && ctx.id === ctx.vid) {
+    ctx.id = PROVIDER_COUNTER;
+    PROVIDER_COUNTER++;
+  }
 
+  const { id, vid } = ctx;
   // Nothing has changed.
   if (id === vid && ctx.$_veeObserver.refs[id]) {
     return;
@@ -141,8 +148,6 @@ function createObserver () {
   };
 }
 
-let id = 0;
-
 export const ValidationProvider = {
   $__veeInject: false,
   inject: {
@@ -161,8 +166,9 @@ export const ValidationProvider = {
     vid: {
       type: [String, Number],
       default: () => {
-        id++;
-        return id;
+        PROVIDER_COUNTER++;
+
+        return PROVIDER_COUNTER;
       }
     },
     name: {
