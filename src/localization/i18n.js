@@ -67,19 +67,23 @@ export default class I18nDictionary implements IDictionary {
 
   getMessage (_, key: string, data: any[]): string {
     const path = `${this.rootKey}.messages.${key}`;
-    const result = this.i18n.t(path, data);
-    if (result !== path) {
-      return result;
+    if (this.i18n.te(path)) {
+      return this.i18n.t(path, data);
     }
 
+    // fallback to the fallback message
+    if (this.i18n.te(path, this.i18n.fallbackLocale)) {
+      return this.i18n.t(path, this.i18n.fallbackLocale, data);
+    }
+
+    // fallback to the root message
     return this.i18n.t(`${this.rootKey}.messages._default`, data);
   }
 
   getAttribute (_, key: string, fallback?: string = ''): string {
     const path = `${this.rootKey}.attributes.${key}`;
-    const result = this.i18n.t(path);
-    if (result !== path) {
-      return result;
+    if (this.i18n.te(path)) {
+      return this.i18n.t(path);
     }
 
     return fallback;
@@ -87,9 +91,8 @@ export default class I18nDictionary implements IDictionary {
 
   getFieldMessage (_, field: string, key: string, data: any[]) {
     const path = `${this.rootKey}.custom.${field}.${key}`;
-    const result = this.i18n.t(path, data);
-    if (result !== path) {
-      return result;
+    if (this.i18n.te(path)) {
+      return this.i18n.t(path, data);
     }
 
     return this.getMessage(_, key, data);
