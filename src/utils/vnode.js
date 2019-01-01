@@ -15,15 +15,28 @@ export function findModel (vnode) {
   return !!(vnode.data.directives) && find(vnode.data.directives, d => d.name === 'model');
 }
 
+function extractChildren (vnode) {
+  if (Array.isArray(vnode)) {
+    return vnode;
+  }
+
+  if (Array.isArray(vnode.children)) {
+    return vnode.children;
+  }
+
+  if (vnode.componentOptions && Array.isArray(vnode.componentOptions.children)) {
+    return vnode.componentOptions.children;
+  }
+
+  return [];
+}
+
 export function extractVNodes (vnode) {
   if (findModel(vnode)) {
     return [vnode];
   }
 
-  const children = Array.isArray(vnode) ? vnode : vnode.children;
-  if (!Array.isArray(children)) {
-    return [];
-  }
+  const children = extractChildren(vnode);
 
   return children.reduce((nodes, node) => {
     const candidates = extractVNodes(node);
