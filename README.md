@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://baianat.github.io/vee-validate/" target="_blank">
-    <img width="200" src="https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg">
+    <img width="200" src="https://github.com/baianat/vee-validate/blob/master/vee-validate.svg">
   </a>
 </p>
 
@@ -149,7 +149,6 @@ These libraries/projects make it a breeze integrating vee-validate into your fav
 
 - Some validations/test scenarios are provided/based on [validator.js](https://github.com/chriso/validator.js).
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
-- Logo by [Abdelrahman Ismail](https://github.com/Abdelrahman3D)
 
 ### license
 
