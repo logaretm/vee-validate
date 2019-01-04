@@ -1,13 +1,6 @@
 # Inferred Rules
 
-While you can specify your rules in the `v-validate` directive, you can also let vee-validate resolve rules from native HTML5 elements based on their [validation attributes](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation) and their type. You can enable this behavior by setting the `validity` option to `true`.
-
-## Enabling Validity
-
-```js
-// When installing the plugin.
-Vue.use(VeeValidate, { validity: true });
-```
+While you can specify your rules in the `v-validate` directive, vee-validate also resolve rules for native HTML5 elements based on their [constraint attributes](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation) and their type.
 
 ## Example
 
@@ -20,6 +13,16 @@ It would be redundant to specify `v-validate="'required|email'"`. vee-validate w
   required
   v-validate
 >
+```
+
+## Disabling Inferred Rules
+
+You can disable this feature by setting the `useConstraintAttrs` to `false` when configuring vee-validate.
+
+```js
+Vue.use(VeeValidate, {
+  useConstraintAttrs: false
+});
 ```
 
 ## Demo
@@ -41,11 +44,13 @@ This is a table of HTML attributes that is inferred as rules.
 | type      | "time"           | `date_format:hh:mm` or `date_format:hh:mm:ss` depending on the step value |
 | type      | "week"           | `date_format:YYYY-Www`                                                    |
 | type      | "month           | `date_format:YYYY-MM`                                                     |
-| min       | val              |  min_value: val                                                           |
-| max       | val              | max_value: val                                                            |
-| pattern   | rgx              | regex: rgx                                                                |
-| required  | _none_           | required                                                                  |
+| min       | val              | `min_value:val`                                                           |
+| max       | val              | `max_value:val`                                                           |
+| pattern   | rgx              | `regex: rgx`                                                              |
+| required  | _none_           | `required`                                                                |
+| maxlength | "val"            | `max: val`                                                                |
+| minlength | "val"            | `min: val`                                                                |
 
-::: tip
+:::tip
   This feature does not work on custom components, only HTML5 inputs can take advantage from this feature.
 :::

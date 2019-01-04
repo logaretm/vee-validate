@@ -24,6 +24,7 @@ const defaultConfig = {
   fastExit: true,
   aria: true,
   validity: false,
+  useConstraintAttrs: true,
   i18n: null,
   i18nRootKey: 'validation'
 };

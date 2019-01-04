@@ -77,7 +77,7 @@ export default class Resolver {
 
     // If validity is disabled, ignore field rules.
     const normalized = normalizeRules(rules);
-    if (!VeeValidate.config.validity) {
+    if (!VeeValidate.config.useConstraintAttrs) {
       return normalized;
     }
 
