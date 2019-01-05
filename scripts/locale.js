@@ -27,7 +27,7 @@ async function build () {
     if (/utils/.test(file)) continue;
 
     const input = path.join(__dirname, '..', 'locale', file);
-    const output = path.join(paths.dist, 'locale', file);
+    const outputPath = path.join(paths.dist, 'locale', file);
 
     const bundle = await rollup({
       cache,
@@ -35,12 +35,12 @@ async function build () {
       external: ['VeeValidate'],
       plugins: [buble(), resolve()],
     });
-    const { code } = await bundle.generate({
+    const { output } = await bundle.generate({
       format: 'umd',
       name: `__vee_validate_locale__${file}`,
     });
 
-    fs.writeFileSync(output, uglify.minify(code, uglifyOptions).code);
+    fs.writeFileSync(outputPath, uglify.minify(output.code, uglifyOptions).code);
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
   }
