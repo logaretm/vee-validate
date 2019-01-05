@@ -1,6 +1,9 @@
 const path = require('path');
 const fs = require('fs');
+const { rollup } = require('rollup');
 const filesize = require('filesize');
+const uglify = require('uglify-js');
+const chalk = require('chalk');
 const gzipSize = require('gzip-size');
 const flow = require('rollup-plugin-flow');
 const buble = require('rollup-plugin-buble');
@@ -20,14 +23,38 @@ const commons = {
   uglifyOptions: {
     compress: true,
     mangle: true,
-  },
-  utils: {
-    stats ({ path, code }) {
-      const { size } = fs.statSync(path);
-      const gzipped = gzipSize.sync(code);
+  }
+};
 
-      return `| Size: ${filesize(size)} | Gzip: ${filesize(gzipped)}`;
+const paths = {
+  dist: commons.outputFolder
+};
+
+const utils = {
+  stats ({ path, code }) {
+    const { size } = fs.statSync(path);
+    const gzipped = gzipSize.sync(code);
+
+    return `| Size: ${filesize(size)} | Gzip: ${filesize(gzipped)}`;
+  },
+  async writeBundle ({ input, output }, fileName, minify = false) {
+    const bundle = await rollup(input);
+    const { output: [{ code }] } = await bundle.generate(output);
+
+    let outputPath = path.join(paths.dist, fileName);
+    fs.writeFileSync(outputPath, code);
+    let stats = this.stats({ code, path: outputPath });
+    console.log(`${chalk.green('Output File:')} ${fileName} ${stats}`);
+
+    if (minify) {
+      let minifiedFileName = fileName.replace('.js', '') + '.min.js';
+      outputPath = path.join(paths.dist, minifiedFileName);
+      fs.writeFileSync(outputPath, uglify.minify(code, commons.uglifyOptions).code);
+      stats = this.stats({ code, path: outputPath });
+      console.log(`${chalk.green('Output File:')} ${minifiedFileName} ${stats}`);
     }
+
+    return true;
   }
 };
 
@@ -108,9 +135,7 @@ const configs = Object.keys(builds).reduce((prev, key) => {
 
 module.exports = {
   configs,
-  utils: commons.utils,
+  utils,
   uglifyOptions: commons.uglifyOptions,
-  paths: {
-    dist: commons.outputFolder
-  },
+  paths
 };
