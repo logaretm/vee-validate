@@ -156,13 +156,6 @@ test('formats error messages', async () => {
     'The content field may not be greater than 20 characters.',
     'The tags field must be a valid value.'
   ]);
-  expect(v.errors.all()).toEqual([
-    'The email field must be a valid email.',
-    'The name field is required.',
-    'The title field must be at least 3 characters.',
-    'The content field may not be greater than 20 characters.',
-    'The tags field must be a valid value.'
-  ]);
 });
 
 test('can manually attach new fields', async () => {
@@ -218,18 +211,31 @@ test('can detach fields', () => {
 test('can validate specific scopes', async () => {
   const v = new Validator();
 
-  v.attach({ name: 'field', rules: 'alpha', getter: () => '123' });
-  v.attach({ name: 'field', rules: 'alpha', scope: 'myscope', getter: () => '123' });
-  v.attach({ name: 'field', rules: 'alpha', scope: 'otherscope', getter: () => '123' });
+  v.attach({ name: 'field1', rules: 'alpha', getter: () => '123' });
+  v.attach({ name: 'field2', rules: 'alpha', scope: 'myscope', getter: () => '123' });
+  v.attach({ name: 'field3', rules: 'alpha', scope: 'otherscope', getter: () => '123' });
 
+  // validate scope-less fields
   expect(await v.validate('*')).toBe(false);
   expect(v.errors.count()).toBe(1);
+  expect(v.errors.all()).toEqual([
+    'The field1 field may only contain alphabetic characters.'
+  ]);
   // the second scope too.
   expect(await v.validate('myscope.*')).toBe(false);
   expect(v.errors.count()).toBe(2);
+  expect(v.errors.all()).toEqual([
+    'The field1 field may only contain alphabetic characters.',
+    'The field2 field may only contain alphabetic characters.'
+  ]);
   v.errors.clear();
   expect(await v.validateScopes()).toBe(false);
   expect(v.errors.count()).toBe(3);
+  expect(v.errors.all()).toEqual([
+    'The field1 field may only contain alphabetic characters.',
+    'The field2 field may only contain alphabetic characters.',
+    'The field3 field may only contain alphabetic characters.'
+  ]);
 });
 
 test('can validate specific scopes on an object', async () => {
@@ -275,7 +281,7 @@ test('can extend the validators with a validator instance', async () => {
   expect(v.errors.first('anotherField')).toBe('The anotherField field value is not truthy.');
 });
 
-test('add rules than can target other fields', async () => {
+test('add rules that can target other fields', async () => {
   const v = new Validator();
   v.extend('isBigger', (value, [other]) => {
     return value > other;
@@ -907,6 +913,7 @@ test('it does not validate disabled fields', async () => {
   const el = document.querySelector('#el');
   const v = new Validator();
   const field = v.attach({
+    name: 'field',
     el,
     rules: 'required|email'
   });
@@ -923,6 +930,7 @@ test('some fields can blacklist false as a non-empty value', async () => {
   let val = true;
   const v = new Validator();
   const field = v.attach({
+    name: 'field',
     el,
     rules: 'required',
     getter: () => {

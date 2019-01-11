@@ -3,7 +3,7 @@ import Field from '@/core/field';
 
 test('adds field items to the collection', () => {
   const bag = new FieldBag();
-  const field = new Field({ el: null });
+  const field = new Field({ name: 'field', el: null });
 
   bag.push(field);
   expect(bag).toHaveLength(1);
@@ -11,17 +11,17 @@ test('adds field items to the collection', () => {
   // does not allow duplicates.
   expect(() => {
     bag.push(field);
-  }).toThrowError(`[vee-validate] Field with id ${field.id} is already added.`);
+  }).toThrow(`[vee-validate] Field with id ${field.id} is already added.`);
 
   expect(() => {
     field.id = null;
     bag.push(field);
-  }).toThrowError('[vee-validate] Field id must be defined.');
+  }).toThrow('[vee-validate] Field id must be defined.');
 
   // test type check.
   expect(() => {
     bag.push('generic');
-  }).toThrowError('[vee-validate] FieldBag only accepts instances of Field');
+  }).toThrow('[vee-validate] FieldBag only accepts instances of Field');
 });
 
 test('finds the first field that matches a matcher object', () => {
