@@ -72,7 +72,7 @@ Then you can use your rule like any other rule:
 ```
 
 ::: warning
-  When the field under validation is __not__ required, your rule may not be executed at all. This is because VeeValidate skips validation for empty fields if they are not required.
+  When the field under validation is __not__ required, your rule may not be executed at all. This is because VeeValidate skips validation for empty fields if they are not required. You can override this behavior by [using `v-validate.continues` modifier](/api/directive.md#continues) to force all rules to run.
 :::
 
 ## Args and Rule Configuration
