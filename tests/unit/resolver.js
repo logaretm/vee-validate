@@ -73,14 +73,14 @@ describe('resolves the rules', () => {
     expect(resolve(input)).toEqual({ decimal: ['4'] });
   });
 
-  test('rule inference can be disabled with validity option', () => {
+  test('rule inference can be disabled with inferredRules option', () => {
     const input = document.createElement('input');
     input.type = 'number';
-    VeeValidate.configure({ validity: false });
+    VeeValidate.configure({ useConstraintAttrs: false });
     const resolve = (el) => Resolver.resolveRules(el, { value: 'required' }, {});
 
     expect(resolve(input)).toEqual({ required: [] });
-    VeeValidate.configure({ validity: true });
+    VeeValidate.configure({ useConstraintAttrs: true });
   });
 
   test('using HTML5 validation Attributes', () => {

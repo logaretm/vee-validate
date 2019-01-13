@@ -12,7 +12,15 @@ Vue.use(VeeValidate, {
 });
 ```
 
-If you want to listen for multiple events, including custom ones. Just use a pipe separated list of event names:
+If you want to listen for multiple events, Just use a pipe separated list of event names:
+
+```js
+Vue.use(VeeValidate, {
+  events: 'change|blur|xxx'
+});
+```
+
+Specially, If you want to include custom ones, Just write the code like below
 
 ```js
 Vue.use(VeeValidate, {
