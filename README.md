@@ -18,7 +18,7 @@
 </p>
 <br>
 
-vee-validate is a template-based validation framework for [Vue.js](https://vuejs.org/) that allows you to validate input fields and display errors.
+vee-validate is a template-based validation framework for [Vue.js](https://vuejs.org/) that allows you to validate inputs and display errors.
 
 Being template-based you only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated with 40+ locales supported. [Many rules are available out of the box](https://baianat.github.io/vee-validate/guide/rules.html).
 
@@ -45,6 +45,8 @@ vee-validate is also available on these cdns:
 - [jsdelivr cdn](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js) [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/vee-validate/badge?style=rounded)](https://www.jsdelivr.com/package/npm/vee-validate)
 - [unpkg](https://unpkg.com/vee-validate)
 
+> When using a CDN via script tag, all the exported modules on VeeValidate are available on the VeeValidate Object. ex: VeeValidate.Validator
+
 ### Getting Started
 
 In your script entry point:
@@ -59,11 +61,50 @@ Now you are all setup to use the plugin.
 
 ### Usage
 
-There are two ways to use vee-validate, Using `v-validate` directive or using `Validation*` components.
+There are two ways to use vee-validate:
+
+#### Using Components (recommended)
+
+Import the `ValidationProvider` component and register it:
+
+```js
+import { ValidationProvider } from 'vee-validate';
+
+// Register it globally
+// main.js or any entry file.
+Vue.component('ValidationProvider', ValidationProvider);
+
+
+// or register it locally in a component
+// mycomponent.vue
+export default {
+  components: {
+    ValidationProvider
+  }
+};
+```
+
+All the JavaScript work is done, let's go to the template and add fields to validate them:
+
+```vue
+<ValidationProvider name="email" rules="required|email">
+  <div slot-scope="{ errors }">
+    <input v-model="email">
+    <p>{{ errors[0] }}</p>
+  </div>
+</ValidationProvider>
+```
+
+The validation provider accepts two props: `rules` which is in its simplest form, a string containing the validation rules seperated by a `pipe` character, and `name` which is the field name that will be used in error messages.
+
+and That's it, your input will be validated automatically, notice that the `ValidationProvider` uses [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
+
+
+There is more that can be done! You can customize events, validate initial values, manually validate or reset the field and much more. Make sure to [read the docs](https://baianat.github.io/vee-validate/guide/components.html).
 
 #### Using directive
 
-Just apply the `v-validate` directive on your input and pass a **string value** which is a list of validations separated by a pipe. For example, we will use the `required` and the `email` validators:
+Apply the `v-validate` directive on your input and pass a **string value** which is a list of validations separated by a pipe. For example, we will use the `required` and the `email` validators:
 
 ```vue
 <input v-validate="'required|email'" type="text" name="email">
@@ -85,36 +126,6 @@ Let's display the error for the email input we've created:
 <span v-show="errors.has('email')">{{ errors.first('email') }}</span>
 ```
 
-#### Using Components
-
-Validation components uses the [scoped slots feature](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
-
-```vue
-<template>
-  <div>
-    <ValidationProvider rules="required|email">
-      <div slot-scope="{ errors }">
-        <input v-model="value">
-        <p>{{ errors[0] }}</p>
-      </div>
-    </ValidationProvider>
-  </div>
-</template>
-
-<script>
-import { ValidationProvider } from 'vee-validate';
-
-export default {
-  data: () => ({
-    value: ''
-  }),
-  components: {
-    ValidationProvider
-  }
-}
-</script>
-```
-
 ### Documentation
 
 Read the [documentation and demos](https://baianat.github.io/vee-validate/).
@@ -125,25 +136,19 @@ This library uses ES6 Promises so be sure to provide a polyfill for it for the b
 
 ### Contributing
 
-You are welcome to contribute to this repo with anything you think is useful. Fixes are more than welcome.
-However if you are adding a new validation rule, it should have multiple uses or be as generic as possible.
-
-You can find more information in the [contribution guide](CONTRIBUTING.md).
-
-### UI Integrations
-
-These libraries/projects make it a breeze integrating vee-validate into your favorite UI library/framework.
-
-- [vee-element](https://github.com/davestewart/vee-element) for [Element](https://github.com/ElemeFE/element)
+You are welcome to contribute to this repo, but before you do, please make sure you read the [contribution guide](CONTRIBUTING.md).
 
 ### Tutorials and Examples
 
+#### Articles
+
+- [Validation Providers](https://medium.com/@logaretm/vee-validate-validation-providers-b5b38647c05c)
+- [Authoring Validatble Vue Components](https://medium.com/@logaretm/authoring-validatable-custom-vue-input-components-1583fcc68314)
 - [Vue Multi Step Form](http://statemachine.davestewart.io/html/examples/vue/vue-sign-up.html) by [Dave Stewart](https://github.com/davestewart)
-- [Laravel 5.4 with Vue and Vee Validate (Windows)](https://medium.com/@kanokpit.skuberg/laravel-5-4-with-vue-and-vee-validate-windows-c3ff7f4cdabc) by [Noi Skuberg](https://medium.com/@kanokpit.skuberg)
-- [Vee-validate (Intro and Example)](https://medium.com/@ngLahin/vee-validate-intro-and-example-22d8b95e25e1) by [Hussain Muhammad Lahin](https://medium.com/@ngLahin)
 - [An imperative guide to forms in Vue.js](https://blog.logrocket.com/an-imperative-guide-to-forms-in-vue-js-7536bfa374e0) by [Olayinka Omole](https://blog.logrocket.com/@olayinka.omole).
 - [Template Driven Form Validation In Vue.js](https://scotch.io/tutorials/template-driven-form-validation-in-vuejs) by [Ogundipe Samuel Ayo](https://twitter.com/fucked_down)
 - [Make Validation Great Again! Vue form validation with vee validate](https://qiita.com/nickhall/items/d1043f3f9874c90b6f8e) by [Nick Hall](https://github.com/nickhall)
+
 
 ### Credits
 
