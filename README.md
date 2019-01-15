@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://baianat.github.io/vee-validate/" target="_blank">
-    <img width="200" src="https://github.com/baianat/vee-validate/blob/master/vee-validate.svg">
+    <img width="200" src="https://github.com/baianat/vee-validate/blob/master/logo.png">
   </a>
 </p>
 
