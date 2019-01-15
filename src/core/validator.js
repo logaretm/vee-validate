@@ -164,6 +164,16 @@ export default class Validator {
    * Registers a field to be validated.
    */
   attach (fieldOpts: FieldOptions): Field {
+    // We search for a field with the same name, having persist enabled
+    const oldField = fieldOpts.persist ? this.fields.find({ name: fieldOpts.name, persist: true }) : null;
+
+    if (oldField) {
+      // We keep the flags of the old field, then we remove its instance
+      fieldOpts.flags = oldField.flags;
+      oldField.destroy();
+      this.fields.remove(oldField);
+    }
+
     // fixes initial value detection with v-model and select elements.
     const value = fieldOpts.initialValue;
     const field = new Field(fieldOpts);
@@ -201,9 +211,12 @@ export default class Validator {
     let field = isCallable(name.destroy) ? name : this._resolveField(name, scope, uid);
     if (!field) return;
 
-    field.destroy();
-    this.errors.remove(field.name, field.scope, field.vmId);
-    this.fields.remove(field);
+    // We destroy/remove the field & error instances if it's not a `persist` one
+    if (!field.persist) {
+      field.destroy();
+      this.errors.remove(field.name, field.scope, field.vmId);
+      this.fields.remove(field);
+    }
   }
 
   /**

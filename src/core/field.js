@@ -27,6 +27,7 @@ import {
 const DEFAULT_OPTIONS = {
   targetOf: null,
   immediate: false,
+  persist: false,
   scope: null,
   listen: true,
   name: null,
@@ -92,7 +93,7 @@ export default class Field {
     this._delay = !isNullOrUndefined(options.delay) ? options.delay : 0; // cache initial delay
     this.validity = options.validity;
     this.aria = options.aria;
-    this.flags = createFlags();
+    this.flags = options.flags || createFlags();
     this.vm = options.vm;
     this.componentInstance = options.component;
     this.ctorConfig = this.componentInstance ? getPath('$options.$_veeValidate', this.componentInstance) : undefined;
@@ -232,6 +233,7 @@ export default class Field {
   update (options: Object) {
     this.targetOf = options.targetOf || null;
     this.immediate = options.immediate || this.immediate || false;
+    this.persist = options.persist || this.persist || false;
 
     // update errors scope if the field scope was changed.
     if (!isNullOrUndefined(options.scope) && options.scope !== this.scope && isCallable(this.validator.update)) {
