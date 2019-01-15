@@ -187,6 +187,10 @@ export const ValidationProvider = {
       type: Boolean,
       default: false
     },
+    persist: {
+      type: Boolean,
+      default: false
+    },
     bails: {
       type: Boolean,
       default: () => VeeValidate.config.fastExit
