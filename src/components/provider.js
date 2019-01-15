@@ -91,11 +91,11 @@ export function createCommonHandlers (ctx) {
     () => {
       const pendingPromise = ctx.validate();
       // avoids race conditions between successive validations.
-      ctx._waiting = pendingPromise;
+      ctx._pendingValidation = pendingPromise;
       pendingPromise.then(result => {
-        if (pendingPromise === ctx._waiting) {
+        if (pendingPromise === ctx._pendingValidation) {
           ctx.applyResult(result);
-          ctx._waiting = null;
+          ctx._pendingValidation = null;
         }
       });
     },
@@ -250,13 +250,12 @@ export const ValidationProvider = {
     },
     syncValue (e) {
       const value = isEvent(e) ? e.target.value : e;
-
       this.value = value;
-      this.flags.changed = this.initialValue === value;
+      this.flags.changed = this.initialValue !== value;
     },
     reset () {
       this.messages = [];
-      this._waiting = null;
+      this._pendingValidation = null;
       this.initialValue = this.value;
       const flags = createFlags();
       this.setFlags(flags);
