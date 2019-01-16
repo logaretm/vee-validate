@@ -164,8 +164,9 @@ export default class Validator {
    * Registers a field to be validated.
    */
   attach (fieldOpts: FieldOptions): Field {
-    // We search for a field with the same name, having persist enabled
-    const oldField = fieldOpts.persist ? this.fields.find({ name: fieldOpts.name, persist: true }) : null;
+    // We search for a field with the same name & scope, having persist enabled
+    const oldFieldMatcher = { name: fieldOpts.name, scope: fieldOpts.scope, persist: true };
+    const oldField = fieldOpts.persist ? this.fields.find(oldFieldMatcher) : null;
 
     if (oldField) {
       // We keep the flags of the old field, then we remove its instance
