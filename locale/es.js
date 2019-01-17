@@ -12,7 +12,7 @@ const messages = {
   confirmed: (field) => `El campo ${field} no coincide.`,
   credit_card: (field) => `El campo ${field} es inválido.`,
   date_between: (field, [min, max]) => `El campo ${field} debe estar entre ${min} y ${max}.`,
-  date_format: (field, [format]) => `El campo ${field} debe tener formato formato ${format}.`,
+  date_format: (field, [format]) => `El campo ${field} debe tener un formato ${format}.`,
   decimal: (field, [decimals = '*'] = []) => `El campo ${field} debe ser numérico y contener ${decimals === '*' ? '' : decimals} puntos decimales.`,
   digits: (field, [length]) => `El campo ${field} debe ser numérico y contener exactamente ${length} dígitos.`,
   dimensions: (field, [width, height]) => `El campo ${field} debe ser de ${width} píxeles por ${height} píxeles.`,
