@@ -31,6 +31,7 @@ import min_value from './min_value';
 import numeric from './numeric';
 import regex from './regex';
 import required from './required';
+import required_if from './required_if';
 import size from './size';
 import url from './url';
 
@@ -67,6 +68,7 @@ export {
   numeric,
   regex,
   required,
+  required_if,
   size,
   url
 };

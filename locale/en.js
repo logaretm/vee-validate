@@ -38,6 +38,7 @@ const messages = {
   numeric: (field) => `The ${field} field may only contain numeric characters.`,
   regex: (field) => `The ${field} field format is invalid.`,
   required: (field) => `The ${field} field is required.`,
+  required_if: (field, [target]) => `The ${field} field is required when the ${target} field has this value.`,
   size: (field, [size]) => `The ${field} size must be less than ${formatFileSize(size)}.`,
   url: (field) => `The ${field} field is not a valid URL.`
 };

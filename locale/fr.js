@@ -38,6 +38,7 @@ const messages = {
   numeric: (field) => `Le champ ${field} ne peut contenir que des chiffres.`,
   regex: (field) => `Le champ ${field} est invalide.`,
   required: (field) => `Le champ ${field} est obligatoire.`,
+  required_if: (field, [target]) => `Le champ ${field} est obligatoire lorsque ${target} possède cette valeur.`,
   size: (field, [size]) => `Le champ ${field} doit avoir un poids inférieur à ${formatFileSize(size)}.`,
   url: (field) => `Le champ ${field} n'est pas une URL valide.`
 };
