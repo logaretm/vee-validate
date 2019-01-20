@@ -387,10 +387,13 @@ export default class Validator {
     field.isRequired = field.rules.required;
     const targetRules = Object.keys(field.rules).filter(Validator.isTargetRule);
     if (targetRules.length && options && isObject(options.values)) {
-      // patch the field params with the targets' values.
-      targetRules.forEach(rule => {
-        const [first, ...rest] = field.rules[rule];
-        field.rules[rule] = [options.values[first], ...rest];
+      field.dependencies = targetRules.map(rule => {
+        const [targetKey] = field.rules[rule];
+
+        return {
+          name: rule,
+          field: { value: options.values[targetKey] }
+        };
       });
     }
 
