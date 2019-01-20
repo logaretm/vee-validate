@@ -12,7 +12,7 @@ Getting a field instance is straightforward, you can use the `Validator.fields.f
 
 ```js
 // find the field which has a matching name of 'email'
-const field = this.$validator.fields.find({ name: 'email' }));
+const field = this.$validator.fields.find({ name: 'email' });
 
 // find the field which has a name of email and is in the 'newsletter' scope.
 const field = this.$validator.fields.find({ name: 'email', scope: 'newsletter' });

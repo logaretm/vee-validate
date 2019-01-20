@@ -65,6 +65,41 @@ export default {
 };
 </script>
 ```
+### persist
+
+You can use `.persist` modifier to keep the field (and its possible error(s)) in memory when the field is unmount/removed from the DOM (e.g. in a `v-if` block).
+If the field disappears from your component, it will stay accessible in the `fields` object.
+You'll be able to run a `validateAll()` with all your disappeared fields, very handy if you want to develop a multi-steps form with switching components.
+
+```vue
+<template>
+  <div>
+    <div v-if="displayField">
+      <input v-model="email" v-validate.persist="'required|email'" data-vv-validate-on="input" name="email" type="text">
+    </div>
+    <label><input type="checkbox" v-model="displayField"> Display the field</label>
+    <div>{{ errors.first('email') }}</div>
+  </div>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    email: '',
+    displayField: true
+  })
+};
+</script>
+```
+
+::: tip
+You can force it to disappear completely by changing the `persist` property in the field object:
+```js
+this.$validator.fields.find({name: 'email'}).persist = false;
+this.diplayField = false;
+// The field instance and its errors will also disappear from the memory in the next tick
+```
+:::
 
 ### continues
 

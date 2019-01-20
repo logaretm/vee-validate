@@ -42,6 +42,7 @@ export default class Resolver {
       delay: Resolver.resolveDelay(el, vnode, options),
       rules: Resolver.resolveRules(el, binding, vnode),
       immediate: !!binding.modifiers.initial || !!binding.modifiers.immediate,
+      persist: !!binding.modifiers.persist,
       validity: options.validity,
       aria: options.aria,
       initialValue: Resolver.resolveInitialValue(vnode)

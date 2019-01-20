@@ -21,7 +21,7 @@ The official example uses the following template:
 
 ## Handling v-if
 
-When attempting the validate those inputs, it would seem that vee-validate thinks they are the same one depending on who got rendered initially. This is due to Vue actually re-using the input, so to `vee-validate` and due to some limitation in the `directive` API, vee-validate doesn't know that the input got switched. So you need to help it a little bit by using `key` attribute on the inputs which forces Vue to render those elements independently.
+When attempting to validate those inputs, it would seem that vee-validate thinks they are the same one depending on who got rendered initially. This is due to Vue actually re-using the input, so to `vee-validate` and due to some limitation in the `directive` API, vee-validate doesn't know that the input got switched. So you need to help it a little bit by using `key` attribute on the inputs which forces Vue to render those elements independently.
 
 ```html
 <template v-if="loginType === 'username'">

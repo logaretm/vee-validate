@@ -2,7 +2,7 @@
 title: VeeValidate
 lang: en-US
 home: true
-heroImage: https://s3.eu-central-1.amazonaws.com/logaretm/vee-validate.svg
+heroImage: /logo.png
 actionText: Get Started →
 actionLink: ./guide/
 features:
