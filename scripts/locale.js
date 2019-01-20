@@ -40,7 +40,7 @@ async function build () {
       name: `__vee_validate_locale__${file}`,
     });
 
-    fs.writeFileSync(outputPath, uglify.minify(output.code, uglifyOptions).code);
+    fs.writeFileSync(outputPath, uglify.minify(output[0].code, uglifyOptions).code);
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
   }
