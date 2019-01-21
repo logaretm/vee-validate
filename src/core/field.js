@@ -87,6 +87,7 @@ export default class Field {
     this.events = [];
     this.delay = 0;
     this.rules = {};
+    this.forceRequired = false;
     this._cacheId(options);
     this.classNames = assign({}, DEFAULT_OPTIONS.classNames);
     options = assign({}, DEFAULT_OPTIONS, options);
@@ -112,7 +113,7 @@ export default class Field {
   }
 
   get isRequired (): boolean {
-    return !!this.rules.required;
+    return !!this.rules.required || this.forceRequired;
   }
 
   get isDisabled (): boolean {

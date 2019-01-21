@@ -131,6 +131,34 @@ These rules require at least one argument and the target field must have a match
 <input name="passwordConfirmation" ref="confirmation" type="password" placeholder="Confirm the password">
 ```
 
+## Require-like rules
+
+If you need to define a rule that declares a field as required under specific conditions, you will need to enable the `computesRequired` option. Because, by default, VeeValidate doesn't validate non require-like rules if the field has no value. The `computesRequired` will tell VeeValidate to run your rule even if the field has no value.
+
+In consequence, your rule **must** return an object with both `valid` and `data.required` boolean properties:
+```js
+validator.extend('my_custom_rule', (value, [otherValue]) => {
+  // do something and finally return an object like this one:
+  return {
+    valid: true, // or false
+    data: {
+      required: true // or false
+    }
+  };
+}, {
+  computesRequired: true
+});
+```
+
+Your rule also has to check for the requirement to be fulfilled.
+If `data.required` is set to false, the other field rules won't be executed if the field is empty.
+::: tip
+This option is best used when combined with `hasTarget`, to make a conditionnal requirement, based on other field values. Like the `require_if` rule.
+:::
+::: danger
+You cannot use this option if you want to write an async (promise-based) rule. You rule implementation has to be synchronous.
+:::
+
 ## Non-immediate Rules
 
 VeeValidate triggers initial validation regardless if you used the [immediate modifier](/api/directive.md#immediate) or not, the difference being if the immediate modifier is set, the errors and flags will be updated.
