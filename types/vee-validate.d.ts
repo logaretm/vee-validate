@@ -132,6 +132,14 @@ export interface VerifyOptions {
     values: { [x: string]: any };
 }
 
+export interface ValidationSlotScopeData {
+    errors: string[];
+    flags: FieldFlags;
+    valid: boolean;
+    reset (): void;
+    validate(value?: any): Promise<VerifyResult>
+}
+
 export class Validator {
     errors: ErrorBag;
     fields: FieldBag;
@@ -194,6 +202,8 @@ export const ValidationObserver: Vue.Component;
  * Note that this component is renderless.
  */
 export const ValidationProvider: Vue.Component;
+
+export const withValidation: (component: Vue.Component, mapFn: (ctx: ValidationSlotScopeData) => Object) => Vue.component;
 
 export const version: string;
 
