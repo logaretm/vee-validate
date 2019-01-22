@@ -381,16 +381,22 @@ export default class Validator {
     const field = {
       name: (options && options.name) || '{field}',
       rules: normalizeRules(rules),
-      bails: getPath('bails', options, true)
+      bails: getPath('bails', options, true),
+      forceRequired: false,
+      get isRequired () {
+        return !!this.rules.required || this.forceRequired;
+      }
     };
 
-    field.isRequired = field.rules.required;
     const targetRules = Object.keys(field.rules).filter(Validator.isTargetRule);
     if (targetRules.length && options && isObject(options.values)) {
-      // patch the field params with the targets' values.
-      targetRules.forEach(rule => {
-        const [first, ...rest] = field.rules[rule];
-        field.rules[rule] = [options.values[first], ...rest];
+      field.dependencies = targetRules.map(rule => {
+        const [targetKey] = field.rules[rule];
+
+        return {
+          name: rule,
+          field: { value: options.values[targetKey] }
+        };
       });
     }
 
@@ -562,6 +568,7 @@ export default class Validator {
 
         return {
           valid: allValid,
+          data: result.data,
           errors: allValid ? [] : [this._createFieldError(field, rule, data, targetName)]
         };
       });
@@ -573,6 +580,7 @@ export default class Validator {
 
     return {
       valid: result.valid,
+      data: result.data,
       errors: result.valid ? [] : [this._createFieldError(field, rule, result.data, targetName)]
     };
   }
@@ -716,6 +724,21 @@ export default class Validator {
    * Starts the validation process.
    */
   _validate (field: Field, value: any, { initial } = {}): Promise<ValidationResult> {
+    let requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
+
+    field.forceRequired = false;
+    requireRules.forEach(rule => {
+      let ruleOptions = RuleContainer.getOptions(rule);
+      let result = this._test(field, value, { name: rule, params: field.rules[rule], options: ruleOptions });
+
+      if (isCallable(result.then)) { throw createError('Require rules cannot be async'); }
+      if (!isObject(result)) { throw createError('Require rules has to return an object (see docs)'); }
+
+      if (result.data.required === true) {
+        field.forceRequired = true;
+      }
+    });
+
     if (this._shouldSkip(field, value)) {
       return Promise.resolve({ valid: true, id: field.id, field: field.name, scope: field.scope, errors: [] });
     }

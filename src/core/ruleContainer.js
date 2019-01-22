@@ -21,6 +21,10 @@ export default class RuleContainer {
     return !!(RULES[name] && RULES[name].options.immediate);
   }
 
+  static isRequireRule (name) {
+    return !!(RULES[name] && RULES[name].options.computesRequired);
+  }
+
   static isTargetRule (name) {
     return !!(RULES[name] && RULES[name].options.hasTarget);
   }

@@ -34,6 +34,7 @@ VeeValidate comes with a bunch of validation rules out of the box and they are a
 - [numeric](#numeric)
 - [regex](#regex)
 - [required](#required)
+- [required_if](#required-if)
 - [size](#size)
 - [url](#url)
 
@@ -537,12 +538,39 @@ By default, the boolean value of `false` will pass validate. Setting invalidateF
 <span v-show="errors.has('required_field')" class="help is-danger">{{ errors.first('required_field') }}</span>
 
 ::: tip
-  The `required` rule is special, by default the validator skips the validation for non-required fields that have an empty value. If you wish to force validation for non-required fields, use the [`continues` modifier](/api/directive.md#continues).
+  The `required` &amp; `required_if` rules are special, by default the validator skips the validation for non-required fields that have an empty value. If you wish to force validation for non-required fields, use the [`continues` modifier](/api/directive.md#continues).
 :::
 
 ```html
 <input v-validate="'required'" data-vv-as="field" name="required_field" type="text">
 ```
+
+## required_if
+
+The field under validation must have a non-empty value **only if** the target field (first argument) is set to one of the specified values (other arguments).
+
+In the example below, the `required_if:country,US,FM` rule makes the `state` field required only if the `ref="country"` input is set to US or FM.
+If the target field value meets the requirement, empty values (empty strings, `undefined`, `null` and `false`) in the field under validation will trigger an error.
+
+<div>
+  <select ref="country" v-validate :class="{'input': true, 'is-danger': errors.has('required_field') }" name="select_country" >
+    <option value="US">United States of America</option>
+    <option value="FM">Federated States of Micronesia</option>
+    <option value="OTHER">Other country</option>
+  </select>
+  <input v-validate.immediate="'required_if:country,US,FM'" data-vv-as="state" :class="{'input': true, 'is-danger': errors.has('state_field') }" name="state_field" type="text" placeholder="State">
+</div>
+<span v-show="errors.has('state_field')" class="help is-danger">{{ errors.first('state_field') }}</span>
+
+```html
+<select ref="country" v-validate :class="{'input': true, 'is-danger': errors.has('required_field') }" name="select_country" >
+  <option value="US">United States</option>
+  <option value="OTHER">Other country</option>
+</select>
+<input v-validate.immediate="'required_if:country,US'" data-vv-as="state" :class="{'input': true, 'is-danger': errors.has('state_field') }" name="state_field" type="text" placeholder="State">
+<span v-show="errors.has('state_field')" class="help is-danger">{{ errors.first('state_field') }}</span>
+```
+
 
 ## size
 

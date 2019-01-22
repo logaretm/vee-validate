@@ -214,6 +214,7 @@ export const ValidationProvider = {
     initialized: false,
     initialValue: undefined,
     flags: createFlags(),
+    forceRequired: false,
     id: null
   }),
   methods: {
@@ -314,8 +315,9 @@ export const ValidationProvider = {
     },
     isRequired () {
       const rules = normalizeRules(this.rules);
+      const forceRequired = this.forceRequired;
 
-      return !!rules.required;
+      return !!rules.required || forceRequired;
     },
     classes () {
       const names = VeeValidate.config.classNames;
