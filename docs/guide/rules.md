@@ -595,9 +595,9 @@ The field under validation must be a valid url. Protocols are not required by de
 
 This rule can recieve any args from [validator.js isURL](https://github.com/chriso/validator.js) validator. Note that to be able to configure it you need to use the object format and pass the params as an object.
 
-<input v-validate="'url:require_protocol'" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('url_field') }" name="url_field" type="text" placeholder="Enter a url">
+<input v-validate="{url: {require_protocol: true }}" data-vv-as="field" :class="{'input': true, 'is-danger': errors.has('url_field') }" name="url_field" type="text" placeholder="Enter a url">
 <span v-show="errors.has('url_field')" class="help is-danger">{{ errors.first('url_field') }}</span>
 
 ```html
-<input v-validate="'url:require_protocol'" data-vv-as="field" name="url_field" type="text">
+<input v-validate="{url: {require_protocol: true }}" data-vv-as="field" name="url_field" type="text">
 ```
