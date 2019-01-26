@@ -178,9 +178,11 @@ export class Validator {
     static localize(language: string, dictionary?: Object): void;
 }
 
-export class ExtendOptions  {
+export class ExtendOptions {
   hasTarget?: boolean;
   paramNames?: string[];
+  computesRequired?: Boolean
+  initial?: Boolean
 }
 
 /**
