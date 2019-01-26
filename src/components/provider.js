@@ -23,18 +23,42 @@ export function createValidationCtx (ctx) {
   };
 }
 
+/**
+ * Determines if a provider needs to run validation.
+ */
+function shouldValidate (ctx, model) {
+  // when an immediate/initial validation is needed and wasn't done before.
+  if (!ctx._ignoreImmediate && ctx.immediate) {
+    return true;
+  }
+
+  // when the value changes for whatever reason.
+  if (ctx.value !== model.value) {
+    return true;
+  }
+
+  // when it needs validation due to props/cross-fields changes.
+  if (ctx._needsValidation) {
+    return true;
+  }
+
+  // when the initial value is undefined and the field wasn't rendered yet.
+  if (!ctx.initialized && model.value === undefined) {
+    return true;
+  }
+
+  return false;
+}
+
 export function onRenderUpdate (model) {
-  let validateNow = (this.value !== model.value) || this._needsValidation;
   if (!this.initialized) {
     this.initialValue = model.value;
   }
 
-  if (!this.initialized && model.value === undefined) {
-    validateNow = true;
-  }
-
+  const validateNow = shouldValidate(this, model);
   this._needsValidation = false;
-  this._eventEmitted = false;
+  this.value = model.value;
+  this._ignoreImmediate = true;
 
   if (!validateNow) {
     return;
@@ -48,7 +72,6 @@ export function onRenderUpdate (model) {
     });
   };
 
-  this.value = model.value;
   this.validateSilent().then(this.immediate || this.flags.validated ? this.applyResult : silentHandler);
 }
 
@@ -69,7 +92,6 @@ export function createCommonHandlers (ctx) {
       const pendingPromise = ctx.validate();
       // avoids race conditions between successive validations.
       ctx._waiting = pendingPromise;
-      ctx._eventEmitted = true;
       pendingPromise.then(result => {
         if (pendingPromise === ctx._waiting) {
           ctx.applyResult(result);
@@ -300,6 +322,7 @@ export const ValidationProvider = {
         const watcherName = `$__${depName}`;
         if (!isCallable(this[watcherName])) {
           this[watcherName] = providers[depName].$watch('value', () => {
+            this._needsValidation = true;
             this.validate();
           });
         }
