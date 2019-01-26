@@ -24,8 +24,7 @@ export function createValidationCtx (ctx) {
 }
 
 export function onRenderUpdate (model) {
-  let validateNow = this.value !== model.value || this._needsValidation;
-  let shouldRevalidate = this.flags.validated;
+  let validateNow = (this.value !== model.value) || this._needsValidation;
   if (!this.initialized) {
     this.initialValue = model.value;
   }
@@ -34,20 +33,23 @@ export function onRenderUpdate (model) {
     validateNow = true;
   }
 
-  if (validateNow) {
-    const silentHandler = ({ valid }) => {
-      // initially assign the valid/invalid flags.
-      this.setFlags({
-        valid,
-        invalid: !valid
-      });
-    };
+  this._needsValidation = false;
+  this._eventEmitted = false;
 
-    this.value = model.value;
-    this.validateSilent().then(this.immediate || shouldRevalidate ? this.applyResult : silentHandler);
+  if (!validateNow) {
+    return;
   }
 
-  this._needsValidation = false;
+  const silentHandler = ({ valid }) => {
+    // initially assign the valid/invalid flags.
+    this.setFlags({
+      valid,
+      invalid: !valid
+    });
+  };
+
+  this.value = model.value;
+  this.validateSilent().then(this.immediate || this.flags.validated ? this.applyResult : silentHandler);
 }
 
 // Creates the common handlers for a validatable context.
@@ -67,6 +69,7 @@ export function createCommonHandlers (ctx) {
       const pendingPromise = ctx.validate();
       // avoids race conditions between successive validations.
       ctx._waiting = pendingPromise;
+      ctx._eventEmitted = true;
       pendingPromise.then(result => {
         if (pendingPromise === ctx._waiting) {
           ctx.applyResult(result);
