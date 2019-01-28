@@ -12,7 +12,7 @@ const messages = {
   credit_card: (field) => `Položka ${field} je neplatná.`,
   date_between: (field, [min, max]) => `${field} musí byť medzi ${min} a ${max}.`,
   date_format: (field, [format]) => `${field} musí byť vo formáte ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `Položka ${field} musí byť číselná a smie obsahovať ${decimals === '*' ? '' : decimals} desatinné miesta.`,
+  decimal: (field, [decimals = '*'] = []) => `Položka ${field} musí byť číselná a smie obsahovať${decimals === '*' ? '' : ' ' + decimals} desatinné miesta.`,
   digits: (field, [length]) => `Položka ${field} musí obsahovať ${length} ${length < 5 ? 'čísla' : 'čísiel'}.`,
   dimensions: (field, [width, height]) => `Položka ${field} musí mať ${width} x ${height} pixlov.`,
   email: (field) => `Položka ${field} musí obsahovať správnu emailovú adresu.`,

@@ -13,7 +13,7 @@ const messages = {
   credit_card: (field) => `${field} πρέπει να είναι έγκυρη πιστωτική κάρτα.`,
   date_between: (field, [min, max]) => `${field} πρέπει να είναι μεταξύ ${min} καί ${max}.`,
   date_format: (field, [format]) => `${field} πρέπει να είναι σε μορφή ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `${field} πρέπει να είναι αριθμός και να περιέχει ${decimals === '*' ? '' : decimals} δεκαδικά ψηφία.`,
+  decimal: (field, [decimals = '*'] = []) => `${field} πρέπει να είναι αριθμός και να περιέχει${decimals === '*' ? '' : ' ' + decimals} δεκαδικά ψηφία.`,
   digits: (field, [length]) => `${field} πρέπει να είναι αριθμός και να περιέχει ${length} ψηφία.`,
   dimensions: (field, [width, height]) => `${field} πρέπει να είναι ${width} pixels επί ${height} pixels.`,
   email: (field) => `${field} πρέπει να είναι έγκυρο email.`,
