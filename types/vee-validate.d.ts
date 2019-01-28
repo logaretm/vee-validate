@@ -205,7 +205,7 @@ export const ValidationObserver: Vue.Component;
  */
 export const ValidationProvider: Vue.Component;
 
-export const withValidation: (component: Vue.Component, mapFn: (ctx: ValidationSlotScopeData) => Object) => Vue.component;
+export const withValidation: (component: Vue.Component, mapFn: (ctx: ValidationSlotScopeData) => Object) => Vue.Component;
 
 export const version: string;
 
