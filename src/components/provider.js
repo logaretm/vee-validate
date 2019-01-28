@@ -64,15 +64,7 @@ export function onRenderUpdate (model) {
     return;
   }
 
-  const silentHandler = ({ valid }) => {
-    // initially assign the valid/invalid flags.
-    this.setFlags({
-      valid,
-      invalid: !valid
-    });
-  };
-
-  this.validateSilent().then(this.immediate || this.flags.validated ? this.applyResult : silentHandler);
+  this.validateSilent().then(this.immediate || this.flags.validated ? this.applyResult : x => x);
 }
 
 // Creates the common handlers for a validatable context.
@@ -348,15 +340,7 @@ export const ValidationProvider = {
       const names = VeeValidate.config.classNames;
       return Object.keys(this.flags).reduce((classes, flag) => {
         const className = (names && names[flag]) || flag;
-        if (flag === 'invalid') {
-          classes[className] = !!this.messages.length;
-
-          return classes;
-        }
-
-        if (flag === 'valid') {
-          classes[className] = !this.messages.length;
-
+        if (isNullOrUndefined(this.flags[flag])) {
           return classes;
         }
 
