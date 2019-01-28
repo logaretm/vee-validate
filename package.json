@@ -1,7 +1,7 @@
 {
   "name": "vee-validate",
-  "version": "2.1.6",
-  "description": "Simple Vue.js input validation plugin",
+  "version": "2.1.7",
+  "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
   "module": "dist/vee-validate.esm.js",
