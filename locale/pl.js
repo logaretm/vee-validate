@@ -16,7 +16,7 @@ const messages = {
   credit_card: (field) => `Pole ${field} musi być poprawnym numerem karty kredytowej.`,
   date_between: (field, [min, max]) => `Pole ${field} musi zawierać się między ${min} a ${max}.`,
   date_format: (field, [format]) => `Pole ${field} musi pasować do formatu ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `Pole ${field} musi być liczbą i może zawierać ${decimals === '*' ? '' : decimals} miejsca po przecinku.`,
+  decimal: (field, [decimals = '*'] = []) => `Pole ${field} musi być liczbą i może zawierać${decimals === '*' ? '' : ' ' + decimals} miejsca po przecinku.`,
   digits: (field, [length]) => `Pole ${field} musi być liczbą i dokładnie ${length} cyfr.`,
   dimensions: (field, [width, height]) => `Obraz ${field} musi być szeroki na ${width} pikseli i wysoki na ${height} pikseli.`,
   email: (field) => `Pole ${field} musi być poprawnym adresem email.`,

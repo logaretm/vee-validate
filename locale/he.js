@@ -11,7 +11,7 @@ const messages = {
   confirmed: (field) => `הערכים של ${field} חייבים להיות זהים.`,
   date_between: (field, [min, max]) => `השדה ${field} חייב להיות בין התאריכים ${min} ו- ${max}.`,
   date_format: (field, [format]) => `השדה ${field} חייב להיות בפורמט ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `השדה ${field} חייב להיות מספרי ולהכיל ${decimals === '*' ? '' : decimals} נקודות עשרוניות.`,
+  decimal: (field, [decimals = '*'] = []) => `השדה ${field} חייב להיות מספרי ולהכיל${decimals === '*' ? '' : ' ' + decimals} נקודות עשרוניות.`,
   digits: (field, [length]) => `השדה ${field} חייב להיות מספר ולהכיל ${length} ספרות בדיוק.`,
   dimensions: (field, [width, height]) => `השדה ${field} חייב להיות ${width} פיקסלים על ${height} פיקסלים.`,
   email: (field) => `השדה ${field} חייב להכיל כתובת אימייל תקינה.`,
