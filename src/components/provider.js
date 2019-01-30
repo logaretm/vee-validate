@@ -329,7 +329,10 @@ export const ValidationProvider = {
       const rules = normalizeRules(this.rules);
       const forceRequired = this.forceRequired;
 
-      return !!rules.required || forceRequired;
+      const isRequired = rules.required || forceRequired;
+      this.flags.required = isRequired;
+
+      return isRequired;
     },
     classes () {
       const names = getConfig().classNames;
