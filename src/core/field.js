@@ -296,6 +296,10 @@ export default class Field {
       this.flags[flag] = defaults[flag];
     });
 
+    // update initial value
+    this.initialValue = this.value;
+    this.flags.changed = false;
+
     this.addValueListeners();
     this.addActionListeners();
     this.updateClasses(true);
