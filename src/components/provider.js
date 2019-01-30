@@ -1,4 +1,6 @@
-import VeeValidate from '../plugin';
+import { getConfig } from '../config';
+import { getValidator } from '../state';
+import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined } from '../utils';
@@ -210,11 +212,11 @@ export const ValidationProvider = {
     },
     bails: {
       type: Boolean,
-      default: () => VeeValidate.config.fastExit
+      default: () => getConfig().fastExit
     },
     debounce: {
       type: Number,
-      default: () => VeeValidate.config.delay || 0
+      default: () => getConfig().delay || 0
     }
   },
   watch: {
@@ -287,14 +289,7 @@ export const ValidationProvider = {
     },
     registerField () {
       if (!$validator) {
-        /* istanbul ignore next */
-        if (process.env.NODE_ENV !== 'production') {
-          if (!VeeValidate.instance) {
-            warn('You must install vee-validate first before using this component.');
-          }
-        }
-
-        $validator = VeeValidate.instance._validator;
+        $validator = getValidator() || new Validator(null, { fastExit: getConfig().fastExit });
       }
 
       updateRenderingContextRefs(this);
@@ -337,7 +332,7 @@ export const ValidationProvider = {
       return !!rules.required || forceRequired;
     },
     classes () {
-      const names = VeeValidate.config.classNames;
+      const names = getConfig().classNames;
       return Object.keys(this.flags).reduce((classes, flag) => {
         const className = (names && names[flag]) || flag;
         if (isNullOrUndefined(this.flags[flag])) {

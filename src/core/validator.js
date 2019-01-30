@@ -1,8 +1,8 @@
 import ErrorBag from './errorBag';
 import FieldBag from './fieldBag';
+import Dictionary from '../dictionary';
 import RuleContainer from './ruleContainer';
 import Field from './field';
-import VeeValidate from '../plugin';
 import {
   isObject,
   getPath,
@@ -14,7 +14,8 @@ import {
   isNullOrUndefined,
   includes,
   normalizeRules,
-  isEmptyArray
+  isEmptyArray,
+  warn
 } from '../utils';
 
 // @flow
@@ -27,28 +28,49 @@ export default class Validator {
   paused: boolean;
   reset: (matcher) => Promise<void>;
 
-  constructor (validations?: MapObject, options?: MapObject = { fastExit: true }) {
+  constructor (validations?: MapObject, options?: MapObject = { fastExit: true }, pluginContainer?: Object = null) {
     this.errors = new ErrorBag();
     this.fields = new FieldBag();
     this._createFields(validations);
     this.paused = false;
     this.fastExit = !isNullOrUndefined(options && options.fastExit) ? options.fastExit : true;
+    this.$vee = pluginContainer || {
+      _vm: {
+        $nextTick: (cb) => isCallable(cb) ? cb() : Promise.resolve(),
+        $emit: () => {},
+        $off: () => {}
+      }
+    };
   }
 
+  /**
+   * @deprecated
+   */
   static get rules () {
+    if (process.env.NODE_ENV !== 'production') {
+      warn('this accessor will be deprecated, use `import { rules } from "vee-validate"` instead.');
+    }
+
     return RuleContainer.rules;
   }
 
+  /**
+   * @deprecated
+   */
   get rules () {
+    if (process.env.NODE_ENV !== 'production') {
+      warn('this accessor will be deprecated, use `import { rules } from "vee-validate"` instead.');
+    }
+
     return RuleContainer.rules;
   }
 
   get dictionary () {
-    return VeeValidate.i18nDriver;
+    return Dictionary.getDriver();
   }
 
   static get dictionary () {
-    return VeeValidate.i18nDriver;
+    return Dictionary.getDriver();
   }
 
   get flags () {
@@ -82,24 +104,29 @@ export default class Validator {
   }
 
   static get locale () {
-    return VeeValidate.i18nDriver.locale;
+    return Dictionary.getDriver().locale;
   }
 
   /**
    * Setter for the validator locale.
    */
   static set locale (value) {
-    const hasChanged = value !== VeeValidate.i18nDriver.locale;
-    VeeValidate.i18nDriver.locale = value;
-    if (hasChanged && VeeValidate.instance && VeeValidate.instance._vm) {
-      VeeValidate.instance._vm.$emit('localeChanged');
+    const hasChanged = value !== Dictionary.getDriver().locale;
+    Dictionary.getDriver().locale = value;
+    if (hasChanged && Validator.$vee && Validator.$vee._vm) {
+      Validator.$vee._vm.$emit('localeChanged');
     }
   }
 
   /**
    * Static constructor.
+   * @deprecated
    */
   static create (validations?: MapObject, options?: MapObject): Validator {
+    if (process.env.NODE_ENV !== 'production') {
+      warn('Please use `new` to create new validator instances.');
+    }
+
     return new Validator(validations, options);
   }
 
@@ -117,21 +144,19 @@ export default class Validator {
 
   /**
    * Removes a rule from the list of validators.
+   * @deprecated
    */
   static remove (name: string): void {
+    if (process.env.NODE_ENV !== 'production') {
+      warn('this method will be deprecated, you can still override your rules with `extend`');
+    }
+
     RuleContainer.remove(name);
   }
 
   /**
-   * Checks if the given rule name is a rule that targets other fields.
-   */
-  static isTargetRule (name: string): boolean {
-    return RuleContainer.isTargetRule(name);
-  }
-
-  /**
    * Adds and sets the current locale for the validator.
-   */
+  */
   localize (lang: string, dictionary?: MapObject): void {
     Validator.localize(lang, dictionary);
   }
@@ -141,7 +166,7 @@ export default class Validator {
    */
   static localize (lang: string | MapObject, dictionary?: MapObject) {
     if (isObject(lang)) {
-      VeeValidate.i18nDriver.merge(lang);
+      Dictionary.getDriver().merge(lang);
       return;
     }
 
@@ -149,7 +174,7 @@ export default class Validator {
     if (dictionary) {
       const locale = lang || dictionary.name;
       dictionary = assign({}, dictionary);
-      VeeValidate.i18nDriver.merge({
+      Dictionary.getDriver().merge({
         [locale]: dictionary
       });
     }
@@ -182,7 +207,7 @@ export default class Validator {
 
     // validate the field initially
     if (field.immediate) {
-      VeeValidate.instance._vm.$nextTick(() => this.validate(`#${field.id}`, value || field.value, { vmId: fieldOpts.vmId }));
+      this.$vee._vm.$nextTick(() => this.validate(`#${field.id}`, value || field.value, { vmId: fieldOpts.vmId }));
     } else {
       this._validate(field, value || field.value, { initial: true }).then(result => {
         field.flags.valid = result.valid;
@@ -229,8 +254,8 @@ export default class Validator {
 
   reset (matcher) {
     // two ticks
-    return VeeValidate.instance._vm.$nextTick().then(() => {
-      return VeeValidate.instance._vm.$nextTick();
+    return this.$vee._vm.$nextTick().then(() => {
+      return this.$vee._vm.$nextTick();
     }).then(() => {
       this.fields.filter(matcher).forEach(field => {
         field.waitFor(null);
@@ -253,6 +278,7 @@ export default class Validator {
 
   /**
    * Removes a rule from the list of validators.
+   * @deprecated
    */
   remove (name: string) {
     Validator.remove(name);
@@ -388,7 +414,7 @@ export default class Validator {
       }
     };
 
-    const targetRules = Object.keys(field.rules).filter(Validator.isTargetRule);
+    const targetRules = Object.keys(field.rules).filter(RuleContainer.isTargetRule);
     if (targetRules.length && options && isObject(options.values)) {
       field.dependencies = targetRules.map(rule => {
         const [targetKey] = field.rules[rule];
@@ -409,7 +435,7 @@ export default class Validator {
    * Perform cleanup.
    */
   destroy () {
-    VeeValidate.instance._vm.$off('localeChanged');
+    this.$vee._vm.$off('localeChanged');
   }
 
   /**
@@ -433,7 +459,7 @@ export default class Validator {
       format = validations.date_format[0];
     }
 
-    return format || VeeValidate.i18nDriver.getDateFormat(this.locale);
+    return format || Dictionary.getDriver().getDateFormat(this.locale);
   }
 
   /**
@@ -443,7 +469,7 @@ export default class Validator {
     const name = this._getFieldDisplayName(field);
     const params = this._getLocalizedParams(rule, targetName);
 
-    return VeeValidate.i18nDriver.getFieldMessage(this.locale, field.name, rule.name, [name, params, data]);
+    return Dictionary.getDriver().getFieldMessage(this.locale, field.name, rule.name, [name, params, data]);
   }
 
   /**
@@ -474,7 +500,7 @@ export default class Validator {
   _getLocalizedParams (rule: MapObject, targetName?: string | null = null) {
     let params = this._convertParamObjectToArray(rule.params, rule.name);
     if (rule.options.hasTarget && params && params[0]) {
-      const localizedName = targetName || VeeValidate.i18nDriver.getAttribute(this.locale, params[0], params[0]);
+      const localizedName = targetName || Dictionary.getDriver().getAttribute(this.locale, params[0], params[0]);
       return [localizedName].concat(params.slice(1));
     }
 
@@ -485,7 +511,7 @@ export default class Validator {
    * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
    */
   _getFieldDisplayName (field: Field) {
-    return field.alias || VeeValidate.i18nDriver.getAttribute(this.locale, field.name, field.name);
+    return field.alias || Dictionary.getDriver().getAttribute(this.locale, field.name, field.name);
   }
 
   /**
@@ -591,7 +617,7 @@ export default class Validator {
   static _merge (name: string, { validator, options, paramNames }) {
     const validate = isCallable(validator) ? validator : validator.validate;
     if (validator.getMessage) {
-      VeeValidate.i18nDriver.setMessage(Validator.locale, name, validator.getMessage);
+      Dictionary.getDriver().setMessage(Validator.locale, name, validator.getMessage);
     }
 
     RuleContainer.add(name, {

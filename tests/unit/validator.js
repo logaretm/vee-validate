@@ -2,6 +2,7 @@ import { createLocalVue } from '@vue/test-utils';
 import Field from '@/core/field';
 import VeeValidate from '@/index';
 import flushPromises from 'flush-promises';
+import RuleContainer from '@/core/ruleContainer';
 
 const Vue = createLocalVue();
 const Validator = VeeValidate.Validator;
@@ -997,10 +998,10 @@ test('removes target based rules from the internal collection', async () => {
   const v = new Validator();
   const rule = (val) => !!val;
   v.extend('rule', rule, { hasTarget: true });
-  expect(Validator.isTargetRule('rule')).toBe(true);
+  expect(RuleContainer.isTargetRule('rule')).toBe(true);
 
   v.remove('rule');
-  expect(Validator.isTargetRule('rule')).toBe(false);
+  expect(RuleContainer.isTargetRule('rule')).toBe(false);
 });
 
 test('creates regeneratable messages', async () => {

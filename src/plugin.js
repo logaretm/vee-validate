@@ -1,37 +1,18 @@
 import dictionary from './dictionary';
 import mixin from './mixin';
 import directive from './directive';
-import { assign, getPath, warn, isCallable } from './utils';
+import { warn, isCallable } from './utils';
 import Validator from './core/validator';
 import ErrorBag from './core/errorBag';
-import mapFields from './core/mapFields';
-import { ValidationProvider, ValidationObserver, withValidation } from './components';
 import I18nDictionary from './localization/i18n';
 import { detectPassiveSupport } from './utils/events';
+import { setConfig, getConfig } from './config';
+import { setValidator } from './state';
 
 // @flow
 
-const defaultConfig = {
-  locale: 'en',
-  delay: 0,
-  errorBagName: 'errors',
-  dictionary: null,
-  fieldsBagName: 'fields',
-  classes: false,
-  classNames: null,
-  events: 'input',
-  inject: true,
-  fastExit: true,
-  aria: true,
-  validity: false,
-  useConstraintAttrs: true,
-  i18n: null,
-  i18nRootKey: 'validation'
-};
-
 let Vue;
 let pendingPlugins;
-export let currentConfig = assign({}, defaultConfig);
 export let pluginInstance;
 
 class VeeValidate {
@@ -48,7 +29,9 @@ class VeeValidate {
     if (_Vue) {
       Vue = _Vue;
     }
-    this._validator = new Validator(null, { fastExit: config && config.fastExit });
+    this._validator = setValidator(
+      new Validator(null, { fastExit: config && config.fastExit }, this)
+    );
     this._initVM(this.config);
     this._initI18n(this.config);
   }
@@ -58,7 +41,7 @@ class VeeValidate {
   }
 
   static configure (cfg) {
-    currentConfig = assign({}, currentConfig, cfg);
+    setConfig(cfg);
   }
 
   static use (plugin: (ctx: PluginContext, options?: any) => any, options?: any = {}) {
@@ -88,6 +71,8 @@ class VeeValidate {
 
     Vue = _Vue;
     pluginInstance = new VeeValidate(opts);
+    // inject the plugin container statically into the validator class
+    Validator.$vee = pluginInstance;
 
     detectPassiveSupport();
 
@@ -101,10 +86,6 @@ class VeeValidate {
     }
   }
 
-  static get instance () {
-    return pluginInstance;
-  }
-
   get i18nDriver (): IDictionary {
     return dictionary.getDriver();
   }
@@ -114,11 +95,11 @@ class VeeValidate {
   }
 
   get config () {
-    return currentConfig;
+    return getConfig();
   }
 
   static get config () {
-    return currentConfig;
+    return getConfig();
   }
 
   _initVM (config) {
@@ -154,24 +135,13 @@ class VeeValidate {
   }
 
   configure (cfg) {
-    VeeValidate.configure(cfg);
-  }
-
-  resolveConfig (ctx) {
-    const selfConfig = getPath('$options.$_veeValidate', ctx, {});
-
-    return assign({}, this.config, selfConfig);
+    setConfig(cfg);
   }
 }
 
-VeeValidate.version = '__VERSION__';
 VeeValidate.mixin = mixin;
 VeeValidate.directive = directive;
 VeeValidate.Validator = Validator;
 VeeValidate.ErrorBag = ErrorBag;
-VeeValidate.mapFields = mapFields;
-VeeValidate.ValidationProvider = ValidationProvider;
-VeeValidate.ValidationObserver = ValidationObserver;
-VeeValidate.withValidation = withValidation;
 
 export default VeeValidate;

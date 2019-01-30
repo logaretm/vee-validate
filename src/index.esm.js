@@ -34,4 +34,10 @@ export {
   withValidation
 };
 
+VeeValidate.version = version;
+VeeValidate.mapFields = mapFields;
+VeeValidate.ValidationProvider = ValidationProvider;
+VeeValidate.ValidationObserver = ValidationObserver;
+VeeValidate.withValidation = withValidation;
+
 export default VeeValidate;

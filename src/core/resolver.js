@@ -1,4 +1,4 @@
-import { pluginInstance as VeeValidate } from '../plugin';
+import { resolveConfig, getConfig } from '../config';
 import { findModel } from '../utils/vnode';
 import {
   getScope,
@@ -23,7 +23,7 @@ import {
 export default class Resolver {
   static generate (el, binding, vnode) {
     const model = Resolver.resolveModel(binding, vnode);
-    const options = VeeValidate.resolveConfig(vnode.context);
+    const options = resolveConfig(vnode.context);
 
     return {
       name: Resolver.resolveName(el, vnode),
@@ -78,7 +78,7 @@ export default class Resolver {
 
     // If validity is disabled, ignore field rules.
     const normalized = normalizeRules(rules);
-    if (!VeeValidate.config.useConstraintAttrs) {
+    if (!getConfig().useConstraintAttrs) {
       return normalized;
     }
 
@@ -160,8 +160,8 @@ export default class Resolver {
       events = config && config.events;
     }
 
-    if (!events && VeeValidate.config.events) {
-      events = VeeValidate.config.events;
+    if (!events && getConfig().events) {
+      events = getConfig().events;
     }
 
     // resolve the model event if its configured for custom components.

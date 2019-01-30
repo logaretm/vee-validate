@@ -1,6 +1,7 @@
-import { pluginInstance as VeeValidate } from './plugin';
 import Validator from './core/validatorDecorator';
 import { isObject, isBuiltInComponent } from './utils';
+import { resolveConfig, setConfig } from './config';
+import { getValidator } from './state';
 
 // @flow
 
@@ -33,25 +34,25 @@ export default {
 
     // if its a root instance set the config if it exists.
     if (!this.$parent) {
-      VeeValidate.configure(this.$options.$_veeValidate || {});
+      setConfig(this.$options.$_veeValidate || {});
     }
 
-    const options = VeeValidate.resolveConfig(this);
+    const options = resolveConfig(this);
 
     // if its a root instance, inject anyways, or if it requested a new instance.
     if (!this.$parent || (this.$options.$_veeValidate && /new/.test(this.$options.$_veeValidate.validator))) {
-      this.$validator = new Validator(VeeValidate._validator, this);
+      this.$validator = new Validator(getValidator(), this);
     }
 
     const requested = requestsValidator(this.$options.inject);
 
     // if automatic injection is enabled and no instance was requested.
     if (! this.$validator && options.inject && !requested) {
-      this.$validator = new Validator(VeeValidate._validator, this);
+      this.$validator = new Validator(getValidator(), this);
     }
 
     // don't inject errors or fieldBag as no validator was resolved.
-    if (! requested && ! this.$validator) {
+    if (!requested && !this.$validator) {
       return;
     }
 
@@ -61,7 +62,7 @@ export default {
       Vue.util.defineReactive(this.$validator, 'errors', this.$validator.errors);
     }
 
-    if (! this.$options.computed) {
+    if (!this.$options.computed) {
       this.$options.computed = {};
     }
 
