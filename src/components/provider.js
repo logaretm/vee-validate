@@ -195,8 +195,15 @@ export const ValidationProvider = {
       default: null
     },
     events: {
-      type: [Array, String],
-      default: () => ['input']
+      type: Array,
+      default: () => {
+        const events = getConfig().events;
+        if (typeof events === 'string') {
+          return events.split('|');
+        }
+
+        return events;
+      }
     },
     rules: {
       type: [Object, String],
