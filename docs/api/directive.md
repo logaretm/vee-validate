@@ -65,6 +65,7 @@ export default {
 };
 </script>
 ```
+
 ### persist
 
 You can use `.persist` modifier to keep the field (and its possible error(s)) in memory when the field is unmount/removed from the DOM (e.g. in a `v-if` block).
@@ -94,11 +95,13 @@ export default {
 
 ::: tip
 You can force it to disappear completely by changing the `persist` property in the field object:
+
 ```js
 this.$validator.fields.find({name: 'email'}).persist = false;
 this.diplayField = false;
 // The field instance and its errors will also disappear from the memory in the next tick
 ```
+
 :::
 
 ### continues
