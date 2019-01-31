@@ -9,10 +9,10 @@ features:
 - title: Simple
   details: Template based validation that is both familiar and easy to setup.
 - title: Flexible
-  details: Validate HTML inputs and Vue components, generate localized errors, Extendable, We have it all.
+  details: Validate HTML inputs and Vue components, generate localized errors, Extendable, It does it all.
 - title: Configurable
   details: Config that doesn't get into your way, everything is optional.
-footer: MIT Licensed | Copyright © 2018-present Baianat
+footer: MIT Licensed | Copyright © 2019-present Baianat
 description: Template Based Validation Framework for Vue.js
 meta:
   - name: og:title

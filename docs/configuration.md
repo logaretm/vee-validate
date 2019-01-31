@@ -69,3 +69,15 @@ const vee = new VeeValidate(config, Vue);
 ```
 
 Using this method __will not__ add any directives, mixins, or components to your app, instead it passes everything vee-validate needs to set itself up and you will be responsible for using the plugin manually which is helpful if you are only planning to use standalone features like the [Validator.verify API](/api/validator.md#verify).
+
+### Runtime Configuration
+
+You also could modify the plugin config after installation by importing the default module and using the `configure` method:
+
+```js
+import VeeValidate from 'vee-validate';
+
+VeeValidate.configure({
+  // config properties
+});
+```
