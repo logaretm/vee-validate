@@ -13,7 +13,7 @@ import { setValidator } from './state';
 
 let Vue;
 let pendingPlugins;
-export let pluginInstance;
+let pluginInstance;
 
 class VeeValidate {
   static version: string
