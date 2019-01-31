@@ -40,9 +40,9 @@ npm i vee-validate --save
 
 #### CDN
 
-vee-validate is also available on these cdns:
+vee-validate is also available on these CDNs:
 
-- [jsdelivr cdn](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js) [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/vee-validate/badge?style=rounded)](https://www.jsdelivr.com/package/npm/vee-validate)
+- [jsdelivr](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js) [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/vee-validate/badge?style=rounded)](https://www.jsdelivr.com/package/npm/vee-validate)
 - [unpkg](https://unpkg.com/vee-validate)
 
 > When using a CDN via script tag, all the exported modules on VeeValidate are available on the VeeValidate Object. ex: VeeValidate.Validator
@@ -65,6 +65,8 @@ There are two ways to use vee-validate:
 
 #### Using Components (recommended)
 
+> This is available in 2.1 onwards.
+
 Import the `ValidationProvider` component and register it:
 
 ```js
@@ -84,7 +86,7 @@ export default {
 };
 ```
 
-All the JavaScript work is done, let's go to the template and add fields to validate them:
+All the JavaScript work is done. Next in the template add the inputs you want to validate them:
 
 ```vue
 <ValidationProvider name="email" rules="required|email">
@@ -95,7 +97,7 @@ All the JavaScript work is done, let's go to the template and add fields to vali
 </ValidationProvider>
 ```
 
-The validation provider accepts two props: `rules` which is in its simplest form, a string containing the validation rules seperated by a `pipe` character, and `name` which is the field name that will be used in error messages.
+The validation provider accepts two props: `rules` which is in its simplest form, a string containing the validation rules separated by a `|` character, and a `name` prop which is the field name that will be used in error messages.
 
 and That's it, your input will be validated automatically, notice that the `ValidationProvider` uses [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
 
@@ -136,7 +138,7 @@ This library uses ES6 Promises so be sure to provide a polyfill for it for the b
 
 ### Contributing
 
-You are welcome to contribute to this repo, but before you do, please make sure you read the [contribution guide](CONTRIBUTING.md).
+You are welcome to contribute to this project, but before you do, please make sure you read the [contribution guide](CONTRIBUTING.md).
 
 ### Tutorials and Examples
 
