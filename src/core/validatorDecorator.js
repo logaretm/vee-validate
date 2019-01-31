@@ -88,6 +88,10 @@ export default class ScopedValidator {
     return this._base.validate(descriptor, value, assign({}, { vmId: this.id }, opts || {}));
   }
 
+  verify (...args) {
+    return this._base.verify(...args);
+  }
+
   validateAll (values, opts = {}) {
     if (this._paused) return Promise.resolve(true);
 
