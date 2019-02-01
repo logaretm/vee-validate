@@ -772,6 +772,10 @@ export default class Validator {
     const promises = [];
     const errors = [];
     let isExitEarly = false;
+    if (isCallable(field.checkValueChanged)) {
+      field.flags.changed = field.checkValueChanged();
+    }
+
     // use of '.some()' is to break iteration in middle by returning true
     Object.keys(field.rules).filter(rule => {
       if (!initial || !RuleContainer.has(rule)) return true;

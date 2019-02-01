@@ -579,7 +579,6 @@ export default class Field {
 
     const token = { cancelled: false };
     const fn = this.targetOf ? () => {
-      this.flags.changed = this.checkValueChanged(); ;
       this.validator.validate(`#${this.targetOf}`);
     } : (...args) => {
       // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
@@ -587,7 +586,6 @@ export default class Field {
         args[0] = this.value;
       }
 
-      this.flags.changed = this.checkValueChanged();
       this.validator.validate(`#${this.id}`, args[0]);
     };
 
