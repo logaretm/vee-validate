@@ -263,7 +263,7 @@ test('calls functions immediatly if time is 0', done => {
 test('warns with branded message', () => {
   global.console = { warn: jest.fn() };
   utils.warn('Something is not right');
-  expect(console.warn).toBeCalledWith('[vee-validate] Something is not right');
+  expect(console.warn).toHaveBeenCalledWith('[vee-validate] Something is not right');
 });
 
 test('it generates a unique id', () => {
@@ -317,7 +317,7 @@ describe('normalizes rules', () => {
 test('creates branded errors', () => {
   expect(() => {
     throw utils.createError('My Error');
-  }).toThrowError('[vee-validate] My Error');
+  }).toThrow('[vee-validate] My Error');
 });
 
 test('checks if a value is a callable function', () => {
