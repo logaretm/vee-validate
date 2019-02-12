@@ -81,20 +81,29 @@ export function createCommonHandlers (ctx) {
     ctx.setFlags({ touched: true, untouched: false });
   };
 
-  const onValidate = debounce(
-    () => {
-      const pendingPromise = ctx.validate();
-      // avoids race conditions between successive validations.
-      ctx._pendingValidation = pendingPromise;
-      pendingPromise.then(result => {
-        if (pendingPromise === ctx._pendingValidation) {
-          ctx.applyResult(result);
-          ctx._pendingValidation = null;
-        }
-      });
-    },
-    ctx.debounce
-  );
+  let onValidate = ctx.$veeHandler;
+  // Handle debounce changes.
+  if (!onValidate || ctx.$veeDebounce !== ctx.debounce) {
+    onValidate = debounce(
+      () => {
+        const pendingPromise = ctx.validate();
+        // avoids race conditions between successive validations.
+        ctx._pendingValidation = pendingPromise;
+        pendingPromise.then(result => {
+          if (pendingPromise === ctx._pendingValidation) {
+            ctx.applyResult(result);
+            ctx._pendingValidation = null;
+          }
+        });
+      },
+      ctx.debounce
+    );
+
+    // Cache the handler so we don't create it each time.
+    ctx.$veeHandler = onValidate;
+    // cache the debounce value so we detect if it was changed.
+    ctx.$veeDebounce = ctx.debounce;
+  }
 
   return { onInput, onBlur, onValidate };
 }
