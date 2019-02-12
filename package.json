@@ -21,8 +21,7 @@
     "build:umd": "node scripts/umd.js",
     "build:esm": "node scripts/esm.js",
     "build": "npm run build:umd && npm run build:esm && npm run build:locale",
-    "cover": "jest --coverage",
-    "release": "./scripts/release.sh"
+    "cover": "jest --coverage"
   },
   "keywords": [
     "VueJS",
