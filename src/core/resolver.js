@@ -43,8 +43,8 @@ export default class Resolver {
       rules: Resolver.resolveRules(el, binding, vnode),
       immediate: !!binding.modifiers.initial || !!binding.modifiers.immediate,
       persist: !!binding.modifiers.persist,
-      validity: options.validity,
-      aria: options.aria,
+      validity: options.validity && !vnode.componentInstance,
+      aria: options.aria && !vnode.componentInstance,
       initialValue: Resolver.resolveInitialValue(vnode)
     };
   }
