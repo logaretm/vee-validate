@@ -14,7 +14,7 @@ Typically you would want to display one error at a time for your fields, you can
 ```
 
 ::: tip
-  VeeValidate __only generates one message per field by default__ as it uses a fast-exit strategy when running the validation pipeline. When the first failing rule is detected it will have its message generated and stored in the error bag instance, other rules results are then ignored. To disable this behavior you may want to configure the `fastExit` option in [VeeValidate's config](/configuration.md) or use the [`continutes` modifier](/api/directive.md#continues).
+  VeeValidate __only generates one message per field by default__ as it uses a fast-exit strategy when running the validation pipeline. When the first failing rule is detected it will have its message generated and stored in the error bag instance, other rules results are then ignored. To disable this behavior you may want to configure the `fastExit` option in [VeeValidate's config](/configuration.md) or use the [`continues` modifier](/api/directive.md#continues).
 :::
 
 ## Displaying Multiple error messages
