@@ -122,10 +122,10 @@ The Validation Components API does not implement scopes and won't be, you can us
 <script>
 // Somewhere in a method ...
 // validate the first observer.
-this.$refs.$obs1.validate();
+this.$refs.obs1.validate();
 
 // validate the second observer.
-this.$refs.$obs2.validate();
+this.$refs.obs2.validate();
 </script>
 ```
 
