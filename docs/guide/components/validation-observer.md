@@ -34,7 +34,7 @@ The scoped slot is passed an object containing a flags object representing the m
 | invalid   | `boolean`                   | True if at least one field is invalid.                                                      |
 | pending   | `boolean`                   | True if at least one field's validation is in progress.                                     |
 | touched   | `boolean`                   | True if at least one field has been touched (blurred).                                      |
-| untouched | `boolean`                   | True if all fields hasn't been tocuhed (blurred).                                           |
+| untouched | `boolean`                   | True if all fields haven't been touched (blurred).                                           |
 | errors    | `{ [x: string]: string[] }` | An object containing reference to each field errors, each field is keyed by its `vid` prop. |
 | validate  | `() => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after successful validation. |
 | reset     | `() => void`                | A method that resets validation state for all providers. |
