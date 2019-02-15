@@ -38,14 +38,12 @@ const sidebars = {
   examples: [
     '',
     'debounce',
-    'using-v-model',
     'initial-value',
     'vuex',
     'radio',
     'checkboxes',
     'async-backend-validation',
     'scopes',
-    'selecting-errors',
     'custom-component',
     'locale',
     'validation-providers'
