@@ -141,7 +141,7 @@ The validation observer does not accept any props.
 
 ## Methods
 
-Those are the only methods meant for public usage, other methods that may exist on the ValidationProvider are strictly internal.
+Those are the only methods meant for public usage, other methods that may exist on the ValidationObserver are strictly internal.
 
 |Method       | Args    | Return Value                  | Description                                                     |
 |-------------|:-------:|:-----------------------------:|-----------------------------------------------------------------|
