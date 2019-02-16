@@ -32,7 +32,7 @@ export default {
 It also works for custom components and solves the issue of authoring __self validated__ components, which is hard to achieve normally because of the directive limitations.
 
 ::: tip
-  The fields being validated __must have__ a `v-model` so the component can correctly identify the element/component being validated __unless__ the field accepts a __file__
+  The fields being validated __must have__ a `v-model` so the component can correctly identify the element/component being validated __unless__ the field accepts a __file__.
 :::
 
 ## Scoped Slot Data
