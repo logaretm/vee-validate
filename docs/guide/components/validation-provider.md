@@ -141,7 +141,7 @@ While `v-model` is generally required when using the ValidationProvider componen
 
 ### Input Groups (Checkbox/Radio)
 
-Like radio inputs and checkboxes (sometimes), some inputs behave as a single input entity. You can wrap the whole group of inputs __given that they have the same `v-model`__ in a single ValidationProvider component. You can group as many inputs as you want inside the ValidationProvider component.
+Like radio inputs and (sometimes) checkboxes, some inputs behave as a single input entity. You can wrap a whole group of inputs __given that they have the same `v-model`__ in a single ValidationProvider component. You can group as many inputs as you want inside the ValidationProvider component.
 
 ```vue
 <ValidationProvider rules="required">
