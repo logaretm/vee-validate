@@ -29,15 +29,15 @@ export default {
 </script>
 ```
 
-It also works for custom components and solves the issue of authoring __self validated__ components which are hard to achieve normally because of the directive limitations.
+It also works for custom components and solves the issue of authoring __self validated__ components, which is hard to achieve normally because of the directive limitations.
 
 ::: tip
-  The fields being validated __must have__ a `v-model` so the component can correctly identify the element/component being validated.
+  The fields being validated __must have__ a `v-model` so the component can correctly identify the element/component being validated __unless__ the field accepts a __file__
 :::
 
 ## Scoped Slot Data
 
-The object passed down to the slot scope is called the __validation context__ it has the following properties:
+The object passed down to the slot scope is called the __validation context__. It has the following properties:
 
 | Name    | Type                       |  Description |
 |:--------|:--------------------------:|:--------------------------------------------------------------------|
@@ -49,7 +49,7 @@ The object passed down to the slot scope is called the __validation context__ it
 | validate| `(e: any) => Promise`      | A function that is used as an event handler to trigger validation. Useful for fields that do not use v-model. |
 | reset   | `() => void`               | A function that resets the validation state on the provider.        |
 
-Since slot scopes can take advantage of ES6 destructing; you can opt-in for any of those properties and pass down to your slot template as you see fit. The example above only needed the `errors` array.
+Since slot scopes can take advantage of ES6 destructing, you can opt-in for any of those properties and pass down to your slot template as you see fit. The example above only needed the `errors` array.
 
 ## Examples
 
@@ -66,7 +66,7 @@ This passes error messages down to Vuetify's text field component.
 ```
 
 ::: tip
-  ValidationProvider is a __renderless__ component, meaning it does not render anything of its own. It only renders its slot, as such you need to have __only one root element__ in your slot, if you use the `template` tag it might cause render errors.
+  ValidationProvider is a __renderless__ component, meaning it does not render anything of its own. It only renders its slot, as such you need to have __only one root element__ in your slot. Using the `template` tag might cause render errors.
 :::
 
 ### Manual Validation
@@ -128,7 +128,7 @@ Note that the `validate` method on the validation handler, you can use the `$eve
 
 ### File Validation
 
-`v-model` is pretty much required to use the ValidationProvider, but some inputs like `file` do not benefit from having `v-model` and is usually not used at all. We can use the manual validation to avoid having to use `v-model`.
+While `v-model` is generally required when using the ValidationProvider component, some inputs like `file` do not benefit from having `v-model`. Instead, you can use the manual `validate` method to avoid having to use `v-model` in this instance.
 
 ```vue
 <ValidationProvider rules="required">
@@ -141,13 +141,13 @@ Note that the `validate` method on the validation handler, you can use the `$eve
 
 ### Input Groups (Checkbox/Radio)
 
-Like radio inputs and checkboxes (sometimes), some inputs behave as a single input entity. You can wrap the whole group of inputs __given that they have the same `v-model`__ in a single Validation Provider component. You can group as many inputs as you want inside the Provider component.
+Like radio inputs and checkboxes (sometimes), some inputs behave as a single input entity. You can wrap the whole group of inputs __given that they have the same `v-model`__ in a single ValidationProvider component. You can group as many inputs as you want inside the ValidationProvider component.
 
 ```vue
 <ValidationProvider rules="required">
   <div slot-scope="{ errors }">
     <input type="radio" v-model="drink" value="">
-    <input type="radio" v-model="drink" value="coffe">
+    <input type="radio" v-model="drink" value="coffee">
     <input type="radio" v-model="drink" value="coke">
   </div>
 </ValidationProvider>
@@ -155,7 +155,7 @@ Like radio inputs and checkboxes (sometimes), some inputs behave as a single inp
 
 ### Confirmed/Target based Validation
 
-When using the directive, the `confirmed` rule targets the other field that has a match ref. Using the ValidationProvider is slightly diffrent as it looks for provider components that has a matching `vid` prop which can be either a number or a string.
+When using the directive, the `confirmed` rule targets the other field that has a corresponding `ref`. Using the ValidationProvider is slightly different; it looks for a ValidationProvider component that has a matching `vid` prop. The `vid` can be either a number or a string.
 
 ```vue
 <ValidationProvider rules="required|confirmed:confirm">
@@ -171,13 +171,13 @@ When using the directive, the `confirmed` rule targets the other field that has 
 
 ## Refactoring Validation Providers
 
-The ValidationProvider while have its advantages, it is more verbose than using the directive, and can be very annoying when creating large forms, there are a couple of ways to address this issue.
+While the ValidationProvider has its advantages, it is more verbose than using the `v-model` directive, and can be very annoying when creating large forms. There are a couple of ways to address this issue.
 
 ### Creating Higher-Order Components
 
-A common pattern in React is to use higher-order components to produce new components with slightly different behavior, It is similair to creating a wrapper or a mixin for our component except it uses props/events to communicate state.
+A common pattern in React is to use higher-order components to produce new components with slightly different behavior. This is similar to creating a wrapper or a mixin for our component, except it uses props/events to communicate state.
 
-The `withValidation` method takes in a component and creates a new one with the validation behavior enabled. Lets create a `VTextFieldWithValidation` using this method:
+The `withValidation` method takes a component as an argument and creates a new one with the validation behavior enabled. Let's create a `VTextFieldWithValidation` using this method:
 
 ```js
 import { withValidation } from 'vee-validate';
@@ -207,12 +207,12 @@ With this approach the last example becomes:
 ```
 
 ::: danger
-This approach has some cons, for example if the wrapped component accepts props that has the same name as the `ValidationProvider` component - while it will receive them - it may be in a different type which might cause serious issues. The problem with HOCs is that you need to be aware of the underlying component implementation which can be problematic for 3rd party components.
+This approach has some cons, for example if the wrapped component accepts props that have the same name as the `ValidationProvider` component. while it will receive these props, they may be of different types, which could lead to serious issues. The problem with HOCs is that you need to be aware of the underlying component implementation. THis can be problematic when working with 3rd party components.
 :::
 
 ### Wrapping Components Manually
 
-Instead We can wrap the field component with the ValidationProvider in a new component. This is much simpler and flexible and doesn't have any of the HOC problems.
+Instead we can wrap the field component with the ValidationProvider in a new component. This is easier and more flexible, and avoids some of the potential problems with Higher-Order components.
 
 Consider this new `VTextFieldWithValidation` component.
 
@@ -247,9 +247,9 @@ export default {
 
 ```
 
-Ideally you would pass the props you need to either `ValidationProvider` or the `VTextField` being validated, with this approach solves the verbosity problem while preserving the simple scoped slots API. It also allows you to distrubute props without the issues of having a conflict unlike HOC.
+Ideally you would pass the props you need to either the `ValidationProvider` or the `VTextField` being validated, with this approach solves the verbosity problem while preserving the simple scoped slots API. It also allows you to distribute props without the issues of having a conflict, unlike HOC.
 
-Using either approaches is up to you.
+Using either of these approaches is at your preference.
 
 ## Reference
 
@@ -263,7 +263,7 @@ All the following props are optional.
 |-----------|-----------|-----------------------|------------------------------------------------------------------------------|
 | rules     | `string`  | `undefined`           | The validation rules.                                                        |
 | vid       | `string`  | auto increment number | Identifier used for target/cross-field based rules.                          |
-| immediate | `boolean` | `false`               | If the field should be validated immediatly after render (initially).        |
+| immediate | `boolean` | `false`               | If the field should be validated immediately after render (initially).        |
 | events    | `string[]`| `['input']`           | Events that will trigger validation.                                         |
 | name      | `string`  | `undefined`           | A string that will be used to replace `{field}` in error messages and for [custom error messages](/guide/messages.md#field-specific-custom-messages). |
 | bails     | `boolean` | `true`                | If true the validation will stop on the first failing rule.                  |
