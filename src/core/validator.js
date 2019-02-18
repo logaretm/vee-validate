@@ -239,9 +239,9 @@ export default class Validator {
 
     // We destroy/remove the field & error instances if it's not a `persist` one
     if (!field.persist) {
-      field.destroy();
       this.errors.remove(field.name, field.scope, field.vmId);
       this.fields.remove(field);
+      field.destroy();
     }
   }
 
@@ -260,7 +260,7 @@ export default class Validator {
       this.fields.filter(matcher).forEach(field => {
         field.waitFor(null);
         field.reset(); // reset field flags.
-        this.errors.remove(field.name, field.scope, matcher && matcher.vmId);
+        this.errors.remove(field.name, field.scope, matcher && matcher.vmId, field.id);
       });
     });
   }
@@ -701,7 +701,7 @@ export default class Validator {
     this.errors.removeById(matchers.map(m => m.id));
     // remove by name and scope to remove any custom errors added.
     results.forEach(result => {
-      this.errors.remove(result.field, result.scope, vmId);
+      this.errors.remove(result.field, result.scope, vmId, (result != null && result.field != null ? result.field.id : null));
     });
     const allErrors = results.reduce((prev, curr) => {
       prev.push(...curr.errors);

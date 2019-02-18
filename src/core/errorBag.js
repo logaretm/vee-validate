@@ -271,7 +271,7 @@ export default class ErrorBag {
   /**
    * Removes all error messages associated with a specific field.
    */
-  remove (field: string, scope: ?string, vmId: any) {
+  remove (field: string, scope: ?string, vmId: any, fieldId: ?string) {
     if (isNullOrUndefined(field)) {
       return;
     }
@@ -279,10 +279,11 @@ export default class ErrorBag {
     const selector = isNullOrUndefined(scope) ? String(field) : `${scope}.${field}`;
     const { isPrimary, isAlt } = this._makeCandidateFilters(selector);
     const matches = item => isPrimary(item) || isAlt(item);
+    const matchesId = item => (isNullOrUndefined(item.id) || isNullOrUndefined(fieldId) || item.id === fieldId);
     const shouldRemove = (item) => {
-      if (isNullOrUndefined(vmId)) return matches(item);
+      if (isNullOrUndefined(vmId)) return matches(item) && matchesId(item);
 
-      return matches(item) && item.vmId === vmId;
+      return matches(item) && item.vmId === vmId && matchesId(item);
     };
 
     for (let i = 0; i < this.items.length; ++i) {
