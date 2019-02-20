@@ -7,7 +7,7 @@ const validate = (value) {
     value = '';
   }
 
-  if (Array.isArray(value)) {
+  if (Array.isArray(value)) => {
     return value.every(val => (isIP(val, '') || isFQDN(val)));
   }
 
