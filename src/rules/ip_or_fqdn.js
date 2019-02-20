@@ -11,7 +11,7 @@ const validate = (value) => {
     return value.every(val => (isIP(val, '') || isFQDN(val)));
   }
 
-  return isIP(value, '') || isFQDN(value));
+  return isIP(value, '') || isFQDN(value);
 };
 
 export {
