@@ -372,6 +372,8 @@ test('compares two values', () => {
   expect(utils.isEqual([1, 2, 3], [1, 2, 3])).toBe(true);
   expect(utils.isEqual([1, 2, 3], [1, 2])).toBe(false);
   expect(utils.isEqual([1, 2, 3], [1, 2, '3'])).toBe(false);
+
+  expect(utils.isEqual(NaN, NaN)).toBe(true);
 });
 
 test('formats file sizes', () => {

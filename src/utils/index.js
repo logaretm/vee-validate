@@ -17,6 +17,15 @@ export const isDateInput = (el: HTMLInputElement) => {
  */
 export const getDataAttribute = (el: HTMLElement, name: string) => el.getAttribute(`data-vv-${name}`);
 
+export const isNaN = (value: any) => {
+  if ('isNaN' in Number) {
+    return Number.isNaN(value);
+  }
+
+  // eslint-disable-next-line
+  return value === value;
+};
+
 /**
  * Checks if the values are either null or undefined.
  */
@@ -74,6 +83,10 @@ export const isEqual = (lhs: any, rhs: any): boolean => {
     }) && Object.keys(rhs).every(key => {
       return isEqual(lhs[key], rhs[key]);
     });
+  }
+
+  if (isNaN(lhs) && isNaN(rhs)) {
+    return true;
   }
 
   return lhs === rhs;
