@@ -33,8 +33,7 @@ export const ValidationObserver = {
       this.refs = Object.assign({}, this.refs, { [provider.vid]: provider });
     },
     $unsubscribe ({ vid }) {
-      delete this.refs[vid];
-      this.refs = Object.assign({}, this.refs);
+      this.$delete(this.refs, vid);
     },
     validate () {
       return Promise.all(

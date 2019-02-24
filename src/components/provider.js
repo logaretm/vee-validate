@@ -151,7 +151,7 @@ function updateRenderingContextRefs (ctx) {
 
   const { id, vid } = ctx;
   // Nothing has changed.
-  if (id === vid && ctx.$_veeObserver.refs[id]) {
+  if (ctx.isDeactivated || (id === vid && ctx.$_veeObserver.refs[id])) {
     return;
   }
 
@@ -250,67 +250,9 @@ export const ValidationProvider = {
     initialValue: undefined,
     flags: createFlags(),
     forceRequired: false,
+    isDeactivated: false,
     id: null
   }),
-  methods: {
-    setFlags (flags) {
-      Object.keys(flags).forEach(flag => {
-        this.flags[flag] = flags[flag];
-      });
-    },
-    syncValue (e) {
-      const value = isEvent(e) ? e.target.value : e;
-      this.value = value;
-      this.flags.changed = this.initialValue !== value;
-    },
-    reset () {
-      this.messages = [];
-      this._pendingValidation = null;
-      this.initialValue = this.value;
-      const flags = createFlags();
-      this.setFlags(flags);
-    },
-    validate (...args) {
-      if (args[0]) {
-        this.syncValue(args[0]);
-      }
-
-      return this.validateSilent().then(result => {
-        this.applyResult(result);
-
-        return result;
-      });
-    },
-    validateSilent () {
-      this.setFlags({ pending: true });
-
-      return $validator.verify(this.value, this.rules, {
-        name: this.name,
-        values: createValuesLookup(this),
-        bails: this.bails
-      }).then(result => {
-        this.setFlags({ pending: false });
-
-        return result;
-      });
-    },
-    applyResult ({ errors }) {
-      this.messages = errors;
-      this.setFlags({
-        valid: !errors.length,
-        changed: this.value !== this.initialValue,
-        invalid: !!errors.length,
-        validated: true
-      });
-    },
-    registerField () {
-      if (!$validator) {
-        $validator = getValidator() || new Validator(null, { fastExit: getConfig().fastExit });
-      }
-
-      updateRenderingContextRefs(this);
-    }
-  },
   computed: {
     isValid () {
       return this.flags.valid;
@@ -391,5 +333,72 @@ export const ValidationProvider = {
   beforeDestroy () {
     // cleanup reference.
     this.$_veeObserver.$unsubscribe(this);
+  },
+  activated () {
+    this.$_veeObserver.$subscribe(this);
+    this.isDeactivated = false;
+  },
+  deactivated () {
+    this.$_veeObserver.$unsubscribe(this);
+    this.isDeactivated = true;
+  },
+  methods: {
+    setFlags (flags) {
+      Object.keys(flags).forEach(flag => {
+        this.flags[flag] = flags[flag];
+      });
+    },
+    syncValue (e) {
+      const value = isEvent(e) ? e.target.value : e;
+      this.value = value;
+      this.flags.changed = this.initialValue !== value;
+    },
+    reset () {
+      this.messages = [];
+      this._pendingValidation = null;
+      this.initialValue = this.value;
+      const flags = createFlags();
+      this.setFlags(flags);
+    },
+    validate (...args) {
+      if (args[0]) {
+        this.syncValue(args[0]);
+      }
+
+      return this.validateSilent().then(result => {
+        this.applyResult(result);
+
+        return result;
+      });
+    },
+    validateSilent () {
+      this.setFlags({ pending: true });
+
+      return $validator.verify(this.value, this.rules, {
+        name: this.name,
+        values: createValuesLookup(this),
+        bails: this.bails
+      }).then(result => {
+        this.setFlags({ pending: false });
+
+        return result;
+      });
+    },
+    applyResult ({ errors }) {
+      this.messages = errors;
+      this.setFlags({
+        valid: !errors.length,
+        changed: this.value !== this.initialValue,
+        invalid: !!errors.length,
+        validated: true
+      });
+    },
+    registerField () {
+      if (!$validator) {
+        $validator = getValidator() || new Validator(null, { fastExit: getConfig().fastExit });
+      }
+
+      updateRenderingContextRefs(this);
+    }
   }
 };
