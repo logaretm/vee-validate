@@ -127,9 +127,9 @@ export interface VerifyResult {
 }
 
 export interface VerifyOptions {
-    bails: boolean;
-    name: string;
-    values: { [x: string]: any };
+    bails?: boolean;
+    name?: string;
+    values?: { [x: string]: any };
 }
 
 export interface ValidationSlotScopeData {
