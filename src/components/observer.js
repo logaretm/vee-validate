@@ -40,7 +40,7 @@ export const ValidationObserver = {
     }
   },
   data: () => ({
-    vid: OBSERVER_COUNTER++,
+    vid: `obs_${OBSERVER_COUNTER++}`,
     refs: {},
     observers: [],
   }),
@@ -66,17 +66,23 @@ export const ValidationObserver = {
         reset: () => this.reset()
       };
 
-      return values(this.refs).reduce((acc, provider) => {
+      return [
+        ...values(this.refs),
+        ...this.observers,
+      ].reduce((acc, provider) => {
         Object.keys(flagMergingStrategy).forEach(flag => {
+          const flags = provider.flags || provider.ctx;
           if (!(flag in acc)) {
-            acc[flag] = provider.flags[flag];
+            acc[flag] = flags[flag];
             return;
           }
 
-          acc[flag] = mergeFlags(acc[flag], provider.flags[flag], flag);
+          acc[flag] = mergeFlags(acc[flag], flags[flag], flag);
         });
 
-        acc.errors[provider.vid] = provider.messages;
+        acc.errors[provider.vid] = provider.messages || values(provider.ctx.errors).reduce((errs, obsErrors) => {
+          return errs.concat(obsErrors);
+        }, []);
 
         return acc;
       }, ctx);
