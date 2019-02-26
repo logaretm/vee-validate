@@ -29,10 +29,10 @@ export const ValidationObserver = {
     refs: {}
   }),
   methods: {
-    $subscribe (provider) {
+    subscribe (provider) {
       this.refs = Object.assign({}, this.refs, { [provider.vid]: provider });
     },
-    $unsubscribe ({ vid }) {
+    unsubscribe ({ vid }) {
       this.$delete(this.refs, vid);
     },
     validate () {
