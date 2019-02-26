@@ -269,7 +269,7 @@ All the following props are optional.
 | bails     | `boolean` | `true`                | If true, the validation will stop on the first failing rule.                  |
 | debounce  | `number`  | `0`                   | Debounces the validation for the specified amount of milliseconds.           |
 
-## Methods
+### Methods
 
 Those are the only methods meant for public usage, other methods that may exist on the ValidationProvider are strictly internal.
 

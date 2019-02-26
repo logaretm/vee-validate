@@ -18,7 +18,7 @@ Here is a small example, again with Vuetify components wrapped by the [Provider'
 </ValidationObserver>
 ```
 
-::: tip
+:::tip
   ValidationObserver is a __renderless__ component, meaning it does not render anything of its own. It only renders its slot, as such you need to have __only one root element__ in your slot, if you use the `template` tag it might cause render errors.
 :::
 
@@ -131,6 +131,29 @@ this.$refs.obs2.validate();
 
 Simple and clean.
 
+### Nested Observers
+
+Building upon the previous example, observers can be nested to create nested forms for advanced use-cases. The outmost observer is able to trigger validation/resets on child obeservers and providers. Its state is also synced with the child observers and providers alike.
+
+```vue
+<ValidationObserver ref="op">
+  <ValidationObserver ref="oc" slot-scope="obsctx">
+    <div>
+      <ValidationProvider rules="required">
+        <div slot-scope="ctx">
+          <input type="text" v-model="value">
+          <span>{{ ctx.errors[0] }}</span>
+        </div>
+      </ValidationProvider>
+      <!-- This is synced with the state of all children providers/observers -->
+      <pre>
+        {{ obsctx }}
+      </pre>
+    </div>
+  </ValidationObserver>
+</ValidationObserver>
+```
+
 ## Reference
 
 Below is the reference of the ValidationObserver public API.
@@ -139,14 +162,14 @@ Below is the reference of the ValidationObserver public API.
 
 The validation observer does not accept any props.
 
-## Methods
+### Methods
 
 Those are the only methods meant for public usage, other methods that may exist on the ValidationObserver are strictly internal.
 
 |Method       | Args    | Return Value                  | Description                                                     |
 |-------------|:-------:|:-----------------------------:|-----------------------------------------------------------------|
-| validate    | `void`  | `Promise<boolean>`            | Validates all the child providers and also mutates their state. |
-| reset       | `void`  | `void`                        | Resets validation state for all child providers.                |
+| validate    | `void`  | `Promise<boolean>`            | Validates all the child providers/observers and also mutates their state. |
+| reset       | `void`  | `void`                        | Resets validation state for all child providers/observers.                |
 
 ### Events
 
