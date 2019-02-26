@@ -413,18 +413,25 @@ export const uniqId = (): string => {
   return newId;
 };
 
+export const findIndex = (arrayLike: { length: number } | any[], predicate: (any) => boolean): number => {
+  const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
+  for (let i = 0; i < array.length; i++) {
+    if (predicate(array[i])) {
+      return i;
+    }
+  }
+
+  return -1;
+};
+
 /**
  * finds the first element that satisfies the predicate callback, polyfills array.find
  */
 export const find = (arrayLike: { length: number } | any[], predicate: (any) => boolean): any => {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
-  for (let i = 0; i < array.length; i++) {
-    if (predicate(array[i])) {
-      return array[i];
-    }
-  }
+  const idx = findIndex(array, predicate);
 
-  return undefined;
+  return idx === -1 ? undefined : array[idx];
 };
 
 export const isBuiltInComponent = (vnode: Object): boolean => {
