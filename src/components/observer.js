@@ -87,6 +87,16 @@ export const ValidationObserver = {
       this.$_veeObserver.subscribe(this, 'observer');
     }
   },
+  activated () {
+    if (this.$_veeObserver) {
+      this.$_veeObserver.subscribe(this, 'observer');
+    }
+  },
+  deactivated () {
+    if (this.$_veeObserver) {
+      this.$_veeObserver.unsubscribe(this, 'observer');
+    }
+  },
   beforeDestroy () {
     if (this.$_veeObserver) {
       this.$_veeObserver.unsubscribe(this, 'observer');
