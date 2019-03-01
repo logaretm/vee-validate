@@ -157,20 +157,20 @@ function updateRenderingContextRefs (ctx) {
 
   // vid was changed.
   if (id !== vid && ctx.$_veeObserver.refs[id] === ctx) {
-    ctx.$_veeObserver.$unsubscribe(ctx);
+    ctx.$_veeObserver.unsubscribe(ctx);
   }
 
-  ctx.$_veeObserver.$subscribe(ctx);
+  ctx.$_veeObserver.subscribe(ctx);
   ctx.id = vid;
 }
 
 function createObserver () {
   return {
     refs: {},
-    $subscribe (ctx) {
+    subscribe (ctx) {
       this.refs[ctx.vid] = ctx;
     },
-    $unsubscribe (ctx) {
+    unsubscribe (ctx) {
       delete this.refs[ctx.vid];
     }
   };
@@ -332,14 +332,14 @@ export const ValidationProvider = {
   },
   beforeDestroy () {
     // cleanup reference.
-    this.$_veeObserver.$unsubscribe(this);
+    this.$_veeObserver.unsubscribe(this);
   },
   activated () {
-    this.$_veeObserver.$subscribe(this);
+    this.$_veeObserver.subscribe(this);
     this.isDeactivated = false;
   },
   deactivated () {
-    this.$_veeObserver.$unsubscribe(this);
+    this.$_veeObserver.unsubscribe(this);
     this.isDeactivated = true;
   },
   methods: {

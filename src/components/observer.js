@@ -1,5 +1,5 @@
 import { createRenderless } from '../utils/vnode';
-import { isCallable, values } from '../utils';
+import { isCallable, values, findIndex } from '../utils';
 
 const flagMergingStrategy = {
   pristine: 'every',
@@ -18,6 +18,8 @@ function mergeFlags (lhs, rhs, strategy) {
   return [lhs, rhs][stratName](f => f);
 }
 
+let OBSERVER_COUNTER = 0;
+
 export const ValidationObserver = {
   name: 'ValidationObserver',
   provide () {
@@ -25,25 +27,23 @@ export const ValidationObserver = {
       $_veeObserver: this
     };
   },
-  data: () => ({
-    refs: {}
-  }),
-  methods: {
-    $subscribe (provider) {
-      this.refs = Object.assign({}, this.refs, { [provider.vid]: provider });
-    },
-    $unsubscribe ({ vid }) {
-      this.$delete(this.refs, vid);
-    },
-    validate () {
-      return Promise.all(
-        values(this.refs).map(ref => ref.validate())
-      ).then(results => results.every(r => r.valid));
-    },
-    reset () {
-      return values(this.refs).forEach(ref => ref.reset());
+  inject: {
+    $_veeObserver: {
+      from: '$_veeObserver',
+      default () {
+        if (!this.$vnode.context.$_veeObserver) {
+          return null;
+        }
+
+        return this.$vnode.context.$_veeObserver;
+      }
     }
   },
+  data: () => ({
+    vid: `obs_${OBSERVER_COUNTER++}`,
+    refs: {},
+    observers: [],
+  }),
   computed: {
     ctx () {
       const ctx = {
@@ -66,20 +66,46 @@ export const ValidationObserver = {
         reset: () => this.reset()
       };
 
-      return values(this.refs).reduce((acc, provider) => {
+      return [
+        ...values(this.refs),
+        ...this.observers,
+      ].reduce((acc, provider) => {
         Object.keys(flagMergingStrategy).forEach(flag => {
+          const flags = provider.flags || provider.ctx;
           if (!(flag in acc)) {
-            acc[flag] = provider.flags[flag];
+            acc[flag] = flags[flag];
             return;
           }
 
-          acc[flag] = mergeFlags(acc[flag], provider.flags[flag], flag);
+          acc[flag] = mergeFlags(acc[flag], flags[flag], flag);
         });
 
-        acc.errors[provider.vid] = provider.messages;
+        acc.errors[provider.vid] = provider.messages || values(provider.ctx.errors).reduce((errs, obsErrors) => {
+          return errs.concat(obsErrors);
+        }, []);
 
         return acc;
       }, ctx);
+    }
+  },
+  created () {
+    if (this.$_veeObserver) {
+      this.$_veeObserver.subscribe(this, 'observer');
+    }
+  },
+  activated () {
+    if (this.$_veeObserver) {
+      this.$_veeObserver.subscribe(this, 'observer');
+    }
+  },
+  deactivated () {
+    if (this.$_veeObserver) {
+      this.$_veeObserver.unsubscribe(this, 'observer');
+    }
+  },
+  beforeDestroy () {
+    if (this.$_veeObserver) {
+      this.$_veeObserver.unsubscribe(this, 'observer');
     }
   },
   render (h) {
@@ -89,5 +115,35 @@ export const ValidationObserver = {
     }
 
     return createRenderless(h, slots(this.ctx));
+  },
+  methods: {
+    subscribe (subscriber, kind = 'provider') {
+      if (kind === 'observer') {
+        this.observers.push(subscriber);
+        return;
+      }
+
+      this.refs = Object.assign({}, this.refs, { [subscriber.vid]: subscriber });
+    },
+    unsubscribe ({ vid }, kind = 'provider') {
+      if (kind === 'provider') {
+        this.$delete(this.refs, vid);
+        return;
+      }
+
+      const idx = findIndex(this.observers, o => o.vid === vid);
+      if (idx !== -1) {
+        this.observers.splice(idx, 1);
+      }
+    },
+    validate () {
+      return Promise.all([
+        ...values(this.refs).map(ref => ref.validate().then(r => r.valid)),
+        ...this.observers.map(obs => obs.validate())
+      ]).then(results => results.every(r => r));
+    },
+    reset () {
+      return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
+    }
   }
 };
