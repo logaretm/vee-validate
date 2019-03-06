@@ -59,7 +59,7 @@ Use `errors.collect()` without providing a field name to collect all errors into
   <li v-for="group in errors.collect()">
     <ul>
       <li v-for="error in group">{{ error }}</li>
-    <ul>
+    </ul>
   </li>
 </ul>
 ```
