@@ -54,6 +54,16 @@ function shouldValidate (ctx, model) {
   return false;
 }
 
+function computeModeSetting (ctx) {
+  const compute = isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode];
+
+  return compute({
+    errors: ctx.messages,
+    value: ctx.value,
+    flags: ctx.flags
+  });
+}
+
 export function onRenderUpdate (model) {
   if (!this.initialized) {
     this.initialValue = model.value;
@@ -84,6 +94,8 @@ export function createCommonHandlers (ctx) {
   };
 
   let onValidate = ctx.$veeHandler;
+  const mode = computeModeSetting(ctx);
+
   // Handle debounce changes.
   if (!onValidate || ctx.$veeDebounce !== ctx.debounce) {
     onValidate = debounce(
@@ -100,7 +112,7 @@ export function createCommonHandlers (ctx) {
           });
         });
       },
-      ctx.debounce
+      mode.debounce || ctx.debounce
     );
 
     // Cache the handler so we don't create it each time.
@@ -295,12 +307,7 @@ export const ValidationProvider = {
       });
     },
     normalizedEvents () {
-      const make = isCallable(this.mode) ? this.mode : modes[this.mode];
-      const { events } = make({
-        errors: this.messages,
-        value: this.value,
-        flags: this.flags
-      });
+      const { events } = computeModeSetting(this);
 
       return normalizeEvents(events).map(e => {
         if (e === 'input') {
