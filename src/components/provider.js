@@ -209,7 +209,9 @@ export const ValidationProvider = {
     },
     mode: {
       type: [String, Function],
-      default: getConfig().mode
+      default: () => {
+        return getConfig().mode;
+      }
     },
     events: {
       type: Array,
