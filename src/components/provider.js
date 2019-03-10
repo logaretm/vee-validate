@@ -298,9 +298,8 @@ export const ValidationProvider = {
       const make = isCallable(this.mode) ? this.mode : modes[this.mode];
       const { events } = make({
         errors: this.messages,
-        valid: this.isValid,
-        invalid: !this.isValid,
-        value: this.value
+        value: this.value,
+        flags: this.flags
       });
 
       return normalizeEvents(events).map(e => {
