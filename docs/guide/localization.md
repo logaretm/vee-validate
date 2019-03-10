@@ -156,6 +156,7 @@ import validationMessages from 'vee-validate/dist/locale/en';
 Vue.use(VueI18n);
 
 const i18n = new VueI18n();
+i18n.locale = "en"; // set a default locale (without it, it won't work)
 
 Vue.use(VeeValidate, {
    i18nRootKey: 'validations', // customize the root path for validation messages.
