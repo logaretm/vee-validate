@@ -363,7 +363,7 @@ describe('Validation Provider Component', () => {
       }
     }, { localVue: Vue });
 
-    expect(wrapper.html()).toBe(`<div><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div>`);
+    expect(wrapper.html()).toBe(`<div value=""><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div>`);
   });
 
   test('resets validation state', async () => {
@@ -515,7 +515,7 @@ describe('Validation Provider Component', () => {
         <ValidationProvider rules="required">
           <div slot-scope="{ validate, errors }">
             <input type="text" @input="validate">
-            <p id="error">{{ errors[0] }}</p>  
+            <p id="error">{{ errors[0] }}</p>
           </div>
         </ValidationProvider>
       `
