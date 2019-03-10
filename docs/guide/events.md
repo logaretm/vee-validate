@@ -59,8 +59,8 @@ export default {
   // ...
   methods: {
     onSubmit () {
-      this.$validator.validate().then(result => {
-        if (!result) {
+      this.$validator.validate().then(valid => {
+        if (!valid) {
           // do stuff if not valid.
         }
       });
