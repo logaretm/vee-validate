@@ -1,5 +1,6 @@
 import { getConfig } from '../config';
 import { getValidator } from '../state';
+import { modes } from '../modes';
 import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
@@ -206,8 +207,19 @@ export const ValidationProvider = {
       type: String,
       default: null
     },
+    mode: {
+      type: [String, Function],
+      default: getConfig().mode
+    },
     events: {
       type: Array,
+      validate: () => {
+        if (process.env.NODE_ENV !== 'production') {
+          warn('events prop and config will be deprecated in future version please use the interaction modes instead');
+        }
+
+        return true;
+      },
       default: () => {
         const events = getConfig().events;
         if (typeof events === 'string') {
@@ -281,7 +293,15 @@ export const ValidationProvider = {
       });
     },
     normalizedEvents () {
-      return normalizeEvents(this.events).map(e => {
+      const make = isCallable(this.mode) ? this.mode : modes[this.mode];
+      const { events } = make({
+        errors: this.messages,
+        valid: this.isValid,
+        invalid: !this.isValid,
+        value: this.value
+      });
+
+      return normalizeEvents(events).map(e => {
         if (e === 'input') {
           return this._inputEventName;
         }
