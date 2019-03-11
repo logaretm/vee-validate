@@ -579,7 +579,10 @@ export default class Field {
 
     const token = { cancelled: false };
     const fn = this.targetOf ? () => {
-      this.validator.validate(`#${this.targetOf}`);
+      const target = this.validator._resolveField(`#${this.targetOf}`);
+      if (target && target.flags.validated) {
+        this.validator.validate(`#${this.targetOf}`);
+      }
     } : (...args) => {
       // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
       if (args.length === 0 || isEvent(args[0])) {
