@@ -137,6 +137,7 @@ export interface ValidationSlotScopeData {
     errors: string[];
     flags: FieldFlags;
     valid: boolean;
+    failedRules: { [x: string]: string };
     reset (): void;
     validate(value?: any): Promise<VerifyResult>
 }
