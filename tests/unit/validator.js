@@ -2,7 +2,6 @@ import { createLocalVue } from '@vue/test-utils';
 import Field from '@/core/field';
 import VeeValidate from '@/index';
 import flushPromises from 'flush-promises';
-import RuleContainer from '@/core/ruleContainer';
 
 const Vue = createLocalVue();
 const Validator = VeeValidate.Validator;
@@ -169,9 +168,9 @@ test('formats error messages', async () => {
 test('can manually attach new fields', async () => {
   const v = new Validator();
 
-  expect(v.fields.find({ name: 'field' })).toBeFalsy();
+  expect(v.fields.find(f => f.matches({ name: 'field' }))).toBeFalsy();
   v.attach({ name: 'field', rules: 'required|min:5' });
-  expect(v.fields.find({ name: 'field' })).toBeTruthy();
+  expect(v.fields.find(f => f.matches({ name: 'field' }))).toBeTruthy();
   expect(await v.validate('field', 'less')).toBe(false);
   expect(await v.validate('field', 'not less')).toBe(true);
 });
@@ -199,9 +198,9 @@ test('can detach fields', () => {
   const v = new Validator();
 
   v.attach({ name: 'field', rules: 'required' });
-  expect(v.fields.find({ name: 'field' })).toBeTruthy();
+  expect(v.fields.find(f => f.matches({ name: 'field' }))).toBeTruthy();
   v.detach('field');
-  expect(v.fields.find({ name: 'field' })).toBeFalsy();
+  expect(v.fields.find(f => f.matches({ name: 'field' }))).toBeFalsy();
   // Silently fails if the field does not exist.
   expect(() => {
     v.detach('someOtherField');
@@ -213,7 +212,7 @@ test('can detach fields', () => {
     scope: 'myscope'
   });
   v.detach('myscope.field');
-  expect(v.fields.find({ name: 'field', scope: 'myscope' })).toBeFalsy();
+  expect(v.fields.find(f => f.matches({ name: 'field', scope: 'myscope' }))).toBeFalsy();
 });
 
 test('can validate specific scopes', async () => {
@@ -242,7 +241,7 @@ test('can validate specific scopes on an object', async () => {
   v.attach({ name: 'anotherfield', rules: 'required', scope: 'myscope' });
 
   // only global scope got validated.
-  expect(await v.validateAll({ field: null })).toBe(false);
+  expect(await v.validateAll()).toBe(false);
   expect(v.errors.count()).toBe(1);
 });
 
@@ -444,7 +443,7 @@ test('can translate target field for field dependent validations', async () => {
         birthday_min: el
       }
     },
-    rules: 'date_format:dd-MM-yyyy|after:birthday_min'
+    rules: 'date_format:DD-MM-YYYY|after:birthday_min'
   });
   v.localize('en', {
     attributes: {
@@ -895,7 +894,7 @@ test('it should pass the after/before inclusion parameters correctly', async () 
         field: el
       }
     },
-    rules: 'date_format:dd/MM/yyyy|after:field,true'
+    rules: 'date_format:DD/MM/YYYY|after:field,true'
   });
 
   el.value = '01/12/2008';
@@ -998,10 +997,10 @@ test('removes target based rules from the internal collection', async () => {
   const v = new Validator();
   const rule = (val) => !!val;
   v.extend('rule', rule, { hasTarget: true });
-  expect(RuleContainer.isTargetRule('rule')).toBe(true);
+  expect(Validator.isTargetRule('rule')).toBe(true);
 
   v.remove('rule');
-  expect(RuleContainer.isTargetRule('rule')).toBe(false);
+  expect(Validator.isTargetRule('rule')).toBe(false);
 });
 
 test('creates regeneratable messages', async () => {
@@ -1016,14 +1015,14 @@ test('creates regeneratable messages', async () => {
 describe('Verify API', () => {
   test('passing values and results', async () => {
     const v = new Validator();
-    expect(await v.verify('test', 'max:3')).toEqual({ 'errors': ['The {field} field may not be greater than 3 characters.'], 'valid': false, 'failedRules': { 'max': 'The {field} field may not be greater than 3 characters.' } });
+    expect(await v.verify('test', 'max:3')).toEqual({ 'errors': ['The {field} field may not be greater than 3 characters.'], 'valid': false });
     expect(v.errors.count()).toBe(0); // Errors not added.
-    expect(await v.verify('tst', 'max:3')).toEqual({ valid: true, errors: [], failedRules: {} });
+    expect(await v.verify('tst', 'max:3')).toEqual({ valid: true, errors: [] });
     // test required rule
-    expect(await v.verify('', 'required')).toEqual({ 'errors': ['The {field} field is required.'], 'valid': false, failedRules: { required: 'The {field} field is required.' } });
+    expect(await v.verify('', 'required')).toEqual({ 'errors': ['The {field} field is required.'], 'valid': false });
     // test #1353
-    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: true } })).toEqual({ valid: true, errors: [], failedRules: {} });
-    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: false } })).toEqual({ valid: false, errors: ['The {field} field must be a valid email.'], failedRules: { 'email': 'The {field} field must be a valid email.' } });
+    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: true } })).toEqual({ valid: true, errors: [] });
+    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: false } })).toEqual({ valid: false, errors: ['The {field} field must be a valid email.'] });
   });
 
   test('target rules validation using options.values', async () => {

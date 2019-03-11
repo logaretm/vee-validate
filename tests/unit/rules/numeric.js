@@ -2,9 +2,7 @@ import { validate } from '@/rules/numeric';
 
 const valid = [
   '1234567890',
-  123,
-  '٠١٢٣٤',
-  '٠١٢٣٤٥٦٧٨٩'
+  123
 ];
 
 const invalid = [
@@ -20,6 +18,7 @@ const invalid = [
 ];
 
 test('validates that the string only contains numeric characters', () => {
+  expect.assertions(13);
   // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
   expect(validate(valid)).toBe(true);
