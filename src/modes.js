@@ -1,25 +1,25 @@
 const aggressive = () => ({
-  events: ['input']
+  on: ['input']
 });
 
 const lazy = () => ({
-  events: ['change']
+  on: ['change']
 });
 
 const eager = ({ errors }) => {
   if (errors.length) {
     return {
-      events: ['input']
+      on: ['input']
     };
   }
 
   return {
-    events: ['change']
+    on: ['change']
   };
 };
 
 const passive = () => ({
-  events: []
+  on: []
 });
 
 export const modes = {

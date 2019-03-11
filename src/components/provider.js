@@ -307,9 +307,9 @@ export const ValidationProvider = {
       });
     },
     normalizedEvents () {
-      const { events } = computeModeSetting(this);
+      const { on } = computeModeSetting(this);
 
-      return normalizeEvents(events || this.events).map(e => {
+      return normalizeEvents(on || this.events || []).map(e => {
         if (e === 'input') {
           return this._inputEventName;
         }
