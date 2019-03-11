@@ -86,14 +86,16 @@ export function createCommonHandlers (ctx) {
   if (!onValidate || ctx.$veeDebounce !== ctx.debounce) {
     onValidate = debounce(
       () => {
-        const pendingPromise = ctx.validate();
-        // avoids race conditions between successive validations.
-        ctx._pendingValidation = pendingPromise;
-        pendingPromise.then(result => {
-          if (pendingPromise === ctx._pendingValidation) {
-            ctx.applyResult(result);
-            ctx._pendingValidation = null;
-          }
+        ctx.$nextTick(() => {
+          const pendingPromise = ctx.validateSilent();
+          // avoids race conditions between successive validations.
+          ctx._pendingValidation = pendingPromise;
+          pendingPromise.then(result => {
+            if (pendingPromise === ctx._pendingValidation) {
+              ctx.applyResult(result);
+              ctx._pendingValidation = null;
+            }
+          });
         });
       },
       ctx.debounce
