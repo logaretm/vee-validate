@@ -153,7 +153,7 @@ Like radio inputs and (sometimes) checkboxes, some inputs behave as a single inp
 </ValidationProvider>
 ```
 
-### Confirmed/Target based Validation
+### Cross-Field Validation
 
 When using the directive, the `confirmed` rule targets the other field that has a corresponding `ref`. Using the ValidationProvider is slightly different; it looks for a ValidationProvider component that has a matching `vid` prop. The `vid` can be either a number or a string.
 

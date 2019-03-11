@@ -108,7 +108,7 @@ The order is what controls the param names in that case. The validator will use 
 Locale methods will still recieve the array of args, it will not convert it to an object at the time being due to the possible breaking changes in locale files.
 :::
 
-## Target Dependant Rules
+## Cross-Field Rules
 
 Sometimes your rules may need to compare the field value against another field value, some built in rules like `confirmed`, `before` and `after` need a target field to compare against.
 
@@ -130,6 +130,8 @@ These rules require at least one argument and the target field must have a match
 <input v-validate="'confirmed:confirmation'" name="password" type="password" >
 <input name="passwordConfirmation" ref="confirmation" type="password" placeholder="Confirm the password">
 ```
+
+For [validation providers](./components/validation-provider.md) the target field must have a `vid` prop set instead of the `ref`.
 
 ## Require-like rules
 
