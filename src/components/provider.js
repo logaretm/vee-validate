@@ -228,6 +228,7 @@ export const ValidationProvider = {
     events: {
       type: Array,
       validate: () => {
+        /* istanbul ignore next */
         if (process.env.NODE_ENV !== 'production') {
           warn('events prop and config will be deprecated in future version please use the interaction modes instead');
         }
@@ -348,6 +349,7 @@ export const ValidationProvider = {
 
     // Gracefully handle non-existent scoped slots.
     let slot = this.$scopedSlots.default;
+    /* istanbul ignore next */
     if (!isCallable(slot)) {
       if (process.env.NODE_ENV !== 'production') {
         warn('ValidationProvider expects a scoped slot. Did you forget to add "slot-scope" to your slot?');
