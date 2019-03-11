@@ -281,18 +281,24 @@ describe('Validation Provider Component', () => {
     }, { localVue: Vue });
 
     const error = wrapper.find('#err1');
+    const inputs = wrapper.findAll('input');
 
     expect(error.text()).toBeFalsy();
-    wrapper.setData({
-      password: '',
-      confirmation: 'val'
-    });
+    inputs.at(0).element.value = 'val';
+    inputs.at(0).trigger('input');
     await flushPromises();
+    // the password input hasn't changed yet.
+    expect(error.text()).toBeFalsy();
+    inputs.at(1).element.value = '12';
+    inputs.at(1).trigger('input');
+    await flushPromises();
+    // the password input was interacted with and should be validated.
     expect(error.text()).toBeTruthy();
-    wrapper.setData({
-      password: 'val'
-    });
+
+    inputs.at(1).element.value = 'val';
+    inputs.at(1).trigger('input');
     await flushPromises();
+    // the password input now matches the confirmation.
     expect(error.text()).toBeFalsy();
   });
 

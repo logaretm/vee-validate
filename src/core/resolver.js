@@ -110,7 +110,8 @@ export default class Resolver {
       $validator: vm.$validator ? {
         errors: vm.$validator.errors,
         validate: vm.$validator.validate.bind(vm.$validator),
-        update: vm.$validator.update.bind(vm.$validator)
+        update: vm.$validator.update.bind(vm.$validator),
+        _resolveField: vm.$validator._base._resolveField.bind(vm.$validator)
       } : null
     };
   }
