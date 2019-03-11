@@ -53,7 +53,7 @@ The field under validation must have a valid date and is after the date value in
 <input name="after_field_target" ref="afterTarget" :class="{'input': true, 'is-danger': errors.has('after_field') }" type="text" placeholder="DD/MM/YYYY">
 
 ::: tip
-  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
+  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value. For [validation providers](./components/validation-provider.md) the target field must have a `vid` prop set instead of the `ref`.
 :::
 
 ```html
@@ -122,7 +122,7 @@ The field under validation must have a valid date and is before the date value i
 <input name="before_field_target" ref="beforeTarget" :class="{'input': true, 'is-danger': errors.has('alpha_field') }" type="text" placeholder="DD/MM/YYYY">
 
 ::: tip
-  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
+  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value. For [validation providers](./components/validation-provider.md) the target field must have a `vid` prop set instead of the `ref`.
 :::
 
 ```html
@@ -162,7 +162,7 @@ The field under validation must have the same value as the confirmation field.
 <span v-show="errors.has('pw_confirm')" class="help is-danger">{{ errors.first('pw_confirm') }}</span>
 
 ::: tip
-  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value.
+  Target based rules like `after`, `before`, and `confirmed` can target custom components as well as native inputs, but the target field must have a `ref` attribute set and the confirmed parameter must be the same ref value. For [validation providers](./components/validation-provider.md) the target field must have a `vid` prop set instead of the `ref`.
 :::
 
 ```html
