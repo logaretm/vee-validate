@@ -268,8 +268,10 @@ export const ValidationProvider = {
         const watcherName = `$__${depName}`;
         if (!isCallable(this[watcherName])) {
           this[watcherName] = providers[depName].$watch('value', () => {
-            this._needsValidation = true;
-            this.validate();
+            if (this.flags.validated) {
+              this._needsValidation = true;
+              this.validate();
+            }
           });
         }
 
