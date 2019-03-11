@@ -8,6 +8,7 @@ import I18nDictionary from './localization/i18n';
 import { detectPassiveSupport } from './utils/events';
 import { setConfig, getConfig } from './config';
 import { setValidator } from './state';
+import { modes } from './modes';
 
 // @flow
 
@@ -42,6 +43,19 @@ class VeeValidate {
 
   static configure (cfg) {
     setConfig(cfg);
+  }
+
+  static setMode (mode, implementation) {
+    setConfig({ mode });
+    if (!implementation) {
+      return;
+    }
+
+    if (!isCallable(implementation)) {
+      throw new Error('A mode implementation must be a function');
+    }
+
+    modes[mode] = implementation;
   }
 
   static use (plugin: (ctx: PluginContext, options?: any) => any, options?: any = {}) {

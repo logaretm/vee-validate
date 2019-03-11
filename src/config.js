@@ -13,6 +13,7 @@ const DEFAULT_CONFIG = {
   fastExit: true,
   aria: true,
   validity: false,
+  mode: 'aggressive',
   useConstraintAttrs: true,
   i18n: null,
   i18nRootKey: 'validation'

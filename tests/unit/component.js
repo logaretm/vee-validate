@@ -221,7 +221,7 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toBe('');
   });
 
-  test('validates on custom events', async () => {
+  test('uses interaction modes', async () => {
     const wrapper = mount({
       data: () => ({
         value: ''
@@ -234,7 +234,7 @@ describe('Validation Provider Component', () => {
       },
       template: `
         <div>
-          <ValidationProvider rules="required" events="blur">
+          <ValidationProvider rules="required" mode="lazy">
             <div slot-scope="{ errors }">
               <TextInput v-model="value"></TextInput>
               <span id="error">{{ errors[0] }}</span>
@@ -252,7 +252,7 @@ describe('Validation Provider Component', () => {
     await flushPromises();
     // did not validate.
     expect(error.text()).toBe('');
-    input.trigger('blur');
+    input.trigger('change');
     await flushPromises();
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   });

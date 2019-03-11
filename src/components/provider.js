@@ -1,5 +1,6 @@
 import { getConfig } from '../config';
 import { getValidator } from '../state';
+import { modes } from '../modes';
 import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
@@ -53,6 +54,16 @@ function shouldValidate (ctx, model) {
   return false;
 }
 
+function computeModeSetting (ctx) {
+  const compute = isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode];
+
+  return compute({
+    errors: ctx.messages,
+    value: ctx.value,
+    flags: ctx.flags
+  });
+}
+
 export function onRenderUpdate (model) {
   if (!this.initialized) {
     this.initialValue = model.value;
@@ -83,6 +94,8 @@ export function createCommonHandlers (ctx) {
   };
 
   let onValidate = ctx.$veeHandler;
+  const mode = computeModeSetting(ctx);
+
   // Handle debounce changes.
   if (!onValidate || ctx.$veeDebounce !== ctx.debounce) {
     onValidate = debounce(
@@ -99,7 +112,7 @@ export function createCommonHandlers (ctx) {
           });
         });
       },
-      ctx.debounce
+      mode.debounce || ctx.debounce
     );
 
     // Cache the handler so we don't create it each time.
@@ -206,8 +219,22 @@ export const ValidationProvider = {
       type: String,
       default: null
     },
+    mode: {
+      type: [String, Function],
+      default: () => {
+        return getConfig().mode;
+      }
+    },
     events: {
       type: Array,
+      validate: () => {
+        /* istanbul ignore next */
+        if (process.env.NODE_ENV !== 'production') {
+          warn('events prop and config will be deprecated in future version please use the interaction modes instead');
+        }
+
+        return true;
+      },
       default: () => {
         const events = getConfig().events;
         if (typeof events === 'string') {
@@ -281,7 +308,9 @@ export const ValidationProvider = {
       });
     },
     normalizedEvents () {
-      return normalizeEvents(this.events).map(e => {
+      const { on } = computeModeSetting(this);
+
+      return normalizeEvents(on || this.events || []).map(e => {
         if (e === 'input') {
           return this._inputEventName;
         }
@@ -320,6 +349,7 @@ export const ValidationProvider = {
 
     // Gracefully handle non-existent scoped slots.
     let slot = this.$scopedSlots.default;
+    /* istanbul ignore next */
     if (!isCallable(slot)) {
       if (process.env.NODE_ENV !== 'production') {
         warn('ValidationProvider expects a scoped slot. Did you forget to add "slot-scope" to your slot?');

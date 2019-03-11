@@ -17,6 +17,7 @@ const sidebars = {
     'flags',
     'classes-and-styling',
     'events',
+    'interaction',
     'conditional-and-looping-inputs',
     'ui-integrations'
   ],

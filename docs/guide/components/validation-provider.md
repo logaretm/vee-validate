@@ -264,10 +264,10 @@ All the following props are optional.
 |-----------|-----------|-----------------------|------------------------------------------------------------------------------|
 | rules     | `string`  | `undefined`           | The validation rules.                                                        |
 | vid       | `string`  | auto increment number | Identifier used for target/cross-field based rules.                          |
-| immediate | `boolean` | `false`               | If the field should be validated immediately after render (initially).        |
-| events    | `string[]`| `['input']`           | Events that will trigger validation.                                         |
+| immediate | `boolean` | `false`               | If the field should be validated immediately after render (initially).       |
+| events    | `string[]`| `['input']`           | deprecated: check [interaction modes](../interaction.md)                      |
 | name      | `string`  | `undefined`           | A string that will be used to replace `{field}` in error messages and for [custom error messages](/guide/messages.md#field-specific-custom-messages). |
-| bails     | `boolean` | `true`                | If true, the validation will stop on the first failing rule.                  |
+| bails     | `boolean` | `true`                | If true, the validation will stop on the first failing rule.                 |
 | debounce  | `number`  | `0`                   | Debounces the validation for the specified amount of milliseconds.           |
 
 ### Methods
