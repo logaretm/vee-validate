@@ -427,7 +427,18 @@ export default class Validator {
     }
 
     return this._validate(field, value).then(result => {
-      return { valid: result.valid, errors: result.errors.map(e => e.msg) };
+      const errors = [];
+      const ruleMap = {};
+      result.errors.forEach(e => {
+        errors.push(e.msg);
+        ruleMap[e.rule] = e.msg;
+      });
+
+      return {
+        valid: result.valid,
+        errors,
+        failedRules: ruleMap
+      };
     });
   }
 

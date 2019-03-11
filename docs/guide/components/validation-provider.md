@@ -42,6 +42,7 @@ The object passed down to the slot scope is called the __validation context__. I
 | Name    | Type                       |  Description |
 |:--------|:--------------------------:|:--------------------------------------------------------------------|
 | errors  | `string[]`                 | The list of error messages.                                         |
+| failedRules | `[x: string]: string`  | A map object of failed rules with (rule, message) as a (key, value) |
 | valid   | `boolean`                  | The current validation state.                                       |
 | flags   | `{ [x: string]: boolean }` | The flags map object state.                                         |
 | aria    | `{ [x: string]: string }`  | Map object of aria attributes for accessibility.                    |

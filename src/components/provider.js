@@ -3,7 +3,7 @@ import { getValidator } from '../state';
 import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
-import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined } from '../utils';
+import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign } from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName, createRenderless } from '../utils/vnode';
 
 let $validator = null;
@@ -16,6 +16,7 @@ export function createValidationCtx (ctx) {
     flags: ctx.flags,
     classes: ctx.classes,
     valid: ctx.isValid,
+    failedRules: ctx.failedRules,
     reset: () => ctx.reset(),
     validate: (...args) => ctx.validate(...args),
     aria: {
@@ -251,6 +252,7 @@ export const ValidationProvider = {
     initialized: false,
     initialValue: undefined,
     flags: createFlags(),
+    failedRules: {},
     forceRequired: false,
     isDeactivated: false,
     id: null
@@ -388,8 +390,9 @@ export const ValidationProvider = {
         return result;
       });
     },
-    applyResult ({ errors }) {
+    applyResult ({ errors, failedRules }) {
       this.messages = errors;
+      this.failedRules = assign({}, failedRules);
       this.setFlags({
         valid: !errors.length,
         changed: this.value !== this.initialValue,

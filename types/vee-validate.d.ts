@@ -124,6 +124,7 @@ export interface FieldMatchOptions {
 export interface VerifyResult {
     valid: boolean;
     errors: string[];
+    failedRules: { [x: string]: string };
 }
 
 export interface VerifyOptions {
@@ -136,6 +137,7 @@ export interface ValidationSlotScopeData {
     errors: string[];
     flags: FieldFlags;
     valid: boolean;
+    failedRules: { [x: string]: string };
     reset (): void;
     validate(value?: any): Promise<VerifyResult>
 }
