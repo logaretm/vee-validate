@@ -1016,14 +1016,14 @@ test('creates regeneratable messages', async () => {
 describe('Verify API', () => {
   test('passing values and results', async () => {
     const v = new Validator();
-    expect(await v.verify('test', 'max:3')).toEqual({ 'errors': ['The {field} field may not be greater than 3 characters.'], 'valid': false });
+    expect(await v.verify('test', 'max:3')).toEqual({ 'errors': ['The {field} field may not be greater than 3 characters.'], 'valid': false, 'failedRules': { 'max': 'The {field} field may not be greater than 3 characters.' } });
     expect(v.errors.count()).toBe(0); // Errors not added.
-    expect(await v.verify('tst', 'max:3')).toEqual({ valid: true, errors: [] });
+    expect(await v.verify('tst', 'max:3')).toEqual({ valid: true, errors: [], failedRules: {} });
     // test required rule
-    expect(await v.verify('', 'required')).toEqual({ 'errors': ['The {field} field is required.'], 'valid': false });
+    expect(await v.verify('', 'required')).toEqual({ 'errors': ['The {field} field is required.'], 'valid': false, failedRules: { required: 'The {field} field is required.' } });
     // test #1353
-    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: true } })).toEqual({ valid: true, errors: [] });
-    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: false } })).toEqual({ valid: false, errors: ['The {field} field must be a valid email.'] });
+    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: true } })).toEqual({ valid: true, errors: [], failedRules: {} });
+    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: false } })).toEqual({ valid: false, errors: ['The {field} field must be a valid email.'], failedRules: { 'email': 'The {field} field must be a valid email.' } });
   });
 
   test('target rules validation using options.values', async () => {

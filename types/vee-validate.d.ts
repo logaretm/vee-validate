@@ -124,6 +124,7 @@ export interface FieldMatchOptions {
 export interface VerifyResult {
     valid: boolean;
     errors: string[];
+    failedRules: { [x: string]: string };
 }
 
 export interface VerifyOptions {
