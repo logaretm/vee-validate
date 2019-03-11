@@ -86,7 +86,7 @@ export function createCommonHandlers (ctx) {
   if (!onValidate || ctx.$veeDebounce !== ctx.debounce) {
     onValidate = debounce(
       () => {
-        const pendingPromise = ctx.validate();
+        const pendingPromise = ctx.validateSilent();
         // avoids race conditions between successive validations.
         ctx._pendingValidation = pendingPromise;
         pendingPromise.then(result => {
