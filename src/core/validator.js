@@ -135,10 +135,13 @@ export default class Validator {
    */
   static extend (name: string, validator: Rule | Object, options?: ExtendOptions = {}) {
     Validator._guardExtend(name, validator);
+    // rules imported from the minimal bundle
+    // will have the options embedded in them
+    const mergedOpts = validator.options || {};
     Validator._merge(name, {
       validator,
-      paramNames: options && options.paramNames,
-      options: assign({}, { hasTarget: false, immediate: true }, options || {})
+      paramNames: (options && options.paramNames) || validator.paramNames,
+      options: assign({ hasTarget: false, immediate: true }, mergedOpts, options || {})
     });
   }
 
