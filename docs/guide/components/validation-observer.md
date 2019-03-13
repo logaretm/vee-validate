@@ -160,7 +160,9 @@ Below is the reference of the ValidationObserver public API.
 
 ### Props
 
-The validation observer does not accept any props.
+|Prop  | Type     | Default Value         | Description                                                           |
+|------|----------|-----------------------|-----------------------------------------------------------------------|
+| tag  | `string` | `span`                | The default tag to [render](./validation-provider.md#rendering).      |
 
 ### Methods
 

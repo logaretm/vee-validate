@@ -119,7 +119,10 @@ export const ValidationObserver = {
       return h(this.tag, this.$slots.default);
     }
 
-    return h(this.tag, slots(this.ctx));
+    return h(this.tag, {
+      on: this.$listeners,
+      attrs: this.$attrs
+    }, slots(this.ctx));
   },
   methods: {
     subscribe (subscriber, kind = 'provider') {

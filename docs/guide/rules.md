@@ -601,3 +601,11 @@ This rule can recieve any args from [validator.js isURL](https://github.com/chri
 ```html
 <input v-validate="{url: {require_protocol: true }}" data-vv-as="field" name="url_field" type="text">
 ```
+
+<script>
+export default {
+  $_veeValidate: {
+    validator: 'new'
+  }
+}
+</script>
