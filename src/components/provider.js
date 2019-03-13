@@ -4,7 +4,7 @@ import { modes } from '../modes';
 import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
-import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign } from '../utils';
+import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual } from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName } from '../utils/vnode';
 
 let $validator = null;
@@ -272,8 +272,8 @@ export const ValidationProvider = {
   watch: {
     rules: {
       deep: true,
-      handler () {
-        this._needsValidation = true;
+      handler (val, oldVal) {
+        this._needsValidation = !isEqual(val, oldVal);
       }
     }
   },
