@@ -12,16 +12,17 @@ Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
 const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required.';
 
 describe('Validation Provider Component', () => {
-  test('renders its slot', () => {
+  test('renders its tag attribute', () => {
     const wrapper = mount({
+      data: () => ({ val: '' }),
       template: `
-        <ValidationProvider>
-          <p slot-scope="ctx"></p>
+        <ValidationProvider v-slot="ctx">
+          <input v-model="val" type="text">
         </ValidationProvider>
       `
     }, { localVue: Vue });
 
-    expect(wrapper.html()).toBe(`<p></p>`);
+    expect(wrapper.html()).toBe(`<span><input type="text"></span>`);
   });
 
   test('SSR: render single root slot', () => {
@@ -33,7 +34,7 @@ describe('Validation Provider Component', () => {
       `
     }, { localVue: Vue });
 
-    expect(output).toBe('<p data-server-rendered="true"></p>');
+    expect(output).toBe('<span data-server-rendered="true"><p></p></span>');
   });
 
   test('validates lazy models', async () => {
@@ -581,8 +582,7 @@ describe('Validation Observer Component', () => {
   test('renders the slot', () => {
     const wrapper = mount({
       template: `
-        <ValidationObserver>
-          <form slot-scope="ctx"></form>
+        <ValidationObserver tag="form" v-slot="ctx">
         </ValidationObserver>
       `
     }, { localVue: Vue });
@@ -593,8 +593,7 @@ describe('Validation Observer Component', () => {
   test('renders the scoped slot in SSR', () => {
     const output = renderToString({
       template: `
-        <ValidationObserver>
-          <form slot-scope="ctx"></form>
+        <ValidationObserver tag="form" v-slot="ctx">
         </ValidationObserver>
       `
     }, { localVue: Vue });
@@ -605,8 +604,7 @@ describe('Validation Observer Component', () => {
   test('renders the default slot if no scoped slots in SSR', () => {
     const output = renderToString({
       template: `
-        <ValidationObserver>
-          <form></form>
+        <ValidationObserver tag="form">
         </ValidationObserver>
       `
     }, { localVue: Vue });

@@ -5,7 +5,7 @@ import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign } from '../utils';
-import { findModel, extractVNodes, addVNodeListener, getInputEventName, createRenderless } from '../utils/vnode';
+import { findModel, extractVNodes, addVNodeListener, getInputEventName } from '../utils/vnode';
 
 let $validator = null;
 
@@ -263,6 +263,10 @@ export const ValidationProvider = {
     debounce: {
       type: Number,
       default: () => getConfig().delay || 0
+    },
+    tag: {
+      type: String,
+      default: 'span'
     }
   },
   watch: {
@@ -355,7 +359,7 @@ export const ValidationProvider = {
         warn('ValidationProvider expects a scoped slot. Did you forget to add "slot-scope" to your slot?');
       }
 
-      return createRenderless(h, this.$slots.default);
+      return h(this.tag, this.$slots.default);
     }
 
     const nodes = slot(ctx);
@@ -364,7 +368,7 @@ export const ValidationProvider = {
       addListeners.call(this, input);
     });
 
-    return createRenderless(h, nodes);
+    return h(this.tag, nodes);
   },
   beforeDestroy () {
     // cleanup reference.

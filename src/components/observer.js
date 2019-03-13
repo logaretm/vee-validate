@@ -1,4 +1,3 @@
-import { createRenderless } from '../utils/vnode';
 import { isCallable, values, findIndex } from '../utils';
 
 const flagMergingStrategy = {
@@ -37,6 +36,12 @@ export const ValidationObserver = {
 
         return this.$vnode.context.$_veeObserver;
       }
+    }
+  },
+  props: {
+    tag: {
+      type: String,
+      default: 'span'
     }
   },
   data: () => ({
@@ -111,10 +116,10 @@ export const ValidationObserver = {
   render (h) {
     let slots = this.$scopedSlots.default;
     if (!isCallable(slots)) {
-      return createRenderless(h, this.$slots.default);
+      return h(this.tag, this.$slots.default);
     }
 
-    return createRenderless(h, slots(this.ctx));
+    return h(this.tag, slots(this.ctx));
   },
   methods: {
     subscribe (subscriber, kind = 'provider') {
