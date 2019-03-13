@@ -12,14 +12,10 @@ Here is a quick example:
 
 ```vue
 <template>
-  <div>
-    <ValidationProvider rules="required" v-slot="{ errors }">
-      <div>
-        <input v-model="value" type="text">
-        <span id="error">{{ errors[0] }}</span>
-      </div>
-    </ValidationProvider>
-  </div>
+  <ValidationProvider rules="required" v-slot="{ errors }">
+    <input v-model="value" type="text">
+    <span id="error">{{ errors[0] }}</span>
+  </ValidationProvider>
 </template>
 
 <script>
