@@ -2,20 +2,20 @@
 
 The `ValidationProvider` component is a regular component that wraps your inputs and provides validation state using [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots).
 
+::: tip
+The slots syntax has been changed in Vue 2.6, the following examples use the new `v-slot` syntax instead of the deprecated `slot-scope`, but it is still supported and you can use it. However `v-slot` have different semantics, consult the Vue docs for more information.
+:::
+
 Using the ValidationProvider offers isolated scope for each field validation state, and does not inject/mutate anything outside its slot. You can import it and use whenever you need it. Using the validation context will allow you to apply classes, flags and pass state to your template.
 
 Here is a quick example:
 
 ```vue
 <template>
-  <div>
-    <ValidationProvider rules="required">
-      <div slot-scope="{ errors }">
-        <input v-model="value" type="text">
-        <span id="error">{{ errors[0] }}</span>
-      </div>
-    </ValidationProvider>
-  </div>
+  <ValidationProvider rules="required" v-slot="{ errors }">
+    <input v-model="value" type="text">
+    <span id="error">{{ errors[0] }}</span>
+  </ValidationProvider>
 </template>
 
 <script>
@@ -34,6 +34,47 @@ It also works for custom components and solves the issue of authoring __self val
 ::: tip
   The fields being validated __must have__ a `v-model` so the component can correctly identify the element/component being validated __unless__ the field accepts a __file__.
 :::
+
+## Rendering
+
+By default, ValidationProvider renders a `span`, meaning it does not render anything of its own. Consider the following example
+
+```vue
+  <ValidationProvider rules="required" v-slot="{ errors }">
+    <input v-model="value" type="text">
+    <span>{{ errors[0] }}</span>
+  </ValidationProvider>
+
+  <!-- HTML Output -->
+  <span>
+    <input type="text">
+    <span>ERROR_MSG_PLACEHOLDER</span>
+  </span>
+```
+
+The default tag can be changed using the provider's `tag` prop.
+
+```vue
+  <!-- Multiple Child nodes using templates -->
+  <ValidationProvider rules="required" tag="div">
+    <template v-slot="{ errors }">
+      <input v-model="value" type="text">
+      <span>{{ errors[0] }}</span>
+    </template>
+  </ValidationProvider>
+
+  <!-- Multiple Child nodes directly -->
+  <ValidationProvider rules="required" v-slot="{ errors }" tag="div">
+    <input v-model="value" type="text">
+    <span>{{ errors[0] }}</span>
+  </ValidationProvider>
+
+  <!-- Both have the same HTML Output -->
+  <div>
+    <input type="text">
+    <span>ERROR_MSG_PLACEHOLDER</span>
+  </div>
+```
 
 ## Scoped Slot Data
 
@@ -61,14 +102,10 @@ The previous quick sample validates simple HTML inputs, lets take this up a notc
 This passes error messages down to Vuetify's text field component.
 
 ```vue
-<ValidationProvider rules="required">
-  <VTextField slot-scope="{ errors }" v-model="value" :error-messages="errors" />
+<ValidationProvider rules="required" v-slot="{ errors }">
+  <VTextField v-model="value" :error-messages="errors" />
 </ValidationProvider>
 ```
-
-::: tip
-  ValidationProvider is a __renderless__ component, meaning it does not render anything of its own. It only renders its slot, as such you need to have __only one root element__ in your slot. Using the `template` tag might cause render errors.
-:::
 
 ### Manual Validation
 
@@ -77,8 +114,8 @@ Triggering validation on any of the providers is simple, but it is opt-in. Meani
 ```vue
 <template>
   <div>
-    <ValidationProvider rules="required" ref="myinput">
-      <VTextField slot-scope="{ errors }" v-model="value" :error-messages="errors" />
+    <ValidationProvider rules="required" ref="myinput" v-slot="{ errors }">
+      <VTextField v-model="value" :error-messages="errors" />
     </ValidationProvider>
 
     <v-btn @click="validateField('myinput')" >Submit</v-btn>
@@ -101,11 +138,11 @@ export default {
 </script>
 ```
 
-If you only plan to trigger manual validation using the UI, you can use the `validate` handler on the slot-scope data to trigger validation without having to use `refs`.
+If you only plan to trigger manual validation using the UI, you can use the `validate` handler on the v-slot data to trigger validation without having to use `refs`.
 
 ```vue
-<ValidationProvider rules="required">
-  <div slot-scope="{ validate, errors }">
+<ValidationProvider rules="required" v-slot="{ validate, errors }">
+  <div>
     <input type="text" @input="validate">
     <p id="error">{{ errors[0] }}</p>
   </div>
@@ -115,8 +152,8 @@ If you only plan to trigger manual validation using the UI, you can use the `val
 Note that the `validate` method on the validation handler, you can use the `$event` in the Vue template to reference the event arg that is emitted with the event if your handlers are more complex.
 
 ```vue
-<ValidationProvider rules="required">
-  <div slot-scope="{ validate, errors }">
+<ValidationProvider rules="required" v-slot="{ validate, errors }">
+  <div>
     <input type="text" @input="syncVuex($event.target.value) || validate($event)">
     <p id="error">{{ errors[0] }}</p>
   </div>
@@ -132,8 +169,8 @@ Note that the `validate` method on the validation handler, you can use the `$eve
 While `v-model` is generally required when using the ValidationProvider component, some inputs like `file` do not benefit from having `v-model`. Instead, you can use the manual `validate` method to avoid having to use `v-model` in this instance.
 
 ```vue
-<ValidationProvider rules="required">
-  <div slot-scope="{ validate, errors }">
+<ValidationProvider rules="required" v-slot="{ validate, errors }">
+  <div>
     <input type="file" @change="handleFileChange($event) || validate($event)">
     <p id="error">{{ errors[0] }}</p>
   </div>
@@ -145,8 +182,8 @@ While `v-model` is generally required when using the ValidationProvider componen
 Like radio inputs and (sometimes) checkboxes, some inputs behave as a single input entity. You can wrap a whole group of inputs __given that they have the same `v-model`__ in a single ValidationProvider component. You can group as many inputs as you want inside the ValidationProvider component.
 
 ```vue
-<ValidationProvider rules="required">
-  <div slot-scope="{ errors }">
+<ValidationProvider rules="required" v-slot="{ errors }">
+  <div>
     <input type="radio" v-model="drink" value="">
     <input type="radio" v-model="drink" value="coffee">
     <input type="radio" v-model="drink" value="coke">
@@ -159,12 +196,12 @@ Like radio inputs and (sometimes) checkboxes, some inputs behave as a single inp
 When using the directive, the `confirmed` rule targets the other field that has a corresponding `ref`. Using the ValidationProvider is slightly different; it looks for a ValidationProvider component that has a matching `vid` prop. The `vid` can be either a number or a string.
 
 ```vue
-<ValidationProvider rules="required|confirmed:confirm">
-  <VTextField slot-scope="{ errors }" v-model="password" type="password" :error-messages="errors" />
+<ValidationProvider rules="required|confirmed:confirm" v-slot="{ errors }">
+  <VTextField v-model="password" type="password" :error-messages="errors" />
 </ValidationProvider>
 
-<ValidationProvider vid="confirm" rules="required">
-  <VTextField slot-scope="{ errors }" v-model="passwordConfirm" type="password" :error-messages="errors" />
+<ValidationProvider vid="confirm" rules="required" v-slot="{ errors }">
+  <VTextField v-model="passwordConfirm" type="password" :error-messages="errors" />
 </ValidationProvider>
 ```
 
@@ -219,8 +256,8 @@ Consider this new `VTextFieldWithValidation` component.
 
 ```vue
 <template>
-  <ValidationProvider :rules="rules">
-    <VTextField slot-scope="{ errors }" v-model="innerValue" :error-messages="errors" />
+  <ValidationProvider :rules="rules" v-slot="{ errors }">
+    <VTextField v-model="innerValue" :error-messages="errors" />
   </ValidationProvider>
 </template>
 
@@ -269,6 +306,7 @@ All the following props are optional.
 | name      | `string`  | `undefined`           | A string that will be used to replace `{field}` in error messages and for [custom error messages](/guide/messages.md#field-specific-custom-messages). |
 | bails     | `boolean` | `true`                | If true, the validation will stop on the first failing rule.                 |
 | debounce  | `number`  | `0`                   | Debounces the validation for the specified amount of milliseconds.           |
+| tag       | `string`  | `span`                | The default tag to [render](#rendering). |
 
 ### Methods
 

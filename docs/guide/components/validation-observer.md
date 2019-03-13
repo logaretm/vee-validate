@@ -4,11 +4,11 @@ Using [providers](./validation-provider.md) for validation is very handy but it 
 
 The ValidationObserver is a convenient component that also uses the [scoped slots feature](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to communicate the current state of your inputs as a whole.
 
-Here is a small example, again with Vuetify components wrapped by the [Provider's wrap](./validation-provider.md#creating-high-order-components) method:
+Here is a small example, again with Vuetify components wrapped by the [Provider's withValidation](./validation-provider.md#creating-high-order-components) method:
 
 ```vue
-<ValidationObserver>
-  <form slot-scope="{ invalid }" @submit.prevent="submit">
+<ValidationObserver v-slot="{ invalid }">
+  <form @submit.prevent="submit">
     <InputWithValidation rules="required" v-model="first" :error-messages="errors" />
 
     <InputWithValidation rules="required" v-model="second" :error-messages="errors" />
@@ -18,9 +18,25 @@ Here is a small example, again with Vuetify components wrapped by the [Provider'
 </ValidationObserver>
 ```
 
-:::tip
-  ValidationObserver is a __renderless__ component, meaning it does not render anything of its own. It only renders its slot, as such you need to have __only one root element__ in your slot, if you use the `template` tag it might cause render errors.
-:::
+## Rendering
+
+[Like providers](./validation-provider.md#rendering), observers render a `span` by default. You can customize the rendered tag using the `tag` prop, for example a `form` tag might be more useful.
+
+```vue
+<!-- Render a form -->
+<ValidationObserver tag="form">
+  <!-- Fields -->
+</ValidationObserver>
+```
+
+You can expand upon this by adding your form listeners like `submit` on the observer directly:
+
+```vue
+<!-- Render a form -->
+<ValidationObserver tag="form" @submit.prevent="onSubmit">
+  <!-- Fields -->
+</ValidationObserver>
+```
 
 ## Scoped Slot Data
 
@@ -47,14 +63,12 @@ Validating before submit is even easier than the old way, using the [public meth
 
 ```vue
 <template>
-  <ValidationObserver ref="observer">
-    <form slot-scope="{ invalid }" @submit.prevent="submit()">
-      <InputWithValidation rules="required" v-model="first" :error-messages="errors" />
+  <ValidationObserver ref="observer" v-slot="{ invalid }" tag="form" @submit.prevent="submit()">
+    <InputWithValidation rules="required" v-model="first" :error-messages="errors" />
 
-      <InputWithValidation rules="required" v-model="second" :error-messages="errors" />
+    <InputWithValidation rules="required" v-model="second" :error-messages="errors" />
 
-      <v-btn :disabled="invalid">Submit</v-btn>
-    </form>
+    <v-btn :disabled="invalid">Submit</v-btn>
   </ValidationObserver>
 </template>
 
@@ -74,12 +88,12 @@ export default {
 </script>
 ```
 
-If you plan to trigger validation from the template without using `refs` you can use the `validate` method present in the slot-scope data.
+If you plan to trigger validation from the template without using `refs` you can use the `validate` method present in the scopedSlot data.
 
 ```vue
 <template>
-  <ValidationObserver>
-    <form slot-scope="{ invalid, validate }" @submit.prevent="validate().then(submit)">
+  <ValidationObserver v-slot="{ invalid, validate }">
+    <form @submit.prevent="validate().then(submit)">
       <InputWithValidation rules="required" v-model="first" :error-messages="errors" />
 
       <InputWithValidation rules="required" v-model="second" :error-messages="errors" />
@@ -90,7 +104,7 @@ If you plan to trigger validation from the template without using `refs` you can
 </template>
 ```
 
-As you have guessed, the `validate` method on the Observer's slot-scope is thenable, meaning you can chain another method to run after the validation passes like the form submission handler. Note that the `validate` method does not return a promise, but a promise-like object that has a `then` method for convenience, which can be also chained further.
+As you have guessed, the `validate` method on the Observer's scopedSlot is thenable, meaning you can chain another method to run after the validation passes like the form submission handler. Note that the `validate` method does not return a promise, but a promise-like object that has a `then` method for convenience, which can be also chained further.
 
 ::: tip
   Using the same approach you can reset validation state for all providers using the public method `reset()`.
@@ -105,16 +119,12 @@ The Validation Components API does not implement scopes and won't be, you can us
 ```vue
 <template>
   <div>
-    <ValidationObserver ref="obs1">
-      <div slot-scope="{ invalid }">
-        <!-- Fields -->
-      </div>
+    <ValidationObserver tag="form" ref="obs1" v-slot="{ invalid }">
+      <!-- Fields -->
     </ValidationObserver>
 
-    <ValidationObserver ref="obs2">
-      <div slot-scope="{ invalid }">
-        <!-- Fields -->
-      </div>
+    <ValidationObserver tag="form" ref="obs2" v-slot="{ invalid }">
+      <!-- Fields -->
     </ValidationObserver>
   </div>
 </template>
@@ -136,20 +146,16 @@ Simple and clean.
 Building upon the previous example, observers can be nested to create nested forms for advanced use-cases. The outmost observer is able to trigger validation/resets on child obeservers and providers. Its state is also synced with the child observers and providers alike.
 
 ```vue
-<ValidationObserver ref="op">
-  <ValidationObserver ref="oc" slot-scope="obsctx">
-    <div>
-      <ValidationProvider rules="required">
-        <div slot-scope="ctx">
-          <input type="text" v-model="value">
-          <span>{{ ctx.errors[0] }}</span>
-        </div>
-      </ValidationProvider>
-      <!-- This is synced with the state of all children providers/observers -->
-      <pre>
-        {{ obsctx }}
-      </pre>
-    </div>
+<ValidationObserver ref="op" v-slot="observer">
+  <ValidationObserver ref="oc">
+    <ValidationProvider rules="required" v-slot="provider">
+      <input type="text" v-model="value">
+      <span>{{ provider.errors[0] }}</span>
+    </ValidationProvider>
+    <!-- This is synced with the state of all children providers/observers -->
+    <pre>
+      {{ observer }}
+    </pre>
   </ValidationObserver>
 </ValidationObserver>
 ```
@@ -160,7 +166,9 @@ Below is the reference of the ValidationObserver public API.
 
 ### Props
 
-The validation observer does not accept any props.
+|Prop  | Type     | Default Value         | Description                                                           |
+|------|----------|-----------------------|-----------------------------------------------------------------------|
+| tag  | `string` | `span`                | The default tag to [render](#rendering).      |
 
 ### Methods
 
