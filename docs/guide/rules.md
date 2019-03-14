@@ -211,7 +211,7 @@ The field under validation must be a valid date in the specified format. This ru
 
 ### date_format params
 
-- `format:` The date format. See [date-fns format](https://date-fns.org/v2.0.0-alpha.7/docs/format)
+- `format:` The date format. See [date-fns format](https://date-fns.org/v2.0.0-alpha.25/docs/format)
 
 <input v-validate="'date_format:dd/MM/yyyy'" :class="{'input': true, 'is-danger': errors.has('date_format_field') }" name="date_format_field" type="text" placeholder="dd/MM/yyyy">
 <span v-show="errors.has('date_format_field')" class="help is-danger">{{ errors.first('date_format_field') }}</span>
