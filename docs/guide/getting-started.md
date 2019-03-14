@@ -86,3 +86,11 @@ Here is the basic example in action
 ::: tip
   There are other ways to install the plugin, [check them out](/configuration.md#installation).
 :::
+
+<script>
+export default {
+  $_veeValidate: {
+    validator: 'new'
+  }
+};
+</script>
