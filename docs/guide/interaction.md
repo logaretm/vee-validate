@@ -60,7 +60,7 @@ Modes can be passed directly to providers `mode` prop or applied globally using 
 
 ### Example
 
-This exmaple impelments a custom version that behaves similar to the `eager` mode, except it applies a **debouce** value depending on each event type, an input event usually has high trigger frequenecy in text fields, so we debounce it to only validate after the user has finished typing.
+This example implements a custom version that behaves similar to the `eager` mode, except it applies a **debounce** value depending on each event type, an input event usually has high trigger frequenecy in text fields, so we debounce it to only validate after the user has finished typing.
 
 ```js
 VeeValidate.setMode('betterEager', ({ errors }) => {
