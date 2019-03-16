@@ -1,6 +1,7 @@
 import Resolver from './resolver';
 import RuleContainer from './ruleContainer';
 import { isEvent, addEventListener, normalizeEvents } from '../utils/events';
+import { findModel } from '../utils/vnode';
 import {
   uniqId,
   createFlags,
@@ -48,60 +49,78 @@ const DEFAULT_OPTIONS = {
   }
 };
 
-export default class Field {
-  id: string;
-  el: ?HTMLInputElement;
-  updated: boolean;
-  dependencies: Array<{ name: string, field: Field }>;
-  watchers: Watcher[];
-  events: string[];
-  rules: { [string]: Object };
-  validity: boolean;
-  aria: boolean;
-  vm: Object | null;
-  component: Object | null;
-  ctorConfig: ?Object;
-  flags: { [string]: boolean };
-  alias: ?string;
-  getter: () => any;
-  name: string;
-  scope: string | null;
-  targetOf: ?string;
-  immediate: boolean;
-  classes: boolean;
-  classNames: { [string]: string };
-  delay: number | Object;
-  listen: boolean;
-  model: null | { expression: string | null, lazy: boolean };
-  value: any;
-  _alias: ?string;
-  _delay: number | Object;
+const FIELDS = [];
 
-  constructor (options: FieldOptions | MapObject = {}) {
-    this.id = uniqId();
-    this.el = options.el;
-    this.updated = false;
-    this.dependencies = [];
-    this.vmId = options.vmId;
-    this.watchers = [];
-    this.events = [];
-    this.delay = 0;
-    this.rules = {};
-    this.forceRequired = false;
-    this._cacheId(options);
-    this.classNames = assign({}, DEFAULT_OPTIONS.classNames);
-    options = assign({}, DEFAULT_OPTIONS, options);
-    this._delay = !isNullOrUndefined(options.delay) ? options.delay : 0; // cache initial delay
-    this.validity = options.validity;
-    this.aria = options.aria;
-    this.flags = options.flags || createFlags();
-    this.vm = options.vm;
-    this.componentInstance = options.component;
-    this.ctorConfig = this.componentInstance ? getPath('$options.$_veeValidate', this.componentInstance) : undefined;
-    this.update(options);
-    // set initial value.
-    this.initialValue = this.value;
-    this.updated = false;
+export default class Field {
+  constructor (el, binding, vnode) {
+    this.el = el;
+    this.el._vid = uniqId();
+    this.id = this.el._vid;
+    this.$validator = vnode.context.$validator;
+    this.value = el.value;
+    FIELDS.push(this);
+  }
+
+  static from (fid) {
+    return FIELDS.find(({ id }) => id === fid);
+  }
+
+  validate () {
+    return this.$validator.verify(this.value, this.rules).then(res => this.applyResult(res));
+  }
+
+  onModelUpdated (model, binding, vnode) {
+    if (model.value === this.value) {
+      return;
+    }
+
+    this.value = model.value;
+    this.validate();
+  }
+
+  applyResult ({ errors }) {
+    const fieldName = this.el.name;
+    this.$validator.errors.removeById(this.id);
+    this.$validator.errors.add(
+      errors.map(e => ({
+        id: this.id,
+        field: fieldName,
+        msg: e.replace('{field}', fieldName)
+      }))
+    );
+  }
+
+  addLiteListeners (el) {
+    addEventListener(el, 'input', () => {
+      this._emittedEvt = true;
+    });
+  }
+
+  addListeners (el) {
+    if (this.hasListener) {
+      return;
+    }
+
+    addEventListener(el, 'input', (e) => {
+      const value = e.target.value;
+      this.value = value;
+      this.validate();
+      this._emittedEvt = false;
+    });
+    this.hasListener = true;
+  }
+
+  onUpdate (el, binding, vnode) {
+    const model = findModel(vnode);
+    this.rules = binding.value;
+    if (model) {
+      this.onModelUpdated(model, binding, vnode);
+      this.addLiteListeners(el);
+    } else {
+      this.addListeners(el);
+    }
+
+    this._emittedEvt = false;
   }
 
   get validator (): any {
@@ -206,15 +225,6 @@ export default class Field {
     }
 
     return options.name === this.name && options.scope === this.scope;
-  }
-
-  /**
-   * Caches the field id.
-   */
-  _cacheId (options: FieldOptions): void {
-    if (this.el && !options.targetOf) {
-      this.el._veeValidateId = this.id;
-    }
   }
 
   /**
