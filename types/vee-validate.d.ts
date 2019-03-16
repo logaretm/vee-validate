@@ -1,4 +1,4 @@
-import Vue = require("vue")
+import Vue from 'vue';
 
 export interface VeeValidateComponentOptions {
     validator?: 'new' | 'inherit';
@@ -74,7 +74,7 @@ export class Field {
     el: any;
     value: any;
     rules: any;
-    update(options:object): void;
+    update(options: object): void;
 }
 
 export interface ErrorField {
@@ -106,8 +106,8 @@ export class ErrorBag {
 
 export class FieldBag {
     items: Field[];
-    filter(matcher: {name?: string, scope?: string, id?: string}): Field[];
-    find(matcher: {name?: string, scope?: string, id?: string}): Field | undefined;
+    filter(matcher: { name?: string, scope?: string, id?: string }): Field[];
+    find(matcher: { name?: string, scope?: string, id?: string }): Field | undefined;
     map(fn: Function): Field[];
 }
 
@@ -138,7 +138,7 @@ export interface ValidationSlotScopeData {
     flags: FieldFlags;
     valid: boolean;
     failedRules: { [x: string]: string };
-    reset (): void;
+    reset(): void;
     validate(value?: any): Promise<VerifyResult>
 }
 
@@ -155,25 +155,25 @@ export class Validator {
     static readonly dictionary: any;
 
     constructor(validations?: any, options?: any);
-    attach(name: string, checks: string|Object, options?: Object): Field;
+    attach(name: string, checks: string | Object, options?: Object): Field;
     attach(options: FieldOptions): Field;
     reset(matcher?: FieldMatchOptions): Promise<void>;
     detach(name: string, scope?: string): void;
-    extend(name: string, validator: Object|Function, options?:ExtendOptions): void;
+    extend(name: string, validator: Object | Function, options?: ExtendOptions): void;
     flag(name: string, flags: Object): void;
     pause(): Validator;
     remove(name: string): void;
     update(id: string, diff: Object): void;
     resume(): Validator;
-    localize(rootDictionary?: Object) :void;
-    localize(language: string, dictionary?: Object) :void;
+    localize(rootDictionary?: Object): void;
+    localize(language: string, dictionary?: Object): void;
     setStrictMode(strictMode?: boolean): void;
     validate(name?: string, value?: any, scope?: string, silent?: boolean): Promise<any>;
     validateAll(values?: Object, scope?: string, silent?: boolean): Promise<any>;
     validateScopes(silent?: boolean): Promise<any>;
-    verify(value: any, rules: string|Object, options?: VerifyOptions): Promise<VerifyResult>;
+    verify(value: any, rules: string | Object, options?: VerifyOptions): Promise<VerifyResult>;
     static create(validations: Object, options: any): Validator;
-    static extend(name: string, validator: Object|Function, options?:ExtendOptions): void;
+    static extend(name: string, validator: Object | Function, options?: ExtendOptions): void;
     static remove(name: string): void;
     static setStrictMode(strictMode?: boolean): void;
     static localize(rootDictionary: Object): void;
@@ -181,33 +181,61 @@ export class Validator {
 }
 
 export class ExtendOptions {
-  hasTarget?: boolean;
-  paramNames?: string[];
-  computesRequired?: Boolean
-  initial?: Boolean
+    hasTarget?: boolean;
+    paramNames?: string[];
+    computesRequired?: Boolean
+    initial?: Boolean
 }
 
 /**
  * `mapFields` helper, which is similar to Vuex's `mapGetters` and `mapActions`
  * as it maps a field object to a computed property.
  */
-export function mapFields(fields?: string[]|{[key: string]: string}): any;
+export function mapFields(fields?: string[] | { [key: string]: string }): any;
+
+export interface ObserverSlotData {
+    errors: string[];
+    untouched: boolean;
+    touched: boolean;
+    dirty: boolean;
+    pristine: boolean;
+    valid: boolean | null;
+    invalid: boolean | null;
+    validated: boolean;
+    required: boolean;
+    pending: boolean;
+}
 
 /**
  * The `ValidationObserver` is a convenient component that uses the `scoped slots` feature
  * to communicate the current state of your inputs as a whole.
  * Note that this component is renderless.
  */
-export const ValidationObserver: Vue.Component;
+export class ValidationObserver extends Vue {
+    validate (): Promise<boolean>;
+    reset (): void;
+    observers: ValidationObserver[];
+    refs: { [x: string]: ValidationProvider };
+    ctx: ObserverSlotData;
+};
 
 /**
  * The `ValidationProvider` component is a regular component
  * that wraps your inputs and provides validation state using `scoped slots`.
  * Note that this component is renderless.
  */
-export const ValidationProvider: Vue.Component;
+export class ValidationProvider extends Vue {
+    messages: string[];
+    flags: FieldFlags;
+    applyResult(result: VerifyResult): void;
+    validate(value: any): Promise<VerifyResult>;
+    reset(): void;
+    validateSilent(): Promise<VerifyResult>;
+    syncValue(value: any): void;
+    setFlags(value: { [x: string]: boolean }): void;
+}
 
-export const withValidation: (component: Vue.Component, mapFn: (ctx: ValidationSlotScopeData) => Object) => Vue.Component;
+export const withValidation: (component: Vue, mapFn: (ctx: ValidationSlotScopeData) => Object) => Vue.Component;
 
 export const version: string;
 
@@ -217,7 +245,7 @@ export const directive: Vue.DirectiveOptions;
 
 export const Rules: {
     [key: string]: {
-        validate (value: any, args: Object | any[], data?: any): boolean | Promise<boolean>;
+        validate(value: any, args: Object | any[], data?: any): boolean | Promise<boolean>;
         options?: object;
         paramNames?: string[];
     }
