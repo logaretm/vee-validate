@@ -289,6 +289,54 @@ Ideally you would pass the props you need to either the `ValidationProvider` or 
 
 Using either of these approaches is at your preference.
 
+## Adding Errors Manually
+
+You may want to add manual errors to a field, such cases like pre-filling initially due to a server response, or an async request. You can do this using `refs` and the `applyResult` method.
+
+```vue
+<template>
+  <div id="app">
+    <ValidationProvider ref="provider" rules="required">
+      <div slot-scope="{ errors }">
+        <input v-model="model" type="text">
+        <div v-if="errors" v-text="errors[0]"></div>
+      </div>
+    </ValidationProvider>
+  </div>
+</template>
+
+<script>
+import { ValidationProvider } from "vee-validate";
+
+export default {
+  components: {
+    ValidationProvider
+  },
+  mounted() {
+    // all those properties are required.
+    this.$refs.provider.applyResult({
+      errors: ["this is a backend error"], // array of string errors
+      valid: false, // boolean state
+      failedRules: {} // should be empty since this is a manual error.
+    });
+  }
+};
+</script>
+```
+
+::: tip
+If you are using TypeScript you may face issues with `$refs` not giving you the correct typings, you can solve that by casting the ref to a `ValidationProvider`.
+
+```ts
+(this.$refs.provider as ValidationProvider).applyResult({
+  errors: ["this is a backend error"],
+  valid: false,
+  failedRules: {}
+});
+```
+
+:::
+
 ## Reference
 
 Below is the reference of the ValidationProvider public API.
