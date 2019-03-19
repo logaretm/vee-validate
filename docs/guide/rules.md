@@ -26,9 +26,11 @@ VeeValidate comes with a bunch of validation rules out of the box and they are a
 - [is_not](#is-not)
 - [length](#length)
 - [max](#max)
+- [max_dimensions](#max_dimensions)
 - [max_value](#max-value)
 - [mimes](#mimes)
 - [min](#min)
+- [min_dimensions](#min_dimensions)
 - [min_value](#min-value)
 - [excluded](#excluded)
 - [numeric](#numeric)
@@ -401,6 +403,22 @@ The field under validation length may not exceed the specified length.
 <input v-validate="'max:11'" data-vv-as="field" name="max_field" type="text">
 ```
 
+## max_dimensions
+
+The file added to the field under validation must be an image (jpg,svg,jpeg,png,bmp,gif) having the maximum specified dimension.
+
+### max_dimensions params
+
+- `width:` The width of the image.
+- `height:` The height of the image.
+
+<input v-validate="'max_dimensions:30,30'" data-vv-as="image" name="dimensions_field" type="file">
+<span v-show="errors.has('dimensions_field')" class="help is-danger">{{ errors.first('dimensions_field') }}</span>
+
+```html
+<input v-validate="'max_dimensions:30,30'" data-vv-as="image" name="dimensions_field" type="file">
+```
+
 ## max_value
 
 The field under validation must be a numeric value and must not be greater than the specified value.
@@ -449,6 +467,22 @@ The field under validation length should not be less than the specified length.
 
 ```html
 <input v-validate="'min:3'" data-vv-as="field" name="min_field" type="text">
+```
+
+## min_dimensions
+
+The file added to the field under validation must be an image (jpg,svg,jpeg,png,bmp,gif) having the minimum specified dimension.
+
+### min_dimensions params
+
+- `width:` The width of the image.
+- `height:` The height of the image.
+
+<input v-validate="'min_dimensions:30,30'" data-vv-as="image" name="dimensions_field" type="file">
+<span v-show="errors.has('dimensions_field')" class="help is-danger">{{ errors.first('dimensions_field') }}</span>
+
+```html
+<input v-validate="'min_dimensions:30,30'" data-vv-as="image" name="dimensions_field" type="file">
 ```
 
 ## min_value
