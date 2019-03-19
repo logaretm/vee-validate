@@ -22,6 +22,7 @@ import integer from './integer';
 import ip from './ip';
 import is from './is';
 import is_not from './is_not';
+import json from './json';
 import length from './length';
 import max from './max';
 import max_dimensions from './max_dimensions';
@@ -61,6 +62,7 @@ export {
   ip,
   is_not,
   is,
+  json,
   max,
   max_dimensions,
   max_value,

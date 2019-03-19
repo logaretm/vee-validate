@@ -24,6 +24,7 @@ VeeValidate comes with a bunch of validation rules out of the box and they are a
 - [ip](#ip)
 - [is](#is)
 - [is_not](#is-not)
+- [json](#json)
 - [length](#length)
 - [max](#max)
 - [max_dimensions](#max_dimensions)
@@ -373,6 +374,23 @@ A negated version of [is](#is) rule, also uses the `===` for equality checks.
 ```html
 <input v-validate="{ is_not: duplicate }" type="text" name="field">
 <input v-model="duplicate" type="text" name="not_again">
+```
+
+
+## json
+
+The field under validation must have a string that is a valid json value.
+
+### json params
+
+- `type:` A json is specific type of json. The possible values :
+  - `array`: Accept only json array (ex: `["value",{"key":"value"}]`)
+  - `array_object`: Accept only json array and value is only object (ex: `[{"key":"value"},{"key":"value"}]`)
+  - `object`: Accept only json object (ex: `{"key":"value"}`)
+  - `all` (default): Accept all json (array and object)
+
+```html
+<input v-validate="'type:array_object'" type="text" name="field">
 ```
 
 ## length

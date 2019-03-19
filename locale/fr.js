@@ -23,6 +23,22 @@ const messages = {
   included: (field) => `Le champ ${field} doit être une valeur valide.`,
   integer: (field) => `Le champ ${field} doit être un entier.`,
   ip: (field) => `Le champ ${field} doit être une adresse IP.`,
+  json: (field, {type}) => {
+    let typeStr = 'un'
+    switch(type) {
+      case 'array_object':
+        typeStr = 'une liste d\'objet';
+        break;
+      case 'array':
+        typeStr = 'une liste';
+        break;
+      case 'object':
+        typeStr = 'un objet';
+        break;
+    }
+
+    return `Le champ ${field} doit être ${typeStr} json valide.`;
+  },
   length: (field, [length, max]) => {
     if (max) {
       return `Le champ ${field} doit contenir entre ${length} et ${max} caractères.`;
