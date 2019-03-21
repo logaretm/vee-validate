@@ -4,7 +4,7 @@ import { modes } from '../modes';
 import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
-import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual } from '../utils';
+import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual, toArray } from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName } from '../utils/vnode';
 
 let $validator = null;
@@ -25,6 +25,14 @@ export function createValidationCtx (ctx) {
       'aria-required': ctx.isRequired ? 'true' : 'false'
     }
   };
+}
+
+function normalizeValue (value) {
+  if (isEvent(value)) {
+    return value.target.type === 'file' ? toArray(value.target.files) : value.target.value;
+  }
+
+  return value;
 }
 
 /**
@@ -389,7 +397,7 @@ export const ValidationProvider = {
       });
     },
     syncValue (e) {
-      const value = isEvent(e) ? e.target.value : e;
+      const value = normalizeValue(e);
       this.value = value;
       this.flags.changed = this.initialValue !== value;
     },
