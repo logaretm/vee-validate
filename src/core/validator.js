@@ -12,10 +12,8 @@ import {
   assign,
   find,
   isNullOrUndefined,
-  includes,
   normalizeRules,
-  isEmptyArray,
-  warn
+  isEmptyArray
 } from '../utils';
 
 // @flow
@@ -31,7 +29,6 @@ export default class Validator {
   constructor (validations?: MapObject, options?: MapObject = { fastExit: true }, pluginContainer?: Object = null) {
     this.errors = new ErrorBag();
     this.fields = new FieldBag();
-    this._createFields(validations);
     this.paused = false;
     this.fastExit = !isNullOrUndefined(options && options.fastExit) ? options.fastExit : true;
     this.$vee = pluginContainer || {
@@ -41,28 +38,6 @@ export default class Validator {
         $off: () => {}
       }
     };
-  }
-
-  /**
-   * @deprecated
-   */
-  static get rules () {
-    if (process.env.NODE_ENV !== 'production') {
-      warn('this accessor will be deprecated, use `import { rules } from "vee-validate"` instead.');
-    }
-
-    return RuleContainer.rules;
-  }
-
-  /**
-   * @deprecated
-   */
-  get rules () {
-    if (process.env.NODE_ENV !== 'production') {
-      warn('this accessor will be deprecated, use `import { rules } from "vee-validate"` instead.');
-    }
-
-    return RuleContainer.rules;
   }
 
   get dictionary () {
@@ -119,18 +94,6 @@ export default class Validator {
   }
 
   /**
-   * Static constructor.
-   * @deprecated
-   */
-  static create (validations?: MapObject, options?: MapObject): Validator {
-    if (process.env.NODE_ENV !== 'production') {
-      warn('Please use `new` to create new validator instances.');
-    }
-
-    return new Validator(validations, options);
-  }
-
-  /**
    * Adds a custom validator to the list of validation rules.
    */
   static extend (name: string, validator: Rule | Object, options?: ExtendOptions = {}) {
@@ -143,18 +106,6 @@ export default class Validator {
       paramNames: (options && options.paramNames) || validator.paramNames,
       options: assign({ hasTarget: false, immediate: true }, mergedOpts, options || {})
     });
-  }
-
-  /**
-   * Removes a rule from the list of validators.
-   * @deprecated
-   */
-  static remove (name: string): void {
-    if (process.env.NODE_ENV !== 'production') {
-      warn('this method will be deprecated, you can still override your rules with `extend`');
-    }
-
-    RuleContainer.remove(name);
   }
 
   /**
@@ -189,66 +140,6 @@ export default class Validator {
   }
 
   /**
-   * Registers a field to be validated.
-   */
-  attach (fieldOpts: FieldOptions): Field {
-    // We search for a field with the same name & scope, having persist enabled
-    const oldFieldMatcher = { name: fieldOpts.name, scope: fieldOpts.scope, persist: true };
-    const oldField = fieldOpts.persist ? this.fields.find(oldFieldMatcher) : null;
-
-    if (oldField) {
-      // We keep the flags of the old field, then we remove its instance
-      fieldOpts.flags = oldField.flags;
-      oldField.destroy();
-      this.fields.remove(oldField);
-    }
-
-    // fixes initial value detection with v-model and select elements.
-    const value = fieldOpts.initialValue;
-    const field = new Field(fieldOpts);
-    this.fields.push(field);
-
-    // validate the field initially
-    if (field.immediate) {
-      this.$vee._vm.$nextTick(() => this.validate(`#${field.id}`, value || field.value, { vmId: fieldOpts.vmId }));
-    } else {
-      this._validate(field, value || field.value, { initial: true }).then(result => {
-        field.flags.valid = result.valid;
-        field.flags.invalid = !result.valid;
-      });
-    }
-
-    return field;
-  }
-
-  /**
-   * Sets the flags on a field.
-   */
-  flag (name: string, flags: { [string]: boolean }, uid = null) {
-    const field = this._resolveField(name, undefined, uid);
-    if (!field || !flags) {
-      return;
-    }
-
-    field.setFlags(flags);
-  }
-
-  /**
-   * Removes a field from the validator.
-   */
-  detach (name: string, scope?: string | null, uid) {
-    let field = isCallable(name.destroy) ? name : this._resolveField(name, scope, uid);
-    if (!field) return;
-
-    // We destroy/remove the field & error instances if it's not a `persist` one
-    if (!field.persist) {
-      field.destroy();
-      this.errors.remove(field.name, field.scope, field.vmId);
-      this.fields.remove(field);
-    }
-  }
-
-  /**
    * Adds a custom validator to the list of validation rules.
    */
   extend (name: string, validator: Rule | MapObject, options?: ExtendOptions = {}) {
@@ -265,141 +156,6 @@ export default class Validator {
         field.reset(); // reset field flags.
         this.errors.remove(field.name, field.scope, matcher && matcher.vmId);
       });
-    });
-  }
-
-  /**
-   * Updates a field, updating both errors and flags.
-   */
-  update (id: string, { scope }) {
-    const field = this._resolveField(`#${id}`);
-    if (!field) return;
-
-    // remove old scope.
-    this.errors.update(id, { scope });
-  }
-
-  /**
-   * Removes a rule from the list of validators.
-   * @deprecated
-   */
-  remove (name: string) {
-    Validator.remove(name);
-  }
-
-  /**
-   * Validates a value against a registered field validations.
-   */
-  validate (fieldDescriptor: string, value?: any, { silent, vmId } = {}): Promise<boolean> {
-    if (this.paused) return Promise.resolve(true);
-
-    // overload to validate all.
-    if (isNullOrUndefined(fieldDescriptor)) {
-      return this.validateScopes({ silent, vmId });
-    }
-
-    // overload to validate scope-less fields.
-    if (fieldDescriptor === '*') {
-      return this.validateAll(undefined, { silent, vmId });
-    }
-
-    // if scope validation was requested.
-    if (/^(.+)\.\*$/.test(fieldDescriptor)) {
-      const matched = fieldDescriptor.match(/^(.+)\.\*$/)[1];
-      return this.validateAll(matched);
-    }
-
-    const field = this._resolveField(fieldDescriptor);
-    if (!field) {
-      return this._handleFieldNotFound(fieldDescriptor);
-    }
-
-    if (!silent) field.flags.pending = true;
-    if (value === undefined) {
-      value = field.value;
-    }
-
-    const validationPromise = this._validate(field, value);
-    field.waitFor(validationPromise);
-
-    return validationPromise.then(result => {
-      if (!silent && field.isWaitingFor(validationPromise)) {
-        // allow next validation to mutate the state.
-        field.waitFor(null);
-        this._handleValidationResults([result], vmId);
-      }
-
-      return result.valid;
-    });
-  }
-
-  /**
-   * Pauses the validator.
-   */
-  pause (): Validator {
-    this.paused = true;
-
-    return this;
-  }
-
-  /**
-   * Resumes the validator.
-   */
-  resume (): Validator {
-    this.paused = false;
-
-    return this;
-  }
-
-  /**
-   * Validates each value against the corresponding field validations.
-   */
-  validateAll (values?: string | MapObject, { silent, vmId } = {}): Promise<boolean> {
-    if (this.paused) return Promise.resolve(true);
-
-    let matcher = null;
-    let providedValues = false;
-
-    if (typeof values === 'string') {
-      matcher = { scope: values, vmId };
-    } else if (isObject(values)) {
-      matcher = Object.keys(values).map(key => {
-        return { name: key, vmId: vmId, scope: null };
-      });
-      providedValues = true;
-    } else if (Array.isArray(values)) {
-      matcher = values.map(key => {
-        return { name: key, vmId: vmId };
-      });
-    } else {
-      matcher = { scope: null, vmId: vmId };
-    }
-
-    return Promise.all(
-      this.fields.filter(matcher).map(field => this._validate(field, providedValues ? values[field.name] : field.value))
-    ).then(results => {
-      if (!silent) {
-        this._handleValidationResults(results, vmId);
-      }
-
-      return results.every(t => t.valid);
-    });
-  }
-
-  /**
-   * Validates all scopes.
-   */
-  validateScopes ({ silent, vmId } = {}): Promise<boolean> {
-    if (this.paused) return Promise.resolve(true);
-
-    return Promise.all(
-      this.fields.filter({ vmId }).map(field => this._validate(field, field.value))
-    ).then(results => {
-      if (!silent) {
-        this._handleValidationResults(results, vmId);
-      }
-
-      return results.every(t => t.valid);
     });
   }
 
@@ -450,18 +206,6 @@ export default class Validator {
    */
   destroy () {
     this.$vee._vm.$off('localeChanged');
-  }
-
-  /**
-   * Creates the fields to be validated.
-   */
-  _createFields (validations?: MapObject) {
-    if (!validations) return;
-
-    Object.keys(validations).forEach(field => {
-      const options = assign({}, { name: field, rules: validations[field] });
-      this.attach(options);
-    });
   }
 
   /**
@@ -671,40 +415,6 @@ export default class Validator {
         return this._formatErrorMessage(field, rule, data, targetName);
       }
     };
-  }
-
-  /**
-   * Tries different strategies to find a field.
-   */
-  _resolveField (name: string, scope: string | null, uid): ?Field {
-    if (name[0] === '#') {
-      return this.fields.find({ id: name.slice(1) });
-    }
-
-    if (!isNullOrUndefined(scope)) {
-      return this.fields.find({ name, scope, vmId: uid });
-    }
-
-    if (includes(name, '.')) {
-      const [fieldScope, ...fieldName] = name.split('.');
-      const field = this.fields.find({ name: fieldName.join('.'), scope: fieldScope, vmId: uid });
-      if (field) {
-        return field;
-      }
-    }
-
-    return this.fields.find({ name, scope: null, vmId: uid });
-  }
-
-  /**
-   * Handles when a field is not found.
-   */
-  _handleFieldNotFound (name: string, scope?: string | null) {
-    const fullName = isNullOrUndefined(scope) ? name : `${!isNullOrUndefined(scope) ? scope + '.' : ''}${name}`;
-
-    return Promise.reject(createError(
-      `Validating a non-existent field: "${fullName}". Use "attach()" first.`
-    ));
   }
 
   /**

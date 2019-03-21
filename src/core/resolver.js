@@ -26,26 +26,26 @@ export default class Resolver {
     const options = resolveConfig(vnode.context);
 
     return {
-      name: Resolver.resolveName(el, vnode),
-      el: el,
-      listen: !binding.modifiers.disable,
+      alias: Resolver.resolveAlias(el, vnode),
+      aria: options.aria && !vnode.componentInstance,
       bails: binding.modifiers.bails ? true : (binding.modifiers.continues === true ? false : undefined),
-      scope: Resolver.resolveScope(el, binding, vnode),
-      vm: Resolver.makeVM(vnode.context),
-      expression: binding.value,
-      component: vnode.componentInstance,
       classes: options.classes,
       classNames: options.classNames,
-      getter: Resolver.resolveGetter(el, vnode, model),
-      events: Resolver.resolveEvents(el, vnode) || options.events,
-      model,
+      component: vnode.componentInstance,
       delay: Resolver.resolveDelay(el, vnode, options),
-      rules: Resolver.resolveRules(el, binding, vnode),
+      el: el,
+      events: Resolver.resolveEvents(el, vnode) || options.events,
+      expression: binding.value,
+      getter: Resolver.resolveGetter(el, vnode, model),
       immediate: !!binding.modifiers.initial || !!binding.modifiers.immediate,
+      initialValue: Resolver.resolveInitialValue(vnode),
+      listen: !binding.modifiers.disable,
+      model,
+      name: Resolver.resolveName(el, vnode),
       persist: !!binding.modifiers.persist,
-      validity: options.validity && !vnode.componentInstance,
-      aria: options.aria && !vnode.componentInstance,
-      initialValue: Resolver.resolveInitialValue(vnode)
+      rules: Resolver.resolveRules(el, binding, vnode),
+      scope: Resolver.resolveScope(el, binding, vnode),
+      validity: options.validity && !vnode.componentInstance
     };
   }
 
@@ -139,6 +139,24 @@ export default class Resolver {
     }
 
     return deepParseInt(globalDelay);
+  }
+
+  static resolveAlias (el, vnode) {
+    const ctorConfig = Resolver.getCtorConfig(vnode);
+    let alias = null;
+    if (ctorConfig && ctorConfig.alias) {
+      alias = isCallable(ctorConfig.alias) ? ctorConfig.alias.call(vnode.componentInstance) : ctorConfig.alias;
+    }
+
+    if (!alias && this.el) {
+      alias = getDataAttribute(this.el, 'as');
+    }
+
+    if (!alias && vnode.componentInstance) {
+      return vnode.componentInstance.$attrs && vnode.componentInstance.$attrs['data-vv-as'];
+    }
+
+    return alias;
   }
 
   /**

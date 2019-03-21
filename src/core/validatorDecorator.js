@@ -1,10 +1,11 @@
-import { assign } from '../utils';
+import { assign, values } from '../utils';
 import ErrorBag from './errorBag';
 import FieldBag from './fieldBag';
 
 export default class ScopedValidator {
   constructor (base, vm) {
     this.id = vm._uid;
+    this._vm = vm;
     this._base = base;
     this._paused = false;
 
@@ -83,9 +84,11 @@ export default class ScopedValidator {
   }
 
   validate (descriptor, value, opts = {}) {
-    if (this._paused) return Promise.resolve(true);
+    if (this._paused || !this._vm.$_veeObserver) return Promise.resolve(true);
 
-    return this._base.validate(descriptor, value, assign({}, { vmId: this.id }, opts || {}));
+    return Promise.all(values(this._vm.$_veeObserver.refs).map(field => {
+      return field.validate();
+    })).then(results => results.every(r => r.valid));
   }
 
   verify (...args) {

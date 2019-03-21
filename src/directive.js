@@ -3,7 +3,7 @@ import Field from './core/field';
 // @flow
 export default {
   bind (el, binding, vnode) {
-    const field = Field.from(el);
+    const field = Field.from(el, vnode) || new Field(el, binding, vnode);
     field.onUpdate(el, binding, vnode);
   },
   update (el: HTMLElement, binding, vnode, oldVnode) {
@@ -11,11 +11,11 @@ export default {
       return;
     }
 
-    if (vnode === oldVnode) {
+    const field = Field.from(el, vnode);
+    if (vnode === oldVnode || !field) {
       return;
     }
 
-    const field = Field.from(el);
     field.onUpdate(el, binding, vnode);
   },
   unbind (el: HTMLElement, binding, { context }) {

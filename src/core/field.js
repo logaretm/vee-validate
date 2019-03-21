@@ -1,72 +1,108 @@
 import Resolver from './resolver';
 import RuleContainer from './ruleContainer';
-import { isEvent, addEventListener, normalizeEvents } from '../utils/events';
+import { isEvent, addEventListener } from '../utils/events';
 import { findModel } from '../utils/vnode';
 import {
   uniqId,
   createFlags,
-  assign,
   normalizeRules,
   isNullOrUndefined,
-  getDataAttribute,
   toggleClass,
   isTextInput,
   debounce,
   isCallable,
-  warn,
   toArray,
-  getPath,
-  makeDelayObject,
-  merge,
-  isObject,
   isCheckboxOrRadioInput,
-  includes
+  includes,
+  isEqual,
+  values
 } from '../utils';
 
 // @flow
 
-const DEFAULT_OPTIONS = {
-  targetOf: null,
-  immediate: false,
-  persist: false,
-  scope: null,
-  listen: true,
-  name: null,
-  rules: {},
-  vm: null,
-  classes: false,
-  validity: true,
-  aria: true,
-  events: 'input|blur',
-  delay: 0,
-  classNames: {
-    touched: 'touched', // the control has been blurred
-    untouched: 'untouched', // the control hasn't been blurred
-    valid: 'valid', // model is valid
-    invalid: 'invalid', // model is invalid
-    pristine: 'pristine', // control has not been interacted with
-    dirty: 'dirty' // control has been interacted with
-  }
-};
-
-const FIELDS = [];
+function createObserver () {
+  return {
+    refs: {},
+    subscribe (ctx) {
+      this.refs[ctx.vid] = ctx;
+    },
+    unsubscribe (ctx) {
+      delete this.refs[ctx.vid];
+    }
+  };
+}
 
 export default class Field {
   constructor (el, binding, vnode) {
     this.el = el;
-    this.el._vid = uniqId();
+    this.vid = vnode.data.ref || uniqId();
+    this.el._vid = this.vid;
     this.id = this.el._vid;
+    this.deps = {};
+    this._value = undefined;
+    this.flags = createFlags();
+    this.$ctx = vnode.context;
     this.$validator = vnode.context.$validator;
-    this.value = el.value;
-    FIELDS.push(this);
   }
 
-  static from (fid) {
-    return FIELDS.find(({ id }) => id === fid);
+  get value () {
+    return this._value;
+  }
+
+  set value (value) {
+    if (!isEqual(value, this._value)) {
+      this.validateDeps();
+    }
+
+    this._value = value;
+  }
+
+  static from (el, vnode) {
+    if (!vnode.context.$_veeObserver) {
+      return null;
+    }
+
+    return vnode.context.$_veeObserver.refs[el._vid];
   }
 
   validate () {
-    return this.$validator.verify(this.value, this.rules).then(res => this.applyResult(res));
+    const options = Resolver.generate(this.el, this.binding, this.vnode);
+    this.classNames = options.classNames;
+    this.classes = options.classes;
+
+    return this.$validator.verify(this.value, this.rules, {
+      name: options.alias || options.name,
+      bails: options.bails,
+      values: this.createValuesLookup(),
+    }).then(res => {
+      this.flags.validated = true;
+      this.applyResult(res);
+
+      return res;
+    });
+  }
+
+  fieldDeps () {
+    const rules = normalizeRules(this.rules);
+
+    return Object.keys(rules).filter(RuleContainer.isTargetRule).map(rule => {
+      return rules[rule][0];
+    });
+  }
+
+  createValuesLookup () {
+    return this.fieldDeps().reduce((acc, depName) => {
+      const fields = this.$ctx.$_veeObserver.refs;
+      if (!fields[depName]) {
+        return acc;
+      }
+
+      // register cross-field dependencies
+      fields[depName].deps[this.vid] = this;
+      acc[depName] = fields[depName].value;
+
+      return acc;
+    }, {});
   }
 
   onModelUpdated (model, binding, vnode) {
@@ -78,16 +114,31 @@ export default class Field {
     this.validate();
   }
 
-  applyResult ({ errors }) {
+  validateDeps () {
+    values(this.deps).forEach(dep => {
+      if (dep.flags.validated) {
+        this.$ctx.$nextTick(() => {
+          dep.validate();
+        });
+      }
+    });
+  }
+
+  applyResult ({ valid, errors }) {
     const fieldName = this.el.name;
-    this.$validator.errors.removeById(this.id);
+    this.flags.valid = valid;
+    this.flags.invalid = !valid;
+    this.$validator.errors.removeById(this.vid);
     this.$validator.errors.add(
       errors.map(e => ({
-        id: this.id,
+        id: this.vid,
         field: fieldName,
         msg: e.replace('{field}', fieldName)
       }))
     );
+    if (this.componentInstance) {
+
+    }
   }
 
   addLiteListeners (el) {
@@ -111,8 +162,11 @@ export default class Field {
   }
 
   onUpdate (el, binding, vnode) {
+    this.binding = binding;
+    this.vnode = vnode;
     const model = findModel(vnode);
     this.rules = binding.value;
+    this.registerField(vnode);
     if (model) {
       this.onModelUpdated(model, binding, vnode);
       this.addLiteListeners(el);
@@ -121,6 +175,14 @@ export default class Field {
     }
 
     this._emittedEvt = false;
+  }
+
+  registerField (vnode) {
+    if (!vnode.context.$_veeObserver) {
+      vnode.context.$_veeObserver = createObserver();
+    }
+
+    vnode.context.$_veeObserver.subscribe(this);
   }
 
   get validator (): any {
@@ -140,94 +202,6 @@ export default class Field {
   }
 
   /**
-   * Gets the display name (user-friendly name).
-   */
-  get alias (): ?string {
-    if (this._alias) {
-      return this._alias;
-    }
-
-    let alias = null;
-    if (this.ctorConfig && this.ctorConfig.alias) {
-      alias = isCallable(this.ctorConfig.alias) ? this.ctorConfig.alias.call(this.componentInstance) : this.ctorConfig.alias;
-    }
-
-    if (!alias && this.el) {
-      alias = getDataAttribute(this.el, 'as');
-    }
-
-    if (!alias && this.componentInstance) {
-      return this.componentInstance.$attrs && this.componentInstance.$attrs['data-vv-as'];
-    }
-
-    return alias;
-  }
-
-  /**
-   * Gets the input value.
-   */
-
-  get value (): any {
-    if (!isCallable(this.getter)) {
-      return undefined;
-    }
-
-    return this.getter();
-  }
-
-  get bails () {
-    return this._bails;
-  }
-
-  /**
-   * If the field rejects false as a valid value for the required rule.
-   */
-
-  get rejectsFalse (): boolean {
-    if (this.componentInstance && this.ctorConfig) {
-      return !!this.ctorConfig.rejectsFalse;
-    }
-
-    if (!this.el) {
-      return false;
-    }
-
-    return this.el.type === 'checkbox';
-  }
-
-  /**
-   * Determines if the instance matches the options provided.
-   */
-  matches (options: FieldMatchOptions | null): boolean {
-    if (!options) {
-      return true;
-    }
-
-    if (options.id) {
-      return this.id === options.id;
-    }
-
-    let matchesComponentId = isNullOrUndefined(options.vmId) ? () => true : (id) => id === this.vmId;
-    if (!matchesComponentId(options.vmId)) {
-      return false;
-    }
-
-    if (options.name === undefined && options.scope === undefined) {
-      return true;
-    }
-
-    if (options.scope === undefined) {
-      return this.name === options.name;
-    }
-
-    if (options.name === undefined) {
-      return this.scope === options.scope;
-    }
-
-    return options.name === this.name && options.scope === this.scope;
-  }
-
-  /**
    * Keeps a reference of the most current validation run.
    */
   waitFor (pendingPromise) {
@@ -236,60 +210,6 @@ export default class Field {
 
   isWaitingFor (promise) {
     return this._waitingFor === promise;
-  }
-
-  /**
-   * Updates the field with changed data.
-   */
-  update (options: Object) {
-    this.targetOf = options.targetOf || null;
-    this.immediate = options.immediate || this.immediate || false;
-    this.persist = options.persist || this.persist || false;
-
-    // update errors scope if the field scope was changed.
-    if (!isNullOrUndefined(options.scope) && options.scope !== this.scope && isCallable(this.validator.update)) {
-      this.validator.update(this.id, { scope: options.scope });
-    }
-    this.scope = !isNullOrUndefined(options.scope) ? options.scope
-      : !isNullOrUndefined(this.scope) ? this.scope : null;
-    this.name = (!isNullOrUndefined(options.name) ? String(options.name) : options.name) || this.name || null;
-    this.rules = options.rules !== undefined ? normalizeRules(options.rules) : this.rules;
-    this._bails = options.bails !== undefined ? options.bails : this._bails;
-    this.model = options.model || this.model;
-    this.listen = options.listen !== undefined ? options.listen : this.listen;
-    this.classes = (options.classes || this.classes || false) && !this.componentInstance;
-    this.classNames = isObject(options.classNames) ? merge(this.classNames, options.classNames) : this.classNames;
-    this.getter = isCallable(options.getter) ? options.getter : this.getter;
-    this._alias = options.alias || this._alias;
-    this.events = (options.events) ? normalizeEvents(options.events) : this.events;
-    this.delay = makeDelayObject(this.events, options.delay || this.delay, this._delay);
-    this.updateDependencies();
-    this.addActionListeners();
-
-    if (process.env.NODE_ENV !== 'production' && !this.name && !this.targetOf) {
-      warn('A field is missing a "name" or "data-vv-name" attribute');
-    }
-
-    // update required flag flags
-    if (options.rules !== undefined) {
-      this.flags.required = this.isRequired;
-    }
-
-    // validate if it was validated before and field was updated and there was a rules mutation.
-    if (this.flags.validated && options.rules !== undefined && this.updated) {
-      this.validator.validate(`#${this.id}`);
-    }
-
-    this.updated = true;
-    this.addValueListeners();
-
-    // no need to continue.
-    if (!this.el) {
-      return;
-    };
-
-    this.updateClasses();
-    this.updateAriaAttrs();
   }
 
   /**
@@ -349,58 +269,6 @@ export default class Field {
     this.updateClasses();
     this.updateAriaAttrs();
     this.updateCustomValidity();
-  }
-
-  /**
-   * Determines if the field requires references to target fields.
-  */
-  updateDependencies () {
-    // reset dependencies.
-    this.dependencies.forEach(d => d.field.destroy());
-    this.dependencies = [];
-
-    // we get the selectors for each field.
-    const fields = Object.keys(this.rules).reduce((prev, r) => {
-      if (RuleContainer.isTargetRule(r)) {
-        prev.push({ selector: this.rules[r][0], name: r });
-      }
-
-      return prev;
-    }, []);
-
-    if (!fields.length || !this.vm || !this.vm.$el) return;
-
-    // must be contained within the same component, so we use the vm root element constrain our dom search.
-    fields.forEach(({ selector, name }) => {
-      const ref = this.vm.$refs[selector];
-      const el = Array.isArray(ref) ? ref[0] : ref;
-      if (!el) {
-        return;
-      }
-
-      const options: FieldOptions = {
-        vm: this.vm,
-        classes: this.classes,
-        classNames: this.classNames,
-        delay: this.delay,
-        scope: this.scope,
-        events: this.events.join('|'),
-        immediate: this.immediate,
-        targetOf: this.id
-      };
-
-      // probably a component.
-      if (isCallable(el.$watch)) {
-        options.component = el;
-        options.el = el.$el;
-        options.getter = Resolver.resolveGetter(el.$el, el.$vnode);
-      } else {
-        options.el = el;
-        options.getter = Resolver.resolveGetter(el, {});
-      }
-
-      this.dependencies.push({ name, field: new Field(options) });
-    });
   }
 
   /**
@@ -524,15 +392,6 @@ export default class Field {
         this.el.removeEventListener(blurEvent, onBlur);
       }
     });
-  }
-
-  checkValueChanged () {
-    // handle some people initialize the value to null, since text inputs have empty string value.
-    if (this.initialValue === null && this.value === '' && isTextInput(this.el)) {
-      return false;
-    }
-
-    return this.value !== this.initialValue;
   }
 
   /**
