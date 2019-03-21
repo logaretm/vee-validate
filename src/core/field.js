@@ -67,8 +67,10 @@ export default class Field {
 
   validate () {
     const options = Resolver.generate(this.el, this.binding, this.vnode);
-    this.classNames = options.classNames;
     this.classes = options.classes;
+    this.classNames = options.classNames;
+    this.aria = options.aria;
+    this.validity = options.validity;
 
     return this.$validator.verify(this.value, this.rules, {
       name: options.alias || options.name,
@@ -84,6 +86,7 @@ export default class Field {
 
   fieldDeps () {
     const rules = normalizeRules(this.rules);
+    this.isRequired = !!rules.required;
 
     return Object.keys(rules).filter(RuleContainer.isTargetRule).map(rule => {
       return rules[rule][0];
@@ -136,9 +139,9 @@ export default class Field {
         msg: e.replace('{field}', fieldName)
       }))
     );
-    if (this.componentInstance) {
-
-    }
+    this.applyClasses();
+    this.applyAriaAttrs();
+    this.applyCustomValidity();
   }
 
   addLiteListeners (el) {
@@ -191,10 +194,6 @@ export default class Field {
     }
 
     return this.vm.$validator;
-  }
-
-  get isRequired (): boolean {
-    return !!this.rules.required || this.forceRequired;
   }
 
   get isDisabled (): boolean {
@@ -288,37 +287,33 @@ export default class Field {
   /**
    * Updates the element classes depending on each field flag status.
    */
-  updateClasses (isReset = false) {
+  applyClasses (isReset = false) {
     if (!this.classes || this.isDisabled) return;
-    const applyClasses = (el) => {
-      toggleClass(el, this.classNames.dirty, this.flags.dirty);
-      toggleClass(el, this.classNames.pristine, this.flags.pristine);
-      toggleClass(el, this.classNames.touched, this.flags.touched);
-      toggleClass(el, this.classNames.untouched, this.flags.untouched);
 
-      // remove valid/invalid classes on reset.
-      if (isReset) {
-        toggleClass(el, this.classNames.valid, false);
-        toggleClass(el, this.classNames.invalid, false);
+    const classes = values(this.classNames).reduce((acc, name) => {
+      if (this.flags[name] && this.classNames[name]) {
+        acc[name] = this.classNames[name];
       }
 
-      // make sure we don't set any classes if the state is undetermined.
-      if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
-        toggleClass(el, this.classNames.valid, this.flags.valid);
-      }
+      return acc;
+    }, {});
 
-      if (!isNullOrUndefined(this.flags.invalid) && this.flags.validated) {
-        toggleClass(el, this.classNames.invalid, this.flags.invalid);
-      }
-    };
-
-    if (!isCheckboxOrRadioInput(this.el)) {
-      applyClasses(this.el);
-      return;
+    // remove valid/invalid classes on reset.
+    if (isReset) {
+      delete classes.valid;
+      delete classes.invalid;
     }
 
-    const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
-    toArray(els).forEach(applyClasses);
+    // make sure we don't set any classes if the state is undetermined.
+    if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
+      delete classes.valid;
+    }
+
+    if (!isNullOrUndefined(this.flags.invalid) && this.flags.validated) {
+      delete classes.valid;
+    }
+
+    this.el.className = values(classes).join(' ');
   }
 
   /**
@@ -556,30 +551,20 @@ export default class Field {
   /**
    * Updates aria attributes on the element.
    */
-  updateAriaAttrs () {
+  applyAriaAttrs () {
     if (!this.aria || !this.el || !isCallable(this.el.setAttribute)) return;
 
-    const applyAriaAttrs = (el) => {
-      el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
-      el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
-    };
-
-    if (!isCheckboxOrRadioInput(this.el)) {
-      applyAriaAttrs(this.el);
-      return;
-    }
-
-    const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
-    toArray(els).forEach(applyAriaAttrs);
+    this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
+    this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
   }
 
   /**
    * Updates the custom validity for the field.
    */
-  updateCustomValidity () {
-    if (!this.validity || !this.el || !isCallable(this.el.setCustomValidity) || !this.validator.errors) return;
+  applyCustomValidity () {
+    if (!this.validity || !this.el || !isCallable(this.el.setCustomValidity) || !this.$ctx.$validator.errors) return;
 
-    this.el.setCustomValidity(this.flags.valid ? '' : (this.validator.errors.firstById(this.id) || ''));
+    this.el.setCustomValidity(this.flags.valid ? '' : (this.$ctx.$validator.errors.firstById(this.vid) || ''));
   }
 
   /**

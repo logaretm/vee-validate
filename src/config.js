@@ -7,7 +7,14 @@ const DEFAULT_CONFIG = {
   dictionary: null,
   fieldsBagName: 'fields',
   classes: false,
-  classNames: null,
+  classNames: {
+    touched: 'touched', // the control has been blurred
+    untouched: 'untouched', // the control hasn't been blurred
+    valid: 'valid', // model is valid
+    invalid: 'invalid', // model is invalid
+    pristine: 'pristine', // control has not been interacted with
+    dirty: 'dirty' // control has been interacted with
+  },
   events: 'input',
   inject: true,
   fastExit: true,
