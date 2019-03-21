@@ -53,8 +53,8 @@ export const ValidationObserver = {
     ctx () {
       const ctx = {
         errors: {},
-        validate: () => {
-          const promise = this.validate();
+        validate: (arg) => {
+          const promise = this.validate(arg);
 
           return {
             then (thenable) {
@@ -144,10 +144,10 @@ export const ValidationObserver = {
         this.observers.splice(idx, 1);
       }
     },
-    validate () {
+    validate ({ silent } = { silent: false }) {
       return Promise.all([
-        ...values(this.refs).map(ref => ref.validate().then(r => r.valid)),
-        ...this.observers.map(obs => obs.validate())
+        ...values(this.refs).map(ref => ref[silent ? 'validateSilent' : 'validate']().then(r => r.valid)),
+        ...this.observers.map(obs => obs.validate({ silent }))
       ]).then(results => results.every(r => r));
     },
     reset () {
