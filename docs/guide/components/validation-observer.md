@@ -52,7 +52,7 @@ The scoped slot is passed an object containing a flags object representing the m
 | touched   | `boolean`                   | True if at least one field has been touched (blurred).                                      |
 | untouched | `boolean`                   | True if all fields haven't been touched (blurred).                                           |
 | errors    | `{ [x: string]: string[] }` | An object containing reference to each field errors, each field is keyed by its `vid` prop. |
-| validate  | `() => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after successful validation. |
+| validate  | `({ silent: boolean }) => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after successful validation. Mutates child providers state unless `silent` is true. |
 | reset     | `() => void`                | A method that resets validation state for all providers. |
 
 ## Examples
@@ -176,7 +176,7 @@ Those are the only methods meant for public usage, other methods that may exist 
 
 |Method       | Args    | Return Value                  | Description                                                     |
 |-------------|:-------:|:-----------------------------:|-----------------------------------------------------------------|
-| validate    | `void`  | `Promise<boolean>`            | Validates all the child providers/observers and also mutates their state. |
+| validate    | `{ silent: boolean }`  | `Promise<boolean>` | Validates all the child providers/observers and mutates their state unless `silent` is true. |
 | reset       | `void`  | `void`                        | Resets validation state for all child providers/observers.                |
 
 ### Events
