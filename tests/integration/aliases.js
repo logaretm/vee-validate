@@ -1,60 +1,74 @@
-import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import VeeValidate from '@/index';
-import TestComponent from './components/Aliases';
 
-const Vue = createLocalVue();
-Vue.use(VeeValidate);
-VeeValidate.Validator.localize('en', {
-  messages: {
-    confirmed: (field, [targetName]) => `The ${field} and ${targetName} do not match`
-  },
-  attributes: {
-    confirm: 'Password Confirmation'
-  }
-});
+describe('Fields can be given an alias for messages', () => {
+  const localVue = createLocalVue();
+  localVue.use(VeeValidate);
 
-test('validates input initially when .immediate modifier is set', async () => {
-  const wrapper = shallow(TestComponent, { localVue: Vue });
+  test('aliases can be specified with data-vv-as attr', async () => {
+    const wrapper = mount({
+      template: `
+      <div>
+        <input name="aliasTest" v-model="value" v-validate.immediate="'required'" data-vv-as="Alias">
+        <span>{{ errors.first('aliasTest') }}</span>
+      </div>
+    `,
+      data: () => ({ value: '' })
+    }, { localVue, sync: false });
 
-  wrapper.setData({
-    password: '',
-    confirm: ''
+    await flushPromises();
+
+    expect(wrapper.find('span').text()).toBe('The Alias field is required.');
   });
-  await flushPromises();
 
-  expect(wrapper.vm.errors.first('password')).toBe('The Password field is required.');
-  expect(wrapper.vm.errors.first('confirm')).toBe('The Password Confirmation field is required.');
+  test('aliases can be specified with dictionary API', async () => {
+    const wrapper = mount({
+      template: `
+      <div>
+        <input name="aliasTest" v-model="value" v-validate="'required'">
+        <span>{{ errors.first('aliasTest') }}</span>
+      </div>
+    `,
+      data: () => ({ value: '' })
+    }, { localVue, sync: false });
 
-  wrapper.setData({
-    password: '12345'
+    wrapper.vm.$validator.localize({
+      en: {
+        attributes: {
+          aliasTest: 'Alias'
+        }
+      }
+    });
+
+    await wrapper.vm.$validator.validate();
+
+    expect(wrapper.find('span').text()).toBe('The Alias field is required.');
   });
-  await flushPromises();
-  expect(wrapper.vm.errors.first('password')).toBe('The Password and Password Confirmation do not match');
-});
 
-test('alias can be set with the ctor options', async () => {
-  const wrapper = mount({
-    template: `<TextInput v-model="value" v-validate="'required'" name="bar" label="foo"></TextInput>`,
-    data: () => ({
-      value: ''
-    }),
-    components: {
-      TextInput: {
-        template: `<input type="text">`,
-        $_veeValidate: {
-          name () {
-            return this.$attrs.name;
-          },
-          alias () {
-            return this.$attrs.label;
+  test('aliases can be set with the ctor options', async () => {
+    const wrapper = mount({
+      template: `<TextInput v-model="value" v-validate="'required'" name="bar" label="foo"></TextInput>`,
+      data: () => ({
+        value: ''
+      }),
+      components: {
+        TextInput: {
+          template: `<input type="text">`,
+          $_veeValidate: {
+            name () {
+              return this.$attrs.name;
+            },
+            alias () {
+              return this.$attrs.label;
+            }
           }
         }
       }
-    }
-  }, { localVue: Vue });
+    }, { localVue, sync: false });
 
-  await wrapper.vm.$validator.validate();
+    await wrapper.vm.$validator.validate();
 
-  expect(wrapper.vm.errors.first('bar')).toBe('The foo field is required.');
+    expect(wrapper.vm.errors.first('bar')).toBe('The foo field is required.');
+  });
 });

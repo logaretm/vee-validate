@@ -148,8 +148,8 @@ export default class Resolver {
       alias = isCallable(ctorConfig.alias) ? ctorConfig.alias.call(vnode.componentInstance) : ctorConfig.alias;
     }
 
-    if (!alias && this.el) {
-      alias = getDataAttribute(this.el, 'as');
+    if (!alias && el) {
+      alias = getDataAttribute(el, 'as');
     }
 
     if (!alias && vnode.componentInstance) {
@@ -188,13 +188,13 @@ export default class Resolver {
       const { event } = vnode.componentInstance.$options.model || { event: 'input' };
       // if the prop was configured but not the model.
       if (!event) {
-        return events;
+        return Array.isArray(events) ? events : events.split('|');
       }
 
       events = events.replace('input', event);
     }
 
-    return events;
+    return Array.isArray(events) ? events : events.split('|');
   }
 
   /**

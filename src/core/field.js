@@ -1,6 +1,6 @@
 import Resolver from './resolver';
 import RuleContainer from './ruleContainer';
-import { isEvent, addEventListener } from '../utils/events';
+import { isEvent, addEventListener, addEventListenerOnce } from '../utils/events';
 import { findModel } from '../utils/vnode';
 import {
   uniqId,
@@ -155,21 +155,28 @@ export default class Field {
       return;
     }
 
-    addEventListener(el, 'input', (e) => {
-      const value = e.target.value;
-      this.value = value;
-      this.validate();
-      this._emittedEvt = false;
+    const inputEvt = this._determineInputEvent();
+    const events = this._determineEventList(inputEvt);
+
+    events.forEach(ev => {
+      addEventListener(el, ev, (e) => {
+        const value = e.target.value;
+        this.value = value;
+        this.validate();
+        this._emittedEvt = false;
+      });
     });
     this.hasListener = true;
   }
 
   onUpdate (el, binding, vnode) {
+    this.el = el;
     this.binding = binding;
     this.vnode = vnode;
     const model = findModel(vnode);
     this.rules = binding.value;
     this.registerField(vnode);
+    this.updateOptions(el, binding, vnode);
     if (model) {
       this.onModelUpdated(model, binding, vnode);
       this.addLiteListeners(el);
@@ -181,6 +188,14 @@ export default class Field {
     if (binding.modifiers && binding.modifiers.immediate && !this.flags.validated) {
       this.validate();
     }
+
+    this.addActionListeners();
+  }
+
+  updateOptions (el, binding, vnode) {
+    const options = Resolver.generate(el, binding, vnode);
+    this.events = options.events;
+    this.componentInstance = options.component;
   }
 
   registerField (vnode) {
@@ -324,8 +339,6 @@ export default class Field {
    */
   addActionListeners () {
     // remove previous listeners.
-    this.unwatch(/class/);
-
     if (!this.el) return;
 
     const onBlur = () => {
@@ -335,9 +348,6 @@ export default class Field {
         toggleClass(this.el, this.classNames.touched, true);
         toggleClass(this.el, this.classNames.untouched, false);
       }
-
-      // only needed once.
-      this.unwatch(/^class_blur$/);
     };
 
     const inputEvent = isTextInput(this.el) ? 'input' : 'change';
@@ -348,48 +358,18 @@ export default class Field {
         toggleClass(this.el, this.classNames.pristine, false);
         toggleClass(this.el, this.classNames.dirty, true);
       }
-
-      // only needed once.
-      this.unwatch(/^class_input$/);
     };
 
     if (this.componentInstance && isCallable(this.componentInstance.$once)) {
       this.componentInstance.$once('input', onInput);
       this.componentInstance.$once('blur', onBlur);
-      this.watchers.push({
-        tag: 'class_input',
-        unwatch: () => {
-          this.componentInstance.$off('input', onInput);
-        }
-      });
-      this.watchers.push({
-        tag: 'class_blur',
-        unwatch: () => {
-          this.componentInstance.$off('blur', onBlur);
-        }
-      });
       return;
     }
 
-    if (!this.el) return;
-
-    addEventListener(this.el, inputEvent, onInput);
+    addEventListenerOnce(this.el, inputEvent, onInput);
     // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
     const blurEvent = isCheckboxOrRadioInput(this.el) ? 'change' : 'blur';
-    addEventListener(this.el, blurEvent, onBlur);
-    this.watchers.push({
-      tag: 'class_input',
-      unwatch: () => {
-        this.el.removeEventListener(inputEvent, onInput);
-      }
-    });
-
-    this.watchers.push({
-      tag: 'class_blur',
-      unwatch: () => {
-        this.el.removeEventListener(blurEvent, onBlur);
-      }
-    });
+    addEventListenerOnce(this.el, blurEvent, onBlur);
   }
 
   /**

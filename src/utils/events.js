@@ -29,6 +29,15 @@ export const detectPassiveSupport = () => {
   return supportsPassive;
 };
 
-export const addEventListener = (el: HTMLElement, eventName: string, cb: Function) => {
-  el.addEventListener(eventName, cb, supportsPassive ? { passive: true } : false);
+export const addEventListener = (el: HTMLElement, eventName: string, handler: Function) => {
+  el.addEventListener(eventName, handler, supportsPassive ? { passive: true } : false);
+};
+
+export const addEventListenerOnce = (el: HTMLElement, eventName: string, handler: Function) => {
+  const once = e => {
+    handler(e);
+    el.removeEventListener(eventName, handler);
+  };
+
+  el.addEventListener(eventName, once, supportsPassive ? { passive: true } : false);
 };
