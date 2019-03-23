@@ -558,9 +558,5 @@ export default class Field {
     if (this._cancellationToken) {
       this._cancellationToken.cancelled = true;
     }
-
-    this.unwatch();
-    this.dependencies.forEach(d => d.field.destroy());
-    this.dependencies = [];
   }
 }
