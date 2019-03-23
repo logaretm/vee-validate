@@ -178,6 +178,9 @@ export default class Field {
     }
 
     this._emittedEvt = false;
+    if (binding.modifiers && binding.modifiers.immediate && !this.flags.validated) {
+      this.validate();
+    }
   }
 
   registerField (vnode) {
