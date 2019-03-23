@@ -21,7 +21,7 @@ The validator offers an API to add new fields and trigger validations.
 | validateAll(fields?: String or Object) | `Promise<boolean>` | Validates each value against the corresponding field validations. |
 | pause() | `void` | Disables validation. |
 | resume() | `void` | Enables validation. |
-| verify(value: any, rules: string | Object) | { errors: string[], valid: boolean, failedRules: { [x: string]: string } } | [verify method](#verify) |
+| verify(value: any, rules: string) | Object | { errors: string[], valid: boolean, failedRules: { [x: string]: string } } | [verify method](#verify) |
 | detach(name: string, scope?: string) | `void` | Detaches the field that matches the name and the scope of the provided values. |
 | extend(name: string, rule: Rule, options?: ExtendOptions) | `void` | Adds a new validation rule. The provided rule param must be a [valid Rule function or object](/guide/custom-rules.md). |
 | reset(matcher?: Object) | `void` | Resets field flags for all scoped fields. Resets all fields if no scope is provided. |
