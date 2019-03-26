@@ -220,7 +220,7 @@ export const ValidationProvider = {
       default: () => {
         PROVIDER_COUNTER++;
 
-        return PROVIDER_COUNTER;
+        return `_vee_${PROVIDER_COUNTER}`;
       }
     },
     name: {
