@@ -381,6 +381,7 @@ All the following props are optional.
 | bails     | `boolean` | `true`                | If true, the validation will stop on the first failing rule.                 |
 | debounce  | `number`  | `0`                   | Debounces the validation for the specified amount of milliseconds.           |
 | tag       | `string`  | `span`                | The default tag to [render](#rendering). |
+| persist   | `boolean` | `false`               | If true, the provider will keep its errors across mounted/destroyed lifecycles |
 
 ### Methods
 
