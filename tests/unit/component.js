@@ -864,4 +864,45 @@ describe('Validation Observer Component', () => {
     expect(errors.at(0).text()).toBe(DEFAULT_REQUIRED_MESSAGE);
     expect(errors.at(1).text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   });
+
+  test('persist provider state after destroyed', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: '',
+        isHidden: false
+      }),
+      template: `
+      <div>
+        <ValidationObserver>
+          <div v-if="!isHidden">
+            <ValidationProvider
+              rules="required|min:3|max:6"
+              vid="myfield"
+              v-slot="{ errors }"
+              :persist="true"
+            >
+              <input type="text" v-model="value">
+              <span>{{ errors[0] }}</span>
+            </ValidationProvider>
+          </div>
+        </ValidationObserver>
+        <button @click="isHidden = !isHidden">Toggle</button>
+      </div>
+      `
+    }, { localVue: Vue });
+
+    const button = wrapper.find('button');
+    const input = wrapper.find('input');
+    await flushPromises();
+    input.element.value = 'se';
+    input.trigger('input');
+    await flushPromises();
+
+    button.trigger('click');
+    await flushPromises();
+    button.trigger('click');
+    await flushPromises();
+    const span = wrapper.find('span');
+    expect(span.text()).toBeTruthy();
+  });
 });

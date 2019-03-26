@@ -166,6 +166,7 @@ export const ValidationObserver = {
       const provider = this.refs[vid];
       // save it for the next time.
       if (provider && provider.persist) {
+        /* istanbul ignore else */
         if (process.env.NODE_ENV !== 'production') {
           if (vid.indexOf('_vee_') === 0) {
             warn('Please provide a `vid` prop when using `persist`, there might be unexpected issues otherwise.');
