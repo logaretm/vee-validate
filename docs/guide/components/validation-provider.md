@@ -289,6 +289,32 @@ Ideally you would pass the props you need to either the `ValidationProvider` or 
 
 Using either of these approaches is at your preference.
 
+### Persisting Provider Errors
+
+Sometimes when building something like a multi-step form, you would need to use `v-if` on your providers to toggle the visibility of your steps. However, when the provider is hidden and shown again, it does not keep its state.
+
+You can use the `persist` prop to allow the provider to __remember__ its state across mounting/destroyed lifecycles, but there are a couple of caveats:
+
+- Your Provider __must be inside__ an __observer__ component.
+- Your Provider __must have__ a `vid` property set.
+
+```vue
+<ValidationObserver>
+  <div v-if="!isHidden">
+    <ValidationProvider
+      rules="required|min:3|max:6"
+      vid="myfield"
+      v-slot="{ errors }"
+      :persist="true"
+    >
+      <input type="text" v-model="value">
+      {{ errors[0] }}
+    </ValidationProvider>
+  </div>
+</ValidationObserver>
+<button @click="isHidden = !isHidden">Toggle</button>
+```
+
 ## Adding Errors Manually
 
 You may want to add manual errors to a field, such cases like pre-filling initially due to a server response, or an async request. You can do this using `refs` and the `applyResult` method.
