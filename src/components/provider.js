@@ -307,7 +307,7 @@ export const ValidationProvider = {
       return Object.keys(rules).filter(RuleContainer.isTargetRule).map(rule => {
         const depName = rules[rule][0];
         const watcherName = `$__${depName}`;
-        if (!isCallable(this[watcherName])) {
+        if (!isCallable(this[watcherName]) && providers[depName]) {
           this[watcherName] = providers[depName].$watch('value', () => {
             if (this.flags.validated) {
               this._needsValidation = true;
