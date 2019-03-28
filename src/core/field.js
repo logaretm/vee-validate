@@ -15,10 +15,20 @@ import {
   isCheckboxOrRadioInput,
   includes,
   isEqual,
-  values
+  values,
+  assign
 } from '../utils';
 
 // @flow
+
+const DEFAULT_CLASSES = {
+  touched: 'touched', // the control has been blurred
+  untouched: 'untouched', // the control hasn't been blurred
+  valid: 'valid', // model is valid
+  invalid: 'invalid', // model is invalid
+  pristine: 'pristine', // control has not been interacted with
+  dirty: 'dirty' // control has been interacted with
+};
 
 function createObserver () {
   return {
@@ -68,7 +78,7 @@ export default class Field {
   validate () {
     const options = Resolver.generate(this.el, this.binding, this.vnode);
     this.classes = options.classes;
-    this.classNames = options.classNames;
+    this.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
     this.aria = options.aria;
     this.validity = options.validity;
 
@@ -185,6 +195,7 @@ export default class Field {
     }
 
     this._emittedEvt = false;
+    this.applyClasses();
     if (binding.modifiers && binding.modifiers.immediate && !this.flags.validated) {
       this.validate();
     }
@@ -195,6 +206,8 @@ export default class Field {
   updateOptions (el, binding, vnode) {
     const options = Resolver.generate(el, binding, vnode);
     this.events = options.events;
+    this.classes = options.classes;
+    this.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
     this.componentInstance = options.component;
   }
 
@@ -308,30 +321,35 @@ export default class Field {
   applyClasses (isReset = false) {
     if (!this.classes || this.isDisabled) return;
 
-    const classes = values(this.classNames).reduce((acc, name) => {
-      if (this.flags[name] && this.classNames[name]) {
-        acc[name] = this.classNames[name];
+    const applyClasses = (el) => {
+      toggleClass(el, this.classNames.dirty, this.flags.dirty);
+      toggleClass(el, this.classNames.pristine, this.flags.pristine);
+      toggleClass(el, this.classNames.touched, this.flags.touched);
+      toggleClass(el, this.classNames.untouched, this.flags.untouched);
+
+      // remove valid/invalid classes on reset.
+      if (isReset) {
+        toggleClass(el, this.classNames.valid, false);
+        toggleClass(el, this.classNames.invalid, false);
       }
 
-      return acc;
-    }, {});
+      // make sure we don't set any classes if the state is undetermined.
+      if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
+        toggleClass(el, this.classNames.valid, this.flags.valid);
+      }
 
-    // remove valid/invalid classes on reset.
-    if (isReset) {
-      delete classes.valid;
-      delete classes.invalid;
+      if (!isNullOrUndefined(this.flags.invalid) && this.flags.validated) {
+        toggleClass(el, this.classNames.invalid, this.flags.invalid);
+      }
+    };
+
+    if (!isCheckboxOrRadioInput(this.el)) {
+      applyClasses(this.el);
+      return;
     }
 
-    // make sure we don't set any classes if the state is undetermined.
-    if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
-      delete classes.valid;
-    }
-
-    if (!isNullOrUndefined(this.flags.invalid) && this.flags.validated) {
-      delete classes.valid;
-    }
-
-    this.el.className = values(classes).join(' ');
+    const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+    toArray(els).forEach(applyClasses);
   }
 
   /**
