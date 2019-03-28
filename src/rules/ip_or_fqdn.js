@@ -16,7 +16,7 @@ const validate = (value) => {
 
 export {
   validate
-  };
+};
 
 export default {
   validate

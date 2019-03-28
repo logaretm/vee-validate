@@ -1,11 +1,9 @@
 import VeeValidate from './plugin';
 import directive from './directive';
-import mixin from './mixin';
 import en from '../locale/en';
 import * as Rules from './rules';
-import mapFields from './core/mapFields';
 import Validator from './core/validator';
-import ErrorBag from './core/errorBag';
+import { mapValidationState } from './mapValidationState';
 import { assign } from './utils';
 import { ValidationProvider, ValidationObserver, withValidation } from './components';
 
@@ -23,21 +21,19 @@ const install = VeeValidate.install;
 export {
   install,
   directive,
-  mixin,
-  mapFields,
   Validator,
-  ErrorBag,
   Rules,
   version,
   ValidationProvider,
   ValidationObserver,
-  withValidation
+  withValidation,
+  mapValidationState
 };
 
 VeeValidate.version = version;
-VeeValidate.mapFields = mapFields;
 VeeValidate.ValidationProvider = ValidationProvider;
 VeeValidate.ValidationObserver = ValidationObserver;
 VeeValidate.withValidation = withValidation;
+VeeValidate.mapValidationState = mapValidationState;
 
 export default VeeValidate;

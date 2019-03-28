@@ -1,4 +1,5 @@
 import Resolver from './resolver';
+import { Vue } from '../plugin';
 import RuleContainer from './ruleContainer';
 import { isEvent, addEventListener, addEventListenerOnce } from '../utils/events';
 import { findModel } from '../utils/vnode';
@@ -16,8 +17,10 @@ import {
   includes,
   isEqual,
   values,
+  defineNonReactive,
   assign
 } from '../utils';
+import { getValidator } from '../state';
 
 const DEFAULT_CLASSES = {
   touched: 'touched', // the control has been blurred
@@ -28,29 +31,21 @@ const DEFAULT_CLASSES = {
   dirty: 'dirty' // control has been interacted with
 };
 
-function createObserver () {
-  return {
-    refs: {},
-    subscribe (ctx) {
-      this.refs[ctx.vid] = ctx;
-    },
-    unsubscribe (ctx) {
-      delete this.refs[ctx.vid];
-    }
-  };
-}
-
 export default class Field {
   constructor (el, binding, vnode) {
-    this.el = el;
-    this.vid = vnode.data.ref || uniqId();
+    defineNonReactive(this, 'el', el);
+    defineNonReactive(this, 'vid', vnode.data.ref || uniqId());
+    defineNonReactive(this, 'deps', {});
+    defineNonReactive(this, 'validator', getValidator());
+    defineNonReactive(this, 'vmId', vnode.context._uid);
+    defineNonReactive(this, 'ctx', vnode.context);
+    defineNonReactive(this, 'opts', {});
+    defineNonReactive(this, 'binding', binding);
+    defineNonReactive(this, 'vnode', vnode);
     this.el._vid = this.vid;
-    this.id = this.el._vid;
-    this.deps = {};
     this._value = undefined;
-    this.flags = createFlags();
-    this.$ctx = vnode.context;
-    this.$validator = vnode.context.$validator;
+    this.flags = Vue.observable(createFlags());
+    this.errors = Vue.observable([]);
   }
 
   get value () {
@@ -75,12 +70,10 @@ export default class Field {
 
   validate () {
     const options = Resolver.generate(this.el, this.binding, this.vnode);
-    this.classes = options.classes;
-    this.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
-    this.aria = options.aria;
-    this.validity = options.validity;
+    this.opts.aria = options.aria;
+    this.opts.validity = options.validity;
 
-    return this.$validator.verify(this.value, this.rules, {
+    return this.validator.verify(this.value, this.rules, {
       name: options.alias || options.name,
       bails: options.bails,
       values: this.createValuesLookup(),
@@ -103,7 +96,7 @@ export default class Field {
 
   createValuesLookup () {
     return this.fieldDeps().reduce((acc, depName) => {
-      const fields = this.$ctx.$_veeObserver.refs;
+      const fields = this.ctx.$_veeObserver.refs;
       if (!fields[depName]) {
         return acc;
       }
@@ -128,7 +121,7 @@ export default class Field {
   validateDeps () {
     values(this.deps).forEach(dep => {
       if (dep.flags.validated) {
-        this.$ctx.$nextTick(() => {
+        this.ctx.$nextTick(() => {
           dep.validate();
         });
       }
@@ -136,17 +129,9 @@ export default class Field {
   }
 
   applyResult ({ valid, errors }) {
-    const fieldName = this.el.name;
     this.flags.valid = valid;
     this.flags.invalid = !valid;
-    this.$validator.errors.removeById(this.vid);
-    this.$validator.errors.add(
-      errors.map(e => ({
-        id: this.vid,
-        field: fieldName,
-        msg: e.replace('{field}', fieldName)
-      }))
-    );
+    this.errors = errors;
     this.applyClasses();
     this.applyAriaAttrs();
     this.applyCustomValidity();
@@ -203,15 +188,15 @@ export default class Field {
 
   updateOptions (el, binding, vnode) {
     const options = Resolver.generate(el, binding, vnode);
-    this.events = options.events;
-    this.classes = options.classes;
-    this.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
-    this.componentInstance = options.component;
+    this.opts.events = options.events;
+    this.opts.classes = options.classes;
+    this.opts.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
+    this.opts.componentInstance = options.component;
   }
 
   registerField (vnode) {
     if (!vnode.context.$_veeObserver) {
-      vnode.context.$_veeObserver = createObserver();
+      throw new Error('Did you forget to mapValidationState');
     }
 
     vnode.context.$_veeObserver.subscribe(this);
@@ -291,27 +276,27 @@ export default class Field {
    * Updates the element classes depending on each field flag status.
    */
   applyClasses (isReset = false) {
-    if (!this.classes || this.isDisabled) return;
+    if (!this.opts.classes || this.isDisabled) return;
 
     const applyClasses = (el) => {
-      toggleClass(el, this.classNames.dirty, this.flags.dirty);
-      toggleClass(el, this.classNames.pristine, this.flags.pristine);
-      toggleClass(el, this.classNames.touched, this.flags.touched);
-      toggleClass(el, this.classNames.untouched, this.flags.untouched);
+      toggleClass(el, this.opts.classNames.dirty, this.flags.dirty);
+      toggleClass(el, this.opts.classNames.pristine, this.flags.pristine);
+      toggleClass(el, this.opts.classNames.touched, this.flags.touched);
+      toggleClass(el, this.opts.classNames.untouched, this.flags.untouched);
 
       // remove valid/invalid classes on reset.
       if (isReset) {
-        toggleClass(el, this.classNames.valid, false);
-        toggleClass(el, this.classNames.invalid, false);
+        toggleClass(el, this.opts.classNames.valid, false);
+        toggleClass(el, this.opts.classNames.invalid, false);
       }
 
       // make sure we don't set any classes if the state is undetermined.
       if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
-        toggleClass(el, this.classNames.valid, this.flags.valid);
+        toggleClass(el, this.opts.classNames.valid, this.flags.valid);
       }
 
       if (!isNullOrUndefined(this.flags.invalid) && this.flags.validated) {
-        toggleClass(el, this.classNames.invalid, this.flags.invalid);
+        toggleClass(el, this.opts.classNames.invalid, this.flags.invalid);
       }
     };
 
@@ -334,9 +319,9 @@ export default class Field {
     const onBlur = () => {
       this.flags.touched = true;
       this.flags.untouched = false;
-      if (this.classes) {
-        toggleClass(this.el, this.classNames.touched, true);
-        toggleClass(this.el, this.classNames.untouched, false);
+      if (this.opts.classes) {
+        toggleClass(this.el, this.opts.classNames.touched, true);
+        toggleClass(this.el, this.opts.classNames.untouched, false);
       }
     };
 
@@ -344,9 +329,9 @@ export default class Field {
     const onInput = () => {
       this.flags.dirty = true;
       this.flags.pristine = false;
-      if (this.classes) {
-        toggleClass(this.el, this.classNames.pristine, false);
-        toggleClass(this.el, this.classNames.dirty, true);
+      if (this.opts.classes) {
+        toggleClass(this.el, this.opts.classNames.pristine, false);
+        toggleClass(this.el, this.opts.classNames.dirty, true);
       }
     };
 
@@ -525,7 +510,7 @@ export default class Field {
    * Updates aria attributes on the element.
    */
   applyAriaAttrs () {
-    if (!this.aria || !this.el || !isCallable(this.el.setAttribute)) return;
+    if (!this.opts.aria || !this.el || !isCallable(this.el.setAttribute)) return;
 
     this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
     this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
@@ -535,9 +520,9 @@ export default class Field {
    * Updates the custom validity for the field.
    */
   applyCustomValidity () {
-    if (!this.validity || !this.el || !isCallable(this.el.setCustomValidity) || !this.$ctx.$validator.errors) return;
+    if (!this.opts.validity || !this.el || !isCallable(this.el.setCustomValidity)) return;
 
-    this.el.setCustomValidity(this.flags.valid ? '' : (this.$ctx.$validator.errors.firstById(this.vid) || ''));
+    this.el.setCustomValidity(this.errors[0] || '');
   }
 
   /**

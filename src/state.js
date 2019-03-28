@@ -1,4 +1,3 @@
-
 let VALIDATOR = null;
 
 export const getValidator = () => {

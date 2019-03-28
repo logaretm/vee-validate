@@ -1,16 +1,14 @@
 import dictionary from './dictionary';
-import mixin from './mixin';
 import directive from './directive';
 import { warn, isCallable } from './utils';
 import Validator from './core/validator';
-import ErrorBag from './core/errorBag';
 import I18nDictionary from './localization/i18n';
 import { detectPassiveSupport } from './utils/events';
 import { setConfig, getConfig } from './config';
 import { setValidator } from './state';
 import { modes } from './modes';
 
-let Vue;
+export let Vue = null;
 let pendingPlugins;
 let pluginInstance;
 
@@ -22,9 +20,9 @@ class VeeValidate {
       Vue = _Vue;
     }
     this._validator = setValidator(
-      new Validator(null, { fastExit: config && config.fastExit }, this)
+      new Validator(null, { bails: config && config.bails }, this)
     );
-    this._initVM(this.config);
+    this._vm = new Vue();
     this._initI18n(this.config);
   }
 
@@ -63,7 +61,7 @@ class VeeValidate {
       return;
     }
 
-    plugin({ Validator, ErrorBag, Rules: Validator.rules }, options);
+    plugin({ Validator, Rules: Validator.rules }, options);
   };
 
   static install (_Vue, opts) {
@@ -81,7 +79,6 @@ class VeeValidate {
 
     detectPassiveSupport();
 
-    Vue.mixin(mixin);
     Vue.directive('validate', directive);
     if (pendingPlugins) {
       pendingPlugins.forEach(({ plugin, options }) => {
@@ -105,15 +102,6 @@ class VeeValidate {
 
   static get config () {
     return getConfig();
-  }
-
-  _initVM (config) {
-    this._vm = new Vue({
-      data: () => ({
-        errors: this._validator.errors,
-        fields: this._validator.fields
-      })
-    });
   }
 
   _initI18n (config) {
@@ -144,9 +132,7 @@ class VeeValidate {
   }
 }
 
-VeeValidate.mixin = mixin;
 VeeValidate.directive = directive;
 VeeValidate.Validator = Validator;
-VeeValidate.ErrorBag = ErrorBag;
 
 export default VeeValidate;

@@ -442,31 +442,6 @@ export const isBuiltInComponent = (vnode) => {
   return /^(keep-alive|transition|transition-group)$/.test(tag);
 };
 
-export const makeDelayObject = (events[], delay | number, delayConfig | number) => {
-  if (typeof delay === 'number') {
-    return events.reduce((prev, e) => {
-      prev[e] = delay;
-      return prev;
-    }, {});
-  }
-
-  return events.reduce((prev, e) => {
-    if (typeof delay === 'object' && e in delay) {
-      prev[e] = delay[e];
-      return prev;
-    }
-
-    if (typeof delayConfig === 'number') {
-      prev[e] = delayConfig;
-      return prev;
-    }
-
-    prev[e] = (delayConfig && delayConfig[e]) || 0;
-
-    return prev;
-  }, {});
-};
-
 export const deepParseInt = (input) => {
   if (typeof input === 'number') return input;
 
@@ -613,4 +588,12 @@ export const includes = (collection, item) => {
 
 export const isEmptyArray = (arr) => {
   return Array.isArray(arr) && arr.length === 0;
+};
+
+export const defineNonReactive = (obj, prop, value) => {
+  Object.defineProperty(obj, prop, {
+    configurable: false,
+    writable: true,
+    value
+  });
 };

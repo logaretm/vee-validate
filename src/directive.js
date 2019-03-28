@@ -6,7 +6,7 @@ export default {
     field.onUpdate(el, binding, vnode);
   },
   update (el, binding, vnode, oldVnode) {
-    if (!vnode.context.$validator) {
+    if (!vnode.context.$_veeObserver) {
       return;
     }
 

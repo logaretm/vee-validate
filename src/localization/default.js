@@ -50,7 +50,7 @@ export default class Dictionary {
   /**
    * Gets a specific message for field. falls back to the rule message.
    */
-  getFieldMessage (locale, field, key) {
+  getFieldMessage (locale, field, key, data) {
     if (!this.hasLocale(locale)) {
       return this.getMessage(locale, key, data);
     }

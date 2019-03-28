@@ -7,11 +7,9 @@
     },
     "extends": [
         "standard",
-        "plugin:flowtype/recommended",
         "plugin:jest/recommended"
     ],
     "plugins": [
-        "flowtype",
         "jest"
     ],
     "rules": {
