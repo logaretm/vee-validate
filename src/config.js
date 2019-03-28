@@ -17,7 +17,7 @@ const DEFAULT_CONFIG = {
   },
   events: 'input',
   inject: true,
-  fastExit: true,
+  bails: true,
   aria: true,
   validity: false,
   mode: 'aggressive',
