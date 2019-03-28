@@ -19,8 +19,6 @@ import {
   assign
 } from '../utils';
 
-// @flow
-
 const DEFAULT_CLASSES = {
   touched: 'touched', // the control has been blurred
   untouched: 'untouched', // the control hasn't been blurred
@@ -219,18 +217,6 @@ export default class Field {
     vnode.context.$_veeObserver.subscribe(this);
   }
 
-  get validator (): any {
-    if (!this.vm || !this.vm.$validator) {
-      return { validate: () => {} };
-    }
-
-    return this.vm.$validator;
-  }
-
-  get isDisabled (): boolean {
-    return !!(this.componentInstance && this.componentInstance.disabled) || !!(this.el && this.el.disabled);
-  }
-
   /**
    * Keeps a reference of the most current validation run.
    */
@@ -270,7 +256,7 @@ export default class Field {
   /**
    * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
    */
-  setFlags (flags: { [string]: boolean }) {
+  setFlags (flags) {
     const negated = {
       pristine: 'dirty',
       dirty: 'pristine',
@@ -299,20 +285,6 @@ export default class Field {
     this.updateClasses();
     this.updateAriaAttrs();
     this.updateCustomValidity();
-  }
-
-  /**
-   * Removes listeners.
-   */
-  unwatch (tag?: ?RegExp = null) {
-    if (!tag) {
-      this.watchers.forEach(w => w.unwatch());
-      this.watchers = [];
-      return;
-    }
-
-    this.watchers.filter(w => tag.test(w.tag)).forEach(w => w.unwatch());
-    this.watchers = this.watchers.filter(w => !tag.test(w.tag));
   }
 
   /**

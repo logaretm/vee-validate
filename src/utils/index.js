@@ -1,23 +1,21 @@
-// @flow
-
-export const isTextInput = (el: HTMLInputElement) => {
+export const isTextInput = (el) => {
   return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'textarea', 'number'], el.type);
 };
 
-export const isCheckboxOrRadioInput = (el: HTMLInputElement) => {
+export const isCheckboxOrRadioInput = (el) => {
   return includes(['radio', 'checkbox'], el.type);
 };
 
-export const isDateInput = (el: HTMLInputElement) => {
+export const isDateInput = (el) => {
   return includes(['date', 'week', 'month', 'datetime-local', 'time'], el.type);
 };
 
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
-export const getDataAttribute = (el: HTMLElement, name: string) => el.getAttribute(`data-vv-${name}`);
+export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
 
-export const isNaN = (value: any) => {
+export const isNaN = (value) => {
   if ('isNaN' in Number) {
     return Number.isNaN(value);
   }
@@ -29,7 +27,7 @@ export const isNaN = (value: any) => {
 /**
  * Checks if the values are either null or undefined.
  */
-export const isNullOrUndefined = (...values): boolean => {
+export const isNullOrUndefined = (...values) => {
   return values.every(value => {
     return value === null || value === undefined;
   });
@@ -38,12 +36,12 @@ export const isNullOrUndefined = (...values): boolean => {
 /**
  * Sets the data attribute.
  */
-export const setDataAttribute = (el: HTMLElement, name: string, value: string): void => el.setAttribute(`data-vv-${name}`, value);
+export const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
 
 /**
  * Creates the default flags object.
  */
-export const createFlags = (): Object => ({
+export const createFlags = () => ({
   untouched: true,
   touched: false,
   dirty: false,
@@ -59,7 +57,7 @@ export const createFlags = (): Object => ({
 /**
  * Shallow object comparison.
  */
-export const isEqual = (lhs: any, rhs: any): boolean => {
+export const isEqual = (lhs, rhs) => {
   if (lhs instanceof RegExp && rhs instanceof RegExp) {
     return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
   }
@@ -95,7 +93,7 @@ export const isEqual = (lhs: any, rhs: any): boolean => {
 /**
  * Determines the input field scope.
  */
-export const getScope = (el: HTMLInputElement) => {
+export const getScope = (el) => {
   let scope = getDataAttribute(el, 'scope');
   if (isNullOrUndefined(scope)) {
     let form = getForm(el);
@@ -111,7 +109,7 @@ export const getScope = (el: HTMLInputElement) => {
 /**
  * Get the closest form element.
  */
-export const getForm = (el: HTMLInputElement) => {
+export const getForm = (el) => {
   if (isNullOrUndefined(el)) return null;
 
   if (el.tagName === 'FORM') return el;
@@ -124,7 +122,7 @@ export const getForm = (el: HTMLInputElement) => {
 /**
  * Gets the value in an object safely.
  */
-export const getPath = (path: string, target: ?Object, def: any = undefined) => {
+export const getPath = (path, target, def = undefined) => {
   if (!path || !target) return def;
 
   let value = target;
@@ -146,7 +144,7 @@ export const getPath = (path: string, target: ?Object, def: any = undefined) => 
 /**
  * Checks if path exists within an object.
  */
-export const hasPath = (path: string, target: Object) => {
+export const hasPath = (path, target) => {
   let obj = target;
   return path.split('.').every(prop => {
     if (prop in obj) {
@@ -162,7 +160,7 @@ export const hasPath = (path: string, target: Object) => {
 /**
  * Parses a rule string expression.
  */
-export const parseRule = (rule: string): Object => {
+export const parseRule = (rule) => {
   let params = [];
   const name = rule.split(':')[0];
 
@@ -176,14 +174,14 @@ export const parseRule = (rule: string): Object => {
 /**
  * Debounces a function.
  */
-export const debounce = (fn: () => any, wait: number = 0, token: { cancelled: boolean } = { cancelled: false }) => {
+export const debounce = (fn, wait = 0, token = { cancelled: false }) => {
   if (wait === 0) {
     return fn;
   }
 
   let timeout;
 
-  return (...args: any[]) => {
+  return (...args) => {
     const later = () => {
       timeout = null;
 
@@ -200,7 +198,7 @@ export const debounce = (fn: () => any, wait: number = 0, token: { cancelled: bo
 /**
  * Appends a rule definition to a list of rules.
  */
-export const appendRule = (rule: string, rules: string | { [string]: boolean | any[] }) => {
+export const appendRule = (rule, rules) => {
   if (!rules) {
     return normalizeRules(rule);
   }
@@ -219,7 +217,7 @@ export const appendRule = (rule: string, rules: string | { [string]: boolean | a
 /**
  * Normalizes the given rules expression.
  */
-export const normalizeRules = (rules: string | { [string]: boolean | any[] }) => {
+export const normalizeRules = (rules) => {
   // if falsy value return an empty object.
   if (!rules) {
     return {};
@@ -268,29 +266,29 @@ export const normalizeRules = (rules: string | { [string]: boolean | any[] }) =>
 /**
  * Emits a warning to the console.
  */
-export const warn = (message: string) => {
+export const warn = (message) => {
   console.warn(`[vee-validate] ${message}`); // eslint-disable-line
 };
 
 /**
  * Creates a branded error object.
  */
-export const createError = (message: string): Error => new Error(`[vee-validate] ${message}`);
+export const createError = (message) => new Error(`[vee-validate] ${message}`);
 
 /**
  * Checks if the value is an object.
  */
-export const isObject = (obj: any): boolean => obj !== null && obj && typeof obj === 'object' && ! Array.isArray(obj);
+export const isObject = (obj) => obj !== null && obj && typeof obj === 'object' && ! Array.isArray(obj);
 
 /**
  * Checks if a function is callable.
  */
-export const isCallable = (func: any): boolean => typeof func === 'function';
+export const isCallable = (func) => typeof func === 'function';
 
 /**
  * Check if element has the css class on it.
  */
-export const hasClass = (el: HTMLElement, className: string) => {
+export const hasClass = (el, className) => {
   if (el.classList) {
     return el.classList.contains(className);
   }
@@ -301,7 +299,7 @@ export const hasClass = (el: HTMLElement, className: string) => {
 /**
  * Adds the provided css className to the element.
  */
-export const addClass = (el: HTMLElement, className: string) => {
+export const addClass = (el, className) => {
   if (el.classList) {
     el.classList.add(className);
     return;
@@ -315,7 +313,7 @@ export const addClass = (el: HTMLElement, className: string) => {
 /**
  * Remove the provided css className from the element.
  */
-export const removeClass = (el: HTMLElement, className: string) => {
+export const removeClass = (el, className) => {
   if (el.classList) {
     el.classList.remove(className);
     return;
@@ -330,7 +328,7 @@ export const removeClass = (el: HTMLElement, className: string) => {
 /**
  * Adds or removes a class name on the input depending on the status flag.
  */
-export const toggleClass = (el: ?HTMLElement, className: ?string | ?string[], status: boolean) => {
+export const toggleClass = (el, className, status) => {
   if (!el || !className) return;
 
   if (Array.isArray(className)) {
@@ -348,7 +346,7 @@ export const toggleClass = (el: ?HTMLElement, className: ?string | ?string[], st
 /**
  * Converts an array-like object to array, provides a simple polyfill for Array.from
  */
-export const toArray = (arrayLike: { length: number }) => {
+export const toArray = (arrayLike) => {
   if (isCallable(Array.from)) {
     return Array.from(arrayLike);
   }
@@ -367,7 +365,7 @@ export const toArray = (arrayLike: { length: number }) => {
 /**
  * Assign polyfill from the mdn.
  */
-export const assign = (target: Object, ...others: any[]) => {
+export const assign = (target, ...others) => {
   /* istanbul ignore else */
   if (isCallable(Object.assign)) {
     return Object.assign(target, ...others);
@@ -399,7 +397,7 @@ let idTemplate = '{id}';
 /**
  * Generates a unique id.
  */
-export const uniqId = (): string => {
+export const uniqId = () => {
   // handle too many uses of uniqId, although unlikely.
   if (id >= 9999) {
     id = 0;
@@ -413,7 +411,7 @@ export const uniqId = (): string => {
   return newId;
 };
 
-export const findIndex = (arrayLike: { length: number } | any[], predicate: (any) => boolean): number => {
+export const findIndex = (arrayLike, predicate) => {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
   for (let i = 0; i < array.length; i++) {
     if (predicate(array[i])) {
@@ -427,14 +425,14 @@ export const findIndex = (arrayLike: { length: number } | any[], predicate: (any
 /**
  * finds the first element that satisfies the predicate callback, polyfills array.find
  */
-export const find = (arrayLike: { length: number } | any[], predicate: (any) => boolean): any => {
+export const find = (arrayLike, predicate) => {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
   const idx = findIndex(array, predicate);
 
   return idx === -1 ? undefined : array[idx];
 };
 
-export const isBuiltInComponent = (vnode: Object): boolean => {
+export const isBuiltInComponent = (vnode) => {
   if (!vnode) {
     return false;
   }
@@ -444,7 +442,7 @@ export const isBuiltInComponent = (vnode: Object): boolean => {
   return /^(keep-alive|transition|transition-group)$/.test(tag);
 };
 
-export const makeDelayObject = (events: string[], delay: Object | number, delayConfig: Object | number) => {
+export const makeDelayObject = (events[], delay | number, delayConfig | number) => {
   if (typeof delay === 'number') {
     return events.reduce((prev, e) => {
       prev[e] = delay;
@@ -469,7 +467,7 @@ export const makeDelayObject = (events: string[], delay: Object | number, delayC
   }, {});
 };
 
-export const deepParseInt = (input: Object | string | number) => {
+export const deepParseInt = (input) => {
   if (typeof input === 'number') return input;
 
   if (typeof input === 'string') return parseInt(input);
@@ -482,12 +480,12 @@ export const deepParseInt = (input: Object | string | number) => {
   return map;
 };
 
-export const merge = (target: MapObject, source: MapObject): MapObject => {
+export const merge = (target, source) => {
   if (! (isObject(target) && isObject(source))) {
     return target;
   }
 
-  Object.keys(source).forEach((key: string) => {
+  Object.keys(source).forEach((key) => {
     if (isObject(source[key])) {
       if (! target[key]) {
         assign(target, { [key]: {} });
@@ -503,7 +501,7 @@ export const merge = (target: MapObject, source: MapObject): MapObject => {
   return target;
 };
 
-export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [string]: boolean | any[] }) => {
+export const fillRulesFromElement = (el, rules) => {
   if (el.required) {
     rules = appendRule('required', rules);
   }
@@ -609,10 +607,10 @@ export const parseSelector = (selector) => {
   };
 };
 
-export const includes = (collection: String | any[], item: any) => {
+export const includes = (collection, item) => {
   return collection.indexOf(item) !== -1;
 };
 
-export const isEmptyArray = (arr: any): boolean => {
+export const isEmptyArray = (arr) => {
   return Array.isArray(arr) && arr.length === 0;
 };

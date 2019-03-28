@@ -10,20 +10,11 @@ import { setConfig, getConfig } from './config';
 import { setValidator } from './state';
 import { modes } from './modes';
 
-// @flow
-
 let Vue;
 let pendingPlugins;
 let pluginInstance;
 
 class VeeValidate {
-  static version: string
-  static install: () => void
-  static Validator: Function<Validator>
-
-  _vm: any
-  _validator: Validator
-
   constructor (config, _Vue) {
     this.configure(config);
     pluginInstance = this;
@@ -37,7 +28,7 @@ class VeeValidate {
     this._initI18n(this.config);
   }
 
-  static setI18nDriver (driver: string, instance): void {
+  static setI18nDriver (driver, instance) {
     dictionary.setDriver(driver, instance);
   }
 
@@ -58,7 +49,7 @@ class VeeValidate {
     modes[mode] = implementation;
   }
 
-  static use (plugin: (ctx: PluginContext, options?: any) => any, options?: any = {}) {
+  static use (plugin, options = {}) {
     if (!isCallable(plugin)) {
       return warn('The plugin must be a callable function');
     }
@@ -100,11 +91,11 @@ class VeeValidate {
     }
   }
 
-  get i18nDriver (): IDictionary {
+  get i18nDriver () {
     return dictionary.getDriver();
   }
 
-  static get i18nDriver (): IDictionary {
+  static get i18nDriver () {
     return dictionary.getDriver();
   }
 

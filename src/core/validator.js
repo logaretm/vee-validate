@@ -1,8 +1,6 @@
-import ErrorBag from './errorBag';
-import FieldBag from './fieldBag';
+
 import Dictionary from '../dictionary';
 import RuleContainer from './ruleContainer';
-import Field from './field';
 import {
   isObject,
   getPath,
@@ -16,21 +14,9 @@ import {
   isEmptyArray
 } from '../utils';
 
-// @flow
-
 export default class Validator {
-  errors: ErrorBag;
-  fields: FieldBag;
-  flags: MapObject;
-  fastExit: boolean;
-  paused: boolean;
-  reset: (matcher) => Promise<void>;
-
-  constructor (validations?: MapObject, options?: MapObject = { fastExit: true }, pluginContainer?: Object = null) {
-    this.errors = new ErrorBag();
-    this.fields = new FieldBag();
-    this.paused = false;
-    this.fastExit = !isNullOrUndefined(options && options.fastExit) ? options.fastExit : true;
+  constructor (options = { bails: true }, pluginContainer = null) {
+    this.bails = !isNullOrUndefined(options && options.bails) ? options.bails : true;
     this.$vee = pluginContainer || {
       _vm: {
         $nextTick: (cb) => isCallable(cb) ? cb() : Promise.resolve(),
@@ -40,41 +26,17 @@ export default class Validator {
     };
   }
 
-  get dictionary () {
-    return Dictionary.getDriver();
-  }
-
-  static get dictionary () {
-    return Dictionary.getDriver();
-  }
-
-  get flags () {
-    return this.fields.items.reduce((acc, field) => {
-      if (field.scope) {
-        acc[`$${field.scope}`] = {
-          [field.name]: field.flags
-        };
-
-        return acc;
-      }
-
-      acc[field.name] = field.flags;
-
-      return acc;
-    }, {});
-  }
-
   /**
    * Getter for the current locale.
    */
-  get locale (): string {
+  get locale () {
     return Validator.locale;
   }
 
   /**
    * Setter for the validator locale.
    */
-  set locale (value: string): void {
+  set locale (value) {
     Validator.locale = value;
   }
 
@@ -96,7 +58,7 @@ export default class Validator {
   /**
    * Adds a custom validator to the list of validation rules.
    */
-  static extend (name: string, validator: Rule | Object, options?: ExtendOptions = {}) {
+  static extend (name, validator, options = {}) {
     Validator._guardExtend(name, validator);
     // rules imported from the minimal bundle
     // will have the options embedded in them
@@ -111,14 +73,14 @@ export default class Validator {
   /**
    * Adds and sets the current locale for the validator.
   */
-  localize (lang: string, dictionary?: MapObject): void {
+  localize (lang, dictionary) {
     Validator.localize(lang, dictionary);
   }
 
   /**
    * Adds and sets the current locale for the validator.
    */
-  static localize (lang: string | MapObject, dictionary?: MapObject) {
+  static localize (lang, dictionary) {
     if (isObject(lang)) {
       Dictionary.getDriver().merge(lang);
       return;
@@ -142,7 +104,7 @@ export default class Validator {
   /**
    * Adds a custom validator to the list of validation rules.
    */
-  extend (name: string, validator: Rule | MapObject, options?: ExtendOptions = {}) {
+  extend (name, validator, options) {
     Validator.extend(name, validator, options);
   }
 
@@ -162,7 +124,7 @@ export default class Validator {
   /**
    * Validates a value against the rules.
    */
-  verify (value: any, rules: string | MapObject, options?: VerifyOptions = {}): Promise<VerifyOptions> {
+  verify (value, rules, options = {}) {
     const field = {
       name: (options && options.name) || '{field}',
       rules: normalizeRules(rules),
@@ -211,7 +173,7 @@ export default class Validator {
   /**
    * Date rules need the existence of a format, so date_format must be supplied.
    */
-  _getDateFormat (validations: Array<MapObject>): ?string {
+  _getDateFormat (validations) {
     let format = null;
     if (validations.date_format && Array.isArray(validations.date_format)) {
       format = validations.date_format[0];
@@ -223,7 +185,7 @@ export default class Validator {
   /**
    * Formats an error message for field and a rule.
    */
-  _formatErrorMessage (field: Field, rule: MapObject, data?: MapObject = {}, targetName?: string | null = null) {
+  _formatErrorMessage (field, rule, data = {}, targetName = null) {
     const name = this._getFieldDisplayName(field);
     const params = this._getLocalizedParams(rule, targetName);
 
@@ -255,7 +217,7 @@ export default class Validator {
   /**
    * Translates the parameters passed to the rule (mainly for target fields).
    */
-  _getLocalizedParams (rule: MapObject, targetName?: string | null = null) {
+  _getLocalizedParams (rule, targetName = null) {
     let params = this._convertParamObjectToArray(rule.params, rule.name);
     if (rule.options.hasTarget && params && params[0]) {
       const localizedName = targetName || Dictionary.getDriver().getAttribute(this.locale, params[0], params[0]);
@@ -268,7 +230,7 @@ export default class Validator {
   /**
    * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
    */
-  _getFieldDisplayName (field: Field) {
+  _getFieldDisplayName (field) {
     return field.alias || Dictionary.getDriver().getAttribute(this.locale, field.name, field.name);
   }
 
@@ -277,7 +239,7 @@ export default class Validator {
    * Only works if the rule is configured with a paramNames array.
    * Returns the same params if it cannot convert it.
    */
-  _convertParamArrayToObj (params, ruleName): MapObject | Array {
+  _convertParamArrayToObj (params, ruleName) {
     const paramNames = RuleContainer.getParamNames(ruleName);
     if (!paramNames) {
       return params;
@@ -305,7 +267,7 @@ export default class Validator {
   /**
    * Tests a single input value against a rule.
    */
-  _test (field: Field, value: any, rule: MapObject): ValidationResult | Promise<ValidationResult> {
+  _test (field, value, rule) {
     const validator = RuleContainer.getValidatorMethod(rule.name);
     let params = Array.isArray(rule.params) ? toArray(rule.params) : rule.params;
     if (!params) {
@@ -372,7 +334,7 @@ export default class Validator {
   /**
    * Merges a validator object into the RULES and Messages.
    */
-  static _merge (name: string, { validator, options, paramNames }) {
+  static _merge (name, { validator, options, paramNames }) {
     const validate = isCallable(validator) ? validator : validator.validate;
     if (validator.getMessage) {
       Dictionary.getDriver().setMessage(Validator.locale, name, validator.getMessage);
@@ -388,7 +350,7 @@ export default class Validator {
   /**
    * Guards from extension violations.
    */
-  static _guardExtend (name: string, validator: Rule) {
+  static _guardExtend (name, validator) {
     if (isCallable(validator)) {
       return;
     }
@@ -403,7 +365,7 @@ export default class Validator {
   /**
    * Creates a Field Error Object.
    */
-  _createFieldError (field: Field, rule: MapObject, data: MapObject, targetName?: string): FieldError {
+  _createFieldError (field, rule, data, targetName) {
     return {
       id: field.id,
       vmId: field.vmId,
@@ -473,7 +435,7 @@ export default class Validator {
   /**
    * Starts the validation process.
    */
-  _validate (field: Field, value: any, { initial } = {}): Promise<ValidationResult> {
+  _validate (field, value, { initial } = {}) {
     let requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
 
     field.forceRequired = false;

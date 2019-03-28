@@ -1,8 +1,6 @@
 import { warn, isCallable, isObject, merge, getPath, isNullOrUndefined } from '../utils';
 
-// @flow
-
-const normalizeValue = (value: any) => {
+const normalizeValue = (value) => {
   if (isObject(value)) {
     return Object.keys(value).reduce((prev, key) => {
       prev[key] = normalizeValue(value[key]);
@@ -18,7 +16,7 @@ const normalizeValue = (value: any) => {
   return value;
 };
 
-const normalizeFormat = (locale: Locale) => {
+const normalizeFormat = (locale) => {
   // normalize messages
   const dictionary = {};
   if (locale.messages) {
@@ -40,32 +38,29 @@ const normalizeFormat = (locale: Locale) => {
   return dictionary;
 };
 
-export default class I18nDictionary implements IDictionary {
-  rootKey: string;
-  i18n: Object;
-
-  constructor (i18n: Object, rootKey: string) {
+export default class I18nDictionary {
+  constructor (i18n, rootKey) {
     this.i18n = i18n;
     this.rootKey = rootKey;
   }
 
-  get locale (): string {
+  get locale () {
     return this.i18n.locale;
   }
 
-  set locale (value: string) {
+  set locale (value) {
     warn('Cannot set locale from the validator when using vue-i18n, use i18n.locale setter instead');
   }
 
-  getDateFormat (locale: string): string {
+  getDateFormat (locale) {
     return this.i18n.getDateTimeFormat(locale || this.locale);
   }
 
-  setDateFormat (locale: string, value: string) {
+  setDateFormat (locale, value) {
     this.i18n.setDateTimeFormat(locale || this.locale, value);
   }
 
-  getMessage (_, key: string, data: any[]): string {
+  getMessage (_, key, data) {
     const path = `${this.rootKey}.messages.${key}`;
     if (this.i18n.te(path)) {
       return this.i18n.t(path, data);
@@ -80,7 +75,7 @@ export default class I18nDictionary implements IDictionary {
     return this.i18n.t(`${this.rootKey}.messages._default`, data);
   }
 
-  getAttribute (_, key: string, fallback?: string = ''): string {
+  getAttribute (_, key, fallback = '') {
     const path = `${this.rootKey}.attributes.${key}`;
     if (this.i18n.te(path)) {
       return this.i18n.t(path);
@@ -89,7 +84,7 @@ export default class I18nDictionary implements IDictionary {
     return fallback;
   }
 
-  getFieldMessage (_, field: string, key: string, data: any[]) {
+  getFieldMessage (_, field, key, data) {
     const path = `${this.rootKey}.custom.${field}.${key}`;
     if (this.i18n.te(path)) {
       return this.i18n.t(path, data);
@@ -112,7 +107,7 @@ export default class I18nDictionary implements IDictionary {
     });
   }
 
-  setMessage (locale: string, key: string, value: () => string | string) {
+  setMessage (locale, key, value) {
     this.merge({
       [locale]: {
         messages: {
@@ -122,7 +117,7 @@ export default class I18nDictionary implements IDictionary {
     });
   }
 
-  setAttribute (locale: string, key: string, value: string) {
+  setAttribute (locale, key, value) {
     this.merge({
       [locale]: {
         attributes: {

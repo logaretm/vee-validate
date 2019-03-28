@@ -1,11 +1,9 @@
 import { parse, isValid, format as formatDate } from 'date-fns';
 
-// @flow
-
 /**
  * Custom parse behavior on top of date-fns parse function.
  */
-export function parseDate (date: string | Date, format: string): ?Date {
+export function parseDate (date, format) {
   if (typeof date !== 'string') {
     return isValid(date) ? date : null;
   }

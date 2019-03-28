@@ -5,7 +5,6 @@ const filesize = require('filesize');
 const uglify = require('uglify-js');
 const chalk = require('chalk');
 const gzipSize = require('gzip-size');
-const flow = require('rollup-plugin-flow');
 const buble = require('rollup-plugin-buble');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
@@ -102,7 +101,6 @@ function genConfig (options) {
     input: {
       input: options.input,
       plugins: [
-        flow({ pretty: true }),
         replace({ __VERSION__: version }),
         resolve(),
         commonjs({

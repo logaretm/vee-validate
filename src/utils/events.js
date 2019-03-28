@@ -1,11 +1,10 @@
-// @flow
 import { isCallable } from './index';
 
-export const isEvent = (evt: any): boolean => {
+export const isEvent = (evt) => {
   return (typeof Event !== 'undefined' && isCallable(Event) && evt instanceof Event) || (evt && evt.srcElement);
 };
 
-export const normalizeEvents = (evts: string | string[]): string[] => {
+export const normalizeEvents = (evts) => {
   if (!evts) return [];
 
   return (typeof evts === 'string' ? evts.split('|') : evts);
@@ -29,11 +28,11 @@ export const detectPassiveSupport = () => {
   return supportsPassive;
 };
 
-export const addEventListener = (el: HTMLElement, eventName: string, handler: Function) => {
+export const addEventListener = (el, eventName, handler) => {
   el.addEventListener(eventName, handler, supportsPassive ? { passive: true } : false);
 };
 
-export const addEventListenerOnce = (el: HTMLElement, eventName: string, handler: Function) => {
+export const addEventListenerOnce = (el, eventName, handler) => {
   const once = e => {
     handler(e);
     el.removeEventListener(eventName, handler);
