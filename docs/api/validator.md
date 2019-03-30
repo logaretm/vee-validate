@@ -16,12 +16,12 @@ The validator offers an API to add new fields and trigger validations.
 
 |Name  | Return Type  |Description  |
 |---------|---------|---------|
-| attach(field: FieldOptions) | `Field` | attaches a new field to the validator. |
+| attach(field: FieldOptions) | `Field` | Attaches a new field to the validator. |
 | validate(descriptor?: String, value?: any, options?: Object) | `Promise<boolean>` | Validates the matching fields of the provided [descriptor](#field-descriptor). when validation is done, the Promise resolves a boolean indicating whether the selected was valid or not. |
 | validateAll(fields?: String or Object) | `Promise<boolean>` | Validates each value against the corresponding field validations. |
 | pause() | `void` | Disables validation. |
 | resume() | `void` | Enables validation. |
-| verify(value: any, rules: string \| Object) | { errors: string[], valid: boolean, failedRules: { [x: string]: string } } | [verify method](#verify) |
+| verify(value: any, rules: string \| Object) | { errors: string[], valid: boolean, failedRules: { [x: string]: string } } | [Verify method](#verify). |
 | detach(name: string, scope?: string) | `void` | Detaches the field that matches the name and the scope of the provided values. |
 | extend(name: string, rule: Rule, options?: ExtendOptions) | `void` | Adds a new validation rule. The provided rule param must be a [valid Rule function or object](/guide/custom-rules.md). |
 | reset(matcher?: Object) | `void` | Resets field flags for all scoped fields. Resets all fields if no scope is provided. |
