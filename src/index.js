@@ -1,6 +1,5 @@
 import * as Rules from './rules';
 import VeeValidate from './plugin';
-import mapFields from './core/mapFields';
 import { ValidationProvider, ValidationObserver, withValidation } from './components';
 import { assign } from './utils';
 import en from '../locale/en';
@@ -18,7 +17,6 @@ VeeValidate.Validator.localize({
 
 VeeValidate.version = '__VERSION__';
 VeeValidate.Rules = Rules;
-VeeValidate.mapFields = mapFields;
 VeeValidate.ValidationProvider = ValidationProvider;
 VeeValidate.ValidationObserver = ValidationObserver;
 VeeValidate.withValidation = withValidation;
