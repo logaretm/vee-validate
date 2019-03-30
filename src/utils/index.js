@@ -91,35 +91,6 @@ export const isEqual = (lhs, rhs) => {
 };
 
 /**
- * Determines the input field scope.
- */
-export const getScope = (el) => {
-  let scope = getDataAttribute(el, 'scope');
-  if (isNullOrUndefined(scope)) {
-    let form = getForm(el);
-
-    if (form) {
-      scope = getDataAttribute(form, 'scope');
-    }
-  }
-
-  return !isNullOrUndefined(scope) ? scope : null;
-};
-
-/**
- * Get the closest form element.
- */
-export const getForm = (el) => {
-  if (isNullOrUndefined(el)) return null;
-
-  if (el.tagName === 'FORM') return el;
-
-  if (!isNullOrUndefined(el.form)) return el.form;
-
-  return !isNullOrUndefined(el.parentNode) ? getForm(el.parentNode) : null;
-};
-
-/**
  * Gets the value in an object safely.
  */
 export const getPath = (path, target, def = undefined) => {
@@ -548,38 +519,6 @@ export const values = (obj) => {
   // fallback to keys()
   /* istanbul ignore next */
   return Object.keys(obj).map(k => obj[k]);
-};
-
-export const parseSelector = (selector) => {
-  let rule = null;
-  if (includes(selector, ':')) {
-    rule = selector.split(':').pop();
-    selector = selector.replace(`:${rule}`, '');
-  }
-
-  if (selector[0] === '#') {
-    return {
-      id: selector.slice(1),
-      rule,
-      name: null,
-      scope: null
-    };
-  }
-
-  let scope = null;
-  let name = selector;
-  if (includes(selector, '.')) {
-    const parts = selector.split('.');
-    scope = parts[0];
-    name = parts.slice(1).join('.');
-  }
-
-  return {
-    id: null,
-    scope,
-    name,
-    rule
-  };
 };
 
 export const includes = (collection, item) => {

@@ -1,7 +1,6 @@
 import { resolveConfig, getConfig } from '../config';
 import { findModel } from '../utils/vnode';
 import {
-  getScope,
   getDataAttribute,
   isObject,
   toArray,

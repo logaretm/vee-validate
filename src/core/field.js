@@ -2,7 +2,7 @@ import Resolver from './resolver';
 import { Vue } from '../plugin';
 import { modes } from '../modes';
 import RuleContainer from './ruleContainer';
-import { addEventListenerOnce, addEventListener } from '../utils/events';
+import { addEventListener } from '../utils/events';
 import { findModel } from '../utils/vnode';
 import { getValidator } from '../state';
 import {
