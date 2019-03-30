@@ -1,6 +1,5 @@
 import { validate } from '@/rules/size';
-import helpers from './../../helpers';
-
+import helpers from './../helpers';
 test('validates file size', () => {
   const params = [15];
   expect(validate([helpers.file('file.txt', 'text/plain', 10)], params)).toBe(true);

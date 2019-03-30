@@ -1,6 +1,5 @@
 import { validate } from '@/rules/mimes';
-import helpers from './../../helpers';
-
+import helpers from './../helpers';
 test('validates mime types', () => {
   const params = ['image/*', 'text/plain'];
 

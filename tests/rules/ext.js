@@ -1,6 +1,5 @@
 import { validate } from '@/rules/ext';
-import helpers from './../../helpers';
-
+import helpers from './../helpers';
 test('validates files extensions', () => {
   const params = ['txt', 'jpg', 'svg'];
   const validFiles = [

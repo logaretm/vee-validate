@@ -1,5 +1,5 @@
 import { validate } from '@/rules/dimensions';
-import helpers from './../../helpers';
+import helpers from './../helpers';
 
 let fails = false;
 
