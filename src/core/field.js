@@ -30,7 +30,7 @@ const DEFAULT_CLASSES = {
   dirty: 'dirty' // control has been interacted with
 };
 
-function createObserver() {
+function createObserver () {
   const state = Vue.observable({ refs: {} });
   state.subscribe = (ctx) => {
     Vue.set(state.refs, ctx.vid, ctx);
@@ -130,7 +130,12 @@ export default class Field {
       return;
     }
 
+    if (!this.initialized) {
+      defineNonReactive(this, 'initialValue', model.value);
+    }
+
     this.value = model.value;
+    this.flags.changed = this.value === this.initialValue;
     if (this.initialized) {
       this.validate();
     }
@@ -173,6 +178,7 @@ export default class Field {
       addEventListener(el, ev, (e) => {
         const value = e.target.value;
         this.value = value;
+        this.flags.changed = this.value !== this.initialValue;
         this.validate();
         this._emittedEvt = false;
       });
@@ -211,6 +217,7 @@ export default class Field {
     this.opts.classes = options.classes;
     this.opts.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
     this.opts.componentInstance = options.component;
+    this.flags.required = !!options.rules.required;
   }
 
   registerField (vnode) {
