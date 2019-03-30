@@ -41,6 +41,7 @@ export default class Field {
     defineNonReactive(this, 'binding', binding);
     defineNonReactive(this, 'vnode', vnode);
     defineNonReactive(this, 'initialized', false);
+    defineNonReactive(this, 'events', Resolver.resolveEvents(el, vnode));
 
     this.el._vid = this.vid;
     this._value = undefined;

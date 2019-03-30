@@ -2,7 +2,7 @@ import VeeValidate from './plugin';
 import directive from './directive';
 import Validator from './core/validator';
 import { ValidationProvider, ValidationObserver, withValidation } from './components';
-import { mapValidationState } from './mapValidationState';
+import { mapValidationState, mapValidationAction } from './mapValidationState';
 
 const version = '__VERSION__';
 const install = VeeValidate.install;
@@ -17,7 +17,8 @@ export {
   ValidationProvider,
   ValidationObserver,
   withValidation,
-  mapValidationState
+  mapValidationState,
+  mapValidationAction
 };
 
 VeeValidate.version = version;
@@ -25,5 +26,6 @@ VeeValidate.ValidationProvider = ValidationProvider;
 VeeValidate.ValidationObserver = ValidationObserver;
 VeeValidate.withValidation = withValidation;
 VeeValidate.mapValidationState = mapValidationState;
+VeeValidate.mapValidationAction = mapValidationAction;
 
 export default VeeValidate;
