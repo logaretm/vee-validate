@@ -3,7 +3,6 @@
     "@babel/env"
   ],
   "plugins": [
-    "@babel/plugin-transform-flow-strip-types",
     "@babel/plugin-transform-runtime"
   ]
 }
