@@ -15,7 +15,6 @@ const DEFAULT_CONFIG = {
     pristine: 'pristine', // control has not been interacted with
     dirty: 'dirty' // control has been interacted with
   },
-  events: 'input',
   inject: true,
   bails: true,
   aria: true,

@@ -34,8 +34,6 @@ export default class Resolver {
       component: vnode.componentInstance,
       delay: Resolver.resolveDelay(el, vnode, options),
       el: el,
-      events: Resolver.resolveEvents(el, vnode) || options.events,
-      expression: binding.value,
       getter: Resolver.resolveGetter(el, vnode, model),
       immediate: !!binding.modifiers.initial || !!binding.modifiers.immediate,
       initialValue: Resolver.resolveInitialValue(vnode),
@@ -44,7 +42,6 @@ export default class Resolver {
       name: Resolver.resolveName(el, vnode),
       persist: !!binding.modifiers.persist,
       rules: Resolver.resolveRules(el, binding, vnode),
-      scope: Resolver.resolveScope(el, binding, vnode),
       validity: options.validity && !vnode.componentInstance
     };
   }
@@ -157,58 +154,6 @@ export default class Resolver {
     }
 
     return alias;
-  }
-
-  /**
-   * Resolves the events to validate in response to.
-   * @param {*} el
-   * @param {*} vnode
-   */
-  static resolveEvents (el, vnode) {
-    // resolve it from the root element.
-    let events = getDataAttribute(el, 'validate-on');
-
-    // resolve from data-vv-validate-on if its a vue component.
-    if (!events && vnode.componentInstance && vnode.componentInstance.$attrs) {
-      events = vnode.componentInstance.$attrs['data-vv-validate-on'];
-    }
-
-    // resolve it from $_veeValidate options.
-    if (!events && vnode.componentInstance) {
-      const config = Resolver.getCtorConfig(vnode);
-      events = config && config.events;
-    }
-
-    if (!events && getConfig().events) {
-      events = getConfig().events;
-    }
-
-    // resolve the model event if its configured for custom components.
-    if (events && vnode.componentInstance && includes(events, 'input')) {
-      const { event } = vnode.componentInstance.$options.model || { event: 'input' };
-      // if the prop was configured but not the model.
-      if (!event) {
-        return Array.isArray(events) ? events : events.split('|');
-      }
-
-      events = events.replace('input', event);
-    }
-
-    return Array.isArray(events) ? events : events.split('|');
-  }
-
-  /**
-   * Resolves the scope for the field.
-   * @param {*} el
-   * @param {*} binding
-   */
-  static resolveScope (el, binding, vnode = {}) {
-    let scope = null;
-    if (vnode.componentInstance && isNullOrUndefined(scope)) {
-      scope = vnode.componentInstance.$attrs && vnode.componentInstance.$attrs['data-vv-scope'];
-    }
-
-    return !isNullOrUndefined(scope) ? scope : getScope(el);
   }
 
   /**

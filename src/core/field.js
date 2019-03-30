@@ -1,7 +1,8 @@
 import Resolver from './resolver';
 import { Vue } from '../plugin';
+import { modes } from '../modes';
 import RuleContainer from './ruleContainer';
-import { addEventListener, addEventListenerOnce } from '../utils/events';
+import { addEventListenerOnce, addEventListener } from '../utils/events';
 import { findModel } from '../utils/vnode';
 import { getValidator } from '../state';
 import {
@@ -18,8 +19,10 @@ import {
   values,
   warn,
   defineNonReactive,
-  assign
+  assign,
+  includes
 } from '../utils';
+import { getConfig } from '../config';
 
 const DEFAULT_CLASSES = {
   touched: 'touched', // the control has been blurred
@@ -43,6 +46,16 @@ function createObserver () {
   return state;
 }
 
+function computeModeSetting (ctx) {
+  const compute = isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode];
+
+  return compute({
+    errors: ctx.errors,
+    value: ctx.value,
+    flags: ctx.flags
+  });
+}
+
 export default class Field {
   constructor (el, binding, vnode) {
     defineNonReactive(this, 'el', el);
@@ -55,10 +68,11 @@ export default class Field {
     defineNonReactive(this, 'binding', binding);
     defineNonReactive(this, 'vnode', vnode);
     defineNonReactive(this, 'initialized', false);
-    defineNonReactive(this, 'events', Resolver.resolveEvents(el, vnode));
+    defineNonReactive(this, '_listeners', {});
+    defineNonReactive(this, '_interactions', {});
+    defineNonReactive(this, '_value', undefined);
 
     this.el._vid = this.vid;
-    this._value = undefined;
     this.flags = Vue.observable(createFlags());
     this.errors = Vue.observable([]);
     this.name = Resolver.resolveName(el, vnode);
@@ -66,6 +80,10 @@ export default class Field {
 
   get value () {
     return this._value;
+  }
+
+  get mode () {
+    return getConfig().mode;
   }
 
   set value (value) {
@@ -136,7 +154,8 @@ export default class Field {
 
     this.value = model.value;
     this.flags.changed = this.value === this.initialValue;
-    if (this.initialized) {
+    const { on } = computeModeSetting(this);
+    if (this.initialized && on.includes('input')) {
       this.validate();
     }
   }
@@ -160,32 +179,6 @@ export default class Field {
     this.applyCustomValidity();
   }
 
-  addLiteListeners (el) {
-    addEventListener(el, 'input', () => {
-      this._emittedEvt = true;
-    });
-  }
-
-  addListeners (el) {
-    if (this.hasListener) {
-      return;
-    }
-
-    const inputEvt = this._determineInputEvent();
-    const events = this._determineEventList(inputEvt);
-
-    events.forEach(ev => {
-      addEventListener(el, ev, (e) => {
-        const value = e.target.value;
-        this.value = value;
-        this.flags.changed = this.value !== this.initialValue;
-        this.validate();
-        this._emittedEvt = false;
-      });
-    });
-    this.hasListener = true;
-  }
-
   onUpdate (el, binding, vnode) {
     this.el = el;
     this.binding = binding;
@@ -194,14 +187,14 @@ export default class Field {
     this.rules = binding.value;
     this.registerField(vnode);
     this.updateOptions(el, binding, vnode);
-    if (model) {
+    const inputEvt = this._determineInputEvent();
+    let events = this._determineEventList(inputEvt);
+    if (includes(events, 'input') && model) {
       this.onModelUpdated(model);
-      this.addLiteListeners(el);
-    } else {
-      this.addListeners(el);
+      events = events.filter(evt => evt !== 'input');
     }
 
-    this._emittedEvt = false;
+    this.addListeners(el, events);
     this.applyClasses();
     if (binding.modifiers && binding.modifiers.immediate && !this.flags.validated) {
       this.validate();
@@ -230,6 +223,23 @@ export default class Field {
     }
 
     vnode.context.$_veeObserver.subscribe(this);
+  }
+
+  addListeners (el, events) {
+    const handler = (e) => {
+      const value = e.target.value;
+      this.value = value;
+      this.flags.changed = this.value !== this.initialValue;
+      this.validate();
+    };
+
+    events.forEach(evt => {
+      if (this._listeners[evt]) {
+        return;
+      }
+
+      this._listeners[evt] = addEventListener(el, evt, handler);
+    });
   }
 
   /**
@@ -370,10 +380,15 @@ export default class Field {
       return;
     }
 
-    addEventListenerOnce(this.el, inputEvent, onInput);
-    // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
-    const blurEvent = isCheckboxOrRadioInput(this.el) ? 'change' : 'blur';
-    addEventListenerOnce(this.el, blurEvent, onBlur);
+    if (!this._interactions.input) {
+      this._interactions.input = addEventListener(this.el, inputEvent, onInput);
+    }
+
+    if (!this._interactions.blur) {
+      // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
+      const blurEvent = isCheckboxOrRadioInput(this.el) ? 'change' : 'blur';
+      this._interactions.blur = addEventListener(this.el, blurEvent, onBlur);
+    }
   }
 
   /**
@@ -400,25 +415,18 @@ export default class Field {
    * Determines the list of events to listen to.
    */
   _determineEventList (defaultInputEvent) {
-    // if no event is configured, or it is a component or a text input then respect the user choice.
-    if (!this.events.length || this.componentInstance || isTextInput(this.el)) {
-      return [...this.events].map(evt => {
-        if (evt === 'input' && this.model && this.model.lazy) {
-          return 'change';
-        }
+    const { on } = computeModeSetting(this);
 
-        return evt;
-      });
-    }
-
-    // force suitable event for non-text type fields.
-    return this.events.map(e => {
-      if (e === 'input') {
-        return defaultInputEvent;
+    return on.reduce((evts, evt) => {
+      if (evt === 'input' && defaultInputEvent !== evt) {
+        evts.push(defaultInputEvent);
+        return evts;
       }
 
-      return e;
-    });
+      evts.push(evt);
+
+      return evts;
+    }, []);
   }
 
   /**

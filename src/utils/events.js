@@ -30,6 +30,10 @@ export const detectPassiveSupport = () => {
 
 export const addEventListener = (el, eventName, handler) => {
   el.addEventListener(eventName, handler, supportsPassive ? { passive: true } : false);
+
+  return () => {
+    el.removeEventListener(eventName, handler);
+  };
 };
 
 export const addEventListenerOnce = (el, eventName, handler) => {
@@ -39,4 +43,8 @@ export const addEventListenerOnce = (el, eventName, handler) => {
   };
 
   el.addEventListener(eventName, once, supportsPassive ? { passive: true } : false);
+
+  return () => {
+    el.removeEventListener(eventName, once);
+  };
 };
