@@ -1,4 +1,5 @@
-import { mount, createLocalVue, renderToString } from '@vue/test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
+import { renderToString } from '@vue/server-test-utils';
 import VeeValidate from '@/index';
 import flushPromises from 'flush-promises';
 
@@ -16,7 +17,7 @@ describe('Validation Observer Component', () => {
         <ValidationObserver tag="form" v-slot="ctx">
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(wrapper.html()).toBe(`<form></form>`);
   });
@@ -27,7 +28,7 @@ describe('Validation Observer Component', () => {
         <ValidationObserver tag="form" v-slot="ctx">
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(output).toBe(`<form data-server-rendered="true"></form>`);
   });
@@ -38,7 +39,7 @@ describe('Validation Observer Component', () => {
         <ValidationObserver tag="form">
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(output).toBe(`<form data-server-rendered="true"></form>`);
   });
@@ -49,19 +50,15 @@ describe('Validation Observer Component', () => {
         value: ''
       }),
       template: `
-        <ValidationObserver>
-          <div slot-scope="{ valid }">
-            <ValidationProvider rules="required">
-              <div slot-scope="ctx">
-                <input v-model="value" type="text">
-              </div>
-            </ValidationProvider>
+        <ValidationObserver v-slot="{ valid }">
+          <ValidationProvider rules="required" v-slot="ctx">
+            <input v-model="value" type="text">
+          </ValidationProvider>
 
-            <span id="state">{{ valid }}</span>
-          </div>
+          <span id="state">{{ valid }}</span>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const stateSpan = wrapper.find('#state');
     const input = wrapper.find('input');
@@ -70,8 +67,7 @@ describe('Validation Observer Component', () => {
     // initially the field valid flag is null as in its unknown.
     expect(stateSpan.text()).toBe('');
 
-    input.element.value = 'value';
-    input.trigger('input');
+    input.setValue('value');
     await flushPromises();
 
     expect(stateSpan.text()).toBe('true');
@@ -83,22 +79,14 @@ describe('Validation Observer Component', () => {
         value: ''
       }),
       template: `
-        <ValidationObserver ref="obs">
-          <div slot-scope="ctx">
-
-            <ValidationProvider rules="required">
-
-              <div slot-scope="{ errors }">
-                <input v-model="value" type="text">
-                <span id="error">{{ errors[0] }}</span>
-              </div>
-
-            </ValidationProvider>
-
-          </div>
+        <ValidationObserver ref="obs" v-slot="ctx">
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
     await flushPromises();
@@ -109,35 +97,30 @@ describe('Validation Observer Component', () => {
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   });
 
-  test('triggers validation manually on its children providers using validate on slot-scope', async () => {
+  test('triggers validation manually on its children providers using validate on v-slot', async () => {
     const wrapper = mount({
       data: () => ({
-        value: ''
+        value: '',
+        calls: 0
       }),
       methods: {
-        submit: () => {}
+        submit () {
+          this.calls++;
+        }
       },
       template: `
-        <ValidationObserver>
-          <div slot-scope="ctx">
-
-            <ValidationProvider rules="required">
-
-              <div slot-scope="{ errors }">
-                <input v-model="value" type="text">
-                <span id="error">{{ errors[0] }}</span>
-              </div>
-
-            </ValidationProvider>
-            <button @click="ctx.validate().then(submit)">Validate</button>
-          </div>
+        <ValidationObserver v-slot="ctx">
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+          <button @click="ctx.validate().then(submit)">Validate</button>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
-
-    wrapper.vm.submit = jest.fn();
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
+    const input = wrapper.find('input');
     await flushPromises();
     expect(error.text()).toBe('');
 
@@ -145,12 +128,12 @@ describe('Validation Observer Component', () => {
     await flushPromises();
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-    wrapper.setData({ value: '12' });
+    input.setValue('12');
     wrapper.find('button').trigger('click');
     await flushPromises();
 
     expect(error.text()).toBe('');
-    expect(wrapper.vm.submit).toHaveBeenCalledTimes(1);
+    expect(wrapper.vm.calls).toBe(1);
   });
 
   test('removes child ref when the child is destroyed', async () => {
@@ -159,22 +142,14 @@ describe('Validation Observer Component', () => {
         value: ''
       }),
       template: `
-        <ValidationObserver ref="obs">
-          <div slot-scope="ctx">
-
-            <ValidationProvider rules="required" vid="id">
-
-              <div slot-scope="{ errors }">
-                <input v-model="value" type="text">
-                <span id="error">{{ errors[0] }}</span>
-              </div>
-
-            </ValidationProvider>
-
-          </div>
+        <ValidationObserver ref="obs" v-slot="ctx">
+          <ValidationProvider rules="required" vid="id" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const obs = wrapper.vm.$refs.obs;
     expect(obs.refs).toHaveProperty('id');
@@ -190,22 +165,14 @@ describe('Validation Observer Component', () => {
         value: ''
       }),
       template: `
-        <ValidationObserver ref="obs">
-          <div slot-scope="ctx">
-
-            <ValidationProvider rules="required">
-
-              <div slot-scope="{ errors }">
-                <input v-model="value" type="text">
-                <span id="error">{{ errors[0] }}</span>
-              </div>
-
-            </ValidationProvider>
-
-          </div>
+        <ValidationObserver ref="obs" v-slot="ctx">
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
     await flushPromises();
@@ -221,29 +188,21 @@ describe('Validation Observer Component', () => {
     expect(error.text()).toBe('');
   });
 
-  test('resets child refs using reset on the slot-scope data', async () => {
+  test('resets child refs using reset on the v-slot data', async () => {
     const wrapper = mount({
       data: () => ({
         value: ''
       }),
       template: `
-        <ValidationObserver ref="obs">
-          <div slot-scope="ctx">
-
-            <ValidationProvider rules="required">
-
-              <div slot-scope="{ errors }">
-                <input v-model="value" type="text">
-                <span id="error">{{ errors[0] }}</span>
-              </div>
-
-            </ValidationProvider>
-
-            <button @click="ctx.reset()">Reset</button>
-          </div>
+        <ValidationObserver ref="obs" v-slot="ctx">
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+          <button @click="ctx.reset()">Reset</button>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
     await flushPromises();
@@ -267,24 +226,17 @@ describe('Validation Observer Component', () => {
         name: ''
       }),
       template: `
-        <ValidationObserver ref="obs">
-          <div slot-scope="{ errors }">
-            <ValidationProvider vid="name" rules="required">
-              <div slot-scope="ctx">
-                <input v-model="name" type="text">
-              </div>
-            </ValidationProvider>
-            <ValidationProvider vid="email" rules="required">
-              <div slot-scope="ctx">
-                <input v-model="email" type="text">
-              </div>
-            </ValidationProvider>
-
-            <p v-for="fieldErrors in errors">{{ fieldErrors[0] }}</p>
-          </div>
+        <ValidationObserver ref="obs" v-slot="{ errors }">
+          <ValidationProvider vid="name" rules="required" v-slot="ctx">
+            <input v-model="name" type="text">
+          </ValidationProvider>
+          <ValidationProvider vid="email" rules="required" v-slot="ctx">
+            <input v-model="email" type="text">
+          </ValidationProvider>
+          <p v-for="fieldErrors in errors">{{ fieldErrors[0] }}</p>
         </ValidationObserver>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     await flushPromises();
 

@@ -1,6 +1,7 @@
-import { mount, createLocalVue, renderToString } from '@vue/test-utils';
-import VeeValidate from '@/index';
+import { mount, createLocalVue } from '@vue/test-utils';
+import { renderToString } from '@vue/server-test-utils';
 import flushPromises from 'flush-promises';
+import VeeValidate from '@/index';
 import InputWithoutValidation from './components/Input';
 import SelectWithoutValidation from './components/Select';
 
@@ -20,7 +21,7 @@ describe('Validation Provider Component', () => {
           <input v-model="val" type="text">
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(wrapper.html()).toBe(`<span><input type="text"></span>`);
   });
@@ -32,7 +33,7 @@ describe('Validation Provider Component', () => {
           <p slot-scope="ctx"></p>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(output).toBe('<span data-server-rendered="true"><p></p></span>');
   });
@@ -50,7 +51,7 @@ describe('Validation Provider Component', () => {
           </div>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
     const error = wrapper.find('#error');
@@ -91,7 +92,7 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const select = wrapper.find('select');
     const error = wrapper.find('#error');
@@ -129,7 +130,7 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
 
@@ -164,21 +165,19 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, attachToDocument: true, sync: false });
+    }, { localVue: Vue, sync: false, attachToDocument: true });
 
     const error = wrapper.find('#error');
     const input = wrapper.find('#input');
 
     expect(error.text()).toBe('');
 
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
-    input.element.value = 'val';
-    input.trigger('input');
+    input.setValue('val');
     await flushPromises();
     expect(error.text()).toBe('');
   });
@@ -207,7 +206,7 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
     const input = wrapper.find({ ref: 'input' });
@@ -243,13 +242,12 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
     const error = wrapper.find('#error');
     const input = wrapper.find('input');
 
     expect(error.text()).toBe('');
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
     // did not validate.
     expect(error.text()).toBe('');
@@ -279,25 +277,22 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#err1');
     const inputs = wrapper.findAll('input');
 
     expect(error.text()).toBeFalsy();
-    inputs.at(0).element.value = 'val';
-    inputs.at(0).trigger('input');
+    inputs.at(0).setValue('val');
     await flushPromises();
     // the password input hasn't changed yet.
     expect(error.text()).toBeFalsy();
-    inputs.at(1).element.value = '12';
-    inputs.at(1).trigger('input');
+    inputs.at(1).setValue('12');
     await flushPromises();
     // the password input was interacted with and should be validated.
     expect(error.text()).toBeTruthy();
 
-    inputs.at(1).element.value = 'val';
-    inputs.at(1).trigger('input');
+    inputs.at(1).setValue('val');
     await flushPromises();
     // the password input now matches the confirmation.
     expect(error.text()).toBeFalsy();
@@ -314,7 +309,7 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const providersMap = wrapper.vm.$_veeObserver.refs;
     expect(providersMap.named).toBe(wrapper.vm.$refs.provider);
@@ -335,21 +330,17 @@ describe('Validation Provider Component', () => {
       components: {
         InputWithValidation
       }
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
     const input = wrapper.find('#input');
 
     expect(error.text()).toBe('');
-    input.element.value = '';
-    input.trigger('input');
-
+    input.setValue('');
     await flushPromises();
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-
-    input.element.value = 'txt';
-    input.trigger('input');
+    input.setValue('txt');
     await flushPromises();
     await flushPromises();
     expect(error.text()).toBe('');
@@ -368,7 +359,7 @@ describe('Validation Provider Component', () => {
       components: {
         SelectWithValidation: WithValidation
       }
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     expect(wrapper.html()).toBe(`<div value=""><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div>`);
   });
@@ -398,15 +389,14 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, attachToDocument: true, sync: false });
+    }, { localVue: Vue, sync: false, attachToDocument: true });
 
     const error = wrapper.find('#error');
     const input = wrapper.find('#input');
 
     expect(error.text()).toBe('');
 
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
@@ -429,12 +419,10 @@ describe('Validation Provider Component', () => {
           </div>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
-
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
 
     const errors = wrapper.findAll('p');
@@ -457,13 +445,12 @@ describe('Validation Provider Component', () => {
           </div>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
     const error = wrapper.find('p');
 
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await sleep(40);
     expect(error.text()).toBe('');
     await sleep(10);
@@ -472,20 +459,6 @@ describe('Validation Provider Component', () => {
   });
 
   test('avoids race conditions between successive validations', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
-        <ValidationProvider rules="required|longRunning" :debounce="10">
-          <div slot-scope="{ errors }">
-            <input v-model="value" type="text">
-            <p>{{ errors[0] }}</p>
-          </div>
-        </ValidationProvider>
-      `
-    }, { localVue: Vue });
-
     // A decreasing timeout (the most recent validation will finish before new ones).
     VeeValidate.Validator.extend('longRunning', {
       getMessage: (_, __, data) => data,
@@ -501,15 +474,26 @@ describe('Validation Provider Component', () => {
       }
     });
 
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationProvider rules="required|longRunning" :debounce="10">
+          <div slot-scope="{ errors }">
+            <input v-model="value" type="text">
+            <p>{{ errors[0] }}</p>
+          </div>
+        </ValidationProvider>
+      `
+    }, { localVue: Vue, sync: false });
+
     const input = wrapper.find('input');
     const error = wrapper.find('p');
 
-    input.element.value = '123';
-    input.trigger('input');
-    input.element.value = '123';
-    input.trigger('input');
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('123');
+    input.setValue('12');
+    input.setValue('');
     await sleep(100);
     await flushPromises();
     // LAST message should be the required one.
@@ -526,18 +510,16 @@ describe('Validation Provider Component', () => {
           </div>
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
 
     const error = wrapper.find('#error');
     expect(error.text()).toBeTruthy();
 
-    input.element.value = '123';
-    input.trigger('input');
+    input.setValue('123');
     await flushPromises();
 
     expect(error.text()).toBeFalsy();
@@ -559,15 +541,14 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue });
+    }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('#error');
     const input = wrapper.find('input');
 
     expect(error.text()).toBe('');
 
-    input.element.value = '';
-    input.trigger('input');
+    input.setValue('');
     await flushPromises();
 
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
