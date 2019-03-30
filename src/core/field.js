@@ -16,6 +16,7 @@ import {
   isCheckboxOrRadioInput,
   isEqual,
   values,
+  warn,
   defineNonReactive,
   assign
 } from '../utils';
@@ -28,6 +29,19 @@ const DEFAULT_CLASSES = {
   pristine: 'pristine', // control has not been interacted with
   dirty: 'dirty' // control has been interacted with
 };
+
+function createObserver() {
+  const state = Vue.observable({ refs: {} });
+  state.subscribe = (ctx) => {
+    Vue.set(state.refs, ctx.vid, ctx);
+  };
+
+  state.unsubscribe = (ctx) => {
+    Vue.delete(state.refs, ctx.vid);
+  };
+
+  return state;
+}
 
 export default class Field {
   constructor (el, binding, vnode) {
@@ -201,7 +215,11 @@ export default class Field {
 
   registerField (vnode) {
     if (!vnode.context.$_veeObserver) {
-      throw new Error('Did you forget to mapValidationState?');
+      if (process.env.NODE_ENV !== 'production') {
+        warn('Did you forget to mapValidationState?');
+      }
+
+      vnode.context.$_veeObserver = createObserver();
     }
 
     vnode.context.$_veeObserver.subscribe(this);
