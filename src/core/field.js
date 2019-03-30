@@ -46,6 +46,7 @@ export default class Field {
     this._value = undefined;
     this.flags = Vue.observable(createFlags());
     this.errors = Vue.observable([]);
+    this.name = Resolver.resolveName(el, vnode);
   }
 
   get value () {

@@ -1,24 +1,39 @@
-import * as Rules from './rules';
 import VeeValidate from './plugin';
-import { ValidationProvider, ValidationObserver, withValidation } from './components';
-import { assign } from './utils';
+import directive from './directive';
 import en from '../locale/en';
+import * as Rules from './rules';
+import Validator from './core/validator';
+import { mapValidationState } from './mapValidationState';
+import { assign } from './utils';
+import { ValidationProvider, ValidationObserver, withValidation } from './components';
 
-// rules plugin definition.
+const version = '__VERSION__';
 
 Object.keys(Rules).forEach(rule => {
-  VeeValidate.Validator.extend(rule, Rules[rule].validate, assign({}, Rules[rule].options, { paramNames: Rules[rule].paramNames }));
+  Validator.extend(rule, Rules[rule].validate, assign({}, Rules[rule].options, { paramNames: Rules[rule].paramNames }));
 });
 
 // Merge the english messages.
-VeeValidate.Validator.localize({
-  en
-});
+Validator.localize({ en });
 
-VeeValidate.version = '__VERSION__';
-VeeValidate.Rules = Rules;
+const install = VeeValidate.install;
+
+export {
+  install,
+  directive,
+  Validator,
+  Rules,
+  version,
+  ValidationProvider,
+  ValidationObserver,
+  withValidation,
+  mapValidationState
+};
+
+VeeValidate.version = version;
 VeeValidate.ValidationProvider = ValidationProvider;
 VeeValidate.ValidationObserver = ValidationObserver;
 VeeValidate.withValidation = withValidation;
+VeeValidate.mapValidationState = mapValidationState;
 
 export default VeeValidate;

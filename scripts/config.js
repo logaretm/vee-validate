@@ -83,11 +83,11 @@ const builds = {
     env: 'production'
   },
   esm: {
-    input: 'src/index.esm.js',
+    input: 'src/index.js',
     format: 'es'
   },
   esmMinimal: {
-    input: 'src/index.minimal.esm.js',
+    input: 'src/index.minimal.js',
     format: 'es'
   },
   rules: {

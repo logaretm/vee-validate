@@ -245,6 +245,10 @@ export default class Resolver {
   static resolveName (el, vnode) {
     let name = getDataAttribute(el, 'name');
 
+    if (!vnode.componentInstance && vnode.data.attrs.name) {
+      return vnode.data.attrs.name;
+    }
+
     if (!name && !vnode.componentInstance) {
       return el.name;
     }

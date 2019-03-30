@@ -18,8 +18,7 @@
     "docs:build": "vuepress build docs",
     "docs:deploy": "./scripts/deploy.sh",
     "build:locale": "node scripts/locale.js",
-    "build:umd": "node scripts/umd.js",
-    "build:esm": "node scripts/esm.js",
+    "build:main": "node scripts/main.js",
     "build": "npm run build:umd && npm run build:esm && npm run build:locale",
     "cover": "jest --coverage"
   },
