@@ -1,8 +1,9 @@
 import Resolver from './resolver';
 import { Vue } from '../plugin';
 import RuleContainer from './ruleContainer';
-import { isEvent, addEventListener, addEventListenerOnce } from '../utils/events';
+import { addEventListener, addEventListenerOnce } from '../utils/events';
 import { findModel } from '../utils/vnode';
+import { getValidator } from '../state';
 import {
   uniqId,
   createFlags,
@@ -10,17 +11,14 @@ import {
   isNullOrUndefined,
   toggleClass,
   isTextInput,
-  debounce,
   isCallable,
   toArray,
   isCheckboxOrRadioInput,
-  includes,
   isEqual,
   values,
   defineNonReactive,
   assign
 } from '../utils';
-import { getValidator } from '../state';
 
 const DEFAULT_CLASSES = {
   touched: 'touched', // the control has been blurred
@@ -42,6 +40,8 @@ export default class Field {
     defineNonReactive(this, 'opts', {});
     defineNonReactive(this, 'binding', binding);
     defineNonReactive(this, 'vnode', vnode);
+    defineNonReactive(this, 'initialized', false);
+
     this.el._vid = this.vid;
     this._value = undefined;
     this.flags = Vue.observable(createFlags());
@@ -109,13 +109,15 @@ export default class Field {
     }, {});
   }
 
-  onModelUpdated (model, binding, vnode) {
+  onModelUpdated (model) {
     if (model.value === this.value) {
       return;
     }
 
     this.value = model.value;
-    this.validate();
+    if (this.initialized) {
+      this.validate();
+    }
   }
 
   validateDeps () {
@@ -171,7 +173,7 @@ export default class Field {
     this.registerField(vnode);
     this.updateOptions(el, binding, vnode);
     if (model) {
-      this.onModelUpdated(model, binding, vnode);
+      this.onModelUpdated(model);
       this.addLiteListeners(el);
     } else {
       this.addListeners(el);
@@ -184,6 +186,7 @@ export default class Field {
     }
 
     this.addActionListeners();
+    this.initialized = true;
   }
 
   updateOptions (el, binding, vnode) {
@@ -196,7 +199,7 @@ export default class Field {
 
   registerField (vnode) {
     if (!vnode.context.$_veeObserver) {
-      throw new Error('Did you forget to mapValidationState');
+      throw new Error('Did you forget to mapValidationState?');
     }
 
     vnode.context.$_veeObserver.subscribe(this);
@@ -231,7 +234,6 @@ export default class Field {
     this.initialValue = this.value;
     this.flags.changed = false;
 
-    this.addValueListeners();
     this.addActionListeners();
     this.updateClasses(true);
     this.updateAriaAttrs();
@@ -389,120 +391,6 @@ export default class Field {
       }
 
       return e;
-    });
-  }
-
-  /**
-   * Adds the listeners required for validation.
-   */
-  addValueListeners () {
-    this.unwatch(/^input_.+/);
-    if (!this.listen || !this.el) return;
-
-    const token = { cancelled: false };
-    const fn = this.targetOf ? () => {
-      const target = this.validator._resolveField(`#${this.targetOf}`);
-      if (target && target.flags.validated) {
-        this.validator.validate(`#${this.targetOf}`);
-      }
-    } : (...args) => {
-      // if its a DOM event, resolve the value, otherwise use the first parameter as the value.
-      if (args.length === 0 || isEvent(args[0])) {
-        args[0] = this.value;
-      }
-
-      this.validator.validate(`#${this.id}`, args[0]);
-    };
-
-    const inputEvent = this._determineInputEvent();
-    let events = this._determineEventList(inputEvent);
-
-    // if there is a model and an on input validation is requested.
-    if (this.model && includes(events, inputEvent)) {
-      let ctx = null;
-      let expression = this.model.expression;
-      // if its watchable from the context vm.
-      if (this.model.expression) {
-        ctx = this.vm;
-        expression = this.model.expression;
-      }
-
-      // watch it from the custom component vm instead.
-      if (!expression && this.componentInstance && this.componentInstance.$options.model) {
-        ctx = this.componentInstance;
-        expression = this.componentInstance.$options.model.prop || 'value';
-      }
-
-      if (ctx && expression) {
-        const debouncedFn = debounce(fn, this.delay[inputEvent], token);
-        const unwatch = ctx.$watch(expression, (...args) => {
-          this.flags.pending = true;
-          this._cancellationToken = token;
-          debouncedFn(...args);
-        });
-        this.watchers.push({
-          tag: 'input_model',
-          unwatch
-        });
-
-        // filter out input event as it is already handled by the watcher API.
-        events = events.filter(e => e !== inputEvent);
-      }
-    }
-
-    // Add events.
-    events.forEach(e => {
-      const debouncedFn = debounce(fn, this.delay[e], token);
-      const validate = (...args) => {
-        this.flags.pending = true;
-        this._cancellationToken = token;
-        debouncedFn(...args);
-      };
-
-      this._addComponentEventListener(e, validate);
-      this._addHTMLEventListener(e, validate);
-    });
-  }
-
-  _addComponentEventListener (evt, validate) {
-    if (!this.componentInstance) return;
-
-    this.componentInstance.$on(evt, validate);
-    this.watchers.push({
-      tag: 'input_vue',
-      unwatch: () => {
-        this.componentInstance.$off(evt, validate);
-      }
-    });
-  }
-
-  _addHTMLEventListener (evt, validate) {
-    if (!this.el || this.componentInstance) return;
-
-    // listen for the current element.
-    const addListener = (el) => {
-      addEventListener(el, evt, validate);
-      this.watchers.push({
-        tag: 'input_native',
-        unwatch: () => {
-          el.removeEventListener(evt, validate);
-        }
-      });
-    };
-
-    addListener(this.el);
-    if (!isCheckboxOrRadioInput(this.el)) {
-      return;
-    }
-
-    const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
-    toArray(els).forEach(el => {
-      // skip if it is added by v-validate and is not the current element.
-      if (el._veeValidateId && el !== this.el) {
-        return;
-      }
-
-      addListener(el);
     });
   }
 
