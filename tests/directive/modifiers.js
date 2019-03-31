@@ -63,4 +63,42 @@ describe('directive modifiers', () => {
     await flushPromises();
     expect(wrapper.find('p').text()).toBe('The field field is required.');
   });
+
+  test('.persist modifier', async () => {
+    const Vue = createLocalVue();
+    Vue.use(VeeValidate);
+
+    const wrapper = mount({
+      computed: mapValidationState('vee'),
+      data: () => ({
+        isHidden: false
+      }),
+      template: `
+      <div>
+        <div v-if="!isHidden">
+          <input type="text" name="__field__" v-validate.persist="'required'" ref="vid">
+          <p>{{ vee.for('__field__').errors[0] }}</p>
+        </div>
+      </div>
+    `
+    }, { localVue: Vue, sync: false });
+
+    wrapper.find('input').setValue('');
+    await flushPromises();
+    expect(wrapper.find('p').text()).toBeTruthy();
+
+    wrapper.setData({
+      isHidden: true
+    });
+
+    expect(wrapper.find('input').exists()).toBe(true);
+    await flushPromises();
+    wrapper.setData({
+      isHidden: false
+    });
+    await flushPromises();
+    expect(wrapper.find('input').exists()).toBe(true);
+
+    expect(wrapper.find('p').text()).toBeTruthy();
+  });
 });

@@ -55,7 +55,6 @@ function computeModeSetting (ctx) {
     flags: ctx.flags
   });
 }
-
 export default class Field {
   constructor (el, binding, vnode) {
     defineNonReactive(this, 'el', el);
@@ -71,11 +70,15 @@ export default class Field {
     defineNonReactive(this, '_listeners', {});
     defineNonReactive(this, '_interactions', {});
     defineNonReactive(this, '_value', undefined);
+    defineNonReactive(this, 'rules', Resolver.resolveRules(el, binding, vnode));
 
     this.el._vid = this.vid;
     this.flags = Vue.observable(createFlags());
     this.errors = Vue.observable([]);
     this.name = Resolver.resolveName(el, vnode);
+    if (binding.modifiers.persist) {
+      this.restoreFieldState();
+    }
   }
 
   get value () {
@@ -129,8 +132,9 @@ export default class Field {
   }
 
   createValuesLookup () {
+    const fields = this.ctx.$_veeObserver.refs;
+
     return this.fieldDeps().reduce((acc, depName) => {
-      const fields = this.ctx.$_veeObserver.refs;
       if (!fields[depName]) {
         return acc;
       }
@@ -184,7 +188,12 @@ export default class Field {
     this.binding = binding;
     this.vnode = vnode;
     const model = findModel(vnode);
-    this.rules = binding.value;
+    const rules = binding.value;
+    if (!isEqual(rules, this.rules) && this.flags.validated) {
+      this.validate();
+    }
+
+    this.rules = rules;
     this.registerField(vnode);
     this.updateOptions(el, binding, vnode);
     const inputEvt = this._determineInputEvent();
@@ -449,12 +458,46 @@ export default class Field {
   }
 
   /**
-   * Removes all listeners.
+   * Remove everything.
    */
   destroy () {
-    // ignore the result of any ongoing validation.
-    if (this._cancellationToken) {
-      this._cancellationToken.cancelled = true;
+    const isPersisted = !!(this.binding.modifiers && this.binding.modifiers.persist);
+    if (isPersisted) {
+      this.persistFieldState();
     }
+
+    // Remove All listeners.
+    Object.keys(this._listeners).forEach(evt => this._listeners[evt]());
+
+    // Remove cross-field references.
+    const fields = this.ctx.$_veeObserver.refs;
+    this.fieldDeps().forEach(depName => {
+      delete fields[depName].deps[this.vid];
+    });
+    this.ctx.$_veeObserver.unsubscribe(this);
+  }
+
+  persistFieldState () {
+    if (!this.ctx.$_veeObserver._persistStore) {
+      this.ctx.$_veeObserver._persistStore = {};
+    }
+
+    this.ctx.$_veeObserver._persistStore[this.vid] = {
+      errors: this.errors,
+      flags: this.flags
+    };
+  }
+
+  restoreFieldState () {
+    if (!this.ctx.$_veeObserver._persistStore) return;
+
+    const state = this.ctx.$_veeObserver._persistStore[this.vid];
+    if (!state) {
+      return;
+    }
+
+    this.applyResult({ valid: !!state.errors.length, errors: state.errors });
+    this.flags = assign({}, this.flags, state.flags);
+    delete this.ctx.$_veeObserver._persistStore[this.vid];
   }
 }
