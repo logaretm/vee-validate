@@ -189,10 +189,7 @@ export default class Field {
     this.vnode = vnode;
     const model = findModel(vnode);
     const rules = binding.value;
-    if (!isEqual(rules, this.rules) && this.flags.validated) {
-      this.validate();
-    }
-
+    let shouldValidate = !isEqual(rules, this.rules) && this.flags.validated;
     this.rules = rules;
     this.registerField(vnode);
     this.updateOptions(el, binding, vnode);
@@ -205,7 +202,8 @@ export default class Field {
 
     this.addListeners(el, events);
     this.applyClasses();
-    if (binding.modifiers && binding.modifiers.immediate && !this.flags.validated) {
+    shouldValidate = shouldValidate || (binding.modifiers && binding.modifiers.immediate && !this.flags.validated);
+    if (shouldValidate) {
       this.validate();
     }
 
