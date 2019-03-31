@@ -2,14 +2,12 @@ import dictionary from './dictionary';
 import directive from './directive';
 import { warn, isCallable } from './utils';
 import Validator from './core/validator';
-import I18nDictionary from './localization/i18n';
 import { detectPassiveSupport } from './utils/events';
 import { setConfig, getConfig } from './config';
 import { setValidator } from './state';
 import { modes } from './modes';
 
 export let Vue = null;
-let pendingPlugins;
 let pluginInstance;
 
 class VeeValidate {
@@ -47,25 +45,9 @@ class VeeValidate {
     modes[mode] = implementation;
   }
 
-  static use (plugin, options = {}) {
-    if (!isCallable(plugin)) {
-      return warn('The plugin must be a callable function');
-    }
-
-    // Don't install plugins until vee-validate is installed.
-    if (!pluginInstance) {
-      if (!pendingPlugins) {
-        pendingPlugins = [];
-      }
-      pendingPlugins.push({ plugin, options });
-      return;
-    }
-
-    plugin({ Validator, Rules: Validator.rules }, options);
-  };
-
   static install (_Vue, opts) {
     if (Vue && _Vue === Vue) {
+      /* istanbul ignore next */
       if (process.env.NODE_ENV !== 'production') {
         warn('already installed, Vue.use(VeeValidate) should only be called once.');
       }
@@ -80,12 +62,6 @@ class VeeValidate {
     detectPassiveSupport();
 
     Vue.directive('validate', directive);
-    if (pendingPlugins) {
-      pendingPlugins.forEach(({ plugin, options }) => {
-        VeeValidate.use(plugin, options);
-      });
-      pendingPlugins = null;
-    }
   }
 
   get i18nDriver () {
@@ -105,25 +81,14 @@ class VeeValidate {
   }
 
   _initI18n (config) {
-    const { dictionary, i18n, i18nRootKey, locale } = config;
-    const onLocaleChanged = () => {
-      this._validator.errors.regenerate();
-    };
-
-    // i18 is being used for localization.
-    if (i18n) {
-      VeeValidate.setI18nDriver('i18n', new I18nDictionary(i18n, i18nRootKey));
-      i18n._vm.$watch('locale', onLocaleChanged);
-    } else if (typeof window !== 'undefined') {
-      this._vm.$on('localeChanged', onLocaleChanged);
-    }
+    const { dictionary, locale } = config;
 
     if (dictionary) {
       this.i18nDriver.merge(dictionary);
     }
 
-    if (locale && !i18n) {
-      this._validator.localize(locale);
+    if (locale) {
+      this.i18nDriver.locale = locale;
     }
   }
 
