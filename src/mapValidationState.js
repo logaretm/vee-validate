@@ -41,19 +41,3 @@ export function mapValidationState (propName, { errors = true, flags = true } = 
     }
   };
 };
-
-export function mapValidationAction (methodName) {
-  return {
-    [methodName] () {
-      if (!this.$_veeObserver) {
-        return true;
-      }
-
-      return Promise.all(
-        values(this.$_veeObserver.refs).map(field => {
-          return field.validate();
-        })
-      ).then(results => results.every(r => r.valid));
-    }
-  };
-};

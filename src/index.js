@@ -3,7 +3,8 @@ import directive from './directive';
 import en from '../locale/en';
 import * as Rules from './rules';
 import Validator from './core/validator';
-import { mapValidationState, mapValidationAction } from './mapValidationState';
+import { mapValidationState } from './mapValidationState';
+import { mapValidationActions } from './mapValidationActions';
 import { assign } from './utils';
 import { ValidationProvider, ValidationObserver, withValidation } from './components';
 
@@ -28,7 +29,7 @@ export {
   ValidationObserver,
   withValidation,
   mapValidationState,
-  mapValidationAction
+  mapValidationActions
 };
 
 VeeValidate.version = version;
@@ -36,6 +37,6 @@ VeeValidate.ValidationProvider = ValidationProvider;
 VeeValidate.ValidationObserver = ValidationObserver;
 VeeValidate.withValidation = withValidation;
 VeeValidate.mapValidationState = mapValidationState;
-VeeValidate.mapValidationAction = mapValidationAction;
+VeeValidate.mapValidationActions = mapValidationActions;
 
 export default VeeValidate;

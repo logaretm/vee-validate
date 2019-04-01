@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
-import VeeValidate, { mapValidationState, mapValidationAction } from '@/index';
+import VeeValidate, { mapValidationState, mapValidationActions } from '@/index';
 
 describe('Cross Field Validation', () => {
   const Vue = createLocalVue();
@@ -97,7 +97,7 @@ describe('Cross Field Validation', () => {
     const wrapper = mount({
       computed: mapValidationState('vee'),
       methods: {
-        ...mapValidationAction('validate')
+        ...mapValidationActions({ validate: 'validate' })
       },
       template: `
       <div>

@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
-import VeeValidate, { mapValidationState, mapValidationAction } from '@/index';
+import VeeValidate, { mapValidationState, mapValidationActions } from '@/index';
 
 describe('directive modifiers', () => {
   test('.bails modifier', async () => {
@@ -10,7 +10,7 @@ describe('directive modifiers', () => {
 
     const wrapper = mount({
       computed: mapValidationState('vee'),
-      methods: mapValidationAction('validate'),
+      methods: mapValidationActions(['validate']),
       template: `
       <div>
         <input type="text" name="bails" v-validate.bails="'required|min:3|is:3'">
@@ -31,7 +31,7 @@ describe('directive modifiers', () => {
 
     const wrapper = mount({
       computed: mapValidationState('vee'),
-      methods: mapValidationAction('validate'),
+      methods: mapValidationActions(['validate']),
       template: `
       <div>
         <input type="text" name="bails" v-validate.continues="'required|min:3|is:3'">

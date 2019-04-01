@@ -275,13 +275,14 @@ export default class Field {
     });
 
     // update initial value
+    this.errors = [];
     this.initialValue = this.value;
     this.flags.changed = false;
 
     this.addActionListeners();
-    this.updateClasses(true);
-    this.updateAriaAttrs();
-    this.updateCustomValidity();
+    this.applyClasses(true);
+    this.applyAriaAttrs();
+    this.applyCustomValidity();
   }
 
   /**
