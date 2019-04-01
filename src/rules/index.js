@@ -9,7 +9,6 @@ import between from './between';
 import confirmed from './confirmed';
 import credit_card from './credit_card';
 import date_between from './date_between';
-import date_format from './date_format';
 import decimal from './decimal';
 import digits from './digits';
 import dimensions from './dimensions';
@@ -47,7 +46,6 @@ export {
   confirmed,
   credit_card,
   date_between,
-  date_format,
   decimal,
   digits,
   dimensions,

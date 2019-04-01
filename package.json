@@ -47,7 +47,6 @@
     "babel-jest": "^24.5.0",
     "chalk": "^2.4.2",
     "cross-env": "^5.2.0",
-    "date-fns": "2.0.0-alpha.25",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.16.0",

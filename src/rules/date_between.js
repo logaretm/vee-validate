@@ -1,41 +1,35 @@
-import { isAfter, isBefore, isEqual } from 'date-fns';
-import { parseDate as parse } from '../utils/date';
+import { isValidDate } from '../utils';
 
-const validate = (value, { min, max, inclusivity = '()', format } = {}) => {
-  if (typeof format === 'undefined') {
-    format = inclusivity;
-    inclusivity = '()';
-  }
-
-  const minDate = parse(String(min), format);
-  const maxDate = parse(String(max), format);
-  const dateVal = parse(String(value), format);
-
-  if (!minDate || !maxDate || !dateVal) {
+const validate = (value, { min, max, inclusivity = '()' } = {}) => {
+  // if any is not valid.
+  if (!isValidDate(value) || !isValidDate(min) || !isValidDate(max)) {
     return false;
   }
 
+  const minDate = min.getTime();
+  const maxDate = max.getTime();
+  const dateVal = value.getTime();
+
   if (inclusivity === '()') {
-    return isAfter(dateVal, minDate) && isBefore(dateVal, maxDate);
+    return dateVal > minDate && dateVal < maxDate;
   }
 
   if (inclusivity === '(]') {
-    return isAfter(dateVal, minDate) && (isEqual(dateVal, maxDate) || isBefore(dateVal, maxDate));
+    return dateVal > minDate && dateVal <= maxDate;
   }
 
   if (inclusivity === '[)') {
-    return isBefore(dateVal, maxDate) && (isEqual(dateVal, minDate) || isAfter(dateVal, minDate));
+    return dateVal >= minDate && dateVal < maxDate;
   }
 
-  return isEqual(dateVal, maxDate) || isEqual(dateVal, minDate) ||
-    (isBefore(dateVal, maxDate) && isAfter(dateVal, minDate));
+  return dateVal >= minDate && dateVal <= maxDate;
 };
 
 const options = {
   isDate: true
 };
 
-const paramNames = ['min', 'max', 'inclusivity', 'format'];
+const paramNames = ['min', 'max', 'inclusivity'];
 
 export {
   validate,

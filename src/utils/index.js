@@ -10,16 +10,21 @@ export const isDateInput = (el) => {
   return includes(['date', 'week', 'month', 'datetime-local', 'time'], el.type);
 };
 
+export const isValidDate = (value) => {
+  if (!value) {
+    return false;
+  }
+
+  return isCallable(value.getTime) && !isNaN(value.getTime());
+};
+
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
 export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
 
 export const isNaN = (value) => {
-  if ('isNaN' in Number) {
-    return Number.isNaN(value);
-  }
-
+  // NaN is the one value that does not equal itself.
   // eslint-disable-next-line
   return value === value;
 };

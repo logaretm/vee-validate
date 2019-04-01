@@ -1,21 +1,16 @@
-import { isAfter, isEqual } from 'date-fns';
-import { parseDate as parse } from '../utils/date';
+import { isValidDate } from '../utils';
 
-const afterValidator = (value, { targetValue, inclusion = false, format } = {}) => {
-  if (typeof format === 'undefined') {
-    format = inclusion;
-    inclusion = false;
-  }
-
-  value = parse(value, format);
-  targetValue = parse(targetValue, format);
-
+const afterValidator = (value, { targetValue, inclusion = false } = {}) => {
   // if either is not valid.
-  if (!value || !targetValue) {
+  if (!isValidDate(value) || !isValidDate(targetValue)) {
     return false;
   }
 
-  return isAfter(value, targetValue) || (inclusion && isEqual(value, targetValue));
+  if (inclusion) {
+    return value.getTime() >= targetValue.getTime();
+  }
+
+  return value.getTime() > targetValue.getTime();
 };
 
 const options = {
@@ -24,7 +19,7 @@ const options = {
 };
 
 // required to convert from a list of array values to an object.
-const paramNames = ['targetValue', 'inclusion', 'format'];
+const paramNames = ['targetValue', 'inclusion'];
 
 export {
   afterValidator as validate,
