@@ -42,10 +42,15 @@ export const ValidationObserver = {
     tag: {
       type: String,
       default: 'span'
+    },
+    vid: {
+      type: String,
+      default () {
+        return `obs_${OBSERVER_COUNTER++}`;
+      }
     }
   },
   data: () => ({
-    vid: `obs_${OBSERVER_COUNTER++}`,
     refs: {},
     observers: [],
   }),
@@ -166,7 +171,7 @@ export const ValidationObserver = {
       const provider = this.refs[vid];
       // save it for the next time.
       if (provider && provider.persist) {
-        /* istanbul ignore else */
+        /* istanbul ignore next */
         if (process.env.NODE_ENV !== 'production') {
           if (vid.indexOf('_vee_') === 0) {
             warn('Please provide a `vid` prop when using `persist`, there might be unexpected issues otherwise.');
