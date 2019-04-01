@@ -179,7 +179,7 @@ export default class Validator {
       format = validations.date_format[0];
     }
 
-    return format || Dictionary.getDriver().getDateFormat(this.locale);
+    return format;
   }
 
   /**
@@ -337,7 +337,11 @@ export default class Validator {
   static _merge (name, { validator, options, paramNames }) {
     const validate = isCallable(validator) ? validator : validator.validate;
     if (validator.getMessage) {
-      Dictionary.getDriver().setMessage(Validator.locale, name, validator.getMessage);
+      Dictionary.getDriver().merge({
+        [Validator.locale]: {
+          [name]: validator.getMessage
+        }
+      });
     }
 
     RuleContainer.add(name, {

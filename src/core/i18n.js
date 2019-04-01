@@ -20,25 +20,9 @@ export default class Dictionary {
     return !!this.container[locale];
   }
 
-  setDateFormat (locale, format) {
-    if (!this.container[locale]) {
-      this.container[locale] = {};
-    }
-
-    this.container[locale].dateFormat = format;
-  }
-
-  getDateFormat (locale) {
-    if (!this.container[locale] || !this.container[locale].dateFormat) {
-      return null;
-    }
-
-    return this.container[locale].dateFormat;
-  }
-
   getMessage (locale, key, data) {
     let message = null;
-    if (!this.hasMessage(locale, key)) {
+    if (!this._hasMessage(locale, key)) {
       message = this._getDefaultMessage(locale);
     } else {
       message = this.container[locale].messages[key];
@@ -65,7 +49,7 @@ export default class Dictionary {
   }
 
   _getDefaultMessage (locale) {
-    if (this.hasMessage(locale, '_default')) {
+    if (this._hasMessage(locale, '_default')) {
       return this.container[locale].messages._default;
     }
 
@@ -73,14 +57,14 @@ export default class Dictionary {
   }
 
   getAttribute (locale, key, fallback = '') {
-    if (!this.hasAttribute(locale, key)) {
+    if (!this._hasAttribute(locale, key)) {
       return fallback;
     }
 
     return this.container[locale].attributes[key];
   }
 
-  hasMessage (locale, key) {
+  _hasMessage (locale, key) {
     return !! (
       this.hasLocale(locale) &&
             this.container[locale].messages &&
@@ -88,7 +72,7 @@ export default class Dictionary {
     );
   }
 
-  hasAttribute (locale, key) {
+  _hasAttribute (locale, key) {
     return !! (
       this.hasLocale(locale) &&
             this.container[locale].attributes &&
@@ -98,27 +82,5 @@ export default class Dictionary {
 
   merge (dictionary) {
     merge(this.container, dictionary);
-  }
-
-  setMessage (locale, key, message) {
-    if (! this.hasLocale(locale)) {
-      this.container[locale] = {
-        messages: {},
-        attributes: {}
-      };
-    }
-
-    this.container[locale].messages[key] = message;
-  }
-
-  setAttribute (locale, key, attribute) {
-    if (! this.hasLocale(locale)) {
-      this.container[locale] = {
-        messages: {},
-        attributes: {}
-      };
-    }
-
-    this.container[locale].attributes[key] = attribute;
   }
 }
