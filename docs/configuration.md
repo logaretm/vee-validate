@@ -21,7 +21,7 @@ const config = {
   i18nRootKey: 'validations', // the nested key under which the validation messages will be located
   inject: true,
   locale: 'en',
-  validity: false
+  validity: false,
   useConstraintAttrs: true
 };
 
