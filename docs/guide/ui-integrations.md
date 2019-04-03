@@ -10,3 +10,7 @@ Those libraries/helpers make it a breeze using vee-validate and your favorite UI
 
 - [vue-form-json](https://github.com/14nrv/vue-form-json):
 Generate a vue form with validation and bulma style, from json
+
+## Vuetify
+
+- [Vuetify forms](https://vuetifyjs.com/en/components/forms)
