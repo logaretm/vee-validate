@@ -393,6 +393,7 @@ Those are the only methods meant for public usage, other methods that may exist 
 | validateSilent | `void`  | `Promise<ValidationResult>` | Runs a validation of the current value against the rules defined. __does not mutate the validation state.__  |
 | applyResult | `ValidationResult` | `void`           | Takes a __validation result__ object and applies it on the current state.                                   |
 | reset       | `void`  | `void`                      | Resets validation state.                                                                                    |
+| setFlags    | Object | void | Updates the field flag states with an object, the object properties should be the flag names and the values should be boolean values. |
 
 ### Events
 
