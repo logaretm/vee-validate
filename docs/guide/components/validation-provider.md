@@ -37,7 +37,7 @@ It also works for custom components and solves the issue of authoring __self val
 
 ## Rendering
 
-By default, ValidationProvider renders a `span`, meaning it does not render anything of its own. Consider the following example
+By default, ValidationProvider renders a `span`, Consider the following example:
 
 ```vue
   <ValidationProvider rules="required" v-slot="{ errors }">
