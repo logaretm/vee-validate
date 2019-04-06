@@ -20,6 +20,7 @@ const messages = {
   image: (field) => `O campo ${field} deve ser uma imagem.`,
   included: (field) => `O campo ${field} deve ter um valor válido.`,
   ip: (field) => `O campo ${field} deve ser um endereço IP válido.`,
+  is: (field) => `O valor inserido no campo ${field} não é válido.`,
   max: (field, [length]) => `O campo ${field} não deve ter mais que ${length} caracteres.`,
   max_value: (field, [max]) => `O campo ${field} precisa ser ${max} ou menor.`,
   mimes: (field) => `O campo ${field} deve ser um tipo de ficheiro válido.`,
