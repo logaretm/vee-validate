@@ -17,7 +17,6 @@ import {
   isCheckboxOrRadioInput,
   isEqual,
   values,
-  warn,
   defineNonReactive,
   assign,
   includes
@@ -222,10 +221,6 @@ export default class Field {
 
   registerField (vnode) {
     if (!vnode.context.$_veeObserver) {
-      if (process.env.NODE_ENV !== 'production') {
-        warn('Did you forget to mapValidationState?');
-      }
-
       vnode.context.$_veeObserver = createObserver();
     }
 

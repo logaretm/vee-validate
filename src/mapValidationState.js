@@ -14,7 +14,19 @@ function createObserver () {
   return state;
 }
 
-export function mapValidationState (propName, { errors = true, flags = true } = {}) {
+function findObserver (vm) {
+  if (vm.$_veeObserver) {
+    return vm.$_veeObserver;
+  }
+
+  if (!vm.$parent) {
+    return null;
+  }
+
+  return findObserver(vm.$parent);
+}
+
+export function mapValidationState (propName, { errors = true, flags = true, inherit = false } = {}) {
   function mapObserverState (obs) {
     return values(obs.refs).reduce((acc, field) => {
       acc[field.name || field.vid] = {
@@ -28,6 +40,10 @@ export function mapValidationState (propName, { errors = true, flags = true } = 
 
   return {
     [propName] () {
+      if (inherit) {
+        this.$_veeObserver = findObserver(this);
+      }
+
       if (!this.$_veeObserver) {
         this.$_veeObserver = createObserver();
       }
