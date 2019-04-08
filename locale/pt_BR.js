@@ -23,6 +23,7 @@ const messages = {
   included: (field) => `O campo ${field} deve ter um valor válido.`,
   integer: (field) => `O campo ${field} deve ser um número inteiro.`,
   ip: (field) => `O campo ${field} deve ser um endereço IP válido.`,
+  is: (field) => `O valor inserido no campo ${field} não é válido.`,
   length: (field, [length, max]) => {
     if (max) {
       return `O tamanho do campo ${field} está entre ${length} e ${max}.`;
