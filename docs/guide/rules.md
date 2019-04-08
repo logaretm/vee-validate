@@ -579,7 +579,7 @@ If the target field value meets the requirement, empty values (empty strings, `u
   <option value="US">United States</option>
   <option value="OTHER">Other country</option>
 </select>
-<input v-validate.immediate="'required_if:country,US'" data-vv-as="state" :class="{'input': true, 'is-danger': errors.has('state_field') }" name="state_field" type="text" placeholder="State">
+<input v-validate.immediate="'required_if:country,US,FM'" data-vv-as="state" :class="{'input': true, 'is-danger': errors.has('state_field') }" name="state_field" type="text" placeholder="State">
 <span v-show="errors.has('state_field')" class="help is-danger">{{ errors.first('state_field') }}</span>
 ```
 
