@@ -202,13 +202,25 @@ test('checks if a value path with exists', () => {
   const some = {
     value: {
       path: undefined,
-      val: 1
+      nullValue: null,
+      val: 1,
+      someString: ''
     }
   };
 
   expect(utils.hasPath('value.val', some)).toBe(true); // exists.
   expect(utils.hasPath('value.path', some)).toBe(true); // undefined but exists.
-  expect(utils.hasPath('value.not', some)).toBe(false); // does not.
+  expect(utils.hasPath('value.nullValue', some)).toBe(true); // null but exists.
+  expect(utils.hasPath('value.notExist', some)).toBe(false); // does not.
+  expect(() => {
+    utils.hasPath('value.val.notExistAttr', some);
+  }).toThrow('value.val is not an object'); // throw error because not object.
+  expect(() => {
+    utils.hasPath('value.someString.notExistAttr', some);
+  }).toThrow('value.someString is not an object'); // throw error because not object.
+  expect(() => {
+    utils.hasPath('value.nullValue.notExistAttr', some);
+  }).toThrow('value.nullValue is not an object'); // throw error because not object.
 });
 
 test('gets the value path with a fallback value', () => {
