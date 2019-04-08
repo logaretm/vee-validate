@@ -544,19 +544,19 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
     const timeFormat = el.step && Number(el.step) < 60 ? 'HH:mm:ss' : 'HH:mm';
 
     if (el.type === 'date') {
-      return appendRule('date_format:YYYY-MM-DD', rules);
+      return appendRule('date_format:yyyy-MM-dd', rules);
     }
 
     if (el.type === 'datetime-local') {
-      return appendRule(`date_format:YYYY-MM-DDT${timeFormat}`, rules);
+      return appendRule(`date_format:yyyy-MM-ddT${timeFormat}`, rules);
     }
 
     if (el.type === 'month') {
-      return appendRule('date_format:YYYY-MM', rules);
+      return appendRule('date_format:yyyy-MM', rules);
     }
 
     if (el.type === 'week') {
-      return appendRule('date_format:YYYY-[W]WW', rules);
+      return appendRule('date_format:yyyy-[W]WW', rules);
     }
 
     if (el.type === 'time') {
