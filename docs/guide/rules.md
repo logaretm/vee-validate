@@ -171,6 +171,7 @@ The field under validation must have the same value as the confirmation field.
 <span v-show="errors.has('password')" class="help is-danger">{{ errors.first('password') }}</span>
 
 <input v-validate="'required|confirmed:password'" name="password_confirmation" type="password" :class="{'is-danger': errors.has('password_confirmation')}" placeholder="Password, Again" data-vv-as="password">
+<span v-show="errors.has('password_confirmation')" class="help is-danger">{{ errors.first('password_confirmation') }}</span>
 ```
 
 ::: tip
