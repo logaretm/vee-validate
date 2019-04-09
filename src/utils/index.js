@@ -151,7 +151,7 @@ export const hasPath = (path: string, target: Object) => {
   let previousPath = null;
   let isNullOrNonObject = false;
   const isValidPath = path.split('.').reduce((reducer, prop) => {
-    if (obj == null || typeof obj != 'object') {
+    if (obj == null || typeof obj !== 'object') {
       isNullOrNonObject = true;
       return reducer && false;
     }
@@ -166,8 +166,10 @@ export const hasPath = (path: string, target: Object) => {
     return reducer && false;
   }, true);
 
-  if (isNullOrNonObject) {
-    throw new Error(previousPath + ' is not an object');
+  if (process.env.NODE_ENV !== 'production') {
+    if (isNullOrNonObject) {
+      throw new Error(previousPath + ' is not an object');
+    }
   }
 
   return isValidPath;
