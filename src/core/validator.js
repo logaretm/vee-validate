@@ -369,7 +369,7 @@ export default class Validator {
       providedValues = true;
     } else if (Array.isArray(values)) {
       matcher = values.map(key => {
-        return { name: key, vmId: vmId };
+        return typeof key === 'object' ? Object.assign({ vmId: vmId }, key) : { name: key, vmId: vmId };
       });
     } else {
       matcher = { scope: null, vmId: vmId };
