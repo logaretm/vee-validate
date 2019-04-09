@@ -217,7 +217,7 @@ export class ValidationObserver extends Vue {
     observers: ValidationObserver[];
     refs: { [x: string]: ValidationProvider };
     ctx: ObserverSlotData;
-};
+}
 
 /**
  * The `ValidationProvider` component is a regular component
