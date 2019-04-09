@@ -148,15 +148,29 @@ export const getPath = (path: string, target: ?Object, def: any = undefined) => 
  */
 export const hasPath = (path: string, target: Object) => {
   let obj = target;
-  return path.split('.').every(prop => {
-    if (prop in obj) {
-      obj = obj[prop];
-
-      return true;
+  let previousPath = null;
+  let isNullOrNonObject = false;
+  const isValidPath = path.split('.').reduce((reducer, prop) => {
+    if (obj == null || typeof obj != 'object') {
+      isNullOrNonObject = true;
+      return reducer && false;
     }
 
-    return false;
-  });
+    if (prop in obj) {
+      obj = obj[prop];
+      previousPath = previousPath === null ? prop : previousPath + '.' + prop;
+
+      return reducer && true;
+    }
+
+    return reducer && false;
+  }, true);
+
+  if (isNullOrNonObject) {
+    throw new Error(previousPath + ' is not an object');
+  }
+
+  return isValidPath;
 };
 
 /**
