@@ -632,3 +632,11 @@ export const includes = (collection: String | any[], item: any) => {
 export const isEmptyArray = (arr: any): boolean => {
   return Array.isArray(arr) && arr.length === 0;
 };
+
+export const defineNonReactive = (obj, prop, value) => {
+  Object.defineProperty(obj, prop, {
+    configurable: false,
+    writable: true,
+    value
+  });
+};

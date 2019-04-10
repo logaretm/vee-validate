@@ -116,4 +116,8 @@ export default class ScopedValidator {
   flag (...args) {
     return this._base.flag(...args, this.id);
   }
+
+  _resolveField (...args) {
+    return this._base._resolveField(...args);
+  }
 };

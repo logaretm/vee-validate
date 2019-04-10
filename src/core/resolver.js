@@ -31,7 +31,7 @@ export default class Resolver {
       listen: !binding.modifiers.disable,
       bails: binding.modifiers.bails ? true : (binding.modifiers.continues === true ? false : undefined),
       scope: Resolver.resolveScope(el, binding, vnode),
-      vm: Resolver.makeVM(vnode.context),
+      vm: vnode.context,
       expression: binding.value,
       component: vnode.componentInstance,
       classes: options.classes,
@@ -92,28 +92,6 @@ export default class Resolver {
     const model = vnode.data.model || find(vnode.data.directives, d => d.name === 'model');
 
     return model && model.value;
-  }
-
-  /**
-   * Creates a non-circular partial VM instance from a Vue instance.
-   * @param {*} vm
-   */
-  static makeVM (vm) {
-    return {
-      get $el () {
-        return vm.$el;
-      },
-      get $refs () {
-        return vm.$refs;
-      },
-      $watch: vm.$watch ? vm.$watch.bind(vm) : () => {},
-      $validator: vm.$validator ? {
-        errors: vm.$validator.errors,
-        validate: vm.$validator.validate.bind(vm.$validator),
-        update: vm.$validator.update.bind(vm.$validator),
-        _resolveField: vm.$validator._base._resolveField.bind(vm.$validator)
-      } : null
-    };
   }
 
   /**

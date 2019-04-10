@@ -16,6 +16,7 @@ import {
   toArray,
   getPath,
   makeDelayObject,
+  defineNonReactive,
   merge,
   isObject,
   isCheckboxOrRadioInput,
@@ -81,10 +82,10 @@ export default class Field {
     this.id = uniqId();
     this.el = options.el;
     this.updated = false;
-    this.dependencies = [];
     this.vmId = options.vmId;
-    this.watchers = [];
-    this.events = [];
+    defineNonReactive(this, 'dependencies', []);
+    defineNonReactive(this, 'watchers', []);
+    defineNonReactive(this, 'events', []);
     this.delay = 0;
     this.rules = {};
     this.forceRequired = false;
@@ -95,8 +96,8 @@ export default class Field {
     this.validity = options.validity;
     this.aria = options.aria;
     this.flags = options.flags || createFlags();
-    this.vm = options.vm;
-    this.componentInstance = options.component;
+    defineNonReactive(this, 'vm', options.vm);
+    defineNonReactive(this, 'componentInstance', options.component);
     this.ctorConfig = this.componentInstance ? getPath('$options.$_veeValidate', this.componentInstance) : undefined;
     this.update(options);
     // set initial value.
@@ -589,6 +590,8 @@ export default class Field {
         args[0] = this.value;
       }
 
+      this.flags.pending = true;
+      this._cancellationToken = token;
       this.validator.validate(`#${this.id}`, args[0]);
     };
 
@@ -613,14 +616,14 @@ export default class Field {
 
       if (ctx && expression) {
         const debouncedFn = debounce(fn, this.delay[inputEvent], token);
-        const unwatch = ctx.$watch(expression, (...args) => {
-          this.flags.pending = true;
-          this._cancellationToken = token;
-          debouncedFn(...args);
-        });
+        const unwatch = ctx.$watch(expression, debouncedFn);
         this.watchers.push({
           tag: 'input_model',
-          unwatch
+          unwatch: () => {
+            this.vm.$nextTick(() => {
+              unwatch();
+            });
+          }
         });
 
         // filter out input event as it is already handled by the watcher API.
@@ -631,14 +634,9 @@ export default class Field {
     // Add events.
     events.forEach(e => {
       const debouncedFn = debounce(fn, this.delay[e], token);
-      const validate = (...args) => {
-        this.flags.pending = true;
-        this._cancellationToken = token;
-        debouncedFn(...args);
-      };
 
-      this._addComponentEventListener(e, validate);
-      this._addHTMLEventListener(e, validate);
+      this._addComponentEventListener(e, debouncedFn);
+      this._addHTMLEventListener(e, debouncedFn);
     });
   }
 
