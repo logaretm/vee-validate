@@ -187,7 +187,7 @@ export default class Field {
     this.binding = binding;
     this.vnode = vnode;
     const model = findModel(vnode);
-    const rules = binding.value;
+    const rules = Resolver.resolveRules(el, binding, vnode);
     let shouldValidate = !isEqual(rules, this.rules) && this.flags.validated;
     this.rules = rules;
     this.registerField(vnode);

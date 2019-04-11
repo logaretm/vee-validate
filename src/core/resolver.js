@@ -1,4 +1,5 @@
 import { resolveConfig, getConfig } from '../config';
+import { resolveRules } from '../utils/vnode';
 import {
   getDataAttribute,
   isObject,
@@ -6,7 +7,6 @@ import {
   isNullOrUndefined,
   isCallable,
   deepParseInt,
-  fillRulesFromElement,
   includes,
   normalizeRules,
   assign
@@ -70,7 +70,7 @@ export default class Resolver {
       return normalized;
     }
 
-    return assign({}, fillRulesFromElement(el, {}), normalized);
+    return assign({}, resolveRules(vnode), normalized);
   }
 
   /**
