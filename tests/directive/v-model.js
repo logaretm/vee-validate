@@ -46,13 +46,15 @@ describe('v-model integration', () => {
     }, { localVue: Vue, sync: false });
 
     const error = wrapper.find('span');
+    const input = wrapper.find('input');
 
-    expect(error.text()).toBeFalsy();
-    wrapper.setData({ value: '12' });
+    input.element.value = '12';
+    input.trigger('input');
     await flushPromises();
-    wrapper.setData({ value: '' });
-    await flushPromises();
+    expect(error.text()).toBe('');
 
+    input.trigger('change');
+    await flushPromises();
     expect(error.text()).toBeTruthy();
   });
 

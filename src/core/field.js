@@ -1,9 +1,9 @@
-import Resolver from './resolver';
+import { resolveDirectiveRules, resolveName, resolveFeatures, resolveAlias } from './resolvers';
 import { Vue } from '../plugin';
 import { modes } from '../modes';
 import RuleContainer from './ruleContainer';
 import { addEventListener } from '../utils/events';
-import { findModel } from '../utils/vnode';
+import { findModel, getInputEventName } from '../utils/vnode';
 import { getValidator } from '../state';
 import {
   uniqId,
@@ -69,12 +69,12 @@ export default class Field {
     defineNonReactive(this, '_listeners', {});
     defineNonReactive(this, '_interactions', {});
     defineNonReactive(this, '_value', undefined);
-    defineNonReactive(this, 'rules', Resolver.resolveRules(el, binding, vnode));
+    defineNonReactive(this, 'rules', resolveDirectiveRules(el, binding, vnode));
 
     this.el._vid = this.vid;
     this.flags = Vue.observable(createFlags());
     this.errors = Vue.observable([]);
-    this.name = Resolver.resolveName(el, vnode);
+    this.name = resolveName(el, vnode);
     if (binding.modifiers.persist) {
       this.restoreFieldState();
     }
@@ -105,12 +105,14 @@ export default class Field {
   }
 
   validate () {
-    const options = Resolver.generate(this.el, this.binding, this.vnode);
+    const options = resolveFeatures(this.binding, this.vnode);
+    const alias = resolveAlias(this.el, this.vnode);
+    const name = resolveName(this.el, this.vnode);
     this.opts.aria = options.aria;
     this.opts.validity = options.validity;
 
     return this.validator.verify(this.value, this.rules, {
-      name: options.alias || options.name,
+      name: alias || name,
       bails: options.bails,
       values: this.createValuesLookup(),
     }).then(res => {
@@ -187,12 +189,15 @@ export default class Field {
     this.binding = binding;
     this.vnode = vnode;
     const model = findModel(vnode);
-    const rules = Resolver.resolveRules(el, binding, vnode);
+    const rules = resolveDirectiveRules(el, binding, vnode);
     let shouldValidate = !isEqual(rules, this.rules) && this.flags.validated;
     this.rules = rules;
+    this.flags.required = !!this.rules.required;
     this.registerField(vnode);
-    this.updateOptions(el, binding, vnode);
-    const inputEvt = this._determineInputEvent();
+    const options = resolveFeatures(el, binding, vnode);
+    this.opts.classes = options.classes;
+    this.opts.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
+    const inputEvt = getInputEventName(this.vnode, model);
     let events = this._determineEventList(inputEvt);
     if (includes(events, 'input') && model) {
       this.onModelUpdated(model);
@@ -208,15 +213,6 @@ export default class Field {
 
     this.addActionListeners();
     this.initialized = true;
-  }
-
-  updateOptions (el, binding, vnode) {
-    const options = Resolver.generate(el, binding, vnode);
-    this.opts.events = options.events;
-    this.opts.classes = options.classes;
-    this.opts.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
-    this.opts.componentInstance = options.component;
-    this.flags.required = !!options.rules.required;
   }
 
   registerField (vnode) {
@@ -392,26 +388,6 @@ export default class Field {
       const blurEvent = isCheckboxOrRadioInput(this.el) ? 'change' : 'blur';
       this._interactions.blur = addEventListener(this.el, blurEvent, onBlur);
     }
-  }
-
-  /**
-   * Determines the suitable primary event to listen for.
-   */
-  _determineInputEvent () {
-    // if its a custom component, use the customized model event or the input event.
-    if (this.componentInstance) {
-      return (this.componentInstance.$options.model && this.componentInstance.$options.model.event) || 'input';
-    }
-
-    if (this.model && this.model.lazy) {
-      return 'change';
-    }
-
-    if (isTextInput(this.el)) {
-      return 'input';
-    }
-
-    return 'change';
   }
 
   /**
