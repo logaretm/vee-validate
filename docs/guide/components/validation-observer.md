@@ -106,11 +106,55 @@ If you plan to trigger validation from the template without using `refs` you can
 
 As you have guessed, the `validate` method on the Observer's scopedSlot is thenable, meaning you can chain another method to run after the validation passes like the form submission handler. Note that the `validate` method does not return a promise, but a promise-like object that has a `then` method for convenience, which can be also chained further.
 
-::: tip
-  Using the same approach you can reset validation state for all providers using the public method `reset()`.
-:::
-
 [You can see observers in action here](/examples/validation-providers.md)
+
+### Resetting Forms
+
+Like the `validate` method, we could also reset our form after submitting the values to the server. There are a few things to keep in mind:
+
+- The observer does not reset the values on your inputs, you have to do that yourself.
+- It only resets the validation state, being the error messages and flags.
+- Vue does renders updates asynchronously.
+
+```vue
+<template>
+  <ValidationObserver ref="observer" v-slot="{ invalid }" tag="form" @submit.prevent="submit()">
+    <InputWithValidation rules="required" v-model="first" :error-messages="errors" />
+
+    <InputWithValidation rules="required" v-model="second" :error-messages="errors" />
+
+    <v-btn :disabled="invalid">Submit</v-btn>
+  </ValidationObserver>
+</template>
+
+<script>
+export default {
+  methods: {
+    async submit () {
+      const isValid = await this.$refs.observer.validate();
+      if (!isValid) {
+        // ABORT!!
+      }
+
+      // 🐿 ship it
+      // sending to API...
+      // ...
+
+      // reset the values ...
+      this.first = '';
+      this.second = '';
+
+      // You should call it on the next frame
+      requestAnimationFrame(() => {
+        this.$refs.observer.reset();
+      });
+    }
+  }
+};
+</script>
+```
+
+Notice the usage of [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame), this is because Vue does not update the values immediately after you set them. So you need to reset the state after the UI has been stabilized, otherwise some inputs may report an invalid state.
 
 ### Scopes And Groups
 
