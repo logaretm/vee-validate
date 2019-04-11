@@ -26,7 +26,7 @@ export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`)
 export const isNaN = (value) => {
   // NaN is the one value that does not equal itself.
   // eslint-disable-next-line
-  return value === value;
+  return value !== value;
 };
 
 /**
