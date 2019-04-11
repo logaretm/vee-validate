@@ -35,16 +35,3 @@ export const addEventListener = (el, eventName, handler) => {
     el.removeEventListener(eventName, handler);
   };
 };
-
-export const addEventListenerOnce = (el, eventName, handler) => {
-  const once = e => {
-    handler(e);
-    el.removeEventListener(eventName, handler);
-  };
-
-  el.addEventListener(eventName, once, supportsPassive ? { passive: true } : false);
-
-  return () => {
-    el.removeEventListener(eventName, once);
-  };
-};

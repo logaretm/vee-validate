@@ -6,10 +6,6 @@ export const isCheckboxOrRadioInput = (el) => {
   return includes(['radio', 'checkbox'], el.type);
 };
 
-export const isDateInput = (el) => {
-  return includes(['date', 'week', 'month', 'datetime-local', 'time'], el.type);
-};
-
 export const isValidDate = (value) => {
   if (!value) {
     return false;
@@ -37,11 +33,6 @@ export const isNullOrUndefined = (...values) => {
     return value === null || value === undefined;
   });
 };
-
-/**
- * Sets the data attribute.
- */
-export const setDataAttribute = (el, name, value) => el.setAttribute(`data-vv-${name}`, value);
 
 /**
  * Creates the default flags object.
@@ -118,22 +109,6 @@ export const getPath = (path, target, def = undefined) => {
 };
 
 /**
- * Checks if path exists within an object.
- */
-export const hasPath = (path, target) => {
-  let obj = target;
-  return path.split('.').every(prop => {
-    if (prop in obj) {
-      obj = obj[prop];
-
-      return true;
-    }
-
-    return false;
-  });
-};
-
-/**
  * Parses a rule string expression.
  */
 export const parseRule = (rule) => {
@@ -169,25 +144,6 @@ export const debounce = (fn, wait = 0, token = { cancelled: false }) => {
     timeout = setTimeout(later, wait);
     if (!timeout) fn(...args);
   };
-};
-
-/**
- * Appends a rule definition to a list of rules.
- */
-export const appendRule = (rule, rules) => {
-  if (!rules) {
-    return normalizeRules(rule);
-  }
-
-  if (!rule) {
-    return normalizeRules(rules);
-  }
-
-  if (typeof rules === 'string') {
-    rules = normalizeRules(rules);
-  }
-
-  return assign({}, rules, normalizeRules(rule));
 };
 
 /**
@@ -406,29 +362,6 @@ export const find = (arrayLike, predicate) => {
   const idx = findIndex(array, predicate);
 
   return idx === -1 ? undefined : array[idx];
-};
-
-export const isBuiltInComponent = (vnode) => {
-  if (!vnode) {
-    return false;
-  }
-
-  const tag = vnode.componentOptions.tag;
-
-  return /^(keep-alive|transition|transition-group)$/.test(tag);
-};
-
-export const deepParseInt = (input) => {
-  if (typeof input === 'number') return input;
-
-  if (typeof input === 'string') return parseInt(input);
-
-  const map = {};
-  for (const element in input) {
-    map[element] = parseInt(input[element]);
-  }
-
-  return map;
 };
 
 export const merge = (target, source) => {
