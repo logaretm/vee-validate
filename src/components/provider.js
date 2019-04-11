@@ -233,25 +233,6 @@ export const ValidationProvider = {
         return getConfig().mode;
       }
     },
-    events: {
-      type: Array,
-      validate: () => {
-        /* istanbul ignore next */
-        if (process.env.NODE_ENV !== 'production') {
-          warn('events prop and config will be deprecated in future version please use the interaction modes instead');
-        }
-
-        return true;
-      },
-      default: () => {
-        const events = getConfig().events;
-        if (typeof events === 'string') {
-          return events.split('|');
-        }
-
-        return events;
-      }
-    },
     rules: {
       type: [Object, String],
       default: null
@@ -322,7 +303,7 @@ export const ValidationProvider = {
     normalizedEvents () {
       const { on } = computeModeSetting(this);
 
-      return normalizeEvents(on || this.events || []).map(e => {
+      return normalizeEvents(on || []).map(e => {
         if (e === 'input') {
           return this._inputEventName;
         }
