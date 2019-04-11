@@ -27,7 +27,7 @@ export function mapValidationActions (actions) {
   let mappedActions = actionsMap;
   if (isObject(actions)) {
     mappedActions = Object.keys(actions).reduce((acc, key) => {
-      acc[key] = actionsMap[key];
+      acc[key] = actionsMap[actions[key]];
 
       return acc;
     }, {});
