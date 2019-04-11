@@ -19,7 +19,8 @@ const sidebars = {
     'events',
     'interaction',
     'conditional-and-looping-inputs',
-    'ui-integrations'
+    'ui-integrations',
+    'testing'
   ],
   api: [
     'directive',
