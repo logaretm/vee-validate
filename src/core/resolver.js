@@ -1,12 +1,8 @@
 import { resolveConfig, getConfig } from '../config';
-import { findModel } from '../utils/vnode';
 import {
   getDataAttribute,
   isObject,
-  toArray,
-  find,
   getPath,
-  hasPath,
   isNullOrUndefined,
   isCallable,
   deepParseInt,
@@ -21,7 +17,6 @@ import {
  */
 export default class Resolver {
   static generate (el, binding, vnode) {
-    const model = Resolver.resolveModel(binding, vnode);
     const options = resolveConfig(vnode.context);
 
     return {
@@ -33,11 +28,8 @@ export default class Resolver {
       component: vnode.componentInstance,
       delay: Resolver.resolveDelay(el, vnode, options),
       el: el,
-      getter: Resolver.resolveGetter(el, vnode, model),
       immediate: !!binding.modifiers.initial || !!binding.modifiers.immediate,
-      initialValue: Resolver.resolveInitialValue(vnode),
       listen: !binding.modifiers.disable,
-      model,
       name: Resolver.resolveName(el, vnode),
       persist: !!binding.modifiers.persist,
       rules: Resolver.resolveRules(el, binding, vnode),
@@ -79,37 +71,6 @@ export default class Resolver {
     }
 
     return assign({}, fillRulesFromElement(el, {}), normalized);
-  }
-
-  /**
-   * @param {*} vnode
-   */
-  static resolveInitialValue (vnode) {
-    const model = vnode.data.model || find(vnode.data.directives, d => d.name === 'model');
-
-    return model && model.value;
-  }
-
-  /**
-   * Creates a non-circular partial VM instance from a Vue instance.
-   * @param {*} vm
-   */
-  static makeVM (vm) {
-    return {
-      get $el () {
-        return vm.$el;
-      },
-      get $refs () {
-        return vm.$refs;
-      },
-      $watch: vm.$watch ? vm.$watch.bind(vm) : () => {},
-      $validator: vm.$validator ? {
-        errors: vm.$validator.errors,
-        validate: vm.$validator.validate.bind(vm.$validator),
-        update: vm.$validator.update.bind(vm.$validator),
-        _resolveField: vm.$validator._base._resolveField.bind(vm.$validator)
-      } : null
-    };
   }
 
   /**
@@ -156,33 +117,6 @@ export default class Resolver {
   }
 
   /**
-   * Checks if the node directives contains a v-model or a specified arg.
-   * Args take priority over models.
-   *
-   * @return {Object}
-   */
-  static resolveModel (binding, vnode) {
-    if (binding.arg) {
-      return { expression: binding.arg };
-    }
-
-    const model = findModel(vnode);
-    if (!model) {
-      return null;
-    }
-
-    // https://github.com/vuejs/vue/blob/dev/src/core/util/lang.js#L26
-    const watchable = !/[^\w.$]/.test(model.expression) && hasPath(model.expression, vnode.context);
-    const lazy = !!(model.modifiers && model.modifiers.lazy);
-
-    if (!watchable) {
-      return { expression: null, lazy };
-    }
-
-    return { expression: model.expression, lazy };
-  }
-
-  /**
    * Resolves the field name to trigger validations.
    * @return {String} The field name.
    */
@@ -213,66 +147,5 @@ export default class Resolver {
     }
 
     return name;
-  }
-
-  /**
-   * Returns a value getter input type.
-   */
-  static resolveGetter (el, vnode, model) {
-    if (model && model.expression) {
-      return () => {
-        return getPath(model.expression, vnode.context);
-      };
-    }
-
-    if (vnode.componentInstance) {
-      const path = getDataAttribute(el, 'value-path') || (vnode.componentInstance.$attrs && vnode.componentInstance.$attrs['data-vv-value-path']);
-      if (path) {
-        return () => {
-          return getPath(path, vnode.componentInstance);
-        };
-      }
-
-      const config = Resolver.getCtorConfig(vnode);
-      if (config && isCallable(config.value)) {
-        const boundGetter = config.value.bind(vnode.componentInstance);
-
-        return () => {
-          return boundGetter();
-        };
-      }
-
-      const { prop } = vnode.componentInstance.$options.model || { prop: 'value' };
-
-      return () => {
-        return vnode.componentInstance[prop];
-      };
-    }
-
-    switch (el.type) {
-    case 'checkbox': return () => {
-      let els = document.querySelectorAll(`input[name="${el.name}"]`);
-
-      els = toArray(els).filter(el => el.checked);
-      if (!els.length) return undefined;
-
-      return els.map(checkbox => checkbox.value);
-    };
-    case 'radio': return () => {
-      const els = document.querySelectorAll(`input[name="${el.name}"]`);
-      const elm = find(els, el => el.checked);
-
-      return elm && elm.value;
-    };
-    case 'file': return (context) => {
-      return toArray(el.files);
-    };
-    case 'select-multiple': return () => {
-      return toArray(el.options).filter(opt => opt.selected).map(opt => opt.value);
-    };
-    default: return () => {
-      return el && el.value;
-    };
-    }
   }
 }
