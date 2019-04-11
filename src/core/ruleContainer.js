@@ -9,14 +9,6 @@ export default class RuleContainer {
     };
   }
 
-  static get rules () {
-    return RULES;
-  }
-
-  static has (name) {
-    return !!RULES[name];
-  }
-
   static isImmediate (name) {
     return !!(RULES[name] && RULES[name].options.immediate);
   }
