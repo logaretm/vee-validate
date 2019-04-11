@@ -557,4 +557,33 @@ describe('Validation Provider Component', () => {
     await flushPromises();
     expect(error.text()).toBe('');
   });
+
+  test('resolves rules based on the HTML input attributes', async () => {
+    const wrapper = mount({
+      data: () => ({ val: '' }),
+      template: `
+        <ValidationProvider>
+          <div slot-scope="{ errors }">
+            <input type="text" v-model="val" required minlength="3">
+            <p id="error">{{ errors[0] }}</p>
+          </div>
+        </ValidationProvider>
+      `
+    }, { localVue: Vue, sync: false });
+
+    const input = wrapper.find('input');
+    input.setValue('');
+    await flushPromises();
+
+    const error = wrapper.find('#error');
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+    input.setValue('12');
+    await flushPromises();
+    expect(error.text()).toBe('The {field} field must be at least 3 characters.');
+
+    input.setValue('123');
+    await flushPromises();
+    expect(error.text()).toBeFalsy();
+  });
 });

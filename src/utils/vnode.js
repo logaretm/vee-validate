@@ -1,5 +1,5 @@
 // VNode Utils
-import { find, isCallable, isNullOrUndefined, isTextInput } from './index';
+import { find, isCallable, isNullOrUndefined, isTextInput, includes, assign, normalizeRules } from './index';
 
 // Gets the model object on the vnode.
 export function findModel (vnode) {
@@ -138,4 +138,58 @@ export function normalizeSlots (slots, ctx) {
 
     return arr.concat(slots[key]);
   }, []);
+};
+
+function resolveTextualRules (vnode) {
+  const attrs = vnode.data.attrs;
+
+  const rules = {};
+  if (attrs.type === 'email') {
+    rules.email = ['multiple' in attrs];
+  }
+
+  if (attrs.pattern) {
+    rules.regex = attrs.pattern;
+  }
+
+  if (attrs.maxlength >= 0) {
+    rules.max = attrs.maxlength;
+  }
+
+  if (attrs.minlength >= 0) {
+    rules.min = attrs.minlength;
+  }
+
+  if (attrs.type === 'number') {
+    rules.decimal = [];
+
+    if (attrs.min !== '') {
+      rules.minValue = Number(attrs.min);
+    }
+
+    if (attrs.max !== '') {
+      rules.maxValue = Number(attrs.max);
+    }
+  }
+
+  return rules;
+}
+
+export function resolveRules (vnode) {
+  const htmlTags = ['input', 'select'];
+  if (!includes(htmlTags, vnode.tag) || !vnode.data.attrs) {
+    return {};
+  }
+
+  const rules = {};
+  const attrs = vnode.data.attrs;
+  if ('required' in attrs) {
+    rules.required = attrs.type === 'checkbox' ? [true] : true;
+  }
+
+  if (isTextInput(attrs.type ? attrs : { type: 'text' })) {
+    return normalizeRules(assign(rules, resolveTextualRules(vnode)));
+  }
+
+  return normalizeRules(rules);
 };

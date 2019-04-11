@@ -5,7 +5,7 @@ import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual, toArray } from '../utils';
-import { findModel, extractVNodes, addVNodeListener, getInputEventName } from '../utils/vnode';
+import { findModel, extractVNodes, addVNodeListener, getInputEventName, resolveRules } from '../utils/vnode';
 
 let $validator = null;
 
@@ -282,11 +282,10 @@ export const ValidationProvider = {
       return this.flags.valid;
     },
     fieldDeps () {
-      const rules = normalizeRules(this.rules);
-      let providers = this.$_veeObserver.refs;
+      const providers = this.$_veeObserver.refs;
 
-      return Object.keys(rules).filter(RuleContainer.isTargetRule).map(rule => {
-        const depName = rules[rule][0];
+      return Object.keys(this.normalizedRules).filter(RuleContainer.isTargetRule).map(rule => {
+        const depName = this.normalizedRules[rule][0];
         const watcherName = `$__${depName}`;
         if (!isCallable(this[watcherName]) && providers[depName]) {
           this[watcherName] = providers[depName].$watch('value', () => {
@@ -312,7 +311,7 @@ export const ValidationProvider = {
       });
     },
     isRequired () {
-      const rules = normalizeRules(this.rules);
+      const rules = assign({}, this._resolvedRules, this.normalizedRules);
       const forceRequired = this.forceRequired;
 
       const isRequired = rules.required || forceRequired;
@@ -334,6 +333,9 @@ export const ValidationProvider = {
 
         return classes;
       }, {});
+    },
+    normalizedRules () {
+      return normalizeRules(this.rules);
     }
   },
   render (h) {
@@ -354,6 +356,7 @@ export const ValidationProvider = {
     const nodes = slot(ctx);
     // Handle single-root slot.
     extractVNodes(nodes).forEach(input => {
+      this._resolvedRules = resolveRules(input);
       addListeners.call(this, input);
     });
 
@@ -402,11 +405,13 @@ export const ValidationProvider = {
     },
     validateSilent () {
       this.setFlags({ pending: true });
+      const rules = assign({}, this._resolvedRules, this.normalizedRules);
 
-      return $validator.verify(this.value, this.rules, {
+      return $validator.verify(this.value, rules, {
         name: this.name,
         values: createValuesLookup(this),
-        bails: this.bails
+        bails: this.bails,
+        isNormalized: true
       }).then(result => {
         this.setFlags({ pending: false });
 

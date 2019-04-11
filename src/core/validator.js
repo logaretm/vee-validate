@@ -127,7 +127,7 @@ export default class Validator {
   verify (value, rules, options = {}) {
     const field = {
       name: (options && options.name) || '{field}',
-      rules: normalizeRules(rules),
+      rules: getPath('isNormalized', options, false) ? rules : normalizeRules(rules),
       bails: getPath('bails', options, true),
       forceRequired: false,
       get isRequired () {
