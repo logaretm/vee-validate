@@ -108,19 +108,6 @@ export default class Validator {
     Validator.extend(name, validator, options);
   }
 
-  reset (matcher) {
-    // two ticks
-    return this.$vee._vm.$nextTick().then(() => {
-      return this.$vee._vm.$nextTick();
-    }).then(() => {
-      this.fields.filter(matcher).forEach(field => {
-        field.waitFor(null);
-        field.reset(); // reset field flags.
-        this.errors.remove(field.name, field.scope, matcher && matcher.vmId);
-      });
-    });
-  }
-
   /**
    * Validates a value against the rules.
    */
@@ -168,18 +155,6 @@ export default class Validator {
    */
   destroy () {
     this.$vee._vm.$off('localeChanged');
-  }
-
-  /**
-   * Date rules need the existence of a format, so date_format must be supplied.
-   */
-  _getDateFormat (validations) {
-    let format = null;
-    if (validations.date_format && Array.isArray(validations.date_format)) {
-      format = validations.date_format[0];
-    }
-
-    return format;
   }
 
   /**
@@ -381,35 +356,6 @@ export default class Validator {
         return this._formatErrorMessage(field, rule, data, targetName);
       }
     };
-  }
-
-  /**
-   * Handles validation results.
-   */
-  _handleValidationResults (results, vmId) {
-    const matchers = results.map(result => ({ id: result.id }));
-    this.errors.removeById(matchers.map(m => m.id));
-    // remove by name and scope to remove any custom errors added.
-    results.forEach(result => {
-      this.errors.remove(result.field, result.scope, vmId);
-    });
-    const allErrors = results.reduce((prev, curr) => {
-      prev.push(...curr.errors);
-
-      return prev;
-    }, []);
-
-    this.errors.add(allErrors);
-
-    // handle flags.
-    this.fields.filter(matchers).forEach(field => {
-      const result = find(results, r => r.id === field.id);
-      field.setFlags({
-        pending: false,
-        valid: result.valid,
-        validated: true
-      });
-    });
   }
 
   _shouldSkip (field, value) {
