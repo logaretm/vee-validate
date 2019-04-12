@@ -414,6 +414,9 @@ export const ValidationProvider = {
         isNormalized: true
       }).then(result => {
         this.setFlags({ pending: false });
+        if (!this.isRequired) {
+          this.setFlags({ valid: result.valid, invalid: !result.valid });
+        }
 
         return result;
       });
