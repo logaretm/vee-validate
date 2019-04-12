@@ -20,7 +20,6 @@ VeeValidate comes with a bunch of validation rules out of the box and they are a
 - [ext](#ext)
 - [image](#image)
 - [included](#included)
-- [integer](#integer)
 - [ip](#ip)
 - [ip_or_fqdn](#ip_or_fqdn)
 - [is](#is)
