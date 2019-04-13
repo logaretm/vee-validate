@@ -22,13 +22,13 @@ test('testing computesRequired rule (here required_if)', async () => {
       <div>
         <input type="text" name="f1" v-validate="'required_if:text,foo,baz|between:20,30'" id="f1" />
         <input type="text" name="f1-continues" v-validate.continues="'required_if:text,foo,baz|between:20,30'" id="f1-continues" />
-        <input type="text" name="f2" ref="text" id="f2" />
+        <input type="text" name="f2" ref="text" id="f2" v-validate />
         <span id="f1-errors">{{ vee.for('f1').errors[0] }}</span>
         <span id="f1-continues-errors">{{ vee.for('f1-continues').errors[0] }}</span>
         <span id="f2-errors">{{ vee.for('f2').errors[0] }}</span>
       </div>
     `
-  }, { localVue: Vue });
+  }, { localVue: Vue, sync: false });
 
   let input = wrapper.find('#f1');
   let inputCont = wrapper.find('#f1-continues');
@@ -71,5 +71,8 @@ test('testing computesRequired rule (here required_if)', async () => {
   input.trigger('input');
   inputCont.trigger('input');
   await flushPromises();
-  expect(wrapper.vm.$validator.errors.count()).toBe(0); // No errors left
+  const errors = wrapper.findAll('span');
+  expect(errors.at(0).text()).toBe(''); // No errors left
+  expect(errors.at(1).text()).toBe(''); // No errors left
+  expect(errors.at(2).text()).toBe(''); // No errors left
 });
