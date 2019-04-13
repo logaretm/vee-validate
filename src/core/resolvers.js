@@ -2,11 +2,8 @@ import { resolveConfig, getConfig } from '../config';
 import { resolveRules } from '../utils/vnode';
 import {
   getDataAttribute,
-  isObject,
   getPath,
-  isNullOrUndefined,
   isCallable,
-  deepParseInt,
   includes,
   normalizeRules,
   assign
@@ -66,26 +63,6 @@ export function resolveDirectiveRules (el, binding, vnode) {
   }
 
   return assign({}, resolveRules(vnode), normalized);
-}
-
-export function resolveDelay (el, vnode) {
-  const options = resolveConfig(vnode.context);
-  let delay = getDataAttribute(el, 'delay');
-  const globalDelay = (options && 'delay' in options) ? options.delay : 0;
-
-  if (!delay && vnode.componentInstance && vnode.componentInstance.$attrs) {
-    delay = vnode.componentInstance.$attrs['data-vv-delay'];
-  }
-
-  if (!isObject(globalDelay)) {
-    return deepParseInt(delay || globalDelay);
-  }
-
-  if (!isNullOrUndefined(delay)) {
-    globalDelay.input = delay;
-  }
-
-  return deepParseInt(globalDelay);
 }
 
 export function resolveAlias (el, vnode) {
