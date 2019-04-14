@@ -235,7 +235,7 @@ export class ValidationProvider extends Vue {
     setFlags(value: { [x: string]: boolean }): void;
 }
 
-export const withValidation: (component: Vue, mapFn: (ctx: ValidationSlotScopeData) => Object) => Vue.Component;
+export const withValidation: (component: Vue, mapFn: (ctx: ValidationSlotScopeData) => Object) => Vue;
 
 export const version: string;
 
