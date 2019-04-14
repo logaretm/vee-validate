@@ -67,17 +67,23 @@ export default class I18nDictionary implements IDictionary {
 
   getMessage (_, key: string, data: any[]): string {
     const path = `${this.rootKey}.messages.${key}`;
+    let dataOptions = data;
+
+    if (Array.isArray(data)) {
+      dataOptions = [].concat.apply([], data);
+    }
+
     if (this.i18n.te(path)) {
-      return this.i18n.t(path, data);
+      return this.i18n.t(path, dataOptions);
     }
 
     // fallback to the fallback message
     if (this.i18n.te(path, this.i18n.fallbackLocale)) {
-      return this.i18n.t(path, this.i18n.fallbackLocale, data);
+      return this.i18n.t(path, this.i18n.fallbackLocale, dataOptions);
     }
 
     // fallback to the root message
-    return this.i18n.t(`${this.rootKey}.messages._default`, data);
+    return this.i18n.t(`${this.rootKey}.messages._default`, dataOptions);
   }
 
   getAttribute (_, key: string, fallback?: string = ''): string {
