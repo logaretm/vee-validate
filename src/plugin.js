@@ -11,12 +11,9 @@ export let Vue = null;
 let pluginInstance;
 
 class VeeValidate {
-  constructor (config, _Vue) {
+  constructor (config) {
     this.configure(config);
     pluginInstance = this;
-    if (_Vue) {
-      Vue = _Vue;
-    }
     this._validator = setValidator(
       new Validator(null, { bails: config && config.bails }, this)
     );

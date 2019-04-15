@@ -256,6 +256,84 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   });
 
+  test('interaction mode can be set globally', async () => {
+    VeeValidate.setMode('lazy');
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      components: {
+        TextInput: {
+          props: ['value'],
+          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+        }
+      },
+      template: `
+        <div>
+          <ValidationProvider rules="required">
+            <div slot-scope="{ errors }">
+              <TextInput v-model="value"></TextInput>
+              <span id="error">{{ errors[0] }}</span>
+            </div>
+          </ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue, sync: false });
+    const error = wrapper.find('#error');
+    const input = wrapper.find('input');
+
+    expect(error.text()).toBe('');
+    input.setValue('');
+    await flushPromises();
+    // did not validate.
+    expect(error.text()).toBe('');
+    input.trigger('change');
+    await flushPromises();
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+    VeeValidate.setMode('aggressive');
+  });
+
+  test('new interaction modes can be added', async () => {
+    VeeValidate.setMode('custom', () => {
+      return {
+        on: ['customEvent']
+      };
+    });
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      components: {
+        TextInput: {
+          props: ['value'],
+          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+        }
+      },
+      template: `
+        <div>
+          <ValidationProvider rules="required">
+            <div slot-scope="{ errors }">
+              <TextInput v-model="value"></TextInput>
+              <span id="error">{{ errors[0] }}</span>
+            </div>
+          </ValidationProvider>
+        </div>
+      `
+    }, { localVue: Vue, sync: false });
+    const error = wrapper.find('#error');
+    const input = wrapper.find('input');
+
+    expect(error.text()).toBe('');
+    input.setValue('');
+    await flushPromises();
+    // did not validate.
+    expect(error.text()).toBe('');
+    input.trigger('customEvent');
+    await flushPromises();
+    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+    VeeValidate.setMode('aggressive');
+  });
+
   test('validates target dependant fields', async () => {
     const wrapper = mount({
       data: () => ({
