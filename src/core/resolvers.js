@@ -42,10 +42,6 @@ function getCtorConfig (vnode) {
 
 export function resolveDirectiveRules (el, binding, vnode) {
   let rules = '';
-  if (!binding.value && (!binding || !binding.expression)) {
-    rules = getDataAttribute(el, 'rules');
-  }
-
   if (binding.value && includes(['string', 'object'], typeof binding.value.rules)) {
     rules = binding.value.rules;
   } else if (binding.value) {
