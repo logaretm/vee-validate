@@ -17,13 +17,6 @@ import {
 export default class Validator {
   constructor (options = { bails: true }, pluginContainer = null) {
     this.bails = !isNullOrUndefined(options && options.bails) ? options.bails : true;
-    this.$vee = pluginContainer || {
-      _vm: {
-        $nextTick: (cb) => isCallable(cb) ? cb() : Promise.resolve(),
-        $emit: () => {},
-        $off: () => {}
-      }
-    };
   }
 
   /**
@@ -148,13 +141,6 @@ export default class Validator {
         failedRules: ruleMap
       };
     });
-  }
-
-  /**
-   * Perform cleanup.
-   */
-  destroy () {
-    this.$vee._vm.$off('localeChanged');
   }
 
   /**
