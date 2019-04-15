@@ -5,9 +5,14 @@ import { find, createError } from '../utils';
 
 export default class FieldBag {
   items: Array<Field>;
+  itemsById: Object;
 
   constructor (items = []) {
     this.items = items || [];
+    this.itemsById = this.items.reduce((itemsById, item) => {
+      itemsById[item.id] = item;
+      return itemsById;
+    }, {});
   }
 
   [typeof Symbol === 'function' ? Symbol.iterator : '@@iterator'] () {
@@ -32,6 +37,14 @@ export default class FieldBag {
    */
   find (matcher: Object): ?Field {
     return find(this.items, item => item.matches(matcher));
+  }
+
+  /**
+   * Finds the field with the given id, using a plain object as a map to link
+   * ids to items faster than by looping over the array and matching.
+   */
+  findById (id: String): ?Field {
+    return this.itemsById[id] || null;
   }
 
   /**
@@ -68,6 +81,7 @@ export default class FieldBag {
 
     const index = this.items.indexOf(item);
     this.items.splice(index, 1);
+    delete this.itemsById[item.id];
 
     return item;
   }
@@ -84,10 +98,11 @@ export default class FieldBag {
       throw createError('Field id must be defined.');
     }
 
-    if (this.find({ id: item.id })) {
+    if (this.findById(item.id)) {
       throw createError(`Field with id ${item.id} is already added.`);
     }
 
     this.items.push(item);
+    this.itemsById[item.id] = item;
   }
 }

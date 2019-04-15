@@ -678,7 +678,7 @@ export default class Validator {
    */
   _resolveField (name: string, scope: string | null, uid): ?Field {
     if (name[0] === '#') {
-      return this.fields.find({ id: name.slice(1) });
+      return this.fields.findById(name.slice(1));
     }
 
     if (!isNullOrUndefined(scope)) {
