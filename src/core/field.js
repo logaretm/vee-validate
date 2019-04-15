@@ -2,7 +2,7 @@ import { resolveDirectiveRules, resolveName, resolveFeatures, resolveAlias } fro
 import { Vue } from '../plugin';
 import { modes } from '../modes';
 import RuleContainer from './ruleContainer';
-import { addEventListener } from '../utils/events';
+import { addEventListener, normalizeEventValue } from '../utils/events';
 import { findModel, getInputEventName } from '../utils/vnode';
 import { getValidator } from '../state';
 import {
@@ -94,6 +94,10 @@ export default class Field {
     }
 
     this._value = value;
+  }
+
+  get componentInstance () {
+    return this.vnode.componentInstance;
   }
 
   static from (el, vnode) {
@@ -225,7 +229,7 @@ export default class Field {
 
   addListeners (el, events) {
     const handler = (e) => {
-      const value = e.target.value;
+      const value = normalizeEventValue(e);
       this.value = value;
       this.flags.changed = this.value !== this.initialValue;
       this.validate();
@@ -233,6 +237,12 @@ export default class Field {
 
     events.forEach(evt => {
       if (this._listeners[evt]) {
+        return;
+      }
+
+      if (this.componentInstance) {
+        this.componentInstance.$on(evt, handler);
+        this._listeners[evt] = () => this.componentInstance.$off(evt, handler);
         return;
       }
 

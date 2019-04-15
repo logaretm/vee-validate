@@ -1,4 +1,4 @@
-import { isCallable } from './index';
+import { isCallable, toArray } from './index';
 
 export const isEvent = (evt) => {
   return (typeof Event !== 'undefined' && isCallable(Event) && evt instanceof Event) || (evt && evt.srcElement);
@@ -35,3 +35,11 @@ export const addEventListener = (el, eventName, handler) => {
     el.removeEventListener(eventName, handler);
   };
 };
+
+export function normalizeEventValue (value) {
+  if (isEvent(value)) {
+    return value.target.type === 'file' ? toArray(value.target.files) : value.target.value;
+  }
+
+  return value;
+}
