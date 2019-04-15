@@ -1,4 +1,3 @@
-import { createError } from './utils';
 import DefaultDictionary from './core/i18n';
 
 const drivers = {
@@ -14,19 +13,15 @@ const drivers = {
 let currentDriver = 'default';
 
 export default class DictionaryResolver {
-  static _checkDriverName (driver) {
-    if (!driver) {
-      throw createError('you must provide a name to the dictionary driver');
-    }
-  }
-
-  static setDriver (driver, implementation = null) {
-    this._checkDriverName(driver);
-    if (implementation) {
-      drivers[driver] = implementation;
+  static setDriver (implementation) {
+    if (typeof implementation === 'string') {
+      currentDriver = implementation;
+      return;
     }
 
-    currentDriver = driver;
+    const tempName = Date.now().toString().substring(7);
+    drivers[tempName] = implementation;
+    currentDriver = tempName;
   }
 
   static getDriver () {

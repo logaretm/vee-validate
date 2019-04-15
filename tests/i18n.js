@@ -33,7 +33,7 @@ test('can provider an initial dictionary to be merged', async () => {
 
 test('can implement custom i18n driver', async () => {
   const localVue = createLocalVue();
-  VeeValidate.setI18nDriver('mydriver', {
+  VeeValidate.setI18nDriver({
     getFieldMessage () {
       return 'custom dictionary!';
     },
