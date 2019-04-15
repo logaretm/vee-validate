@@ -4,7 +4,7 @@ import { modes } from '../modes';
 import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
-import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual } from '../utils';
+import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual, toArray } from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName } from '../utils/vnode';
 
 let $validator = null;
@@ -25,6 +25,14 @@ export function createValidationCtx (ctx) {
       'aria-required': ctx.isRequired ? 'true' : 'false'
     }
   };
+}
+
+function normalizeValue (value) {
+  if (isEvent(value)) {
+    return value.target.type === 'file' ? toArray(value.target.files) : value.target.value;
+  }
+
+  return value;
 }
 
 /**
@@ -212,7 +220,7 @@ export const ValidationProvider = {
       default: () => {
         PROVIDER_COUNTER++;
 
-        return PROVIDER_COUNTER;
+        return `_vee_${PROVIDER_COUNTER}`;
       }
     },
     name: {
@@ -299,7 +307,7 @@ export const ValidationProvider = {
       return Object.keys(rules).filter(RuleContainer.isTargetRule).map(rule => {
         const depName = rules[rule][0];
         const watcherName = `$__${depName}`;
-        if (!isCallable(this[watcherName])) {
+        if (!isCallable(this[watcherName]) && providers[depName]) {
           this[watcherName] = providers[depName].$watch('value', () => {
             if (this.flags.validated) {
               this._needsValidation = true;
@@ -389,7 +397,7 @@ export const ValidationProvider = {
       });
     },
     syncValue (e) {
-      const value = isEvent(e) ? e.target.value : e;
+      const value = normalizeValue(e);
       this.value = value;
       this.flags.changed = this.initialValue !== value;
     },
@@ -401,7 +409,7 @@ export const ValidationProvider = {
       this.setFlags(flags);
     },
     validate (...args) {
-      if (args[0]) {
+      if (args.length > 0) {
         this.syncValue(args[0]);
       }
 
@@ -420,6 +428,9 @@ export const ValidationProvider = {
         bails: this.bails
       }).then(result => {
         this.setFlags({ pending: false });
+        if (!this.isRequired) {
+          this.setFlags({ valid: result.valid, invalid: !result.valid });
+        }
 
         return result;
       });

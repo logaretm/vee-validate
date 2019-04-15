@@ -22,6 +22,7 @@ VeeValidate comes with a bunch of validation rules out of the box and they are a
 - [included](#included)
 - [integer](#integer)
 - [ip](#ip)
+- [ip_or_fqdn](#ip_or_fqdn)
 - [is](#is)
 - [is_not](#is-not)
 - [json](#json)
@@ -173,6 +174,7 @@ The field under validation must have the same value as the confirmation field.
 <span v-show="errors.has('password')" class="help is-danger">{{ errors.first('password') }}</span>
 
 <input v-validate="'required|confirmed:password'" name="password_confirmation" type="password" :class="{'is-danger': errors.has('password_confirmation')}" placeholder="Password, Again" data-vv-as="password">
+<span v-show="errors.has('password_confirmation')" class="help is-danger">{{ errors.first('password_confirmation') }}</span>
 ```
 
 ::: tip
@@ -348,6 +350,17 @@ The field under validation must have a string that is a valid ipv4 value.
 
 ```html
 <input v-validate="'ip'" data-vv-as="ip" name="ip_field" type="text">
+```
+
+## ip_or_fqdn
+
+The field under validation must have a string that is a valid ipv4 value, a valid ipv6 value, or a valid fully-qualified domain name.
+
+<input v-validate="'ip_or_fqdn'" data-vv-as="host_address" :class="{'input': true, 'is-danger': errors.has('host_address_field') }" name="host_address_field" type="text" placeholder="Your Host Address">
+<span v-show="errors.has('host_address_field')" class="help is-danger">{{ errors.first('host_address_field') }}</span>
+
+```html
+<input v-validate="'ip'" data-vv-as="host_address" name="host_address_field" type="text">
 ```
 
 ## is
@@ -619,7 +632,7 @@ If the target field value meets the requirement, empty values (empty strings, `u
   <option value="US">United States</option>
   <option value="OTHER">Other country</option>
 </select>
-<input v-validate.immediate="'required_if:country,US'" data-vv-as="state" :class="{'input': true, 'is-danger': errors.has('state_field') }" name="state_field" type="text" placeholder="State">
+<input v-validate.immediate="'required_if:country,US,FM'" data-vv-as="state" :class="{'input': true, 'is-danger': errors.has('state_field') }" name="state_field" type="text" placeholder="State">
 <span v-show="errors.has('state_field')" class="help is-danger">{{ errors.first('state_field') }}</span>
 ```
 

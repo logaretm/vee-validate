@@ -98,16 +98,16 @@ describe('resolves the rules', () => {
     expect(resolve(input)).toEqual({ min_value: ['10'], max_value: ['20'], decimal: [] });
 
     input.type = 'date';
-    expect(resolve(input)).toEqual({ date_format: ['YYYY-MM-DD'] });
+    expect(resolve(input)).toEqual({ date_format: ['yyyy-MM-dd'] });
 
     input.type = 'datetime-local';
-    expect(resolve(input)).toEqual({ date_format: ['YYYY-MM-DDTHH:mm'] });
+    expect(resolve(input)).toEqual({ date_format: ['yyyy-MM-ddTHH:mm'] });
 
     input.type = 'week';
-    expect(resolve(input)).toEqual({ date_format: ['YYYY-[W]WW'] });
+    expect(resolve(input)).toEqual({ date_format: ['yyyy-[W]WW'] });
 
     input.type = 'month';
-    expect(resolve(input)).toEqual({ date_format: ['YYYY-MM'] });
+    expect(resolve(input)).toEqual({ date_format: ['yyyy-MM'] });
 
     input.type = 'time';
     expect(resolve(input)).toEqual({ date_format: ['HH:mm'] });

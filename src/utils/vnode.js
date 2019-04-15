@@ -111,8 +111,8 @@ export function getInputEventName (vnode, model) {
     return event;
   }
 
-  // Lazy Models typically use change event
-  if (model && model.modifiers && model.modifiers.lazy) {
+  // Lazy Models and select tag typically use change event
+  if ((model && model.modifiers && model.modifiers.lazy) || vnode.tag === 'select') {
     return 'change';
   }
 

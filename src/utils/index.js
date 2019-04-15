@@ -148,15 +148,31 @@ export const getPath = (path: string, target: ?Object, def: any = undefined) => 
  */
 export const hasPath = (path: string, target: Object) => {
   let obj = target;
-  return path.split('.').every(prop => {
-    if (prop in obj) {
-      obj = obj[prop];
-
-      return true;
+  let previousPath = null;
+  let isNullOrNonObject = false;
+  const isValidPath = path.split('.').reduce((reducer, prop) => {
+    if (obj == null || typeof obj !== 'object') {
+      isNullOrNonObject = true;
+      return reducer && false;
     }
 
-    return false;
-  });
+    if (prop in obj) {
+      obj = obj[prop];
+      previousPath = previousPath === null ? prop : previousPath + '.' + prop;
+
+      return reducer && true;
+    }
+
+    return reducer && false;
+  }, true);
+
+  if (process.env.NODE_ENV !== 'production') {
+    if (isNullOrNonObject) {
+      throw new Error(previousPath + ' is not an object');
+    }
+  }
+
+  return isValidPath;
 };
 
 /**
@@ -544,19 +560,19 @@ export const fillRulesFromElement = (el: HTMLInputElement, rules: string | { [st
     const timeFormat = el.step && Number(el.step) < 60 ? 'HH:mm:ss' : 'HH:mm';
 
     if (el.type === 'date') {
-      return appendRule('date_format:YYYY-MM-DD', rules);
+      return appendRule('date_format:yyyy-MM-dd', rules);
     }
 
     if (el.type === 'datetime-local') {
-      return appendRule(`date_format:YYYY-MM-DDT${timeFormat}`, rules);
+      return appendRule(`date_format:yyyy-MM-ddT${timeFormat}`, rules);
     }
 
     if (el.type === 'month') {
-      return appendRule('date_format:YYYY-MM', rules);
+      return appendRule('date_format:yyyy-MM', rules);
     }
 
     if (el.type === 'week') {
-      return appendRule('date_format:YYYY-[W]WW', rules);
+      return appendRule('date_format:yyyy-[W]WW', rules);
     }
 
     if (el.type === 'time') {
@@ -615,4 +631,12 @@ export const includes = (collection: String | any[], item: any) => {
 
 export const isEmptyArray = (arr: any): boolean => {
   return Array.isArray(arr) && arr.length === 0;
+};
+
+export const defineNonReactive = (obj, prop, value) => {
+  Object.defineProperty(obj, prop, {
+    configurable: false,
+    writable: true,
+    value
+  });
 };

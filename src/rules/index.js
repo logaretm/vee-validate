@@ -20,6 +20,7 @@ import image from './image';
 import included from './included';
 import integer from './integer';
 import ip from './ip';
+import ip_or_fqdn from './ip_or_fqdn';
 import is from './is';
 import is_not from './is_not';
 import json from './json';
@@ -60,6 +61,7 @@ export {
   integer,
   length,
   ip,
+  ip_or_fqdn,
   is_not,
   is,
   json,

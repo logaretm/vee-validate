@@ -37,7 +37,7 @@ It also works for custom components and solves the issue of authoring __self val
 
 ## Rendering
 
-By default, ValidationProvider renders a `span`, meaning it does not render anything of its own. Consider the following example
+By default, ValidationProvider renders a `span`, Consider the following example:
 
 ```vue
   <ValidationProvider rules="required" v-slot="{ errors }">
@@ -289,6 +289,32 @@ Ideally you would pass the props you need to either the `ValidationProvider` or 
 
 Using either of these approaches is at your preference.
 
+### Persisting Provider Errors
+
+Sometimes when building something like a multi-step form, you would need to use `v-if` on your providers to toggle the visibility of your steps. However, when the provider is hidden and shown again, it does not keep its state.
+
+You can use the `persist` prop to allow the provider to __remember__ its state across mounting/destroyed lifecycles, but there are a couple of caveats:
+
+- Your Provider __must be inside__ an __observer__ component.
+- Your Provider __must have__ a `vid` property set.
+
+```vue
+<ValidationObserver>
+  <div v-if="!isHidden">
+    <ValidationProvider
+      rules="required|min:3|max:6"
+      vid="myfield"
+      v-slot="{ errors }"
+      :persist="true"
+    >
+      <input type="text" v-model="value">
+      {{ errors[0] }}
+    </ValidationProvider>
+  </div>
+</ValidationObserver>
+<button @click="isHidden = !isHidden">Toggle</button>
+```
+
 ## Adding Errors Manually
 
 You may want to add manual errors to a field, such cases like pre-filling initially due to a server response, or an async request. You can do this using `refs` and the `applyResult` method.
@@ -355,6 +381,7 @@ All the following props are optional.
 | bails     | `boolean` | `true`                | If true, the validation will stop on the first failing rule.                 |
 | debounce  | `number`  | `0`                   | Debounces the validation for the specified amount of milliseconds.           |
 | tag       | `string`  | `span`                | The default tag to [render](#rendering). |
+| persist   | `boolean` | `false`               | If true, the provider will keep its errors across mounted/destroyed lifecycles |
 
 ### Methods
 
@@ -366,6 +393,7 @@ Those are the only methods meant for public usage, other methods that may exist 
 | validateSilent | `void`  | `Promise<ValidationResult>` | Runs a validation of the current value against the rules defined. __does not mutate the validation state.__  |
 | applyResult | `ValidationResult` | `void`           | Takes a __validation result__ object and applies it on the current state.                                   |
 | reset       | `void`  | `void`                      | Resets validation state.                                                                                    |
+| setFlags    | Object | void | Updates the field flag states with an object, the object properties should be the flag names and the values should be boolean values. |
 
 ### Events
 

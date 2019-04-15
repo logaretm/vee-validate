@@ -1,4 +1,4 @@
-import { isCallable, values, findIndex } from '../utils';
+import { isCallable, values, findIndex, warn } from '../utils';
 
 const flagMergingStrategy = {
   pristine: 'every',
@@ -53,8 +53,8 @@ export const ValidationObserver = {
     ctx () {
       const ctx = {
         errors: {},
-        validate: () => {
-          const promise = this.validate();
+        validate: (arg) => {
+          const promise = this.validate(arg);
 
           return {
             then (thenable) {
@@ -115,6 +115,7 @@ export const ValidationObserver = {
   },
   render (h) {
     let slots = this.$scopedSlots.default;
+    this._persistedStore = this._persistedStore || {};
     if (!isCallable(slots)) {
       return h(this.tag, this.$slots.default);
     }
@@ -132,11 +133,13 @@ export const ValidationObserver = {
       }
 
       this.refs = Object.assign({}, this.refs, { [subscriber.vid]: subscriber });
+      if (subscriber.persist && this._persistedStore[subscriber.vid]) {
+        this.restoreProviderState(subscriber);
+      }
     },
     unsubscribe ({ vid }, kind = 'provider') {
       if (kind === 'provider') {
-        this.$delete(this.refs, vid);
-        return;
+        this.removeProvider(vid);
       }
 
       const idx = findIndex(this.observers, o => o.vid === vid);
@@ -144,14 +147,40 @@ export const ValidationObserver = {
         this.observers.splice(idx, 1);
       }
     },
-    validate () {
+    validate ({ silent } = { silent: false }) {
       return Promise.all([
-        ...values(this.refs).map(ref => ref.validate().then(r => r.valid)),
-        ...this.observers.map(obs => obs.validate())
+        ...values(this.refs).map(ref => ref[silent ? 'validateSilent' : 'validate']().then(r => r.valid)),
+        ...this.observers.map(obs => obs.validate({ silent }))
       ]).then(results => results.every(r => r));
     },
     reset () {
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
-    }
+    },
+    restoreProviderState (provider) {
+      const state = this._persistedStore[provider.vid];
+      provider.setFlags(state.flags);
+      provider.applyResult(state);
+      delete this._persistedStore[provider.vid];
+    },
+    removeProvider (vid) {
+      const provider = this.refs[vid];
+      // save it for the next time.
+      if (provider && provider.persist) {
+        /* istanbul ignore else */
+        if (process.env.NODE_ENV !== 'production') {
+          if (vid.indexOf('_vee_') === 0) {
+            warn('Please provide a `vid` prop when using `persist`, there might be unexpected issues otherwise.');
+          }
+        }
+
+        this._persistedStore[vid] = {
+          flags: provider.flags,
+          errors: provider.messages,
+          failedRules: provider.failedRules
+        };
+      }
+
+      this.$delete(this.refs, vid);
+    },
   }
 };

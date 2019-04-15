@@ -14,7 +14,7 @@ const eager = ({ errors }) => {
   }
 
   return {
-    on: ['change']
+    on: ['change', 'blur']
   };
 };
 
