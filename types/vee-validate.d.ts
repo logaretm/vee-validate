@@ -2,7 +2,6 @@ import Vue, { DirectiveOptions, VueConstructor, ComponentOptions, PluginFunction
 import VueI18n from 'vue-i18n';
 
 export type StringNullable = string | null
-export type Modes = 'aggressive' | 'eager' | 'passive' | 'lazy'
 
 export interface VeeValidateComponentOptions {
     validator?: 'new' | 'inherit';
@@ -538,7 +537,7 @@ export default class VeeValidate {
     configure(cfg: Configuration): void;
     static setI18nDriver(driver: string, instance: IDictionary): void;
     static configure(cfg: Configuration): void;
-    static setMode(mode: Modes, implementation: Function): void;
+    static setMode(mode: string, implementation: Function): void;
     static use<T>(plugin: (ctx: PluginContext, options?: T) => any, options?: T): void;
     static withValidation(component: Vue, mapFn: (ctx: ValidationSlotScopeData) => object): Vue
     /**
