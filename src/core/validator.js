@@ -300,7 +300,9 @@ export default class Validator {
     if (validator.getMessage) {
       Dictionary.getDriver().merge({
         [Validator.locale]: {
-          [name]: validator.getMessage
+          messages: {
+            [name]: validator.getMessage
+          }
         }
       });
     }
