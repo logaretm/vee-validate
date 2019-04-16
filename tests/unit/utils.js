@@ -275,6 +275,7 @@ test('calls functions immediatly if time is 0', done => {
 test('warns with branded message', () => {
   global.console = { warn: jest.fn() };
   utils.warn('Something is not right');
+  // eslint-disable-next-line no-console
   expect(console.warn).toHaveBeenCalledWith('[vee-validate] Something is not right');
 });
 
