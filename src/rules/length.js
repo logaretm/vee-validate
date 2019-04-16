@@ -1,4 +1,4 @@
-import { toArray } from '../utils';
+import { isNullOrUndefined, toArray } from '../utils';
 
 /**
  * @param {Array|String} value
@@ -17,11 +17,11 @@ const compare = (value, length, max) => {
 };
 
 const validate = (value, [length, max = undefined]) => {
-  length = Number(length);
-  if (value === undefined || value === null) {
+  if (isNullOrUndefined(value)) {
     return false;
   }
 
+  length = Number(length);
   if (typeof value === 'number') {
     value = String(value);
   }

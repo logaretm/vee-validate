@@ -1,10 +1,12 @@
+import { isNullOrUndefined } from '../utils';
+
 const validate = (value, { decimals = '*', separator = '.' } = {}) => {
-  if (Array.isArray(value)) {
-    return value.every(val => validate(val, { decimals, separator }));
+  if (isNullOrUndefined(value) || value === '') {
+    return false;
   }
 
-  if (value === null || value === undefined || value === '') {
-    return false;
+  if (Array.isArray(value)) {
+    return value.every(val => validate(val, { decimals, separator }));
   }
 
   // if is 0.
@@ -22,7 +24,7 @@ const validate = (value, { decimals = '*', separator = '.' } = {}) => {
   const parsedValue = parseFloat(value);
 
   // eslint-disable-next-line
-    return parsedValue === parsedValue;
+  return parsedValue === parsedValue;
 };
 
 const paramNames = ['decimals', 'separator'];
