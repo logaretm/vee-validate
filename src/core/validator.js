@@ -127,7 +127,7 @@ export default class Validator {
       });
     }
 
-    return this._validate(field, value).then(result => {
+    return this._validate(field, value, { initial: options.isInitial }).then(result => {
       const errors = [];
       const ruleMap = {};
       result.errors.forEach(e => {
@@ -396,7 +396,7 @@ export default class Validator {
     let isExitEarly = false;
     // use of '.some()' is to break iteration in middle by returning true
     Object.keys(field.rules).filter(rule => {
-      if (!initial || !RuleContainer.has(rule)) return true;
+      if (!initial) return true;
 
       return RuleContainer.isImmediate(rule);
     }).some(rule => {

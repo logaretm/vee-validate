@@ -403,7 +403,8 @@ export const ValidationProvider = {
         name: this.name,
         values: createValuesLookup(this),
         bails: this.bails,
-        isNormalized: true
+        isNormalized: true,
+        isInitial: !this.initialized
       }).then(result => {
         this.setFlags({ pending: false });
         if (!this.isRequired) {

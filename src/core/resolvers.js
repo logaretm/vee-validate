@@ -1,12 +1,13 @@
 import { resolveConfig, getConfig } from '../config';
-import { resolveRules } from '../utils/vnode';
+import { resolveRules, findModel } from '../utils/vnode';
 import {
   getDataAttribute,
   getPath,
   isCallable,
   includes,
   normalizeRules,
-  assign
+  assign,
+  isTextInput
 } from '../utils';
 
 export function resolveFeatures (binding, vnode) {
@@ -107,3 +108,26 @@ export function resolveName (el, vnode) {
 
   return name;
 }
+
+export function resolveValue (el, vnode) {
+  const model = findModel(vnode);
+  if (model) {
+    return model.value;
+  }
+
+  if (isTextInput(el)) {
+    return el.value;
+  }
+
+  if (el.type === 'file') {
+    return el.files;
+  }
+
+  // TODO: Radio and Checkboxes resolution.
+
+  if (el.tag === 'select') {
+    return el.value;
+  }
+
+  return undefined;
+};

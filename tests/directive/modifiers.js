@@ -64,6 +64,27 @@ describe('directive modifiers', () => {
     expect(wrapper.find('p').text()).toBe('The field field is required.');
   });
 
+  test('some rules can be excluded when validating initially', async () => {
+    const Vue = createLocalVue();
+    Vue.use(VeeValidate);
+    VeeValidate.Validator.extend('noInitial', () => {
+      return false;
+    }, { immediate: false });
+
+    const wrapper = mount({
+      computed: mapValidationState('vee'),
+      template: `
+      <div>
+        <input type="text" name="field" value="1" v-validate.immediate="'required|noInitial'">
+        <p>{{ vee.for('field').errors[0] }}</p>
+      </div>
+    `
+    }, { localVue: Vue, sync: false });
+
+    await flushPromises();
+    expect(wrapper.find('p').text()).toBe('');
+  });
+
   test('.persist modifier', async () => {
     const Vue = createLocalVue();
     Vue.use(VeeValidate);

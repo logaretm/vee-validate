@@ -1,4 +1,4 @@
-import { resolveDirectiveRules, resolveName, resolveFeatures, resolveAlias } from './resolvers';
+import { resolveDirectiveRules, resolveName, resolveFeatures, resolveAlias, resolveValue } from './resolvers';
 import { Vue } from '../plugin';
 import { modes } from '../modes';
 import RuleContainer from './ruleContainer';
@@ -68,7 +68,7 @@ export default class Field {
     defineNonReactive(this, 'initialized', false);
     defineNonReactive(this, '_listeners', {});
     defineNonReactive(this, '_interactions', {});
-    defineNonReactive(this, '_value', undefined);
+    defineNonReactive(this, '_value', resolveValue(el, vnode));
     defineNonReactive(this, 'rules', resolveDirectiveRules(el, binding, vnode));
 
     this.el._vid = this.vid;
@@ -108,7 +108,7 @@ export default class Field {
     return vnode.context.$_veeObserver.refs[el._vid];
   }
 
-  validate () {
+  validate (isInitial = false) {
     const options = resolveFeatures(this.binding, this.vnode);
     const alias = resolveAlias(this.el, this.vnode);
     const name = resolveName(this.el, this.vnode);
@@ -119,6 +119,7 @@ export default class Field {
       name: alias || name,
       bails: options.bails,
       values: this.createValuesLookup(),
+      isInitial: isInitial
     }).then(res => {
       this.flags.validated = true;
       this.applyResult(res);
@@ -212,7 +213,7 @@ export default class Field {
     this.applyClasses();
     shouldValidate = shouldValidate || (binding.modifiers && binding.modifiers.immediate && !this.flags.validated);
     if (shouldValidate) {
-      this.validate();
+      this.validate(!this.initialized);
     }
 
     this.addActionListeners();
