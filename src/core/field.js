@@ -108,24 +108,34 @@ export default class Field {
     return vnode.context.$_veeObserver.refs[el._vid];
   }
 
-  validate (isInitial = false) {
+  validate () {
     const options = resolveFeatures(this.binding, this.vnode);
     const alias = resolveAlias(this.el, this.vnode);
     const name = resolveName(this.el, this.vnode);
     this.opts.aria = options.aria;
     this.opts.validity = options.validity;
 
-    return this.validator.verify(this.value, this.rules, {
+    const validation = this.validator.verify(this.value, this.rules, {
       name: alias || name,
       bails: options.bails,
       values: this.createValuesLookup(),
-      isInitial: isInitial
+      isInitial: !this.initialized
     }).then(res => {
+      // prevent race conditions from overriding each other.
+      // fixed by waiting for the most recent validation triggered.
+      // if its not waiting for anything then we can also mutate the state.
+      if (!this.isWaitingFor(undefined) && !this.isWaitingFor(validation)) return;
+      this.waitFor(undefined);
+
       this.flags.validated = true;
       this.applyResult(res);
 
       return res;
     });
+
+    this.waitFor(validation);
+
+    return validation;
   }
 
   fieldDeps () {
@@ -213,7 +223,7 @@ export default class Field {
     this.applyClasses();
     shouldValidate = shouldValidate || (binding.modifiers && binding.modifiers.immediate && !this.flags.validated);
     if (shouldValidate) {
-      this.validate(!this.initialized);
+      this.validate();
     }
 
     this.addActionListeners();
