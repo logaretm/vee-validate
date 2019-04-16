@@ -1,5 +1,7 @@
+import { isNullOrUndefined } from '../utils';
+
 const validate = (value, [min]) => {
-  if (value === null || value === undefined || value === '') {
+  if (isNullOrUndefined(value) || value === '') {
     return false;
   }
 
