@@ -29,13 +29,41 @@ describe('Validation Provider Component', () => {
   test('SSR: render single root slot', () => {
     const output = renderToString({
       template: `
-        <ValidationProvider>
-          <p slot-scope="ctx"></p>
+        <ValidationProvider v-slot="ctx">
+          <p></p>
         </ValidationProvider>
       `
     }, { localVue: Vue, sync: false });
 
     expect(output).toBe('<span data-server-rendered="true"><p></p></span>');
+  });
+
+  test('listens for input, blur events to set flags', async () => {
+    const wrapper = mount({
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationProvider rules="required" v-slot="{ errors, flags }">
+          <input v-model="value" type="text">
+          <li v-for="(flag, name) in flags" v-if="flag" :id="name">{{ name }}</li>
+        </ValidationProvider>
+      `
+    }, { localVue: Vue, sync: false });
+
+    const input = wrapper.find('input');
+    expect(wrapper).toHaveElement('#untouched');
+    expect(wrapper).toHaveElement('#pristine');
+    input.trigger('blur');
+    await flushPromises();
+    expect(wrapper).toHaveElement('#touched');
+    expect(wrapper).not.toHaveElement('#untouched');
+    expect(wrapper).toHaveElement('#pristine');
+    await flushPromises();
+    input.trigger('input');
+    await flushPromises();
+    expect(wrapper).not.toHaveElement('#pristine');
+    expect(wrapper).toHaveElement('#dirty');
   });
 
   test('validates lazy models', async () => {
@@ -44,11 +72,9 @@ describe('Validation Provider Component', () => {
         value: ''
       }),
       template: `
-        <ValidationProvider rules="required">
-          <div slot-scope="{ errors }">
-            <input v-model.lazy="value" type="text">
-            <span id="error">{{ errors[0] }}</span>
-          </div>
+        <ValidationProvider rules="required" v-slot="{ errors }">
+          <input v-model.lazy="value" type="text">
+          <span id="error">{{ errors[0] }}</span>
         </ValidationProvider>
       `
     }, { localVue: Vue, sync: false });
@@ -81,14 +107,12 @@ describe('Validation Provider Component', () => {
       }),
       template: `
         <div>
-          <ValidationProvider rules="required">
-            <div slot-scope="{ errors }">
-              <select v-model="value">
-                <option value="">0</option>
-                <option value="1">1</option>
-              </select>
-              <span id="error">{{ errors[0] }}</span>
-            </div>
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <select v-model="value">
+              <option value="">0</option>
+              <option value="1">1</option>
+            </select>
+            <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
       `
@@ -122,11 +146,9 @@ describe('Validation Provider Component', () => {
       }),
       template: `
         <div>
-          <ValidationProvider :immediate="true" rules="required">
-            <div slot-scope="{ errors }">
-              <input v-model="value" type="text">
-              <span id="error">{{ errors[0] }}</span>
-            </div>
+          <ValidationProvider :immediate="true" rules="required" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
       `
@@ -157,11 +179,9 @@ describe('Validation Provider Component', () => {
       },
       template: `
         <div>
-          <ValidationProvider rules="required">
-            <div slot-scope="{ errors }">
-              <TextInput v-model="value" ref="input"></TextInput>
-              <span id="error">{{ errors && errors[0] }}</span>
-            </div>
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <TextInput v-model="value" ref="input"></TextInput>
+            <span id="error">{{ errors && errors[0] }}</span>
           </ValidationProvider>
         </div>
       `
@@ -198,11 +218,9 @@ describe('Validation Provider Component', () => {
       },
       template: `
         <div>
-          <ValidationProvider rules="required">
-            <div slot-scope="{ errors }">
-              <TextInput v-model="value" ref="input"></TextInput>
-              <span id="error">{{ errors[0] }}</span>
-            </div>
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <TextInput v-model="value" ref="input"></TextInput>
+            <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
       `
@@ -234,11 +252,9 @@ describe('Validation Provider Component', () => {
       },
       template: `
         <div>
-          <ValidationProvider rules="required" mode="lazy">
-            <div slot-scope="{ errors }">
-              <TextInput v-model="value"></TextInput>
-              <span id="error">{{ errors[0] }}</span>
-            </div>
+          <ValidationProvider rules="required" mode="lazy" v-slot="{ errors }">
+            <TextInput v-model="value"></TextInput>
+            <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
       `
@@ -270,11 +286,9 @@ describe('Validation Provider Component', () => {
       },
       template: `
         <div>
-          <ValidationProvider rules="required">
-            <div slot-scope="{ errors }">
-              <TextInput v-model="value"></TextInput>
-              <span id="error">{{ errors[0] }}</span>
-            </div>
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <TextInput v-model="value"></TextInput>
+            <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
       `
@@ -311,11 +325,9 @@ describe('Validation Provider Component', () => {
       },
       template: `
         <div>
-          <ValidationProvider rules="required">
-            <div slot-scope="{ errors }">
-              <TextInput v-model="value"></TextInput>
-              <span id="error">{{ errors[0] }}</span>
-            </div>
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <TextInput v-model="value"></TextInput>
+            <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
       `
@@ -342,16 +354,12 @@ describe('Validation Provider Component', () => {
       }),
       template: `
         <div>
-          <ValidationProvider rules="required" vid="confirmation">
-            <div slot-scope="ctx">
-              <input type="password" v-model="confirmation">
-            </div>
+          <ValidationProvider rules="required" vid="confirmation" v-slot="ctx">
+            <input type="password" v-model="confirmation">
           </ValidationProvider>
-          <ValidationProvider rules="required|confirmed:confirmation">
-            <div slot-scope="{ errors }">
-              <input type="password" v-model="password">
-              <span id="err1">{{ errors[0] }}</span>
-            </div>
+          <ValidationProvider rules="required|confirmed:confirmation" v-slot="{ errors }">
+            <input type="password" v-model="password">
+            <span id="err1">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
       `
@@ -380,10 +388,8 @@ describe('Validation Provider Component', () => {
     const wrapper = mount({
       template: `
         <div>
-          <ValidationProvider vid="named" ref="provider">
-            <div slot-scope="ctx">
-              <span></span>
-            </div>
+          <ValidationProvider vid="named" ref="provider" v-slot="{ errors }">
+            <span></span>
           </ValidationProvider>
         </div>
       `
@@ -459,11 +465,9 @@ describe('Validation Provider Component', () => {
       },
       template: `
         <div>
-          <ValidationProvider rules="required" ref="provider">
-            <div slot-scope="{ errors }">
-              <TextInput v-model="value" ref="input"></TextInput>
-              <span id="error">{{ errors && errors[0] }}</span>
-            </div>
+          <ValidationProvider rules="required" ref="provider" v-slot="{ errors }">
+            <TextInput v-model="value" ref="input"></TextInput>
+            <span id="error">{{ errors && errors[0] }}</span>
           </ValidationProvider>
         </div>
       `
@@ -490,11 +494,9 @@ describe('Validation Provider Component', () => {
         value: ''
       }),
       template: `
-        <ValidationProvider :bails="false" rules="email|min:3">
-          <div slot-scope="{ errors }">
-            <input v-model="value" type="text">
-            <p v-for="error in errors">{{ error }}</p>
-          </div>
+        <ValidationProvider :bails="false" rules="email|min:3" v-slot="{ errors }">
+          <input v-model="value" type="text">
+          <p v-for="error in errors">{{ error }}</p>
         </ValidationProvider>
       `
     }, { localVue: Vue, sync: false });
@@ -516,11 +518,9 @@ describe('Validation Provider Component', () => {
         value: ''
       }),
       template: `
-        <ValidationProvider rules="required" :debounce="50">
-          <div slot-scope="{ errors }">
-            <input v-model="value" type="text">
-            <p>{{ errors[0] }}</p>
-          </div>
+        <ValidationProvider rules="required" :debounce="50" v-slot="{ errors }">
+          <input v-model="value" type="text">
+          <p>{{ errors[0] }}</p>
         </ValidationProvider>
       `
     }, { localVue: Vue, sync: false });
@@ -557,11 +557,9 @@ describe('Validation Provider Component', () => {
         value: ''
       }),
       template: `
-        <ValidationProvider rules="required|longRunning" :debounce="10">
-          <div slot-scope="{ errors }">
-            <input v-model="value" type="text">
-            <p>{{ errors[0] }}</p>
-          </div>
+        <ValidationProvider rules="required|longRunning" :debounce="10" v-slot="{ errors }">
+          <input v-model="value" type="text">
+          <p>{{ errors[0] }}</p>
         </ValidationProvider>
       `
     }, { localVue: Vue, sync: false });
@@ -581,11 +579,9 @@ describe('Validation Provider Component', () => {
   test('validates manually using the validate event handler', async () => {
     const wrapper = mount({
       template: `
-        <ValidationProvider rules="required">
-          <div slot-scope="{ validate, errors }">
-            <input type="text" @input="validate">
-            <p id="error">{{ errors[0] }}</p>
-          </div>
+        <ValidationProvider rules="required" v-slot="{ validate, errors }">
+          <input type="text" @input="validate">
+          <p id="error">{{ errors[0] }}</p>
         </ValidationProvider>
       `
     }, { localVue: Vue, sync: false });
@@ -609,15 +605,11 @@ describe('Validation Provider Component', () => {
         value: ''
       }),
       template: `
-        <div>
-          <ValidationProvider rules="required">
-            <div slot-scope="{ errors, reset }">
-              <input type="text" v-model="value">
-              <span id="error">{{ errors && errors[0] }}</span>
-              <button @click="reset">Reset</button>
-            </div>
-          </ValidationProvider>
-        </div>
+        <ValidationProvider rules="required" v-slot="{ errors, reset }">
+          <input type="text" v-model="value">
+          <span id="error">{{ errors && errors[0] }}</span>
+          <button @click="reset">Reset</button>
+        </ValidationProvider>
       `
     }, { localVue: Vue, sync: false });
 
@@ -640,11 +632,9 @@ describe('Validation Provider Component', () => {
     const wrapper = mount({
       data: () => ({ val: '' }),
       template: `
-        <ValidationProvider>
-          <div slot-scope="{ errors }">
-            <input type="text" v-model="val" required minlength="3">
-            <p id="error">{{ errors[0] }}</p>
-          </div>
+        <ValidationProvider v-slot="{ errors }">
+          <input type="text" v-model="val" required minlength="3">
+          <p id="error">{{ errors[0] }}</p>
         </ValidationProvider>
       `
     }, { localVue: Vue, sync: false });
