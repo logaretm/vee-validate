@@ -1,6 +1,6 @@
-import * as VeeValidate from './vee-validate';
+import VeeValidate from './vee-validate';
 
 export default VeeValidate;
 
-export * from "./vue";
-export * from "./vee-validate";
+export * from './vue';
+export * from './vee-validate';
