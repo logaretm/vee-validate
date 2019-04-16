@@ -12,7 +12,7 @@ function findField (el: HTMLElement, context: ValidatingVM): ?Field {
     return null;
   }
 
-  return context.$validator.fields.find({ id: el._veeValidateId });
+  return context.$validator.fields.findById(el._veeValidateId);
 };
 
 export default {
