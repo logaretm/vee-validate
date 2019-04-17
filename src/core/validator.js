@@ -15,7 +15,7 @@ import {
 } from '../utils';
 
 export default class Validator {
-  constructor (options = { bails: true }, pluginContainer = null) {
+  constructor (options = { bails: true }) {
     this.bails = !isNullOrUndefined(options && options.bails) ? options.bails : true;
   }
 
