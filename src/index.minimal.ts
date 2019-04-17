@@ -7,11 +7,9 @@ import { mapValidationActions } from './mapValidationActions';
 
 const version = '__VERSION__';
 const install = VeeValidate.install;
-const use = VeeValidate.use;
 
 export {
   install,
-  use,
   directive,
   Validator,
   version,
@@ -22,11 +20,14 @@ export {
   mapValidationActions
 };
 
-VeeValidate.version = version;
-VeeValidate.ValidationProvider = ValidationProvider;
-VeeValidate.ValidationObserver = ValidationObserver;
-VeeValidate.withValidation = withValidation;
-VeeValidate.mapValidationState = mapValidationState;
-VeeValidate.mapValidationActions = mapValidationActions;
-
-export default VeeValidate;
+export default {
+  ...VeeValidate,
+  directive,
+  Validator,
+  version,
+  ValidationProvider,
+  ValidationObserver,
+  withValidation,
+  mapValidationState,
+  mapValidationActions
+};

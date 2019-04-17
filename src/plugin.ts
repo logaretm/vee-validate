@@ -11,18 +11,19 @@ export let Vue = null;
 let pluginInstance;
 
 class VeeValidate {
+  private validator: any;
+  private vm;
+
   constructor (config) {
     this.configure(config);
     pluginInstance = this;
-    this._validator = setValidator(
-      new Validator(null, { bails: config && config.bails }, this)
-    );
-    this._vm = new Vue();
+    this.validator = setValidator(new Validator({ bails: config && config.bails }));
+    this.vm = new Vue();
     this._initI18n(this.config);
   }
 
-  static setI18nDriver (driver, instance) {
-    dictionary.setDriver(driver, instance);
+  static setI18nDriver (driver) {
+    dictionary.setDriver(driver);
   }
 
   static configure (cfg) {
@@ -54,7 +55,7 @@ class VeeValidate {
     Vue = _Vue;
     pluginInstance = new VeeValidate(opts);
     // inject the plugin container statically into the validator class
-    Validator.$vee = pluginInstance;
+    Validator.setVeeContext(pluginInstance);
 
     detectPassiveSupport();
 
@@ -93,8 +94,5 @@ class VeeValidate {
     setConfig(cfg);
   }
 }
-
-VeeValidate.directive = directive;
-VeeValidate.Validator = Validator;
 
 export default VeeValidate;

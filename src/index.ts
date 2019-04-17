@@ -32,11 +32,15 @@ export {
   mapValidationActions
 };
 
-VeeValidate.version = version;
-VeeValidate.ValidationProvider = ValidationProvider;
-VeeValidate.ValidationObserver = ValidationObserver;
-VeeValidate.withValidation = withValidation;
-VeeValidate.mapValidationState = mapValidationState;
-VeeValidate.mapValidationActions = mapValidationActions;
-
-export default VeeValidate;
+export default {
+  ...VeeValidate,
+  directive,
+  Validator,
+  Rules,
+  version,
+  ValidationProvider,
+  ValidationObserver,
+  withValidation,
+  mapValidationState,
+  mapValidationActions
+};

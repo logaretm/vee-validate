@@ -1,4 +1,4 @@
-import isCreditCard from 'validator/lib/isCreditCard';
+import { isCreditCard } from 'validator';
 
 const validate = (value) => isCreditCard(String(value));
 

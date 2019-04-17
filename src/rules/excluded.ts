@@ -1,7 +1,7 @@
 import { validate as includes } from './included';
 
-const validate = (...args) => {
-  return !includes(...args);
+const validate = (value, args) => {
+  return !includes(value, args);
 };
 
 export {

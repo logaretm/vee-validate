@@ -24,7 +24,7 @@ export function mapValidationActions (actions) {
     'reset': resetRefs
   };
 
-  let mappedActions = actionsMap;
+  let mappedActions: any = actionsMap;
   if (isObject(actions)) {
     mappedActions = Object.keys(actions).reduce((acc, key) => {
       acc[key] = actionsMap[actions[key]];

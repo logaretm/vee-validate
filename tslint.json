@@ -1,0 +1,9 @@
+{
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier"
+  ],
+  "linterOptions": {
+    "exclude": ["jest.config.js", "./scripts/**/*.js"]
+  }
+}

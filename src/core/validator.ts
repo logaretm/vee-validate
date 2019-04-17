@@ -14,7 +14,10 @@ import {
   isEmptyArray
 } from '../utils';
 
+let $vee;
+
 export default class Validator {
+  bails: boolean;
   constructor (options = { bails: true }) {
     this.bails = !isNullOrUndefined(options && options.bails) ? options.bails : true;
   }
@@ -43,15 +46,19 @@ export default class Validator {
   static set locale (value) {
     const hasChanged = value !== Dictionary.getDriver().locale;
     Dictionary.getDriver().locale = value;
-    if (hasChanged && Validator.$vee && Validator.$vee._vm) {
-      Validator.$vee._vm.$emit('localeChanged');
+    if (hasChanged && $vee && $vee.vm) {
+      $vee.vm.$emit('localeChanged');
     }
+  }
+
+  static setVeeContext (value) {
+    $vee = value;
   }
 
   /**
    * Adds a custom validator to the list of validation rules.
    */
-  static extend (name, validator, options = {}) {
+  static extend (name, validator, options: any = {}) {
     Validator._guardExtend(name, validator);
     // rules imported from the minimal bundle
     // will have the options embedded in them
@@ -70,10 +77,14 @@ export default class Validator {
     Validator.localize(lang, dictionary);
   }
 
+  static localize(rootDictionary): void;
+  static localize(lang, langDictionary): void;
+
+
   /**
    * Adds and sets the current locale for the validator.
    */
-  static localize (lang, dictionary) {
+  static localize (lang, dictionary?: any) {
     if (isObject(lang)) {
       Dictionary.getDriver().merge(lang);
       return;
@@ -104,12 +115,13 @@ export default class Validator {
   /**
    * Validates a value against the rules.
    */
-  verify (value, rules, options = {}) {
+  verify (value, rules, options: any = {}) {
     const field = {
       name: (options && options.name) || '{field}',
       rules: getPath('isNormalized', options, false) ? rules : normalizeRules(rules),
       bails: getPath('bails', options, true),
       forceRequired: false,
+      dependencies: [],
       get isRequired () {
         return !!this.rules.required || this.forceRequired;
       }
@@ -366,7 +378,7 @@ export default class Validator {
   /**
    * Starts the validation process.
    */
-  _validate (field, value, { initial } = {}) {
+  _validate (field, value, { initial = false } = {}) {
     let requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
 
     field.forceRequired = false;

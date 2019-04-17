@@ -1,8 +1,8 @@
 import { alpha } from './alpha_helper';
 
-const validate = (value, { locale } = {}) => {
+const validate = (value, { locale = '' } = {}) => {
   if (Array.isArray(value)) {
-    return value.every(val => validate(val, [locale]));
+    return value.every(val => validate(val, { locale }));
   }
 
   // Match at least one locale.

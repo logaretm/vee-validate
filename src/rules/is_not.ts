@@ -1,4 +1,4 @@
-const validate = (value, [other] = []) => {
+const validate = (value, [other = undefined] = []) => {
   return value !== other;
 };
 

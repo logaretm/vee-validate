@@ -1,5 +1,5 @@
 const validateImage = (file, width, height) => {
-  const URL = window.URL || window.webkitURL;
+  const URL = window.URL || (window as any).webkitURL;
   return new Promise(resolve => {
     const image = new Image();
     image.onerror = () => resolve({ valid: false });

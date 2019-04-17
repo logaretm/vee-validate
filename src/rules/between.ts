@@ -1,4 +1,4 @@
-const validate = (value, { min, max } = {}) => {
+const validate = (value, { min = null, max = null } = {}) => {
   if (Array.isArray(value)) {
     return value.every(val => validate(val, { min, max }));
   }

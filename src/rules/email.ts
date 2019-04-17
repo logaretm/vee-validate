@@ -1,4 +1,4 @@
-import isEmail from 'validator/lib/isEmail';
+import { isEmail } from 'validator';
 import { assign } from '../utils';
 
 const validate = (value, { multiple = false, ...options } = {}) => {

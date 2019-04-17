@@ -143,7 +143,7 @@ export function normalizeSlots (slots, ctx) {
 function resolveTextualRules (vnode) {
   const attrs = vnode.data.attrs;
 
-  const rules = {};
+  const rules: any = {};
   if (attrs.type === 'email') {
     rules.email = ['multiple' in attrs];
   }
@@ -181,7 +181,7 @@ export function resolveRules (vnode) {
     return {};
   }
 
-  const rules = {};
+  const rules: any = {};
   const attrs = vnode.data.attrs;
   if ('required' in attrs) {
     rules.required = attrs.type === 'checkbox' ? [true] : true;

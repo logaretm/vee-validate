@@ -3,6 +3,7 @@ import { isCallable, merge } from '../utils';
 let LOCALE = 'en';
 
 export default class Dictionary {
+  container: any;
   constructor (dictionary) {
     this.container = {};
     this.merge(dictionary);

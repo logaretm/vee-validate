@@ -13,10 +13,12 @@ module.exports = {
   ],
   moduleFileExtensions: [
     'js',
+    'ts',
     'json',
     'vue'
   ],
   transform: {
+    '\\.(ts)$': 'ts-jest',
     '^.+\\.jsx?$': 'babel-jest',
     '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest'
   },

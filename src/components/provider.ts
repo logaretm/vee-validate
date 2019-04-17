@@ -426,7 +426,7 @@ export const ValidationProvider = {
     },
     registerField () {
       if (!$validator) {
-        $validator = getValidator() || new Validator(null, { fastExit: getConfig().fastExit });
+        $validator = getValidator() || new Validator({ bails: getConfig().fastExit });
       }
 
       updateRenderingContextRefs(this);

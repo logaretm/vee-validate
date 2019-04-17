@@ -1,6 +1,6 @@
 import { isValidDate } from '../utils';
 
-const validate = (value, { min, max, inclusivity = '()' } = {}) => {
+const validate = (value, { min = null, max = null, inclusivity = '()' } = {}) => {
   // if any is not valid.
   if (!isValidDate(value) || !isValidDate(min) || !isValidDate(max)) {
     return false;

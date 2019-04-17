@@ -1,6 +1,6 @@
 import { isValidDate } from '../utils';
 
-const afterValidator = (value, { targetValue, inclusion = false } = {}) => {
+const afterValidator = (value, { targetValue = null, inclusion = false } = {}) => {
   // if either is not valid.
   if (!isValidDate(value) || !isValidDate(targetValue)) {
     return false;

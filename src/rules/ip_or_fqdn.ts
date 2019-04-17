@@ -1,5 +1,4 @@
-import isIP from 'validator/lib/isIP';
-import isFQDN from 'validator/lib/isFQDN';
+import { isIP, isFQDN } from 'validator';
 import { isNullOrUndefined } from '../utils';
 
 const validate = (value) => {

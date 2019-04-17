@@ -1,4 +1,4 @@
-import isURL from 'validator/lib/isURL';
+import { isURL } from 'validator';
 import { assign, isNullOrUndefined } from '../utils';
 
 const validate = (value, options = {}) => {

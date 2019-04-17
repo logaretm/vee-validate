@@ -1,4 +1,4 @@
-import isIP from 'validator/lib/isIP';
+import { isIP } from 'validator';
 import { isNullOrUndefined } from '../utils';
 
 const validate = (value, { version = 4 } = {}) => {

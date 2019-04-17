@@ -5,7 +5,7 @@ import { findModel, findModelConfig, mergeVNodeListeners, getInputEventName, nor
 export function withValidation (component, ctxToProps = null) {
   const options = isCallable(component) ? component.options : component;
   options.$__veeInject = false;
-  const hoc = {
+  const hoc: any = {
     name: `${options.name || 'AnonymousHoc'}WithValidation`,
     props: assign({}, ValidationProvider.props),
     data: ValidationProvider.data,

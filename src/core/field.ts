@@ -55,6 +55,28 @@ function computeModeSetting (ctx) {
   });
 }
 export default class Field {
+  el: any;
+  vid: any;
+  deps: any;
+  flags: any;
+  errors: any;
+  name: any;
+  _value: any;
+  vnode: any;
+  binding: any;
+  initialized: any;
+  opts: any;
+  validator: any;
+  rules: any;
+  isRequired: any;
+  _listeners: any;
+  ctx: any;
+  _waitingFor: any;
+  initialValue: any;
+  _cancellationToken: any;
+  _interactions: any;
+  isDisabled: any;
+
   constructor (el, binding, vnode) {
     defineNonReactive(this, 'el', el);
     defineNonReactive(this, 'vid', vnode.data.ref || uniqId());
@@ -139,7 +161,7 @@ export default class Field {
   }
 
   fieldDeps () {
-    const rules = normalizeRules(this.rules);
+    const rules: any = normalizeRules(this.rules);
     this.isRequired = !!rules.required;
 
     return Object.keys(rules).filter(RuleContainer.isTargetRule).map(rule => {
@@ -209,7 +231,7 @@ export default class Field {
     this.rules = rules;
     this.flags.required = !!this.rules.required;
     this.registerField(vnode);
-    const options = resolveFeatures(el, binding, vnode);
+    const options = resolveFeatures(binding, vnode);
     this.opts.classes = options.classes;
     this.opts.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
     const inputEvt = getInputEventName(this.vnode, model);
@@ -326,9 +348,9 @@ export default class Field {
     ) {
       this.addActionListeners();
     }
-    this.updateClasses();
-    this.updateAriaAttrs();
-    this.updateCustomValidity();
+    this.applyClasses();
+    this.applyAriaAttrs();
+    this.applyCustomValidity();
   }
 
   /**
