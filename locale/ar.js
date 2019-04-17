@@ -29,7 +29,7 @@ const messages = {
   decimal: (field, [decimals = '*'] = []) => `${field} يجب ان يكون قيمة رقمية وقد يحتوي على${decimals === '*' ? '' : ' ' + decimals} ارقام عشرية.`,
   digits: (field, [length]) => `${field} يجب ان تحتوي فقط على ارقام والا يزيد عددها عن ${length} رقم.`,
   dimensions: (field, [width, height]) => `${field} يجب ان تكون بمقاس ${width} بكسل في ${height} بكسل.`,
-  email: (field) => `${field} يجب ان يكون بريدا اليكتروني صحيح.`,
+  email: (field) => `${field} يجب ان يكون بريداً اليكتروناً صحيحاً.`,
   excluded: (field) => `الحقل ${field} غير صحيح.`,
   ext: (field) => `نوع ملف ${field} غير صحيح.`,
   image: (field) => `${field} يجب ان تكون صورة.`,
