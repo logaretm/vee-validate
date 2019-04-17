@@ -252,13 +252,6 @@ export default class Validator {
       params = params.length ? params : [true];
     }
 
-    if (rule.options.isDate) {
-      const dateFormat = this._getDateFormat(field.rules);
-      if (rule.name !== 'date_format') {
-        params.push(dateFormat);
-      }
-    }
-
     let result = validator(value, this._convertParamArrayToObj(params, rule.name));
 
     // If it is a promise.
