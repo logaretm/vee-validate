@@ -1,4 +1,5 @@
 const validate = (files, [size]) => {
+  if (!Array.isArray(files)) files = [files];
   if (isNaN(size)) {
     return false;
   }
