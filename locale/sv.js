@@ -10,7 +10,7 @@ const messages = {
   between: (field, [min, max]) => `Fältet ${field} måste vara mellan ${min} och ${max}.`,
   confirmed: (field, [target]) => `Fältet ${field} matchar inte ${target}.`,
   date_between: (field, [min, max]) => `Fältet ${field} måste vara mellan ${min} och ${max}.`,
-  date_format: (field, [target]) => `Fältet ${field} måste ha formatatet ${target}.`,
+  date_format: (field, [target]) => `Fältet ${field} måste ha formatet ${target}.`,
   decimal: (field, [decimals = '*'] = []) => `Fältet ${field} måste vara numeriskt och får innehålla ${(decimals === '*' ? '' : decimals)} decimaltecken.`,
   digits: (field, [length]) => `Fältet ${field} måste vara numeriskt och innehålla exakt ${length} siffor.`,
   dimensions: (field, [width, height]) => `Fältet ${field} måste vara ${width} pixlar bred och ${height} pixlar hög.`,
