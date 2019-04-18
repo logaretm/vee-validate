@@ -1,6 +1,6 @@
 import { validate as includes } from './included';
 
-const validate = (value, args) => {
+const validate = (value: any, args: any[]) => {
   return !includes(value, args);
 };
 

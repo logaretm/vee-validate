@@ -1,4 +1,4 @@
-const validate = (files, [size]) => {
+const validate = (files: any, [size]: any) => {
   if (isNaN(size)) {
     return false;
   }

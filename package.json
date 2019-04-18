@@ -41,6 +41,7 @@
     "@babel/preset-env": "^7.4.3",
     "@commitlint/cli": "^7.5.2",
     "@types/jest": "^24.0.11",
+    "@types/validator": "^10.11.0",
     "@vue/server-test-utils": "^1.0.0-beta.29",
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-core": "^7.0.0-bridge.0",

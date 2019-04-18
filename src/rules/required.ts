@@ -1,6 +1,6 @@
 import { isEmptyArray, isNullOrUndefined } from '../utils';
 
-const validate = (value, [invalidateFalse = false] = []) => {
+const validate = (value: any, [invalidateFalse = false] = []) => {
   if (isNullOrUndefined(value) || isEmptyArray(value)) {
     return false;
   }

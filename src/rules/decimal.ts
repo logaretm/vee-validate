@@ -1,6 +1,6 @@
 import { isNullOrUndefined } from '../utils';
 
-const validate = (value, { decimals = '*', separator = '.' } = {}) => {
+const validate = (value: any, { decimals = '*', separator = '.' }: any = {}): boolean => {
   if (isNullOrUndefined(value) || value === '') {
     return false;
   }

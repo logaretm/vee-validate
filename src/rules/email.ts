@@ -1,7 +1,7 @@
-import { isEmail } from 'validator';
+import * as isEmail from 'validator/lib/isEmail';
 import { assign } from '../utils';
 
-const validate = (value, { multiple = false, ...options } = {}) => {
+const validate = (value: string | string[], { multiple = false, ...options } = {}) => {
   if (multiple && !Array.isArray(value)) {
     value = String(value).split(',').map(emailStr => emailStr.trim());
   }

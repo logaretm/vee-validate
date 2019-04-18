@@ -1,10 +1,30 @@
 import { isCallable, merge } from '../utils';
 
+
+export type ValidatorMessageGenerator = string | ((field: string, args: any[], data: any) => string);
+
+export interface PartialI18nDictionary {
+  messages?: { [k: string]: ValidatorMessageGenerator };
+  attributes?: { [k: string]: string };
+  custom?: { [k: string]: { [r: string]: ValidatorMessageGenerator } };
+}
+
+export interface I18nDriver {
+  locale: string;
+
+  getFieldMessage (locale: string, field: string, key: string, data: any): string;
+
+  getAttribute (locale: string, key: string): string;
+
+  merge (partial: PartialI18nDictionary): void;
+}
+
+
 let LOCALE = 'en';
 
-export default class Dictionary {
+export default class Dictionary implements I18nDriver {
   container: any;
-  constructor (dictionary) {
+  constructor (dictionary: object) {
     this.container = {};
     this.merge(dictionary);
   }
@@ -17,11 +37,11 @@ export default class Dictionary {
     LOCALE = value || 'en';
   }
 
-  hasLocale (locale) {
+  hasLocale (locale: string) {
     return !!this.container[locale];
   }
 
-  getMessage (locale, key, data) {
+  getMessage (locale: string, key: string, data: any) {
     let message = null;
     if (!this._hasMessage(locale, key)) {
       message = this._getDefaultMessage(locale);
@@ -35,7 +55,7 @@ export default class Dictionary {
   /**
    * Gets a specific message for field. falls back to the rule message.
    */
-  getFieldMessage (locale, field, key, data) {
+  getFieldMessage(locale: string, field: string, key: string, data: any) {
     if (!this.hasLocale(locale)) {
       return this.getMessage(locale, key, data);
     }
@@ -49,7 +69,12 @@ export default class Dictionary {
     return isCallable(message) ? message(...data) : message;
   }
 
-  _getDefaultMessage (locale) {
+
+  merge(dictionary: PartialI18nDictionary) {
+    merge(this.container, dictionary);
+  }
+
+  _getDefaultMessage (locale: string) {
     if (this._hasMessage(locale, '_default')) {
       return this.container[locale].messages._default;
     }
@@ -57,7 +82,7 @@ export default class Dictionary {
     return this.container.en.messages._default;
   }
 
-  getAttribute (locale, key, fallback = '') {
+  getAttribute (locale: string, key: string, fallback = '') {
     if (!this._hasAttribute(locale, key)) {
       return fallback;
     }
@@ -65,7 +90,7 @@ export default class Dictionary {
     return this.container[locale].attributes[key];
   }
 
-  _hasMessage (locale, key) {
+  _hasMessage (locale: string, key: string): boolean {
     return !! (
       this.hasLocale(locale) &&
             this.container[locale].messages &&
@@ -73,15 +98,11 @@ export default class Dictionary {
     );
   }
 
-  _hasAttribute (locale, key) {
+  _hasAttribute (locale: string, key: string): boolean {
     return !! (
       this.hasLocale(locale) &&
             this.container[locale].attributes &&
             this.container[locale].attributes[key]
     );
-  }
-
-  merge (dictionary) {
-    merge(this.container, dictionary);
   }
 }

@@ -1,6 +1,7 @@
 import Field from './core/field';
+import { DirectiveOptions } from 'vue';
 
-export default {
+const directive: DirectiveOptions = {
   bind (el, binding, vnode) {
     const field = Field.from(el, vnode) || new Field(el, binding, vnode);
     field.onUpdate(el, binding, vnode);
@@ -20,3 +21,6 @@ export default {
     }
   }
 };
+
+
+export default directive;

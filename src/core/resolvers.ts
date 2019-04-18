@@ -1,16 +1,18 @@
+import { DirectiveBinding } from 'vue/types/options';
+import { VNode } from 'vue';
 import { resolveConfig, getConfig } from '../config';
-import { resolveRules, findModel } from '../utils/vnode';
+import { resolveRules, findModel, isTextInput } from '../utils/vnode';
 import {
   getDataAttribute,
   getPath,
   isCallable,
   includes,
   normalizeRules,
-  assign,
-  isTextInput
+  assign
 } from '../utils';
 
-export function resolveFeatures (binding, vnode) {
+
+export function resolveFeatures (binding: DirectiveBinding, vnode: VNode) {
   const options = resolveConfig(vnode.context);
 
   let bails = options.bails;
@@ -33,7 +35,7 @@ export function resolveFeatures (binding, vnode) {
   };
 }
 
-function getCtorConfig (vnode) {
+function getCtorConfig (vnode: VNode) {
   if (!vnode.componentInstance) return null;
 
   const config = getPath('componentInstance.$options.$_veeValidate', vnode);
@@ -41,7 +43,7 @@ function getCtorConfig (vnode) {
   return config;
 }
 
-export function resolveDirectiveRules (el, binding, vnode) {
+export function resolveDirectiveRules (el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
   let rules = '';
   if (binding.value && includes(['string', 'object'], typeof binding.value.rules)) {
     rules = binding.value.rules;
@@ -62,7 +64,7 @@ export function resolveDirectiveRules (el, binding, vnode) {
   return assign({}, resolveRules(vnode), normalized);
 }
 
-export function resolveAlias (el, vnode) {
+export function resolveAlias (el: HTMLElement, vnode: VNode) {
   const ctorConfig = getCtorConfig(vnode);
   let alias = null;
   if (ctorConfig && ctorConfig.alias) {
@@ -80,7 +82,7 @@ export function resolveAlias (el, vnode) {
   return alias;
 }
 
-export function resolveName (el, vnode) {
+export function resolveName (el: HTMLElement, vnode: VNode) {
   let name = getDataAttribute(el, 'name');
 
   if (!vnode.componentInstance && vnode.data.attrs.name) {
@@ -88,7 +90,7 @@ export function resolveName (el, vnode) {
   }
 
   if (!name && !vnode.componentInstance) {
-    return el.name;
+    return (el as HTMLInputElement).name;
   }
 
   if (!name && vnode.componentInstance && vnode.componentInstance.$attrs) {
@@ -103,30 +105,31 @@ export function resolveName (el, vnode) {
       return boundGetter();
     }
 
-    return vnode.componentInstance.name;
+    return (vnode.componentInstance as any).name;
   }
 
   return name;
 }
 
-export function resolveValue (el, vnode) {
+export function resolveValue (el: HTMLElement, vnode: VNode) {
   const model = findModel(vnode);
   if (model) {
     return model.value;
   }
 
-  if (isTextInput(el)) {
-    return el.value;
+  const input = el as HTMLInputElement;
+  if (isTextInput(vnode)) {
+    return input.value;
   }
 
-  if (el.type === 'file') {
-    return el.files;
+  if (input.type === 'file') {
+    return input.files;
   }
 
   // TODO: Radio and Checkboxes resolution.
 
-  if (el.tag === 'select') {
-    return el.value;
+  if (vnode.tag === 'select') {
+    return input.value;
   }
 
   return undefined;

@@ -29,12 +29,12 @@ beforeEach(() => {
 // eslint-disable-next-line
 test('validates image dimensions', async () => {
   let result = await validate([helpers.file('file.jpg', 'image/jpeg', 10)], [150, 100]);
-  expect(result[0].valid).toBe(true);
+  expect(result).toBe(true);
 
   // mock a failing Image, even with the right dimensions.
   fails = true;
   result = await validate([helpers.file('file.jpg', 'image/jpeg', 10)], [150, 100]);
-  expect(result[0].valid).toBe(false);
+  expect(result).toBe(false);
 
   fails = false;
   // not an image.
@@ -43,9 +43,9 @@ test('validates image dimensions', async () => {
 
   // wrong dimensions.
   result = await validate([helpers.file('file.jpg', 'image/jpeg', 10)], [15, 10]);
-  expect(result[0].valid).toBe(false);
+  expect(result).toBe(false);
 
   global.URL = undefined; // test webkit fallback.
   result = await validate([helpers.file('file.jpg', 'image/jpeg', 10)], [150, 100]);
-  expect(result[0].valid).toBe(true);
+  expect(result).toBe(true);
 });

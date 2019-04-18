@@ -1,12 +1,27 @@
-const aggressive = () => ({
+import { ValidationFlags } from "./utils";
+
+interface ModeContext {
+  errors: string[];
+  value: unknown;
+  flags: ValidationFlags;
+}
+
+export interface InteractionSetting {
+  on?: string[];
+  debounce?: number;
+}
+
+export type InteractionModeFactory = (ctx: ModeContext) => InteractionSetting;
+
+const aggressive: InteractionModeFactory = () => ({
   on: ['input']
 });
 
-const lazy = () => ({
+const lazy: InteractionModeFactory = () => ({
   on: ['change']
 });
 
-const eager = ({ errors }) => {
+const eager: InteractionModeFactory = ({ errors }) => {
   if (errors.length) {
     return {
       on: ['input']
@@ -18,11 +33,11 @@ const eager = ({ errors }) => {
   };
 };
 
-const passive = () => ({
+const passive: InteractionModeFactory = () => ({
   on: []
 });
 
-export const modes = {
+export const modes: { [k: string]: InteractionModeFactory } = {
   aggressive,
   eager,
   passive,

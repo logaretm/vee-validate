@@ -1,6 +1,7 @@
-import { formatFileSize, isDefinedGlobally } from './utils';
+import { formatFileSize } from './utils';
+import { ValidationMessageGenerator } from '../src/types';
 
-const messages = {
+const messages: { [k: string]: ValidationMessageGenerator } = {
   _default: (field) => `The ${field} value is not valid.`,
   after: (field, [target, inclusion]) => `The ${field} must be after ${inclusion ? 'or equal to ' : ''}${target}.`,
   alpha: (field) => `The ${field} field may only contain alphabetic characters.`,
@@ -49,10 +50,5 @@ const locale = {
   messages,
   attributes: {}
 };
-
-if (isDefinedGlobally()) {
-  // eslint-disable-next-line
-  VeeValidate.Validator.localize({ [locale.name]: locale });
-}
 
 export default locale;

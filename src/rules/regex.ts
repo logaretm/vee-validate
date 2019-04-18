@@ -1,4 +1,4 @@
-const validate = (value, { expression }) => {
+const validate = (value: any, { expression }: any): boolean => {
   if (typeof expression === 'string') {
     expression = new RegExp(expression);
   }

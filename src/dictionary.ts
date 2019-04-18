@@ -1,6 +1,6 @@
-import DefaultDictionary from './core/i18n';
+import DefaultDictionary, { I18nDriver } from './core/i18n';
 
-const drivers = {
+const drivers: { [x: string]: I18nDriver } = {
   default: new DefaultDictionary({
     en: {
       messages: {},
@@ -13,7 +13,7 @@ const drivers = {
 let currentDriver = 'default';
 
 export default class DictionaryResolver {
-  static setDriver (implementation) {
+  static setDriver (implementation: I18nDriver | string) {
     if (typeof implementation === 'string') {
       currentDriver = implementation;
       return;

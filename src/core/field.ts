@@ -1,9 +1,11 @@
+import { DirectiveBinding } from 'vue/types/options';
+import { VNode, VNodeDirective } from 'vue';
 import { resolveDirectiveRules, resolveName, resolveFeatures, resolveAlias, resolveValue } from './resolvers';
-import { Vue } from '../plugin';
+import { _Vue } from '../plugin';
 import { modes } from '../modes';
 import RuleContainer from './ruleContainer';
 import { addEventListener, normalizeEventValue } from '../utils/events';
-import { findModel, getInputEventName } from '../utils/vnode';
+import { findModel, getInputEventName, isTextInput, isCheckboxOrRadioInput } from '../utils/vnode';
 import { getValidator } from '../state';
 import {
   uniqId,
@@ -11,17 +13,19 @@ import {
   normalizeRules,
   isNullOrUndefined,
   toggleClass,
-  isTextInput,
   isCallable,
   toArray,
-  isCheckboxOrRadioInput,
   isEqual,
   values,
   defineNonReactive,
   assign,
-  includes
+  includes,
+  ValidationFlags
 } from '../utils';
 import { getConfig } from '../config';
+import { createObserver } from '../mapValidationState';
+import Validator from './validator';
+import { ValidationResult } from '../types';
 
 const DEFAULT_CLASSES = {
   touched: 'touched', // the control has been blurred
@@ -32,21 +36,13 @@ const DEFAULT_CLASSES = {
   dirty: 'dirty' // control has been interacted with
 };
 
-function createObserver () {
-  const state = Vue.observable({ refs: {} });
-  state.subscribe = (ctx) => {
-    Vue.set(state.refs, ctx.vid, ctx);
-  };
-
-  state.unsubscribe = (ctx) => {
-    Vue.delete(state.refs, ctx.vid);
-  };
-
-  return state;
-}
-
-function computeModeSetting (ctx) {
-  const compute = isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode];
+function computeModeSetting (ctx: Field) {
+  let compute;
+  if (typeof ctx.mode === 'string') {
+    compute = modes[ctx.mode];
+  } else {
+    compute = ctx.mode;
+  }
 
   return compute({
     errors: ctx.errors,
@@ -55,20 +51,20 @@ function computeModeSetting (ctx) {
   });
 }
 export default class Field {
-  el: any;
-  vid: any;
-  deps: any;
-  flags: any;
-  errors: any;
-  name: any;
+  el: HTMLElement;
+  vid: string;
+  deps: { [k: string]: Field };
+  flags: ValidationFlags;
+  errors: string[];
+  name: string;
   _value: any;
-  vnode: any;
-  binding: any;
-  initialized: any;
+  vnode: VNode;
+  binding: DirectiveBinding;
+  initialized: boolean;
   opts: any;
-  validator: any;
+  validator: Validator;
   rules: any;
-  isRequired: any;
+  isRequired: boolean;
   _listeners: any;
   ctx: any;
   _waitingFor: any;
@@ -77,12 +73,11 @@ export default class Field {
   _interactions: any;
   isDisabled: any;
 
-  constructor (el, binding, vnode) {
+  constructor (el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
     defineNonReactive(this, 'el', el);
     defineNonReactive(this, 'vid', vnode.data.ref || uniqId());
     defineNonReactive(this, 'deps', {});
     defineNonReactive(this, 'validator', getValidator());
-    defineNonReactive(this, 'vmId', vnode.context._uid);
     defineNonReactive(this, 'ctx', vnode.context);
     defineNonReactive(this, 'opts', {});
     defineNonReactive(this, 'binding', binding);
@@ -93,9 +88,9 @@ export default class Field {
     defineNonReactive(this, '_value', resolveValue(el, vnode));
     defineNonReactive(this, 'rules', resolveDirectiveRules(el, binding, vnode));
 
-    this.el._vid = this.vid;
-    this.flags = Vue.observable(createFlags());
-    this.errors = Vue.observable([]);
+    (this.el as any)._vid = this.vid;
+    this.flags = _Vue.observable(createFlags());
+    this.errors = _Vue.observable([]);
     this.name = resolveName(el, vnode);
     if (binding.modifiers.persist) {
       this.restoreFieldState();
@@ -122,12 +117,12 @@ export default class Field {
     return this.vnode.componentInstance;
   }
 
-  static from (el, vnode) {
+  static from (el: any, vnode: any): Field | undefined {
     if (!vnode.context.$_veeObserver) {
       return null;
     }
 
-    return vnode.context.$_veeObserver.refs[el._vid];
+    return vnode.context.$_veeObserver.state.refs[el._vid];
   }
 
   validate () {
@@ -170,7 +165,7 @@ export default class Field {
   }
 
   createValuesLookup () {
-    const fields = this.ctx.$_veeObserver.refs;
+    const fields = (this.ctx as any).$_veeObserver.state.refs;
 
     return this.fieldDeps().reduce((acc, depName) => {
       if (!fields[depName]) {
@@ -185,7 +180,7 @@ export default class Field {
     }, {});
   }
 
-  onModelUpdated (model) {
+  onModelUpdated(model: VNodeDirective) {
     if (model.value === this.value) {
       return;
     }
@@ -212,7 +207,7 @@ export default class Field {
     });
   }
 
-  applyResult ({ valid, errors }) {
+  applyResult ({ valid, errors }: { valid: boolean, errors: string[] }) {
     this.flags.valid = valid;
     this.flags.invalid = !valid;
     this.errors = errors;
@@ -221,7 +216,7 @@ export default class Field {
     this.applyCustomValidity();
   }
 
-  onUpdate (el, binding, vnode) {
+  onUpdate (el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
     this.el = el;
     this.binding = binding;
     this.vnode = vnode;
@@ -252,7 +247,7 @@ export default class Field {
     this.initialized = true;
   }
 
-  registerField (vnode) {
+  registerField (vnode: any) {
     if (!vnode.context.$_veeObserver) {
       vnode.context.$_veeObserver = createObserver();
     }
@@ -260,8 +255,8 @@ export default class Field {
     vnode.context.$_veeObserver.subscribe(this);
   }
 
-  addListeners (el, events) {
-    const handler = (e) => {
+  addListeners (el: HTMLElement, events: string[]) {
+    const handler = (e: unknown) => {
       const value = normalizeEventValue(e);
       this.value = value;
       this.flags.changed = this.value !== this.initialValue;
@@ -286,11 +281,11 @@ export default class Field {
   /**
    * Keeps a reference of the most current validation run.
    */
-  waitFor (pendingPromise) {
+  waitFor(pendingPromise: Promise<ValidationResult>) {
     this._waitingFor = pendingPromise;
   }
 
-  isWaitingFor (promise) {
+  isWaitingFor (promise: Promise<ValidationResult>) {
     return this._waitingFor === promise;
   }
 
@@ -322,8 +317,8 @@ export default class Field {
   /**
    * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
    */
-  setFlags (flags) {
-    const negated = {
+  setFlags (flags: Partial<ValidationFlags>) {
+    const negated: { [x: string]: string | undefined } = {
       pristine: 'dirty',
       dirty: 'pristine',
       valid: 'invalid',
@@ -359,7 +354,7 @@ export default class Field {
   applyClasses (isReset = false) {
     if (!this.opts.classes || this.isDisabled) return;
 
-    const applyClasses = (el) => {
+    const applyClasses = (el: HTMLElement) => {
       toggleClass(el, this.opts.classNames.dirty, this.flags.dirty);
       toggleClass(el, this.opts.classNames.pristine, this.flags.pristine);
       toggleClass(el, this.opts.classNames.touched, this.flags.touched);
@@ -381,12 +376,12 @@ export default class Field {
       }
     };
 
-    if (!isCheckboxOrRadioInput(this.el)) {
+    if (!isCheckboxOrRadioInput(this.vnode)) {
       applyClasses(this.el);
       return;
     }
 
-    const els = document.querySelectorAll(`input[name="${this.el.name}"]`);
+    const els = document.querySelectorAll(`input[name="${(this.el as HTMLInputElement).name}"]`);
     toArray(els).forEach(applyClasses);
   }
 
@@ -406,7 +401,7 @@ export default class Field {
       }
     };
 
-    const inputEvent = isTextInput(this.el) ? 'input' : 'change';
+    const inputEvent = isTextInput(this.vnode) ? 'input' : 'change';
     const onInput = () => {
       this.flags.dirty = true;
       this.flags.pristine = false;
@@ -428,7 +423,7 @@ export default class Field {
 
     if (!this._interactions.blur) {
       // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
-      const blurEvent = isCheckboxOrRadioInput(this.el) ? 'change' : 'blur';
+      const blurEvent = isCheckboxOrRadioInput(this.vnode) ? 'change' : 'blur';
       this._interactions.blur = addEventListener(this.el, blurEvent, onBlur);
     }
   }
@@ -436,7 +431,7 @@ export default class Field {
   /**
    * Determines the list of events to listen to.
    */
-  _determineEventList (defaultInputEvent) {
+  _determineEventList (defaultInputEvent: string) {
     const { on } = computeModeSetting(this);
 
     return on.reduce((evts, evt) => {
@@ -465,9 +460,10 @@ export default class Field {
    * Updates the custom validity for the field.
    */
   applyCustomValidity () {
-    if (!this.opts.validity || !this.el || !isCallable(this.el.setCustomValidity)) return;
+    const input = this.el as HTMLInputElement;
+    if (!this.opts.validity || !input || !isCallable(input.setCustomValidity)) return;
 
-    this.el.setCustomValidity(this.errors[0] || '');
+    input.setCustomValidity(this.errors[0] || '');
   }
 
   /**
@@ -483,7 +479,7 @@ export default class Field {
     Object.keys(this._listeners).forEach(evt => this._listeners[evt]());
 
     // Remove cross-field references.
-    const fields = this.ctx.$_veeObserver.refs;
+    const fields = this.ctx.$_veeObserver.state.refs;
     this.fieldDeps().forEach(depName => {
       delete fields[depName].deps[this.vid];
     });

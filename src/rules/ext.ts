@@ -1,4 +1,4 @@
-const validate = (files, extensions) => {
+const validate = (files: File[], extensions: string[]) => {
   const regex = new RegExp(`.(${extensions.join('|')})$`, 'i');
 
   return files.every(file => regex.test(file.name));

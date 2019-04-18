@@ -1,4 +1,4 @@
-const validate = (files) => files.every(file => /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(file.name));
+const validate = (files: File[]) => files.every(file => /\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(file.name));
 
 export {
   validate

@@ -1,4 +1,7 @@
-const validate = (value, { targetValue }) => String(value) === String(targetValue);
+import { ValidationRuleFunction } from "../types";
+
+const validate: ValidationRuleFunction = (value, { targetValue }: any) => String(value) === String(targetValue);
+
 const options = {
   hasTarget: true
 };

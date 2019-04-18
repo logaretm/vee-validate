@@ -10,8 +10,10 @@ import { ValidationProvider, ValidationObserver, withValidation } from './compon
 
 const version = '__VERSION__';
 
-Object.keys(Rules).forEach(rule => {
-  Validator.extend(rule, Rules[rule].validate, assign({}, Rules[rule].options, { paramNames: Rules[rule].paramNames }));
+const RulesAsList: any[] = Object.keys(Rules).map(key => ({ rule: (Rules as any)[key], name: key }));
+
+RulesAsList.forEach(({ name, rule }) => {
+  Validator.extend(name, rule.validate, assign({}, rule.options, { paramNames: rule.paramNames }));
 });
 
 // Merge the english messages.

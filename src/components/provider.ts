@@ -4,196 +4,28 @@ import { modes } from '../modes';
 import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, normalizeEventValue } from '../utils/events';
-import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual } from '../utils';
+import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual, ValidationFlags } from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName, resolveRules } from '../utils/vnode';
+import { VNode, VNodeDirective, CreateElement, ComponentOptions, Component } from 'vue';
+import { ValidationResult } from '../types';
 
-let $validator = null;
+let $validator: Validator;
 
 let PROVIDER_COUNTER = 0;
 
-export function createValidationCtx (ctx) {
-  return {
-    errors: ctx.messages,
-    flags: ctx.flags,
-    classes: ctx.classes,
-    valid: ctx.isValid,
-    failedRules: ctx.failedRules,
-    reset: () => ctx.reset(),
-    validate: (...args) => ctx.validate(...args),
-    aria: {
-      'aria-invalid': ctx.flags.invalid ? 'true' : 'false',
-      'aria-required': ctx.isRequired ? 'true' : 'false'
-    }
-  };
+interface ProviderData {
+  messages: string[];
+  value: any;
+  initialized: boolean;
+  initialValue: any;
+  flags: ValidationFlags;
+  failedRules: { [k: string]: string };
+  forceRequired: boolean;
+  isDeactivated: boolean;
+  id: string;
 }
 
-/**
- * Determines if a provider needs to run validation.
- */
-function shouldValidate (ctx, model) {
-  // when an immediate/initial validation is needed and wasn't done before.
-  if (!ctx._ignoreImmediate && ctx.immediate) {
-    return true;
-  }
-
-  // when the value changes for whatever reason.
-  if (ctx.value !== model.value) {
-    return true;
-  }
-
-  // when it needs validation due to props/cross-fields changes.
-  if (ctx._needsValidation) {
-    return true;
-  }
-
-  // when the initial value is undefined and the field wasn't rendered yet.
-  if (!ctx.initialized && model.value === undefined) {
-    return true;
-  }
-
-  return false;
-}
-
-function computeModeSetting (ctx) {
-  const compute = isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode];
-
-  return compute({
-    errors: ctx.messages,
-    value: ctx.value,
-    flags: ctx.flags
-  });
-}
-
-export function onRenderUpdate (model) {
-  if (!this.initialized) {
-    this.initialValue = model.value;
-  }
-
-  const validateNow = shouldValidate(this, model);
-  this._needsValidation = false;
-  this.value = model.value;
-  this._ignoreImmediate = true;
-
-  if (!validateNow) {
-    return;
-  }
-
-  this.validateSilent().then(this.immediate || this.flags.validated ? this.applyResult : x => x);
-}
-
-// Creates the common handlers for a validatable context.
-export function createCommonHandlers (ctx) {
-  const onInput = (e) => {
-    ctx.syncValue(e); // track and keep the value updated.
-    ctx.setFlags({ dirty: true, pristine: false });
-  };
-
-  // Blur event listener.
-  const onBlur = () => {
-    ctx.setFlags({ touched: true, untouched: false });
-  };
-
-  let onValidate = ctx.$veeHandler;
-  const mode = computeModeSetting(ctx);
-
-  // Handle debounce changes.
-  if (!onValidate || ctx.$veeDebounce !== ctx.debounce) {
-    onValidate = debounce(
-      () => {
-        ctx.$nextTick(() => {
-          const pendingPromise = ctx.validateSilent();
-          // avoids race conditions between successive validations.
-          ctx._pendingValidation = pendingPromise;
-          pendingPromise.then(result => {
-            if (pendingPromise === ctx._pendingValidation) {
-              ctx.applyResult(result);
-              ctx._pendingValidation = null;
-            }
-          });
-        });
-      },
-      mode.debounce || ctx.debounce
-    );
-
-    // Cache the handler so we don't create it each time.
-    ctx.$veeHandler = onValidate;
-    // cache the debounce value so we detect if it was changed.
-    ctx.$veeDebounce = ctx.debounce;
-  }
-
-  return { onInput, onBlur, onValidate };
-}
-
-// Adds all plugin listeners to the vnode.
-function addListeners (node) {
-  const model = findModel(node);
-  // cache the input eventName.
-  this._inputEventName = this._inputEventName || getInputEventName(node, model);
-
-  onRenderUpdate.call(this, model);
-
-  const { onInput, onBlur, onValidate } = createCommonHandlers(this);
-  addVNodeListener(node, this._inputEventName, onInput);
-  addVNodeListener(node, 'blur', onBlur);
-
-  // add the validation listeners.
-  this.normalizedEvents.forEach(evt => {
-    addVNodeListener(node, evt, onValidate);
-  });
-
-  this.initialized = true;
-}
-
-function createValuesLookup (ctx) {
-  let providers = ctx.$_veeObserver.refs;
-
-  return ctx.fieldDeps.reduce((acc, depName) => {
-    if (!providers[depName]) {
-      return acc;
-    }
-
-    acc[depName] = providers[depName].value;
-
-    return acc;
-  }, {});
-}
-
-function updateRenderingContextRefs (ctx) {
-  // IDs should not be nullable.
-  if (isNullOrUndefined(ctx.id) && ctx.id === ctx.vid) {
-    ctx.id = PROVIDER_COUNTER;
-    PROVIDER_COUNTER++;
-  }
-
-  const { id, vid } = ctx;
-  // Nothing has changed.
-  if (ctx.isDeactivated || (id === vid && ctx.$_veeObserver.refs[id])) {
-    return;
-  }
-
-  // vid was changed.
-  if (id !== vid && ctx.$_veeObserver.refs[id] === ctx) {
-    ctx.$_veeObserver.unsubscribe(ctx);
-  }
-
-  ctx.$_veeObserver.subscribe(ctx);
-  ctx.id = vid;
-}
-
-function createObserver () {
-  return {
-    refs: {},
-    subscribe (ctx) {
-      this.refs[ctx.vid] = ctx;
-    },
-    unsubscribe (ctx) {
-      delete this.refs[ctx.vid];
-    }
-  };
-}
-
-export const ValidationProvider = {
-  $__veeInject: false,
+export const ValidationProvider: any = {
   inject: {
     $_veeObserver: {
       from: '$_veeObserver',
@@ -239,7 +71,7 @@ export const ValidationProvider = {
     },
     bails: {
       type: Boolean,
-      default: () => getConfig().fastExit
+      default: () => getConfig().bails
     },
     debounce: {
       type: Number,
@@ -253,12 +85,12 @@ export const ValidationProvider = {
   watch: {
     rules: {
       deep: true,
-      handler (val, oldVal) {
+      handler (val: any, oldVal: any) {
         this._needsValidation = !isEqual(val, oldVal);
       }
     }
   },
-  data: () => ({
+  data: (): ProviderData => ({
     messages: [],
     value: undefined,
     initialized: false,
@@ -313,24 +145,29 @@ export const ValidationProvider = {
     },
     classes () {
       const names = getConfig().classNames;
+      const acc: { [k: string]: any } = {};
       return Object.keys(this.flags).reduce((classes, flag) => {
         const className = (names && names[flag]) || flag;
         if (isNullOrUndefined(this.flags[flag])) {
           return classes;
         }
 
-        if (className) {
+        if (typeof className === 'string') {
           classes[className] = this.flags[flag];
+        } else if (Array.isArray(className)) {
+          className.forEach(cls => {
+            classes[cls] = this.flags[flag];
+          });
         }
 
         return classes;
-      }, {});
+      }, acc);
     },
     normalizedRules () {
       return normalizeRules(this.rules);
     }
   },
-  render (h) {
+  render(h: CreateElement): VNode {
     this.registerField();
     const ctx = createValidationCtx(this);
 
@@ -367,13 +204,13 @@ export const ValidationProvider = {
     this.isDeactivated = true;
   },
   methods: {
-    setFlags (flags) {
+    setFlags (flags: Partial<ValidationFlags>) {
       Object.keys(flags).forEach(flag => {
         this.flags[flag] = flags[flag];
       });
     },
-    syncValue (e) {
-      const value = normalizeEventValue(e);
+    syncValue (v: any) {
+      const value = normalizeEventValue(v);
       this.value = value;
       this.flags.changed = this.initialValue !== value;
     },
@@ -384,18 +221,18 @@ export const ValidationProvider = {
       const flags = createFlags();
       this.setFlags(flags);
     },
-    validate (...args) {
+    validate(...args: any[]): Promise<ValidationResult> {
       if (args.length > 0) {
         this.syncValue(args[0]);
       }
 
-      return this.validateSilent().then(result => {
+      return this.validateSilent().then((result: ValidationResult) => {
         this.applyResult(result);
 
         return result;
       });
     },
-    validateSilent () {
+    validateSilent(): Promise<ValidationResult> {
       this.setFlags({ pending: true });
       const rules = assign({}, this._resolvedRules, this.normalizedRules);
 
@@ -414,7 +251,7 @@ export const ValidationProvider = {
         return result;
       });
     },
-    applyResult ({ errors, failedRules }) {
+    applyResult ({ errors, failedRules }: ValidationResult) {
       this.messages = errors;
       this.failedRules = assign({}, failedRules);
       this.setFlags({
@@ -426,10 +263,193 @@ export const ValidationProvider = {
     },
     registerField () {
       if (!$validator) {
-        $validator = getValidator() || new Validator({ bails: getConfig().fastExit });
+        $validator = getValidator() || new Validator({ bails: getConfig().bails });
       }
 
       updateRenderingContextRefs(this);
     }
   }
 };
+
+
+export function createValidationCtx(ctx: any) {
+  return {
+    errors: ctx.messages,
+    flags: ctx.flags,
+    classes: ctx.classes,
+    valid: ctx.isValid,
+    failedRules: ctx.failedRules,
+    reset: () => ctx.reset(),
+    validate: (...args: any[]) => ctx.validate(...args),
+    aria: {
+      'aria-invalid': ctx.flags.invalid ? 'true' : 'false',
+      'aria-required': ctx.isRequired ? 'true' : 'false'
+    }
+  };
+}
+
+/**
+ * Determines if a provider needs to run validation.
+ */
+function shouldValidate(ctx: any, model: VNodeDirective) {
+  // when an immediate/initial validation is needed and wasn't done before.
+  if (!ctx._ignoreImmediate && ctx.immediate) {
+    return true;
+  }
+
+  // when the value changes for whatever reason.
+  if (ctx.value !== model.value) {
+    return true;
+  }
+
+  // when it needs validation due to props/cross-fields changes.
+  if (ctx._needsValidation) {
+    return true;
+  }
+
+  // when the initial value is undefined and the field wasn't rendered yet.
+  if (!ctx.initialized && model.value === undefined) {
+    return true;
+  }
+
+  return false;
+}
+
+function computeModeSetting(ctx: any) {
+  const compute = isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode];
+
+  return compute({
+    errors: ctx.messages,
+    value: ctx.value,
+    flags: ctx.flags
+  });
+}
+
+export function onRenderUpdate(model: VNodeDirective) {
+  if (!this.initialized) {
+    this.initialValue = model.value;
+  }
+
+  const validateNow = shouldValidate(this, model);
+  this._needsValidation = false;
+  this.value = model.value;
+  this._ignoreImmediate = true;
+
+  if (!validateNow) {
+    return;
+  }
+
+  this.validateSilent().then(this.immediate || this.flags.validated ? this.applyResult : (x: any) => x);
+}
+
+// Creates the common handlers for a validatable context.
+export function createCommonHandlers(ctx: any) {
+  const onInput = (e: any) => {
+    ctx.syncValue(e); // track and keep the value updated.
+    ctx.setFlags({ dirty: true, pristine: false });
+  };
+
+  // Blur event listener.
+  const onBlur = () => {
+    ctx.setFlags({ touched: true, untouched: false });
+  };
+
+  let onValidate = ctx.$veeHandler;
+  const mode = computeModeSetting(ctx);
+
+  // Handle debounce changes.
+  if (!onValidate || ctx.$veeDebounce !== ctx.debounce) {
+    onValidate = debounce(
+      () => {
+        ctx.$nextTick(() => {
+          const pendingPromise: Promise<ValidationResult> = ctx.validateSilent();
+          // avoids race conditions between successive validations.
+          ctx._pendingValidation = pendingPromise;
+          pendingPromise.then(result => {
+            if (pendingPromise === ctx._pendingValidation) {
+              ctx.applyResult(result);
+              ctx._pendingValidation = null;
+            }
+          });
+        });
+      },
+      mode.debounce || ctx.debounce
+    );
+
+    // Cache the handler so we don't create it each time.
+    ctx.$veeHandler = onValidate;
+    // cache the debounce value so we detect if it was changed.
+    ctx.$veeDebounce = ctx.debounce;
+  }
+
+  return { onInput, onBlur, onValidate };
+}
+
+// Adds all plugin listeners to the vnode.
+function addListeners(node: VNode) {
+  const model = findModel(node);
+  // cache the input eventName.
+  this._inputEventName = this._inputEventName || getInputEventName(node, model);
+
+  onRenderUpdate.call(this, model);
+
+  const { onInput, onBlur, onValidate } = createCommonHandlers(this);
+  addVNodeListener(node, this._inputEventName, onInput);
+  addVNodeListener(node, 'blur', onBlur);
+
+  // add the validation listeners.
+  this.normalizedEvents.forEach((evt: string) => {
+    addVNodeListener(node, evt, onValidate);
+  });
+
+  this.initialized = true;
+}
+
+function createValuesLookup(ctx: any) {
+  let providers = ctx.$_veeObserver.refs;
+  const reduced: { [k: string]: any } = {};
+
+  return ctx.fieldDeps.reduce((acc: typeof reduced, depName: string) => {
+    if (!providers[depName]) {
+      return acc;
+    }
+
+    acc[depName] = providers[depName].value;
+
+    return acc;
+  }, reduced);
+}
+
+function updateRenderingContextRefs(ctx: any) {
+  // IDs should not be nullable.
+  if (isNullOrUndefined(ctx.id) && ctx.id === ctx.vid) {
+    ctx.id = PROVIDER_COUNTER;
+    PROVIDER_COUNTER++;
+  }
+
+  const { id, vid } = ctx;
+  // Nothing has changed.
+  if (ctx.isDeactivated || (id === vid && ctx.$_veeObserver.refs[id])) {
+    return;
+  }
+
+  // vid was changed.
+  if (id !== vid && ctx.$_veeObserver.refs[id] === ctx) {
+    ctx.$_veeObserver.unsubscribe(ctx);
+  }
+
+  ctx.$_veeObserver.subscribe(ctx);
+  ctx.id = vid;
+}
+
+function createObserver() {
+  return {
+    refs: {},
+    subscribe(ctx: any) {
+      this.refs[ctx.vid] = ctx;
+    },
+    unsubscribe(ctx: any) {
+      delete this.refs[ctx.vid];
+    }
+  };
+}

@@ -3,7 +3,7 @@
  * https://github.com/chriso/validator.js/blob/master/src/lib/alpha.js
  */
 
-export const alpha = {
+export const alpha: { [k: string]: RegExp } = {
   en: /^[A-Z]*$/i,
   cs: /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]*$/i,
   da: /^[A-ZÆØÅ]*$/i,
@@ -26,7 +26,7 @@ export const alpha = {
   az: /^[A-ZÇƏĞİıÖŞÜ]*$/i
 };
 
-export const alphaSpaces = {
+export const alphaSpaces: { [k: string]: RegExp } = {
   en: /^[A-Z\s]*$/i,
   cs: /^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s]*$/i,
   da: /^[A-ZÆØÅ\s]*$/i,
@@ -49,7 +49,7 @@ export const alphaSpaces = {
   az: /^[A-ZÇƏĞİıÖŞÜ\s]*$/i
 };
 
-export const alphanumeric = {
+export const alphanumeric: { [k: string]: RegExp } = {
   en: /^[0-9A-Z]*$/i,
   cs: /^[0-9A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]*$/i,
   da: /^[0-9A-ZÆØÅ]$/i,
@@ -72,7 +72,7 @@ export const alphanumeric = {
   az: /^[0-9A-ZÇƏĞİıÖŞÜ]*$/i
 };
 
-export const alphaDash = {
+export const alphaDash: { [k: string]: RegExp } = {
   en: /^[0-9A-Z_-]*$/i,
   cs: /^[0-9A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ_-]*$/i,
   da: /^[0-9A-ZÆØÅ_-]*$/i,

@@ -1,7 +1,9 @@
-const RULES = {};
+import { ValidationRuleSchema } from "../types";
+
+const RULES: { [k: string]: ValidationRuleSchema } = {};
 
 export default class RuleContainer {
-  static add (name, { validate, options, paramNames }) {
+  static add (name: string, { validate, options, paramNames }: ValidationRuleSchema) {
     RULES[name] = {
       validate,
       options,
@@ -9,31 +11,31 @@ export default class RuleContainer {
     };
   }
 
-  static isImmediate (name) {
+  static isImmediate (name: string) {
     return !!(RULES[name] && RULES[name].options.immediate);
   }
 
-  static isRequireRule (name) {
+  static isRequireRule (name: string) {
     return !!(RULES[name] && RULES[name].options.computesRequired);
   }
 
-  static isTargetRule (name) {
+  static isTargetRule (name: string) {
     return !!(RULES[name] && RULES[name].options.hasTarget);
   }
 
-  static remove (ruleName) {
+  static remove (ruleName: string) {
     delete RULES[ruleName];
   }
 
-  static getParamNames (ruleName) {
+  static getParamNames (ruleName: string) {
     return RULES[ruleName] && RULES[ruleName].paramNames;
   }
 
-  static getOptions (ruleName) {
+  static getOptions (ruleName: string) {
     return RULES[ruleName] && RULES[ruleName].options;
   }
 
-  static getValidatorMethod (ruleName) {
+  static getValidatorMethod (ruleName: string) {
     return RULES[ruleName] ? RULES[ruleName].validate : null;
   }
 };

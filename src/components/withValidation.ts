@@ -1,10 +1,10 @@
 import { ValidationProvider, createValidationCtx, createCommonHandlers, onRenderUpdate } from './provider';
-import { assign, isCallable } from '../utils';
+import { assign } from '../utils';
 import { findModel, findModelConfig, mergeVNodeListeners, getInputEventName, normalizeSlots } from '../utils/vnode';
+import { CreateElement } from 'vue';
 
-export function withValidation (component, ctxToProps = null) {
-  const options = isCallable(component) ? component.options : component;
-  options.$__veeInject = false;
+export function withValidation (component: any, ctxToProps: any = null) {
+  const options = 'options' in component ? component.options : component;
   const hoc: any = {
     name: `${options.name || 'AnonymousHoc'}WithValidation`,
     props: assign({}, ValidationProvider.props),
@@ -18,12 +18,12 @@ export function withValidation (component, ctxToProps = null) {
 
   // Default ctx converts ctx props to component props.
   if (!ctxToProps) {
-    ctxToProps = ctx => ctx;
+    ctxToProps = (ctx: any) => ctx;
   }
 
   const eventName = (options.model && options.model.event) || 'input';
 
-  hoc.render = function (h) {
+  hoc.render = function (h: CreateElement) {
     this.registerField();
     const vctx = createValidationCtx(this);
     const listeners = assign({}, this.$listeners);
@@ -36,7 +36,7 @@ export function withValidation (component, ctxToProps = null) {
 
     mergeVNodeListeners(listeners, eventName, onInput);
     mergeVNodeListeners(listeners, 'blur', onBlur);
-    this.normalizedEvents.forEach((evt, idx) => {
+    this.normalizedEvents.forEach((evt: string) => {
       mergeVNodeListeners(listeners, evt, onValidate);
     });
 

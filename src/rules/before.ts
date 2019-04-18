@@ -1,6 +1,7 @@
 import { isValidDate } from '../utils';
+import { ValidationRuleFunction } from '../types';
 
-const validate = (value, { targetValue = null, inclusion = false } = {}) => {
+const validate: ValidationRuleFunction = (value, { targetValue = null, inclusion = false }: any = {}) => {
   // if either is not valid.
   if (!isValidDate(value) || !isValidDate(targetValue)) {
     return false;

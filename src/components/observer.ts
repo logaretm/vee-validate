@@ -1,6 +1,10 @@
 import { isCallable, values, findIndex, warn } from '../utils';
+import { ValidationResult } from '../types';
+import { CreateElement, VNode } from 'vue';
 
-const flagMergingStrategy = {
+const flagMergingStrategy: {
+  [x: string]: 'every' | 'some',
+} = {
   pristine: 'every',
   dirty: 'some',
   touched: 'some',
@@ -8,10 +12,10 @@ const flagMergingStrategy = {
   valid: 'every',
   invalid: 'some',
   pending: 'some',
-  validated: 'every'
+  validated: 'every',
 };
 
-function mergeFlags (lhs, rhs, strategy) {
+function mergeFlags (lhs: any, rhs: any, strategy: string) {
   const stratName = flagMergingStrategy[strategy];
 
   return [lhs, rhs][stratName](f => f);
@@ -19,7 +23,7 @@ function mergeFlags (lhs, rhs, strategy) {
 
 let OBSERVER_COUNTER = 0;
 
-export const ValidationObserver = {
+export const ValidationObserver: any = {
   name: 'ValidationObserver',
   provide () {
     return {
@@ -50,7 +54,7 @@ export const ValidationObserver = {
       }
     }
   },
-  data: () => ({
+  data: (): { refs: {}, observers: any[] } => ({
     refs: {},
     observers: [],
   }),
@@ -58,12 +62,12 @@ export const ValidationObserver = {
     ctx () {
       const ctx = {
         errors: {},
-        validate: (arg) => {
+        validate: (arg: any) => {
           const promise = this.validate(arg);
 
           return {
-            then (thenable) {
-              promise.then(success => {
+            then (thenable: { then: CallableFunction }) {
+              promise.then((success: boolean) => {
                 if (success && isCallable(thenable)) {
                   return Promise.resolve(thenable());
                 }
@@ -90,7 +94,7 @@ export const ValidationObserver = {
           acc[flag] = mergeFlags(acc[flag], flags[flag], flag);
         });
 
-        acc.errors[provider.vid] = provider.messages || values(provider.ctx.errors).reduce((errs, obsErrors) => {
+        acc.errors[provider.vid] = provider.messages || values(provider.ctx.errors).reduce((errs: any[], obsErrors) => {
           return errs.concat(obsErrors);
         }, []);
 
@@ -118,7 +122,7 @@ export const ValidationObserver = {
       this.$_veeObserver.unsubscribe(this, 'observer');
     }
   },
-  render (h) {
+  render (h: CreateElement): VNode {
     let slots = this.$scopedSlots.default;
     this._persistedStore = this._persistedStore || {};
     if (!isCallable(slots)) {
@@ -131,7 +135,7 @@ export const ValidationObserver = {
     }, slots(this.ctx));
   },
   methods: {
-    subscribe (subscriber, kind = 'provider') {
+    subscribe (subscriber: any, kind = 'provider') {
       if (kind === 'observer') {
         this.observers.push(subscriber);
         return;
@@ -142,32 +146,32 @@ export const ValidationObserver = {
         this.restoreProviderState(subscriber);
       }
     },
-    unsubscribe ({ vid }, kind = 'provider') {
+    unsubscribe ({ vid }: any, kind = 'provider') {
       if (kind === 'provider') {
         this.removeProvider(vid);
       }
 
-      const idx = findIndex(this.observers, o => o.vid === vid);
+      const idx = findIndex(this.observers, o => (o as any).vid === vid);
       if (idx !== -1) {
         this.observers.splice(idx, 1);
       }
     },
     validate ({ silent } = { silent: false }) {
       return Promise.all([
-        ...values(this.refs).map(ref => ref[silent ? 'validateSilent' : 'validate']().then(r => r.valid)),
-        ...this.observers.map(obs => obs.validate({ silent }))
+        ...values(this.refs).map((ref: any) => ref[silent ? 'validateSilent' : 'validate']().then((r: ValidationResult) => r.valid)),
+        ...this.observers.map((obs: any) => obs.validate({ silent }))
       ]).then(results => results.every(r => r));
     },
     reset () {
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
     },
-    restoreProviderState (provider) {
+    restoreProviderState (provider: any) {
       const state = this._persistedStore[provider.vid];
       provider.setFlags(state.flags);
       provider.applyResult(state);
       delete this._persistedStore[provider.vid];
     },
-    removeProvider (vid) {
+    removeProvider (vid: string) {
       const provider = this.refs[vid];
       // save it for the next time.
       if (provider && provider.persist) {

@@ -1,7 +1,7 @@
 import { isIP } from 'validator';
 import { isNullOrUndefined } from '../utils';
 
-const validate = (value, { version = 4 } = {}) => {
+const validate = (value: any, { version = 4 } = {}) => {
   if (isNullOrUndefined(value)) {
     value = '';
   }

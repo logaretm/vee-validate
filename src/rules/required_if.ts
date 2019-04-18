@@ -1,6 +1,6 @@
 import { isEmptyArray } from '../utils';
 
-const validate = (value, [otherFieldVal, ...possibleVals]) => {
+const validate = (value: any, [otherFieldVal, ...possibleVals]: any) => {
   let required = possibleVals.includes(String(otherFieldVal).trim());
 
   if (!required) {

@@ -1,25 +1,18 @@
-export const isTextInput = (el) => {
-  return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'textarea', 'number'], el.type);
-};
-
-export const isCheckboxOrRadioInput = (el) => {
-  return includes(['radio', 'checkbox'], el.type);
-};
-
-export const isValidDate = (value) => {
-  if (!value) {
-    return false;
+export const isValidDate = (value: unknown): value is Date => {
+  const valueAsDate = value as any;
+  if (valueAsDate && isCallable(valueAsDate.getTime)) {
+    return !isNaN(valueAsDate.getTime());
   }
 
-  return isCallable(value.getTime) && !isNaN(value.getTime());
+  return false;
 };
 
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
-export const getDataAttribute = (el, name) => el.getAttribute(`data-vv-${name}`);
+export const getDataAttribute = (el: HTMLElement, name: string) => el.getAttribute(`data-vv-${name}`);
 
-export const isNaN = (value) => {
+export const isNaN = (value: unknown) => {
   // NaN is the one value that does not equal itself.
   // eslint-disable-next-line
   return value !== value;
@@ -28,16 +21,28 @@ export const isNaN = (value) => {
 /**
  * Checks if the values are either null or undefined.
  */
-export const isNullOrUndefined = (...values) => {
-  return values.every(value => {
-    return value === null || value === undefined;
-  });
+export const isNullOrUndefined = (value: unknown): value is undefined | null => {
+  return value === null || value === undefined;
 };
+
+export interface ValidationFlags {
+  untouched: boolean;
+  touched: boolean;
+  dirty: boolean;
+  pristine: boolean;
+  valid: boolean | null;
+  invalid: boolean | null;
+  validated: boolean;
+  pending: boolean;
+  required: boolean;
+  changed: boolean;
+  [x: string]: boolean | undefined;
+}
 
 /**
  * Creates the default flags object.
  */
-export const createFlags = () => ({
+export const createFlags = (): ValidationFlags => ({
   untouched: true,
   touched: false,
   dirty: false,
@@ -53,7 +58,7 @@ export const createFlags = () => ({
 /**
  * Shallow object comparison.
  */
-export const isEqual = (lhs, rhs) => {
+export const isEqual = (lhs: any, rhs: any): boolean => {
   if (lhs instanceof RegExp && rhs instanceof RegExp) {
     return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
   }
@@ -89,7 +94,7 @@ export const isEqual = (lhs, rhs) => {
 /**
  * Gets the value in an object safely.
  */
-export const getPath = (path, target, def = undefined) => {
+export const getPath = (path: string, target: any, def: any = undefined) => {
   if (!path || !target) return def;
 
   let value = target;
@@ -111,8 +116,8 @@ export const getPath = (path, target, def = undefined) => {
 /**
  * Parses a rule string expression.
  */
-export const parseRule = (rule) => {
-  let params = [];
+export const parseRule = (rule: string) => {
+  let params: string[] = [];
   const name = rule.split(':')[0];
 
   if (includes(rule, ':')) {
@@ -125,14 +130,14 @@ export const parseRule = (rule) => {
 /**
  * Debounces a function.
  */
-export const debounce = (fn, wait = 0, token = { cancelled: false }) => {
+export const debounce = (fn: Function, wait = 0, token = { cancelled: false }) => {
   if (wait === 0) {
     return fn;
   }
 
-  let timeout;
+  let timeout: ReturnType<typeof setTimeout>;
 
-  return (...args) => {
+  return (...args: any[]) => {
     const later = () => {
       timeout = null;
 
@@ -149,17 +154,16 @@ export const debounce = (fn, wait = 0, token = { cancelled: false }) => {
 /**
  * Normalizes the given rules expression.
  */
-export const normalizeRules = (rules) => {
+export const normalizeRules = (rules: any) => {
   // if falsy value return an empty object.
   if (!rules) {
     return {};
   }
 
+  const acc: { [x: string]: any } = {};
   if (isObject(rules)) {
-    // $FlowFixMe
     return Object.keys(rules).reduce((prev, curr) => {
       let params = [];
-      // $FlowFixMe
       if (rules[curr] === true) {
         params = [];
       } else if (Array.isArray(rules[curr])) {
@@ -170,13 +174,12 @@ export const normalizeRules = (rules) => {
         params = [rules[curr]];
       }
 
-      // $FlowFixMe
       if (rules[curr] !== false) {
         prev[curr] = params;
       }
 
       return prev;
-    }, {});
+    }, acc);
   }
 
   if (typeof rules !== 'string') {
@@ -192,35 +195,43 @@ export const normalizeRules = (rules) => {
 
     prev[parsedRule.name] = parsedRule.params;
     return prev;
-  }, {});
+  }, acc);
 };
 
 /**
  * Emits a warning to the console.
  */
-export const warn = (message) => {
+export const warn = (message: string) => {
   console.warn(`[vee-validate] ${message}`); // eslint-disable-line
 };
 
 /**
  * Creates a branded error object.
  */
-export const createError = (message) => new Error(`[vee-validate] ${message}`);
+export const createError = (message: string) => new Error(`[vee-validate] ${message}`);
 
 /**
  * Checks if the value is an object.
  */
-export const isObject = (obj) => obj !== null && obj && typeof obj === 'object' && ! Array.isArray(obj);
+export const isObject = (obj: unknown): obj is { [x: string]: any } => obj !== null && obj && typeof obj === 'object' && ! Array.isArray(obj);
 
 /**
  * Checks if a function is callable.
  */
-export const isCallable = (func) => typeof func === 'function';
+export const isCallable = (func: unknown): func is CallableFunction => typeof func === 'function';
+
+export function isPromise<T> (value: unknown): value is Promise<T> {
+  if (isObject(value)) {
+    return 'then' in value;
+  }
+
+  return false;
+}
 
 /**
  * Check if element has the css class on it.
  */
-export const hasClass = (el, className) => {
+export const hasClass = (el: HTMLElement, className: string) => {
   if (el.classList) {
     return el.classList.contains(className);
   }
@@ -231,7 +242,7 @@ export const hasClass = (el, className) => {
 /**
  * Adds the provided css className to the element.
  */
-export const addClass = (el, className) => {
+export const addClass = (el: HTMLElement, className: string) => {
   if (el.classList) {
     el.classList.add(className);
     return;
@@ -245,7 +256,7 @@ export const addClass = (el, className) => {
 /**
  * Remove the provided css className from the element.
  */
-export const removeClass = (el, className) => {
+export const removeClass = (el: HTMLElement, className: string) => {
   if (el.classList) {
     el.classList.remove(className);
     return;
@@ -260,7 +271,7 @@ export const removeClass = (el, className) => {
 /**
  * Adds or removes a class name on the input depending on the status flag.
  */
-export const toggleClass = (el, className, status) => {
+export const toggleClass = (el: HTMLElement, className: string, status: boolean) => {
   if (!el || !className) return;
 
   if (Array.isArray(className)) {
@@ -278,7 +289,7 @@ export const toggleClass = (el, className, status) => {
 /**
  * Converts an array-like object to array, provides a simple polyfill for Array.from
  */
-export const toArray = (arrayLike) => {
+export function toArray<T> (arrayLike: ArrayLike<T>): T[] {
   if (isCallable(Array.from)) {
     return Array.from(arrayLike);
   }
@@ -297,7 +308,7 @@ export const toArray = (arrayLike) => {
 /**
  * Assign polyfill from the mdn.
  */
-export const assign = (target, ...others) => {
+export const assign = (target: any, ...others: any[]) => {
   /* istanbul ignore else */
   if (isCallable(Object.assign)) {
     return Object.assign(target, ...others);
@@ -343,7 +354,7 @@ export const uniqId = () => {
   return newId;
 };
 
-export const findIndex = (arrayLike, predicate) => {
+export function findIndex<T> (arrayLike: ArrayLike<T>, predicate: (item: T) => boolean): number {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
   for (let i = 0; i < array.length; i++) {
     if (predicate(array[i])) {
@@ -357,14 +368,14 @@ export const findIndex = (arrayLike, predicate) => {
 /**
  * finds the first element that satisfies the predicate callback, polyfills array.find
  */
-export const find = (arrayLike, predicate) => {
+export function find<T> (arrayLike: ArrayLike<T>, predicate: (item: T) => boolean): T | undefined {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
   const idx = findIndex(array, predicate);
 
   return idx === -1 ? undefined : array[idx];
 };
 
-export const merge = (target, source) => {
+export const merge = (target: any, source: any) => {
   if (! (isObject(target) && isObject(source))) {
     return target;
   }
@@ -385,7 +396,7 @@ export const merge = (target, source) => {
   return target;
 };
 
-export const values = (obj) => {
+export function values<T> (obj: { [x: string] : T }): T[] {
   if (isCallable(Object.values)) {
     return Object.values(obj);
   }
@@ -395,15 +406,16 @@ export const values = (obj) => {
   return Object.keys(obj).map(k => obj[k]);
 };
 
-export const includes = (collection, item) => {
+export const includes = (collection: any[] | string, item: any) => {
   return collection.indexOf(item) !== -1;
 };
 
-export const isEmptyArray = (arr) => {
+
+export const isEmptyArray = (arr: any[]): boolean => {
   return Array.isArray(arr) && arr.length === 0;
 };
 
-export const defineNonReactive = (obj, prop, value) => {
+export const defineNonReactive = (obj: any, prop: string, value: any) => {
   Object.defineProperty(obj, prop, {
     configurable: false,
     writable: true,

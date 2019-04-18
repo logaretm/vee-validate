@@ -1,6 +1,6 @@
 import { alphaSpaces } from './alpha_helper';
 
-const validate = (value, { locale = '' } = {}) => {
+const validate = (value: any, { locale = '' } = {}): boolean => {
   if (Array.isArray(value)) {
     return value.every(val => validate(val, { locale }));
   }

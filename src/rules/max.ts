@@ -1,6 +1,6 @@
 import { isNullOrUndefined } from '../utils';
 
-const validate = (value, [length]) => {
+const validate = (value: any, [length]: any): boolean => {
   if (isNullOrUndefined(value)) {
     return length >= 0;
   }

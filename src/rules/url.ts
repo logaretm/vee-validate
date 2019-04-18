@@ -1,7 +1,7 @@
 import { isURL } from 'validator';
 import { assign, isNullOrUndefined } from '../utils';
 
-const validate = (value, options = {}) => {
+const validate = (value: any, options: any = {}) => {
   if (isNullOrUndefined(value)) {
     value = '';
   }

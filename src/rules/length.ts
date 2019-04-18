@@ -1,11 +1,6 @@
 import { isNullOrUndefined, toArray } from '../utils';
 
-/**
- * @param {Array|String} value
- * @param {Number} length
- * @param {Number} max
- */
-const compare = (value, length, max) => {
+const compare = (value: any[] | string, length: number, max: number) => {
   if (max === undefined) {
     return value.length === length;
   }
@@ -16,7 +11,7 @@ const compare = (value, length, max) => {
   return value.length >= length && value.length <= max;
 };
 
-const validate = (value, [length, max = undefined]) => {
+const validate = (value: any, [length, max = undefined]: any) => {
   if (isNullOrUndefined(value)) {
     return false;
   }

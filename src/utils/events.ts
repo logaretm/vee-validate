@@ -1,10 +1,22 @@
 import { isCallable, toArray } from './index';
 
-export const isEvent = (evt) => {
-  return (typeof Event !== 'undefined' && isCallable(Event) && evt instanceof Event) || (evt && evt.srcElement);
+export const isEvent = (evt: any): evt is Event => {
+  if (!evt) {
+    return false;
+  }
+
+   if (typeof Event !== 'undefined' && isCallable(Event) && evt instanceof Event) {
+     return true;
+   }
+
+  if (evt && evt.srcElement) {
+    return true;
+  }
+
+   return false;
 };
 
-export const normalizeEvents = (evts) => {
+export const normalizeEvents = (evts: string | string[]) => {
   if (!evts) return [];
 
   return (typeof evts === 'string' ? evts.split('|') : evts);
@@ -28,7 +40,7 @@ export const detectPassiveSupport = () => {
   return supportsPassive;
 };
 
-export const addEventListener = (el, eventName, handler) => {
+export const addEventListener = (el: HTMLElement, eventName: string, handler: EventHandlerNonNull) => {
   el.addEventListener(eventName, handler, supportsPassive ? { passive: true } : false);
 
   return () => {
@@ -36,10 +48,15 @@ export const addEventListener = (el, eventName, handler) => {
   };
 };
 
-export function normalizeEventValue (value) {
-  if (isEvent(value)) {
-    return value.target.type === 'file' ? toArray(value.target.files) : value.target.value;
+export function normalizeEventValue (value: unknown): any {
+  if (!isEvent(value)) {
+    return value;
   }
 
-  return value;
+  const input = value.target as HTMLInputElement;
+  if (input.type === 'file') {
+    return toArray(input.files);
+  }
+
+  return input.value;
 }

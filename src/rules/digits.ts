@@ -1,4 +1,4 @@
-const validate = (value, [length]) => {
+const validate = (value: any, [length]: any): boolean => {
   if (Array.isArray(value)) {
     return value.every(val => validate(val, [length]));
   }

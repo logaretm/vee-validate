@@ -1,4 +1,4 @@
-const validate = (value) => {
+const validate = (value: any) => {
   if (Array.isArray(value)) {
     return value.every(val => /^-?[0-9]+$/.test(String(val)));
   }
