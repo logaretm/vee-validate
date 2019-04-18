@@ -2,6 +2,7 @@ import * as utils from '@/utils';
 import * as dateUtils from '@/utils/date';
 import * as i18Utils from '../../locale/utils';
 import * as eventUtils from '@/utils/events';
+import helpers from '../helpers';
 
 test('gets the data attribute prefixed with the plugin', () => {
   document.body.innerHTML =
@@ -196,6 +197,17 @@ test('converts array like objects to arrays', () => {
 
   let array = utils.toArray(nodeList);
   expect(Array.isArray(array)).toBe(true);
+});
+
+test('converts file list or single file to array of files', () => {
+  const file = helpers.file('file.jpg', 'image/jpeg', 10);
+  expect(Array.isArray(file)).toBe(false);
+
+  const fileList = helpers.fileList([file]);
+  expect(Array.isArray(fileList)).toBe(false);
+
+  expect(Array.isArray(utils.ensureArray(file))).toBe(true);
+  expect(Array.isArray(utils.ensureArray(fileList))).toBe(true);
 });
 
 test('checks if a value path with exists', () => {

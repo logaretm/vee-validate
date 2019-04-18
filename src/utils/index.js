@@ -381,6 +381,17 @@ export const toArray = (arrayLike: { length: number }) => {
 };
 
 /**
+ * Converts an array-like object to array and place other elements in an array
+ */
+export const ensureArray = (arrayLike: any): array => {
+  if (Array.isArray(arrayLike)) {
+    return [...arrayLike];
+  }
+  const array = toArray(arrayLike);
+  return isEmptyArray(array) ? [arrayLike] : array;
+};
+
+/**
  * Assign polyfill from the mdn.
  */
 export const assign = (target: Object, ...others: any[]) => {
