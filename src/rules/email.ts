@@ -1,18 +1,16 @@
-import * as isEmail from 'validator/lib/isEmail';
 import { assign } from '../utils';
 
-const validate = (value: string | string[], { multiple = false, ...options } = {}) => {
+const validate = (value: string | string[], { multiple = false } = {}) => {
+  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (multiple && !Array.isArray(value)) {
     value = String(value).split(',').map(emailStr => emailStr.trim());
   }
 
-  const validatorOptions = assign({}, options);
-
   if (Array.isArray(value)) {
-    return value.every(val => isEmail(String(val), validatorOptions));
+    return value.every(val => re.test(String(val)));
   }
 
-  return isEmail(String(value), validatorOptions);
+  return re.test(String(value));
 };
 
 export {

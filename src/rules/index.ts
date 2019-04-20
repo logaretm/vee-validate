@@ -7,7 +7,6 @@ import alpha_spaces from './alpha_spaces';
 import before from './before';
 import between from './between';
 import confirmed from './confirmed';
-import credit_card from './credit_card';
 import date_between from './date_between';
 import decimal from './decimal';
 import digits from './digits';
@@ -18,8 +17,6 @@ import ext from './ext';
 import image from './image';
 import included from './included';
 import integer from './integer';
-import ip from './ip';
-import ip_or_fqdn from './ip_or_fqdn';
 import is from './is';
 import is_not from './is_not';
 import length from './length';
@@ -33,7 +30,6 @@ import regex from './regex';
 import required from './required';
 import required_if from './required_if';
 import size from './size';
-import url from './url';
 
 export {
   after,
@@ -44,7 +40,6 @@ export {
   before,
   between,
   confirmed,
-  credit_card,
   date_between,
   decimal,
   digits,
@@ -55,8 +50,6 @@ export {
   included,
   integer,
   length,
-  ip,
-  ip_or_fqdn,
   is_not,
   is,
   max,
@@ -69,6 +62,5 @@ export {
   regex,
   required,
   required_if,
-  size,
-  url
+  size
 };
