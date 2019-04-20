@@ -6,6 +6,7 @@ const path = require('path');
 const mkdirpNode = require('mkdirp');
 const { promisify } = require('util');
 const chalk = require('chalk');
+const typescript = require('rollup-plugin-typescript2');
 const resolve = require('rollup-plugin-node-resolve');
 const { paths, uglifyOptions } = require('./config');
 
@@ -17,6 +18,7 @@ const mkdirp = promisify(mkdirpNode);
 
 async function build () {
   await mkdirp(path.join(paths.dist, 'locale'));
+  // eslint-disable-next-line
   console.log(chalk.cyan('Building locales...'));
 
   for (let i = 0; i < files.length; i++) {
@@ -27,13 +29,13 @@ async function build () {
     if (/utils/.test(file)) continue;
 
     const input = path.join(__dirname, '..', 'locale', file);
-    const outputPath = path.join(paths.dist, 'locale', file);
+    const outputPath = path.join(paths.dist, 'locale', file.replace('.ts', '.js'));
 
     const bundle = await rollup({
       cache,
       input,
       external: ['VeeValidate'],
-      plugins: [buble(), resolve()],
+      plugins: [typescript(), buble(), resolve()],
     });
     const { output } = await bundle.generate({
       format: 'umd',

@@ -7,3 +7,4 @@ coverage
 .vs
 yarn-error.log
 dist
+.rpt2_cache

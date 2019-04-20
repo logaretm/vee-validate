@@ -7,19 +7,19 @@
   "module": "dist/vee-validate.esm.js",
   "unpkg": "dist/vee-validate.js",
   "main": "dist/vee-validate.js",
-  "typings": "types/index.d.ts",
+  "typings": "dist/types/index.d.ts",
   "homepage": "https://baianat.github.io/vee-validate/",
   "repository": "https://github.com/baianat/vee-validate",
   "scripts": {
     "test": "jest",
-    "lint": "eslint src tests --fix",
+    "lint": "tslint --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "flow": "flow",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "docs:deploy": "./scripts/deploy.sh",
     "build:locale": "node scripts/locale.js",
     "build:main": "node scripts/main.js",
-    "build": "npm run build:umd && npm run build:esm && npm run build:locale",
+    "build": "npm run build:main && npm run build:locale",
     "cover": "jest --coverage"
   },
   "keywords": [
@@ -33,7 +33,7 @@
   "files": [
     "dist/*.js",
     "dist/locale/*.js",
-    "types/*.d.ts"
+    "dist/types/*.d.ts"
   ],
   "devDependencies": {
     "@babel/core": "^7.4.3",
@@ -64,6 +64,7 @@
     "lint-staged": "^8.1.5",
     "mkdirp": "^0.5.1",
     "polish-plurals": "^1.1.0",
+    "prettier": "^1.17.0",
     "rollup": "^1.10.0",
     "rollup-plugin-buble": "^0.19.6",
     "rollup-plugin-commonjs": "^9.3.4",
@@ -73,6 +74,7 @@
     "ts-jest": "^24.0.2",
     "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
+    "tslint-config-standard": "^8.0.1",
     "typescript": "^3.4.3",
     "uglify-js": "^3.5.4",
     "validator": "^10.8.0",
@@ -94,6 +96,11 @@
     }
   },
   "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "git add",
+      "jest --maxWorkers=1 --bail --findRelatedTests"
+    ],
     "*.js": [
       "eslint --fix",
       "git add",

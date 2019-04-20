@@ -9,3 +9,11 @@ export const formatFileSize = (size: number | string): string => {
 
   return `${(size / Math.pow(threshold, i)).toFixed(2)} ${units[i]}`;
 };
+
+
+/**
+ * Checks if vee-validate is defined globally.
+ */
+export const isDefinedGlobally = () => {
+  return typeof (window as any).VeeValidate !== 'undefined';
+};

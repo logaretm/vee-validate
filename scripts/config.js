@@ -5,7 +5,7 @@ const filesize = require('filesize');
 const uglify = require('uglify-js');
 const chalk = require('chalk');
 const gzipSize = require('gzip-size');
-const buble = require('rollup-plugin-buble');
+const typescript = require('rollup-plugin-typescript2');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const replace = require('rollup-plugin-replace');
@@ -43,6 +43,7 @@ const utils = {
     let outputPath = path.join(paths.dist, fileName);
     fs.writeFileSync(outputPath, code);
     let stats = this.stats({ code, path: outputPath });
+    // eslint-disable-next-line
     console.log(`${chalk.green('Output File:')} ${fileName} ${stats}`);
 
     if (minify) {
@@ -50,6 +51,7 @@ const utils = {
       outputPath = path.join(paths.dist, minifiedFileName);
       fs.writeFileSync(outputPath, uglify.minify(code, commons.uglifyOptions).code);
       stats = this.stats({ code, path: outputPath });
+      // eslint-disable-next-line
       console.log(`${chalk.green('Output File:')} ${minifiedFileName} ${stats}`);
     }
 
@@ -58,40 +60,28 @@ const utils = {
 };
 
 const builds = {
-  umdDev: {
-    input: 'src/index.js',
-    format: 'umd',
-    name: 'VeeValidate',
-    env: 'development'
-  },
-  umdProd: {
-    input: 'src/index.js',
+  umd: {
+    input: 'src/index.ts',
     format: 'umd',
     name: 'VeeValidate',
     env: 'production'
   },
-  umdMinimalDev: {
-    input: 'src/index.minimal.js',
-    format: 'umd',
-    name: 'VeeValidate',
-    env: 'development'
-  },
-  umdMinimalProd: {
-    input: 'src/index.minimal.js',
+  umdMinimal: {
+    input: 'src/index.minimal.ts',
     format: 'umd',
     name: 'VeeValidate',
     env: 'production'
   },
   esm: {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     format: 'es'
   },
   esmMinimal: {
-    input: 'src/index.minimal.js',
+    input: 'src/index.minimal.ts',
     format: 'es'
   },
   rules: {
-    input: 'src/rules/index.js',
+    input: 'src/rules/index.ts',
     format: 'es'
   }
 };
@@ -101,12 +91,12 @@ function genConfig (options) {
     input: {
       input: options.input,
       plugins: [
+        typescript({ useTsconfigDeclarationDir: true }),
         replace({ __VERSION__: version }),
         resolve(),
         commonjs({
           include: 'node_modules/validator/**',
         }),
-        buble()
       ]
     },
     output: {

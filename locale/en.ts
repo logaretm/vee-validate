@@ -1,4 +1,4 @@
-import { formatFileSize } from './utils';
+import { formatFileSize, isDefinedGlobally } from './utils';
 import { ValidationMessageGenerator } from '../src/types';
 
 const messages: { [k: string]: ValidationMessageGenerator } = {
@@ -50,5 +50,10 @@ const locale = {
   messages,
   attributes: {}
 };
+
+if (isDefinedGlobally()) {
+  // eslint-disable-next-line
+  (window as any).VeeValidate.Validator.localize({ [locale.name]: locale });
+}
 
 export default locale;
