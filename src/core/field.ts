@@ -1,12 +1,23 @@
-import { DirectiveBinding } from 'vue/types/options';
-import { VNode, VNodeDirective } from 'vue';
-import { resolveDirectiveRules, resolveName, resolveFeatures, resolveAlias, resolveValue } from './resolvers';
-import { _Vue } from '../plugin';
-import { modes } from '../modes';
-import RuleContainer from './ruleContainer';
-import { addEventListener, normalizeEventValue } from '../utils/events';
-import { findModel, getInputEventName, isTextInput, isCheckboxOrRadioInput } from '../utils/vnode';
-import { getValidator } from '../state';
+import { DirectiveBinding } from "vue/types/options";
+import { VNode, VNodeDirective } from "vue";
+import {
+  resolveDirectiveRules,
+  resolveName,
+  resolveFeatures,
+  resolveAlias,
+  resolveValue
+} from "./resolvers";
+import { _Vue } from "../plugin";
+import { modes } from "../modes";
+import RuleContainer from "./ruleContainer";
+import { addEventListener, normalizeEventValue } from "../utils/events";
+import {
+  findModel,
+  getInputEventName,
+  isTextInput,
+  isCheckboxOrRadioInput
+} from "../utils/vnode";
+import { getValidator } from "../state";
 import {
   uniqId,
   createFlags,
@@ -19,25 +30,25 @@ import {
   values,
   defineNonReactive,
   assign,
-  includes,
-} from '../utils';
-import { getConfig } from '../config';
-import { createObserver } from '../mapValidationState';
-import Validator from './validator';
-import { ValidationResult, ValidationFlags } from '../types';
+  includes
+} from "../utils";
+import { getConfig } from "../config";
+import { createObserver } from "../mapValidationState";
+import Validator from "./validator";
+import { ValidationResult, ValidationFlags } from "../types";
 
 const DEFAULT_CLASSES = {
-  touched: 'touched', // the control has been blurred
-  untouched: 'untouched', // the control hasn't been blurred
-  valid: 'valid', // model is valid
-  invalid: 'invalid', // model is invalid
-  pristine: 'pristine', // control has not been interacted with
-  dirty: 'dirty' // control has been interacted with
+  touched: "touched", // the control has been blurred
+  untouched: "untouched", // the control hasn't been blurred
+  valid: "valid", // model is valid
+  invalid: "invalid", // model is invalid
+  pristine: "pristine", // control has not been interacted with
+  dirty: "dirty" // control has been interacted with
 };
 
-function computeModeSetting (ctx: Field) {
+function computeModeSetting(ctx: Field) {
   let compute;
-  if (typeof ctx.mode === 'string') {
+  if (typeof ctx.mode === "string") {
     compute = modes[ctx.mode];
   } else {
     compute = ctx.mode;
@@ -72,20 +83,20 @@ export default class Field {
   _interactions: any;
   isDisabled: any;
 
-  constructor (el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
-    defineNonReactive(this, 'el', el);
-    defineNonReactive(this, 'vid', (vnode.data && vnode.data.ref) || uniqId());
-    defineNonReactive(this, 'deps', {});
-    defineNonReactive(this, 'validator', getValidator());
-    defineNonReactive(this, 'ctx', vnode.context);
-    defineNonReactive(this, 'opts', {});
-    defineNonReactive(this, 'binding', binding);
-    defineNonReactive(this, 'vnode', vnode);
-    defineNonReactive(this, 'initialized', false);
-    defineNonReactive(this, '_listeners', {});
-    defineNonReactive(this, '_interactions', {});
-    defineNonReactive(this, '_value', resolveValue(el, vnode));
-    defineNonReactive(this, 'rules', resolveDirectiveRules(el, binding, vnode));
+  constructor(el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
+    defineNonReactive(this, "el", el);
+    defineNonReactive(this, "vid", (vnode.data && vnode.data.ref) || uniqId());
+    defineNonReactive(this, "deps", {});
+    defineNonReactive(this, "validator", getValidator());
+    defineNonReactive(this, "ctx", vnode.context);
+    defineNonReactive(this, "opts", {});
+    defineNonReactive(this, "binding", binding);
+    defineNonReactive(this, "vnode", vnode);
+    defineNonReactive(this, "initialized", false);
+    defineNonReactive(this, "_listeners", {});
+    defineNonReactive(this, "_interactions", {});
+    defineNonReactive(this, "_value", resolveValue(el, vnode));
+    defineNonReactive(this, "rules", resolveDirectiveRules(el, binding, vnode));
 
     (this.el as any)._vid = this.vid;
     this.flags = _Vue.observable(createFlags());
@@ -96,15 +107,15 @@ export default class Field {
     }
   }
 
-  get value () {
+  get value() {
     return this._value;
   }
 
-  get mode () {
+  get mode() {
     return getConfig().mode;
   }
 
-  set value (value) {
+  set value(value) {
     if (!isEqual(value, this._value)) {
       this.validateDeps();
     }
@@ -112,11 +123,11 @@ export default class Field {
     this._value = value;
   }
 
-  get componentInstance () {
+  get componentInstance() {
     return this.vnode.componentInstance;
   }
 
-  static from (el: any, vnode: any): Field | undefined {
+  static from(el: any, vnode: any): Field | undefined {
     if (!vnode.context.$_veeObserver) {
       return undefined;
     }
@@ -124,47 +135,52 @@ export default class Field {
     return vnode.context.$_veeObserver.state.refs[el._vid];
   }
 
-  validate () {
+  validate() {
     const options = resolveFeatures(this.binding, this.vnode);
     const alias = resolveAlias(this.el, this.vnode);
     const name = resolveName(this.el, this.vnode);
     this.opts.aria = options.aria;
     this.opts.validity = options.validity;
 
-    const validation = this.validator.verify(this.value, this.rules, {
-      name: alias || name,
-      bails: options.bails,
-      values: this.createValuesLookup(),
-      isInitial: !this.initialized
-    }).then(res => {
-      // prevent race conditions from overriding each other.
-      // fixed by waiting for the most recent validation triggered.
-      // if its not waiting for anything then we can also mutate the state.
-      if (!this.isWaitingFor(undefined) && !this.isWaitingFor(validation)) return res;
-      this.waitFor(undefined);
+    const validation = this.validator
+      .verify(this.value, this.rules, {
+        name: alias || name,
+        bails: options.bails,
+        values: this.createValuesLookup(),
+        isInitial: !this.initialized
+      })
+      .then(res => {
+        // prevent race conditions from overriding each other.
+        // fixed by waiting for the most recent validation triggered.
+        // if its not waiting for anything then we can also mutate the state.
+        if (!this.isWaitingFor(undefined) && !this.isWaitingFor(validation))
+          return res;
+        this.waitFor(undefined);
 
-      this.flags.validated = true;
-      this.applyResult(res);
+        this.flags.validated = true;
+        this.applyResult(res);
 
-      return res;
-    });
+        return res;
+      });
 
     this.waitFor(validation);
 
     return validation;
   }
 
-  fieldDeps () {
+  fieldDeps() {
     const rules: any = normalizeRules(this.rules);
     this.isRequired = !!rules.required;
 
-    return Object.keys(rules).filter(RuleContainer.isTargetRule).map(rule => {
-      return rules[rule][0];
-    });
+    return Object.keys(rules)
+      .filter(RuleContainer.isTargetRule)
+      .map(rule => {
+        return rules[rule][0];
+      });
   }
 
-  createValuesLookup () {
-    const fields = (this.ctx as any).$_veeObserver.state.refs;
+  createValuesLookup() {
+    const fields = this.ctx.$_veeObserver.state.refs;
 
     return this.fieldDeps().reduce((acc, depName) => {
       if (!fields[depName]) {
@@ -185,28 +201,30 @@ export default class Field {
     }
 
     if (!this.initialized) {
-      defineNonReactive(this, 'initialValue', model.value);
+      defineNonReactive(this, "initialValue", model.value);
     }
 
     this.value = model.value;
     this.flags.changed = this.value === this.initialValue;
     const { on } = computeModeSetting(this);
-    if (this.initialized && on && on.includes('input')) {
+    if (this.initialized && on && on.includes("input")) {
+      // tslint:disable-next-line
       this.validate();
     }
   }
 
-  validateDeps () {
+  validateDeps() {
     values(this.deps).forEach(dep => {
       if (dep.flags.validated) {
         this.ctx.$nextTick(() => {
+          // tslint:disable-next-line
           dep.validate();
         });
       }
     });
   }
 
-  applyResult ({ valid, errors }: { valid: boolean, errors: string[] }) {
+  applyResult({ valid, errors }: { valid: boolean; errors: string[] }) {
     this.flags.valid = valid;
     this.flags.invalid = !valid;
     this.errors = errors;
@@ -215,7 +233,7 @@ export default class Field {
     this.applyCustomValidity();
   }
 
-  onUpdate (el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
+  onUpdate(el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
     this.el = el;
     this.binding = binding;
     this.vnode = vnode;
@@ -230,15 +248,20 @@ export default class Field {
     this.opts.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
     const inputEvt = getInputEventName(this.vnode, model);
     let events = this._determineEventList(inputEvt);
-    if (includes(events, 'input') && model) {
+    if (includes(events, "input") && model) {
       this.onModelUpdated(model);
-      events = events.filter(evt => evt !== 'input');
+      events = events.filter(evt => evt !== "input");
     }
 
     this.addListeners(el, events);
     this.applyClasses();
-    shouldValidate = shouldValidate || (binding.modifiers && binding.modifiers.immediate && !this.flags.validated);
+    shouldValidate =
+      shouldValidate ||
+      (binding.modifiers &&
+        binding.modifiers.immediate &&
+        !this.flags.validated);
     if (shouldValidate) {
+      // tslint:disable-next-line
       this.validate();
     }
 
@@ -246,7 +269,7 @@ export default class Field {
     this.initialized = true;
   }
 
-  registerField (vnode: any) {
+  registerField(vnode: any) {
     if (!vnode.context.$_veeObserver) {
       vnode.context.$_veeObserver = createObserver();
     }
@@ -254,11 +277,13 @@ export default class Field {
     vnode.context.$_veeObserver.subscribe(this);
   }
 
-  addListeners (el: HTMLElement, events: string[]) {
+  addListeners(el: HTMLElement, events: string[]) {
     const handler = (e: unknown) => {
       const value = normalizeEventValue(e);
       this.value = value;
       this.flags.changed = this.value !== this.initialValue;
+
+      // tslint:disable-next-line
       this.validate();
     };
 
@@ -269,7 +294,8 @@ export default class Field {
 
       if (this.componentInstance) {
         this.componentInstance.$on(evt, handler);
-        this._listeners[evt] = () => this.componentInstance && this.componentInstance.$off(evt, handler);
+        this._listeners[evt] = () =>
+          this.componentInstance && this.componentInstance.$off(evt, handler);
         return;
       }
 
@@ -284,23 +310,25 @@ export default class Field {
     this._waitingFor = pendingPromise;
   }
 
-  isWaitingFor (promise: Promise<ValidationResult> | undefined) {
+  isWaitingFor(promise: Promise<ValidationResult> | undefined) {
     return this._waitingFor === promise;
   }
 
   /**
    * Resets field flags and errors.
    */
-  reset () {
+  reset() {
     if (this._cancellationToken) {
       this._cancellationToken.cancelled = true;
       delete this._cancellationToken;
     }
 
     const defaults = createFlags();
-    Object.keys(this.flags).filter(flag => flag !== 'required').forEach(flag => {
-      this.flags[flag] = defaults[flag];
-    });
+    Object.keys(this.flags)
+      .filter(flag => flag !== "required")
+      .forEach(flag => {
+        this.flags[flag] = defaults[flag];
+      });
 
     // update initial value
     this.errors = [];
@@ -316,14 +344,14 @@ export default class Field {
   /**
    * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
    */
-  setFlags (flags: Partial<ValidationFlags>) {
+  setFlags(flags: Partial<ValidationFlags>) {
     const negated: { [x: string]: string | undefined } = {
-      pristine: 'dirty',
-      dirty: 'pristine',
-      valid: 'invalid',
-      invalid: 'valid',
-      touched: 'untouched',
-      untouched: 'touched'
+      pristine: "dirty",
+      dirty: "pristine",
+      valid: "invalid",
+      invalid: "valid",
+      touched: "untouched",
+      untouched: "touched"
     };
 
     Object.keys(flags).forEach(flag => {
@@ -351,7 +379,7 @@ export default class Field {
   /**
    * Updates the element classes depending on each field flag status.
    */
-  applyClasses (isReset = false) {
+  applyClasses(isReset = false) {
     if (!this.opts.classes || this.isDisabled) return;
 
     const applyClasses = (el: HTMLElement) => {
@@ -381,7 +409,9 @@ export default class Field {
       return;
     }
 
-    const els = document.querySelectorAll(`input[name="${(this.el as HTMLInputElement).name}"]`);
+    const els = document.querySelectorAll(
+      `input[name="${(this.el as HTMLInputElement).name}"]`
+    );
     toArray(els).forEach(el => {
       applyClasses(el as HTMLElement);
     });
@@ -390,7 +420,7 @@ export default class Field {
   /**
    * Adds the listeners required for automatic classes and some flags.
    */
-  addActionListeners () {
+  addActionListeners() {
     // remove previous listeners.
     if (!this.el) return;
 
@@ -403,7 +433,7 @@ export default class Field {
       }
     };
 
-    const inputEvent = isTextInput(this.vnode) ? 'input' : 'change';
+    const inputEvent = isTextInput(this.vnode) ? "input" : "change";
     const onInput = () => {
       this.flags.dirty = true;
       this.flags.pristine = false;
@@ -414,8 +444,8 @@ export default class Field {
     };
 
     if (this.componentInstance && isCallable(this.componentInstance.$once)) {
-      this.componentInstance.$once('input', onInput);
-      this.componentInstance.$once('blur', onBlur);
+      this.componentInstance.$once("input", onInput);
+      this.componentInstance.$once("blur", onBlur);
       return;
     }
 
@@ -425,7 +455,7 @@ export default class Field {
 
     if (!this._interactions.blur) {
       // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
-      const blurEvent = isCheckboxOrRadioInput(this.vnode) ? 'change' : 'blur';
+      const blurEvent = isCheckboxOrRadioInput(this.vnode) ? "change" : "blur";
       this._interactions.blur = addEventListener(this.el, blurEvent, onBlur);
     }
   }
@@ -433,14 +463,14 @@ export default class Field {
   /**
    * Determines the list of events to listen to.
    */
-  _determineEventList (defaultInputEvent: string) {
+  _determineEventList(defaultInputEvent: string) {
     const { on } = computeModeSetting(this);
     if (!on) {
       return [];
     }
 
     return on.reduce((evts: string[], evt) => {
-      if (evt === 'input' && defaultInputEvent !== evt) {
+      if (evt === "input" && defaultInputEvent !== evt) {
         evts.push(defaultInputEvent);
         return evts;
       }
@@ -454,28 +484,32 @@ export default class Field {
   /**
    * Updates aria attributes on the element.
    */
-  applyAriaAttrs () {
-    if (!this.opts.aria || !this.el || !isCallable(this.el.setAttribute)) return;
+  applyAriaAttrs() {
+    if (!this.opts.aria || !this.el || !isCallable(this.el.setAttribute))
+      return;
 
-    this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
-    this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
+    this.el.setAttribute("aria-required", this.isRequired ? "true" : "false");
+    this.el.setAttribute("aria-invalid", this.flags.invalid ? "true" : "false");
   }
 
   /**
    * Updates the custom validity for the field.
    */
-  applyCustomValidity () {
+  applyCustomValidity() {
     const input = this.el as HTMLInputElement;
-    if (!this.opts.validity || !input || !isCallable(input.setCustomValidity)) return;
+    if (!this.opts.validity || !input || !isCallable(input.setCustomValidity))
+      return;
 
-    input.setCustomValidity(this.errors[0] || '');
+    input.setCustomValidity(this.errors[0] || "");
   }
 
   /**
    * Remove everything.
    */
-  destroy () {
-    const isPersisted = !!(this.binding.modifiers && this.binding.modifiers.persist);
+  destroy() {
+    const isPersisted = !!(
+      this.binding.modifiers && this.binding.modifiers.persist
+    );
     if (isPersisted) {
       this.persistFieldState();
     }
@@ -491,7 +525,7 @@ export default class Field {
     this.ctx.$_veeObserver.unsubscribe(this);
   }
 
-  persistFieldState () {
+  persistFieldState() {
     if (!this.ctx.$_veeObserver._persistStore) {
       this.ctx.$_veeObserver._persistStore = {};
     }
@@ -502,7 +536,7 @@ export default class Field {
     };
   }
 
-  restoreFieldState () {
+  restoreFieldState() {
     if (!this.ctx.$_veeObserver._persistStore) return;
 
     const state = this.ctx.$_veeObserver._persistStore[this.vid];

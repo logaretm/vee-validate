@@ -1,6 +1,6 @@
-import { isNullOrUndefined, toArray } from '../utils';
+import { isNullOrUndefined, toArray } from "../utils";
 
-const compare = (value: any[] | string, length: number, max: number) => {
+const compare = (value: any[] | string, length: number, max?: number) => {
   if (max === undefined) {
     return value.length === length;
   }
@@ -17,7 +17,7 @@ const validate = (value: any, [length, max = undefined]: any) => {
   }
 
   length = Number(length);
-  if (typeof value === 'number') {
+  if (typeof value === "number") {
     value = String(value);
   }
 
@@ -28,9 +28,7 @@ const validate = (value: any, [length, max = undefined]: any) => {
   return compare(value, length, max);
 };
 
-export {
-  validate
-};
+export { validate };
 
 export default {
   validate

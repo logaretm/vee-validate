@@ -1,7 +1,10 @@
-import { isNullOrUndefined } from '../utils';
+import { isNullOrUndefined } from "../utils";
 
-const validate = (value: any, { decimals = '*', separator = '.' }: any = {}): boolean => {
-  if (isNullOrUndefined(value) || value === '') {
+const validate = (
+  value: any,
+  { decimals = "*", separator = "." }: any = {}
+): boolean => {
+  if (isNullOrUndefined(value) || value === "") {
     return false;
   }
 
@@ -14,25 +17,21 @@ const validate = (value: any, { decimals = '*', separator = '.' }: any = {}): bo
     return /^-?\d*$/.test(value);
   }
 
-  const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
+  const regexPart = decimals === "*" ? "+" : `{1,${decimals}}`;
   const regex = new RegExp(`^[-+]?\\d*(\\${separator}\\d${regexPart})?$`);
 
-  if (! regex.test(value)) {
+  if (!regex.test(value)) {
     return false;
   }
 
   const parsedValue = parseFloat(value);
 
-  // eslint-disable-next-line
-  return parsedValue === parsedValue;
+  return !isNaN(parsedValue);
 };
 
-const paramNames = ['decimals', 'separator'];
+const paramNames = ["decimals", "separator"];
 
-export {
-  validate,
-  paramNames
-};
+export { validate, paramNames };
 
 export default {
   validate,

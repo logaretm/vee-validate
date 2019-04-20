@@ -12,22 +12,22 @@ export const isValidDate = (value: unknown): value is Date => {
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
-export const getDataAttribute = (el: HTMLElement, name: string) => el.getAttribute(`data-vv-${name}`);
+export const getDataAttribute = (el: HTMLElement, name: string) =>
+  el.getAttribute(`data-vv-${name}`);
 
 export const isNaN = (value: unknown) => {
   // NaN is the one value that does not equal itself.
-  // eslint-disable-next-line
   return value !== value;
 };
 
 /**
  * Checks if the values are either null or undefined.
  */
-export const isNullOrUndefined = (value: unknown): value is undefined | null => {
+export const isNullOrUndefined = (
+  value: unknown
+): value is undefined | null => {
   return value === null || value === undefined;
 };
-
-
 
 /**
  * Creates the default flags object.
@@ -67,11 +67,14 @@ export const isEqual = (lhs: any, rhs: any): boolean => {
 
   // if both are objects, compare each key recursively.
   if (isObject(lhs) && isObject(rhs)) {
-    return Object.keys(lhs).every(key => {
-      return isEqual(lhs[key], rhs[key]);
-    }) && Object.keys(rhs).every(key => {
-      return isEqual(lhs[key], rhs[key]);
-    });
+    return (
+      Object.keys(lhs).every(key => {
+        return isEqual(lhs[key], rhs[key]);
+      }) &&
+      Object.keys(rhs).every(key => {
+        return isEqual(lhs[key], rhs[key]);
+      })
+    );
   }
 
   if (isNaN(lhs) && isNaN(rhs)) {
@@ -88,7 +91,7 @@ export const getPath = (path: string, target: any, def: any = undefined) => {
   if (!path || !target) return def;
 
   let value = target;
-  path.split('.').every(prop => {
+  path.split(".").every(prop => {
     if (prop in value) {
       value = value[prop];
 
@@ -108,10 +111,14 @@ export const getPath = (path: string, target: any, def: any = undefined) => {
  */
 export const parseRule = (rule: string) => {
   let params: string[] = [];
-  const name = rule.split(':')[0];
+  const name = rule.split(":")[0];
 
-  if (includes(rule, ':')) {
-    params = rule.split(':').slice(1).join(':').split(',');
+  if (includes(rule, ":")) {
+    params = rule
+      .split(":")
+      .slice(1)
+      .join(":")
+      .split(",");
   }
 
   return { name, params };
@@ -120,7 +127,11 @@ export const parseRule = (rule: string) => {
 /**
  * Debounces a function.
  */
-export const debounce = (fn: Function, wait = 0, token = { cancelled: false }) => {
+export const debounce = (
+  fn: Function,
+  wait = 0,
+  token = { cancelled: false }
+) => {
   if (wait === 0) {
     return fn;
   }
@@ -173,12 +184,12 @@ export const normalizeRules = (rules: any) => {
     }, acc);
   }
 
-  if (typeof rules !== 'string') {
-    warn('rules must be either a string or an object.');
+  if (typeof rules !== "string") {
+    warn("rules must be either a string or an object.");
     return {};
   }
 
-  return rules.split('|').reduce((prev, rule) => {
+  return rules.split("|").reduce((prev, rule) => {
     const parsedRule = parseRule(rule);
     if (!parsedRule.name) {
       return prev;
@@ -193,27 +204,30 @@ export const normalizeRules = (rules: any) => {
  * Emits a warning to the console.
  */
 export const warn = (message: string) => {
-  console.warn(`[vee-validate] ${message}`); // eslint-disable-line
+  console.warn(`[vee-validate] ${message}`);
 };
 
 /**
  * Creates a branded error object.
  */
-export const createError = (message: string) => new Error(`[vee-validate] ${message}`);
+export const createError = (message: string) =>
+  new Error(`[vee-validate] ${message}`);
 
 /**
  * Checks if the value is an object.
  */
-export const isObject = (obj: unknown): obj is { [x: string]: any } => obj !== null && obj && typeof obj === 'object' && ! Array.isArray(obj);
+export const isObject = (obj: unknown): obj is { [x: string]: any } =>
+  obj !== null && obj && typeof obj === "object" && !Array.isArray(obj);
 
 /**
  * Checks if a function is callable.
  */
-export const isCallable = (func: unknown): func is CallableFunction => typeof func === 'function';
+export const isCallable = (func: unknown): func is CallableFunction =>
+  typeof func === "function";
 
-export function isPromise (value: unknown): value is Promise<any> {
+export function isPromise(value: unknown): value is Promise<any> {
   if (isObject(value) && value instanceof Promise) {
-    return 'then' in value;
+    return "then" in value;
   }
 
   return false;
@@ -255,14 +269,18 @@ export const removeClass = (el: HTMLElement, className: string) => {
 
   if (hasClass(el, className)) {
     const reg = new RegExp(`(\\s|^)${className}(\\s|$)`);
-    el.className = el.className.replace(reg, ' ');
+    el.className = el.className.replace(reg, " ");
   }
 };
 
 /**
  * Adds or removes a class name on the input depending on the status flag.
  */
-export const toggleClass = (el: HTMLElement, className: string, status: boolean) => {
+export const toggleClass = (
+  el: HTMLElement,
+  className: string,
+  status: boolean
+) => {
   if (!el || !className) return;
 
   if (Array.isArray(className)) {
@@ -280,7 +298,7 @@ export const toggleClass = (el: HTMLElement, className: string, status: boolean)
 /**
  * Converts an array-like object to array, provides a simple polyfill for Array.from
  */
-export function toArray<T> (arrayLike: ArrayLike<T>): T[] {
+export function toArray<T>(arrayLike: ArrayLike<T>): T[] {
   if (isCallable(Array.from)) {
     return Array.from(arrayLike);
   }
@@ -294,7 +312,7 @@ export function toArray<T> (arrayLike: ArrayLike<T>): T[] {
 
   /* istanbul ignore next */
   return array;
-};
+}
 
 /**
  * Assign polyfill from the mdn.
@@ -307,7 +325,7 @@ export const assign = (target: any, ...others: any[]) => {
 
   /* istanbul ignore next */
   if (target == null) {
-    throw new TypeError('Cannot convert undefined or null to object');
+    throw new TypeError("Cannot convert undefined or null to object");
   }
 
   /* istanbul ignore next */
@@ -326,7 +344,7 @@ export const assign = (target: any, ...others: any[]) => {
 };
 
 let id = 0;
-let idTemplate = '{id}';
+let idTemplate = "{id}";
 
 /**
  * Generates a unique id.
@@ -336,16 +354,19 @@ export const uniqId = () => {
   if (id >= 9999) {
     id = 0;
     // shift the template.
-    idTemplate = idTemplate.replace('{id}', '_{id}');
+    idTemplate = idTemplate.replace("{id}", "_{id}");
   }
 
   id++;
-  const newId = idTemplate.replace('{id}', String(id));
+  const newId = idTemplate.replace("{id}", String(id));
 
   return newId;
 };
 
-export function findIndex<T> (arrayLike: ArrayLike<T>, predicate: (item: T) => boolean): number {
+export function findIndex<T>(
+  arrayLike: ArrayLike<T>,
+  predicate: (item: T) => boolean
+): number {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
   for (let i = 0; i < array.length; i++) {
     if (predicate(array[i])) {
@@ -354,26 +375,29 @@ export function findIndex<T> (arrayLike: ArrayLike<T>, predicate: (item: T) => b
   }
 
   return -1;
-};
+}
 
 /**
  * finds the first element that satisfies the predicate callback, polyfills array.find
  */
-export function find<T> (arrayLike: ArrayLike<T>, predicate: (item: T) => boolean): T | undefined {
+export function find<T>(
+  arrayLike: ArrayLike<T>,
+  predicate: (item: T) => boolean
+): T | undefined {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
   const idx = findIndex(array, predicate);
 
   return idx === -1 ? undefined : array[idx];
-};
+}
 
 export const merge = (target: any, source: any) => {
-  if (! (isObject(target) && isObject(source))) {
+  if (!(isObject(target) && isObject(source))) {
     return target;
   }
 
-  Object.keys(source).forEach((key) => {
+  Object.keys(source).forEach(key => {
     if (isObject(source[key])) {
-      if (! target[key]) {
+      if (!target[key]) {
         assign(target, { [key]: {} });
       }
 
@@ -387,7 +411,7 @@ export const merge = (target: any, source: any) => {
   return target;
 };
 
-export function values<T> (obj: { [x: string] : T }): T[] {
+export function values<T>(obj: { [x: string]: T }): T[] {
   if (isCallable(Object.values)) {
     return Object.values(obj);
   }
@@ -395,12 +419,11 @@ export function values<T> (obj: { [x: string] : T }): T[] {
   // fallback to keys()
   /* istanbul ignore next */
   return Object.keys(obj).map(k => obj[k]);
-};
+}
 
 export const includes = (collection: any[] | string, item: any) => {
   return collection.indexOf(item) !== -1;
 };
-
 
 export const isEmptyArray = (arr: any[]): boolean => {
   return Array.isArray(arr) && arr.length === 0;
