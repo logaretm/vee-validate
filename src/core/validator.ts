@@ -20,10 +20,14 @@ import { ValidationResult, ValidationRule, ValidationRuleSchema } from '../types
 
 let $vee: VeeValidate;
 
+interface ValidatorOptions {
+  bails?: boolean;
+};
+
 export default class Validator {
   bails: boolean;
-  constructor (options = { bails: true }) {
-    this.bails = !isNullOrUndefined(options && options.bails) ? options.bails : true;
+  constructor(options: ValidatorOptions = { bails: true }) {
+    this.bails = !!(!isNullOrUndefined(options && options.bails) ? options.bails : true);
   }
 
   /**
@@ -199,7 +203,7 @@ export default class Validator {
   /**
    * Translates the parameters passed to the rule (mainly for target fields).
    */
-  _getLocalizedParams (rule: any, targetName: string = null) {
+  _getLocalizedParams (rule: any, targetName: string = '') {
     let params = this._convertParamObjectToArray(rule.params, rule.name);
     if (rule.options.hasTarget && params && params[0]) {
       const localizedName = targetName || Dictionary.getDriver().getAttribute(this.locale, params[0]) || params[0];
@@ -257,7 +261,7 @@ export default class Validator {
       params = [];
     }
 
-    let targetName: string = null;
+    let targetName: string = '';
     if (!validator || typeof validator !== 'function') {
       return Promise.reject(createError(`No such validator '${rule.name}' exists.`));
     }

@@ -31,8 +31,9 @@ export const detectPassiveSupport = () => {
         supportsPassive = true;
       }
     });
-    window.addEventListener('testPassive', null, opts);
-    window.removeEventListener('testPassive', null, opts);
+    const evt = ()=> {};
+    window.addEventListener('testPassive', evt, opts);
+    window.removeEventListener('testPassive', evt, opts);
   } catch (e) {
     supportsPassive = false;
   };
@@ -54,7 +55,7 @@ export function normalizeEventValue (value: unknown): any {
   }
 
   const input = value.target as HTMLInputElement;
-  if (input.type === 'file') {
+  if (input.type === 'file' && input.files) {
     return toArray(input.files);
   }
 

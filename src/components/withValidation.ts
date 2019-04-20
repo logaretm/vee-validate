@@ -30,7 +30,7 @@ export function withValidation (component: any, ctxToProps: any = null) {
 
     const model = findModel(this.$vnode);
     this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
-    onRenderUpdate.call(this, model);
+    onRenderUpdate(this, model);
 
     const { onInput, onBlur, onValidate } = createCommonHandlers(this);
 

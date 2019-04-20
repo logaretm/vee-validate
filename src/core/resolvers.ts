@@ -85,7 +85,7 @@ export function resolveAlias (el: HTMLElement, vnode: VNode) {
 export function resolveName (el: HTMLElement, vnode: VNode) {
   let name = getDataAttribute(el, 'name');
 
-  if (!vnode.componentInstance && vnode.data.attrs.name) {
+  if (!vnode.componentInstance && vnode.data && vnode.data.attrs && vnode.data.attrs.name) {
     return vnode.data.attrs.name;
   }
 

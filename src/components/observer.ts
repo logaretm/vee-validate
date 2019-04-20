@@ -33,7 +33,7 @@ export const ValidationObserver: any = {
   inject: {
     $_veeObserver: {
       from: '$_veeObserver',
-      default () {
+      default(this: any) {
         if (!this.$vnode.context.$_veeObserver) {
           return null;
         }
@@ -59,7 +59,7 @@ export const ValidationObserver: any = {
     observers: [],
   }),
   computed: {
-    ctx () {
+    ctx(this: any) {
       const ctx = {
         errors: {},
         validate: (arg: any) => {
@@ -135,7 +135,7 @@ export const ValidationObserver: any = {
     }, slots(this.ctx));
   },
   methods: {
-    subscribe (subscriber: any, kind = 'provider') {
+    subscribe(this: any, subscriber: any, kind = 'provider') {
       if (kind === 'observer') {
         this.observers.push(subscriber);
         return;
@@ -146,7 +146,7 @@ export const ValidationObserver: any = {
         this.restoreProviderState(subscriber);
       }
     },
-    unsubscribe ({ vid }: any, kind = 'provider') {
+    unsubscribe(this: any, { vid }: any, kind = 'provider') {
       if (kind === 'provider') {
         this.removeProvider(vid);
       }
@@ -156,22 +156,22 @@ export const ValidationObserver: any = {
         this.observers.splice(idx, 1);
       }
     },
-    validate ({ silent } = { silent: false }) {
+    validate(this: any, { silent } = { silent: false }) {
       return Promise.all([
         ...values(this.refs).map((ref: any) => ref[silent ? 'validateSilent' : 'validate']().then((r: ValidationResult) => r.valid)),
         ...this.observers.map((obs: any) => obs.validate({ silent }))
       ]).then(results => results.every(r => r));
     },
-    reset () {
+    reset(this: any) {
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
     },
-    restoreProviderState (provider: any) {
+    restoreProviderState(this: any, provider: any) {
       const state = this._persistedStore[provider.vid];
       provider.setFlags(state.flags);
       provider.applyResult(state);
       delete this._persistedStore[provider.vid];
     },
-    removeProvider (vid: string) {
+    removeProvider(this: any, vid: string) {
       const provider = this.refs[vid];
       // save it for the next time.
       if (provider && provider.persist) {

@@ -1,6 +1,6 @@
 import Validator from "./core/validator";
 
-let VALIDATOR: Validator = null;
+let VALIDATOR: Validator;
 
 export const getValidator = () => {
   return VALIDATOR;

@@ -1,3 +1,5 @@
+import { ValidationFlags } from "../types";
+
 export const isValidDate = (value: unknown): value is Date => {
   const valueAsDate = value as any;
   if (valueAsDate && isCallable(valueAsDate.getTime)) {
@@ -25,19 +27,7 @@ export const isNullOrUndefined = (value: unknown): value is undefined | null => 
   return value === null || value === undefined;
 };
 
-export interface ValidationFlags {
-  untouched: boolean;
-  touched: boolean;
-  dirty: boolean;
-  pristine: boolean;
-  valid: boolean | null;
-  invalid: boolean | null;
-  validated: boolean;
-  pending: boolean;
-  required: boolean;
-  changed: boolean;
-  [x: string]: boolean | undefined;
-}
+
 
 /**
  * Creates the default flags object.
@@ -47,8 +37,8 @@ export const createFlags = (): ValidationFlags => ({
   touched: false,
   dirty: false,
   pristine: true,
-  valid: null,
-  invalid: null,
+  valid: false,
+  invalid: false,
   validated: false,
   pending: false,
   required: false,
@@ -135,18 +125,19 @@ export const debounce = (fn: Function, wait = 0, token = { cancelled: false }) =
     return fn;
   }
 
-  let timeout: ReturnType<typeof setTimeout>;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
 
   return (...args: any[]) => {
     const later = () => {
-      timeout = null;
+      timeout = undefined;
 
       // check if the fn call was cancelled.
       if (!token.cancelled) fn(...args);
     };
 
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+    // because we might want to use Node.js setTimout for SSR.
+    clearTimeout(timeout as any);
+    timeout = setTimeout(later, wait) as any;
     if (!timeout) fn(...args);
   };
 };
@@ -220,8 +211,8 @@ export const isObject = (obj: unknown): obj is { [x: string]: any } => obj !== n
  */
 export const isCallable = (func: unknown): func is CallableFunction => typeof func === 'function';
 
-export function isPromise<T> (value: unknown): value is Promise<T> {
-  if (isObject(value)) {
+export function isPromise (value: unknown): value is Promise<any> {
+  if (isObject(value) && value instanceof Promise) {
     return 'then' in value;
   }
 

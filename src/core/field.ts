@@ -20,12 +20,11 @@ import {
   defineNonReactive,
   assign,
   includes,
-  ValidationFlags
 } from '../utils';
 import { getConfig } from '../config';
 import { createObserver } from '../mapValidationState';
 import Validator from './validator';
-import { ValidationResult } from '../types';
+import { ValidationResult, ValidationFlags } from '../types';
 
 const DEFAULT_CLASSES = {
   touched: 'touched', // the control has been blurred
@@ -51,20 +50,20 @@ function computeModeSetting (ctx: Field) {
   });
 }
 export default class Field {
-  el: HTMLElement;
-  vid: string;
-  deps: { [k: string]: Field };
+  el!: HTMLElement;
+  vid!: string;
+  deps!: { [k: string]: Field };
   flags: ValidationFlags;
   errors: string[];
   name: string;
   _value: any;
-  vnode: VNode;
-  binding: DirectiveBinding;
-  initialized: boolean;
+  vnode!: VNode;
+  binding!: DirectiveBinding;
+  initialized!: boolean;
   opts: any;
-  validator: Validator;
+  validator!: Validator;
   rules: any;
-  isRequired: boolean;
+  isRequired!: boolean;
   _listeners: any;
   ctx: any;
   _waitingFor: any;
@@ -75,7 +74,7 @@ export default class Field {
 
   constructor (el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
     defineNonReactive(this, 'el', el);
-    defineNonReactive(this, 'vid', vnode.data.ref || uniqId());
+    defineNonReactive(this, 'vid', (vnode.data && vnode.data.ref) || uniqId());
     defineNonReactive(this, 'deps', {});
     defineNonReactive(this, 'validator', getValidator());
     defineNonReactive(this, 'ctx', vnode.context);
@@ -119,7 +118,7 @@ export default class Field {
 
   static from (el: any, vnode: any): Field | undefined {
     if (!vnode.context.$_veeObserver) {
-      return null;
+      return undefined;
     }
 
     return vnode.context.$_veeObserver.state.refs[el._vid];
@@ -141,7 +140,7 @@ export default class Field {
       // prevent race conditions from overriding each other.
       // fixed by waiting for the most recent validation triggered.
       // if its not waiting for anything then we can also mutate the state.
-      if (!this.isWaitingFor(undefined) && !this.isWaitingFor(validation)) return;
+      if (!this.isWaitingFor(undefined) && !this.isWaitingFor(validation)) return res;
       this.waitFor(undefined);
 
       this.flags.validated = true;
@@ -192,7 +191,7 @@ export default class Field {
     this.value = model.value;
     this.flags.changed = this.value === this.initialValue;
     const { on } = computeModeSetting(this);
-    if (this.initialized && on.includes('input')) {
+    if (this.initialized && on && on.includes('input')) {
       this.validate();
     }
   }
@@ -270,7 +269,7 @@ export default class Field {
 
       if (this.componentInstance) {
         this.componentInstance.$on(evt, handler);
-        this._listeners[evt] = () => this.componentInstance.$off(evt, handler);
+        this._listeners[evt] = () => this.componentInstance && this.componentInstance.$off(evt, handler);
         return;
       }
 
@@ -281,11 +280,11 @@ export default class Field {
   /**
    * Keeps a reference of the most current validation run.
    */
-  waitFor(pendingPromise: Promise<ValidationResult>) {
+  waitFor(pendingPromise: Promise<ValidationResult> | undefined) {
     this._waitingFor = pendingPromise;
   }
 
-  isWaitingFor (promise: Promise<ValidationResult>) {
+  isWaitingFor (promise: Promise<ValidationResult> | undefined) {
     return this._waitingFor === promise;
   }
 
@@ -329,10 +328,11 @@ export default class Field {
 
     Object.keys(flags).forEach(flag => {
       this.flags[flag] = flags[flag];
-      // if it has a negation and was not specified, set it as well.
-      if (negated[flag] && flags[negated[flag]] === undefined) {
-        this.flags[negated[flag]] = !flags[flag];
-      }
+
+      let negatedName = negated[flag];
+      if (!negatedName) return;
+
+      this.flags[negatedName] = !flags[flag];
     });
 
     if (
@@ -382,7 +382,9 @@ export default class Field {
     }
 
     const els = document.querySelectorAll(`input[name="${(this.el as HTMLInputElement).name}"]`);
-    toArray(els).forEach(applyClasses);
+    toArray(els).forEach(el => {
+      applyClasses(el as HTMLElement);
+    });
   }
 
   /**
@@ -433,8 +435,11 @@ export default class Field {
    */
   _determineEventList (defaultInputEvent: string) {
     const { on } = computeModeSetting(this);
+    if (!on) {
+      return [];
+    }
 
-    return on.reduce((evts, evt) => {
+    return on.reduce((evts: string[], evt) => {
       if (evt === 'input' && defaultInputEvent !== evt) {
         evts.push(defaultInputEvent);
         return evts;

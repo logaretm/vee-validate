@@ -1,6 +1,7 @@
-import { values, ValidationFlags } from './utils';
+import { values } from './utils';
 import { _Vue } from './plugin';
 import Field from './core/field';
+import { ValidationFlags } from './types';
 
 interface FieldObserver {
   state: {
@@ -50,8 +51,8 @@ function mapObserverState(obs: FieldObserver, { errors = true, flags = true }) {
   const collection: { [k: string]: MappedFieldState } = {};
   return values(obs.state.refs).reduce((acc, field) => {
     acc[field.name || field.vid] = {
-      errors: errors ? field.errors : null,
-      flags: flags ? field.flags : null
+      errors: errors ? field.errors : undefined,
+      flags: flags ? field.flags : undefined
     };
 
     return acc;
@@ -61,7 +62,7 @@ function mapObserverState(obs: FieldObserver, { errors = true, flags = true }) {
 
 export function mapValidationState (propName: string, { errors = true, flags = true, inherit = false } = {}) {
   return {
-    [propName](): MappedValidationState {
+    [propName](this: any): MappedValidationState {
       if (inherit) {
         this.$_veeObserver = findObserver(this);
       }

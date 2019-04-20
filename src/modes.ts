@@ -1,4 +1,4 @@
-import { ValidationFlags } from "./utils";
+import { ValidationFlags } from "./types";
 
 interface ModeContext {
   errors: string[];

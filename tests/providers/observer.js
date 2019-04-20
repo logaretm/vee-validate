@@ -64,8 +64,8 @@ describe('Validation Observer Component', () => {
     const input = wrapper.find('input');
 
     await flushPromises();
-    // initially the field valid flag is null as in its unknown.
-    expect(stateSpan.text()).toBe('');
+    // initially the field valid flag is false.
+    expect(stateSpan.text()).toBe('false');
 
     input.setValue('value');
     await flushPromises();

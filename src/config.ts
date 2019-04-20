@@ -2,7 +2,7 @@ import { assign, getPath } from './utils';
 import { InteractionModeFactory } from './modes';
 import { PartialI18nDictionary } from './core/i18n';
 
-type ValidationClass = string | string[]
+type ValidationClass = string | string[] | undefined;
 
 export interface ValidationClassMap {
   touched?: ValidationClass;
@@ -27,7 +27,7 @@ export interface VeeValidateConfig {
   delay: number;
 }
 
-const DEFAULT_CONFIG: VeeValidateConfig = {
+const DEFAULT_CONFIG: Partial<VeeValidateConfig> = {
   locale: 'en',
   classes: false,
   classNames: {
@@ -43,13 +43,12 @@ const DEFAULT_CONFIG: VeeValidateConfig = {
   validity: false,
   mode: 'aggressive',
   useConstraintAttrs: true,
-  dictionary: null,
+  dictionary: undefined,
   delay: 0
 };
 
 export let currentConfig: VeeValidateConfig = assign({}, DEFAULT_CONFIG);
 
-// TODO: Type this.
 export const resolveConfig = (ctx: any) => {
   const selfConfig = getPath('$options.$_veeValidate', ctx, {});
 

@@ -6,6 +6,11 @@
     "lib": ["es2015", "es2016", "es2017", "dom"],
     "noImplicitAny": true,
     "allowJs": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "experimentalDecorators": true,
     "outDir": "dist/lib",
     "typeRoots": [
       "node_modules/@types"

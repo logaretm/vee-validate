@@ -3,13 +3,13 @@ import { find, isCallable, isNullOrUndefined, includes, assign, normalizeRules }
 import { VNode, VNodeDirective } from 'vue';
 
 export const isTextInput = (vnode: VNode) => {
-  const attrs = vnode.data.attrs || vnode.elm;
+  const attrs = (vnode.data && vnode.data.attrs) || vnode.elm;
 
   return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'textarea', 'number'], attrs && attrs.type);
 };
 
 export const isCheckboxOrRadioInput = (vnode: VNode) => {
-  const attrs = vnode.data.attrs || vnode.elm;
+  const attrs = (vnode.data && vnode.data.attrs) || vnode.elm;
 
   return includes(['radio', 'checkbox'], attrs && attrs.type);
 };
@@ -57,7 +57,7 @@ export function extractVNodes(vnode: VNode): VNode[] {
 
   const children = extractChildren(vnode);
 
-  return children.reduce((nodes, node) => {
+  return children.reduce((nodes: VNode[], node) => {
     const candidates = extractVNodes(node);
     if (candidates.length) {
       nodes.push(...candidates);
@@ -97,6 +97,10 @@ export function mergeVNodeListeners (obj: any, eventName: string, handler: Funct
 
 // Adds a listener to a native HTML vnode.
 function addNativeNodeListener (node: VNode, eventName: string, handler: Function) {
+  if (!node.data) {
+    node.data = {};
+  }
+
   if (isNullOrUndefined(node.data.on)) {
     node.data.on = {};
   }
@@ -106,6 +110,10 @@ function addNativeNodeListener (node: VNode, eventName: string, handler: Functio
 
 // Adds a listener to a Vue component vnode.
 function addComponentNodeListener (node: VNode, eventName: string, handler: Function) {
+  if (!node.componentOptions) {
+    return;
+  }
+
   /* istanbul ignore next */
   if (!node.componentOptions.listeners) {
     node.componentOptions.listeners = {};
@@ -137,7 +145,7 @@ export function getInputEventName (vnode: VNode, model: VNodeDirective) {
   }
 
   // is a textual-type input.
-  if (vnode.data.attrs && isTextInput(vnode)) {
+  if (vnode.data && vnode.data.attrs && isTextInput(vnode)) {
     return 'input';
   }
 
@@ -162,9 +170,11 @@ export function normalizeSlots (slots: any, ctx: any) {
 };
 
 function resolveTextualRules (vnode: VNode) {
-  const attrs = vnode.data.attrs;
-
+  const attrs = vnode.data && vnode.data.attrs;
   const rules: any = {};
+
+  if (!attrs) return rules;
+
   if (attrs.type === 'email') {
     rules.email = ['multiple' in attrs];
   }
@@ -198,12 +208,13 @@ function resolveTextualRules (vnode: VNode) {
 
 export function resolveRules (vnode: VNode) {
   const htmlTags = ['input', 'select'];
-  if (!includes(htmlTags, vnode.tag) || !vnode.data.attrs) {
+  const attrs = vnode.data && vnode.data.attrs;
+
+  if (!includes(htmlTags, vnode.tag) || !attrs) {
     return {};
   }
 
   const rules: any = {};
-  const attrs = vnode.data.attrs;
   if ('required' in attrs) {
     rules.required = attrs.type === 'checkbox' ? [true] : true;
   }

@@ -1,20 +1,22 @@
 import { values } from './utils';
 import Field from './core/field';
 
-function validateRefs () {
+type RefMap = { [k: string]: Field };
+
+function validateRefs (this: any) {
   if (!this.$_veeObserver) return true;
 
   return Promise.all(
-    values(this.$_veeObserver.state.refs).map((field: Field) => {
+    values(this.$_veeObserver.state.refs as RefMap).map((field: Field) => {
       return field.validate();
     })
   ).then(results => results.every(r => r.valid));
 }
 
-function resetRefs () {
+function resetRefs (this: any) {
   if (!this.$_veeObserver) return;
 
-  return values(this.$_veeObserver.state.refs).forEach((field: Field) => {
+  return values(this.$_veeObserver.state.refs as RefMap).forEach((field: Field) => {
     field.reset();
   });
 }
