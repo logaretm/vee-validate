@@ -1,5 +1,4 @@
 import Vue, { DirectiveOptions, VueConstructor, ComponentOptions, PluginFunction, Component } from 'vue';
-import VueI18n from 'vue-i18n';
 
 export type StringNullable = string | null
 
@@ -30,7 +29,7 @@ export interface Configuration {
     events?: string;
     fieldsBagName?: string;
     fastExit?: boolean;
-    i18n?: VueI18n | null;
+    i18n?: any;
     i18nRootKey?: string;
     inject?: boolean;
     locale?: string;
@@ -471,18 +470,6 @@ export class ExtendOptions {
     initial?: Boolean
 }
 
-export interface ObserverSlotData {
-    errors: string[];
-    untouched: boolean;
-    touched: boolean;
-    dirty: boolean;
-    pristine: boolean;
-    valid: boolean | null;
-    invalid: boolean | null;
-    validated: boolean;
-    required: boolean;
-    pending: boolean;
-}
 /**
  * `mapFields` helper, which is similar to Vuex's `mapGetters` and `mapActions`
  * as it maps a field object to a computed property.
@@ -494,13 +481,13 @@ export interface ValidationFlags {
   touched: boolean;
   dirty: boolean;
   pristine: boolean;
-  valid: boolean;
-  invalid: boolean;
+  valid: boolean | null;
+  invalid: boolean | null;
   validated: boolean;
   pending: boolean;
   required: boolean;
   changed: boolean;
-  [x: string]: boolean | undefined;
+  [x: string]: boolean | null | undefined;
 }
 
 // maps known keys of a given type.
