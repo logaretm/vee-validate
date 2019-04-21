@@ -80,6 +80,7 @@
     "uglify-js": "^3.5.4",
     "validator": "^10.8.0",
     "vue": "^2.6.10",
+    "vue-class-component": "^7.0.2",
     "vue-i18n": "^8.9.0",
     "vue-jest": "^3.0.4",
     "vue-server-renderer": "^2.6.10",

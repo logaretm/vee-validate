@@ -4,9 +4,17 @@ import Validator from './core/validator';
 import { ValidationProvider, ValidationObserver, withValidation } from './components';
 import { mapValidationState } from './mapValidationState';
 import { mapValidationActions } from './mapValidationActions';
+import { ValidationState, ValidationAction } from './decorators';
 
 const version = '__VERSION__';
 const install = VeeValidate.install;
+
+export {
+  MappedValidationState,
+  MappedFieldState,
+  ValidationObserverInstance,
+  ValidationProviderInstance
+} from './types';
 
 export {
   install,
@@ -17,7 +25,9 @@ export {
   ValidationObserver,
   withValidation,
   mapValidationState,
-  mapValidationActions
+  mapValidationActions,
+  ValidationState,
+  ValidationAction
 };
 
 export default {
@@ -29,5 +39,7 @@ export default {
   ValidationObserver,
   withValidation,
   mapValidationState,
-  mapValidationActions
+  mapValidationActions,
+  ValidationState,
+  ValidationAction
 };

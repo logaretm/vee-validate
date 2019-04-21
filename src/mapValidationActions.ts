@@ -3,7 +3,7 @@ import Field from './core/field';
 
 type RefMap = { [k: string]: Field };
 
-function validateRefs (this: any) {
+function validateRefs(this: any) {
   if (!this.$_veeObserver) return true;
 
   return Promise.all(
@@ -13,7 +13,7 @@ function validateRefs (this: any) {
   ).then(results => results.every(r => r.valid));
 }
 
-function resetRefs (this: any) {
+function resetRefs(this: any) {
   if (!this.$_veeObserver) return;
 
   return values(this.$_veeObserver.state.refs as RefMap).forEach((field: Field) => {
@@ -21,14 +21,14 @@ function resetRefs (this: any) {
   });
 }
 
-export function mapValidationActions (actions: { [k: string]: string } | string[]) {
-  const actionsMap: { [k: string]: CallableFunction } = {
-    'validate': validateRefs,
-    'reset': resetRefs
+export function mapValidationActions(actions: { [k: string]: string } | string[]) {
+  const actionsMap: { [k: string]: (this: any, ...args: any[]) => any } = {
+    validate: validateRefs,
+    reset: resetRefs
   };
 
-  let mappedActions: { [k: string]: CallableFunction } = actionsMap;
-  const obj: { [k: string]: CallableFunction } = {};
+  let mappedActions: { [k: string]: (this: any, ...args: any[]) => any } = actionsMap;
+  const obj: { [k: string]: (this: any, ...args: any[]) => any } = {};
   if (Array.isArray(actions)) {
     mappedActions = actions.reduce((acc, action) => {
       acc[action] = actionsMap[action];
@@ -44,4 +44,4 @@ export function mapValidationActions (actions: { [k: string]: string } | string[
   }
 
   return mappedActions;
-};
+}

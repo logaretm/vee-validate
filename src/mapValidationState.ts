@@ -1,7 +1,7 @@
 import { values } from './utils';
 import { _Vue } from './plugin';
 import Field from './core/field';
-import { ValidationFlags } from './types';
+import { MappedFieldState, MappedValidationState } from './types';
 
 interface FieldObserver {
   state: {
@@ -11,7 +11,7 @@ interface FieldObserver {
   unsubscribe: (field: Field) => void;
 }
 
-export function createObserver (): FieldObserver {
+export function createObserver(): FieldObserver {
   const state = _Vue.observable({ refs: {} });
 
   return {
@@ -22,10 +22,10 @@ export function createObserver (): FieldObserver {
     unsubscribe: (ctx: Field) => {
       _Vue.delete(state.refs, ctx.vid);
     }
-  }
-};
+  };
+}
 
-function findObserver (vm: any): FieldObserver | undefined {
+function findObserver(vm: any): FieldObserver | undefined {
   if (vm.$_veeObserver) {
     return vm.$_veeObserver;
   }
@@ -35,16 +35,6 @@ function findObserver (vm: any): FieldObserver | undefined {
   }
 
   return findObserver(vm.$parent);
-}
-
-interface MappedFieldState {
-  errors?: string[];
-  flags?: ValidationFlags;
-}
-
-interface MappedValidationState {
-  fields: { [k: string]: MappedFieldState };
-  for: (fieldNameOrVid: string) => MappedFieldState;
 }
 
 function mapObserverState(obs: FieldObserver, { errors = true, flags = true }) {
@@ -57,10 +47,9 @@ function mapObserverState(obs: FieldObserver, { errors = true, flags = true }) {
 
     return acc;
   }, collection);
-};
+}
 
-
-export function mapValidationState (propName: string, { errors = true, flags = true, inherit = false } = {}) {
+export function mapValidationState(propName: string, { errors = true, flags = true, inherit = false } = {}) {
   return {
     [propName](this: any): MappedValidationState {
       if (inherit) {
@@ -81,4 +70,4 @@ export function mapValidationState (propName: string, { errors = true, flags = t
       };
     }
   };
-};
+}
