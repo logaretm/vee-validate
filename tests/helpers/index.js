@@ -44,9 +44,10 @@ export default {
       }
     };
   },
-  file: (name, type, size = 1) => ({
-    name,
-    type,
-    size: size * 1024
+  file: (name, type, size = 1) => new File([new ArrayBuffer(size * 1024)], name, { type }),
+  fileList: (files) => ({
+    length: files.length,
+    item: (index) => files[index],
+    ...files
   })
 };
