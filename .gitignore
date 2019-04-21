@@ -8,3 +8,4 @@ coverage
 yarn-error.log
 dist
 .rpt2_cache
+./types

@@ -1,13 +1,13 @@
 {
   "name": "vee-validate",
-  "version": "2.2.0",
+  "version": "3.0.0-beta.0",
   "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
   "module": "dist/vee-validate.esm.js",
   "unpkg": "dist/vee-validate.js",
   "main": "dist/vee-validate.js",
-  "typings": "dist/types/index.d.ts",
+  "typings": "dist/types/src/index.d.ts",
   "homepage": "https://baianat.github.io/vee-validate/",
   "repository": "https://github.com/baianat/vee-validate",
   "scripts": {
@@ -20,7 +20,7 @@
     "build:locale": "node scripts/locale.js",
     "build:main": "node scripts/main.js",
     "ts:defs": "tsc --emitDeclarationOnly",
-    "build": "npm run build:main && ts:defs && npm run build:locale",
+    "build": "npm run build:main && npm run ts:defs && npm run build:locale",
     "cover": "jest --coverage"
   },
   "keywords": [
@@ -34,7 +34,7 @@
   "files": [
     "dist/*.js",
     "dist/locale/*.js",
-    "dist/types/*.d.ts"
+    "dist/types/**/*.d.ts"
   ],
   "devDependencies": {
     "@babel/core": "^7.4.3",

@@ -7,6 +7,7 @@ import { mapValidationState } from './mapValidationState';
 import { mapValidationActions } from './mapValidationActions';
 import { assign } from './utils';
 import { ValidationProvider, ValidationObserver, withValidation } from './components';
+import { ValidationObserverInstance, ValidationProviderInstance } from './types';
 
 const version = '__VERSION__';
 
@@ -20,6 +21,8 @@ RulesAsList.forEach(({ name, rule }) => {
 Validator.localize({ en });
 
 const install = VeeValidate.install;
+
+export { ValidationObserverInstance, ValidationProviderInstance };
 
 export {
   install,
