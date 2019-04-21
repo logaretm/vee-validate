@@ -1,4 +1,4 @@
-import { ValidationFlags } from "../types";
+import { ValidationFlags } from '../types';
 
 export const isValidDate = (value: unknown): value is Date => {
   const valueAsDate = value as any;
@@ -12,8 +12,7 @@ export const isValidDate = (value: unknown): value is Date => {
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
-export const getDataAttribute = (el: HTMLElement, name: string) =>
-  el.getAttribute(`data-vv-${name}`);
+export const getDataAttribute = (el: HTMLElement, name: string) => el.getAttribute(`data-vv-${name}`);
 
 export const isNaN = (value: unknown) => {
   // NaN is the one value that does not equal itself.
@@ -23,9 +22,7 @@ export const isNaN = (value: unknown) => {
 /**
  * Checks if the values are either null or undefined.
  */
-export const isNullOrUndefined = (
-  value: unknown
-): value is undefined | null => {
+export const isNullOrUndefined = (value: unknown): value is undefined | null => {
   return value === null || value === undefined;
 };
 
@@ -91,7 +88,7 @@ export const getPath = (path: string, target: any, def: any = undefined) => {
   if (!path || !target) return def;
 
   let value = target;
-  path.split(".").every(prop => {
+  path.split('.').every(prop => {
     if (prop in value) {
       value = value[prop];
 
@@ -111,14 +108,14 @@ export const getPath = (path: string, target: any, def: any = undefined) => {
  */
 export const parseRule = (rule: string) => {
   let params: string[] = [];
-  const name = rule.split(":")[0];
+  const name = rule.split(':')[0];
 
-  if (includes(rule, ":")) {
+  if (includes(rule, ':')) {
     params = rule
-      .split(":")
+      .split(':')
       .slice(1)
-      .join(":")
-      .split(",");
+      .join(':')
+      .split(',');
   }
 
   return { name, params };
@@ -127,11 +124,7 @@ export const parseRule = (rule: string) => {
 /**
  * Debounces a function.
  */
-export const debounce = (
-  fn: Function,
-  wait = 0,
-  token = { cancelled: false }
-) => {
+export const debounce = (fn: Function, wait = 0, token = { cancelled: false }) => {
   if (wait === 0) {
     return fn;
   }
@@ -184,12 +177,12 @@ export const normalizeRules = (rules: any) => {
     }, acc);
   }
 
-  if (typeof rules !== "string") {
-    warn("rules must be either a string or an object.");
+  if (typeof rules !== 'string') {
+    warn('rules must be either a string or an object.');
     return {};
   }
 
-  return rules.split("|").reduce((prev, rule) => {
+  return rules.split('|').reduce((prev, rule) => {
     const parsedRule = parseRule(rule);
     if (!parsedRule.name) {
       return prev;
@@ -210,24 +203,25 @@ export const warn = (message: string) => {
 /**
  * Creates a branded error object.
  */
-export const createError = (message: string) =>
-  new Error(`[vee-validate] ${message}`);
+export const createError = (message: string) => new Error(`[vee-validate] ${message}`);
 
 /**
  * Checks if the value is an object.
  */
 export const isObject = (obj: unknown): obj is { [x: string]: any } =>
-  obj !== null && obj && typeof obj === "object" && !Array.isArray(obj);
+  obj !== null && obj && typeof obj === 'object' && !Array.isArray(obj);
 
+export function identity<T>(x: T) {
+  return x;
+}
 /**
  * Checks if a function is callable.
  */
-export const isCallable = (func: unknown): func is CallableFunction =>
-  typeof func === "function";
+export const isCallable = (func: unknown): func is CallableFunction => typeof func === 'function';
 
 export function isPromise(value: unknown): value is Promise<any> {
   if (isObject(value) && value instanceof Promise) {
-    return "then" in value;
+    return 'then' in value;
   }
 
   return false;
@@ -269,18 +263,14 @@ export const removeClass = (el: HTMLElement, className: string) => {
 
   if (hasClass(el, className)) {
     const reg = new RegExp(`(\\s|^)${className}(\\s|$)`);
-    el.className = el.className.replace(reg, " ");
+    el.className = el.className.replace(reg, ' ');
   }
 };
 
 /**
  * Adds or removes a class name on the input depending on the status flag.
  */
-export const toggleClass = (
-  el: HTMLElement,
-  className: string,
-  status: boolean
-) => {
+export const toggleClass = (el: HTMLElement, className: string, status: boolean) => {
   if (!el || !className) return;
 
   if (Array.isArray(className)) {
@@ -325,7 +315,7 @@ export const assign = (target: any, ...others: any[]) => {
 
   /* istanbul ignore next */
   if (target == null) {
-    throw new TypeError("Cannot convert undefined or null to object");
+    throw new TypeError('Cannot convert undefined or null to object');
   }
 
   /* istanbul ignore next */
@@ -344,7 +334,7 @@ export const assign = (target: any, ...others: any[]) => {
 };
 
 let id = 0;
-let idTemplate = "{id}";
+let idTemplate = '{id}';
 
 /**
  * Generates a unique id.
@@ -354,19 +344,16 @@ export const uniqId = () => {
   if (id >= 9999) {
     id = 0;
     // shift the template.
-    idTemplate = idTemplate.replace("{id}", "_{id}");
+    idTemplate = idTemplate.replace('{id}', '_{id}');
   }
 
   id++;
-  const newId = idTemplate.replace("{id}", String(id));
+  const newId = idTemplate.replace('{id}', String(id));
 
   return newId;
 };
 
-export function findIndex<T>(
-  arrayLike: ArrayLike<T>,
-  predicate: (item: T) => boolean
-): number {
+export function findIndex<T>(arrayLike: ArrayLike<T>, predicate: (item: T) => boolean): number {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
   for (let i = 0; i < array.length; i++) {
     if (predicate(array[i])) {
@@ -380,10 +367,7 @@ export function findIndex<T>(
 /**
  * finds the first element that satisfies the predicate callback, polyfills array.find
  */
-export function find<T>(
-  arrayLike: ArrayLike<T>,
-  predicate: (item: T) => boolean
-): T | undefined {
+export function find<T>(arrayLike: ArrayLike<T>, predicate: (item: T) => boolean): T | undefined {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
   const idx = findIndex(array, predicate);
 
