@@ -1,23 +1,12 @@
-import { DirectiveBinding } from "vue/types/options";
-import { VNode, VNodeDirective } from "vue";
-import {
-  resolveDirectiveRules,
-  resolveName,
-  resolveFeatures,
-  resolveAlias,
-  resolveValue
-} from "./resolvers";
-import { _Vue } from "../plugin";
-import { modes } from "../modes";
-import RuleContainer from "./ruleContainer";
-import { addEventListener, normalizeEventValue } from "../utils/events";
-import {
-  findModel,
-  getInputEventName,
-  isTextInput,
-  isCheckboxOrRadioInput
-} from "../utils/vnode";
-import { getValidator } from "../state";
+import { DirectiveBinding } from 'vue/types/options';
+import { VNode, VNodeDirective } from 'vue';
+import { resolveDirectiveRules, resolveName, resolveFeatures, resolveAlias, resolveValue } from './resolvers';
+import { _Vue } from '../plugin';
+import { modes } from '../modes';
+import RuleContainer from './ruleContainer';
+import { addEventListener, normalizeEventValue } from '../utils/events';
+import { findModel, getInputEventName, isTextInput, isCheckboxOrRadioInput } from '../utils/vnode';
+import { getValidator } from '../state';
 import {
   uniqId,
   createFlags,
@@ -31,24 +20,24 @@ import {
   defineNonReactive,
   assign,
   includes
-} from "../utils";
-import { getConfig } from "../config";
-import { createObserver } from "../mapValidationState";
-import Validator from "./validator";
-import { ValidationResult, ValidationFlags } from "../types";
+} from '../utils';
+import { getConfig } from '../config';
+import { createObserver } from '../mapValidationState';
+import Validator from './validator';
+import { ValidationResult, ValidationFlags } from '../types';
 
 const DEFAULT_CLASSES = {
-  touched: "touched", // the control has been blurred
-  untouched: "untouched", // the control hasn't been blurred
-  valid: "valid", // model is valid
-  invalid: "invalid", // model is invalid
-  pristine: "pristine", // control has not been interacted with
-  dirty: "dirty" // control has been interacted with
+  touched: 'touched', // the control has been blurred
+  untouched: 'untouched', // the control hasn't been blurred
+  valid: 'valid', // model is valid
+  invalid: 'invalid', // model is invalid
+  pristine: 'pristine', // control has not been interacted with
+  dirty: 'dirty' // control has been interacted with
 };
 
 function computeModeSetting(ctx: Field) {
   let compute;
-  if (typeof ctx.mode === "string") {
+  if (typeof ctx.mode === 'string') {
     compute = modes[ctx.mode];
   } else {
     compute = ctx.mode;
@@ -84,19 +73,19 @@ export default class Field {
   isDisabled: any;
 
   constructor(el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
-    defineNonReactive(this, "el", el);
-    defineNonReactive(this, "vid", (vnode.data && vnode.data.ref) || uniqId());
-    defineNonReactive(this, "deps", {});
-    defineNonReactive(this, "validator", getValidator());
-    defineNonReactive(this, "ctx", vnode.context);
-    defineNonReactive(this, "opts", {});
-    defineNonReactive(this, "binding", binding);
-    defineNonReactive(this, "vnode", vnode);
-    defineNonReactive(this, "initialized", false);
-    defineNonReactive(this, "_listeners", {});
-    defineNonReactive(this, "_interactions", {});
-    defineNonReactive(this, "_value", resolveValue(el, vnode));
-    defineNonReactive(this, "rules", resolveDirectiveRules(el, binding, vnode));
+    defineNonReactive(this, 'el', el);
+    defineNonReactive(this, 'vid', (vnode.data && vnode.data.ref) || uniqId());
+    defineNonReactive(this, 'deps', {});
+    defineNonReactive(this, 'validator', getValidator());
+    defineNonReactive(this, 'ctx', vnode.context);
+    defineNonReactive(this, 'opts', {});
+    defineNonReactive(this, 'binding', binding);
+    defineNonReactive(this, 'vnode', vnode);
+    defineNonReactive(this, 'initialized', false);
+    defineNonReactive(this, '_listeners', {});
+    defineNonReactive(this, '_interactions', {});
+    defineNonReactive(this, '_value', resolveValue(el, vnode));
+    defineNonReactive(this, 'rules', resolveDirectiveRules(el, binding, vnode));
 
     (this.el as any)._vid = this.vid;
     this.flags = _Vue.observable(createFlags());
@@ -143,7 +132,7 @@ export default class Field {
     this.opts.validity = options.validity;
 
     const validation = this.validator
-      .verify(this.value, this.rules, {
+      .validate(this.value, this.rules, {
         name: alias || name,
         bails: options.bails,
         values: this.createValuesLookup(),
@@ -153,8 +142,7 @@ export default class Field {
         // prevent race conditions from overriding each other.
         // fixed by waiting for the most recent validation triggered.
         // if its not waiting for anything then we can also mutate the state.
-        if (!this.isWaitingFor(undefined) && !this.isWaitingFor(validation))
-          return res;
+        if (!this.isWaitingFor(undefined) && !this.isWaitingFor(validation)) return res;
         this.waitFor(undefined);
 
         this.flags.validated = true;
@@ -201,13 +189,13 @@ export default class Field {
     }
 
     if (!this.initialized) {
-      defineNonReactive(this, "initialValue", model.value);
+      defineNonReactive(this, 'initialValue', model.value);
     }
 
     this.value = model.value;
     this.flags.changed = this.value === this.initialValue;
     const { on } = computeModeSetting(this);
-    if (this.initialized && on && on.includes("input")) {
+    if (this.initialized && on && on.includes('input')) {
       // tslint:disable-next-line
       this.validate();
     }
@@ -248,18 +236,14 @@ export default class Field {
     this.opts.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
     const inputEvt = getInputEventName(this.vnode, model);
     let events = this._determineEventList(inputEvt);
-    if (includes(events, "input") && model) {
+    if (includes(events, 'input') && model) {
       this.onModelUpdated(model);
-      events = events.filter(evt => evt !== "input");
+      events = events.filter(evt => evt !== 'input');
     }
 
     this.addListeners(el, events);
     this.applyClasses();
-    shouldValidate =
-      shouldValidate ||
-      (binding.modifiers &&
-        binding.modifiers.immediate &&
-        !this.flags.validated);
+    shouldValidate = shouldValidate || (binding.modifiers && binding.modifiers.immediate && !this.flags.validated);
     if (shouldValidate) {
       // tslint:disable-next-line
       this.validate();
@@ -294,8 +278,7 @@ export default class Field {
 
       if (this.componentInstance) {
         this.componentInstance.$on(evt, handler);
-        this._listeners[evt] = () =>
-          this.componentInstance && this.componentInstance.$off(evt, handler);
+        this._listeners[evt] = () => this.componentInstance && this.componentInstance.$off(evt, handler);
         return;
       }
 
@@ -325,7 +308,7 @@ export default class Field {
 
     const defaults = createFlags();
     Object.keys(this.flags)
-      .filter(flag => flag !== "required")
+      .filter(flag => flag !== 'required')
       .forEach(flag => {
         this.flags[flag] = defaults[flag];
       });
@@ -346,12 +329,12 @@ export default class Field {
    */
   setFlags(flags: Partial<ValidationFlags>) {
     const negated: { [x: string]: string | undefined } = {
-      pristine: "dirty",
-      dirty: "pristine",
-      valid: "invalid",
-      invalid: "valid",
-      touched: "untouched",
-      untouched: "touched"
+      pristine: 'dirty',
+      dirty: 'pristine',
+      valid: 'invalid',
+      invalid: 'valid',
+      touched: 'untouched',
+      untouched: 'touched'
     };
 
     Object.keys(flags).forEach(flag => {
@@ -409,9 +392,7 @@ export default class Field {
       return;
     }
 
-    const els = document.querySelectorAll(
-      `input[name="${(this.el as HTMLInputElement).name}"]`
-    );
+    const els = document.querySelectorAll(`input[name="${(this.el as HTMLInputElement).name}"]`);
     toArray(els).forEach(el => {
       applyClasses(el as HTMLElement);
     });
@@ -433,7 +414,7 @@ export default class Field {
       }
     };
 
-    const inputEvent = isTextInput(this.vnode) ? "input" : "change";
+    const inputEvent = isTextInput(this.vnode) ? 'input' : 'change';
     const onInput = () => {
       this.flags.dirty = true;
       this.flags.pristine = false;
@@ -444,8 +425,8 @@ export default class Field {
     };
 
     if (this.componentInstance && isCallable(this.componentInstance.$once)) {
-      this.componentInstance.$once("input", onInput);
-      this.componentInstance.$once("blur", onBlur);
+      this.componentInstance.$once('input', onInput);
+      this.componentInstance.$once('blur', onBlur);
       return;
     }
 
@@ -455,7 +436,7 @@ export default class Field {
 
     if (!this._interactions.blur) {
       // Checkboxes and radio buttons on Mac don't emit blur naturally, so we listen on click instead.
-      const blurEvent = isCheckboxOrRadioInput(this.vnode) ? "change" : "blur";
+      const blurEvent = isCheckboxOrRadioInput(this.vnode) ? 'change' : 'blur';
       this._interactions.blur = addEventListener(this.el, blurEvent, onBlur);
     }
   }
@@ -470,7 +451,7 @@ export default class Field {
     }
 
     return on.reduce((evts: string[], evt) => {
-      if (evt === "input" && defaultInputEvent !== evt) {
+      if (evt === 'input' && defaultInputEvent !== evt) {
         evts.push(defaultInputEvent);
         return evts;
       }
@@ -485,11 +466,10 @@ export default class Field {
    * Updates aria attributes on the element.
    */
   applyAriaAttrs() {
-    if (!this.opts.aria || !this.el || !isCallable(this.el.setAttribute))
-      return;
+    if (!this.opts.aria || !this.el || !isCallable(this.el.setAttribute)) return;
 
-    this.el.setAttribute("aria-required", this.isRequired ? "true" : "false");
-    this.el.setAttribute("aria-invalid", this.flags.invalid ? "true" : "false");
+    this.el.setAttribute('aria-required', this.isRequired ? 'true' : 'false');
+    this.el.setAttribute('aria-invalid', this.flags.invalid ? 'true' : 'false');
   }
 
   /**
@@ -497,19 +477,16 @@ export default class Field {
    */
   applyCustomValidity() {
     const input = this.el as HTMLInputElement;
-    if (!this.opts.validity || !input || !isCallable(input.setCustomValidity))
-      return;
+    if (!this.opts.validity || !input || !isCallable(input.setCustomValidity)) return;
 
-    input.setCustomValidity(this.errors[0] || "");
+    input.setCustomValidity(this.errors[0] || '');
   }
 
   /**
    * Remove everything.
    */
   destroy() {
-    const isPersisted = !!(
-      this.binding.modifiers && this.binding.modifiers.persist
-    );
+    const isPersisted = !!(this.binding.modifiers && this.binding.modifiers.persist);
     if (isPersisted) {
       this.persistFieldState();
     }

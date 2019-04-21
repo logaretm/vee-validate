@@ -3,7 +3,7 @@ import { assign } from '../utils';
 import { findModel, findModelConfig, mergeVNodeListeners, getInputEventName, normalizeSlots } from '../utils/vnode';
 import { CreateElement } from 'vue';
 
-export function withValidation (component: any, ctxToProps: any = null) {
+export function withValidation(component: any, ctxToProps: any = null) {
   const options = 'options' in component ? component.options : component;
   const hoc: any = {
     name: `${options.name || 'AnonymousHoc'}WithValidation`,
@@ -23,7 +23,7 @@ export function withValidation (component: any, ctxToProps: any = null) {
 
   const eventName = (options.model && options.model.event) || 'input';
 
-  hoc.render = function (h: CreateElement) {
+  hoc.render = function(h: CreateElement) {
     this.registerField();
     const vctx = createValidationCtx(this);
     const listeners = assign({}, this.$listeners);
@@ -45,12 +45,16 @@ export function withValidation (component: any, ctxToProps: any = null) {
     const { prop } = findModelConfig(this.$vnode) || { prop: 'value' };
     const props = assign({}, this.$attrs, { [prop]: model.value }, ctxToProps(vctx));
 
-    return h(options, {
-      attrs: this.$attrs,
-      props,
-      on: listeners
-    }, normalizeSlots(this.$slots, this.$vnode.context));
+    return h(
+      options,
+      {
+        attrs: this.$attrs,
+        props,
+        on: listeners
+      },
+      normalizeSlots(this.$slots, this.$vnode.context)
+    );
   };
 
   return hoc;
-};
+}

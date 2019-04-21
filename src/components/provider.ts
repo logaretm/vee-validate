@@ -1,28 +1,13 @@
-import { getConfig, ValidationClassMap } from "../config";
-import { getValidator } from "../state";
-import { modes } from "../modes";
-import Validator from "../core/validator";
-import RuleContainer from "../core/ruleContainer";
-import { normalizeEvents, normalizeEventValue } from "../utils/events";
-import {
-  createFlags,
-  normalizeRules,
-  warn,
-  isCallable,
-  debounce,
-  isNullOrUndefined,
-  assign,
-  isEqual
-} from "../utils";
-import {
-  findModel,
-  extractVNodes,
-  addVNodeListener,
-  getInputEventName,
-  resolveRules
-} from "../utils/vnode";
-import { VNode, VNodeDirective, CreateElement, Component } from "vue";
-import { ValidationResult, ValidationFlags } from "../types";
+import { getConfig, ValidationClassMap } from '../config';
+import { getValidator } from '../state';
+import { modes } from '../modes';
+import Validator from '../core/validator';
+import RuleContainer from '../core/ruleContainer';
+import { normalizeEvents, normalizeEventValue } from '../utils/events';
+import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual } from '../utils';
+import { findModel, extractVNodes, addVNodeListener, getInputEventName, resolveRules } from '../utils/vnode';
+import { VNode, VNodeDirective, CreateElement, Component } from 'vue';
+import { ValidationResult, ValidationFlags } from '../types';
 
 let $validator: Validator;
 
@@ -43,7 +28,7 @@ interface ProviderData {
 export const ValidationProvider: any = {
   inject: {
     $_veeObserver: {
-      from: "$_veeObserver",
+      from: '$_veeObserver',
       default(this: any) {
         if (!this.$vnode.context.$_veeObserver) {
           this.$vnode.context.$_veeObserver = createObserver();
@@ -94,7 +79,7 @@ export const ValidationProvider: any = {
     },
     tag: {
       type: String,
-      default: "span"
+      default: 'span'
     }
   },
   watch: {
@@ -114,7 +99,7 @@ export const ValidationProvider: any = {
     failedRules: {},
     forceRequired: false,
     isDeactivated: false,
-    id: ""
+    id: ''
   }),
   computed: {
     isValid(this: any): boolean {
@@ -129,7 +114,7 @@ export const ValidationProvider: any = {
           const depName = this.normalizedRules[rule][0];
           const watcherName = `$__${depName}`;
           if (!isCallable(this[watcherName]) && providers[depName]) {
-            this[watcherName] = providers[depName].$watch("value", () => {
+            this[watcherName] = providers[depName].$watch('value', () => {
               if (this.flags.validated) {
                 this._needsValidation = true;
                 this.validate();
@@ -144,7 +129,7 @@ export const ValidationProvider: any = {
       const { on } = computeModeSetting(this);
 
       return normalizeEvents(on || []).map(e => {
-        if (e === "input") {
+        if (e === 'input') {
           return this._inputEventName;
         }
 
@@ -169,7 +154,7 @@ export const ValidationProvider: any = {
           return classes;
         }
 
-        if (typeof className === "string") {
+        if (typeof className === 'string') {
           classes[className] = this.flags[flag];
         } else if (Array.isArray(className)) {
           className.forEach(cls => {
@@ -185,17 +170,15 @@ export const ValidationProvider: any = {
     }
   },
   render(h: CreateElement): VNode {
-    this.registerField();
+    this.registerField(this);
     const ctx = createValidationCtx(this);
 
     // Gracefully handle non-existent scoped slots.
     let slot = this.$scopedSlots.default;
     /* istanbul ignore next */
     if (!isCallable(slot)) {
-      if (process.env.NODE_ENV !== "production") {
-        warn(
-          'ValidationProvider expects a scoped slot. Did you forget to add "slot-scope" to your slot?'
-        );
+      if (process.env.NODE_ENV !== 'production') {
+        warn('ValidationProvider expects a scoped slot. Did you forget to add "slot-scope" to your slot?');
       }
 
       return h(this.tag, this.$slots.default);
@@ -256,7 +239,7 @@ export const ValidationProvider: any = {
       const rules = assign({}, this._resolvedRules, this.normalizedRules);
 
       return $validator
-        .verify(this.value, rules, {
+        .validate(this.value, rules, {
           name: this.name,
           values: createValuesLookup(this),
           bails: this.bails,
@@ -284,8 +267,7 @@ export const ValidationProvider: any = {
     },
     registerField() {
       if (!$validator) {
-        $validator =
-          getValidator() || new Validator({ bails: getConfig().bails });
+        $validator = getValidator() || new Validator({ bails: getConfig().bails });
       }
 
       updateRenderingContextRefs(this);
@@ -303,8 +285,8 @@ export function createValidationCtx(ctx: any) {
     reset: () => ctx.reset(),
     validate: (...args: any[]) => ctx.validate(...args),
     aria: {
-      "aria-invalid": ctx.flags.invalid ? "true" : "false",
-      "aria-required": ctx.isRequired ? "true" : "false"
+      'aria-invalid': ctx.flags.invalid ? 'true' : 'false',
+      'aria-required': ctx.isRequired ? 'true' : 'false'
     }
   };
 }
@@ -360,9 +342,7 @@ export function onRenderUpdate(vm: any, model: VNodeDirective) {
     return;
   }
 
-  vm.validateSilent().then(
-    vm.immediate || vm.flags.validated ? vm.applyResult : (x: any) => x
-  );
+  vm.validateSilent().then(vm.immediate || vm.flags.validated ? vm.applyResult : (x: any) => x);
 }
 
 // Creates the common handlers for a validatable context.
@@ -416,7 +396,7 @@ function addListeners(vm: any, node: VNode) {
 
   const { onInput, onBlur, onValidate } = createCommonHandlers(vm);
   addVNodeListener(node, vm._inputEventName, onInput);
-  addVNodeListener(node, "blur", onBlur);
+  addVNodeListener(node, 'blur', onBlur);
 
   // add the validation listeners.
   vm.normalizedEvents.forEach((evt: string) => {

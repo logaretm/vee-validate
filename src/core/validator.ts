@@ -1,6 +1,6 @@
-import VeeValidate from "../plugin";
-import Dictionary from "../dictionary";
-import RuleContainer from "./ruleContainer";
+import VeeValidate from '../plugin';
+import Dictionary from '../dictionary';
+import RuleContainer from './ruleContainer';
 import {
   isObject,
   getPath,
@@ -13,13 +13,9 @@ import {
   normalizeRules,
   isEmptyArray,
   isPromise
-} from "../utils";
-import { PartialI18nDictionary, RootI18nDictionary } from "./i18n";
-import {
-  ValidationResult,
-  ValidationRule,
-  ValidationRuleSchema
-} from "../types";
+} from '../utils';
+import { PartialI18nDictionary, RootI18nDictionary } from './i18n';
+import { ValidationResult, ValidationRule, ValidationRuleSchema } from '../types';
 
 let $vee: VeeValidate;
 
@@ -30,9 +26,7 @@ interface ValidatorOptions {
 export default class Validator {
   bails: boolean;
   constructor(options: ValidatorOptions = { bails: true }) {
-    this.bails = !!(!isNullOrUndefined(options && options.bails)
-      ? options.bails
-      : true);
+    this.bails = !!(!isNullOrUndefined(options && options.bails) ? options.bails : true);
   }
 
   /**
@@ -60,7 +54,7 @@ export default class Validator {
     const hasChanged = value !== Dictionary.getDriver().locale;
     Dictionary.getDriver().locale = value;
     if (hasChanged && $vee && $vee.vm) {
-      $vee.vm.$emit("localeChanged");
+      $vee.vm.$emit('localeChanged');
     }
   }
 
@@ -76,23 +70,15 @@ export default class Validator {
     // rules imported from the minimal bundle
     // will have the options embedded in them
     let mergedOpts = {};
-    if ("options" in validator) {
+    if ('options' in validator) {
       mergedOpts = validator.options;
     }
 
     Validator._merge(name, {
-      validate:
-        typeof validator === "function" ? validator : validator.validate,
-      getMessage:
-        typeof validator === "function" ? undefined : validator.getMessage,
-      paramNames:
-        (options && options.paramNames) ||
-        (validator as ValidationRuleSchema).paramNames,
-      options: assign(
-        { hasTarget: false, immediate: true },
-        mergedOpts,
-        options || {}
-      )
+      validate: typeof validator === 'function' ? validator : validator.validate,
+      getMessage: typeof validator === 'function' ? undefined : validator.getMessage,
+      paramNames: (options && options.paramNames) || (validator as ValidationRuleSchema).paramNames,
+      options: assign({ hasTarget: false, immediate: true }, mergedOpts, options || {})
     });
   }
 
@@ -109,10 +95,7 @@ export default class Validator {
   /**
    * Adds and sets the current locale for the validator.
    */
-  static localize(
-    lang: string | RootI18nDictionary,
-    dictionary?: PartialI18nDictionary
-  ) {
+  static localize(lang: string | RootI18nDictionary, dictionary?: PartialI18nDictionary) {
     if (isObject(lang)) {
       Dictionary.getDriver().merge(lang);
       return;
@@ -145,13 +128,11 @@ export default class Validator {
   /**
    * Validates a value against the rules.
    */
-  verify(value: any, rules: any, options: any = {}): Promise<ValidationResult> {
+  validate(value: any, rules: any, options: any = {}): Promise<ValidationResult> {
     const field: any = {
-      name: (options && options.name) || "{field}",
-      rules: getPath("isNormalized", options, false)
-        ? rules
-        : normalizeRules(rules),
-      bails: getPath("bails", options, true),
+      name: (options && options.name) || '{field}',
+      rules: getPath('isNormalized', options, false) ? rules : normalizeRules(rules),
+      bails: getPath('bails', options, true),
       forceRequired: false,
       dependencies: [],
       get isRequired() {
@@ -159,9 +140,7 @@ export default class Validator {
       }
     };
 
-    const targetRules = Object.keys(field.rules).filter(
-      RuleContainer.isTargetRule
-    );
+    const targetRules = Object.keys(field.rules).filter(RuleContainer.isTargetRule);
     if (targetRules.length && options && isObject(options.values)) {
       field.dependencies = targetRules.map(rule => {
         const [targetKey] = field.rules[rule];
@@ -173,42 +152,30 @@ export default class Validator {
       });
     }
 
-    return this._validate(field, value, { initial: options.isInitial }).then(
-      result => {
-        const errors: string[] = [];
-        const ruleMap: { [k: string]: string } = {};
-        result.errors.forEach((e: any) => {
-          errors.push(e.msg);
-          ruleMap[e.rule] = e.msg;
-        });
+    return this._validate(field, value, { initial: options.isInitial }).then(result => {
+      const errors: string[] = [];
+      const ruleMap: { [k: string]: string } = {};
+      result.errors.forEach((e: any) => {
+        errors.push(e.msg);
+        ruleMap[e.rule] = e.msg;
+      });
 
-        return {
-          valid: result.valid,
-          errors,
-          failedRules: ruleMap
-        };
-      }
-    );
+      return {
+        valid: result.valid,
+        errors,
+        failedRules: ruleMap
+      };
+    });
   }
 
   /**
    * Formats an error message for field and a rule.
    */
-  _formatErrorMessage(
-    field: any,
-    rule: any,
-    data = {},
-    targetName: any = null
-  ) {
+  _formatErrorMessage(field: any, rule: any, data = {}, targetName: any = null) {
     const name = this._getFieldDisplayName(field);
     const params = this._getLocalizedParams(rule, targetName);
 
-    return Dictionary.getDriver().getFieldMessage(
-      this.locale,
-      field.name,
-      rule.name,
-      [name, params, data]
-    );
+    return Dictionary.getDriver().getFieldMessage(this.locale, field.name, rule.name, [name, params, data]);
   }
 
   /**
@@ -236,13 +203,10 @@ export default class Validator {
   /**
    * Translates the parameters passed to the rule (mainly for target fields).
    */
-  _getLocalizedParams(rule: any, targetName: string = "") {
+  _getLocalizedParams(rule: any, targetName: string = '') {
     let params = this._convertParamObjectToArray(rule.params, rule.name);
     if (rule.options.hasTarget && params && params[0]) {
-      const localizedName =
-        targetName ||
-        Dictionary.getDriver().getAttribute(this.locale, params[0]) ||
-        params[0];
+      const localizedName = targetName || Dictionary.getDriver().getAttribute(this.locale, params[0]) || params[0];
 
       return [localizedName].concat(params.slice(1));
     }
@@ -254,11 +218,7 @@ export default class Validator {
    * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
    */
   _getFieldDisplayName(field: { alias?: string; name: string }) {
-    return (
-      field.alias ||
-      Dictionary.getDriver().getAttribute(this.locale, field.name) ||
-      field.name
-    );
+    return field.alias || Dictionary.getDriver().getAttribute(this.locale, field.name) || field.name;
   }
 
   /**
@@ -274,9 +234,7 @@ export default class Validator {
 
     if (isObject(params)) {
       // check if the object is either a config object or a single parameter that is an object.
-      const hasKeys = paramNames.some(
-        (name: string) => Object.keys(params).indexOf(name) !== -1
-      );
+      const hasKeys = paramNames.some((name: string) => Object.keys(params).indexOf(name) !== -1);
       // if it has some of the keys, return it as is.
       if (hasKeys) {
         return params;
@@ -298,18 +256,14 @@ export default class Validator {
    */
   _test(field: any, value: any, rule: any) {
     const validator = RuleContainer.getValidatorMethod(rule.name);
-    let params = Array.isArray(rule.params)
-      ? toArray(rule.params)
-      : rule.params;
+    let params = Array.isArray(rule.params) ? toArray(rule.params) : rule.params;
     if (!params) {
       params = [];
     }
 
-    let targetName: string = "";
+    let targetName: string = '';
     if (!validator) {
-      return Promise.reject(
-        createError(`No such validator '${rule.name}' exists.`)
-      );
+      return Promise.reject(createError(`No such validator '${rule.name}' exists.`));
     }
 
     // has field dependencies.
@@ -319,15 +273,12 @@ export default class Validator {
         targetName = target.field.alias;
         params = [target.field.value].concat(params.slice(1));
       }
-    } else if (rule.name === "required" && field.rejectsFalse) {
+    } else if (rule.name === 'required' && field.rejectsFalse) {
       // invalidate false if no args were specified and the field rejects false by default.
       params = params.length ? params : [true];
     }
 
-    let result = validator(
-      value,
-      this._convertParamArrayToObj(params, rule.name)
-    );
+    let result = validator(value, this._convertParamArrayToObj(params, rule.name));
 
     // If it is a promise.
     if (isPromise(result)) {
@@ -345,9 +296,7 @@ export default class Validator {
         return {
           valid: allValid,
           data,
-          errors: allValid
-            ? []
-            : [this._createFieldError(field, rule, data, targetName)]
+          errors: allValid ? [] : [this._createFieldError(field, rule, data, targetName)]
         };
       });
     }
@@ -359,19 +308,14 @@ export default class Validator {
     return {
       valid: result.valid,
       data: result.data,
-      errors: result.valid
-        ? []
-        : [this._createFieldError(field, rule, result.data, targetName)]
+      errors: result.valid ? [] : [this._createFieldError(field, rule, result.data, targetName)]
     };
   }
 
   /**
    * Merges a validator object into the RULES and Messages.
    */
-  static _merge(
-    name: string,
-    { validate, options, paramNames, getMessage }: ValidationRuleSchema
-  ) {
+  static _merge(name: string, { validate, options, paramNames, getMessage }: ValidationRuleSchema) {
     if (getMessage) {
       Dictionary.getDriver().merge({
         [Validator.locale]: {
@@ -401,9 +345,7 @@ export default class Validator {
       return;
     }
 
-    throw createError(
-      `Extension Error: The validator '${name}' must be a function or have a 'validate' method.`
-    );
+    throw createError(`Extension Error: The validator '${name}' must be a function or have a 'validate' method.`);
   }
 
   /**
@@ -435,10 +377,7 @@ export default class Validator {
     }
 
     // skip if the field is not required and has an empty value.
-    return (
-      !field.isRequired &&
-      (isNullOrUndefined(value) || value === "" || isEmptyArray(value))
-    );
+    return !field.isRequired && (isNullOrUndefined(value) || value === '' || isEmptyArray(value));
   }
 
   _shouldBail(field: any) {
@@ -454,9 +393,7 @@ export default class Validator {
    * Starts the validation process.
    */
   _validate(field: any, value: any, { initial = false } = {}) {
-    let requireRules = Object.keys(field.rules).filter(
-      RuleContainer.isRequireRule
-    );
+    let requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
 
     field.forceRequired = false;
     requireRules.forEach(rule => {
@@ -468,10 +405,10 @@ export default class Validator {
       });
 
       if (isPromise(result)) {
-        throw createError("Require rules cannot be async");
+        throw createError('Require rules cannot be async');
       }
       if (!isObject(result)) {
-        throw createError("Require rules has to return an object (see docs)");
+        throw createError('Require rules has to return an object (see docs)');
       }
 
       if (result.data.required === true) {
