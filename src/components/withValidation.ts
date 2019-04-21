@@ -1,9 +1,13 @@
-import { ValidationProvider, createValidationCtx, createCommonHandlers, onRenderUpdate } from './provider';
-import { assign } from '../utils';
+import { ValidationProvider } from './provider';
+import { assign, identity } from '../utils';
 import { findModel, findModelConfig, mergeVNodeListeners, getInputEventName, normalizeSlots } from '../utils/vnode';
-import { CreateElement } from 'vue';
+import { CreateElement, Component } from 'vue';
+import { createValidationCtx, onRenderUpdate, createCommonHandlers, ValidationContext } from './common';
 
-export function withValidation(component: any, ctxToProps: any = null) {
+type ValidationContextMapper = (ctx: ValidationContext) => { [k: string]: any };
+type ComponentLike = Component | { options: any };
+
+export function withValidation(component: ComponentLike, mapProps: ValidationContextMapper = identity): Component {
   const options = 'options' in component ? component.options : component;
   const hoc: any = {
     name: `${options.name || 'AnonymousHoc'}WithValidation`,
@@ -11,15 +15,9 @@ export function withValidation(component: any, ctxToProps: any = null) {
     data: ValidationProvider.data,
     computed: assign({}, ValidationProvider.computed),
     methods: assign({}, ValidationProvider.methods),
-    $__veeInject: false,
     beforeDestroy: ValidationProvider.beforeDestroy,
     inject: ValidationProvider.inject
   };
-
-  // Default ctx converts ctx props to component props.
-  if (!ctxToProps) {
-    ctxToProps = (ctx: any) => ctx;
-  }
 
   const eventName = (options.model && options.model.event) || 'input';
 
@@ -43,7 +41,7 @@ export function withValidation(component: any, ctxToProps: any = null) {
     // Props are any attrs not associated with ValidationProvider Plus the model prop.
     // WARNING: Accidental prop overwrite will probably happen.
     const { prop } = findModelConfig(this.$vnode) || { prop: 'value' };
-    const props = assign({}, this.$attrs, { [prop]: model.value }, ctxToProps(vctx));
+    const props = assign({}, this.$attrs, { [prop]: model.value }, mapProps(vctx));
 
     return h(
       options,
