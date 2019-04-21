@@ -1,22 +1,9 @@
 module.exports = {
   setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
-  testMatch: [
-    '**/tests/**/*.js'
-  ],
-  testPathIgnorePatterns: [
-    '/helpers/',
-    '/setup.js'
-  ],
-  collectCoverageFrom: [
-    'src/**/*.js',
-    '!src/index.*.js',
-  ],
-  moduleFileExtensions: [
-    'js',
-    'ts',
-    'json',
-    'vue'
-  ],
+  testMatch: ['**/tests/**/*.js'],
+  testPathIgnorePatterns: ['/helpers/', '/setup.js'],
+  collectCoverageFrom: ['src/**/*.ts', '!src/index.minimal.ts'],
+  moduleFileExtensions: ['js', 'ts', 'json', 'vue'],
   transform: {
     '\\.(ts)$': 'ts-jest',
     '^.+\\.jsx?$': 'babel-jest',
