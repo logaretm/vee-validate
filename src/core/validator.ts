@@ -356,7 +356,6 @@ export default class Validator {
       field: field.name,
       msg: this._formatErrorMessage(field, rule, data, targetName),
       rule: rule.name,
-      scope: field.scope,
       regenerate: () => {
         return this._formatErrorMessage(field, rule, data, targetName);
       }
@@ -419,7 +418,6 @@ export default class Validator {
         valid: true,
         id: field.id,
         field: field.name,
-        scope: field.scope,
         errors: []
       });
     }
@@ -459,8 +457,7 @@ export default class Validator {
         valid: false,
         errors,
         id: field.id,
-        field: field.name,
-        scope: field.scope
+        field: field.name
       });
     }
 
@@ -479,8 +476,7 @@ export default class Validator {
           valid: true,
           errors,
           id: field.id,
-          field: field.name,
-          scope: field.scope
+          field: field.name
         }
       );
     });
