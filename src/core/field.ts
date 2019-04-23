@@ -221,7 +221,7 @@ export default class Field {
     this.applyCustomValidity();
   }
 
-  onUpdate(el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
+  async onUpdate(el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
     this.el = el;
     this.binding = binding;
     this.vnode = vnode;
@@ -246,7 +246,7 @@ export default class Field {
     shouldValidate = shouldValidate || (binding.modifiers && binding.modifiers.immediate && !this.flags.validated);
     if (shouldValidate) {
       // tslint:disable-next-line
-      this.validate();
+      await this.validate();
     }
 
     this.addActionListeners();
@@ -267,8 +267,7 @@ export default class Field {
       this.value = value;
       this.flags.changed = this.value !== this.initialValue;
 
-      // tslint:disable-next-line
-      this.validate();
+      return this.validate();
     };
 
     events.forEach(evt => {

@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
-import VeeValidate from '@/index';
+import VeeValidate, { mapValidationState } from '@/index';
 
 describe('Automatic Classes', () => {
   test('automatic classes applied on inputs', async () => {
@@ -14,10 +14,12 @@ describe('Automatic Classes', () => {
     });
 
     const wrapper = mount({
-      template: `<input type="text" name="field" v-validate="'required'">`
+      computed: mapValidationState('vee'),
+      template: `<input type="text" name="field" v-validate="'required'" :class="vee.for('field').classes">`
     }, { localVue: Vue, sync: false });
 
     const input = wrapper.find('input');
+    await flushPromises();
 
     expect(input.classes()).toContain('untouched'); // hasn't been touched
     expect(input.classes()).not.toContain('touched');

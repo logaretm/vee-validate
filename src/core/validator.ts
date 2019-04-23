@@ -22,6 +22,14 @@ interface ValidatorOptions {
   bails?: boolean;
 }
 
+interface FieldMeta {
+  name: string;
+  rules: { [k: string]: any[] };
+  bails: boolean;
+  forceRequired: boolean;
+  crossTable: { [k: string]: any };
+}
+
 export default class Validator {
   bails: boolean;
   constructor(options: ValidatorOptions = { bails: true }) {
@@ -126,31 +134,16 @@ export default class Validator {
   /**
    * Validates a value against the rules.
    */
-  validate(value: any, rules: any, options: any = {}): Promise<ValidationResult> {
-    const field: any = {
+  async validate(value: any, rules: any, options: any = {}): Promise<ValidationResult> {
+    const field: FieldMeta = {
       name: (options && options.name) || '{field}',
       rules: getPath('isNormalized', options, false) ? rules : normalizeRules(rules),
-      bails: getPath('bails', options, true),
+      bails: getPath('bails', options, this.bails),
       forceRequired: false,
-      dependencies: [],
-      get isRequired() {
-        return !!this.rules.required || this.forceRequired;
-      }
+      crossTable: options && options.values
     };
 
-    const targetRules = Object.keys(field.rules).filter(RuleContainer.isTargetRule);
-    if (targetRules.length && options && isObject(options.values)) {
-      field.dependencies = targetRules.map(rule => {
-        const [targetKey] = field.rules[rule];
-
-        return {
-          name: rule,
-          field: { value: options.values[targetKey] }
-        };
-      });
-    }
-
-    return this._validate(field, value, { initial: options.isInitial }).then(result => {
+    return this._validate(field, value, options).then(result => {
       const errors: string[] = [];
       const ruleMap: { [k: string]: string } = {};
       result.errors.forEach((e: any) => {
@@ -252,7 +245,7 @@ export default class Validator {
   /**
    * Tests a single input value against a rule.
    */
-  private _test(field: any, value: any, rule: any) {
+  private async _test(field: FieldMeta, value: any, rule: any) {
     const validator = RuleContainer.getValidatorMethod(rule.name);
     let params = Array.isArray(rule.params) ? toArray(rule.params) : rule.params;
     if (!params) {
@@ -261,51 +254,29 @@ export default class Validator {
 
     let targetName: string = '';
     if (!validator) {
-      return Promise.reject(createError(`No such validator '${rule.name}' exists.`));
+      throw createError(`No such validator '${rule.name}' exists.`);
     }
 
     // has field dependencies.
-    if (rule.options.hasTarget && field.dependencies) {
-      const target = find(field.dependencies, (d: any) => d.name === rule.name);
-      if (target) {
-        targetName = target.field.alias;
-        params = [target.field.value].concat(params.slice(1));
+    if (rule.options.hasTarget && field.crossTable) {
+      const targetId = params[0];
+      if (targetId in field.crossTable) {
+        const targetValue = field.crossTable[targetId];
+        params = [targetValue].concat(params.slice(1));
       }
-    } else if (rule.name === 'required' && field.rejectsFalse) {
+    } else if (rule.name === 'required' && field) {
       // invalidate false if no args were specified and the field rejects false by default.
       params = params.length ? params : [true];
     }
 
-    let result = validator(value, this._convertParamArrayToObj(params, rule.name));
-
-    // If it is a promise.
-    if (isPromise(result)) {
-      return result.then((values: any) => {
-        let allValid = true;
-        let data = {};
-        if (Array.isArray(values)) {
-          allValid = values.every(t => (isObject(t) ? t.valid : t));
-        } else {
-          // Is a single object/boolean.
-          allValid = isObject(values) ? values.valid : values;
-          data = values.data;
-        }
-
-        return {
-          valid: allValid,
-          data,
-          errors: allValid ? [] : [this._createFieldError(field, rule, data, targetName)]
-        };
-      });
-    }
-
+    let result = await validator(value, this._convertParamArrayToObj(params, rule.name));
     if (!isObject(result)) {
       result = { valid: result, data: {} };
     }
 
     return {
       valid: result.valid,
-      data: result.data,
+      data: result.data || {},
       errors: result.valid ? [] : [this._createFieldError(field, rule, result.data, targetName)]
     };
   }
@@ -349,10 +320,8 @@ export default class Validator {
   /**
    * Creates a Field Error Object.
    */
-  private _createFieldError(field: any, rule: any, data: any, targetName?: string) {
+  private _createFieldError(field: FieldMeta, rule: any, data: any, targetName?: string) {
     return {
-      id: field.id,
-      vmId: field.vmId,
       field: field.name,
       msg: this._formatErrorMessage(field, rule, data, targetName),
       rule: rule.name,
@@ -362,123 +331,79 @@ export default class Validator {
     };
   }
 
-  private _shouldSkip(field: any, value: any) {
-    // field is configured to run through the pipeline regardless
-    if (field.bails === false) {
-      return false;
-    }
-
-    // disabled fields are skipped
-    if (field.isDisabled) {
-      return true;
-    }
-
-    // skip if the field is not required and has an empty value.
-    return !field.isRequired && (isNullOrUndefined(value) || value === '' || isEmptyArray(value));
-  }
-
-  private _shouldBail(field: any) {
-    // if the field was configured explicitly.
-    if (field.bails !== undefined) {
-      return field.bails;
-    }
-
-    return this.bails;
-  }
-
-  /**
-   * Starts the validation process.
-   */
-  private _validate(field: any, value: any, { initial = false } = {}) {
-    let requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
-
-    field.forceRequired = false;
-    requireRules.forEach(rule => {
+  private async _shouldSkip(field: FieldMeta, value: any) {
+    const requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
+    const length = requireRules.length;
+    let isRequired = false;
+    for (let i = 0; i < length; i++) {
+      let rule = requireRules[i];
       let ruleOptions = RuleContainer.getOptions(rule);
-      let result = this._test(field, value, {
+      let result = await this._test(field, value, {
         name: rule,
         params: field.rules[rule],
         options: ruleOptions
       });
 
-      if (isPromise(result)) {
-        throw createError('Require rules cannot be async');
-      }
       if (!isObject(result)) {
         throw createError('Require rules has to return an object (see docs)');
       }
 
-      if (result.data.required === true) {
-        field.forceRequired = true;
+      if (result.data.required) {
+        isRequired = true;
       }
-    });
+    }
 
-    if (this._shouldSkip(field, value)) {
-      return Promise.resolve({
+    // field is configured to run through the pipeline regardless
+    if (!field.bails) {
+      return false;
+    }
+
+    // skip if the field is not required and has an empty value.
+    return !isRequired && (isNullOrUndefined(value) || value === '' || isEmptyArray(value));
+  }
+
+  /**
+   * Starts the validation process.
+   */
+  private async _validate(field: FieldMeta, value: any, { isInitial = false } = {}) {
+    const shouldSkip = await this._shouldSkip(field, value);
+    if (shouldSkip) {
+      return {
         valid: true,
-        id: field.id,
-        field: field.name,
         errors: []
-      });
+      };
     }
 
-    const promises: any[] = [];
     const errors: any[] = [];
-    let isExitEarly = false;
-    // use of '.some()' is to break iteration in middle by returning true
-    Object.keys(field.rules)
-      .filter(rule => {
-        if (!initial) return true;
+    const rules = Object.keys(field.rules);
+    const length = rules.length;
+    for (let i = 0; i < length; i++) {
+      if (isInitial && !RuleContainer.isImmediate(rules[i])) {
+        continue;
+      }
 
-        return RuleContainer.isImmediate(rule);
-      })
-      .some(rule => {
-        const ruleOptions = RuleContainer.getOptions(rule);
-        const result = this._test(field, value, {
-          name: rule,
-          params: field.rules[rule],
-          options: ruleOptions
-        });
-        if (isPromise(result)) {
-          promises.push(result);
-        } else if (!result.valid && this._shouldBail(field)) {
-          errors.push(...result.errors);
-          isExitEarly = true;
-        } else {
-          // promisify the result.
-          promises.push(new Promise(resolve => resolve(result)));
+      const rule = rules[i];
+      const ruleOptions = RuleContainer.getOptions(rule);
+      const result = await this._test(field, value, {
+        name: rule,
+        params: field.rules[rule],
+        options: ruleOptions
+      });
+
+      if (!result.valid) {
+        errors.push(...result.errors);
+        if (field.bails) {
+          return {
+            valid: false,
+            errors
+          };
         }
-
-        return isExitEarly;
-      });
-
-    if (isExitEarly) {
-      return Promise.resolve({
-        valid: false,
-        errors,
-        id: field.id,
-        field: field.name
-      });
+      }
     }
 
-    return Promise.all(promises).then(results => {
-      return results.reduce(
-        (prev, v) => {
-          if (!v.valid) {
-            prev.errors.push(...v.errors);
-          }
-
-          prev.valid = prev.valid && v.valid;
-
-          return prev;
-        },
-        {
-          valid: true,
-          errors,
-          id: field.id,
-          field: field.name
-        }
-      );
-    });
+    return {
+      valid: !errors.length,
+      errors
+    };
   }
 }

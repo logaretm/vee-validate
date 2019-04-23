@@ -1,22 +1,34 @@
 import { isEmptyArray, isNullOrUndefined } from '../utils';
 
 const validate = (value: any, [invalidateFalse = false] = []) => {
+  const result = {
+    valid: false,
+    data: {
+      required: true
+    }
+  };
+
   if (isNullOrUndefined(value) || isEmptyArray(value)) {
-    return false;
+    return result;
   }
 
   // incase a field considers `false` as an empty value like checkboxes.
   if (value === false && invalidateFalse) {
-    return false;
+    return result;
   }
 
-  return !!String(value).trim().length;
+  result.valid = !!String(value).trim().length;
+
+  return result;
 };
 
-export {
-  validate
+const options = {
+  computesRequired: true
 };
+
+export { validate, options };
 
 export default {
-  validate
+  validate,
+  options
 };
