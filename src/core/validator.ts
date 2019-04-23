@@ -169,7 +169,7 @@ export default class Validator {
   /**
    * Formats an error message for field and a rule.
    */
-  _formatErrorMessage(field: any, rule: any, data = {}, targetName: any = null) {
+  private _formatErrorMessage(field: any, rule: any, data = {}, targetName: any = null) {
     const name = this._getFieldDisplayName(field);
     const params = this._getLocalizedParams(rule, targetName);
 
@@ -179,7 +179,7 @@ export default class Validator {
   /**
    * We need to convert any object param to an array format since the locales do not handle params as objects yet.
    */
-  _convertParamObjectToArray(obj: any, ruleName: string) {
+  private _convertParamObjectToArray(obj: any, ruleName: string) {
     if (Array.isArray(obj)) {
       return obj;
     }
@@ -201,7 +201,7 @@ export default class Validator {
   /**
    * Translates the parameters passed to the rule (mainly for target fields).
    */
-  _getLocalizedParams(rule: any, targetName: string = '') {
+  private _getLocalizedParams(rule: any, targetName: string = '') {
     let params = this._convertParamObjectToArray(rule.params, rule.name);
     if (rule.options.hasTarget && params && params[0]) {
       const localizedName = targetName || Dictionary.getDriver().getAttribute(this.locale, params[0]) || params[0];
@@ -215,7 +215,7 @@ export default class Validator {
   /**
    * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
    */
-  _getFieldDisplayName(field: { alias?: string; name: string }) {
+  private _getFieldDisplayName(field: { alias?: string; name: string }) {
     return field.alias || Dictionary.getDriver().getAttribute(this.locale, field.name) || field.name;
   }
 
@@ -224,7 +224,7 @@ export default class Validator {
    * Only works if the rule is configured with a paramNames array.
    * Returns the same params if it cannot convert it.
    */
-  _convertParamArrayToObj(params: any[], ruleName: string) {
+  private _convertParamArrayToObj(params: any[], ruleName: string) {
     const paramNames = RuleContainer.getParamNames(ruleName);
     if (!paramNames) {
       return params;
@@ -252,7 +252,7 @@ export default class Validator {
   /**
    * Tests a single input value against a rule.
    */
-  _test(field: any, value: any, rule: any) {
+  private _test(field: any, value: any, rule: any) {
     const validator = RuleContainer.getValidatorMethod(rule.name);
     let params = Array.isArray(rule.params) ? toArray(rule.params) : rule.params;
     if (!params) {
@@ -313,7 +313,7 @@ export default class Validator {
   /**
    * Merges a validator object into the RULES and Messages.
    */
-  static _merge(name: string, { validate, options, paramNames, getMessage }: ValidationRuleSchema) {
+  private static _merge(name: string, { validate, options, paramNames, getMessage }: ValidationRuleSchema) {
     if (getMessage) {
       Dictionary.getDriver().merge({
         [Validator.locale]: {
@@ -334,7 +334,7 @@ export default class Validator {
   /**
    * Guards from extension violations.
    */
-  static _guardExtend(name: string, validator: ValidationRule) {
+  private static _guardExtend(name: string, validator: ValidationRule) {
     if (isCallable(validator)) {
       return;
     }
@@ -349,7 +349,7 @@ export default class Validator {
   /**
    * Creates a Field Error Object.
    */
-  _createFieldError(field: any, rule: any, data: any, targetName?: string) {
+  private _createFieldError(field: any, rule: any, data: any, targetName?: string) {
     return {
       id: field.id,
       vmId: field.vmId,
@@ -363,7 +363,7 @@ export default class Validator {
     };
   }
 
-  _shouldSkip(field: any, value: any) {
+  private _shouldSkip(field: any, value: any) {
     // field is configured to run through the pipeline regardless
     if (field.bails === false) {
       return false;
@@ -378,7 +378,7 @@ export default class Validator {
     return !field.isRequired && (isNullOrUndefined(value) || value === '' || isEmptyArray(value));
   }
 
-  _shouldBail(field: any) {
+  private _shouldBail(field: any) {
     // if the field was configured explicitly.
     if (field.bails !== undefined) {
       return field.bails;
@@ -390,7 +390,7 @@ export default class Validator {
   /**
    * Starts the validation process.
    */
-  _validate(field: any, value: any, { initial = false } = {}) {
+  private _validate(field: any, value: any, { initial = false } = {}) {
     let requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
 
     field.forceRequired = false;
