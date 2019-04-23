@@ -156,11 +156,13 @@ export const ValidationObserver: any = {
         this.observers.splice(idx, 1);
       }
     },
-    validate(this: any, { silent } = { silent: false }) {
-      return Promise.all([
+    async validate(this: any, { silent } = { silent: false }) {
+      const results = await Promise.all([
         ...values(this.refs).map((ref: any) => ref[silent ? 'validateSilent' : 'validate']().then((r: ValidationResult) => r.valid)),
         ...this.observers.map((obs: any) => obs.validate({ silent }))
-      ]).then(results => results.every(r => r));
+      ]);
+
+      return results.every(r => r);
     },
     reset(this: any) {
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());

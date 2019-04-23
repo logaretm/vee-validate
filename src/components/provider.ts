@@ -3,15 +3,7 @@ import { getValidator } from '../state';
 import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, normalizeEventValue } from '../utils/events';
-import {
-  createFlags,
-  normalizeRules,
-  warn,
-  isCallable,
-  isNullOrUndefined,
-  isEqual,
-  computeClassObj
-} from '../utils';
+import { createFlags, normalizeRules, warn, isCallable, isNullOrUndefined, isEqual, computeClassObj } from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName, resolveRules } from '../utils/vnode';
 import { VNode, CreateElement } from 'vue';
 import { ValidationResult, ValidationFlags } from '../types';
@@ -204,37 +196,34 @@ export const ValidationProvider: any = {
       const flags = createFlags();
       this.setFlags(flags);
     },
-    validate(...args: any[]): Promise<ValidationResult> {
+    async validate(...args: any[]): Promise<ValidationResult> {
       if (args.length > 0) {
         this.syncValue(args[0]);
       }
 
-      return this.validateSilent().then((result: ValidationResult) => {
-        this.applyResult(result);
+      const result = await this.validateSilent();
+      this.applyResult(result);
 
-        return result;
-      });
+      return result;
     },
-    validateSilent(this: any): Promise<ValidationResult> {
+    async validateSilent(this: any): Promise<ValidationResult> {
       this.setFlags({ pending: true });
       const rules = { ...this._resolvedRules, ...this.normalizedRules };
 
-      return $validator
-        .validate(this.value, rules, {
-          name: this.name,
-          values: createValuesLookup(this),
-          bails: this.bails,
-          isNormalized: true,
-          isInitial: !this.initialized
-        })
-        .then(result => {
-          this.setFlags({ pending: false });
-          if (!this.isRequired) {
-            this.setFlags({ valid: result.valid, invalid: !result.valid });
-          }
+      const result = await $validator.validate(this.value, rules, {
+        name: this.name,
+        values: createValuesLookup(this),
+        bails: this.bails,
+        isNormalized: true,
+        isInitial: !this.initialized
+      });
 
-          return result;
-        });
+      this.setFlags({ pending: false });
+      if (!this.isRequired) {
+        this.setFlags({ valid: result.valid, invalid: !result.valid });
+      }
+
+      return result;
     },
     applyResult(this: any, { errors, failedRules }: ValidationResult) {
       this.messages = errors;
