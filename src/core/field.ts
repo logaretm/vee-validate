@@ -418,7 +418,7 @@ export default class Field {
   /**
    * Determines the list of events to listen to.
    */
-  _determineEventList(defaultInputEvent: string) {
+  private _determineEventList(defaultInputEvent: string) {
     const { on } = computeModeSetting(this);
     if (!on) {
       return [];
