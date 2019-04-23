@@ -7,7 +7,6 @@ import {
   isCallable,
   toArray,
   createError,
-  assign,
   find,
   isNullOrUndefined,
   normalizeRules,
@@ -78,7 +77,7 @@ export default class Validator {
       validate: typeof validator === 'function' ? validator : validator.validate,
       getMessage: typeof validator === 'function' ? undefined : validator.getMessage,
       paramNames: (options && options.paramNames) || (validator as ValidationRuleSchema).paramNames,
-      options: assign({ hasTarget: false, immediate: true }, mergedOpts, options || {})
+      options: { hasTarget: false, immediate: true, ...mergedOpts, ...(options || {}) }
     });
   }
 
@@ -106,7 +105,6 @@ export default class Validator {
       const locale = lang || dictionary.name;
       if (!locale) return;
 
-      dictionary = assign({}, dictionary) as PartialI18nDictionary;
       Dictionary.getDriver().merge({
         [locale]: dictionary
       });

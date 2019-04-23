@@ -2,7 +2,7 @@ import { DirectiveBinding } from 'vue/types/options';
 import { VNode } from 'vue';
 import { resolveConfig, getConfig } from '../config';
 import { resolveRules, findModel, isTextInput } from '../utils/vnode';
-import { getDataAttribute, getPath, isCallable, includes, normalizeRules, assign } from '../utils';
+import { getDataAttribute, getPath, isCallable, includes, normalizeRules } from '../utils';
 
 export function resolveFeatures(binding: DirectiveBinding, vnode: VNode) {
   const options = resolveConfig(vnode.context);
@@ -53,7 +53,7 @@ export function resolveDirectiveRules(el: HTMLElement, binding: DirectiveBinding
     return normalized;
   }
 
-  return assign({}, resolveRules(vnode), normalized);
+  return { ...resolveRules(vnode), ...normalized };
 }
 
 export function resolveAlias(el: HTMLElement, vnode: VNode) {

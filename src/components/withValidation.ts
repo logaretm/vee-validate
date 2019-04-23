@@ -1,5 +1,5 @@
 import { ValidationProvider } from './provider';
-import { assign, identity } from '../utils';
+import { identity } from '../utils';
 import { findModel, findModelConfig, mergeVNodeListeners, getInputEventName, normalizeSlots } from '../utils/vnode';
 import { CreateElement, Component } from 'vue';
 import { createValidationCtx, onRenderUpdate, createCommonHandlers, ValidationContext } from './common';
@@ -11,10 +11,10 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
   const options = 'options' in component ? component.options : component;
   const hoc: any = {
     name: `${options.name || 'AnonymousHoc'}WithValidation`,
-    props: assign({}, ValidationProvider.props),
+    props: { ...ValidationProvider.props },
     data: ValidationProvider.data,
-    computed: assign({}, ValidationProvider.computed),
-    methods: assign({}, ValidationProvider.methods),
+    computed: { ...ValidationProvider.computed },
+    methods: { ...ValidationProvider.methods },
     beforeDestroy: ValidationProvider.beforeDestroy,
     inject: ValidationProvider.inject
   };
@@ -24,7 +24,7 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
   hoc.render = function(h: CreateElement) {
     this.registerField();
     const vctx = createValidationCtx(this);
-    const listeners = assign({}, this.$listeners);
+    const listeners = { ...this.$listeners };
 
     const model = findModel(this.$vnode);
     this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
@@ -41,7 +41,7 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
     // Props are any attrs not associated with ValidationProvider Plus the model prop.
     // WARNING: Accidental prop overwrite will probably happen.
     const { prop } = findModelConfig(this.$vnode) || { prop: 'value' };
-    const props = assign({}, this.$attrs, { [prop]: model.value }, mapProps(vctx));
+    const props = { ...this.$attrs, ...{ [prop]: model.value }, ...mapProps(vctx) };
 
     return h(
       options,

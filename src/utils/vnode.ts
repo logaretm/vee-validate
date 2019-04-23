@@ -1,5 +1,5 @@
 // VNode Utils
-import { find, isCallable, isNullOrUndefined, includes, assign, normalizeRules } from './index';
+import { find, isCallable, isNullOrUndefined, includes, normalizeRules } from './index';
 import { VNode, VNodeDirective } from 'vue';
 
 export const isTextInput = (vnode: VNode) => {
@@ -220,7 +220,7 @@ export function resolveRules(vnode: VNode) {
   }
 
   if (isTextInput(vnode)) {
-    return normalizeRules(assign(rules, resolveTextualRules(vnode)));
+    return normalizeRules({ ...rules, ...resolveTextualRules(vnode) });
   }
 
   return normalizeRules(rules);

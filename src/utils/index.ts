@@ -275,35 +275,6 @@ export function toArray<T>(arrayLike: ArrayLike<T>): T[] {
   return array;
 }
 
-/**
- * Assign polyfill from the mdn.
- */
-export const assign = (target: any, ...others: any[]) => {
-  /* istanbul ignore else */
-  if (isCallable(Object.assign)) {
-    return Object.assign(target, ...others);
-  }
-
-  /* istanbul ignore next */
-  if (target == null) {
-    throw new TypeError('Cannot convert undefined or null to object');
-  }
-
-  /* istanbul ignore next */
-  const to = Object(target);
-  /* istanbul ignore next */
-  others.forEach(arg => {
-    // Skip over if undefined or null
-    if (arg != null) {
-      Object.keys(arg).forEach(key => {
-        to[key] = arg[key];
-      });
-    }
-  });
-  /* istanbul ignore next */
-  return to;
-};
-
 let id = 0;
 let idTemplate = '{id}';
 
@@ -353,14 +324,14 @@ export const merge = (target: any, source: any) => {
   Object.keys(source).forEach(key => {
     if (isObject(source[key])) {
       if (!target[key]) {
-        assign(target, { [key]: {} });
+        target[key] = {};
       }
 
       merge(target[key], source[key]);
       return;
     }
 
-    assign(target, { [key]: source[key] });
+    target[key] = source[key];
   });
 
   return target;

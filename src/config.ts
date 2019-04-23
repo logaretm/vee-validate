@@ -1,4 +1,4 @@
-import { assign, getPath } from "./utils";
+import { getPath } from "./utils";
 import { InteractionModeFactory } from "./modes";
 import { RootI18nDictionary } from "./core/i18n";
 
@@ -27,7 +27,7 @@ export interface VeeValidateConfig {
   delay: number;
 }
 
-const DEFAULT_CONFIG: Partial<VeeValidateConfig> = {
+const DEFAULT_CONFIG: VeeValidateConfig = {
   locale: "en",
   classes: false,
   classNames: {
@@ -43,20 +43,20 @@ const DEFAULT_CONFIG: Partial<VeeValidateConfig> = {
   validity: false,
   mode: "aggressive",
   useConstraintAttrs: true,
-  dictionary: undefined,
+  dictionary: {},
   delay: 0
 };
 
-export let currentConfig: VeeValidateConfig = assign({}, DEFAULT_CONFIG);
+export let currentConfig: VeeValidateConfig = { ...DEFAULT_CONFIG };
 
 export const resolveConfig = (ctx: any) => {
   const selfConfig = getPath("$options.$_veeValidate", ctx, {});
 
-  return assign({}, currentConfig, selfConfig);
+  return { ...currentConfig, ...selfConfig };
 };
 
 export const getConfig = () => currentConfig;
 
 export const setConfig = (newConf: Partial<VeeValidateConfig>) => {
-  currentConfig = assign({}, currentConfig, newConf);
+  currentConfig = { ...currentConfig, ...newConf };
 };

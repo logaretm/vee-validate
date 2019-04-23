@@ -15,7 +15,6 @@ import {
   isEqual,
   values,
   defineNonReactive,
-  assign,
   includes,
   computeClassObj
 } from '../utils';
@@ -234,7 +233,7 @@ export default class Field {
     this.registerField(vnode);
     const options = resolveFeatures(binding, vnode);
     this.opts.classes = options.classes;
-    this.opts.classNames = assign({}, DEFAULT_CLASSES, options.classNames);
+    this.opts.classNames = { ...DEFAULT_CLASSES, ...options.classNames };
     const inputEvt = getInputEventName(this.vnode, model);
     let events = this._determineEventList(inputEvt);
     if (includes(events, 'input') && model) {
@@ -372,7 +371,7 @@ export default class Field {
     }
 
     this.classes = computeClassObj(this.opts.classNames, this.flags);
-    this._flagsCache = assign({}, this.flags);
+    this._flagsCache = { ...this.flags };
   }
 
   /**
@@ -497,7 +496,7 @@ export default class Field {
     }
 
     this.applyResult({ valid: !!state.errors.length, errors: state.errors });
-    this.flags = assign({}, this.flags, state.flags);
+    this.flags = { ...this.flags, ...state.flags };
     delete this.ctx.$_veeObserver._persistStore[this.vid];
   }
 }

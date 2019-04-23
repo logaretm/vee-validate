@@ -9,7 +9,6 @@ import {
   warn,
   isCallable,
   isNullOrUndefined,
-  assign,
   isEqual,
   computeClassObj
 } from '../utils';
@@ -134,7 +133,7 @@ export const ValidationProvider: any = {
       });
     },
     isRequired(this: any): boolean {
-      const rules = assign({}, this._resolvedRules, this.normalizedRules);
+      const rules = { ...this._resolvedRules, ...this.normalizedRules };
       const forceRequired = this.forceRequired;
 
       const isRequired = rules.required || forceRequired;
@@ -218,7 +217,7 @@ export const ValidationProvider: any = {
     },
     validateSilent(this: any): Promise<ValidationResult> {
       this.setFlags({ pending: true });
-      const rules = assign({}, this._resolvedRules, this.normalizedRules);
+      const rules = { ...this._resolvedRules, ...this.normalizedRules };
 
       return $validator
         .validate(this.value, rules, {
@@ -239,7 +238,7 @@ export const ValidationProvider: any = {
     },
     applyResult(this: any, { errors, failedRules }: ValidationResult) {
       this.messages = errors;
-      this.failedRules = assign({}, failedRules);
+      this.failedRules = { ...failedRules };
       this.setFlags({
         valid: !errors.length,
         changed: this.value !== this.initialValue,
