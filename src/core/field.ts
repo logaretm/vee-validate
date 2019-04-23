@@ -11,15 +11,13 @@ import {
   uniqId,
   createFlags,
   normalizeRules,
-  isNullOrUndefined,
-  toggleClass,
   isCallable,
-  toArray,
   isEqual,
   values,
   defineNonReactive,
   assign,
-  includes
+  includes,
+  computeClassObj
 } from '../utils';
 import { getConfig } from '../config';
 import { createObserver } from '../mapValidationState';
@@ -55,8 +53,8 @@ export default class Field {
   deps!: { [k: string]: Field };
   flags: ValidationFlags;
   errors: string[];
+  classes: { [k: string]: boolean };
   name: string;
-  _value: any;
   vnode!: VNode;
   binding!: DirectiveBinding;
   initialized!: boolean;
@@ -64,13 +62,15 @@ export default class Field {
   validator!: Validator;
   rules: any;
   isRequired!: boolean;
-  _listeners: any;
   ctx: any;
-  _waitingFor: any;
   initialValue: any;
-  _cancellationToken: any;
-  _interactions: any;
   isDisabled: any;
+  private _value: any;
+  private _listeners: any;
+  private _waitingFor: any;
+  private _cancellationToken: any;
+  private _interactions: any;
+  private _flagsCache?: ValidationFlags;
 
   constructor(el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
     defineNonReactive(this, 'el', el);
@@ -90,6 +90,7 @@ export default class Field {
     (this.el as any)._vid = this.vid;
     this.flags = _Vue.observable(createFlags());
     this.errors = _Vue.observable([]);
+    this.classes = _Vue.observable(computeClassObj(getConfig().classNames, this.flags));
     this.name = resolveName(el, vnode);
     if (binding.modifiers.persist) {
       this.restoreFieldState();
@@ -216,7 +217,7 @@ export default class Field {
     this.flags.valid = valid;
     this.flags.invalid = !valid;
     this.errors = errors;
-    this.applyClasses();
+    this.computeClasses();
     this.applyAriaAttrs();
     this.applyCustomValidity();
   }
@@ -242,7 +243,7 @@ export default class Field {
     }
 
     this.addListeners(el, events);
-    this.applyClasses();
+    this.computeClasses();
     shouldValidate = shouldValidate || (binding.modifiers && binding.modifiers.immediate && !this.flags.validated);
     if (shouldValidate) {
       // tslint:disable-next-line
@@ -319,7 +320,7 @@ export default class Field {
     this.flags.changed = false;
 
     this.addActionListeners();
-    this.applyClasses(true);
+    this.computeClasses(true);
     this.applyAriaAttrs();
     this.applyCustomValidity();
   }
@@ -354,7 +355,7 @@ export default class Field {
     ) {
       this.addActionListeners();
     }
-    this.applyClasses();
+    this.computeClasses();
     this.applyAriaAttrs();
     this.applyCustomValidity();
   }
@@ -362,40 +363,16 @@ export default class Field {
   /**
    * Updates the element classes depending on each field flag status.
    */
-  applyClasses(isReset = false) {
-    if (!this.opts.classes || this.isDisabled) return;
+  computeClasses(isReset = false) {
+    if (!this.opts.classes || this.isDisabled || isEqual(this._flagsCache, this.flags)) return;
 
-    const applyClasses = (el: HTMLElement) => {
-      toggleClass(el, this.opts.classNames.dirty, this.flags.dirty);
-      toggleClass(el, this.opts.classNames.pristine, this.flags.pristine);
-      toggleClass(el, this.opts.classNames.touched, this.flags.touched);
-      toggleClass(el, this.opts.classNames.untouched, this.flags.untouched);
-
-      // remove valid/invalid classes on reset.
-      if (isReset) {
-        toggleClass(el, this.opts.classNames.valid, false);
-        toggleClass(el, this.opts.classNames.invalid, false);
-      }
-
-      // make sure we don't set any classes if the state is undetermined.
-      if (!isNullOrUndefined(this.flags.valid) && this.flags.validated) {
-        toggleClass(el, this.opts.classNames.valid, this.flags.valid);
-      }
-
-      if (!isNullOrUndefined(this.flags.invalid) && this.flags.validated) {
-        toggleClass(el, this.opts.classNames.invalid, this.flags.invalid);
-      }
-    };
-
-    if (!isCheckboxOrRadioInput(this.vnode)) {
-      applyClasses(this.el);
-      return;
+    if (isReset) {
+      this.flags.valid = false;
+      this.flags.invalid = false;
     }
 
-    const els = document.querySelectorAll(`input[name="${(this.el as HTMLInputElement).name}"]`);
-    toArray(els).forEach(el => {
-      applyClasses(el as HTMLElement);
-    });
+    this.classes = computeClassObj(this.opts.classNames, this.flags);
+    this._flagsCache = assign({}, this.flags);
   }
 
   /**
@@ -409,8 +386,7 @@ export default class Field {
       this.flags.touched = true;
       this.flags.untouched = false;
       if (this.opts.classes) {
-        toggleClass(this.el, this.opts.classNames.touched, true);
-        toggleClass(this.el, this.opts.classNames.untouched, false);
+        this.computeClasses();
       }
     };
 
@@ -419,8 +395,7 @@ export default class Field {
       this.flags.dirty = true;
       this.flags.pristine = false;
       if (this.opts.classes) {
-        toggleClass(this.el, this.opts.classNames.pristine, false);
-        toggleClass(this.el, this.opts.classNames.dirty, true);
+        this.computeClasses();
       }
     };
 

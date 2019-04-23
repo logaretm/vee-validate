@@ -1,4 +1,5 @@
 import { ValidationFlags } from '../types';
+import { ValidationClassMap } from '../config';
 
 export const isValidDate = (value: unknown): value is Date => {
   const valueAsDate = value as any;
@@ -227,63 +228,33 @@ export function isPromise(value: unknown): value is Promise<any> {
   return false;
 }
 
-/**
- * Check if element has the css class on it.
- */
-export const hasClass = (el: HTMLElement, className: string) => {
-  if (el.classList) {
-    return el.classList.contains(className);
+export function computeClassObj(names: ValidationClassMap, flags: ValidationFlags) {
+  const acc: { [k: string]: boolean } = {};
+  const keys = Object.keys(flags);
+  const length = keys.length;
+  for (let i = 0; i < length; i++) {
+    const flag = keys[i];
+    const className = (names && names[flag]) || flag;
+    const value = flags[flag];
+    if (isNullOrUndefined(value)) {
+      continue;
+    }
+
+    if ((flag === 'valid' || flag === 'invalid') && !flags.validated) {
+      continue;
+    }
+
+    if (typeof className === 'string') {
+      acc[className] = value;
+    } else if (Array.isArray(className)) {
+      className.forEach(cls => {
+        acc[cls] = value;
+      });
+    }
   }
 
-  return !!el.className.match(new RegExp(`(\\s|^)${className}(\\s|$)`));
-};
-
-/**
- * Adds the provided css className to the element.
- */
-export const addClass = (el: HTMLElement, className: string) => {
-  if (el.classList) {
-    el.classList.add(className);
-    return;
-  }
-
-  if (!hasClass(el, className)) {
-    el.className += ` ${className}`;
-  }
-};
-
-/**
- * Remove the provided css className from the element.
- */
-export const removeClass = (el: HTMLElement, className: string) => {
-  if (el.classList) {
-    el.classList.remove(className);
-    return;
-  }
-
-  if (hasClass(el, className)) {
-    const reg = new RegExp(`(\\s|^)${className}(\\s|$)`);
-    el.className = el.className.replace(reg, ' ');
-  }
-};
-
-/**
- * Adds or removes a class name on the input depending on the status flag.
- */
-export const toggleClass = (el: HTMLElement, className: string, status: boolean) => {
-  if (!el || !className) return;
-
-  if (Array.isArray(className)) {
-    className.forEach(item => toggleClass(el, item, status));
-    return;
-  }
-
-  if (status) {
-    return addClass(el, className);
-  }
-
-  removeClass(el, className);
-};
+  return acc;
+}
 
 /**
  * Converts an array-like object to array, provides a simple polyfill for Array.from

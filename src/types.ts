@@ -127,8 +127,9 @@ export interface ValidationProviderInstance extends Vue {
 }
 
 export interface MappedFieldState {
-  errors?: string[];
-  flags?: ValidationFlags;
+  errors: string[];
+  flags: ValidationFlags;
+  classes: { [k: string]: boolean };
 }
 
 export interface MappedValidationState {
@@ -137,7 +138,5 @@ export interface MappedValidationState {
 }
 
 export interface MapStateOptions {
-  errors: boolean;
-  flags: boolean;
   inherit: boolean;
 }

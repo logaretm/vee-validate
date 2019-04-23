@@ -1,9 +1,18 @@
-import { getConfig, ValidationClassMap } from '../config';
+import { getConfig } from '../config';
 import { getValidator } from '../state';
 import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, normalizeEventValue } from '../utils/events';
-import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual } from '../utils';
+import {
+  createFlags,
+  normalizeRules,
+  warn,
+  isCallable,
+  isNullOrUndefined,
+  assign,
+  isEqual,
+  computeClassObj
+} from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName, resolveRules } from '../utils/vnode';
 import { VNode, CreateElement } from 'vue';
 import { ValidationResult, ValidationFlags } from '../types';
@@ -133,25 +142,10 @@ export const ValidationProvider: any = {
 
       return isRequired;
     },
-    classes(this: any): ValidationClassMap {
+    classes(this: any) {
       const names = getConfig().classNames;
-      const acc: { [k: string]: any } = {};
-      return Object.keys(this.flags).reduce((classes, flag) => {
-        const className = (names && names[flag]) || flag;
-        if (isNullOrUndefined(this.flags[flag])) {
-          return classes;
-        }
 
-        if (typeof className === 'string') {
-          classes[className] = this.flags[flag];
-        } else if (Array.isArray(className)) {
-          className.forEach(cls => {
-            classes[cls] = this.flags[flag];
-          });
-        }
-
-        return classes;
-      }, acc);
+      return computeClassObj(names, this.flags);
     },
     normalizedRules(this: any) {
       return normalizeRules(this.rules);

@@ -2,17 +2,9 @@ import { DirectiveBinding } from 'vue/types/options';
 import { VNode } from 'vue';
 import { resolveConfig, getConfig } from '../config';
 import { resolveRules, findModel, isTextInput } from '../utils/vnode';
-import {
-  getDataAttribute,
-  getPath,
-  isCallable,
-  includes,
-  normalizeRules,
-  assign
-} from '../utils';
+import { getDataAttribute, getPath, isCallable, includes, normalizeRules, assign } from '../utils';
 
-
-export function resolveFeatures (binding: DirectiveBinding, vnode: VNode) {
+export function resolveFeatures(binding: DirectiveBinding, vnode: VNode) {
   const options = resolveConfig(vnode.context);
 
   let bails = options.bails;
@@ -35,7 +27,7 @@ export function resolveFeatures (binding: DirectiveBinding, vnode: VNode) {
   };
 }
 
-function getCtorConfig (vnode: VNode) {
+function getCtorConfig(vnode: VNode) {
   if (!vnode.componentInstance) return null;
 
   const config = getPath('componentInstance.$options.$_veeValidate', vnode);
@@ -43,7 +35,7 @@ function getCtorConfig (vnode: VNode) {
   return config;
 }
 
-export function resolveDirectiveRules (el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
+export function resolveDirectiveRules(el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
   let rules = '';
   if (binding.value && includes(['string', 'object'], typeof binding.value.rules)) {
     rules = binding.value.rules;
@@ -64,7 +56,7 @@ export function resolveDirectiveRules (el: HTMLElement, binding: DirectiveBindin
   return assign({}, resolveRules(vnode), normalized);
 }
 
-export function resolveAlias (el: HTMLElement, vnode: VNode) {
+export function resolveAlias(el: HTMLElement, vnode: VNode) {
   const ctorConfig = getCtorConfig(vnode);
   let alias = null;
   if (ctorConfig && ctorConfig.alias) {
@@ -82,7 +74,7 @@ export function resolveAlias (el: HTMLElement, vnode: VNode) {
   return alias;
 }
 
-export function resolveName (el: HTMLElement, vnode: VNode) {
+export function resolveName(el: HTMLElement, vnode: VNode) {
   let name = getDataAttribute(el, 'name');
 
   if (!vnode.componentInstance && vnode.data && vnode.data.attrs && vnode.data.attrs.name) {
@@ -111,7 +103,7 @@ export function resolveName (el: HTMLElement, vnode: VNode) {
   return name;
 }
 
-export function resolveValue (el: HTMLElement, vnode: VNode) {
+export function resolveValue(el: HTMLElement, vnode: VNode) {
   const model = findModel(vnode);
   if (model) {
     return model.value;
@@ -133,4 +125,4 @@ export function resolveValue (el: HTMLElement, vnode: VNode) {
   }
 
   return undefined;
-};
+}

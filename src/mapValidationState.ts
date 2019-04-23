@@ -1,7 +1,7 @@
 import { values } from './utils';
 import { _Vue } from './plugin';
 import Field from './core/field';
-import { MappedFieldState, MappedValidationState } from './types';
+import { MappedFieldState, MappedValidationState, MapStateOptions } from './types';
 
 interface FieldObserver {
   state: {
@@ -37,22 +37,23 @@ function findObserver(vm: any): FieldObserver | undefined {
   return findObserver(vm.$parent);
 }
 
-function mapObserverState(obs: FieldObserver, { errors = true, flags = true }) {
+function mapObserverState(obs: FieldObserver) {
   const collection: { [k: string]: MappedFieldState } = {};
   return values(obs.state.refs).reduce((acc, field) => {
     acc[field.name || field.vid] = {
-      errors: errors ? field.errors : undefined,
-      flags: flags ? field.flags : undefined
+      errors: field.errors,
+      flags: field.flags,
+      classes: field.classes
     };
 
     return acc;
   }, collection);
 }
 
-export function mapValidationState(propName: string, { errors = true, flags = true, inherit = false } = {}) {
+export function mapValidationState(propName: string, opts: MapStateOptions = { inherit: false }) {
   return {
     [propName](this: any): MappedValidationState {
-      if (inherit) {
+      if (opts && opts.inherit) {
         this.$_veeObserver = findObserver(this);
       }
 
@@ -60,12 +61,12 @@ export function mapValidationState(propName: string, { errors = true, flags = tr
         this.$_veeObserver = createObserver();
       }
 
-      const mapped = mapObserverState(this.$_veeObserver, { errors, flags });
+      const mapped = mapObserverState(this.$_veeObserver);
 
       return {
         fields: mapped,
         for: function(fieldNameOrVid: string): MappedFieldState {
-          return this.fields[fieldNameOrVid] || { errors: [] };
+          return this.fields[fieldNameOrVid] || { errors: [], flags: {}, classes: {} };
         }
       };
     }
