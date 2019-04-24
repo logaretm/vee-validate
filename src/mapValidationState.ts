@@ -4,25 +4,22 @@ import Field from './core/field';
 import { MappedFieldState, MappedValidationState, MapStateOptions } from './types';
 
 interface FieldObserver {
-  state: {
-    refs: { [k: string]: Field };
-  };
+  refs: { [k: string]: Field };
   subscribe: (field: Field) => void;
   unsubscribe: (field: Field) => void;
 }
 
 export function createObserver(): FieldObserver {
-  const state = _Vue.observable({ refs: {} });
+  const observer: any = _Vue.observable({ refs: {} });
 
-  return {
-    state,
-    subscribe: (ctx: Field) => {
-      _Vue.set(state.refs, ctx.vid, ctx);
-    },
-    unsubscribe: (ctx: Field) => {
-      _Vue.delete(state.refs, ctx.vid);
-    }
+  observer.subscribe = (ctx: Field) => {
+    _Vue.set(observer.refs, ctx.vid, ctx);
   };
+  observer.unsubscribe = (ctx: Field) => {
+    _Vue.delete(observer.refs, ctx.vid);
+  }
+
+  return observer;
 }
 
 function findObserver(vm: any): FieldObserver | undefined {
@@ -39,7 +36,7 @@ function findObserver(vm: any): FieldObserver | undefined {
 
 function mapObserverState(obs: FieldObserver) {
   const collection: { [k: string]: MappedFieldState } = {};
-  return values(obs.state.refs).reduce((acc, field) => {
+  return values(obs.refs).reduce((acc, field) => {
     acc[field.name || field.vid] = {
       errors: field.errors,
       flags: field.flags,

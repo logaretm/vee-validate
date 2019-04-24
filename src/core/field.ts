@@ -121,7 +121,7 @@ export default class Field {
       return undefined;
     }
 
-    return vnode.context.$_veeObserver.state.refs[el._vid];
+    return vnode.context.$_veeObserver.refs[el._vid];
   }
 
   validate() {
@@ -168,7 +168,7 @@ export default class Field {
   }
 
   createValuesLookup() {
-    const fields = this.ctx.$_veeObserver.state.refs;
+    const fields = this.ctx.$_veeObserver.refs;
 
     return this.fieldDeps().reduce((acc, depName) => {
       if (!fields[depName]) {
@@ -468,7 +468,7 @@ export default class Field {
     Object.keys(this._listeners).forEach(evt => this._listeners[evt]());
 
     // Remove cross-field references.
-    const fields = this.ctx.$_veeObserver.state.refs;
+    const fields = this.ctx.$_veeObserver.refs;
     this.fieldDeps().forEach(depName => {
       delete fields[depName].deps[this.vid];
     });

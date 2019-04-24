@@ -7,7 +7,7 @@ function validateRefs(this: any) {
   if (!this.$_veeObserver) return true;
 
   return Promise.all(
-    values(this.$_veeObserver.state.refs as RefMap).map((field: Field) => {
+    values(this.$_veeObserver.refs as RefMap).map((field: Field) => {
       return field.validate();
     })
   ).then(results => results.every(r => r.valid));
@@ -16,7 +16,7 @@ function validateRefs(this: any) {
 function resetRefs(this: any) {
   if (!this.$_veeObserver) return;
 
-  return values(this.$_veeObserver.state.refs as RefMap).forEach((field: Field) => {
+  return values(this.$_veeObserver.refs as RefMap).forEach((field: Field) => {
     field.reset();
   });
 }
