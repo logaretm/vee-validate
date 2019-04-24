@@ -1,9 +1,10 @@
 import { values } from './utils';
 import Field from './core/field';
+import { VueValidationContext } from './types';
 
 type RefMap = { [k: string]: Field };
 
-function validateRefs(this: any) {
+function validateRefs(this: VueValidationContext) {
   if (!this.$_veeObserver) return true;
 
   return Promise.all(
@@ -13,7 +14,7 @@ function validateRefs(this: any) {
   ).then(results => results.every(r => r.valid));
 }
 
-function resetRefs(this: any) {
+function resetRefs(this: VueValidationContext) {
   if (!this.$_veeObserver) return;
 
   return values(this.$_veeObserver.refs as RefMap).forEach((field: Field) => {
@@ -22,13 +23,13 @@ function resetRefs(this: any) {
 }
 
 export function mapValidationActions(actions: { [k: string]: string } | string[]) {
-  const actionsMap: { [k: string]: (this: any, ...args: any[]) => any } = {
+  const actionsMap: { [k: string]: (...args: any[]) => any } = {
     validate: validateRefs,
     reset: resetRefs
   };
 
-  let mappedActions: { [k: string]: (this: any, ...args: any[]) => any } = actionsMap;
-  const obj: { [k: string]: (this: any, ...args: any[]) => any } = {};
+  let mappedActions: { [k: string]: (...args: any[]) => any } = actionsMap;
+  const obj: { [k: string]: (...args: any[]) => any } = {};
   if (Array.isArray(actions)) {
     mappedActions = actions.reduce((acc, action) => {
       acc[action] = actionsMap[action];

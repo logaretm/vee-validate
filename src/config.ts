@@ -1,6 +1,6 @@
-import { getPath } from "./utils";
-import { InteractionModeFactory } from "./modes";
-import { RootI18nDictionary } from "./core/i18n";
+import { getPath } from './utils';
+import { InteractionModeFactory } from './modes';
+import { RootI18nDictionary } from './core/i18n';
 
 type ValidationClass = string | string[] | undefined;
 
@@ -16,7 +16,6 @@ export interface ValidationClassMap {
 
 export interface VeeValidateConfig {
   locale: string;
-  classes: boolean;
   bails: boolean;
   aria: boolean;
   validity: boolean;
@@ -28,20 +27,19 @@ export interface VeeValidateConfig {
 }
 
 const DEFAULT_CONFIG: VeeValidateConfig = {
-  locale: "en",
-  classes: false,
+  locale: 'en',
   classNames: {
-    touched: "touched", // the control has been blurred
-    untouched: "untouched", // the control hasn't been blurred
-    valid: "valid", // model is valid
-    invalid: "invalid", // model is invalid
-    pristine: "pristine", // control has not been interacted with
-    dirty: "dirty" // control has been interacted with
+    touched: 'touched', // the control has been blurred
+    untouched: 'untouched', // the control hasn't been blurred
+    valid: 'valid', // model is valid
+    invalid: 'invalid', // model is invalid
+    pristine: 'pristine', // control has not been interacted with
+    dirty: 'dirty' // control has been interacted with
   },
   bails: true,
   aria: true,
   validity: false,
-  mode: "aggressive",
+  mode: 'aggressive',
   useConstraintAttrs: true,
   dictionary: {},
   delay: 0
@@ -50,7 +48,7 @@ const DEFAULT_CONFIG: VeeValidateConfig = {
 export let currentConfig: VeeValidateConfig = { ...DEFAULT_CONFIG };
 
 export const resolveConfig = (ctx: any) => {
-  const selfConfig = getPath("$options.$_veeValidate", ctx, {});
+  const selfConfig = getPath('$options.$_veeValidate', ctx, {});
 
   return { ...currentConfig, ...selfConfig };
 };

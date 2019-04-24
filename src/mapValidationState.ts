@@ -1,7 +1,7 @@
 import { values } from './utils';
 import { _Vue } from './plugin';
 import Field from './core/field';
-import { MappedFieldState, MappedValidationState, MapStateOptions } from './types';
+import { MappedFieldState, MappedValidationState, MapStateOptions, VueValidationContext } from './types';
 
 interface FieldObserver {
   refs: { [k: string]: Field };
@@ -17,12 +17,12 @@ export function createObserver(): FieldObserver {
   };
   observer.unsubscribe = (ctx: Field) => {
     _Vue.delete(observer.refs, ctx.vid);
-  }
+  };
 
   return observer;
 }
 
-function findObserver(vm: any): FieldObserver | undefined {
+function findObserver(vm: VueValidationContext): FieldObserver | undefined {
   if (vm.$_veeObserver) {
     return vm.$_veeObserver;
   }
@@ -49,7 +49,7 @@ function mapObserverState(obs: FieldObserver) {
 
 export function mapValidationState(propName: string, opts: MapStateOptions = { inherit: false }) {
   return {
-    [propName](this: any): MappedValidationState {
+    [propName](this: VueValidationContext): MappedValidationState {
       if (opts && opts.inherit) {
         this.$_veeObserver = findObserver(this);
       }

@@ -1,6 +1,6 @@
 // VNode Utils
 import { find, isCallable, isNullOrUndefined, includes, normalizeRules } from './index';
-import { VNode, VNodeDirective } from 'vue';
+import Vue, { VNode, VNodeDirective } from 'vue';
 
 export const isTextInput = (vnode: VNode) => {
   const attrs = (vnode.data && vnode.data.attrs) || vnode.elm;
@@ -125,7 +125,6 @@ function addComponentNodeListener(node: VNode, eventName: string, handler: Funct
 export function addVNodeListener(vnode: VNode, eventName: string, handler: Function) {
   if (vnode.componentOptions) {
     addComponentNodeListener(vnode, eventName, handler);
-    return;
   }
 
   addNativeNodeListener(vnode, eventName, handler);
@@ -154,7 +153,7 @@ export function getInputEventName(vnode: VNode, model: VNodeDirective) {
 }
 
 // TODO: Type this one properly.
-export function normalizeSlots(slots: any, ctx: any) {
+export function normalizeSlots(slots: any, ctx: Vue) {
   return Object.keys(slots).reduce((arr, key) => {
     slots[key].forEach((vnode: VNode) => {
       if (!vnode.context) {
@@ -172,7 +171,7 @@ export function normalizeSlots(slots: any, ctx: any) {
 
 function resolveTextualRules(vnode: VNode) {
   const attrs = vnode.data && vnode.data.attrs;
-  const rules: any = {};
+  const rules: { [k: string]: any } = {};
 
   if (!attrs) return rules;
 
@@ -215,7 +214,7 @@ export function resolveRules(vnode: VNode) {
     return {};
   }
 
-  const rules: any = {};
+  const rules: { [k: string]: any } = {};
   if ('required' in attrs) {
     rules.required = attrs.type === 'checkbox' ? [true] : true;
   }

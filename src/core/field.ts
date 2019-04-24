@@ -56,18 +56,18 @@ export default class Field {
   vnode!: VNode;
   binding!: DirectiveBinding;
   initialized!: boolean;
-  opts: any;
+  opts!: { aria: boolean; validity: boolean };
   validator!: Validator;
   rules!: { [k: string]: any[] };
   isRequired!: boolean;
-  ctx: any;
+  ctx!: any;
   initialValue: any;
   isDisabled: any;
   private _value: any;
-  private _listeners: any;
-  private _waitingFor: any;
-  private _cancellationToken: any;
-  private _interactions: any;
+  private _waitingFor: Promise<any> | undefined;
+  // private _cancellationToken: { cancelled: boolean };
+  private _listeners!: { [k: string]: Function };
+  private _interactions!: { [k: string]: Function };
   private _flagsCache?: ValidationFlags;
 
   constructor(el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
@@ -234,9 +234,6 @@ export default class Field {
     this.rules = rules;
     this.flags.required = !!this.rules.required;
     this.registerField(vnode);
-    const options = resolveFeatures(binding, vnode);
-    this.opts.classes = options.classes;
-    this.opts.classNames = { ...DEFAULT_CLASSES, ...options.classNames };
     const inputEvt = getInputEventName(this.vnode, model);
     let events = this._determineEventList(inputEvt);
     if (includes(events, 'input') && model) {
@@ -303,10 +300,10 @@ export default class Field {
    * Resets field flags and errors.
    */
   reset() {
-    if (this._cancellationToken) {
-      this._cancellationToken.cancelled = true;
-      delete this._cancellationToken;
-    }
+    // if (this._cancellationToken) {
+    //   this._cancellationToken.cancelled = true;
+    //   delete this._cancellationToken;
+    // }
 
     const defaults = createFlags();
     Object.keys(this.flags)
@@ -365,14 +362,14 @@ export default class Field {
    * Updates the element classes depending on each field flag status.
    */
   computeClasses(isReset = false) {
-    if (!this.opts.classes || this.isDisabled || isEqual(this._flagsCache, this.flags)) return;
+    if (isEqual(this._flagsCache, this.flags)) return;
 
     if (isReset) {
       this.flags.valid = false;
       this.flags.invalid = false;
     }
 
-    this.classes = computeClassObj(this.opts.classNames, this.flags);
+    this.classes = computeClassObj({ ...DEFAULT_CLASSES, ...getConfig().classNames }, this.flags);
     this._flagsCache = { ...this.flags };
   }
 
@@ -386,18 +383,14 @@ export default class Field {
     const onBlur = () => {
       this.flags.touched = true;
       this.flags.untouched = false;
-      if (this.opts.classes) {
-        this.computeClasses();
-      }
+      this.computeClasses();
     };
 
     const inputEvent = isTextInput(this.vnode) ? 'input' : 'change';
     const onInput = () => {
       this.flags.dirty = true;
       this.flags.pristine = false;
-      if (this.opts.classes) {
-        this.computeClasses();
-      }
+      this.computeClasses();
     };
 
     if (this.componentInstance && isCallable(this.componentInstance.$once)) {

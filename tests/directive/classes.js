@@ -6,17 +6,19 @@ describe('Automatic Classes', () => {
   test('automatic classes applied on inputs', async () => {
     const Vue = createLocalVue();
     Vue.use(VeeValidate, {
-      classes: true,
       classNames: {
         valid: ['is-valid', 'text-green'],
         invalid: ['is-invalid', 'text-red']
       }
     });
 
-    const wrapper = mount({
-      computed: mapValidationState('vee'),
-      template: `<input type="text" name="field" v-validate="'required'" :class="vee.for('field').classes">`
-    }, { localVue: Vue, sync: false });
+    const wrapper = mount(
+      {
+        computed: mapValidationState('vee'),
+        template: `<input type="text" name="field" v-validate="'required'" :class="vee.for('field').classes">`
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const input = wrapper.find('input');
     await flushPromises();
