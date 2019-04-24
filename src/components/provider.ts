@@ -6,7 +6,7 @@ import { normalizeEvents, normalizeEventValue } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable, isNullOrUndefined, isEqual, computeClassObj } from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName, resolveRules } from '../utils/vnode';
 import { VNode, CreateElement } from 'vue';
-import { ValidationResult, ValidationFlags } from '../types';
+import { ValidationResult, ValidationFlags, VeeObserver } from '../types';
 import { onRenderUpdate, computeModeSetting, createValidationCtx, createCommonHandlers } from './common';
 
 let $validator: Validator;
@@ -302,13 +302,7 @@ function updateRenderingContextRefs(vm: any) {
   vm.id = vid;
 }
 
-interface ProviderObserverStub {
-  refs: { [k: string]: any };
-  subscribe(provider: any): void;
-  unsubscribe(provider: any): void;
-}
-
-function createObserver(): ProviderObserverStub {
+function createObserver(): VeeObserver {
   return {
     refs: {},
     subscribe(ctx: any) {

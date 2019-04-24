@@ -21,7 +21,7 @@ import {
 import { getConfig } from '../config';
 import { createObserver } from '../mapValidationState';
 import Validator from './validator';
-import { ValidationResult, ValidationFlags } from '../types';
+import { ValidationResult, ValidationFlags, VueValidationContext } from '../types';
 
 const DEFAULT_CLASSES = {
   touched: 'touched', // the control has been blurred
@@ -116,12 +116,17 @@ export default class Field {
     return this.vnode.componentInstance;
   }
 
-  static from(el: any, vnode: any): Field | undefined {
-    if (!vnode.context.$_veeObserver) {
+  static from(el: HTMLElement, vnode: VNode): Field | undefined {
+    if (!vnode.context) {
       return undefined;
     }
 
-    return vnode.context.$_veeObserver.refs[el._vid];
+    const context = vnode.context as VueValidationContext;
+    if (!context.$_veeObserver) {
+      return undefined;
+    }
+
+    return context.$_veeObserver.refs[(el as any)._vid];
   }
 
   validate() {
@@ -157,7 +162,7 @@ export default class Field {
   }
 
   fieldDeps() {
-    const rules: any = normalizeRules(this.rules);
+    const rules = normalizeRules(this.rules);
     this.isRequired = !!rules.required;
 
     return Object.keys(rules)

@@ -6,6 +6,10 @@ export interface ValidationResult {
   failedRules: { [x: string]: string };
 }
 
+export type VueValidationContext = Vue & {
+  $_veeObserver?: VeeObserver;
+};
+
 export interface ValidationMessageGenerator {
   (field: string, params: any[], data: any): string;
 }
@@ -139,4 +143,10 @@ export interface MappedValidationState {
 
 export interface MapStateOptions {
   inherit: boolean;
+}
+
+export interface VeeObserver {
+  refs: { [k: string]: any };
+  subscribe(provider: any): void;
+  unsubscribe(provider: any): void;
 }
