@@ -1,4 +1,4 @@
-import { isCallable, toArray } from "./index";
+import { isCallable, toArray } from './index';
 
 export const isEvent = (evt: any): evt is Event => {
   if (!evt) {
@@ -6,11 +6,7 @@ export const isEvent = (evt: any): evt is Event => {
   }
 
   // tslint:disable-next-line
-  if (
-    typeof Event !== "undefined" &&
-    isCallable(Event) &&
-    evt instanceof Event
-  ) {
+  if (typeof Event !== 'undefined' && isCallable(Event) && evt instanceof Event) {
     return true;
   }
 
@@ -24,14 +20,14 @@ export const isEvent = (evt: any): evt is Event => {
 export const normalizeEvents = (evts: string | string[]) => {
   if (!evts) return [];
 
-  return typeof evts === "string" ? evts.split("|") : evts;
+  return typeof evts === 'string' ? evts.split('|') : evts;
 };
 
 let supportsPassive = true;
 
 export const detectPassiveSupport = () => {
   try {
-    const opts = Object.defineProperty({}, "passive", {
+    const opts = Object.defineProperty({}, 'passive', {
       get() {
         supportsPassive = true;
       }
@@ -39,8 +35,8 @@ export const detectPassiveSupport = () => {
     const evt = () => {
       // Nothing.
     };
-    window.addEventListener("testPassive", evt, opts);
-    window.removeEventListener("testPassive", evt, opts);
+    window.addEventListener('testPassive', evt, opts);
+    window.removeEventListener('testPassive', evt, opts);
   } catch (e) {
     supportsPassive = false;
   }
@@ -48,16 +44,8 @@ export const detectPassiveSupport = () => {
   return supportsPassive;
 };
 
-export const addEventListener = (
-  el: HTMLElement,
-  eventName: string,
-  handler: EventHandlerNonNull
-) => {
-  el.addEventListener(
-    eventName,
-    handler,
-    supportsPassive ? { passive: true } : false
-  );
+export const addEventListener = (el: HTMLElement, eventName: string, handler: EventHandlerNonNull) => {
+  el.addEventListener(eventName, handler, supportsPassive ? { passive: true } : false);
 
   return () => {
     el.removeEventListener(eventName, handler);
@@ -70,7 +58,7 @@ export function normalizeEventValue(value: unknown): any {
   }
 
   const input = value.target as HTMLInputElement;
-  if (input.type === "file" && input.files) {
+  if (input.type === 'file' && input.files) {
     return toArray(input.files);
   }
 
