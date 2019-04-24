@@ -3,7 +3,7 @@ import { mapValidationState } from './mapValidationState';
 import { mapValidationActions } from './mapValidationActions';
 import { MapStateOptions } from './types';
 
-export function ValidationState(opts: MapStateOptions = { errors: true, flags: true, inherit: false }) {
+export function ValidationState(opts: MapStateOptions = { inherit: false }) {
   return createDecorator((componentOptions: any, key: string) => {
     const mappedState = mapValidationState(key, opts);
 
@@ -12,6 +12,7 @@ export function ValidationState(opts: MapStateOptions = { errors: true, flags: t
     }
 
     componentOptions.computed[key] = mappedState[key];
+    delete componentOptions.props[key];
   });
 }
 
