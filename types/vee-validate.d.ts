@@ -76,6 +76,7 @@ export interface Rule {
     validate: RuleValidate;
     options?: object;
     paramNames?: string[];
+    getMessage? (field: string, params: any[], data: any): string;
 }
 
 export interface Rules {
