@@ -7,11 +7,9 @@ import {
   isCallable,
   toArray,
   createError,
-  find,
   isNullOrUndefined,
   normalizeRules,
-  isEmptyArray,
-  isPromise
+  isEmptyArray
 } from '../utils';
 import { PartialI18nDictionary, RootI18nDictionary } from './i18n';
 import { ValidationResult, ValidationRule, ValidationRuleSchema } from '../types';
@@ -134,10 +132,10 @@ export default class Validator {
   /**
    * Validates a value against the rules.
    */
-  async validate(value: any, rules: any, options: any = {}): Promise<ValidationResult> {
+  async validate(value: any, rules: string | { [k: string]: any }, options: any = {}): Promise<ValidationResult> {
     const field: FieldMeta = {
       name: (options && options.name) || '{field}',
-      rules: getPath('isNormalized', options, false) ? rules : normalizeRules(rules),
+      rules: normalizeRules(rules),
       bails: getPath('bails', options, this.bails),
       forceRequired: false,
       crossTable: options && options.values

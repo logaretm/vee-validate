@@ -152,11 +152,23 @@ export const debounce = (fn: Function, wait = 0, token = { cancelled: false }) =
  */
 export const normalizeRules = (rules: any) => {
   // if falsy value return an empty object.
+  const acc: { [x: string]: any[] } = {};
+  Object.defineProperty(acc, '_$$isNormalized', {
+    value: true,
+    writable: false,
+    enumerable: false,
+    configurable: false
+  });
+
   if (!rules) {
-    return {};
+    return acc;
   }
 
-  const acc: { [x: string]: any } = {};
+  // Object is already normalized, skip.
+  if (isObject(rules) && rules._$$isNormalized) {
+    return rules as typeof acc;
+  }
+
   if (isObject(rules)) {
     return Object.keys(rules).reduce((prev, curr) => {
       let params = [];
@@ -180,7 +192,7 @@ export const normalizeRules = (rules: any) => {
 
   if (typeof rules !== 'string') {
     warn('rules must be either a string or an object.');
-    return {};
+    return acc;
   }
 
   return rules.split('|').reduce((prev, rule) => {

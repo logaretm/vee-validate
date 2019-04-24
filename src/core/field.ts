@@ -10,7 +10,6 @@ import { getValidator } from '../state';
 import {
   uniqId,
   createFlags,
-  normalizeRules,
   isCallable,
   isEqual,
   values,
@@ -59,7 +58,7 @@ export default class Field {
   initialized!: boolean;
   opts: any;
   validator!: Validator;
-  rules: any;
+  rules!: { [k: string]: any[] };
   isRequired!: boolean;
   ctx: any;
   initialValue: any;
@@ -84,7 +83,7 @@ export default class Field {
     defineNonReactive(this, '_listeners', {});
     defineNonReactive(this, '_interactions', {});
     defineNonReactive(this, '_value', resolveValue(el, vnode));
-    defineNonReactive(this, 'rules', resolveDirectiveRules(el, binding, vnode));
+    defineNonReactive(this, 'rules', resolveDirectiveRules(binding, vnode));
 
     (this.el as any)._vid = this.vid;
     this.flags = _Vue.observable(createFlags());
@@ -162,13 +161,12 @@ export default class Field {
   }
 
   fieldDeps() {
-    const rules = normalizeRules(this.rules);
-    this.isRequired = !!rules.required;
+    this.isRequired = !!this.rules.required;
 
-    return Object.keys(rules)
+    return Object.keys(this.rules)
       .filter(RuleContainer.isTargetRule)
       .map(rule => {
-        return rules[rule][0];
+        return this.rules[rule][0];
       });
   }
 
@@ -231,7 +229,7 @@ export default class Field {
     this.binding = binding;
     this.vnode = vnode;
     const model = findModel(vnode);
-    const rules = resolveDirectiveRules(el, binding, vnode);
+    const rules = resolveDirectiveRules(binding, vnode);
     let shouldValidate = !isEqual(rules, this.rules) && this.flags.validated;
     this.rules = rules;
     this.flags.required = !!this.rules.required;

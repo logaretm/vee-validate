@@ -35,7 +35,7 @@ function getCtorConfig(vnode: VNode) {
   return config;
 }
 
-export function resolveDirectiveRules(el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
+export function resolveDirectiveRules(binding: DirectiveBinding, vnode: VNode) {
   let rules = '';
   if (binding.value && includes(['string', 'object'], typeof binding.value.rules)) {
     rules = binding.value.rules;
@@ -43,17 +43,25 @@ export function resolveDirectiveRules(el: HTMLElement, binding: DirectiveBinding
     rules = binding.value;
   }
 
+  const normalized = normalizeRules(rules);
   if (vnode.componentInstance) {
-    return rules;
+    return normalized;
   }
 
   // If validity is disabled, ignore field rules.
-  const normalized = normalizeRules(rules);
   if (!getConfig().useConstraintAttrs) {
     return normalized;
   }
 
-  return { ...resolveRules(vnode), ...normalized };
+  const combined = { ...resolveRules(vnode), ...normalized };
+  Object.defineProperty(combined, '_$$isNormalized', {
+    value: true,
+    writable: false,
+    enumerable: false,
+    configurable: false
+  });
+
+  return combined;
 }
 
 export function resolveAlias(el: HTMLElement, vnode: VNode) {

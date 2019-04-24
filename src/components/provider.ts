@@ -209,12 +209,17 @@ export const ValidationProvider: any = {
     async validateSilent(this: any): Promise<ValidationResult> {
       this.setFlags({ pending: true });
       const rules = { ...this._resolvedRules, ...this.normalizedRules };
+      Object.defineProperty(rules, '_$$isNormalized', {
+        value: true,
+        writable: false,
+        enumerable: false,
+        configurable: false
+      });
 
       const result = await $validator.validate(this.value, rules, {
         name: this.name,
         values: createValuesLookup(this),
         bails: this.bails,
-        isNormalized: true,
         isInitial: !this.initialized
       });
 
