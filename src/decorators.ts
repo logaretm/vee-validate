@@ -4,7 +4,7 @@ import { mapValidationActions } from './mapValidationActions';
 import { MapStateOptions } from './types';
 
 export function ValidationState(opts: MapStateOptions = { inherit: false }) {
-  return createDecorator((componentOptions: any, key: string) => {
+  return createDecorator((componentOptions, key) => {
     const mappedState = mapValidationState(key, opts);
 
     if (!componentOptions.computed) {
@@ -12,16 +12,21 @@ export function ValidationState(opts: MapStateOptions = { inherit: false }) {
     }
 
     componentOptions.computed[key] = mappedState[key];
-    delete componentOptions.props[key];
+    // Remove the prop to make sure we don't confuse the computed props with
+    if (componentOptions.props && !Array.isArray(componentOptions.props)) {
+      delete componentOptions.props[key];
+    }
   });
 }
 
 export function ValidationAction(action: 'validate' | 'reset' = 'validate') {
-  return createDecorator((componentOptions: any, key: string) => {
+  return createDecorator((componentOptions, key) => {
     const actions = mapValidationActions([action]);
+    if (!componentOptions.methods) {
+      componentOptions.methods = {};
+    }
 
-    const originalMethod = componentOptions.methods[key];
-
+    let originalMethod = componentOptions.methods[key];
     if (action === 'validate') {
       componentOptions.methods[key] = function() {
         actions[action].call(this).then((result: boolean) => {
