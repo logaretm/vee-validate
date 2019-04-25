@@ -141,20 +141,19 @@ export default class Validator {
       crossTable: options && options.values
     };
 
-    return this._validate(field, value, options).then(result => {
-      const errors: string[] = [];
-      const ruleMap: { [k: string]: string } = {};
-      result.errors.forEach((e: any) => {
-        errors.push(e.msg);
-        ruleMap[e.rule] = e.msg;
-      });
-
-      return {
-        valid: result.valid,
-        errors,
-        failedRules: ruleMap
-      };
+    const result = await this._validate(field, value, options);
+    const errors: string[] = [];
+    const ruleMap: { [k: string]: string } = {};
+    result.errors.forEach(e => {
+      errors.push(e.msg);
+      ruleMap[e.rule] = e.msg;
     });
+
+    return {
+      valid: result.valid,
+      errors,
+      failedRules: ruleMap
+    };
   }
 
   /**
@@ -372,7 +371,7 @@ export default class Validator {
       };
     }
 
-    const errors: any[] = [];
+    const errors: ReturnType<typeof Validator.prototype._createFieldError>[] = [];
     const rules = Object.keys(field.rules);
     const length = rules.length;
     for (let i = 0; i < length; i++) {
