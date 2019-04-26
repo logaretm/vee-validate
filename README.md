@@ -88,13 +88,26 @@ export default {
 
 All the JavaScript work is done. Next in the template add the inputs you want to validate them:
 
+**With Vue 2.6.0+**
+
 ```vue
-<ValidationProvider name="email" rules="required|email">
+<validation-provider name="email" rules="required|email">
+  <template #default="{ errors }">
+    <input v-model="email">
+    <p>{{ errors[0] }}</p>
+  </template>
+</validation-provider>
+```
+
+**Before Vue 2.6.0**
+
+```vue
+<validation-provider name="email" rules="required|email">
   <div slot-scope="{ errors }">
     <input v-model="email">
     <p>{{ errors[0] }}</p>
   </div>
-</ValidationProvider>
+</validation-provider>
 ```
 
 The validation provider accepts two props: `rules` which is in its simplest form, a string containing the validation rules separated by a `|` character, and a `name` prop which is the field name that will be used in error messages.

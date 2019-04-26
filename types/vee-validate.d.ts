@@ -1,5 +1,4 @@
-import Vue, { DirectiveOptions, VueConstructor, ComponentOptions, PluginFunction } from 'vue';
-import VueI18n from 'vue-i18n';
+import Vue, { DirectiveOptions, VueConstructor, ComponentOptions, PluginFunction, Component } from 'vue';
 
 export type StringNullable = string | null
 
@@ -30,7 +29,7 @@ export interface Configuration {
     events?: string;
     fieldsBagName?: string;
     fastExit?: boolean;
-    i18n?: VueI18n | null;
+    i18n?: any;
     i18nRootKey?: string;
     inject?: boolean;
     locale?: string;
@@ -77,6 +76,7 @@ export interface Rule {
     validate: RuleValidate;
     options?: object;
     paramNames?: string[];
+    getMessage? (field: string, params: any[], data: any): string;
 }
 
 export interface Rules {
@@ -471,17 +471,36 @@ export class ExtendOptions {
     initial?: Boolean
 }
 
-export interface ObserverSlotData {
-    errors: string[];
-    untouched: boolean;
-    touched: boolean;
-    dirty: boolean;
-    pristine: boolean;
-    valid: boolean | null;
-    invalid: boolean | null;
-    validated: boolean;
-    required: boolean;
-    pending: boolean;
+/**
+ * `mapFields` helper, which is similar to Vuex's `mapGetters` and `mapActions`
+ * as it maps a field object to a computed property.
+ */
+export function mapFields(fields?: string[] | { [key: string]: string }): any;
+
+export interface ValidationFlags {
+  untouched: boolean;
+  touched: boolean;
+  dirty: boolean;
+  pristine: boolean;
+  valid: boolean | null;
+  invalid: boolean | null;
+  validated: boolean;
+  pending: boolean;
+  required: boolean;
+  changed: boolean;
+  [x: string]: boolean | null | undefined;
+}
+
+// maps known keys of a given type.
+// https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-414782407
+type KnownKeys<T> = { [K in keyof T]: string extends K ? never : number extends K ? never : K } extends {
+  [_ in keyof T]: infer U
+}
+  ? U
+  : never;
+
+interface ObserverSlotData extends Pick<ValidationFlags, KnownKeys<ValidationFlags>> {
+  errors: string[];
 }
 
 export interface PluginContext {
@@ -493,31 +512,113 @@ export interface PluginContext {
 /**
  * The `ValidationObserver` is a convenient component that uses the `scoped slots` feature
  * to communicate the current state of your inputs as a whole.
- * Note that this component is renderless.
  */
-export class ValidationObserver extends Vue {
-    validate (): Promise<boolean>;
-    reset (): void;
-    observers: ValidationObserver[];
-    refs: { [x: string]: ValidationProvider };
-    ctx: ObserverSlotData;
+export interface ValidationObserverInstance extends Vue {
+  /**
+   * Trigger validation across all child components validation state, updates their validation state.
+   * Can pass a silent flag to only report the current state of the observed children without triggering state change.
+   */
+  validate(opts?: { silent: boolean }): Promise<boolean>;
+
+  /**
+   * Reset all observed components validation state.
+   */
+  reset(): void;
+
+  /**
+   * Holds reference to the observed child observer components.
+   */
+  observers: ValidationObserverInstance[];
+
+  /**
+   * Contains an id, provider-instances pairs of the observed children.
+   */
+  refs: { [x: string]: ValidationProviderInstance };
+
+  /**
+   * Validation state object representing the combined state of the observed children.
+   */
+  ctx: ObserverSlotData;
 }
 
 /**
  * The `ValidationProvider` component is a regular component
  * that wraps your inputs and provides validation state using `scoped slots`.
- * Note that this component is renderless.
  */
-export class ValidationProvider extends Vue {
-    messages: string[];
-    flags: FieldFlags;
-    applyResult(result: VerifyResult): void;
-    validate(value: any): Promise<VerifyResult>;
-    reset(): void;
-    validateSilent(): Promise<VerifyResult>;
-    syncValue(value: any): void;
-    setFlags(value: { [x: string]: boolean }): void;
+export interface ValidationProviderInstance extends Vue {
+  messages: string[];
+  flags: ValidationFlags;
+
+  /**
+   * Updates the validation state with the given result.
+   */
+  applyResult(result: VerifyResult): void;
+
+  /**
+   * Triggers a validation, updates messages and flags.
+   */
+  validate(value: any): Promise<VerifyResult>;
+
+  /**
+   * Resets validation state, clears error messages.
+   */
+  reset(): void;
+
+  /**
+   * Triggers a validation without setting flags or updating messages.
+   */
+  validateSilent(): Promise<VerifyResult>;
+
+  /**
+   * Forces the provider value to the given value without triggering validation.
+   */
+  syncValue(value: any): void;
+
+  /**
+   * Sets the current flags for the provider instance.
+   */
+  setFlags(value: Partial<ValidationFlags>): void;
 }
+
+/**
+ * The `ValidationProvider` component is a regular component
+ * that wraps your inputs and provides validation state using `scoped slots`.
+ */
+export const ValidationProvider: Component;
+
+/**
+ * The `ValidationObserver` is a convenient component that uses the `scoped slots` feature
+ * to communicate the current state of your inputs as a whole.
+ */
+export const ValidationObserver: Component;
+
+export interface ValidationContext {
+    errors: string[];
+    flags: ValidationFlags;
+    classes: { [k: string]: string | string[] };
+    valid: boolean;
+    failedRules: { [k: string]: string };
+    reset: () => void;
+    validate: (evtOrNewValue: Event | any) => Promise<VerifyResult>;
+    aria: {
+      'aria-invalid': 'true' | 'false';
+      'aria-required': 'true' | 'false';
+    };
+  }
+
+
+type ValidationContextMapper = (ctx: ValidationContext) => { [k: string]: any };
+
+type ComponentLike = Component | { options: any };
+
+export function withValidation (component: ComponentLike, mapProps?: ValidationContextMapper): Component;
+
+export const version: string;
+
+export const install: Vue.PluginFunction<Configuration>
+
+export const directive: Vue.DirectiveOptions;
+
 
 export default class VeeValidate {
     readonly config: Configuration;
@@ -529,11 +630,10 @@ export default class VeeValidate {
     static Validator: Validator;
     static ErrorBag: ErrorBag;
     static Rules: Rules;
-    static ValidationProvider: ValidationProvider;
-    static ValidationObserver: ValidationObserver;
+    static ValidationProvider: typeof ValidationProvider;
+    static ValidationObserver: typeof ValidationObserver;
     static mixin: VueConstructor | ComponentOptions<Vue>;
     static directive: DirectiveOptions;
-
     configure(cfg: Configuration): void;
     static setI18nDriver(driver: string, instance: IDictionary): void;
     static configure(cfg: Configuration): void;
