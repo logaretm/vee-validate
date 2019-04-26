@@ -14,7 +14,7 @@ const messages = {
   date_between: (field, [min, max]) => `यह ${field} का ${min} और ${max} के बीच होना आवश्यक है ।`,
   date_format: (field, [format]) => `यह ${field} का प्रारूप ${format} में होना आवश्यक है ।`,
   decimal: (field, [decimals = '*'] = []) => `यह ${field} फ़ील्ड का संख्यात्मक होना आवश्यक है और इसमें ${!decimals || decimals === '*' ? '' : decimals} दशमलव बिंदु शामिल हो सकते हैं ।`,
-  digits: (field, [length]) => `यह ${field} फ़ील्ड का संख्यात्मक होना आवश्यक है और इसे पूरी तरह से ${length} अंक होने चाहिए।`,
+  digits: (field, [length]) => `यह ${field} फ़ील्ड का संख्यात्मक होना आवश्यक है और इसे पूरी तरह से ${length} अंक का होना चाहिए।`,
   dimensions: (field, [width, height]) => `यह ${field} फ़ील्ड की ${width} पिक्सेल बाई ${height} पिक्सेल का होना आवश्यक है।`,
   email: (field) => `यह  ${field} फ़ील्ड एक मान्य ईमेल होना चाहिए।`,
   excluded: (field) => `यह ${field} फ़ील्ड का एक मान्य मूल्य होना चाहिए।`,
