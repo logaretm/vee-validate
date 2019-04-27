@@ -2,7 +2,7 @@ import VeeValidate from '../plugin';
 import Dictionary from '../dictionary';
 import RuleContainer from './ruleContainer';
 import { PartialI18nDictionary, RootI18nDictionary } from './i18n';
-import { isObject, getPath, isCallable, createError, isNullOrUndefined, normalizeRules, isEmptyArray } from '../utils';
+import { isObject, getPath, isCallable, isNullOrUndefined, normalizeRules, isEmptyArray } from '../utils';
 import { ValidationResult, ValidationRule, ValidationRuleSchema, RuleParamSchema } from '../types';
 
 let $vee: VeeValidate;
@@ -203,7 +203,7 @@ export default class Validator {
       });
 
       if (!isObject(result)) {
-        throw createError('Require rules has to return an object (see docs)');
+        throw new Error('Require rules has to return an object (see docs)');
       }
 
       if (result.data.required) {
@@ -243,7 +243,7 @@ export default class Validator {
   private async _test(field: FieldMeta, value: any, rule: { name: string; params: any[] | object }) {
     const ruleSchema = RuleContainer.getRuleDefinition(rule.name);
     if (!ruleSchema.validate) {
-      throw createError(`No such validator '${rule.name}' exists.`);
+      throw new Error(`No such validator '${rule.name}' exists.`);
     }
 
     // build params
@@ -267,7 +267,7 @@ export default class Validator {
   ) {
     const params: { [k: string]: any } = {};
     if (!defined && !Array.isArray(provided)) {
-      throw createError('You provided an object params to a rule that has no defined schema.');
+      throw new Error('You provided an object params to a rule that has no defined schema.');
     }
 
     // Rule probably uses an array for their args, keep it as is.
@@ -363,7 +363,7 @@ export default class Validator {
       return;
     }
 
-    throw createError(`Extension Error: The validator '${name}' must be a function or have a 'validate' method.`);
+    throw new Error(`Extension Error: The validator '${name}' must be a function or have a 'validate' method.`);
   }
 
   /**
