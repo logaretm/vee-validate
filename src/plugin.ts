@@ -2,7 +2,6 @@ import dictionary from './dictionary';
 import directive from './directive';
 import { warn, isCallable } from './utils';
 import Validator from './core/validator';
-import { detectPassiveSupport } from './utils/events';
 import { setConfig, getConfig, VeeValidateConfig } from './config';
 import { setValidator } from './state';
 import { modes, InteractionModeFactory } from './modes';
@@ -59,9 +58,6 @@ class VeeValidate {
     pluginInstance = new VeeValidate(_Vue, opts);
     // inject the plugin container statically into the validator class
     Validator.setVeeContext(pluginInstance);
-
-    detectPassiveSupport();
-
     _Vue.directive('validate', directive);
   }
 

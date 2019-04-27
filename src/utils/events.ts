@@ -22,30 +22,8 @@ export const normalizeEvents = (evts: string | string[]) => {
 
   return typeof evts === 'string' ? evts.split('|') : evts;
 };
-
-let supportsPassive = true;
-
-export const detectPassiveSupport = () => {
-  try {
-    const opts = Object.defineProperty({}, 'passive', {
-      get() {
-        supportsPassive = true;
-      }
-    });
-    const evt = () => {
-      // Nothing.
-    };
-    window.addEventListener('testPassive', evt, opts);
-    window.removeEventListener('testPassive', evt, opts);
-  } catch (e) {
-    supportsPassive = false;
-  }
-
-  return supportsPassive;
-};
-
 export const addEventListener = (el: HTMLElement, eventName: string, handler: EventHandlerNonNull) => {
-  el.addEventListener(eventName, handler, supportsPassive ? { passive: true } : false);
+  el.addEventListener(eventName, handler, false);
 
   return () => {
     el.removeEventListener(eventName, handler);
