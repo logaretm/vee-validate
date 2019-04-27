@@ -7,9 +7,7 @@ const validate = (files: File | File[], mimes: any) => {
   return regex.test(files.type);
 };
 
-export {
-  validate
-};
+export { validate };
 
 export default {
   validate

@@ -1,5 +1,5 @@
-import { isNullOrUndefined, toArray } from "../utils";
-import { RuleParamSchema } from "../types";
+import { isNullOrUndefined, toArray } from '../utils';
+import { RuleParamSchema } from '../types';
 
 const compare = (value: any[] | string, length: number, max?: number) => {
   if (max === undefined) {
@@ -18,7 +18,7 @@ const validate = (value: any, { length, max }: any) => {
   }
 
   length = Number(length);
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     value = String(value);
   }
 
@@ -32,13 +32,13 @@ const validate = (value: any, { length, max }: any) => {
 const params: RuleParamSchema[] = [
   {
     name: 'length',
-    cast (value) {
+    cast(value) {
       return Number(value);
     }
   },
   {
     name: 'max',
-    cast (value) {
+    cast(value) {
       if (value === undefined) {
         return value;
       }

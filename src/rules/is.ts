@@ -1,4 +1,4 @@
-import { RuleParamSchema } from "../types";
+import { RuleParamSchema } from '../types';
 
 const validate = (value: any, { other }: any) => {
   return value === other;
@@ -10,10 +10,7 @@ const params: RuleParamSchema[] = [
   }
 ];
 
-export {
-  validate,
-  params
-};
+export { validate, params };
 
 export default {
   validate,

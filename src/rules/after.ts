@@ -1,7 +1,6 @@
 import { isValidDate } from '../utils';
 import { RuleParamSchema } from '../types';
 
-
 // required to convert from a list of array values to an object.
 const params: RuleParamSchema[] = [
   {
@@ -27,13 +26,9 @@ const afterValidator = (value: any, { target, allowEqual }: any) => {
   return value.getTime() > target.getTime();
 };
 
-
-export {
-  afterValidator as validate,
-  params
-};
+export { afterValidator as validate, params };
 
 export default {
   validate: afterValidator,
-  params,
+  params
 };

@@ -39,10 +39,7 @@ const params: RuleParamSchema[] = [
   }
 ];
 
-export {
-  validate,
-  params
-};
+export { validate, params };
 
 export default {
   validate,

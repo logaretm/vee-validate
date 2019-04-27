@@ -1,7 +1,6 @@
 import { ValidationRuleSchema } from '../types';
 import { merge } from '../utils';
 
-
 const RULES: { [k: string]: ValidationRuleSchema } = {};
 
 export default class RuleContainer {
@@ -28,7 +27,7 @@ export default class RuleContainer {
     return !!(RULES[name] && RULES[name].computesRequired);
   }
 
-  static isTargetRule (name: string) {
+  static isTargetRule(name: string) {
     const definition = RuleContainer.getRuleDefinition(name);
     if (!definition.params) {
       return false;

@@ -1,4 +1,4 @@
-import { RuleParamSchema } from "../types";
+import { RuleParamSchema } from '../types';
 
 const validate = (value: any, { regex }: any): boolean => {
   if (Array.isArray(value)) {
@@ -11,7 +11,7 @@ const validate = (value: any, { regex }: any): boolean => {
 const params: RuleParamSchema[] = [
   {
     name: 'regex',
-    cast (value) {
+    cast(value) {
       if (typeof value === 'string') {
         return new RegExp(value);
       }
@@ -21,10 +21,7 @@ const params: RuleParamSchema[] = [
   }
 ];
 
-export {
-  validate,
-  params
-};
+export { validate, params };
 
 export default {
   validate,

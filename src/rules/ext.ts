@@ -7,9 +7,7 @@ const validate = (files: File | File[], extensions: string[]) => {
   return regex.test(files.name);
 };
 
-export {
-  validate
-};
+export { validate };
 
 export default {
   validate

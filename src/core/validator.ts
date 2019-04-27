@@ -2,21 +2,8 @@ import VeeValidate from '../plugin';
 import Dictionary from '../dictionary';
 import RuleContainer from './ruleContainer';
 import { PartialI18nDictionary, RootI18nDictionary } from './i18n';
-import {
-  isObject,
-  getPath,
-  isCallable,
-  createError,
-  isNullOrUndefined,
-  normalizeRules,
-  isEmptyArray
-} from '../utils';
-import {
-  ValidationResult,
-  ValidationRule,
-  ValidationRuleSchema,
-  RuleParamSchema
-} from '../types';
+import { isObject, getPath, isCallable, createError, isNullOrUndefined, normalizeRules, isEmptyArray } from '../utils';
+import { ValidationResult, ValidationRule, ValidationRuleSchema, RuleParamSchema } from '../types';
 
 let $vee: VeeValidate;
 
@@ -273,7 +260,11 @@ export default class Validator {
     };
   }
 
-  private _buildParams(provided: any[] | { [k: string]: any }, defined: RuleParamSchema[] | undefined, crossTable: { [k: string]: any }) {
+  private _buildParams(
+    provided: any[] | { [k: string]: any },
+    defined: RuleParamSchema[] | undefined,
+    crossTable: { [k: string]: any }
+  ) {
     const params: { [k: string]: any } = {};
     if (!defined && !Array.isArray(provided)) {
       throw createError('You provided an object params to a rule that has no defined schema.');
