@@ -7,16 +7,7 @@ import RuleContainer from './ruleContainer';
 import { addEventListener, normalizeEventValue } from '../utils/events';
 import { findModel, getInputEventName, isTextInput, isCheckboxOrRadioInput } from '../utils/vnode';
 import { getValidator } from '../state';
-import {
-  uniqId,
-  createFlags,
-  isCallable,
-  isEqual,
-  values,
-  defineNonReactive,
-  includes,
-  computeClassObj
-} from '../utils';
+import { createFlags, isCallable, isEqual, values, defineNonReactive, includes, computeClassObj } from '../utils';
 import { getConfig } from '../config';
 import { createObserver } from '../mapValidationState';
 import Validator from './validator';
@@ -45,6 +36,9 @@ function computeModeSetting(ctx: Field) {
     flags: ctx.flags
   });
 }
+
+let FIELD_COUNTER = 0;
+
 export default class Field {
   el!: HTMLElement;
   alias?: string;
@@ -73,7 +67,7 @@ export default class Field {
 
   constructor(el: HTMLElement, binding: DirectiveBinding, vnode: VNode) {
     defineNonReactive(this, 'el', el);
-    defineNonReactive(this, 'vid', (vnode.data && vnode.data.ref) || uniqId());
+    defineNonReactive(this, 'vid', (vnode.data && vnode.data.ref) || FIELD_COUNTER++);
     defineNonReactive(this, 'deps', {});
     defineNonReactive(this, 'alias', resolveAlias(el, vnode));
     defineNonReactive(this, 'name', resolveName(el, vnode));
@@ -178,18 +172,21 @@ export default class Field {
   createLookup() {
     const fields = this.ctx.$_veeObserver.refs;
 
-    return this.fieldDeps().reduce((acc: any, { target, rule }) => {
-      if (!fields[target]) {
+    return this.fieldDeps().reduce(
+      (acc: any, { target, rule }) => {
+        if (!fields[target]) {
+          return acc;
+        }
+
+        // register cross-field dependencies
+        fields[target].deps[this.vid] = this;
+        acc.values[target] = fields[target].value;
+        acc.names[rule] = fields[target].alias || fields[target].name;
+
         return acc;
-      }
-
-      // register cross-field dependencies
-      fields[target].deps[this.vid] = this;
-      acc.values[target] = fields[target].value;
-      acc.names[rule] = fields[target].alias || fields[target].name;
-
-      return acc;
-    }, { values: {}, names: {} });
+      },
+      { values: {}, names: {} }
+    );
   }
 
   onModelUpdated(model: VNodeDirective) {

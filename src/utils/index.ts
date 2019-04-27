@@ -214,11 +214,6 @@ export const warn = (message: string) => {
 };
 
 /**
- * Creates a branded error object.
- */
-export const createError = (message: string) => new Error(`[vee-validate] ${message}`);
-
-/**
  * Checks if the value is an object.
  */
 export const isObject = (obj: unknown): obj is { [x: string]: any } =>
@@ -231,14 +226,6 @@ export function identity<T>(x: T) {
  * Checks if a function is callable.
  */
 export const isCallable = (func: unknown): func is CallableFunction => typeof func === 'function';
-
-export function isPromise(value: unknown): value is Promise<any> {
-  if (isObject(value) && value instanceof Promise) {
-    return 'then' in value;
-  }
-
-  return false;
-}
 
 export function computeClassObj(names: ValidationClassMap, flags: ValidationFlags) {
   const acc: { [k: string]: boolean } = {};
@@ -286,26 +273,6 @@ export function toArray<T>(arrayLike: ArrayLike<T>): T[] {
   /* istanbul ignore next */
   return array;
 }
-
-let id = 0;
-let idTemplate = '{id}';
-
-/**
- * Generates a unique id.
- */
-export const uniqId = () => {
-  // handle too many uses of uniqId, although unlikely.
-  if (id >= 9999) {
-    id = 0;
-    // shift the template.
-    idTemplate = idTemplate.replace('{id}', '_{id}');
-  }
-
-  id++;
-  const newId = idTemplate.replace('{id}', String(id));
-
-  return newId;
-};
 
 export function findIndex<T>(arrayLike: ArrayLike<T>, predicate: (item: T) => boolean): number {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
