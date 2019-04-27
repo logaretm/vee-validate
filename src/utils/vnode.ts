@@ -195,11 +195,11 @@ function resolveTextualRules(vnode: VNode) {
     rules.decimal = [];
 
     if (attrs.min !== '') {
-      rules.minValue = Number(attrs.min);
+      rules.min_value = Number(attrs.min);
     }
 
     if (attrs.max !== '') {
-      rules.maxValue = Number(attrs.max);
+      rules.max_value = Number(attrs.max);
     }
   }
 
