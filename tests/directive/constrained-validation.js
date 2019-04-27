@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
-import VeeValidate from '@/index';
 import flushPromises from 'flush-promises';
+import VeeValidate from '@/index';
 
 describe('HTML Constrained Validation API', () => {
   test('sets HTML Constraint validation API messages', async () => {

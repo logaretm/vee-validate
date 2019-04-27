@@ -8726,7 +8726,7 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-performance-now@^2.1.0:
+performance-now@2.1.0, performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
@@ -9322,6 +9322,13 @@ quick-lru@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-1.1.0.tgz#4360b17c61136ad38078397ff11416e186dcfbb8"
   integrity sha1-Q2CxfGETatOAeDl/8RQW4Ybc+7g=
+
+raf-stub@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/raf-stub/-/raf-stub-2.0.2.tgz#0f76b208876d88741667e1975560d172ec2aaf84"
+  integrity sha512-C3WCzQO4OECaVfDxhBTQNBlbUzxTQ4gVYolSxDwvymIasfWuSXuFcfSeSeXQPy+JqzQOUTgPcuZgzMZzFeufww==
+  dependencies:
+    performance-now "2.1.0"
 
 randomatic@^3.0.0:
   version "3.1.0"
@@ -11313,7 +11320,7 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vue-class-component@^7.0.2:
+vue-class-component@^7.0.1, vue-class-component@^7.0.2:
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.0.2.tgz#c5f35a91c0e9341532392b84d606a84911fb13bc"
   integrity sha512-8xw/wkZI2tgHcwvkSRC1ax7GeP1CG27wKhedvOAdjdASm05VU4RijGsCYti6s6CzBioBL5BQUmntQQTCsp1wnQ==
@@ -11349,6 +11356,13 @@ vue-loader@^15.2.4:
     loader-utils "^1.1.0"
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
+
+vue-property-decorator@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-8.1.0.tgz#66493a5350e7f643e852e7698ec2c883554daa79"
+  integrity sha512-TUWpbadApSW/sx9hlbrUq092ULm4E3RkL5X4fFhkiJ88/Y99lVubjh3bd3VbFQ8JRlKaTeqMOKaFHQRzWBCFPg==
+  dependencies:
+    vue-class-component "^7.0.1"
 
 vue-router@^3.0.1:
   version "3.0.1"
