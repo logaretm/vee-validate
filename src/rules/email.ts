@@ -1,7 +1,11 @@
-const validate = (value: string | string[], { multiple = false } = {}) => {
+import { RuleParamSchema } from '../types';
+
+const validate = (value: string | string[], { multiple }: any = {}) => {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (multiple && !Array.isArray(value)) {
-    value = String(value).split(',').map(emailStr => emailStr.trim());
+    value = String(value)
+      .split(',')
+      .map(emailStr => emailStr.trim());
   }
 
   if (Array.isArray(value)) {
@@ -11,10 +15,16 @@ const validate = (value: string | string[], { multiple = false } = {}) => {
   return re.test(String(value));
 };
 
-export {
-  validate
-};
+const params: RuleParamSchema[] = [
+  {
+    name: 'multiple',
+    default: false
+  }
+];
+
+export { validate, params };
 
 export default {
-  validate
+  validate,
+  params
 };

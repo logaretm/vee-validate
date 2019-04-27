@@ -22,14 +22,14 @@ test('validates number minimum value', () => {
   const min = -1;
 
   // valid
-  valid.forEach(value => expect(validate(value, [min])).toBe(true));
+  valid.forEach(value => expect(validate(value, { min })).toBe(true));
 
   // invalid
-  invalid.forEach(value => expect(validate(value, [min])).toBe(false));
+  invalid.forEach(value => expect(validate(value, { min })).toBe(false));
 });
 
 test('handles array of values', () => {
-  expect(validate(valid, [-1])).toBe(true);
+  expect(validate(valid, { min: -1 })).toBe(true);
 
-  expect(validate(invalid, [-1])).toBe(false);
+  expect(validate(invalid, { min: -1 })).toBe(false);
 });

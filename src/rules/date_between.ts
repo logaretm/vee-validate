@@ -1,6 +1,7 @@
 import { isValidDate } from '../utils';
+import { RuleParamSchema } from '../types';
 
-const validate = (value: any, { min = null, max = null, inclusivity = '()' }: any = {}) => {
+const validate = (value: any, { min, max, inclusivity }: any) => {
   // if any is not valid.
   if (!isValidDate(value) || !isValidDate(min) || !isValidDate(max)) {
     return false;
@@ -25,20 +26,25 @@ const validate = (value: any, { min = null, max = null, inclusivity = '()' }: an
   return dateVal >= minDate && dateVal <= maxDate;
 };
 
-const options = {
-  isDate: true
-};
-
-const paramNames = ['min', 'max', 'inclusivity'];
+const params: RuleParamSchema[] = [
+  {
+    name: 'min'
+  },
+  {
+    name: 'max'
+  },
+  {
+    name: 'inclusivity',
+    default: '()'
+  }
+];
 
 export {
   validate,
-  options,
-  paramNames
+  params
 };
 
 export default {
   validate,
-  options,
-  paramNames
+  params
 };

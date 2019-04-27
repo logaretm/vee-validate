@@ -22,14 +22,14 @@ test('validates number maximum value', () => {
   const max = 10;
 
   // valid.
-  valid.forEach(value => expect(validate(value, [max])).toBe(true));
+  valid.forEach(value => expect(validate(value, { max })).toBe(true));
 
   // invalid
-  invalid.forEach(value => expect(validate(value, [max])).toBe(false));
+  invalid.forEach(value => expect(validate(value, { max })).toBe(false));
 });
 
 test('handles array of values', () => {
-  expect(validate(valid, [10])).toBe(true);
+  expect(validate(valid, { max: 10 })).toBe(true);
 
-  expect(validate(invalid, [10])).toBe(false);
+  expect(validate(invalid, { max: 10 })).toBe(false);
 });

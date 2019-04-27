@@ -1,23 +1,23 @@
-import { isNullOrUndefined } from "../utils";
+import { isNullOrUndefined } from '../utils';
+import { RuleParamSchema } from '../types';
 
-const validate = (
-  value: any,
-  { decimals = "*", separator = "." }: any = {}
-): boolean => {
-  if (isNullOrUndefined(value) || value === "") {
+const validate = (value: any, { decimals, separator }: any = {}): boolean => {
+  if (isNullOrUndefined(value) || value === '') {
     return false;
   }
+
+  separator = isNullOrUndefined(separator) ? '.' : separator;
+  decimals = isNullOrUndefined(decimals) ? '*' : decimals;
 
   if (Array.isArray(value)) {
     return value.every(val => validate(val, { decimals, separator }));
   }
 
-  // if is 0.
   if (Number(decimals) === 0) {
     return /^-?\d*$/.test(value);
   }
 
-  const regexPart = decimals === "*" ? "+" : `{1,${decimals}}`;
+  const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
   const regex = new RegExp(`^[-+]?\\d*(\\${separator}\\d${regexPart})?$`);
 
   if (!regex.test(value)) {
@@ -29,11 +29,20 @@ const validate = (
   return !isNaN(parsedValue);
 };
 
-const paramNames = ["decimals", "separator"];
+const params: RuleParamSchema[] = [
+  {
+    name: 'decimals',
+    default: '*'
+  },
+  {
+    name: 'separator',
+    default: '.'
+  }
+];
 
-export { validate, paramNames };
+export { validate, params };
 
 export default {
   validate,
-  paramNames
+  params
 };

@@ -1,4 +1,5 @@
 import { alphaSpaces } from './alpha_helper';
+import { RuleParamSchema } from '../types';
 
 const validate = (value: any, { locale = '' } = {}): boolean => {
   if (Array.isArray(value)) {
@@ -6,21 +7,22 @@ const validate = (value: any, { locale = '' } = {}): boolean => {
   }
 
   // Match at least one locale.
-  if (! locale) {
+  if (!locale) {
     return Object.keys(alphaSpaces).some(loc => alphaSpaces[loc].test(value));
   }
 
   return (alphaSpaces[locale] || alphaSpaces.en).test(value);
 };
 
-const paramNames = ['locale'];
+const params: RuleParamSchema[] = [
+  {
+    name: 'locale'
+  }
+];
 
-export {
-  validate,
-  paramNames
-};
+export { validate, params };
 
 export default {
   validate,
-  paramNames
+  params
 };

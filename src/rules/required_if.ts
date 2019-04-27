@@ -1,7 +1,8 @@
 import { isEmptyArray } from '../utils';
+import { RuleParamSchema } from '../types';
 
-const validate = (value: any, [otherFieldVal, ...possibleVals]: any) => {
-  let required = possibleVals.includes(String(otherFieldVal).trim());
+const validate = (value: any, { target, values }: any) => {
+  let required = values.includes(String(target).trim());
 
   if (!required) {
     return {
@@ -12,7 +13,7 @@ const validate = (value: any, [otherFieldVal, ...possibleVals]: any) => {
     };
   }
 
-  let invalid = (isEmptyArray(value) || [false, null, undefined].includes(value));
+  let invalid = isEmptyArray(value) || [false, null, undefined].includes(value);
 
   invalid = invalid || !String(value).trim().length;
 
@@ -24,17 +25,22 @@ const validate = (value: any, [otherFieldVal, ...possibleVals]: any) => {
   };
 };
 
-const options = {
-  hasTarget: true,
-  computesRequired: true
-};
+const params: RuleParamSchema[] = [
+  {
+    name: 'target',
+    isTarget: true
+  },
+  {
+    name: 'values'
+  }
+];
 
-export {
-  validate,
-  options
-};
+export const computesRequired = true;
+
+export { validate, params };
 
 export default {
   validate,
-  options
+  params,
+  computesRequired
 };

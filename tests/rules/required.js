@@ -27,5 +27,5 @@ test('validates required', () => {
 
 test('false value can be invalidated', () => {
   expect(validate(false).valid).toBe(true);
-  expect(validate(false, [true]).valid).toBe(false);
+  expect(validate(false, { allowFalse: false }).valid).toBe(false);
 });

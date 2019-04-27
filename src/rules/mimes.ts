@@ -1,7 +1,10 @@
-const validate = (files: File[], mimes: any) => {
+const validate = (files: File | File[], mimes: any) => {
   const regex = new RegExp(`${mimes.join('|').replace('*', '.+')}$`, 'i');
+  if (Array.isArray(files)) {
+    return files.every(file => regex.test(file.type));
+  }
 
-  return files.every(file => regex.test(file.type));
+  return regex.test(files.type);
 };
 
 export {

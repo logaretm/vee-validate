@@ -51,8 +51,8 @@ test('testing computesRequired rule (here required_if)', async () => {
   ref.element.value = 'baz';
   ref.trigger('input');
   await flushPromises();
-  expect(wrapper.find('#f1-errors').text()).toBe('The f1 field is required when the text field has this value.');
-  expect(wrapper.find('#f1-continues-errors').text()).toBe('The f1-continues field is required when the text field has this value.');
+  expect(wrapper.find('#f1-errors').text()).toBe('The f1 field is required when the f2 field has this value.');
+  expect(wrapper.find('#f1-continues-errors').text()).toBe('The f1-continues field is required when the f2 field has this value.');
 
   // We fill the input with numbers ; it should silent the require_if error, and let the between rule trigger
   input.element.value = '10';

@@ -24,12 +24,20 @@ export type ValidationRuleFunction = (
   params: any[] | { [k: string]: any }
 ) => boolean | ValidationRuleResult | Promise<boolean | ValidationRuleResult>;
 
-export type ValidationRuleSchema = {
+export interface RuleParamSchema {
+  name: string;
+  isTarget?: boolean;
+  default?: any;
+  cast?(value: any): any;
+}
+
+export interface ValidationRuleSchema {
   validate: ValidationRuleFunction;
-  options?: any;
-  paramNames?: string[];
-  getMessage?: ValidationMessageGenerator;
-};
+  params?: RuleParamSchema[];
+  message?: ValidationMessageGenerator;
+  immediate?: boolean;
+  computesRequired?: boolean;
+}
 
 export type ValidationRule = ValidationRuleFunction | ValidationRuleSchema;
 

@@ -1,23 +1,32 @@
-const validate = (value: any, { expression }: any): boolean => {
-  if (typeof expression === 'string') {
-    expression = new RegExp(expression);
-  }
+import { RuleParamSchema } from "../types";
 
+const validate = (value: any, { regex }: any): boolean => {
   if (Array.isArray(value)) {
-    return value.every(val => validate(val, { expression }));
+    return value.every(val => validate(val, { regex }));
   }
 
-  return expression.test(String(value));
+  return regex.test(String(value));
 };
 
-const paramNames = ['expression'];
+const params: RuleParamSchema[] = [
+  {
+    name: 'regex',
+    cast (value) {
+      if (typeof value === 'string') {
+        return new RegExp(value);
+      }
+
+      return value;
+    }
+  }
+];
 
 export {
   validate,
-  paramNames
+  params
 };
 
 export default {
   validate,
-  paramNames
+  params
 };

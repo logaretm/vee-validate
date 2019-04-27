@@ -1,9 +1,15 @@
-const validate = (files: any, [size]: any) => {
+import { RuleParamSchema } from '../types';
+
+const validate = (files: File | File[], { size }: any) => {
   if (isNaN(size)) {
     return false;
   }
 
-  const nSize = Number(size) * 1024;
+  const nSize = size * 1024;
+  if (!Array.isArray(files)) {
+    return files.size <= nSize;
+  }
+
   for (let i = 0; i < files.length; i++) {
     if (files[i].size > nSize) {
       return false;
@@ -13,10 +19,18 @@ const validate = (files: any, [size]: any) => {
   return true;
 };
 
-export {
-  validate
-};
+const params: RuleParamSchema[] = [
+  {
+    name: 'size',
+    cast(value) {
+      return Number(value);
+    }
+  }
+];
+
+export { validate, params };
 
 export default {
-  validate
+  validate,
+  params
 };

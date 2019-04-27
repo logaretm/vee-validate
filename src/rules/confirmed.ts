@@ -1,21 +1,20 @@
-import { ValidationRuleFunction } from "../types";
+import { ValidationRuleFunction, RuleParamSchema } from "../types";
 
-const validate: ValidationRuleFunction = (value, { targetValue }: any) => String(value) === String(targetValue);
+const validate: ValidationRuleFunction = (value, { target }: any) => String(value) === String(target);
 
-const options = {
-  hasTarget: true
-};
-
-const paramNames = ['targetValue'];
+const params: RuleParamSchema[] = [
+  {
+    name: 'target',
+    isTarget: true
+  }
+];
 
 export {
   validate,
-  options,
-  paramNames
+  params
 };
 
 export default {
   validate,
-  options,
-  paramNames
+  params
 };

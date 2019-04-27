@@ -1,18 +1,22 @@
 import VeeValidate from '../plugin';
 import Dictionary from '../dictionary';
 import RuleContainer from './ruleContainer';
+import { PartialI18nDictionary, RootI18nDictionary } from './i18n';
 import {
   isObject,
   getPath,
   isCallable,
-  toArray,
   createError,
   isNullOrUndefined,
   normalizeRules,
   isEmptyArray
 } from '../utils';
-import { PartialI18nDictionary, RootI18nDictionary } from './i18n';
-import { ValidationResult, ValidationRule, ValidationRuleSchema } from '../types';
+import {
+  ValidationResult,
+  ValidationRule,
+  ValidationRuleSchema,
+  RuleParamSchema
+} from '../types';
 
 let $vee: VeeValidate;
 
@@ -26,6 +30,7 @@ interface FieldMeta {
   bails: boolean;
   forceRequired: boolean;
   crossTable: { [k: string]: any };
+  names: { [k: string]: any };
 }
 
 export default class Validator {
@@ -70,20 +75,18 @@ export default class Validator {
   /**
    * Adds a custom validator to the list of validation rules.
    */
-  static extend(name: string, validator: ValidationRule, options: any = {}) {
-    Validator._guardExtend(name, validator);
-    // rules imported from the minimal bundle
-    // will have the options embedded in them
-    let mergedOpts = {};
-    if ('options' in validator) {
-      mergedOpts = validator.options;
+  static extend(name: string, schema: ValidationRule) {
+    // makes sure new rules are properly formatted.
+    Validator._guardExtend(name, schema);
+
+    // Full schema object.
+    if (typeof schema === 'object') {
+      Validator._extendRule(name, schema);
+      return;
     }
 
-    Validator._merge(name, {
-      validate: typeof validator === 'function' ? validator : validator.validate,
-      getMessage: typeof validator === 'function' ? undefined : validator.getMessage,
-      paramNames: (options && options.paramNames) || (validator as ValidationRuleSchema).paramNames,
-      options: { hasTarget: false, immediate: true, ...mergedOpts, ...(options || {}) }
+    Validator._extendRule(name, {
+      validate: schema
     });
   }
 
@@ -125,8 +128,8 @@ export default class Validator {
   /**
    * Adds a custom validator to the list of validation rules.
    */
-  extend(name: string, validator: ValidationRule, options: any) {
-    Validator.extend(name, validator, options);
+  extend(name: string, schema: ValidationRule) {
+    Validator.extend(name, schema);
   }
 
   /**
@@ -138,7 +141,8 @@ export default class Validator {
       rules: normalizeRules(rules),
       bails: getPath('bails', options, this.bails),
       forceRequired: false,
-      crossTable: options && options.values
+      crossTable: options && options.values,
+      names: (options && options.names) || {}
     };
 
     const result = await this._validate(field, value, options);
@@ -157,116 +161,107 @@ export default class Validator {
   }
 
   /**
-   * Formats an error message for field and a rule.
+   * Starts the validation process.
    */
-  private _formatErrorMessage(field: any, rule: any, data = {}, targetName: any = null) {
-    const name = this._getFieldDisplayName(field);
-    const params = this._getLocalizedParams(rule, targetName);
-
-    return Dictionary.getDriver().getFieldMessage(this.locale, field.name, rule.name, [name, params, data]);
-  }
-
-  /**
-   * We need to convert any object param to an array format since the locales do not handle params as objects yet.
-   */
-  private _convertParamObjectToArray(obj: any, ruleName: string) {
-    if (Array.isArray(obj)) {
-      return obj;
+  private async _validate(field: FieldMeta, value: any, { isInitial = false } = {}) {
+    const { shouldSkip, errors } = await this._shouldSkip(field, value);
+    if (shouldSkip) {
+      return {
+        valid: !errors.length,
+        errors
+      };
     }
 
-    const paramNames = RuleContainer.getParamNames(ruleName);
-    if (!paramNames || !isObject(obj)) {
-      return obj;
-    }
-
-    return paramNames.reduce((prev: any, paramName: any) => {
-      if (paramName in obj) {
-        prev.push(obj[paramName]);
+    // Filter out non-require rules since we already checked them.
+    const rules = Object.keys(field.rules).filter(rule => !RuleContainer.isRequireRule(rule));
+    const length = rules.length;
+    for (let i = 0; i < length; i++) {
+      if (isInitial && !RuleContainer.isImmediate(rules[i])) {
+        continue;
       }
 
-      return prev;
-    }, []);
-  }
+      const rule = rules[i];
+      const result = await this._test(field, value, {
+        name: rule,
+        params: field.rules[rule]
+      });
 
-  /**
-   * Translates the parameters passed to the rule (mainly for target fields).
-   */
-  private _getLocalizedParams(rule: any, targetName: string = '') {
-    let params = this._convertParamObjectToArray(rule.params, rule.name);
-    if (rule.options.hasTarget && params && params[0]) {
-      const localizedName = targetName || Dictionary.getDriver().getAttribute(this.locale, params[0]) || params[0];
-
-      return [localizedName].concat(params.slice(1));
-    }
-
-    return params;
-  }
-
-  /**
-   * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
-   */
-  private _getFieldDisplayName(field: { alias?: string; name: string }) {
-    return field.alias || Dictionary.getDriver().getAttribute(this.locale, field.name) || field.name;
-  }
-
-  /**
-   * Converts an array of params to an object with named properties.
-   * Only works if the rule is configured with a paramNames array.
-   * Returns the same params if it cannot convert it.
-   */
-  private _convertParamArrayToObj(params: any[], ruleName: string) {
-    const paramNames = RuleContainer.getParamNames(ruleName);
-    if (!paramNames) {
-      return params;
-    }
-
-    if (isObject(params)) {
-      // check if the object is either a config object or a single parameter that is an object.
-      const hasKeys = paramNames.some((name: string) => Object.keys(params).indexOf(name) !== -1);
-      // if it has some of the keys, return it as is.
-      if (hasKeys) {
-        return params;
+      if (!result.valid) {
+        errors.push(...result.errors);
+        if (field.bails) {
+          return {
+            valid: false,
+            errors
+          };
+        }
       }
-      // otherwise wrap the object in an array.
-      params = [params];
     }
 
-    // Reduce the paramsNames to a param object.
-    return params.reduce((prev, value, idx) => {
-      prev[paramNames[idx]] = value;
+    return {
+      valid: !errors.length,
+      errors
+    };
+  }
 
-      return prev;
-    }, {});
+  private async _shouldSkip(field: FieldMeta, value: any) {
+    const requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
+    const length = requireRules.length;
+    const errors: ReturnType<typeof Validator.prototype._createFieldError>[] = [];
+    let isRequired = false;
+    for (let i = 0; i < length; i++) {
+      let rule = requireRules[i];
+      let result = await this._test(field, value, {
+        name: rule,
+        params: field.rules[rule]
+      });
+
+      if (!isObject(result)) {
+        throw createError('Require rules has to return an object (see docs)');
+      }
+
+      if (result.data.required) {
+        isRequired = true;
+      }
+
+      if (!result.valid) {
+        errors.push(...result.errors);
+        // Exit early as the field is required and failed validation.
+        if (field.bails) {
+          return {
+            shouldSkip: true,
+            errors
+          };
+        }
+      }
+    }
+
+    // field is configured to run through the pipeline regardless
+    if (!field.bails) {
+      return {
+        shouldSkip: false,
+        errors
+      };
+    }
+
+    // skip if the field is not required and has an empty value.
+    return {
+      shouldSkip: !isRequired && (isNullOrUndefined(value) || value === '' || isEmptyArray(value)),
+      errors
+    };
   }
 
   /**
    * Tests a single input value against a rule.
    */
-  private async _test(field: FieldMeta, value: any, rule: any) {
-    const validator = RuleContainer.getValidatorMethod(rule.name);
-    let params = Array.isArray(rule.params) ? toArray(rule.params) : rule.params;
-    if (!params) {
-      params = [];
-    }
-
-    let targetName: string = '';
-    if (!validator) {
+  private async _test(field: FieldMeta, value: any, rule: { name: string; params: any[] | object }) {
+    const ruleSchema = RuleContainer.getRuleDefinition(rule.name);
+    if (!ruleSchema.validate) {
       throw createError(`No such validator '${rule.name}' exists.`);
     }
 
-    // has field dependencies.
-    if (rule.options.hasTarget && field.crossTable) {
-      const targetId = params[0];
-      if (targetId in field.crossTable) {
-        const targetValue = field.crossTable[targetId];
-        params = [targetValue].concat(params.slice(1));
-      }
-    } else if (rule.name === 'required' && field) {
-      // invalidate false if no args were specified and the field rejects false by default.
-      params = params.length ? params : [true];
-    }
-
-    let result = await validator(value, this._convertParamArrayToObj(params, rule.name));
+    // build params
+    const params = this._buildParams(rule.params, ruleSchema.params, field.crossTable);
+    let result = await ruleSchema.validate(value, params);
     if (!isObject(result)) {
       result = { valid: result, data: {} };
     }
@@ -274,29 +269,91 @@ export default class Validator {
     return {
       valid: result.valid,
       data: result.data || {},
-      errors: result.valid ? [] : [this._createFieldError(field, rule, result.data, targetName)]
+      errors: result.valid ? [] : [this._createFieldError(field, rule, params, result.data)]
     };
+  }
+
+  private _buildParams(provided: any[] | { [k: string]: any }, defined: RuleParamSchema[] | undefined, crossTable: { [k: string]: any }) {
+    const params: { [k: string]: any } = {};
+    if (!defined && !Array.isArray(provided)) {
+      throw createError('You provided an object params to a rule that has no defined schema.');
+    }
+
+    // Rule probably uses an array for their args, keep it as is.
+    if (Array.isArray(provided) && !defined) {
+      return provided;
+    }
+
+    let definedRules: RuleParamSchema[];
+    // collect the params schema.
+    if (!defined || defined.length < provided.length) {
+      let lastDefinedParam: RuleParamSchema;
+      // collect any additional parameters in the last item.
+      definedRules = provided.map((_: any, idx: number) => {
+        let param = defined && defined[idx];
+        lastDefinedParam = param || lastDefinedParam;
+        if (!param) {
+          param = lastDefinedParam;
+        }
+
+        return param;
+      });
+    } else {
+      definedRules = defined;
+    }
+
+    // Match the provided array length with a temporary schema.
+    for (let i = 0; i < definedRules.length; i++) {
+      const options = definedRules[i];
+      let value = options.default;
+      // if the provided is an array, map element value.
+      if (Array.isArray(provided)) {
+        if (i in provided) {
+          value = provided[i];
+        }
+      } else {
+        // map it from the object if it exists.
+        value = options.name in provided ? provided[options.name] : value;
+      }
+
+      // if the param is a target, resolve the target value.
+      if (options.isTarget) {
+        value = crossTable[value];
+      }
+
+      // If there is a transformer defined.
+      if (options.cast) {
+        value = options.cast(value);
+      }
+
+      // already been set, probably multiple values.
+      if (params[options.name]) {
+        params[options.name] = Array.isArray(params[options.name]) ? params[options.name] : [params[options.name]];
+        params[options.name].push(value);
+      } else {
+        // set the value.
+        params[options.name] = value;
+      }
+    }
+
+    return params;
   }
 
   /**
    * Merges a validator object into the RULES and Messages.
    */
-  private static _merge(name: string, { validate, options, paramNames, getMessage }: ValidationRuleSchema) {
-    if (getMessage) {
+  private static _extendRule(name: string, schema: ValidationRuleSchema) {
+    if (schema.message) {
       Dictionary.getDriver().merge({
         [Validator.locale]: {
           messages: {
-            [name]: getMessage
+            [name]: schema.message
           }
         }
       });
     }
 
-    RuleContainer.add(name, {
-      validate,
-      options,
-      paramNames
-    });
+    RuleContainer.extend(name, schema);
   }
 
   /**
@@ -317,90 +374,32 @@ export default class Validator {
   /**
    * Creates a Field Error Object.
    */
-  private _createFieldError(field: FieldMeta, rule: any, data: any, targetName?: string) {
+  private _createFieldError(field: FieldMeta, rule: any, params: any, data: any) {
     return {
       field: field.name,
-      msg: this._formatErrorMessage(field, rule, data, targetName),
+      msg: this._formatErrorMessage(field, rule, params, data),
       rule: rule.name,
       regenerate: () => {
-        return this._formatErrorMessage(field, rule, data, targetName);
+        return this._formatErrorMessage(field, rule, params, data);
       }
     };
-  }
-
-  private async _shouldSkip(field: FieldMeta, value: any) {
-    const requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
-    const length = requireRules.length;
-    let isRequired = false;
-    for (let i = 0; i < length; i++) {
-      let rule = requireRules[i];
-      let ruleOptions = RuleContainer.getOptions(rule);
-      let result = await this._test(field, value, {
-        name: rule,
-        params: field.rules[rule],
-        options: ruleOptions
-      });
-
-      if (!isObject(result)) {
-        throw createError('Require rules has to return an object (see docs)');
-      }
-
-      if (result.data.required) {
-        isRequired = true;
-      }
-    }
-
-    // field is configured to run through the pipeline regardless
-    if (!field.bails) {
-      return false;
-    }
-
-    // skip if the field is not required and has an empty value.
-    return !isRequired && (isNullOrUndefined(value) || value === '' || isEmptyArray(value));
   }
 
   /**
-   * Starts the validation process.
+   * Formats an error message for field and a rule.
    */
-  private async _validate(field: FieldMeta, value: any, { isInitial = false } = {}) {
-    const shouldSkip = await this._shouldSkip(field, value);
-    if (shouldSkip) {
-      return {
-        valid: true,
-        errors: []
-      };
-    }
+  private _formatErrorMessage(field: FieldMeta, rule: any, params: any, data: any = {}) {
+    const name = this._getFieldDisplayName(field);
+    data.targetName = field.names[rule.name] || '{target}';
+    data.targetName = Dictionary.getDriver().getAttribute(this.locale, data.targetName) || data.targetName;
 
-    const errors: ReturnType<typeof Validator.prototype._createFieldError>[] = [];
-    const rules = Object.keys(field.rules);
-    const length = rules.length;
-    for (let i = 0; i < length; i++) {
-      if (isInitial && !RuleContainer.isImmediate(rules[i])) {
-        continue;
-      }
+    return Dictionary.getDriver().getFieldMessage(this.locale, field.name, rule.name, [name, params, data]);
+  }
 
-      const rule = rules[i];
-      const ruleOptions = RuleContainer.getOptions(rule);
-      const result = await this._test(field, value, {
-        name: rule,
-        params: field.rules[rule],
-        options: ruleOptions
-      });
-
-      if (!result.valid) {
-        errors.push(...result.errors);
-        if (field.bails) {
-          return {
-            valid: false,
-            errors
-          };
-        }
-      }
-    }
-
-    return {
-      valid: !errors.length,
-      errors
-    };
+  /**
+   * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
+   */
+  private _getFieldDisplayName(field: { alias?: string; name: string }) {
+    return field.alias || Dictionary.getDriver().getAttribute(this.locale, field.name) || field.name;
   }
 }

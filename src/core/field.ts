@@ -47,6 +47,7 @@ function computeModeSetting(ctx: Field) {
 }
 export default class Field {
   el!: HTMLElement;
+  alias?: string;
   vid!: string;
   deps!: { [k: string]: Field };
   flags: ValidationFlags;
@@ -74,6 +75,8 @@ export default class Field {
     defineNonReactive(this, 'el', el);
     defineNonReactive(this, 'vid', (vnode.data && vnode.data.ref) || uniqId());
     defineNonReactive(this, 'deps', {});
+    defineNonReactive(this, 'alias', resolveAlias(el, vnode));
+    defineNonReactive(this, 'name', resolveName(el, vnode));
     defineNonReactive(this, 'validator', getValidator());
     defineNonReactive(this, 'ctx', vnode.context);
     defineNonReactive(this, 'opts', {});
@@ -132,6 +135,8 @@ export default class Field {
     const options = resolveFeatures(this.binding, this.vnode);
     const alias = resolveAlias(this.el, this.vnode);
     const name = resolveName(this.el, this.vnode);
+    this.name = name;
+    this.alias = alias;
     this.opts.aria = options.aria;
     this.opts.validity = options.validity;
 
@@ -139,8 +144,8 @@ export default class Field {
       .validate(this.value, this.rules, {
         name: alias || name,
         bails: options.bails,
-        values: this.createValuesLookup(),
-        isInitial: !this.initialized
+        isInitial: !this.initialized,
+        ...this.createLookup()
       })
       .then(res => {
         // prevent race conditions from overriding each other.
@@ -166,24 +171,25 @@ export default class Field {
     return Object.keys(this.rules)
       .filter(RuleContainer.isTargetRule)
       .map(rule => {
-        return this.rules[rule][0];
+        return { rule, target: this.rules[rule][0] };
       });
   }
 
-  createValuesLookup() {
+  createLookup() {
     const fields = this.ctx.$_veeObserver.refs;
 
-    return this.fieldDeps().reduce((acc, depName) => {
-      if (!fields[depName]) {
+    return this.fieldDeps().reduce((acc: any, { target, rule }) => {
+      if (!fields[target]) {
         return acc;
       }
 
       // register cross-field dependencies
-      fields[depName].deps[this.vid] = this;
-      acc[depName] = fields[depName].value;
+      fields[target].deps[this.vid] = this;
+      acc.values[target] = fields[target].value;
+      acc.names[rule] = fields[target].alias || fields[target].name;
 
       return acc;
-    }, {});
+    }, { values: {}, names: {} });
   }
 
   onModelUpdated(model: VNodeDirective) {
@@ -465,8 +471,8 @@ export default class Field {
 
     // Remove cross-field references.
     const fields = this.ctx.$_veeObserver.refs;
-    this.fieldDeps().forEach(depName => {
-      delete fields[depName].deps[this.vid];
+    this.fieldDeps().forEach(({ target }) => {
+      delete fields[target].deps[this.vid];
     });
     this.ctx.$_veeObserver.unsubscribe(this);
   }

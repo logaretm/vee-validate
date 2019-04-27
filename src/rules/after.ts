@@ -1,39 +1,39 @@
 import { isValidDate } from '../utils';
+import { RuleParamSchema } from '../types';
 
-interface AfterValidatorParams {
-  targetValue?: any;
-  inclusion?: boolean;
-}
 
-const afterValidator = (value: any, { targetValue = null, inclusion = false }: AfterValidatorParams = {}) => {
+// required to convert from a list of array values to an object.
+const params: RuleParamSchema[] = [
+  {
+    name: 'target',
+    isTarget: true
+  },
+  {
+    name: 'allowEqual',
+    default: false
+  }
+];
+
+const afterValidator = (value: any, { target, allowEqual }: any) => {
   // if either is not valid.
-  if (!isValidDate(value) || !isValidDate(targetValue)) {
+  if (!isValidDate(value) || !isValidDate(target)) {
     return false;
   }
 
-  if (inclusion) {
-    return value.getTime() >= targetValue.getTime();
+  if (allowEqual) {
+    return value.getTime() >= target.getTime();
   }
 
-  return value.getTime() > targetValue.getTime();
+  return value.getTime() > target.getTime();
 };
 
-const options = {
-  hasTarget: true,
-  isDate: true
-};
-
-// required to convert from a list of array values to an object.
-const paramNames = ['targetValue', 'inclusion'];
 
 export {
   afterValidator as validate,
-  options,
-  paramNames
+  params
 };
 
 export default {
   validate: afterValidator,
-  options,
-  paramNames
+  params,
 };

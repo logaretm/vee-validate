@@ -1,11 +1,21 @@
-const validate = (value: any, [other = undefined]: any = []) => {
+import { RuleParamSchema } from "../types";
+
+const validate = (value: any, { other }: any) => {
   return value === other;
 };
 
+const params: RuleParamSchema[] = [
+  {
+    name: 'other'
+  }
+];
+
 export {
-  validate
+  validate,
+  params
 };
 
 export default {
-  validate
+  validate,
+  params
 };

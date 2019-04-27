@@ -1,6 +1,6 @@
-import { ValidationRuleFunction } from "../types";
+import { ValidationRuleFunction, RuleParamSchema } from '../types';
 
-const validate: ValidationRuleFunction = (value, { min = null, max = null }: any = {}) => {
+const validate: ValidationRuleFunction = (value, { min, max }: any = {}) => {
   if (Array.isArray(value)) {
     return value.every(val => !!validate(val, { min, max }));
   }
@@ -8,14 +8,18 @@ const validate: ValidationRuleFunction = (value, { min = null, max = null }: any
   return Number(min) <= value && Number(max) >= value;
 };
 
-const paramNames = ['min', 'max'];
+const params: RuleParamSchema[] = [
+  {
+    name: 'min'
+  },
+  {
+    name: 'max'
+  }
+];
 
-export {
-  validate,
-  paramNames
-};
+export { validate, params };
 
 export default {
   validate,
-  paramNames
+  params
 };

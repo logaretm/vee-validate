@@ -1,41 +1,47 @@
-import { ValidationRuleSchema } from "../types";
+import { ValidationRuleSchema } from '../types';
+import { merge } from '../utils';
+
 
 const RULES: { [k: string]: ValidationRuleSchema } = {};
 
 export default class RuleContainer {
-  static add (name: string, { validate, options, paramNames }: ValidationRuleSchema) {
-    RULES[name] = {
-      validate,
-      options,
-      paramNames
+  static extend(name: string, schema: ValidationRuleSchema) {
+    // Rule already exists.
+    let rule = {
+      ...{ immediate: true, computesRequired: false },
+      ...schema
     };
+
+    // rule already exists, overwrite it.
+    if (RULES[name]) {
+      rule = merge(RULES[name], rule);
+    }
+
+    RULES[name] = rule;
   }
 
-  static isImmediate (name: string) {
-    return !!(RULES[name] && RULES[name].options.immediate);
+  static isImmediate(name: string) {
+    return !!(RULES[name] && RULES[name].immediate);
   }
 
-  static isRequireRule (name: string) {
-    return !!(RULES[name] && RULES[name].options.computesRequired);
+  static isRequireRule(name: string) {
+    return !!(RULES[name] && RULES[name].computesRequired);
   }
 
   static isTargetRule (name: string) {
-    return !!(RULES[name] && RULES[name].options.hasTarget);
+    const definition = RuleContainer.getRuleDefinition(name);
+    if (!definition.params) {
+      return false;
+    }
+
+    return definition.params.some(param => !!param.isTarget);
   }
 
-  static remove (ruleName: string) {
+  static remove(ruleName: string) {
     delete RULES[ruleName];
   }
 
-  static getParamNames (ruleName: string) {
-    return RULES[ruleName] && RULES[ruleName].paramNames;
+  static getRuleDefinition(ruleName: string) {
+    return RULES[ruleName];
   }
-
-  static getOptions (ruleName: string) {
-    return RULES[ruleName] && RULES[ruleName].options;
-  }
-
-  static getValidatorMethod (ruleName: string) {
-    return RULES[ruleName] ? RULES[ruleName].validate : null;
-  }
-};
+}

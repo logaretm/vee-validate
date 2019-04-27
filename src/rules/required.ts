@@ -1,6 +1,7 @@
 import { isEmptyArray, isNullOrUndefined } from '../utils';
+import { RuleParamSchema } from '../types';
 
-const validate = (value: any, [invalidateFalse = false] = []) => {
+const validate = (value: any, { allowFalse }: any = { allowFalse: true }) => {
   const result = {
     valid: false,
     data: {
@@ -13,7 +14,7 @@ const validate = (value: any, [invalidateFalse = false] = []) => {
   }
 
   // incase a field considers `false` as an empty value like checkboxes.
-  if (value === false && invalidateFalse) {
+  if (value === false && !allowFalse) {
     return result;
   }
 
@@ -22,13 +23,19 @@ const validate = (value: any, [invalidateFalse = false] = []) => {
   return result;
 };
 
-const options = {
-  computesRequired: true
-};
+export const computesRequired = true;
 
-export { validate, options };
+const params: RuleParamSchema[] = [
+  {
+    name: 'allowFalse',
+    default: true
+  }
+];
+
+export { validate, params };
 
 export default {
   validate,
-  options
+  params,
+  computesRequired
 };

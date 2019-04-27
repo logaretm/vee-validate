@@ -102,7 +102,7 @@ describe('Cross Field Validation', () => {
       template: `
       <div>
         <input type="password" name="password" v-model="password" v-validate="'required|confirmed:confirm'" data-vv-as="Password">
-        <input type="password" name="confirm" v-model="confirm" v-validate="'required'">
+        <input type="password" name="confirm" v-model="confirm" v-validate="'required'" ref="confirm">
         <span id="pwError">{{ vee.for('password').errors[0] }}</span>
         <span id="confirmError">{{ vee.for('confirm').errors[0] }}</span>
       </div>
@@ -112,7 +112,7 @@ describe('Cross Field Validation', () => {
 
     VeeValidate.Validator.localize('en', {
       messages: {
-        confirmed: (field, [targetName]) => `The ${field} and ${targetName} do not match`
+        confirmed: (field, _, { targetName }) => `The ${field} and ${targetName} do not match`
       },
       attributes: {
         confirm: 'Password Confirmation'

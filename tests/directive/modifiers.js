@@ -67,9 +67,12 @@ describe('directive modifiers', () => {
   test('some rules can be excluded when validating initially', async () => {
     const Vue = createLocalVue();
     Vue.use(VeeValidate);
-    VeeValidate.Validator.extend('noInitial', () => {
-      return false;
-    }, { immediate: false });
+    VeeValidate.Validator.extend('noInitial', {
+      validate: () => {
+        return false;
+      },
+      immediate: false
+    });
 
     const wrapper = mount({
       computed: mapValidationState('vee'),

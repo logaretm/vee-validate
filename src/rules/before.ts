@@ -1,34 +1,33 @@
 import { isValidDate } from '../utils';
-import { ValidationRuleFunction } from '../types';
+import { ValidationRuleFunction, RuleParamSchema } from '../types';
 
-const validate: ValidationRuleFunction = (value, { targetValue = null, inclusion = false }: any = {}) => {
+const validate: ValidationRuleFunction = (value, { target, allowEqual }: any) => {
   // if either is not valid.
-  if (!isValidDate(value) || !isValidDate(targetValue)) {
+  if (!isValidDate(value) || !isValidDate(target)) {
     return false;
   }
 
-  if (inclusion) {
-    return value.getTime() <= targetValue.getTime();
+  if (allowEqual) {
+    return value.getTime() <= target.getTime();
   }
 
-  return value.getTime() < targetValue.getTime();
+  return value.getTime() < target.getTime();
 };
 
-const options = {
-  hasTarget: true,
-  isDate: true
-};
+const params: RuleParamSchema[] = [
+  {
+    name: 'target',
+    isTarget: true
+  },
+  {
+    name: 'allowEqual',
+    default: false
+  }
+];
 
-const paramNames = ['targetValue', 'inclusion'];
-
-export {
-  validate,
-  options,
-  paramNames
-};
+export { validate, params };
 
 export default {
   validate,
-  options,
-  paramNames
+  params
 };

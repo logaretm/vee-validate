@@ -21,14 +21,14 @@ test('validates maximum number of characters in a string', () => {
   const limit = 3;
 
   // valid.
-  valid.forEach(value => expect(validate(value, [limit])).toBe(true));
+  valid.forEach(value => expect(validate(value, { length: limit })).toBe(true));
 
   // invalid
-  invalid.forEach(value => expect(validate(value, [limit])).toBe(false));
+  invalid.forEach(value => expect(validate(value, { length: limit })).toBe(false));
 });
 
 test('handles array of values', () => {
-  expect(validate(valid, [3])).toBe(true);
+  expect(validate(valid, { length: 3 })).toBe(true);
 
-  expect(validate(invalid, [3])).toBe(false);
+  expect(validate(invalid, { length: 3 })).toBe(false);
 });

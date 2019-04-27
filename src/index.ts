@@ -10,10 +10,10 @@ import { ValidationState, ValidationAction } from './decorators';
 
 const version = '__VERSION__';
 
-const RulesAsList: any[] = Object.keys(Rules).map(key => ({ rule: (Rules as any)[key], name: key }));
+const RulesAsList = Object.keys(Rules).map(key => ({ schema: (Rules as any)[key], name: key }));
 
-RulesAsList.forEach(({ name, rule }) => {
-  Validator.extend(name, rule.validate, { ...rule.options, paramNames: rule.paramNames });
+RulesAsList.forEach(({ name, schema }) => {
+  Validator.extend(name, schema);
 });
 
 // Merge the english messages.

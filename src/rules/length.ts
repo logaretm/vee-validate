@@ -1,4 +1,5 @@
 import { isNullOrUndefined, toArray } from "../utils";
+import { RuleParamSchema } from "../types";
 
 const compare = (value: any[] | string, length: number, max?: number) => {
   if (max === undefined) {
@@ -11,7 +12,7 @@ const compare = (value: any[] | string, length: number, max?: number) => {
   return value.length >= length && value.length <= max;
 };
 
-const validate = (value: any, [length, max = undefined]: any) => {
+const validate = (value: any, { length, max }: any) => {
   if (isNullOrUndefined(value)) {
     return false;
   }
@@ -28,8 +29,28 @@ const validate = (value: any, [length, max = undefined]: any) => {
   return compare(value, length, max);
 };
 
-export { validate };
+const params: RuleParamSchema[] = [
+  {
+    name: 'length',
+    cast (value) {
+      return Number(value);
+    }
+  },
+  {
+    name: 'max',
+    cast (value) {
+      if (value === undefined) {
+        return value;
+      }
+
+      return Number(value);
+    }
+  }
+];
+
+export { validate, params };
 
 export default {
-  validate
+  validate,
+  params
 };
