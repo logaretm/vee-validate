@@ -36,10 +36,6 @@ export default class RuleContainer {
     return definition.params.some(param => !!param.isTarget);
   }
 
-  static remove(ruleName: string) {
-    delete RULES[ruleName];
-  }
-
   static getRuleDefinition(ruleName: string) {
     return RULES[ruleName];
   }

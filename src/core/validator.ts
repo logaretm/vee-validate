@@ -359,6 +359,10 @@ export default class Validator {
       return;
     }
 
+    if (RuleContainer.getRuleDefinition(name)) {
+      return;
+    }
+
     throw createError(`Extension Error: The validator '${name}' must be a function or have a 'validate' method.`);
   }
 
