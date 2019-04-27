@@ -9,5 +9,5 @@ test('validates files extensions', () => {
   ];
 
   expect(validate(validFiles, params)).toBe(true);
-  expect(validate([helpers.file('file.pdf', 'application/pdf')], params)).toBe(false);
+  expect(validate(helpers.file('file.pdf', 'application/pdf'), params)).toBe(false);
 });

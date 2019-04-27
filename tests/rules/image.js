@@ -11,5 +11,5 @@ test('validates image files', () => {
   ];
 
   expect(validate(validFiles)).toBe(true);
-  expect(validate([helpers.file('file.pdf', 'application/pdf')])).toBe(false);
+  expect(validate(helpers.file('file.pdf', 'application/pdf'))).toBe(false);
 });
