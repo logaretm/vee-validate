@@ -19,17 +19,5 @@ declare module 'vue/types/vue' {
      * Note that this property is not available in the component if you are using `inject: false`.
      */
     $validator: Validator;
-    /**
-     * An `ErrorBag` instance, injected via a mixin by VeeValidate.
-     *
-     * Note that this property is not available in the component if you are using `inject: false`.
-     */
-    errors: ErrorBag;
-    /**
-     * An object containing state flags for the validated fields, injected via a mixin by VeeValidate.
-     *
-     * Note that this property is not available in the component if you are using `inject: false`.
-     */
-    fields: FieldFlagsBag;
   }
 }
