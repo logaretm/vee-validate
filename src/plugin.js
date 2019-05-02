@@ -128,6 +128,10 @@ class VeeValidate {
   _initI18n (config) {
     const { dictionary, i18n, i18nRootKey, locale } = config;
     const onLocaleChanged = () => {
+      if (dictionary) {
+        this.i18nDriver.merge(dictionary);
+      }
+
       this._validator.errors.regenerate();
     };
 
