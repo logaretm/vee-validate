@@ -24,6 +24,16 @@ const messages = {
   integer: (field) => `The ${field} field must be an integer.`,
   ip: (field) => `The ${field} field must be a valid ip address.`,
   ip_or_fqdn: (field) => `The ${field} field must be a valid ip address or FQDN.`,
+  json: (field, {type}) => {
+    let typeStr = ''
+    switch(type) {
+      case 'array_object':
+        typeStr = 'array of object';
+        break;
+    }
+
+    return `The ${field} field must be an valid json ${typeStr}.`;
+  },
   length: (field, [length, max]) => {
     if (max) {
       return `The ${field} length must be between ${length} and ${max}.`;
