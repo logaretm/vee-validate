@@ -32,9 +32,11 @@ const messages = {
     return `The ${field} length must be ${length}.`;
   },
   max: (field, [length]) => `The ${field} field may not be greater than ${length} characters.`,
+  max_dimensions: (field, [width, height]) => `The ${field} field must be UP TO ${width} pixels by ${height} pixels.`,
   max_value: (field, [max]) => `The ${field} field must be ${max} or less.`,
   mimes: (field) => `The ${field} field must have a valid file type.`,
   min: (field, [length]) => `The ${field} field must be at least ${length} characters.`,
+  min_dimensions: (field, [width, height]) => `The ${field} field must be DOWN TO ${width} pixels by ${height} pixels.`,
   min_value: (field, [min]) => `The ${field} field must be ${min} or more.`,
   numeric: (field) => `The ${field} field may only contain numeric characters.`,
   regex: (field) => `The ${field} field format is invalid.`,

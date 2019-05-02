@@ -25,9 +25,11 @@ import is from './is';
 import is_not from './is_not';
 import length from './length';
 import max from './max';
+import max_dimensions from './max_dimensions';
 import max_value from './max_value';
 import mimes from './mimes';
 import min from './min';
+import min_dimensions from './min_dimensions';
 import min_value from './min_value';
 import numeric from './numeric';
 import regex from './regex';
@@ -62,9 +64,11 @@ export {
   is_not,
   is,
   max,
+  max_dimensions,
   max_value,
   mimes,
   min,
+  min_dimensions,
   min_value,
   excluded,
   numeric,

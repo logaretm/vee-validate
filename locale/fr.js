@@ -31,9 +31,11 @@ const messages = {
     return `Le champ ${field} doit contenir ${length} caractères.`;
   },
   max: (field, [length]) => `Le champ ${field} ne peut pas contenir plus de ${length} caractères.`,
+  max_dimensions: (field, [width, height]) => `Le champ ${field} doit avoir une taille maximum de ${width} pixels par ${height} pixels.`,
   max_value: (field, [max]) => `Le champ ${field} doit avoir une valeur de ${max} ou moins.`,
   mimes: (field) => `Le champ ${field} doit avoir un type MIME valide.`,
   min: (field, [length]) => `Le champ ${field} doit contenir au minimum ${length} caractères.`,
+  min_dimensions: (field, [width, height]) => `Le champ ${field} doit avoir une taille minimum de ${width} pixels par ${height} pixels.`,
   min_value: (field, [min]) => `Le champ ${field} doit avoir une valeur de ${min} ou plus.`,
   numeric: (field) => `Le champ ${field} ne peut contenir que des chiffres.`,
   regex: (field) => `Le champ ${field} est invalide.`,
