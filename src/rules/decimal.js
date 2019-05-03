@@ -15,7 +15,7 @@ const validate = (value, { decimals = '*', separator = '.' } = {}) => {
   }
 
   const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
-  const regex = new RegExp(`^[-+]?\\d*(\\${separator}\\d${regexPart})?$`);
+  const regex = new RegExp(`^[-+]?\\d*(\\${separator}\\d${regexPart})?([eE]{1}[-]?\\d+)?$`);
 
   if (! regex.test(value)) {
     return false;
