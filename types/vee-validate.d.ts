@@ -68,8 +68,13 @@ export interface IDictionary {
     setDateFormat(locale: string, format: string): void;
 }
 
+export type ResultObject = {
+    valid: boolean;
+    data?: object;
+}
+
 export interface RuleValidate {
-    (value: any, args: object | any[], data?: any): boolean | Promise<boolean>
+    (value: any, args: object | any[], data?: any): boolean | ResultObject | Promise<boolean | ResultObject>
 }
 
 export interface Rule {
