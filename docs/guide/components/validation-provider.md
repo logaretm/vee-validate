@@ -373,7 +373,7 @@ All the following props are optional.
 
 |Prop       | Type      | Default Value         | Description                                                                  |
 |-----------|-----------|-----------------------|------------------------------------------------------------------------------|
-| rules     | `string`  | `undefined`           | The validation rules.                                                        |
+| rules     | `string | object`  | `undefined`           | The validation rules.                                                        |
 | vid       | `string`  | auto increment number | Identifier used for target/cross-field based rules.                          |
 | immediate | `boolean` | `false`               | If the field should be validated immediately after render (initially).       |
 | events    | `string[]`| `['input']`           | deprecated: check [interaction modes](../interaction.md)                      |
