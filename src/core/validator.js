@@ -3,6 +3,7 @@ import FieldBag from './fieldBag';
 import Dictionary from '../dictionary';
 import RuleContainer from './ruleContainer';
 import Field from './field';
+import { getConfig } from '../config';
 import {
   isObject,
   getPath,
@@ -742,8 +743,8 @@ export default class Validator {
       return false;
     }
 
-    // disabled fields are skipped
-    if (field.isDisabled) {
+    // disabled fields are skipped if useConstraintAttrs is enabled in config
+    if (field.isDisabled && getConfig().useConstraintAttrs) {
       return true;
     }
 
