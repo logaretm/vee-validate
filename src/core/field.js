@@ -118,7 +118,7 @@ export default class Field {
   }
 
   get isDisabled (): boolean {
-    return !!(this.componentInstance && this.componentInstance.disabled) || !!(this.el && this.el.disabled);
+    return !!(this.el && this.el.disabled);
   }
 
   /**
