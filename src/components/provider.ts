@@ -94,21 +94,11 @@ export const ValidationProvider: any = {
       return this.flags.valid;
     },
     fieldDeps(this: any): { [k: string]: any } {
-      const providers = this.$_veeObserver.refs;
-
       return Object.keys(this.normalizedRules)
         .filter(RuleContainer.isTargetRule)
         .map(rule => {
           const depName = this.normalizedRules[rule][0];
-          const watcherName = `$__${depName}`;
-          if (!isCallable(this[watcherName]) && providers[depName]) {
-            this[watcherName] = providers[depName].$watch('value', () => {
-              if (this.flags.validated) {
-                this._needsValidation = true;
-                this.validate();
-              }
-            });
-          }
+          watchCrossFieldDep(this, depName);
 
           return depName;
         });
@@ -317,4 +307,26 @@ function createObserver(): VeeObserver {
       delete this.refs[ctx.vid];
     }
   };
+}
+
+function watchCrossFieldDep(ctx: any, depName: string, withHooks = true) {
+  const providers = ctx.$_veeObserver.refs;
+  if (!ctx._veeWatchers) {
+    ctx._veeWatchers = {};
+  }
+
+  if (!providers[depName] && withHooks) {
+    return ctx.$once('hook:mounted', () => {
+      watchCrossFieldDep(ctx, depName, false);
+    });
+  }
+
+  if (!isCallable(ctx._veeWatchers[depName]) && providers[depName]) {
+    ctx._veeWatchers[depName] = providers[depName].$watch('value', () => {
+      if (ctx.flags.validated) {
+        ctx._needsValidation = true;
+        ctx.validate();
+      }
+    });
+  }
 }
