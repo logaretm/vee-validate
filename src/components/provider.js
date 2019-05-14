@@ -11,6 +11,252 @@ let $validator = null;
 
 let PROVIDER_COUNTER = 0;
 
+export const ValidationProvider = {
+  $__veeInject: false,
+  inject: {
+    $_veeObserver: {
+      from: '$_veeObserver',
+      default () {
+        if (!this.$vnode.context.$_veeObserver) {
+          this.$vnode.context.$_veeObserver = createObserver();
+        }
+
+        return this.$vnode.context.$_veeObserver;
+      }
+    }
+  },
+  props: {
+    vid: {
+      type: [String, Number],
+      default: () => {
+        PROVIDER_COUNTER++;
+
+        return `_vee_${PROVIDER_COUNTER}`;
+      }
+    },
+    name: {
+      type: String,
+      default: null
+    },
+    mode: {
+      type: [String, Function],
+      default: () => {
+        return getConfig().mode;
+      }
+    },
+    events: {
+      type: Array,
+      validate: () => {
+        /* istanbul ignore next */
+        if (process.env.NODE_ENV !== 'production') {
+          warn('events prop and config will be deprecated in future version please use the interaction modes instead');
+        }
+
+        return true;
+      },
+      default: () => {
+        const events = getConfig().events;
+        if (typeof events === 'string') {
+          return events.split('|');
+        }
+
+        return events;
+      }
+    },
+    rules: {
+      type: [Object, String],
+      default: null
+    },
+    immediate: {
+      type: Boolean,
+      default: false
+    },
+    persist: {
+      type: Boolean,
+      default: false
+    },
+    bails: {
+      type: Boolean,
+      default: () => getConfig().fastExit
+    },
+    debounce: {
+      type: Number,
+      default: () => getConfig().delay || 0
+    },
+    tag: {
+      type: String,
+      default: 'span'
+    }
+  },
+  watch: {
+    rules: {
+      deep: true,
+      handler (val, oldVal) {
+        this._needsValidation = !isEqual(val, oldVal);
+      }
+    }
+  },
+  data: () => ({
+    messages: [],
+    value: undefined,
+    initialized: false,
+    initialValue: undefined,
+    flags: createFlags(),
+    failedRules: {},
+    forceRequired: false,
+    isDeactivated: false,
+    id: null
+  }),
+  computed: {
+    isValid () {
+      return this.flags.valid;
+    },
+    fieldDeps () {
+      const rules = normalizeRules(this.rules);
+
+      return Object.keys(rules).filter(RuleContainer.isTargetRule).map(rule => {
+        const depName = rules[rule][0];
+        watchCrossFieldDep(this, depName);
+
+        return depName;
+      });
+    },
+    normalizedEvents () {
+      const { on } = computeModeSetting(this);
+
+      return normalizeEvents(on || this.events || []).map(e => {
+        if (e === 'input') {
+          return this._inputEventName;
+        }
+
+        return e;
+      });
+    },
+    isRequired () {
+      const rules = normalizeRules(this.rules);
+      const forceRequired = this.forceRequired;
+
+      const isRequired = rules.required || forceRequired;
+      this.flags.required = isRequired;
+
+      return isRequired;
+    },
+    classes () {
+      const names = getConfig().classNames;
+      return Object.keys(this.flags).reduce((classes, flag) => {
+        const className = (names && names[flag]) || flag;
+        if (isNullOrUndefined(this.flags[flag])) {
+          return classes;
+        }
+
+        if (className) {
+          classes[className] = this.flags[flag];
+        }
+
+        return classes;
+      }, {});
+    }
+  },
+  render (h) {
+    this.registerField();
+    const ctx = createValidationCtx(this);
+
+    // Gracefully handle non-existent scoped slots.
+    let slot = this.$scopedSlots.default;
+    /* istanbul ignore next */
+    if (!isCallable(slot)) {
+      if (process.env.NODE_ENV !== 'production') {
+        warn('ValidationProvider expects a scoped slot. Did you forget to add "slot-scope" to your slot?');
+      }
+
+      return h(this.tag, this.$slots.default);
+    }
+
+    const nodes = slot(ctx);
+    // Handle single-root slot.
+    extractVNodes(nodes).forEach(input => {
+      addListeners.call(this, input);
+    });
+
+    return h(this.tag, nodes);
+  },
+  beforeDestroy () {
+    // cleanup reference.
+    this.$_veeObserver.unsubscribe(this);
+  },
+  activated () {
+    this.$_veeObserver.subscribe(this);
+    this.isDeactivated = false;
+  },
+  deactivated () {
+    this.$_veeObserver.unsubscribe(this);
+    this.isDeactivated = true;
+  },
+  methods: {
+    setFlags (flags) {
+      Object.keys(flags).forEach(flag => {
+        this.flags[flag] = flags[flag];
+      });
+    },
+    syncValue (e) {
+      const value = normalizeValue(e);
+      this.value = value;
+      this.flags.changed = this.initialValue !== value;
+    },
+    reset () {
+      this.messages = [];
+      this._pendingValidation = null;
+      this.initialValue = this.value;
+      const flags = createFlags();
+      this.setFlags(flags);
+    },
+    validate (...args) {
+      if (args.length > 0) {
+        this.syncValue(args[0]);
+      }
+
+      return this.validateSilent().then(result => {
+        this.applyResult(result);
+
+        return result;
+      });
+    },
+    validateSilent () {
+      this.setFlags({ pending: true });
+
+      return $validator.verify(this.value, this.rules, {
+        name: this.name,
+        values: createValuesLookup(this),
+        bails: this.bails
+      }).then(result => {
+        this.setFlags({ pending: false });
+        if (!this.isRequired) {
+          this.setFlags({ valid: result.valid, invalid: !result.valid });
+        }
+
+        return result;
+      });
+    },
+    applyResult ({ errors, failedRules }) {
+      this.messages = errors;
+      this.failedRules = assign({}, failedRules);
+      this.setFlags({
+        valid: !errors.length,
+        changed: this.value !== this.initialValue,
+        invalid: !!errors.length,
+        validated: true
+      });
+    },
+    registerField () {
+      if (!$validator) {
+        $validator = getValidator() || new Validator(null, { fastExit: getConfig().fastExit });
+      }
+
+      updateRenderingContextRefs(this);
+    }
+  }
+};
+
 export function createValidationCtx (ctx) {
   return {
     errors: ctx.messages,
@@ -200,257 +446,24 @@ function createObserver () {
   };
 }
 
-export const ValidationProvider = {
-  $__veeInject: false,
-  inject: {
-    $_veeObserver: {
-      from: '$_veeObserver',
-      default () {
-        if (!this.$vnode.context.$_veeObserver) {
-          this.$vnode.context.$_veeObserver = createObserver();
-        }
+function watchCrossFieldDep (ctx, depName, withHooks = true) {
+  const providers = ctx.$_veeObserver.refs;
+  if (!ctx._veeWatchers) {
+    ctx._veeWatchers = {};
+  }
 
-        return this.$vnode.context.$_veeObserver;
-      }
-    }
-  },
-  props: {
-    vid: {
-      type: [String, Number],
-      default: () => {
-        PROVIDER_COUNTER++;
-
-        return `_vee_${PROVIDER_COUNTER}`;
-      }
-    },
-    name: {
-      type: String,
-      default: null
-    },
-    mode: {
-      type: [String, Function],
-      default: () => {
-        return getConfig().mode;
-      }
-    },
-    events: {
-      type: Array,
-      validate: () => {
-        /* istanbul ignore next */
-        if (process.env.NODE_ENV !== 'production') {
-          warn('events prop and config will be deprecated in future version please use the interaction modes instead');
-        }
-
-        return true;
-      },
-      default: () => {
-        const events = getConfig().events;
-        if (typeof events === 'string') {
-          return events.split('|');
-        }
-
-        return events;
-      }
-    },
-    rules: {
-      type: [Object, String],
-      default: null
-    },
-    immediate: {
-      type: Boolean,
-      default: false
-    },
-    persist: {
-      type: Boolean,
-      default: false
-    },
-    bails: {
-      type: Boolean,
-      default: () => getConfig().fastExit
-    },
-    debounce: {
-      type: Number,
-      default: () => getConfig().delay || 0
-    },
-    tag: {
-      type: String,
-      default: 'span'
-    }
-  },
-  watch: {
-    rules: {
-      deep: true,
-      handler (val, oldVal) {
-        this._needsValidation = !isEqual(val, oldVal);
-      }
-    }
-  },
-  data: () => ({
-    messages: [],
-    value: undefined,
-    initialized: false,
-    initialValue: undefined,
-    flags: createFlags(),
-    failedRules: {},
-    forceRequired: false,
-    isDeactivated: false,
-    id: null
-  }),
-  computed: {
-    isValid () {
-      return this.flags.valid;
-    },
-    fieldDeps () {
-      const rules = normalizeRules(this.rules);
-      let providers = this.$_veeObserver.refs;
-
-      return Object.keys(rules).filter(RuleContainer.isTargetRule).map(rule => {
-        const depName = rules[rule][0];
-        const watcherName = `$__${depName}`;
-        if (!isCallable(this[watcherName]) && providers[depName]) {
-          this[watcherName] = providers[depName].$watch('value', () => {
-            if (this.flags.validated) {
-              this._needsValidation = true;
-              this.validate();
-            }
-          });
-        }
-
-        return depName;
-      });
-    },
-    normalizedEvents () {
-      const { on } = computeModeSetting(this);
-
-      return normalizeEvents(on || this.events || []).map(e => {
-        if (e === 'input') {
-          return this._inputEventName;
-        }
-
-        return e;
-      });
-    },
-    isRequired () {
-      const rules = normalizeRules(this.rules);
-      const forceRequired = this.forceRequired;
-
-      const isRequired = rules.required || forceRequired;
-      this.flags.required = isRequired;
-
-      return isRequired;
-    },
-    classes () {
-      const names = getConfig().classNames;
-      return Object.keys(this.flags).reduce((classes, flag) => {
-        const className = (names && names[flag]) || flag;
-        if (isNullOrUndefined(this.flags[flag])) {
-          return classes;
-        }
-
-        if (className) {
-          classes[className] = this.flags[flag];
-        }
-
-        return classes;
-      }, {});
-    }
-  },
-  render (h) {
-    this.registerField();
-    const ctx = createValidationCtx(this);
-
-    // Gracefully handle non-existent scoped slots.
-    let slot = this.$scopedSlots.default;
-    /* istanbul ignore next */
-    if (!isCallable(slot)) {
-      if (process.env.NODE_ENV !== 'production') {
-        warn('ValidationProvider expects a scoped slot. Did you forget to add "slot-scope" to your slot?');
-      }
-
-      return h(this.tag, this.$slots.default);
-    }
-
-    const nodes = slot(ctx);
-    // Handle single-root slot.
-    extractVNodes(nodes).forEach(input => {
-      addListeners.call(this, input);
+  if (!providers[depName] && withHooks) {
+    return ctx.$once('hook:mounted', () => {
+      watchCrossFieldDep(ctx, depName, false);
     });
+  }
 
-    return h(this.tag, nodes);
-  },
-  beforeDestroy () {
-    // cleanup reference.
-    this.$_veeObserver.unsubscribe(this);
-  },
-  activated () {
-    this.$_veeObserver.subscribe(this);
-    this.isDeactivated = false;
-  },
-  deactivated () {
-    this.$_veeObserver.unsubscribe(this);
-    this.isDeactivated = true;
-  },
-  methods: {
-    setFlags (flags) {
-      Object.keys(flags).forEach(flag => {
-        this.flags[flag] = flags[flag];
-      });
-    },
-    syncValue (e) {
-      const value = normalizeValue(e);
-      this.value = value;
-      this.flags.changed = this.initialValue !== value;
-    },
-    reset () {
-      this.messages = [];
-      this._pendingValidation = null;
-      this.initialValue = this.value;
-      const flags = createFlags();
-      this.setFlags(flags);
-    },
-    validate (...args) {
-      if (args.length > 0) {
-        this.syncValue(args[0]);
+  if (!isCallable(ctx._veeWatchers[depName]) && providers[depName]) {
+    ctx._veeWatchers[depName] = providers[depName].$watch('value', () => {
+      if (ctx.flags.validated) {
+        ctx._needsValidation = true;
+        ctx.validate();
       }
-
-      return this.validateSilent().then(result => {
-        this.applyResult(result);
-
-        return result;
-      });
-    },
-    validateSilent () {
-      this.setFlags({ pending: true });
-
-      return $validator.verify(this.value, this.rules, {
-        name: this.name,
-        values: createValuesLookup(this),
-        bails: this.bails
-      }).then(result => {
-        this.setFlags({ pending: false });
-        if (!this.isRequired) {
-          this.setFlags({ valid: result.valid, invalid: !result.valid });
-        }
-
-        return result;
-      });
-    },
-    applyResult ({ errors, failedRules }) {
-      this.messages = errors;
-      this.failedRules = assign({}, failedRules);
-      this.setFlags({
-        valid: !errors.length,
-        changed: this.value !== this.initialValue,
-        invalid: !!errors.length,
-        validated: true
-      });
-    },
-    registerField () {
-      if (!$validator) {
-        $validator = getValidator() || new Validator(null, { fastExit: getConfig().fastExit });
-      }
-
-      updateRenderingContextRefs(this);
-    }
+    });
   }
 };
