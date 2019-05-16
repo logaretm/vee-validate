@@ -38,7 +38,7 @@ this.$validator.reset(matcher);
 
 ### Validate API
 
-The validate method is the primary way to trigger validation, all arguments are optional but that will produce different results depending on which arguments you did provide.
+The validate method is the primary way to trigger validation, all arguments are optional but will produce different results depending on which arguments you did provide.
 
 #### Field Descriptor
 
@@ -76,7 +76,7 @@ You can pass the options to modify the behavior of the validation, the options i
 
 ### Verify
 
-The `Validator.verify` method validates a value against the specified rules, allowing you to use the validator programatically in your code without having to register fields using the `v-validate` directive, this is useful if you want to validate values rather than input fields, for example in a Vuex action.
+The `Validator.verify` method validates a value against the specified rules, allowing you to use the validator programmatically in your code without having to register fields using the `v-validate` directive, this is useful if you want to validate values rather than input fields, for example in a Vuex action.
 
 ```js
 import { Validator } from 'vee-validate';
@@ -92,7 +92,7 @@ console.log(errors); // ["The {field} field may not be greater than 3 characters
 ```
 
 ::: tip
-  Note that the messages returned will have {field} as the field name so you can replace it easily if you need to.
+  Note that the messages returned will have `{field}` as the field name so you can replace it easily if you need to.
 :::
 
 #### Verify Options
@@ -111,9 +111,10 @@ v.verify(value, rules, opts);
 
 #### Cross-Field Rules
 
-Target dependant rules can be also used, you would need to pass the `values` object in the third parameter containing the other values keyed by target name.
+Target dependant rules can also be used; see the rule [`required_if`](/guide/rules.md#required-if). You would need to pass the `values` object in the third parameter, containing the other values and keyed by target name.
 
 ```js
+// value, rule, values
 v.verify('pass', 'confirmed:conf', {
   values: {
     // target fields.
