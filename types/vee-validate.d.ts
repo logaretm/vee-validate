@@ -188,7 +188,7 @@ export class Field {
     /**
      * Sets the flags and their negated counterparts, and updates the classes and re-adds action listeners.
      */
-    setFlags (flags: FieldFlags): void;
+    setFlags (flags: Partial<FieldFlags>): void;
     /**
      * Determines if the field requires references to target fields.
      */
@@ -399,7 +399,7 @@ export class Validator {
     /**
      * Sets the flags on a field.
      */
-    flag(name: string, flags: FieldFlags, uid?: string): void;
+    flag(name: string, flags: Partial<FieldFlags>, uid?: string): void;
     /**
      * Pauses the validator.
      */
