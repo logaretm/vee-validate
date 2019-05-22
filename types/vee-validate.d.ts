@@ -73,8 +73,10 @@ export type ResultObject = {
     data?: object;
 }
 
+export type RuleResult = boolean | ResultObject | boolean[] | ResultObject[] | Promise<boolean | ResultObject | boolean[] | ResultObject[]>
+
 export interface RuleValidate {
-    (value: any, args: object | any[], data?: any): boolean | ResultObject | Promise<boolean | ResultObject>
+    (value: any, args: object | any[], data?: any): RuleResult
 }
 
 export interface Rule {
