@@ -16,6 +16,10 @@ test('validates numerics with decmial numbers', () => {
   expect(validate('1', { decimails: 0 })).toBe(true);
   expect(validate('+1')).toBe(true);
   expect(validate('+1.2')).toBe(true);
+  expect(validate('1.2E-12')).toBe(true);
+  expect(validate('1.2e16')).toBe(true);
+  expect(validate('1.2E16')).toBe(true);
+  expect(validate('1.2e-12')).toBe(true);
 
   expect(validate('')).toBe(false);
   expect(validate(null)).toBe(false);

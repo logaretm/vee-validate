@@ -1,6 +1,7 @@
 import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
+  _default: (field) => `${field} värde är inte giltigt.`,
   after: (field, [target]) => `Fältet ${field} måste vara efter ${target}.`,
   alpha: (field) => `Fältet ${field} får bara innehålla alfabetiska tecken.`,
   alpha_dash: (field) => `Fältet ${field} får bara innehålla alfanumeriska tecken såväl som snedstreck och understreck.`,

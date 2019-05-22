@@ -84,7 +84,7 @@ The object passed down to the slot scope is called the __validation context__. I
 |:--------|:--------------------------:|:--------------------------------------------------------------------|
 | errors  | `string[]`                 | The list of error messages.                                         |
 | failedRules | `[x: string]: string`  | A map object of failed rules with (rule, message) as a (key, value) |
-| valid   | `boolean`                  | The current validation state.                                       |
+| valid   | `boolean | null`           | The current validation state.                                       |
 | flags   | `{ [x: string]: boolean }` | The flags map object state.                                         |
 | aria    | `{ [x: string]: string }`  | Map object of aria attributes for accessibility.                    |
 | classes | `{ [x: string]: boolean }` | Map object of the classes configured based on the validation state. |
@@ -373,7 +373,7 @@ All the following props are optional.
 
 |Prop       | Type      | Default Value         | Description                                                                  |
 |-----------|-----------|-----------------------|------------------------------------------------------------------------------|
-| rules     | `string`  | `undefined`           | The validation rules.                                                        |
+| rules     | `string | object`  | `undefined`           | The validation rules.                                                        |
 | vid       | `string`  | auto increment number | Identifier used for target/cross-field based rules.                          |
 | immediate | `boolean` | `false`               | If the field should be validated immediately after render (initially).       |
 | events    | `string[]`| `['input']`           | deprecated: check [interaction modes](../interaction.md)                      |

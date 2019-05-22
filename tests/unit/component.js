@@ -230,7 +230,7 @@ describe('Validation Provider Component', () => {
       components: {
         TextInput: {
           props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+          template: `<input :value="value" @change="$emit('change', $event.target.value)" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
         }
       },
       template: `
