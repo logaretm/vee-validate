@@ -8,6 +8,7 @@ import { ErrorBag } from 'vee-validate';
 const bag = new ErrorBag();
 
 // For example, you may want to add an error related to authentication:
+// field and msg required keys (this.errors.has(field) won't work)
 bag.add({
   field: 'auth',
   msg: 'Wrong Credentials'
