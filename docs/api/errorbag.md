@@ -8,6 +8,7 @@ import { ErrorBag } from 'vee-validate';
 const bag = new ErrorBag();
 
 // For example, you may want to add an error related to authentication:
+// field and msg keys are required, otherwise (errors.has(field) won't work)
 bag.add({
   field: 'auth',
   msg: 'Wrong Credentials'
@@ -42,6 +43,7 @@ const error = {
 | count() | `number` | Returns the number of errors that are currently in the collection.|
 | first(field: string, scope?: string) | `string|null` |Returns the first error message associated with a specific field or specified by the selector, providing a scope will look for messages within that scope.|
 | firstById(id: string) |`string|null` |Returns the first error message for a field with the given id.|
+| firstRule(field: string) |`string|null` |Returns the first error message associated with a specific field.|
 | firstByRule(field: string, rule: string, scope?: string)| `string|null` |Returns the first error message associated with a specific field and rule, providing a scope will look for messages within that scope.|
 | has(field: string, scope?: string) | `boolean` |Checks if there is an error message associated with a specific field or specified by the selector, providing a scope will check for messages within that scope.|
 | remove(field: string, scope?: string) | `void`| Removes all errors associated with a specific field, specifying a scope will remove messages only for that field and scope.|
