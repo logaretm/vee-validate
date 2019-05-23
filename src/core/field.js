@@ -598,14 +598,16 @@ export default class Field {
     const inputEvent = this._determineInputEvent();
     let events = this._determineEventList(inputEvent);
 
-    // if there is a model and an on input validation is requested.
-    if (this.model && includes(events, inputEvent)) {
+    // if on input validation is requested.
+    if (includes(events, inputEvent)) {
       let ctx = null;
-      let expression = this.model.expression;
+      let expression = null;
+      let watchCtxVm = false;
       // if its watchable from the context vm.
-      if (this.model.expression) {
+      if (this.model && this.model.expression) {
         ctx = this.vm;
         expression = this.model.expression;
+        watchCtxVm = true;
       }
 
       // watch it from the custom component vm instead.
@@ -626,8 +628,10 @@ export default class Field {
           }
         });
 
-        // filter out input event as it is already handled by the watcher API.
-        events = events.filter(e => e !== inputEvent);
+        // filter out input event when we are watching from the context vm.
+        if (watchCtxVm) {
+          events = events.filter(e => e !== inputEvent);
+        }
       }
     }
 
