@@ -21,6 +21,13 @@ const messages = {
   image: (field) => `В полі ${field} має бути зображення.`,
   included: (field) => `Поле ${field} повинно бути допустимим значенням.`,
   ip: (field) => `Поле ${field} повинно бути IP адресою.`,
+  length: (field, [length, max]) => {
+    if (max) {
+      return `Довжина поля ${field} повинна бути між ${length} та ${max}.`;
+    }
+
+    return `Довжина поля ${field} повинна бути ${length}.`;
+  },
   max: (field, [length]) => `Поле ${field} не може бути більше, ніж ${length} символів.`,
   max_value: (field, [max]) => `Поле ${field} повинно бути ${max} або менше.`,
   mimes: (field) => `Поле ${field} повиннно мати дійсний тип файлу.`,
