@@ -90,6 +90,10 @@ export interface Rules {
     [rule: string]: Rule;
 }
 
+export const Rules: {
+    [rule: string]: Rule;
+}
+
 export interface Watcher {
     tag: string;
     unwatch: () => void;
