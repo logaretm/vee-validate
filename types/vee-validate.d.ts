@@ -11,12 +11,12 @@ export interface VeeValidateComponentOptions {
 }
 
 export interface ClassNames {
-    touched: string;
-    untouched: string;
-    valid: string;
-    invalid: string;
-    pristine: string;
-    dirty: string;
+    touched?: string;
+    untouched?: string;
+    valid?: string;
+    invalid?: string;
+    pristine?: string;
+    dirty?: string;
 }
 
 export interface Configuration {
