@@ -13,7 +13,7 @@ const messages = {
   credit_card: (field) => `Поље ${field} није валидно.`,
   date_between: (field, [min, max]) => `Поље ${field} мора бити између ${min} и ${max}.`,
   date_format: (field, [format]) => `Поље ${field} мора бити у формату ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `Поље ${field} мора бити број и може садржати${decimals === '*' ? '' : ' ' + decimals} децималних места.`,
+  decimal: (field, [decimals = '*'] = []) => `Поље ${field} мора бити број и може садржати${!decimals || decimals === '*' ? '' : ' ' + decimals} децималних места.`,
   digits: (field, [length]) => `Поље ${field} мора бити број и садржати тачно ${length} цифара.`,
   dimensions: (field, [width, height]) => `Поље ${field} мора бити ${width} x ${height} пиксела.`,
   email: (field) => `Поље ${field} мора бити валидан имејл.`,

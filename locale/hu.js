@@ -13,7 +13,7 @@ const messages = {
   credit_card: (field) => `A(z) ${field} nem érvényes.`,
   date_between: (field, [min, max]) => `A(z) ${field} ${min} és ${max} közötti dátum kell, hogy legyen.`,
   date_format: (field, [format]) => `A(z) ${field} nem egyezik az alábbi dátum formátummal ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `The ${field} must be numeric and may contain${decimals === '*' ? '' : ' ' + decimals} decimal points.`,
+  decimal: (field, [decimals = '*'] = []) => `The ${field} must be numeric and may contain${!decimals || decimals === '*' ? '' : ' ' + decimals} decimal points.`,
   digits: (field, [length]) => `A(z) ${field} ${length} számjegyű kell, hogy legyen.`,
   dimensions: (field, [width, height]) => `A(z) ${field} felbontása ${width} és ${height} pixel között kell, hogy legyen.`,
   email: (field) => `A(z) ${field} nem érvényes email formátum.`,

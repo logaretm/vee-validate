@@ -13,7 +13,7 @@ const messages = {
   credit_card: (field) => `Polje ${field} ni veljavno.`,
   date_between: (field, [min, max]) => `Datum v polju ${field} mora biti med ${min} in ${max}.`,
   date_format: (field, [format]) => `Datum v polju ${field} mora biti sledečega formata: ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `Polje ${field} mora biti numerično in lahko vsebuje${decimals === '*' ? '' : ' ' + decimals} decimalnih mest.`,
+  decimal: (field, [decimals = '*'] = []) => `Polje ${field} mora biti numerično in lahko vsebuje${!decimals || decimals === '*' ? '' : ' ' + decimals} decimalnih mest.`,
   digits: (field, [length]) => `Vrednost polja ${field} mora biti numerična in vsebovati natančno ${length} številk.`,
   dimensions: (field, [width, height]) => `Slika ${field} mora biti široka ${width} slikovnih točk in visoka ${height} slikovnih točk.`,
   email: (field) => `Vrednost polja ${field} mora biti ustrezen e-naslov.`,

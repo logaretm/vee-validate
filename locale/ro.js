@@ -12,7 +12,7 @@ const messages = {
   credit_card: (field) => `Valoarea câmpului ${field} nu este un număr de card valid.`,
   date_between: (field, [min, max]) => `Data introdusă în ${field} trebuie să fie între ${min} și ${max}.`,
   date_format: (field, [format]) => `Respectați următorul format: ${format} în câmpul ${field}.`,
-  decimal: (field, [decimals = '*'] = []) => `Câmpul ${field} trebuie să fie numberic și poate conține ${decimals === '*' ? '' : ' ' + decimals} zecimale.`,
+  decimal: (field, [decimals = '*'] = []) => `Câmpul ${field} trebuie să fie numberic și poate conține ${!decimals || decimals === '*' ? '' : ' ' + decimals} zecimale.`,
   digits: (field, [length]) => `Câmpul ${field} trebuie să fie numeric și să conțină exact ${length} caractere.`,
   dimensions: (field, [width, height]) => `Câmpul ${field} trebuie să fie ${width} pixeli lungime și ${height} pixeli înălțime.`,
   email: (field) => `Câmpul ${field} trebuie să conțină un email valid.`,

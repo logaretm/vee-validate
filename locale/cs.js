@@ -13,7 +13,7 @@ const messages = {
   credit_card: (field) => `Pole ${field} není vyplněno správně.`,
   date_between: (field, [min, max]) => `Pole ${field} musí být mezi ${min} a ${max}.`,
   date_format: (field, [format]) => `Pole ${field} musí být ve formátu ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `Pole ${field} musí být číslo a může obsahovat${decimals === '*' ? '' : ' ' + decimals} desetinných míst.`,
+  decimal: (field, [decimals = '*'] = []) => `Pole ${field} musí být číslo a může obsahovat${!decimals || decimals === '*' ? '' : ' ' + decimals} desetinných míst.`,
   digits: (field, [length]) => `Pole ${field} musí být číslo a musí obshovat přesně ${length} číslic.`,
   dimensions: (field, [width, height]) => `${field} musí mít ${width} pixelů na ${height} pixelů.`,
   email: (field) => `Pole ${field} musí být validní email.`,

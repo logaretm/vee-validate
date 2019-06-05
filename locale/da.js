@@ -12,7 +12,7 @@ const messages = {
   confirmed: (field, [confirmedField]) => `${field} skal matche ${confirmedField}.`,
   date_between: (field, [min, max]) => `${field} skal være mellem ${min} og ${max}.`,
   date_format: (field, [format]) => `${field} skal være i formatet: ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `${field} skal være numerisk og må maksimalt indeholde${decimals === '*' ? '' : ' ' + decimals} decimaler.`,
+  decimal: (field, [decimals = '*'] = []) => `${field} skal være numerisk og må maksimalt indeholde${!decimals || decimals === '*' ? '' : ' ' + decimals} decimaler.`,
   digits: (field, [length]) => `${field} skal være et tal på ${length} cifre.`,
   dimensions: (field, [width, height]) => `${field} skal være ${width} pixels gange ${height} pixels.`,
   email: (field) => `${field} skal være en gyldig email.`,
