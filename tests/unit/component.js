@@ -898,7 +898,7 @@ describe('Validation Observer Component', () => {
       }),
       template: `
       <div>
-        <ValidationObserver>
+        <ValidationObserver v-slot="form">
           <div v-if="!isHidden">
             <ValidationProvider
               rules="required|min:3|max:6"
@@ -907,9 +907,10 @@ describe('Validation Observer Component', () => {
               :persist="true"
             >
               <input type="text" v-model="value">
-              <span>{{ errors[0] }}</span>
+              <span class="error-message">{{ errors[0] }}</span>
             </ValidationProvider>
           </div>
+          <span class="error-message">{{ form.errors.myfield && form.errors.myfield[0] }}</span>
         </ValidationObserver>
         <button @click="isHidden = !isHidden">Toggle</button>
       </div>
@@ -925,9 +926,14 @@ describe('Validation Observer Component', () => {
 
     button.trigger('click');
     await flushPromises();
+    // should be hidden, but the errors should still be visible in the observer.
+    expect(wrapper.find('.error-message').text()).toBeTruthy();
+
     button.trigger('click');
     await flushPromises();
-    const span = wrapper.find('span');
-    expect(span.text()).toBeTruthy();
+    const span = wrapper.findAll('.error-message');
+    // both should have the same error message, meaning the errors is restored to the provider.
+    expect(span.at(0).text()).toBe('The {field} field must be at least 3 characters.');
+    expect(span.at(1).text()).toBe('The {field} field must be at least 3 characters.');
   });
 });
