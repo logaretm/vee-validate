@@ -25,6 +25,19 @@ describe('Validation Provider Component', () => {
     expect(wrapper.html()).toBe(`<span><input type="text"></span>`);
   });
 
+  test('can be renderless with slim prop', () => {
+    const wrapper = mount({
+      data: () => ({ val: '' }),
+      template: `
+        <ValidationProvider v-slot="ctx" slim>
+          <input v-model="val" type="text">
+        </ValidationProvider>
+      `
+    }, { localVue: Vue });
+
+    expect(wrapper.html()).toBe(`<input type="text">`);
+  });
+
   test('SSR: render single root slot', () => {
     const output = renderToString({
       template: `
@@ -73,7 +86,7 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toBe('');
   });
 
-  test('uses appropiate events for different input types', async () => {
+  test('uses appropriate events for different input types', async () => {
     const wrapper = mount({
       data: () => ({
         value: ''
@@ -583,6 +596,18 @@ describe('Validation Observer Component', () => {
     const wrapper = mount({
       template: `
         <ValidationObserver tag="form" v-slot="ctx">
+        </ValidationObserver>
+      `
+    }, { localVue: Vue });
+
+    expect(wrapper.html()).toBe(`<form></form>`);
+  });
+
+  test('can be renderless with slim prop', () => {
+    const wrapper = mount({
+      template: `
+        <ValidationObserver v-slot="ctx" slim>
+          <form></form>
         </ValidationObserver>
       `
     }, { localVue: Vue });
