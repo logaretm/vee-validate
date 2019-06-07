@@ -1,4 +1,4 @@
-import { isCallable, values, findIndex, warn } from '../utils';
+import { isCallable, values, findIndex, warn, assign } from '../utils';
 import { createRenderless } from '../utils/vnode';
 
 const flagMergingStrategy = {
@@ -53,6 +53,7 @@ export const ValidationObserver = {
     vid: `obs_${OBSERVER_COUNTER++}`,
     refs: {},
     observers: [],
+    persistedStore: {}
   }),
   computed: {
     ctx () {
@@ -78,6 +79,13 @@ export const ValidationObserver = {
 
       return [
         ...values(this.refs),
+        ...Object.keys(this.persistedStore).map(key => {
+          return {
+            vid: key,
+            flags: this.persistedStore[key].flags,
+            messages: this.persistedStore[key].errors
+          };
+        }),
         ...this.observers,
       ].reduce((acc, provider) => {
         Object.keys(flagMergingStrategy).forEach(flag => {
@@ -124,8 +132,6 @@ export const ValidationObserver = {
       slots = slots(this.ctx);
     }
 
-    this._persistedStore = this._persistedStore || {};
-
     return this.slim ? createRenderless(h, slots) : h(this.tag, { on: this.$listeners, attrs: this.$attrs }, slots);
   },
   methods: {
@@ -136,7 +142,7 @@ export const ValidationObserver = {
       }
 
       this.refs = Object.assign({}, this.refs, { [subscriber.vid]: subscriber });
-      if (subscriber.persist && this._persistedStore[subscriber.vid]) {
+      if (subscriber.persist && this.persistedStore[subscriber.vid]) {
         this.restoreProviderState(subscriber);
       }
     },
@@ -157,13 +163,16 @@ export const ValidationObserver = {
       ]).then(results => results.every(r => r));
     },
     reset () {
+      Object.keys(this.persistedStore).forEach((key) => {
+        this.$delete(this.persistedStore, key);
+      });
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
     },
     restoreProviderState (provider) {
-      const state = this._persistedStore[provider.vid];
+      const state = this.persistedStore[provider.vid];
       provider.setFlags(state.flags);
       provider.applyResult(state);
-      delete this._persistedStore[provider.vid];
+      this.$delete(this.persistedStore, provider.vid);
     },
     removeProvider (vid) {
       const provider = this.refs[vid];
@@ -176,11 +185,13 @@ export const ValidationObserver = {
           }
         }
 
-        this._persistedStore[vid] = {
-          flags: provider.flags,
-          errors: provider.messages,
-          failedRules: provider.failedRules
-        };
+        this.persistedStore = assign({}, this.persistedStore, {
+          [vid]: {
+            flags: provider.flags,
+            errors: provider.messages,
+            failedRules: provider.failedRules
+          }
+        });
       }
 
       this.$delete(this.refs, vid);
