@@ -38,6 +38,31 @@ You can expand upon this by adding your form listeners like `submit` on the obse
 </ValidationObserver>
 ```
 
+### Renderless
+
+Sometimes it is unsuitable for a Provider component in principle to render anything extra, because of limitations in the Vue rendering engine we cannot have multiple root nodes which limits the design choice to move away from renderless at the moment, in Vue 3.x it this may change with fragments.
+
+In 2.2.10 a `slim` prop can be used to force the component to be renderless, by default it is set to `false`.
+
+```vue
+<!-- Only the stuff inside the observer will be rendered -->
+<ValidationObserver slim>
+  <form>
+    <!-- Fields -->
+  </form>
+</ValidationObserver>
+```
+
+Note that **only the first child** will be rendered when `slim` is used, any other nodes will be dropped as you cannot have multiple root nodes in a renderless component. Be mindful of that when using the `slim` prop.
+
+```vue
+<!-- Only form is rendered. -->
+<ValidationObserver slim>
+  <form></form>
+  <div></div>
+</ValidationObserver>
+```
+
 ## Scoped Slot Data
 
 The scoped slot is passed an object containing a flags object representing the merged state of all providers registered under the observer. It contains the following properties:
@@ -210,9 +235,10 @@ Below is the reference of the ValidationObserver public API.
 
 ### Props
 
-|Prop  | Type     | Default Value         | Description                                                           |
-|------|----------|-----------------------|-----------------------------------------------------------------------|
-| tag  | `string` | `span`                | The default tag to [render](#rendering).      |
+|Prop   | Type     | Default Value         | Description                                                      |
+|-------|----------|------------------|-----------------------------------------------------------------------|
+| tag  | `string`  | `span`     | The default tag to [render](#rendering).      |
+| slim | `boolean` | `false`    | If true, it will make the observer [renderless](#renderless), only rendering the HTML inside its slot. |
 
 ### Methods
 

@@ -76,6 +76,39 @@ The default tag can be changed using the provider's `tag` prop.
   </div>
 ```
 
+### Renderless
+
+Sometimes it is unsuitable for a Provider component in principle to render anything extra, because of limitations in the Vue rendering engine we cannot have multiple root nodes which limits the design choice to move away from renderless at the moment, in Vue 3.x it this may change with fragments.
+
+In 2.2.10 a `slim` prop can be used to force the component to be renderless, by default it is set to `false`.
+
+```vue
+<ValidationProvider rules="required" v-slot="{ errors }">
+  <div>
+    <input v-model="value" type="text">
+    <span>{{ errors[0] }}</span>
+  </div>
+</ValidationProvider>
+
+<!-- HTML Output, NO OUTER SPANS -->
+<div>
+  <input type="text">
+  <span>ERROR_MSG_PLACEHOLDER</span>
+</div>
+```
+
+Note that **only the first child** will be rendered when `slim` is used, any other nodes will be dropped as you cannot have multiple root nodes in a renderless component. Be mindful of that when using the `slim` prop.
+
+```vue
+<ValidationProvider rules="required" v-slot="{ errors }">
+  <input v-model="value" type="text">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+
+<!-- Only input is rendered, the span is dropped -->
+<input type="text">
+```
+
 ## Scoped Slot Data
 
 The object passed down to the slot scope is called the __validation context__. It has the following properties:
@@ -382,6 +415,7 @@ All the following props are optional.
 | debounce  | `number`  | `0`                   | Debounces the validation for the specified amount of milliseconds.           |
 | tag       | `string`  | `span`                | The default tag to [render](#rendering). |
 | persist   | `boolean` | `false`               | If true, the provider will keep its errors across mounted/destroyed lifecycles |
+| slim      | `boolean` | `false`               | If true, it will make the provider [renderless](#renderless), only rendering the HTML inside its slot. |
 
 ### Methods
 

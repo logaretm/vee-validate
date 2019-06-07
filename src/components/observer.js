@@ -1,4 +1,5 @@
 import { isCallable, values, findIndex, warn } from '../utils';
+import { createRenderless } from '../utils/vnode';
 
 const flagMergingStrategy = {
   pristine: 'every',
@@ -42,6 +43,10 @@ export const ValidationObserver = {
     tag: {
       type: String,
       default: 'span'
+    },
+    slim: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -114,16 +119,14 @@ export const ValidationObserver = {
     }
   },
   render (h) {
-    let slots = this.$scopedSlots.default;
-    this._persistedStore = this._persistedStore || {};
-    if (!isCallable(slots)) {
-      return h(this.tag, this.$slots.default);
+    let slots = this.$slots.default || this.$scopedSlots.default || [];
+    if (isCallable(slots)) {
+      slots = slots(this.ctx);
     }
 
-    return h(this.tag, {
-      on: this.$listeners,
-      attrs: this.$attrs
-    }, slots(this.ctx));
+    this._persistedStore = this._persistedStore || {};
+
+    return this.slim ? createRenderless(h, slots) : h(this.tag, { on: this.$listeners, attrs: this.$attrs }, slots);
   },
   methods: {
     subscribe (subscriber, kind = 'provider') {
