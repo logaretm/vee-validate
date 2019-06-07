@@ -138,21 +138,6 @@ export interface ValidationProviderInstance extends Vue {
   setFlags(value: Partial<ValidationFlags>): void;
 }
 
-export interface MappedFieldState {
-  errors: string[];
-  flags: ValidationFlags;
-  classes: { [k: string]: boolean };
-}
-
-export interface MappedValidationState {
-  fields: { [k: string]: MappedFieldState };
-  for: (fieldNameOrVid: string) => MappedFieldState;
-}
-
-export interface MapStateOptions {
-  inherit: boolean;
-}
-
 export interface VeeObserver {
   refs: { [k: string]: any };
   subscribe(provider: any): void;

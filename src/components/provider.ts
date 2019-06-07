@@ -1,5 +1,4 @@
 import { getConfig } from '../config';
-import { getValidator } from '../state';
 import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, normalizeEventValue } from '../utils/events';
@@ -9,7 +8,7 @@ import { VNode, CreateElement } from 'vue';
 import { ValidationResult, ValidationFlags, VeeObserver } from '../types';
 import { onRenderUpdate, computeModeSetting, createValidationCtx, createCommonHandlers } from './common';
 
-let $validator: Validator;
+let VALIDATOR: Validator;
 
 let PROVIDER_COUNTER = 0;
 
@@ -206,7 +205,7 @@ export const ValidationProvider: any = {
         configurable: false
       });
 
-      const result = await $validator.validate(this.value, rules, {
+      const result = await VALIDATOR.validate(this.value, rules, {
         name: this.name,
         values: createValuesLookup(this),
         bails: this.bails,
@@ -231,8 +230,8 @@ export const ValidationProvider: any = {
       });
     },
     registerField() {
-      if (!$validator) {
-        $validator = getValidator() || new Validator({ bails: getConfig().bails });
+      if (!VALIDATOR) {
+        VALIDATOR = new Validator({ bails: getConfig().bails });
       }
 
       updateRenderingContextRefs(this);

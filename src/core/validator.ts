@@ -1,11 +1,8 @@
-import VeeValidate from '../plugin';
 import Dictionary from '../dictionary';
 import RuleContainer from './ruleContainer';
 import { PartialI18nDictionary, RootI18nDictionary } from './i18n';
 import { isObject, getPath, isCallable, isNullOrUndefined, normalizeRules, isEmptyArray } from '../utils';
 import { ValidationResult, ValidationRule, ValidationRuleSchema, RuleParamSchema } from '../types';
-
-let $vee: VeeValidate;
 
 interface ValidatorOptions {
   bails?: boolean;
@@ -48,15 +45,7 @@ export default class Validator {
    * Setter for the validator locale.
    */
   static set locale(value) {
-    const hasChanged = value !== Dictionary.getDriver().locale;
-    Dictionary.getDriver().locale = value;
-    if (hasChanged && $vee && $vee.vm) {
-      $vee.vm.$emit('localeChanged');
-    }
-  }
-
-  static setVeeContext(value: VeeValidate) {
-    $vee = value;
+    // TODO: Handle setting the locale.
   }
 
   /**

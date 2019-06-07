@@ -13,18 +13,20 @@ const drivers: { [x: string]: I18nDriver } = {
 let currentDriver = 'default';
 
 export default class DictionaryResolver {
-  static setDriver (implementation: I18nDriver | string) {
+  static setDriver(implementation: I18nDriver | string) {
     if (typeof implementation === 'string') {
       currentDriver = implementation;
       return;
     }
 
-    const tempName = Date.now().toString().substring(7);
+    const tempName = Date.now()
+      .toString()
+      .substring(7);
     drivers[tempName] = implementation;
     currentDriver = tempName;
   }
 
-  static getDriver () {
+  static getDriver() {
     return drivers[currentDriver];
   }
-};
+}
