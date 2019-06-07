@@ -12,8 +12,7 @@ const replace = require('rollup-plugin-replace');
 const version = process.env.VERSION || require('../package.json').version;
 
 const commons = {
-  banner:
-    `/**
+  banner: `/**
   * vee-validate v${version}
   * (c) ${new Date().getFullYear()} Abdelrahman Awad
   * @license MIT
@@ -21,7 +20,7 @@ const commons = {
   outputFolder: path.join(__dirname, '..', 'dist'),
   uglifyOptions: {
     compress: true,
-    mangle: true,
+    mangle: true
   }
 };
 
@@ -38,7 +37,9 @@ const utils = {
   },
   async writeBundle ({ input, output }, fileName, minify = false) {
     const bundle = await rollup(input);
-    const { output: [{ code }] } = await bundle.generate(output);
+    const {
+      output: [{ code }]
+    } = await bundle.generate(output);
 
     let outputPath = path.join(paths.dist, fileName);
     fs.writeFileSync(outputPath, code);
@@ -90,14 +91,14 @@ function genConfig (options) {
   const config = {
     input: {
       input: options.input,
-      external: ['vue-class-component'],
+      external: ['vue'],
       plugins: [
-        typescript({ useTsconfigDeclarationDir: true }),
+        typescript({ typescript: require('typescript'), useTsconfigDeclarationDir: true }),
         replace({ __VERSION__: version }),
         resolve(),
         commonjs({
-          include: 'node_modules/validator/**',
-        }),
+          include: 'node_modules/validator/**'
+        })
       ]
     },
     output: {
@@ -105,19 +106,21 @@ function genConfig (options) {
       format: options.format,
       name: options.name,
       globals: {
-        'vue-class-component': 'VueClassComponent'
+        vue: 'Vue'
       }
     }
   };
 
   if (options.env) {
-    config.input.plugins.unshift(replace({
-      'process.env.NODE_ENV': JSON.stringify(options.env)
-    }));
+    config.input.plugins.unshift(
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(options.env)
+      })
+    );
   }
 
   return config;
-};
+}
 
 const configs = Object.keys(builds).reduce((prev, key) => {
   prev[key] = genConfig(builds[key]);
