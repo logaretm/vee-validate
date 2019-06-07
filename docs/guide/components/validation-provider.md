@@ -142,7 +142,7 @@ This passes error messages down to Vuetify's text field component.
 
 ### Manual Validation
 
-Triggering validation on any of the providers is simple, but it is opt-in. Meaning you need to explicity call the validation on the provider instance. Using [refs](https://vuejs.org/v2/api/#ref) and the [public method](#methods) `validate` makes it straight forward.
+Triggering validation on any of the providers is simple, but it is opt-in. Meaning you need to explicitly call the validation on the provider instance. Using [refs](https://vuejs.org/v2/api/#ref) and the [public method](#methods) `validate` makes it straight forward.
 
 ```vue
 <template>
@@ -191,6 +191,18 @@ Note that the `validate` method on the validation handler, you can use the `$eve
     <p id="error">{{ errors[0] }}</p>
   </div>
 </ValidationProvider>
+```
+
+### Validation Result
+
+The `validate` method returns a validation result wrapped in a promise, so normally you either would use `then` or `await` for the validation to finish. The validation result contains useful information about the validation attempt:
+
+```ts
+interface ValidationResult {
+  errors: string[]; // Array of error messages
+  valid: boolean; // boolean flag
+  failedRules: { [x: string]: string } // A map of rule names and their error message.
+}
 ```
 
 ::: tip
