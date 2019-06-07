@@ -23,7 +23,7 @@ export const isNaN = (value: any) => {
   }
 
   // eslint-disable-next-line
-  return value === value;
+  return typeof(value) === 'number' && value !== value;
 };
 
 /**
