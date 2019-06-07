@@ -140,3 +140,18 @@ export function normalizeSlots (slots, ctx) {
     return arr.concat(slots[key]);
   }, []);
 };
+
+export function createRenderless (h, children) {
+  // Only render the first item of the node.
+  if (Array.isArray(children) && children[0]) {
+    return children[0];
+  }
+
+  // a single node.
+  if (children) {
+    return children;
+  }
+
+  // No slots, render nothing.
+  return h();
+};

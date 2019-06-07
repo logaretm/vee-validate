@@ -5,7 +5,7 @@ import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, isEvent } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable, debounce, isNullOrUndefined, assign, isEqual, toArray } from '../utils';
-import { findModel, extractVNodes, addVNodeListener, getInputEventName } from '../utils/vnode';
+import { findModel, extractVNodes, addVNodeListener, getInputEventName, createRenderless } from '../utils/vnode';
 
 let $validator = null;
 
@@ -86,6 +86,10 @@ export const ValidationProvider = {
     tag: {
       type: String,
       default: 'span'
+    },
+    slim: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -178,7 +182,7 @@ export const ValidationProvider = {
       addListeners.call(this, input);
     });
 
-    return h(this.tag, nodes);
+    return this.slim ? createRenderless(h, nodes) : h(this.tag, nodes);
   },
   beforeDestroy () {
     // cleanup reference.
