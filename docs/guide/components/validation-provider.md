@@ -396,6 +396,32 @@ If you are using TypeScript you may face issues with `$refs` not giving you the 
 
 :::
 
+## Nested Slots
+
+If you want to validate a field inside another component that uses slots, you need to be aware that the `ValidationProvider` only detects inputs marked by `v-model` that are within its immediate slot, meaning nested inputs inside other components will not be detected.
+
+For example, this will not be detected.
+
+```vue
+<ValidationProvider v-slot="{ errors }">
+  <MyNestedComponent v-slot="componentSlot">
+    <input v-model="value" type="text">
+  </MyNestedComponent>
+</ValidationProvider>
+```
+
+One way around that is to invert the nesting of the components, for example the above example should be functionally and visually equivalent to this:
+
+```vue
+<MyNestedComponent v-slot="componentSlot">
+  <ValidationProvider v-slot="{ errors }">
+    <input v-model="value" type="text">
+  </ValidationProvider>
+</MyNestedComponent>
+```
+
+But we have placed the input inside the provider slot directly and it should be detected and validated correctly, you can also use the `slim` prop to make sure everything stays visually the same.
+
 ## Reference
 
 Below is the reference of the ValidationProvider public API.
