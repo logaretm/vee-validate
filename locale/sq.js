@@ -13,7 +13,7 @@ const messages = {
   credit_card: (field) => `${field} nuk është valide.`,
   date_between: (field, [min, max]) => `${field} duhet të jetë në mes ${min} dhe ${max}.`,
   date_format: (field, [format]) => `${field} duhet të jetë në formatin ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `${field} duhet të jetë numerike dhe të përmbaj${decimals === '*' ? '' : ' ' + decimals} presje dhjetore.`,
+  decimal: (field, [decimals = '*'] = []) => `${field} duhet të jetë numerike dhe të përmbaj${!decimals || decimals === '*' ? '' : ' ' + decimals} presje dhjetore.`,
   digits: (field, [length]) => `${field} duhet të jetë numerike dhe të përmbaj saktësisht ${length} shifra.`,
   dimensions: (field, [width, height]) => `${field} duhet të jetë ${width} piksela me ${height} piksela.`,
   email: (field) => `${field} duhet të jetë e-mail valid.`,

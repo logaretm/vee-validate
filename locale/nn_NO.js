@@ -12,7 +12,7 @@ const messages = {
   credit_card: (field) => `${field}-feltet er ugyldig.`,
   date_between: (field, [min, max]) => `${field}-feltet må vere imellom ${min} og ${max}.`,
   date_format: (field, [format]) => `${field}-feltet må vere i følgende format: ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `${field}-feltet må vere numerisk, og kan innehalde${decimals === '*' ? '' : ' ' + decimals} desimaler.`,
+  decimal: (field, [decimals = '*'] = []) => `${field}-feltet må vere numerisk, og kan innehalde${!decimals || decimals === '*' ? '' : ' ' + decimals} desimaler.`,
   digits: (field, [length]) => `${field}-feltet må vere numerisk og innehalde nøyaktig ${length} siffer.`,
   dimensions: (field, [width, height]) => `${field}-feltet må vere ${width} gonger ${height} piksler.`,
   email: (field) => `${field}-feltet må innehalde ein gyldig E-post adresse.`,

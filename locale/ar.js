@@ -26,7 +26,7 @@ const messages = {
   credit_card: (field) => `الحقل ${field} غير صحيح.`,
   date_between: (field, [min, max]) => `${field} يجب ان يكون ما بين ${min} و ${max}.`,
   date_format: (field, [format]) => `${field} يجب ان يكون على هيئة ${format}.`,
-  decimal: (field, [decimals = '*'] = []) => `${field} يجب ان يكون قيمة رقمية وقد يحتوي على${decimals === '*' ? '' : ' ' + decimals} ارقام عشرية.`,
+  decimal: (field, [decimals = '*'] = []) => `${field} يجب ان يكون قيمة رقمية وقد يحتوي على${!decimals || decimals === '*' ? '' : ' ' + decimals} ارقام عشرية.`,
   digits: (field, [length]) => `${field} يجب ان تحتوي فقط على ارقام والا يزيد عددها عن ${length} رقم.`,
   dimensions: (field, [width, height]) => `${field} يجب ان تكون بمقاس ${width} بكسل في ${height} بكسل.`,
   email: (field) => `${field} يجب ان يكون بريداً اليكتروناً صحيحاً.`,

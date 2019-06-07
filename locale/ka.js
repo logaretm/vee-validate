@@ -11,7 +11,7 @@ const messages = {
   confirmed: (field, [confirmedField]) => `${field} არ ემთხვევა ${confirmedField}(ი)ს.`,
   date_between: (field, [min, max]) => `${field} უნდა უნდა იყოს ${min} და ${max}-ს შორის.`,
   date_format: (field, [format]) => `${field} უნდა იყოს ${format} ფორმატში.`,
-  decimal: (field, [decimals = '*'] = []) => `${field} უნდა შეიცავდეს ციფრებსა და${decimals === '*' ? '' : ' ' + decimals} მთელ რიცხვებს.`,
+  decimal: (field, [decimals = '*'] = []) => `${field} უნდა შეიცავდეს ციფრებსა და${!decimals || decimals === '*' ? '' : ' ' + decimals} მთელ რიცხვებს.`,
   digits: (field, [length]) => `${field} უნდა შეიცავდეს ციფრებს და უნდა იყოს ზუსტად ${length}-ნიშნა.`,
   dimensions: (field, [width, height]) => `${field} უნდა იყოს ${width}x${height} ზომის (pixel).`,
   email: (field) => `${field}-ს უნდა ჰქონდეს ელ-ფოსტის სწორი ფორმატი.`,
