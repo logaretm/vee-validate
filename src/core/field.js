@@ -107,7 +107,7 @@ export default class Field {
 
   get validator (): any {
     if (!this.vm || !this.vm.$validator) {
-      return { validate: () => {} };
+      return { validate: () => Promise.resolve(true) };
     }
 
     return this.vm.$validator;
@@ -264,6 +264,13 @@ export default class Field {
     // update required flag flags
     if (options.rules !== undefined) {
       this.flags.required = this.isRequired;
+    }
+
+    if (Object.keys(options.rules || {}).length === 0 && this.updated) {
+      let resetFlag = this.flags.validated;
+      this.validator.validate(`#${this.id}`).then(() => {
+        this.flags.validated = resetFlag;
+      });
     }
 
     // validate if it was validated before and field was updated and there was a rules mutation.
