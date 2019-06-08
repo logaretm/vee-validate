@@ -1,12 +1,11 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import { renderToString } from '@vue/server-test-utils';
-import VeeValidate from '@/index';
+import { ValidationProvider, ValidationObserver } from '@/index';
 import flushPromises from 'flush-promises';
 
 const Vue = createLocalVue();
-Vue.use(VeeValidate, { inject: false });
-Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
-Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
+Vue.component('ValidationProvider', ValidationProvider);
+Vue.component('ValidationObserver', ValidationObserver);
 
 const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required.';
 

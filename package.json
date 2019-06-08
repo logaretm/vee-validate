@@ -107,5 +107,8 @@
       "jest --maxWorkers=1 --bail --findRelatedTests"
     ]
   },
-  "dependencies": {}
+  "dependencies": {},
+  "peerDependencies": {
+    "vue": "^2.5.18"
+  }
 }

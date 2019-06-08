@@ -1,9 +1,10 @@
+import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { isCallable, values, findIndex, warn } from '../utils';
-import { ValidationResult } from '../types';
-import { CreateElement, VNode } from 'vue';
+import { ValidationResult, InactiveRefCache, VeeObserver, VNodeWithVeeContext } from '../types';
+import { ValidationProvider } from './provider';
 
 const flagMergingStrategy: {
-  [x: string]: 'every' | 'some',
+  [x: string]: 'every' | 'some';
 } = {
   pristine: 'every',
   dirty: 'some',
@@ -12,10 +13,10 @@ const flagMergingStrategy: {
   valid: 'every',
   invalid: 'some',
   pending: 'some',
-  validated: 'every',
+  validated: 'every'
 };
 
-function mergeFlags (lhs: any, rhs: any, strategy: string) {
+function mergeFlags(lhs: any, rhs: any, strategy: string) {
   const stratName = flagMergingStrategy[strategy];
 
   return [lhs, rhs][stratName](f => f);
@@ -23,9 +24,28 @@ function mergeFlags (lhs: any, rhs: any, strategy: string) {
 
 let OBSERVER_COUNTER = 0;
 
-export const ValidationObserver: any = {
+function data() {
+  const refs: { [k: string]: InstanceType<typeof ValidationProvider> } = {};
+  const inactiveRefs: { [k: string]: InactiveRefCache } = {};
+  // FIXME: Not sure of this one can be typed, circular type reference.
+  const observers: any[] = [];
+
+  return {
+    refs,
+    observers,
+    inactiveRefs
+  };
+}
+type withObserverNode = VueConstructor<
+  Vue & {
+    $_veeObserver: VeeObserver;
+    $vnode: VNodeWithVeeContext;
+  }
+>;
+
+export const ValidationObserver = (Vue as withObserverNode).extend({
   name: 'ValidationObserver',
-  provide () {
+  provide() {
     return {
       $_veeObserver: this
     };
@@ -33,7 +53,7 @@ export const ValidationObserver: any = {
   inject: {
     $_veeObserver: {
       from: '$_veeObserver',
-      default(this: any) {
+      default() {
         if (!this.$vnode.context.$_veeObserver) {
           return null;
         }
@@ -49,24 +69,22 @@ export const ValidationObserver: any = {
     },
     vid: {
       type: String,
-      default () {
+      default() {
         return `obs_${OBSERVER_COUNTER++}`;
       }
     }
   },
-  data: (): { refs: {}, observers: any[] } => ({
-    refs: {},
-    observers: [],
-  }),
+  data,
   computed: {
-    ctx(this: any) {
+    ctx() {
       const ctx = {
         errors: {},
         validate: (arg: any) => {
           const promise = this.validate(arg);
 
           return {
-            then (thenable: { then: CallableFunction }) {
+            then(thenable: { then: CallableFunction }) {
+              // tslint:disable-next-line
               promise.then((success: boolean) => {
                 if (success && isCallable(thenable)) {
                   return Promise.resolve(thenable());
@@ -82,8 +100,15 @@ export const ValidationObserver: any = {
 
       return [
         ...values(this.refs),
-        ...this.observers,
-      ].reduce((acc, provider) => {
+        ...Object.keys(this.inactiveRefs).map(key => {
+          return {
+            vid: key,
+            flags: this.inactiveRefs[key].flags,
+            messages: this.inactiveRefs[key].errors
+          };
+        }),
+        ...this.observers
+      ].reduce((acc: any, provider: any) => {
         Object.keys(flagMergingStrategy).forEach(flag => {
           const flags = provider.flags || provider.ctx;
           if (!(flag in acc)) {
@@ -94,86 +119,97 @@ export const ValidationObserver: any = {
           acc[flag] = mergeFlags(acc[flag], flags[flag], flag);
         });
 
-        acc.errors[provider.vid] = provider.messages || values(provider.ctx.errors).reduce((errs: any[], obsErrors) => {
-          return errs.concat(obsErrors);
-        }, []);
+        acc.errors[provider.vid] =
+          provider.messages ||
+          values(provider.ctx.errors).reduce((errs: any[], obsErrors) => {
+            return errs.concat(obsErrors);
+          }, []);
 
         return acc;
       }, ctx);
     }
   },
-  created () {
+  created() {
     if (this.$_veeObserver) {
       this.$_veeObserver.subscribe(this, 'observer');
     }
   },
-  activated () {
+  activated() {
     if (this.$_veeObserver) {
       this.$_veeObserver.subscribe(this, 'observer');
     }
   },
-  deactivated () {
+  deactivated() {
     if (this.$_veeObserver) {
       this.$_veeObserver.unsubscribe(this, 'observer');
     }
   },
-  beforeDestroy () {
+  beforeDestroy() {
     if (this.$_veeObserver) {
       this.$_veeObserver.unsubscribe(this, 'observer');
     }
   },
-  render (h: CreateElement): VNode {
+  render(h: CreateElement): VNode {
     let slots = this.$scopedSlots.default;
-    this._persistedStore = this._persistedStore || {};
     if (!isCallable(slots)) {
       return h(this.tag, this.$slots.default);
     }
 
-    return h(this.tag, {
-      on: this.$listeners,
-      attrs: this.$attrs
-    }, slots(this.ctx));
+    return h(
+      this.tag,
+      {
+        on: this.$listeners,
+        attrs: this.$attrs
+      },
+      slots(this.ctx)
+    );
   },
   methods: {
-    subscribe(this: any, subscriber: any, kind = 'provider') {
+    subscribe(subscriber: any, kind = 'provider') {
       if (kind === 'observer') {
         this.observers.push(subscriber);
         return;
       }
 
       this.refs = Object.assign({}, this.refs, { [subscriber.vid]: subscriber });
-      if (subscriber.persist && this._persistedStore[subscriber.vid]) {
+      if (subscriber.persist && this.inactiveRefs[subscriber.vid]) {
         this.restoreProviderState(subscriber);
       }
     },
-    unsubscribe(this: any, { vid }: any, kind = 'provider') {
+    unsubscribe({ vid }: any, kind = 'provider') {
       if (kind === 'provider') {
         this.removeProvider(vid);
       }
 
-      const idx = findIndex(this.observers, o => (o as any).vid === vid);
+      const idx = findIndex(this.observers, o => o.vid === vid);
       if (idx !== -1) {
         this.observers.splice(idx, 1);
       }
     },
-    async validate(this: any, { silent } = { silent: false }) {
+    async validate({ silent = false }: { silent?: boolean } = {}) {
       const results = await Promise.all([
-        ...values(this.refs).map((ref: any) => ref[silent ? 'validateSilent' : 'validate']().then((r: ValidationResult) => r.valid)),
+        ...values(this.refs).map((ref: any) =>
+          ref[silent ? 'validateSilent' : 'validate']().then((r: ValidationResult) => r.valid)
+        ),
         ...this.observers.map((obs: any) => obs.validate({ silent }))
       ]);
 
       return results.every(r => r);
     },
-    reset(this: any) {
+    reset() {
+      Object.keys(this.inactiveRefs).forEach(key => {
+        this.$delete(this.inactiveRefs, key);
+      });
+
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
     },
-    restoreProviderState(this: any, provider: any) {
-      const state = this._persistedStore[provider.vid];
+    restoreProviderState(provider: any) {
+      const state = this.inactiveRefs[provider.vid];
       provider.setFlags(state.flags);
       provider.applyResult(state);
-      delete this._persistedStore[provider.vid];
+      this.$delete(this.inactiveRefs, provider.vid);
     },
-    removeProvider(this: any, vid: string) {
+    removeProvider(vid: string) {
       const provider = this.refs[vid];
       // save it for the next time.
       if (provider && provider.persist) {
@@ -184,7 +220,7 @@ export const ValidationObserver: any = {
           }
         }
 
-        this._persistedStore[vid] = {
+        this.inactiveRefs[vid] = {
           flags: provider.flags,
           errors: provider.messages,
           failedRules: provider.failedRules
@@ -192,6 +228,6 @@ export const ValidationObserver: any = {
       }
 
       this.$delete(this.refs, vid);
-    },
+    }
   }
-};
+});

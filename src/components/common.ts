@@ -1,8 +1,9 @@
-import { VNodeDirective } from 'vue';
+import { VNodeDirective, VNode } from 'vue';
 import { isCallable, debounce } from '../utils';
 import { modes } from '../modes';
 import { ValidationResult, ValidationFlags } from '../types';
 import { ValidationClassMap } from '../config';
+import { findModel, getInputEventName, addVNodeListener } from '../utils/vnode';
 
 /**
  * Determines if a provider needs to run validation.
@@ -127,4 +128,24 @@ export function createCommonHandlers(vm: any) {
   }
 
   return { onInput, onBlur, onValidate };
+}
+
+// Adds all plugin listeners to the vnode.
+export function addListeners(vm: any, node: VNode) {
+  const model = findModel(node);
+  // cache the input eventName.
+  vm._inputEventName = vm._inputEventName || getInputEventName(node, model);
+
+  onRenderUpdate(vm, model);
+
+  const { onInput, onBlur, onValidate } = createCommonHandlers(vm);
+  addVNodeListener(node, vm._inputEventName, onInput);
+  addVNodeListener(node, 'blur', onBlur);
+
+  // add the validation listeners.
+  vm.normalizedEvents.forEach((evt: string) => {
+    addVNodeListener(node, evt, onValidate);
+  });
+
+  vm.initialized = true;
 }

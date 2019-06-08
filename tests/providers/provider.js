@@ -1,55 +1,63 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import { renderToString } from '@vue/server-test-utils';
 import flushPromises from 'flush-promises';
-import VeeValidate from '@/index';
+import { ValidationProvider, ValidationObserver, setMode, Validator, withValidation } from '@/index';
 import InputWithoutValidation from './components/Input';
 import SelectWithoutValidation from './components/Select';
 
 const Vue = createLocalVue();
-Vue.use(VeeValidate, { inject: false });
-Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
-Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
+Vue.component('ValidationProvider', ValidationProvider);
+Vue.component('ValidationObserver', ValidationObserver);
 
 const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required.';
 
 describe('Validation Provider Component', () => {
   test('renders its tag attribute', () => {
-    const wrapper = mount({
-      data: () => ({ val: '' }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({ val: '' }),
+        template: `
         <ValidationProvider v-slot="ctx">
           <input v-model="val" type="text">
         </ValidationProvider>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     expect(wrapper.html()).toBe(`<span><input type="text"></span>`);
   });
 
   test('SSR: render single root slot', () => {
-    const output = renderToString({
-      template: `
+    const output = renderToString(
+      {
+        template: `
         <ValidationProvider v-slot="ctx">
           <p></p>
         </ValidationProvider>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     expect(output).toBe('<span data-server-rendered="true"><p></p></span>');
   });
 
   test('listens for input, blur events to set flags', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationProvider rules="required" v-slot="{ errors, flags }">
           <input v-model="value" type="text">
           <li v-for="(flag, name) in flags" v-if="flag" :id="name">{{ name }}</li>
         </ValidationProvider>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const input = wrapper.find('input');
     expect(wrapper).toHaveElement('#untouched');
@@ -67,17 +75,20 @@ describe('Validation Provider Component', () => {
   });
 
   test('validates lazy models', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationProvider rules="required" v-slot="{ errors }">
           <input v-model.lazy="value" type="text">
           <span id="error">{{ errors[0] }}</span>
         </ValidationProvider>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const input = wrapper.find('input');
     const error = wrapper.find('#error');
@@ -101,11 +112,12 @@ describe('Validation Provider Component', () => {
   });
 
   test('uses appropiate events for different input types', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <div>
           <ValidationProvider rules="required" v-slot="{ errors }">
             <select v-model="value">
@@ -116,7 +128,9 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const select = wrapper.find('select');
     const error = wrapper.find('#error');
@@ -140,11 +154,12 @@ describe('Validation Provider Component', () => {
   });
 
   test('validates fields initially using the immediate prop', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <div>
           <ValidationProvider :immediate="true" rules="required" v-slot="{ errors }">
             <input v-model="value" type="text">
@@ -152,7 +167,9 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const error = wrapper.find('#error');
 
@@ -163,21 +180,22 @@ describe('Validation Provider Component', () => {
   });
 
   test('validates components on input by default', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      components: {
-        TextInput: {
-          props: ['value'],
-          template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        components: {
+          TextInput: {
+            props: ['value'],
+            template: `
             <div>
               <input id="input" :value="value" @input="$emit('input', $event.target.value)">
             </div>
           `
-        }
-      },
-      template: `
+          }
+        },
+        template: `
         <div>
           <ValidationProvider rules="required" v-slot="{ errors }">
             <TextInput v-model="value" ref="input"></TextInput>
@@ -185,7 +203,9 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, sync: false, attachToDocument: true });
+      },
+      { localVue: Vue, sync: false, attachToDocument: true }
+    );
 
     const error = wrapper.find('#error');
     const input = wrapper.find('#input');
@@ -203,20 +223,21 @@ describe('Validation Provider Component', () => {
   });
 
   test('validates components on configured model event', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      components: {
-        TextInput: {
-          model: {
-            event: 'change'
-          },
-          props: ['value'],
-          template: `<input :value="value" @change="$emit('change', $event.target.value)">`
-        }
-      },
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        components: {
+          TextInput: {
+            model: {
+              event: 'change'
+            },
+            props: ['value'],
+            template: `<input :value="value" @change="$emit('change', $event.target.value)">`
+          }
+        },
+        template: `
         <div>
           <ValidationProvider rules="required" v-slot="{ errors }">
             <TextInput v-model="value" ref="input"></TextInput>
@@ -224,7 +245,9 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const error = wrapper.find('#error');
     const input = wrapper.find({ ref: 'input' });
@@ -240,17 +263,18 @@ describe('Validation Provider Component', () => {
   });
 
   test('uses interaction modes', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      components: {
-        TextInput: {
-          props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
-        }
-      },
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        components: {
+          TextInput: {
+            props: ['value'],
+            template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+          }
+        },
+        template: `
         <div>
           <ValidationProvider rules="required" mode="lazy" v-slot="{ errors }">
             <TextInput v-model="value"></TextInput>
@@ -258,7 +282,9 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
     const error = wrapper.find('#error');
     const input = wrapper.find('input');
 
@@ -273,18 +299,19 @@ describe('Validation Provider Component', () => {
   });
 
   test('interaction mode can be set globally', async () => {
-    VeeValidate.setMode('lazy');
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      components: {
-        TextInput: {
-          props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
-        }
-      },
-      template: `
+    setMode('lazy');
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        components: {
+          TextInput: {
+            props: ['value'],
+            template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+          }
+        },
+        template: `
         <div>
           <ValidationProvider rules="required" v-slot="{ errors }">
             <TextInput v-model="value"></TextInput>
@@ -292,7 +319,9 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
     const error = wrapper.find('#error');
     const input = wrapper.find('input');
 
@@ -304,26 +333,27 @@ describe('Validation Provider Component', () => {
     input.trigger('change');
     await flushPromises();
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-    VeeValidate.setMode('aggressive');
+    setMode('aggressive');
   });
 
   test('new interaction modes can be added', async () => {
-    VeeValidate.setMode('custom', () => {
+    setMode('custom', () => {
       return {
         on: ['customEvent']
       };
     });
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      components: {
-        TextInput: {
-          props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
-        }
-      },
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        components: {
+          TextInput: {
+            props: ['value'],
+            template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+          }
+        },
+        template: `
         <div>
           <ValidationProvider rules="required" v-slot="{ errors }">
             <TextInput v-model="value"></TextInput>
@@ -331,7 +361,9 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
     const error = wrapper.find('#error');
     const input = wrapper.find('input');
 
@@ -343,16 +375,17 @@ describe('Validation Provider Component', () => {
     input.trigger('customEvent');
     await flushPromises();
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-    VeeValidate.setMode('aggressive');
+    setMode('aggressive');
   });
 
   test('validates target dependant fields', async () => {
-    const wrapper = mount({
-      data: () => ({
-        password: '',
-        confirmation: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          password: '',
+          confirmation: ''
+        }),
+        template: `
         <div>
           <ValidationProvider rules="required" vid="confirmation" v-slot="ctx">
             <input type="password" v-model="confirmation">
@@ -363,7 +396,9 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const error = wrapper.find('#err1');
     const inputs = wrapper.findAll('input');
@@ -385,15 +420,18 @@ describe('Validation Provider Component', () => {
   });
 
   test('removes the provider reference at destroy', () => {
-    const wrapper = mount({
-      template: `
+    const wrapper = mount(
+      {
+        template: `
         <div>
           <ValidationProvider vid="named" ref="provider" v-slot="{ errors }">
             <span></span>
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const providersMap = wrapper.vm.$_veeObserver.refs;
     expect(providersMap.named).toBe(wrapper.vm.$refs.provider);
@@ -402,19 +440,22 @@ describe('Validation Provider Component', () => {
   });
 
   test('creates HOCs from other components', async () => {
-    const InputWithValidation = VeeValidate.withValidation(InputWithoutValidation);
+    const InputWithValidation = withValidation(InputWithoutValidation);
 
-    const wrapper = mount({
-      template: `
+    const wrapper = mount(
+      {
+        template: `
         <div>
           <InputWithValidation v-model="value" rules="required"></InputWithValidation>
         </div>
       `,
-      data: () => ({ value: '' }),
-      components: {
-        InputWithValidation
-      }
-    }, { localVue: Vue, sync: false });
+        data: () => ({ value: '' }),
+        components: {
+          InputWithValidation
+        }
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const error = wrapper.find('#error');
     const input = wrapper.find('#input');
@@ -431,39 +472,45 @@ describe('Validation Provider Component', () => {
   });
 
   test('renders slots', async () => {
-    const WithValidation = VeeValidate.withValidation(SelectWithoutValidation);
-    const wrapper = mount({
-      data: () => ({ value: '' }),
-      template: `
+    const WithValidation = withValidation(SelectWithoutValidation);
+    const wrapper = mount(
+      {
+        data: () => ({ value: '' }),
+        template: `
         <SelectWithValidation v-model="value" rules="required">
           <option value="">0</option>
           <option value="1">1</option>
         </SelectWithValidation>
       `,
-      components: {
-        SelectWithValidation: WithValidation
-      }
-    }, { localVue: Vue, sync: false });
+        components: {
+          SelectWithValidation: WithValidation
+        }
+      },
+      { localVue: Vue, sync: false }
+    );
 
-    expect(wrapper.html()).toBe(`<div value=""><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div>`);
+    expect(wrapper.html()).toBe(
+      `<div value=""><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div>`
+    );
   });
 
   test('resets validation state', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      components: {
-        TextInput: {
-          props: ['value'],
-          template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        components: {
+          TextInput: {
+            props: ['value'],
+            template: `
             <div>
               <input id="input" :value="value" @input="$emit('input', $event.target.value)">
             </div>
           `
-        }
-      },
-      template: `
+          }
+        },
+        template: `
         <div>
           <ValidationProvider rules="required" ref="provider" v-slot="{ errors }">
             <TextInput v-model="value" ref="input"></TextInput>
@@ -471,7 +518,9 @@ describe('Validation Provider Component', () => {
           </ValidationProvider>
         </div>
       `
-    }, { localVue: Vue, sync: false, attachToDocument: true });
+      },
+      { localVue: Vue, sync: false, attachToDocument: true }
+    );
 
     const error = wrapper.find('#error');
     const input = wrapper.find('#input');
@@ -489,17 +538,20 @@ describe('Validation Provider Component', () => {
   });
 
   test('setting bails prop to false disables fast exit', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationProvider :bails="false" rules="email|min:3" v-slot="{ errors }">
           <input v-model="value" type="text">
           <p v-for="error in errors">{{ error }}</p>
         </ValidationProvider>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const input = wrapper.find('input');
     input.setValue('');
@@ -511,19 +563,22 @@ describe('Validation Provider Component', () => {
     expect(errors.at(1).text()).toBe('The {field} field must be at least 3 characters.');
   });
 
-  const sleep = (wait) => new Promise(resolve => setTimeout(resolve, wait));
+  const sleep = wait => new Promise(resolve => setTimeout(resolve, wait));
   test('validation can be debounced', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationProvider rules="required" :debounce="50" v-slot="{ errors }">
           <input v-model="value" type="text">
           <p>{{ errors[0] }}</p>
         </ValidationProvider>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const input = wrapper.find('input');
     const error = wrapper.find('p');
@@ -538,9 +593,9 @@ describe('Validation Provider Component', () => {
 
   test('avoids race conditions between successive validations', async () => {
     // A decreasing timeout (the most recent validation will finish before new ones).
-    VeeValidate.Validator.extend('longRunning', {
+    Validator.extend('longRunning', {
       getMessage: (_, __, data) => data,
-      validate: (value) => {
+      validate: value => {
         return new Promise(resolve => {
           setTimeout(() => {
             resolve({
@@ -552,17 +607,20 @@ describe('Validation Provider Component', () => {
       }
     });
 
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationProvider rules="required|longRunning" :debounce="10" v-slot="{ errors }">
           <input v-model="value" type="text">
           <p>{{ errors[0] }}</p>
         </ValidationProvider>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const input = wrapper.find('input');
     const error = wrapper.find('p');
@@ -577,14 +635,17 @@ describe('Validation Provider Component', () => {
   });
 
   test('validates manually using the validate event handler', async () => {
-    const wrapper = mount({
-      template: `
+    const wrapper = mount(
+      {
+        template: `
         <ValidationProvider rules="required" v-slot="{ validate, errors }">
           <input type="text" @input="validate">
           <p id="error">{{ errors[0] }}</p>
         </ValidationProvider>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const input = wrapper.find('input');
     input.setValue('');
@@ -600,18 +661,21 @@ describe('Validation Provider Component', () => {
   });
 
   test('resets validation state using reset method in slot scope data', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationProvider rules="required" v-slot="{ errors, reset }">
           <input type="text" v-model="value">
           <span id="error">{{ errors && errors[0] }}</span>
           <button @click="reset">Reset</button>
         </ValidationProvider>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const error = wrapper.find('#error');
     const input = wrapper.find('input');
@@ -629,15 +693,18 @@ describe('Validation Provider Component', () => {
   });
 
   test('resolves rules based on the HTML input attributes', async () => {
-    const wrapper = mount({
-      data: () => ({ val: '' }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({ val: '' }),
+        template: `
         <ValidationProvider v-slot="{ errors }">
           <input type="text" v-model="val" required minlength="3">
           <p id="error">{{ errors[0] }}</p>
         </ValidationProvider>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const input = wrapper.find('input');
     input.setValue('');

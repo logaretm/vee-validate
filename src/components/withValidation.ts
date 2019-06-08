@@ -9,14 +9,15 @@ type ComponentLike = Component | { options: any };
 
 export function withValidation(component: ComponentLike, mapProps: ValidationContextMapper = identity): Component {
   const options = 'options' in component ? component.options : component;
+  const providerOpts = (ValidationProvider as any).options;
   const hoc: any = {
     name: `${options.name || 'AnonymousHoc'}WithValidation`,
-    props: { ...ValidationProvider.props },
-    data: ValidationProvider.data,
-    computed: { ...ValidationProvider.computed },
-    methods: { ...ValidationProvider.methods },
-    beforeDestroy: ValidationProvider.beforeDestroy,
-    inject: ValidationProvider.inject
+    props: { ...providerOpts.props },
+    data: providerOpts.data,
+    computed: { ...providerOpts.computed },
+    methods: { ...providerOpts.methods },
+    beforeDestroy: providerOpts.beforeDestroy,
+    inject: providerOpts.inject
   };
 
   const eventName = (options.model && options.model.event) || 'input';

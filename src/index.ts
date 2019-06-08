@@ -1,4 +1,3 @@
-import VeeValidate from './plugin';
 import en from '../locale/en';
 import * as Rules from './rules';
 import Validator from './core/validator';
@@ -15,18 +14,5 @@ RulesAsList.forEach(({ name, schema }) => {
 // Merge the english messages.
 Validator.localize({ en });
 
-const install = VeeValidate.install;
-
-export { ValidationObserverInstance, ValidationProviderInstance } from './types';
-
-export { install, Validator, Rules, version, ValidationProvider, ValidationObserver, withValidation };
-
-export default {
-  ...VeeValidate,
-  Validator,
-  Rules,
-  version,
-  ValidationProvider,
-  ValidationObserver,
-  withValidation
-};
+export { Validator, Rules, version, ValidationProvider, ValidationObserver, withValidation };
+export * from './setters';

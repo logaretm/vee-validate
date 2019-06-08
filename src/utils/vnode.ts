@@ -34,7 +34,7 @@ export function findModel(vnode: VNode) {
   return find(vnode.data.directives, d => d.name === 'model');
 }
 
-function extractChildren(vnode: VNode): VNode[] {
+function extractChildren(vnode: VNode | VNode[]): VNode[] {
   if (Array.isArray(vnode)) {
     return vnode;
   }
@@ -50,8 +50,8 @@ function extractChildren(vnode: VNode): VNode[] {
   return [];
 }
 
-export function extractVNodes(vnode: VNode): VNode[] {
-  if (findModel(vnode)) {
+export function extractVNodes(vnode: VNode | VNode[]): VNode[] {
+  if (!Array.isArray(vnode) && findModel(vnode)) {
     return [vnode];
   }
 

@@ -4,19 +4,47 @@ import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, normalizeEventValue } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable, isNullOrUndefined, isEqual, computeClassObj } from '../utils';
 import { findModel, extractVNodes, addVNodeListener, getInputEventName, resolveRules } from '../utils/vnode';
-import { VNode, CreateElement } from 'vue';
-import { ValidationResult, ValidationFlags, VeeObserver } from '../types';
-import { onRenderUpdate, computeModeSetting, createValidationCtx, createCommonHandlers } from './common';
+import Vue, { VNode, CreateElement, VueConstructor } from 'vue';
+import { ValidationResult, ValidationFlags, VeeObserver, VNodeWithVeeContext } from '../types';
+import { onRenderUpdate, computeModeSetting, createValidationCtx, createCommonHandlers, addListeners } from './common';
 
 let VALIDATOR: Validator;
 
 let PROVIDER_COUNTER = 0;
 
-export const ValidationProvider: any = {
+type withProviderPrivates = VueConstructor<
+  Vue & {
+    $_veeObserver: VeeObserver;
+    _needsValidation: boolean;
+    _inputEventName: string;
+    _resolvedRules: any;
+    _veeWatchers: { [k: string]: Function };
+    $vnode: VNodeWithVeeContext;
+  }
+>;
+
+function data() {
+  const messages: string[] = [];
+
+  const defaultValues = {
+    messages,
+    value: undefined,
+    initialized: false,
+    initialValue: undefined,
+    flags: createFlags(),
+    failedRules: {},
+    forceRequired: false,
+    isDeactivated: false,
+    id: ''
+  };
+  return defaultValues;
+}
+
+export const ValidationProvider = (Vue as withProviderPrivates).extend({
   inject: {
     $_veeObserver: {
       from: '$_veeObserver',
-      default(this: any) {
+      default() {
         if (!this.$vnode.context.$_veeObserver) {
           this.$vnode.context.$_veeObserver = createObserver();
         }
@@ -27,7 +55,7 @@ export const ValidationProvider: any = {
   },
   props: {
     vid: {
-      type: [String, Number],
+      type: String,
       default: () => {
         PROVIDER_COUNTER++;
 
@@ -72,27 +100,17 @@ export const ValidationProvider: any = {
   watch: {
     rules: {
       deep: true,
-      handler(this: any, val: any, oldVal: any) {
+      handler(val: any, oldVal: any) {
         this._needsValidation = !isEqual(val, oldVal);
       }
     }
   },
-  data: () => ({
-    messages: [],
-    value: undefined,
-    initialized: false,
-    initialValue: undefined,
-    flags: createFlags(),
-    failedRules: {},
-    forceRequired: false,
-    isDeactivated: false,
-    id: ''
-  }),
+  data,
   computed: {
-    isValid(this: any): boolean {
+    isValid(): boolean {
       return this.flags.valid;
     },
-    fieldDeps(this: any): { [k: string]: any } {
+    fieldDeps(): { [k: string]: any } {
       return Object.keys(this.normalizedRules)
         .filter(RuleContainer.isTargetRule)
         .map(rule => {
@@ -102,7 +120,7 @@ export const ValidationProvider: any = {
           return depName;
         });
     },
-    normalizedEvents(this: any): string[] {
+    normalizedEvents(): string[] {
       const { on } = computeModeSetting(this);
 
       return normalizeEvents(on || []).map(e => {
@@ -113,7 +131,7 @@ export const ValidationProvider: any = {
         return e;
       });
     },
-    isRequired(this: any): boolean {
+    isRequired(): boolean {
       const rules = { ...this._resolvedRules, ...this.normalizedRules };
       const forceRequired = this.forceRequired;
 
@@ -122,17 +140,17 @@ export const ValidationProvider: any = {
 
       return isRequired;
     },
-    classes(this: any) {
+    classes() {
       const names = getConfig().classNames;
 
       return computeClassObj(names, this.flags);
     },
-    normalizedRules(this: any) {
+    normalizedRules() {
       return normalizeRules(this.rules);
     }
   },
   render(h: CreateElement): VNode {
-    this.registerField(this);
+    this.registerField();
     const ctx = createValidationCtx(this);
 
     // Gracefully handle non-existent scoped slots.
@@ -147,6 +165,10 @@ export const ValidationProvider: any = {
     }
 
     const nodes = slot(ctx);
+    if (!nodes || nodes.length === 0) {
+      return h(this.tag);
+    }
+
     // Handle single-root slot.
     extractVNodes(nodes).forEach(input => {
       this._resolvedRules = resolveRules(input);
@@ -168,19 +190,18 @@ export const ValidationProvider: any = {
     this.isDeactivated = true;
   },
   methods: {
-    setFlags(this: any, flags: Partial<ValidationFlags>) {
+    setFlags(flags: Partial<ValidationFlags>) {
       Object.keys(flags).forEach(flag => {
         this.flags[flag] = flags[flag];
       });
     },
-    syncValue(this: any, v: any) {
+    syncValue(v: any) {
       const value = normalizeEventValue(v);
       this.value = value;
       this.flags.changed = this.initialValue !== value;
     },
-    reset(this: any) {
+    reset() {
       this.messages = [];
-      this._pendingValidation = null;
       this.initialValue = this.value;
       const flags = createFlags();
       this.setFlags(flags);
@@ -195,7 +216,7 @@ export const ValidationProvider: any = {
 
       return result;
     },
-    async validateSilent(this: any): Promise<ValidationResult> {
+    async validateSilent(): Promise<ValidationResult> {
       this.setFlags({ pending: true });
       const rules = { ...this._resolvedRules, ...this.normalizedRules };
       Object.defineProperty(rules, '_$$isNormalized', {
@@ -219,7 +240,7 @@ export const ValidationProvider: any = {
 
       return result;
     },
-    applyResult(this: any, { errors, failedRules }: ValidationResult) {
+    applyResult({ errors, failedRules }: ValidationResult) {
       this.messages = errors;
       this.failedRules = { ...failedRules };
       this.setFlags({
@@ -237,29 +258,11 @@ export const ValidationProvider: any = {
       updateRenderingContextRefs(this);
     }
   }
-};
+});
 
-// Adds all plugin listeners to the vnode.
-function addListeners(vm: any, node: VNode) {
-  const model = findModel(node);
-  // cache the input eventName.
-  vm._inputEventName = vm._inputEventName || getInputEventName(node, model);
+type ProviderInstance = InstanceType<typeof ValidationProvider>;
 
-  onRenderUpdate(vm, model);
-
-  const { onInput, onBlur, onValidate } = createCommonHandlers(vm);
-  addVNodeListener(node, vm._inputEventName, onInput);
-  addVNodeListener(node, 'blur', onBlur);
-
-  // add the validation listeners.
-  vm.normalizedEvents.forEach((evt: string) => {
-    addVNodeListener(node, evt, onValidate);
-  });
-
-  vm.initialized = true;
-}
-
-function createValuesLookup(vm: any) {
+function createValuesLookup(vm: ProviderInstance) {
   let providers = vm.$_veeObserver.refs;
   const reduced: { [k: string]: any } = {};
 
@@ -274,10 +277,10 @@ function createValuesLookup(vm: any) {
   }, reduced);
 }
 
-function updateRenderingContextRefs(vm: any) {
+function updateRenderingContextRefs(vm: ProviderInstance) {
   // IDs should not be nullable.
   if (isNullOrUndefined(vm.id) && vm.id === vm.vid) {
-    vm.id = PROVIDER_COUNTER;
+    vm.id = `${PROVIDER_COUNTER}`;
     PROVIDER_COUNTER++;
   }
 
@@ -308,7 +311,7 @@ function createObserver(): VeeObserver {
   };
 }
 
-function watchCrossFieldDep(ctx: any, depName: string, withHooks = true) {
+function watchCrossFieldDep(ctx: ProviderInstance, depName: string, withHooks = true) {
   const providers = ctx.$_veeObserver.refs;
   if (!ctx._veeWatchers) {
     ctx._veeWatchers = {};
@@ -324,6 +327,7 @@ function watchCrossFieldDep(ctx: any, depName: string, withHooks = true) {
     ctx._veeWatchers[depName] = providers[depName].$watch('value', () => {
       if (ctx.flags.validated) {
         ctx._needsValidation = true;
+        // tslint:disable-next-line: no-floating-promises
         ctx.validate();
       }
     });
