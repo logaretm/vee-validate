@@ -170,7 +170,7 @@ export const ValidationProvider = {
     /* istanbul ignore next */
     if (!isCallable(slot)) {
       if (process.env.NODE_ENV !== 'production') {
-        warn('ValidationProvider expects a scoped slot. Did you forget to add "slot-scope" to your slot?');
+        warn('ValidationProvider expects a scoped slot. Did you forget to add "v-slot" to your slot?');
       }
 
       return h(this.tag, this.$slots.default);
