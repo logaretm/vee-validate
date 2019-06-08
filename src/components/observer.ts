@@ -2,6 +2,7 @@ import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { isCallable, values, findIndex, warn } from '../utils';
 import { ValidationResult, InactiveRefCache, VeeObserver, VNodeWithVeeContext } from '../types';
 import { ValidationProvider } from './provider';
+import { normalizeChildren } from '../utils/vnode';
 
 const flagMergingStrategy: {
   [x: string]: 'every' | 'some';
@@ -72,6 +73,10 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       default() {
         return `obs_${OBSERVER_COUNTER++}`;
       }
+    },
+    slim: {
+      type: Boolean,
+      default: false
     }
   },
   data,
@@ -150,19 +155,9 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     }
   },
   render(h: CreateElement): VNode {
-    let slots = this.$scopedSlots.default;
-    if (!isCallable(slots)) {
-      return h(this.tag, this.$slots.default);
-    }
+    const children = normalizeChildren(this, this.ctx);
 
-    return h(
-      this.tag,
-      {
-        on: this.$listeners,
-        attrs: this.$attrs
-      },
-      slots(this.ctx)
-    );
+    return this.slim && children.length <= 1 ? children[0] : h(this.tag, children);
   },
   methods: {
     subscribe(subscriber: any, kind = 'provider') {

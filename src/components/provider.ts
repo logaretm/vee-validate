@@ -3,7 +3,7 @@ import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, normalizeEventValue } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable, isNullOrUndefined, isEqual, computeClassObj } from '../utils';
-import { extractVNodes, resolveRules } from '../utils/vnode';
+import { extractVNodes, resolveRules, normalizeChildren } from '../utils/vnode';
 import Vue, { VNode, CreateElement, VueConstructor } from 'vue';
 import { ValidationResult, ValidationFlags, VeeObserver, VNodeWithVeeContext } from '../types';
 import { computeModeSetting, createValidationCtx, addListeners } from './common';
@@ -95,6 +95,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     tag: {
       type: String,
       default: 'span'
+    },
+    slim: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -152,30 +156,15 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
   render(h: CreateElement): VNode {
     this.registerField();
     const ctx = createValidationCtx(this);
-
-    // Gracefully handle non-existent scoped slots.
-    let slot = this.$scopedSlots.default;
-    /* istanbul ignore next */
-    if (!isCallable(slot)) {
-      if (process.env.NODE_ENV !== 'production') {
-        warn('ValidationProvider expects a scoped slot. Did you forget to add "slot-scope" to your slot?');
-      }
-
-      return h(this.tag, this.$slots.default);
-    }
-
-    const nodes = slot(ctx);
-    if (!nodes || nodes.length === 0) {
-      return h(this.tag);
-    }
+    const children = normalizeChildren(this, ctx);
 
     // Handle single-root slot.
-    extractVNodes(nodes).forEach(input => {
+    extractVNodes(children).forEach(input => {
       this._resolvedRules = resolveRules(input);
       addListeners(this, input);
     });
 
-    return h(this.tag, nodes);
+    return this.slim && children.length <= 1 ? children[0] : h(this.tag, children);
   },
   beforeDestroy() {
     // cleanup reference.

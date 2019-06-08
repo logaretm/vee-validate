@@ -28,6 +28,19 @@ describe('Validation Provider Component', () => {
     expect(wrapper.html()).toBe(`<span><input type="text"></span>`);
   });
 
+  test('can be renderless with slim prop', () => {
+    const wrapper = mount({
+      data: () => ({ val: '' }),
+      template: `
+        <ValidationProvider v-slot="ctx" slim>
+          <input v-model="val" type="text">
+        </ValidationProvider>
+      `
+    }, { localVue: Vue });
+
+    expect(wrapper.html()).toBe(`<input type="text">`);
+  });
+
   test('SSR: render single root slot', () => {
     const output = renderToString(
       {
