@@ -3,10 +3,10 @@ import Validator from '../core/validator';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, normalizeEventValue } from '../utils/events';
 import { createFlags, normalizeRules, warn, isCallable, isNullOrUndefined, isEqual, computeClassObj } from '../utils';
-import { findModel, extractVNodes, addVNodeListener, getInputEventName, resolveRules } from '../utils/vnode';
+import { extractVNodes, resolveRules } from '../utils/vnode';
 import Vue, { VNode, CreateElement, VueConstructor } from 'vue';
 import { ValidationResult, ValidationFlags, VeeObserver, VNodeWithVeeContext } from '../types';
-import { onRenderUpdate, computeModeSetting, createValidationCtx, createCommonHandlers, addListeners } from './common';
+import { computeModeSetting, createValidationCtx, addListeners } from './common';
 
 let VALIDATOR: Validator;
 
