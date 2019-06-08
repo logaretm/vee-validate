@@ -229,6 +229,7 @@ The field under validation must be numeric and may contain the specified amount 
 ### decimal params
 
 - `decimals:` The maximum allowed number of decimal point numbers. Not passing the decimals will accept numeric data which may or may not contain decimal point numbers.
+- `separator:` Character used to separate the integer from the fractional part of the number
 
 <input v-validate="'decimal:3'" :class="{'input': true, 'is-danger': errors.has('decimal_field') }" name="decimal_field" type="text" placeholder="Numeric value with decimals">
 <span v-show="errors.has('decimal_field')" class="help is-danger">{{ errors.first('decimal_field') }}</span>
