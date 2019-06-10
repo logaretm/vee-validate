@@ -1,7 +1,7 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import { renderToString } from '@vue/server-test-utils';
 import flushPromises from 'flush-promises';
-import { ValidationProvider, ValidationObserver, setMode, Validator, withValidation } from '@/index';
+import { ValidationProvider, ValidationObserver, setMode, extend, withValidation } from '@/index';
 import InputWithoutValidation from './components/Input';
 import SelectWithoutValidation from './components/Select';
 
@@ -606,7 +606,7 @@ describe('Validation Provider Component', () => {
 
   test('avoids race conditions between successive validations', async () => {
     // A decreasing timeout (the most recent validation will finish before new ones).
-    Validator.extend('longRunning', {
+    extend('longRunning', {
       getMessage: (_, __, data) => data,
       validate: value => {
         return new Promise(resolve => {

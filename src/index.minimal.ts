@@ -1,7 +1,8 @@
-import Validator from './core/validator';
-import { ValidationProvider, ValidationObserver, withValidation } from './components';
+export { Validator } from './core/validator';
+export { extend } from './extend';
+export { ValidationProvider, ValidationObserver, withValidation } from './components';
 
 const version = '__VERSION__';
 
-export { Validator, version, ValidationProvider, ValidationObserver, withValidation };
+export { version };
 export * from './setters';

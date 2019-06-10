@@ -1,8 +1,8 @@
 import Dictionary from '../dictionary';
 import RuleContainer from './ruleContainer';
 import { PartialI18nDictionary, RootI18nDictionary } from './i18n';
-import { isObject, getPath, isCallable, isNullOrUndefined, normalizeRules, isEmptyArray } from '../utils';
-import { ValidationResult, ValidationRule, ValidationRuleSchema, RuleParamSchema } from '../types';
+import { isObject, getPath, isNullOrUndefined, normalizeRules, isEmptyArray } from '../utils';
+import { ValidationResult, RuleParamSchema } from '../types';
 
 interface ValidatorOptions {
   bails?: boolean;
@@ -17,7 +17,7 @@ interface FieldMeta {
   names: { [k: string]: any };
 }
 
-export default class Validator {
+export class Validator {
   bails: boolean;
   constructor(options: ValidatorOptions = { bails: true }) {
     this.bails = !!(!isNullOrUndefined(options && options.bails) ? options.bails : true);
@@ -46,24 +46,6 @@ export default class Validator {
    */
   static set locale(value) {
     // TODO: Handle setting the locale.
-  }
-
-  /**
-   * Adds a custom validator to the list of validation rules.
-   */
-  static extend(name: string, schema: ValidationRule) {
-    // makes sure new rules are properly formatted.
-    Validator._guardExtend(name, schema);
-
-    // Full schema object.
-    if (typeof schema === 'object') {
-      Validator._extendRule(name, schema);
-      return;
-    }
-
-    Validator._extendRule(name, {
-      validate: schema
-    });
   }
 
   /**
@@ -99,13 +81,6 @@ export default class Validator {
       // set the locale.
       Validator.locale = lang;
     }
-  }
-
-  /**
-   * Adds a custom validator to the list of validation rules.
-   */
-  extend(name: string, schema: ValidationRule) {
-    Validator.extend(name, schema);
   }
 
   /**
@@ -317,42 +292,6 @@ export default class Validator {
     }
 
     return params;
-  }
-
-  /**
-   * Merges a validator object into the RULES and Messages.
-   */
-  private static _extendRule(name: string, schema: ValidationRuleSchema) {
-    if (schema.message) {
-      Dictionary.getDriver().merge({
-        [Validator.locale]: {
-          messages: {
-            [name]: schema.message
-          }
-        }
-      });
-    }
-
-    RuleContainer.extend(name, schema);
-  }
-
-  /**
-   * Guards from extension violations.
-   */
-  private static _guardExtend(name: string, validator: ValidationRule) {
-    if (isCallable(validator)) {
-      return;
-    }
-
-    if (isCallable(validator.validate)) {
-      return;
-    }
-
-    if (RuleContainer.getRuleDefinition(name)) {
-      return;
-    }
-
-    throw new Error(`Extension Error: The validator '${name}' must be a function or have a 'validate' method.`);
   }
 
   /**
