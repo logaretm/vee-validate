@@ -1,6 +1,6 @@
 import { getPath } from './utils';
 import { InteractionModeFactory } from './modes';
-import { RootI18nDictionary } from './core/i18n';
+import { ValidationMessageGenerator } from './types';
 
 type ValidationClass = string | string[] | undefined;
 
@@ -15,19 +15,20 @@ export interface ValidationClassMap {
 }
 
 export interface VeeValidateConfig {
-  locale: string;
   bails: boolean;
   aria: boolean;
   validity: boolean;
   useConstraintAttrs: boolean;
   mode: string | InteractionModeFactory;
   classNames: ValidationClassMap;
-  dictionary: RootI18nDictionary;
   delay: number;
+  defaultMessage: ValidationMessageGenerator;
 }
 
 const DEFAULT_CONFIG: VeeValidateConfig = {
-  locale: 'en',
+  defaultMessage: (field: string) => {
+    return `${field} is not valid.`;
+  },
   classNames: {
     touched: 'touched', // the control has been blurred
     untouched: 'untouched', // the control hasn't been blurred
@@ -41,7 +42,6 @@ const DEFAULT_CONFIG: VeeValidateConfig = {
   validity: false,
   mode: 'aggressive',
   useConstraintAttrs: true,
-  dictionary: {},
   delay: 0
 };
 

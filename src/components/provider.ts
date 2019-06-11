@@ -241,7 +241,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     },
     registerField() {
       if (!VALIDATOR) {
-        VALIDATOR = new Validator({ bails: getConfig().bails });
+        VALIDATOR = new Validator();
       }
 
       updateRenderingContextRefs(this);

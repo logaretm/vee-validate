@@ -11,7 +11,7 @@ export type VueValidationContext = Vue & {
 };
 
 export interface ValidationMessageGenerator {
-  (field: string, params: any[], data: any): string;
+  (field: string, params?: any[] | { [k: string]: any }, data?: any): string;
 }
 
 export interface ValidationRuleResult {

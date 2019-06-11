@@ -1,12 +1,7 @@
-import Dictionary from '../dictionary';
 import RuleContainer from './ruleContainer';
-import { PartialI18nDictionary, RootI18nDictionary } from './i18n';
 import { isObject, getPath, isNullOrUndefined, normalizeRules, isEmptyArray } from '../utils';
-import { ValidationResult, RuleParamSchema } from '../types';
-
-interface ValidatorOptions {
-  bails?: boolean;
-}
+import { ValidationResult, RuleParamSchema, ValidationRuleSchema } from '../types';
+import { getConfig } from '../config';
 
 interface FieldMeta {
   name: string;
@@ -18,71 +13,6 @@ interface FieldMeta {
 }
 
 export class Validator {
-  bails: boolean;
-  constructor(options: ValidatorOptions = { bails: true }) {
-    this.bails = !!(!isNullOrUndefined(options && options.bails) ? options.bails : true);
-  }
-
-  /**
-   * Getter for the current locale.
-   */
-  get locale() {
-    return Validator.locale;
-  }
-
-  /**
-   * Setter for the validator locale.
-   */
-  set locale(value) {
-    Validator.locale = value;
-  }
-
-  static get locale() {
-    return Dictionary.getDriver().locale;
-  }
-
-  /**
-   * Setter for the validator locale.
-   */
-  static set locale(value) {
-    // TODO: Handle setting the locale.
-  }
-
-  /**
-   * Adds and sets the current locale for the validator.
-   */
-  localize(lang: string, dictionary: PartialI18nDictionary) {
-    Validator.localize(lang, dictionary);
-  }
-
-  static localize(rootDictionary: RootI18nDictionary): void;
-  static localize(lang: string, langDictionary: PartialI18nDictionary): void;
-
-  /**
-   * Adds and sets the current locale for the validator.
-   */
-  static localize(lang: string | RootI18nDictionary, dictionary?: PartialI18nDictionary) {
-    if (isObject(lang)) {
-      Dictionary.getDriver().merge(lang);
-      return;
-    }
-
-    // merge the dictionary.
-    if (dictionary) {
-      const locale = lang || dictionary.name;
-      if (!locale) return;
-
-      Dictionary.getDriver().merge({
-        [locale]: dictionary
-      });
-    }
-
-    if (lang) {
-      // set the locale.
-      Validator.locale = lang;
-    }
-  }
-
   /**
    * Validates a value against the rules.
    */
@@ -90,7 +20,7 @@ export class Validator {
     const field: FieldMeta = {
       name: (options && options.name) || '{field}',
       rules: normalizeRules(rules),
-      bails: getPath('bails', options, this.bails),
+      bails: getPath('bails', options, true),
       forceRequired: false,
       crossTable: options && options.values,
       names: (options && options.names) || {}
@@ -157,7 +87,7 @@ export class Validator {
   private async _shouldSkip(field: FieldMeta, value: any) {
     const requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
     const length = requireRules.length;
-    const errors: ReturnType<typeof Validator.prototype._createFieldError>[] = [];
+    const errors: ReturnType<typeof Validator.prototype._generateFieldError>[] = [];
     let isRequired = false;
     for (let i = 0; i < length; i++) {
       let rule = requireRules[i];
@@ -220,7 +150,30 @@ export class Validator {
     return {
       valid: result.valid,
       data: result.data || {},
-      errors: result.valid ? [] : [this._createFieldError(field, rule, params, result.data)]
+      errors: result.valid ? [] : [this._generateFieldError(field, ruleSchema, rule.name, params, result.data)]
+    };
+  }
+
+  /**
+   * Generates error messages.
+   */
+  _generateFieldError(
+    field: FieldMeta,
+    ruleSchema: ValidationRuleSchema,
+    ruleName: string,
+    params: { [k: string]: any },
+    data: any
+  ) {
+    if (ruleSchema.message) {
+      return {
+        msg: ruleSchema.message(field.name, params, data),
+        rule: ruleName
+      };
+    }
+
+    return {
+      msg: getConfig().defaultMessage(field.name),
+      rule: ruleName
     };
   }
 
@@ -292,37 +245,5 @@ export class Validator {
     }
 
     return params;
-  }
-
-  /**
-   * Creates a Field Error Object.
-   */
-  private _createFieldError(field: FieldMeta, rule: any, params: any, data: any) {
-    return {
-      field: field.name,
-      msg: this._formatErrorMessage(field, rule, params, data),
-      rule: rule.name,
-      regenerate: () => {
-        return this._formatErrorMessage(field, rule, params, data);
-      }
-    };
-  }
-
-  /**
-   * Formats an error message for field and a rule.
-   */
-  private _formatErrorMessage(field: FieldMeta, rule: any, params: any, data: any = {}) {
-    const name = this._getFieldDisplayName(field);
-    data.targetName = field.names[rule.name] || '{target}';
-    data.targetName = Dictionary.getDriver().getAttribute(this.locale, data.targetName) || data.targetName;
-
-    return Dictionary.getDriver().getFieldMessage(this.locale, field.name, rule.name, [name, params, data]);
-  }
-
-  /**
-   * Resolves an appropriate display name, first checking 'data-as' or the registered 'prettyName'
-   */
-  private _getFieldDisplayName(field: { alias?: string; name: string }) {
-    return field.alias || Dictionary.getDriver().getAttribute(this.locale, field.name) || field.name;
   }
 }

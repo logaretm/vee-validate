@@ -1,5 +1,4 @@
-import { ValidationRule, ValidationRuleSchema } from './types';
-import Dictionary from './dictionary';
+import { ValidationRule } from './types';
 import RuleContainer from './core/ruleContainer';
 import { isCallable } from './utils';
 
@@ -12,30 +11,13 @@ export function extend(name: string, schema: ValidationRule) {
 
   // Full schema object.
   if (typeof schema === 'object') {
-    extendRule(name, schema);
+    RuleContainer.extend(name, schema);
     return;
   }
 
-  extendRule(name, {
+  RuleContainer.extend(name, {
     validate: schema
   });
-}
-
-/**
- * Merges a validator object into the RULES and Messages.
- */
-function extendRule(name: string, schema: ValidationRuleSchema) {
-  if (schema.message) {
-    Dictionary.getDriver().merge({
-      [Dictionary.getDriver().locale]: {
-        messages: {
-          [name]: schema.message
-        }
-      }
-    });
-  }
-
-  RuleContainer.extend(name, schema);
 }
 
 /**

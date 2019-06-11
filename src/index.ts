@@ -8,11 +8,10 @@ const version = '__VERSION__';
 const RulesAsList = Object.keys(Rules).map(key => ({ schema: (Rules as any)[key], name: key }));
 
 RulesAsList.forEach(({ name, schema }) => {
-  extend(name, schema);
+  extend(name, { ...schema, message: en.messages[name] });
 });
 
 // Merge the english messages.
-Validator.localize({ en });
 
 export { Validator, Rules, version, extend };
 export * from './setters';
