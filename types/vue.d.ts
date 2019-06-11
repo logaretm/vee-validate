@@ -3,7 +3,7 @@
  */
 
 import Vue, { ComponentOptions } from 'vue';
-import { ErrorBag, FieldFlagsBag, Validator, VeeValidateComponentOptions } from './vee-validate.d';
+import { Validator, VeeValidateComponentOptions } from './vee-validate.d';
 
 declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {
