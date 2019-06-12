@@ -29,13 +29,13 @@ const paths = {
 };
 
 const utils = {
-  stats ({ path, code }) {
+  stats({ path, code }) {
     const { size } = fs.statSync(path);
     const gzipped = gzipSize.sync(code);
 
     return `| Size: ${filesize(size)} | Gzip: ${filesize(gzipped)}`;
   },
-  async writeBundle ({ input, output }, fileName, minify = false) {
+  async writeBundle({ input, output }, fileName, minify = false) {
     const bundle = await rollup(input);
     const {
       output: [{ code }]
@@ -67,8 +67,8 @@ const builds = {
     name: 'VeeValidate',
     env: 'production'
   },
-  umdMinimal: {
-    input: 'src/index.minimal.ts',
+  umdFull: {
+    input: 'src/index.full.ts',
     format: 'umd',
     name: 'VeeValidate',
     env: 'production'
@@ -77,8 +77,8 @@ const builds = {
     input: 'src/index.ts',
     format: 'es'
   },
-  esmMinimal: {
-    input: 'src/index.minimal.ts',
+  esmFull: {
+    input: 'src/index.full.ts',
     format: 'es'
   },
   rules: {
@@ -87,7 +87,7 @@ const builds = {
   }
 };
 
-function genConfig (options) {
+function genConfig(options) {
   const config = {
     input: {
       input: options.input,

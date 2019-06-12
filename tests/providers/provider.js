@@ -1,7 +1,7 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import { renderToString } from '@vue/server-test-utils';
 import flushPromises from 'flush-promises';
-import { ValidationProvider, ValidationObserver, setMode, extend, withValidation } from '@/index';
+import { ValidationProvider, ValidationObserver, setMode, extend, withValidation } from '@/index.full';
 import InputWithoutValidation from './components/Input';
 import SelectWithoutValidation from './components/Select';
 

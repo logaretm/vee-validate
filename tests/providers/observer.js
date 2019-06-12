@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import { renderToString } from '@vue/server-test-utils';
-import { ValidationProvider, ValidationObserver } from '@/index';
+import { ValidationProvider, ValidationObserver } from '@/index.full';
 import flushPromises from 'flush-promises';
 
 const Vue = createLocalVue();
