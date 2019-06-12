@@ -478,8 +478,10 @@ export class Validator {
 export class ExtendOptions {
     hasTarget?: boolean;
     paramNames?: string[];
-    computesRequired?: Boolean
-    initial?: Boolean
+    computesRequired?: boolean;
+    initial?: boolean;
+    immediate?: boolean;
+    isDate?: boolean;
 }
 
 /**
