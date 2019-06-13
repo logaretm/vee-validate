@@ -70,6 +70,17 @@ test('can set messages', () => {
   expect(dict.getMessage('en', 'winter')).toBe('Winter is coming');
 });
 
+test('can set messages when no messages present', () => {
+  const dict = new Dictionary();
+  dict.merge({
+    'nl': {}
+  });
+
+  dict.setMessage('nl', 'winter', 'De winter komt er aan');
+
+  expect(dict.getMessage('nl', 'winter')).toBe('De winter komt er aan');
+});
+
 test('can set attributes', () => {
   const dict = new Dictionary({
     en: {

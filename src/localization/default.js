@@ -111,6 +111,10 @@ export default class Dictionary implements IDictionary {
         attributes: {}
       };
     }
+    
+    if (!this.container[locale].messages) {
+      this.container[locale].messages = {}
+    }
 
     this.container[locale].messages[key] = message;
   }
