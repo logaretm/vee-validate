@@ -1,6 +1,5 @@
 import en from '../locale/en';
 import * as Rules from './rules';
-import { Validator } from './core/validator';
 import { localize } from './localize';
 import { extend } from './extend';
 
@@ -15,6 +14,7 @@ RulesAsList.forEach(({ name, schema }) => {
 // Install locale
 localize('en', en);
 
-export { Validator, Rules, version, localize, extend };
+export { Rules, version, localize, extend };
 export * from './setters';
+export { validate } from './validate';
 export { ValidationProvider, ValidationObserver, withValidation } from './components';

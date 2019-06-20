@@ -1,5 +1,5 @@
 import { getConfig } from '../config';
-import { Validator } from '../core/validator';
+import { validate } from '../validate';
 import RuleContainer from '../core/ruleContainer';
 import { normalizeEvents, normalizeEventValue } from '../utils/events';
 import { createFlags, normalizeRules, isCallable, isNullOrUndefined, isEqual, computeClassObj } from '../utils';
@@ -7,8 +7,6 @@ import { extractVNodes, resolveRules, normalizeChildren } from '../utils/vnode';
 import Vue, { VNode, CreateElement, VueConstructor } from 'vue';
 import { ValidationResult, ValidationFlags, VeeObserver, VNodeWithVeeContext } from '../types';
 import { computeModeSetting, createValidationCtx, addListeners } from './common';
-
-let VALIDATOR: Validator;
 
 let PROVIDER_COUNTER = 0;
 
@@ -215,7 +213,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         configurable: false
       });
 
-      const result = await VALIDATOR.validate(this.value, rules, {
+      const result = await validate(this.value, rules, {
         name: this.name,
         values: createValuesLookup(this),
         bails: this.bails,
@@ -240,10 +238,6 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       });
     },
     registerField() {
-      if (!VALIDATOR) {
-        VALIDATOR = new Validator();
-      }
-
       updateRenderingContextRefs(this);
     }
   }

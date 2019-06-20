@@ -1,4 +1,4 @@
-export { Validator } from './core/validator';
+export { validate } from './validate';
 export { extend } from './extend';
 export { install } from './install';
 export * from './setters';
