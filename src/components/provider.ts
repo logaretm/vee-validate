@@ -1,6 +1,6 @@
 import { getConfig } from '../config';
 import { validate } from '../validate';
-import RuleContainer from '../core/ruleContainer';
+import { RuleContainer } from '../extend';
 import { normalizeEvents, normalizeEventValue } from '../utils/events';
 import { createFlags, normalizeRules, isCallable, isNullOrUndefined, isEqual, computeClassObj } from '../utils';
 import { extractVNodes, resolveRules, normalizeChildren } from '../utils/vnode';

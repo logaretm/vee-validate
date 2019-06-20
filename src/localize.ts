@@ -1,7 +1,6 @@
 import { isCallable, merge, interpolate } from './utils';
-import { ValidationMessageTemplate, ValidationRuleSchema } from './types';
-import RuleContainer from './core/ruleContainer';
-import { extend } from './extend';
+import { ValidationMessageTemplate } from './types';
+import { extend, RuleContainer } from './extend';
 import { getConfig } from './config';
 
 interface PartialI18nDictionary {

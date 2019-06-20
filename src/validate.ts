@@ -1,4 +1,4 @@
-import RuleContainer from './core/ruleContainer';
+import { RuleContainer } from './extend';
 import { isObject, getPath, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate } from './utils';
 import { ValidationResult, RuleParamSchema, ValidationRuleSchema, ValidationMessageTemplate } from './types';
 import { getConfig } from './config';
