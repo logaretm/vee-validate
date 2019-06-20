@@ -341,3 +341,9 @@ export const defineNonReactive = (obj: any, prop: string, value: any) => {
     value
   });
 };
+
+export const interpolate = (template: string, values: { [k: string]: any }) => {
+  return template.replace(/\{([^}]+)\}/g, (_, p) => {
+    return values[p] || `{${p}}`;
+  });
+}

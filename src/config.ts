@@ -1,6 +1,6 @@
 import { getPath } from './utils';
 import { InteractionModeFactory } from './modes';
-import { ValidationMessageGenerator } from './types';
+import { ValidationMessageTemplate } from './types';
 
 type ValidationClass = string | string[] | undefined;
 
@@ -22,13 +22,11 @@ export interface VeeValidateConfig {
   mode: string | InteractionModeFactory;
   classNames: ValidationClassMap;
   delay: number;
-  defaultMessage: ValidationMessageGenerator;
+  defaultMessage: ValidationMessageTemplate;
 }
 
 const DEFAULT_CONFIG: VeeValidateConfig = {
-  defaultMessage: (field: string) => {
-    return `${field} is not valid.`;
-  },
+  defaultMessage: `{_field_} is not valid.`,
   classNames: {
     touched: 'touched', // the control has been blurred
     untouched: 'untouched', // the control hasn't been blurred

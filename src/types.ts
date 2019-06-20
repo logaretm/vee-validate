@@ -11,8 +11,10 @@ export type VueValidationContext = Vue & {
 };
 
 export interface ValidationMessageGenerator {
-  (field: string, params?: any[] | { [k: string]: any }, data?: any): string;
+  (field: string, params?: { [k: string]: any }): string;
 }
+
+export type ValidationMessageTemplate = string | ValidationMessageGenerator;
 
 export interface ValidationRuleResult {
   data?: any;
@@ -32,7 +34,7 @@ export interface RuleParamSchema {
 }
 
 export interface ValidationRuleSchema {
-  validate: ValidationRuleFunction;
+  validate?: ValidationRuleFunction;
   params?: RuleParamSchema[];
   message?: ValidationMessageGenerator;
   immediate?: boolean;

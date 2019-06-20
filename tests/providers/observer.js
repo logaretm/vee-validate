@@ -7,7 +7,7 @@ const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
-const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required.';
+const DEFAULT_REQUIRED_MESSAGE = 'The {field} is required.';
 
 describe('Validation Observer Component', () => {
   test('renders the slot', () => {
@@ -269,7 +269,7 @@ describe('Validation Observer Component', () => {
     input.setValue('1');
     await flushPromises();
 
-    expect(wrapper.find('p').text()).toContain('The {field} field may only contain alphabetic characters.');
+    expect(wrapper.find('p').text()).toContain('The {field} may only contain alphabetic characters.');
   });
 
   test('validates and resets nested observers', async () => {

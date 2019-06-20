@@ -9,7 +9,7 @@ const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
-const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required.';
+const DEFAULT_REQUIRED_MESSAGE = 'The {field} is required.';
 
 describe('Validation Provider Component', () => {
   test('renders its tag attribute', () => {
@@ -29,14 +29,17 @@ describe('Validation Provider Component', () => {
   });
 
   test('can be renderless with slim prop', () => {
-    const wrapper = mount({
-      data: () => ({ val: '' }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({ val: '' }),
+        template: `
         <ValidationProvider v-slot="ctx" slim>
           <input v-model="val" type="text">
         </ValidationProvider>
       `
-    }, { localVue: Vue });
+      },
+      { localVue: Vue }
+    );
 
     expect(wrapper.html()).toBe(`<input type="text">`);
   });
@@ -572,8 +575,8 @@ describe('Validation Provider Component', () => {
 
     const errors = wrapper.findAll('p');
     expect(errors).toHaveLength(2);
-    expect(errors.at(0).text()).toBe('The {field} field must be a valid email.');
-    expect(errors.at(1).text()).toBe('The {field} field must be at least 3 characters.');
+    expect(errors.at(0).text()).toBe('The {field} must be a valid email.');
+    expect(errors.at(1).text()).toBe('The {field} must be at least 3 characters.');
   });
 
   const sleep = wait => new Promise(resolve => setTimeout(resolve, wait));
@@ -607,7 +610,7 @@ describe('Validation Provider Component', () => {
   test('avoids race conditions between successive validations', async () => {
     // A decreasing timeout (the most recent validation will finish before new ones).
     extend('longRunning', {
-      getMessage: (_, __, data) => data,
+      message: (_, __, data) => data,
       validate: value => {
         return new Promise(resolve => {
           setTimeout(() => {
@@ -662,6 +665,11 @@ describe('Validation Provider Component', () => {
 
     const input = wrapper.find('input');
     input.setValue('');
+    await flushPromises();
+    await flushPromises();
+    await flushPromises();
+    await flushPromises();
+    await flushPromises();
     await flushPromises();
 
     const error = wrapper.find('#error');
@@ -728,7 +736,7 @@ describe('Validation Provider Component', () => {
 
     input.setValue('12');
     await flushPromises();
-    expect(error.text()).toBe('The {field} field must be at least 3 characters.');
+    expect(error.text()).toBe('The {field} must be at least 3 characters.');
 
     input.setValue('123');
     await flushPromises();

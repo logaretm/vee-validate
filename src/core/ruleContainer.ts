@@ -3,20 +3,32 @@ import { merge } from '../utils';
 
 const RULES: { [k: string]: ValidationRuleSchema } = {};
 
+type RuleIterateFn = (ruleName: string, schema: ValidationRuleSchema) => any;
+
 export default class RuleContainer {
   static extend(name: string, schema: ValidationRuleSchema) {
-    // Rule already exists.
-    let rule = {
-      ...{ immediate: true, computesRequired: false },
-      ...schema
-    };
-
-    // rule already exists, overwrite it.
+    // if rule already exists, overwrite it.
+    let rule: ValidationRuleSchema;
     if (RULES[name]) {
-      rule = merge(RULES[name], rule);
+      rule = merge(RULES[name], schema);
+    } else {
+      rule = {
+        immediate: true,
+        computesRequired: false,
+        ...schema
+      };
     }
 
     RULES[name] = rule;
+  }
+
+  static iterate(fn: RuleIterateFn) {
+    const keys = Object.keys(RULES);
+    const length = keys.length;
+
+    for (let i = 0; i < length; i++) {
+      fn(keys[i], RULES[keys[i]]);
+    }
   }
 
   static isImmediate(name: string) {

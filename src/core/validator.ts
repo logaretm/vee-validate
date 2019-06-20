@@ -1,6 +1,6 @@
 import RuleContainer from './ruleContainer';
-import { isObject, getPath, isNullOrUndefined, normalizeRules, isEmptyArray } from '../utils';
-import { ValidationResult, RuleParamSchema, ValidationRuleSchema } from '../types';
+import { isObject, getPath, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate } from '../utils';
+import { ValidationResult, RuleParamSchema, ValidationRuleSchema, ValidationMessageTemplate } from '../types';
 import { getConfig } from '../config';
 
 interface FieldMeta {
@@ -164,17 +164,30 @@ export class Validator {
     params: { [k: string]: any },
     data: any
   ) {
+    const values = {
+      ...(params ? params : {}),
+      ...(data ? data : {})
+    };
+
     if (ruleSchema.message) {
       return {
-        msg: ruleSchema.message(field.name, params, data),
+        msg: this._normalizeMessage(ruleSchema.message, field.name, values),
         rule: ruleName
       };
     }
 
     return {
-      msg: getConfig().defaultMessage(field.name),
+      msg: this._normalizeMessage(getConfig().defaultMessage, field.name, values),
       rule: ruleName
     };
+  }
+
+  _normalizeMessage(template: ValidationMessageTemplate, field: string, values: { [k: string]: any }) {
+    if (typeof template === 'function') {
+      return template(field, values);
+    }
+
+    return interpolate(template, { ...values, _field_: field });
   }
 
   private _buildParams(
