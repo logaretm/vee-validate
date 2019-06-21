@@ -237,8 +237,13 @@ function _buildParams(
         value = provided[i];
       }
     } else {
-      // map it from the object if it exists.
-      value = options.name in provided ? provided[options.name] : value;
+      // If the param exists in the provided object.
+      if (options.name in provided) {
+        value = provided[options.name];
+        // if the provided is the first param value.
+      } else if (definedRules.length === 1) {
+        value = provided;
+      }
     }
 
     // if the param is a target, resolve the target value.

@@ -2,7 +2,7 @@ import { RuleParamSchema } from '../types';
 
 const validate = (value: any, { regex }: any): boolean => {
   if (Array.isArray(value)) {
-    return value.every(val => validate(val, { regex }));
+    return value.every(val => validate(val, { regex: regex }));
   }
 
   return regex.test(String(value));

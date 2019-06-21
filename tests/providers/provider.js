@@ -231,6 +231,78 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toBe('The {field} must be at least 3 characters.');
   });
 
+  test('validates on rule change: testing arrays', async () => {
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: '',
+          rules: { required: true, included: [1, 2, 3] }
+        }),
+        template: `
+        <div>
+          <ValidationProvider :rules="rules" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      `
+      },
+      { localVue: Vue, sync: false }
+    );
+
+    const input = wrapper.find('input');
+    const error = wrapper.find('#error');
+    input.setValue('4');
+    // flush the pending validation.
+    await flushPromises();
+
+    expect(error.text()).toBe('{field} is not valid.');
+
+    wrapper.vm.rules = {
+      required: true,
+      included: [1, 2, 3, 4]
+    };
+
+    await flushPromises();
+    expect(error.text()).toBe('');
+  });
+
+  test('validates on rule change: testing regex', async () => {
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: '',
+          rules: { required: true, regex: /[0-9]+/i }
+        }),
+        template: `
+        <div>
+          <ValidationProvider :rules="rules" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      `
+      },
+      { localVue: Vue, sync: false }
+    );
+
+    const input = wrapper.find('input');
+    const error = wrapper.find('#error');
+    input.setValue('88');
+    // flush the pending validation.
+    await flushPromises();
+
+    expect(error.text()).toBe('');
+
+    wrapper.vm.rules = {
+      required: false,
+      regex: /^[0-9]$/i
+    };
+
+    await flushPromises();
+    expect(error.text()).toBe('The {field} format is invalid.');
+  });
+
   test('validates components on input by default', async () => {
     const wrapper = mount(
       {
