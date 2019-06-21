@@ -1,4 +1,6 @@
-import { ValidationFlags } from "./types";
+import { ValidationFlags } from './types';
+import { setConfig } from './config';
+import { isCallable } from './utils';
 
 interface ModeContext {
   errors: string[];
@@ -42,4 +44,17 @@ export const modes: { [k: string]: InteractionModeFactory } = {
   eager,
   passive,
   lazy
+};
+
+export const setInteractionMode = (mode: string, implementation: InteractionModeFactory) => {
+  setConfig({ mode });
+  if (!implementation) {
+    return;
+  }
+
+  if (!isCallable(implementation)) {
+    throw new Error('A mode implementation must be a function');
+  }
+
+  modes[mode] = implementation;
 };

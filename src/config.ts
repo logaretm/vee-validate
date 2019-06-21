@@ -1,4 +1,3 @@
-import { getPath } from './utils';
 import { InteractionModeFactory } from './modes';
 import { ValidationMessageTemplate } from './types';
 
@@ -49,4 +48,8 @@ export const getConfig = () => currentConfig;
 
 export const setConfig = (newConf: Partial<VeeValidateConfig>) => {
   currentConfig = { ...currentConfig, ...newConf };
+};
+
+export const configure = (cfg: Partial<VeeValidateConfig>) => {
+  setConfig(cfg);
 };
