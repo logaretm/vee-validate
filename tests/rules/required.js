@@ -1,22 +1,8 @@
 import { validate } from '@/rules/required';
 
-const valid = [
-  'asjdj',
-  0,
-  'undefined',
-  'null',
-  's ',
-  true,
-  false
-];
+const valid = ['asjdj', 0, 'undefined', 'null', 's ', true, false];
 
-const invalid = [
-  '',
-  ' ',
-  [],
-  undefined,
-  null
-];
+const invalid = ['', ' ', [], undefined, null];
 
 test('validates required', () => {
   expect.assertions(12);

@@ -1,20 +1,8 @@
 import { validate } from '@/rules/max';
 
-const valid = [
-  123,
-  'abc',
-  1,
-  12,
-  undefined,
-  null,
-  ''
-];
+const valid = [123, 'abc', 1, 12, undefined, null, ''];
 
-const invalid = [
-  'abcde',
-  'null',
-  'undefined'
-];
+const invalid = ['abcde', 'null', 'undefined'];
 
 test('validates maximum number of characters in a string', () => {
   expect.assertions(10);

@@ -5,7 +5,6 @@ export const isEvent = (evt: any): evt is Event => {
     return false;
   }
 
-  // tslint:disable-next-line
   if (typeof Event !== 'undefined' && isCallable(Event) && evt instanceof Event) {
     return true;
   }

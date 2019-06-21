@@ -12,13 +12,7 @@ const valid = [
   ['abcdefg', 'hijk', 'lmnopq']
 ];
 
-const invalid = [
-  'this is sparta',
-  '1234567a89',
-  {},
-  ' ',
-  ['abcdefg', 'hijk', 'lmnopq123']
-];
+const invalid = ['this is sparta', '1234567a89', {}, ' ', ['abcdefg', 'hijk', 'lmnopq123']];
 
 test('validates that the string may only contains alphabetic characters', () => {
   expect.assertions(14);

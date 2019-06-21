@@ -1,4 +1,4 @@
-import { toArray } from "../utils";
+import { toArray } from '../utils';
 
 const validate = (value: any, options: any[]): boolean => {
   if (Array.isArray(value)) {
@@ -6,7 +6,7 @@ const validate = (value: any, options: any[]): boolean => {
   }
 
   return toArray(options).some(item => {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     return item == value;
   });
 };

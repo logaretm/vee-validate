@@ -11,44 +11,54 @@ const DEFAULT_REQUIRED_MESSAGE = 'The {field} is required.';
 
 describe('Validation Observer Component', () => {
   test('renders the slot', () => {
-    const wrapper = mount({
-      template: `
+    const wrapper = mount(
+      {
+        template: `
         <ValidationObserver tag="form" v-slot="ctx">
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     expect(wrapper.html()).toBe(`<form></form>`);
   });
 
   test('renders the scoped slot in SSR', () => {
-    const output = renderToString({
-      template: `
+    const output = renderToString(
+      {
+        template: `
         <ValidationObserver tag="form" v-slot="ctx">
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     expect(output).toBe(`<form data-server-rendered="true"></form>`);
   });
 
   test('renders the default slot if no scoped slots in SSR', () => {
-    const output = renderToString({
-      template: `
+    const output = renderToString(
+      {
+        template: `
         <ValidationObserver tag="form">
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     expect(output).toBe(`<form data-server-rendered="true"></form>`);
   });
 
   test('observes the current state of providers', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationObserver v-slot="{ valid }">
           <ValidationProvider rules="required" v-slot="ctx">
             <input v-model="value" type="text">
@@ -57,7 +67,9 @@ describe('Validation Observer Component', () => {
           <span id="state">{{ valid }}</span>
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const stateSpan = wrapper.find('#state');
     const input = wrapper.find('input');
@@ -73,11 +85,12 @@ describe('Validation Observer Component', () => {
   });
 
   test('triggers validation manually on its children providers using refs', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationObserver ref="obs" v-slot="ctx">
           <ValidationProvider rules="required" v-slot="{ errors }">
             <input v-model="value" type="text">
@@ -85,7 +98,9 @@ describe('Validation Observer Component', () => {
           </ValidationProvider>
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const error = wrapper.find('#error');
     await flushPromises();
@@ -97,17 +112,18 @@ describe('Validation Observer Component', () => {
   });
 
   test('triggers validation manually on its children providers using validate on v-slot', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: '',
-        calls: 0
-      }),
-      methods: {
-        submit () {
-          this.calls++;
-        }
-      },
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: '',
+          calls: 0
+        }),
+        methods: {
+          submit() {
+            this.calls++;
+          }
+        },
+        template: `
         <ValidationObserver v-slot="ctx">
           <ValidationProvider rules="required" v-slot="{ errors }">
             <input v-model="value" type="text">
@@ -116,7 +132,9 @@ describe('Validation Observer Component', () => {
           <button @click="ctx.validate().then(submit)">Validate</button>
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const error = wrapper.find('#error');
     const input = wrapper.find('input');
@@ -136,11 +154,12 @@ describe('Validation Observer Component', () => {
   });
 
   test('removes child ref when the child is destroyed', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationObserver ref="obs" v-slot="ctx">
           <ValidationProvider rules="required" vid="id" v-slot="{ errors }">
             <input v-model="value" type="text">
@@ -148,7 +167,9 @@ describe('Validation Observer Component', () => {
           </ValidationProvider>
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const obs = wrapper.vm.$refs.obs;
     expect(obs.refs).toHaveProperty('id');
@@ -159,11 +180,12 @@ describe('Validation Observer Component', () => {
   });
 
   test('resets child refs', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationObserver ref="obs" v-slot="ctx">
           <ValidationProvider rules="required" v-slot="{ errors }">
             <input v-model="value" type="text">
@@ -171,7 +193,9 @@ describe('Validation Observer Component', () => {
           </ValidationProvider>
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const error = wrapper.find('#error');
     await flushPromises();
@@ -188,11 +212,12 @@ describe('Validation Observer Component', () => {
   });
 
   test('resets child refs using reset on the v-slot data', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: ''
+        }),
+        template: `
         <ValidationObserver ref="obs" v-slot="ctx">
           <ValidationProvider rules="required" v-slot="{ errors }">
             <input v-model="value" type="text">
@@ -201,7 +226,9 @@ describe('Validation Observer Component', () => {
           <button @click="ctx.reset()">Reset</button>
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     const error = wrapper.find('#error');
     await flushPromises();
@@ -219,12 +246,13 @@ describe('Validation Observer Component', () => {
   });
 
   test('collects errors from child providers', async () => {
-    const wrapper = mount({
-      data: () => ({
-        email: '',
-        name: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          email: '',
+          name: ''
+        }),
+        template: `
         <ValidationObserver ref="obs" v-slot="{ errors }">
           <ValidationProvider vid="name" rules="required" v-slot="ctx">
             <input v-model="name" type="text">
@@ -235,7 +263,9 @@ describe('Validation Observer Component', () => {
           <p v-for="fieldErrors in errors">{{ fieldErrors[0] }}</p>
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     await flushPromises();
 
@@ -248,11 +278,12 @@ describe('Validation Observer Component', () => {
   });
 
   test('exposes nested observers state', async () => {
-    const wrapper = mount({
-      data: () => ({
-        name: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          name: ''
+        }),
+        template: `
         <ValidationObserver ref="obs" v-slot="state">
           <ValidationObserver>
             <ValidationProvider vid="name" rules="required|alpha" v-slot="_">
@@ -262,7 +293,9 @@ describe('Validation Observer Component', () => {
           <p>{{ state.errors }}</p>
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     await flushPromises();
     const input = wrapper.find('input');
@@ -273,11 +306,12 @@ describe('Validation Observer Component', () => {
   });
 
   test('validates and resets nested observers', async () => {
-    const wrapper = mount({
-      data: () => ({
-        name: ''
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          name: ''
+        }),
+        template: `
         <ValidationObserver ref="obs" v-slot="state">
           <ValidationObserver>
             <ValidationProvider vid="name" rules="required|alpha" v-slot="_">
@@ -287,7 +321,9 @@ describe('Validation Observer Component', () => {
           <p>{{ state.errors }}</p>
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     await flushPromises();
     expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
@@ -298,12 +334,13 @@ describe('Validation Observer Component', () => {
   });
 
   test('handles unmouting nested observers', async () => {
-    const wrapper = mount({
-      data: () => ({
-        name: '',
-        isMounted: true
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          name: '',
+          isMounted: true
+        }),
+        template: `
         <ValidationObserver ref="obs" v-slot="state">
           <ValidationObserver v-if="isMounted" vid="NESTED_OBS">
             <ValidationProvider vid="name" rules="required|alpha" v-slot="_">
@@ -313,7 +350,9 @@ describe('Validation Observer Component', () => {
           <p>{{ state.errors }}</p>
         </ValidationObserver>
       `
-    }, { localVue: Vue, sync: false });
+      },
+      { localVue: Vue, sync: false }
+    );
 
     await flushPromises();
     expect(wrapper.find('p').text()).toContain(`NESTED_OBS`); // observer is mounted.
@@ -325,12 +364,13 @@ describe('Validation Observer Component', () => {
   });
 
   test('persist provider state after destroyed', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: '',
-        isHidden: false
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: '',
+          isHidden: false
+        }),
+        template: `
       <div>
         <ValidationObserver>
           <div v-if="!isHidden">
@@ -348,7 +388,9 @@ describe('Validation Observer Component', () => {
         <button @click="isHidden = !isHidden">Toggle</button>
       </div>
       `
-    }, { localVue: Vue });
+      },
+      { localVue: Vue }
+    );
 
     const button = wrapper.find('button');
     const input = wrapper.find('input');
@@ -368,12 +410,13 @@ describe('Validation Observer Component', () => {
   // This is a vue-test-utils issue, maybe after they disable the "sync" behavior.
   // eslint-disable-next-line
   test.skip('handles keep-alive activation/deactivation life-cycles', async () => {
-    const wrapper = mount({
-      data: () => ({
-        value: '',
-        isHidden: false
-      }),
-      template: `
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: '',
+          isHidden: false
+        }),
+        template: `
       <div>
         <ValidationObserver v-slot="{ errors }">
           <keep-alive>
@@ -391,7 +434,9 @@ describe('Validation Observer Component', () => {
         <button @click="isHidden = !isHidden">Toggle</button>
       </div>
       `
-    }, { localVue: Vue });
+      },
+      { localVue: Vue }
+    );
     await flushPromises();
 
     const button = wrapper.find('button');

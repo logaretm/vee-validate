@@ -6,7 +6,7 @@ const RULES: { [k: string]: ValidationRuleSchema } = {};
 type RuleIterateFn = (ruleName: string, schema: ValidationRuleSchema) => any;
 
 export class RuleContainer {
-  static extend(name: string, schema: ValidationRuleSchema) {
+  public static extend(name: string, schema: ValidationRuleSchema) {
     // if rule already exists, overwrite it.
     let rule: ValidationRuleSchema;
     if (RULES[name]) {
@@ -22,7 +22,7 @@ export class RuleContainer {
     RULES[name] = rule;
   }
 
-  static iterate(fn: RuleIterateFn) {
+  public static iterate(fn: RuleIterateFn) {
     const keys = Object.keys(RULES);
     const length = keys.length;
 
@@ -31,15 +31,15 @@ export class RuleContainer {
     }
   }
 
-  static isImmediate(name: string) {
+  public static isImmediate(name: string) {
     return !!(RULES[name] && RULES[name].immediate);
   }
 
-  static isRequireRule(name: string) {
+  public static isRequireRule(name: string) {
     return !!(RULES[name] && RULES[name].computesRequired);
   }
 
-  static isTargetRule(name: string) {
+  public static isTargetRule(name: string) {
     const definition = RuleContainer.getRuleDefinition(name);
     if (!definition.params) {
       return false;
@@ -48,7 +48,7 @@ export class RuleContainer {
     return definition.params.some(param => !!param.isTarget);
   }
 
-  static getRuleDefinition(ruleName: string) {
+  public static getRuleDefinition(ruleName: string) {
     return RULES[ruleName];
   }
 }

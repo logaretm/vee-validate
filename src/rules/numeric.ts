@@ -1,4 +1,3 @@
-
 const ar = /^[٠١٢٣٤٥٦٧٨٩]+$/;
 const en = /^[0-9]+$/;
 
@@ -16,9 +15,7 @@ const validate = (value: any) => {
   return testValue(value);
 };
 
-export {
-  validate
-};
+export { validate };
 
 export default {
   validate

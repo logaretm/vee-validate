@@ -15,14 +15,7 @@ const valid = [
   ['adasd dasdasda', 'yy']
 ];
 
-const invalid = [
-  '123-abc',
-  {},
-  '1234567890',
-  'abc123',
-  123,
-  ['adasd dasdasda', '123']
-];
+const invalid = ['123-abc', {}, '1234567890', 'abc123', 123, ['adasd dasdasda', '123']];
 
 test('validates that the string may only contain alphabetic characters and spaces', () => {
   expect.assertions(18);

@@ -42,7 +42,7 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
     // Props are any attrs not associated with ValidationProvider Plus the model prop.
     // WARNING: Accidental prop overwrite will probably happen.
     const { prop } = findModelConfig(this.$vnode) || { prop: 'value' };
-    const props = { ...this.$attrs, ...{ [prop]: model.value }, ...mapProps(vctx) };
+    const props = { ...this.$attrs, ...{ [prop]: model && model.value }, ...mapProps(vctx) };
 
     return h(
       options,

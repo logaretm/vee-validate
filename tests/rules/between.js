@@ -1,26 +1,8 @@
 import { validate } from '@/rules/between';
 
-const valid = [
-  '1',
-  2,
-  3,
-  [1, 2, 3]
-];
+const valid = ['1', 2, 3, [1, 2, 3]];
 
-const invalid = [
-  '',
-  undefined,
-  null,
-  {},
-  '1234',
-  '12',
-  'abc',
-  '12a',
-  0,
-  4,
-  -1,
-  [4, 5, 6]
-];
+const invalid = ['', undefined, null, {}, '1234', '12', 'abc', '12a', 0, 4, -1, [4, 5, 6]];
 
 test('validates numbers range', () => {
   expect.assertions(16);

@@ -6,9 +6,7 @@ const validate = (value: any) => {
   return /^-?[0-9]+$/.test(String(value));
 };
 
-export {
-  validate
-};
+export { validate };
 
 export default {
   validate

@@ -1,8 +1,9 @@
 import { ValidationFlags } from '../types';
 import { ValidationClassMap } from '../config';
 
-export const isNaN = (value: unknown) => {
+export const isNaN = (value: unknown): boolean => {
   // NaN is the one value that does not equal itself.
+  // eslint-disable-next-line
   return value !== value;
 };
 
@@ -28,6 +29,16 @@ export const createFlags = (): ValidationFlags => ({
   required: false,
   changed: false
 });
+
+/**
+ * Checks if the value is an object.
+ */
+export const isObject = (obj: unknown): obj is { [x: string]: any } =>
+  obj !== null && obj && typeof obj === 'object' && !Array.isArray(obj);
+
+export function identity<T>(x: T): T {
+  return x;
+}
 
 /**
  * Shallow object comparison.
@@ -66,6 +77,10 @@ export const isEqual = (lhs: any, rhs: any): boolean => {
   }
 
   return lhs === rhs;
+};
+
+export const includes = (collection: any[] | string, item: any): boolean => {
+  return collection.indexOf(item) !== -1;
 };
 
 /**
@@ -109,6 +124,13 @@ export const debounce = (fn: Function, wait = 0, token = { cancelled: false }) =
     timeout = setTimeout(later, wait) as any;
     if (!timeout) fn(...args);
   };
+};
+
+/**
+ * Emits a warning to the console.
+ */
+export const warn = (message: string) => {
+  console.warn(`[vee-validate] ${message}`);
 };
 
 /**
@@ -170,22 +192,6 @@ export const normalizeRules = (rules: any) => {
   }, acc);
 };
 
-/**
- * Emits a warning to the console.
- */
-export const warn = (message: string) => {
-  console.warn(`[vee-validate] ${message}`);
-};
-
-/**
- * Checks if the value is an object.
- */
-export const isObject = (obj: unknown): obj is { [x: string]: any } =>
-  obj !== null && obj && typeof obj === 'object' && !Array.isArray(obj);
-
-export function identity<T>(x: T) {
-  return x;
-}
 /**
  * Checks if a function is callable.
  */
@@ -259,7 +265,7 @@ export function find<T>(arrayLike: ArrayLike<T>, predicate: (item: T) => boolean
   return idx === -1 ? undefined : array[idx];
 }
 
-export const merge = (target: any, source: any) => {
+export function merge(target: any, source: any) {
   if (!(isObject(target) && isObject(source))) {
     return target;
   }
@@ -278,7 +284,7 @@ export const merge = (target: any, source: any) => {
   });
 
   return target;
-};
+}
 
 export function values<T>(obj: { [x: string]: T }): T[] {
   if (isCallable(Object.values)) {
@@ -290,16 +296,12 @@ export function values<T>(obj: { [x: string]: T }): T[] {
   return Object.keys(obj).map(k => obj[k]);
 }
 
-export const includes = (collection: any[] | string, item: any) => {
-  return collection.indexOf(item) !== -1;
-};
-
 export const isEmptyArray = (arr: any[]): boolean => {
   return Array.isArray(arr) && arr.length === 0;
 };
 
-export const interpolate = (template: string, values: { [k: string]: any }) => {
-  return template.replace(/\{([^}]+)\}/g, (_, p) => {
+export const interpolate = (template: string, values: { [k: string]: any }): string => {
+  return template.replace(/\{([^}]+)\}/g, (_, p): string => {
     return values[p] || `{${p}}`;
   });
 };

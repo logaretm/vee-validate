@@ -1,21 +1,8 @@
 import { validate } from '@/rules/max_value';
 
-const valid = [
-  0,
-  '1',
-  10
-];
+const valid = [0, '1', 10];
 
-const invalid = [
-  '',
-  10.01,
-  11,
-  [],
-  undefined,
-  null,
-  {},
-  'abc'
-];
+const invalid = ['', 10.01, 11, [], undefined, null, {}, 'abc'];
 
 test('validates number maximum value', () => {
   expect.assertions(11);

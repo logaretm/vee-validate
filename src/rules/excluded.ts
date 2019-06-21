@@ -4,9 +4,7 @@ const validate = (value: any, args: any[]) => {
   return !includes(value, args);
 };
 
-export {
-  validate
-};
+export { validate };
 
 export default {
   validate

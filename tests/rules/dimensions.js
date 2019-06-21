@@ -5,19 +5,19 @@ let fails = false;
 
 beforeEach(() => {
   global.window.URL = {
-    createObjectURL () {
+    createObjectURL() {
       return 'data:image/png;base64,AAAAAAA';
     }
   };
 
   global.window.webkitURL = {
-    createObjectURL () {
+    createObjectURL() {
       return 'data:image/png;base64,AAAAAAA';
     }
   };
 
   global.Image = class Image {
-    set src (value) {
+    set src(value) {
       this.width = 150;
       this.height = 100;
 

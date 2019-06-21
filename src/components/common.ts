@@ -62,7 +62,11 @@ export function createValidationCtx(ctx: any): ValidationContext {
   };
 }
 
-export function onRenderUpdate(vm: any, model: VNodeDirective) {
+export function onRenderUpdate(vm: any, model: VNodeDirective | undefined) {
+  if (!model) {
+    return;
+  }
+
   if (!vm.initialized) {
     vm.initialValue = model.value;
   }
@@ -111,7 +115,6 @@ export function createCommonHandlers(vm: any) {
         const pendingPromise: Promise<ValidationResult> = vm.validateSilent();
         // avoids race conditions between successive validations.
         vm._pendingValidation = pendingPromise;
-        // tslint:disable-next-line
         pendingPromise.then(result => {
           if (pendingPromise === vm._pendingValidation) {
             vm.applyResult(result);

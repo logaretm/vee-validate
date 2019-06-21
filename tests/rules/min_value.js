@@ -1,21 +1,8 @@
 import { validate } from '@/rules/min_value';
 
-const valid = [
-  -1,
-  0,
-  '5'
-];
+const valid = [-1, 0, '5'];
 
-const invalid = [
-  '',
-  [],
-  undefined,
-  null,
-  {},
-  'abc',
-  -2,
-  '-3'
-];
+const invalid = ['', [], undefined, null, {}, 'abc', -2, '-3'];
 
 test('validates number minimum value', () => {
   expect.assertions(11);

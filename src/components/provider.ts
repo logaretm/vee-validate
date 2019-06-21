@@ -310,7 +310,6 @@ function watchCrossFieldDep(ctx: ProviderInstance, depName: string, withHooks = 
     ctx._veeWatchers[depName] = providers[depName].$watch('value', () => {
       if (ctx.flags.validated) {
         ctx._needsValidation = true;
-        // tslint:disable-next-line: no-floating-promises
         ctx.validate();
       }
     });

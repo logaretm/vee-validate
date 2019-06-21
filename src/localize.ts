@@ -15,24 +15,24 @@ interface RootI18nDictionary {
 }
 
 class Dictionary {
-  locale: string;
+  public locale: string;
   private container: any;
 
-  constructor(locale: string, dictionary: RootI18nDictionary) {
+  public constructor(locale: string, dictionary: RootI18nDictionary) {
     this.container = {};
     this.locale = locale;
     this.merge(dictionary);
   }
 
-  resolve(field: string, rule: string, values: { [k: string]: any }) {
+  public resolve(field: string, rule: string, values: { [k: string]: any }) {
     return this.format(this.locale, field, rule, values);
   }
 
-  _hasLocale(locale: string) {
+  private _hasLocale(locale: string) {
     return !!this.container[locale];
   }
 
-  format(locale: string, field: string, rule: string, values: { [k: string]: any }) {
+  public format(locale: string, field: string, rule: string, values: { [k: string]: any }) {
     let message!: ValidationMessageTemplate;
 
     // find if specific message for that field was specified.
@@ -56,19 +56,19 @@ class Dictionary {
     return isCallable(message) ? message(field, values) : interpolate(message, { ...values, _field_: field });
   }
 
-  merge(dictionary: RootI18nDictionary) {
+  public merge(dictionary: RootI18nDictionary) {
     merge(this.container, dictionary);
   }
 
-  getName(locale: string, key: string) {
+  public getName(locale: string, key: string) {
     return this.container[locale].names[key];
   }
 
-  _hasMessage(locale: string, key: string): boolean {
+  private _hasMessage(locale: string, key: string): boolean {
     return !!(this._hasLocale(locale) && this.container[locale].messages && this.container[locale].messages[key]);
   }
 
-  _hasName(locale: string, key: string): boolean {
+  private _hasName(locale: string, key: string): boolean {
     return !!(this._hasLocale(locale) && this.container[locale].names && this.container[locale].names[key]);
   }
 }

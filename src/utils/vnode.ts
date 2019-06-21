@@ -2,33 +2,34 @@
 import { find, isCallable, isNullOrUndefined, includes, normalizeRules } from './index';
 import Vue, { VNode, VNodeDirective } from 'vue';
 
-export const isTextInput = (vnode: VNode) => {
+export const isTextInput = (vnode: VNode): boolean => {
   const attrs = (vnode.data && vnode.data.attrs) || vnode.elm;
 
   return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'textarea', 'number'], attrs && attrs.type);
 };
 
-export const isCheckboxOrRadioInput = (vnode: VNode) => {
-  const attrs = (vnode.data && vnode.data.attrs) || vnode.elm;
+// export const isCheckboxOrRadioInput = (vnode: VNode): boolean => {
+//   const attrs = (vnode.data && vnode.data.attrs) || vnode.elm;
 
-  return includes(['radio', 'checkbox'], attrs && attrs.type);
-};
+//   return includes(['radio', 'checkbox'], attrs && attrs.type);
+// };
 
 // Gets the model object on the vnode.
-export function findModel(vnode: VNode) {
+export function findModel(vnode: VNode): VNodeDirective | undefined {
   if (!vnode.data) {
-    return null;
+    return undefined;
   }
 
   // Component Model
   // THIS IS NOT TYPED IN OFFICIAL VUE TYPINGS
+  // eslint-disable-next-line
   const nonStandardVNodeData = vnode.data as any;
   if ('model' in nonStandardVNodeData) {
     return nonStandardVNodeData.model;
   }
 
   if (!vnode.data.directives) {
-    return null;
+    return undefined;
   }
 
   return find(vnode.data.directives, d => d.name === 'model');
@@ -57,7 +58,7 @@ export function extractVNodes(vnode: VNode | VNode[]): VNode[] {
 
   const children = extractChildren(vnode);
 
-  return children.reduce((nodes: VNode[], node) => {
+  return children.reduce((nodes: VNode[], node): VNode[] => {
     const candidates = extractVNodes(node);
     if (candidates.length) {
       nodes.push(...candidates);
@@ -68,7 +69,7 @@ export function extractVNodes(vnode: VNode | VNode[]): VNode[] {
 }
 
 // Resolves v-model config if exists.
-export function findModelConfig(vnode: VNode) {
+export function findModelConfig(vnode: VNode): { prop: string; event: string } | null {
   if (!vnode.componentOptions) return null;
 
   // This is also not typed in the standard Vue TS.
@@ -76,7 +77,7 @@ export function findModelConfig(vnode: VNode) {
 }
 
 // Adds a listener to vnode listener object.
-export function mergeVNodeListeners(obj: any, eventName: string, handler: Function) {
+export function mergeVNodeListeners(obj: any, eventName: string, handler: Function): void {
   // Has a single listener.
   if (isCallable(obj[eventName])) {
     const prevHandler = obj[eventName];
@@ -96,7 +97,7 @@ export function mergeVNodeListeners(obj: any, eventName: string, handler: Functi
 }
 
 // Adds a listener to a native HTML vnode.
-function addNativeNodeListener(node: VNode, eventName: string, handler: Function) {
+function addNativeNodeListener(node: VNode, eventName: string, handler: Function): void {
   if (!node.data) {
     node.data = {};
   }
@@ -109,7 +110,7 @@ function addNativeNodeListener(node: VNode, eventName: string, handler: Function
 }
 
 // Adds a listener to a Vue component vnode.
-function addComponentNodeListener(node: VNode, eventName: string, handler: Function) {
+function addComponentNodeListener(node: VNode, eventName: string, handler: Function): void {
   if (!node.componentOptions) {
     return;
   }
@@ -122,7 +123,7 @@ function addComponentNodeListener(node: VNode, eventName: string, handler: Funct
   mergeVNodeListeners(node.componentOptions.listeners, eventName, handler);
 }
 
-export function addVNodeListener(vnode: VNode, eventName: string, handler: Function) {
+export function addVNodeListener(vnode: VNode, eventName: string, handler: Function): void {
   if (vnode.componentOptions) {
     addComponentNodeListener(vnode, eventName, handler);
   }
@@ -131,7 +132,7 @@ export function addVNodeListener(vnode: VNode, eventName: string, handler: Funct
 }
 
 // Determines if `change` should be used over `input` for listeners.
-export function getInputEventName(vnode: VNode, model: VNodeDirective) {
+export function getInputEventName(vnode: VNode, model?: VNodeDirective): string {
   // Is a component.
   if (vnode.componentOptions) {
     const { event } = findModelConfig(vnode) || { event: 'input' };
@@ -153,9 +154,11 @@ export function getInputEventName(vnode: VNode, model: VNodeDirective) {
 }
 
 // TODO: Type this one properly.
-export function normalizeSlots(slots: any, ctx: Vue) {
-  return Object.keys(slots).reduce((arr, key) => {
-    slots[key].forEach((vnode: VNode) => {
+export function normalizeSlots(slots: any, ctx: Vue): VNode[] {
+  const acc: VNode[] = [];
+
+  return Object.keys(slots).reduce((arr, key): VNode[] => {
+    slots[key].forEach((vnode: VNode): void => {
       if (!vnode.context) {
         slots[key].context = ctx;
         if (!vnode.data) {
@@ -166,10 +169,10 @@ export function normalizeSlots(slots: any, ctx: Vue) {
     });
 
     return arr.concat(slots[key]);
-  }, []);
+  }, acc);
 }
 
-function resolveTextualRules(vnode: VNode) {
+function resolveTextualRules(vnode: VNode): { [k: string]: any } {
   const attrs = vnode.data && vnode.data.attrs;
   const rules: { [k: string]: any } = {};
 
@@ -206,7 +209,7 @@ function resolveTextualRules(vnode: VNode) {
   return rules;
 }
 
-export function resolveRules(vnode: VNode) {
+export function resolveRules(vnode: VNode): { [k: string]: any } {
   const htmlTags = ['input', 'select'];
   const attrs = vnode.data && vnode.data.attrs;
 
@@ -226,7 +229,7 @@ export function resolveRules(vnode: VNode) {
   return normalizeRules(rules);
 }
 
-export function normalizeChildren(context: Vue, slotProps: any) {
+export function normalizeChildren(context: Vue, slotProps: any): VNode[] {
   if (context.$scopedSlots.default) {
     return context.$scopedSlots.default(slotProps) || [];
   }

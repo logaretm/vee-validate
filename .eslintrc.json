@@ -1,42 +1,26 @@
 {
-    "env": {
-        "browser": true,
-        "commonjs": true,
-        "es6": true,
-        "jest/globals": true
-    },
-    "extends": [
-        "standard",
-        "plugin:jest/recommended"
-    ],
-    "plugins": [
-        "jest"
-    ],
-    "rules": {
-        "indent": [
-            "error",
-            2
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "comma-dangle": 0,
-        "no-console": "error",
-        "space-unary-ops": 0,
-        "import/no-extraneous-dependencies": 0,
-        "no-new": 0,
-        "no-global-assign": 0,
-        "no-unsafe-negation": 0,
-        "import/no-named-as-default": 0,
-        "import/no-named-as-default-member": 0,
-        "no-underscore-dangle": 0,
-        "no-param-reassign": 0,
-        "class-methods-use-this": 0,
-        "no-bitwise": 0
-    }
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "jest/globals": true
+  },
+  "extends": [
+    "standard",
+    "plugin:jest/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier/@typescript-eslint"
+  ],
+  "plugins": ["jest", "prettier", "@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-use-before-define": "off"
+  }
 }

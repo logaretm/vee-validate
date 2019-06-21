@@ -1,20 +1,8 @@
 import { validate } from '@/rules/min';
 
-const valid = [
-  'asjdj',
-  'null',
-  'undefined',
-  123,
-  'abc'
-];
+const valid = ['asjdj', 'null', 'undefined', 123, 'abc'];
 
-const invalid = [
-  1,
-  12,
-  undefined,
-  null,
-  ''
-];
+const invalid = [1, 12, undefined, null, ''];
 
 test('validates minimum number of characters in a string', () => {
   expect.assertions(10);

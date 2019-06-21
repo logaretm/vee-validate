@@ -3,7 +3,7 @@ import { replaceRaf } from 'raf-stub';
 replaceRaf();
 
 expect.extend({
-  toHaveElement (wrapper, selector) {
+  toHaveElement(wrapper, selector) {
     const exists = wrapper.find(selector).exists();
 
     return {

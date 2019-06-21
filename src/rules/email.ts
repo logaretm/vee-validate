@@ -1,6 +1,7 @@
 import { RuleParamSchema } from '../types';
 
 const validate = (value: string | string[], { multiple }: any = {}) => {
+  // eslint-disable-next-line
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (multiple && !Array.isArray(value)) {
     value = String(value)

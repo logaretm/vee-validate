@@ -89,7 +89,6 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
 
           return {
             then(thenable: { then: CallableFunction }) {
-              // tslint:disable-next-line
               promise.then((success: boolean) => {
                 if (success && isCallable(thenable)) {
                   return Promise.resolve(thenable());

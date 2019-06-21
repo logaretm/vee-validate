@@ -12,7 +12,7 @@
   "repository": "https://github.com/baianat/vee-validate",
   "scripts": {
     "test": "jest",
-    "lint": "tslint --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
+    "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",
     "flow": "flow",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
@@ -42,6 +42,8 @@
     "@babel/preset-env": "^7.4.5",
     "@commitlint/cli": "^8.0.0",
     "@types/jest": "^24.0.15",
+    "@typescript-eslint/eslint-plugin": "^1.10.2",
+    "@typescript-eslint/parser": "^1.10.2",
     "@vue/server-test-utils": "^1.0.0-beta.29",
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-core": "^7.0.0-bridge.0",
@@ -50,10 +52,12 @@
     "chalk": "^2.4.2",
     "cross-env": "^5.2.0",
     "eslint": "^5.16.0",
+    "eslint-config-prettier": "^5.0.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.17.3",
     "eslint-plugin-jest": "^22.7.0",
     "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
     "filesize": "^4.1.2",
@@ -73,7 +77,6 @@
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-typescript2": "^0.21.2",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.18.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
     "typescript": "^3.5.2",
@@ -96,6 +99,7 @@
   },
   "lint-staged": {
     "*.ts": [
+      "eslint --fix",
       "prettier --write",
       "git add",
       "jest --maxWorkers=1 --bail --findRelatedTests"

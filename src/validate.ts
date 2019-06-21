@@ -169,8 +169,8 @@ function _generateFieldError(
   data: any
 ) {
   const values = {
-    ...(params ? params : {}),
-    ...(data ? data : {})
+    ...(params || {}),
+    ...(data || {})
   };
 
   if (ruleSchema.message) {

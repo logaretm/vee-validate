@@ -14,8 +14,6 @@ const validate = (value: any, { locale = '' } = {}): boolean => {
   return (alpha[locale] || alpha.en).test(value);
 };
 
-const paramNames = ['locale'];
-
 const params: RuleParamSchema[] = [
   {
     name: 'locale'

@@ -16,7 +16,7 @@ let cache;
 
 const mkdirp = promisify(mkdirpNode);
 
-async function build () {
+async function build() {
   await mkdirp(path.join(paths.dist, 'locale'));
   // eslint-disable-next-line
   console.log(chalk.cyan('Building locales...'));
@@ -35,11 +35,11 @@ async function build () {
       cache,
       input,
       external: ['VeeValidate'],
-      plugins: [typescript(), buble(), resolve()],
+      plugins: [typescript(), buble(), resolve()]
     });
     const { output } = await bundle.generate({
       format: 'umd',
-      name: `__vee_validate_locale__${file}`,
+      name: `__vee_validate_locale__${file}`
     });
 
     fs.writeFileSync(outputPath, uglify.minify(output[0].code, uglifyOptions).code);

@@ -18,12 +18,7 @@ const valid = [
   ['a', 'b', 'cdef-_']
 ];
 
-const invalid = [
-  'this is sparta',
-  {},
-  ' ',
-  [' ', 'ada as']
-];
+const invalid = ['this is sparta', {}, ' ', [' ', 'ada as']];
 
 // eslint-disable-next-line
 test('validates that the string may only contain alpha-numeric characters as well as dashes and spaces', () => {
