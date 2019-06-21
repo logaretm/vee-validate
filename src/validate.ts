@@ -1,5 +1,5 @@
 import { RuleContainer } from './extend';
-import { isObject, getPath, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate } from './utils';
+import { isObject, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate } from './utils';
 import { ValidationResult, RuleParamSchema, ValidationRuleSchema, ValidationMessageTemplate } from './types';
 import { getConfig } from './config';
 
@@ -20,10 +20,11 @@ export async function validate(
   rules: string | { [k: string]: any },
   options: any = {}
 ): Promise<ValidationResult> {
+  const shouldBail = options && options.bails;
   const field: FieldMeta = {
     name: (options && options.name) || '{field}',
     rules: normalizeRules(rules),
-    bails: getPath('bails', options, true),
+    bails: isNullOrUndefined(shouldBail) ? true : shouldBail,
     forceRequired: false,
     crossTable: options && options.values,
     names: (options && options.names) || {}
