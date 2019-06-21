@@ -195,6 +195,42 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toContain(DEFAULT_REQUIRED_MESSAGE);
   });
 
+  test('validates on rule change if the field was validated before', async () => {
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: '',
+          rules: { required: true }
+        }),
+        template: `
+        <div>
+          <ValidationProvider :rules="rules" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      `
+      },
+      { localVue: Vue, sync: false }
+    );
+
+    const input = wrapper.find('input');
+    const error = wrapper.find('#error');
+    input.setValue('1');
+    // flush the pending validation.
+    await flushPromises();
+
+    expect(error.text()).toBe('');
+
+    wrapper.vm.rules = {
+      required: false,
+      min: 3
+    };
+
+    await flushPromises();
+    expect(error.text()).toBe('The {field} must be at least 3 characters.');
+  });
+
   test('validates components on input by default', async () => {
     const wrapper = mount(
       {
