@@ -1,7 +1,7 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import { renderToString } from '@vue/server-test-utils';
 import flushPromises from 'flush-promises';
-import { ValidationProvider, ValidationObserver, setMode, extend, withValidation } from '@/index.full';
+import { ValidationProvider, ValidationObserver, setInteractionMode, extend, withValidation } from '@/index.full';
 import InputWithoutValidation from './components/Input';
 import SelectWithoutValidation from './components/Select';
 
@@ -315,7 +315,7 @@ describe('Validation Provider Component', () => {
   });
 
   test('interaction mode can be set globally', async () => {
-    setMode('lazy');
+    setInteractionMode('lazy');
     const wrapper = mount(
       {
         data: () => ({
@@ -349,11 +349,11 @@ describe('Validation Provider Component', () => {
     input.trigger('change');
     await flushPromises();
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-    setMode('aggressive');
+    setInteractionMode('aggressive');
   });
 
   test('new interaction modes can be added', async () => {
-    setMode('custom', () => {
+    setInteractionMode('custom', () => {
       return {
         on: ['customEvent']
       };
@@ -391,7 +391,7 @@ describe('Validation Provider Component', () => {
     input.trigger('customEvent');
     await flushPromises();
     expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-    setMode('aggressive');
+    setInteractionMode('aggressive');
   });
 
   test('validates target dependant fields', async () => {

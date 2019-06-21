@@ -6,7 +6,7 @@ export const configure = (cfg: Partial<VeeValidateConfig>) => {
   setConfig(cfg);
 };
 
-export const setMode = (mode: string, implementation: InteractionModeFactory) => {
+export const setInteractionMode = (mode: string, implementation: InteractionModeFactory) => {
   setConfig({ mode });
   if (!implementation) {
     return;
