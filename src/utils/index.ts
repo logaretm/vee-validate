@@ -1,15 +1,6 @@
 import { ValidationFlags } from '../types';
 import { ValidationClassMap } from '../config';
 
-export const isValidDate = (value: unknown): value is Date => {
-  const valueAsDate = value as any;
-  if (valueAsDate && isCallable(valueAsDate.getTime)) {
-    return !isNaN(valueAsDate.getTime());
-  }
-
-  return false;
-};
-
 /**
  * Gets the data attribute. the name must be kebab-case.
  */
@@ -346,4 +337,4 @@ export const interpolate = (template: string, values: { [k: string]: any }) => {
   return template.replace(/\{([^}]+)\}/g, (_, p) => {
     return values[p] || `{${p}}`;
   });
-}
+};
