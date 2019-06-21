@@ -303,6 +303,42 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toBe('The {field} format is invalid.');
   });
 
+  test('validates on rule change: testing NaN', async () => {
+    const wrapper = mount(
+      {
+        data: () => ({
+          value: '',
+          rules: { required: true, max: NaN }
+        }),
+        template: `
+        <div>
+          <ValidationProvider :rules="rules" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      `
+      },
+      { localVue: Vue, sync: false }
+    );
+
+    const input = wrapper.find('input');
+    const error = wrapper.find('#error');
+    input.setValue('2');
+    // flush the pending validation.
+    await flushPromises();
+
+    expect(error.text()).toBe('The {field} may not be greater than {length} characters.');
+
+    wrapper.vm.rules = {
+      required: true,
+      max: NaN
+    };
+
+    await flushPromises();
+    expect(error.text()).toBe('The {field} may not be greater than {length} characters.');
+  });
+
   test('validates components on input by default', async () => {
     const wrapper = mount(
       {
