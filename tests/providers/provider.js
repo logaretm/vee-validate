@@ -1,7 +1,7 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import { renderToString } from '@vue/server-test-utils';
 import flushPromises from 'flush-promises';
-import { ValidationProvider, ValidationObserver, setInteractionMode, extend, withValidation } from '@/index.full';
+import { ValidationProvider, ValidationObserver, extend, withValidation } from '@/index.full';
 import InputWithoutValidation from './components/Input';
 import SelectWithoutValidation from './components/Select';
 
@@ -276,122 +276,6 @@ describe('Validation Provider Component', () => {
     input.vm.$emit('change', 'txt');
     await flushPromises();
     expect(error.text()).toBe('');
-  });
-
-  test('uses interaction modes', async () => {
-    const wrapper = mount(
-      {
-        data: () => ({
-          value: ''
-        }),
-        components: {
-          TextInput: {
-            props: ['value'],
-            template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
-          }
-        },
-        template: `
-        <div>
-          <ValidationProvider rules="required" mode="lazy" v-slot="{ errors }">
-            <TextInput v-model="value"></TextInput>
-            <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `
-      },
-      { localVue: Vue, sync: false }
-    );
-    const error = wrapper.find('#error');
-    const input = wrapper.find('input');
-
-    expect(error.text()).toBe('');
-    input.setValue('');
-    await flushPromises();
-    // did not validate.
-    expect(error.text()).toBe('');
-    input.trigger('change');
-    await flushPromises();
-    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-  });
-
-  test('interaction mode can be set globally', async () => {
-    setInteractionMode('lazy');
-    const wrapper = mount(
-      {
-        data: () => ({
-          value: ''
-        }),
-        components: {
-          TextInput: {
-            props: ['value'],
-            template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
-          }
-        },
-        template: `
-        <div>
-          <ValidationProvider rules="required" v-slot="{ errors }">
-            <TextInput v-model="value"></TextInput>
-            <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `
-      },
-      { localVue: Vue, sync: false }
-    );
-    const error = wrapper.find('#error');
-    const input = wrapper.find('input');
-
-    expect(error.text()).toBe('');
-    input.setValue('');
-    await flushPromises();
-    // did not validate.
-    expect(error.text()).toBe('');
-    input.trigger('change');
-    await flushPromises();
-    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-    setInteractionMode('aggressive');
-  });
-
-  test('new interaction modes can be added', async () => {
-    setInteractionMode('custom', () => {
-      return {
-        on: ['customEvent']
-      };
-    });
-    const wrapper = mount(
-      {
-        data: () => ({
-          value: ''
-        }),
-        components: {
-          TextInput: {
-            props: ['value'],
-            template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
-          }
-        },
-        template: `
-        <div>
-          <ValidationProvider rules="required" v-slot="{ errors }">
-            <TextInput v-model="value"></TextInput>
-            <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `
-      },
-      { localVue: Vue, sync: false }
-    );
-    const error = wrapper.find('#error');
-    const input = wrapper.find('input');
-
-    expect(error.text()).toBe('');
-    input.setValue('');
-    await flushPromises();
-    // did not validate.
-    expect(error.text()).toBe('');
-    input.trigger('customEvent');
-    await flushPromises();
-    expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-    setInteractionMode('aggressive');
   });
 
   test('validates target dependant fields', async () => {
