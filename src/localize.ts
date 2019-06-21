@@ -1,13 +1,12 @@
 import { isCallable, merge, interpolate } from './utils';
 import { ValidationMessageTemplate } from './types';
 import { extend, RuleContainer } from './extend';
-import { getConfig } from './config';
 
 interface PartialI18nDictionary {
   name?: string;
   messages?: { [k: string]: ValidationMessageTemplate };
   names?: { [k: string]: string };
-  custom?: { [k: string]: { [r: string]: ValidationMessageTemplate } };
+  fields?: { [k: string]: { [r: string]: ValidationMessageTemplate } };
 }
 
 interface RootI18nDictionary {
