@@ -22,13 +22,6 @@ export const normalizeEvents = (evts: string | string[]) => {
 
   return typeof evts === 'string' ? evts.split('|') : evts;
 };
-export const addEventListener = (el: HTMLElement, eventName: string, handler: EventHandlerNonNull) => {
-  el.addEventListener(eventName, handler, false);
-
-  return () => {
-    el.removeEventListener(eventName, handler);
-  };
-};
 
 export function normalizeEventValue(value: unknown): any {
   if (!isEvent(value)) {

@@ -1,11 +1,6 @@
 import { ValidationFlags } from '../types';
 import { ValidationClassMap } from '../config';
 
-/**
- * Gets the data attribute. the name must be kebab-case.
- */
-export const getDataAttribute = (el: HTMLElement, name: string) => el.getAttribute(`data-vv-${name}`);
-
 export const isNaN = (value: unknown) => {
   // NaN is the one value that does not equal itself.
   return value !== value;
@@ -71,28 +66,6 @@ export const isEqual = (lhs: any, rhs: any): boolean => {
   }
 
   return lhs === rhs;
-};
-
-/**
- * Gets the value in an object safely.
- */
-export const getPath = (path: string, target: any, def: any = undefined) => {
-  if (!path || !target) return def;
-
-  let value = target;
-  path.split('.').every(prop => {
-    if (prop in value) {
-      value = value[prop];
-
-      return true;
-    }
-
-    value = def;
-
-    return false;
-  });
-
-  return value;
 };
 
 /**
@@ -323,14 +296,6 @@ export const includes = (collection: any[] | string, item: any) => {
 
 export const isEmptyArray = (arr: any[]): boolean => {
   return Array.isArray(arr) && arr.length === 0;
-};
-
-export const defineNonReactive = (obj: any, prop: string, value: any) => {
-  Object.defineProperty(obj, prop, {
-    configurable: false,
-    writable: true,
-    value
-  });
 };
 
 export const interpolate = (template: string, values: { [k: string]: any }) => {
