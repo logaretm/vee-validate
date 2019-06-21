@@ -1,7 +1,7 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import { renderToString } from '@vue/server-test-utils';
 import flushPromises from 'flush-promises';
-import { ValidationProvider, ValidationObserver, extend, withValidation } from '@/index.full';
+import { ValidationProvider, ValidationObserver, extend, withValidation, configure } from '@/index.full';
 import InputWithoutValidation from './components/Input';
 import SelectWithoutValidation from './components/Select';
 
@@ -769,5 +769,37 @@ describe('Validation Provider Component', () => {
     input.setValue('123');
     await flushPromises();
     expect(error.text()).toBeFalsy();
+  });
+
+  test('classes can be arrays', async () => {
+    configure({
+      classNames: {
+        invalid: ['wrong', 'bad'],
+        valid: ['jolly', 'good']
+      }
+    });
+    const wrapper = mount(
+      {
+        data: () => ({ val: '' }),
+        template: `
+        <ValidationProvider v-slot="{ errors, classes }">
+          <input type="text" v-model="val" required :class="classes">
+          <p id="error">{{ errors[0] }}</p>
+        </ValidationProvider>
+      `
+      },
+      { localVue: Vue, sync: false }
+    );
+
+    const input = wrapper.find('input');
+    input.setValue('');
+    await flushPromises();
+    expect(input.classes()).toContain('wrong');
+    expect(input.classes()).toContain('bad');
+
+    input.setValue('1');
+    await flushPromises();
+    expect(input.classes()).toContain('jolly');
+    expect(input.classes()).toContain('good');
   });
 });
