@@ -6,7 +6,7 @@ import { getConfig } from './config';
 interface PartialI18nDictionary {
   name?: string;
   messages?: { [k: string]: ValidationMessageTemplate };
-  attributes?: { [k: string]: string };
+  names?: { [k: string]: string };
   custom?: { [k: string]: { [r: string]: ValidationMessageTemplate } };
 }
 
@@ -20,34 +20,23 @@ class Dictionary {
 
   constructor(locale: string, dictionary: RootI18nDictionary) {
     this.container = {};
-    this.locale = locale || 'en';
+    this.locale = locale;
     this.merge(dictionary);
   }
 
-  resolve(field: string, rule: string, values?: { [k: string]: any }) {
-    return this.format(this.locale, field, rule, values || {});
+  resolve(field: string, rule: string, values: { [k: string]: any }) {
+    return this.format(this.locale, field, rule, values);
   }
 
   _hasLocale(locale: string) {
     return !!this.container[locale];
   }
 
-  _normalizeMessage(template: ValidationMessageTemplate | string, field: string, values: { [k: string]: any }) {
-    if (typeof template === 'function') {
-      return template(field, values);
-    }
-
-    return interpolate(template, {
-      ...values,
-      _field_: field
-    });
-  }
-
   format(locale: string, field: string, rule: string, values: { [k: string]: any }) {
-    let message: ValidationMessageTemplate | null = null;
+    let message!: ValidationMessageTemplate;
 
     // find if specific message for that field was specified.
-    const dict = this.container[locale].custom && this.container[locale].custom[field];
+    const dict = this.container[locale].fields && this.container[locale].fields[field];
     if (dict && dict[rule]) {
       message = dict[rule];
     }
@@ -56,9 +45,8 @@ class Dictionary {
       message = this.container[locale].messages[rule];
     }
 
-    // Assign the default message if it does not exist.
-    if (!message) {
-      message = getConfig().defaultMessage;
+    if (this._hasName(locale, field)) {
+      field = this.getName(locale, field);
     }
 
     return isCallable(message) ? message(field, values) : interpolate(message, { ...values, _field_: field });
@@ -68,20 +56,16 @@ class Dictionary {
     merge(this.container, dictionary);
   }
 
-  getAttribute(locale: string, key: string, fallback = '') {
-    if (!this._hasAttribute(locale, key)) {
-      return fallback;
-    }
-
-    return this.container[locale].attributes[key];
+  getName(locale: string, key: string) {
+    return this.container[locale].names[key];
   }
 
   _hasMessage(locale: string, key: string): boolean {
     return !!(this._hasLocale(locale) && this.container[locale].messages && this.container[locale].messages[key]);
   }
 
-  _hasAttribute(locale: string, key: string): boolean {
-    return !!(this._hasLocale(locale) && this.container[locale].attributes && this.container[locale].attributes[key]);
+  _hasName(locale: string, key: string): boolean {
+    return !!(this._hasLocale(locale) && this.container[locale].names && this.container[locale].names[key]);
   }
 }
 
@@ -96,7 +80,7 @@ function updateRules() {
   RuleContainer.iterate(name => {
     extend(name, {
       message: (field: string, values?: { [k: string]: any }) => {
-        return DICTIONARY.resolve(field, name, values);
+        return DICTIONARY.resolve(field, name, values || {});
       }
     });
   });

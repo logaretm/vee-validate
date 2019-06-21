@@ -127,7 +127,7 @@ describe('Validation Provider Component', () => {
     expect(error.text()).toBe('');
   });
 
-  test('uses appropiate events for different input types', async () => {
+  test('uses appropriate events for different input types', async () => {
     const wrapper = mount(
       {
         data: () => ({

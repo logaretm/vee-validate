@@ -17,4 +17,5 @@ localize('en', en);
 export { Rules, version, localize, extend };
 export * from './setters';
 export { validate } from './validate';
+export { install } from './install';
 export { ValidationProvider, ValidationObserver, withValidation } from './components';

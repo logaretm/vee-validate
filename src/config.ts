@@ -45,12 +45,6 @@ const DEFAULT_CONFIG: VeeValidateConfig = {
 
 export let currentConfig: VeeValidateConfig = { ...DEFAULT_CONFIG };
 
-export const resolveConfig = (ctx: any) => {
-  const selfConfig = getPath('$options.$_veeValidate', ctx, {});
-
-  return { ...currentConfig, ...selfConfig };
-};
-
 export const getConfig = () => currentConfig;
 
 export const setConfig = (newConf: Partial<VeeValidateConfig>) => {
