@@ -12,13 +12,21 @@ interface FieldMeta {
   names: { [k: string]: any };
 }
 
+interface ValidationOptions {
+  name?: string;
+  values?: { [k: string]: any };
+  names?: { [k: string]: any };
+  bails?: boolean;
+  isInitial?: boolean;
+}
+
 /**
  * Validates a value against the rules.
  */
 export async function validate(
   value: any,
   rules: string | { [k: string]: any },
-  options: any = {}
+  options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   const shouldBail = options && options.bails;
   const field: FieldMeta = {
@@ -26,7 +34,7 @@ export async function validate(
     rules: normalizeRules(rules),
     bails: isNullOrUndefined(shouldBail) ? true : shouldBail,
     forceRequired: false,
-    crossTable: options && options.values,
+    crossTable: (options && options.values) || {},
     names: (options && options.names) || {}
   };
 
