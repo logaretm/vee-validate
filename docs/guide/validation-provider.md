@@ -10,7 +10,7 @@ Using the ValidationProvider offers isolated scope for each field validation sta
 
 Here is a quick example:
 
-```vue{2,5,9,12}
+```vue{2,5,9,13}
 <template>
   <ValidationProvider rules="required" v-slot="{ errors }">
     <input v-model="value" type="text">
@@ -54,7 +54,7 @@ By default, ValidationProvider renders a `span`, Consider the following example 
 
 The default the rendered **tag** can be changed using the provider's `tag` prop.
 
-```vue{1}
+```vue{2,10,16,19}
   <!-- Multiple Child nodes using templates -->
   <ValidationProvider rules="required" tag="div">
     <template v-slot="{ errors }">
@@ -134,7 +134,7 @@ The previous quick sample validates simple HTML inputs, lets take this up a notc
 
 Triggering validation on any of the providers is simple, but it is opt-in. Meaning you need to explicitly call the validation on the provider instance. Using [refs](https://vuejs.org/v2/api/#ref) and the [public method](#methods) `validate` makes it straight forward.
 
-```vue{2,7,17}
+```vue{3,8,18}
 <template>
   <div>
     <ValidationProvider rules="required" ref="myinput" v-slot="{ errors }">
@@ -142,7 +142,7 @@ Triggering validation on any of the providers is simple, but it is opt-in. Meani
       <span>{{ errors[0] }}</span>
     </ValidationProvider>
 
-    <v-btn @click="validateField()" >Submit</v-btn>
+    <button @click="validateField()" >Submit</button>
   </div>
 </template>
 

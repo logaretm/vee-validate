@@ -78,7 +78,7 @@ To remedy this, you can pass rules as an object:
 
 To pass parameters to your rules, you pass an object:
 
-```vue{1}
+```vue{2}
 <ValidationProvider
   :rules="{ required: true, min: { length: 3 } }"
   v-slot="{ errors }"
@@ -88,7 +88,7 @@ To pass parameters to your rules, you pass an object:
 </ValidationProvider>
 ```
 
-```vue{1}
+```vue{2}
 <ValidationProvider
   :rules="{ required: true, between: { min: 3, max: 10 } }"
   v-slot="{ errors }"
@@ -100,7 +100,7 @@ To pass parameters to your rules, you pass an object:
 
 You can omit the object if the rule accepts one parameter:
 
-```vue{1}
+```vue{2}
 <ValidationProvider
   :rules="{ required: true, min: 3 }"
   v-slot="{ errors }"
