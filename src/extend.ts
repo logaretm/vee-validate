@@ -41,7 +41,7 @@ export class RuleContainer {
 
   public static isTargetRule(name: string) {
     const definition = RuleContainer.getRuleDefinition(name);
-    if (!definition.params) {
+    if (!definition || !definition.params) {
       return false;
     }
 

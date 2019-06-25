@@ -95,12 +95,26 @@ To display error messages, the `ValidationProvider` exposes `errors` array throu
 
 Here is the above example in action:
 
-<div>
-  <ValidationProvider rules="required" v-slot="{ errors }">
-    <input v-model="email" type="text">
-    <span>{{ errors.first('email') }}</span>
+<code-sample>
+  <template #demo>
+    <ValidationProvider rules="required" v-slot="{ errors }">
+      <input v-model="email" type="text">
+      <span>{{ errors[0] }}</span>
+    </ValidationProvider>
+  </template>
+
+  <template #snippet>
+
+
+  ```vue
+    <ValidationProvider rules="required" v-slot="{ errors }">
+      <input v-model="email" type="text">
+      <span>{{ errors[0] }}</span>
   </ValidationProvider>
-</div>
+  ```
+
+  </template>
+</code-sample>
 
 [More Examples](/examples/)
 

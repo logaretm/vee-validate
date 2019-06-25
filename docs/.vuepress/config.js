@@ -100,7 +100,7 @@ module.exports = {
           { text: 'Examples', link: '/examples/' },
           { text: 'API', link: '/api/' }
         ],
-        sidebarDepth: 3,
+        sidebarDepth: 2,
         sidebar: {
           '/guide/': genSidebarConfig('Guide', 'Components'),
           '/concepts/': genSidebarConfig('Concepts'),
