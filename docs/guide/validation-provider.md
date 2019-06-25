@@ -446,3 +446,7 @@ Those are the only methods meant for public usage, other methods that may exist 
 ### Events
 
 The validation provider does not emit any events at this time.
+
+---
+
+What now remains, is how to validate forms, the `ValidationObserver` is the other component that completes this library.
