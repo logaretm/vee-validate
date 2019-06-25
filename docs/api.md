@@ -101,6 +101,8 @@ localize({
 
 ## `configure`
 
+Configures the default global options for vee-validate.
+
 | Argument | Type            | Description                             |
 | -------- | --------------- | --------------------------------------- |
 | options  | `ConfigOptions` | An object of the configuration options. |
