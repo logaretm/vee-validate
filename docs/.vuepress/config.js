@@ -1,41 +1,25 @@
 const sidebars = {
-  components: [
-    'components',
-    'components/validation-provider',
-    'components/validation-observer'
-  ],
   guide: [
     '',
     'getting-started',
-    'syntax',
+    'validation',
+    'applying-rules',
     'displaying-errors',
-    'rules',
-    'custom-rules',
-    'inferred-rules',
-    'messages',
-    'localization',
-    'flags',
-    'classes-and-styling',
-    'events',
-    'interaction',
-    'conditional-and-looping-inputs',
-    'ui-integrations',
-    'testing'
-  ],
-  api: [
-    'directive',
-    'mixin',
-    'data-attrs',
-    'errorbag',
-    'field',
-    'validator'
-  ],
-  concepts: [
-    '',
-    'components',
-    'injections',
-    'backend',
-    'bundle-size'
+    'validation-provider',
+    // 'validation-observer',
+    // 'syntax',
+    // 'rules',
+    // 'custom-rules',
+    // 'inferred-rules',
+    // 'messages',
+    // 'localization',
+    // 'flags',
+    // 'classes-and-styling',
+    // 'events',
+    // 'interaction',
+    // 'conditional-and-looping-inputs',
+    // 'ui-integrations',
+    // 'testing'
   ],
   examples: [
     '',

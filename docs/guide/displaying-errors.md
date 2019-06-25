@@ -1,65 +1,71 @@
 # Displaying Errors
 
-After generating error messages, they are stored in an ErrorBag instance which simplifies displaying errors in your UI.
+The `errors` array exposed on the `ValidationProvider` is a simple array containing error messages for the field as strings, you can manipulate the displayed field name and how many errors should be displayed for that field.
 
-By default the error bag instance will be injected in your component's computed properties under the `errors` name, which can be customized to avoid conflicts with other libraries/components.
+## Single error message
 
-## Displaying single error message
+Typically you would want to display one error at a time for your fields, which is the first item in the `errors` array.
 
-Typically you would want to display one error at a time for your fields, you can do this using `errors.first('fieldName')` method.
-
-```html
-<input type="text" name="fieldName" v-validate="'required'">
-<span>{{ errors.first('fieldName') }}</span>
+```vue{3}
+<ValidationProvider rules="required" v-slot="{ errors }">
+  <input v-model="value" type="text" />
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
 ```
 
-::: tip
-  VeeValidate __only generates one message per field by default__ as it uses a fast-exit strategy when running the validation pipeline. When the first failing rule is detected it will have its message generated and stored in the error bag instance, other rules results are then ignored. To disable this behavior you may want to configure the `fastExit` option in [VeeValidate's config](/configuration.md) or use the [`continues` modifier](/api/directive.md#continues).
+## Multiple error messages
+
+You will notice that only 1 error is generated. this is because vee-validate tries to be efficient by stopping validation on the first failure it encounters for any rule. to disable this behavior and force the validation to test against all rules you can provide `bails` prop set to `false` on the `ValidationProvider`.
+
+```vue{3}
+<ValidationProvider rules="required" v-slot="{ errors }" :bails="false">
+  <input v-model="value" type="text" />
+  <pre>{{ errors }}</pre>
+</ValidationProvider>
+```
+
+Additionally you can disable this behavior for all Providers by using the `bails` config:
+
+```js
+import { configure } from 'vee-validate';
+
+// Disable fast-exit behavior for all providers in the app.
+configure({ bails: false });
+```
+
+:::tip
+  The `bails` prop takes precedence over the global config, that means you can have fields with either behavior at the same time in your app by passing a `bails` prop explicitly to those fields.
 :::
 
-## Displaying Multiple error messages
+Now that we've setup multiple errors generation properly, you can iterate over the `errors` array to display them with `v-for`:
 
-Another use-case is that you might want to dispaly all the errors for an input, typically to allow the user to fix multiple input errors at once. The `errors.collect('fieldName')` method collects all error messages for a specific field into an array.
-
-```html
-<input type="text" name="fieldName" v-validate.continues="'required|alpha|min:5'">
-<ul>
-  <li v-for="error in errors.collect('fieldName')">{{ error }}</li>
-</ul>
+```vue{1,4}
+<ValidationProvider rules="required|min:3|alpha" v-slot="{ errors }" :bails="false">
+  <input v-model="value" type="text" />
+  <ul>
+    <li v-for="error in errors">{{ error }}</li>
+  </ul>
+</ValidationProvider>
 ```
 
-## Displaying all errors
+## Customizing the field name
 
-Sometimes you need to display all fields errors on top of a form, especially for very large forms. You can use either:
+So far you only saw `{field}` placeholder used in the error messages to refer to the field, you can change that by specifying a `name` prop on the `ValidationProvider`.
 
-### Flat list of errors
-
-You can use `errors.all()` to collect all fields errors into a single flat array.
-
-```html
-<input type="text" name="first" v-validate.continues="'required|alpha|min:5'">
-
-<input type="text" name="second" v-validate.continues="'required|alpha|min:5'">
-
-<ul>
-  <li v-for="error in errors.all()">{{ error }}</li>
-</ul>
+```vue{2}
+<ValidationProvider
+  name="first name"
+  rules="required"
+  v-slot="{ errors }"
+>
+  <input v-model="value" type="text" />
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
 ```
 
-### Grouped by field name
+ <!-- TODO: Add localization and custom messages guide -->
+<!-- Messages can also be localized and customized per field. -->
 
-Use `errors.collect()` without providing a field name to collect all errors into an object which keys are field names and the values are arrays of error messages for each field. In other words it groups error messages by field name.
+---
 
-```html
-<input type="text" name="first" v-validate.continues="'required|alpha|min:5'">
-
-<input type="text" name="second" v-validate.continues="'required|alpha|min:5'">
-
-<ul>
-  <li v-for="group in errors.collect()">
-    <ul>
-      <li v-for="error in group">{{ error }}</li>
-    </ul>
-  </li>
-</ul>
-```
+Now that we have got grasp of the basics, we can learn more about the validation provider.

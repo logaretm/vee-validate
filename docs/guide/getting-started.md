@@ -7,11 +7,18 @@ meta:
   - name: og:description
     content: Getting started with VeeValidate
 ---
+
 # Getting started
 
 ## Installation
 
 You can install this plugin via [npm](#npm) or via a [CDN](#cdn).
+
+### yarn
+
+```bash
+yarn add vee-validate
+```
 
 ### npm
 
@@ -31,66 +38,86 @@ npm install vee-validate --save
 
 ## Usage
 
-::: tip
-  Examples use the ES2015 syntax, make sure to brush up on ES2015 if you haven't already.
-:::
+### via script tag
 
-```js
-import Vue from 'vue';
-import VeeValidate from 'vee-validate';
-
-Vue.use(VeeValidate);
-```
-
-or include the script directly
+include the script directly
 
 ```html
   <script src="path/to/vue.js"></script>
   <script src="path/to/vee-validate.js"></script>
   <script>
-    Vue.use(VeeValidate); // good to go.
+    Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
   </script>
 ```
 
+### ES6+
+
+```js
+import Vue from 'vue';
+import { ValidationProvider, extend } from 'vee-validate';
+
+extend('required', {
+  validate: value => !!value,
+  message: 'This field is required'
+});
+
+Vue.component('ValidationProvider', ValidationProvider);
+```
+
+:::tip
+  All Examples from now on will use the ES2015 syntax, make sure to brush up on ES2015 if you haven't already.
+:::
+
 ## Basic Example
 
-All you need is to add the `v-validate` directive to the input you wish to validate and make sure your input has a `name` attribute for error messages generation.
+`ValidationProvider` is one of the components provided by `vee-validate`, you will use this component to validate your fields.
 
-Then, pass to the directive a `rules` string which contains a list of validation rules separated by a pipe '`|`'. For the following example, the validation rules are straightforward. Use `required` to indicate that the field is required and `email` to indicate that the field must be an email. To combine both rules we assign the string value `required|email` to the `v-validate` expression value.
-
-```html
-<input v-validate="'required|email'" name="email" type="text">
-```
-
-To display the error message we simply use the `errors.first` method to fetch the first error generated for the field:
+Here is an input field without validation:
 
 ```html
-<span>{{ errors.first('email') }}</span>
+<input v-model="email" type="text">
 ```
+
+To validate it, wrap the `input` with a `ValidationProvider` component:
+
+```vue{1,4}
+<ValidationProvider rules="required" v-slot="{ errors }">
+  <input v-model="email" type="text">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+The `rules` prop passed to the `ValidationProvider` is the validation rules that will be checked against the input, the syntax is Laravel-like by placing the rules names between pipes, for that input we want to make sure it is required.
+
+To display error messages, the `ValidationProvider` exposes `errors` array through [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots).
 
 ### Demo
 
-Here is the basic example in action
+Here is the above example in action:
 
 <div>
-  <input v-validate="'required|email'" name="email" type="text">
-  <span>{{ errors.first('email') }}</span>
+  <ValidationProvider rules="required" v-slot="{ errors }">
+    <input v-model="email" type="text">
+    <span>{{ errors.first('email') }}</span>
+  </ValidationProvider>
 </div>
 
 [More Examples](/examples/)
 
-::: danger
+:::danger
   Client-side validation is never a substitute for server-side validation. Make sure to validate any input from the user on your backend as well.
 :::
 
-::: tip
+### Config
+
+:::tip
   There are other ways to install the plugin, [check them out](/configuration.md#installation).
 :::
 
 <script>
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  }
+ data: () => ({
+    email: ''
+  })
 };
 </script>
