@@ -64,7 +64,7 @@ export const ValidationObserver = {
 
           return {
             then (thenable) {
-              promise.then(success => {
+              return promise.then(success => {
                 if (success && isCallable(thenable)) {
                   return Promise.resolve(thenable());
                 }
