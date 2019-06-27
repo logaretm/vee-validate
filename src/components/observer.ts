@@ -89,7 +89,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
 
           return {
             then(thenable: { then: CallableFunction }) {
-              promise.then((success: boolean) => {
+              return promise.then((success: boolean) => {
                 if (success && isCallable(thenable)) {
                   return Promise.resolve(thenable());
                 }
