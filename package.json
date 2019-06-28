@@ -84,7 +84,8 @@
     "vue-jest": "^3.0.4",
     "vue-server-renderer": "^2.6.10",
     "vue-template-compiler": "^2.6.10",
-    "vuepress": "^1.0.1"
+    "vuepress": "^1.0.1",
+    "vuepress-plugin-demo-code": "^0.3.5"
   },
   "eslintIgnore": [
     "locale",

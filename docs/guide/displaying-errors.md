@@ -17,10 +17,16 @@ Typically you would want to display one error at a time for your fields, which i
 
 You will notice that only 1 error is generated. this is because vee-validate tries to be efficient by stopping validation on the first failure it encounters for any rule. to disable this behavior and force the validation to test against all rules you can provide `bails` prop set to `false` on the `ValidationProvider`.
 
-```vue{3}
-<ValidationProvider rules="required" v-slot="{ errors }" :bails="false">
+```vue{4}
+<ValidationProvider
+  rules="required|min:3|alpha"
+  v-slot="{ errors }"
+  :bails="false"
+>
   <input v-model="value" type="text" />
-  <pre>{{ errors }}</pre>
+  <ul>
+    <li v-for="error in errors">{{ error }}</li>
+  </ul>
 </ValidationProvider>
 ```
 
@@ -39,7 +45,7 @@ configure({ bails: false });
 
 Now that we've setup multiple errors generation properly, you can iterate over the `errors` array to display them with `v-for`:
 
-```vue{1,4}
+```vue{4}
 <ValidationProvider rules="required|min:3|alpha" v-slot="{ errors }" :bails="false">
   <input v-model="value" type="text" />
   <ul>

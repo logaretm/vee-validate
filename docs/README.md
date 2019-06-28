@@ -25,7 +25,7 @@ meta:
 
 VeeValidate is a validation framework that offers validation for your fields using components and scoped slots.
 
-## install
+## Installation
 
 ```bash
 # install with npm
@@ -35,28 +35,50 @@ npm install vee-validate
 yarn add vee-validate
 ```
 
-## Use
+## Usage
 
-In your html
+Register the `ValidationProvider` component:
 
-```html
+```js{1,3,4,5,6,11}
+import { ValidationProvider, extend } from 'vee-validate';
+
+extend('required', {
+  validate: value => !!value,
+  message: 'The {field} is required'
+});
+
+new Vue({
+  el: '#app',
+  components: {
+    ValidationProvider
+  },
+  data: () => ({
+    value: ''
+  })
+});
+```
+
+Wrap your inputs with the `ValidationProvider`:
+
+```html{1,4}
 <validation-provider rules="required" v-slot="{ errors }">
   <input v-model="value" name="myinput" type="text" />
   <span>{{ errors[0] }}</span>
 </validation-provider>
 ```
 
-And in your JavaScript:
+And this is the result:
 
-```js
-import { ValidationProvider } from 'vee-validate';
+<validation-provider rules="required" v-slot="{ errors }">
+  <input v-model="value" name="myinput" type="text" placeholder="type something">
+  <span>{{ errors[0] }}</span>
+</validation-provider>
 
-Vue.component('ValidationProvider', ValidationProvider);
-
-new Vue({
-  el: '#app',
+<script>
+export default {
   data: () => ({
     value: ''
   })
-});
-```
+};
+</script>
+
