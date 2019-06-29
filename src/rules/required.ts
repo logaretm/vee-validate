@@ -4,9 +4,7 @@ import { RuleParamSchema } from '../types';
 const validate = (value: any, { allowFalse }: any = { allowFalse: true }) => {
   const result = {
     valid: false,
-    data: {
-      required: true
-    }
+    required: true
   };
 
   if (isNullOrUndefined(value) || isEmptyArray(value)) {

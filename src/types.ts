@@ -19,6 +19,7 @@ export type ValidationMessageTemplate = string | ValidationMessageGenerator;
 export interface ValidationRuleResult {
   data?: any;
   valid: boolean;
+  required?: boolean;
 }
 
 export type ValidationRuleFunction = (

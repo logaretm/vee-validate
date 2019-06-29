@@ -12,13 +12,13 @@ test('validates a conditional requirement', () => {
   let test2 = validate('', { target: 'foo', values: ['bar', 'baz', 'foo'] });
   expect(test2).toMatchObject({
     valid: false,
-    data: { required: true }
+    required: true
   });
 
   // foo is part of [bar, foo, baz] -> field is required & valid
   let test3 = validate('test', { target: 'foo', values: ['bar', 'baz', 'foo'] });
   expect(test3).toMatchObject({
     valid: true,
-    data: { required: true }
+    required: true
   });
 });

@@ -1,6 +1,6 @@
 import { RuleContainer } from './extend';
 import { isObject, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate } from './utils';
-import { ValidationResult, RuleParamSchema, ValidationRuleSchema, ValidationMessageTemplate, RuleParamConfig } from './types';
+import { ValidationResult, ValidationRuleSchema, ValidationMessageTemplate, RuleParamConfig } from './types';
 import { getConfig } from './config';
 
 interface FieldMeta {
@@ -112,7 +112,7 @@ async function _shouldSkip(field: FieldMeta, value: any) {
       throw new Error('Require rules has to return an object (see docs)');
     }
 
-    if (result.data.required) {
+    if (result.required) {
       isRequired = true;
     }
 
@@ -161,6 +161,7 @@ async function _test(field: FieldMeta, value: any, rule: { name: string; params:
 
   return {
     valid: result.valid,
+    required: result.required,
     data: result.data || {},
     errors: result.valid ? [] : [_generateFieldError(field, value, ruleSchema, rule.name, params, result.data)]
   };

@@ -7,9 +7,7 @@ const validate = (value: any, { target, values }: any) => {
   if (!required) {
     return {
       valid: true,
-      data: {
-        required
-      }
+      required
     };
   }
 
@@ -19,9 +17,7 @@ const validate = (value: any, { target, values }: any) => {
 
   return {
     valid: !invalid,
-    data: {
-      required
-    }
+    required
   };
 };
 
