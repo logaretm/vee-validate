@@ -2,11 +2,13 @@ const sidebars = {
   guide: [
     '',
     'getting-started',
-    'validation',
+    'basic-validation',
     'applying-rules',
     'displaying-errors',
     'validation-provider',
-    'validation-observer'
+    'validation-observer',
+    'localization',
+    // 'advanced-validation',
     // 'syntax',
     // 'rules',
     // 'custom-rules',
@@ -50,7 +52,14 @@ module.exports = {
   title: 'VeeValidate',
   description: 'Template Based Validation Framework for Vue.js',
   ga: 'UA-100131478-1',
-  plugins: ['demo-code'],
+  plugins: [
+    ['demo-code', {
+      settings: {
+        codepen: false,
+        jsfiddle: false
+      }
+    }]
+  ],
   serviceWorker: true,
   base: '/vee-validate/',
   head: [

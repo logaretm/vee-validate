@@ -1,33 +1,7 @@
-import { ValidationProvider, ValidationObserver } from '../../dist/vee-validate.full.esm';
-
-const CodeSample = {
-  functional: true,
-  render (h, { slots }) {
-    const demo = h('div', {
-      style: {
-        width: '50%',
-        flexBasis: '50%'
-      }
-    }, slots.demo);
-
-    const snippet = h('div', {
-      style: {
-        width: '50%',
-        flexBasis: '50%'
-      }
-    }, slots.code);
-
-    return h('div', {
-      style: {
-        display: 'flex',
-        flexDirection: 'row'
-      }
-    }, [demo, snippet]);
-  }
-};
+import { ValidationProvider, ValidationObserver, extend } from '../../dist/vee-validate.full.esm';
 
 export default ({ Vue }) => {
-  Vue.component('CodeSample', CodeSample);
+  window.$extendVee = extend;
   Vue.component('ValidationProvider', ValidationProvider);
   Vue.component('ValidationObserver', ValidationObserver);
 };
