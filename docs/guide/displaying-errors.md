@@ -8,7 +8,7 @@ Typically you would want to display one error at a time for your fields, which i
 
 ```vue{3}
 <ValidationProvider rules="required" v-slot="{ errors }">
-  <input v-model="value" type="text" />
+  <input v-model="value" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 ```
@@ -23,7 +23,7 @@ You will notice that only 1 error is generated. this is because vee-validate tri
   v-slot="{ errors }"
   :bails="false"
 >
-  <input v-model="value" type="text" />
+  <input v-model="value" type="text">
   <ul>
     <li v-for="error in errors">{{ error }}</li>
   </ul>
@@ -47,12 +47,23 @@ Now that we've setup multiple errors generation properly, you can iterate over t
 
 ```vue{4}
 <ValidationProvider rules="required|min:3|alpha" v-slot="{ errors }" :bails="false">
-  <input v-model="value" type="text" />
+  <input v-model="value" type="text">
   <ul>
     <li v-for="error in errors">{{ error }}</li>
   </ul>
 </ValidationProvider>
 ```
+
+<ValidationProvider
+  rules="required|min:3|alpha"
+  v-slot="{ errors }"
+  :bails="false"
+>
+  <input v-model="values.multiple" type="text" placeholder="type something">
+  <ul>
+    <li v-for="error in errors">{{ error }}</li>
+  </ul>
+</ValidationProvider>
 
 ## Customizing the field name
 
@@ -64,10 +75,19 @@ So far you only saw `{field}` placeholder used in the error messages to refer to
   rules="required"
   v-slot="{ errors }"
 >
-  <input v-model="value" type="text" />
+  <input v-model="value" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 ```
+
+<ValidationProvider
+  name="first name"
+  rules="required|alpha"
+  v-slot="{ errors }"
+>
+  <input v-model="values.name" type="text" placeholder="type something...">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
 
  <!-- TODO: Add localization and custom messages guide -->
 <!-- Messages can also be localized and customized per field. -->
@@ -75,3 +95,9 @@ So far you only saw `{field}` placeholder used in the error messages to refer to
 ---
 
 Now that we have got grasp of the basics, we can learn more about the validation provider.
+
+<script>
+export default {
+  data: () => ({ values: {} })
+};
+</script>
