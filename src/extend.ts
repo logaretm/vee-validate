@@ -1,25 +1,42 @@
-import { ValidationRule, ValidationRuleSchema } from './types';
+import { ValidationRule, ValidationRuleSchema, RuleParamConfig } from './types';
 import { isCallable, merge } from './utils';
 
-const RULES: { [k: string]: ValidationRuleSchema } = {};
+interface NormalizedRuleSchema extends ValidationRuleSchema {
+  params?: RuleParamConfig[];
+}
 
-type RuleIterateFn = (ruleName: string, schema: ValidationRuleSchema) => any;
+const RULES: { [k: string]: NormalizedRuleSchema } = {};
+
+type RuleIterateFn = (ruleName: string, schema: NormalizedRuleSchema) => any;
+
+function normalizeSchema(schema: ValidationRuleSchema): NormalizedRuleSchema {
+  if (schema.params && schema.params.length) {
+    schema.params = schema.params.map(param => {
+      if (typeof param === 'string') {
+        return { name: param };
+      }
+
+      return param;
+    });
+  }
+
+  return schema as NormalizedRuleSchema;
+}
 
 export class RuleContainer {
   public static extend(name: string, schema: ValidationRuleSchema) {
     // if rule already exists, overwrite it.
-    let rule: ValidationRuleSchema;
+    const rule = normalizeSchema(schema);
     if (RULES[name]) {
-      rule = merge(RULES[name], schema);
-    } else {
-      rule = {
-        immediate: true,
-        computesRequired: false,
-        ...schema
-      };
+      RULES[name] = merge(RULES[name], schema);
+      return;
     }
 
-    RULES[name] = rule;
+    RULES[name] = {
+      immediate: true,
+      computesRequired: false,
+      ...rule
+    };
   }
 
   public static iterate(fn: RuleIterateFn) {

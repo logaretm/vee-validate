@@ -236,7 +236,7 @@ describe('Validation Provider Component', () => {
       {
         data: () => ({
           value: '',
-          rules: { required: true, included: [1, 2, 3] }
+          rules: { required: true, oneOf: [1, 2, 3] }
         }),
         template: `
         <div>
@@ -256,11 +256,11 @@ describe('Validation Provider Component', () => {
     // flush the pending validation.
     await flushPromises();
 
-    expect(error.text()).toBe('{field} is not valid.');
+    expect(error.text()).toBe('The {field} is not a valid value.');
 
     wrapper.vm.rules = {
       required: true,
-      included: [1, 2, 3, 4]
+      oneOf: [1, 2, 3, 4]
     };
 
     await flushPromises();

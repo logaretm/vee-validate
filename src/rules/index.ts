@@ -11,7 +11,7 @@ import email from './email';
 import excluded from './excluded';
 import ext from './ext';
 import image from './image';
-import included from './included';
+import oneOf from './oneOf';
 import integer from './integer';
 import is from './is';
 import is_not from './is_not';
@@ -40,7 +40,7 @@ export {
   email,
   ext,
   image,
-  included,
+  oneOf,
   integer,
   length,
   is_not,

@@ -1,6 +1,6 @@
 import { RuleContainer } from './extend';
 import { isObject, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate } from './utils';
-import { ValidationResult, RuleParamSchema, ValidationRuleSchema, ValidationMessageTemplate } from './types';
+import { ValidationResult, RuleParamSchema, ValidationRuleSchema, ValidationMessageTemplate, RuleParamConfig } from './types';
 import { getConfig } from './config';
 
 interface FieldMeta {
@@ -148,7 +148,7 @@ async function _shouldSkip(field: FieldMeta, value: any) {
  */
 async function _test(field: FieldMeta, value: any, rule: { name: string; params: any[] | object }) {
   const ruleSchema = RuleContainer.getRuleDefinition(rule.name);
-  if (!ruleSchema.validate) {
+  if (!ruleSchema || !ruleSchema.validate) {
     throw new Error(`No such validator '${rule.name}' exists.`);
   }
 
@@ -162,7 +162,7 @@ async function _test(field: FieldMeta, value: any, rule: { name: string; params:
   return {
     valid: result.valid,
     data: result.data || {},
-    errors: result.valid ? [] : [_generateFieldError(field, ruleSchema, rule.name, params, result.data)]
+    errors: result.valid ? [] : [_generateFieldError(field, value, ruleSchema, rule.name, params, result.data)]
   };
 }
 
@@ -171,6 +171,7 @@ async function _test(field: FieldMeta, value: any, rule: { name: string; params:
  */
 function _generateFieldError(
   field: FieldMeta,
+  value: any,
   ruleSchema: ValidationRuleSchema,
   ruleName: string,
   params: { [k: string]: any },
@@ -178,7 +179,8 @@ function _generateFieldError(
 ) {
   const values = {
     ...(params || {}),
-    ...(data || {})
+    ...(data || {}),
+    _value_: value
   };
 
   if (ruleSchema.message) {
@@ -204,7 +206,7 @@ function _normalizeMessage(template: ValidationMessageTemplate, field: string, v
 
 function _buildParams(
   provided: any[] | { [k: string]: any },
-  defined: RuleParamSchema[] | undefined,
+  defined: RuleParamConfig[] | undefined,
   crossTable: { [k: string]: any }
 ) {
   const params: { [k: string]: any } = {};
@@ -217,10 +219,10 @@ function _buildParams(
     return provided;
   }
 
-  let definedRules: RuleParamSchema[];
+  let definedRules: RuleParamConfig[];
   // collect the params schema.
   if (!defined || defined.length < provided.length) {
-    let lastDefinedParam: RuleParamSchema;
+    let lastDefinedParam: RuleParamConfig;
     // collect any additional parameters in the last item.
     definedRules = provided.map((_: any, idx: number) => {
       let param = defined && defined[idx];
