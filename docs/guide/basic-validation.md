@@ -1,6 +1,6 @@
 # Validation
 
-Previously vee-validate shipped with many validation rules, since `v3` it will ship with rules separate in another bundle. So you need to import what you need and use it. By default we wanted apps that use vee-validate to be nimble and fast as possible.
+Previously vee-validate shipped with many validation rules. Starting with `v3` it will ship the rules in a separate bundle. So you import only what you need. Mostly you won't use all the rules in every single form in your app so by default we wanted apps that use vee-validate to be nimble and fast as possible.
 
 ## Adding validation rules
 
@@ -11,6 +11,33 @@ import { extend } from 'vee-validate';
 
 extend('required', value => !!value);
 ```
+
+or an object with a `validate` function:
+
+```js
+import { extend } from 'vee-validate';
+
+extend('required', {
+  validate: value => !!value
+});
+```
+
+## Rules Parameters
+
+Rule functions can also accept params to configure their behavior.
+
+```js
+import { extend } from 'vee-validate';
+
+extend('required', {
+  params: ['max'], // list of parameter names
+  validate (value, { max }) {
+    return Number(value) > max;
+  }
+});
+```
+
+declared parameters will be passed in an object in the second parameter to the `validate` function.
 
 ## Customizing the error message
 
@@ -105,6 +132,55 @@ Keep in mind when using the **full bundle** you need to keep all your imports po
 :::
 
 This bundle comes with extra size because all rules are imported for you.
+
+### Async Rules
+
+Rules can also be an asynchronous function, in fact vee-validate treats all rules as asynchronous. You can return a promise in your rules `validate` function.
+
+```js
+import { extend } from 'vee-validate';
+
+extend('asyncRule', {
+  validate (value) {
+    return new Promise(resolve => {
+      // simulate a network request.
+      setTimeout(() => {
+        resolve(!!value);
+      }, 300);
+    });
+  },
+  message: 'This field is required' // the error message
+});
+```
+
+Or if you are an `async/await` fan:
+
+```js
+import { extend } from 'vee-validate';
+
+extend('asyncRule', {
+  async validate (value) {
+    // some heavy work/network request.
+
+    return !!value;
+  },
+  message: 'This field is required' // the error message
+});
+```
+
+---
+
+:::tip Heads up!
+
+There are more to rules, but for now you know how to use most common cases in your app. The other cases that were not covered here are:
+
+- Cross-Field validation (confirm password).
+- Required State Rules.
+- Backend messages.
+
+You can refer to the [Advanced Validation](./advanced-validation.md) guide for these cases.
+
+:::
 
 ---
 
