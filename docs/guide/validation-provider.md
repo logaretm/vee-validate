@@ -236,7 +236,7 @@ When using cross-field rules like the `confirmed` rule the target field must hav
 </ValidationProvider>
 ```
 
-[You can see providers in action here](/examples/validation-providers.md)
+You learn more about cross-field validation in the [advanced guide](./advanced-validation.md)
 
 ## Refactoring Validation Providers
 

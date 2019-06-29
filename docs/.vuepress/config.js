@@ -8,33 +8,18 @@ const sidebars = {
     'validation-provider',
     'validation-observer',
     'localization',
-    // 'advanced-validation',
+    'advanced-validation',
     // 'syntax',
     // 'rules',
     // 'custom-rules',
     // 'inferred-rules',
-    // 'messages',
-    // 'localization',
-    // 'flags',
     // 'classes-and-styling',
-    // 'events',
     // 'interaction',
-    // 'conditional-and-looping-inputs',
     // 'ui-integrations',
     // 'testing'
   ],
   examples: [
-    '',
-    'debounce',
-    'initial-value',
-    'vuex',
-    'radio',
-    'checkboxes',
-    'async-backend-validation',
-    'scopes',
-    'custom-component',
-    'locale',
-    'validation-providers'
+    ''
   ]
 };
 
