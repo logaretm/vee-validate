@@ -52,3 +52,11 @@ Also you would normally display error messages and hints to your users in the te
 This is why vee-validate uses the declarative approach, most of the work goes into the template in a fire and forget manner which allows you to focus more on your app logic rather than trivial tasks like validation.
 
 vee-validate can still be used imperatively, but it is not the main focus nor the goal of this library.
+
+## Client Side Validation
+
+:::danger
+Client-side validation is never a substitute for server-side validation. Make sure to validate any input from the user on your backend as well.
+:::
+
+As such you should treat client-side validation as a UX measure rather than a security measure.

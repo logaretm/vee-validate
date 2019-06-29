@@ -38,10 +38,6 @@ npm install vee-validate --save
 
 ## Usage
 
-:::danger
-Client-side validation is never a substitute for server-side validation. Make sure to validate any input from the user on your backend as well.
-:::
-
 ### via script tag
 
 include the script directly
@@ -50,6 +46,13 @@ include the script directly
 <script src="path/to/vue.js"></script>
 <script src="path/to/vee-validate.js"></script>
 <script>
+  // Add a rule.
+  VeeValidate.extend('secret', {
+    validate: value => value === 'example',
+    message: 'This is not the magic word'
+  });
+
+  // Register the component globally.
   Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
 </script>
 ```
@@ -60,11 +63,13 @@ include the script directly
 import Vue from 'vue';
 import { ValidationProvider, extend } from 'vee-validate';
 
-extend('required', {
-  validate: value => !!value,
-  message: 'This field is required'
+// Add a rule.
+extend('secret', {
+  validate: value => value === 'example',
+  message: 'This is not the magic word'
 });
 
+// Register it globally
 Vue.component('ValidationProvider', ValidationProvider);
 ```
 
@@ -85,7 +90,7 @@ Here is an input field without validation:
 To validate it, wrap the `input` with a `ValidationProvider` component:
 
 ```vue{1,4}
-<ValidationProvider rules="required" v-slot="{ errors }">
+<ValidationProvider rules="secret" v-slot="{ errors }">
   <input v-model="email" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
@@ -97,17 +102,22 @@ To display error messages, the `ValidationProvider` exposes `errors` array throu
 
 ### Demo
 
-Here is the above example in action:
+Here is the above example in action, enter `example` or leave it empty to pass the validation.
 
-<ValidationProvider rules="required" v-slot="{ errors }">
-  <input v-model="email" type="text">
+<ValidationProvider rules="secret" v-slot="{ errors }">
+  <input v-model="value" type="text" placeholder="type something">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 
 <script>
+window.$extendVee('secret', {
+  validate: value => value === 'example',
+  message: 'This is not the magic word'
+});
+
 export default {
  data: () => ({
-    email: ''
+    value: ''
   })
 };
 </script>
