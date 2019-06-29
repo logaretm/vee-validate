@@ -76,7 +76,7 @@ The default the rendered **tag** can be changed using the provider's `tag` prop.
   </div>
 ```
 
-### Renderless
+### Forcing Renderless
 
 Sometimes it is unsuitable for a Provider component in principle to render anything extra, because of limitations in the Vue rendering engine we cannot have multiple root nodes which limits the design choice to move away from renderless at the moment, in Vue 3.x it this may change with fragments.
 
@@ -242,7 +242,7 @@ When using cross-field rules like the `confirmed` rule the target field must hav
 
 While the ValidationProvider has its advantages, it is verbose and can be very annoying when creating large forms. There are a couple of ways to address this issue.
 
-### Creating Higher-Order Components
+### Higher-Order Components
 
 A common pattern is to use higher-order components to produce new components with slightly different behavior. This is similar to creating a wrapper or a mixin for our component, except it uses props/events to communicate state.
 
@@ -390,10 +390,10 @@ export default {
 </script>
 ```
 
-:::tip
+:::tip Typescript and $refs
 If you are using TypeScript you may face issues with `$refs` not giving you the correct typings, you can solve that by defining them as `ValidationProvider` instances:
 
-```ts
+```ts{3}
 export default class App extends Vue {
   $refs!: {
     provider: InstanceType<typeof ValidationProvider>;
@@ -401,7 +401,8 @@ export default class App extends Vue {
 }
 ```
 
-```ts
+```ts{3,4,5}
+// All properties are required.
 this.$refs.provider.applyResult({
   errors: ["this is a backend error"],
   valid: false,
