@@ -41,19 +41,39 @@ Other parameters can be added with `,` separating them, the following example ch
   rules="required|between:3,10"
   v-slot="{ errors }"
 >
-  <input v-model="value" type="text">
+  <input v-model="value" type="number">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 ```
 
-Some rules take infinite number of parameters like `oneOf`. The following example checks if the field text is one of the provided parameters.
+Some rules take infinite number of parameters like `oneOf`. The following example checks if the field text is one of the provided parameters, one of those selections is invalid.
 
-```vue{2}
 <ValidationProvider
-  rules="required|oneOf:coffee,tea,juice,beer,milk"
+  rules="required|oneOf:coffee,tea,beer,milk"
   v-slot="{ errors }"
 >
-  <input v-model="value" type="text">
+  <select v-model="values">
+    <option value="coffee">Coffee</option>
+    <option value="tea">Tea</option>
+    <option value="beer">Beer</option>
+    <option value="milk">Milk</option>
+    <option value="juice">Juice</option>
+  </select>
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+
+```vue{3}
+<ValidationProvider
+  rules="required|oneOf:coffee,tea,beer,milk"
+  v-slot="{ errors }"
+>
+  <select v-model="value">
+    <option value="coffee">Coffee</option>
+    <option value="tea">Tea</option>
+    <option value="beer">Beer</option>
+    <option value="milk">Milk</option>
+    <option value="juice">Juice</option>
+  </select>
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 ```
@@ -155,3 +175,9 @@ And in **object format** it is even easier:
 ---
 
 Now you can easily assign rules to fields both statically and dynamically. Let's get to displaying errors.
+
+<script>
+export default {
+  data: () => ({ values: {} })
+};
+</script>
