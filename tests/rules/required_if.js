@@ -5,7 +5,7 @@ test('validates a conditional requirement', () => {
   let test1 = validate('', { target: 'foo', values: ['bar', 'baz'] });
   expect(test1).toMatchObject({
     valid: true,
-    data: { required: false }
+    required: false
   });
 
   // foo is part of [bar, foo, baz] -> field is required & invalid

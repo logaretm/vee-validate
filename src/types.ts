@@ -42,6 +42,7 @@ export interface ValidationRuleSchema {
   message?: ValidationMessageGenerator;
   immediate?: boolean;
   computesRequired?: boolean;
+  castValue?(value: any): any;
 }
 
 export type ValidationRule = ValidationRuleFunction | ValidationRuleSchema;

@@ -154,7 +154,8 @@ async function _test(field: FieldMeta, value: any, rule: { name: string; params:
 
   // build params
   const params = _buildParams(rule.params, ruleSchema.params, field.crossTable);
-  let result = await ruleSchema.validate(value, params);
+  const normalizedValue = ruleSchema.castValue ? ruleSchema.castValue(value) : value;
+  let result = await ruleSchema.validate(normalizedValue, params);
   if (!isObject(result)) {
     result = { valid: result, data: {} };
   }
