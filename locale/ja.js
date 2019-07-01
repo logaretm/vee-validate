@@ -2,12 +2,12 @@ import { formatFileSize, isDefinedGlobally } from './utils';
 
 const messages = {
   _default: (field) => `${field}の値が不正です`,
-  after: (field, [target]) => `${field}は${target}の後でなければなりません`,
+  after: (field, [target, inclusion]) => `${field}は${target}${inclusion ? '以降' : 'の後'}でなければなりません`,
   alpha: (field) => `${field}はアルファベットのみ使用できます`,
   alpha_dash: (field) => `${field}は英数字とハイフン、アンダースコアのみ使用できます`,
   alpha_num: (field) => `${field}は英数字のみ使用できます`,
   alpha_spaces: (field) => `${field}はアルファベットと空白のみ使用できます`,
-  before: (field, [target]) => `${field}は${target}よりも前でなければなりません`,
+  before: (field, [target, inclusion]) => `${field}は${target}${inclusion ? '以前' : 'よりも前'}でなければなりません`,
   between: (field, [min, max]) => `${field}は${min}から${max}の間でなければなりません`,
   confirmed: (field) => `${field}が一致しません`,
   credit_card: (field) => `${field}が正しくありません`,
