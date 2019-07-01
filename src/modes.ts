@@ -16,7 +16,7 @@ export interface InteractionSetting {
 export type InteractionModeFactory = (ctx: ModeContext) => InteractionSetting;
 
 const aggressive: InteractionModeFactory = () => ({
-  on: ['input']
+  on: ['input', 'blur']
 });
 
 const lazy: InteractionModeFactory = () => ({
@@ -26,7 +26,7 @@ const lazy: InteractionModeFactory = () => ({
 const eager: InteractionModeFactory = ({ errors }) => {
   if (errors.length) {
     return {
-      on: ['input']
+      on: ['input', 'change']
     };
   }
 
