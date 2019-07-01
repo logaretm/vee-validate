@@ -11,10 +11,8 @@ const sidebars = {
     'interaction-and-ux',
     'styling',
     'a11y',
-    'advanced-validation',
-    // 'rules',
-    // 'inferred-rules',
-    // 'classes-and-styling',
+    'html5-validation',
+    'advanced-validation'
     // 'testing'
   ],
   examples: [
