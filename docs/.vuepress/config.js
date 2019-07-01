@@ -9,13 +9,11 @@ const sidebars = {
     'validation-observer',
     'localization',
     'interaction-and-ux',
+    'styling',
     'advanced-validation',
-    // 'syntax',
     // 'rules',
-    // 'custom-rules',
     // 'inferred-rules',
     // 'classes-and-styling',
-    // 'ui-integrations',
     // 'testing'
   ],
   examples: [
