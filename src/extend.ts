@@ -33,7 +33,7 @@ export class RuleContainer {
     }
 
     RULES[name] = {
-      immediate: true,
+      lazy: false,
       computesRequired: false,
       ...rule
     };
@@ -48,8 +48,8 @@ export class RuleContainer {
     }
   }
 
-  public static isImmediate(name: string) {
-    return !!(RULES[name] && RULES[name].immediate);
+  public static isLazy(name: string) {
+    return !!(RULES[name] && RULES[name].lazy);
   }
 
   public static isRequireRule(name: string) {

@@ -69,7 +69,7 @@ async function _validate(field: FieldMeta, value: any, { isInitial = false } = {
   const rules = Object.keys(field.rules).filter(rule => !RuleContainer.isRequireRule(rule));
   const length = rules.length;
   for (let i = 0; i < length; i++) {
-    if (isInitial && !RuleContainer.isImmediate(rules[i])) {
+    if (isInitial && RuleContainer.isLazy(rules[i])) {
       continue;
     }
 

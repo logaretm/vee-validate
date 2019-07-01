@@ -40,7 +40,7 @@ export interface ValidationRuleSchema {
   validate?: ValidationRuleFunction;
   params?: RuleParamSchema[];
   message?: ValidationMessageGenerator;
-  immediate?: boolean;
+  lazy?: boolean;
   computesRequired?: boolean;
   castValue?(value: any): any;
 }
