@@ -10,6 +10,7 @@ const sidebars = {
     'localization',
     'interaction-and-ux',
     'styling',
+    'a11y',
     'advanced-validation',
     // 'rules',
     // 'inferred-rules',
