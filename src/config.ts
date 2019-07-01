@@ -19,14 +19,14 @@ export interface VeeValidateConfig {
   validity: boolean;
   useConstraintAttrs: boolean;
   mode: string | InteractionModeFactory;
-  classNames: ValidationClassMap;
+  classes: ValidationClassMap;
   delay: number;
   defaultMessage: ValidationMessageTemplate;
 }
 
 const DEFAULT_CONFIG: VeeValidateConfig = {
   defaultMessage: `{_field_} is not valid.`,
-  classNames: {
+  classes: {
     touched: 'touched', // the control has been blurred
     untouched: 'untouched', // the control hasn't been blurred
     valid: 'valid', // model is valid
