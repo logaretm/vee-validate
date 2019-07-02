@@ -15,6 +15,10 @@ const sidebars = {
     'advanced-validation'
     // 'testing'
   ],
+  api: [
+    '',
+    'rules'
+  ],
   examples: [
     ''
   ]
