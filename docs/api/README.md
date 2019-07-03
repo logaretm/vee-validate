@@ -107,4 +107,4 @@ Configures the default global options for vee-validate.
 | -------- | --------------- | --------------------------------------- |
 | options  | `ConfigOptions` | An object of the configuration options. |
 
-You can refer to the [configuration guide](./configuration.md) for more information.
+You can refer to the [configuration guide](../configuration.md) for more information.

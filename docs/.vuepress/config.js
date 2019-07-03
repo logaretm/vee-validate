@@ -20,7 +20,7 @@ const sidebars = {
     'rules'
   ],
   examples: [
-    ''
+    'ui-libraries'
   ]
 };
 
