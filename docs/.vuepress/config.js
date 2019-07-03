@@ -92,14 +92,12 @@ module.exports = {
         nav: [
           { text: 'Guide', link: '/guide/' },
           { text: 'Config', link: '/configuration' },
-          { text: 'Concepts', link: '/concepts/' },
-          { text: 'Examples', link: '/examples/' },
-          { text: 'API', link: '/api/' }
+          { text: 'API', link: '/api/' },
+          { text: 'Examples', link: '/examples/' }
         ],
         sidebarDepth: 1,
         sidebar: {
           '/guide/': genSidebarConfig('Guide'),
-          '/concepts/': genSidebarConfig('Concepts'),
           '/examples/': genSidebarConfig('Examples'),
           '/api/': genSidebarConfig('API')
         }
