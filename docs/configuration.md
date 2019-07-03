@@ -8,16 +8,16 @@ You may need to configure some options to tweak some of the plugin internals. Yo
 import { configure } from 'vee-validate';
 
 const config = {
-  aria: true,
-  classNames: {},
+  classes: {
+    valid: 'is-valid',
+    invalid: 'is-invalid'
+  },
   bails: true,
-  delay: 0,
   mode: 'aggressive',
-  validity: false,
   useConstraintAttrs: true
 };
 
-// Configures the options.
+// Sets the options.
 configure(config);
 ```
 
@@ -27,10 +27,8 @@ You can update the config with the `configure` method at any time during your ap
 
 |Property       | Type      | Default   | Description  |
 |:--------------|:---------:|:---------:|:---------|
-| aria          | `boolean` | `true`    | Allows setting `aria-invalid` and `aria-required` attributes on HTML inputs. |
-| classNames    | `object`  |           | The classes to be applied depending on the state of the input. |
-| delay         | `number`  | `0`       | The default debounce time for all inputs (only affects validations). |
+| classes    | `object`  |           | The classes to be applied depending on the state of the input. |
 | mode | `string` | `'aggressive'` | Sets the interaction mode to one of the predefined modes. |
-| bails      | `boolean`|  `true`     | Whether the validation should bail after the first failure for each field, you can opt in or out from either settings by using the [continues](/api/directive.md#continues) and the [bails](/api/directive.md#bails) modifiers. |
-| validity      | `boolean` | `false` | Set custom validity [Constraint validation](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation) on native HTML inputs. |
-| useConstraintAttrs | `boolean` | `true` | Enables [rule inference](/guide/inferred-rules.md) on native HTML inputs. |
+| bails      | `boolean`|  `true`     | Whether failed validations should exit or all rules are run to completion. |
+| useConstraintAttrs | `boolean` | `true` | Enables [rule inference](./guide/html5-validation.md) on native HTML inputs. |
+| defaultMessage | `string | () => string` | "{\_field\_} is not valid." | The fallback message for rules without messages. |

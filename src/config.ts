@@ -15,12 +15,9 @@ export interface ValidationClassMap {
 
 export interface VeeValidateConfig {
   bails: boolean;
-  aria: boolean;
-  validity: boolean;
   useConstraintAttrs: boolean;
   mode: string | InteractionModeFactory;
   classes: ValidationClassMap;
-  delay: number;
   defaultMessage: ValidationMessageTemplate;
 }
 
@@ -35,11 +32,8 @@ const DEFAULT_CONFIG: VeeValidateConfig = {
     dirty: 'dirty' // control has been interacted with
   },
   bails: true,
-  aria: true,
-  validity: false,
   mode: 'aggressive',
-  useConstraintAttrs: true,
-  delay: 0
+  useConstraintAttrs: true
 };
 
 export let currentConfig: VeeValidateConfig = { ...DEFAULT_CONFIG };

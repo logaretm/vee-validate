@@ -773,7 +773,7 @@ describe('Validation Provider Component', () => {
 
   test('classes can be arrays', async () => {
     configure({
-      classNames: {
+      classes: {
         invalid: ['wrong', 'bad'],
         valid: ['jolly', 'good']
       }

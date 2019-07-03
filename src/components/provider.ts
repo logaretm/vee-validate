@@ -88,7 +88,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     },
     debounce: {
       type: Number,
-      default: () => getConfig().delay || 0
+      default: 0
     },
     tag: {
       type: String,
@@ -143,7 +143,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       return isRequired;
     },
     classes() {
-      const names = getConfig().classNames;
+      const names = getConfig().classes;
 
       return computeClassObj(names, this.flags);
     },
