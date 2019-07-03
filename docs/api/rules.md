@@ -132,20 +132,24 @@ The field under validation must have a numeric value bounded by a minimum value 
 
 The field under validation must have the same value as the confirmation field.
 
-<RuleDemo rule="confirm:confirmation" />
+<ValidationObserver>
+  <RuleDemo rule="confirmed:confirmation" />
 
-<RuleDemo vid="confirmation" />
+  <RuleDemo vid="confirmation" />
+</ValidationObserver>
 
 ```vue
-<ValidationProvider rules="confirmed:confirmation" v-slot="{ errors }">
-  <input v-model="value" type="text">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
+<ValidationObserver>
+  <ValidationProvider rules="confirmed:confirmation" v-slot="{ errors }">
+    <input v-model="value" type="text">
+    <span>{{ errors[0] }}</span>
+  </ValidationProvider>
 
-<ValidationProvider v-slot="{ errors }" vid="confirmation">
-  <input v-model="confirmation" type="text">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
+  <ValidationProvider v-slot="{ errors }" vid="confirmation">
+    <input v-model="confirmation" type="text">
+    <span>{{ errors[0] }}</span>
+  </ValidationProvider>
+</ValidationObserver>
 ```
 
 | Param Name | Required? | Default | Description                    |
@@ -223,7 +227,7 @@ The field under validation must be a valid email.
 ```
 
 :::tip Inference
-This rule is automatically inferred if the `input` type is `email`.
+This rule is automatically inferred if the `input` type is `email`, it also detects if the `multiple` attribute is set.
 :::
 
 ## ext
@@ -313,6 +317,10 @@ The field under validation length may not exceed the specified length.
 | ---------- | --------- | ------- | -------------------------------------------------------------- |
 | `length`   | **yes**   |         | A numeric value representing the maximum number of characters. |
 
+:::tip Inference
+  This rule is inferred when the field type is `text` and when `maxlength` attribute is set.
+:::
+
 ## max_value <Badge text="Inferred" type="tip"/>
 
 The field under validation must be a numeric value and must not be greater than the specified value.
@@ -329,6 +337,10 @@ The field under validation must be a numeric value and must not be greater than 
 | Param Name | Required? | Default | Description                                              |
 | ---------- | --------- | ------- | -------------------------------------------------------- |
 | `max`      | **yes**   |         | A numeric value representing the greatest value allowed. |
+
+:::tip Inference
+  This rule is inferred when the field type is `number` and when `max` attribute is set.
+:::
 
 ## mimes
 
@@ -366,6 +378,10 @@ The field under validation length should not be less than the specified length.
 | ---------- | --------- | ------- | -------------------------------------------------------------- |
 | `length`   | **yes**   |         | A numeric value representing the minimum number of characters. |
 
+:::tip Inference
+  This rule is inferred when the field type is `text` and when the `minlength` attribute is set.
+:::
+
 ## min_value <Badge text="Inferred" type="tip"/>
 
 <RuleDemo rule="min_value:4" />
@@ -382,6 +398,10 @@ The field under validation must be a numeric value and must not be less than the
 | Param Name | Required? | Default | Description                                              |
 | ---------- | --------- | ------- | -------------------------------------------------------- |
 | `min`      | **yes**   |         | A numeric value representing the smallest value allowed. |
+
+:::tip Inference
+  This rule is inferred when the field type is `number` and when `min` attribute is set.
+:::
 
 ## numeric
 
@@ -421,6 +441,10 @@ You should not use the pipe '|' or commas ',' within your regular expression whe
 When using the `regex` rule, using the `g` flag may result in unexpected falsy validations. This is because vee-validate uses the same instance across validation attempts.
 :::
 
+:::tip Inference
+  This rule is inferred when the field type is `text` and `pattern` attribute is set.
+:::
+
 ## required <Badge text="Inferred" type="tip"/>
 
 The field under validation must have a non-empty value. By default, all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`, empty arrays.
@@ -437,6 +461,10 @@ The field under validation must have a non-empty value. By default, all validato
 | Param Name   | Required? | Default | Description                                     |
 | ------------ | --------- | ------- | ----------------------------------------------- |
 | `allowFalse` | no        | `true`  | Boolean to prevent `false` from being accepted. |
+
+:::tip Inference
+  This rule is inferred when the field type is marked with `required` attribute.
+:::
 
 ## required_if
 
