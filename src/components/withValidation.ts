@@ -1,4 +1,4 @@
-import { ValidationProvider } from './provider';
+import { ValidationProvider } from './Provider';
 import { identity } from '../utils';
 import { findModel, findModelConfig, mergeVNodeListeners, getInputEventName, normalizeSlots } from '../utils/vnode';
 import { CreateElement, Component } from 'vue';

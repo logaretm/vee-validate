@@ -1,7 +1,7 @@
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { isCallable, values, findIndex, warn } from '../utils';
 import { ValidationResult, InactiveRefCache, VeeObserver, VNodeWithVeeContext } from '../types';
-import { ValidationProvider } from './provider';
+import { ValidationProvider } from './Provider';
 import { normalizeChildren } from '../utils/vnode';
 
 const flagMergingStrategy: {

@@ -1,3 +1,3 @@
-export { ValidationProvider } from './provider';
-export { ValidationObserver } from './observer';
+export { ValidationProvider } from './Provider';
+export { ValidationObserver } from './Observer';
 export { withValidation } from './withValidation';
