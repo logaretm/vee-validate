@@ -23,6 +23,10 @@ function mergeFlags(lhs: any, rhs: any, strategy: string) {
   return [lhs, rhs][stratName](f => f);
 }
 
+interface ErrorCollection {
+  [k: string]: string[];
+}
+
 let OBSERVER_COUNTER = 0;
 
 function data() {
@@ -222,6 +226,13 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       }
 
       this.$delete(this.refs, vid);
+    },
+    setErrors(errors: ErrorCollection) {
+      Object.keys(errors).forEach(key => {
+        if (!this.refs[key]) return;
+
+        this.refs[key].setErrors(errors[key]);
+      });
     }
   }
 });

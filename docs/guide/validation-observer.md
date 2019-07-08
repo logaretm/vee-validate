@@ -67,18 +67,18 @@ Note that **only the first child** will be rendered when `slim` is used, any oth
 
 The scoped slot is passed an object containing a flags object representing the merged state of all providers registered under the observer. It contains the following properties:
 
-| Name      | Type                        |  Description                                                                                |
-|:----------|:---------------------------:|:--------------------------------------------------------------------------------------------|
-| dirty     | `boolean`                   | True if at least one field is dirty.                                                        |
-| pristine  | `boolean`                   | True if all fields are pristine (not dirty).                                                |
-| valid     | `boolean`                   | True if all fields are valid.                                                               |
-| invalid   | `boolean`                   | True if at least one field is invalid.                                                      |
-| pending   | `boolean`                   | True if at least one field's validation is in progress.                                     |
-| touched   | `boolean`                   | True if at least one field has been touched (blurred).                                      |
-| untouched | `boolean`                   | True if all fields haven't been touched (blurred).                                           |
-| errors    | `{ [x: string]: string[] }` | An object containing reference to each field errors, each field is keyed by its `vid` prop. |
+| Name      |                          Type                           | Description                                                                                                                                                                          |
+| :-------- | :-----------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dirty     |                        `boolean`                        | True if at least one field is dirty.                                                                                                                                                 |
+| pristine  |                        `boolean`                        | True if all fields are pristine (not dirty).                                                                                                                                         |
+| valid     |                        `boolean`                        | True if all fields are valid.                                                                                                                                                        |
+| invalid   |                        `boolean`                        | True if at least one field is invalid.                                                                                                                                               |
+| pending   |                        `boolean`                        | True if at least one field's validation is in progress.                                                                                                                              |
+| touched   |                        `boolean`                        | True if at least one field has been touched (blurred).                                                                                                                               |
+| untouched |                        `boolean`                        | True if all fields haven't been touched (blurred).                                                                                                                                   |
+| errors    |               `{ [x: string]: string[] }`               | An object containing reference to each field errors, each field is keyed by its `vid` prop.                                                                                          |
 | validate  | `({ silent: boolean }) => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after successful validation. Mutates child providers state unless `silent` is true. |
-| reset     | `() => void`                | A method that resets validation state for all providers. |
+| reset     |                      `() => void`                       | A method that resets validation state for all providers.                                                                                                                             |
 
 ## Examples
 
@@ -131,7 +131,7 @@ If you plan to trigger validation from the template without using `refs` you can
 <script>
 export default {
   methods: {
-    submit () {
+    submit() {
       // No need to worry about form state
       // as this is only runs when the form is valid
       // 🐿 ship it
@@ -145,6 +145,42 @@ As you have guessed, the `validate` method on the Observer's scoped slot is **th
 
 [You can see observers in action here](/examples/validation-providers.md)
 
+### Adding errors to fields
+
+While you can add errors manually to `ValidationProvider` with the `setErrors` method, it can be annoying to do so for multiple fields at once.
+
+The `ValidationObserver` exposes a `setErrors` method that can set errors for its children providers.
+
+```vue
+<template>
+  <div>
+    <ValidationObserver ref="observer">
+      <ValidationProvider vid="field1" v-slot="{ errors }">
+        <input type="text" v-model="field1" />
+        <span id="error1">{{ errors[0] }}</span>
+      </ValidationProvider>
+
+      <ValidationProvider vid="field2" v-slot="{ errors }">
+        <input type="text" v-model="field2" />
+        <span id="error2">{{ errors[0] }}</span>
+      </ValidationProvider>
+    </ValidationObserver>
+  </div>
+</template>
+
+<script>
+// Somewhere in a method, set the errors for each field.
+this.$refs.observer.setErrors({
+  field1: ['wrong'],
+  field2: ['whoops']
+});
+</script>
+```
+
+Notice that the observer `setErrors` takes a different argument than the `ValidationProvider` method, as it accepts an object containing error arrays keyed by the `vid` of each provider.
+
+Refer to the [live example](../examples/backend.md#adding-errors-manually) for more information.
+
 ### Resetting Forms
 
 Like the `validate` method, we could also reset our form after submitting the values to the server. There are a few things to keep in mind:
@@ -155,12 +191,7 @@ Like the `validate` method, we could also reset our form after submitting the va
 
 ```vue{3,34,35,36}
 <template>
-  <ValidationObserver
-    ref="observer"
-    tag="form"
-    @submit.prevent="submit()"
-    v-slot="{ invalid }"
->
+  <ValidationObserver ref="observer" tag="form" @submit.prevent="submit()" v-slot="{ invalid }">
     <TextFieldWithValidation rules="required" v-model="first" />
 
     <TextFieldWithValidation rules="required" v-model="second" />
@@ -172,7 +203,7 @@ Like the `validate` method, we could also reset our form after submitting the va
 <script>
 export default {
   methods: {
-    async submit () {
+    async submit() {
       const isValid = await this.$refs.observer.validate();
       if (!isValid) {
         // ABORT!!
@@ -200,7 +231,7 @@ Notice the usage of [requestAnimationFrame](https://developer.mozilla.org/en-US/
 
 ### Grouping Fields
 
-You can use the __ValidationObserver__ to group your fields using multiple observers and refs.
+You can use the **ValidationObserver** to group your fields using multiple observers and refs.
 
 ```vue{3,7,16,19}
 <template>
@@ -248,10 +279,10 @@ Building upon the previous example, observers can be nested to create nested for
 
 Sometimes when building something like a multi-step form, you would need to use `v-if` on your providers to toggle the visibility of your steps. However, when the provider is hidden and shown again, it does not keep its state.
 
-You can use the `persist` prop to allow the provider to __remember__ its state across mounting/destroyed lifecycles, but there are a couple of caveats:
+You can use the `persist` prop to allow the provider to **remember** its state across mounting/destroyed lifecycles, but there are a couple of caveats:
 
-- Your Provider __must be inside__ an __observer__ component.
-- Your Provider __must have__ a `vid` property set.
+- Your Provider **must be inside** an **observer** component.
+- Your Provider **must have** a `vid` property set.
 
 ```vue{5,6}
 <ValidationObserver>
@@ -278,19 +309,19 @@ Below is the reference of the ValidationObserver public API.
 
 ### Props
 
-|Prop  | Type     | Default Value         | Description                                                           |
-|------|----------|-----------------------|-----------------------------------------------------------------------|
-| tag  | `string` | `span`                | The default tag to [render](#rendering).      |
-| slim | `boolean` | `false`    | If true, it will make the observer [renderless](#renderless), only rendering the HTML inside its slot. |
+| Prop | Type      | Default Value | Description                                                                                            |
+| ---- | --------- | ------------- | ------------------------------------------------------------------------------------------------------ |
+| tag  | `string`  | `span`        | The default tag to [render](#rendering).                                                               |
+| slim | `boolean` | `false`       | If true, it will make the observer [renderless](#renderless), only rendering the HTML inside its slot. |
 
 ### Methods
 
 Those are the only methods meant for public usage, other methods that may exist on the ValidationObserver are strictly internal.
 
-|Method       | Args    | Return Value                  | Description                                                     |
-|-------------|:-------:|:-----------------------------:|-----------------------------------------------------------------|
-| validate    | `{ silent: boolean }`  | `Promise<boolean>` | Validates all the child providers/observers and mutates their state unless `silent` is true. |
-| reset       | `void`  | `void`                        | Resets validation state for all child providers/observers.                |
+| Method   |         Args          |    Return Value    | Description                                                                                  |
+| -------- | :-------------------: | :----------------: | -------------------------------------------------------------------------------------------- |
+| validate | `{ silent: boolean }` | `Promise<boolean>` | Validates all the child providers/observers and mutates their state unless `silent` is true. |
+| reset    |        `void`         |       `void`       | Resets validation state for all child providers/observers.                                   |
 
 ### Events
 
