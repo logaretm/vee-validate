@@ -227,9 +227,12 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
 
       return result;
     },
-    applyResult({ errors, failedRules }: ValidationResult) {
+    setErrors(errors: string[]) {
+      this.applyResult({ errors, failedRules: {} });
+    },
+    applyResult({ errors, failedRules }: Omit<ValidationResult, 'valid'>) {
       this.messages = errors;
-      this.failedRules = { ...failedRules };
+      this.failedRules = { ...(failedRules || {}) };
       this.setFlags({
         valid: !errors.length,
         changed: this.value !== this.initialValue,

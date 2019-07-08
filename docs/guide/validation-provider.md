@@ -13,7 +13,7 @@ Here is a quick example:
 ```vue{2,5,9,13}
 <template>
   <ValidationProvider rules="required" v-slot="{ errors }">
-    <input v-model="value" type="text">
+    <input v-model="value" type="text" />
     <span id="error">{{ errors[0] }}</span>
   </ValidationProvider>
 </template>
@@ -32,7 +32,7 @@ export default {
 It also works for custom components and solves the issue of creating components with built-in validation.
 
 :::tip
-  The fields being validated __must have__ a `v-model` so the component can correctly identify the element/component being validated. Otherwise you need to handle the validation manually.
+The fields being validated **must have** a `v-model` so the component can correctly identify the element/component being validated. Otherwise you need to handle the validation manually.
 :::
 
 ## Rendering
@@ -40,13 +40,13 @@ It also works for custom components and solves the issue of creating components 
 By default, ValidationProvider renders a `span`, Consider the following example where the highlighted represent the render output of the Provider component.
 
 ```vue{7,10}
-  <ValidationProvider rules="required" v-slot="{ errors }">
+<ValidationProvider rules="required" v-slot="{ errors }">
     <input v-model="value" type="text">
     <span>{{ errors[0] }}</span>
   </ValidationProvider>
 
-  <!-- HTML Output -->
-  <span>
+<!-- HTML Output -->
+<span>
     <input type="text">
     <span>ERROR_MSG_PLACEHOLDER</span>
   </span>
@@ -55,22 +55,22 @@ By default, ValidationProvider renders a `span`, Consider the following example 
 The default the rendered **tag** can be changed using the provider's `tag` prop.
 
 ```vue{2,10,16,19}
-  <!-- Multiple Child nodes using templates -->
-  <ValidationProvider rules="required" tag="div">
+<!-- Multiple Child nodes using templates -->
+<ValidationProvider rules="required" tag="div">
     <template v-slot="{ errors }">
       <input v-model="value" type="text">
       <span>{{ errors[0] }}</span>
     </template>
   </ValidationProvider>
 
-  <!-- Multiple Child nodes directly -->
-  <ValidationProvider rules="required" v-slot="{ errors }" tag="div">
+<!-- Multiple Child nodes directly -->
+<ValidationProvider rules="required" v-slot="{ errors }" tag="div">
     <input v-model="value" type="text">
     <span>{{ errors[0] }}</span>
   </ValidationProvider>
 
-  <!-- Both have the same HTML Output -->
-  <div>
+<!-- Both have the same HTML Output -->
+<div>
     <input type="text">
     <span>ERROR_MSG_PLACEHOLDER</span>
   </div>
@@ -111,18 +111,18 @@ Note that **only the first child** will be rendered when `slim` is used, any oth
 
 ## Scoped Slot Data
 
-The object passed down to the slot scope is called the __validation context__. It has the following properties:
+The object passed down to the slot scope is called the **validation context**. It has the following properties:
 
-| Name    | Type                       |  Description |
-|:--------|:--------------------------:|:--------------------------------------------------------------------|
-| errors  | `string[]`                 | The list of error messages.                                         |
-| failedRules | `[x: string]: string`  | A map object of failed rules with (rule, message) as a (key, value) |
-| valid   | `boolean`                  | The current validation state.                                       |
-| flags   | `{ [x: string]: boolean }` | The flags map object state.                                         |
-| aria    | `{ [x: string]: string }`  | Map object of aria attributes for accessibility.                    |
-| classes | `{ [x: string]: boolean }` | Map object of the classes configured based on the validation state. |
-| validate| `(e: any) => Promise`      | A function that is used as an event handler to trigger validation. Useful for fields that do not use v-model. |
-| reset   | `() => void`               | A function that resets the validation state on the provider.        |
+| Name        |            Type            | Description                                                                                                   |
+| :---------- | :------------------------: | :------------------------------------------------------------------------------------------------------------ |
+| errors      |         `string[]`         | The list of error messages.                                                                                   |
+| failedRules |   `[x: string]: string`    | A map object of failed rules with (rule, message) as a (key, value)                                           |
+| valid       |         `boolean`          | The current validation state.                                                                                 |
+| flags       | `{ [x: string]: boolean }` | The flags map object state.                                                                                   |
+| aria        | `{ [x: string]: string }`  | Map object of aria attributes for accessibility.                                                              |
+| classes     | `{ [x: string]: boolean }` | Map object of the classes configured based on the validation state.                                           |
+| validate    |   `(e: any) => Promise`    | A function that is used as an event handler to trigger validation. Useful for fields that do not use v-model. |
+| reset       |        `() => void`        | A function that resets the validation state on the provider.                                                  |
 
 Since slot scopes can take advantage of ES6 destructing, you can opt-in for any of those properties and pass down to your slot template as you see fit. The example above only needed the `errors` array.
 
@@ -138,11 +138,11 @@ Triggering validation on any of the providers is simple, but it is opt-in. Meani
 <template>
   <div>
     <ValidationProvider rules="required" ref="myinput" v-slot="{ errors }">
-      <input v-model="value" type="text">
+      <input v-model="value" type="text" />
       <span>{{ errors[0] }}</span>
     </ValidationProvider>
 
-    <button @click="validateField()" >Submit</button>
+    <button @click="validateField()">Submit</button>
   </div>
 </template>
 
@@ -150,11 +150,11 @@ Triggering validation on any of the providers is simple, but it is opt-in. Meani
 export default {
   // ...
   methods: {
-    validateField () {
+    validateField() {
       // Validate the field
       return provider.validate();
     }
-  },
+  }
   // ..
 };
 </script>
@@ -183,7 +183,7 @@ Note that the `validate` function can handle DOM events and value validation as 
 ```
 
 :::tip
-  Using the same approach you can reset validation state for the provider using the public method `reset()` and the slot scope method of the same name.
+Using the same approach you can reset validation state for the provider using the public method `reset()` and the slot scope method of the same name.
 :::
 
 ### Model-less Validation
@@ -201,7 +201,7 @@ While `v-model` is generally required when using the ValidationProvider componen
 
 ### Input Groups (Checkbox/Radio)
 
-Like radio inputs and (sometimes) check boxes, some inputs behave as a single input entity. You can wrap a whole group of inputs __given that they have the same `v-model`__ in a single ValidationProvider component. You can group as many inputs as you want inside the ValidationProvider component.
+Like radio inputs and (sometimes) check boxes, some inputs behave as a single input entity. You can wrap a whole group of inputs **given that they have the same `v-model`** in a single ValidationProvider component. You can group as many inputs as you want inside the ValidationProvider component.
 
 ```vue
 <ValidationProvider rules="required" v-slot="{ errors }">
@@ -218,19 +218,12 @@ Like radio inputs and (sometimes) check boxes, some inputs behave as a single in
 When using cross-field rules like the `confirmed` rule the target field must have a corresponding `vid` can be either a number or a string.
 
 ```vue{2,9}
-<ValidationProvider
-  rules="required|confirmed:confirm"
-  v-slot="{ errors }"
->
+<ValidationProvider rules="required|confirmed:confirm" v-slot="{ errors }">
   <input v-model="password" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 
-<ValidationProvider
-  vid="confirm"
-  rules="required"
-  v-slot="{ errors }"
->
+<ValidationProvider vid="confirm" rules="required" v-slot="{ errors }">
   <input v-model="confirmation" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
@@ -253,17 +246,18 @@ This is the `TextInput` Component:
 ```vue
 <template>
   <div>
-    <input type="text" @input="$emit('input', $event.target.value)" :value="value">
+    <input type="text" @input="$emit('input', $event.target.value)" :value="value" />
     <span v-show="error">{{ error }}</span>
   </div>
-<template>
-
-<script>
-export default {
-  name: 'TextField',
-  props: ['value', 'error']
-};
-</script>
+  <template>
+    <script>
+      export default {
+        name: 'TextField',
+        props: ['value', 'error']
+      };
+    </script></template
+  ></template
+>
 ```
 
 Now this component does not have validation built-in, but it does have the UI to do so which is common in design systems and input components.
@@ -275,7 +269,7 @@ import { withValidation } from 'vee-validate';
 import TextField from './components/TextField';
 
 const TextFieldWithValidation = withValidation(TextField, ctx => ({
-  'error': ctx.errors[0]
+  error: ctx.errors[0]
 }));
 ```
 
@@ -344,13 +338,12 @@ export default {
     innerValue: null
   }),
   watch: {
-    innerValue (val) {
+    innerValue(val) {
       this.$emit('input', val);
     }
   }
 };
 </script>
-
 ```
 
 Ideally you would pass the props you need to either the `ValidationProvider` or the `TextField` being validated, with this approach solves the verbosity problem while preserving the simple scoped slots API. It also allows you to distribute props without the issues of having a conflict, unlike HOC.
@@ -359,52 +352,47 @@ Using either of these approaches is at your preference.
 
 ## Adding Errors Manually
 
-You may want to add manual errors to a field, such cases like pre-filling initially due to a server response, or an async request. You can do this using `refs` and the `applyResult` method.
+You may want to add manual errors to a field, such cases like pre-filling initially due to a server response, or an async request. You can do this using `refs` and the `setErrors` method.
 
 ```vue{3,19,20,21,22,23}
 <template>
   <div id="app">
     <ValidationProvider ref="provider" rules="required" v-slot="{ errors }">
-      <input v-model="model" type="text">
+      <input v-model="model" type="text" />
       <div v-if="errors" v-text="errors[0]"></div>
     </ValidationProvider>
   </div>
 </template>
 
 <script>
-import { ValidationProvider } from "vee-validate";
+import { ValidationProvider } from 'vee-validate';
 
 export default {
   components: {
     ValidationProvider
   },
   mounted() {
-    // all those properties are required.
-    this.$refs.provider.applyResult({
-      errors: ["this is a backend error"], // array of string errors
-      valid: false, // boolean state
-      failedRules: {} // should be empty since this is a manual error.
-    });
+    this.$refs.provider.setErrors(['this is a backend error']);
   }
 };
 </script>
 ```
 
-:::tip Typescript and $refs
+:::tip Typescript and \$refs
 If you are using TypeScript you may face issues with `$refs` not giving you the correct typings, you can solve that by defining them as `ValidationProvider` instances:
 
 ```ts{3}
 export default class App extends Vue {
   $refs!: {
     provider: InstanceType<typeof ValidationProvider>;
-  }
+  };
 }
 ```
 
 ```ts{3,4,5}
 // All properties are required.
 this.$refs.provider.applyResult({
-  errors: ["this is a backend error"],
+  errors: ['this is a backend error'],
   valid: false,
   failedRules: {}
 });
@@ -420,29 +408,30 @@ Below is the reference of the ValidationProvider public API.
 
 All the following props are optional.
 
-|Prop       | Type      | Default Value         | Description                                                                  |
-|-----------|-----------|-----------------------|------------------------------------------------------------------------------|
-| rules     | `string`  | `undefined`           | The validation rules.                                                        |
-| vid       | `string`  | auto increment number | Identifier used for target/cross-field based rules.                          |
-| immediate | `boolean` | `false`               | If the field should be validated immediately after render (initially).       |
-| events    | `string[]`| `['input']`           | deprecated: check [interaction modes](../interaction.md)                      |
-| name      | `string`  | `undefined`           | A string that will be used to replace `{field}` in error messages and for [custom error messages](/guide/messages.md#field-specific-custom-messages). |
-| bails     | `boolean` | `true`                | If true, the validation will stop on the first failing rule.                 |
-| debounce  | `number`  | `0`                   | Debounces the validation for the specified amount of milliseconds.           |
-| tag       | `string`  | `span`                | The default tag to [render](#rendering). |
-| persist   | `boolean` | `false`               | If true, the provider will keep its errors across mounted/destroyed lifecycles |
+| Prop      | Type       | Default Value         | Description                                                                                                                                           |
+| --------- | ---------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| rules     | `string`   | `undefined`           | The validation rules.                                                                                                                                 |
+| vid       | `string`   | auto increment number | Identifier used for target/cross-field based rules.                                                                                                   |
+| immediate | `boolean`  | `false`               | If the field should be validated immediately after render (initially).                                                                                |
+| events    | `string[]` | `['input']`           | deprecated: check [interaction modes](../interaction.md)                                                                                              |
+| name      | `string`   | `undefined`           | A string that will be used to replace `{field}` in error messages and for [custom error messages](/guide/messages.md#field-specific-custom-messages). |
+| bails     | `boolean`  | `true`                | If true, the validation will stop on the first failing rule.                                                                                          |
+| debounce  | `number`   | `0`                   | Debounces the validation for the specified amount of milliseconds.                                                                                    |
+| tag       | `string`   | `span`                | The default tag to [render](#rendering).                                                                                                              |
+| persist   | `boolean`  | `false`               | If true, the provider will keep its errors across mounted/destroyed lifecycles                                                                        |
 
 ### Methods
 
 Those are the only methods meant for public usage, other methods that may exist on the ValidationProvider are strictly internal.
 
-|Method       | Args    | Return Value                | Description                                                                                                 |
-|-------------|:-------:|:---------------------------:|-------------------------------------------------------------------------------------------------------------|
-| validate    | `value?: any`  | `Promise<ValidationResult>` | Runs a validation of the current value against the rules defined. If a value is provided, it is used as the current value and validates it. |
-| validateSilent | `void`  | `Promise<ValidationResult>` | Runs a validation of the current value against the rules defined. __does not mutate the validation state.__  |
-| applyResult | `ValidationResult` | `void`           | Takes a __validation result__ object and applies it on the current state.                                   |
-| reset       | `void`  | `void`                      | Resets validation state.                                                                                    |
-| setFlags    | Object | void | Updates the field flag states with an object, the object properties should be the flag names and the values should be boolean values. |
+| Method         |        Args        |        Return Value         | Description                                                                                                                                 |
+| -------------- | :----------------: | :-------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| validate       |   `value?: any`    | `Promise<ValidationResult>` | Runs a validation of the current value against the rules defined. If a value is provided, it is used as the current value and validates it. |
+| validateSilent |       `void`       | `Promise<ValidationResult>` | Runs a validation of the current value against the rules defined. **does not mutate the validation state.**                                 |
+| applyResult    | `ValidationResult` |           `void`            | Takes a **validation result** object and applies it on the current state.                                                                   |
+| reset          |       `void`       |           `void`            | Resets validation state.                                                                                                                    |
+| setFlags       |       Object       |           `void`            | Updates the field flag states with an object, the object properties should be the flag names and the values should be boolean values.       |
+| setErrors      |     `string[]`     |           `void`            | Updates the field errors and flags if errors length is > 1                                                                                  |
 
 ### Events
 

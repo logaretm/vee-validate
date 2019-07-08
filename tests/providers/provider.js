@@ -802,4 +802,26 @@ describe('Validation Provider Component', () => {
     expect(input.classes()).toContain('jolly');
     expect(input.classes()).toContain('good');
   });
+
+  test('sets errors manually with setErrors', async () => {
+    const wrapper = mount(
+      {
+        data: () => ({ val: '1' }),
+        template: `
+        <ValidationProvider ref="provider" v-slot="{ errors }" rules="required">
+          <input type="text" v-model="val">
+          <p id="error">{{ errors[0] }}</p>
+        </ValidationProvider>
+      `
+      },
+      { localVue: Vue, sync: false }
+    );
+
+    await flushPromises();
+    expect(wrapper.find('#error').text()).toBe('');
+
+    wrapper.vm.$refs.provider.setErrors(['WRONG!']);
+    await flushPromises();
+    expect(wrapper.find('#error').text()).toBe('WRONG!');
+  });
 });
