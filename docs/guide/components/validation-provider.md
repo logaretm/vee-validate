@@ -367,11 +367,9 @@ You may want to add manual errors to a field, such cases like pre-filling initia
 ```vue
 <template>
   <div id="app">
-    <ValidationProvider ref="provider" rules="required">
-      <div slot-scope="{ errors }">
-        <input v-model="model" type="text">
-        <div v-if="errors" v-text="errors[0]"></div>
-      </div>
+    <ValidationProvider ref="provider" rules="required" v-slot="{ errors }">
+      <input v-model="model" type="text">
+      <div v-if="errors" v-text="errors[0]"></div>
     </ValidationProvider>
   </div>
 </template>
