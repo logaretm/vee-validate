@@ -138,7 +138,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       const forceRequired = this.forceRequired;
 
       const isRequired = rules.required || forceRequired;
-      this.flags.required = isRequired;
+      this.flags.required = !!isRequired;
 
       return isRequired;
     },

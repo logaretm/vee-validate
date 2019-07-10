@@ -7,12 +7,13 @@ const sidebars = {
     'displaying-errors',
     'validation-provider',
     'validation-observer',
-    'localization',
+    'validation-state',
     'interaction-and-ux',
     'styling',
     'a11y',
     'html5-validation',
-    'advanced-validation'
+    'advanced-validation',
+    'localization'
     // 'testing'
   ],
   api: [
