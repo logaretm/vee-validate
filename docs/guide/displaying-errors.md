@@ -89,8 +89,9 @@ So far you only saw `{field}` placeholder used in the error messages to refer to
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 
- <!-- TODO: Add localization and custom messages guide -->
-<!-- Messages can also be localized and customized per field. -->
+:::tip Advanced Customization
+You can localize your messages and display custom messages for specific fields with the [localization API](./localization.md).
+:::
 
 ---
 

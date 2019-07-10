@@ -35,10 +35,7 @@ Here are some examples for the default modes available:
 
 This is the default mode for vee-validate. Validates on `input` and `blur`.
 
-<ValidationProvider rules="required|min:3|alpha" v-slot="{ errors }">
-  <input v-model="values.aggrssive" type="text" placeholder="type something">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
+<RuleDemo rule="required|min:3|alpha" />
 
 ```vue
 <ValidationProvider
@@ -55,10 +52,7 @@ This is the default mode for vee-validate. Validates on `input` and `blur`.
 
 Validates on `change` or `blur`.
 
-<ValidationProvider mode="lazy" rules="required|min:3|alpha" v-slot="{ errors }">
-  <input v-model="values.lazy" type="text" placeholder="type something">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
+<RuleDemo rule="required|min:3|alpha" mode="lazy" />
 
 ```vue{2}
 <ValidationProvider
@@ -75,11 +69,7 @@ Validates on `change` or `blur`.
 
 Does not validate unless `validate` is called explicitly.
 
-<ValidationProvider mode="passive" rules="required|min:3|alpha" v-slot="{ errors, validate }">
-  <input v-model="values.passive" type="text" placeholder="type something">
-  <span>{{ errors[0] }}</span>
-  <button @click="validate()">Validate</button>
-</ValidationProvider>
+<RuleDemo rule="required|min:3|alpha" mode="passive" />
 
 ```vue{2,4,8}
 <ValidationProvider
@@ -99,10 +89,7 @@ This is arguably a better UX for your users since it isn't aggressive initially.
 
 Behaves like **lazy** when the field wasn't interacted with yet, and if it is invalid it will be **aggressive** until the input becomes valid again.
 
-<ValidationProvider mode="eager" rules="required|min:3|alpha" v-slot="{ errors }">
-  <input v-model="values.eager" type="text" placeholder="type something">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
+<RuleDemo rule="required|min:3|alpha" mode="eager" />
 
 ```vue{2,4,8}
 <ValidationProvider
@@ -194,11 +181,3 @@ setInteractionMode('custom', (context) => {
 :::tip Note
   The `mode` prop takes precedence over the globally configured mode, using `setInteraction` in runtime will only affect the new Providers created after its call.
 :::
-
-<script>
-export default {
- data: () => ({
-    values: {}
-  })
-};
-</script>

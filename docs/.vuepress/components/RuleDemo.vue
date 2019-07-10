@@ -1,5 +1,5 @@
 <template>
-  <ValidationProvider :rules="rule" v-slot="{ errors, validate }" :vid="$attrs.vid" class="vprovider">
+  <ValidationProvider :rules="rule" v-slot="{ errors, validate }" :vid="$attrs.vid" class="vprovider" :mode="$attrs.mode">
     <input
       :type="$attrs.inputType || 'text'"
       v-model="value"
