@@ -48,19 +48,10 @@ Other parameters can be added with `,` separating them, the following example ch
 
 Some rules take infinite number of parameters like `oneOf`. The following example checks if the field text is one of the provided parameters, one of those selections is invalid.
 
-<ValidationProvider
-  rules="required|oneOf:coffee,tea,beer,milk"
-  v-slot="{ errors }"
->
-  <select v-model="values">
-    <option value="coffee">Coffee</option>
-    <option value="tea">Tea</option>
-    <option value="beer">Beer</option>
-    <option value="milk">Milk</option>
-    <option value="juice">Juice</option>
-  </select>
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
+<RuleDemo
+type="select"
+rule="required|oneOf:coffee,tea,beer,milk"
+:options="[{ text: 'Coffee', value: 'coffee' }, { text: 'Tea', value: 'tea' }, { text: 'Beer', value: 'beer' }, { text: 'Milk', value: 'milk' }, { text: 'Juice', value: 'juice' }]"></RuleDemo>
 
 ```vue{3}
 <ValidationProvider

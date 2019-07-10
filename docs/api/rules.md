@@ -175,7 +175,7 @@ The field under validation must be numeric and may contain the specified amount 
 | `separator` | no        | '.'     | The decimal point separator character.                     |
 
 :::tip Inference
-  This rule is inferred when the field type is `number`.
+This rule is inferred when the field type is `number`.
 :::
 
 ## digits
@@ -264,7 +264,7 @@ The field under validation must have a value that is in the specified list. **Us
 
 <RuleDemo
 rule="oneOf:1,2,3"
-type="text"
+type="select"
 :options="[{ text: 'One', value: 1 }, { text: 'Two', value: 2 }, { text: 'Three', value: 3 }, { text: 'Four', value: 4 }]"
 
 > </RuleDemo>
@@ -318,7 +318,7 @@ The field under validation length may not exceed the specified length.
 | `length`   | **yes**   |         | A numeric value representing the maximum number of characters. |
 
 :::tip Inference
-  This rule is inferred when the field type is `text` and when `maxlength` attribute is set.
+This rule is inferred when the field type is `text` and when `maxlength` attribute is set.
 :::
 
 ## max_value <Badge text="Inferred" type="tip"/>
@@ -339,7 +339,7 @@ The field under validation must be a numeric value and must not be greater than 
 | `max`      | **yes**   |         | A numeric value representing the greatest value allowed. |
 
 :::tip Inference
-  This rule is inferred when the field type is `number` and when `max` attribute is set.
+This rule is inferred when the field type is `number` and when `max` attribute is set.
 :::
 
 ## mimes
@@ -358,7 +358,7 @@ The file type added to the field under validation should have one of the specifi
 `mimes` take an infinite number of arguments that are formatted as file types. EG: `mimes:image/jpeg,image/png`.
 
 :::tip Wild-card Types
-You can use '*' to specify a wild card, something like `mimes:image/*` will accept all image types.
+You can use '_' to specify a wild card, something like `mimes:image/_` will accept all image types.
 :::
 
 ## min <Badge text="Inferred" type="tip"/>
@@ -379,7 +379,7 @@ The field under validation length should not be less than the specified length.
 | `length`   | **yes**   |         | A numeric value representing the minimum number of characters. |
 
 :::tip Inference
-  This rule is inferred when the field type is `text` and when the `minlength` attribute is set.
+This rule is inferred when the field type is `text` and when the `minlength` attribute is set.
 :::
 
 ## min_value <Badge text="Inferred" type="tip"/>
@@ -400,7 +400,7 @@ The field under validation must be a numeric value and must not be less than the
 | `min`      | **yes**   |         | A numeric value representing the smallest value allowed. |
 
 :::tip Inference
-  This rule is inferred when the field type is `number` and when `min` attribute is set.
+This rule is inferred when the field type is `number` and when `min` attribute is set.
 :::
 
 ## numeric
@@ -442,7 +442,7 @@ When using the `regex` rule, using the `g` flag may result in unexpected falsy v
 :::
 
 :::tip Inference
-  This rule is inferred when the field type is `text` and `pattern` attribute is set.
+This rule is inferred when the field type is `text` and `pattern` attribute is set.
 :::
 
 ## required <Badge text="Inferred" type="tip"/>
@@ -463,7 +463,7 @@ The field under validation must have a non-empty value. By default, all validato
 | `allowFalse` | no        | `true`  | Boolean to prevent `false` from being accepted. |
 
 :::tip Inference
-  This rule is inferred when the field type is marked with `required` attribute.
+This rule is inferred when the field type is marked with `required` attribute.
 :::
 
 ## required_if
@@ -488,10 +488,10 @@ The field under validation must have a non-empty value **only if** the target fi
 </ValidationProvider>
 ```
 
-| Param Name | Required? | Default | Description                                   |
-| ---------- | --------- | ------- | --------------------------------------------- |
-| `target`   | **yes**   |         | The `vid` of the target field.                |
-| `...values`   | **yes**   |         | The values that will make the field required. |
+| Param Name  | Required? | Default | Description                                   |
+| ----------- | --------- | ------- | --------------------------------------------- |
+| `target`    | **yes**   |         | The `vid` of the target field.                |
+| `...values` | **yes**   |         | The values that will make the field required. |
 
 ## size
 
