@@ -37,13 +37,14 @@ yarn add vee-validate
 
 ## Usage
 
-Register the `ValidationProvider` component:
+Register the `ValidationProvider` component and add the `required` rule:
 
-```js{1,3,4,5,6,11}
+```js{1,2,4,5,6,7,12}
 import { ValidationProvider, extend } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules';
 
 extend('required', {
-  validate: value => !!value,
+  ...required,
   message: 'The {field} is required'
 });
 
@@ -69,16 +70,4 @@ Wrap your inputs with the `ValidationProvider`:
 
 And this is the result:
 
-<validation-provider rules="required" v-slot="{ errors }">
-  <input v-model="value" name="myinput" type="text" placeholder="type something">
-  <span>{{ errors[0] }}</span>
-</validation-provider>
-
-<script>
-export default {
-  data: () => ({
-    value: ''
-  })
-};
-</script>
-
+<RuleDemo rule="required" />
