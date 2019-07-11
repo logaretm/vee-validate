@@ -11,7 +11,7 @@ async function build() {
   console.log(chalk.cyan('Generating ESM builds...'));
   await utils.writeBundle(configs.esm, 'vee-validate.esm.js');
   await utils.writeBundle(configs.esmFull, 'vee-validate.full.esm.js');
-  await utils.writeBundle(configs.rules, 'rules.esm.js');
+  await utils.writeBundle(configs.rules, 'rules.js');
   // eslint-disable-next-line
   console.log(chalk.cyan('Done!'));
 
