@@ -8,7 +8,7 @@ Some rules validity are dependent on other fields values, a rule like `confirmed
 
 Rules parameters can be marked as a **field target** by specifying a `isTarget` for that parameters. For example, this is how a basic password confirmation rule would look like:
 
-```js
+```js{6}
 import { extend } from 'vee-validate';
 
 extend('password', {
@@ -19,12 +19,19 @@ extend('password', {
 ```
 
 ```vue{2,10}
-<ValidationProvider rules="required|password:confirmation" v-slot="{ errors }">
+<ValidationProvider
+  rules="required|password:confirmation"
+  v-slot="{ errors }"
+>
   <input v-model="password" type="password">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 
-<ValidationProvider vid="confirmation" rules="required" v-slot="{ errors }">
+<ValidationProvider
+  vid="confirmation"
+  rules="required"
+  v-slot="{ errors }"
+>
   <input v-model="confirm" type="password">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
