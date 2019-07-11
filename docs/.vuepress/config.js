@@ -38,14 +38,6 @@ module.exports = {
   title: 'VeeValidate',
   description: 'Template Based Validation Framework for Vue.js',
   ga: 'UA-100131478-1',
-  plugins: [
-    ['demo-code', {
-      settings: {
-        codepen: false,
-        jsfiddle: false
-      }
-    }]
-  ],
   serviceWorker: true,
   base: '/vee-validate/',
   head: [
