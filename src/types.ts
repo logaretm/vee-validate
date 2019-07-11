@@ -47,7 +47,7 @@ export interface ValidationRuleSchema {
 
 export type ValidationRule = ValidationRuleFunction | ValidationRuleSchema;
 
-// Maps an interface to another but without index signature
+// Extracts explicit keys of an interface without index signature
 // https://stackoverflow.com/questions/51465182/typescript-remove-index-signature-using-mapped-types
 export type KnownKeys<T> = {
   [K in keyof T]: string extends K ? never : number extends K ? never : K;

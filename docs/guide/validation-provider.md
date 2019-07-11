@@ -35,6 +35,119 @@ It also works for custom components and solves the issue of creating components 
 The fields being validated **must have** a `v-model` so the component can correctly identify the element/component being validated. Otherwise you need to handle the validation manually.
 :::
 
+## Scoped Slot Data
+
+The object passed down to the slot scope is called the **validation context**. It has the following properties:
+
+| Name        |            Type            | Description                                                                                                   |
+| :---------- | :------------------------: | :------------------------------------------------------------------------------------------------------------ |
+| errors      |         `string[]`         | The list of error messages.                                                                                   |
+| failedRules |   `[x: string]: string`    | A map object of failed rules with (rule, message) as a (key, value)                                           |
+| aria        | `{ [x: string]: string }`  | Map object of aria attributes for accessibility.                                                              |
+| classes     | `{ [x: string]: boolean }` | Map object of the classes configured based on the validation state.                                           |
+| validate    |   `(e: any) => Promise`    | A function that is used as an event handler to trigger validation. Useful for fields that do not use v-model. |
+| reset       |        `() => void`        | A function that resets the validation state on the provider.                                                  |
+| valid       |    `boolean|undefined`     | If The field is valid.                                                                                        |
+| invalid     |    `boolean|undefined`     | If the field is invalid.                                                                                      |
+| changed     |         `boolean`          | If the field value has been changed.                                                                          |
+| touched     |         `boolean`          | If the field has been focused and blurred.                                                                    |
+| untouched   |         `boolean`          | If the field hasn't been focused.                                                                             |
+| pristine    |         `boolean`          | If the field value was not manipulated.                                                                       |
+| dirty       |         `boolean`          | If the field value has been manipulated.                                                                      |
+| pending     |         `boolean`          | Indicates if the field validation is in progress.                                                             |
+| required    |         `boolean`          | If the field is required.                                                                                     |
+| validated   |         `boolean`          | If the field has been validated at least once.                                                                |
+
+Since slot scopes can take advantage of ES6 destructing, you can opt-in for any of those properties and pass down to your slot template as you see fit. The example above only needed the `errors` array.
+
+The following sample prints all the available props in the Provider's scope:
+
+<ValidationProvider rules="required" v-slot="props">
+  <div>
+    <input type="text" v-model="values.classes">
+    <pre class="no-highlight">{{ props }}</pre>
+  </div>
+</ValidationProvider>
+
+```vue{3,7}
+<ValidationProvider
+  rules="required"
+  v-slot="props"
+>
+  <div>
+    <input type="text" v-model="value">
+    <pre>{{ props }}</pre>
+  </div>
+</ValidationProvider>
+```
+
+## Validation Flags
+
+These are various boolean state values that indicate various actions done by the user on the input field. They are exposed on the `ValidationProvider` slot props. Each flag's state is described by the following behavior:
+
+- `touched`: indicates that the field has been touched or focused.
+- `untouched`: indicates that the field has not been touched nor focused.
+- `dirty`: indicates that the field has been manipulated.
+- `pristine`: indicates that the field has not been manipulated.
+- `valid`: indicates that the field has passed the validation.
+- `invalid`: indicates that the field has failed the validation.
+- `pending`: indicates that the field validation is in progress, helpful if you have long running validation.
+- `validated`: indicates that the field has been validated at least once by a user event (input) or triggered manually using `validate()`.
+- `changed`: indicates that the field value has been changed (strict check).
+
+You can use these flags to give your users a great experience, for example you can disable a button if the field value didn't change.
+
+<ValidationProvider
+  rules="required"
+  v-slot="{ flags }"
+>
+  <input type="text" v-model="values.changed">
+  <button :disabled="!flags.changed">Submit</button>
+</ValidationProvider>
+
+```vue
+<ValidationProvider
+  rules="required"
+  v-slot="{ flags }"
+>
+  <input type="text" v-model="value">
+
+  <button :disabled="!flags.changed">Submit</button>
+</ValidationProvider>
+```
+
+You can do a lot more, like disabling a button if any field in a form is invalid:
+
+<ValidationObserver v-slot="{ valid }"><RuleDemo rule="required" /><RuleDemo rule="required|email" /><button :disabled="!valid">Submit</button></ValidationObserver>
+
+```vue
+<ValidationObserver v-slot="{ valid }">
+  <ValidationProvider
+    rules="required"
+    v-slot="{ errors }"
+  >
+    <input type="text" v-model="name">
+    <span>{{ errors[0] }}</span>
+
+  </ValidationProvider>
+
+  <ValidationProvider
+    rules="required|email"
+    v-slot="{ errors }"
+  >
+    <input type="text" v-model="email">
+    <span>{{ errors[0] }}</span>
+
+  </ValidationProvider>
+
+  <button :disabled="!valid">Submit</button>
+</ValidationObserver>
+```
+
+:::warning Undetermined
+The `valid` and `invalid` flags are special, because both can be `null` at the same time. Initially the input state is undetermined for a very short window of time until vee-validate checks the state internally (silent validation). That is why in the previous example we used `!valid` instead of `invalid` since both will be falsy initially.
+:::
+
 ## Rendering
 
 By default, ValidationProvider renders a `span`, Consider the following example where the highlighted represent the render output of the Provider component.
@@ -109,26 +222,7 @@ Note that **only the first child** will be rendered when `slim` is used, any oth
 <input type="text">
 ```
 
-## Scoped Slot Data
-
-The object passed down to the slot scope is called the **validation context**. It has the following properties:
-
-| Name        |            Type            | Description                                                                                                   |
-| :---------- | :------------------------: | :------------------------------------------------------------------------------------------------------------ |
-| errors      |         `string[]`         | The list of error messages.                                                                                   |
-| failedRules |   `[x: string]: string`    | A map object of failed rules with (rule, message) as a (key, value)                                           |
-| valid       |         `boolean`          | The current validation state.                                                                                 |
-| flags       | `{ [x: string]: boolean }` | The flags map object state.                                                                                   |
-| aria        | `{ [x: string]: string }`  | Map object of aria attributes for accessibility.                                                              |
-| classes     | `{ [x: string]: boolean }` | Map object of the classes configured based on the validation state.                                           |
-| validate    |   `(e: any) => Promise`    | A function that is used as an event handler to trigger validation. Useful for fields that do not use v-model. |
-| reset       |        `() => void`        | A function that resets the validation state on the provider.                                                  |
-
-Since slot scopes can take advantage of ES6 destructing, you can opt-in for any of those properties and pass down to your slot template as you see fit. The example above only needed the `errors` array.
-
 ## Examples
-
-The previous quick sample validates simple HTML inputs, lets take this up a notch and validate popular 3rd party components like [Vuetify's TextInput](https://vuetifyjs.com/en/components/text-fields).
 
 ### Manual Validation
 
@@ -440,3 +534,15 @@ The validation provider does not emit any events at this time.
 ---
 
 What now remains, is how to validate forms, the `ValidationObserver` is the other component that completes this library.
+
+<style lang="css">
+.theme-default-content pre.no-highlight {
+  background: #fff
+}
+</style>
+
+<script>
+export default {
+  data: () => ({ values: { changed: '' } })
+};
+</script>

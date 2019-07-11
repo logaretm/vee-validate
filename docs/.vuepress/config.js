@@ -7,7 +7,6 @@ const sidebars = {
     'displaying-errors',
     'validation-provider',
     'validation-observer',
-    'validation-state',
     'interaction-and-ux',
     'styling',
     'a11y',
