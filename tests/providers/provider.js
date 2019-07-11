@@ -66,9 +66,9 @@ describe('Validation Provider Component', () => {
           value: ''
         }),
         template: `
-        <ValidationProvider rules="required" v-slot="{ errors, flags }">
+        <ValidationProvider rules="required" v-slot="{ errors, ...rest }">
           <input v-model="value" type="text">
-          <li v-for="(flag, name) in flags" v-if="flag" :id="name">{{ name }}</li>
+          <li v-for="(flag, name) in rest" v-if="flag" :id="name">{{ name }}</li>
         </ValidationProvider>
       `
       },

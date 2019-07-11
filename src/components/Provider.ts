@@ -113,9 +113,6 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
   },
   data,
   computed: {
-    isValid(): boolean {
-      return this.flags.valid;
-    },
     fieldDeps(): { [k: string]: any } {
       return Object.keys(this.normalizedRules)
         .filter(RuleContainer.isTargetRule)

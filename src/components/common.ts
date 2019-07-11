@@ -1,7 +1,7 @@
 import { VNodeDirective, VNode } from 'vue';
 import { isCallable, debounce } from '../utils';
 import { modes } from '../modes';
-import { ValidationResult, ValidationFlags } from '../types';
+import { ValidationResult, ValidationFlags, KnownKeys } from '../types';
 import { findModel, getInputEventName, addVNodeListener } from '../utils/vnode';
 import { ProviderInstance } from './Provider';
 
@@ -32,9 +32,8 @@ function shouldValidate(ctx: ProviderInstance, model: VNodeDirective) {
   return false;
 }
 
-export interface ValidationContext {
+export interface ValidationContext extends Pick<ValidationFlags, KnownKeys<ValidationFlags>> {
   errors: string[];
-  flags: ValidationFlags;
   classes: { [k: string]: boolean };
   valid: boolean;
   failedRules: { [k: string]: string };
@@ -48,10 +47,9 @@ export interface ValidationContext {
 
 export function createValidationCtx(ctx: ProviderInstance): ValidationContext {
   return {
+    ...ctx.flags,
     errors: ctx.messages,
-    flags: ctx.flags,
     classes: ctx.classes,
-    valid: ctx.isValid,
     failedRules: ctx.failedRules,
     reset: () => ctx.reset(),
     validate: (...args: any[]) => ctx.validate(...args),
