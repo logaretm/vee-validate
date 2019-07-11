@@ -174,6 +174,8 @@ extend('required', {
 });
 ```
 
+Take a look at the [live examples](../examples/i18n.md) for i18n.
+
 <script>
 window.$extendVee('lengthBetween', {
   validate: (value, { min, max }) => {
