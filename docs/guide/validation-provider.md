@@ -154,15 +154,15 @@ By default, ValidationProvider renders a `span`, Consider the following example 
 
 ```vue{7,10}
 <ValidationProvider rules="required" v-slot="{ errors }">
-    <input v-model="value" type="text">
-    <span>{{ errors[0] }}</span>
-  </ValidationProvider>
+  <input v-model="value" type="text">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
 
 <!-- HTML Output -->
 <span>
-    <input type="text">
-    <span>ERROR_MSG_PLACEHOLDER</span>
-  </span>
+  <input type="text">
+  <span>ERROR_MSG_PLACEHOLDER</span>
+</span>
 ```
 
 The default the rendered **tag** can be changed using the provider's `tag` prop.
@@ -170,23 +170,23 @@ The default the rendered **tag** can be changed using the provider's `tag` prop.
 ```vue{2,10,16,19}
 <!-- Multiple Child nodes using templates -->
 <ValidationProvider rules="required" tag="div">
-    <template v-slot="{ errors }">
-      <input v-model="value" type="text">
-      <span>{{ errors[0] }}</span>
-    </template>
-  </ValidationProvider>
+  <template v-slot="{ errors }">
+    <input v-model="value" type="text">
+    <span>{{ errors[0] }}</span>
+  </template>
+</ValidationProvider>
 
 <!-- Multiple Child nodes directly -->
 <ValidationProvider rules="required" v-slot="{ errors }" tag="div">
-    <input v-model="value" type="text">
-    <span>{{ errors[0] }}</span>
-  </ValidationProvider>
+  <input v-model="value" type="text">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
 
 <!-- Both have the same HTML Output -->
 <div>
-    <input type="text">
-    <span>ERROR_MSG_PLACEHOLDER</span>
-  </div>
+  <input type="text">
+  <span>ERROR_MSG_PLACEHOLDER</span>
+</div>
 ```
 
 ### Forcing Renderless
@@ -256,8 +256,11 @@ export default {
 
 If you only plan to trigger manual validation using the UI, you can use the `validate` handler on the v-slot data to trigger validation without having to use `refs`.
 
-```vue{1}
-<ValidationProvider rules="required" v-slot="{ validate, errors }">
+```vue{3,6}
+<ValidationProvider
+  rules="required"
+  v-slot="{ validate, errors }"
+>
   <div>
     <input type="text" @input="validate">
     <p id="error">{{ errors[0] }}</p>
@@ -311,13 +314,20 @@ Like radio inputs and (sometimes) check boxes, some inputs behave as a single in
 
 When using cross-field rules like the `confirmed` rule the target field must have a corresponding `vid` can be either a number or a string.
 
-```vue{2,9}
-<ValidationProvider rules="required|confirmed:confirm" v-slot="{ errors }">
+```vue{2,10}
+<ValidationProvider
+  rules="required|confirmed:confirm"
+  v-slot="{ errors }"
+>
   <input v-model="password" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 
-<ValidationProvider vid="confirm" rules="required" v-slot="{ errors }">
+<ValidationProvider
+  vid="confirm"
+  rules="required"
+  v-slot="{ errors }"
+>
   <input v-model="confirmation" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
@@ -343,15 +353,14 @@ This is the `TextInput` Component:
     <input type="text" @input="$emit('input', $event.target.value)" :value="value" />
     <span v-show="error">{{ error }}</span>
   </div>
-  <template>
-    <script>
-      export default {
-        name: 'TextField',
-        props: ['value', 'error']
-      };
-    </script></template
-  ></template
->
+<template>
+
+<script>
+  export default {
+    name: 'TextField',
+    props: ['value', 'error']
+  };
+</script>
 ```
 
 Now this component does not have validation built-in, but it does have the UI to do so which is common in design systems and input components.
@@ -448,10 +457,14 @@ Using either of these approaches is at your preference.
 
 You may want to add manual errors to a field, such cases like pre-filling initially due to a server response, or an async request. You can do this using `refs` and the `setErrors` method.
 
-```vue{3,19,20,21,22,23}
+```vue{4,21,22,23}
 <template>
   <div id="app">
-    <ValidationProvider ref="provider" rules="required" v-slot="{ errors }">
+    <ValidationProvider
+      ref="provider"
+      rules="required"
+      v-slot="{ errors }"
+    >
       <input v-model="model" type="text" />
       <div v-if="errors" v-text="errors[0]"></div>
     </ValidationProvider>
@@ -472,7 +485,7 @@ export default {
 </script>
 ```
 
-:::tip Typescript and \$refs
+:::tip Typescript and $refs
 If you are using TypeScript you may face issues with `$refs` not giving you the correct typings, you can solve that by defining them as `ValidationProvider` instances:
 
 ```ts{3}
@@ -483,13 +496,8 @@ export default class App extends Vue {
 }
 ```
 
-```ts{3,4,5}
-// All properties are required.
-this.$refs.provider.applyResult({
-  errors: ['this is a backend error'],
-  valid: false,
-  failedRules: {}
-});
+```typescript
+this.$refs.provider.setErrors(['some error']);
 ```
 
 :::

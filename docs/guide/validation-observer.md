@@ -18,6 +18,24 @@ Here is a small example, with our refactored components:
 </ValidationObserver>
 ```
 
+
+## Scoped Slot Data
+
+The scoped slot is passed an object containing a flags object representing the merged state of all providers registered under the observer. It contains the following properties:
+
+| Name      |                          Type                           | Description                                                                                                                                                                          |
+| :-------- | :-----------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dirty     |                        `boolean`                        | True if at least one field is dirty.                                                                                                                                                 |
+| pristine  |                        `boolean`                        | True if all fields are pristine (not dirty).                                                                                                                                         |
+| valid     |                        `boolean`                        | True if all fields are valid.                                                                                                                                                        |
+| invalid   |                        `boolean`                        | True if at least one field is invalid.                                                                                                                                               |
+| pending   |                        `boolean`                        | True if at least one field's validation is in progress.                                                                                                                              |
+| touched   |                        `boolean`                        | True if at least one field has been touched (blurred).                                                                                                                               |
+| untouched |                        `boolean`                        | True if all fields haven't been touched (blurred).                                                                                                                                   |
+| errors    |               `{ [x: string]: string[] }`               | An object containing reference to each field errors, each field is keyed by its `vid` prop.                                                                                          |
+| validate  | `({ silent: boolean }) => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after successful validation. Mutates child providers state unless `silent` is true. |
+| reset     |                      `() => void`                       | A method that resets validation state for all providers.                                                                                                                             |
+
 ## Rendering
 
 [Like providers](./validation-provider.md#rendering), observers render a `span` by default. You can customize the rendered tag using the `tag` prop, for example a `form` tag might be more useful.
@@ -62,23 +80,6 @@ Note that **only the first child** will be rendered when `slim` is used, any oth
   <div></div>
 </ValidationObserver>
 ```
-
-## Scoped Slot Data
-
-The scoped slot is passed an object containing a flags object representing the merged state of all providers registered under the observer. It contains the following properties:
-
-| Name      |                          Type                           | Description                                                                                                                                                                          |
-| :-------- | :-----------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dirty     |                        `boolean`                        | True if at least one field is dirty.                                                                                                                                                 |
-| pristine  |                        `boolean`                        | True if all fields are pristine (not dirty).                                                                                                                                         |
-| valid     |                        `boolean`                        | True if all fields are valid.                                                                                                                                                        |
-| invalid   |                        `boolean`                        | True if at least one field is invalid.                                                                                                                                               |
-| pending   |                        `boolean`                        | True if at least one field's validation is in progress.                                                                                                                              |
-| touched   |                        `boolean`                        | True if at least one field has been touched (blurred).                                                                                                                               |
-| untouched |                        `boolean`                        | True if all fields haven't been touched (blurred).                                                                                                                                   |
-| errors    |               `{ [x: string]: string[] }`               | An object containing reference to each field errors, each field is keyed by its `vid` prop.                                                                                          |
-| validate  | `({ silent: boolean }) => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after successful validation. Mutates child providers state unless `silent` is true. |
-| reset     |                      `() => void`                       | A method that resets validation state for all providers.                                                                                                                             |
 
 ## Examples
 
@@ -191,7 +192,12 @@ Like the `validate` method, we could also reset our form after submitting the va
 
 ```vue{3,34,35,36}
 <template>
-  <ValidationObserver ref="observer" tag="form" @submit.prevent="submit()" v-slot="{ invalid }">
+  <ValidationObserver
+    ref="observer"
+    tag="form"
+    @submit.prevent="submit()"
+    v-slot="{ invalid }"
+  >
     <TextFieldWithValidation rules="required" v-model="first" />
 
     <TextFieldWithValidation rules="required" v-model="second" />
