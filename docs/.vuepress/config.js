@@ -20,7 +20,10 @@ const sidebars = {
     'rules'
   ],
   examples: [
-    'ui-libraries'
+    'ui-libraries',
+    'i18n',
+    'nested-forms',
+    'backend'
   ]
 };
 
