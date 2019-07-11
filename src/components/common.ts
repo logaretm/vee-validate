@@ -2,13 +2,13 @@ import { VNodeDirective, VNode } from 'vue';
 import { isCallable, debounce } from '../utils';
 import { modes } from '../modes';
 import { ValidationResult, ValidationFlags } from '../types';
-import { ValidationClassMap } from '../config';
 import { findModel, getInputEventName, addVNodeListener } from '../utils/vnode';
+import { ProviderInstance } from './Provider';
 
 /**
  * Determines if a provider needs to run validation.
  */
-function shouldValidate(ctx: any, model: VNodeDirective) {
+function shouldValidate(ctx: ProviderInstance, model: VNodeDirective) {
   // when an immediate/initial validation is needed and wasn't done before.
   if (!ctx._ignoreImmediate && ctx.immediate) {
     return true;
@@ -35,7 +35,7 @@ function shouldValidate(ctx: any, model: VNodeDirective) {
 export interface ValidationContext {
   errors: string[];
   flags: ValidationFlags;
-  classes: ValidationClassMap;
+  classes: { [k: string]: boolean };
   valid: boolean;
   failedRules: { [k: string]: string };
   reset: () => void;
@@ -46,7 +46,7 @@ export interface ValidationContext {
   };
 }
 
-export function createValidationCtx(ctx: any): ValidationContext {
+export function createValidationCtx(ctx: ProviderInstance): ValidationContext {
   return {
     errors: ctx.messages,
     flags: ctx.flags,
@@ -62,7 +62,7 @@ export function createValidationCtx(ctx: any): ValidationContext {
   };
 }
 
-export function onRenderUpdate(vm: any, model: VNodeDirective | undefined) {
+export function onRenderUpdate(vm: ProviderInstance, model: VNodeDirective | undefined) {
   if (!model) {
     return;
   }
@@ -83,7 +83,7 @@ export function onRenderUpdate(vm: any, model: VNodeDirective | undefined) {
   vm.validateSilent().then(vm.immediate || vm.flags.validated ? vm.applyResult : (x: any) => x);
 }
 
-export function computeModeSetting(ctx: any) {
+export function computeModeSetting(ctx: ProviderInstance) {
   const compute = isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode];
 
   return compute({
@@ -94,7 +94,7 @@ export function computeModeSetting(ctx: any) {
 }
 
 // Creates the common handlers for a validatable context.
-export function createCommonHandlers(vm: any) {
+export function createCommonHandlers(vm: ProviderInstance) {
   const onInput = (e: any) => {
     vm.syncValue(e); // track and keep the value updated.
     vm.setFlags({ dirty: true, pristine: false });
@@ -118,7 +118,7 @@ export function createCommonHandlers(vm: any) {
         pendingPromise.then(result => {
           if (pendingPromise === vm._pendingValidation) {
             vm.applyResult(result);
-            vm._pendingValidation = null;
+            vm._pendingValidation = undefined;
           }
         });
       });
@@ -134,7 +134,7 @@ export function createCommonHandlers(vm: any) {
 }
 
 // Adds all plugin listeners to the vnode.
-export function addListeners(vm: any, node: VNode) {
+export function addListeners(vm: ProviderInstance, node: VNode) {
   const model = findModel(node);
   // cache the input eventName.
   vm._inputEventName = vm._inputEventName || getInputEventName(node, model);

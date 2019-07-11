@@ -15,8 +15,12 @@ type withProviderPrivates = VueConstructor<
     $_veeObserver: VeeObserver;
     _needsValidation: boolean;
     _inputEventName: string;
+    _ignoreImmediate: boolean;
+    _pendingValidation?: Promise<ValidationResult>;
     _resolvedRules: any;
     _veeWatchers: { [k: string]: Function };
+    $veeDebounce?: number;
+    $veeHandler?: Function;
     $vnode: VNodeWithVeeContext;
   }
 >;
@@ -246,7 +250,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
   }
 });
 
-type ProviderInstance = InstanceType<typeof ValidationProvider>;
+export type ProviderInstance = InstanceType<typeof ValidationProvider>;
 
 function createValuesLookup(vm: ProviderInstance) {
   let providers = vm.$_veeObserver.refs;

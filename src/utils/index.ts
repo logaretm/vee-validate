@@ -195,7 +195,7 @@ export const normalizeRules = (rules: any) => {
 /**
  * Checks if a function is callable.
  */
-export const isCallable = (func: unknown): func is CallableFunction => typeof func === 'function';
+export const isCallable = (func: unknown): func is Function => typeof func === 'function';
 
 export function computeClassObj(names: ValidationClassMap, flags: ValidationFlags) {
   const acc: { [k: string]: boolean } = {};
