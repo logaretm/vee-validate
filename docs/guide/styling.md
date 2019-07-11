@@ -13,7 +13,7 @@ The `ValidationProvider` slot props expose a `classes` property which you can bi
   </div>
 </ValidationProvider>
 
-```vue{2,6}
+```vue{3,7}
 <template>
   <ValidationProvider
     rules="required"

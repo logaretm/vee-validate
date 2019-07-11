@@ -37,7 +37,7 @@ This is the default mode for vee-validate. Validates on `input` and `blur`.
 
 <RuleDemo rule="required|min:3|alpha" />
 
-```vue
+```vue{2}
 <ValidationProvider
   mode="aggressive"
   rules="required|min:3|alpha"
@@ -71,7 +71,7 @@ Does not validate unless `validate` is called explicitly.
 
 <RuleDemo rule="required|min:3|alpha" mode="passive" />
 
-```vue{2,4,8}
+```vue{2}
 <ValidationProvider
   mode="passive"
   rules="required|min:3|alpha"
@@ -91,7 +91,7 @@ Behaves like **lazy** when the field wasn't interacted with yet, and if it is in
 
 <RuleDemo rule="required|min:3|alpha" mode="eager" />
 
-```vue{2,4,8}
+```vue{2}
 <ValidationProvider
   mode="eager"
   rules="required|min:3|alpha"
@@ -132,7 +132,7 @@ const eager = ({ errors }) => {
 
 You can pass the function directly to the `mode` prop on the `ValidationProvider`:
 
-```vue
+```vue{2,16-24}
 <ValidationProvider
   :mode="custom"
   rules="required"
