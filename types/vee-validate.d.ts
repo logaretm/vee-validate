@@ -35,6 +35,7 @@ export interface Configuration {
     locale?: string;
     validity?: boolean;
     useConstraintAttrs?: boolean;
+    mode?: string;
 }
 
 export interface MapObject {
