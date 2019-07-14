@@ -123,12 +123,15 @@ export default class ErrorBag {
    */
   clear (scope?: ?string) {
     let matchesVM = isNullOrUndefined(this.vmId) ? () => true : (i) => i.vmId === this.vmId;
-    if (isNullOrUndefined(scope)) {
+    let matchesScope = (i) => i.scope === scope;
+    if (arguments.length === 0) {
+      matchesScope = () => true;
+    } else if (isNullOrUndefined(scope)) {
       scope = null;
     }
 
     for (let i = 0; i < this.items.length; ++i) {
-      if (matchesVM(this.items[i]) && this.items[i].scope === scope) {
+      if (matchesVM(this.items[i]) && matchesScope(this.items[i])) {
         this.items.splice(i, 1);
         --i;
       }

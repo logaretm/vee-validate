@@ -491,3 +491,25 @@ test('collect() is scoped by vmId', () => {
   expect(mirror.collect()).toEqual({ field: ['nope'] });
   expect(errors.collect()).toEqual({ field: ['nope'] });
 });
+
+test('clear() without param should remove all errors', () => {
+  const errors = new ErrorBag();
+  errors.add({
+    field: 'testField',
+    msg: 'This is a scoped error.',
+    scope: 'someScope'
+  });
+  errors.add({
+    field: 'testField',
+    msg: 'This is an unscoped error.'
+  });
+  errors.add({
+    field: 'testField',
+    msg: 'This is another scoped error.',
+    scope: 'someScope'
+  });
+
+  errors.clear();
+
+  expect(errors.items).toHaveLength(0);
+});
