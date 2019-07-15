@@ -250,7 +250,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
 export type ProviderInstance = InstanceType<typeof ValidationProvider>;
 
 function createValuesLookup(vm: ProviderInstance) {
-  let providers = vm.$_veeObserver.refs;
+  const providers = vm.$_veeObserver.refs;
   const reduced: { [k: string]: any } = {};
 
   return vm.fieldDeps.reduce((acc: typeof reduced, depName: string) => {
@@ -279,7 +279,7 @@ function updateRenderingContextRefs(vm: ProviderInstance) {
 
   // vid was changed.
   if (id !== vid && vm.$_veeObserver.refs[id] === vm) {
-    vm.$_veeObserver.unsubscribe(vm);
+    vm.$_veeObserver.unsubscribe({ vid: id });
   }
 
   vm.$_veeObserver.subscribe(vm);
