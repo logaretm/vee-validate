@@ -1,4 +1,4 @@
-import en from '../locale/en';
+import en from '../locale/en.json';
 import * as Rules from './rules';
 import { localize } from './localize';
 import { extend } from './extend';

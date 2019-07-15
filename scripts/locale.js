@@ -1,18 +1,12 @@
-const { rollup } = require('rollup');
-const buble = require('rollup-plugin-buble');
-const uglify = require('uglify-js');
 const fs = require('fs');
 const path = require('path');
 const mkdirpNode = require('mkdirp');
 const { promisify } = require('util');
 const chalk = require('chalk');
-const typescript = require('rollup-plugin-typescript2');
-const resolve = require('rollup-plugin-node-resolve');
 const { paths, uglifyOptions } = require('./config');
 
 const localesDir = path.join(__dirname, '..', 'locale');
 const files = fs.readdirSync(localesDir);
-let cache;
 
 const mkdirp = promisify(mkdirpNode);
 
@@ -29,20 +23,8 @@ async function build() {
     if (/utils/.test(file)) continue;
 
     const input = path.join(__dirname, '..', 'locale', file);
-    const outputPath = path.join(paths.dist, 'locale', file.replace('.ts', '.js'));
-
-    const bundle = await rollup({
-      cache,
-      input,
-      external: ['VeeValidate'],
-      plugins: [typescript(), buble(), resolve()]
-    });
-    const { output } = await bundle.generate({
-      format: 'umd',
-      name: `__vee_validate_locale__${file}`
-    });
-
-    fs.writeFileSync(outputPath, uglify.minify(output[0].code, uglifyOptions).code);
+    const out = path.join(paths.dist, 'locale', file);
+    fs.copyFileSync(input, out);
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
   }

@@ -4,7 +4,6 @@ import alpha_num from './alpha_num';
 import alpha_spaces from './alpha_spaces';
 import between from './between';
 import confirmed from './confirmed';
-import decimal from './decimal';
 import digits from './digits';
 import dimensions from './dimensions';
 import email from './email';
@@ -34,7 +33,6 @@ export {
   alpha,
   between,
   confirmed,
-  decimal,
   digits,
   dimensions,
   email,

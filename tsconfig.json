@@ -17,7 +17,8 @@
     "emitDecoratorMetadata": true,
     "typeRoots": ["node_modules/@types"],
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
   },
   "include": ["src", "tests"]
 }

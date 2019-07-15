@@ -8,6 +8,7 @@ const gzipSize = require('gzip-size');
 const typescript = require('rollup-plugin-typescript2');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
+const json = require('rollup-plugin-json');
 const replace = require('rollup-plugin-replace');
 const version = process.env.VERSION || require('../package.json').version;
 
@@ -48,7 +49,7 @@ const utils = {
     console.log(`${chalk.green('Output File:')} ${fileName} ${stats}`);
 
     if (minify) {
-      let minifiedFileName = fileName.replace('.js', '') + '.min.js';
+      const minifiedFileName = fileName.replace('.js', '') + '.min.js';
       outputPath = path.join(paths.dist, minifiedFileName);
       fs.writeFileSync(outputPath, uglify.minify(code, commons.uglifyOptions).code);
       stats = this.stats({ code, path: outputPath });
@@ -93,6 +94,7 @@ function genConfig(options) {
       input: options.input,
       external: ['vue'],
       plugins: [
+        json(),
         typescript({ typescript: require('typescript'), useTsconfigDeclarationDir: true }),
         replace({ __VERSION__: version }),
         resolve(),
