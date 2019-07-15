@@ -195,8 +195,6 @@ function resolveTextualRules(vnode: VNode): { [k: string]: any } {
   }
 
   if (attrs.type === 'number') {
-    rules.decimal = [];
-
     if (attrs.min !== '') {
       rules.min_value = Number(attrs.min);
     }

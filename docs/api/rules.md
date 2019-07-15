@@ -35,7 +35,6 @@ VeeValidate offers common validators that will cover most apps needs:
 - [alpha_spaces](#alpha-spaces)
 - [between](#between)
 - [confirmed](#confirmed)
-- [decimal](#decimal) <Badge text="Inferred" type="tip"/>
 - [digits](#digits)
 - [dimensions](#dimensions)
 - [email](#email) <Badge text="Inferred" type="tip"/>
@@ -155,28 +154,6 @@ The field under validation must have the same value as the confirmation field.
 | Param Name | Required? | Default | Description                    |
 | ---------- | --------- | ------- | ------------------------------ |
 | `target`   | **yes**   |         | The other field's `vid` value. |
-
-## decimal <Badge text="Inferred" type="tip"/>
-
-The field under validation must be numeric and may contain the specified amount of decimal points.
-
-<RuleDemo rule="decimal" />
-
-```vue
-<ValidationProvider rules="decimal" v-slot="{ errors }">
-  <input v-model="value" type="text">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
-```
-
-| Param Name  | Required? | Default | Description                                                |
-| ----------- | --------- | ------- | ---------------------------------------------------------- |
-| `decimals`  | no        | '\*'    | The number of numbers allowed after the decimal separator. |
-| `separator` | no        | '.'     | The decimal point separator character.                     |
-
-:::tip Inference
-This rule is inferred when the field type is `number`.
-:::
 
 ## digits
 
