@@ -182,7 +182,18 @@ export const ValidationProvider = {
       addListeners.call(this, input);
     });
 
-    return this.slim ? createRenderless(h, nodes) : h(this.tag, nodes);
+    const rootNode = this.slim ? createRenderless(h, nodes) : h(this.tag, nodes);
+    if (typeof vid === 'string' && this.vid.indexOf('_vee_') === 0) {
+      return rootNode;
+    }
+
+    // User specifically added the vid.
+    rootNode.key = this.vid;
+    if (rootNode.data) {
+      rootNode.data.key = this.vid;
+    }
+
+    return rootNode;
   },
   beforeDestroy () {
     // cleanup reference.
