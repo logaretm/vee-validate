@@ -39,9 +39,14 @@ export interface ValidationContext extends Pick<ValidationFlags, KnownKeys<Valid
   failedRules: { [k: string]: string };
   reset: () => void;
   validate: (evtOrNewValue: Event | any) => Promise<ValidationResult>;
-  aria: {
+  ariaInput: {
     'aria-invalid': 'true' | 'false';
     'aria-required': 'true' | 'false';
+    'aria-errormessage': string;
+  };
+  ariaMsg: {
+    id: string;
+    'aria-live': 'off' | 'assertive';
   };
 }
 
@@ -53,9 +58,14 @@ export function createValidationCtx(ctx: ProviderInstance): ValidationContext {
     failedRules: ctx.failedRules,
     reset: () => ctx.reset(),
     validate: (...args: any[]) => ctx.validate(...args),
-    aria: {
+    ariaInput: {
       'aria-invalid': ctx.flags.invalid ? 'true' : 'false',
-      'aria-required': ctx.isRequired ? 'true' : 'false'
+      'aria-required': ctx.isRequired ? 'true' : 'false',
+      'aria-errormessage': `vee_${ctx.id}`
+    },
+    ariaMsg: {
+      id: `vee_${ctx.id}`,
+      'aria-live': ctx.messages.length ? 'off' : 'assertive'
     }
   };
 }
