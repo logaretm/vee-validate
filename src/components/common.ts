@@ -65,7 +65,7 @@ export function createValidationCtx(ctx: ProviderInstance): ValidationContext {
     },
     ariaMsg: {
       id: `vee_${ctx.id}`,
-      'aria-live': ctx.messages.length ? 'off' : 'assertive'
+      'aria-live': ctx.messages.length ? 'assertive' : 'off'
     }
   };
 }
