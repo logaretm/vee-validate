@@ -23,9 +23,9 @@ const multiple = {
 
 ## Rules Parameters
 
-Some rules can have parameters, which can be specified in multiple ways for convience:
+Some rules can have parameters, which can be specified in multiple ways for convenience:
 
-- As a comma seperated list which is suitable for the string format.
+- As a comma separated list which is suitable for the string format.
 - An array containing the params values (Suitable for the object format).
 - An object (Provides more complex configuration for the rules in object format), but with a [caveat](/guide/custom-rules.md#args-and-rule-configuration).
 
