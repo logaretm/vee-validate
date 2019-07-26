@@ -19,7 +19,7 @@ Typically you would want to display one error at a time for your fields, you can
 
 ## Displaying Multiple error messages
 
-Another use-case is that you might want to dispaly all the errors for an input, typically to allow the user to fix multiple input errors at once. The `errors.collect('fieldName')` method collects all error messages for a specific field into an array.
+Another use-case is that you might want to display all the errors for an input, typically to allow the user to fix multiple input errors at once. The `errors.collect('fieldName')` method collects all error messages for a specific field into an array.
 
 ```html
 <input type="text" name="fieldName" v-validate.continues="'required|alpha|min:5'">
