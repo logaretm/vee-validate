@@ -57,22 +57,21 @@ export function findModelConfig (vnode) {
 
 // Adds a listener to vnode listener object.
 export function mergeVNodeListeners (obj, eventName, handler) {
-  // Has a single listener.
+  // Has a single listener, convert to array.
   if (isCallable(obj[eventName])) {
     const prevHandler = obj[eventName];
     obj[eventName] = [prevHandler];
   }
 
-  // has other listeners.
-  if (Array.isArray(obj[eventName])) {
-    obj[eventName].push(handler);
-    return;
+  // no listeners, create the array.
+  if (isNullOrUndefined(obj[eventName])) {
+    obj[eventName] = [];
+  } else {
+    // clean up the array #2185
+    obj[eventName] = obj[eventName].filter(ev => !ev._vee_isUnique);
   }
 
-  // no listener at all.
-  if (isNullOrUndefined(obj[eventName])) {
-    obj[eventName] = [handler];
-  }
+  obj[eventName].push(handler);
 }
 
 // Adds a listener to a native HTML vnode.
