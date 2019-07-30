@@ -101,6 +101,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     slim: {
       type: Boolean,
       default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
