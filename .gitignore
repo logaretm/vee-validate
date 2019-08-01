@@ -7,3 +7,6 @@ coverage
 .vs
 yarn-error.log
 dist
+.DS_Store
+.AppleDouble
+.LSOverride
