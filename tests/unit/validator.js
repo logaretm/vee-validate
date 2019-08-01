@@ -151,18 +151,18 @@ test('formats error messages', async () => {
   })).toBe(false);
 
   expect(v.errors.all()).toEqual([
-    'The email field must be a valid email.',
-    'The name field is required.',
-    'The title field must be at least 3 characters.',
-    'The content field may not be greater than 20 characters.',
-    'The tags field must be a valid value.'
+    'The email field must be a valid email',
+    'The name field is required',
+    'The title field must be at least 3 characters',
+    'The content field may not be greater than 20 characters',
+    'The tags field must be a valid value'
   ]);
   expect(v.errors.all()).toEqual([
-    'The email field must be a valid email.',
-    'The name field is required.',
-    'The title field must be at least 3 characters.',
-    'The content field may not be greater than 20 characters.',
-    'The tags field must be a valid value.'
+    'The email field must be a valid email',
+    'The name field is required',
+    'The title field must be at least 3 characters',
+    'The content field may not be greater than 20 characters',
+    'The tags field must be a valid value'
   ]);
 });
 
@@ -180,7 +180,7 @@ test('can display errors with custom field names', async () => {
   const v = new Validator();
   v.attach({ name: 'field', rules: 'min:5', alias: 'pretty' });
   await v.validate('field', 'wo');
-  expect(v.errors.first('field')).toBe('The pretty field must be at least 5 characters.');
+  expect(v.errors.first('field')).toBe('The pretty field must be at least 5 characters');
 });
 
 test('fails when trying to validate a non-existant field.', async () => {
@@ -259,7 +259,7 @@ test('can extend the validator with a validator function', async () => {
   v.attach({ name: 'anotherField', rules: 'neg' });
   expect(await v.validate('anotherField', -1)).toBe(true);
   expect(await v.validate('anotherField', 1)).toBe(false);
-  expect(v.errors.first('anotherField')).toBe('The anotherField value is not valid.');
+  expect(v.errors.first('anotherField')).toBe('The anotherField value is not valid');
 });
 
 test('can extend the validators with a validator instance', async () => {
@@ -402,7 +402,7 @@ test('can add custom names via the attributes dictionary', async () => {
   });
 
   expect(await v.validate('email', 'notvalidemail')).toBe(false);
-  expect(v.errors.first('email')).toBe('The Email Address field must be a valid email.');
+  expect(v.errors.first('email')).toBe('The Email Address field must be a valid email');
 });
 
 test('cascades promise values with previous boolean', async () => {
@@ -455,7 +455,7 @@ test('can translate target field for field dependent validations', async () => {
 
   el.value = '12-09-2017';
   await v.validate('birthday', '11-09-2017');
-  expect(v.errors.first('birthday')).toBe('The Birthday must be after Some Date.');
+  expect(v.errors.first('birthday')).toBe('The Birthday must be after Some Date');
 });
 
 test('rules can return objects to provide context to the error message', async () => {
@@ -1016,21 +1016,21 @@ test('creates regeneratable messages', async () => {
 describe('Verify API', () => {
   test('passing values and results', async () => {
     const v = new Validator();
-    expect(await v.verify('test', 'max:3')).toEqual({ 'errors': ['The {field} field may not be greater than 3 characters.'], 'valid': false, 'failedRules': { 'max': 'The {field} field may not be greater than 3 characters.' } });
+    expect(await v.verify('test', 'max:3')).toEqual({ 'errors': ['The {field} field may not be greater than 3 characters'], 'valid': false, 'failedRules': { 'max': 'The {field} field may not be greater than 3 characters' } });
     expect(v.errors.count()).toBe(0); // Errors not added.
     expect(await v.verify('tst', 'max:3')).toEqual({ valid: true, errors: [], failedRules: {} });
     // test required rule
-    expect(await v.verify('', 'required')).toEqual({ 'errors': ['The {field} field is required.'], 'valid': false, failedRules: { required: 'The {field} field is required.' } });
+    expect(await v.verify('', 'required')).toEqual({ 'errors': ['The {field} field is required'], 'valid': false, failedRules: { required: 'The {field} field is required' } });
     // test #1353
     expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: true } })).toEqual({ valid: true, errors: [], failedRules: {} });
-    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: false } })).toEqual({ valid: false, errors: ['The {field} field must be a valid email.'], failedRules: { 'email': 'The {field} field must be a valid email.' } });
+    expect(await v.verify('föö@bar.de', { email: { allow_utf8_local_part: false } })).toEqual({ valid: false, errors: ['The {field} field must be a valid email'], failedRules: { 'email': 'The {field} field must be a valid email' } });
   });
 
   test('target rules validation using options.values', async () => {
     const v = new Validator();
     let result = await v.verify('test', 'confirmed:pass', {
       values: {
-        pass: 'tes'
+        pass: 'test'
       }
     });
     expect(result.valid).toBe(false);
@@ -1049,15 +1049,15 @@ describe('Verify API', () => {
     });
     expect(errors).toHaveLength(2);
     expect(errors).toEqual([
-      'The {field} field is required.',
-      'The {field} field must be at least 3 characters.'
+      'The {field} field is required',
+      'The {field} field must be at least 3 characters'
     ]);
   });
 
   test('customize field name using options.name', async () => {
     const v = new Validator();
     const { errors } = await v.verify('', 'required', { name: 'username' });
-    expect(errors).toEqual(['The username field is required.']);
+    expect(errors).toEqual(['The username field is required']);
   });
 });
 
