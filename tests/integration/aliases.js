@@ -23,8 +23,8 @@ test('validates input initially when .immediate modifier is set', async () => {
   });
   await flushPromises();
 
-  expect(wrapper.vm.errors.first('password')).toBe('The Password field is required.');
-  expect(wrapper.vm.errors.first('confirm')).toBe('The Password Confirmation field is required.');
+  expect(wrapper.vm.errors.first('password')).toBe('The Password field is required');
+  expect(wrapper.vm.errors.first('confirm')).toBe('The Password Confirmation field is required');
 
   wrapper.setData({
     password: '12345'
@@ -56,5 +56,5 @@ test('alias can be set with the ctor options', async () => {
 
   await wrapper.vm.$validator.validate();
 
-  expect(wrapper.vm.errors.first('bar')).toBe('The foo field is required.');
+  expect(wrapper.vm.errors.first('bar')).toBe('The foo field is required');
 });

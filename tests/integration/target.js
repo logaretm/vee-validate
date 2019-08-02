@@ -16,7 +16,7 @@ test('native HTML elements targeting', async () => {
   input.trigger('input');
   await flushPromises();
 
-  expect(wrapper.vm.$validator.errors.first('f1')).toBe('The f1 confirmation does not match.');
+  expect(wrapper.vm.$validator.errors.first('f1')).toBe('The f1 confirmation does not match');
   target.element.value = '10';
   target.trigger('input');
   await flushPromises();
@@ -35,7 +35,7 @@ test('custom components targeting', async () => {
   wrapper.findAll(InputComponent).at(0).trigger('input');
   await flushPromises();
 
-  expect(wrapper.vm.$validator.errors.first('f5')).toBe('The f5 confirmation does not match.');
+  expect(wrapper.vm.$validator.errors.first('f5')).toBe('The f5 confirmation does not match');
   wrapper.setData({
     d2: '10'
   });
@@ -55,9 +55,9 @@ test('refs with v-for loops', async () => {
   wrapper.findAll(InputComponent).at(2).trigger('input');
   await flushPromises();
 
-  expect(wrapper.vm.$validator.errors.first('f7_1')).toBe('The f7_1 confirmation does not match.');
-  expect(wrapper.vm.$validator.errors.first('f7_2')).toBe('The f7_2 confirmation does not match.');
-  expect(wrapper.vm.$validator.errors.first('f7_3')).toBe('The f7_3 confirmation does not match.');
+  expect(wrapper.vm.$validator.errors.first('f7_1')).toBe('The f7_1 confirmation does not match');
+  expect(wrapper.vm.$validator.errors.first('f7_2')).toBe('The f7_2 confirmation does not match');
+  expect(wrapper.vm.$validator.errors.first('f7_3')).toBe('The f7_3 confirmation does not match');
 
   wrapper.setData({
     d4: '10'

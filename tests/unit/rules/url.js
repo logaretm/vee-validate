@@ -18,8 +18,8 @@ const valid = [
 
 const invalid = [
   'http://',
+  'http://',
   'http://.',
-  'http://..',
   'http://../',
   'http://?',
   'http://??',

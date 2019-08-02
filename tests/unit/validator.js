@@ -183,7 +183,7 @@ test('can display errors with custom field names', async () => {
   expect(v.errors.first('field')).toBe('The pretty field must be at least 5 characters');
 });
 
-test('fails when trying to validate a non-existant field.', async () => {
+test('fails when trying to validate a non-existant field', async () => {
   const v = new Validator({
     email: 'required|email',
     name: 'required|min:3',
@@ -264,7 +264,7 @@ test('can extend the validator with a validator function', async () => {
 
 test('can extend the validators with a validator instance', async () => {
   const truthy = {
-    getMessage: (field) => `The ${field} field value is not truthy.`,
+    getMessage: (field) => `The ${field} field value is not truthy`,
     validate: (value) => !! value
   };
 
@@ -273,7 +273,7 @@ test('can extend the validators with a validator instance', async () => {
   v.attach({ name: 'anotherField', rules: 'truthy' });
   expect(await v.validate('anotherField', 1)).toBe(true);
   expect(await v.validate('anotherField', 0)).toBe(false);
-  expect(v.errors.first('anotherField')).toBe('The anotherField field value is not truthy.');
+  expect(v.errors.first('anotherField')).toBe('The anotherField field value is not truthy');
 });
 
 test('add rules than can target other fields', async () => {
@@ -331,16 +331,16 @@ test('throws an exception when extending with an invalid validator', () => {
 
 test('can overwrite messages and add translated messages', async () => {
   const loc = new Validator({ first_name: 'alpha' });
-  Validator.localize('ar', { messages: { alpha: (field) => `${field} يجب ان يحتوي على حروف فقط.` } });
-  Validator.localize('en', { messages: { alpha: (field) => `${field} is alphabetic.` } });
+  Validator.localize('ar', { messages: { alpha: (field) => `${field} يجب ان يحتوي على حروف فقط` } });
+  Validator.localize('en', { messages: { alpha: (field) => `${field} is alphabetic` } });
 
   loc.attach({ name: 'first_name', rules: 'alpha' });
   await loc.validate('first_name', '0123');
-  expect(loc.errors.first('first_name')).toBe('first_name is alphabetic.');
+  expect(loc.errors.first('first_name')).toBe('first_name is alphabetic');
 
   loc.localize('ar');
   await loc.validate('first_name', '0123');
-  expect(loc.errors.first('first_name')).toBe('first_name يجب ان يحتوي على حروف فقط.');
+  expect(loc.errors.first('first_name')).toBe('first_name يجب ان يحتوي على حروف فقط');
 
   loc.localize('ar', { messages: { alpha: () => 'My name is jeff' } });
   await loc.validate('first_name', '0123');
@@ -1030,7 +1030,7 @@ describe('Verify API', () => {
     const v = new Validator();
     let result = await v.verify('test', 'confirmed:pass', {
       values: {
-        pass: 'test'
+        pass: 'test.'
       }
     });
     expect(result.valid).toBe(false);

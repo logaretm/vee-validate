@@ -102,7 +102,7 @@ test('removes errors for a specific field', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1' });
 
   expect(errors.count()).toBe(3);
   errors.remove('name');
@@ -129,17 +129,17 @@ test('removes errors for a specific field and scope', () => {
   let errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1', scope: 'scope1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1', scope: 'scope1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1', scope: 'scope2' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1', scope: 'scope2' });
 
   expect(errors.count()).toBe(3);
   errors.remove('email', 'scope1'); // remove the scope1 scoped field called email.
   expect(errors.count()).toBe(2);
-  expect(errors.first('email', 'scope2')).toBe('The email is shorter than 3 chars.');
+  expect(errors.first('email', 'scope2')).toBe('The email is shorter than 3 chars');
 
   errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1', scope: 'scope1' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1', scope: 'scope1' });
 
   errors.remove('name');
   expect(errors.count()).toBe(2);
@@ -149,7 +149,7 @@ test('clears the errors', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1' });
   expect(errors.count()).toBe(3);
   errors.clear();
   expect(errors.count()).toBe(0);
@@ -159,7 +159,7 @@ test('clears the errors within a scope', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1', scope: 'scope1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1', scope: 'scope1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1', scope: 'scope2' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1', scope: 'scope2' });
   expect(errors.count()).toBe(3);
   errors.clear('scope1');
   expect(errors.count()).toBe(1);
@@ -196,7 +196,7 @@ test('fetches the errors count/length', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1' });
 
   expect(errors.count()).toBe(3);
 });
@@ -204,7 +204,7 @@ test('fetches the errors count/length', () => {
 test('fetches the first error message for a specific field', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1' });
 
   errors.add({ field: 'email', msg: 'This is the third rule', rule: 'rule2' });
   errors.add({ field: 'email', msg: 'This is the forth rule', rule: 'rule2' });
@@ -214,9 +214,9 @@ test('fetches the first error message for a specific field', () => {
   expect(errors.first('email:rule2')).toBe('This is the third rule');
 
   errors.clear();
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1' });
 
-  expect(errors.first('email')).toBe('The email is shorter than 3 chars.');
+  expect(errors.first('email')).toBe('The email is shorter than 3 chars');
   expect(errors.first('name')).toBe(undefined);
 
   // test dot notation.
@@ -232,7 +232,7 @@ test('fetches the first error message for a specific field that not match the ru
   errors.add({ field: 'email', msg: 'The email is required', rule: 'required' });
 
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1' });
 
   errors.add({ field: 'email', msg: 'This is the third rule', rule: 'rule2' });
   errors.add({ field: 'email', msg: 'This is the forth rule', rule: 'rule2' });
@@ -255,10 +255,10 @@ test('fetches the first error rule for a specific field', () => {
 test('fetches the first error message for a specific scoped field', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1', scope: 'scope1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1', scope: 'scope2' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1', scope: 'scope2' });
 
   expect(errors.first('email', 'scope1')).toBe('The email is invalid');
-  expect(errors.first('email', 'scope2')).toBe('The email is shorter than 3 chars.');
+  expect(errors.first('email', 'scope2')).toBe('The email is shorter than 3 chars');
   expect(errors.first('email', 'scope3')).toBe(undefined);
 });
 
@@ -266,13 +266,13 @@ test('returns all errors in an array', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1' });
 
   expect(Array.isArray(errors.all())).toBe(true);
   expect(errors.all()).toEqual([
     'The name is invalid',
     'The email is invalid',
-    'The email is shorter than 3 chars.'
+    'The email is shorter than 3 chars'
   ]);
 });
 
@@ -280,7 +280,7 @@ test('returns all scoped errors in an array', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1', scope: 'scope1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1', scope: 'scope1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1', scope: 'scope2' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1', scope: 'scope2' });
 
   expect(Array.isArray(errors.all())).toBe(true);
   expect(errors.all('scope1')).toEqual([
@@ -293,11 +293,11 @@ test('collects errors for a specific field in an array', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1' });
 
   expect(errors.collect('email')).toEqual([
     'The email is invalid',
-    'The email is shorter than 3 chars.'
+    'The email is shorter than 3 chars'
   ]);
   expect(~errors.collect('name').indexOf('The name is invalid')).toBeTruthy();
 });
@@ -316,16 +316,16 @@ test('exactly matches the collected field name', () => {
 
 test('collects errors for a specific field and scope', () => {
   const errors = new ErrorBag();
-  errors.add({ field: 'email', msg: 'The email is not email.', rule: 'rule1', scope: 'scope1' });
+  errors.add({ field: 'email', msg: 'The email is not email', rule: 'rule1', scope: 'scope1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1', scope: 'scope1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1', scope: 'scope2' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1', scope: 'scope2' });
 
   expect(errors.collect('email', 'scope1')).toEqual([
-    'The email is not email.',
+    'The email is not email',
     'The email is invalid',
   ]);
   expect(
-    ~errors.collect('email', 'scope2').indexOf('The email is shorter than 3 chars.')
+    ~errors.collect('email', 'scope2').indexOf('The email is shorter than 3 chars')
   ).toBeTruthy();
 });
 
@@ -359,12 +359,12 @@ test('groups errors by field name', () => {
   const errors = new ErrorBag();
   errors.add({ field: 'name', msg: 'The name is invalid', rule: 'rule1' });
   errors.add({ field: 'email', msg: 'The email is invalid', rule: 'rule1' });
-  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars.', rule: 'rule1' });
+  errors.add({ field: 'email', msg: 'The email is shorter than 3 chars', rule: 'rule1' });
 
   expect(errors.collect()).toEqual({
     email: [
       'The email is invalid',
-      'The email is shorter than 3 chars.'
+      'The email is shorter than 3 chars'
     ],
     name: [
       'The name is invalid'
@@ -373,7 +373,7 @@ test('groups errors by field name', () => {
   expect(errors.collect(null, undefined, false)).toEqual({
     email: [
       { field: 'email', msg: 'The email is invalid', scope: null, rule: 'rule1', vmId: null },
-      { field: 'email', msg: 'The email is shorter than 3 chars.', scope: null, rule: 'rule1', vmId: null },
+      { field: 'email', msg: 'The email is shorter than 3 chars', scope: null, rule: 'rule1', vmId: null },
     ],
     name: [
       { field: 'name', msg: 'The name is invalid', scope: null, rule: 'rule1', vmId: null },
@@ -496,16 +496,16 @@ test('clear() without param should remove all errors', () => {
   const errors = new ErrorBag();
   errors.add({
     field: 'testField',
-    msg: 'This is a scoped error.',
+    msg: 'This is a scoped error',
     scope: 'someScope'
   });
   errors.add({
     field: 'testField',
-    msg: 'This is an unscoped error.'
+    msg: 'This is an unscoped error'
   });
   errors.add({
     field: 'testField',
-    msg: 'This is another scoped error.',
+    msg: 'This is another scoped error',
     scope: 'someScope'
   });
 

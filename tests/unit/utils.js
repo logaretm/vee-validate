@@ -407,7 +407,7 @@ test('formats file sizes', () => {
   expect(i18Utils.formatFileSize(1050000)).toBe('1 GB');
 });
 
-test('checks if vee-validate is available globally.', () => {
+test('checks if vee-validate is available globally', () => {
   expect(i18Utils.isDefinedGlobally()).toBe(false);
   global.VeeValidate = {
     myprop: true

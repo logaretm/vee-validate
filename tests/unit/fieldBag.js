@@ -16,7 +16,7 @@ test('adds field items to the collection', () => {
   expect(() => {
     field.id = null;
     bag.push(field);
-  }).toThrow('[vee-validate] Field id must be defined.');
+  }).toThrow('[vee-validate] Field id must be defined');
 
   // test type check.
   expect(() => {
