@@ -9,7 +9,7 @@ Vue.use(VeeValidate, { inject: false });
 Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
 Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
 
-const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required.';
+const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required';
 
 describe('Validation Provider Component', () => {
   test('renders its tag attribute', () => {
@@ -452,8 +452,8 @@ describe('Validation Provider Component', () => {
 
     const errors = wrapper.findAll('p');
     expect(errors).toHaveLength(2);
-    expect(errors.at(0).text()).toBe('The {field} field must be a valid email.');
-    expect(errors.at(1).text()).toBe('The {field} field must be at least 3 characters.');
+    expect(errors.at(0).text()).toBe('The {field} field must be a valid email');
+    expect(errors.at(1).text()).toBe('The {field} field must be at least 3 characters');
   });
 
   const sleep = (wait) => new Promise(resolve => setTimeout(resolve, wait));
@@ -933,7 +933,7 @@ describe('Validation Observer Component', () => {
     await flushPromises();
     const span = wrapper.findAll('.error-message');
     // both should have the same error message, meaning the errors is restored to the provider.
-    expect(span.at(0).text()).toBe('The {field} field must be at least 3 characters.');
-    expect(span.at(1).text()).toBe('The {field} field must be at least 3 characters.');
+    expect(span.at(0).text()).toBe('The {field} field must be at least 3 characters');
+    expect(span.at(1).text()).toBe('The {field} field must be at least 3 characters');
   });
 });
