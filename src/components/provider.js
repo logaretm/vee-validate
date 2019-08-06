@@ -170,7 +170,7 @@ export const ValidationProvider = {
     /* istanbul ignore next */
     if (!isCallable(slot)) {
       if (process.env.NODE_ENV !== 'production') {
-        warn('ValidationProvider expects a scoped slot. Did you forget to add "v-slot"?');
+        warn('ValidationProvider expects a scoped slot. Did you forget to add "v-slot" to your slot?');
       }
 
       return h(this.tag, this.$slots.default);
@@ -329,7 +329,7 @@ export function onRenderUpdate (model) {
 
   const validateNow = shouldValidate(this, model);
   this._needsValidation = false;
-  this.syncValue(model.value);
+  this.value = model.value;
   this._ignoreImmediate = true;
 
   if (!validateNow) {
@@ -342,6 +342,7 @@ export function onRenderUpdate (model) {
 // Creates the common handlers for a validatable context.
 export function createCommonHandlers (ctx) {
   const onInput = (e) => {
+    ctx.syncValue(e); // track and keep the value updated.
     ctx.setFlags({ dirty: true, pristine: false });
   };
 
@@ -377,10 +378,6 @@ export function createCommonHandlers (ctx) {
     // cache the debounce value so we detect if it was changed.
     ctx.$veeDebounce = ctx.debounce;
   }
-
-  onValidate._vee_isUnique = true;
-  onBlur._vee_isUnique = true;
-  onInput._vee_isUnique = true;
 
   return { onInput, onBlur, onValidate };
 }
