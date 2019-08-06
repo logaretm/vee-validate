@@ -379,6 +379,10 @@ export function createCommonHandlers (ctx) {
     ctx.$veeDebounce = ctx.debounce;
   }
 
+  onValidate._vee_isUnique = true;
+  onBlur._vee_isUnique = true;
+  onInput._vee_isUnique = true;
+
   return { onInput, onBlur, onValidate };
 }
 
