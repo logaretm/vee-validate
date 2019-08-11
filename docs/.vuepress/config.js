@@ -15,16 +15,8 @@ const sidebars = {
     'localization'
     // 'testing'
   ],
-  api: [
-    '',
-    'rules'
-  ],
-  examples: [
-    'ui-libraries',
-    'i18n',
-    'nested-forms',
-    'backend'
-  ]
+  api: ['', 'rules'],
+  examples: ['ui-libraries', 'i18n', 'organize-forms', 'backend']
 };
 
 function genSidebarConfig(...names) {
