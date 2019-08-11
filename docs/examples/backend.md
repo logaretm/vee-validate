@@ -1,4 +1,4 @@
-# Backend Validation
+# Backend and Remote Validation
 
 You can integrate your backend validation with vee-validate in a couple of ways.
 
@@ -17,8 +17,11 @@ import { extend } from 'vee-validate';
 
 extend('uniqueEmail', {
   async validate(value) {
+    // You might want to check if its a valid email
+    // before sending to server...
     const { data } = await axios.post('/api/isEmailUnique', { value });
 
+    // server response
     if (data.valid) {
       return true;
     }
@@ -37,11 +40,9 @@ extend('uniqueEmail', {
 
 Here is the example in action:
 
-TODO: PUT THE CODESANDBOX CODE HERE.
+<iframe src="https://codesandbox.io/embed/vue-template-c5s7m?fontsize=14&module=%2Fsrc%2Fcomponents%2FExample.vue" title="VeeValidate 3.0 - Async Rule Example" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
 
-:::tip Tip
-The previous example is suitable for rules that are meant to be re-usable and will be used regularly in your app. For more flexibility check the next section for adding error messages manually.
-:::
+The previous example is suitable for rules that are meant to be re-usable and will be used regularly in your app. But most of the time your backend validates a request body as a whole and returns errors for the entire form. Check the next section.
 
 ## Adding Errors Manually
 
@@ -56,17 +57,19 @@ The `setErrors` method on the observer instance takes an Object shaped like this
 }
 ```
 
+The keys of the error object should be either the provider's `name` or `vid` prop. The `setErrors` method on the **Provider's** instance accepts an array of strings instead of an object.
+
 A quick example would look like this:
 
 ```vue{4}
 <template>
   <ValidationObserver ref="observer">
     <form @submit.prevent="onSubmit">
-      <ValidationProvider vid="field1" v-slot="{ errors }">
+      <ValidationProvider ref="field1Provider name="field1" v-slot="{ errors }">
         <!-- Input -->
       </ValidationProvider>
 
-      <ValidationProvider vid="field2" v-slot="{ errors }">
+      <ValidationProvider name="field2" v-slot="{ errors }">
         <!-- Input -->
       </ValidationProvider>
     </form>
@@ -88,10 +91,16 @@ export default {
       }
 
       // Add the errors for each field.
-      // Each field must have a `vid` value same as the fields in the response.
       this.$refs.observer.setErrors(data.errors);
+
+      // Set the errors for a single field.
+      this.$refs.field1Provider.setErrors(data.errors.field1);
     }
   }
 };
 </script>
 ```
+
+Here is a live example:
+
+<iframe src="https://codesandbox.io/embed/vue-template-k05rn?fontsize=14&module=%2Fsrc%2Fcomponents%2FExample.vue" title="Vue Template" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
