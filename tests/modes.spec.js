@@ -6,7 +6,7 @@ const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
-const DEFAULT_REQUIRED_MESSAGE = 'The {field} is required.';
+const DEFAULT_REQUIRED_MESSAGE = 'The {field} is required';
 
 beforeEach(() => {
   setInteractionMode('aggressive');
@@ -132,7 +132,7 @@ test('eager mode', async () => {
 
   input.setValue('h');
   await flushPromises();
-  expect(error.text()).toBe('The {field} must be at least 3 characters.');
+  expect(error.text()).toBe('The {field} must be at least 3 characters');
 });
 
 test('lazy mode', async () => {

@@ -32,8 +32,8 @@ test('can set config using install fn', async () => {
   const errors = wrapper.findAll('.error');
   expect(errors).toHaveLength(2);
 
-  expect(errors.at(0).text()).toContain('The {field} is required.');
-  expect(errors.at(1).text()).toContain('The {field} must be at least 3 characters.');
+  expect(errors.at(0).text()).toContain('The {field} is required');
+  expect(errors.at(1).text()).toContain('The {field} must be at least 3 characters');
 });
 
 test('can set config using configure fn', async () => {
@@ -63,6 +63,6 @@ test('can set config using configure fn', async () => {
   const errors = wrapper.findAll('.error');
   expect(errors).toHaveLength(2);
 
-  expect(errors.at(0).text()).toContain('The {field} is required.');
-  expect(errors.at(1).text()).toContain('The {field} must be at least 3 characters.');
+  expect(errors.at(0).text()).toContain('The {field} is required');
+  expect(errors.at(1).text()).toContain('The {field} must be at least 3 characters');
 });

@@ -9,7 +9,7 @@ const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
-const DEFAULT_REQUIRED_MESSAGE = 'The {field} is required.';
+const DEFAULT_REQUIRED_MESSAGE = 'The {field} is required';
 
 test('renders its tag attribute', () => {
   const wrapper = mount(
@@ -227,7 +227,7 @@ test('validates on rule change if the field was validated before', async () => {
   };
 
   await flushPromises();
-  expect(error.text()).toBe('The {field} must be at least 3 characters.');
+  expect(error.text()).toBe('The {field} must be at least 3 characters');
 });
 
 test('validates on rule change: testing arrays', async () => {
@@ -255,7 +255,7 @@ test('validates on rule change: testing arrays', async () => {
   // flush the pending validation.
   await flushPromises();
 
-  expect(error.text()).toBe('The {field} is not a valid value.');
+  expect(error.text()).toBe('The {field} is not a valid value');
 
   wrapper.vm.rules = {
     required: true,
@@ -299,7 +299,7 @@ test('validates on rule change: testing regex', async () => {
   };
 
   await flushPromises();
-  expect(error.text()).toBe('The {field} format is invalid.');
+  expect(error.text()).toBe('The {field} format is invalid');
 });
 
 test('validates on rule change: testing NaN', async () => {
@@ -327,7 +327,7 @@ test('validates on rule change: testing NaN', async () => {
   // flush the pending validation.
   await flushPromises();
 
-  expect(error.text()).toBe('The {field} may not be greater than {length} characters.');
+  expect(error.text()).toBe('The {field} may not be greater than {length} characters');
 
   wrapper.vm.rules = {
     required: true,
@@ -335,7 +335,7 @@ test('validates on rule change: testing NaN', async () => {
   };
 
   await flushPromises();
-  expect(error.text()).toBe('The {field} may not be greater than {length} characters.');
+  expect(error.text()).toBe('The {field} may not be greater than {length} characters');
 });
 
 test('validates components on input by default', async () => {
@@ -602,8 +602,8 @@ test('setting bails prop to false disables fast exit', async () => {
 
   const errors = wrapper.findAll('p');
   expect(errors).toHaveLength(2);
-  expect(errors.at(0).text()).toBe('The {field} must be a valid email.');
-  expect(errors.at(1).text()).toBe('The {field} must be at least 3 characters.');
+  expect(errors.at(0).text()).toBe('The {field} must be a valid email');
+  expect(errors.at(1).text()).toBe('The {field} must be at least 3 characters');
 });
 
 const sleep = wait => new Promise(resolve => setTimeout(resolve, wait));
@@ -763,7 +763,7 @@ test('resolves rules based on the HTML input attributes', async () => {
 
   input.setValue('12');
   await flushPromises();
-  expect(error.text()).toBe('The {field} must be at least 3 characters.');
+  expect(error.text()).toBe('The {field} must be at least 3 characters');
 
   input.setValue('123');
   await flushPromises();
