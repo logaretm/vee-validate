@@ -27,16 +27,20 @@ interface ErrorCollection {
   [k: string]: string[];
 }
 
+type ProviderInstance = InstanceType<typeof ValidationProvider>;
+
 let OBSERVER_COUNTER = 0;
 
 function data() {
-  const refs: { [k: string]: InstanceType<typeof ValidationProvider> } = {};
+  const refs: { [k: string]: ProviderInstance } = {};
+  const refsByName: typeof refs = {};
   const inactiveRefs: { [k: string]: InactiveRefCache } = {};
   // FIXME: Not sure of this one can be typed, circular type reference.
   const observers: any[] = [];
 
   return {
     refs,
+    refsByName,
     observers,
     inactiveRefs
   };
@@ -174,13 +178,14 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       }
 
       this.refs = Object.assign({}, this.refs, { [subscriber.vid]: subscriber });
+      this.refsByName = Object.assign({}, this.refsByName, { [subscriber.name]: subscriber });
       if (subscriber.persist && this.inactiveRefs[subscriber.vid]) {
         this.restoreProviderState(subscriber);
       }
     },
-    unsubscribe({ vid }: any, kind = 'provider') {
+    unsubscribe({ vid, name }: any, kind = 'provider') {
       if (kind === 'provider') {
-        this.removeProvider(vid);
+        this.removeProvider({ vid, name });
       }
 
       const idx = findIndex(this.observers, o => o.vid === vid);
@@ -211,7 +216,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       provider.applyResult(state);
       this.$delete(this.inactiveRefs, provider.vid);
     },
-    removeProvider(vid: string) {
+    removeProvider({ vid, name }: { vid: string; name: string }) {
       const provider = this.refs[vid];
       // save it for the next time.
       if (provider && provider.persist) {
@@ -230,12 +235,14 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       }
 
       this.$delete(this.refs, vid);
+      this.$delete(this.refsByName, name);
     },
     setErrors(errors: ErrorCollection) {
       Object.keys(errors).forEach(key => {
-        if (!this.refs[key]) return;
+        const provider = this.refs[key] || this.refsByName[key];
+        if (!provider) return;
 
-        this.refs[key].setErrors(errors[key]);
+        provider.setErrors(errors[key] || []);
       });
     }
   }
