@@ -537,7 +537,7 @@ The field under validation must match the specified regular expression.
  You should not use the pipe '|' or commas ',' within your regular expression when using the string rules format as it will cause a conflict with how validators parsing works. You should use the object format of the rules instead. When using the object format in your HTML template, you need to escape all backslashes. For example:
 
 ```html
-<input v-validate="{ required: true, regex: /\\.(js|ts)$/ }" name="regex">
+<input v-validate="{ required: true, regex: /\.(js|ts)$/ }" name="regex">
 ```
 
 :::
