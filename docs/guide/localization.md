@@ -47,24 +47,20 @@ extend('lengthBetween', {
 ```
 
 ```vue
-<ValidationProvider
-  name="code"
-  rules="required|lengthBetween:3,6"
-  v-slot="{ errors }"
->
+<ValidationProvider name="code" rules="required|lengthBetween:3,6" v-slot="{ errors }">
   <input v-model="value" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 ```
 
 <ValidationProvider
-  name="code"
-  rules="required|lengthBetween:3,6"
-  v-slot="{ errors }"
->
-  <input v-model="values.template" type="text" placeholder="Type something...">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
+name="code"
+rules="required|lengthBetween:3,6"
+v-slot="{ errors }"
+
+>   <input v-model="values.template" type="text" placeholder="Type something...">
+>   <span>{{ errors[0] }}</span>
+> </ValidationProvider>
 
 :::tip Parameter Names
 You can use any name for your parameters, except for `_field_` and `_value_` which are reserved for template interpolation.
@@ -136,7 +132,7 @@ If you have multiple locales in your app, loading all the validation messages fo
 ```js
 import { localize } from 'vee-validate';
 
-function loadLocale (code) {
+function loadLocale(code) {
   return import(`vee-validate/dist/locale/${code}.js`).then(locale => {
     localize(code, locale);
   });
@@ -145,7 +141,7 @@ function loadLocale (code) {
 
 ### Using other i18n libraries
 
-You don't have to use the `localize` helper with `vee-validate`, if you don't it will not be included in your final bundle. It is optional for those who don't use  Vue-SSR framework/solution like Nuxt.
+You don't have to use the `localize` helper with `vee-validate`, if you don't it will not be included in your final bundle. It is optional for those who don't use Vue-SSR framework/solution like Nuxt.
 
 Other plugins dedicated for localization would be much better to use than the built in one, you can use them by using a function for the message instead of a string.
 
@@ -174,7 +170,7 @@ extend('required', {
 });
 ```
 
-Take a look at the [live examples](../examples/i18n.md) for i18n.
+Take a look at the [live examples](../examples/i18n.md).
 
 <script>
 window.$extendVee('lengthBetween', {
