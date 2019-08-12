@@ -66,9 +66,6 @@ export function mergeVNodeListeners (obj, eventName, handler) {
   // no listeners, create the array.
   if (isNullOrUndefined(obj[eventName])) {
     obj[eventName] = [];
-  } else {
-    // clean up the array #2185
-    obj[eventName] = obj[eventName].filter(ev => !ev._vee_isUnique);
   }
 
   obj[eventName].push(handler);

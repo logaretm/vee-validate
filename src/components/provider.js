@@ -166,7 +166,7 @@ export const ValidationProvider = {
     const ctx = createValidationCtx(this);
 
     // Gracefully handle non-existent scoped slots.
-    let slot = this.$scopedSlots.default;
+    const slot = this.$scopedSlots.default;
     /* istanbul ignore next */
     if (!isCallable(slot)) {
       if (process.env.NODE_ENV !== 'production') {
@@ -379,10 +379,6 @@ export function createCommonHandlers (ctx) {
     ctx.$veeDebounce = ctx.debounce;
   }
 
-  onValidate._vee_isUnique = true;
-  onBlur._vee_isUnique = true;
-  onInput._vee_isUnique = true;
-
   return { onInput, onBlur, onValidate };
 }
 
@@ -407,7 +403,7 @@ function addListeners (node) {
 }
 
 function createValuesLookup (ctx) {
-  let providers = ctx.$_veeObserver.refs;
+  const providers = ctx.$_veeObserver.refs;
 
   return ctx.fieldDeps.reduce((acc, depName) => {
     if (!providers[depName]) {
