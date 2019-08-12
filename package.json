@@ -32,7 +32,7 @@
   ],
   "files": [
     "dist/*.js",
-    "dist/locale/*.js",
+    "dist/locale/*.json",
     "dist/types/**/*.d.ts"
   ],
   "devDependencies": {

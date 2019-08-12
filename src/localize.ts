@@ -16,6 +16,7 @@ interface RootI18nDictionary {
 
 class Dictionary {
   public locale: string;
+
   private container: any;
 
   public constructor(locale: string, dictionary: RootI18nDictionary) {
