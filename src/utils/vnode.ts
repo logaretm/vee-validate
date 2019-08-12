@@ -44,6 +44,7 @@ function extractChildren(vnode: VNode | VNode[]): VNode[] {
     return vnode.children;
   }
 
+  /* istanbul ignore next */
   if (vnode.componentOptions && Array.isArray(vnode.componentOptions.children)) {
     return vnode.componentOptions.children;
   }
@@ -70,6 +71,7 @@ export function extractVNodes(vnode: VNode | VNode[]): VNode[] {
 
 // Resolves v-model config if exists.
 export function findModelConfig(vnode: VNode): { prop: string; event: string } | null {
+  /* istanbul ignore next */
   if (!vnode.componentOptions) return null;
 
   // This is also not typed in the standard Vue TS.
@@ -98,6 +100,7 @@ export function mergeVNodeListeners(obj: any, eventName: string, handler: Functi
 
 // Adds a listener to a native HTML vnode.
 function addNativeNodeListener(node: VNode, eventName: string, handler: Function): void {
+  /* istanbul ignore next */
   if (!node.data) {
     node.data = {};
   }
@@ -111,6 +114,7 @@ function addNativeNodeListener(node: VNode, eventName: string, handler: Function
 
 // Adds a listener to a Vue component vnode.
 function addComponentNodeListener(node: VNode, eventName: string, handler: Function): void {
+  /* istanbul ignore next */
   if (!node.componentOptions) {
     return;
   }

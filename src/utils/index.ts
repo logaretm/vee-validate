@@ -175,6 +175,7 @@ export const normalizeRules = (rules: any) => {
     }, acc);
   }
 
+  /* istanbul ignore if */
   if (typeof rules !== 'string') {
     warn('rules must be either a string or an object.');
     return acc;
@@ -182,11 +183,8 @@ export const normalizeRules = (rules: any) => {
 
   return rules.split('|').reduce((prev, rule) => {
     const parsedRule = parseRule(rule);
-    if (!parsedRule.name) {
-      return prev;
-    }
-
     prev[parsedRule.name] = parsedRule.params;
+
     return prev;
   }, acc);
 };

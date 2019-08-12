@@ -839,13 +839,13 @@ describe('HTML5 Rule inference', () => {
     expect(wrapper.find('#error').text()).toContain('email');
   });
 
-  test('regex and maxlength rules', async () => {
+  test('regex and minlength and maxlength rules', async () => {
     const wrapper = mount(
       {
         data: () => ({ val: '1' }),
         template: `
         <ValidationProvider v-slot="{ errors }">
-          <input type="text" pattern="[0-9]+" maxlength="2" v-model="val">
+          <input type="text" pattern="[0-9]+" minlength="2" maxlength="3" v-model="val">
           <p id="error">{{ errors[0] }}</p>
         </ValidationProvider>
       `
@@ -857,10 +857,15 @@ describe('HTML5 Rule inference', () => {
     await flushPromises();
     expect(wrapper.find('#error').text()).toContain('format is invalid');
 
-    // test inferred regex
-    wrapper.find('input').setValue('123');
+    // test inferred maxlength
+    wrapper.find('input').setValue('1234');
     await flushPromises();
-    expect(wrapper.find('#error').text()).toContain('greater than 2');
+    expect(wrapper.find('#error').text()).toContain('greater than 3');
+
+    // test inferred minlength
+    wrapper.find('input').setValue('1');
+    await flushPromises();
+    expect(wrapper.find('#error').text()).toContain('least 2');
   });
 
   test('number and min_value and max_value', async () => {
