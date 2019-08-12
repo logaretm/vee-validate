@@ -9,17 +9,13 @@ export const isEvent = (evt: any): evt is Event => {
     return true;
   }
 
+  // this is for IE
+  /* istanbul ignore next */
   if (evt && evt.srcElement) {
     return true;
   }
 
   return false;
-};
-
-export const normalizeEvents = (evts: string | string[]) => {
-  if (!evts) return [];
-
-  return typeof evts === 'string' ? evts.split('|') : evts;
 };
 
 export function normalizeEventValue(value: unknown): any {

@@ -122,7 +122,6 @@ export const debounce = (fn: Function, wait = 0, token = { cancelled: false }) =
     // because we might want to use Node.js setTimout for SSR.
     clearTimeout(timeout as any);
     timeout = setTimeout(later, wait) as any;
-    if (!timeout) fn(...args);
   };
 };
 
@@ -225,6 +224,17 @@ export function computeClassObj(names: ValidationClassMap, flags: ValidationFlag
   return acc;
 }
 
+/* istanbul ignore next */
+function _copyArray<T>(arrayLike: ArrayLike<T>): T[] {
+  const array = [];
+  const length = arrayLike.length;
+  for (let i = 0; i < length; i++) {
+    array.push(arrayLike[i]);
+  }
+
+  return array;
+}
+
 /**
  * Converts an array-like object to array, provides a simple polyfill for Array.from
  */
@@ -233,25 +243,24 @@ export function toArray<T>(arrayLike: ArrayLike<T>): T[] {
     return Array.from(arrayLike);
   }
 
-  const array = [];
-  const length = arrayLike.length;
   /* istanbul ignore next */
-  for (let i = 0; i < length; i++) {
-    array.push(arrayLike[i]);
-  }
-
-  /* istanbul ignore next */
-  return array;
+  return _copyArray(arrayLike);
 }
 
 export function findIndex<T>(arrayLike: ArrayLike<T>, predicate: (item: T) => boolean): number {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
+  if (isCallable(array.findIndex)) {
+    return array.findIndex(predicate);
+  }
+
+  /* istanbul ignore next */
   for (let i = 0; i < array.length; i++) {
     if (predicate(array[i])) {
       return i;
     }
   }
 
+  /* istanbul ignore next */
   return -1;
 }
 
@@ -266,10 +275,6 @@ export function find<T>(arrayLike: ArrayLike<T>, predicate: (item: T) => boolean
 }
 
 export function merge(target: any, source: any) {
-  if (!(isObject(target) && isObject(source))) {
-    return target;
-  }
-
   Object.keys(source).forEach(key => {
     if (isObject(source[key])) {
       if (!target[key]) {

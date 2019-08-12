@@ -462,6 +462,30 @@ test('validates target dependant fields', async () => {
   expect(error.text()).toBeFalsy();
 });
 
+test('validates file input', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        file: null
+      }),
+      template: `
+        <ValidationProvider rules="required|image" v-slot="{ errors }">
+          <input type="file" v-model="file">
+          <p id="error">{{ errors[0] }}</p>
+        </ValidationProvider>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const input = wrapper.find('input');
+  input.trigger('change');
+  await flushPromises();
+
+  const error = wrapper.find('#error');
+  expect(error.text()).toBeTruthy();
+});
+
 test('removes the provider reference at destroy', () => {
   const wrapper = mount(
     {
@@ -509,7 +533,6 @@ test('creates HOCs from other components', async () => {
 
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   input.setValue('txt');
-  await flushPromises();
   await flushPromises();
   expect(error.text()).toBe('');
 });
@@ -693,11 +716,6 @@ test('validates manually using the validate event handler', async () => {
   const input = wrapper.find('input');
   input.setValue('');
   await flushPromises();
-  await flushPromises();
-  await flushPromises();
-  await flushPromises();
-  await flushPromises();
-  await flushPromises();
 
   const error = wrapper.find('#error');
   expect(error.text()).toBeTruthy();
@@ -738,36 +756,6 @@ test('resets validation state using reset method in slot scope data', async () =
   wrapper.find('button').trigger('click');
   await flushPromises();
   expect(error.text()).toBe('');
-});
-
-test('resolves rules based on the HTML input attributes', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({ val: '' }),
-      template: `
-        <ValidationProvider v-slot="{ errors }">
-          <input type="text" v-model="val" required minlength="3">
-          <p id="error">{{ errors[0] }}</p>
-        </ValidationProvider>
-      `
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const input = wrapper.find('input');
-  input.setValue('');
-  await flushPromises();
-
-  const error = wrapper.find('#error');
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-
-  input.setValue('12');
-  await flushPromises();
-  expect(error.text()).toBe('The {field} must be at least 3 characters');
-
-  input.setValue('123');
-  await flushPromises();
-  expect(error.text()).toBeFalsy();
 });
 
 test('classes can be arrays', async () => {

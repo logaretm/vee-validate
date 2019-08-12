@@ -1,7 +1,7 @@
 import { getConfig } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
-import { normalizeEvents, normalizeEventValue } from '../utils/events';
+import { normalizeEventValue } from '../utils/events';
 import { createFlags, normalizeRules, isCallable, isNullOrUndefined, isEqual, computeClassObj } from '../utils';
 import { extractVNodes, resolveRules, normalizeChildren } from '../utils/vnode';
 import Vue, { VNode, CreateElement, VueConstructor } from 'vue';
@@ -130,7 +130,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     normalizedEvents(): string[] {
       const { on } = computeModeSetting(this);
 
-      return normalizeEvents(on || []).map(e => {
+      return (on || []).map(e => {
         if (e === 'input') {
           return this._inputEventName;
         }

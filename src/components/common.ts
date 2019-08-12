@@ -1,6 +1,6 @@
 import { VNodeDirective, VNode } from 'vue';
 import { isCallable, debounce } from '../utils';
-import { modes } from '../modes';
+import { modes, InteractionModeFactory } from '../modes';
 import { ValidationResult, ValidationFlags, KnownKeys } from '../types';
 import { findModel, getInputEventName, addVNodeListener } from '../utils/vnode';
 import { ProviderInstance } from './Provider';
@@ -92,7 +92,7 @@ export function onRenderUpdate(vm: ProviderInstance, model: VNodeDirective | und
 }
 
 export function computeModeSetting(ctx: ProviderInstance) {
-  const compute = isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode];
+  const compute = (isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode]) as InteractionModeFactory;
 
   return compute({
     errors: ctx.messages,
