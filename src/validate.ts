@@ -102,8 +102,8 @@ async function _shouldSkip(field: FieldMeta, value: any) {
   const errors: ReturnType<typeof _generateFieldError>[] = [];
   let isRequired = false;
   for (let i = 0; i < length; i++) {
-    let rule = requireRules[i];
-    let result = await _test(field, value, {
+    const rule = requireRules[i];
+    const result = await _test(field, value, {
       name: rule,
       params: field.rules[rule]
     });
@@ -182,6 +182,7 @@ function _generateFieldError(
   const values = {
     ...(params || {}),
     ...(data || {}),
+    _field_: field.name,
     _value_: value
   };
 
