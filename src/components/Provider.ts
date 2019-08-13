@@ -117,7 +117,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
   },
   data,
   computed: {
-    fieldDeps(): { [k: string]: any } {
+    fieldDeps(): string[] {
       return Object.keys(this.normalizedRules)
         .filter(RuleContainer.isTargetRule)
         .map(rule => {
@@ -293,10 +293,10 @@ function updateRenderingContextRefs(vm: ProviderInstance) {
 function createObserver(): VeeObserver {
   return {
     refs: {},
-    subscribe(ctx: any) {
+    subscribe(ctx: ProviderInstance) {
       this.refs[ctx.vid] = ctx;
     },
-    unsubscribe(ctx: any) {
+    unsubscribe(ctx: ProviderInstance) {
       delete this.refs[ctx.vid];
     }
   };

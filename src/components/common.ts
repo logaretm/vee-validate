@@ -1,5 +1,5 @@
 import { VNodeDirective, VNode } from 'vue';
-import { isCallable, debounce } from '../utils';
+import { isCallable, debounce, identity } from '../utils';
 import { modes, InteractionModeFactory } from '../modes';
 import { ValidationResult, ValidationFlags, KnownKeys } from '../types';
 import { findModel, getInputEventName, addVNodeListener } from '../utils/vnode';
@@ -88,7 +88,7 @@ export function onRenderUpdate(vm: ProviderInstance, model: VNodeDirective | und
     return;
   }
 
-  vm.validateSilent().then(vm.immediate || vm.flags.validated ? vm.applyResult : (x: any) => x);
+  vm.validateSilent().then(vm.immediate || vm.flags.validated ? vm.applyResult : identity);
 }
 
 export function computeModeSetting(ctx: ProviderInstance) {
