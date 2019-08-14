@@ -18,7 +18,7 @@
     "docs:deploy": "./scripts/deploy.sh",
     "build:locale": "node scripts/locale.js",
     "build:main": "node scripts/main.js",
-    "ts:defs": "tsc --emitDeclarationOnly",
+    "ts:defs": "./scripts/definitions.sh",
     "build": "npm run build:main && npm run ts:defs && npm run build:locale",
     "cover": "jest --coverage"
   },
