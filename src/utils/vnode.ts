@@ -176,9 +176,9 @@ export function normalizeSlots(slots: any, ctx: Vue): VNode[] {
   }, acc);
 }
 
-function resolveTextualRules(vnode: VNode): { [k: string]: any } {
+function resolveTextualRules(vnode: VNode): Record<string, any> {
   const attrs = vnode.data && vnode.data.attrs;
-  const rules: { [k: string]: any } = {};
+  const rules: Record<string, any> = {};
 
   if (!attrs) return rules;
 
@@ -211,7 +211,7 @@ function resolveTextualRules(vnode: VNode): { [k: string]: any } {
   return rules;
 }
 
-export function resolveRules(vnode: VNode): { [k: string]: any } {
+export function resolveRules(vnode: VNode) {
   const htmlTags = ['input', 'select'];
   const attrs = vnode.data && vnode.data.attrs;
 
@@ -219,7 +219,7 @@ export function resolveRules(vnode: VNode): { [k: string]: any } {
     return {};
   }
 
-  const rules: { [k: string]: any } = {};
+  const rules: Record<string, any> = {};
   if ('required' in attrs) {
     rules.required = attrs.type === 'checkbox' ? [true] : true;
   }

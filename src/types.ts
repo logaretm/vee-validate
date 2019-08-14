@@ -1,9 +1,12 @@
 import Vue, { VNode } from 'vue';
+import { ValidationProvider } from './components/Provider';
+
+export type ProviderInstance = InstanceType<typeof ValidationProvider>;
 
 export interface ValidationResult {
   valid: boolean;
   errors: string[];
-  failedRules: { [x: string]: string };
+  failedRules: Record<string, string>;
 }
 
 export type VueValidationContext = Vue & {
@@ -11,20 +14,20 @@ export type VueValidationContext = Vue & {
 };
 
 export interface ValidationMessageGenerator {
-  (field: string, params?: { [k: string]: any }): string;
+  (field: string, params?: Record<string, any>): string;
 }
 
 export type ValidationMessageTemplate = string | ValidationMessageGenerator;
 
 export interface ValidationRuleResult {
-  data?: any;
+  data?: Record<string, any>;
   valid: boolean;
   required?: boolean;
 }
 
 export type ValidationRuleFunction = (
   value: any,
-  params: any[] | { [k: string]: any }
+  params: any[] | Record<string, any>
 ) => boolean | ValidationRuleResult | Promise<boolean | ValidationRuleResult>;
 
 export interface RuleParamConfig {
@@ -70,7 +73,7 @@ export interface ValidationFlags {
 }
 
 export interface VeeObserver {
-  refs: { [k: string]: any };
+  refs: Record<string, ProviderInstance>;
   subscribe(provider: any, type?: 'provider' | 'observer'): void;
   unsubscribe(provider: any, type?: 'provider' | 'observer'): void;
 }
@@ -78,7 +81,7 @@ export interface VeeObserver {
 export interface InactiveRefCache {
   errors: string[];
   flags: ValidationFlags;
-  failedRules: { [k: string]: string };
+  failedRules: Record<string, string>;
 }
 
 export type VNodeWithVeeContext = VNode & {

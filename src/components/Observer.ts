@@ -23,18 +23,14 @@ function mergeFlags(lhs: any, rhs: any, strategy: string) {
   return [lhs, rhs][stratName](f => f);
 }
 
-interface ErrorCollection {
-  [k: string]: string[];
-}
-
 type ProviderInstance = InstanceType<typeof ValidationProvider>;
 
 let OBSERVER_COUNTER = 0;
 
 function data() {
-  const refs: { [k: string]: ProviderInstance } = {};
+  const refs: Record<string, ProviderInstance> = {};
   const refsByName: typeof refs = {};
-  const inactiveRefs: { [k: string]: InactiveRefCache } = {};
+  const inactiveRefs: Record<string, InactiveRefCache> = {};
   // FIXME: Not sure of this one can be typed, circular type reference.
   const observers: any[] = [];
 
@@ -237,7 +233,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       this.$delete(this.refs, vid);
       this.$delete(this.refsByName, name);
     },
-    setErrors(errors: ErrorCollection) {
+    setErrors(errors: Record<string, string[]>) {
       Object.keys(errors).forEach(key => {
         const provider = this.refs[key] || this.refsByName[key];
         if (!provider) return;

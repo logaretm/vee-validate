@@ -1,9 +1,8 @@
 import { VNodeDirective, VNode } from 'vue';
 import { isCallable, debounce, identity } from '../utils';
 import { modes, InteractionModeFactory } from '../modes';
-import { ValidationResult, ValidationFlags, KnownKeys } from '../types';
+import { ValidationResult, ValidationFlags, KnownKeys, ProviderInstance } from '../types';
 import { findModel, getInputEventName, addVNodeListener } from '../utils/vnode';
-import { ProviderInstance } from './Provider';
 
 /**
  * Determines if a provider needs to run validation.
@@ -34,9 +33,9 @@ function shouldValidate(ctx: ProviderInstance, model: VNodeDirective) {
 
 export interface ValidationContext extends Pick<ValidationFlags, KnownKeys<ValidationFlags>> {
   errors: string[];
-  classes: { [k: string]: boolean };
+  classes: Record<string, boolean>;
   valid: boolean;
-  failedRules: { [k: string]: string };
+  failedRules: Record<string, string>;
   reset: () => void;
   validate: (evtOrNewValue: Event | any) => Promise<ValidationResult>;
   ariaInput: {

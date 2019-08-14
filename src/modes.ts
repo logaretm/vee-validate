@@ -4,7 +4,7 @@ import { isCallable } from './utils';
 
 interface ModeContext {
   errors: string[];
-  value: unknown;
+  value: any;
   flags: ValidationFlags;
 }
 

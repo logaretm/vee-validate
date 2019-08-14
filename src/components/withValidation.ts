@@ -4,7 +4,7 @@ import { findModel, findModelConfig, mergeVNodeListeners, getInputEventName, nor
 import { CreateElement, Component } from 'vue';
 import { createValidationCtx, onRenderUpdate, createCommonHandlers, ValidationContext } from './common';
 
-type ValidationContextMapper = (ctx: ValidationContext) => { [k: string]: any };
+type ValidationContextMapper = (ctx: ValidationContext) => Record<string, any>;
 type ComponentLike = Component | { options: any };
 
 export function withValidation(component: ComponentLike, mapProps: ValidationContextMapper = identity): Component {

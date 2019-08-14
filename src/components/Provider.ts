@@ -5,7 +5,7 @@ import { normalizeEventValue } from '../utils/events';
 import { createFlags, normalizeRules, isCallable, isNullOrUndefined, isEqual, computeClassObj } from '../utils';
 import { extractVNodes, resolveRules, normalizeChildren } from '../utils/vnode';
 import Vue, { VNode, CreateElement, VueConstructor } from 'vue';
-import { ValidationResult, ValidationFlags, VeeObserver, VNodeWithVeeContext } from '../types';
+import { ValidationResult, ValidationFlags, VeeObserver, VNodeWithVeeContext, ProviderInstance } from '../types';
 import { computeModeSetting, createValidationCtx, addListeners } from './common';
 
 let PROVIDER_COUNTER = 0;
@@ -18,7 +18,7 @@ type withProviderPrivates = VueConstructor<
     _ignoreImmediate: boolean;
     _pendingValidation?: Promise<ValidationResult>;
     _resolvedRules: any;
-    _veeWatchers: { [k: string]: Function };
+    _veeWatchers: Record<string, Function>;
     $veeDebounce?: number;
     $veeHandler?: Function;
     $vnode: VNodeWithVeeContext;
@@ -251,11 +251,9 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
   }
 });
 
-export type ProviderInstance = InstanceType<typeof ValidationProvider>;
-
 function createValuesLookup(vm: ProviderInstance) {
   const providers = vm.$_veeObserver.refs;
-  const reduced: { [k: string]: any } = {};
+  const reduced: Record<string, any> = {};
 
   return vm.fieldDeps.reduce((acc: typeof reduced, depName: string) => {
     if (!providers[depName]) {

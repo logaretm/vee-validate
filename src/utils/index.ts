@@ -195,7 +195,7 @@ export const normalizeRules = (rules: any) => {
 export const isCallable = (func: unknown): func is Function => typeof func === 'function';
 
 export function computeClassObj(names: ValidationClassMap, flags: ValidationFlags) {
-  const acc: { [k: string]: boolean } = {};
+  const acc: Record<string, boolean> = {};
   const keys = Object.keys(flags);
   const length = keys.length;
   for (let i = 0; i < length; i++) {
@@ -303,7 +303,7 @@ export const isEmptyArray = (arr: any[]): boolean => {
   return Array.isArray(arr) && arr.length === 0;
 };
 
-export const interpolate = (template: string, values: { [k: string]: any }): string => {
+export const interpolate = (template: string, values: Record<string, any>): string => {
   return template.replace(/\{([^}]+)\}/g, (_, p): string => {
     return values[p] || `{${p}}`;
   });

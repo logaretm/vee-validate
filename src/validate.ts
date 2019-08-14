@@ -5,17 +5,17 @@ import { getConfig } from './config';
 
 interface FieldMeta {
   name: string;
-  rules: { [k: string]: any[] };
+  rules: Record<string, any[]>;
   bails: boolean;
   forceRequired: boolean;
-  crossTable: { [k: string]: any };
-  names: { [k: string]: any };
+  crossTable: Record<string, any>;
+  names: Record<string, string>;
 }
 
 interface ValidationOptions {
   name?: string;
-  values?: { [k: string]: any };
-  names?: { [k: string]: any };
+  values?: Record<string, any>;
+  names?: Record<string, string>;
   bails?: boolean;
   isInitial?: boolean;
 }
@@ -25,7 +25,7 @@ interface ValidationOptions {
  */
 export async function validate(
   value: any,
-  rules: string | { [k: string]: any },
+  rules: string | Record<string, any>,
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   const shouldBail = options && options.bails;
@@ -40,7 +40,7 @@ export async function validate(
 
   const result = await _validate(field, value, options);
   const errors: string[] = [];
-  const ruleMap: { [k: string]: string } = {};
+  const ruleMap: Record<string, string> = {};
   result.errors.forEach(e => {
     errors.push(e.msg);
     ruleMap[e.rule] = e.msg;
@@ -176,8 +176,8 @@ function _generateFieldError(
   value: any,
   ruleSchema: ValidationRuleSchema,
   ruleName: string,
-  params: { [k: string]: any },
-  data: any
+  params: Record<string, any>,
+  data?: Record<string, any>
 ) {
   const values = {
     ...(params || {}),
@@ -199,7 +199,7 @@ function _generateFieldError(
   };
 }
 
-function _normalizeMessage(template: ValidationMessageTemplate, field: string, values: { [k: string]: any }) {
+function _normalizeMessage(template: ValidationMessageTemplate, field: string, values: Record<string, any>) {
   if (typeof template === 'function') {
     return template(field, values);
   }
@@ -208,11 +208,11 @@ function _normalizeMessage(template: ValidationMessageTemplate, field: string, v
 }
 
 function _buildParams(
-  provided: any[] | { [k: string]: any },
+  provided: any[] | Record<string, any>,
   defined: RuleParamConfig[] | undefined,
-  crossTable: { [k: string]: any }
+  crossTable: Record<string, any>
 ) {
-  const params: { [k: string]: any } = {};
+  const params: Record<string, any> = {};
   if (!defined && !Array.isArray(provided)) {
     throw new Error('You provided an object params to a rule that has no defined schema.');
   }
