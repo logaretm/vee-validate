@@ -521,6 +521,7 @@ All the following props are optional.
 | debounce  | `number`   | `0`                   | Debounces the validation for the specified amount of milliseconds.                                                                                    |
 | tag       | `string`   | `span`                | The default tag to [render](#rendering).                                                                                                              |
 | persist   | `boolean`  | `false`               | If true, the provider will keep its errors across mounted/destroyed lifecycles                                                                        |
+| disabled | `boolean` | `false`       | If true, the provider will be ignored when `validate` is called by a parent observer. |
 
 ### Methods
 

@@ -18,7 +18,6 @@ Here is a small example, with our refactored components:
 </ValidationObserver>
 ```
 
-
 ## Scoped Slot Data
 
 The scoped slot is passed an object containing a flags object representing the merged state of all providers registered under the observer. It contains the following properties:
@@ -319,6 +318,7 @@ Below is the reference of the ValidationObserver public API.
 | ---- | --------- | ------------- | ------------------------------------------------------------------------------------------------------ |
 | tag  | `string`  | `span`        | The default tag to [render](#rendering).                                                               |
 | slim | `boolean` | `false`       | If true, it will make the observer [renderless](#renderless), only rendering the HTML inside its slot. |
+| disabled | `boolean` | `false`       | If true, the observer will be ignored when `validate` is called by a parent observer. |
 
 ### Methods
 
