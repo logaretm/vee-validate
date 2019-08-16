@@ -16,7 +16,7 @@ const sidebars = {
     // 'testing'
   ],
   api: ['', 'rules'],
-  examples: ['ui-libraries', 'i18n', 'organize-forms', 'backend', 'nuxt']
+  examples: ['ui-libraries', 'i18n', 'multiple-forms', 'backend', 'nuxt']
 };
 
 function genSidebarConfig(...names) {
