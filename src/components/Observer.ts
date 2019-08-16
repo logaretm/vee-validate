@@ -208,7 +208,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     },
     restoreProviderState(provider: ProviderInstance) {
       const id = provider.vid.indexOf('_vee_') === 0 ? provider.name : provider.vid;
-      const state = this.inactiveRefs[id];
+      const state = this.inactiveRefs[id || provider.vid];
       if (!state) {
         return;
       }
@@ -231,7 +231,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
           }
         }
 
-        this.inactiveRefs[id] = {
+        this.inactiveRefs[id || vid] = {
           flags: provider.flags,
           errors: provider.messages,
           failedRules: provider.failedRules
