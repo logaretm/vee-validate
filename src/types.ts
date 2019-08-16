@@ -42,7 +42,7 @@ export type RuleParamSchema = string | RuleParamConfig;
 export interface ValidationRuleSchema {
   validate?: ValidationRuleFunction;
   params?: RuleParamSchema[];
-  message?: ValidationMessageGenerator;
+  message?: ValidationMessageTemplate;
   lazy?: boolean;
   computesRequired?: boolean;
   castValue?(value: any): any;
