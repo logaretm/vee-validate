@@ -24,11 +24,7 @@ Or it can be a **template string** like this:
 The {_field_} is required.
 ```
 
-Template messages are interpolated before display to replace the placeholders, placeholders are computed based on:
-
-- field name: `{_field_}`
-- field value: `{_value_}`
-- rule parameters names.
+Template messages are interpolated before display to replace the placeholders, placeholders are surrounded by `{placeholder}`. You can use the rule's parameter names as placeholders as well as props you return in `data` prop in the validation response.
 
 For example consider this rule:
 
@@ -63,7 +59,13 @@ v-slot="{ errors }"
 > </ValidationProvider>
 
 :::tip Parameter Names
-You can use any name for your parameters, except for `_field_` and `_value_` which are reserved for template interpolation.
+You can use any names for your placeholders, except for:
+
+- `{_field_}` which is the field name.
+- `{_value_}` which is the field value.
+- `{_rule_}` which is the rule name.
+
+Which are provided internally.
 :::
 
 ### Message Function
@@ -72,11 +74,11 @@ Messages can be a function as well, giving you more flexibility over your messag
 
 ```ts
 interface ValidationMessageGenerator {
-  (field: string, params?: { [k: string]: any }): string;
+  (field: string, values?: Record<string, any>): string;
 }
 ```
 
-The `field` is the field name, the `params` argument is an object containing the placeholder values used in string interpolation. Meaning it will contain both a `_value_` and a `_field_` values as well as any other params previously declared.
+The `field` is the field name, the `values` argument is an object containing the placeholder values used in string interpolation. Meaning it will contain `_value_`, `_field_` and `_rule_` values as well as any other params previously declared.
 
 ## i18n
 
@@ -92,8 +94,8 @@ The exposed `localize` helper allows you to add new locales to your validation m
 
 ```js
 import { localize } from 'vee-validate';
-import en from 'vee-validate/dist/locale/en';
-import ar from 'vee-validate/dist/locale/ar';
+import en from 'vee-validate/dist/locale/en.json';
+import ar from 'vee-validate/dist/locale/ar.json';
 
 // Install English and Arabic locales.
 localize({
@@ -119,7 +121,7 @@ You can also activate and add new messages at the same time:
 
 ```js
 import { localize } from 'vee-validate';
-import ar from 'vee-validate/dist/locale/ar';
+import ar from 'vee-validate/dist/locale/ar.json';
 
 // Install and Activate the Arabic locale.
 localize('ar', ar);
@@ -133,7 +135,7 @@ If you have multiple locales in your app, loading all the validation messages fo
 import { localize } from 'vee-validate';
 
 function loadLocale(code) {
-  return import(`vee-validate/dist/locale/${code}.js`).then(locale => {
+  return import(`vee-validate/dist/locale/${code}.json`).then(locale => {
     localize(code, locale);
   });
 }
@@ -170,7 +172,18 @@ extend('required', {
 });
 ```
 
-Take a look at the [live examples](../examples/i18n.md).
+However this will be annoying for each rule, you could take advantage of `defaultMessage` config:
+
+```js
+import { configure } from 'vee-validate';
+
+configure({
+  // this will be used to generate messages.
+  defaultMessage: (_, values) => i18n.t(`validation.${values._rule_}`, values)
+});
+```
+
+Check out the [live samples](../examples/i18n.md).
 
 <script>
 window.$extendVee('lengthBetween', {
