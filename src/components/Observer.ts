@@ -206,8 +206,13 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
 
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
     },
-    restoreProviderState(provider: any) {
-      const state = this.inactiveRefs[provider.vid];
+    restoreProviderState(provider: ProviderInstance) {
+      const id = provider.vid.indexOf('_vee_') === 0 ? provider.name : provider.vid;
+      const state = this.inactiveRefs[id];
+      if (!state) {
+        return;
+      }
+
       provider.setFlags(state.flags);
       provider.applyResult(state);
       this.$delete(this.inactiveRefs, provider.vid);
@@ -216,14 +221,17 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       const provider = this.refs[vid];
       // save it for the next time.
       if (provider && provider.persist) {
+        const id = vid.indexOf('_vee_') === 0 ? name : vid;
         /* istanbul ignore next */
         if (process.env.NODE_ENV !== 'production') {
-          if (vid.indexOf('_vee_') === 0) {
-            warn('Please provide a `vid` prop when using `persist`, there might be unexpected issues otherwise.');
+          if (vid.indexOf('_vee_') === 0 && !name) {
+            warn(
+              'Please provide a `vid` or a `name` prop when using `persist`, there might be unexpected issues otherwise.'
+            );
           }
         }
 
-        this.inactiveRefs[vid] = {
+        this.inactiveRefs[id] = {
           flags: provider.flags,
           errors: provider.messages,
           failedRules: provider.failedRules
