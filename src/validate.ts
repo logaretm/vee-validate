@@ -183,7 +183,8 @@ function _generateFieldError(
     ...(params || {}),
     ...(data || {}),
     _field_: field.name,
-    _value_: value
+    _value_: value,
+    _rule_: ruleName
   };
 
   if (ruleSchema.message) {
