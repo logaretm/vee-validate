@@ -8,12 +8,12 @@
 
 [![codecov](https://codecov.io/gh/baianat/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/baianat/vee-validate)
 [![Build Status](https://travis-ci.org/baianat/vee-validate.svg?branch=master)](https://travis-ci.org/baianat/vee-validate)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/baianat/vee-validate?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=baianat/vee-validate&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/baianat/vee-validate?utm_source=github.com&utm_medium=referral&utm_content=baianat/vee-validate&utm_campaign=Badge_Grade)
 [![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/)
 [![npm](https://img.shields.io/npm/dm/vee-validate.svg)](https://npm-stat.com/charts.html?package=vee-validate)
 [![npm](https://img.shields.io/npm/v/vee-validate.svg)](https://www.npmjs.com/package/vee-validate)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/baianat/vee-validate.svg)](http://isitmaintained.com/project/baianat/vee-validate "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/baianat/vee-validate.svg)](http://isitmaintained.com/project/baianat/vee-validate "Percentage of issues still open")
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/baianat/vee-validate.svg)](http://isitmaintained.com/project/baianat/vee-validate 'Average time to resolve an issue')
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/baianat/vee-validate.svg)](http://isitmaintained.com/project/baianat/vee-validate 'Percentage of issues still open')
 
 </p>
 <br>
@@ -24,17 +24,25 @@ Being template-based you only need to specify for each input what kind of valida
 
 This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.com/).
 
+### Features
+
+- Template based validation that is both familiar and easy to setup.
+- 🌍 i18n Support and error Messages in 40+ locales.
+- 💫 Async and Custom Rules Support.
+- 💪 Written in TypeScript.
+- No dependencies.
+
 ### Installation
 
 #### yarn
 
-```
+```bash
 yarn add vee-validate
 ```
 
 #### npm
 
-```
+```bash
 npm i vee-validate --save
 ```
 
@@ -49,25 +57,22 @@ vee-validate is also available on these CDNs:
 
 ### Getting Started
 
-In your script entry point:
-```javascript
-import Vue from 'vue';
-import VeeValidate from 'vee-validate';
+Install the rules you will use in your app, we will install the `required` rule for now:
 
-Vue.use(VeeValidate);
+```js
+import { extend } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules';
+
+// Add the required rule
+extend('required', {
+  ...required,
+  message: 'This field is required'
+});
 ```
 
-Now you are all setup to use the plugin.
-
-### Usage
-
-There are two ways to use vee-validate:
-
-#### Using Components (recommended)
-
-> This is available in 2.1 onwards.
-
 Import the `ValidationProvider` component and register it:
+
+#### Global Registration
 
 ```js
 import { ValidationProvider } from 'vee-validate';
@@ -75,10 +80,13 @@ import { ValidationProvider } from 'vee-validate';
 // Register it globally
 // main.js or any entry file.
 Vue.component('ValidationProvider', ValidationProvider);
+```
 
+#### Local Registration
 
-// or register it locally in a component
-// mycomponent.vue
+```js
+import { ValidationProvider } from 'vee-validate';
+
 export default {
   components: {
     ValidationProvider
@@ -101,32 +109,7 @@ The validation provider accepts two props: `rules` which is in its simplest form
 
 and That's it, your input will be validated automatically, notice that the `ValidationProvider` uses [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
 
-
-There is more that can be done! You can customize events, validate initial values, manually validate or reset the field and much more. Make sure to [read the docs](https://baianat.github.io/vee-validate/guide/components.html).
-
-#### Using directive
-
-Apply the `v-validate` directive on your input and pass a **string value** which is a list of validations separated by a pipe. For example, we will use the `required` and the `email` validators:
-
-```vue
-<input v-validate="'required|email'" type="text" name="email">
-```
-
-Now every time the input changes, the validator will run the list of validations from left to right, populating the errors helper object whenever an input fails validation.
-
-To access the errors object (in your vue instance):
-
-```js
-this.$validator.errorBag;
-// or
-this.errors; // injected into $data by the plugin, you can customize the property name.
-```
-
-Let's display the error for the email input we've created:
-```html
-<!-- If it has an email error, display the first message associated with it. -->
-<span v-show="errors.has('email')">{{ errors.first('email') }}</span>
-```
+There is more that can be done! You can customize events, validate initial values, manually validate or reset the field and much more. Make sure to [read the docs](https://baianat.github.io/vee-validate).
 
 ### Documentation
 
@@ -142,19 +125,26 @@ You are welcome to contribute to this project, but before you do, please make su
 
 ### Tutorials and Examples
 
-#### Articles
-
-- [Validation Providers](https://medium.com/@logaretm/vee-validate-validation-providers-b5b38647c05c)
-- [Authoring Validatble Vue Components](https://medium.com/@logaretm/authoring-validatable-custom-vue-input-components-1583fcc68314)
-- [Vue Multi Step Form](http://statemachine.davestewart.io/html/examples/vue/vue-sign-up.html) by [Dave Stewart](https://github.com/davestewart)
-- [An imperative guide to forms in Vue.js](https://blog.logrocket.com/an-imperative-guide-to-forms-in-vue-js-7536bfa374e0) by [Olayinka Omole](https://blog.logrocket.com/@olayinka.omole).
-- [Template Driven Form Validation In Vue.js](https://scotch.io/tutorials/template-driven-form-validation-in-vuejs) by [Ogundipe Samuel Ayo](https://twitter.com/fucked_down)
-- [Make Validation Great Again! Vue form validation with vee validate](https://qiita.com/nickhall/items/d1043f3f9874c90b6f8e) by [Nick Hall](https://github.com/nickhall)
-
+- [Backend and Remote Validation](https://baianat.github.io/vee-validate/examples/backend.html)
+  - [Server-side Rules](https://baianat.github.io/vee-validate/examples/backend.html#server-side-rules).
+  - [Adding errors from API responses](https://baianat.github.io/vee-validate/examples/backend.html#server-side-rules).
+- [Localization (i18n) Examples](https://baianat.github.io/vee-validate/examples/i18n.html)
+  - [Localize API](https://baianat.github.io/vee-validate/examples/i18n.html#localize-api)
+  - [vue-i18n Example](https://baianat.github.io/vee-validate/examples/i18n.html#vue-i18n)
+  - [Custom Example](https://baianat.github.io/vee-validate/examples/i18n.html#custom-implementation)
+- [Integrating with Nuxt](https://baianat.github.io/vee-validate/examples/nuxt.html)
+- [Multiple Forms](https://baianat.github.io/vee-validate/examples/multiple-forms.html)
+  - [Multiple Forms in same page](https://baianat.github.io/vee-validate/examples/multiple-forms.html#same-page-forms)
+  - [Nested Forms](https://baianat.github.io/vee-validate/examples/multiple-forms.html#nested-forms)
+  - [Multi-Step Forms](https://baianat.github.io/vee-validate/examples/multiple-forms.html#multi-step-forms)
+- [UI Libraries Validation Samples](https://baianat.github.io/vee-validate/examples/ui-libraries.html)
+  - [Vuetify](https://baianat.github.io/vee-validate/examples/ui-libraries.html#vuetify)
+  - [BootstrapVue](https://baianat.github.io/vee-validate/examples/ui-libraries.html#bootstrapvue)
+  - [Buefy](https://baianat.github.io/vee-validate/examples/ui-libraries.html#buefy)
+  - [Ant Design](https://baianat.github.io/vee-validate/examples/ui-libraries.html#ant-design)
 
 ### Credits
 
-- Some validations/test scenarios are provided/based on [validator.js](https://github.com/chriso/validator.js).
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
 
 ### license
