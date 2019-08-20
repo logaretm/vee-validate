@@ -101,6 +101,7 @@ export interface Watcher {
 }
 
 export interface FieldFlags {
+    changed: boolean;
     untouched: boolean;
     touched: boolean;
     dirty: boolean;
