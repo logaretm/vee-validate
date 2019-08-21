@@ -624,6 +624,32 @@ test('setting bails prop to false disables fast exit', async () => {
   );
 
   const input = wrapper.find('input');
+  input.setValue('1');
+  await flushPromises();
+
+  const errors = wrapper.findAll('p');
+  expect(errors).toHaveLength(2);
+  expect(errors.at(0).text()).toBe('The {field} must be a valid email');
+  expect(errors.at(1).text()).toBe('The {field} must be at least 3 characters');
+});
+
+test('setting bails and skipIfEmpty to false runs all rules', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationProvider :skipIfEmpty="false" :bails="false" rules="email|min:3" v-slot="{ errors }">
+          <input v-model="value" type="text">
+          <p v-for="error in errors">{{ error }}</p>
+        </ValidationProvider>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const input = wrapper.find('input');
   input.setValue('');
   await flushPromises();
 

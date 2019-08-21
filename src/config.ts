@@ -19,10 +19,12 @@ export interface VeeValidateConfig {
   mode: string | InteractionModeFactory;
   classes: ValidationClassMap;
   defaultMessage: ValidationMessageTemplate;
+  skipOptional: boolean;
 }
 
 const DEFAULT_CONFIG: VeeValidateConfig = {
   defaultMessage: `{_field_} is not valid.`,
+  skipOptional: true,
   classes: {
     touched: 'touched', // the control has been blurred
     untouched: 'untouched', // the control hasn't been blurred

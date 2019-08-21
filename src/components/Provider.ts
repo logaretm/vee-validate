@@ -90,6 +90,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       type: Boolean,
       default: () => getConfig().bails
     },
+    skipIfEmpty: {
+      type: Boolean,
+      default: () => getConfig().skipOptional
+    },
     debounce: {
       type: Number,
       default: 0
@@ -222,6 +226,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         name: this.name,
         values: createValuesLookup(this),
         bails: this.bails,
+        skipIfEmpty: this.skipIfEmpty,
         isInitial: !this.initialized
       });
 

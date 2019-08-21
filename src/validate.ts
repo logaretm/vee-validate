@@ -3,10 +3,11 @@ import { isObject, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate 
 import { ValidationResult, ValidationRuleSchema, ValidationMessageTemplate, RuleParamConfig } from './types';
 import { getConfig } from './config';
 
-interface FieldMeta {
+interface FieldContext {
   name: string;
   rules: Record<string, any[]>;
   bails: boolean;
+  skipIfEmpty: boolean;
   forceRequired: boolean;
   crossTable: Record<string, any>;
   names: Record<string, string>;
@@ -17,6 +18,7 @@ interface ValidationOptions {
   values?: Record<string, any>;
   names?: Record<string, string>;
   bails?: boolean;
+  skipIfEmpty?: boolean;
   isInitial?: boolean;
 }
 
@@ -29,10 +31,12 @@ export async function validate(
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   const shouldBail = options && options.bails;
-  const field: FieldMeta = {
+  const skipIfEmpty = options && options.skipIfEmpty;
+  const field: FieldContext = {
     name: (options && options.name) || '{field}',
     rules: normalizeRules(rules),
     bails: isNullOrUndefined(shouldBail) ? true : shouldBail,
+    skipIfEmpty: isNullOrUndefined(skipIfEmpty) ? true : skipIfEmpty,
     forceRequired: false,
     crossTable: (options && options.values) || {},
     names: (options && options.names) || {}
@@ -56,7 +60,7 @@ export async function validate(
 /**
  * Starts the validation process.
  */
-async function _validate(field: FieldMeta, value: any, { isInitial = false } = {}) {
+async function _validate(field: FieldContext, value: any, { isInitial = false } = {}) {
   const { shouldSkip, errors } = await _shouldSkip(field, value);
   if (shouldSkip) {
     return {
@@ -96,11 +100,14 @@ async function _validate(field: FieldMeta, value: any, { isInitial = false } = {
   };
 }
 
-async function _shouldSkip(field: FieldMeta, value: any) {
+async function _shouldSkip(field: FieldContext, value: any) {
   const requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
   const length = requireRules.length;
   const errors: ReturnType<typeof _generateFieldError>[] = [];
+  const isEmpty = isNullOrUndefined(value) || value === '' || isEmptyArray(value);
+  const isEmptyAndOptional = isEmpty && field.skipIfEmpty;
   let isRequired = false;
+
   for (let i = 0; i < length; i++) {
     const rule = requireRules[i];
     const result = await _test(field, value, {
@@ -129,7 +136,7 @@ async function _shouldSkip(field: FieldMeta, value: any) {
   }
 
   // field is configured to run through the pipeline regardless
-  if (!field.bails) {
+  if (!field.bails && !isEmptyAndOptional) {
     return {
       shouldSkip: false,
       errors
@@ -138,7 +145,7 @@ async function _shouldSkip(field: FieldMeta, value: any) {
 
   // skip if the field is not required and has an empty value.
   return {
-    shouldSkip: !isRequired && (isNullOrUndefined(value) || value === '' || isEmptyArray(value)),
+    shouldSkip: !isRequired && isEmpty,
     errors
   };
 }
@@ -146,7 +153,7 @@ async function _shouldSkip(field: FieldMeta, value: any) {
 /**
  * Tests a single input value against a rule.
  */
-async function _test(field: FieldMeta, value: any, rule: { name: string; params: any[] | object }) {
+async function _test(field: FieldContext, value: any, rule: { name: string; params: any[] | object }) {
   const ruleSchema = RuleContainer.getRuleDefinition(rule.name);
   if (!ruleSchema || !ruleSchema.validate) {
     throw new Error(`No such validator '${rule.name}' exists.`);
@@ -172,7 +179,7 @@ async function _test(field: FieldMeta, value: any, rule: { name: string; params:
  * Generates error messages.
  */
 function _generateFieldError(
-  field: FieldMeta,
+  field: FieldContext,
   value: any,
   ruleSchema: ValidationRuleSchema,
   ruleName: string,
