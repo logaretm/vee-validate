@@ -949,3 +949,41 @@ test('array param collecting in the last parameter', async () => {
   await flushPromises();
   expect(wrapper.find('#error').text()).toBe('');
 });
+
+test('should throw if rule does not exist', () => {
+  const wrapper = mount(
+    {
+      data: () => ({ val: '123' }),
+      template: `
+        <ValidationProvider rules="wutface" v-slot="ctx" ref="pro">
+          <input v-model="val" type="text">
+        </ValidationProvider>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+  expect(wrapper.vm.$refs.pro.validate()).rejects.toThrow();
+});
+
+test('should throw if required rule does not return an object', () => {
+  extend('faultyRequired', {
+    computesRequired: true,
+    validate() {
+      return false;
+    }
+  });
+
+  const wrapper = mount(
+    {
+      data: () => ({ val: '' }),
+      template: `
+        <ValidationProvider rules="faultyRequired" v-slot="ctx" ref="pro">
+          <input v-model="val" type="text">
+        </ValidationProvider>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  expect(wrapper.vm.$refs.pro.validate()).rejects.toThrow();
+});

@@ -122,7 +122,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         .filter(RuleContainer.isTargetRule)
         .map(rule => {
           const depName = this.normalizedRules[rule][0];
-          watchCrossFieldDep(this, depName);
+          watchCrossFieldDep(this, depName, true);
 
           return depName;
         });
