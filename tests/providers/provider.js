@@ -460,6 +460,10 @@ test('validates target dependant fields', async () => {
   await flushPromises();
   // the password input now matches the confirmation.
   expect(error.text()).toBeFalsy();
+
+  inputs.at(0).setValue('val1');
+  await flushPromises();
+  expect(error.text()).toBeTruthy();
 });
 
 test('validates file input', async () => {
@@ -914,4 +918,34 @@ describe('HTML5 Rule inference', () => {
     await flushPromises();
     expect(wrapper.find('#error').text()).toContain('is required');
   });
+});
+
+test('array param collecting in the last parameter', async () => {
+  extend('isOneOf', {
+    validate(value, { val, isOneOf }) {
+      return isOneOf.includes(value) && isOneOf.includes(val);
+    },
+    params: ['val', 'isOneOf'],
+    message: 'nah'
+  });
+
+  const wrapper = mount(
+    {
+      data: () => ({ val: '1' }),
+      template: `
+      <ValidationProvider rules="required|isOneOf:2,1,2" v-slot="{ errors }">
+        <input type="text" v-model="val">
+        <p id="error">{{ errors[0] }}</p>
+      </ValidationProvider>
+    `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  wrapper.find('input').setValue('5');
+  await flushPromises();
+  expect(wrapper.find('#error').text()).toContain('nah');
+  wrapper.find('input').setValue('1');
+  await flushPromises();
+  expect(wrapper.find('#error').text()).toBe('');
 });
