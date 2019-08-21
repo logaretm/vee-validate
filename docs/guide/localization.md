@@ -50,13 +50,13 @@ extend('lengthBetween', {
 ```
 
 <ValidationProvider
-name="code"
-rules="required|lengthBetween:3,6"
-v-slot="{ errors }"
-
->   <input v-model="values.template" type="text" placeholder="Type something...">
->   <span>{{ errors[0] }}</span>
-> </ValidationProvider>
+  name="code"
+  rules="required|lengthBetween:3,6"
+  v-slot="{ errors }"
+>
+  <input v-model="values.template" type="text" placeholder="Type something...">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
 
 :::tip Parameter Names
 You can use any names for your placeholders, except for:
