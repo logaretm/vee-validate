@@ -99,10 +99,10 @@ You can use these flags to give your users a great experience, for example you c
 
 <ValidationProvider
   rules="required"
-  v-slot="{ flags }"
+  v-slot="{ changed }"
 >
   <input type="text" v-model="values.changed">
-  <button :disabled="!flags.changed">Submit</button>
+  <button :disabled="!changed">Submit</button>
 </ValidationProvider>
 
 ```vue
@@ -518,6 +518,8 @@ All the following props are optional.
 | events    | `string[]` | `['input']`           | deprecated: check [interaction modes](../interaction.md)                                                                                              |
 | name      | `string`   | `undefined`           | A string that will be used to replace `{field}` in error messages and for [custom error messages](/guide/messages.md#field-specific-custom-messages). |
 | bails     | `boolean`  | `true`                | If true, the validation will stop on the first failing rule.                                                                                          |
+| skipIfEmpty     | `boolean`  | `true`                | If true, the validation will be skipped if the value is empty).                                                                                          |
+
 | debounce  | `number`   | `0`                   | Debounces the validation for the specified amount of milliseconds.                                                                                    |
 | tag       | `string`   | `span`                | The default tag to [render](#rendering).                                                                                                              |
 | persist   | `boolean`  | `false`               | If true, the provider will keep its errors across mounted/destroyed lifecycles                                                                        |

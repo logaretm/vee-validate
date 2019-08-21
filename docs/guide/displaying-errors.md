@@ -54,7 +54,9 @@ Now that we've setup multiple errors generation properly, you can iterate over t
 </ValidationProvider>
 ```
 
-<ValidationProvider
+You can check it out in this sample:
+
+<StyledProvider
   rules="required|min:3|alpha"
   v-slot="{ errors }"
   :bails="false"
@@ -63,7 +65,73 @@ Now that we've setup multiple errors generation properly, you can iterate over t
   <ul>
     <li v-for="error in errors">{{ error }}</li>
   </ul>
+</StyledProvider>
+
+### Non-Required Fields
+
+Non-required fields are fields that do not have the `required` rule or attribute. You will notice that vee-validate by default excludes those fields from validation if they have empty values, which are:
+
+- Empty Array.
+- Empty String.
+- `null`
+- `undefined`
+
+Note that `false` is considered a valid non-empty value.
+
+Consider this **optional field**:
+
+```vue
+<ValidationProvider rules="min:3|numeric" v-slot="{ errors }" :bails="false">
+  <input v-model="value" type="text">
+  <ul>
+    <li v-for="error in errors">{{ error }}</li>
+  </ul>
 </ValidationProvider>
+```
+
+Even though the field is configured with `bails` set to `false`, it will still skip the field (consider it valid) if it has empty value. You can test this in the previous sample, fill it with a value and clear it and it will still hold the errors.
+
+<StyledProvider
+  rules="min:3|numeric"
+  v-slot="{ errors }"
+  :bails="false"
+>
+  <input v-model="values.multiple" type="text" placeholder="type something">
+  <ul>
+    <li v-for="error in errors">{{ error }}</li>
+  </ul>
+</StyledProvider>
+
+Now this might not be what you want, you may need to run all rules regardless of the field requirement status. While this is rare, you could still disable this behavior by setting `skipIfEmpty` prop to false.
+
+```vue{2,3}
+<ValidationProvider
+    rules="min:3|numeric"
+    :skipIfEmpty="false"
+    :bails="false"
+    v-slot="{ errors }"
+>
+  <input v-model="value" type="text">
+  <ul>
+    <li v-for="error in errors">{{ error }}</li>
+  </ul>
+</ValidationProvider>
+```
+
+You can test this in the following input, fill it with a value then clear it and it would still have the errors even when empty:
+
+<StyledProvider
+  rules="min:3|numeric"
+  v-slot="{ errors }"
+  :skipIfEmpty="false"
+  :bails="false"
+>
+  <input v-model="values.bailsButForced" type="text" placeholder="Test me">
+  <ul>
+    <li v-for="error in errors">{{ error }}</li>
+  </ul>
+</StyledProvider>
+
 
 ## Customizing the field name
 

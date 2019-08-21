@@ -13,6 +13,7 @@ const config = {
     invalid: 'is-invalid'
   },
   bails: true,
+  skipOptional: true,
   mode: 'aggressive',
   useConstraintAttrs: true
 };
@@ -25,10 +26,11 @@ You can update the config with the `configure` method at any time during your ap
 
 ## Reference
 
-|Property       | Type      | Default   | Description  |
-|:--------------|:---------:|:---------:|:---------|
-| classes    | `object`  |           | The classes to be applied depending on the state of the input. |
-| mode | `string` | `'aggressive'` | Sets the interaction mode to one of the predefined modes. |
-| bails      | `boolean`|  `true`     | Whether failed validations should exit or all rules are run to completion. |
+| Property     |   Type    |    Default     | Description                                                                |
+| :----------- | :-------: | :------------: | :------------------------------------------------------------------------- |
+| classes      | `object`  |                | The classes to be applied depending on the state of the input.             |
+| mode         | `string`  | `'aggressive'` | Sets the interaction mode to one of the predefined modes.                  |
+| bails        | `boolean` |     `true`     | Whether failed validations should exit or all rules are run to completion. |
+| skipOptional | `boolean` |     `true`     | Optional fields with empty values will be excluded from validation.        |
 | useConstraintAttrs | `boolean` | `true` | Enables [rule inference](./guide/html5-validation.md) on native HTML inputs. |
 | defaultMessage | `string | () => string` | "{\_field\_} is not valid." | The fallback message for rules without messages. |

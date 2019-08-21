@@ -18,17 +18,19 @@ interface ValidationOptions {
   values?: { [k: string]: any };
   names?: { [k: string]: string };
   bails?: boolean;
+  skipOptional:? boolean;
   isInitial?: boolean;
 }
 ```
 
-| Property  | Type                      | Description                                                                               |
-| --------- | ------------------------- | ----------------------------------------------------------------------------------------- |
-| name      | `string | null`           | The name of the field to be validate (will be used for error messages).                   |
-| values    | `{ [k: string]: any }`    | The values of other fields (used in cross-field validation).                              |
-| names     | `{ [k: string]: string }` | The names of other fields (used in cross-field rules messages).                           |
-| bails     | `boolean`                 | If true, the validation will stop at the first failing rule, otherwise trigger all rules. |
-| isInitial | `boolean`                 | if true will skip all rules configured not to run at the first validation attempt.        |
+| Property     | Type                      | Description                                                                                                                                    |
+| ------------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| name         | `string | null`           | The name of the field to be validate (will be used for error messages).                                                                        |
+| values       | `{ [k: string]: any }`    | The values of other fields (used in cross-field validation).                                                                                   |
+| names        | `{ [k: string]: string }` | The names of other fields (used in cross-field rules messages).                                                                                |
+| bails        | `boolean`                 | If true, the validation will stop at the first failing rule, otherwise trigger all rules.                                                      |
+| skipOptional | `boolean`                 | If true, the validation will skip optional (non-required) fields if they have empty values (empty string, empty array, `null` or `undefined`). |
+| isInitial    | `boolean`                 | if true will skip all rules configured not to run at the first validation attempt.                                                             |
 
 ### ValidationResult
 
