@@ -41,15 +41,15 @@ You will notice in your validation function that the `other` parameter is not `'
 
 Here is a working snippet of the last example:
 
-<ValidationProvider
+<StyledProvider
   rules="required|password:confirmation"
   v-slot="{ errors }"
 >
   <input v-model="values.pass" type="password">
   <span>{{ errors[0] }}</span>
-</ValidationProvider>
+</StyledProvider>
 
-<ValidationProvider
+<StyledProvider
   vid="confirmation"
   rules="required"
   v-slot="{ errors }"
@@ -57,7 +57,7 @@ Here is a working snippet of the last example:
 
   <input v-model="values.confirm" type="password">
   <span>{{ errors[0] }}</span>
-</ValidationProvider>
+</StyledProvider>
 
 ## Required Rules
 
@@ -128,10 +128,10 @@ export default {
 <div>
   <span>Test Value: {{ test }}</span>
   <button @click="toggle">Toggle</button>
-  <ValidationProvider :rules="{ requiredIf: { test } }" v-slot="{ errors }">
+  <StyledProvider :rules="{ requiredIf: { test } }" v-slot="{ errors }">
     <input v-model="values.require" type="text">
     <span id="error">{{ errors[0] }}</span>
-  </ValidationProvider>
+  </StyledProvider>
 </div>
 
 :::tip

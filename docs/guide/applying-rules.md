@@ -18,7 +18,7 @@ The string `required|email` is one of the two ways we can specify validation rul
 
 This is the simplest format, you add rules names separated by **pipes (`|`)**. So in the previous example we applied both the `required` and `email` rules on our input.
 
-### Rules with parameters
+### String Parameters
 
 Some rules can take parameters like the `min` rule, to pass parameters in the string format you add a `:` followed the params values.
 
@@ -85,9 +85,9 @@ To remedy this, you can pass rules as an object:
 </ValidationProvider>
 ```
 
-### Rules with parameters
+### Object parameters
 
-To pass parameters to your rules, you pass an object:
+To pass parameters to your rules, you can pass an object:
 
 ```vue{2}
 <ValidationProvider

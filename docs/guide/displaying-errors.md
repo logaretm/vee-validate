@@ -132,6 +132,7 @@ You can test this in the following input, fill it with a value then clear it and
   </ul>
 </StyledProvider>
 
+You can configure this behavior globally, by setting `skipOptional` config value.
 
 ## Customizing the field name
 
@@ -140,7 +141,7 @@ So far you only saw `{field}` placeholder used in the error messages to refer to
 ```vue{2}
 <ValidationProvider
   name="first name"
-  rules="required"
+  rules="required|min:2"
   v-slot="{ errors }"
 >
   <input v-model="value" type="text">
@@ -148,14 +149,14 @@ So far you only saw `{field}` placeholder used in the error messages to refer to
 </ValidationProvider>
 ```
 
-<ValidationProvider
+<StyledProvider
+  rules="required|min:2"
   name="first name"
-  rules="required|alpha"
   v-slot="{ errors }"
 >
   <input v-model="values.name" type="text" placeholder="type something...">
   <span>{{ errors[0] }}</span>
-</ValidationProvider>
+</StyledProvider>
 
 :::tip Advanced Customization
 You can localize your messages and display custom messages for specific fields with the [localization API](./localization.md).
