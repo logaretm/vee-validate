@@ -19,45 +19,49 @@ extend('password', {
 ```
 
 ```vue{2,10}
-<ValidationProvider
-  rules="required|password:confirmation"
-  v-slot="{ errors }"
->
-  <input v-model="password" type="password">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
+<ValidationObserver>
+  <ValidationProvider
+    rules="required|password:confirmation"
+    v-slot="{ errors }"
+  >
+    <input v-model="password" type="password">
+    <span>{{ errors[0] }}</span>
+  </ValidationProvider>
 
-<ValidationProvider
-  vid="confirmation"
-  rules="required"
-  v-slot="{ errors }"
->
-  <input v-model="confirm" type="password">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
+  <ValidationProvider
+    vid="confirmation"
+    rules="required"
+    v-slot="{ errors }"
+  >
+    <input v-model="confirm" type="password">
+    <span>{{ errors[0] }}</span>
+  </ValidationProvider>
+</ValidationObserver>
 ```
 
 You will notice in your validation function that the `other` parameter is not `'confirmation'` string, but rather the confirmation field value. When a parmeter is marked as `isTarget`, vee-validate replaces the parameter value with the target field value.
 
+Note that to make sure the providers can locate each other, they need to be wrapped by the same `ValidationObserver` component.
+
 Here is a working snippet of the last example:
 
-<StyledProvider
-  rules="required|password:confirmation"
-  v-slot="{ errors }"
->
-  <input v-model="values.pass" type="password">
-  <span>{{ errors[0] }}</span>
-</StyledProvider>
-
-<StyledProvider
-  vid="confirmation"
-  rules="required"
-  v-slot="{ errors }"
->
-
-  <input v-model="values.confirm" type="password">
-  <span>{{ errors[0] }}</span>
-</StyledProvider>
+<ValidationObserver>
+  <StyledProvider
+    rules="required|password:confirmation"
+    v-slot="{ errors }"
+  >
+   <input v-model="pass" type="password">
+   <span>{{ errors[0] }}</span>
+  </StyledProvider>
+  <StyledProvider
+    vid="confirmation"
+    rules="required"
+    v-slot="{ errors }"
+  >
+    <input v-model="confirm" type="password">
+    <span>{{ errors[0] }}</span>
+  </StyledProvider>
+</ValidationObserver>
 
 ## Required Rules
 
@@ -228,6 +232,8 @@ Notice the usage of `castValue` and `cast` properties that allows your `validate
 export default {
   data: () => ({
     values: {},
+    confirm: '',
+    pass: '',
     test: 'yes'
   }),
   methods: {
