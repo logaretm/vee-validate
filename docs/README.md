@@ -21,6 +21,12 @@ meta:
     content: Template Based Validation Framework for Vue.js
 ---
 
+:::danger Version
+
+This is a the docs for vee-validate 3.x. You access the docs for the old version 2.x [from here](http://vee-validate.logaretm.com/v2).
+
+:::
+
 # Quick Setup
 
 VeeValidate is a validation framework that offers validation for your fields using components and scoped slots.
