@@ -67,7 +67,7 @@ module.exports = {
   description: 'Template Based Validation Framework for Vue.js',
   ga: 'UA-100131478-1',
   serviceWorker: true,
-  base: '/vee-validate/',
+  base: '/v2/',
   head: [
     ['meta', { charset: 'utf-8' }],
     ['meta', { name: "msapplication-TileColor", content: "#ffffff" }],
@@ -114,7 +114,8 @@ module.exports = {
           { text: 'Config', link: '/configuration' },
           { text: 'Concepts', link: '/concepts/' },
           { text: 'Examples', link: '/examples/' },
-          { text: 'API', link: '/api/' }
+          { text: 'API', link: '/api/' },
+          { text: 'v3.x', link: 'https://baianat.github.io/vee-validate/' }
         ],
         sidebarDepth: 3,
         sidebar: {
