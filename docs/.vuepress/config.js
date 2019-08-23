@@ -80,7 +80,8 @@ module.exports = {
           { text: 'Guide', link: '/guide/' },
           { text: 'Config', link: '/configuration' },
           { text: 'API', link: '/api/' },
-          { text: 'Examples', link: '/examples/' }
+          { text: 'Examples', link: '/examples/' },
+          { text: 'v2.x', link: 'http://vee-validate.logaretm.com/v2' }
         ],
         sidebarDepth: 1,
         sidebar: {
