@@ -22,6 +22,12 @@ meta:
 ---
 # Quick Setup
 
+:::danger Version
+
+This is a the docs for vee-validate 2.x, to access the docs for the latest version 3.x [from here](https://baianat.github.io/vee-validate/).
+
+:::
+
 ## install
 
 ```bash
