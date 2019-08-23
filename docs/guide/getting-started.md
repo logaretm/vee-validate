@@ -110,14 +110,15 @@ Here is the above example in action, enter `example` or leave it empty to pass t
 </ValidationProvider>
 
 <script>
-window.$extendVee('secret', {
-  validate: value => value === 'example',
-  message: 'This is not the magic word'
-});
-
 export default {
  data: () => ({
     value: ''
-  })
+  }),
+  mounted () {
+    this.extendRule('secret', {
+      validate: value => value === 'example',
+      message: 'This is not the magic word'
+    });
+  }
 };
 </script>

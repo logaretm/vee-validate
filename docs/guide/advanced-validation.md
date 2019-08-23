@@ -225,29 +225,6 @@ extend('isAfter', {
 Notice the usage of `castValue` and `cast` properties that allows your `validate` function to always get the correct types before validating them.
 
 <script>
-window.$extendVee('password', {
-  validate: (value, { other }) => value === other,
-  params: [
-    { name: 'other', isTarget: true }
-  ],
-  message: 'The password confirmation does not match.',
-});
-
-window.$extendVee('requiredIf', {
-  computesRequired: true,
-  message: 'This field is required.',
-  params: ['test'],
-  validate: (value, { test }) => {
-    const isEmpty = !!(!value || value.length === 0);
-    const isRequired = test === 'yes';
-
-    return {
-      valid: !isRequired ? true : !isEmpty,
-      required: isRequired
-    };
-  }
-});
-
 export default {
   data: () => ({
     values: {},
@@ -257,6 +234,30 @@ export default {
     toggle () {
       this.test = this.test === 'yes' ? 'no' : 'yes';
     }
+  },
+  mounted () {
+    this.extendRule('password', {
+      validate: (value, { other }) => value === other,
+      params: [
+        { name: 'other', isTarget: true }
+      ],
+      message: 'The password confirmation does not match.',
+    });
+
+    this.extendRule('requiredIf', {
+      computesRequired: true,
+      message: 'This field is required.',
+      params: ['test'],
+      validate: (value, { test }) => {
+        const isEmpty = !!(!value || value.length === 0);
+        const isRequired = test === 'yes';
+
+        return {
+          valid: !isRequired ? true : !isEmpty,
+          required: isRequired
+        };
+      }
+    });
   }
 };
 </script>
