@@ -34,6 +34,7 @@ module.exports = {
   description: 'Template Based Validation Framework for Vue.js',
   ga: 'UA-100131478-1',
   serviceWorker: true,
+  plugins: ['@vuepress/pwa'],
   base: '/vee-validate/',
   head: [
     ['meta', { charset: 'utf-8' }],
