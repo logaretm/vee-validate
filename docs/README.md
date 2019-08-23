@@ -23,7 +23,7 @@ meta:
 
 :::danger Version
 
-This is a the docs for vee-validate 3.x. You access the docs for the old version 2.x [from here](http://vee-validate.logaretm.com/v2).
+This is the docs for vee-validate 3.x. You access the docs for the old version 2.x [from here](http://vee-validate.logaretm.com/v2).
 
 :::
 
