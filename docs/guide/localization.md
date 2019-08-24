@@ -106,6 +106,25 @@ localize({
 
 This will make all your previously installed messages use the new messages added by those locales.
 
+:::tip TypeScript and JSON
+
+By default you cannot import JSON files in TypeScript, so be sure to add those options to the `compilerOptions`:
+
+```json
+{
+  "compilerOptions": {
+    // ...
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    // ...
+  }
+}
+```
+
+And then you should be able to import localization files in your TypeScript projects.
+
+:::
+
 #### Setting the locale
 
 To set the locale you pass the locale key/code to the `localize` method:
