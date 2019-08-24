@@ -135,6 +135,13 @@ async function _shouldSkip(field: FieldContext, value: any) {
     }
   }
 
+  if (isEmpty && !isRequired && !field.skipIfEmpty) {
+    return {
+      shouldSkip: false,
+      errors
+    };
+  }
+
   // field is configured to run through the pipeline regardless
   if (!field.bails && !isEmptyAndOptional) {
     return {
