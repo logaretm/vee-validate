@@ -14,6 +14,7 @@ mv ./dist/types/src/* ./dist/types
 rm -rf ./dist/types/src
 echo "\e[92mDone"
 
-# echo "Generating rule declarations..."
-# tsc ./src/rules/index.ts --emitDeclarationOnly --declaration --declarationDir ./dist/types --lib es2017 dom
-# echo "Done"
+echo "Copying rule declarations..."
+cp ./dist/types/rules/index.d.ts ./dist/rules.d.ts
+node ./scripts/replaceDefs.js
+echo "Done"

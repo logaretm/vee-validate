@@ -7,7 +7,7 @@
   "module": "dist/vee-validate.esm.js",
   "unpkg": "dist/vee-validate.js",
   "main": "dist/vee-validate.js",
-  "typings": "dist/types/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "homepage": "https://baianat.github.io/vee-validate/",
   "repository": "https://github.com/baianat/vee-validate",
   "scripts": {
@@ -33,7 +33,7 @@
   "files": [
     "dist/*.js",
     "dist/locale/*.json",
-    "dist/types/**/*.d.ts"
+    "dist/**/*.d.ts"
   ],
   "devDependencies": {
     "@babel/core": "^7.5.5",
