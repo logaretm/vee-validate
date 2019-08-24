@@ -109,7 +109,6 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
         },
         reset: () => this.reset()
       };
-
       return [
         ...values(this.refs),
         ...Object.keys(this.inactiveRefs).map(key => {
@@ -164,7 +163,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
   render(h: CreateElement): VNode {
     const children = normalizeChildren(this, this.ctx);
 
-    return this.slim && children.length <= 1 ? children[0] : h(this.tag, children);
+    return this.slim && children.length <= 1 ? children[0] : h(this.tag, { on: this.$listeners }, children);
   },
   methods: {
     subscribe(subscriber: any, kind = 'provider') {
