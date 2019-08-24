@@ -172,8 +172,8 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
         return;
       }
 
-      this.refs = Object.assign({}, this.refs, { [subscriber.vid]: subscriber });
-      this.refsByName = Object.assign({}, this.refsByName, { [subscriber.name]: subscriber });
+      this.refs = { ...this.refs, ...{ [subscriber.vid]: subscriber } };
+      this.refsByName = { ...this.refsByName, ...{ [subscriber.name]: subscriber } };
       if (subscriber.persist) {
         this.restoreProviderState(subscriber);
       }
