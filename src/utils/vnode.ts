@@ -5,6 +5,11 @@ import Vue, { VNode, VNodeDirective } from 'vue';
 export const isTextInput = (vnode: VNode): boolean => {
   const attrs = (vnode.data && vnode.data.attrs) || vnode.elm;
 
+  // it will fallback to being a text input per browsers spec.
+  if (vnode.tag === 'input' && (!attrs || !attrs.type)) {
+    return true;
+  }
+
   return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'textarea', 'number'], attrs && attrs.type);
 };
 
@@ -150,7 +155,7 @@ export function getInputEventName(vnode: VNode, model?: VNodeDirective): string 
   }
 
   // is a textual-type input.
-  if (vnode.data && vnode.data.attrs && isTextInput(vnode)) {
+  if (isTextInput(vnode)) {
     return 'input';
   }
 
