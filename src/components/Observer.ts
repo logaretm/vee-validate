@@ -92,21 +92,14 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     ctx() {
       const ctx = {
         errors: {},
-        validate: (arg: any) => {
-          const promise = this.validate(arg);
-
-          return {
-            then(thenable: { then: CallableFunction }) {
-              return promise.then((success: boolean) => {
-                if (success && isCallable(thenable)) {
-                  return Promise.resolve(thenable());
-                }
-
-                return Promise.resolve(success);
-              });
+        passes: (cb: Function) => {
+          return this.validate().then(result => {
+            if (result) {
+              return cb();
             }
-          };
+          });
         },
+        validate: (...args: any[]) => this.validate(...args),
         reset: () => this.reset()
       };
       return [

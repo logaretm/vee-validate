@@ -128,7 +128,7 @@ test('triggers validation manually on its children providers using validate on v
           <input v-model="value" type="text">
           <span id="error">{{ errors[0] }}</span>
         </ValidationProvider>
-        <button @click="ctx.validate().then(submit)">Validate</button>
+        <button @click="ctx.passes(submit)">Validate</button>
       </ValidationObserver>
     `
     },
