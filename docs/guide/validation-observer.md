@@ -32,7 +32,8 @@ The scoped slot is passed an object containing a flags object representing the m
 | touched   |                        `boolean`                        | True if at least one field has been touched (blurred).                                                                                                                               |
 | untouched |                        `boolean`                        | True if all fields haven't been touched (blurred).                                                                                                                                   |
 | errors    |               `{ [x: string]: string[] }`               | An object containing reference to each field errors, each field is keyed by its `vid` prop.                                                                                          |
-| validate  | `({ silent: boolean }) => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after successful validation. Mutates child providers state unless `silent` is true. |
+| validate  | `({ silent: boolean }) => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after validation. Mutates child providers state unless `silent` is true. |
+| passes | `(cb: Function) => Promise<void>` | Calls validation like `validate` and mutates provider's state, accepts a callback to be run only if the validation is successful |
 | reset     |                      `() => void`                       | A method that resets validation state for all providers.                                                                                                                             |
 
 ## Rendering
@@ -113,12 +114,12 @@ export default {
 </script>
 ```
 
-If you plan to trigger validation from the template without using `refs` you can use the `validate` method present in the scopedSlot data.
+You can trigger validation from the template using `passes` method which is convenient for running a handler if the form is valid:
 
 ```vue{2}
 <template>
-  <ValidationObserver v-slot="{ invalid, validate }">
-    <form @submit.prevent="validate().then(submit)">
+  <ValidationObserver v-slot="{ invalid, passes }">
+    <form @submit.prevent="passes(submit)">
       <TextFieldWithValidation rules="required" v-model="first" />
 
       <TextFieldWithValidation rules="required" v-model="second" />
@@ -140,8 +141,6 @@ export default {
 };
 </script>
 ```
-
-As you have guessed, the `validate` method on the Observer's scoped slot is **thenable**, meaning you can chain another method to run after the validation passes like the form submission handler. Note that the `validate` method does not return a promise, but a promise-like object that has a `then` method for convenience, which can be also chained further.
 
 [You can see observers in action here](/examples/validation-providers.md)
 
