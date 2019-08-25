@@ -29,11 +29,11 @@ You can skip providing `rules` for the validation provider and the provider comp
 
 And it would still work, The `ValidationProvider` can tell which HTML attributes on `input` elements that can be used as the rules source, allowing you to make much better and accessible forms with reduced verbosity.
 
-The rules can be **"inferred"** from native HTML inputs are called **"Inferred Rules"**, which you can review in the [rules API reference](../api/rules.md).
-
 :::tip Heads Up!
-If you provide both `rules` prop and inferred rules at the same time they will be merged together, and if the same rules exist in both spots the `rules` prop ones will take precedence and override the inferred ones.
+  This only works for **native HTML inputs**, those **"Inferred Rules"** can be reviewed in the [rules API reference](../api/rules.md).
 :::
+
+If you provide both `rules` prop and inferred rules at the same time they will be merged together, and if the same rules exist in both spots the `rules` prop ones will take precedence and override the inferred ones.
 
 ## Disabling inferred rules
 
