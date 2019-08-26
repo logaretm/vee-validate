@@ -1,5 +1,5 @@
 // VNode Utils
-import { find, isCallable, isNullOrUndefined, includes, normalizeRules } from './index';
+import { find, isCallable, isNullOrUndefined, includes, normalizeRules, isSpecified } from './index';
 import Vue, { VNode, VNodeDirective } from 'vue';
 
 export const isTextInput = (vnode: VNode): boolean => {
@@ -204,11 +204,11 @@ function resolveTextualRules(vnode: VNode): Record<string, any> {
   }
 
   if (attrs.type === 'number') {
-    if (attrs.min !== '') {
+    if (isSpecified(attrs.min)) {
       rules.min_value = Number(attrs.min);
     }
 
-    if (attrs.max !== '') {
+    if (isSpecified(attrs.max)) {
       rules.max_value = Number(attrs.max);
     }
   }

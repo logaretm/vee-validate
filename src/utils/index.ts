@@ -308,3 +308,12 @@ export const interpolate = (template: string, values: Record<string, any>): stri
     return values[p] || `{${p}}`;
   });
 };
+
+// Checks if a given value is not an empty string or null or undefined.
+export const isSpecified = (val: string | null | undefined): boolean => {
+  if (val === '') {
+    return false;
+  }
+
+  return !isNullOrUndefined(val);
+};
