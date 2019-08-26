@@ -50,8 +50,8 @@ The object passed down to the slot scope is called the **validation context**. I
 | valid       |    `boolean|undefined`     | If The field is valid.                                                                                        |
 | invalid     |    `boolean|undefined`     | If the field is invalid.                                                                                      |
 | changed     |         `boolean`          | If the field value has been changed.                                                                          |
-| touched     |         `boolean`          | If the field has been focused and blurred.                                                                    |
-| untouched   |         `boolean`          | If the field hasn't been focused.                                                                             |
+| touched     |         `boolean`          | If the field has been blurred.                                                                    |
+| untouched   |         `boolean`          | If the field wasn't blurred.                                                                             |
 | pristine    |         `boolean`          | If the field value was not manipulated.                                                                       |
 | dirty       |         `boolean`          | If the field value has been manipulated.                                                                      |
 | pending     |         `boolean`          | Indicates if the field validation is in progress.                                                             |
@@ -85,8 +85,8 @@ The following sample prints all the available props in the Provider's scope:
 
 These are various boolean state values that indicate various actions done by the user on the input field. They are exposed on the `ValidationProvider` slot props. Each flag's state is described by the following behavior:
 
-- `touched`: indicates that the field has been touched or focused.
-- `untouched`: indicates that the field has not been touched nor focused.
+- `touched`: indicates that the field has been blurred.
+- `untouched`: indicates that the field has not been blurred.
 - `dirty`: indicates that the field has been manipulated.
 - `pristine`: indicates that the field has not been manipulated.
 - `valid`: indicates that the field has passed the validation.
