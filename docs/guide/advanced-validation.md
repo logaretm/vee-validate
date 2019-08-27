@@ -190,7 +190,7 @@ extend('isAfter', {
 });
 ```
 
-This would work fine for most cases but in complex rules, this starts to break down really fast as you must keep casting the param types before using them. and that example would work if the inputs values are timestamps, we didn't handle strings.
+This would work fine for most cases but in complex rules, this starts to break down really fast as you must keep casting the param types before using them, and that example would work if the inputs values are timestamps, we didn't handle strings.
 
 Params can have a slightly richer schema to allow you to convert types before passing them to your `validate` function, instead of defining an array of param names, we define an array of objects:
 
