@@ -246,7 +246,7 @@ export default {
   methods: {
     validateField() {
       // Validate the field
-      return provider.validate();
+      return this.$refs.myinput.validate();
     }
   }
   // ..
