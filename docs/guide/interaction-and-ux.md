@@ -7,7 +7,7 @@ There are multiple common strategies:
 - **Aggressive**: Triggered when the user presses a key (on `input`).
 - **Passive**: Triggered when the form is submitted.
 - **Lazy**: Triggered when the user leaves the input (on `blur` or `change`).
-- **eager**: Is a combination of `aggressive` and `lazy`, as it first validates when the user leaves the input (on `blur` or `change`) then if the input is invalid it will behave aggressively until the input is valid again and it will go back to being lazy.
+- **Eager**: Is a combination of `aggressive` and `lazy`, as it first validates when the user leaves the input (on `blur` or `change`) then if the input is invalid it will behave aggressively until the input is valid again and it will go back to being lazy.
 
 ## Interaction Modes
 
