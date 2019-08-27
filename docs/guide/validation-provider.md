@@ -407,7 +407,7 @@ With this approach the last example becomes:
 ```
 
 :::danger
-This approach has some cons, for example if the wrapped component accepts props that have the same name as the `ValidationProvider` component. while it will receive these props, they may be of different types, which could lead to serious issues. The problem with HOCs are that you need to be aware of the underlying component's implementation. This can be problematic when working with 3rd party components.
+This approach has some cons, for example if the wrapped component accepts props that have the same name as the `ValidationProvider` component. While it will receive these props, they may be of different types, which could lead to serious issues. The problem with HOCs are that you need to be aware of the underlying component's implementation. This can be problematic when working with 3rd party components.
 :::
 
 ### Wrapping Components Manually
