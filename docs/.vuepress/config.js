@@ -12,8 +12,8 @@ const sidebars = {
     'a11y',
     'html5-validation',
     'advanced-validation',
-    'localization'
-    // 'testing'
+    'localization',
+    'testing'
   ],
   api: ['', 'rules'],
   examples: ['ui-libraries', 'i18n', 'multiple-forms', 'backend', 'nuxt']
