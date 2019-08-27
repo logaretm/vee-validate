@@ -74,7 +74,7 @@ test('can define specific messages for specific fields', async () => {
   expect(errors).toHaveLength(2);
 
   expect(errors.at(0).text()).toContain('WRONG!');
-  expect(errors.at(1).text()).toContain('The {field} is required');
+  expect(errors.at(1).text()).toContain('The {field} field is required');
 });
 
 test('can merge locales without setting the current one', async () => {
@@ -108,7 +108,7 @@ test('can merge locales without setting the current one', async () => {
   await flushPromises();
 
   // locale wasn't set.
-  expect(error.text()).toContain('The {field} is required');
+  expect(error.text()).toContain('The {field} field is required');
 });
 
 test('falls back to the default message if rule without message exists', async () => {
@@ -166,5 +166,5 @@ test('can define custom field names', async () => {
   const error = wrapper.find('#error');
   await flushPromises();
 
-  expect(error.text()).toContain('The Name is required');
+  expect(error.text()).toContain('The Name field is required');
 });

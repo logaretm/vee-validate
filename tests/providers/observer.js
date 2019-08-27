@@ -7,7 +7,7 @@ const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
-const DEFAULT_REQUIRED_MESSAGE = 'The {field} is required';
+const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required';
 
 test('renders the slot', () => {
   const wrapper = mount(
@@ -269,7 +269,7 @@ test('resets inactive refs that were cached', async () => {
 
   await wrapper.vm.$refs.obs.validate();
 
-  expect(error.text()).toContain('The provider is required');
+  expect(error.text()).toContain('The provider field is required');
   wrapper.setData({
     shown: false
   });
@@ -340,7 +340,7 @@ test('exposes nested observers state', async () => {
   input.setValue('1');
   await flushPromises();
 
-  expect(wrapper.find('p').text()).toContain('The {field} may only contain alphabetic characters');
+  expect(wrapper.find('p').text()).toContain('The {field} field may only contain alphabetic characters');
 });
 
 test('validates and resets nested observers', async () => {
