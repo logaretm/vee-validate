@@ -58,7 +58,7 @@ You can expand upon this by adding your form listeners like `submit` on the obse
 
 ### Forcing Renderless
 
-Sometimes it is unsuitable for a Provider component in principle to render anything extra, because of limitations in the Vue rendering output we cannot have multiple root nodes which limits the design choice to move away from renderless at the moment, in Vue 3.x it this may change with fragments.
+Sometimes it is unsuitable for a Observer component in principle to render anything extra, because of limitations in the Vue rendering output we cannot have multiple root nodes which limits the design choice to move away from renderless at the moment, in Vue 3.x it this may change with fragments.
 
 A `slim` prop can be used to force the component to be renderless, by default it is set to `false`. The highlighted lines are the only rendered elements in the final output:
 
