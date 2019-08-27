@@ -350,7 +350,7 @@ This is the `TextInput` Component:
 ```vue
 <template>
   <div>
-    <input type="text" @input="$emit('input', $event.target.value)" :value="value" />
+    <input type="text" v-model="innerValue" :value="value" />
     <span v-show="error">{{ error }}</span>
   </div>
 <template>
@@ -358,10 +358,22 @@ This is the `TextInput` Component:
 <script>
   export default {
     name: 'TextField',
-    props: ['value', 'error']
+    props: ['value', 'error'],
+    data: () => ({
+      innerValue: ''
+    }),
+    watch: {
+      innerValue (val) {
+        this.$emit('input', val);
+      }
+    }
   };
 </script>
 ```
+
+:::tip Tip
+  Note that we are using an `innerValue` so we are able to use `v-model`. This is because we still need to identify which element will be validated.
+:::
 
 Now this component does not have validation built-in, but it does have the UI to do so which is common in design systems and input components.
 
