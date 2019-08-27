@@ -65,7 +65,7 @@ A quick example would look like this:
 <template>
   <ValidationObserver ref="observer">
     <form @submit.prevent="onSubmit">
-      <ValidationProvider ref="field1Provider name="field1" v-slot="{ errors }">
+      <ValidationProvider ref="field1Provider" name="field1" v-slot="{ errors }">
         <!-- Input -->
       </ValidationProvider>
 
