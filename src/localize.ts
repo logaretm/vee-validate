@@ -35,7 +35,7 @@ class Dictionary {
     let message!: ValidationMessageTemplate;
 
     // find if specific message for that field was specified.
-    const dict = this.container[locale].fields && this.container[locale].fields[field];
+    const dict = this.container[locale] && this.container[locale].fields && this.container[locale].fields[field];
     if (dict && dict[rule]) {
       message = dict[rule];
     }
