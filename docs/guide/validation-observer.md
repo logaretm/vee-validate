@@ -101,7 +101,7 @@ Validating before submit is very easy way, using the [public methods](#methods) 
 <script>
 export default {
   methods: {
-    submit () {
+    async submit () {
       const isValid = await this.$refs.observer.validate();
       if (!isValid) {
         // ABORT!!
