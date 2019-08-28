@@ -87,10 +87,10 @@ You can import all rules with ES6 like this:
 
 ```js
 import { extend } from 'vee-validate';
-import * as Rules from 'vee-validate/dist/rules';
+import * as rules from 'vee-validate/dist/rules';
 
 // loop over all rules
-for (rule in Rules) {
+for (let rule in rules) {
   // add the rule
   extend(rule, rules[rule]);
 }
@@ -102,11 +102,11 @@ VeeValidate also has default messages for those rules, which you can import and 
 
 ```js
 import { extend } from 'vee-validate';
-import * as Rules from 'vee-validate/dist/rules';
+import * as rules from 'vee-validate/dist/rules';
 import en from 'vee-validate/dist/locale/en';
 
 // loop over all rules
-for (rule in Rules) {
+for (let rule in rules) {
   extend(rule, {
     ...rules[rule], // add the rule
     message: en.messages[rule] // add its message
