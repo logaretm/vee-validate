@@ -6,7 +6,7 @@
     "alpha_num": "O campo {_field_} deve conter somente letras e números",
     "alpha_spaces": "O campo {_field_} só pode conter caracteres alfabéticos e espaços",
     "between": "O campo {_field_} deve estar entre {min} e {max}",
-    "confirmed": "Os campos {_field_} e {target} devem ser iguais",
+    "confirmed": "A confirmação do campo {_field_} deve ser igual",
     "digits": "O campo {_field_} deve ser numérico e ter exatamente {length} dígitos",
     "dimensions": "O campo {_field_} deve ter {width} pixels de largura por {height} pixels de altura",
     "email": "O campo {_field_} deve ser um email válido",
