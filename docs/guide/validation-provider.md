@@ -108,11 +108,11 @@ You can use these flags to give your users a great experience, for example you c
 ```vue
 <ValidationProvider
   rules="required"
-  v-slot="{ flags }"
+  v-slot="{ changed }"
 >
   <input type="text" v-model="value">
 
-  <button :disabled="!flags.changed">Submit</button>
+  <button :disabled="!changed">Submit</button>
 </ValidationProvider>
 ```
 
