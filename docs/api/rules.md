@@ -103,7 +103,7 @@ The field under validation may contain alphabetic characters or spaces.
 <RuleDemo rule="alpha_spaces" />
 
 ```vue
-<ValidationProvider rules="alpha_num" v-slot="{ errors }">
+<ValidationProvider rules="alpha_spaces" v-slot="{ errors }">
   <input v-model="value" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
