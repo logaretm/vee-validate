@@ -443,6 +443,18 @@ The field under validation must have a non-empty value. By default, all validato
 This rule is inferred when the field type is marked with `required` attribute.
 :::
 
+:::tip Required and `false`
+
+Checkboxes by default emit `true` or `false` depending on wether they are checked or not. The required rule allows the `false` value by default, to disable this you may need to use the object syntax to configure the rule.
+
+```vue
+<ValidationProvider :rules="{ required: { allowFalse: false } }" v-slot="{ errors }">
+  <!-- Your Field -->
+</ValidationProvider>
+```
+
+:::
+
 ## required_if
 
 The field under validation must have a non-empty value **only if** the target field (first argument) is set to one of the specified values (other arguments).

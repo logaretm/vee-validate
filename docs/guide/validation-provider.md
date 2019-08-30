@@ -310,6 +310,18 @@ Like radio inputs and (sometimes) check boxes, some inputs behave as a single in
 </ValidationProvider>
 ```
 
+:::tip Required and `false`
+
+Checkboxes by default emit `true` or `false` depending on wether they are checked or not. The required rule allows the `false` value by default, to disable this you may need to use the object syntax to configure the rule.
+
+```vue
+<ValidationProvider :rules="{ required: { allowFalse: false } }" v-slot="{ errors }">
+  <!-- Your Field -->
+</ValidationProvider>
+```
+
+:::
+
 ### Cross-Field Validation
 
 When using cross-field rules like the `confirmed` rule the target field must have a corresponding `vid` can be either a number or a string.
