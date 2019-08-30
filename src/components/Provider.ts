@@ -167,7 +167,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
 
     // Handle single-root slot.
     extractVNodes(children).forEach(input => {
-      this._resolvedRules = resolveRules(input);
+      this._resolvedRules = getConfig().useConstraintAttrs ? resolveRules(input) : {};
       addListeners(this, input);
     });
 
