@@ -96,6 +96,19 @@ To validate it, wrap the `input` with a `ValidationProvider` component:
 </ValidationProvider>
 ```
 
+:::danger Component Casing
+
+The examples will use Pascal case which should work fine if you are using Vue component files (`.vue` or SFC). If you plan to use vee-validate with the compiler build you will need to use the kebab case. The previous example would then be:
+
+```html{1,4}
+<validation-provider rules="secret" v-slot="{ errors }">
+  <input v-model="email" type="text" />
+  <span>{{ errors[0] }}</span>
+</validation-provider>
+```
+
+:::
+
 The `rules` prop passed to the `ValidationProvider` is the validation rules that will be checked against the input, the syntax is Laravel-like by placing the rules names between pipes, for that input we want to make sure it is required.
 
 To display error messages, the `ValidationProvider` exposes `errors` array through [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots).
