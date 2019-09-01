@@ -400,7 +400,7 @@ The field under validation must match the specified regular expression.
 <RuleDemo :rule="{ regex: /^[0-9]+$/ }" />
 
 ```vue
-<ValidationProvider :rule="{ regex: /^[0-9]+$/ }" v-slot="{ errors }">
+<ValidationProvider :rules="{ regex: /^[0-9]+$/ }" v-slot="{ errors }">
   <input type="text" v-model="value">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
