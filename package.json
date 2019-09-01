@@ -8,8 +8,8 @@
   "unpkg": "dist/vee-validate.js",
   "main": "dist/vee-validate.js",
   "types": "dist/types/index.d.ts",
-  "homepage": "https://baianat.github.io/vee-validate/",
-  "repository": "https://github.com/baianat/vee-validate",
+  "homepage": "https://logaretm.github.io/vee-validate/",
+  "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
     "test": "jest",
     "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",

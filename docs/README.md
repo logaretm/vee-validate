@@ -12,7 +12,7 @@ features:
     details: Validate HTML inputs and Vue components, generate localized errors, Extendable, It does it all.
   - title: Configurable
     details: Config that doesn't get into your way, everything is optional.
-footer: MIT Licensed | Copyright © 2019-present Baianat
+footer: MIT Licensed | Copyright © 2019-present Abdelrahman Awad
 description: Template Based Validation Framework for Vue.js
 meta:
   - name: og:title

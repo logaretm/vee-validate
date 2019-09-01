@@ -65,8 +65,8 @@ module.exports = {
     }
   },
   themeConfig: {
-    repo: 'baianat/vee-validate',
-    docsRepo: 'baianat/vee-validate',
+    repo: 'logaretm/vee-validate',
+    docsRepo: 'logaretm/vee-validate',
     docsDir: 'docs',
     editLinks: true,
     serviceWorker: {
