@@ -22,6 +22,27 @@ extend('required', {
 });
 ```
 
+:::danger Nuxt.js
+Depending on your Nuxt config, You might get this error "Unexpected token **export**". This is because the `node_modules` folder is excluded from transpilation.
+
+We will need to [add an exception](https://nuxtjs.org/api/configuration-build/#transpile) for the `vee-validate/dist/rules.js` file inside the `build` block in the `nuxt.config.js`:
+
+```js
+  build: {
+    // Add exception
+    transpile: [
+      "vee-validate/dist/rules"
+    ],
+    /*
+     ** You can extend webpack config here
+     */
+    extend(config, ctx) {}
+  }
+```
+
+:::
+
+
 ## Rules Parameters
 
 Rule functions can also accept params to configure their behavior.

@@ -147,6 +147,12 @@ You are welcome to contribute to this project, but before you do, please make su
 
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
 
+### Emeriti
+
+Here we honor past contributors and sponsors who have been a major part on this project.
+
+- [Baianat](https://github.com/baianat).
+
 ### license
 
 MIT
