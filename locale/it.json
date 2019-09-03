@@ -13,6 +13,8 @@
     "excluded": "Il campo {_field_} deve avere un valore valido",
     "ext": "Il campo {_field_} deve essere un file valido",
     "image": "Il campo {_field_} deve essere un'immagine",
+    "integer": "Il campo {_field_} deve essere un numero",
+    "is_not": "Il campo {_field_} non è valido",
     "length": "La lunghezza del campo {_field_} deve essere {length}",
     "max_value": "Il campo {_field_} deve essere minore o uguale a {max}",
     "max": "Il campo {_field_} non può essere più lungo di {length} caratteri",
