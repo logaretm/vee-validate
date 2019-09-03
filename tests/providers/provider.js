@@ -1042,7 +1042,7 @@ test('should throw if required rule does not return an object', () => {
 test('returns custom error messages passed in the customMessages prop', async () => {
   extend('truthy', {
     validate: Boolean,
-    message: 'Original Message',
+    message: 'Original Message'
   });
 
   const customMessage = 'Custom Message';
