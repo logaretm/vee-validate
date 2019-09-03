@@ -1038,3 +1038,28 @@ test('should throw if required rule does not return an object', () => {
 
   expect(wrapper.vm.$refs.pro.validate()).rejects.toThrow();
 });
+
+test('returns custom error messages passed in the customMessages prop', async () => {
+  extend('truthy', {
+    validate: Boolean,
+    message: 'Original Message',
+  });
+
+  const customMessage = 'Custom Message';
+
+  const wrapper = mount(
+    {
+      data: () => ({ val: false }),
+      template: `
+        <ValidationProvider rules="truthy" :customMessages="{ truthy: '${customMessage}' }" v-slot="ctx" ref="pro">
+          <input v-model="val" type="text">
+        </ValidationProvider>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const result = await wrapper.vm.$refs.pro.validate();
+
+  expect(result.errors[0]).toEqual(customMessage);
+});

@@ -20,17 +20,19 @@ interface ValidationOptions {
   bails?: boolean;
   skipOptional:? boolean;
   isInitial?: boolean;
+  customMessages?: { [k: string]: string };
 }
 ```
 
-| Property     | Type                      | Description                                                                                                                                    |
-| ------------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| name         | `string | null`           | The name of the field to be validate (will be used for error messages).                                                                        |
-| values       | `{ [k: string]: any }`    | The values of other fields (used in cross-field validation).                                                                                   |
-| names        | `{ [k: string]: string }` | The names of other fields (used in cross-field rules messages).                                                                                |
-| bails        | `boolean`                 | If true, the validation will stop at the first failing rule, otherwise trigger all rules.                                                      |
-| skipOptional | `boolean`                 | If true, the validation will skip optional (non-required) fields if they have empty values (empty string, empty array, `null` or `undefined`). |
-| isInitial    | `boolean`                 | if true will skip all rules configured not to run at the first validation attempt.                                                             |
+| Property       | Type                      | Description                                                                                                                                    |
+| -------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| name           | `string | null`           | The name of the field to be validate (will be used for error messages).                                                                        |
+| values         | `{ [k: string]: any }`    | The values of other fields (used in cross-field validation).                                                                                   |
+| names          | `{ [k: string]: string }` | The names of other fields (used in cross-field rules messages).                                                                                |
+| bails          | `boolean`                 | If true, the validation will stop at the first failing rule, otherwise trigger all rules.                                                      |
+| skipOptional   | `boolean`                 | If true, the validation will skip optional (non-required) fields if they have empty values (empty string, empty array, `null` or `undefined`). |
+| isInitial      | `boolean`                 | If true will skip all rules configured not to run at the first validation attempt.                                                             |
+| customMessages | `{ [k: string]: string }` | Custom error messages, keyed by rule name. These will override any default messages, as well as any messages set in `extend()`.                |
 
 ### ValidationResult
 

@@ -109,6 +109,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     disabled: {
       type: Boolean,
       default: false
+    },
+    customMessages: {
+      type: Object,
+      default: {}
     }
   },
   watch: {
@@ -227,7 +231,8 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         values: createValuesLookup(this),
         bails: this.bails,
         skipIfEmpty: this.skipIfEmpty,
-        isInitial: !this.initialized
+        isInitial: !this.initialized,
+        customMessages: this.customMessages
       });
 
       this.setFlags({ pending: false });
