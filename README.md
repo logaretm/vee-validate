@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://logaretm.github.io/vee-validate/" target="_blank">
-    <img width="200" src="https://github.com/logaretm/vee-validate/blob/master/logo.png">
+    <img width="200" src="https://github.com/logaretm/vee-validate/blob/master/logo.svg">
   </a>
 </p>
 
