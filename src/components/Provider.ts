@@ -112,7 +112,9 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     },
     customMessages: {
       type: Object,
-      default: {}
+      default() {
+        return {};
+      }
     }
   },
   watch: {
