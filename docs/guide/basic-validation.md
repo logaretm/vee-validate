@@ -42,7 +42,6 @@ We will need to [add an exception](https://nuxtjs.org/api/configuration-build/#t
 
 :::
 
-
 ## Rules Parameters
 
 Rule functions can also accept params to configure their behavior.
@@ -52,7 +51,7 @@ import { extend } from 'vee-validate';
 
 extend('required', {
   params: ['max'], // list of parameter names
-  validate (value, { max }) {
+  validate(value, { max }) {
     return Number(value) > max;
   }
 });
@@ -80,7 +79,7 @@ import { extend } from 'vee-validate';
 
 extend('required', {
   validate: value => !!value,
-  message () {
+  message() {
     // You might want to generate a more complex message with this function.
     return 'This field is required';
   }
@@ -162,7 +161,7 @@ Rules can also be an asynchronous function, in fact vee-validate treats all rule
 import { extend } from 'vee-validate';
 
 extend('asyncRule', {
-  validate (value) {
+  validate(value) {
     return new Promise(resolve => {
       // simulate a network request.
       setTimeout(() => {
@@ -180,7 +179,7 @@ Or if you are an `async/await` fan:
 import { extend } from 'vee-validate';
 
 extend('asyncRule', {
-  async validate (value) {
+  async validate(value) {
     // some heavy work/network request.
 
     return !!value;

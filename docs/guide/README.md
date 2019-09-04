@@ -2,6 +2,7 @@
 prev: false
 next: ./getting-started.md
 ---
+
 # Introduction
 
 VeeValidate is a template-based validation library for Vue.js. It has plenty of validation rules out of the box and support for custom ones as well. It is template based so it is easy and familiar.
@@ -11,9 +12,9 @@ VeeValidate is a template-based validation library for Vue.js. It has plenty of 
 - Template based validation.
 - Written in TypeScript.
 - Validates HTML5 inputs and custom Vue components.
-- [Many validation rules are provided out of the box](./rules.md).
+- [Many validation rules are provided out of the box](../api/rules.md).
 - [Localization Support](./localization.md) with 40+ locales available.
-- [Custom Rules](./custom-rules.md) support.
+- [Custom Rules](./basic-validation.md) support.
 - No dependencies.
 
 ## Why Template based validation
@@ -23,23 +24,23 @@ There are two ways to tackle form validation, declarative and imperative. When t
 Both approaches has their pros and cons, but the declarative style has been rooted in the HTML spec as it feels more natural, for example:
 
 ```html
-<input type="text" required>
+<input type="text" required />
 ```
 
 Clearly communicates that the input is required with minimal effort. Compared to a traditional imperative code:
 
 ```html
-<input oninput="updateValue" type="text">
+<input oninput="updateValue" type="text" />
 ```
 
 ```js
 let value = '';
 
-function checkRequired (value) {
+function checkRequired(value) {
   return value.trim().length > 0;
 }
 
-function updateValue (e) {
+function updateValue(e) {
   value = e.target.value;
   checkRequired(value);
 }
