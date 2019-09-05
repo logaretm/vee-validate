@@ -14,7 +14,7 @@ function shouldValidate(ctx: ProviderInstance, model: VNodeDirective) {
   }
 
   // when the value changes for whatever reason.
-  if (ctx.value !== model.value) {
+  if (ctx.value !== model.value && ctx.normalizedEvents.length) {
     return true;
   }
 
