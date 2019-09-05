@@ -59,6 +59,13 @@ class Dictionary {
     merge(this.container, dictionary);
   }
 
+  public hasRule(name: string) {
+    const locale = this.container[this.locale];
+    if (!locale) return false;
+
+    return !!(locale.messages && locale.messages[name]);
+  }
+
   public getName(locale: string, key: string) {
     return this.container[locale].names[key];
   }
@@ -80,7 +87,17 @@ function updateRules() {
     return;
   }
 
-  RuleContainer.iterate(name => {
+  RuleContainer.iterate((name, schema) => {
+    if (schema.message && !DICTIONARY.hasRule(name)) {
+      DICTIONARY.merge({
+        [DICTIONARY.locale]: {
+          messages: {
+            [name]: schema.message
+          }
+        }
+      });
+    }
+
     extend(name, {
       message: (field: string, values?: Record<string, any>) => {
         return DICTIONARY.resolve(field, name, values || {});
