@@ -1,6 +1,6 @@
-import { ValidationRuleFunction, RuleParamSchema } from '../types';
+import { RuleParamSchema, StringOrNumber } from '../types';
 
-const validate: ValidationRuleFunction = (value, { min, max }: any = {}) => {
+const validate = (value: StringOrNumber | StringOrNumber[], { min, max }: Record<string, any> = {}): boolean => {
   if (Array.isArray(value)) {
     return value.every(val => !!validate(val, { min, max }));
   }

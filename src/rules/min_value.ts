@@ -1,7 +1,7 @@
 import { isNullOrUndefined } from '../utils';
-import { RuleParamSchema } from '../types';
+import { RuleParamSchema, StringOrNumber } from '../types';
 
-const validate = (value: any, { min }: any): boolean => {
+const validate = (value: StringOrNumber | StringOrNumber[], { min }: Record<string, any>): boolean => {
   if (isNullOrUndefined(value) || value === '') {
     return false;
   }

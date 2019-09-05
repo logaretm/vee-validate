@@ -1,11 +1,12 @@
 import { toArray } from '../utils';
+import { ValidationRuleFunction } from '../types';
 
-const validate = (value: any, options: any[]): boolean => {
+const validate: ValidationRuleFunction = (value, options) => {
   if (Array.isArray(value)) {
     return value.every(val => validate(val, options));
   }
 
-  return toArray(options).some(item => {
+  return toArray(options as any[]).some(item => {
     // eslint-disable-next-line
     return item == value;
   });

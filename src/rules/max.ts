@@ -1,7 +1,7 @@
 import { isNullOrUndefined } from '../utils';
-import { RuleParamSchema } from '../types';
+import { RuleParamSchema, StringOrNumber } from '../types';
 
-const validate = (value: any, { length }: any): boolean => {
+const validate = (value: StringOrNumber | StringOrNumber[], { length }: Record<string, any>): boolean => {
   if (isNullOrUndefined(value)) {
     return length >= 0;
   }

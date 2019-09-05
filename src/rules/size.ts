@@ -1,6 +1,6 @@
 import { RuleParamSchema } from '../types';
 
-const validate = (files: File | File[], { size }: any) => {
+const validate = (files: File | File[], { size }: Record<string, any>) => {
   if (isNaN(size)) {
     return false;
   }

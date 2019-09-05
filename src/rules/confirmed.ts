@@ -1,6 +1,6 @@
-import { ValidationRuleFunction, RuleParamSchema } from '../types';
+import { RuleParamSchema } from '../types';
 
-const validate: ValidationRuleFunction = (value, { target }: any) => String(value) === String(target);
+const validate = (value: string, { target }: Record<string, any>) => String(value) === String(target);
 
 const params: RuleParamSchema[] = [
   {

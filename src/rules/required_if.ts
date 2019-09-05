@@ -1,8 +1,8 @@
 import { isEmptyArray } from '../utils';
 import { RuleParamSchema } from '../types';
 
-const validate = (value: any, { target, values }: any) => {
-  let required = values.includes(String(target).trim());
+const validate = (value: any, { target, values }: Record<string, any>) => {
+  const required = values.includes(String(target).trim());
 
   if (!required) {
     return {
