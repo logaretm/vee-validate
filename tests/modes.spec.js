@@ -21,7 +21,7 @@ test('aggressive mode', async () => {
       components: {
         TextInput: {
           props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+          template: `<input :value="value" @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)" @blur="$emit('blur')">`
         }
       },
       template: `
@@ -33,7 +33,7 @@ test('aggressive mode', async () => {
         </div>
       `
     },
-    { localVue: Vue, sync: false }
+    { localVue: Vue, sync: false, attachToDocument: true }
   );
   const error = wrapper.find('#error');
   const input = wrapper.find('input');
@@ -102,7 +102,7 @@ test('eager mode', async () => {
       components: {
         TextInput: {
           props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+          template: `<input :value="value" @change="$emit('change', $event.target.value)" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
         }
       },
       template: `
@@ -144,7 +144,7 @@ test('lazy mode', async () => {
       components: {
         TextInput: {
           props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+          template: `<input @change="$emit('change', $event.target.value)" :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
         }
       },
       template: `
@@ -185,7 +185,7 @@ test('new interaction modes can be added', async () => {
       components: {
         TextInput: {
           props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
+          template: `<input @customEvent="$emit('customEvent', $event.target.value)" :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
         }
       },
       template: `

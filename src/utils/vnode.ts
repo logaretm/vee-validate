@@ -135,6 +135,7 @@ function addComponentNodeListener(node: VNode, eventName: string, handler: Funct
 export function addVNodeListener(vnode: VNode, eventName: string, handler: Function): void {
   if (vnode.componentOptions) {
     addComponentNodeListener(vnode, eventName, handler);
+    return;
   }
 
   addNativeNodeListener(vnode, eventName, handler);
