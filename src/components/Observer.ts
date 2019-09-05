@@ -1,5 +1,5 @@
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
-import { isCallable, values, findIndex, warn } from '../utils';
+import { values, findIndex, warn } from '../utils';
 import { ValidationResult, InactiveRefCache, VeeObserver, VNodeWithVeeContext } from '../types';
 import { ValidationProvider } from './Provider';
 import { normalizeChildren } from '../utils/vnode';
@@ -35,6 +35,7 @@ function data() {
   const observers: any[] = [];
 
   return {
+    id: '',
     refs,
     refsByName,
     observers,
@@ -123,7 +124,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
           acc[flag] = mergeFlags(acc[flag], flags[flag], flag);
         });
 
-        acc.errors[provider.vid] =
+        acc.errors[provider.id] =
           provider.messages ||
           values(provider.ctx.errors).reduce((errs: any[], obsErrors) => {
             return errs.concat(obsErrors);
@@ -134,6 +135,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     }
   },
   created() {
+    this.id = this.vid;
     if (this.$_veeObserver) {
       this.$_veeObserver.subscribe(this, 'observer');
     }
@@ -145,12 +147,12 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
   },
   deactivated() {
     if (this.$_veeObserver) {
-      this.$_veeObserver.unsubscribe(this, 'observer');
+      this.$_veeObserver.unsubscribe(this.id, 'observer');
     }
   },
   beforeDestroy() {
     if (this.$_veeObserver) {
-      this.$_veeObserver.unsubscribe(this, 'observer');
+      this.$_veeObserver.unsubscribe(this.id, 'observer');
     }
   },
   render(h: CreateElement): VNode {
@@ -165,18 +167,19 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
         return;
       }
 
-      this.refs = { ...this.refs, ...{ [subscriber.vid]: subscriber } };
+      this.refs = { ...this.refs, ...{ [subscriber.id]: subscriber } };
       this.refsByName = { ...this.refsByName, ...{ [subscriber.name]: subscriber } };
       if (subscriber.persist) {
         this.restoreProviderState(subscriber);
       }
     },
-    unsubscribe({ vid, name }: any, kind = 'provider') {
+    unsubscribe(id: string, kind = 'provider') {
       if (kind === 'provider') {
-        this.removeProvider({ vid, name });
+        this.removeProvider(id);
+        return;
       }
 
-      const idx = findIndex(this.observers, o => o.vid === vid);
+      const idx = findIndex(this.observers, o => o.id === id);
       if (idx !== -1) {
         this.observers.splice(idx, 1);
       }
@@ -199,39 +202,39 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
     },
     restoreProviderState(provider: ProviderInstance) {
-      const id = provider.vid.indexOf('_vee_') === 0 ? provider.name : provider.vid;
-      const state = this.inactiveRefs[id || provider.vid];
+      const id = provider.id;
+      const state = this.inactiveRefs[id];
       if (!state) {
         return;
       }
 
       provider.setFlags(state.flags);
       provider.applyResult(state);
-      this.$delete(this.inactiveRefs, provider.vid);
+      this.$delete(this.inactiveRefs, provider.id);
     },
-    removeProvider({ vid, name }: { vid: string; name: string }) {
-      const provider = this.refs[vid];
+    removeProvider(id: string) {
+      const provider = this.refs[id];
+
       // save it for the next time.
       if (provider && provider.persist) {
-        const id = vid.indexOf('_vee_') === 0 ? name : vid;
         /* istanbul ignore next */
         if (process.env.NODE_ENV !== 'production') {
-          if (vid.indexOf('_vee_') === 0 && !name) {
+          if (id.indexOf('_vee_') === 0) {
             warn(
               'Please provide a `vid` or a `name` prop when using `persist`, there might be unexpected issues otherwise.'
             );
           }
         }
 
-        this.inactiveRefs[id || vid] = {
+        this.inactiveRefs[id] = {
           flags: provider.flags,
           errors: provider.messages,
           failedRules: provider.failedRules
         };
       }
 
-      this.$delete(this.refs, vid);
-      this.$delete(this.refsByName, name);
+      this.$delete(this.refs, id);
+      this.$delete(this.refsByName, provider.name);
     },
     setErrors(errors: Record<string, string[]>) {
       Object.keys(errors).forEach(key => {

@@ -2,7 +2,7 @@ import { getConfig } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
 import { normalizeEventValue } from '../utils/events';
-import { createFlags, normalizeRules, isCallable, isNullOrUndefined, isEqual, computeClassObj } from '../utils';
+import { createFlags, normalizeRules, isCallable, isEqual, computeClassObj } from '../utils';
 import { extractVNodes, resolveRules, normalizeChildren } from '../utils/vnode';
 import Vue, { VNode, CreateElement, VueConstructor } from 'vue';
 import { ValidationResult, ValidationFlags, VeeObserver, VNodeWithVeeContext, ProviderInstance } from '../types';
@@ -58,11 +58,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
   props: {
     vid: {
       type: String,
-      default: () => {
-        PROVIDER_COUNTER++;
-
-        return `_vee_${PROVIDER_COUNTER}`;
-      }
+      default: ''
     },
     name: {
       type: String,
@@ -175,14 +171,14 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
   },
   beforeDestroy() {
     // cleanup reference.
-    this.$_veeObserver.unsubscribe(this);
+    this.$_veeObserver.unsubscribe(this.id);
   },
   activated() {
     this.$_veeObserver.subscribe(this);
     this.isDeactivated = false;
   },
   deactivated() {
-    this.$_veeObserver.unsubscribe(this);
+    this.$_veeObserver.unsubscribe(this.id);
     this.isDeactivated = true;
   },
   methods: {
@@ -271,36 +267,50 @@ function createValuesLookup(vm: ProviderInstance) {
   }, reduced);
 }
 
-function updateRenderingContextRefs(vm: ProviderInstance) {
-  // IDs should not be nullable.
-  if (isNullOrUndefined(vm.id) && vm.id === vm.vid) {
-    vm.id = `${PROVIDER_COUNTER}`;
-    PROVIDER_COUNTER++;
+function extractId(vm: ProviderInstance): string {
+  if (vm.vid) {
+    return vm.vid;
   }
 
-  const { id, vid } = vm;
+  if (vm.name) {
+    return vm.name;
+  }
+
+  if (vm.id) {
+    return vm.id;
+  }
+
+  PROVIDER_COUNTER++;
+
+  return `_vee_${PROVIDER_COUNTER}`;
+}
+
+function updateRenderingContextRefs(vm: ProviderInstance) {
+  const providedId = extractId(vm);
+
+  const { id } = vm;
   // Nothing has changed.
-  if (vm.isDeactivated || (id === vid && vm.$_veeObserver.refs[id])) {
+  if (vm.isDeactivated || (id === providedId && vm.$_veeObserver.refs[id])) {
     return;
   }
 
   // vid was changed.
-  if (id !== vid && vm.$_veeObserver.refs[id] === vm) {
-    vm.$_veeObserver.unsubscribe({ vid: id });
+  if (id !== providedId && vm.$_veeObserver.refs[id] === vm) {
+    vm.$_veeObserver.unsubscribe(id);
   }
 
+  vm.id = providedId;
   vm.$_veeObserver.subscribe(vm);
-  vm.id = vid;
 }
 
 function createObserver(): VeeObserver {
   return {
     refs: {},
-    subscribe(ctx: ProviderInstance) {
-      this.refs[ctx.vid] = ctx;
+    subscribe(vm: ProviderInstance) {
+      this.refs[vm.id] = vm;
     },
-    unsubscribe(ctx: ProviderInstance) {
-      delete this.refs[ctx.vid];
+    unsubscribe(id: string) {
+      delete this.refs[id];
     }
   };
 }
