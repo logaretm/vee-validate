@@ -1,7 +1,7 @@
 import { alphanumeric } from './alpha_helper';
 import { RuleParamSchema } from '../types';
 
-const validate = (value: any, { locale = '' }: any = {}): boolean => {
+const validate = (value: string | string[], { locale = '' }: Record<string, any> = {}): boolean => {
   if (Array.isArray(value)) {
     return value.every(val => validate(val, { locale }));
   }

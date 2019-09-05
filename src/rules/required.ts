@@ -1,7 +1,7 @@
 import { isEmptyArray, isNullOrUndefined } from '../utils';
 import { RuleParamSchema } from '../types';
 
-const validate = (value: any, { allowFalse }: any = { allowFalse: true }) => {
+const validate = (value: any, { allowFalse }: Record<string, any> = { allowFalse: true }) => {
   const result = {
     valid: false,
     required: true

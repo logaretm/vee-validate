@@ -50,6 +50,8 @@ export interface ValidationRuleSchema {
 
 export type ValidationRule = ValidationRuleFunction | ValidationRuleSchema;
 
+export type StringOrNumber = string | number;
+
 // Extracts explicit keys of an interface without index signature
 // https://stackoverflow.com/questions/51465182/typescript-remove-index-signature-using-mapped-types
 export type KnownKeys<T> = {

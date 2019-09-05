@@ -1,6 +1,6 @@
 import { RuleParamSchema } from '../types';
 
-const validate = (value: any, { other }: any) => {
+const validate = (value: any, { other }: Record<string, any>) => {
   return value === other;
 };
 

@@ -12,7 +12,7 @@ const validateImage = (file: File, width: number, height: number): Promise<boole
   });
 };
 
-const validate = (files: File | File[], { width, height }: any) => {
+const validate = (files: File | File[], { width, height }: Record<string, any>) => {
   const list = [];
   files = Array.isArray(files) ? files : [files];
   for (let i = 0; i < files.length; i++) {

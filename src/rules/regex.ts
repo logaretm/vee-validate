@@ -1,6 +1,6 @@
-import { RuleParamSchema } from '../types';
+import { RuleParamSchema, StringOrNumber } from '../types';
 
-const validate = (value: any, { regex }: any): boolean => {
+const validate = (value: StringOrNumber | StringOrNumber[], { regex }: Record<string, any>): boolean => {
   if (Array.isArray(value)) {
     return value.every(val => validate(val, { regex: regex }));
   }
