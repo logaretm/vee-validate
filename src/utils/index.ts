@@ -245,7 +245,7 @@ export function toArray<T>(arrayLike: ArrayLike<T>): T[] {
   return _copyArray(arrayLike);
 }
 
-export function findIndex<T>(arrayLike: ArrayLike<T>, predicate: (item: T) => boolean): number {
+export function findIndex<T>(arrayLike: ArrayLike<T>, predicate: (item: T, idx: number) => boolean): number {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
   if (isCallable(array.findIndex)) {
     return array.findIndex(predicate);
@@ -253,7 +253,7 @@ export function findIndex<T>(arrayLike: ArrayLike<T>, predicate: (item: T) => bo
 
   /* istanbul ignore next */
   for (let i = 0; i < array.length; i++) {
-    if (predicate(array[i])) {
+    if (predicate(array[i], i)) {
       return i;
     }
   }
@@ -265,7 +265,7 @@ export function findIndex<T>(arrayLike: ArrayLike<T>, predicate: (item: T) => bo
 /**
  * finds the first element that satisfies the predicate callback, polyfills array.find
  */
-export function find<T>(arrayLike: ArrayLike<T>, predicate: (item: T) => boolean): T | undefined {
+export function find<T>(arrayLike: ArrayLike<T>, predicate: (item: T, idx: number) => boolean): T | undefined {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
   const idx = findIndex(array, predicate);
 
