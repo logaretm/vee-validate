@@ -197,6 +197,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       this.initialValue = this.value;
       const flags = createFlags();
       this.setFlags(flags);
+      this.validateSilent();
     },
     async validate(...args: any[]): Promise<ValidationResult> {
       if (args.length > 0) {
