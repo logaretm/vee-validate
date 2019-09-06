@@ -18,7 +18,7 @@ extend('password', {
 });
 ```
 
-```vue{2,10}
+```vue{3,11}
 <ValidationObserver>
   <ValidationProvider
     rules="required|password:confirmation"
@@ -29,7 +29,7 @@ extend('password', {
   </ValidationProvider>
 
   <ValidationProvider
-    vid="confirmation"
+    name="confirmation"
     rules="required"
     v-slot="{ errors }"
   >
@@ -39,9 +39,9 @@ extend('password', {
 </ValidationObserver>
 ```
 
-You will notice in your validation function that the `other` parameter is not `'confirmation'` string, but rather the confirmation field value. When a parmeter is marked as `isTarget`, vee-validate replaces the parameter value with the target field value.
+You will notice in your validation function that the `other` parameter is not `'confirmation'` string, but rather the confirmation field value. When a parameter is marked as `isTarget`, vee-validate replaces the parameter value with the target field value.
 
-Note that to make sure the providers can locate each other, they need to be wrapped by the same `ValidationObserver` component.
+To make sure the providers can locate each other, they need to be wrapped by the same `ValidationObserver` component and the target field needs to have the specified target name as its `name` or `vid` prop.
 
 Here is a working snippet of the last example:
 
@@ -54,7 +54,7 @@ Here is a working snippet of the last example:
    <span>{{ errors[0] }}</span>
   </StyledProvider>
   <StyledProvider
-    vid="confirmation"
+    name="confirmation"
     rules="required"
     v-slot="{ errors }"
   >

@@ -324,7 +324,7 @@ Checkboxes by default emit `true` or `false` depending on wether they are checke
 
 ### Cross-Field Validation
 
-When using cross-field rules like the `confirmed` rule the target field must have a corresponding `vid` can be either a number or a string.
+When using cross-field rules like the `confirmed` rule the target field must have a corresponding `name` or a `vid` attribute can be either a number or a string.
 
 ```vue{2,10}
 <ValidationProvider
@@ -336,7 +336,7 @@ When using cross-field rules like the `confirmed` rule the target field must hav
 </ValidationProvider>
 
 <ValidationProvider
-  vid="confirm"
+  name="confirm"
   rules="required"
   v-slot="{ errors }"
 >
