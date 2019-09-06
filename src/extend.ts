@@ -1,5 +1,5 @@
 import { ValidationRule, ValidationRuleSchema, RuleParamConfig } from './types';
-import { isCallable, merge } from './utils';
+import { isCallable, merge, find } from './utils';
 
 interface NormalizedRuleSchema extends ValidationRuleSchema {
   params?: RuleParamConfig[];
@@ -63,6 +63,21 @@ export class RuleContainer {
     }
 
     return definition.params.some(param => !!param.isTarget);
+  }
+
+  public static getTargetParamNames(rule: string, params: Record<string, string> | string[]): string[] {
+    const definition = RuleContainer.getRuleDefinition(rule);
+    if (Array.isArray(params)) {
+      return params.filter((_, idx) => {
+        return definition.params && find(definition.params, (p, i) => !!p.isTarget && i === idx);
+      });
+    }
+
+    return Object.keys(params)
+      .filter(key => {
+        return definition.params && find(definition.params, p => !!p.isTarget && p.name === key);
+      })
+      .map(key => params[key]);
   }
 
   public static getRuleDefinition(ruleName: string) {
