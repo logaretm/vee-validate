@@ -24,9 +24,9 @@ Vuetify is a semantic component framework for Vue. It aims to provide clean, sem
 
 BootstrapVue provides one of the most comprehensive implementations of Bootstrap V4 components and grid system available for Vue.js 2.5+, complete with extensive and automated WAI-ARIA accessibility markup.
 
-<iframe src="https://codesandbox.io/embed/yw8yrmn9y9?view=preview" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+<iframe src="https://codesandbox.io/embed/validation-components-bootstrapvue-kb52q?view=preview" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
 
-[![Edit Validation Components - BootstrapVue](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/yw8yrmn9y9)
+[![Edit Validation Components - BootstrapVue](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/veevalidate-bootstrapvue-kb52q)
 
 ## [Buefy](https://buefy.org/)
 
