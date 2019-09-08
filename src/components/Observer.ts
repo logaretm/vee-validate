@@ -14,7 +14,8 @@ const flagMergingStrategy: {
   valid: 'every',
   invalid: 'some',
   pending: 'some',
-  validated: 'every'
+  validated: 'every',
+  changed: 'some'
 };
 
 function mergeFlags(lhs: any, rhs: any, strategy: string) {
