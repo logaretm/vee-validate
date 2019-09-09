@@ -85,6 +85,11 @@ const builds = {
   rules: {
     input: 'src/rules/index.ts',
     format: 'es'
+  },
+  rulesUmd: {
+    input: 'src/rules/index.ts',
+    format: 'umd',
+    name: 'VeeValidateRules'
   }
 };
 

@@ -19,6 +19,7 @@ async function build() {
   console.log(chalk.cyan('Generating UMD build...'));
   await utils.writeBundle(configs.umd, 'vee-validate.js', true);
   await utils.writeBundle(configs.umdFull, 'vee-validate.full.js', true);
+  await utils.writeBundle(configs.rulesUmd, 'rules.umd.js', true);
   // eslint-disable-next-line
   console.log(chalk.cyan('Done!'));
 }
