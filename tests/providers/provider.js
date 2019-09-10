@@ -894,6 +894,26 @@ describe('HTML5 Rule inference', () => {
     expect(wrapper.find('#error').text()).toContain('email');
   });
 
+  test('Required explicit false', async () => {
+    const wrapper = mount(
+      {
+        data: () => ({ val: '1' }),
+        template: `
+        <ValidationProvider v-slot="{ errors }">
+          <input type="text" :required="false" v-model="val">
+          <p id="error">{{ errors[0] }}</p>
+        </ValidationProvider>`
+      },
+      { localVue: Vue, sync: false }
+    );
+
+    await flushPromises();
+    expect(wrapper.find('#error').text()).toBe('');
+    wrapper.find('input').setValue('');
+    await flushPromises();
+    expect(wrapper.find('#error').text()).toBe('');
+  });
+
   test('regex and minlength and maxlength rules', async () => {
     const wrapper = mount(
       {
