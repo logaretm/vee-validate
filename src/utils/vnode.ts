@@ -226,7 +226,7 @@ export function resolveRules(vnode: VNode) {
   }
 
   const rules: Record<string, any> = {};
-  if ('required' in attrs) {
+  if ('required' in attrs && attrs.required !== false) {
     rules.required = attrs.type === 'checkbox' ? [true] : true;
   }
 
