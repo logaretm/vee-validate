@@ -147,6 +147,12 @@ You are welcome to contribute to this project, but before you do, please make su
 
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
 
+### Backers
+
+![Backer](https://opencollective.com/vee-validate/tiers/backer/badge.svg?label=backer&color=brightgreen)
+
+<object type="image/svg+xml" data="https://opencollective.com/vee-validate/tiers/backer.svg?avatarHeight=36&width=600"></object>
+
 ### Emeriti
 
 Here we honor past contributors and sponsors who have been a major part on this project.

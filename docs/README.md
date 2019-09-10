@@ -77,3 +77,11 @@ Wrap your inputs with the `ValidationProvider`:
 And this is the result:
 
 <RuleDemo rule="required" />
+
+## Backers
+
+<br>
+
+<img src="https://opencollective.com/vee-validate/tiers/backer/badge.svg?label=backer&color=brightgreen" />
+
+<object type="image/svg+xml" data="https://opencollective.com/vee-validate/tiers/backer.svg?avatarHeight=36&width=600"></object>
