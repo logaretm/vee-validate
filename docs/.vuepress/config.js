@@ -1,40 +1,22 @@
-const sidebars = {
-  guide: [
-    '',
-    'getting-started',
-    'basic-validation',
-    'applying-rules',
-    'displaying-errors',
-    'validation-provider',
-    'validation-observer',
-    'interaction-and-ux',
-    'styling',
-    'a11y',
-    'html5-validation',
-    'advanced-validation',
-    'localization',
-    'testing'
-  ],
-  api: ['', 'rules'],
-  examples: ['ui-libraries', 'i18n', 'multiple-forms', 'backend', 'nuxt']
-};
-
-function genSidebarConfig(...names) {
-  return names.map(t => {
-    return {
-      title: t,
-      collapsable: false,
-      children: sidebars[t.toLowerCase()]
-    };
-  });
-}
-
 module.exports = {
   title: 'VeeValidate',
   description: 'Template Based Validation Framework for Vue.js',
-  ga: 'UA-100131478-1',
-  serviceWorker: true,
-  plugins: ['@vuepress/pwa'],
+  plugins: [
+    '@vuepress/back-to-top',
+    [
+      '@vuepress/pwa',
+      {
+        serviceWorker: true,
+        updatePopup: true
+      }
+    ],
+    [
+      '@vuepress/google-analytics',
+      {
+        ga: 'UA-100131478-1'
+      }
+    ]
+  ],
   base: '/vee-validate/',
   head: [
     ['meta', { charset: 'utf-8' }],
@@ -69,8 +51,26 @@ module.exports = {
     docsRepo: 'logaretm/vee-validate',
     docsDir: 'docs',
     editLinks: true,
-    serviceWorker: {
-      updatePopup: { message: 'New content is available.', buttonText: 'Refresh' }
+    sidebarDepth: 2,
+    sidebar: {
+      '/guide/': [
+        '',
+        'getting-started',
+        'basic-validation',
+        'applying-rules',
+        'displaying-errors',
+        'validation-provider',
+        'validation-observer',
+        'interaction-and-ux',
+        'styling',
+        'a11y',
+        'html5-validation',
+        'advanced-validation',
+        'localization',
+        'testing'
+      ],
+      '/api/': ['', 'rules'],
+      '/examples/': ['ui-libraries', 'i18n', 'multiple-forms', 'backend', 'nuxt']
     },
     locales: {
       '/': {
@@ -82,13 +82,7 @@ module.exports = {
           { text: 'Config', link: '/configuration' },
           { text: 'API', link: '/api/' },
           { text: 'Examples', link: '/examples/' }
-        ],
-        sidebarDepth: 1,
-        sidebar: {
-          'guide/': genSidebarConfig('Guide'),
-          'examples/': genSidebarConfig('Examples'),
-          'api/': genSidebarConfig('API')
-        }
+        ]
       }
     }
   }
