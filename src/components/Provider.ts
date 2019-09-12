@@ -35,7 +35,6 @@ function data() {
     initialValue: undefined,
     flags: createFlags(),
     failedRules: {},
-    forceRequired: false,
     isDeactivated: false,
     id: ''
   };
@@ -143,9 +142,8 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     },
     isRequired(): boolean {
       const rules = { ...this._resolvedRules, ...this.normalizedRules };
-      const forceRequired = this.forceRequired;
 
-      const isRequired = Object.keys(rules).some(RuleContainer.isRequireRule) || forceRequired;
+      const isRequired = Object.keys(rules).some(RuleContainer.isRequireRule);
       this.flags.required = !!isRequired;
 
       return isRequired;
@@ -199,6 +197,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       this.messages = [];
       this.initialValue = this.value;
       const flags = createFlags();
+      flags.required = this.isRequired;
       this.setFlags(flags);
       this.validateSilent();
     },
