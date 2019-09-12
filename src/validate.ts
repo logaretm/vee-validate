@@ -11,6 +11,7 @@ interface FieldContext {
   forceRequired: boolean;
   crossTable: Record<string, any>;
   names: Record<string, string>;
+  customMessages: Record<string, string>;
 }
 
 interface ValidationOptions {
@@ -20,6 +21,7 @@ interface ValidationOptions {
   bails?: boolean;
   skipIfEmpty?: boolean;
   isInitial?: boolean;
+  customMessages?: Record<string, string>;
 }
 
 /**
@@ -39,7 +41,8 @@ export async function validate(
     skipIfEmpty: isNullOrUndefined(skipIfEmpty) ? true : skipIfEmpty,
     forceRequired: false,
     crossTable: (options && options.values) || {},
-    names: (options && options.names) || {}
+    names: (options && options.names) || {},
+    customMessages: (options && options.customMessages) || {}
   };
 
   const result = await _validate(field, value, options);
@@ -200,6 +203,16 @@ function _generateFieldError(
     _value_: value,
     _rule_: ruleName
   };
+
+  if (
+    Object.prototype.hasOwnProperty.call(field.customMessages, ruleName) &&
+    typeof field.customMessages[ruleName] === 'string'
+  ) {
+    return {
+      msg: _normalizeMessage(field.customMessages[ruleName], field.name, values),
+      rule: ruleName
+    };
+  }
 
   if (ruleSchema.message) {
     return {
