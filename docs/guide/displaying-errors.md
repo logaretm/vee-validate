@@ -136,7 +136,7 @@ You can configure this behavior globally, by setting `skipOptional` config value
 
 ## Customizing the field name
 
-So far you only saw `{field}` placeholder used in the error messages to refer to the field, you can change that by specifying a `name` prop on the `ValidationProvider`.
+So far you only saw `{_field_}` placeholder used in the error messages to refer to the field, you can change that by specifying a `name` prop on the `ValidationProvider`.
 
 ```vue{2}
 <ValidationProvider
