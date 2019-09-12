@@ -51,7 +51,7 @@ import { required } from 'vee-validate/dist/rules';
 
 extend('required', {
   ...required,
-  message: 'The {field} is required'
+  message: 'This {_field_} is required'
 });
 
 new Vue({
