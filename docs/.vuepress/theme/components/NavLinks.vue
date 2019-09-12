@@ -154,8 +154,10 @@ export default {
 
 .versions
   min-width: 50px
+  box-sizing: border-box
 
   span
+    box-sizing: border-box
     background: #3eaf7c
     border-radius: 6px
     padding: 5px 10px
@@ -174,6 +176,12 @@ export default {
   .nav-links
     .nav-item, .repo-link
       margin-left: 0
+
+  .versions
+    span
+      text-align: left
+      justify-content: flex-start
+      min-height: 50px
 
 @media (min-width: $MQMobile)
   .nav-links a
