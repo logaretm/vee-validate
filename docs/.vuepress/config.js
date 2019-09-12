@@ -85,9 +85,9 @@ module.exports = {
         ],
         sidebarDepth: 1,
         sidebar: {
-          '/guide/': genSidebarConfig('Guide'),
-          '/examples/': genSidebarConfig('Examples'),
-          '/api/': genSidebarConfig('API')
+          'guide/': genSidebarConfig('Guide'),
+          'examples/': genSidebarConfig('Examples'),
+          'api/': genSidebarConfig('API')
         }
       }
     }
