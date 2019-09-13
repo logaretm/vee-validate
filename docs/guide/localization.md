@@ -6,80 +6,6 @@ VeeValidate has built-in localization support for validation messages which is o
 In `2.x`, vee-validate used to ship with localization enabled and pre-configured, this has been changed in `3.x` to allow for a more flexible i18n system.
 :::
 
-## Messages Format
-
-Validation messages in vee-validate can either be a `string` or a function that returns a string for more complex messages.
-
-### String Interpolation
-
-String messages can be plain like:
-
-```
-This field is required.
-```
-
-Or it can be a **template string** like this:
-
-```
-The {_field_} is required.
-```
-
-Template messages are interpolated before display to replace the placeholders, placeholders are surrounded by `{placeholder}`. You can use the rule's parameter names as placeholders as well as props you return in `data` prop in the validation response.
-
-For example consider this rule:
-
-```js
-import { extend } from 'vee-validate';
-
-extend('lengthBetween', {
-  validate: (value, { min, max }) => {
-    const length = value && value.length;
-
-    return length >= min && length <= max;
-  },
-  params: ['min', 'max'],
-  message: 'The {_field_} length must be between {min} and {max}'
-});
-```
-
-```vue
-<ValidationProvider name="code" rules="required|lengthBetween:3,6" v-slot="{ errors }">
-  <input v-model="value" type="text">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
-```
-
-<StyledProvider
-  name="code"
-  rules="required|lengthBetween:3,6"
-  v-slot="{ errors }"
->
-  <input v-model="values.template" type="text" placeholder="Type something...">
-  <span>{{ errors[0] }}</span>
-</StyledProvider>
-
-:::tip Parameter Names
-You can use any names for your placeholders, except for:
-
-- `{_field_}` which is the field name.
-- `{_value_}` which is the field value.
-- `{_rule_}` which is the rule name.
-
-Which are provided internally.
-:::
-
-### Message Function
-
-Messages can be a function as well, giving you more flexibility over your messages. The function signature looks like this:
-
-```ts
-interface ValidationMessageGenerator {
-  (field: string, values?: Record<string, any>): string;
-}
-```
-
-The `field` is the field name, the `values` argument is an object containing the placeholder values used in string interpolation. Meaning it will contain `_value_`, `_field_` and `_rule_` values as well as any other params previously declared.
-
 ## i18n
 
 vee-validate has over 40+ locales available for the shipped validations, but they are not install by default as they have a large overhead so you need to import the locales you need.
@@ -115,7 +41,7 @@ By default you cannot import JSON files in TypeScript, so be sure to add those o
   "compilerOptions": {
     // ...
     "resolveJsonModule": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
     // ...
   }
 }

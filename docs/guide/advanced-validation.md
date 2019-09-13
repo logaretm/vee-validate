@@ -2,6 +2,55 @@
 
 Previously you learned how to add validation rules to vee-validate, in this guide you will learn how to use the full API to create more powerful and complex rules.
 
+## Dynamic Messages
+
+Some rules can be really complicated, and as such you need to provide suitable feedback for your users. While you cannot provide multiple messages for your rules, you can leverage the fact that messages can be functions. Meaning you could create a dynamic message for your rules, allowing you to be more flexible.
+
+```js{4}
+import { extend } from 'vee-validate';
+
+extend('someRule', {
+  message: (field, values) => `The current timestamp is ${Date.now()}`
+});
+```
+
+The previous example isn't very useful, but it showcases how dynamic the messages can be. Earlier you learned that the `values` object [contains some useful information](./displaying-errors.md#message-function) about the field and the rule. It can also contain arbitrary data that you can return from your rule's `validate` function.
+
+Consider this dummy `profanity` rule where we have 2 states for the error message:
+
+```js
+import { extend } from 'vee-validate';
+
+extend('profanity', {
+  validate: value => {
+    if (value === 'heck') {
+      return { valid: false, data: { reason: 'NICE_H_TRY' } };
+    }
+
+    if (value === 'frick') {
+      return { valid: false, data: { reason: 'NICE_F_TRY' } };
+    }
+
+    return true;
+  },
+  message: (field, values) => {
+    if (values.reason === 'NICE_H_TRY') {
+      return 'You cannot say any of the H words.';
+    }
+
+    if (values.reason === 'NICE_F_TRY') {
+      return 'You cannot say any of the F words.';
+    }
+
+    return 'You cannot say that.';
+  }
+});
+```
+
+The `data` property returned in the `validate` function result is an object that contains additional information that we want to pass to our message generator function. The contents of the `data` prop will be merged with the `values` passed to the message function, allowing you to craft specific error messages for specific reasons.
+
+You can find this example [live right here](https://codesandbox.io/embed/veevalidate-30-dynamic-messages-3k649).
+
 ## Cross-Field validation
 
 Some rules validity are dependent on other fields values, a rule like `confirmed` will need access to another field's value and compare it with the current one to be able to determine validity.
@@ -151,9 +200,9 @@ Assuming you have a rule that sends a request to an endpoint, you might want to 
 ```js{2}
 extend('lazyRule', {
   lazy: true,
-  validate: (value) => {
+  validate: value => {
     // Some stuff.
-  },
+  }
 });
 ```
 
@@ -195,7 +244,7 @@ This would work fine for most cases but in complex rules, this starts to break d
 Params can have a slightly richer schema to allow you to convert types before passing them to your `validate` function, instead of defining an array of param names, we define an array of objects:
 
 ```js{21,25}
-function toDate (value) {
+function toDate(value) {
   // handle timestamps
   if (typeof value === 'number') {
     return new Date(value);

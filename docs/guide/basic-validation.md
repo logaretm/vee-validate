@@ -216,6 +216,7 @@ There are more to rules, but for now you know how to use most common cases in yo
 - Cross-Field validation (confirm password).
 - Required State Rules.
 - Backend messages.
+- Dynamic Error Messages.
 
 You can refer to the [Advanced Validation](./advanced-validation.md) guide for these cases.
 

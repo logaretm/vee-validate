@@ -18,11 +18,7 @@ Typically you would want to display one error at a time for your fields, which i
 You will notice that only 1 error is generated. this is because vee-validate tries to be efficient by stopping validation on the first failure it encounters for any rule. to disable this behavior and force the validation to test against all rules you can provide `bails` prop set to `false` on the `ValidationProvider`.
 
 ```vue{4}
-<ValidationProvider
-  rules="required|min:3|alpha"
-  v-slot="{ errors }"
-  :bails="false"
->
+<ValidationProvider rules="required|min:3|alpha" v-slot="{ errors }" :bails="false">
   <input v-model="value" type="text">
   <ul>
     <li v-for="error in errors">{{ error }}</li>
@@ -40,7 +36,7 @@ configure({ bails: false });
 ```
 
 :::tip
-  The `bails` prop takes precedence over the global config, that means you can have fields with either behavior at the same time in your app by passing a `bails` prop explicitly to those fields.
+The `bails` prop takes precedence over the global config, that means you can have fields with either behavior at the same time in your app by passing a `bails` prop explicitly to those fields.
 :::
 
 Now that we've setup multiple errors generation properly, you can iterate over the `errors` array to display them with `v-for`:
@@ -57,10 +53,10 @@ Now that we've setup multiple errors generation properly, you can iterate over t
 You can check it out in this sample:
 
 <StyledProvider
-  rules="required|min:3|alpha"
-  v-slot="{ errors }"
-  :bails="false"
->
+rules="required|min:3|alpha"
+v-slot="{ errors }"
+:bails="false">
+
   <input v-model="values.multiple" type="text" placeholder="type something">
   <ul>
     <li v-for="error in errors">{{ error }}</li>
@@ -92,10 +88,9 @@ Consider this **optional field**:
 Even though the field is configured with `bails` set to `false`, it will still skip the field (consider it valid) if it has empty value. You can test this in the previous sample, fill it with a value and clear it and it will still hold the errors.
 
 <StyledProvider
-  rules="min:3|numeric"
-  v-slot="{ errors }"
-  :bails="false"
->
+rules="min:3|numeric"
+v-slot="{ errors }"
+:bails="false">
   <input v-model="values.multiple" type="text" placeholder="type something">
   <ul>
     <li v-for="error in errors">{{ error }}</li>
@@ -105,12 +100,7 @@ Even though the field is configured with `bails` set to `false`, it will still s
 Now this might not be what you want, you may need to run all rules regardless of the field requirement status. While this is rare, you could still disable this behavior by setting `skipIfEmpty` prop to false.
 
 ```vue{2,3}
-<ValidationProvider
-    rules="min:3|numeric"
-    :skipIfEmpty="false"
-    :bails="false"
-    v-slot="{ errors }"
->
+<ValidationProvider rules="min:3|numeric" :skipIfEmpty="false" :bails="false" v-slot="{ errors }">
   <input v-model="value" type="text">
   <ul>
     <li v-for="error in errors">{{ error }}</li>
@@ -139,28 +129,96 @@ You can configure this behavior globally, by setting `skipOptional` config value
 So far you only saw `{_field_}` placeholder used in the error messages to refer to the field, you can change that by specifying a `name` prop on the `ValidationProvider`.
 
 ```vue{2}
-<ValidationProvider
-  name="first name"
-  rules="required|min:2"
-  v-slot="{ errors }"
->
+<ValidationProvider name="first name" rules="required|min:2" v-slot="{ errors }">
   <input v-model="value" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 ```
 
 <StyledProvider
-  rules="required|min:2"
-  name="first name"
-  v-slot="{ errors }"
+rules="required|min:2"
+name="first name"
+v-slot="{ errors }"
 >
   <input v-model="values.name" type="text" placeholder="type something...">
   <span>{{ errors[0] }}</span>
 </StyledProvider>
 
-:::tip Advanced Customization
-You can localize your messages and display custom messages for specific fields with the [localization API](./localization.md).
+## Messages Format
+
+Validation messages in vee-validate can either be a `string` or a function that returns a string for more complex messages.
+
+### String Interpolation
+
+String messages can be plain like:
+
+```
+This field is required.
+```
+
+Or it can be a **template string** like this:
+
+```
+The {_field_} is required.
+```
+
+Template messages are interpolated before display to replace the placeholders, placeholders are surrounded by `{placeholder}`. You can use the rule's parameter names as placeholders.
+
+For example consider this rule:
+
+```js
+import { extend } from 'vee-validate';
+
+extend('lengthBetween', {
+  validate: (value, { min, max }) => {
+    const length = value && value.length;
+
+    return length >= min && length <= max;
+  },
+  params: ['min', 'max'],
+  message: 'The {_field_} length must be between {min} and {max}'
+});
+```
+
+```vue
+<ValidationProvider name="code" rules="required|lengthBetween:3,6" v-slot="{ errors }">
+  <input v-model="value" type="text">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+<StyledProvider
+  name="code"
+  rules="required|lengthBetween:3,6"
+  v-slot="{ errors }"
+>
+  <input v-model="values.template" type="text" placeholder="Type something...">
+  <span>{{ errors[0] }}</span>
+</StyledProvider>
+
+:::tip Parameter Names
+You can use any names for your placeholders, except for:
+
+- `{_field_}` which is the field name.
+- `{_value_}` which is the field value.
+- `{_rule_}` which is the rule name.
+
+Which are provided internally.
 :::
+
+### Message Function
+
+Messages can be a function as well, giving you more flexibility over your messages. The function signature looks like this:
+
+```ts
+interface ValidationMessageGenerator {
+  (field: string, values?: Record<string, any>): string;
+}
+```
+
+The `field` is the field name, the `values` argument is an object containing the placeholder values used in string interpolation. Meaning it will contain `_value_`, `_field_` and `_rule_` values as well as any other params previously declared.
+
+You can use this feature to create dynamic messages for your rules which is helpful for [providing multiple reasons for failing a rule](./advanced-validation.md#dynamic-messages), or [localization](./localization.md).
 
 ---
 
