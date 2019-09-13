@@ -131,4 +131,8 @@ function localize(locale: string | RootI18nDictionary, dictionary?: PartialI18nD
   updateRules();
 }
 
-export { localize };
+function getDictionary(): Dictionary {
+  return DICTIONARY;
+}
+
+export { localize, getDictionary };
