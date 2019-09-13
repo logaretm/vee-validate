@@ -28,7 +28,7 @@ export interface ValidationRuleResult {
 export type ValidationRuleFunction = (
   value: any,
   params: any[] | Record<string, any>
-) => boolean | ValidationRuleResult | Promise<boolean | ValidationRuleResult>;
+) => boolean | string | ValidationRuleResult | Promise<boolean | string | ValidationRuleResult>;
 
 export interface RuleParamConfig {
   name: string;
