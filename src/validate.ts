@@ -86,8 +86,8 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
       params: field.rules[rule]
     });
 
-    if (!result.valid) {
-      errors.push(...result.errors);
+    if (!result.valid && result.error) {
+      errors.push(result.error);
       if (field.bails) {
         return {
           valid: false,
@@ -126,8 +126,8 @@ async function _shouldSkip(field: FieldContext, value: any) {
       isRequired = true;
     }
 
-    if (!result.valid) {
-      errors.push(...result.errors);
+    if (!result.valid && result.error) {
+      errors.push(result.error);
       // Exit early as the field is required and failed validation.
       if (field.bails) {
         return {
@@ -173,6 +173,20 @@ async function _test(field: FieldContext, value: any, rule: { name: string; para
   const params = _buildParams(rule.params, ruleSchema.params, field.crossTable);
   const normalizedValue = ruleSchema.castValue ? ruleSchema.castValue(value) : value;
   let result = await ruleSchema.validate(normalizedValue, params);
+  if (typeof result === 'string') {
+    const values = {
+      ...(params || {}),
+      _field_: field.name,
+      _value_: value,
+      _rule_: rule.name
+    };
+
+    return {
+      valid: false,
+      error: { rule: rule.name, msg: interpolate(result, values) }
+    };
+  }
+
   if (!isObject(result)) {
     result = { valid: result, data: {} };
   }
@@ -181,7 +195,7 @@ async function _test(field: FieldContext, value: any, rule: { name: string; para
     valid: result.valid,
     required: result.required,
     data: result.data || {},
-    errors: result.valid ? [] : [_generateFieldError(field, value, ruleSchema, rule.name, params, result.data)]
+    error: result.valid ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params, result.data)
   };
 }
 
