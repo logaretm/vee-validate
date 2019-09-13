@@ -88,7 +88,11 @@ extend('required', {
 
 ## Importing validation rules
 
-Implementing rules can be annoying, VeeValidate offers the most common validation rules. which you can import to your project:
+Implementing rules can be annoying, VeeValidate offers the most common validation rules. which you can import to your project.
+
+### ES6
+
+In ES6 if you are using a bundler you can `import` rules individually, you also get tree-shaking so you don't include all the rules in your output bundle.
 
 ```js
 import { extend } from 'vee-validate';
@@ -99,6 +103,21 @@ extend('required', required);
 
 // Add the email rule
 extend('email', email);
+```
+
+### Script Tag
+
+As of `v3.0.5` there is a `rules.umd` bundle that can be used via `script` tags for convenience. All rules will be available in the `VeeValidateRules` on the global object.
+
+```html
+<script src="https://unpkg.com/browse/vee-validate@3.x/dist/rules.umd.min.js"></script>
+<script src="https://unpkg.com/vee-validate@3.x/dist/vee-validate.min.js"></script>
+
+<script>
+  VeeValidate.extend('required', VeeValidateRules.required);
+
+  VeeValidate.extend('email', VeeValidateRules.email);
+</script>
 ```
 
 ### Importing all rules
