@@ -10,7 +10,11 @@ export const isTextInput = (vnode: VNode): boolean => {
     return true;
   }
 
-  return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'textarea', 'number'], attrs && attrs.type);
+  if (vnode.tag === 'textarea') {
+    return true;
+  }
+
+  return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'number'], attrs && attrs.type);
 };
 
 // export const isCheckboxOrRadioInput = (vnode: VNode): boolean => {
