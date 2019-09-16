@@ -305,7 +305,7 @@ export const isEmptyArray = (arr: any[]): boolean => {
 
 export const interpolate = (template: string, values: Record<string, any>): string => {
   return template.replace(/\{([^}]+)\}/g, (_, p): string => {
-    return values[p] || `{${p}}`;
+    return p in values ? values[p] : `{${p}}`;
   });
 };
 

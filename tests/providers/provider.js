@@ -327,7 +327,7 @@ test('validates on rule change: testing NaN', async () => {
   // flush the pending validation.
   await flushPromises();
 
-  expect(error.text()).toBe('The {field} field may not be greater than {length} characters');
+  expect(error.text()).toBe('The {field} field may not be greater than NaN characters');
 
   wrapper.vm.rules = {
     required: true,
@@ -335,7 +335,7 @@ test('validates on rule change: testing NaN', async () => {
   };
 
   await flushPromises();
-  expect(error.text()).toBe('The {field} field may not be greater than {length} characters');
+  expect(error.text()).toBe('The {field} field may not be greater than NaN characters');
 });
 
 test('validates components on input by default', async () => {
