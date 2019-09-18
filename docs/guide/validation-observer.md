@@ -279,6 +279,8 @@ Building upon the previous example, observers can be nested to create nested for
 </ValidationObserver>
 ```
 
+You can control the name of child observers by providing a `vid` prop to it which will make it easier to access them.
+
 ### Persisting Provider Errors
 
 Sometimes when building something like a multi-step form, you would need to use `v-if` on your providers to toggle the visibility of your steps. However, when the provider is hidden and shown again, it does not keep its state.
