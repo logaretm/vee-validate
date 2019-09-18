@@ -102,15 +102,23 @@ export function computeModeSetting(ctx: ProviderInstance) {
 
 // Creates the common handlers for a validatable context.
 export function createCommonHandlers(vm: ProviderInstance) {
-  const onInput = (e: any) => {
-    vm.syncValue(e); // track and keep the value updated.
-    vm.setFlags({ dirty: true, pristine: false });
-  };
+  if (!vm.$veeOnInput) {
+    vm.$veeOnInput = (e: any) => {
+      vm.syncValue(e); // track and keep the value updated.
+      vm.setFlags({ dirty: true, pristine: false });
+    };
+  }
+
+  const onInput = vm.$veeOnInput;
+
+  if (!vm.$veeOnBlur) {
+    vm.$veeOnBlur = () => {
+      vm.setFlags({ touched: true, untouched: false });
+    };
+  }
 
   // Blur event listener.
-  const onBlur = () => {
-    vm.setFlags({ touched: true, untouched: false });
-  };
+  const onBlur = vm.$veeOnBlur;
 
   let onValidate = vm.$veeHandler;
   const mode = computeModeSetting(vm);

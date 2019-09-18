@@ -21,6 +21,8 @@ type withProviderPrivates = VueConstructor<
     _veeWatchers: Record<string, Function>;
     $veeDebounce?: number;
     $veeHandler?: Function;
+    $veeOnInput?: Function;
+    $veeOnBlur?: Function;
     $vnode: VNodeWithVeeContext;
   }
 >;
