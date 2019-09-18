@@ -11,9 +11,7 @@
 
     <Sidebar :items="sidebarItems" @toggle-sidebar="toggleSidebar">
       <slot name="sidebar-top" slot="top">
-        <div id="codefund">
-          <!-- fallback content -->
-        </div>
+        <SidebarAd v-if="sidebarItems && sidebarItems.length" />
       </slot>
       <slot name="sidebar-bottom" slot="bottom" />
     </Sidebar>
@@ -32,11 +30,13 @@ import Home from '@parent-theme/components/Home.vue';
 import Navbar from '@parent-theme/components/Navbar.vue';
 import Page from '@parent-theme/components/Page.vue';
 import Sidebar from '@parent-theme/components/Sidebar.vue';
+import SidebarAd from '@theme/components/SidebarAd.vue';
 import { resolveSidebarItems } from '@parent-theme/util';
-import { loadAds } from '../../ads';
+
+let isLoaded = false;
 
 export default {
-  components: { Home, Page, Sidebar, Navbar },
+  components: { Home, Page, Sidebar, Navbar, SidebarAd },
 
   data() {
     return {
@@ -80,8 +80,6 @@ export default {
     this.$router.afterEach(() => {
       this.isSidebarOpen = false;
     });
-
-    loadAds();
   },
 
   methods: {
