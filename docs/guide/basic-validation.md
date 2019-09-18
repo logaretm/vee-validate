@@ -49,19 +49,39 @@ Rule functions can also accept params to configure their behavior.
 ```js
 import { extend } from 'vee-validate';
 
-extend('required', {
+extend('maxVal', {
   params: ['max'], // list of parameter names
   validate(value, { max }) {
-    return Number(value) > max;
+    return Number(value) <= max;
   }
 });
 ```
 
 declared parameters will be passed in an object in the second parameter to the `validate` function.
 
-## Customizing the error message
+## Error messages
 
-To provide a custom error message for that rule, we will pass an object instead of a function. This object will contain a `validate` method, as well as a `message` prop.
+### Returning messages directly <Badge text="3.0.6+" type="tip"/>
+
+You can return a string in your `validate` function and it will be used as the error message.
+
+```js
+import { extend } from 'vee-validate';
+
+extend('required', value => {
+  if (!!value) {
+    return true;
+  }
+
+  return 'This field is required';
+});
+```
+
+This is very handy for complex rules that may have multiple reasons to fail validation, it is also very concise and allows you to dynamically return messages as needed. [Check this advanced example](./advanced-validation.md#dynamic-messages) that takes advantage of this.
+
+### via extend Options
+
+Alternatively, you can provide a custom error message for that rule, we will pass an object instead of a function. This object will contain a `validate` method, as well as a `message` prop.
 
 ```js
 import { extend } from 'vee-validate';

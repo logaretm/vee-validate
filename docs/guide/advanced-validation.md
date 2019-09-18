@@ -21,35 +21,20 @@ Consider this dummy `profanity` rule where we have 2 states for the error messag
 ```js
 import { extend } from 'vee-validate';
 
-extend('profanity', {
-  validate: value => {
-    if (value === 'heck') {
-      return { valid: false, data: { reason: 'NICE_H_TRY' } };
-    }
-
-    if (value === 'frick') {
-      return { valid: false, data: { reason: 'NICE_F_TRY' } };
-    }
-
-    return true;
-  },
-  message: (field, values) => {
-    if (values.reason === 'NICE_H_TRY') {
-      return 'You cannot say any of the H words.';
-    }
-
-    if (values.reason === 'NICE_F_TRY') {
-      return 'You cannot say any of the F words.';
-    }
-
-    return 'You cannot say that.';
+extend('profanity', value => {
+  if (value === 'heck') {
+    return 'You cannot say any of the H words.';
   }
+
+  if (value === 'frick') {
+    return 'You cannot say any of the F words.';
+  }
+
+  return true;
 });
 ```
 
-The `data` property returned in the `validate` function result is an object that contains additional information that we want to pass to our message generator function. The contents of the `data` prop will be merged with the `values` passed to the message function, allowing you to craft specific error messages for specific reasons.
-
-You can find this example [live right here](https://codesandbox.io/embed/veevalidate-30-dynamic-messages-3k649).
+Here we take advantage of being able to return messages directly in our `validate` function, with this we are able to return multiple messages or **reasons** for failing a rule. You can find this example [live right here](https://codesandbox.io/embed/veevalidate-30-dynamic-messages-3k649).
 
 ## Cross-Field validation
 
