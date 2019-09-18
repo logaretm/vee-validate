@@ -2,21 +2,39 @@
 
 VeeValidate has built-in localization support for validation messages which is opt-in and is not configured by default.
 
+## i18n
+
 :::warning
 In `2.x`, vee-validate used to ship with localization enabled and pre-configured, this has been changed in `3.x` to allow for a more flexible i18n system.
 :::
-
-## i18n
-
-vee-validate has over 40+ locales available for the shipped validations, but they are not install by default as they have a large overhead so you need to import the locales you need.
 
 ### Using the default i18n
 
 vee-validate ships with a tiny i18n dictionary for basic i18n needs.
 
+#### Adding messages
+
+The default language for vee-validate is `en` and you can add messages like this:
+
+```js
+import { localize } from 'vee-validate';
+
+localize({
+  en: {
+    messages: {
+      required: 'this field is required',
+      min: 'this field must have no less than {length} characters',
+      max: (field, { length }) => `The ${field} must have no more than ${length} characters`
+    }
+  }
+});
+```
+
+Where messages is an object whose keys are the rule name and the value is a string or a template string or a message generator function. Which is shown in the sample.
+
 #### Installing locales
 
-The exposed `localize` helper allows you to add new locales to your validation messages:
+vee-validate has over 40+ locales available for the shipped validations, but they are not installed by default as they have a large overhead so you need to import the locales you need. The exposed `localize` helper allows you to add new locales to your validation messages:
 
 ```js
 import { localize } from 'vee-validate';
@@ -71,6 +89,62 @@ import ar from 'vee-validate/dist/locale/ar.json';
 // Install and Activate the Arabic locale.
 localize('ar', ar);
 ```
+
+#### Localized field names
+
+Instead of having to provide a field name for each locale in your template, you can use it as an id instead and have vee-validate handle the message generation for you. The field id will be swapped for the field name provided in the dictionary.
+
+To do that, add `names` property to your locale's object:
+
+```js
+import { localize } from 'vee-validate';
+
+localize({
+  en: {
+    names: {
+      email: "E-mail Address",
+      password: "Password"
+    }
+  },
+  ar: {
+    names: {
+      email: "البريد الاليكتروني",
+      password: "كلمة السر"
+    }
+  }
+});
+```
+
+This will allow you to use `email` and `password` names for your inputs and vee-validate will swap it with the localized one.
+
+#### Custom messages per field
+
+You can provide a custom message for each rule for a specific field by adding a `fields` property to your locale's object:
+
+```js
+import { localize } from 'vee-validate';
+
+localize({
+  en: {
+    messages: {
+      // generic rule messages...
+    },
+    fields: {
+      password: {
+        required: 'Password cannot be empty!',
+        max: 'Are you really going to remember that?',
+        min: 'Too few, you want to get doxed?'
+      }
+    }
+  }
+});
+```
+
+:::tip Localize example
+
+You can find an example showcasing the full capabilities of the localization API [here](../examples/i18n.md#localize-api).
+
+:::
 
 #### Lazily importing locales
 
