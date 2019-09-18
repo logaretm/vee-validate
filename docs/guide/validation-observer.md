@@ -318,6 +318,7 @@ Below is the reference of the ValidationObserver public API.
 | tag  | `string`  | `span`        | The default tag to [render](#rendering).                                                               |
 | slim | `boolean` | `false`       | If true, it will make the observer [renderless](#renderless), only rendering the HTML inside its slot. |
 | disabled | `boolean` | `false`       | If true, the observer will be ignored when `validate` is called by a parent observer. |
+| vid | `string` | random string | if provided it will be used as the observer's id when being registered as a child of a parent observer. |
 
 ### Methods
 
