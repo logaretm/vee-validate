@@ -89,21 +89,30 @@ export function findModelConfig(vnode: VNode): { prop: string; event: string } |
 
 // Adds a listener to vnode listener object.
 export function mergeVNodeListeners(obj: any, eventName: string, handler: Function): void {
-  // Has a single listener.
-  if (isCallable(obj[eventName])) {
-    const prevHandler = obj[eventName];
-    obj[eventName] = [prevHandler];
-  }
-
-  // has other listeners.
-  if (Array.isArray(obj[eventName])) {
-    obj[eventName].push(handler);
-    return;
-  }
-
   // no listener at all.
   if (isNullOrUndefined(obj[eventName])) {
     obj[eventName] = [handler];
+    return;
+  }
+
+  // Is an invoker.
+  if (isCallable(obj[eventName]) && obj[eventName].fns) {
+    const invoker = obj[eventName];
+    invoker.fns = Array.isArray(invoker.fns) ? invoker.fns : [invoker.fns];
+    if (!includes(invoker.fns, handler)) {
+      invoker.fns.push(handler);
+    }
+
+    return;
+  }
+
+  if (isCallable(obj[eventName])) {
+    const prev = obj[eventName];
+    obj[eventName] = [prev];
+  }
+
+  if (Array.isArray(obj[eventName]) && !includes(obj[eventName], handler)) {
+    obj[eventName].push(handler);
   }
 }
 
