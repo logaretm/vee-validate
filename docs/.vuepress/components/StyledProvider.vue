@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: 'RuleDemo',
+  name: 'StyledProvider',
   data: () => ({
     value: ''
   })
