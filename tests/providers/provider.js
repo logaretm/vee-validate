@@ -4,6 +4,7 @@ import flushPromises from 'flush-promises';
 import { ValidationProvider, ValidationObserver, extend, withValidation, configure } from '@/index.full';
 import InputWithoutValidation from './components/Input';
 import SelectWithoutValidation from './components/Select';
+import ModelComp from './../helpers/ModelComp';
 
 const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
@@ -779,6 +780,55 @@ test('validates manually using the validate event handler', async () => {
   await flushPromises();
 
   expect(error.text()).toBeFalsy();
+});
+
+test('validates manually with a initial value using the validate event handler on native comp', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        myValue: 'initial value'
+      }),
+      template: `
+        <ValidationObserver ref="obs">
+          <ValidationProvider rules="required" v-slot="{ validate, errors }">
+            <input type="text" :value="myValue" @input="validate">
+            <p id="error">{{ errors[0] }}</p>
+          </ValidationProvider>
+        </ValidationObserver> 
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  await wrapper.vm.$refs.obs.validate();
+
+  const error = wrapper.find('#error');
+  expect(error.text()).toBe('');
+});
+
+test('validates manually with a initial value using the validate event handler on vue comp', async () => {
+  Vue.component('ModelComp', ModelComp);
+  const wrapper = mount(
+    {
+      data: () => ({
+        myValue: 'initial value'
+      }),
+      template: `
+        <ValidationObserver ref="obs">
+          <ValidationProvider rules="required" v-slot="{ validate, errors }">
+            <ModelComp :value="myValue" @input="validate" />
+            <p id="error">{{ errors[0] }}</p>
+          </ValidationProvider>
+        </ValidationObserver> 
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  await wrapper.vm.$refs.obs.validate();
+
+  const error = wrapper.find('#error');
+  expect(error.text()).toBe('');
 });
 
 test('resets validation state using reset method in slot scope data', async () => {

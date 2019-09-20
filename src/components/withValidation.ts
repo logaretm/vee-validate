@@ -1,6 +1,13 @@
 import { ValidationProvider } from './Provider';
 import { identity } from '../utils';
-import { findModel, findModelConfig, mergeVNodeListeners, getInputEventName, normalizeSlots } from '../utils/vnode';
+import {
+  findModel,
+  findModelConfig,
+  mergeVNodeListeners,
+  getInputEventName,
+  normalizeSlots,
+  findValue
+} from '../utils/vnode';
 import { CreateElement, Component } from 'vue';
 import { createValidationCtx, onRenderUpdate, createCommonHandlers, ValidationContext } from './common';
 
@@ -29,7 +36,8 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
 
     const model = findModel(this.$vnode);
     this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
-    onRenderUpdate(this, model);
+    const value = findValue(this.$vnode);
+    onRenderUpdate(this, value);
 
     const { onInput, onBlur, onValidate } = createCommonHandlers(this);
 
