@@ -1021,7 +1021,7 @@ test('array param collecting in the last parameter', async () => {
   expect(wrapper.find('#error').text()).toBe('');
 });
 
-test('should throw if rule does not exist', () => {
+test('should throw if rule does not exist', async () => {
   const wrapper = mount(
     {
       data: () => ({ val: '123' }),
@@ -1033,30 +1033,7 @@ test('should throw if rule does not exist', () => {
     },
     { localVue: Vue, sync: false }
   );
-  expect(wrapper.vm.$refs.pro.validate()).rejects.toThrow();
-});
-
-test('should throw if required rule does not return an object', () => {
-  extend('faultyRequired', {
-    computesRequired: true,
-    validate() {
-      return false;
-    }
-  });
-
-  const wrapper = mount(
-    {
-      data: () => ({ val: '' }),
-      template: `
-        <ValidationProvider rules="faultyRequired" v-slot="ctx" ref="pro">
-          <input v-model="val" type="text">
-        </ValidationProvider>
-      `
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  expect(wrapper.vm.$refs.pro.validate()).rejects.toThrow();
+  await expect(wrapper.vm.$refs.pro.validate()).rejects.toThrow();
 });
 
 test('returns custom error messages passed in the customMessages prop', async () => {
