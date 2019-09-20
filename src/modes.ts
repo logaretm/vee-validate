@@ -46,7 +46,7 @@ export const modes: { [k: string]: InteractionModeFactory } = {
   lazy
 };
 
-export const setInteractionMode = (mode: string, implementation: InteractionModeFactory) => {
+export const setInteractionMode = (mode: string, implementation?: InteractionModeFactory) => {
   setConfig({ mode });
   if (!implementation) {
     return;
