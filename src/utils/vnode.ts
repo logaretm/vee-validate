@@ -44,6 +44,24 @@ export function findModel(vnode: VNode): VNodeDirective | undefined {
   return find(vnode.data.directives, d => d.name === 'model');
 }
 
+export function findValue(vnode: VNode): any | undefined {
+  const model = findModel(vnode);
+  if (model) {
+    return model.value;
+  }
+
+  if (vnode.componentOptions && vnode.componentOptions.propsData && 'value' in vnode.componentOptions.propsData) {
+    const propsDataWithValue = vnode.componentOptions.propsData as any;
+    return propsDataWithValue.value;
+  }
+
+  if (vnode.data && vnode.data.domProps && 'value' in vnode.data.domProps) {
+    return vnode.data.domProps.value;
+  }
+
+  return undefined;
+}
+
 function extractChildren(vnode: VNode | VNode[]): VNode[] {
   if (Array.isArray(vnode)) {
     return vnode;
@@ -62,7 +80,7 @@ function extractChildren(vnode: VNode | VNode[]): VNode[] {
 }
 
 export function extractVNodes(vnode: VNode | VNode[]): VNode[] {
-  if (!Array.isArray(vnode) && findModel(vnode)) {
+  if (!Array.isArray(vnode) && findValue(vnode) !== undefined) {
     return [vnode];
   }
 

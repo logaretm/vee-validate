@@ -2,19 +2,19 @@ import { VNodeDirective, VNode } from 'vue';
 import { isCallable, debounce, identity } from '../utils';
 import { modes, InteractionModeFactory } from '../modes';
 import { ValidationResult, ValidationFlags, KnownKeys, ProviderInstance } from '../types';
-import { findModel, getInputEventName, addVNodeListener } from '../utils/vnode';
+import { findModel, getInputEventName, addVNodeListener, findValue } from '../utils/vnode';
 
 /**
  * Determines if a provider needs to run validation.
  */
-function shouldValidate(ctx: ProviderInstance, model: VNodeDirective) {
+function shouldValidate(ctx: ProviderInstance, value: string) {
   // when an immediate/initial validation is needed and wasn't done before.
   if (!ctx._ignoreImmediate && ctx.immediate) {
     return true;
   }
 
   // when the value changes for whatever reason.
-  if (ctx.value !== model.value && ctx.normalizedEvents.length) {
+  if (ctx.value !== value && ctx.normalizedEvents.length) {
     return true;
   }
 
@@ -24,7 +24,7 @@ function shouldValidate(ctx: ProviderInstance, model: VNodeDirective) {
   }
 
   // when the initial value is undefined and the field wasn't rendered yet.
-  if (!ctx.initialized && model.value === undefined) {
+  if (!ctx.initialized && value === undefined) {
     return true;
   }
 
@@ -69,18 +69,18 @@ export function createValidationCtx(ctx: ProviderInstance): ValidationContext {
   };
 }
 
-export function onRenderUpdate(vm: ProviderInstance, model: VNodeDirective | undefined) {
-  if (!model) {
+export function onRenderUpdate(vm: ProviderInstance, value: any | undefined) {
+  if (value === undefined) {
     return;
   }
 
   if (!vm.initialized) {
-    vm.initialValue = model.value;
+    vm.initialValue = value;
   }
 
-  const validateNow = shouldValidate(vm, model);
+  const validateNow = shouldValidate(vm, value);
   vm._needsValidation = false;
-  vm.value = model.value;
+  vm.value = value;
   vm._ignoreImmediate = true;
 
   if (!validateNow) {
@@ -150,11 +150,10 @@ export function createCommonHandlers(vm: ProviderInstance) {
 
 // Adds all plugin listeners to the vnode.
 export function addListeners(vm: ProviderInstance, node: VNode) {
-  const model = findModel(node);
+  const value = findValue(node);
   // cache the input eventName.
-  vm._inputEventName = vm._inputEventName || getInputEventName(node, model);
-
-  onRenderUpdate(vm, model);
+  vm._inputEventName = vm._inputEventName || getInputEventName(node, findModel(node));
+  onRenderUpdate(vm, value);
 
   const { onInput, onBlur, onValidate } = createCommonHandlers(vm);
   addVNodeListener(node, vm._inputEventName, onInput);

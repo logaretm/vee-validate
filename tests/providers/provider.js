@@ -4,6 +4,7 @@ import flushPromises from 'flush-promises';
 import { ValidationProvider, ValidationObserver, extend, withValidation, configure } from '@/index.full';
 import InputWithoutValidation from './components/Input';
 import SelectWithoutValidation from './components/Select';
+import ModelComp from './../helpers/ModelComp';
 
 const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
@@ -781,6 +782,55 @@ test('validates manually using the validate event handler', async () => {
   expect(error.text()).toBeFalsy();
 });
 
+test('validates manually with a initial value using the validate event handler on native comp', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        myValue: 'initial value'
+      }),
+      template: `
+        <ValidationObserver ref="obs">
+          <ValidationProvider rules="required" v-slot="{ validate, errors }">
+            <input type="text" :value="myValue" @input="validate">
+            <p id="error">{{ errors[0] }}</p>
+          </ValidationProvider>
+        </ValidationObserver> 
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  await wrapper.vm.$refs.obs.validate();
+
+  const error = wrapper.find('#error');
+  expect(error.text()).toBe('');
+});
+
+test('validates manually with a initial value using the validate event handler on vue comp', async () => {
+  Vue.component('ModelComp', ModelComp);
+  const wrapper = mount(
+    {
+      data: () => ({
+        myValue: 'initial value'
+      }),
+      template: `
+        <ValidationObserver ref="obs">
+          <ValidationProvider rules="required" v-slot="{ validate, errors }">
+            <ModelComp :value="myValue" @input="validate" />
+            <p id="error">{{ errors[0] }}</p>
+          </ValidationProvider>
+        </ValidationObserver> 
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  await wrapper.vm.$refs.obs.validate();
+
+  const error = wrapper.find('#error');
+  expect(error.text()).toBe('');
+});
+
 test('resets validation state using reset method in slot scope data', async () => {
   const wrapper = mount(
     {
@@ -1021,7 +1071,7 @@ test('array param collecting in the last parameter', async () => {
   expect(wrapper.find('#error').text()).toBe('');
 });
 
-test('should throw if rule does not exist', () => {
+test('should throw if rule does not exist', async () => {
   const wrapper = mount(
     {
       data: () => ({ val: '123' }),
@@ -1033,30 +1083,7 @@ test('should throw if rule does not exist', () => {
     },
     { localVue: Vue, sync: false }
   );
-  expect(wrapper.vm.$refs.pro.validate()).rejects.toThrow();
-});
-
-test('should throw if required rule does not return an object', () => {
-  extend('faultyRequired', {
-    computesRequired: true,
-    validate() {
-      return false;
-    }
-  });
-
-  const wrapper = mount(
-    {
-      data: () => ({ val: '' }),
-      template: `
-        <ValidationProvider rules="faultyRequired" v-slot="ctx" ref="pro">
-          <input v-model="val" type="text">
-        </ValidationProvider>
-      `
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  expect(wrapper.vm.$refs.pro.validate()).rejects.toThrow();
+  await expect(wrapper.vm.$refs.pro.validate()).rejects.toThrow();
 });
 
 test('returns custom error messages passed in the customMessages prop', async () => {
