@@ -202,6 +202,7 @@ You can use any names for your placeholders, except for:
 - `{_field_}` which is the field name.
 - `{_value_}` which is the field value.
 - `{_rule_}` which is the rule name.
+- `{_target_}` which is any related target field name.
 
 Which are provided internally.
 :::
@@ -216,7 +217,7 @@ interface ValidationMessageGenerator {
 }
 ```
 
-The `field` is the field name, the `values` argument is an object containing the placeholder values used in string interpolation. Meaning it will contain `_value_`, `_field_` and `_rule_` values as well as any other params previously declared.
+The `field` is the field name, the `values` argument is an object containing the placeholder values used in string interpolation. Meaning it will contain `_value_`, `_field_`, `_rule_` and `_target_` values as well as any other params previously declared.
 
 You can use this feature to create dynamic messages for your rules which is helpful for [providing multiple reasons for failing a rule](./advanced-validation.md#dynamic-messages), or [localization](./localization.md).
 
