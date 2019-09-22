@@ -215,7 +215,8 @@ function _generateFieldError(
     ...(data || {}),
     _field_: field.name,
     _value_: value,
-    _rule_: ruleName
+    _rule_: ruleName,
+    _target_: _getTargetName(field, ruleSchema, ruleName)
   };
 
   if (
@@ -239,6 +240,19 @@ function _generateFieldError(
     msg: _normalizeMessage(getConfig().defaultMessage, field.name, values),
     rule: ruleName
   };
+}
+
+function _getTargetName(field: FieldContext, ruleSchema: ValidationRuleSchema, ruleName: string): string {
+  if (ruleSchema.params) {
+    for (let index = 0; index < ruleSchema.params.length; index++) {
+      const param: RuleParamConfig = ruleSchema.params[index] as RuleParamConfig;
+      if (param.isTarget) {
+        const targetName = field.rules[ruleName][index];
+        return field.names[targetName] || targetName;
+      }
+    }
+  }
+  return '';
 }
 
 function _normalizeMessage(template: ValidationMessageTemplate, field: string, values: Record<string, any>) {
