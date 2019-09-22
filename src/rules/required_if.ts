@@ -1,8 +1,18 @@
-import { isEmptyArray } from '../utils';
+import { isEmptyArray, includes } from '../utils';
 import { RuleParamSchema } from '../types';
 
+const testEmpty = (value: any) =>
+  isEmptyArray(value) || includes([false, null, undefined], value) || !String(value).trim().length;
+
 const validate = (value: any, { target, values }: Record<string, any>) => {
-  const required = values.includes(String(target).trim());
+  let required;
+
+  if (values && values.length) {
+    // eslint-ignore-next-line
+    required = values.some((val: any) => val == String(target).trim());
+  } else {
+    required = !testEmpty(target);
+  }
 
   if (!required) {
     return {
@@ -11,12 +21,8 @@ const validate = (value: any, { target, values }: Record<string, any>) => {
     };
   }
 
-  let invalid = isEmptyArray(value) || [false, null, undefined].includes(value);
-
-  invalid = invalid || !String(value).trim().length;
-
   return {
-    valid: !invalid,
+    valid: !testEmpty(value),
     required
   };
 };

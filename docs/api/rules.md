@@ -477,10 +477,10 @@ The field under validation must have a non-empty value **only if** the target fi
 </ValidationProvider>
 ```
 
-| Param Name  | Required? | Default | Description                                   |
-| ----------- | --------- | ------- | --------------------------------------------- |
-| `target`    | **yes**   |         | The `vid` of the target field.                |
-| `...values` | **yes**   |         | The values that will make the field required. |
+| Param Name  | Required? | Default | Description                                                                                                                             |
+| ----------- | --------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `target`    | **yes**   |         | The `vid` of the target field.                                                                                                          |
+| `...values` | **no**    |         | The values that will make the field required. If empty or not provided it will make the field required if the target field has a value. |
 
 ## size
 
