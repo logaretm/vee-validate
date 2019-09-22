@@ -216,7 +216,7 @@ function _generateFieldError(
     _field_: field.name,
     _value_: value,
     _rule_: ruleName,
-    _target_: _getTargetName(field, ruleSchema, ruleName)
+    ..._getTargetName(field, ruleSchema, ruleName)
   };
 
   if (
@@ -242,17 +242,29 @@ function _generateFieldError(
   };
 }
 
-function _getTargetName(field: FieldContext, ruleSchema: ValidationRuleSchema, ruleName: string): string {
+function _getTargetName(
+  field: FieldContext,
+  ruleSchema: ValidationRuleSchema,
+  ruleName: string
+): Record<string, string> {
   if (ruleSchema.params) {
+    const hasMultiple = ruleSchema.params.filter(param => (param as RuleParamConfig).isTarget).length > 1;
+    const names: Record<string, string> = {};
     for (let index = 0; index < ruleSchema.params.length; index++) {
       const param: RuleParamConfig = ruleSchema.params[index] as RuleParamConfig;
       if (param.isTarget) {
-        const targetName = field.rules[ruleName][index];
-        return field.names[targetName] || targetName;
+        const key = field.rules[ruleName][index];
+        const name = field.names[key] || key;
+        if (hasMultiple) {
+          names[`_${param.name}Target_`] = name;
+        } else {
+          names._target_ = name;
+        }
       }
     }
+    return names;
   }
-  return '';
+  return {};
 }
 
 function _normalizeMessage(template: ValidationMessageTemplate, field: string, values: Record<string, any>) {
