@@ -254,6 +254,11 @@ export default {
 </script>
 ```
 
+:::tip $refs
+Note that `$refs` are not available until the first render, so make sure to add proper checks for that.
+:::
+
+
 If you only plan to trigger manual validation using the UI, you can use the `validate` handler on the v-slot data to trigger validation without having to use `refs`.
 
 ```vue{3,6}

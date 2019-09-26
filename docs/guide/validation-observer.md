@@ -22,19 +22,19 @@ Here is a small example, with our refactored components:
 
 The scoped slot is passed an object containing a flags object representing the merged state of all providers registered under the observer. It contains the following properties:
 
-| Name      |                          Type                           | Description                                                                                                                                                                          |
-| :-------- | :-----------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dirty     |                        `boolean`                        | True if at least one field is dirty.                                                                                                                                                 |
-| pristine  |                        `boolean`                        | True if all fields are pristine (not dirty).                                                                                                                                         |
-| valid     |                        `boolean`                        | True if all fields are valid.                                                                                                                                                        |
-| invalid   |                        `boolean`                        | True if at least one field is invalid.                                                                                                                                               |
-| pending   |                        `boolean`                        | True if at least one field's validation is in progress.                                                                                                                              |
-| touched   |                        `boolean`                        | True if at least one field has been touched (blurred).                                                                                                                               |
-| untouched |                        `boolean`                        | True if all fields haven't been touched (blurred).                                                                                                                                   |
-| errors    |               `{ [x: string]: string[] }`               | An object containing reference to each field errors, each field is keyed by its `vid` prop.                                                                                          |
+| Name      |                          Type                           | Description                                                                                                                                                               |
+| :-------- | :-----------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| dirty     |                        `boolean`                        | True if at least one field is dirty.                                                                                                                                      |
+| pristine  |                        `boolean`                        | True if all fields are pristine (not dirty).                                                                                                                              |
+| valid     |                        `boolean`                        | True if all fields are valid.                                                                                                                                             |
+| invalid   |                        `boolean`                        | True if at least one field is invalid.                                                                                                                                    |
+| pending   |                        `boolean`                        | True if at least one field's validation is in progress.                                                                                                                   |
+| touched   |                        `boolean`                        | True if at least one field has been touched (blurred).                                                                                                                    |
+| untouched |                        `boolean`                        | True if all fields haven't been touched (blurred).                                                                                                                        |
+| errors    |               `{ [x: string]: string[] }`               | An object containing reference to each field errors, each field is keyed by its `vid` prop.                                                                               |
 | validate  | `({ silent: boolean }) => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after validation. Mutates child providers state unless `silent` is true. |
-| passes | `(cb: Function) => Promise<void>` | Calls validation like `validate` and mutates provider's state, accepts a callback to be run only if the validation is successful |
-| reset     |                      `() => void`                       | A method that resets validation state for all providers.                                                                                                                             |
+| passes    |            `(cb: Function) => Promise<void>`            | Calls validation like `validate` and mutates provider's state, accepts a callback to be run only if the validation is successful                                          |
+| reset     |                      `() => void`                       | A method that resets validation state for all providers.                                                                                                                  |
 
 ## Rendering
 
@@ -101,7 +101,7 @@ Validating before submit is very easy way, using the [public methods](#methods) 
 <script>
 export default {
   methods: {
-    async submit () {
+    async submit() {
       const isValid = await this.$refs.observer.validate();
       if (!isValid) {
         // ABORT!!
@@ -113,6 +113,10 @@ export default {
 };
 </script>
 ```
+
+:::tip \$refs
+Note that `$refs` are not available until the first render, so make sure to add proper checks for that.
+:::
 
 You can trigger validation from the template using `passes` method which is convenient for running a handler if the form is valid:
 
@@ -190,12 +194,7 @@ Like the `validate` method, we could also reset our form after submitting the va
 
 ```vue{3,34,35,36}
 <template>
-  <ValidationObserver
-    ref="observer"
-    tag="form"
-    @submit.prevent="submit()"
-    v-slot="{ invalid }"
-  >
+  <ValidationObserver ref="observer" tag="form" @submit.prevent="submit()" v-slot="{ invalid }">
     <TextFieldWithValidation rules="required" v-model="first" />
 
     <TextFieldWithValidation rules="required" v-model="second" />
@@ -315,12 +314,12 @@ Below is the reference of the ValidationObserver public API.
 
 ### Props
 
-| Prop | Type      | Default Value | Description                                                                                            |
-| ---- | --------- | ------------- | ------------------------------------------------------------------------------------------------------ |
-| tag  | `string`  | `span`        | The default tag to [render](#rendering).                                                               |
-| slim | `boolean` | `false`       | If true, it will make the observer [renderless](#renderless), only rendering the HTML inside its slot. |
-| disabled | `boolean` | `false`       | If true, the observer will be ignored when `validate` is called by a parent observer. |
-| vid | `string` | random string | if provided it will be used as the observer's id when being registered as a child of a parent observer. |
+| Prop     | Type      | Default Value | Description                                                                                             |
+| -------- | --------- | ------------- | ------------------------------------------------------------------------------------------------------- |
+| tag      | `string`  | `span`        | The default tag to [render](#rendering).                                                                |
+| slim     | `boolean` | `false`       | If true, it will make the observer [renderless](#renderless), only rendering the HTML inside its slot.  |
+| disabled | `boolean` | `false`       | If true, the observer will be ignored when `validate` is called by a parent observer.                   |
+| vid      | `string`  | random string | if provided it will be used as the observer's id when being registered as a child of a parent observer. |
 
 ### Methods
 
