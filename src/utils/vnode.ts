@@ -50,9 +50,11 @@ export function findValue(vnode: VNode): any | undefined {
     return model.value;
   }
 
-  if (vnode.componentOptions && vnode.componentOptions.propsData && 'value' in vnode.componentOptions.propsData) {
+  const config = findModelConfig(vnode);
+  const prop = (config && config.prop) || 'value';
+  if (vnode.componentOptions && vnode.componentOptions.propsData && prop in vnode.componentOptions.propsData) {
     const propsDataWithValue = vnode.componentOptions.propsData as any;
-    return propsDataWithValue.value;
+    return propsDataWithValue[prop];
   }
 
   if (vnode.data && vnode.data.domProps && 'value' in vnode.data.domProps) {
