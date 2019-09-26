@@ -37,7 +37,7 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
     const model = findModel(this.$vnode);
     this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
     const value = findValue(this.$vnode);
-    onRenderUpdate(this, value);
+    onRenderUpdate(this, value && value.value);
 
     const { onInput, onBlur, onValidate } = createCommonHandlers(this);
 

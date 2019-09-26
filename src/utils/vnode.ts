@@ -44,19 +44,21 @@ export function findModel(vnode: VNode): VNodeDirective | undefined {
   return find(vnode.data.directives, d => d.name === 'model');
 }
 
-export function findValue(vnode: VNode): any | undefined {
+export function findValue(vnode: VNode): { value: any } | undefined {
   const model = findModel(vnode);
   if (model) {
-    return model.value;
+    return { value: model.value };
   }
 
-  if (vnode.componentOptions && vnode.componentOptions.propsData && 'value' in vnode.componentOptions.propsData) {
+  const config = findModelConfig(vnode);
+  const prop = (config && config.prop) || 'value';
+  if (vnode.componentOptions && vnode.componentOptions.propsData && prop in vnode.componentOptions.propsData) {
     const propsDataWithValue = vnode.componentOptions.propsData as any;
-    return propsDataWithValue.value;
+    return { value: propsDataWithValue[prop] };
   }
 
   if (vnode.data && vnode.data.domProps && 'value' in vnode.data.domProps) {
-    return vnode.data.domProps.value;
+    return { value: vnode.data.domProps.value };
   }
 
   return undefined;

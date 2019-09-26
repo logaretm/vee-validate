@@ -1,4 +1,4 @@
-import { VNodeDirective, VNode } from 'vue';
+import { VNode } from 'vue';
 import { isCallable, debounce, identity } from '../utils';
 import { modes, InteractionModeFactory } from '../modes';
 import { ValidationResult, ValidationFlags, KnownKeys, ProviderInstance } from '../types';
@@ -153,7 +153,7 @@ export function addListeners(vm: ProviderInstance, node: VNode) {
   const value = findValue(node);
   // cache the input eventName.
   vm._inputEventName = vm._inputEventName || getInputEventName(node, findModel(node));
-  onRenderUpdate(vm, value);
+  onRenderUpdate(vm, value && value.value);
 
   const { onInput, onBlur, onValidate } = createCommonHandlers(vm);
   addVNodeListener(node, vm._inputEventName, onInput);
