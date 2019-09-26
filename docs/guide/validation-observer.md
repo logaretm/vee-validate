@@ -152,7 +152,7 @@ export default {
 
 While you can add errors manually to `ValidationProvider` with the `setErrors` method, it can be annoying to do so for multiple fields at once.
 
-The `ValidationObserver` exposes a `setErrors` method that can set errors for its children providers.
+The `ValidationObserver` exposes a `setErrors` method that can set errors for its children providers and observers.
 
 ```vue
 <template>

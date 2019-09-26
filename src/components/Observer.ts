@@ -248,6 +248,10 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
 
         provider.setErrors(errors[key] || []);
       });
+
+      this.observers.forEach((observer: any) => {
+        observer.setErrors(errors);
+      });
     }
   }
 });

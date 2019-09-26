@@ -490,3 +490,51 @@ test('Sets errors for all providers', async () => {
   expect(wrapper.find('#error1').text()).toBe('wrong');
   expect(wrapper.find('#error2').text()).toBe('whoops');
 });
+
+test('Sets errors for nested observer providers', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        field1: '',
+        field2: ''
+      }),
+      template: `
+    <div>
+      <ValidationObserver ref="observer">
+        <ValidationObserver>
+          <ValidationProvider
+            vid="field1"
+            v-slot="{ errors }"
+          >
+            <input type="text" v-model="field1">
+            <span id="error1">{{ errors[0] }}</span>
+          </ValidationProvider>
+
+          <ValidationProvider
+            name="field2"
+            v-slot="{ errors }"
+          >
+            <input type="text" v-model="field2">
+            <span id="error2">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </ValidationObserver>
+      </ValidationObserver>
+    </div>
+    `
+    },
+    { localVue: Vue }
+  );
+
+  await flushPromises();
+  expect(wrapper.find('#error1').text()).toBe('');
+  expect(wrapper.find('#error2').text()).toBe('');
+
+  wrapper.vm.$refs.observer.setErrors({
+    field1: ['wrong'],
+    field2: ['whoops']
+  });
+
+  await flushPromises();
+  expect(wrapper.find('#error1').text()).toBe('wrong');
+  expect(wrapper.find('#error2').text()).toBe('whoops');
+});
