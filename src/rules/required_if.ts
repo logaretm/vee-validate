@@ -8,7 +8,11 @@ const validate = (value: any, { target, values }: Record<string, any>) => {
   let required;
 
   if (values && values.length) {
-    // eslint-ignore-next-line
+    if (!Array.isArray(values) && typeof values === 'string') {
+      values = [values];
+    }
+
+    // eslint-disable-next-line
     required = values.some((val: any) => val == String(target).trim());
   } else {
     required = !testEmpty(target);
