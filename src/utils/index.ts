@@ -183,6 +183,10 @@ export const normalizeRules = (rules: any) => {
 
   return rules.split('|').reduce((prev, rule) => {
     const parsedRule = parseRule(rule);
+    if (!parsedRule.name) {
+      return prev;
+    }
+
     prev[parsedRule.name] = parsedRule.params;
 
     return prev;

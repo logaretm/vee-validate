@@ -1,6 +1,6 @@
 import { validate } from '@/validate';
 import { extend } from '@/extend';
-import { confirmed } from '@/rules';
+import { confirmed, numeric } from '@/rules';
 
 test('returns custom error messages passed in ValidationOptions', async () => {
   extend('truthy', {
@@ -76,4 +76,13 @@ describe('target field placeholder', () => {
     const result = await validate(values.foo, rules, options);
     expect(result.errors[0]).toEqual('Foo must be the sum of Bar and Baz');
   });
+});
+
+test('allows empty rules for the string format', async () => {
+  extend('numeric', numeric);
+  let result = await validate(100, '|numeric');
+  expect(result.valid).toBe(true);
+
+  result = await validate(100, '||||numeric');
+  expect(result.valid).toBe(true);
 });
