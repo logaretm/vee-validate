@@ -20,7 +20,8 @@
     "build:main": "node scripts/main.js",
     "ts:defs": "./scripts/definitions.sh",
     "build": "npm run build:main && npm run ts:defs && npm run build:locale",
-    "cover": "jest --coverage"
+    "cover": "jest --coverage",
+    "prepublishOnly": "npm run build && npm run ts:defs"
   },
   "keywords": [
     "VueJS",
