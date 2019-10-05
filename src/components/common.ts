@@ -70,10 +70,6 @@ export function createValidationCtx(ctx: ProviderInstance): ValidationContext {
 }
 
 export function onRenderUpdate(vm: ProviderInstance, value: any | undefined) {
-  if (value === undefined) {
-    return;
-  }
-
   if (!vm.initialized) {
     vm.initialValue = value;
   }
