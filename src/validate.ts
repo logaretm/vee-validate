@@ -295,7 +295,7 @@ function _buildParams(
 
   let definedRules: RuleParamConfig[];
   // collect the params schema.
-  if (!defined || defined.length < provided.length) {
+  if (!defined || (defined.length < provided.length && Array.isArray(provided))) {
     let lastDefinedParam: RuleParamConfig;
     // collect any additional parameters in the last item.
     definedRules = provided.map((_: any, idx: number) => {
