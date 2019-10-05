@@ -168,3 +168,32 @@ test('can define custom field names', async () => {
 
   expect(error.text()).toContain('The Name field is required');
 });
+
+test('regenerates error messages when locale changes', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <div>
+          <ValidationProvider :immediate="true" rules="required" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const error = wrapper.find('#error');
+
+  // flush the pending validation.
+  await flushPromises();
+  expect(error.text()).toContain('The {field} field is required');
+  localize('ar');
+
+  await flushPromises();
+  expect(error.text()).toContain('هذا الحقل مطلوب');
+});
