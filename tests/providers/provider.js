@@ -794,7 +794,7 @@ test('validates manually with a initial value using the validate event handler o
             <input type="text" :value="myValue" @input="validate">
             <p id="error">{{ errors[0] }}</p>
           </ValidationProvider>
-        </ValidationObserver> 
+        </ValidationObserver>
       `
     },
     { localVue: Vue, sync: false }
@@ -819,7 +819,7 @@ test('validates manually with a initial value using the validate event handler o
             <ModelComp :value="myValue" @input="validate" />
             <p id="error">{{ errors[0] }}</p>
           </ValidationProvider>
-        </ValidationObserver> 
+        </ValidationObserver>
       `
     },
     { localVue: Vue, sync: false }
@@ -1109,4 +1109,46 @@ test('returns custom error messages passed in the customMessages prop', async ()
   const result = await wrapper.vm.$refs.pro.validate();
 
   expect(result.errors[0]).toEqual(customMessage);
+});
+
+describe('Handle value mutating modifiers', () => {
+  test('handles .number modifier', () => {
+    const wrapper = mount(
+      {
+        data: () => ({ val: '' }),
+        template: `
+        <ValidationProvider rules="required" v-slot="ctx" ref="provider">
+          <input v-model.number="val" type="text">
+        </ValidationProvider>
+      `
+      },
+      { localVue: Vue, sync: false }
+    );
+
+    // should happen synchronously!
+    wrapper.find('input').setValue('11');
+    expect(wrapper.vm.$refs.provider.value).toBe(11);
+
+    // NaN values are left as is.
+    wrapper.find('input').setValue('x23');
+    expect(wrapper.vm.$refs.provider.value).toBe('x23');
+  });
+
+  test('handles .trim modifier', () => {
+    const wrapper = mount(
+      {
+        data: () => ({ val: '' }),
+        template: `
+        <ValidationProvider rules="required" v-slot="ctx" ref="provider">
+          <input v-model.trim="val" type="text">
+        </ValidationProvider>
+      `
+      },
+      { localVue: Vue, sync: false }
+    );
+
+    // should happen synchronously!
+    wrapper.find('input').setValue('  abc');
+    expect(wrapper.vm.$refs.provider.value).toBe('abc');
+  });
 });
