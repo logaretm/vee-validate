@@ -1128,6 +1128,10 @@ describe('Handle value mutating modifiers', () => {
     // should happen synchronously!
     wrapper.find('input').setValue('11');
     expect(wrapper.vm.$refs.provider.value).toBe(11);
+
+    // NaN values are left as is.
+    wrapper.find('input').setValue('x23');
+    expect(wrapper.vm.$refs.provider.value).toBe('x23');
   });
 
   test('handles .trim modifier', () => {
