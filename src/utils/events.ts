@@ -43,5 +43,11 @@ export function normalizeEventValue(value: unknown): any {
     return valueAsNumber;
   }
 
+  if (input._vModifiers && input._vModifiers.trim) {
+    const trimmedValue = typeof input.value === 'string' ? input.value.trim() : input.value;
+
+    return trimmedValue;
+  }
+
   return input.value;
 }
