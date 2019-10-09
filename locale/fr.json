@@ -6,7 +6,7 @@
     "alpha_dash": "Le champ {_field_} ne peut contenir que des caractères alpha-numériques, tirets ou soulignés",
     "alpha_spaces": "Le champ {_field_} ne peut contenir que des lettres ou des espaces",
     "between": "Le champ {_field_} doit être compris entre {min} et {max}",
-    "confirmed": "Le champ {_field_} ne correspond pas à {target}",
+    "confirmed": "Le champ {_field_} ne correspond pas",
     "digits": "Le champ {_field_} doit être un nombre entier de {length} chiffres",
     "dimensions": "Le champ {_field_} doit avoir une taille de {width} pixels par {height} pixels",
     "email": "Le champ {_field_} doit être une adresse e-mail valide",
