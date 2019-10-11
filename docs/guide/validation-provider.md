@@ -370,7 +370,7 @@ This is the `TextInput` Component:
     <input type="text" v-model="innerValue" :value="value" />
     <span v-show="error">{{ error }}</span>
   </div>
-<template>
+</template>
 
 <script>
   export default {
