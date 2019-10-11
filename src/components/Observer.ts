@@ -256,6 +256,18 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       this.observers.forEach((observer: any) => {
         observer.setErrors(errors);
       });
+    },
+    resolveField(id: string) {
+      let field = this.refs[id];
+      if (!field) {
+        this.observers.some(obs => {
+          field = obs.resolveField(id);
+
+          return field;
+        });
+      }
+
+      return field;
     }
   }
 });

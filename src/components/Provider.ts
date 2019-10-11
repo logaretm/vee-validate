@@ -238,8 +238,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         customMessages: this.customMessages
       });
 
-      this.setFlags({ pending: false });
-      this.setFlags({ valid: result.valid, invalid: !result.valid });
+      this.setFlags({ pending: false, valid: result.valid, invalid: !result.valid });
 
       return result;
     },
@@ -321,6 +320,9 @@ function createObserver(): VeeObserver {
     },
     unsubscribe(id: string) {
       delete this.refs[id];
+    },
+    resolveField(id: string) {
+      return this.refs[id];
     }
   };
 }

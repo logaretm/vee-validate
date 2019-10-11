@@ -76,6 +76,7 @@ export interface ValidationFlags {
 
 export interface VeeObserver {
   refs: Record<string, ProviderInstance>;
+  resolveField(id: string): any;
   subscribe(provider: any, type?: 'provider' | 'observer'): void;
   unsubscribe(id: string, type?: 'provider' | 'observer'): void;
 }
