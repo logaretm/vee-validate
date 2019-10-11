@@ -62,7 +62,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       from: '$_veeObserver',
       default() {
         if (!this.$vnode.context.$_veeObserver) {
-          this.$vnode.context.$_veeObserver = this;
+          return null;
         }
 
         return this.$vnode.context.$_veeObserver;
@@ -137,22 +137,26 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
   },
   created() {
     this.id = this.vid;
-    if (this.$_veeObserver && this.$_veeObserver !== this) {
+    if (this.$_veeObserver) {
       this.$_veeObserver.subscribe(this, 'observer');
+    }
+
+    if (!this.$vnode.context.__vee_observer) {
+      this.$vnode.context.__vee_observer = this;
     }
   },
   activated() {
-    if (this.$_veeObserver && this.$_veeObserver !== this) {
+    if (this.$_veeObserver) {
       this.$_veeObserver.subscribe(this, 'observer');
     }
   },
   deactivated() {
-    if (this.$_veeObserver && this.$_veeObserver !== this) {
+    if (this.$_veeObserver) {
       this.$_veeObserver.unsubscribe(this.id, 'observer');
     }
   },
   beforeDestroy() {
-    if (this.$_veeObserver && this.$_veeObserver !== this) {
+    if (this.$_veeObserver) {
       this.$_veeObserver.unsubscribe(this.id, 'observer');
     }
 

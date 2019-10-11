@@ -90,5 +90,6 @@ export interface InactiveRefCache {
 export type VNodeWithVeeContext = VNode & {
   context: Vue & {
     $_veeObserver?: VeeObserver;
+    __vee_observer?: VeeObserver;
   };
 };
