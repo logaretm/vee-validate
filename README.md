@@ -6,7 +6,7 @@
 
 <p align="center">
 
-[![Financial Contributors on Open Collective](https://opencollective.com/vee-validate/all/badge.svg?label=financial+contributors)](https://opencollective.com/vee-validate) 
+[![Financial Contributors on Open Collective](https://opencollective.com/vee-validate/all/badge.svg?label=financial+contributors)](https://opencollective.com/vee-validate)
 [![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
 [![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=master)](https://travis-ci.org/logaretm/vee-validate)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/logaretm/vee-validate?utm_source=github.com&utm_medium=referral&utm_content=logaretm/vee-validate&utm_campaign=Badge_Grade)
@@ -140,6 +140,7 @@ You are welcome to contribute to this project, but before you do, please make su
   - [Multi-Step Forms](https://logaretm.github.io/vee-validate/examples/multiple-forms.html#multi-step-forms)
 - [UI Libraries Validation Samples](https://logaretm.github.io/vee-validate/examples/ui-libraries.html)
   - [Vuetify](https://logaretm.github.io/vee-validate/examples/ui-libraries.html#vuetify)
+  - [Quasar](https://logaretm.github.io/vee-validate/examples/ui-libraries.html#quasar)
   - [BootstrapVue](https://logaretm.github.io/vee-validate/examples/ui-libraries.html#bootstrapvue)
   - [Buefy](https://logaretm.github.io/vee-validate/examples/ui-libraries.html#buefy)
   - [Ant Design](https://logaretm.github.io/vee-validate/examples/ui-libraries.html#ant-design)
