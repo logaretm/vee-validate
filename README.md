@@ -149,10 +149,6 @@ You are welcome to contribute to this project, but before you do, please make su
 
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
 
-
-
-
-
 ## Contributors
 
 ### Emeriti
