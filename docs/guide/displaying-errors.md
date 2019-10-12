@@ -2,6 +2,30 @@
 
 The `errors` array exposed on the `ValidationProvider` is a simple array containing error messages for the field as strings, you can manipulate the displayed field name and how many errors should be displayed for that field.
 
+## Customizing the field name
+
+So far you only saw `{_field_}` placeholder used in the error messages to refer to the field, you can change that by specifying a `name` prop on the `ValidationProvider`.
+
+```vue{2}
+<ValidationProvider name="first name" rules="required|min:2" v-slot="{ errors }">
+  <input v-model="value" type="text">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+<StyledProvider
+rules="required|min:2"
+name="first name"
+v-slot="{ errors }"
+>
+  <input v-model="values.name" type="text" placeholder="type something...">
+  <span>{{ errors[0] }}</span>
+</StyledProvider>
+
+:::tip
+  Most examples onwards will skip having `name` prop for brevity, but you will probably use it regularly.
+:::
+
 ## Single error message
 
 Typically you would want to display one error at a time for your fields, which is the first item in the `errors` array.
@@ -53,6 +77,7 @@ Now that we've setup multiple errors generation properly, you can iterate over t
 You can check it out in this sample:
 
 <StyledProvider
+name="field"
 rules="required|min:3|alpha"
 v-slot="{ errors }"
 :bails="false">
@@ -123,26 +148,6 @@ You can test this in the following input, fill it with a value then clear it and
 </StyledProvider>
 
 You can configure this behavior globally, by setting `skipOptional` config value.
-
-## Customizing the field name
-
-So far you only saw `{_field_}` placeholder used in the error messages to refer to the field, you can change that by specifying a `name` prop on the `ValidationProvider`.
-
-```vue{2}
-<ValidationProvider name="first name" rules="required|min:2" v-slot="{ errors }">
-  <input v-model="value" type="text">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
-```
-
-<StyledProvider
-rules="required|min:2"
-name="first name"
-v-slot="{ errors }"
->
-  <input v-model="values.name" type="text" placeholder="type something...">
-  <span>{{ errors[0] }}</span>
-</StyledProvider>
 
 ## Messages Format
 

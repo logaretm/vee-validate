@@ -81,6 +81,7 @@ Here is a working snippet of the last example:
 
 <ValidationObserver>
   <StyledProvider
+    name="Password"
     rules="required|password:confirmation"
     v-slot="{ errors }"
   >
