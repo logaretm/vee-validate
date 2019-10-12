@@ -98,6 +98,34 @@ Here is a working snippet of the last example:
   </StyledProvider>
 </ValidationObserver>
 
+:::tip
+There are some cases where you want to use a simple target name for your fields but display a user-friendly name for your user, here you would need to specify `vid` and target your fields using that instead of `name` prop.
+
+```vue{3,11}
+<ValidationObserver>
+  <ValidationProvider
+    rules="required|password:pConf"
+    v-slot="{ errors }"
+  >
+    <input v-model="password" type="password">
+    <span>{{ errors[0] }}</span>
+  </ValidationProvider>
+
+  <ValidationProvider
+    vid="pConf"
+    name="Password Confirmation"
+    rules="required"
+    v-slot="{ errors }"
+  >
+    <input v-model="confirm" type="password">
+    <span>{{ errors[0] }}</span>
+  </ValidationProvider>
+</ValidationObserver>
+```
+
+This will display **"Password Confirmation"** in error messages, but note that you used `pConf` to target the other field because it is specified as its `vid` prop.
+:::
+
 ## Required Rules
 
 You will notice that the `required` rule is special. The default behavior in vee-validate is that when a field is **not required** and has an empty value it skips validation for that field.
