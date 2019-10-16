@@ -129,7 +129,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         .filter(RuleContainer.isTargetRule)
         .reduce((acc: string[], rule: string) => {
           const deps = RuleContainer.getTargetParamNames(rule, this.normalizedRules[rule]).map(
-            (dep: any) => dep.__locatorKey
+            (dep: any) => dep.__locatorRef
           );
           acc.push(...deps);
           deps.forEach(depName => {

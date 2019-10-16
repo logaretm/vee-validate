@@ -1,4 +1,4 @@
-import { ValidationFlags, RuleParamConfig } from '../types';
+import { ValidationFlags, RuleParamConfig, Locator } from '../types';
 import { ValidationClassMap } from '../config';
 import { RuleContainer } from '../extend';
 
@@ -133,6 +133,20 @@ export const warn = (message: string) => {
   console.warn(`[vee-validate] ${message}`);
 };
 
+function createLocator(value: string): Locator {
+  const locator: Locator = (crossTable: Record<string, any>) => {
+    return crossTable[value];
+  };
+
+  locator.__locatorRef = value;
+
+  return locator;
+}
+
+export function isLocator(value: unknown): value is Locator {
+  return isCallable(value) && !!(value as any).__locatorRef;
+}
+
 function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
   const ruleSchema = RuleContainer.getRuleDefinition(ruleName);
   if (!ruleSchema) {
@@ -188,17 +202,7 @@ function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
 
     // if the param is a target, resolve the target value.
     if (options.isTarget) {
-      const __locatorKey = value;
-      const locator: { __isLocator?: boolean; __locatorKey?: string } & Function = (
-        crossTable: Record<string, any>
-      ) => {
-        return crossTable[__locatorKey];
-      };
-
-      locator.__isLocator = true;
-      locator.__locatorKey = __locatorKey;
-
-      value = locator;
+      value = createLocator(value);
     }
 
     // If there is a transformer defined.

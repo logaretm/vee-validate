@@ -1,5 +1,14 @@
 import { RuleContainer } from './extend';
-import { isObject, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate, isCallable, find } from './utils';
+import {
+  isObject,
+  isNullOrUndefined,
+  normalizeRules,
+  isEmptyArray,
+  interpolate,
+  isCallable,
+  find,
+  isLocator
+} from './utils';
 import { ValidationResult, ValidationRuleSchema, ValidationMessageTemplate, RuleParamConfig } from './types';
 import { getConfig } from './config';
 
@@ -272,8 +281,8 @@ function _getTargetNames(
     }
 
     let key = ruleConfig[index];
-    if (isCallable(key) && key.__isLocator) {
-      key = key.__locatorKey;
+    if (isLocator(key)) {
+      key = key.__locatorRef;
     }
 
     const name = field.names[key] || key;
@@ -303,7 +312,7 @@ function fillTargetValues(params: Record<string, any>, crossTable: Record<string
 
   const values: typeof params = {};
   const normalize = (value: any) => {
-    if (isCallable(value) && value.__isLocator) {
+    if (isLocator(value)) {
       return value(crossTable);
     }
 
