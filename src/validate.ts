@@ -247,27 +247,33 @@ function _getTargetNames(
   ruleSchema: ValidationRuleSchema,
   ruleName: string
 ): Record<string, string> {
-  if (ruleSchema.params) {
-    const numTargets = ruleSchema.params.filter(param => (param as RuleParamConfig).isTarget).length;
-    if (numTargets > 0) {
-      const names: Record<string, string> = {};
-      for (let index = 0; index < ruleSchema.params.length; index++) {
-        const param: RuleParamConfig = ruleSchema.params[index] as RuleParamConfig;
-        if (param.isTarget) {
-          const key = field.rules[ruleName][index];
-          const name = field.names[key] || key;
-          if (numTargets === 1) {
-            names._target_ = name;
-            break;
-          } else {
-            names[`_${param.name}Target_`] = name;
-          }
-        }
-      }
-      return names;
-    }
+  if (!ruleSchema.params) {
+    return {};
   }
-  return {};
+
+  const numTargets = ruleSchema.params.filter(param => (param as RuleParamConfig).isTarget).length;
+  if (numTargets <= 0) {
+    return {};
+  }
+
+  const names: Record<string, string> = {};
+  for (let index = 0; index < ruleSchema.params.length; index++) {
+    const param: RuleParamConfig = ruleSchema.params[index] as RuleParamConfig;
+    if (!param.isTarget) {
+      continue;
+    }
+
+    const key = field.rules[ruleName][index];
+    const name = field.names[key] || key;
+    if (numTargets === 1) {
+      names._target_ = name;
+      break;
+    }
+
+    names[`_${param.name}Target_`] = name;
+  }
+
+  return names;
 }
 
 function _normalizeMessage(template: ValidationMessageTemplate, field: string, values: Record<string, any>) {
