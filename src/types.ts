@@ -13,6 +13,8 @@ export type VueValidationContext = Vue & {
   $_veeObserver?: VeeObserver;
 };
 
+export type Locator = { __isLocator?: boolean; __locatorRef?: string } & Function;
+
 export interface ValidationMessageGenerator {
   (field: string, params?: Record<string, any>): string;
 }

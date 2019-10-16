@@ -128,7 +128,9 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       return Object.keys(this.normalizedRules)
         .filter(RuleContainer.isTargetRule)
         .reduce((acc: string[], rule: string) => {
-          const deps = RuleContainer.getTargetParamNames(rule, this.normalizedRules[rule]);
+          const deps = RuleContainer.getTargetParamNames(rule, this.normalizedRules[rule]).map(
+            (dep: any) => dep.__locatorKey
+          );
           acc.push(...deps);
           deps.forEach(depName => {
             watchCrossFieldDep(this, depName);

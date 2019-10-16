@@ -1,11 +1,11 @@
 import { RuleContainer } from './extend';
-import { isObject, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate } from './utils';
+import { isObject, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate, isCallable, find } from './utils';
 import { ValidationResult, ValidationRuleSchema, ValidationMessageTemplate, RuleParamConfig } from './types';
 import { getConfig } from './config';
 
 interface FieldContext {
   name: string;
-  rules: Record<string, any[]>;
+  rules: Record<string, any>;
   bails: boolean;
   skipIfEmpty: boolean;
   forceRequired: boolean;
@@ -163,15 +163,15 @@ async function _shouldSkip(field: FieldContext, value: any) {
 /**
  * Tests a single input value against a rule.
  */
-async function _test(field: FieldContext, value: any, rule: { name: string; params: any[] | object }) {
+async function _test(field: FieldContext, value: any, rule: { name: string; params: Record<string, any> }) {
   const ruleSchema = RuleContainer.getRuleDefinition(rule.name);
   if (!ruleSchema || !ruleSchema.validate) {
     throw new Error(`No such validator '${rule.name}' exists.`);
   }
 
-  // build params
-  const params = _buildParams(rule.params, ruleSchema.params, field.crossTable);
   const normalizedValue = ruleSchema.castValue ? ruleSchema.castValue(value) : value;
+  const params = fillTargetValues(rule.params, field.crossTable);
+
   let result = await ruleSchema.validate(normalizedValue, params);
   if (typeof result === 'string') {
     const values = {
@@ -247,23 +247,35 @@ function _getTargetNames(
   ruleSchema: ValidationRuleSchema,
   ruleName: string
 ): Record<string, string> {
-  if (!ruleSchema.params) {
+  const params = ruleSchema.params;
+  if (!params) {
     return {};
   }
 
-  const numTargets = ruleSchema.params.filter(param => (param as RuleParamConfig).isTarget).length;
+  const numTargets = params.filter(param => (param as RuleParamConfig).isTarget).length;
   if (numTargets <= 0) {
     return {};
   }
 
   const names: Record<string, string> = {};
-  for (let index = 0; index < ruleSchema.params.length; index++) {
-    const param: RuleParamConfig = ruleSchema.params[index] as RuleParamConfig;
+  let ruleConfig = field.rules[ruleName];
+  if (!Array.isArray(ruleConfig) && isObject(ruleConfig)) {
+    ruleConfig = params.map((param: any) => {
+      return ruleConfig[param.name];
+    });
+  }
+
+  for (let index = 0; index < params.length; index++) {
+    const param: RuleParamConfig = params[index] as RuleParamConfig;
     if (!param.isTarget) {
       continue;
     }
 
-    const key = field.rules[ruleName][index];
+    let key = ruleConfig[index];
+    if (isCallable(key) && key.__isLocator) {
+      key = key.__locatorKey;
+    }
+
     const name = field.names[key] || key;
     if (numTargets === 1) {
       names._target_ = name;
@@ -284,77 +296,23 @@ function _normalizeMessage(template: ValidationMessageTemplate, field: string, v
   return interpolate(template, { ...values, _field_: field });
 }
 
-function _buildParams(
-  provided: any[] | Record<string, any>,
-  defined: RuleParamConfig[] | undefined,
-  crossTable: Record<string, any>
-) {
-  const params: Record<string, any> = {};
-  if (!defined && !Array.isArray(provided)) {
-    throw new Error('You provided an object params to a rule that has no defined schema.');
+function fillTargetValues(params: Record<string, any>, crossTable: Record<string, any>) {
+  if (Array.isArray(params)) {
+    return params;
   }
 
-  // Rule probably uses an array for their args, keep it as is.
-  if (Array.isArray(provided) && !defined) {
-    return provided;
-  }
-
-  let definedRules: RuleParamConfig[];
-  // collect the params schema.
-  if (!defined || (defined.length < provided.length && Array.isArray(provided))) {
-    let lastDefinedParam: RuleParamConfig;
-    // collect any additional parameters in the last item.
-    definedRules = provided.map((_: any, idx: number) => {
-      let param = defined && defined[idx];
-      lastDefinedParam = param || lastDefinedParam;
-      if (!param) {
-        param = lastDefinedParam;
-      }
-
-      return param;
-    });
-  } else {
-    definedRules = defined;
-  }
-
-  // Match the provided array length with a temporary schema.
-  for (let i = 0; i < definedRules.length; i++) {
-    const options = definedRules[i];
-    let value = options.default;
-    // if the provided is an array, map element value.
-    if (Array.isArray(provided)) {
-      if (i in provided) {
-        value = provided[i];
-      }
-    } else {
-      // If the param exists in the provided object.
-      if (options.name in provided) {
-        value = provided[options.name];
-        // if the provided is the first param value.
-      } else if (definedRules.length === 1) {
-        value = provided;
-      }
+  const values: typeof params = {};
+  const normalize = (value: any) => {
+    if (isCallable(value) && value.__isLocator) {
+      return value(crossTable);
     }
 
-    // if the param is a target, resolve the target value.
-    if (options.isTarget) {
-      value = crossTable[value];
-    }
+    return value;
+  };
 
-    // If there is a transformer defined.
-    if (options.cast) {
-      value = options.cast(value);
-    }
+  Object.keys(params).forEach(param => {
+    values[param] = normalize(params[param]);
+  });
 
-    // already been set, probably multiple values.
-    if (params[options.name]) {
-      params[options.name] = Array.isArray(params[options.name]) ? params[options.name] : [params[options.name]];
-      params[options.name].push(value);
-    } else {
-      // set the value.
-      params[options.name] = value;
-    }
-  }
-
-  return params;
+  return values;
 }

@@ -1,5 +1,6 @@
-import { ValidationFlags } from '../types';
+import { ValidationFlags, RuleParamConfig } from '../types';
 import { ValidationClassMap } from '../config';
+import { RuleContainer } from '../extend';
 
 export const isNaN = (value: unknown): boolean => {
   // NaN is the one value that does not equal itself.
@@ -132,12 +133,98 @@ export const warn = (message: string) => {
   console.warn(`[vee-validate] ${message}`);
 };
 
+function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
+  const ruleSchema = RuleContainer.getRuleDefinition(ruleName);
+  if (!ruleSchema) {
+    return provided;
+  }
+
+  const params: Record<string, any> = {};
+  if (!ruleSchema.params && !Array.isArray(provided)) {
+    throw new Error('You provided an object params to a rule that has no defined schema.');
+  }
+
+  // Rule probably uses an array for their args, keep it as is.
+  if (Array.isArray(provided) && !ruleSchema.params) {
+    return provided;
+  }
+
+  let definedParams: RuleParamConfig[];
+  // collect the params schema.
+  if (!ruleSchema.params || (ruleSchema.params.length < provided.length && Array.isArray(provided))) {
+    let lastDefinedParam: RuleParamConfig;
+    // collect any additional parameters in the last item.
+    definedParams = provided.map((_: any, idx: number) => {
+      let param = ruleSchema.params && ruleSchema.params[idx];
+      lastDefinedParam = param || lastDefinedParam;
+      if (!param) {
+        param = lastDefinedParam;
+      }
+
+      return param;
+    });
+  } else {
+    definedParams = ruleSchema.params;
+  }
+
+  // Match the provided array length with a temporary schema.
+  for (let i = 0; i < definedParams.length; i++) {
+    const options = definedParams[i];
+    let value = options.default;
+    // if the provided is an array, map element value.
+    if (Array.isArray(provided)) {
+      if (i in provided) {
+        value = provided[i];
+      }
+    } else {
+      // If the param exists in the provided object.
+      if (options.name in provided) {
+        value = provided[options.name];
+        // if the provided is the first param value.
+      } else if (definedParams.length === 1) {
+        value = provided;
+      }
+    }
+
+    // if the param is a target, resolve the target value.
+    if (options.isTarget) {
+      const __locatorKey = value;
+      const locator: { __isLocator?: boolean; __locatorKey?: string } & Function = (
+        crossTable: Record<string, any>
+      ) => {
+        return crossTable[__locatorKey];
+      };
+
+      locator.__isLocator = true;
+      locator.__locatorKey = __locatorKey;
+
+      value = locator;
+    }
+
+    // If there is a transformer defined.
+    if (options.cast) {
+      value = options.cast(value);
+    }
+
+    // already been set, probably multiple values.
+    if (params[options.name]) {
+      params[options.name] = Array.isArray(params[options.name]) ? params[options.name] : [params[options.name]];
+      params[options.name].push(value);
+    } else {
+      // set the value.
+      params[options.name] = value;
+    }
+  }
+
+  return params;
+}
+
 /**
  * Normalizes the given rules expression.
  */
 export const normalizeRules = (rules: any) => {
   // if falsy value return an empty object.
-  const acc: { [x: string]: any[] } = {};
+  const acc: { [x: string]: any } = {};
   Object.defineProperty(acc, '_$$isNormalized', {
     value: true,
     writable: false,
@@ -168,7 +255,7 @@ export const normalizeRules = (rules: any) => {
       }
 
       if (rules[curr] !== false) {
-        prev[curr] = params;
+        prev[curr] = buildParams(curr, params);
       }
 
       return prev;
@@ -187,7 +274,7 @@ export const normalizeRules = (rules: any) => {
       return prev;
     }
 
-    prev[parsedRule.name] = parsedRule.params;
+    prev[parsedRule.name] = buildParams(parsedRule.name, parsedRule.params);
 
     return prev;
   }, acc);
