@@ -69,6 +69,8 @@ export interface ValidationFlags {
   pristine: boolean;
   valid: boolean;
   invalid: boolean;
+  passed: boolean;
+  failed: boolean;
   validated: boolean;
   pending: boolean;
   required: boolean;

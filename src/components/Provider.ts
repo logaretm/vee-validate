@@ -240,8 +240,11 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         customMessages: this.customMessages
       });
 
-      this.setFlags({ pending: false });
-      this.setFlags({ valid: result.valid, invalid: !result.valid });
+      this.setFlags({
+        pending: false,
+        valid: result.valid,
+        invalid: !result.valid
+      });
 
       return result;
     },
@@ -253,9 +256,11 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       this.failedRules = { ...(failedRules || {}) };
       this.setFlags({
         valid: !errors.length,
-        changed: this.value !== this.initialValue,
+        passed: !errors.length,
         invalid: !!errors.length,
-        validated: true
+        failed: !!errors.length,
+        validated: true,
+        changed: this.value !== this.initialValue
       });
     },
     registerField() {
