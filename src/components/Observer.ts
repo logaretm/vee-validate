@@ -1,6 +1,6 @@
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { values, findIndex, warn } from '../utils';
-import { ValidationResult, InactiveRefCache, VeeObserver, VNodeWithVeeContext } from '../types';
+import { ValidationResult, InactiveRefCache, VeeObserver, VNodeWithVeeContext, ValidationFlags } from '../types';
 import { ValidationProvider } from './Provider';
 import { normalizeChildren } from '../utils/vnode';
 
@@ -41,10 +41,16 @@ function data() {
     inactiveRefs
   };
 }
+
+type ObserverErrors = Record<string, string[]>;
+
 type withObserverNode = VueConstructor<
   Vue & {
     $_veeObserver: VeeObserver;
     $vnode: VNodeWithVeeContext;
+    sources: any[];
+    errors: ObserverErrors;
+    flags: ValidationFlags;
   }
 >;
 
@@ -89,48 +95,46 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
   },
   data,
   computed: {
+    sources() {
+      return [...values(this.refs), ...values(this.inactiveRefs), ...this.observers];
+    },
+    errors() {
+      return this.sources.reduce((errors: Record<string, string[]>, vm: any) => {
+        errors[vm.id] = vm.errors;
+
+        return errors;
+      }, {});
+    },
+    flags() {
+      return this.sources.reduce((flags: Record<string, boolean>, vm: any) => {
+        Object.keys(flagMergingStrategy).forEach(flag => {
+          if (!(flag in flags)) {
+            flags[flag] = vm.flags[flag];
+            return;
+          }
+
+          flags[flag] = mergeFlags(flags[flag], vm.flags[flag], flag);
+        });
+
+        return flags;
+      }, {});
+    },
     ctx() {
-      const ctx = {
-        errors: {},
+      return {
+        errors: this.errors,
+        ...this.flags,
         passes: (cb: Function) => {
-          return this.validate().then(result => {
-            if (result) {
-              return cb();
+          return this.validate().then((result: boolean) => {
+            if (!result || !cb) {
+              return;
             }
+
+            return cb();
           });
         },
         validate: (...args: any[]) => this.validate(...args),
         reset: () => this.reset()
       };
-      return [
-        ...values(this.refs),
-        ...Object.keys(this.inactiveRefs).map(key => {
-          return {
-            vid: key,
-            flags: this.inactiveRefs[key].flags,
-            messages: this.inactiveRefs[key].errors
-          };
-        }),
-        ...this.observers
-      ].reduce((acc: any, provider: any) => {
-        Object.keys(flagMergingStrategy).forEach(flag => {
-          const flags = provider.flags || provider.ctx;
-          if (!(flag in acc)) {
-            acc[flag] = flags[flag];
-            return;
-          }
-
-          acc[flag] = mergeFlags(acc[flag], flags[flag], flag);
-        });
-
-        acc.errors[provider.id] =
-          provider.messages ||
-          values(provider.ctx.errors).reduce((errs: any[], obsErrors) => {
-            return errs.concat(obsErrors);
-          }, []);
-
-        return acc;
-      }, ctx);
     }
   },
   created() {
@@ -229,8 +233,9 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
 
         // save it for the next time.
         this.inactiveRefs[id] = {
+          id,
           flags: provider.flags,
-          errors: provider.messages,
+          errors: provider.errors,
           failedRules: provider.failedRules
         };
       }

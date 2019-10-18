@@ -52,7 +52,7 @@ export interface ValidationContext extends Pick<ValidationFlags, KnownKeys<Valid
 export function createValidationCtx(ctx: ProviderInstance): ValidationContext {
   return {
     ...ctx.flags,
-    errors: ctx.messages,
+    errors: ctx.errors,
     classes: ctx.classes,
     failedRules: ctx.failedRules,
     reset: () => ctx.reset(),
@@ -64,7 +64,7 @@ export function createValidationCtx(ctx: ProviderInstance): ValidationContext {
     },
     ariaMsg: {
       id: `vee_${ctx.id}`,
-      'aria-live': ctx.messages.length ? 'assertive' : 'off'
+      'aria-live': ctx.errors.length ? 'assertive' : 'off'
     }
   };
 }
@@ -89,11 +89,7 @@ export function onRenderUpdate(vm: ProviderInstance, value: any | undefined) {
 export function computeModeSetting(ctx: ProviderInstance) {
   const compute = (isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode]) as InteractionModeFactory;
 
-  return compute({
-    errors: ctx.messages,
-    value: ctx.value,
-    flags: ctx.flags
-  });
+  return compute(ctx);
 }
 
 // Creates the common handlers for a validatable context.

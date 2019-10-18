@@ -28,10 +28,10 @@ type withProviderPrivates = VueConstructor<
 >;
 
 function data() {
-  const messages: string[] = [];
+  const errors: string[] = [];
 
   const defaultValues = {
-    messages,
+    errors,
     value: undefined,
     initialized: false,
     initialValue: undefined,
@@ -204,7 +204,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       this.flags.changed = this.initialValue !== value;
     },
     reset() {
-      this.messages = [];
+      this.errors = [];
       this.initialValue = this.value;
       const flags = createFlags();
       flags.required = this.isRequired;
@@ -249,7 +249,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       this.applyResult({ errors, failedRules: {} });
     },
     applyResult({ errors, failedRules }: Omit<ValidationResult, 'valid'>) {
-      this.messages = errors;
+      this.errors = errors;
       this.failedRules = { ...(failedRules || {}) };
       this.setFlags({
         valid: !errors.length,

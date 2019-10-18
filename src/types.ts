@@ -83,6 +83,7 @@ export interface VeeObserver {
 }
 
 export interface InactiveRefCache {
+  id: string;
   errors: string[];
   flags: ValidationFlags;
   failedRules: Record<string, string>;
