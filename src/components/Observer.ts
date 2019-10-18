@@ -30,7 +30,6 @@ let OBSERVER_COUNTER = 0;
 
 function data() {
   const refs: Record<string, ProviderInstance> = {};
-  const refsByName: typeof refs = {};
   const inactiveRefs: Record<string, InactiveRefCache> = {};
   // FIXME: Not sure of this one can be typed, circular type reference.
   const observers: any[] = [];
@@ -38,7 +37,6 @@ function data() {
   return {
     id: '',
     refs,
-    refsByName,
     observers,
     inactiveRefs
   };
@@ -169,7 +167,6 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       }
 
       this.refs = { ...this.refs, ...{ [subscriber.id]: subscriber } };
-      this.refsByName = { ...this.refsByName, ...{ [subscriber.name]: subscriber } };
       if (subscriber.persist) {
         this.restoreProviderState(subscriber);
       }
@@ -239,11 +236,10 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       }
 
       this.$delete(this.refs, id);
-      this.$delete(this.refsByName, provider.name);
     },
     setErrors(errors: Record<string, string[]>) {
       Object.keys(errors).forEach(key => {
-        const provider = this.refs[key] || this.refsByName[key];
+        const provider = this.refs[key];
         if (!provider) return;
 
         provider.setErrors(errors[key] || []);
