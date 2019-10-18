@@ -28,7 +28,9 @@ export const createFlags = (): ValidationFlags => ({
   validated: false,
   pending: false,
   required: false,
-  changed: false
+  changed: false,
+  passed: false,
+  failed: false
 });
 
 /**

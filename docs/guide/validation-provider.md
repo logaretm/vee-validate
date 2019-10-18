@@ -50,13 +50,15 @@ The object passed down to the slot scope is called the **validation context**. I
 | valid       |    `boolean|undefined`     | If The field is valid.                                                                                        |
 | invalid     |    `boolean|undefined`     | If the field is invalid.                                                                                      |
 | changed     |         `boolean`          | If the field value has been changed.                                                                          |
-| touched     |         `boolean`          | If the field has been blurred.                                                                    |
-| untouched   |         `boolean`          | If the field wasn't blurred.                                                                             |
+| touched     |         `boolean`          | If the field has been blurred.                                                                                |
+| untouched   |         `boolean`          | If the field wasn't blurred.                                                                                  |
 | pristine    |         `boolean`          | If the field value was not manipulated.                                                                       |
 | dirty       |         `boolean`          | If the field value has been manipulated.                                                                      |
 | pending     |         `boolean`          | Indicates if the field validation is in progress.                                                             |
 | required    |         `boolean`          | If the field is required.                                                                                     |
 | validated   |         `boolean`          | If the field has been validated at least once.                                                                |
+| passed      |         `boolean`          | If the field has been validated and is valid.                                                                 |
+| failed      |        `boolean`           | If the field has been validated and is invalid.                                                               |
 
 Since slot scopes can take advantage of ES6 destructing, you can opt-in for any of those properties and pass down to your slot template as you see fit. The example above only needed the `errors` array.
 
@@ -89,10 +91,12 @@ These are various boolean state values that indicate various actions done by the
 - `untouched`: indicates that the field has not been blurred.
 - `dirty`: indicates that the field has been manipulated.
 - `pristine`: indicates that the field has not been manipulated.
-- `valid`: indicates that the field has passed the validation.
-- `invalid`: indicates that the field has failed the validation.
+- `valid`: indicates that the field is currently valid.
+- `invalid`: indicates that the field is currently invalid.
 - `pending`: indicates that the field validation is in progress, helpful if you have long running validation.
 - `validated`: indicates that the field has been validated at least once by a user event (input) or triggered manually using `validate()`.
+- `passes`: indicates that the field has been validated (due to user input or manually) and is valid.
+- `failed`: indicates that the field has been validated (due to user input or manually) and is invalid.
 - `changed`: indicates that the field value has been changed (strict check).
 
 You can use these flags to give your users a great experience, for example you can disable a button if the field value didn't change.
@@ -146,6 +150,8 @@ You can do a lot more, like disabling a button if any field in a form is invalid
 
 :::warning Undetermined
 The `valid` and `invalid` flags are special, because both can be `null` at the same time. Initially the input state is undetermined for a very short window of time until vee-validate checks the state internally (silent validation). That is why in the previous example we used `!valid` instead of `invalid` since both will be falsy initially.
+
+You can use `passes` as it combines the use of `valid && validated` which is useful in a lot of cases. `failed` flag also combines `invalid && validated`.
 :::
 
 ## Rendering
