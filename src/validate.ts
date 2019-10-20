@@ -1,6 +1,13 @@
 import { RuleContainer } from './extend';
 import { isObject, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate, isLocator } from './utils';
-import { ValidationResult, ValidationRuleSchema, ValidationMessageTemplate, RuleParamConfig } from './types';
+import {
+  ValidationResult,
+  ValidationRuleSchema,
+  ValidationMessageTemplate,
+  RuleParamConfig,
+  ValidationMessageGenerator,
+  RuleParamSchema
+} from './types';
 import { getConfig } from './config';
 
 interface FieldContext {
@@ -210,39 +217,26 @@ function _generateFieldError(
   params: Record<string, any>,
   data?: Record<string, any>
 ) {
+  const message = field.customMessages[ruleName] || ruleSchema.message;
+  const ruleTargets = _getRuleTargets(field, ruleSchema, ruleName);
+  const { userTargets, userMessage } = _getUserTargets(field, ruleSchema, ruleName, message);
   const values = {
     ...(params || {}),
     ...(data || {}),
     _field_: field.name,
     _value_: value,
     _rule_: ruleName,
-    ..._getTargetNames(field, ruleSchema, ruleName)
+    ...ruleTargets,
+    ...userTargets
   };
 
-  if (
-    Object.prototype.hasOwnProperty.call(field.customMessages, ruleName) &&
-    typeof field.customMessages[ruleName] === 'string'
-  ) {
-    return {
-      msg: _normalizeMessage(field.customMessages[ruleName], field.name, values),
-      rule: ruleName
-    };
-  }
-
-  if (ruleSchema.message) {
-    return {
-      msg: _normalizeMessage(ruleSchema.message, field.name, values),
-      rule: ruleName
-    };
-  }
-
   return {
-    msg: _normalizeMessage(getConfig().defaultMessage, field.name, values),
+    msg: _normalizeMessage(userMessage || getConfig().defaultMessage, field.name, values),
     rule: ruleName
   };
 }
 
-function _getTargetNames(
+function _getRuleTargets(
   field: FieldContext,
   ruleSchema: ValidationRuleSchema,
   ruleName: string
@@ -286,6 +280,48 @@ function _getTargetNames(
   }
 
   return names;
+}
+
+function _getUserTargets(
+  field: FieldContext,
+  ruleSchema: ValidationRuleSchema,
+  ruleName: string,
+  userMessage: string | ValidationMessageGenerator | undefined
+) {
+  const userTargets: any = {};
+  const values: Record<string, any> = field.rules[ruleName];
+  const params: RuleParamSchema[] = ruleSchema.params || [];
+
+  if (values) {
+    // check to see if any are targets
+    Object.keys(values).forEach((key: string, index: number) => {
+      // variables
+      const value: any = values[key];
+
+      // user targets start with @
+      if (typeof value === 'string' && value.startsWith('@')) {
+        // get associated parameter
+        const param: any = params[index];
+        if (param) {
+          // grab the name of the target
+          const key = value.substr(1);
+          const placeholder = `_${key}Target_`;
+          userTargets[placeholder] = field.names[key] || key;
+
+          // update template if it's a string
+          if (typeof userMessage === 'string') {
+            const rx = new RegExp(`{${param.name}}`, 'g');
+            userMessage = userMessage.replace(rx, `{${placeholder}}`);
+          }
+        }
+      }
+    });
+  }
+
+  return {
+    userTargets,
+    userMessage
+  };
 }
 
 function _normalizeMessage(template: ValidationMessageTemplate, field: string, values: Record<string, any>) {
