@@ -35,7 +35,7 @@ VeeValidate is a validation framework that offers validation for your fields usi
 
 ```bash
 # install with npm
-npm install vee-validate
+npm install vee-validate --save
 
 # install with yarn
 yarn add vee-validate
