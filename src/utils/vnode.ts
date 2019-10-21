@@ -1,6 +1,6 @@
-// VNode Utils
-import { find, isCallable, isNullOrUndefined, includes, normalizeRules, isSpecified } from './index';
 import Vue, { VNode, VNodeDirective } from 'vue';
+import { find, isCallable, isNullOrUndefined, includes, isSpecified } from './index';
+import { normalizeRules } from './rules';
 
 export const isTextInput = (vnode: VNode): boolean => {
   const attrs = (vnode.data && vnode.data.attrs) || vnode.elm;

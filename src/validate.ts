@@ -1,5 +1,5 @@
 import { RuleContainer } from './extend';
-import { interpolate, isEmptyArray, isLocator, isNullOrUndefined, isObject, normalizeRules } from './utils';
+import { interpolate, isEmptyArray, isLocator, isNullOrUndefined, isObject } from './utils';
 import {
   RuleParamConfig,
   RuleParamSchema,
@@ -9,6 +9,7 @@ import {
   ValidationRuleSchema
 } from './types';
 import { getConfig } from './config';
+import { normalizeRules } from './utils/rules';
 
 interface FieldContext {
   name: string;
