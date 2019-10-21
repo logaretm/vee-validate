@@ -1,12 +1,13 @@
-import { getConfig } from '../config';
+import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
+import { normalizeRules } from '../utils/rules';
+import { normalizeEventValue } from '../utils/events';
+import { extractVNodes, normalizeChildren, resolveRules } from '../utils/vnode';
+import { isCallable, isEqual, isNullOrUndefined } from '../utils';
+import { getConfig, ValidationClassMap } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
-import { normalizeEventValue } from '../utils/events';
-import { createFlags, normalizeRules, isCallable, isEqual, computeClassObj } from '../utils';
-import { extractVNodes, resolveRules, normalizeChildren } from '../utils/vnode';
-import Vue, { VNode, CreateElement, VueConstructor } from 'vue';
-import { ValidationResult, ValidationFlags, VeeObserver, VNodeWithVeeContext, ProviderInstance } from '../types';
-import { computeModeSetting, createValidationCtx, addListeners } from './common';
+import { ProviderInstance, ValidationFlags, ValidationResult, VeeObserver, VNodeWithVeeContext } from '../types';
+import { addListeners, computeModeSetting, createValidationCtx } from './common';
 
 let PROVIDER_COUNTER = 0;
 
@@ -268,6 +269,51 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     }
   }
 });
+
+function createFlags(): ValidationFlags {
+  return {
+    untouched: true,
+    touched: false,
+    dirty: false,
+    pristine: true,
+    valid: false,
+    invalid: false,
+    validated: false,
+    pending: false,
+    required: false,
+    changed: false,
+    passed: false,
+    failed: false
+  };
+}
+
+function computeClassObj(names: ValidationClassMap, flags: ValidationFlags) {
+  const acc: Record<string, boolean> = {};
+  const keys = Object.keys(flags);
+  const length = keys.length;
+  for (let i = 0; i < length; i++) {
+    const flag = keys[i];
+    const className = (names && names[flag]) || flag;
+    const value = flags[flag];
+    if (isNullOrUndefined(value)) {
+      continue;
+    }
+
+    if ((flag === 'valid' || flag === 'invalid') && !flags.validated) {
+      continue;
+    }
+
+    if (typeof className === 'string') {
+      acc[className] = value;
+    } else if (Array.isArray(className)) {
+      className.forEach(cls => {
+        acc[cls] = value;
+      });
+    }
+  }
+
+  return acc;
+}
 
 function createValuesLookup(vm: ProviderInstance) {
   const providers = vm.$_veeObserver.refs;

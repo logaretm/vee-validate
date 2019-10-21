@@ -1,52 +1,26 @@
-import { ValidationFlags, RuleParamConfig, Locator } from '../types';
-import { ValidationClassMap } from '../config';
-import { RuleContainer } from '../extend';
+import { Locator } from '../types';
 
-export const isNaN = (value: unknown): boolean => {
+export function isNaN(value: unknown): boolean {
   // NaN is the one value that does not equal itself.
   // eslint-disable-next-line
   return value !== value;
-};
+}
 
-/**
- * Checks if the values are either null or undefined.
- */
-export const isNullOrUndefined = (value: unknown): value is undefined | null => {
+export function isNullOrUndefined(value: unknown): value is undefined | null {
   return value === null || value === undefined;
-};
+}
 
-/**
- * Creates the default flags object.
- */
-export const createFlags = (): ValidationFlags => ({
-  untouched: true,
-  touched: false,
-  dirty: false,
-  pristine: true,
-  valid: false,
-  invalid: false,
-  validated: false,
-  pending: false,
-  required: false,
-  changed: false,
-  passed: false,
-  failed: false
-});
+export function isEmptyArray(arr: any[]): boolean {
+  return Array.isArray(arr) && arr.length === 0;
+}
 
-/**
- * Checks if the value is an object.
- */
 export const isObject = (obj: unknown): obj is { [x: string]: any } =>
   obj !== null && obj && typeof obj === 'object' && !Array.isArray(obj);
-
-export function identity<T>(x: T): T {
-  return x;
-}
 
 /**
  * Shallow object comparison.
  */
-export const isEqual = (lhs: any, rhs: any): boolean => {
+export function isEqual(lhs: any, rhs: any): boolean {
   if (lhs instanceof RegExp && rhs instanceof RegExp) {
     return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
   }
@@ -80,34 +54,30 @@ export const isEqual = (lhs: any, rhs: any): boolean => {
   }
 
   return lhs === rhs;
-};
+}
 
-export const includes = (collection: any[] | string, item: any): boolean => {
-  return collection.indexOf(item) !== -1;
-};
-
-/**
- * Parses a rule string expression.
- */
-export const parseRule = (rule: string) => {
-  let params: string[] = [];
-  const name = rule.split(':')[0];
-
-  if (includes(rule, ':')) {
-    params = rule
-      .split(':')
-      .slice(1)
-      .join(':')
-      .split(',');
+// Checks if a given value is not an empty string or null or undefined.
+export function isSpecified(val: string | null | undefined): boolean {
+  if (val === '') {
+    return false;
   }
 
-  return { name, params };
-};
+  return !isNullOrUndefined(val);
+}
 
-/**
- * Debounces a function.
- */
-export const debounce = (fn: Function, wait = 0, token = { cancelled: false }) => {
+export function isLocator(value: unknown): value is Locator {
+  return isCallable(value) && !!(value as any).__locatorRef;
+}
+
+export function isCallable(fn: unknown): fn is Function {
+  return typeof fn === 'function';
+}
+
+export function identity<T>(x: T): T {
+  return x;
+}
+
+export function debounce(fn: Function, wait = 0, token = { cancelled: false }) {
   if (wait === 0) {
     return fn;
   }
@@ -126,220 +96,13 @@ export const debounce = (fn: Function, wait = 0, token = { cancelled: false }) =
     clearTimeout(timeout as any);
     timeout = setTimeout(later, wait) as any;
   };
-};
+}
 
 /**
  * Emits a warning to the console.
  */
-export const warn = (message: string) => {
+export function warn(message: string) {
   console.warn(`[vee-validate] ${message}`);
-};
-
-function createLocator(value: string): Locator {
-  const locator: Locator = (crossTable: Record<string, any>) => {
-    return crossTable[value];
-  };
-
-  locator.__locatorRef = value;
-
-  return locator;
-}
-
-export function isLocator(value: unknown): value is Locator {
-  return isCallable(value) && !!(value as any).__locatorRef;
-}
-
-function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
-  const ruleSchema = RuleContainer.getRuleDefinition(ruleName);
-  if (!ruleSchema) {
-    return provided;
-  }
-
-  const params: Record<string, any> = {};
-  if (!ruleSchema.params && !Array.isArray(provided)) {
-    throw new Error('You provided an object params to a rule that has no defined schema.');
-  }
-
-  // Rule probably uses an array for their args, keep it as is.
-  if (Array.isArray(provided) && !ruleSchema.params) {
-    return provided;
-  }
-
-  let definedParams: RuleParamConfig[];
-  // collect the params schema.
-  if (!ruleSchema.params || (ruleSchema.params.length < provided.length && Array.isArray(provided))) {
-    let lastDefinedParam: RuleParamConfig;
-    // collect any additional parameters in the last item.
-    definedParams = provided.map((_: any, idx: number) => {
-      let param = ruleSchema.params && ruleSchema.params[idx];
-      lastDefinedParam = param || lastDefinedParam;
-      if (!param) {
-        param = lastDefinedParam;
-      }
-
-      return param;
-    });
-  } else {
-    definedParams = ruleSchema.params;
-  }
-
-  // Match the provided array length with a temporary schema.
-  for (let i = 0; i < definedParams.length; i++) {
-    const options = definedParams[i];
-    let value = options.default;
-    // if the provided is an array, map element value.
-    if (Array.isArray(provided)) {
-      if (i in provided) {
-        value = provided[i];
-      }
-    } else {
-      // If the param exists in the provided object.
-      if (options.name in provided) {
-        value = provided[options.name];
-        // if the provided is the first param value.
-      } else if (definedParams.length === 1) {
-        value = provided;
-      }
-    }
-
-    // if the param is a target, resolve the target value.
-    if (options.isTarget) {
-      value = createLocator(value);
-    }
-
-    // If there is a transformer defined.
-    if (options.cast) {
-      value = options.cast(value);
-    }
-
-    // already been set, probably multiple values.
-    if (params[options.name]) {
-      params[options.name] = Array.isArray(params[options.name]) ? params[options.name] : [params[options.name]];
-      params[options.name].push(value);
-    } else {
-      // set the value.
-      params[options.name] = value;
-    }
-  }
-
-  return params;
-}
-
-/**
- * Normalizes the given rules expression.
- */
-export const normalizeRules = (rules: any) => {
-  // if falsy value return an empty object.
-  const acc: { [x: string]: any } = {};
-  Object.defineProperty(acc, '_$$isNormalized', {
-    value: true,
-    writable: false,
-    enumerable: false,
-    configurable: false
-  });
-
-  if (!rules) {
-    return acc;
-  }
-
-  // Object is already normalized, skip.
-  if (isObject(rules) && rules._$$isNormalized) {
-    return rules as typeof acc;
-  }
-
-  if (isObject(rules)) {
-    return Object.keys(rules).reduce((prev, curr) => {
-      let params = [];
-      if (rules[curr] === true) {
-        params = [];
-      } else if (Array.isArray(rules[curr])) {
-        params = rules[curr];
-      } else if (isObject(rules[curr])) {
-        params = rules[curr];
-      } else {
-        params = [rules[curr]];
-      }
-
-      if (rules[curr] !== false) {
-        prev[curr] = buildParams(curr, params);
-      }
-
-      return prev;
-    }, acc);
-  }
-
-  /* istanbul ignore if */
-  if (typeof rules !== 'string') {
-    warn('rules must be either a string or an object.');
-    return acc;
-  }
-
-  return rules.split('|').reduce((prev, rule) => {
-    const parsedRule = parseRule(rule);
-    if (!parsedRule.name) {
-      return prev;
-    }
-
-    prev[parsedRule.name] = buildParams(parsedRule.name, parsedRule.params);
-
-    return prev;
-  }, acc);
-};
-
-/**
- * Checks if a function is callable.
- */
-export const isCallable = (func: unknown): func is Function => typeof func === 'function';
-
-export function computeClassObj(names: ValidationClassMap, flags: ValidationFlags) {
-  const acc: Record<string, boolean> = {};
-  const keys = Object.keys(flags);
-  const length = keys.length;
-  for (let i = 0; i < length; i++) {
-    const flag = keys[i];
-    const className = (names && names[flag]) || flag;
-    const value = flags[flag];
-    if (isNullOrUndefined(value)) {
-      continue;
-    }
-
-    if ((flag === 'valid' || flag === 'invalid') && !flags.validated) {
-      continue;
-    }
-
-    if (typeof className === 'string') {
-      acc[className] = value;
-    } else if (Array.isArray(className)) {
-      className.forEach(cls => {
-        acc[cls] = value;
-      });
-    }
-  }
-
-  return acc;
-}
-
-/* istanbul ignore next */
-function _copyArray<T>(arrayLike: ArrayLike<T>): T[] {
-  const array = [];
-  const length = arrayLike.length;
-  for (let i = 0; i < length; i++) {
-    array.push(arrayLike[i]);
-  }
-
-  return array;
-}
-
-/**
- * Converts an array-like object to array, provides a simple polyfill for Array.from
- */
-export function toArray<T>(arrayLike: ArrayLike<T>): T[] {
-  if (isCallable(Array.from)) {
-    return Array.from(arrayLike);
-  }
-
-  /* istanbul ignore next */
-  return _copyArray(arrayLike);
 }
 
 export function findIndex<T>(arrayLike: ArrayLike<T>, predicate: (item: T, idx: number) => boolean): number {
@@ -369,6 +132,10 @@ export function find<T>(arrayLike: ArrayLike<T>, predicate: (item: T, idx: numbe
   return idx === -1 ? undefined : array[idx];
 }
 
+export function includes(collection: any[] | string, item: any): boolean {
+  return collection.indexOf(item) !== -1;
+}
+
 export function merge(target: any, source: any) {
   Object.keys(source).forEach(key => {
     if (isObject(source[key])) {
@@ -386,6 +153,29 @@ export function merge(target: any, source: any) {
   return target;
 }
 
+/**
+ * Converts an array-like object to array, provides a simple polyfill for Array.from
+ */
+export function toArray<T>(arrayLike: ArrayLike<T>): T[] {
+  if (isCallable(Array.from)) {
+    return Array.from(arrayLike);
+  }
+
+  /* istanbul ignore next */
+  return _copyArray(arrayLike);
+}
+
+/* istanbul ignore next */
+function _copyArray<T>(arrayLike: ArrayLike<T>): T[] {
+  const array = [];
+  const length = arrayLike.length;
+  for (let i = 0; i < length; i++) {
+    array.push(arrayLike[i]);
+  }
+
+  return array;
+}
+
 export function values<T>(obj: { [x: string]: T }): T[] {
   if (isCallable(Object.values)) {
     return Object.values(obj);
@@ -396,21 +186,8 @@ export function values<T>(obj: { [x: string]: T }): T[] {
   return Object.keys(obj).map(k => obj[k]);
 }
 
-export const isEmptyArray = (arr: any[]): boolean => {
-  return Array.isArray(arr) && arr.length === 0;
-};
-
-export const interpolate = (template: string, values: Record<string, any>): string => {
-  return template.replace(/\{([^}]+)\}/g, (_, p): string => {
+export function interpolate(template: string, values: Record<string, any>): string {
+  return template.replace(/{([^}]+)}/g, (_, p): string => {
     return p in values ? values[p] : `{${p}}`;
   });
-};
-
-// Checks if a given value is not an empty string or null or undefined.
-export const isSpecified = (val: string | null | undefined): boolean => {
-  if (val === '') {
-    return false;
-  }
-
-  return !isNullOrUndefined(val);
-};
+}
