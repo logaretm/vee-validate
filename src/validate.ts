@@ -1,12 +1,12 @@
 import { RuleContainer } from './extend';
-import { isObject, isNullOrUndefined, normalizeRules, isEmptyArray, interpolate, isLocator } from './utils';
+import { interpolate, isEmptyArray, isLocator, isNullOrUndefined, isObject, normalizeRules } from './utils';
 import {
-  ValidationResult,
-  ValidationRuleSchema,
-  ValidationMessageTemplate,
   RuleParamConfig,
+  RuleParamSchema,
   ValidationMessageGenerator,
-  RuleParamSchema
+  ValidationMessageTemplate,
+  ValidationResult,
+  ValidationRuleSchema
 } from './types';
 import { getConfig } from './config';
 
@@ -289,34 +289,39 @@ function _getUserTargets(
   userMessage: string | ValidationMessageGenerator | undefined
 ) {
   const userTargets: any = {};
-  const values: Record<string, any> = field.rules[ruleName];
+  const rules: Record<string, any> = field.rules[ruleName];
   const params: RuleParamSchema[] = ruleSchema.params || [];
 
-  if (values) {
-    // check to see if any are targets
-    Object.keys(values).forEach((key: string, index: number) => {
-      // variables
-      const value: any = values[key];
-
-      // user targets start with @
-      if (typeof value === 'string' && value.startsWith('@')) {
-        // get associated parameter
-        const param: any = params[index];
-        if (param) {
-          // grab the name of the target
-          const key = value.substr(1);
-          const placeholder = `_${key}Target_`;
-          userTargets[placeholder] = field.names[key] || key;
-
-          // update template if it's a string
-          if (typeof userMessage === 'string') {
-            const rx = new RegExp(`{${param.name}}`, 'g');
-            userMessage = userMessage.replace(rx, `{${placeholder}}`);
-          }
-        }
-      }
-    });
+  // early return if no rules
+  if (!rules) {
+    return {};
   }
+
+  // check all rules to convert targets
+  Object.keys(rules).forEach((key: string, index: number) => {
+    // get the rule
+    const rule: any = rules[key];
+    if (typeof rule !== 'string' || !rule.startsWith('@')) {
+      return {};
+    }
+
+    // get associated parameter
+    const param: any = params[index];
+    if (!param) {
+      return {};
+    }
+
+    // grab the name of the target
+    const name = rule.substr(1);
+    const placeholder = `_${name}Target_`;
+    userTargets[placeholder] = field.names[name] || name;
+
+    // update template if it's a string
+    if (typeof userMessage === 'string') {
+      const rx = new RegExp(`{${param.name}}`, 'g');
+      userMessage = userMessage.replace(rx, `{${placeholder}}`);
+    }
+  });
 
   return {
     userTargets,
