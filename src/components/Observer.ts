@@ -1,30 +1,29 @@
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
-import { values, findIndex, warn } from '../utils';
-import { ValidationResult, InactiveRefCache, VeeObserver, VNodeWithVeeContext, ValidationFlags } from '../types';
+import { values, findIndex, warn, createFlags } from '../utils';
+import {
+  ValidationResult,
+  InactiveRefCache,
+  VeeObserver,
+  VNodeWithVeeContext,
+  ValidationFlags,
+  KnownKeys
+} from '../types';
 import { ValidationProvider } from './Provider';
 import { normalizeChildren } from '../utils/vnode';
 
-const flagMergingStrategy: {
-  [x: string]: 'every' | 'some';
-} = {
-  pristine: 'every',
-  dirty: 'some',
-  touched: 'some',
-  untouched: 'every',
-  valid: 'every',
-  invalid: 'some',
-  pending: 'some',
-  validated: 'every',
-  changed: 'some',
-  passed: 'every',
-  failed: 'some'
-};
-
-function mergeFlags(lhs: any, rhs: any, strategy: string) {
-  const stratName = flagMergingStrategy[strategy];
-
-  return [lhs, rhs][stratName](f => f);
-}
+const FLAGS_STRATEGIES: [KnownKeys<ValidationFlags>, 'every' | 'some'][] = [
+  ['pristine', 'every'],
+  ['dirty', 'some'],
+  ['touched', 'some'],
+  ['untouched', 'every'],
+  ['valid', 'every'],
+  ['invalid', 'some'],
+  ['pending', 'some'],
+  ['validated', 'every'],
+  ['changed', 'some'],
+  ['passed', 'every'],
+  ['failed', 'some']
+];
 
 type ProviderInstance = InstanceType<typeof ValidationProvider>;
 
@@ -97,34 +96,26 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
   },
   data,
   computed: {
-    sources() {
-      return [...values(this.refs), ...values(this.inactiveRefs), ...this.observers];
-    },
     errors() {
-      return this.sources.reduce((errors: Record<string, string[]>, vm: any) => {
-        errors[vm.id] = vm.errors;
-
-        return errors;
-      }, {});
+      return (this as any).ctx.errors;
     },
     flags() {
-      return this.sources.reduce((flags: Record<string, boolean>, vm: any) => {
-        Object.keys(flagMergingStrategy).forEach(flag => {
-          if (!(flag in flags)) {
-            flags[flag] = vm.flags[flag];
-            return;
-          }
+      return FLAGS_STRATEGIES.reduce(
+        (acc: ValidationFlags, [flag]) => {
+          acc[flag] = (this as any).ctx[flag];
 
-          flags[flag] = mergeFlags(flags[flag], vm.flags[flag], flag);
-        });
-
-        return flags;
-      }, {});
+          return acc;
+        },
+        {} as ValidationFlags
+      );
     },
     ctx() {
-      return {
-        errors: this.errors,
-        ...this.flags,
+      const vms = [...values(this.refs), ...values(this.inactiveRefs), ...this.observers];
+
+      const errors: Record<string, string> = {};
+      const props = {
+        errors,
+        ...createFlags(),
         passes: (cb: Function) => {
           return this.validate().then((result: boolean) => {
             if (!result || !cb) {
@@ -137,6 +128,18 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
         validate: (...args: any[]) => this.validate(...args),
         reset: () => this.reset()
       };
+
+      const length = vms.length;
+      for (let i = 0; i < length; i++) {
+        const vm = vms[i];
+        props.errors[vm.id] = vm.errors;
+      }
+
+      FLAGS_STRATEGIES.forEach(([flag, method]) => {
+        props[flag] = vms[method](vm => vm.flags[flag]);
+      });
+
+      return props;
     }
   },
   created() {

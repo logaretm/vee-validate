@@ -2,7 +2,7 @@ import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { normalizeRules } from '../utils/rules';
 import { normalizeEventValue } from '../utils/events';
 import { extractVNodes, normalizeChildren, resolveRules } from '../utils/vnode';
-import { isCallable, isEqual, isNullOrUndefined } from '../utils';
+import { isCallable, isEqual, isNullOrUndefined, createFlags } from '../utils';
 import { getConfig, ValidationClassMap } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
@@ -269,23 +269,6 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     }
   }
 });
-
-function createFlags(): ValidationFlags {
-  return {
-    untouched: true,
-    touched: false,
-    dirty: false,
-    pristine: true,
-    valid: false,
-    invalid: false,
-    validated: false,
-    pending: false,
-    required: false,
-    changed: false,
-    passed: false,
-    failed: false
-  };
-}
 
 function computeClassObj(names: ValidationClassMap, flags: ValidationFlags) {
   const acc: Record<string, boolean> = {};
