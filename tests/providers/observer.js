@@ -7,6 +7,14 @@ const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
+async function flush() {
+  await flushPromises();
+
+  return new Promise(resolve => {
+    setTimeout(resolve, 50);
+  });
+}
+
 const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required';
 
 test('renders the slot', () => {
@@ -73,12 +81,12 @@ test('observes the current state of providers', async () => {
   const stateSpan = wrapper.find('#state');
   const input = wrapper.find('input');
 
-  await flushPromises();
+  await flush();
   // initially the field valid flag is false.
   expect(stateSpan.text()).toBe('false');
 
   input.setValue('value');
-  await flushPromises();
+  await flush();
 
   expect(stateSpan.text()).toBe('true');
 });
@@ -102,15 +110,16 @@ test('triggers validation manually on its children providers using refs', async 
   );
 
   const error = wrapper.find('#error');
-  await flushPromises();
+  await flush();
   expect(error.text()).toBe('');
 
   await wrapper.vm.$refs.obs.validate();
+  await flush();
 
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 });
 
-test('triggers validation manually on its children providers using validate on v-slot', async () => {
+test('passes only executes the callback if observer is valid', async () => {
   const wrapper = mount(
     {
       data: () => ({
@@ -137,16 +146,17 @@ test('triggers validation manually on its children providers using validate on v
 
   const error = wrapper.find('#error');
   const input = wrapper.find('input');
-  await flushPromises();
+  await flush();
   expect(error.text()).toBe('');
 
   wrapper.find('button').trigger('click');
-  await flushPromises();
+  await flush();
+  expect(wrapper.vm.calls).toBe(0);
 
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
   input.setValue('12');
   wrapper.find('button').trigger('click');
-  await flushPromises();
+  await flush();
 
   expect(error.text()).toBe('');
   expect(wrapper.vm.calls).toBe(1);
@@ -197,7 +207,7 @@ test('resets child refs', async () => {
   );
 
   const error = wrapper.find('#error');
-  await flushPromises();
+  await flush();
   expect(error.text()).toBe('');
 
   await wrapper.vm.$refs.obs.validate();
@@ -205,7 +215,7 @@ test('resets child refs', async () => {
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
   wrapper.vm.$refs.obs.reset();
-  await flushPromises();
+  await flush();
 
   expect(error.text()).toBe('');
 });
@@ -230,16 +240,16 @@ test('resets child refs using reset on the v-slot data', async () => {
   );
 
   const error = wrapper.find('#error');
-  await flushPromises();
+  await flush();
   expect(error.text()).toBe('');
 
   wrapper.vm.$refs.obs.validate();
-  await flushPromises();
+  await flush();
 
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
   await wrapper.find('button').trigger('click');
-  await flushPromises();
+  await flush();
 
   expect(error.text()).toBe('');
 });
@@ -264,7 +274,7 @@ test('resets inactive refs that were cached', async () => {
   );
 
   let error = wrapper.find('#error');
-  await flushPromises();
+  await flush();
   expect(error.text()).toBe('');
 
   await wrapper.vm.$refs.obs.validate();
@@ -277,7 +287,7 @@ test('resets inactive refs that were cached', async () => {
   wrapper.setData({
     shown: true
   });
-  await flushPromises();
+  await flush();
   error = wrapper.find('#error');
 
   expect(error.text()).toBe('');
@@ -305,9 +315,10 @@ test('collects errors from child providers', async () => {
     { localVue: Vue, sync: false }
   );
 
-  await flushPromises();
+  await flush();
 
   await wrapper.vm.$refs.obs.validate();
+  await flush();
 
   const errors = wrapper.findAll('p');
   expect(errors).toHaveLength(2); // 2 fields.
@@ -335,10 +346,10 @@ test('exposes nested observers state', async () => {
     { localVue: Vue, sync: false }
   );
 
-  await flushPromises();
+  await flush();
   const input = wrapper.find('input');
   input.setValue('1');
-  await flushPromises();
+  await flush();
 
   expect(wrapper.find('p').text()).toContain('The {field} field may only contain alphabetic characters');
 });
@@ -363,11 +374,13 @@ test('validates and resets nested observers', async () => {
     { localVue: Vue, sync: false }
   );
 
-  await flushPromises();
+  await flush();
   expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
   await wrapper.vm.$refs.obs.validate();
+  await flush();
   expect(wrapper.find('p').text()).toContain(DEFAULT_REQUIRED_MESSAGE);
   await wrapper.vm.$refs.obs.reset();
+  await flush();
   expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
 });
 
@@ -392,12 +405,12 @@ test('handles unmouting nested observers', async () => {
     { localVue: Vue, sync: false }
   );
 
-  await flushPromises();
+  await flush();
   expect(wrapper.find('p').text()).toContain(`NESTED_OBS`); // observer is mounted.
   wrapper.setData({
     isMounted: false
   });
-  await flushPromises();
+  await flush();
   expect(wrapper.find('p').text()).not.toContain(`NESTED_OBS`); // observer is mounted.
 });
 
@@ -432,15 +445,15 @@ test('persist provider state after destroyed', async () => {
 
   const button = wrapper.find('button');
   const input = wrapper.find('input');
-  await flushPromises();
+  await flush();
   input.element.value = 'se';
   input.trigger('input');
-  await flushPromises();
+  await flush();
 
   button.trigger('click');
-  await flushPromises();
+  await flush();
   button.trigger('click');
-  await flushPromises();
+  await flush();
   const span = wrapper.find('span');
   expect(span.text()).toBeTruthy();
 });
@@ -477,7 +490,7 @@ test('Sets errors for all providers', async () => {
     { localVue: Vue }
   );
 
-  await flushPromises();
+  await flush();
   expect(wrapper.find('#error1').text()).toBe('');
   expect(wrapper.find('#error2').text()).toBe('');
 
@@ -486,7 +499,7 @@ test('Sets errors for all providers', async () => {
     field2: ['whoops']
   });
 
-  await flushPromises();
+  await flush();
   expect(wrapper.find('#error1').text()).toBe('wrong');
   expect(wrapper.find('#error2').text()).toBe('whoops');
 });
@@ -525,7 +538,7 @@ test('Sets errors for nested observer providers', async () => {
     { localVue: Vue }
   );
 
-  await flushPromises();
+  await flush();
   expect(wrapper.find('#error1').text()).toBe('');
   expect(wrapper.find('#error2').text()).toBe('');
 
@@ -534,7 +547,7 @@ test('Sets errors for nested observer providers', async () => {
     field2: ['whoops']
   });
 
-  await flushPromises();
+  await flush();
   expect(wrapper.find('#error1').text()).toBe('wrong');
   expect(wrapper.find('#error2').text()).toBe('whoops');
 });

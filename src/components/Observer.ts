@@ -1,5 +1,5 @@
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
-import { values, findIndex, warn, createFlags } from '../utils';
+import { values, findIndex, warn, createFlags, debounce } from '../utils';
 import {
   ValidationResult,
   InactiveRefCache,
@@ -26,12 +26,15 @@ const FLAGS_STRATEGIES: [KnownKeys<ValidationFlags>, 'every' | 'some'][] = [
 ];
 
 type ProviderInstance = InstanceType<typeof ValidationProvider>;
+type ObserverErrors = Record<string, string[]>;
 
 let OBSERVER_COUNTER = 0;
 
 function data() {
   const refs: Record<string, ProviderInstance> = {};
   const inactiveRefs: Record<string, InactiveRefCache> = {};
+  const errors: ObserverErrors = {};
+  const flags: ValidationFlags = {} as ValidationFlags;
   // FIXME: Not sure of this one can be typed, circular type reference.
   const observers: any[] = [];
 
@@ -39,19 +42,16 @@ function data() {
     id: '',
     refs,
     observers,
-    inactiveRefs
+    inactiveRefs,
+    errors,
+    flags
   };
 }
-
-type ObserverErrors = Record<string, string[]>;
 
 type withObserverNode = VueConstructor<
   Vue & {
     $_veeObserver: VeeObserver;
     $vnode: VNodeWithVeeContext;
-    sources: any[];
-    errors: ObserverErrors;
-    flags: ValidationFlags;
   }
 >;
 
@@ -95,81 +95,46 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     }
   },
   data,
-  computed: {
-    errors() {
-      return (this as any).ctx.errors;
-    },
-    flags() {
-      return FLAGS_STRATEGIES.reduce(
-        (acc: ValidationFlags, [flag]) => {
-          acc[flag] = (this as any).ctx[flag];
-
-          return acc;
-        },
-        {} as ValidationFlags
-      );
-    },
-    ctx() {
-      const vms = [...values(this.refs), ...values(this.inactiveRefs), ...this.observers];
-
-      const errors: Record<string, string> = {};
-      const props = {
-        errors,
-        ...createFlags(),
-        passes: (cb: Function) => {
-          return this.validate().then((result: boolean) => {
-            if (!result || !cb) {
-              return;
-            }
-
-            return cb();
-          });
-        },
-        validate: (...args: any[]) => this.validate(...args),
-        reset: () => this.reset()
-      };
-
-      const length = vms.length;
-      for (let i = 0; i < length; i++) {
-        const vm = vms[i];
-        props.errors[vm.id] = vm.errors;
-      }
-
-      FLAGS_STRATEGIES.forEach(([flag, method]) => {
-        props[flag] = vms[method](vm => vm.flags[flag]);
-      });
-
-      return props;
-    }
-  },
   created() {
     this.id = this.vid;
-    if (this.$_veeObserver) {
-      this.$_veeObserver.subscribe(this, 'observer');
-    }
+    register.call(this);
+
+    const onChange = debounce(({ errors, flags }: { errors: ObserverErrors; flags: ValidationFlags }) => {
+      this.errors = errors;
+      this.flags = flags;
+    }, 16);
+
+    this.$watch(
+      () => {
+        const vms = [...values(this.refs), ...values(this.inactiveRefs), ...this.observers];
+        const errors: ObserverErrors = {};
+        const flags: ValidationFlags = {} as ValidationFlags;
+
+        const length = vms.length;
+        for (let i = 0; i < length; i++) {
+          const vm = vms[i];
+          errors[vm.id] = vm.errors;
+        }
+
+        FLAGS_STRATEGIES.forEach(([flag, method]) => {
+          flags[flag] = vms[method](vm => vm.flags[flag]);
+        });
+
+        return { errors, flags };
+      },
+      onChange as any
+    );
   },
-  activated() {
-    if (this.$_veeObserver) {
-      this.$_veeObserver.subscribe(this, 'observer');
-    }
-  },
-  deactivated() {
-    if (this.$_veeObserver) {
-      this.$_veeObserver.unsubscribe(this.id, 'observer');
-    }
-  },
-  beforeDestroy() {
-    if (this.$_veeObserver) {
-      this.$_veeObserver.unsubscribe(this.id, 'observer');
-    }
-  },
+  activated: register,
+  deactivated: unregister,
+  beforeDestroy: unregister,
   render(h: CreateElement): VNode {
-    const children = normalizeChildren(this, this.ctx);
+    const children = normalizeChildren(this, prepareSlotProps(this));
 
     return this.slim && children.length <= 1 ? children[0] : h(this.tag, { on: this.$listeners }, children);
   },
   methods: {
-    subscribe(subscriber: any, kind = 'provider') {
+    subscribe(this: any, subscriber: any, kind = 'provider') {
       if (kind === 'observer') {
         this.observers.push(subscriber);
         return;
@@ -180,13 +145,13 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
         this.restoreProviderState(subscriber);
       }
     },
-    unsubscribe(id: string, kind = 'provider') {
+    unsubscribe(this: any, id: string, kind = 'provider') {
       if (kind === 'provider') {
         this.removeProvider(id);
         return;
       }
 
-      const idx = findIndex(this.observers, o => o.id === id);
+      const idx = findIndex(this.observers, (o: any) => o.id === id);
       if (idx !== -1) {
         this.observers.splice(idx, 1);
       }
@@ -200,6 +165,14 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       ]);
 
       return results.every(r => r);
+    },
+    async passes(this: any, cb: Function) {
+      const isValid = await this.validate();
+      if (!isValid || !cb) {
+        return;
+      }
+
+      return cb();
     },
     reset() {
       Object.keys(this.inactiveRefs).forEach(key => {
@@ -261,3 +234,25 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     }
   }
 });
+
+function unregister(this: any) {
+  if (this.$_veeObserver) {
+    this.$_veeObserver.unsubscribe(this.id, 'observer');
+  }
+}
+
+function register(this: any) {
+  if (this.$_veeObserver) {
+    this.$_veeObserver.subscribe(this, 'observer');
+  }
+}
+
+function prepareSlotProps(vm: any) {
+  return {
+    ...vm.flags,
+    errors: vm.errors,
+    validate: vm.validate,
+    passes: vm.passes,
+    reset: vm.reset
+  };
+}
