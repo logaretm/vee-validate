@@ -51,7 +51,7 @@ import { required } from 'vee-validate/dist/rules';
 
 extend('required', {
   ...required,
-  message: 'The {_field_} field is required'
+  message: 'This field is required'
 });
 
 new Vue({
@@ -76,7 +76,7 @@ Wrap your inputs with the `ValidationProvider`:
 
 And this is the result:
 
-<RuleDemo rule="required" />
+<RuleDemo rule="required" :customMessages="{ required: 'This field is required' }" />
 
 ## Contributions
 
