@@ -1,7 +1,7 @@
 # Validation Rules
 
 :::tip Bundle size
-VeeValidate default bundle do no include any of these rules, you can import them indivdually:
+VeeValidate default bundle does not include any of these rules, you can import them individually:
 
 ```js
 import { extend } from 'vee-validate';
