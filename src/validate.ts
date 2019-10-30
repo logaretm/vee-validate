@@ -194,6 +194,10 @@ async function _test(field: FieldContext, value: any, rule: NormalizedRule) {
     result = { valid: result, data: {} };
   }
 
+  if (rule.isNegated) {
+    result.valid = !result.valid;
+  }
+
   return {
     valid: result.valid,
     required: result.required,
