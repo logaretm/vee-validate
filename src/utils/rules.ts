@@ -38,7 +38,9 @@ export function normalizeRules(rules: any): Record<string, NormalizedRule> {
       }
 
       if (rules[curr] !== false) {
-        prev[curr] = { params: buildParams(curr, params) };
+        const isNegated = curr[0] === '!';
+        const name = isNegated ? curr.slice(1) : curr;
+        prev[name] = { name, params: buildParams(curr, params), isNegated };
       }
 
       return prev;
@@ -57,7 +59,13 @@ export function normalizeRules(rules: any): Record<string, NormalizedRule> {
       return prev;
     }
 
-    prev[parsedRule.name] = { params: buildParams(parsedRule.name, parsedRule.params) };
+    const isNegated = parsedRule.name[0] === '!';
+    const name = isNegated ? parsedRule.name.slice(1) : parsedRule.name;
+    prev[name] = {
+      name,
+      params: buildParams(parsedRule.name, parsedRule.params),
+      isNegated
+    };
 
     return prev;
   }, acc);

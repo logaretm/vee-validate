@@ -90,10 +90,7 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
     }
 
     const rule = rules[i];
-    const result = await _test(field, value, {
-      name: rule,
-      params: field.rules[rule].params
-    });
+    const result = await _test(field, value, field.rules[rule]);
 
     if (!result.valid && result.error) {
       errors.push(result.error);
@@ -122,10 +119,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
 
   for (let i = 0; i < length; i++) {
     const rule = requireRules[i];
-    const result = await _test(field, value, {
-      name: rule,
-      params: field.rules[rule]
-    });
+    const result = await _test(field, value, field.rules[rule]);
 
     if (!isObject(result)) {
       throw new Error('Require rules has to return an object (see docs)');
@@ -172,7 +166,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
 /**
  * Tests a single input value against a rule.
  */
-async function _test(field: FieldContext, value: any, rule: { name: string; params: Record<string, any> }) {
+async function _test(field: FieldContext, value: any, rule: NormalizedRule) {
   const ruleSchema = RuleContainer.getRuleDefinition(rule.name);
   if (!ruleSchema || !ruleSchema.validate) {
     throw new Error(`No such validator '${rule.name}' exists.`);

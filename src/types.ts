@@ -98,5 +98,7 @@ export type VNodeWithVeeContext = VNode & {
 };
 
 export interface NormalizedRule {
+  name: string;
   params: Record<string, any>;
+  isNegated: boolean;
 }
