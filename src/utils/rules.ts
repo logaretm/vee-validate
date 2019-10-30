@@ -1,11 +1,11 @@
-import { Locator, RuleParamConfig } from '../types';
+import { Locator, RuleParamConfig, NormalizedRule } from '../types';
 import { RuleContainer } from '../extend';
 import { includes, isObject, warn } from './index';
 
 /**
  * Normalizes the given rules expression.
  */
-export function normalizeRules(rules: any) {
+export function normalizeRules(rules: any): Record<string, NormalizedRule> {
   // if falsy value return an empty object.
   const acc: { [x: string]: any } = {};
   Object.defineProperty(acc, '_$$isNormalized', {
@@ -38,7 +38,7 @@ export function normalizeRules(rules: any) {
       }
 
       if (rules[curr] !== false) {
-        prev[curr] = buildParams(curr, params);
+        prev[curr] = { params: buildParams(curr, params) };
       }
 
       return prev;
@@ -57,7 +57,7 @@ export function normalizeRules(rules: any) {
       return prev;
     }
 
-    prev[parsedRule.name] = buildParams(parsedRule.name, parsedRule.params);
+    prev[parsedRule.name] = { params: buildParams(parsedRule.name, parsedRule.params) };
 
     return prev;
   }, acc);

@@ -6,14 +6,15 @@ import {
   ValidationMessageGenerator,
   ValidationMessageTemplate,
   ValidationResult,
-  ValidationRuleSchema
+  ValidationRuleSchema,
+  NormalizedRule
 } from './types';
 import { getConfig } from './config';
 import { normalizeRules } from './utils/rules';
 
 interface FieldContext {
   name: string;
-  rules: Record<string, any>;
+  rules: Record<string, NormalizedRule>;
   bails: boolean;
   skipIfEmpty: boolean;
   forceRequired: boolean;
@@ -91,7 +92,7 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
     const rule = rules[i];
     const result = await _test(field, value, {
       name: rule,
-      params: field.rules[rule]
+      params: field.rules[rule].params
     });
 
     if (!result.valid && result.error) {
@@ -253,7 +254,7 @@ function _getRuleTargets(
   }
 
   const names: Record<string, string> = {};
-  let ruleConfig = field.rules[ruleName];
+  let ruleConfig = field.rules[ruleName].params;
   if (!Array.isArray(ruleConfig) && isObject(ruleConfig)) {
     ruleConfig = params.map((param: any) => {
       return ruleConfig[param.name];
@@ -290,7 +291,7 @@ function _getUserTargets(
   userMessage: string | ValidationMessageGenerator | undefined
 ) {
   const userTargets: any = {};
-  const rules: Record<string, any> = field.rules[ruleName];
+  const rules: Record<string, any> = field.rules[ruleName].params;
   const params: RuleParamSchema[] = ruleSchema.params || [];
 
   // early return if no rules

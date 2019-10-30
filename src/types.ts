@@ -96,3 +96,7 @@ export type VNodeWithVeeContext = VNode & {
     $_veeObserver?: VeeObserver;
   };
 };
+
+export interface NormalizedRule {
+  params: Record<string, any>;
+}
