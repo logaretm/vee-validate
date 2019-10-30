@@ -1,5 +1,13 @@
 <template>
-  <ValidationProvider :rules="rule" v-slot="{ errors, validate }" :vid="$attrs.vid" class="vprovider" :mode="$attrs.mode" :customMessages="$attrs.customMessages">
+  <ValidationProvider
+    :rules="rule"
+    v-slot="{ errors, validate }"
+    :name="$attrs.name"
+    :vid="$attrs.vid"
+    class="vprovider"
+    :mode="$attrs.mode"
+    :customMessages="$attrs.customMessages"
+  >
     <input
       :type="$attrs.inputType || 'text'"
       v-model="value"
@@ -60,27 +68,26 @@ input
   -webkit-appearance: none
   -moz-appearance: none
   _input-color: $gray $dark
+
   &:focus
     z-index: 1
     border-color: #302d48
-    box-shadow: 0 0 0 3px rgba(56,53,85,.25)
+    box-shadow: 0 0 0 3px rgba(56, 53, 85, 0.25)
     z-index: 1
 
-  &:disabled,
-  &.is-disabled
+  &:disabled, &.is-disabled
     cursor: not-allowed
     background: $gray
 
-  &[type="color"]
+  &[type='color']
     padding: 0
 
 .vprovider
   span
     display: block
-    margin-bottom: .5em
-    font-size: .75em
+    margin-bottom: 0.5em
+    font-size: 0.75em
     color: #f22435
-
 
 select
   position: relative

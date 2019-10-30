@@ -459,9 +459,11 @@ Checkboxes by default emit `true` or `false` depending on wether they are checke
 
 The field under validation must have a non-empty value **only if** the target field (first argument) is set to one of the specified values (other arguments).
 
-<RuleDemo type="select" :options="[{ text: 'EG', value: 'EG' }, { text: 'US', value: 'US' }]" />
+<ValidationObserver>
+  <RuleDemo vid="country" type="select" :options="[{ text: 'EG', value: 'EG' }, { text: 'US', value: 'US' }]" />
 
-<RuleDemo rule="required_if:country,US" />
+  <RuleDemo name="state" rule="required_if:country,US" />
+</ValidationObserver>
 
 ```vue
 <ValidationProvider rules="" vid="country" v-slot="x">
