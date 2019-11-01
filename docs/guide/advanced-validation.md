@@ -81,8 +81,8 @@ Here is a working snippet of the last example:
 
 <ValidationObserver>
   <StyledProvider
-    name="Password"
-    rules="required|password:confirmation"
+    name="password"
+    :rules="{required:true, password: { confirm }}"
     v-slot="{ errors }"
   >
    <input v-model="pass" type="password">
@@ -306,10 +306,8 @@ export default {
   },
   mounted () {
     this.extendRule('password', {
-      validate: (value, { other }) => value === other,
-      params: [
-        { name: 'other', isTarget: true }
-      ],
+      validate: (value,  {confirm}) => value === confirm,
+      params: ['confirm'],
       message: 'The password confirmation does not match.',
     });
 
