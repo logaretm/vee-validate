@@ -175,7 +175,15 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
 
     // Handle single-root slot.
     extractVNodes(children).forEach(input => {
-      this._resolvedRules = getConfig().useConstraintAttrs ? resolveRules(input) : {};
+      // resolved rules are not reactive because it has a new reference each time.
+      // causing infinite render-loops.
+      // So we are comparing them manually to decide if we need to validate or not.
+      const resolved = getConfig().useConstraintAttrs ? resolveRules(input) : {};
+      if (!isEqual(this._resolvedRules, resolved)) {
+        this._needsValidation = true;
+      }
+
+      this._resolvedRules = resolved;
       addListeners(this, input);
     });
 
