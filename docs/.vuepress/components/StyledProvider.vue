@@ -33,6 +33,7 @@ $border-radius = 4px
     border-style: solid
     border-radius: $border-radius
     border-color: #888888
+    box-sizing: border-box
     background-color: $white
     line-height: $element-lineheight
     -webkit-appearance: none
@@ -74,6 +75,7 @@ $border-radius = 4px
     background-position: right 0.75em center
     background-size: 0.5em
     background-repeat: no-repeat
+    box-sizing: border-box
     text-align: left
     -webkit-appearance: none
     -moz-appearance: none
