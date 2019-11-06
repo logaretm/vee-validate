@@ -40,17 +40,17 @@ export async function validate(
   rules: string | Record<string, any>,
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
-  const shouldBail = options && options.bails;
-  const skipIfEmpty = options && options.skipIfEmpty;
+  const shouldBail = options?.bails;
+  const skipIfEmpty = options?.skipIfEmpty;
   const field: FieldContext = {
-    name: (options && options.name) || '{field}',
+    name: options?.name || '{field}',
     rules: normalizeRules(rules),
     bails: isNullOrUndefined(shouldBail) ? true : shouldBail,
     skipIfEmpty: isNullOrUndefined(skipIfEmpty) ? true : skipIfEmpty,
     forceRequired: false,
-    crossTable: (options && options.values) || {},
-    names: (options && options.names) || {},
-    customMessages: (options && options.customMessages) || {}
+    crossTable: options?.values || {},
+    names: options?.names || {},
+    customMessages: options?.customMessages || {}
   };
 
   const result = await _validate(field, value, options);

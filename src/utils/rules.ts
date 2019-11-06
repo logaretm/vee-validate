@@ -85,7 +85,7 @@ function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
     let lastDefinedParam: RuleParamConfig;
     // collect any additional parameters in the last item.
     definedParams = provided.map((_: any, idx: number) => {
-      let param = ruleSchema.params && ruleSchema.params[idx];
+      let param = ruleSchema.params?.[idx];
       lastDefinedParam = param || lastDefinedParam;
       if (!param) {
         param = lastDefinedParam;

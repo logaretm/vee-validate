@@ -27,7 +27,7 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
     inject: providerOpts.inject
   };
 
-  const eventName = (options.model && options.model.event) || 'input';
+  const eventName = (options?.model?.event) || 'input';
 
   hoc.render = function(h: CreateElement) {
     this.registerField();
@@ -37,7 +37,7 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
     const model = findModel(this.$vnode);
     this._inputEventName = this._inputEventName || getInputEventName(this.$vnode, model);
     const value = findValue(this.$vnode);
-    onRenderUpdate(this, value && value.value);
+    onRenderUpdate(this, value?.value);
 
     const { onInput, onBlur, onValidate } = createCommonHandlers(this);
 
@@ -50,7 +50,7 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
     // Props are any attrs not associated with ValidationProvider Plus the model prop.
     // WARNING: Accidental prop overwrite will probably happen.
     const { prop } = findModelConfig(this.$vnode) || { prop: 'value' };
-    const props = { ...this.$attrs, ...{ [prop]: model && model.value }, ...mapProps(vctx) };
+    const props = { ...this.$attrs, ...{ [prop]: model?.value }, ...mapProps(vctx) };
 
     return h(
       options,

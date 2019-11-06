@@ -33,7 +33,7 @@ export function normalizeEventValue(value: unknown): any {
   }
 
   // If the input has a `v-model.number` modifier applied.
-  if (input._vModifiers && input._vModifiers.number) {
+  if (input._vModifiers?.number) {
     // as per the spec the v-model.number uses parseFloat
     const valueAsNumber = parseFloat(input.value);
     if (isNaN(valueAsNumber)) {
@@ -43,7 +43,7 @@ export function normalizeEventValue(value: unknown): any {
     return valueAsNumber;
   }
 
-  if (input._vModifiers && input._vModifiers.trim) {
+  if (input._vModifiers?.trim) {
     const trimmedValue = typeof input.value === 'string' ? input.value.trim() : input.value;
 
     return trimmedValue;

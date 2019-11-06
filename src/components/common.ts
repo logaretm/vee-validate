@@ -145,7 +145,7 @@ export function addListeners(vm: ProviderInstance, node: VNode) {
   const value = findValue(node);
   // cache the input eventName.
   vm._inputEventName = vm._inputEventName || getInputEventName(node, findModel(node));
-  onRenderUpdate(vm, value && value.value);
+  onRenderUpdate(vm, value?.value);
 
   const { onInput, onBlur, onValidate } = createCommonHandlers(vm);
   addVNodeListener(node, vm._inputEventName, onInput);

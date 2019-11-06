@@ -10,7 +10,7 @@ const RULES: { [k: string]: NormalizedRuleSchema } = {};
 type RuleIterateFn = (ruleName: string, schema: NormalizedRuleSchema) => any;
 
 function normalizeSchema(schema: ValidationRuleSchema): NormalizedRuleSchema {
-  if (schema.params && schema.params.length) {
+  if (schema.params?.length) {
     schema.params = schema.params.map(param => {
       if (typeof param === 'string') {
         return { name: param };
@@ -49,16 +49,16 @@ export class RuleContainer {
   }
 
   public static isLazy(name: string) {
-    return !!(RULES[name] && RULES[name].lazy);
+    return !!(RULES[name]?.lazy);
   }
 
   public static isRequireRule(name: string) {
-    return !!(RULES[name] && RULES[name].computesRequired);
+    return !!(RULES[name]?.computesRequired);
   }
 
   public static isTargetRule(name: string) {
     const definition = RuleContainer.getRuleDefinition(name);
-    if (!definition || !definition.params) {
+    if (!definition?.params) {
       return false;
     }
 

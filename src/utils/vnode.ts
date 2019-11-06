@@ -3,7 +3,7 @@ import { find, isCallable, isNullOrUndefined, includes, isSpecified } from './in
 import { normalizeRules } from './rules';
 
 export const isTextInput = (vnode: VNode): boolean => {
-  const attrs = (vnode.data && vnode.data.attrs) || vnode.elm;
+  const attrs = (vnode.data?.attrs) || vnode.elm;
 
   // it will fallback to being a text input per browsers spec.
   if (vnode.tag === 'input' && (!attrs || !attrs.type)) {
@@ -14,7 +14,7 @@ export const isTextInput = (vnode: VNode): boolean => {
     return true;
   }
 
-  return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'number'], attrs && attrs.type);
+  return includes(['text', 'password', 'search', 'email', 'tel', 'url', 'number'], attrs?.type);
 };
 
 // export const isCheckboxOrRadioInput = (vnode: VNode): boolean => {
@@ -51,13 +51,13 @@ export function findValue(vnode: VNode): { value: any } | undefined {
   }
 
   const config = findModelConfig(vnode);
-  const prop = (config && config.prop) || 'value';
-  if (vnode.componentOptions && vnode.componentOptions.propsData && prop in vnode.componentOptions.propsData) {
+  const prop = (config?.prop) || 'value';
+  if (vnode.componentOptions?.propsData && prop in vnode.componentOptions.propsData) {
     const propsDataWithValue = vnode.componentOptions.propsData as any;
     return { value: propsDataWithValue[prop] };
   }
 
-  if (vnode.data && vnode.data.domProps && 'value' in vnode.data.domProps) {
+  if (vnode.data?.domProps && 'value' in vnode.data.domProps) {
     return { value: vnode.data.domProps.value };
   }
 
@@ -116,7 +116,7 @@ export function mergeVNodeListeners(obj: any, eventName: string, handler: Functi
   }
 
   // Is an invoker.
-  if (isCallable(obj[eventName]) && obj[eventName].fns) {
+  if (isCallable(obj[eventName]?.fns)) {
     const invoker = obj[eventName];
     invoker.fns = Array.isArray(invoker.fns) ? invoker.fns : [invoker.fns];
     if (!includes(invoker.fns, handler)) {
@@ -184,7 +184,7 @@ export function getInputEventName(vnode: VNode, model?: VNodeDirective): string 
   }
 
   // Lazy Models typically use change event
-  if (model && model.modifiers && model.modifiers.lazy) {
+  if (model?.modifiers?.lazy) {
     return 'change';
   }
 
@@ -216,7 +216,7 @@ export function normalizeSlots(slots: any, ctx: Vue): VNode[] {
 }
 
 function resolveTextualRules(vnode: VNode): Record<string, any> {
-  const attrs = vnode.data && vnode.data.attrs;
+  const attrs = vnode.data?.attrs;
   const rules: Record<string, any> = {};
 
   if (!attrs) return rules;
@@ -252,7 +252,7 @@ function resolveTextualRules(vnode: VNode): Record<string, any> {
 
 export function resolveRules(vnode: VNode) {
   const htmlTags = ['input', 'select'];
-  const attrs = vnode.data && vnode.data.attrs;
+  const attrs = vnode.data?.attrs;
 
   if (!includes(htmlTags, vnode.tag) || !attrs) {
     return {};

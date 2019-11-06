@@ -27,30 +27,16 @@ class Dictionary {
     return this.format(this.locale, field, rule, values);
   }
 
-  private _hasLocale(locale: string) {
-    return !!this.container[locale];
-  }
-
   public format(locale: string, field: string, rule: string, values: { [k: string]: any }) {
     let message!: ValidationMessageTemplate;
 
     // find if specific message for that field was specified.
-    const dict = this.container[locale] && this.container[locale].fields && this.container[locale].fields[field];
-    if (dict && dict[rule]) {
-      message = dict[rule];
-    }
-
-    if (!message && this._hasLocale(locale) && this._hasMessage(locale, rule)) {
-      message = this.container[locale].messages[rule];
-    }
-
+    message = this.container[locale]?.fields?.[field]?.[rule] || this.container[locale]?.messages?.[rule];
     if (!message) {
       message = getConfig().defaultMessage;
     }
 
-    if (this._hasName(locale, field)) {
-      field = this.getName(locale, field);
-    }
+    field = this.container[locale]?.names?.[field] ?? field;
 
     return isCallable(message) ? message(field, values) : interpolate(message, { ...values, _field_: field });
   }
@@ -60,22 +46,7 @@ class Dictionary {
   }
 
   public hasRule(name: string) {
-    const locale = this.container[this.locale];
-    if (!locale) return false;
-
-    return !!(locale.messages && locale.messages[name]);
-  }
-
-  public getName(locale: string, key: string) {
-    return this.container[locale].names[key];
-  }
-
-  private _hasMessage(locale: string, key: string): boolean {
-    return !!(this._hasLocale(locale) && this.container[locale].messages && this.container[locale].messages[key]);
-  }
-
-  private _hasName(locale: string, key: string): boolean {
-    return !!(this._hasLocale(locale) && this.container[locale].names && this.container[locale].names[key]);
+    return !!this.container[this.locale]?.messages?.[name];
   }
 }
 
