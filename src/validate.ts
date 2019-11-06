@@ -45,8 +45,8 @@ export async function validate(
   const field: FieldContext = {
     name: options?.name || '{field}',
     rules: normalizeRules(rules),
-    bails: isNullOrUndefined(shouldBail) ? true : shouldBail,
-    skipIfEmpty: isNullOrUndefined(skipIfEmpty) ? true : skipIfEmpty,
+    bails: shouldBail ?? true,
+    skipIfEmpty: skipIfEmpty ?? true,
     forceRequired: false,
     crossTable: options?.values || {},
     names: options?.names || {},
