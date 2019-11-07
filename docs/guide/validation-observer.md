@@ -33,7 +33,7 @@ The scoped slot is passed an object containing a flags object representing the m
 | untouched |                        `boolean`                        | True if all fields haven't been touched (blurred).                                                                                                                        |
 | errors    |               `{ [x: string]: string[] }`               | An object containing reference to each field errors, each field is keyed by its `vid` prop.                                                                               |
 | validate  | `({ silent: boolean }) => { then: () => Promise<any> }` | A method that triggers validation for all providers. Can be chained using `then` to run a method after validation. Mutates child providers state unless `silent` is true. |
-| passes    |            `(cb: Function) => Promise<void>`            | Calls validation like `validate` and mutates provider's state, accepts a callback to be run only if the validation is successful                                          |
+| handleSubmit    |            `(cb: Function) => Promise<void>`            | Calls validation like `validate` and mutates provider's state, accepts a callback to be run only if the validation is successful                                          |
 | reset     |                      `() => void`                       | A method that resets validation state for all providers.                                                                                                                  |
 
 ## Rendering
@@ -118,12 +118,12 @@ export default {
 Note that `$refs` are not available until the first render, so make sure to add proper checks for that.
 :::
 
-You can trigger validation from the template using `passes` method which is convenient for running a handler if the form is valid:
+You can trigger validation from the template using `handleSubmit` method which is convenient for running a handler if the form is valid:
 
 ```vue{2}
 <template>
-  <ValidationObserver v-slot="{ invalid, passes }">
-    <form @submit.prevent="passes(submit)">
+  <ValidationObserver v-slot="{ invalid, handleSubmit }">
+    <form @submit.prevent="handleSubmit(submit)">
       <TextFieldWithValidation rules="required" v-model="first" />
 
       <TextFieldWithValidation rules="required" v-model="second" />
