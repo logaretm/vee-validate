@@ -137,7 +137,7 @@ test('passes only executes the callback if observer is valid', async () => {
           <input v-model="value" type="text">
           <span id="error">{{ errors[0] }}</span>
         </ValidationProvider>
-        <button @click="ctx.passes(submit)">Validate</button>
+        <button @click="ctx.handleSubmit(submit)">Validate</button>
       </ValidationObserver>
     `
     },

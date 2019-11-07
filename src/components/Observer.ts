@@ -166,7 +166,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
 
       return results.every(r => r);
     },
-    async passes(this: any, cb: Function) {
+    async handleSubmit(this: any, cb: Function) {
       const isValid = await this.validate();
       if (!isValid || !cb) {
         return;
@@ -252,7 +252,8 @@ function prepareSlotProps(vm: any) {
     ...vm.flags,
     errors: vm.errors,
     validate: vm.validate,
-    passes: vm.passes,
+    passes: vm.handleSubmit,
+    handleSubmit: vm.handleSubmit,
     reset: vm.reset
   };
 }
