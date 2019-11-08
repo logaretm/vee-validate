@@ -53,22 +53,7 @@ module.exports = {
     editLinks: true,
     sidebarDepth: 2,
     sidebar: {
-      '/guide/': [
-        '',
-        'getting-started',
-        'basic-validation',
-        'applying-rules',
-        'displaying-errors',
-        'validation-provider',
-        'validation-observer',
-        'interaction-and-ux',
-        'styling',
-        'a11y',
-        'html5-validation',
-        'advanced-validation',
-        'localization',
-        'testing'
-      ],
+      '/guide/': ['getting-started', 'basics', 'rules', 'state', 'forms'],
       '/api/': ['', 'rules'],
       '/examples/': ['ui-libraries', 'i18n', 'multiple-forms', 'backend', 'nuxt']
     },
