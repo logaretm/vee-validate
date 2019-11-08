@@ -1,25 +1,77 @@
 # Validation Rules
 
-:::tip Bundle size
-VeeValidate default bundle does not include any of these rules, you can import them individually:
+The following are the validation rules available for you, **remember that they are not installed by default** and you need to import and install them yourself, this allows you to only import what you need while keeping the bundle size for your application to minimum.
+
+## Importing The Rules
+
+Validation rules are available as an ES6 exports at `vee-validate/dist/rules`, if you are using an IDE or VSCode you should have a small peek on what rules are available when you are importing them, here is how to import some common rules like `required` and `min`.
 
 ```js
 import { extend } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
+import { required, email } from 'vee-validate/dist/rules';
 
+// No message specified.
+extend('email', email);
+
+// Override the default message.
 extend('required', {
   ...required,
-  message: 'field is required'
+  message: 'This field is required'
 });
 ```
 
-Or you can import all rules by using the full bundle which has a larger footprint on your app:
+And then we can use those rules immediately:
 
-```js
-import { ValidationProvider } from 'vee-validate/dist/vee-validate.full';
+```vue
+<ValidationProvider name="email" rules="required|email" v-slot="{ errors }">
+  <input v-model="email" type="text">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
 ```
 
+## Installing All Rules
+
+This is not recommended, but you need to have all of the vee-validate rules pre-configured, you can do that in two ways:
+
+You can install all of vee-validate rules by looping over the entire set of rules using `Object.keys` like this:
+
+```js
+import { extend } from 'vee-validate';
+import * as rules from 'vee-validate/dist/rules';
+
+Object.keys(rules).forEach(rule => {
+  extend(rule, rules[rule]);
+});
+```
+
+One downside of this is that you lose the ability to define error messages as you no longer know which rule is in the iteration. Luckily vee-validate includes messages for all of those rules in 40+ locales that you can import, and they map nicely to rule names, let's define messages in our previous sample:
+
+```js{3,6-9}
+import { extend } from 'vee-validate';
+import * as rules from 'vee-validate/dist/rules';
+import { messages } from 'vee-validate/dist/locale/en.json';
+
+Object.keys(rules).forEach(rule => {
+  extend(rule, {
+    ...rules[rule],
+    message: messages[rule]
+  });
+});
+```
+
+### Full Bundle
+
+Another way of doing that is to import vee-validate's full bundle instead of the default one, which comes pre-installed with all the validation rules and their English messages.
+
+```js
+import { ValidationProvider } from 'vee-validate/dist/vee-validate.full.esm';
+```
+
+:::tip
+  Make sure to reference `vee-validate` from the full bundle path if you are going to use it, aliasing it in your webpack config is a good idea since you don't want to endup with two vee-validate installations in your app.
 :::
+
+## Available Rules
 
 :::warning
 
@@ -29,35 +81,37 @@ Rules marked with <Badge text="inferred"></Badge> can be automatically inferred 
 
 VeeValidate offers common validators that will cover most apps needs:
 
-- [alpha](#alpha)
-- [alpha_dash](#alpha-dash)
-- [alpha_num](#alpha-num)
-- [alpha_spaces](#alpha-spaces)
-- [between](#between)
-- [confirmed](#confirmed)
-- [digits](#digits)
-- [dimensions](#dimensions)
-- [email](#email) <Badge text="Inferred" type="tip"/>
-- [ext](#ext)
-- [image](#image)
-- [oneOf](#oneOf)
-- [integer](#integer)
-- [is](#is)
-- [is_not](#is-not)
-- [length](#length)
-- [max](#max) <Badge text="Inferred" type="tip"/>
-- [max_value](#max-value) <Badge text="Inferred" type="tip"/>
-- [mimes](#mimes)
-- [min](#min) <Badge text="Inferred" type="tip"/>
-- [min_value](#min-value) <Badge text="Inferred" type="tip"/>
-- [excluded](#excluded)
-- [numeric](#numeric)
-- [regex](#regex) <Badge text="Inferred" type="tip"/>
-- [required](#required) <Badge text="Inferred" type="tip"/>
-- [required_if](#required-if)
-- [size](#size)
+<ul class="Rules">
+  <li><a href="#alpha">alpha</a></li>
+  <li><a href="#alpha-dash">alpha_dash</a></li>
+  <li><a href="#alpha-num">alpha_num</a></li>
+  <li><a href="#alpha-spaces">alpha_spaces</a></li>
+  <li><a href="#between">between</a></li>
+  <li><a href="#confirmed">confirmed</a></li>
+  <li><a href="#digits">digits</a></li>
+  <li><a href="#dimensions">dimensions</a></li>
+  <li><a href="#email">email <Badge text="Inferred" type="tip"/></a></li>
+  <li><a href="#ext">ext</a></li>
+  <li><a href="#image">image</a></li>
+  <li><a href="#oneOf">oneOf</a></li>
+  <li><a href="#integer">integer</a></li>
+  <li><a href="#is">is</a></li>
+  <li><a href="#is-not">is_not</a></li>
+  <li><a href="#length">length</a></li>
+  <li><a href="#max">max <Badge text="Inferred" type="tip"/></a></li>
+  <li><a href="#max-value">max_value <Badge text="Inferred" type="tip"/></a></li>
+  <li><a href="#mimes">mimes</a></li>
+  <li><a href="#min">min <Badge text="Inferred" type="tip"/></a></li>
+  <li><a href="#min-value">min_value <Badge text="Inferred" type="tip"/></a></li>
+  <li><a href="#excluded">excluded</a></li>
+  <li><a href="#numeric">numeric</a></li>
+  <li><a href="#regex">regex <Badge text="Inferred" type="tip"/></a></li>
+  <li><a href="#required">required <Badge text="Inferred" type="tip"/></a></li>
+  <li><a href="#required-if">required_if</a></li>
+  <li><a href="#size">size</a></li>
+</ul>
 
-## alpha
+### alpha
 
 The field under validation may only contain alphabetic characters.
 
@@ -70,7 +124,7 @@ The field under validation may only contain alphabetic characters.
 </ValidationProvider>
 ```
 
-## alpha_dash
+### alpha_dash
 
 The field under validation may contain alphabetic characters, numbers, dashes or underscores.
 
@@ -83,7 +137,7 @@ The field under validation may contain alphabetic characters, numbers, dashes or
 </ValidationProvider>
 ```
 
-## alpha_num
+### alpha_num
 
 The field under validation may contain alphabetic characters or numbers.
 
@@ -96,7 +150,7 @@ The field under validation may contain alphabetic characters or numbers.
 </ValidationProvider>
 ```
 
-## alpha_spaces
+### alpha_spaces
 
 The field under validation may contain alphabetic characters or spaces.
 
@@ -109,7 +163,7 @@ The field under validation may contain alphabetic characters or spaces.
 </ValidationProvider>
 ```
 
-## between
+### between
 
 The field under validation must have a numeric value bounded by a minimum value and a maximum value.
 
@@ -127,7 +181,7 @@ The field under validation must have a numeric value bounded by a minimum value 
 | `min`      | **yes**   |         | The minimum value. |
 | `max`      | **yes**   |         | The maximum value. |
 
-## confirmed
+### confirmed
 
 The field under validation must have the same value as the confirmation field.
 
@@ -155,7 +209,7 @@ The field under validation must have the same value as the confirmation field.
 | ---------- | --------- | ------- | ------------------------------ |
 | `target`   | **yes**   |         | The other field's `vid` value. |
 
-## digits
+### digits
 
 The field under validation must be numeric and have the specified number of digits.
 
@@ -172,7 +226,7 @@ The field under validation must be numeric and have the specified number of digi
 | ---------- | --------- | ------- | ----------------------------- |
 | `length`   | **yes**   |         | The number of digits allowed. |
 
-## dimensions
+### dimensions
 
 The file added to the field under validation must be an image (jpg,svg,jpeg,png,bmp,gif) having the exact specified dimension.
 
@@ -190,7 +244,7 @@ The file added to the field under validation must be an image (jpg,svg,jpeg,png,
 | `width`    | **yes**   |         | The width in pixels.  |
 | `height`   | **yes**   |         | The height in pixels. |
 
-## email <Badge text="Inferred" type="tip"/>
+### email <Badge text="Inferred" type="tip"/>
 
 The field under validation must be a valid email.
 
@@ -207,7 +261,7 @@ The field under validation must be a valid email.
 This rule is automatically inferred if the `input` type is `email`, it also detects if the `multiple` attribute is set.
 :::
 
-## ext
+### ext
 
 The file added to the field under validation must have one of the extensions specified.
 
@@ -222,7 +276,7 @@ The file added to the field under validation must have one of the extensions spe
 
 `ext` takes an infinite number of arguments representing extensions. ex: `ext:jpg,png,bmp,svg`.
 
-## image
+### image
 
 The file added to the field under validation must have an image mime type (image/\*).
 
@@ -235,7 +289,7 @@ The file added to the field under validation must have an image mime type (image
 </ValidationProvider>
 ```
 
-## oneOf
+### oneOf
 
 The field under validation must have a value that is in the specified list. **Uses double equals** for checks.
 
@@ -260,7 +314,7 @@ type="select"
 
 `oneOf` takes an infinite number of params, each is a value that is allowed.
 
-## is
+### is
 
 The field under validation must be equal to the first argument passed, uses `===` for equality checks. This rule is useful for confirming passwords when used in object form. Note that using the string format will cause any arguments to be parsed as strings, so use the object format when using this rule.
 
@@ -277,7 +331,7 @@ The field under validation must be equal to the first argument passed, uses `===
 | ---------- | --------- | ------- | ----------------------------------------------------------- |
 | `value`    | **yes**   |         | A value of any type to be compared against the field value. |
 
-## max <Badge text="Inferred" type="tip"/>
+### max <Badge text="Inferred" type="tip"/>
 
 The field under validation length may not exceed the specified length.
 
@@ -298,7 +352,7 @@ The field under validation length may not exceed the specified length.
 This rule is inferred when the field type is `text` and when `maxlength` attribute is set.
 :::
 
-## max_value <Badge text="Inferred" type="tip"/>
+### max_value <Badge text="Inferred" type="tip"/>
 
 The field under validation must be a numeric value and must not be greater than the specified value.
 
@@ -319,7 +373,7 @@ The field under validation must be a numeric value and must not be greater than 
 This rule is inferred when the field type is `number` and when `max` attribute is set.
 :::
 
-## mimes
+### mimes
 
 The file type added to the field under validation should have one of the specified mime types.
 
@@ -338,7 +392,7 @@ The file type added to the field under validation should have one of the specifi
 You can use '_' to specify a wild card, something like `mimes:image/_` will accept all image types.
 :::
 
-## min <Badge text="Inferred" type="tip"/>
+### min <Badge text="Inferred" type="tip"/>
 
 The field under validation length should not be less than the specified length.
 
@@ -359,7 +413,7 @@ The field under validation length should not be less than the specified length.
 This rule is inferred when the field type is `text` and when the `minlength` attribute is set.
 :::
 
-## min_value <Badge text="Inferred" type="tip"/>
+### min_value <Badge text="Inferred" type="tip"/>
 
 <RuleDemo rule="min_value:4" />
 
@@ -380,7 +434,7 @@ The field under validation must be a numeric value and must not be less than the
 This rule is inferred when the field type is `number` and when `min` attribute is set.
 :::
 
-## numeric
+### numeric
 
 The field under validation must only consist of numbers.
 
@@ -393,7 +447,7 @@ The field under validation must only consist of numbers.
 </ValidationProvider>
 ```
 
-## regex <Badge text="Inferred" type="tip"/>
+### regex <Badge text="Inferred" type="tip"/>
 
 The field under validation must match the specified regular expression.
 
@@ -422,7 +476,7 @@ When using the `regex` rule, using the `g` flag may result in unexpected falsy v
 This rule is inferred when the field type is `text` and `pattern` attribute is set.
 :::
 
-## required <Badge text="Inferred" type="tip"/>
+### required <Badge text="Inferred" type="tip"/>
 
 The field under validation must have a non-empty value. By default, all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`, empty arrays.
 
@@ -455,7 +509,7 @@ Checkboxes by default emit `true` or `false` depending on wether they are checke
 
 :::
 
-## required_if
+### required_if
 
 The field under validation must have a non-empty value **only if** the target field (first argument) is set to one of the specified values (other arguments).
 
@@ -484,7 +538,7 @@ The field under validation must have a non-empty value **only if** the target fi
 | `target`    | **yes**   |         | The `vid` of the target field.                                                                                                          |
 | `...values` | **no**    |         | The values that will make the field required. If empty or not provided it will make the field required if the target field has a value. |
 
-## size
+### size
 
 The file size added to the field under validation must not exceed the specified size in kilobytes.
 
@@ -500,3 +554,13 @@ The file size added to the field under validation must not exceed the specified 
 | Param Name | Required? | Default | Description                         |
 | ---------- | --------- | ------- | ----------------------------------- |
 | `size`     | **yes**   |         | The maximum file size in kilobytes. |
+
+<style lang="stylus">
+.Rules
+  column-count: 1
+
+@media (min-width: 721px)
+  .Rules
+    column-count: 3
+
+</style>
