@@ -12,8 +12,6 @@ meta:
 
 ## Installation
 
-You can install this plugin via [npm](#npm) or via a [CDN](#cdn).
-
 ### yarn
 
 ```bash
@@ -79,15 +77,7 @@ All Examples from now on will use the ES2015 syntax, make sure to brush up on ES
 
 ## Basic Example
 
-`ValidationProvider` is one of the components provided by `vee-validate`, you will use this component to validate your fields.
-
-Here is an input field without validation:
-
-```html
-<input v-model="email" type="text" />
-```
-
-To validate it, wrap the `input` with a `ValidationProvider` component:
+VeeValidate exposes a `ValidationProvider` component that allows you to validate your fields, simply wrap your field with a `validation-provider` component.
 
 ```vue{1,4}
 <ValidationProvider rules="secret" v-slot="{ errors }">
@@ -98,7 +88,7 @@ To validate it, wrap the `input` with a `ValidationProvider` component:
 
 :::danger Component Casing
 
-The examples will use Pascal case which should work fine if you are using Vue component files (`.vue` or SFC). If you plan to use vee-validate with the compiler build you will need to use the kebab case. The previous example would then be:
+The examples will use Pascal case which should work fine if you are using Vue component files (SFC or `.vue` files). If you plan to use vee-validate in the browser build, you will need to use the kebab case. The previous example would then be:
 
 ```html{1,4}
 <validation-provider rules="secret" v-slot="{ errors }">
@@ -109,13 +99,13 @@ The examples will use Pascal case which should work fine if you are using Vue co
 
 :::
 
-The `rules` prop passed to the `ValidationProvider` is the validation rules that will be checked against the input, the syntax is Laravel-like by placing the rules names between pipes, for that input we want to make sure it is required.
+The `rules` prop passed to the `ValidationProvider` is the validation rules that will be checked against the input.
 
-To display error messages, the `ValidationProvider` exposes `errors` array through [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots).
+To display error messages, the `ValidationProvider` exposes `errors` array through [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots), this array contains error messages related to that field.
 
 ### Demo
 
-Here is the above example in action, enter `example` or leave it empty to pass the validation.
+Here is the above example in action, enter `example` to pass validation:
 
 <ValidationProvider rules="secret" v-slot="{ errors }">
   <input v-model="value" type="text" placeholder="type something">
