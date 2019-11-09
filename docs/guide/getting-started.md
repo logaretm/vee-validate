@@ -107,21 +107,4 @@ To display error messages, the `ValidationProvider` exposes `errors` array throu
 
 Here is the above example in action, enter `example` to pass validation:
 
-<ValidationProvider rules="secret" v-slot="{ errors }">
-  <input v-model="value" type="text" placeholder="type something">
-  <span>{{ errors[0] }}</span>
-</ValidationProvider>
-
-<script>
-export default {
- data: () => ({
-    value: ''
-  }),
-  mounted () {
-    this.extendRule('secret', {
-      validate: value => value === 'example',
-      message: 'This is not the magic word'
-    });
-  }
-};
-</script>
+@[example](getting-started)

@@ -44,7 +44,7 @@ Object.keys(rules).forEach(rule => {
 });
 ```
 
-One downside of this is that you lose the ability to define error messages as you no longer know which rule is in the iteration. Luckily vee-validate includes messages for all of those rules in 40+ locales that you can import, and they map nicely to rule names, let's define messages in our previous sample:
+One downside of the previous snippet is that you lose the ability to define error messages as you no longer know which rule is in the iteration. Luckily vee-validate includes messages for all of those rules in 40+ locales that you can import, and they map nicely to rule names, let's define messages in our previous sample:
 
 ```js{3,6-9}
 import { extend } from 'vee-validate';
@@ -53,8 +53,8 @@ import { messages } from 'vee-validate/dist/locale/en.json';
 
 Object.keys(rules).forEach(rule => {
   extend(rule, {
-    ...rules[rule],
-    message: messages[rule]
+    ...rules[rule], // copies rule configuration
+    message: messages[rule] // assign message
   });
 });
 ```
