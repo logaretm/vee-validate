@@ -87,18 +87,16 @@ module.exports = {
       const examples = fs.readdirSync(path.resolve(__dirname, `./examples/`)).reduce((acc, example) => {
         let source = fs.readFileSync(path.resolve(__dirname, `./examples/${example}`)).toString();
 
-        // let template = source.match(/<template[^>]*>([\s\S]*?)<\/template>/)[1];
-        // const script = source.match(/<script[^>]*>([\s\S]*?)<\/script>/)[1];
         source = source.replace(/@vee-validate/g, 'vee-validate');
 
-        acc[example.split('.').shift()] = { source: md.render("```vue\n" + source + "\n```") };
+        acc[example.split('.').shift()] = md.render("```vue\n" + source + "\n```");
 
         return acc;
       }, {});
 
       md.use(require('markdown-it-custom-block'), {
         example (arg) {
-          const { source } = examples[arg];
+          const source = examples[arg];
 
           return `
             <Example name="${arg}">
