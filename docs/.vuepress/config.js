@@ -1,3 +1,6 @@
+const path = require('path');
+const fs = require('fs');
+
 module.exports = {
   title: 'VeeValidate',
   description: 'Template Based Validation Framework for Vue.js',
@@ -69,6 +72,32 @@ module.exports = {
           { text: 'Examples', link: '/examples/' }
         ]
       }
+    }
+  },
+  markdown: {
+    extendMarkdown: md => {
+      const examples = fs.readdirSync(path.resolve(__dirname, `./examples/`)).reduce((acc, example) => {
+        const source = fs.readFileSync(path.resolve(__dirname, `./examples/${example}`)).toString();
+
+        // let template = source.match(/<template[^>]*>([\s\S]*?)<\/template>/)[1];
+        // const script = source.match(/<script[^>]*>([\s\S]*?)<\/script>/)[1];
+
+        acc[example.split('.').shift()] = { source: md.render("```vue\n" + source + "\n```") };
+
+        return acc;
+      }, {});
+
+      md.use(require('markdown-it-custom-block'), {
+        example (arg) {
+          const { source } = examples[arg];
+
+          return `
+            <Example name="${arg}">
+              <template #source>${source}</template>
+            </Example>
+          `;
+        }
+      })
     }
   }
 };
