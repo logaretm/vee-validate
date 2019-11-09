@@ -41,16 +41,3 @@ You are probably wondering where this might be useful, consider having a multi-s
 :::tip
  The previous example could've just used `div` elements instead of `ValidationObserver` components and it would've worked the same, We recommend you only nest observers where you need to know the fieldset current state.
 :::
-
-<script>
-export default {
-  data: () => ({
-    values: {}
-  }),
-  methods: {
-    onSubmit () {
-
-    }
-  }
-}
-</script>
