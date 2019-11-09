@@ -49,6 +49,13 @@ module.exports = {
       description: 'Input validation for Vue.js'
     }
   },
+  configureWebpack: {
+    resolve: {
+      alias: {
+        '@vee-validate': path.resolve(__dirname, '../../dist/vee-validate.full.esm')
+      }
+    }
+  },
   themeConfig: {
     repo: 'logaretm/vee-validate',
     docsRepo: 'logaretm/vee-validate',
@@ -66,7 +73,8 @@ module.exports = {
         selectText: 'Languages',
         editLinkText: 'Help us improve this page!',
         nav: [
-          { text: 'Guide', link: '/guide/' },
+          { text: 'Guide', link: '/guide/getting-started' },
+          { text: 'Advanced', link: '/advanced' },
           { text: 'Config', link: '/configuration' },
           { text: 'API', link: '/api/' },
           { text: 'Examples', link: '/examples/' }
@@ -77,10 +85,11 @@ module.exports = {
   markdown: {
     extendMarkdown: md => {
       const examples = fs.readdirSync(path.resolve(__dirname, `./examples/`)).reduce((acc, example) => {
-        const source = fs.readFileSync(path.resolve(__dirname, `./examples/${example}`)).toString();
+        let source = fs.readFileSync(path.resolve(__dirname, `./examples/${example}`)).toString();
 
         // let template = source.match(/<template[^>]*>([\s\S]*?)<\/template>/)[1];
         // const script = source.match(/<script[^>]*>([\s\S]*?)<\/script>/)[1];
+        source = source.replace(/@vee-validate/g, 'vee-validate');
 
         acc[example.split('.').shift()] = { source: md.render("```vue\n" + source + "\n```") };
 
