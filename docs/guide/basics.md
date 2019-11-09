@@ -271,7 +271,7 @@ You could then be wondering why `errors` is an array when vee-validate only gene
 
 First you could tell the `ValidationProvider` component to run all the rules by passing `bails` prop equal to `false` like this:
 
-```vue
+```vue{3}
 <ValidationProvider
   rules="positive|odd|prime|fib"
   :bails="false"

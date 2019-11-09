@@ -31,77 +31,7 @@ To support all the flags for your custom component you need to emit an `input` e
 
 These flags are exposed as a slot prop on the `ValidationProvider` component, this is a small demo for these flags:
 
-```vue
-<ValidationProvider
-  name="field"
-  rules="required"
-  v-slot="{
-    valid,
-    invalid,
-    changed,
-    touched,
-    untouched,
-    pristine,
-    dirty,
-    pending,
-    required,
-    validated,
-    passed,
-    failed
-  }"
->
-  <input type="text" v-model="value">
-  <ul class="BooleanSwitches">
-    <li>valid: {{ valid }}</li>
-    <li>invalid: {{ invalid }}</li>
-    <li>changed: {{ changed }}</li>
-    <li>touched: {{ touched }}</li>
-    <li>untouched: {{ untouched }}</li>
-    <li>pristine: {{ pristine }}</li>
-    <li>dirty: {{ dirty }}</li>
-    <li>pending: {{ pending }}</li>
-    <li>required: {{ required }}</li>
-    <li>validated: {{ validated }}</li>
-    <li>passed: {{ passed }}</li>
-    <li>failed: {{ failed }}</li>
-  </ul>
-</ValidationProvider>
-```
-
-<ValidationProvider
-  name="field"
-  rules="required"
-  v-slot="{
-    valid,
-    invalid,
-    changed,
-    touched,
-    untouched,
-    pristine,
-    dirty,
-    pending,
-    required,
-    validated,
-    passed,
-    failed
-  }"
->
-  <input type="text" v-model="values.flags">
-  <ul class="BooleanSwitches">
-    <li :class="`is-${valid}`">valid: {{ valid }}</li>
-    <li :class="`is-${invalid}`">invalid: {{ invalid }}</li>
-    <li :class="`is-${changed}`">changed: {{ changed }}</li>
-    <li :class="`is-${touched}`">touched: {{ touched }}</li>
-    <li :class="`is-${untouched}`">untouched: {{ untouched }}</li>
-    <li :class="`is-${pristine}`">pristine: {{ pristine }}</li>
-    <li :class="`is-${dirty}`">dirty: {{ dirty }}</li>
-    <li :class="`is-${pending}`">pending: {{ pending }}</li>
-    <li :class="`is-${required}`">required: {{ required }}</li>
-    <li :class="`is-${validated}`">validated: {{ validated }}</li>
-    <li :class="`is-${passed}`">passed: {{ passed }}</li>
-    <li :class="`is-${failed}`">failed: {{ failed }}</li>
-  </ul>
-</ValidationProvider>
+@[example](validation-flags)
 
 ## Failed Rules
 
@@ -109,60 +39,7 @@ Failed rules is similar to `errors` but you can use it to find out which rules i
 
 Just like the `errors` array, by default it will only contain 1 key because of the **fast-exit** strategy, if we disable this behavior we can see our failed rules mapped to their message:
 
-```vue
-<ValidationProvider
-  name="field"
-  :bails="false"
-  rules="required|min:3|email|max:100"
-  v-slot="{
-    failedRules
-  }"
->
-  <input type="text" v-model="value">
-  <pre>{{ failedRules }}</pre>
-</ValidationProvider>
-```
-
-<ValidationProvider
-  name="field"
-  rules="required|min:3|email|max:100"
-  :bails="false"
-  v-slot="{
-    failedRules
-  }"
->
-  <input type="text" v-model="values.failedRules">
-  <pre style="color: white;">{{ failedRules }}</pre>
-</ValidationProvider>
-
-<style lang="stylus">
-  .BooleanSwitches
-    list-style: none
-    padding: 0
-    margin: 0
-    margin-top: 20px
-    box-sizing: border-box
-    column-count: 3
-
-    li
-      padding: 5px 10px
-      transition: background-color 0.3s, color 0.3s ease-in-out
-      font-weight: bold
-      border-radius: 20px
-      text-align: center
-
-      &.is-true
-        background-color: #0AE569
-        color: #045929
-
-      &.is-false
-        background-color: #FFA4A2
-        color: #EB0600
-
-    li + li
-      margin-top: 10px
-
-</style>
+@[example](failed-rules)
 
 ## CSS Classes
 
@@ -183,97 +60,15 @@ configure({
 
 You don't have to configure all the classes, just configure what you need and once you are done you can directly use class binding to apply them to your input.
 
-```vue
-<ValidationProvider
-  name="field"
-  rules="required|min:3|email|max:100"
-  :bails="false"
-  v-slot="{
-    classes
-  }"
->
-  <div class="control" :class="classes">
-    <input type="text" v-model="value">
-    <span>{{ errors[0] }}</span>
-  </div>
-</ValidationProvider>
-```
-
-<ValidationProvider
-  name="field"
-  rules="required|min:3|email|max:100"
-  :bails="false"
-  v-slot="{
-    classes,
-    errors
-  }"
->
-  <div class="control" :class="classes">
-    <input type="text" v-model="values.classes">
-    <span>{{ errors[0] }}</span>
-  </div>
-</ValidationProvider>
-
-<style lang="stylus">
-  .control
-    width: 100%
-    span
-      display: block
-    input
-      padding: 5px 10px
-
-    &.invalid
-      input, span
-        color: #EB0600
-      input
-        border: 1px #EB0600 solid
-    &.valid
-      input, span
-        color: #045929
-      input
-        border: 1px #045929 solid
-
-</style>
+@[example](classes)
 
 ## Aria Attributes
 
 `ValidationProvider` also exposes two more state items that can be used to enhance the accessability of your forms, the `ariaInput` and `ariaMsg` objects contain `aria-*` attributes that you can directly bind to your inputs just like classes:
 
-```vue
-<ValidationProvider
-  name="field"
-  rules="required|email"
-  :bails="false"
-  v-slot="ctx"
->
-  <div>
-    <input type="text" v-model="value" v-bind="ariaInput">
-    <span v-bind="ariaMsg">{{ errors[0] }}</span>
-  </div>
-</ValidationProvider>
-```
-
-<ValidationProvider
-  name="a11y"
-  rules="required|email"
-  :bails="false"
-  v-slot="{ errors, ariaMsg, ariaInput }"
->
-  <div>
-    <input type="text" v-model="value" v-bind="ariaInput">
-    <span v-bind="ariaMsg">{{ errors[0] }}</span>
-  </div>
-</ValidationProvider>
+@[example](aria)
 
 You can use your devtools to check which attributes where applied on each element.
-
-<script>
-export default {
-  data: () => ({
-    values: {}
-  })
-}
-</script>
 
 ---
 
