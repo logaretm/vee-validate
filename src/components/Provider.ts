@@ -1,5 +1,5 @@
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
-import { normalizeRules } from '../utils/rules';
+import { normalizeRules, extractLocators } from '../utils/rules';
 import { normalizeEventValue } from '../utils/events';
 import { extractVNodes, normalizeChildren, resolveRules } from '../utils/vnode';
 import { isCallable, isEqual, isNullOrUndefined, createFlags } from '../utils';
@@ -126,19 +126,16 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
   data,
   computed: {
     fieldDeps(): string[] {
-      return Object.keys(this.normalizedRules)
-        .filter(RuleContainer.isTargetRule)
-        .reduce((acc: string[], rule: string) => {
-          const deps = RuleContainer.getTargetParamNames(rule, this.normalizedRules[rule]).map(
-            (dep: any) => dep.__locatorRef
-          );
-          acc.push(...deps);
-          deps.forEach(depName => {
-            watchCrossFieldDep(this, depName);
-          });
+      return Object.keys(this.normalizedRules).reduce((acc: string[], rule: string) => {
+        const deps = extractLocators(this.normalizedRules[rule]).map((dep: any) => dep.__locatorRef);
 
-          return acc;
-        }, []);
+        acc.push(...deps);
+        deps.forEach(depName => {
+          watchCrossFieldDep(this, depName);
+        });
+
+        return acc;
+      }, []);
     },
     normalizedEvents(): string[] {
       const { on } = computeModeSetting(this);

@@ -422,7 +422,7 @@ test('validates components on configured model event', async () => {
   expect(error.text()).toBe('');
 });
 
-test('validates target dependant fields', async () => {
+test('validates target dependant fields using targeted params', async () => {
   const wrapper = mount(
     {
       data: () => ({
@@ -435,6 +435,51 @@ test('validates target dependant fields', async () => {
             <input type="password" v-model="confirmation">
           </ValidationProvider>
           <ValidationProvider rules="required|confirmed:confirmation" v-slot="{ errors }">
+            <input type="password" v-model="password">
+            <span id="err1">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const error = wrapper.find('#err1');
+  const inputs = wrapper.findAll('input');
+
+  expect(error.text()).toBeFalsy();
+  inputs.at(0).setValue('val');
+  await flushPromises();
+  // the password input hasn't changed yet.
+  expect(error.text()).toBeFalsy();
+  inputs.at(1).setValue('12');
+  await flushPromises();
+  // the password input was interacted with and should be validated.
+  expect(error.text()).toBeTruthy();
+
+  inputs.at(1).setValue('val');
+  await flushPromises();
+  // the password input now matches the confirmation.
+  expect(error.text()).toBeFalsy();
+
+  inputs.at(0).setValue('val1');
+  await flushPromises();
+  expect(error.text()).toBeTruthy();
+});
+
+test('validates target dependant fields using interpolated params', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        password: '',
+        confirmation: ''
+      }),
+      template: `
+        <div>
+          <ValidationProvider rules="required" vid="confirmation" v-slot="ctx">
+            <input type="password" v-model="confirmation">
+          </ValidationProvider>
+          <ValidationProvider rules="required|is:@confirmation" v-slot="{ errors }">
             <input type="password" v-model="password">
             <span id="err1">{{ errors[0] }}</span>
           </ValidationProvider>

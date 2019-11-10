@@ -1,6 +1,6 @@
 import { Locator, RuleParamConfig } from '../types';
 import { RuleContainer } from '../extend';
-import { includes, isObject, warn } from './index';
+import { includes, isObject, warn, isLocator } from './index';
 
 /**
  * Normalizes the given rules expression.
@@ -121,6 +121,11 @@ function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
       value = createLocator(value);
     }
 
+    // A target param using interpolation
+    if (typeof value === 'string' && value[0] === '@') {
+      value = createLocator(value.slice(1));
+    }
+
     // If there is a transformer defined.
     if (options.cast) {
       value = options.cast(value);
@@ -165,4 +170,14 @@ function createLocator(value: string): Locator {
   locator.__locatorRef = value;
 
   return locator;
+}
+
+export function extractLocators(params: Record<string, string> | string[]): string[] {
+  if(Array.isArray(params)) {
+    return params.filter(isLocator);
+  }
+
+  return Object.keys(params)
+    .filter(key => isLocator(params[key]))
+    .map(key => params[key]);
 }

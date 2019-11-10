@@ -302,7 +302,7 @@ function _getUserTargets(
   Object.keys(rules).forEach((key: string, index: number) => {
     // get the rule
     const rule: any = rules[key];
-    if (typeof rule !== 'string' || !rule.startsWith('@')) {
+    if (!isLocator(rule)) {
       return {};
     }
 
@@ -313,7 +313,7 @@ function _getUserTargets(
     }
 
     // grab the name of the target
-    const name = rule.substr(1);
+    const name = rule.__locatorRef;
     const placeholder = `_${name}Target_`;
     userTargets[placeholder] = field.names[name] || name;
 
