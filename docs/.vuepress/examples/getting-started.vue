@@ -13,7 +13,7 @@ extend('even', value => {
 });
 
 export default {
- data: () => ({
+  data: () => ({
     value: ''
   })
 };

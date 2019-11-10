@@ -110,6 +110,8 @@ To configure the rule, we use a Laravel-like syntax, simply append a colon `:` a
 </ValidationProvider>
 ```
 
+### Multiple Arguments
+
 Rules arguments are one of the most versatile aspects of vee-validate, to drive this point home, let's create a slightly more complex rule. Let's call it `minmax` that will make sure the field value length is between a `min` and a `max`.
 
 This rule will require two parameters, the first called `min` and the second called `max`, let's define the rule:
@@ -138,7 +140,7 @@ extend('minmax', {
 });
 ```
 
-To use this rule, we do the same thing we did with the `min` rule:
+To use this rule, we do the same thing we did with the `min` rule, but we supply the arguments as a **comma separated list**:
 
 ```vue
 <ValidationProvider
@@ -155,6 +157,32 @@ Now our field will be valid when the value is a string having a length between 3
 :::tip
   Note how the parameters **must follow** the same order they were defined in.
 :::
+
+### Infinite Arguments
+
+Some rules accept an infinite number of arguments, consider a `one_of` rule that checks if the specified value in within a defined set, it looks like this:
+
+```js
+import { extend } from 'vee-validate';
+
+extend('one_of', (value, values) => {
+  return values.indexOf(value) !== -1;
+});
+```
+
+For such rules you are not required to define a `params` key, as vee-validate will automatically pass whatever specified in the `ValidationProvider` rules prop to your rule, and it will maintain the same order.
+
+```vue
+<ValidationProvider
+  rules="one_of:1,2,3,4,5,6,7,8,9"
+  v-slot="{ errors }"
+>
+  <input v-model="value" type="text">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+vee-validate will then pass an array containing: `[1, 2, 3, 4, 5, 6, 7, 8, 9]` to your rule.
 
 ## Messages
 
