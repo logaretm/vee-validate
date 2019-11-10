@@ -23,7 +23,6 @@
 
 <script>
 export default {
-  name: 'basic-example',
   data: () => ({
     email: '',
     firstName: '',

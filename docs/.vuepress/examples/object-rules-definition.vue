@@ -7,7 +7,6 @@
 
 <script>
 export default {
-  name: 'object-rules-definition',
   data: () => ({
     value: ''
   })

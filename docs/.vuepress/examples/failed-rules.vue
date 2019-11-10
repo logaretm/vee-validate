@@ -14,7 +14,6 @@
 
 <script>
 export default {
-  name: 'failed-rules',
   data: () => ({
     value: ''
   })

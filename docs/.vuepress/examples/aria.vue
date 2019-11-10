@@ -14,7 +14,6 @@
 
 <script>
 export default {
-  name: 'aria',
   data: () => ({
     value: ''
   })

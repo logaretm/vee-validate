@@ -37,7 +37,6 @@
 
 <script>
 export default {
-  name: 'validation-flags',
   data: () => ({
     value: ''
   })

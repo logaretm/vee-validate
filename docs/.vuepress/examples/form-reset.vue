@@ -24,7 +24,6 @@
 
 <script>
 export default {
-  name: 'form-reset',
   data: () => ({
     firstName: '',
     lastName: '',
