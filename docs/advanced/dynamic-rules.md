@@ -9,16 +9,11 @@ So we can do the following:
 ```vue{4}
 <template>
   <div>
-    <ValidationProvider
-      :rules="`${required ? 'required' : '' }`"
-      v-slot="{ errors }"
-    >
-      <input v-model="value" type="text">
+    <ValidationProvider :rules="`${required ? 'required' : ''}`" v-slot="{ errors }">
+      <input v-model="value" type="text" />
       <span>{{ errors[0] }}</span>
     </ValidationProvider>
-    <div>
-      <input type="checkbox" v-model="required"> Is Required?
-    </div>
+    <div><input type="checkbox" v-model="required" /> Is Required?</div>
   </div>
 </template>
 
@@ -34,5 +29,4 @@ export default {
 
 The previous sample will work, but it is very verbose. We can utilize the [**rules object expression**](./rules-object-expression.md) for better readability and versatility, here such an example:
 
-@[example](dynamic-rules.md)
-
+@[example](dynamic-rules)
