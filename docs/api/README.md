@@ -1,6 +1,6 @@
 # API Reference
 
-## `validate`
+## `validate()`
 
 | Argument | Type                            | Description                                            |
 | -------- | ------------------------------- | ------------------------------------------------------ |
@@ -60,7 +60,7 @@ validate('someValue', 'rules|pipe|line').then(result => {
 });
 ```
 
-## `localize`
+## `localize()`
 
 The localize method is used to enable the internal dictionary implementation and localization for vee-validate.
 
@@ -103,7 +103,7 @@ localize({
 });
 ```
 
-## `configure`
+## `configure()`
 
 Configures the default global options for vee-validate.
 
@@ -112,3 +112,66 @@ Configures the default global options for vee-validate.
 | options  | `ConfigOptions` | An object of the configuration options. |
 
 You can refer to the [configuration guide](../configuration.md) for more information.
+
+## `setInteractionMode()`
+
+This function allows you to build complex UX related to when the field should be validated, here is the type definition:
+
+```ts
+interface ModeContext {
+  errors: string[];
+  value: any;
+  flags: ValidationFlags;
+}
+
+interface InteractionSetting {
+  on?: string[];
+  debounce?: number;
+}
+
+type InteractionModeFactory = (ctx: ModeContext) => InteractionSetting;
+
+type setInteractionMode = (name: string, implementation?: InteractionModeFactory) => void;
+```
+
+Passing the first argument only will make the function search through the defined modes that match it and set the current mode to it.
+
+Passing both arguments will add/overwrite mode with the specified name.
+
+```js
+import { setInteractionMode } from 'vee-validate';
+
+// eager is one of the pre-defined modes.
+setInteractionMode('eager');
+
+// implement a new mode.
+setInteractionMode('eager', (flags) => {
+  // aggressive validation when the field is invalid.
+  if (flags.invalid) {
+    return { on: 'input' };
+  }
+
+  // lazy validation when the field is valid.
+  return { on: 'change' };
+})
+```
+
+## `normalizeRules()`
+
+You will rarely need this function, it transforms a validation rule expression like `required|email` or `{ required: true }` to a more diffable object format that's used by vee-validate internally. It is useful if you have large validation fieldset and you want to gain some performance by caching rule expressions.
+
+```js
+import { normalizeRules } from 'vee-validate';
+
+normalizeRules('required|email');
+
+// output
+// {
+//   required: { allowFalse: false },
+//   email: { multiple: false }
+// }
+```
+
+:::danger Internal Function
+  This is an internal function and it's implementation detail may change without notice, but its available if you are a fellow library developer and want some deep level integration/optimization with vee-validate.
+:::
