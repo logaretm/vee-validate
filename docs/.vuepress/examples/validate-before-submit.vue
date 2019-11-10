@@ -23,7 +23,6 @@
 
 <script>
 export default {
-  name: 'validate-before-submit',
   data: () => ({
     firstName: '',
     lastName: '',

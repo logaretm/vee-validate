@@ -17,7 +17,6 @@
 
 <script>
 export default {
-  name: 'classes',
   data: () => ({
     value: ''
   })

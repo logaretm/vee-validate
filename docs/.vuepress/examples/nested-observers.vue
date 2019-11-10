@@ -43,7 +43,6 @@
 
 <script>
 export default {
-  name: 'nested-observers',
   data: () => ({
     currentStep: 1,
     address: '',
