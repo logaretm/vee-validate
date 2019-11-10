@@ -59,7 +59,7 @@ Notice that we have a `|` pipe character separating the rules, this is inspired 
 </ValidationProvider>
 ```
 
-The string we send to our `rules` prop is called a **string expression**, there is another expression that you can use but we will discuss this later in the docs.
+The string we send to our `rules` prop is called a **string expression**, there is [another expression](../advanced/rules-object-expression.md) that you can use but we will discuss this later in the docs.
 
 ## Rule Arguments
 
