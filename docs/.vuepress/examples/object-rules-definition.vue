@@ -1,6 +1,7 @@
 <template>
-  <ValidationProvider :rules="{ required: true, email: true }" v-slot="{ errors }">
-    <input v-model="value" type="text" placeholder="type something" />
+  <ValidationProvider name="Email" :rules="{ required: true, email: true }" v-slot="{ errors }">
+    <label for="email">Email</label>
+    <input id="email" v-model="value" type="text" />
     <span>{{ errors[0] }}</span>
   </ValidationProvider>
 </template>
