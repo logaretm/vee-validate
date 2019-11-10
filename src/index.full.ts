@@ -18,6 +18,5 @@ export { Rules, version, localize, extend };
 export { configure } from './config';
 export { setInteractionMode } from './modes';
 export { validate } from './validate';
-export { install } from './install';
 export { ValidationProvider, ValidationObserver, withValidation } from './components';
 export { normalizeRules } from './utils/rules';
