@@ -64,6 +64,7 @@ module.exports = {
     sidebarDepth: 2,
     sidebar: {
       '/guide/': ['getting-started', 'basics', 'rules', 'state', 'forms'],
+      '/advanced/': ['', 'rules-object-expression', 'dynamic-rules', 'cross-field-validation'],
       '/api/': ['', 'rules'],
       '/examples/': ['ui-libraries', 'i18n', 'multiple-forms', 'backend', 'nuxt']
     },
@@ -76,8 +77,7 @@ module.exports = {
           { text: 'Guide', link: '/guide/getting-started' },
           { text: 'Advanced', link: '/advanced' },
           { text: 'Config', link: '/configuration' },
-          { text: 'API', link: '/api/' },
-          { text: 'Examples', link: '/examples/' }
+          { text: 'API', link: '/api/' }
         ]
       }
     }
@@ -89,13 +89,13 @@ module.exports = {
 
         source = source.replace(/@vee-validate/g, 'vee-validate');
 
-        acc[example.split('.').shift()] = md.render("```vue\n" + source + "\n```");
+        acc[example.split('.').shift()] = md.render('```vue\n' + source + '\n```');
 
         return acc;
       }, {});
 
       md.use(require('markdown-it-custom-block'), {
-        example (arg) {
+        example(arg) {
           const source = examples[arg];
 
           return `
@@ -104,7 +104,7 @@ module.exports = {
             </Example>
           `;
         }
-      })
+      });
     }
   }
 };
