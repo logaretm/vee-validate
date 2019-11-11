@@ -13,6 +13,7 @@
     "excluded": "{_field_}は不正な値です",
     "ext": "{_field_}は有効なファイル形式ではありません",
     "image": "{_field_}は有効な画像形式ではありません",
+    "integer": "{_field_}は整数のみ使用できます",
     "is": "{_field_}が一致しません",
     "length": "{_field_}は{length}文字でなければなりません",
     "max_value": "{_field_}は{max}以下でなければなりません",
