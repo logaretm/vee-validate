@@ -64,7 +64,7 @@ module.exports = {
     sidebarDepth: 2,
     sidebar: {
       '/guide/': ['getting-started', 'basics', 'rules', 'state', 'forms'],
-      '/advanced/': ['', 'rules-object-expression', 'dynamic-rules', 'cross-field-validation'],
+      '/advanced/': ['', 'rules-object-expression', 'dynamic-rules', 'cross-field-validation', 'core-validation-api'],
       '/api/': ['', 'rules'],
       '/examples/': ['ui-libraries', 'i18n', 'multiple-forms', 'backend', 'nuxt']
     },
