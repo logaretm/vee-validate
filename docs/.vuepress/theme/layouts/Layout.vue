@@ -10,15 +10,13 @@
     <div class="sidebar-mask" @click="toggleSidebar(false)"></div>
 
     <Sidebar :items="sidebarItems" @toggle-sidebar="toggleSidebar">
-      <slot name="sidebar-top" slot="top">
-        <SidebarAd v-if="sidebarItems && sidebarItems.length" />
-      </slot>
       <slot name="sidebar-bottom" slot="bottom" />
     </Sidebar>
 
     <Home v-if="$page.frontmatter.home" />
 
-    <Page v-else :sidebar-items="sidebarItems">
+    <Ad />
+    <Page v-if="!$page.frontmatter.home" :sidebar-items="sidebarItems">
       <slot name="page-top" slot="top" />
       <slot name="page-bottom" slot="bottom" />
     </Page>
@@ -30,14 +28,13 @@ import Home from '@parent-theme/components/Home.vue';
 import Navbar from '@parent-theme/components/Navbar.vue';
 import Page from '@parent-theme/components/Page.vue';
 import Sidebar from '@parent-theme/components/Sidebar.vue';
-import SidebarAd from '@theme/components/SidebarAd.vue';
+import Ad from '@theme/components/Ad.vue';
 import { resolveSidebarItems } from '@parent-theme/util';
 
 let isLoaded = false;
 
 export default {
-  components: { Home, Page, Sidebar, Navbar, SidebarAd },
-
+  components: { Home, Page, Sidebar, Navbar, Ad },
   data() {
     return {
       isSidebarOpen: false
