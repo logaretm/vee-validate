@@ -55,16 +55,21 @@ export async function validate(
 
   const result = await _validate(field, value, options);
   const errors: string[] = [];
-  const ruleMap: Record<string, string> = {};
+  const failedRules: Record<string, string> = {};
+  // holds a fn that regenerates the message.
+  const regenerateMap: Record<string, () => string> = {};
   result.errors.forEach(e => {
-    errors.push(e.msg);
-    ruleMap[e.rule] = e.msg;
+    const msg = e.msg();
+    errors.push(msg);
+    failedRules[e.rule] = msg;
+    regenerateMap[e.rule] = e.msg;
   });
 
   return {
     valid: result.valid,
     errors,
-    failedRules: ruleMap
+    failedRules,
+    regenerateMap
   };
 }
 
@@ -191,7 +196,7 @@ async function _test(field: FieldContext, value: any, rule: { name: string; para
 
     return {
       valid: false,
-      error: { rule: rule.name, msg: interpolate(result, values) }
+      error: { rule: rule.name, msg: () => interpolate(result as string, values) }
     };
   }
 
@@ -232,7 +237,7 @@ function _generateFieldError(
   };
 
   return {
-    msg: _normalizeMessage(userMessage || getConfig().defaultMessage, field.name, values),
+    msg: () => _normalizeMessage(userMessage || getConfig().defaultMessage, field.name, values),
     rule: ruleName
   };
 }
