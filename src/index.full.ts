@@ -20,3 +20,4 @@ export { setInteractionMode } from './modes';
 export { validate } from './validate';
 export { ValidationProvider, ValidationObserver, withValidation } from './components';
 export { normalizeRules } from './utils/rules';
+export { localeChanged } from './localeChanged';

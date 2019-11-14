@@ -8,6 +8,7 @@ import { validate } from '../validate';
 import { RuleContainer } from '../extend';
 import { ProviderInstance, ValidationFlags, ValidationResult, VeeObserver, VNodeWithVeeContext } from '../types';
 import { addListeners, computeModeSetting, createValidationCtx } from './common';
+import { EVENT_BUS } from '../localeChanged';
 
 let PROVIDER_COUNTER = 0;
 
@@ -19,12 +20,14 @@ type withProviderPrivates = VueConstructor<
     _ignoreImmediate: boolean;
     _pendingValidation?: Promise<ValidationResult>;
     _resolvedRules: any;
+    _regenerateMap?: Record<string, () => string>;
     _veeWatchers: Record<string, Function>;
     $veeDebounce?: number;
     $veeHandler?: Function;
     $veeOnInput?: Function;
     $veeOnBlur?: Function;
     $vnode: VNodeWithVeeContext;
+    $localeHandler: Function;
   }
 >;
 
@@ -165,6 +168,34 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       return normalizeRules(this.rules);
     }
   },
+  created() {
+    const onLocaleChanged = () => {
+      if (!this.flags.validated) {
+        return;
+      }
+
+      const regenerateMap = this._regenerateMap;
+      if (regenerateMap) {
+        const errors: string[] = [];
+        const failedRules: Record<string, string> = {};
+        Object.keys(regenerateMap).forEach(rule => {
+          const msg = regenerateMap[rule]();
+          errors.push(msg);
+          failedRules[rule] = msg;
+        });
+
+        this.applyResult({ errors, failedRules, regenerateMap });
+        return;
+      }
+
+      this.validate();
+    };
+
+    EVENT_BUS.$on('change:locale', onLocaleChanged);
+    this.$on('hook:beforeDestroy', () => {
+      EVENT_BUS.$off('change:locale', onLocaleChanged);
+    });
+  },
   render(h: CreateElement): VNode {
     this.registerField();
     const ctx = createValidationCtx(this);
@@ -257,8 +288,9 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     setErrors(errors: string[]) {
       this.applyResult({ errors, failedRules: {} });
     },
-    applyResult({ errors, failedRules }: Omit<ValidationResult, 'valid'>) {
+    applyResult({ errors, failedRules, regenerateMap }: Omit<ValidationResult, 'valid'>) {
       this.errors = errors;
+      this._regenerateMap = regenerateMap;
       this.failedRules = { ...(failedRules || {}) };
       this.setFlags({
         valid: !errors.length,
