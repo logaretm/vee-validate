@@ -62,22 +62,53 @@ module.exports = {
     docsDir: 'docs',
     editLinks: true,
     sidebarDepth: 2,
-    sidebar: {
-      '/guide/': ['', 'basics', 'rules', 'state', 'forms'],
-      '/advanced/': ['', 'rules-object-expression', 'dynamic-rules', 'cross-field-validation', 'core-validation-api'],
-      '/api/': ['', 'rules'],
-      '/examples/': ['ui-libraries', 'i18n', 'multiple-forms', 'backend', 'nuxt']
-    },
+    sidebar: [
+      {
+        title: 'Getting Started',
+        collapsable: false,
+        children: [
+          '/overview'
+        ]
+      },
+      {
+        title: 'Guide',
+        collapsable: false,
+        children: [
+          '/guide/basics',
+          '/guide/rules',
+          '/guide/state',
+          '/guide/forms',
+          '/guide/localization'
+        ]
+      },
+      {
+        title: 'Advanced',
+        collapsable: false,
+        children: [
+          '/advanced/rules-object-expression',
+          '/advanced/cross-field-validation',
+          '/advanced/dynamic-rules',
+          '/advanced/programmatic-validation'
+        ]
+      },
+      {
+        title: 'API Reference',
+        collapsable: false,
+        children: [
+          ['/api/validation-provider', '<ValidationProvider />'],
+          ['/api/validation-observer', '<ValidationObserver />'],
+          ['/api/with-validation', 'withValidation()']
+        ]
+      }
+    ],
     locales: {
       '/': {
         label: 'English',
         selectText: 'Languages',
         editLinkText: 'Help us improve this page!',
         nav: [
-          { text: 'Guide', link: '/guide/' },
-          { text: 'Advanced', link: '/advanced' },
+          { text: 'Guide', link: '/guide/basics' },
           { text: 'Config', link: '/configuration' },
-          { text: 'API', link: '/api/' }
         ]
       }
     }
