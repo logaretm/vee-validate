@@ -4,7 +4,7 @@ These are the core concepts you need to know about vee-validate and its approach
 
 VeeValidate is a validation framework built specifically for Vue.js and as such it makes some assumptions and enforces "best-practices" for your forms while being versatile and customizable.
 
-VeeValidate is a collection of function-based APIs and Vue components, the main things we will cover is how to add rules and use them on your fields and error messages.
+VeeValidate is a collection of function-based APIs and Vue components, the main things that will be covered is how to add rules and use them on your fields and error messages.
 
 ## Validation Provider
 
@@ -79,7 +79,7 @@ The `v` identifier is called **slot props** which lets components like the `Vali
 </ValidationProvider>
 ```
 
-So far we only rendered the slot without any validation of any kind, the next section will walk you through adding validation rules and executing them.
+So far you only rendered the slot without any validation of any kind, the next section will walk you through adding validation rules and executing them.
 
 ## Adding Rules
 
@@ -101,7 +101,7 @@ The `extend` function accepts the name of the rule and the **validator function*
 
 You can use the newly defined `positive` rule like this:
 
-```vue
+```vue{1}
 <ValidationProvider rules="positive" v-slot="{ errors }">
   <input v-model="value" type="text">
   <span>{{ errors[0] }}</span>
@@ -120,7 +120,7 @@ extend('odd', value => {
 
 To make sure our field is validated by both rules, you append the `odd` rule to the field to make sure it's positive and also an odd number:
 
-```vue
+```vue{1}
 <ValidationProvider rules="positive|odd" v-slot="{ errors }">
   <input v-model="value" type="number">
   <span>{{ errors[0] }}</span>
@@ -129,14 +129,14 @@ To make sure our field is validated by both rules, you append the `odd` rule to 
 
 Notice that the `|` pipe character separates the rules, this is inspired by Laravel's validation syntax, You can add as many rules as you want on your input:
 
-```vue
+```vue{1}
 <ValidationProvider rules="positive|odd|prime|fib" v-slot="{ errors }">
   <input v-model="value" type="number">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 ```
 
-The string we send to our `rules` prop is called a **string expression**.
+The string you sent to the `rules` prop is called a **string expression**.
 
 :::tip
   There is another advanced expression that you can express your rules with. See [Rules Object Expression](../advanced/rules-object-expression.md).
@@ -156,7 +156,7 @@ extend('odd', {
 
 ## Rule Arguments
 
-Assuming you want to create a rule that checks the minimum the number of characters, it is clear that such a rule requires some sort of configuration. Ideally you should be able to re-use such a rule. Let's say we need to make sure the minimum number of characters is 3:
+Assuming you want to create a rule that checks the minimum the number of characters, it is clear that such a rule requires some sort of configuration. Ideally you should be able to re-use such a rule. For example you need to make sure the minimum number of characters is 3:
 
 ```js
 import { extend } from 'vee-validate';
@@ -183,9 +183,9 @@ extend('min', {
 
 Note that the second parameter `args` sent to the `validate` method is an object containing keys that were specified in the `params` array.
 
-To configure the rule, we use a Laravel-like syntax, simply append a colon `:` after the rule. This is an example of two fields using the same rule but with different `length` for each of them:
+To configure the rule, use a Laravel-like syntax by appending a colon `:` after the rule. This is an example of two fields using the same rule but with different `length` for each of them:
 
-```vue{2,10}
+```vue{1,6}
 <ValidationProvider rules="min:3" v-slot="{ errors }">
   <input v-model="value" type="text">
   <span>{{ errors[0] }}</span>
@@ -229,8 +229,11 @@ extend('minmax', {
 
 To use this rule, you pass the `minmax` rule to the `rules` prop of the `ValidationProvider` and you supply the arguments as a **comma separated list**:
 
-```vue
-<ValidationProvider rules="minmax:3,8" v-slot="{ errors }">
+```vue{2}
+<ValidationProvider
+  rules="minmax:3,8"
+  v-slot="{ errors }"
+>
   <input v-model="value" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
@@ -271,7 +274,7 @@ VeeValidate generates error messages for your fields, the last examples had `Thi
 
 You can change that by returning strings in the validation function itself:
 
-```js{9,17}
+```js{8,16}
 import { extend } from 'vee-validate';
 
 extend('positive', value => {
@@ -314,7 +317,7 @@ The {fieldName} must be a valid...
 
 The validator function doesn't accept the field name anywhere, but vee-validate offers simple interpolation mechanism for returned messages, you can use the `{_field_}` placeholder in your string and it will be replaced with your field name automatically:
 
-```js
+```js{6}
 extend('positive', value => {
   if (value >= 0) {
     return true;
@@ -373,7 +376,7 @@ If using interpolated strings is not flexible enough for you, using functions is
 
 This is the previous example but with a function as our message:
 
-```js
+```js{6-8}
 extend('minmax', {
   validate(value, { min, max }) {
     return value.length >= min && value.length <= max;
@@ -406,9 +409,12 @@ You could then be wondering why `errors` is an array when vee-validate only gene
 You could configure the `ValidationProvider` component to run all the rules by setting the `bails` prop to `false`:
 
 ```vue{3}
-<ValidationProvider rules="positive|odd|prime|fib" :bails="false" v-slot="{ errors }">
+<ValidationProvider
+  rules="positive|odd|prime|fib"
+  :bails="false"
+  v-slot="{ errors }"
+>
   <input v-model="value" type="text">
-
   <ul>
     <li v-for="error in errors">{{ error }}</li>
   </ul>
