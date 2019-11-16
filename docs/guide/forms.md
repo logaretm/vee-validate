@@ -77,3 +77,7 @@ Here is the same example but without such nesting and only using one `Validation
 @[example](no-nested-observers)
 
 It is simpler to reason about than with multiple observers and for that scenario you don't need to know wether two observers are valid in the same time, there is only one rendered `ValidationObserver` at any given time which should give you a hint that you only need one from the start, not multiple ones.
+
+---
+
+You should now have enough information about building your next form, the only remaining thing is to tackle localization.

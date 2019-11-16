@@ -367,6 +367,36 @@ extend('minmax', {
 });
 ```
 
+### Messages as Functions
+
+If using interpolated strings is not flexible enough for you, using functions is also allowed. When using a function as your message, it has to return a `string`. Function messages receive the field name and an object containing the placeholders mentioned earlier.
+
+This is the previous example but with a function as our message:
+
+```js
+extend('minmax', {
+  validate(value, { min, max }) {
+    return value.length >= min && value.length <= max;
+  },
+  params: ['min', 'max'],
+  message: (fieldName, placeholders) => {
+    return `The ${fieldName} field must have at least ${min} characters and ${max} characters at most`
+  }
+});
+```
+
+This allows you to manually interpolate or generate messages depending on your needs, this will come in handy when implementing localization using popular plugins like `vue-i18n`. See [The Localization Guide](./localization.md).
+
+For reference these are the contents of the `placeholders` object:
+
+| Prop      |Description                                 |
+|-----------|--------------------------------------------|
+| `_field_` | The field name.                            |
+| `_value_` | The field value that was validated.        |
+| `_rule_`  | The rule name that triggered this message. |
+
+Along side any parameters configured in the `params` array.
+
 ### Multiple Messages
 
 VeeValidate by default follows a **fast-exit** or **bails** whenever a rule fails and stops the validation pipeline for other rules, this is done to maximize performance and provide feedback to your users as fast as possible.
