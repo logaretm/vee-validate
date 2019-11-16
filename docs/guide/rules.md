@@ -20,7 +20,7 @@ extend('required', {
 });
 ```
 
-And then we can use those rules immediately:
+And then you can use those rules immediately:
 
 ```vue
 <ValidationProvider name="email" rules="required|email" v-slot="{ errors }">

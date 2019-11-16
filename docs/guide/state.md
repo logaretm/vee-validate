@@ -1,6 +1,6 @@
 # Validation State
 
-In the previous examples we used `errors` to display error messages, but the `errors` array is only a part of the validation state available to you. There are other state items that can be useful to you when building accessible and pleasant forms.
+In the previous examples you used `errors` to display error messages, but the `errors` array is only a part of the validation state available to you. There are other state items that can be useful to you when building accessible and pleasant forms.
 
 ## Flags
 
