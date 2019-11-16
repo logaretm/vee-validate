@@ -106,3 +106,9 @@ export default {
   }
 };
 </script>
+
+
+<style lang="stylus">
+.theme-default-content.content__default
+  margin-left: 2rem
+</style>
