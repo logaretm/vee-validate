@@ -46,11 +46,9 @@ TODO: Public API Docs
   Using `refs` gives you full access to the `ValidationObserver` component API, but it is recommended that you only use the documented API as any of the internals are subject to change. See the [ValidationObserver Public API]().
 :::
 
-## Observed State
+## Persisting Provider State
 
-The `ValidationObserver` only observes the currently rendered `ValidationProvider` instances, so if any `ValidationProvider` is hidden with `v-if` or removed with `v-for` it will automatically be excluded from the `ValidationObserver` state, this makes nested observers redundant in most cases.
-
-### Persisting Provider State
+The `ValidationObserver` only observes the currently rendered `ValidationProvider` instances, so if any `ValidationProvider` is hidden with `v-if` or removed with `v-for` it will automatically be excluded from the `ValidationObserver` state.
 
 You might want the `ValidationObserver` **to keep unmounted providers** state, for example you could have a paged/multi-step form where the user can freely go to the next set of inputs without forcing the previous set to be valid, but you want to make sure that before they submit. All the pages/steps are valid.
 
@@ -59,6 +57,10 @@ For these cases you could use the Vue.js `keep-alive` built-in component. The `V
 Here is an example that employs `keep-alive` to keep `ValidationProvider` state in its parent `ValidationProvider`:
 
 @[example](persist-provider)
+
+:::tip
+  Even when fields are hidden/unmounted, as long as they wrapped with `keep-alive` their state will also be affected by `validate` and `reset` calls.
+:::
 
 ## Nested Observers
 
