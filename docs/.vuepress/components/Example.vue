@@ -180,9 +180,14 @@ export default {
         border: none
         background: #3eaf7c
         color: #fff
+        border: 2px dashed transparent
 
         &:hover, &.is-active
           background: darken(#3eaf7c, 20%)
+
+        &:focus
+          outline: none
+          border-color: #fff
 
   &__Content
     padding: 2rem
