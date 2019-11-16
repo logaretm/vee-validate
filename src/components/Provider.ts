@@ -41,7 +41,7 @@ function data() {
     initialValue: undefined,
     flags: createFlags(),
     failedRules: {},
-    isDeactivated: false,
+    isActive: true,
     id: ''
   };
   return defaultValues;
@@ -80,10 +80,6 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       default: null
     },
     immediate: {
-      type: Boolean,
-      default: false
-    },
-    persist: {
       type: Boolean,
       default: false
     },
@@ -222,12 +218,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     this.$_veeObserver.unsubscribe(this.id);
   },
   activated() {
-    this.$_veeObserver.subscribe(this);
-    this.isDeactivated = false;
+    this.isActive = true;
   },
   deactivated() {
-    this.$_veeObserver.unsubscribe(this.id);
-    this.isDeactivated = true;
+    this.isActive = false;
   },
   methods: {
     setFlags(flags: Partial<ValidationFlags>) {
@@ -373,7 +367,7 @@ function updateRenderingContextRefs(vm: ProviderInstance) {
 
   const { id } = vm;
   // Nothing has changed.
-  if (vm.isDeactivated || (id === providedId && vm.$_veeObserver.refs[id])) {
+  if (!vm.isActive || (id === providedId && vm.$_veeObserver.refs[id])) {
     return;
   }
 

@@ -254,45 +254,6 @@ test('resets child refs using reset on the v-slot data', async () => {
   expect(error.text()).toBe('');
 });
 
-test('resets inactive refs that were cached', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-        shown: true
-      }),
-      template: `
-      <ValidationObserver ref="obs" v-slot="ctx">
-        <ValidationProvider rules="required" v-slot="{ errors }" name="provider" persist v-if="shown">
-          <input v-model="value" type="text">
-          <span id="error">{{ errors[0] }}</span>
-        </ValidationProvider>
-      </ValidationObserver>
-    `
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  let error = wrapper.find('#error');
-  await flush();
-  expect(error.text()).toBe('');
-
-  await wrapper.vm.$refs.obs.validate();
-
-  expect(error.text()).toContain('The provider field is required');
-  wrapper.setData({
-    shown: false
-  });
-  wrapper.vm.$refs.obs.reset();
-  wrapper.setData({
-    shown: true
-  });
-  await flush();
-  error = wrapper.find('#error');
-
-  expect(error.text()).toBe('');
-});
-
 test('collects errors from child providers', async () => {
   const wrapper = mount(
     {
@@ -412,50 +373,6 @@ test('handles unmouting nested observers', async () => {
   });
   await flush();
   expect(wrapper.find('p').text()).not.toContain(`NESTED_OBS`); // observer is mounted.
-});
-
-test('persist provider state after destroyed', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-        isHidden: false
-      }),
-      template: `
-    <div>
-      <ValidationObserver>
-        <div v-if="!isHidden">
-          <ValidationProvider
-            rules="required|min:3|max:6"
-            vid="myfield"
-            v-slot="{ errors }"
-            :persist="true"
-          >
-            <input type="text" v-model="value">
-            <span>{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      </ValidationObserver>
-      <button @click="isHidden = !isHidden">Toggle</button>
-    </div>
-    `
-    },
-    { localVue: Vue }
-  );
-
-  const button = wrapper.find('button');
-  const input = wrapper.find('input');
-  await flush();
-  input.element.value = 'se';
-  input.trigger('input');
-  await flush();
-
-  button.trigger('click');
-  await flush();
-  button.trigger('click');
-  await flush();
-  const span = wrapper.find('span');
-  expect(span.text()).toBeTruthy();
 });
 
 test('Sets errors for all providers', async () => {

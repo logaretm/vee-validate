@@ -1,13 +1,6 @@
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
-import { values, findIndex, warn, createFlags, debounce } from '../utils';
-import {
-  ValidationResult,
-  InactiveRefCache,
-  VeeObserver,
-  VNodeWithVeeContext,
-  ValidationFlags,
-  KnownKeys
-} from '../types';
+import { values, findIndex, debounce } from '../utils';
+import { ValidationResult, VeeObserver, VNodeWithVeeContext, ValidationFlags, KnownKeys } from '../types';
 import { ValidationProvider } from './Provider';
 import { normalizeChildren } from '../utils/vnode';
 
@@ -32,7 +25,6 @@ let OBSERVER_COUNTER = 0;
 
 function data() {
   const refs: Record<string, ProviderInstance> = {};
-  const inactiveRefs: Record<string, InactiveRefCache> = {};
   const errors: ObserverErrors = {};
   const flags: ValidationFlags = {} as ValidationFlags;
   // FIXME: Not sure of this one can be typed, circular type reference.
@@ -42,7 +34,6 @@ function data() {
     id: '',
     refs,
     observers,
-    inactiveRefs,
     errors,
     flags
   };
@@ -106,7 +97,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
 
     this.$watch(
       () => {
-        const vms = [...values(this.refs), ...values(this.inactiveRefs), ...this.observers];
+        const vms = [...values(this.refs), ...this.observers];
         const errors: ObserverErrors = {};
         const flags: ValidationFlags = {} as ValidationFlags;
 
@@ -141,9 +132,6 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       }
 
       this.refs = { ...this.refs, ...{ [subscriber.id]: subscriber } };
-      if (subscriber.persist) {
-        this.restoreProviderState(subscriber);
-      }
     },
     unsubscribe(this: any, id: string, kind = 'provider') {
       if (kind === 'provider') {
@@ -175,47 +163,12 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       return cb();
     },
     reset() {
-      Object.keys(this.inactiveRefs).forEach(key => {
-        this.$delete(this.inactiveRefs, key);
-      });
-
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
-    },
-    restoreProviderState(provider: ProviderInstance) {
-      const id = provider.id;
-      const state = this.inactiveRefs[id];
-      if (!state) {
-        return;
-      }
-
-      provider.setFlags(state.flags);
-      provider.applyResult(state);
-      this.$delete(this.inactiveRefs, provider.id);
     },
     removeProvider(id: string) {
       const provider = this.refs[id];
       if (!provider) {
-        // FIXME: inactive refs are not being cleaned up.
         return;
-      }
-
-      if (provider.persist) {
-        /* istanbul ignore next */
-        if (process.env.NODE_ENV !== 'production') {
-          if (id.indexOf('_vee_') === 0) {
-            warn(
-              'Please provide a `vid` or a `name` prop when using `persist`, there might be unexpected issues otherwise.'
-            );
-          }
-        }
-
-        // save it for the next time.
-        this.inactiveRefs[id] = {
-          id,
-          flags: provider.flags,
-          errors: provider.errors,
-          failedRules: provider.failedRules
-        };
       }
 
       this.$delete(this.refs, id);
