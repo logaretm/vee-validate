@@ -4,7 +4,7 @@ Sometimes your validation rules may change depending on arbitrary reasons in you
 
 The `ValidationProvider` component automatically watches the `rules` prop and whenever it changes it will trigger validation **if the field has been validated before**. Meaning not only you can create very versatile form validation rules but you can dynamically apply them.
 
-So we can do the following:
+So you can do the following:
 
 ```vue{4}
 <template>
@@ -27,6 +27,6 @@ export default {
 </script>
 ```
 
-The previous sample will work, but it is very verbose. We can utilize the [**rules object expression**](./rules-object-expression.md) for better readability and versatility, here such an example:
+The previous sample will work, but it is very verbose. You can utilize the [**rules object expression**](./rules-object-expression.md) for better readability and versatility, here such an example:
 
 @[example](dynamic-rules)
