@@ -1,16 +1,18 @@
 # Cross Field Validation
 
-There are a lot of terms to describe this use case, so we will just use an example. Consider a `password` field and a `confirmation` field, both fields must match each other but unlike the validation scenarios we encountered we now actually have a dependency between two fields, as one must match the other.
+There are a lot of terms to describe this use case, cross-field validation is when a validation rule needs to use another field's value to validate the current field.
+
+Consider a `password` field and a `confirmation` field, both fields must match each other but unlike the validation scenarios you've encountered, you now have a dependency between two fields, as one must match the other.
 
 ## Targeting other fields
 
-vee-validate handles such rules given that you properly do the following:
+vee-validate handles such rules but **you must do the following**:
 
 - Wrap the fields within the same `ValidationObserver` component.
 - The target field must have a `name` or `vid` prop.
 - Properly reference the target field `name` or `vid` value in the rules of the other.
 
-This can be confusing at first, but let's build up our sample from scratch, so we have those two fields:
+This can be confusing at first, you can start by defining those two fields:
 
 ```vue
 <ValidationProvider rules="required" v-slot="{ errors }">
@@ -25,7 +27,7 @@ This can be confusing at first, but let's build up our sample from scratch, so w
 </ValidationProvider>
 ```
 
-First we need to wrap them both in a `ValidationObserver` component:
+First you need to wrap them both in a `ValidationObserver` component:
 
 ```vue{1,12}
 <ValidationObserver>
@@ -42,9 +44,9 @@ First we need to wrap them both in a `ValidationObserver` component:
 </ValidationObserver>
 ```
 
-The validation observer here acts as an broker for those fields, it allows them to discover each other and be able to reference one another.
+The `ValidationObserver` not only aggregates the fields state, it also allows them to discover each other and be able to reference one another.
 
-Now we need to create our rule which is straight forward:
+Secondly, create the `password` rule, which needs to check if the field value matches the given `target` value:
 
 ```js
 import { extend } from 'vee-validate';
@@ -58,7 +60,7 @@ extend('password', {
 });
 ```
 
-This rule checks if the field's `value` matches the target param value, which wouldn't work if we do this:
+If you test the rule right away like this:
 
 ```vue
 <ValidationProvider rules="required|password:confirm" v-slot="{ errors }">
@@ -67,9 +69,9 @@ This rule checks if the field's `value` matches the target param value, which wo
 </ValidationProvider>
 ```
 
-This doesn't work because vee-validate does not know you are trying to reference another field's value, so the param value is fixed to always be "confirm".
+You will notice that it doesn't work. This is because vee-validate does not know you are trying to reference another field's value, so the param value is fixed to always be "confirm".
 
-We need to add `@` at the beginning of a param to signal to vee-validate that it should substitute the param with the target field value. Now instead of getting a static "confirm" string, you will get the field's value instead.
+To reference another field's value, add a `@` at the beginning of a param to signal to vee-validate that it should substitute the param with the target field value. So instead of getting a static "confirm" string, you will get the field's value instead.
 
 ```vue{2}
 <ValidationObserver>
@@ -86,21 +88,19 @@ We need to add `@` at the beginning of a param to signal to vee-validate that it
 </ValidationObserver>
 ```
 
-Here is an example of what we just did:
+You can see the previous sample working here:
 
 @[example](cross-field-password)
 
 :::tip
-Note that the `password` rule we created is not special in any way, it just checks if two strings are the same. You can use the `@` to reference fields values in any rule you create, there is no limitation on that.
+Note that the `password` rule you created is not special in any way, it just checks if two strings are the same. You can use the `@` to reference fields values in any rule you create, there is no limitation on that.
 :::
 
 ## Targeting multiple fields
 
 You are not limited to targeting just 1 field, you can target as many as you like provided that you use the proper syntax to reference that field.
 
-Let's try another example that's slightly more complex to solidify this concept.
-
-Imagine having a field whose value must be between two other fields, our `between` rule can be as simple as this:
+Try another example that's slightly more complex to solidify this concept. Imagine having a field whose value must be between two other fields, our `between` rule can be as simple as this:
 
 ```js
 import { extend } from 'vee-validate';
@@ -114,6 +114,6 @@ extend('between', {
 });
 ```
 
-Again we make sure to wrap our Providers within the same `ValidationObserver` so they can reference each other.
+Again, make sure to wrap our Providers within the same `ValidationObserver` so they can reference each other, and make sure you reference the two fields with `@max` and `@min`.
 
 @[example](cross-field-between)

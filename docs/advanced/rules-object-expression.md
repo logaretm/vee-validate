@@ -1,6 +1,6 @@
 # Rules Object Expression
 
-You've learned that we can do `required|email` to specify validation rules for our fields, that was called the **rules string expression** and we hinted at an alternate expression.
+You've learned that you can use string expressions to express validation rules, i.e: `required|email`. A hint was made at an alternate expression.
 
 This **rules object expression** like the name suggests, uses JavaScript/JSON objects to define validation rules and generally is much more powerful than string expressions due to the expressive nature of JavaScript objects.
 
@@ -30,19 +30,19 @@ There are multiple ways to supply arguments to your rules, let's start by the mo
 const ruleObject = { min: { length: 3 }, max: { length: 10 } };
 ```
 
-This can be verbose, for rules that only have 1 parameter we can omit the nested objects and pass the singular argument directly:
+This can be verbose, for rules that only have a single parameter, you can omit the nested objects and pass the singular argument directly:
 
 ```js
 const ruleObject = { min: 3, max: 10 };
 ```
 
-For rules that have multiple parameters, we can supply its arguments using either the formal approach mentioned earlier:
+For rules that have multiple parameters, you can supply its arguments using either the formal approach mentioned earlier:
 
 ```js
 const ruleObject = { between: { min: 1, max: 20 } };
 ```
 
-Or we can use a simpler expression that uses arrays:
+Or you can use a simpler expression that uses arrays:
 
 ```js
 const ruleObject = { between: [1, 20] };

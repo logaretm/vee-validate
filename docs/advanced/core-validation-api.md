@@ -1,6 +1,6 @@
 # Core Validation API
 
-vee-validate doesn't just offer you a `ValidationProvider` or a `ValidationObserver` component to work with, those are just outlets for the core functionality. You can use the underlying core to validate arbitrary values or even build your own validation outlets.
+vee-validate doesn't just offer you components to work with, those are just outlets for the core functionality. You can use the underlying core to validate arbitrary values or even build your own validation outlets.
 
 ## The Validate Function
 
@@ -32,7 +32,7 @@ interface validate {
 }
 ```
 
-So we could build our own input field with validation without having to use the `ValidationProvider` component, but remember that components do pack a lot more than just validation of input fields.
+So you could build your own input field with validation without having to use the `ValidationProvider` component, but remember that components do pack a lot more than just validation of input fields.
 
 Be careful of re-inventing wheel as you add more features to your input field, you might end up with a `ValidationProvider` minus the flexibility!
 
@@ -62,7 +62,7 @@ interface ValidationOptions {
 | isInitial      | `boolean`                 | If true will skip all rules configured not to run at the first validation attempt.                                                             |
 | customMessages | `{ [k: string]: string }` | Custom error messages, keyed by rule name. These will override any default messages, as well as any messages set in `extend()`.                |
 
-So we could provide a fully working form validation without components like this:
+So you could provide a fully working form validation without components like this:
 
 ```js
 let password = 'my password';
@@ -80,4 +80,4 @@ validate(password, 'required|confirmed:@confirmation', {
 });
 ```
 
-And just like that we did a cross-field validation, of course the `ValidationObserver` and `ValidationProvider` do handle most of those options for you. But if you ever need to implement something "lower-level" you got the tools to do so and with a very convenient API as well.
+And just like that you did a cross-field validation, of course the `ValidationObserver` and `ValidationProvider` do handle most of those options for you. But if you ever need to implement something "lower-level" you got the tools to do so and with a very convenient API as well.
