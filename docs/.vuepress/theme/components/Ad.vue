@@ -19,9 +19,8 @@ export default {
   width: 300px
   position: fixed
   z-index: 19
-  bottom: 10px
+  bottom: 5rem
   right: 10px
-  padding: 10px
   background-color: #fff
   border-radius: 3px
   font-size: 13px
@@ -71,6 +70,28 @@ export default {
     text-transform: uppercase
     line-height: 1
     letter-spacing: 1px
+
+@media screen and (max-width: 1500px) and (min-width: 1301px)
+  #ad
+    width: 150px
+    #carbonads
+      max-width: 150px
+
+    .carbon-img
+      margin: 0
+
+    #carbonads,
+    .carbon-wrap
+      display: flex
+      flex-direction: column
+
+    .carbon-text
+      margin-top: 10px
+      max-width: 150px
+
+    .carbon-poweredby
+      position: static
+      margin-top: 10px
 
 @media screen and (max-width: 1300px)
   #ad
