@@ -67,7 +67,8 @@ module.exports = {
         title: 'Getting Started',
         collapsable: false,
         children: [
-          '/overview'
+          '/overview',
+          '/migration'
         ]
       },
       {
