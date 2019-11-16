@@ -1,9 +1,9 @@
 # Localization
 
-VeeValidate has built-in localization support for validation messages which is opt-in and is not configured by default.
+VeeValidate has built-in localization support for validation messages. Localization is opt-in and is not configured by default.
 
 :::warning
-In `2.x`, vee-validate used to ship with localization enabled and pre-configured, this has been changed in `3.x` to allow for a more flexible i18n system.
+  In `2.x`, vee-validate used to ship with localization enabled and pre-configured, this has been changed in `3.x` to allow for a more flexible i18n system.
 :::
 
 ## Using the default i18n
@@ -21,13 +21,14 @@ localize({
   en: {
     messages: {
       required: 'this field is required',
-      min: 'this field must have no less than {length} characters'
+      min: 'this field must have no less than {length} characters',
+      max: (_, { length }) => `this field must have no more than ${length} characters`
     }
   }
 });
 ```
 
-Where messages is an object whose keys are the rule name and the value is a string or a template string or a message generator function. Which is shown in the sample.
+The `messages` prop is an object whose keys are the rule name and the value is a string or a template string or a message generator function. Which is shown in the sample.
 
 ### Installing locales
 
@@ -151,7 +152,7 @@ This is a demo showcasing the previous features
 
 ### Lazily importing locales
 
-If you have multiple locales in your app, loading all the validation messages for those locales is not optimal. We can load a locale at time with dynamic `import()` that you can use if you are using a bundler like **webpack**.
+If you have multiple locales in your app, loading all the validation messages for those locales is not optimal. You can load a locale at time with dynamic `import()` that you can use if you are using a bundler like **webpack**.
 
 ```js
 import { localize } from 'vee-validate';
@@ -165,11 +166,11 @@ function loadLocale(code) {
 
 ## Using other i18n libraries
 
-You don't have to use the `localize` helper with `vee-validate`, if you don't it will not be included in your final bundle. It is optional for those who don't use Vue-SSR framework/solution like Nuxt.
+You don't have to use the `localize` helper with `vee-validate`, as it will not be included in your final bundle if you don't import it.
 
-Other plugins dedicated for localization would be much better to use than the built in one, you can use them by using a function for the message instead of a string.
+Other plugins dedicated for localization can be much better to use than the built-in one, you can use them by leveraging the fact that messages can be a function.
 
-For example we can use `vue-i18n` with vee-validate like this:
+For example you can use `vue-i18n` with vee-validate like this:
 
 ```js{19}
 import VueI18n from 'vue-i18n';
@@ -179,7 +180,7 @@ import validationMessages from 'vee-validate/dist/locale/en';
 
 // Since vee-validate default messages are
 // compatible with I18n format
-// we can merge them if needed.
+// you can merge them if needed.
 const i18n = new VueI18n({
   locale: 'en',
   en: {
@@ -204,6 +205,10 @@ configure({
   defaultMessage: (_, values) => i18n.t(`validations.${values._rule_}`, values)
 });
 ```
+
+:::tip
+  VeeValidate default messages are formatted to be compatible with `vue-i18n` format and most ICU based solutions.
+:::
 
 ## vue-i18n
 
