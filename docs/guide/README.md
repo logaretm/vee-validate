@@ -77,7 +77,7 @@ All Examples from now on will use the ES2015 syntax, make sure to brush up on ES
 
 ## Basic Example
 
-VeeValidate exposes a `ValidationProvider` component that allows you to validate your fields, simply wrap your field with a `validation-provider` component.
+VeeValidate exposes a `ValidationProvider` component that allows you to validate your fields. To validate, wrap your field with a `validation-provider` component:
 
 ```vue{1,4}
 <ValidationProvider rules="secret" v-slot="{ errors }">

@@ -13,12 +13,12 @@ features:
   - title: Configurable
     details: Config that doesn't get into your way, everything is optional.
 footer: MIT Licensed | Copyright © 2019-present Abdelrahman Awad
-description: Template Based Validation Framework for Vue.js
+description: Template Based Form Validation Framework for Vue.js
 meta:
   - name: og:title
     content: VeeValidate
   - name: og:description
-    content: Template Based Validation Framework for Vue.js
+    content: Template Based Form Validation Framework for Vue.js
 ---
 
 :::danger Version
@@ -29,7 +29,7 @@ This is the docs for vee-validate 3.x. You access the docs for the old version 2
 
 # Quick Setup
 
-VeeValidate is a validation framework that offers validation for your fields using components and scoped slots.
+VeeValidate is a form validation framework for Vue.js.
 
 ## Installation
 
