@@ -1,26 +1,26 @@
 <p align="center">
-  <a href="https://baianat.github.io/vee-validate/" target="_blank">
-    <img width="200" src="https://github.com/baianat/vee-validate/blob/master/logo.png">
+  <a href="https://logaretm.github.io/vee-validate/" target="_blank">
+    <img width="200" src="https://github.com/logaretm/vee-validate/blob/master/logo.png">
   </a>
 </p>
 
 <p align="center">
 
-[![codecov](https://codecov.io/gh/baianat/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/baianat/vee-validate)
-[![Build Status](https://travis-ci.org/baianat/vee-validate.svg?branch=master)](https://travis-ci.org/baianat/vee-validate)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/baianat/vee-validate?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=baianat/vee-validate&amp;utm_campaign=Badge_Grade)
+[![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
+[![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=master)](https://travis-ci.org/logaretm/vee-validate)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/logaretm/vee-validate?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=logaretm/vee-validate&amp;utm_campaign=Badge_Grade)
 [![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/)
 [![npm](https://img.shields.io/npm/dm/vee-validate.svg)](https://npm-stat.com/charts.html?package=vee-validate)
 [![npm](https://img.shields.io/npm/v/vee-validate.svg)](https://www.npmjs.com/package/vee-validate)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/baianat/vee-validate.svg)](http://isitmaintained.com/project/baianat/vee-validate "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/baianat/vee-validate.svg)](http://isitmaintained.com/project/baianat/vee-validate "Percentage of issues still open")
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/logaretm/vee-validate.svg)](http://isitmaintained.com/project/logaretm/vee-validate "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/logaretm/vee-validate.svg)](http://isitmaintained.com/project/logaretm/vee-validate "Percentage of issues still open")
 
 </p>
 <br>
 
 vee-validate is a template-based validation framework for [Vue.js](https://vuejs.org/) that allows you to validate inputs and display errors.
 
-Being template-based you only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated with 40+ locales supported. [Many rules are available out of the box](https://baianat.github.io/vee-validate/guide/rules.html).
+Being template-based you only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated with 40+ locales supported. [Many rules are available out of the box](https://logaretm.github.io/vee-validate/guide/rules.html).
 
 This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.com/).
 
@@ -115,7 +115,7 @@ The validation provider accepts two props: `rules` which is in its simplest form
 and That's it, your input will be validated automatically, notice that the `ValidationProvider` uses [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
 
 
-There is more that can be done! You can customize events, validate initial values, manually validate or reset the field and much more. Make sure to [read the docs](https://baianat.github.io/vee-validate/guide/components.html).
+There is more that can be done! You can customize events, validate initial values, manually validate or reset the field and much more. Make sure to [read the docs](https://logaretm.github.io/vee-validate/guide/components.html).
 
 #### Using directive
 
@@ -143,7 +143,7 @@ Let's display the error for the email input we've created:
 
 ### Documentation
 
-Read the [documentation and demos](https://baianat.github.io/vee-validate/).
+Read the [documentation and demos](https://logaretm.github.io/vee-validate/).
 
 ### Compatibility
 

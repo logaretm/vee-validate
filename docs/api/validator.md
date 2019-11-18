@@ -9,7 +9,7 @@ The validator offers an API to add new fields and trigger validations.
 |Name  | Type  | Description  |
 |---------|---------|---------|
 | errors | [`ErrorBag`](/api/errorbag.md)| Instance of the ErrorBag class to manage errors. |
-| fields     | [`FieldBag`](https://github.com/baianat/vee-validate/blob/master/src/core/fieldBag.js)| Instance of the FieldBag class to manage fields. |
+| fields     | [`FieldBag`](https://github.com/logaretm/vee-validate/blob/master/src/core/fieldBag.js)| Instance of the FieldBag class to manage fields. |
 | locale | `string` | The Currently activated locale. |
 
 ### Methods

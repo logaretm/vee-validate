@@ -97,8 +97,8 @@ module.exports = {
     }
   },
   themeConfig: {
-    repo: 'baianat/vee-validate',
-    docsRepo: 'baianat/vee-validate',
+    repo: 'logaretm/vee-validate',
+    docsRepo: 'logaretm/vee-validate',
     docsDir: 'docs',
     editLinks: true,
     serviceWorker: {
@@ -115,7 +115,7 @@ module.exports = {
           { text: 'Concepts', link: '/concepts/' },
           { text: 'Examples', link: '/examples/' },
           { text: 'API', link: '/api/' },
-          { text: 'v3.x', link: 'https://baianat.github.io/vee-validate/' }
+          { text: 'v3.x', link: 'https://logaretm.github.io/vee-validate/' }
         ],
         sidebarDepth: 3,
         sidebar: {

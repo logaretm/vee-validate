@@ -31,7 +31,7 @@ const validator = {
 This validator object must have a `validate` method and can contain a `getMessage` method which will be merged into the current dictionary locale. For multiple languages, you should use the [localization API](./localization.md).
 
 ::: tip
-  Notice how the `getMessage` method receives the `field`, which is the name of the field under validation as a first parameter, and how the `validate` method receives the value as a first parameter. Both receive the `args` array which contains the arguments that were configured with the validation rule. Take a look at the [actual implementation of the min rule](https://github.com/baianat/vee-validate/blob/master/src/rules/min.js) as an example.
+  Notice how the `getMessage` method receives the `field`, which is the name of the field under validation as a first parameter, and how the `validate` method receives the value as a first parameter. Both receive the `args` array which contains the arguments that were configured with the validation rule. Take a look at the [actual implementation of the min rule](https://github.com/logaretm/vee-validate/blob/master/src/rules/min.js) as an example.
 :::
 
 ::: warning

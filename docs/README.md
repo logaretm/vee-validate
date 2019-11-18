@@ -12,7 +12,7 @@ features:
   details: Validate HTML inputs and Vue components, generate localized errors, Extendable, It does it all.
 - title: Configurable
   details: Config that doesn't get into your way, everything is optional.
-footer: MIT Licensed | Copyright © 2019-present Baianat
+footer: MIT Licensed | Copyright © 2019-present Abdelrahman Awad
 description: Template Based Validation Framework for Vue.js
 meta:
   - name: og:title
@@ -24,7 +24,7 @@ meta:
 
 :::danger Version
 
-This is a the docs for vee-validate 2.x, to access the docs for the latest version 3.x [from here](https://baianat.github.io/vee-validate/).
+This is a the docs for vee-validate 2.x, to access the docs for the latest version 3.x [from here](https://logaretm.github.io/vee-validate/).
 
 :::
 

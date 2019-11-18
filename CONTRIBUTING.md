@@ -7,7 +7,7 @@ First of all, thanks for taking interest into contributing to this repository, b
 Fork the repository, or clone it:
 
 ```bash
-git clone https://github.com/baianat/vee-validate.git
+git clone https://github.com/logaretm/vee-validate.git
 ```
 
 Install dependencies using [yarn](https://yarnpkg.com)
@@ -21,7 +21,7 @@ yarn
 As you can see we have:
 
 - `src` contains the working code for the repository:
-  - `core`: contains files that are the 
+  - `core`: contains files that are the
   - `rules`: contains validation rules that are available to the validator instances.
   - `utils`: contains commonly used utility functions.
 - `dist`: contains the unminified and the minified build of the repository.
