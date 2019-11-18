@@ -81,6 +81,7 @@ module.exports = {
         sidebarDepth: 1,
         children: [
           '/guide/basics',
+          '/guide/required-fields',
           '/guide/rules',
           '/guide/state',
           '/guide/forms',
