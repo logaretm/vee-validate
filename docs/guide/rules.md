@@ -1,4 +1,4 @@
-# Validation Rules
+# Available Rules
 
 The following are the validation rules available for you, **remember that they are not installed by default** and you need to import and install them yourself, this allows you to only import what you need while keeping the bundle size for your application to minimum.
 
