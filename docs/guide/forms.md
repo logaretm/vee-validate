@@ -1,4 +1,4 @@
-# Validating Forms
+# Handling Forms
 
 Now that you've learned how to use the `ValidationProvider` to validate your input fields, what about validating forms in its entirety?
 

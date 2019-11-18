@@ -1,4 +1,4 @@
-# Validation Basics
+# Basics
 
 These are the core concepts you need to know about vee-validate and its approach to form validation.
 
