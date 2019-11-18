@@ -59,6 +59,10 @@ module.exports = {
   themeConfig: {
     repo: 'logaretm/vee-validate',
     docsRepo: 'logaretm/vee-validate',
+    algolia: {
+      apiKey: '498c5d264196aacd7606fed9857deb44',
+      indexName: 'vee-validate'
+    },
     docsDir: 'docs',
     editLinks: true,
     sidebarDepth: 2,
