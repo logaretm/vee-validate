@@ -103,7 +103,9 @@ module.exports = {
         children: [
           ['/api/validation-provider', '<ValidationProvider />'],
           ['/api/validation-observer', '<ValidationObserver />'],
-          ['/api/with-validation', 'withValidation()']
+          ['/api/with-validation', 'withValidation()'],
+          ['/api/validate', 'validate()'],
+          ['/api/extend', 'extend()'],
         ]
       }
     ],
