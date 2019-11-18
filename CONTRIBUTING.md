@@ -51,9 +51,9 @@ If you want to contribute to the docs you can find it in the `docs` folder.
 Our docs require `./dist/vee-validate.esm` as dependency to run successfully in your local machine. You can generate this dependency by executing the following command from the root of the repository:
 
 ```bash
-yarn build:esm
+yarn build
 # or
-npm run build:esm
+npm run build
 ```
 
 And then you can run vuepress local dev server by running:
