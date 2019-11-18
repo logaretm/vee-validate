@@ -74,6 +74,7 @@ module.exports = {
       {
         title: 'Guide',
         collapsable: false,
+        sidebarDepth: 1,
         children: [
           '/guide/basics',
           '/guide/rules',
