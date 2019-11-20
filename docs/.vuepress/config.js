@@ -96,6 +96,7 @@ module.exports = {
           '/advanced/cross-field-validation',
           '/advanced/dynamic-rules',
           '/advanced/refactoring-forms',
+          '/advanced/server-side-validation',
           '/advanced/programmatic-validation',
         ]
       },
