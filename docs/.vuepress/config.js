@@ -95,7 +95,8 @@ module.exports = {
           '/advanced/rules-object-expression',
           '/advanced/cross-field-validation',
           '/advanced/dynamic-rules',
-          '/advanced/programmatic-validation'
+          '/advanced/refactoring-forms',
+          '/advanced/programmatic-validation',
         ]
       },
       {
