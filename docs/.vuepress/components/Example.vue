@@ -15,7 +15,7 @@
           </svg>
         </button>
       </li>
-      <li class="Example__Header--item">
+      <!-- <li class="Example__Header--item">
         <form
           ref="codepen"
           style="display: none;"
@@ -33,7 +33,7 @@
             />
           </svg>
         </button>
-      </li>
+      </li> -->
       <li class="Example__Header--item">
         <form
           ref="codesandbox"
