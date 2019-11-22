@@ -28,8 +28,14 @@ This is a basic example that illustrates setting errors manually:
 
 ## Handling Backend Validation
 
-It doesn't matter what kind of backend server you have, it can be Laravel or some Node.js framework. As long the errors are formatted as shown in the previous section, you should be able to use your backend validation to power your forms on the client-side.
+It doesn't matter what kind of backend server you have, it can be Laravel or some Node.js framework. As long as the errors are formatted as shown in the previous section, you should be able to use your backend validation to power your forms on the client-side.
 
-This example handles a Node.js server-side validation in a Nuxt app.
+This example handles an Express Node.js server-side validation in a Nuxt app, the express app returns a compatible responses that can be used directly with `setErrors`, in other cases you would need to map responses appropriately.
 
-TODO: Setup a Node.js app
+<iframe
+  src="https://codesandbox.io/embed/vue-template-ynrp9?fontsize=14&hidenavigation=1&module=%2Fsrc%2FApp.vue&theme=dark"
+  style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+  title="VeeValidate - Backend Driven Validation"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+></iframe>
