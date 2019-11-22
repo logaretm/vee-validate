@@ -70,6 +70,7 @@
     "gzip-size": "^5.1.1",
     "husky": "^3.1.0",
     "jest": "^24.9.0",
+    "lerna": "^3.19.0",
     "lint-staged": "^9.5.0",
     "markdown-it-custom-block": "^0.1.1",
     "mkdirp": "^0.5.1",
@@ -115,7 +116,6 @@
       "jest --maxWorkers=1 --bail --findRelatedTests"
     ]
   },
-  "dependencies": {},
   "peerDependencies": {
     "vue": "^2.5.18"
   }
