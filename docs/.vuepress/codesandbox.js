@@ -10,7 +10,7 @@ const PACKAGE_JSON = {
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "vee-validate": "3.0.11",
+    "vee-validate": "^3.1.0",
     "vue": "2.6.10"
   },
   "devDependencies": {
