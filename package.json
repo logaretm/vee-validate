@@ -1,6 +1,7 @@
 {
   "name": "vee-validate",
-  "version": "3.2.0",
+  "private": true,
+  "version": "4.0.0",
   "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -115,8 +116,5 @@
       "git add",
       "jest --maxWorkers=1 --bail --findRelatedTests"
     ]
-  },
-  "peerDependencies": {
-    "vue": "^2.5.18"
   }
 }

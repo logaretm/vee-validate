@@ -1,0 +1,41 @@
+{
+  "name": "@vee-validate/core",
+  "version": "3.1.0",
+  "description": "Template Based Validation Framework for Vue.js",
+  "author": "Abdelrahman Awad <logaretm1@gmail.com>",
+  "license": "MIT",
+  "module": "dist/vee-validate.esm.js",
+  "unpkg": "dist/vee-validate.js",
+  "main": "dist/vee-validate.js",
+  "types": "dist/types/index.d.ts",
+  "homepage": "https://logaretm.github.io/vee-validate/",
+  "repository": "https://github.com/logaretm/vee-validate",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",
+    "build:main": "node scripts/build.js",
+    "ts:defs": "tsc --emitDeclarationOnly",
+    "build": "npm run build:main && npm run ts:defs",
+    "cover": "jest --coverage",
+    "prepublishOnly": "npm run build && npm run ts:defs"
+  },
+  "keywords": [
+    "VueJS",
+    "Vue",
+    "validation",
+    "validator",
+    "inputs",
+    "form"
+  ],
+  "files": [
+    "dist/*.js",
+    "dist/locale/*.json",
+    "dist/**/*.d.ts"
+  ],
+  "devDependencies": {
+    "typescript": "^3.7.2"
+  },
+  "peerDependencies": {
+    "vue": "^2.5.18"
+  }
+}
