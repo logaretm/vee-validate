@@ -207,19 +207,5 @@ Check out the [live samples](../examples/i18n.md).
 <script>
 export default {
   data: () => ({ values: {} }),
-  mounted () {
-    this.extendRule('lengthBetween', {
-      validate: (value, { min, max }) => {
-        const length = value && value.length;
-
-        return length >= min && length <= max;
-      },
-      params: [
-        { name: 'min' },
-        { name: 'max' }
-      ],
-      message: 'The {_field_} length must be between {min} and {max}. You wrote "{_value_}".',
-    });
-  }
 };
 </script>
