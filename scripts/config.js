@@ -101,11 +101,7 @@ function genConfig(options) {
       plugins: [
         json(),
         typescript({ typescript: require('typescript'), useTsconfigDeclarationDir: true }),
-        replace({ __VERSION__: version }),
-        resolve(),
-        commonjs({
-          include: 'node_modules/validator/**'
-        })
+        replace({ __VERSION__: version })
       ]
     },
     output: {
