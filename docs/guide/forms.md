@@ -40,11 +40,29 @@ That means you need access to the `ValidationObserver` in your script. To do tha
 
 @[example](form-refs)
 
-TODO: Public API Docs
-
 :::tip
-  Using `refs` gives you full access to the `ValidationObserver` component API, but it is recommended that you only use the documented API as any of the internals are subject to change. See the [ValidationObserver Public API]().
+  Using `refs` gives you full access to the `ValidationObserver` component API, but it is recommended that you only use the documented API as any of the internals are subject to change. See the [ValidationObserver Public API](../api/validation-observer.md).
 :::
+
+## Initial State Validation
+
+The `ValidationProvider` doesn't validate initially, but you can use the `immediate` prop to validate your fields upon rendering:
+
+```vue{3}
+<ValidationProvider
+  rules="required"
+  immediate
+  v-slot="{ errors }"
+>
+  <!-- -->
+</ValidationProvider>
+```
+
+This will make the fields validated immediately when they are rendered.
+
+This is an example of such a form:
+
+@[example](immediate-form)
 
 ## Persisting Provider State
 
