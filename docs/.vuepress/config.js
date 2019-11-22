@@ -85,7 +85,8 @@ module.exports = {
           '/guide/rules',
           '/guide/state',
           '/guide/forms',
-          '/guide/localization'
+          '/guide/localization',
+          '/guide/3rd-party-libraries'
         ]
       },
       {
