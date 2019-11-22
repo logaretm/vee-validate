@@ -42,7 +42,7 @@
           style="display: none;"
           target="_blank"
         >
-          <input type="hidden" name="parameters" />
+          <input ref="codesandboxInput" type="hidden" name="parameters" />
         </form>
         <button title="Open in Codesandbox" @click="codesandbox">
           <svg
@@ -97,6 +97,8 @@
 </template>
 
 <script>
+import { makeExample } from '../codesandbox';
+
 export default {
   name: 'Example',
   props: {
@@ -129,7 +131,11 @@ export default {
       // this.$refs.codepenData.value = JSON.stringify({ "title": this.name, html, js, js_external });
       // this.$refs.codepen.submit();
     },
-    codesandbox() {},
+    codesandbox() {
+      const source = this.$refs.content.innerText;
+      this.$refs.codesandboxInput.value = makeExample(source);
+      this.$refs.codesandbox.submit();
+    },
     copy() {
       const el = document.createElement('textarea');
       el.value = this.$refs.content.innerText;

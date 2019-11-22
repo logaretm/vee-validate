@@ -54,6 +54,7 @@
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
     "chalk": "^3.0.0",
+    "codesandbox": "^2.1.10",
     "cross-env": "^6.0.3",
     "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.5.0",
