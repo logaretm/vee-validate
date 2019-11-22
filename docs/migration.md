@@ -16,6 +16,10 @@ The `persist` prop has been removed from the `ValidationProvider` for a better a
 
 For more information, see [Persisting Provider State](./guide/forms.md#persisting-provider-state)
 
+### Renamed: ValidationObserver `passes` slot prop method
+
+The method `passes` was used to trigger validation before submitting and only submits if the form is valid, because it will be confusing with `passed` boolean slot prop, it is now renamed to `handleSubmit` which makes it clear and explicit.
+
 ## Migrating from 2.x to 3.0
 
 vee-validate 3.0 introduced a lot of breaking changes due to the deprecation of the main outlet of its validation, the `v-validate` directive was removed due to many design choices that wasn't suitable for the library moving forward. You should treat `3.x` as a different library and read the documentation carefully, however these are some pointers towards more of the significant changes.
@@ -112,6 +116,10 @@ For more information, see the [Validate Before Submit](./guide/forms.md#validate
 If you used `Validator`, you might want to use `validate()` instead which is a stateless function that allows you to validate arbitrary values. For more information, see [Advanced: Programmatic Validation](./advanced/programmatic-validation.md).
 
 There isn't an alternative to the `ErrorBag` class.
+
+### Removed: `mapFields` function
+
+You longer have access to `mapFields` function, instead you should either use `$refs` or do most of your logic in the template.
 
 ### Reworked: Localization
 
