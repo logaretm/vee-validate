@@ -33,6 +33,18 @@ Not only it looks much cleaner, but also due to the nature of template-based val
 
 ## Advanced Input Fields
 
-You've only touched the surface of refactoring the `ValidationProvider`, if you want, you could use the rich state provided by the `ValidationProvider` to build an accessible, pleasant `TextInput` component. this is a real example from an app that employed this technique to build a versatile `TextInput` component:
+You've only touched the surface of refactoring the `ValidationProvider`, if you want, you could use the rich state provided by the `ValidationProvider` to build stylish, accessible and functional inputs for your users.
 
-// TODO: Example for a text field from dashboard
+This is an example that utilizes the following:
+
+- Uses `required` flag to display `*` next to field labels to indicate that they are required.
+- Uses `errors` to display error UI state.
+- Uses `ariaMsg` and `ariaInput` bindings to improve accessability.
+
+<iframe
+  src="https://codesandbox.io/embed/vue-template-lldw2?fontsize=14&hidenavigation=1&module=%2Fsrc%2Fcomponents%2FTextInput.vue&theme=dark"
+  style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+  title="Vue Template"
+  allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+></iframe>
