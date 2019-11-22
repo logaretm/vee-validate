@@ -15,10 +15,10 @@ Form validation is one of the most difficult subjects in frontend, not only you 
 Most validation libraries will save you a lot of time, but `vee-validate` tackles the major pain points of form validation and addresses them in the most flexible way possible:
 
 - Ability to craft complicated UX for your users.
+- Most common validations are built-in.
+- Cross Field validation.
 - Utilities to enhance your forms accessability and styling.
 - Localization is built-in the core.
-- Many validations are available and pre-translated out of the box.
-- Cross Field validation with advanced features.
 
 ## Getting Started
 

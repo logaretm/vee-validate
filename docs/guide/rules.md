@@ -68,10 +68,10 @@ import { ValidationProvider } from 'vee-validate/dist/vee-validate.full.esm';
 ```
 
 :::tip
-  Make sure to reference `vee-validate` from the full bundle path if you are going to use it, aliasing it in your webpack config is a good idea since you don't want to endup with two vee-validate installations in your app.
+  Make sure to reference `vee-validate` from the full bundle path if you are going to use it, aliasing it in your webpack config is a good idea since you don't want to end up with two vee-validate installations in your app.
 :::
 
-## Available Rules
+## Rules
 
 :::warning
 
@@ -289,36 +289,24 @@ The file added to the field under validation must have an image mime type (image
 </ValidationProvider>
 ```
 
-### oneOf
+### integer
 
-The field under validation must have a value that is in the specified list. **Uses double equals** for checks.
+The field under validation must be a valid integer value. Doesn't accept exponentiale notation.
 
-<RuleDemo
-rule="oneOf:1,2,3"
-type="select"
-:options="[{ text: 'One', value: 1 }, { text: 'Two', value: 2 }, { text: 'Three', value: 3 }, { text: 'Four', value: 4 }]"
-
-> </RuleDemo>
+<RuleDemo rule="integer" type="text" />
 
 ```vue
-<ValidationProvider rules="oneOf:1,2,3" v-slot="{ errors }">
-  <select v-model="value">
-    <option value="1">One</option>
-    <option value="2">Two</option>
-    <option value="3">Three</option>
-    <option value="4">Invalid</option>
-  </select>
+<ValidationProvider rules="integer" v-slot="{ errors }">
+  <input type="text" v-model="value">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 ```
 
-`oneOf` takes an infinite number of params, each is a value that is allowed.
-
 ### is
 
-The field under validation must be equal to the first argument passed, uses `===` for equality checks. This rule is useful for confirming passwords when used in object form. Note that using the string format will cause any arguments to be parsed as strings, so use the object format when using this rule.
+The field under validation must match the given value, uses strict equality.
 
-<RuleDemo rule="is:hello" />
+<RuleDemo rule="is:hello" type="text" />
 
 ```vue
 <ValidationProvider rules="is:hello" v-slot="{ errors }">
@@ -330,6 +318,50 @@ The field under validation must be equal to the first argument passed, uses `===
 | Param Name | Required? | Default | Description                                                 |
 | ---------- | --------- | ------- | ----------------------------------------------------------- |
 | `value`    | **yes**   |         | A value of any type to be compared against the field value. |
+
+:::tip
+ you should use this rule with the advanced rules object expression to take advantage of its full capabilities as you are only limited to comparing strings with the string format. See [Advanced: Rules Object Expression](../advanced/rules-object-expression.md)
+:::
+
+### is_not
+
+The field under validation must not match the given value, uses strict equality.
+
+<RuleDemo rule="is_not:hello" type="text" />
+
+```vue
+<ValidationProvider rules="is_not:hello" v-slot="{ errors }">
+  <input type="text" v-model="value">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+| Param Name | Required? | Default | Description                                                 |
+| ---------- | --------- | ------- | ----------------------------------------------------------- |
+| `value`    | **yes**   |         | A value of any type to be compared against the field value. |
+
+:::tip
+ you should use this rule with the advanced rules object expression to take advantage of its full capabilities as you are only limited to comparing strings with the string format. See [Advanced: Rules Object Expression](../advanced/rules-object-expression.md)
+:::
+
+### length
+
+The field under validation must have exactly have the specified number of items, only works for iterables.
+
+Allowed Iterable values are: `string`, `array` and any object that can be used with `Array.from`.
+
+<RuleDemo rule="length:4" />
+
+```vue
+<ValidationProvider rules="length:4" v-slot="{ errors }">
+  <input type="text" v-model="value">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+| Param Name | Required? | Default | Description                                                    |
+| ---------- | --------- | ------- | -------------------------------------------------------------- |
+| `length`   | **yes**   |         | A numeric value representing the exact number of items the value can contain. |
 
 ### max <Badge text="Inferred" type="tip"/>
 
@@ -446,6 +478,31 @@ The field under validation must only consist of numbers.
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 ```
+
+### oneOf
+
+The field under validation must have a value that is in the specified list. **Uses double equals** for checks.
+
+<RuleDemo
+rule="oneOf:1,2,3"
+type="select"
+:options="[{ text: 'One', value: 1 }, { text: 'Two', value: 2 }, { text: 'Three', value: 3 }, { text: 'Four', value: 4 }]"
+
+> </RuleDemo>
+
+```vue
+<ValidationProvider rules="oneOf:1,2,3" v-slot="{ errors }">
+  <select v-model="value">
+    <option value="1">One</option>
+    <option value="2">Two</option>
+    <option value="3">Three</option>
+    <option value="4">Invalid</option>
+  </select>
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+`oneOf` takes an infinite number of params, each is a value that is allowed.
 
 ### regex <Badge text="Inferred" type="tip"/>
 
