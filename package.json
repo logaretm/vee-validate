@@ -73,7 +73,6 @@
     "lint-staged": "^9.4.3",
     "markdown-it-custom-block": "^0.1.1",
     "mkdirp": "^0.5.1",
-    "polish-plurals": "^1.1.0",
     "prettier": "^1.19.1",
     "raf-stub": "^3.0.0",
     "rollup": "^1.27.0",
