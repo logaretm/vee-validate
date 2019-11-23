@@ -1,6 +1,6 @@
 <template>
   <ValidationObserver ref="form">
-    <form @submit.prevent="handleSubmit(onSubmit)">
+    <form @submit.prevent="onSubmit">
       <ValidationProvider name="E-mail" rules="required|email" v-slot="{ errors }">
         <input v-model="email" type="email">
         <span>{{ errors[0] }}</span>
