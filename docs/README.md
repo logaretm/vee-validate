@@ -4,7 +4,7 @@ lang: en-US
 home: true
 heroImage: /logo.svg
 actionText: Get Started →
-actionLink: ./guide/
+actionLink: ./guide/basics.md
 features:
   - title: Simple
     details: Template based validation that is both familiar and easy to setup.
