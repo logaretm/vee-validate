@@ -29,10 +29,10 @@ You may want to reset the form state after successful submission for re-usable f
 @[example](form-reset)
 
 :::tip
-  The ValidationObserver `reset` method does not reset the values of the child fields, this is up to you.
+The ValidationObserver `reset` method does not reset the values of the child fields, this is up to you.
 :::
 
-## Programmatic Access with $refs
+## Programmatic Access with \$refs
 
 Typically, re-setting forms happens programmatically, and not as a response to event handlers like the previous example. Most of the time you will reset the forms once the submission succeeds. Also you may want to arbitrarily call the `validate` or `handleSubmit` methods on the `ValidationObserver` in your script rather than the template.
 
@@ -41,19 +41,35 @@ That means you need access to the `ValidationObserver` in your script. To do tha
 @[example](form-refs)
 
 :::tip
-  Using `refs` gives you full access to the `ValidationObserver` component API, but it is recommended that you only use the documented API as any of the internals are subject to change. See the [ValidationObserver Public API](../api/validation-observer.md).
+Using `refs` gives you full access to the `ValidationObserver` component API, but it is recommended that you only use the documented API as any of the internals are subject to change. See the [ValidationObserver Public API](../api/validation-observer.md).
 :::
+
+:::tip TypeScript
+
+When using `$refs` with TypeScript, you have to provide the typings for the `ValidationObserver` or `ValidationProvider` instances which can be done using `InstanceType` utility type. Use it like the following snippet:
+
+```ts
+import { ValidationObserver } from 'vee-validate';
+
+export default class App extends Vue {
+  $refs!: {
+    observer: InstanceType<typeof ValidationObserver>;
+  };
+
+  mounted() {
+    this.$refs.observer;
+  }
+}
+```
+
+::
 
 ## Initial State Validation
 
 The `ValidationProvider` doesn't validate initially, but you can use the `immediate` prop to validate your fields upon rendering:
 
 ```vue{3}
-<ValidationProvider
-  rules="required"
-  immediate
-  v-slot="{ errors }"
->
+<ValidationProvider rules="required" immediate v-slot="{ errors }">
   <!-- -->
 </ValidationProvider>
 ```
@@ -77,7 +93,7 @@ Here is an example that employs `keep-alive` to keep `ValidationProvider` state 
 @[example](persist-provider)
 
 :::tip
-  Even when fields are hidden/unmounted, as long as they wrapped with `keep-alive` their state will also be affected by `validate` and `reset` calls.
+Even when fields are hidden/unmounted, as long as they wrapped with `keep-alive` their state will also be affected by `validate` and `reset` calls.
 :::
 
 ## Nested Observers
