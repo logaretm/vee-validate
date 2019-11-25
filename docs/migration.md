@@ -20,6 +20,12 @@ For more information, see [Persisting Provider State](./guide/forms.md#persistin
 
 The method `passes` was used to trigger validation before submitting and only submits if the form is valid, because it will be confusing with `passed` boolean slot prop, it is now renamed to `handleSubmit` which makes it clear and explicit.
 
+### Removed: ValidationObserver's internal `ctx` prop
+
+The `ctx` computed prop was never meant to be used publicly but it provided suitable programmatic access to the observer's combined state, this was removed because the state is no longer computed and is debounced by watcher and a setter instead.
+
+You can use two new data properties called `errors` and `flags` which should cater to the same use-case as the deprecated `ctx` prop.
+
 ## Migrating from 2.x to 3.0
 
 vee-validate 3.0 introduced a lot of breaking changes due to the deprecation of the main outlet of its validation, the `v-validate` directive was removed due to many design choices that wasn't suitable for the library moving forward. You should treat `3.x` as a different library and read the documentation carefully, however these are some pointers towards more of the significant changes.
@@ -48,7 +54,7 @@ Will be re-written as this:
 
 Much of the directive modifiers has been moved to be props on the `ValidationProvider`, be sure to go through the guide to learn most of the features.
 
-### Removed: Injected $validator property
+### Removed: Injected \$validator property
 
 VeeValidate no longer has `$validator`, `errors` or `fields` implicitly injected. If you relied on `$validator` providing a **validate before submit** mechanism, you need to use `ValidationObserver` to wrap your form and use the `handleSubmit` function on the observer's slot.
 
