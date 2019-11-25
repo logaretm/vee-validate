@@ -70,10 +70,7 @@ module.exports = {
       {
         title: 'Getting Started',
         collapsable: false,
-        children: [
-          '/overview',
-          '/migration'
-        ]
+        children: ['/overview', '/migration']
       },
       {
         title: 'Guide',
@@ -99,6 +96,7 @@ module.exports = {
           '/advanced/refactoring-forms',
           '/advanced/server-side-validation',
           '/advanced/programmatic-validation',
+          '/advanced/testing'
         ]
       },
       {
@@ -109,7 +107,7 @@ module.exports = {
           ['/api/validation-observer', '<ValidationObserver />'],
           ['/api/with-validation', 'withValidation()'],
           ['/api/validate', 'validate()'],
-          ['/api/extend', 'extend()'],
+          ['/api/extend', 'extend()']
         ]
       }
     ],
@@ -120,7 +118,7 @@ module.exports = {
         editLinkText: 'Help us improve this page!',
         nav: [
           { text: 'Guide', link: '/guide/basics' },
-          { text: 'Config', link: '/configuration' },
+          { text: 'Config', link: '/configuration' }
         ]
       }
     }
