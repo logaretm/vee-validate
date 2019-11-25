@@ -1,4 +1,4 @@
-import Vue, { VueConstructor } from 'vue';
+import Vue, { VueConstructor, VNode } from 'vue';
 import { values, findIndex, debounce } from '../utils';
 import { ValidationResult, VeeObserver, VNodeWithVeeContext, ValidationFlags, KnownKeys } from '../types';
 import { ValidationProvider } from './Provider';
@@ -46,73 +46,15 @@ function data() {
   };
 }
 
-const methods = {
-  subscribe(this: any, subscriber: any, kind = 'provider') {
-    if (kind === 'observer') {
-      this.observers.push(subscriber);
-      return;
-    }
-
-    this.refs = { ...this.refs, ...{ [subscriber.id]: subscriber } };
-  },
-  unsubscribe(this: any, id: string, kind = 'provider') {
-    if (kind === 'provider') {
-      const provider = this.refs[id];
-      if (!provider) {
-        return;
-      }
-
-      this.$delete(this.refs, id);
-      return;
-    }
-
-    const idx = findIndex(this.observers, (o: any) => o.id === id);
-    if (idx !== -1) {
-      this.observers.splice(idx, 1);
-    }
-  },
-  async validate(this: any, { silent = false }: { silent?: boolean } = {}) {
-    const results = await Promise.all([
-      ...values(this.refs)
-        .filter((r: any) => !r.disabled)
-        .map((ref: any) => ref[silent ? 'validateSilent' : 'validate']().then((r: ValidationResult) => r.valid)),
-      ...this.observers.filter((o: any) => !o.disabled).map((obs: any) => obs.validate({ silent }))
-    ]);
-
-    return results.every(r => r);
-  },
-  async handleSubmit(cb: Function) {
-    const isValid = await this.validate();
-    if (!isValid || !cb) {
-      return;
-    }
-
-    return cb();
-  },
-  reset(this: any) {
-    return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
-  },
-  setErrors(this: any, errors: Record<string, string[]>) {
-    Object.keys(errors).forEach(key => {
-      const provider = this.refs[key];
-      if (!provider) return;
-
-      provider.setErrors(errors[key] || []);
-    });
-
-    this.observers.forEach((observer: any) => {
-      observer.setErrors(errors);
-    });
-  }
-};
+function provideSelf(this: any) {
+  return {
+    $_veeObserver: this
+  };
+}
 
 export const ValidationObserver = (Vue as withObserverNode).extend({
   name: 'ValidationObserver',
-  provide() {
-    return {
-      $_veeObserver: this
-    };
-  },
+  provide: provideSelf,
   inject: {
     $_veeObserver: {
       from: '$_veeObserver',
@@ -182,12 +124,70 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
   beforeDestroy() {
     unregister(this);
   },
-  render(h) {
+  render(h): VNode {
     const children = normalizeChildren(this, prepareSlotProps(this));
 
     return this.slim && children.length <= 1 ? children[0] : h(this.tag, { on: this.$listeners }, children);
   },
-  methods
+  methods: {
+    subscribe(subscriber: any, kind = 'provider') {
+      if (kind === 'observer') {
+        this.observers.push(subscriber);
+        return;
+      }
+
+      this.refs = { ...this.refs, ...{ [subscriber.id]: subscriber } };
+    },
+    unsubscribe(id: string, kind = 'provider') {
+      if (kind === 'provider') {
+        const provider = this.refs[id];
+        if (!provider) {
+          return;
+        }
+
+        this.$delete(this.refs, id);
+        return;
+      }
+
+      const idx = findIndex(this.observers, (o: any) => o.id === id);
+      if (idx !== -1) {
+        this.observers.splice(idx, 1);
+      }
+    },
+    async validate({ silent = false }: { silent?: boolean } = {}) {
+      const results = await Promise.all([
+        ...values(this.refs)
+          .filter((r: any) => !r.disabled)
+          .map((ref: any) => ref[silent ? 'validateSilent' : 'validate']().then((r: ValidationResult) => r.valid)),
+        ...this.observers.filter((o: any) => !o.disabled).map((obs: any) => obs.validate({ silent }))
+      ]);
+
+      return results.every(r => r);
+    },
+    async handleSubmit(cb: Function) {
+      const isValid = await this.validate();
+      if (!isValid || !cb) {
+        return;
+      }
+
+      return cb();
+    },
+    reset() {
+      return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
+    },
+    setErrors(errors: Record<string, string[]>) {
+      Object.keys(errors).forEach(key => {
+        const provider = this.refs[key];
+        if (!provider) return;
+
+        provider.setErrors(errors[key] || []);
+      });
+
+      this.observers.forEach((observer: any) => {
+        observer.setErrors(errors);
+      });
+    }
+  }
 });
 
 type ObserverInstance = InstanceType<typeof ValidationObserver>;
