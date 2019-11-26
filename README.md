@@ -21,7 +21,7 @@
 
 vee-validate is a template-based validation framework for [Vue.js](https://vuejs.org/) that allows you to validate inputs and display errors.
 
-Being template-based you only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated with 40+ locales supported. [Many rules are available out of the box](https://logaretm.github.io/vee-validate/api/rules.html).
+Being template-based you only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated with 40+ locales supported. [Many rules are available out of the box](https://logaretm.github.io/vee-validate/guide/rules.html).
 
 This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.com/).
 
@@ -126,24 +126,17 @@ You are welcome to contribute to this project, but before you do, please make su
 
 ### Tutorials and Examples
 
-- [Backend and Remote Validation](https://logaretm.github.io/vee-validate/examples/backend.html)
-  - [Server-side Rules](https://logaretm.github.io/vee-validate/examples/backend.html#server-side-rules).
-  - [Adding errors from API responses](https://logaretm.github.io/vee-validate/examples/backend.html#server-side-rules).
-- [Localization (i18n) Examples](https://logaretm.github.io/vee-validate/examples/i18n.html)
-  - [Localize API](https://logaretm.github.io/vee-validate/examples/i18n.html#localize-api)
-  - [vue-i18n Example](https://logaretm.github.io/vee-validate/examples/i18n.html#vue-i18n)
-  - [Custom Example](https://logaretm.github.io/vee-validate/examples/i18n.html#custom-implementation)
-- [Integrating with Nuxt](https://logaretm.github.io/vee-validate/examples/nuxt.html)
-- [Multiple Forms](https://logaretm.github.io/vee-validate/examples/multiple-forms.html)
-  - [Multiple Forms in same page](https://logaretm.github.io/vee-validate/examples/multiple-forms.html#same-page-forms)
-  - [Nested Forms](https://logaretm.github.io/vee-validate/examples/multiple-forms.html#nested-forms)
-  - [Multi-Step Forms](https://logaretm.github.io/vee-validate/examples/multiple-forms.html#multi-step-forms)
-- [UI Libraries Validation Samples](https://logaretm.github.io/vee-validate/examples/ui-libraries.html)
-  - [Vuetify](https://logaretm.github.io/vee-validate/examples/ui-libraries.html#vuetify)
-  - [Quasar](https://logaretm.github.io/vee-validate/examples/ui-libraries.html#quasar)
-  - [BootstrapVue](https://logaretm.github.io/vee-validate/examples/ui-libraries.html#bootstrapvue)
-  - [Buefy](https://logaretm.github.io/vee-validate/examples/ui-libraries.html#buefy)
-  - [Ant Design](https://logaretm.github.io/vee-validate/examples/ui-libraries.html#ant-design)
+#### Docs Highlights
+
+- [Backend and Server Side Validation](https://logaretm.github.io/vee-validate/advanced/server-side-validation.html)
+- [Localization (i18n)](https://logaretm.github.io/vee-validate/guide/localization.html)
+- [Handling Forms](https://logaretm.github.io/vee-validate/guide/forms.html)
+- [UI Libraries Validation Samples](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html)
+  - [Vuetify](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#vuetify)
+  - [Quasar](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#quasar)
+  - [BootstrapVue](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#bootstrapvue)
+  - [Buefy](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#buefy)
+  - [Ant Design](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#ant-design)
 
 ### Credits
 
