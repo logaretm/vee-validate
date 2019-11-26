@@ -42,7 +42,14 @@ import * as rules from 'vee-validate/dist/rules';
 Object.keys(rules).forEach(rule => {
   extend(rule, rules[rule]);
 });
-```
+
+// with typescript
+for (let [rule, validation] of Object.entries(rules)) {
+  extend(rule, {
+    ...validation
+  });
+}
+``` 
 
 One downside of the previous snippet is that you lose the ability to define error messages as you no longer know which rule is in the iteration. Luckily vee-validate includes messages for all of those rules in 40+ locales that you can import, and they map nicely to rule names, let's define messages in our previous sample:
 
