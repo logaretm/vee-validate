@@ -49,7 +49,7 @@ for (let [rule, validation] of Object.entries(rules)) {
     ...validation
   });
 }
-``` 
+```
 
 One downside of the previous snippet is that you lose the ability to define error messages as you no longer know which rule is in the iteration. Luckily vee-validate includes messages for all of those rules in 40+ locales that you can import, and they map nicely to rule names, let's define messages in our previous sample:
 
@@ -75,8 +75,29 @@ import { ValidationProvider } from 'vee-validate/dist/vee-validate.full.esm';
 ```
 
 :::tip
-  Make sure to reference `vee-validate` from the full bundle path if you are going to use it, aliasing it in your webpack config is a good idea since you don't want to end up with two vee-validate installations in your app.
+Make sure to reference `vee-validate` from the full bundle path if you are going to use it, aliasing it in your webpack config is a good idea since you don't want to end up with two vee-validate installations in your app.
 :::
+
+## Importing Rules in Nuxt.js
+
+By default Nuxt ignores transpilation of the `node_modules` folder, and since the `rules.js` is an ES6 export. You should add `vee-validate/dist/rules` to the list of sources that will be transpiled. Otherwise you might run into "Unexpected Token: export" errors.
+
+Add the following lines in your `nuxt.config.js`:
+
+```js
+build: {
+  // Add exception
+  transpile: [
+    "vee-validate/dist/rules"
+  ],
+  /*
+    ** You can extend webpack config here
+    */
+  extend(config, ctx) {
+    // ...
+  }
+}
+```
 
 ## Rules
 
@@ -327,7 +348,7 @@ The field under validation must match the given value, uses strict equality.
 | `value`    | **yes**   |         | A value of any type to be compared against the field value. |
 
 :::tip
- you should use this rule with the advanced rules object expression to take advantage of its full capabilities as you are only limited to comparing strings with the string format. See [Advanced: Rules Object Expression](../advanced/rules-object-expression.md)
+you should use this rule with the advanced rules object expression to take advantage of its full capabilities as you are only limited to comparing strings with the string format. See [Advanced: Rules Object Expression](../advanced/rules-object-expression.md)
 :::
 
 ### is_not
@@ -348,7 +369,7 @@ The field under validation must not match the given value, uses strict equality.
 | `value`    | **yes**   |         | A value of any type to be compared against the field value. |
 
 :::tip
- you should use this rule with the advanced rules object expression to take advantage of its full capabilities as you are only limited to comparing strings with the string format. See [Advanced: Rules Object Expression](../advanced/rules-object-expression.md)
+you should use this rule with the advanced rules object expression to take advantage of its full capabilities as you are only limited to comparing strings with the string format. See [Advanced: Rules Object Expression](../advanced/rules-object-expression.md)
 :::
 
 ### length
@@ -366,8 +387,8 @@ Allowed Iterable values are: `string`, `array` and any object that can be used w
 </ValidationProvider>
 ```
 
-| Param Name | Required? | Default | Description                                                    |
-| ---------- | --------- | ------- | -------------------------------------------------------------- |
+| Param Name | Required? | Default | Description                                                                   |
+| ---------- | --------- | ------- | ----------------------------------------------------------------------------- |
 | `length`   | **yes**   |         | A numeric value representing the exact number of items the value can contain. |
 
 ### max <Badge text="Inferred" type="tip"/>
