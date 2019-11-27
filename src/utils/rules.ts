@@ -118,16 +118,16 @@ function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
 
     // if the param is a target, resolve the target value.
     if (options.isTarget) {
-      value = createLocator(value);
+      value = createLocator(value, options.cast);
     }
 
     // A target param using interpolation
     if (typeof value === 'string' && value[0] === '@') {
-      value = createLocator(value.slice(1));
+      value = createLocator(value.slice(1), options.cast);
     }
 
     // If there is a transformer defined.
-    if (options.cast) {
+    if (!isLocator(value) && options.cast) {
       value = options.cast(value);
     }
 
@@ -162,9 +162,11 @@ export const parseRule = (rule: string) => {
   return { name, params };
 };
 
-function createLocator(value: string): Locator {
+function createLocator(value: string, castFn?: Function): Locator {
   const locator: Locator = (crossTable: Record<string, any>) => {
-    return crossTable[value];
+    const val = crossTable[value];
+
+    return castFn ? castFn(val) : val;
   };
 
   locator.__locatorRef = value;
@@ -173,7 +175,7 @@ function createLocator(value: string): Locator {
 }
 
 export function extractLocators(params: Record<string, string> | string[]): string[] {
-  if(Array.isArray(params)) {
+  if (Array.isArray(params)) {
     return params.filter(isLocator);
   }
 

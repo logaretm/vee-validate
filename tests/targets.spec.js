@@ -101,4 +101,27 @@ describe('cross-field syntax', () => {
       expect(result.errors[0]).toEqual('Must be more than 0 and less than Max Value');
     });
   });
+
+  test('should cast values of the resolved targets', async () => {
+    extend('isEven', {
+      params: [{ name: 'target', cast: val => val % 2 }],
+      validate(val, { target }) {
+        return target === 0;
+      }
+    });
+
+    let result = await validate('watever', 'isEven:@field', {
+      values: {
+        field: 2
+      }
+    });
+
+    expect(result.valid).toBe(true);
+    result = await validate('watever', 'isEven:@field', {
+      values: {
+        field: 3
+      }
+    });
+    expect(result.valid).toBe(false);
+  });
 });
