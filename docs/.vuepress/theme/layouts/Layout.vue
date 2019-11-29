@@ -15,7 +15,7 @@
 
     <Home v-if="$page.frontmatter.home" />
 
-    <Ad :key="$route.path" />
+    <Ad />
     <Page v-if="!$page.frontmatter.home" :sidebar-items="sidebarItems">
       <slot name="page-top" slot="top" />
       <slot name="page-bottom" slot="bottom" />

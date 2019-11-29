@@ -5,11 +5,28 @@
 <script>
 export default {
   name: 'SidebarAd',
+  watch: {
+    $route(to, from) {
+      if (
+        to.path !== from.path &&
+        // Fix duplicated ads.
+        this.$el.querySelector('#carbonads')
+      ) {
+        this.$el.innerHTML = '';
+        this.load();
+      }
+    }
+  },
   mounted() {
-    const script = document.createElement('script');
-    script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=logaretmgithubio';
-    script.id = '_carbonads_js';
-    this.$el.appendChild(script);
+    this.load();
+  },
+  methods: {
+    load() {
+      const script = document.createElement('script');
+      script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=logaretmgithubio';
+      script.id = '_carbonads_js';
+      this.$el.appendChild(script);
+    }
   }
 };
 </script>
@@ -74,14 +91,14 @@ export default {
 @media screen and (max-width: 1500px) and (min-width: 1301px)
   #ad
     width: 150px
+
     #carbonads
       max-width: 150px
 
     .carbon-img
       margin: 0
 
-    #carbonads,
-    .carbon-wrap
+    #carbonads, .carbon-wrap
       display: flex
       flex-direction: column
 
