@@ -264,7 +264,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
 
       const result = await validate(this.value, rules, {
         name: this.name,
-        values: createValuesLookup(this),
+        ...createLookup(this),
         bails: this.bails,
         skipIfEmpty: this.skipIfEmpty,
         isInitial: !this.initialized,
@@ -329,16 +329,20 @@ function computeClassObj(names: ValidationClassMap, flags: ValidationFlags) {
   return acc;
 }
 
-function createValuesLookup(vm: ProviderInstance) {
+function createLookup(vm: ProviderInstance) {
   const providers = vm.$_veeObserver.refs;
-  const reduced: Record<string, any> = {};
+  const reduced: { names: Record<string, string>; values: Record<string, any> } = {
+    names: {},
+    values: {}
+  };
 
   return vm.fieldDeps.reduce((acc: typeof reduced, depName: string) => {
     if (!providers[depName]) {
       return acc;
     }
 
-    acc[depName] = providers[depName].value;
+    acc.values[depName] = providers[depName].value;
+    acc.names[depName] = providers[depName].name;
 
     return acc;
   }, reduced);

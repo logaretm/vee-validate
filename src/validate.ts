@@ -321,6 +321,7 @@ function _getUserTargets(
     const name = rule.__locatorRef;
     const placeholder = `_${name}Target_`;
     userTargets[placeholder] = field.names[name] || name;
+    userTargets[name] = field.names[name] || name;
 
     // update template if it's a string
     if (typeof userMessage === 'string') {
