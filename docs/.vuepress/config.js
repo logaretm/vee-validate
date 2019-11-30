@@ -5,7 +5,6 @@ module.exports = {
   title: 'VeeValidate',
   description: 'Template Based Validation Framework for Vue.js',
   plugins: [
-    '@vuepress/back-to-top',
     [
       '@vuepress/pwa',
       {

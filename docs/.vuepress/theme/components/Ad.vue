@@ -36,7 +36,7 @@ export default {
   width: 300px
   position: fixed
   z-index: 19
-  bottom: 5rem
+  bottom: 10px
   right: 10px
   background-color: #fff
   border-radius: 3px
