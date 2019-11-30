@@ -3,7 +3,7 @@ import { find, isCallable, isNullOrUndefined, includes, isSpecified } from './in
 import { normalizeRules } from './rules';
 
 export const isTextInput = (vnode: VNode): boolean => {
-  const attrs = (vnode.data?.attrs) || vnode.elm;
+  const attrs = vnode.data?.attrs || vnode.elm;
 
   // it will fallback to being a text input per browsers spec.
   if (vnode.tag === 'input' && (!attrs || !attrs.type)) {
@@ -51,7 +51,7 @@ export function findValue(vnode: VNode): { value: any } | undefined {
   }
 
   const config = findModelConfig(vnode);
-  const prop = (config?.prop) || 'value';
+  const prop = config?.prop || 'value';
   if (vnode.componentOptions?.propsData && prop in vnode.componentOptions.propsData) {
     const propsDataWithValue = vnode.componentOptions.propsData as any;
     return { value: propsDataWithValue[prop] };
@@ -116,7 +116,7 @@ export function mergeVNodeListeners(obj: any, eventName: string, handler: Functi
   }
 
   // Is an invoker.
-  if (isCallable(obj[eventName]?.fns)) {
+  if (isCallable(obj[eventName]) && obj[eventName].fns) {
     const invoker = obj[eventName];
     invoker.fns = Array.isArray(invoker.fns) ? invoker.fns : [invoker.fns];
     if (!includes(invoker.fns, handler)) {
