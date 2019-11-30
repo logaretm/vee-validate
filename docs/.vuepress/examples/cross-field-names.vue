@@ -1,13 +1,7 @@
 <template>
   <div>
     <ValidationObserver ref="form">
-      <h2>Cross field rule</h2>
-      <ValidationProvider
-        vid="first"
-        name="First"
-        rules="required|confirmedBy:@second"
-        v-slot="{ errors }"
-      >
+      <ValidationProvider vid="first" name="First" rules="required|confirmedBy:@second" v-slot="{ errors }">
         First
         <input type="text" v-model="first" />
         <span>{{ errors[0] }}</span>
@@ -49,8 +43,7 @@ export default {
 };
 </script>
 
-
-<style>
+<style scoped>
 span {
   display: block;
   margin-top: 20px;
