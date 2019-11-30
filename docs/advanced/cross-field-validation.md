@@ -117,3 +117,21 @@ extend('between', {
 Again, make sure to wrap our Providers within the same `ValidationObserver` so they can reference each other, and make sure you reference the two fields with `@max` and `@min`.
 
 @[example](cross-field-between)
+
+## Target Fields Names
+
+When generating messages for target fields, it is more useful to have their names rather than their values. For example, a password confirmation rule will not typically say the following:
+
+```
+Your Password does not match the $P455W0RD
+```
+
+It would make more sense to have the target field name instead of its value:
+
+```
+Your Password does not match the Password Confirmation
+```
+
+VeeValidate does that for you automatically when it interpolates the given message, instead of giving you the target value, it will give you its display name. This is an example of a rule that uses the placeholder for the `target` param to display the other field's name.
+
+@[example](cross-field-names)
