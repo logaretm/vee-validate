@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="theme-container"
-    :class="pageClasses"
-    @touchstart="onTouchStart"
-    @touchend="onTouchEnd"
-  >
+  <div class="theme-container" :class="pageClasses" @touchstart="onTouchStart" @touchend="onTouchEnd">
     <Navbar v-if="shouldShowNavbar" @toggle-sidebar="toggleSidebar" />
 
     <div class="sidebar-mask" @click="toggleSidebar(false)"></div>
@@ -25,7 +20,7 @@
 
 <script>
 import Home from '@parent-theme/components/Home.vue';
-import Navbar from '@parent-theme/components/Navbar.vue';
+import Navbar from '@theme/components/Navbar.vue';
 import Page from '@parent-theme/components/Page.vue';
 import Sidebar from '@parent-theme/components/Sidebar.vue';
 import Ad from '@theme/components/Ad.vue';
@@ -106,7 +101,6 @@ export default {
   }
 };
 </script>
-
 
 <style lang="stylus">
 .theme-default-content.content__default
