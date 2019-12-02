@@ -105,4 +105,7 @@ export default {
 <style lang="stylus">
 .theme-default-content.content__default
   margin-left: 2rem
+
+.sw-update-popup
+  right: 50vw !important
 </style>
