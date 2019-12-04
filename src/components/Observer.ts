@@ -99,13 +99,21 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
 
     this.$watch(() => {
       const vms = [...values(this.refs), ...this.observers];
-      const errors: ObserverErrors = {};
+      let errors: ObserverErrors = {};
       const flags: ValidationFlags = createObserverFlags();
 
       const length = vms.length;
       for (let i = 0; i < length; i++) {
         const vm = vms[i];
-        errors[vm.id] = vm.errors;
+
+        // validation provider error
+        if (Array.isArray(vm.errors)) {
+          errors[vm.id] = vm.errors;
+          continue;
+        }
+
+        // Nested observer
+        errors = { ...errors, ...vm.errors };
       }
 
       FLAGS_STRATEGIES.forEach(([flag, method]) => {

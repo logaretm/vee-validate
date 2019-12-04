@@ -345,7 +345,7 @@ test('validates and resets nested observers', async () => {
   expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
 });
 
-test('handles unmouting nested observers', async () => {
+test('merges nested observers state', async () => {
   const wrapper = mount(
     {
       data: () => ({
@@ -367,12 +367,12 @@ test('handles unmouting nested observers', async () => {
   );
 
   await flush();
-  expect(wrapper.find('p').text()).toContain(`NESTED_OBS`); // observer is mounted.
+  expect(wrapper.find('p').text()).toContain(`name`); // nested observer is mounted.
   wrapper.setData({
     isMounted: false
   });
   await flush();
-  expect(wrapper.find('p').text()).not.toContain(`NESTED_OBS`); // observer is mounted.
+  expect(wrapper.find('p').text()).not.toContain(`name`); // nested observer is unmounted.
 });
 
 test('Sets errors for all providers', async () => {
