@@ -1,5 +1,5 @@
 import Vue, { VueConstructor, VNode } from 'vue';
-import { values, findIndex, debounce } from '../utils';
+import { values, findIndex, debounce, createFlags } from '../utils';
 import { ValidationResult, VeeObserver, VNodeWithVeeContext, ValidationFlags, KnownKeys } from '../types';
 import { ValidationProvider } from './Provider';
 import { normalizeChildren } from '../utils/vnode';
@@ -33,7 +33,7 @@ type withObserverNode = VueConstructor<
 function data() {
   const refs: Record<string, ProviderInstance> = {};
   const errors: ObserverErrors = {};
-  const flags: ValidationFlags = {} as ValidationFlags;
+  const flags: ValidationFlags = createObserverFlags();
   // FIXME: Not sure of this one can be typed, circular type reference.
   const observers: any[] = [];
 
@@ -100,7 +100,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     this.$watch(() => {
       const vms = [...values(this.refs), ...this.observers];
       const errors: ObserverErrors = {};
-      const flags: ValidationFlags = {} as ValidationFlags;
+      const flags: ValidationFlags = createObserverFlags();
 
       const length = vms.length;
       for (let i = 0; i < length; i++) {
@@ -212,5 +212,14 @@ function prepareSlotProps(vm: ObserverInstance) {
     passes: vm.handleSubmit,
     handleSubmit: vm.handleSubmit,
     reset: vm.reset
+  };
+}
+
+// Creates a modified version of validation flags
+function createObserverFlags() {
+  return {
+    ...createFlags(),
+    valid: true,
+    invalid: false
   };
 }
