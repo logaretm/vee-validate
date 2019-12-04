@@ -18,7 +18,7 @@
     "length": "El largo del campo {_field_} debe ser {length}",
     "max": "El campo {_field_} no debe ser mayor a {length} caracteres",
     "max_value": "El campo {_field_} debe de ser {max} o menor",
-    "mimes": "El campo ${field} debe ser un tipo de archivo válido",
+    "mimes": "El campo {_field_} debe ser un tipo de archivo válido",
     "min": "El campo {_field_} debe tener al menos {length} caracteres",
     "min_value": "El campo {_field_} debe ser {min} o superior",
     "numeric": "El campo {_field_} debe contener solo caracteres numéricos",

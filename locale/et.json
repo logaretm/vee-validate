@@ -3,7 +3,7 @@
   "messages": {
     "alpha": "{_field_} võib sisaldada ainult tähti",
     "alpha_num": "{_field_} võib sisaldada ainult tähti ja numbreid",
-    "alpha_dash": "${_field_} võib sisaldada ainult tähti, numbreid, kriipse ja alakriipse",
+    "alpha_dash": "{_field_} võib sisaldada ainult tähti, numbreid, kriipse ja alakriipse",
     "alpha_spaces": "{_field_} võib sisaldada ainult tähti ja tühikuid",
     "between": "{_field_} peab jääma vahemikku {min} kuni {max}",
     "confirmed": "{_field_} on kontrollist erinev",
