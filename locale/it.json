@@ -6,7 +6,7 @@
     "alpha_dash": "Il campo {_field_} può contenere caratteri alfa-numerici così come lineette e trattini di sottolineatura",
     "alpha_spaces": "Il campo {_field_} può contenere solo caratteri alfanumerici così come spazi",
     "between": "Il campo {_field_} deve essere compreso tra {min} e {max}",
-    "confirmed": "Il campo {_field_} non corrisponde con {target}",
+    "confirmed": "Il campo {_field_} non corrisponde",
     "digits": "Il campo {_field_} deve essere numerico e contenere esattamente {length} cifre",
     "dimensions": "Il campo {_field_} deve essere {width} x {height}",
     "email": "Il campo {_field_} deve essere un indirizzo email valido",
