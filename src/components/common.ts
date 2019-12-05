@@ -83,7 +83,14 @@ export function onRenderUpdate(vm: ProviderInstance, value: any | undefined) {
     return;
   }
 
-  vm.validateSilent().then(vm.immediate || vm.flags.validated ? vm.applyResult : identity);
+  const validate = () => vm.validateSilent().then(vm.immediate || vm.flags.validated ? vm.applyResult : identity);
+
+  if (vm.initialized) {
+    validate();
+    return;
+  }
+
+  vm.$once('hook:mounted', () => validate());
 }
 
 export function computeModeSetting(ctx: ProviderInstance) {
