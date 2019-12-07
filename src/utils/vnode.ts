@@ -1,6 +1,7 @@
 import Vue, { VNode, VNodeDirective } from 'vue';
 import { find, isCallable, isNullOrUndefined, includes, isSpecified } from './index';
 import { normalizeRules } from './rules';
+import { RuleContainer } from '../extend';
 
 export const isTextInput = (vnode: VNode): boolean => {
   const attrs = vnode.data?.attrs || vnode.elm;
@@ -221,28 +222,28 @@ function resolveTextualRules(vnode: VNode): Record<string, any> {
 
   if (!attrs) return rules;
 
-  if (attrs.type === 'email') {
+  if (attrs.type === 'email' && RuleContainer.getRuleDefinition('email')) {
     rules.email = ['multiple' in attrs];
   }
 
-  if (attrs.pattern) {
+  if (attrs.pattern && RuleContainer.getRuleDefinition('regex')) {
     rules.regex = attrs.pattern;
   }
 
-  if (attrs.maxlength >= 0) {
+  if (attrs.maxlength >= 0 && RuleContainer.getRuleDefinition('max')) {
     rules.max = attrs.maxlength;
   }
 
-  if (attrs.minlength >= 0) {
+  if (attrs.minlength >= 0 && RuleContainer.getRuleDefinition('min')) {
     rules.min = attrs.minlength;
   }
 
   if (attrs.type === 'number') {
-    if (isSpecified(attrs.min)) {
+    if (isSpecified(attrs.min) && RuleContainer.getRuleDefinition('min_value')) {
       rules.min_value = Number(attrs.min);
     }
 
-    if (isSpecified(attrs.max)) {
+    if (isSpecified(attrs.max) && RuleContainer.getRuleDefinition('max_value')) {
       rules.max_value = Number(attrs.max);
     }
   }
@@ -259,7 +260,7 @@ export function resolveRules(vnode: VNode) {
   }
 
   const rules: Record<string, any> = {};
-  if ('required' in attrs && attrs.required !== false) {
+  if ('required' in attrs && attrs.required !== false && RuleContainer.getRuleDefinition('required')) {
     rules.required = attrs.type === 'checkbox' ? [true] : true;
   }
 
