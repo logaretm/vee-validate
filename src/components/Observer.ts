@@ -21,6 +21,22 @@ const FLAGS_STRATEGIES: [KnownKeys<ValidationFlags>, 'every' | 'some'][] = [
 type ProviderInstance = InstanceType<typeof ValidationProvider>;
 type ObserverErrors = Record<string, string[]>;
 
+interface ObserverField {
+  id: string;
+  name: string;
+  pristine: boolean;
+  dirty: boolean;
+  touched: boolean;
+  untouched: boolean;
+  valid: boolean;
+  invalid: boolean;
+  pending: boolean;
+  validated: boolean;
+  changed: boolean;
+  passed: boolean;
+  failed: boolean;
+}
+
 let OBSERVER_COUNTER = 0;
 
 type withObserverNode = VueConstructor<
@@ -34,6 +50,7 @@ function data() {
   const refs: Record<string, ProviderInstance> = {};
   const errors: ObserverErrors = {};
   const flags: ValidationFlags = createObserverFlags();
+  const fields: Record<string, ObserverField> = {};
   // FIXME: Not sure of this one can be typed, circular type reference.
   const observers: any[] = [];
 
@@ -42,7 +59,8 @@ function data() {
     refs,
     observers,
     errors,
-    flags
+    flags,
+    fields
   };
 }
 
@@ -92,35 +110,54 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     this.id = this.vid;
     register(this);
 
-    const onChange = debounce(({ errors, flags }: { errors: ObserverErrors; flags: ValidationFlags }) => {
-      this.errors = errors;
-      this.flags = flags;
-    }, 16);
+    const onChange = debounce(
+      ({
+        errors,
+        flags,
+        fields
+      }: {
+        errors: ObserverErrors;
+        flags: ValidationFlags;
+        fields: Record<string, ObserverField>;
+      }) => {
+        this.errors = errors;
+        this.flags = flags;
+        this.fields = fields;
+      },
+      16
+    );
 
     this.$watch(() => {
       const vms = [...values(this.refs), ...this.observers];
       let errors: ObserverErrors = {};
       const flags: ValidationFlags = createObserverFlags();
+      let fields: Record<string, ObserverField> = {};
 
       const length = vms.length;
       for (let i = 0; i < length; i++) {
         const vm = vms[i];
 
-        // validation provider error
+        // validation provider
         if (Array.isArray(vm.errors)) {
           errors[vm.id] = vm.errors;
+          fields[vm.id] = {
+            id: vm.id,
+            name: vm.name,
+            ...vm.flags
+          };
           continue;
         }
 
-        // Nested observer
+        // Nested observer, merge errors and fields
         errors = { ...errors, ...vm.errors };
+        fields = { ...fields, ...vm.fields };
       }
 
       FLAGS_STRATEGIES.forEach(([flag, method]) => {
         flags[flag] = vms[method](vm => vm.flags[flag]);
       });
 
-      return { errors, flags };
+      return { errors, flags, fields };
     }, onChange as any);
   },
   activated() {
@@ -216,6 +253,7 @@ function prepareSlotProps(vm: ObserverInstance) {
   return {
     ...vm.flags,
     errors: vm.errors,
+    fields: vm.fields,
     validate: vm.validate,
     passes: vm.handleSubmit,
     handleSubmit: vm.handleSubmit,
