@@ -15,7 +15,7 @@ vee-validate implements those common strategies for you, which are called **"int
 
 ### Setting The Interaction Mode Globally
 
-You can se the interaction mode for all of the `ValidationProvider` instances by using the exported `setInteractionMode` function.
+You can set the interaction mode for all of the `ValidationProvider` instances by using the exported `setInteractionMode` function.
 
 ```js{1,3}
 import { setInteractionMode } from 'vee-validate';
