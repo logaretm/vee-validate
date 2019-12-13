@@ -24,6 +24,7 @@ type ObserverErrors = Record<string, string[]>;
 interface ObserverField {
   id: string;
   name: string;
+  failedRules: Record<string, string>;
   pristine: boolean;
   dirty: boolean;
   touched: boolean;
@@ -143,6 +144,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
           fields[vm.id] = {
             id: vm.id,
             name: vm.name,
+            failedRules: vm.failedRules,
             ...vm.flags
           };
           continue;
