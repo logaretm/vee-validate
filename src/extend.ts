@@ -45,15 +45,6 @@ export class RuleContainer {
     return !!RULES[name]?.computesRequired;
   }
 
-  public static isTargetRule(name: string) {
-    const definition = RuleContainer.getRuleDefinition(name);
-    if (!definition?.params) {
-      return false;
-    }
-
-    return definition.params.some(param => !!param.isTarget);
-  }
-
   public static getRuleDefinition(ruleName: string) {
     return RULES[ruleName];
   }
