@@ -1,7 +1,6 @@
 import { isCallable, merge, interpolate } from './utils';
 import { ValidationMessageTemplate } from './types';
-import { extend, RuleContainer } from './extend';
-import { getConfig } from './config';
+import { getConfig, setConfig } from './config';
 import { localeChanged } from './localeChanged';
 
 interface PartialI18nDictionary {
@@ -34,7 +33,7 @@ class Dictionary {
     // find if specific message for that field was specified.
     message = this.container[locale]?.fields?.[field]?.[rule] || this.container[locale]?.messages?.[rule];
     if (!message) {
-      message = getConfig().defaultMessage;
+      message = '{field} is not valid';
     }
 
     field = this.container[locale]?.names?.[field] ?? field;
@@ -52,33 +51,6 @@ class Dictionary {
 }
 
 let DICTIONARY: Dictionary;
-let INSTALLED = false;
-
-function updateRules() {
-  if (INSTALLED) {
-    return;
-  }
-
-  RuleContainer.iterate((name, schema) => {
-    if (schema.message && !DICTIONARY.hasRule(name)) {
-      DICTIONARY.merge({
-        [DICTIONARY.locale]: {
-          messages: {
-            [name]: schema.message
-          }
-        }
-      });
-    }
-
-    extend(name, {
-      message: (field: string, values?: Record<string, any>) => {
-        return DICTIONARY.resolve(field, name, values || {});
-      }
-    });
-  });
-
-  INSTALLED = true;
-}
 
 function localize(dictionary: RootI18nDictionary): void;
 function localize(locale: string, dictionary?: PartialI18nDictionary): void;
@@ -86,6 +58,11 @@ function localize(locale: string, dictionary?: PartialI18nDictionary): void;
 function localize(locale: string | RootI18nDictionary, dictionary?: PartialI18nDictionary) {
   if (!DICTIONARY) {
     DICTIONARY = new Dictionary('en', {});
+    setConfig({
+      defaultMessage(field, values) {
+        return DICTIONARY.resolve(field, values?._rule_, values || {});
+      }
+    });
   }
 
   if (typeof locale === 'string') {
@@ -95,13 +72,11 @@ function localize(locale: string | RootI18nDictionary, dictionary?: PartialI18nD
       DICTIONARY.merge({ [locale]: dictionary });
     }
 
-    updateRules();
     localeChanged();
     return;
   }
 
   DICTIONARY.merge(locale);
-  updateRules();
 }
 
 export { localize };

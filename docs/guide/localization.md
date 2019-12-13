@@ -3,7 +3,7 @@
 VeeValidate has built-in localization support for validation messages. Localization is opt-in and is not configured by default.
 
 :::warning
-  In `2.x`, vee-validate used to ship with localization enabled and pre-configured, this has been changed in `3.x` to allow for a more flexible i18n system.
+In `2.x`, vee-validate used to ship with localization enabled and pre-configured, this has been changed in `3.x` to allow for a more flexible i18n system.
 :::
 
 ## Using the default i18n
@@ -100,14 +100,14 @@ import { localize } from 'vee-validate';
 localize({
   en: {
     names: {
-      email: "E-mail Address",
-      password: "Password"
+      email: 'E-mail Address',
+      password: 'Password'
     }
   },
   ar: {
     names: {
-      email: "البريد الاليكتروني",
-      password: "كلمة السر"
+      email: 'البريد الاليكتروني',
+      password: 'كلمة السر'
     }
   }
 });
@@ -164,6 +164,10 @@ function loadLocale(code) {
 }
 ```
 
+:::warn `defaultMessage` Config
+Avoid setting the `defaultMessage` config after using `localize` as it will conflict with the internal working of the basic dictionary.
+:::
+
 ## Using other i18n libraries
 
 You don't have to use the `localize` helper with `vee-validate`, as it will not be included in your final bundle if you don't import it.
@@ -207,7 +211,7 @@ configure({
 ```
 
 :::tip
-  VeeValidate default messages are formatted to be compatible with `vue-i18n` format and most ICU based solutions.
+VeeValidate default messages are formatted to be compatible with `vue-i18n` format and most ICU based solutions.
 :::
 
 ## vue-i18n
