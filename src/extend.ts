@@ -7,8 +7,6 @@ interface NormalizedRuleSchema extends ValidationRuleSchema {
 
 const RULES: { [k: string]: NormalizedRuleSchema } = {};
 
-type RuleIterateFn = (ruleName: string, schema: NormalizedRuleSchema) => any;
-
 function normalizeSchema(schema: ValidationRuleSchema): NormalizedRuleSchema {
   if (schema.params?.length) {
     schema.params = schema.params.map(param => {
@@ -39,21 +37,12 @@ export class RuleContainer {
     };
   }
 
-  public static iterate(fn: RuleIterateFn) {
-    const keys = Object.keys(RULES);
-    const length = keys.length;
-
-    for (let i = 0; i < length; i++) {
-      fn(keys[i], RULES[keys[i]]);
-    }
-  }
-
   public static isLazy(name: string) {
-    return !!(RULES[name]?.lazy);
+    return !!RULES[name]?.lazy;
   }
 
   public static isRequireRule(name: string) {
-    return !!(RULES[name]?.computesRequired);
+    return !!RULES[name]?.computesRequired;
   }
 
   public static isTargetRule(name: string) {
