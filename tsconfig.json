@@ -19,7 +19,10 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "paths": {
-      "@vee-validate/shared": ["packages/shared/src"]
+      "@vee-validate/shared": ["packages/shared/src"],
+      "@vee-validate/core": ["packages/core/src"],
+      "@vee-validate/rules": ["packages/rules/src"],
+      "@vee-validate/i18n": ["packages/i18n/src"]
     }
   },
   "include": ["src", "tests"]
