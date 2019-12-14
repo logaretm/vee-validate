@@ -1,4 +1,4 @@
-import { validate } from '@/required';
+import { validate } from '../src/required';
 
 const valid = ['asjdj', 0, 'undefined', 'null', 's ', true, false];
 

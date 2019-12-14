@@ -1,23 +1,23 @@
-import { validate } from '@/dimensions';
+import { validate } from '../src/dimensions';
 import helpers from './helpers';
 
 let fails = false;
 
 beforeEach(() => {
-  global.window.URL = {
+  (global as any).window.URL = {
     createObjectURL() {
       return 'data:image/png;base64,AAAAAAA';
     }
   };
 
-  global.window.webkitURL = {
+  (global as any).window.webkitURL = {
     createObjectURL() {
       return 'data:image/png;base64,AAAAAAA';
     }
   };
 
-  global.Image = class Image {
-    set src(value) {
+  (global as any).Image = class Image {
+    set src(this: any, value) {
       this.width = 150;
       this.height = 100;
 

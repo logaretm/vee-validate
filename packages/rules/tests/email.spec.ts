@@ -1,4 +1,4 @@
-import { validate } from '@/email';
+import { validate } from '../src/email';
 
 const valid = [
   'someone@example.com',
@@ -28,7 +28,7 @@ test('validates that the string is a valid email address', () => {
   valid.forEach(value => expect(validate(value)).toBe(true));
 
   // invalid
-  invalid.forEach(value => expect(validate(value)).toBe(false));
+  invalid.forEach(value => expect(validate(value as any)).toBe(false));
 });
 
 test('validates multiple emails', () => {

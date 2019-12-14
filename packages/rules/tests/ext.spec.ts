@@ -1,4 +1,4 @@
-import { validate } from '@/ext';
+import { validate } from '../src/ext';
 import helpers from './helpers';
 test('validates files extensions', () => {
   const params = ['txt', 'jpg', 'svg'];

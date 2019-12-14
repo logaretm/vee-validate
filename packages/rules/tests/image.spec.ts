@@ -1,4 +1,4 @@
-import { validate } from '@/image';
+import { validate } from '../src/image';
 import helpers from './helpers';
 test('validates image files', () => {
   const validFiles = [

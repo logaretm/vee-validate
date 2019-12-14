@@ -1,4 +1,4 @@
-import { validate } from '@/length';
+import { validate } from '../src/length';
 
 test('validates number of characters in a string', () => {
   // exact length
@@ -7,15 +7,15 @@ test('validates number of characters in a string', () => {
 });
 
 test('null and undefined are always rejected', () => {
-  expect(validate(null, { length: 3 })).toBe(false);
-  expect(validate(undefined, { length: 3 })).toBe(false);
+  expect(validate(null as any, { length: 3 })).toBe(false);
+  expect(validate(undefined as any, { length: 3 })).toBe(false);
 });
 
 test('validates number of elements in an enumerable', () => {
   const firstSet = new Set(['h', 'e', 'y']);
   const secondSet = new Set(['h', 'e', 'l', 'l']);
-  expect(validate(firstSet, { length: 3 })).toBe(true);
-  expect(validate(secondSet, { length: 4 })).toBe(false);
+  expect(validate(firstSet as any, { length: 3 })).toBe(true);
+  expect(validate(secondSet as any, { length: 4 })).toBe(false);
 });
 
 test('validates number of elements in an array', () => {

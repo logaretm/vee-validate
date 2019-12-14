@@ -1,4 +1,4 @@
-import { validate } from '@/min';
+import { validate } from '../src/min';
 
 const valid = ['asjdj', 'null', 'undefined', 123, 'abc'];
 
@@ -11,11 +11,11 @@ test('validates minimum number of characters in a string', () => {
   valid.forEach(value => expect(validate(value, { length: limit })).toBe(true));
 
   // invalid
-  invalid.forEach(value => expect(validate(value, { length: limit })).toBe(false));
+  invalid.forEach(value => expect(validate(value as any, { length: limit })).toBe(false));
 });
 
 test('handles array of values', () => {
   expect(validate(valid, { length: 3 })).toBe(true);
 
-  expect(validate(invalid, { length: 3 })).toBe(false);
+  expect(validate(invalid as any, { length: 3 })).toBe(false);
 });

@@ -1,4 +1,4 @@
-import { validate } from '@/required_if';
+import { validate } from '../src/required_if';
 
 test('validates a conditional requirement', () => {
   // foo is not part of [bar, baz] -> field is not required & valid

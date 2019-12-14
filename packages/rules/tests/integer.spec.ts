@@ -1,4 +1,4 @@
-import { validate } from '@/integer';
+import { validate } from '../src/integer';
 
 const valid = ['1234567890', 123, -123, '-1234'];
 
@@ -11,6 +11,6 @@ test('validates integer numbers', () => {
   expect(validate(valid)).toBe(true);
 
   // invalid
-  invalid.forEach(value => expect(validate(value)).toBe(false));
-  expect(validate(invalid)).toBe(false);
+  invalid.forEach(value => expect(validate(value as any)).toBe(false));
+  expect(validate(invalid as any)).toBe(false);
 });

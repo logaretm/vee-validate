@@ -1,4 +1,4 @@
-import { validate } from '@/min_value';
+import { validate } from '../src/min_value';
 
 const valid = [-1, 0, '5'];
 
@@ -12,11 +12,11 @@ test('validates number minimum value', () => {
   valid.forEach(value => expect(validate(value, { min })).toBe(true));
 
   // invalid
-  invalid.forEach(value => expect(validate(value, { min })).toBe(false));
+  invalid.forEach(value => expect(validate(value as any, { min })).toBe(false));
 });
 
 test('handles array of values', () => {
   expect(validate(valid, { min: -1 })).toBe(true);
 
-  expect(validate(invalid, { min: -1 })).toBe(false);
+  expect(validate(invalid as any, { min: -1 })).toBe(false);
 });

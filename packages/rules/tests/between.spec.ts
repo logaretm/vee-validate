@@ -1,4 +1,4 @@
-import { validate } from '@/between';
+import { validate } from '../src/between';
 
 const valid = ['1', 2, 3, [1, 2, 3]];
 
@@ -9,7 +9,7 @@ test('validates numbers range', () => {
   const params = { min: 1, max: 3 };
   valid.forEach(value => expect(validate(value, params)).toBe(true));
 
-  invalid.forEach(value => expect(validate(value, params)).toBe(false));
+  invalid.forEach(value => expect(validate(value as any, params)).toBe(false));
 });
 
 test('validates numbers range including negative numbers', () => {

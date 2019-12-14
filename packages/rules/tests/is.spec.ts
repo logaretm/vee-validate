@@ -1,4 +1,4 @@
-import { validate } from '@/is';
+import { validate } from '../src/is';
 
 test('checks if the value matches another', () => {
   expect(validate(1, { other: '1' })).toBe(false);

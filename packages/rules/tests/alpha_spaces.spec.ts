@@ -1,11 +1,8 @@
-import { validate } from '@/alpha_num';
+import { validate } from '../src/alpha_spaces';
 
 const valid = [
   'a',
   'abcdefgHijklMnOpqRsTUVwxYZ',
-  '1234567890',
-  'abc123',
-  123,
   '',
   null,
   undefined,
@@ -13,12 +10,14 @@ const valid = [
   'undefined',
   true,
   false,
-  ['asdad', 123, 'asd2123']
+  'this is sparta',
+  ' ',
+  ['adasd dasdasda', 'yy']
 ];
 
-const invalid = ['this is sparta', '123-abc', {}, ' ', ['asdasda  ', '123 ad']];
+const invalid = ['123-abc', {}, '1234567890', 'abc123', 123, ['adasd dasdasda', '123']];
 
-test('validates that the string may only contain alphabetic and numeric characters', () => {
+test('validates that the string may only contain alphabetic characters and spaces', () => {
   expect.assertions(18);
   // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
@@ -29,8 +28,8 @@ test('validates that the string may only contain alphabetic and numeric characte
 
 test('validates the string contains alphabetic chars from other locales', () => {
   // any locale.
-  expect(validate('سلام12')).toBe(true);
-  expect(validate('Привет12')).toBe(true);
+  expect(validate('سلام عليكم')).toBe(true);
+  expect(validate('Привет т')).toBe(true);
 
   // specfic locale
   expect(validate('peace', { locale: 'ar' })).toBe(false);
