@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
     "moduleResolution": "node",
     "target": "es5",
     "module": "es2015",
@@ -15,7 +17,10 @@
     "typeRoots": ["node_modules/@types"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@vee-validate/shared": ["packages/shared/src"]
+    }
   },
   "include": ["src", "tests"]
 }

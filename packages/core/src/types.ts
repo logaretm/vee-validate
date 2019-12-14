@@ -1,5 +1,8 @@
 import Vue, { VNode } from 'vue';
 import { ValidationProvider } from './components/Provider';
+import { RuleParamSchema, ValidationRuleFunction } from '@vee-validate/shared';
+
+export { RuleParamSchema, ValidationRuleFunction };
 
 export type ProviderInstance = InstanceType<typeof ValidationProvider>;
 
@@ -22,26 +25,12 @@ export interface ValidationMessageGenerator {
 
 export type ValidationMessageTemplate = string | ValidationMessageGenerator;
 
-export interface ValidationRuleResult {
-  data?: Record<string, any>;
-  valid: boolean;
-  required?: boolean;
-}
-
-export type ValidationRuleFunction = (
-  value: any,
-  params: any[] | Record<string, any>
-) => boolean | string | ValidationRuleResult | Promise<boolean | string | ValidationRuleResult>;
-
 export interface RuleParamConfig {
   name: string;
   isTarget?: boolean;
   default?: any;
   cast?(value: any): any;
 }
-
-export type RuleParamSchema = string | RuleParamConfig;
-
 export interface ValidationRuleSchema {
   validate?: ValidationRuleFunction;
   params?: RuleParamSchema[];
@@ -52,8 +41,6 @@ export interface ValidationRuleSchema {
 }
 
 export type ValidationRule = ValidationRuleFunction | ValidationRuleSchema;
-
-export type StringOrNumber = string | number;
 
 // Extracts explicit keys of an interface without index signature
 // https://stackoverflow.com/questions/51465182/typescript-remove-index-signature-using-mapped-types

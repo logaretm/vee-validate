@@ -1,17 +1,12 @@
 import { Locator } from '../types';
+import { isCallable, isNullOrUndefined, isEmptyArray } from '@vee-validate/shared';
+
+export { isCallable, isNullOrUndefined, isEmptyArray };
 
 export function isNaN(value: unknown): boolean {
   // NaN is the one value that does not equal itself.
   // eslint-disable-next-line
   return value !== value;
-}
-
-export function isNullOrUndefined(value: unknown): value is undefined | null {
-  return value === null || value === undefined;
-}
-
-export function isEmptyArray(arr: any[]): boolean {
-  return Array.isArray(arr) && arr.length === 0;
 }
 
 export const isObject = (obj: unknown): obj is { [x: string]: any } =>
@@ -63,10 +58,6 @@ export function isSpecified(val: string | null | undefined): boolean {
   }
 
   return !isNullOrUndefined(val);
-}
-
-export function isCallable(fn: unknown): fn is Function {
-  return typeof fn === 'function';
 }
 
 export function isLocator(value: unknown): value is Locator {

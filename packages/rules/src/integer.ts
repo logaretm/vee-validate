@@ -1,4 +1,4 @@
-import { StringOrNumber } from '../types';
+import { StringOrNumber } from '@vee-validate/shared';
 
 const validate = (value: StringOrNumber | StringOrNumber[]) => {
   if (Array.isArray(value)) {

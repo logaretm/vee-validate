@@ -1,5 +1,4 @@
-import { toArray } from '../utils';
-import { ValidationRuleFunction } from '../types';
+import { ValidationRuleFunction, toArray } from '@vee-validate/shared';
 
 const validate: ValidationRuleFunction = (value, options) => {
   if (Array.isArray(value)) {

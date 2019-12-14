@@ -1,4 +1,4 @@
-import { StringOrNumber } from '../types';
+import { StringOrNumber } from '@vee-validate/shared';
 
 const ar = /^[٠١٢٣٤٥٦٧٨٩]+$/;
 const en = /^[0-9]+$/;

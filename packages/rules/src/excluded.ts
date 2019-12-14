@@ -1,5 +1,5 @@
 import { validate as includes } from './oneOf';
-import { ValidationRuleFunction } from '../types';
+import { ValidationRuleFunction } from '@vee-validate/shared';
 
 const validate: ValidationRuleFunction = (value, args) => {
   return !includes(value, args);

@@ -1,5 +1,5 @@
 import { alphaSpaces } from './alpha_helper';
-import { RuleParamSchema } from '../types';
+import { RuleParamSchema } from '@vee-validate/shared';
 
 const validate = (value: string | string[], { locale = '' }: Record<string, any> = {}): boolean => {
   if (Array.isArray(value)) {

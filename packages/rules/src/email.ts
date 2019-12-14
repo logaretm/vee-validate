@@ -1,4 +1,4 @@
-import { RuleParamSchema } from '../types';
+import { RuleParamSchema } from '@vee-validate/shared';
 
 const validate = (value: string | string[], { multiple }: Record<string, any> = {}) => {
   // eslint-disable-next-line

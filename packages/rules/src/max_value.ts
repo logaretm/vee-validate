@@ -1,5 +1,4 @@
-import { isNullOrUndefined } from '../utils';
-import { RuleParamSchema, ValidationRuleFunction, StringOrNumber } from '../types';
+import { RuleParamSchema, ValidationRuleFunction, StringOrNumber, isNullOrUndefined } from '@vee-validate/shared';
 
 const validate: ValidationRuleFunction = (value: StringOrNumber | StringOrNumber[], { max }: Record<string, any>) => {
   if (isNullOrUndefined(value) || value === '') {

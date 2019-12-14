@@ -12,7 +12,7 @@
   "homepage": "https://logaretm.github.io/vee-validate/",
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
-    "test": "jest",
+    "test": "lerna run test",
     "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",

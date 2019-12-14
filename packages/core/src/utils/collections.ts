@@ -1,4 +1,7 @@
 import { isCallable, isObject } from './assertions';
+import { toArray, includes } from '@vee-validate/shared';
+
+export { toArray, includes };
 
 export function findIndex<T>(arrayLike: ArrayLike<T>, predicate: (item: T, idx: number) => boolean): number {
   const array = Array.isArray(arrayLike) ? arrayLike : toArray(arrayLike);
@@ -25,33 +28,6 @@ export function find<T>(arrayLike: ArrayLike<T>, predicate: (item: T, idx: numbe
   const idx = findIndex(array, predicate);
 
   return idx === -1 ? undefined : array[idx];
-}
-
-export function includes(collection: any[] | string, item: any): boolean {
-  return collection.indexOf(item) !== -1;
-}
-
-/**
- * Converts an array-like object to array, provides a simple polyfill for Array.from
- */
-export function toArray<T>(arrayLike: ArrayLike<T>): T[] {
-  if (isCallable(Array.from)) {
-    return Array.from(arrayLike);
-  }
-
-  /* istanbul ignore next */
-  return _copyArray(arrayLike);
-}
-
-/* istanbul ignore next */
-function _copyArray<T>(arrayLike: ArrayLike<T>): T[] {
-  const array = [];
-  const length = arrayLike.length;
-  for (let i = 0; i < length; i++) {
-    array.push(arrayLike[i]);
-  }
-
-  return array;
 }
 
 export function values<T>(obj: { [x: string]: T }): T[] {

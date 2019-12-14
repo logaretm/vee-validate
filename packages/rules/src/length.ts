@@ -1,5 +1,5 @@
-import { isNullOrUndefined, toArray } from '../utils';
-import { RuleParamSchema } from '../types';
+import { isNullOrUndefined, toArray } from '@vee-validate/shared';
+import { RuleParamSchema } from '@vee-validate/shared';
 
 const validate = (value: string | number | string[], { length }: Record<string, any>) => {
   if (isNullOrUndefined(value)) {

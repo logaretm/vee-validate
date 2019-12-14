@@ -1,4 +1,4 @@
-import { RuleParamSchema } from '../types';
+import { RuleParamSchema } from '@vee-validate/shared';
 
 const validateImage = (file: File, width: number, height: number): Promise<boolean> => {
   const URL = window.URL || (window as any).webkitURL;

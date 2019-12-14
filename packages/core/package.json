@@ -33,7 +33,9 @@
     "dist/**/*.d.ts"
   ],
   "devDependencies": {
-    "typescript": "^3.7.2"
+    "jest": "^24.9.0",
+    "typescript": "^3.7.2",
+    "vue-jest": "^3.0.5"
   },
   "peerDependencies": {
     "vue": "^2.5.18"

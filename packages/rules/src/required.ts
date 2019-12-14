@@ -1,5 +1,4 @@
-import { isEmptyArray, isNullOrUndefined } from '../utils';
-import { RuleParamSchema } from '../types';
+import { RuleParamSchema, isEmptyArray, isNullOrUndefined } from '@vee-validate/shared';
 
 const validate = (value: any, { allowFalse }: Record<string, any> = { allowFalse: true }) => {
   const result = {

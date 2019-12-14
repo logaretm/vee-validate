@@ -1,5 +1,4 @@
-import { isEmptyArray, includes } from '../utils';
-import { RuleParamSchema } from '../types';
+import { RuleParamSchema, isEmptyArray, includes } from '@vee-validate/shared';
 
 const testEmpty = (value: any) =>
   isEmptyArray(value) || includes([false, null, undefined], value) || !String(value).trim().length;

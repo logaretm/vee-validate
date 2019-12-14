@@ -1,5 +1,4 @@
-import { isNullOrUndefined } from '../utils';
-import { RuleParamSchema, StringOrNumber } from '../types';
+import { RuleParamSchema, StringOrNumber, isNullOrUndefined } from '@vee-validate/shared';
 
 const validate = (value: StringOrNumber | StringOrNumber[], { min }: Record<string, any>): boolean => {
   if (isNullOrUndefined(value) || value === '') {

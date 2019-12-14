@@ -1,4 +1,4 @@
-import { RuleParamSchema, StringOrNumber } from '../types';
+import { RuleParamSchema, StringOrNumber } from '@vee-validate/shared';
 
 const validate = (value: StringOrNumber | StringOrNumber[], { min, max }: Record<string, any> = {}): boolean => {
   if (Array.isArray(value)) {

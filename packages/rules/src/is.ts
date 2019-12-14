@@ -1,4 +1,4 @@
-import { RuleParamSchema } from '../types';
+import { RuleParamSchema } from '@vee-validate/shared';
 
 const validate = (value: any, { other }: Record<string, any>) => {
   return value === other;
