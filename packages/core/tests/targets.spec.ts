@@ -1,5 +1,4 @@
-import { validate } from '@/validate';
-import { extend } from '@/extend';
+import { validate, extend } from '@vee-validate/core';
 import { between, confirmed } from '@vee-validate/rules';
 
 describe('target field placeholder', () => {

@@ -1,4 +1,4 @@
-import { extend, validate } from '@/index';
+import { extend, validate } from '@vee-validate/core';
 
 test('passing a non-function as the validate method will throw', () => {
   expect(() => {

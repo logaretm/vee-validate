@@ -1,10 +1,8 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import { renderToString } from '@vue/server-test-utils';
 import flushPromises from 'flush-promises';
-import { ValidationProvider, ValidationObserver, extend, withValidation, configure } from '@/index';
-import InputWithoutValidation from './components/Input';
-import SelectWithoutValidation from './components/Select';
-import ModelComp from './../helpers/ModelComp';
+import { ValidationProvider, ValidationObserver, extend, configure } from '@vee-validate/core';
+import ModelComp from './helpers/ModelComp';
 
 const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
@@ -76,18 +74,18 @@ test('listens for input, blur events to set flags', async () => {
   );
 
   const input = wrapper.find('input');
-  expect(wrapper).toHaveElement('#untouched');
-  expect(wrapper).toHaveElement('#pristine');
+  (expect(wrapper) as any).toHaveElement('#untouched');
+  (expect(wrapper) as any).toHaveElement('#pristine');
   input.trigger('blur');
   await flushPromises();
-  expect(wrapper).toHaveElement('#touched');
-  expect(wrapper).not.toHaveElement('#untouched');
-  expect(wrapper).toHaveElement('#pristine');
+  (expect(wrapper) as any).toHaveElement('#touched');
+  (expect(wrapper).not as any).toHaveElement('#untouched');
+  (expect(wrapper) as any).toHaveElement('#pristine');
   await flushPromises();
   input.trigger('input');
   await flushPromises();
-  expect(wrapper).not.toHaveElement('#pristine');
-  expect(wrapper).toHaveElement('#dirty');
+  (expect(wrapper).not as any).toHaveElement('#pristine');
+  (expect(wrapper) as any).toHaveElement('#dirty');
 });
 
 test('validates lazy models', async () => {
@@ -109,7 +107,7 @@ test('validates lazy models', async () => {
   const input = wrapper.find('input');
   const error = wrapper.find('#error');
 
-  input.element.value = '';
+  (input.element as any).value = '';
   input.trigger('input');
   await flushPromises();
   // did not validate on input.
@@ -120,7 +118,7 @@ test('validates lazy models', async () => {
   // validation triggered on change.
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
-  input.element.value = 'text';
+  (input.element as any).value = 'text';
   input.trigger('change');
   await flushPromises();
   // validation triggered on change.
@@ -157,12 +155,12 @@ test('uses appropriate events for different input types', async () => {
   expect(error.text()).toBe('');
 
   select.trigger('change');
-  select.element.value = '';
+  (select.element as any).value = '';
   await flushPromises();
   // validation triggered on change.
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
-  select.element.value = '1';
+  (select.element as any).value = '1';
   wrapper.find('select').trigger('change');
   await flushPromises();
 
@@ -222,7 +220,7 @@ test('validates on rule change if the field was validated before', async () => {
 
   expect(error.text()).toBe('');
 
-  wrapper.vm.rules = {
+  (wrapper.vm as any).rules = {
     required: false,
     min: 3
   };
@@ -258,7 +256,7 @@ test('validates on rule change: testing arrays', async () => {
 
   expect(error.text()).toBe('The {field} field is not a valid value');
 
-  wrapper.vm.rules = {
+  (wrapper.vm as any).rules = {
     required: true,
     oneOf: [1, 2, 3, 4]
   };
@@ -294,7 +292,7 @@ test('validates on rule change: testing regex', async () => {
 
   expect(error.text()).toBe('');
 
-  wrapper.vm.rules = {
+  (wrapper.vm as any).rules = {
     required: false,
     regex: /^[0-9]$/i
   };
@@ -330,7 +328,7 @@ test('validates on rule change: testing NaN', async () => {
 
   expect(error.text()).toBe('The {field} field may not be greater than NaN characters');
 
-  wrapper.vm.rules = {
+  (wrapper.vm as any).rules = {
     required: true,
     max: NaN
   };
@@ -550,64 +548,10 @@ test('removes the provider reference at destroy', () => {
     { localVue: Vue, sync: false }
   );
 
-  const providersMap = wrapper.vm.$_veeObserver.refs;
-  expect(providersMap.named).toBe(wrapper.vm.$refs.provider);
+  const providersMap = (wrapper.vm as any).$_veeObserver.refs;
+  expect(providersMap.named).toBe((wrapper.vm as any).$refs.provider);
   wrapper.destroy();
   expect(providersMap.named).toBeUndefined();
-});
-
-test('creates HOCs from other components', async () => {
-  const InputWithValidation = withValidation(InputWithoutValidation);
-
-  const wrapper = mount(
-    {
-      template: `
-        <div>
-          <InputWithValidation v-model="value" rules="required"></InputWithValidation>
-        </div>
-      `,
-      data: () => ({ value: '' }),
-      components: {
-        InputWithValidation
-      }
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const error = wrapper.find('#error');
-  const input = wrapper.find('#input');
-
-  expect(error.text()).toBe('');
-  input.setValue('');
-  await flushPromises();
-
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-  input.setValue('txt');
-  await flushPromises();
-  expect(error.text()).toBe('');
-});
-
-test('renders slots', async () => {
-  const WithValidation = withValidation(SelectWithoutValidation);
-  const wrapper = mount(
-    {
-      data: () => ({ value: '' }),
-      template: `
-        <SelectWithValidation v-model="value" rules="required">
-          <option value="">0</option>
-          <option value="1">1</option>
-        </SelectWithValidation>
-      `,
-      components: {
-        SelectWithValidation: WithValidation
-      }
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  expect(wrapper.html()).toBe(
-    `<div value=""><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div>`
-  );
 });
 
 test('resets validation state', async () => {
@@ -648,7 +592,7 @@ test('resets validation state', async () => {
 
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
-  wrapper.vm.$refs.provider.reset();
+  (wrapper.vm as any).$refs.provider.reset();
   await flushPromises();
   expect(error.text()).toBe('');
 });
@@ -730,7 +674,7 @@ test('setting skipIfEmpty to false runs only the first rule', async () => {
   expect(errors.at(0).text()).toBe('The {field} field must be a valid email');
 });
 
-const sleep = wait => new Promise(resolve => setTimeout(resolve, wait));
+const sleep = (wait: number) => new Promise(resolve => setTimeout(resolve, wait));
 test('validation can be debounced', async () => {
   const wrapper = mount(
     {
@@ -761,14 +705,11 @@ test('validation can be debounced', async () => {
 test('avoids race conditions between successive validations', async () => {
   // A decreasing timeout (the most recent validation will finish before new ones).
   extend('longRunning', {
-    message: (_, __, data) => data,
+    message: 'Lost in time',
     validate: value => {
       return new Promise(resolve => {
         setTimeout(() => {
-          resolve({
-            valid: value === 42,
-            data: 'Lost in time'
-          });
+          resolve(value === 42);
         }, 20);
       });
     }
@@ -845,7 +786,7 @@ test('validates manually with a initial value using the validate event handler o
     { localVue: Vue, sync: false }
   );
 
-  await wrapper.vm.$refs.obs.validate();
+  await (wrapper.vm as any).$refs.obs.validate();
 
   const error = wrapper.find('#error');
   expect(error.text()).toBe('');
@@ -870,7 +811,7 @@ test('validates manually with a initial value using the validate event handler o
     { localVue: Vue, sync: false }
   );
 
-  await wrapper.vm.$refs.obs.validate();
+  await (wrapper.vm as any).$refs.obs.validate();
 
   const error = wrapper.find('#error');
   expect(error.text()).toBe('');
@@ -957,7 +898,7 @@ test('sets errors manually with setErrors', async () => {
   await flushPromises();
   expect(wrapper.find('#error').text()).toBe('');
 
-  wrapper.vm.$refs.provider.setErrors(['WRONG!']);
+  (wrapper.vm as any).$refs.provider.setErrors(['WRONG!']);
   await flushPromises();
   expect(wrapper.find('#error').text()).toBe('WRONG!');
 });
@@ -1088,7 +1029,7 @@ describe('HTML5 Rule inference', () => {
 
 test('array param collecting in the last parameter', async () => {
   extend('isOneOf', {
-    validate(value, { val, isOneOf }) {
+    validate(value, { val, isOneOf }: Record<string, any>) {
       return isOneOf.includes(value) && isOneOf.includes(val);
     },
     params: ['val', 'isOneOf'],
@@ -1128,7 +1069,7 @@ test('should throw if rule does not exist', async () => {
     },
     { localVue: Vue, sync: false }
   );
-  await expect(wrapper.vm.$refs.pro.validate()).rejects.toThrow();
+  await expect((wrapper.vm as any).$refs.pro.validate()).rejects.toThrow();
 });
 
 test('returns custom error messages passed in the customMessages prop', async () => {
@@ -1151,7 +1092,7 @@ test('returns custom error messages passed in the customMessages prop', async ()
     { localVue: Vue, sync: false }
   );
 
-  const result = await wrapper.vm.$refs.pro.validate();
+  const result = await (wrapper.vm as any).$refs.pro.validate();
 
   expect(result.errors[0]).toEqual(customMessage);
 });
@@ -1172,11 +1113,11 @@ describe('Handle value mutating modifiers', () => {
 
     // should happen synchronously!
     wrapper.find('input').setValue('11');
-    expect(wrapper.vm.$refs.provider.value).toBe(11);
+    expect((wrapper.vm as any).$refs.provider.value).toBe(11);
 
     // NaN values are left as is.
     wrapper.find('input').setValue('x23');
-    expect(wrapper.vm.$refs.provider.value).toBe('x23');
+    expect((wrapper.vm as any).$refs.provider.value).toBe('x23');
   });
 
   test('handles .trim modifier', () => {
@@ -1194,6 +1135,6 @@ describe('Handle value mutating modifiers', () => {
 
     // should happen synchronously!
     wrapper.find('input').setValue('  abc');
-    expect(wrapper.vm.$refs.provider.value).toBe('abc');
+    expect((wrapper.vm as any).$refs.provider.value).toBe('abc');
   });
 });

@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import { renderToString } from '@vue/server-test-utils';
-import { ValidationProvider, ValidationObserver } from '@/index';
+import { ValidationProvider, ValidationObserver } from '@vee-validate/core';
 import flushPromises from 'flush-promises';
 
 const Vue = createLocalVue();
@@ -113,7 +113,7 @@ test('triggers validation manually on its children providers using refs', async 
   await flush();
   expect(error.text()).toBe('');
 
-  await wrapper.vm.$refs.obs.validate();
+  await (wrapper.vm.$refs.obs as any).validate();
   await flush();
 
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
@@ -127,7 +127,7 @@ test('passes only executes the callback if observer is valid', async () => {
         calls: 0
       }),
       methods: {
-        submit() {
+        submit(this: any) {
           this.calls++;
         }
       },
@@ -180,11 +180,9 @@ test('removes child ref when the child is destroyed', async () => {
     { localVue: Vue, sync: false }
   );
 
-  const obs = wrapper.vm.$refs.obs;
+  const obs = wrapper.vm.$refs.obs as any;
   expect(obs.refs).toHaveProperty('id');
-
   wrapper.destroy();
-
   expect(obs.refs).not.toHaveProperty('id');
 });
 
@@ -210,11 +208,11 @@ test('resets child refs', async () => {
   await flush();
   expect(error.text()).toBe('');
 
-  await wrapper.vm.$refs.obs.validate();
+  await (wrapper.vm.$refs.obs as any).validate();
 
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
-  wrapper.vm.$refs.obs.reset();
+  (wrapper.vm.$refs.obs as any).reset();
   await flush();
 
   expect(error.text()).toBe('');
@@ -243,7 +241,7 @@ test('resets child refs using reset on the v-slot data', async () => {
   await flush();
   expect(error.text()).toBe('');
 
-  wrapper.vm.$refs.obs.validate();
+  (wrapper.vm.$refs.obs as any).validate();
   await flush();
 
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
@@ -278,7 +276,7 @@ test('collects errors from child providers', async () => {
 
   await flush();
 
-  await wrapper.vm.$refs.obs.validate();
+  await (wrapper.vm.$refs.obs as any).validate();
   await flush();
 
   const errors = wrapper.findAll('p');
@@ -337,10 +335,10 @@ test('validates and resets nested observers', async () => {
 
   await flush();
   expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
-  await wrapper.vm.$refs.obs.validate();
+  await (wrapper.vm.$refs.obs as any).validate();
   await flush();
   expect(wrapper.find('p').text()).toContain(DEFAULT_REQUIRED_MESSAGE);
-  await wrapper.vm.$refs.obs.reset();
+  await (wrapper.vm.$refs.obs as any).reset();
   await flush();
   expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
 });
@@ -411,7 +409,7 @@ test('Sets errors for all providers', async () => {
   expect(wrapper.find('#error1').text()).toBe('');
   expect(wrapper.find('#error2').text()).toBe('');
 
-  wrapper.vm.$refs.observer.setErrors({
+  (wrapper.vm.$refs.observer as any).setErrors({
     field1: ['wrong'],
     field2: ['whoops']
   });
@@ -459,7 +457,7 @@ test('Sets errors for nested observer providers', async () => {
   expect(wrapper.find('#error1').text()).toBe('');
   expect(wrapper.find('#error2').text()).toBe('');
 
-  wrapper.vm.$refs.observer.setErrors({
+  (wrapper.vm.$refs.observer as any).setErrors({
     field1: ['wrong'],
     field2: ['whoops']
   });

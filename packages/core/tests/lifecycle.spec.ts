@@ -1,4 +1,5 @@
-import { ValidationProvider, ValidationObserver } from '@/index';
+import { ValidationProvider, ValidationObserver } from '@vee-validate/core';
+import flushPromises from 'flush-promises';
 
 // This is a vue-test-utils issue, maybe after they disable the "sync" behavior.
 // eslint-disable-next-line

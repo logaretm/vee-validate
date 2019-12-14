@@ -1,5 +1,4 @@
-import { validate } from '@/validate';
-import { extend } from '@/extend';
+import { validate, extend } from '@vee-validate/core';
 import { numeric } from '@vee-validate/rules';
 
 test('returns custom error messages passed in ValidationOptions', async () => {

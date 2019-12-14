@@ -1,10 +1,13 @@
+// @ts-ignore
 import { replaceRaf } from 'raf-stub';
 import * as Rules from '@vee-validate/rules';
-import { extend, localize } from '@/index';
-import en from '@i18n/en';
+import { extend, localize } from '@vee-validate/core';
+// @ts-ignore
+import en from '@vee-validate/i18n/en.json';
 
 Object.keys(Rules).forEach(rule => {
   extend(rule, {
+    // @ts-ignore
     ...Rules[rule]
   });
 });
