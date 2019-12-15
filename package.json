@@ -5,38 +5,16 @@
   "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
-  "module": "dist/vee-validate.esm.js",
-  "unpkg": "dist/vee-validate.js",
-  "main": "dist/vee-validate.js",
-  "types": "dist/types/index.d.ts",
   "homepage": "https://logaretm.github.io/vee-validate/",
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
     "test": "jest",
     "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
-    "docs:deploy": "./scripts/deploy.sh",
-    "build:locale": "node scripts/locale.js",
-    "build:main": "node scripts/main.js",
     "ts:defs": "./scripts/definitions.sh",
-    "build": "npm run build:main && npm run ts:defs && npm run build:locale",
+    "build": "lerna run build",
     "cover": "jest --coverage",
     "prepublishOnly": "npm run build && npm run ts:defs"
   },
-  "keywords": [
-    "VueJS",
-    "Vue",
-    "validation",
-    "validator",
-    "inputs",
-    "form"
-  ],
-  "files": [
-    "dist/*.js",
-    "dist/locale/*.json",
-    "dist/**/*.d.ts"
-  ],
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@types/jest": "^24.0.23",
@@ -88,7 +66,8 @@
   },
   "eslintIgnore": [
     "locale",
-    "dist"
+    "dist",
+    "scripts"
   ],
   "husky": {
     "hooks": {
