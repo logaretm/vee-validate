@@ -1,6 +1,6 @@
 {
   "name": "@vee-validate/rules",
-  "version": "4.0.0.alpha-0",
+  "version": "4.0.0-alpha.0",
   "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -13,7 +13,6 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",
-    "build": "node scripts/build.js",
     "cover": "jest --coverage",
     "prepublishOnly": "npm run build && npm run ts:defs"
   },
