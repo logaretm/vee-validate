@@ -1,4 +1,4 @@
-const validate = (files: File | File[], mimes: string[] | Record<string, any>) => {
+const validate = (files: any, mimes: string[] | Record<string, any>) => {
   const regex = new RegExp(`${mimes.join('|').replace('*', '.+')}$`, 'i');
   if (Array.isArray(files)) {
     return files.every(file => regex.test(file.type));

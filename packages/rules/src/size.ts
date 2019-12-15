@@ -1,6 +1,6 @@
 import { RuleParamSchema } from '@vee-validate/shared';
 
-const validate = (files: File | File[], { size }: Record<string, any>) => {
+const validate = (files: any, { size }: Record<string, any>) => {
   if (isNaN(size)) {
     return false;
   }

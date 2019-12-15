@@ -1,6 +1,6 @@
 import { RuleParamSchema } from '@vee-validate/shared';
 
-const validate = (value: string | string[], { multiple }: Record<string, any> = {}) => {
+const validate = (value: any, { multiple }: Record<string, any> = {}) => {
   // eslint-disable-next-line
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (multiple && !Array.isArray(value)) {

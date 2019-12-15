@@ -1,6 +1,4 @@
-import { StringOrNumber } from '@vee-validate/shared';
-
-const validate = (value: StringOrNumber | StringOrNumber[]) => {
+const validate = (value: any) => {
   if (Array.isArray(value)) {
     return value.every(val => /^-?[0-9]+$/.test(String(val)));
   }

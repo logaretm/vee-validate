@@ -40,7 +40,7 @@ describe('target field placeholder', () => {
         { name: 'a', isTarget: true },
         { name: 'b', isTarget: true }
       ],
-      validate: (value, { a, b }) => value === parseInt(a, 10) + parseInt(b, 10)
+      validate: (value, { a, b }: Record<string, any>) => value === parseInt(a, 10) + parseInt(b, 10)
     });
 
     const values = { foo: 10, bar: 10, baz: 10 };
@@ -92,10 +92,11 @@ describe('cross-field syntax', () => {
 
     test('with options.customMessages function', async () => {
       const customMessages = {
-        between(field, { min, _maxValueTarget_ }) {
+        between(_: string, { min, _maxValueTarget_ }: Record<string, string>) {
           return `Must be more than ${min} and less than ${_maxValueTarget_}`;
         }
       };
+      // @ts-ignore
       const result = await validate(values.value, rules, { ...options, customMessages, names });
       expect(result.errors[0]).toEqual('Must be more than 0 and less than Max Value');
     });
@@ -104,7 +105,7 @@ describe('cross-field syntax', () => {
   test('should cast values of the resolved targets', async () => {
     extend('isEven', {
       params: [{ name: 'target', cast: val => val % 2 }],
-      validate(val, { target }) {
+      validate(val, { target }: Record<string, any>) {
         return target === 0;
       }
     });

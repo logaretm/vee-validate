@@ -17,7 +17,7 @@ beforeEach(() => {
   };
 
   (global as any).Image = class Image {
-    set src(this: any, value) {
+    set src(this: any, _: any) {
       this.width = 150;
       this.height = 100;
 
@@ -45,7 +45,7 @@ test('validates image dimensions', async () => {
   result = await validate([helpers.file('file.jpg', 'image/jpeg', 10)], { width: 15, height: 10 });
   expect(result).toBe(false);
 
-  global.URL = undefined; // test webkit fallback.
+  (global as any).URL = undefined; // test webkit fallback.
   result = await validate([helpers.file('file.jpg', 'image/jpeg', 10)], { width: 150, height: 100 });
   expect(result).toBe(true);
 });

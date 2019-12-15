@@ -1,10 +1,8 @@
-import { StringOrNumber } from '@vee-validate/shared';
-
 const ar = /^[٠١٢٣٤٥٦٧٨٩]+$/;
 const en = /^[0-9]+$/;
 
-const validate = (value: StringOrNumber | StringOrNumber[]) => {
-  const testValue = (val: StringOrNumber) => {
+const validate = (value: any) => {
+  const testValue = (val: any) => {
     const strValue = String(val);
 
     return en.test(strValue) || ar.test(strValue);

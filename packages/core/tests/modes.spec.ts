@@ -214,6 +214,7 @@ test('new interaction modes can be added', async () => {
 
 test('throws if new mode was added without a valid factory fn', () => {
   expect(() => {
+    // @ts-ignore
     setInteractionMode('throws', 'hello');
   }).toThrow();
 });

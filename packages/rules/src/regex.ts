@@ -1,6 +1,6 @@
-import { RuleParamSchema, StringOrNumber } from '@vee-validate/shared';
+import { RuleParamSchema } from '@vee-validate/shared';
 
-const validate = (value: StringOrNumber | StringOrNumber[], { regex }: Record<string, any>): boolean => {
+const validate = (value: any, { regex }: Record<string, any>): boolean => {
   if (Array.isArray(value)) {
     return value.every(val => validate(val, { regex: regex }));
   }

@@ -1,4 +1,4 @@
-const validate = (files: File | File[]) => {
+const validate = (files: any) => {
   const regex = /\.(jpg|svg|jpeg|png|bmp|gif)$/i;
   if (Array.isArray(files)) {
     return files.every(file => regex.test(file.name));

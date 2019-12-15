@@ -1,7 +1,7 @@
 import { alpha } from './alpha_helper';
 import { RuleParamSchema } from '@vee-validate/shared';
 
-const validate = (value: string | string[], { locale = '' }: Record<string, any> = {}): boolean => {
+const validate = (value: any, { locale = '' }: Record<string, any> = {}): boolean => {
   if (Array.isArray(value)) {
     return value.every(val => validate(val, { locale }));
   }

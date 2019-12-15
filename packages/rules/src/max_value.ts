@@ -1,6 +1,6 @@
-import { RuleParamSchema, ValidationRuleFunction, StringOrNumber, isNullOrUndefined } from '@vee-validate/shared';
+import { RuleParamSchema, ValidationRuleFunction, isNullOrUndefined } from '@vee-validate/shared';
 
-const validate: ValidationRuleFunction = (value: StringOrNumber | StringOrNumber[], { max }: Record<string, any>) => {
+const validate: ValidationRuleFunction = (value: any, { max }: Record<string, any>) => {
   if (isNullOrUndefined(value) || value === '') {
     return false;
   }

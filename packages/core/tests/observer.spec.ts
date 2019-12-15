@@ -1,5 +1,4 @@
 import { mount, createLocalVue } from '@vue/test-utils';
-import { renderToString } from '@vue/server-test-utils';
 import { ValidationProvider, ValidationObserver } from '@vee-validate/core';
 import flushPromises from 'flush-promises';
 
@@ -29,34 +28,6 @@ test('renders the slot', () => {
   );
 
   expect(wrapper.html()).toBe(`<form></form>`);
-});
-
-test('renders the scoped slot in SSR', () => {
-  const output = renderToString(
-    {
-      template: `
-      <ValidationObserver tag="form" v-slot="ctx">
-      </ValidationObserver>
-    `
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  expect(output).toBe(`<form data-server-rendered="true"></form>`);
-});
-
-test('renders the default slot if no scoped slots in SSR', () => {
-  const output = renderToString(
-    {
-      template: `
-      <ValidationObserver tag="form">
-      </ValidationObserver>
-    `
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  expect(output).toBe(`<form data-server-rendered="true"></form>`);
 });
 
 test('observes the current state of providers', async () => {

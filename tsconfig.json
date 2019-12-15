@@ -3,9 +3,9 @@
     "baseUrl": ".",
     "rootDir": ".",
     "moduleResolution": "node",
-    "target": "es5",
+    "target": "es2015",
     "module": "es2015",
-    "lib": ["es2015", "es2016", "es2017", "dom"],
+    "lib": ["esnext", "es2017", "es2016", "es2015", "dom"],
     "sourceMap": true,
     "noImplicitAny": true,
     "strict": true,
@@ -19,11 +19,12 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "paths": {
-      "@vee-validate/shared": ["packages/shared/src"],
       "@vee-validate/core": ["packages/core/src"],
       "@vee-validate/rules": ["packages/rules/src"],
-      "@vee-validate/i18n": ["packages/i18n/src"]
+      "@vee-validate/i18n": ["packages/i18n/src"],
+      "@vee-validate/shared": ["packages/shared/src"]
     }
   },
-  "include": ["src", "tests"]
+  "include": ["packages/*/src", "packages/*/tests"],
+  "exclude": ["jest.config.js"]
 }

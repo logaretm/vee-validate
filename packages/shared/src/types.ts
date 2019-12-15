@@ -7,8 +7,6 @@ export interface RuleParamConfig {
 
 export type RuleParamSchema = string | RuleParamConfig;
 
-export type StringOrNumber = string | number;
-
 export type ValidationRuleFunction = (
   value: any,
   params: any[] | Record<string, any>

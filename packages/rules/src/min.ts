@@ -1,6 +1,6 @@
-import { RuleParamSchema, StringOrNumber, isNullOrUndefined } from '@vee-validate/shared';
+import { RuleParamSchema, isNullOrUndefined } from '@vee-validate/shared';
 
-const validate = (value: StringOrNumber | StringOrNumber[], { length }: Record<string, any>): boolean => {
+const validate = (value: any, { length }: Record<string, any>): boolean => {
   if (isNullOrUndefined(value)) {
     return false;
   }

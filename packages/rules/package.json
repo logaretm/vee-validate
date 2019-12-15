@@ -29,9 +29,7 @@
     "dist/*.js",
     "dist/**/*.d.ts"
   ],
-  "devDependencies": {
-    "typescript": "^3.7.2"
-  },
+  "devDependencies": {},
   "peerDependencies": {
     "vue": "^2.5.18"
   }

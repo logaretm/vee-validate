@@ -12,7 +12,7 @@
   "homepage": "https://logaretm.github.io/vee-validate/",
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
-    "test": "lerna run test",
+    "test": "jest",
     "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
@@ -38,9 +38,6 @@
     "dist/**/*.d.ts"
   ],
   "devDependencies": {
-    "@babel/core": "^7.7.5",
-    "@babel/plugin-transform-runtime": "^7.7.6",
-    "@babel/preset-env": "^7.7.6",
     "@commitlint/cli": "^8.2.0",
     "@types/jest": "^24.0.23",
     "@types/node": "^12.12.17",
@@ -51,9 +48,6 @@
     "@vuepress/plugin-back-to-top": "^1.2.0",
     "@vuepress/plugin-google-analytics": "^1.2.0",
     "@vuepress/plugin-pwa": "^1.2.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.0.3",
-    "babel-jest": "^24.9.0",
     "chalk": "^3.0.0",
     "codesandbox": "^2.1.11",
     "cross-env": "^6.0.3",
@@ -89,7 +83,6 @@
     "typescript": "^3.7.3",
     "uglify-js": "^3.7.2",
     "vue": "^2.6.10",
-    "vue-jest": "^3.0.5",
     "vue-server-renderer": "^2.6.10",
     "vue-template-compiler": "^2.6.10",
     "vuepress": "^1.2.0"

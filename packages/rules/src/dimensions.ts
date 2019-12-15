@@ -1,6 +1,6 @@
 import { RuleParamSchema } from '@vee-validate/shared';
 
-const validateImage = (file: File, width: number, height: number): Promise<boolean> => {
+const validateImage = (file: any, width: number, height: number): Promise<boolean> => {
   const URL = window.URL || (window as any).webkitURL;
 
   return new Promise(resolve => {
@@ -12,7 +12,7 @@ const validateImage = (file: File, width: number, height: number): Promise<boole
   });
 };
 
-const validate = (files: File | File[], { width, height }: Record<string, any>) => {
+const validate = (files: any, { width, height }: Record<string, any>) => {
   const list = [];
   files = Array.isArray(files) ? files : [files];
   for (let i = 0; i < files.length; i++) {

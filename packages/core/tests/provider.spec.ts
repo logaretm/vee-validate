@@ -1,5 +1,4 @@
 import { mount, createLocalVue } from '@vue/test-utils';
-import { renderToString } from '@vue/server-test-utils';
 import flushPromises from 'flush-promises';
 import { ValidationProvider, ValidationObserver, extend, configure } from '@vee-validate/core';
 import ModelComp from './helpers/ModelComp';
@@ -40,21 +39,6 @@ test('can be renderless with slim prop', () => {
   );
 
   expect(wrapper.html()).toBe(`<input type="text">`);
-});
-
-test('SSR: render single root slot', () => {
-  const output = renderToString(
-    {
-      template: `
-        <ValidationProvider v-slot="ctx">
-          <p></p>
-        </ValidationProvider>
-      `
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  expect(output).toBe('<span data-server-rendered="true"><p></p></span>');
 });
 
 test('listens for input, blur events to set flags', async () => {
