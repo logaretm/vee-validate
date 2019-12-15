@@ -6,9 +6,6 @@ const uglify = require('uglify-js');
 const chalk = require('chalk');
 const gzipSize = require('gzip-size');
 const typescript = require('rollup-plugin-typescript2');
-const resolve = require('rollup-plugin-node-resolve');
-const commonjs = require('rollup-plugin-commonjs');
-const json = require('rollup-plugin-json');
 const replace = require('rollup-plugin-replace');
 const version = process.env.VERSION || require('../package.json').version;
 
@@ -79,11 +76,8 @@ function genConfig(options) {
       input: options.input,
       external: ['vue'],
       plugins: [
-        json(),
         typescript({ typescript: require('typescript'), useTsconfigDeclarationDir: true }),
-        replace({ __VERSION__: version }),
-        resolve(),
-        commonjs()
+        replace({ __VERSION__: version })
       ]
     },
     output: {

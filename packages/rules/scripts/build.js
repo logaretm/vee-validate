@@ -1,4 +1,5 @@
 const chalk = require('chalk');
+const path = require('path');
 const mkdirpNode = require('mkdirp');
 const { promisify } = require('util');
 const { configs, utils, paths } = require('./config');
@@ -20,4 +21,25 @@ async function build() {
   console.log(chalk.cyan('Done!'));
 }
 
-build();
+async function buildLocales() {
+  const localesDir = path.join(__dirname, '..', 'i18n');
+  const files = fs.readdirSync(localesDir);
+  await mkdirp(path.join(paths.dist, 'i18n'));
+  // eslint-disable-next-line
+  console.log(chalk.cyan('Building i18n...'));
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    process.stdout.write(`${chalk.green(`Output File ${i}/${files.length}: `)} ${file}`);
+
+    const input = path.join(__dirname, '..', 'i18n', file);
+    const out = path.join(paths.dist, 'i18n', file);
+    fs.copyFileSync(input, out);
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+  }
+}
+
+build()
+  .catch(console.log)
+  .then(buildLocales);
