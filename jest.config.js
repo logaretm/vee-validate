@@ -8,7 +8,6 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
   moduleNameMapper: {
     '^vue$': 'vue/dist/vue.common.js',
-    '^@vee-validate/i18n/(.+)$': '<rootDir>/packages/i18n/src/$1',
     '^@vee-validate/(.+)$': '<rootDir>/packages/$1/src'
   }
 };
