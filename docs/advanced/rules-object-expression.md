@@ -57,3 +57,29 @@ For rules with infinite parameters, you **must send** an array containing your s
 ```js
 const ruleObject = { one_of: [1, 2, 3, 4, 5, 6, 7, 8, 9] };
 ```
+
+## Conditionally Applying Rules
+
+There may be times where you need to conditionally apply rules depending on a condition in your application. This can easily be done using the JavaScript ternary operator.
+
+```js
+const enforceLengthCheck = true; // Some condition that determines whether the rule should be applied.
+const ruleObject = { required: true,  length: enforceLengthCheck ? { length: 10 } : false };
+```
+
+## Cross Field Validation
+It is also possible to use the **rule object expression** when you need to apply validation rules across fields.
+
+```js
+<ValidationObserver>
+  <ValidationProvider rules="{ required: true, confirmed: { target: '@confirmation' } } v-slot="{ errors }">
+    <input v-model="value" type="text">
+    <span>{{ errors[0] }}</span>
+  </ValidationProvider>
+
+  <ValidationProvider v-slot="{ errors }" vid="confirmation">
+    <input v-model="confirmation" type="text">
+    <span>{{ errors[0] }}</span>
+  </ValidationProvider>
+</ValidationObserver>
+```
