@@ -72,7 +72,7 @@ It is also possible to use the **rule object expression** when you need to apply
 
 ```js
 <ValidationObserver>
-  <ValidationProvider rules="{ required: true, confirmed: { target: '@confirmation' } } v-slot="{ errors }">
+  <ValidationProvider rules="{ required: true, confirmed: { target: '@confirmation' } }" v-slot="{ errors }">
     <input v-model="value" type="text">
     <span>{{ errors[0] }}</span>
   </ValidationProvider>
