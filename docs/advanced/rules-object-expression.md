@@ -93,9 +93,7 @@ To call this rule using the **rule object expression**, you would use the follow
       <input type="number" v-model.number="firstValue">
       <span>{{ errors[0] }}</span>
     </ValidationProvider>
-    <ValidationProvider
-      :rules="{ required: true, maxDifference: { otherValue: '@firstValue', maxDifference: maxDifference } }"
-      v-slot="{ errors }">
+    <ValidationProvider :rules="{ required: true, maxDifference: { otherValue: '@firstValue', maxDifference: maxDifference } }" v-slot="{ errors }">
       <input type="number" v-model.number="secondValue">
       <span>{{ errors[0] }}</span>
     </ValidationProvider>
