@@ -86,7 +86,7 @@ extend("maxDifference", {
 });
 ```
 
-To call this rule using the **rule object expression**, you would use the following syntax:
+To call this rule using the **rule object expression**, you could use the following syntax:
 ```js
 <ValidationObserver>
     <ValidationProvider vid="firstValue" rules="required" v-slot="{ errors }">
@@ -105,4 +105,12 @@ To call this rule using the **rule object expression**, you would use the follow
 ```
 
 @[example](object-rules-definition-cross-field)
+
+You could also write the above example in a slightly more brief way:
+```js
+<ValidationProvider :rules="{ required: true, maxDifference: ['@firstValue', maxDifference] }" v-slot="{ errors }">
+  <input type="number" v-model.number="secondValue">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
 
