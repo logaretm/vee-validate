@@ -24,7 +24,7 @@
     "oneOf": "Le champ {_field_} doit être une valeur valide",
     "regex": "Le champ {_field_} est invalide",
     "required": "Le champ {_field_} est obligatoire",
-    "required_if": "Le champ {_field_} est obligatoire lorsque {target} possède cette valeur",
+    "required_if": "Le champ {_field_} est obligatoire lorsque {_target_} possède cette valeur",
     "size": "Le champ {_field_} doit avoir un poids inférieur à {size}KB"
   }
 }
