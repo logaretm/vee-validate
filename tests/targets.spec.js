@@ -5,7 +5,7 @@ import { between, confirmed } from '@/rules';
 describe('target field placeholder', () => {
   extend('confirmed', {
     ...confirmed,
-    message: '{_field_} must match {_target_}'
+    message: '{_field_} must match {target}'
   });
 
   const names = { foo: 'Foo', bar: 'Bar', baz: 'Baz' };
@@ -35,7 +35,7 @@ describe('target field placeholder', () => {
 
   test('works for multiple targets', async () => {
     extend('sum_of', {
-      message: '{_field_} must be the sum of {_aTarget_} and {_bTarget_}',
+      message: '{_field_} must be the sum of {a} and {b}',
       // eslint-disable-next-line prettier/prettier
       params: [
         { name: 'a', isTarget: true },
@@ -93,8 +93,8 @@ describe('cross-field syntax', () => {
 
     test('with options.customMessages function', async () => {
       const customMessages = {
-        between(field, { min, _maxValueTarget_ }) {
-          return `Must be more than ${min} and less than ${_maxValueTarget_}`;
+        between(field, { min, max }) {
+          return `Must be more than ${min} and less than ${max}`;
         }
       };
       const result = await validate(values.value, rules, { ...options, customMessages, names });
