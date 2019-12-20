@@ -57,3 +57,60 @@ For rules with infinite parameters, you **must send** an array containing your s
 ```js
 const ruleObject = { one_of: [1, 2, 3, 4, 5, 6, 7, 8, 9] };
 ```
+
+## Conditionally Applying Rules
+
+There may be times where you need to conditionally apply rules depending on a condition in your application. This can easily be done using the JavaScript ternary operator.
+
+```js
+const enforceLengthCheck = true; // Some condition that determines whether the rule should be applied.
+const ruleObject = { required: true,  length: enforceLengthCheck ? { length: 10 } : false };
+```
+
+## Cross Field Validation
+It is also possible to use the **rule object expression** when you need to apply validation rules across fields.
+
+Consider that you might have the following custom rule, that accepts a fieldname to be cross validated, and additional parameters. The rule is designed to make sure that the difference between two numbers is within the given maximum allowed
+
+```js
+extend("maxDifference", {
+  params: ["otherValue", "maxDifference"],
+  validate: (value, { otherValue, maxDifference }) => {
+    if (maxDifference === null || maxDifference === 0 || maxDifference >= Math.abs(value - otherValue)) {
+      return true;
+    }
+    return false;
+  },
+  message:
+    "The difference between the two numbers is too great. The maximum allowed is difference is {maxDifference}."
+});
+```
+
+To call this rule using the **rule object expression**, you could use the following syntax:
+```js
+<ValidationObserver>
+    <ValidationProvider vid="firstValue" rules="required" v-slot="{ errors }">
+      <input type="number" v-model.number="firstValue">
+      <span>{{ errors[0] }}</span>
+    </ValidationProvider>
+    <ValidationProvider :rules="{ required: true, maxDifference: { otherValue: '@firstValue', maxDifference: maxDifference } }" v-slot="{ errors }">
+      <input type="number" v-model.number="secondValue">
+      <span>{{ errors[0] }}</span>
+    </ValidationProvider>
+    <ValidationProvider rules="required" v-slot="{ errors }">
+      <input type="number" v-model.number="maxDifference">
+      <span>{{ errors[0] }}</span>
+    </ValidationProvider>
+  </ValidationObserver>
+```
+
+@[example](object-rules-definition-cross-field)
+
+You could also write the above example in a slightly more brief way:
+```js
+<ValidationProvider :rules="{ required: true, maxDifference: ['@firstValue', maxDifference] }" v-slot="{ errors }">
+  <input type="number" v-model.number="secondValue">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
