@@ -6,7 +6,7 @@
     "alpha_num": "{_field_} chỉ có thể chứa các kí tự chữ và số",
     "alpha_spaces": "{_field_} chỉ có thế chứa các kí tự và khoảng trắng",
     "between": "{_field_} phải có giá trị nằm trong khoảng giữa {min} và {max}",
-    "confirmed": "{_field_} khác với {target}",
+    "confirmed": "{_field_} khác với {_target_}",
     "digits": "Trường {_field_} chỉ có thể chứa các kí tự số và bắt buộc phải có độ dài là {length}",
     "dimensions": "{_field_} phải có chiều rộng {width} pixels và chiều cao {height} pixels",
     "email": "{_field_} phải là một địa chỉ email hợp lệ",

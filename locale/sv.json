@@ -6,7 +6,7 @@
     "alpha_num": "Fältet {_field_} får bara innehålla alfanumeriska tecken",
     "alpha_spaces": "Fältet {_field_} får bara innehålla alfabetiska tecken och mellanslag",
     "between": "Fältet {_field_} måste vara mellan {min} och {max}",
-    "confirmed": "Fältet {_field_} matchar inte {target}",
+    "confirmed": "Fältet {_field_} matchar inte {_target_}",
     "digits": "Fältet {_field_} måste vara numeriskt och innehålla exakt {length} siffor",
     "dimensions": "Fältet {_field_} måste vara {width} pixlar bred och {height} pixlar hög",
     "email": "Fältet {_field_} måste vara en giltig e-postadress",

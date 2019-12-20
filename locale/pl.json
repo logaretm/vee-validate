@@ -6,7 +6,7 @@
     "alpha_num": "Pole {_field_} może zawierać tylko litery i cyfry",
     "alpha_spaces": "Pole {_field_} może zawierać tylko litery oraz spacje",
     "between": "Pole {_field_} musi być pomiędzy {min} oraz {max}",
-    "confirmed": "Pole {_field_} nie zgadza się z polem potwierdzającym {target}",
+    "confirmed": "Pole {_field_} nie zgadza się z polem potwierdzającym {_target_}",
     "digits": "Pole {_field_} musi być liczbą i dokładnie {length} cyfr",
     "dimensions": "Obraz {_field_} musi być szeroki na {width} pikseli i wysoki na {height} pikseli",
     "email": "Pole {_field_} musi być poprawnym adresem email",

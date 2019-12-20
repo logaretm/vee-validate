@@ -6,7 +6,7 @@
     "alpha_dash": "{_field_} μπορεί να περιέχει αλφαριθμητικούς χαρακτήρες, παύλες και κάτω παύλες",
     "alpha_spaces": "{_field_} μπορεί να περιέχει μόνο αλφαβητικούς χαρακτήρες και κενά",
     "between": "{_field_} πρέπει να είναι μεταξύ {min} καί {max}",
-    "confirmed": "{_field_} δεν ταιριάζει με {target}",
+    "confirmed": "{_field_} δεν ταιριάζει με {_target_}",
     "digits": "{_field_} πρέπει να είναι αριθμός και να περιέχει {length} ψηφία",
     "dimensions": "{_field_} πρέπει να είναι {width} pixels επί {height} pixels",
     "email": "{_field_} πρέπει να είναι έγκυρο email",

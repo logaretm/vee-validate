@@ -6,7 +6,7 @@
     "alpha_dash": "{_field_} må kun indeholde tal, bogstaver, bindestreger og underscores",
     "alpha_spaces": "{_field_} må kun indeholde bogstaver og mellemrum",
     "between": "{_field_} skal være mellem {min} og {max}",
-    "confirmed": "{_field_} skal matche {target}",
+    "confirmed": "{_field_} skal matche {_target_}",
     "digits": "{_field_} skal være et tal på {length} cifre",
     "dimensions": "{_field_} skal være {width} pixels gange {height} pixels",
     "email": "{_field_} skal være en gyldig email",

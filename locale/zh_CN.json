@@ -6,7 +6,7 @@
     "alpha_num": "{_field_}只能包含字母数字字符",
     "alpha_spaces": "{_field_}只能包含字母字符和空格",
     "between": "{_field_}必须在{min}与{max}之间",
-    "confirmed": "{_field_}不能和{target}匹配",
+    "confirmed": "{_field_}不能和{_target_}匹配",
     "digits": "{_field_}必须是数字，且精确到{length}位数",
     "dimensions": "{_field_}必须在{width}像素与{height}像素之间",
     "email": "{_field_}不是一个有效的邮箱",

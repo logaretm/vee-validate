@@ -6,7 +6,7 @@
     "alpha_dash": "El camp {_field_} només ha de contenir lletres, números i guions",
     "alpha_spaces": "El camp {_field_} només ha de contenir lletres i espais",
     "between": "El camp {_field_} ha d'estar entre {min} i {max}",
-    "confirmed": "El camp {_field_} no coincideix amb el camp {target}",
+    "confirmed": "El camp {_field_} no coincideix amb el camp {_target_}",
     "digits": "El camp {_field_} ha de ser numèric i contenir exactament {length} dígits",
     "dimensions": "El camp {_field_} ha de ser de {width} píxels per {height} píxels",
     "email": "El camp {_field_} ha de ser un correu electrònic vàlid",

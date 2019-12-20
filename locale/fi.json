@@ -5,7 +5,7 @@
     "alpha_dash": "{_field_} voi sisältää vain kirajimia, numeroita, ja tavu-, tai alaviivoja",
     "alpha_num": "{_field_} voi sisältää vain kirjaimia ja numeroita",
     "between": "Kentän {_field_} tulee olla {min} ja {max} väliltä",
-    "confirmed": "{_field_} ei vastannut {target}",
+    "confirmed": "{_field_} ei vastannut {_target_}",
     "digits": "{_field_} tulee olla numeerinen ja tarkalleen {length} merkkiä",
     "dimensions": "{_field_} tulee olla {width} pikseliä kertaa {height} pikseliä",
     "email": "{_field_} tulee olla kelvollinen sähköpostiosoite",
