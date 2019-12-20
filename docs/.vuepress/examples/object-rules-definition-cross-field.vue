@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { extend } from "vee-validate";
+import { extend } from "@vee-validate";
 
 extend("maxDifference", {
   params: ["otherValue", "maxDifference"],
