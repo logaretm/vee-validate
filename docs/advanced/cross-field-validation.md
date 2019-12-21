@@ -132,6 +132,51 @@ It would make more sense to have the target field name instead of its value:
 Your Password does not match the Password Confirmation
 ```
 
-VeeValidate does that for you automatically when it interpolates the given message, instead of giving you the target value, it will give you its display name. This is an example of a rule that uses the placeholder for the `target` param to display the other field's name.
+VeeValidate does that for you automatically when it interpolates the given message, instead of giving you the target field value, it will give you its display name. This is an example of a rule that uses the placeholder for the `target` param to display the other field's name.
 
 @[example](cross-field-names)
+
+The same applies to all arguments passed to rules, **when a target field is specified, the param placeholder will resolve to the target field name rather than its value**. These are a few examples to help make this clear:
+
+> Using a `between` rule message that looks like this:
+
+```
+The field must be between {min} and {max}
+```
+
+Assuming you have also these fields:
+
+```vue
+<!-- Check the table below for the possible between values ->
+<ValidationProvider name="value" rules="between:..." v-slot="{ errors }">
+  <input type="number" v-model="value">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+
+<ValidationProvider vid="maxValue name="Min Value" rules="required" v-slot="{ errors }">
+  <input type="number" v-model="min">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+
+
+<ValidationProvider vid="minValue" name="Max Value" rules="required" v-slot="{ errors }">
+  <input type="number" v-model="max">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+The following is a table that shows the `between` rule message in various configurations when coupled with cross-field validation:
+
+| between rule arguments | Generated message                              | Explanation                                                                              |
+| ---------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| between:3,5            | The field must be between 3 and 5              | Arguments are specified as values are interpolated as is in the message.                 |
+| (3, @maxValue)         | The field must be between 3 and Max Value      | The `min` argument is interpolated as is, while the `max` will be the target field name. |
+| (@minValue, @maxValue) | The field must between Min Value and Max Value | Both arguments will be interpolated as their corresponding fields display names          |
+
+If you always need the values of target fields in your message, wrap the argument name with `_` like this:
+
+```
+The field must be between {_min_} and {_max_}
+```
+
+Which will always interpolate the values regardless if cross-field validation is used or not.
