@@ -190,12 +190,14 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     reset() {
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
     },
-    setErrors(errors: Record<string, string[]>) {
+    setErrors(errors: Record<string, string[] | string>) {
       Object.keys(errors).forEach(key => {
         const provider = this.refs[key];
         if (!provider) return;
+        let errorArr = errors[key] || [];
+        errorArr = typeof errorArr === 'string' ? [errorArr] : errorArr;
 
-        provider.setErrors(errors[key] || []);
+        provider.setErrors(errorArr);
       });
 
       this.observers.forEach((observer: any) => {
