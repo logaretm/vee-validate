@@ -298,7 +298,7 @@ You can also leave out messages from the `validator` function and instead use th
 
 ```js{5}
 extend('odd', {
-  validator: value => {
+  validate: value => {
     return value % 2 !== 0;
   },
   message: 'This field must be an odd number'
