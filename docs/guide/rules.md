@@ -121,7 +121,7 @@ VeeValidate offers common validators that will cover most apps needs:
   <li><a href="#email">email <Badge text="Inferred" type="tip"/></a></li>
   <li><a href="#ext">ext</a></li>
   <li><a href="#image">image</a></li>
-  <li><a href="#oneOf">oneOf</a></li>
+  <li><a href="#oneof">oneOf</a></li>
   <li><a href="#integer">integer</a></li>
   <li><a href="#is">is</a></li>
   <li><a href="#is-not">is_not</a></li>
