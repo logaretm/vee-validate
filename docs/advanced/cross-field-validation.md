@@ -153,7 +153,7 @@ Assuming you have also these fields:
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 
-<ValidationProvider vid="maxValue name="Min Value" rules="required" v-slot="{ errors }">
+<ValidationProvider vid="maxValue" name="Min Value" rules="required" v-slot="{ errors }">
   <input type="number" v-model="min">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
