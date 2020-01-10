@@ -6,12 +6,11 @@ const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
+jest.useFakeTimers();
+
 async function flush() {
   await flushPromises();
-
-  return new Promise(resolve => {
-    setTimeout(resolve, 50);
-  });
+  jest.runAllTimers();
 }
 
 const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required';
@@ -280,6 +279,7 @@ test('exposes nested observers state', async () => {
   const input = wrapper.find('input');
   input.setValue('1');
   await flush();
+  await flush();
 
   expect(wrapper.find('p').text()).toContain('The {field} field may only contain alphabetic characters');
 });
@@ -308,8 +308,10 @@ test('validates and resets nested observers', async () => {
   expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
   await (wrapper.vm.$refs.obs as any).validate();
   await flush();
+  await flush();
   expect(wrapper.find('p').text()).toContain(DEFAULT_REQUIRED_MESSAGE);
   await (wrapper.vm.$refs.obs as any).reset();
+  await flush();
   await flush();
   expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
 });
@@ -335,6 +337,7 @@ test('merges nested observers state', async () => {
     { localVue: Vue, sync: false }
   );
 
+  await flush();
   await flush();
   expect(wrapper.find('p').text()).toContain(`name`); // nested observer is mounted.
   wrapper.setData({
