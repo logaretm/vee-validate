@@ -67,7 +67,8 @@
   "eslintIgnore": [
     "locale",
     "dist",
-    "scripts"
+    "scripts",
+    "coverage"
   ],
   "husky": {
     "hooks": {
