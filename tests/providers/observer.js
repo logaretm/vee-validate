@@ -369,6 +369,7 @@ test('merges nested observers state', async () => {
   );
 
   await flush();
+  await flush();
   expect(wrapper.find('p').text()).toContain(`name`); // nested observer is mounted.
   wrapper.setData({
     isMounted: false
