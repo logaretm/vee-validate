@@ -128,39 +128,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       16
     );
 
-    this.$watch(() => {
-      const vms = [...values(this.refs), ...this.observers];
-      let errors: ObserverErrors = {};
-      const flags: ValidationFlags = createObserverFlags();
-      let fields: Record<string, ObserverField> = {};
-
-      const length = vms.length;
-      for (let i = 0; i < length; i++) {
-        const vm = vms[i];
-
-        // validation provider
-        if (Array.isArray(vm.errors)) {
-          errors[vm.id] = vm.errors;
-          fields[vm.id] = {
-            id: vm.id,
-            name: vm.name,
-            failedRules: vm.failedRules,
-            ...vm.flags
-          };
-          continue;
-        }
-
-        // Nested observer, merge errors and fields
-        errors = { ...errors, ...vm.errors };
-        fields = { ...fields, ...vm.fields };
-      }
-
-      FLAGS_STRATEGIES.forEach(([flag, method]) => {
-        flags[flag] = vms[method](vm => vm.flags[flag]);
-      });
-
-      return { errors, flags, fields };
-    }, onChange as any);
+    this.$watch(computeObserverState, onChange as any);
   },
   activated() {
     register(this);
@@ -177,7 +145,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     return this.slim && children.length <= 1 ? children[0] : h(this.tag, { on: this.$listeners }, children);
   },
   methods: {
-    subscribe(subscriber: any, kind = 'provider') {
+    observe(subscriber: any, kind = 'provider') {
       if (kind === 'observer') {
         this.observers.push(subscriber);
         return;
@@ -185,7 +153,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
 
       this.refs = { ...this.refs, ...{ [subscriber.id]: subscriber } };
     },
-    unsubscribe(id: string, kind = 'provider') {
+    unobserve(id: string, kind = 'provider') {
       if (kind === 'provider') {
         const provider = this.refs[id];
         if (!provider) {
@@ -222,12 +190,14 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
     reset() {
       return [...values(this.refs), ...this.observers].forEach(ref => ref.reset());
     },
-    setErrors(errors: Record<string, string[]>) {
+    setErrors(errors: Record<string, string[] | string>) {
       Object.keys(errors).forEach(key => {
         const provider = this.refs[key];
         if (!provider) return;
+        let errorArr = errors[key] || [];
+        errorArr = typeof errorArr === 'string' ? [errorArr] : errorArr;
 
-        provider.setErrors(errors[key] || []);
+        provider.setErrors(errorArr);
       });
 
       this.observers.forEach((observer: any) => {
@@ -241,13 +211,13 @@ type ObserverInstance = InstanceType<typeof ValidationObserver>;
 
 function unregister(vm: ObserverInstance) {
   if (vm.$_veeObserver) {
-    vm.$_veeObserver.unsubscribe(vm.id, 'observer');
+    vm.$_veeObserver.unobserve(vm.id, 'observer');
   }
 }
 
 function register(vm: ObserverInstance) {
   if (vm.$_veeObserver) {
-    vm.$_veeObserver.subscribe(vm, 'observer');
+    vm.$_veeObserver.observe(vm, 'observer');
   }
 }
 
@@ -270,4 +240,38 @@ function createObserverFlags() {
     valid: true,
     invalid: false
   };
+}
+
+function computeObserverState(this: ObserverInstance) {
+  const vms = [...values(this.refs), ...this.observers];
+  let errors: ObserverErrors = {};
+  const flags: ValidationFlags = createObserverFlags();
+  let fields: Record<string, ObserverField> = {};
+
+  const length = vms.length;
+  for (let i = 0; i < length; i++) {
+    const vm = vms[i];
+
+    // validation provider
+    if (Array.isArray(vm.errors)) {
+      errors[vm.id] = vm.errors;
+      fields[vm.id] = {
+        id: vm.id,
+        name: vm.name,
+        failedRules: vm.failedRules,
+        ...vm.flags
+      };
+      continue;
+    }
+
+    // Nested observer, merge errors and fields
+    errors = { ...errors, ...vm.errors };
+    fields = { ...fields, ...vm.fields };
+  }
+
+  FLAGS_STRATEGIES.forEach(([flag, method]) => {
+    flags[flag] = vms[method](vm => vm.flags[flag]);
+  });
+
+  return { errors, flags, fields };
 }

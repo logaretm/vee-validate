@@ -215,7 +215,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
   },
   beforeDestroy() {
     // cleanup reference.
-    this.$_veeObserver.unsubscribe(this.id);
+    this.$_veeObserver.unobserve(this.id);
   },
   activated() {
     this.isActive = true;
@@ -240,6 +240,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       const flags = createFlags();
       flags.required = this.isRequired;
       this.setFlags(flags);
+      this.failedRules = {};
       this.validateSilent();
     },
     async validate(...args: any[]): Promise<ValidationResult> {
@@ -377,20 +378,20 @@ function updateRenderingContextRefs(vm: ProviderInstance) {
 
   // vid was changed.
   if (id !== providedId && vm.$_veeObserver.refs[id] === vm) {
-    vm.$_veeObserver.unsubscribe(id);
+    vm.$_veeObserver.unobserve(id);
   }
 
   vm.id = providedId;
-  vm.$_veeObserver.subscribe(vm);
+  vm.$_veeObserver.observe(vm);
 }
 
 function createObserver(): VeeObserver {
   return {
     refs: {},
-    subscribe(vm: ProviderInstance) {
+    observe(vm: ProviderInstance) {
       this.refs[vm.id] = vm;
     },
-    unsubscribe(id: string) {
+    unobserve(id: string) {
       delete this.refs[id];
     }
   };

@@ -68,8 +68,8 @@ export interface ValidationFlags {
 
 export interface VeeObserver {
   refs: Record<string, ProviderInstance>;
-  subscribe(provider: any, type?: 'provider' | 'observer'): void;
-  unsubscribe(id: string, type?: 'provider' | 'observer'): void;
+  observe(provider: any, type?: 'provider' | 'observer'): void;
+  unobserve(id: string, type?: 'provider' | 'observer'): void;
 }
 
 export interface InactiveRefCache {

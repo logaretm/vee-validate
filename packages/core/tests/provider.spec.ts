@@ -556,9 +556,10 @@ test('resets validation state', async () => {
       },
       template: `
         <div>
-          <ValidationProvider rules="required" ref="provider" v-slot="{ errors }">
+          <ValidationProvider rules="required" ref="provider" v-slot="{ errors, failedRules }">
             <TextInput v-model="value" ref="input"></TextInput>
             <span id="error">{{ errors && errors[0] }}</span>
+            <span id="failed">{{ failedRules.required }}</span>
           </ValidationProvider>
         </div>
       `
@@ -570,15 +571,18 @@ test('resets validation state', async () => {
   const input = wrapper.find('#input');
 
   expect(error.text()).toBe('');
+  expect(wrapper.find('#failed').text()).toBe('');
 
   input.setValue('');
   await flushPromises();
 
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+  expect(wrapper.find('#failed').text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 
   (wrapper.vm as any).$refs.provider.reset();
   await flushPromises();
   expect(error.text()).toBe('');
+  expect(wrapper.find('#failed').text()).toBe('');
 });
 
 test('setting bails prop to false disables fast exit', async () => {

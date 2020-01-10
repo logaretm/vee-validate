@@ -4,7 +4,7 @@ import { between, confirmed } from '@vee-validate/rules';
 describe('target field placeholder', () => {
   extend('confirmed', {
     ...confirmed,
-    message: '{_field_} must match {_target_}'
+    message: '{_field_} must match {target}'
   });
 
   const names = { foo: 'Foo', bar: 'Bar', baz: 'Baz' };
@@ -34,7 +34,7 @@ describe('target field placeholder', () => {
 
   test('works for multiple targets', async () => {
     extend('sum_of', {
-      message: '{_field_} must be the sum of {_aTarget_} and {_bTarget_}',
+      message: '{_field_} must be the sum of {a} and {b}',
       // eslint-disable-next-line prettier/prettier
       params: [
         { name: 'a', isTarget: true },
@@ -92,10 +92,12 @@ describe('cross-field syntax', () => {
 
     test('with options.customMessages function', async () => {
       const customMessages = {
-        between(_: string, { min, _maxValueTarget_ }: Record<string, string>) {
-          return `Must be more than ${min} and less than ${_maxValueTarget_}`;
+        between(_: string, { min, max }: Record<string, any>) {
+          return `Must be more than ${min} and less than ${max}`;
         }
       };
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       const result = await validate(values.value, rules, { ...options, customMessages, names });
       expect(result.errors[0]).toEqual('Must be more than 0 and less than Max Value');

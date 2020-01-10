@@ -1,5 +1,6 @@
 import { RuleContainer } from './extend';
-import { interpolate, isEmptyArray, isLocator, isNullOrUndefined, isObject } from './utils';
+import { interpolate, isEmptyArray, isLocator, isNullOrUndefined, isObject, normalizeRules } from './utils';
+import { getConfig } from './config';
 import {
   RuleParamConfig,
   RuleParamSchema,
@@ -8,8 +9,6 @@ import {
   ValidationResult,
   ValidationRuleSchema
 } from './types';
-import { getConfig } from './config';
-import { normalizeRules } from './utils/rules';
 
 interface FieldContext {
   name: string;
@@ -201,14 +200,13 @@ async function _test(field: FieldContext, value: any, rule: { name: string; para
   }
 
   if (!isObject(result)) {
-    result = { valid: result, data: {} };
+    result = { valid: result };
   }
 
   return {
     valid: result.valid,
     required: result.required,
-    data: result.data || {},
-    error: result.valid ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params, result.data)
+    error: result.valid ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params)
   };
 }
 
@@ -220,15 +218,13 @@ function _generateFieldError(
   value: any,
   ruleSchema: ValidationRuleSchema,
   ruleName: string,
-  params: Record<string, any>,
-  data?: Record<string, any>
+  params: Record<string, any>
 ) {
   const message = field.customMessages[ruleName] || ruleSchema.message;
   const ruleTargets = _getRuleTargets(field, ruleSchema, ruleName);
   const { userTargets, userMessage } = _getUserTargets(field, ruleSchema, ruleName, message);
   const values = {
     ...(params || {}),
-    ...(data || {}),
     _field_: field.name,
     _value_: value,
     _rule_: ruleName,
@@ -267,22 +263,15 @@ function _getRuleTargets(
 
   for (let index = 0; index < params.length; index++) {
     const param: RuleParamConfig = params[index] as RuleParamConfig;
-    if (!param.isTarget) {
+    let key = ruleConfig[index];
+    if (!isLocator(key)) {
       continue;
     }
 
-    let key = ruleConfig[index];
-    if (isLocator(key)) {
-      key = key.__locatorRef;
-    }
-
+    key = key.__locatorRef;
     const name = field.names[key] || key;
-    if (numTargets === 1) {
-      names._target_ = name;
-      break;
-    }
-
-    names[`_${param.name}Target_`] = name;
+    names[param.name] = name;
+    names[`_${param.name}_`] = field.crossTable[key];
   }
 
   return names;
@@ -319,15 +308,8 @@ function _getUserTargets(
 
     // grab the name of the target
     const name = rule.__locatorRef;
-    const placeholder = `_${name}Target_`;
-    userTargets[placeholder] = field.names[name] || name;
-    userTargets[name] = field.names[name] || name;
-
-    // update template if it's a string
-    if (typeof userMessage === 'string') {
-      const rx = new RegExp(`{${param.name}}`, 'g');
-      userMessage = userMessage.replace(rx, `{${placeholder}}`);
-    }
+    userTargets[param.name] = field.names[name] || name;
+    userTargets[`_${param.name}_`] = field.crossTable[name];
   });
 
   return {

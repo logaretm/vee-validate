@@ -13,7 +13,6 @@ export type ValidationRuleFunction = (
 ) => boolean | string | ValidationRuleResult | Promise<boolean | string | ValidationRuleResult>;
 
 export interface ValidationRuleResult {
-  data?: Record<string, any>;
   valid: boolean;
   required?: boolean;
 }

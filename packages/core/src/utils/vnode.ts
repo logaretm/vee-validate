@@ -252,7 +252,7 @@ function resolveTextualRules(vnode: VNode): Record<string, any> {
 }
 
 export function resolveRules(vnode: VNode) {
-  const htmlTags = ['input', 'select'];
+  const htmlTags = ['input', 'select', 'textarea'];
   const attrs = vnode.data?.attrs;
 
   if (!includes(htmlTags, vnode.tag) || !attrs) {

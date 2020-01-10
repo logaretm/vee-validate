@@ -1,6 +1,6 @@
 import { isCallable, merge, interpolate } from './utils';
 import { ValidationMessageTemplate } from './types';
-import { getConfig, setConfig } from './config';
+import { setConfig } from './config';
 import { localeChanged } from './localeChanged';
 
 interface PartialI18nDictionary {
