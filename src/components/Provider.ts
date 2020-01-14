@@ -123,8 +123,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     },
     'flags.valid': {
       immediate: true,
-      handler(valid) {
-        this.$emit('valid', valid);
+      handler(valid, oldValue) {
+        if (this.immediate || valid !== oldValue) {
+          this.$emit('valid', valid);
+        }
       },
     }
   },
