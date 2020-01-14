@@ -213,8 +213,12 @@ test('emits valid on state change', async () => {
     { localVue: Vue, sync: false }
   );
 
-  wrapper.value = 'abc';
-  wrapper.value = '';
+  const input = wrapper.find('input');
+
+  input.element.value = 'abc';
+  input.trigger('input');
+  input.element.value = '';
+  input.trigger('input');
 
   // flush the pending validation.
   await flushPromises();
@@ -248,7 +252,10 @@ test('emits valid on state change with immediate', async () => {
     { localVue: Vue, sync: false }
   );
 
-  wrapper.value = 'abc';
+  const input = wrapper.find('input');
+
+  input.element.value = 'abc';
+  input.trigger('input');
 
   // flush the pending validation.
   await flushPromises();
