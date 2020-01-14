@@ -143,5 +143,7 @@ Those are the only methods meant for public usage, other methods that may exist 
 | setErrors      |     `string[]`     |           `void`            | Updates the field errors and flags if errors length is > 1                                                                                  |
 
 ## Events
+| Name           |       Value           | Description                                                                                                                |
+| -------------- | :----------------------: | --------------------------------------------------------------------------------------------------------------------------|
+| valid       |   `Boolean`<br>`true`:&nbsp;valid<br>`false`:&nbsp;invalid  | This event is fired every time the validation state changes and sends the current state of validation. |
 
-The validation provider does not emit any events at this time.
