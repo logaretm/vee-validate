@@ -195,6 +195,75 @@ test('validates fields initially using the immediate prop', async () => {
   expect(error.text()).toContain(DEFAULT_REQUIRED_MESSAGE);
 });
 
+test('emits valid on state change', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <div>
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  wrapper.value = 'abc';
+  wrapper.value = '';
+
+  // flush the pending validation.
+  await flushPromises();
+
+  // assert event has been emitted
+  expect(wrapper.emitted().valid).toBeTruthy()
+
+  // assert event count
+  expect(wrapper.emitted().valid.length).toBe(2)
+
+  // assert event payload
+  expect(wrapper.emitted().valid[0]).toEqual([true])
+  expect(wrapper.emitted().valid[1]).toEqual([false])
+})
+
+test('emits valid on state change with immediate', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <div>
+          <ValidationProvider :immediate="true" rules="required" v-slot="{ errors }">
+            <input v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  wrapper.value = 'abc';
+
+  // flush the pending validation.
+  await flushPromises();
+
+  // assert event has been emitted
+  expect(wrapper.emitted().valid).toBeTruthy()
+
+  // assert event count
+  expect(wrapper.emitted().valid.length).toBe(2)
+
+  // assert event payload
+  expect(wrapper.emitted().valid[0]).toEqual([false])
+  expect(wrapper.emitted().valid[1]).toEqual([true])
+})
+
 test('validates on rule change if the field was validated before', async () => {
   const wrapper = mount(
     {
