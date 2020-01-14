@@ -203,7 +203,7 @@ test('emits valid on state change', async () => {
       }),
       template: `
         <div>
-          <ValidationProvider ref="provider" rules="required" v-slot="{ errors }">
+          <ValidationProvider @valid="(v) => $emit('valid', v)" rules="required" v-slot="{ errors }">
             <input v-model="value" type="text">
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
@@ -219,17 +219,15 @@ test('emits valid on state change', async () => {
   // flush the pending validation.
   await flushPromises();
 
-  const provider = wrapper.vm.$refs.provider;
-
   // assert event has been emitted
-  expect(provider.emitted().valid).toBeTruthy()
+  expect(wrapper.emitted().valid).toBeTruthy()
 
   // assert event count
-  expect(provider.emitted().valid.length).toBe(2)
+  expect(wrapper.emitted().valid.length).toBe(2)
 
   // assert event payload
-  expect(provider.emitted().valid[0]).toEqual([true])
-  expect(provider.emitted().valid[1]).toEqual([false])
+  expect(wrapper.emitted().valid[0]).toEqual([true])
+  expect(wrapper.emitted().valid[1]).toEqual([false])
 })
 
 test('emits valid on state change with immediate', async () => {
@@ -240,7 +238,7 @@ test('emits valid on state change with immediate', async () => {
       }),
       template: `
         <div>
-          <ValidationProvider :immediate="true" rules="required" v-slot="{ errors }">
+          <ValidationProvider @valid="(v) => $emit('valid', v)" :immediate="true" rules="required" v-slot="{ errors }">
             <input v-model="value" type="text">
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
@@ -255,17 +253,15 @@ test('emits valid on state change with immediate', async () => {
   // flush the pending validation.
   await flushPromises();
 
-  const provider = wrapper.vm.$refs.provider;
-
   // assert event has been emitted
-  expect(provider.emitted().valid).toBeTruthy()
+  expect(wrapper.emitted().valid).toBeTruthy()
 
   // assert event count
-  expect(provider.emitted().valid.length).toBe(2)
+  expect(wrapper.emitted().valid.length).toBe(2)
 
   // assert event payload
-  expect(provider.emitted().valid[0]).toEqual([false])
-  expect(provider.emitted().valid[1]).toEqual([true])
+  expect(wrapper.emitted().valid[0]).toEqual([false])
+  expect(wrapper.emitted().valid[1]).toEqual([true])
 })
 
 test('validates on rule change if the field was validated before', async () => {
