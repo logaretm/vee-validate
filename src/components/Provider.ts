@@ -120,7 +120,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       handler(val: any, oldVal: any) {
         this._needsValidation = !isEqual(val, oldVal);
       }
-    }
+    },
+    'flags.valid'(valid) {
+      this.$emit('valid', valid);
+    },
   },
   data,
   computed: {
