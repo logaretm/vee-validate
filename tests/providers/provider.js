@@ -219,7 +219,8 @@ test('emits valid on state change', async () => {
   // flush the pending validation.
   await flushPromises();
 
-  const provider = wrapper.$refs.provider;
+  const provider = wrapper.vm.$refs.provider;
+
   // assert event has been emitted
   expect(provider.emitted().valid).toBeTruthy()
 
@@ -254,7 +255,7 @@ test('emits valid on state change with immediate', async () => {
   // flush the pending validation.
   await flushPromises();
 
-  const provider = wrapper.$refs.provider;
+  const provider = wrapper.vm.$refs.provider;
 
   // assert event has been emitted
   expect(provider.emitted().valid).toBeTruthy()
