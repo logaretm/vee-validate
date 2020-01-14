@@ -121,9 +121,12 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         this._needsValidation = !isEqual(val, oldVal);
       }
     },
-    'flags.valid'(valid) {
-      this.$emit('valid', valid);
-    },
+    'flags.valid': {
+      immediate: true,
+      handler(valid) {
+        this.$emit('valid', valid);
+      },
+    }
   },
   data,
   computed: {
