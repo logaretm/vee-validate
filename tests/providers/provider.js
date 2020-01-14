@@ -217,6 +217,10 @@ test('emits valid on state change', async () => {
 
   input.element.value = 'abc';
   input.trigger('input');
+  
+  // flush the pending validation.
+  await flushPromises();
+  
   input.element.value = '';
   input.trigger('input');
 
