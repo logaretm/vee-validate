@@ -28,11 +28,7 @@ setInteractionMode('lazy');
 You can alternatively set it per `ValidationProvider` by passing a `mode` prop.
 
 ```vue{2}
-<ValidationProvider
-  mode="lazy"
-  rules="required"
-  v-slot="{ errors }"
->
+<ValidationProvider mode="lazy" rules="required" v-slot="{ errors }">
   <!-- Some input -->
 </ValidationProvider>
 ```
@@ -63,7 +59,7 @@ This is arguably a better UX for your users since it isn't aggressive initially.
 
 Behaves like **lazy** when the field wasn't interacted with yet, and if it is invalid it will be **aggressive** until the input becomes valid again.
 
-@[example](mode-passive)
+@[example](mode-eager)
 
 ## Custom Modes
 
@@ -96,22 +92,18 @@ const eager = ({ errors }) => {
 You can pass the function directly to the `mode` prop on the `ValidationProvider`:
 
 ```vue{2,16-24}
-<ValidationProvider
-  :mode="custom"
-  rules="required"
-  v-slot="{ errors }"
->
+<ValidationProvider :mode="custom" rules="required" v-slot="{ errors }">
   <input v-model="value" type="text" placeholder="type something">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
 
 <script>
 export default {
- data: () => ({
+  data: () => ({
     value: ''
   }),
   methods: {
-    custom (context) {
+    custom(context) {
       if (context.value === 'yes') {
         return {
           on: ['input']
@@ -130,7 +122,7 @@ Or you can set it globally with `setInteractionMode`:
 ```js
 import { setInteractionMode } from 'vee-validate';
 
-setInteractionMode('custom', (context) => {
+setInteractionMode('custom', context => {
   if (context.value === 'yes') {
     return {
       on: ['input']
@@ -142,5 +134,5 @@ setInteractionMode('custom', (context) => {
 ```
 
 :::tip Note
-  The `mode` prop takes precedence over the globally configured mode, using `setInteraction` in runtime will only affect the new Providers created after its call.
+The `mode` prop takes precedence over the globally configured mode, using `setInteraction` in runtime will only affect the new Providers created after its call.
 :::
