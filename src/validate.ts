@@ -221,7 +221,7 @@ function _generateFieldError(
   ruleName: string,
   params: Record<string, any>
 ) {
-  const message = field.customMessages[ruleName] || ruleSchema.message;
+  const message = field.customMessages[ruleName] ?? ruleSchema.message;
   const ruleTargets = _getRuleTargets(field, ruleSchema, ruleName);
   const { userTargets, userMessage } = _getUserTargets(field, ruleSchema, ruleName, message);
   const values = {
