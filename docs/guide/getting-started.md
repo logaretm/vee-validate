@@ -16,17 +16,17 @@ You can install this plugin via [npm](#npm) or via a [CDN](#cdn).
 ### npm
 
 ```bash
-npm install vee-validate --save
+npm install vee-validate@"<3.0.0" --save
 ```
 
 ### CDN
 
 ```html
   <!-- jsdelivr cdn -->
-  <script src="https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vee-validate@<3.0.0/dist/vee-validate.js"></script>
 
   <!-- unpkg -->
-  <script src="https://unpkg.com/vee-validate@latest"></script>
+  <script src="https://unpkg.com/vee-validate@<3.0.0"></script>
 ```
 
 ## Usage
