@@ -10,13 +10,7 @@ The following examples will use vue-test-utils API to conduct the tests.
 
 ## Asynchronous Testing
 
-VeeValidate is primarily asynchronous, so you would need to disable vue-test-utils sync mode. And you will use flush-promises to wait for the updated to take effect.
-
-To disable the sync mode, when mounting the component set the sync option to false in the mounting options.
-
-```js
-const wrapper = mount(MyComponent, { sync: false });
-```
+VeeValidate is primarily asynchronous, so you will have to use flush-promises to wait for UI updates to take effect.
 
 After triggering an event like an input event, make sure to call flushPromises before checking the UI for changes:
 
