@@ -762,6 +762,35 @@ test('validation can be debounced', async () => {
   expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
 });
 
+test('reset ignores pending validation result', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationProvider ref="provider" rules="required" :debounce="50" v-slot="{ errors }">
+          <input v-model="value" type="text">
+          <p>{{ errors[0] }}</p>
+        </ValidationProvider>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const input = wrapper.find('input');
+  const error = wrapper.find('p');
+
+  input.setValue('');
+  await sleep(40);
+  await flushPromises();
+  wrapper.vm.$refs.provider.reset();
+  expect(error.text()).toBe('');
+  await sleep(10);
+  await flushPromises();
+  expect(error.text()).toBe('');
+});
+
 test('avoids race conditions between successive validations', async () => {
   // A decreasing timeout (the most recent validation will finish before new ones).
   extend('longRunning', {

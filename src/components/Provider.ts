@@ -7,7 +7,7 @@ import { getConfig, ValidationClassMap } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
 import { ProviderInstance, ValidationFlags, ValidationResult, VeeObserver, VNodeWithVeeContext } from '../types';
-import { addListeners, computeModeSetting, createValidationCtx } from './common';
+import { addListeners, computeModeSetting, createValidationCtx, triggerThreadSafeValidation } from './common';
 import { EVENT_BUS } from '../localeChanged';
 
 let PROVIDER_COUNTER = 0;
@@ -19,6 +19,7 @@ type withProviderPrivates = VueConstructor<
     _inputEventName: string;
     _ignoreImmediate: boolean;
     _pendingValidation?: Promise<ValidationResult>;
+    _pendingReset?: boolean;
     _resolvedRules: any;
     _regenerateMap?: Record<string, () => string>;
     _veeWatchers: Record<string, Function>;
@@ -242,16 +243,18 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       this.setFlags(flags);
       this.failedRules = {};
       this.validateSilent();
+      this._pendingValidation = undefined;
+      this._pendingReset = true;
+      setTimeout(() => {
+        this._pendingReset = false;
+      }, this.debounce);
     },
     async validate(...args: any[]): Promise<ValidationResult> {
       if (args.length > 0) {
         this.syncValue(args[0]);
       }
 
-      const result = await this.validateSilent();
-      this.applyResult(result);
-
-      return result;
+      return triggerThreadSafeValidation(this as ProviderInstance);
     },
     async validateSilent(): Promise<ValidationResult> {
       this.setFlags({ pending: true });

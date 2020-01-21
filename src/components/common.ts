@@ -83,7 +83,13 @@ export function onRenderUpdate(vm: ProviderInstance, value: any | undefined) {
     return;
   }
 
-  const validate = () => vm.validateSilent().then(vm.immediate || vm.flags.validated ? vm.applyResult : identity);
+  const validate = () => {
+    if (vm.immediate || vm.flags.validated) {
+      return triggerThreadSafeValidation(vm);
+    }
+
+    vm.validateSilent();
+  };
 
   if (vm.initialized) {
     validate();
@@ -97,6 +103,20 @@ export function computeModeSetting(ctx: ProviderInstance) {
   const compute = (isCallable(ctx.mode) ? ctx.mode : modes[ctx.mode]) as InteractionModeFactory;
 
   return compute(ctx);
+}
+
+export function triggerThreadSafeValidation(vm: ProviderInstance) {
+  const pendingPromise: Promise<ValidationResult> = vm.validateSilent();
+  // avoids race conditions between successive validations.
+  vm._pendingValidation = pendingPromise;
+  return pendingPromise.then(result => {
+    if (pendingPromise === vm._pendingValidation) {
+      vm.applyResult(result);
+      vm._pendingValidation = undefined;
+    }
+
+    return result;
+  });
 }
 
 // Creates the common handlers for a validatable context.
@@ -126,15 +146,11 @@ export function createCommonHandlers(vm: ProviderInstance) {
   if (!onValidate || vm.$veeDebounce !== vm.debounce) {
     onValidate = debounce(() => {
       vm.$nextTick(() => {
-        const pendingPromise: Promise<ValidationResult> = vm.validateSilent();
-        // avoids race conditions between successive validations.
-        vm._pendingValidation = pendingPromise;
-        pendingPromise.then(result => {
-          if (pendingPromise === vm._pendingValidation) {
-            vm.applyResult(result);
-            vm._pendingValidation = undefined;
-          }
-        });
+        if (!vm._pendingReset) {
+          triggerThreadSafeValidation(vm);
+        }
+
+        vm._pendingReset = false;
       });
     }, mode.debounce || vm.debounce);
 
