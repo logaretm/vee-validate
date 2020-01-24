@@ -1,4 +1,4 @@
-import Vue, { VNode } from 'vue';
+import Vue, { VNode, ComputedRef, Ref } from 'vue';
 import { ValidationProvider } from './components/Provider';
 import { RuleParamSchema, ValidationRuleFunction } from '@vee-validate/shared';
 
@@ -84,3 +84,26 @@ export type VNodeWithVeeContext = VNode & {
     $_veeObserver?: VeeObserver;
   };
 };
+
+export type Flag =
+  | 'untouched'
+  | 'touched'
+  | 'dirty'
+  | 'pristine'
+  | 'valid'
+  | 'invalid'
+  | 'passed'
+  | 'failed'
+  | 'validated'
+  | 'pending'
+  | 'required'
+  | 'changed';
+
+export interface FormController {
+  register(field: any): void;
+  values: ComputedRef<Record<string, any>>;
+  names: ComputedRef<Record<string, string>>;
+  fields: any;
+}
+
+export type MaybeReactive<T> = Ref<T> | T;
