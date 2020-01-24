@@ -54,7 +54,7 @@ const error = wrapper.vm.$refs.provider.errors[0];
 expect(error).toBeTruthy();
 ```
 
-While this test would work fine, it could fail easily, since `messages` is internal property and may change at anytime without notice and also if you decided to swap vee-validate for something else it will immediately break, you want to test your UI the way the user would use it.
+While this test would work fine, it could fail easily, since `errors` is internal property and may change at anytime without notice and also if you decided to swap vee-validate for something else it will immediately break, you want to test your UI the way the user would use it.
 
 So instead of checking the internal messages, let's describe what the user will actually experience via a short story and simulate that.
 
