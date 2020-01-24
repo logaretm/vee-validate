@@ -1,5 +1,5 @@
 {
-  "name": "@vee-validate/core",
+  "name": "vee-validate",
   "version": "4.0.0-alpha.0",
   "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
@@ -10,12 +10,6 @@
   "types": "dist/types/index.d.ts",
   "homepage": "https://logaretm.github.io/vee-validate/",
   "repository": "https://github.com/logaretm/vee-validate",
-  "scripts": {
-    "test": "jest",
-    "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",
-    "cover": "jest --coverage",
-    "prepublishOnly": "npm run build && npm run ts:defs"
-  },
   "keywords": [
     "VueJS",
     "Vue",
