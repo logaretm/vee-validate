@@ -59,7 +59,7 @@
     "tslint-config-standard": "^9.0.0",
     "typescript": "^3.7.4",
     "uglify-js": "^3.7.4",
-    "vue": "^2.6.10",
+    "vue": "^3.0.0-alpha.1",
     "vue-server-renderer": "^2.6.10",
     "vue-template-compiler": "^2.6.10",
     "vuepress": "^1.2.0"

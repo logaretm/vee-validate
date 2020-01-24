@@ -2161,6 +2161,22 @@
     "@vue/babel-plugin-transform-vue-jsx" "^1.1.2"
     camelcase "^5.0.0"
 
+"@vue/compiler-core@3.0.0-alpha.1":
+  version "3.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@vue/compiler-core/-/compiler-core-3.0.0-alpha.1.tgz#963b2c19a5e882726242b32872068f6a23501cfc"
+  integrity sha512-TKWRUtPfeOQmm4fylfgjp5ENf0nWYuWp2nhzXXZdVn+upqNJNw9nX45WhQDSamyhB1inSyjsg/+jQq5FnUC/rQ==
+  dependencies:
+    acorn "^7.1.0"
+    estree-walker "^0.8.1"
+    source-map "^0.6.1"
+
+"@vue/compiler-dom@3.0.0-alpha.1":
+  version "3.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@vue/compiler-dom/-/compiler-dom-3.0.0-alpha.1.tgz#c928dd61f42d0b90e7e9e9d1dd0e8094475a25fe"
+  integrity sha512-3gEYW/G3FyQtpgARw/eVhfJPiUQchfRdpoRmkFZUDGpnqqw0fRr30u8Bm80JYajH5y3DgYOZbt6yIhy8enNPpw==
+  dependencies:
+    "@vue/compiler-core" "3.0.0-alpha.1"
+
 "@vue/component-compiler-utils@^3.0.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@vue/component-compiler-utils/-/component-compiler-utils-3.1.0.tgz#64cd394925f5af1f9c3228c66e954536f5311857"
@@ -2175,6 +2191,25 @@
     prettier "^1.18.2"
     source-map "~0.6.1"
     vue-template-es2015-compiler "^1.9.0"
+
+"@vue/reactivity@3.0.0-alpha.1":
+  version "3.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@vue/reactivity/-/reactivity-3.0.0-alpha.1.tgz#c4d858a97e4a2f249dc15e32f9eaa515161fefc7"
+  integrity sha512-yhH5mZqCt5MCiAAtF9Tv7ofph8erpb54hX6nCBJHotOm/IuR4G4TpQcKs4m0LVsW8EIFjTrE4XI4ekuMqjCXeQ==
+
+"@vue/runtime-core@3.0.0-alpha.1":
+  version "3.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@vue/runtime-core/-/runtime-core-3.0.0-alpha.1.tgz#37fbee2a5b1703df194c2a12576f15af9f64d48e"
+  integrity sha512-oNDjcx/uR+98Omm7o651gwVnUfePh5JySR73ubeENnwZejMnShMwsNrJgLxgn6y5DzbPirIerPbFrXbFBQ9cJA==
+  dependencies:
+    "@vue/reactivity" "3.0.0-alpha.1"
+
+"@vue/runtime-dom@3.0.0-alpha.1":
+  version "3.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@vue/runtime-dom/-/runtime-dom-3.0.0-alpha.1.tgz#3b07954470e8b33aa22cd1c09c7c67ec567b2ab0"
+  integrity sha512-NOEg4cXykAZFmnBPFZs/ncJh1lXn3/j4VYD9YZn/myn905AxaWYslv71f0lh1eLgMw3yRh3W0Gi1P12U5D2iVA==
+  dependencies:
+    "@vue/runtime-core" "3.0.0-alpha.1"
 
 "@vue/server-test-utils@^1.0.0-beta.29":
   version "1.0.0-beta.30"
@@ -5424,6 +5459,11 @@ estree-walker@^0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/estree-walker/-/estree-walker-0.6.1.tgz#53049143f40c6eb918b23671d1fe3219f3a1b362"
   integrity sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w==
+
+estree-walker@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/estree-walker/-/estree-walker-0.8.1.tgz#6230ce2ec9a5cb03888afcaf295f97d90aa52b79"
+  integrity sha512-H6cJORkqvrNziu0KX2hqOMAlA2CiuAxHeGJXSIoKA/KLv229Dw806J3II6mKTm5xiDX1At1EXCfsOQPB+tMB+g==
 
 esutils@^1.1.6:
   version "1.1.6"
@@ -12958,6 +12998,14 @@ vue@^2.6.10:
   version "2.6.11"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.11.tgz#76594d877d4b12234406e84e35275c6d514125c5"
   integrity sha512-VfPwgcGABbGAue9+sfrD4PuwFar7gPb1yl1UK1MwXoQPAw0BKSqWfoYCT/ThFrdEVWoI51dBuyCoiNU9bZDZxQ==
+
+vue@^3.0.0-alpha.1:
+  version "3.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-3.0.0-alpha.1.tgz#142d45c56fc1f65c2773f4f577fc0242cbb39dab"
+  integrity sha512-6yLtH27wZtqYLXbd5M0kSbHAEClV66sih5CAQ8SCvV+9JUQMF//j1mMBzf2xdoJeOPZDkNpqooB85vyJxT8e3Q==
+  dependencies:
+    "@vue/compiler-dom" "3.0.0-alpha.1"
+    "@vue/runtime-dom" "3.0.0-alpha.1"
 
 vuepress-html-webpack-plugin@^3.2.0:
   version "3.2.0"
