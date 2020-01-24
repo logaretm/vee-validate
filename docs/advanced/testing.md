@@ -4,11 +4,26 @@ Testing is extremely important to give you confidence in your code. VeeValidate 
 
 This guide illustrates the caveats that you might encounter with vee-validate.
 
-TIP
+:::tip
+If you using `jest` to conduct your tests you need to add an exception for the `vee-validate/dist/rules` file, you can do by configuring `jest.config.js` like this:
 
-The following examples will use vue-test-utils API to conduct the tests.
+```
+transform: {
+    ...
+  'vee-validate/dist/rules': 'babel-jest',
+},
+transformIgnorePatterns: [
+  '<roodDir>/node_modules/(?!vee-validate/dist/rules)',
+],
+```
+
+:::
 
 ## Asynchronous Testing
+
+:::tip
+The following examples will use vue-test-utils API to conduct the tests.
+:::
 
 VeeValidate is primarily asynchronous, so you would need to disable vue-test-utils sync mode. And you will use flush-promises to wait for the updated to take effect.
 
