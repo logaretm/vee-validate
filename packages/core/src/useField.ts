@@ -1,6 +1,6 @@
 import { watch, ref, Ref, isRef, reactive, computed, onMounted, toRefs } from 'vue';
 import { validate } from './validate';
-import { Flag, FormController, ValidationResult, MaybeReactive } from './types';
+import { FormController, ValidationResult, MaybeReactive, FieldComposite } from './types';
 import { createFlags, normalizeRules, extractLocators } from './utils';
 
 interface FieldOptions {
@@ -9,7 +9,147 @@ interface FieldOptions {
   form?: FormController;
 }
 
-export function useFlags() {
+type RuleExpression = MaybeReactive<string | Record<string, any>>;
+
+export function useField(fieldName: string, rules: RuleExpression, opts?: FieldOptions): FieldComposite {
+  const { value, form, immediate } = useFieldOptions(opts);
+  const { flags, errors, failedRules, onBlur, onInput, reset, patch } = useValidationState(value);
+  const normalizedRules = computed(() => {
+    return normalizeRules(isRef(rules) ? rules.value : rules);
+  });
+
+  const validateField = async (): Promise<ValidationResult> => {
+    flags.pending.value = true;
+    const result = await validate(value.value, normalizedRules.value, {
+      name: fieldName,
+      values: form?.values.value ?? {},
+      names: form?.names.value ?? {}
+    });
+
+    patch(result);
+
+    return result;
+  };
+
+  watch(value, validateField, {
+    lazy: true,
+    deep: true
+  });
+
+  if (isRef(rules)) {
+    watch(rules, validateField, {
+      lazy: true,
+      deep: true
+    });
+  }
+
+  onMounted(() => {
+    validate(value.value, isRef(rules) ? rules.value : rules).then(result => {
+      if (immediate) {
+        patch(result);
+        return;
+      }
+
+      // Initial silent validation.
+      flags.valid.value = result.valid;
+      flags.invalid.value = !result.valid;
+    });
+  });
+
+  const field = {
+    vid: fieldName,
+    name: fieldName, // TODO: Custom field names
+    value: value,
+    ...flags,
+    errors,
+    failedRules,
+    reset,
+    validate: validateField,
+    onInput,
+    onBlur
+  };
+
+  useFormController(field, normalizedRules, form);
+
+  return field;
+}
+
+function useFieldOptions(opts: FieldOptions | undefined): FieldOptions {
+  const defaults = () => ({
+    value: ref(null),
+    immediate: false,
+    rules: ''
+  });
+
+  if (!opts) {
+    return defaults();
+  }
+
+  return {
+    ...defaults(),
+    ...(opts ?? {})
+  };
+}
+
+function useValidationState(value: Ref<any>) {
+  const errors: Ref<string[]> = ref([]);
+  const { onBlur, onInput, reset: resetFlags, ...flags } = useFlags();
+  const failedRules: Ref<Record<string, string>> = ref({});
+  const initialValue = value.value;
+
+  function patch(result: ValidationResult) {
+    errors.value = result.errors;
+    flags.changed.value = initialValue !== value.value;
+    flags.valid.value = result.valid;
+    flags.invalid.value = !result.valid;
+    flags.validated.value = true;
+    flags.pending.value = false;
+    failedRules.value = result.failedRules;
+  }
+
+  const reset = () => {
+    errors.value = [];
+    failedRules.value = {};
+    resetFlags();
+  };
+
+  return {
+    flags,
+    errors,
+    failedRules,
+    patch,
+    reset,
+    onBlur,
+    onInput
+  };
+}
+
+function useFormController(field: FieldComposite, rules: Ref<Record<string, any>>, form?: FormController) {
+  if (!form) return;
+
+  form.register(field);
+
+  const dependencies = computed(() => {
+    return Object.keys(rules.value).reduce((acc: string[], rule: string) => {
+      const deps = extractLocators(rules.value[rule]).map((dep: any) => dep.__locatorRef);
+      acc.push(...deps);
+
+      return acc;
+    }, []);
+  });
+
+  watch(dependencies, val => {
+    val.forEach(dep => {
+      watch(form.fields[dep].value, () => {
+        if (field.validated.value) {
+          field.validate();
+        }
+      });
+    });
+  });
+}
+
+function useFlags() {
   const flags = reactive(createFlags());
   const passed = computed(() => {
     return flags.valid && flags.validated;
@@ -29,139 +169,24 @@ export function useFlags() {
     flags.pristine = false;
   };
 
-  return {
-    ...toRefs(flags),
-    passed,
-    failed,
-    onInput,
-    onBlur
-  };
-}
-
-export function useField(fieldName: string, rules: MaybeReactive<string | Record<string, any>>, opts?: FieldOptions) {
-  const errors: Ref<string[]> = ref([]);
-  const failedRules: Ref<Record<string, string>> = ref({});
-  const { value, form, immediate } = normalizeOptions(opts);
-  const initialValue = value.value;
-  const { onBlur, onInput, ...flags } = useFlags();
-
-  function commitResult(result: ValidationResult) {
-    errors.value = result.errors;
-    flags.changed.value = initialValue !== value.value;
-    flags.valid.value = result.valid;
-    flags.invalid.value = !result.valid;
-    flags.validated.value = true;
-    flags.pending.value = false;
-    failedRules.value = result.failedRules;
-  }
-
-  const normalizedRules = computed(() => {
-    return normalizeRules(isRef(rules) ? rules.value : rules);
-  });
-
-  const validateField = async (): Promise<ValidationResult> => {
-    flags.pending.value = true;
-    const result = await validate(value.value, normalizedRules.value, {
-      name: fieldName,
-      values: form?.values.value ?? {},
-      names: form?.names.value ?? {}
-    });
-
-    commitResult(result);
-
-    return result;
-  };
-
-  watch(value, validateField, {
-    lazy: true,
-    deep: true
-  });
-
-  if (isRef(rules)) {
-    watch(rules, validateField, {
-      lazy: true,
-      deep: true
-    });
-  }
-
-  const reset = () => {
-    errors.value = [];
+  function reset() {
     const defaults = createFlags();
-    failedRules.value = {};
     Object.keys(flags).forEach((key: string) => {
       // Skip these, since they are computed anyways.
       if (key === 'passed' || key === 'failed') {
         return;
       }
 
-      (flags[key as Flag] as Ref<boolean>).value = defaults[key as Flag];
+      flags[key] = defaults[key];
     });
-  };
-
-  onMounted(() => {
-    validate(initialValue, isRef(rules) ? rules.value : rules).then(result => {
-      if (immediate) {
-        commitResult(result);
-        return;
-      }
-
-      // Initial silent validation.
-      flags.valid.value = result.valid;
-      flags.invalid.value = !result.valid;
-    });
-  });
-
-  const field = {
-    vid: fieldName,
-    value: value,
-    ...flags,
-    errors,
-    reset,
-    validate: validateField,
-    onInput,
-    onBlur
-  };
-
-  // eslint-disable-next-line no-unused-expressions
-  form?.register(field);
-
-  if (form) {
-    const dependencies = computed(() => {
-      return Object.keys(normalizedRules.value).reduce((acc: string[], rule: string) => {
-        const deps = extractLocators(normalizedRules.value[rule]).map((dep: any) => dep.__locatorRef);
-        acc.push(...deps);
-
-        return acc;
-      }, []);
-    });
-
-    watch(dependencies, val => {
-      val.forEach(dep => {
-        watch(form.fields[dep].value, () => {
-          if (flags.validated.value) {
-            validateField();
-          }
-        });
-      });
-    });
-  }
-
-  return field;
-}
-
-function normalizeOptions(opts: FieldOptions | undefined): FieldOptions {
-  const defaults = () => ({
-    value: ref(null),
-    immediate: false,
-    rules: ''
-  });
-
-  if (!opts) {
-    return defaults();
   }
 
   return {
-    ...defaults(),
-    ...(opts ?? {})
+    ...toRefs(flags),
+    passed,
+    failed,
+    onInput,
+    onBlur,
+    reset
   };
 }

@@ -13,9 +13,9 @@ export interface ValidationResult {
   regenerateMap?: Record<string, () => string>;
 }
 
-export type VueValidationContext = Vue & {
-  $_veeObserver?: VeeObserver;
-};
+// export type VueValidationContext = Vue & {
+//   $_veeObserver?: VeeObserver;
+// };
 
 export type Locator = { __locatorRef: string } & Function;
 
@@ -79,11 +79,11 @@ export interface InactiveRefCache {
   failedRules: Record<string, string>;
 }
 
-export type VNodeWithVeeContext = VNode & {
-  context: Vue & {
-    $_veeObserver?: VeeObserver;
-  };
-};
+// export type VNodeWithVeeContext = VNode & {
+//   context: Vue & {
+//     $_veeObserver?: VeeObserver;
+//   };
+// };
 
 export type Flag =
   | 'untouched'
@@ -98,6 +98,15 @@ export type Flag =
   | 'pending'
   | 'required'
   | 'changed';
+
+export interface FieldComposite extends Record<Flag, Ref<boolean>> {
+  validate(): Promise<ValidationResult>;
+  reset(): void;
+  onInput(): void;
+  onBlur(): void;
+  value: Ref<any>;
+  failedRules: Ref<Record<string, string>>;
+}
 
 export interface FormController {
   register(field: any): void;
