@@ -1119,6 +1119,46 @@ describe('HTML5 Rule inference', () => {
   });
 });
 
+test('field name can be resolved from name attribute', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({ val: '123' }),
+      template: `
+        <ValidationProvider v-slot="{ errors }" rules="required">
+          <input v-model="val" name="firstName" type="text">
+          <span id="error">{{ errors[0] }}</span>
+        </ValidationProvider>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+  await flushPromises();
+  wrapper.find('input').setValue('');
+  await flushPromises();
+
+  expect(wrapper.find('#error').text()).toBe(DEFAULT_REQUIRED_MESSAGE.replace('{field}', 'firstName'));
+});
+
+test('field name can be resolved from id attribute', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({ val: '123' }),
+      template: `
+        <ValidationProvider v-slot="{ errors }" rules="required">
+          <input v-model="val" id="firstName" type="text">
+          <span id="error">{{ errors[0] }}</span>
+        </ValidationProvider>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+  await flushPromises();
+  wrapper.find('input').setValue('');
+  await flushPromises();
+
+  expect(wrapper.find('#error').text()).toBe(DEFAULT_REQUIRED_MESSAGE.replace('{field}', 'firstName'));
+});
+
 test('array param collecting in the last parameter', async () => {
   extend('isOneOf', {
     validate(value, { val, isOneOf }) {

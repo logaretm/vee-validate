@@ -197,6 +197,10 @@ export function getInputEventName(vnode: VNode, model?: VNodeDirective): string 
   return 'change';
 }
 
+export function isHTMLNode(node: VNode) {
+  return includes(['input', 'select', 'textarea'], node.tag);
+}
+
 // TODO: Type this one properly.
 export function normalizeSlots(slots: any, ctx: Vue): VNode[] {
   const acc: VNode[] = [];
