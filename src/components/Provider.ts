@@ -1,7 +1,7 @@
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { normalizeRules, extractLocators } from '../utils/rules';
 import { normalizeEventValue } from '../utils/events';
-import { extractVNodes, normalizeChildren, resolveRules } from '../utils/vnode';
+import { extractVNodes, normalizeChildren, resolveRules, isHTMLNode } from '../utils/vnode';
 import { isCallable, isEqual, isNullOrUndefined, createFlags } from '../utils';
 import { getConfig, ValidationClassMap } from '../config';
 import { validate } from '../validate';
@@ -34,6 +34,7 @@ type withProviderPrivates = VueConstructor<
 
 function data() {
   const errors: string[] = [];
+  const fieldName: string | undefined = '';
 
   const defaultValues = {
     errors,
@@ -43,6 +44,7 @@ function data() {
     flags: createFlags(),
     failedRules: {},
     isActive: true,
+    fieldName,
     id: ''
   };
   return defaultValues;
@@ -208,6 +210,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         this._needsValidation = true;
       }
 
+      if (isHTMLNode(input)) {
+        this.fieldName = input.data?.attrs?.name || input.data?.attrs?.id;
+      }
+
       this._resolvedRules = resolved;
       addListeners(this, input);
     });
@@ -267,7 +273,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       });
 
       const result = await validate(this.value, rules, {
-        name: this.name,
+        name: this.name || this.fieldName,
         ...createLookup(this),
         bails: this.bails,
         skipIfEmpty: this.skipIfEmpty,
@@ -363,6 +369,10 @@ function extractId(vm: ProviderInstance): string {
 
   if (vm.id) {
     return vm.id;
+  }
+
+  if (vm.fieldName) {
+    return vm.fieldName;
   }
 
   PROVIDER_COUNTER++;
