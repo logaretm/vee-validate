@@ -342,7 +342,7 @@ To display the field name, you set the `name` prop on the validation provider:
 
 Additionally, the field name can be automatically picked up from `name` or `id` attributes on HTML5 nodes if not specified already in the `ValidationProvider`'s `name` prop.
 
-Here since a `name` prop is not provided, vee-validate uses the `name` attribute on the input tag as a field name.
+Here since a `name` prop is not set, vee-validate uses the `name` attribute on the input tag as a field name.
 
 ```vue{5}
 <ValidationProvider
@@ -354,7 +354,7 @@ Here since a `name` prop is not provided, vee-validate uses the `name` attribute
 </ValidationProvider>
 ```
 
-Here since a `name` prop is not provided nor a `name` attribute on the input, vee-validate uses the `id` attribute on the input tag as a field name.
+Here since a `name` prop is not set nor a `name` attribute on the input, vee-validate uses the `id` attribute on the input tag as a field name.
 
 ```vue{5}
 <ValidationProvider
