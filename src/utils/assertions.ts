@@ -72,7 +72,3 @@ export function isCallable(fn: unknown): fn is Function {
 export function isLocator(value: unknown): value is Locator {
   return isCallable(value) && !!(value as any).__locatorRef;
 }
-
-export function isTarget(value: unknown): boolean {
-  return typeof value === 'string' && /^@\w+/.test(value);
-}
