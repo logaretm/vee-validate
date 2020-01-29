@@ -1,13 +1,13 @@
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { normalizeRules, extractLocators } from '../utils/rules';
 import { normalizeEventValue } from '../utils/events';
-import { extractVNodes, normalizeChildren, resolveRules } from '../utils/vnode';
+import { extractVNodes, normalizeChildren, resolveRules, isHTMLNode } from '../utils/vnode';
 import { isCallable, isEqual, isNullOrUndefined, createFlags } from '../utils';
 import { getConfig, ValidationClassMap } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
 import { ProviderInstance, ValidationFlags, ValidationResult, VeeObserver, VNodeWithVeeContext } from '../types';
-import { addListeners, computeModeSetting, createValidationCtx } from './common';
+import { addListeners, computeModeSetting, createValidationCtx, triggerThreadSafeValidation } from './common';
 import { EVENT_BUS } from '../localeChanged';
 
 let PROVIDER_COUNTER = 0;
@@ -19,6 +19,7 @@ type withProviderPrivates = VueConstructor<
     _inputEventName: string;
     _ignoreImmediate: boolean;
     _pendingValidation?: Promise<ValidationResult>;
+    _pendingReset?: boolean;
     _resolvedRules: any;
     _regenerateMap?: Record<string, () => string>;
     _veeWatchers: Record<string, Function>;
@@ -33,6 +34,7 @@ type withProviderPrivates = VueConstructor<
 
 function data() {
   const errors: string[] = [];
+  const fieldName: string | undefined = '';
 
   const defaultValues = {
     errors,
@@ -42,6 +44,7 @@ function data() {
     flags: createFlags(),
     failedRules: {},
     isActive: true,
+    fieldName,
     id: ''
   };
   return defaultValues;
@@ -207,6 +210,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         this._needsValidation = true;
       }
 
+      if (isHTMLNode(input)) {
+        this.fieldName = input.data?.attrs?.name || input.data?.attrs?.id;
+      }
+
       this._resolvedRules = resolved;
       addListeners(this, input);
     });
@@ -242,16 +249,18 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       this.setFlags(flags);
       this.failedRules = {};
       this.validateSilent();
+      this._pendingValidation = undefined;
+      this._pendingReset = true;
+      setTimeout(() => {
+        this._pendingReset = false;
+      }, this.debounce);
     },
     async validate(...args: any[]): Promise<ValidationResult> {
       if (args.length > 0) {
         this.syncValue(args[0]);
       }
 
-      const result = await this.validateSilent();
-      this.applyResult(result);
-
-      return result;
+      return triggerThreadSafeValidation(this as ProviderInstance);
     },
     async validateSilent(): Promise<ValidationResult> {
       this.setFlags({ pending: true });
@@ -264,7 +273,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       });
 
       const result = await validate(this.value, rules, {
-        name: this.name,
+        name: this.name || this.fieldName,
         ...createLookup(this),
         bails: this.bails,
         skipIfEmpty: this.skipIfEmpty,
@@ -360,6 +369,10 @@ function extractId(vm: ProviderInstance): string {
 
   if (vm.id) {
     return vm.id;
+  }
+
+  if (vm.fieldName) {
+    return vm.fieldName;
   }
 
   PROVIDER_COUNTER++;
