@@ -340,6 +340,32 @@ To display the field name, you set the `name` prop on the validation provider:
 </ValidationProvider>
 ```
 
+Additionally, the field name can be automatically picked up from `name` or `id` attributes on HTML5 nodes if not specified already in the `ValidationProvider`'s `name` prop.
+
+Here since a `name` prop is not provided, vee-validate uses the `name` attribute on the input tag as a field name.
+
+```vue{5}
+<ValidationProvider
+  rules="positive"
+  v-slot="{ errors }"
+>
+  <input v-model="value" name="age" type="text">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+Here since a `name` prop is not provided nor a `name` attribute on the input, vee-validate uses the `id` attribute on the input tag as a field name.
+
+```vue{5}
+<ValidationProvider
+  rules="positive"
+  v-slot="{ errors }"
+>
+  <input v-model="value" id="age" type="text">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
 ### Arguments Placeholders
 
 You can't really have the `min` rule message to be "this field is invalid", this is not only confusing to the user, they will have no knowledge on how to fix them.
