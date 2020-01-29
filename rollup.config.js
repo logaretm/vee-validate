@@ -2,12 +2,11 @@ const path = require('path');
 const fs = require('fs');
 const { rollup } = require('rollup');
 const filesize = require('filesize');
-const uglify = require('uglify-js');
 const chalk = require('chalk');
 const gzipSize = require('gzip-size');
 const typescript = require('rollup-plugin-typescript2');
 const replace = require('rollup-plugin-replace');
-const mkdirp = require('util').promisify(require('mkdirp'));
+const mkdirp = require('mkdirp');
 
 const version = process.env.VERSION || require(__dirname + '/package.json').version;
 

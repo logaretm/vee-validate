@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const chalk = require('chalk');
-const mkdirp = require('util').promisify(require('mkdirp'));
+const mkdirp = require('mkdirp');
 
 const { build } = require('../rollup.config');
 
