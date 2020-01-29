@@ -1,14 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const mkdirpNode = require('mkdirp');
-const { promisify } = require('util');
+const mkdirp = require('mkdirp');
 const chalk = require('chalk');
-const { paths, uglifyOptions } = require('./config');
+const { paths } = require('./config');
 
 const localesDir = path.join(__dirname, '..', 'locale');
 const files = fs.readdirSync(localesDir);
-
-const mkdirp = promisify(mkdirpNode);
 
 async function build() {
   await mkdirp(path.join(paths.dist, 'locale'));
