@@ -1,5 +1,4 @@
 import { mount, createLocalVue } from '@vue/test-utils';
-import { renderToString } from '@vue/server-test-utils';
 import flushPromises from 'flush-promises';
 import { ValidationProvider, ValidationObserver, extend, withValidation, configure } from '@/index.full';
 import InputWithoutValidation from './components/Input';
@@ -42,21 +41,6 @@ test('can be renderless with slim prop', () => {
   );
 
   expect(wrapper.html()).toBe(`<input type="text">`);
-});
-
-test('SSR: render single root slot', () => {
-  const output = renderToString(
-    {
-      template: `
-        <ValidationProvider v-slot="ctx">
-          <p></p>
-        </ValidationProvider>
-      `
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  expect(output).toBe('<span data-server-rendered="true"><p></p></span>');
 });
 
 test('listens for input, blur events to set flags', async () => {
@@ -585,29 +569,6 @@ test('creates HOCs from other components', async () => {
   input.setValue('txt');
   await flushPromises();
   expect(error.text()).toBe('');
-});
-
-test('renders slots', async () => {
-  const WithValidation = withValidation(SelectWithoutValidation);
-  const wrapper = mount(
-    {
-      data: () => ({ value: '' }),
-      template: `
-        <SelectWithValidation v-model="value" rules="required">
-          <option value="">0</option>
-          <option value="1">1</option>
-        </SelectWithValidation>
-      `,
-      components: {
-        SelectWithValidation: WithValidation
-      }
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  expect(wrapper.html()).toBe(
-    `<div value=""><select><option value="">0</option> <option value="1">1</option></select> <span id="error"></span></div>`
-  );
 });
 
 test('resets validation state', async () => {
