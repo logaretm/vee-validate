@@ -51,7 +51,15 @@ After that you can use it in your components templates, typically you **wrap you
 </ValidationProvider>
 ```
 
-The `input` field or the component acting as an input **MUST** have a `v-model` attached to it, this is because the `ValidationProvider` searches its own children for inputs. So the `v-model` acts as a hint for the `ValidationProvider`.
+For the `input` field or the component acting as an input, it is **recommended to have a `v-model` attached to it**. This is because the `ValidationProvider` searches its own children for inputs, so the <code>v&#8209;model</code> acts as a hint for the `ValidationProvider`.
+
+However, if you do not want to use `v-model` the input needs to have set binding to `value` prop, which in this case serves as a hint for the `ValidationProvider`.
+
+```vue
+<ValidationProvider v-slot="v">
+  <input :value="value" @change="onInputChanged" type="text">
+</ValidationProvider>
+```
 
 If you are using a CDN with vee-validate you may to use the `kebab` case as HTML is case insensitive, so you need to reference the `ValidationProvider` as `validation-provider`.
 
