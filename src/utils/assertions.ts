@@ -6,6 +6,18 @@ export function isNaN(value: unknown): boolean {
   return value !== value;
 }
 
+export function isBigInt(value: unknown): boolean {
+  if (typeof value === 'bigint') {
+    return true;
+  }
+
+  if (isEmptyArray(value as any[]) || isObject(value) || isNaN(Number(value))) {
+    return false;
+  }
+
+  return Number(value).toString() !== `${value}`;
+}
+
 export function isNullOrUndefined(value: unknown): value is undefined | null {
   return value === null || value === undefined;
 }
