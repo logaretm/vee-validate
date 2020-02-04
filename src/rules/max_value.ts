@@ -21,6 +21,10 @@ const params: RuleParamSchema[] = [
   {
     name: 'max',
     cast(value) {
+      if (isBigInt(value)) {
+        return BigInt(value);
+      }
+
       return Number(value);
     }
   }
