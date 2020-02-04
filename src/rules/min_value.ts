@@ -1,9 +1,13 @@
-import { isNullOrUndefined } from '../utils';
+import { isBigInt, isNullOrUndefined } from '../utils';
 import { RuleParamSchema, StringOrNumber } from '../types';
 
 const validate = (value: StringOrNumber | StringOrNumber[], { min }: Record<string, any>): boolean => {
   if (isNullOrUndefined(value) || value === '') {
     return false;
+  }
+
+  if (isBigInt(value) || isBigInt(min)) {
+    return BigInt(value) >= BigInt(min);
   }
 
   if (Array.isArray(value)) {
