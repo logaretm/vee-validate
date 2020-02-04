@@ -62,7 +62,7 @@ export default class App extends Vue {
 }
 ```
 
-::
+:::
 
 ## Initial State Validation
 
