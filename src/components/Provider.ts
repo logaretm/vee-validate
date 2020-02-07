@@ -167,7 +167,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       return normalizeRules(this.rules);
     }
   },
-  created() {
+  mounted() {
     const onLocaleChanged = () => {
       if (!this.flags.validated) {
         return;
