@@ -417,7 +417,7 @@ extend('minmax', {
   },
   params: ['min', 'max'],
   message: (fieldName, placeholders) => {
-    return `The ${fieldName} field must have at least ${min} characters and ${max} characters at most`
+    return `The ${fieldName} field must have at least ${placeholders.min} characters and ${placeholders.max} characters at most`
   }
 });
 ```
