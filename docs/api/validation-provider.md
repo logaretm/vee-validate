@@ -116,19 +116,20 @@ Note that **only the first child** will be rendered when `slim` is used, any oth
 
 All the following props are optional.
 
-| Prop           | Type                      | Default Value         | Description                                                                                         |
-| -------------- | ------------------------- | --------------------- | --------------------------------------------------------------------------------------------------- |
-| bails          | `boolean`                 | `true`                | If true, the validation will stop on the first failing rule.                                        |
-| customMessages | `{ [k: string]: string }` | `{}`                  | Custom error messages, keyed by rule name. These will override any default and configured messages. |
-| debounce       | `number`                  | `0`                   | Debounces the validation for the specified amount of milliseconds.                                  |
-| disabled       | `boolean`                 | `false`               | If true, the provider will be ignored when `validate` is called by a parent observer.               |
-| immediate      | `boolean`                 | `false`               | If the field should be validated immediately after render (initially).                              |
-| mode           | `string | ModeFactory`    | `config.mode`         | Specifies the [interaction mode](../guide/interaction-and-ux.md) for this provider instance.        |
-| name           | `string`                  | `undefined`           | Specifies a field name to be used in error messages.                                                |
-| rules          | `string`                  | `undefined`           | The validation rules.                                                                               |
-| skipIfEmpty    | `boolean`                 | `true`                | If true, the validation will be skipped if the value is empty).                                     |
-| tag            | `string`                  | `span`                | The default tag to [render](#rendering).                                                            |
-| vid            | `string`                  | auto increment number | Identifier used for target/cross-field based rules.                                                 |
+| Prop                | Type                      | Default Value         | Description                                                                                         |
+| --------------------| ------------------------- | --------------------- | --------------------------------------------------------------------------------------------------- |
+| bails               | `boolean`                 | `true`                | If true, the validation will stop on the first failing rule.                                        |
+| customMessages      | `{ [k: string]: string }` | `{}`                  | Custom error messages, keyed by rule name. These will override any default and configured messages. |
+| debounce            | `number`                  | `0`                   | Debounces the validation for the specified amount of milliseconds.                                  |
+| disabled            | `boolean`                 | `false`               | If true, the provider will be ignored when `validate` is called by a parent observer.               |
+| immediate           | `boolean`                 | `false`               | If the field should be validated immediately after render (initially).                              |
+| mode                | `string | ModeFactory`    | `config.mode`         | Specifies the [interaction mode](../guide/interaction-and-ux.md) for this provider instance.        |
+| name                | `string`                  | `undefined`           | Specifies a field name to be used in error messages.                                                |
+| rules               | `string`                  | `undefined`           | The validation rules.                                                                               |
+| skipIfEmpty         | `boolean`                 | `true`                | If true, the validation will be skipped if the value is empty).                                     |
+| showResolvedRules   | `boolean`                 | `false`               | If true, provider will have 'successes' and 'resolvedRules' arrays. (skipIfEmpty will be ignored)   |
+| tag                 | `string`                  | `span`                | The default tag to [render](#rendering).                                                            |
+| vid                 | `string`                  | auto increment number | Identifier used for target/cross-field based rules.                                                 |
 
 ## Methods
 

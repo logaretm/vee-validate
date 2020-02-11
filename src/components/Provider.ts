@@ -34,15 +34,18 @@ type withProviderPrivates = VueConstructor<
 
 function data() {
   const errors: string[] = [];
+  const successes: string[] = [];
   const fieldName: string | undefined = '';
 
   const defaultValues = {
     errors,
+    successes,
     value: undefined,
     initialized: false,
     initialValue: undefined,
     flags: createFlags(),
     failedRules: {},
+    resolvedRules: {},
     isActive: true,
     fieldName,
     id: ''
@@ -93,6 +96,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     skipIfEmpty: {
       type: Boolean,
       default: () => getConfig().skipOptional
+    },
+    showResolvedRules: {
+      type: Boolean,
+      default: () => getConfig().showResolvedRules
     },
     debounce: {
       type: Number,
@@ -176,14 +183,16 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       const regenerateMap = this._regenerateMap;
       if (regenerateMap) {
         const errors: string[] = [];
+        const successes: string[] = [];
         const failedRules: Record<string, string> = {};
+        const resolvedRules: Record<string, string> = {};
         Object.keys(regenerateMap).forEach(rule => {
           const msg = regenerateMap[rule]();
           errors.push(msg);
           failedRules[rule] = msg;
         });
 
-        this.applyResult({ errors, failedRules, regenerateMap });
+        this.applyResult({ errors, successes, failedRules, resolvedRules, regenerateMap });
         return;
       }
 
@@ -243,11 +252,13 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     },
     reset() {
       this.errors = [];
+      this.successes = [];
       this.initialValue = this.value;
       const flags = createFlags();
       flags.required = this.isRequired;
       this.setFlags(flags);
       this.failedRules = {};
+      this.resolvedRules = {};
       this.validateSilent();
       this._pendingValidation = undefined;
       this._pendingReset = true;
@@ -277,6 +288,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         ...createLookup(this),
         bails: this.bails,
         skipIfEmpty: this.skipIfEmpty,
+        showResolvedRules: this.showResolvedRules,
         isInitial: !this.initialized,
         customMessages: this.customMessages
       });
@@ -290,12 +302,14 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       return result;
     },
     setErrors(errors: string[]) {
-      this.applyResult({ errors, failedRules: {} });
+      this.applyResult({ errors, failedRules: {}, successes: [], resolvedRules: {} });
     },
-    applyResult({ errors, failedRules, regenerateMap }: Omit<ValidationResult, 'valid'>) {
+    applyResult({ errors, successes, failedRules, resolvedRules, regenerateMap }: Omit<ValidationResult, 'valid'>) {
       this.errors = errors;
+      this.successes = successes;
       this._regenerateMap = regenerateMap;
       this.failedRules = { ...(failedRules || {}) };
+      this.resolvedRules = { ...(resolvedRules || {}) };
       this.setFlags({
         valid: !errors.length,
         passed: !errors.length,

@@ -16,6 +16,7 @@ interface FieldContext {
   rules: Record<string, any>;
   bails: boolean;
   skipIfEmpty: boolean;
+  showResolvedRules: boolean;
   forceRequired: boolean;
   crossTable: Record<string, any>;
   names: Record<string, string>;
@@ -28,6 +29,7 @@ interface ValidationOptions {
   names?: Record<string, string>;
   bails?: boolean;
   skipIfEmpty?: boolean;
+  showResolvedRules?: boolean;
   isInitial?: boolean;
   customMessages?: Record<string, string>;
 }
@@ -42,11 +44,13 @@ export async function validate(
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
   const skipIfEmpty = options?.skipIfEmpty;
+  const showResolvedRules = options?.showResolvedRules;
   const field: FieldContext = {
     name: options?.name || '{field}',
     rules: normalizeRules(rules),
     bails: shouldBail ?? true,
     skipIfEmpty: skipIfEmpty ?? true,
+    showResolvedRules: showResolvedRules ?? false,
     forceRequired: false,
     crossTable: options?.values || {},
     names: options?.names || {},
@@ -55,7 +59,9 @@ export async function validate(
 
   const result = await _validate(field, value, options);
   const errors: string[] = [];
+  const successes: string[] = [];
   const failedRules: Record<string, string> = {};
+  const resolvedRules: Record<string, string> = {};
   // holds a fn that regenerates the message.
   const regenerateMap: Record<string, () => string> = {};
   result.errors.forEach(e => {
@@ -65,10 +71,18 @@ export async function validate(
     regenerateMap[e.rule] = e.msg;
   });
 
+  result.successes.forEach(e => {
+    const msg = e.msg();
+    successes.push(msg);
+    resolvedRules[e.rule] = msg;
+  });
+
   return {
     valid: result.valid,
     errors,
+    successes,
     failedRules,
+    resolvedRules,
     regenerateMap
   };
 }
@@ -77,11 +91,12 @@ export async function validate(
  * Starts the validation process.
  */
 async function _validate(field: FieldContext, value: any, { isInitial = false } = {}) {
-  const { shouldSkip, errors } = await _shouldSkip(field, value);
-  if (shouldSkip) {
+  const { shouldSkip, errors, successes } = await _shouldSkip(field, value);
+  if (shouldSkip && !field.showResolvedRules) {
     return {
       valid: !errors.length,
-      errors
+      errors,
+      successes
     };
   }
 
@@ -101,10 +116,11 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
 
     if (!result.valid && result.error) {
       errors.push(result.error);
-      if (field.bails) {
+      if (field.bails && !field.showResolvedRules) {
         return {
           valid: false,
-          errors
+          errors,
+          successes
         };
       }
     }
@@ -112,7 +128,8 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
 
   return {
     valid: !errors.length,
-    errors
+    errors,
+    successes
   };
 }
 
@@ -120,6 +137,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
   const requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
   const length = requireRules.length;
   const errors: ReturnType<typeof _generateFieldError>[] = [];
+  const successes: ReturnType<typeof _generateFieldError>[] = [];
   const isEmpty = isNullOrUndefined(value) || value === '' || isEmptyArray(value);
   const isEmptyAndOptional = isEmpty && field.skipIfEmpty;
   let isRequired = false;
@@ -145,16 +163,22 @@ async function _shouldSkip(field: FieldContext, value: any) {
       if (field.bails) {
         return {
           shouldSkip: true,
-          errors
+          errors,
+          successes
         };
       }
+    }
+
+    if (result.valid && result.success) {
+      successes.push(result.success);
     }
   }
 
   if (isEmpty && !isRequired && !field.skipIfEmpty) {
     return {
       shouldSkip: false,
-      errors
+      errors,
+      successes
     };
   }
 
@@ -162,14 +186,16 @@ async function _shouldSkip(field: FieldContext, value: any) {
   if (!field.bails && !isEmptyAndOptional) {
     return {
       shouldSkip: false,
-      errors
+      errors,
+      successes
     };
   }
 
   // skip if the field is not required and has an empty value.
   return {
     shouldSkip: !isRequired && isEmpty,
-    errors
+    errors,
+    successes
   };
 }
 
@@ -207,7 +233,8 @@ async function _test(field: FieldContext, value: any, rule: { name: string; para
   return {
     valid: result.valid,
     required: result.required,
-    error: result.valid ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params)
+    error: result.valid ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params),
+    success: !result.valid ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params)
   };
 }
 

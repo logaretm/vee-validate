@@ -6,7 +6,9 @@ export type ProviderInstance = InstanceType<typeof ValidationProvider>;
 export interface ValidationResult {
   valid: boolean;
   errors: string[];
+  successes: string[];
   failedRules: Record<string, string>;
+  resolvedRules: Record<string, string>;
   regenerateMap?: Record<string, () => string>;
 }
 

@@ -1,5 +1,10 @@
 const validate = (files: File | File[]) => {
   const regex = /\.(jpg|svg|jpeg|png|bmp|gif)$/i;
+
+  if (!files) {
+    return false;
+  }
+
   if (Array.isArray(files)) {
     return files.every(file => regex.test(file.name));
   }
