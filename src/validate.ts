@@ -124,6 +124,10 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
         };
       }
     }
+
+    if (result.valid && result.success) {
+      successes.push(result.success);
+    }
   }
 
   return {
