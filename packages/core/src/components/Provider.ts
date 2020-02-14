@@ -1,37 +1,19 @@
-import {
-  ref,
-  Ref,
-  reactive,
-  inject,
-  computed,
-  SetupContext,
-  onBeforeUnmount,
-  toRefs,
-  onActivated,
-  onDeactivated,
-  VNode,
-  nextTick
-} from 'vue';
+import { ref, computed, SetupContext, VNode } from 'vue';
 import { modes, InteractionModeFactory } from '../modes';
-import { normalizeRules, extractLocators } from '../utils/rules';
-import { normalizeEventValue } from '../utils/events';
+import { normalizeRules } from '../utils/rules';
 import {
   extractVNodes,
   normalizeChildren,
   resolveRules,
   isHTMLNode,
-  findValue,
-  findModel,
   getInputEventName,
   addVNodeListener
 } from '../utils/vnode';
-import { isCallable, isEqual, isNullOrUndefined, createFlags } from '../utils';
-import { getConfig, ValidationClassMap } from '../config';
-import { validate } from '../validate';
+import { isCallable, isEqual, isNullOrUndefined } from '../utils';
+import { getConfig } from '../config';
 import { RuleContainer } from '../extend';
-import { ProviderInstance, ValidationFlags, ValidationResult, VeeObserver } from '../types';
-
-let PROVIDER_COUNTER = 0;
+import { Flag, ValidationFlags } from '../types';
+import { useField } from '../useField';
 
 interface ProviderProps {
   vid: string | undefined;
@@ -94,33 +76,28 @@ export const ValidationProvider = {
     }
   },
   setup(props: ProviderProps, ctx: SetupContext) {
-    const $observer: VeeObserver = inject('$_veeObserver', createObserver());
-    const errors: Ref<string[]> = ref([]);
-    const value: Ref<any> = ref(undefined);
-    const failedRules: Ref<Record<string, string>> = ref({});
-    const flags = reactive(createFlags());
-    let initialValue: any;
-    let fieldName = '';
+    const fieldName = ref(props.name || '');
+    const { errors, failedRules, value, validate: validateField, onInput, onBlur, reset, ...flags } = useField(
+      fieldName,
+      props.rules
+    );
+    // let initialValue: any;
     // eslint-disable-next-line prefer-const
     let inputEvtName = '';
-    let initialized = false;
-    let isActive = false;
-    let id = '';
+    // let initialized = false;
+    const id = '';
     let resolvedRules = {};
-    let needsValidation = false;
 
     const normalizedRules = computed(() => {
       return normalizeRules(props.rules);
     });
 
-    const fieldDeps = computed(() => {
-      return Object.keys(normalizedRules).reduce((acc: string[], rule: string) => {
-        const deps = extractLocators(normalizedRules.value[rule]).map((dep: any) => dep.__locatorRef);
-
-        acc.push(...deps);
+    const unwrappedFlags = computed(() => {
+      return Object.keys(flags).reduce((acc, key) => {
+        acc[key] = flags[key as Flag].value;
 
         return acc;
-      }, []);
+      }, {} as ValidationFlags);
     });
 
     const interactionMode = computed(() => {
@@ -128,7 +105,7 @@ export const ValidationProvider = {
 
       return computeModeSetting({
         errors: errors.value,
-        flags,
+        flags: unwrappedFlags.value,
         value: value.value
       });
     });
@@ -149,7 +126,7 @@ export const ValidationProvider = {
       const rules = { ...resolvedRules, ...normalizedRules.value };
 
       const isRequired = Object.keys(rules).some(RuleContainer.isRequireRule);
-      flags.required = !!isRequired;
+      flags.required.value = !!isRequired;
 
       return isRequired;
     });
@@ -163,7 +140,7 @@ export const ValidationProvider = {
       for (let i = 0; i < length; i++) {
         const flag = keys[i];
         const className = (names && names[flag]) || flag;
-        const value = flags[flag];
+        const value = flags[flag as Flag].value;
         if (isNullOrUndefined(value)) {
           continue;
         }
@@ -184,101 +161,14 @@ export const ValidationProvider = {
       return acc;
     });
 
-    onBeforeUnmount(() => {
-      $observer.unobserve(id);
-    });
-
-    onActivated(() => {
-      isActive = true;
-    });
-
-    onDeactivated(() => {
-      isActive = false;
-    });
-
-    const setFlags = (input: Partial<ValidationFlags>) => {
-      Object.keys(input).forEach(flag => {
-        flags[flag] = input[flag];
-      });
-    };
-
-    const syncValue = (v: any) => {
-      const evtVal = normalizeEventValue(v);
-      value.value = evtVal;
-      flags.changed = initialValue !== value;
-    };
-
-    const validateSilent = (): Promise<ValidationResult> => {
-      setFlags({ pending: true });
-      const rules = { ...resolvedRules, ...normalizedRules.value };
-      Object.defineProperty(rules, '_$$isNormalized', {
-        value: true,
-        writable: false,
-        enumerable: false,
-        configurable: false
-      });
-
-      return validate(value.value, rules, {
-        name: props.name || fieldName,
-        // ...createLookup(this),
-        bails: props.bails,
-        skipIfEmpty: props.skipIfEmpty,
-        isInitial: !initialized,
-        customMessages: props.customMessages
-      }).then(result => {
-        setFlags({
-          pending: false,
-          valid: result.valid,
-          invalid: !result.valid
-        });
-
-        return result;
-      });
-    };
-
-    const reset = () => {
-      errors.value = [];
-      initialValue = value;
-      const flags = createFlags();
-      flags.required = isRequired.value;
-      setFlags(flags);
-      failedRules.value = {};
-      validateSilent();
-    };
-
-    const applyResult = (result: Omit<ValidationResult, 'valid'>) => {
-      errors.value = result.errors;
-      failedRules.value = { ...(result.failedRules || {}) };
-      setFlags({
-        valid: !result.errors.length,
-        passed: !result.errors.length,
-        invalid: !!result.errors.length,
-        failed: !!result.errors.length,
-        validated: true,
-        changed: value !== initialValue
-      });
-    };
-
-    const validateCurrentValue = (...args: any[]): Promise<ValidationResult> => {
-      if (args.length > 0) {
-        syncValue(args[0]);
-      }
-
-      return validateSilent().then(result => {
-        applyResult(result);
-
-        return result;
-      });
-    };
-
     const slotProps = computed(() => {
       return {
-        ...toRefs(flags),
+        flags: unwrappedFlags.value,
         errors: errors.value,
         classes: classes.value,
         failedRules: failedRules.value,
-        reset: () => reset(),
-        validate: (...args: any[]) => validateCurrentValue(...args),
+        reset,
+        validate: validateField,
         ariaInput: {
           'aria-invalid': flags.invalid ? 'true' : 'false',
           'aria-required': isRequired.value ? 'true' : 'false',
@@ -291,124 +181,15 @@ export const ValidationProvider = {
       };
     });
 
-    function resolveId(): string {
-      if (props.vid) {
-        return props.vid;
-      }
-
-      if (props.name) {
-        return props.name;
-      }
-
-      if (id) {
-        return id;
-      }
-
-      if (fieldName) {
-        return fieldName;
-      }
-
-      PROVIDER_COUNTER++;
-
-      return `_vee_${PROVIDER_COUNTER}`;
-    }
-
-    function updateRenderingContextRefs() {
-      const providedId = resolveId();
-
-      // // Nothing has changed.
-      // if (!isActive || (id === providedId && $observer.refs[id])) {
-      //   return;
-      // }
-
-      // // vid was changed.
-      // if (id !== providedId && $observer.refs[id] === vm) {
-      //   vm.$_veeObserver.unobserve(id);
-      // }
-
-      id = providedId;
-      // $observer.observe();
-    }
-
-    /**
-     * Determines if a provider needs to run validation.
-     */
-    function shouldValidate(newVal: any) {
-      // when an immediate/initial validation is needed and wasn't done before.
-      if (!props.immediate) {
-        return true;
-      }
-
-      // when the value changes for whatever reason.
-      if (value.value !== newVal && normalizedEvents.value.length) {
-        return true;
-      }
-
-      // when it needs validation due to props/cross-fields changes.
-      if (needsValidation) {
-        return true;
-      }
-
-      // when the initial value is undefined and the field wasn't rendered yet.
-      if (!initialized && newVal === undefined) {
-        return true;
-      }
-
-      return false;
-    }
-
-    const renderValidate = () => {
-      if (props.immediate || flags.validated) {
-        validateCurrentValue();
-        return;
-      }
-
-      validateSilent();
-    };
-
-    function onRender(renderValue: any) {
-      // if (!initialized) {
-      //   initialValue = renderValue;
-      // }
-
-      // const validateNow = shouldValidate(renderValue);
-      // needsValidation = false;
-      value.value = renderValue;
-
-      // if (!validateNow) {
-      //   return;
-      // }
-
-      // if (initialized) {
-      //   renderValidate();
-      // }
-    }
-
-    function onBlur() {
-      setFlags({ touched: true, untouched: false });
-    }
-
-    function onInput(e: Event) {
-      syncValue(e); // track and keep the value updated.
-      setFlags({ dirty: true, pristine: false });
-    }
-
-    function validateField(e: Event) {
-      syncValue(e);
-      validateCurrentValue();
-    }
-
     // Adds all plugin listeners to the vnode.
     function listen(node: VNode) {
-      const renderValue = findValue(node);
-      onRender(renderValue?.value);
       addVNodeListener(node, inputEvtName, onInput);
       addVNodeListener(node, 'blur', onBlur);
       // add the validation listeners.
       normalizedEvents.value.forEach((evt: string) => {
         addVNodeListener(node, evt, validateField);
       });
-      initialized = true;
+      // initialized = true;
     }
 
     return () => {
@@ -421,11 +202,12 @@ export const ValidationProvider = {
         // So we are comparing them manually to decide if we need to validate or not.
         const resolved = getConfig().useConstraintAttrs ? resolveRules(input) : {};
         if (!isEqual(resolvedRules, resolved)) {
-          needsValidation = true;
+          // FIXME: Should validate!
         }
 
-        if (isHTMLNode(input)) {
-          fieldName = input.props?.name || input.props?.id;
+        const name = props.name || input.props?.name || input.props?.id || '';
+        if (isHTMLNode(input) && fieldName.value !== name) {
+          fieldName.value = name;
         }
 
         // cache the input eventName.
@@ -438,15 +220,3 @@ export const ValidationProvider = {
     };
   }
 };
-
-function createObserver(): VeeObserver {
-  return {
-    refs: {},
-    observe(vm: ProviderInstance) {
-      this.refs[vm.id] = vm;
-    },
-    unobserve(id: string) {
-      delete this.refs[id];
-    }
-  };
-}

@@ -1,10 +1,7 @@
-import Vue, { VNode, ComputedRef, Ref } from 'vue';
-import { ValidationProvider } from './components/Provider';
+import { ComputedRef, Ref } from 'vue';
 import { RuleParamSchema, ValidationRuleFunction } from '@vee-validate/shared';
 
 export { RuleParamSchema, ValidationRuleFunction };
-
-export type ProviderInstance = InstanceType<typeof ValidationProvider>;
 
 export interface ValidationResult {
   valid: boolean;
@@ -67,7 +64,7 @@ export interface ValidationFlags {
 }
 
 export interface VeeObserver {
-  refs: Record<string, ProviderInstance>;
+  refs: Record<string, any>;
   observe(provider: any, type?: 'provider' | 'observer'): void;
   unobserve(id: string, type?: 'provider' | 'observer'): void;
 }
@@ -102,10 +99,11 @@ export type Flag =
 export interface FieldComposite extends Record<Flag, Ref<boolean>> {
   validate(): Promise<ValidationResult>;
   reset(): void;
-  onInput(): void;
-  onBlur(): void;
+  onInput(e?: any): void;
+  onBlur(e?: any): void;
   value: Ref<any>;
   failedRules: Ref<Record<string, string>>;
+  errors: Ref<string[]>;
 }
 
 export interface FormController {

@@ -2,16 +2,17 @@ import { watch, ref, Ref, isRef, reactive, computed, onMounted, toRefs } from 'v
 import { validate } from './validate';
 import { FormController, ValidationResult, MaybeReactive, FieldComposite } from './types';
 import { createFlags, normalizeRules, extractLocators } from './utils';
+import { normalizeEventValue } from './utils/events';
 
 interface FieldOptions {
   value: Ref<any>;
-  immediate: boolean;
+  immediate?: boolean;
   form?: FormController;
 }
 
 type RuleExpression = MaybeReactive<string | Record<string, any>>;
 
-export function useField(fieldName: string, rules: RuleExpression, opts?: FieldOptions): FieldComposite {
+export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: FieldOptions): FieldComposite {
   const { value, form, immediate } = useFieldOptions(opts);
   const { flags, errors, failedRules, onBlur, onInput, reset, patch } = useValidationState(value);
   const normalizedRules = computed(() => {
@@ -21,7 +22,7 @@ export function useField(fieldName: string, rules: RuleExpression, opts?: FieldO
   const validateField = async (): Promise<ValidationResult> => {
     flags.pending.value = true;
     const result = await validate(value.value, normalizedRules.value, {
-      name: fieldName,
+      name: isRef(fieldName) ? fieldName.value : fieldName,
       values: form?.values.value ?? {},
       names: form?.names.value ?? {}
     });
@@ -93,9 +94,15 @@ function useFieldOptions(opts: FieldOptions | undefined): FieldOptions {
 
 function useValidationState(value: Ref<any>) {
   const errors: Ref<string[]> = ref([]);
-  const { onBlur, onInput, reset: resetFlags, ...flags } = useFlags();
+  const { onBlur, reset: resetFlags, ...flags } = useFlags();
   const failedRules: Ref<Record<string, string>> = ref({});
   const initialValue = value.value;
+
+  const onInput = (e: Event) => {
+    value.value = normalizeEventValue(e);
+    flags.dirty.value = true;
+    flags.pristine.value = false;
+  };
 
   function patch(result: ValidationResult) {
     errors.value = result.errors;
@@ -163,12 +170,6 @@ function useFlags() {
     flags.touched = true;
     flags.untouched = false;
   };
-
-  const onInput = () => {
-    flags.dirty = true;
-    flags.pristine = false;
-  };
-
   function reset() {
     const defaults = createFlags();
     Object.keys(flags).forEach((key: string) => {
@@ -185,7 +186,6 @@ function useFlags() {
     ...toRefs(flags),
     passed,
     failed,
-    onInput,
     onBlur,
     reset
   };
