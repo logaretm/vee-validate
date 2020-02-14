@@ -1,2 +1,2 @@
 export { ValidationProvider } from './Provider';
-// export { ValidationObserver } from './Observer';
+export { ValidationObserver } from './Observer';

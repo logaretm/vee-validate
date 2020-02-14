@@ -1,4 +1,4 @@
-import { ref, computed, SetupContext, VNode } from 'vue';
+import { ref, computed, SetupContext, VNode, inject } from 'vue';
 import { modes, InteractionModeFactory } from '../modes';
 import { normalizeRules } from '../utils/rules';
 import {
@@ -12,7 +12,7 @@ import {
 import { isCallable, isEqual, isNullOrUndefined } from '../utils';
 import { getConfig } from '../config';
 import { RuleContainer } from '../extend';
-import { Flag, ValidationFlags } from '../types';
+import { Flag, ValidationFlags, FormController } from '../types';
 import { useField } from '../useField';
 
 interface ProviderProps {
@@ -77,10 +77,15 @@ export const ValidationProvider = {
   },
   setup(props: ProviderProps, ctx: SetupContext) {
     const fieldName = ref(props.name || '');
+    const $form = inject('$_veeObserver', undefined) as FormController | undefined;
     const { errors, failedRules, value, validate: validateField, onInput, onBlur, reset, ...flags } = useField(
       fieldName,
-      props.rules
+      props.rules,
+      {
+        form: $form
+      }
     );
+
     // let initialValue: any;
     // eslint-disable-next-line prefer-const
     let inputEvtName = '';
