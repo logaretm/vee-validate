@@ -5,6 +5,12 @@ import { createFlags, normalizeRules, extractLocators } from './utils';
 import { normalizeEventValue } from './utils/events';
 
 interface FieldOptions {
+  value?: Ref<any>;
+  immediate?: boolean;
+  form?: FormController;
+}
+
+interface CompleteFieldOptions {
   value: Ref<any>;
   immediate?: boolean;
   form?: FormController;
@@ -75,7 +81,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
   return field;
 }
 
-function useFieldOptions(opts: FieldOptions | undefined): FieldOptions {
+function useFieldOptions(opts: FieldOptions | undefined): CompleteFieldOptions {
   const defaults = () => ({
     value: ref(null),
     immediate: false,
