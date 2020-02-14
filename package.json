@@ -80,12 +80,10 @@
     "*.ts": [
       "eslint --fix",
       "prettier --write",
-      "git add",
       "jest --maxWorkers=1 --bail --findRelatedTests"
     ],
     "*.js": [
       "eslint --fix",
-      "git add",
       "jest --maxWorkers=1 --bail --findRelatedTests"
     ]
   }
