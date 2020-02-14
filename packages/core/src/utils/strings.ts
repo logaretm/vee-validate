@@ -13,3 +13,7 @@ export function interpolate(template: string, values: Record<string, any>): stri
     return p in values ? values[p] : `{${p}}`;
   });
 }
+
+export function upperCaseFirst(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
