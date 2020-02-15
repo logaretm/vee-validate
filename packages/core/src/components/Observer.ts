@@ -1,6 +1,7 @@
 import { SetupContext, computed, provide } from 'vue';
 import { normalizeChildren } from '../utils/vnode';
 import { useForm } from '../useForm';
+import { ValidationFlags } from '../types';
 
 export const ValidationObserver = {
   name: 'ValidationObserver',
@@ -10,7 +11,11 @@ export const ValidationObserver = {
 
     const slotProps = computed(() => {
       return {
-        ...flags,
+        ...Object.keys(flags).reduce((acc: ValidationFlags, key) => {
+          acc[key] = (flags as any)[key].value;
+
+          return acc;
+        }, {} as ValidationFlags),
         errors: errors.value,
         validate,
         handleSubmit,
