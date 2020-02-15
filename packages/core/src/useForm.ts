@@ -1,5 +1,6 @@
 import { computed, ref, Ref } from 'vue';
 import { Flag, FormController } from './types';
+import { unwrap } from './utils';
 
 const mergeStrategies: Record<Flag, 'every' | 'some'> = {
   valid: 'every',
@@ -41,7 +42,7 @@ export function useForm(): FormComposite {
   const fieldsById: Record<string, any> = {};
   const values = computed(() => {
     return fields.value.reduce((acc: any, field: any) => {
-      acc[field.vid] = field.value;
+      acc[unwrap(field.vid)] = field.value;
 
       return acc;
     }, {});
@@ -49,7 +50,7 @@ export function useForm(): FormComposite {
 
   const names = computed(() => {
     return fields.value.reduce((acc: any, field: any) => {
-      acc[field.vid] = field.vid;
+      acc[unwrap(field.vid)] = field.vid;
 
       return acc;
     }, {});
@@ -58,7 +59,7 @@ export function useForm(): FormComposite {
   const controller: FormController = {
     register(field) {
       fields.value.push(field);
-      fieldsById[field.vid] = field;
+      fieldsById[unwrap(field.vid)] = field;
     },
     fields: fieldsById,
     values,
@@ -77,7 +78,7 @@ export function useForm(): FormComposite {
 
   const errors = computed(() => {
     return fields.value.reduce((acc: Record<string, string[]>, field) => {
-      acc[field.vid] = field.errors.value;
+      acc[unwrap(field.vid)] = field.errors.value;
 
       return acc;
     }, {});
