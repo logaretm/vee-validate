@@ -1,7 +1,10 @@
-import { VNode, SetupContext, registerRuntimeCompiler } from 'vue';
-import { find, isCallable, isNullOrUndefined, includes, isSpecified, upperCaseFirst } from './index';
+import { VNode, SetupContext } from 'vue';
+import { includes, isSpecified, upperCaseFirst } from './index';
 import { normalizeRules } from './rules';
 import { RuleContainer } from '../extend';
+
+// FIXME: The first `on` is probably a mistake.
+export const UPDATE_MODEL_EVENT = 'onUpdate:modelValue';
 
 export const HTML_TAGS = ['input', 'select', 'textarea'];
 
@@ -92,7 +95,7 @@ export function extractVNodes(vnode: VNode | VNode[]): VNode[] {
 }
 
 // Resolves v-model config if exists.
-export function findModelConfig(vnode: VNode) {
+export function findModelConfig() {
   // /* istanbul ignore next */
   // if (!vnode.componentOptions) return null;
   // // This is also not typed in the standard Vue TS.
@@ -133,7 +136,7 @@ export function getInputEventName(vnode: VNode): string {
   // Is a component.
   if (typeof vnode.type !== 'string') {
     // FIXME: this works, but probably a bug in Vue.
-    return 'onUpdate:modelValue';
+    return UPDATE_MODEL_EVENT;
   }
 
   // is a textual-type input.
