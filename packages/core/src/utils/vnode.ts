@@ -117,6 +117,7 @@ export function addVNodeListener(vnode: VNode, eventName: string, handler: Funct
   const evtObj = vnode.props[eventPropName];
   if (Array.isArray(evtObj) && evtObj.indexOf(handler) === -1) {
     evtObj.push(handler);
+    return;
   }
 
   if (typeof evtObj === 'function') {
@@ -128,18 +129,12 @@ export function addVNodeListener(vnode: VNode, eventName: string, handler: Funct
 }
 
 // Determines if `change` should be used over `input` for listeners.
-export function getInputEventName(vnode: VNode, model?: any): string {
+export function getInputEventName(vnode: VNode): string {
   // Is a component.
-  // if (vnode.componentOptions) {
-  //   const { event } = findModelConfig(vnode) || { event: 'input' };
-
-  //   return event;
-  // }
-
-  // Lazy Models typically use change event
-  // if (model?.modifiers?.lazy) {
-  //   return 'change';
-  // }
+  if (typeof vnode.type !== 'string') {
+    // FIXME: this works, but probably a bug in Vue.
+    return 'onUpdate:modelValue';
+  }
 
   // is a textual-type input.
   if (isTextInput(vnode)) {
