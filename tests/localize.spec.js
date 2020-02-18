@@ -139,6 +139,34 @@ test('falls back to the default message if rule without message exists', async (
   expect(error.text()).toContain('{field} is not valid');
 });
 
+test('uses field name in the default message if rule without message exists', async () => {
+  extend('ruleWithoutMessage', () => false);
+
+  const wrapper = mount(
+    {
+      data: () => ({
+        value: '1'
+      }),
+      template: `
+        <div>
+          <ValidationProvider :immediate="true" rules="required|ruleWithoutMessage" v-slot="{ errors }">
+            <input name="MyFancyInputName" v-model="value" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const error = wrapper.find('#error');
+
+  // flush the pending validation.
+  await flushPromises();
+
+  expect(error.text()).toContain('MyFancyInputName is not valid');
+});
+
 test('can define custom field names', async () => {
   localize('en', {
     names: {
