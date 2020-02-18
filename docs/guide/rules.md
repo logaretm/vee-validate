@@ -18,6 +18,12 @@ extend('required', {
   ...required,
   message: 'This field is required'
 });
+
+// include the field name in the message
+extend('required', {
+  ...required,
+  message: 'This {_field_} is required'
+});
 ```
 
 And then you can use those rules immediately:
