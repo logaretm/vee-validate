@@ -16,7 +16,6 @@ interface FieldContext {
   rules: Record<string, any>;
   bails: boolean;
   skipIfEmpty: boolean;
-  showResolvedRules: boolean;
   forceRequired: boolean;
   crossTable: Record<string, any>;
   names: Record<string, string>;
@@ -29,7 +28,6 @@ interface ValidationOptions {
   names?: Record<string, string>;
   bails?: boolean;
   skipIfEmpty?: boolean;
-  showResolvedRules?: boolean;
   isInitial?: boolean;
   customMessages?: Record<string, string>;
 }
@@ -44,13 +42,11 @@ export async function validate(
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
   const skipIfEmpty = options?.skipIfEmpty;
-  const showResolvedRules = options?.showResolvedRules;
   const field: FieldContext = {
     name: options?.name || '{field}',
     rules: normalizeRules(rules),
     bails: shouldBail ?? true,
     skipIfEmpty: skipIfEmpty ?? true,
-    showResolvedRules: showResolvedRules ?? false,
     forceRequired: false,
     crossTable: options?.values || {},
     names: options?.names || {},
@@ -61,7 +57,6 @@ export async function validate(
   const errors: string[] = [];
   const successes: string[] = [];
   const failedRules: Record<string, string> = {};
-  const resolvedRules: Record<string, string> = {};
   // holds a fn that regenerates the message.
   const regenerateMap: Record<string, () => string> = {};
   result.errors.forEach(e => {
@@ -74,7 +69,6 @@ export async function validate(
   result.successes.forEach(e => {
     const msg = e.msg();
     successes.push(msg);
-    resolvedRules[e.rule] = msg;
   });
 
   return {
@@ -82,7 +76,6 @@ export async function validate(
     errors,
     successes,
     failedRules,
-    resolvedRules,
     regenerateMap
   };
 }
@@ -92,7 +85,7 @@ export async function validate(
  */
 async function _validate(field: FieldContext, value: any, { isInitial = false } = {}) {
   const { shouldSkip, errors, successes } = await _shouldSkip(field, value);
-  if (shouldSkip && !field.showResolvedRules) {
+  if (shouldSkip) {
     return {
       valid: !errors.length,
       errors,
@@ -103,6 +96,7 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
   // Filter out non-require rules since we already checked them.
   const rules = Object.keys(field.rules).filter(rule => !RuleContainer.isRequireRule(rule));
   const length = rules.length;
+
   for (let i = 0; i < length; i++) {
     if (isInitial && RuleContainer.isLazy(rules[i])) {
       continue;
@@ -116,7 +110,7 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
 
     if (!result.valid && result.error) {
       errors.push(result.error);
-      if (field.bails && !field.showResolvedRules) {
+      if (field.bails) {
         return {
           valid: false,
           errors,

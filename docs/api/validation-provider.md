@@ -127,7 +127,6 @@ All the following props are optional.
 | name                | `string`                  | `undefined`           | Specifies a field name to be used in error messages.                                                |
 | rules               | `string`                  | `undefined`           | The validation rules.                                                                               |
 | skipIfEmpty         | `boolean`                 | `true`                | If true, the validation will be skipped if the value is empty).                                     |
-| showResolvedRules   | `boolean`                 | `false`               | If true, provider will have 'successes' and 'resolvedRules' arrays. (skipIfEmpty will be ignored)   |
 | tag                 | `string`                  | `span`                | The default tag to [render](#rendering).                                                            |
 | vid                 | `string`                  | auto increment number | Identifier used for target/cross-field based rules.                                                 |
 

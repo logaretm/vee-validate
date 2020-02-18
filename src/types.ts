@@ -8,7 +8,6 @@ export interface ValidationResult {
   errors: string[];
   successes: string[];
   failedRules: Record<string, string>;
-  resolvedRules: Record<string, string>;
   regenerateMap?: Record<string, () => string>;
 }
 

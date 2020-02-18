@@ -37,7 +37,6 @@ export interface ValidationContext extends Pick<ValidationFlags, KnownKeys<Valid
   classes: Record<string, boolean>;
   valid: boolean;
   failedRules: Record<string, string>;
-  resolvedRules: Record<string, string>;
   reset: () => void;
   validate: (evtOrNewValue: Event | any) => Promise<ValidationResult>;
   ariaInput: {
@@ -58,7 +57,6 @@ export function createValidationCtx(ctx: ProviderInstance): ValidationContext {
     successes: ctx.successes,
     classes: ctx.classes,
     failedRules: ctx.failedRules,
-    resolvedRules: ctx.resolvedRules,
     reset: () => ctx.reset(),
     validate: (...args: any[]) => ctx.validate(...args),
     ariaInput: {

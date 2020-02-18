@@ -1,7 +1,9 @@
+import { isNullOrUndefined } from '../utils';
+
 const validate = (files: File | File[]) => {
   const regex = /\.(jpg|svg|jpeg|png|bmp|gif)$/i;
 
-  if (!files) {
+  if (isNullOrUndefined(files)) {
     return false;
   }
 
