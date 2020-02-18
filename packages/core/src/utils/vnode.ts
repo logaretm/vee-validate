@@ -3,8 +3,7 @@ import { includes, isSpecified, upperCaseFirst } from './index';
 import { normalizeRules } from './rules';
 import { RuleContainer } from '../extend';
 
-// FIXME: The first `on` is probably a mistake.
-export const UPDATE_MODEL_EVENT = 'onUpdate:modelValue';
+export const UPDATE_MODEL_EVENT = 'update:modelValue';
 
 export const HTML_TAGS = ['input', 'select', 'textarea'];
 
@@ -135,7 +134,6 @@ export function addVNodeListener(vnode: VNode, eventName: string, handler: Funct
 export function getInputEventName(vnode: VNode): string {
   // Is a component.
   if (typeof vnode.type !== 'string') {
-    // FIXME: this works, but probably a bug in Vue.
     return UPDATE_MODEL_EVENT;
   }
 
