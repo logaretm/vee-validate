@@ -27,7 +27,7 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
     inject: providerOpts.inject
   };
 
-  const eventName = (options?.model?.event) || 'input';
+  const eventName = options?.model?.event || 'input';
 
   hoc.render = function(h: CreateElement) {
     this.registerField();
