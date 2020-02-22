@@ -39,13 +39,11 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
   };
 
   watch(value, validateField, {
-    lazy: true,
     deep: true
   });
 
   if (isRef(rules)) {
     watch(rules, validateField, {
-      lazy: true,
       deep: true
     });
   }
