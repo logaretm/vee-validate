@@ -49,7 +49,6 @@
     "lerna": "^3.20.2",
     "lint-staged": "^10.0.7",
     "markdown-it-custom-block": "^0.1.1",
-    "mkdirp": "^1.0.3",
     "prettier": "^1.19.1",
     "raf-stub": "^3.0.0",
     "rollup": "^1.31.1",
