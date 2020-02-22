@@ -7,7 +7,7 @@
   "module": "dist/vee-validate.esm.js",
   "unpkg": "dist/vee-validate.js",
   "main": "dist/vee-validate.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/vee-validate.d.ts",
   "homepage": "https://logaretm.github.io/vee-validate/",
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
@@ -23,8 +23,7 @@
   ],
   "files": [
     "dist/*.js",
-    "dist/locale/*.json",
-    "dist/**/*.d.ts"
+    "dist/*.d.ts"
   ],
   "devDependencies": {},
   "peerDependencies": {
