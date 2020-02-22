@@ -10,6 +10,9 @@
   "types": "dist/types/index.d.ts",
   "homepage": "https://logaretm.github.io/vee-validate/",
   "repository": "https://github.com/logaretm/vee-validate",
+  "scripts": {
+    "ts:defs": "tsc --emitDeclarationOnly"
+  },
   "keywords": [
     "VueJS",
     "Vue",

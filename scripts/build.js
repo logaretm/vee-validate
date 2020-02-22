@@ -2,7 +2,6 @@ const path = require('path');
 const fs = require('fs');
 const chalk = require('chalk');
 const mkdirp = require('mkdirp');
-
 const { build } = require('../rollup.config');
 
 async function buildLocales() {

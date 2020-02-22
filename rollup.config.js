@@ -7,6 +7,7 @@ const gzipSize = require('gzip-size');
 const typescript = require('rollup-plugin-typescript2');
 const replace = require('rollup-plugin-replace');
 const mkdirp = require('mkdirp');
+const { Extractor, ExtractorConfig } = require('@microsoft/api-extractor');
 
 const version = process.env.VERSION || require(__dirname + '/package.json').version;
 
@@ -101,6 +102,21 @@ async function build(pkg) {
     let stats = reportSize({ code, path: outputPath });
     // eslint-disable-next-line
     console.log(`${chalk.green('Output File:')} ${bundleName} ${stats}`);
+
+    // Generate .d.ts rollup
+    const extractorConfigPath = path.resolve(`packages/${pkg}`, `api-extractor.json`);
+    const extractorConfig = ExtractorConfig.loadFileAndPrepare(extractorConfigPath);
+    const result = Extractor.invoke(extractorConfig, {
+      localBuild: true,
+      showVerboseMessages: true
+    });
+
+    if (!result.succeeded) {
+      console.error(
+        `API Extractor completed with ${result.errorCount} errors` + ` and ${extractorResult.warningCount} warnings`
+      );
+      process.exitCode = 1;
+    }
   }
 
   return true;
