@@ -42,6 +42,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "filesize": "^6.1.0",
     "flush-promises": "^1.0.2",
+    "fs-extra": "^8.1.0",
     "gzip-size": "^5.1.1",
     "husky": "^4.2.3",
     "jest": "^25.1.0",
