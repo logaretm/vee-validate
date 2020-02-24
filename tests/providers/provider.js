@@ -2,7 +2,6 @@ import { mount, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { ValidationProvider, ValidationObserver, extend, withValidation, configure } from '@/index.full';
 import InputWithoutValidation from './components/Input';
-import SelectWithoutValidation from './components/Select';
 import ModelComp from './../helpers/ModelComp';
 
 const Vue = createLocalVue();

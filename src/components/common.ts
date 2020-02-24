@@ -1,5 +1,5 @@
 import { VNode } from 'vue';
-import { isCallable, debounce, identity } from '../utils';
+import { isCallable, debounce } from '../utils';
 import { modes, InteractionModeFactory } from '../modes';
 import { ValidationResult, ValidationFlags, KnownKeys, ProviderInstance } from '../types';
 import { findModel, getInputEventName, addVNodeListener, findValue } from '../utils/vnode';

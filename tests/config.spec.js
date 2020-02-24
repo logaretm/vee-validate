@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
-import { ValidationProvider, install as VeeValidate, configure } from '@/index.full';
+import { ValidationProvider, configure } from '@/index.full';
 
 const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);

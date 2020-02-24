@@ -20,5 +20,5 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true
   },
-  "include": ["src", "tests"]
+  "include": ["*", "src", "tests", "scripts"]
 }

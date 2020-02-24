@@ -2,6 +2,7 @@
  * Some Alpha Regex helpers.
  * https://github.com/chriso/validator.js/blob/master/src/lib/alpha.js
  */
+/* eslint-disable no-misleading-character-class */
 
 export const alpha: { [k: string]: RegExp } = {
   en: /^[A-Z]*$/i,
