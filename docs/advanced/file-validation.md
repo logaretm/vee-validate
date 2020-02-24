@@ -2,6 +2,10 @@
 
 While the `ValidationProvider` requires having `v-model` on your input elements, that does not mean that inputs like `file` inputs cannot be validated.
 
+:::tip
+While the `file` input is the most common field not to use a `v-model`.This guide applies to any type of input, not just the `file` type.
+:::
+
 ## HTML File Validation
 
 To validate a file input you can use the `validate` function on the slot prop as an event handler, and use it on the `change` event to validate the file input.

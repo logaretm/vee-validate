@@ -112,6 +112,10 @@ Here is the same example but without such nesting and only using one `Validation
 
 It is simpler to reason about than with multiple observers and for that scenario you don't need to know wether two observers are valid in the same time, there is only one rendered `ValidationObserver` at any given time which should give you a hint that you only need one from the start, not multiple ones.
 
+## Advanced Forms
+
+Some forms have more complex requirements, like **input masks** or file validation. VeeValidate allows you to hook your complex inputs to the validation cycle, to do that [see the advanced file-validation guide](../advanced/file-validation.md).
+
 ---
 
 You should now have enough information about building your next form, the only remaining thing is to tackle localization.
