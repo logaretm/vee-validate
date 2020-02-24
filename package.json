@@ -18,7 +18,7 @@
     "docs:deploy": "./scripts/deploy.sh",
     "build:locale": "node scripts/locale.js",
     "build:main": "node scripts/main.js",
-    "ts:defs": "./scripts/definitions.sh",
+    "ts:defs": "node scripts/definitions.js",
     "build": "npm run build:main && npm run ts:defs && npm run build:locale",
     "cover": "jest --coverage",
     "prepublishOnly": "npm run build && npm run ts:defs"
@@ -114,7 +114,9 @@
       "jest --maxWorkers=1 --bail --findRelatedTests"
     ]
   },
-  "dependencies": {},
+  "dependencies": {
+    "shelljs": "^0.8.3"
+  },
   "peerDependencies": {
     "vue": "^2.5.18"
   }
