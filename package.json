@@ -80,6 +80,7 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-typescript2": "^0.26.0",
+    "shelljs": "^0.8.3",
     "ts-jest": "^25.2.1",
     "tslib": "^1.11.0",
     "tslint-config-prettier": "^1.18.0",
@@ -113,9 +114,6 @@
       "prettier --write",
       "jest --maxWorkers=1 --bail --findRelatedTests"
     ]
-  },
-  "dependencies": {
-    "shelljs": "^0.8.3"
   },
   "peerDependencies": {
     "vue": "^2.5.18"
