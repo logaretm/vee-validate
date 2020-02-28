@@ -12,13 +12,13 @@
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
     "test": "jest",
-    "lint": "eslint '**/*.{js,jsx,ts,tsx}' --fix",
+    "lint": "eslint **/*.{js,jsx,ts,tsx} --fix",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "docs:deploy": "./scripts/deploy.sh",
     "build:locale": "node scripts/locale.js",
     "build:main": "node scripts/main.js",
-    "ts:defs": "./scripts/definitions.sh",
+    "ts:defs": "node scripts/definitions.js",
     "build": "npm run build:main && npm run ts:defs && npm run build:locale",
     "cover": "jest --coverage",
     "prepublishOnly": "npm run build && npm run ts:defs"
@@ -67,6 +67,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "filesize": "^6.1.0",
     "flush-promises": "^1.0.2",
+    "fs-extra": "^8.1.0",
     "gzip-size": "^5.1.1",
     "husky": "^4.2.3",
     "jest": "^25.1.0",
@@ -114,7 +115,6 @@
       "jest --maxWorkers=1 --bail --findRelatedTests"
     ]
   },
-  "dependencies": {},
   "peerDependencies": {
     "vue": "^2.5.18"
   }
