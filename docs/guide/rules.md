@@ -4,7 +4,7 @@ The following are the validation rules available for you, **remember that they a
 
 ## Importing The Rules
 
-Validation rules are available as an ES6 exports at `vee-validate/dist/rules`, if you are using an IDE or VSCode you should have a small peek on what rules are available when you are importing them, here is how to import some common rules like `required` and `min`.
+Validation rules are available as an ES6 exports at `vee-validate/dist/rules`, if you are using an IDE or VSCode you should have a small peek on what rules are available when you are importing them, here is how to import some common rules like `required` and `email`.
 
 ```js
 import { extend } from 'vee-validate';
