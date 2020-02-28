@@ -1,32 +1,41 @@
-const shell = require('shelljs');
+﻿const fs = require('fs-extra');
 const path = require('path');
 const { paths } = require('./config');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
-if (!shell.which('tsc')) {
-  shell.echo('Sorry, this script requires typescript\n');
-  shell.exit(1);
+const pathTypes = path.join(paths.dist, 'types');
+const pathTypesSrc = path.join(paths.dist, 'types/src');
+
+const pathRulesSrc = path.join(paths.dist, 'types/rules/index.d.ts');
+const pathRulesDist = path.join(paths.dist, 'rules.d.ts');
+
+async function definitions() {
+  try {
+    await exec('tsc -v');
+
+    console.log('Removing old declarations...');
+    await fs.emptyDir(pathTypes);
+    console.log('Done\n');
+
+    console.log('Generating main declarations...');
+    await exec('tsc --emitDeclarationOnly');
+    console.log('Done\n');
+
+    console.log('Cleaning up declaration folder...');
+    await fs.copy(pathTypesSrc, pathTypes);
+    await fs.remove(pathTypesSrc);
+    console.log('Done\n');
+    console.log('Copying rule declarations...');
+    await fs.copy(pathRulesSrc, pathRulesDist);
+    console.log('Done\n');
+
+    console.log('Replacing definitions...');
+    await exec('node ./scripts/replaceDefs.js');
+    console.log('Done\n');
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-shell.echo('Removing old declarations...');
-shell.rm('-rf', path.join(paths.dist, 'types/*'));
-shell.echo('Done\n');
-
-shell.echo('Generating main declarations...');
-if (shell.exec('tsc --emitDeclarationOnly').code !== 0) {
-  shell.echo('Error: Typescript Failed');
-  shell.exit(1);
-}
-shell.echo('Done\n');
-
-shell.echo('Cleaning up declaration folder...');
-shell.mv(path.join(paths.dist, 'types/src/*'), path.join(paths.dist, 'types'));
-shell.rm('-rf', path.join(paths.dist, 'types/src'));
-shell.echo('Done\n');
-
-shell.echo('Copying rule declarations...');
-shell.cp(path.join(paths.dist, 'types/rules/index.d.ts'), path.join(paths.dist, 'rules.d.ts'));
-if (shell.exec('node ./scripts/replaceDefs.js').code !== 0) {
-  shell.echo('Error: ReplaceDefs Failed');
-  shell.exit(1);
-}
-shell.echo('Done\n');
+definitions();
