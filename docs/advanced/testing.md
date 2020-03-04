@@ -86,7 +86,7 @@ await flushPromises();
 
 // Check if the element has text inside it.
 const errorEl = wrapper.find('.error');
-expect(error.text()).toBeTruthy();
+expect(errorEl.text()).toBeTruthy();
 ```
 
 This test is much more robust than the previous one, if you were to change the validation your tests would still work. Because we are not testing implementation details, we care if the validation is done, we don't care how it is being done.
