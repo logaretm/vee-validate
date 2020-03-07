@@ -107,27 +107,10 @@ export function addVNodeListener(vnode: VNode, eventName: string, handler: Funct
     vnode.props = {};
   }
 
-  if (!vnode.props[eventPropName]) {
-    vnode.props[eventPropName] = handler;
-    return;
+  const existing = vnode.props[eventPropName];
+  if (existing !== handler) {
+    vnode.props[eventPropName] = existing ? [].concat(existing as any, handler as any) : handler;
   }
-
-  if (vnode.props[eventPropName] === handler) {
-    return;
-  }
-
-  const evtObj = vnode.props[eventPropName];
-  if (Array.isArray(evtObj) && evtObj.indexOf(handler) === -1) {
-    evtObj.push(handler);
-    return;
-  }
-
-  if (typeof evtObj === 'function') {
-    vnode.props[eventPropName] = [evtObj, handler];
-    return;
-  }
-
-  console.log('Cannot handle this evt obj!', evtObj);
 }
 
 // Determines if `change` should be used over `input` for listeners.
