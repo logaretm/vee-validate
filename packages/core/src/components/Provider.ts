@@ -78,7 +78,7 @@ export const ValidationProvider = {
   setup(props: ProviderProps, ctx: SetupContext) {
     const fieldName = ref(props.name || '');
     const $form = inject('$_veeObserver', undefined) as FormController | undefined;
-    const { errors, failedRules, value, validate: validateField, onInput, onBlur, reset, ...flags } = useField(
+    const { errors, failedRules, value, validate: validateField, handleChange, onBlur, reset, ...flags } = useField(
       fieldName,
       props.rules,
       {
@@ -188,7 +188,7 @@ export const ValidationProvider = {
 
     // Adds all plugin listeners to the vnode.
     function listen(node: VNode) {
-      addVNodeListener(node, inputEvtName, onInput);
+      addVNodeListener(node, inputEvtName, handleChange);
       addVNodeListener(node, 'blur', onBlur);
       // add the validation listeners.
       normalizedEvents.value.forEach((evt: string) => {

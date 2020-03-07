@@ -99,7 +99,7 @@ export type Flag =
 export interface FieldComposite extends Record<Flag, Ref<boolean>> {
   validate(): Promise<ValidationResult>;
   reset(): void;
-  onInput(e?: any): void;
+  handleChange(e?: any): void;
   onBlur(e?: any): void;
   value: Ref<any>;
   failedRules: Ref<Record<string, string>>;

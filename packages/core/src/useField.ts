@@ -20,7 +20,7 @@ type RuleExpression = MaybeReactive<string | Record<string, any>>;
 
 export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: FieldOptions): FieldComposite {
   const { value, form, immediate } = useFieldOptions(opts);
-  const { flags, errors, failedRules, onBlur, onInput, reset, patch } = useValidationState(value);
+  const { flags, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
   const normalizedRules = computed(() => {
     return normalizeRules(isRef(rules) ? rules.value : rules);
   });
@@ -70,7 +70,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     failedRules,
     reset,
     validate: validateField,
-    onInput,
+    handleChange,
     onBlur
   };
 
@@ -102,7 +102,7 @@ function useValidationState(value: Ref<any>) {
   const failedRules: Ref<Record<string, string>> = ref({});
   const initialValue = value.value;
 
-  const onInput = (e: Event) => {
+  const handleChange = (e: Event) => {
     value.value = normalizeEventValue(e);
     flags.dirty.value = true;
     flags.pristine.value = false;
@@ -131,7 +131,7 @@ function useValidationState(value: Ref<any>) {
     patch,
     reset,
     onBlur,
-    onInput
+    handleChange
   };
 }
 
