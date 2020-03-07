@@ -1,7 +1,6 @@
 import { isCallable, merge, interpolate } from './utils';
 import { ValidationMessageTemplate } from './types';
 import { setConfig } from './config';
-import { localeChanged } from './localeChanged';
 
 interface PartialI18nDictionary {
   name?: string;
@@ -72,7 +71,6 @@ function localize(locale: string | RootI18nDictionary, dictionary?: PartialI18nD
       DICTIONARY.merge({ [locale]: dictionary });
     }
 
-    localeChanged();
     return;
   }
 
