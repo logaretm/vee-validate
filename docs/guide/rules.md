@@ -584,7 +584,7 @@ This rule is inferred when the field type is marked with `required` attribute.
 
 :::tip Required and `false`
 
-Checkboxes by default emit `true` or `false` depending on wether they are checked or not. The required rule allows the `false` value by default, to disable this you may need to use the object syntax to configure the rule.
+Checkboxes by default emit `true` or `false` depending on whether they are checked or not. The required rule allows the `false` value by default, to disable this you may need to use the object syntax to configure the rule.
 
 ```vue
 <ValidationProvider :rules="{ required: { allowFalse: false } }" v-slot="{ errors }">
@@ -622,6 +622,10 @@ The field under validation must have a non-empty value **only if** the target fi
 | ----------- | --------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `target`    | **yes**   |         | The `vid` of the target field.                                                                                                          |
 | `...values` | **no**    |         | The values that will make the field required. If empty or not provided it will make the field required if the target field has a value. |
+
+:::warning ValidationObserver
+If a modification is made to the source of the required_if ("country" in the above example), the `invalid` and other flags of the ValidationObserver will not automatically be updated.  One solution is to watch the data element and when it changes, manually call `ValidationObserver.validate`.
+:::
 
 ### size
 
