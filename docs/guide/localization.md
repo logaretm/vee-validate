@@ -206,7 +206,10 @@ import { configure } from 'vee-validate';
 
 configure({
   // this will be used to generate messages.
-  defaultMessage: (_, values) => i18n.t(`validations.${values._rule_}`, values)
+  defaultMessage: (field, values) => {
+    values._field_ = i18n.t(`fields.${field}`);
+    return i18n.t(`validations.${values._rule_}`, values);
+  }
 });
 ```
 
