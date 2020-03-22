@@ -1,7 +1,7 @@
 # Localization
 
 This plugin only comes with English messages to keep things small, but it was built with flexible message generation in mind.
-The [English messages file](https://github.com/logaretm/vee-validate/blob/master/locale/en.js) is an example on how you would structure those messages. Then, you may want to update the validator dictionary, which should happen once in your app startup. Still, you may update them whenever you want at any point of your app. Check the [dictionary](#using-the-dictionary-api) section below.
+The [English messages file](https://github.com/logaretm/vee-validate/blob/v2/locale/en.js) is an example on how you would structure those messages. Then, you may want to update the validator dictionary, which should happen once in your app startup. Still, you may update them whenever you want at any point of your app. Check the [dictionary](#using-the-dictionary-api) section below.
 
 ## Aliases
 
@@ -95,7 +95,7 @@ A working example can be found [here](/examples/locale.md).
 
 ## Localized Files
 
-In the [`locale`](https://github.com/logaretm/vee-validate/tree/master/locale) directory of this plugin, is a collection of localized files. If you can't find your locale, you could help this plugin by contributing a localized version to the [repository](https://github.com/logaretm/vee-validate). It will be happily accepted.
+In the [`locale`](https://github.com/logaretm/vee-validate/tree/v2/locale) directory of this plugin, is a collection of localized files. If you can't find your locale, you could help this plugin by contributing a localized version to the [repository](https://github.com/logaretm/vee-validate). It will be happily accepted.
 
 You can import those locales like this:
 
@@ -185,7 +185,7 @@ this.$i18n.locale = 'ar';
 
 You might have a different i18n system for your app, vee-validate internally uses drivers to generate its messages. To avoid having to maintain two different localization drivers you can easily integrate your custom driver into vee-validate.
 
-You will need to create an object that implements the [IDictionary interface](https://github.com/logaretm/vee-validate/blob/master/flow/dictionary.js#L12). And after installing the plugin you can apply the new driver to vee-validate.
+You will need to create an object that implements the [IDictionary interface](https://github.com/logaretm/vee-validate/blob/v2/flow/dictionary.js#L12). And after installing the plugin you can apply the new driver to vee-validate.
 
 ```js
 import Vue from 'vue';
