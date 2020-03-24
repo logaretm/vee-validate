@@ -61,7 +61,7 @@ However, if you do not want to use `v-model` the input needs to have set binding
 </ValidationProvider>
 ```
 
-If you are using a CDN with vee-validate you may to use the `kebab` case as HTML is case insensitive, so you need to reference the `ValidationProvider` as `validation-provider`.
+If you are using a CDN with vee-validate you may have to use the `kebab` case as HTML is case insensitive, so you need to reference the `ValidationProvider` as `validation-provider`.
 
 ```vue
 <validation-provider v-slot="v">
