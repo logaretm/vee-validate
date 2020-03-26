@@ -52,6 +52,8 @@ See the [ValidationObserver Public API](../api/validation-observer.md).
 
 When using `$refs` with TypeScript, you have to provide the typings for the `ValidationObserver` or `ValidationProvider` instances which can be done using `InstanceType` utility type. Use it like the following snippet:
 
+:::
+
 ```ts
 import { ValidationObserver } from 'vee-validate';
 
@@ -66,7 +68,6 @@ export default class App extends Vue {
 }
 ```
 
-:::
 
 ## Initial State Validation
 
