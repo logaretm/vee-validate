@@ -30,7 +30,7 @@ For example: setting the `touched` and `dirty` flags to `false` and clearing all
 
 @[example](form-reset)
 
-:::hint
+:::tip
 The ValidationObserver `reset` method does not reset the values of the child fields, this is up to you.
 :::
 
@@ -43,12 +43,12 @@ Here is an example that handles validation before submit and then resetting usin
 
 @[example](form-refs)
 
-:::hint
+:::tip
 Using `refs` gives you full access to the `ValidationObserver` component API, but it is recommended that you only use the documented API as any of the internals are subject to change.
 See the [ValidationObserver Public API](../api/validation-observer.md).
 :::
 
-:::hint TypeScript
+:::tip TypeScript
 
 When using `$refs` with TypeScript, you have to provide the typings for the `ValidationObserver` or `ValidationProvider` instances which can be done using `InstanceType` utility type. Use it like the following snippet:
 
@@ -96,7 +96,7 @@ Here is an example that employs `keep-alive` to keep `ValidationProvider` state 
 
 @[example](persist-provider)
 
-:::hint
+:::tip
 Even when fields are hidden/unmounted, as long as they wrapped with `keep-alive` their state will also be affected by `validate` and `reset` calls.
 :::
 
