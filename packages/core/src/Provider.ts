@@ -1,6 +1,6 @@
 import { ref, computed, SetupContext, VNode, inject } from 'vue';
-import { modes, InteractionModeFactory } from '../modes';
-import { normalizeRules } from '../utils/rules';
+import { modes, InteractionModeFactory } from './modes';
+import { normalizeRules } from './utils/rules';
 import {
   extractVNodes,
   normalizeChildren,
@@ -8,12 +8,12 @@ import {
   isHTMLNode,
   getInputEventName,
   addVNodeListener
-} from '../utils/vnode';
-import { isCallable, isEqual, isNullOrUndefined } from '../utils';
-import { getConfig } from '../config';
-import { RuleContainer } from '../extend';
-import { Flag, ValidationFlags, FormController } from '../types';
-import { useField } from '../useField';
+} from './utils/vnode';
+import { isCallable, isEqual, isNullOrUndefined } from './utils';
+import { getConfig } from './config';
+import { RuleContainer } from './extend';
+import { Flag, ValidationFlags, FormController } from './types';
+import { useField } from './useField';
 
 interface ProviderProps {
   vid: string | undefined;
@@ -28,7 +28,7 @@ interface ProviderProps {
   customMessages: Record<string, string>;
 }
 
-export const ValidationProvider = {
+export const ValidationProvider: any = {
   props: {
     vid: {
       type: String,
@@ -91,7 +91,7 @@ export const ValidationProvider = {
     let inputEvtName = '';
     // let initialized = false;
     const id = '';
-    let resolvedRules = {};
+    const resolvedRules = {};
 
     const normalizedRules = computed(() => {
       return normalizeRules(props.rules);
@@ -174,6 +174,7 @@ export const ValidationProvider = {
         failedRules: failedRules.value,
         reset,
         validate: validateField,
+        handleChange,
         ariaInput: {
           'aria-invalid': flags.invalid ? 'true' : 'false',
           'aria-required': isRequired.value ? 'true' : 'false',
@@ -200,26 +201,6 @@ export const ValidationProvider = {
     return () => {
       // updateRenderingContextRefs();
       const children = normalizeChildren(ctx, slotProps.value);
-
-      extractVNodes(children).forEach(input => {
-        // resolved rules are not reactive because it has a new reference each time.
-        // causing infinite render-loops.
-        // So we are comparing them manually to decide if we need to validate or not.
-        const resolved = getConfig().useConstraintAttrs ? resolveRules(input) : {};
-        if (!isEqual(resolvedRules, resolved)) {
-          // FIXME: Should validate!
-        }
-
-        const name = props.name || input.props?.name || input.props?.id || '';
-        if (isHTMLNode(input) && fieldName.value !== name) {
-          fieldName.value = name;
-        }
-
-        // cache the input eventName.
-        inputEvtName = inputEvtName || getInputEventName(input);
-        resolvedRules = resolved;
-        listen(input);
-      });
 
       return children;
     };

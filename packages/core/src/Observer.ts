@@ -1,9 +1,9 @@
 import { SetupContext, computed, provide } from 'vue';
-import { normalizeChildren } from '../utils/vnode';
-import { useForm } from '../useForm';
-import { ValidationFlags } from '../types';
+import { normalizeChildren } from './utils/vnode';
+import { useForm } from './useForm';
+import { ValidationFlags } from './types';
 
-export const ValidationObserver = {
+export const ValidationObserver: any = {
   name: 'ValidationObserver',
   setup(_: any, ctx: SetupContext) {
     const { form, errors, validate, handleSubmit, reset, ...flags } = useForm();

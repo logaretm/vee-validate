@@ -7,7 +7,7 @@ export const UPDATE_MODEL_EVENT = 'update:modelValue';
 
 export const HTML_TAGS = ['input', 'select', 'textarea'];
 
-export const isTextInput = (vnode: VNode) => {
+export const isTextInput: (v: VNode) => boolean = (vnode: VNode) => {
   if (typeof vnode.type === 'object') {
     return false;
   }
@@ -183,10 +183,10 @@ export function resolveRules(vnode: VNode) {
   return normalizeRules(rules);
 }
 
-export function normalizeChildren(context: SetupContext, slotProps: any) {
+export const normalizeChildren: (c: SetupContext, a: any) => VNode[] = (context: SetupContext, slotProps: any) => {
   if (!context.slots.default) {
     return [];
   }
 
   return context.slots.default(slotProps) || [];
-}
+};
