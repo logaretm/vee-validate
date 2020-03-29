@@ -1,15 +1,7 @@
-import { ref, computed, SetupContext, VNode, inject } from 'vue';
-import { modes, InteractionModeFactory } from './modes';
+import { ref, computed, SetupContext, inject } from 'vue';
 import { normalizeRules } from './utils/rules';
-import {
-  extractVNodes,
-  normalizeChildren,
-  resolveRules,
-  isHTMLNode,
-  getInputEventName,
-  addVNodeListener
-} from './utils/vnode';
-import { isCallable, isEqual, isNullOrUndefined } from './utils';
+import { normalizeChildren } from './utils/vnode';
+import { isNullOrUndefined } from './utils';
 import { getConfig } from './config';
 import { RuleContainer } from './extend';
 import { Flag, ValidationFlags, FormController } from './types';
@@ -38,12 +30,6 @@ export const ValidationProvider: any = {
       type: String,
       default: null
     },
-    mode: {
-      type: [String, Function],
-      default: () => {
-        return getConfig().mode;
-      }
-    },
     rules: {
       type: [Object, String],
       default: null
@@ -59,10 +45,6 @@ export const ValidationProvider: any = {
     skipIfEmpty: {
       type: Boolean,
       default: () => getConfig().skipOptional
-    },
-    debounce: {
-      type: Number,
-      default: 0
     },
     disabled: {
       type: Boolean,
@@ -88,7 +70,6 @@ export const ValidationProvider: any = {
 
     // let initialValue: any;
     // eslint-disable-next-line prefer-const
-    let inputEvtName = '';
     // let initialized = false;
     const id = '';
     const resolvedRules = {};
@@ -103,28 +84,6 @@ export const ValidationProvider: any = {
 
         return acc;
       }, {} as ValidationFlags);
-    });
-
-    const interactionMode = computed(() => {
-      const computeModeSetting = (isCallable(props.mode) ? props.mode : modes[props.mode]) as InteractionModeFactory;
-
-      return computeModeSetting({
-        errors: errors.value,
-        flags: unwrappedFlags.value,
-        value: value.value
-      });
-    });
-
-    const normalizedEvents = computed(() => {
-      const { on } = interactionMode.value;
-
-      return (on || []).map(e => {
-        if (e === 'input') {
-          return inputEvtName;
-        }
-
-        return e;
-      });
     });
 
     const isRequired = computed(() => {
@@ -186,17 +145,6 @@ export const ValidationProvider: any = {
         }
       };
     });
-
-    // Adds all plugin listeners to the vnode.
-    function listen(node: VNode) {
-      addVNodeListener(node, inputEvtName, handleChange);
-      addVNodeListener(node, 'blur', onBlur);
-      // add the validation listeners.
-      normalizedEvents.value.forEach((evt: string) => {
-        addVNodeListener(node, evt, validateField);
-      });
-      // initialized = true;
-    }
 
     return () => {
       // updateRenderingContextRefs();

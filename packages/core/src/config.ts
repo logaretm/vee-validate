@@ -1,4 +1,3 @@
-import { InteractionModeFactory } from './modes';
 import { ValidationMessageTemplate } from './types';
 
 type ValidationClass = string | string[] | undefined;
@@ -15,8 +14,6 @@ export interface ValidationClassMap {
 
 export interface VeeValidateConfig {
   bails: boolean;
-  useConstraintAttrs: boolean;
-  mode: string | InteractionModeFactory;
   classes: ValidationClassMap;
   defaultMessage: ValidationMessageTemplate;
   skipOptional: boolean;
@@ -33,9 +30,7 @@ const DEFAULT_CONFIG: VeeValidateConfig = {
     pristine: 'pristine', // control has not been interacted with
     dirty: 'dirty' // control has been interacted with
   },
-  bails: true,
-  mode: 'aggressive',
-  useConstraintAttrs: true
+  bails: true
 };
 
 export let currentConfig: VeeValidateConfig = { ...DEFAULT_CONFIG };

@@ -1,7 +1,6 @@
 export { validate } from './validate';
 export { extend } from './extend';
 export { configure } from './config';
-export { setInteractionMode } from './modes';
 export { localize } from './localize';
 export { ValidationProvider } from './Provider';
 export { ValidationObserver } from './Observer';
