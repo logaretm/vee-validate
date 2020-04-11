@@ -30,3 +30,24 @@ test('allows empty rules for the string format', async () => {
   result = await validate(100, '||||numeric');
   expect(result.valid).toBe(true);
 });
+
+describe('array args collection', () => {
+  extend('array_args', {
+    validate(val, args) {
+      return args.arr.indexOf(val) === -1;
+    },
+    params: ['arr']
+  });
+
+  test('should collect args in an array when using strings', async () => {
+    const result = await validate(2, 'array_args:1');
+
+    expect(result.valid).toBe(true);
+  });
+
+  test('should preserve array args as is when using objects', async () => {
+    const result = await validate(2, { array_args: [1] });
+
+    expect(result.valid).toBe(true);
+  });
+});
