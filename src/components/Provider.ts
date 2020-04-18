@@ -1,8 +1,8 @@
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { normalizeRules, extractLocators } from '../utils/rules';
 import { normalizeEventValue } from '../utils/events';
-import { extractVNodes, normalizeChildren, resolveRules, isHTMLNode } from '../utils/vnode';
-import { isCallable, isEqual, isNullOrUndefined, createFlags } from '../utils';
+import { findInputNode, normalizeChildren, resolveRules, isHTMLNode } from '../utils/vnode';
+import { isCallable, isEqual, isNullOrUndefined, createFlags, warn } from '../utils';
 import { getConfig, ValidationClassMap } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
@@ -200,23 +200,23 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     const ctx = createValidationCtx(this);
     const children = normalizeChildren(this, ctx);
 
-    // Handle single-root slot.
-    extractVNodes(children).forEach(input => {
-      // resolved rules are not reactive because it has a new reference each time.
-      // causing infinite render-loops.
-      // So we are comparing them manually to decide if we need to validate or not.
-      const resolved = getConfig().useConstraintAttrs ? resolveRules(input) : {};
-      if (!isEqual(this._resolvedRules, resolved)) {
-        this._needsValidation = true;
-      }
+    const input = findInputNode(children);
+    if (!input) {
+      // Silent exit if no input was found.
+      return this.slim && children.length <= 1 ? children[0] : h(this.tag, children);
+    }
 
-      if (isHTMLNode(input)) {
-        this.fieldName = input.data?.attrs?.name || input.data?.attrs?.id;
-      }
+    const resolved = getConfig().useConstraintAttrs ? resolveRules(input) : {};
+    if (!isEqual(this._resolvedRules, resolved)) {
+      this._needsValidation = true;
+    }
 
-      this._resolvedRules = resolved;
-      addListeners(this, input);
-    });
+    if (isHTMLNode(input)) {
+      this.fieldName = input.data?.attrs?.name || input.data?.attrs?.id;
+    }
+
+    this._resolvedRules = resolved;
+    addListeners(this, input);
 
     return this.slim && children.length <= 1 ? children[0] : h(this.tag, children);
   },

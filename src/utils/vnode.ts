@@ -82,21 +82,19 @@ function extractChildren(vnode: VNode | VNode[]): VNode[] {
   return [];
 }
 
-export function extractVNodes(vnode: VNode | VNode[]): VNode[] {
+export function findInputNode(vnode: VNode | VNode[]): VNode | null {
   if (!Array.isArray(vnode) && findValue(vnode) !== undefined) {
-    return [vnode];
+    return vnode;
   }
 
   const children = extractChildren(vnode);
-
-  return children.reduce((nodes: VNode[], node): VNode[] => {
-    const candidates = extractVNodes(node);
-    if (candidates.length) {
-      nodes.push(...candidates);
+  return children.reduce((candidate: VNode | null, node): VNode | null => {
+    if (candidate) {
+      return candidate;
     }
 
-    return nodes;
-  }, []);
+    return findInputNode(node);
+  }, null);
 }
 
 // Resolves v-model config if exists.
