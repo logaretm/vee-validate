@@ -2,7 +2,7 @@ import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { normalizeRules, extractLocators } from '../utils/rules';
 import { normalizeEventValue } from '../utils/events';
 import { findInputNode, normalizeChildren, resolveRules, isHTMLNode } from '../utils/vnode';
-import { isCallable, isEqual, isNullOrUndefined, createFlags, warn } from '../utils';
+import { isCallable, isEqual, isNullOrUndefined, createFlags } from '../utils';
 import { getConfig, ValidationClassMap } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
