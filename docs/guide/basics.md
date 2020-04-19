@@ -53,13 +53,17 @@ After that you can use it in your components templates, typically you **wrap you
 
 For the `input` field or the component acting as an input, it **should have a `v-model` attached to it**. This is because the `ValidationProvider` searches its own children for inputs, so the `v-model` acts as a hint for the `ValidationProvider`.
 
-However, if you do not want to use `v-model` the input needs to have set binding to `value` prop, which in this case serves as a hint for the `ValidationProvider`.
+However, if you cannot use `v-model` on the input, then you also could set binding to `value` prop, which in this case serves as a hint for the `ValidationProvider`.
 
 ```vue
 <ValidationProvider v-slot="v">
   <input :value="value" @change="onInputChanged" type="text">
 </ValidationProvider>
 ```
+
+:::warning
+If you cannot use neither `v-model` or a `value` binding on your inputs, you can still validate your fields. For example a `file` type input usually doesn't use `v-mode`. To validate such fields, visit the [model-less validation guide](../advanced/model-less-validation.md).
+:::
 
 If you are using a CDN with vee-validate you may have to use the `kebab` case as HTML is case insensitive, so you need to reference the `ValidationProvider` as `validation-provider`.
 

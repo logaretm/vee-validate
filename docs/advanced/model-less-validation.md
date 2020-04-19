@@ -1,6 +1,6 @@
-# File Validation
+# Model-less Validation
 
-While the `ValidationProvider` requires having `v-model` on your input elements, that does not mean that inputs like `file` inputs cannot be validated.
+The `ValidationProvider` requires having `v-model` on your input elements. However, that does not mean that inputs like `file` inputs cannot be validated.
 
 :::tip
 While the `file` input is the most common field not to use a `v-model`.This guide applies to any type of input, not just the `file` type.
