@@ -92,7 +92,7 @@ module.exports = {
         children: [
           '/advanced/rules-object-expression',
           '/advanced/cross-field-validation',
-          '/advanced/file-validation.md',
+          '/advanced/model-less-validation.md',
           '/advanced/dynamic-rules',
           '/advanced/refactoring-forms',
           '/advanced/server-side-validation',

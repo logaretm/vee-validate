@@ -164,7 +164,7 @@ function loadLocale(code) {
 }
 ```
 
-:::warn `defaultMessage` Config
+:::warning `defaultMessage` Config
 Avoid setting the `defaultMessage` config after using `localize` as it will conflict with the internal working of the basic dictionary.
 :::
 

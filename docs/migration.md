@@ -4,7 +4,15 @@ sidebarDepth: 1
 
 # Migration Guide
 
-This document should help you navigate the tricky path of migrating between major versions of `vee-validate` that introduced breaking changes:
+This document should help you navigate the tricky path of migrating between different versions of `vee-validate` that introduced breaking changes:
+
+## Migrating from 3.2.x to 3.3.0
+
+Only 1 minor change was introduced which could be breaking to some edge cases.
+
+### `v-model` detection limited to 1 Node
+
+Starting from 3.3.0, the `ValidationProvider` will only look for exactly 1 node with the `v-model` attached to it. This shouldn't affect you as usually you had 1:1 input to `ValidationProvider` relation, but in some cases when you have more complex template inside the `ValidationProvider`, you should make sure your input that will be validated will come first in the tree.
 
 ## Migrating from 3.0.x to 3.1.0
 

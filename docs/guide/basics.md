@@ -51,15 +51,19 @@ After that you can use it in your components templates, typically you **wrap you
 </ValidationProvider>
 ```
 
-For the `input` field or the component acting as an input, it is **recommended to have a `v-model` attached to it**. This is because the `ValidationProvider` searches its own children for inputs, so the <code>v&#8209;model</code> acts as a hint for the `ValidationProvider`.
+For the `input` field or the component acting as an input, it **should have a `v-model` attached to it**. This is because the `ValidationProvider` searches its own children for inputs, so the `v-model` acts as a hint for the `ValidationProvider`.
 
-However, if you do not want to use `v-model` the input needs to have set binding to `value` prop, which in this case serves as a hint for the `ValidationProvider`.
+However, if you cannot use `v-model` on the input, then you also could set binding to `value` prop, which in this case serves as a hint for the `ValidationProvider`.
 
 ```vue
 <ValidationProvider v-slot="v">
   <input :value="value" @change="onInputChanged" type="text">
 </ValidationProvider>
 ```
+
+:::warning
+If you cannot use neither `v-model` or a `value` binding on your inputs, you can still validate your fields. For example a `file` type input usually doesn't use `v-mode`. To validate such fields, visit the [model-less validation guide](../advanced/model-less-validation.md).
+:::
 
 If you are using a CDN with vee-validate you may have to use the `kebab` case as HTML is case insensitive, so you need to reference the `ValidationProvider` as `validation-provider`.
 
@@ -147,7 +151,7 @@ Notice that the `|` pipe character separates the rules, this is inspired by Lara
 The string you sent to the `rules` prop is called a **string expression**.
 
 :::tip
-  There is another advanced expression that you can express your rules with. See [Rules Object Expression](../advanced/rules-object-expression.md).
+There is another advanced expression that you can express your rules with. See [Rules Object Expression](../advanced/rules-object-expression.md).
 :::
 
 The last snippet used a function as the validation rule, there is a more **extended form of rules** that uses objects to include more metadata. The last snippet can also be re-written as:
@@ -238,10 +242,7 @@ extend('minmax', {
 To use this rule, you pass the `minmax` rule to the `rules` prop of the `ValidationProvider` and you supply the arguments as a **comma separated list**:
 
 ```vue{2}
-<ValidationProvider
-  rules="minmax:3,8"
-  v-slot="{ errors }"
->
+<ValidationProvider rules="minmax:3,8" v-slot="{ errors }">
   <input v-model="value" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
@@ -250,7 +251,7 @@ To use this rule, you pass the `minmax` rule to the `rules` prop of the `Validat
 Now the field will be valid when the value is a string having a length between 3 and 8.
 
 :::tip
-  Arguments **must follow** the same order they were defined in as in the `params` array.
+Arguments **must follow** the same order they were defined in as in the `params` array.
 :::
 
 ### Infinite Arguments
@@ -338,11 +339,7 @@ extend('positive', value => {
 To display the field name, you set the `name` prop on the validation provider:
 
 ```vue{2}
-<ValidationProvider
-  name="age"
-  rules="positive"
-  v-slot="{ errors }"
->
+<ValidationProvider name="age" rules="positive" v-slot="{ errors }">
   <input v-model="value" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
@@ -353,10 +350,7 @@ Additionally, the field name can be automatically picked up from `name` or `id` 
 Here since a `name` prop is not set, vee-validate uses the `name` attribute on the input tag as a field name.
 
 ```vue{5}
-<ValidationProvider
-  rules="positive"
-  v-slot="{ errors }"
->
+<ValidationProvider rules="positive" v-slot="{ errors }">
   <input v-model="value" name="age" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
@@ -365,10 +359,7 @@ Here since a `name` prop is not set, vee-validate uses the `name` attribute on t
 Here since a `name` prop is not set nor a `name` attribute on the input, vee-validate uses the `id` attribute on the input tag as a field name.
 
 ```vue{5}
-<ValidationProvider
-  rules="positive"
-  v-slot="{ errors }"
->
+<ValidationProvider rules="positive" v-slot="{ errors }">
   <input v-model="value" id="age" type="text">
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
@@ -417,7 +408,7 @@ extend('minmax', {
   },
   params: ['min', 'max'],
   message: (fieldName, placeholders) => {
-    return `The ${fieldName} field must have at least ${placeholders.min} characters and ${placeholders.max} characters at most`
+    return `The ${fieldName} field must have at least ${placeholders.min} characters and ${placeholders.max} characters at most`;
   }
 });
 ```
@@ -426,8 +417,8 @@ This allows you to manually interpolate or generate messages depending on your n
 
 For reference these are the contents of the `placeholders` object:
 
-| Prop      |Description                                 |
-|-----------|--------------------------------------------|
+| Prop      | Description                                |
+| --------- | ------------------------------------------ |
 | `_field_` | The field name.                            |
 | `_value_` | The field value that was validated.        |
 | `_rule_`  | The rule name that triggered this message. |
@@ -443,11 +434,7 @@ You could then be wondering why `errors` is an array when vee-validate only gene
 You could configure the `ValidationProvider` component to run all the rules by setting the `bails` prop to `false`:
 
 ```vue{3}
-<ValidationProvider
-  rules="positive|odd|prime|fib"
-  :bails="false"
-  v-slot="{ errors }"
->
+<ValidationProvider rules="positive|odd|prime|fib" :bails="false" v-slot="{ errors }">
   <input v-model="value" type="text">
   <ul>
     <li v-for="error in errors">{{ error }}</li>
