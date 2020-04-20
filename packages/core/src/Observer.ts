@@ -19,10 +19,10 @@ export const ValidationObserver: any = {
         errors: errors.value,
         validate,
         handleSubmit,
-        reset
+        reset,
       };
     });
 
     return () => normalizeChildren(ctx, slotProps.value);
-  }
+  },
 };

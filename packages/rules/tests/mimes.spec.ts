@@ -8,7 +8,7 @@ test('validates mime types', () => {
       [
         helpers.file('file.txt', 'text/plain'),
         helpers.file('file.jpg', 'image/jpeg'),
-        helpers.file('file.svg', 'image/svg')
+        helpers.file('file.svg', 'image/svg'),
       ],
       params
     )

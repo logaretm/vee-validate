@@ -12,7 +12,7 @@ const valid = [
   false,
   'this is sparta',
   ' ',
-  ['adasd dasdasda', 'yy']
+  ['adasd dasdasda', 'yy'],
 ];
 
 const invalid = ['123-abc', {}, '1234567890', 'abc123', 123, ['adasd dasdasda', '123']];

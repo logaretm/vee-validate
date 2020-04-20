@@ -13,7 +13,7 @@ const valid = [
   'undefined',
   true,
   false,
-  ['asdad', 123, 'asd2123']
+  ['asdad', 123, 'asd2123'],
 ];
 
 const invalid = ['this is sparta', '123-abc', {}, ' ', ['asdasda  ', '123 ad']];

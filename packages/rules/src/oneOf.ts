@@ -14,5 +14,5 @@ const validate: ValidationRuleFunction = (value, options) => {
 export { validate };
 
 export default {
-  validate
+  validate,
 };

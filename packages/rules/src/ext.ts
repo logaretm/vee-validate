@@ -10,5 +10,5 @@ const validate = (files: any, extensions: string[] | Record<string, any>) => {
 export { validate };
 
 export default {
-  validate
+  validate,
 };

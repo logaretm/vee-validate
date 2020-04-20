@@ -28,9 +28,9 @@ const DEFAULT_CONFIG: VeeValidateConfig = {
     valid: 'valid', // model is valid
     invalid: 'invalid', // model is invalid
     pristine: 'pristine', // control has not been interacted with
-    dirty: 'dirty' // control has been interacted with
+    dirty: 'dirty', // control has been interacted with
   },
-  bails: true
+  bails: true,
 };
 
 export let currentConfig: VeeValidateConfig = { ...DEFAULT_CONFIG };

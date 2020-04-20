@@ -7,13 +7,13 @@ Vue.component('ValidationProvider', ValidationProvider);
 
 test('can set config using configure fn', async () => {
   configure({
-    bails: false
+    bails: false,
   });
 
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       template: `
         <div>
@@ -22,7 +22,7 @@ test('can set config using configure fn', async () => {
             <span class="error" v-for="error in errors">{{ error }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );

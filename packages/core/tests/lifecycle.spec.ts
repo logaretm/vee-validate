@@ -8,11 +8,11 @@ test.skip('handles keep-alive activation/deactivation life-cycles', async () => 
   const vm = new TheRealVue({
     components: {
       ValidationProvider,
-      ValidationObserver
+      ValidationObserver,
     },
     data: () => ({
       value: '',
-      isHidden: false
+      isHidden: false,
     }),
     template: `
     <div>
@@ -31,7 +31,7 @@ test.skip('handles keep-alive activation/deactivation life-cycles', async () => 
       </ValidationObserver>
       <button @click="isHidden = !isHidden">Toggle</button>
     </div>
-    `
+    `,
   });
 
   vm.$mount();

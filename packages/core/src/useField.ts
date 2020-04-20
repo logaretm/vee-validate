@@ -30,7 +30,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     const result = await validate(value.value, normalizedRules.value, {
       name: isRef(fieldName) ? fieldName.value : fieldName,
       values: form?.values.value ?? {},
-      names: form?.names.value ?? {}
+      names: form?.names.value ?? {},
     });
 
     patch(result);
@@ -39,12 +39,12 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
   };
 
   watch(value, validateField, {
-    deep: true
+    deep: true,
   });
 
   if (isRef(rules)) {
     watch(rules, validateField, {
-      deep: true
+      deep: true,
     });
   }
 
@@ -71,7 +71,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     reset,
     validate: validateField,
     handleChange,
-    onBlur
+    onBlur,
   };
 
   useFormController(field, normalizedRules, form);
@@ -83,7 +83,7 @@ function useFieldOptions(opts: FieldOptions | undefined): CompleteFieldOptions {
   const defaults = () => ({
     value: ref(null),
     immediate: false,
-    rules: ''
+    rules: '',
   });
 
   if (!opts) {
@@ -92,7 +92,7 @@ function useFieldOptions(opts: FieldOptions | undefined): CompleteFieldOptions {
 
   return {
     ...defaults(),
-    ...(opts ?? {})
+    ...(opts ?? {}),
   };
 }
 
@@ -131,7 +131,7 @@ function useValidationState(value: Ref<any>) {
     patch,
     reset,
     onBlur,
-    handleChange
+    handleChange,
   };
 }
 
@@ -191,6 +191,6 @@ function useFlags() {
     passed,
     failed,
     onBlur,
-    reset
+    reset,
   };
 }

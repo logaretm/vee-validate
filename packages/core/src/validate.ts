@@ -7,7 +7,7 @@ import {
   ValidationMessageGenerator,
   ValidationMessageTemplate,
   ValidationResult,
-  ValidationRuleSchema
+  ValidationRuleSchema,
 } from './types';
 
 interface FieldContext {
@@ -49,7 +49,7 @@ export async function validate(
     forceRequired: false,
     crossTable: options?.values || {},
     names: options?.names || {},
-    customMessages: options?.customMessages || {}
+    customMessages: options?.customMessages || {},
   };
 
   const result = await _validate(field, value, options);
@@ -68,7 +68,7 @@ export async function validate(
     valid: result.valid,
     errors,
     failedRules,
-    regenerateMap
+    regenerateMap,
   };
 }
 
@@ -80,7 +80,7 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
   if (shouldSkip) {
     return {
       valid: !errors.length,
-      errors
+      errors,
     };
   }
 
@@ -95,7 +95,7 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
     const rule = rules[i];
     const result = await _test(field, value, {
       name: rule,
-      params: field.rules[rule]
+      params: field.rules[rule],
     });
 
     if (!result.valid && result.error) {
@@ -103,7 +103,7 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
       if (field.bails) {
         return {
           valid: false,
-          errors
+          errors,
         };
       }
     }
@@ -111,7 +111,7 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
 
   return {
     valid: !errors.length,
-    errors
+    errors,
   };
 }
 
@@ -127,7 +127,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
     const rule = requireRules[i];
     const result = await _test(field, value, {
       name: rule,
-      params: field.rules[rule]
+      params: field.rules[rule],
     });
 
     if (!isObject(result)) {
@@ -144,7 +144,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
       if (field.bails) {
         return {
           shouldSkip: true,
-          errors
+          errors,
         };
       }
     }
@@ -153,7 +153,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
   if (isEmpty && !isRequired && !field.skipIfEmpty) {
     return {
       shouldSkip: false,
-      errors
+      errors,
     };
   }
 
@@ -161,14 +161,14 @@ async function _shouldSkip(field: FieldContext, value: any) {
   if (!field.bails && !isEmptyAndOptional) {
     return {
       shouldSkip: false,
-      errors
+      errors,
     };
   }
 
   // skip if the field is not required and has an empty value.
   return {
     shouldSkip: !isRequired && isEmpty,
-    errors
+    errors,
   };
 }
 
@@ -190,12 +190,12 @@ async function _test(field: FieldContext, value: any, rule: { name: string; para
       ...(params || {}),
       _field_: field.name,
       _value_: value,
-      _rule_: rule.name
+      _rule_: rule.name,
     };
 
     return {
       valid: false,
-      error: { rule: rule.name, msg: () => interpolate(result as string, values) }
+      error: { rule: rule.name, msg: () => interpolate(result as string, values) },
     };
   }
 
@@ -206,7 +206,7 @@ async function _test(field: FieldContext, value: any, rule: { name: string; para
   return {
     valid: result.valid,
     required: result.required,
-    error: result.valid ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params)
+    error: result.valid ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params),
   };
 }
 
@@ -229,12 +229,12 @@ function _generateFieldError(
     _value_: value,
     _rule_: ruleName,
     ...ruleTargets,
-    ...userTargets
+    ...userTargets,
   };
 
   return {
     msg: () => _normalizeMessage(userMessage || getConfig().defaultMessage, field.name, values),
-    rule: ruleName
+    rule: ruleName,
   };
 }
 
@@ -314,7 +314,7 @@ function _getUserTargets(
 
   return {
     userTargets,
-    userMessage
+    userMessage,
   };
 }
 

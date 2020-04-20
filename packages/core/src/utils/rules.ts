@@ -12,7 +12,7 @@ export function normalizeRules(rules: any) {
     value: true,
     writable: false,
     enumerable: false,
-    configurable: false
+    configurable: false,
   });
 
   if (!rules) {
@@ -152,11 +152,7 @@ export const parseRule = (rule: string) => {
   const name = rule.split(':')[0];
 
   if (includes(rule, ':')) {
-    params = rule
-      .split(':')
-      .slice(1)
-      .join(':')
-      .split(',');
+    params = rule.split(':').slice(1).join(':').split(',');
   }
 
   return { name, params };

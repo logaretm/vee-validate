@@ -4,7 +4,7 @@ import { between, confirmed } from '@vee-validate/rules';
 describe('target field placeholder', () => {
   extend('confirmed', {
     ...confirmed,
-    message: '{_field_} must match {target}'
+    message: '{_field_} must match {target}',
   });
 
   const names = { foo: 'Foo', bar: 'Bar', baz: 'Baz' };
@@ -15,7 +15,7 @@ describe('target field placeholder', () => {
     const options = {
       name: names.bar,
       values,
-      names
+      names,
     };
     const result = await validate(values.bar, rules, options);
     expect(result.errors[0]).toEqual('Bar must match Foo');
@@ -26,7 +26,7 @@ describe('target field placeholder', () => {
     const rules = 'confirmed:foo';
     const options = {
       name: names.bar,
-      values
+      values,
     };
     const result = await validate(values.bar, rules, options);
     expect(result.errors[0]).toEqual('Bar must match foo');
@@ -38,9 +38,9 @@ describe('target field placeholder', () => {
       // eslint-disable-next-line prettier/prettier
       params: [
         { name: 'a', isTarget: true },
-        { name: 'b', isTarget: true }
+        { name: 'b', isTarget: true },
       ],
-      validate: (value, { a, b }: Record<string, any>) => value === parseInt(a, 10) + parseInt(b, 10)
+      validate: (value, { a, b }: Record<string, any>) => value === parseInt(a, 10) + parseInt(b, 10),
     });
 
     const values = { foo: 10, bar: 10, baz: 10 };
@@ -49,7 +49,7 @@ describe('target field placeholder', () => {
     const options = {
       name: names.foo,
       values,
-      names
+      names,
     };
 
     const result = await validate(values.foo, rules, options);
@@ -60,7 +60,7 @@ describe('target field placeholder', () => {
 describe('cross-field syntax', () => {
   extend('between', {
     ...between,
-    message: '{_field_} must be between {min} and {max}'
+    message: '{_field_} must be between {min} and {max}',
   });
 
   const values = { value: 20, maxValue: 15 };
@@ -68,7 +68,7 @@ describe('cross-field syntax', () => {
   const rules = 'between:0,@maxValue';
   const options = {
     name: names.value,
-    values
+    values,
   };
 
   describe('should validate and generate the correct message', () => {
@@ -84,7 +84,7 @@ describe('cross-field syntax', () => {
 
     test('with options.customMessages string', async () => {
       const customMessages = {
-        between: 'The Value field must be more than {min} but less than {max}'
+        between: 'The Value field must be more than {min} but less than {max}',
       };
       const result = await validate(values.value, rules, { ...options, customMessages, names });
       expect(result.errors[0]).toEqual('The Value field must be more than 0 but less than Max Value');
@@ -94,7 +94,7 @@ describe('cross-field syntax', () => {
       const customMessages = {
         between(_: string, { min, max }: Record<string, any>) {
           return `Must be more than ${min} and less than ${max}`;
-        }
+        },
       };
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -109,20 +109,20 @@ describe('cross-field syntax', () => {
       params: [{ name: 'target', cast: val => val % 2 }],
       validate(val, { target }: Record<string, any>) {
         return target === 0;
-      }
+      },
     });
 
     let result = await validate('watever', 'isEven:@field', {
       values: {
-        field: 2
-      }
+        field: 2,
+      },
     });
 
     expect(result.valid).toBe(true);
     result = await validate('watever', 'isEven:@field', {
       values: {
-        field: 3
-      }
+        field: 3,
+      },
     });
     expect(result.valid).toBe(false);
   });

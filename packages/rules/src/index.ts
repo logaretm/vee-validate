@@ -53,5 +53,5 @@ export {
   regex,
   required,
   required_if,
-  size
+  size,
 };

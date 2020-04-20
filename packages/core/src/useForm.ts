@@ -13,7 +13,7 @@ const mergeStrategies: Record<Flag, 'every' | 'some'> = {
   changed: 'some',
   passed: 'every',
   failed: 'some',
-  required: 'some'
+  required: 'some',
 };
 
 function computeFlags(fields: Ref<any[]>) {
@@ -62,7 +62,7 @@ export function useForm(): FormComposite {
     },
     fields: fieldsById,
     values,
-    names
+    names,
   };
 
   const validate = async () => {
@@ -99,6 +99,6 @@ export function useForm(): FormComposite {
           return fn();
         }
       });
-    }
+    },
   };
 }

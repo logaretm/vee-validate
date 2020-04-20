@@ -15,7 +15,7 @@ const valid = [
   '123_abc',
   true,
   false,
-  ['a', 'b', 'cdef-_']
+  ['a', 'b', 'cdef-_'],
 ];
 
 const invalid = ['this is sparta', {}, ' ', [' ', 'ada as']];

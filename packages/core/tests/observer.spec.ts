@@ -21,7 +21,7 @@ test('renders the slot', () => {
       template: `
       <ValidationObserver tag="form" v-slot="ctx">
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -33,7 +33,7 @@ test('observes the current state of providers', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       template: `
       <ValidationObserver v-slot="{ valid }">
@@ -43,7 +43,7 @@ test('observes the current state of providers', async () => {
 
         <span id="state">{{ valid }}</span>
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -65,7 +65,7 @@ test('triggers validation manually on its children providers using refs', async 
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       template: `
       <ValidationObserver ref="obs" v-slot="ctx">
@@ -74,7 +74,7 @@ test('triggers validation manually on its children providers using refs', async 
           <span id="error">{{ errors[0] }}</span>
         </ValidationProvider>
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -94,12 +94,12 @@ test('passes only executes the callback if observer is valid', async () => {
     {
       data: () => ({
         value: '',
-        calls: 0
+        calls: 0,
       }),
       methods: {
         submit(this: any) {
           this.calls++;
-        }
+        },
       },
       template: `
       <ValidationObserver v-slot="ctx">
@@ -109,7 +109,7 @@ test('passes only executes the callback if observer is valid', async () => {
         </ValidationProvider>
         <button @click="ctx.handleSubmit(submit)">Validate</button>
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -136,7 +136,7 @@ test('removes child ref when the child is destroyed', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       template: `
       <ValidationObserver ref="obs" v-slot="ctx">
@@ -145,7 +145,7 @@ test('removes child ref when the child is destroyed', async () => {
           <span id="error">{{ errors[0] }}</span>
         </ValidationProvider>
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -160,7 +160,7 @@ test('resets child refs', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       template: `
       <ValidationObserver ref="obs" v-slot="ctx">
@@ -169,7 +169,7 @@ test('resets child refs', async () => {
           <span id="error">{{ errors[0] }}</span>
         </ValidationProvider>
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -192,7 +192,7 @@ test('resets child refs using reset on the v-slot data', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       template: `
       <ValidationObserver ref="obs" v-slot="ctx">
@@ -202,7 +202,7 @@ test('resets child refs using reset on the v-slot data', async () => {
         </ValidationProvider>
         <button @click="ctx.reset()">Reset</button>
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -227,7 +227,7 @@ test('collects errors from child providers', async () => {
     {
       data: () => ({
         email: '',
-        name: ''
+        name: '',
       }),
       template: `
       <ValidationObserver ref="obs" v-slot="{ errors }">
@@ -239,7 +239,7 @@ test('collects errors from child providers', async () => {
         </ValidationProvider>
         <p v-for="fieldErrors in errors">{{ fieldErrors[0] }}</p>
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -259,7 +259,7 @@ test('exposes nested observers state', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        name: ''
+        name: '',
       }),
       template: `
       <ValidationObserver ref="obs" v-slot="state">
@@ -270,7 +270,7 @@ test('exposes nested observers state', async () => {
         </ValidationObserver>
         <p>{{ state.errors }}</p>
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -288,7 +288,7 @@ test('validates and resets nested observers', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        name: ''
+        name: '',
       }),
       template: `
       <ValidationObserver ref="obs" v-slot="state">
@@ -299,7 +299,7 @@ test('validates and resets nested observers', async () => {
         </ValidationObserver>
         <p>{{ state.errors }}</p>
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -321,7 +321,7 @@ test('merges nested observers state', async () => {
     {
       data: () => ({
         name: '',
-        isMounted: true
+        isMounted: true,
       }),
       template: `
       <ValidationObserver ref="obs" v-slot="state">
@@ -332,7 +332,7 @@ test('merges nested observers state', async () => {
         </ValidationObserver>
         <p>{{ state.errors }}</p>
       </ValidationObserver>
-    `
+    `,
     },
     { localVue: Vue, sync: false }
   );
@@ -341,7 +341,7 @@ test('merges nested observers state', async () => {
   await flush();
   expect(wrapper.find('p').text()).toContain(`name`); // nested observer is mounted.
   wrapper.setData({
-    isMounted: false
+    isMounted: false,
   });
   await flush();
   expect(wrapper.find('p').text()).not.toContain(`name`); // nested observer is unmounted.
@@ -352,7 +352,7 @@ test('Sets errors for all providers', async () => {
     {
       data: () => ({
         field1: '',
-        field2: ''
+        field2: '',
       }),
       template: `
     <div>
@@ -374,7 +374,7 @@ test('Sets errors for all providers', async () => {
         </ValidationProvider>
       </ValidationObserver>
     </div>
-    `
+    `,
     },
     { localVue: Vue }
   );
@@ -385,7 +385,7 @@ test('Sets errors for all providers', async () => {
 
   (wrapper.vm.$refs.observer as any).setErrors({
     field1: ['wrong'],
-    field2: ['whoops']
+    field2: ['whoops'],
   });
 
   await flush();
@@ -398,7 +398,7 @@ test('Sets errors for nested observer providers', async () => {
     {
       data: () => ({
         field1: '',
-        field2: ''
+        field2: '',
       }),
       template: `
     <div>
@@ -422,7 +422,7 @@ test('Sets errors for nested observer providers', async () => {
         </ValidationObserver>
       </ValidationObserver>
     </div>
-    `
+    `,
     },
     { localVue: Vue }
   );
@@ -433,7 +433,7 @@ test('Sets errors for nested observer providers', async () => {
 
   (wrapper.vm.$refs.observer as any).setErrors({
     field1: ['wrong'],
-    field2: ['whoops']
+    field2: ['whoops'],
   });
 
   await flush();

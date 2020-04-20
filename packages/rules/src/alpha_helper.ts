@@ -23,7 +23,7 @@ export const alpha: { [k: string]: RegExp } = {
   tr: /^[A-ZÇĞİıÖŞÜ]*$/i,
   uk: /^[А-ЩЬЮЯЄІЇҐ]*$/i,
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/,
-  az: /^[A-ZÇƏĞİıÖŞÜ]*$/i
+  az: /^[A-ZÇƏĞİıÖŞÜ]*$/i,
 };
 
 export const alphaSpaces: { [k: string]: RegExp } = {
@@ -46,7 +46,7 @@ export const alphaSpaces: { [k: string]: RegExp } = {
   tr: /^[A-ZÇĞİıÖŞÜ\s]*$/i,
   uk: /^[А-ЩЬЮЯЄІЇҐ\s]*$/i,
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ\s]*$/,
-  az: /^[A-ZÇƏĞİıÖŞÜ\s]*$/i
+  az: /^[A-ZÇƏĞİıÖŞÜ\s]*$/i,
 };
 
 export const alphanumeric: { [k: string]: RegExp } = {
@@ -69,7 +69,7 @@ export const alphanumeric: { [k: string]: RegExp } = {
   tr: /^[0-9A-ZÇĞİıÖŞÜ]*$/i,
   uk: /^[0-9А-ЩЬЮЯЄІЇҐ]*$/i,
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/,
-  az: /^[0-9A-ZÇƏĞİıÖŞÜ]*$/i
+  az: /^[0-9A-ZÇƏĞİıÖŞÜ]*$/i,
 };
 
 export const alphaDash: { [k: string]: RegExp } = {
@@ -92,5 +92,5 @@ export const alphaDash: { [k: string]: RegExp } = {
   tr: /^[0-9A-ZÇĞİıÖŞÜ_-]*$/i,
   uk: /^[0-9А-ЩЬЮЯЄІЇҐ_-]*$/i,
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ_-]*$/,
-  az: /^[0-9A-ZÇƏĞİıÖŞÜ_-]*$/i
+  az: /^[0-9A-ZÇƏĞİıÖŞÜ_-]*$/i,
 };

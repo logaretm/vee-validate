@@ -10,16 +10,16 @@ const validate = (value: any, { min, max }: Record<string, any> = {}): boolean =
 
 const params: RuleParamSchema[] = [
   {
-    name: 'min'
+    name: 'min',
   },
   {
-    name: 'max'
-  }
+    name: 'max',
+  },
 ];
 
 export { validate, params };
 
 export default {
   validate,
-  params
+  params,
 };

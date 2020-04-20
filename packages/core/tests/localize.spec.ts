@@ -8,14 +8,14 @@ Vue.component('ValidationProvider', ValidationProvider);
 test('can define new locales', async () => {
   localize('ar', {
     messages: {
-      required: 'هذا الحقل مطلوب'
-    }
+      required: 'هذا الحقل مطلوب',
+    },
   });
 
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       template: `
         <div>
@@ -24,7 +24,7 @@ test('can define new locales', async () => {
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );
@@ -41,16 +41,16 @@ test('can define specific messages for specific fields', async () => {
   localize('en', {
     fields: {
       test: {
-        required: 'WRONG!'
-      }
-    }
+        required: 'WRONG!',
+      },
+    },
   });
 
   const wrapper = mount(
     {
       data: () => ({
         first: '',
-        second: ''
+        second: '',
       }),
       template: `
         <div>
@@ -64,7 +64,7 @@ test('can define specific messages for specific fields', async () => {
             <span class="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );
@@ -81,15 +81,15 @@ test('can merge locales without setting the current one', async () => {
   localize({
     ar: {
       messages: {
-        required: 'هذا الحقل مطلوب'
-      }
-    }
+        required: 'هذا الحقل مطلوب',
+      },
+    },
   });
 
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       template: `
         <div>
@@ -98,7 +98,7 @@ test('can merge locales without setting the current one', async () => {
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );
@@ -117,7 +117,7 @@ test('falls back to the default message if rule without message exists', async (
   const wrapper = mount(
     {
       data: () => ({
-        value: '1'
+        value: '1',
       }),
       template: `
         <div>
@@ -126,7 +126,7 @@ test('falls back to the default message if rule without message exists', async (
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );
@@ -142,14 +142,14 @@ test('falls back to the default message if rule without message exists', async (
 test('can define custom field names', async () => {
   localize('en', {
     names: {
-      ugly: 'Name'
-    }
+      ugly: 'Name',
+    },
   });
 
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       template: `
         <div>
@@ -158,7 +158,7 @@ test('can define custom field names', async () => {
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );
@@ -173,7 +173,7 @@ test('regenerates error messages when locale changes', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       template: `
         <div>
@@ -182,7 +182,7 @@ test('regenerates error messages when locale changes', async () => {
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );

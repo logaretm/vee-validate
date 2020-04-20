@@ -20,24 +20,24 @@ const validate = (value: any, { target, values }: Record<string, any>) => {
   if (!required) {
     return {
       valid: true,
-      required
+      required,
     };
   }
 
   return {
     valid: !testEmpty(value),
-    required
+    required,
   };
 };
 
 const params: RuleParamSchema[] = [
   {
     name: 'target',
-    isTarget: true
+    isTarget: true,
   },
   {
-    name: 'values'
-  }
+    name: 'values',
+  },
 ];
 
 export const computesRequired = true;
@@ -47,5 +47,5 @@ export { validate, params };
 export default {
   validate,
   params,
-  computesRequired
+  computesRequired,
 };

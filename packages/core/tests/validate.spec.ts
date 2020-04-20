@@ -4,7 +4,7 @@ import { numeric } from '@vee-validate/rules';
 test('returns custom error messages passed in ValidationOptions', async () => {
   extend('truthy', {
     validate: Boolean,
-    message: 'Original Message'
+    message: 'Original Message',
   });
 
   const customMessage = 'Custom Message';
@@ -13,8 +13,8 @@ test('returns custom error messages passed in ValidationOptions', async () => {
   const rules = 'truthy';
   const options = {
     customMessages: {
-      truthy: customMessage
-    }
+      truthy: customMessage,
+    },
   };
   const result = await validate(value, rules, options);
 

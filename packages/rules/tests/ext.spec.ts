@@ -5,7 +5,7 @@ test('validates files extensions', () => {
   const validFiles = [
     helpers.file('file.txt', 'text/plain'),
     helpers.file('file.jpg', 'image/jpeg'),
-    helpers.file('file.svg', 'image/svg')
+    helpers.file('file.svg', 'image/svg'),
   ];
 
   expect(validate(validFiles, params)).toBe(true);

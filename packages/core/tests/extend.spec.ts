@@ -4,7 +4,7 @@ test('passing a non-function as the validate method will throw', () => {
   expect(() => {
     // @ts-ignore
     extend('noFn', {
-      validate: ''
+      validate: '',
     });
   }).toThrow();
 });

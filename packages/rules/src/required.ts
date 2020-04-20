@@ -3,7 +3,7 @@ import { RuleParamSchema, isEmptyArray, isNullOrUndefined } from '@vee-validate/
 const validate = (value: any, { allowFalse }: Record<string, any> = { allowFalse: true }) => {
   const result = {
     valid: false,
-    required: true
+    required: true,
   };
 
   if (isNullOrUndefined(value) || isEmptyArray(value)) {
@@ -25,8 +25,8 @@ export const computesRequired = true;
 const params: RuleParamSchema[] = [
   {
     name: 'allowFalse',
-    default: true
-  }
+    default: true,
+  },
 ];
 
 export { validate, params };
@@ -34,5 +34,5 @@ export { validate, params };
 export default {
   validate,
   params,
-  computesRequired
+  computesRequired,
 };

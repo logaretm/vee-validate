@@ -16,13 +16,13 @@ const validate = (value: any, { locale = '' }: Record<string, any> = {}): boolea
 
 const params: RuleParamSchema[] = [
   {
-    name: 'locale'
-  }
+    name: 'locale',
+  },
 ];
 
 export { validate, params };
 
 export default {
   validate,
-  params
+  params,
 };

@@ -16,13 +16,13 @@ test('aggressive mode', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       components: {
         TextInput: {
           props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)" @blur="$emit('blur')">`
-        }
+          template: `<input :value="value" @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)" @blur="$emit('blur')">`,
+        },
       },
       template: `
         <div>
@@ -31,7 +31,7 @@ test('aggressive mode', async () => {
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false, attachToDocument: true }
   );
@@ -53,13 +53,13 @@ test('passive mode', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       components: {
         TextInput: {
           props: ['value'],
-          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
-        }
+          template: `<input :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`,
+        },
       },
       template: `
         <div>
@@ -68,7 +68,7 @@ test('passive mode', async () => {
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );
@@ -97,13 +97,13 @@ test('eager mode', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       components: {
         TextInput: {
           props: ['value'],
-          template: `<input :value="value" @change="$emit('change', $event.target.value)" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
-        }
+          template: `<input :value="value" @change="$emit('change', $event.target.value)" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`,
+        },
       },
       template: `
         <div>
@@ -112,7 +112,7 @@ test('eager mode', async () => {
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );
@@ -139,13 +139,13 @@ test('lazy mode', async () => {
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       components: {
         TextInput: {
           props: ['value'],
-          template: `<input @change="$emit('change', $event.target.value)" :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
-        }
+          template: `<input @change="$emit('change', $event.target.value)" :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`,
+        },
       },
       template: `
         <div>
@@ -154,7 +154,7 @@ test('lazy mode', async () => {
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );
@@ -174,19 +174,19 @@ test('lazy mode', async () => {
 test('new interaction modes can be added', async () => {
   setInteractionMode('custom', () => {
     return {
-      on: ['customEvent']
+      on: ['customEvent'],
     };
   });
   const wrapper = mount(
     {
       data: () => ({
-        value: ''
+        value: '',
       }),
       components: {
         TextInput: {
           props: ['value'],
-          template: `<input @customEvent="$emit('customEvent', $event.target.value)" :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`
-        }
+          template: `<input @customEvent="$emit('customEvent', $event.target.value)" :value="value" @input="$emit('input', $event.target.value)" @blur="$emit('blur')">`,
+        },
       },
       template: `
         <div>
@@ -195,7 +195,7 @@ test('new interaction modes can be added', async () => {
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
-      `
+      `,
     },
     { localVue: Vue, sync: false }
   );

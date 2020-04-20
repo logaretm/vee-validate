@@ -10,5 +10,5 @@ const validate = (files: any) => {
 export { validate };
 
 export default {
-  validate
+  validate,
 };

@@ -13,6 +13,6 @@ export function createFlags(): ValidationFlags {
     required: false,
     changed: false,
     passed: false,
-    failed: false
+    failed: false,
   };
 }

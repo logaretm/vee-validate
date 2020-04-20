@@ -6,13 +6,13 @@ const validate = (value: any, { other }: Record<string, any>) => {
 
 const params: RuleParamSchema[] = [
   {
-    name: 'other'
-  }
+    name: 'other',
+  },
 ];
 
 export { validate, params };
 
 export default {
   validate,
-  params
+  params,
 };

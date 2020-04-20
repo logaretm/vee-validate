@@ -8,5 +8,5 @@ const validate: ValidationRuleFunction = (value, args) => {
 export { validate };
 
 export default {
-  validate
+  validate,
 };

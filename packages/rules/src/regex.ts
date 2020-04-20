@@ -17,13 +17,13 @@ const params: RuleParamSchema[] = [
       }
 
       return value;
-    }
-  }
+    },
+  },
 ];
 
 export { validate, params };
 
 export default {
   validate,
-  params
+  params,
 };

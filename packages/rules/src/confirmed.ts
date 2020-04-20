@@ -8,5 +8,5 @@ export { validate, params };
 
 export default {
   validate,
-  params
+  params,
 };

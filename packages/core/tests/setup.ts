@@ -8,7 +8,7 @@ import en from '@vee-validate/rules/i18n/en.json';
 Object.keys(Rules).forEach(rule => {
   extend(rule, {
     // @ts-ignore
-    ...Rules[rule]
+    ...Rules[rule],
   });
 });
 
@@ -22,7 +22,7 @@ expect.extend({
 
     return {
       pass: exists,
-      message: () => `The element ${!this.isNot ? 'does not' : 'does'} exist.`
+      message: () => `The element ${!this.isNot ? 'does not' : 'does'} exist.`,
     };
-  }
+  },
 });

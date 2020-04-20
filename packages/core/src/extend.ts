@@ -33,7 +33,7 @@ export class RuleContainer {
     RULES[name] = {
       lazy: false,
       computesRequired: false,
-      ...rule
+      ...rule,
     };
   }
 
@@ -64,7 +64,7 @@ export function extend(name: string, schema: ValidationRule) {
   }
 
   RuleContainer.extend(name, {
-    validate: schema
+    validate: schema,
   });
 }
 

@@ -10,6 +10,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",
+    "format": "prettier \"./**/*.ts\" --write",
     "ts:defs": "lerna run ts:defs",
     "ts:bundle": "api-extractor run --local --verbose",
     "build": "node scripts/build.js",

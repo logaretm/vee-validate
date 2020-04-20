@@ -7,13 +7,13 @@ beforeEach(() => {
   (global as any).window.URL = {
     createObjectURL() {
       return 'data:image/png;base64,AAAAAAA';
-    }
+    },
   };
 
   (global as any).window.webkitURL = {
     createObjectURL() {
       return 'data:image/png;base64,AAAAAAA';
-    }
+    },
   };
 
   (global as any).Image = class Image {

@@ -60,7 +60,7 @@ function localize(locale: string | RootI18nDictionary, dictionary?: PartialI18nD
     setConfig({
       defaultMessage(field, values) {
         return DICTIONARY.resolve(field, values?._rule_, values || {});
-      }
+      },
     });
   }
 

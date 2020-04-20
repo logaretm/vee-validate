@@ -19,13 +19,13 @@ const validate = (value: any, { length }: Record<string, any>) => {
 const params: RuleParamSchema[] = [
   {
     name: 'length',
-    cast: value => Number(value)
-  }
+    cast: value => Number(value),
+  },
 ];
 
 export { validate, params };
 
 export default {
   validate,
-  params
+  params,
 };

@@ -23,38 +23,38 @@ export const ValidationProvider: any = {
   props: {
     vid: {
       type: String,
-      default: ''
+      default: '',
     },
     name: {
       type: String,
-      default: null
+      default: null,
     },
     rules: {
       type: [Object, String],
-      default: null
+      default: null,
     },
     immediate: {
       type: Boolean,
-      default: false
+      default: false,
     },
     bails: {
       type: Boolean,
-      default: () => getConfig().bails
+      default: () => getConfig().bails,
     },
     skipIfEmpty: {
       type: Boolean,
-      default: () => getConfig().skipOptional
+      default: () => getConfig().skipOptional,
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     customMessages: {
       type: Object,
       default() {
         return {};
-      }
-    }
+      },
+    },
   },
   setup(props: ProviderProps, ctx: SetupContext) {
     const fieldName = ref(props.name || '');
@@ -63,7 +63,7 @@ export const ValidationProvider: any = {
       fieldName,
       props.rules,
       {
-        form: $form
+        form: $form,
       }
     );
 
@@ -96,7 +96,7 @@ export const ValidationProvider: any = {
           onInput: handleChange,
           onChange: handleChange,
           'onUpdate:modelValue': handleChange,
-          onBlur: onBlur
+          onBlur: onBlur,
         },
         isRequired,
         flags: unwrappedFlags.value,
@@ -104,7 +104,7 @@ export const ValidationProvider: any = {
         failedRules: failedRules.value,
         validate: validateField,
         reset,
-        handleChange
+        handleChange,
       };
     });
 
@@ -113,5 +113,5 @@ export const ValidationProvider: any = {
 
       return children;
     };
-  }
+  },
 };

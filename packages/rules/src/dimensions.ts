@@ -34,19 +34,19 @@ const params: RuleParamSchema[] = [
     name: 'width',
     cast(value) {
       return Number(value);
-    }
+    },
   },
   {
     name: 'height',
     cast(value) {
       return Number(value);
-    }
-  }
+    },
+  },
 ];
 
 export { validate, params };
 
 export default {
   validate,
-  params
+  params,
 };

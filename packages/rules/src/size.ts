@@ -24,13 +24,13 @@ const params: RuleParamSchema[] = [
     name: 'size',
     cast(value) {
       return Number(value);
-    }
-  }
+    },
+  },
 ];
 
 export { validate, params };
 
 export default {
   validate,
-  params
+  params,
 };
