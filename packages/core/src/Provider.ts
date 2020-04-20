@@ -67,7 +67,6 @@ export const ValidationProvider: any = {
       }
     );
 
-    const id = '';
     const resolvedRules = {};
 
     const normalizedRules = computed(() => {
@@ -94,24 +93,18 @@ export const ValidationProvider: any = {
     const slotProps = computed(() => {
       return {
         field: {
-          'aria-invalid': flags.invalid ? 'true' : 'false',
-          'aria-required': isRequired.value ? 'true' : 'false',
-          'aria-errormessage': `vee_${id}`,
           onInput: handleChange,
           onChange: handleChange,
           'onUpdate:modelValue': handleChange,
           onBlur: onBlur
         },
+        isRequired,
         flags: unwrappedFlags.value,
         errors: errors.value,
         failedRules: failedRules.value,
-        reset,
         validate: validateField,
-        handleChange,
-        ariaMsg: {
-          id: `vee_${id}`,
-          'aria-live': errors.value.length ? 'assertive' : 'off'
-        }
+        reset,
+        handleChange
       };
     });
 
