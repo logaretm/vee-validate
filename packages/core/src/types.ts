@@ -104,6 +104,7 @@ export interface FieldComposite extends Record<Flag, Ref<boolean>> {
   value: Ref<any>;
   failedRules: Ref<Record<string, string>>;
   errors: Ref<string[]>;
+  errorMessage: Ref<string | undefined>;
 }
 
 export interface FormController {
