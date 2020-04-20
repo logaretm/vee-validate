@@ -1,4 +1,4 @@
-import { ref, computed, SetupContext, inject } from 'vue';
+import { ref, computed, SetupContext, inject, h } from 'vue';
 import { normalizeRules } from './utils/rules';
 import { normalizeChildren } from './utils/vnode';
 import { getConfig } from './config';
@@ -8,6 +8,7 @@ import { useField } from './useField';
 
 interface ProviderProps {
   vid: string | undefined;
+  as: string | undefined;
   name: string | undefined;
   mode: string | Function;
   rules: Record<string, any> | string;
@@ -23,38 +24,42 @@ export const ValidationProvider: any = {
   props: {
     vid: {
       type: String,
-      default: '',
+      default: ''
+    },
+    as: {
+      type: String,
+      default: 'input'
     },
     name: {
       type: String,
-      default: null,
+      default: null
     },
     rules: {
       type: [Object, String],
-      default: null,
+      default: null
     },
     immediate: {
       type: Boolean,
-      default: false,
+      default: false
     },
     bails: {
       type: Boolean,
-      default: () => getConfig().bails,
+      default: () => getConfig().bails
     },
     skipIfEmpty: {
       type: Boolean,
-      default: () => getConfig().skipOptional,
+      default: () => getConfig().skipOptional
     },
     disabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
     customMessages: {
       type: Object,
       default() {
         return {};
-      },
-    },
+      }
+    }
   },
   setup(props: ProviderProps, ctx: SetupContext) {
     const fieldName = ref(props.name || '');
@@ -63,7 +68,7 @@ export const ValidationProvider: any = {
       fieldName,
       props.rules,
       {
-        form: $form,
+        form: $form
       }
     );
 
@@ -93,10 +98,11 @@ export const ValidationProvider: any = {
     const slotProps = computed(() => {
       return {
         field: {
+          name: fieldName,
           onInput: handleChange,
           onChange: handleChange,
           'onUpdate:modelValue': handleChange,
-          onBlur: onBlur,
+          onBlur: onBlur
         },
         isRequired,
         flags: unwrappedFlags.value,
@@ -104,14 +110,21 @@ export const ValidationProvider: any = {
         failedRules: failedRules.value,
         validate: validateField,
         reset,
-        handleChange,
+        handleChange
       };
     });
 
     return () => {
       const children = normalizeChildren(ctx, slotProps.value);
+      if (children.length) {
+        return children;
+      }
 
-      return children;
+      if (props.as) {
+        return h(props.as, slotProps.value);
+      }
+
+      return [];
     };
-  },
+  }
 };
