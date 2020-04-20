@@ -27,7 +27,7 @@ export const ValidationProvider: any = {
       default: ''
     },
     as: {
-      type: String,
+      type: [String, Object],
       default: 'input'
     },
     name: {
