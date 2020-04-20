@@ -61,12 +61,17 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     });
   });
 
+  const errorMessage = computed(() => {
+    return errors.value[0];
+  });
+
   const field = {
     vid: fieldName,
     name: fieldName, // TODO: Custom field names
     value: value,
     ...flags,
     errors,
+    errorMessage,
     failedRules,
     reset,
     validate: validateField,
@@ -156,10 +161,10 @@ function useFormController(field: FieldComposite, rules: Ref<Record<string, any>
 
     dependencies.value.forEach(dep => {
       if (dep in form.values.value && field.validated.value) {
-          field.validate();
-        }
-      });
+        field.validate();
+      }
     });
+  });
 }
 
 function useFlags() {

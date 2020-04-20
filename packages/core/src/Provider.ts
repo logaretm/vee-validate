@@ -64,13 +64,19 @@ export const ValidationProvider: any = {
   setup(props: ProviderProps, ctx: SetupContext) {
     const fieldName = ref(props.name || '');
     const $form = inject('$_veeObserver', undefined) as FormController | undefined;
-    const { errors, failedRules, value, validate: validateField, handleChange, onBlur, reset, ...flags } = useField(
-      fieldName,
-      props.rules,
-      {
+    const {
+      errors,
+      failedRules,
+      value,
+      errorMessage,
+      validate: validateField,
+      handleChange,
+      onBlur,
+      reset,
+      ...flags
+    } = useField(fieldName, props.rules, {
         form: $form,
-      }
-    );
+    });
 
     const resolvedRules = {};
 
@@ -107,7 +113,7 @@ export const ValidationProvider: any = {
         isRequired: isRequired.value,
         flags: unwrappedFlags.value,
         errors: errors.value,
-        error: errors.value[0],
+        errorMessage: errorMessage.value,
         failedRules: failedRules.value,
         validate: validateField,
         reset,
