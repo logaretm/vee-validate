@@ -1,7 +1,6 @@
 import { ref, computed, SetupContext, inject } from 'vue';
 import { normalizeRules } from './utils/rules';
 import { normalizeChildren } from './utils/vnode';
-import { isNullOrUndefined } from './utils';
 import { getConfig } from './config';
 import { RuleContainer } from './extend';
 import { Flag, ValidationFlags, FormController } from './types';
@@ -68,9 +67,6 @@ export const ValidationProvider: any = {
       }
     );
 
-    // let initialValue: any;
-    // eslint-disable-next-line prefer-const
-    // let initialized = false;
     const id = '';
     const resolvedRules = {};
 
@@ -95,50 +91,23 @@ export const ValidationProvider: any = {
       return isRequired;
     });
 
-    const classes = computed(() => {
-      const names = getConfig().classes;
-      const acc: Record<string, boolean> = {};
-      const keys = Object.keys(flags);
-      const length = keys.length;
-
-      for (let i = 0; i < length; i++) {
-        const flag = keys[i];
-        const className = (names && names[flag]) || flag;
-        const value = flags[flag as Flag].value;
-        if (isNullOrUndefined(value)) {
-          continue;
-        }
-
-        if ((flag === 'valid' || flag === 'invalid') && !flags.validated) {
-          continue;
-        }
-
-        if (typeof className === 'string') {
-          acc[className] = value;
-        } else if (Array.isArray(className)) {
-          className.forEach(cls => {
-            acc[cls] = value;
-          });
-        }
-      }
-
-      return acc;
-    });
-
     const slotProps = computed(() => {
       return {
+        field: {
+          'aria-invalid': flags.invalid ? 'true' : 'false',
+          'aria-required': isRequired.value ? 'true' : 'false',
+          'aria-errormessage': `vee_${id}`,
+          onInput: handleChange,
+          onChange: handleChange,
+          'onUpdate:modelValue': handleChange,
+          onBlur: onBlur
+        },
         flags: unwrappedFlags.value,
         errors: errors.value,
-        classes: classes.value,
         failedRules: failedRules.value,
         reset,
         validate: validateField,
         handleChange,
-        ariaInput: {
-          'aria-invalid': flags.invalid ? 'true' : 'false',
-          'aria-required': isRequired.value ? 'true' : 'false',
-          'aria-errormessage': `vee_${id}`
-        },
         ariaMsg: {
           id: `vee_${id}`,
           'aria-live': errors.value.length ? 'assertive' : 'off'
@@ -147,7 +116,6 @@ export const ValidationProvider: any = {
     });
 
     return () => {
-      // updateRenderingContextRefs();
       const children = normalizeChildren(ctx, slotProps.value);
 
       return children;
