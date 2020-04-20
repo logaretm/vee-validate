@@ -107,6 +107,7 @@ export const ValidationProvider: any = {
         isRequired,
         flags: unwrappedFlags.value,
         errors: errors.value,
+        error: errors.value[0],
         failedRules: failedRules.value,
         validate: validateField,
         reset,
