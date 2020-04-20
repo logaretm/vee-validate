@@ -75,7 +75,7 @@ export const ValidationProvider: any = {
       reset,
       ...flags
     } = useField(fieldName, props.rules, {
-        form: $form,
+      form: $form,
     });
 
     const resolvedRules = {};
