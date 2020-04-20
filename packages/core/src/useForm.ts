@@ -1,5 +1,6 @@
-import { computed, ref, Ref, isRef } from 'vue';
+import { computed, ref, Ref } from 'vue';
 import { Flag, FormController } from './types';
+import { unwrap } from './utils/refs';
 
 const mergeStrategies: Record<Flag, 'every' | 'some'> = {
   valid: 'every',
@@ -33,7 +34,7 @@ export function useForm() {
   const fieldsById: Record<string, any> = {};
   const values = computed(() => {
     return fields.value.reduce((acc: any, field: any) => {
-      acc[isRef(field.vid) ? field.vid.value : field.vid] = field.value;
+      acc[field.vid] = field.value;
 
       return acc;
     }, {});
@@ -41,7 +42,7 @@ export function useForm() {
 
   const names = computed(() => {
     return fields.value.reduce((acc: any, field: any) => {
-      acc[isRef(field.vid) ? field.vid.value : field.vid] = field.vid;
+      acc[field.vid] = field.vid;
 
       return acc;
     }, {});
@@ -50,7 +51,7 @@ export function useForm() {
   const controller: FormController = {
     register(field) {
       fields.value.push(field);
-      fieldsById[isRef(field.vid) ? field.vid.value : field.vid] = field;
+      fieldsById[unwrap(field.vid)] = field;
     },
     fields: fieldsById,
     values,
@@ -69,7 +70,7 @@ export function useForm() {
 
   const errors = computed(() => {
     return fields.value.reduce((acc: Record<string, string[]>, field) => {
-      acc[isRef(field.vid) ? field.vid.value : field.vid] = field.errors.value;
+      acc[field.vid] = field.errorMessage;
 
       return acc;
     }, {});

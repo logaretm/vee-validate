@@ -3,6 +3,7 @@ import { validate } from './validate';
 import { FormController, ValidationResult, MaybeReactive, FieldComposite } from './types';
 import { createFlags, normalizeRules, extractLocators } from './utils';
 import { normalizeEventValue } from './utils/events';
+import { unwrap } from './utils/refs';
 
 interface FieldOptions {
   value?: Ref<any>;
@@ -22,13 +23,13 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
   const { value, form, immediate } = useFieldOptions(opts);
   const { flags, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
   const normalizedRules = computed(() => {
-    return normalizeRules(isRef(rules) ? rules.value : rules);
+    return normalizeRules(unwrap(rules));
   });
 
   const validateField = async (): Promise<ValidationResult> => {
     flags.pending.value = true;
     const result = await validate(value.value, normalizedRules.value, {
-      name: isRef(fieldName) ? fieldName.value : fieldName,
+      name: unwrap(fieldName),
       values: form?.values.value ?? {},
       names: form?.names.value ?? {},
     });
@@ -49,7 +50,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
   }
 
   onMounted(() => {
-    validate(value.value, isRef(rules) ? rules.value : rules).then(result => {
+    validate(value.value, unwrap(rules)).then(result => {
       if (immediate) {
         patch(result);
         return;
