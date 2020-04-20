@@ -1,4 +1,4 @@
-import { watch, ref, Ref, isRef, reactive, computed, onMounted, toRefs } from 'vue';
+import { watch, ref, Ref, isRef, reactive, computed, onMounted, toRefs, watchEffect } from 'vue';
 import { validate } from './validate';
 import { FormController, ValidationResult, MaybeReactive, FieldComposite } from './types';
 import { createFlags, normalizeRules, extractLocators } from './utils';
@@ -149,15 +149,17 @@ function useFormController(field: FieldComposite, rules: Ref<Record<string, any>
     }, []);
   });
 
-  watch(dependencies, val => {
-    val.forEach(dep => {
-      watch(form.fields[dep].value, () => {
-        if (field.validated.value) {
+  watchEffect(() => {
+    if (!dependencies.value.length) {
+      return;
+    }
+
+    dependencies.value.forEach(dep => {
+      if (dep in form.values.value && field.validated.value) {
           field.validate();
         }
       });
     });
-  });
 }
 
 function useFlags() {
