@@ -86,8 +86,8 @@ export function useForm() {
     form: controller,
     values,
     validate,
-    reset,
-    handleSubmit: (fn: Function) => {
+    handleReset: reset,
+    handleSubmit: (fn?: Function) => {
       return validate().then(result => {
         if (result && typeof fn === 'function') {
           return fn(values.value);
