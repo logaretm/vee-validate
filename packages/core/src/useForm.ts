@@ -28,15 +28,7 @@ function computeFlags(fields: Ref<any[]>) {
   }, {} as Record<Flag, Ref<boolean>>);
 }
 
-interface FormComposite {
-  form: FormController;
-  errors: Ref<Record<string, string[]>>;
-  reset: () => void;
-  handleSubmit: (fn: Function) => Promise<any>;
-  validate: () => Promise<boolean>;
-}
-
-export function useForm(): FormComposite {
+export function useForm() {
   const fields: Ref<any[]> = ref([]);
   const fieldsById: Record<string, any> = {};
   const values = computed(() => {
@@ -91,12 +83,13 @@ export function useForm(): FormComposite {
     errors,
     ...computeFlags(fields),
     form: controller,
+    values,
     validate,
     reset,
     handleSubmit: (fn: Function) => {
       return validate().then(result => {
         if (result && typeof fn === 'function') {
-          return fn();
+          return fn(values.value);
         }
       });
     },

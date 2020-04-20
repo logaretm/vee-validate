@@ -6,7 +6,7 @@ import { ValidationFlags } from './types';
 export const ValidationObserver: any = {
   name: 'ValidationObserver',
   setup(_: any, ctx: SetupContext) {
-    const { form, errors, validate, handleSubmit, reset, ...flags } = useForm();
+    const { form, errors, validate, handleSubmit, reset, values, ...flags } = useForm();
     provide('$_veeObserver', form);
 
     const slotProps = computed(() => {
@@ -17,9 +17,10 @@ export const ValidationObserver: any = {
           return acc;
         }, {} as ValidationFlags),
         errors: errors.value,
+        values: values.value,
         validate,
         handleSubmit,
-        reset,
+        handleReset: reset,
       };
     });
 
