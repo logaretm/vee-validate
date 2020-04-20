@@ -28,7 +28,7 @@ export const ValidationProvider: any = {
     },
     as: {
       type: [String, Object],
-      default: 'input'
+      default: undefined
     },
     name: {
       type: String,
@@ -98,13 +98,13 @@ export const ValidationProvider: any = {
     const slotProps = computed(() => {
       return {
         field: {
-          name: fieldName,
+          name: fieldName.value,
           onInput: handleChange,
           onChange: handleChange,
           'onUpdate:modelValue': handleChange,
           onBlur: onBlur
         },
-        isRequired,
+        isRequired: isRequired.value,
         flags: unwrappedFlags.value,
         errors: errors.value,
         error: errors.value[0],
@@ -117,15 +117,18 @@ export const ValidationProvider: any = {
 
     return () => {
       const children = normalizeChildren(ctx, slotProps.value);
-      if (children.length) {
-        return children;
-      }
-
       if (props.as) {
-        return h(props.as, slotProps.value);
+        return h(
+          props.as,
+          {
+            ...ctx.attrs,
+            ...slotProps.value.field
+          },
+          children
+        );
       }
 
-      return [];
+      return children;
     };
   }
 };
