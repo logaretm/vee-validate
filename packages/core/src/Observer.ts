@@ -1,12 +1,23 @@
-import { SetupContext, computed, provide } from 'vue';
+import { SetupContext, computed, provide, h } from 'vue';
 import { normalizeChildren } from './utils/vnode';
 import { useForm } from './useForm';
 import { ValidationFlags } from './types';
 
+interface ObserverProps {
+  as: string | undefined;
+}
+
 export const ValidationObserver: any = {
   name: 'ValidationObserver',
-  setup(_: any, ctx: SetupContext) {
-    const { form, errors, validate, handleSubmit, reset, values, ...flags } = useForm();
+  inheritAttrs: false,
+  props: {
+    as: {
+      type: String,
+      default: undefined,
+    },
+  },
+  setup(props: ObserverProps, ctx: SetupContext) {
+    const { form, errors, validate, handleSubmit, handleReset, values, ...flags } = useForm();
     provide('$_veeObserver', form);
 
     const slotProps = computed(() => {
@@ -20,10 +31,41 @@ export const ValidationObserver: any = {
         values: values.value,
         validate,
         handleSubmit,
-        handleReset: reset,
+        handleReset,
       };
     });
 
-    return () => normalizeChildren(ctx, slotProps.value);
+    function handleFormSubmit(e: Event) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      return handleSubmit(ctx.attrs.onSubmit as Function);
+    }
+
+    function handleFormReset() {
+      handleReset();
+      if (typeof ctx.attrs.onReset === 'function') {
+        ctx.attrs.onReset();
+      }
+    }
+
+    return () => {
+      const children = normalizeChildren(ctx, slotProps.value);
+      if (props.as) {
+        return h(
+          props.as,
+          {
+            // Disables native validation as vee-validate will handle it.
+            novalidate: true,
+            ...ctx.attrs,
+            onSubmit: handleFormSubmit,
+            onReset: handleFormReset,
+          },
+          children
+        );
+      }
+
+      return children;
+    };
   },
 };
