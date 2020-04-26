@@ -1,13 +1,9 @@
-import { SetupContext, computed, provide, h } from 'vue';
+import { computed, provide, h, defineComponent } from 'vue';
 import { normalizeChildren } from './utils/vnode';
 import { useForm } from './useForm';
 import { ValidationFlags } from './types';
 
-interface ObserverProps {
-  as: string | undefined;
-}
-
-export const ValidationObserver: any = {
+export const ValidationObserver = defineComponent({
   name: 'ValidationObserver',
   inheritAttrs: false,
   props: {
@@ -16,7 +12,7 @@ export const ValidationObserver: any = {
       default: undefined,
     },
   },
-  setup(props: ObserverProps, ctx: SetupContext) {
+  setup(props, ctx) {
     const { form, errors, validate, handleSubmit, handleReset, values, ...flags } = useForm();
     provide('$_veeObserver', form);
 
@@ -68,4 +64,4 @@ export const ValidationObserver: any = {
       return children;
     };
   },
-};
+});

@@ -1,4 +1,4 @@
-import { ref, computed, SetupContext, inject, h } from 'vue';
+import { ref, computed, inject, h, defineComponent } from 'vue';
 import { normalizeRules } from './utils/rules';
 import { normalizeChildren } from './utils/vnode';
 import { getConfig } from './config';
@@ -6,21 +6,8 @@ import { RuleContainer } from './extend';
 import { Flag, ValidationFlags, FormController } from './types';
 import { useField } from './useField';
 
-interface ProviderProps {
-  vid: string | undefined;
-  as: string | undefined;
-  name: string | undefined;
-  mode: string | Function;
-  rules: Record<string, any> | string;
-  immediate: boolean;
-  bails: boolean;
-  skipIfEmpty: boolean;
-  debounce: number;
-  disabled: boolean;
-  customMessages: Record<string, string>;
-}
-
-export const ValidationProvider: any = {
+export const ValidationProvider = defineComponent({
+  name: 'ValidationProvider',
   props: {
     vid: {
       type: String,
@@ -56,12 +43,10 @@ export const ValidationProvider: any = {
     },
     customMessages: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: undefined,
     },
   },
-  setup(props: ProviderProps, ctx: SetupContext) {
+  setup(props, ctx) {
     const fieldName = ref(props.name || '');
     const $form = inject('$_veeObserver', undefined) as FormController | undefined;
     const {
@@ -137,4 +122,4 @@ export const ValidationProvider: any = {
       return children;
     };
   },
-};
+});
