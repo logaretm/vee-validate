@@ -38,7 +38,7 @@ The ValidationObserver `reset` method does not reset the values of the child fie
 
 Typically, resetting forms happens programmatically once the submission succeeds, and not as a response to event handlers like in the previous example. In addtion, you may want to arbitrarily call the `validate` or `handleSubmit` methods on the `ValidationObserver` in your script rather than the template.
 
-That means you need access to the `ValidationObserver` in your script. To do that, use the `ref` attribute. 
+That means you need access to the `ValidationObserver` in your script. To do that, use the `ref` attribute.
 Here is an example that handles validation before submit and then resetting using `$refs`.
 
 @[example](form-refs)
@@ -67,7 +67,6 @@ export default class App extends Vue {
   }
 }
 ```
-
 
 ## Initial State Validation
 
@@ -120,8 +119,8 @@ It is simpler to think about non-nested observers than multiple observers. For t
 
 ## Advanced Forms
 
-Some forms have more complex requirements, like **input masks** or file validation. VeeValidate allows you to hook your complex inputs into the validation cycle. 
-To do this [see the advanced file-validation guide](../advanced/file-validation.md).
+Some forms have more complex requirements, like **input masks** or file validation. VeeValidate allows you to hook your complex inputs into the validation cycle.
+To do this [see the advanced file-validation guide](../advanced/model-less-validation.md).
 
 ---
 
