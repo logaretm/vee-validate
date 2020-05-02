@@ -6,7 +6,7 @@ import { RuleContainer } from './extend';
 import { Flag, ValidationFlags, FormController } from './types';
 import { useField } from './useField';
 
-export const ValidationProvider: any = defineComponent({
+export const ValidationProvider = defineComponent({
   name: 'ValidationProvider',
   props: {
     vid: {

@@ -3,7 +3,7 @@ import { normalizeChildren } from './utils/vnode';
 import { useForm } from './useForm';
 import { ValidationFlags } from './types';
 
-export const ValidationObserver: any = defineComponent({
+export const ValidationObserver = defineComponent({
   name: 'ValidationObserver',
   inheritAttrs: false,
   props: {
