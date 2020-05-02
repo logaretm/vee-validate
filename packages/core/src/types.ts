@@ -10,10 +10,6 @@ export interface ValidationResult {
   regenerateMap?: Record<string, () => string>;
 }
 
-// export type VueValidationContext = Vue & {
-//   $_veeObserver?: VeeObserver;
-// };
-
 export type Locator = { __locatorRef: string } & Function;
 
 export interface ValidationMessageGenerator {
@@ -75,12 +71,6 @@ export interface InactiveRefCache {
   flags: ValidationFlags;
   failedRules: Record<string, string>;
 }
-
-// export type VNodeWithVeeContext = VNode & {
-//   context: Vue & {
-//     $_veeObserver?: VeeObserver;
-//   };
-// };
 
 export type Flag =
   | 'untouched'
