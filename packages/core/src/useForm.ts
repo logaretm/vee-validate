@@ -1,5 +1,5 @@
 import { computed, ref, Ref } from 'vue';
-import { Flag, FormController } from './types';
+import { Flag, FormController, SubmissionHandler } from './types';
 import { unwrap } from './utils/refs';
 
 const mergeStrategies: Record<Flag, 'every' | 'some'> = {
@@ -87,12 +87,19 @@ export function useForm() {
     values,
     validate,
     handleReset: reset,
-    handleSubmit: (fn?: Function) => {
-      return validate().then(result => {
-        if (result && typeof fn === 'function') {
-          return fn(values.value);
+    handleSubmit: (fn?: SubmissionHandler) => {
+      return function submissionHandler(e: unknown) {
+        if (e instanceof Event) {
+          e.preventDefault();
+          e.stopPropagation();
         }
-      });
+
+        return validate().then(result => {
+          if (result && typeof fn === 'function') {
+            return fn(values.value);
+          }
+        });
+      };
     },
   };
 }

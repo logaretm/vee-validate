@@ -1,7 +1,7 @@
 import { computed, provide, h, defineComponent } from 'vue';
 import { normalizeChildren } from './utils/vnode';
 import { useForm } from './useForm';
-import { ValidationFlags } from './types';
+import { ValidationFlags, SubmissionHandler } from './types';
 
 export const ValidationObserver = defineComponent({
   name: 'ValidationObserver',
@@ -31,12 +31,7 @@ export const ValidationObserver = defineComponent({
       };
     });
 
-    function handleFormSubmit(e: Event) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      return handleSubmit(ctx.attrs.onSubmit as Function);
-    }
+    const onSubmit = handleSubmit(ctx.attrs.onSubmit as SubmissionHandler);
 
     function handleFormReset() {
       handleReset();
@@ -54,7 +49,7 @@ export const ValidationObserver = defineComponent({
             // Disables native validation as vee-validate will handle it.
             novalidate: true,
             ...ctx.attrs,
-            onSubmit: handleFormSubmit,
+            onSubmit,
             onReset: handleFormReset,
           },
           children

@@ -105,3 +105,5 @@ export interface FormController {
 }
 
 export type MaybeReactive<T> = Ref<T> | T;
+
+export type SubmissionHandler = (values: Record<string, any>) => any;
