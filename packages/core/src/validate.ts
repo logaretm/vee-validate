@@ -1,7 +1,13 @@
 import { RuleContainer } from './extend';
-import { interpolate, isLocator, isObject, normalizeRules } from './utils';
+import { interpolate, isLocator, isObject, normalizeRules, isCallable } from './utils';
 import { getConfig } from './config';
-import { ValidationMessageGenerator, ValidationMessageTemplate, ValidationResult, ValidationRuleSchema } from './types';
+import {
+  ValidationMessageGenerator,
+  ValidationMessageTemplate,
+  ValidationResult,
+  ValidationRuleSchema,
+  GenericValidateFunction,
+} from './types';
 
 interface FieldContext {
   name: string;
@@ -29,7 +35,7 @@ interface ValidationOptions {
  */
 export async function validate(
   value: any,
-  rules: string | Record<string, any>,
+  rules: string | Record<string, any> | GenericValidateFunction,
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
@@ -48,20 +54,16 @@ export async function validate(
   const result = await _validate(field, value);
   const errors: string[] = [];
   const failedRules: Record<string, string> = {};
-  // holds a fn that regenerates the message.
-  const regenerateMap: Record<string, () => string> = {};
   result.errors.forEach(e => {
-    const msg = e.msg();
+    const msg = e.msg;
     errors.push(msg);
     failedRules[e.rule] = msg;
-    regenerateMap[e.rule] = e.msg;
   });
 
   return {
     valid: result.valid,
     errors,
     failedRules,
-    regenerateMap,
   };
 }
 
@@ -69,8 +71,17 @@ export async function validate(
  * Starts the validation process.
  */
 async function _validate(field: FieldContext, value: any) {
-  const errors: ReturnType<typeof _generateFieldError>[] = [];
+  // if a generic function, use it as the pipeline.
+  if (isCallable(field.rules)) {
+    const result = await field.rules(value);
 
+    return {
+      valid: typeof result === 'string' || !result,
+      errors: typeof result === 'string' ? [{ msg: result, rule: '' }] : [],
+    };
+  }
+
+  const errors: ReturnType<typeof _generateFieldError>[] = [];
   const rules = Object.keys(field.rules);
   const length = rules.length;
   for (let i = 0; i < length; i++) {
@@ -107,7 +118,7 @@ async function _test(field: FieldContext, value: any, rule: { name: string; para
   }
 
   const params = fillTargetValues(rule.params, field.crossTable);
-  let result = await ruleSchema.validate(value, params);
+  const result = await ruleSchema.validate(value, params);
   if (typeof result === 'string') {
     const values = {
       ...(params || {}),
@@ -118,18 +129,13 @@ async function _test(field: FieldContext, value: any, rule: { name: string; para
 
     return {
       valid: false,
-      error: { rule: rule.name, msg: () => interpolate(result as string, values) },
+      error: { rule: rule.name, msg: interpolate(result as string, values) },
     };
   }
 
-  if (!isObject(result)) {
-    result = { valid: result };
-  }
-
   return {
-    valid: result.valid,
-    required: result.required,
-    error: result.valid ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params),
+    valid: result,
+    error: result ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params),
   };
 }
 
@@ -156,7 +162,7 @@ function _generateFieldError(
   };
 
   return {
-    msg: () => _normalizeMessage(userMessage || getConfig().defaultMessage, field.name, values),
+    msg: _normalizeMessage(userMessage || getConfig().defaultMessage, field.name, values),
     rule: ruleName,
   };
 }

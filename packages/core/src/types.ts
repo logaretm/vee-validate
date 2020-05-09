@@ -98,3 +98,5 @@ export interface FormController {
 export type MaybeReactive<T> = Ref<T> | T;
 
 export type SubmissionHandler = (values: Record<string, any>) => any;
+
+export type GenericValidateFunction = (value: any) => boolean | string | Promise<boolean | string>;

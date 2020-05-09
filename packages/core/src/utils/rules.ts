@@ -1,11 +1,12 @@
-import { Locator } from '../types';
+import { Locator, GenericValidateFunction } from '../types';
 import { RuleContainer } from '../extend';
 import { includes, isObject, warn, isLocator } from './index';
+import { isCallable } from '@vee-validate/shared';
 
 /**
  * Normalizes the given rules expression.
  */
-export function normalizeRules(rules: any) {
+export function normalizeRules(rules: any): GenericValidateFunction | Record<string, any> {
   // if falsy value return an empty object.
   const acc: { [x: string]: any } = {};
   Object.defineProperty(acc, '_$$isNormalized', {
@@ -17,6 +18,11 @@ export function normalizeRules(rules: any) {
 
   if (!rules) {
     return acc;
+  }
+
+  // If its a single validate function, leave as is.
+  if (isCallable(rules)) {
+    return rules;
   }
 
   // Object is already normalized, skip.

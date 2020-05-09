@@ -1,6 +1,6 @@
 import { watch, ref, Ref, isRef, reactive, computed, onMounted, toRefs, watchEffect } from 'vue';
 import { validate } from './validate';
-import { FormController, ValidationResult, MaybeReactive, FieldComposite } from './types';
+import { FormController, ValidationResult, MaybeReactive, FieldComposite, GenericValidateFunction } from './types';
 import { createFlags, normalizeRules, extractLocators } from './utils';
 import { normalizeEventValue } from './utils/events';
 import { unwrap } from './utils/refs';
@@ -17,7 +17,7 @@ interface CompleteFieldOptions {
   form?: FormController;
 }
 
-type RuleExpression = MaybeReactive<string | Record<string, any>>;
+type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValidateFunction>;
 
 export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: FieldOptions): FieldComposite {
   const { value, form, immediate } = useFieldOptions(opts);

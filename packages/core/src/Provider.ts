@@ -20,7 +20,7 @@ export const ValidationProvider = defineComponent({
       default: null,
     },
     rules: {
-      type: [Object, String],
+      type: [Object, String, Function],
       default: null,
     },
     immediate: {
