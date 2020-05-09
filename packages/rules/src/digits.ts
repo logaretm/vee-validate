@@ -1,6 +1,5 @@
-import { RuleParamSchema } from '@vee-validate/shared';
-
 const validate = (value: any, { length }: Record<string, any>): boolean => {
+  length = Number(value);
   if (Array.isArray(value)) {
     return value.every(val => validate(val, { length }));
   }
@@ -9,14 +8,7 @@ const validate = (value: any, { length }: Record<string, any>): boolean => {
   return /^[0-9]*$/.test(strVal) && strVal.length === length;
 };
 
-const params: RuleParamSchema[] = [
-  {
-    name: 'length',
-    cast(value) {
-      return Number(value);
-    },
-  },
-];
+const params = ['length'];
 
 export { validate, params };
 

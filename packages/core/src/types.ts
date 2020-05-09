@@ -1,7 +1,7 @@
 import { ComputedRef, Ref } from 'vue';
-import { RuleParamSchema, ValidationRuleFunction } from '@vee-validate/shared';
+import { ValidationRuleFunction } from '@vee-validate/shared';
 
-export { RuleParamSchema, ValidationRuleFunction };
+export { ValidationRuleFunction };
 
 export interface ValidationResult {
   valid: boolean;
@@ -18,19 +18,10 @@ export interface ValidationMessageGenerator {
 
 export type ValidationMessageTemplate = string | ValidationMessageGenerator;
 
-export interface RuleParamConfig {
-  name: string;
-  isTarget?: boolean;
-  default?: any;
-  cast?(value: any): any;
-}
 export interface ValidationRuleSchema {
   validate?: ValidationRuleFunction;
-  params?: RuleParamSchema[];
+  params?: string[];
   message?: ValidationMessageTemplate;
-  lazy?: boolean;
-  computesRequired?: boolean;
-  castValue?(value: any): any;
 }
 
 export type ValidationRule = ValidationRuleFunction | ValidationRuleSchema;

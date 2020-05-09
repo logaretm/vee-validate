@@ -1,4 +1,4 @@
-import { RuleParamSchema, isNullOrUndefined } from '@vee-validate/shared';
+import { isNullOrUndefined } from '@vee-validate/shared';
 
 const validate = (value: any, { length }: Record<string, any>): boolean => {
   if (isNullOrUndefined(value)) {
@@ -9,17 +9,10 @@ const validate = (value: any, { length }: Record<string, any>): boolean => {
     return value.every(val => validate(val, { length }));
   }
 
-  return String(value).length <= length;
+  return String(value).length <= Number(length);
 };
 
-const params: RuleParamSchema[] = [
-  {
-    name: 'length',
-    cast(value) {
-      return Number(value);
-    },
-  },
-];
+const params = ['length'];
 
 export { validate, params };
 

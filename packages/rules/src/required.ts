@@ -1,38 +1,23 @@
-import { RuleParamSchema, isEmptyArray, isNullOrUndefined } from '@vee-validate/shared';
+import { isEmptyArray, isNullOrUndefined } from '@vee-validate/shared';
 
 const validate = (value: any, { allowFalse }: Record<string, any> = { allowFalse: true }) => {
-  const result = {
-    valid: false,
-    required: true,
-  };
-
   if (isNullOrUndefined(value) || isEmptyArray(value)) {
-    return result;
+    return false;
   }
 
   // incase a field considers `false` as an empty value like checkboxes.
   if (value === false && !allowFalse) {
-    return result;
+    return false;
   }
 
-  result.valid = !!String(value).trim().length;
-
-  return result;
+  return !!String(value).trim().length;
 };
 
-export const computesRequired = true;
-
-const params: RuleParamSchema[] = [
-  {
-    name: 'allowFalse',
-    default: true,
-  },
-];
+const params = ['allowFalse'];
 
 export { validate, params };
 
 export default {
   validate,
   params,
-  computesRequired,
 };

@@ -1,4 +1,4 @@
-import { isNullOrUndefined, toArray, RuleParamSchema } from '@vee-validate/shared';
+import { isNullOrUndefined, toArray } from '@vee-validate/shared';
 
 const validate = (value: any, { length }: Record<string, any>) => {
   if (isNullOrUndefined(value)) {
@@ -13,15 +13,10 @@ const validate = (value: any, { length }: Record<string, any>) => {
     value = toArray(value);
   }
 
-  return value.length === length;
+  return value.length === Number(length);
 };
 
-const params: RuleParamSchema[] = [
-  {
-    name: 'length',
-    cast: value => Number(value),
-  },
-];
+const params = ['length'];
 
 export { validate, params };
 

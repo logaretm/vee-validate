@@ -1,5 +1,4 @@
 import { alphaDash } from './alpha_helper';
-import { RuleParamSchema } from '@vee-validate/shared';
 
 const validate = (value: any, { locale = '' }: Record<string, any> = {}): boolean => {
   if (Array.isArray(value)) {
@@ -14,11 +13,7 @@ const validate = (value: any, { locale = '' }: Record<string, any> = {}): boolea
   return (alphaDash[locale] || alphaDash.en).test(value);
 };
 
-const params: RuleParamSchema[] = [
-  {
-    name: 'locale',
-  },
-];
+const params = ['locale'];
 
 export { validate, params };
 

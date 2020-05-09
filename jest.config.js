@@ -7,8 +7,7 @@ module.exports = {
   collectCoverageFrom: ['packages/*/src/**/*.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
   moduleNameMapper: {
-    '^vue$': 'vue/dist/vue.common.js',
     '^@vee-validate/rules/i18n/(.+)$': '<rootDir>/packages/rules/i18n/$1',
-    '^@vee-validate/(.+)$': '<rootDir>/packages/$1/src'
-  }
+    '^@vee-validate/(.+)$': '<rootDir>/packages/$1/src',
+  },
 };

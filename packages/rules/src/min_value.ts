@@ -1,4 +1,4 @@
-import { RuleParamSchema, isNullOrUndefined } from '@vee-validate/shared';
+import { isNullOrUndefined } from '@vee-validate/shared';
 
 const validate = (value: any, { min }: Record<string, any>): boolean => {
   if (isNullOrUndefined(value) || value === '') {
@@ -9,17 +9,10 @@ const validate = (value: any, { min }: Record<string, any>): boolean => {
     return value.length > 0 && value.every(val => validate(val, { min }));
   }
 
-  return Number(value) >= min;
+  return Number(value) >= Number(min);
 };
 
-const params: RuleParamSchema[] = [
-  {
-    name: 'min',
-    cast(value) {
-      return Number(value);
-    },
-  },
-];
+const params = ['min'];
 
 export { validate, params };
 

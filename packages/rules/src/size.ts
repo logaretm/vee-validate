@@ -1,6 +1,5 @@
-import { RuleParamSchema } from '@vee-validate/shared';
-
 const validate = (files: any, { size }: Record<string, any>) => {
+  size = Number(size);
   if (isNaN(size)) {
     return false;
   }
@@ -19,14 +18,7 @@ const validate = (files: any, { size }: Record<string, any>) => {
   return true;
 };
 
-const params: RuleParamSchema[] = [
-  {
-    name: 'size',
-    cast(value) {
-      return Number(value);
-    },
-  },
-];
+const params = ['size'];
 
 export { validate, params };
 

@@ -1,6 +1,8 @@
-import { RuleParamSchema } from '@vee-validate/shared';
-
 const validate = (value: any, { regex }: Record<string, any>): boolean => {
+  if (typeof regex === 'string') {
+    regex = new RegExp(value);
+  }
+
   if (Array.isArray(value)) {
     return value.every(val => validate(val, { regex: regex }));
   }
@@ -8,18 +10,7 @@ const validate = (value: any, { regex }: Record<string, any>): boolean => {
   return regex.test(String(value));
 };
 
-const params: RuleParamSchema[] = [
-  {
-    name: 'regex',
-    cast(value) {
-      if (typeof value === 'string') {
-        return new RegExp(value);
-      }
-
-      return value;
-    },
-  },
-];
+const params = ['regex'];
 
 export { validate, params };
 

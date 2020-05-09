@@ -1,4 +1,4 @@
-import { Locator, RuleParamConfig } from '../types';
+import { Locator } from '../types';
 import { RuleContainer } from '../extend';
 import { includes, isObject, warn, isLocator } from './index';
 
@@ -79,10 +79,10 @@ function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
     return provided;
   }
 
-  let definedParams: RuleParamConfig[];
+  let definedParams: string[];
   // collect the params schema.
   if (!ruleSchema.params || (ruleSchema.params.length < provided.length && Array.isArray(provided))) {
-    let lastDefinedParam: RuleParamConfig;
+    let lastDefinedParam: string;
     // collect any additional parameters in the last item.
     definedParams = provided.map((_: any, idx: number) => {
       let param = ruleSchema.params?.[idx];
@@ -99,8 +99,8 @@ function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
 
   // Match the provided array length with a temporary schema.
   for (let i = 0; i < definedParams.length; i++) {
-    const options = definedParams[i];
-    let value = options.default;
+    const param = definedParams[i];
+    let value;
     // if the provided is an array, map element value.
     if (Array.isArray(provided)) {
       if (i in provided) {
@@ -108,36 +108,26 @@ function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
       }
     } else {
       // If the param exists in the provided object.
-      if (options.name in provided) {
-        value = provided[options.name];
+      if (param in provided) {
+        value = provided[param];
         // if the provided is the first param value.
       } else if (definedParams.length === 1) {
         value = provided;
       }
     }
 
-    // if the param is a target, resolve the target value.
-    if (options.isTarget) {
-      value = createLocator(value, options.cast);
-    }
-
     // A target param using interpolation
     if (typeof value === 'string' && value[0] === '@') {
-      value = createLocator(value.slice(1), options.cast);
-    }
-
-    // If there is a transformer defined.
-    if (!isLocator(value) && options.cast) {
-      value = options.cast(value);
+      value = createLocator(value.slice(1));
     }
 
     // already been set, probably multiple values.
-    if (params[options.name]) {
-      params[options.name] = Array.isArray(params[options.name]) ? params[options.name] : [params[options.name]];
-      params[options.name].push(value);
+    if (params[param]) {
+      params[param] = Array.isArray(params[param]) ? params[param] : [params[param]];
+      params[param].push(value);
     } else {
       // set the value.
-      params[options.name] = value;
+      params[param] = value;
     }
   }
 
@@ -158,11 +148,11 @@ export const parseRule = (rule: string) => {
   return { name, params };
 };
 
-function createLocator(value: string, castFn?: Function): Locator {
+function createLocator(value: string): Locator {
   const locator: Locator = (crossTable: Record<string, any>) => {
     const val = crossTable[value];
 
-    return castFn ? castFn(val) : val;
+    return val;
   };
 
   locator.__locatorRef = value;

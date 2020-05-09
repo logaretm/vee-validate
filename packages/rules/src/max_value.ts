@@ -1,4 +1,4 @@
-import { RuleParamSchema, ValidationRuleFunction, isNullOrUndefined } from '@vee-validate/shared';
+import { ValidationRuleFunction, isNullOrUndefined } from '@vee-validate/shared';
 
 const validate: ValidationRuleFunction = (value: any, { max }: Record<string, any>) => {
   if (isNullOrUndefined(value) || value === '') {
@@ -9,17 +9,10 @@ const validate: ValidationRuleFunction = (value: any, { max }: Record<string, an
     return value.length > 0 && value.every(val => validate(val, { max }));
   }
 
-  return Number(value) <= max;
+  return Number(value) <= Number(max);
 };
 
-const params: RuleParamSchema[] = [
-  {
-    name: 'max',
-    cast(value) {
-      return Number(value);
-    },
-  },
-];
+const params = ['max'];
 
 export { validate, params };
 

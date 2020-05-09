@@ -1,14 +1,7 @@
 import { RuleContainer } from './extend';
 import { interpolate, isEmptyArray, isLocator, isNullOrUndefined, isObject, normalizeRules } from './utils';
 import { getConfig } from './config';
-import {
-  RuleParamConfig,
-  RuleParamSchema,
-  ValidationMessageGenerator,
-  ValidationMessageTemplate,
-  ValidationResult,
-  ValidationRuleSchema,
-} from './types';
+import { ValidationMessageGenerator, ValidationMessageTemplate, ValidationResult, ValidationRuleSchema } from './types';
 
 interface FieldContext {
   name: string;
@@ -52,7 +45,7 @@ export async function validate(
     customMessages: options?.customMessages || {},
   };
 
-  const result = await _validate(field, value, options);
+  const result = await _validate(field, value);
   const errors: string[] = [];
   const failedRules: Record<string, string> = {};
   // holds a fn that regenerates the message.
@@ -75,23 +68,12 @@ export async function validate(
 /**
  * Starts the validation process.
  */
-async function _validate(field: FieldContext, value: any, { isInitial = false } = {}) {
-  const { shouldSkip, errors } = await _shouldSkip(field, value);
-  if (shouldSkip) {
-    return {
-      valid: !errors.length,
-      errors,
-    };
-  }
+async function _validate(field: FieldContext, value: any) {
+  const errors: ReturnType<typeof _generateFieldError>[] = [];
 
-  // Filter out non-require rules since we already checked them.
-  const rules = Object.keys(field.rules).filter(rule => !RuleContainer.isRequireRule(rule));
+  const rules = Object.keys(field.rules);
   const length = rules.length;
   for (let i = 0; i < length; i++) {
-    if (isInitial && RuleContainer.isLazy(rules[i])) {
-      continue;
-    }
-
     const rule = rules[i];
     const result = await _test(field, value, {
       name: rule,
@@ -115,63 +97,6 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
   };
 }
 
-async function _shouldSkip(field: FieldContext, value: any) {
-  const requireRules = Object.keys(field.rules).filter(RuleContainer.isRequireRule);
-  const length = requireRules.length;
-  const errors: ReturnType<typeof _generateFieldError>[] = [];
-  const isEmpty = isNullOrUndefined(value) || value === '' || isEmptyArray(value);
-  const isEmptyAndOptional = isEmpty && field.skipIfEmpty;
-  let isRequired = false;
-
-  for (let i = 0; i < length; i++) {
-    const rule = requireRules[i];
-    const result = await _test(field, value, {
-      name: rule,
-      params: field.rules[rule],
-    });
-
-    if (!isObject(result)) {
-      throw new Error('Require rules has to return an object (see docs)');
-    }
-
-    if (result.required) {
-      isRequired = true;
-    }
-
-    if (!result.valid && result.error) {
-      errors.push(result.error);
-      // Exit early as the field is required and failed validation.
-      if (field.bails) {
-        return {
-          shouldSkip: true,
-          errors,
-        };
-      }
-    }
-  }
-
-  if (isEmpty && !isRequired && !field.skipIfEmpty) {
-    return {
-      shouldSkip: false,
-      errors,
-    };
-  }
-
-  // field is configured to run through the pipeline regardless
-  if (!field.bails && !isEmptyAndOptional) {
-    return {
-      shouldSkip: false,
-      errors,
-    };
-  }
-
-  // skip if the field is not required and has an empty value.
-  return {
-    shouldSkip: !isRequired && isEmpty,
-    errors,
-  };
-}
-
 /**
  * Tests a single input value against a rule.
  */
@@ -181,10 +106,8 @@ async function _test(field: FieldContext, value: any, rule: { name: string; para
     throw new Error(`No such validator '${rule.name}' exists.`);
   }
 
-  const normalizedValue = ruleSchema.castValue ? ruleSchema.castValue(value) : value;
   const params = fillTargetValues(rule.params, field.crossTable);
-
-  let result = await ruleSchema.validate(normalizedValue, params);
+  let result = await ruleSchema.validate(value, params);
   if (typeof result === 'string') {
     const values = {
       ...(params || {}),
@@ -248,11 +171,6 @@ function _getRuleTargets(
     return {};
   }
 
-  const numTargets = params.filter(param => (param as RuleParamConfig).isTarget).length;
-  if (numTargets <= 0) {
-    return {};
-  }
-
   const names: Record<string, string> = {};
   let ruleConfig = field.rules[ruleName];
   if (!Array.isArray(ruleConfig) && isObject(ruleConfig)) {
@@ -262,7 +180,7 @@ function _getRuleTargets(
   }
 
   for (let index = 0; index < params.length; index++) {
-    const param: RuleParamConfig = params[index] as RuleParamConfig;
+    const param = params[index];
     let key = ruleConfig[index];
     if (!isLocator(key)) {
       continue;
@@ -270,8 +188,8 @@ function _getRuleTargets(
 
     key = key.__locatorRef;
     const name = field.names[key] || key;
-    names[param.name] = name;
-    names[`_${param.name}_`] = field.crossTable[key];
+    names[param] = name;
+    names[`_${param}_`] = field.crossTable[key];
   }
 
   return names;
@@ -285,7 +203,7 @@ function _getUserTargets(
 ) {
   const userTargets: any = {};
   const rules: Record<string, any> = field.rules[ruleName];
-  const params: RuleParamSchema[] = ruleSchema.params || [];
+  const params: string[] = ruleSchema.params || [];
 
   // early return if no rules
   if (!rules) {

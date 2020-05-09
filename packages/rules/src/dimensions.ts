@@ -1,7 +1,7 @@
-import { RuleParamSchema } from '@vee-validate/shared';
-
 const validateImage = (file: any, width: number, height: number): Promise<boolean> => {
   const URL = window.URL || (window as any).webkitURL;
+  width = Number(width);
+  height = Number(height);
 
   return new Promise(resolve => {
     const image = new Image();
@@ -29,20 +29,7 @@ const validate = (files: any, { width, height }: Record<string, any>) => {
   });
 };
 
-const params: RuleParamSchema[] = [
-  {
-    name: 'width',
-    cast(value) {
-      return Number(value);
-    },
-  },
-  {
-    name: 'height',
-    cast(value) {
-      return Number(value);
-    },
-  },
-];
+const params = ['width', 'height'];
 
 export { validate, params };
 

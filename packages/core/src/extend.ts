@@ -1,48 +1,23 @@
-import { ValidationRule, ValidationRuleSchema, RuleParamConfig } from './types';
+import { ValidationRule, ValidationRuleSchema } from './types';
 import { isCallable, merge } from './utils';
 
 interface NormalizedRuleSchema extends ValidationRuleSchema {
-  params?: RuleParamConfig[];
+  params?: string[];
 }
 
 const RULES: { [k: string]: NormalizedRuleSchema } = {};
 
-function normalizeSchema(schema: ValidationRuleSchema): NormalizedRuleSchema {
-  if (schema.params?.length) {
-    schema.params = schema.params.map(param => {
-      if (typeof param === 'string') {
-        return { name: param };
-      }
-
-      return param;
-    });
-  }
-
-  return schema as NormalizedRuleSchema;
-}
-
 export class RuleContainer {
   public static extend(name: string, schema: ValidationRuleSchema) {
     // if rule already exists, overwrite it.
-    const rule = normalizeSchema(schema);
     if (RULES[name]) {
       RULES[name] = merge(RULES[name], schema);
       return;
     }
 
     RULES[name] = {
-      lazy: false,
-      computesRequired: false,
-      ...rule,
+      ...schema,
     };
-  }
-
-  public static isLazy(name: string) {
-    return !!RULES[name]?.lazy;
-  }
-
-  public static isRequireRule(name: string) {
-    return !!RULES[name]?.computesRequired;
   }
 
   public static getRuleDefinition(ruleName: string) {

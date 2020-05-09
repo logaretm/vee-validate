@@ -63,12 +63,6 @@ export const ValidationProvider = defineComponent({
       form: $form,
     });
 
-    const resolvedRules = {};
-
-    const normalizedRules = computed(() => {
-      return normalizeRules(props.rules);
-    });
-
     const unwrappedFlags = computed(() => {
       return Object.keys(flags).reduce((acc, key) => {
         acc[key] = flags[key as Flag].value;
@@ -77,14 +71,19 @@ export const ValidationProvider = defineComponent({
       }, {} as ValidationFlags);
     });
 
-    const isRequired = computed(() => {
-      const rules = { ...resolvedRules, ...normalizedRules.value };
+    // const resolvedRules = {};
 
-      const isRequired = Object.keys(rules).some(RuleContainer.isRequireRule);
-      flags.required.value = !!isRequired;
+    // const normalizedRules = computed(() => {
+    //   return normalizeRules(props.rules);
+    // });
+    // const isRequired = computed(() => {
+    //   const rules = { ...resolvedRules, ...normalizedRules.value };
 
-      return isRequired;
-    });
+    //   const isRequired = Object.keys(rules).some(RuleContainer.isRequireRule);
+    //   flags.required.value = !!isRequired;
+
+    //   return isRequired;
+    // });
 
     const slotProps = computed(() => {
       return {
@@ -95,7 +94,7 @@ export const ValidationProvider = defineComponent({
           'onUpdate:modelValue': handleChange,
           onBlur: onBlur,
         },
-        isRequired: isRequired.value,
+        // isRequired: isRequired.value,
         flags: unwrappedFlags.value,
         errors: errors.value,
         errorMessage: errorMessage.value,
