@@ -1,5 +1,5 @@
 import { RuleContainer } from './extend';
-import { interpolate, isEmptyArray, isLocator, isNullOrUndefined, isObject, normalizeRules } from './utils';
+import { interpolate, isLocator, isObject, normalizeRules } from './utils';
 import { getConfig } from './config';
 import { ValidationMessageGenerator, ValidationMessageTemplate, ValidationResult, ValidationRuleSchema } from './types';
 

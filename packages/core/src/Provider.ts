@@ -1,8 +1,6 @@
 import { ref, computed, inject, h, defineComponent } from 'vue';
-import { normalizeRules } from './utils/rules';
 import { normalizeChildren } from './utils/vnode';
 import { getConfig } from './config';
-import { RuleContainer } from './extend';
 import { Flag, ValidationFlags, FormController } from './types';
 import { useField } from './useField';
 
@@ -52,7 +50,7 @@ export const ValidationProvider = defineComponent({
     const {
       errors,
       failedRules,
-      value,
+      // value,
       errorMessage,
       validate: validateField,
       handleChange,

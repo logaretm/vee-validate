@@ -1,4 +1,4 @@
-import { isCallable, isObject } from './assertions';
+import { isObject } from './assertions';
 import { toArray, includes } from '@vee-validate/shared';
 
 export { toArray, includes };
