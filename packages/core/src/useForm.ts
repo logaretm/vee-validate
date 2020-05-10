@@ -1,5 +1,5 @@
 import { computed, ref, Ref } from 'vue';
-import { Flag, FormController, SubmissionHandler } from './types';
+import { Flag, FormController, SubmissionHandler, GenericValidateFunction } from './types';
 import { unwrap } from './utils/refs';
 
 const mergeStrategies: Record<Flag, 'every' | 'some'> = {
@@ -29,7 +29,11 @@ function computeFlags(fields: Ref<any[]>) {
   }, {} as Record<Flag, Ref<boolean>>);
 }
 
-export function useForm() {
+interface FormOptions {
+  validationSchema: Record<string, GenericValidateFunction>;
+}
+
+export function useForm(opts?: FormOptions) {
   const fields: Ref<any[]> = ref([]);
   const fieldsById: Record<string, any> = {};
   const values = computed(() => {
@@ -50,8 +54,14 @@ export function useForm() {
 
   const controller: FormController = {
     register(field) {
+      const vid = unwrap(field.vid);
+      // Set the rules for that field from the schema.
+      if (opts?.validationSchema[vid]) {
+        field.__setRules(opts?.validationSchema[vid]);
+      }
+
       fields.value.push(field);
-      fieldsById[unwrap(field.vid)] = field;
+      fieldsById[vid] = field;
     },
     fields: fieldsById,
     values,

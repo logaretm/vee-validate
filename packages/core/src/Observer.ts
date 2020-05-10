@@ -11,9 +11,16 @@ export const ValidationObserver = defineComponent({
       type: String,
       default: undefined,
     },
+    validationSchema: {
+      type: Object,
+      default: undefined,
+    },
   },
   setup(props, ctx) {
-    const { form, errors, validate, handleSubmit, handleReset, values, ...flags } = useForm();
+    const { form, errors, validate, handleSubmit, handleReset, values, ...flags } = useForm({
+      validationSchema: props.validationSchema,
+    });
+
     provide('$_veeObserver', form);
 
     const slotProps = computed(() => {

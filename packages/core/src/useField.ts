@@ -22,8 +22,9 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
 export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: FieldOptions): FieldComposite {
   const { value, form, immediate } = useFieldOptions(opts);
   const { flags, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
+  let schemaValidation: GenericValidateFunction;
   const normalizedRules = computed(() => {
-    return normalizeRules(unwrap(rules));
+    return schemaValidation || normalizeRules(unwrap(rules));
   });
 
   const validateField = async (): Promise<ValidationResult> => {
@@ -78,6 +79,9 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     validate: validateField,
     handleChange,
     onBlur,
+    __setRules(fn: GenericValidateFunction) {
+      schemaValidation = fn;
+    },
   };
 
   useFormController(field, normalizedRules, form);

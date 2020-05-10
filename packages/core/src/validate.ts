@@ -74,10 +74,11 @@ async function _validate(field: FieldContext, value: any) {
   // if a generic function, use it as the pipeline.
   if (isCallable(field.rules)) {
     const result = await field.rules(value);
+    const isValid = typeof result !== 'string' && result;
 
     return {
-      valid: typeof result === 'string' || !result,
-      errors: typeof result === 'string' ? [{ msg: result, rule: '' }] : [],
+      valid: isValid,
+      errors: !isValid ? [{ msg: result, rule: '' }] : [],
     };
   }
 

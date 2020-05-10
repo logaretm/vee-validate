@@ -86,6 +86,7 @@ export interface FieldComposite extends Record<Flag, Ref<boolean>> {
   failedRules: Ref<Record<string, string>>;
   errors: Ref<string[]>;
   errorMessage: Ref<string | undefined>;
+  __setRules(fn: GenericValidateFunction): void;
 }
 
 export interface FormController {
