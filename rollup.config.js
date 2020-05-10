@@ -19,23 +19,25 @@ const commons = {
   */`,
   uglifyOptions: {
     compress: true,
-    mangle: true
-  }
+    mangle: true,
+  },
 };
 
 const formatMap = {
   es: 'esm',
-  umd: ''
+  umd: '',
 };
 
 const formatNameMap = {
   core: 'VeeValidate',
-  rules: 'VeeValidateRules'
+  rules: 'VeeValidateRules',
+  yup: 'VeeValidateYupAdapter',
 };
 
 const pkgNameMap = {
   core: 'vee-validate',
-  rules: 'rules'
+  rules: 'rules',
+  yup: 'yup',
 };
 
 function createConfig(pkg, format) {
@@ -43,24 +45,24 @@ function createConfig(pkg, format) {
     tsconfig: path.resolve(__dirname, 'tsconfig.json'),
     cacheRoot: path.resolve(__dirname, 'node_modules/.rts2_cache'),
     tsconfigOverride: {
-      exclude: ['**/tests']
-    }
+      exclude: ['**/tests'],
+    },
   });
 
   const config = {
     input: {
       input: `packages/${pkg}/src/index.ts`,
       external: ['vue'],
-      plugins: [tsPlugin, replace({ __VERSION__: version })]
+      plugins: [tsPlugin, replace({ __VERSION__: version })],
     },
     output: {
       banner: commons.banner,
       format,
       name: format === 'umd' ? formatNameMap[pkg] : undefined,
       globals: {
-        vue: 'Vue'
-      }
-    }
+        vue: 'Vue',
+      },
+    },
   };
 
   // if (options.env) {
@@ -87,7 +89,7 @@ async function build(pkg) {
     const { input, output } = createConfig(pkg, format);
     const bundle = await rollup(input);
     const {
-      output: [{ code }]
+      output: [{ code }],
     } = await bundle.generate(output);
 
     const bundleName = `${pkgNameMap[pkg]}${formatMap[format] ? '.' + formatMap[format] : ''}.js`;
@@ -112,7 +114,7 @@ async function generateDts(pkg) {
     declaration: true,
     declarationMap: true,
     emitDeclarationOnly: true,
-    declarationDir: `packages/${pkg}/dist/types`
+    declarationDir: `packages/${pkg}/dist/types`,
   });
 
   // Generate .d.ts rollup
@@ -120,7 +122,7 @@ async function generateDts(pkg) {
   const extractorConfig = ExtractorConfig.loadFileAndPrepare(extractorConfigPath);
   const result = Extractor.invoke(extractorConfig, {
     localBuild: true,
-    showVerboseMessages: true
+    showVerboseMessages: true,
   });
 
   if (!result.succeeded) {
@@ -146,5 +148,5 @@ async function compileDts(pkg, options) {
 }
 
 module.exports = {
-  build
+  build,
 };

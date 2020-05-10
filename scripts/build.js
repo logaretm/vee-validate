@@ -22,7 +22,8 @@ async function buildLocales() {
 }
 
 (async function Bundle() {
-  await build('rules');
-  await buildLocales();
   await build('core');
+  await build('rules');
+  await build('yup');
+  await buildLocales();
 })();

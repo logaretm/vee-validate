@@ -1,0 +1,24 @@
+{
+  "name": "@vee-validate/yup",
+  "version": "4.0.0-alpha.0",
+  "description": "Yup adapter for vee-validate",
+  "author": "Abdelrahman Awad <logaretm1@gmail.com>",
+  "homepage": "https://logaretm.github.io/vee-validate/tree/master/packages/yup#readme",
+  "license": "MIT",
+  "types": "dist/yup.d.ts",
+  "main": "dist/yup.js",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/logaretm/vee-validate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/logaretm/vee-validate/issues"
+  },
+  "devDependencies": {
+    "@types/yup": "^0.28.1",
+    "yup": "^0.28.5"
+  }
+}
