@@ -45,9 +45,7 @@ export interface ValidationFlags {
   failed: boolean;
   validated: boolean;
   pending: boolean;
-  required: boolean;
   changed: boolean;
-  [x: string]: boolean | undefined;
 }
 
 export interface VeeObserver {
@@ -74,7 +72,6 @@ export type Flag =
   | 'failed'
   | 'validated'
   | 'pending'
-  | 'required'
   | 'changed';
 
 export interface FieldComposite {

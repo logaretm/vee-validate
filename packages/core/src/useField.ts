@@ -1,6 +1,13 @@
 import { watch, ref, Ref, isRef, reactive, computed, onMounted, toRefs, watchEffect } from 'vue';
 import { validate } from './validate';
-import { FormController, ValidationResult, MaybeReactive, FieldComposite, GenericValidateFunction } from './types';
+import {
+  FormController,
+  ValidationResult,
+  MaybeReactive,
+  FieldComposite,
+  GenericValidateFunction,
+  Flag,
+} from './types';
 import { createFlags, normalizeRules, extractLocators } from './utils';
 import { normalizeEventValue } from './utils/events';
 import { unwrap } from './utils/refs';
@@ -222,7 +229,7 @@ function useMeta() {
         return;
       }
 
-      flags[key] = defaults[key];
+      flags[key as Flag] = defaults[key as Flag];
     });
   }
 

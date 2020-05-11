@@ -14,7 +14,6 @@ const mergeStrategies: Record<Flag, 'every' | 'some'> = {
   changed: 'some',
   passed: 'every',
   failed: 'some',
-  required: 'some',
 };
 
 function computeMeta(fields: Ref<any[]>) {

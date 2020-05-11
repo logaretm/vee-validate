@@ -63,7 +63,7 @@ export const ValidationProvider = defineComponent({
 
     const unwrappedMeta = computed(() => {
       return Object.keys(meta).reduce((acc, key) => {
-        acc[key] = meta[key as Flag].value;
+        acc[key as Flag] = meta[key as Flag].value;
 
         return acc;
       }, {} as ValidationFlags);

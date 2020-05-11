@@ -1,7 +1,7 @@
 import { computed, provide, h, defineComponent } from 'vue';
 import { normalizeChildren } from './utils/vnode';
 import { useForm } from './useForm';
-import { ValidationFlags, SubmissionHandler } from './types';
+import { ValidationFlags, SubmissionHandler, Flag } from './types';
 
 export const ValidationObserver = defineComponent({
   name: 'ValidationObserver',
@@ -24,7 +24,7 @@ export const ValidationObserver = defineComponent({
     provide('$_veeObserver', form);
     const unwrappedMeta = computed(() =>
       Object.keys(meta).reduce((acc: ValidationFlags, key) => {
-        acc[key] = (meta as any)[key].value;
+        acc[key as Flag] = meta[key as Flag].value;
 
         return acc;
       }, {} as ValidationFlags)
