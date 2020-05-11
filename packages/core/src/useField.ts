@@ -6,12 +6,6 @@ import { normalizeEventValue } from './utils/events';
 import { unwrap } from './utils/refs';
 
 interface FieldOptions {
-  value?: Ref<any>;
-  immediate?: boolean;
-  form?: FormController;
-}
-
-interface CompleteFieldOptions {
   value: Ref<any>;
   immediate?: boolean;
   form?: FormController;
@@ -19,15 +13,22 @@ interface CompleteFieldOptions {
 
 type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValidateFunction>;
 
-export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: FieldOptions): FieldComposite {
-  const { value, form, immediate } = useFieldOptions(opts);
+/**
+ * Creates a field composite.
+ */
+export function useField(
+  fieldName: MaybeReactive<string>,
+  rules: RuleExpression,
+  opts?: Partial<FieldOptions>
+): FieldComposite {
+  const { value, form, immediate } = normalizeOptions(opts);
   const { flags, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
   let schemaValidation: GenericValidateFunction;
   const normalizedRules = computed(() => {
     return schemaValidation || normalizeRules(unwrap(rules));
   });
 
-  const validateField = async (): Promise<ValidationResult> => {
+  const runValidation = async (): Promise<ValidationResult> => {
     flags.pending.value = true;
     const result = await validate(value.value, normalizedRules.value, {
       name: unwrap(fieldName),
@@ -40,12 +41,12 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     return result;
   };
 
-  watch(value, validateField, {
+  watch(value, runValidation, {
     deep: true,
   });
 
   if (isRef(rules)) {
-    watch(rules, validateField, {
+    watch(rules, runValidation, {
       deep: true,
     });
   }
@@ -76,7 +77,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     errorMessage,
     failedRules,
     reset,
-    validate: validateField,
+    validate: runValidation,
     handleChange,
     onBlur,
     __setRules(fn: GenericValidateFunction) {
@@ -89,7 +90,10 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
   return field;
 }
 
-function useFieldOptions(opts: FieldOptions | undefined): CompleteFieldOptions {
+/**
+ * Normalizes partial field options to include the full
+ */
+function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions {
   const defaults = () => ({
     value: ref(null),
     immediate: false,
@@ -106,18 +110,23 @@ function useFieldOptions(opts: FieldOptions | undefined): CompleteFieldOptions {
   };
 }
 
+/**
+ * Manages the validation state of a field.
+ */
 function useValidationState(value: Ref<any>) {
   const errors: Ref<string[]> = ref([]);
-  const { onBlur, reset: resetFlags, ...flags } = useFlags();
+  const { onBlur, reset: resetFlags, ...flags } = useMeta();
   const failedRules: Ref<Record<string, string>> = ref({});
   const initialValue = value.value;
 
+  // Common input/change event handler
   const handleChange = (e: Event) => {
     value.value = normalizeEventValue(e);
     flags.dirty.value = true;
     flags.pristine.value = false;
   };
 
+  // Updates the validation state with the validation result
   function patch(result: ValidationResult) {
     errors.value = result.errors;
     flags.changed.value = initialValue !== value.value;
@@ -128,6 +137,7 @@ function useValidationState(value: Ref<any>) {
     failedRules.value = result.failedRules;
   }
 
+  // Resets the validation state
   const reset = () => {
     errors.value = [];
     failedRules.value = {};
@@ -145,11 +155,16 @@ function useValidationState(value: Ref<any>) {
   };
 }
 
+/**
+ * Associated fields with forms and watches any cross-field validation dependencies.
+ */
 function useFormController(field: FieldComposite, rules: Ref<Record<string, any>>, form?: FormController) {
   if (!form) return;
 
+  // associate the field with the given form
   form.register(field);
 
+  // extract cross-field dependencies in a computed prop
   const dependencies = computed(() => {
     return Object.keys(rules.value).reduce((acc: string[], rule: string) => {
       const deps = extractLocators(rules.value[rule]).map((dep: any) => dep.__locatorRef);
@@ -159,11 +174,14 @@ function useFormController(field: FieldComposite, rules: Ref<Record<string, any>
     }, []);
   });
 
+  // Adds a watcher that runs the validation whenever field dependencies change
   watchEffect(() => {
+    // Skip if no dependencies
     if (!dependencies.value.length) {
       return;
     }
 
+    // For each dependent field, validate it if it was validated before
     dependencies.value.forEach(dep => {
       if (dep in form.values.value && field.validated.value) {
         field.validate();
@@ -172,7 +190,10 @@ function useFormController(field: FieldComposite, rules: Ref<Record<string, any>
   });
 }
 
-function useFlags() {
+/**
+ * Exposes meta flags state and some associated actions with them.
+ */
+function useMeta() {
   const flags = reactive(createFlags());
   const passed = computed(() => {
     return flags.valid && flags.validated;
@@ -182,14 +203,21 @@ function useFlags() {
     return flags.invalid && flags.validated;
   });
 
+  /**
+   * Handles common onBlur meta update
+   */
   const onBlur = () => {
     flags.touched = true;
     flags.untouched = false;
   };
+
+  /**
+   * Resets the flag state
+   */
   function reset() {
     const defaults = createFlags();
     Object.keys(flags).forEach((key: string) => {
-      // Skip these, since they are computed anyways.
+      // Skip these, since they are computed anyways
       if (key === 'passed' || key === 'failed') {
         return;
       }
