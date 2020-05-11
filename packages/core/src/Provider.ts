@@ -56,32 +56,18 @@ export const ValidationProvider = defineComponent({
       handleChange,
       onBlur,
       reset,
-      ...flags
+      meta,
     } = useField(fieldName, props.rules, {
       form: $form,
     });
 
-    const unwrappedFlags = computed(() => {
-      return Object.keys(flags).reduce((acc, key) => {
-        acc[key] = flags[key as Flag].value;
+    const unwrappedMeta = computed(() => {
+      return Object.keys(meta).reduce((acc, key) => {
+        acc[key] = meta[key as Flag].value;
 
         return acc;
       }, {} as ValidationFlags);
     });
-
-    // const resolvedRules = {};
-
-    // const normalizedRules = computed(() => {
-    //   return normalizeRules(props.rules);
-    // });
-    // const isRequired = computed(() => {
-    //   const rules = { ...resolvedRules, ...normalizedRules.value };
-
-    //   const isRequired = Object.keys(rules).some(RuleContainer.isRequireRule);
-    //   flags.required.value = !!isRequired;
-
-    //   return isRequired;
-    // });
 
     const slotProps = computed(() => {
       return {
@@ -92,8 +78,7 @@ export const ValidationProvider = defineComponent({
           'onUpdate:modelValue': handleChange,
           onBlur: onBlur,
         },
-        // isRequired: isRequired.value,
-        flags: unwrappedFlags.value,
+        meta: unwrappedMeta.value,
         errors: errors.value,
         errorMessage: errorMessage.value,
         failedRules: failedRules.value,

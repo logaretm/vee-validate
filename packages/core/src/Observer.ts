@@ -17,19 +17,22 @@ export const ValidationObserver = defineComponent({
     },
   },
   setup(props, ctx) {
-    const { form, errors, validate, handleSubmit, handleReset, values, ...flags } = useForm({
+    const { form, errors, validate, handleSubmit, handleReset, values, meta } = useForm({
       validationSchema: props.validationSchema,
     });
 
     provide('$_veeObserver', form);
+    const unwrappedMeta = computed(() =>
+      Object.keys(meta).reduce((acc: ValidationFlags, key) => {
+        acc[key] = (meta as any)[key].value;
+
+        return acc;
+      }, {} as ValidationFlags)
+    );
 
     const slotProps = computed(() => {
       return {
-        ...Object.keys(flags).reduce((acc: ValidationFlags, key) => {
-          acc[key] = (flags as any)[key].value;
-
-          return acc;
-        }, {} as ValidationFlags),
+        meta: unwrappedMeta.value,
         errors: errors.value,
         values: values.value,
         validate,
@@ -39,7 +42,6 @@ export const ValidationObserver = defineComponent({
     });
 
     const onSubmit = handleSubmit(ctx.attrs.onSubmit as SubmissionHandler);
-
     function handleFormReset() {
       handleReset();
       if (typeof ctx.attrs.onReset === 'function') {

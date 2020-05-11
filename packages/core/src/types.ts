@@ -77,7 +77,7 @@ export type Flag =
   | 'required'
   | 'changed';
 
-export interface FieldComposite extends Record<Flag, Ref<boolean>> {
+export interface FieldComposite {
   validate(): Promise<ValidationResult>;
   reset(): void;
   handleChange(e?: any): void;
@@ -86,6 +86,7 @@ export interface FieldComposite extends Record<Flag, Ref<boolean>> {
   failedRules: Ref<Record<string, string>>;
   errors: Ref<string[]>;
   errorMessage: Ref<string | undefined>;
+  meta: Record<Flag, Ref<boolean>>;
   __setRules(fn: GenericValidateFunction): void;
 }
 

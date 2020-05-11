@@ -17,12 +17,13 @@ const mergeStrategies: Record<Flag, 'every' | 'some'> = {
   required: 'some',
 };
 
-function computeFlags(fields: Ref<any[]>) {
+function computeMeta(fields: Ref<any[]>) {
   const flags: Flag[] = Object.keys(mergeStrategies) as Flag[];
 
   return flags.reduce((acc, flag: Flag) => {
     acc[flag] = computed(() => {
-      return fields.value[mergeStrategies[flag]](field => field[flag]);
+      const mergeMethod = mergeStrategies[flag];
+      return fields.value[mergeMethod](field => field.meta[flag]);
     });
 
     return acc;
@@ -92,7 +93,7 @@ export function useForm(opts?: FormOptions) {
 
   return {
     errors,
-    ...computeFlags(fields),
+    meta: computeMeta(fields),
     form: controller,
     values,
     validate,

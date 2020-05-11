@@ -22,14 +22,14 @@ export function useField(
   opts?: Partial<FieldOptions>
 ): FieldComposite {
   const { value, form, immediate } = normalizeOptions(opts);
-  const { flags, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
+  const { meta, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
   let schemaValidation: GenericValidateFunction;
   const normalizedRules = computed(() => {
     return schemaValidation || normalizeRules(unwrap(rules));
   });
 
   const runValidation = async (): Promise<ValidationResult> => {
-    flags.pending.value = true;
+    meta.pending.value = true;
     const result = await validate(value.value, normalizedRules.value, {
       name: unwrap(fieldName),
       values: form?.values.value ?? {},
@@ -59,8 +59,8 @@ export function useField(
       }
 
       // Initial silent validation.
-      flags.valid.value = result.valid;
-      flags.invalid.value = !result.valid;
+      meta.valid.value = result.valid;
+      meta.invalid.value = !result.valid;
     });
   });
 
@@ -72,7 +72,7 @@ export function useField(
     vid: fieldName,
     name: fieldName, // TODO: Custom field names
     value: value,
-    ...flags,
+    meta,
     errors,
     errorMessage,
     failedRules,
@@ -115,25 +115,25 @@ function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions
  */
 function useValidationState(value: Ref<any>) {
   const errors: Ref<string[]> = ref([]);
-  const { onBlur, reset: resetFlags, ...flags } = useMeta();
+  const { onBlur, reset: resetFlags, meta } = useMeta();
   const failedRules: Ref<Record<string, string>> = ref({});
   const initialValue = value.value;
 
   // Common input/change event handler
   const handleChange = (e: Event) => {
     value.value = normalizeEventValue(e);
-    flags.dirty.value = true;
-    flags.pristine.value = false;
+    meta.dirty.value = true;
+    meta.pristine.value = false;
   };
 
   // Updates the validation state with the validation result
   function patch(result: ValidationResult) {
     errors.value = result.errors;
-    flags.changed.value = initialValue !== value.value;
-    flags.valid.value = result.valid;
-    flags.invalid.value = !result.valid;
-    flags.validated.value = true;
-    flags.pending.value = false;
+    meta.changed.value = initialValue !== value.value;
+    meta.valid.value = result.valid;
+    meta.invalid.value = !result.valid;
+    meta.validated.value = true;
+    meta.pending.value = false;
     failedRules.value = result.failedRules;
   }
 
@@ -145,7 +145,7 @@ function useValidationState(value: Ref<any>) {
   };
 
   return {
-    flags,
+    meta,
     errors,
     failedRules,
     patch,
@@ -183,7 +183,7 @@ function useFormController(field: FieldComposite, rules: Ref<Record<string, any>
 
     // For each dependent field, validate it if it was validated before
     dependencies.value.forEach(dep => {
-      if (dep in form.values.value && field.validated.value) {
+      if (dep in form.values.value && field.meta.validated.value) {
         field.validate();
       }
     });
@@ -227,9 +227,11 @@ function useMeta() {
   }
 
   return {
-    ...toRefs(flags),
-    passed,
-    failed,
+    meta: {
+      ...toRefs(flags),
+      passed,
+      failed,
+    },
     onBlur,
     reset,
   };
