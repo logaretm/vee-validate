@@ -56,7 +56,7 @@ export function useForm(opts?: FormOptions) {
     register(field) {
       const vid = unwrap(field.vid);
       // Set the rules for that field from the schema.
-      if (opts?.validationSchema[vid]) {
+      if (opts?.validationSchema?.[vid]) {
         field.__setRules(opts?.validationSchema[vid]);
       }
 
