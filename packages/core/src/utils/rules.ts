@@ -32,16 +32,7 @@ export function normalizeRules(rules: any): GenericValidateFunction | Record<str
 
   if (isObject(rules)) {
     return Object.keys(rules).reduce((prev, curr) => {
-      let params = [];
-      if (rules[curr] === true) {
-        params = [];
-      } else if (Array.isArray(rules[curr])) {
-        params = rules[curr];
-      } else if (isObject(rules[curr])) {
-        params = rules[curr];
-      } else {
-        params = [rules[curr]];
-      }
+      const params = normalizeParams(rules[curr]);
 
       if (rules[curr] !== false) {
         prev[curr] = buildParams(curr, params);
@@ -67,6 +58,25 @@ export function normalizeRules(rules: any): GenericValidateFunction | Record<str
 
     return prev;
   }, acc);
+}
+
+/**
+ * Normalizes a rule param.
+ */
+function normalizeParams(params: unknown) {
+  if (params === true) {
+    return [];
+  }
+
+  if (Array.isArray(params)) {
+    return params;
+  }
+
+  if (isObject(params)) {
+    return params;
+  }
+
+  return [params];
 }
 
 function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
@@ -131,10 +141,11 @@ function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
     if (params[param]) {
       params[param] = Array.isArray(params[param]) ? params[param] : [params[param]];
       params[param].push(value);
-    } else {
-      // set the value.
-      params[param] = value;
+      continue;
     }
+
+    // set the value.
+    params[param] = value;
   }
 
   return params;
