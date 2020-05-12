@@ -1,442 +1,117 @@
-import { mount, createLocalVue } from '@vue/test-utils';
-import { ValidationProvider, ValidationObserver } from '@vee-validate/core';
 import flushPromises from 'flush-promises';
+import { mountWithHoc, setValue } from './helpers';
 
-const Vue = createLocalVue();
-Vue.component('ValidationProvider', ValidationProvider);
-Vue.component('ValidationObserver', ValidationObserver);
+const DEFAULT_REQUIRED_MESSAGE = (name: string) => `The ${name} field is required`;
 
-jest.useFakeTimers();
-
-async function flush() {
-  await flushPromises();
-  jest.runAllTimers();
-}
-
-const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required';
-
-test('renders the slot', () => {
-  const wrapper = mount(
-    {
-      template: `
-      <ValidationObserver tag="form" v-slot="ctx">
-      </ValidationObserver>
+test('renders the as prop', () => {
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <ValidationObserver as="form" />
+      </div>
     `,
-    },
-    { localVue: Vue, sync: false }
-  );
+  });
 
-  expect(wrapper.html()).toBe(`<form></form>`);
+  expect(wrapper.$el.innerHTML).toBe(`<form novalidate=""></form>`);
 });
 
 test('observes the current state of providers', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-      <ValidationObserver v-slot="{ valid }">
-        <ValidationProvider rules="required" v-slot="ctx">
-          <input v-model="value" type="text">
-        </ValidationProvider>
+  const wrapper = mountWithHoc({
+    template: `
+      <ValidationObserver as="form" v-slot="{ meta }">
+        <ValidationProvider name="field" rules="required" as="input" type="text" />
 
-        <span id="state">{{ valid }}</span>
+        <span id="state">{{ meta.valid }}</span>
       </ValidationObserver>
     `,
-    },
-    { localVue: Vue, sync: false }
-  );
+  });
 
-  const stateSpan = wrapper.find('#state');
-  const input = wrapper.find('input');
+  const stateSpan = wrapper.$el.querySelector('#state');
+  const input = wrapper.$el.querySelector('input');
+  setValue(input, '');
 
-  await flush();
+  await flushPromises();
   // initially the field valid flag is false.
-  expect(stateSpan.text()).toBe('false');
+  expect(stateSpan.textContent).toBe('false');
 
-  input.setValue('value');
-  await flush();
+  setValue(input, 'value');
+  await flushPromises();
 
-  expect(stateSpan.text()).toBe('true');
+  expect(stateSpan.textContent).toBe('true');
 });
 
-test('triggers validation manually on its children providers using refs', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-      <ValidationObserver ref="obs" v-slot="ctx">
-        <ValidationProvider rules="required" v-slot="{ errors }">
-          <input v-model="value" type="text">
-          <span id="error">{{ errors[0] }}</span>
-        </ValidationProvider>
-      </ValidationObserver>
-    `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const error = wrapper.find('#error');
-  await flush();
-  expect(error.text()).toBe('');
-
-  await (wrapper.vm.$refs.obs as any).validate();
-  await flush();
-
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-});
-
-test('passes only executes the callback if observer is valid', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-        calls: 0,
-      }),
-      methods: {
-        submit(this: any) {
-          this.calls++;
+test('submit handler only executes if observer is valid', async () => {
+  let calls = 0;
+  const wrapper = mountWithHoc({
+    setup() {
+      return {
+        submit() {
+          calls++;
         },
-      },
-      template: `
-      <ValidationObserver v-slot="ctx">
-        <ValidationProvider rules="required" v-slot="{ errors }">
-          <input v-model="value" type="text">
-          <span id="error">{{ errors[0] }}</span>
-        </ValidationProvider>
-        <button @click="ctx.handleSubmit(submit)">Validate</button>
+      };
+    },
+    template: `
+      <ValidationObserver @submit="submit" as="form" v-slot="{ errors }">
+        <ValidationProvider name="field" rules="required" as="input" />
+        <span id="error">{{ errors.field }}</span>
+
+        <button>Validate</button>
       </ValidationObserver>
     `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const error = wrapper.find('#error');
-  const input = wrapper.find('input');
-  await flush();
-  expect(error.text()).toBe('');
-
-  wrapper.find('button').trigger('click');
-  await flush();
-  expect(wrapper.vm.calls).toBe(0);
-
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-  input.setValue('12');
-  wrapper.find('button').trigger('click');
-  await flush();
-
-  expect(error.text()).toBe('');
-  expect(wrapper.vm.calls).toBe(1);
-});
-
-test('removes child ref when the child is destroyed', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-      <ValidationObserver ref="obs" v-slot="ctx">
-        <ValidationProvider rules="required" vid="id" v-slot="{ errors }">
-          <input v-model="value" type="text">
-          <span id="error">{{ errors[0] }}</span>
-        </ValidationProvider>
-      </ValidationObserver>
-    `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const obs = wrapper.vm.$refs.obs as any;
-  expect(obs.refs).toHaveProperty('id');
-  wrapper.destroy();
-  expect(obs.refs).not.toHaveProperty('id');
-});
-
-test('resets child refs', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-      <ValidationObserver ref="obs" v-slot="ctx">
-        <ValidationProvider rules="required" v-slot="{ errors }">
-          <input v-model="value" type="text">
-          <span id="error">{{ errors[0] }}</span>
-        </ValidationProvider>
-      </ValidationObserver>
-    `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const error = wrapper.find('#error');
-  await flush();
-  expect(error.text()).toBe('');
-
-  await (wrapper.vm.$refs.obs as any).validate();
-
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-
-  (wrapper.vm.$refs.obs as any).reset();
-  await flush();
-
-  expect(error.text()).toBe('');
-});
-
-test('resets child refs using reset on the v-slot data', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-      <ValidationObserver ref="obs" v-slot="ctx">
-        <ValidationProvider rules="required" v-slot="{ errors }">
-          <input v-model="value" type="text">
-          <span id="error">{{ errors[0] }}</span>
-        </ValidationProvider>
-        <button @click="ctx.reset()">Reset</button>
-      </ValidationObserver>
-    `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const error = wrapper.find('#error');
-  await flush();
-  expect(error.text()).toBe('');
-
-  (wrapper.vm.$refs.obs as any).validate();
-  await flush();
-
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-
-  await wrapper.find('button').trigger('click');
-  await flush();
-
-  expect(error.text()).toBe('');
-});
-
-test('collects errors from child providers', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        email: '',
-        name: '',
-      }),
-      template: `
-      <ValidationObserver ref="obs" v-slot="{ errors }">
-        <ValidationProvider vid="name" rules="required" v-slot="ctx">
-          <input v-model="name" type="text">
-        </ValidationProvider>
-        <ValidationProvider vid="email" rules="required" v-slot="ctx">
-          <input v-model="email" type="text">
-        </ValidationProvider>
-        <p v-for="fieldErrors in errors">{{ fieldErrors[0] }}</p>
-      </ValidationObserver>
-    `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  await flush();
-
-  await (wrapper.vm.$refs.obs as any).validate();
-  await flush();
-
-  const errors = wrapper.findAll('p');
-  expect(errors).toHaveLength(2); // 2 fields.
-  expect(errors.at(0).text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-  expect(errors.at(1).text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-});
-
-test('exposes nested observers state', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        name: '',
-      }),
-      template: `
-      <ValidationObserver ref="obs" v-slot="state">
-        <ValidationObserver>
-          <ValidationProvider vid="name" rules="required|alpha" v-slot="_">
-            <input v-model="name" type="text">
-          </ValidationProvider>
-        </ValidationObserver>
-        <p>{{ state.errors }}</p>
-      </ValidationObserver>
-    `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  await flush();
-  const input = wrapper.find('input');
-  input.setValue('1');
-  await flush();
-  await flush();
-
-  expect(wrapper.find('p').text()).toContain('The {field} field may only contain alphabetic characters');
-});
-
-test('validates and resets nested observers', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        name: '',
-      }),
-      template: `
-      <ValidationObserver ref="obs" v-slot="state">
-        <ValidationObserver>
-          <ValidationProvider vid="name" rules="required|alpha" v-slot="_">
-            <input v-model="name" type="text">
-          </ValidationProvider>
-        </ValidationObserver>
-        <p>{{ state.errors }}</p>
-      </ValidationObserver>
-    `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  await flush();
-  expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
-  await (wrapper.vm.$refs.obs as any).validate();
-  await flush();
-  await flush();
-  expect(wrapper.find('p').text()).toContain(DEFAULT_REQUIRED_MESSAGE);
-  await (wrapper.vm.$refs.obs as any).reset();
-  await flush();
-  await flush();
-  expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
-});
-
-test('merges nested observers state', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        name: '',
-        isMounted: true,
-      }),
-      template: `
-      <ValidationObserver ref="obs" v-slot="state">
-        <ValidationObserver v-if="isMounted" vid="NESTED_OBS">
-          <ValidationProvider vid="name" rules="required|alpha" v-slot="_">
-            <input v-model="name" type="text">
-          </ValidationProvider>
-        </ValidationObserver>
-        <p>{{ state.errors }}</p>
-      </ValidationObserver>
-    `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  await flush();
-  await flush();
-  expect(wrapper.find('p').text()).toContain(`name`); // nested observer is mounted.
-  wrapper.setData({
-    isMounted: false,
-  });
-  await flush();
-  expect(wrapper.find('p').text()).not.toContain(`name`); // nested observer is unmounted.
-});
-
-test('Sets errors for all providers', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        field1: '',
-        field2: '',
-      }),
-      template: `
-    <div>
-      <ValidationObserver ref="observer">
-        <ValidationProvider
-          vid="field1"
-          v-slot="{ errors }"
-        >
-          <input type="text" v-model="field1">
-          <span id="error1">{{ errors[0] }}</span>
-        </ValidationProvider>
-
-        <ValidationProvider
-          name="field2"
-          v-slot="{ errors }"
-        >
-          <input type="text" v-model="field2">
-          <span id="error2">{{ errors[0] }}</span>
-        </ValidationProvider>
-      </ValidationObserver>
-    </div>
-    `,
-    },
-    { localVue: Vue }
-  );
-
-  await flush();
-  expect(wrapper.find('#error1').text()).toBe('');
-  expect(wrapper.find('#error2').text()).toBe('');
-
-  (wrapper.vm.$refs.observer as any).setErrors({
-    field1: ['wrong'],
-    field2: ['whoops'],
   });
 
-  await flush();
-  expect(wrapper.find('#error1').text()).toBe('wrong');
-  expect(wrapper.find('#error2').text()).toBe('whoops');
+  console.log(wrapper.$el.outerHTML);
+
+  const error = wrapper.$el.querySelector('#error');
+  const input = wrapper.$el.querySelector('input');
+  await flushPromises();
+  expect(error.textContent).toBe('');
+
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+  expect(calls).toBe(0);
+
+  expect(error.textContent).toBe(DEFAULT_REQUIRED_MESSAGE('field'));
+  setValue(input, '12');
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+
+  expect(error.textContent).toBe('');
+  expect(calls).toBe(1);
 });
 
-test('Sets errors for nested observer providers', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        field1: '',
-        field2: '',
-      }),
-      template: `
-    <div>
-      <ValidationObserver ref="observer">
-        <ValidationObserver>
-          <ValidationProvider
-            vid="field1"
-            v-slot="{ errors }"
-          >
-            <input type="text" v-model="field1">
-            <span id="error1">{{ errors[0] }}</span>
-          </ValidationProvider>
-
-          <ValidationProvider
-            name="field2"
-            v-slot="{ errors }"
-          >
-            <input type="text" v-model="field2">
-            <span id="error2">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </ValidationObserver>
-      </ValidationObserver>
-    </div>
-    `,
+test('handles reset', async () => {
+  let isReset = false;
+  const wrapper = mountWithHoc({
+    setup() {
+      return {
+        reset: () => {
+          isReset = true;
+        },
+      };
     },
-    { localVue: Vue }
-  );
+    template: `
+      <ValidationObserver @reset="reset" as="form" v-slot="{ errors }">
+        <ValidationProvider rules="required" name="field" as="input"/>
+        <span id="error">{{ errors.field }}</span>
 
-  await flush();
-  expect(wrapper.find('#error1').text()).toBe('');
-  expect(wrapper.find('#error2').text()).toBe('');
-
-  (wrapper.vm.$refs.observer as any).setErrors({
-    field1: ['wrong'],
-    field2: ['whoops'],
+        <button id="submit">Validate</button>
+        <button id="reset" type="reset">Reset</button>
+      </ValidationObserver>
+    `,
   });
 
-  await flush();
-  expect(wrapper.find('#error1').text()).toBe('wrong');
-  expect(wrapper.find('#error2').text()).toBe('whoops');
+  const error = wrapper.$el.querySelector('#error');
+  expect(error.textContent).toBe('');
+
+  wrapper.$el.querySelector('#submit').click();
+  await flushPromises();
+
+  expect(error.textContent).toBe(DEFAULT_REQUIRED_MESSAGE('field'));
+
+  wrapper.$el.querySelector('#reset').click();
+  await flushPromises();
+
+  expect(error.textContent).toBe('');
+  expect(isReset).toBe(true);
 });
