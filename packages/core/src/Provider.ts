@@ -59,6 +59,7 @@ export const ValidationProvider = defineComponent({
       meta,
     } = useField(fieldName, props.rules, {
       form: $form,
+      immediate: props.immediate as boolean,
     });
 
     const unwrappedMeta = computed(() => {
