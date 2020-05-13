@@ -45,31 +45,31 @@ export function useField(
       bails,
     });
 
-    patch(result);
+    // Must be updated regardless if a mutation is needed or not
+    // FIXME: is this needed?
+    meta.valid.value = result.valid;
+    meta.invalid.value = !result.valid;
 
     return result;
   };
 
-  watch(value, runValidation, {
+  const runValidationWithMutation = () => runValidation().then(patch);
+
+  watch(value, runValidationWithMutation, {
     deep: true,
   });
 
   if (isRef(rules)) {
-    watch(rules, runValidation, {
+    watch(rules, runValidationWithMutation, {
       deep: true,
     });
   }
 
   onMounted(() => {
-    validate(value.value, unwrap(rules)).then(result => {
+    runValidation().then(result => {
       if (immediate) {
         patch(result);
-        return;
       }
-
-      // Initial silent validation.
-      meta.valid.value = result.valid;
-      meta.invalid.value = !result.valid;
     });
   });
 
@@ -78,7 +78,7 @@ export function useField(
   });
 
   const field = {
-    vid: fieldName,
+    vid: fieldName, // FIXME: is is needed anymore?
     name: fieldName, // TODO: Custom field names
     value: value,
     meta,
@@ -86,7 +86,7 @@ export function useField(
     errorMessage,
     failedRules,
     reset,
-    validate: runValidation,
+    validate: runValidationWithMutation,
     handleChange,
     onBlur,
     __setRules(fn: GenericValidateFunction) {
@@ -145,6 +145,8 @@ function useValidationState(value: Ref<any>) {
     meta.validated.value = true;
     meta.pending.value = false;
     failedRules.value = result.failedRules;
+
+    return result;
   }
 
   // Resets the validation state
