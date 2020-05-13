@@ -45,7 +45,7 @@ export const ValidationProvider = defineComponent({
     },
   },
   setup(props, ctx) {
-    const fieldName = ref(props.name || '');
+    const fieldName = props.name;
     const $form = inject('$_veeObserver', undefined) as FormController | undefined;
     const {
       errors,
@@ -74,7 +74,7 @@ export const ValidationProvider = defineComponent({
     const slotProps = computed(() => {
       return {
         field: {
-          name: fieldName.value,
+          name: fieldName,
           onInput: handleChange,
           onChange: handleChange,
           'onUpdate:modelValue': handleChange,
