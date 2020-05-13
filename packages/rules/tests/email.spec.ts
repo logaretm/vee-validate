@@ -30,11 +30,3 @@ test('validates that the string is a valid email address', () => {
   // invalid
   invalid.forEach(value => expect(validate(value as any)).toBe(false));
 });
-
-test('validates multiple emails', () => {
-  const validList = 'emaisadasdl@gmail.com, myemasdasdadail@gmail.com, woasdadadaw@email.com';
-  expect(validate(validList, { multiple: true })).toBe(true);
-
-  const invalidList = 'emaadasdasdil@gmail.com, myemdasdasdadail@gmail.c, woasdasdasw@email.com';
-  expect(validate(invalidList, { multiple: true })).toBe(false);
-});

@@ -17,11 +17,11 @@ beforeEach(() => {
   };
 
   (global as any).Image = class Image {
-    set src(this: any, _: any) {
-      this.width = 150;
-      this.height = 100;
+    set src(_: any) {
+      (this as any).width = 150;
+      (this as any).height = 100;
 
-      this[fails ? 'onerror' : 'onload']();
+      (this as any)[fails ? 'onerror' : 'onload']();
     }
   };
 });

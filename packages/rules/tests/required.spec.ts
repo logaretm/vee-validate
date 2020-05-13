@@ -6,12 +6,12 @@ const invalid = ['', ' ', [], undefined, null];
 
 test('validates required', () => {
   expect.assertions(12);
-  valid.forEach(value => expect(validate(value).valid).toBe(true));
+  valid.forEach(value => expect(validate(value)).toBe(true));
 
-  invalid.forEach(value => expect(validate(value).valid).toBe(false));
+  invalid.forEach(value => expect(validate(value)).toBe(false));
 });
 
 test('false value can be invalidated', () => {
-  expect(validate(false).valid).toBe(true);
-  expect(validate(false, { allowFalse: false }).valid).toBe(false);
+  expect(validate(false)).toBe(true);
+  expect(validate(false, { allowFalse: false })).toBe(false);
 });
