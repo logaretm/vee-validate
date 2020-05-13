@@ -32,7 +32,7 @@ class Dictionary {
     // find if specific message for that field was specified.
     message = this.container[locale]?.fields?.[field]?.[rule] || this.container[locale]?.messages?.[rule];
     if (!message) {
-      message = '{field} is not valid';
+      message = '{_field_} is not valid';
     }
 
     field = this.container[locale]?.names?.[field] ?? field;
