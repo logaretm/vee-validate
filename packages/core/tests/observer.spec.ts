@@ -60,8 +60,6 @@ test('submit handler only executes if observer is valid', async () => {
     `,
   });
 
-  console.log(wrapper.$el.outerHTML);
-
   const error = wrapper.$el.querySelector('#error');
   const input = wrapper.$el.querySelector('input');
   await flushPromises();
