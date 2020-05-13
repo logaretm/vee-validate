@@ -1,693 +1,268 @@
-import { mount, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
-import { ValidationProvider, ValidationObserver, extend, configure } from '@vee-validate/core';
-import ModelComp from './helpers/ModelComp';
+import { extend } from '@vee-validate/core';
+import { mountWithHoc, setValue, dispatchEvent } from './helpers';
 
-const Vue = createLocalVue();
-Vue.component('ValidationProvider', ValidationProvider);
-Vue.component('ValidationObserver', ValidationObserver);
+const DEFAULT_REQUIRED_MESSAGE = (name: string) => `The ${name} field is required`;
 
-const DEFAULT_REQUIRED_MESSAGE = 'The {field} field is required';
+test('renders the as prop', () => {
+  const wrapper = mountWithHoc({
+    template: `
+      <ValidationProvider name="field" as="input" />
+    `,
+  });
 
-test('renders its tag attribute', () => {
-  const wrapper = mount(
-    {
-      data: () => ({ val: '' }),
-      template: `
-        <ValidationProvider v-slot="ctx">
-          <input v-model="val" type="text">
-        </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  expect(wrapper.html()).toBe(`<span><input type="text"></span>`);
+  expect(wrapper.$el.outerHTML).toBe(`<input name="field">`);
 });
 
-test('can be renderless with slim prop', () => {
-  const wrapper = mount(
-    {
-      data: () => ({ val: '' }),
-      template: `
-        <ValidationProvider v-slot="ctx" slim>
-          <input v-model="val" type="text">
+test('listens for input and blur events to set meta flags', async () => {
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <ValidationProvider name="field" rules="required" v-slot="{ errors, field, meta }">
+          <input v-bind="field" type="text">
+          <pre id="pre">{{ meta }}</pre>
         </ValidationProvider>
-      `,
-    },
-    { localVue: Vue }
-  );
+      </div>
+    `,
+  });
 
-  expect(wrapper.html()).toBe(`<input type="text">`);
+  const input = wrapper.$el.querySelector('input');
+  const pre = wrapper.$el.querySelector('pre');
+
+  expect(pre.textContent).toContain('"untouched": true');
+  expect(pre.textContent).toContain('"pristine": true');
+  dispatchEvent(input, 'blur');
+  await flushPromises();
+  expect(pre.textContent).toContain('"touched": true');
+  expect(pre.textContent).toContain('"untouched": false');
+  expect(pre.textContent).toContain('"pristine": true');
+  dispatchEvent(input, 'input');
+  await flushPromises();
+  // eslint-disable-next-line jest/valid-expect
+  expect(pre.textContent).toContain('"pristine": false');
+  expect(pre.textContent).toContain('"dirty": true');
 });
 
-test('listens for input, blur events to set flags', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-        <ValidationProvider rules="required" v-slot="{ errors, ...rest }">
-          <input v-model="value" type="text">
-          <li v-for="(flag, name) in rest" v-if="flag" :id="name">{{ name }}</li>
+test('listens for change events', async () => {
+  const wrapper = mountWithHoc({
+    template: `
+      <ValidationObserver as="form" v-slot="{ errors }">
+        <ValidationProvider name="select" as="select" rules="required">
+          <option value="">0</option>
+          <option value="1">1</option>
         </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
+        <span id="error">{{ errors.select }}</span>
+      </ValidationObserver>
+    `,
+  });
 
-  const input = wrapper.find('input');
-  (expect(wrapper) as any).toHaveElement('#untouched');
-  (expect(wrapper) as any).toHaveElement('#pristine');
-  input.trigger('blur');
+  const select = wrapper.$el.querySelector('select');
+  const error = wrapper.$el.querySelector('#error');
+
+  setValue(select, '');
   await flushPromises();
-  (expect(wrapper) as any).toHaveElement('#touched');
-  (expect(wrapper).not as any).toHaveElement('#untouched');
-  (expect(wrapper) as any).toHaveElement('#pristine');
+  // validation triggered on change.
+  expect(error.textContent).toBe(DEFAULT_REQUIRED_MESSAGE('select'));
+
+  setValue(select, '1');
   await flushPromises();
-  input.trigger('input');
-  await flushPromises();
-  (expect(wrapper).not as any).toHaveElement('#pristine');
-  (expect(wrapper) as any).toHaveElement('#dirty');
+
+  expect(error.textContent).toBe('');
 });
 
-test('validates lazy models', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-        <ValidationProvider rules="required" v-slot="{ errors }">
-          <input v-model.lazy="value" type="text">
+test('validates initially with immediate prop', async () => {
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <ValidationProvider name="field" immediate rules="required" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
           <span id="error">{{ errors[0] }}</span>
         </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
+      </div>
+    `,
+  });
 
-  const input = wrapper.find('input');
-  const error = wrapper.find('#error');
-
-  (input.element as any).value = '';
-  input.trigger('input');
-  await flushPromises();
-  // did not validate on input.
-  expect(error.text()).toBe('');
-
-  input.trigger('change');
-  await flushPromises();
-  // validation triggered on change.
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-
-  (input.element as any).value = 'text';
-  input.trigger('change');
-  await flushPromises();
-  // validation triggered on change.
-  expect(error.text()).toBe('');
-});
-
-test('uses appropriate events for different input types', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-        <div>
-          <ValidationProvider rules="required" v-slot="{ errors }">
-            <select v-model="value">
-              <option value="">0</option>
-              <option value="1">1</option>
-            </select>
-            <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const select = wrapper.find('select');
-  const error = wrapper.find('#error');
-
-  select.trigger('input');
-  await flushPromises();
-  // did not validate on input.
-  expect(error.text()).toBe('');
-
-  select.trigger('change');
-  (select.element as any).value = '';
-  await flushPromises();
-  // validation triggered on change.
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-
-  (select.element as any).value = '1';
-  wrapper.find('select').trigger('change');
-  await flushPromises();
-
-  expect(error.text()).toBe('');
-});
-
-test('validates fields initially using the immediate prop', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-        <div>
-          <ValidationProvider :immediate="true" rules="required" v-slot="{ errors }">
-            <input v-model="value" type="text">
-            <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const error = wrapper.find('#error');
+  const error = wrapper.$el.querySelector('#error');
 
   // flush the pending validation.
   await flushPromises();
 
-  expect(error.text()).toContain(DEFAULT_REQUIRED_MESSAGE);
+  expect(error.textContent).toContain(DEFAULT_REQUIRED_MESSAGE('field'));
 });
 
-test('validates on rule change if the field was validated before', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
+test.skip('watches rules and re-validates', async () => {
+  const wrapper = mountWithHoc({
+    setup() {
+      return {
         rules: { required: true },
-      }),
-      template: `
+      };
+    },
+    template: `
         <div>
-          <ValidationProvider :rules="rules" v-slot="{ errors }">
-            <input v-model="value" type="text">
+          <ValidationProvider name="field" :rules="rules" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
             <span id="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
       `,
-    },
-    { localVue: Vue, sync: false }
-  );
+  });
 
-  const input = wrapper.find('input');
-  const error = wrapper.find('#error');
-  input.setValue('1');
+  const input = wrapper.$el.querySelector('input');
+  const error = wrapper.$el.querySelector('#error');
+  setValue(input, '1');
   // flush the pending validation.
   await flushPromises();
 
-  expect(error.text()).toBe('');
+  expect(error.textContent).toBe('');
 
-  (wrapper.vm as any).rules = {
+  (wrapper as any).rules = {
     required: false,
     min: 3,
   };
 
   await flushPromises();
-  expect(error.text()).toBe('The {field} field must be at least 3 characters');
+  expect(error.textContent).toBe('The field field must be at least 3 characters');
 });
 
-test('validates on rule change: testing arrays', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-        rules: { required: true, oneOf: [1, 2, 3] },
-      }),
-      template: `
-        <div>
-          <ValidationProvider :rules="rules" v-slot="{ errors }">
-            <input v-model="value" type="text">
-            <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const input = wrapper.find('input');
-  const error = wrapper.find('#error');
-  input.setValue('4');
-  // flush the pending validation.
-  await flushPromises();
-
-  expect(error.text()).toBe('The {field} field is not a valid value');
-
-  (wrapper.vm as any).rules = {
-    required: true,
-    oneOf: [1, 2, 3, 4],
-  };
-
-  await flushPromises();
-  expect(error.text()).toBe('');
-});
-
-test('validates on rule change: testing regex', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-        rules: { required: true, regex: /[0-9]+/i },
-      }),
-      template: `
-        <div>
-          <ValidationProvider :rules="rules" v-slot="{ errors }">
-            <input v-model="value" type="text">
-            <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const input = wrapper.find('input');
-  const error = wrapper.find('#error');
-  input.setValue('88');
-  // flush the pending validation.
-  await flushPromises();
-
-  expect(error.text()).toBe('');
-
-  (wrapper.vm as any).rules = {
-    required: false,
-    regex: /^[0-9]$/i,
-  };
-
-  await flushPromises();
-  expect(error.text()).toBe('The {field} field format is invalid');
-});
-
-test('validates on rule change: testing NaN', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-        rules: { required: true, max: NaN },
-      }),
-      template: `
-        <div>
-          <ValidationProvider :rules="rules" v-slot="{ errors }">
-            <input v-model="value" type="text">
-            <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const input = wrapper.find('input');
-  const error = wrapper.find('#error');
-  input.setValue('2');
-  // flush the pending validation.
-  await flushPromises();
-
-  expect(error.text()).toBe('The {field} field may not be greater than NaN characters');
-
-  (wrapper.vm as any).rules = {
-    required: true,
-    max: NaN,
-  };
-
-  await flushPromises();
-  expect(error.text()).toBe('The {field} field may not be greater than NaN characters');
-});
-
-test('validates components on input by default', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      components: {
-        TextInput: {
-          props: ['value'],
-          template: `
+test('validates custom components', async () => {
+  const wrapper = mountWithHoc({
+    components: {
+      TextInput: {
+        props: ['value'],
+        template: `
             <div>
               <input id="input" :value="value" @input="$emit('input', $event.target.value)">
             </div>
           `,
-        },
       },
-      template: `
+    },
+    template: `
         <div>
-          <ValidationProvider rules="required" v-slot="{ errors }">
-            <TextInput v-model="value" ref="input"></TextInput>
+          <ValidationProvider name="field" rules="required" v-slot="{ field, errors }">
+            <TextInput ref="input" v-bind="field" />
             <span id="error">{{ errors && errors[0] }}</span>
           </ValidationProvider>
         </div>
       `,
-    },
-    { localVue: Vue, sync: false, attachToDocument: true }
-  );
+  });
 
-  const error = wrapper.find('#error');
-  const input = wrapper.find('#input');
+  const error = wrapper.$el.querySelector('#error');
+  const input = wrapper.$el.querySelector('#input');
 
-  expect(error.text()).toBe('');
+  expect(error.textContent).toBe('');
 
-  input.setValue('');
+  setValue(input, '');
   await flushPromises();
 
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+  expect(error.textContent).toBe(DEFAULT_REQUIRED_MESSAGE('field'));
 
-  input.setValue('val');
+  setValue(input, 'val');
   await flushPromises();
-  expect(error.text()).toBe('');
+  expect(error.textContent).toBe('');
 });
 
-test('validates components on configured model event', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      components: {
-        TextInput: {
-          model: {
-            event: 'change',
-          },
-          props: ['value'],
-          template: `<input :value="value" @change="$emit('change', $event.target.value)">`,
-        },
-      },
-      template: `
-        <div>
-          <ValidationProvider rules="required" v-slot="{ errors }">
-            <TextInput v-model="value" ref="input"></TextInput>
-            <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
+test('validates target fields using targeted params', async () => {
+  const wrapper = mountWithHoc({
+    template: `
+      <ValidationObserver as="form">
+        <ValidationProvider rules="required" name="confirmation" as="input" />
 
-  const error = wrapper.find('#error');
-  const input = wrapper.find({ ref: 'input' });
+        <ValidationProvider name="password" rules="required|confirmed:@confirmation" v-slot="{ field, errors }">
+          <input type="password" v-bind="field">
+          <span id="err">{{ errors[0] }}</span>
+        </ValidationProvider>
+      </ValidationObserver>
+    `,
+  });
 
-  expect(error.text()).toBe('');
-  input.vm.$emit('change', '');
-  await flushPromises();
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+  const error = wrapper.$el.querySelector('#err');
+  const inputs = wrapper.$el.querySelectorAll('input');
 
-  input.vm.$emit('change', 'txt');
-  await flushPromises();
-  expect(error.text()).toBe('');
-});
-
-test('validates target dependant fields using targeted params', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        password: '',
-        confirmation: '',
-      }),
-      template: `
-        <div>
-          <ValidationProvider rules="required" vid="confirmation" v-slot="ctx">
-            <input type="password" v-model="confirmation">
-          </ValidationProvider>
-          <ValidationProvider rules="required|confirmed:confirmation" v-slot="{ errors }">
-            <input type="password" v-model="password">
-            <span id="err1">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const error = wrapper.find('#err1');
-  const inputs = wrapper.findAll('input');
-
-  expect(error.text()).toBeFalsy();
-  inputs.at(0).setValue('val');
+  expect(error.textContent).toBeFalsy();
+  setValue(inputs[0], 'val');
   await flushPromises();
   // the password input hasn't changed yet.
-  expect(error.text()).toBeFalsy();
-  inputs.at(1).setValue('12');
+  expect(error.textContent).toBeFalsy();
+  setValue(inputs[1], '12');
   await flushPromises();
   // the password input was interacted with and should be validated.
-  expect(error.text()).toBeTruthy();
+  expect(error.textContent).toBeTruthy();
 
-  inputs.at(1).setValue('val');
+  setValue(inputs[1], 'val');
   await flushPromises();
   // the password input now matches the confirmation.
-  expect(error.text()).toBeFalsy();
+  expect(error.textContent).toBeFalsy();
 
-  inputs.at(0).setValue('val1');
+  setValue(inputs[0], 'val1');
   await flushPromises();
-  expect(error.text()).toBeTruthy();
-});
-
-test('validates target dependant fields using interpolated params', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        password: '',
-        confirmation: '',
-      }),
-      template: `
-        <div>
-          <ValidationProvider rules="required" vid="confirmation" v-slot="ctx">
-            <input type="password" v-model="confirmation">
-          </ValidationProvider>
-          <ValidationProvider rules="required|is:@confirmation" v-slot="{ errors }">
-            <input type="password" v-model="password">
-            <span id="err1">{{ errors[0] }}</span>
-          </ValidationProvider>
-        </div>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const error = wrapper.find('#err1');
-  const inputs = wrapper.findAll('input');
-
-  expect(error.text()).toBeFalsy();
-  inputs.at(0).setValue('val');
-  await flushPromises();
-  // the password input hasn't changed yet.
-  expect(error.text()).toBeFalsy();
-  inputs.at(1).setValue('12');
-  await flushPromises();
-  // the password input was interacted with and should be validated.
-  expect(error.text()).toBeTruthy();
-
-  inputs.at(1).setValue('val');
-  await flushPromises();
-  // the password input now matches the confirmation.
-  expect(error.text()).toBeFalsy();
-
-  inputs.at(0).setValue('val1');
-  await flushPromises();
-  expect(error.text()).toBeTruthy();
+  expect(error.textContent).toBeTruthy();
 });
 
 test('validates file input', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        file: null,
-      }),
-      template: `
-        <ValidationProvider rules="required|image" v-slot="{ errors }">
-          <input type="file" v-model="file">
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <ValidationProvider rules="required|image" v-slot="{ field, errors }">
+          <input type="file" v-bind="field">
           <p id="error">{{ errors[0] }}</p>
         </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
+      </div>
+    `,
+  });
 
-  const input = wrapper.find('input');
-  input.trigger('change');
+  const input = wrapper.$el.querySelector('input');
+  dispatchEvent(input, 'change');
   await flushPromises();
 
-  const error = wrapper.find('#error');
-  expect(error.text()).toBeTruthy();
-});
-
-test('removes the provider reference at destroy', () => {
-  const wrapper = mount(
-    {
-      template: `
-        <div>
-          <ValidationProvider vid="named" ref="provider" v-slot="{ errors }">
-            <span></span>
-          </ValidationProvider>
-        </div>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const providersMap = (wrapper.vm as any).$_veeObserver.refs;
-  expect(providersMap.named).toBe((wrapper.vm as any).$refs.provider);
-  wrapper.destroy();
-  expect(providersMap.named).toBeUndefined();
-});
-
-test('resets validation state', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      components: {
-        TextInput: {
-          props: ['value'],
-          template: `
-            <div>
-              <input id="input" :value="value" @input="$emit('input', $event.target.value)">
-            </div>
-          `,
-        },
-      },
-      template: `
-        <div>
-          <ValidationProvider rules="required" ref="provider" v-slot="{ errors, failedRules }">
-            <TextInput v-model="value" ref="input"></TextInput>
-            <span id="error">{{ errors && errors[0] }}</span>
-            <span id="failed">{{ failedRules.required }}</span>
-          </ValidationProvider>
-        </div>
-      `,
-    },
-    { localVue: Vue, sync: false, attachToDocument: true }
-  );
-
-  const error = wrapper.find('#error');
-  const input = wrapper.find('#input');
-
-  expect(error.text()).toBe('');
-  expect(wrapper.find('#failed').text()).toBe('');
-
-  input.setValue('');
-  await flushPromises();
-
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-  expect(wrapper.find('#failed').text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-
-  (wrapper.vm as any).$refs.provider.reset();
-  await flushPromises();
-  expect(error.text()).toBe('');
-  expect(wrapper.find('#failed').text()).toBe('');
+  const error = wrapper.$el.querySelector('#error');
+  expect(error.textContent).toBeTruthy();
 });
 
 test('setting bails prop to false disables fast exit', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-        <ValidationProvider :bails="false" rules="email|min:3" v-slot="{ errors }">
-          <input v-model="value" type="text">
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <ValidationProvider :bails="false" name="field" rules="email|min:3" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
           <p v-for="error in errors">{{ error }}</p>
         </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
+      </div>
+    `,
+  });
 
-  const input = wrapper.find('input');
-  input.setValue('1');
+  const input = wrapper.$el.querySelector('input');
+  setValue(input, '1');
   await flushPromises();
 
-  const errors = wrapper.findAll('p');
+  const errors = wrapper.$el.querySelectorAll('p');
   expect(errors).toHaveLength(2);
-  expect(errors.at(0).text()).toBe('The {field} field must be a valid email');
-  expect(errors.at(1).text()).toBe('The {field} field must be at least 3 characters');
-});
-
-test('setting bails and skipIfEmpty to false runs all rules', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-        <ValidationProvider :skipIfEmpty="false" :bails="false" rules="email|min:3" v-slot="{ errors }">
-          <input v-model="value" type="text">
-          <p v-for="error in errors">{{ error }}</p>
-        </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const input = wrapper.find('input');
-  input.setValue('');
-  await flushPromises();
-
-  const errors = wrapper.findAll('p');
-  expect(errors).toHaveLength(2);
-  expect(errors.at(0).text()).toBe('The {field} field must be a valid email');
-  expect(errors.at(1).text()).toBe('The {field} field must be at least 3 characters');
-});
-
-test('setting skipIfEmpty to false runs only the first rule', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-        <ValidationProvider :skipIfEmpty="false" rules="email|min:3" v-slot="{ errors }">
-          <input v-model="value" type="text">
-          <p v-for="error in errors">{{ error }}</p>
-        </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const input = wrapper.find('input');
-  input.setValue('');
-  await flushPromises();
-
-  const errors = wrapper.findAll('p');
-  expect(errors).toHaveLength(1);
-  expect(errors.at(0).text()).toBe('The {field} field must be a valid email');
+  expect(errors[0].textContent).toBe('The field field must be a valid email');
+  expect(errors[1].textContent).toBe('The field field must be at least 3 characters');
 });
 
 const sleep = (wait: number) => new Promise(resolve => setTimeout(resolve, wait));
-test('validation can be debounced', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-        <ValidationProvider rules="required" :debounce="50" v-slot="{ errors }">
-          <input v-model="value" type="text">
+
+test.skip('validation can be debounced', async () => {
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <ValidationProvider name="field" rules="required" :debounce="50" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
           <p>{{ errors[0] }}</p>
         </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
+      </div>
+    `,
+  });
 
-  const input = wrapper.find('input');
-  const error = wrapper.find('p');
+  const input = wrapper.$el.querySelector('input');
+  const error = wrapper.$el.querySelector('p');
 
-  input.setValue('');
+  setValue(input, '');
   await sleep(40);
-  expect(error.text()).toBe('');
+  expect(error.textContent).toBe('');
   await sleep(10);
   await flushPromises();
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+  expect(error.textContent).toBe(DEFAULT_REQUIRED_MESSAGE('field'));
 });
 
 test('avoids race conditions between successive validations', async () => {
@@ -703,426 +278,53 @@ test('avoids race conditions between successive validations', async () => {
     },
   });
 
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-        <ValidationProvider rules="required|longRunning" :debounce="10" v-slot="{ errors }">
-          <input v-model="value" type="text">
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <ValidationProvider name="field" rules="required|longRunning" :debounce="10" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
           <p>{{ errors[0] }}</p>
         </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
+      </div>
+    `,
+  });
 
-  const input = wrapper.find('input');
-  const error = wrapper.find('p');
+  const input = wrapper.$el.querySelector('input');
+  const error = wrapper.$el.querySelector('p');
 
-  input.setValue('123');
-  input.setValue('12');
-  input.setValue('');
+  setValue(input, '123');
+  setValue(input, '12');
+  setValue(input, '');
   await sleep(100);
   await flushPromises();
   // LAST message should be the required one.
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-});
-
-test('validates manually using the validate event handler', async () => {
-  const wrapper = mount(
-    {
-      template: `
-        <ValidationProvider rules="required" v-slot="{ validate, errors }">
-          <input type="text" @input="validate">
-          <p id="error">{{ errors[0] }}</p>
-        </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const input = wrapper.find('input');
-  input.setValue('');
-  await flushPromises();
-
-  const error = wrapper.find('#error');
-  expect(error.text()).toBeTruthy();
-
-  input.setValue('123');
-  await flushPromises();
-
-  expect(error.text()).toBeFalsy();
-});
-
-test('validates manually with a initial value using the validate event handler on native comp', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        myValue: 'initial value',
-      }),
-      template: `
-        <ValidationObserver ref="obs">
-          <ValidationProvider rules="required" v-slot="{ validate, errors }">
-            <input type="text" :value="myValue" @input="validate">
-            <p id="error">{{ errors[0] }}</p>
-          </ValidationProvider>
-        </ValidationObserver>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  await (wrapper.vm as any).$refs.obs.validate();
-
-  const error = wrapper.find('#error');
-  expect(error.text()).toBe('');
-});
-
-test('validates manually with a initial value using the validate event handler on vue comp', async () => {
-  Vue.component('ModelComp', ModelComp);
-  const wrapper = mount(
-    {
-      data: () => ({
-        myValue: 'initial value',
-      }),
-      template: `
-        <ValidationObserver ref="obs">
-          <ValidationProvider rules="required" v-slot="{ validate, errors }">
-            <ModelComp :value="myValue" @input="validate" />
-            <p id="error">{{ errors[0] }}</p>
-          </ValidationProvider>
-        </ValidationObserver>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  await (wrapper.vm as any).$refs.obs.validate();
-
-  const error = wrapper.find('#error');
-  expect(error.text()).toBe('');
+  expect(error.textContent).toBe(DEFAULT_REQUIRED_MESSAGE('field'));
 });
 
 test('resets validation state using reset method in slot scope data', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({
-        value: '',
-      }),
-      template: `
-        <ValidationProvider rules="required" v-slot="{ errors, reset }">
-          <input type="text" v-model="value">
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <ValidationProvider name="field" rules="required" v-slot="{ field, errors, reset }">
+          <input type="text" v-bind="field">
           <span id="error">{{ errors && errors[0] }}</span>
           <button @click="reset">Reset</button>
         </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const error = wrapper.find('#error');
-  const input = wrapper.find('input');
-
-  expect(error.text()).toBe('');
-
-  input.setValue('');
-  await flushPromises();
-
-  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
-
-  wrapper.find('button').trigger('click');
-  await flushPromises();
-  expect(error.text()).toBe('');
-});
-
-test('classes can be arrays', async () => {
-  configure({
-    classes: {
-      invalid: ['wrong', 'bad'],
-      valid: ['jolly', 'good'],
-    },
-  });
-  const wrapper = mount(
-    {
-      data: () => ({ val: '' }),
-      template: `
-        <ValidationProvider v-slot="{ errors, classes }">
-          <input type="text" v-model="val" required :class="classes">
-          <p id="error">{{ errors[0] }}</p>
-        </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const input = wrapper.find('input');
-  input.setValue('');
-  await flushPromises();
-  expect(input.classes()).toContain('wrong');
-  expect(input.classes()).toContain('bad');
-
-  input.setValue('1');
-  await flushPromises();
-  expect(input.classes()).toContain('jolly');
-  expect(input.classes()).toContain('good');
-});
-
-test('sets errors manually with setErrors', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({ val: '1' }),
-      template: `
-        <ValidationProvider ref="provider" v-slot="{ errors }" rules="required">
-          <input type="text" v-model="val">
-          <p id="error">{{ errors[0] }}</p>
-        </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  await flushPromises();
-  expect(wrapper.find('#error').text()).toBe('');
-
-  (wrapper.vm as any).$refs.provider.setErrors(['WRONG!']);
-  await flushPromises();
-  expect(wrapper.find('#error').text()).toBe('WRONG!');
-});
-
-describe('HTML5 Rule inference', () => {
-  test('Required and email rules', async () => {
-    const wrapper = mount(
-      {
-        data: () => ({ val: '1' }),
-        template: `
-        <ValidationProvider v-slot="{ errors }">
-          <input type="email" required v-model="val">
-          <p id="error">{{ errors[0] }}</p>
-        </ValidationProvider>
-      `,
-      },
-      { localVue: Vue, sync: false }
-    );
-
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toBe('');
-    wrapper.find('input').setValue('');
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toContain('is required');
-
-    // test inferred email value
-    wrapper.find('input').setValue('123');
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toContain('email');
-  });
-
-  test('Required explicit false', async () => {
-    const wrapper = mount(
-      {
-        data: () => ({ val: '1' }),
-        template: `
-        <ValidationProvider v-slot="{ errors }">
-          <input type="text" :required="false" v-model="val">
-          <p id="error">{{ errors[0] }}</p>
-        </ValidationProvider>`,
-      },
-      { localVue: Vue, sync: false }
-    );
-
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toBe('');
-    wrapper.find('input').setValue('');
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toBe('');
-  });
-
-  test('regex and minlength and maxlength rules', async () => {
-    const wrapper = mount(
-      {
-        data: () => ({ val: '1' }),
-        template: `
-        <ValidationProvider v-slot="{ errors }">
-          <input type="text" pattern="[0-9]+" minlength="2" maxlength="3" v-model="val">
-          <p id="error">{{ errors[0] }}</p>
-        </ValidationProvider>
-      `,
-      },
-      { localVue: Vue, sync: false }
-    );
-
-    wrapper.find('input').setValue('a');
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toContain('format is invalid');
-
-    // test inferred maxlength
-    wrapper.find('input').setValue('1234');
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toContain('greater than 3');
-
-    // test inferred minlength
-    wrapper.find('input').setValue('1');
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toContain('least 2');
-  });
-
-  test('number and min_value and max_value', async () => {
-    const wrapper = mount(
-      {
-        data: () => ({ val: '1' }),
-        template: `
-        <ValidationProvider v-slot="{ errors }">
-          <input type="number" min="2" max="4" v-model="val">
-          <p id="error">{{ errors[0] }}</p>
-        </ValidationProvider>
-      `,
-      },
-      { localVue: Vue, sync: false }
-    );
-
-    // test min_value
-    wrapper.find('input').setValue('1');
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toContain('must be 2');
-
-    // test max_value
-    wrapper.find('input').setValue('5');
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toContain('must be 4');
-  });
-
-  test('select input required', async () => {
-    const wrapper = mount(
-      {
-        data: () => ({ val: '1' }),
-        template: `
-        <ValidationProvider v-slot="{ errors }">
-          <select required v-model="val">
-            <option value="">1</option>
-            <option value="1">1</option>
-          </select>
-          <p id="error">{{ errors[0] }}</p>
-        </ValidationProvider>
-      `,
-      },
-      { localVue: Vue, sync: false }
-    );
-
-    wrapper.find('select').setValue('');
-    await flushPromises();
-    expect(wrapper.find('#error').text()).toContain('is required');
-  });
-});
-
-test('array param collecting in the last parameter', async () => {
-  extend('isOneOf', {
-    validate(value, { val, isOneOf }: Record<string, any>) {
-      return isOneOf.includes(value) && isOneOf.includes(val);
-    },
-    params: ['val', 'isOneOf'],
-    message: 'nah',
-  });
-
-  const wrapper = mount(
-    {
-      data: () => ({ val: '1' }),
-      template: `
-      <ValidationProvider rules="required|isOneOf:2,1,2" v-slot="{ errors }">
-        <input type="text" v-model="val">
-        <p id="error">{{ errors[0] }}</p>
-      </ValidationProvider>
+      </div>
     `,
-    },
-    { localVue: Vue, sync: false }
-  );
+  });
 
-  wrapper.find('input').setValue('5');
+  const error = wrapper.$el.querySelector('#error');
+  const input = wrapper.$el.querySelector('input');
+
+  expect(error.textContent).toBe('');
+
+  setValue(input, '');
   await flushPromises();
-  expect(wrapper.find('#error').text()).toContain('nah');
-  wrapper.find('input').setValue('1');
+
+  expect(error.textContent).toBe(DEFAULT_REQUIRED_MESSAGE('field'));
+
+  wrapper.$el.querySelector('button').click();
   await flushPromises();
-  expect(wrapper.find('#error').text()).toBe('');
-});
-
-test('should throw if rule does not exist', async () => {
-  const wrapper = mount(
-    {
-      data: () => ({ val: '123' }),
-      template: `
-        <ValidationProvider rules="wutface" v-slot="ctx" ref="pro">
-          <input v-model="val" type="text">
-        </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-  await expect((wrapper.vm as any).$refs.pro.validate()).rejects.toThrow();
-});
-
-test('returns custom error messages passed in the customMessages prop', async () => {
-  extend('truthy', {
-    validate: Boolean,
-    message: 'Original Message',
-  });
-
-  const customMessage = 'Custom Message';
-
-  const wrapper = mount(
-    {
-      data: () => ({ val: false }),
-      template: `
-        <ValidationProvider rules="truthy" :customMessages="{ truthy: '${customMessage}' }" v-slot="ctx" ref="pro">
-          <input v-model="val" type="text">
-        </ValidationProvider>
-      `,
-    },
-    { localVue: Vue, sync: false }
-  );
-
-  const result = await (wrapper.vm as any).$refs.pro.validate();
-
-  expect(result.errors[0]).toEqual(customMessage);
-});
-
-describe('Handle value mutating modifiers', () => {
-  test('handles .number modifier', () => {
-    const wrapper = mount(
-      {
-        data: () => ({ val: '' }),
-        template: `
-        <ValidationProvider rules="required" v-slot="ctx" ref="provider">
-          <input v-model.number="val" type="text">
-        </ValidationProvider>
-      `,
-      },
-      { localVue: Vue, sync: false }
-    );
-
-    // should happen synchronously!
-    wrapper.find('input').setValue('11');
-    expect((wrapper.vm as any).$refs.provider.value).toBe(11);
-
-    // NaN values are left as is.
-    wrapper.find('input').setValue('x23');
-    expect((wrapper.vm as any).$refs.provider.value).toBe('x23');
-  });
-
-  test('handles .trim modifier', () => {
-    const wrapper = mount(
-      {
-        data: () => ({ val: '' }),
-        template: `
-        <ValidationProvider rules="required" v-slot="ctx" ref="provider">
-          <input v-model.trim="val" type="text">
-        </ValidationProvider>
-      `,
-      },
-      { localVue: Vue, sync: false }
-    );
-
-    // should happen synchronously!
-    wrapper.find('input').setValue('  abc');
-    expect((wrapper.vm as any).$refs.provider.value).toBe('abc');
-  });
+  expect(error.textContent).toBe('');
 });
