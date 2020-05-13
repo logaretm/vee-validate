@@ -15,6 +15,7 @@ import { unwrap } from './utils/refs';
 interface FieldOptions {
   value: Ref<any>;
   immediate?: boolean;
+  bails?: boolean;
   form?: FormController;
 }
 
@@ -28,7 +29,7 @@ export function useField(
   rules: RuleExpression,
   opts?: Partial<FieldOptions>
 ): FieldComposite {
-  const { value, form, immediate } = normalizeOptions(opts);
+  const { value, form, immediate, bails } = normalizeOptions(opts);
   const { meta, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
   let schemaValidation: GenericValidateFunction;
   const normalizedRules = computed(() => {
@@ -41,6 +42,7 @@ export function useField(
       name: unwrap(fieldName),
       values: form?.values.value ?? {},
       names: form?.names.value ?? {},
+      bails,
     });
 
     patch(result);
@@ -104,6 +106,7 @@ function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions
   const defaults = () => ({
     value: ref(null),
     immediate: false,
+    bails: true,
     rules: '',
   });
 

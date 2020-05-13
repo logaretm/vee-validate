@@ -17,7 +17,7 @@ export const ValidationProvider = defineComponent({
     },
     name: {
       type: String,
-      default: null,
+      required: true,
     },
     rules: {
       type: [Object, String, Function],
@@ -60,6 +60,7 @@ export const ValidationProvider = defineComponent({
     } = useField(fieldName, props.rules, {
       form: $form,
       immediate: props.immediate as boolean,
+      bails: props.bails as boolean,
     });
 
     const unwrappedMeta = computed(() => {
