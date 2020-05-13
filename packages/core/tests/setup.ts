@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 // @ts-ignore
 import { replaceRaf } from 'raf-stub';
 import * as Rules from '@vee-validate/rules';
@@ -15,14 +16,3 @@ Object.keys(Rules).forEach(rule => {
 localize('en', en);
 
 replaceRaf();
-
-expect.extend({
-  toHaveElement(wrapper, selector) {
-    const exists = wrapper.find(selector).exists();
-
-    return {
-      pass: exists,
-      message: () => `The element ${!this.isNot ? 'does not' : 'does'} exist.`,
-    };
-  },
-});
