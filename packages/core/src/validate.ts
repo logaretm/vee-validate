@@ -181,8 +181,8 @@ function _getRuleTargets(
   const names: Record<string, string> = {};
   let ruleConfig = field.rules[ruleName];
   if (!Array.isArray(ruleConfig) && isObject(ruleConfig)) {
-    ruleConfig = params.map((param: any) => {
-      return ruleConfig[param.name];
+    ruleConfig = params.map(param => {
+      return ruleConfig[param];
     });
   }
 
