@@ -50,7 +50,7 @@ A `slim` prop can be used to force the component to be renderless, by default it
 </ValidationObserver>
 ```
 
-Note that **only the first child** will be rendered when `slim` is used, any other nodes will be dropped as you cannot have multiple root nodes in a renderless component. Be mindful of that when using the `slim` prop.
+Note that `slim` will take effect only when you have **one child element** in the slot as you cannot have multiple root nodes in a renderless component. Otherwise the tag will be rendered anyway.
 
 ```vue{2}
 <!-- Only form is rendered. -->
