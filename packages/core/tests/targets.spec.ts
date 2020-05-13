@@ -11,7 +11,7 @@ describe('target field placeholder', () => {
 
   test('uses target field name, if supplied in options', async () => {
     const values = { foo: 10, bar: 20 };
-    const rules = 'confirmed:foo';
+    const rules = 'confirmed:@foo';
     const options = {
       name: names.bar,
       values,
@@ -23,7 +23,7 @@ describe('target field placeholder', () => {
 
   test('uses target field key, if target field name not supplied in options', async () => {
     const values = { foo: 10, bar: 20 };
-    const rules = 'confirmed:foo';
+    const rules = 'confirmed:@foo';
     const options = {
       name: names.bar,
       values,
@@ -36,16 +36,13 @@ describe('target field placeholder', () => {
     extend('sum_of', {
       message: '{_field_} must be the sum of {a} and {b}',
       // eslint-disable-next-line prettier/prettier
-      params: [
-        { name: 'a', isTarget: true },
-        { name: 'b', isTarget: true },
-      ],
+      params: ['a', 'b'],
       validate: (value, { a, b }: Record<string, any>) => value === parseInt(a, 10) + parseInt(b, 10),
     });
 
     const values = { foo: 10, bar: 10, baz: 10 };
     const names = { foo: 'Foo', bar: 'Bar', baz: 'Baz' };
-    const rules = 'sum_of:bar,baz';
+    const rules = 'sum_of:@bar,@baz';
     const options = {
       name: names.foo,
       values,
@@ -102,28 +99,5 @@ describe('cross-field syntax', () => {
       const result = await validate(values.value, rules, { ...options, customMessages, names });
       expect(result.errors[0]).toEqual('Must be more than 0 and less than Max Value');
     });
-  });
-
-  test('should cast values of the resolved targets', async () => {
-    extend('isEven', {
-      params: [{ name: 'target', cast: val => val % 2 }],
-      validate(val, { target }: Record<string, any>) {
-        return target === 0;
-      },
-    });
-
-    let result = await validate('watever', 'isEven:@field', {
-      values: {
-        field: 2,
-      },
-    });
-
-    expect(result.valid).toBe(true);
-    result = await validate('watever', 'isEven:@field', {
-      values: {
-        field: 3,
-      },
-    });
-    expect(result.valid).toBe(false);
   });
 });
