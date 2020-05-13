@@ -1,5 +1,5 @@
 const validate = (value: any, { length }: Record<string, any>): boolean => {
-  length = Number(value);
+  length = Number(length);
   if (Array.isArray(value)) {
     return value.every(val => validate(val, { length }));
   }
