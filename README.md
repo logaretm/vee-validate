@@ -6,7 +6,6 @@
 
 <p align="center">
 
-[![Financial Contributors on Open Collective](https://opencollective.com/vee-validate/all/badge.svg?label=financial+contributors)](https://opencollective.com/vee-validate)
 [![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
 [![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=master)](https://travis-ci.org/logaretm/vee-validate)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/logaretm/vee-validate?utm_source=github.com&utm_medium=referral&utm_content=logaretm/vee-validate&utm_campaign=Badge_Grade)
@@ -142,42 +141,6 @@ You are welcome to contribute to this project, but before you do, please make su
 
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
 
-## Contributors
-
-### Emeriti
-
-Here we honor past contributors and sponsors who have been a major part on this project.
-
-- [Baianat](https://github.com/baianat).
-
-### Code Contributors
-
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/logaretm/vee-validate/graphs/contributors"><img src="https://opencollective.com/vee-validate/contributors.svg?width=890&button=false" /></a>
-
-### Financial Contributors
-
-Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/vee-validate/contribute)]
-
-#### Individuals
-
-<a href="https://opencollective.com/vee-validate"><img src="https://opencollective.com/vee-validate/individuals.svg?width=890"></a>
-
-#### Organizations
-
-Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/vee-validate/contribute)]
-
-<a href="https://opencollective.com/vee-validate/organization/0/website"><img src="https://opencollective.com/vee-validate/organization/0/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/1/website"><img src="https://opencollective.com/vee-validate/organization/1/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/2/website"><img src="https://opencollective.com/vee-validate/organization/2/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/3/website"><img src="https://opencollective.com/vee-validate/organization/3/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/4/website"><img src="https://opencollective.com/vee-validate/organization/4/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/5/website"><img src="https://opencollective.com/vee-validate/organization/5/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/6/website"><img src="https://opencollective.com/vee-validate/organization/6/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/7/website"><img src="https://opencollective.com/vee-validate/organization/7/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/8/website"><img src="https://opencollective.com/vee-validate/organization/8/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/9/website"><img src="https://opencollective.com/vee-validate/organization/9/avatar.svg"></a>
-
-### license
+### License
 
 MIT

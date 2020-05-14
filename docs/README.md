@@ -77,33 +77,3 @@ Wrap your inputs with the `ValidationProvider`:
 And this is the result:
 
 <RuleDemo rule="required" :customMessages="{ required: 'This field is required' }" />
-
-## Contributions
-
-### Code Contributors
-
-This project exists thanks to all the people who contribute. [[Contribute](https://github.com/logaretm/vee-validate/blob/master/CONTRIBUTING.md)].
-<a href="https://github.com/logaretm/vee-validate/graphs/contributors"><img src="https://opencollective.com/vee-validate/contributors.svg?width=890&button=false" /></a>
-
-### Financial Contributors
-
-Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/vee-validate/contribute)]
-
-#### Individuals
-
-<a href="https://opencollective.com/vee-validate"><img src="https://opencollective.com/vee-validate/individuals.svg?width=890"></a>
-
-#### Organizations
-
-Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/vee-validate/contribute)]
-
-<a href="https://opencollective.com/vee-validate/organization/0/website"><img src="https://opencollective.com/vee-validate/organization/0/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/1/website"><img src="https://opencollective.com/vee-validate/organization/1/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/2/website"><img src="https://opencollective.com/vee-validate/organization/2/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/3/website"><img src="https://opencollective.com/vee-validate/organization/3/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/4/website"><img src="https://opencollective.com/vee-validate/organization/4/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/5/website"><img src="https://opencollective.com/vee-validate/organization/5/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/6/website"><img src="https://opencollective.com/vee-validate/organization/6/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/7/website"><img src="https://opencollective.com/vee-validate/organization/7/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/8/website"><img src="https://opencollective.com/vee-validate/organization/8/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/9/website"><img src="https://opencollective.com/vee-validate/organization/9/avatar.svg"></a>
