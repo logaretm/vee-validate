@@ -1,5 +1,5 @@
 import { computed, ref, Ref } from 'vue';
-import { Flag, FormController, SubmissionHandler, GenericValidateFunction } from './types';
+import { Flag, FormController, SubmissionHandler, GenericValidateFunction, FieldComposite } from './types';
 import { unwrap } from './utils/refs';
 
 const mergeStrategies: Record<Flag, 'every' | 'some'> = {
@@ -38,7 +38,7 @@ export function useForm(opts?: FormOptions) {
   const fieldsById: Record<string, any> = {};
   const values = computed(() => {
     return fields.value.reduce((acc: any, field: any) => {
-      acc[field.vid] = field.value;
+      acc[field.name] = field.value;
 
       return acc;
     }, {});
@@ -46,22 +46,22 @@ export function useForm(opts?: FormOptions) {
 
   const names = computed(() => {
     return fields.value.reduce((acc: any, field: any) => {
-      acc[field.vid] = field.vid;
+      acc[field.name] = field.name;
 
       return acc;
     }, {});
   });
 
   const controller: FormController = {
-    register(field) {
-      const vid = unwrap(field.vid);
+    register(field: FieldComposite) {
+      const name = unwrap(field.name);
       // Set the rules for that field from the schema.
-      if (opts?.validationSchema?.[vid]) {
-        field.__setRules(opts?.validationSchema[vid]);
+      if (opts?.validationSchema?.[name]) {
+        field.__setRules(opts?.validationSchema[name]);
       }
 
       fields.value.push(field);
-      fieldsById[vid] = field;
+      fieldsById[name] = field;
     },
     fields: fieldsById,
     values,
@@ -80,7 +80,7 @@ export function useForm(opts?: FormOptions) {
 
   const errors = computed(() => {
     return fields.value.reduce((acc: Record<string, string[]>, field) => {
-      acc[field.vid] = field.errorMessage;
+      acc[field.name] = field.errorMessage;
 
       return acc;
     }, {});

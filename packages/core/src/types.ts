@@ -80,6 +80,7 @@ export interface FieldComposite {
   handleChange(e?: any): void;
   onBlur(e?: any): void;
   value: Ref<any>;
+  name: MaybeReactive<string>;
   failedRules: Ref<Record<string, string>>;
   errors: Ref<string[]>;
   errorMessage: Ref<string | undefined>;

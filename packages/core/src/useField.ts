@@ -77,8 +77,7 @@ export function useField(
   });
 
   const field = {
-    vid: fieldName, // FIXME: is is needed anymore?
-    name: fieldName, // TODO: Custom field names
+    name: fieldName,
     value: value,
     meta,
     errors,
