@@ -538,18 +538,19 @@ The field under validation must have a value that is in the specified list. **Us
 
 <RuleDemo
 rule="oneOf:1,2,3"
+name="number"
 type="select"
-:options="[{ text: 'One', value: 1 }, { text: 'Two', value: 2 }, { text: 'Three', value: 3 }, { text: 'Four', value: 4 }]"
+:options="[{ text: 'One', value: 1 }, { text: 'Two', value: 2 }, { text: 'Three', value: 3 }, { text: 'Four (invalid)', value: 4 }]"
 
 > </RuleDemo>
 
 ```vue
-<ValidationProvider rules="oneOf:1,2,3" v-slot="{ errors }">
+<ValidationProvider rules="oneOf:1,2,3" name="number" v-slot="{ errors }">
   <select v-model="value">
     <option value="1">One</option>
     <option value="2">Two</option>
     <option value="3">Three</option>
-    <option value="4">Invalid</option>
+    <option value="4">Four (invalid)</option>
   </select>
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
