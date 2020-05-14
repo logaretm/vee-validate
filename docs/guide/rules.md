@@ -119,6 +119,7 @@ VeeValidate offers common validators that will cover most apps needs:
   <li><a href="#digits">digits</a></li>
   <li><a href="#dimensions">dimensions</a></li>
   <li><a href="#email">email <Badge text="Inferred" type="tip"/></a></li>
+  <li><a href="#excluded">excluded</a></li>
   <li><a href="#ext">ext</a></li>
   <li><a href="#image">image</a></li>
   <li><a href="#oneof">oneOf</a></li>
@@ -131,7 +132,6 @@ VeeValidate offers common validators that will cover most apps needs:
   <li><a href="#mimes">mimes</a></li>
   <li><a href="#min">min <Badge text="Inferred" type="tip"/></a></li>
   <li><a href="#min-value">min_value <Badge text="Inferred" type="tip"/></a></li>
-  <li><a href="#excluded">excluded</a></li>
   <li><a href="#numeric">numeric</a></li>
   <li><a href="#regex">regex <Badge text="Inferred" type="tip"/></a></li>
   <li><a href="#required">required <Badge text="Inferred" type="tip"/></a></li>
@@ -288,6 +288,31 @@ The field under validation must be a valid email.
 :::tip Inference
 This rule is automatically inferred if the `input` type is `email`, it also detects if the `multiple` attribute is set.
 :::
+
+### excluded
+
+The field under validation must have a value that is not in the specified list. **Uses double equals** for checks.
+
+<RuleDemo
+rule="excluded:1,2"
+name="number"
+type="select"
+:options="[{ text: 'One (invalid)', value: 1 }, { text: 'Two (invalid)', value: 2 }, { text: 'Three', value: 3 }, { text: 'Four', value: 4 }]"
+></RuleDemo>
+
+```vue
+<ValidationProvider rules="excluded:1,2" name="number" v-slot="{ errors }">
+  <select v-model="value">
+    <option value="1">One (invalid)</option>
+    <option value="2">Two (invalid)</option>
+    <option value="3">Three</option>
+    <option value="4">Invalid</option>
+  </select>
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+`excluded` takes an infinite number of params, each is a value that is allowed.
 
 ### ext
 
@@ -513,18 +538,19 @@ The field under validation must have a value that is in the specified list. **Us
 
 <RuleDemo
 rule="oneOf:1,2,3"
+name="number"
 type="select"
-:options="[{ text: 'One', value: 1 }, { text: 'Two', value: 2 }, { text: 'Three', value: 3 }, { text: 'Four', value: 4 }]"
+:options="[{ text: 'One', value: 1 }, { text: 'Two', value: 2 }, { text: 'Three', value: 3 }, { text: 'Four (invalid)', value: 4 }]"
 
 > </RuleDemo>
 
 ```vue
-<ValidationProvider rules="oneOf:1,2,3" v-slot="{ errors }">
+<ValidationProvider rules="oneOf:1,2,3" name="number" v-slot="{ errors }">
   <select v-model="value">
     <option value="1">One</option>
     <option value="2">Two</option>
     <option value="3">Three</option>
-    <option value="4">Invalid</option>
+    <option value="4">Four (invalid)</option>
   </select>
   <span>{{ errors[0] }}</span>
 </ValidationProvider>
