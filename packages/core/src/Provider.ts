@@ -8,10 +8,6 @@ import { useRefsObjToComputed } from './utils';
 export const ValidationProvider = defineComponent({
   name: 'ValidationProvider',
   props: {
-    vid: {
-      type: String,
-      default: '',
-    },
     as: {
       type: [String, Object],
       default: undefined,
@@ -31,10 +27,6 @@ export const ValidationProvider = defineComponent({
     bails: {
       type: Boolean,
       default: () => getConfig().bails,
-    },
-    skipIfEmpty: {
-      type: Boolean,
-      default: () => getConfig().skipOptional,
     },
     disabled: {
       type: Boolean,
