@@ -42,6 +42,8 @@ export const ValidationProvider = defineComponent({
     const $form = inject('$_veeObserver', undefined) as FormController | undefined;
     // FIXME: is this right?
     const disabled = computed(() => props.disabled as boolean);
+    const rules = computed(() => props.rules);
+
     const {
       errors,
       failedRules,
@@ -52,7 +54,7 @@ export const ValidationProvider = defineComponent({
       onBlur,
       reset,
       meta,
-    } = useField(fieldName, props.rules, {
+    } = useField(fieldName, rules, {
       form: $form,
       immediate: props.immediate as boolean,
       bails: props.bails as boolean,

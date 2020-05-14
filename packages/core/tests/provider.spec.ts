@@ -90,7 +90,7 @@ test('validates initially with immediate prop', async () => {
   expect(error.textContent).toContain(DEFAULT_REQUIRED_MESSAGE('field'));
 });
 
-test.skip('watches rules and re-validates', async () => {
+test('watches rules and re-validates', async () => {
   const wrapper = mountWithHoc({
     setup() {
       return {
