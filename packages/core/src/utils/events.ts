@@ -1,4 +1,4 @@
-import { isCallable, toArray, isNaN } from './index';
+import { isCallable, toArray } from './index';
 
 export const isEvent = (evt: any): evt is Event => {
   if (!evt) {
@@ -18,35 +18,14 @@ export const isEvent = (evt: any): evt is Event => {
   return false;
 };
 
-type BoundInputElement = HTMLInputElement & {
-  _vModifiers?: { number?: boolean; trim?: boolean };
-};
-
 export function normalizeEventValue(value: unknown): any {
   if (!isEvent(value)) {
     return value;
   }
 
-  const input = value.target as BoundInputElement;
+  const input = value.target as HTMLInputElement;
   if (input.type === 'file' && input.files) {
     return toArray(input.files);
-  }
-
-  // If the input has a `v-model.number` modifier applied.
-  if (input._vModifiers?.number) {
-    // as per the spec the v-model.number uses parseFloat
-    const valueAsNumber = parseFloat(input.value);
-    if (isNaN(valueAsNumber)) {
-      return input.value;
-    }
-
-    return valueAsNumber;
-  }
-
-  if (input._vModifiers?.trim) {
-    const trimmedValue = typeof input.value === 'string' ? input.value.trim() : input.value;
-
-    return trimmedValue;
   }
 
   return input.value;

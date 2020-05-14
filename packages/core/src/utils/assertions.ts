@@ -51,19 +51,6 @@ export function isEqual(lhs: any, rhs: any): boolean {
   return lhs === rhs;
 }
 
-// Checks if a given value is not an empty string or null or undefined.
-export function isSpecified(val: string | null | undefined): boolean {
-  if (val === '') {
-    return false;
-  }
-
-  return !isNullOrUndefined(val);
-}
-
 export function isLocator(value: unknown): value is Locator {
   return isCallable(value) && !!(value as any).__locatorRef;
-}
-
-export function isTarget(value: unknown): boolean {
-  return typeof value === 'string' && /^@\w+/.test(value);
 }

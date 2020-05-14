@@ -1,20 +1,7 @@
 import { ValidationMessageTemplate } from './types';
 
-type ValidationClass = string | string[] | undefined;
-
-export interface ValidationClassMap {
-  touched?: ValidationClass;
-  untouched?: ValidationClass;
-  valid?: ValidationClass;
-  invalid?: ValidationClass;
-  pristine?: ValidationClass;
-  dirty?: ValidationClass;
-  [k: string]: ValidationClass;
-}
-
 export interface VeeValidateConfig {
   bails: boolean;
-  classes: ValidationClassMap;
   defaultMessage: ValidationMessageTemplate;
   skipOptional: boolean;
 }
@@ -22,14 +9,6 @@ export interface VeeValidateConfig {
 const DEFAULT_CONFIG: VeeValidateConfig = {
   defaultMessage: `{_field_} is not valid.`,
   skipOptional: true,
-  classes: {
-    touched: 'touched', // the control has been blurred
-    untouched: 'untouched', // the control hasn't been blurred
-    valid: 'valid', // model is valid
-    invalid: 'invalid', // model is invalid
-    pristine: 'pristine', // control has not been interacted with
-    dirty: 'dirty', // control has been interacted with
-  },
   bails: true,
 };
 
