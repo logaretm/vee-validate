@@ -7,10 +7,9 @@ import {
   FieldComposite,
   GenericValidateFunction,
   Flag,
+  ValidationFlags,
 } from './types';
-import { createFlags, normalizeRules, extractLocators } from './utils';
-import { normalizeEventValue } from './utils/events';
-import { unwrap } from './utils/refs';
+import { normalizeRules, extractLocators, normalizeEventValue, unwrap } from './utils';
 
 interface FieldOptions {
   value: Ref<any>;
@@ -206,7 +205,22 @@ function useFormController(field: FieldComposite, rules: Ref<Record<string, any>
  * Exposes meta flags state and some associated actions with them.
  */
 function useMeta() {
-  const flags = reactive(createFlags());
+  const initialMeta = (): ValidationFlags => ({
+    untouched: true,
+    touched: false,
+    dirty: false,
+    pristine: true,
+    valid: false,
+    invalid: false,
+    validated: false,
+    pending: false,
+    changed: false,
+    passed: false,
+    failed: false,
+  });
+
+  const flags = reactive(initialMeta());
+
   const passed = computed(() => {
     return flags.valid && flags.validated;
   });
@@ -227,7 +241,7 @@ function useMeta() {
    * Resets the flag state
    */
   function reset() {
-    const defaults = createFlags();
+    const defaults = initialMeta();
     Object.keys(flags).forEach((key: string) => {
       // Skip these, since they are computed anyways
       if (key === 'passed' || key === 'failed') {
