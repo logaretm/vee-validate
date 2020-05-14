@@ -1,8 +1,9 @@
-import { ref, computed, inject, h, defineComponent } from 'vue';
+import { computed, inject, h, defineComponent } from 'vue';
 import { normalizeChildren } from './utils/vnode';
 import { getConfig } from './config';
-import { Flag, ValidationFlags, FormController } from './types';
+import { FormController } from './types';
 import { useField } from './useField';
+import { useRefsObjToComputed } from './utils';
 
 export const ValidationProvider = defineComponent({
   name: 'ValidationProvider',
@@ -63,13 +64,7 @@ export const ValidationProvider = defineComponent({
       bails: props.bails as boolean,
     });
 
-    const unwrappedMeta = computed(() => {
-      return Object.keys(meta).reduce((acc, key) => {
-        acc[key as Flag] = meta[key as Flag].value;
-
-        return acc;
-      }, {} as ValidationFlags);
-    });
+    const unwrappedMeta = useRefsObjToComputed(meta);
 
     const slotProps = computed(() => {
       return {
