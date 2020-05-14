@@ -2,33 +2,6 @@ import { computed, ref, Ref } from 'vue';
 import { Flag, FormController, SubmissionHandler, GenericValidateFunction, FieldComposite } from './types';
 import { unwrap } from './utils/refs';
 
-const mergeStrategies: Record<Flag, 'every' | 'some'> = {
-  valid: 'every',
-  invalid: 'some',
-  dirty: 'some',
-  pristine: 'every',
-  touched: 'some',
-  untouched: 'every',
-  pending: 'some',
-  validated: 'every',
-  changed: 'some',
-  passed: 'every',
-  failed: 'some',
-};
-
-function computeMeta(fields: Ref<any[]>) {
-  const flags: Flag[] = Object.keys(mergeStrategies) as Flag[];
-
-  return flags.reduce((acc, flag: Flag) => {
-    acc[flag] = computed(() => {
-      const mergeMethod = mergeStrategies[flag];
-      return fields.value[mergeMethod](field => field.meta[flag]);
-    });
-
-    return acc;
-  }, {} as Record<Flag, Ref<boolean>>);
-}
-
 interface FormOptions {
   validationSchema: Record<string, GenericValidateFunction>;
 }
@@ -36,8 +9,13 @@ interface FormOptions {
 export function useForm(opts?: FormOptions) {
   const fields: Ref<any[]> = ref([]);
   const fieldsById: Record<string, any> = {};
+
+  const activeFields = computed(() => {
+    return fields.value.filter(field => !unwrap(field.disabled));
+  });
+
   const values = computed(() => {
-    return fields.value.reduce((acc: any, field: any) => {
+    return activeFields.value.reduce((acc: any, field: any) => {
       acc[field.name] = field.value;
 
       return acc;
@@ -70,7 +48,7 @@ export function useForm(opts?: FormOptions) {
 
   const validate = async () => {
     const results = await Promise.all(
-      fields.value.map((f: any) => {
+      activeFields.value.map((f: any) => {
         return f.validate();
       })
     );
@@ -79,7 +57,7 @@ export function useForm(opts?: FormOptions) {
   };
 
   const errors = computed(() => {
-    return fields.value.reduce((acc: Record<string, string[]>, field) => {
+    return activeFields.value.reduce((acc: Record<string, string[]>, field) => {
       acc[field.name] = field.errorMessage;
 
       return acc;
@@ -90,9 +68,11 @@ export function useForm(opts?: FormOptions) {
     fields.value.forEach((f: any) => f.reset());
   };
 
+  const meta = useFormMeta(fields);
+
   return {
     errors,
-    meta: computeMeta(fields),
+    meta,
     form: controller,
     values,
     validate,
@@ -112,4 +92,32 @@ export function useForm(opts?: FormOptions) {
       };
     },
   };
+}
+
+const MERGE_STRATEGIES: Record<Flag, 'every' | 'some'> = {
+  valid: 'every',
+  invalid: 'some',
+  dirty: 'some',
+  pristine: 'every',
+  touched: 'some',
+  untouched: 'every',
+  pending: 'some',
+  validated: 'every',
+  changed: 'some',
+  passed: 'every',
+  failed: 'some',
+};
+
+function useFormMeta(fields: Ref<any[]>) {
+  const flags: Flag[] = Object.keys(MERGE_STRATEGIES) as Flag[];
+
+  return flags.reduce((acc, flag: Flag) => {
+    acc[flag] = computed(() => {
+      const mergeMethod = MERGE_STRATEGIES[flag];
+
+      return fields.value[mergeMethod](field => field.meta[flag]);
+    });
+
+    return acc;
+  }, {} as Record<Flag, Ref<boolean>>);
 }

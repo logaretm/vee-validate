@@ -40,6 +40,8 @@ export const ValidationProvider = defineComponent({
   setup(props, ctx) {
     const fieldName = props.name;
     const $form = inject('$_veeObserver', undefined) as FormController | undefined;
+    // FIXME: is this right?
+    const disabled = computed(() => props.disabled as boolean);
     const {
       errors,
       failedRules,
@@ -54,6 +56,7 @@ export const ValidationProvider = defineComponent({
       form: $form,
       immediate: props.immediate as boolean,
       bails: props.bails as boolean,
+      disabled,
     });
 
     const unwrappedMeta = useRefsObjToComputed(meta);
@@ -62,6 +65,7 @@ export const ValidationProvider = defineComponent({
       return {
         field: {
           name: fieldName,
+          disabled: props.disabled,
           onInput: handleChange,
           onChange: handleChange,
           'onUpdate:modelValue': handleChange,

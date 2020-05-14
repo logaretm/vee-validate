@@ -113,3 +113,39 @@ test('handles reset', async () => {
   expect(error.textContent).toBe('');
   expect(isReset).toBe(true);
 });
+
+test('disabled fields do not participate in validation', async () => {
+  let isInObject = false;
+  const wrapper = mountWithHoc({
+    setup() {
+      return {
+        disabled: false,
+        submit: (values: Record<string, any>) => {
+          isInObject = 'field' in values;
+        },
+      };
+    },
+    template: `
+      <ValidationObserver @submit="submit" as="form">
+        <ValidationProvider rules="required" name="field" as="input" :disabled="disabled"/>
+
+        <button id="submit">Submit</button>
+      </ValidationObserver>
+    `,
+  });
+
+  const input = wrapper.$el.querySelector('input');
+  setValue(input, '123');
+  const button = wrapper.$el.querySelector('#submit');
+
+  button.click();
+  await flushPromises();
+
+  expect(isInObject).toBe(true);
+
+  (wrapper as any).disabled = true;
+  button.click();
+  await flushPromises();
+
+  expect(isInObject).toBe(false);
+});

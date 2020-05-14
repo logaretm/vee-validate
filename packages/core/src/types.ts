@@ -81,6 +81,7 @@ export interface FieldComposite {
   onBlur(e?: any): void;
   value: Ref<any>;
   name: MaybeReactive<string>;
+  disabled: MaybeReactive<boolean>;
   failedRules: Ref<Record<string, string>>;
   errors: Ref<string[]>;
   errorMessage: Ref<string | undefined>;
@@ -95,7 +96,7 @@ export interface FormController {
   fields: any;
 }
 
-export type MaybeReactive<T> = Ref<T> | T;
+export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
 
 export type SubmissionHandler = (values: Record<string, any>) => any;
 
