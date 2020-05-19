@@ -47,7 +47,7 @@ export const ValidationProvider = defineComponent({
     const {
       errors,
       failedRules,
-      // value,
+      value,
       errorMessage,
       validate: validateField,
       handleChange,
@@ -72,6 +72,7 @@ export const ValidationProvider = defineComponent({
           onChange: handleChange,
           'onUpdate:modelValue': handleChange,
           onBlur: onBlur,
+          value: value.value,
         },
         meta: unwrappedMeta.value,
         errors: errors.value,

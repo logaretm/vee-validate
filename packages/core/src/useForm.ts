@@ -4,6 +4,7 @@ import { unwrap } from './utils/refs';
 
 interface FormOptions {
   validationSchema?: Record<string, GenericValidateFunction>;
+  initialValues?: Record<string, any>;
 }
 
 export function useForm(opts?: FormOptions) {
@@ -36,6 +37,11 @@ export function useForm(opts?: FormOptions) {
       // Set the rules for that field from the schema.
       if (opts?.validationSchema?.[name]) {
         field.__setRules(opts?.validationSchema[name]);
+      }
+
+      // Set the initial value for that field
+      if (opts?.initialValues?.[name]) {
+        field.value.value = opts?.initialValues[name];
       }
 
       fields.value.push(field);

@@ -55,16 +55,6 @@ export function useField(
 
   const runValidationWithMutation = () => runValidation().then(patch);
 
-  watch(value, runValidationWithMutation, {
-    deep: true,
-  });
-
-  if (isRef(rules)) {
-    watch(rules, runValidationWithMutation, {
-      deep: true,
-    });
-  }
-
   onMounted(() => {
     runValidation().then(result => {
       if (immediate) {
@@ -95,6 +85,16 @@ export function useField(
   };
 
   useFormController(field, normalizedRules, form);
+
+  watch(value, runValidationWithMutation, {
+    deep: true,
+  });
+
+  if (isRef(rules)) {
+    watch(rules, runValidationWithMutation, {
+      deep: true,
+    });
+  }
 
   return field;
 }

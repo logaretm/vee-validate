@@ -149,3 +149,27 @@ test('disabled fields do not participate in validation', async () => {
 
   expect(isInObject).toBe(false);
 });
+
+test('initial values can be set with initialValues prop', async () => {
+  const initialValues = {
+    field: 'hello',
+  };
+  const wrapper = mountWithHoc({
+    setup() {
+      return {
+        initialValues,
+      };
+    },
+    template: `
+      <ValidationObserver :initialValues="initialValues" @submit="submit" as="form">
+        <ValidationProvider rules="required" name="field" as="input" />
+
+        <button id="submit">Submit</button>
+      </ValidationObserver>
+    `,
+  });
+
+  const input = wrapper.$el.querySelector('input');
+
+  expect(input.value).toBe(initialValues.field);
+});

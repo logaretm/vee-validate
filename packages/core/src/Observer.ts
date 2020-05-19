@@ -16,10 +16,15 @@ export const ValidationObserver = defineComponent({
       type: Object,
       default: undefined,
     },
+    initialValues: {
+      type: Object,
+      default: undefined,
+    },
   },
   setup(props, ctx) {
     const { form, errors, validate, handleSubmit, handleReset, values, meta } = useForm({
       validationSchema: props.validationSchema,
+      initialValues: props.initialValues,
     });
 
     provide('$_veeObserver', form);
