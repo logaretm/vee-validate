@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const fs = require('fs-extra');
 const { rollup } = require('rollup');
@@ -9,7 +10,7 @@ const replace = require('rollup-plugin-replace');
 const ts = require('typescript');
 const { Extractor, ExtractorConfig } = require('@microsoft/api-extractor');
 
-const version = process.env.VERSION || require(__dirname + '/package.json').version;
+const version = process.env.VERSION || require(path.resolve(__dirname, '/package.json')).version;
 
 const commons = {
   banner: `/**
@@ -93,10 +94,10 @@ async function build(pkg) {
     } = await bundle.generate(output);
 
     const bundleName = `${pkgNameMap[pkg]}${formatMap[format] ? '.' + formatMap[format] : ''}.js`;
-    let outputPath = path.join(pkgout, bundleName);
+    const outputPath = path.join(pkgout, bundleName);
     console.log(outputPath);
     fs.outputFileSync(outputPath, code);
-    let stats = reportSize({ code, path: outputPath });
+    const stats = reportSize({ code, path: outputPath });
     // eslint-disable-next-line
     console.log(`${chalk.green('Output File:')} ${bundleName} ${stats}`);
   }
@@ -126,9 +127,7 @@ async function generateDts(pkg) {
   });
 
   if (!result.succeeded) {
-    console.error(
-      `API Extractor completed with ${result.errorCount} errors` + ` and ${extractorResult.warningCount} warnings`
-    );
+    console.error(`API Extractor completed with ${result.errorCount} errors` + ` and ${result.warningCount} warnings`);
     process.exitCode = 1;
   }
 }

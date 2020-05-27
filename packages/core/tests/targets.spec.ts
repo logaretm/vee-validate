@@ -89,13 +89,11 @@ describe('cross-field syntax', () => {
 
     test('with options.customMessages function', async () => {
       const customMessages = {
-        between(_: string, { min, max }: Record<string, any>) {
+        between(_: string, { min, max }: any) {
           return `Must be more than ${min} and less than ${max}`;
         },
       };
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
       const result = await validate(values.value, rules, { ...options, customMessages, names });
       expect(result.errors[0]).toEqual('Must be more than 0 and less than Max Value');
     });

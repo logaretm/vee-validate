@@ -1,4 +1,4 @@
-export function isCallable(fn: unknown): fn is Function {
+export function isCallable(fn: unknown): fn is (...args: any[]) => any {
   return typeof fn === 'function';
 }
 

@@ -10,6 +10,7 @@ export interface ValidationResult {
   regenerateMap?: Record<string, () => string>;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type Locator = { __locatorRef: string } & Function;
 
 export interface ValidationMessageGenerator {

@@ -17,7 +17,7 @@ interface FieldContext {
   forceRequired: boolean;
   crossTable: Record<string, any>;
   names: Record<string, string>;
-  customMessages: Record<string, string>;
+  customMessages: Record<string, ValidationMessageTemplate>;
 }
 
 interface ValidationOptions {
@@ -27,7 +27,7 @@ interface ValidationOptions {
   bails?: boolean;
   skipIfEmpty?: boolean;
   isInitial?: boolean;
-  customMessages?: Record<string, string>;
+  customMessages?: Record<string, ValidationMessageTemplate>;
 }
 
 /**

@@ -1,3 +1,4 @@
+/* eslint-disable no-misleading-character-class */
 /**
  * Some Alpha Regex helpers.
  * https://github.com/chriso/validator.js/blob/master/src/lib/alpha.js

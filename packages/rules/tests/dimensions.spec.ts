@@ -17,6 +17,10 @@ beforeEach(() => {
   };
 
   (global as any).Image = class Image {
+    get src() {
+      return 'test';
+    }
+
     set src(_: any) {
       (this as any).width = 150;
       (this as any).height = 100;

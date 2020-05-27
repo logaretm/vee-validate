@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 // @ts-ignore
 import { replaceRaf } from 'raf-stub';
 import * as Rules from '@vee-validate/rules';

@@ -12,7 +12,7 @@ export function wrap<T>(rules: Schema<T>) {
   };
 }
 
-export function wrapSchema<T extends object>(schema: ObjectSchema<T>) {
+export function wrapSchema<T extends Record<string, unknown>>(schema: ObjectSchema<T>) {
   return Object.keys(schema.fields).reduce((acc, field) => {
     acc[field] = wrap((schema as any).fields[field]);
 
