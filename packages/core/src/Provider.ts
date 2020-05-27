@@ -32,6 +32,10 @@ export const ValidationProvider = defineComponent({
       type: Boolean,
       default: false,
     },
+    debounce: {
+      type: Number,
+      default: 0,
+    },
     customMessages: {
       type: Object,
       default: undefined,
@@ -59,6 +63,7 @@ export const ValidationProvider = defineComponent({
       immediate: props.immediate as boolean,
       bails: props.bails as boolean,
       disabled,
+      debounceMs: props.debounce,
     });
 
     const unwrappedMeta = useRefsObjToComputed(meta);

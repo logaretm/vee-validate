@@ -1,5 +1,5 @@
 export function debounce(fn: (...args: any[]) => any, wait = 0, token = { cancelled: false }) {
-  if (wait === 0) {
+  if (!wait) {
     return fn;
   }
 

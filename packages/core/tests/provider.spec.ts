@@ -4,6 +4,8 @@ import { mountWithHoc, setValue, dispatchEvent } from './helpers';
 
 const DEFAULT_REQUIRED_MESSAGE = (name: string) => `The ${name} field is required`;
 
+jest.useFakeTimers();
+
 test('renders the as prop', () => {
   const wrapper = mountWithHoc({
     template: `
@@ -240,9 +242,7 @@ test('setting bails prop to false disables fast exit', async () => {
   expect(errors[1].textContent).toBe('The field field must be at least 3 characters');
 });
 
-const sleep = (wait: number) => new Promise(resolve => setTimeout(resolve, wait));
-
-test.skip('validation can be debounced', async () => {
+test('validation can be debounced', async () => {
   const wrapper = mountWithHoc({
     template: `
       <div>
@@ -258,9 +258,8 @@ test.skip('validation can be debounced', async () => {
   const error = wrapper.$el.querySelector('p');
 
   setValue(input, '');
-  await sleep(40);
   expect(error.textContent).toBe('');
-  await sleep(10);
+  await jest.advanceTimersByTime(50);
   await flushPromises();
   expect(error.textContent).toBe(DEFAULT_REQUIRED_MESSAGE('field'));
 });
@@ -295,7 +294,7 @@ test('avoids race conditions between successive validations', async () => {
   setValue(input, '123');
   setValue(input, '12');
   setValue(input, '');
-  await sleep(100);
+  jest.advanceTimersByTime(100);
   await flushPromises();
   // LAST message should be the required one.
   expect(error.textContent).toBe(DEFAULT_REQUIRED_MESSAGE('field'));
