@@ -9,12 +9,11 @@ import {
   Flag,
   ValidationFlags,
 } from './types';
-import { normalizeRules, extractLocators, normalizeEventValue, unwrap, debounce } from './utils';
+import { normalizeRules, extractLocators, normalizeEventValue, unwrap } from './utils';
 
 interface FieldOptions {
   value: Ref<any>;
   disabled: MaybeReactive<boolean>;
-  debounceMs: number;
   immediate?: boolean;
   bails?: boolean;
   form?: FormController;
@@ -30,7 +29,7 @@ export function useField(
   rules: RuleExpression,
   opts?: Partial<FieldOptions>
 ): FieldComposite {
-  const { value, form, immediate, bails, disabled, debounceMs } = normalizeOptions(opts);
+  const { value, form, immediate, bails, disabled } = normalizeOptions(opts);
   const { meta, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
   let schemaValidation: GenericValidateFunction;
   const normalizedRules = computed(() => {
@@ -76,7 +75,7 @@ export function useField(
     errorMessage,
     failedRules,
     reset,
-    validate: debounce(runValidationWithMutation, debounceMs),
+    validate: runValidationWithMutation,
     handleChange,
     onBlur,
     disabled,
@@ -110,7 +109,6 @@ function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions
     bails: true,
     rules: '',
     disabled: false,
-    debounceMs: 0,
   });
 
   if (!opts) {

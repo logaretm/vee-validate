@@ -3,7 +3,7 @@ import { normalizeChildren } from './utils/vnode';
 import { getConfig } from './config';
 import { FormController } from './types';
 import { useField } from './useField';
-import { useRefsObjToComputed } from './utils';
+import { useRefsObjToComputed, debounce } from './utils';
 
 export const ValidationProvider = defineComponent({
   name: 'ValidationProvider',
@@ -63,9 +63,9 @@ export const ValidationProvider = defineComponent({
       immediate: props.immediate as boolean,
       bails: props.bails as boolean,
       disabled,
-      debounceMs: props.debounce,
     });
 
+    const limitedHandleChange = debounce(handleChange, props.debounce);
     const unwrappedMeta = useRefsObjToComputed(meta);
 
     const slotProps = computed(() => {
@@ -73,9 +73,9 @@ export const ValidationProvider = defineComponent({
         field: {
           name: fieldName,
           disabled: props.disabled,
-          onInput: handleChange,
-          onChange: handleChange,
-          'onUpdate:modelValue': handleChange,
+          onInput: limitedHandleChange,
+          onChange: limitedHandleChange,
+          'onUpdate:modelValue': limitedHandleChange,
           onBlur: onBlur,
           value: value.value,
         },
@@ -85,7 +85,7 @@ export const ValidationProvider = defineComponent({
         failedRules: failedRules.value,
         validate: validateField,
         reset,
-        handleChange,
+        handleChange: limitedHandleChange,
       };
     });
 

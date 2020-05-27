@@ -258,6 +258,7 @@ test('validation can be debounced', async () => {
   const error = wrapper.$el.querySelector('p');
 
   setValue(input, '');
+  await flushPromises();
   expect(error.textContent).toBe('');
   await jest.advanceTimersByTime(50);
   await flushPromises();
