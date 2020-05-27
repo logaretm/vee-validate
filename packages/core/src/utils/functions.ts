@@ -1,7 +1,3 @@
-export function identity<T>(x: T): T {
-  return x;
-}
-
 export function debounce(fn: (...args: any[]) => any, wait = 0, token = { cancelled: false }) {
   if (wait === 0) {
     return fn;
