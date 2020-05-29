@@ -14,13 +14,13 @@ This will enable both the `required` and `email` rules:
 const ruleObject = { required: true, email: true };
 ```
 
-As you noticed they keys must have a single value at least, using `true` let's vee-validate turn the rule on for that field and supplies it with the default configured parameters if they exist.
+As you may have noticed, keys must have a single value. Using `true` lets vee-validate turn the rule on for that field and supplies it with the default configured parameters if they exist.
 
 Here is a simple example:
 
 @[example](object-rules-definition)
 
-Supplying `false` on the other hand will **disable the rule**, meaning as if it doesn't exist in the object. This will come in handy later in the [dynamic rules section](./dynamic-rules.md).
+Supplying `false` on the other hand will **disable the rule**, treating it as if it doesn't exist in the object. This will come in handy later in the [dynamic rules section](./dynamic-rules.md).
 
 ## Supplying Arguments
 
