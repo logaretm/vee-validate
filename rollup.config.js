@@ -10,7 +10,7 @@ const replace = require('rollup-plugin-replace');
 const ts = require('typescript');
 const { Extractor, ExtractorConfig } = require('@microsoft/api-extractor');
 
-const version = process.env.VERSION || require(path.resolve(__dirname, '/package.json')).version;
+const version = process.env.VERSION || require(path.resolve(__dirname, 'package.json')).version;
 
 const commons = {
   banner: `/**
