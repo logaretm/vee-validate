@@ -1,5 +1,5 @@
 import { computed, ref, Ref } from 'vue';
-import { Flag, FormController, SubmissionHandler, GenericValidateFunction, FieldComposite } from './types';
+import { Flag, FormController, SubmissionHandler, GenericValidateFunction, FieldComposite, SubmitEvent } from './types';
 import { unwrap } from './utils/refs';
 
 interface FormOptions {
@@ -9,6 +9,7 @@ interface FormOptions {
 
 export function useForm(opts?: FormOptions) {
   const fields: Ref<any[]> = ref([]);
+  const isSubmitting = ref(false);
   const fieldsById: Record<string, any> = {};
 
   const activeFields = computed(() => {
@@ -70,9 +71,35 @@ export function useForm(opts?: FormOptions) {
     }, {});
   });
 
-  const reset = () => {
+  const handleReset = () => {
     fields.value.forEach((f: any) => f.reset());
   };
+
+  const handleSubmit = (fn?: SubmissionHandler) => {
+    return function submissionHandler(e: unknown) {
+      if (e instanceof Event) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      isSubmitting.value = true;
+      return validate()
+        .then(result => {
+          if (result && typeof fn === 'function') {
+            return fn(values.value, e as SubmitEvent);
+          }
+        })
+        .then(() => {
+          isSubmitting.value = false;
+        });
+    };
+  };
+
+  const submitForm = handleSubmit((_, e) => {
+    if (e) {
+      e.target.submit();
+    }
+  });
 
   const meta = useFormMeta(fields);
 
@@ -82,21 +109,10 @@ export function useForm(opts?: FormOptions) {
     form: controller,
     values,
     validate,
-    handleReset: reset,
-    handleSubmit: (fn?: SubmissionHandler) => {
-      return function submissionHandler(e: unknown) {
-        if (e instanceof Event) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-
-        return validate().then(result => {
-          if (result && typeof fn === 'function') {
-            return fn(values.value);
-          }
-        });
-      };
-    },
+    isSubmitting,
+    handleReset,
+    handleSubmit,
+    submitForm,
   };
 }
 

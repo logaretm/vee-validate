@@ -22,7 +22,7 @@ export const ValidationObserver = defineComponent({
     },
   },
   setup(props, ctx) {
-    const { form, errors, validate, handleSubmit, handleReset, values, meta } = useForm({
+    const { form, errors, validate, handleSubmit, handleReset, values, meta, isSubmitting, submitForm } = useForm({
       validationSchema: props.validationSchema,
       initialValues: props.initialValues,
     });
@@ -35,13 +35,15 @@ export const ValidationObserver = defineComponent({
         meta: unwrappedMeta.value,
         errors: errors.value,
         values: values.value,
+        isSubmitting: isSubmitting.value,
         validate,
         handleSubmit,
         handleReset,
+        submitForm,
       };
     });
 
-    const onSubmit = handleSubmit(ctx.attrs.onSubmit as SubmissionHandler);
+    const onSubmit = ctx.attrs.onSubmit ? handleSubmit(ctx.attrs.onSubmit as SubmissionHandler) : submitForm;
     function handleFormReset() {
       handleReset();
       if (typeof ctx.attrs.onReset === 'function') {

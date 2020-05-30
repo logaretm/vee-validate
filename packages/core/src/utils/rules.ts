@@ -1,6 +1,6 @@
 import { Locator, GenericValidateFunction } from '../types';
 import { RuleContainer } from '../extend';
-import { includes, isObject, warn, isLocator } from './index';
+import { includes, isObject, isLocator } from './index';
 import { isCallable } from '@vee-validate/shared';
 
 /**
@@ -44,7 +44,6 @@ export function normalizeRules(rules: any): GenericValidateFunction | Record<str
 
   /* istanbul ignore if */
   if (typeof rules !== 'string') {
-    warn('rules must be either a string or an object.');
     return acc;
   }
 

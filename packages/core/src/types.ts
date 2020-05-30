@@ -99,6 +99,8 @@ export interface FormController {
 
 export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
 
-export type SubmissionHandler = (values: Record<string, any>) => any;
+export type SubmitEvent = Event & { target: HTMLFormElement };
+
+export type SubmissionHandler = (values: Record<string, any>, evt?: SubmitEvent) => any;
 
 export type GenericValidateFunction = (value: any) => boolean | string | Promise<boolean | string>;

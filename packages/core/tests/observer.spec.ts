@@ -173,3 +173,32 @@ test('initial values can be set with initialValues prop', async () => {
 
   expect(input.value).toBe(initialValues.field);
 });
+
+test('having no submit listener will submit the form natively', async () => {
+  const submitMock = jest.fn();
+  const wrapper = mountWithHoc({
+    template: `
+      <ValidationObserver @submit="submit" as="form" v-slot="{ errors }">
+        <ValidationProvider name="field" rules="required" as="input" />
+        <span id="error">{{ errors.field }}</span>
+
+        <button>Validate</button>
+      </ValidationObserver>
+    `,
+  });
+
+  const form = wrapper.$el;
+  form.submit = submitMock;
+  const input = wrapper.$el.querySelector('input');
+  await flushPromises();
+
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+  expect(submitMock).toHaveBeenCalledTimes(0);
+
+  setValue(input, '12');
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+
+  expect(submitMock).toHaveBeenCalledTimes(1);
+});
