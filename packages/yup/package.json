@@ -18,7 +18,7 @@
     "url": "https://github.com/logaretm/vee-validate/issues"
   },
   "devDependencies": {
-    "@types/yup": "^0.28.1",
-    "yup": "^0.28.5"
+    "@types/yup": "^0.29.1",
+    "yup": "^0.29.1"
   }
 }
