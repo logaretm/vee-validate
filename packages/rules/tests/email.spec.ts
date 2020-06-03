@@ -1,4 +1,4 @@
-import { validate } from '../src/email';
+import validate from '../src/email';
 
 const valid = [
   'someone@example.com',

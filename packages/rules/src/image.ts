@@ -1,4 +1,6 @@
-const validate = (files: any) => {
+import { ValidationRuleFunction } from '@vee-validate/shared';
+
+const imageValidator: ValidationRuleFunction = (files: File | File[]) => {
   const regex = /\.(jpg|svg|jpeg|png|bmp|gif)$/i;
   if (Array.isArray(files)) {
     return files.every(file => regex.test(file.name));
@@ -7,8 +9,4 @@ const validate = (files: any) => {
   return regex.test(files.name);
 };
 
-export { validate };
-
-export default {
-  validate,
-};
+export default imageValidator;

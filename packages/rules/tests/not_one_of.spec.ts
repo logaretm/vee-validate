@@ -1,4 +1,4 @@
-import { validate } from '../src/excluded';
+import validate from '../src/not_one_of';
 
 test('validates that the value does not exist within a list', () => {
   const list = [1, 2, 3, 4, 5];

@@ -1,4 +1,4 @@
-import { validate } from '../src/alpha';
+import validate from '../src/alpha';
 
 const valid = [
   'abcdefgHijklMnOpqRsTUVwxYZ',

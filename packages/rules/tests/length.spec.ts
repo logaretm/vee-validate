@@ -1,4 +1,4 @@
-import { validate } from '../src/length';
+import validate from '../src/length';
 
 test('validates number of characters in a string', () => {
   // exact length

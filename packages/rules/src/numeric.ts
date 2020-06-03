@@ -1,7 +1,9 @@
+import { ValidationRuleFunction } from '@vee-validate/shared';
+
 const ar = /^[٠١٢٣٤٥٦٧٨٩]+$/;
 const en = /^[0-9]+$/;
 
-const validate = (value: any) => {
+const numericValidator: ValidationRuleFunction = (value: any) => {
   const testValue = (val: any) => {
     const strValue = String(val);
 
@@ -15,8 +17,4 @@ const validate = (value: any) => {
   return testValue(value);
 };
 
-export { validate };
-
-export default {
-  validate,
-};
+export default numericValidator;

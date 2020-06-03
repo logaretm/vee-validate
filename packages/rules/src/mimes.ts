@@ -1,4 +1,10 @@
-const validate = (files: any, mimes: string[] | Record<string, any>) => {
+import { ValidationRuleFunction } from '@vee-validate/shared';
+
+const mimesValidator: ValidationRuleFunction = (files: File | File[], mimes) => {
+  if (!mimes) {
+    mimes = [];
+  }
+
   const regex = new RegExp(`${mimes.join('|').replace('*', '.+')}$`, 'i');
   if (Array.isArray(files)) {
     return files.every(file => regex.test(file.type));
@@ -7,8 +13,4 @@ const validate = (files: any, mimes: string[] | Record<string, any>) => {
   return regex.test(files.type);
 };
 
-export { validate };
-
-export default {
-  validate,
-};
+export default mimesValidator;

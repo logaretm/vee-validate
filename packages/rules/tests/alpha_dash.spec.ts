@@ -1,4 +1,4 @@
-import { validate } from '../src/alpha_dash';
+import validate from '../src/alpha_dash';
 
 const valid = [
   'a',

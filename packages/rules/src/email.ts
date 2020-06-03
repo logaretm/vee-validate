@@ -1,4 +1,6 @@
-const validate = (value: any) => {
+import { ValidationRuleFunction } from '@vee-validate/shared';
+
+const emailValidator: ValidationRuleFunction = (value: any) => {
   // eslint-disable-next-line
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -9,8 +11,4 @@ const validate = (value: any) => {
   return re.test(String(value));
 };
 
-export { validate };
-
-export default {
-  validate,
-};
+export default emailValidator;

@@ -1,4 +1,4 @@
-import { validate } from '../src/between';
+import validate from '../src/between';
 
 const valid = ['1', 2, 3, [1, 2, 3]];
 

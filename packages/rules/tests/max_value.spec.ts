@@ -1,4 +1,4 @@
-import { validate } from '../src/max_value';
+import validate from '../src/max_value';
 
 const valid = [0, '1', 10];
 

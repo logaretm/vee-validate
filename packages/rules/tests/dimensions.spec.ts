@@ -1,4 +1,4 @@
-import { validate } from '../src/dimensions';
+import validate from '../src/dimensions';
 import helpers from './helpers';
 
 let fails = false;

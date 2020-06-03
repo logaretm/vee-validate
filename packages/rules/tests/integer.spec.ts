@@ -1,4 +1,4 @@
-import { validate } from '../src/integer';
+import validate from '../src/integer';
 
 const valid = ['1234567890', 123, -123, '-1234'];
 

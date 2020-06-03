@@ -1,4 +1,4 @@
-import { validate } from '../src/regex';
+import validate from '../src/regex';
 
 test('validates regular expressions', () => {
   const regex = /^[0-9]+$/;

@@ -1,8 +1,8 @@
 import { ValidationRuleFunction, toArray } from '@vee-validate/shared';
 
-const validate: ValidationRuleFunction = (value, options) => {
+const oneOfValidator: ValidationRuleFunction = (value, options) => {
   if (Array.isArray(value)) {
-    return value.every(val => validate(val, options));
+    return value.every(val => oneOfValidator(val, options));
   }
 
   return toArray(options as any[]).some(item => {
@@ -11,8 +11,4 @@ const validate: ValidationRuleFunction = (value, options) => {
   });
 };
 
-export { validate };
-
-export default {
-  validate,
-};
+export default oneOfValidator;

@@ -9,10 +9,8 @@ import confirmed from './confirmed';
 import digits from './digits';
 import dimensions from './dimensions';
 import email from './email';
-import excluded from './excluded';
 import ext from './ext';
 import image from './image';
-import oneOf from './oneOf';
 import integer from './integer';
 import is from './is';
 import is_not from './is_not';
@@ -22,7 +20,9 @@ import max_value from './max_value';
 import mimes from './mimes';
 import min from './min';
 import min_value from './min_value';
+import not_one_of from './not_one_of';
 import numeric from './numeric';
+import one_of from './one_of';
 import regex from './regex';
 import required from './required';
 import size from './size';
@@ -39,18 +39,18 @@ export {
   email,
   ext,
   image,
-  oneOf,
   integer,
-  length,
   is_not,
   is,
-  max,
+  length,
   max_value,
+  max,
   mimes,
-  min,
   min_value,
-  excluded,
+  min,
+  not_one_of,
   numeric,
+  one_of,
   regex,
   required,
   size,

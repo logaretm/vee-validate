@@ -95,3 +95,11 @@ export const alphaDash: { [k: string]: RegExp } = {
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ_-]*$/,
   az: /^[0-9A-ZÇƏĞİıÖŞÜ_-]*$/i,
 };
+
+export const getLocale = (params?: Record<string, any> | any[]) => {
+  if (!params) {
+    return undefined;
+  }
+
+  return Array.isArray(params) ? params[0] : params.locale;
+};

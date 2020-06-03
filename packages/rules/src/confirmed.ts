@@ -1,10 +1,10 @@
-const validate = (value: any, { target }: Record<string, any>) => String(value) === String(target);
+import { ValidationRuleFunction } from '@vee-validate/shared';
+import { getSingleParam } from './utils';
 
-const params = ['target'];
+const confirmedValidator: ValidationRuleFunction = (value: any, params) => {
+  const target = getSingleParam(params, 'target');
 
-export { validate, params };
-
-export default {
-  validate,
-  params,
+  return String(value) === String(target);
 };
+
+export default confirmedValidator;

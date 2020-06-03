@@ -1,4 +1,4 @@
-import { validate } from '../src/min';
+import validate from '../src/min';
 
 const valid = ['asjdj', 'null', 'undefined', 123, 'abc'];
 

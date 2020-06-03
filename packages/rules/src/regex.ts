@@ -1,20 +1,17 @@
-const validate = (value: any, { regex }: Record<string, any>): boolean => {
+import { ValidationRuleFunction } from '@vee-validate/shared';
+import { getSingleParam } from './utils';
+
+const regexValidator: ValidationRuleFunction = (value: any, params): boolean => {
+  let regex = getSingleParam(params, 'regex');
   if (typeof regex === 'string') {
     regex = new RegExp(value);
   }
 
   if (Array.isArray(value)) {
-    return value.every(val => validate(val, { regex: regex }));
+    return value.every(val => regexValidator(val, { regex: regex }));
   }
 
   return regex.test(String(value));
 };
 
-const params = ['regex'];
-
-export { validate, params };
-
-export default {
-  validate,
-  params,
-};
+export default regexValidator;

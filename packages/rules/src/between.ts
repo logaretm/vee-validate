@@ -1,16 +1,27 @@
-const validate = (value: any, { min, max }: Record<string, any> = {}): boolean => {
+import { ValidationRuleFunction } from '@vee-validate/shared';
+
+function getParams(params?: any[] | Record<string, any>) {
+  if (!params) {
+    return {
+      min: 0,
+      max: 0,
+    };
+  }
+
+  if (Array.isArray(params)) {
+    return { min: params[0], max: params[1] };
+  }
+
+  return params;
+}
+
+const betweenValidator: ValidationRuleFunction = (value: any, params): boolean => {
+  const { min, max } = getParams(params);
   if (Array.isArray(value)) {
-    return value.every(val => !!validate(val, { min, max }));
+    return value.every(val => !!betweenValidator(val, { min, max }));
   }
 
   return Number(min) <= value && Number(max) >= value;
 };
 
-const params = ['min', 'max'];
-
-export { validate, params };
-
-export default {
-  validate,
-  params,
-};
+export default betweenValidator;

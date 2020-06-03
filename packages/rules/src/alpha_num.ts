@@ -1,8 +1,10 @@
-import { alphanumeric } from './alpha_helper';
+import { alphanumeric, getLocale } from './alpha_helper';
+import { ValidationRuleFunction } from '@vee-validate/shared';
 
-const validate = (value: any, { locale = '' }: Record<string, any> = {}): boolean => {
+const alphaNumValidator: ValidationRuleFunction = (value: any, params): boolean => {
+  const locale = getLocale(params);
   if (Array.isArray(value)) {
-    return value.every(val => validate(val, { locale }));
+    return value.every(val => alphaNumValidator(val, { locale }));
   }
 
   // Match at least one locale.
@@ -13,11 +15,4 @@ const validate = (value: any, { locale = '' }: Record<string, any> = {}): boolea
   return (alphanumeric[locale] || alphanumeric.en).test(value);
 };
 
-const params = ['locale'];
-
-export { validate, params };
-
-export default {
-  validate,
-  params,
-};
+export default alphaNumValidator;

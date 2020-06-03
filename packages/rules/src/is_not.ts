@@ -1,12 +1,10 @@
-const validate = (value: any, { other }: Record<string, any>) => {
+import { ValidationRuleFunction } from '@vee-validate/shared';
+import { getSingleParam } from './utils';
+
+const isNotValidator: ValidationRuleFunction = (value: any, params) => {
+  const other = getSingleParam(params, 'other');
+
   return value !== other;
 };
 
-const params = ['other'];
-
-export { validate, params };
-
-export default {
-  validate,
-  params,
-};
+export default isNotValidator;

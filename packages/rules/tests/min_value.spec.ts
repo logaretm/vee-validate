@@ -1,4 +1,4 @@
-import { validate } from '../src/min_value';
+import validate from '../src/min_value';
 
 const valid = [-1, 0, '5'];
 

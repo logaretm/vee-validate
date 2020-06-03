@@ -1,6 +1,9 @@
-import { isNullOrUndefined, toArray } from '@vee-validate/shared';
+import { isNullOrUndefined, toArray, ValidationRuleFunction } from '@vee-validate/shared';
+import { getSingleParam } from './utils';
 
-const validate = (value: any, { length }: Record<string, any>) => {
+const lengthValidator: ValidationRuleFunction = (value: any, params) => {
+  // Normalize the length value
+  const length = getSingleParam(params, 'length');
   if (isNullOrUndefined(value)) {
     return false;
   }
@@ -16,11 +19,4 @@ const validate = (value: any, { length }: Record<string, any>) => {
   return value.length === Number(length);
 };
 
-const params = ['length'];
-
-export { validate, params };
-
-export default {
-  validate,
-  params,
-};
+export default lengthValidator;
