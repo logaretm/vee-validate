@@ -4,7 +4,7 @@ const chalk = require('chalk');
 const { build } = require('../rollup.config');
 
 async function buildLocales() {
-  const localesDir = path.join(__dirname, '../packages/rules/i18n');
+  const localesDir = path.join(__dirname, '../packages/i18n/locale');
   const files = fs.readdirSync(localesDir);
   // eslint-disable-next-line
   console.log(chalk.cyan('Building i18n...'));
@@ -13,8 +13,8 @@ async function buildLocales() {
     const file = files[i];
     process.stdout.write(`${chalk.green(`Output File ${i}/${files.length}: `)} ${file}`);
 
-    const input = path.join(__dirname, '../packages/rules/i18n', file);
-    const out = path.join(__dirname, '../packages/rules/dist/i18n', file);
+    const input = path.join(__dirname, '../packages/i18n/locale', file);
+    const out = path.join(__dirname, '../packages/i18n/dist', file);
     fs.copySync(input, out);
     process.stdout.clearLine();
     process.stdout.cursorTo(0);

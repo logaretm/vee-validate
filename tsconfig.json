@@ -23,6 +23,7 @@
     "paths": {
       "@vee-validate/core": ["packages/core/src"],
       "@vee-validate/rules": ["packages/rules/src"],
+      "@vee-validate/i18n": ["packages/i18n/src"],
       "@vee-validate/yup": ["packages/yup/src"],
       "@vee-validate/shared": ["packages/shared/src"]
     }
