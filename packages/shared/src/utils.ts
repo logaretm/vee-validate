@@ -36,3 +36,23 @@ export function isEmptyArray(arr: any[]): boolean {
 export function includes(collection: any[] | string, item: any): boolean {
   return collection.indexOf(item) !== -1;
 }
+
+export const isObject = (obj: unknown): obj is { [x: string]: any } =>
+  obj !== null && obj && typeof obj === 'object' && !Array.isArray(obj);
+
+export function merge(target: any, source: any) {
+  Object.keys(source).forEach(key => {
+    if (isObject(source[key])) {
+      if (!target[key]) {
+        target[key] = {};
+      }
+
+      merge(target[key], source[key]);
+      return;
+    }
+
+    target[key] = source[key];
+  });
+
+  return target;
+}

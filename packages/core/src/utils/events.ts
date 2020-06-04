@@ -1,4 +1,4 @@
-import { isCallable, toArray } from './index';
+import { isCallable, toArray } from '@vee-validate/shared';
 
 export const isEvent = (evt: any): evt is Event => {
   if (!evt) {

@@ -1,7 +1,6 @@
 import { Locator, GenericValidateFunction } from '../types';
-import { RuleContainer } from '../extend';
-import { includes, isObject, isLocator } from './index';
-import { isCallable } from '@vee-validate/shared';
+import { isLocator } from './assertions';
+import { isCallable, isObject, includes } from '@vee-validate/shared';
 
 /**
  * Normalizes the given rules expression.
@@ -35,7 +34,7 @@ export function normalizeRules(rules: any): GenericValidateFunction | Record<str
       const params = normalizeParams(rules[curr]);
 
       if (rules[curr] !== false) {
-        prev[curr] = buildParams(curr, params);
+        prev[curr] = buildParams(params);
       }
 
       return prev;
@@ -53,7 +52,7 @@ export function normalizeRules(rules: any): GenericValidateFunction | Record<str
       return prev;
     }
 
-    prev[parsedRule.name] = buildParams(parsedRule.name, parsedRule.params);
+    prev[parsedRule.name] = buildParams(parsedRule.params);
 
     return prev;
   }, acc);
@@ -78,76 +77,25 @@ function normalizeParams(params: unknown) {
   return [params];
 }
 
-function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
-  const ruleSchema = RuleContainer.getRuleDefinition(ruleName);
-  if (!ruleSchema) {
-    return provided;
-  }
-
-  const params: Record<string, any> = {};
-  if (!ruleSchema.params && !Array.isArray(provided)) {
-    throw new Error('You provided an object params to a rule that has no defined schema.');
-  }
-
-  // Rule probably uses an array for their args, keep it as is.
-  if (Array.isArray(provided) && !ruleSchema.params) {
-    return provided;
-  }
-
-  let definedParams: string[];
-  // collect the params schema.
-  if (!ruleSchema.params || (ruleSchema.params.length < provided.length && Array.isArray(provided))) {
-    let lastDefinedParam: string;
-    // collect any additional parameters in the last item.
-    definedParams = provided.map((_: any, idx: number) => {
-      let param = ruleSchema.params?.[idx];
-      lastDefinedParam = param || lastDefinedParam;
-      if (!param) {
-        param = lastDefinedParam;
-      }
-
-      return param;
-    });
-  } else {
-    definedParams = ruleSchema.params;
-  }
-
-  // Match the provided array length with a temporary schema.
-  for (let i = 0; i < definedParams.length; i++) {
-    const param = definedParams[i];
-    let value;
-    // if the provided is an array, map element value.
-    if (Array.isArray(provided)) {
-      if (i in provided) {
-        value = provided[i];
-      }
-    } else {
-      // If the param exists in the provided object.
-      if (param in provided) {
-        value = provided[param];
-        // if the provided is the first param value.
-      } else if (definedParams.length === 1) {
-        value = provided;
-      }
-    }
-
+function buildParams(provided: any[] | Record<string, any>) {
+  const mapValueToLocator = (value: unknown) => {
     // A target param using interpolation
     if (typeof value === 'string' && value[0] === '@') {
-      value = createLocator(value.slice(1));
+      return createLocator(value.slice(1));
     }
 
-    // already been set, probably multiple values.
-    if (params[param]) {
-      params[param] = Array.isArray(params[param]) ? params[param] : [params[param]];
-      params[param].push(value);
-      continue;
-    }
+    return value;
+  };
 
-    // set the value.
-    params[param] = value;
+  if (Array.isArray(provided)) {
+    return provided.map(mapValueToLocator);
   }
 
-  return params;
+  return Object.keys(provided).reduce((prev, key) => {
+    prev[key] = mapValueToLocator(provided[key]);
+
+    return prev;
+  }, {} as Record<string, any>);
 }
 
 /**
