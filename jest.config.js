@@ -7,7 +7,6 @@ module.exports = {
   collectCoverageFrom: ['packages/*/src/**/*.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
   moduleNameMapper: {
-    '^@vee-validate/rules/i18n/(.+)$': '<rootDir>/packages/rules/i18n/$1',
     '^@vee-validate/(.+)$': '<rootDir>/packages/$1/src',
   },
 };
