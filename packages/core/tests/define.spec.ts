@@ -1,15 +1,13 @@
-import { extend, validate } from '@vee-validate/core';
+import { defineRule, validate } from '@vee-validate/core';
 
 test('passing a non-function as the validate method will throw', () => {
   expect(() => {
-    extend('noFn', {
-      validate: ('' as unknown) as (value: any) => boolean,
-    });
+    defineRule('noFn', ('' as unknown) as (value: any) => boolean);
   }).toThrow();
 });
 
 test('Can return error messages directly in the validate fn', async () => {
-  extend('test-direct', value => {
+  defineRule('test-direct', value => {
     if (value === '1') {
       return 'Cannot be 1';
     }
