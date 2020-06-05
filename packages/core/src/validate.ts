@@ -1,15 +1,13 @@
-import { RuleContainer } from './extend';
-import { interpolate, isLocator, isObject, normalizeRules, isCallable } from './utils';
+import { RuleContainer } from './define';
+import { isLocator, normalizeRules } from './utils';
 import { getConfig } from './config';
-import {
-  ValidationMessageGenerator,
-  ValidationMessageTemplate,
-  ValidationResult,
-  ValidationRuleSchema,
-  GenericValidateFunction,
-} from './types';
+import { ValidationResult, GenericValidateFunction, FieldContext } from './types';
+import { isCallable } from '@vee-validate/shared';
 
-interface FieldContext {
+/**
+ * Used internally
+ */
+interface FieldValidationContext {
   name: string;
   rules: Record<string, any>;
   bails: boolean;
@@ -17,7 +15,6 @@ interface FieldContext {
   forceRequired: boolean;
   crossTable: Record<string, any>;
   names: Record<string, string>;
-  customMessages: Record<string, ValidationMessageTemplate>;
 }
 
 interface ValidationOptions {
@@ -27,7 +24,6 @@ interface ValidationOptions {
   bails?: boolean;
   skipIfEmpty?: boolean;
   isInitial?: boolean;
-  customMessages?: Record<string, ValidationMessageTemplate>;
 }
 
 /**
@@ -40,7 +36,7 @@ export async function validate(
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
   const skipIfEmpty = options?.skipIfEmpty;
-  const field: FieldContext = {
+  const field: FieldValidationContext = {
     name: options?.name || '{field}',
     rules: normalizeRules(rules),
     bails: shouldBail ?? true,
@@ -48,7 +44,6 @@ export async function validate(
     forceRequired: false,
     crossTable: options?.values || {},
     names: options?.names || {},
-    customMessages: options?.customMessages || {},
   };
 
   const result = await _validate(field, value);
@@ -70,7 +65,7 @@ export async function validate(
 /**
  * Starts the validation process.
  */
-async function _validate(field: FieldContext, value: any) {
+async function _validate(field: FieldValidationContext, value: any) {
   // if a generic function, use it as the pipeline.
   if (isCallable(field.rules)) {
     const result = await field.rules(value);
@@ -112,151 +107,47 @@ async function _validate(field: FieldContext, value: any) {
 /**
  * Tests a single input value against a rule.
  */
-async function _test(field: FieldContext, value: any, rule: { name: string; params: Record<string, any> }) {
-  const ruleSchema = RuleContainer.getRuleDefinition(rule.name);
-  if (!ruleSchema || !ruleSchema.validate) {
+async function _test(field: FieldValidationContext, value: any, rule: { name: string; params: Record<string, any> }) {
+  const validator = RuleContainer.getRuleDefinition(rule.name);
+  if (!validator) {
     throw new Error(`No such validator '${rule.name}' exists.`);
   }
 
   const params = fillTargetValues(rule.params, field.crossTable);
-  const result = await ruleSchema.validate(value, params);
-  if (typeof result === 'string') {
-    const values = {
-      ...(params || {}),
-      _field_: field.name,
-      _value_: value,
-      _rule_: rule.name,
-    };
+  const ctx: FieldContext = {
+    field: field.name,
+    value,
+    form: field.crossTable,
+    rule,
+  };
+  const result = await validator(value, params, ctx);
 
+  if (typeof result === 'string') {
     return {
       valid: false,
-      error: { rule: rule.name, msg: interpolate(result as string, values) },
+      error: { rule: rule.name, msg: result },
     };
   }
 
   return {
     valid: result,
-    error: result ? undefined : _generateFieldError(field, value, ruleSchema, rule.name, params),
+    error: result ? undefined : _generateFieldError(ctx),
   };
 }
 
 /**
  * Generates error messages.
  */
-function _generateFieldError(
-  field: FieldContext,
-  value: any,
-  ruleSchema: ValidationRuleSchema,
-  ruleName: string,
-  params: Record<string, any>
-) {
-  const message = field.customMessages[ruleName] || ruleSchema.message;
-  const ruleTargets = _getRuleTargets(field, ruleSchema, ruleName);
-  const { userTargets, userMessage } = _getUserTargets(field, ruleSchema, ruleName, message);
-  const values = {
-    ...(params || {}),
-    _field_: field.name,
-    _value_: value,
-    _rule_: ruleName,
-    ...ruleTargets,
-    ...userTargets,
-  };
+function _generateFieldError(fieldCtx: FieldContext) {
+  const message = getConfig().defaultMessage;
 
   return {
-    msg: _normalizeMessage(userMessage || getConfig().defaultMessage, field.name, values),
-    rule: ruleName,
+    msg: message(fieldCtx),
+    rule: fieldCtx.rule.name,
   };
 }
 
-function _getRuleTargets(
-  field: FieldContext,
-  ruleSchema: ValidationRuleSchema,
-  ruleName: string
-): Record<string, string> {
-  const params = ruleSchema.params;
-  if (!params) {
-    return {};
-  }
-
-  const names: Record<string, string> = {};
-  let ruleConfig = field.rules[ruleName];
-  if (!Array.isArray(ruleConfig) && isObject(ruleConfig)) {
-    ruleConfig = params.map(param => {
-      return ruleConfig[param];
-    });
-  }
-
-  for (let index = 0; index < params.length; index++) {
-    const param = params[index];
-    let key = ruleConfig[index];
-    if (!isLocator(key)) {
-      continue;
-    }
-
-    key = key.__locatorRef;
-    const name = field.names[key] || key;
-    names[param] = name;
-    names[`_${param}_`] = field.crossTable[key];
-  }
-
-  return names;
-}
-
-function _getUserTargets(
-  field: FieldContext,
-  ruleSchema: ValidationRuleSchema,
-  ruleName: string,
-  userMessage: string | ValidationMessageGenerator | undefined
-) {
-  const userTargets: any = {};
-  const rules: Record<string, any> = field.rules[ruleName];
-  const params: string[] = ruleSchema.params || [];
-
-  // early return if no rules
-  if (!rules) {
-    return {};
-  }
-
-  // check all rules to convert targets
-  Object.keys(rules).forEach((key: string, index: number) => {
-    // get the rule
-    const rule: any = rules[key];
-    if (!isLocator(rule)) {
-      return {};
-    }
-
-    // get associated parameter
-    const param: any = params[index];
-    if (!param) {
-      return {};
-    }
-
-    // grab the name of the target
-    const name = rule.__locatorRef;
-    userTargets[param.name] = field.names[name] || name;
-    userTargets[`_${param.name}_`] = field.crossTable[name];
-  });
-
-  return {
-    userTargets,
-    userMessage,
-  };
-}
-
-function _normalizeMessage(template: ValidationMessageTemplate, field: string, values: Record<string, any>) {
-  if (typeof template === 'function') {
-    return template(field, values);
-  }
-
-  return interpolate(template, { ...values, _field_: field });
-}
-
-function fillTargetValues(params: Record<string, any>, crossTable: Record<string, any>) {
-  if (Array.isArray(params)) {
-    return params;
-  }
-
-  const values: typeof params = {};
+function fillTargetValues(params: any[] | Record<string, any>, crossTable: Record<string, any>) {
   const normalize = (value: any) => {
     if (isLocator(value)) {
       return value(crossTable);
@@ -265,9 +156,13 @@ function fillTargetValues(params: Record<string, any>, crossTable: Record<string
     return value;
   };
 
-  Object.keys(params).forEach(param => {
-    values[param] = normalize(params[param]);
-  });
+  if (Array.isArray(params)) {
+    return params.map(normalize);
+  }
 
-  return values;
+  return Object.keys(params).reduce((acc, param) => {
+    acc[param] = normalize(params[param]);
+
+    return acc;
+  }, {} as Record<string, any>);
 }

@@ -1,13 +1,13 @@
-import { ValidationMessageTemplate } from './types';
+import { ValidationMessageGenerator } from './types';
 
 export interface VeeValidateConfig {
   bails: boolean;
-  defaultMessage: ValidationMessageTemplate;
+  defaultMessage: ValidationMessageGenerator;
   skipOptional: boolean;
 }
 
 const DEFAULT_CONFIG: VeeValidateConfig = {
-  defaultMessage: `{_field_} is not valid.`,
+  defaultMessage: ({ field }) => `${field} is not valid.`,
   skipOptional: true,
   bails: true,
 };

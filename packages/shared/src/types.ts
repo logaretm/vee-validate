@@ -1,6 +1,7 @@
 export type ValidationRuleFunction = (
   value: any,
-  params?: any[] | Record<string, any>
+  params: any[] | Record<string, any>,
+  ctx: FieldContext
 ) => boolean | string | Promise<boolean | string>;
 
 export interface FieldContext {

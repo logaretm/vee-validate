@@ -6,14 +6,14 @@ test('passing a non-function as the validate method will throw', () => {
   }).toThrow();
 });
 
-test('Can return error messages directly in the validate fn', async () => {
-  defineRule('test-direct', value => {
+test('define global validations using string ids', async () => {
+  defineRule('test-direct', (value, _, { field }) => {
     if (value === '1') {
       return 'Cannot be 1';
     }
 
     if (value === '2') {
-      return '{_field_} Cannot be 2';
+      return `${field} Cannot be 2`;
     }
 
     return true;

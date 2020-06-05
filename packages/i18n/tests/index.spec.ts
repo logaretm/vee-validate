@@ -1,12 +1,24 @@
 import flushPromises from 'flush-promises';
-import { localize, defineRule } from '@vee-validate/core';
-import { mountWithHoc, setValue } from './helpers';
+import { defineRule, configure } from '@vee-validate/core';
+import { required } from '@vee-validate/rules';
+import { localize } from '@vee-validate/i18n';
+import { mountWithHoc, setValue } from '../../core/tests/helpers';
+
+defineRule('required', required);
+
+localize('en', {
+  messages: {
+    required: 'The {field} is required',
+  },
+});
 
 test('can define new locales', async () => {
-  localize('ar', {
-    messages: {
-      required: 'هذا الحقل مطلوب',
-    },
+  configure({
+    defaultMessage: localize('ar', {
+      messages: {
+        required: 'هذا الحقل مطلوب',
+      },
+    }),
   });
 
   const wrapper = mountWithHoc({
@@ -29,12 +41,14 @@ test('can define new locales', async () => {
 });
 
 test('can define specific messages for specific fields', async () => {
-  localize('en', {
-    fields: {
-      test: {
-        required: 'WRONG!',
+  configure({
+    defaultMessage: localize('en', {
+      fields: {
+        test: {
+          required: 'WRONG!',
+        },
       },
-    },
+    }),
   });
 
   const wrapper = mountWithHoc({
@@ -58,16 +72,18 @@ test('can define specific messages for specific fields', async () => {
   expect(errors).toHaveLength(2);
 
   expect(errors[0].textContent).toContain('WRONG!');
-  expect(errors[1].textContent).toContain('The name field is required');
+  expect(errors[1].textContent).toContain('The name is required');
 });
 
 test('can merge locales without setting the current one', async () => {
-  localize({
-    ar: {
-      messages: {
-        required: 'هذا الحقل مطلوب',
+  configure({
+    defaultMessage: localize({
+      ar: {
+        messages: {
+          required: 'هذا الحقل مطلوب',
+        },
       },
-    },
+    }),
   });
 
   const wrapper = mountWithHoc({
@@ -86,7 +102,7 @@ test('can merge locales without setting the current one', async () => {
   await flushPromises();
 
   // locale wasn't set.
-  expect(error.textContent).toContain('The field field is required');
+  expect(error.textContent).toContain('The field is required');
 });
 
 test('falls back to the default message if rule without message exists', async () => {

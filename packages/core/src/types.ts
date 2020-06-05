@@ -1,7 +1,7 @@
 import { ComputedRef, Ref } from 'vue';
-import { ValidationRuleFunction } from '@vee-validate/shared';
+import { ValidationRuleFunction, ValidationMessageGenerator, FieldContext } from '@vee-validate/shared';
 
-export { ValidationRuleFunction };
+export { ValidationRuleFunction, ValidationMessageGenerator, FieldContext };
 
 export interface ValidationResult {
   valid: boolean;
@@ -12,20 +12,6 @@ export interface ValidationResult {
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type Locator = { __locatorRef: string } & Function;
-
-export interface ValidationMessageGenerator {
-  (field: string, params?: Record<string, any>): string;
-}
-
-export type ValidationMessageTemplate = string | ValidationMessageGenerator;
-
-export interface ValidationRuleSchema {
-  validate?: ValidationRuleFunction;
-  params?: string[];
-  message?: ValidationMessageTemplate;
-}
-
-export type ValidationRule = ValidationRuleFunction | ValidationRuleSchema;
 
 // Extracts explicit keys of an interface without index signature
 // https://stackoverflow.com/questions/51465182/typescript-remove-index-signature-using-mapped-types
