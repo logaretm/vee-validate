@@ -1,6 +1,6 @@
-import { isEmptyArray, isNullOrUndefined, ValidationRuleFunction } from '@vee-validate/shared';
+import { isEmptyArray, isNullOrUndefined } from '@vee-validate/shared';
 
-const requiredValidator: ValidationRuleFunction = (value: any) => {
+const requiredValidator = (value: any) => {
   if (isNullOrUndefined(value) || isEmptyArray(value) || value === false) {
     return false;
   }

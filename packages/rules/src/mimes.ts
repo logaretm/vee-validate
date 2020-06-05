@@ -1,6 +1,4 @@
-import { ValidationRuleFunction } from '@vee-validate/shared';
-
-const mimesValidator: ValidationRuleFunction = (files: File | File[], mimes) => {
+const mimesValidator = (files: File | File[], mimes: string[]) => {
   if (!mimes) {
     mimes = [];
   }

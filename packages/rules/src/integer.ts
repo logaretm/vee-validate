@@ -1,6 +1,4 @@
-import { ValidationRuleFunction } from '@vee-validate/shared';
-
-const integerValidator: ValidationRuleFunction = (value: any) => {
+const integerValidator = (value: any) => {
   if (Array.isArray(value)) {
     return value.every(val => /^-?[0-9]+$/.test(String(val)));
   }

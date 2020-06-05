@@ -1,7 +1,7 @@
-import { isNullOrUndefined, ValidationRuleFunction } from '@vee-validate/shared';
+import { isNullOrUndefined } from '@vee-validate/shared';
 import { getSingleParam } from './utils';
 
-const minValidator: ValidationRuleFunction = (value: any, params): boolean => {
+const minValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
   const length = getSingleParam(params, 'length');
 
   if (isNullOrUndefined(value)) {

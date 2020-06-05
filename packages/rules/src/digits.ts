@@ -1,7 +1,6 @@
-import { ValidationRuleFunction } from '@vee-validate/shared';
 import { getSingleParam } from './utils';
 
-const digitsValidator: ValidationRuleFunction = (value: any, params): boolean => {
+const digitsValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
   const length = getSingleParam(params, 'length');
   if (Array.isArray(value)) {
     return value.every(val => digitsValidator(val, { length }));

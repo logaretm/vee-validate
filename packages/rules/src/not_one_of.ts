@@ -1,7 +1,6 @@
-import { ValidationRuleFunction } from '@vee-validate/shared';
 import oneOf from './one_of';
 
-const excludedValidator: ValidationRuleFunction = (value, args) => {
+const excludedValidator = (value: any, args: any[]) => {
   return !oneOf(value, args);
 };
 

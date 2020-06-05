@@ -1,5 +1,3 @@
-import { ValidationRuleFunction } from '@vee-validate/shared';
-
 function getParams(params?: any[] | Record<string, any>) {
   if (!params) {
     return {
@@ -15,7 +13,7 @@ function getParams(params?: any[] | Record<string, any>) {
   return params;
 }
 
-const betweenValidator: ValidationRuleFunction = (value: any, params): boolean => {
+const betweenValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
   const { min, max } = getParams(params);
   if (Array.isArray(value)) {
     return value.every(val => !!betweenValidator(val, { min, max }));

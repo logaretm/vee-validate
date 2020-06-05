@@ -1,7 +1,7 @@
-import { isNullOrUndefined, ValidationRuleFunction } from '@vee-validate/shared';
+import { isNullOrUndefined } from '@vee-validate/shared';
 import { getSingleParam } from './utils';
 
-const maxLengthValidator: ValidationRuleFunction = (value: any, params): boolean => {
+const maxLengthValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
   const length = getSingleParam(params, 'length');
 
   if (isNullOrUndefined(value)) {

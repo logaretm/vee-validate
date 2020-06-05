@@ -1,6 +1,6 @@
-import { ValidationRuleFunction, toArray } from '@vee-validate/shared';
+import { toArray } from '@vee-validate/shared';
 
-const oneOfValidator: ValidationRuleFunction = (value, options) => {
+const oneOfValidator = (value: any, options: any[]): boolean => {
   if (Array.isArray(value)) {
     return value.every(val => oneOfValidator(val, options));
   }

@@ -1,7 +1,6 @@
-import { ValidationRuleFunction } from '@vee-validate/shared';
 import { getSingleParam } from './utils';
 
-const isNotValidator: ValidationRuleFunction = (value: any, params) => {
+const isNotValidator = (value: any, params?: any[] | Record<string, any>) => {
   const other = getSingleParam(params, 'other');
 
   return value !== other;

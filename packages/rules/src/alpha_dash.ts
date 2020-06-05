@@ -1,7 +1,6 @@
 import { alphaDash, getLocale } from './alpha_helper';
-import { ValidationRuleFunction } from '@vee-validate/shared';
 
-const alphaDashValidator: ValidationRuleFunction = (value: any, params): boolean => {
+const alphaDashValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
   const locale = getLocale(params);
   if (Array.isArray(value)) {
     return value.every(val => alphaDashValidator(val, { locale }));

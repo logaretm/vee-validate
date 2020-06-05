@@ -1,7 +1,6 @@
-import { ValidationRuleFunction } from '@vee-validate/shared';
 import { getSingleParam } from './utils';
 
-const sizeValidator: ValidationRuleFunction = (files: any, params) => {
+const sizeValidator = (files: any, params?: any[] | Record<string, any>) => {
   let size = getSingleParam(params, 'size');
   size = Number(size);
   if (isNaN(size)) {

@@ -1,6 +1,4 @@
-import { ValidationRuleFunction } from '@vee-validate/shared';
-
-const extValidator: ValidationRuleFunction = (files: File | File[], extensions) => {
+const extValidator = (files: File | File[], extensions: any[]) => {
   if (!extensions) {
     extensions = [];
   }

@@ -1,5 +1,3 @@
-import { ValidationRuleFunction } from '@vee-validate/shared';
-
 const validateImage = (file: any, width: number, height: number): Promise<boolean> => {
   const URL = window.URL || (window as any).webkitURL;
 
@@ -27,7 +25,7 @@ function getParams(params?: any[] | Record<string, any>) {
   };
 }
 
-const dimensionsValidator: ValidationRuleFunction = (files: any, params) => {
+const dimensionsValidator = (files: any, params?: any[] | Record<string, any>) => {
   const { width, height } = getParams(params);
   const list = [];
   files = Array.isArray(files) ? files : [files];
