@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import { defineRule } from '@vee-validate/core';
 import { mountWithHoc, setValue } from './helpers';
 
-describe('validation observer', () => {
+describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
   defineRule('required', value => {
     if (!value) {
@@ -16,7 +16,7 @@ describe('validation observer', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <ValidationObserver as="form" />
+        <VForm as="form" />
       </div>
     `,
     });
@@ -27,11 +27,11 @@ describe('validation observer', () => {
   test('observes the current state of providers', async () => {
     const wrapper = mountWithHoc({
       template: `
-      <ValidationObserver as="form" v-slot="{ meta }">
-        <ValidationProvider name="field" rules="required" as="input" type="text" />
+      <VForm as="form" v-slot="{ meta }">
+        <Field name="field" rules="required" as="input" type="text" />
 
         <span id="state">{{ meta.valid }}</span>
-      </ValidationObserver>
+      </VForm>
     `,
     });
 
@@ -60,12 +60,12 @@ describe('validation observer', () => {
         };
       },
       template: `
-      <ValidationObserver @submit="submit" as="form" v-slot="{ errors }">
-        <ValidationProvider name="field" rules="required" as="input" />
+      <VForm @submit="submit" as="form" v-slot="{ errors }">
+        <Field name="field" rules="required" as="input" />
         <span id="error">{{ errors.field }}</span>
 
         <button>Validate</button>
-      </ValidationObserver>
+      </VForm>
     `,
     });
 
@@ -98,13 +98,13 @@ describe('validation observer', () => {
         };
       },
       template: `
-      <ValidationObserver @reset="reset" as="form" v-slot="{ errors }">
-        <ValidationProvider rules="required" name="field" as="input"/>
+      <VForm @reset="reset" as="form" v-slot="{ errors }">
+        <Field rules="required" name="field" as="input"/>
         <span id="error">{{ errors.field }}</span>
 
         <button id="submit">Validate</button>
         <button id="reset" type="reset">Reset</button>
-      </ValidationObserver>
+      </VForm>
     `,
     });
 
@@ -135,11 +135,11 @@ describe('validation observer', () => {
         };
       },
       template: `
-      <ValidationObserver @submit="submit" as="form">
-        <ValidationProvider rules="required" name="field" as="input" :disabled="disabled"/>
+      <VForm @submit="submit" as="form">
+        <Field rules="required" name="field" as="input" :disabled="disabled"/>
 
         <button id="submit">Submit</button>
-      </ValidationObserver>
+      </VForm>
     `,
     });
 
@@ -170,11 +170,11 @@ describe('validation observer', () => {
         };
       },
       template: `
-      <ValidationObserver :initialValues="initialValues" @submit="submit" as="form">
-        <ValidationProvider rules="required" name="field" as="input" />
+      <VForm :initialValues="initialValues" @submit="submit" as="form">
+        <Field rules="required" name="field" as="input" />
 
         <button id="submit">Submit</button>
-      </ValidationObserver>
+      </VForm>
     `,
     });
 
@@ -187,12 +187,12 @@ describe('validation observer', () => {
     const submitMock = jest.fn();
     const wrapper = mountWithHoc({
       template: `
-      <ValidationObserver @submit="submit" as="form" v-slot="{ errors }">
-        <ValidationProvider name="field" rules="required" as="input" />
+      <VForm @submit="submit" as="form" v-slot="{ errors }">
+        <Field name="field" rules="required" as="input" />
         <span id="error">{{ errors.field }}</span>
 
         <button>Validate</button>
-      </ValidationObserver>
+      </VForm>
     `,
     });
 

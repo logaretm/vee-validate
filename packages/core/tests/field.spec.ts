@@ -4,7 +4,7 @@ import { mountWithHoc, setValue, dispatchEvent } from './helpers';
 
 jest.useFakeTimers();
 
-describe('validation provider', () => {
+describe('<Field />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
   defineRule('required', value => {
     if (!value) {
@@ -30,7 +30,7 @@ describe('validation provider', () => {
   test('renders the as prop', () => {
     const wrapper = mountWithHoc({
       template: `
-      <ValidationProvider name="field" as="input" />
+      <Field name="field" as="input" />
     `,
     });
 
@@ -41,10 +41,10 @@ describe('validation provider', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <ValidationProvider name="field" rules="required" v-slot="{ errors, field, meta }">
+        <Field name="field" rules="required" v-slot="{ errors, field, meta }">
           <input v-bind="field" type="text">
           <pre id="pre">{{ meta }}</pre>
-        </ValidationProvider>
+        </Field>
       </div>
     `,
     });
@@ -69,13 +69,13 @@ describe('validation provider', () => {
   test('listens for change events', async () => {
     const wrapper = mountWithHoc({
       template: `
-      <ValidationObserver as="form" v-slot="{ errors }">
-        <ValidationProvider name="select" as="select" rules="required">
+      <VForm as="form" v-slot="{ errors }">
+        <Field name="select" as="select" rules="required">
           <option value="">0</option>
           <option value="1">1</option>
-        </ValidationProvider>
+        </Field>
         <span id="error">{{ errors.select }}</span>
-      </ValidationObserver>
+      </VForm>
     `,
     });
 
@@ -97,10 +97,10 @@ describe('validation provider', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <ValidationProvider name="field" immediate rules="required" v-slot="{ field, errors }">
+        <Field name="field" immediate rules="required" v-slot="{ field, errors }">
           <input v-bind="field" type="text">
           <span id="error">{{ errors[0] }}</span>
-        </ValidationProvider>
+        </Field>
       </div>
     `,
     });
@@ -122,10 +122,10 @@ describe('validation provider', () => {
       },
       template: `
         <div>
-          <ValidationProvider name="field" :rules="rules" v-slot="{ field, errors }">
+          <Field name="field" :rules="rules" v-slot="{ field, errors }">
             <input v-bind="field" type="text">
             <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
+          </Field>
         </div>
       `,
     });
@@ -161,10 +161,10 @@ describe('validation provider', () => {
       },
       template: `
         <div>
-          <ValidationProvider name="field" rules="required" v-slot="{ field, errors }">
+          <Field name="field" rules="required" v-slot="{ field, errors }">
             <TextInput ref="input" v-bind="field" />
             <span id="error">{{ errors && errors[0] }}</span>
-          </ValidationProvider>
+          </Field>
         </div>
       `,
     });
@@ -187,14 +187,14 @@ describe('validation provider', () => {
   test('validates target fields using targeted params', async () => {
     const wrapper = mountWithHoc({
       template: `
-      <ValidationObserver as="form">
-        <ValidationProvider rules="required" name="confirmation" as="input" />
+      <VForm as="form">
+        <Field rules="required" name="confirmation" as="input" />
 
-        <ValidationProvider name="password" rules="required|confirmed:@confirmation" v-slot="{ field, errors }">
+        <Field name="password" rules="required|confirmed:@confirmation" v-slot="{ field, errors }">
           <input type="password" v-bind="field">
           <span id="err">{{ errors[0] }}</span>
-        </ValidationProvider>
-      </ValidationObserver>
+        </Field>
+      </VForm>
     `,
     });
 
@@ -230,10 +230,10 @@ describe('validation provider', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <ValidationProvider rules="required|atLeastOne" v-slot="{ field, errors }">
+        <Field rules="required|atLeastOne" v-slot="{ field, errors }">
           <input type="file" v-bind="field">
           <p id="error">{{ errors[0] }}</p>
-        </ValidationProvider>
+        </Field>
       </div>
     `,
     });
@@ -250,10 +250,10 @@ describe('validation provider', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <ValidationProvider :bails="false" name="field" rules="email|min:3" v-slot="{ field, errors }">
+        <Field :bails="false" name="field" rules="email|min:3" v-slot="{ field, errors }">
           <input v-bind="field" type="text">
           <p v-for="error in errors">{{ error }}</p>
-        </ValidationProvider>
+        </Field>
       </div>
     `,
     });
@@ -272,10 +272,10 @@ describe('validation provider', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <ValidationProvider name="field" rules="required" :debounce="50" v-slot="{ field, errors }">
+        <Field name="field" rules="required" :debounce="50" v-slot="{ field, errors }">
           <input v-bind="field" type="text">
           <p>{{ errors[0] }}</p>
-        </ValidationProvider>
+        </Field>
       </div>
     `,
     });
@@ -304,10 +304,10 @@ describe('validation provider', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <ValidationProvider name="field" rules="required|longRunning" :debounce="10" v-slot="{ field, errors }">
+        <Field name="field" rules="required|longRunning" :debounce="10" v-slot="{ field, errors }">
           <input v-bind="field" type="text">
           <p>{{ errors[0] }}</p>
-        </ValidationProvider>
+        </Field>
       </div>
     `,
     });
@@ -328,11 +328,11 @@ describe('validation provider', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <ValidationProvider name="field" rules="required" v-slot="{ field, errors, reset }">
+        <Field name="field" rules="required" v-slot="{ field, errors, reset }">
           <input type="text" v-bind="field">
           <span id="error">{{ errors && errors[0] }}</span>
           <button @click="reset">Reset</button>
-        </ValidationProvider>
+        </Field>
       </div>
     `,
     });

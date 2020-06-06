@@ -24,10 +24,10 @@ test('can define new locales', async () => {
   const wrapper = mountWithHoc({
     template: `
       <div>
-        <ValidationProvider name="field" immediate rules="required" v-slot="{ field, errors }">
+        <Field name="field" immediate rules="required" v-slot="{ field, errors }">
           <input v-bind="field" type="text">
           <span id="error">{{ errors[0] }}</span>
-        </ValidationProvider>
+        </Field>
       </div>
     `,
   });
@@ -54,15 +54,15 @@ test('can define specific messages for specific fields', async () => {
   const wrapper = mountWithHoc({
     template: `
         <div>
-          <ValidationProvider name="test" :immediate="true" rules="required" v-slot="{ field, errors }">
+          <Field name="test" :immediate="true" rules="required" v-slot="{ field, errors }">
             <input v-bind="field" type="text">
             <span class="error">{{ errors[0] }}</span>
-          </ValidationProvider>
+          </Field>
 
-          <ValidationProvider name="name" :immediate="true" rules="required" v-slot="{ field, errors }">
+          <Field name="name" :immediate="true" rules="required" v-slot="{ field, errors }">
             <input v-bind="field" type="text">
             <span class="error">{{ errors[0] }}</span>
-          </ValidationProvider>
+          </Field>
         </div>
       `,
   });
@@ -89,10 +89,10 @@ test('can merge locales without setting the current one', async () => {
   const wrapper = mountWithHoc({
     template: `
         <div>
-          <ValidationProvider name="field" :immediate="true" rules="required" v-slot="{ field, errors }">
+          <Field name="field" :immediate="true" rules="required" v-slot="{ field, errors }">
             <input v-bind="field" type="text">
             <span id="error">{{ errors[0] }}</span>
-          </ValidationProvider>
+          </Field>
         </div>
       `,
   });
@@ -111,10 +111,10 @@ test('falls back to the default message if rule without message exists', async (
   const wrapper = mountWithHoc({
     template: `
       <div>
-        <ValidationProvider name="field" rules="required|i18n" v-slot="{ field, errors }">
+        <Field name="field" rules="required|i18n" v-slot="{ field, errors }">
           <input v-bind="field" type="text">
           <span id="error">{{ errors[0] }}</span>
-        </ValidationProvider>
+        </Field>
       </div>
     `,
   });

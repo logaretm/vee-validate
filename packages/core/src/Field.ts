@@ -5,8 +5,8 @@ import { FormController } from './types';
 import { useField } from './useField';
 import { useRefsObjToComputed, debounce } from './utils';
 
-export const ValidationProvider = defineComponent({
-  name: 'ValidationProvider',
+export const Field = defineComponent({
+  name: 'Field',
   props: {
     as: {
       type: [String, Object],

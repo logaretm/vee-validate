@@ -4,8 +4,8 @@ import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
 import { useRefsObjToComputed } from './utils';
 
-export const ValidationObserver = defineComponent({
-  name: 'ValidationObserver',
+export const Form = defineComponent({
+  name: 'Form',
   inheritAttrs: false,
   props: {
     as: {
