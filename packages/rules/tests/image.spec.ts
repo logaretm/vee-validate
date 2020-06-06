@@ -8,6 +8,7 @@ test('validates image files', () => {
     helpers.file('file.svg', 'image/svg'),
     helpers.file('file.bmp', 'image/bmp'),
     helpers.file('file.png', 'image/png'),
+    helpers.file('file.png', 'image/webp'),
   ];
 
   expect(validate(validFiles)).toBe(true);
