@@ -20,6 +20,7 @@
     "max": "{_field_}は{length}文字以内にしてください",
     "mimes": "{_field_}は有効なファイル形式ではありません",
     "min_value": "{_field_}は{min}以上でなければなりません",
+    "alpha_min_value": "{_field_}は{min}以上の英数字でなければなりません",
     "min": "{_field_}は{length}文字以上でなければなりません",
     "numeric": "{_field_}は数字のみ使用できます",
     "oneOf": "{_field_}は有効な値ではありません",
