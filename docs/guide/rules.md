@@ -68,7 +68,7 @@ Object.keys(rules).forEach(rule => {
 
 ### Full Bundle
 
-Another way of doing that is to import vee-validate's full bundle instead of the default one, which comes pre-installed with all the validation rules and their English messages.
+Another way of doing that is to import vee-validate's full bundle instead of the default one, which comes pre-installed with all the validation rules and their English messages. Note that localizing messages will not work when using the full bundle.
 
 ```js
 import { ValidationProvider } from 'vee-validate/dist/vee-validate.full.esm';
