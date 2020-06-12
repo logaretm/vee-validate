@@ -16,6 +16,8 @@
 
     <Home v-if="$page.frontmatter.home" />
 
+    <Ad />
+
     <Page v-if="!$page.frontmatter.home" :sidebar-items="sidebarItems">
       <slot name="page-top" slot="top" />
       <slot name="page-bottom" slot="bottom" />
@@ -29,12 +31,13 @@ import Navbar from "@parent-theme/components/Navbar.vue";
 import UpgradeNotice from "@theme/components/UpgradeNotice.vue";
 import Page from "@parent-theme/components/Page.vue";
 import Sidebar from "@parent-theme/components/Sidebar.vue";
+import Ad from '@theme/components/Ad.vue';
 import { resolveSidebarItems } from "@parent-theme/util";
 
 let isLoaded = false;
 
 export default {
-  components: { Home, Page, Sidebar, Navbar, UpgradeNotice },
+  components: { Home, Page, Sidebar, Navbar, UpgradeNotice, Ad },
   data() {
     return {
       isSidebarOpen: false
@@ -139,5 +142,5 @@ export default {
   padding-top: 50px
 
   .nav-links
-    padding-top: calc(0.5rem + 50px);
+    padding-top: calc(0.5rem + 50px)
 </style>
