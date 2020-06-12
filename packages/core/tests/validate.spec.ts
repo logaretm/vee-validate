@@ -9,3 +9,15 @@ test('allows empty rules for the string format', async () => {
   result = await validate(100, '||||numeric');
   expect(result.valid).toBe(true);
 });
+
+test('handles targets expressed in objects', async () => {
+  defineRule('confirmed', (value, { target }: any) => {
+    return value === target ? true : 'must match';
+  });
+
+  let result = await validate('test', { confirmed: { target: '@other' } }, { values: { other: '' } });
+  expect(result.valid).toBe(false);
+
+  result = await validate('test', { confirmed: { target: '@other' } }, { values: { other: 'test' } });
+  expect(result.valid).toBe(true);
+});
