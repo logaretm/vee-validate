@@ -37,6 +37,33 @@ describe('<Field />', () => {
     expect(wrapper.$el.outerHTML).toBe(`<input name="field">`);
   });
 
+  test('accepts functions to be passed as rules', async () => {
+    const isRequired = (val: any) => (val ? true : 'Field is required');
+
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          rules: isRequired,
+        };
+      },
+      template: `
+      <div>
+        <Field name="field" :rules="rules" v-slot="{ errors, field, meta }">
+          <input v-bind="field" type="text">
+          <span>{{ errors[0] }}</span>
+        </Field>
+      </div>
+    `,
+    });
+
+    const input = wrapper.$el.querySelector('input');
+    const error = wrapper.$el.querySelector('span');
+    expect(error.textContent).toBe('');
+    setValue(input, '');
+    await flushPromises();
+    expect(error.textContent).toBe('Field is required');
+  });
+
   test('listens for input and blur events to set meta flags', async () => {
     const wrapper = mountWithHoc({
       template: `
