@@ -1,16 +1,10 @@
-import { isCallable, merge } from '@vee-validate/shared';
+import { isCallable } from '@vee-validate/shared';
 import { ValidationRuleFunction } from './types';
 
 const RULES: Record<string, ValidationRuleFunction> = {};
 
 export class RuleContainer {
   public static extend(name: string, validator: ValidationRuleFunction) {
-    // if rule already exists, overwrite it.
-    if (RULES[name]) {
-      RULES[name] = merge(RULES[name], validator);
-      return;
-    }
-
     RULES[name] = validator;
   }
 
