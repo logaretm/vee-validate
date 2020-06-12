@@ -244,4 +244,39 @@ describe('<Form />', () => {
 
     expect(submitMock).toHaveBeenCalledTimes(1);
   });
+
+  test('validation schema to validate form', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = {
+          field: 'required',
+          other: 'required',
+        };
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors }">
+        <Field name="field" as="input" />
+        <span id="field">{{ errors.field }}</span>
+        
+        <Field name="other" as="input" />
+        <span id="other">{{ errors.other }}</span>
+
+        <button>Validate</button>
+      </VForm>
+    `,
+    });
+
+    const first = wrapper.$el.querySelector('#field');
+    const second = wrapper.$el.querySelector('#other');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+
+    expect(first.textContent).toBe(REQUIRED_MESSAGE);
+    expect(second.textContent).toBe(REQUIRED_MESSAGE);
+  });
 });

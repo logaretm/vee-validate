@@ -73,7 +73,7 @@ export interface FieldComposite {
   errors: Ref<string[]>;
   errorMessage: Ref<string | undefined>;
   meta: Record<Flag, Ref<boolean>>;
-  __setRules(fn: GenericValidateFunction): void;
+  __setRules(fn: GenericValidateFunction | string | Record<string, any>): void;
 }
 
 export interface FormController {

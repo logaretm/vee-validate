@@ -31,9 +31,9 @@ export function useField(
 ): FieldComposite {
   const { value, form, immediate, bails, disabled } = normalizeOptions(opts);
   const { meta, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
-  let schemaValidation: GenericValidateFunction;
+  let schemaValidation: GenericValidateFunction | string | Record<string, any>;
   const normalizedRules = computed(() => {
-    return schemaValidation || normalizeRules(unwrap(rules));
+    return normalizeRules(schemaValidation || unwrap(rules));
   });
 
   const runValidation = async (): Promise<ValidationResult> => {
@@ -79,7 +79,7 @@ export function useField(
     handleChange,
     onBlur,
     disabled,
-    __setRules(fn: GenericValidateFunction) {
+    __setRules(fn: GenericValidateFunction | string | Record<string, any>) {
       schemaValidation = fn;
     },
   };

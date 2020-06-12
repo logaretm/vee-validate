@@ -3,7 +3,7 @@ import { Flag, FormController, SubmissionHandler, GenericValidateFunction, Field
 import { unwrap } from './utils/refs';
 
 interface FormOptions {
-  validationSchema?: Record<string, GenericValidateFunction>;
+  validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
   initialValues?: Record<string, any>;
 }
 
