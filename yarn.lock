@@ -2102,22 +2102,22 @@
     mkdirp "^0.5.1"
     rimraf "^2.5.2"
 
-"@microsoft/api-extractor-model@7.8.7":
-  version "7.8.7"
-  resolved "https://registry.yarnpkg.com/@microsoft/api-extractor-model/-/api-extractor-model-7.8.7.tgz#1e25de466be5e4a9ef929e8842316a8844720349"
-  integrity sha512-fTGiQuwFny3a5U6z8iJxygC72uYhaOM4e+YXtvSDLedoAX5ySsdhX98BemqouHm3pjbLHVcD8uTPfrE1F2DuLw==
+"@microsoft/api-extractor-model@7.8.8":
+  version "7.8.8"
+  resolved "https://registry.yarnpkg.com/@microsoft/api-extractor-model/-/api-extractor-model-7.8.8.tgz#4ba1974c9b1e2d6b65daf56f6149c88d0a784680"
+  integrity sha512-oiUkYZmBUUd1afxkOXDgdaz/ROnNQT72xHE1ALHJzlCUWnAhQcWjVUOr9WnigIOJp1fiwfA6F2l1wUgDzFQ6Iw==
   dependencies:
     "@microsoft/tsdoc" "0.12.19"
-    "@rushstack/node-core-library" "3.24.0"
+    "@rushstack/node-core-library" "3.24.1"
 
-"@microsoft/api-extractor@^7.8.10":
-  version "7.8.10"
-  resolved "https://registry.yarnpkg.com/@microsoft/api-extractor/-/api-extractor-7.8.10.tgz#600e3e4c0ac1b08dea0b386cc2b3457f731305ee"
-  integrity sha512-u5jRog6TbN8ZfzRSTslKkrypxVB82PSDAIXAbIwu6Rq7Nkowska1ak+ZgTjDhjFBuEVFM7TEgA26Jphva8gihA==
+"@microsoft/api-extractor@^7.8.11":
+  version "7.8.11"
+  resolved "https://registry.yarnpkg.com/@microsoft/api-extractor/-/api-extractor-7.8.11.tgz#920f14f9c85eab7fb76e8e0ea9f6fefc68bf6b10"
+  integrity sha512-7edCK4d7oXFSXEf3ICaag1p0V2aOeqbK8atTNIS/mKNMCR4MiHNKD+qDaZrg+m9HyO6Ec9mcv0nEsuREeiyf9w==
   dependencies:
-    "@microsoft/api-extractor-model" "7.8.7"
+    "@microsoft/api-extractor-model" "7.8.8"
     "@microsoft/tsdoc" "0.12.19"
-    "@rushstack/node-core-library" "3.24.0"
+    "@rushstack/node-core-library" "3.24.1"
     "@rushstack/ts-command-line" "4.4.2"
     colors "~1.2.1"
     lodash "~4.17.15"
@@ -2214,10 +2214,10 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@rushstack/node-core-library@3.24.0":
-  version "3.24.0"
-  resolved "https://registry.yarnpkg.com/@rushstack/node-core-library/-/node-core-library-3.24.0.tgz#8a22612a2dd3805049027427384c6f1a123a6610"
-  integrity sha512-0UnaRKwjprJ4LJkdp6fjuiRuKbtH8PqomKT3RiNPK0p1cEnSTs5vSQxw47bAKQVqERoV7im+rbryc4onYgLFcw==
+"@rushstack/node-core-library@3.24.1":
+  version "3.24.1"
+  resolved "https://registry.yarnpkg.com/@rushstack/node-core-library/-/node-core-library-3.24.1.tgz#4da7d59e9555c633f4cfdd4e4f097e5348891eb7"
+  integrity sha512-A21eDQwXAD9bZnvJZIEIhD171EQEWWo2afRs0sSUJ5FpMFpoDwx5DOY4hDE7dnczSKRmKsiDBV8hTSKhJrsw/A==
   dependencies:
     "@types/node" "10.17.13"
     colors "~1.2.1"
@@ -2356,10 +2356,10 @@
     "@types/istanbul-lib-coverage" "*"
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@^25.2.3":
-  version "25.2.3"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-25.2.3.tgz#33d27e4c4716caae4eced355097a47ad363fdcaf"
-  integrity sha512-JXc1nK/tXHiDhV55dvfzqtmP4S3sy3T3ouV2tkViZgxY/zeUkcpQcQPGRlgF4KmWzWW5oiWYSZwtCB+2RsE4Fw==
+"@types/jest@^26.0.0":
+  version "26.0.0"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.0.tgz#a6d7573dffa9c68cbbdf38f2e0de26f159e11134"
+  integrity sha512-/yeMsH9HQ1RLORlXAwoLXe8S98xxvhNtUz3yrgrwbaxYjT+6SFPZZRksmRKRA6L5vsUtSHeN71viDOTTyYAD+g==
   dependencies:
     jest-diff "^25.2.1"
     pretty-format "^25.2.1"
@@ -2719,17 +2719,17 @@
   dependencies:
     lodash.debounce "^4.0.8"
 
-"@vuepress/plugin-back-to-top@^1.4.1":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@vuepress/plugin-back-to-top/-/plugin-back-to-top-1.5.0.tgz#393cbc392ac7c1718cdbdbcac6375f8079a57912"
-  integrity sha512-CXfZEj0LefJE0u32VsGlszL6nS7k7ba/M6eLIS2V1ZUXsDECwtSxiTp51gMGVG265/hAid35Lk0ZDvv2obQgfg==
+"@vuepress/plugin-back-to-top@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@vuepress/plugin-back-to-top/-/plugin-back-to-top-1.5.1.tgz#bafd45267419ff54b46cbb2626500e4803ab1f13"
+  integrity sha512-YP1h+oLhhjtUhoyg7418D+Nazdczqo36gevJwV1Zgtqs8PJ970aa8+UrSI5+uN/bRVRn0FUSsgRLF3jIM8wnwg==
   dependencies:
     lodash.debounce "^4.0.8"
 
-"@vuepress/plugin-google-analytics@^1.4.1":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@vuepress/plugin-google-analytics/-/plugin-google-analytics-1.5.0.tgz#07a9783739a552e3e4c435e3e2ad64432a540002"
-  integrity sha512-VJo7igbrkZdl02rkCnGmfr124o7qKkY8YfZtsGTsXDMpwP43FDQjsZVB2TLXHdaKoeVQr3khD4wKKklGzpiOGg==
+"@vuepress/plugin-google-analytics@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@vuepress/plugin-google-analytics/-/plugin-google-analytics-1.5.1.tgz#56e52ade7264e3bb5eaa6efabb9af86b81fe6307"
+  integrity sha512-mbOUu07aXEVbuzlcheZkVzLpnveKciQ1iuYXuWa26W141kKwdIFvd4JQV7emWpOG8KMMI9/GL3Lej7KRTAa41w==
 
 "@vuepress/plugin-last-updated@1.5.0":
   version "1.5.0"
@@ -4157,6 +4157,14 @@ chalk@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.0.0.tgz#6e98081ed2d17faab615eb52ac66ec1fe6209e72"
   integrity sha512-N9oWFcegS0sFr9oh1oz2d7Npos6vNoWW9HvtCg5N1KRFpUhaAhvTv5Y58g880fZaEYSNm3qDz8SU1UrGvp+n7A==
+  dependencies:
+    ansi-styles "^4.1.0"
+    supports-color "^7.1.0"
+
+chalk@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.0.tgz#4e14870a618d9e2edd97dd8345fd9d9dc315646a"
+  integrity sha512-qwx12AxXe2Q5xQ43Ac//I6v5aXTipYrSESdOgzrN+9XjgEpyjpKuvSGaN4qE93f7TQTlerQQ8S+EQ0EyDoVL1A==
   dependencies:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
@@ -5875,10 +5883,10 @@ eslint-plugin-es@^3.0.0:
     eslint-utils "^2.0.0"
     regexpp "^3.0.0"
 
-eslint-plugin-import@^2.21.1:
-  version "2.21.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.21.1.tgz#3398318e5e4abbd23395c4964ce61538705154c8"
-  integrity sha512-qYOOsgUv63vHof7BqbzuD+Ud34bXHxFJxntuAC1ZappFZXYbRIek3aJ7jc9i2dHDGDyZ/0zlO0cpioES265Lsw==
+eslint-plugin-import@^2.21.2:
+  version "2.21.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.21.2.tgz#8fef77475cc5510801bedc95f84b932f7f334a7c"
+  integrity sha512-FEmxeGI6yaz+SnEB6YgNHlQK1Bs2DKLM+YF+vuTk5H8J9CLbJLtlPvRFgZZ2+sXiKAlN5dpdlrWOjK8ZoZJpQA==
   dependencies:
     array-includes "^3.1.1"
     array.prototype.flat "^1.2.3"
