@@ -72,7 +72,7 @@ describe('<Field />', () => {
     const wrapper = mountWithHoc({
       setup() {
         return {
-          rules: { required: true, confirmedObj: { target: '@other' } },
+          rules: { required: true, min: [3], confirmedObj: { target: '@other' } },
         };
       },
       template: `
@@ -94,6 +94,9 @@ describe('<Field />', () => {
     const error = wrapper.$el.querySelector('#fieldError');
     expect(error.textContent).toBe('');
     setValue(input, '1');
+    await flushPromises();
+    expect(error.textContent).toBe('This field must be at least 3 characters');
+    setValue(input, '123');
     await flushPromises();
     expect(error.textContent).toBe('inputs do not match');
   });
