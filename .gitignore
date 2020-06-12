@@ -9,3 +9,5 @@ yarn-error.log
 dist
 .rpt2_cache
 ./types
+
+.DS_STORE
