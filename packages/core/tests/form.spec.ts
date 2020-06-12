@@ -211,4 +211,37 @@ describe('<Form />', () => {
 
     expect(submitMock).toHaveBeenCalledTimes(1);
   });
+
+  test('can be renderless', async () => {
+    const submitMock = jest.fn();
+    const wrapper = mountWithHoc({
+      template: `
+      <div>
+        <VForm v-slot="{ errors, submitForm }">
+          <form @submit="submitForm">
+            <Field name="field" rules="required" as="input" />
+            <span id="error">{{ errors.field }}</span>
+
+            <button>Validate</button>
+          </form>
+        </VForm>
+      </div>
+    `,
+    });
+
+    const form = wrapper.$el.querySelector('form');
+    form.submit = submitMock;
+    const input = wrapper.$el.querySelector('input');
+    await flushPromises();
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(submitMock).toHaveBeenCalledTimes(0);
+
+    setValue(input, '12');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+
+    expect(submitMock).toHaveBeenCalledTimes(1);
+  });
 });
