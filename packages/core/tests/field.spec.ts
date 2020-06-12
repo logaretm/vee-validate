@@ -27,6 +27,10 @@ describe('<Field />', () => {
     return value === target ? true : 'inputs do not match';
   });
 
+  defineRule('confirmedObj', (value, { target }: any) => {
+    return value === target ? true : 'inputs do not match';
+  });
+
   test('renders the as prop', () => {
     const wrapper = mountWithHoc({
       template: `
@@ -62,6 +66,36 @@ describe('<Field />', () => {
     setValue(input, '');
     await flushPromises();
     expect(error.textContent).toBe('Field is required');
+  });
+
+  test('accepts objects to be passed as rules', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          rules: { required: true, confirmedObj: { target: '@other' } },
+        };
+      },
+      template: `
+      <VForm as="form">
+        <Field name="field" :rules="rules" v-slot="{ errors, field }">
+          <input v-bind="field" type="text">
+          <span id="fieldError">{{ errors[0] }}</span>
+        </Field>
+    
+        <Field name="other" rules="required" v-slot="{ errors, field }">
+          <input v-bind="field" type="text">
+          <span>{{ errors[0] }}</span>
+        </Field>
+      </VForm>
+    `,
+    });
+
+    const input = wrapper.$el.querySelector('input');
+    const error = wrapper.$el.querySelector('#fieldError');
+    expect(error.textContent).toBe('');
+    setValue(input, '1');
+    await flushPromises();
+    expect(error.textContent).toBe('inputs do not match');
   });
 
   test('listens for input and blur events to set meta flags', async () => {
