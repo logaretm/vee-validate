@@ -45,10 +45,6 @@ class Dictionary {
   public merge(dictionary: RootI18nDictionary) {
     merge(this.container, dictionary);
   }
-
-  public hasRule(name: string) {
-    return !!this.container[this.locale]?.messages?.[name];
-  }
 }
 
 let DICTIONARY: Dictionary;
