@@ -112,7 +112,7 @@ export default {
 
 @media screen and (max-width: 1300px)
   #ad
-    margin-top: 3.6rem
+    margin-top: calc(50px +3.6rem)
     z-index: 1
     position: relative
     padding: 0
