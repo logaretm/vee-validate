@@ -1,5 +1,5 @@
 import { VNode } from 'vue';
-import { isCallable, debounce } from '../utils';
+import { isCallable, debounce, isRefEqual } from '../utils';
 import { modes, InteractionModeFactory } from '../modes';
 import { ValidationResult, ValidationFlags, KnownKeys, ProviderInstance } from '../types';
 import { findModel, getInputEventName, addVNodeListener, findValue } from '../utils/vnode';
@@ -14,7 +14,7 @@ function shouldValidate(ctx: ProviderInstance, value: string) {
   }
 
   // when the value changes for whatever reason.
-  if (ctx.value !== value && ctx.normalizedEvents.length) {
+  if (!isRefEqual(ctx.value, value) && ctx.normalizedEvents.length) {
     return true;
   }
 

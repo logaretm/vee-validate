@@ -18,6 +18,17 @@ export const isObject = (obj: unknown): obj is { [x: string]: any } =>
   obj !== null && obj && typeof obj === 'object' && !Array.isArray(obj);
 
 /**
+ * A reference comparison function with NaN support
+ */
+export function isRefEqual(lhs: any, rhs: any) {
+  if (isNaN(lhs) && isNaN(rhs)) {
+    return true;
+  }
+
+  return lhs === rhs;
+}
+
+/**
  * Shallow object comparison.
  */
 export function isEqual(lhs: any, rhs: any): boolean {
@@ -49,11 +60,7 @@ export function isEqual(lhs: any, rhs: any): boolean {
     );
   }
 
-  if (isNaN(lhs) && isNaN(rhs)) {
-    return true;
-  }
-
-  return lhs === rhs;
+  return isRefEqual(lhs, rhs);
 }
 
 // Checks if a given value is not an empty string or null or undefined.
