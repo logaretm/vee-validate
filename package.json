@@ -58,11 +58,11 @@
     "tslint-config-standard": "^9.0.0",
     "typescript": "^3.9.3",
     "uglify-js": "^3.9.4",
-    "vue": "^3.0.0-beta.14",
+    "vue": "^3.0.0-beta.15",
     "vuepress": "^1.5.2"
   },
   "peerDependencies": {
-    "vue": "^3.0.0-beta.14"
+    "vue": "^3.0.0-beta.15"
   },
   "eslintIgnore": [
     "locale",
