@@ -1,5 +1,3 @@
-import { ValidationMessageGenerator } from './types';
-
 export interface VeeValidateConfig {
   bails: boolean;
   defaultMessage: ValidationMessageGenerator;

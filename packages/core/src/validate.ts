@@ -1,7 +1,7 @@
-import { RuleContainer } from './define';
+import { resolveRule } from './defineRule';
 import { isLocator, normalizeRules } from './utils';
 import { getConfig } from './config';
-import { ValidationResult, GenericValidateFunction, FieldContext } from './types';
+import { ValidationResult, GenericValidateFunction } from './types';
 import { isCallable } from '@vee-validate/shared';
 
 /**
@@ -108,7 +108,7 @@ async function _validate(field: FieldValidationContext, value: any) {
  * Tests a single input value against a rule.
  */
 async function _test(field: FieldValidationContext, value: any, rule: { name: string; params: Record<string, any> }) {
-  const validator = RuleContainer.getRuleDefinition(rule.name);
+  const validator = resolveRule(rule.name);
   if (!validator) {
     throw new Error(`No such validator '${rule.name}' exists.`);
   }

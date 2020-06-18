@@ -1,7 +1,4 @@
 import { ComputedRef, Ref } from 'vue';
-import { ValidationRuleFunction, ValidationMessageGenerator, FieldContext } from '@vee-validate/shared';
-
-export { ValidationRuleFunction, ValidationMessageGenerator, FieldContext };
 
 export interface ValidationResult {
   valid: boolean;
