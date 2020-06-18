@@ -5,7 +5,10 @@
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "homepage": "https://logaretm.github.io/vee-validate/tree/master/packages/i18n#readme",
   "license": "MIT",
+  "module": "dist/vee-validate-i18n.esm.js",
+  "unpkg": "dist/vee-validate-i18n.js",
   "main": "dist/vee-validate-i18n.js",
+  "types": "dist/vee-validate-i18n.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

@@ -4,15 +4,12 @@
   "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
-  "module": "dist/rules.esm.js",
-  "unpkg": "dist/rules.js",
-  "main": "dist/rules.js",
-  "types": "dist/rules.d.ts",
+  "module": "dist/vee-validate-rules.esm.js",
+  "unpkg": "dist/vee-validate-rules.js",
+  "main": "dist/vee-validate-rules.js",
+  "types": "dist/vee-validate-rules.d.ts",
   "homepage": "https://logaretm.github.io/vee-validate/",
   "repository": "https://github.com/logaretm/vee-validate",
-  "scripts": {
-    "ts:defs": "tsc --emitDeclarationOnly"
-  },
   "keywords": [
     "VueJS",
     "Vue",

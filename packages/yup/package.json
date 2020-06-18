@@ -5,8 +5,10 @@
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "homepage": "https://logaretm.github.io/vee-validate/tree/master/packages/yup#readme",
   "license": "MIT",
-  "types": "dist/yup.d.ts",
-  "main": "dist/yup.js",
+  "module": "dist/vee-validate-yup.esm.js",
+  "unpkg": "dist/vee-validate-yup.js",
+  "types": "dist/vee-validate-yup.d.ts",
+  "main": "dist/vee-validate-yup.js",
   "files": [
     "dist"
   ],
