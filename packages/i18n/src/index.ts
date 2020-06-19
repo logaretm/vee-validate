@@ -1,4 +1,4 @@
-import { isCallable, merge } from '@vee-validate/shared';
+import { isCallable, merge, FieldContext, ValidationMessageGenerator } from '@vee-validate/shared';
 import { interpolate } from './utils';
 
 type ValidationMessageTemplate = ValidationMessageGenerator | string;

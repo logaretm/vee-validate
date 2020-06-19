@@ -24,6 +24,6 @@
       "@vee-validate/*": ["packages/*/src"]
     }
   },
-  "include": ["packages/common.d.ts", "packages/*/src", "packages/*/tests"],
+  "include": ["packages/*/src", "packages/*/tests"],
   "exclude": ["jest.config.js"]
 }

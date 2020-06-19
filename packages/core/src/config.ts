@@ -1,3 +1,5 @@
+import { ValidationMessageGenerator } from '@vee-validate/shared';
+
 export interface VeeValidateConfig {
   bails: boolean;
   defaultMessage: ValidationMessageGenerator;
