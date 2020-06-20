@@ -67,7 +67,6 @@
   "eslintIgnore": [
     "locale",
     "dist",
-    "scripts",
     "coverage"
   ],
   "husky": {
