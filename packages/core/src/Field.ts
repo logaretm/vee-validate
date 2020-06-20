@@ -1,9 +1,8 @@
 import { computed, inject, h, defineComponent } from 'vue';
-import { normalizeChildren } from './utils/vnode';
 import { getConfig } from './config';
 import { FormController } from './types';
 import { useField } from './useField';
-import { useRefsObjToComputed, debounce } from './utils';
+import { useRefsObjToComputed, debounce, normalizeChildren } from './utils';
 
 export const Field = defineComponent({
   name: 'Field',

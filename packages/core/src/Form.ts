@@ -1,8 +1,7 @@
 import { computed, provide, h, defineComponent } from 'vue';
-import { normalizeChildren } from './utils/vnode';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
-import { useRefsObjToComputed } from './utils';
+import { useRefsObjToComputed, normalizeChildren } from './utils';
 
 export const Form = defineComponent({
   name: 'Form',

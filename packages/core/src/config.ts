@@ -1,4 +1,4 @@
-import { ValidationMessageGenerator } from '@vee-validate/shared';
+import { ValidationMessageGenerator } from '../../shared';
 
 export interface VeeValidateConfig {
   bails: boolean;

@@ -1,6 +1,6 @@
 import { Locator, GenericValidateFunction } from '../types';
 import { isLocator } from './assertions';
-import { isCallable, isObject, includes } from '@vee-validate/shared';
+import { isCallable, isObject, includes } from '../../../shared';
 
 /**
  * Normalizes the given rules expression.

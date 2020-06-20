@@ -2,7 +2,7 @@ import { resolveRule } from './defineRule';
 import { isLocator, normalizeRules } from './utils';
 import { getConfig } from './config';
 import { ValidationResult, GenericValidateFunction } from './types';
-import { isCallable, FieldContext } from '@vee-validate/shared';
+import { isCallable, FieldContext } from '../../shared';
 
 /**
  * Used internally

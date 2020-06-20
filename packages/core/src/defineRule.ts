@@ -1,4 +1,4 @@
-import { isCallable, ValidationRuleFunction } from '@vee-validate/shared';
+import { ValidationRuleFunction, isCallable } from '../../shared';
 
 const RULES: Record<string, ValidationRuleFunction> = {};
 
