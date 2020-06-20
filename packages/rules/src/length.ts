@@ -1,4 +1,4 @@
-import { isNullOrUndefined, toArray } from '@vee-validate/shared';
+import { isNullOrUndefined, toArray } from '../../shared';
 import { getSingleParam } from './utils';
 
 const lengthValidator = (value: any, params?: any[] | Record<string, any>) => {

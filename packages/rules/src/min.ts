@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from '@vee-validate/shared';
+import { isNullOrUndefined } from '../../shared';
 import { getSingleParam } from './utils';
 
 const minValidator = (value: any, params?: any[] | Record<string, any>): boolean => {

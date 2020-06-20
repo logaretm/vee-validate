@@ -1,4 +1,4 @@
-import { isEmptyArray, isNullOrUndefined } from '@vee-validate/shared';
+import { isEmptyArray, isNullOrUndefined } from '../../shared';
 
 const requiredValidator = (value: any) => {
   if (isNullOrUndefined(value) || isEmptyArray(value) || value === false) {

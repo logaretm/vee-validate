@@ -1,4 +1,4 @@
-import { toArray } from '@vee-validate/shared';
+import { toArray } from '../../shared';
 
 const oneOfValidator = (value: any, options: any[]): boolean => {
   if (Array.isArray(value)) {
