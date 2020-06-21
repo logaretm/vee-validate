@@ -59,7 +59,7 @@ new Vue({
 });
 ```
 
-Then use the `Form` and `Field` component to render your form:
+Then use the `Form` and `Field` components to render your form:
 
 ```html{1,4}
 <form as="form" v-slot="{ errors }">

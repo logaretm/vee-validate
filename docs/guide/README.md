@@ -59,38 +59,4 @@ include the script directly
 All Examples from now on will use the ES2015 syntax, make sure to brush up on ES2015 if you haven't already.
 :::
 
-### Basic Example
-
-<!-- TODO: Tutorial Video -->
-
-VeeValidate exposes 2 components, `Field` component and `Form` that allow you to validate your fields. First, use the `Form` component to define your `Form`
-
-```vue{1,4}
-<Field rules="secret" v-slot="{ errors }">
-  <input v-model="email" type="text">
-  <span>{{ errors[0] }}</span>
-</Field>
-```
-
-:::danger Component Casing
-
-The examples will use Pascal case which should work fine if you are using Vue component files (SFC or `.vue` files). If you plan to use vee-validate in the browser build, you will need to use the kebab case. The previous example would then be:
-
-```html{1,4}
-<validation-provider rules="secret" v-slot="{ errors }">
-  <input v-model="email" type="text" />
-  <span>{{ errors[0] }}</span>
-</validation-provider>
-```
-
-:::
-
-The `rules` prop passed to the `ValidationProvider` is the validation rules that will be checked against the input.
-
-To display error messages, the `ValidationProvider` exposes `errors` array through [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots), this array contains error messages related to that field.
-
-#### Demo
-
-Here is the above example in action, enter `example` to pass validation:
-
-@[example](getting-started)
+<!-- TODO: Add basic example of entire form and a gist -->
