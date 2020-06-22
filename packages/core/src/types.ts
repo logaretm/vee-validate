@@ -77,7 +77,7 @@ export interface FormController {
   register(field: any): void;
   values: ComputedRef<Record<string, any>>;
   names: ComputedRef<Record<string, string>>;
-  fields: any;
+  fields: ComputedRef<Record<string, any>>;
 }
 
 export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;

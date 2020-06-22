@@ -42,7 +42,7 @@ export const Field = defineComponent({
   },
   setup(props, ctx) {
     const fieldName = props.name;
-    const $form = inject('$_veeObserver', undefined) as FormController | undefined;
+    const $form = inject('$_veeForm', undefined) as FormController | undefined;
     // FIXME: is this right?
     const disabled = computed(() => props.disabled as boolean);
     const rules = computed(() => props.rules);

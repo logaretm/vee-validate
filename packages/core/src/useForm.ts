@@ -10,7 +10,13 @@ interface FormOptions {
 export function useForm(opts?: FormOptions) {
   const fields: Ref<any[]> = ref([]);
   const isSubmitting = ref(false);
-  const fieldsById: Record<string, any> = {};
+  const fieldsById = computed(() => {
+    return fields.value.reduce((acc, field) => {
+      acc[field.name] = field;
+
+      return acc;
+    }, {} as Record<string, any>);
+  });
 
   const activeFields = computed(() => {
     return fields.value.filter(field => !unwrap(field.disabled));
@@ -46,7 +52,6 @@ export function useForm(opts?: FormOptions) {
       }
 
       fields.value.push(field);
-      fieldsById[name] = field;
     },
     fields: fieldsById,
     values,

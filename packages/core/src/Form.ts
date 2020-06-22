@@ -26,7 +26,7 @@ export const Form = defineComponent({
       initialValues: props.initialValues,
     });
 
-    provide('$_veeObserver', form);
+    provide('$_veeForm', form);
     const unwrappedMeta = useRefsObjToComputed(meta);
 
     const slotProps = computed(() => {
