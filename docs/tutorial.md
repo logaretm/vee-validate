@@ -225,28 +225,30 @@ You are not quite there yet, The last step is to show error messages that you al
 
 ## Displaying Error Messages
 
-There are multiple ways to display error messages with VeeValidate. In this tutorial you will use the `Form` component scoped slots to display the error message.
+There are multiple ways to display error messages with VeeValidate. In this tutorial you will use the `ErrorMessage` component to display the error message.
 
-First, grab the `errors` object from the `Form` component's scoped slot, which is done using the `v-slot` directive:
+First, grab the `ErrorMessage` component from `vee-validate` and register it in your component:
 
-```vue
-<template>
-  <Form as="input" @submit="onSubmit" v-slot="{ errors }">
-    <!-- ... -->
-  </Form>
-</template>
+```js
+import { Field, Form, ErrorMessage } from 'vee-validate';
+
+export default {
+  components: {
+    Field,
+    Form,
+    ErrorMessage,
+  },
+};
 ```
 
-The `errors` object contains the fields present in that form and any corresponding error messages that may exist, the fields are being keyed by their `name` prop. You can then display the message by referencing our `errors.email` in your template. This is the full example:
+Then add the `<ErrorMessage />` component to your template, passing a `name` prop that matches the `<Field />` name prop:
 
 ```vue
 <template>
   <div id="app">
     <Form as="form" @submit="onSubmit" v-slot="{ errors }">
       <Field name="email" as="input" :rules="validateEmail" />
-      <div>
-        {{ errors.email }}
-      </div>
+      <ErrorMessage name="email" />
 
       <button>Sign up</button>
     </Form>
@@ -254,12 +256,13 @@ The `errors` object contains the fields present in that form and any correspondi
 </template>
 
 <script>
-import { Form, Field } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 
 export default {
   components: {
     Form,
     Field,
+    ErrorMessage,
   },
   setup() {
     const onSubmit = values => {
@@ -296,4 +299,5 @@ There is a lot more you can do with vee-validate and while this example is verbo
 - Using 3rd-party libraries like `yup` to validate
 - Doing form-level validation using a validation schema
 - Advanced rendering of your inputs and forms using scoped-slots
+- Component-less validation with the composition API
 - Generating localized messages
