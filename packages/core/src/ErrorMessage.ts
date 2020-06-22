@@ -1,0 +1,50 @@
+import { inject, h, defineComponent, computed, Ref } from 'vue';
+import { normalizeChildren } from './utils';
+
+export const ErrorMessage = defineComponent({
+  props: {
+    as: {
+      type: String,
+      default: undefined,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props, ctx) {
+    const errors = (inject('$_veeFormErrors', undefined) as unknown) as Ref<Record<string, string>>;
+    const message = computed<string | undefined>(() => {
+      return errors.value[props.name];
+    });
+
+    return () => {
+      const children = normalizeChildren(ctx, {
+        message: message.value,
+      });
+
+      const tag = props.as;
+
+      // If no tag was specified and there are children
+      // render the slot as is without wrapping it
+      if (!tag && children.length) {
+        return children;
+      }
+
+      // If no children in slot
+      // render whatever specified and fallback to a <span> with the message in it's contents
+      if (!children.length) {
+        console.log('nooo');
+        return h(tag || 'span', message.value);
+      }
+
+      return h(
+        tag,
+        {
+          ...ctx.attrs,
+        },
+        children
+      );
+    };
+  },
+});

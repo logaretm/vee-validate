@@ -27,6 +27,7 @@ export const Form = defineComponent({
     });
 
     provide('$_veeForm', form);
+    provide('$_veeFormErrors', errors);
     const unwrappedMeta = useRefsObjToComputed(meta);
 
     const slotProps = computed(() => {
