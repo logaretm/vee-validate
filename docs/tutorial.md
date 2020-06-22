@@ -1,6 +1,6 @@
 # Validation Basics
 
-VeeValidate offers many ways to do form validation, this tutorial will teach you how to do basic form validation.
+VeeValidate offers many ways to do form validation, this tutorial will teach you how to do basic form validation using the simplest approach.
 
 ## What are we building
 
@@ -124,7 +124,6 @@ VeeValidate exposes 2 components that you will be using regularly, the `<Field>`
 <template>
   <div id="app">
     <Form as="form" @submit="onSubmit">
-
       <Field name="email" as="input" />
 
       <button>Sign up</button>
@@ -138,22 +137,26 @@ import { Form, Field } from 'vee-validate';
 export default {
   components: {
     Form,
-    Field
+    Field,
   },
   setup() {
     const onSubmit = () => {
       alert('Submitting :(');
-    }
+    };
 
     return {
       onSubmit,
     };
-  }
-}
+  },
+};
 </script>
 ```
 
 Notice that `Form` component is different than the native `form` element as it accepts an `as` prop which tells it what element to render, this is because the `Form` component is very flexible and can be used to render other complex markup or even custom form components.
+
+:::tip
+It might be necessary to rename the `Form` and `Field` components to something else to avoid conflicting with HTML native elements tag names, while this will work fine in Vue's single file components (SFCs) because the compiler is able to determine which one to render, but in native browser environment the `Form` will still render the native HTML counterpart because HTML is case-insensitive.
+:::
 
 Another distinction is that the `.prevents` modifier is removed, this is because the `Form` component does that automatically for you since you won't be listening to the `submit` event unless you want to handle it in JavaScript. And lastly, it sends all the fields values to your submit handler and that saves you the need to use `v-model` to bind your inputs.
 
@@ -167,7 +170,6 @@ There are multiple ways to define rules with VeeValidate, this tutorial will cov
 <template>
   <div id="app">
     <Form as="form" @submit="onSubmit">
-
       <Field name="email" as="input" :rules="validateEmail" />
 
       <button>Sign up</button>
@@ -181,13 +183,13 @@ import { Form, Field } from 'vee-validate';
 export default {
   components: {
     Form,
-    Field
+    Field,
   },
   setup() {
-    const onSubmit = (values) => {
+    const onSubmit = values => {
       alert('Submitting :(');
       console.log(JSON.stringify(values, null, 2));
-    }
+    };
 
     // The validator function
     const validateEmail = value => {
@@ -210,8 +212,8 @@ export default {
       // make it available to the template so we can bind it to the `<Field>`
       validateEmail,
     };
-  }
-}
+  },
+};
 </script>
 ```
 
@@ -229,13 +231,8 @@ First, grab the `errors` object from the `Form` component's scoped slot, which i
 
 ```vue
 <template>
-  <Form
-    as="input"
-    @submit="onSubmit"
-    v-slot="{ errors }"
-  >
-
-  <!-- ... -->
+  <Form as="input" @submit="onSubmit" v-slot="{ errors }">
+    <!-- ... -->
   </Form>
 </template>
 ```
@@ -246,7 +243,6 @@ The `errors` object contains the fields present in that form and any correspondi
 <template>
   <div id="app">
     <Form as="form" @submit="onSubmit" v-slot="{ errors }">
-
       <Field name="email" as="input" :rules="validateEmail" />
       <div>
         {{ errors.email }}
@@ -263,13 +259,13 @@ import { Form, Field } from 'vee-validate';
 export default {
   components: {
     Form,
-    Field
+    Field,
   },
   setup() {
-    const onSubmit = (values) => {
+    const onSubmit = values => {
       alert('Submitting :(');
       console.log(JSON.stringify(values, null, 2));
-    }
+    };
 
     const validateEmail = value => {
       if (!value) {
@@ -287,8 +283,8 @@ export default {
       onSubmit,
       validateEmail,
     };
-  }
-}
+  },
+};
 </script>
 ```
 
