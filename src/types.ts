@@ -17,7 +17,7 @@ export type VueValidationContext = Vue & {
 export type Locator = { __locatorRef: string } & Function;
 
 export interface ValidationMessageGenerator {
-  (field: string, params?: Record<string, any>): string;
+  (field: string, params: Record<string, any>): string;
 }
 
 export type ValidationMessageTemplate = string | ValidationMessageGenerator;
