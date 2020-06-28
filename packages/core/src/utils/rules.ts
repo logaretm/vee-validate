@@ -1,6 +1,6 @@
 import { Locator, GenericValidateFunction } from '../types';
 import { isLocator } from './assertions';
-import { isCallable, isObject, includes } from '../../../shared';
+import { isCallable, isObject } from '../../../shared';
 
 /**
  * Normalizes the given rules expression.
@@ -105,7 +105,7 @@ export const parseRule = (rule: string) => {
   let params: string[] = [];
   const name = rule.split(':')[0];
 
-  if (includes(rule, ':')) {
+  if (rule.includes(':')) {
     params = rule.split(':').slice(1).join(':').split(',');
   }
 

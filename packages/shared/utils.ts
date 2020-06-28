@@ -10,10 +10,6 @@ export function isEmptyArray(arr: any[]): boolean {
   return Array.isArray(arr) && arr.length === 0;
 }
 
-export function includes(collection: any[] | string, item: any): boolean {
-  return collection.indexOf(item) !== -1;
-}
-
 export const isObject = (obj: unknown): obj is { [x: string]: any } =>
   obj !== null && obj && typeof obj === 'object' && !Array.isArray(obj);
 
