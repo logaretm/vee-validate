@@ -1,4 +1,4 @@
-import { isNullOrUndefined, toArray } from '../../shared';
+import { isNullOrUndefined } from '../../shared';
 import { getSingleParam } from './utils';
 
 const lengthValidator = (value: any, params?: any[] | Record<string, any>) => {
@@ -13,7 +13,7 @@ const lengthValidator = (value: any, params?: any[] | Record<string, any>) => {
   }
 
   if (!value.length) {
-    value = toArray(value);
+    value = Array.from(value);
   }
 
   return value.length === Number(length);

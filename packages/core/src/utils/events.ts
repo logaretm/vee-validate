@@ -1,4 +1,4 @@
-import { isCallable, toArray } from '../../../shared';
+import { isCallable } from '../../../shared';
 
 export const isEvent = (evt: any): evt is Event => {
   if (!evt) {
@@ -25,7 +25,7 @@ export function normalizeEventValue(value: unknown): any {
 
   const input = value.target as HTMLInputElement;
   if (input.type === 'file' && input.files) {
-    return toArray(input.files);
+    return Array.from(input.files);
   }
 
   return input.value;
