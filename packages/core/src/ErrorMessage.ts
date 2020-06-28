@@ -24,7 +24,10 @@ export const ErrorMessage = defineComponent({
       });
 
       const tag = props.as;
-      const id = genFieldErrorId(props.name);
+      const attrs = {
+        id: genFieldErrorId(props.name),
+        role: 'alert',
+      };
 
       // If no tag was specified and there are children
       // render the slot as is without wrapping it
@@ -35,13 +38,13 @@ export const ErrorMessage = defineComponent({
       // If no children in slot
       // render whatever specified and fallback to a <span> with the message in it's contents
       if (!children.length) {
-        return h(tag || 'span', { id }, message.value);
+        return h(tag || 'span', attrs, message.value);
       }
 
       return h(
         tag,
         {
-          id,
+          ...attrs,
           ...ctx.attrs,
         },
         children
