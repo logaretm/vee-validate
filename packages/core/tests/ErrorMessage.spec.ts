@@ -93,4 +93,26 @@ describe('<ErrorMessage />', () => {
 
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
   });
+
+  test('is associated using aria-describeBy', async () => {
+    const wrapper = mountWithHoc({
+      components: {
+        ErrorMessage,
+      },
+      template: `
+      <VForm as="form">
+        <Field name="field" rules="required" as="input" />
+        <ErrorMessage name="field" as="span" />
+
+        <button>Validate</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const error = wrapper.$el.querySelector('span');
+    const input = wrapper.$el.querySelector('input');
+
+    expect(input.getAttribute('aria-describedBy')).toBe(error.id);
+  });
 });

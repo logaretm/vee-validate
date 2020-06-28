@@ -9,7 +9,7 @@ import {
   Flag,
   ValidationFlags,
 } from './types';
-import { normalizeRules, extractLocators, normalizeEventValue, unwrap } from './utils';
+import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId } from './utils';
 
 interface FieldOptions {
   value: Ref<any>;
@@ -67,6 +67,8 @@ export function useField(
     return errors.value[0];
   });
 
+  const aria = useAriAttrs(fieldName, meta);
+
   const field = {
     name: fieldName,
     value: value,
@@ -74,6 +76,7 @@ export function useField(
     errors,
     errorMessage,
     failedRules,
+    aria,
     reset,
     validate: runValidationWithMutation,
     handleChange,
@@ -263,4 +266,13 @@ function useMeta() {
     onBlur,
     reset,
   };
+}
+
+function useAriAttrs(fieldName: MaybeReactive<string>, meta: Record<Flag, Ref<boolean>>) {
+  return computed(() => {
+    return {
+      'aria-invalid': meta.failed.value ? 'true' : 'false',
+      'aria-describedBy': genFieldErrorId(unwrap(fieldName)),
+    };
+  });
 }

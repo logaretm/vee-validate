@@ -70,6 +70,7 @@ export interface FieldComposite {
   errors: Ref<string[]>;
   errorMessage: Ref<string | undefined>;
   meta: Record<Flag, Ref<boolean>>;
+  aria: ComputedRef<Record<string, any>>;
   __setRules(fn: GenericValidateFunction | string | Record<string, any>): void;
 }
 

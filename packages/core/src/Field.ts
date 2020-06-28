@@ -2,7 +2,7 @@ import { computed, inject, h, defineComponent } from 'vue';
 import { getConfig } from './config';
 import { FormController } from './types';
 import { useField } from './useField';
-import { useRefsObjToComputed, debounce, normalizeChildren } from './utils';
+import { useRefsObjToComputed, debounce, normalizeChildren, isHTMLTag } from './utils';
 
 export const Field = defineComponent({
   name: 'Field',
@@ -57,6 +57,7 @@ export const Field = defineComponent({
       onBlur,
       reset,
       meta,
+      aria,
     } = useField(fieldName, rules, {
       form: $form,
       immediate: props.immediate as boolean,
@@ -78,6 +79,7 @@ export const Field = defineComponent({
           onBlur: onBlur,
           value: value.value,
         },
+        aria: aria.value,
         meta: unwrappedMeta.value,
         errors: errors.value,
         errorMessage: errorMessage.value,
@@ -96,6 +98,7 @@ export const Field = defineComponent({
           {
             ...ctx.attrs,
             ...slotProps.value.field,
+            ...(isHTMLTag(props.as) ? slotProps.value.aria : {}),
           },
           children
         );

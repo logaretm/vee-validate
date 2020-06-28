@@ -1,5 +1,5 @@
 import { inject, h, defineComponent, computed, Ref } from 'vue';
-import { normalizeChildren } from './utils';
+import { normalizeChildren, genFieldErrorId } from './utils';
 
 export const ErrorMessage = defineComponent({
   props: {
@@ -24,6 +24,7 @@ export const ErrorMessage = defineComponent({
       });
 
       const tag = props.as;
+      const id = genFieldErrorId(props.name);
 
       // If no tag was specified and there are children
       // render the slot as is without wrapping it
@@ -34,13 +35,13 @@ export const ErrorMessage = defineComponent({
       // If no children in slot
       // render whatever specified and fallback to a <span> with the message in it's contents
       if (!children.length) {
-        console.log('nooo');
-        return h(tag || 'span', message.value);
+        return h(tag || 'span', { id }, message.value);
       }
 
       return h(
         tag,
         {
+          id,
           ...ctx.attrs,
         },
         children
