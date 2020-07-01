@@ -27,12 +27,10 @@ export function normalizeRules(rules: any) {
   if (isObject(rules)) {
     return Object.keys(rules).reduce((prev, curr) => {
       let params = [];
-      let preserveArrayParams = false;
       if (rules[curr] === true) {
         params = [];
       } else if (Array.isArray(rules[curr])) {
         params = rules[curr];
-        preserveArrayParams = true;
       } else if (isObject(rules[curr])) {
         params = rules[curr];
       } else {
@@ -40,7 +38,7 @@ export function normalizeRules(rules: any) {
       }
 
       if (rules[curr] !== false) {
-        prev[curr] = buildParams(curr, params, preserveArrayParams);
+        prev[curr] = buildParams(curr, params);
       }
 
       return prev;
@@ -65,7 +63,7 @@ export function normalizeRules(rules: any) {
   }, acc);
 }
 
-function buildParams(ruleName: string, provided: any[] | Record<string, any>, preserveArrayParams = false) {
+function buildParams(ruleName: string, provided: any[] | Record<string, any>) {
   const ruleSchema = RuleContainer.getRuleDefinition(ruleName);
   if (!ruleSchema) {
     return provided;
@@ -104,14 +102,14 @@ function buildParams(ruleName: string, provided: any[] | Record<string, any>, pr
     const options = definedParams[i];
     let value = options.default;
     // if the provided is an array, map element value.
-    if (Array.isArray(provided) && !preserveArrayParams) {
+    if (Array.isArray(provided)) {
       if (i in provided) {
         value = provided[i];
       }
     } else {
       // If the param exists in the provided object.
       if (options.name in provided) {
-        value = (provided as Record<string, any>)[options.name];
+        value = provided[options.name];
         // if the provided is the first param value.
       } else if (definedParams.length === 1) {
         value = provided;
