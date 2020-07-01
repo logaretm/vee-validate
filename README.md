@@ -62,12 +62,18 @@ Install the rules you will use in your app, we will install the `required` rule 
 
 ```js
 import { extend } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
+import { required, email } from 'vee-validate/dist/rules';
 
 // Add the required rule
 extend('required', {
   ...required,
   message: 'This field is required'
+});
+
+// Add the email rule
+extend('email', {
+  ...email,
+  message: 'This field must be a valid email'
 });
 ```
 
