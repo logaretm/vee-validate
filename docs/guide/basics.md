@@ -228,7 +228,7 @@ extend('minmax', {
 });
 ```
 
-You can make things less verbose by destructing the args object:
+You can make things less verbose by destructuring the args object:
 
 ```js{2}
 extend('minmax', {
