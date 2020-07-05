@@ -29,6 +29,10 @@ And then you can use those rules immediately:
 </ValidationProvider>
 ```
 
+:::tip Babel Transformation
+Depending on your setup, you might run into issues importing rules from `vee-validate/dist/rules` as the file is using ES exports to allow tree shaking. You can fix that by either ignoring `vee-validate/dist/rules` from the transpilation process or importing rules from `vee-validate/dist/rules.umd` instead.
+:::
+
 ## Installing All Rules
 
 This is not recommended, but you need to have all of the vee-validate rules pre-configured, you can do that in two ways:
@@ -298,7 +302,8 @@ rule="excluded:1,2"
 name="number"
 type="select"
 :options="[{ text: 'One (invalid)', value: 1 }, { text: 'Two (invalid)', value: 2 }, { text: 'Three', value: 3 }, { text: 'Four', value: 4 }]"
-></RuleDemo>
+
+> </RuleDemo>
 
 ```vue
 <ValidationProvider rules="excluded:1,2" name="number" v-slot="{ errors }">
@@ -650,7 +655,7 @@ The field under validation must have a non-empty value **only if** the target fi
 | `...values` | **no**    |         | The values that will make the field required. If empty or not provided it will make the field required if the target field has a value. |
 
 :::warning ValidationObserver
-If a modification is made to the source of the required_if ("country" in the above example), the `invalid` and other flags of the ValidationObserver will not automatically be updated.  One solution is to watch the data element and when it changes, manually call `ValidationObserver.validate`.
+If a modification is made to the source of the required_if ("country" in the above example), the `invalid` and other flags of the ValidationObserver will not automatically be updated. One solution is to watch the data element and when it changes, manually call `ValidationObserver.validate`.
 :::
 
 ### size
