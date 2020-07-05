@@ -15,6 +15,7 @@
     "image": "{_field_}は有効な画像形式ではありません",
     "integer": "{_field_}は整数のみ使用できます",
     "is": "{_field_}が一致しません",
+    "is_not": "{_field_}は無効です ",
     "length": "{_field_}は{length}文字でなければなりません",
     "max_value": "{_field_}は{max}以下でなければなりません",
     "max": "{_field_}は{length}文字以内にしてください",
