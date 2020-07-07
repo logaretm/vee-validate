@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://logaretm.github.io/vee-validate/" target="_blank">
-    <img width="200" src="https://github.com/logaretm/vee-validate/blob/master/logo.svg">
+    <img width="200" src="https://github.com/logaretm/vee-validate/blob/master/logo.png">
   </a>
 </p>
 
@@ -147,6 +147,7 @@ You are welcome to contribute to this project, but before you do, please make su
 ### Credits
 
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
+- Logo by @baianat design team.
 
 ### License
 
