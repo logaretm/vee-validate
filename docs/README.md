@@ -2,7 +2,7 @@
 title: VeeValidate
 lang: en-US
 home: true
-heroImage: /logo.svg
+heroImage: /logo.png
 actionText: Get Started →
 actionLink: ./guide/basics.md
 features:

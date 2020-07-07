@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://logaretm.github.io/vee-validate/" target="_blank">
-    <img width="200" src="https://github.com/logaretm/vee-validate/blob/master/logo.svg">
+    <img width="200" src="https://github.com/logaretm/vee-validate/blob/master/logo.png">
   </a>
 </p>
 
@@ -67,7 +67,7 @@ import { required } from 'vee-validate/dist/rules';
 // Add the required rule
 extend('required', {
   ...required,
-  message: 'This field is required'
+  message: 'This field is required',
 });
 ```
 
@@ -90,8 +90,8 @@ import { ValidationProvider } from 'vee-validate';
 
 export default {
   components: {
-    ValidationProvider
-  }
+    ValidationProvider,
+  },
 };
 ```
 
