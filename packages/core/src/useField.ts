@@ -37,7 +37,6 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     const result = await validate(value.value, normalizedRules.value, {
       name: unwrap(fieldName),
       values: form?.values.value ?? {},
-      names: form?.names.value ?? {},
       bails,
     });
 

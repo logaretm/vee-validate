@@ -8,6 +8,8 @@ interface FormOptions {
   initialValues?: Record<string, any>;
 }
 
+type FieldComposite = ReturnType<typeof useField>;
+
 export function useForm(opts?: FormOptions) {
   const fields: Ref<any[]> = ref([]);
   const isSubmitting = ref(false);
@@ -24,23 +26,15 @@ export function useForm(opts?: FormOptions) {
   });
 
   const values = computed(() => {
-    return activeFields.value.reduce((acc: any, field: any) => {
+    return activeFields.value.reduce((acc: any, field) => {
       acc[field.name] = field.value;
 
       return acc;
     }, {});
   });
 
-  const names = computed(() => {
-    return fields.value.reduce((acc: any, field: any) => {
-      acc[field.name] = field.name;
-
-      return acc;
-    }, {});
-  });
-
   const controller: FormController = {
-    register(field: ReturnType<typeof useField>) {
+    register(field: FieldComposite) {
       const name = unwrap(field.name);
       // Set the initial value for that field
       if (opts?.initialValues?.[name]) {
@@ -51,7 +45,6 @@ export function useForm(opts?: FormOptions) {
     },
     fields: fieldsById,
     values,
-    names,
     schema: opts?.validationSchema,
   };
 
@@ -66,7 +59,7 @@ export function useForm(opts?: FormOptions) {
   };
 
   const errors = computed(() => {
-    return activeFields.value.reduce((acc: Record<string, string[]>, field) => {
+    return activeFields.value.reduce((acc: Record<string, string>, field) => {
       acc[field.name] = field.errorMessage;
 
       return acc;

@@ -14,13 +14,11 @@ interface FieldValidationContext {
   skipIfEmpty: boolean;
   forceRequired: boolean;
   crossTable: Record<string, any>;
-  names: Record<string, string>;
 }
 
 interface ValidationOptions {
   name?: string;
   values?: Record<string, any>;
-  names?: Record<string, string>;
   bails?: boolean;
   skipIfEmpty?: boolean;
   isInitial?: boolean;
@@ -43,7 +41,6 @@ export async function validate(
     skipIfEmpty: skipIfEmpty ?? true,
     forceRequired: false,
     crossTable: options?.values || {},
-    names: options?.names || {},
   };
 
   const result = await _validate(field, value);

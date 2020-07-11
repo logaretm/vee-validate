@@ -61,7 +61,6 @@ export type Flag =
 export interface FormController {
   register(field: any): void;
   values: ComputedRef<Record<string, any>>;
-  names: ComputedRef<Record<string, string>>;
   fields: ComputedRef<Record<string, any>>;
   schema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
 }
