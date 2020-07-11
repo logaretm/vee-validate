@@ -1,8 +1,8 @@
 <template>
   <header
-    class="pt-6 pb-3 px-6 lg:px-0 sticky top-0 dark-mode:bg-dark bg-white z-20 border-b dark-mode:border-carbon border-gray-lighter"
+    class="pt-6 pb-3 sticky top-0 dark-mode:bg-dark bg-white z-20 border-b dark-mode:border-carbon border-gray-lighter"
   >
-    <div class="flex items-center header__content">
+    <div class="flex items-center header__content px-6 lg:px-10">
       <nuxt-link class="mr-auto" to="/">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 858.42 693.79" class="h-10 w-10 lg:w-12 lg:h-12">
           <defs>
@@ -54,13 +54,8 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-header {
-  grid-area: header;
-}
 .header__content {
-  @screen lg {
-    @apply mx-auto;
-    width: calc(50rem);
-  }
+  max-width: 1300px;
+  @apply mx-auto;
 }
 </style>

@@ -1,30 +1,41 @@
 <template>
-  <div class="App">
+  <div class="AppWrapper">
     <TheHeader />
+    <div class="App">
+      <main class="main">
+        <Nuxt />
+      </main>
 
-    <main class="main">
-      <Nuxt />
-    </main>
+      <div class="lside hidden lg:block">
+        <DocMenu class="sticky top-0" />
+      </div>
 
-    <div class="lside hidden lg:block">
-      <DocMenu class="sticky top-0" />
-    </div>
-
-    <div class="rside hidden lg:block">
-      <DocToc class="sticky top-0" />
+      <div class="rside hidden xl:block">
+        <DocToc class="sticky top-0" />
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="postcss">
+.AppWrapper {
+  @apply bg-white text-dark w-full min-h-full;
+}
+
+.is-dark {
+  .AppWrapper {
+    @apply bg-dark text-white;
+  }
+}
+
 .App {
-  @apply w-full min-h-full bg-white text-dark;
-  display: grid;
+  max-width: 1300px;
+  @apply mx-auto;
   grid-template-areas:
-    'header header header'
     'lside content rside'
     'footer footer footer';
-  grid-template-rows: auto 1fr auto;
+  display: grid;
+  grid-template-rows: 1fr auto;
   grid-gap: 20px;
   grid-template-columns: 1fr auto 1fr;
 
@@ -42,16 +53,10 @@
   grid-area: lside;
 }
 
-.is-dark {
-  .App {
-    @apply bg-dark text-white;
-  }
-}
-
 .main {
   grid-area: content;
   width: 80vw;
-  @apply mx-auto;
+  @apply mx-auto pt-16;
 }
 
 @screen md {
