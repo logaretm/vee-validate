@@ -60,6 +60,8 @@ export default {
    */
   modules: ['@nuxt/content', '@nuxtjs/pwa'],
 
+  plugins: ['@/plugins/store.client.js'],
+
   /*
    ** Build configuration
    */
