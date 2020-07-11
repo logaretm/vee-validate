@@ -158,9 +158,11 @@ export default {
 
 Notice that `Form` component is different than the native `form` element as it accepts an `as` prop which tells it what element to render, this is because the `Form` component is very flexible and can be used to render other complex markup or even custom form components.
 
-:::tip
+<doc-tip type="warn" title="Component Registration">
+
 It might be necessary to rename the `Form` and `Field` components to something else to avoid conflicting with HTML native elements tag names, while this will work fine in Vue's single file components (SFCs) because the compiler is able to determine which one to render, but in native browser environment the `Form` will still render the native HTML counterpart because HTML is case-insensitive.
-:::
+
+</doc-tip>
 
 Another distinction is that the `.prevents` modifier is removed, this is because the `Form` component does that automatically for you since you won't be listening to the `submit` event unless you want to handle it in JavaScript. And lastly, it sends all the fields values to your submit handler and that saves you the need to use `v-model` to bind your inputs.
 
