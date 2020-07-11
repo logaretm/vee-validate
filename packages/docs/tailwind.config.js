@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const plugin = require('tailwindcss/plugin');
+
 /*
  ** TailwindCSS Configuration File
  **
@@ -45,6 +48,17 @@ module.exports = {
       },
     },
   },
-  variants: {},
-  plugins: [],
+  variants: {
+    backgroundColor: ['responsive', 'hover', 'focus', 'light-mode'],
+    textColor: ['responsive', 'hover', 'focus', 'light-mode'],
+  },
+  plugins: [
+    plugin(function ({ addVariant, e }) {
+      addVariant('light-mode', ({ modifySelectors, separator }) => {
+        modifySelectors(({ className }) => {
+          return `.is-light .${e(`light-mode${separator}${className}`)}`;
+        });
+      });
+    }),
+  ],
 };

@@ -26,7 +26,7 @@
       href="https://github.com/logaretm/vee-validate"
       target="_blank"
       rel="noopener"
-      class="transition-colors text-gray hover:text-white duration-200 hidden lg:block"
+      class="transition-colors text-gray hover:text-white duration-200 hidden lg:block light-mode:hover:text-black"
     >
       <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
         <title>GitHub</title>
@@ -35,6 +35,8 @@
         ></path>
       </svg>
     </a>
+
+    <ThemeSwitcher class="ml-4 hidden lg:flex" />
   </header>
 </template>
 
