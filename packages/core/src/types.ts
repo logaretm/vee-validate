@@ -58,27 +58,12 @@ export type Flag =
   | 'pending'
   | 'changed';
 
-export interface FieldComposite {
-  validate(): Promise<ValidationResult>;
-  reset(): void;
-  handleChange(e?: any): void;
-  onBlur(e?: any): void;
-  value: Ref<any>;
-  name: MaybeReactive<string>;
-  disabled: MaybeReactive<boolean>;
-  failedRules: Ref<Record<string, string>>;
-  errors: Ref<string[]>;
-  errorMessage: Ref<string | undefined>;
-  meta: Record<Flag, Ref<boolean>>;
-  aria: ComputedRef<Record<string, any>>;
-  __setRules(fn: GenericValidateFunction | string | Record<string, any>): void;
-}
-
 export interface FormController {
   register(field: any): void;
   values: ComputedRef<Record<string, any>>;
   names: ComputedRef<Record<string, string>>;
   fields: ComputedRef<Record<string, any>>;
+  schema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
 }
 
 export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;

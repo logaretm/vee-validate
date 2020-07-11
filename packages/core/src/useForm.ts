@@ -1,5 +1,6 @@
 import { computed, ref, Ref } from 'vue';
-import { Flag, FormController, SubmissionHandler, GenericValidateFunction, FieldComposite, SubmitEvent } from './types';
+import type { useField } from './useField';
+import { Flag, FormController, SubmissionHandler, GenericValidateFunction, SubmitEvent } from './types';
 import { unwrap } from './utils/refs';
 
 interface FormOptions {
@@ -39,13 +40,8 @@ export function useForm(opts?: FormOptions) {
   });
 
   const controller: FormController = {
-    register(field: FieldComposite) {
+    register(field: ReturnType<typeof useField>) {
       const name = unwrap(field.name);
-      // Set the rules for that field from the schema.
-      if (opts?.validationSchema?.[name]) {
-        field.__setRules(opts?.validationSchema[name]);
-      }
-
       // Set the initial value for that field
       if (opts?.initialValues?.[name]) {
         field.value.value = opts?.initialValues[name];
@@ -56,6 +52,7 @@ export function useForm(opts?: FormOptions) {
     fields: fieldsById,
     values,
     names,
+    schema: opts?.validationSchema,
   };
 
   const validate = async () => {

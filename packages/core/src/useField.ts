@@ -4,12 +4,12 @@ import {
   FormController,
   ValidationResult,
   MaybeReactive,
-  FieldComposite,
   GenericValidateFunction,
   Flag,
   ValidationFlags,
 } from './types';
 import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId } from './utils';
+import { isCallable } from '../../shared';
 
 interface FieldOptions {
   value: Ref<any>;
@@ -24,11 +24,7 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
 /**
  * Creates a field composite.
  */
-export function useField(
-  fieldName: MaybeReactive<string>,
-  rules: RuleExpression,
-  opts?: Partial<FieldOptions>
-): FieldComposite {
+export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
   const { value, form, immediate, bails, disabled } = normalizeOptions(opts);
   const { meta, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
   let schemaValidation: GenericValidateFunction | string | Record<string, any>;
@@ -82,12 +78,7 @@ export function useField(
     handleChange,
     onBlur,
     disabled,
-    __setRules(schemaRules: GenericValidateFunction | string | Record<string, any>) {
-      schemaValidation = schemaRules;
-    },
   };
-
-  useFormController(field, normalizedRules, form);
 
   watch(value, runValidationWithMutation, {
     deep: true,
@@ -98,6 +89,46 @@ export function useField(
       deep: true,
     });
   }
+
+  // if no associated form return the field API immediately
+  if (!form) {
+    return field;
+  }
+
+  // associate the field with the given form
+  form.register(field);
+
+  // set the rules if present in schema
+  if (form.schema?.[unwrap(fieldName)]) {
+    schemaValidation = form.schema[unwrap(fieldName)];
+  }
+
+  // extract cross-field dependencies in a computed prop
+  const dependencies = computed(() => {
+    return Object.keys(normalizedRules.value).reduce((acc: string[], rule: string) => {
+      const deps = extractLocators((normalizedRules as Ref<Record<string, any>>).value[rule]).map(
+        (dep: any) => dep.__locatorRef
+      );
+      acc.push(...deps);
+
+      return acc;
+    }, []);
+  });
+
+  // Adds a watcher that runs the validation whenever field dependencies change
+  watchEffect(() => {
+    // Skip if no dependencies
+    if (!dependencies.value.length) {
+      return;
+    }
+
+    // For each dependent field, validate it if it was validated before
+    dependencies.value.forEach(dep => {
+      if (dep in form.values.value && meta.validated.value) {
+        runValidationWithMutation();
+      }
+    });
+  });
 
   return field;
 }
@@ -169,41 +200,6 @@ function useValidationState(value: Ref<any>) {
     onBlur,
     handleChange,
   };
-}
-
-/**
- * Associated fields with forms and watches any cross-field validation dependencies.
- */
-function useFormController(field: FieldComposite, rules: Ref<Record<string, any>>, form?: FormController) {
-  if (!form) return;
-
-  // associate the field with the given form
-  form.register(field);
-
-  // extract cross-field dependencies in a computed prop
-  const dependencies = computed(() => {
-    return Object.keys(rules.value).reduce((acc: string[], rule: string) => {
-      const deps = extractLocators(rules.value[rule]).map((dep: any) => dep.__locatorRef);
-      acc.push(...deps);
-
-      return acc;
-    }, []);
-  });
-
-  // Adds a watcher that runs the validation whenever field dependencies change
-  watchEffect(() => {
-    // Skip if no dependencies
-    if (!dependencies.value.length) {
-      return;
-    }
-
-    // For each dependent field, validate it if it was validated before
-    dependencies.value.forEach(dep => {
-      if (dep in form.values.value && field.meta.validated.value) {
-        field.validate();
-      }
-    });
-  });
 }
 
 /**
