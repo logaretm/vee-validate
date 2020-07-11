@@ -35,10 +35,10 @@ module.exports = {
       colors: {
         error: '#cf6679',
         'dark-light': '#151518',
-        dark: '#0f0f11',
+        dark: 'hsl(240 6% 9%)',
         gray: '#a2a2a2',
         'gray-lighter': '#e8e8e8',
-        accent: '#09a884',
+        accent: '#06d77b',
       },
       screens: {
         motion: { raw: '(prefers-reduced-motion: no-preference)' },

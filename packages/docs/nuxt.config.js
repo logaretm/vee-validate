@@ -2,6 +2,14 @@ export default {
   mode: 'universal',
 
   components: true,
+
+  publicRuntimeConfig: {
+    algolia: {
+      apiKey: '498c5d264196aacd7606fed9857deb44',
+      indexName: 'vee-validate',
+    },
+  },
+
   /*
    ** Headers of the page
    */
@@ -55,5 +63,13 @@ export default {
   /*
    ** Build configuration
    */
-  build: {},
+  build: {
+    postcss: {
+      plugins: {
+        tailwindcss: {},
+        'postcss-nested': {},
+        autoprefixer: {},
+      },
+    },
+  },
 };

@@ -1,10 +1,11 @@
 <template>
-  <aside>
-    <nav>
+  <aside class="px-6 pt-16">
+    <nav class="space-y-8">
       <div v-for="category in categories" :key="category.title">
-        <ul>
-          <li v-for="link in category.links" :key="link.title">
-            <nuxt-link :to="link.path">{{ link.title }}</nuxt-link>
+        <p class="text-xs font-bold text-gray">{{ category.title }}</p>
+        <ul class="mt-1 space-y-2">
+          <li v-for="page in category.children" :key="page.title">
+            <nuxt-link :to="page.path">{{ page.title }}</nuxt-link>
           </li>
         </ul>
       </div>
@@ -22,7 +23,7 @@ export default {
         content: ['/guide/overview'],
       },
       {
-        title: 'Tutorial',
+        title: 'Tutorials',
         content: ['/tutorial'],
       },
       {
@@ -40,7 +41,7 @@ export default {
     this.categories = categories.map((c, idx) => {
       return {
         title: c.title,
-        links: results[idx],
+        children: results[idx],
       };
     });
   },
