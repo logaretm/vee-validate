@@ -1,8 +1,8 @@
 <template>
   <aside class="px-6 pt-16">
-    <nav class="space-y-8">
+    <nav class="space-y-8 text-sm">
       <div v-for="category in categories" :key="category.title">
-        <p class="text-xs font-bold text-gray">{{ category.title }}</p>
+        <p class="text-xs font-bold text-gray uppercase">{{ category.title }}</p>
         <ul class="mt-1 space-y-2">
           <li v-for="page in category.children" :key="page.title">
             <nuxt-link :to="page.path">{{ page.title }}</nuxt-link>
@@ -50,3 +50,21 @@ export default {
   }),
 };
 </script>
+
+<style lang="postcss" scoped>
+nav {
+  a {
+    @screen motion {
+      transition: color 0.2s ease-in-out;
+    }
+
+    &:hover {
+      @apply text-accent;
+    }
+
+    &.nuxt-link-active {
+      @apply text-accent;
+    }
+  }
+}
+</style>

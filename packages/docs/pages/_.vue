@@ -3,6 +3,9 @@
 </template>
 
 <script>
+import { store } from '@/plugins/store';
+import { slugify } from '@/utils/string';
+
 export default {
   async asyncData({ $content, params }) {
     const page = await $content(params.pathMatch || 'home').fetch();
@@ -14,7 +17,7 @@ export default {
   mounted() {
     function linkify(node) {
       const anchor = document.createElement('a');
-      const slug = node.textContent.replace(/\s|\.|\?|\!|'/g, '-').toLowerCase();
+      const slug = slugify(node.textContent);
       anchor.href = `#${slug}`;
       anchor.textContent = node.textContent;
       node.id = slug;
@@ -24,6 +27,8 @@ export default {
 
     Array.from(this.$el.querySelectorAll('h2')).forEach(linkify);
     Array.from(this.$el.querySelectorAll('h3')).forEach(linkify);
+    // set the current document
+    store.currentDoc = this.page;
   },
 };
 </script>

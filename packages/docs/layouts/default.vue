@@ -1,9 +1,16 @@
 <template>
   <div class="App">
+    <div class="lside hidden lg:block">
+      <DocMenu class="sticky top-0" />
+    </div>
     <TheHeader />
     <main class="main">
       <Nuxt />
     </main>
+
+    <div class="rside hidden lg:block">
+      <PageNavigation class="sticky top-0" />
+    </div>
   </div>
 </template>
 
@@ -18,6 +25,19 @@
   grid-template-rows: auto 1fr auto;
   grid-gap: 20px;
   grid-template-columns: 1fr auto 1fr;
+
+  @screen lg {
+    column-gap: 50px;
+  }
+
+  @screen xl {
+    column-gap: 70px;
+  }
+}
+
+.lside {
+  @apply ml-auto;
+  grid-area: lside;
 }
 
 .is-light {

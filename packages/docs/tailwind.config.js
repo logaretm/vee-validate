@@ -20,18 +20,14 @@ module.exports = {
       display: ['Montserrat', 'sans-serif'],
       body: ['Noto Sans', 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
     },
-    fontSize: {
-      tiny: '13px',
-      xs: 'calc(11px + 0.25vw)',
-      sm: 'calc(12px + 0.25vw)',
-      base: 'calc(14px + 0.25vw)',
-      lg: '1.15em',
-      xl: 'calc(1em + 0.40vw)',
-      '2xl': 'calc(1em + 0.75vw)',
-      '3xl': 'calc(1em + 1.75vw)',
-      '6xl': 'calc(1em + 2.8vw)',
-    },
+
     extend: {
+      fontSize: {
+        xl: 'calc(1em + 0.40vw)',
+        '2xl': 'calc(1em + 0.75vw)',
+        '3xl': 'calc(1em + 1.75vw)',
+        '6xl': 'calc(1em + 2.8vw)',
+      },
       colors: {
         error: '#cf6679',
         'dark-light': '#151518',

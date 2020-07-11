@@ -12,7 +12,7 @@ export default {
     };
   },
   mounted() {
-    this.initialize(this.$config.algolia, this.$lang);
+    this.initialize(this.$config.algolia, 'en');
   },
   methods: {
     initialize(userOptions, lang) {
@@ -59,7 +59,7 @@ export default {
 
 <style lang="postcss" scoped>
 #algolia-search-input {
-  @apply px-4 text-black;
+  @apply px-4 text-black outline-none;
   @screen motion {
     transition: background-color 0.2s ease-in-out;
   }
@@ -71,5 +71,9 @@ export default {
   &:focus {
     @apply bg-white;
   }
+}
+
+>>> .algolia-autocomplete {
+  display: block !important;
 }
 </style>
