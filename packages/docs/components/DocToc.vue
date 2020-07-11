@@ -15,8 +15,6 @@
 import { store } from '@/plugins/store';
 import { slugify } from '@/utils/string';
 
-const levels = ['h2', 'h3'];
-
 export default {
   name: 'PageNavigation',
   computed: {
@@ -25,16 +23,7 @@ export default {
         return [];
       }
 
-      return store.currentDoc.body.children
-        .filter(node => levels.includes(node.tag))
-        .map(heading => {
-          const text = (heading.children.find(node => node.type === 'text') || { value: heading }).value;
-          return {
-            text,
-            id: slugify(text),
-            level: Number(heading.tag.replace('h', '')),
-          };
-        });
+      return store.currentDoc.toc;
     },
   },
 };
