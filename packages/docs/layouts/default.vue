@@ -3,6 +3,7 @@
     <TheHeader />
     <div class="App">
       <main class="main">
+        <Ad />
         <Nuxt />
       </main>
 
