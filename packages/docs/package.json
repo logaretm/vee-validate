@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "nuxt dev",
     "serve": "nuxt dev",
-    "build": "nuxt generate"
+    "build": "nuxt export"
   },
   "dependencies": {
     "@nuxt/content": "^1.4.1",
