@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { store } from '@/plugins/store';
+import { store } from '@/plugins/appstate';
 import { slugify } from '@/utils/string';
 
 export default {

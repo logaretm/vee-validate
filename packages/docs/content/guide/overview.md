@@ -55,8 +55,10 @@ include the script directly
 
 <!-- TODO: Script tag tutorial -->
 
-:::tip
+<doc-tip>
+ 
 All Examples from now on will use the ES2015 syntax, make sure to brush up on ES2015 if you haven't already.
-:::
+
+</doc-tip>
 
 <!-- TODO: Add basic example of entire form and a gist -->

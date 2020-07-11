@@ -9,7 +9,7 @@
         d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"
       ></path>
     </svg>
-    <input id="algolia-search-input" class="h-full w-full" :placeholder="placeholder" />
+    <input id="algolia-search-input" class="h-full w-full" placeholder="Search the docs" />
   </form>
 </template>
 
@@ -73,14 +73,25 @@ export default {
   &:hover {
     @apply outline-none;
   }
+
+  &::placeholder {
+    @apply text-dark opacity-50;
+  }
 }
 #search-form {
+  @apply border-2 border-transparent;
   @screen motion {
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
   }
 
   &:focus-within {
-    @apply bg-white;
+    @apply bg-white border-accent;
+  }
+}
+
+.is-light {
+  #search-form {
+    @apply bg-gray-lighter;
   }
 }
 

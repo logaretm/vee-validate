@@ -1,13 +1,13 @@
 <template>
   <div
-    class="p-6 rounded my-8 border-l-4 bg-black"
+    class="p-6 rounded my-8 border-l-4 bg-black light-mode:bg-gray-lighter"
     :class="{
       'border-accent-darker': type === 'tip',
       'border-warning': type === 'warn',
       'border-error': type === 'error',
     }"
   >
-    <h4 class="font-bold text-lg mb-4">{{ title }}</h4>
+    <h4 v-if="title" class="font-bold text-lg mb-4">{{ title }}</h4>
 
     <slot />
   </div>
