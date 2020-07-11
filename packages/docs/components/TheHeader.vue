@@ -1,5 +1,5 @@
 <template>
-  <header class="flex items-center py-3 px-6 lg:px-0 relative">
+  <header class="flex items-center pt-6 pb-3 px-6 lg:px-0 relative">
     <nuxt-link class="mr-auto" to="/">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 858.42 693.79" class="h-10 w-10 lg:w-12 lg:h-12">
         <defs>
@@ -51,10 +51,8 @@ export default {
 header {
   grid-area: header;
 
-  width: 80vw;
-  @apply mx-auto;
-
   @screen lg {
+    @apply mx-auto;
     width: calc(50rem);
   }
 }
