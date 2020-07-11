@@ -25,11 +25,13 @@
       <SideMenuButton class="ml-auto block lg:hidden relative z-30" v-model="isMenuOpen" />
       <SideMenu v-model="isMenuOpen" />
 
+      <VersionSwitcher />
+
       <a
         href="https://github.com/logaretm/vee-validate"
         target="_blank"
         rel="noopener"
-        class="transition-opacity opacity-50 dark-mode:text-white hover:opacity-100 text-dark duration-200 hidden lg:block"
+        class="ml-4 transition-opacity opacity-50 dark-mode:text-white hover:opacity-100 text-dark duration-200 hidden lg:block"
       >
         <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
           <title>GitHub</title>
