@@ -9,7 +9,7 @@
     </main>
 
     <div class="rside hidden lg:block">
-      <PageNavigation class="sticky top-0" />
+      <DocToc class="sticky top-0" />
     </div>
   </div>
 </template>
