@@ -1,6 +1,15 @@
 <template>
-  <form id="search-form" role="search" class="w-full px-6">
-    <input id="algolia-search-input" class="w-full h-8 rounded bg-gray" :placeholder="placeholder" />
+  <form id="search-form" role="search" class="px-4 mx-8 relative flex items-center w-full h-10 rounded bg-gray">
+    <svg
+      class="fill-current text-dark pointer-events-none text-gray-600 w-4 h-4 absolute z-10"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+    >
+      <path
+        d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"
+      ></path>
+    </svg>
+    <input id="algolia-search-input" class="h-full w-full" :placeholder="placeholder" />
   </form>
 </template>
 
@@ -59,21 +68,24 @@ export default {
 
 <style lang="postcss" scoped>
 #algolia-search-input {
-  @apply px-4 text-black outline-none;
-  @screen motion {
-    transition: background-color 0.2s ease-in-out;
-  }
+  @apply px-8 text-dark outline-none bg-transparent;
 
   &:hover {
     @apply outline-none;
   }
+}
+#search-form {
+  @screen motion {
+    transition: background-color 0.2s ease-in-out;
+  }
 
-  &:focus {
+  &:focus-within {
     @apply bg-white;
   }
 }
 
 >>> .algolia-autocomplete {
   display: block !important;
+  @apply w-full;
 }
 </style>
