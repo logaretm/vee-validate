@@ -9,7 +9,6 @@ import {
   ValidationFlags,
 } from './types';
 import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId } from './utils';
-import { isCallable } from '../../shared';
 
 interface FieldOptions {
   value: Ref<any>;
