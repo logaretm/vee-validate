@@ -3,7 +3,7 @@
     <nav>
       <p class="font-bold text-xs uppercase text-gray">On this page</p>
       <ul class="mt-4 space-y-1 text-sm">
-        <li v-for="heading in headings" :key="heading.id" :class="{ 'ml-4': heading.level === 3 }">
+        <li v-for="heading in headings" :key="heading.id" :class="{ 'ml-4': heading.depth === 3 }">
           <a class="inline-block py-1" :href="`#${heading.id}`">{{ heading.text }}</a>
         </li>
       </ul>
