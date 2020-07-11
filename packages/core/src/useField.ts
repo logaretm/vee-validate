@@ -82,8 +82,8 @@ export function useField(
     handleChange,
     onBlur,
     disabled,
-    __setRules(fn: GenericValidateFunction | string | Record<string, any>) {
-      schemaValidation = fn;
+    __setRules(schemaRules: GenericValidateFunction | string | Record<string, any>) {
+      schemaValidation = schemaRules;
     },
   };
 
