@@ -106,17 +106,19 @@ export default {
     @apply rounded-lg my-4 block shadow-lg;
   }
 
-  /* code:not([class]) {
-  @apply px-2 text-white;
-  background: rgb(9, 168, 132);
-  background: linear-gradient(90deg, rgba(9, 168, 132, 1) 0%, rgba(40, 130, 130, 1) 100%);
-}
-
-.is-light {
-  code:not([class]) {
-    @apply text-white;
+  *:not(pre) > code:not([class]) {
+    @apply px-2 text-white;
+    background: rgb(9, 168, 132);
+    background: linear-gradient(to right, #009f53, #05b769);
   }
-} */
+
+  details {
+    @apply my-10 border-l-4 border-accent-darker pl-3;
+
+    summary {
+      @apply mb-8;
+    }
+  }
 
   code[class*='language-'],
   pre[class*='language-'] {
