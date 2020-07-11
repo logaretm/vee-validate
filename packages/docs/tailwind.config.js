@@ -29,7 +29,6 @@ module.exports = {
         '6xl': 'calc(1em + 2.8vw)',
       },
       colors: {
-        error: '#cf6679',
         'dark-light': '#151518',
         dark: 'hsl(240 6% 9%)',
         gray: '#a2a2a2',
@@ -37,6 +36,9 @@ module.exports = {
         accent: '#06d77b',
         'accent-lighter': '#7bffc5',
         'accent-darker': '#009f53',
+
+        warning: 'hsl(33deg 100% 77%)',
+        error: '#cf6679',
       },
       screens: {
         motion: { raw: '(prefers-reduced-motion: no-preference)' },
