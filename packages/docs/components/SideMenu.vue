@@ -45,12 +45,12 @@ export default {
 
 <style lang="postcss" scoped>
 .SideMenu {
-  @apply fixed h-screen w-screen inset-0 z-20 overflow-y-auto bg-dark flex flex-col;
+  @apply fixed h-screen w-screen inset-0 z-20 overflow-y-auto bg-white text-dark flex flex-col;
 }
 
-.is-light {
+.is-dark {
   .SideMenu {
-    @apply bg-white text-dark;
+    @apply bg-dark text-white;
   }
 }
 

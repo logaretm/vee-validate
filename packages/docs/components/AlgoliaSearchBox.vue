@@ -1,5 +1,9 @@
 <template>
-  <form id="search-form" role="search" class="px-4 mx-8 relative flex items-center w-full h-10 rounded bg-gray">
+  <form
+    id="search-form"
+    role="search"
+    class="px-4 mx-8 relative flex items-center w-full h-10 rounded bg-gray-lighter dark-mode:bg-gray"
+  >
     <svg
       class="fill-current text-dark pointer-events-none text-gray-600 w-4 h-4 absolute z-10"
       xmlns="http://www.w3.org/2000/svg"
@@ -86,12 +90,6 @@ export default {
 
   &:focus-within {
     @apply bg-white border-accent;
-  }
-}
-
-.is-light {
-  #search-form {
-    @apply bg-gray-lighter;
   }
 }
 

@@ -50,15 +50,15 @@ module.exports = {
     },
   },
   variants: {
-    backgroundColor: ['responsive', 'hover', 'focus', 'light-mode'],
-    textColor: ['responsive', 'hover', 'focus', 'light-mode'],
-    borderColor: ['responsive', 'hover', 'focus', 'light-mode'],
+    backgroundColor: ['responsive', 'hover', 'focus', 'dark-mode'],
+    textColor: ['responsive', 'hover', 'focus', 'dark-mode'],
+    borderColor: ['responsive', 'hover', 'focus', 'dark-mode'],
   },
   plugins: [
     plugin(function ({ addVariant, e }) {
-      addVariant('light-mode', ({ modifySelectors, separator }) => {
+      addVariant('dark-mode', ({ modifySelectors, separator }) => {
         modifySelectors(({ className }) => {
-          return `.is-light .${e(`light-mode${separator}${className}`)}`;
+          return `.is-dark .${e(`dark-mode${separator}${className}`)}`;
         });
       });
     }),

@@ -59,7 +59,7 @@ export default {
   content: '';
   width: 100%;
   border-radius: 0.25em;
-  background-color: white;
+  background-color: #000;
   height: 0.25em;
   position: absolute;
   -webkit-transform: rotate(0);
@@ -67,11 +67,11 @@ export default {
   transform: rotate(0);
 }
 
-.is-light {
+.is-dark {
   .burger .burger-lines,
   .burger .burger-lines:after,
   .burger .burger-lines:before {
-    background-color: #000;
+    background-color: #fff;
   }
 }
 

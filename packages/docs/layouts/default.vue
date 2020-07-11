@@ -18,7 +18,7 @@
 
 <style lang="postcss">
 .App {
-  @apply w-full min-h-full bg-dark text-white;
+  @apply w-full min-h-full bg-white text-dark;
   display: grid;
   grid-template-areas:
     'header header header'
@@ -42,9 +42,9 @@
   grid-area: lside;
 }
 
-.is-light {
+.is-dark {
   .App {
-    @apply bg-white text-dark;
+    @apply bg-dark text-white;
   }
 }
 

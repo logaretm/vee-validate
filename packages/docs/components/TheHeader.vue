@@ -1,6 +1,6 @@
 <template>
   <header
-    class="pt-6 pb-3 px-6 lg:px-0 sticky top-0 bg-dark light-mode:bg-white z-20 border-b border-carbon light-mode:border-gray-lighter"
+    class="pt-6 pb-3 px-6 lg:px-0 sticky top-0 dark-mode:bg-dark bg-white z-20 border-b dark-mode:border-carbon border-gray-lighter"
   >
     <div class="flex items-center header__content">
       <nuxt-link class="mr-auto" to="/">
@@ -29,7 +29,7 @@
         href="https://github.com/logaretm/vee-validate"
         target="_blank"
         rel="noopener"
-        class="transition-opacity opacity-50 text-white hover:opacity-100 light-mode:text-dark duration-200 hidden lg:block"
+        class="transition-opacity opacity-50 dark-mode:text-white hover:opacity-100 text-dark duration-200 hidden lg:block"
       >
         <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
           <title>GitHub</title>

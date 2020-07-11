@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 const store = Vue.observable({
   currentDoc: null,
-  theme: 'dark',
+  theme: 'light',
 });
 
 export function initStore() {
@@ -10,13 +10,13 @@ export function initStore() {
   let theme;
   // no dark setting, get it from browser
   if (!themeSetting) {
-    const wantsLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-    theme = wantsLight ? 'light' : 'dark';
+    const wantsDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    theme = wantsDark ? 'dark' : 'light';
   } else {
     theme = themeSetting;
   }
 
-  document.body.classList.toggle('is-light', theme === 'light');
+  document.body.classList.toggle('is-dark', theme === 'dark');
   store.theme = theme;
 }
 

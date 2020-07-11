@@ -88,14 +88,6 @@ export default {
     @apply py-4 rounded-r-lg pl-4 bg-black border-l-4 border-accent italic my-8 text-lg;
   }
 
-  .is-light {
-    .content {
-      blockquote {
-        @apply bg-gray-lighter;
-      }
-    }
-  }
-
   button {
     &.is-saved {
       @apply opacity-50 pointer-events-none;

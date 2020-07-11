@@ -1,5 +1,5 @@
 <template>
-  <button @click="isDark = !isDark" class="opacity-50 transition-opacity duration-200 hover:opacity-100">
+  <button @click="isDark = !isDark" class="opacity-50 transition-opacity duration-200 hover:opacity-100i">
     <transition name="popup" mode="out-in">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +52,7 @@ export default {
       set(value) {
         store.theme = value ? 'dark' : 'light';
         localStorage.setItem('theme', store.theme);
-        document.body.classList.toggle('is-light', !value);
+        document.body.classList.toggle('is-dark', value);
       },
     },
   },
