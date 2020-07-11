@@ -35,6 +35,7 @@ module.exports = {
         'dark-light': '#151518',
         dark: 'hsl(240 6% 9%)',
         gray: '#a2a2a2',
+        carbon: '#333',
         'gray-lighter': '#e8e8e8',
         accent: '#06d77b',
         'accent-lighter': '#7bffc5',
@@ -51,6 +52,7 @@ module.exports = {
   variants: {
     backgroundColor: ['responsive', 'hover', 'focus', 'light-mode'],
     textColor: ['responsive', 'hover', 'focus', 'light-mode'],
+    borderColor: ['responsive', 'hover', 'focus', 'light-mode'],
   },
   plugins: [
     plugin(function ({ addVariant, e }) {

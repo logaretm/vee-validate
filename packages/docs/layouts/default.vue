@@ -1,12 +1,14 @@
 <template>
   <div class="App">
-    <div class="lside hidden lg:block">
-      <DocMenu class="sticky top-0" />
-    </div>
     <TheHeader />
+
     <main class="main">
       <Nuxt />
     </main>
+
+    <div class="lside hidden lg:block">
+      <DocMenu class="sticky top-0" />
+    </div>
 
     <div class="rside hidden lg:block">
       <DocToc class="sticky top-0" />

@@ -1,5 +1,5 @@
 <template>
-  <button @click="isDark = !isDark">
+  <button @click="isDark = !isDark" class="opacity-50 transition-opacity duration-200 hover:opacity-100">
     <transition name="popup" mode="out-in">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -8,7 +8,7 @@
         width="24"
         height="24"
         viewBox="0 0 24 24"
-        class="fill-current text-gray"
+        class="fill-current text-white"
         v-if="isDark"
       >
         <title>Dark Mode</title>
@@ -26,7 +26,7 @@
         width="24"
         height="24"
         viewBox="0 0 24 24"
-        class="fill-current text-dark-light"
+        class="fill-current text-dark"
         v-if="!isDark"
       >
         <title>Light Mode</title>
