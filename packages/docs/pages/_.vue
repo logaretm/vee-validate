@@ -33,31 +33,34 @@ export default {
 };
 </script>
 
-<style lang="postcss">
-h1 {
-  @apply text-6xl;
-}
-h2 {
-  @apply text-2xl;
-}
+<style lang="postcss" scoped>
+* >>> {
+  h1 {
+    @apply text-4xl mb-8;
+  }
 
-h3 {
-  @apply text-xl;
-}
+  h2 {
+    @apply text-2xl;
+  }
 
-h1,
-h2,
-h3 {
-  @apply font-display;
-}
+  h3 {
+    @apply text-xl;
+  }
 
-h2,
-h3 {
-  @apply font-semibold mb-3 mt-5 relative;
-  &::before {
-    @apply absolute text-accent;
-    margin-left: -2ch;
-    content: '#';
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+
+  h2,
+  h3 {
+    @apply font-semibold my-5 relative;
+    &::before {
+      @apply absolute text-accent;
+      margin-left: -2ch;
+      content: '#';
+    }
   }
 
   p + p {
@@ -66,33 +69,44 @@ h3 {
 
   ul {
     @apply px-8 my-4;
-    list-style: initial;
+
+    li + li {
+      @apply mt-2;
+    }
+
+    li {
+      @apply relative flex items-center;
+      &:before {
+        @apply w-5 h-5 absolute rounded-full flex text-accent-darker bg-accent-lighter items-center justify-center;
+        content: '✓';
+        left: -2rem;
+      }
+    }
   }
 
   blockquote {
     @apply py-4 rounded-r-lg pl-4 bg-black border-l-4 border-accent italic my-8 text-lg;
   }
-}
 
-.is-light {
-  .content {
-    blockquote {
-      @apply bg-gray-lighter;
+  .is-light {
+    .content {
+      blockquote {
+        @apply bg-gray-lighter;
+      }
     }
   }
-}
 
-button {
-  &.is-saved {
-    @apply opacity-50 pointer-events-none;
+  button {
+    &.is-saved {
+      @apply opacity-50 pointer-events-none;
+    }
   }
-}
 
-pre[class*='language-'] {
-  @apply rounded-lg my-4 block shadow-lg;
-}
+  pre[class*='language-'] {
+    @apply rounded-lg my-4 block shadow-lg;
+  }
 
-/* code:not([class]) {
+  /* code:not([class]) {
   @apply px-2 text-white;
   background: rgb(9, 168, 132);
   background: linear-gradient(90deg, rgba(9, 168, 132, 1) 0%, rgba(40, 130, 130, 1) 100%);
@@ -104,156 +118,157 @@ pre[class*='language-'] {
   }
 } */
 
-code[class*='language-'],
-pre[class*='language-'] {
-  background-color: #070707;
-  text-shadow: none;
-  color: #d6deeb;
-  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-  text-align: left;
-  white-space: pre;
-  word-spacing: normal;
-  word-break: normal;
-  word-wrap: normal;
-  line-height: 1.5;
-
-  -moz-tab-size: 4;
-  -o-tab-size: 4;
-  tab-size: 4;
-
-  -webkit-hyphens: none;
-  -moz-hyphens: none;
-  -ms-hyphens: none;
-  hyphens: none;
-}
-
-pre[class*='language-']::-moz-selection,
-pre[class*='language-'] ::-moz-selection,
-code[class*='language-']::-moz-selection,
-code[class*='language-'] ::-moz-selection {
-  text-shadow: none;
-  background: rgba(29, 59, 83, 0.99);
-}
-
-pre[class*='language-']::selection,
-pre[class*='language-'] ::selection,
-code[class*='language-']::selection,
-code[class*='language-'] ::selection {
-  text-shadow: none;
-  background: rgba(29, 59, 83, 0.99);
-}
-
-@media print {
   code[class*='language-'],
   pre[class*='language-'] {
+    background-color: #070707;
     text-shadow: none;
+    color: #d6deeb;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
   }
-}
 
-/* Code blocks */
-pre {
-  padding: 1em;
-  margin: 0.5em 0;
-  overflow: auto;
-}
+  pre[class*='language-']::-moz-selection,
+  pre[class*='language-'] ::-moz-selection,
+  code[class*='language-']::-moz-selection,
+  code[class*='language-'] ::-moz-selection {
+    text-shadow: none;
+    background: rgba(29, 59, 83, 0.99);
+  }
 
-:not(pre) > code,
-pre {
-  color: white;
-  background: #011627;
-}
+  pre[class*='language-']::selection,
+  pre[class*='language-'] ::selection,
+  code[class*='language-']::selection,
+  code[class*='language-'] ::selection {
+    text-shadow: none;
+    background: rgba(29, 59, 83, 0.99);
+  }
 
-:not(pre) > code {
-  padding: 0.1em;
-  border-radius: 0.3em;
-  white-space: normal;
-}
+  @media print {
+    code[class*='language-'],
+    pre[class*='language-'] {
+      text-shadow: none;
+    }
+  }
 
-.token.comment,
-.token.prolog,
-.token.cdata {
-  color: rgb(99, 119, 119);
-  font-style: italic;
-}
+  /* Code blocks */
+  pre {
+    padding: 1em;
+    margin: 0.5em 0;
+    overflow: auto;
+  }
 
-.token.punctuation {
-  color: rgb(199, 146, 234);
-}
+  :not(pre) > code,
+  pre {
+    color: white;
+    background: #011627;
+  }
 
-.namespace {
-  color: rgb(178, 204, 214);
-}
+  :not(pre) > code {
+    padding: 0.1em;
+    border-radius: 0.3em;
+    white-space: normal;
+  }
 
-.token.deleted {
-  color: rgba(239, 83, 80, 0.56);
-  font-style: italic;
-}
+  .token.comment,
+  .token.prolog,
+  .token.cdata {
+    color: rgb(99, 119, 119);
+    font-style: italic;
+  }
 
-.token.symbol,
-.token.property {
-  color: rgb(128, 203, 196);
-}
+  .token.punctuation {
+    color: rgb(199, 146, 234);
+  }
 
-.token.tag,
-.token.operator,
-.token.keyword {
-  color: rgb(127, 219, 202);
-  background: transparent;
-}
+  .namespace {
+    color: rgb(178, 204, 214);
+  }
 
-.token.boolean {
-  color: rgb(255, 88, 116);
-}
+  .token.deleted {
+    color: rgba(239, 83, 80, 0.56);
+    font-style: italic;
+  }
 
-.token.number {
-  color: rgb(247, 140, 108);
-}
+  .token.symbol,
+  .token.property {
+    color: rgb(128, 203, 196);
+  }
 
-.token.constant,
-.token.function,
-.token.builtin,
-.token.char {
-  color: rgb(130, 170, 255);
-}
+  .token.tag,
+  .token.operator,
+  .token.keyword {
+    color: rgb(127, 219, 202);
+    background: transparent;
+  }
 
-.token.selector,
-.token.doctype {
-  color: rgb(199, 146, 234);
-  font-style: italic;
-}
+  .token.boolean {
+    color: rgb(255, 88, 116);
+  }
 
-.token.attr-name,
-.token.inserted {
-  color: rgb(173, 219, 103);
-  font-style: italic;
-}
+  .token.number {
+    color: rgb(247, 140, 108);
+  }
 
-.token.string,
-.token.url,
-.token.entity,
-.language-css .token.string,
-.style .token.string {
-  color: rgb(173, 219, 103);
-}
+  .token.constant,
+  .token.function,
+  .token.builtin,
+  .token.char {
+    color: rgb(130, 170, 255);
+  }
 
-.token.class-name,
-.token.atrule,
-.token.attr-value {
-  color: rgb(255, 203, 139);
-}
+  .token.selector,
+  .token.doctype {
+    color: rgb(199, 146, 234);
+    font-style: italic;
+  }
 
-.token.regex,
-.token.important,
-.token.variable {
-  color: rgb(214, 222, 235);
-}
+  .token.attr-name,
+  .token.inserted {
+    color: rgb(173, 219, 103);
+    font-style: italic;
+  }
 
-.token.important,
-.token.bold {
-  font-weight: bold;
-}
+  .token.string,
+  .token.url,
+  .token.entity,
+  .language-css .token.string,
+  .style .token.string {
+    color: rgb(173, 219, 103);
+  }
 
-.token.italic {
-  font-style: italic;
+  .token.class-name,
+  .token.atrule,
+  .token.attr-value {
+    color: rgb(255, 203, 139);
+  }
+
+  .token.regex,
+  .token.important,
+  .token.variable {
+    color: rgb(214, 222, 235);
+  }
+
+  .token.important,
+  .token.bold {
+    font-weight: bold;
+  }
+
+  .token.italic {
+    font-style: italic;
+  }
 }
 </style>

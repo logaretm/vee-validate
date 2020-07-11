@@ -35,6 +35,8 @@ module.exports = {
         gray: '#a2a2a2',
         'gray-lighter': '#e8e8e8',
         accent: '#06d77b',
+        'accent-lighter': '#7bffc5',
+        'accent-darker': '#009f53',
       },
       screens: {
         motion: { raw: '(prefers-reduced-motion: no-preference)' },
