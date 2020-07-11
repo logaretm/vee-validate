@@ -7,7 +7,7 @@
           :class="{ 'is-active': showSource }"
           :title="showSource ? 'Hide Source' : 'Show Source'"
         >
-          <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+          <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
             <path
               fill="#fff"
               d="M12.89,3L14.85,3.4L11.11,21L9.15,20.6L12.89,3M19.59,12L16,8.41V5.58L22.42,12L16,18.41V15.58L19.59,12M1.58,12L8,5.58V8.41L4.41,12L8,15.58V18.41L1.58,12Z"
@@ -76,13 +76,8 @@
           <slot name="source"></slot>
         </div>
       </Transition>
-      <button
-        class="Example__Source--copy-btn"
-        v-if="showSource"
-        title="Copy Snippet"
-        @click="copy"
-      >
-        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+      <button class="Example__Source--copy-btn" v-if="showSource" title="Copy Snippet" @click="copy">
+        <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
           <path
             d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"
           />
@@ -97,23 +92,21 @@
 </template>
 
 <script>
-import { makeExample } from '../codesandbox';
-
 export default {
   name: 'Example',
   props: {
     name: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data: () => ({
-    showSource: false
+    showSource: false,
   }),
   computed: {
     loadedComponent() {
       return () => import(`../examples/${this.name}.vue`);
-    }
+    },
   },
   methods: {
     codepen() {
@@ -152,8 +145,8 @@ export default {
 
       document.getSelection().removeAllRanges();
       document.getSelection().addRange(selected);
-    }
-  }
+    },
+  },
 };
 </script>
 

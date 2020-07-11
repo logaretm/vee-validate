@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "nuxt dev",
+    "build": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxt/content": "^1.4.1",
+    "@nuxtjs/pwa": "^3.0.0-beta.20",
+    "@nuxtjs/tailwindcss": "^2.0.0",
+    "nuxt": "^2.13.3"
+  },
+  "devDependencies": {
+    "markdown-it-custom-block": "^0.1.1"
+  }
+}

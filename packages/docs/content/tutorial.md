@@ -1,3 +1,7 @@
+---
+title: Validation Basics
+---
+
 # Validation Basics
 
 VeeValidate offers many ways to do form validation, this tutorial will teach you how to do basic form validation using the simplest approach.
