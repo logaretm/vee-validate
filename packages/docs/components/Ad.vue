@@ -91,11 +91,10 @@ export default {
 @screen lg {
   #ad {
     @apply fixed rounded;
-    margin-left: 1vw;
     width: 130px;
     z-index: 19;
     bottom: 2rem;
-    left: 0;
+    left: calc((100% - 45rem - 100px) / 2 - 80px);
     background-color: #fff;
     font-size: 13px;
     #carbonads {
@@ -129,7 +128,8 @@ export default {
     width: 220px;
     margin-left: 0;
     left: unset;
-    right: 0;
+    float: unset;
+    right: calc((100% - 45rem) / 2 - 290px);
   }
 }
 

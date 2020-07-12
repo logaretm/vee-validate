@@ -33,19 +33,25 @@
   max-width: 1300px;
   @apply mx-auto;
   grid-template-areas:
-    'lside content rside'
-    'footer footer footer';
+    'content'
+    'footer';
   display: grid;
   grid-template-rows: 1fr auto;
   grid-gap: 20px;
-  grid-template-columns: 1fr auto 1fr;
 
   @screen lg {
-    column-gap: 50px;
+    grid-template-areas:
+      'lside content rside'
+      'footer footer footer';
+    grid-template-columns: 1.5fr 45rem 0.5fr;
+    column-gap: 70px;
   }
 
   @screen xl {
-    column-gap: 70px;
+    grid-template-areas:
+      'lside content rside'
+      'footer footer footer';
+    grid-template-columns: 1fr 45rem 1fr;
   }
 }
 
@@ -55,21 +61,7 @@
 }
 
 .main {
-  grid-area: content;
-  width: 80vw;
-  @apply mx-auto pt-16;
-}
-
-@screen md {
-  .main {
-    width: 70vw;
-  }
-}
-
-@screen lg {
-  .main {
-    width: 45rem;
-  }
+  @apply pt-16;
 }
 
 .fade-enter-active,
