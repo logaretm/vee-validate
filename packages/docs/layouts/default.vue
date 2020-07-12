@@ -61,7 +61,11 @@
 }
 
 .main {
-  @apply pt-16;
+  @apply pt-16 px-6 min-w-0;
+
+  @screen lg {
+    @apply px-0;
+  }
 }
 
 .fade-enter-active,

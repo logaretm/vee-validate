@@ -56,10 +56,15 @@ export default {
   h2,
   h3 {
     @apply font-semibold my-5 relative;
+    transform: translateX(2ch);
     &::before {
       @apply absolute text-accent;
       margin-left: -2ch;
       content: '#';
+    }
+
+    @screen lg {
+      transform: none;
     }
   }
 
