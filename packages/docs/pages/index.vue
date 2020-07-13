@@ -11,6 +11,13 @@
           <p class="mt-2">{{ feature.details }}</p>
         </div>
       </div>
+
+      <div class="mt-16 grid grid-cols-3 col-gap-4">
+        <nuxt-link class="block mt-8 bg-accent-darker p-4 text-white rounded-lg font-bold text-center" to="/guide/overview">📚 Getting Started</nuxt-link>
+        <nuxt-link class="block mt-8 bg-warning p-4 text-dark rounded-lg font-bold text-center" to="/tutorial">⏰ 10 Minute Tutorial</nuxt-link>
+        <nuxt-link class="block mt-8 bg-error p-4 text-dark rounded-lg font-bold text-center" to="/tutorial">🧪 Examples</nuxt-link>
+      </div>
+
     </div>
 
     <ContentWrapper :document="page" />
