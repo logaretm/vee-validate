@@ -1,22 +1,34 @@
 <template>
   <div class="AppWrapper">
     <TheHeader />
-    <div class="App">
+    <div class="App" :class="{ 'is-home': isHome }">
       <main class="main">
         <Ad />
         <Nuxt />
       </main>
 
-      <div class="lside hidden lg:block">
+      <div class="lside hidden lg:block" v-if="!isHome">
         <DocMenu class="sticky top-0" />
       </div>
 
-      <div class="rside hidden xl:block">
+      <div class="rside hidden xl:block" v-if="!isHome">
         <DocToc class="sticky top-0" />
       </div>
     </div>
   </div>
 </template>
+
+<script>
+import { store } from '@/plugins/appstate';
+
+export default {
+  computed: {
+    isHome() {
+      return store.currentDoc && store.currentDoc.home;
+    },
+  },
+};
+</script>
 
 <style lang="postcss">
 .AppWrapper {
@@ -29,7 +41,7 @@
   }
 }
 
-.App {
+.App:not(.is-home) {
   max-width: 1300px;
   @apply mx-auto;
   grid-template-areas:
@@ -55,13 +67,18 @@
   }
 }
 
+.App.is-home {
+  max-width: 45rem;
+  @apply mx-auto;
+}
+
 .lside {
   @apply ml-auto;
   grid-area: lside;
 }
 
 .main {
-  @apply pt-16 px-6 min-w-0;
+  @apply py-12 px-6 min-w-0;
 
   @screen lg {
     @apply px-0;

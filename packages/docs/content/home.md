@@ -1,29 +1,20 @@
 ---
 title: VeeValidate
-lang: en-US
-home: true
+description: Template Based Validation for Vue.js
 heroImage: /logo.png
-actionText: Get Started →
-actionLink: ./guide/basics.md
+home: true
 features:
   - title: Simple
     details: Template based validation that is both familiar and easy to setup.
   - title: Flexible
     details: Validate HTML inputs and Vue components, generate localized errors, Extendable, It does it all.
-  - title: Configurable
-    details: Config that doesn't get into your way, everything is optional.
-footer: MIT Licensed | Copyright © 2020-present Abdelrahman Awad
-description: Template Based Form Validation for Vue.js
-meta:
-  - name: og:title
-    content: VeeValidate
-  - name: og:description
-    content: Template Based Form Validation for Vue.js
+  - title: ⚡️ Fast
+    details: Build faster forms faster with intuitive syntax
 ---
 
-# Quick Setup
+## Quick Setup
 
-## Installation
+### Installation
 
 ```bash
 # install with yarn
@@ -33,7 +24,7 @@ yarn add vee-validate
 npm install vee-validate --save
 ```
 
-## Usage
+### Usage
 
 Register the `Field` and `Form` components and create a simple `required` validator:
 
