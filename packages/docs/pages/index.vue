@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex flex-col items-center justify-center mb-16">
-      <img src="@/assets/logo.png" width="300" height="300" alt="" />
+      <img src="@/assets/img/logo.png" width="300" height="300" alt="" />
       <h1 class="mt-4 text-4xl font-bold font-display">{{ page.title }}</h1>
       <p class="mt-4 text-xl text-gray">{{ page.description }}</p>
 
