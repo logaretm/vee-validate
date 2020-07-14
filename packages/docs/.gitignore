@@ -1,3 +1,5 @@
 .nuxt
 dist
 node_modules
+
+sw.js

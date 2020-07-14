@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "nuxt dev",
     "serve": "nuxt dev",
-    "build": "nuxt export"
+    "build": "nuxt build --target static",
+    "export": "nuxt export"
   },
   "dependencies": {
     "@nuxt/content": "^1.4.1",

@@ -15,7 +15,8 @@
     "ts:bundle": "api-extractor run --local --verbose",
     "build": "node scripts/build.js",
     "cover": "jest --coverage",
-    "prepublishOnly": "npm run build && npm run ts:defs"
+    "prepublishOnly": "npm run build && npm run ts:defs",
+    "docs:deploy": "./scripts/deploy-docs.sh"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.1.1",
