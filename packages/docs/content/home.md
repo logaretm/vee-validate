@@ -1,7 +1,6 @@
 ---
 title: VeeValidate
 description: Template Based Validation for Vue.js
-heroImage: /logo.png
 home: true
 features:
   - title: Simple
@@ -51,10 +50,10 @@ new Vue({
 Then use the `Form` and `Field` components to render your form:
 
 ```html{1,4}
-<Form as="form" v-slot="{ errors }">
+<form as="form" v-slot="{ errors }">
   <Field name="field" as="input" :rules="isRequired" />
   <span>{{ errors.field }}</span>
-</Form>
+</form>
 ```
 
 And this is the result:

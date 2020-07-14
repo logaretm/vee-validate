@@ -3,7 +3,7 @@
     <nav class="space-y-8 text-sm">
       <div v-for="category in categories" :key="category.title">
         <p class="text-xs font-bold text-gray uppercase">{{ category.title }}</p>
-        <ul class="mt-1 space-y-2">
+        <ul class="mt-3 space-y-2">
           <li v-for="page in category.children" :key="page.title">
             <nuxt-link :to="page.path">{{ page.title }}</nuxt-link>
           </li>
@@ -20,15 +20,25 @@ export default {
     const categories = [
       {
         title: 'Guide',
-        content: ['/guide/overview'],
+        content: [
+          '/guide/overview',
+          '/guide/validation',
+          '/guide/handling-forms',
+          '/guide/i18n',
+          '/guide/rules-module',
+        ],
       },
       {
-        title: 'Tutorials',
-        content: ['/tutorial'],
+        title: 'Tutorials and Resources',
+        content: ['/tutorial', '/resources'],
       },
       {
         title: 'Configuration',
         content: ['/configuration'],
+      },
+      {
+        title: 'API Reference',
+        content: ['/api/field', '/api/form', '/api/error-message', '/api/use-field', '/api/use-form'],
       },
     ];
 
