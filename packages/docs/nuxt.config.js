@@ -1,5 +1,11 @@
+console.log(process.env.NODE_ENV);
+
 export default {
   mode: 'universal',
+
+  router: {
+    base: process.env.NODE_ENV === 'production' ? '/v4/' : '/',
+  },
 
   components: true,
 
@@ -26,7 +32,6 @@ export default {
       { name: 'msapplication-TileColor', content: '#ffffff' },
       { name: 'msapplication-TileImage', content: '/img/ms-icon-144x144.png' },
       { name: 'theme-color', content: '#41b883' },
-      { property: 'og:image', content: '/logo.png' },
     ],
 
     link: [

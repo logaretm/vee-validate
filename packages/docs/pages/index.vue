@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex flex-col items-center justify-center mb-16">
-      <img src="/logo.png" width="300" height="300" alt="" />
+      <img src="@/assets/logo.png" width="300" height="300" alt="" />
       <h1 class="mt-4 text-4xl font-bold font-display">{{ page.title }}</h1>
       <p class="mt-4 text-xl text-gray">{{ page.description }}</p>
 
@@ -13,11 +13,18 @@
       </div>
 
       <div class="mt-16 grid grid-cols-3 col-gap-4">
-        <nuxt-link class="block mt-8 bg-accent-darker p-4 text-white rounded-lg font-bold text-center" to="/guide/overview">📚 Getting Started</nuxt-link>
-        <nuxt-link class="block mt-8 bg-warning p-4 text-dark rounded-lg font-bold text-center" to="/tutorial">⏰ 10 Minute Tutorial</nuxt-link>
-        <nuxt-link class="block mt-8 bg-error p-4 text-dark rounded-lg font-bold text-center" to="/tutorial">🧪 Examples</nuxt-link>
+        <nuxt-link
+          class="block mt-8 bg-accent-darker p-4 text-white rounded-lg font-bold text-center"
+          to="/guide/overview"
+          >📚 Getting Started</nuxt-link
+        >
+        <nuxt-link class="block mt-8 bg-warning p-4 text-dark rounded-lg font-bold text-center" to="/tutorial"
+          >⏰ 10 Minute Tutorial</nuxt-link
+        >
+        <nuxt-link class="block mt-8 bg-error p-4 text-dark rounded-lg font-bold text-center" to="/tutorial"
+          >🧪 Examples</nuxt-link
+        >
       </div>
-
     </div>
 
     <ContentWrapper :document="page" />
