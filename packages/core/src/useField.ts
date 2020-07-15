@@ -26,7 +26,8 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
 export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
   const { value, form, immediate, bails, disabled } = normalizeOptions(opts);
   const { meta, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
-  let schemaValidation: GenericValidateFunction | string | Record<string, any>;
+  // eslint-disable-next-line prefer-const
+  let schemaValidation: GenericValidateFunction | string | Record<string, any> | undefined;
   const normalizedRules = computed(() => {
     return normalizeRules(schemaValidation || unwrap(rules));
   });
@@ -97,9 +98,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
   form.register(field);
 
   // set the rules if present in schema
-  if (form.schema?.[unwrap(fieldName)]) {
-    schemaValidation = form.schema[unwrap(fieldName)];
-  }
+  schemaValidation = extractRuleFromSchema(form.schema, unwrap(fieldName));
 
   // extract cross-field dependencies in a computed prop
   const dependencies = computed(() => {
@@ -269,4 +268,26 @@ function useAriAttrs(fieldName: MaybeReactive<string>, meta: Record<Flag, Ref<bo
       'aria-describedBy': genFieldErrorId(unwrap(fieldName)),
     };
   });
+}
+
+/**
+ * Extracts the validation rules from a schema
+ */
+function extractRuleFromSchema(schema: Record<string, any> | undefined, fieldName: string) {
+  // no schema at all
+  if (!schema) {
+    return undefined;
+  }
+
+  // a yup schema
+  if (schema.fields?.[fieldName]) {
+    return schema.fields?.[fieldName];
+  }
+
+  // there is a key on the schema object for this field
+  if (schema[fieldName]) {
+    return schema[fieldName];
+  }
+
+  return undefined;
 }

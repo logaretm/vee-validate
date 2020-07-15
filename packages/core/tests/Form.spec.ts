@@ -1,6 +1,7 @@
 import flushPromises from 'flush-promises';
 import { defineRule } from '@vee-validate/core';
 import { mountWithHoc, setValue } from './helpers';
+import * as yup from 'yup';
 
 describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
@@ -244,6 +245,40 @@ describe('<Form />', () => {
 
     expect(submitMock).toHaveBeenCalledTimes(1);
   });
+
+  // test('validation schema with yup', async () => {
+  //   const wrapper = mountWithHoc({
+  //     setup() {
+  //       const schema = yup.object().shape({
+  //         email: yup.string().email(),
+  //         password: yup.string().required().min(8),
+  //       });
+
+  //       return {
+  //         schema,
+  //       };
+  //     },
+  //     template: `
+  //     <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors }">
+  //       <Field name="field" as="input" />
+  //       <span id="field">{{ errors.field }}</span>
+
+  //       <Field name="other" as="input" />
+  //       <span id="other">{{ errors.other }}</span>
+
+  //       <button>Validate</button>
+  //     </VForm>
+  //   `,
+  //   });
+
+  //   const first = wrapper.$el.querySelector('#field');
+  //   const second = wrapper.$el.querySelector('#other');
+
+  //   await flushPromises();
+
+  //   expect(first.textContent).toBe('this is required');
+  //   expect(second.textContent).toBe('this is required');
+  // });
 
   test('validation schema to validate form', async () => {
     const wrapper = mountWithHoc({
