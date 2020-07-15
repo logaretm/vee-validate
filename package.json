@@ -21,6 +21,7 @@
   "devDependencies": {
     "@commitlint/cli": "^9.1.1",
     "@types/jest": "^26.0.4",
+    "@types/yup": "^0.29.3",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.6.1",
     "chalk": "^4.1.0",
@@ -53,7 +54,8 @@
     "tslint-config-standard": "^9.0.0",
     "typescript": "^3.9.3",
     "uglify-js": "^3.10.0",
-    "vue": "^3.0.0-beta.15"
+    "vue": "^3.0.0-beta.15",
+    "yup": "^0.29.1"
   },
   "peerDependencies": {
     "vue": "^3.0.0-beta.15"
