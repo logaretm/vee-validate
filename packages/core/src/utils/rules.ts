@@ -19,8 +19,8 @@ export function normalizeRules(rules: any): GenericValidateFunction | Record<str
     return acc;
   }
 
-  // If its a single validate function, leave as is.
-  if (isCallable(rules)) {
+  // If its a single validate function or a yup fn, leave as is.
+  if (isCallable(rules) || isCallable(rules && rules.validate)) {
     return rules;
   }
 

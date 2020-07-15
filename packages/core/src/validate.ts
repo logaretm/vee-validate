@@ -74,6 +74,10 @@ async function _validate(field: FieldValidationContext, value: any) {
     };
   }
 
+  if (isCallable(field.rules?.validate)) {
+    return validateWithYup(field, value);
+  }
+
   const errors: ReturnType<typeof _generateFieldError>[] = [];
   const rules = Object.keys(field.rules);
   const length = rules.length;
@@ -102,6 +106,32 @@ async function _validate(field: FieldValidationContext, value: any) {
 }
 
 /**
+ * Handles yup validation
+ */
+async function validateWithYup(field: FieldValidationContext, value: any) {
+  const result = await field.rules
+    .validate(value)
+    .then(() => true)
+    .catch((err: Error) => {
+      // Yup errors have a name prop one them.
+      // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+      if (err.name === 'ValidationError') {
+        return err.message;
+      }
+
+      // re-throw the error so we don't hide it
+      throw err;
+    });
+
+  const isValid = typeof result !== 'string' && result;
+
+  return {
+    valid: isValid,
+    errors: !isValid ? [{ msg: result, rule: '' }] : [],
+  };
+}
+
+/**
  * Tests a single input value against a rule.
  */
 async function _test(field: FieldValidationContext, value: any, rule: { name: string; params: Record<string, any> }) {
@@ -117,6 +147,7 @@ async function _test(field: FieldValidationContext, value: any, rule: { name: st
     form: field.crossTable,
     rule,
   };
+
   const result = await validator(value, params, ctx);
 
   if (typeof result === 'string') {

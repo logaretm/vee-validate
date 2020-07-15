@@ -1,6 +1,7 @@
 import flushPromises from 'flush-promises';
 import { defineRule } from '@vee-validate/core';
 import { mountWithHoc, setValue, dispatchEvent } from './helpers';
+import * as yup from 'yup';
 
 jest.useFakeTimers();
 
@@ -353,6 +354,39 @@ describe('<Field />', () => {
     await jest.advanceTimersByTime(50);
     await flushPromises();
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('yup rules can be used', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const rules = yup.string().required().min(8);
+
+        return {
+          rules,
+        };
+      },
+      template: `
+      <div>
+        <Field name="field" :rules="rules" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
+          <p>{{ errors[0] }}</p>
+        </Field>
+      </div>
+    `,
+    });
+
+    const input = wrapper.$el.querySelector('input');
+    const error = wrapper.$el.querySelector('p');
+
+    setValue(input, '');
+    await flushPromises();
+    expect(error.textContent).toBe('this is a required field');
+    setValue(input, '12');
+    await flushPromises();
+    expect(error.textContent).toBe('this must be at least 8 characters');
+    setValue(input, '12345678');
+    await flushPromises();
+    expect(error.textContent).toBe('');
   });
 
   test('avoids race conditions between successive validations', async () => {
