@@ -19,7 +19,7 @@ export default {
   async fetch() {
     const categories = [
       {
-        title: 'Guide',
+        title: 'Guides',
         content: [
           '/guide/overview',
           '/guide/validation',

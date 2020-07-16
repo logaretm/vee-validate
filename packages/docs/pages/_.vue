@@ -15,15 +15,15 @@ export default {
     };
   },
   mounted() {
-    function linkify(node) {
+    const linkify = node => {
       const anchor = document.createElement('a');
       const slug = slugify(node.textContent);
-      anchor.href = `#${slug}`;
+      anchor.href = `${this.$route.path}#${slug}`;
       anchor.textContent = node.textContent;
       node.id = slug;
       node.textContent = '';
       node.appendChild(anchor);
-    }
+    };
 
     Array.from(this.$el.querySelectorAll('h2')).forEach(linkify);
     Array.from(this.$el.querySelectorAll('h3')).forEach(linkify);

@@ -1,5 +1,5 @@
 ---
-title: 'Validation Guide'
+title: 'Validation'
 description: How validation works and field-level validations vs form-level validations
 ---
 
