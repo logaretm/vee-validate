@@ -22,6 +22,10 @@ export default {
     @apply text-xl;
   }
 
+  h4 {
+    @apply text-lg;
+  }
+
   h1,
   h2,
   h3 {
@@ -29,11 +33,12 @@ export default {
   }
 
   h2,
-  h3 {
-    @apply font-semibold my-5 relative;
+  h3,
+  h4 {
+    @apply font-semibold my-8 relative;
     transform: translateX(2ch);
     &::before {
-      @apply absolute text-accent;
+      @apply absolute text-accent-800;
       margin-left: -2ch;
       content: '#';
     }
@@ -48,24 +53,28 @@ export default {
   }
 
   ul {
-    @apply px-8 my-4;
+    @apply px-8 my-4 list-disc;
 
     li + li {
       @apply mt-2;
     }
+  }
 
-    li {
-      @apply relative flex items-center;
-      &:before {
-        @apply w-5 h-5 absolute rounded-full flex text-accent-darker bg-accent-lighter items-center justify-center;
-        content: '✓';
-        left: -2rem;
+  .features {
+    ul {
+      li {
+        @apply relative flex items-center;
+        &:before {
+          @apply w-5 h-5 absolute rounded-full flex text-accent-900 bg-accent-100 items-center justify-center;
+          content: '✓';
+          left: -2rem;
+        }
       }
     }
   }
 
   blockquote {
-    @apply py-4 rounded-r-lg pl-4 bg-black border-l-4 border-accent italic my-8 text-lg;
+    @apply py-4 rounded-r-lg pl-4 bg-black border-l-4 border-accent-800 italic my-8 text-lg;
   }
 
   pre[class*='language-'] {
@@ -73,16 +82,24 @@ export default {
   }
 
   *:not(pre) > code:not([class]) {
-    @apply px-2 text-white;
-    background: rgb(9, 168, 132);
-    background: linear-gradient(to right, #009f53, #05b769);
+    @apply px-1;
   }
 
   details {
-    @apply my-10 border-l-4 border-accent-darker pl-3;
+    @apply my-10 border-l-4 border-accent-900 pl-3;
 
     summary {
       @apply mb-8;
+    }
+  }
+
+  p {
+    a[href] {
+      @apply text-accent-800;
+
+      &:hover {
+        @apply text-accent-900;
+      }
     }
   }
 

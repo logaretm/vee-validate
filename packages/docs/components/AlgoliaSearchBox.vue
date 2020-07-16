@@ -2,7 +2,7 @@
   <form
     id="search-form"
     role="search"
-    class="px-4 mx-8 relative flex items-center w-full h-10 rounded bg-gray-lighter dark-mode:bg-gray"
+    class="px-4 mx-8 relative flex items-center w-full h-10 rounded bg-gray-700 dark-mode:bg-gray-800"
   >
     <svg
       class="fill-current text-dark pointer-events-none text-gray-600 w-4 h-4 absolute z-10"
@@ -89,7 +89,7 @@ export default {
   }
 
   &:focus-within {
-    @apply bg-white border-accent;
+    @apply bg-white border-accent-800;
   }
 }
 

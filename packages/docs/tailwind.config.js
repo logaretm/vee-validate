@@ -34,15 +34,16 @@ module.exports = {
       colors: {
         'dark-light': '#151518',
         dark: 'hsl(240 6% 9%)',
-        gray: '#a2a2a2',
         carbon: '#333',
-        'gray-lighter': '#e8e8e8',
-        accent: '#06d77b',
-        'accent-lighter': '#7bffc5',
-        'accent-darker': '#009f53',
+        'accent-900': '#009f53',
+        'accent-800': '#06d77b',
+        'accent-100': '#7bffc5',
 
         warning: 'hsl(33deg 100% 77%)',
         error: '#cf6679',
+
+        'gray-800': '#a2a2a2',
+        'gray-700': '#e8e8e8',
       },
       screens: {
         motion: { raw: '(prefers-reduced-motion: no-preference)' },

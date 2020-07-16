@@ -33,7 +33,7 @@ export default {
 
 <style lang="postcss">
 #ad {
-  @apply static text-gray;
+  @apply static text-gray-800;
   margin-top: 3.6rem;
   z-index: 1;
   float: right;

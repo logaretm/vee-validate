@@ -75,11 +75,11 @@ nav {
     }
 
     &:hover {
-      @apply text-accent;
+      @apply text-accent-800;
     }
 
     &:focus {
-      @apply text-accent;
+      @apply text-accent-800;
       outline: 2px dotted currentColor;
       outline-offset: 2px;
     }
@@ -95,7 +95,7 @@ nav {
       &::after {
         transition: border-color 0.3s ease-in-out;
 
-        @apply border-accent;
+        @apply border-accent-800;
       }
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <header
-    class="pt-6 pb-3 sticky top-0 dark-mode:bg-dark bg-white z-20 border-b dark-mode:border-carbon border-gray-lighter"
+    class="pt-6 pb-3 sticky top-0 dark-mode:bg-dark bg-white z-20 border-b dark-mode:border-carbon border-gray-700"
   >
     <div class="flex items-center header__content px-6 lg:px-10">
       <nuxt-link class="mr-auto" to="/">
