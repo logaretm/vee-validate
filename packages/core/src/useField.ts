@@ -9,6 +9,7 @@ import {
   ValidationFlags,
 } from './types';
 import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId } from './utils';
+import { isCallable } from '../../shared';
 
 interface FieldOptions {
   value: Ref<any>;
@@ -102,7 +103,13 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
 
   // extract cross-field dependencies in a computed prop
   const dependencies = computed(() => {
-    return Object.keys(normalizedRules.value).reduce((acc: string[], rule: string) => {
+    const rulesVal = normalizedRules.value;
+    // is falsy, a function schema or a yup schema
+    if (!rulesVal || isCallable(rulesVal) || isCallable(rulesVal.validate)) {
+      return [];
+    }
+
+    return Object.keys(rulesVal).reduce((acc: string[], rule: string) => {
       const deps = extractLocators((normalizedRules as Ref<Record<string, any>>).value[rule]).map(
         (dep: any) => dep.__locatorRef
       );
@@ -148,7 +155,7 @@ function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions
 
   return {
     ...defaults(),
-    ...(opts ?? {}),
+    ...(opts || {}),
   };
 }
 
