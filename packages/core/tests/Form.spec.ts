@@ -246,39 +246,56 @@ describe('<Form />', () => {
     expect(submitMock).toHaveBeenCalledTimes(1);
   });
 
-  // test('validation schema with yup', async () => {
-  //   const wrapper = mountWithHoc({
-  //     setup() {
-  //       const schema = yup.object().shape({
-  //         email: yup.string().email(),
-  //         password: yup.string().required().min(8),
-  //       });
+  test('validation schema with yup', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object().shape({
+          email: yup.string().required().email(),
+          password: yup.string().required().min(8),
+        });
 
-  //       return {
-  //         schema,
-  //       };
-  //     },
-  //     template: `
-  //     <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors }">
-  //       <Field name="field" as="input" />
-  //       <span id="field">{{ errors.field }}</span>
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors }">
+        <Field id="email" name="email" as="input" />
+        <span id="emailErr">{{ errors.email }}</span>
 
-  //       <Field name="other" as="input" />
-  //       <span id="other">{{ errors.other }}</span>
+        <Field id="password" name="password" as="input" type="password" />
+        <span id="passwordErr">{{ errors.password }}</span>
 
-  //       <button>Validate</button>
-  //     </VForm>
-  //   `,
-  //   });
+        <button>Validate</button>
+      </VForm>
+    `,
+    });
 
-  //   const first = wrapper.$el.querySelector('#field');
-  //   const second = wrapper.$el.querySelector('#other');
+    const email = wrapper.$el.querySelector('#email');
+    const password = wrapper.$el.querySelector('#password');
+    const emailError = wrapper.$el.querySelector('#emailErr');
+    const passwordError = wrapper.$el.querySelector('#passwordErr');
 
-  //   await flushPromises();
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
 
-  //   expect(first.textContent).toBe('this is required');
-  //   expect(second.textContent).toBe('this is required');
-  // });
+    expect(emailError.textContent).toBe('this is a required field');
+    expect(passwordError.textContent).toBe('this is a required field');
+
+    setValue(email, 'hello@');
+    setValue(password, '1234');
+    await flushPromises();
+
+    expect(emailError.textContent).toBe('this must be a valid email');
+    expect(passwordError.textContent).toBe('this must be at least 8 characters');
+
+    setValue(email, 'hello@email.com');
+    setValue(password, '12346789');
+    await flushPromises();
+
+    expect(emailError.textContent).toBe('');
+    expect(passwordError.textContent).toBe('');
+  });
 
   test('validation schema to validate form', async () => {
     const wrapper = mountWithHoc({
