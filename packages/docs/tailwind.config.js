@@ -42,8 +42,11 @@ module.exports = {
         warning: 'hsl(33deg 100% 77%)',
         error: '#cf6679',
 
+        'gray-900': 'hsl(0 0% 29%)',
         'gray-800': '#a2a2a2',
         'gray-700': '#e8e8e8',
+        'gray-200': 'hsl(0 0% 74%)',
+        'gray-100': 'hsl(213 0% 91%)',
       },
       screens: {
         motion: { raw: '(prefers-reduced-motion: no-preference)' },
