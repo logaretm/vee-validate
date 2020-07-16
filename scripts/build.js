@@ -50,7 +50,6 @@ async function build(pkg) {
 (async function Bundle() {
   await build('core');
   await build('rules');
-  await build('yup');
   await build('i18n');
   await buildLocales();
 })();

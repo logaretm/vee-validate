@@ -19,14 +19,12 @@ const commons = {
 const formatNameMap = {
   core: 'VeeValidate',
   rules: 'VeeValidateRules',
-  yup: 'VeeValidateYupAdapter',
   i18n: 'VeeValidateI18n',
 };
 
 const pkgNameMap = {
   core: 'vee-validate',
   rules: 'vee-validate-rules',
-  yup: 'vee-validate-yup',
   i18n: 'vee-validate-i18n',
 };
 
