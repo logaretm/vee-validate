@@ -53,21 +53,29 @@ export const Form = defineComponent({
 
     return () => {
       const children = normalizeChildren(ctx, slotProps.value);
-      if (props.as) {
-        return h(
-          props.as,
-          {
-            // Disables native validation as vee-validate will handle it.
-            novalidate: true,
-            ...ctx.attrs,
-            onSubmit,
-            onReset: handleFormReset,
-          },
-          children
-        );
+      if (!props.as) {
+        return children;
       }
 
-      return children;
+      // Attributes to add on a native `form` tag
+      const formAttrs =
+        props.as === 'form'
+          ? {
+              // Disables native validation as vee-validate will handle it.
+              novalidate: true,
+            }
+          : {};
+
+      return h(
+        props.as,
+        {
+          ...formAttrs,
+          ...ctx.attrs,
+          onSubmit,
+          onReset: handleFormReset,
+        },
+        children
+      );
     };
   },
 });
