@@ -33,12 +33,8 @@ export default {
         content: ['/tutorial', '/resources'],
       },
       {
-        title: 'Configuration',
-        content: ['/configuration'],
-      },
-      {
         title: 'API Reference',
-        content: ['/api/field', '/api/form', '/api/error-message', '/api/use-field', '/api/use-form'],
+        content: ['/configuration', '/api/field', '/api/form', '/api/error-message', '/api/use-field', '/api/use-form'],
       },
     ];
 
