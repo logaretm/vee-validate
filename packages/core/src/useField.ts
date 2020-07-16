@@ -142,7 +142,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
  */
 function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions {
   const defaults = () => ({
-    value: ref(null),
+    value: ref(undefined),
     immediate: false,
     bails: true,
     rules: '',
