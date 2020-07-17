@@ -273,7 +273,7 @@ You can pass your schemas to the `<Form />` component using the `validation-sche
     <Field name="email" as="input" />
     <span>{{ errors.email }}</span>
 
-    <Field name="password" as="input" />
+    <Field name="password" as="input" type="password" />
     <span>{{ errors.password }}</span>
 
     <button>Submit</button>
