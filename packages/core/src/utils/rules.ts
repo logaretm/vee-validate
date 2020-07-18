@@ -1,5 +1,5 @@
 import { Locator, GenericValidateFunction } from '../types';
-import { isLocator } from './assertions';
+import { isLocator, isYupValidator } from './assertions';
 import { isCallable, isObject } from '../../../shared';
 
 /**
@@ -20,7 +20,7 @@ export function normalizeRules(rules: any): GenericValidateFunction | Record<str
   }
 
   // If its a single validate function or a yup fn, leave as is.
-  if (isCallable(rules) || isCallable(rules && rules.validate)) {
+  if (isCallable(rules) || isYupValidator(rules)) {
     return rules;
   }
 

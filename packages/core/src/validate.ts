@@ -1,5 +1,5 @@
 import { resolveRule } from './defineRule';
-import { isLocator, normalizeRules } from './utils';
+import { isLocator, normalizeRules, isYupValidator } from './utils';
 import { getConfig } from './config';
 import { ValidationResult, GenericValidateFunction } from './types';
 import { isCallable, FieldContext } from '../../shared';
@@ -71,8 +71,8 @@ async function _validate(field: FieldValidationContext, value: any) {
     };
   }
 
-  if (isCallable(field.rules?.validate)) {
-    return validateWithYup(field, value);
+  if (isYupValidator(field.rules)) {
+    return validateFieldWithYup(field, value);
   }
 
   const errors: ReturnType<typeof _generateFieldError>[] = [];
@@ -105,7 +105,7 @@ async function _validate(field: FieldValidationContext, value: any) {
 /**
  * Handles yup validation
  */
-async function validateWithYup(field: FieldValidationContext, value: any) {
+async function validateFieldWithYup(field: FieldValidationContext, value: any) {
   const result = await field.rules
     .validate(value)
     .then(() => true)

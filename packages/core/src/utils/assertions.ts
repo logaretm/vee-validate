@@ -11,3 +11,9 @@ export function isLocator(value: unknown): value is Locator {
 export function isHTMLTag(tag: string) {
   return ['input', 'textarea', 'select'].includes(tag);
 }
+
+type YupValidator = { validate: (value: any) => Promise<void | boolean> };
+
+export function isYupValidator(value: unknown): value is YupValidator {
+  return value && isCallable((value as any).validate);
+}
