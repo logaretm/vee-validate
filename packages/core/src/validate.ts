@@ -45,17 +45,14 @@ export async function validate(
 
   const result = await _validate(field, value);
   const errors: string[] = [];
-  const failedRules: Record<string, string> = {};
   result.errors.forEach(e => {
     const msg = e.msg;
     errors.push(msg);
-    failedRules[e.rule] = msg;
   });
 
   return {
     valid: result.valid,
     errors,
-    failedRules,
   };
 }
 

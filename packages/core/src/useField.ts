@@ -166,7 +166,6 @@ function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions
 function useValidationState(value: Ref<any>) {
   const errors: Ref<string[]> = ref([]);
   const { onBlur, reset: resetFlags, meta } = useMeta();
-  const failedRules: Ref<Record<string, string>> = ref({});
   const initialValue = value.value;
 
   // Common input/change event handler
@@ -183,7 +182,6 @@ function useValidationState(value: Ref<any>) {
     meta.valid.value = result.valid;
     meta.invalid.value = !result.valid;
     meta.validated.value = true;
-    failedRules.value = result.failedRules;
 
     return result;
   }
@@ -191,14 +189,12 @@ function useValidationState(value: Ref<any>) {
   // Resets the validation state
   const reset = () => {
     errors.value = [];
-    failedRules.value = {};
     resetFlags();
   };
 
   return {
     meta,
     errors,
-    failedRules,
     patch,
     reset,
     onBlur,

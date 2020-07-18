@@ -47,23 +47,16 @@ export const Field = defineComponent({
     const disabled = computed(() => props.disabled as boolean);
     const rules = computed(() => props.rules);
 
-    const {
-      errors,
-      failedRules,
-      value,
-      errorMessage,
-      validate: validateField,
-      handleChange,
-      onBlur,
-      reset,
-      meta,
-      aria,
-    } = useField(fieldName, rules, {
-      form: $form,
-      immediate: props.immediate as boolean,
-      bails: props.bails as boolean,
-      disabled,
-    });
+    const { errors, value, errorMessage, validate: validateField, handleChange, onBlur, reset, meta, aria } = useField(
+      fieldName,
+      rules,
+      {
+        form: $form,
+        immediate: props.immediate as boolean,
+        bails: props.bails as boolean,
+        disabled,
+      }
+    );
 
     const limitedHandleChange = debounce(handleChange, props.debounce);
     const unwrappedMeta = useRefsObjToComputed(meta);
@@ -83,7 +76,6 @@ export const Field = defineComponent({
         meta: unwrappedMeta.value,
         errors: errors.value,
         errorMessage: errorMessage.value,
-        failedRules: failedRules.value,
         validate: validateField,
         reset,
         handleChange: limitedHandleChange,

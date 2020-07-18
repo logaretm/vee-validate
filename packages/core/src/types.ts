@@ -3,8 +3,6 @@ import { ComputedRef, Ref } from 'vue';
 export interface ValidationResult {
   valid: boolean;
   errors: string[];
-  failedRules: Record<string, string>;
-  regenerateMap?: Record<string, () => string>;
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -30,19 +28,6 @@ export interface ValidationFlags {
   validated: boolean;
   pending: boolean;
   changed: boolean;
-}
-
-export interface VeeObserver {
-  refs: Record<string, any>;
-  observe(provider: any, type?: 'provider' | 'observer'): void;
-  unobserve(id: string, type?: 'provider' | 'observer'): void;
-}
-
-export interface InactiveRefCache {
-  id: string;
-  errors: string[];
-  flags: ValidationFlags;
-  failedRules: Record<string, string>;
 }
 
 export type Flag =
