@@ -2,7 +2,11 @@
   <header
     class="pt-6 pb-3 sticky top-0 dark-mode:bg-dark bg-white z-20 border-b dark-mode:border-carbon border-gray-700"
   >
-    <div class="flex items-center header__content px-6 lg:px-10">
+    <div class="w-full bg-warning fixed top-0 text-black h-8 flex items-center justify-center">
+      These docs are still a WIP ⚙️
+    </div>
+
+    <div class="mt-8 flex items-center header__content px-6 lg:px-10">
       <nuxt-link class="mr-auto" to="/">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 858.42 693.79" class="h-10 w-10 lg:w-12 lg:h-12">
           <defs>
