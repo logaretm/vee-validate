@@ -17,10 +17,10 @@ features:
 
 ```bash
 # install with yarn
-yarn add vee-validate
+yarn add vee-validate@next
 
 # install with npm
-npm install vee-validate --save
+npm install vee-validate@next --save
 ```
 
 ### Usage
