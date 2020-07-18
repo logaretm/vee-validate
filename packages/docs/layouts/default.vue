@@ -32,7 +32,7 @@ export default {
 
 <style lang="postcss">
 .AppWrapper {
-  @apply bg-white text-dark w-full h-full;
+  @apply bg-white text-dark w-full h-full min-h-screen;
 }
 
 .is-dark {
@@ -78,6 +78,7 @@ export default {
 
 .main {
   @apply py-12 px-6 min-w-0;
+  min-height: 100%;
 
   @screen lg {
     @apply px-0;
