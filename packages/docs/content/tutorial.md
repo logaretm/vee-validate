@@ -193,8 +193,7 @@ export default {
   },
   setup() {
     const onSubmit = values => {
-      alert('Submitting :(');
-      console.log(JSON.stringify(values, null, 2));
+      alert(JSON.stringify(values, null, 2));
     };
 
     // The validator function
@@ -272,8 +271,7 @@ export default {
   },
   setup() {
     const onSubmit = values => {
-      alert('Submitting :(');
-      console.log(JSON.stringify(values, null, 2));
+      alert(JSON.stringify(values, null, 2));
     };
 
     const validateEmail = value => {
