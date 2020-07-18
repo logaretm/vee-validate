@@ -45,6 +45,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     // FIXME: is this needed?
     meta.valid.value = result.valid;
     meta.invalid.value = !result.valid;
+    meta.pending.value = false;
 
     return result;
   };
@@ -182,7 +183,6 @@ function useValidationState(value: Ref<any>) {
     meta.valid.value = result.valid;
     meta.invalid.value = !result.valid;
     meta.validated.value = true;
-    meta.pending.value = false;
     failedRules.value = result.failedRules;
 
     return result;
