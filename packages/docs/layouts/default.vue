@@ -43,13 +43,13 @@ export default {
 
 .App:not(.is-home) {
   max-width: 1300px;
-  @apply mx-auto;
   grid-template-areas:
     'content'
     'footer';
   display: grid;
   grid-template-rows: 1fr auto;
   grid-gap: 20px;
+  height: 100vh;
 
   @screen lg {
     grid-template-areas:
