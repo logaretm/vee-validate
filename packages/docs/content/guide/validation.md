@@ -11,8 +11,6 @@ With Vue 3, vee-validate offers both flavors of doing validation: an _imperative
 
 This guide will discuss all those aspects of vee-validate.
 
-## Meet the Gang
-
 vee-validate supports both flavors of doing validation, using either _the composition API_ or _higher-order components_, the latter will be focused upon more as it offers a lot of convenience over the composition API and will make building forms faster and fun.
 
 vee-validate exposes the following components that you will be using frequently to validate your forms:
@@ -20,7 +18,7 @@ vee-validate exposes the following components that you will be using frequently 
 - A `Field` component which represents a single form input.
 - A `Form` component which represents a form.
 
-### Field Component
+## Field Component
 
 The `<Field />` component is an extremely flexible component that makes rendering input fields easy and intuitive, a simple text input looks like this:
 
@@ -40,7 +38,7 @@ export default {
 </script>
 ```
 
-#### Rendering Fields
+### Rendering Fields
 
 The `as` prop tells the Field component which tag to render in its place, you can pass any additional attributes like `type="text"` and it will be passed to the rendered `input` tag as well as any listeners and slots.
 
@@ -81,7 +79,7 @@ The `Field` component `v-slot` contains many useful props that will help you cra
 
 When using `v-slot` on the `Field` component you no longer have to provide an `as` prop.
 
-### Form Component
+## Form Component
 
 The `<Form />` component is like its name, a simple HTML form but with a few adjustments and DX improvements, like the `Field` component it requires an `as` prop that tells it what to render, usually you will pass `form` to it in most of the cases.
 
@@ -91,7 +89,7 @@ The `<Form />` component is like its name, a simple HTML form but with a few adj
 </Form>
 ```
 
-#### Rendering Forms
+### Rendering Forms
 
 Just like the `Field` component you can pass whatever you want to render in its place, for example a custom `v-form` component that is registered globally:
 
