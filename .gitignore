@@ -11,3 +11,5 @@ dist
 ./types
 
 .DS_STORE
+
+lerna-debug.log
