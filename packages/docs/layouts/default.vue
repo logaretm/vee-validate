@@ -32,7 +32,7 @@ export default {
 
 <style lang="postcss">
 .AppWrapper {
-  @apply bg-white text-dark w-full min-h-full;
+  @apply bg-white text-dark w-full h-full;
 }
 
 .is-dark {
@@ -42,14 +42,13 @@ export default {
 }
 
 .App:not(.is-home) {
+  @apply h-full mx-auto;
   max-width: 1300px;
   grid-template-areas:
     'content'
     'footer';
   display: grid;
-  grid-template-rows: 1fr auto;
   grid-gap: 20px;
-  height: 100vh;
 
   @screen lg {
     grid-template-areas:

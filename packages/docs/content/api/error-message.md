@@ -1,5 +1,5 @@
 ---
-title: ErrorMessage Component API Reference
+title: <ErrorMessage />
 description: API reference for the ErrorMessage component
 ---
 
