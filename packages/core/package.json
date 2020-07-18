@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "4.0.0-alpha.0",
+  "version": "4.0.0-alpha.1",
   "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -22,7 +22,6 @@
     "dist/*.js",
     "dist/*.d.ts"
   ],
-  "devDependencies": {},
   "peerDependencies": {
     "vue": "^2.5.18"
   }
