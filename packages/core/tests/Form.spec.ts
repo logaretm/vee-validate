@@ -279,15 +279,15 @@ describe('<Form />', () => {
     wrapper.$el.querySelector('button').click();
     await flushPromises();
 
-    expect(emailError.textContent).toBe('this is a required field');
-    expect(passwordError.textContent).toBe('this is a required field');
+    expect(emailError.textContent).toBe('email is a required field');
+    expect(passwordError.textContent).toBe('password is a required field');
 
     setValue(email, 'hello@');
     setValue(password, '1234');
     await flushPromises();
 
-    expect(emailError.textContent).toBe('this must be a valid email');
-    expect(passwordError.textContent).toBe('this must be at least 8 characters');
+    expect(emailError.textContent).toBe('email must be a valid email');
+    expect(passwordError.textContent).toBe('password must be at least 8 characters');
 
     setValue(email, 'hello@email.com');
     setValue(password, '12346789');
@@ -330,5 +330,48 @@ describe('<Form />', () => {
 
     expect(first.textContent).toBe(REQUIRED_MESSAGE);
     expect(second.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('cross field validation with yup schema', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object().shape({
+          password: yup.string().required(),
+          confirmation: yup.string().oneOf([yup.ref('password')], 'passwords must match'),
+        });
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors }">
+        <Field id="password" name="password" as="input" />
+        <span id="field">{{ errors.password }}</span>
+        
+        <Field id="confirmation" name="confirmation" as="input" />
+        <span id="confirmationError">{{ errors.confirmation }}</span>
+
+        <button>Validate</button>
+      </VForm>
+    `,
+    });
+
+    const password = wrapper.$el.querySelector('#password');
+    const confirmation = wrapper.$el.querySelector('#confirmation');
+    const confirmationError = wrapper.$el.querySelector('#confirmationError');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+
+    setValue(password, 'hello@');
+    setValue(confirmation, '1234');
+    await flushPromises();
+    expect(confirmationError.textContent).toBe('passwords must match');
+
+    setValue(password, '1234');
+    setValue(confirmation, '1234');
+    await flushPromises();
+    expect(confirmationError.textContent).toBe('');
   });
 });

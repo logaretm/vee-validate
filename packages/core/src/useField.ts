@@ -26,28 +26,34 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
  */
 export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
   const { value, form, immediate, bails, disabled } = normalizeOptions(opts);
-  const { meta, errors, failedRules, onBlur, handleChange, reset, patch } = useValidationState(value);
-  // eslint-disable-next-line prefer-const
-  let schemaValidation: GenericValidateFunction | string | Record<string, any> | undefined;
+  const { meta, errors, onBlur, handleChange, reset, patch } = useValidationState(value);
+  const nonYupSchemaRules = extractRuleFromSchema(opts?.form?.schema, unwrap(fieldName));
   const normalizedRules = computed(() => {
-    return normalizeRules(schemaValidation || unwrap(rules));
+    return normalizeRules(nonYupSchemaRules || unwrap(rules));
   });
 
   const runValidation = async (): Promise<ValidationResult> => {
     meta.pending.value = true;
-    const result = await validate(value.value, normalizedRules.value, {
-      name: unwrap(fieldName),
-      values: form?.values.value ?? {},
-      bails,
-    });
+    if (!form || !form.validateSchema) {
+      const result = await validate(value.value, normalizedRules.value, {
+        name: unwrap(fieldName),
+        values: form?.values.value ?? {},
+        bails,
+      });
 
-    // Must be updated regardless if a mutation is needed or not
-    // FIXME: is this needed?
-    meta.valid.value = result.valid;
-    meta.invalid.value = !result.valid;
+      // Must be updated regardless if a mutation is needed or not
+      // FIXME: is this needed?
+      meta.valid.value = result.valid;
+      meta.invalid.value = !result.valid;
+      meta.pending.value = false;
+
+      return result;
+    }
+
+    const results = await form.validateSchema();
     meta.pending.value = false;
 
-    return result;
+    return results[unwrap(fieldName)];
   };
 
   const runValidationWithMutation = () => runValidation().then(patch);
@@ -72,13 +78,13 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     meta,
     errors,
     errorMessage,
-    failedRules,
     aria,
     reset,
     validate: runValidationWithMutation,
     handleChange,
     onBlur,
     disabled,
+    setValidationState: patch,
   };
 
   watch(value, runValidationWithMutation, {
@@ -98,9 +104,6 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
 
   // associate the field with the given form
   form.register(field);
-
-  // set the rules if present in schema
-  schemaValidation = extractRuleFromSchema(form.schema, unwrap(fieldName));
 
   // extract cross-field dependencies in a computed prop
   const dependencies = computed(() => {
@@ -282,15 +285,6 @@ function extractRuleFromSchema(schema: Record<string, any> | undefined, fieldNam
     return undefined;
   }
 
-  // a yup schema
-  if (schema.fields?.[fieldName]) {
-    return schema.fields?.[fieldName];
-  }
-
   // there is a key on the schema object for this field
-  if (schema[fieldName]) {
-    return schema[fieldName];
-  }
-
-  return undefined;
+  return schema[fieldName];
 }

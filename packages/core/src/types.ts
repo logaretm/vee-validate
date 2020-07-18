@@ -48,6 +48,7 @@ export interface FormController {
   values: ComputedRef<Record<string, any>>;
   fields: ComputedRef<Record<string, any>>;
   schema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
+  validateSchema?: (shouldMutate?: boolean) => Promise<Record<string, ValidationResult>>;
 }
 
 export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;

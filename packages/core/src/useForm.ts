@@ -1,7 +1,15 @@
 import { computed, ref, Ref } from 'vue';
 import type { useField } from './useField';
-import { Flag, FormController, SubmissionHandler, GenericValidateFunction, SubmitEvent } from './types';
+import {
+  Flag,
+  FormController,
+  SubmissionHandler,
+  GenericValidateFunction,
+  SubmitEvent,
+  ValidationResult,
+} from './types';
 import { unwrap } from './utils/refs';
+import { isYupValidator } from './utils';
 
 interface FormOptions {
   validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
@@ -46,9 +54,20 @@ export function useForm(opts?: FormOptions) {
     fields: fieldsById,
     values,
     schema: opts?.validationSchema,
+    validateSchema: isYupValidator(opts?.validationSchema)
+      ? (shouldMutate = false) => {
+          return validateYupSchema(controller, shouldMutate);
+        }
+      : undefined,
   };
 
   const validate = async () => {
+    if (controller.validateSchema) {
+      return controller.validateSchema(true).then(results => {
+        return Object.keys(results).every(r => results[r].valid);
+      });
+    }
+
     const results = await Promise.all(
       activeFields.value.map((f: any) => {
         return f.validate();
@@ -137,4 +156,49 @@ function useFormMeta(fields: Ref<any[]>) {
 
     return acc;
   }, {} as Record<Flag, Ref<boolean>>);
+}
+
+async function validateYupSchema(
+  form: FormController,
+  shouldMutate = false
+): Promise<Record<string, ValidationResult>> {
+  const errors: any[] = await (form.schema as any)
+    .validate(form.values.value, { abortEarly: false })
+    .then(() => [])
+    .catch((err: any) => {
+      // Yup errors have a name prop one them.
+      // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+      if (err.name !== 'ValidationError') {
+        throw err;
+      }
+
+      // list of aggregated errors
+      return err.inner || [];
+    });
+
+  const fields = form.fields.value;
+  const errorsByPath = errors.reduce((acc, err) => {
+    acc[err.path] = err;
+
+    return acc;
+  }, {});
+
+  // Aggregates the validation result
+  const aggregatedResult = Object.keys(fields).reduce((result: Record<string, ValidationResult>, fieldId) => {
+    const field = fields[fieldId];
+    const messages = (errorsByPath[fieldId] || { errors: [] }).errors;
+    const fieldResult = {
+      errors: messages,
+      valid: !messages.length,
+    };
+
+    result[fieldId] = fieldResult;
+    if (shouldMutate || field.meta.validated) {
+      field.setValidationState(fieldResult);
+    }
+
+    return result;
+  }, {});
+
+  return aggregatedResult;
 }
