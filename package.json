@@ -1,7 +1,6 @@
 {
-  "name": "vee-validate",
+  "name": "vee-validate-monorepo",
   "private": true,
-  "version": "4.0.0",
   "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
