@@ -16,6 +16,7 @@
     "build": "node scripts/build.js",
     "cover": "jest --coverage",
     "prepublishOnly": "npm run build && npm run ts:defs",
+    "docs:dev": "cd ./packages/docs && npm run dev && cd -",
     "docs:deploy": "./scripts/deploy-docs.sh"
   },
   "devDependencies": {
