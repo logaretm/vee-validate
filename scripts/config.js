@@ -10,10 +10,6 @@ const commons = {
   * (c) ${new Date().getFullYear()} Abdelrahman Awad
   * @license MIT
   */`,
-  uglifyOptions: {
-    compress: true,
-    mangle: true,
-  },
 };
 
 const formatNameMap = {
