@@ -11,11 +11,9 @@
     "test": "jest",
     "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",
     "format": "prettier \"./**/*.ts\" --write",
-    "ts:defs": "lerna run ts:defs",
-    "ts:bundle": "api-extractor run --local --verbose",
     "build": "node scripts/build.js",
     "cover": "jest --coverage",
-    "prepublishOnly": "npm run build && npm run ts:defs",
+    "prepublishOnly": "npm run build",
     "docs:dev": "cd ./packages/docs && npm run dev && cd -",
     "docs:deploy": "./scripts/deploy-docs.sh"
   },
