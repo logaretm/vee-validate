@@ -73,12 +73,16 @@ export default {
     }
   }
 
+  .nuxt-content-highlight {
+    @apply my-4;
+  }
+
   blockquote {
     @apply py-4 rounded-r-lg pl-4 bg-black border-l-4 border-accent-800 italic my-8 text-lg;
   }
 
   pre[class*='language-'] {
-    @apply rounded-lg my-4 block shadow-lg;
+    @apply rounded-lg my-4 block border border-gray-100;
   }
 
   *:not(pre) > code:not([class]) {
@@ -249,6 +253,21 @@ export default {
   .token.italic {
     font-style: italic;
   }
+
+  table {
+    @apply w-full my-4;
+  }
+
+  table,
+  th,
+  td {
+    @apply border border-gray-100;
+  }
+
+  th,
+  td {
+    @apply p-3;
+  }
 }
 
 .is-dark {
@@ -408,6 +427,16 @@ export default {
 
     .token.italic {
       font-style: italic;
+    }
+
+    pre[class*='language-'] {
+      @apply border-carbon;
+    }
+
+    table,
+    th,
+    td {
+      @apply border border-carbon;
     }
   }
 }
