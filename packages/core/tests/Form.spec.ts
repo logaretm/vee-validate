@@ -218,7 +218,7 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <VForm v-slot="{ errors, submitForm }">
+        <VForm as="" v-slot="{ errors, submitForm }">
           <form @submit="submitForm">
             <Field name="field" rules="required" as="input" />
             <span id="error">{{ errors.field }}</span>

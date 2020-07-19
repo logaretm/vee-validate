@@ -9,7 +9,7 @@ export const Form = defineComponent({
   props: {
     as: {
       type: String,
-      default: undefined,
+      default: 'form',
     },
     validationSchema: {
       type: Object,
