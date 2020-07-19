@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.2](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.1...vee-validate@4.0.0-alpha.2) (2020-07-19)
+
+
+### Features
+
+* always render a from by default ([402603a](https://github.com/logaretm/vee-validate/commit/402603a8f755a377a056debf24815611a01c3037))
+
+
+
+
+
 # 4.0.0-alpha.1 (2020-07-18)
 
 
