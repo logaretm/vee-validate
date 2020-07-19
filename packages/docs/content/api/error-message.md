@@ -71,7 +71,7 @@ You can use a combination of both to render a root node with children:
 ### Props
 
 | Prop | Type     | Required/Default | Description                              |
-| ---- | -------- | ---------------- | ---------------------------------------- |
+| :--- | :------- | :--------------- | :--------------------------------------- |
 | as   | `string` | `"span"`         | The element to render as a root node     |
 | name | `string` | Required         | The field's name to display messages for |
 
@@ -82,7 +82,7 @@ You can use a combination of both to render a root node with children:
 The default slot gives you access to the following props:
 
 | Scoped Prop | Type     | Description                 |
-| ----------- | -------- | --------------------------- |
+| :---------- | :------- | :-------------------------- |
 | message     | `string` | The element's error message |
 
 Check the sample above for rendering with scoped slots
