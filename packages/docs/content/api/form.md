@@ -40,7 +40,7 @@ For more complex form markup, you can render a `div` and inline your forms in th
 </Form>
 ```
 
-<doc-tip type="error">
+<doc-tip type="danger" title="HTML Case Insensitivity">
 
 Notice the character-case difference between `Form` and `form`, the uppercased one is the component provided by vee-validate while the lowercased one is the native `form` element, you might run into issues when not using Vue compiler workflow like script tags. In these cases it is recommended to rename the `Form` component to something that will not conflict with native HTML.
 
