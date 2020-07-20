@@ -3,12 +3,12 @@ title: VeeValidate
 description: Template Based Validation for Vue.js
 home: true
 features:
-  - title: Simple
-    details: Template based validation that is both familiar and easy to setup.
-  - title: Flexible
-    details: Validate HTML inputs and Vue components, generate localized errors, Extendable, It does it all.
+  - title: 🍞 Simple
+    details: Template based validation that is both familiar and easy to setup
+  - title: 🧘‍♀️ Flexible
+    details: Synchronous, Asynchronous, field-level or form-level validation
   - title: ⚡️ Fast
-    details: Build faster forms faster with intuitive syntax
+    details: Build faster forms faster with intuitive syntax and small footprint
 ---
 
 ## Quick Setup
