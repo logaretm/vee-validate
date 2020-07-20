@@ -103,9 +103,17 @@ export function useForm(opts?: FormOptions) {
             return fn(values.value, e as SubmitEvent);
           }
         })
-        .then(() => {
-          isSubmitting.value = false;
-        });
+        .then(
+          () => {
+            isSubmitting.value = false;
+          },
+          err => {
+            isSubmitting.value = false;
+
+            // re-throw the err so it doesn't go silent
+            throw err;
+          }
+        );
     };
   };
 

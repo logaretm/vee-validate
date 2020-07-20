@@ -100,6 +100,8 @@ The default slot gives you access to the following props:
 
 Check the sample above for rendering with scoped slots
 
+### Types
+
 #### FieldBindingObject
 
 The `field` prop on the scoped slot has the following typescript type:

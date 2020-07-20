@@ -27,6 +27,7 @@ export default {
 
     Array.from(this.$el.querySelectorAll('h2')).forEach(linkify);
     Array.from(this.$el.querySelectorAll('h3')).forEach(linkify);
+    Array.from(this.$el.querySelectorAll('h4')).forEach(linkify);
     // set the current document
     store.currentDoc = this.page;
   },
