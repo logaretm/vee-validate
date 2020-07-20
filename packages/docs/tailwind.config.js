@@ -46,7 +46,7 @@ module.exports = {
         'gray-800': '#a2a2a2',
         'gray-700': '#e8e8e8',
         'gray-200': 'hsl(0 0% 74%)',
-        'gray-100': 'hsl(213 0% 91%)',
+        'gray-100': '#f6f6f6',
       },
       screens: {
         motion: { raw: '(prefers-reduced-motion: no-preference)' },
