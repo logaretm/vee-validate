@@ -43,8 +43,8 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
 
       // Must be updated regardless if a mutation is needed or not
       // FIXME: is this needed?
-      meta.valid.value = result.valid;
-      meta.invalid.value = !result.valid;
+      meta.valid.value = !result.errors.length;
+      meta.invalid.value = !!result.errors.length;
       meta.pending.value = false;
 
       return result;
@@ -182,8 +182,8 @@ function useValidationState(value: Ref<any>) {
   function patch(result: ValidationResult) {
     errors.value = result.errors;
     meta.changed.value = initialValue !== value.value;
-    meta.valid.value = result.valid;
-    meta.invalid.value = !result.valid;
+    meta.valid.value = !result.errors.length;
+    meta.invalid.value = !!result.errors.length;
     meta.validated.value = true;
 
     return result;

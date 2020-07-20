@@ -1,7 +1,6 @@
 import { ComputedRef, Ref } from 'vue';
 
 export interface ValidationResult {
-  valid: boolean;
   errors: string[];
 }
 

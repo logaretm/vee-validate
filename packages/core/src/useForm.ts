@@ -64,7 +64,7 @@ export function useForm(opts?: FormOptions) {
   const validate = async () => {
     if (controller.validateSchema) {
       return controller.validateSchema(true).then(results => {
-        return Object.keys(results).every(r => results[r].valid);
+        return Object.keys(results).every(r => !results[r].errors.length);
       });
     }
 
@@ -74,7 +74,7 @@ export function useForm(opts?: FormOptions) {
       })
     );
 
-    return results.every(r => r.valid);
+    return results.every(r => !r.errors.length);
   };
 
   const errors = computed(() => {
@@ -197,7 +197,6 @@ async function validateYupSchema(
     const messages = (errorsByPath[fieldId] || { errors: [] }).errors;
     const fieldResult = {
       errors: messages,
-      valid: !messages.length,
     };
 
     result[fieldId] = fieldResult;

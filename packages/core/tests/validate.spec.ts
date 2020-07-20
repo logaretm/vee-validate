@@ -4,10 +4,10 @@ import { numeric } from '@vee-validate/rules';
 test('allows empty rules for the string format', async () => {
   defineRule('numeric', numeric);
   let result = await validate(100, '|numeric');
-  expect(result.valid).toBe(true);
+  expect(result.errors).toHaveLength(0);
 
   result = await validate(100, '||||numeric');
-  expect(result.valid).toBe(true);
+  expect(result.errors).toHaveLength(0);
 });
 
 test('handles targets expressed in objects', async () => {
@@ -16,8 +16,8 @@ test('handles targets expressed in objects', async () => {
   });
 
   let result = await validate('test', { confirmed: { target: '@other' } }, { values: { other: '' } });
-  expect(result.valid).toBe(false);
+  expect(result.errors).toHaveLength(1);
 
   result = await validate('test', { confirmed: { target: '@other' } }, { values: { other: 'test' } });
-  expect(result.valid).toBe(true);
+  expect(result.errors).toHaveLength(0);
 });

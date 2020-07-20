@@ -44,14 +44,9 @@ export async function validate(
   };
 
   const result = await _validate(field, value);
-  const errors: string[] = [];
-  result.errors.forEach(e => {
-    const msg = e.msg;
-    errors.push(msg);
-  });
+  const errors = result.errors;
 
   return {
-    valid: result.valid,
     errors,
   };
 }
@@ -66,8 +61,7 @@ async function _validate(field: FieldValidationContext, value: any) {
     const isValid = typeof result !== 'string' && result;
 
     return {
-      valid: isValid,
-      errors: !isValid ? [{ msg: result, rule: '' }] : [],
+      errors: !isValid ? [result as string] : [],
     };
   }
 
@@ -85,11 +79,10 @@ async function _validate(field: FieldValidationContext, value: any) {
       params: field.rules[rule],
     });
 
-    if (!result.valid && result.error) {
+    if (result.error) {
       errors.push(result.error);
       if (field.bails) {
         return {
-          valid: false,
           errors,
         };
       }
@@ -97,7 +90,6 @@ async function _validate(field: FieldValidationContext, value: any) {
   }
 
   return {
-    valid: !errors.length,
     errors,
   };
 }
@@ -123,8 +115,7 @@ async function validateFieldWithYup(field: FieldValidationContext, value: any) {
   const isValid = typeof result !== 'string' && result;
 
   return {
-    valid: isValid,
-    errors: !isValid ? [{ msg: result, rule: '' }] : [],
+    errors: !isValid ? [result as string] : [],
   };
 }
 
@@ -149,13 +140,11 @@ async function _test(field: FieldValidationContext, value: any, rule: { name: st
 
   if (typeof result === 'string') {
     return {
-      valid: false,
-      error: { rule: rule.name, msg: result },
+      error: result,
     };
   }
 
   return {
-    valid: result,
     error: result ? undefined : _generateFieldError(ctx),
   };
 }
@@ -166,10 +155,7 @@ async function _test(field: FieldValidationContext, value: any, rule: { name: st
 function _generateFieldError(fieldCtx: FieldContext) {
   const message = getConfig().defaultMessage;
 
-  return {
-    msg: message(fieldCtx),
-    rule: fieldCtx.rule.name,
-  };
+  return message(fieldCtx);
 }
 
 function fillTargetValues(params: any[] | Record<string, any>, crossTable: Record<string, any>) {
