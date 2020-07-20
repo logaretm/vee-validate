@@ -25,159 +25,84 @@ Being template-based you only need to specify for each input what kind of valida
 
 This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.com/).
 
-### Features
+## Features
 
-- Template based validation that is both familiar and easy to setup.
-- 🌍 i18n Support and error Messages in 40+ locales.
-- 💫 Async and Custom Rules Support.
-- 💪 Written in TypeScript.
-- No dependencies.
+- **🍞Simple:** Template based validation that is familiar and easy to setup
+- **🧘‍♀️ Flexible:** Synchronous, Asynchronous, field-level or form-level validation
+- **⚡️ Fast:** Build faster forms faster with intuitive API and small footprint
+- **🦐 Minimal:** < 4kb minified and gzipped size
+- 💪 Written in TypeScript
+- 🌍 i18n Support and error Messages in 40+ locales
+
+## Getting Started
 
 ### Installation
 
-#### yarn
+```sh
+# install with yarn
+yarn add vee-validate@next
 
-```bash
-yarn add vee-validate
+# install with npm
+npm install vee-validate@next --save
 ```
 
-#### npm
+### Usage
 
-```bash
-npm i vee-validate --save
-```
-
-#### CDN
-
-vee-validate is also available on these CDNs:
-
-- [jsdelivr](https://cdn.jsdelivr.net/npm/vee-validate@latest/dist/vee-validate.js) [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/vee-validate/badge?style=rounded)](https://www.jsdelivr.com/package/npm/vee-validate)
-- [unpkg](https://unpkg.com/vee-validate)
-
-> When using a CDN via script tag, all the exported modules on VeeValidate are available on the VeeValidate Object. ex: VeeValidate.Validator
-
-### Getting Started
-
-Install the rules you will use in your app, we will install the `required` rule for now:
+Register the `Field` and `Form` components and create a simple `required` validator:
 
 ```js
-import { extend } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
-
-// Add the required rule
-extend('required', {
-  ...required,
-  message: 'This field is required',
-});
-```
-
-Import the `ValidationProvider` component and register it:
-
-#### Global Registration
-
-```js
-import { ValidationProvider } from 'vee-validate';
-
-// Register it globally
-// main.js or any entry file.
-Vue.component('ValidationProvider', ValidationProvider);
-```
-
-#### Local Registration
-
-```js
-import { ValidationProvider } from 'vee-validate';
+import { Field, Form } from 'vee-validate';
 
 export default {
   components: {
-    ValidationProvider,
+    Field,
+    Form,
+  },
+  setup() {
+    // Validator function
+    const isRequired = value => (value ? true : 'This field is required');
+
+    return {
+      isRequired,
+    };
   },
 };
 ```
 
-All the JavaScript work is done. Next in the template add the inputs you want to validate them:
+Then use the `Form` and `Field` components to render your form:
 
 ```vue
-<ValidationProvider name="email" rules="required|email">
-  <div slot-scope="{ errors }">
-    <input v-model="email">
-    <p>{{ errors[0] }}</p>
-  </div>
-</ValidationProvider>
+<Form v-slot="{ errors }">
+  <Field name="field" as="input" :rules="isRequired" />
+
+  <span>{{ errors.field }}</span>
+</Form>
 ```
 
-The validation provider accepts two props: `rules` which is in its simplest form, a string containing the validation rules separated by a `|` character, and a `name` prop which is the field name that will be used in error messages.
+## 📚 Documentation
 
-and That's it, your input will be validated automatically, notice that the `ValidationProvider` uses [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
+Read the [documentation and demos](https://vee-validate.logaretm.com/v4).
 
-There is more that can be done! You can customize events, validate initial values, manually validate or reset the field and much more. Make sure to [read the docs](https://logaretm.github.io/vee-validate).
-
-### Documentation
-
-Read the [documentation and demos](https://logaretm.github.io/vee-validate/).
-
-### Compatibility
+## Compatibility
 
 This library uses ES6 Promises so be sure to provide a polyfill for it for the browsers that do not support it.
 
-### Contributing
+## Contributing
 
 You are welcome to contribute to this project, but before you do, please make sure you read the [contribution guide](CONTRIBUTING.md).
 
-### Tutorials and Examples
-
-#### Docs Highlights
-
-- [Backend and Server Side Validation](https://logaretm.github.io/vee-validate/advanced/server-side-validation.html)
-- [Localization (i18n)](https://logaretm.github.io/vee-validate/guide/localization.html)
-- [Handling Forms](https://logaretm.github.io/vee-validate/guide/forms.html)
-- [UI Libraries Validation Samples](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html)
-  - [Vuetify](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#vuetify)
-  - [Quasar](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#quasar)
-  - [BootstrapVue](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#bootstrapvue)
-  - [Buefy](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#buefy)
-  - [Ant Design](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#ant-design)
-
-### Credits
+## Credits
 
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
+- v4 API Inspired by [Formik's](https://github.com/formium/formik)
+- Logo by [Baianat](https://github.com/baianat).
 
-## Contributors
-
-### Emeriti
+## Emeriti
 
 Here we honor past contributors and sponsors who have been a major part on this project.
 
 - [Baianat](https://github.com/baianat).
 
-### Code Contributors
-
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/logaretm/vee-validate/graphs/contributors"><img src="https://opencollective.com/vee-validate/contributors.svg?width=890&button=false" /></a>
-
-### Financial Contributors
-
-Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/vee-validate/contribute)]
-
-#### Individuals
-
-<a href="https://opencollective.com/vee-validate"><img src="https://opencollective.com/vee-validate/individuals.svg?width=890"></a>
-
-#### Organizations
-
-Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/vee-validate/contribute)]
-
-<a href="https://opencollective.com/vee-validate/organization/0/website"><img src="https://opencollective.com/vee-validate/organization/0/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/1/website"><img src="https://opencollective.com/vee-validate/organization/1/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/2/website"><img src="https://opencollective.com/vee-validate/organization/2/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/3/website"><img src="https://opencollective.com/vee-validate/organization/3/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/4/website"><img src="https://opencollective.com/vee-validate/organization/4/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/5/website"><img src="https://opencollective.com/vee-validate/organization/5/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/6/website"><img src="https://opencollective.com/vee-validate/organization/6/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/7/website"><img src="https://opencollective.com/vee-validate/organization/7/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/8/website"><img src="https://opencollective.com/vee-validate/organization/8/avatar.svg"></a>
-<a href="https://opencollective.com/vee-validate/organization/9/website"><img src="https://opencollective.com/vee-validate/organization/9/avatar.svg"></a>
-
-### license
+## ⚖️ License
 
 MIT

@@ -4,11 +4,11 @@ description: Template Based Validation for Vue.js
 home: true
 features:
   - title: 🍞 Simple
-    details: Template based validation that is both familiar and easy to setup
+    details: Template based validation that is familiar and easy to setup
   - title: 🧘‍♀️ Flexible
     details: Synchronous, Asynchronous, field-level or form-level validation
   - title: ⚡️ Fast
-    details: Build faster forms faster with intuitive syntax and small footprint
+    details: Build faster forms faster with intuitive API and small footprint
 ---
 
 ## Quick Setup
