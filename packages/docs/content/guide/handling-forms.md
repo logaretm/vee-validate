@@ -21,7 +21,7 @@ You may access your form's values using either the `Form` component scoped slot 
 
 ```vue
 <template>
-  <Form as="form" v-slot="{ values }" :validation-schema="schema">
+  <Form v-slot="{ values }" :validation-schema="schema">
     <Field name="email" as="input">
     <Field name="name" as="input" type="email">
     <Field name="password" as="input" type="password">
@@ -63,7 +63,7 @@ So if you were to add a `submit` handler on the `<Form />` component, vee-valida
 
 ```vue
 <template>
-  <Form as="form" @submit="onSubmit" :validation-schema="schema">
+  <Form @submit="onSubmit" :validation-schema="schema">
     <Field name="email" as="input">
     <Field name="name" as="input" type="email">
     <Field name="password" as="input" type="password">
@@ -111,7 +111,7 @@ If you have a `submit` listener on the `Form` component, vee-validate assumes yo
 But in the case when you don't have a `submit` listener on your form, vee-validate assumes that the form will be submitted using the native HTML submission that causes the page to "reload". However vee-validate will make sure the form is not submitted unless all fields are valid, here is an example:
 
 ```vue
-<Form as="form" method="post" action="/api/users" :validation-schema="schema">
+<Form method="post" action="/api/users" :validation-schema="schema">
   <Field name="email" as="input">
   <Field name="name" as="input" type="email">
   <Field name="password" as="input" type="password">
@@ -241,7 +241,7 @@ vee-validate also handles form resets in similar way to submissions, consider th
 
 ```vue
 <template>
-  <Form as="form" :validation-schema="schema">
+  <Form :validation-schema="schema">
     <Field name="email" as="input">
     <Field name="name" as="input" type="email">
     <Field name="password" as="input" type="password">
@@ -285,6 +285,56 @@ Alternatively if you plan to use the scoped slot for complex markup, you can use
   <Field name="name" as="input" type="email">
   <Field name="password" as="input" type="password">
 
-  <button @click="handleReset">Reset</button>
+  <button type="button" @click="handleReset">Reset</button>
 </Form>
 ```
+
+## Initial Values
+
+Since with vee-validate you don't use `v-model` often to track your values, the `Form` component allows you to define the starting values for your fields, by default all fields start with `undefined` as a value.
+
+Using the `initialValues` prop you can send an object that contains the field names as keys and their values:
+
+```vue
+<template>
+  <Form :validation-schema="schema" :initial-values="formValues">
+    <Field name="email" as="input">
+    <Field name="name" as="input" type="email">
+    <Field name="password" as="input" type="password">
+
+    <button type="Submit">Submit</button>
+  </Form>
+</template>
+
+<script>
+import { Form, Field } from 'vee-validate';
+import * as yup from 'yup';
+
+export default {
+  components: {
+    Form,
+    Field
+  },
+  setup() {
+    const schema = yup.object().shape({
+      email: yup.string().required().email(),
+      name: yup.string().required(),
+      password: yup.string().required().min(8),
+    });
+
+    const formValues = {
+      email: 'example@example.com',
+      name: 'John Smith',
+      password: 'P@$$w0Rd'
+    };
+
+    return {
+      schema,
+      formValues
+    };
+  }
+};
+</script>
+```
+
+Doing so will trigger initial validation on the form and it will generate messages for fields that fail the initial validation.

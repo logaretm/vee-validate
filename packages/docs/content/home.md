@@ -49,15 +49,14 @@ new Vue({
 
 Then use the `Form` and `Field` components to render your form:
 
-```html{1,4}
-<form as="form" v-slot="{ errors }">
+```vue
+<Form v-slot="{ errors }">
   <Field name="field" as="input" :rules="isRequired" />
+
   <span>{{ errors.field }}</span>
-</form>
+</Form>
 ```
 
 And this is the result:
-
-@[example](intro)
 
 For more information continue reading the [Guide](./guide).

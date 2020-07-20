@@ -7,10 +7,10 @@ description: API reference for the Form component
 
 ## Form Component
 
-The `<Form />` component is like its name, a simple HTML form but with a few adjustments and DX improvements, like the `Field` it accepts an `as` prop that tells it what to render, usually you will pass some type of a form element to it. By default it will render a native HTML `form` element.
+The `<Form />` component is like its name, a simple HTML form but with a few adjustments and DX improvements, By default it will render a native HTML `form` element.
 
 ```vue
-<Form as="form">
+<Form>
   <Field name="password" as="input" type="password">
 </Form>
 ```
