@@ -7,9 +7,13 @@ description: Handling form submissions, resets and state
 
 vee-validate offers many helpers to handle form submissions, resets and DX to make your forms much easier to reason about and less of a burden to maintain. The `Form` component handles the following form cases:
 
+<div class="features">
+
 - Submitting forms with JavaScript listeners (AJAX)
 - Submitting forms using the classic/native approach (page reload)
 - Handling form resets
+
+</div>
 
 ## Form Values
 

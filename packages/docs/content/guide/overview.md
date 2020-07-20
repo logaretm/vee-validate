@@ -18,9 +18,13 @@ Doing form validation by hand is painful and is a lot of work and you won't prob
 
 Most validation libraries will save you a lot of time, but `vee-validate` tackles the major pain points of form validation and addresses them in a very flexible way:
 
+<div class="features">
+
 - Define validation rules declaratively or imperatively
 - Cross Field validation
 - Both Field-level or Schema (form-level) Validation
 - Built-in helpers to enhance your forms accessability and styling
 - Message generation support
 - A collection of common rules to bootstrap most applications
+
+</div>

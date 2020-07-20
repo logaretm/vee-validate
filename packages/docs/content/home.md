@@ -30,8 +30,7 @@ Register the `Field` and `Form` components and create a simple `required` valida
 ```js
 import { Field, Form } from 'vee-validate';
 
-new Vue({
-  el: '#app',
+export default {
   components: {
     Field,
     Form,
@@ -44,7 +43,7 @@ new Vue({
       isRequired,
     };
   },
-});
+};
 ```
 
 Then use the `Form` and `Field` components to render your form:
@@ -56,7 +55,5 @@ Then use the `Form` and `Field` components to render your form:
   <span>{{ errors.field }}</span>
 </Form>
 ```
-
-And this is the result:
 
 For more information continue reading the [Guide](./guide).
