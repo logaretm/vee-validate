@@ -333,29 +333,6 @@ describe('<Field />', () => {
     expect(errors[1].textContent).toBe('This field must be at least 3 characters');
   });
 
-  test('validation can be debounced', async () => {
-    const wrapper = mountWithHoc({
-      template: `
-      <div>
-        <Field name="field" rules="required" :debounce="50" v-slot="{ field, errors }">
-          <input v-bind="field" type="text">
-          <p>{{ errors[0] }}</p>
-        </Field>
-      </div>
-    `,
-    });
-
-    const input = wrapper.$el.querySelector('input');
-    const error = wrapper.$el.querySelector('p');
-
-    setValue(input, '');
-    await flushPromises();
-    expect(error.textContent).toBe('');
-    await jest.advanceTimersByTime(50);
-    await flushPromises();
-    expect(error.textContent).toBe(REQUIRED_MESSAGE);
-  });
-
   test('yup rules can be used', async () => {
     const wrapper = mountWithHoc({
       setup() {
@@ -402,7 +379,7 @@ describe('<Field />', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <Field name="field" rules="required|longRunning" :debounce="10" v-slot="{ field, errors }">
+        <Field name="field" rules="required|longRunning" v-slot="{ field, errors }">
           <input v-bind="field" type="text">
           <p>{{ errors[0] }}</p>
         </Field>

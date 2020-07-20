@@ -2,7 +2,7 @@ import { computed, inject, h, defineComponent } from 'vue';
 import { getConfig } from './config';
 import { FormController } from './types';
 import { useField } from './useField';
-import { useRefsObjToComputed, debounce, normalizeChildren, isHTMLTag } from './utils';
+import { useRefsObjToComputed, normalizeChildren, isHTMLTag } from './utils';
 
 export const Field = defineComponent({
   name: 'Field',
@@ -31,14 +31,6 @@ export const Field = defineComponent({
       type: Boolean,
       default: false,
     },
-    debounce: {
-      type: Number,
-      default: 0,
-    },
-    customMessages: {
-      type: Object,
-      default: undefined,
-    },
   },
   setup(props, ctx) {
     const fieldName = props.name;
@@ -58,7 +50,6 @@ export const Field = defineComponent({
       }
     );
 
-    const limitedHandleChange = debounce(handleChange, props.debounce);
     const unwrappedMeta = useRefsObjToComputed(meta);
 
     const slotProps = computed(() => {
@@ -66,9 +57,9 @@ export const Field = defineComponent({
         field: {
           name: fieldName,
           disabled: props.disabled,
-          onInput: limitedHandleChange,
-          onChange: limitedHandleChange,
-          'onUpdate:modelValue': limitedHandleChange,
+          onInput: handleChange,
+          onChange: handleChange,
+          'onUpdate:modelValue': handleChange,
           onBlur: onBlur,
           value: value.value,
         },
@@ -78,7 +69,7 @@ export const Field = defineComponent({
         errorMessage: errorMessage.value,
         validate: validateField,
         reset,
-        handleChange: limitedHandleChange,
+        handleChange,
       };
     });
 
