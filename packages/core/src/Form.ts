@@ -1,4 +1,4 @@
-import { computed, provide, h, defineComponent } from 'vue';
+import { computed, h, defineComponent } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
 import { useRefsObjToComputed, normalizeChildren } from './utils';
@@ -21,13 +21,11 @@ export const Form = defineComponent({
     },
   },
   setup(props, ctx) {
-    const { form, errors, validate, handleSubmit, handleReset, values, meta, isSubmitting, submitForm } = useForm({
+    const { errors, validate, handleSubmit, handleReset, values, meta, isSubmitting, submitForm } = useForm({
       validationSchema: props.validationSchema,
       initialValues: props.initialValues,
     });
 
-    provide('$_veeForm', form);
-    provide('$_veeFormErrors', errors);
     const unwrappedMeta = useRefsObjToComputed(meta);
 
     const slotProps = computed(() => {

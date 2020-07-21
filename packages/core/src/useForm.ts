@@ -1,4 +1,4 @@
-import { computed, ref, Ref } from 'vue';
+import { computed, ref, Ref, provide } from 'vue';
 import type { useField } from './useField';
 import {
   Flag,
@@ -124,6 +124,9 @@ export function useForm(opts?: FormOptions) {
   });
 
   const meta = useFormMeta(fields);
+
+  provide('$_veeForm', controller);
+  provide('$_veeFormErrors', errors);
 
   return {
     errors,

@@ -1,4 +1,4 @@
-import { watch, ref, Ref, isRef, reactive, computed, onMounted, toRefs, watchEffect } from 'vue';
+import { watch, ref, Ref, isRef, reactive, computed, onMounted, toRefs, watchEffect, inject } from 'vue';
 import { validate } from './validate';
 import {
   FormController,
@@ -27,7 +27,7 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
 export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
   const { value, form, immediate, bails, disabled } = normalizeOptions(opts);
   const { meta, errors, onBlur, handleChange, reset, patch } = useValidationState(value);
-  const nonYupSchemaRules = extractRuleFromSchema(opts?.form?.schema, unwrap(fieldName));
+  const nonYupSchemaRules = extractRuleFromSchema(form?.schema, unwrap(fieldName));
   const normalizedRules = computed(() => {
     return normalizeRules(nonYupSchemaRules || unwrap(rules));
   });
@@ -145,12 +145,15 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
  * Normalizes partial field options to include the full
  */
 function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions {
+  const form = inject('$_veeForm', undefined) as FormController | undefined;
+
   const defaults = () => ({
     value: ref(undefined),
     immediate: false,
     bails: true,
     rules: '',
     disabled: false,
+    form,
   });
 
   if (!opts) {

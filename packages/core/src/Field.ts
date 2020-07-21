@@ -1,6 +1,5 @@
-import { computed, inject, h, defineComponent } from 'vue';
+import { computed, h, defineComponent } from 'vue';
 import { getConfig } from './config';
-import { FormController } from './types';
 import { useField } from './useField';
 import { useRefsObjToComputed, normalizeChildren, isHTMLTag } from './utils';
 
@@ -34,7 +33,6 @@ export const Field = defineComponent({
   },
   setup(props, ctx) {
     const fieldName = props.name;
-    const $form = inject('$_veeForm', undefined) as FormController | undefined;
     // FIXME: is this right?
     const disabled = computed(() => props.disabled as boolean);
     const rules = computed(() => props.rules);
@@ -43,7 +41,6 @@ export const Field = defineComponent({
       fieldName,
       rules,
       {
-        form: $form,
         immediate: props.immediate as boolean,
         bails: props.bails as boolean,
         disabled,
