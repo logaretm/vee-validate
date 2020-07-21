@@ -1,6 +1,7 @@
 ---
-title: <Form />
+title: Form
 description: API reference for the Form component
+menuTitle: '<Field />'
 ---
 
 # Form

@@ -1,6 +1,7 @@
 ---
-title: <ErrorMessage />
+title: ErrorMessage
 description: API reference for the ErrorMessage component
+menuTitle: 'ErrorMessage />'
 ---
 
 # ErrorMessage

@@ -1,6 +1,6 @@
 ---
-title: 'Validation'
-description: How validation works and field-level validations vs form-level validations
+title: Validation
+description: Field-level and form-level validation and validation behavior and error messages
 ---
 
 # Validation

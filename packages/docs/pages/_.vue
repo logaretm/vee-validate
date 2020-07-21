@@ -5,6 +5,7 @@
 <script>
 import { store } from '@/plugins/appstate';
 import { slugify } from '@/utils/string';
+import { generateSocialImage, generateMetaTags, generateLinks } from '@/utils/seo';
 
 export default {
   async asyncData({ $content, params }) {
@@ -30,6 +31,31 @@ export default {
     Array.from(this.$el.querySelectorAll('h4')).forEach(linkify);
     // set the current document
     store.currentDoc = this.page;
+  },
+  head() {
+    const url = `${this.$config.appURL}${this.$route.path}`;
+    const links = generateLinks({
+      url,
+    });
+
+    const image = generateSocialImage({
+      title: this.page.title,
+      tagline: this.page.description,
+      imagePublicID: 'open-source/vee-validate-share',
+    });
+
+    const meta = generateMetaTags({
+      title: this.page.title,
+      description: this.page.description,
+      url,
+      image,
+    });
+
+    return {
+      title: this.page.title,
+      meta,
+      links,
+    };
   },
 };
 </script>

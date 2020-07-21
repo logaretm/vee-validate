@@ -5,7 +5,7 @@
         <p class="text-xs font-bold text-gray-800 uppercase">{{ category.title }}</p>
         <ul class="mt-3 space-y-2">
           <li v-for="page in category.children" :key="page.title">
-            <nuxt-link :to="page.path">{{ page.title }}</nuxt-link>
+            <nuxt-link :to="page.path">{{ page.menuTitle || page.title }}</nuxt-link>
           </li>
         </ul>
       </div>
@@ -40,7 +40,7 @@ export default {
 
     const results = await Promise.all(
       categories.map(cat => {
-        return Promise.all(cat.content.map(page => this.$content(page).only(['title', 'path']).fetch()));
+        return Promise.all(cat.content.map(page => this.$content(page).only(['title', 'path', 'menuTitle']).fetch()));
       })
     );
 

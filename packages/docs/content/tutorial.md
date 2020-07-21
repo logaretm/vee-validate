@@ -1,5 +1,6 @@
 ---
 title: Validation Basics
+description: Build a newsletter form with vee-validate
 ---
 
 # Validation Basics
