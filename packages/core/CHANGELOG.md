@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.3](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.2...vee-validate@4.0.0-alpha.3) (2020-07-21)
+
+
+### Features
+
+* automatic injection of the form controller ([c039831](https://github.com/logaretm/vee-validate/commit/c0398318ec70c925b6bcb2afa859ec89488e1f78))
+* remove debounce feature and make it userland ([b7263ce](https://github.com/logaretm/vee-validate/commit/b7263ce0f887388709846975b59965e440636089))
+
+
+
+
+
 # [4.0.0-alpha.2](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.1...vee-validate@4.0.0-alpha.2) (2020-07-19)
 
 
