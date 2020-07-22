@@ -36,7 +36,7 @@ module.exports = {
         dark: 'hsl(240 6% 9%)',
         carbon: '#333',
         'accent-900': '#009f53',
-        'accent-800': '#06d77b',
+        'accent-800': 'var(--accent, #06d77b)',
         'accent-100': '#7bffc5',
 
         warning: 'hsl(33deg 100% 77%)',

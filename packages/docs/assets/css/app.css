@@ -7,3 +7,11 @@ body {
   height: 100%;
   @apply font-body;
 }
+
+:root {
+  --accent: #09a884;
+
+  .is-dark {
+    --accent: #06d77b;
+  }
+}
