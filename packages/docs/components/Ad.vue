@@ -33,7 +33,7 @@ export default {
 
 <style lang="postcss">
 #ad {
-  @apply static text-gray-800;
+  @apply static text-gray-800 ml-3;
   margin-top: 3.6rem;
   z-index: 1;
   float: right;
@@ -57,48 +57,48 @@ export default {
 
   #carbonads span {
     position: relative;
-    display: block;
+    display: flex;
     overflow: hidden;
   }
 
   .carbon-img img {
     display: block;
+    @apply mx-auto;
   }
 
   .carbon-text {
-    @apply p-2;
-    display: block;
-    float: left;
+    @apply p-2 block float-left text-left;
     max-width: calc(100% - 130px - 1em);
-    text-align: left;
     color: currentColor;
   }
 
   .carbon-poweredby {
-    @apply p-2;
-    position: absolute;
+    @apply p-2 absolute bottom-0 block uppercase;
     left: 142px;
     bottom: 0;
-    display: block;
     font-size: 10px;
     color: currentColor;
     font-weight: 500;
-    text-transform: uppercase;
     line-height: 1;
     letter-spacing: 1px;
   }
 }
 @screen lg {
   #ad {
-    @apply fixed rounded;
-    width: 130px;
+    @apply fixed rounded ml-0;
+    width: 160px;
     z-index: 19;
     bottom: 2rem;
-    left: calc((100% - 45rem - 100px) / 2 - 80px);
+    left: calc((100% - 45rem - 100px) / 2 - 140px);
     background-color: #fff;
     font-size: 13px;
     #carbonads {
+      padding-top: 15px;
       max-width: 100%;
+    }
+
+    #carbonads span {
+      @apply flex-col;
     }
 
     .carbon-img {
@@ -125,11 +125,10 @@ export default {
 
 @screen xl {
   #ad {
-    width: 220px;
     margin-left: 0;
     left: unset;
     float: unset;
-    right: calc((100% - 45rem) / 2 - 290px);
+    right: calc((100% - 45rem) / 2 - 230px);
   }
 }
 
