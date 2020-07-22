@@ -20,11 +20,10 @@ Most validation libraries will save you a lot of time, but `vee-validate` tackle
 
 <div class="features">
 
-- Define validation rules declaratively or imperatively
-- Cross Field validation
-- Both Field-level or Schema (form-level) Validation
-- Built-in helpers to enhance your forms accessability and styling
-- Message generation support
-- A collection of common rules to bootstrap most applications
+- Tracking form state
+- UI and UX
+- Synchronous and Asynchronous Validation
+- Handling submissions
+- Accessability (A11y)
 
 </div>

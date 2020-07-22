@@ -30,7 +30,7 @@ export default {
       },
       {
         title: 'Tutorials and Resources',
-        content: ['/tutorial', '/resources'],
+        content: ['/tutorials/basics', '/tutorials/dynamic-form-generator', '/resources'],
       },
       {
         title: 'API Reference',
