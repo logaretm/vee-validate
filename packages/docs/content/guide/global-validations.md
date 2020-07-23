@@ -9,7 +9,7 @@ Sometimes you are building an application that is form-heavy and needs to valida
 
 VeeValidate allows you to define validation rules globally on the app-level which in turn can allow you express your rules in a minimal syntax that is inspired by the [Laravel framework's validation syntax](https://laravel.com/docs/validation).
 
-## Defining a Global Validator
+## Defining Global Validators
 
 You can define a global validator using the `defineRule` function exported by vee-validate:
 
@@ -70,7 +70,7 @@ Now that you've defined your validators, for example the `email` and `required` 
 
 Notice that to define multiple rules you have to place a `|` (pipe) character between your rules as a separator.
 
-## Defining Configurable Validators
+## Configuring Global Validators
 
 Sometimes you rules require more information to work properly, for example if we want to define a `minLength` rule it won't be very useful to hard code the character limit, instead it should receive it per field.
 
@@ -128,7 +128,7 @@ Then you can use it like this:
 <Field name="longitude" as="input" type="number" rules="required|minMax:-180,180" />
 ```
 
-## Form-level validation with Global Rules
+## Schema Validation
 
 The [Form-level validation](./guide/validation#form-level-validation) feature isn't limited to `yup` validators, you can define your global validators and define them in the exact same way as the previous examples in the `Form` component `validation-schema` prop.
 
