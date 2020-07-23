@@ -78,7 +78,6 @@ export default {
 
 .main {
   @apply py-12 px-6 min-w-0;
-  min-height: 100%;
 
   @screen lg {
     @apply px-0;
