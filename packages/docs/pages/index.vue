@@ -16,10 +16,10 @@
         <nuxt-link class="block mt-8 bg-accent-900 p-4 text-white rounded-lg font-bold text-center" to="/guide/overview"
           >📚 Getting Started</nuxt-link
         >
-        <nuxt-link class="block mt-8 bg-warning p-4 text-dark rounded-lg font-bold text-center" to="/tutorial"
+        <nuxt-link class="block mt-8 bg-warning p-4 text-dark rounded-lg font-bold text-center" to="/tutorials/basics"
           >⏰ 10 Minute Tutorial</nuxt-link
         >
-        <nuxt-link class="block mt-8 bg-error p-4 text-dark rounded-lg font-bold text-center" to="/tutorial"
+        <nuxt-link class="block mt-8 bg-error p-4 text-dark rounded-lg font-bold text-center" to="/tutorials/basics"
           >🧪 Examples</nuxt-link
         >
       </div>
