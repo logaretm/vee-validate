@@ -24,8 +24,8 @@ export default {
           '/guide/overview',
           '/guide/validation',
           '/guide/handling-forms',
+          '/guide/global-validators',
           '/guide/i18n',
-          '/guide/global-validations',
         ],
       },
       {

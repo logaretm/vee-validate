@@ -1,9 +1,9 @@
 ---
-title: Global Validations
+title: Global Validators
 description: Defining global rules to be used throughout your web app
 ---
 
-# Global Validations
+# Global Validators
 
 Sometimes you are building an application that is form-heavy and needs to validate forms frequently, like an admin dashboard or a form based application. importing validation rules every time you need them can be quite tedious.
 
@@ -47,8 +47,9 @@ defineRule('email', value => {
 
 The validator function is a simple function that receives the current field value as the first argument, and it should return:
 
-- `true` If the validation passed
-- `string` If the validation failed and there is an error message to display
+- `true` if the validation passed
+- `string` if the validation failed and there is an error message to display
+- `false` if validation fails, in that case vee-validate will try to generate an error message using `config.defaultMessage`
 - `Promise` if you have an asynchronous rule, the promise must either resolve to `string` or `true`
 
 <doc-tip title="Rules Placement">
@@ -218,6 +219,71 @@ defineRule('confirmed', (value, [target]) => {
 ```
 
 This allows you to create more concise rules, you can reference any number of fields using this way.
+
+## @vee-validate/rules
+
+VeeValidate offers a wide range of common validators that you can use as global validators, they are packed in a separate package under the `@vee-validate/rules` namespace
+
+```sh
+yarn add @vee-validate/rules
+
+# or with npm
+npm install @vee-validate/rules
+```
+
+You can then start importing and defining rules globally:
+
+```js
+import { defineRule } from 'vee-validate';
+import { required, email, min } from '@vee-validate/rules';
+
+defineRule('required', required);
+defineRule('email', email);
+defineRule('min', min);
+```
+
+Or you can globally define all the available rules in the `@vee-validate/rules` package:
+
+```js
+import { defineRule } from 'vee-validate';
+import * as rules from '@vee-validate/rules';
+
+Object.keys(rules).forEach(rule => {
+  defineRule(rule, rules[rule]);
+});
+```
+
+### Available Rules
+
+<ul class="grid grid-cols-2 col-gap-4 lg:grid-cols-3 lg:col-gap-8 text-accent-800">
+  <li><a href="#alpha">alpha</a></li>
+  <li><a href="#alpha-dash">alpha_dash</a></li>
+  <li><a href="#alpha-num">alpha_num</a></li>
+  <li><a href="#alpha-spaces">alpha_spaces</a></li>
+  <li><a href="#between">between</a></li>
+  <li><a href="#confirmed">confirmed</a></li>
+  <li><a href="#digits">digits</a></li>
+  <li><a href="#dimensions">dimensions</a></li>
+  <li><a href="#email">email</a></li>
+  <li><a href="#excluded">excluded</a></li>
+  <li><a href="#ext">ext</a></li>
+  <li><a href="#image">image</a></li>
+  <li><a href="#oneof">oneOf</a></li>
+  <li><a href="#integer">integer</a></li>
+  <li><a href="#is">is</a></li>
+  <li><a href="#is-not">is_not</a></li>
+  <li><a href="#length">length</a></li>
+  <li><a href="#max">max</a></li>
+  <li><a href="#max-value">max_value</a></li>
+  <li><a href="#mimes">mimes</a></li>
+  <li><a href="#min">min</a></li>
+  <li><a href="#min-value">min_value</a></li>
+  <li><a href="#numeric">numeric</a></li>
+  <li><a href="#regex">regex</a></li>
+  <li><a href="#required">required</a></li>
+  <li><a href="#required-if">required_if</a></li>
+  <li><a href="#size">size</a></li>
+</ul>
 
 ## Caveats
 
