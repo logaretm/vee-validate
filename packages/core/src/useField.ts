@@ -1,4 +1,16 @@
-import { watch, ref, Ref, isRef, reactive, computed, onMounted, toRefs, watchEffect, inject } from 'vue';
+import {
+  watch,
+  ref,
+  Ref,
+  isRef,
+  reactive,
+  computed,
+  onMounted,
+  toRefs,
+  watchEffect,
+  inject,
+  onBeforeUnmount,
+} from 'vue';
 import { validate } from './validate';
 import {
   FormController,
@@ -104,6 +116,10 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
 
   // associate the field with the given form
   form.register(field);
+
+  onBeforeUnmount(() => {
+    form.unregister(field);
+  });
 
   // extract cross-field dependencies in a computed prop
   const dependencies = computed(() => {

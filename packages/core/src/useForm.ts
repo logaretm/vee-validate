@@ -51,6 +51,14 @@ export function useForm(opts?: FormOptions) {
 
       fields.value.push(field);
     },
+    unregister(field: FieldComposite) {
+      const idx = fields.value.indexOf(field);
+      if (idx === -1) {
+        return;
+      }
+
+      fields.value.splice(idx, 1);
+    },
     fields: fieldsById,
     values,
     schema: opts?.validationSchema,
