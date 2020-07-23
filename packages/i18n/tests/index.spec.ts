@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import { defineRule, configure } from '@vee-validate/core';
 import { required } from '@vee-validate/rules';
-import { localize } from '@vee-validate/i18n';
+import { localize, setLocale } from '@vee-validate/i18n';
 import { mountWithHoc, setValue } from '../../core/tests/helpers';
 
 defineRule('required', required);
@@ -125,4 +125,46 @@ test('falls back to the default message if rule without message exists', async (
   await flushPromises();
 
   expect(error.textContent).toContain('field is not valid');
+});
+
+test('can switch between locales with setLocale', async () => {
+  configure({
+    generateMessage: localize({
+      en: {
+        messages: {
+          required: 'This field is required',
+        },
+      },
+      ar: {
+        messages: {
+          required: 'هذا الحقل مطلوب',
+        },
+      },
+    }),
+  });
+
+  setLocale('en');
+
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <Field name="field" immediate rules="required" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
+          <span id="error">{{ errors[0] }}</span>
+        </Field>
+      </div>
+    `,
+  });
+
+  const error = wrapper.$el.querySelector('#error');
+
+  // flush the pending validation.
+  await flushPromises();
+
+  expect(error.textContent).toContain('This field is required');
+  setLocale('ar');
+  setValue(wrapper.$el.querySelector('input'), '');
+
+  await flushPromises();
+  expect(error.textContent).toContain('هذا الحقل مطلوب');
 });

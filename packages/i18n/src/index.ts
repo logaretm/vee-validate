@@ -76,4 +76,11 @@ function localize(locale: string | RootI18nDictionary, dictionary?: PartialI18nD
   return generateMessage;
 }
 
-export { localize };
+/**
+ * Sets the locale
+ */
+function setLocale(locale: string) {
+  DICTIONARY.locale = locale;
+}
+
+export { localize, setLocale };
