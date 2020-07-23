@@ -25,7 +25,7 @@ export default {
           '/guide/validation',
           '/guide/handling-forms',
           '/guide/i18n',
-          '/guide/rules-module',
+          '/guide/global-validations',
         ],
       },
       {
@@ -34,7 +34,7 @@ export default {
       },
       {
         title: 'API Reference',
-        content: ['/configuration', '/api/field', '/api/form', '/api/error-message', '/api/use-field', '/api/use-form'],
+        content: ['/api/field', '/api/form', '/api/error-message', '/api/use-field', '/api/use-form'],
       },
     ];
 
