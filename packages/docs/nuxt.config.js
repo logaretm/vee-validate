@@ -1,10 +1,10 @@
-console.log(process.env.NODE_ENV);
+const basePath = process.env.NODE_ENV === 'production' ? '/v4/' : '/';
 
 export default {
   mode: 'universal',
 
   router: {
-    base: process.env.NODE_ENV === 'production' ? '/v4/' : '/',
+    base: basePath,
   },
 
   components: true,
@@ -31,25 +31,25 @@ export default {
         content: 'VeeValidate Docs',
       },
       { name: 'msapplication-TileColor', content: '#ffffff' },
-      { name: 'msapplication-TileImage', content: '/img/ms-icon-144x144.png' },
+      { name: 'msapplication-TileImage', content: `${basePath}img/ms-icon-144x144.png` },
       { name: 'theme-color', content: '#41b883' },
     ],
 
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'apple-touch-icon', sizes: '57x57', href: '/img/apple-icon-57x57.png' },
-      { rel: 'apple-touch-icon', sizes: '60x60', href: '/img/apple-icon-60x60.png' },
-      { rel: 'apple-touch-icon', sizes: '72x72', href: '/img/apple-icon-72x72.png' },
-      { rel: 'apple-touch-icon', sizes: '76x76', href: '/img/apple-icon-76x76.png' },
-      { rel: 'apple-touch-icon', sizes: '114x114', href: '/img/apple-icon-114x114.png' },
-      { rel: 'apple-touch-icon', sizes: '120x120', href: '/img/apple-icon-120x120.png' },
-      { rel: 'apple-touch-icon', sizes: '144x144', href: '/img/apple-icon-144x144.png' },
-      { rel: 'apple-touch-icon', sizes: '152x152', href: '/img/apple-icon-152x152.png' },
-      { rel: 'apple-touch-icon', sizes: '180x180', href: '/img/apple-icon-180x180.png' },
-      { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/img/android-icon-192x192.png' },
-      { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/img/favicon-32x32.png' },
-      { rel: 'icon', type: 'image/png', sizes: '96x96', href: '/img/favicon-96x96.png' },
-      { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/img/favicon-16x16.png' },
+      { rel: 'icon', type: 'image/x-icon', href: `${basePath}favicon.ico` },
+      { rel: 'apple-touch-icon', sizes: '57x57', href: `${basePath}img/apple-icon-57x57.png` },
+      { rel: 'apple-touch-icon', sizes: '60x60', href: `${basePath}img/apple-icon-60x60.png` },
+      { rel: 'apple-touch-icon', sizes: '72x72', href: `${basePath}img/apple-icon-72x72.png` },
+      { rel: 'apple-touch-icon', sizes: '76x76', href: `${basePath}img/apple-icon-76x76.png` },
+      { rel: 'apple-touch-icon', sizes: '114x114', href: `${basePath}img/apple-icon-114x114.png` },
+      { rel: 'apple-touch-icon', sizes: '120x120', href: `${basePath}img/apple-icon-120x120.png` },
+      { rel: 'apple-touch-icon', sizes: '144x144', href: `${basePath}img/apple-icon-144x144.png` },
+      { rel: 'apple-touch-icon', sizes: '152x152', href: `${basePath}img/apple-icon-152x152.png` },
+      { rel: 'apple-touch-icon', sizes: '180x180', href: `${basePath}img/apple-icon-180x180.png` },
+      { rel: 'icon', type: 'image/png', sizes: '192x192', href: `${basePath}img/android-icon-192x192.png` },
+      { rel: 'icon', type: 'image/png', sizes: '32x32', href: `${basePath}img/favicon-32x32.png` },
+      { rel: 'icon', type: 'image/png', sizes: '96x96', href: `${basePath}img/favicon-96x96.png` },
+      { rel: 'icon', type: 'image/png', sizes: '16x16', href: `${basePath}img/favicon-16x16.png` },
     ],
   },
   /*
