@@ -153,7 +153,7 @@ async function _test(field: FieldValidationContext, value: any, rule: { name: st
  * Generates error messages.
  */
 function _generateFieldError(fieldCtx: FieldContext) {
-  const message = getConfig().defaultMessage;
+  const message = getConfig().generateMessage;
 
   return message(fieldCtx);
 }

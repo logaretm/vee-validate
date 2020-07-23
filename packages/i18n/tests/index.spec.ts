@@ -14,7 +14,7 @@ localize('en', {
 
 test('can define new locales', async () => {
   configure({
-    defaultMessage: localize('ar', {
+    generateMessage: localize('ar', {
       messages: {
         required: 'هذا الحقل مطلوب',
       },
@@ -42,7 +42,7 @@ test('can define new locales', async () => {
 
 test('can define specific messages for specific fields', async () => {
   configure({
-    defaultMessage: localize('en', {
+    generateMessage: localize('en', {
       fields: {
         test: {
           required: 'WRONG!',
@@ -77,7 +77,7 @@ test('can define specific messages for specific fields', async () => {
 
 test('can merge locales without setting the current one', async () => {
   configure({
-    defaultMessage: localize({
+    generateMessage: localize({
       ar: {
         messages: {
           required: 'هذا الحقل مطلوب',
