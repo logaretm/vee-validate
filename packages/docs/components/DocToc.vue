@@ -1,6 +1,6 @@
 <template>
   <aside>
-    <nav class="pt-24">
+    <nav class="pt-24" v-show="headings.length">
       <p class="font-bold text-xs uppercase text-gray-800">On this page</p>
       <ul class="mt-4 space-y-1 text-sm">
         <li v-for="heading in headings" :key="heading.id" :class="{ 'ml-4': heading.depth === 3 }">

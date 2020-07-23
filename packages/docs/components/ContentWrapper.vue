@@ -97,12 +97,13 @@ export default {
     }
   }
 
-  p {
+  p,
+  li {
     a[href] {
       @apply text-accent-800;
 
       &:hover {
-        @apply text-accent-900;
+        @apply underline;
       }
     }
   }

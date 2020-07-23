@@ -336,6 +336,6 @@ And that's it, any field that got an initial value will be automatically validat
 
 ## Conclusion
 
-In this guide you learned how to use the dynamic rendering capabilities of Vue.js combined with the flexible nature of the vee-validate components. You created a form that renders fields and validates them based on a JSON schema which.
+In this guide you learned how to use the dynamic rendering capabilities of Vue.js combined with the flexible nature of the vee-validate components. You created a form that renders fields and validates them based on a JSON schema.
 
 While the finished product is far from being complete, you can add features as needed to your form generator.
