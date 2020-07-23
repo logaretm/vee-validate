@@ -220,3 +220,7 @@ defineRule('confirmed', (value, [target]) => {
 This allows you to create more concise rules, you can reference any number of fields using this way.
 
 ## Caveats
+
+- Be careful of having too many global rules as this can slow down your initial website load time due to large initial bundle size
+- It is recommended to treat your validation rules as pure functions, meaning they only operate with the information given to them
+- Having small, pure global validations is preferable to allow re-using them across the app
