@@ -25,17 +25,12 @@ transformIgnorePatterns: [
 The following examples will use vue-test-utils API to conduct the tests.
 :::
 
-VeeValidate is primarily asynchronous, so you would need to disable vue-test-utils sync mode. And you will use flush-promises to wait for the updated to take effect.
-
-To disable the sync mode, when mounting the component set the sync option to false in the mounting options.
-
-```js
-const wrapper = mount(MyComponent, { sync: false });
-```
 
 After triggering an event like an input event, make sure to call flushPromises before checking the UI for changes:
 
 ```js
+import flushPromises from 'flush-promises'
+
 await flushPromises();
 ```
 
