@@ -6,7 +6,7 @@ menuTitle: '<Field />'
 
 # Field
 
-The `<Field />` component is an extremely flexible component that makes rendering input fields easy and intuitive, a simple text input looks like this:
+The `<Field />` component is an extremely flexible component that makes rendering input fields easy and intuitive, By default it renders an HTML `input` tag. So a simple text input can be rendered like this:
 
 ```vue
 <template>
@@ -26,7 +26,7 @@ export default {
 
 ## Rendering Fields
 
-The `Field` component allows you to render practically anything and gives you complete flexibility and control over how your fields are rendered. By default it renders an HTML `input` tag if not specified otherwise.
+The `Field` component allows you to render practically anything and gives you complete flexibility and control over how your fields are rendered. The `Field` component renders an HTML `input` tag if not specified otherwise. Which can be done in two ways.
 
 ### Rendering simple fields with 'as' prop
 
