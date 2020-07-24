@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.5](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.4...vee-validate@4.0.0-alpha.5) (2020-07-24)
+
+
+### Bug Fixes
+
+* unregister fields once they are unmounted ([0d601cb](https://github.com/logaretm/vee-validate/commit/0d601cb60b3ba907e6c0d73dd129c0c7b086316e))
+
+
+### Features
+
+* **v4:** add checkbox and radio HTML input support ([#2835](https://github.com/logaretm/vee-validate/issues/2835)) ([ab3d499](https://github.com/logaretm/vee-validate/commit/ab3d4998caf5950656dc0476f13215d598b28832))
+* render input by default for the field component ([81d055d](https://github.com/logaretm/vee-validate/commit/81d055d704deaa12b392fd9197218733b3a0bb8d))
+
+
+
+
+
 # [4.0.0-alpha.4](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.3...vee-validate@4.0.0-alpha.4) (2020-07-23)
 
 **Note:** Version bump only for package vee-validate
