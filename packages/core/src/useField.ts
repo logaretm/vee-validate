@@ -20,7 +20,7 @@ import {
   Flag,
   ValidationFlags,
 } from './types';
-import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId } from './utils';
+import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId, hasCheckedAttr } from './utils';
 import { isCallable } from '../../shared';
 
 interface FieldOptions {
@@ -87,6 +87,16 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
 
   const aria = useAriAttrs(fieldName, meta);
 
+  const checked = hasCheckedAttr(type)
+    ? computed(() => {
+        if (Array.isArray(value.value)) {
+          return value.value.includes(unwrap(valueProp));
+        }
+
+        return unwrap(valueProp) === value.value;
+      })
+    : undefined;
+
   const field = {
     name: fieldName,
     value: value,
@@ -102,6 +112,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     setValidationState: patch,
     type,
     valueProp,
+    checked,
     idx: -1,
   };
 

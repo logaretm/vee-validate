@@ -98,11 +98,14 @@ export function useForm(opts?: FormOptions) {
       : undefined,
     setFieldValue(path: string, value: any) {
       const field = fieldsById.value[path];
-      if (!Array.isArray(field) && field.type !== 'checkbox') {
+
+      // singular inputs fields
+      if (!Array.isArray(field)) {
         _values.value[path] = value;
         return;
       }
 
+      // Radio buttons and other unknown group type inputs
       if (Array.isArray(field) && field[0].type !== 'checkbox') {
         _values.value[path] = value;
         // return;

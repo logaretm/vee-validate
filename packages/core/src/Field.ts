@@ -1,7 +1,7 @@
 import { computed, h, defineComponent } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
-import { useRefsObjToComputed, normalizeChildren, isHTMLTag, unwrap } from './utils';
+import { useRefsObjToComputed, normalizeChildren, isHTMLTag, unwrap, hasCheckedAttr } from './utils';
 
 export const Field = defineComponent({
   name: 'Field',
@@ -37,17 +37,24 @@ export const Field = defineComponent({
     const disabled = computed(() => props.disabled as boolean);
     const rules = computed(() => props.rules);
 
-    const { errors, value, errorMessage, validate: validateField, handleChange, onBlur, reset, meta, aria } = useField(
-      fieldName,
-      rules,
-      {
-        immediate: props.immediate as boolean,
-        bails: props.bails as boolean,
-        disabled,
-        type: ctx.attrs.type as string,
-        valueProp: ctx.attrs.value,
-      }
-    );
+    const {
+      errors,
+      value,
+      errorMessage,
+      validate: validateField,
+      handleChange,
+      onBlur,
+      reset,
+      meta,
+      aria,
+      checked,
+    } = useField(fieldName, rules, {
+      immediate: props.immediate as boolean,
+      bails: props.bails as boolean,
+      disabled,
+      type: ctx.attrs.type as string,
+      valueProp: ctx.attrs.value,
+    });
 
     const unwrappedMeta = useRefsObjToComputed(meta);
 
@@ -61,8 +68,8 @@ export const Field = defineComponent({
         onBlur: onBlur,
       };
 
-      if (ctx.attrs.type === 'checkbox') {
-        fieldProps.checked = value.value === unwrap(ctx.attrs.value);
+      if (hasCheckedAttr(ctx.attrs.type as string) && checked) {
+        fieldProps.checked = checked.value;
       } else {
         fieldProps.value = value.value;
       }
