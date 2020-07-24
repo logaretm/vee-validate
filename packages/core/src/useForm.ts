@@ -33,9 +33,12 @@ export function useForm(opts?: FormOptions) {
     return fields.value.filter(field => !unwrap(field.disabled));
   });
 
+  // a private ref for all form values
+  const _values = ref<Record<string, any>>({});
+  // public ref for all active form values
   const values = computed(() => {
-    return activeFields.value.reduce((acc: any, field) => {
-      acc[field.name] = field.value;
+    return activeFields.value.reduce((acc: Record<string, any>, field) => {
+      acc[field.name] = _values.value[field.name];
 
       return acc;
     }, {});
@@ -60,13 +63,16 @@ export function useForm(opts?: FormOptions) {
       fields.value.splice(idx, 1);
     },
     fields: fieldsById,
-    values,
+    values: _values,
     schema: opts?.validationSchema,
     validateSchema: isYupValidator(opts?.validationSchema)
       ? (shouldMutate = false) => {
           return validateYupSchema(controller, shouldMutate);
         }
       : undefined,
+    setFieldValue(path: string, value: any) {
+      _values.value[path] = value;
+    },
   };
 
   const validate = async () => {
