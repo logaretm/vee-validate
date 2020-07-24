@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 import { defineRule } from '@vee-validate/core';
-import { mountWithHoc, setValue } from './helpers';
+import { mountWithHoc, setValue, setChecked } from './helpers';
 import * as yup from 'yup';
 
 describe('<Form />', () => {
@@ -373,5 +373,48 @@ describe('<Form />', () => {
     setValue(confirmation, '1234');
     await flushPromises();
     expect(confirmationError.textContent).toBe('');
+  });
+
+  test('supports radio inputs', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = {
+          drink: 'required',
+        };
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema" v-slot="{ errors }">
+        <Field name="drink" as="input" type="radio" value="" /> Coffee
+        <Field name="drink" as="input" type="radio" value="Tea" /> Tea
+        <Field name="drink" as="input" type="radio" value="Coke" /> Coke
+
+        <span id="err">{{ errors.drink }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+    });
+
+    const err = wrapper.$el.querySelector('#err');
+    const inputs = wrapper.$el.querySelectorAll('input');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(err.textContent).toBe(REQUIRED_MESSAGE);
+    setChecked(inputs[2]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+
+    setChecked(inputs[0]);
+    await flushPromises();
+    expect(err.textContent).toBe(REQUIRED_MESSAGE);
+
+    setChecked(inputs[1]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
   });
 });

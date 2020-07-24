@@ -97,6 +97,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     onBlur,
     disabled,
     setValidationState: patch,
+    idx: -1,
   };
 
   watch(value, runValidationWithMutation, {

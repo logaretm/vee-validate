@@ -23,7 +23,21 @@ export function useForm(opts?: FormOptions) {
   const isSubmitting = ref(false);
   const fieldsById = computed(() => {
     return fields.value.reduce((acc, field) => {
-      acc[field.name] = field;
+      if (!acc[field.name]) {
+        acc[field.name] = field;
+        field.idx = -1;
+
+        return acc;
+      }
+
+      if (!Array.isArray(acc[field.name])) {
+        acc[field.name] = [acc[field.name]];
+        field.idx = 0;
+        return acc;
+      }
+
+      field.idx = acc[field.name].length;
+      acc[field.name].push(field);
 
       return acc;
     }, {} as Record<string, any>);
@@ -49,7 +63,7 @@ export function useForm(opts?: FormOptions) {
       const name = unwrap(field.name);
       // Set the initial value for that field
       if (opts?.initialValues?.[name]) {
-        field.value.value = opts?.initialValues[name];
+        _values.value[name] = opts?.initialValues[name];
       }
 
       fields.value.push(field);
@@ -61,6 +75,18 @@ export function useForm(opts?: FormOptions) {
       }
 
       fields.value.splice(idx, 1);
+      const fieldName = unwrap(field.name);
+      if (field.idx === -1) {
+        delete _values.value[fieldName];
+      }
+
+      // clean up the form value
+      const valueIdx = _values.value[fieldName].indexOf(unwrap(field.valueProp));
+      if (valueIdx === -1) {
+        return;
+      }
+
+      _values.value[fieldName].splice(valueIdx, 1);
     },
     fields: fieldsById,
     values: _values,
@@ -71,7 +97,16 @@ export function useForm(opts?: FormOptions) {
         }
       : undefined,
     setFieldValue(path: string, value: any) {
-      _values.value[path] = value;
+      const field = fieldsById.value[path];
+      if (!Array.isArray(field) && field.type !== 'checkbox') {
+        _values.value[path] = value;
+        return;
+      }
+
+      if (Array.isArray(field) && field[0].type !== 'checkbox') {
+        _values.value[path] = value;
+        // return;
+      }
     },
   };
 
