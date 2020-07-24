@@ -32,7 +32,7 @@ describe('<Field />', () => {
     return value === target ? true : 'inputs do not match';
   });
 
-  test('renders the as prop', () => {
+  test('renders an input by default', () => {
     const wrapper = mountWithHoc({
       template: `
       <Field name="field" as="input" />
@@ -40,6 +40,30 @@ describe('<Field />', () => {
     });
 
     expect(wrapper.$el.tagName).toBe(`INPUT`);
+  });
+
+  test('renders the as prop', () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <Field name="field" as="div" />
+    `,
+    });
+
+    expect(wrapper.$el.tagName).toBe(`DIV`);
+  });
+
+  test('renderless if no as prop and default slot exists', () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <Field name="field" v-slot="{ field }">
+        <select v-bind="field">
+          <option>1</option>
+        </select>
+      </select>
+    `,
+    });
+
+    expect(wrapper.$el.tagName).toBe(undefined);
   });
 
   test('accepts functions to be passed as rules', async () => {

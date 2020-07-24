@@ -10,7 +10,7 @@ The `<Field />` component is an extremely flexible component that makes renderin
 
 ```vue
 <template>
-  <Field name="field" as="input" type="text">
+  <Field name="field" type="text">
 </template>
 
 <script>
@@ -26,7 +26,7 @@ export default {
 
 ## Rendering Fields
 
-The `Field` component allows you to render practically anything and gives you complete flexibility and control over how your fields are rendered.
+The `Field` component allows you to render practically anything and gives you complete flexibility and control over how your fields are rendered. By default it renders an HTML `input` tag if not specified otherwise.
 
 ### Rendering simple fields with 'as' prop
 
@@ -75,7 +75,7 @@ When using `v-slot` on the `Field` component you no longer have to provide an `a
 
 | Prop      | Type                     | Required/Default | Description                                                                           |
 | :-------- | :----------------------- | :--------------- | :------------------------------------------------------------------------------------ |
-| as        | `string`                 | `"span"`         | The element to render as a root node                                                  |
+| as        | `string`                 | `"span"`         | The element to render as a root node, defaults to `input`                             |
 | name      | `string`                 | Required         | The field's name, must be inside `<Form />`                                           |
 | rules     | `object|string|Function` | `null`           | The field's validation rules                                                          |
 | immediate | `boolean`                | `false`          | If true, field will be validated on mounted                                           |

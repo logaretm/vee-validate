@@ -71,10 +71,15 @@ export const Field = defineComponent({
     });
 
     return () => {
+      let tag = props.as;
+      if (!props.as && !ctx.slots.default) {
+        tag = 'input';
+      }
+
       const children = normalizeChildren(ctx, slotProps.value);
       if (props.as) {
         return h(
-          props.as,
+          tag,
           {
             ...ctx.attrs,
             ...slotProps.value.field,
