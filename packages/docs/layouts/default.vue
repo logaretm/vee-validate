@@ -43,7 +43,7 @@ export default {
 
 .App:not(.is-home) {
   @apply h-full mx-auto;
-  max-width: 1300px;
+  max-width: 1500px;
   grid-template-areas:
     'content'
     'footer';

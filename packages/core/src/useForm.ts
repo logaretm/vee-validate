@@ -1,4 +1,4 @@
-import { computed, ref, Ref, provide } from 'vue';
+import { computed, ref, Ref, provide, reactive } from 'vue';
 import type { useField } from './useField';
 import {
   Flag,
@@ -23,7 +23,21 @@ export function useForm(opts?: FormOptions) {
   const isSubmitting = ref(false);
   const fieldsById = computed(() => {
     return fields.value.reduce((acc, field) => {
-      acc[field.name] = field;
+      if (!acc[field.name]) {
+        acc[field.name] = field;
+        field.idx = -1;
+
+        return acc;
+      }
+
+      if (!Array.isArray(acc[field.name])) {
+        acc[field.name] = [acc[field.name]];
+        field.idx = 0;
+        return acc;
+      }
+
+      field.idx = acc[field.name].length;
+      acc[field.name].push(field);
 
       return acc;
     }, {} as Record<string, any>);
@@ -33,9 +47,12 @@ export function useForm(opts?: FormOptions) {
     return fields.value.filter(field => !unwrap(field.disabled));
   });
 
+  // a private ref for all form values
+  const _values = reactive<Record<string, any>>({});
+  // public ref for all active form values
   const values = computed(() => {
-    return activeFields.value.reduce((acc: any, field) => {
-      acc[field.name] = field.value;
+    return activeFields.value.reduce((acc: Record<string, any>, field) => {
+      acc[field.name] = _values[field.name];
 
       return acc;
     }, {});
@@ -46,7 +63,7 @@ export function useForm(opts?: FormOptions) {
       const name = unwrap(field.name);
       // Set the initial value for that field
       if (opts?.initialValues?.[name]) {
-        field.value.value = opts?.initialValues[name];
+        _values[name] = opts?.initialValues[name];
       }
 
       fields.value.push(field);
@@ -58,15 +75,61 @@ export function useForm(opts?: FormOptions) {
       }
 
       fields.value.splice(idx, 1);
+      const fieldName = unwrap(field.name);
+      if (field.idx === -1) {
+        delete _values[fieldName];
+      }
+
+      // clean up the form value
+      const valueIdx = _values[fieldName].indexOf(unwrap(field.valueProp));
+      if (valueIdx === -1) {
+        return;
+      }
+
+      _values[fieldName].splice(valueIdx, 1);
     },
     fields: fieldsById,
-    values,
+    values: _values,
     schema: opts?.validationSchema,
     validateSchema: isYupValidator(opts?.validationSchema)
       ? (shouldMutate = false) => {
           return validateYupSchema(controller, shouldMutate);
         }
       : undefined,
+    setFieldValue(path: string, value: any) {
+      const field = fieldsById.value[path];
+
+      // singular inputs fields
+      if (!Array.isArray(field) && field.type !== 'checkbox') {
+        _values[path] = value;
+        return;
+      }
+
+      // Radio buttons and other unknown group type inputs
+      if (Array.isArray(field) && field[0].type !== 'checkbox') {
+        _values[path] = value;
+        return;
+      }
+
+      // Single Checkbox
+      if (!Array.isArray(field) && field.type === 'checkbox') {
+        _values[path] = _values[path] === value ? undefined : value;
+        return;
+      }
+
+      // Multiple Checkboxes
+      const newVal = Array.isArray(_values[path]) ? [..._values[path]] : [];
+      if (newVal.includes(value)) {
+        const idx = newVal.indexOf(value);
+        newVal.splice(idx, 1);
+
+        _values[path] = newVal;
+        return;
+      }
+
+      newVal.push(value);
+      _values[path] = newVal;
+    },
   };
 
   const validate = async () => {
@@ -182,7 +245,7 @@ async function validateYupSchema(
   shouldMutate = false
 ): Promise<Record<string, ValidationResult>> {
   const errors: any[] = await (form.schema as any)
-    .validate(form.values.value, { abortEarly: false })
+    .validate(form.values, { abortEarly: false })
     .then(() => [])
     .catch((err: any) => {
       // Yup errors have a name prop one them.
@@ -211,9 +274,19 @@ async function validateYupSchema(
     };
 
     result[fieldId] = fieldResult;
-    if (shouldMutate || field.meta.validated) {
-      field.setValidationState(fieldResult);
+    const isGroup = Array.isArray(field);
+    const touched = isGroup ? field.some((f: any) => f.meta.validated) : field.meta.validated;
+    if (!shouldMutate && !touched) {
+      return result;
     }
+
+    if (isGroup) {
+      field.forEach((f: any) => f.setValidationState(fieldResult));
+
+      return result;
+    }
+
+    field.setValidationState(fieldResult);
 
     return result;
   }, {});

@@ -44,6 +44,12 @@ export function setValue(node: ComponentPublicInstance | HTMLInputElement, value
   (node as any).$emit('input', value);
 }
 
+export function setChecked(node: HTMLInputElement) {
+  node.checked = true;
+  node.dispatchEvent(new window.Event('change'));
+  node.dispatchEvent(new window.Event('input'));
+}
+
 export function dispatchEvent(node: ComponentPublicInstance | HTMLInputElement, eventName: string) {
   if (HTML_TAGS.includes((node as any).tagName)) {
     const input = node as HTMLInputElement;

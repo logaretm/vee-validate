@@ -20,15 +20,17 @@ import {
   Flag,
   ValidationFlags,
 } from './types';
-import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId } from './utils';
+import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId, hasCheckedAttr } from './utils';
 import { isCallable } from '../../shared';
 
 interface FieldOptions {
-  value: Ref<any>;
+  initialValue: any;
   disabled: MaybeReactive<boolean>;
   immediate?: boolean;
   bails?: boolean;
   form?: FormController;
+  type?: string;
+  valueProp?: MaybeReactive<any>;
 }
 
 type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValidateFunction>;
@@ -37,8 +39,9 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
  * Creates a field composite.
  */
 export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
-  const { value, form, immediate, bails, disabled } = normalizeOptions(opts);
-  const { meta, errors, onBlur, handleChange, reset, patch } = useValidationState(value);
+  const { initialValue, form, immediate, bails, disabled, type, valueProp } = normalizeOptions(opts);
+  const { meta, errors, onBlur, handleChange, reset, patch, value } = useValidationState(fieldName, initialValue, form);
+
   const nonYupSchemaRules = extractRuleFromSchema(form?.schema, unwrap(fieldName));
   const normalizedRules = computed(() => {
     return normalizeRules(nonYupSchemaRules || unwrap(rules));
@@ -49,7 +52,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     if (!form || !form.validateSchema) {
       const result = await validate(value.value, normalizedRules.value, {
         name: unwrap(fieldName),
-        values: form?.values.value ?? {},
+        values: form?.values ?? {},
         bails,
       });
 
@@ -84,6 +87,16 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
 
   const aria = useAriAttrs(fieldName, meta);
 
+  const checked = hasCheckedAttr(type)
+    ? computed(() => {
+        if (Array.isArray(value.value)) {
+          return value.value.includes(unwrap(valueProp));
+        }
+
+        return unwrap(valueProp) === value.value;
+      })
+    : undefined;
+
   const field = {
     name: fieldName,
     value: value,
@@ -97,6 +110,10 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     onBlur,
     disabled,
     setValidationState: patch,
+    type,
+    valueProp,
+    checked,
+    idx: -1,
   };
 
   watch(value, runValidationWithMutation, {
@@ -148,7 +165,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
 
     // For each dependent field, validate it if it was validated before
     dependencies.value.forEach(dep => {
-      if (dep in form.values.value && meta.validated.value) {
+      if (dep in form.values && meta.validated.value) {
         runValidationWithMutation();
       }
     });
@@ -164,7 +181,7 @@ function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions
   const form = inject('$_veeForm', undefined) as FormController | undefined;
 
   const defaults = () => ({
-    value: ref(undefined),
+    initialValue: undefined,
     immediate: false,
     bails: true,
     rules: '',
@@ -185,10 +202,11 @@ function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions
 /**
  * Manages the validation state of a field.
  */
-function useValidationState(value: Ref<any>) {
+function useValidationState(fieldName: MaybeReactive<string>, initValue: any, form?: FormController) {
   const errors: Ref<string[]> = ref([]);
   const { onBlur, reset: resetFlags, meta } = useMeta();
-  const initialValue = value.value;
+  const initialValue = initValue;
+  const value = useFieldValue(initialValue, fieldName, form);
 
   // Common input/change event handler
   const handleChange = (e: Event) => {
@@ -221,6 +239,7 @@ function useValidationState(value: Ref<any>) {
     reset,
     onBlur,
     handleChange,
+    value,
   };
 }
 
@@ -306,4 +325,24 @@ function extractRuleFromSchema(schema: Record<string, any> | undefined, fieldNam
 
   // there is a key on the schema object for this field
   return schema[fieldName];
+}
+
+/**
+ * Manages the field value
+ */
+function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: FormController) {
+  // if no form is associated, use a regular ref.
+  if (!form) {
+    return ref(initialValue);
+  }
+
+  // otherwise use a computed setter that triggers the `setFieldValue`
+  return computed({
+    get() {
+      return form.values[unwrap(path)];
+    },
+    set(newVal) {
+      form.setFieldValue(unwrap(path), newVal);
+    },
+  });
 }

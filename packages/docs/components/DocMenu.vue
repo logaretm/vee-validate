@@ -33,6 +33,10 @@ export default {
         content: ['/tutorials/basics', '/tutorials/dynamic-form-generator', '/resources'],
       },
       {
+        title: 'Examples',
+        content: ['/examples/checkboxes-and-radio'],
+      },
+      {
         title: 'API Reference',
         content: ['/api/field', '/api/form', '/api/error-message', '/api/use-field', '/api/use-form'],
       },

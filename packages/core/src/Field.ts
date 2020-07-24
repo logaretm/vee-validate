@@ -1,7 +1,7 @@
 import { computed, h, defineComponent } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
-import { useRefsObjToComputed, normalizeChildren, isHTMLTag } from './utils';
+import { useRefsObjToComputed, normalizeChildren, isHTMLTag, unwrap, hasCheckedAttr } from './utils';
 
 export const Field = defineComponent({
   name: 'Field',
@@ -37,29 +37,47 @@ export const Field = defineComponent({
     const disabled = computed(() => props.disabled as boolean);
     const rules = computed(() => props.rules);
 
-    const { errors, value, errorMessage, validate: validateField, handleChange, onBlur, reset, meta, aria } = useField(
-      fieldName,
-      rules,
-      {
-        immediate: props.immediate as boolean,
-        bails: props.bails as boolean,
-        disabled,
-      }
-    );
+    const {
+      errors,
+      value,
+      errorMessage,
+      validate: validateField,
+      handleChange,
+      onBlur,
+      reset,
+      meta,
+      aria,
+      checked,
+    } = useField(fieldName, rules, {
+      immediate: props.immediate as boolean,
+      bails: props.bails as boolean,
+      disabled,
+      type: ctx.attrs.type as string,
+      valueProp: ctx.attrs.value,
+    });
 
     const unwrappedMeta = useRefsObjToComputed(meta);
 
     const slotProps = computed(() => {
+      const fieldProps: Record<string, any> = {
+        name: fieldName,
+        disabled: props.disabled,
+        onInput: handleChange,
+        onChange: handleChange,
+        'onUpdate:modelValue': handleChange,
+        onBlur: onBlur,
+      };
+
+      if (hasCheckedAttr(ctx.attrs.type as string) && checked) {
+        fieldProps.checked = checked.value;
+        // redundant for checkboxes and radio buttons
+        delete fieldProps.onInput;
+      } else {
+        fieldProps.value = value.value;
+      }
+
       return {
-        field: {
-          name: fieldName,
-          disabled: props.disabled,
-          onInput: handleChange,
-          onChange: handleChange,
-          'onUpdate:modelValue': handleChange,
-          onBlur: onBlur,
-          value: value.value,
-        },
+        field: fieldProps,
         aria: aria.value,
         meta: unwrappedMeta.value,
         errors: errors.value,
