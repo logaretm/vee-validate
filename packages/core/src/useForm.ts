@@ -100,7 +100,7 @@ export function useForm(opts?: FormOptions) {
       const field = fieldsById.value[path];
 
       // singular inputs fields
-      if (!Array.isArray(field)) {
+      if (!Array.isArray(field) && field.type !== 'checkbox') {
         _values[path] = value;
         return;
       }
@@ -111,6 +111,13 @@ export function useForm(opts?: FormOptions) {
         return;
       }
 
+      // Single Checkbox
+      if (!Array.isArray(field) && field.type === 'checkbox') {
+        _values[path] = _values[path] === value ? undefined : value;
+        return;
+      }
+
+      // Multiple Checkboxes
       const newVal = Array.isArray(_values[path]) ? [..._values[path]] : [];
       if (newVal.includes(value)) {
         const idx = newVal.indexOf(value);
