@@ -1,4 +1,4 @@
-import { computed, ref, Ref, provide } from 'vue';
+import { computed, ref, Ref, provide, reactive } from 'vue';
 import type { useField } from './useField';
 import {
   Flag,
@@ -48,11 +48,11 @@ export function useForm(opts?: FormOptions) {
   });
 
   // a private ref for all form values
-  const _values = ref<Record<string, any>>({});
+  const _values = reactive<Record<string, any>>({});
   // public ref for all active form values
   const values = computed(() => {
     return activeFields.value.reduce((acc: Record<string, any>, field) => {
-      acc[field.name] = _values.value[field.name];
+      acc[field.name] = _values[field.name];
 
       return acc;
     }, {});
@@ -63,7 +63,7 @@ export function useForm(opts?: FormOptions) {
       const name = unwrap(field.name);
       // Set the initial value for that field
       if (opts?.initialValues?.[name]) {
-        _values.value[name] = opts?.initialValues[name];
+        _values[name] = opts?.initialValues[name];
       }
 
       fields.value.push(field);
@@ -77,16 +77,16 @@ export function useForm(opts?: FormOptions) {
       fields.value.splice(idx, 1);
       const fieldName = unwrap(field.name);
       if (field.idx === -1) {
-        delete _values.value[fieldName];
+        delete _values[fieldName];
       }
 
       // clean up the form value
-      const valueIdx = _values.value[fieldName].indexOf(unwrap(field.valueProp));
+      const valueIdx = _values[fieldName].indexOf(unwrap(field.valueProp));
       if (valueIdx === -1) {
         return;
       }
 
-      _values.value[fieldName].splice(valueIdx, 1);
+      _values[fieldName].splice(valueIdx, 1);
     },
     fields: fieldsById,
     values: _values,
@@ -101,15 +101,27 @@ export function useForm(opts?: FormOptions) {
 
       // singular inputs fields
       if (!Array.isArray(field)) {
-        _values.value[path] = value;
+        _values[path] = value;
         return;
       }
 
       // Radio buttons and other unknown group type inputs
       if (Array.isArray(field) && field[0].type !== 'checkbox') {
-        _values.value[path] = value;
-        // return;
+        _values[path] = value;
+        return;
       }
+
+      const newVal = Array.isArray(_values[path]) ? [..._values[path]] : [];
+      if (newVal.includes(value)) {
+        const idx = newVal.indexOf(value);
+        newVal.splice(idx, 1);
+
+        _values[path] = newVal;
+        return;
+      }
+
+      newVal.push(value);
+      _values[path] = newVal;
     },
   };
 
@@ -226,7 +238,7 @@ async function validateYupSchema(
   shouldMutate = false
 ): Promise<Record<string, ValidationResult>> {
   const errors: any[] = await (form.schema as any)
-    .validate(form.values.value, { abortEarly: false })
+    .validate(form.values, { abortEarly: false })
     .then(() => [])
     .catch((err: any) => {
       // Yup errors have a name prop one them.

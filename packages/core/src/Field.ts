@@ -70,6 +70,8 @@ export const Field = defineComponent({
 
       if (hasCheckedAttr(ctx.attrs.type as string) && checked) {
         fieldProps.checked = checked.value;
+        // redundant for checkboxes and radio buttons
+        delete fieldProps.onInput;
       } else {
         fieldProps.value = value.value;
       }

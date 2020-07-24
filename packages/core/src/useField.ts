@@ -52,7 +52,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     if (!form || !form.validateSchema) {
       const result = await validate(value.value, normalizedRules.value, {
         name: unwrap(fieldName),
-        values: form?.values.value ?? {},
+        values: form?.values ?? {},
         bails,
       });
 
@@ -165,7 +165,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
 
     // For each dependent field, validate it if it was validated before
     dependencies.value.forEach(dep => {
-      if (dep in form.values.value && meta.validated.value) {
+      if (dep in form.values && meta.validated.value) {
         runValidationWithMutation();
       }
     });
@@ -339,7 +339,7 @@ function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: Fo
   // otherwise use a computed setter that triggers the `setFieldValue`
   return computed({
     get() {
-      return form.values.value[unwrap(path)];
+      return form.values[unwrap(path)];
     },
     set(newVal) {
       form.setFieldValue(unwrap(path), newVal);

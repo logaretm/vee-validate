@@ -32,7 +32,7 @@ export const Form = defineComponent({
       return {
         meta: unwrappedMeta.value,
         errors: errors.value,
-        values: values.value,
+        values: values,
         isSubmitting: isSubmitting.value,
         validate,
         handleSubmit,
