@@ -417,4 +417,51 @@ describe('<Form />', () => {
     await flushPromises();
     expect(err.textContent).toBe('');
   });
+
+  test('supports checkboxes inputs', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = {
+          drink: 'required',
+        };
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema" v-slot="{ errors, values }">
+        <Field name="drink" as="input" type="checkbox" value="" /> Coffee
+        <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
+        <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+
+        <span id="err">{{ errors.drink }}</span>
+        <span id="values">{{ values.drink && values.drink.toString() }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+    });
+
+    const err = wrapper.$el.querySelector('#err');
+    const values = wrapper.$el.querySelector('#values');
+    const inputs = wrapper.$el.querySelectorAll('input');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(err.textContent).toBe(REQUIRED_MESSAGE);
+    setChecked(inputs[2]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+
+    setChecked(inputs[0]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+
+    setChecked(inputs[1]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+
+    expect(values.textContent).toBe(['Coke', '', 'Tea'].toString());
+  });
 });
