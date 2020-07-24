@@ -252,9 +252,19 @@ async function validateYupSchema(
     };
 
     result[fieldId] = fieldResult;
-    if (shouldMutate || field.meta.validated) {
-      field.setValidationState(fieldResult);
+    const isGroup = Array.isArray(field);
+    const touched = isGroup ? field.some((f: any) => f.meta.validated) : field.meta.validated;
+    if (!shouldMutate && !touched) {
+      return result;
     }
+
+    if (isGroup) {
+      field.forEach((f: any) => f.setValidationState(fieldResult));
+
+      return result;
+    }
+
+    field.setValidationState(fieldResult);
 
     return result;
   }, {});

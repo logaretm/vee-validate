@@ -1,7 +1,7 @@
 import { computed, h, defineComponent } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
-import { useRefsObjToComputed, normalizeChildren, isHTMLTag } from './utils';
+import { useRefsObjToComputed, normalizeChildren, isHTMLTag, unwrap } from './utils';
 
 export const Field = defineComponent({
   name: 'Field',
@@ -44,22 +44,31 @@ export const Field = defineComponent({
         immediate: props.immediate as boolean,
         bails: props.bails as boolean,
         disabled,
+        type: ctx.attrs.type as string,
+        valueProp: ctx.attrs.value,
       }
     );
 
     const unwrappedMeta = useRefsObjToComputed(meta);
 
     const slotProps = computed(() => {
+      const fieldProps: Record<string, any> = {
+        name: fieldName,
+        disabled: props.disabled,
+        onInput: handleChange,
+        onChange: handleChange,
+        'onUpdate:modelValue': handleChange,
+        onBlur: onBlur,
+      };
+
+      if (ctx.attrs.type === 'checkbox') {
+        fieldProps.checked = value.value === unwrap(ctx.attrs.value);
+      } else {
+        fieldProps.value = value.value;
+      }
+
       return {
-        field: {
-          name: fieldName,
-          disabled: props.disabled,
-          onInput: handleChange,
-          onChange: handleChange,
-          'onUpdate:modelValue': handleChange,
-          onBlur: onBlur,
-          value: value.value,
-        },
+        field: fieldProps,
         aria: aria.value,
         meta: unwrappedMeta.value,
         errors: errors.value,

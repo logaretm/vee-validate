@@ -20,7 +20,7 @@ import {
   Flag,
   ValidationFlags,
 } from './types';
-import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId, hasCheckedAttr } from './utils';
+import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId } from './utils';
 import { isCallable } from '../../shared';
 
 interface FieldOptions {
@@ -29,6 +29,8 @@ interface FieldOptions {
   immediate?: boolean;
   bails?: boolean;
   form?: FormController;
+  type?: string;
+  valueProp?: MaybeReactive<any>;
 }
 
 type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValidateFunction>;
@@ -37,8 +39,9 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
  * Creates a field composite.
  */
 export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
-  const { initialValue, form, immediate, bails, disabled } = normalizeOptions(opts);
+  const { initialValue, form, immediate, bails, disabled, type, valueProp } = normalizeOptions(opts);
   const { meta, errors, onBlur, handleChange, reset, patch, value } = useValidationState(fieldName, initialValue, form);
+
   const nonYupSchemaRules = extractRuleFromSchema(form?.schema, unwrap(fieldName));
   const normalizedRules = computed(() => {
     return normalizeRules(nonYupSchemaRules || unwrap(rules));
@@ -97,6 +100,8 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     onBlur,
     disabled,
     setValidationState: patch,
+    type,
+    valueProp,
     idx: -1,
   };
 
