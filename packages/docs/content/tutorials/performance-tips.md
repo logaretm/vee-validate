@@ -5,11 +5,11 @@ description: Tips and best practices to improve form rendering/validation perfor
 
 # Performance Tips
 
-Because vee-validate is a template based validation library for Vue.js, it makes heavy use of higher-order components and as such it brings overhead to your applications. In this guide you will find some tips on how to improve performance while using vee-validate.
+In this guide you will learn some tips and opportunities to improve performance while using vee-validate.
 
 ## Disable Reactivity for yup Schemas
 
-While defining a `yup` schema, you maybe inclined to do this:
+While defining a `yup` schema, you would be inclined to do this:
 
 ```js
 import * as yup from 'yup';
@@ -20,6 +20,10 @@ export default {
       email: yup.string().email().required(),
       // other fields ...
     });
+
+    return {
+      schema,
+    };
   },
 };
 ```
