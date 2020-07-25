@@ -30,12 +30,7 @@ export default {
       },
       {
         title: 'Tutorials and Resources',
-        content: [
-          '/tutorials/basics',
-          '/tutorials/dynamic-form-generator',
-          '/tutorials/performance-tips',
-          '/resources',
-        ],
+        content: ['/tutorials/basics', '/tutorials/dynamic-form-generator', '/tutorials/best-practices', '/resources'],
       },
       {
         title: 'Examples',

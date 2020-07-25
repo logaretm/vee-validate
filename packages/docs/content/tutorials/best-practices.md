@@ -1,11 +1,11 @@
 ---
-title: Performance Tips
-description: Tips and best practices to improve form rendering/validation performance
+title: Best Practices
+description: Tips and best practices to improve your workflow with vee-validate
 ---
 
-# Performance Tips
+# Best Practices
 
-In this guide you will learn some tips and opportunities to improve performance while using vee-validate.
+In this guide you will learn some tips and opportunities to improve your workflow while using vee-validate.
 
 ## Disable Reactivity for yup Schemas
 
