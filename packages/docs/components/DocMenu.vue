@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: 'PrimarySidebar',
+  name: 'DocMenu',
   async fetch() {
     const categories = [
       {

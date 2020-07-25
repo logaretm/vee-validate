@@ -16,7 +16,7 @@ import { store } from '@/plugins/appstate';
 import { slugify } from '@/utils/string';
 
 export default {
-  name: 'PageNavigation',
+  name: 'DocToc',
   computed: {
     headings() {
       if (!store.currentDoc) {
