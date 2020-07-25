@@ -19,32 +19,24 @@ The only requirements are that the fields:
 
 ## Validating Radio Inputs
 
-vee-validate automatically assigns the value of the checked radio button to the `values` object sent to your submit function or present on the `Form` scoped-slot props.
+vee-validate handles radio input groups as long as they have the `type="radio"` and the same `name` prop value. The selected value will be present in the `values` object.
 
-```vue
-<Form @submit="onSubmit">
-  <Field name="drink" type="radio" value="" /> Coffee
-  <Field name="drink" type="radio" value="Tea" /> Tea
-  <Field name="drink" type="radio" value="Coke" /> Coke
-
-  <ErrorMessage name="drink" />
-
-  <button>Submit</button>
-</Form>
-```
+<p class="codepen" data-height="423" data-theme-id="light" data-default-tab="js,result" data-user="logaretm" data-slug-hash="YzwMqmL" style="height: 423px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="Validating Radio Inputs">
+  <span>See the Pen <a href="https://codepen.io/logaretm/pen/YzwMqmL">
+  Validating Radio Inputs</a> by Abdelrahman Awad (<a href="https://codepen.io/logaretm">@logaretm</a>)
+  on <a href="https://codepen.io">CodePen</a>.</span>
+</p>
 
 ## Validating Checkbox Inputs
 
-vee-validate automatically assigns the value of the checked checkboxes as an array on the `values` object. Just like `v-model`.
+vee-validate handles checkboxes as long as they have the `type="checkbox"` prop and the same `name` prop value. The selected values will be collected in an array similar to what `v-model` does.
 
-```vue
-<Form @submit="onSubmit">
-  <Field name="drink" type="checkbox" value="" /> Coffee
-  <Field name="drink" type="checkbox" value="Tea" /> Tea
-  <Field name="drink" type="checkbox" value="Coke" /> Coke
+<p class="codepen" data-height="423" data-theme-id="light" data-default-tab="js,result" data-user="logaretm" data-slug-hash="BajEzoe" style="height: 423px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="Validating Checkboxes">
+  <span>See the Pen <a href="https://codepen.io/logaretm/pen/BajEzoe">
+  Validating Checkboxes</a> by Abdelrahman Awad (<a href="https://codepen.io/logaretm">@logaretm</a>)
+  on <a href="https://codepen.io">CodePen</a>.</span>
+</p>
 
-  <ErrorMessage name="drink" />
+If there is only one checkbox then its value will be directly assigned in the `values` object without binding it in an array.
 
-  <button>Submit</button>
-</Form>
-```
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>

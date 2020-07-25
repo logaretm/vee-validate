@@ -68,6 +68,14 @@ export default {
 
   plugins: ['@/plugins/store.client.js'],
 
+  content: {
+    markdown: {
+      prism: {
+        theme: false,
+      },
+    },
+  },
+
   /*
    ** Build configuration
    */

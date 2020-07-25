@@ -15,3 +15,8 @@ body {
     --accent: #06d77b;
   }
 }
+
+.codepen,
+.cp_embed_wrapper {
+  @apply my-8;
+}
