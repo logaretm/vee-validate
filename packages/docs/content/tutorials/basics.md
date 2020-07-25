@@ -104,16 +104,10 @@ Fix that by adding a `submit` event handler that prevents the native form submis
 
 <script>
 export default {
-  setup() {
-    // The submission handler
-    const onSubmit = () => {
+  methods: {
+    onSubmit() {
       alert('Submitted');
-    };
-
-    // Make it available for the template
-    return {
-      onSubmit,
-    };
+    },
   },
 };
 </script>
@@ -144,14 +138,10 @@ export default {
     Form,
     Field,
   },
-  setup() {
-    const onSubmit = () => {
+  methods: {
+    onSubmit() {
       alert('Submitting :(');
-    };
-
-    return {
-      onSubmit,
-    };
+    },
   },
 };
 </script>
@@ -190,13 +180,11 @@ export default {
     Form,
     Field,
   },
-  setup() {
-    const onSubmit = values => {
+  methods: {
+    onSubmit(values) {
       alert(JSON.stringify(values, null, 2));
-    };
-
-    // The validator function
-    const validateEmail = value => {
+    },
+    validateEmail(value) {
       // if the field is empty
       if (!value) {
         return 'This field is required';
@@ -209,13 +197,7 @@ export default {
 
       // All is good
       return true;
-    };
-
-    return {
-      onSubmit,
-      // make it available to the template so we can bind it to the `<Field>`
-      validateEmail,
-    };
+    },
   },
 };
 </script>
@@ -250,7 +232,7 @@ Then add the `<ErrorMessage />` component to your template, passing a `name` pro
 ```vue
 <template>
   <div id="app">
-    <Form @submit="onSubmit" v-slot="{ errors }">
+    <Form @submit="onSubmit">
       <Field name="email" as="input" :rules="validateEmail" />
       <ErrorMessage name="email" />
 
@@ -268,27 +250,24 @@ export default {
     Field,
     ErrorMessage,
   },
-  setup() {
-    const onSubmit = values => {
+  methods: {
+    onSubmit(values) {
       alert(JSON.stringify(values, null, 2));
-    };
-
-    const validateEmail = value => {
+    },
+    validateEmail(value) {
+      // if the field is empty
       if (!value) {
         return 'This field is required';
       }
 
+      // if the field is not a valid email
       if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
         return 'This field must be a valid email';
       }
 
+      // All is good
       return true;
-    };
-
-    return {
-      onSubmit,
-      validateEmail,
-    };
+    },
   },
 };
 </script>

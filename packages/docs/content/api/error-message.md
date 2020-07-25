@@ -13,7 +13,7 @@ The basic usage looks like this:
 ```vue
 <template>
   <Form>
-    <Field name="email" as="input" type="email" :rules="emailSchema">
+    <Field name="email" as="input" type="email" :rules="validateEmail">
     <ErrorMessage name="email" />
   </Form>
 </template>
@@ -28,11 +28,11 @@ export default {
     Field,
     ErrorMessage,
   },
-  setup() {
-    const emailSchema = yup.string().required().email();
+  data() {
+    const validateEmail = yup.string().required().email();
 
     return {
-      emailSchema
+      validateEmail
     };
   }
 };

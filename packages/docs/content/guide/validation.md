@@ -40,19 +40,15 @@ export default {
     Field,
     Form,
   },
-  setup() {
-    const isRequired = value => {
+  methods: {
+    isRequired(value) {
       if (value && value.trim()) {
         return true;
       }
 
       return 'This is required';
     }
-
-    return {
-      isRequired,
-    };
-  },
+  }
 };
 </script>
 ```
@@ -78,11 +74,9 @@ export default {
     Field,
     Form,
   },
-  setup() {
-    const passwordRules = yup.string().required().min(8);
-
+  data() {
     return {
-      passwordRules,
+      passwordRules: yup.string().required().min(8),
     };
   },
 };
@@ -120,7 +114,7 @@ export default {
     Form,
     Field,
   },
-  setup() {
+  data() {
     const simpleSchema = {
       email(value) {
         // validate email value...
@@ -177,9 +171,9 @@ export default {
     Form,
     Field,
   },
-  setup() {
+  data() {
     const schema = yup.object().shape({
-      email: yup.string().email(),
+      email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
 
@@ -297,6 +291,7 @@ vee-validate offers an `<ErrorMessage />` component that displays your error mes
 
 <script>
 import { Field, Form, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 export default {
   components: {
@@ -304,8 +299,12 @@ export default {
     Form,
     ErrorMessage
   },
-  setup() {
-    // ...
+  data() {
+    const rules = yup.string().required();
+
+    return {
+      rules
+    };
   }
 };
 </script>

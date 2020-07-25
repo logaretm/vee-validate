@@ -156,7 +156,7 @@ export default {
     Form,
     Field,
   },
-  setup() {
+  data() {
     const schema = {
       email: 'required|email',
       password: 'required|min:8',

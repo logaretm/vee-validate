@@ -46,7 +46,7 @@ export default {
     Form,
     Field
   },
-  setup() {
+  data() {
     const schema = yup.object().shape({
       email: yup.string().required().email(),
       name: yup.string().required(),
@@ -85,20 +85,21 @@ export default {
     Form,
     Field
   },
-  setup() {
+  data() {
     const schema = yup.object().shape({
       email: yup.string().required().email(),
       name: yup.string().required(),
       password: yup.string().required().min(8),
     });
-    function onSubmit(values) {
-      // Submit values to API...
-    }
 
     return {
       schema,
-      onSubmit
     };
+  },
+  methods: {
+    onSubmit(values) {
+      // Submit values to API...
+    }
   }
 };
 </script>
@@ -159,21 +160,22 @@ export default {
     VeeForm,
     Field
   },
-  setup() {
+  data() {
     const schema = yup.object().shape({
       email: yup.string().required().email(),
       name: yup.string().required(),
       password: yup.string().required().min(8),
     });
-    function onSubmit(values) {
-      // Submit values to API...
-      console.log(values);
-    }
 
     return {
       schema,
-      onSubmit
     };
+  },
+  methods: {
+    onSubmit(values) {
+      // Submit values to API...
+      console.log(values);
+    }
   }
 };
 </script>
@@ -206,7 +208,7 @@ export default {
     VeeForm,
     Field
   },
-  setup() {
+  data() {
     const schema = yup.object().shape({
       email: yup.string().required().email(),
       name: yup.string().required(),
@@ -264,7 +266,7 @@ export default {
     Form,
     Field
   },
-  setup() {
+  data() {
     const schema = yup.object().shape({
       email: yup.string().required().email(),
       name: yup.string().required(),
@@ -319,13 +321,15 @@ export default {
     Form,
     Field
   },
-  setup() {
+  data() {
+    // Validation Schema
     const schema = yup.object().shape({
       email: yup.string().required().email(),
       name: yup.string().required(),
       password: yup.string().required().min(8),
     });
 
+    // Initial values
     const formValues = {
       email: 'example@example.com',
       name: 'John Smith',

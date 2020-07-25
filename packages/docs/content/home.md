@@ -3,7 +3,7 @@ title: VeeValidate
 description: Template Based Validation for Vue.js
 home: true
 features:
-  - title: 🍞 Simple
+  - title: 🍞 Declarative
     details: Template based validation that is familiar and easy to setup
   - title: 🧘‍♀️ Flexible
     details: Synchronous, Asynchronous, field-level or form-level validation
@@ -35,7 +35,7 @@ export default {
     Field,
     Form,
   },
-  setup() {
+  data() {
     // Validator function
     const isRequired = value => (value ? true : 'This field is required');
 

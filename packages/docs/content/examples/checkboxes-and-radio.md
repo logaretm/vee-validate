@@ -5,7 +5,7 @@ description: Validating checkboxes and Radio inputs
 
 # Checkbox and Radio Inputs
 
-The documentation has so far avoided using `type="radio"` and `type="checkbox`" inputs because of their complex nature, however vee-validate supports both HTML checkboxes and radio inputs as well as your custom components that act as such (with caveats).
+The documentation has so far avoided using `type="radio"` and `type="checkbox"` inputs because of their complex nature, however vee-validate supports both HTML checkboxes and radio inputs as well as your custom components that act as such (with caveats).
 
 The only requirements are that the fields:
 
