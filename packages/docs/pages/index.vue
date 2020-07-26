@@ -16,10 +16,14 @@
         <nuxt-link class="block mt-8 bg-accent-900 p-4 text-white rounded-lg font-bold text-center" to="/guide/overview"
           >📚 Getting Started</nuxt-link
         >
-        <nuxt-link class="block mt-8 bg-warning p-4 text-dark rounded-lg font-bold text-center" to="/tutorials/basics"
+        <nuxt-link
+          class="block mt-8 bg-accent-900 p-4 text-white rounded-lg font-bold text-center"
+          to="/tutorials/basics"
           >⏰ 10 Minute Tutorial</nuxt-link
         >
-        <nuxt-link class="block mt-8 bg-error p-4 text-dark rounded-lg font-bold text-center" to="/tutorials/basics"
+        <nuxt-link
+          class="block mt-8 bg-accent-900 p-4 text-white rounded-lg font-bold text-center"
+          to="/examples/checkboxes-and-radio"
           >🧪 Examples</nuxt-link
         >
       </div>
@@ -56,6 +60,12 @@ export default {
     Array.from(this.$el.querySelectorAll('h3')).forEach(linkify);
     // set the current document
     store.currentDoc = this.page;
+  },
+  head() {
+    return {
+      title: 'VeeValidate',
+      titleTemplate: '%s',
+    };
   },
 };
 </script>

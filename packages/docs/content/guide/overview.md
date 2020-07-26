@@ -30,6 +30,8 @@ Most validation libraries will save you a lot of time, but `vee-validate` tackle
 
 ## Getting Started
 
+vee-validate primarily makes use of higher-order components to validate your fields, in the next examples you will find `Field`, `Form` and `ErrorMessage` components being used, don't worry about them for now as they are documented extensively later on.
+
 ### Using a script tag
 
 You can use vee-validate with a script tag and a CDN, import the library like this:

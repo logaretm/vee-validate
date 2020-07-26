@@ -22,6 +22,7 @@ export default {
    */
   head: {
     title: 'VeeValidate',
+    titleTemplate: '%s | vee-validate',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },

@@ -285,6 +285,16 @@ export default {
 
 If you try the form now, it validates and renders error messages while preventing submitting the form while invalid.
 
+You can checkout the finished code in action:
+
+<p class="codepen" data-height="265" data-theme-id="light" data-default-tab="js,result" data-user="logaretm" data-slug-hash="yLeraZR" style="height: 265px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="Tutorial - Basics">
+  <span>See the Pen <a href="https://codepen.io/logaretm/pen/yLeraZR">
+  Tutorial - Basics</a> by Abdelrahman Awad (<a href="https://codepen.io/logaretm">@logaretm</a>)
+  on <a href="https://codepen.io">CodePen</a>.</span>
+</p>
+
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
 There is a lot more you can do with vee-validate and while this example is verbose, there are other ways and features you can use to clean up your form validation logic. Here is a few things that you can do with vee-validate:
 
 - Declare rules globally and use them in a Laravel-like syntax

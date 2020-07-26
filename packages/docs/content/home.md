@@ -54,4 +54,4 @@ Then use the `Form` and `Field` components to render your form:
 </Form>
 ```
 
-For more information continue reading the [Guide](./guide).
+For more information continue reading the [Guide](./guide/overview).
