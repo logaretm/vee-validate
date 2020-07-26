@@ -9,6 +9,7 @@
   "unpkg": "dist/vee-validate-i18n.js",
   "main": "dist/vee-validate-i18n.js",
   "types": "dist/vee-validate-i18n.d.ts",
+  "sideEffects": false,
   "files": [
     "dist/*.js",
     "dist/*.d.ts",

@@ -10,6 +10,7 @@
   "types": "dist/vee-validate-rules.d.ts",
   "homepage": "https://logaretm.github.io/vee-validate/",
   "repository": "https://github.com/logaretm/vee-validate",
+  "sideEffects": false,
   "keywords": [
     "VueJS",
     "Vue",
