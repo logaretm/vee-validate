@@ -159,7 +159,7 @@ export default {
 
 <doc-tip type="danger" title="Component Registration">
 
-It might be necessary to rename the `Form` and `Field` components to something else to avoid conflicting with HTML native elements tag names, while this will work fine in Vue's single file components (SFCs) because the compiler is able to determine which one to render, but in native browser environment the `Form` will still render the native HTML counterpart because HTML is case-insensitive.
+It might be necessary to rename the `Form` and `Field` components to something else to avoid conflicting with HTML native elements tag names, while this will work fine in [Vue's single file components (SFCs)](https://v3.vuejs.org/guide/single-file-component.html) because the compiler is able to determine which one to render, but in native browser environment the `Form` will still render the native HTML counterpart because HTML is case-insensitive.
 
 </doc-tip>
 

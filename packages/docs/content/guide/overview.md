@@ -52,7 +52,7 @@ Here is a basic example with vee-validate:
 
 <doc-tip>
 
-From this point forwards, the docs will assume basic knowledge of Vue's SFC components and will demonstrate examples as such and will be using ES6+ code snippets. So be sure to brush up on these if you haven't already.
+From this point forwards, the docs will assume basic knowledge of [Vue's SFC components](https://v3.vuejs.org/guide/single-file-component.html) and will demonstrate examples as such and will be using ES6+ code snippets. So be sure to brush up on these if you haven't already.
 
 </doc-tip>
 
