@@ -46,7 +46,7 @@ module.exports = {
         'accent-800': 'var(--accent, #06d77b)',
         'accent-100': '#7bffc5',
 
-        warning: 'hsl(33deg 100% 77%)',
+        warning: 'hsl(14deg 36% 34%)',
         error: '#cf6679',
 
         'gray-900': 'hsl(0 0% 29%)',

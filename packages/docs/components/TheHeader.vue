@@ -2,8 +2,8 @@
   <header
     class="pt-6 pb-3 sticky top-0 dark-mode:bg-dark bg-white z-20 border-b dark-mode:border-carbon border-gray-700"
   >
-    <div class="w-full bg-warning fixed top-0 text-black h-8 flex items-center justify-center">
-      These docs are still a WIP ⚙️
+    <div class="w-full text-white bg-accent-800 fixed top-0 h-8 flex items-center justify-center text-xs">
+      Documentation is still a work in progress 🚧
     </div>
 
     <div class="mt-8 flex items-center header__content px-6 lg:px-10">
