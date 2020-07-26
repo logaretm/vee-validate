@@ -28,19 +28,29 @@ It is preferable to use a local development environment to follow along, make su
 
 <summary>Optional: Detailed Steps</summary>
 
-1. Using the `vue-cli`, create a new project:
+1. If not already prepared, install the New Vue CLI
+
+```sh
+npm install -g @vue/cli@next
+```
+
+2. Using the `vue-cli`, create a new project and choose Vue 3 template:
 
 ```sh
 vue create vee-validate-tutorial
 ```
 
-If your project was created using Vue 2, make sure to migrate to Vue 3:
+<doc-tip>
+
+If your project was created using Vue 2 project you can migrate to Vue 3:
 
 ```sh
 vue add vue-next
 ```
 
-2. Add `vee-validate` to your project
+</doc-tip>
+
+3. Add `vee-validate` to your project
 
 ```sh
 yarn add vee-validate
@@ -50,7 +60,7 @@ yarn add vee-validate
 npm install vee-validate
 ```
 
-3. Cleanup the contents of `App.vue` so it contains an empty template, it should look like the following:
+4. Cleanup the contents of `App.vue` so it contains an empty template, it should look like the following:
 
 ```vue
 <template>

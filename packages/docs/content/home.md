@@ -35,13 +35,11 @@ export default {
     Field,
     Form,
   },
-  data() {
+  methods: {
     // Validator function
-    const isRequired = value => (value ? true : 'This field is required');
-
-    return {
-      isRequired,
-    };
+    isRequired(value) {
+      return value ? true : 'This field is required';
+    },
   },
 };
 ```

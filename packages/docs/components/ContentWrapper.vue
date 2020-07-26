@@ -90,11 +90,15 @@ export default {
   }
 
   details {
-    @apply my-10 border-l-4 border-accent-900 pl-3;
+    @apply my-10 px-3;
 
     summary {
-      @apply mb-8;
+      @apply outline-none mb-8;
     }
+  }
+
+  ol {
+    @apply list-decimal px-8;
   }
 
   p,
