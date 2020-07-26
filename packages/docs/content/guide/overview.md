@@ -48,6 +48,12 @@ Here is a basic example with vee-validate:
   on <a href="https://codepen.io">CodePen</a>.</span>
 </p>
 
+<doc-tip>
+
+From this point forwards, the docs will assume basic knowledge of Vue's SFC components and will demonstrate examples as such and will be using ES6+ code snippets. So be sure to brush up on these if you haven't already.
+
+</doc-tip>
+
 ### Using NPM
 
 For a more modern workflow with a bundler, you can install vee-validate using a package manager like `yarn` or `npm`:
