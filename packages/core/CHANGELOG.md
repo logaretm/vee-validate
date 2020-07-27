@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.6](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.5...vee-validate@4.0.0-alpha.6) (2020-07-27)
+
+
+### Bug Fixes
+
+* render input tags by default for the field component ([858c47b](https://github.com/logaretm/vee-validate/commit/858c47b4a7fa740611abaf026e6e5db6cdb41050))
+
+
+
+
+
 # [4.0.0-alpha.5](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.4...vee-validate@4.0.0-alpha.5) (2020-07-24)
 
 

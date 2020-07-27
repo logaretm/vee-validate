@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.2](https://github.com/logaretm/vee-validate/compare/@vee-validate/rules@4.0.0-alpha.1...@vee-validate/rules@4.0.0-alpha.2) (2020-07-27)
+
+**Note:** Version bump only for package @vee-validate/rules
+
+
+
+
+
 # 4.0.0-alpha.1 (2020-07-18)
 
 
