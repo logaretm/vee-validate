@@ -37,6 +37,7 @@ export default {
         const { algoliaOptions = {} } = userOptions;
         docsearch(
           Object.assign({}, userOptions, {
+            debug: true,
             inputSelector: '#algolia-search-input',
             handleSelected: (input, event, suggestion) => {
               const { pathname, hash } = new URL(suggestion.url);
@@ -89,5 +90,10 @@ export default {
 >>> .algolia-autocomplete {
   display: block !important;
   @apply w-full;
+}
+
+/* Highlighted text */
+>>> .algolia-autocomplete .algolia-docsearch-suggestion--highlight {
+  @apply text-accent-800;
 }
 </style>
