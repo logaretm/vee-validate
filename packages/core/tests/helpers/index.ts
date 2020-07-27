@@ -3,7 +3,7 @@ import { Field, Form } from '@vee-validate/core';
 
 export function mount(component: Record<string, any>) {
   const app = createApp(component);
-  app.config.devtools = false;
+  // app.config.devtools = false;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   app.config.warnHandler = () => {};
   app.config.errorHandler = err => {

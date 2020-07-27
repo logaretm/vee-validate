@@ -95,13 +95,13 @@ export const Field = defineComponent({
       }
 
       const children = normalizeChildren(ctx, slotProps.value);
-      if (props.as) {
+      if (tag) {
         return h(
           tag,
           {
             ...ctx.attrs,
             ...slotProps.value.field,
-            ...(isHTMLTag(props.as) ? slotProps.value.aria : {}),
+            ...(isHTMLTag(tag) ? slotProps.value.aria : {}),
           },
           children
         );
