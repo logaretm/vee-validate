@@ -12,8 +12,8 @@ export default {
   publicRuntimeConfig: {
     appURL: process.env.NODE_ENV === 'production' ? 'https://vee-validate.logaretm.com/v4' : 'http://localhost:3000',
     algolia: {
-      apiKey: '498c5d264196aacd7606fed9857deb44',
-      indexName: 'vee-validate',
+      apiKey: '36539f933d7a7cd4801b6f07dea75ed8',
+      indexName: 'vee-validate-v4',
     },
   },
 
