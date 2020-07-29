@@ -128,7 +128,7 @@ export default {
 
 We have a problem though, our password field is showing the user input to everyone around them which isn't very responsible on our part. This means that some inputs may require additional props that we may need to pass to our `Field` component, let's update our `FieldSchema` definition:
 
-```diff-typescript
+```diff
 interface FieldSchema {
   as: string;
   name: string;
@@ -158,7 +158,7 @@ The `select` input introduces an edge case where your field would need to have c
 
 First, back to our schema and let's add support for `children` prop that accepts a flat array of child nodes:
 
-```diff-typescript
+```diff
 interface FieldSchema {
   as: string;
   name: string;
@@ -236,7 +236,7 @@ We can go two ways here, either allow each field to define its own validation ru
 
 The `Form` component already has support for validating fields on the form-level by accepting a `validation-schema` prop which can be a yup object validation schema. Let's add support for the `validation` prop on our own `FormSchema` object:
 
-```typescript-diff
+```diff
 interface FormSchema {
   fields: FieldSchema[];
 + validation: any;
@@ -245,7 +245,7 @@ interface FormSchema {
 
 Now let's use `yup` to add the validation schema:
 
-```js-diff
+```diff
 const formSchema = {
   fields: [
     // ...
@@ -299,7 +299,7 @@ And that's it, you should have validation working now 🎉
 
 Since we are using the `Form` component provided by vee-validate we almost got this for free. All we have to do is to allow your component consumers to pass in initial values, let's get back to the `FormSchema` and add support for a `values` prop that contains the form values as a key-value pair:
 
-```typescript-diff
+```diff
 interface FormSchema {
   fields: FieldSchema[];
 + values: { [k: string]: any };
@@ -308,7 +308,7 @@ interface FormSchema {
 
 Now add `values` field to the `formSchema` object we built earlier:
 
-```js-diff
+```diff
 const formSchema = {
   fields: [
     // ...
