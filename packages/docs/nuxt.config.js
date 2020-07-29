@@ -70,6 +70,7 @@ export default {
   plugins: ['@/plugins/store.client.js'],
 
   content: {
+    liveEdit: false,
     markdown: {
       prism: {
         theme: false,
