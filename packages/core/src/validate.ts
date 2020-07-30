@@ -1,3 +1,4 @@
+import type { ValidationError } from 'yup';
 import { resolveRule } from './defineRule';
 import { isLocator, normalizeRules, isYupValidator } from './utils';
 import { getConfig } from './config';
@@ -98,24 +99,24 @@ async function _validate(field: FieldValidationContext, value: any) {
  * Handles yup validation
  */
 async function validateFieldWithYup(field: FieldValidationContext, value: any) {
-  const result = await field.rules
-    .validate(value)
-    .then(() => true)
-    .catch((err: Error) => {
+  const errors = await field.rules
+    .validate(value, {
+      abortEarly: field.bails,
+    })
+    .then(() => [])
+    .catch((err: ValidationError) => {
       // Yup errors have a name prop one them.
       // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
       if (err.name === 'ValidationError') {
-        return err.message;
+        return err.errors;
       }
 
       // re-throw the error so we don't hide it
       throw err;
     });
 
-  const isValid = typeof result !== 'string' && result;
-
   return {
-    errors: !isValid ? [result as string] : [],
+    errors,
   };
 }
 

@@ -1,10 +1,16 @@
 import flushPromises from 'flush-promises';
-import { defineRule } from '@vee-validate/core';
+import { defineRule, configure } from '@vee-validate/core';
 import { mountWithHoc, setValue, dispatchEvent } from './helpers';
 import * as yup from 'yup';
 import { ref, Ref } from 'vue';
 
 jest.useFakeTimers();
+
+beforeEach(() => {
+  configure({
+    bails: true,
+  });
+});
 
 describe('<Field />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
@@ -478,5 +484,70 @@ describe('<Field />', () => {
     setValue(input, '1');
     await flushPromises();
     expect(input.getAttribute('aria-invalid')).toBe('false');
+  });
+
+  test('yup abortEarly is set by bails global option', async () => {
+    configure({
+      bails: false,
+    });
+    const wrapper = mountWithHoc({
+      setup() {
+        const rules = yup.string().min(8).url();
+
+        return {
+          rules,
+        };
+      },
+      template: `
+      <div>
+        <Field name="field" :rules="rules" v-slot="{ errors, field }">
+          <input type="text" v-bind="field">
+          <ul>
+            <li v-for="error in errors">{{ error }}</li>
+          </ul>
+        </Field>
+      </div>
+    `,
+    });
+
+    await flushPromises();
+    const errors = wrapper.$el.querySelector('ul');
+    const input = wrapper.$el.querySelector('input');
+    expect(errors.children).toHaveLength(0);
+
+    setValue(input, '1234');
+    await flushPromises();
+    expect(errors.children).toHaveLength(2);
+  });
+
+  test('yup abortEarly is set by bails prop', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const rules = yup.string().min(8).url();
+
+        return {
+          rules,
+        };
+      },
+      template: `
+      <div>
+        <Field name="field" :rules="rules" v-slot="{ errors, field }" :bails="false">
+          <input type="text" v-bind="field">
+          <ul>
+            <li v-for="error in errors">{{ error }}</li>
+          </ul>
+        </Field>
+      </div>
+    `,
+    });
+
+    await flushPromises();
+    const errors = wrapper.$el.querySelector('ul');
+    const input = wrapper.$el.querySelector('input');
+    expect(errors.children).toHaveLength(0);
+
+    setValue(input, '1234');
+    await flushPromises();
+    expect(errors.children).toHaveLength(2);
   });
 });

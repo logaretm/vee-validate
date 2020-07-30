@@ -1,4 +1,5 @@
 import { computed, ref, Ref, provide, reactive } from 'vue';
+import type { ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
   Flag,
@@ -247,7 +248,7 @@ async function validateYupSchema(
   const errors: any[] = await (form.schema as any)
     .validate(form.values, { abortEarly: false })
     .then(() => [])
-    .catch((err: any) => {
+    .catch((err: ValidationError) => {
       // Yup errors have a name prop one them.
       // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
       if (err.name !== 'ValidationError') {
