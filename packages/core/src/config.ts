@@ -3,12 +3,10 @@ import { ValidationMessageGenerator } from '../../shared';
 export interface VeeValidateConfig {
   bails: boolean;
   generateMessage: ValidationMessageGenerator;
-  skipOptional: boolean;
 }
 
 const DEFAULT_CONFIG: VeeValidateConfig = {
   generateMessage: ({ field }) => `${field} is not valid.`,
-  skipOptional: true,
   bails: true,
 };
 
