@@ -38,7 +38,14 @@ export default {
       },
       {
         title: 'API Reference',
-        content: ['/api/field', '/api/form', '/api/error-message', '/api/use-field', '/api/use-form'],
+        content: [
+          '/api/field',
+          '/api/form',
+          '/api/error-message',
+          '/api/use-field',
+          '/api/use-form',
+          '/api/configuration',
+        ],
       },
     ];
 

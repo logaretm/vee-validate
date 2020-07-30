@@ -102,7 +102,8 @@ export default {
   }
 
   p,
-  li {
+  li,
+  td {
     a[href] {
       @apply text-accent-800;
 
