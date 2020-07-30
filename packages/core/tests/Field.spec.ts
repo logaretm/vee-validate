@@ -2,6 +2,7 @@ import flushPromises from 'flush-promises';
 import { defineRule } from '@vee-validate/core';
 import { mountWithHoc, setValue, dispatchEvent } from './helpers';
 import * as yup from 'yup';
+import { ref, Ref } from 'vue';
 
 jest.useFakeTimers();
 
@@ -203,10 +204,13 @@ describe('<Field />', () => {
   });
 
   test('watches rules and re-validates', async () => {
+    let rules!: Ref<any>;
     const wrapper = mountWithHoc({
       setup() {
+        rules = ref({ required: true });
+
         return {
-          rules: { required: true },
+          rules,
         };
       },
       template: `
@@ -227,7 +231,7 @@ describe('<Field />', () => {
 
     expect(error.textContent).toBe('');
 
-    (wrapper as any).rules = {
+    rules.value = {
       required: false,
       min: 3,
     };
