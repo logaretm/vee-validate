@@ -1,6 +1,6 @@
 ---
 title: Build a Form Generator
-description: Learn how to build a schema-generated form with vee-validate
+description: Learn how to build a schema-generated form
 ---
 
 # Build a Form Generator
@@ -333,6 +333,17 @@ The `Form` component already handles initial values, so all we need to do is pas
 ```
 
 And that's it, any field that got an initial value will be automatically validated for you as well.
+
+## Demo
+
+You can check a live sample of what we did here, note that there are differences because the live version uses vee-validate and vue loaded from a CDN rather than a Vue Cli setup.
+
+<p class="codepen" data-height="500" data-theme-id="light" data-default-tab="js,result" data-user="logaretm" data-slug-hash="vYLMKGV" style="height: 265px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="Dynamic Form Generator">
+  <span>See the Pen <a href="https://codepen.io/logaretm/pen/vYLMKGV">
+  Dynamic Form Generator</a> by Abdelrahman Awad (<a href="https://codepen.io/logaretm">@logaretm</a>)
+  on <a href="https://codepen.io">CodePen</a>.</span>
+</p>
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
 ## Conclusion
 
