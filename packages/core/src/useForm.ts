@@ -63,7 +63,7 @@ export function useForm(opts?: FormOptions) {
     register(field: FieldComposite) {
       const name = unwrap(field.name);
       // Set the initial value for that field
-      if (opts?.initialValues?.[name]) {
+      if (opts?.initialValues?.[name] !== undefined) {
         _values[name] = opts?.initialValues[name];
       }
 
@@ -101,7 +101,7 @@ export function useForm(opts?: FormOptions) {
       const field = fieldsById.value[path];
 
       // singular inputs fields
-      if (!Array.isArray(field) && field.type !== 'checkbox') {
+      if (!field || (!Array.isArray(field) && field.type !== 'checkbox')) {
         _values[path] = value;
         return;
       }

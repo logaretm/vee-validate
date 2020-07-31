@@ -18,6 +18,6 @@ export function isYupValidator(value: unknown): value is YupValidator {
   return value && isCallable((value as any).validate);
 }
 
-export function hasCheckedAttr(type: string | undefined) {
+export function hasCheckedAttr(type: unknown) {
   return type === 'checkbox' || type === 'radio';
 }

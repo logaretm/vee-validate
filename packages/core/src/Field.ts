@@ -1,10 +1,11 @@
 import { computed, h, defineComponent } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
-import { useRefsObjToComputed, normalizeChildren, isHTMLTag, unwrap, hasCheckedAttr } from './utils';
+import { useRefsObjToComputed, normalizeChildren, isHTMLTag, hasCheckedAttr } from './utils';
 
 export const Field = defineComponent({
   name: 'Field',
+  inheritAttrs: false,
   props: {
     as: {
       type: [String, Object],
@@ -53,6 +54,7 @@ export const Field = defineComponent({
       bails: props.bails as boolean,
       disabled,
       type: ctx.attrs.type as string,
+      initialValue: hasCheckedAttr(ctx.attrs.type) ? ctx.attrs.modelValue : ctx.attrs.value,
       valueProp: ctx.attrs.value,
     });
 
@@ -68,7 +70,7 @@ export const Field = defineComponent({
         onBlur: onBlur,
       };
 
-      if (hasCheckedAttr(ctx.attrs.type as string) && checked) {
+      if (hasCheckedAttr(ctx.attrs.type) && checked) {
         fieldProps.checked = checked.value;
         // redundant for checkboxes and radio buttons
         delete fieldProps.onInput;

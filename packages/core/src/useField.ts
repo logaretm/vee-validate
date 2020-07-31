@@ -337,7 +337,7 @@ function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: Fo
   }
 
   // otherwise use a computed setter that triggers the `setFieldValue`
-  return computed({
+  const value = computed({
     get() {
       return form.values[unwrap(path)];
     },
@@ -345,4 +345,11 @@ function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: Fo
       form.setFieldValue(unwrap(path), newVal);
     },
   });
+
+  // Set the value without triggering the setter
+  if (initialValue !== undefined) {
+    value.value = initialValue;
+  }
+
+  return value;
 }
