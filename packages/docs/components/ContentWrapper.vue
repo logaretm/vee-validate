@@ -121,8 +121,9 @@ export default {
     color: #ec5975;
   }
   code .token.inserted {
-    color: #f00;
+    color: #0a7a34;
   }
+
   pre,
   pre[class*='language-'] {
     line-height: 1.4;
@@ -188,7 +189,7 @@ export default {
     left: 0;
     top: 0;
     display: block;
-    width: $lineNumbersWrapperWidth;
+    width: 1rem;
     height: 100%;
     background-color: rgba(255, 255, 255, 0.95);
   }
