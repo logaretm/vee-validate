@@ -57,7 +57,8 @@ export function withValidation(component: ComponentLike, mapProps: ValidationCon
       {
         attrs: this.$attrs,
         props,
-        on: listeners
+        on: listeners,
+        scopedSlots: this.$scopedSlots
       },
       normalizeSlots(this.$slots, this.$vnode.context)
     );

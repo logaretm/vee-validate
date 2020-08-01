@@ -2,6 +2,7 @@ import { mount, createLocalVue } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { ValidationProvider, ValidationObserver, extend, withValidation, configure } from '@/index.full';
 import InputWithoutValidation from './components/Input';
+import InputWithSlot from './components/InputWithSlot';
 import ModelComp from './../helpers/ModelComp';
 
 const Vue = createLocalVue();
@@ -568,6 +569,31 @@ test('creates HOCs from other components', async () => {
   input.setValue('txt');
   await flushPromises();
   expect(error.text()).toBe('');
+});
+
+test('created HOCs preserves their slots', async () => {
+  const InputWithValidation = withValidation(InputWithSlot);
+
+  const wrapper = mount(
+    {
+      template: `
+        <div>
+          <InputWithValidation v-model="value" rules="required" v-slot="{ data }">
+            <p id="slotted">{{ data }}</p>
+          </InputWithValidation>
+        </div>
+      `,
+      data: () => ({ value: '' }),
+      components: {
+        InputWithValidation
+      }
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const slot = wrapper.find('#slotted');
+  expect(slot.exists()).toBe(true);
+  expect(slot.text()).toBe('10');
 });
 
 test('resets validation state', async () => {
