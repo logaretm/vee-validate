@@ -44,3 +44,29 @@ this.$refs.provider.syncValue(newValue);
 ```
 
 This will not trigger validation.
+
+## Using Computed Setters
+
+You can use computed setters for cases where your input manipulates multiple states rather than one bound with `v-model`. For example consider a `fullName` input that changes both the `firstName` and `lastName` values:
+
+```vue
+<template>
+  <ValidationProvider rules="required" name="fullName" v-slot="{ errors }">
+    <input type="text" />
+    <p>{{ errors[0] }}</p>
+  </ValidationProvider>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    firstName: '',
+    lastName: ''
+  })
+};
+</script>
+```
+
+You won't be able to bind `v-model` on a single input for both of these states as `v-model` have a 1:1 relation with data items, instead you can use [Vue's computed setters](https://vuejs.org/v2/guide/computed.html#Computed-Setter) to achieve binding with `v-model` while updating the state accordingly.
+
+@[example](computed-setters)

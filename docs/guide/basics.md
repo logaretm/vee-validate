@@ -53,7 +53,9 @@ After that you can use it in your components templates, typically you **wrap you
 
 For the `input` field or the component acting as an input, it **should have a `v-model` attached to it**. This is because the `ValidationProvider` searches its own children for inputs, so the `v-model` acts as a hint for the `ValidationProvider`.
 
-However, if you cannot use `v-model` on the input, then you also could set binding to `value` prop, which in this case serves as a hint for the `ValidationProvider`.
+However, if you cannot use `v-model` on the input, you can use [computed setters](https://vuejs.org/v2/guide/computed.html#Computed-Setter) for cases like Vuex state and other complex input types where more than one state items are involved. For more information on using computed setters you can check the [advanced guide](model-less-validation.md#using-computed-setters).
+
+If you cannot use either you can add a `value` prop on your input and it should serve as a hint for vee-validate as well.
 
 ```vue
 <ValidationProvider v-slot="v">
