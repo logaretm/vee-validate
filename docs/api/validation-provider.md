@@ -142,6 +142,7 @@ Those are the only methods meant for public usage, other methods that may exist 
 | reset          |       `void`       |           `void`            | Resets validation state.                                                                                                                    |
 | setFlags       |       Object       |           `void`            | Updates the field flag states with an object, the object properties should be the flag names and the values should be boolean values.       |
 | setErrors      |     `string[]`     |           `void`            | Updates the field errors and flags if errors length is > 1                                                                                  |
+| syncValue      |   `value?: any`    |           `void`            | Synchronizes the value for it to be used as the value during the next validation attempt.                                                   |
 
 ## Events
 
