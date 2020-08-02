@@ -25,9 +25,9 @@ async function buildLocales() {
   }
 }
 
-function minify({ code, pkg, bundleName }) {
+async function minify({ code, pkg, bundleName }) {
   const pkgout = path.join(__dirname, `../packages/${pkg}/dist`);
-  const output = Terser.minify(code, {
+  const output = await Terser.minify(code, {
     compress: true,
     mangle: true,
   });
