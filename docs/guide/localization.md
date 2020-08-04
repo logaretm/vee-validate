@@ -195,7 +195,7 @@ const i18n = new VueI18n({
 extend('required', {
   ...required,
   // the values param is the placeholders values
-  message: (_, values) => i18n.$t('validations.required', values)
+  message: (_, values) => i18n.$t('validations.messages.required', values)
 });
 ```
 
@@ -208,7 +208,7 @@ configure({
   // this will be used to generate messages.
   defaultMessage: (field, values) => {
     values._field_ = i18n.t(`fields.${field}`);
-    return i18n.t(`validations.${values._rule_}`, values);
+    return i18n.t(`validations.messages.${values._rule_}`, values);
   }
 });
 ```
