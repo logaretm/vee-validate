@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.7](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.6...vee-validate@4.0.0-alpha.7) (2020-08-04)
+
+
+### Bug Fixes
+
+* avoid removing array value for a non-group field closes [#2847](https://github.com/logaretm/vee-validate/issues/2847) ([69f2092](https://github.com/logaretm/vee-validate/commit/69f2092db7d53665986dd384cae561d1b13bd8f5))
+* bails affects yup non-object validators ([a50645b](https://github.com/logaretm/vee-validate/commit/a50645b1c0206d0e7d85ec6681ff6dc224536fa2))
+* initial values on HTML inputs ([c4f4eb9](https://github.com/logaretm/vee-validate/commit/c4f4eb9fe97b13fedb93ac760614eb53c177ffb3))
+
+
+### Features
+
+* deprecate the skipOptional config ([e62f5ea](https://github.com/logaretm/vee-validate/commit/e62f5ea6d31e82ac9f257627e8544431b933c4f9))
+
+
+
+
+
 # [4.0.0-alpha.6](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.5...vee-validate@4.0.0-alpha.6) (2020-07-27)
 
 
