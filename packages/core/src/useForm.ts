@@ -77,11 +77,14 @@ export function useForm(opts?: FormOptions) {
 
       fields.value.splice(idx, 1);
       const fieldName = unwrap(field.name);
+      // in this case, this is a single field not a group (checkbox or radio)
+      // so remove the field value key immediately
       if (field.idx === -1) {
         delete _values[fieldName];
+        return;
       }
 
-      // clean up the form value
+      // otherwise find the actual value in the current array of values and remove it
       const valueIdx = _values[fieldName].indexOf(unwrap(field.valueProp));
       if (valueIdx === -1) {
         return;
