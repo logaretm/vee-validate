@@ -187,8 +187,10 @@ import validationMessages from 'vee-validate/dist/locale/en';
 // you can merge them if needed.
 const i18n = new VueI18n({
   locale: 'en',
-  en: {
-    validations: validationMessages
+  messages: {
+    en: {
+      validations: validationMessages
+    }
   }
 });
 
