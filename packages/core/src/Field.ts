@@ -54,9 +54,18 @@ export const Field = defineComponent({
       bails: props.bails as boolean,
       disabled,
       type: ctx.attrs.type as string,
-      initialValue: hasCheckedAttr(ctx.attrs.type) ? ctx.attrs.modelValue : ctx.attrs.value,
+      initialValue: hasCheckedAttr(ctx.attrs.type) ? ctx.attrs.modelValue : ctx.attrs.modelValue || ctx.attrs.value,
       valueProp: ctx.attrs.value,
     });
+
+    // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
+    const onChangeHandler =
+      'modelValue' in ctx.attrs
+        ? function handleChangeWithModel(e: any) {
+            handleChange(e);
+            ctx.emit('update:modelValue', value.value);
+          }
+        : handleChange;
 
     const unwrappedMeta = useRefsObjToComputed(meta);
 
@@ -64,9 +73,9 @@ export const Field = defineComponent({
       const fieldProps: Record<string, any> = {
         name: fieldName,
         disabled: props.disabled,
-        onInput: handleChange,
-        onChange: handleChange,
-        'onUpdate:modelValue': handleChange,
+        onInput: onChangeHandler,
+        onChange: onChangeHandler,
+        'onUpdate:modelValue': onChangeHandler,
         onBlur: onBlur,
       };
 
@@ -86,7 +95,7 @@ export const Field = defineComponent({
         errorMessage: errorMessage.value,
         validate: validateField,
         reset,
-        handleChange,
+        handleChange: onChangeHandler,
       };
     });
 
