@@ -127,7 +127,13 @@ export function useForm(opts?: FormOptions) {
         return;
       }
 
-      // Multiple Checkboxes
+      // Multiple Checkboxes but their whole value was updated
+      if (Array.isArray(value)) {
+        _values[path] = value;
+        return;
+      }
+
+      // Multiple Checkboxes and a single item is updated
       const newVal = Array.isArray(_values[path]) ? [..._values[path]] : [];
       if (newVal.includes(value)) {
         const idx = newVal.indexOf(value);
