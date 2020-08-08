@@ -85,7 +85,13 @@ export function useForm(opts?: FormOptions) {
       }
 
       // otherwise find the actual value in the current array of values and remove it
-      const valueIdx = _values[fieldName].indexOf(unwrap(field.valueProp));
+      const valueIdx: number | undefined = _values[fieldName]?.indexOf?.(unwrap(field.valueProp));
+
+      if (valueIdx === undefined) {
+        delete _values[fieldName];
+        return;
+      }
+
       if (valueIdx === -1) {
         return;
       }
