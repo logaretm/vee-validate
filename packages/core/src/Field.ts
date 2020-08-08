@@ -54,7 +54,14 @@ export const Field = defineComponent({
       bails: props.bails as boolean,
       disabled,
       type: ctx.attrs.type as string,
-      initialValue: hasCheckedAttr(ctx.attrs.type) ? ctx.attrs.modelValue : ctx.attrs.modelValue || ctx.attrs.value,
+      // Gets the initial value either from `value` prop/attr or `v-model` binding (modelValue)
+      // For checkboxes and radio buttons it will always be the model value not the `value` attribute
+      initialValue: hasCheckedAttr(ctx.attrs.type)
+        ? ctx.attrs.modelValue
+        : 'modelValue' in ctx.attrs
+        ? ctx.attrs.modelValue
+        : ctx.attrs.value,
+      // Only for checkboxes and radio buttons
       valueProp: ctx.attrs.value,
     });
 
