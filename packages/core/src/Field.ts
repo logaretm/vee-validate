@@ -1,4 +1,4 @@
-import { computed, h, defineComponent } from 'vue';
+import { computed, h, defineComponent, nextTick } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { useRefsObjToComputed, normalizeChildren, isHTMLTag, hasCheckedAttr } from './utils';
@@ -103,6 +103,15 @@ export const Field = defineComponent({
       let tag = props.as;
       if (!props.as && !ctx.slots.default) {
         tag = 'input';
+      }
+
+      // Sync the model value with the inner field value if they mismatch
+      // a simple string comparison is used here
+      // TODO: Maybe use JSON.stringify for better accuracy?
+      if ('modelValue' in ctx.attrs && String(ctx.attrs.modelValue) !== String(value.value)) {
+        nextTick(() => {
+          handleChange(ctx.attrs.modelValue as any);
+        });
       }
 
       const children = normalizeChildren(ctx, slotProps.value);
