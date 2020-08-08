@@ -213,7 +213,7 @@ By default vee-validate adds the following event listeners to your fields:
 - blur
 - update:modelValue
 
-You can specifically control which events to listen to by using the scoped-slot `field` prop of the `<Field />` component:
+You can specifically control which events to listen to by using the scoped-slot `handleChange` prop of the `<Field />` component and binding it to the desired event:
 
 ```vue
 <!-- Listen to all events, this is the default behavior -->
@@ -221,9 +221,9 @@ You can specifically control which events to listen to by using the scoped-slot 
   <input v-bind="field" />
 </Field>
 
-<!-- Only listen for the blur event -->
-<Field v-slot="{ field }">
-  <input @blur="field.onBlur" :value="field.value" />
+<!-- Only listen for the change and blur events -->
+<Field v-slot="{ field, handleChange }">
+  <input @change="handleChange" @blur="field.onBlur" :value="field.value" />
 </Field>
 ```
 
