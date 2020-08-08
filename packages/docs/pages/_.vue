@@ -19,7 +19,7 @@ export default {
     const linkify = node => {
       const anchor = document.createElement('a');
       const slug = slugify(node.textContent);
-      anchor.href = `${this.$route.path}#${slug}`;
+      anchor.href = `${this.$config.appURL}${this.$route.path}#${slug}`;
       anchor.textContent = node.textContent;
       node.id = slug;
       node.textContent = '';
