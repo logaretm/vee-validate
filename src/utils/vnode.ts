@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import Vue, { VNode, VNodeDirective } from 'vue';
 import { find, isCallable, isNullOrUndefined, includes, isSpecified } from './index';
 import { normalizeRules } from './rules';
@@ -82,19 +83,21 @@ function extractChildren(vnode: VNode | VNode[]): VNode[] {
   return [];
 }
 
-export function findInputNode(vnode: VNode | VNode[]): VNode | null {
+export function findInputNodes(vnode: VNode | VNode[]): VNode[] {
   if (!Array.isArray(vnode) && findValue(vnode) !== undefined) {
-    return vnode;
+    return [vnode];
   }
 
   const children = extractChildren(vnode);
-  return children.reduce((candidate: VNode | null, node): VNode | null => {
-    if (candidate) {
-      return candidate;
+
+  return children.reduce((nodes: VNode[], node): VNode[] => {
+    const candidates = findInputNodes(node);
+    if (candidates.length) {
+      nodes.push(...candidates);
     }
 
-    return findInputNode(node);
-  }, null);
+    return nodes;
+  }, []);
 }
 
 // Resolves v-model config if exists.

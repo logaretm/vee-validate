@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { normalizeRules, extractLocators } from '../utils/rules';
 import { normalizeEventValue } from '../utils/events';
-import { findInputNode, normalizeChildren, resolveRules, isHTMLNode } from '../utils/vnode';
-import { isCallable, isEqual, isNullOrUndefined, createFlags } from '../utils';
+import { findInputNodes, normalizeChildren, resolveRules, isHTMLNode } from '../utils/vnode';
+import { isCallable, isEqual, isNullOrUndefined, createFlags, includes } from '../utils';
 import { getConfig, ValidationClassMap } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
@@ -14,6 +15,7 @@ let PROVIDER_COUNTER = 0;
 
 type withProviderPrivates = VueConstructor<
   Vue & {
+    // eslint-disable-next-line camelcase
     $_veeObserver: VeeObserver;
     _needsValidation: boolean;
     _inputEventName: string;
@@ -200,23 +202,30 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     const ctx = createValidationCtx(this);
     const children = normalizeChildren(this, ctx);
 
-    const input = findInputNode(children);
-    if (!input) {
+    const inputs = findInputNodes(children);
+    if (!inputs.length) {
       // Silent exit if no input was found.
       return this.slim && children.length <= 1 ? children[0] : h(this.tag, children);
     }
 
-    const resolved = getConfig().useConstraintAttrs ? resolveRules(input) : {};
-    if (!isEqual(this._resolvedRules, resolved)) {
-      this._needsValidation = true;
-    }
+    inputs.forEach((input, idx) => {
+      // If the elements are not checkboxes and there are more input nodes
+      if (!includes(['checkbox', 'radio'], input.data?.attrs?.type) && idx > 0) {
+        return;
+      }
 
-    if (isHTMLNode(input)) {
-      this.fieldName = input.data?.attrs?.name || input.data?.attrs?.id;
-    }
+      const resolved = getConfig().useConstraintAttrs ? resolveRules(input) : {};
+      if (!isEqual(this._resolvedRules, resolved)) {
+        this._needsValidation = true;
+      }
 
-    this._resolvedRules = resolved;
-    addListeners(this, input);
+      if (isHTMLNode(input)) {
+        this.fieldName = input.data?.attrs?.name || input.data?.attrs?.id;
+      }
+
+      this._resolvedRules = resolved;
+      addListeners(this, input);
+    });
 
     return this.slim && children.length <= 1 ? children[0] : h(this.tag, children);
   },

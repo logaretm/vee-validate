@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import Vue, { VueConstructor, VNode } from 'vue';
 import { values, findIndex, debounce, createFlags } from '../utils';
 import { ValidationResult, VeeObserver, VNodeWithVeeContext, ValidationFlags, KnownKeys } from '../types';
@@ -42,6 +43,7 @@ let OBSERVER_COUNTER = 0;
 
 type withObserverNode = VueConstructor<
   Vue & {
+    // eslint-disable-next-line camelcase
     $_veeObserver: VeeObserver;
     $vnode: VNodeWithVeeContext;
   }
