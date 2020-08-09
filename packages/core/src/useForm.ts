@@ -24,6 +24,7 @@ export function useForm(opts?: FormOptions) {
   const isSubmitting = ref(false);
   const fieldsById = computed(() => {
     return fields.value.reduce((acc, field) => {
+      // if the field was not added before
       if (!acc[field.name]) {
         acc[field.name] = field;
         field.idx = -1;
@@ -31,10 +32,11 @@ export function useForm(opts?: FormOptions) {
         return acc;
       }
 
+      // if the same name is detected
       if (!Array.isArray(acc[field.name])) {
-        acc[field.name] = [acc[field.name]];
-        field.idx = 0;
-        return acc;
+        const firstField = acc[field.name];
+        firstField.idx = 0;
+        acc[field.name] = [firstField];
       }
 
       field.idx = acc[field.name].length;

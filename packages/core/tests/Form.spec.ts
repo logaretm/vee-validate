@@ -2,6 +2,7 @@ import flushPromises from 'flush-promises';
 import { defineRule } from '@vee-validate/core';
 import { mountWithHoc, setValue, setChecked } from './helpers';
 import * as yup from 'yup';
+import { ref } from 'vue';
 
 describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
@@ -503,5 +504,54 @@ describe('<Form />', () => {
     setChecked(input, false);
     await flushPromises();
     expect(err.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('unmounted', async () => {
+    const showFields = ref(true);
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = {
+          field: 'required',
+          drink: 'required',
+        };
+
+        return {
+          schema,
+          showFields,
+        };
+      },
+      template: `
+      <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors, values }">
+        <template v-if="showFields">
+          <Field name="field" as="input" />          
+          <Field name="drink" as="input" type="checkbox" value="" /> Coffee
+          <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
+        </template>
+        <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+
+        <span id="errors">{{ errors }}</span>
+        <span id="values">{{ values }}</span>
+
+        <button>Validate</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const errors = wrapper.$el.querySelector('#errors');
+    const values = wrapper.$el.querySelector('#values');
+    const inputs = wrapper.$el.querySelectorAll('input');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(errors.textContent).toBeTruthy();
+    setChecked(inputs[2]);
+    setChecked(inputs[3]);
+    await flushPromises();
+
+    showFields.value = false;
+    await flushPromises();
+    expect(errors.textContent).toBe('{}');
+    expect(values.textContent).toBe(JSON.stringify({ drink: ['Coke'] }, null, 2));
   });
 });
