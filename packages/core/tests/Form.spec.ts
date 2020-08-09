@@ -463,5 +463,45 @@ describe('<Form />', () => {
     expect(err.textContent).toBe('');
 
     expect(values.textContent).toBe(['Coke', '', 'Tea'].toString());
+
+    setChecked(inputs[1], false);
+    await flushPromises();
+    expect(values.textContent).toBe(['Coke', ''].toString());
+  });
+
+  test('supports a singular checkbox', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = {
+          drink: 'required',
+        };
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema" v-slot="{ errors, values }">
+        <Field name="drink" as="input" type="checkbox" :value="true" /> Coffee
+
+        <span id="err">{{ errors.drink }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+    });
+
+    const err = wrapper.$el.querySelector('#err');
+    const input = wrapper.$el.querySelector('input');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(err.textContent).toBe(REQUIRED_MESSAGE);
+    setChecked(input, true);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+    setChecked(input, false);
+    await flushPromises();
+    expect(err.textContent).toBe(REQUIRED_MESSAGE);
   });
 });
