@@ -550,4 +550,31 @@ describe('<Field />', () => {
     await flushPromises();
     expect(errors.children).toHaveLength(2);
   });
+
+  test('is synced with v-model', async () => {
+    let inputValue!: Ref<string>;
+    const wrapper = mountWithHoc({
+      setup() {
+        inputValue = ref('');
+        return {
+          value: inputValue,
+        };
+      },
+      template: `
+      <div>
+        <Field v-model="value" type="text" name="field" />
+      </div>
+    `,
+    });
+
+    await flushPromises();
+    const input = wrapper.$el.querySelector('input');
+    setValue(input, '1234');
+    await flushPromises();
+    expect(inputValue.value).toBe('1234');
+
+    inputValue.value = '455';
+    await flushPromises();
+    expect(input.value).toBe('455');
+  });
 });
