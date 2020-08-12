@@ -12,7 +12,6 @@ describe('<ErrorMessage />', () => {
     return true;
   });
 
-  // TODO: Causes infinite loop for some reason
   test('shows error messages for a field', async () => {
     const wrapper = mountWithHoc({
       components: {
@@ -64,6 +63,33 @@ describe('<ErrorMessage />', () => {
     await flushPromises();
 
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('render with "as" prop and child nodes', async () => {
+    const wrapper = mountWithHoc({
+      components: {
+        ErrorMessage,
+      },
+      template: `
+      <VForm as="form">
+        <Field name="field" rules="required" as="input" />
+        <ErrorMessage as="div" name="field" id="error" v-slot="{ message }">
+          <span>icon</span>
+          <span>{{ message }}</span>
+        </ErrorMessage>
+
+        <button>Validate</button>
+      </VForm>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+
+    expect(error.tagName).toBe('DIV');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+
+    expect(error.textContent).toContain(REQUIRED_MESSAGE);
   });
 
   test('render with scoped slots', async () => {
