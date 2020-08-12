@@ -13,17 +13,15 @@ describe('<ErrorMessage />', () => {
   });
 
   // TODO: Causes infinite loop for some reason
-  test.skip('shows error messages for a field', async () => {
+  test('shows error messages for a field', async () => {
     const wrapper = mountWithHoc({
       components: {
         ErrorMessage,
       },
       template: `
-      <VForm as="form">
+      <VForm>
         <Field name="field" rules="required" as="input" />
         <ErrorMessage name="field" id="error" />
-
-        <button>Validate</button>
       </VForm>
     `,
     });
@@ -34,12 +32,11 @@ describe('<ErrorMessage />', () => {
     await flushPromises();
     expect(error.textContent).toBe('');
 
-    wrapper.$el.querySelector('button').click();
+    setValue(input, '');
     await flushPromises();
 
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
     setValue(input, '12');
-    wrapper.$el.querySelector('button').click();
     await flushPromises();
 
     expect(error.textContent).toBe('');

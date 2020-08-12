@@ -27,6 +27,7 @@ export const ErrorMessage = defineComponent({
       const attrs = {
         id: genFieldErrorId(props.name),
         role: 'alert',
+        ...ctx.attrs,
       };
 
       // If no tag was specified and there are children
@@ -41,14 +42,7 @@ export const ErrorMessage = defineComponent({
         return h(tag || 'span', attrs, message.value);
       }
 
-      return h(
-        tag,
-        {
-          ...attrs,
-          ...ctx.attrs,
-        },
-        children
-      );
+      return h(tag, attrs, children);
     };
   },
 });
