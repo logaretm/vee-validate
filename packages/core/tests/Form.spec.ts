@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import { defineRule } from '@vee-validate/core';
 import { mountWithHoc, setValue, setChecked } from './helpers';
 import * as yup from 'yup';
-import { ref } from 'vue';
+import { ref, Ref } from 'vue';
 
 describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
@@ -506,7 +506,7 @@ describe('<Form />', () => {
     expect(err.textContent).toBe(REQUIRED_MESSAGE);
   });
 
-  test('unmounted', async () => {
+  test('unmounted fields gets unregistered and their values cleaned up', async () => {
     const showFields = ref(true);
     const wrapper = mountWithHoc({
       setup() {
@@ -553,5 +553,108 @@ describe('<Form />', () => {
     await flushPromises();
     expect(errors.textContent).toBe('{}');
     expect(values.textContent).toBe(JSON.stringify({ drink: ['Coke'] }, null, 2));
+  });
+
+  test('checkboxes with yup schema', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object().shape({
+          drink: yup.array().required().min(1),
+        });
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema" v-slot="{ errors, values }">
+        <Field name="drink" as="input" type="checkbox" value="" /> Coffee
+        <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
+        <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+
+        <span id="err">{{ errors.drink }}</span>
+        <span id="values">{{ values.drink && values.drink.toString() }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+    });
+
+    const err = wrapper.$el.querySelector('#err');
+    const values = wrapper.$el.querySelector('#values');
+    const inputs = wrapper.$el.querySelectorAll('input');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(err.textContent).toBe('drink is a required field');
+    setChecked(inputs[2]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+
+    setChecked(inputs[0]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+
+    setChecked(inputs[1]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+
+    expect(values.textContent).toBe(['Coke', '', 'Tea'].toString());
+
+    setChecked(inputs[1], false);
+    await flushPromises();
+    expect(values.textContent).toBe(['Coke', ''].toString());
+  });
+
+  test('checkboxes v-model value syncing', async () => {
+    let drinks!: Ref<string[]>;
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object().shape({
+          drink: yup.array().required(),
+        });
+
+        drinks = ref([]);
+
+        return {
+          schema,
+          drinks,
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema" v-slot="{ errors, values }">
+        <Field v-model="drinks" name="drink" as="input" type="checkbox" value="" /> Coffee
+        <Field v-model="drinks" name="drink" as="input" type="checkbox" value="Tea" /> Tea
+        <Field v-model="drinks" name="drink" as="input" type="checkbox" value="Coke" /> Coke
+
+        <span id="err">{{ errors.drink }}</span>
+        <span id="values">{{ values.drink && values.drink.toString() }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+    });
+
+    const err = wrapper.$el.querySelector('#err');
+    const values = wrapper.$el.querySelector('#values');
+    const inputs = wrapper.$el.querySelectorAll('input');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(err.textContent).toBe('drink is a required field');
+    setChecked(inputs[1]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+    expect(drinks.value).toEqual(['Tea']);
+
+    drinks.value = [];
+    await flushPromises();
+    expect(err.textContent).toBe('drink is a required field');
+    expect(values.textContent).toBe('');
+
+    drinks.value = ['Coke'];
+    await flushPromises();
+    expect(err.textContent).toBe('');
+    expect(values.textContent).toBe(['Coke'].toString());
   });
 });
