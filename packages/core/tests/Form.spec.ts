@@ -657,4 +657,60 @@ describe('<Form />', () => {
     expect(err.textContent).toBe('');
     expect(values.textContent).toBe(['Coke'].toString());
   });
+
+  test('isSubmitting state', async () => {
+    jest.useFakeTimers();
+
+    let throws = false;
+    let errMsg = '';
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          onSubmit() {
+            return new Promise((resolve, reject) => {
+              if (throws) {
+                setTimeout(() => {
+                  reject(new Error('Sorry'));
+                }, 500);
+                return;
+              }
+
+              setTimeout(resolve, 1000);
+            }).catch(err => {
+              errMsg = err.message;
+
+              throw err;
+            });
+          },
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" as="form" v-slot="{ isSubmitting }">
+
+        <button id="submit">Submit</button>
+        <span id="submitting">{{ isSubmitting }}</span>
+      </VForm>
+    `,
+    });
+
+    const submit = wrapper.$el.querySelector('#submit');
+    const submitting = wrapper.$el.querySelector('#submitting');
+    submit.click();
+    await flushPromises();
+    expect(submitting.textContent).toBe('true');
+    jest.advanceTimersByTime(1001);
+    await flushPromises();
+    expect(submitting.textContent).toBe('false');
+
+    throws = true;
+    submit.click();
+    await flushPromises();
+    expect(submitting.textContent).toBe('true');
+    jest.advanceTimersByTime(501);
+    await flushPromises();
+    expect(submitting.textContent).toBe('false');
+    expect(errMsg).toBe('Sorry');
+
+    jest.useRealTimers();
+  });
 });
