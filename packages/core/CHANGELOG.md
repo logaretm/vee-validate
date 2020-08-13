@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.8](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.7...vee-validate@4.0.0-alpha.8) (2020-08-13)
+
+
+### Bug Fixes
+
+* detect initial values from v-model ([e566302](https://github.com/logaretm/vee-validate/commit/e566302bb485353f03baccdf98f35a255605e15d))
+* handle unmount issue when removed value is falsy for checkboxes ([b6393f4](https://github.com/logaretm/vee-validate/commit/b6393f4adce9346cadaf1f423dca29645bf3c2f1))
+* initial array values for checkboxes not populated correctly in form ([fb99edc](https://github.com/logaretm/vee-validate/commit/fb99edc309c26f9be2baa71f90ec1ac59ddcdc9d))
+* umounting group of checkbox issues ([8c77af5](https://github.com/logaretm/vee-validate/commit/8c77af52955b235a6bd2357a35036097e109e37f))
+
+
+### Features
+
+* added basic v-model support ([c93d125](https://github.com/logaretm/vee-validate/commit/c93d125b4d6c0af8365920ee577c883493e60648))
+* merge ctx.attrs to any rendered root node ([5c9979c](https://github.com/logaretm/vee-validate/commit/5c9979ce45d4ab10cd019ad0c25159e013198301))
+* sync the model value with inner value ([57d7923](https://github.com/logaretm/vee-validate/commit/57d79232f490be3525c2576ef83376a2f5643386))
+
+
+
+
+
 # [4.0.0-alpha.7](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.6...vee-validate@4.0.0-alpha.7) (2020-08-04)
 
 
