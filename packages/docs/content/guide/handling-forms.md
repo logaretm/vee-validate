@@ -241,6 +241,26 @@ You can validate the form without submissions using the `validate()` slot prop f
 
 That form doesn't render a `form` tag, so vee-validate doesn't handle submissions for those group of fields. But you can still validate them using the `validate` function present on the `Form` component slot props.
 
+## Submission Progress
+
+Quite often you need to show your users a submission indicator, or you might want to disable the submit button entirely until the submission attempt is done. The `Form` component offers a `isSubmitting` slot prop that you can use to show such UI indicators.
+
+The `isSubmitting` state will be set to `true` once the validation of the form starts (as a result of a submit event) and will keep track of the submission handler you passed to either `onSubmit` or until it calls `submitForm`. If the submission handler throws any errors or completes successfully it will be set to `false` afterwards.
+
+Here is small example:
+
+<p class="codepen" data-height="265" data-theme-id="light" data-default-tab="html,result" data-user="logaretm" data-slug-hash="xxVZOGX" style="height: 265px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="vee-validate v4 isSubmitting">
+  <span>See the Pen <a href="https://codepen.io/logaretm/pen/xxVZOGX">
+  vee-validate v4 isSubmitting</a> by Abdelrahman Awad (<a href="https://codepen.io/logaretm">@logaretm</a>)
+  on <a href="https://codepen.io">CodePen</a>.</span>
+</p>
+
+<doc-tip title="isSubmitting and validate()">
+
+Note that calling `validate` from the `Form` slot props will not cause the `isSubmitting` state to change, it will only change if either `submitForm` or `handleSubmit` are called or when a submit event is triggered.
+
+</doc-tip>
+
 ## Handling Resets
 
 vee-validate also handles form resets in similar way to submissions, consider this example:
@@ -345,4 +365,6 @@ export default {
 </script>
 ```
 
-Doing so will trigger initial validation on the form and it will generate messages for fields that fail the initial validation.
+Doing so will trigger initial validation on the form and it will generate messages for fields that fail the initial validation. You can still use `v-model` on your fields to define model-based initial values.
+
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
