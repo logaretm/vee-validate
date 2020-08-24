@@ -8,7 +8,7 @@ defineRule('required', required);
 
 localize('en', {
   messages: {
-    required: 'The {field} is required',
+    required: 'The {_field_} is required',
   },
 });
 
