@@ -39,7 +39,7 @@ class Dictionary {
 
     const fieldName = this.container[locale]?.names?.[field] ?? field;
 
-    return isCallable(message) ? message(ctx) : interpolate(message, { ...form, field: fieldName });
+    return isCallable(message) ? message(ctx) : interpolate(message, { ...form, _field_: fieldName });
   }
 
   public merge(dictionary: RootI18nDictionary) {
