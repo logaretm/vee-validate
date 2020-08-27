@@ -27,3 +27,8 @@ test('validates number of elements in an array', () => {
 test('validates strings consisting of numbers', () => {
   expect(validate(123, { length: 3 })).toBe(true);
 });
+
+test('validates strings with multibyte unicode chars', () => {
+  expect(validate('😹🐶😹🐶', { length: 4 })).toBe(true);
+  expect(validate('😹🐶😹🐶', { length: 3 })).toBe(false);
+});
