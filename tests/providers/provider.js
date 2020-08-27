@@ -4,6 +4,7 @@ import { ValidationProvider, ValidationObserver, extend, withValidation, configu
 import InputWithoutValidation from './components/Input';
 import InputWithSlot from './components/InputWithSlot';
 import ModelComp from './../helpers/ModelComp';
+import { template } from '@babel/core';
 
 const Vue = createLocalVue();
 Vue.component('ValidationProvider', ValidationProvider);
@@ -324,6 +325,9 @@ test('validates on rule change: testing NaN', async () => {
 });
 
 test('validates components on input by default', async () => {
+  const div = document.createElement('div');
+  div.id = 'root';
+  document.body.appendChild(div);
   const wrapper = mount(
     {
       data: () => ({
@@ -340,7 +344,7 @@ test('validates components on input by default', async () => {
         }
       },
       template: `
-        <div>
+        <div id="root">
           <ValidationProvider rules="required" v-slot="{ errors }">
             <TextInput v-model="value" ref="input"></TextInput>
             <span id="error">{{ errors && errors[0] }}</span>
@@ -348,7 +352,7 @@ test('validates components on input by default', async () => {
         </div>
       `
     },
-    { localVue: Vue, sync: false, attachToDocument: true }
+    { localVue: Vue, sync: false, attachTo: '#root' }
   );
 
   const error = wrapper.find('#error');
@@ -385,7 +389,7 @@ test('validates components on configured model event', async () => {
         <div>
           <ValidationProvider rules="required" v-slot="{ errors }">
             <TextInput v-model="value" ref="input"></TextInput>
-            <span id="error">{{ errors[0] }}</span>
+            <span ref="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
       `
@@ -393,8 +397,8 @@ test('validates components on configured model event', async () => {
     { localVue: Vue, sync: false }
   );
 
-  const error = wrapper.find('#error');
-  const input = wrapper.find({ ref: 'input' });
+  const error = wrapper.findComponent({ ref: 'error' });
+  const input = wrapper.findComponent({ ref: 'input' });
 
   expect(error.text()).toBe('');
   input.vm.$emit('change', '');
@@ -503,8 +507,8 @@ test('validates file input', async () => {
         file: null
       }),
       template: `
-        <ValidationProvider rules="required|image" v-slot="{ errors }">
-          <input type="file" v-model="file">
+        <ValidationProvider rules="required|image" v-slot="{ errors, validate }">
+          <input type="file"  @change="validate">
           <p id="error">{{ errors[0] }}</p>
         </ValidationProvider>
       `
@@ -597,6 +601,9 @@ test('created HOCs preserves their slots', async () => {
 });
 
 test('resets validation state', async () => {
+  const div = document.createElement('div');
+  div.id = 'root';
+  document.body.appendChild(div);
   const wrapper = mount(
     {
       data: () => ({
@@ -622,7 +629,7 @@ test('resets validation state', async () => {
         </div>
       `
     },
-    { localVue: Vue, sync: false, attachToDocument: true }
+    { localVue: Vue, sync: false, attachTo: '#root' }
   );
 
   const error = wrapper.find('#error');
@@ -771,6 +778,7 @@ test('reset ignores pending validation result', async () => {
   await sleep(40);
   await flushPromises();
   wrapper.vm.$refs.provider.reset();
+  await flushPromises();
   expect(error.text()).toBe('');
   await sleep(10);
   await flushPromises();

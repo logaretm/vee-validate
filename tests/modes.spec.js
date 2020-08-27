@@ -13,6 +13,9 @@ beforeEach(() => {
 });
 
 test('aggressive mode', async () => {
+  const div = document.createElement('div');
+  div.id = 'root';
+  document.body.appendChild(div);
   const wrapper = mount(
     {
       data: () => ({
@@ -33,7 +36,7 @@ test('aggressive mode', async () => {
         </div>
       `
     },
-    { localVue: Vue, sync: false, attachToDocument: true }
+    { localVue: Vue, sync: false, attachTo: '#root' }
   );
   const error = wrapper.find('#error');
   const input = wrapper.find('input');

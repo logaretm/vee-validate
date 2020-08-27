@@ -10,6 +10,10 @@ const validate = (value: string | number | string[], { length }: Record<string, 
     value = String(value);
   }
 
+  if (typeof value === 'string') {
+    value = Array.from(value);
+  }
+
   if (!value.length) {
     value = toArray(value);
   }
