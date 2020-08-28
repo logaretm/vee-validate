@@ -168,7 +168,7 @@ export function useForm(opts?: FormOptions) {
 
   const errors = computed(() => {
     return activeFields.value.reduce((acc: Record<string, string>, field) => {
-      acc[field.name] = field.errorMessage;
+      acc[field.name] = unwrap(field.errorMessage);
 
       return acc;
     }, {});
@@ -247,15 +247,14 @@ const MERGE_STRATEGIES: Record<Flag, 'every' | 'some'> = {
 function useFormMeta(fields: Ref<any[]>) {
   const flags: Flag[] = Object.keys(MERGE_STRATEGIES) as Flag[];
 
-  return flags.reduce((acc, flag: Flag) => {
-    acc[flag] = computed(() => {
+  return computed(() => {
+    return flags.reduce((acc, flag: Flag) => {
       const mergeMethod = MERGE_STRATEGIES[flag];
+      acc[flag] = fields.value[mergeMethod](field => field.meta[flag]);
 
-      return fields.value[mergeMethod](field => field.meta[flag]);
-    });
-
-    return acc;
-  }, {} as Record<Flag, Ref<boolean>>);
+      return acc;
+    }, {} as Record<string, boolean>);
+  });
 }
 
 async function validateYupSchema(

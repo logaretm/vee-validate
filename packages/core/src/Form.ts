@@ -1,7 +1,7 @@
-import { computed, h, defineComponent } from 'vue';
+import { h, defineComponent, watch } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
-import { useRefsObjToComputed, normalizeChildren } from './utils';
+import { normalizeChildren } from './utils';
 
 export const Form = defineComponent({
   name: 'Form',
@@ -26,21 +26,6 @@ export const Form = defineComponent({
       initialValues: props.initialValues,
     });
 
-    const unwrappedMeta = useRefsObjToComputed(meta);
-
-    const slotProps = computed(() => {
-      return {
-        meta: unwrappedMeta.value,
-        errors: errors.value,
-        values: values.value,
-        isSubmitting: isSubmitting.value,
-        validate,
-        handleSubmit,
-        handleReset,
-        submitForm,
-      };
-    });
-
     const onSubmit = ctx.attrs.onSubmit ? handleSubmit(ctx.attrs.onSubmit as SubmissionHandler) : submitForm;
     function handleFormReset() {
       handleReset();
@@ -49,8 +34,22 @@ export const Form = defineComponent({
       }
     }
 
+    // FIXME: for whatever reason that's beyond me, this fixes the reactivity issue
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    watch(errors, () => {});
+
     return () => {
-      const children = normalizeChildren(ctx, slotProps.value);
+      const children = normalizeChildren(ctx, {
+        meta: meta.value,
+        errors: errors.value,
+        values: values.value,
+        isSubmitting: isSubmitting.value,
+        validate,
+        handleSubmit,
+        handleReset,
+        submitForm,
+      });
+
       if (!props.as) {
         return children;
       }

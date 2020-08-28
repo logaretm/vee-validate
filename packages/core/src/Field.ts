@@ -1,7 +1,7 @@
 import { computed, h, defineComponent, nextTick } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
-import { useRefsObjToComputed, normalizeChildren, isHTMLTag, hasCheckedAttr } from './utils';
+import { normalizeChildren, isHTMLTag, hasCheckedAttr } from './utils';
 
 export const Field = defineComponent({
   name: 'Field',
@@ -74,9 +74,7 @@ export const Field = defineComponent({
           }
         : handleChange;
 
-    const unwrappedMeta = useRefsObjToComputed(meta);
-
-    const slotProps = computed(() => {
+    const makeSlotProps = () => {
       const fieldProps: Record<string, any> = {
         name: fieldName,
         disabled: props.disabled,
@@ -97,17 +95,18 @@ export const Field = defineComponent({
       return {
         field: fieldProps,
         aria: aria.value,
-        meta: unwrappedMeta.value,
+        meta,
         errors: errors.value,
         errorMessage: errorMessage.value,
         validate: validateField,
         reset,
         handleChange: onChangeHandler,
       };
-    });
+    };
 
     return () => {
-      let tag = props.as;
+      let tag: string | undefined = props.as;
+      const slotProps = makeSlotProps();
       if (!props.as && !ctx.slots.default) {
         tag = 'input';
       }
@@ -121,14 +120,14 @@ export const Field = defineComponent({
         });
       }
 
-      const children = normalizeChildren(ctx, slotProps.value);
+      const children = normalizeChildren(ctx, slotProps);
       if (tag) {
         return h(
           tag,
           {
             ...ctx.attrs,
-            ...slotProps.value.field,
-            ...(isHTMLTag(tag) ? slotProps.value.aria : {}),
+            ...slotProps.field,
+            ...(isHTMLTag(tag) ? slotProps.aria : {}),
           },
           children
         );

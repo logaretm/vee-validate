@@ -48,7 +48,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
   });
 
   const runValidation = async (): Promise<ValidationResult> => {
-    meta.pending.value = true;
+    meta.pending = true;
     if (!form || !form.validateSchema) {
       const result = await validate(value.value, normalizedRules.value, {
         name: unwrap(fieldName),
@@ -58,15 +58,15 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
 
       // Must be updated regardless if a mutation is needed or not
       // FIXME: is this needed?
-      meta.valid.value = !result.errors.length;
-      meta.invalid.value = !!result.errors.length;
-      meta.pending.value = false;
+      meta.valid = !result.errors.length;
+      meta.invalid = !!result.errors.length;
+      meta.pending = false;
 
       return result;
     }
 
     const results = await form.validateSchema();
-    meta.pending.value = false;
+    meta.pending = false;
 
     return results[unwrap(fieldName)];
   };
@@ -165,7 +165,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
 
     // For each dependent field, validate it if it was validated before
     dependencies.value.forEach(dep => {
-      if (dep in form.values && meta.validated.value) {
+      if (dep in form.values && meta.validated) {
         runValidationWithMutation();
       }
     });
@@ -211,17 +211,17 @@ function useValidationState(fieldName: MaybeReactive<string>, initValue: any, fo
   // Common input/change event handler
   const handleChange = (e: Event) => {
     value.value = normalizeEventValue(e);
-    meta.dirty.value = true;
-    meta.pristine.value = false;
+    meta.dirty = true;
+    meta.pristine = false;
   };
 
   // Updates the validation state with the validation result
   function patch(result: ValidationResult) {
     errors.value = result.errors;
-    meta.changed.value = initialValue !== value.value;
-    meta.valid.value = !result.errors.length;
-    meta.invalid.value = !!result.errors.length;
-    meta.validated.value = true;
+    meta.changed = initialValue !== value.value;
+    meta.valid = !result.errors.length;
+    meta.invalid = !!result.errors.length;
+    meta.validated = true;
 
     return result;
   }
@@ -261,22 +261,20 @@ function useMeta() {
     failed: false,
   });
 
-  const flags = reactive(initialMeta());
+  const meta = reactive(initialMeta());
 
-  const passed = computed(() => {
-    return flags.valid && flags.validated;
-  });
-
-  const failed = computed(() => {
-    return flags.invalid && flags.validated;
+  // FIXME: Fix computation of passed
+  watchEffect(() => {
+    meta.passed = meta.valid && meta.validated;
+    meta.failed = meta.invalid && meta.validated;
   });
 
   /**
    * Handles common onBlur meta update
    */
   const onBlur = () => {
-    flags.touched = true;
-    flags.untouched = false;
+    meta.touched = true;
+    meta.untouched = false;
   };
 
   /**
@@ -284,31 +282,27 @@ function useMeta() {
    */
   function reset() {
     const defaults = initialMeta();
-    Object.keys(flags).forEach((key: string) => {
+    Object.keys(meta).forEach((key: string) => {
       // Skip these, since they are computed anyways
-      if (key === 'passed' || key === 'failed') {
+      if (['passed', 'failed'].includes(key)) {
         return;
       }
 
-      flags[key as Flag] = defaults[key as Flag];
+      meta[key as Flag] = defaults[key as Flag];
     });
   }
 
   return {
-    meta: {
-      ...toRefs(flags),
-      passed,
-      failed,
-    },
+    meta,
     onBlur,
     reset,
   };
 }
 
-function useAriAttrs(fieldName: MaybeReactive<string>, meta: Record<Flag, Ref<boolean>>) {
+function useAriAttrs(fieldName: MaybeReactive<string>, meta: Record<string, boolean>) {
   return computed(() => {
     return {
-      'aria-invalid': meta.failed.value ? 'true' : 'false',
+      'aria-invalid': meta.failed ? 'true' : 'false',
       'aria-describedBy': genFieldErrorId(unwrap(fieldName)),
     };
   });
