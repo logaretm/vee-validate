@@ -39,7 +39,7 @@ This is an example that utilizes the following:
 
 - Uses `required` flag to display `*` next to field labels to indicate that they are required.
 - Uses `errors` to display error UI state.
-- Uses `ariaMsg` and `ariaInput` bindings to improve accessability.
+- Uses `ariaMsg` and `ariaInput` bindings to improve accessibility.
 
 <iframe
   src="https://codesandbox.io/embed/vue-template-lldw2?fontsize=14&hidenavigation=1&module=%2Fsrc%2Fcomponents%2FTextInput.vue&theme=dark"
