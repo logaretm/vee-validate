@@ -1,10 +1,12 @@
 import flushPromises from 'flush-promises';
 import { defineRule, configure } from '@vee-validate/core';
-import { required } from '@vee-validate/rules';
+import { required, between } from '@vee-validate/rules';
 import { localize, setLocale } from '@vee-validate/i18n';
 import { mountWithHoc, setValue } from '../../core/tests/helpers';
+import en from '../src/locale/en.json';
 
 defineRule('required', required);
+defineRule('between', between);
 
 localize('en', {
   messages: {
@@ -167,4 +169,88 @@ test('can switch between locales with setLocale', async () => {
 
   await flushPromises();
   expect(error.textContent).toContain('هذا الحقل مطلوب');
+});
+
+test('interpolates object params', async () => {
+  configure({
+    generateMessage: localize('en', {
+      messages: {
+        between: en.messages.between,
+      },
+    }),
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+        <div>
+          <Field name="name" :immediate="true" :rules="{ between: { min: 1, max: 10 } }" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </Field>
+        </div>
+      `,
+  });
+
+  const error = wrapper.$el.querySelector('#error');
+  // flush the pending validation.
+  await flushPromises();
+
+  // locale wasn't set.
+  expect(error.textContent).toContain('The name field must be between 1 and 10');
+});
+
+test('interpolates array params', async () => {
+  configure({
+    generateMessage: localize('en', {
+      messages: {
+        between: en.messages.between,
+      },
+    }),
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+        <div>
+          <Field name="name" :immediate="true" :rules="{ between: [1, 10] }" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </Field>
+        </div>
+      `,
+  });
+
+  const error = wrapper.$el.querySelector('#error');
+  // flush the pending validation.
+  await flushPromises();
+
+  // locale wasn't set.
+  expect(error.textContent).toContain('The name field must be between 1 and 10');
+});
+
+test('interpolates string params', async () => {
+  configure({
+    generateMessage: localize('en', {
+      messages: {
+        between: en.messages.between,
+      },
+    }),
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+        <div>
+          <Field name="name" :immediate="true" rules="between:1,10" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </Field>
+        </div>
+      `,
+  });
+
+  const error = wrapper.$el.querySelector('#error');
+  // flush the pending validation.
+  await flushPromises();
+
+  // locale wasn't set.
+  expect(error.textContent).toContain('The name field must be between 1 and 10');
 });
