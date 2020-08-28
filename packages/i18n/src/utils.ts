@@ -4,7 +4,11 @@
 export function interpolate(template: string, values: Record<string, any>): string {
   return template.replace(/(\d:)?{([^}]+)}/g, function (_, param, placeholder): string {
     if (!param || !values.params) {
-      return placeholder in values ? values[placeholder] : `{${placeholder}}`;
+      return placeholder in values
+        ? values[placeholder]
+        : values.params && placeholder in values.params
+        ? values.params[placeholder]
+        : `{${placeholder}}`;
     }
 
     // Handles object params
@@ -14,7 +18,6 @@ export function interpolate(template: string, values: Record<string, any>): stri
 
     // Extended Params exit in the format of `paramIndex:{paramName}` where the index is optional
     const paramIndex = Number(param.replace(':', ''));
-    console.log(param, values.params);
 
     return paramIndex in values.params ? values.params[paramIndex] : param;
   });

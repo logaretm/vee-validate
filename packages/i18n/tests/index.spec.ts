@@ -3,7 +3,6 @@ import { defineRule, configure } from '@vee-validate/core';
 import { required, between } from '@vee-validate/rules';
 import { localize, setLocale } from '@vee-validate/i18n';
 import { mountWithHoc, setValue } from '../../core/tests/helpers';
-import en from '../src/locale/en.json';
 
 defineRule('required', required);
 defineRule('between', between);
@@ -175,7 +174,7 @@ test('interpolates object params', async () => {
   configure({
     generateMessage: localize('en', {
       messages: {
-        between: en.messages.between,
+        between: `The {field} field must be between {min} and {max}`,
       },
     }),
   });
@@ -203,7 +202,7 @@ test('interpolates array params', async () => {
   configure({
     generateMessage: localize('en', {
       messages: {
-        between: en.messages.between,
+        between: 'The {field} field must be between 0:{min} and 1:{max}',
       },
     }),
   });
@@ -231,7 +230,7 @@ test('interpolates string params', async () => {
   configure({
     generateMessage: localize('en', {
       messages: {
-        between: en.messages.between,
+        between: 'The {field} field must be between 0:{min} and 1:{max}',
       },
     }),
   });
