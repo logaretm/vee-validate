@@ -6,6 +6,7 @@ body {
   width: 100%;
   height: 100%;
   @apply font-body;
+  scroll-padding-top: 130px;
 }
 
 :root {
