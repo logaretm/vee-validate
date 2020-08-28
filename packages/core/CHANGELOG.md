@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.9](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.8...vee-validate@4.0.0-alpha.9) (2020-08-28)
+
+
+### Bug Fixes
+
+* adapt to the breaking changes in #vue-1682 closes [#2873](https://github.com/logaretm/vee-validate/issues/2873) ([05f7df3](https://github.com/logaretm/vee-validate/commit/05f7df313f9f47ca79bdf99be35cb2ccfea0c346))
+
+
+
+
+
 # [4.0.0-alpha.8](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.7...vee-validate@4.0.0-alpha.8) (2020-08-13)
 
 

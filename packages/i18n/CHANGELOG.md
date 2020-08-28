@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.5](https://github.com/logaretm/vee-validate/compare/@vee-validate/i18n@4.0.0-alpha.4...@vee-validate/i18n@4.0.0-alpha.5) (2020-08-28)
+
+
+### Bug Fixes
+
+* update placeholder format for locales closes [#2871](https://github.com/logaretm/vee-validate/issues/2871) closes [#2875](https://github.com/logaretm/vee-validate/issues/2875) ([1cf8404](https://github.com/logaretm/vee-validate/commit/1cf840465e1fc09b09d8830673176530585de355))
+
+
+
+
+
 # [4.0.0-alpha.4](https://github.com/logaretm/vee-validate/compare/@vee-validate/i18n@4.0.0-alpha.3...@vee-validate/i18n@4.0.0-alpha.4) (2020-07-27)
 
 **Note:** Version bump only for package @vee-validate/i18n
