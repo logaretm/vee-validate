@@ -262,8 +262,6 @@ function useMeta() {
   });
 
   const meta = reactive(initialMeta());
-
-  // FIXME: Fix computation of passed
   watchEffect(() => {
     meta.passed = meta.valid && meta.validated;
     meta.failed = meta.invalid && meta.validated;
