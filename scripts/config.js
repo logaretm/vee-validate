@@ -2,16 +2,6 @@ const path = require('path');
 const typescript = require('rollup-plugin-typescript2');
 const replace = require('rollup-plugin-replace');
 
-const version = process.env.VERSION || require(path.resolve(__dirname, '../package.json')).version;
-
-const commons = {
-  banner: `/**
-  * vee-validate v${version}
-  * (c) ${new Date().getFullYear()} Abdelrahman Awad
-  * @license MIT
-  */`,
-};
-
 const formatNameMap = {
   core: 'VeeValidate',
   rules: 'VeeValidateRules',
@@ -38,6 +28,8 @@ function createConfig(pkg, format) {
     },
   });
 
+  const version = require(path.resolve(__dirname, `../packages/${pkg}/package.json`)).version;
+
   const config = {
     input: {
       input: path.resolve(__dirname, `../packages/${pkg}/src/index.ts`),
@@ -45,7 +37,11 @@ function createConfig(pkg, format) {
       plugins: [tsPlugin, replace({ __VERSION__: version })],
     },
     output: {
-      banner: commons.banner,
+      banner: `/**
+  * vee-validate v${version}
+  * (c) ${new Date().getFullYear()} Abdelrahman Awad
+  * @license MIT
+  */`,
       format,
       name: format === 'umd' ? formatNameMap[pkg] : undefined,
       globals: {
