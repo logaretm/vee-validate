@@ -170,11 +170,39 @@ test('can switch between locales with setLocale', async () => {
   expect(error.textContent).toContain('هذا الحقل مطلوب');
 });
 
-test('interpolates object params', async () => {
+test('interpolates object params with short format', async () => {
   configure({
     generateMessage: localize('en', {
       messages: {
         between: `The {field} field must be between {min} and {max}`,
+      },
+    }),
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+        <div>
+          <Field name="name" :immediate="true" :rules="{ between: { min: 1, max: 10 } }" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </Field>
+        </div>
+      `,
+  });
+
+  const error = wrapper.$el.querySelector('#error');
+  // flush the pending validation.
+  await flushPromises();
+
+  // locale wasn't set.
+  expect(error.textContent).toContain('The name field must be between 1 and 10');
+});
+
+test('interpolates object params with extended format', async () => {
+  configure({
+    generateMessage: localize('en', {
+      messages: {
+        between: `The {field} field must be between 0:{min} and 1:{max}`,
       },
     }),
   });
@@ -252,4 +280,62 @@ test('interpolates string params', async () => {
 
   // locale wasn't set.
   expect(error.textContent).toContain('The name field must be between 1 and 10');
+});
+
+describe('interpolation preserves placeholders if not found', () => {
+  test('array format', async () => {
+    configure({
+      generateMessage: localize('en', {
+        messages: {
+          between: 'The {field} field must be between 0:{min} and 1:{max}',
+        },
+      }),
+    });
+
+    const wrapper = mountWithHoc({
+      template: `
+        <div>
+          <Field name="name" :immediate="true" :rules="{ between: [1] }" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </Field>
+        </div>
+      `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    // flush the pending validation.
+    await flushPromises();
+
+    // locale wasn't set.
+    expect(error.textContent).toContain('The name field must be between 1 and 1:{max}');
+  });
+
+  test('object format', async () => {
+    configure({
+      generateMessage: localize('en', {
+        messages: {
+          between: 'The {field} field must be between 0:{min} and 1:{max}',
+        },
+      }),
+    });
+
+    const wrapper = mountWithHoc({
+      template: `
+        <div>
+          <Field name="name" :immediate="true" :rules="{ between: { min: 0 } }" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </Field>
+        </div>
+      `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    // flush the pending validation.
+    await flushPromises();
+
+    // locale wasn't set.
+    expect(error.textContent).toContain('The name field must be between 0 and {max}');
+  });
 });

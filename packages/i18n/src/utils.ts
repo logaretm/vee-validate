@@ -11,7 +11,7 @@ export function interpolate(template: string, values: Record<string, any>): stri
         : `{${placeholder}}`;
     }
 
-    // Handles object params
+    // Handles extended object params format
     if (!Array.isArray(values.params)) {
       return placeholder in values.params ? values.params[placeholder] : `{${placeholder}}`;
     }
@@ -19,6 +19,6 @@ export function interpolate(template: string, values: Record<string, any>): stri
     // Extended Params exit in the format of `paramIndex:{paramName}` where the index is optional
     const paramIndex = Number(param.replace(':', ''));
 
-    return paramIndex in values.params ? values.params[paramIndex] : param;
+    return paramIndex in values.params ? values.params[paramIndex] : `${param}{${placeholder}}`;
   });
 }
