@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.6](https://github.com/logaretm/vee-validate/compare/@vee-validate/i18n@4.0.0-alpha.5...@vee-validate/i18n@4.0.0-alpha.6) (2020-08-29)
+
+
+### Features
+
+* full param interpolation ([#2880](https://github.com/logaretm/vee-validate/issues/2880)) ([0576504](https://github.com/logaretm/vee-validate/commit/0576504bb36d3d2583ecd8c6855a1ab39a4d0c34))
+
+
+
+
+
 # [4.0.0-alpha.5](https://github.com/logaretm/vee-validate/compare/@vee-validate/i18n@4.0.0-alpha.4...@vee-validate/i18n@4.0.0-alpha.5) (2020-08-28)
 
 
