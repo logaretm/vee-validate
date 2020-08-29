@@ -713,4 +713,24 @@ describe('<Form />', () => {
 
     jest.useRealTimers();
   });
+
+  test('aggregated meta reactivity', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm @submit="onSubmit" v-slot="{ meta }">
+        <Field name="field" as="input" rules="required"  />
+
+        <button :disabled="meta.invalid" id="submit">Submit</button>
+      </VForm>
+    `,
+    });
+
+    const submitBtn = wrapper.$el.querySelector('#submit');
+    const input = wrapper.$el.querySelector('input');
+    await flushPromises();
+    expect(submitBtn.disabled).toBe(true);
+    setValue(input, '12');
+    await flushPromises();
+    expect(submitBtn.disabled).toBe(false);
+  });
 });

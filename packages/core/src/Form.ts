@@ -1,4 +1,4 @@
-import { h, defineComponent, watch } from 'vue';
+import { h, defineComponent, watchEffect } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
 import { normalizeChildren } from './utils';
@@ -35,8 +35,16 @@ export const Form = defineComponent({
     }
 
     // FIXME: for whatever reason that's beyond me, this fixes the reactivity issue
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    watch(errors, () => {});
+    watchEffect(() => {
+      // eslint-disable-next-line no-unused-expressions
+      errors.value;
+      // eslint-disable-next-line no-unused-expressions
+      meta.value;
+      // eslint-disable-next-line no-unused-expressions
+      values.value;
+      // eslint-disable-next-line no-unused-expressions
+      isSubmitting.value;
+    });
 
     return () => {
       const children = normalizeChildren(ctx, {
