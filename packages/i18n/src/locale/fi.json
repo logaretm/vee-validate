@@ -4,22 +4,22 @@
     "alpha": "{field} voi sisältää vain kirjaimia",
     "alpha_dash": "{field} voi sisältää vain kirajimia, numeroita, ja tavu-, tai alaviivoja",
     "alpha_num": "{field} voi sisältää vain kirjaimia ja numeroita",
-    "between": "Kentän {field} tulee olla {min} ja {max} väliltä",
+    "between": "Kentän {field} tulee olla 0:{min} ja 1:{max} väliltä",
     "confirmed": "{field} ei vastannut {target}",
-    "digits": "{field} tulee olla numeerinen ja tarkalleen {length} merkkiä",
-    "dimensions": "{field} tulee olla {width} pikseliä kertaa {height} pikseliä",
+    "digits": "{field} tulee olla numeerinen ja tarkalleen 0:{length} merkkiä",
+    "dimensions": "{field} tulee olla 0:{width} pikseliä kertaa 1:{height} pikseliä",
     "email": "{field} tulee olla kelvollinen sähköpostiosoite",
     "excluded": "{field} tulee olla kelvollinen arvo",
     "ext": "{field} tulee olla kelvollinen tiedosto",
     "image": "{field} tulee olla kelvollinen kuva",
-    "max": "{field} ei saa olla pidempi kuin {length} merkkiä",
+    "max": "{field} ei saa olla pidempi kuin 0:{length} merkkiä",
     "mimes": "{field} tulee olla kelvollinen tiedostotyyppi",
-    "min": "{field} tulee olla vähintään {length} merkkiä",
+    "min": "{field} tulee olla vähintään 0:{length} merkkiä",
     "numeric": "{field} voi sisältää vain numeroita",
     "oneOf": "{field} tulee olla kelvollinen arvo",
     "regex": "{field} tulee olla kelvollinen säännöllinen lauseke",
     "required": "{field} on pakollinen kenttä",
     "required_if": "{field} on pakollinen kenttä",
-    "size": "{field} tulee olla vähemmän kuin {size}KB"
+    "size": "{field} tulee olla vähemmän kuin 0:{size}KB"
   }
 }
