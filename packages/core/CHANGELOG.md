@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.10](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.9...vee-validate@4.0.0-alpha.10) (2020-08-29)
+
+
+### Bug Fixes
+
+* added temporary fix for [#2873](https://github.com/logaretm/vee-validate/issues/2873) with form meta ([6e1bf17](https://github.com/logaretm/vee-validate/commit/6e1bf176e7ba5c890afab6c11731dac54924d39b))
+
+
+
+
+
 # [4.0.0-alpha.9](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.8...vee-validate@4.0.0-alpha.9) (2020-08-28)
 
 
