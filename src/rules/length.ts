@@ -6,12 +6,12 @@ const validate = (value: string | number | string[], { length }: Record<string, 
     return false;
   }
 
-  if (typeof value === 'number') {
-    value = String(value);
+  if (typeof value === 'string') {
+    value = toArray(value);
   }
 
-  if (typeof value === 'string') {
-    value = Array.from(value);
+  if (typeof value === 'number') {
+    value = String(value);
   }
 
   if (!value.length) {

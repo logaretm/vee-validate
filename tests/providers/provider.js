@@ -344,7 +344,7 @@ test('validates components on input by default', async () => {
         }
       },
       template: `
-        <div id="root">
+        <div>
           <ValidationProvider rules="required" v-slot="{ errors }">
             <TextInput v-model="value" ref="input"></TextInput>
             <span id="error">{{ errors && errors[0] }}</span>
