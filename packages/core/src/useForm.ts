@@ -97,8 +97,7 @@ export function useForm(opts?: FormOptions) {
       if (valueIdx === -1) {
         return;
       }
-
-      _values[fieldName].splice(valueIdx, 1);
+      delete _values[fieldName]
     },
     fields: fieldsById,
     values: _values,
