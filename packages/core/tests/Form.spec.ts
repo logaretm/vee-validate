@@ -418,6 +418,56 @@ describe('<Form />', () => {
     await flushPromises();
     expect(err.textContent).toBe('');
   });
+  
+  test('supports radio inputs with check after submit', async () => {
+    console.log('radios');
+    const initialValues = { test: 'one' };
+
+    const showFields = ref(true);
+    const result = ref();
+
+    const wrapper = mountWithHoc({
+      setup() {
+        const values = ['one', 'two', 'three'];
+        const onSubmit = (formData: Record<string, any>) => {
+          result.value = formData.test;
+        };
+
+        return {
+          values,
+          onSubmit,
+          initialValues,
+          showFields,
+          result,
+        };
+      },
+      template: ` 
+      <VForm  @submit="onSubmit"  >
+      
+      <label v-for="(value, index) in values" v-bind:key="index">
+              <div v-if="showFields">
+
+        <Field name="test" as="input" type="radio" :value="value" /> {{value}}
+        </div>
+              </label>
+    
+        <button>Submit</button>
+        <div>{{$result}}</div>
+      </VForm>
+    `,
+    });
+
+    // const err = wrapper.$el.querySelector('#err');
+    const inputs = wrapper.$el.querySelectorAll('input');
+
+    setChecked(inputs[1]);
+    await flushPromises();
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    showFields.value = false;
+    await flushPromises();
+    expect(result.value).toBe('two');
+  });
 
   test('supports checkboxes inputs', async () => {
     const wrapper = mountWithHoc({
