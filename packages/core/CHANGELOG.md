@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.11](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.10...vee-validate@4.0.0-alpha.11) (2020-09-02)
+
+**Note:** Version bump only for package vee-validate
+
+
+
+
+
 # [4.0.0-alpha.10](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.9...vee-validate@4.0.0-alpha.10) (2020-08-29)
 
 
