@@ -97,11 +97,12 @@ export function useForm(opts?: FormOptions) {
       if (valueIdx === -1) {
         return;
       }
+            
       if (Array.isArray(_values[fieldName])) {
         _values[fieldName].splice(valueIdx, 1);
-      } else {
-        delete _values[fieldName];
+        return;
       }
+      delete _values[fieldName];
     },
     fields: fieldsById,
     values: _values,
