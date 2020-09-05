@@ -418,7 +418,7 @@ describe('<Form />', () => {
     await flushPromises();
     expect(err.textContent).toBe('');
   });
-  
+
   test('supports radio inputs with check after submit', async () => {
     console.log('radios');
     const initialValues = { test: 'one' };
@@ -520,7 +520,7 @@ describe('<Form />', () => {
     expect(values.textContent).toBe(['Coke', ''].toString());
   });
 
-  test('supports a singular checkbox', async () => {
+  test('supports a single checkbox', async () => {
     const wrapper = mountWithHoc({
       setup() {
         const schema = {
@@ -536,6 +536,7 @@ describe('<Form />', () => {
         <Field name="drink" as="input" type="checkbox" :value="true" /> Coffee
 
         <span id="err">{{ errors.drink }}</span>
+        <span id="value">{{ typeof values.drink }}</span>
 
         <button>Submit</button>
       </VForm>
@@ -543,6 +544,7 @@ describe('<Form />', () => {
     });
 
     const err = wrapper.$el.querySelector('#err');
+    const value = wrapper.$el.querySelector('#value');
     const input = wrapper.$el.querySelector('input');
 
     wrapper.$el.querySelector('button').click();
@@ -551,9 +553,11 @@ describe('<Form />', () => {
     setChecked(input, true);
     await flushPromises();
     expect(err.textContent).toBe('');
+    expect(value.textContent).toBe('boolean');
     setChecked(input, false);
     await flushPromises();
     expect(err.textContent).toBe(REQUIRED_MESSAGE);
+    expect(value.textContent).toBe('undefined');
   });
 
   test('unmounted fields gets unregistered and their values cleaned up', async () => {
