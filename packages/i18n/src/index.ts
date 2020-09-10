@@ -30,6 +30,9 @@ class Dictionary {
   public format(locale: string, ctx: FieldContext) {
     let message!: ValidationMessageTemplate;
     const { field, rule, form } = ctx;
+    if (!rule) {
+      return `${field} is not valid`;
+    }
 
     // find if specific message for that field was specified.
     message = this.container[locale]?.fields?.[field]?.[rule.name] || this.container[locale]?.messages?.[rule.name];
@@ -41,7 +44,7 @@ class Dictionary {
 
     return isCallable(message)
       ? message(ctx)
-      : interpolate(message, { ...form, field: fieldName, params: ctx.rule.params });
+      : interpolate(message, { ...form, field: fieldName, params: rule.params });
   }
 
   public merge(dictionary: RootI18nDictionary) {

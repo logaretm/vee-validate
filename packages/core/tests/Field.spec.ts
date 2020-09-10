@@ -577,4 +577,32 @@ describe('<Field />', () => {
     await flushPromises();
     expect(input.value).toBe('455');
   });
+
+  test('generateMessage is invoked with custom fn rules', async () => {
+    configure({
+      generateMessage: ({ field }) => `${field} is bad`,
+    });
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          rules: () => false,
+        };
+      },
+      template: `
+      <div>
+        <Field :rules="rules" name="field" v-slot="{ field, errors }">
+          <input type="text" v-bind="field">
+          <p id="error">{{ errors[0] }}</p>
+        </Field>
+      </div>
+    `,
+    });
+
+    await flushPromises();
+    const input = wrapper.$el.querySelector('input');
+    const error = wrapper.$el.querySelector('#error');
+    setValue(input, '1234');
+    await flushPromises();
+    expect(error.textContent).toBe('field is bad');
+  });
 });

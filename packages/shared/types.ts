@@ -2,7 +2,7 @@ export interface FieldContext {
   field: string;
   value: any;
   form: Record<string, any>;
-  rule: {
+  rule?: {
     name: string;
     params?: Record<string, any> | any[];
   };

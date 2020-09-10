@@ -12,9 +12,7 @@ interface FieldValidationContext {
   name: string;
   rules: Record<string, any>;
   bails: boolean;
-  skipIfEmpty: boolean;
-  forceRequired: boolean;
-  crossTable: Record<string, any>;
+  formData: Record<string, any>;
 }
 
 interface ValidationOptions {
@@ -34,14 +32,11 @@ export async function validate(
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
-  const skipIfEmpty = options?.skipIfEmpty;
   const field: FieldValidationContext = {
     name: options?.name || '{field}',
     rules: normalizeRules(rules),
     bails: shouldBail ?? true,
-    skipIfEmpty: skipIfEmpty ?? true,
-    forceRequired: false,
-    crossTable: options?.values || {},
+    formData: options?.values || {},
   };
 
   const result = await _validate(field, value);
@@ -56,18 +51,26 @@ export async function validate(
  * Starts the validation process.
  */
 async function _validate(field: FieldValidationContext, value: any) {
+  if (isYupValidator(field.rules)) {
+    return validateFieldWithYup(field, value);
+  }
+
   // if a generic function, use it as the pipeline.
   if (isCallable(field.rules)) {
     const result = await field.rules(value);
     const isValid = typeof result !== 'string' && result;
+    const message =
+      typeof result === 'string'
+        ? result
+        : _generateFieldError({
+            field: field.name,
+            value,
+            form: field.formData,
+          });
 
     return {
-      errors: !isValid ? [result as string] : [],
+      errors: !isValid ? [message] : [],
     };
-  }
-
-  if (isYupValidator(field.rules)) {
-    return validateFieldWithYup(field, value);
   }
 
   const errors: ReturnType<typeof _generateFieldError>[] = [];
@@ -129,11 +132,11 @@ async function _test(field: FieldValidationContext, value: any, rule: { name: st
     throw new Error(`No such validator '${rule.name}' exists.`);
   }
 
-  const params = fillTargetValues(rule.params, field.crossTable);
+  const params = fillTargetValues(rule.params, field.formData);
   const ctx: FieldContext = {
     field: field.name,
     value,
-    form: field.crossTable,
+    form: field.formData,
     rule,
   };
 
