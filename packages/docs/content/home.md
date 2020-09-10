@@ -23,6 +23,12 @@ yarn add vee-validate@next
 npm install vee-validate@next --save
 ```
 
+Or use a CDN
+
+```html
+<script src="https://unpkg.com/vee-validate@next"></script>
+```
+
 ### Usage
 
 Register the `Field` and `Form` components and create a simple `required` validator:
