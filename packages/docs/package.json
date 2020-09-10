@@ -7,11 +7,11 @@
     "export": "nuxt export"
   },
   "dependencies": {
-    "@nuxt/content": "^1.4.1",
-    "@nuxtjs/pwa": "^3.0.0-beta.20",
-    "@nuxtjs/tailwindcss": "^2.0.0",
+    "@nuxt/content": "^1.8.1",
+    "@nuxtjs/pwa": "^3.0.2",
+    "@nuxtjs/tailwindcss": "^3.0.2",
     "docsearch.js": "^2.6.3",
-    "nuxt": "^2.13.3"
+    "nuxt": "^2.14.5"
   },
   "devDependencies": {
     "markdown-it-custom-block": "^0.1.1",
