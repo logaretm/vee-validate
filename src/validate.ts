@@ -329,7 +329,14 @@ function _normalizeMessage(template: ValidationMessageTemplate, field: string, v
 
 function fillTargetValues(params: Record<string, any>, crossTable: Record<string, any>) {
   if (Array.isArray(params)) {
-    return params;
+    return params.map(param => {
+      const targetPart = typeof param === 'string' && param[0] === '@' ? param.slice(1) : param;
+      if (targetPart in crossTable) {
+        return crossTable[targetPart];
+      }
+
+      return param;
+    });
   }
 
   const values: typeof params = {};

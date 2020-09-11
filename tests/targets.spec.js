@@ -1,6 +1,6 @@
 import { validate } from '@/validate';
 import { extend } from '@/extend';
-import { between, confirmed } from '@/rules';
+import { between, confirmed, excluded } from '@/rules';
 
 describe('target field placeholder', () => {
   extend('confirmed', {
@@ -123,5 +123,44 @@ describe('cross-field syntax', () => {
       }
     });
     expect(result.valid).toBe(false);
+  });
+
+  test('infinite params value swapping', async () => {
+    extend('excluded', excluded);
+    let result = await validate(1, 'excluded:@v1,@v2,@v3', {
+      values: {
+        v1: 1,
+        v2: 3,
+        v3: 4
+      }
+    });
+    expect(result.valid).toBe(false);
+
+    result = await validate(3, 'excluded:@v1,@v2,@v3', {
+      values: {
+        v1: 1,
+        v2: 3,
+        v3: 4
+      }
+    });
+    expect(result.valid).toBe(false);
+
+    result = await validate(4, 'excluded:@v1,@v2,@v3', {
+      values: {
+        v1: 1,
+        v2: 3,
+        v3: 4
+      }
+    });
+    expect(result.valid).toBe(false);
+
+    result = await validate(5, 'excluded:@v1,@v2,@v3', {
+      values: {
+        v1: 1,
+        v2: 3,
+        v3: 4
+      }
+    });
+    expect(result.valid).toBe(true);
   });
 });
