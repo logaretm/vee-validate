@@ -20,7 +20,7 @@ const aggressive: InteractionModeFactory = () => ({
 });
 
 const lazy: InteractionModeFactory = () => ({
-  on: ['change']
+  on: ['change', 'blur']
 });
 
 const eager: InteractionModeFactory = ({ errors }) => {
