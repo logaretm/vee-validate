@@ -174,9 +174,11 @@ function createLocator(value: string, castFn?: Function): Locator {
   return locator;
 }
 
-export function extractLocators(params: Record<string, string> | string[]): string[] {
+export function extractLocators(params: Record<string, string> | string[]): (string | Locator)[] {
   if (Array.isArray(params)) {
-    return params.filter(isLocator);
+    return params.filter(param => {
+      return isLocator(param) || (typeof param === 'string' && param[0] === '@');
+    });
   }
 
   return Object.keys(params)

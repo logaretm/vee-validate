@@ -3,7 +3,7 @@ import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
 import { normalizeRules, extractLocators } from '../utils/rules';
 import { normalizeEventValue } from '../utils/events';
 import { findInputNodes, normalizeChildren, resolveRules, isHTMLNode } from '../utils/vnode';
-import { isCallable, isEqual, isNullOrUndefined, createFlags, includes } from '../utils';
+import { isCallable, isEqual, isNullOrUndefined, createFlags, includes, isLocator } from '../utils';
 import { getConfig, ValidationClassMap } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
@@ -131,7 +131,9 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
   computed: {
     fieldDeps(): string[] {
       return Object.keys(this.normalizedRules).reduce((acc: string[], rule: string) => {
-        const deps = extractLocators(this.normalizedRules[rule]).map((dep: any) => dep.__locatorRef);
+        const deps = extractLocators(this.normalizedRules[rule]).map(dep =>
+          isLocator(dep) ? dep.__locatorRef : dep.slice(1)
+        );
 
         acc.push(...deps);
         deps.forEach(depName => {
