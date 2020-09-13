@@ -28,12 +28,15 @@ This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.
 
 ## Features
 
-- **🍞Simple:** Template based validation that is familiar and easy to setup
+- **🍞 Easy:** Declarative validation that is familiar and easy to setup
 - **🧘‍♀️ Flexible:** Synchronous, Asynchronous, field-level or form-level validation
 - **⚡️ Fast:** Build faster forms faster with intuitive API and small footprint
-- **🦐 Minimal:** < 4kb minified and gzipped size
-- 💪 Written in TypeScript
-- 🌍 i18n Support and error Messages in 40+ locales
+- **🏏 Minimal:** Only handles the complicated and painful form concerns, gives you full control over everything else
+- **🍤 Tiny:** Small footprint < 5kb which makes your apps faster to load
+- **😎 UI Agnostic:** Works with native HTML elements or your favorite UI library components
+- **🦾 Progressive:** Works with any setup whether you use Vue.js as a progressive enhancement or in a complex setup
+- **✅ Built-in Rules:** Companion lib with 25+ Rules that covers most needs in most web applications
+- **🌐 i18n:** 45+ locales for built-in rules contributed by developers from all over the world
 
 ## Getting Started
 
