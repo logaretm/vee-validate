@@ -29,6 +29,14 @@ export interface ValidationFlags {
   changed: boolean;
 }
 
+export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
+
+export type SubmitEvent = Event & { target: HTMLFormElement };
+
+export type SubmissionHandler = (values: Record<string, any>, evt?: SubmitEvent) => any;
+
+export type GenericValidateFunction = (value: any) => boolean | string | Promise<boolean | string>;
+
 export type Flag =
   | 'untouched'
   | 'touched'
@@ -51,11 +59,3 @@ export interface FormController {
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<string, ValidationResult>>;
   setFieldValue: (path: string, value: any) => void;
 }
-
-export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
-
-export type SubmitEvent = Event & { target: HTMLFormElement };
-
-export type SubmissionHandler = (values: Record<string, any>, evt?: SubmitEvent) => any;
-
-export type GenericValidateFunction = (value: any) => boolean | string | Promise<boolean | string>;

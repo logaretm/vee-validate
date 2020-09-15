@@ -38,7 +38,7 @@ export const Form = defineComponent({
       const children = normalizeChildren(ctx, {
         meta: meta.value,
         errors: errors.value,
-        values: values.value,
+        values: values,
         isSubmitting: isSubmitting.value,
         validate,
         handleSubmit,

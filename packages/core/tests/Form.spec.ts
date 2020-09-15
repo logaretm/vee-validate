@@ -787,4 +787,35 @@ describe('<Form />', () => {
     await flushPromises();
     expect(submitBtn.disabled).toBe(false);
   });
+
+  test('nested object fields', async () => {
+    const fn = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          onSubmit(values: any) {
+            fn(values);
+          },
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" v-slot="{ values }">
+        <Field name="user.name" as="input" rules="required"  />
+        <pre>{{ values }}</pre>
+
+        <button id="submit">Submit</button>
+      </VForm>
+    `,
+    });
+
+    const submitBtn = wrapper.$el.querySelector('#submit');
+    const input = wrapper.$el.querySelector('input');
+    const pre = wrapper.$el.querySelector('pre');
+    setValue(input, '12');
+    await flushPromises();
+    expect(pre.textContent).toBe(JSON.stringify({ user: { name: '12' } }, null, 2));
+    submitBtn.click();
+    await flushPromises();
+    expect(fn).toHaveBeenCalledWith({ user: { name: '12' } });
+  });
 });

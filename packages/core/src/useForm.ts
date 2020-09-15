@@ -10,7 +10,7 @@ import {
   ValidationResult,
 } from './types';
 import { unwrap } from './utils/refs';
-import { isYupValidator, setInPath } from './utils';
+import { getFromPath, isYupValidator, setInPath } from './utils';
 
 interface FormOptions {
   validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
@@ -51,22 +51,14 @@ export function useForm(opts?: FormOptions) {
   });
 
   // a private ref for all form values
-  const _values = reactive<Record<string, any>>({});
-  // public ref for all active form values
-  const values = computed(() => {
-    return activeFields.value.reduce((acc: Record<string, any>, field) => {
-      acc[field.name] = _values[field.name];
-
-      return acc;
-    }, {});
-  });
-
+  const formValues = reactive<Record<string, any>>({});
   const controller: FormController = {
     register(field: FieldComposite) {
       const name = unwrap(field.name);
       // Set the initial value for that field
-      if (opts?.initialValues?.[name] !== undefined) {
-        _values[name] = opts?.initialValues[name];
+      const initialValue = getFromPath(opts?.initialValues || {}, name);
+      if (initialValue !== undefined) {
+        setInPath(formValues, name, initialValue);
       }
 
       fields.value.push(field);
@@ -82,15 +74,15 @@ export function useForm(opts?: FormOptions) {
       // in this case, this is a single field not a group (checkbox or radio)
       // so remove the field value key immediately
       if (field.idx === -1) {
-        delete _values[fieldName];
+        delete formValues[fieldName];
         return;
       }
 
       // otherwise find the actual value in the current array of values and remove it
-      const valueIdx: number | undefined = _values[fieldName]?.indexOf?.(unwrap(field.valueProp));
+      const valueIdx: number | undefined = getFromPath(formValues, fieldName)?.indexOf?.(unwrap(field.valueProp));
 
       if (valueIdx === undefined) {
-        delete _values[fieldName];
+        delete formValues[fieldName];
         return;
       }
 
@@ -98,14 +90,14 @@ export function useForm(opts?: FormOptions) {
         return;
       }
 
-      if (Array.isArray(_values[fieldName])) {
-        _values[fieldName].splice(valueIdx, 1);
+      if (Array.isArray(formValues[fieldName])) {
+        formValues[fieldName].splice(valueIdx, 1);
         return;
       }
-      delete _values[fieldName];
+      delete formValues[fieldName];
     },
     fields: fieldsById,
-    values: _values,
+    values: formValues,
     schema: opts?.validationSchema,
     validateSchema: isYupValidator(opts?.validationSchema)
       ? (shouldMutate = false) => {
@@ -117,41 +109,42 @@ export function useForm(opts?: FormOptions) {
 
       // singular inputs fields
       if (!field || (!Array.isArray(field) && field.type !== 'checkbox')) {
-        setInPath(_values, path, value);
+        setInPath(formValues, path, value);
         return;
       }
 
       // Radio buttons and other unknown group type inputs
       if (Array.isArray(field) && field[0].type !== 'checkbox') {
-        setInPath(_values, path, value);
+        setInPath(formValues, path, value);
         return;
       }
 
       // Single Checkbox
       if (!Array.isArray(field) && field.type === 'checkbox') {
-        const newVal = _values[path] === value ? undefined : value;
-        setInPath(_values, path, newVal);
+        const newVal = getFromPath(formValues, path) === value ? undefined : value;
+        setInPath(formValues, path, newVal);
         return;
       }
 
       // Multiple Checkboxes but their whole value was updated
       if (Array.isArray(value)) {
-        setInPath(_values, path, value);
+        setInPath(formValues, path, value);
         return;
       }
 
       // Multiple Checkboxes and a single item is updated
-      const newVal = Array.isArray(_values[path]) ? [..._values[path]] : [];
+      const oldVal = getFromPath(formValues, path);
+      const newVal = Array.isArray(oldVal) ? [...oldVal] : [];
       if (newVal.includes(value)) {
         const idx = newVal.indexOf(value);
         newVal.splice(idx, 1);
 
-        setInPath(_values, path, newVal);
+        setInPath(formValues, path, newVal);
         return;
       }
 
       newVal.push(value);
-      setInPath(_values, path, newVal);
+      setInPath(formValues, path, newVal);
     },
   };
 
@@ -194,7 +187,7 @@ export function useForm(opts?: FormOptions) {
       return validate()
         .then(result => {
           if (result && typeof fn === 'function') {
-            return fn(values.value, e as SubmitEvent);
+            return fn(formValues, e as SubmitEvent);
           }
         })
         .then(
@@ -226,7 +219,7 @@ export function useForm(opts?: FormOptions) {
     errors,
     meta,
     form: controller,
-    values,
+    values: formValues,
     validate,
     isSubmitting,
     handleReset,
