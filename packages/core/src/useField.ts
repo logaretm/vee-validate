@@ -8,7 +8,15 @@ import {
   Flag,
   ValidationFlags,
 } from './types';
-import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId, hasCheckedAttr } from './utils';
+import {
+  normalizeRules,
+  extractLocators,
+  normalizeEventValue,
+  unwrap,
+  genFieldErrorId,
+  hasCheckedAttr,
+  getFromPath,
+} from './utils';
 import { isCallable } from '../../shared';
 
 interface FieldOptions {
@@ -319,7 +327,7 @@ function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: Fo
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed({
     get() {
-      return form.values[unwrap(path)];
+      return getFromPath(form.values, unwrap(path));
     },
     set(newVal) {
       form.setFieldValue(unwrap(path), newVal);

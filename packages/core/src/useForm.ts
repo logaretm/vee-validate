@@ -10,7 +10,7 @@ import {
   ValidationResult,
 } from './types';
 import { unwrap } from './utils/refs';
-import { isYupValidator } from './utils';
+import { isYupValidator, setInPath } from './utils';
 
 interface FormOptions {
   validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
@@ -117,25 +117,26 @@ export function useForm(opts?: FormOptions) {
 
       // singular inputs fields
       if (!field || (!Array.isArray(field) && field.type !== 'checkbox')) {
-        _values[path] = value;
+        setInPath(_values, path, value);
         return;
       }
 
       // Radio buttons and other unknown group type inputs
       if (Array.isArray(field) && field[0].type !== 'checkbox') {
-        _values[path] = value;
+        setInPath(_values, path, value);
         return;
       }
 
       // Single Checkbox
       if (!Array.isArray(field) && field.type === 'checkbox') {
-        _values[path] = _values[path] === value ? undefined : value;
+        const newVal = _values[path] === value ? undefined : value;
+        setInPath(_values, path, newVal);
         return;
       }
 
       // Multiple Checkboxes but their whole value was updated
       if (Array.isArray(value)) {
-        _values[path] = value;
+        setInPath(_values, path, value);
         return;
       }
 
@@ -145,12 +146,12 @@ export function useForm(opts?: FormOptions) {
         const idx = newVal.indexOf(value);
         newVal.splice(idx, 1);
 
-        _values[path] = newVal;
+        setInPath(_values, path, newVal);
         return;
       }
 
       newVal.push(value);
-      _values[path] = newVal;
+      setInPath(_values, path, newVal);
     },
   };
 
