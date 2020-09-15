@@ -578,6 +578,7 @@ describe('<Form />', () => {
       <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors, values }">
         <template v-if="showFields">
           <Field name="field" as="input" />          
+          <Field name="nested.field" />
           <Field name="drink" as="input" type="checkbox" value="" /> Coffee
           <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
         </template>
@@ -599,9 +600,14 @@ describe('<Form />', () => {
     wrapper.$el.querySelector('button').click();
     await flushPromises();
     expect(errors.textContent).toBeTruthy();
-    setChecked(inputs[2]);
     setChecked(inputs[3]);
+    setChecked(inputs[4]);
+    setValue(inputs[0], 'test');
+    setValue(inputs[1], '12');
     await flushPromises();
+    expect(values.textContent).toBe(
+      JSON.stringify({ drink: ['Tea', 'Coke'], field: 'test', nested: { field: '12' } }, null, 2)
+    );
 
     showFields.value = false;
     await flushPromises();
@@ -801,6 +807,7 @@ describe('<Form />', () => {
       template: `
       <VForm @submit="onSubmit" v-slot="{ values }">
         <Field name="user.name" as="input" rules="required"  />
+        <Field name="user.addresses.0" as="input" id="address" rules="required"  />
         <pre>{{ values }}</pre>
 
         <button id="submit">Submit</button>
@@ -809,13 +816,15 @@ describe('<Form />', () => {
     });
 
     const submitBtn = wrapper.$el.querySelector('#submit');
-    const input = wrapper.$el.querySelector('input');
+    const name = wrapper.$el.querySelector('input');
+    const address = wrapper.$el.querySelector('#address');
     const pre = wrapper.$el.querySelector('pre');
-    setValue(input, '12');
+    setValue(name, '12');
+    setValue(address, 'abc');
     await flushPromises();
-    expect(pre.textContent).toBe(JSON.stringify({ user: { name: '12' } }, null, 2));
+    expect(pre.textContent).toBe(JSON.stringify({ user: { name: '12', addresses: ['abc'] } }, null, 2));
     submitBtn.click();
     await flushPromises();
-    expect(fn).toHaveBeenCalledWith({ user: { name: '12' } });
+    expect(fn).toHaveBeenCalledWith({ user: { name: '12', addresses: ['abc'] } });
   });
 });

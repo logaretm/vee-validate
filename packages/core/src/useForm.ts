@@ -10,7 +10,7 @@ import {
   ValidationResult,
 } from './types';
 import { unwrap } from './utils/refs';
-import { getFromPath, isYupValidator, setInPath } from './utils';
+import { getFromPath, isYupValidator, setInPath, unsetPath } from './utils';
 
 interface FormOptions {
   validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
@@ -74,7 +74,7 @@ export function useForm(opts?: FormOptions) {
       // in this case, this is a single field not a group (checkbox or radio)
       // so remove the field value key immediately
       if (field.idx === -1) {
-        delete formValues[fieldName];
+        unsetPath(formValues, fieldName);
         return;
       }
 
@@ -82,7 +82,8 @@ export function useForm(opts?: FormOptions) {
       const valueIdx: number | undefined = getFromPath(formValues, fieldName)?.indexOf?.(unwrap(field.valueProp));
 
       if (valueIdx === undefined) {
-        delete formValues[fieldName];
+        unsetPath(formValues, fieldName);
+
         return;
       }
 
@@ -91,10 +92,11 @@ export function useForm(opts?: FormOptions) {
       }
 
       if (Array.isArray(formValues[fieldName])) {
-        formValues[fieldName].splice(valueIdx, 1);
+        unsetPath(formValues, `${fieldName}.${valueIdx}`);
         return;
       }
-      delete formValues[fieldName];
+
+      unsetPath(formValues, fieldName);
     },
     fields: fieldsById,
     values: formValues,

@@ -1,3 +1,5 @@
+import { isEmptyContainer, isIndex } from './assertions';
+
 export function genFieldErrorId(fieldName: string): string {
   return `v_${fieldName}_error`;
 }
@@ -25,12 +27,54 @@ export function setInPath(object: Record<string, any>, path: string, value: any)
     // Last key, set it
     if (i === keys.length - 1) {
       acc[keys[i]] = value;
-      break;
+      return;
     }
 
     // Key does not exist, create a container for it
     if (!(keys[i] in acc)) {
-      acc[keys[i]] = {};
+      // container can be either an object or an array depending on the next key if it exists
+      acc[keys[i]] = isIndex(keys[i + 1]) ? [] : {};
+    }
+
+    acc = acc[keys[i]];
+  }
+}
+
+/**
+ * Removes a nested property from object
+ */
+export function unsetPath(object: Record<string, any>, path: string, { keepContainer = false } = {}): void {
+  const keys = path.split('.');
+  let acc = object;
+  for (let i = 0; i < keys.length; i++) {
+    // Last key, unset it
+    if (i === keys.length - 1) {
+      if (Array.isArray(acc) && isIndex(keys[i])) {
+        acc.splice(Number(keys[i]), 1);
+        break;
+      }
+
+      delete acc[keys[i]];
+      break;
+    }
+
+    // Key does not exist, exit
+    if (!(keys[i] in acc)) {
+      break;
+    }
+
+    acc = acc[keys[i]];
+  }
+
+  if (keepContainer) {
+    return;
+  }
+
+  acc = object;
+  for (let i = 0; i < keys.length; i++) {
+    if (acc && isEmptyContainer(acc[keys[i]])) {
+      delete acc[keys[i]];
+      return;
     }
 
     acc = acc[keys[i]];

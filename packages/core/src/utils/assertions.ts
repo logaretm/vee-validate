@@ -1,5 +1,5 @@
 import { Locator } from '../types';
-import { isCallable } from '../../../shared';
+import { isCallable, isObject } from '../../../shared';
 
 export function isLocator(value: unknown): value is Locator {
   return isCallable(value) && !!(value as any).__locatorRef;
@@ -20,4 +20,19 @@ export function isYupValidator(value: unknown): value is YupValidator {
 
 export function hasCheckedAttr(type: unknown) {
   return type === 'checkbox' || type === 'radio';
+}
+
+export function isIndex(value: unknown): value is number {
+  return Number(value) >= 0;
+}
+
+/**
+ * True if the value is an empty object or array
+ */
+export function isEmptyContainer(value: unknown): boolean {
+  if (Array.isArray(value)) {
+    return value.length === 0;
+  }
+
+  return isObject(value) && Object.keys(value).length === 0;
 }
