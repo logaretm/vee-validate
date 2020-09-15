@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.7](https://github.com/logaretm/vee-validate/compare/@vee-validate/i18n@4.0.0-alpha.6...@vee-validate/i18n@4.0.0-alpha.7) (2020-09-15)
+
+
+### Bug Fixes
+
+* add positional information to the zh_CN locale closes [#2898](https://github.com/logaretm/vee-validate/issues/2898) ([f5f44eb](https://github.com/logaretm/vee-validate/commit/f5f44ebb523db0f4d726cb8a07881d7c981c785c))
+
+
+### Features
+
+* invoke generateMessage handler for local functions closes [#2893](https://github.com/logaretm/vee-validate/issues/2893) ([e9fe773](https://github.com/logaretm/vee-validate/commit/e9fe77365877edda51548c9539ec085fff91586b))
+
+
+
+
+
 # [4.0.0-alpha.6](https://github.com/logaretm/vee-validate/compare/@vee-validate/i18n@4.0.0-alpha.5...@vee-validate/i18n@4.0.0-alpha.6) (2020-08-29)
 
 

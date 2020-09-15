@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.12](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.11...vee-validate@4.0.0-alpha.12) (2020-09-15)
+
+
+### Features
+
+* cast single checkboxes values to booleans closes [#2889](https://github.com/logaretm/vee-validate/issues/2889) ([7a08184](https://github.com/logaretm/vee-validate/commit/7a081845ac6a4bc09c51e52c5996b65814a48baf))
+* invoke generateMessage handler for local functions closes [#2893](https://github.com/logaretm/vee-validate/issues/2893) ([e9fe773](https://github.com/logaretm/vee-validate/commit/e9fe77365877edda51548c9539ec085fff91586b))
+
+
+
+
+
 # [4.0.0-alpha.11](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.10...vee-validate@4.0.0-alpha.11) (2020-09-02)
 
 **Note:** Version bump only for package vee-validate
