@@ -5,7 +5,11 @@ export function genFieldErrorId(fieldName: string): string {
 }
 
 function cleanupNonNestedPath(path: string) {
-  return path.replace(/\[|\]/gi, '');
+  if (isNotNestedPath(path)) {
+    return path.replace(/\[|\]/gi, '');
+  }
+
+  return path;
 }
 
 /**
