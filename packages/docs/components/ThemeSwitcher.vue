@@ -49,7 +49,7 @@ export default {
       },
       set(value) {
         this.$store.commit('SET_THEME', value ? 'dark' : 'light');
-        localStorage.setItem('theme', store.theme);
+        localStorage.setItem('theme', this.$store.state.theme);
         document.body.classList.toggle('is-dark', value);
       },
     },
