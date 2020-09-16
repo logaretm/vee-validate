@@ -24,6 +24,7 @@ export default {
           '/guide/overview',
           '/guide/validation',
           '/guide/handling-forms',
+          '/guide/nested-objects-and-arrays',
           '/guide/global-validators',
           '/guide/i18n',
         ],

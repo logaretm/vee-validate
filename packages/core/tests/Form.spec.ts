@@ -420,7 +420,6 @@ describe('<Form />', () => {
   });
 
   test('supports radio inputs with check after submit', async () => {
-    console.log('radios');
     const initialValues = { test: 'one' };
 
     const showFields = ref(true);
@@ -578,6 +577,8 @@ describe('<Form />', () => {
       <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors, values }">
         <template v-if="showFields">
           <Field name="field" as="input" />          
+          <Field name="nested.field" />
+          <Field name="[non-nested.field]" />
           <Field name="drink" as="input" type="checkbox" value="" /> Coffee
           <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
         </template>
@@ -599,14 +600,23 @@ describe('<Form />', () => {
     wrapper.$el.querySelector('button').click();
     await flushPromises();
     expect(errors.textContent).toBeTruthy();
-    setChecked(inputs[2]);
-    setChecked(inputs[3]);
+    setChecked(inputs[4]);
+    setChecked(inputs[5]);
+    setValue(inputs[0], 'test');
+    setValue(inputs[1], '12');
+    setValue(inputs[2], '12');
     await flushPromises();
+    expect(JSON.parse(values.textContent)).toEqual({
+      drink: ['Tea', 'Coke'],
+      field: 'test',
+      'non-nested.field': '12',
+      nested: { field: '12' },
+    });
 
     showFields.value = false;
     await flushPromises();
     expect(errors.textContent).toBe('{}');
-    expect(values.textContent).toBe(JSON.stringify({ drink: ['Coke'] }, null, 2));
+    expect(JSON.parse(values.textContent)).toEqual({ drink: ['Coke'] });
   });
 
   test('checkboxes with yup schema', async () => {
@@ -786,5 +796,123 @@ describe('<Form />', () => {
     setValue(input, '12');
     await flushPromises();
     expect(submitBtn.disabled).toBe(false);
+  });
+
+  test('nested object fields', async () => {
+    const fn = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          onSubmit(values: any) {
+            fn(values);
+          },
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" v-slot="{ values }">
+        <Field name="user.name" as="input" rules="required"  />
+        <Field name="user.addresses.0" as="input" id="address" rules="required"  />
+        <pre>{{ values }}</pre>
+
+        <button id="submit">Submit</button>
+      </VForm>
+    `,
+    });
+
+    const submitBtn = wrapper.$el.querySelector('#submit');
+    const name = wrapper.$el.querySelector('input');
+    const address = wrapper.$el.querySelector('#address');
+    const pre = wrapper.$el.querySelector('pre');
+    setValue(name, '12');
+    setValue(address, 'abc');
+    await flushPromises();
+    expect(pre.textContent).toBe(JSON.stringify({ user: { name: '12', addresses: ['abc'] } }, null, 2));
+    submitBtn.click();
+    await flushPromises();
+    expect(fn).toHaveBeenCalledWith({ user: { name: '12', addresses: ['abc'] } });
+  });
+
+  test('nested object fields validation with yup nested objects', async () => {
+    const fn = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          schema: yup.object({
+            user: yup.object({
+              name: yup.string().required(),
+              addresses: yup.array().of(yup.string().required().min(3)).required(),
+            }),
+          }),
+          onSubmit(values: any) {
+            fn(values);
+          },
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" v-slot="{ errors }" :validation-schema="schema">
+        <Field name="user.name" as="input" />
+        <span id="nameErr">{{ errors['user.name'] }}</span>
+        <Field name="user.addresses[0]" as="input" id="address" />
+        <span id="addrErr">{{ errors['user.addresses[0]'] }}</span>
+
+        <button id="submit">Submit</button>
+      </VForm>
+    `,
+    });
+
+    const submitBtn = wrapper.$el.querySelector('#submit');
+    const name = wrapper.$el.querySelector('input');
+    const nameErr = wrapper.$el.querySelector('#nameErr');
+    const address = wrapper.$el.querySelector('#address');
+    const addrErr = wrapper.$el.querySelector('#addrErr');
+    submitBtn.click();
+    await flushPromises();
+
+    expect(fn).not.toHaveBeenCalled();
+    expect(nameErr.textContent).toBeTruthy();
+    expect(addrErr.textContent).toBeTruthy();
+    setValue(name, '12');
+    setValue(address, 'abc');
+    await flushPromises();
+    expect(nameErr.textContent).toBe('');
+    expect(addrErr.textContent).toBe('');
+    submitBtn.click();
+    await flushPromises();
+
+    expect(fn).toHaveBeenCalledWith({ user: { name: '12', addresses: ['abc'] } });
+  });
+
+  test('can opt out of nested object fields', async () => {
+    const fn = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          onSubmit(values: any) {
+            fn(values);
+          },
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" v-slot="{ values }">
+        <Field name="[user.name]" as="input" rules="required"  />
+        <Field name="[user.addresses.0]" as="input" id="address" rules="required"  />
+        <pre>{{ values }}</pre>
+
+        <button id="submit">Submit</button>
+      </VForm>
+    `,
+    });
+
+    const submitBtn = wrapper.$el.querySelector('#submit');
+    const name = wrapper.$el.querySelector('input');
+    const address = wrapper.$el.querySelector('#address');
+    const pre = wrapper.$el.querySelector('pre');
+    setValue(name, '12');
+    setValue(address, 'abc');
+    await flushPromises();
+    expect(pre.textContent).toBe(JSON.stringify({ 'user.name': '12', 'user.addresses.0': 'abc' }, null, 2));
+    submitBtn.click();
+    await flushPromises();
+    expect(fn).toHaveBeenCalledWith({ 'user.name': '12', 'user.addresses.0': 'abc' });
   });
 });

@@ -8,7 +8,15 @@ import {
   Flag,
   ValidationFlags,
 } from './types';
-import { normalizeRules, extractLocators, normalizeEventValue, unwrap, genFieldErrorId, hasCheckedAttr } from './utils';
+import {
+  normalizeRules,
+  extractLocators,
+  normalizeEventValue,
+  unwrap,
+  genFieldErrorId,
+  hasCheckedAttr,
+  getFromPath,
+} from './utils';
 import { isCallable } from '../../shared';
 
 interface FieldOptions {
@@ -28,7 +36,13 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
  */
 export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
   const { initialValue, form, immediate, bails, disabled, type, valueProp } = normalizeOptions(opts);
-  const { meta, errors, onBlur, handleChange, reset, patch, value } = useValidationState(fieldName, initialValue, form);
+  const { meta, errors, onBlur, handleChange, reset, patch, value, checked } = useValidationState({
+    fieldName,
+    initValue: initialValue,
+    form,
+    type,
+    valueProp,
+  });
 
   const nonYupSchemaRules = extractRuleFromSchema(form?.schema, unwrap(fieldName));
   const normalizedRules = computed(() => {
@@ -74,16 +88,6 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
   });
 
   const aria = useAriAttrs(fieldName, meta);
-
-  const checked = hasCheckedAttr(type)
-    ? computed(() => {
-        if (Array.isArray(value.value)) {
-          return value.value.includes(unwrap(valueProp));
-        }
-
-        return unwrap(valueProp) === value.value;
-      })
-    : undefined;
 
   const field = {
     name: fieldName,
@@ -190,11 +194,38 @@ function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions
 /**
  * Manages the validation state of a field.
  */
-function useValidationState(fieldName: MaybeReactive<string>, initValue: any, form?: FormController) {
+function useValidationState({
+  fieldName,
+  initValue,
+  form,
+  type,
+  valueProp,
+}: {
+  fieldName: MaybeReactive<string>;
+  initValue?: any;
+  form?: FormController;
+  type?: string;
+  valueProp: any;
+}) {
   const errors: Ref<string[]> = ref([]);
   const { onBlur, reset: resetFlags, meta } = useMeta();
-  const initialValue = initValue;
+  const initialValue = initValue ?? getFromPath(inject('$_veeFormInitValues', {}), unwrap(fieldName));
   const value = useFieldValue(initialValue, fieldName, form);
+
+  const checked = hasCheckedAttr(type)
+    ? computed(() => {
+        if (Array.isArray(value.value)) {
+          return value.value.includes(unwrap(valueProp));
+        }
+
+        return unwrap(valueProp) === value.value;
+      })
+    : undefined;
+
+  if (checked === undefined || checked.value) {
+    // Set the value without triggering the watcher
+    value.value = initialValue;
+  }
 
   // Common input/change event handler
   const handleChange = (e: Event) => {
@@ -228,6 +259,7 @@ function useValidationState(fieldName: MaybeReactive<string>, initValue: any, fo
     onBlur,
     handleChange,
     value,
+    checked,
   };
 }
 
@@ -319,17 +351,12 @@ function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: Fo
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed({
     get() {
-      return form.values[unwrap(path)];
+      return getFromPath(form.values, unwrap(path));
     },
     set(newVal) {
       form.setFieldValue(unwrap(path), newVal);
     },
   });
-
-  // Set the value without triggering the setter
-  if (initialValue !== undefined) {
-    value.value = initialValue;
-  }
 
   return value;
 }
