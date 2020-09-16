@@ -578,6 +578,7 @@ describe('<Form />', () => {
         <template v-if="showFields">
           <Field name="field" as="input" />          
           <Field name="nested.field" />
+          <Field name="[non-nested.field]" />
           <Field name="drink" as="input" type="checkbox" value="" /> Coffee
           <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
         </template>
@@ -599,12 +600,18 @@ describe('<Form />', () => {
     wrapper.$el.querySelector('button').click();
     await flushPromises();
     expect(errors.textContent).toBeTruthy();
-    setChecked(inputs[3]);
     setChecked(inputs[4]);
+    setChecked(inputs[5]);
     setValue(inputs[0], 'test');
     setValue(inputs[1], '12');
+    setValue(inputs[2], '12');
     await flushPromises();
-    expect(JSON.parse(values.textContent)).toEqual({ drink: ['Tea', 'Coke'], field: 'test', nested: { field: '12' } });
+    expect(JSON.parse(values.textContent)).toEqual({
+      drink: ['Tea', 'Coke'],
+      field: 'test',
+      'non-nested.field': '12',
+      nested: { field: '12' },
+    });
 
     showFields.value = false;
     await flushPromises();

@@ -63,7 +63,7 @@ export function setInPath(object: Record<string, any>, path: string, value: any)
 /**
  * Removes a nested property from object
  */
-export function unsetPath(object: Record<string, any>, path: string, { keepContainer = false } = {}): void {
+export function unsetPath(object: Record<string, any>, path: string): void {
   if (isNotNestedPath(path)) {
     delete object[cleanupNonNestedPath(path)];
     return;
@@ -89,10 +89,6 @@ export function unsetPath(object: Record<string, any>, path: string, { keepConta
     }
 
     acc = acc[keys[i]];
-  }
-
-  if (keepContainer) {
-    return;
   }
 
   acc = object;
