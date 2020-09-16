@@ -1,4 +1,4 @@
-import { computed, h, defineComponent, nextTick } from 'vue';
+import { h, defineComponent, nextTick, toRefs } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, isHTMLTag, hasCheckedAttr } from './utils';
@@ -33,8 +33,7 @@ export const Field = defineComponent({
     },
   },
   setup(props, ctx) {
-    const disabled = computed(() => props.disabled);
-    const rules = computed(() => props.rules);
+    const { disabled, rules } = toRefs(props);
 
     const {
       errors,
