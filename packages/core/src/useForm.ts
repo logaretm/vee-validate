@@ -178,6 +178,14 @@ export function useForm(opts?: FormOptions) {
     fields.value.forEach((f: any) => f.reset());
   };
 
+  const activeFormValues = computed(() => {
+    return activeFields.value.reduce((formData: Record<string, any>, field) => {
+      setInPath(formData, field.name, unwrap(field.value));
+
+      return formData;
+    }, {});
+  });
+
   const handleSubmit = (fn?: SubmissionHandler) => {
     return function submissionHandler(e: unknown) {
       if (e instanceof Event) {
@@ -189,7 +197,7 @@ export function useForm(opts?: FormOptions) {
       return validate()
         .then(result => {
           if (result && typeof fn === 'function') {
-            return fn(formValues, e as SubmitEvent);
+            return fn(activeFormValues.value, e as SubmitEvent);
           }
         })
         .then(
