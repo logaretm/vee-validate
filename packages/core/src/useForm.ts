@@ -54,13 +54,6 @@ export function useForm(opts?: FormOptions) {
   const formValues = reactive<Record<string, any>>({});
   const controller: FormController = {
     register(field: FieldComposite) {
-      const name = unwrap(field.name);
-      // Set the initial value for that field
-      const initialValue = getFromPath(opts?.initialValues || {}, name);
-      if (initialValue !== undefined) {
-        setInPath(formValues, name, initialValue);
-      }
-
       fields.value.push(field);
     },
     unregister(field: FieldComposite) {
@@ -224,6 +217,7 @@ export function useForm(opts?: FormOptions) {
 
   provide('$_veeForm', controller);
   provide('$_veeFormErrors', errors);
+  provide('$_veeFormInitValues', opts?.initialValues || {});
 
   return {
     errors,

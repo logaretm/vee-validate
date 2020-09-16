@@ -604,14 +604,12 @@ describe('<Form />', () => {
     setValue(inputs[0], 'test');
     setValue(inputs[1], '12');
     await flushPromises();
-    expect(values.textContent).toBe(
-      JSON.stringify({ drink: ['Tea', 'Coke'], field: 'test', nested: { field: '12' } }, null, 2)
-    );
+    expect(JSON.parse(values.textContent)).toEqual({ drink: ['Tea', 'Coke'], field: 'test', nested: { field: '12' } });
 
     showFields.value = false;
     await flushPromises();
     expect(errors.textContent).toBe('{}');
-    expect(values.textContent).toBe(JSON.stringify({ drink: ['Coke'] }, null, 2));
+    expect(JSON.parse(values.textContent)).toEqual({ drink: ['Coke'] });
   });
 
   test('checkboxes with yup schema', async () => {
@@ -835,7 +833,7 @@ describe('<Form />', () => {
           schema: yup.object({
             user: yup.object({
               name: yup.string().required(),
-              addresses: yup.array().of(yup.string().required()),
+              addresses: yup.array().of(yup.string().required().min(3)).required(),
             }),
           }),
           onSubmit(values: any) {
@@ -844,11 +842,11 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="onSubmit" v-slot="{ errors }">
+      <VForm @submit="onSubmit" v-slot="{ errors }" :validation-schema="schema">
         <Field name="user.name" as="input" />
         <span id="nameErr">{{ errors['user.name'] }}</span>
-        <Field name="user.addresses.0" as="input" id="address" />
-        <span id="addrErr">{{ errors['user.addresses.0'] }}</span>
+        <Field name="user.addresses[0]" as="input" id="address" />
+        <span id="addrErr">{{ errors['user.addresses[0]'] }}</span>
 
         <button id="submit">Submit</button>
       </VForm>
@@ -863,9 +861,9 @@ describe('<Form />', () => {
     submitBtn.click();
     await flushPromises();
 
+    expect(fn).not.toHaveBeenCalled();
     expect(nameErr.textContent).toBeTruthy();
     expect(addrErr.textContent).toBeTruthy();
-    expect(fn).not.toHaveBeenCalled();
     setValue(name, '12');
     setValue(address, 'abc');
     await flushPromises();

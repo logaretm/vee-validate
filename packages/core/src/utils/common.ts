@@ -20,13 +20,16 @@ export function getFromPath(object: Record<string, any>, path: string): any {
     return object[cleanupNonNestedPath(path)];
   }
 
-  return path.split('.').reduce((acc, propKey) => {
-    if (acc && acc[propKey]) {
-      return acc[propKey];
-    }
+  return path
+    .split(/\.|\[(\d+)\]/)
+    .filter(Boolean)
+    .reduce((acc, propKey) => {
+      if (acc && acc[propKey]) {
+        return acc[propKey];
+      }
 
-    return undefined;
-  }, object);
+      return undefined;
+    }, object);
 }
 
 /**
@@ -38,7 +41,7 @@ export function setInPath(object: Record<string, any>, path: string, value: any)
     return;
   }
 
-  const keys = path.split('.');
+  const keys = path.split(/\.|\[(\d+)\]/).filter(Boolean);
   let acc = object;
   for (let i = 0; i < keys.length; i++) {
     // Last key, set it
@@ -66,7 +69,7 @@ export function unsetPath(object: Record<string, any>, path: string, { keepConta
     return;
   }
 
-  const keys = path.split('.');
+  const keys = path.split(/\.|\[(\d+)\]/).filter(Boolean);
   let acc = object;
   for (let i = 0; i < keys.length; i++) {
     // Last key, unset it
