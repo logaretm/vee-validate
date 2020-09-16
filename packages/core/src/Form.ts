@@ -34,18 +34,6 @@ export const Form = defineComponent({
       }
     }
 
-    // FIXME: for whatever reason that's beyond me, this fixes the reactivity issue
-    watchEffect(() => {
-      // eslint-disable-next-line no-unused-expressions
-      errors.value;
-      // eslint-disable-next-line no-unused-expressions
-      meta.value;
-      // eslint-disable-next-line no-unused-expressions
-      values.value;
-      // eslint-disable-next-line no-unused-expressions
-      isSubmitting.value;
-    });
-
     return () => {
       const children = normalizeChildren(ctx, {
         meta: meta.value,
