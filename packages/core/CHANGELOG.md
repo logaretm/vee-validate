@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.13](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.12...vee-validate@4.0.0-alpha.13) (2020-09-16)
+
+
+### Features
+
+* nested objects/arrays ([#2897](https://github.com/logaretm/vee-validate/issues/2897)) ([8d161a1](https://github.com/logaretm/vee-validate/commit/8d161a137a65c90ec8f7189743be24802231cf29))
+
+
+
+
+
 # [4.0.0-alpha.12](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.11...vee-validate@4.0.0-alpha.12) (2020-09-15)
 
 
