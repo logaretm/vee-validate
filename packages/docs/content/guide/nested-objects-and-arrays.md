@@ -47,15 +47,15 @@ You are not limited to a specific depth, you can nest as much as you like.
 
 ## Nested Arrays
 
-Similar to objects, you can also nested your values in an array, using dot paths as well but using numbers as property key instead.
+Similar to objects, you can also nested your values in an array, using square brackets just like how you would do it in JavaScript.
 
 Here is the same example as above but in array format:
 
 ```vue
 <template>
   <Form @submit="onSubmit">
-    <Field name="links.0" type="url" />
-    <Field name="links.1" type="url" />
+    <Field name="links[0]" type="url" />
+    <Field name="links[1]" type="url" />
 
     <button>Submit</button>
   </Form>
@@ -85,7 +85,7 @@ Submitting the previous form would result in the following values being passed t
 
 <doc-tip type="warn">
 
-vee-validate will only create nested arrays if the path expression is a complete number, for example paths like `some.nested.0path` will not create any arrays because the `0path` key is not a number. However `some.nested.0.path` will create the array with an object as the first item.
+vee-validate will only create nested arrays if the path expression is a complete number, for example paths like `some.nested[0path]` will not create any arrays because the `0path` key is not a number. However `some.nested[0].path` will create the array with an object as the first item.
 
 </doc-top>
 
@@ -126,6 +126,51 @@ Submitting the previous form would result in the following values being passed t
 
 ## Caveats
 
-- vee-validate creates the paths inside the form data automatically but lazily, so initially your form values won't contain the fields values unless you provide initial values for them. It might be worthwhile to provide initial data for your forms with nested paths.
-- When fields get unmounted like in the case of conditional rendered fields with `v-if` or `v-for`, their path will be destroyed just as it was created if they are the last field in that path. So you need to be careful while accessing the nested field in `values` inside your submission handler or the `Form` component or `useForm` composable.
-- When referencing errors using `errors` object on the `Form` slot props or the `ErrorMessage` component, make sure to reference the field name in the exact same way you set it on the `name` prop for that field. So even if you avoid nesting you should always include the square brackets.
+### Paths creation and destruction
+
+vee-validate creates the paths inside the form data automatically but lazily, so initially your form values won't contain the fields values unless you provide initial values for them. It might be worthwhile to provide initial data for your forms with nested paths.
+
+When fields get unmounted like in the case of conditional rendered fields with `v-if` or `v-for`, their path will be destroyed just as it was created if they are the last field in that path. So you need to be careful while accessing the nested field in `values` inside your submission handler or the `Form` component or `useForm` composable.
+
+### Referencing Errors
+
+When referencing errors using `errors` object on the `Form` slot props or the `ErrorMessage` component, make sure to reference the field name in the exact same way you set it on the `name` prop for that field. So even if you avoid nesting you should always include the square brackets. In other words `errors` do not get nested, they are always flat.
+
+### Referencing In Validation Schema
+
+Since vee-validate supports [form-level validation](./validation#form-level-validation), referncing the nested fields may vary depending on how you are specifying the schema.
+
+#### Using Yup
+
+If you are using yup, you can utilize the nested `yup.object` or `yup.array` schemas to provide validation for your nested fields, here is a quick example:
+
+```vue
+<template>
+  <Form @submit="onSubmit" v-slot="{ errors }">
+    <Field name="user.name" as="input" />
+    <span id="nameErr">{{ errors['user.name'] }}</span>
+    <Field name="user.addresses[0]" as="input" id="address" />
+    <span id="addrErr">{{ errors['user.addresses[0]'] }}</span>
+
+    <button id="submit">Submit</button>
+  </Form>
+</template>
+
+<script>
+export default {
+  setup() {
+    return {
+      schema: yup.object({
+        user: yup.object({
+          name: yup.string().required(),
+          addresses: yup.array().of(yup.string().required()),
+        }),
+      }),
+      onSubmit(values: any) {
+        fn(values);
+      },
+    };
+  },
+};
+</script>
+```
