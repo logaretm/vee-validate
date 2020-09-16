@@ -24,7 +24,7 @@ import { store } from '@/plugins/appstate';
 export default {
   computed: {
     isHome() {
-      return store.currentDoc && store.currentDoc.home;
+      return this.$route.name === 'index';
     },
   },
 };
