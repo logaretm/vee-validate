@@ -3,13 +3,13 @@
 </template>
 
 <script>
-import { store } from '@/plugins/appstate';
 import { slugify } from '@/utils/string';
 import { generateSocialImage, generateMetaTags, generateLinks } from '@/utils/seo';
 
 export default {
-  async asyncData({ $content, params }) {
+  async asyncData({ $content, params, store }) {
     const page = await $content(params.pathMatch || 'home').fetch();
+    store.commit('SET_DOC', page);
 
     return {
       page,
@@ -29,8 +29,6 @@ export default {
     Array.from(this.$el.querySelectorAll('h2')).forEach(linkify);
     Array.from(this.$el.querySelectorAll('h3')).forEach(linkify);
     Array.from(this.$el.querySelectorAll('h4')).forEach(linkify);
-    // set the current document
-    store.currentDoc = this.page;
   },
   head() {
     const url = `${this.$config.appURL}${this.$route.path}`;

@@ -12,18 +12,17 @@
 </template>
 
 <script>
-import { store } from '@/plugins/appstate';
 import { slugify } from '@/utils/string';
 
 export default {
   name: 'DocToc',
   computed: {
     headings() {
-      if (!store.currentDoc) {
+      if (!this.$store.state.doc) {
         return [];
       }
 
-      return store.currentDoc.toc;
+      return this.$store.state.doc.toc;
     },
   },
 };

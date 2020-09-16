@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import { store } from '@/plugins/appstate';
 
 export default {
   computed: {

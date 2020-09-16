@@ -40,17 +40,15 @@
 </template>
 
 <script>
-import { store } from '@/plugins/appstate';
-
 export default {
   name: 'ThemeSwitcher',
   computed: {
     isDark: {
       get() {
-        return store.theme === 'dark';
+        return this.$store.state.theme === 'dark';
       },
       set(value) {
-        store.theme = value ? 'dark' : 'light';
+        this.$store.commit('SET_THEME', value ? 'dark' : 'light');
         localStorage.setItem('theme', store.theme);
         document.body.classList.toggle('is-dark', value);
       },
