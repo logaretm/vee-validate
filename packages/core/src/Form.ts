@@ -1,4 +1,4 @@
-import { h, defineComponent, watchEffect } from 'vue';
+import { h, defineComponent } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
 import { normalizeChildren } from './utils';
