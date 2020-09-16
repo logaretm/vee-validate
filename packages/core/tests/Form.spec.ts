@@ -420,7 +420,6 @@ describe('<Form />', () => {
   });
 
   test('supports radio inputs with check after submit', async () => {
-    console.log('radios');
     const initialValues = { test: 'one' };
 
     const showFields = ref(true);
@@ -825,6 +824,56 @@ describe('<Form />', () => {
     expect(pre.textContent).toBe(JSON.stringify({ user: { name: '12', addresses: ['abc'] } }, null, 2));
     submitBtn.click();
     await flushPromises();
+    expect(fn).toHaveBeenCalledWith({ user: { name: '12', addresses: ['abc'] } });
+  });
+
+  test('nested object fields validation with yup nested objects', async () => {
+    const fn = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          schema: yup.object({
+            user: yup.object({
+              name: yup.string().required(),
+              addresses: yup.array().of(yup.string().required()),
+            }),
+          }),
+          onSubmit(values: any) {
+            fn(values);
+          },
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" v-slot="{ errors }">
+        <Field name="user.name" as="input" rules="required"  />
+        <span id="nameErr">{{ errors['user.name'] }}</span>
+        <Field name="user.addresses.0" as="input" id="address" rules="required"  />
+        <span id="addrErr">{{ errors['user.addresses.0'] }}</span>
+
+        <button id="submit">Submit</button>
+      </VForm>
+    `,
+    });
+
+    const submitBtn = wrapper.$el.querySelector('#submit');
+    const name = wrapper.$el.querySelector('input');
+    const nameErr = wrapper.$el.querySelector('#nameErr');
+    const address = wrapper.$el.querySelector('#address');
+    const addrErr = wrapper.$el.querySelector('#addrErr');
+    submitBtn.click();
+    await flushPromises();
+
+    expect(nameErr.textContent).toBeTruthy();
+    expect(addrErr.textContent).toBeTruthy();
+    expect(fn).not.toHaveBeenCalled();
+    setValue(name, '12');
+    setValue(address, 'abc');
+    await flushPromises();
+    expect(nameErr.textContent).toBe('');
+    expect(addrErr.textContent).toBe('');
+    submitBtn.click();
+    await flushPromises();
+
     expect(fn).toHaveBeenCalledWith({ user: { name: '12', addresses: ['abc'] } });
   });
 
