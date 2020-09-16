@@ -1,4 +1,5 @@
 import { inject, h, defineComponent, computed, Ref } from 'vue';
+import { FormErrorsSymbol } from './symbols';
 import { normalizeChildren, genFieldErrorId } from './utils';
 
 export const ErrorMessage = defineComponent({
@@ -13,7 +14,7 @@ export const ErrorMessage = defineComponent({
     },
   },
   setup(props, ctx) {
-    const errors = (inject('$_veeFormErrors', undefined) as unknown) as Ref<Record<string, string>>;
+    const errors = (inject(FormErrorsSymbol, undefined) as unknown) as Ref<Record<string, string>>;
     const message = computed<string | undefined>(() => {
       return errors.value[props.name];
     });

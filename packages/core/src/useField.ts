@@ -18,6 +18,7 @@ import {
   getFromPath,
 } from './utils';
 import { isCallable } from '../../shared';
+import { FormInitialValues, FormSymbol } from './symbols';
 
 interface FieldOptions {
   initialValue: any;
@@ -170,7 +171,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
  * Normalizes partial field options to include the full
  */
 function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions {
-  const form = inject('$_veeForm', undefined) as FormController | undefined;
+  const form = inject(FormSymbol, undefined) as FormController | undefined;
 
   const defaults = () => ({
     initialValue: undefined,
@@ -209,7 +210,7 @@ function useValidationState({
 }) {
   const errors: Ref<string[]> = ref([]);
   const { onBlur, reset: resetFlags, meta } = useMeta();
-  const initialValue = initValue ?? getFromPath(inject('$_veeFormInitValues', {}), unwrap(fieldName));
+  const initialValue = initValue ?? getFromPath(inject(FormInitialValues, {}), unwrap(fieldName));
   const value = useFieldValue(initialValue, fieldName, form);
 
   const checked = hasCheckedAttr(type)

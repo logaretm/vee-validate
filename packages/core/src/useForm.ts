@@ -11,6 +11,7 @@ import {
 } from './types';
 import { unwrap } from './utils/refs';
 import { getFromPath, isYupValidator, setInPath, unsetPath } from './utils';
+import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
 
 interface FormOptions {
   validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
@@ -215,9 +216,9 @@ export function useForm(opts?: FormOptions) {
 
   const meta = useFormMeta(fields);
 
-  provide('$_veeForm', controller);
-  provide('$_veeFormErrors', errors);
-  provide('$_veeFormInitValues', opts?.initialValues || {});
+  provide(FormSymbol, controller);
+  provide(FormErrorsSymbol, errors);
+  provide(FormInitialValues, opts?.initialValues || {});
 
   return {
     errors,
