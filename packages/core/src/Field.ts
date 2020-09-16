@@ -33,9 +33,7 @@ export const Field = defineComponent({
     },
   },
   setup(props, ctx) {
-    const fieldName = props.name;
-    // FIXME: is this right?
-    const disabled = computed(() => props.disabled as boolean);
+    const disabled = computed(() => props.disabled);
     const rules = computed(() => props.rules);
 
     const {
@@ -49,9 +47,9 @@ export const Field = defineComponent({
       meta,
       aria,
       checked,
-    } = useField(fieldName, rules, {
-      immediate: props.immediate as boolean,
-      bails: props.bails as boolean,
+    } = useField(props.name, rules, {
+      immediate: props.immediate,
+      bails: props.bails,
       disabled,
       type: ctx.attrs.type as string,
       // Gets the initial value either from `value` prop/attr or `v-model` binding (modelValue)
@@ -76,7 +74,7 @@ export const Field = defineComponent({
 
     const makeSlotProps = () => {
       const fieldProps: Record<string, any> = {
-        name: fieldName,
+        name: props.name,
         disabled: props.disabled,
         onInput: onChangeHandler,
         onChange: onChangeHandler,
