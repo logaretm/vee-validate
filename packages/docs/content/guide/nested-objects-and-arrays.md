@@ -87,7 +87,7 @@ Submitting the previous form would result in the following values being passed t
 
 vee-validate will only create nested arrays if the path expression is a complete number, for example paths like `some.nested[0path]` will not create any arrays because the `0path` key is not a number. However `some.nested[0].path` will create the array with an object as the first item.
 
-</doc-top>
+</doc-tip>
 
 ## Avoiding Nesting
 
