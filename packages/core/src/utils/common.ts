@@ -1,13 +1,21 @@
-import { isEmptyContainer, isIndex } from './assertions';
+import { isEmptyContainer, isIndex, isNotNestedPath } from './assertions';
 
 export function genFieldErrorId(fieldName: string): string {
   return `v_${fieldName}_error`;
+}
+
+function cleanupNonNestedPath(path: string) {
+  return path.replace(/\[|\]/gi, '');
 }
 
 /**
  * Gets a nested property value from an object
  */
 export function getFromPath(object: Record<string, any>, path: string): any {
+  if (isNotNestedPath(path)) {
+    return object[cleanupNonNestedPath(path)];
+  }
+
   return path.split('.').reduce((acc, propKey) => {
     if (acc && acc[propKey]) {
       return acc[propKey];
@@ -21,6 +29,11 @@ export function getFromPath(object: Record<string, any>, path: string): any {
  * Sets a nested property value in a path, creates the path properties if it doesn't exist
  */
 export function setInPath(object: Record<string, any>, path: string, value: any): void {
+  if (isNotNestedPath(path)) {
+    object[cleanupNonNestedPath(path)] = value;
+    return;
+  }
+
   const keys = path.split('.');
   let acc = object;
   for (let i = 0; i < keys.length; i++) {
@@ -44,6 +57,11 @@ export function setInPath(object: Record<string, any>, path: string, value: any)
  * Removes a nested property from object
  */
 export function unsetPath(object: Record<string, any>, path: string, { keepContainer = false } = {}): void {
+  if (isNotNestedPath(path)) {
+    delete object[cleanupNonNestedPath(path)];
+    return;
+  }
+
   const keys = path.split('.');
   let acc = object;
   for (let i = 0; i < keys.length; i++) {

@@ -36,3 +36,10 @@ export function isEmptyContainer(value: unknown): boolean {
 
   return isObject(value) && Object.keys(value).length === 0;
 }
+
+/**
+ * Checks if the path opted out of nested fields using `[fieldName]` syntax
+ */
+export function isNotNestedPath(path: string) {
+  return /^\[.+\]$/i.test(path);
+}

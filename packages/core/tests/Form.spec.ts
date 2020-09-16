@@ -827,4 +827,38 @@ describe('<Form />', () => {
     await flushPromises();
     expect(fn).toHaveBeenCalledWith({ user: { name: '12', addresses: ['abc'] } });
   });
+
+  test('can opt out of nested object fields', async () => {
+    const fn = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          onSubmit(values: any) {
+            fn(values);
+          },
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" v-slot="{ values }">
+        <Field name="[user.name]" as="input" rules="required"  />
+        <Field name="[user.addresses.0]" as="input" id="address" rules="required"  />
+        <pre>{{ values }}</pre>
+
+        <button id="submit">Submit</button>
+      </VForm>
+    `,
+    });
+
+    const submitBtn = wrapper.$el.querySelector('#submit');
+    const name = wrapper.$el.querySelector('input');
+    const address = wrapper.$el.querySelector('#address');
+    const pre = wrapper.$el.querySelector('pre');
+    setValue(name, '12');
+    setValue(address, 'abc');
+    await flushPromises();
+    expect(pre.textContent).toBe(JSON.stringify({ 'user.name': '12', 'user.addresses.0': 'abc' }, null, 2));
+    submitBtn.click();
+    await flushPromises();
+    expect(fn).toHaveBeenCalledWith({ 'user.name': '12', 'user.addresses.0': 'abc' });
+  });
 });
