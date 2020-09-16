@@ -329,7 +329,7 @@ describe('<Field />', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <Field rules="required|atLeastOne" v-slot="{ field, errors }">
+        <Field name="field" rules="required|atLeastOne" v-slot="{ field, errors }">
           <input type="file" v-bind="field">
           <p id="error">{{ errors[0] }}</p>
         </Field>
