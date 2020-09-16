@@ -845,9 +845,9 @@ describe('<Form />', () => {
       },
       template: `
       <VForm @submit="onSubmit" v-slot="{ errors }">
-        <Field name="user.name" as="input" rules="required"  />
+        <Field name="user.name" as="input" />
         <span id="nameErr">{{ errors['user.name'] }}</span>
-        <Field name="user.addresses.0" as="input" id="address" rules="required"  />
+        <Field name="user.addresses.0" as="input" id="address" />
         <span id="addrErr">{{ errors['user.addresses.0'] }}</span>
 
         <button id="submit">Submit</button>
