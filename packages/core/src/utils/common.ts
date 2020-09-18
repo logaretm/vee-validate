@@ -60,6 +60,15 @@ export function setInPath(object: Record<string, any>, path: string, value: any)
   }
 }
 
+function unset(object: any, key: string | number) {
+  if (Array.isArray(object) && isIndex(key)) {
+    object.splice(Number(key), 1);
+    return;
+  }
+
+  delete object[key];
+}
+
 /**
  * Removes a nested property from object
  */
@@ -74,12 +83,7 @@ export function unsetPath(object: Record<string, any>, path: string): void {
   for (let i = 0; i < keys.length; i++) {
     // Last key, unset it
     if (i === keys.length - 1) {
-      if (Array.isArray(acc) && isIndex(keys[i])) {
-        acc.splice(Number(keys[i]), 1);
-        break;
-      }
-
-      delete acc[keys[i]];
+      unset(acc, keys[i]);
       break;
     }
 
@@ -91,13 +95,20 @@ export function unsetPath(object: Record<string, any>, path: string): void {
     acc = acc[keys[i]];
   }
 
-  acc = object;
-  for (let i = 0; i < keys.length; i++) {
-    if (acc && isEmptyContainer(acc[keys[i]])) {
-      delete acc[keys[i]];
-      return;
+  const pathValues = keys.map((_, idx) => {
+    return getFromPath(object, keys.slice(0, idx).join('.'));
+  });
+
+  for (let i = pathValues.length - 1; i >= 0; i--) {
+    if (!isEmptyContainer(pathValues[i])) {
+      continue;
     }
 
-    acc = acc[keys[i]];
+    if (i === 0) {
+      unset(object, keys[0]);
+      continue;
+    }
+
+    unset(pathValues[i - 1], keys[i - 1]);
   }
 }
