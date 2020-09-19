@@ -162,6 +162,32 @@ describe('<Field />', () => {
     expect(pre.textContent).toContain('"dirty": true');
   });
 
+  test('emits invalid event', async () => {
+    const onInvalid = jest.fn();
+    const wrapper = mountWithHoc({
+      methods: {
+        onInvalid,
+      },
+      template: `
+      <div>
+        <Field @invalid="onInvalid" name="field" rules="required" v-slot="{ field }">
+          <input v-bind="field" type="text">
+        </Field>
+      </div>
+    `,
+    });
+
+    const input = wrapper.$el.querySelector('input');
+    await flushPromises();
+    expect(onInvalid.mock.calls).toMatchObject([]);
+
+    setValue(input, '12');
+    await flushPromises();
+    setValue(input, '');
+    await flushPromises();
+    expect(onInvalid.mock.calls).toMatchObject([[[REQUIRED_MESSAGE]]]);
+  });
+
   test('listens for change events', async () => {
     const wrapper = mountWithHoc({
       template: `

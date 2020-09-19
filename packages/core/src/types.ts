@@ -59,3 +59,5 @@ export interface FormController {
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<string, ValidationResult>>;
   setFieldValue: (path: string, value: any) => void;
 }
+
+export type FieldErrors = string[];

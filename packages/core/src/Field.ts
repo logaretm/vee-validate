@@ -1,7 +1,8 @@
-import { h, defineComponent, nextTick, toRefs } from 'vue';
+import { h, defineComponent, nextTick, toRefs, watch } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, isHTMLTag, hasCheckedAttr } from './utils';
+import { FieldErrors } from './types';
 
 export const Field = defineComponent({
   name: 'Field',
@@ -61,6 +62,14 @@ export const Field = defineComponent({
       // Only for checkboxes and radio buttons
       valueProp: ctx.attrs.value,
     });
+
+    if (ctx.attrs.onInvalid) {
+      watch(errors, () => {
+        if (errors.value.length !== 0) {
+          (ctx.attrs.onInvalid as (errors: FieldErrors) => any)(errors.value);
+        }
+      });
+    }
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
     const onChangeHandler =

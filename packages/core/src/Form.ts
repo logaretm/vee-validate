@@ -1,4 +1,4 @@
-import { h, defineComponent } from 'vue';
+import { h, defineComponent, SetupContext } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
 import { normalizeChildren } from './utils';
@@ -29,13 +29,11 @@ export const Form = defineComponent({
     const onSubmit = ctx.attrs.onSubmit ? handleSubmit(ctx.attrs.onSubmit as SubmissionHandler) : submitForm;
     function handleFormReset() {
       handleReset();
-      if (typeof ctx.attrs.onReset === 'function') {
-        ctx.attrs.onReset();
-      }
+      if (ctx.attrs.onReset) (ctx.attrs.onReset as any)();
     }
 
     return () => {
-      const children = normalizeChildren(ctx, {
+      const children = normalizeChildren(ctx as SetupContext, {
         meta: meta.value,
         errors: errors.value,
         values: values,

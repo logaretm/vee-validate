@@ -7,6 +7,7 @@ import {
   GenericValidateFunction,
   Flag,
   ValidationFlags,
+  FieldErrors,
 } from './types';
 import {
   normalizeRules,
@@ -208,7 +209,7 @@ function useValidationState({
   type?: string;
   valueProp: any;
 }) {
-  const errors: Ref<string[]> = ref([]);
+  const errors: Ref<FieldErrors> = ref([]);
   const { onBlur, reset: resetFlags, meta } = useMeta();
   const initialValue = initValue ?? getFromPath(inject(FormInitialValues, {}), unwrap(fieldName));
   const value = useFieldValue(initialValue, fieldName, form);

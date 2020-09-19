@@ -125,6 +125,24 @@ describe('<Form />', () => {
     expect(isReset).toBe(true);
   });
 
+  test('emits reset event', async () => {
+    const onReset = jest.fn();
+    const wrapper = mountWithHoc({
+      methods: {
+        onReset,
+      },
+      template: `
+      <VForm @reset="onReset" as="form">
+        <button id="reset" type="reset">Reset</button>
+      </VForm>
+    `,
+    });
+    wrapper.$el.querySelector('#reset').click();
+    await flushPromises();
+    await flushPromises();
+    expect(onReset.mock.calls).toMatchObject([[]]);
+  });
+
   test('disabled fields do not participate in validation', async () => {
     let isInObject = false;
     const wrapper = mountWithHoc({
