@@ -29,7 +29,9 @@ export const Form = defineComponent({
     const onSubmit = ctx.attrs.onSubmit ? handleSubmit(ctx.attrs.onSubmit as SubmissionHandler) : submitForm;
     function handleFormReset() {
       handleReset();
-      if (ctx.attrs.onReset) (ctx.attrs.onReset as any)();
+      if (typeof ctx.attrs.onReset === 'function') {
+        ctx.attrs.onReset();
+      }
     }
 
     return () => {

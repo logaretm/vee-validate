@@ -90,17 +90,13 @@ describe('<Form />', () => {
   });
 
   test('handles reset', async () => {
-    let isReset = false;
+    const onReset = jest.fn();
     const wrapper = mountWithHoc({
-      setup() {
-        return {
-          reset: () => {
-            isReset = true;
-          },
-        };
+      methods: {
+        onReset,
       },
       template: `
-      <VForm @reset="reset" as="form" v-slot="{ errors }">
+      <VForm @reset="onReset" as="form" v-slot="{ errors }">
         <Field rules="required" name="field" as="input"/>
         <span id="error">{{ errors.field }}</span>
 
@@ -122,24 +118,6 @@ describe('<Form />', () => {
     await flushPromises();
 
     expect(error.textContent).toBe('');
-    expect(isReset).toBe(true);
-  });
-
-  test('emits reset event', async () => {
-    const onReset = jest.fn();
-    const wrapper = mountWithHoc({
-      methods: {
-        onReset,
-      },
-      template: `
-      <VForm @reset="onReset" as="form">
-        <button id="reset" type="reset">Reset</button>
-      </VForm>
-    `,
-    });
-    wrapper.$el.querySelector('#reset').click();
-    await flushPromises();
-    await flushPromises();
     expect(onReset.mock.calls).toMatchObject([[]]);
   });
 
