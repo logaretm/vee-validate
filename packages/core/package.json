@@ -22,8 +22,5 @@
   "files": [
     "dist/*.js",
     "dist/*.d.ts"
-  ],
-  "peerDependencies": {
-    "vue": "^2.5.18"
-  }
+  ]
 }
