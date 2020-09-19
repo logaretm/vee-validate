@@ -1,4 +1,4 @@
-import { h, defineComponent, SetupContext } from 'vue';
+import { h, defineComponent } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
 import { normalizeChildren } from './utils';
@@ -33,7 +33,7 @@ export const Form = defineComponent({
     }
 
     return () => {
-      const children = normalizeChildren(ctx as SetupContext, {
+      const children = normalizeChildren(ctx, {
         meta: meta.value,
         errors: errors.value,
         values: values,
