@@ -1,6 +1,9 @@
 {
   "name": "vee-validate-monorepo",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "description": "Template Based Validation for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
