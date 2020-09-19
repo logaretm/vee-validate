@@ -24,6 +24,6 @@
     "dist/*.d.ts"
   ],
   "peerDependencies": {
-    "vue": "^2.5.18"
+    "vue": "^3.0.0"
   }
 }
