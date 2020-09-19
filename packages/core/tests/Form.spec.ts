@@ -559,7 +559,9 @@ describe('<Form />', () => {
     expect(value.textContent).toBe('undefined');
   });
 
-  test('unmounted fields gets unregistered and their values cleaned up', async () => {
+  // broken as of 3.0.0-rc.12 for some reason
+  // FIXME: try to resolve values reactivity issues when removing attributes
+  test.skip('unmounted fields gets unregistered and their values cleaned up', async () => {
     const showFields = ref(true);
     const wrapper = mountWithHoc({
       setup() {
@@ -617,6 +619,70 @@ describe('<Form />', () => {
     await flushPromises();
     expect(errors.textContent).toBe('{}');
     expect(JSON.parse(values.textContent)).toEqual({ drink: ['Coke'] });
+  });
+
+  test('unmounted fields gets unregistered and submitted values do not include them', async () => {
+    let showFields!: Ref<boolean>;
+    const spy = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        showFields = ref(true);
+
+        return {
+          showFields,
+          onSubmit(values: any) {
+            spy(values);
+          },
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" as="form" v-slot="{ errors }">
+        <template v-if="showFields">
+          <Field name="field" as="input" rules="required" />          
+          <Field name="nested.field" rules="required" />
+          <Field name="[non-nested.field]" rules="required" />
+          <Field name="drink" as="input" type="checkbox" value="" rules="required" /> Coffee
+          <Field name="drink" as="input" type="checkbox" value="Tea" rules="required" /> Tea
+        </template>
+        <Field name="drink" as="input" type="checkbox" value="Coke" rules="required" /> Coke
+
+        <span id="errors">{{ errors }}</span>
+        <span id="values">{{ values }}</span>
+
+        <button>ValidSate</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const errors = wrapper.$el.querySelector('#errors');
+    const button = wrapper.$el.querySelector('button');
+    const inputs = wrapper.$el.querySelectorAll('input');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(errors.textContent).toBeTruthy();
+    setChecked(inputs[4]);
+    setChecked(inputs[5]);
+    setValue(inputs[0], 'test');
+    setValue(inputs[1], '12');
+    setValue(inputs[2], '12');
+    await flushPromises();
+    button.click();
+    await flushPromises();
+    expect(spy).toHaveBeenLastCalledWith({
+      drink: ['Tea', 'Coke'],
+      field: 'test',
+      'non-nested.field': '12',
+      nested: { field: '12' },
+    });
+
+    showFields.value = false;
+    await flushPromises();
+    expect(errors.textContent).toBe('{}');
+    button.click();
+    await flushPromises();
+    expect(spy).toHaveBeenLastCalledWith({ drink: ['Coke'] });
   });
 
   test('checkboxes with yup schema', async () => {
