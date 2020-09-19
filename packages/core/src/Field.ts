@@ -1,4 +1,4 @@
-import { h, defineComponent, nextTick, toRefs, watch } from 'vue';
+import { h, defineComponent, nextTick, toRef, watch } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, isHTMLTag, hasCheckedAttr } from './utils';
