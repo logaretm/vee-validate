@@ -212,7 +212,7 @@ function useValidationState({
   const { onBlur, reset: resetFlags, meta } = useMeta();
   const initialValue = initValue ?? getFromPath(inject(FormInitialValues, {}), unwrap(fieldName));
   const value = useFieldValue(initialValue, fieldName, form);
-  if (hasCheckedAttr(type)) {
+  if (hasCheckedAttr(type) && initialValue) {
     value.value = initialValue;
   }
   const checked = hasCheckedAttr(type)
