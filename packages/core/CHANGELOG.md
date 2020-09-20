@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.14](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.13...vee-validate@4.0.0-alpha.14) (2020-09-20)
+
+
+### Bug Fixes
+
+* **core:** in case of radio or checkbox explicitly set initialValue ([#2907](https://github.com/logaretm/vee-validate/issues/2907)) ([e45ec82](https://github.com/logaretm/vee-validate/commit/e45ec82ee8fa6fabd4d3012a03ba8f9b72854631))
+
+
+### Features
+
+* use symbols to avoid provide/inject conflicts ([cc80032](https://github.com/logaretm/vee-validate/commit/cc8003213c34a8a33d84802f2c93598e1ac3c6f0))
+* workspaces ([#2904](https://github.com/logaretm/vee-validate/issues/2904)) ([0c05f94](https://github.com/logaretm/vee-validate/commit/0c05f9486a73744273de6816f00f689916aba91c))
+
+
+
+
+
 # [4.0.0-alpha.13](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.12...vee-validate@4.0.0-alpha.13) (2020-09-16)
 
 
