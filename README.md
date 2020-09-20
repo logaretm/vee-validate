@@ -59,7 +59,9 @@ npm install vee-validate@next --save
 
 ### Usage
 
-Register the `Field` and `Form` components and create a simple `required` validator:
+#### Higher-order Components (Recommended)
+
+Higher-order components are better suited for most of your cases. Register the `Field` and `Form` components and create a simple `required` validator:
 
 ```js
 import { Field, Form } from 'vee-validate';
@@ -88,6 +90,32 @@ Then use the `Form` and `Field` components to render your form:
 
   <span>{{ errors.field }}</span>
 </Form>
+```
+
+#### Composition API Functions
+
+If you want more fine grained control, you can use `useField` functions:
+
+```js
+import { useField } from 'vee-validate';
+
+export default {
+  setup() {
+    // Validator function
+    const isRequired = value => (value ? true : 'This field is required');
+    const { value, errorMessage } = useField('field', isRequired);
+
+    return {
+      value,
+      errorMessage,
+    };
+  },
+};
+```
+
+```vue
+<input name="field" v-model="value" />
+<span>{{ errorMessage }}</span>
 ```
 
 ## 📚 Documentation
