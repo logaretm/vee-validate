@@ -50,6 +50,13 @@ yarn add vee-validate@next
 npm install vee-validate@next --save
 ```
 
+### Vue version support
+
+| vue Version | vee-validate version |
+| ----------- | -------------------- |
+| `2.x`       | `2.x` or `3.x`       |
+| `3.x`       | `4.x`                |
+
 ### Usage
 
 Register the `Field` and `Form` components and create a simple `required` validator:
