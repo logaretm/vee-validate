@@ -442,3 +442,33 @@ test('Sets errors for nested observer providers', async () => {
   expect(wrapper.find('#error1').text()).toBe('wrong');
   expect(wrapper.find('#error2').text()).toBe('whoops');
 });
+
+// #2686 and #2781
+test('Errors are synced immediately after validation', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        email: '',
+        name: ''
+      }),
+      template: `
+      <ValidationObserver ref="obs" v-slot="{ errors }">
+        <ValidationProvider vid="name" rules="required" v-slot="ctx">
+          <input v-model="name" type="text">
+        </ValidationProvider>
+        <ValidationProvider vid="email" rules="required" v-slot="ctx">
+          <input v-model="email" type="text">
+        </ValidationProvider>
+        <p v-for="fieldErrors in errors">{{ fieldErrors[0] }}</p>
+      </ValidationObserver>
+    `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  await flush();
+
+  await wrapper.vm.$refs.obs.validate();
+  expect(wrapper.vm.$refs.obs.errors.name).toHaveLength(1);
+  expect(wrapper.vm.$refs.obs.errors.email).toHaveLength(1);
+});

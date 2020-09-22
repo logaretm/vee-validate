@@ -179,7 +179,13 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
         ...this.observers.filter((o: any) => !o.disabled).map((obs: any) => obs.validate({ silent }))
       ]);
 
-      return results.every(r => r);
+      const isValid = results.every(r => r);
+      const { errors, flags, fields } = computeObserverState.call(this);
+      this.errors = errors;
+      this.flags = flags;
+      this.fields = fields;
+
+      return isValid;
     },
     async handleSubmit(cb: Function) {
       const isValid = await this.validate();
