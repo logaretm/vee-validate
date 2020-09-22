@@ -171,7 +171,7 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
         this.observers.splice(idx, 1);
       }
     },
-    async validate({ silent = false }: { silent?: boolean } = {}) {
+    async validateWithInfo({ silent = false }: { silent?: boolean } = {}) {
       const results = await Promise.all([
         ...values(this.refs)
           .filter((r: any) => !r.disabled)
@@ -184,6 +184,16 @@ export const ValidationObserver = (Vue as withObserverNode).extend({
       this.errors = errors;
       this.flags = flags;
       this.fields = fields;
+
+      return {
+        errors,
+        flags,
+        fields,
+        isValid
+      };
+    },
+    async validate({ silent = false }: { silent?: boolean } = {}) {
+      const { isValid } = await this.validateWithInfo({ silent });
 
       return isValid;
     },

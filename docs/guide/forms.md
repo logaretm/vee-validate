@@ -36,7 +36,7 @@ The ValidationObserver `reset` method does not reset the values of the child fie
 
 ## Programmatic Access with \$refs
 
-Typically, resetting forms happens programmatically once the submission succeeds, and not as a response to event handlers like in the previous example. In addtion, you may want to arbitrarily call the `validate` or `handleSubmit` methods on the `ValidationObserver` in your script rather than the template.
+Typically, resetting forms happens programmatically once the submission succeeds, and not as a response to event handlers like in the previous example. In addition, you may want to arbitrarily call the `validate` or `handleSubmit` methods on the `ValidationObserver` in your script rather than the template. You can also use `validateWithInfo` which returns more detailed information about the validation like error messages and the fields involved in the validation.
 
 That means you need access to the `ValidationObserver` in your script. To do that, use the `ref` attribute.
 Here is an example that handles validation before submit and then resetting using `$refs`.

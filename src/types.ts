@@ -1,7 +1,15 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable camelcase */
 import Vue, { VNode } from 'vue';
 import { ValidationProvider } from './components/Provider';
 
 export type ProviderInstance = InstanceType<typeof ValidationProvider>;
+
+export interface VeeObserver {
+  refs: Record<string, ProviderInstance>;
+  observe(provider: any, type?: 'provider' | 'observer'): void;
+  unobserve(id: string, type?: 'provider' | 'observer'): void;
+}
 
 export interface ValidationResult {
   valid: boolean;
@@ -77,12 +85,6 @@ export interface ValidationFlags {
   required: boolean;
   changed: boolean;
   [x: string]: boolean | undefined;
-}
-
-export interface VeeObserver {
-  refs: Record<string, ProviderInstance>;
-  observe(provider: any, type?: 'provider' | 'observer'): void;
-  unobserve(id: string, type?: 'provider' | 'observer'): void;
 }
 
 export interface InactiveRefCache {

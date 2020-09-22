@@ -8,21 +8,22 @@ For more information on how to use the `ValidationObserver`, see [Forms Guide](.
 
 These are the properties available on the slot scope accessible with `v-slot`:
 
-| Name         |               Type                | Description                                                                                                                       |
-| :----------- | :-------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------- |
-| dirty        |             `boolean`             | True if at least one field is dirty.                                                                                              |
-| pristine     |             `boolean`             | True if all fields are pristine (not dirty).                                                                                      |
-| valid        |             `boolean`             | True if all fields are valid.                                                                                                     |
-| invalid      |             `boolean`             | True if at least one field is invalid.                                                                                            |
-| pending      |             `boolean`             | True if at least one field's validation is in progress.                                                                           |
-| touched      |             `boolean`             | True if at least one field has been touched (blurred).                                                                            |
-| untouched    |             `boolean`             | True if all fields haven't been touched (blurred).                                                                                |
-| passed       |             `boolean`             | True if all fields are valid as a result of user interaction                                                                      |
-| failed       |             `boolean`             | True if any field is invalid as a result of user interaction                                                                      |
-| errors       |    `{ [x: string]: string[] }`    | An object containing reference to each field errors, each field is keyed by its `vid` prop.                                       |
-| validate     |     `() => Promise<boolean>`      | A method that triggers validation for all providers. Mutates child providers state unless `silent` is true.                       |
-| handleSubmit | `(cb: Function) => Promise<void>` | Calls validation like `validate` and mutates provider's state, accepts a callback to be run only if the validation is successful. |
-| reset        |           `() => void`            | A method that resets validation state for all providers.                                                                          |
+| Name             |                        Type                         | Description                                                                                                                                                             |
+| :--------------- | :-------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dirty            |                      `boolean`                      | True if at least one field is dirty.                                                                                                                                    |
+| pristine         |                      `boolean`                      | True if all fields are pristine (not dirty).                                                                                                                            |
+| valid            |                      `boolean`                      | True if all fields are valid.                                                                                                                                           |
+| invalid          |                      `boolean`                      | True if at least one field is invalid.                                                                                                                                  |
+| pending          |                      `boolean`                      | True if at least one field's validation is in progress.                                                                                                                 |
+| touched          |                      `boolean`                      | True if at least one field has been touched (blurred).                                                                                                                  |
+| untouched        |                      `boolean`                      | True if all fields haven't been touched (blurred).                                                                                                                      |
+| passed           |                      `boolean`                      | True if all fields are valid as a result of user interaction                                                                                                            |
+| failed           |                      `boolean`                      | True if any field is invalid as a result of user interaction                                                                                                            |
+| errors           |             `{ [x: string]: string[] }`             | An object containing reference to each field errors, each field is keyed by its `vid` prop.                                                                             |
+| validate         |              `() => Promise<boolean>`               | A method that triggers validation for all providers. Mutates child providers state unless `silent` is true. Returns true if all valid                                   |
+| validateWithInfo | `() => Promise<{ isValid, errors, flags, fields }>` | A method that triggers validation for all providers. Mutates child providers state unless `silent` is true. Returns information about the validation and error messages |
+| handleSubmit     |          `(cb: Function) => Promise<void>`          | Calls validation like `validate` and mutates provider's state, accepts a callback to be run only if the validation is successful.                                       |
+| reset            |                    `() => void`                     | A method that resets validation state for all providers.                                                                                                                |
 
 ## Rendering
 
