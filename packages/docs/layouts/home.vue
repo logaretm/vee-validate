@@ -6,14 +6,6 @@
         <Ad />
         <Nuxt />
       </main>
-
-      <div class="lside hidden lg:block">
-        <DocMenu class="sticky top-0" />
-      </div>
-
-      <div class="rside hidden xl:block">
-        <DocToc class="sticky top-0" />
-      </div>
     </div>
   </div>
 </template>
@@ -41,26 +33,11 @@ export default {};
     'footer';
   display: grid;
   grid-gap: 20px;
-
-  @screen lg {
-    grid-template-areas:
-      'lside content rside'
-      'footer footer footer';
-    grid-template-columns: 1.5fr 45rem 0.5fr;
-    column-gap: 70px;
-  }
-
-  @screen xl {
-    grid-template-areas:
-      'lside content rside'
-      'footer footer footer';
-    grid-template-columns: 1fr 45rem 1fr;
-  }
 }
 
-.lside {
-  @apply ml-auto;
-  grid-area: lside;
+.App {
+  max-width: 45rem;
+  @apply mx-auto;
 }
 
 .main {
