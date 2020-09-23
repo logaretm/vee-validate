@@ -1,8 +1,6 @@
 const basePath = process.env.NODE_ENV === 'production' ? '/v4/' : '/';
 
 export default {
-  mode: 'universal',
-
   router: {
     base: basePath,
   },

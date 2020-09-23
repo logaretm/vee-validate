@@ -8,6 +8,11 @@ const plugin = require('tailwindcss/plugin');
  ** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
  */
 module.exports = {
+  // FIXME: remove this in nuxt 2.0
+  future: {
+    removeDeprecatedGapUtilities: true,
+    purgeLayersByDefault: true,
+  },
   purge: {
     content: [
       'components/**/*.vue',

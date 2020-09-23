@@ -2,6 +2,7 @@
 title: Field
 description: API reference for the Field component
 menuTitle: '<Field />'
+order: 1
 ---
 
 # Field
@@ -73,14 +74,14 @@ When using `v-slot` on the `Field` component you no longer have to provide an `a
 
 ### Props
 
-| Prop      | Type                     | Required/Default | Description                                                                           |
-| :-------- | :----------------------- | :--------------- | :------------------------------------------------------------------------------------ |
-| as        | `string`                 | `"span"`         | The element to render as a root node, defaults to `input`                             |
-| name      | `string`                 | Required         | The field's name, must be inside `<Form />`                                           |
-| rules     | `object|string|Function` | `null`           | The field's validation rules                                                          |
-| immediate | `boolean`                | `false`          | If true, field will be validated on mounted                                           |
-| bails     | `boolean`                | `true`           | Stops validating as soon as a rule fails the validation                               |
-| disabled  | `disabled`               | `false`          | Disables validation and the field will no longer participate in the parent form state |
+| Prop      | Type       | Required/Default | Description                                                                           |
+| :-------- | :--------- | :--------------- | :------------------------------------------------------------------------------------ |
+| as        | `string`   | `"span"`         | The element to render as a root node, defaults to `input`                             |
+| name      | `string`   | Required         | The field's name, must be inside `<Form />`                                           |
+| rules     | `object    | string           | Function`                                                                             | `null` | The field's validation rules |
+| immediate | `boolean`  | `false`          | If true, field will be validated on mounted                                           |
+| bails     | `boolean`  | `true`           | Stops validating as soon as a rule fails the validation                               |
+| disabled  | `disabled` | `false`          | Disables validation and the field will no longer participate in the parent form state |
 
 ### Slots
 

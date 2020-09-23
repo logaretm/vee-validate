@@ -1,6 +1,7 @@
 ---
 title: Best Practices
 description: Tips and best practices to improve your workflow with vee-validate
+order: 3
 ---
 
 # Best Practices

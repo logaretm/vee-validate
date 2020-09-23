@@ -1,6 +1,7 @@
 ---
 title: Resources
 description: Articles and Tutorials on VeeValidate
+order: 4
 ---
 
 # Resources

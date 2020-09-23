@@ -5,8 +5,7 @@ set -e
 
 cd packages/docs
 
-yarn build
-yarn export
+yarn generate
 
 cd dist
 git init

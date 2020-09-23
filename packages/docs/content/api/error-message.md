@@ -2,6 +2,7 @@
 title: ErrorMessage
 description: API reference for the ErrorMessage component
 menuTitle: '<ErrorMessage />'
+order: 3
 ---
 
 # ErrorMessage

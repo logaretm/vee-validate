@@ -1,6 +1,7 @@
 ---
 title: Checkbox and Radio Inputs
 description: Validating checkboxes and Radio inputs
+order: 1
 ---
 
 # Checkbox and Radio Inputs

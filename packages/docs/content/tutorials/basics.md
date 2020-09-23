@@ -1,6 +1,7 @@
 ---
 title: Validation Basics
 description: Build a newsletter form with vee-validate
+order: 1
 ---
 
 # Validation Basics

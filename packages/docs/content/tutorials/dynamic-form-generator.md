@@ -1,6 +1,7 @@
 ---
 title: Build a Form Generator
 description: Learn how to build a schema-generated form
+order: 2
 ---
 
 # Build a Form Generator

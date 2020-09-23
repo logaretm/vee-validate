@@ -1,11 +1,7 @@
 ---
 title: Overview
 description: Getting started with VeeValidate
-meta:
-  - name: og:title
-    content: Getting Started
-  - name: og:description
-    content: Getting started with VeeValidate
+order: 1
 ---
 
 # Overview

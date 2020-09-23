@@ -4,7 +4,7 @@
       <div v-for="category in categories" :key="category.title">
         <p class="text-xs font-bold text-gray-800 uppercase">{{ category.title }}</p>
         <ul class="mt-3 space-y-2">
-          <li v-for="page in category.children" :key="page.title">
+          <li v-for="page in category.pages" :key="page.title">
             <nuxt-link :to="page.path">{{ page.menuTitle || page.title }}</nuxt-link>
           </li>
         </ul>
@@ -14,54 +14,42 @@
 </template>
 
 <script>
+const GROUPS = [
+  {
+    name: 'guide',
+    contentPath: 'guide',
+  },
+  {
+    name: 'tutorials and resources',
+    contentPath: 'tutorials',
+  },
+  {
+    name: 'examples',
+    contentPath: 'examples',
+  },
+  {
+    name: 'api reference',
+    contentPath: 'api',
+  },
+];
+
 export default {
   name: 'DocMenu',
   async fetch() {
-    const categories = [
-      {
-        title: 'Guides',
-        content: [
-          '/guide/overview',
-          '/guide/validation',
-          '/guide/handling-forms',
-          '/guide/nested-objects-and-arrays',
-          '/guide/global-validators',
-          '/guide/i18n',
-        ],
-      },
-      {
-        title: 'Tutorials and Resources',
-        content: ['/tutorials/basics', '/tutorials/dynamic-form-generator', '/tutorials/best-practices', '/resources'],
-      },
-      {
-        title: 'Examples',
-        content: ['/examples/checkboxes-and-radio'],
-      },
-      {
-        title: 'API Reference',
-        content: [
-          '/api/field',
-          '/api/form',
-          '/api/error-message',
-          '/api/use-field',
-          '/api/use-form',
-          '/api/configuration',
-        ],
-      },
-    ];
-
-    const results = await Promise.all(
-      categories.map(cat => {
-        return Promise.all(cat.content.map(page => this.$content(page).only(['title', 'path', 'menuTitle']).fetch()));
-      })
-    );
-
-    this.categories = categories.map((c, idx) => {
+    const categories = (
+      await Promise.all(
+        GROUPS.map(group => {
+          return this.$content(group.contentPath).only(['title', 'path', 'order', 'menuTitle']).fetch();
+        })
+      )
+    ).map((pages, idx) => {
       return {
-        title: c.title,
-        children: results[idx],
+        title: GROUPS[idx].name,
+        pages: pages.sort((a, b) => a.order - b.order),
       };
     });
+
+    this.categories = categories;
   },
   data: () => ({
     categories: [],

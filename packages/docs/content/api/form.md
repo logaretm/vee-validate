@@ -2,6 +2,7 @@
 title: Form
 description: API reference for the Form component
 menuTitle: '<Form />'
+order: 2
 ---
 
 # Form
@@ -98,11 +99,11 @@ While not recommended, you can make the `Form` component a renderless component 
 
 ### Props
 
-| Prop             | Type                                | Required/Default | Description                                                                                   |
-| :--------------- | :---------------------------------- | :--------------- | :-------------------------------------------------------------------------------------------- |
-| as               | `string`                            | `"form"`         | The element to render as a root node                                                          |
-| validationSchema | `Record<string, string | Function>` | `undefined`      | The element to render as a root node                                                          |
-| initialValues    | `Record<string, any>`               | `undefined`      | Initial values to fill the fields with, when provided the fields will be validated on mounted |
+| Prop             | Type                   | Required/Default | Description                                                                                   |
+| :--------------- | :--------------------- | :--------------- | :-------------------------------------------------------------------------------------------- |
+| as               | `string`               | `"form"`         | The element to render as a root node                                                          |
+| validationSchema | `Record<string, string | Function>`       | `undefined`                                                                                   | The element to render as a root node |
+| initialValues    | `Record<string, any>`  | `undefined`      | Initial values to fill the fields with, when provided the fields will be validated on mounted |
 
 ### Slots
 
