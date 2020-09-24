@@ -25,11 +25,10 @@ transformIgnorePatterns: [
 The following examples will use vue-test-utils API to conduct the tests.
 :::
 
-
 After triggering an event like an input event, make sure to call flushPromises before checking the UI for changes:
 
 ```js
-import flushPromises from 'flush-promises'
+import flushPromises from 'flush-promises';
 
 await flushPromises();
 ```
@@ -158,11 +157,15 @@ jest.advanceTimersByTime(50);
 jest.runAllTimers();
 ```
 
-You can also write your own `flush` method that should make waiting for async operations much easier:
+You then need to "flush promises" as the rendering isn't updated yet after computing the state. You can write your own `flush` method that should make waiting for async operations much easier:
 
 ```js
-async function flush() {
+async function flushAll() {
+  // get rid of any pending validations on the leading edge
   await flushPromises();
+  // any delayed or debounced state computations
   jest.runAllTimers();
+  // get rid of the pending rendering tick
+  await flushPromises();
 }
 ```
