@@ -33,6 +33,22 @@ This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.
 - 💪 Written in TypeScript.
 - No dependencies.
 
+### Vue 3 Support
+
+Since Vue 3.0 was released, `vee-validate@v4` targets Vue 3 support with a completely new API. It will not be tagged as latest until Vue is tagged as latest as well.
+
+Currently we are in Alpha releases, to install vee-validate v4 use the `next` tag:
+
+```bash
+yarn add vee-validate@next
+# or
+npm install vee-validate@next
+```
+
+You can find the documentation for v4 here:
+
+https://vee-validate.logaretm.com/v4/
+
 ### Installation
 
 #### yarn
