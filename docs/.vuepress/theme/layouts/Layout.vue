@@ -1,5 +1,7 @@
 <template>
   <div class="theme-container" :class="pageClasses" @touchstart="onTouchStart" @touchend="onTouchEnd">
+    <UpgradeNotice />
+
     <Navbar v-if="shouldShowNavbar" @toggle-sidebar="toggleSidebar" />
 
     <div class="sidebar-mask" @click="toggleSidebar(false)"></div>
@@ -25,11 +27,12 @@ import Page from '@parent-theme/components/Page.vue';
 import Sidebar from '@parent-theme/components/Sidebar.vue';
 import Ad from '@theme/components/Ad.vue';
 import { resolveSidebarItems } from '@parent-theme/util';
+import UpgradeNotice from '@theme/components/UpgradeNotice.vue';
 
 let isLoaded = false;
 
 export default {
-  components: { Home, Page, Sidebar, Navbar, Ad },
+  components: { Home, Page, Sidebar, Navbar, Ad, UpgradeNotice },
   data() {
     return {
       isSidebarOpen: false
@@ -108,4 +111,16 @@ export default {
 
 .sw-update-popup
   right: 50vw !important
+
+.navbar
+  margin-top: 50px
+
+.theme-default-content.content__default
+  padding-top: calc(2rem + 50px)
+
+.sidebar
+  padding-top: 50px
+
+  .nav-links
+    padding-top: calc(0.5rem + 50px)
 </style>
