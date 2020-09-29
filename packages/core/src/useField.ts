@@ -39,7 +39,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
   const { initialValue, form, immediate, bails, disabled, type, valueProp } = normalizeOptions(opts);
   const { meta, errors, onBlur, handleChange, reset, patch, value, checked } = useValidationState({
     fieldName,
-    initValue: initialValue,
+    initValue: unwrap(initialValue),
     form,
     type,
     valueProp,
@@ -356,7 +356,7 @@ function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: Fo
     get() {
       return getFromPath(form.values, unwrap(path));
     },
-    set(newVal) {
+    set(newVal: any) {
       form.setFieldValue(unwrap(path), newVal);
     },
   });
