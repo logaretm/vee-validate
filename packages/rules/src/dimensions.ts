@@ -26,6 +26,10 @@ function getParams(params?: any[] | Record<string, any>) {
 }
 
 const dimensionsValidator = (files: any, params?: any[] | Record<string, any>) => {
+  if (!files) {
+    return true;
+  }
+
   const { width, height } = getParams(params);
   const list = [];
   files = Array.isArray(files) ? files : [files];

@@ -1,6 +1,10 @@
 import { getSingleParam } from './utils';
 
 const sizeValidator = (files: any, params?: any[] | Record<string, any>) => {
+  if (!files) {
+    return true;
+  }
+
   let size = getSingleParam(params, 'size');
   size = Number(size);
   if (isNaN(size)) {

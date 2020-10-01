@@ -1,4 +1,8 @@
 const mimesValidator = (files: File | File[], mimes: string[]) => {
+  if (!files) {
+    return true;
+  }
+
   if (!mimes) {
     mimes = [];
   }
