@@ -12,4 +12,4 @@ More often than not, you will have complex requirements for your inputs. Like a 
 
 In the following example we have a complex `TextInput` component that we use for many types of fields.
 
-<code-sandbox id="lingering-hill-8k9gy"></code-sandbox>
+<code-sandbox id="lingering-hill-8k9gy" title="Custom Text Input with vee-validate v4"></code-sandbox>
