@@ -10,10 +10,16 @@ vee-validate exposes global configs to help with a few repeated or certain behav
 
 ## Config Options
 
-| Option          | Type                            | Description                                                                                                                                                                                                                                             |
-| --------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| bails           | `boolean`                       | Whether to run validations to completion or quit on the first, default is `true` error                                                                                                                                                                  |
-| generateMessage | `(ctx: FieldContext) => string` | A message generator function for i18n libraries and a fallback for rules with no messages. For more information about the `FieldContext` type and the purpose of this, see the [Global Message Generator Guide](../guide/i18n#global-message-generator) |
+| Option                | Type                            | Description                                                                                                                                                                                                                                             |
+| --------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| bails                 | `boolean`                       | Whether to run validations to completion or quit on the first, default is `true` error                                                                                                                                                                  |
+| generateMessage       | `(ctx: FieldContext) => string` | A message generator function for i18n libraries and a fallback for rules with no messages. For more information about the `FieldContext` type and the purpose of this, see the [Global Message Generator Guide](../guide/i18n#global-message-generator) |
+| validateOnBlur        | `boolean`                       | If validation should be triggered on `blur` event, default is `true`                                                                                                                                                                                    |
+| validateOnChange      | `boolean`                       | If validation should be triggered on `change` event, default is `true`                                                                                                                                                                                  |
+| validateOnInput       | `boolean`                       | If validation should be triggered on `input` event, default is `false`                                                                                                                                                                                  |
+| validateOnModelUpdate | `boolean`                       | If validation should be triggered on `update:modelValue` (v-model) event, default is `true`                                                                                                                                                             |
+
+This is slightly verbose, but this gives you exact control on which events triggers validation.
 
 ## Updating The Config
 

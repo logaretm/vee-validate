@@ -190,14 +190,26 @@ For more information on the `Form` component, read [the API reference](../api/fo
 
 ## Validation Behavior
 
-By default vee-validate runs validation whenever one of the following is satisfied:
+By default vee-validate runs validation in these scenarios:
 
-- Field value changed (`input` or `change` events were emitted).
-- Field rules changed and it was validated before.
-- Field has been blurred (`blur` event was emitted).
-- Form has been submitted.
+**After field value change**
 
-For field-triggered scenarios of the list above, vee-validate only validates that field, other fields won't be validated. Whenever a form is submitted all fields will be re-validated.
+- When a `change` event is dispatched/emitted
+- value changed externally (model update or others)
+
+Note that `input` event is not considered to be a trigger because it would make it too aggressive, you can configure the triggers in the next section to suit your needs.
+
+**After Rules change**
+
+- Only if the field was validated before via user interaction
+
+**After field is blurred**
+
+- Field has been blurred (`blur` event was emitted)
+
+**After form submissions**
+
+- When the form has been submitted with either `handleSubmit` or `submitForm` on the `<Form />` component
 
 <doc-tip>
 
@@ -207,14 +219,30 @@ This is only relevant to the `<Field />` and `<Form />` components
 
 ### Customizing Validation Triggers
 
-By default vee-validate adds the following event listeners to your fields:
+By default vee-validate adds multiple event listeners to your fields:
 
-- input
-- change
-- blur
-- update:modelValue
+- **input:** Adds a `handleInput` handler that updates the `dirty` and `pristine` meta flags
+- **change:** Adds a `handleInput` handler just like the input event but also adds a `handleChange` event that updates the field value
+- **blur:** Adds a `handleBlur` handler that updates the `touched` and `untouched` meta flags, also adds a `handleChange` handler
+- **update:modelValue** Adds a `handleChange` handler to components emitting the `update:modelValue` event
 
-You can specifically control which events to listen to by using the scoped-slot `handleChange` prop of the `<Field />` component and binding it to the desired event:
+Notice that in all of these, the `handleChange` handler is the only one that triggers validation. This is because its the handler responsible for updating the value, which then triggers a validation check. You can configure whether the `handleChange` is added to any of these fields by using the `configure` helper:
+
+```js
+import { configure } from 'vee-validate';
+
+// Default values
+configure({
+  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
+  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
+  validateOnInput: false, // controls if `input` events should trigger validation with `handleChange` handler
+  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
+});
+```
+
+Note that configuring any of these options to `false` will not remove all the events, they only control if each event triggers a validation check or not.
+
+This might not be flexible enough for your needs, which is why you can specifically control which events to listen to by using the scoped-slot `handleChange` prop of the `<Field />` component and binding it to the desired event:
 
 ```vue
 <!-- Listen to all events, this is the default behavior -->
@@ -222,13 +250,15 @@ You can specifically control which events to listen to by using the scoped-slot 
   <input v-bind="field" />
 </Field>
 
-<!-- Only listen for the change and blur events -->
+<!-- Only validate when the change event is dispatched -->
 <Field v-slot="{ field, handleChange }">
-  <input @change="handleChange" @blur="field.onBlur" :value="field.value" />
+  <input @change="handleChange" :value="field.value" />
 </Field>
 ```
 
-`useField()` is not concerned with any events, it only validates whenever the `value` ref changes. It gives you everything you need to setup your own validation experience.
+This is slightly verbose, but this gives you exact control on which events triggers validation.
+
+`useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. It gives you everything you need to setup your own validation experience.
 
 ## Displaying Error Messages
 
