@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.0](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.14...vee-validate@4.0.0-beta.0) (2020-10-01)
+
+
+### Bug Fixes
+
+* make sure to unwrap initial value ([0298a92](https://github.com/logaretm/vee-validate/commit/0298a926de5536154a69088b55cb688133638a39))
+
+
+### Features
+
+* validation triggers ([#2927](https://github.com/logaretm/vee-validate/issues/2927)) ([e725f43](https://github.com/logaretm/vee-validate/commit/e725f43a47dd1993699c0450fd8777aa921c7a49))
+
+
+
+
+
 # [4.0.0-alpha.14](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.13...vee-validate@4.0.0-alpha.14) (2020-09-20)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@vee-validate/rules",
-  "version": "4.0.0-alpha.2",
+  "version": "4.0.0-beta.0",
   "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
