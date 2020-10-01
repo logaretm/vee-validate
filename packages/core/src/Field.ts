@@ -41,7 +41,8 @@ export const Field = defineComponent({
       errorMessage,
       validate: validateField,
       handleChange,
-      onBlur,
+      handleBlur,
+      handleInput,
       reset,
       meta,
       aria,
@@ -71,15 +72,31 @@ export const Field = defineComponent({
           }
         : handleChange;
 
+    const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = getConfig();
     const makeSlotProps = () => {
       const fieldProps: Record<string, any> = {
         name: props.name,
         disabled: props.disabled,
-        onInput: onChangeHandler,
-        onChange: onChangeHandler,
-        'onUpdate:modelValue': onChangeHandler,
-        onBlur: onBlur,
+        onBlur: [handleBlur],
+        onInput: [handleInput],
+        onChange: [handleInput],
       };
+
+      if (validateOnInput) {
+        fieldProps.onInput.push(onChangeHandler);
+      }
+
+      if (validateOnChange) {
+        fieldProps.onChange.push(onChangeHandler);
+      }
+
+      if (validateOnBlur) {
+        fieldProps.onBlur.push(onChangeHandler);
+      }
+
+      if (validateOnModelUpdate) {
+        fieldProps['onUpdate:modelValue'] = onChangeHandler;
+      }
 
       if (hasCheckedAttr(ctx.attrs.type) && checked) {
         fieldProps.checked = checked.value;

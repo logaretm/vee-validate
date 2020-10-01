@@ -37,7 +37,7 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
  */
 export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
   const { initialValue, form, immediate, bails, disabled, type, valueProp } = normalizeOptions(opts);
-  const { meta, errors, onBlur, handleChange, reset, patch, value, checked } = useValidationState({
+  const { meta, errors, handleBlur, handleChange, handleInput, reset, patch, value, checked } = useValidationState({
     fieldName,
     initValue: unwrap(initialValue),
     form,
@@ -100,7 +100,8 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     reset,
     validate: runValidationWithMutation,
     handleChange,
-    onBlur,
+    handleBlur,
+    handleInput,
     disabled,
     setValidationState: patch,
     type,
@@ -209,7 +210,7 @@ function useValidationState({
   valueProp: any;
 }) {
   const errors: Ref<string[]> = ref([]);
-  const { onBlur, reset: resetFlags, meta } = useMeta();
+  const { reset: resetFlags, meta } = useMeta();
   const initialValue = initValue ?? getFromPath(inject(FormInitialValues, {}), unwrap(fieldName));
   const value = useFieldValue(initialValue, fieldName, form);
   if (hasCheckedAttr(type) && initialValue) {
@@ -230,11 +231,25 @@ function useValidationState({
     value.value = initialValue;
   }
 
+  /**
+   * Handles common onBlur meta update
+   */
+  const handleBlur = () => {
+    meta.touched = true;
+    meta.untouched = false;
+  };
+
+  /**
+   * Handles common on blur events
+   */
+  const handleInput = () => {
+    meta.dirty = true;
+    meta.pristine = false;
+  };
+
   // Common input/change event handler
   const handleChange = (e: Event) => {
     value.value = normalizeEventValue(e);
-    meta.dirty = true;
-    meta.pristine = false;
   };
 
   // Updates the validation state with the validation result
@@ -259,8 +274,9 @@ function useValidationState({
     errors,
     patch,
     reset,
-    onBlur,
     handleChange,
+    handleBlur,
+    handleInput,
     value,
     checked,
   };
@@ -291,14 +307,6 @@ function useMeta() {
   });
 
   /**
-   * Handles common onBlur meta update
-   */
-  const onBlur = () => {
-    meta.touched = true;
-    meta.untouched = false;
-  };
-
-  /**
    * Resets the flag state
    */
   function reset() {
@@ -315,7 +323,6 @@ function useMeta() {
 
   return {
     meta,
-    onBlur,
     reset,
   };
 }

@@ -9,6 +9,10 @@ jest.useFakeTimers();
 beforeEach(() => {
   configure({
     bails: true,
+    validateOnBlur: true,
+    validateOnChange: true,
+    validateOnInput: false,
+    validateOnModelUpdate: true,
   });
 });
 
@@ -253,7 +257,7 @@ describe('<Field />', () => {
           props: ['value'],
           template: `
             <div>
-              <input id="input" :value="value" @input="$emit('input', $event.target.value)">
+              <input id="input" :value="value" @input="$emit('change', $event.target.value)">
             </div>
           `,
         },
@@ -604,5 +608,36 @@ describe('<Field />', () => {
     setValue(input, '1234');
     await flushPromises();
     expect(error.textContent).toBe('field is bad');
+  });
+
+  test('can customize validation triggers', async () => {
+    configure({
+      validateOnChange: false,
+      validateOnInput: true,
+    });
+
+    const wrapper = mountWithHoc({
+      template: `
+      <div>
+        <Field name="field" rules="required" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
+          <span id="error">{{ errors[0] }}</span>
+        </Field>
+      </div>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    const input = wrapper.$el.querySelector('input');
+    input.value = '';
+    dispatchEvent(input, 'change');
+    await flushPromises();
+    // nothing got triggered
+    expect(error.textContent).toBe('');
+
+    input.value = '';
+    dispatchEvent(input, 'input');
+    await flushPromises();
+    expect(error.textContent).toBe(REQUIRED_MESSAGE);
   });
 });
