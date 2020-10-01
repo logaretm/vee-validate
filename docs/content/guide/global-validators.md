@@ -293,6 +293,11 @@ Object.keys(rules).forEach(rule => {
   <li><a href="#size">size</a></li>
 </ul>
 
+### Playground
+
+Here is a live demo where you can view and test all the global validators live
+
+<code-sandbox id="global-rules-playground-hd5r8" title="Global Rules Playground" view="preview"></code-sandbox>
 
 #### alpha
 
