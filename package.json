@@ -16,7 +16,7 @@
     "build": "node scripts/build.js",
     "cover": "jest --coverage",
     "postversion": "npm run build",
-    "docs:dev": "cd ./packages/docs && npm run dev && cd -",
+    "docs:dev": "cd ./docs && npm run dev && cd -",
     "docs:deploy": "./scripts/deploy-docs.sh"
   },
   "devDependencies": {
