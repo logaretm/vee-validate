@@ -20,11 +20,7 @@
 </p>
 <br>
 
-vee-validate is a template-based validation framework for [Vue.js](https://vuejs.org/) that allows you to validate inputs and display errors.
-
-Being template-based you only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated with 40+ locales supported. [Many rules are available out of the box](https://logaretm.github.io/vee-validate/guide/rules.html).
-
-This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.com/).
+vee-validate is a form validation library for [Vue.js](https://vuejs.org/) that allows you to validate inputs and build better form UIs in a familiar declarative style or using composition functions
 
 ## Features
 
@@ -59,7 +55,7 @@ npm install vee-validate@next --save
 
 ### Usage
 
-#### Higher-order Components (Recommended)
+#### Declarative Components (Recommended)
 
 Higher-order components are better suited for most of your cases. Register the `Field` and `Form` components and create a simple `required` validator:
 
@@ -71,13 +67,9 @@ export default {
     Field,
     Form,
   },
-  setup() {
-    // Validator function
-    const isRequired = value => (value ? true : 'This field is required');
-
-    return {
-      isRequired,
-    };
+  methods: {
+    isRequired(value) {
+    return value ? true : 'This field is required';
   },
 };
 ```
@@ -86,15 +78,17 @@ Then use the `Form` and `Field` components to render your form:
 
 ```vue
 <Form v-slot="{ errors }">
-  <Field name="field" as="input" :rules="isRequired" />
+  <Field name="field" :rules="isRequired" />
 
   <span>{{ errors.field }}</span>
 </Form>
 ```
 
+The `Field` component renders an `input` of type `text` by default but you can [control that](https://vee-validate.logaretm.com/v4/api/field#rendering-fields)
+
 #### Composition API Functions
 
-If you want more fine grained control, you can use `useField` functions:
+If you want more fine grained control, you can use `useField` function to compose validation logic into your component:
 
 ```js
 import { useField } from 'vee-validate';
@@ -113,6 +107,8 @@ export default {
 };
 ```
 
+Then in your template use `v-model` to bind the `value` to your input and display the errors using `errorMessage`:
+
 ```vue
 <input name="field" v-model="value" />
 <span>{{ errorMessage }}</span>
@@ -128,13 +124,13 @@ This library uses ES6 Promises so be sure to provide a polyfill for it for the b
 
 ## Contributing
 
-You are welcome to contribute to this project, but before you do, please make sure you read the [contribution guide](CONTRIBUTING.md).
+You are welcome to contribute to this project, but before you do, please make sure you read the [contribution guide](CONTRIBUTING.md)
 
 ## Credits
 
-- Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation).
+- Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation)
 - v4 API Inspired by [Formik's](https://github.com/formium/formik)
-- Logo by [Baianat](https://github.com/baianat).
+- Logo by [Baianat](https://github.com/baianat)
 
 ## Emeriti
 

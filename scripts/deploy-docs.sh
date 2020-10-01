@@ -3,7 +3,7 @@
 # abort on errors
 set -e
 
-cd packages/docs
+cd docs
 
 yarn generate
 
