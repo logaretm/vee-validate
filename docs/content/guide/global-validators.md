@@ -214,9 +214,11 @@ defineRule('confirmed', (value, [target]) => {
 ```
 
 ```vue
-<Field name="password" as="input" rules="required" />
+<Form>
+  <Field name="password" type="password" />
 
-<Field name="confirmation" as="input" rules="required|confirmed:@password" />
+  <Field name="confirmation" type="password" rules="confirmed:@password" />
+</Form>
 ```
 
 This allows you to create more concise rules, you can reference any number of fields using this way.
