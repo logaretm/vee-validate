@@ -256,7 +256,13 @@ Object.keys(rules).forEach(rule => {
 });
 ```
 
-### Available Rules
+## Caveats
+
+- Be careful of having too many global rules as this can slow down your initial website load time due to large initial bundle size
+- It is recommended to treat your validation rules as pure functions, meaning they only operate with the information given to them
+- Having small, pure global validations is preferable to allow re-using them across the app
+
+## Available Rules
 
 <ul class="grid grid-cols-2 col-gap-4 lg:grid-cols-3 lg:col-gap-8 text-accent-800">
   <li><a href="#alpha">alpha</a></li>
@@ -284,12 +290,411 @@ Object.keys(rules).forEach(rule => {
   <li><a href="#numeric">numeric</a></li>
   <li><a href="#regex">regex</a></li>
   <li><a href="#required">required</a></li>
-  <li><a href="#required-if">required_if</a></li>
   <li><a href="#size">size</a></li>
 </ul>
 
-## Caveats
 
-- Be careful of having too many global rules as this can slow down your initial website load time due to large initial bundle size
-- It is recommended to treat your validation rules as pure functions, meaning they only operate with the information given to them
-- Having small, pure global validations is preferable to allow re-using them across the app
+#### alpha
+
+The field under validation may only contain alphabetic characters.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="alpha" />
+
+<!-- object format -->
+<Field name="field" :rules="{ alpha: true }" />
+```
+
+#### alpha_dash
+
+The field under validation may contain alphabetic characters, numbers, dashes or underscores.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="alpha_dash" />
+
+<!-- object format -->
+<Field name="field" :rules="{ alpha_dash: true }" />
+```
+
+#### alpha_num
+
+The field under validation may contain alphabetic characters or numbers.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="alpha_num" />
+
+<!-- object format -->
+<Field name="field" :rules="{ alpha_num: true }" />
+```
+
+#### alpha_spaces
+
+The field under validation may contain alphabetic characters or spaces.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="alpha_spaces" />
+
+<!-- object format -->
+<Field name="field" :rules="{ alpha_spaces: true }" />
+```
+
+#### between
+
+The field under validation must have a numeric value bounded by a minimum value and a maximum value.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="between:1,10" />
+
+<!-- object format with shorthand array -->
+<Field name="field" :rules="{ between: [1, 10] }" />
+
+<!-- object format with named arguments -->
+<Field name="field" :rules="{ between: { min: 1, max: 10 } }" />
+```
+
+| Param Name | Required? | Default | Description        |
+| ---------- | --------- | ------- | ------------------ |
+| `min`      | **yes**   |         | The minimum value. |
+| `max`      | **yes**   |         | The maximum value. |
+
+#### confirmed
+
+The field under validation must have the same value as the confirmation field.
+
+```vue
+<Form>
+  <Field name="password" type="password" />
+
+  <Field name="confirmation" type="password" rules="confirmed:@password" />
+</Form>
+```
+
+| Param Name | Required? | Default | Description                                                                  |
+| ---------- | --------- | ------- | ---------------------------------------------------------------------------- |
+| `target`   | **yes**   |         | The other field's `name` value, must use `@` to prefix the target field name |
+
+<doc-tip type="danger">
+
+Any fields defined to have this rule must have a `<Form />` parent in their hierarchy or `useForm()` called on their parent hierarchy.
+
+</doc-tip>
+
+#### digits
+
+The field under validation must be numeric and have the specified number of digits.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="digits:3" />
+
+<!-- object format -->
+<Field name="field" :rules="{ digits: 3 }" />
+```
+
+| Param Name | Required? | Default | Description                   |
+| ---------- | --------- | ------- | ----------------------------- |
+| `length`   | **yes**   |         | The number of digits allowed. |
+
+#### dimensions
+
+The file added to the field under validation must be an image (jpg,svg,jpeg,png,bmp,gif) having the exact specified dimension.
+
+```vue
+<!-- string format -->
+<Field name="field" type="file" rules="dimensions:120,120" />
+
+<!-- object format -->
+<Field name="field" :rules="{ dimensions: [120, 120] }" />
+
+<!-- object format with named arguments -->
+<Field name="field" :rules="{ dimensions: { width: 120, height: 120 } }" />
+```
+
+| Param Name | Required? | Default | Description           |
+| ---------- | --------- | ------- | --------------------- |
+| `width`    | **yes**   |         | The width in pixels.  |
+| `height`   | **yes**   |         | The height in pixels. |
+
+#### email
+
+The field under validation must be a valid email.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="email" />
+
+<!-- object format -->
+<Field name="field" :rules="{ email: true }" />
+```
+
+#### excluded
+
+The field under validation must have a value that is not in the specified list. **Uses double equals** for checks.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="excluded:1,3" />
+
+<!-- object format -->
+<Field name="field" :rules="{ excluded: [1, 3] }" />
+```
+
+`excluded` accepts an infinite number of params, each is a value that is disallowed.
+
+#### ext
+
+The file added to the field under validation must have one of the extensions specified.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="ext:jpg,png" />
+
+<!-- object format -->
+<Field name="field" :rules="{ ext: ['jpg', 'png'] }" />
+```
+
+`ext` accepts an infinite number of arguments representing extensions. ex: `ext:jpg,png,bmp,svg`.
+
+#### image
+
+The file added to the field under validation must have an image mime type (image/\*).
+
+```vue
+<!-- string format -->
+<Field name="field" rules="image" />
+
+<!-- object format -->
+<Field name="field" :rules="{ image: true }" />
+```
+
+#### integer
+
+The field under validation must be a valid integer value. Doesn't accept exponentiale notation.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="integer" />
+
+<!-- object format -->
+<Field name="field" :rules="{ integer: true }" />
+```
+
+#### is
+
+The field under validation must match the given value, uses strict equality.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="is:hello" />
+
+<!-- object format -->
+<Field name="field" :rules="{ is: 'hello' }" />
+```
+
+| Param Name | Required? | Default | Description                                                 |
+| ---------- | --------- | ------- | ----------------------------------------------------------- |
+| `value`    | **yes**   |         | A value of any type to be compared against the field value. |
+
+#### is_not
+
+The field under validation must not match the given value, uses strict equality.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="is_not:world" />
+
+<!-- object format -->
+<Field name="field" :rules="{ is_not: 'world' }" />
+```
+
+| Param Name | Required? | Default | Description                                                 |
+| ---------- | --------- | ------- | ----------------------------------------------------------- |
+| `value`    | **yes**   |         | A value of any type to be compared against the field value. |
+
+#### length
+
+The field under validation must have exactly have the specified number of items, only works for iterables.
+
+Allowed Iterable values are: `string`, `array` and any object that can be used with `Array.from`.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="length:5" />
+
+<!-- object format -->
+<Field name="field" :rules="{ length: 5 }" />
+```
+
+| Param Name | Required? | Default | Description                                                                   |
+| ---------- | --------- | ------- | ----------------------------------------------------------------------------- |
+| `length`   | **yes**   |         | A numeric value representing the exact number of items the value can contain. |
+
+#### max
+
+The field under validation length may not exceed the specified length.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="max:10" />
+
+<!-- object format -->
+<Field name="field" :rules="{ max: 10 }" />
+```
+
+| Param Name | Required? | Default | Description                                                    |
+| ---------- | --------- | ------- | -------------------------------------------------------------- |
+| `length`   | **yes**   |         | A numeric value representing the maximum number of characters. |
+
+#### max_value
+
+The field under validation must be a numeric value and must not be greater than the specified value.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="max_value:10" />
+
+<!-- object format -->
+<Field name="field" :rules="{ max_value: 10 }" />
+```
+
+| Param Name | Required? | Default | Description                                              |
+| ---------- | --------- | ------- | -------------------------------------------------------- |
+| `max`      | **yes**   |         | A numeric value representing the greatest value allowed. |
+
+#### mimes
+
+The file type added to the field under validation should have one of the specified mime types.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="mimes:image/jpeg" />
+
+<!-- object format -->
+<Field name="field" :rules="{ mimes: ['image/jpeg'] }" />
+```
+
+`mimes` accepts an infinite number of arguments that are formatted as file types. EG: `mimes:image/jpeg,image/png`.
+
+<doc-tip>
+
+You can use '\*' to specify a wild card, something like `mimes:image/*` will accept all image types.
+
+</doc-tip>
+
+#### min
+
+The field under validation length should not be less than the specified length.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="min:3" />
+
+<!-- object format -->
+<Field name="field" :rules="{ min: 3 }" />
+```
+
+| Param Name | Required? | Default | Description                                                    |
+| ---------- | --------- | ------- | -------------------------------------------------------------- |
+| `length`   | **yes**   |         | A numeric value representing the minimum number of characters. |
+
+#### min_value
+
+```vue
+<!-- string format -->
+<Field name="field" rules="min_value:5" />
+
+<!-- object format -->
+<Field name="field" :rules="{ min_value: 5 }" />
+```
+
+The field under validation must be a numeric value and must not be less than the specified value.
+
+| Param Name | Required? | Default | Description                                              |
+| ---------- | --------- | ------- | -------------------------------------------------------- |
+| `min`      | **yes**   |         | A numeric value representing the smallest value allowed. |
+
+#### numeric
+
+The field under validation must only consist of numbers.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="numeric" />
+
+<!-- object format -->
+<Field name="field" :rules="{ numeric: true }" />
+```
+
+#### oneOf
+
+The field under validation must have a value that is in the specified list. **Uses double equals** for checks.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="oneOf:1,2,3" />
+
+<!-- object format -->
+<Field name="field" :rules="{ oneOf: [1, 2, 3] }" />
+```
+
+`oneOf` takes an infinite number of params, each is a value that is allowed.
+
+#### regex
+
+The field under validation must match the specified regular expression.
+
+```vue
+<!-- string format: NOT RECOMMENDED -->
+
+<!-- object format -->
+<Field name="field" :rules="{ regex: /^[0-9]+$/ }" />
+```
+
+| Param Name | Required? | Default | Description                                               |
+| ---------- | --------- | ------- | --------------------------------------------------------- |
+| `pattern`  | **yes**   |         | A regular expression instance or string representing one. |
+
+<doc-tip type="warn">
+
+You should not use the pipe '|' or commas ',' within your regular expression when using the string rules format as it will cause a conflict with how validators parsing works. You should use the object format of the rules instead as show in the last snippet
+
+</doc-tip>
+
+<doc-tip type="warn" title="The g flag">
+
+When using the `regex` rule, using the `g` flag may result in unexpected falsy validations. This is because vee-validate uses the same instance across validation attempts.
+
+</doc-tip>
+
+#### required
+
+The field under validation must have a non-empty value. By default, all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`, `false` and empty arrays.
+
+```vue
+<!-- string format -->
+<Field name="field" rules="required" />
+
+<!-- object format -->
+<Field name="field" :rules="{ required: true }" />
+```
+
+#### size
+
+The file size added to the field under validation must not exceed the specified size in kilobytes.
+
+```vue
+<!-- string format -->
+<Field name="field" type="file" rules="size:250" />
+
+<!-- object format -->
+<Field name="field" :rules="{ size: 250 }" />
+```
+
+| Param Name | Required? | Default | Description                         |
+| ---------- | --------- | ------- | ----------------------------------- |
+| `size`     | **yes**   |         | The maximum file size in kilobytes. |
