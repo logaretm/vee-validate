@@ -1,7 +1,7 @@
-import { h, defineComponent, nextTick, toRef } from 'vue';
+import { h, defineComponent, nextTick, toRef, SetupContext } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
-import { normalizeChildren, isHTMLTag, hasCheckedAttr } from './utils';
+import { normalizeChildren, isHTMLTag, hasCheckedAttr, isFileInput } from './utils';
 
 export const Field = defineComponent({
   name: 'Field',
@@ -106,6 +106,10 @@ export const Field = defineComponent({
         fieldProps.value = value.value;
       }
 
+      if (isFileInput(resolveTag(props, ctx), ctx.attrs.type as string)) {
+        delete fieldProps.value;
+      }
+
       return {
         field: fieldProps,
         aria: aria.value,
@@ -119,11 +123,8 @@ export const Field = defineComponent({
     };
 
     return () => {
-      let tag: string | undefined = props.as;
+      const tag = resolveTag(props, ctx);
       const slotProps = makeSlotProps();
-      if (!props.as && !ctx.slots.default) {
-        tag = 'input';
-      }
 
       // Sync the model value with the inner field value if they mismatch
       // a simple string comparison is used here
@@ -151,3 +152,13 @@ export const Field = defineComponent({
     };
   },
 });
+
+function resolveTag(props: Record<string, any>, ctx: SetupContext) {
+  let tag: string = props.as || '';
+
+  if (!props.as && !ctx.slots.default) {
+    tag = 'input';
+  }
+
+  return tag;
+}

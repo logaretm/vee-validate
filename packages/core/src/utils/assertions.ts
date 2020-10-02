@@ -12,6 +12,13 @@ export function isHTMLTag(tag: string) {
   return ['input', 'textarea', 'select'].includes(tag);
 }
 
+/**
+ * Checks if an input is of type file
+ */
+export function isFileInput(tag: string, type: string) {
+  return isHTMLTag(tag) && type === 'file';
+}
+
 type YupValidator = { validate: (value: any) => Promise<void | boolean> };
 
 export function isYupValidator(value: unknown): value is YupValidator {
