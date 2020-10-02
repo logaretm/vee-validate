@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.1](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.0...vee-validate@4.0.0-beta.1) (2020-10-02)
+
+
+### Bug Fixes
+
+* avoid binding the value to file inputs ([02a2745](https://github.com/logaretm/vee-validate/commit/02a27456ba961540a882ec4f94a24a271b0ea3a3))
+
+
+
+
+
 # [4.0.0-beta.0](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-alpha.14...vee-validate@4.0.0-beta.0) (2020-10-01)
 
 
