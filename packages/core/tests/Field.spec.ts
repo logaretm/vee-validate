@@ -13,6 +13,7 @@ beforeEach(() => {
     validateOnChange: true,
     validateOnInput: false,
     validateOnModelUpdate: true,
+    generateMessage: undefined,
   });
 });
 
@@ -639,5 +640,32 @@ describe('<Field />', () => {
     dispatchEvent(input, 'input');
     await flushPromises();
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('can show custom labels for fields in messages', async () => {
+    configure({
+      generateMessage: ({ field }) => `${field} is bad`,
+    });
+
+    defineRule('noMessage', value => {
+      return value === 48;
+    });
+
+    const wrapper = mountWithHoc({
+      template: `
+      <div>
+        <Field name="_bad_field_name" label="nice name" rules="noMessage" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
+          <span id="error">{{ errors[0] }}</span>
+        </Field>
+      </div>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    const input = wrapper.$el.querySelector('input');
+    setValue(input, '3');
+    await flushPromises();
+    expect(error.textContent).toBe('nice name is bad');
   });
 });
