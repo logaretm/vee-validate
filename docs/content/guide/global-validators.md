@@ -62,6 +62,8 @@ You should make the `defineRule` calls in your application entry-point file to m
 
 </doc-tip>
 
+### Using Global Validators
+
 Now that you've defined your validators, for example the `email` and `required` rules. You can pass them directly to `<Field />` component's `rules` prop like this:
 
 ```vue
@@ -223,6 +225,58 @@ defineRule('confirmed', (value, [target]) => {
 
 This allows you to create more concise rules, you can reference any number of fields using this way.
 
+## Object Expressions
+
+There is another way to use global validators which is more expressive by using JavaScript object to describe the validation for your fields. For example this:
+
+```
+required|between:0,10
+```
+
+Could be rewritten as an object like this
+
+```js
+{ required: true, between: [0, 10] }
+```
+
+This makes defining rules more expressive and less limited by the string format, **however there is a caveat you must be aware of.**
+
+<doc-tip type="danger" title="Infinite Render Loops">
+
+Because vee-validate automatically re-validates the fields whenever their rules change, the following snippet is fine when using string expressions for your validations:
+
+```vue
+<Field rules="required|between:0,10" name="field" />
+```
+
+However if you were to do the same sample in an object format:
+
+```vue
+<Field :rules="{ required: true, between: [1, 10] }" name="field" />
+```
+
+You will encounter an infinite render loop error, this is because of how equality works in JavaScript. On each re-render the props will be checked by Vue and determine if anything changes, but because the object is an inline object. You will be constructing a new object each time a re-render happens which opens the possibility for errors. Strings are fine because they are unlike objects, a value type.
+
+So if you decided to use objects to express your rules, you must extract them to a named object instead. Define it in your `data` or `setup` and bind it to the `rules` prop, this way vee-validate could tell whenever it changes without triggering infinite render loops. Here is a quick sample:
+
+```vue
+<template>
+  <Field name="field" :rules="validations" />
+</template>
+
+<script>
+export default {
+  data: () => ({
+    validations: { required: true, between: [0, 10] },
+  }),
+};
+</script>
+```
+
+For dynamic expressions, you can use computed properties in the same way to define dynamic validation rules.
+
+</doc-tip>
+
 ## @vee-validate/rules
 
 VeeValidate offers a wide range of common validators that you can use as global validators, they are packed in a separate package under the `@vee-validate/rules` namespace
@@ -261,6 +315,7 @@ Object.keys(rules).forEach(rule => {
 - Be careful of having too many global rules as this can slow down your initial website load time due to large initial bundle size
 - It is recommended to treat your validation rules as pure functions, meaning they only operate with the information given to them
 - Having small, pure global validations is preferable to allow re-using them across the app
+- You could possibly trigger an infinite render-loop when using the [object expressions](../guide/global-validators#object-expressions) to define your validations for a field, read the [linked section](../guide/global-validators#object-expressions) for a workaround
 
 ## Available Rules
 
