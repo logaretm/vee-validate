@@ -64,7 +64,7 @@ export function useForm(opts?: FormOptions) {
       }
 
       fields.value.splice(idx, 1);
-      const fieldName = unwrap(field.name);
+      const fieldName = field.name;
       // in this case, this is a single field not a group (checkbox or radio)
       // so remove the field value key immediately
       if (field.idx === -1) {

@@ -35,17 +35,18 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
 /**
  * Creates a field composite.
  */
-export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
+export function useField(name: string, rules: RuleExpression, opts?: Partial<FieldOptions>) {
   const { initialValue, form, immediate, bails, disabled, type, valueProp } = normalizeOptions(opts);
+
   const { meta, errors, handleBlur, handleChange, handleInput, reset, patch, value, checked } = useValidationState({
-    fieldName,
+    name,
     initValue: unwrap(initialValue),
     form,
     type,
     valueProp,
   });
 
-  const nonYupSchemaRules = extractRuleFromSchema(form?.schema, unwrap(fieldName));
+  const nonYupSchemaRules = extractRuleFromSchema(form?.schema, name);
   const normalizedRules = computed(() => {
     return normalizeRules(nonYupSchemaRules || unwrap(rules));
   });
@@ -54,7 +55,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     meta.pending = true;
     if (!form || !form.validateSchema) {
       const result = await validate(value.value, normalizedRules.value, {
-        name: unwrap(fieldName),
+        name,
         values: form?.values ?? {},
         bails,
       });
@@ -71,7 +72,7 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     const results = await form.validateSchema();
     meta.pending = false;
 
-    return results[unwrap(fieldName)];
+    return results[name];
   };
 
   const runValidationWithMutation = () => runValidation().then(patch);
@@ -88,10 +89,10 @@ export function useField(fieldName: MaybeReactive<string>, rules: RuleExpression
     return errors.value[0];
   });
 
-  const aria = useAriAttrs(fieldName, meta);
+  const aria = useAriAttrs(name, meta);
 
   const field = {
-    name: fieldName,
+    name,
     value: value,
     meta,
     errors,
@@ -197,13 +198,13 @@ function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions
  * Manages the validation state of a field.
  */
 function useValidationState({
-  fieldName,
+  name,
   initValue,
   form,
   type,
   valueProp,
 }: {
-  fieldName: MaybeReactive<string>;
+  name: string;
   initValue?: any;
   form?: FormController;
   type?: string;
@@ -211,8 +212,8 @@ function useValidationState({
 }) {
   const errors: Ref<string[]> = ref([]);
   const { reset: resetFlags, meta } = useMeta();
-  const initialValue = initValue ?? getFromPath(inject(FormInitialValues, {}), unwrap(fieldName));
-  const value = useFieldValue(initialValue, fieldName, form);
+  const initialValue = initValue ?? getFromPath(inject(FormInitialValues, {}), name);
+  const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
     value.value = initialValue;
   }
@@ -327,11 +328,11 @@ function useMeta() {
   };
 }
 
-function useAriAttrs(fieldName: MaybeReactive<string>, meta: Record<string, boolean>) {
+function useAriAttrs(fieldName: string, meta: Record<string, boolean>) {
   return computed(() => {
     return {
       'aria-invalid': meta.failed ? 'true' : 'false',
-      'aria-describedBy': genFieldErrorId(unwrap(fieldName)),
+      'aria-describedBy': genFieldErrorId(fieldName),
     };
   });
 }
