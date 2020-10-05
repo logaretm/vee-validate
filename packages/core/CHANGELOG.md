@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.2](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.1...vee-validate@4.0.0-beta.2) (2020-10-05)
+
+
+### Features
+
+* field labels ([#2933](https://github.com/logaretm/vee-validate/issues/2933)) ([513137f](https://github.com/logaretm/vee-validate/commit/513137f28c6266d3e752448b00eb1c3d410ae474))
+
+
+
+
+
 # [4.0.0-beta.1](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.0...vee-validate@4.0.0-beta.1) (2020-10-02)
 
 
