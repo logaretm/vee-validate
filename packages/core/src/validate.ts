@@ -158,6 +158,9 @@ async function _test(field: FieldValidationContext, value: any, rule: { name: st
  */
 function _generateFieldError(fieldCtx: FieldContext) {
   const message = getConfig().generateMessage;
+  if (!message) {
+    return 'Field is invalid';
+  }
 
   return message(fieldCtx);
 }

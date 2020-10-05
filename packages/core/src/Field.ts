@@ -31,6 +31,10 @@ export const Field = defineComponent({
       type: Boolean,
       default: false,
     },
+    label: {
+      type: String,
+      default: undefined,
+    },
   },
   setup(props, ctx) {
     const [disabled, rules] = [toRef(props, 'disabled'), toRef(props, 'rules')];
@@ -61,6 +65,7 @@ export const Field = defineComponent({
         : ctx.attrs.value,
       // Only for checkboxes and radio buttons
       valueProp: ctx.attrs.value,
+      label: props.label || props.name,
     });
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes

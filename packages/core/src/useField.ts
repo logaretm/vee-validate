@@ -28,6 +28,7 @@ interface FieldOptions {
   form?: FormController;
   type?: string;
   valueProp?: MaybeReactive<any>;
+  label?: string;
 }
 
 type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValidateFunction>;
@@ -36,10 +37,11 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
  * Creates a field composite.
  */
 export function useField(name: string, rules: RuleExpression, opts?: Partial<FieldOptions>) {
-  const { initialValue, form, immediate, bails, disabled, type, valueProp } = normalizeOptions(opts);
+  const { initialValue, form, immediate, bails, disabled, type, valueProp, label } = normalizeOptions(name, opts);
 
   const { meta, errors, handleBlur, handleChange, handleInput, reset, patch, value, checked } = useValidationState({
     name,
+    // make sure to unwrap initial value because of possible refs passed in
     initValue: unwrap(initialValue),
     form,
     type,
@@ -55,7 +57,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     meta.pending = true;
     if (!form || !form.validateSchema) {
       const result = await validate(value.value, normalizedRules.value, {
-        name,
+        name: label,
         values: form?.values ?? {},
         bails,
       });
@@ -172,7 +174,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
 /**
  * Normalizes partial field options to include the full
  */
-function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions {
+function normalizeOptions(name: string, opts: Partial<FieldOptions> | undefined): FieldOptions {
   const form = inject(FormSymbol, undefined) as FormController | undefined;
 
   const defaults = () => ({
@@ -182,6 +184,7 @@ function normalizeOptions(opts: Partial<FieldOptions> | undefined): FieldOptions
     rules: '',
     disabled: false,
     form,
+    label: name,
   });
 
   if (!opts) {
