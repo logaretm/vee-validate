@@ -19,11 +19,16 @@ export const Form = defineComponent({
       type: Object,
       default: undefined,
     },
+    validateOnMount: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, ctx) {
     const { errors, validate, handleSubmit, handleReset, values, meta, isSubmitting, submitForm } = useForm({
       validationSchema: props.validationSchema,
       initialValues: props.initialValues,
+      validateOnMount: props.validateOnMount,
     });
 
     const onSubmit = ctx.attrs.onSubmit ? handleSubmit(ctx.attrs.onSubmit as SubmissionHandler) : submitForm;

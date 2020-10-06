@@ -1032,4 +1032,40 @@ describe('<Form />', () => {
     await flushPromises();
     expect(fn).toHaveBeenCalledWith({ 'user.name': '12', 'user.addresses.0': 'abc' });
   });
+
+  test('validate fields on mount with validateOnMount = true', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object().shape({
+          email: yup.string().required().email(),
+          password: yup.string().required().min(8),
+        });
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm @submit="submit" as="form" :validationSchema="schema" validateOnMount v-slot="{ errors }">
+        <Field id="email" name="email" as="input" />
+        <span id="emailErr">{{ errors.email }}</span>
+
+        <Field id="password" name="password" as="input" type="password" />
+        <span id="passwordErr">{{ errors.password }}</span>
+
+        <button>Validate</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+
+    const emailError = wrapper.$el.querySelector('#emailErr');
+    const passwordError = wrapper.$el.querySelector('#passwordErr');
+
+    await flushPromises();
+
+    expect(emailError.textContent).toBe('email is a required field');
+    expect(passwordError.textContent).toBe('password is a required field');
+  });
 });

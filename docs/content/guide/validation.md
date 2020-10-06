@@ -260,6 +260,19 @@ This is slightly verbose, but this gives you exact control on which events trigg
 
 `useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. It gives you everything you need to setup your own validation experience.
 
+In addition to those events, you can also validate when the `<Field />` or `<Form />` components are mounted with `validateOnMount` prop present on both components:
+
+```vue
+<!-- Trigger validation when this field is mounted (initial validation) -->
+</Field name="name" validate-on-mount />
+
+<!-- Trigger validation on all fields inside this form when the form is mounted -->
+<Form validate-on-mount >
+  </Field name="email" />
+  </Field name="password" />
+</Form>
+```
+
 ## Displaying Error Messages
 
 ### Using the Field slot-props

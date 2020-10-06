@@ -1,4 +1,4 @@
-import { computed, ref, Ref, provide, reactive } from 'vue';
+import { computed, ref, Ref, provide, reactive, onMounted } from 'vue';
 import type { ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
@@ -16,6 +16,7 @@ import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
 interface FormOptions {
   validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
   initialValues?: Record<string, any>;
+  validateOnMount?: boolean;
 }
 
 type FieldComposite = ReturnType<typeof useField>;
@@ -219,6 +220,12 @@ export function useForm(opts?: FormOptions) {
   provide(FormSymbol, controller);
   provide(FormErrorsSymbol, errors);
   provide(FormInitialValues, opts?.initialValues || {});
+
+  onMounted(() => {
+    if (opts?.validateOnMount) {
+      validate();
+    }
+  });
 
   return {
     errors,
