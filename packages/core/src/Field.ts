@@ -96,7 +96,7 @@ export const Field = defineComponent({
       }
 
       if (validateOnBlur) {
-        fieldProps.onBlur.push(onChangeHandler);
+        fieldProps.onBlur.push(validateField);
       }
 
       if (validateOnModelUpdate) {
