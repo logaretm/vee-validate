@@ -253,6 +253,10 @@ function useValidationState({
 
   // Common input/change event handler
   const handleChange = (e: Event) => {
+    if (checked && checked.value === (e?.target as any)?.checked) {
+      return;
+    }
+
     value.value = normalizeEventValue(e);
   };
 

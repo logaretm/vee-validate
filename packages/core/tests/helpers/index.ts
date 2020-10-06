@@ -44,8 +44,8 @@ export function setValue(node: ComponentPublicInstance | HTMLInputElement, value
   (node as any).$emit('input', value);
 }
 
-export function setChecked(node: HTMLInputElement, status = true) {
-  node.checked = true;
+export function setChecked(node: HTMLInputElement, status?: boolean) {
+  node.checked = status !== undefined ? status : !node.checked;
   node.dispatchEvent(new window.Event('change'));
   node.dispatchEvent(new window.Event('input'));
 }
