@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.1](https://github.com/logaretm/vee-validate/compare/@vee-validate/i18n@4.0.0-beta.0...@vee-validate/i18n@4.0.0-beta.1) (2020-10-06)
+
+
+### Features
+
+* added `validateOnMount` prop to `Field` and `Form` components ([#2938](https://github.com/logaretm/vee-validate/issues/2938)) ([3a0d878](https://github.com/logaretm/vee-validate/commit/3a0d878e453163f305acc87c5d4c93812f77f340))
+
+
+
+
+
 # [4.0.0-beta.0](https://github.com/logaretm/vee-validate/compare/@vee-validate/i18n@4.0.0-alpha.7...@vee-validate/i18n@4.0.0-beta.0) (2020-10-01)
 
 **Note:** Version bump only for package @vee-validate/i18n

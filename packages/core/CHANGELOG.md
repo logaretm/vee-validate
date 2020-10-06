@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.3](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.2...vee-validate@4.0.0-beta.3) (2020-10-06)
+
+
+### Bug Fixes
+
+* avoid toggling checkbox `checked` attr in `handleChange` ([#2937](https://github.com/logaretm/vee-validate/issues/2937)) ([b8dafbd](https://github.com/logaretm/vee-validate/commit/b8dafbdb75e305f00c6effc21391f364db9236d0))
+
+
+### Features
+
+* added `validateOnMount` prop to `Field` and `Form` components ([#2938](https://github.com/logaretm/vee-validate/issues/2938)) ([3a0d878](https://github.com/logaretm/vee-validate/commit/3a0d878e453163f305acc87c5d4c93812f77f340))
+
+
+
+
+
 # [4.0.0-beta.2](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.1...vee-validate@4.0.0-beta.2) (2020-10-05)
 
 
