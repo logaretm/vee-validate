@@ -19,7 +19,7 @@ export const Field = defineComponent({
       type: [Object, String, Function],
       default: null,
     },
-    immediate: {
+    validateOnMount: {
       type: Boolean,
       default: false,
     },
@@ -52,7 +52,7 @@ export const Field = defineComponent({
       aria,
       checked,
     } = useField(props.name, rules, {
-      immediate: props.immediate,
+      validateOnMount: props.validateOnMount,
       bails: props.bails,
       disabled,
       type: ctx.attrs.type as string,

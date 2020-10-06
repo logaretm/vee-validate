@@ -74,15 +74,15 @@ When using `v-slot` on the `Field` component you no longer have to provide an `a
 
 ### Props
 
-| Prop      | Type                           | Required/Default | Description                                                                                                          |
-| :-------- | :----------------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------- |
-| as        | `string`                       | `"span"`         | The element to render as a root node, defaults to `input`                                                            |
-| name      | `string`                       | Required         | The field's name, must be inside `<Form />`                                                                          |
-| rules     | `object \| string \| Function` | `null`           | The field's validation rules                                                                                         |
-| immediate | `boolean`                      | `false`          | If true, field will be validated on mounted                                                                          |
-| bails     | `boolean`                      | `true`           | Stops validating as soon as a rule fails the validation                                                              |
-| disabled  | `disabled`                     | `false`          | Disables validation and the field will no longer participate in the parent form state                                |
-| label     | `string`                       | `undefined`      | A different string to override the field `name` prop in error messages, useful for display better or formatted names |
+| Prop            | Type                           | Required/Default | Description                                                                                                          |
+| :-------------- | :----------------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------- |
+| as              | `string`                       | `"span"`         | The element to render as a root node, defaults to `input`                                                            |
+| name            | `string`                       | Required         | The field's name, must be inside `<Form />`                                                                          |
+| rules           | `object \| string \| Function` | `null`           | The field's validation rules                                                                                         |
+| validateOnMount | `boolean`                      | `false`          | If true, field will be validated when the component is mounted                                                       |
+| bails           | `boolean`                      | `true`           | Stops validating as soon as a rule fails the validation                                                              |
+| disabled        | `disabled`                     | `false`          | Disables validation and the field will no longer participate in the parent form state                                |
+| label           | `string`                       | `undefined`      | A different string to override the field `name` prop in error messages, useful for display better or formatted names |
 
 ### Slots
 

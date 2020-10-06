@@ -99,11 +99,12 @@ While not recommended, you can make the `Form` component a renderless component 
 
 ### Props
 
-| Prop             | Type                   | Required/Default | Description                                                                                   |
-| :--------------- | :--------------------- | :--------------- | :-------------------------------------------------------------------------------------------- |
-| as               | `string`               | `"form"`         | The element to render as a root node                                                          |
-| validationSchema | `Record<string, string | Function>`       | `undefined`                                                                                   | The element to render as a root node |
-| initialValues    | `Record<string, any>`  | `undefined`      | Initial values to fill the fields with, when provided the fields will be validated on mounted |
+| Prop             | Type                                 | Default     | Description                                                                                                  |
+| :--------------- | :----------------------------------- | :---------- | :----------------------------------------------------------------------------------------------------------- |
+| as               | `string`                             | `"form"`    | The element to render as a root node                                                                         |
+| validationSchema | `Record<string, string \| Function>` | `undefined` | An object describing a schema to validate fields with, can be a plain object or a `yup` object schema        |
+| initialValues    | `Record<string, any>`                | `undefined` | Initial values to fill the fields with, when provided the fields will be validated on mounted                |
+| validateOnMount  | `boolean`                            | `false`     | If true, the fields currently present in the form will be validated when the `<Form />` component is mounted |
 
 ### Slots
 

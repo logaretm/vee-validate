@@ -368,4 +368,6 @@ export default {
 
 Doing so will trigger initial validation on the form and it will generate messages for fields that fail the initial validation. You can still use `v-model` on your fields to define model-based initial values.
 
+You can use `validateOnMount` prop present on the `<Form />` component to force an initial validation when the component is mounted.
+
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>

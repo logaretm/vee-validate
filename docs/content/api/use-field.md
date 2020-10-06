@@ -98,7 +98,7 @@ The full signature of the `useField` function looks like this:
 interface FieldOptions {
   initialValue: any; // the initial value, cannot be a ref
   disabled: MaybeReactive<boolean>; // if the input is disabled, can be a ref
-  immediate?: boolean; // if the field should be validated on mounted
+  validateOnMount?: boolean; // if the field should be validated when the component is mounted
   bails?: boolean; // if the field validation should run all validations
   form?: FormController; // the Form object returned from `useForm` to associate this field with
   label?: string; // A friendly name to be used in `generateMessage` config instead of the field name
