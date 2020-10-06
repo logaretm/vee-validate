@@ -42,7 +42,7 @@ export default {
             handleSelected: (input, event, suggestion) => {
               const { pathname, hash } = new URL(suggestion.url);
               const routepath = pathname.replace(this.$config.appURL, '/');
-              this.$router.push(`${routepath}${hash}`);
+              this.$router.push(`/${routepath}${hash}`);
             },
           })
         );
