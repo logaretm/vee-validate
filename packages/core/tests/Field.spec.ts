@@ -194,11 +194,11 @@ describe('<Field />', () => {
     expect(error.textContent).toBe('');
   });
 
-  test('validates initially with immediate prop', async () => {
+  test('validates initially with validateOnMount prop', async () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <Field name="field" immediate rules="required" v-slot="{ field, errors }">
+        <Field name="field" validateOnMount rules="required" v-slot="{ field, errors }">
           <input v-bind="field" type="text">
           <span id="error">{{ errors[0] }}</span>
         </Field>
