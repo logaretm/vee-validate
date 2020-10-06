@@ -41,8 +41,8 @@ export default {
             inputSelector: '#algolia-search-input',
             handleSelected: (input, event, suggestion) => {
               const { pathname, hash } = new URL(suggestion.url);
-              const routepath = pathname.replace(this.$config.appURL, '/');
-              this.$router.push(`/${routepath}${hash}`);
+              const routepath = pathname.replace(process.env.NODE_ENV === 'production' ? '/v4' : '/', '/');
+              this.$router.push(`${routepath}${hash}`);
             },
           })
         );
