@@ -66,6 +66,7 @@ export const Field = defineComponent({
       // Only for checkboxes and radio buttons
       valueProp: ctx.attrs.value,
       label: props.label || props.name,
+      validateOnValueUpdate: false,
     });
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
