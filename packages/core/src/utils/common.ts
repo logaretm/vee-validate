@@ -24,7 +24,7 @@ export function getFromPath(object: Record<string, any>, path: string): any {
     .split(/\.|\[(\d+)\]/)
     .filter(Boolean)
     .reduce((acc, propKey) => {
-      if (acc && acc[propKey]) {
+      if (acc && propKey in acc) {
         return acc[propKey];
       }
 

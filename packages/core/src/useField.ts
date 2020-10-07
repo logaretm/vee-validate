@@ -16,6 +16,7 @@ import {
   genFieldErrorId,
   hasCheckedAttr,
   getFromPath,
+  setInPath,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FormInitialValues, FormSymbol } from './symbols';
@@ -215,7 +216,7 @@ function useValidationState({
 }) {
   const errors: Ref<string[]> = ref([]);
   const { reset: resetFlags, meta } = useMeta();
-  const initialValue = initValue ?? getFromPath(inject(FormInitialValues, {}), name);
+  const initialValue = getFromPath(inject(FormInitialValues, {}), name) ?? initValue;
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
     value.value = initialValue;
@@ -366,6 +367,8 @@ function useFieldValue(initialValue: any, path: string, form?: FormController) {
     return ref(initialValue);
   }
 
+  // set initial value
+  setInPath(form.values, path, initialValue);
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed({
     get() {
