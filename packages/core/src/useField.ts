@@ -360,7 +360,7 @@ function extractRuleFromSchema(schema: Record<string, any> | undefined, fieldNam
 /**
  * Manages the field value
  */
-function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: FormController) {
+function useFieldValue(initialValue: any, path: string, form?: FormController) {
   // if no form is associated, use a regular ref.
   if (!form) {
     return ref(initialValue);
@@ -369,10 +369,10 @@ function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: Fo
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed({
     get() {
-      return getFromPath(form.values, unwrap(path));
+      return getFromPath(form.values, path);
     },
     set(newVal: any) {
-      form.setFieldValue(unwrap(path), newVal);
+      form.setFieldValue(path, newVal);
     },
   });
 
