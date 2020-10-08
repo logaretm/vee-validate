@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.4](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.3...vee-validate@4.0.0-beta.4) (2020-10-08)
+
+
+### Bug Fixes
+
+* prevent recursive re-render model update ([#2943](https://github.com/logaretm/vee-validate/issues/2943)) ([9fa319f](https://github.com/logaretm/vee-validate/commit/9fa319f0e42f8225565e2f54d1bebd07898574a4))
+* set falsy initial values ([4b29e72](https://github.com/logaretm/vee-validate/commit/4b29e721f06fe30a5f7207935ae3d6291ea464fe))
+* use validateField instead of onChange handler for blur events ([636077a](https://github.com/logaretm/vee-validate/commit/636077a35183b33372825cd4075a143383ed0c68))
+
+
+
+
+
 # [4.0.0-beta.3](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.2...vee-validate@4.0.0-beta.3) (2020-10-06)
 
 
