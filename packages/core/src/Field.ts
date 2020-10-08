@@ -87,14 +87,22 @@ export const Field = defineComponent({
           }
         : handleChange;
 
+    const onInputHandler =
+      'modelValue' in ctx.attrs
+        ? function handleChangeWithModel(e: any) {
+            handleInput(e);
+            ctx.emit('update:modelValue', value.value);
+          }
+        : handleInput;
+
     const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = getConfig();
     const makeSlotProps = () => {
       const fieldProps: Record<string, any> = {
         name: props.name,
         disabled: props.disabled,
         onBlur: [handleBlur],
-        onInput: [handleInput, valueTick],
-        onChange: [handleInput, valueTick],
+        onInput: [onInputHandler, valueTick],
+        onChange: [onInputHandler, valueTick],
       };
 
       if (validateOnInput) {
