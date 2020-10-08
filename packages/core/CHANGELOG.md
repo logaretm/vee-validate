@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.5](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.4...vee-validate@4.0.0-beta.5) (2020-10-08)
+
+
+### Bug Fixes
+
+* sync model value on input closes [#2944](https://github.com/logaretm/vee-validate/issues/2944) ([5f77fa9](https://github.com/logaretm/vee-validate/commit/5f77fa931bdb01cc6415c4edd1dcaa7eb7e1a0d2))
+
+
+
+
+
 # [4.0.0-beta.4](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.3...vee-validate@4.0.0-beta.4) (2020-10-08)
 
 
