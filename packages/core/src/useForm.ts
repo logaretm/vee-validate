@@ -104,44 +104,23 @@ export function useForm(opts?: FormOptions) {
     setFieldValue(path: string, value: any) {
       const field = fieldsById.value[path];
 
-      // singular inputs fields
-      if (!field || (!Array.isArray(field) && field.type !== 'checkbox')) {
-        setInPath(formValues, path, value);
-        return;
-      }
-
-      // Radio buttons and other unknown group type inputs
-      if (Array.isArray(field) && field[0].type !== 'checkbox') {
-        setInPath(formValues, path, value);
-        return;
-      }
-
-      // Single Checkbox
-      if (!Array.isArray(field) && field.type === 'checkbox') {
-        const newVal = getFromPath(formValues, path) === value ? undefined : value;
-        setInPath(formValues, path, newVal);
-        return;
-      }
-
-      // Multiple Checkboxes but their whole value was updated
-      if (Array.isArray(value)) {
-        setInPath(formValues, path, value);
-        return;
-      }
-
-      // Multiple Checkboxes and a single item is updated
-      const oldVal = getFromPath(formValues, path);
-      const newVal = Array.isArray(oldVal) ? [...oldVal] : [];
-      if (newVal.includes(value)) {
+      // Multiple checkboxes, and only one of them got updated
+      if (Array.isArray(field) && field[0]?.type === 'checkbox' && !Array.isArray(value)) {
+        const oldVal = getFromPath(formValues, path);
+        const newVal = Array.isArray(oldVal) ? [...oldVal] : [];
         const idx = newVal.indexOf(value);
-        newVal.splice(idx, 1);
-
+        idx >= 0 ? newVal.splice(idx, 1) : newVal.push(value);
         setInPath(formValues, path, newVal);
         return;
       }
 
-      newVal.push(value);
-      setInPath(formValues, path, newVal);
+      let newValue = value;
+      // Single Checkbox
+      if (field?.type === 'checkbox') {
+        newValue = getFromPath(formValues, path) === value ? undefined : value;
+      }
+
+      setInPath(formValues, path, newValue);
     },
   };
 
