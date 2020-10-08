@@ -24,6 +24,7 @@ import { FormInitialValues, FormSymbol } from './symbols';
 interface FieldOptions {
   initialValue: any;
   disabled: MaybeReactive<boolean>;
+  validateOnValueUpdate: boolean;
   validateOnMount?: boolean;
   bails?: boolean;
   form?: FormController;
@@ -38,9 +39,19 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
  * Creates a field composite.
  */
 export function useField(name: string, rules: RuleExpression, opts?: Partial<FieldOptions>) {
-  const { initialValue, form, validateOnMount, bails, disabled, type, valueProp, label } = normalizeOptions(name, opts);
+  const {
+    initialValue,
+    form,
+    validateOnMount,
+    bails,
+    disabled,
+    type,
+    valueProp,
+    label,
+    validateOnValueUpdate,
+  } = normalizeOptions(name, opts);
 
-  const { meta, errors, handleBlur, handleChange, handleInput, reset, patch, value, checked } = useValidationState({
+  const { meta, errors, handleBlur, handleInput, reset, patch, value, checked } = useValidationState({
     name,
     // make sure to unwrap initial value because of possible refs passed in
     initValue: unwrap(initialValue),
@@ -80,6 +91,20 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
 
   const runValidationWithMutation = () => runValidation().then(patch);
 
+  // Common input/change event handler
+  const handleChange = (e: unknown) => {
+    if (checked && checked.value === (e as any)?.target?.checked) {
+      return;
+    }
+
+    value.value = normalizeEventValue(e);
+    meta.dirty = true;
+    meta.pristine = false;
+    if (!validateOnValueUpdate) {
+      return runValidationWithMutation();
+    }
+  };
+
   onMounted(() => {
     runValidation().then(result => {
       if (validateOnMount) {
@@ -114,9 +139,11 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     idx: -1,
   };
 
-  watch(value, runValidationWithMutation, {
-    deep: true,
-  });
+  if (validateOnValueUpdate) {
+    watch(value, runValidationWithMutation, {
+      deep: true,
+    });
+  }
 
   if (isRef(rules)) {
     watch(rules, runValidationWithMutation, {
@@ -186,6 +213,7 @@ function normalizeOptions(name: string, opts: Partial<FieldOptions> | undefined)
     disabled: false,
     form,
     label: name,
+    validateOnValueUpdate: true,
   });
 
   if (!opts) {
@@ -247,18 +275,15 @@ function useValidationState({
   /**
    * Handles common on blur events
    */
-  const handleInput = () => {
-    meta.dirty = true;
-    meta.pristine = false;
-  };
-
-  // Common input/change event handler
-  const handleChange = (e: Event) => {
-    if (checked && checked.value === (e?.target as any)?.checked) {
-      return;
+  const handleInput = (e: unknown) => {
+    // Checkboxes/Radio will emit a `change` event anyway, custom components will use `update:modelValue`
+    // so this is redundant
+    if (!hasCheckedAttr(type)) {
+      value.value = normalizeEventValue(e);
     }
 
-    value.value = normalizeEventValue(e);
+    meta.dirty = true;
+    meta.pristine = false;
   };
 
   // Updates the validation state with the validation result
@@ -283,7 +308,6 @@ function useValidationState({
     errors,
     patch,
     reset,
-    handleChange,
     handleBlur,
     handleInput,
     value,

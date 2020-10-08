@@ -66,7 +66,17 @@ export const Field = defineComponent({
       // Only for checkboxes and radio buttons
       valueProp: ctx.attrs.value,
       label: props.label || props.name,
+      validateOnValueUpdate: false,
     });
+
+    let isDuringValueTick = false;
+    // Prevents re-render updates that rests value when using v-model (#2941)
+    function valueTick() {
+      isDuringValueTick = true;
+      nextTick(() => {
+        isDuringValueTick = false;
+      });
+    }
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
     const onChangeHandler =
@@ -83,8 +93,8 @@ export const Field = defineComponent({
         name: props.name,
         disabled: props.disabled,
         onBlur: [handleBlur],
-        onInput: [handleInput],
-        onChange: [handleInput],
+        onInput: [handleInput, valueTick],
+        onChange: [handleInput, valueTick],
       };
 
       if (validateOnInput) {
@@ -100,7 +110,7 @@ export const Field = defineComponent({
       }
 
       if (validateOnModelUpdate) {
-        fieldProps['onUpdate:modelValue'] = onChangeHandler;
+        fieldProps['onUpdate:modelValue'] = [onChangeHandler, valueTick];
       }
 
       if (hasCheckedAttr(ctx.attrs.type) && checked) {
@@ -131,8 +141,8 @@ export const Field = defineComponent({
 
       // Sync the model value with the inner field value if they mismatch
       // a simple string comparison is used here
-      // TODO: Maybe use JSON.stringify for better accuracy?
-      if ('modelValue' in ctx.attrs && String(ctx.attrs.modelValue) !== String(value.value)) {
+      // make sure to check if the re-render isn't caused by a value update tick
+      if ('modelValue' in ctx.attrs && String(ctx.attrs.modelValue) !== String(value.value) && !isDuringValueTick) {
         nextTick(() => {
           handleChange(ctx.attrs.modelValue as any);
         });
