@@ -256,6 +256,17 @@ This might not be flexible enough for your needs, which is why you can specifica
 </Field>
 ```
 
+<doc-tip type="danger">
+  When using `handleChange` in scoped slot or with `useField`, make sure to pass the event object or the new value. Otherwise vee-validate won't pick up the new value.
+
+```js
+handleChange(e);
+
+handleChange(newValue);
+```
+
+</doc-tip>
+
 This is slightly verbose, but this gives you exact control on which events triggers validation.
 
 `useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. It gives you everything you need to setup your own validation experience.
