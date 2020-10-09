@@ -244,7 +244,7 @@ function useValidationState({
 }) {
   const errors: Ref<string[]> = ref([]);
   const { reset: resetFlags, meta } = useMeta();
-  const initialValue = getFromPath(inject(FormInitialValues, {}), name) ?? initValue;
+  const initialValue = getFromPath(unwrap(inject(FormInitialValues, {})), name) ?? initValue;
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
     value.value = initialValue;
