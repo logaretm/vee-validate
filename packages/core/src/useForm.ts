@@ -1,4 +1,4 @@
-import { computed, ref, Ref, provide, reactive, onMounted } from 'vue';
+import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch } from 'vue';
 import type { ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
@@ -8,6 +8,7 @@ import {
   GenericValidateFunction,
   SubmitEvent,
   ValidationResult,
+  MaybeReactive,
 } from './types';
 import { unwrap } from './utils/refs';
 import { getFromPath, isYupValidator, setInPath, unsetPath } from './utils';
@@ -15,7 +16,7 @@ import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
 
 interface FormOptions {
   validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
-  initialValues?: Record<string, any>;
+  initialValues?: MaybeReactive<Record<string, any>>;
   validateOnMount?: boolean;
 }
 
@@ -206,7 +207,40 @@ export function useForm(opts?: FormOptions) {
 
   provide(FormSymbol, controller);
   provide(FormErrorsSymbol, errors);
-  provide(FormInitialValues, opts?.initialValues || {});
+  const initialValues = computed<Record<string, any>>(() => {
+    const vals = opts?.initialValues || {};
+    if (isRef(vals)) {
+      return vals.value as Record<string, any>;
+    }
+
+    return vals;
+  });
+
+  // Provide fields with a reference to the initial values
+  provide(FormInitialValues, initialValues);
+
+  // Watch initial values for changes, and update the pristine (non-dirty fields)
+  // we exclude dirty fields because it's unlikely you want to change the form values using initial values
+  // we mostly watch them for API population or newly inserted fields
+  watch(
+    initialValues,
+    value => {
+      const isDirty = (f: any) => f.meta.dirty;
+      Object.keys(fieldsById.value).forEach(fieldPath => {
+        const field = fieldsById.value[fieldPath];
+        const isFieldDirty = Array.isArray(field) ? field.some(isDirty) : isDirty(field);
+        if (isFieldDirty) {
+          return;
+        }
+
+        const newValue = getFromPath(value, fieldPath);
+        setInPath(formValues, fieldPath, newValue);
+      });
+    },
+    {
+      deep: true,
+    }
+  );
 
   onMounted(() => {
     if (opts?.validateOnMount) {

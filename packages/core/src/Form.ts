@@ -1,4 +1,4 @@
-import { h, defineComponent } from 'vue';
+import { h, defineComponent, toRef } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
 import { normalizeChildren } from './utils';
@@ -25,9 +25,10 @@ export const Form = defineComponent({
     },
   },
   setup(props, ctx) {
+    const initialValues = toRef(props, 'initialValues');
     const { errors, validate, handleSubmit, handleReset, values, meta, isSubmitting, submitForm } = useForm({
       validationSchema: props.validationSchema,
-      initialValues: props.initialValues,
+      initialValues,
       validateOnMount: props.validateOnMount,
     });
 

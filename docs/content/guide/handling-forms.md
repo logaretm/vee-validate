@@ -370,4 +370,14 @@ Doing so will trigger initial validation on the form and it will generate messag
 
 You can use `validateOnMount` prop present on the `<Form />` component to force an initial validation when the component is mounted.
 
+The `initialValues` prop on both the `<Form />` component and `useForm()` function can reactive value, meaning you can change the initial values after your component was created/mounted which is very useful if you are populating form fields from external API.
+
+Note that **only the pristine fields will be updated**. In other words, **only the fields that were not manipulated by the user will be updated**.
+
+<doc-tip title="Composition API">
+
+If you are using the composition API with `setup` function, you could create the `initialValues` prop using both [**reactive()**](https://v3.vuejs.org/api/basic-reactivity.html#reactive) and [**ref()**](https://v3.vuejs.org/api/refs-api.html#ref). vee-validate handles both cases.
+
+</doc-tip>
+
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
