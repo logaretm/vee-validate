@@ -115,7 +115,7 @@ The default slot gives you access to the following props:
 | Scoped Prop  | Type                         | Description                                                                                                               |
 | :----------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
 | errors       | `Record<string, string>`     | The first error message of each field, the object keys are the fields names                                               |
-| meta         | `Record<string, boolean>`    | An aggregate of the [FieldMeta](./api/field#fieldmeta) for the fields within the form                                     |
+| meta         | `Record<string, boolean>`    | An aggregate of the [FieldMeta](/api/field#fieldmeta) for the fields within the form                                      |
 | values       | `Record<string, any>`        | The current field values                                                                                                  |
 | isSubmitting | `boolean`                    | True while the submission handler for the form is being executed                                                          |
 | validate     | `Function`                   | Validates the form                                                                                                        |

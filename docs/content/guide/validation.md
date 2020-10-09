@@ -84,7 +84,7 @@ export default {
 </script>
 ```
 
-For more information on the `Field` component, read [the API reference](../api/field).
+For more information on the `Field` component, read [the API reference](/api/field).
 
 ## Form-level Validation
 
@@ -186,7 +186,7 @@ export default {
 </script>
 ```
 
-For more information on the `Form` component, read [the API reference](../api/form).
+For more information on the `Form` component, read [the API reference](/api/form).
 
 ## Validation Behavior
 
@@ -354,7 +354,7 @@ export default {
 </script>
 ```
 
-The `<ErrorMessage />` component is very flexible and you can customize its render output with scoped slots to build complex messages markup, read the [ErrorMessage API reference](../api/error-message) for more information.
+The `<ErrorMessage />` component is very flexible and you can customize its render output with scoped slots to build complex messages markup, read the [ErrorMessage API reference](/api/error-message) for more information.
 
 ### Custom Field Labels
 
@@ -370,7 +370,7 @@ And instead show something more meaningful to the user
 The down payment is required
 ```
 
-You can do this in two ways depending on which validators you are using (yup or [global validators](../guide/global-validators)).
+You can do this in two ways depending on which validators you are using (yup or [global validators](/guide/global-validators)).
 
 #### Custom Labels with Yup
 
@@ -387,4 +387,4 @@ Here is a live example:
 
 <code-sandbox id="vee-validate-v4-custom-field-labels-with-yup-qikju" title="Custom Labels with yup"></code-sandbox>
 
-If you are interested on how to do the same for global validators check the [i18n guide](../guide/i18n#custom-labels)
+If you are interested on how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)

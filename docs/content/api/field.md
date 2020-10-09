@@ -51,7 +51,7 @@ You can also render any globally defined components:
 
 <doc-tip>
 
-For validation to work, the rendered tag with `as` prop must conform to the events that the `Field` component listens for, you can view a list of these in the [Validation Behavior](../guide/validation#validation-behavior)
+For validation to work, the rendered tag with `as` prop must conform to the events that the `Field` component listens for, you can view a list of these in the [Validation Behavior](/guide/validation#validation-behavior)
 
 </doc-tip>
 

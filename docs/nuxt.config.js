@@ -2,7 +2,7 @@ const basePath = process.env.NODE_ENV === 'production' ? '/v4/' : '/';
 
 export default {
   router: {
-    base: basePath,
+    base: '/v4/',
   },
 
   components: true,

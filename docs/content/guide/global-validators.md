@@ -134,7 +134,7 @@ Then you can use it like this:
 
 ## Schema Validation
 
-The [Form-level validation](./guide/validation#form-level-validation) feature isn't limited to `yup` validators, you can define your global validators and define them in the exact same way as the previous examples in the `Form` component `validation-schema` prop.
+The [Form-level validation](/guide/validation#form-level-validation) feature isn't limited to `yup` validators, you can define your global validators and define them in the exact same way as the previous examples in the `Form` component `validation-schema` prop.
 
 Here is an example that uses all the rules we've defined prior in this page in a form validation schema:
 
@@ -315,7 +315,7 @@ Object.keys(rules).forEach(rule => {
 - Be careful of having too many global rules as this can slow down your initial website load time due to large initial bundle size
 - It is recommended to treat your validation rules as pure functions, meaning they only operate with the information given to them
 - Having small, pure global validations is preferable to allow re-using them across the app
-- You could possibly trigger an infinite render-loop when using the [object expressions](../guide/global-validators#object-expressions) to define your validations for a field, read the [linked section](../guide/global-validators#object-expressions) for a workaround
+- You could possibly trigger an infinite render-loop when using the [object expressions](/guide/global-validators#object-expressions) to define your validations for a field, read the [linked section](/guide/global-validators#object-expressions) for a workaround
 
 ## Available Rules
 

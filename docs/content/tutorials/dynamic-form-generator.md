@@ -62,7 +62,7 @@ interface FormSchema {
 }
 ```
 
-Notice that for the field schema we tried to match the same prop names on the [Field component](./api/field#props) which will help you later. Let's imagine we are building a sign up form, our schema will look like this:
+Notice that for the field schema we tried to match the same prop names on the [Field component](/api/field#props) which will help you later. Let's imagine we are building a sign up form, our schema will look like this:
 
 ```js
 const formSchema = {
