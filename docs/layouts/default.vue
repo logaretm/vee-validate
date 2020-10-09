@@ -5,6 +5,7 @@
       <main class="main">
         <Ad />
         <Nuxt />
+        <EditPage class="mt-20" />
       </main>
 
       <div class="lside hidden lg:block">
