@@ -141,7 +141,7 @@ The `handleSubmit` slot prop is probably the most common method you will use to 
 ```vue
 <template>
   <VeeForm v-slot="{ handleSubmit }" :validation-schema="schema" as="div">
-    <form @submit="handleSubmit(onSubmit)">
+    <form @submit="handleSubmit($event, onSubmit)">
       <Field name="email" as="input" />
       <Field name="name" as="input" type="email" />
       <Field name="password" as="input" type="password" />
@@ -236,7 +236,7 @@ You can validate the form without submissions using the `validate()` slot prop f
   <Field name="name" as="input" type="email" />
   <Field name="password" as="input" type="password" />
 
-  <button @click="validate">Submit</button>
+  <button type="button" @click="validate">Submit</button>
 </Form>
 ```
 

@@ -1244,4 +1244,108 @@ describe('<Form />', () => {
     expect(inputs[0].value).toBe(values.email);
     expect(inputs[1].value).toBe(values.password);
   });
+
+  test('handles submit with handleSubmit and passing the event object', async () => {
+    const spy = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object().shape({
+          email: yup.string().required().email(),
+          password: yup.string().required().min(8),
+        });
+
+        return {
+          schema,
+          onSubmit: spy,
+        };
+      },
+      template: `
+      <VForm as="div" :validationSchema="schema" v-slot="{ errors, handleSubmit }">
+        <form @submit="handleSubmit($event, onSubmit)">
+          <Field id="email" name="email" as="input" />
+          <span id="emailErr">{{ errors.email }}</span>
+
+          <Field id="password" name="password" as="input" type="password" />
+          <span id="passwordErr">{{ errors.password }}</span>
+
+          <button>Validate</button>
+        </form>
+      </VForm>
+    `,
+    });
+
+    const email = wrapper.$el.querySelector('#email');
+    const password = wrapper.$el.querySelector('#password');
+    const emailError = wrapper.$el.querySelector('#emailErr');
+    const passwordError = wrapper.$el.querySelector('#passwordErr');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+
+    expect(emailError.textContent).toBe('email is a required field');
+    expect(passwordError.textContent).toBe('password is a required field');
+    expect(spy).toHaveBeenCalledTimes(0);
+
+    setValue(email, 'hello@email.com');
+    setValue(password, '12346789');
+    wrapper.$el.querySelector('button').click();
+
+    await flushPromises();
+
+    expect(emailError.textContent).toBe('');
+    expect(passwordError.textContent).toBe('');
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  test('handles submit with handleSubmit without the event object', async () => {
+    const spy = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object().shape({
+          email: yup.string().required().email(),
+          password: yup.string().required().min(8),
+        });
+
+        return {
+          schema,
+          onSubmit: spy,
+        };
+      },
+      template: `
+      <VForm as="div" :validationSchema="schema" v-slot="{ errors, handleSubmit }">
+        <form @submit.prevent.stop="handleSubmit(onSubmit)">
+          <Field id="email" name="email" as="input" />
+          <span id="emailErr">{{ errors.email }}</span>
+
+          <Field id="password" name="password" as="input" type="password" />
+          <span id="passwordErr">{{ errors.password }}</span>
+
+          <button>Validate</button>
+        </form>
+      </VForm>
+    `,
+    });
+
+    const email = wrapper.$el.querySelector('#email');
+    const password = wrapper.$el.querySelector('#password');
+    const emailError = wrapper.$el.querySelector('#emailErr');
+    const passwordError = wrapper.$el.querySelector('#passwordErr');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+
+    expect(emailError.textContent).toBe('email is a required field');
+    expect(passwordError.textContent).toBe('password is a required field');
+    expect(spy).toHaveBeenCalledTimes(0);
+
+    setValue(email, 'hello@email.com');
+    setValue(password, '12346789');
+    wrapper.$el.querySelector('button').click();
+
+    await flushPromises();
+
+    expect(emailError.textContent).toBe('');
+    expect(passwordError.textContent).toBe('');
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
 });
