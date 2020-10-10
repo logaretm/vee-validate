@@ -1196,4 +1196,24 @@ describe('<Form />', () => {
     expect(emailError.textContent).toBe('WRONG');
     expect(passwordError.textContent).toBe('WRONG AGAIN');
   });
+
+  test('sets error message with setFieldError for checkboxes', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm ref="form" v-slot="{ errors }">
+        <Field name="drink" type="checkbox" value="" /> Coffee
+        <Field name="drink" type="checkbox" value="Tea" /> Tea
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
+
+        <span id="err">{{ errors.drink }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const error = wrapper.$el.querySelector('#err');
+    (wrapper.$refs as any)?.form.setFieldError('drink', 'WRONG');
+    await flushPromises();
+    expect(error.textContent).toBe('WRONG');
+  });
 });

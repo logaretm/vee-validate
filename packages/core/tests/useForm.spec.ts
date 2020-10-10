@@ -46,7 +46,7 @@ describe('useForm()', () => {
       template: `
       <span>{{ err1 }}</span>
       <span>{{ err2 }}</span>
-      <button @click="setErrors({ field1: 'WRONG', field2: 'WRONG AGAIN' })">Set Field Error</button>
+      <button @click="setErrors({ field1: 'WRONG', field2: 'WRONG AGAIN', field3: 'huh' })">Set Field Error</button>
     `,
     });
 

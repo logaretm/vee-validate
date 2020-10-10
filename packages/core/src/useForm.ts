@@ -57,13 +57,16 @@ export function useForm(opts?: FormOptions) {
    * Manually sets an error message on a specific field
    */
   function setFieldError(field: string, message: string) {
-    let fieldInstance = fieldsById.value[field];
+    const fieldInstance = fieldsById.value[field];
     if (!fieldInstance) {
       return;
     }
 
     if (Array.isArray(fieldInstance)) {
-      fieldInstance = fieldInstance[0];
+      fieldInstance.forEach(instance => {
+        instance.setValidationState({ errors: [message] });
+      });
+      return;
     }
 
     fieldInstance.setValidationState({ errors: [message] });
