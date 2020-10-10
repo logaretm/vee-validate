@@ -53,6 +53,31 @@ export function useForm(opts?: FormOptions) {
     return fields.value.filter(field => !unwrap(field.disabled));
   });
 
+  /**
+   * Manually sets an error message on a specific field
+   */
+  function setFieldError(field: string, message: string) {
+    let fieldInstance = fieldsById.value[field];
+    if (!fieldInstance) {
+      return;
+    }
+
+    if (Array.isArray(fieldInstance)) {
+      fieldInstance = fieldInstance[0];
+    }
+
+    fieldInstance.setValidationState({ errors: [message] });
+  }
+
+  /**
+   * Sets errors for the fields specified in the object
+   */
+  function setErrors(fields: Record<string, string>) {
+    Object.keys(fields).forEach(field => {
+      setFieldError(field, fields[field]);
+    });
+  }
+
   // a private ref for all form values
   const formValues = reactive<Record<string, any>>({});
   const controller: FormController = {
@@ -123,6 +148,8 @@ export function useForm(opts?: FormOptions) {
 
       setInPath(formValues, path, newValue);
     },
+    setErrors,
+    setFieldError,
   };
 
   const validate = async () => {
@@ -180,7 +207,7 @@ export function useForm(opts?: FormOptions) {
       return validate()
         .then(result => {
           if (result && typeof fn === 'function') {
-            return fn(activeFormValues.value, e as SubmitEvent);
+            return fn(activeFormValues.value, { evt: e as SubmitEvent, form: controller });
           }
         })
         .then(
@@ -197,9 +224,9 @@ export function useForm(opts?: FormOptions) {
     };
   };
 
-  const submitForm = handleSubmit((_, e) => {
-    if (e) {
-      e.target.submit();
+  const submitForm = handleSubmit((_, { evt }) => {
+    if (evt) {
+      evt?.target?.submit();
     }
   });
 
@@ -248,31 +275,6 @@ export function useForm(opts?: FormOptions) {
       validate();
     }
   });
-
-  /**
-   * Manually sets an error message on a specific field
-   */
-  function setFieldError(field: string, message: string) {
-    let fieldInstance = fieldsById.value[field];
-    if (!fieldInstance) {
-      return;
-    }
-
-    if (Array.isArray(fieldInstance)) {
-      fieldInstance = fieldInstance[0];
-    }
-
-    fieldInstance.setValidationState({ errors: [message] });
-  }
-
-  /**
-   * Sets errors for the fields specified in the object
-   */
-  function setErrors(fields: Record<string, string>) {
-    Object.keys(fields).forEach(field => {
-      setFieldError(field, fields[field]);
-    });
-  }
 
   return {
     errors,

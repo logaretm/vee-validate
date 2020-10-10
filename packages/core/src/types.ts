@@ -33,8 +33,6 @@ export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
 
 export type SubmitEvent = Event & { target: HTMLFormElement };
 
-export type SubmissionHandler = (values: Record<string, any>, evt?: SubmitEvent) => any;
-
 export type GenericValidateFunction = (value: any) => boolean | string | Promise<boolean | string>;
 
 export type Flag =
@@ -58,4 +56,10 @@ export interface FormController {
   schema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<string, ValidationResult>>;
   setFieldValue: (path: string, value: any) => void;
+  setFieldError: (field: string, message: string) => void;
+  setErrors: (errors: Record<string, string>) => void;
 }
+
+type SubmissionContext = { evt: SubmitEvent; form: FormController };
+
+export type SubmissionHandler = (values: Record<string, any>, ctx: SubmissionContext) => any;

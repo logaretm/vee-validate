@@ -56,7 +56,6 @@ export const Form = defineComponent({
       // getCurrentInstance doesn't work with render fns, it returns the wrong instance
       // we want to expose setFieldError and setErrors
       if (!this.setErrors) {
-        console.log('Setting it');
         this.setFieldError = setFieldError;
         this.setErrors = setErrors;
       }
