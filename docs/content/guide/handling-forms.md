@@ -27,9 +27,9 @@ You may access your form's values using either the `Form` component scoped slot 
 ```vue
 <template>
   <Form v-slot="{ values }" :validation-schema="schema">
-    <Field name="email" as="input">
-    <Field name="name" as="input" type="email">
-    <Field name="password" as="input" type="password">
+    <Field name="email" as="input" />
+    <Field name="name" as="input" type="email" />
+    <Field name="password" as="input" type="password" />
 
     <!-- print form values -->
     <pre>
@@ -45,7 +45,7 @@ import * as yup from 'yup';
 export default {
   components: {
     Form,
-    Field
+    Field,
   },
   data() {
     const schema = yup.object().shape({
@@ -55,9 +55,9 @@ export default {
     });
 
     return {
-      schema
+      schema,
     };
-  }
+  },
 };
 </script>
 ```
@@ -69,9 +69,9 @@ So if you were to add a `submit` handler on the `<Form />` component, vee-valida
 ```vue
 <template>
   <Form @submit="onSubmit" :validation-schema="schema">
-    <Field name="email" as="input">
-    <Field name="name" as="input" type="email">
-    <Field name="password" as="input" type="password">
+    <Field name="email" as="input" />
+    <Field name="name" as="input" type="email" />
+    <Field name="password" as="input" type="password" />
 
     <button>Submit</button>
   </Form>
@@ -84,7 +84,7 @@ import * as yup from 'yup';
 export default {
   components: {
     Form,
-    Field
+    Field,
   },
   data() {
     const schema = yup.object().shape({
@@ -100,8 +100,8 @@ export default {
   methods: {
     onSubmit(values) {
       // Submit values to API...
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -117,10 +117,10 @@ If you have a `submit` listener on the `Form` component, vee-validate assumes yo
 But in the case when you don't have a `submit` listener on your form, vee-validate assumes that the form will be submitted using the native HTML submission that causes the page to "reload". However vee-validate will make sure the form is not submitted unless all fields are valid, here is an example:
 
 ```vue
-<Form method="post" action="/api/users" :validation-schema="schema">
-  <Field name="email" as="input">
-  <Field name="name" as="input" type="email">
-  <Field name="password" as="input" type="password">
+<Form method="post" action="/api/users" :validation-schema="schema" />
+  <Field name="email" as="input" />
+  <Field name="name" as="input" type="email" />
+  <Field name="password" as="input" type="password" />
 
   <button>Submit</button>
 </Form>
@@ -142,9 +142,9 @@ The `handleSubmit` slot prop is probably the most common method you will use to 
 <template>
   <VeeForm v-slot="{ handleSubmit }" :validation-schema="schema" as="div">
     <form @submit="handleSubmit(onSubmit)">
-      <Field name="email" as="input">
-      <Field name="name" as="input" type="email">
-      <Field name="password" as="input" type="password">
+      <Field name="email" as="input" />
+      <Field name="name" as="input" type="email" />
+      <Field name="password" as="input" type="password" />
 
       <button>Submit</button>
     </form>
@@ -159,7 +159,7 @@ export default {
   components: {
     // Rename form to avoid confusion with native `form`
     VeeForm,
-    Field
+    Field,
   },
   data() {
     const schema = yup.object().shape({
@@ -176,8 +176,8 @@ export default {
     onSubmit(values) {
       // Submit values to API...
       console.log(values);
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -190,9 +190,9 @@ Alternatively if you plan to submit forms natively which will cause a page "relo
 <template>
   <VeeForm v-slot="{ submitForm }" :validation-schema="schema" as="div">
     <form @submit="submitForm" method="post" action="/api/users/">
-      <Field name="email" as="input">
-      <Field name="name" as="input" type="email">
-      <Field name="password" as="input" type="password">
+      <Field name="email" as="input" />
+      <Field name="name" as="input" type="email" />
+      <Field name="password" as="input" type="password" />
 
       <button>Submit</button>
     </form>
@@ -207,7 +207,7 @@ export default {
   components: {
     // Rename form to avoid confusion with native `form`
     VeeForm,
-    Field
+    Field,
   },
   data() {
     const schema = yup.object().shape({
@@ -217,9 +217,9 @@ export default {
     });
 
     return {
-      schema
+      schema,
     };
-  }
+  },
 };
 </script>
 ```
@@ -232,9 +232,9 @@ You can validate the form without submissions using the `validate()` slot prop f
 
 ```vue
 <Form v-slot="{ validate }" :validation-schema="schema">
-  <Field name="email" as="input">
-  <Field name="name" as="input" type="email">
-  <Field name="password" as="input" type="password">
+  <Field name="email" as="input" />
+  <Field name="name" as="input" type="email" />
+  <Field name="password" as="input" type="password" />
 
   <button @click="validate">Submit</button>
 </Form>
@@ -269,9 +269,9 @@ vee-validate also handles form resets in similar way to submissions, consider th
 ```vue
 <template>
   <Form :validation-schema="schema">
-    <Field name="email" as="input">
-    <Field name="name" as="input" type="email">
-    <Field name="password" as="input" type="password">
+    <Field name="email" as="input" />
+    <Field name="name" as="input" type="email" />
+    <Field name="password" as="input" type="password" />
 
     <button type="Submit">Submit</button>
     <button type="reset">Reset</button>
@@ -285,7 +285,7 @@ import * as yup from 'yup';
 export default {
   components: {
     Form,
-    Field
+    Field,
   },
   data() {
     const schema = yup.object().shape({
@@ -297,7 +297,7 @@ export default {
     return {
       schema,
     };
-  }
+  },
 };
 </script>
 ```
@@ -325,9 +325,9 @@ Using the `initialValues` prop you can send an object that contains the field na
 ```vue
 <template>
   <Form :validation-schema="schema" :initial-values="formValues">
-    <Field name="email" as="input">
-    <Field name="name" as="input" type="email">
-    <Field name="password" as="input" type="password">
+    <Field name="email" as="input" />
+    <Field name="name" as="input" type="email" />
+    <Field name="password" as="input" type="password" />
 
     <button type="Submit">Submit</button>
   </Form>
@@ -340,7 +340,7 @@ import * as yup from 'yup';
 export default {
   components: {
     Form,
-    Field
+    Field,
   },
   data() {
     // Validation Schema
@@ -354,14 +354,14 @@ export default {
     const formValues = {
       email: 'example@example.com',
       name: 'John Smith',
-      password: 'P@$$w0Rd'
+      password: 'P@$$w0Rd',
     };
 
     return {
       schema,
-      formValues
+      formValues,
     };
-  }
+  },
 };
 </script>
 ```
@@ -388,10 +388,10 @@ You can set any field's value using either `setFieldValue` or `setValues`, both 
 
 ```vue
 <Form v-slot="{ setFieldValue, setValues }">
-  <Field name="email" as="input">
+  <Field name="email" as="input" />
   <ErrorMessage name="email" />
 
-  <Field name="password" as="input">
+  <Field name="password" as="input" />
   <ErrorMessage name="password" />
 
   <button type="button" @click="setFieldValue('email', 'test')">Set Field Value</button>
@@ -405,21 +405,21 @@ You can set any field's value using either `setFieldValue` or `setValues`, both 
 
 ```vue
 <template>
-<Form @submit="onSubmit">
-  <Field name="email" as="input">
-  <ErrorMessage name="email" />
+  <Form @submit="onSubmit">
+    <Field name="email" as="input" />
+    <ErrorMessage name="email" />
 
-  <Field name="password" as="input">
-  <ErrorMessage name="password" />
+    <Field name="password" as="input" />
+    <ErrorMessage name="password" />
 
-  <button>Submit</button>
-</Form>
+    <button>Submit</button>
+  </Form>
 </template>
 
 <script>
 export default {
   // ...
-  methods :{
+  methods: {
     onSubmit(values, { form }) {
       // Submit the values...
 
@@ -431,8 +431,8 @@ export default {
         email: 'ummm@example.com',
         password: 'P@$$w0Rd',
       });
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -441,21 +441,21 @@ export default {
 
 ```vue
 <template>
-<Form @submit="onSubmit" ref="myForm">
-  <Field name="email" as="input">
-  <ErrorMessage name="email" />
+  <Form @submit="onSubmit" ref="myForm">
+    <Field name="email" as="input" />
+    <ErrorMessage name="email" />
 
-  <Field name="password" as="input">
-  <ErrorMessage name="password" />
+    <Field name="password" as="input" />
+    <ErrorMessage name="password" />
 
-  <button>Submit</button>
-</Form>
+    <button>Submit</button>
+  </Form>
 </template>
 
 <script>
 export default {
   // ...
-  methods :{
+  methods: {
     onSubmit(values) {
       // Submit the values...
 
@@ -467,8 +467,8 @@ export default {
         email: 'ummm@example.com',
         password: 'P@$$w0Rd',
       });
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -489,10 +489,10 @@ Here are a few snippets showcasing it's usage in these various scenarios:
 
 ```vue
 <Form v-slot="{ setFieldError, setErrors }">
-  <Field name="email" as="input">
+  <Field name="email" as="input" />
   <ErrorMessage name="email" />
 
-  <Field name="password" as="input">
+  <Field name="password" as="input" />
   <ErrorMessage name="password" />
 
   <button type="button" @click="setFieldError('email', 'nope')">Set Single Error</button>
@@ -506,21 +506,21 @@ Here are a few snippets showcasing it's usage in these various scenarios:
 
 ```vue
 <template>
-<Form @submit="onSubmit">
-  <Field name="email" as="input">
-  <ErrorMessage name="email" />
+  <Form @submit="onSubmit">
+    <Field name="email" as="input" />
+    <ErrorMessage name="email" />
 
-  <Field name="password" as="input">
-  <ErrorMessage name="password" />
+    <Field name="password" as="input" />
+    <ErrorMessage name="password" />
 
-  <button>Submit</button>
-</Form>
+    <button>Submit</button>
+  </Form>
 </template>
 
 <script>
 export default {
   // ...
-  methods :{
+  methods: {
     onSubmit(values, { form }) {
       // Submit the values...
 
@@ -532,8 +532,8 @@ export default {
         email: 'this field is already taken',
         password: 'someone already has this password',
       });
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -542,21 +542,21 @@ export default {
 
 ```vue
 <template>
-<Form @submit="onSubmit" ref="myForm">
-  <Field name="email" as="input">
-  <ErrorMessage name="email" />
+  <Form @submit="onSubmit" ref="myForm">
+    <Field name="email" as="input" />
+    <ErrorMessage name="email" />
 
-  <Field name="password" as="input">
-  <ErrorMessage name="password" />
+    <Field name="password" as="input" />
+    <ErrorMessage name="password" />
 
-  <button>Submit</button>
-</Form>
+    <button>Submit</button>
+  </Form>
 </template>
 
 <script>
 export default {
   // ...
-  methods :{
+  methods: {
     onSubmit(values) {
       // Submit the values...
 
@@ -566,8 +566,8 @@ export default {
         email: 'this field is already taken',
         password: 'someone already has this password',
       });
-    }
-  }
+    },
+  },
 };
 </script>
 ```

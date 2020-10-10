@@ -13,7 +13,7 @@ The `<Form />` component is like its name, a simple HTML form but with a few adj
 
 ```vue
 <Form>
-  <Field name="password" as="input" type="password">
+  <Field name="password" as="input" type="password" />
 </Form>
 ```
 
@@ -23,7 +23,7 @@ Just like the `Field` component you can pass whatever you want to render in its 
 
 ```vue
 <Form as="v-form">
-  <Field name="password" as="input" type="password">
+  <Field name="password" as="input" type="password" />
 </Form>
 ```
 
@@ -35,9 +35,9 @@ For more complex form markup, you can render a `div` and inline your forms in th
 <Form as="div">
   <h2>Sign up form</h2>
   <form>
-    <Field name="name" as="input"">
-    <Field name="email" as="input" type="email">
-    <Field name="password" as="input" type="password">
+    <Field name="name" as="input"" />
+    <Field name="email" as="input" type="email" />
+    <Field name="password" as="input" type="password" />
   </form>
 </Form>
 ```
@@ -64,9 +64,9 @@ Lastly, you can use the `Form` component slot props to access various aspects of
 
 ```vue
 <Form v-slot="{ values }">
-  <Field name="name" as="input"">
-  <Field name="email" as="input" type="email">
-  <Field name="password" as="input" type="password">
+  <Field name="name" as="input" />
+  <Field name="email" as="input" type="email" />
+  <Field name="password" as="input" type="password" />
 
   <!-- prints current form values -->
   <pre>
@@ -83,9 +83,9 @@ While not recommended, you can make the `Form` component a renderless component 
 <Form as="" v-slot="{ values, submitForm }">
   <h2>Sign up form</h2>
   <form @submit="submitForm">
-    <Field name="name" as="input"">
-    <Field name="email" as="input" type="email">
-    <Field name="password" as="input" type="password">
+    <Field name="name" as="input" />
+    <Field name="email" as="input" type="email" />
+    <Field name="password" as="input" type="password" />
 
     <!-- prints current form values -->
     <pre>
@@ -112,19 +112,19 @@ While not recommended, you can make the `Form` component a renderless component 
 
 The default slot gives you access to the following props:
 
-| Scoped Prop   | Type                                                                      | Description                                                                                                                                                                                                                                                       |
-| :------------ | :------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| errors        | `Record<string, string>`                                                  | The first error message of each field, the object keys are the fields names                                                                                                                                                                                       |
-| meta          | `Record<string, boolean>`                                                 | An aggregate of the [FieldMeta](/api/field#fieldmeta) for the fields within the form                                                                                                                                                                              |
-| values        | `Record<string, any>`                                                     | The current field values                                                                                                                                                                                                                                          |
-| isSubmitting  | `boolean`                                                                 | True while the submission handler for the form is being executed                                                                                                                                                                                                  |
-| validate      | `() => Promise<boolean>`                                                  | Validates the form                                                                                                                                                                                                                                                |
-| handleSubmit  | `(cb: (values: Record<string, any>, ctx: SubmissionContext)) => Function` | Creates a submission handler that disables the native form submissions and executes the callback if the validation passes. You can check the type for [SubmissionContext here](https://github.com/logaretm/vee-validate/blob/next/packages/core/src/types.ts#L64) |
-| handleReset   | `() => void`                                                              | Resets and form and executes any `onReset` listeners on the component                                                                                                                                                                                             |
-| submitForm    | `(evt: Event) => Promise<void>`                                           | Validates the form and triggers the `submit` event on the form, useful for non-SPA applications                                                                                                                                                                   |
-| setFieldError | `(field: string, message: string) => void`                                | Sets an error message on a field                                                                                                                                                                                                                                  |
-| setErrors     | `(fields: Record<string, string>) => void`                                | Sets error message for the specified fields                                                                                                                                                                                                                       |
-| setFieldValue | `(field: string, value: any) => void`                                     | Sets a field's value, triggers validation                                                                                                                                                                                                                         |
-| setValues     | `(fields: Record<string, any>) => void`                                   | Sets the specified fields values, triggers validation on those fields                                                                                                                                                                                             |
+| Scoped Prop   | Type                                                                                  | Description                                                                                                                                                                                                                                                           |
+| :------------ | :------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| errors        | `Record<string, string>`                                                              | The first error message of each field, the object keys are the fields names                                                                                                                                                                                           |
+| meta          | `Record<string, boolean>`                                                             | An aggregate of the [FieldMeta](/api/field#fieldmeta) for the fields within the form                                                                                                                                                                                  |
+| values        | `Record<string, any>`                                                                 | The current field values                                                                                                                                                                                                                                              |
+| isSubmitting  | `boolean`                                                                             | True while the submission handler for the form is being executed                                                                                                                                                                                                      |
+| validate      | `() => Promise<boolean>`                                                              | Validates the form                                                                                                                                                                                                                                                    |
+| handleSubmit  | `(evt: Event, cb: (values: Record<string, any>, ctx: SubmissionContext)) => Function` | Creates a submission handler that disables the native form submissions and executes the callback if the validation passes. You You can check the type for [SubmissionContext here](https://github.com/logaretm/vee-validate/blob/next/packages/core/src/types.ts#L64) |
+| handleReset   | `() => void`                                                                          | Resets and form and executes any `onReset` listeners on the component                                                                                                                                                                                                 |
+| submitForm    | `(evt: Event) => Promise<void>`                                                       | Validates the form and triggers the `submit` event on the form, useful for non-SPA applications                                                                                                                                                                       |
+| setFieldError | `(field: string, message: string) => void`                                            | Sets an error message on a field                                                                                                                                                                                                                                      |
+| setErrors     | `(fields: Record<string, string>) => void`                                            | Sets error message for the specified fields                                                                                                                                                                                                                           |
+| setFieldValue | `(field: string, value: any) => void`                                                 | Sets a field's value, triggers validation                                                                                                                                                                                                                             |
+| setValues     | `(fields: Record<string, any>) => void`                                               | Sets the specified fields values, triggers validation on those fields                                                                                                                                                                                                 |
 
 Check the sample above for rendering with scoped slots

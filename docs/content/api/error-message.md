@@ -14,7 +14,7 @@ The basic usage looks like this:
 ```vue
 <template>
   <Form>
-    <Field name="email" as="input" type="email" :rules="validateEmail">
+    <Field name="email" as="input" type="email" :rules="validateEmail" />
     <ErrorMessage name="email" />
   </Form>
 </template>
@@ -33,9 +33,9 @@ export default {
     const validateEmail = yup.string().required().email();
 
     return {
-      validateEmail
+      validateEmail,
     };
-  }
+  },
 };
 </script>
 ```

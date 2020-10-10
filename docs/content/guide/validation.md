@@ -28,7 +28,7 @@ This is an example using the `<Field />` component:
 ```vue
 <template>
   <Form v-slot="{ errors }">
-    <Field name="field" as="input" :rules="isRequired">
+    <Field name="field" as="input" :rules="isRequired" />
     {{ errors.field }}
   </Form>
 </template>
@@ -48,8 +48,8 @@ export default {
       }
 
       return 'This is required';
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -61,7 +61,7 @@ yup is a very popular, simple and powerful data validation library for JavaScrip
 ```vue
 <template>
   <Form v-slot="{ errors }">
-    <Field name="password" as="input" type="password" :rules="passwordRules">
+    <Field name="password" as="input" type="password" :rules="passwordRules" />
     {{ errors.field }}
   </Form>
 </template>
@@ -275,12 +275,12 @@ In addition to those events, you can also validate when the `<Field />` or `<For
 
 ```vue
 <!-- Trigger validation when this field is mounted (initial validation) -->
-</Field name="name" validate-on-mount />
+<Field name="name" validate-on-mount />
 
 <!-- Trigger validation on all fields inside this form when the form is mounted -->
-<Form validate-on-mount >
-  </Field name="email" />
-  </Field name="password" />
+<Form validate-on-mount>
+  <Field name="email" />
+  <Field name="password" />
 </Form>
 ```
 
@@ -307,7 +307,7 @@ As you noticed the `<Form />` component gives you access to the `errors` on its 
 
 ```vue
 <Form v-slot="{ errors }">
-  <Field name="field" as="input" :rules="rules">
+  <Field name="field" as="input" :rules="rules" />
   {{ errors.field }}
 </Form>
 ```
@@ -325,9 +325,9 @@ and if you would like, you could display all error messages for your fields by i
     </ul>
   </template>
 
-  <Field name="name" as="input" :rules="rules">
-  <Field name="email" as="input" :rules="rules">
-  <Field name="password" as="input" :rules="rules">
+  <Field name="name" as="input" :rules="rules" /> 
+  <Field name="email" as="input" :rules="rules" />
+  <Field name="password" as="input" :rules="rules" />
 </Form>
 ```
 
@@ -338,11 +338,10 @@ vee-validate offers an `<ErrorMessage />` component that displays your error mes
 ```vue
 <template>
   <Form>
-    <Field name="field" as="input" :rules="rules">
+    <Field name="field" as="input" :rules="rules" />
     <ErrorMessage name="field" />
   </Form>
 </template>
-
 
 <script>
 import { Field, Form, ErrorMessage } from 'vee-validate';
@@ -352,15 +351,15 @@ export default {
   components: {
     Field,
     Form,
-    ErrorMessage
+    ErrorMessage,
   },
   data() {
     const rules = yup.string().required();
 
     return {
-      rules
+      rules,
     };
-  }
+  },
 };
 </script>
 ```

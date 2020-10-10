@@ -11,7 +11,7 @@ The `<Field />` component is an extremely flexible component that makes renderin
 
 ```vue
 <template>
-  <Field name="field" type="text">
+  <Field name="field" type="text" />
 </template>
 
 <script>
