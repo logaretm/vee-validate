@@ -96,5 +96,7 @@ type useForm = (
   handleReset: (e: Event) => void; // Resets all fields' errors and meta
   handleSubmit: (cb: Function) => () => void; // Creates a submission handler that calls the cb only after successful validation with the form values
   submitForm: (e: Event) => void; // Forces submission of a form after successful validation (calls e.target.submit())
+  setErrors: (errors: Record<string, string>) => void; // Sets error messages for fields
+  setFieldError: (field: string, errorMessage: string) => void; // Sets an error message for a field
 };
 ```

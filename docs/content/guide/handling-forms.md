@@ -380,4 +380,113 @@ If you are using the composition API with `setup` function, you could create the
 
 </doc-tip>
 
+## Setting Errors Manually
+
+Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example a `unique` email validation is complex to implement on the client-side, which is why the `<Form />` component and `useForm()` function allow you to set errors manually.
+
+You can set messages for fields by using either `setFieldError` which sets an error message for one field at a time, and the `setErrors` function which allows you set error messages for multiple fields at once.
+
+Both functions are available as a return value from `useForm` and on the `Form` component scoped slot props, and also on the `Form` component instance which enables you to use it with template `$refs`, and also for added convenience on the `submit` event handler since it would be the most common place for its usage.
+
+Here are a few snippets showcasing it's usage in these various scenarios:
+
+**Using scoped slot props (recommended)**
+
+```vue
+<Form v-slot="{ setFieldError, setErrors }">
+  <Field name="email" as="input">
+  <ErrorMessage name="email" />
+
+  <Field name="password" as="input">
+  <ErrorMessage name="password" />
+
+  <button type="button" @click="setFieldError('email', 'nope')">Set Single Error</button>
+  <button type="button" @click="setErrors({ email: 'nope', password: 'wrong' })">
+    Set Multiple Errors
+  </button>
+</Form>
+```
+
+**Using submit callback (recommended)**
+
+```vue
+<template>
+<Form @submit="onSubmit">
+  <Field name="email" as="input">
+  <ErrorMessage name="email" />
+
+  <Field name="password" as="input">
+  <ErrorMessage name="password" />
+
+  <button>Submit</button>
+</Form>
+</template>
+
+<script>
+export default {
+  // ...
+  methods :{
+    onSubmit(values, { form }) {
+      // Submit the values...
+
+      // set single field error
+      form.setFieldError('email', 'this email is already taken');
+
+      // set multiple errors
+      form.setErrors({
+        email: 'this field is already taken',
+        password: 'someone already has this password',
+      });
+    }
+  }
+};
+</script>
+```
+
+**Using template `$refs`**
+
+```vue
+<template>
+<Form @submit="onSubmit" ref="myForm">
+  <Field name="email" as="input">
+  <ErrorMessage name="email" />
+
+  <Field name="password" as="input">
+  <ErrorMessage name="password" />
+
+  <button>Submit</button>
+</Form>
+</template>
+
+<script>
+export default {
+  // ...
+  methods :{
+    onSubmit(values) {
+      // Submit the values...
+
+      // if API returns errors
+      this.$refs.myForm.setFieldError('email', 'this email is already taken');
+      this.$refs.myForm.setErrors({
+        email: 'this field is already taken',
+        password: 'someone already has this password',
+      });
+    }
+  }
+};
+</script>
+```
+
+<doc-tip title="Avoid Template $refs" type="warn">
+
+Always try to avoid using the template `$refs` to gain access to the `<Form />` component methods, template `$refs` are designed to be an escape hatch of sorts when all else fails.
+
+So treat them as such and don't reach out for template `$refs` if you can help it.
+
+</doc-tip>
+
+**With useForm composable**
+
+For information on how to use `setErrors` and `setFieldError` with `useForm` composable function, [check the API reference](/api/use-form)
+
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
