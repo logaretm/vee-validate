@@ -1216,4 +1216,43 @@ describe('<Form />', () => {
     await flushPromises();
     expect(error.textContent).toBe('WRONG');
   });
+
+  test('sets individual field value with setFieldValue()', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm ref="form">
+        <Field id="email" name="email" as="input" />
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const value = 'example@gmail.com';
+    const email = wrapper.$el.querySelector('#email');
+    (wrapper.$refs as any)?.form.setFieldValue('email', value);
+    await flushPromises();
+    expect(email.value).toBe(value);
+  });
+
+  test('sets multiple fields values with setValues()', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm ref="form">
+        <Field id="email" name="email" as="input" />
+        <Field id="password" name="password" as="input" />
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const values = {
+      email: 'example@gmail.com',
+      password: '12345',
+    };
+    const inputs = wrapper.$el.querySelectorAll('input');
+    (wrapper.$refs as any)?.form.setValues(values);
+    await flushPromises();
+    expect(inputs[0].value).toBe(values.email);
+    expect(inputs[1].value).toBe(values.password);
+  });
 });
