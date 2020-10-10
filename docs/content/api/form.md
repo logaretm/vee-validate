@@ -112,15 +112,19 @@ While not recommended, you can make the `Form` component a renderless component 
 
 The default slot gives you access to the following props:
 
-| Scoped Prop  | Type                         | Description                                                                                                               |
-| :----------- | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| errors       | `Record<string, string>`     | The first error message of each field, the object keys are the fields names                                               |
-| meta         | `Record<string, boolean>`    | An aggregate of the [FieldMeta](/api/field#fieldmeta) for the fields within the form                                      |
-| values       | `Record<string, any>`        | The current field values                                                                                                  |
-| isSubmitting | `boolean`                    | True while the submission handler for the form is being executed                                                          |
-| validate     | `Function`                   | Validates the form                                                                                                        |
-| handleSubmit | `(cb: Function) => Function` | Creates a submission handler that disables the native form submissions and executes the callback if the validation passes |
-| handleReset  | `Function`                   | Resets and form and executes any `onReset` listeners on the component                                                     |
-| submitForm   | `Function`                   | Validates the form and triggers the `submit` event on the form, useful for non-SPA applications                           |
+| Scoped Prop   | Type                         | Description                                                                                                               |
+| :------------ | :--------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| errors        | `Record<string, string>`     | The first error message of each field, the object keys are the fields names                                               |
+| meta          | `Record<string, boolean>`    | An aggregate of the [FieldMeta](/api/field#fieldmeta) for the fields within the form                                      |
+| values        | `Record<string, any>`        | The current field values                                                                                                  |
+| isSubmitting  | `boolean`                    | True while the submission handler for the form is being executed                                                          |
+| validate      | `Function`                   | Validates the form                                                                                                        |
+| handleSubmit  | `(cb: Function) => Function` | Creates a submission handler that disables the native form submissions and executes the callback if the validation passes |
+| handleReset   | `Function`                   | Resets and form and executes any `onReset` listeners on the component                                                     |
+| submitForm    | `Function`                   | Validates the form and triggers the `submit` event on the form, useful for non-SPA applications                           |
+| setFieldError | `Function`                   | Sets an error message on a field                                                                                          |
+| setErrors     | `Function`                   | Sets error message for the specified fields                                                                               |
+| setFieldValue | `Function`                   | Sets a field's value, triggers validation                                                                                 |
+| setValues     | `Function`                   | Sets the specified fields values, triggers validation on those fields                                                     |
 
 Check the sample above for rendering with scoped slots
