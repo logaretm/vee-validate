@@ -57,7 +57,7 @@ export const Form = defineComponent({
       // FIXME: Hacky but cute way to expose some stuff to the rendered instance
       // getCurrentInstance doesn't work with render fns, it returns the wrong instance
       // we want to expose setFieldError and setErrors
-      if (!this.setErrors) {
+      if (!('setErrors' in this)) {
         this.setFieldError = setFieldError;
         this.setErrors = setErrors;
         this.setFieldValue = setFieldValue;
