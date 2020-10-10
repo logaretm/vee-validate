@@ -53,8 +53,10 @@ export const Form = defineComponent({
       }
     }
 
-    function handleScopedSlotSubmit(evt: Event, onSubmit: SubmissionHandler) {
-      return handleSubmit(onSubmit)(evt);
+    function handleScopedSlotSubmit(evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) {
+      const onSuccess = typeof evt === 'function' && !onSubmit ? evt : onSubmit;
+
+      return handleSubmit(onSuccess)(evt);
     }
 
     return function renderForm(this: any) {
