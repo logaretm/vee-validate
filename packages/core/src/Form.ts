@@ -26,7 +26,18 @@ export const Form = defineComponent({
   },
   setup(props, ctx) {
     const initialValues = toRef(props, 'initialValues');
-    const { errors, validate, handleSubmit, handleReset, values, meta, isSubmitting, submitForm } = useForm({
+    const {
+      errors,
+      validate,
+      handleSubmit,
+      handleReset,
+      values,
+      meta,
+      isSubmitting,
+      submitForm,
+      setErrors,
+      setFieldError,
+    } = useForm({
       validationSchema: props.validationSchema,
       initialValues,
       validateOnMount: props.validateOnMount,
@@ -50,6 +61,8 @@ export const Form = defineComponent({
         handleSubmit,
         handleReset,
         submitForm,
+        setErrors,
+        setFieldError,
       });
 
       if (!props.as) {

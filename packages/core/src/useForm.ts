@@ -242,11 +242,37 @@ export function useForm(opts?: FormOptions) {
     }
   );
 
+  // Trigger initial validation
   onMounted(() => {
     if (opts?.validateOnMount) {
       validate();
     }
   });
+
+  /**
+   * Manually sets an error message on a specific field
+   */
+  function setFieldError(field: string, message: string) {
+    let fieldInstance = fieldsById.value[field];
+    if (!fieldInstance) {
+      return;
+    }
+
+    if (Array.isArray(fieldInstance)) {
+      fieldInstance = fieldInstance[0];
+    }
+
+    fieldInstance.setValidationState({ errors: [message] });
+  }
+
+  /**
+   * Sets errors for the fields specified in the object
+   */
+  function setErrors(fields: Record<string, string>) {
+    Object.keys(fields).forEach(field => {
+      setFieldError(field, fields[field]);
+    });
+  }
 
   return {
     errors,
@@ -258,6 +284,8 @@ export function useForm(opts?: FormOptions) {
     handleReset,
     handleSubmit,
     submitForm,
+    setFieldError,
+    setErrors,
   };
 }
 
