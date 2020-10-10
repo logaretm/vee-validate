@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.7](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.6...vee-validate@4.0.0-beta.7) (2020-10-10)
+
+
+### Bug Fixes
+
+* avoid accessing properties in form directly to avoid warninings ([c5627af](https://github.com/logaretm/vee-validate/commit/c5627af64b252c8f7ec18e7f0a4296f315c7bf99))
+* update the handleSubmit signature ([#2954](https://github.com/logaretm/vee-validate/issues/2954)) ([d17517d](https://github.com/logaretm/vee-validate/commit/d17517daf692c48ac4fa1cfce5ac0bb051e73d2e))
+
+
+
+
+
 # [4.0.0-beta.6](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.5...vee-validate@4.0.0-beta.6) (2020-10-10)
 
 
