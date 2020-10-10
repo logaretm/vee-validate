@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.6](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.5...vee-validate@4.0.0-beta.6) (2020-10-10)
+
+
+### Features
+
+* form and fields values setters ([#2949](https://github.com/logaretm/vee-validate/issues/2949)) ([cc2cb41](https://github.com/logaretm/vee-validate/commit/cc2cb413dfa23aefeb8be6e4bf7fa17927e0e1ce))
+* reactive initial form values ([#2946](https://github.com/logaretm/vee-validate/issues/2946)) ([ac2c68f](https://github.com/logaretm/vee-validate/commit/ac2c68fdbfb7062674f8294a1f0f6d33fc8792b3))
+
+
+
+
+
 # [4.0.0-beta.5](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.4...vee-validate@4.0.0-beta.5) (2020-10-08)
 
 
