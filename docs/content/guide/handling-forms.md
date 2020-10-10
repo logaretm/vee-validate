@@ -140,7 +140,7 @@ The `handleSubmit` slot prop is probably the most common method you will use to 
 
 ```vue
 <template>
-  <VeeForm v-slot="{ handleSubmit }" :validation-schema="schema">
+  <VeeForm v-slot="{ handleSubmit }" :validation-schema="schema" as="div">
     <form @submit="handleSubmit(onSubmit)">
       <Field name="email" as="input">
       <Field name="name" as="input" type="email">
@@ -188,7 +188,7 @@ Alternatively if you plan to submit forms natively which will cause a page "relo
 
 ```vue
 <template>
-  <VeeForm v-slot="{ submitForm }" :validation-schema="schema">
+  <VeeForm v-slot="{ submitForm }" :validation-schema="schema" as="div">
     <form @submit="submitForm" method="post" action="/api/users/">
       <Field name="email" as="input">
       <Field name="name" as="input" type="email">
