@@ -30,48 +30,6 @@ export default {
 };
 ```
 
-## Recipes
-
-These are some of the common scenarios that you will encounter with `useForm`.
-
-### Creating Custom Form Components
-
-If you are building your own UI library and would like to create similar component to the `<Form />` component, all you have to do is to use the `useForm` function and it will automatically tell child components that it can act as a form for them and will automatically associate the child components that use `useField` with it.
-
-```vue
-<template>
-  <div>
-    <slot />
-
-    <button @click="onSubmit">Submit</button>
-  </div>
-</template>
-
-<script>
-import { useForm } from 'vee-validate';
-import * as yup from 'yup';
-
-export default {
-  name: 'CustomForm',
-  props: ['schema'],
-  setup({ schema }) {
-    const { handleSubmit } = useForm({
-      validationSchema: schema,
-    });
-    const onSubmit = handleSubmit(function (values) {
-      // Do whatever you want with the values
-    });
-
-    return {
-      onSubmit,
-    };
-  },
-};
-</script>
-```
-
-And in your custom inputs you can use `useField` or even use the `<Field />` component and they will be automatically associated with the form. Under the hood this is done using `provide/inject` API of Vue.js.
-
 ## API Reference
 
 The full signature of the `useForm` function looks like this:

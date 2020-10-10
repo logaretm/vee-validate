@@ -56,40 +56,6 @@ export default {
 };
 ```
 
-## Recipes
-
-These are some of the common scenarios that you will encounter with `useField`.
-
-### Controlling Validation Events
-
-You will use the `handleChange` function and bind it to the event you want to validate on:
-
-```vue
-<template>
-  <div>
-    <input :value="value" @change="handleChange" />
-    <span>{{ errorMessage }}</span>
-  </div>
-</template>
-
-<script>
-import { useField } from 'vee-validate';
-import * as yup from 'yup';
-
-export default {
-  setup() {
-    const { value, errorMessage, handleChange } = useField('name', yup.string().required().email());
-
-    return {
-      value,
-      errorMessage,
-      handleChange,
-    };
-  },
-};
-</script>
-```
-
 ## API Reference
 
 The full signature of the `useField` function looks like this:
