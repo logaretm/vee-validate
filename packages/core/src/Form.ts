@@ -53,6 +53,10 @@ export const Form = defineComponent({
       }
     }
 
+    function handleScopedSlotSubmit(evt: Event, onSubmit: SubmissionHandler) {
+      return handleSubmit(onSubmit)(evt);
+    }
+
     return function renderForm(this: any) {
       // FIXME: Hacky but cute way to expose some stuff to the rendered instance
       // getCurrentInstance doesn't work with render fns, it returns the wrong instance
@@ -70,7 +74,7 @@ export const Form = defineComponent({
         values: values,
         isSubmitting: isSubmitting.value,
         validate,
-        handleSubmit,
+        handleSubmit: handleScopedSlotSubmit,
         handleReset,
         submitForm,
         setErrors,
