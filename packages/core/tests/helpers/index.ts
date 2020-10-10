@@ -4,16 +4,6 @@ import { Field, Form } from '@vee-validate/core';
 export function mount(component: Record<string, any>) {
   const app = createApp(component);
   // app.config.devtools = false;
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  app.config.warnHandler = () => {};
-  app.config.errorHandler = err => {
-    if ((err as Error).message === 'data is not defined') {
-      return;
-    }
-
-    // eslint-disable-next-line no-console
-    console.error(err);
-  };
 
   document.body.innerHTML = `<div id="app"></div>`;
 
