@@ -90,16 +90,16 @@ When using `v-slot` on the `Field` component you no longer have to provide an `a
 
 The default slot gives you access to the following props:
 
-| Scoped Prop  | Type                     | Description                                                                                                                  |
-| :----------- | :----------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| field        | `FieldBindingObject`     | A collection of listeners and attributes that handles the validation cycle, check the [type reference](#fieldbindingobject). |
-| aria         | `Record<string, string>` | Aria-attributes that improves a11y for the field                                                                             |
-| meta         | `FieldMeta`              | A collection of boolean values to help manage field UI across different states, check the [FieldMeta reference](#fieldmeta)  |
-| errors       | `string[]`               | The field's error messages                                                                                                   |
-| errorMessage | `string`                 | The first error message in `errors` messages                                                                                 |
-| validate     | `Function`               | Validates the field's current value and updates its validation state messages                                                |
-| reset        | `Function`               | Resets the validation state of the field                                                                                     |
-| handleChange | `Function`               | Updates the field current value and associated field meta                                                                    |
+| Scoped Prop  | Type                                  | Description                                                                                                                  |
+| :----------- | :------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------- |
+| field        | `FieldBindingObject`                  | A collection of listeners and attributes that handles the validation cycle, check the [type reference](#fieldbindingobject). |
+| aria         | `Record<string, string>`              | Aria-attributes that improves a11y for the field                                                                             |
+| meta         | `FieldMeta`                           | A collection of boolean values to help manage field UI across different states, check the [FieldMeta reference](#fieldmeta)  |
+| errors       | `string[]`                            | The field's error messages                                                                                                   |
+| errorMessage | `string`                              | The first error message in `errors` messages                                                                                 |
+| validate     | `() => Promise<{ errors: string[] }>` | Validates the field's current value and updates its validation state messages                                                |
+| reset        | `() => void`                          | Resets the validation state of the field                                                                                     |
+| handleChange | `(evt: Event \| any) => void`         | Updates the field current value and associated field meta                                                                    |
 
 Check the sample above for rendering with scoped slots
 
