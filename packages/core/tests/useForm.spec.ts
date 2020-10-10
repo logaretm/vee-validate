@@ -5,7 +5,7 @@ import { mountWithHoc } from './helpers';
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
 
-  test('sets individual field errors', async () => {
+  test('sets individual field error message', async () => {
     mountWithHoc({
       setup() {
         const { setFieldError } = useForm();
@@ -30,7 +30,7 @@ describe('useForm()', () => {
     expect(error?.textContent).toBe('WRONG');
   });
 
-  test('sets multiple field errors', async () => {
+  test('sets multiple field error messages', async () => {
     mountWithHoc({
       setup() {
         const { setErrors } = useForm();

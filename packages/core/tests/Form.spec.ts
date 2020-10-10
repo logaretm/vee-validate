@@ -1151,4 +1151,49 @@ describe('<Form />', () => {
     expect(emailError.textContent).toBe('email is a required field');
     expect(passwordError.textContent).toBe('password is a required field');
   });
+
+  test('sets individual field error message with setFieldError()', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm ref="form" v-slot="{ errors }">
+        <Field id="email" name="email" as="input" />
+        <span id="emailErr">{{ errors.email }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const emailError = wrapper.$el.querySelector('#emailErr');
+    (wrapper.$refs as any)?.form.setFieldError('email', 'WRONG');
+    await flushPromises();
+
+    expect(emailError.textContent).toBe('WRONG');
+  });
+
+  test('sets multiple field error messages with setErrors()', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm ref="form" v-slot="{ errors }">
+        <Field id="email" name="email" as="input" />
+        <span id="emailErr">{{ errors.email }}</span>
+
+        <Field id="password" name="password" as="input" type="password" />
+        <span id="passwordErr">{{ errors.password }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const emailError = wrapper.$el.querySelector('#emailErr');
+    const passwordError = wrapper.$el.querySelector('#passwordErr');
+
+    (wrapper.$refs as any)?.form.setErrors({
+      email: 'WRONG',
+      password: 'WRONG AGAIN',
+    });
+    await flushPromises();
+
+    expect(emailError.textContent).toBe('WRONG');
+    expect(passwordError.textContent).toBe('WRONG AGAIN');
+  });
 });

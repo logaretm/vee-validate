@@ -51,7 +51,16 @@ export const Form = defineComponent({
       }
     }
 
-    return () => {
+    return function renderForm(this: any) {
+      // FIXME: Hacky but cute way to expose some stuff to the rendered instance
+      // getCurrentInstance doesn't work with render fns, it returns the wrong instance
+      // we want to expose setFieldError and setErrors
+      if (!this.setErrors) {
+        console.log('Setting it');
+        this.setFieldError = setFieldError;
+        this.setErrors = setErrors;
+      }
+
       const children = normalizeChildren(ctx, {
         meta: meta.value,
         errors: errors.value,
