@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import { defineRule } from '@vee-validate/core';
 import { mountWithHoc, setValue, setChecked } from './helpers';
 import * as yup from 'yup';
-import { reactive, ref, Ref } from 'vue';
+import { onErrorCaptured, reactive, ref, Ref } from 'vue';
 
 describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
@@ -172,7 +172,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm :initialValues="initialValues" @submit="submit" as="form">
+      <VForm :initialValues="initialValues" as="form">
         <Field rules="required" name="field" as="input" />
 
         <button id="submit">Submit</button>
@@ -200,7 +200,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm :initialValues="initialValues" @submit="submit" as="form">
+      <VForm :initialValues="initialValues" as="form">
         <Field rules="required" name="field1" as="input" />
         <Field rules="required" name="field2" as="input" />
 
@@ -240,7 +240,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm :initialValues="initialValues" @submit="submit" as="form">
+      <VForm :initialValues="initialValues" as="form">
         <Field rules="required" name="field1" as="input" />
         <Field rules="required" name="field2" as="input" />
 
@@ -272,7 +272,7 @@ describe('<Form />', () => {
     const submitMock = jest.fn();
     const wrapper = mountWithHoc({
       template: `
-      <VForm @submit="submit" as="form" v-slot="{ errors }">
+      <VForm as="form" v-slot="{ errors }">
         <Field name="field" rules="required" as="input" />
         <span id="error">{{ errors.field }}</span>
 
@@ -343,7 +343,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors }">
+      <VForm as="form" :validationSchema="schema" v-slot="{ errors }">
         <Field id="email" name="email" as="input" />
         <span id="emailErr">{{ errors.email }}</span>
 
@@ -394,7 +394,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors }">
+      <VForm as="form" :validationSchema="schema" v-slot="{ errors }">
         <Field name="field" as="input" />
         <span id="field">{{ errors.field }}</span>
         
@@ -429,7 +429,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors }">
+      <VForm as="form" :validationSchema="schema" v-slot="{ errors }">
         <Field id="password" name="password" as="input" />
         <span id="field">{{ errors.password }}</span>
         
@@ -526,15 +526,12 @@ describe('<Form />', () => {
       template: ` 
       <VForm  @submit="onSubmit"  >
       
-      <label v-for="(value, index) in values" v-bind:key="index">
-              <div v-if="showFields">
-
-        <Field name="test" as="input" type="radio" :value="value" /> {{value}}
-        </div>
-              </label>
-    
+        <label v-for="(value, index) in values" v-bind:key="index">
+          <div v-if="showFields">
+            <Field name="test" as="input" type="radio" :value="value" /> {{value}}
+          </div>
+        </label>
         <button>Submit</button>
-        <div>{{$result}}</div>
       </VForm>
     `,
     });
@@ -573,17 +570,14 @@ describe('<Form />', () => {
         };
       },
       template: ` 
-      <VForm  @submit="onSubmit" :initialValues="initialValues" >
+      <VForm  @submit="onSubmit" :initialValues="initialValues" >  
+        <label v-for="(value, index) in values" v-bind:key="index">
+          <div v-if="showFields">
+            <Field name="test.fieldOne" as="input" type="radio" :value="value" /> {{value}}
+          </div>
+        </label>
       
-      <label v-for="(value, index) in values" v-bind:key="index">
-              <div v-if="showFields">
-
-        <Field name="test.fieldOne" as="input" type="radio" :value="value" /> {{value}}
-        </div>
-              </label>
-    
         <button>Submit</button>
-        <div>{{$result}}</div>
       </VForm>
     `,
     });
@@ -781,7 +775,6 @@ describe('<Form />', () => {
         <Field name="drink" as="input" type="checkbox" value="Coke" rules="required" /> Coke
 
         <span id="errors">{{ errors }}</span>
-        <span id="values">{{ values }}</span>
 
         <button>ValidSate</button>
       </VForm>
@@ -926,9 +919,10 @@ describe('<Form />', () => {
     jest.useFakeTimers();
 
     let throws = false;
-    let errMsg = '';
     const wrapper = mountWithHoc({
       setup() {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onErrorCaptured(() => true);
         return {
           onSubmit() {
             return new Promise((resolve, reject) => {
@@ -940,10 +934,6 @@ describe('<Form />', () => {
               }
 
               setTimeout(resolve, 1000);
-            }).catch(err => {
-              errMsg = err.message;
-
-              throw err;
             });
           },
         };
@@ -973,7 +963,6 @@ describe('<Form />', () => {
     jest.advanceTimersByTime(501);
     await flushPromises();
     expect(submitting.textContent).toBe('false');
-    expect(errMsg).toBe('Sorry');
 
     jest.useRealTimers();
   });
@@ -981,7 +970,7 @@ describe('<Form />', () => {
   test('aggregated meta reactivity', async () => {
     const wrapper = mountWithHoc({
       template: `
-      <VForm @submit="onSubmit" v-slot="{ meta }">
+      <VForm v-slot="{ meta }">
         <Field name="field" as="input" rules="required"  />
 
         <button :disabled="meta.invalid" id="submit">Submit</button>
@@ -1129,7 +1118,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="submit" as="form" :validationSchema="schema" validateOnMount v-slot="{ errors }">
+      <VForm as="form" :validationSchema="schema" validateOnMount v-slot="{ errors }">
         <Field id="email" name="email" as="input" />
         <span id="emailErr">{{ errors.email }}</span>
 

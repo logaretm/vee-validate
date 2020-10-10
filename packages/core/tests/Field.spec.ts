@@ -71,7 +71,7 @@ describe('<Field />', () => {
         <select v-bind="field">
           <option>1</option>
         </select>
-      </select>
+      </Field>
     `,
     });
 
