@@ -139,7 +139,7 @@ When referencing errors using `errors` object on the `Form` slot props or the `E
 
 ### Referencing In Validation Schema
 
-Since vee-validate supports [form-level validation](/validation#form-level-validation), referncing the nested fields may vary depending on how you are specifying the schema.
+Since vee-validate supports [form-level validation](/guide/validation#form-level-validation), referencing the nested fields may vary depending on how you are specifying the schema.
 
 #### Using Yup
 

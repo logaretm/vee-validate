@@ -12,7 +12,7 @@ The only requirements are that the fields:
 
 <div class="features">
 
-- Must be inside a `Form` component or a [derivative (using useForm)](/../api/use-form#creating-custom-form-components)
+- Must be inside a `Form` component or a [derivative (using useForm)](/api/use-form#creating-custom-form-components)
 - Must Have the same `name` prop
 - Should have a `type` attribute
 
