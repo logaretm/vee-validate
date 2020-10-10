@@ -372,13 +372,108 @@ You can use `validateOnMount` prop present on the `<Form />` component to force 
 
 The `initialValues` prop on both the `<Form />` component and `useForm()` function can reactive value, meaning you can change the initial values after your component was created/mounted which is very useful if you are populating form fields from external API.
 
-Note that **only the pristine fields will be updated**. In other words, **only the fields that were not manipulated by the user will be updated**.
+Note that **only the pristine fields will be updated**. In other words, **only the fields that were not manipulated by the user will be updated**. For information on how to set the values for all fields regardless of their dirty status check the following [Setting Form Values section](#setting-form-values)
 
 <doc-tip title="Composition API">
 
 If you are using the composition API with `setup` function, you could create the `initialValues` prop using both [**reactive()**](https://v3.vuejs.org/api/basic-reactivity.html#reactive) and [**ref()**](https://v3.vuejs.org/api/refs-api.html#ref). vee-validate handles both cases.
 
 </doc-tip>
+
+## Setting Form Values
+
+You can set any field's value using either `setFieldValue` or `setValues`, both methods are exposed on the `<Form />` component scoped slot props, and in `useForm` return value, and as instance methods if so you can call them with template `$refs` and for an added convenience you can call them in the submit handler callback.
+
+**Using scoped slot props**
+
+```vue
+<Form v-slot="{ setFieldValue, setValues }">
+  <Field name="email" as="input">
+  <ErrorMessage name="email" />
+
+  <Field name="password" as="input">
+  <ErrorMessage name="password" />
+
+  <button type="button" @click="setFieldValue('email', 'test')">Set Field Value</button>
+  <button type="button" @click="setValues({ email: 'test', password: 'test12' })">
+    Set Multiple Values
+  </button>
+</Form>
+```
+
+**Using submit callback**
+
+```vue
+<template>
+<Form @submit="onSubmit">
+  <Field name="email" as="input">
+  <ErrorMessage name="email" />
+
+  <Field name="password" as="input">
+  <ErrorMessage name="password" />
+
+  <button>Submit</button>
+</Form>
+</template>
+
+<script>
+export default {
+  // ...
+  methods :{
+    onSubmit(values, { form }) {
+      // Submit the values...
+
+      // set single field value
+      form.setFieldValue('email', 'ummm@example.com');
+
+      // set multiple values
+      form.setValues({
+        email: 'ummm@example.com',
+        password: 'P@$$w0Rd',
+      });
+    }
+  }
+};
+</script>
+```
+
+**Using template `$refs`**
+
+```vue
+<template>
+<Form @submit="onSubmit" ref="myForm">
+  <Field name="email" as="input">
+  <ErrorMessage name="email" />
+
+  <Field name="password" as="input">
+  <ErrorMessage name="password" />
+
+  <button>Submit</button>
+</Form>
+</template>
+
+<script>
+export default {
+  // ...
+  methods :{
+    onSubmit(values) {
+      // Submit the values...
+
+      // set single field value
+      this.$refs.myForm.setFieldValue('email', 'ummm@example.com');
+
+      // set multiple values
+      this.$refs.myForm.setValues({
+        email: 'ummm@example.com',
+        password: 'P@$$w0Rd',
+      });
+    }
+  }
+};
+</script>
+```
+
+Note that setting any field's value using this way will trigger validation
 
 ## Setting Errors Manually
 

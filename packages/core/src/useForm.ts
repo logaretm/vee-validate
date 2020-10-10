@@ -81,6 +81,40 @@ export function useForm(opts?: FormOptions) {
     });
   }
 
+  /**
+   * Sets a single field value
+   */
+  function setFieldValue(path: string, value: any) {
+    const field = fieldsById.value[path];
+
+    // Multiple checkboxes, and only one of them got updated
+    if (Array.isArray(field) && field[0]?.type === 'checkbox' && !Array.isArray(value)) {
+      const oldVal = getFromPath(formValues, path);
+      const newVal = Array.isArray(oldVal) ? [...oldVal] : [];
+      const idx = newVal.indexOf(value);
+      idx >= 0 ? newVal.splice(idx, 1) : newVal.push(value);
+      setInPath(formValues, path, newVal);
+      return;
+    }
+
+    let newValue = value;
+    // Single Checkbox
+    if (field?.type === 'checkbox') {
+      newValue = getFromPath(formValues, path) === value ? undefined : value;
+    }
+
+    setInPath(formValues, path, newValue);
+  }
+
+  /**
+   * Sets multiple fields values
+   */
+  function setValues(fields: Record<string, any>) {
+    Object.keys(fields).forEach(field => {
+      setFieldValue(field, fields[field]);
+    });
+  }
+
   // a private ref for all form values
   const formValues = reactive<Record<string, any>>({});
   const controller: FormController = {
@@ -130,27 +164,8 @@ export function useForm(opts?: FormOptions) {
           return validateYupSchema(controller, shouldMutate);
         }
       : undefined,
-    setFieldValue(path: string, value: any) {
-      const field = fieldsById.value[path];
-
-      // Multiple checkboxes, and only one of them got updated
-      if (Array.isArray(field) && field[0]?.type === 'checkbox' && !Array.isArray(value)) {
-        const oldVal = getFromPath(formValues, path);
-        const newVal = Array.isArray(oldVal) ? [...oldVal] : [];
-        const idx = newVal.indexOf(value);
-        idx >= 0 ? newVal.splice(idx, 1) : newVal.push(value);
-        setInPath(formValues, path, newVal);
-        return;
-      }
-
-      let newValue = value;
-      // Single Checkbox
-      if (field?.type === 'checkbox') {
-        newValue = getFromPath(formValues, path) === value ? undefined : value;
-      }
-
-      setInPath(formValues, path, newValue);
-    },
+    setFieldValue,
+    setValues,
     setErrors,
     setFieldError,
   };
@@ -291,6 +306,8 @@ export function useForm(opts?: FormOptions) {
     submitForm,
     setFieldError,
     setErrors,
+    setFieldValue,
+    setValues,
   };
 }
 

@@ -37,6 +37,8 @@ export const Form = defineComponent({
       submitForm,
       setErrors,
       setFieldError,
+      setFieldValue,
+      setValues,
     } = useForm({
       validationSchema: props.validationSchema,
       initialValues,
@@ -58,6 +60,8 @@ export const Form = defineComponent({
       if (!this.setErrors) {
         this.setFieldError = setFieldError;
         this.setErrors = setErrors;
+        this.setFieldValue = setFieldValue;
+        this.setValues = setValues;
       }
 
       const children = normalizeChildren(ctx, {
@@ -71,6 +75,8 @@ export const Form = defineComponent({
         submitForm,
         setErrors,
         setFieldError,
+        setFieldValue,
+        setValues,
       });
 
       if (!props.as) {

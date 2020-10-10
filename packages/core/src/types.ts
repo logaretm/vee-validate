@@ -57,7 +57,8 @@ export interface FormController {
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<string, ValidationResult>>;
   setFieldValue: (path: string, value: any) => void;
   setFieldError: (field: string, message: string) => void;
-  setErrors: (errors: Record<string, string>) => void;
+  setErrors: (fields: Record<string, string>) => void;
+  setValues: (fields: Record<string, any>) => void;
 }
 
 type SubmissionContext = { evt: SubmitEvent; form: FormController };
