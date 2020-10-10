@@ -26,7 +26,18 @@ export const Form = defineComponent({
   },
   setup(props, ctx) {
     const initialValues = toRef(props, 'initialValues');
-    const { errors, validate, handleSubmit, handleReset, values, meta, isSubmitting, submitForm } = useForm({
+    const {
+      errors,
+      validate,
+      handleSubmit,
+      handleReset,
+      values,
+      meta,
+      isSubmitting,
+      submitForm,
+      setErrors,
+      setFieldError,
+    } = useForm({
       validationSchema: props.validationSchema,
       initialValues,
       validateOnMount: props.validateOnMount,
@@ -40,7 +51,15 @@ export const Form = defineComponent({
       }
     }
 
-    return () => {
+    return function renderForm(this: any) {
+      // FIXME: Hacky but cute way to expose some stuff to the rendered instance
+      // getCurrentInstance doesn't work with render fns, it returns the wrong instance
+      // we want to expose setFieldError and setErrors
+      if (!this.setErrors) {
+        this.setFieldError = setFieldError;
+        this.setErrors = setErrors;
+      }
+
       const children = normalizeChildren(ctx, {
         meta: meta.value,
         errors: errors.value,
@@ -50,6 +69,8 @@ export const Form = defineComponent({
         handleSubmit,
         handleReset,
         submitForm,
+        setErrors,
+        setFieldError,
       });
 
       if (!props.as) {
