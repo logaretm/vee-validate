@@ -15,12 +15,12 @@ export type KnownKeys<T> = {
   ? U
   : never;
 
-export interface ValidationFlags {
+export interface FieldMeta {
   touched: boolean;
   dirty: boolean;
   valid: boolean;
   pending: boolean;
-  changed: boolean;
+  initialValue?: any;
 }
 
 export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
@@ -28,8 +28,6 @@ export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
 export type SubmitEvent = Event & { target: HTMLFormElement };
 
 export type GenericValidateFunction = (value: any) => boolean | string | Promise<boolean | string>;
-
-export type Flag = keyof ValidationFlags;
 
 export interface FormController {
   register(field: any): void;

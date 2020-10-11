@@ -2,7 +2,7 @@ import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch } from '
 import type { ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
-  Flag,
+  FieldMeta,
   FormController,
   SubmissionHandler,
   GenericValidateFunction,
@@ -11,7 +11,7 @@ import {
   MaybeReactive,
 } from './types';
 import { unwrap } from './utils/refs';
-import { getFromPath, isYupValidator, setInPath, unsetPath } from './utils';
+import { getFromPath, isYupValidator, keysOf, setInPath, unsetPath } from './utils';
 import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
 
 interface FormOptions {
@@ -255,8 +255,6 @@ export function useForm(opts?: FormOptions) {
     }
   });
 
-  const meta = useFormMeta(fields);
-
   provide(FormSymbol, controller);
   provide(FormErrorsSymbol, errors);
   const initialValues = computed<Record<string, any>>(() => {
@@ -294,6 +292,7 @@ export function useForm(opts?: FormOptions) {
     }
   );
 
+  const meta = useFormMeta(fields, initialValues);
   // Trigger initial validation
   onMounted(() => {
     if (opts?.validateOnMount) {
@@ -318,24 +317,26 @@ export function useForm(opts?: FormOptions) {
   };
 }
 
-const MERGE_STRATEGIES: Record<Flag, 'every' | 'some'> = {
+const MERGE_STRATEGIES: Record<keyof Omit<FieldMeta, 'initialValue'>, 'every' | 'some'> = {
   valid: 'every',
   dirty: 'some',
   touched: 'some',
   pending: 'some',
-  changed: 'some',
 };
 
-function useFormMeta(fields: Ref<any[]>) {
-  const flags: Flag[] = Object.keys(MERGE_STRATEGIES) as Flag[];
-
+function useFormMeta(fields: Ref<any[]>, initialValues: MaybeReactive<Record<string, any>>) {
   return computed(() => {
-    return flags.reduce((acc, flag: Flag) => {
+    const flags = keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
       const mergeMethod = MERGE_STRATEGIES[flag];
       acc[flag] = fields.value[mergeMethod](field => field.meta[flag]);
 
       return acc;
     }, {} as Record<string, boolean>);
+
+    return {
+      initialValues: unwrap(initialValues),
+      ...flags,
+    };
   });
 }
 

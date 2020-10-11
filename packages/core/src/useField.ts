@@ -1,13 +1,6 @@
 import { watch, ref, Ref, isRef, reactive, computed, onMounted, watchEffect, inject, onBeforeUnmount } from 'vue';
 import { validate } from './validate';
-import {
-  FormController,
-  ValidationResult,
-  MaybeReactive,
-  GenericValidateFunction,
-  Flag,
-  ValidationFlags,
-} from './types';
+import { FormController, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
 import {
   normalizeRules,
   extractLocators,
@@ -16,6 +9,7 @@ import {
   hasCheckedAttr,
   getFromPath,
   setInPath,
+  keysOf,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FormInitialValues, FormSymbol } from './symbols';
@@ -237,8 +231,8 @@ function useValidationState({
   valueProp: any;
 }) {
   const errors: Ref<string[]> = ref([]);
-  const { reset: resetFlags, meta } = useMeta();
   const initialValue = getFromPath(unwrap(inject(FormInitialValues, {})), name) ?? initValue;
+  const { reset: resetFlags, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
     value.value = initialValue;
@@ -281,7 +275,6 @@ function useValidationState({
   // Updates the validation state with the validation result
   function patch(result: ValidationResult) {
     errors.value = result.errors;
-    meta.changed = initialValue !== value.value;
     meta.valid = !result.errors.length;
 
     return result;
@@ -308,13 +301,13 @@ function useValidationState({
 /**
  * Exposes meta flags state and some associated actions with them.
  */
-function useMeta() {
-  const initialMeta = (): ValidationFlags => ({
+function useMeta(initialValue: any) {
+  const initialMeta = (): FieldMeta => ({
     touched: false,
     dirty: false,
     valid: false,
     pending: false,
-    changed: false,
+    initialValue,
   });
 
   const meta = reactive(initialMeta());
@@ -324,8 +317,8 @@ function useMeta() {
    */
   function reset() {
     const defaults = initialMeta();
-    Object.keys(meta).forEach((key: string) => {
-      meta[key as Flag] = defaults[key as Flag];
+    keysOf(meta).forEach(key => {
+      meta[key] = defaults[key];
     });
   }
 

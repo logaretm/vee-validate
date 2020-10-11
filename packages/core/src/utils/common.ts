@@ -112,3 +112,10 @@ export function unsetPath(object: Record<string, any>, path: string): void {
     unset(pathValues[i - 1], keys[i - 1]);
   }
 }
+
+/**
+ * A typed version of Object.keys
+ */
+export function keysOf<TRecord extends Record<string, any>>(record: TRecord): (keyof TRecord)[] {
+  return Object.keys(record);
+}
