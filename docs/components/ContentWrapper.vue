@@ -26,6 +26,10 @@ export default {
     @apply text-lg;
   }
 
+  h5 {
+    @apply text-base;
+  }
+
   h1,
   h2,
   h3 {
@@ -34,7 +38,8 @@ export default {
 
   h2,
   h3,
-  h4 {
+  h4,
+  h5 {
     @apply font-semibold my-8 relative;
     transform: translateX(2ch);
     &::before {

@@ -90,53 +90,94 @@ When using `v-slot` on the `Field` component you no longer have to provide an `a
 
 The default slot gives you access to the following props:
 
-| Scoped Prop  | Type                                  | Description                                                                                                                  |
-| :----------- | :------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------- |
-| field        | `FieldBindingObject`                  | A collection of listeners and attributes that handles the validation cycle, check the [type reference](#fieldbindingobject). |
-| aria         | `Record<string, string>`              | Aria-attributes that improves a11y for the field                                                                             |
-| meta         | `FieldMeta`                           | A collection of boolean values to help manage field UI across different states, check the [FieldMeta reference](#fieldmeta)  |
-| errors       | `string[]`                            | The field's error messages                                                                                                   |
-| errorMessage | `string`                              | The first error message in `errors` messages                                                                                 |
-| validate     | `() => Promise<{ errors: string[] }>` | Validates the field's current value and updates its validation state messages                                                |
-| reset        | `() => void`                          | Resets the validation state of the field                                                                                     |
-| handleChange | `(evt: Event \| any) => void`         | Updates the field current value and associated field meta                                                                    |
+#### `meta: Record<string, boolean>`
 
-Check the sample above for rendering with scoped slots
+Contains useful information/flags about the field status.
 
-### Types
+#### `errors: string[]`
 
-#### FieldBindingObject
+An array containing all error messages for the field.
 
-The `field` prop on the scoped slot has the following typescript type:
+#### `errorMessage: ComputedRef<string | undefined>`
 
-```typescript
-interface FieldBindingObject {
-  name: string; // matches the name prop on the field component
-  disabled: boolean; // matches the disabled prop on the field component
-  onInput: Function; // updates the current value on `input` events
-  onChange: Function; // updates the current value on `change` event
-  ['onUpdate:modelValue']: Function; // updates the current value if the field uses a v-model
-  onBlur: Function; // Updates field meta state on blur
-  value: any; // the current field value
-}
+The first error in the `errors` array if available, a handy shortcut to display error messages
+
+#### `disabled: boolean`
+
+A reactive reference to the field's current disabled state, this allows/prevents the field from participating in it's owning form's validation state and doesn't block the submission handlers even if invalid.
+
+```js
+const { disabled } = useField('field', value => !!value);
+
+disabled.value; // true or false
 ```
 
-#### FieldMeta
+#### `reset: () => void`
 
-the `meta` prop on the scoped slot has the following typescript type:
+Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages. Doesn't change the field's value.
 
-```typescript
-interface FieldMeta {
-  untouched: boolean; // if the field wasn't blurred
-  touched: boolean; // if the field is blurred
-  dirty: boolean; // if the field was manipulated
-  pristine: boolean; // if the field wasn't manipulated
-  valid: boolean; // if the field is valid
-  invalid: boolean; // if the field isn't valid
-  passed: boolean; // if the field is valid and has been validated explicitly or by user manipulation
-  failed: boolean; // if the field is invalid and has been validated explicitly or by user manipulation
-  validated: boolean; // if the field was validated either explicitly or by user manipulation
-  pending: boolean; // if the field is pending async validation
-  changed: boolean; // if the field value was changed since it's initial value
-}
+```js
+const { reset } = useField('field', value => !!value);
+
+// reset the field validation state
+reset();
 ```
+
+#### `validate: () => Promise<{ errors: string[] }>`
+
+Validates the field's current value and returns a promise that resolves with an object containing the error messages emitted by the various rule(s).
+
+```js
+const { validate } = useField('field', value => !!value);
+
+// trigger validation
+await validate();
+```
+
+#### `handleChange: (evt: Event | any) => void`
+
+Updates the field value, and validates the field. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
+
+It sets the following meta flags: `dirty` and `pristine`
+
+#### `handleInput: (evt: Event | any) => void`
+
+Updates the field value, **but does not validate the field**. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
+
+It sets the following meta flags: `dirty` and `pristine`
+
+#### `handleBlur: (evt: Event | any) => void`
+
+Validates the field by default unless explicitly [specified by validation triggers](/guide/validation#customizing-validation-triggers). Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
+
+It sets the following meta flags: `touched` and `untouched`
+
+Because this handler doesn't set the field value, it might not report validation correctly if other events are unspecified or disabled.
+
+#### `field`
+
+Contains a few properties that you can use `v-bind` with to get all vee-validate features on that input. The following is a description of the properties
+
+##### `field.value: any`
+
+The field's current value, you can bind it with `value` prop on your inputs to sync both values. Don't use it with `v-model` otherwise your input will freeze.
+
+##### `field.disabled: boolean`
+
+The field's current disabled state, this allows/prevents the field from participating in it's owning form's validation state and doesn't block the submission handlers even if invalid.
+
+##### `field.name: string`
+
+The field name.
+
+##### `field.onBlur: Function[]`
+
+An array containing a few listeners for the `blur` event, it involves updating some meta information and triggers validation by default.
+
+##### `field.onInput: Function[]`
+
+An array containing a few listeners for the `input` event, it involves updating the field value and some meta information.
+
+##### `field.onChange: Function[]`
+
+An array containing a few listeners for the `change` event, it involves updating the field value and triggering validation.
