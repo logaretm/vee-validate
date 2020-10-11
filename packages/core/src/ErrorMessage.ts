@@ -1,6 +1,6 @@
 import { inject, h, defineComponent, computed, Ref } from 'vue';
 import { FormErrorsSymbol } from './symbols';
-import { normalizeChildren, genFieldErrorId } from './utils';
+import { normalizeChildren } from './utils';
 
 export const ErrorMessage = defineComponent({
   props: {
@@ -26,7 +26,6 @@ export const ErrorMessage = defineComponent({
 
       const tag = props.as;
       const attrs = {
-        id: genFieldErrorId(props.name),
         role: 'alert',
         ...ctx.attrs,
       };

@@ -1,7 +1,7 @@
 import { h, defineComponent, nextTick, toRef, SetupContext } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
-import { normalizeChildren, isHTMLTag, hasCheckedAttr, isFileInput } from './utils';
+import { normalizeChildren, hasCheckedAttr, isFileInput } from './utils';
 
 export const Field = defineComponent({
   name: 'Field',
@@ -49,7 +49,6 @@ export const Field = defineComponent({
       handleInput,
       reset,
       meta,
-      aria,
       checked,
     } = useField(props.name, rules, {
       validateOnMount: props.validateOnMount,
@@ -133,7 +132,6 @@ export const Field = defineComponent({
 
       return {
         field: fieldProps,
-        aria: aria.value,
         meta,
         errors: errors.value,
         errorMessage: errorMessage.value,
@@ -165,7 +163,6 @@ export const Field = defineComponent({
           {
             ...ctx.attrs,
             ...slotProps.field,
-            ...(isHTMLTag(tag) ? slotProps.aria : {}),
           },
           children
         );

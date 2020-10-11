@@ -85,10 +85,6 @@ type useField = (
   errors: Ref<string[]>; // all error messages
   errorMessage: Ref<string | undefined>; // the first error message
   disabled: Ref<boolean>; // if the field is currently disabled
-  aria: Ref<{
-    'aria-invalid': 'true' | 'false';
-    'aria-describedBy': string;
-  }>;
   reset: () => void; // resets errors and field meta
   validate: () => Promise<ValidationResult>; // validates and updates the errors and field meta
   handleChange: (e: Event) => void; // updates the value

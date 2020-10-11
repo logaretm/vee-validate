@@ -466,31 +466,6 @@ describe('<Field />', () => {
     expect(error.textContent).toBe('');
   });
 
-  test('generates aria invalid attribute', async () => {
-    const wrapper = mountWithHoc({
-      template: `
-      <div>
-        <Field name="field" rules="required" v-slot="{ aria, field }">
-          <input type="text" v-bind="{ ...field, ...aria }">
-        </Field>
-      </div>
-    `,
-    });
-
-    await flushPromises();
-    const input = wrapper.$el.querySelector('input');
-    expect(input.getAttribute('aria-invalid')).toBe('false');
-
-    setValue(input, '');
-    await flushPromises();
-
-    expect(input.getAttribute('aria-invalid')).toBe('true');
-
-    setValue(input, '1');
-    await flushPromises();
-    expect(input.getAttribute('aria-invalid')).toBe('false');
-  });
-
   test('yup abortEarly is set by bails global option', async () => {
     configure({
       bails: false,

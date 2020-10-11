@@ -334,7 +334,7 @@ and if you would like, you could display all error messages for your fields by i
 
 ### Using ErrorMessage component
 
-vee-validate offers an `<ErrorMessage />` component that displays your error messages in a convenient manner, as an added bonus vee-validate automatically adds some accessability attributes to both the `<Field />` and the associated `<ErrorMessage />` component.
+vee-validate offers an `<ErrorMessage />` component that displays your error messages in a convenient manner.
 
 ```vue
 <template>

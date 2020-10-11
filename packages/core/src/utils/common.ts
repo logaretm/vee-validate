@@ -1,9 +1,5 @@
 import { isEmptyContainer, isIndex, isNotNestedPath } from './assertions';
 
-export function genFieldErrorId(fieldName: string): string {
-  return `v_${fieldName}_error`;
-}
-
 function cleanupNonNestedPath(path: string) {
   if (isNotNestedPath(path)) {
     return path.replace(/\[|\]/gi, '');

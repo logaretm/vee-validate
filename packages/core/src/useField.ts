@@ -13,7 +13,6 @@ import {
   extractLocators,
   normalizeEventValue,
   unwrap,
-  genFieldErrorId,
   hasCheckedAttr,
   getFromPath,
   setInPath,
@@ -117,15 +116,12 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     return errors.value[0];
   });
 
-  const aria = useAriAttrs(name, meta);
-
   const field = {
     name,
     value: value,
     meta,
     errors,
     errorMessage,
-    aria,
     disabled,
     type,
     valueProp,
@@ -358,15 +354,6 @@ function useMeta() {
     meta,
     reset,
   };
-}
-
-function useAriAttrs(fieldName: string, meta: Record<string, boolean>) {
-  return computed(() => {
-    return {
-      'aria-invalid': meta.failed ? 'true' : 'false',
-      'aria-describedBy': genFieldErrorId(fieldName),
-    };
-  });
 }
 
 /**
