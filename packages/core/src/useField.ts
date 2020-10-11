@@ -76,7 +76,6 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
       // Must be updated regardless if a mutation is needed or not
       // FIXME: is this needed?
       meta.valid = !result.errors.length;
-      meta.invalid = !!result.errors.length;
       meta.pending = false;
 
       return result;
@@ -98,7 +97,6 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
 
     value.value = normalizeEventValue(e);
     meta.dirty = true;
-    meta.pristine = false;
     if (!validateOnValueUpdate) {
       return runValidationWithMutation();
     }
@@ -186,7 +184,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
 
     // For each dependent field, validate it if it was validated before
     dependencies.value.forEach(dep => {
-      if (dep in form.values && meta.validated) {
+      if (dep in form.values && meta.dirty) {
         runValidationWithMutation();
       }
     });
@@ -265,7 +263,6 @@ function useValidationState({
    */
   const handleBlur = () => {
     meta.touched = true;
-    meta.untouched = false;
   };
 
   /**
@@ -279,7 +276,6 @@ function useValidationState({
     }
 
     meta.dirty = true;
-    meta.pristine = false;
   };
 
   // Updates the validation state with the validation result
@@ -287,8 +283,6 @@ function useValidationState({
     errors.value = result.errors;
     meta.changed = initialValue !== value.value;
     meta.valid = !result.errors.length;
-    meta.invalid = !!result.errors.length;
-    meta.validated = true;
 
     return result;
   }
@@ -316,24 +310,14 @@ function useValidationState({
  */
 function useMeta() {
   const initialMeta = (): ValidationFlags => ({
-    untouched: true,
     touched: false,
     dirty: false,
-    pristine: true,
     valid: false,
-    invalid: false,
-    validated: false,
     pending: false,
     changed: false,
-    passed: false,
-    failed: false,
   });
 
   const meta = reactive(initialMeta());
-  watchEffect(() => {
-    meta.passed = meta.valid && meta.validated;
-    meta.failed = meta.invalid && meta.validated;
-  });
 
   /**
    * Resets the flag state
@@ -341,11 +325,6 @@ function useMeta() {
   function reset() {
     const defaults = initialMeta();
     Object.keys(meta).forEach((key: string) => {
-      // Skip these, since they are computed anyways
-      if (['passed', 'failed'].includes(key)) {
-        return;
-      }
-
       meta[key as Flag] = defaults[key as Flag];
     });
   }

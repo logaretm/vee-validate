@@ -320,16 +320,10 @@ export function useForm(opts?: FormOptions) {
 
 const MERGE_STRATEGIES: Record<Flag, 'every' | 'some'> = {
   valid: 'every',
-  invalid: 'some',
   dirty: 'some',
-  pristine: 'every',
   touched: 'some',
-  untouched: 'every',
   pending: 'some',
-  validated: 'every',
   changed: 'some',
-  passed: 'every',
-  failed: 'some',
 };
 
 function useFormMeta(fields: Ref<any[]>) {
@@ -380,7 +374,7 @@ async function validateYupSchema(
 
     result[fieldId] = fieldResult;
     const isGroup = Array.isArray(field);
-    const touched = isGroup ? field.some((f: any) => f.meta.validated) : field.meta.validated;
+    const touched = isGroup ? field.some((f: any) => f.meta.dirty) : field.meta.dirty;
     if (!shouldMutate && !touched) {
       return result;
     }

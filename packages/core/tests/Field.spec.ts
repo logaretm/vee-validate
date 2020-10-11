@@ -153,17 +153,14 @@ describe('<Field />', () => {
     const input = wrapper.$el.querySelector('input');
     const pre = wrapper.$el.querySelector('pre');
 
-    expect(pre.textContent).toContain('"untouched": true');
-    expect(pre.textContent).toContain('"pristine": true');
+    expect(pre.textContent).toContain('"touched": false');
+    expect(pre.textContent).toContain('"dirty": false');
     dispatchEvent(input, 'blur');
     await flushPromises();
     expect(pre.textContent).toContain('"touched": true');
-    expect(pre.textContent).toContain('"untouched": false');
-    expect(pre.textContent).toContain('"pristine": true');
+    expect(pre.textContent).toContain('"dirty": false');
     dispatchEvent(input, 'input');
     await flushPromises();
-    // eslint-disable-next-line jest/valid-expect
-    expect(pre.textContent).toContain('"pristine": false');
     expect(pre.textContent).toContain('"dirty": true');
   });
 
