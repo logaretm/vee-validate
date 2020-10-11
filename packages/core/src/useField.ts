@@ -126,17 +126,17 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     errors,
     errorMessage,
     aria,
+    disabled,
+    type,
+    valueProp,
+    checked,
+    idx: -1,
     reset,
     validate: runValidationWithMutation,
     handleChange,
     handleBlur,
     handleInput,
-    disabled,
     setValidationState: patch,
-    type,
-    valueProp,
-    checked,
-    idx: -1,
   };
 
   if (validateOnValueUpdate) {

@@ -38,6 +38,7 @@ The full signature of the `useForm` function looks like this:
 interface FormOptions {
   validationSchema?: any; // A yup schema, or a Record<string, any> containing valid rules as `useField`
   initialValues?: Record<string, any>;
+  validateOnMount?: boolean;
 }
 
 type useForm = (
@@ -57,6 +58,20 @@ type useForm = (
   handleReset: () => void; // Resets all fields' errors and meta
 };
 ```
+
+### Arguments
+
+#### `validationSchema?: Record<string, string | Function> | YupObjectSchema`
+
+Enables form-level validation, uses the specified schema to validate the fields. The schema can be either valid vee-validate global validators or functions or a yup object schema.
+
+#### `initialValues?: Record<string, any>`
+
+The initial values for the form, can be a reactive object or reference.
+
+#### `validateOnMount?: boolean`
+
+If true, it will trigger validation for all fields once the form component is mounted.
 
 ### Composable API
 
