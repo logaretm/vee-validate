@@ -44,7 +44,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     validateOnValueUpdate,
   } = normalizeOptions(name, opts);
 
-  const { meta, errors, handleBlur, handleInput, reset, patch, value, checked } = useValidationState({
+  const { meta, errors, handleBlur, handleInput, reset, setValidationState, value, checked } = useValidationState({
     name,
     // make sure to unwrap initial value because of possible refs passed in
     initValue: unwrap(initialValue),
@@ -73,7 +73,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
 
     meta.pending = false;
 
-    return patch(result);
+    return setValidationState(result);
   };
 
   // Common input/change event handler
@@ -113,7 +113,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     handleChange,
     handleBlur,
     handleInput,
-    setValidationState: patch,
+    setValidationState,
   };
 
   if (validateOnValueUpdate) {
@@ -262,7 +262,7 @@ function useValidationState({
   };
 
   // Updates the validation state with the validation result
-  function patch(result: ValidationResult) {
+  function setValidationState(result: ValidationResult) {
     errors.value = result.errors;
     meta.valid = !result.errors.length;
 
@@ -278,7 +278,7 @@ function useValidationState({
   return {
     meta,
     errors,
-    patch,
+    setValidationState,
     reset,
     handleBlur,
     handleInput,
