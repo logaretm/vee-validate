@@ -1,5 +1,5 @@
 import { watch, ref, Ref, isRef, reactive, computed, onMounted, watchEffect, inject, onBeforeUnmount } from 'vue';
-import { validate } from './validate';
+import { validate as validateValue } from './validate';
 import { FormController, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
 import {
   normalizeRules,
@@ -58,30 +58,23 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     return normalizeRules(nonYupSchemaRules || unwrap(rules));
   });
 
-  const runValidation = async (): Promise<ValidationResult> => {
+  const validate = async (): Promise<ValidationResult> => {
     meta.pending = true;
+    let result: ValidationResult;
     if (!form || !form.validateSchema) {
-      const result = await validate(value.value, normalizedRules.value, {
+      result = await validateValue(value.value, normalizedRules.value, {
         name: label,
         values: form?.values ?? {},
         bails,
       });
-
-      // Must be updated regardless if a mutation is needed or not
-      // FIXME: is this needed?
-      meta.valid = !result.errors.length;
-      meta.pending = false;
-
-      return result;
+    } else {
+      result = (await form.validateSchema())[name];
     }
 
-    const results = await form.validateSchema();
     meta.pending = false;
 
-    return results[name];
+    return patch(result);
   };
-
-  const runValidationWithMutation = () => runValidation().then(patch);
 
   // Common input/change event handler
   const handleChange = (e: unknown) => {
@@ -92,17 +85,13 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     value.value = normalizeEventValue(e);
     meta.dirty = true;
     if (!validateOnValueUpdate) {
-      return runValidationWithMutation();
+      return validate();
     }
   };
 
-  onMounted(() => {
-    runValidation().then(result => {
-      if (validateOnMount) {
-        patch(result);
-      }
-    });
-  });
+  if (validateOnMount) {
+    onMounted(validate);
+  }
 
   const errorMessage = computed(() => {
     return errors.value[0];
@@ -120,7 +109,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     checked,
     idx: -1,
     reset,
-    validate: runValidationWithMutation,
+    validate,
     handleChange,
     handleBlur,
     handleInput,
@@ -128,13 +117,13 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
   };
 
   if (validateOnValueUpdate) {
-    watch(value, runValidationWithMutation, {
+    watch(value, validate, {
       deep: true,
     });
   }
 
   if (isRef(rules)) {
-    watch(rules, runValidationWithMutation, {
+    watch(rules, validate, {
       deep: true,
     });
   }
@@ -179,7 +168,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     // For each dependent field, validate it if it was validated before
     dependencies.value.forEach(dep => {
       if (dep in form.values && meta.dirty) {
-        runValidationWithMutation();
+        return validate();
       }
     });
   });
