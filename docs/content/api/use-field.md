@@ -124,11 +124,19 @@ useField('password', yup.string().required().min(8));
 
 The following sections documents each available property on the `useField` composable.
 
-#### `name: string`
+<code-title level="4">
+
+`name: string`
+
+</code-title>
 
 The field name, this is a static string and cannot be changed.
 
-#### `value: Ref<any>`
+<code-title level="4">
+
+`value: Ref<any>`
+
+</code-title>
 
 A reactive reference to the field's current value, can be changed and will trigger validation by default unless disabled by the `validateOnValueUpdate` option.
 
@@ -140,7 +148,11 @@ value.value = 'hello world'; // sets the value and validates the field
 
 You can also bind it with `v-model` to get two-way value binding with validation.
 
-#### `meta: Record<string, boolean>`
+<code-title level="4">
+
+`meta: Record<string, boolean>`
+
+</code-title>
 
 Contains useful information/flags about the field status, should be treated as **read only**.
 
@@ -150,7 +162,11 @@ const { meta } = useField('field', value => !!value);
 meta; // { valid: true, invalid: false, dirty: true, .... }
 ```
 
-#### `errors: Ref<string[]>`
+<code-title level="4">
+
+`errors: Ref<string[]>`
+
+</code-title>
 
 A reactive reference containing all error messages for the field, should be treated as **read only**
 
@@ -160,7 +176,11 @@ const { errors } = useField('field', value => !!value);
 errors.value; // ['field is not valid']
 ```
 
-#### `errorMessage: ComputedRef<string | undefined>`
+<code-title level="4">
+
+`errorMessage: ComputedRef<string | undefined>`
+
+</code-title>
 
 A computed reference that returns the first error in the `errors` array, a handy shortcut to display error messages
 
@@ -170,7 +190,11 @@ const { errorMessage } = useField('field', value => !!value);
 errorMessage.value; // 'field is not valid' or undefined
 ```
 
-#### `disabled: Ref<boolean>`
+<code-title level="4">
+
+`disabled: Ref<boolean>`
+
+</code-title>
 
 A reactive reference to the field's current disabled state, this allows/prevents the field from participating in it's owning form's validation state and doesn't block the submission handlers even if invalid.
 
@@ -180,7 +204,11 @@ const { disabled } = useField('field', value => !!value);
 disabled.value; // true or false
 ```
 
-#### `reset: () => void`
+<code-title level="4">
+
+`reset: () => void`
+
+</code-title>
 
 Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages. Doesn't change the field's value.
 
@@ -191,7 +219,11 @@ const { reset } = useField('field', value => !!value);
 reset();
 ```
 
-#### `validate: () => Promise<{ errors: string[] }>`
+<code-title level="4">
+
+`validate: () => Promise<{ errors: string[] }>`
+
+</code-title>
 
 Validates the field's current value and returns a promise that resolves with an object containing the error messages emitted by the various rule(s).
 
@@ -202,7 +234,11 @@ const { validate } = useField('field', value => !!value);
 await validate();
 ```
 
-#### `handleChange: (evt: Event | any) => void`
+<code-title level="4">
+
+`handleChange: (evt: Event | any) => void`
+
+</code-title>
 
 Updates the field value, and validates the field. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
@@ -228,7 +264,11 @@ export default {
 </script>
 ```
 
-#### `handleInput: (evt: Event | any) => void`
+<code-title level="4">
+
+`handleInput: (evt: Event | any) => void`
+
+</code-title>
 
 Updates the field value, **but does not validate the field**. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
@@ -254,7 +294,11 @@ export default {
 </script>
 ```
 
-#### `handleBlur: (evt: Event | any) => void`
+<code-title level="4">
+
+`handleBlur: (evt: Event | any) => void`
+
+</code-title>
 
 Validates the field by default unless explicitly [specified by validation triggers](/guide/validation#customizing-validation-triggers). Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
@@ -280,7 +324,11 @@ export default {
 
 Because this event doesn't set the field value, it might not report validation correctly if other events are unspecified or disabled.
 
-#### `setValidationState: (state: { errors: string[] }) => void`
+<code-title level="4">
+
+`setValidationState: (state: { errors: string[] }) => void`
+
+</code-title>
 
 Sets the errors array for the fields and updates all the assoicated meta tags like `valid` and `invalid`, if the array is empty it is considered as marking the field valid.
 

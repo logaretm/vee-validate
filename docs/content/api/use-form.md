@@ -77,7 +77,11 @@ If true, it will trigger validation for all fields once the form component is mo
 
 The following sections documents each available property on the `useForm` composable.
 
-#### `errors: Ref<Record<string, string>>`
+<code-title level="4">
+
+`errors: Ref<Record<string, string>>`
+
+</code-title>
 
 An object that maps field names to their error messages, it only takes the first error message of each field if multiple exists.
 
@@ -98,7 +102,11 @@ Here is an example of its shape:
 
 Any fields without error messages will not be included in the object. So you can safety iterate over it with `Object.keys()` knowing all the included fields are invalid.
 
-#### `isSubmitting: Ref<boolean>`
+<code-title level="4">
+
+`isSubmitting: Ref<boolean>`
+
+</code-title>
 
 Indicates if the submission handler is still running, once it resolves/rejects it will be automatically set to false again.
 
@@ -108,7 +116,11 @@ const { isSubmitting } = useForm();
 isSubmitting.value; // true or false
 ```
 
-#### `meta: ComputedRef<Record<string, boolean>>`
+<code-title level="4">
+
+`meta: ComputedRef<Record<string, boolean>>`
+
+</code-title>
 
 A computed property that contains an aggregated meta information/flags reflecting the state of all the fields inside the form.
 
@@ -118,7 +130,11 @@ const { meta } = useForm();
 meta.value; // { valid: false, invalid: true, dirty: true, .... }
 ```
 
-#### `values: ComputedRef<Record<string, any>>`
+<code-title level="4">
+
+`values: ComputedRef<Record<string, any>>`
+
+</code-title>
 
 A computed property that contains the current form values, it will only contain the active (non-disabled) fields.
 
@@ -128,7 +144,11 @@ const { values } = useForm();
 values.value; // { email: 'something@gmail.com', .... }
 ```
 
-#### `setFieldError: (field: string, message: string) => void`
+<code-title level="4">
+
+`setFieldError: (field: string, message: string) => void`
+
+</code-title>
 
 Sets a field's error message, useful for setting messages form an API or that are not available as a validation rule.
 
@@ -140,7 +160,11 @@ setFieldError('email', 'this email is already taken');
 
 If you try to set an error for field doesn't exist, it will not affect the form's overall validity and will be ignored.
 
-#### `setErrors: (fields: Record<string, string>) => void`
+<code-title level="4">
+
+`setErrors: (fields: Record<string, string>) => void`
+
+</code-title>
 
 Sets multiple fields error messages, uses `setFieldError` internally.
 
@@ -153,7 +177,11 @@ setErrors({
 });
 ```
 
-#### `setFieldValue: (field: string, value: any) => void`
+<code-title level="4">
+
+`setFieldValue: (field: string, value: any) => void`
+
+</code-title>
 
 Sets a field's value, if a field does not exist it will not be reflected in the `values` ref. This will trigger validation on the field whose value changed.
 
@@ -163,7 +191,11 @@ const { setFieldValue } = useForm();
 setFieldValue('email', 'example@gmail.com');
 ```
 
-#### `setValues: (fields: Record<string, any>) => void`
+<code-title level="4">
+
+`setValues: (fields: Record<string, any>) => void`
+
+</code-title>
 
 Sets multiple fields values, will trigger validation for all the changed fields.
 
@@ -176,7 +208,11 @@ setValues({
 });
 ```
 
-#### `validate: () => Promise<boolean>`
+<code-title level="4">
+
+`validate: () => Promise<boolean>`
+
+</code-title>
 
 Validates all the fields and populates the `errors` object, returns a promise that resolves to a boolean indicating if the validation was successful or not
 
@@ -186,7 +222,11 @@ const { validate } = useForm();
 await validate(); // true or false
 ```
 
-#### `handleSubmit: (cb: (values: Record<string, any>, ctx: SubmissionContext )) => (evt?: Event) => Promise<void>`
+<code-title level="4">
+
+`handleSubmit: (cb: SubmissionHandler) => (evt?: Event) => Promise<void>`
+
+</code-title>
 
 This is a higher order function used to create `submit` event handlers, You shouldn't use it as a handler for the events directly but rather use it to create those handlers.
 
@@ -240,7 +280,11 @@ const onSubmit = handleSubmit((values, { evt, form }) => {
 });
 ```
 
-#### `submitForm: (evt: Event) => void`
+<code-title level="4">
+
+`submitForm: (evt: Event) => void`
+
+</code-title>
 
 Unlike `handleSubmit` this function can be used as an event handler for form `submit` event, it will prevent the propagation and submission of the forms using it as long as they are invalid. Once all the fields are valid it will submit the form with the native HTML behavior following the `form` element's `action` and `method` attributes.
 
@@ -268,7 +312,11 @@ export default {
 </script>
 ```
 
-#### `handleReset: () => void`
+<code-title level="4">
+
+`handleReset: () => void`
+
+</code-title>
 
 You can use this function as handler for the `reset` events on native form elements, it a
 

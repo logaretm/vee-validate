@@ -90,19 +90,35 @@ When using `v-slot` on the `Field` component you no longer have to provide an `a
 
 The default slot gives you access to the following props:
 
-#### `meta: Record<string, boolean>`
+<code-title level="4">
+
+`meta: Record<string, boolean>`
+
+</code-title>
 
 Contains useful information/flags about the field status.
 
-#### `errors: string[]`
+<code-title level="4">
+
+`errors: string[]`
+
+</code-title>
 
 An array containing all error messages for the field.
 
-#### `errorMessage: ComputedRef<string | undefined>`
+<code-title level="4">
+
+`errorMessage: ComputedRef<string | undefined>`
+
+</code-title>
 
 The first error in the `errors` array if available, a handy shortcut to display error messages
 
-#### `disabled: boolean`
+<code-title level="4">
+
+`disabled: boolean`
+
+</code-title>
 
 A reactive reference to the field's current disabled state, this allows/prevents the field from participating in it's owning form's validation state and doesn't block the submission handlers even if invalid.
 
@@ -112,7 +128,11 @@ const { disabled } = useField('field', value => !!value);
 disabled.value; // true or false
 ```
 
-#### `reset: () => void`
+<code-title level="4">
+
+`reset: () => void`
+
+</code-title>
 
 Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages. Doesn't change the field's value.
 
@@ -123,7 +143,11 @@ const { reset } = useField('field', value => !!value);
 reset();
 ```
 
-#### `validate: () => Promise<{ errors: string[] }>`
+<code-title level="4">
+
+`validate: () => Promise<{ errors: string[] }>`
+
+</code-title>
 
 Validates the field's current value and returns a promise that resolves with an object containing the error messages emitted by the various rule(s).
 
@@ -134,19 +158,31 @@ const { validate } = useField('field', value => !!value);
 await validate();
 ```
 
-#### `handleChange: (evt: Event | any) => void`
+<code-title level="4">
+
+`handleChange: (evt: Event | any) => void`
+
+</code-title>
 
 Updates the field value, and validates the field. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
 It sets the following meta flags: `dirty` and `pristine`
 
-#### `handleInput: (evt: Event | any) => void`
+<code-title level="4">
+
+`handleInput: (evt: Event | any) => void`
+
+</code-title>
 
 Updates the field value, **but does not validate the field**. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
 It sets the following meta flags: `dirty` and `pristine`
 
-#### `handleBlur: (evt: Event | any) => void`
+<code-title level="4">
+
+`handleBlur: (evt: Event | any) => void`
+
+</code-title>
 
 Validates the field by default unless explicitly [specified by validation triggers](/guide/validation#customizing-validation-triggers). Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
@@ -158,26 +194,50 @@ Because this handler doesn't set the field value, it might not report validation
 
 Contains a few properties that you can use `v-bind` with to get all vee-validate features on that input. The following is a description of the properties
 
-##### `field.value: any`
+<code-title level="5">
+
+`field.value: any`
+
+</code-title>
 
 The field's current value, you can bind it with `value` prop on your inputs to sync both values. Don't use it with `v-model` otherwise your input will freeze.
 
-##### `field.disabled: boolean`
+<code-title level="5">
+
+`field.disabled: boolean`
+
+</code-title>
 
 The field's current disabled state, this allows/prevents the field from participating in it's owning form's validation state and doesn't block the submission handlers even if invalid.
 
-##### `field.name: string`
+<code-title level="5">
+
+`field.name: string`
+
+</code-title>
 
 The field name.
 
-##### `field.onBlur: Function[]`
+<code-title level="5">
+
+`field.onBlur: Function[]`
+
+</code-title>
 
 An array containing a few listeners for the `blur` event, it involves updating some meta information and triggers validation by default.
 
-##### `field.onInput: Function[]`
+<code-title level="5">
+
+`field.onInput: Function[]`
+
+</code-title>
 
 An array containing a few listeners for the `input` event, it involves updating the field value and some meta information.
 
-##### `field.onChange: Function[]`
+<code-title level="5">
+
+`field.onChange: Function[]`
+
+</code-title>
 
 An array containing a few listeners for the `change` event, it involves updating the field value and triggering validation.
