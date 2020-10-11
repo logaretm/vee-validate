@@ -191,12 +191,18 @@ export function useForm(opts?: FormOptions) {
       // Check if its a grouped field (checkbox/radio)
       if (Array.isArray(fieldsById.value[field.name])) {
         const group = fieldsById.value[field.name];
-        acc[field.name] = unwrap((group.find((f: any) => unwrap(f.checked)) || field).errorMessage);
+        const message = unwrap((group.find((f: any) => unwrap(f.checked)) || field).errorMessage);
+        if (message) {
+          acc[field.name] = message;
+        }
 
         return acc;
       }
 
-      acc[field.name] = unwrap(field.errorMessage);
+      const message = unwrap(field.errorMessage);
+      if (message) {
+        acc[field.name] = message;
+      }
 
       return acc;
     }, {});
