@@ -140,6 +140,8 @@ export const Field = defineComponent({
         validate: validateField,
         reset,
         handleChange: onChangeHandler,
+        handleInput: onInputHandler,
+        handleBlur,
       };
     };
 
