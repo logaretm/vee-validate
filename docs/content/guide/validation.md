@@ -257,7 +257,8 @@ This might not be flexible enough for your needs, which is why you can specifica
 ```
 
 <doc-tip type="danger">
-  When using `handleChange` in scoped slot or with `useField`, make sure to pass the event object or the new value. Otherwise vee-validate won't pick up the new value.
+
+When using `handleChange` in scoped slot or with `useField`, make sure to pass the event object or the new value. Otherwise vee-validate won't pick up the new value.
 
 ```js
 handleChange(e);
