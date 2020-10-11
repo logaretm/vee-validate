@@ -62,7 +62,7 @@ type useForm = (
 
 The following sections documents each available property on the `useForm` composable.
 
-#### errors: Ref<Record<string, string>>
+#### `errors: Ref<Record<string, string>>`
 
 An object that maps field names to their error messages, it only takes the first error message of each field if multiple exists.
 
@@ -113,7 +113,7 @@ const { values } = useForm();
 values.value; // { email: 'something@gmail.com', .... }
 ```
 
-#### `setFieldError(field: string, message: string)`
+#### `setFieldError: (field: string, message: string) => void`
 
 Sets a field's error message, useful for setting messages form an API or that are not available as a validation rule.
 
@@ -125,7 +125,7 @@ setFieldError('email', 'this email is already taken');
 
 If you try to set an error for field doesn't exist, it will not affect the form's overall validity and will be ignored.
 
-#### `setErrors(fields: Record<string, string>)`
+#### `setErrors: (fields: Record<string, string>) => void`
 
 Sets multiple fields error messages, uses `setFieldError` internally.
 
@@ -138,7 +138,7 @@ setErrors({
 });
 ```
 
-#### `setFieldValue(field: string, value: any)`
+#### `setFieldValue: (field: string, value: any) => void`
 
 Sets a field's value, if a field does not exist it will not be reflected in the `values` ref. This will trigger validation on the field whose value changed.
 
@@ -148,7 +148,7 @@ const { setFieldValue } = useForm();
 setFieldValue('email', 'example@gmail.com');
 ```
 
-#### `setValues(fields: Record<string, any>)`
+#### `setValues: (fields: Record<string, any>) => void`
 
 Sets multiple fields values, will trigger validation for all the changed fields.
 
@@ -161,7 +161,7 @@ setValues({
 });
 ```
 
-#### `validate(): Promise<boolean>`
+#### `validate: () => Promise<boolean>`
 
 Validates all the fields and populates the `errors` object, returns a promise that resolves to a boolean indicating if the validation was successful or not
 
@@ -171,7 +171,7 @@ const { validate } = useForm();
 await validate(); // true or false
 ```
 
-#### `handleSubmit(cb: (values: Record<string, any>, ctx: SubmissionContext )) => (evt?: Event) => Promise<void>`
+#### `handleSubmit: (cb: (values: Record<string, any>, ctx: SubmissionContext )) => (evt?: Event) => Promise<void>`
 
 This is a higher order function used to create `submit` event handlers, You shouldn't use it as a handler for the events directly but rather use it to create those handlers.
 
@@ -225,7 +225,7 @@ const onSubmit = handleSubmit((values, { evt, form }) => {
 });
 ```
 
-#### `submitForm(evt: Event)`
+#### `submitForm: (evt: Event) => void`
 
 Unlike `handleSubmit` this function can be used as an event handler for form `submit` event, it will prevent the propagation and submission of the forms using it as long as they are invalid. Once all the fields are valid it will submit the form with the native HTML behavior following the `form` element's `action` and `method` attributes.
 
@@ -253,7 +253,7 @@ export default {
 </script>
 ```
 
-#### `handleReset() => void`
+#### `handleReset: () => void`
 
 You can use this function as handler for the `reset` events on native form elements, it a
 
