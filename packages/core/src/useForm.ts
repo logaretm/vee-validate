@@ -194,17 +194,14 @@ export function useForm(opts?: FormOptions) {
   const errors = computed(() => {
     return activeFields.value.reduce((acc: Record<string, string>, field) => {
       // Check if its a grouped field (checkbox/radio)
+      let message: string | undefined;
       if (Array.isArray(fieldsById.value[field.name])) {
         const group = fieldsById.value[field.name];
-        const message = unwrap((group.find((f: any) => unwrap(f.checked)) || field).errorMessage);
-        if (message) {
-          acc[field.name] = message;
-        }
-
-        return acc;
+        message = unwrap((group.find((f: any) => unwrap(f.checked)) || field).errorMessage);
+      } else {
+        message = unwrap(field.errorMessage);
       }
 
-      const message = unwrap(field.errorMessage);
       if (message) {
         acc[field.name] = message;
       }
