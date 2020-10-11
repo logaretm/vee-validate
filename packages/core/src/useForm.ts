@@ -115,6 +115,10 @@ export function useForm(opts?: FormOptions) {
     });
   }
 
+  const handleReset = () => {
+    fields.value.forEach((f: any) => f.reset());
+  };
+
   // a private ref for all form values
   const formValues = reactive<Record<string, any>>({});
   const controller: FormController = {
@@ -168,6 +172,7 @@ export function useForm(opts?: FormOptions) {
     setValues,
     setErrors,
     setFieldError,
+    reset: handleReset,
   };
 
   const validate = async () => {
@@ -207,10 +212,6 @@ export function useForm(opts?: FormOptions) {
       return acc;
     }, {});
   });
-
-  const handleReset = () => {
-    fields.value.forEach((f: any) => f.reset());
-  };
 
   const activeFormValues = computed(() => {
     return activeFields.value.reduce((formData: Record<string, any>, field) => {

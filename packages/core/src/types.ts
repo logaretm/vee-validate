@@ -59,6 +59,7 @@ export interface FormController {
   setFieldError: (field: string, message: string) => void;
   setErrors: (fields: Record<string, string>) => void;
   setValues: (fields: Record<string, any>) => void;
+  reset: () => void;
 }
 
 type SubmissionContext = { evt: SubmitEvent; form: FormController };
