@@ -20,6 +20,7 @@
     "regex": "{_field_} tulee olla kelvollinen säännöllinen lauseke",
     "required": "{_field_} on pakollinen kenttä",
     "required_if": "{_field_} on pakollinen kenttä",
-    "size": "{_field_} tulee olla vähemmän kuin {size}KB"
+    "size": "{_field_} tulee olla vähemmän kuin {size}KB",
+    "double": "{_field_} on oltava kelvollinen desimaali"
   }
 }

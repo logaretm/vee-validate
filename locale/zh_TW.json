@@ -25,6 +25,7 @@
     "regex": "{_field_} 的格式錯誤",
     "required": "{_field_} 為必填",
     "required_if": "{_field_} 為必填",
-    "size": "{_field_} 的檔案須小於 {size}KB"
+    "size": "{_field_} 的檔案須小於 {size}KB",
+    "double": "{_field_}字段必須為有效的小數"
   }
 }

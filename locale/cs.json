@@ -23,6 +23,7 @@
     "regex": "Pole {_field_} není vyplněno správně",
     "required": "Pole {_field_} je povinné",
     "required_if": "Pole {_field_} je povinné",
-    "size": "{_field_} musí být menší než {size}"
+    "size": "{_field_} musí být menší než {size}",
+    "double": "Pole {_field_} musí být platné desetinné číslo"
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import alpha from './alpha';
 import alpha_dash from './alpha_dash';
 import alpha_num from './alpha_num';
@@ -25,6 +26,7 @@ import regex from './regex';
 import required from './required';
 import required_if from './required_if';
 import size from './size';
+import double from './double';
 
 export {
   alpha_dash,
@@ -53,5 +55,6 @@ export {
   regex,
   required,
   required_if,
-  size
+  size,
+  double
 };

@@ -23,6 +23,7 @@
     "regex": "A(z) {_field_} formátuma érvénytelen",
     "required": "A(z) {_field_} megadása kötelező",
     "required_if": "A(z) {_field_} megadása kötelező",
-    "size": "A(z) {_field_} méretének {size} kilobájtnál kisebbnek kell lennie"
+    "size": "A(z) {_field_} méretének {size} kilobájtnál kisebbnek kell lennie",
+    "double": "A(z) {_field_} mezőnek érvényes decimálisnak kell lennie"
   }
 }

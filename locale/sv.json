@@ -23,6 +23,7 @@
     "regex": "Fältet {_field_} har en felaktig formatering",
     "required": "Fältet {_field_} är obligatoriskt",
     "required_if": "Fältet {_field_} är obligatoriskt",
-    "size": "Fältet {_field_} måste vara mindre än {size}KB"
+    "size": "Fältet {_field_} måste vara mindre än {size}KB",
+    "double": "Fältet {_field_} måste vara ett giltigt decimal"
   }
 }

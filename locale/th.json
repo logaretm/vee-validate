@@ -25,6 +25,7 @@
     "regex": "รูปแบบ {_field_} ไม่ถูกต้อง",
     "required": "กรุณากรอก {_field_}",
     "required_if": "กรุณากรอก {_field_}",
-    "size": "{_field_} ต้องมีขนาดไฟล์ไม่เกิน {size}KB"
+    "size": "{_field_} ต้องมีขนาดไฟล์ไม่เกิน {size}KB",
+    "double": "{_field_} ต้องเป็นทศนิยมที่ถูกต้อง"
   }
 }

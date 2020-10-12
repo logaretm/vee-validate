@@ -23,6 +23,7 @@
     "regex": "{_field_} formatı geçersiz",
     "required": "{_field_} alanı gereklidir",
     "required_if": "{_field_} alanı gereklidir",
-    "size": "{_field_} alanı {size}KB'dan daha az olmalıdır"
+    "size": "{_field_} alanı {size}KB'dan daha az olmalıdır",
+    "double": "{_field_} alanı geçerli bir ondalık olmalıdır"
   }
 }

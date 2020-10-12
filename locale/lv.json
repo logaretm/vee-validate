@@ -25,6 +25,7 @@
     "regex": "Lauka {_field_} formāts nav korekts",
     "required": "Lauks {_field_} ir obligāti aizpildāms",
     "required_if": "Lauks {_field_} ir obligāti aizpildāms",
-    "size": "Lauka {_field_} lielumam jābut mazākam nekā {size}KB"
+    "size": "Lauka {_field_} lielumam jābut mazākam nekā {size}KB",
+    "double": "Laukam {_field_} ir jābūt derīgam aiz komata"
   }
 }

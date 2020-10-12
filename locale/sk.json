@@ -23,6 +23,7 @@
     "regex": "Formát položky {_field_} je nesprávny",
     "required": "Položka {_field_} je povinná",
     "required_if": "Položka {_field_} je povinná",
-    "size": "Položka {_field_} musí byť menej ako {size}KB"
+    "size": "Položka {_field_} musí byť menej ako {size}KB",
+    "double": "Pole {_field_} musí byť platné desatinné miesto"
   }
 }

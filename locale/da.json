@@ -25,6 +25,7 @@
     "regex": "{_field_} skal have et gyldigt format",
     "required": "{_field_} skal udfyldes",
     "required_if": "{_field_} skal udfyldes",
-    "size": "{_field_} må maksimalt have en størrelse på {size}KB"
+    "size": "{_field_} må maksimalt have en størrelse på {size}KB",
+    "double": "{_field_} skal være en gyldig decimal"
   }
 }

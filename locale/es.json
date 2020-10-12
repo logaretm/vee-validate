@@ -25,6 +25,7 @@
     "regex": "El formato del campo {_field_} no es válido",
     "required": "El campo {_field_} es obligatorio",
     "required_if": "El campo {_field_} es obligatorio",
-    "size": "El campo {_field_} debe ser menor a {size}KB"
+    "size": "El campo {_field_} debe ser menor a {size}KB",
+    "double": "El campo {_field_} debe ser un decimal válido"
   }
 }

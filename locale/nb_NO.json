@@ -23,6 +23,7 @@
     "regex": "{_field_}-feltet sin formatering er ugyldig",
     "required": "{_field_}-feltet er obligatorisk",
     "required_if": "{_field_}-feltet er obligatorisk",
-    "size": "{_field_}-feltet må være mindre enn {size}KB"
+    "size": "{_field_}-feltet må være mindre enn {size}KB",
+    "double": "{_field_} -feltet må være en gyldig desimal"
   }
 }

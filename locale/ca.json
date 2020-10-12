@@ -23,6 +23,7 @@
     "regex": "El format del camp {_field_} no és vàlid",
     "required": "El camp {_field_} és obligatori",
     "required_if": "El camp {_field_} és obligatori",
-    "size": "El camp {_field_} ha de ser menor a {size}KB"
+    "size": "El camp {_field_} ha de ser menor a {size}KB",
+    "double": "El camp {__Camp__} ha de ser un decimal vàlid"
   }
 }

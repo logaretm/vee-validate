@@ -23,6 +23,7 @@
     "regex": "Laukelio {_field_} formatas netinkamas",
     "required": "Laukelis {_field_} privalomas",
     "required_if": "Laukelis {_field_} privalomas",
-    "size": "{_field_} turi būti mažesnis nei {size}KB"
+    "size": "{_field_} turi būti mažesnis nei {size}KB",
+    "double": "{_field_} laukas turi būti tinkamas dešimtainis skaičius"
   }
 }

@@ -25,6 +25,7 @@
     "regex": "Format {_field_} salah",
     "required": "{_field_} harus diisi",
     "required_if": "{_field_} harus diisi",
-    "size": "{_field_} harus lebih kecil dari {size}KB"
+    "size": "{_field_} harus lebih kecil dari {size}KB",
+    "double": "{_field_} harus berupa desimal yang valid"
   }
 }

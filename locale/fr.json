@@ -25,6 +25,7 @@
     "regex": "Le champ {_field_} est invalide",
     "required": "Le champ {_field_} est obligatoire",
     "required_if": "Le champ {_field_} est obligatoire lorsque {target} possède cette valeur",
-    "size": "Le champ {_field_} doit avoir un poids inférieur à {size}KB"
+    "size": "Le champ {_field_} doit avoir un poids inférieur à {size}KB",
+    "double": "Le champ {_field_} doit être une décimale valide"
   }
 }

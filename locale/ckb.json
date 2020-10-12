@@ -25,6 +25,7 @@
     "regex": "جۆری {_field_} دروست نییە",
     "required_if": "{_field_} داواکراوە",
     "required": "{_field_} داواکراوە",
-    "size": "{_field_} پێویستە لە {size}KB کەمتربێت"
+    "size": "{_field_} پێویستە لە {size}KB کەمتربێت",
+    "double": "يجب أن يكون الحقل {_field_} عددًا عشريًا صالحًا"
   }
 }
