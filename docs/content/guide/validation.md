@@ -316,8 +316,8 @@ As you noticed the `<Form />` component gives you access to the `errors` on its 
 and if you would like, you could display all error messages for your fields by iterating over the `errors` object:
 
 ```vue
-<Form v-slot="{ errors, meta }">
-  <template v-if="!meta.valid && meta.dirty">
+<Form v-slot="{ errors }">
+  <template v-if="Object.keys(errors).length">
     <p>Please correct the following errors</p>
     <ul>
       <li v-for="(message, field) in errors" :key="field">
