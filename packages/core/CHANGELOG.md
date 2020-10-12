@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.8](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.7...vee-validate@4.0.0-beta.8) (2020-10-12)
+
+
+### Features
+
+* added handleInput and handleBlur to field scoped slot props ([69d5833](https://github.com/logaretm/vee-validate/commit/69d5833e85d1f455fa43de83251c634b8efa89fa))
+* expose reset() on the form controller object ([3229ee7](https://github.com/logaretm/vee-validate/commit/3229ee722e8df5f2e79155e1a4e5ec4729dff726))
+* new meta tags API ([#2958](https://github.com/logaretm/vee-validate/issues/2958)) ([7494bfc](https://github.com/logaretm/vee-validate/commit/7494bfc6533fa29bd0668294d694aca96721d52d))
+* remove aria attributes and leave it to userland ([365d825](https://github.com/logaretm/vee-validate/commit/365d825b9bc3e2955b31b941f12d5856c9be8bfe))
+* remove valid fields from errors mapping ([1eee524](https://github.com/logaretm/vee-validate/commit/1eee52407f4d7156a541811053b529f7540c931c))
+
+
+
+
+
 # [4.0.0-beta.7](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.6...vee-validate@4.0.0-beta.7) (2020-10-10)
 
 
