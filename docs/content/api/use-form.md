@@ -286,9 +286,9 @@ const onSubmit = handleSubmit((values, { evt, form }) => {
   // set multiple fields values
   form.setValues({ email: 'value', password: 'hi' });
   // set a single field error
-  form.setFieldValue('field', 'this field is bad');
+  form.setFieldError('field', 'this field is bad');
   // set multiple fields errors
-  form.setValues({ email: 'bad email', password: 'bad password' });
+  form.setErrors({ email: 'bad email', password: 'bad password' });
 });
 ```
 
