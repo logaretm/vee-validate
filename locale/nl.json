@@ -25,6 +25,7 @@
     "regex": "{_field_} formaat is ongeldig",
     "required": "{_field_} is verplicht",
     "required_if": "{_field_} is verplicht",
-    "size": "{_field_} mag niet groter zijn dan {size}KB"
+    "size": "{_field_} mag niet groter zijn dan {size}KB",
+    "double": "{_field_} moet een geldige decimaal zijn"
   }
 }

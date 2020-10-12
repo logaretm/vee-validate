@@ -23,6 +23,7 @@
     "regex": "Vrednost polja {_field_} ni v ustreznem formatu",
     "required": "Polje {_field_} je obvezno",
     "required_if": "Polje {_field_} je obvezno",
-    "size": "Velikost datoteke {_field_} mora biti manjša kot {size}KB"
+    "size": "Velikost datoteke {_field_} mora biti manjša kot {size}KB",
+    "double": "Polje {_field_} mora biti veljavno decimalno mesto"
   }
 }

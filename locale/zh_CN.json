@@ -25,6 +25,7 @@
     "regex": "{_field_}格式无效",
     "required": "{_field_}是必须的",
     "required_if": "{_field_}是必须的",
-    "size": "{_field_}必须小于{size}KB"
+    "size": "{_field_}必须小于{size}KB",
+    "double": "{_field_}字段必须为有效的小数"
   }
 }

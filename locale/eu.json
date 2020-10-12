@@ -25,6 +25,7 @@
     "regex": "{_field_} eremuaren formatua baliogabea da",
     "required": "{_field_} eremua derrigorrezkoa da",
     "required_if": "{_field_} eremua derrigorrezkoa da",
-    "size": "{_field_}(e)n tamainak {size}KB baino txikiagoa izan behar du"
+    "size": "{_field_}(e)n tamainak {size}KB baino txikiagoa izan behar du",
+    "double": "{_field_} eremuak baliozko hamartarra izan behar du"
   }
 }

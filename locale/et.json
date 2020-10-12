@@ -23,6 +23,7 @@
     "regex": "{_field_} pole sobival kujul",
     "required": "{_field_} on nõutud väli",
     "required_if": "{_field_} on nõutud väli",
-    "size": "{_field_} peab olema väiksem kui {size}KB"
+    "size": "{_field_} peab olema väiksem kui {size}KB",
+    "double": "{_field_} peab olema kehtiv kümnendkoht"
   }
 }

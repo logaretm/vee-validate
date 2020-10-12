@@ -25,6 +25,7 @@
     "regex": "{_field_} 항목은 형식에 맞지 않습니다",
     "required": "{_field_} 항목은 필수 정보입니다",
     "required_if": "{_field_} 항목은 필수 정보입니다",
-    "size": "{_field_} 항목의 크기는 {size}KB보다 작아야 합니다"
+    "size": "{_field_} 항목의 크기는 {size}KB보다 작아야 합니다",
+    "double": "{_field_} 필드는 유효한 십진수 여야합니다"
   }
 }

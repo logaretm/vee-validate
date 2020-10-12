@@ -141,6 +141,7 @@ VeeValidate offers common validators that will cover most apps needs:
   <li><a href="#required">required <Badge text="Inferred" type="tip"/></a></li>
   <li><a href="#required-if">required_if</a></li>
   <li><a href="#size">size</a></li>
+  <li><a href="#double">double</a></li>
 </ul>
 
 ### alpha
@@ -674,6 +675,29 @@ The file size added to the field under validation must not exceed the specified 
 | Param Name | Required? | Default | Description                         |
 | ---------- | --------- | ------- | ----------------------------------- |
 | `size`     | **yes**   |         | The maximum file size in kilobytes. |
+
+### double
+
+The field under validation must have a valid decimal value.
+
+<RuleDemo rule="double" />
+
+```vue
+<ValidationProvider rules="double" v-slot="{ errors }">
+  <input type="text" v-model="value">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+
+<ValidationProvider rules="double:2,comma" v-slot="{ errors }">
+  <input type="text" v-model="value">
+  <span>{{ errors[0] }}</span>
+</ValidationProvider>
+```
+
+| Param Name  | Required? | Default | Description                                              |
+| ----------- | --------- | ------- | -------------------------------------------------------- |
+| `decimals`  | no        | `0`     | The count of decimal places (0 for accepting any count). |
+| `separator` | no        | `dot`   | The separator (. or ,).                                  |
 
 <style lang="stylus">
 .Rules

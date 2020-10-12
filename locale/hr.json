@@ -23,6 +23,7 @@
     "regex": "Oblik {_field_} nije važeći",
     "required": "Polje {_field_} je obavezno",
     "required_if": "Polje {_field_} je obavezno",
-    "size": "{_field_} mora biti manje od {size}KB"
+    "size": "{_field_} mora biti manje od {size}KB",
+    "double": "{_field_} mora biti valjana decimala"
   }
 }

@@ -23,6 +23,7 @@
     "regex": "Formati {_field_} nuk është valid",
     "required": "Fusha {_field_} nuk duhet të jetë e zbrazët",
     "required_if": "Fusha {_field_} nuk duhet të jetë e zbrazët",
-    "size": "{_field_} duhet të jetë më e vogël se {size}KB"
+    "size": "{_field_} duhet të jetë më e vogël se {size}KB",
+    "double": "Fusha {_field_} duhet të jetë një dhjetore e vlefshme"
   }
 }

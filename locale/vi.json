@@ -23,6 +23,7 @@
     "regex": "{_field_} có định dạng không đúng",
     "required": "{_field_} là bắt buộc",
     "required_if": "{_field_} là bắt buộc",
-    "size": "{_field_} chỉ có thể chứa tệp nhỏ hơn {size}KB"
+    "size": "{_field_} chỉ có thể chứa tệp nhỏ hơn {size}KB",
+    "double": "{_field_} phải là một số thập phân hợp lệ"
   }
 }

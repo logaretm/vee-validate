@@ -23,6 +23,7 @@
     "regex": "قالب {_field_} قابل قبول نیست",
     "required_if": "{_field_} الزامی است",
     "required": "{_field_} الزامی است",
-    "size": "حجم {_field_} کمتر از {size}KB باشد"
+    "size": "حجم {_field_} کمتر از {size}KB باشد",
+    "double": "قسمت {_field_} باید یک اعشار معتبر باشد"
   }
 }

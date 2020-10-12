@@ -25,6 +25,7 @@
     "regex": "Formatul câmpului {_field_} este invalid",
     "required": "Câmpul {_field_} este obligatoriu",
     "required_if": "Câmpul {_field_} este obligatoriu",
-    "size": "Câmpul {_field_} nu trebuie să depășească {size}KB"
+    "size": "Câmpul {_field_} nu trebuie să depășească {size}KB",
+    "double": "Câmpul {_field_} trebuie să fie o zecimală validă"
   }
 }

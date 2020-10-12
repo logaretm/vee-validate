@@ -24,6 +24,7 @@
     "regex": "{_field_} formatı yalnışdır",
     "required": "{_field_} əlavə etmək zəruridir",
     "required_if": "{_field_} əlavə etmək zəruridir",
-    "size": "{_field_} həcmi {size}KB və daha az olmalıdır"
+    "size": "{_field_} həcmi {size}KB və daha az olmalıdır",
+    "double": "{_field_} sahəsi etibarlı bir onluq olmalıdır"
   }
 }
