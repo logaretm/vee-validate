@@ -150,11 +150,31 @@ You can also bind it with `v-model` to get two-way value binding with validation
 
 <code-title level="4">
 
-`meta: Record<string, boolean>`
+`meta: FieldMeta`
 
 </code-title>
 
 Contains useful information/flags about the field status, should be treated as **read only**.
+
+```typescript
+interface FieldMeta {
+  touched: boolean; // if the field has been blurred (via handleBlur)
+  dirty: boolean; // if the field has been manipulated (via handleInput or handleChange)
+  valid: boolean; // if the field has been validated and is valid
+  pending: boolean; // if validation is in progress
+  initialValue?: any; // the field's initial value
+}
+```
+
+<doc-tip title="The valid flag">
+
+The `valid` flag on the meta object can be tricky, because by default it stars off with `false` until the field has been validated, only then it is updated to its proper state.
+
+You should check the `errorMessage` or `errors` to determine if a field is indeed invalid. Combining your `valid` flag checks with `dirty` or `errorMessage` may yield the experience you are trying to build.
+
+</doc-tip>
+
+**usage**
 
 ```js
 const { meta } = useField('field', value => !!value);
@@ -242,7 +262,7 @@ await validate();
 
 Updates the field value, and validates the field. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
-It sets the following meta flags: `dirty` and `pristine`
+It sets the `dirty` meta flag to `true`
 
 ```vue
 <template>
@@ -272,7 +292,7 @@ export default {
 
 Updates the field value, **but does not validate the field**. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
-It sets the following meta flags: `dirty` and `pristine`
+It sets the `dirty` meta flag to `true`
 
 ```vue
 <template>
@@ -302,7 +322,7 @@ export default {
 
 Validates the field by default unless explicitly [specified by validation triggers](/guide/validation#customizing-validation-triggers). Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
-It sets the following meta flags: `touched` and `untouched`
+It sets the `touched` meta flag to `true`
 
 ```vue
 <template>

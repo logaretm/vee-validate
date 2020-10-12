@@ -141,11 +141,21 @@ Indicates if the submission handler is still running, once it resolves/rejects i
 
 <code-title level="4">
 
-`meta: Record<string, boolean>`
+`meta: FormMeta`
 
 </code-title>
 
 Contains an aggregated meta information/flags reflecting the state of all the fields inside the form.
+
+```typescript
+interface FormMeta {
+  touched: boolean; // if at least one field is touched (was blurred)
+  dirty: boolean; // if at least one field is dirty (manipulated)
+  valid: boolean; // if all fields are valid
+  pending: boolean; // if at least one field is pending validation
+  initialValues?: Record<string, any>; // a map of the form's initial values
+}
+```
 
 <code-title level="4">
 

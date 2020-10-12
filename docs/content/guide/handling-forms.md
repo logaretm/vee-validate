@@ -372,7 +372,7 @@ You can use `validateOnMount` prop present on the `<Form />` component to force 
 
 The `initialValues` prop on both the `<Form />` component and `useForm()` function can reactive value, meaning you can change the initial values after your component was created/mounted which is very useful if you are populating form fields from external API.
 
-Note that **only the pristine fields will be updated**. In other words, **only the fields that were not manipulated by the user will be updated**. For information on how to set the values for all fields regardless of their dirty status check the following [Setting Form Values section](#setting-form-values)
+Note that **only the non-dirty fields will be updated**. In other words, **only the fields that were not manipulated by the user will be updated**. For information on how to set the values for all fields regardless of their dirty status check the following [Setting Form Values section](#setting-form-values)
 
 <doc-tip title="Composition API">
 

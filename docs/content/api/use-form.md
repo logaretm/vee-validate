@@ -46,7 +46,7 @@ type useForm = (
 ) => {
   errors: Record<string, string>; // first error message for each field
   isSubmitting: boolean; // if the form submission function is being run
-  meta: FieldMeta; // aggregate of the field's meta information
+  meta: FormMeta; // aggregate of the field's meta information
   values: Record<string, any>; // current form values
   setFieldError: (field: string, errorMessage: string) => void; // Sets an error message for a field
   setErrors: (fields: Record<string, string>) => void; // Sets error messages for fields
@@ -118,11 +118,23 @@ isSubmitting.value; // true or false
 
 <code-title level="4">
 
-`meta: ComputedRef<Record<string, boolean>>`
+`meta: ComputedRef<FormMeta>`
 
 </code-title>
 
 A computed property that contains an aggregated meta information/flags reflecting the state of all the fields inside the form.
+
+```typescript
+interface FormMeta {
+  touched: boolean; // if at least one field is touched (was blurred)
+  dirty: boolean; // if at least one field is dirty (manipulated)
+  valid: boolean; // if all fields are valid
+  pending: boolean; // if at least one field is pending validation
+  initialValues?: Record<string, any>; // a map of the form's initial values
+}
+```
+
+**usage**
 
 ```js
 const { meta } = useForm();

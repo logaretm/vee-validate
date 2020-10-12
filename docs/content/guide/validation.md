@@ -221,9 +221,9 @@ This is only relevant to the `<Field />` and `<Form />` components
 
 By default vee-validate adds multiple event listeners to your fields:
 
-- **input:** Adds a `handleInput` handler that updates the `dirty` and `pristine` meta flags
-- **change:** Adds a `handleInput` handler just like the input event but also adds a `handleChange` event that updates the field value
-- **blur:** Adds a `handleBlur` handler that updates the `touched` and `untouched` meta flags, also adds a `handleChange` handler
+- **input:** Adds a `handleInput` handler that updates the `meta.dirty` flag.
+- **change:** Adds a `handleInput` handler just like the input event but also adds a `handleChange` event that updates the field value and validates the field
+- **blur:** Adds a `handleBlur` handler that updates the `meta.touched` flag, and validates the field (does not update the value)
 - **update:modelValue** Adds a `handleChange` handler to components emitting the `update:modelValue` event
 
 Notice that in all of these, the `handleChange` handler is the only one that triggers validation. This is because its the handler responsible for updating the value, which then triggers a validation check. You can configure whether the `handleChange` is added to any of these fields by using the `configure` helper:
@@ -317,7 +317,7 @@ and if you would like, you could display all error messages for your fields by i
 
 ```vue
 <Form v-slot="{ errors, meta }">
-  <template v-if="meta.failed">
+  <template v-if="!meta.valid && meta.dirty">
     <p>Please correct the following errors</p>
     <ul>
       <li v-for="(message, field) in errors" :key="field">
@@ -326,7 +326,7 @@ and if you would like, you could display all error messages for your fields by i
     </ul>
   </template>
 
-  <Field name="name" as="input" :rules="rules" /> 
+  <Field name="name" as="input" :rules="rules" />
   <Field name="email" as="input" :rules="rules" />
   <Field name="password" as="input" :rules="rules" />
 </Form>
