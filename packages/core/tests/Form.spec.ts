@@ -973,7 +973,7 @@ describe('<Form />', () => {
       <VForm v-slot="{ meta }">
         <Field name="field" as="input" rules="required"  />
 
-        <button :disabled="meta.invalid" id="submit">Submit</button>
+        <button :disabled="!meta.valid" id="submit">Submit</button>
       </VForm>
     `,
     });

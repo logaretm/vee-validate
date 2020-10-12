@@ -2,7 +2,7 @@ import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch } from '
 import type { ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
-  Flag,
+  FieldMeta,
   FormController,
   SubmissionHandler,
   GenericValidateFunction,
@@ -11,7 +11,7 @@ import {
   MaybeReactive,
 } from './types';
 import { unwrap } from './utils/refs';
-import { getFromPath, isYupValidator, setInPath, unsetPath } from './utils';
+import { getFromPath, isYupValidator, keysOf, setInPath, unsetPath } from './utils';
 import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
 
 interface FormOptions {
@@ -194,17 +194,14 @@ export function useForm(opts?: FormOptions) {
   const errors = computed(() => {
     return activeFields.value.reduce((acc: Record<string, string>, field) => {
       // Check if its a grouped field (checkbox/radio)
+      let message: string | undefined;
       if (Array.isArray(fieldsById.value[field.name])) {
         const group = fieldsById.value[field.name];
-        const message = unwrap((group.find((f: any) => unwrap(f.checked)) || field).errorMessage);
-        if (message) {
-          acc[field.name] = message;
-        }
-
-        return acc;
+        message = unwrap((group.find((f: any) => unwrap(f.checked)) || field).errorMessage);
+      } else {
+        message = unwrap(field.errorMessage);
       }
 
-      const message = unwrap(field.errorMessage);
       if (message) {
         acc[field.name] = message;
       }
@@ -255,8 +252,6 @@ export function useForm(opts?: FormOptions) {
     }
   });
 
-  const meta = useFormMeta(fields);
-
   provide(FormSymbol, controller);
   provide(FormErrorsSymbol, errors);
   const initialValues = computed<Record<string, any>>(() => {
@@ -294,6 +289,7 @@ export function useForm(opts?: FormOptions) {
     }
   );
 
+  const meta = useFormMeta(fields, initialValues);
   // Trigger initial validation
   onMounted(() => {
     if (opts?.validateOnMount) {
@@ -318,30 +314,26 @@ export function useForm(opts?: FormOptions) {
   };
 }
 
-const MERGE_STRATEGIES: Record<Flag, 'every' | 'some'> = {
+const MERGE_STRATEGIES: Record<keyof Omit<FieldMeta, 'initialValue'>, 'every' | 'some'> = {
   valid: 'every',
-  invalid: 'some',
   dirty: 'some',
-  pristine: 'every',
   touched: 'some',
-  untouched: 'every',
   pending: 'some',
-  validated: 'every',
-  changed: 'some',
-  passed: 'every',
-  failed: 'some',
 };
 
-function useFormMeta(fields: Ref<any[]>) {
-  const flags: Flag[] = Object.keys(MERGE_STRATEGIES) as Flag[];
-
+function useFormMeta(fields: Ref<any[]>, initialValues: MaybeReactive<Record<string, any>>) {
   return computed(() => {
-    return flags.reduce((acc, flag: Flag) => {
+    const flags = keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
       const mergeMethod = MERGE_STRATEGIES[flag];
       acc[flag] = fields.value[mergeMethod](field => field.meta[flag]);
 
       return acc;
     }, {} as Record<string, boolean>);
+
+    return {
+      initialValues: unwrap(initialValues),
+      ...flags,
+    };
   });
 }
 
@@ -380,7 +372,7 @@ async function validateYupSchema(
 
     result[fieldId] = fieldResult;
     const isGroup = Array.isArray(field);
-    const touched = isGroup ? field.some((f: any) => f.meta.validated) : field.meta.validated;
+    const touched = isGroup ? field.some((f: any) => f.meta.dirty) : field.meta.dirty;
     if (!shouldMutate && !touched) {
       return result;
     }

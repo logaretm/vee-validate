@@ -1,13 +1,6 @@
 import { watch, ref, Ref, isRef, reactive, computed, onMounted, watchEffect, inject, onBeforeUnmount } from 'vue';
-import { validate } from './validate';
-import {
-  FormController,
-  ValidationResult,
-  MaybeReactive,
-  GenericValidateFunction,
-  Flag,
-  ValidationFlags,
-} from './types';
+import { validate as validateValue } from './validate';
+import { FormController, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
 import {
   normalizeRules,
   extractLocators,
@@ -16,6 +9,7 @@ import {
   hasCheckedAttr,
   getFromPath,
   setInPath,
+  keysOf,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FormInitialValues, FormSymbol } from './symbols';
@@ -50,7 +44,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     validateOnValueUpdate,
   } = normalizeOptions(name, opts);
 
-  const { meta, errors, handleBlur, handleInput, reset, patch, value, checked } = useValidationState({
+  const { meta, errors, handleBlur, handleInput, reset, setValidationState, value, checked } = useValidationState({
     name,
     // make sure to unwrap initial value because of possible refs passed in
     initValue: unwrap(initialValue),
@@ -64,31 +58,23 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     return normalizeRules(nonYupSchemaRules || unwrap(rules));
   });
 
-  const runValidation = async (): Promise<ValidationResult> => {
+  const validate = async (): Promise<ValidationResult> => {
     meta.pending = true;
+    let result: ValidationResult;
     if (!form || !form.validateSchema) {
-      const result = await validate(value.value, normalizedRules.value, {
+      result = await validateValue(value.value, normalizedRules.value, {
         name: label,
         values: form?.values ?? {},
         bails,
       });
-
-      // Must be updated regardless if a mutation is needed or not
-      // FIXME: is this needed?
-      meta.valid = !result.errors.length;
-      meta.invalid = !!result.errors.length;
-      meta.pending = false;
-
-      return result;
+    } else {
+      result = (await form.validateSchema())[name];
     }
 
-    const results = await form.validateSchema();
     meta.pending = false;
 
-    return results[name];
+    return setValidationState(result);
   };
-
-  const runValidationWithMutation = () => runValidation().then(patch);
 
   // Common input/change event handler
   const handleChange = (e: unknown) => {
@@ -98,19 +84,14 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
 
     value.value = normalizeEventValue(e);
     meta.dirty = true;
-    meta.pristine = false;
     if (!validateOnValueUpdate) {
-      return runValidationWithMutation();
+      return validate();
     }
   };
 
-  onMounted(() => {
-    runValidation().then(result => {
-      if (validateOnMount) {
-        patch(result);
-      }
-    });
-  });
+  if (validateOnMount) {
+    onMounted(validate);
+  }
 
   const errorMessage = computed(() => {
     return errors.value[0];
@@ -128,21 +109,21 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     checked,
     idx: -1,
     reset,
-    validate: runValidationWithMutation,
+    validate,
     handleChange,
     handleBlur,
     handleInput,
-    setValidationState: patch,
+    setValidationState,
   };
 
   if (validateOnValueUpdate) {
-    watch(value, runValidationWithMutation, {
+    watch(value, validate, {
       deep: true,
     });
   }
 
   if (isRef(rules)) {
-    watch(rules, runValidationWithMutation, {
+    watch(rules, validate, {
       deep: true,
     });
   }
@@ -186,8 +167,8 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
 
     // For each dependent field, validate it if it was validated before
     dependencies.value.forEach(dep => {
-      if (dep in form.values && meta.validated) {
-        runValidationWithMutation();
+      if (dep in form.values && meta.dirty) {
+        return validate();
       }
     });
   });
@@ -239,8 +220,8 @@ function useValidationState({
   valueProp: any;
 }) {
   const errors: Ref<string[]> = ref([]);
-  const { reset: resetFlags, meta } = useMeta();
   const initialValue = getFromPath(unwrap(inject(FormInitialValues, {})), name) ?? initValue;
+  const { reset: resetFlags, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
     value.value = initialValue;
@@ -265,7 +246,6 @@ function useValidationState({
    */
   const handleBlur = () => {
     meta.touched = true;
-    meta.untouched = false;
   };
 
   /**
@@ -279,16 +259,12 @@ function useValidationState({
     }
 
     meta.dirty = true;
-    meta.pristine = false;
   };
 
   // Updates the validation state with the validation result
-  function patch(result: ValidationResult) {
+  function setValidationState(result: ValidationResult) {
     errors.value = result.errors;
-    meta.changed = initialValue !== value.value;
     meta.valid = !result.errors.length;
-    meta.invalid = !!result.errors.length;
-    meta.validated = true;
 
     return result;
   }
@@ -302,7 +278,7 @@ function useValidationState({
   return {
     meta,
     errors,
-    patch,
+    setValidationState,
     reset,
     handleBlur,
     handleInput,
@@ -314,39 +290,24 @@ function useValidationState({
 /**
  * Exposes meta flags state and some associated actions with them.
  */
-function useMeta() {
-  const initialMeta = (): ValidationFlags => ({
-    untouched: true,
+function useMeta(initialValue: any) {
+  const initialMeta = (): FieldMeta => ({
     touched: false,
     dirty: false,
-    pristine: true,
     valid: false,
-    invalid: false,
-    validated: false,
     pending: false,
-    changed: false,
-    passed: false,
-    failed: false,
+    initialValue,
   });
 
   const meta = reactive(initialMeta());
-  watchEffect(() => {
-    meta.passed = meta.valid && meta.validated;
-    meta.failed = meta.invalid && meta.validated;
-  });
 
   /**
    * Resets the flag state
    */
   function reset() {
     const defaults = initialMeta();
-    Object.keys(meta).forEach((key: string) => {
-      // Skip these, since they are computed anyways
-      if (['passed', 'failed'].includes(key)) {
-        return;
-      }
-
-      meta[key as Flag] = defaults[key as Flag];
+    keysOf(meta).forEach(key => {
+      meta[key] = defaults[key];
     });
   }
 
