@@ -1,4 +1,4 @@
-import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch } from 'vue';
+import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, ComputedRef } from 'vue';
 import type { ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
@@ -321,14 +321,17 @@ const MERGE_STRATEGIES: Record<keyof Omit<FieldMeta, 'initialValue'>, 'every' | 
   pending: 'some',
 };
 
-function useFormMeta(fields: Ref<any[]>, initialValues: MaybeReactive<Record<string, any>>) {
+function useFormMeta(
+  fields: Ref<any[]>,
+  initialValues: MaybeReactive<Record<string, any>>
+): ComputedRef<FieldMeta & { initialValues: Record<string, any> }> {
   return computed(() => {
     const flags = keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
       const mergeMethod = MERGE_STRATEGIES[flag];
       acc[flag] = fields.value[mergeMethod](field => field.meta[flag]);
 
       return acc;
-    }, {} as Record<string, boolean>);
+    }, {} as Record<keyof Omit<FieldMeta, 'initialValue'>, boolean>);
 
     return {
       initialValues: unwrap(initialValues),
