@@ -255,12 +255,12 @@ export function useForm(opts?: FormOptions) {
   provide(FormSymbol, controller);
   provide(FormErrorsSymbol, errors);
   const initialValues = computed<Record<string, any>>(() => {
-    const vals = opts?.initialValues || {};
-    if (isRef(vals)) {
-      return vals.value as Record<string, any>;
+    const values = opts?.initialValues || {};
+    if (isRef(values)) {
+      return values.value as Record<string, any>;
     }
 
-    return vals;
+    return values;
   });
 
   // Provide fields with a reference to the initial values
@@ -372,8 +372,8 @@ async function validateYupSchema(
 
     result[fieldId] = fieldResult;
     const isGroup = Array.isArray(field);
-    const touched = isGroup ? field.some((f: any) => f.meta.dirty) : field.meta.dirty;
-    if (!shouldMutate && !touched) {
+    const isDirty = isGroup ? field.some((f: any) => f.meta.dirty) : field.meta.dirty;
+    if (!shouldMutate && !isDirty) {
       return result;
     }
 
