@@ -115,6 +115,50 @@ export function useForm(opts?: FormOptions) {
     });
   }
 
+  /**
+   * Sets the touched meta state on a field
+   */
+  function setFieldTouched(field: string, isTouched: boolean) {
+    const fieldInstance = fieldsById.value[field];
+    if (Array.isArray(fieldInstance)) {
+      fieldInstance.forEach(f => f.setTouched(isTouched));
+      return;
+    }
+
+    fieldInstance.setTouched(isTouched);
+  }
+
+  /**
+   * Sets the touched meta state on multiple fields
+   */
+  function setTouched(fields: Record<string, boolean>) {
+    Object.keys(fields).forEach(field => {
+      setFieldTouched(field, fields[field]);
+    });
+  }
+
+  /**
+   * Sets the dirty meta state on a field
+   */
+  function setFieldDirty(field: string, isDirty: boolean) {
+    const fieldInstance = fieldsById.value[field];
+    if (Array.isArray(fieldInstance)) {
+      fieldInstance.forEach(f => f.setDirty(isDirty));
+      return;
+    }
+
+    fieldInstance.setDirty(isDirty);
+  }
+
+  /**
+   * Sets the dirty meta state on multiple fields
+   */
+  function setDirty(fields: Record<string, boolean>) {
+    Object.keys(fields).forEach(field => {
+      setFieldDirty(field, fields[field]);
+    });
+  }
+
   const handleReset = () => {
     fields.value.forEach((f: any) => f.reset());
   };
@@ -172,6 +216,10 @@ export function useForm(opts?: FormOptions) {
     setValues,
     setErrors,
     setFieldError,
+    setFieldTouched,
+    setTouched,
+    setFieldDirty,
+    setDirty,
     reset: handleReset,
   };
 
@@ -311,6 +359,10 @@ export function useForm(opts?: FormOptions) {
     setErrors,
     setFieldValue,
     setValues,
+    setFieldTouched,
+    setTouched,
+    setFieldDirty,
+    setDirty,
   };
 }
 
