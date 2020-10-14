@@ -397,7 +397,7 @@ describe('<Form />', () => {
       <VForm as="form" :validationSchema="schema" v-slot="{ errors }">
         <Field name="field" as="input" />
         <span id="field">{{ errors.field }}</span>
-        
+
         <Field name="other" as="input" />
         <span id="other">{{ errors.other }}</span>
 
@@ -432,7 +432,7 @@ describe('<Form />', () => {
       <VForm as="form" :validationSchema="schema" v-slot="{ errors }">
         <Field id="password" name="password" as="input" />
         <span id="field">{{ errors.password }}</span>
-        
+
         <Field id="confirmation" name="confirmation" as="input" />
         <span id="confirmationError">{{ errors.confirmation }}</span>
 
@@ -523,9 +523,9 @@ describe('<Form />', () => {
           result,
         };
       },
-      template: ` 
+      template: `
       <VForm  @submit="onSubmit"  >
-      
+
         <label v-for="(value, index) in values" v-bind:key="index">
           <div v-if="showFields">
             <Field name="test" as="input" type="radio" :value="value" /> {{value}}
@@ -569,14 +569,14 @@ describe('<Form />', () => {
           result,
         };
       },
-      template: ` 
-      <VForm  @submit="onSubmit" :initialValues="initialValues" >  
+      template: `
+      <VForm  @submit="onSubmit" :initialValues="initialValues" >
         <label v-for="(value, index) in values" v-bind:key="index">
           <div v-if="showFields">
             <Field name="test.fieldOne" as="input" type="radio" :value="value" /> {{value}}
           </div>
         </label>
-      
+
         <button>Submit</button>
       </VForm>
     `,
@@ -706,7 +706,7 @@ describe('<Form />', () => {
       template: `
       <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors, values }">
         <template v-if="showFields">
-          <Field name="field" as="input" />          
+          <Field name="field" as="input" />
           <Field name="nested.field" />
           <Field name="[non-nested.field]" />
           <Field name="drink" as="input" type="checkbox" value="" /> Coffee
@@ -766,7 +766,7 @@ describe('<Form />', () => {
       template: `
       <VForm @submit="onSubmit" as="form" v-slot="{ errors }">
         <template v-if="showFields">
-          <Field name="field" as="input" rules="required" />          
+          <Field name="field" as="input" rules="required" />
           <Field name="nested.field" rules="required" />
           <Field name="[non-nested.field]" rules="required" />
           <Field name="drink" as="input" type="checkbox" value="" rules="required" /> Coffee
@@ -1349,7 +1349,7 @@ describe('<Form />', () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  test('sets meta touched with setFieldError for checkboxes', async () => {
+  test('sets meta touched with setFieldTouched for checkboxes', async () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm ref="form" v-slot="{ meta }">
@@ -1370,7 +1370,7 @@ describe('<Form />', () => {
     expect(meta?.textContent).toBe('true');
   });
 
-  test('sets meta dirty with setFieldError for checkboxes', async () => {
+  test('sets meta dirty with setFieldDirty for checkboxes', async () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm ref="form" v-slot="{ meta }">
