@@ -17,10 +17,8 @@ import * as yup from 'yup';
 
 export default {
   setup() {
-    const { form } = useForm();
-    const { value: email, errors } = useField('email', yup.string().email().required(), {
-      form,
-    });
+    useForm();
+    const { value: email, errors } = useField('email', yup.string().email().required());
 
     return {
       email,
