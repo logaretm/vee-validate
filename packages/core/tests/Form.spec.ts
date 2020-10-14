@@ -1348,4 +1348,46 @@ describe('<Form />', () => {
     expect(passwordError.textContent).toBe('');
     expect(spy).toHaveBeenCalledTimes(1);
   });
+
+  test('sets meta touched with setFieldError for checkboxes', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm ref="form" v-slot="{ meta }">
+        <Field name="drink" type="checkbox" value="" /> Coffee
+        <Field name="drink" type="checkbox" value="Tea" /> Tea
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
+
+        <span id="meta">{{ meta.touched }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const meta = wrapper.$el.querySelector('#meta');
+    expect(meta?.textContent).toBe('false');
+    (wrapper.$refs as any)?.form.setFieldTouched('drink', true);
+    await flushPromises();
+    expect(meta?.textContent).toBe('true');
+  });
+
+  test('sets meta dirty with setFieldError for checkboxes', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm ref="form" v-slot="{ meta }">
+        <Field name="drink" type="checkbox" value="" /> Coffee
+        <Field name="drink" type="checkbox" value="Tea" /> Tea
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
+
+        <span id="meta">{{ meta.dirty }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const meta = wrapper.$el.querySelector('#meta');
+    expect(meta?.textContent).toBe('false');
+    (wrapper.$refs as any)?.form.setFieldDirty('drink', true);
+    await flushPromises();
+    expect(meta?.textContent).toBe('true');
+  });
 });
