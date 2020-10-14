@@ -167,6 +167,9 @@ export function useForm(opts?: FormOptions) {
     });
   }
 
+  /**
+   * Resets all fields
+   */
   const handleReset = () => {
     fields.value.forEach((f: any) => f.reset());
   };
@@ -308,43 +311,7 @@ export function useForm(opts?: FormOptions) {
     }
   });
 
-  provide(FormSymbol, controller);
-  provide(FormErrorsSymbol, errors);
-  const initialValues = computed<Record<string, any>>(() => {
-    const values = opts?.initialValues || {};
-    if (isRef(values)) {
-      return values.value as Record<string, any>;
-    }
-
-    return values;
-  });
-
-  // Provide fields with a reference to the initial values
-  provide(FormInitialValues, initialValues);
-
-  // Watch initial values for changes, and update the pristine (non-dirty fields)
-  // we exclude dirty fields because it's unlikely you want to change the form values using initial values
-  // we mostly watch them for API population or newly inserted fields
-  watch(
-    initialValues,
-    value => {
-      const isDirty = (f: any) => f.meta.dirty;
-      Object.keys(fieldsById.value).forEach(fieldPath => {
-        const field = fieldsById.value[fieldPath];
-        const isFieldDirty = Array.isArray(field) ? field.some(isDirty) : isDirty(field);
-        if (isFieldDirty) {
-          return;
-        }
-
-        const newValue = getFromPath(value, fieldPath);
-        setInPath(formValues, fieldPath, newValue);
-      });
-    },
-    {
-      deep: true,
-    }
-  );
-
+  const { initialValues } = useFormInitialValues(fieldsById, formValues, opts?.initialValues);
   const meta = useFormMeta(fields, initialValues);
   // Trigger initial validation
   onMounted(() => {
@@ -353,10 +320,14 @@ export function useForm(opts?: FormOptions) {
     }
   });
 
+  // Provide injections
+  provide(FormInitialValues, initialValues);
+  provide(FormSymbol, controller);
+  provide(FormErrorsSymbol, errors);
+
   return {
     errors,
     meta,
-    form: controller,
     values: formValues,
     validate,
     isSubmitting,
@@ -374,17 +345,20 @@ export function useForm(opts?: FormOptions) {
   };
 }
 
-const MERGE_STRATEGIES: Record<keyof Omit<FieldMeta, 'initialValue'>, 'every' | 'some'> = {
-  valid: 'every',
-  dirty: 'some',
-  touched: 'some',
-  pending: 'some',
-};
-
+/**
+ * Manages form meta aggregation
+ */
 function useFormMeta(
   fields: Ref<any[]>,
   initialValues: MaybeReactive<Record<string, any>>
 ): ComputedRef<FieldMeta & { initialValues: Record<string, any> }> {
+  const MERGE_STRATEGIES: Record<keyof Omit<FieldMeta, 'initialValue'>, 'every' | 'some'> = {
+    valid: 'every',
+    dirty: 'some',
+    touched: 'some',
+    pending: 'some',
+  };
+
   return computed(() => {
     const flags = keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
       const mergeMethod = MERGE_STRATEGIES[flag];
@@ -452,4 +426,49 @@ async function validateYupSchema(
   }, {});
 
   return aggregatedResult;
+}
+
+/**
+ * Manages the initial values prop
+ */
+function useFormInitialValues(
+  fields: Ref<any>,
+  formValues: Record<string, any>,
+  providedValues?: MaybeReactive<Record<string, any>>
+) {
+  const initialValues = computed<Record<string, any>>(() => {
+    const values = providedValues?.value || {};
+    if (isRef(values)) {
+      return values.value as Record<string, any>;
+    }
+
+    return values;
+  });
+
+  // Watch initial values for changes, and update the pristine (non-dirty and non-touched fields)
+  // we exclude dirty and untouched fields because it's unlikely you want to change the form values using initial values
+  // we mostly watch them for API population or newly inserted fields
+  watch(
+    initialValues,
+    value => {
+      const isSafeToUpdate = (f: any) => f.meta.dirty || f.meta.touched;
+      Object.keys(fields.value).forEach(fieldPath => {
+        const field = fields.value[fieldPath];
+        const isFieldDirty = Array.isArray(field) ? field.some(isSafeToUpdate) : isSafeToUpdate(field);
+        if (isFieldDirty) {
+          return;
+        }
+
+        const newValue = getFromPath(value, fieldPath);
+        setInPath(formValues, fieldPath, newValue);
+      });
+    },
+    {
+      deep: true,
+    }
+  );
+
+  return {
+    initialValues,
+  };
 }
