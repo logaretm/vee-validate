@@ -23,8 +23,13 @@ interface FormOptions {
 type FieldComposite = ReturnType<typeof useField>;
 
 export function useForm(opts?: FormOptions) {
+  // A flat array containing field references
   const fields: Ref<any[]> = ref([]);
+
+  // If the form is currently submitting
   const isSubmitting = ref(false);
+
+  // a field map object useful for faster access of fields
   const fieldsById = computed(() => {
     return fields.value.reduce((acc, field) => {
       // if the field was not added before
@@ -49,9 +54,48 @@ export function useForm(opts?: FormOptions) {
     }, {} as Record<string, any>);
   });
 
+  // a flat array of the non-disabled
   const activeFields = computed(() => {
     return fields.value.filter(field => !unwrap(field.disabled));
   });
+
+  // a private ref for all form values
+  const formValues = reactive<Record<string, any>>({});
+
+  // an aggregation of field errors in a map object
+  const errors = computed(() => {
+    return activeFields.value.reduce((acc: Record<string, string>, field) => {
+      // Check if its a grouped field (checkbox/radio)
+      let message: string | undefined;
+      if (Array.isArray(fieldsById.value[field.name])) {
+        const group = fieldsById.value[field.name];
+        message = unwrap((group.find((f: any) => unwrap(f.checked)) || field).errorMessage);
+      } else {
+        message = unwrap(field.errorMessage);
+      }
+
+      if (message) {
+        acc[field.name] = message;
+      }
+
+      return acc;
+    }, {});
+  });
+
+  // same as form values but filtered disabled fields out
+  const activeFormValues = computed(() => {
+    return activeFields.value.reduce((formData: Record<string, any>, field) => {
+      setInPath(formData, field.name, unwrap(field.value));
+
+      return formData;
+    }, {});
+  });
+
+  // initial form values
+  const { initialValues } = useFormInitialValues(fieldsById, formValues, opts?.initialValues);
+
+  // form meta aggregations
+  const meta = useFormMeta(fields, initialValues);
 
   /**
    * Manually sets an error message on a specific field
@@ -174,47 +218,49 @@ export function useForm(opts?: FormOptions) {
     fields.value.forEach((f: any) => f.reset());
   };
 
-  // a private ref for all form values
-  const formValues = reactive<Record<string, any>>({});
-  const controller: FormController = {
-    register(field: FieldComposite) {
-      fields.value.push(field);
-    },
-    unregister(field: FieldComposite) {
-      const idx = fields.value.indexOf(field);
-      if (idx === -1) {
-        return;
-      }
+  function registerField(field: FieldComposite) {
+    fields.value.push(field);
+  }
 
-      fields.value.splice(idx, 1);
-      const fieldName = field.name;
-      // in this case, this is a single field not a group (checkbox or radio)
-      // so remove the field value key immediately
-      if (field.idx === -1) {
-        unsetPath(formValues, fieldName);
-        return;
-      }
+  function unregisterField(field: FieldComposite) {
+    const idx = fields.value.indexOf(field);
+    if (idx === -1) {
+      return;
+    }
 
-      // otherwise find the actual value in the current array of values and remove it
-      const valueIdx: number | undefined = getFromPath(formValues, fieldName)?.indexOf?.(unwrap(field.valueProp));
-
-      if (valueIdx === undefined) {
-        unsetPath(formValues, fieldName);
-
-        return;
-      }
-
-      if (valueIdx === -1) {
-        return;
-      }
-
-      if (Array.isArray(formValues[fieldName])) {
-        unsetPath(formValues, `${fieldName}.${valueIdx}`);
-        return;
-      }
-
+    fields.value.splice(idx, 1);
+    const fieldName = field.name;
+    // in this case, this is a single field not a group (checkbox or radio)
+    // so remove the field value key immediately
+    if (field.idx === -1) {
       unsetPath(formValues, fieldName);
-    },
+      return;
+    }
+
+    // otherwise find the actual value in the current array of values and remove it
+    const valueIdx: number | undefined = getFromPath(formValues, fieldName)?.indexOf?.(unwrap(field.valueProp));
+
+    if (valueIdx === undefined) {
+      unsetPath(formValues, fieldName);
+
+      return;
+    }
+
+    if (valueIdx === -1) {
+      return;
+    }
+
+    if (Array.isArray(formValues[fieldName])) {
+      unsetPath(formValues, `${fieldName}.${valueIdx}`);
+      return;
+    }
+
+    unsetPath(formValues, fieldName);
+  }
+
+  const controller: FormController = {
+    register: registerField,
+    unregister: unregisterField,
     fields: fieldsById,
     values: formValues,
     schema: opts?.validationSchema,
@@ -250,33 +296,6 @@ export function useForm(opts?: FormOptions) {
     return results.every(r => !r.errors.length);
   };
 
-  const errors = computed(() => {
-    return activeFields.value.reduce((acc: Record<string, string>, field) => {
-      // Check if its a grouped field (checkbox/radio)
-      let message: string | undefined;
-      if (Array.isArray(fieldsById.value[field.name])) {
-        const group = fieldsById.value[field.name];
-        message = unwrap((group.find((f: any) => unwrap(f.checked)) || field).errorMessage);
-      } else {
-        message = unwrap(field.errorMessage);
-      }
-
-      if (message) {
-        acc[field.name] = message;
-      }
-
-      return acc;
-    }, {});
-  });
-
-  const activeFormValues = computed(() => {
-    return activeFields.value.reduce((formData: Record<string, any>, field) => {
-      setInPath(formData, field.name, unwrap(field.value));
-
-      return formData;
-    }, {});
-  });
-
   const handleSubmit = (fn?: SubmissionHandler) => {
     return function submissionHandler(e: unknown) {
       if (e instanceof Event) {
@@ -311,8 +330,6 @@ export function useForm(opts?: FormOptions) {
     }
   });
 
-  const { initialValues } = useFormInitialValues(fieldsById, formValues, opts?.initialValues);
-  const meta = useFormMeta(fields, initialValues);
   // Trigger initial validation
   onMounted(() => {
     if (opts?.validateOnMount) {
