@@ -97,6 +97,14 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     return errors.value[0];
   });
 
+  function setTouched(isTouched: boolean) {
+    meta.touched = isTouched;
+  }
+
+  function setDirty(isDirty: boolean) {
+    meta.dirty = isDirty;
+  }
+
   const field = {
     name,
     value: value,
@@ -114,6 +122,8 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     handleBlur,
     handleInput,
     setValidationState,
+    setTouched,
+    setDirty,
   };
 
   if (validateOnValueUpdate) {

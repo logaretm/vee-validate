@@ -208,6 +208,22 @@ It sets the `touched` meta flag to true
 
 Because this handler doesn't set the field value, it might not report validation correctly if other events are unspecified or disabled.
 
+<code-title level="4">
+
+`setDirty: (isDirty: boolean) => void`
+
+</code-title>
+
+Sets the `dirty` meta flag for this field, useful to create your own `input` or other behaviors handlers
+
+<code-title level="4">
+
+`setTouched: (isTouched: boolean) => void`
+
+</code-title>
+
+Sets the `touched` meta flag for this field, useful to create your own `blur` handlers
+
 #### `field`
 
 Contains a few properties that you can use `v-bind` with to get all vee-validate features on that input. The following is a description of the properties

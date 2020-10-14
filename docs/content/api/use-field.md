@@ -361,3 +361,33 @@ setValidationState({ errors: ['something is not right'] });
 // set the field as valid and clears errors
 setValidationState({ errors: [] });
 ```
+
+<code-title level="4">
+
+`setDirty: (isDirty: boolean) => void`
+
+</code-title>
+
+Sets the `dirty` meta flag for this field, useful to create your own `input` or other behaviors handlers
+
+```js
+const { setDirty } = useField('field', value => !!value);
+
+// mark the field as dirty
+setDirty(true);
+```
+
+<code-title level="4">
+
+`setTouched: (isTouched: boolean) => void`
+
+</code-title>
+
+Sets the `touched` meta flag for this field, useful to create your own `blur` handlers
+
+```js
+const { setTouched } = useField('field', value => !!value);
+
+// mark the field as touched
+setTouched(true);
+```

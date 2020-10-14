@@ -40,6 +40,10 @@ export interface FormController {
   setFieldError: (field: string, message: string) => void;
   setErrors: (fields: Record<string, string>) => void;
   setValues: (fields: Record<string, any>) => void;
+  setFieldTouched: (field: string, isTouched: boolean) => void;
+  setTouched: (fields: Record<string, boolean>) => void;
+  setFieldDirty: (field: string, isDirty: boolean) => void;
+  setDirty: (fields: Record<string, boolean>) => void;
   reset: () => void;
 }
 
