@@ -66,7 +66,6 @@ interface FieldOptions {
   disabled: MaybeReactive<boolean>; // if the input is disabled, can be a ref
   validateOnMount?: boolean; // if the field should be validated when the component is mounted
   bails?: boolean; // if the field validation should run all validations
-  form?: FormController; // the Form object returned from `useForm` to associate this field with
   label?: string; // A friendly name to be used in `generateMessage` config instead of the field name
 }
 
