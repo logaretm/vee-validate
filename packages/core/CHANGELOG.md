@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.9](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.8...vee-validate@4.0.0-beta.9) (2020-10-14)
+
+
+### Bug Fixes
+
+* improve useForm meta types ([#2963](https://github.com/logaretm/vee-validate/issues/2963)) ([6b46047](https://github.com/logaretm/vee-validate/commit/6b46047278633a095243fcce4ba94ddd94e08c11))
+
+
+### Features
+
+* meta setters ([#2967](https://github.com/logaretm/vee-validate/issues/2967)) ([5036e13](https://github.com/logaretm/vee-validate/commit/5036e13e0f5974589387746398446fa5f318dc0d))
+
+
+
+
+
 # [4.0.0-beta.8](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.7...vee-validate@4.0.0-beta.8) (2020-10-12)
 
 
