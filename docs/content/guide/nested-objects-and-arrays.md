@@ -120,8 +120,7 @@ Submitting the previous form would result in the following values being passed t
 ```js
 {
   "links.twitter": "https://twitter.com/logaretm",
-   "links.github": "https://github.com/logaretm"
-  ]
+  "links.github": "https://github.com/logaretm"
 }
 ```
 
@@ -158,6 +157,8 @@ If you are using yup, you can utilize the nested `yup.object` or `yup.array` sch
 </template>
 
 <script>
+import * as yup from 'yup';
+
 export default {
   setup() {
     return {
