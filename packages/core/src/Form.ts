@@ -39,6 +39,10 @@ export const Form = defineComponent({
       setFieldError,
       setFieldValue,
       setValues,
+      setFieldDirty,
+      setDirty,
+      setFieldTouched,
+      setTouched,
     } = useForm({
       validationSchema: props.validationSchema,
       initialValues,
@@ -68,6 +72,10 @@ export const Form = defineComponent({
         this.setErrors = setErrors;
         this.setFieldValue = setFieldValue;
         this.setValues = setValues;
+        this.setFieldDirty = setFieldDirty;
+        this.setDirty = setDirty;
+        this.setFieldTouched = setFieldTouched;
+        this.setTouched = setTouched;
       }
 
       const children = normalizeChildren(ctx, {
@@ -83,6 +91,10 @@ export const Form = defineComponent({
         setFieldError,
         setFieldValue,
         setValues,
+        setFieldDirty,
+        setDirty,
+        setFieldTouched,
+        setTouched,
       });
 
       if (!props.as) {
