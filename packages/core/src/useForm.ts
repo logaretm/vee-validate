@@ -120,6 +120,10 @@ export function useForm(opts?: FormOptions) {
    */
   function setFieldTouched(field: string, isTouched: boolean) {
     const fieldInstance = fieldsById.value[field];
+    if (!fieldInstance) {
+      return;
+    }
+
     if (Array.isArray(fieldInstance)) {
       fieldInstance.forEach(f => f.setTouched(isTouched));
       return;
@@ -142,6 +146,10 @@ export function useForm(opts?: FormOptions) {
    */
   function setFieldDirty(field: string, isDirty: boolean) {
     const fieldInstance = fieldsById.value[field];
+    if (!fieldInstance) {
+      return;
+    }
+
     if (Array.isArray(fieldInstance)) {
       fieldInstance.forEach(f => f.setDirty(isDirty));
       return;
