@@ -201,6 +201,38 @@ Sets multiple fields values, will trigger validation for all the changed fields.
 
 <code-title level="4">
 
+`setFieldDirty: (field: string, isDirty: boolean) => void`
+
+</code-title>
+
+Sets a field's `dirty` meta flag
+
+<code-title level="4">
+
+`setDirty: (fields: Record<string, boolean>) => void`
+
+</code-title>
+
+Sets multiple fields `dirty` meta flag, does not validate.
+
+<code-title level="4">
+
+`setFieldTouched: (field: string, isTouched: boolean) => void`
+
+</code-title>
+
+Sets a field's `touched` meta flag
+
+<code-title level="4">
+
+`setTouched: (fields: Record<string, boolean>) => void`
+
+</code-title>
+
+Sets multiple fields `touched` meta flag, does not validate.
+
+<code-title level="4">
+
 `validate: () => Promise<boolean>`
 
 </code-title>
