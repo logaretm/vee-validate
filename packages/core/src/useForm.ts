@@ -343,6 +343,7 @@ export function useForm(opts?: FormOptions) {
   provide(FormErrorsSymbol, errors);
 
   return {
+    form: controller,
     errors,
     meta,
     values: formValues,
