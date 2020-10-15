@@ -11,7 +11,7 @@
     "@docsearch/css": "^1.0.0-alpha.28",
     "@docsearch/js": "^1.0.0-alpha.28",
     "@nuxt/content": "^1.9.0",
-    "@nuxtjs/pwa": "^3.0.2",
+    "@nuxtjs/pwa": "^3.2.2",
     "@nuxtjs/tailwindcss": "^3.1.0",
     "nuxt": "^2.14.6"
   },
