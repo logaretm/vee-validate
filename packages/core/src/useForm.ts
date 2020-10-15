@@ -454,12 +454,11 @@ function useFormInitialValues(
   providedValues?: MaybeReactive<Record<string, any>>
 ) {
   const initialValues = computed<Record<string, any>>(() => {
-    const values = providedValues?.value || {};
-    if (isRef(values)) {
-      return values.value as Record<string, any>;
+    if (isRef(providedValues)) {
+      return providedValues.value as Record<string, any>;
     }
 
-    return values;
+    return providedValues || {};
   });
 
   // Watch initial values for changes, and update the pristine (non-dirty and non-touched fields)
