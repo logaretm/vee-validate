@@ -117,6 +117,10 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
       default() {
         return {};
       }
+    },
+    detectInput: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {
@@ -204,30 +208,31 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     const ctx = createValidationCtx(this);
     const children = normalizeChildren(this, ctx);
 
-    const inputs = findInputNodes(children);
-    if (!inputs.length) {
-      // Silent exit if no input was found.
-      return this.slim && children.length <= 1 ? children[0] : h(this.tag, children);
+    // Automatic v-model detection
+    if (this.detectInput) {
+      const inputs = findInputNodes(children);
+
+      if (inputs.length) {
+        inputs.forEach((input, idx) => {
+          // If the elements are not checkboxes and there are more input nodes
+          if (!includes(['checkbox', 'radio'], input.data?.attrs?.type) && idx > 0) {
+            return;
+          }
+
+          const resolved = getConfig().useConstraintAttrs ? resolveRules(input) : {};
+          if (!isEqual(this._resolvedRules, resolved)) {
+            this._needsValidation = true;
+          }
+
+          if (isHTMLNode(input)) {
+            this.fieldName = input.data?.attrs?.name || input.data?.attrs?.id;
+          }
+
+          this._resolvedRules = resolved;
+          addListeners(this, input);
+        });
+      }
     }
-
-    inputs.forEach((input, idx) => {
-      // If the elements are not checkboxes and there are more input nodes
-      if (!includes(['checkbox', 'radio'], input.data?.attrs?.type) && idx > 0) {
-        return;
-      }
-
-      const resolved = getConfig().useConstraintAttrs ? resolveRules(input) : {};
-      if (!isEqual(this._resolvedRules, resolved)) {
-        this._needsValidation = true;
-      }
-
-      if (isHTMLNode(input)) {
-        this.fieldName = input.data?.attrs?.name || input.data?.attrs?.id;
-      }
-
-      this._resolvedRules = resolved;
-      addListeners(this, input);
-    });
 
     return this.slim && children.length <= 1 ? children[0] : h(this.tag, children);
   },
