@@ -727,6 +727,30 @@ test('setting skipIfEmpty to false runs only the first rule', async () => {
   expect(errors.at(0).text()).toBe('The {field} field must be a valid email');
 });
 
+test('setting detectInput to false disables the v-model autodetection', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        value: ''
+      }),
+      template: `
+        <ValidationProvider :detectInput="false" rules="required" v-slot="{ errors }">
+          <input id="input" v-model="value" type="text">
+          <span id="error">{{ errors[0] }}</span>
+        </ValidationProvider>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const input = wrapper.find('#input');
+  input.setValue('');
+  await flushPromises();
+
+  const error = wrapper.find('#error');
+  expect(error.text()).toBeFalsy();
+});
+
 const sleep = wait => new Promise(resolve => setTimeout(resolve, wait));
 test('validation can be debounced', async () => {
   const wrapper = mount(
