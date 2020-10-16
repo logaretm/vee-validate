@@ -735,7 +735,7 @@ test('setting detectInput to false disables the v-model autodetection', async ()
       }),
       template: `
         <ValidationProvider :detectInput="false" rules="required" v-slot="{ errors }">
-          <input v-model="value" type="text">
+          <input id="input" v-model="value" type="text">
           <span id="error">{{ errors[0] }}</span>
         </ValidationProvider>
       `
@@ -743,6 +743,8 @@ test('setting detectInput to false disables the v-model autodetection', async ()
     { localVue: Vue, sync: false }
   );
 
+  const input = wrapper.find('#input');
+  input.setValue('');
   await flushPromises();
 
   const error = wrapper.find('#error');
