@@ -921,8 +921,7 @@ describe('<Form />', () => {
     let throws = false;
     const wrapper = mountWithHoc({
       setup() {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        onErrorCaptured(() => true);
+        onErrorCaptured(() => false);
         return {
           onSubmit() {
             return new Promise((resolve, reject) => {
