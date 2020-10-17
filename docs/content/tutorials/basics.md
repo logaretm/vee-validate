@@ -12,7 +12,7 @@ VeeValidate offers many ways to do form validation, this tutorial will teach you
 
 In this tutorial we will be building a "sign up newsletter" form where the user would have to fill a field to complete their sign up.
 
-## Perquisites
+## Prerequisites
 
 You will need to be familiar with HTML and a good understanding of modern JavaScript like arrow functions and ES modules, also you will need to have basic understanding of Vue's scoped slots feature.
 

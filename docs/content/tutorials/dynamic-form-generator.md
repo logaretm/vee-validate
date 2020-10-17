@@ -22,7 +22,7 @@ Let's quickly recap what you will be building, the component we will be building
 
 </div>
 
-## Perquisites
+## Prerequisites
 
 You will need to be familiar with HTML and a good understanding of modern JavaScript like arrow functions and ES modules, you need to have basic understanding of Vue's `v-for` and prop binding using `v-bind` and its shorthand `:`.
 
