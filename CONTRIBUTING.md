@@ -16,6 +16,12 @@ Install dependencies using [yarn](https://yarnpkg.com)
 yarn
 ```
 
+### Online one-click setup
+
+You can use Gitpod (an Online IDE which is free for Open-source) for contributing to the framework or the docs. With a single click Gitpod will launch a workspace and automatically: clone the repo, run `yarn install`, `yarn build` and afterwards run `yarn docs:dev` to start vuepress local dev server.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
+
 ### Folder Structure
 
 As you can see we have:
