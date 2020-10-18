@@ -1,4 +1,5 @@
 import { ComputedRef, Ref } from 'vue';
+import { ObjectSchema } from 'yup';
 
 export interface ValidationResult {
   errors: string[];
@@ -34,7 +35,7 @@ export interface FormController {
   unregister(field: any): void;
   values: Record<string, any>;
   fields: ComputedRef<Record<string, any>>;
-  schema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
+  schema?: Record<string, GenericValidateFunction | string | Record<string, any>> | ObjectSchema;
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<string, ValidationResult>>;
   setFieldValue: (path: string, value: any) => void;
   setFieldError: (field: string, message: string) => void;

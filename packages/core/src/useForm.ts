@@ -1,5 +1,5 @@
 import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, ComputedRef } from 'vue';
-import type { ValidationError } from 'yup';
+import type { ObjectSchema, ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
   FieldMeta,
@@ -15,7 +15,7 @@ import { getFromPath, isYupValidator, keysOf, setInPath, unsetPath } from './uti
 import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
 
 interface FormOptions {
-  validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>>;
+  validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>> | ObjectSchema;
   initialValues?: MaybeReactive<Record<string, any>>;
   validateOnMount?: boolean;
 }
