@@ -188,6 +188,10 @@ export default {
 
 For more information on the `Form` component, read [the API reference](/api/form).
 
+<doc-tip title="Yup Schema Optimizations">
+  There are a couple of optimization caveats when it comes to using `yup` schemas to validate your forms, be sure to check the [best practices guide](/tutorials/best-practices)
+</doc-tip>
+
 ## Validation Behavior
 
 By default vee-validate runs validation in these scenarios:
