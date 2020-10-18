@@ -6,7 +6,7 @@ order: 1
 
 # Overview
 
-Form validation is one of the most difficult subjects in frontend, not only you have to deal with ensuring correct values are submitted, you must also make sure to provide a pleasant UX for your users and we also have to deal with accessability and making sure our forms are inclusive and usable for all types of our users.
+Form validation is one of the most difficult subjects in frontend, not only you have to deal with ensuring correct values are submitted, you must also make sure to provide a pleasant UX for your users and we also have to deal with accessibility and making sure our forms are inclusive and usable for all types of our users.
 
 Doing form validation by hand is painful and is a lot of work and you won't probably cover all your needs if you decide to build your own.
 
