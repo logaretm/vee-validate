@@ -56,15 +56,18 @@ export default {
 };
 ```
 
+You are responsible for when the field validates, blurs or when its value changes. This gives you greater control over the `Field` component which may include or implement sensible defaults for most common use cases.
+
 ## API Reference
 
 The full signature of the `useField` function looks like this:
 
 ```typescript
 interface FieldOptions {
-  initialValue: any; // the initial value, cannot be a ref
-  disabled: MaybeReactive<boolean>; // if the input is disabled, can be a ref
+  initialValue?: any; // the initial value, cannot be a ref
+  disabled?: MaybeReactive<boolean>; // if the input is disabled, can be a ref
   validateOnMount?: boolean; // if the field should be validated when the component is mounted
+  validateOnValueUpdate?: boolean; // if the field should be validated when the value changes (default is true)
   bails?: boolean; // if the field validation should run all validations
   label?: string; // A friendly name to be used in `generateMessage` config instead of the field name
 }
@@ -76,7 +79,7 @@ interface ValidationResult {
 type useField = (
   fieldName: MaybeReactive<string>,
   rules: RuleExpression,
-  opts?: Partial<FieldOptions>
+  opts?: FieldOptions
 ) => {
   name: string; // The field name
   value: Ref<any>; // the field's current value
