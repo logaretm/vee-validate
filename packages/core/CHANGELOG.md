@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.11](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.10...vee-validate@4.0.0-beta.11) (2020-10-18)
+
+
+### Bug Fixes
+
+* provide yup object schema type to the useForm closes [#2988](https://github.com/logaretm/vee-validate/issues/2988) ([29157f7](https://github.com/logaretm/vee-validate/commit/29157f7a36dd14dc9a6c411ffddbbeb9d3749f6e))
+
+
+
+
+
 # [4.0.0-beta.10](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.9...vee-validate@4.0.0-beta.10) (2020-10-15)
 
 
