@@ -316,6 +316,88 @@ Alternatively if you plan to use the scoped slot for complex markup, you can use
 </Form>
 ```
 
+### Resetting Forms After Submit
+
+Usually you will reset your forms after a successful submission, the `onSubmit` handler receives an additional `form` object in the second argument that allows you do some actions on the form after submissions:
+
+```vue
+<template>
+  <Form @submit="onSubmit" :validation-schema="schema">
+    <!-- fields ... -->
+  </Form>
+</template>
+
+<script>
+import { Form, Field } from 'vee-validate';
+import * as yup from 'yup';
+
+export default {
+  components: {
+    Form,
+    Field,
+  },
+  data() {
+    const schema = yup.object().shape({
+      // ...
+    });
+
+    return {
+      schema,
+    };
+  },
+  methods: {
+    onSubmit(values, { form }) {
+      console.log(values); // send data to API
+
+      // reset the form
+      form.reset();
+    },
+  },
+};
+</script>
+```
+
+Alternatively you can also use template `$refs` to reset the form whenever you need:
+
+```vue
+<template>
+  <Form ref="form" @submit="onSubmit" :validation-schema="schema">
+    <!-- fields ... -->
+
+    <button type="Submit">Submit</button>
+  </Form>
+</template>
+
+<script>
+import { Form, Field } from 'vee-validate';
+import * as yup from 'yup';
+
+export default {
+  components: {
+    Form,
+    Field,
+  },
+  data() {
+    const schema = yup.object().shape({
+      // ...
+    });
+
+    return {
+      schema,
+    };
+  },
+  methods: {
+    onSubmit(values) {
+      console.log(values); // send data to API
+
+      // reset the form
+      this.$refs.form.reset();
+    },
+  },
+};
+</script>
+```
+
 ## Initial Values
 
 Since with vee-validate you don't use `v-model` often to track your values, the `Form` component allows you to define the starting values for your fields, by default all fields start with `undefined` as a value.
