@@ -245,6 +245,7 @@ function prepareSlotProps(vm: ObserverInstance) {
     errors: vm.errors,
     fields: vm.fields,
     validate: vm.validate,
+    validateWithInfo: vm.validateWithInfo,
     passes: vm.handleSubmit,
     handleSubmit: vm.handleSubmit,
     reset: vm.reset
