@@ -48,7 +48,7 @@ Notice the character-case difference between `Form` and `form`, the uppercased o
 
 ```js
 // Using named imports
-import { From as ValidationForm } from 'vee-validate';
+import { Form as ValidationForm } from 'vee-validate';
 
 const component = {
   components: {
