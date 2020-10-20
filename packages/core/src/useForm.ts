@@ -3,7 +3,7 @@ import type { ObjectSchema, ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
   FieldMeta,
-  FormController,
+  FormContext,
   SubmissionHandler,
   GenericValidateFunction,
   SubmitEvent,
@@ -258,7 +258,7 @@ export function useForm(opts?: FormOptions) {
     unsetPath(formValues, fieldName);
   }
 
-  const controller: FormController = {
+  const controller: FormContext = {
     register: registerField,
     unregister: unregisterField,
     fields: fieldsById,
@@ -391,10 +391,7 @@ function useFormMeta(
   });
 }
 
-async function validateYupSchema(
-  form: FormController,
-  shouldMutate = false
-): Promise<Record<string, ValidationResult>> {
+async function validateYupSchema(form: FormContext, shouldMutate = false): Promise<Record<string, ValidationResult>> {
   const errors: any[] = await (form.schema as any)
     .validate(form.values, { abortEarly: false })
     .then(() => [])

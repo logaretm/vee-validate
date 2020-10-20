@@ -1,6 +1,6 @@
 import { watch, ref, Ref, isRef, reactive, computed, onMounted, watchEffect, inject, onBeforeUnmount } from 'vue';
 import { validate as validateValue } from './validate';
-import { FormController, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
+import { FormContext, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
 import {
   normalizeRules,
   extractLocators,
@@ -20,7 +20,6 @@ interface FieldOptions {
   validateOnValueUpdate: boolean;
   validateOnMount?: boolean;
   bails?: boolean;
-  form?: FormController;
   type?: string;
   valueProp?: MaybeReactive<any>;
   label?: string;
@@ -34,7 +33,6 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
 export function useField(name: string, rules: RuleExpression, opts?: Partial<FieldOptions>) {
   const {
     initialValue,
-    form,
     validateOnMount,
     bails,
     disabled,
@@ -43,6 +41,8 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     label,
     validateOnValueUpdate,
   } = normalizeOptions(name, opts);
+
+  const form = inject(FormSymbol, undefined) as FormContext | undefined;
 
   const { meta, errors, handleBlur, handleInput, reset, setValidationState, value, checked } = useValidationState({
     name,
@@ -190,15 +190,12 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
  * Normalizes partial field options to include the full
  */
 function normalizeOptions(name: string, opts: Partial<FieldOptions> | undefined): FieldOptions {
-  const form = inject(FormSymbol, undefined) as FormController | undefined;
-
   const defaults = () => ({
     initialValue: undefined,
     validateOnMount: false,
     bails: true,
     rules: '',
     disabled: false,
-    form,
     label: name,
     validateOnValueUpdate: true,
   });
@@ -225,7 +222,7 @@ function useValidationState({
 }: {
   name: string;
   initValue?: any;
-  form?: FormController;
+  form?: FormContext;
   type?: string;
   valueProp: any;
 }) {
@@ -343,7 +340,7 @@ function extractRuleFromSchema(schema: Record<string, any> | undefined, fieldNam
 /**
  * Manages the field value
  */
-function useFieldValue(initialValue: any, path: string, form?: FormController) {
+function useFieldValue(initialValue: any, path: string, form?: FormContext) {
   // if no form is associated, use a regular ref.
   if (!form) {
     return ref(initialValue);

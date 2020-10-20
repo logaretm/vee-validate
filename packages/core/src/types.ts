@@ -30,7 +30,7 @@ export type SubmitEvent = Event & { target: HTMLFormElement };
 
 export type GenericValidateFunction = (value: any) => boolean | string | Promise<boolean | string>;
 
-export interface FormController {
+export interface FormContext {
   register(field: any): void;
   unregister(field: any): void;
   values: Record<string, any>;
@@ -48,6 +48,6 @@ export interface FormController {
   reset: () => void;
 }
 
-type SubmissionContext = { evt: SubmitEvent; form: FormController };
+type SubmissionContext = { evt: SubmitEvent; form: FormContext };
 
 export type SubmissionHandler = (values: Record<string, any>, ctx: SubmissionContext) => any;

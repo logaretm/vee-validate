@@ -332,7 +332,7 @@ export default {
 </script>
 ```
 
-For advanced forms, you may need to trigger various actions on the form in the `submit` handler. Your callback receives a `FormController` object as part of the second argument along with the event object that triggered the submission if available.
+For advanced forms, you may need to trigger various actions on the form in the `submit` handler. Your callback receives a `FormContext` object as part of the second argument along with the event object that triggered the submission if available.
 
 ```js
 const { handleSubmit } = useForm();
