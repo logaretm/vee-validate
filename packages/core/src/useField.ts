@@ -1,4 +1,16 @@
-import { watch, ref, Ref, isRef, reactive, computed, onMounted, watchEffect, inject, onBeforeUnmount } from 'vue';
+import {
+  watch,
+  ref,
+  Ref,
+  isRef,
+  reactive,
+  computed,
+  onMounted,
+  watchEffect,
+  inject,
+  onBeforeUnmount,
+  getCurrentInstance,
+} from 'vue';
 import { validate as validateValue } from './validate';
 import { FormContext, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
 import {
@@ -42,7 +54,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     validateOnValueUpdate,
   } = normalizeOptions(name, opts);
 
-  const form = inject(FormSymbol, undefined) as FormContext | undefined;
+  const form = injectWithSelf(FormSymbol, undefined) as FormContext | undefined;
 
   const { meta, errors, handleBlur, handleInput, reset, setValidationState, value, checked } = useValidationState({
     name,
@@ -359,4 +371,12 @@ function useFieldValue(initialValue: any, path: string, form?: FormContext) {
   });
 
   return value;
+}
+
+// Uses same component provide as its own injections
+// Due to changes in https://github.com/vuejs/vue-next/pull/2424
+function injectWithSelf(symbol: symbol, def = undefined) {
+  const vm = getCurrentInstance() as any;
+
+  return inject(symbol, def) || vm?.provides[symbol];
 }
