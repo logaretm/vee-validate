@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.12](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.11...vee-validate@4.0.0-beta.12) (2020-10-21)
+
+
+### Bug Fixes
+
+* upgrade to Vue 3.0.2 and fix broken cases ([ede7214](https://github.com/logaretm/vee-validate/commit/ede72147bd998b888825457541ff964df5e7a2fd))
+
+
+
+
+
 # [4.0.0-beta.11](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.10...vee-validate@4.0.0-beta.11) (2020-10-18)
 
 
