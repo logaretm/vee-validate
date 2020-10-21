@@ -1,4 +1,4 @@
-import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, ComputedRef } from 'vue';
+import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, ComputedRef, unref } from 'vue';
 import type { ObjectSchema, ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
@@ -10,7 +10,6 @@ import {
   ValidationResult,
   MaybeReactive,
 } from './types';
-import { unwrap } from './utils/refs';
 import { getFromPath, isYupValidator, keysOf, setInPath, unsetPath } from './utils';
 import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
 
@@ -56,7 +55,7 @@ export function useForm(opts?: FormOptions) {
 
   // a flat array of the non-disabled
   const activeFields = computed(() => {
-    return fields.value.filter(field => !unwrap(field.disabled));
+    return fields.value.filter(field => !unref(field.disabled));
   });
 
   // a private ref for all form values
@@ -69,9 +68,9 @@ export function useForm(opts?: FormOptions) {
       let message: string | undefined;
       if (Array.isArray(fieldsById.value[field.name])) {
         const group = fieldsById.value[field.name];
-        message = unwrap((group.find((f: any) => unwrap(f.checked)) || field).errorMessage);
+        message = unref((group.find((f: any) => unref(f.checked)) || field).errorMessage);
       } else {
-        message = unwrap(field.errorMessage);
+        message = unref(field.errorMessage);
       }
 
       if (message) {
@@ -85,7 +84,7 @@ export function useForm(opts?: FormOptions) {
   // same as form values but filtered disabled fields out
   const activeFormValues = computed(() => {
     return activeFields.value.reduce((formData: Record<string, any>, field) => {
-      setInPath(formData, field.name, unwrap(field.value));
+      setInPath(formData, field.name, unref(field.value));
 
       return formData;
     }, {});
@@ -238,7 +237,7 @@ export function useForm(opts?: FormOptions) {
     }
 
     // otherwise find the actual value in the current array of values and remove it
-    const valueIdx: number | undefined = getFromPath(formValues, fieldName)?.indexOf?.(unwrap(field.valueProp));
+    const valueIdx: number | undefined = getFromPath(formValues, fieldName)?.indexOf?.(unref(field.valueProp));
 
     if (valueIdx === undefined) {
       unsetPath(formValues, fieldName);
@@ -385,7 +384,7 @@ function useFormMeta(
     }, {} as Record<keyof Omit<FieldMeta, 'initialValue'>, boolean>);
 
     return {
-      initialValues: unwrap(initialValues),
+      initialValues: unref(initialValues),
       ...flags,
     };
   });

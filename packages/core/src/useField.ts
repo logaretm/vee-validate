@@ -10,6 +10,7 @@ import {
   inject,
   onBeforeUnmount,
   getCurrentInstance,
+  unref,
 } from 'vue';
 import { validate as validateValue } from './validate';
 import { FormContext, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
@@ -17,7 +18,6 @@ import {
   normalizeRules,
   extractLocators,
   normalizeEventValue,
-  unwrap,
   hasCheckedAttr,
   getFromPath,
   setInPath,
@@ -58,8 +58,8 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
 
   const { meta, errors, handleBlur, handleInput, reset, setValidationState, value, checked } = useValidationState({
     name,
-    // make sure to unwrap initial value because of possible refs passed in
-    initValue: unwrap(initialValue),
+    // make sure to unref initial value because of possible refs passed in
+    initValue: unref(initialValue),
     form,
     type,
     valueProp,
@@ -67,7 +67,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
 
   const nonYupSchemaRules = extractRuleFromSchema(form?.schema, name);
   const normalizedRules = computed(() => {
-    return normalizeRules(nonYupSchemaRules || unwrap(rules));
+    return normalizeRules(nonYupSchemaRules || unref(rules));
   });
 
   const validate = async (): Promise<ValidationResult> => {
@@ -239,7 +239,7 @@ function useValidationState({
   valueProp: any;
 }) {
   const errors: Ref<string[]> = ref([]);
-  const initialValue = getFromPath(unwrap(inject(FormInitialValues, {})), name) ?? initValue;
+  const initialValue = getFromPath(unref(inject(FormInitialValues, {})), name) ?? initValue;
   const { reset: resetFlags, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
@@ -248,10 +248,10 @@ function useValidationState({
   const checked = hasCheckedAttr(type)
     ? computed(() => {
         if (Array.isArray(value.value)) {
-          return value.value.includes(unwrap(valueProp));
+          return value.value.includes(unref(valueProp));
         }
 
-        return unwrap(valueProp) === value.value;
+        return unref(valueProp) === value.value;
       })
     : undefined;
 
