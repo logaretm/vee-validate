@@ -258,7 +258,7 @@ export function useForm(opts?: FormOptions) {
     unsetPath(formValues, fieldName);
   }
 
-  const controller: FormContext = {
+  const formCtx: FormContext = {
     register: registerField,
     unregister: unregisterField,
     fields: fieldsById,
@@ -266,7 +266,7 @@ export function useForm(opts?: FormOptions) {
     schema: opts?.validationSchema,
     validateSchema: isYupValidator(opts?.validationSchema)
       ? (shouldMutate = false) => {
-          return validateYupSchema(controller, shouldMutate);
+          return validateYupSchema(formCtx, shouldMutate);
         }
       : undefined,
     setFieldValue,
@@ -281,8 +281,8 @@ export function useForm(opts?: FormOptions) {
   };
 
   const validate = async () => {
-    if (controller.validateSchema) {
-      return controller.validateSchema(true).then(results => {
+    if (formCtx.validateSchema) {
+      return formCtx.validateSchema(true).then(results => {
         return Object.keys(results).every(r => !results[r].errors.length);
       });
     }
@@ -307,7 +307,7 @@ export function useForm(opts?: FormOptions) {
       return validate()
         .then(result => {
           if (result && typeof fn === 'function') {
-            return fn(activeFormValues.value, { evt: e as SubmitEvent, form: controller });
+            return fn(activeFormValues.value, { evt: e as SubmitEvent, form: formCtx });
           }
         })
         .then(
@@ -339,7 +339,7 @@ export function useForm(opts?: FormOptions) {
 
   // Provide injections
   provide(FormInitialValues, initialValues);
-  provide(FormSymbol, controller);
+  provide(FormSymbol, formCtx);
   provide(FormErrorsSymbol, errors);
 
   return {
