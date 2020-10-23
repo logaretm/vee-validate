@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.13](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.12...vee-validate@4.0.0-beta.13) (2020-10-23)
+
+
+### Features
+
+* `useForm` Field types ([#2996](https://github.com/logaretm/vee-validate/issues/2996)) ([727f229](https://github.com/logaretm/vee-validate/commit/727f2295d421ef92620995a356bcaee53770299b))
+
+
+
+
+
 # [4.0.0-beta.12](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.11...vee-validate@4.0.0-beta.12) (2020-10-21)
 
 
