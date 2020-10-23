@@ -28,6 +28,8 @@ export default {
 };
 ```
 
+The `useForm` composable has very powerful type information and can be fully typed, for more information check the [useForm typing tutorial](/tutorials/use-form-types)
+
 ## API Reference
 
 The full signature of the `useForm` function looks like this:
@@ -156,23 +158,26 @@ values.value; // { email: 'something@gmail.com', .... }
 
 <code-title level="4">
 
-`setFieldError: (field: string, message: string) => void`
+`setFieldError: (field: string, message: string | undefined) => void`
 
 </code-title>
 
-Sets a field's error message, useful for setting messages form an API or that are not available as a validation rule.
+Sets a field's error message, useful for setting messages form an API or that are not available as a validation rule. Setting the message to `undefined` or an empty string clears the errors and marks the field as valid.
 
 ```js
 const { setFieldError } = useForm();
 
 setFieldError('email', 'this email is already taken');
+
+// Mark field as valid
+setFieldError('email', undefined);
 ```
 
 If you try to set an error for field doesn't exist, it will not affect the form's overall validity and will be ignored.
 
 <code-title level="4">
 
-`setErrors: (fields: Record<string, string>) => void`
+`setErrors: (fields: Record<string, string | undefined>) => void`
 
 </code-title>
 
@@ -184,8 +189,15 @@ const { setErrors } = useForm();
 setErrors({
   email: 'this email is already taken',
   password: 'someone already has this password 🤪',
+  firstName: undefined, // clears errors and marks the field as valid
 });
 ```
+
+<doc-tip>
+
+Any missing fields you didn't pass to `setErrors` will be unaffected and their state will not change
+
+</doc-tip>
 
 <code-title level="4">
 
