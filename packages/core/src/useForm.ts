@@ -1,4 +1,4 @@
-import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, ComputedRef, unref } from 'vue';
+import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref } from 'vue';
 import type { ObjectSchema, ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
@@ -13,15 +13,17 @@ import {
 import { getFromPath, isYupValidator, keysOf, setInPath, unsetPath } from './utils';
 import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
 
-interface FormOptions {
-  validationSchema?: Record<string, GenericValidateFunction | string | Record<string, any>> | ObjectSchema;
-  initialValues?: MaybeReactive<Record<string, any>>;
+interface FormOptions<TValues extends Record<string, any>> {
+  validationSchema?:
+    | Record<keyof TValues, GenericValidateFunction | string | Record<string, any>>
+    | ObjectSchema<TValues>;
+  initialValues?: MaybeReactive<TValues>;
   validateOnMount?: boolean;
 }
 
 type FieldComposite = ReturnType<typeof useField>;
 
-export function useForm(opts?: FormOptions) {
+export function useForm<TValues extends Record<string, any> = Record<string, any>>(opts?: FormOptions<TValues>) {
   // A flat array containing field references
   const fields: Ref<any[]> = ref([]);
 
@@ -29,7 +31,7 @@ export function useForm(opts?: FormOptions) {
   const isSubmitting = ref(false);
 
   // a field map object useful for faster access of fields
-  const fieldsById = computed(() => {
+  const fieldsById = computed<Record<keyof TValues, any>>(() => {
     return fields.value.reduce((acc, field) => {
       // if the field was not added before
       if (!acc[field.name]) {
@@ -59,11 +61,11 @@ export function useForm(opts?: FormOptions) {
   });
 
   // a private ref for all form values
-  const formValues = reactive<Record<string, any>>({});
+  const formValues = reactive({}) as TValues;
 
   // an aggregation of field errors in a map object
-  const errors = computed(() => {
-    return activeFields.value.reduce((acc: Record<string, string>, field) => {
+  const errors = computed<{ [P in keyof TValues]?: string }>(() => {
+    return activeFields.value.reduce((acc: Record<keyof TValues, string>, field) => {
       // Check if its a grouped field (checkbox/radio)
       let message: string | undefined;
       if (Array.isArray(fieldsById.value[field.name])) {
@@ -74,7 +76,7 @@ export function useForm(opts?: FormOptions) {
       }
 
       if (message) {
-        acc[field.name] = message;
+        acc[field.name as keyof TValues] = message;
       }
 
       return acc;
@@ -82,8 +84,8 @@ export function useForm(opts?: FormOptions) {
   });
 
   // same as form values but filtered disabled fields out
-  const activeFormValues = computed(() => {
-    return activeFields.value.reduce((formData: Record<string, any>, field) => {
+  const activeFormValues = computed<TValues>(() => {
+    return activeFields.value.reduce((formData: Record<keyof TValues, any>, field) => {
       setInPath(formData, field.name, unref(field.value));
 
       return formData;
@@ -91,7 +93,7 @@ export function useForm(opts?: FormOptions) {
   });
 
   // initial form values
-  const { initialValues } = useFormInitialValues(fieldsById, formValues, opts?.initialValues);
+  const { initialValues } = useFormInitialValues<TValues>(fieldsById, formValues, opts?.initialValues);
 
   // form meta aggregations
   const meta = useFormMeta(fields, initialValues);
@@ -99,7 +101,7 @@ export function useForm(opts?: FormOptions) {
   /**
    * Manually sets an error message on a specific field
    */
-  function setFieldError(field: string, message: string) {
+  function setFieldError(field: keyof TValues, message: string | undefined) {
     const fieldInstance = fieldsById.value[field];
     if (!fieldInstance) {
       return;
@@ -107,19 +109,19 @@ export function useForm(opts?: FormOptions) {
 
     if (Array.isArray(fieldInstance)) {
       fieldInstance.forEach(instance => {
-        instance.setValidationState({ errors: [message] });
+        instance.setValidationState({ errors: message ? [message] : [] });
       });
       return;
     }
 
-    fieldInstance.setValidationState({ errors: [message] });
+    fieldInstance.setValidationState({ errors: message ? [message] : [] });
   }
 
   /**
    * Sets errors for the fields specified in the object
    */
-  function setErrors(fields: Record<string, string>) {
-    Object.keys(fields).forEach(field => {
+  function setErrors(fields: Partial<Record<keyof TValues, string | undefined>>) {
+    keysOf(fields).forEach(field => {
       setFieldError(field, fields[field]);
     });
   }
@@ -127,33 +129,33 @@ export function useForm(opts?: FormOptions) {
   /**
    * Sets a single field value
    */
-  function setFieldValue(path: string, value: any) {
-    const field = fieldsById.value[path];
+  function setFieldValue<T extends keyof TValues = string>(field: T, value: TValues[T] | undefined) {
+    const fieldInstance = fieldsById.value[field] as any;
 
     // Multiple checkboxes, and only one of them got updated
-    if (Array.isArray(field) && field[0]?.type === 'checkbox' && !Array.isArray(value)) {
-      const oldVal = getFromPath(formValues, path);
+    if (Array.isArray(fieldInstance) && fieldInstance[0]?.type === 'checkbox' && !Array.isArray(value)) {
+      const oldVal = getFromPath(formValues, field as string);
       const newVal = Array.isArray(oldVal) ? [...oldVal] : [];
       const idx = newVal.indexOf(value);
       idx >= 0 ? newVal.splice(idx, 1) : newVal.push(value);
-      setInPath(formValues, path, newVal);
+      setInPath(formValues, field as string, newVal);
       return;
     }
 
     let newValue = value;
     // Single Checkbox
-    if (field?.type === 'checkbox') {
-      newValue = getFromPath(formValues, path) === value ? undefined : value;
+    if (fieldInstance?.type === 'checkbox') {
+      newValue = getFromPath(formValues, field as string) === value ? undefined : value;
     }
 
-    setInPath(formValues, path, newValue);
+    setInPath(formValues, field as string, newValue);
   }
 
   /**
    * Sets multiple fields values
    */
-  function setValues(fields: Record<string, any>) {
-    Object.keys(fields).forEach(field => {
+  function setValues(fields: Partial<TValues>) {
+    keysOf(fields).forEach(field => {
       setFieldValue(field, fields[field]);
     });
   }
@@ -161,7 +163,7 @@ export function useForm(opts?: FormOptions) {
   /**
    * Sets the touched meta state on a field
    */
-  function setFieldTouched(field: string, isTouched: boolean) {
+  function setFieldTouched(field: keyof TValues, isTouched: boolean) {
     const fieldInstance = fieldsById.value[field];
     if (!fieldInstance) {
       return;
@@ -178,16 +180,16 @@ export function useForm(opts?: FormOptions) {
   /**
    * Sets the touched meta state on multiple fields
    */
-  function setTouched(fields: Record<string, boolean>) {
-    Object.keys(fields).forEach(field => {
-      setFieldTouched(field, fields[field]);
+  function setTouched(fields: Partial<Record<keyof TValues, boolean>>) {
+    keysOf(fields).forEach(field => {
+      setFieldTouched(field, !!fields[field]);
     });
   }
 
   /**
    * Sets the dirty meta state on a field
    */
-  function setFieldDirty(field: string, isDirty: boolean) {
+  function setFieldDirty(field: keyof TValues, isDirty: boolean) {
     const fieldInstance = fieldsById.value[field];
     if (!fieldInstance) {
       return;
@@ -204,9 +206,9 @@ export function useForm(opts?: FormOptions) {
   /**
    * Sets the dirty meta state on multiple fields
    */
-  function setDirty(fields: Record<string, boolean>) {
-    Object.keys(fields).forEach(field => {
-      setFieldDirty(field, fields[field]);
+  function setDirty(fields: Partial<Record<keyof TValues, boolean>>) {
+    keysOf(fields).forEach(field => {
+      setFieldDirty(field, !!fields[field]);
     });
   }
 
@@ -257,7 +259,7 @@ export function useForm(opts?: FormOptions) {
     unsetPath(formValues, fieldName);
   }
 
-  const formCtx: FormContext = {
+  const formCtx: FormContext<TValues> = {
     register: registerField,
     unregister: unregisterField,
     fields: fieldsById,
@@ -295,7 +297,7 @@ export function useForm(opts?: FormOptions) {
     return results.every(r => !r.errors.length);
   };
 
-  const handleSubmit = (fn?: SubmissionHandler) => {
+  const handleSubmit = (fn?: SubmissionHandler<TValues>) => {
     return function submissionHandler(e: unknown) {
       if (e instanceof Event) {
         e.preventDefault();
@@ -364,10 +366,7 @@ export function useForm(opts?: FormOptions) {
 /**
  * Manages form meta aggregation
  */
-function useFormMeta(
-  fields: Ref<any[]>,
-  initialValues: MaybeReactive<Record<string, any>>
-): ComputedRef<FieldMeta & { initialValues: Record<string, any> }> {
+function useFormMeta<TValues>(fields: Ref<any[]>, initialValues: MaybeReactive<TValues>) {
   const MERGE_STRATEGIES: Record<keyof Omit<FieldMeta, 'initialValue'>, 'every' | 'some'> = {
     valid: 'every',
     dirty: 'some',
@@ -384,13 +383,16 @@ function useFormMeta(
     }, {} as Record<keyof Omit<FieldMeta, 'initialValue'>, boolean>);
 
     return {
-      initialValues: unref(initialValues),
+      initialValues: unref(initialValues) as TValues,
       ...flags,
     };
   });
 }
 
-async function validateYupSchema(form: FormContext, shouldMutate = false): Promise<Record<string, ValidationResult>> {
+async function validateYupSchema<TValues>(
+  form: FormContext<TValues>,
+  shouldMutate = false
+): Promise<Record<keyof TValues, ValidationResult>> {
   const errors: any[] = await (form.schema as any)
     .validate(form.values, { abortEarly: false })
     .then(() => [])
@@ -413,7 +415,7 @@ async function validateYupSchema(form: FormContext, shouldMutate = false): Promi
   }, {});
 
   // Aggregates the validation result
-  const aggregatedResult = Object.keys(fields).reduce((result: Record<string, ValidationResult>, fieldId) => {
+  const aggregatedResult = keysOf(fields).reduce((result: Record<keyof TValues, ValidationResult>, fieldId) => {
     const field = fields[fieldId];
     const messages = (errorsByPath[fieldId] || { errors: [] }).errors;
     const fieldResult = {
@@ -436,7 +438,7 @@ async function validateYupSchema(form: FormContext, shouldMutate = false): Promi
     field.setValidationState(fieldResult);
 
     return result;
-  }, {});
+  }, {} as Record<keyof TValues, ValidationResult>);
 
   return aggregatedResult;
 }
@@ -444,17 +446,17 @@ async function validateYupSchema(form: FormContext, shouldMutate = false): Promi
 /**
  * Manages the initial values prop
  */
-function useFormInitialValues(
-  fields: Ref<any>,
-  formValues: Record<string, any>,
-  providedValues?: MaybeReactive<Record<string, any>>
+function useFormInitialValues<TValues>(
+  fields: Ref<Record<keyof TValues, any>>,
+  formValues: TValues,
+  providedValues?: MaybeReactive<TValues>
 ) {
-  const initialValues = computed<Record<string, any>>(() => {
+  const initialValues = computed<TValues>(() => {
     if (isRef(providedValues)) {
-      return providedValues.value as Record<string, any>;
+      return providedValues.value;
     }
 
-    return providedValues || {};
+    return providedValues || ({} as TValues);
   });
 
   // Watch initial values for changes, and update the pristine (non-dirty and non-touched fields)
@@ -464,15 +466,15 @@ function useFormInitialValues(
     initialValues,
     value => {
       const isSafeToUpdate = (f: any) => f.meta.dirty || f.meta.touched;
-      Object.keys(fields.value).forEach(fieldPath => {
+      keysOf(fields.value).forEach(fieldPath => {
         const field = fields.value[fieldPath];
         const isFieldDirty = Array.isArray(field) ? field.some(isSafeToUpdate) : isSafeToUpdate(field);
         if (isFieldDirty) {
           return;
         }
 
-        const newValue = getFromPath(value, fieldPath);
-        setInPath(formValues, fieldPath, newValue);
+        const newValue = getFromPath(value, fieldPath as string);
+        setInPath(formValues, fieldPath as string, newValue);
       });
     },
     {

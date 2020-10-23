@@ -30,24 +30,30 @@ export type SubmitEvent = Event & { target: HTMLFormElement };
 
 export type GenericValidateFunction = (value: any) => boolean | string | Promise<boolean | string>;
 
-export interface FormContext {
+export interface FormContext<TValues extends Record<string, any> = Record<string, any>> {
   register(field: any): void;
   unregister(field: any): void;
-  values: Record<string, any>;
-  fields: ComputedRef<Record<string, any>>;
-  schema?: Record<string, GenericValidateFunction | string | Record<string, any>> | ObjectSchema;
-  validateSchema?: (shouldMutate?: boolean) => Promise<Record<string, ValidationResult>>;
-  setFieldValue: (path: string, value: any) => void;
-  setFieldError: (field: string, message: string) => void;
-  setErrors: (fields: Record<string, string>) => void;
-  setValues: (fields: Record<string, any>) => void;
-  setFieldTouched: (field: string, isTouched: boolean) => void;
-  setTouched: (fields: Record<string, boolean>) => void;
-  setFieldDirty: (field: string, isDirty: boolean) => void;
-  setDirty: (fields: Record<string, boolean>) => void;
+  values: TValues;
+  fields: ComputedRef<Record<keyof TValues, any>>;
+  schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | ObjectSchema<TValues>;
+  validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
+  setFieldValue<T extends keyof TValues>(field: T, value: TValues[T]): void;
+  setFieldError: (field: keyof TValues, message: string | undefined) => void;
+  setErrors: (fields: Partial<Record<keyof TValues, string | undefined>>) => void;
+  setValues<T extends keyof TValues>(fields: Partial<Record<T, TValues[T]>>): void;
+  setFieldTouched: (field: keyof TValues, isTouched: boolean) => void;
+  setTouched: (fields: Partial<Record<keyof TValues, boolean>>) => void;
+  setFieldDirty: (field: keyof TValues, isDirty: boolean) => void;
+  setDirty: (fields: Partial<Record<keyof TValues, boolean>>) => void;
   reset: () => void;
 }
 
-type SubmissionContext = { evt: SubmitEvent; form: FormContext };
+type SubmissionContext<TValues extends Record<string, any> = Record<string, any>> = {
+  evt: SubmitEvent;
+  form: FormContext<TValues>;
+};
 
-export type SubmissionHandler = (values: Record<string, any>, ctx: SubmissionContext) => any;
+export type SubmissionHandler<TValues extends Record<string, any> = Record<string, any>> = (
+  values: TValues,
+  ctx: SubmissionContext<TValues>
+) => any;
