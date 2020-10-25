@@ -122,7 +122,7 @@ You can use the newly defined `positive` rule like this:
 </ValidationProvider>
 ```
 
-You can add more rules to your field. To do that, define a rule that ensures that the field value must be an even number:
+You can add more rules to your field. To do that, define a rule that ensures that the field value must be an odd number:
 
 ```js
 import { extend } from 'vee-validate';
