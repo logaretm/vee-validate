@@ -340,7 +340,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   // Provide injections
   provide(FormInitialValues, initialValues);
-  provide(FormSymbol, formCtx);
+  provide(FormSymbol, formCtx as FormContext);
   provide(FormErrorsSymbol, errors);
 
   return {

@@ -11,7 +11,7 @@ function cleanupNonNestedPath(path: string) {
 /**
  * Gets a nested property value from an object
  */
-export function getFromPath(object: Record<string, any>, path: string): any {
+export function getFromPath(object: Record<string, any> | undefined, path: string): any {
   if (!object) {
     return undefined;
   }

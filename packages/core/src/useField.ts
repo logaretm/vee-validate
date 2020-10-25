@@ -11,6 +11,7 @@ import {
   onBeforeUnmount,
   getCurrentInstance,
   unref,
+  InjectionKey,
 } from 'vue';
 import { validate as validateValue } from './validate';
 import { FormContext, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
@@ -54,8 +55,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     validateOnValueUpdate,
   } = normalizeOptions(name, opts);
 
-  const form = injectWithSelf(FormSymbol, undefined) as FormContext | undefined;
-
+  const form = injectWithSelf(FormSymbol);
   const { meta, errors, handleBlur, handleInput, reset, setValidationState, value, checked } = useValidationState({
     name,
     // make sure to unref initial value because of possible refs passed in
@@ -239,7 +239,7 @@ function useValidationState({
   valueProp: any;
 }) {
   const errors: Ref<string[]> = ref([]);
-  const initialValue = getFromPath(unref(inject(FormInitialValues, {})), name) ?? initValue;
+  const initialValue = getFromPath(unref(inject(FormInitialValues, undefined)), name) ?? initValue;
   const { reset: resetFlags, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
@@ -375,8 +375,8 @@ function useFieldValue(initialValue: any, path: string, form?: FormContext) {
 
 // Uses same component provide as its own injections
 // Due to changes in https://github.com/vuejs/vue-next/pull/2424
-function injectWithSelf(symbol: symbol, def = undefined) {
+function injectWithSelf<T>(symbol: InjectionKey<T>, def: T | undefined = undefined): T | undefined {
   const vm = getCurrentInstance() as any;
 
-  return inject(symbol, def) || vm?.provides[symbol];
+  return inject(symbol, vm?.provides[symbol as any] || def);
 }

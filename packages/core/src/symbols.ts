@@ -1,5 +1,12 @@
-export const FormSymbol = Symbol('vee-validate-form');
+import { ComputedRef, InjectionKey } from 'vue';
+import { FormContext } from './types';
 
-export const FormErrorsSymbol = Symbol('vee-validate-form-errors');
+export const FormSymbol: InjectionKey<FormContext> = Symbol('vee-validate-form');
 
-export const FormInitialValues = Symbol('vee-validate-form-initial-values');
+export const FormErrorsSymbol: InjectionKey<ComputedRef<Record<string, string | undefined>>> = Symbol(
+  'vee-validate-form-errors'
+);
+
+export const FormInitialValues: InjectionKey<ComputedRef<Record<string, any>>> = Symbol(
+  'vee-validate-form-initial-values'
+);
