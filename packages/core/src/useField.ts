@@ -29,7 +29,6 @@ import { FormInitialValues, FormSymbol } from './symbols';
 
 interface FieldOptions {
   initialValue: any;
-  disabled: MaybeReactive<boolean>;
   validateOnValueUpdate: boolean;
   validateOnMount?: boolean;
   bails?: boolean;
@@ -44,16 +43,10 @@ type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValida
  * Creates a field composite.
  */
 export function useField(name: string, rules: RuleExpression, opts?: Partial<FieldOptions>) {
-  const {
-    initialValue,
-    validateOnMount,
-    bails,
-    disabled,
-    type,
-    valueProp,
-    label,
-    validateOnValueUpdate,
-  } = normalizeOptions(name, opts);
+  const { initialValue, validateOnMount, bails, type, valueProp, label, validateOnValueUpdate } = normalizeOptions(
+    name,
+    opts
+  );
 
   const form = injectWithSelf(FormSymbol);
   const { meta, errors, handleBlur, handleInput, reset, setValidationState, value, checked } = useValidationState({
@@ -123,7 +116,6 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     meta,
     errors,
     errorMessage,
-    disabled,
     type,
     valueProp,
     checked,
@@ -207,7 +199,6 @@ function normalizeOptions(name: string, opts: Partial<FieldOptions> | undefined)
     validateOnMount: false,
     bails: true,
     rules: '',
-    disabled: false,
     label: name,
     validateOnValueUpdate: true,
   });

@@ -55,17 +55,12 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }, {} as Record<string, any>);
   });
 
-  // a flat array of the non-disabled
-  const activeFields = computed(() => {
-    return fields.value.filter(field => !unref(field.disabled));
-  });
-
   // a private ref for all form values
   const formValues = reactive({}) as TValues;
 
   // an aggregation of field errors in a map object
   const errors = computed<{ [P in keyof TValues]?: string }>(() => {
-    return activeFields.value.reduce((acc: Record<keyof TValues, string>, field) => {
+    return fields.value.reduce((acc: Record<keyof TValues, string>, field) => {
       // Check if its a grouped field (checkbox/radio)
       let message: string | undefined;
       if (Array.isArray(fieldsById.value[field.name])) {
@@ -80,15 +75,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       }
 
       return acc;
-    }, {});
-  });
-
-  // same as form values but filtered disabled fields out
-  const activeFormValues = computed<TValues>(() => {
-    return activeFields.value.reduce((formData: Record<keyof TValues, any>, field) => {
-      setInPath(formData, field.name, unref(field.value));
-
-      return formData;
     }, {});
   });
 
@@ -289,13 +275,21 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     const results = await Promise.all(
-      activeFields.value.map((f: any) => {
+      fields.value.map((f: any) => {
         return f.validate();
       })
     );
 
     return results.every(r => !r.errors.length);
   };
+
+  const immutableFormValues = computed<TValues>(() => {
+    return fields.value.reduce((formData: Record<keyof TValues, any>, field) => {
+      setInPath(formData, field.name, unref(field.value));
+
+      return formData;
+    }, {});
+  });
 
   const handleSubmit = (fn?: SubmissionHandler<TValues>) => {
     return function submissionHandler(e: unknown) {
@@ -308,7 +302,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       return validate()
         .then(result => {
           if (result && typeof fn === 'function') {
-            return fn(activeFormValues.value, { evt: e as SubmitEvent, form: formCtx });
+            return fn(immutableFormValues.value, { evt: e as SubmitEvent, form: formCtx });
           }
         })
         .then(

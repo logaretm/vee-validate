@@ -65,7 +65,6 @@ The full signature of the `useField` function looks like this:
 ```typescript
 interface FieldOptions {
   initialValue?: any; // the initial value, cannot be a ref
-  disabled?: MaybeReactive<boolean>; // if the input is disabled, can be a ref
   validateOnMount?: boolean; // if the field should be validated when the component is mounted
   validateOnValueUpdate?: boolean; // if the field should be validated when the value changes (default is true)
   bails?: boolean; // if the field validation should run all validations
@@ -86,7 +85,6 @@ type useField = (
   meta: FieldMeta;
   errors: Ref<string[]>; // all error messages
   errorMessage: Ref<string | undefined>; // the first error message
-  disabled: Ref<boolean>; // if the field is currently disabled
   reset: () => void; // resets errors and field meta
   validate: () => Promise<ValidationResult>; // validates and updates the errors and field meta
   handleChange: (e: Event) => void; // updates the value
@@ -210,20 +208,6 @@ A computed reference that returns the first error in the `errors` array, a handy
 const { errorMessage } = useField('field', value => !!value);
 
 errorMessage.value; // 'field is not valid' or undefined
-```
-
-<code-title level="4">
-
-`disabled: Ref<boolean>`
-
-</code-title>
-
-A reactive reference to the field's current disabled state, this allows/prevents the field from participating in it's owning form's validation state and doesn't block the submission handlers even if invalid.
-
-```js
-const { disabled } = useField('field', value => !!value);
-
-disabled.value; // true or false
 ```
 
 <code-title level="4">

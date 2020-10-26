@@ -27,17 +27,13 @@ export const Field = defineComponent({
       type: Boolean,
       default: () => getConfig().bails,
     },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
     label: {
       type: String,
       default: undefined,
     },
   },
   setup(props, ctx) {
-    const [disabled, rules] = [toRef(props, 'disabled'), toRef(props, 'rules')];
+    const rules = toRef(props, 'rules');
 
     const {
       errors,
@@ -55,7 +51,6 @@ export const Field = defineComponent({
     } = useField(props.name, rules, {
       validateOnMount: props.validateOnMount,
       bails: props.bails,
-      disabled,
       type: ctx.attrs.type as string,
       // Gets the initial value either from `value` prop/attr or `v-model` binding (modelValue)
       // For checkboxes and radio buttons it will always be the model value not the `value` attribute
@@ -100,7 +95,6 @@ export const Field = defineComponent({
     const makeSlotProps = () => {
       const fieldProps: Record<string, any> = {
         name: props.name,
-        disabled: props.disabled,
         onBlur: [handleBlur],
         onInput: [onInputHandler, valueTick],
         onChange: [onInputHandler, valueTick],

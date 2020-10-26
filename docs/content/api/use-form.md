@@ -148,7 +148,7 @@ meta.value; // { valid: false, invalid: true, dirty: true, .... }
 
 </code-title>
 
-A computed property that contains the current form values, it will only contain the active (non-disabled) fields.
+A computed property that contains the current form values
 
 ```js
 const { values } = useForm();
@@ -316,7 +316,7 @@ This is a higher order function used to create `submit` event handlers, You shou
 
 The handlers created using this function will automatically prevent form submission and stop the propagation of the submit event.
 
-It accepts a function which runs after validating the form and if all fields are valid. The callback you pass will receive the form values as the first argument, which is an object containing the active (non-disabled) fields' values.
+It accepts a function which runs after validating the form and if all fields are valid. The callback you pass will receive the form values as the first argument, which is an object containing the fields' values.
 
 ```vue
 <template>

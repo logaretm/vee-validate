@@ -81,7 +81,6 @@ When using `v-slot` on the `Field` component you no longer have to provide an `a
 | rules           | `object \| string \| Function` | `null`           | The field's validation rules                                                                                         |
 | validateOnMount | `boolean`                      | `false`          | If true, field will be validated when the component is mounted                                                       |
 | bails           | `boolean`                      | `true`           | Stops validating as soon as a rule fails the validation                                                              |
-| disabled        | `disabled`                     | `false`          | Disables validation and the field will no longer participate in the parent form state                                |
 | label           | `string`                       | `undefined`      | A different string to override the field `name` prop in error messages, useful for display better or formatted names |
 
 ### Slots
@@ -131,20 +130,6 @@ An array containing all error messages for the field.
 </code-title>
 
 The first error in the `errors` array if available, a handy shortcut to display error messages
-
-<code-title level="4">
-
-`disabled: boolean`
-
-</code-title>
-
-A reactive reference to the field's current disabled state, this allows/prevents the field from participating in it's owning form's validation state and doesn't block the submission handlers even if invalid.
-
-```js
-const { disabled } = useField('field', value => !!value);
-
-disabled.value; // true or false
-```
 
 <code-title level="4">
 
@@ -235,14 +220,6 @@ Contains a few properties that you can use `v-bind` with to get all vee-validate
 </code-title>
 
 The field's current value, you can bind it with `value` prop on your inputs to sync both values. Don't use it with `v-model` otherwise your input will freeze.
-
-<code-title level="5">
-
-`field.disabled: boolean`
-
-</code-title>
-
-The field's current disabled state, this allows/prevents the field from participating in it's owning form's validation state and doesn't block the submission handlers even if invalid.
 
 <code-title level="5">
 

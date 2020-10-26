@@ -163,7 +163,7 @@ interface FormMeta {
 
 </code-title>
 
-Contains the current form values, it will only contain the active (non-disabled) fields.
+Contains the current form values
 
 <code-title level="4">
 
