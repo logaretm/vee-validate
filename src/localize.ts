@@ -12,10 +12,16 @@ interface PartialI18nDictionary {
 
 type RootI18nDictionary = Record<string, PartialI18nDictionary>;
 
+type Container = {
+  [container: string]: PartialI18nDictionary;
+};
+
+type Value = Record<string, any>;
+
 class Dictionary {
   public locale: string;
 
-  private container: any;
+  private container: Container;
 
   public constructor(locale: string, dictionary: RootI18nDictionary) {
     this.container = {};
@@ -23,15 +29,18 @@ class Dictionary {
     this.merge(dictionary);
   }
 
-  public resolve(field: string, rule: string, values: { [k: string]: any }) {
+  public resolve(field: string, rule: string, values: Value) {
     return this.format(this.locale, field, rule, values);
   }
 
-  public format(locale: string, field: string, rule: string, values: { [k: string]: any }) {
+  public format(locale: string, field: string, rule: string, values: Value) {
     let message!: ValidationMessageTemplate;
 
     // find if specific message for that field was specified.
-    message = this.container[locale]?.fields?.[field]?.[rule] || this.container[locale]?.messages?.[rule];
+    const fieldContainer = this.container[locale]?.fields?.[field]?.[rule];
+    const messageContainer = this.container[locale]?.messages?.[rule];
+
+    message = fieldContainer || messageContainer || '';
     if (!message) {
       message = '{_field_} is not valid';
     }
