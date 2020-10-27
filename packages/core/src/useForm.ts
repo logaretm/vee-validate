@@ -18,6 +18,7 @@ interface FormOptions<TValues extends Record<string, any>> {
     | Record<keyof TValues, GenericValidateFunction | string | Record<string, any>>
     | ObjectSchema<TValues>;
   initialValues?: MaybeReactive<TValues>;
+  initialErrors?: Record<keyof TValues, string | undefined>;
   validateOnMount?: boolean;
 }
 
@@ -327,6 +328,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   // Trigger initial validation
   onMounted(() => {
+    if (opts?.initialErrors) {
+      setErrors(opts.initialErrors);
+    }
+
     if (opts?.validateOnMount) {
       validate();
     }

@@ -1353,4 +1353,32 @@ describe('<Form />', () => {
     await flushPromises();
     expect(meta?.textContent).toBe('true');
   });
+
+  test('sets initial errors with initialErrors', async () => {
+    const errors = {
+      password: 'too short',
+      email: 'wrong',
+    };
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          errors,
+        };
+      },
+      template: `
+      <VForm ref="form" :initial-errors="errors">
+        <Field id="email" name="email" as="input" />
+        <ErrorMessage name="email" />
+        <Field id="password" name="password" as="input" />
+        <ErrorMessage name="password" />
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const errorEls = wrapper.$el.querySelectorAll('span');
+    await flushPromises();
+    expect(errorEls[0].textContent).toBe(errors.email);
+    expect(errorEls[1].textContent).toBe(errors.password);
+  });
 });
