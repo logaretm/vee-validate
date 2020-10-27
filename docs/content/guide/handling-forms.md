@@ -557,6 +557,45 @@ export default {
 
 Note that setting any field's value using this way will trigger validation
 
+## Initial Errors
+
+If you are building a non-SPA application it is very common to pre-fill form errors using server-side rendering, frameworks like Laravel make this very easy to do. vee-validate supports filling the errors initially before any validation is done using the `initialErrors` prop which is both present on `useForm()` function and the `<Form />` component.
+
+The `initialErrors` property accepts an object containing the field names as keys with their corresponding error message string.
+
+```vue
+<template>
+  <Form :initial-errors="initialErrors">
+    <Field name="email" as="input" />
+    <ErrorMessage name="email" />
+
+    <Field name="password" as="input" />
+    <ErrorMessage name="password" />
+
+    <button>Submit</button>
+  </Form>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    initialErrors: {
+      email: 'This email is already taken',
+      password: 'The password is too short',
+    },
+  }),
+};
+</script>
+```
+
+<doc-tip>
+
+`initialErrors` are applied once the `Form` component is mounted and is ignored after, so any changes to the `initialErrors` props won't affect the messages.
+
+See the next section for setting errors manually.
+
+</doc-tip>
+
 ## Setting Errors Manually
 
 Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example a `unique` email validation is complex to implement on the client-side, which is why the `<Form />` component and `useForm()` function allow you to set errors manually.
