@@ -16,4 +16,12 @@ extend('positive', (value) => {
 
   return 'This value must be a positive number';
 });
+
+export default {
+  data: () => ({
+    fieldRules: {
+      positive: '@fieldName'
+    }
+  })
+};
 ```
