@@ -105,6 +105,8 @@ While not recommended, you can make the `Form` component a renderless component 
 | validationSchema | `Record<string, string \| Function>` | `undefined` | An object describing a schema to validate fields with, can be a plain object or a `yup` object schema        |
 | initialValues    | `Record<string, any>`                | `undefined` | Initial values to fill the fields with, when provided the fields will be validated on mounted                |
 | initialErrors    | `Record<string, string>`             | `undefined` | Initial form errors to fill the fields with, the errors will be added when the form component is mounted     |
+| initialDirty     | `Record<string, boolean>`            | `undefined` | Initial dirty fields, the status will be applied when the form component is mounted                          |
+| initialTouched   | `Record<string, boolean>`            | `undefined` | Initial touched fields, the status will be applied when the form component is mounted                        |
 | validateOnMount  | `boolean`                            | `false`     | If true, the fields currently present in the form will be validated when the `<Form />` component is mounted |
 
 ### Slots

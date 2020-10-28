@@ -39,6 +39,8 @@ interface FormOptions {
   validationSchema?: any; // A yup schema, or a Record<string, any> containing valid rules as `useField`
   initialValues?: Record<string, any>;
   initialErrors?: Record<string, string>; // a map of the form's initial error messages
+  initialDirty?: Record<string, boolean>; // a map of the form's initial dirty fields
+  initialTouched?: Record<string, boolean>; // a map of the form's initial touched fields
   validateOnMount?: boolean;
 }
 
@@ -69,6 +71,54 @@ Enables form-level validation, uses the specified schema to validate the fields.
 #### `initialValues?: Record<string, any>`
 
 The initial values for the form, can be a reactive object or reference.
+
+```js
+const { ... } = useForm({
+  initialErrors: {
+    email: 'example@gmail.com',
+    password: 'p@$$w0rd',
+  }
+});
+```
+
+#### `initialErrors?: Record<string, string>`
+
+The initial errors for the fields, useful for non hydrated SSR applications like Laravel, errors are applied on mounted.
+
+```js
+const { ... } = useForm({
+  initialErrors: {
+    email: 'This email is invalid',
+    password: 'Password too short',
+  }
+});
+```
+
+#### `initialDirty?: Record<string, any>`
+
+The initial dirty status for the form fields, applied on mounted.
+
+```js
+const { ... } = useForm({
+  initialDirty: {
+    email: true, // dirty
+    password: false, // non-dirty
+  }
+});
+```
+
+#### `initialTouched?: Record<string, any>`
+
+The initial touched status for the form fields, applied on mounted.
+
+```js
+const { ... } = useForm({
+  initialTouched: {
+    email: true, // touched
+    password: false, // non-touched
+  }
+});
+```
 
 #### `validateOnMount?: boolean`
 

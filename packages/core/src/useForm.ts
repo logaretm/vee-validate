@@ -19,6 +19,8 @@ interface FormOptions<TValues extends Record<string, any>> {
     | ObjectSchema<TValues>;
   initialValues?: MaybeReactive<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;
+  initialTouched?: Record<keyof TValues, boolean>;
+  initialDirty?: Record<keyof TValues, boolean>;
   validateOnMount?: boolean;
 }
 
@@ -330,6 +332,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   onMounted(() => {
     if (opts?.initialErrors) {
       setErrors(opts.initialErrors);
+    }
+
+    if (opts?.initialDirty) {
+      setDirty(opts.initialDirty);
+    }
+
+    if (opts?.initialTouched) {
+      setTouched(opts.initialTouched);
     }
 
     if (opts?.validateOnMount) {

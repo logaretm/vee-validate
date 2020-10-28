@@ -1381,4 +1381,56 @@ describe('<Form />', () => {
     expect(errorEls[0].textContent).toBe(errors.email);
     expect(errorEls[1].textContent).toBe(errors.password);
   });
+
+  test('sets initial dirty with initialDirty', async () => {
+    const dirty = {
+      email: true,
+    };
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          dirty,
+        };
+      },
+      template: `
+      <VForm ref="form" :initial-dirty="dirty">
+        <Field id="email" name="email"  v-slot="{ meta, field }">
+          <input v-bind="field" />
+          <span>{{ meta.dirty }}</span>
+        </Field>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const meta = wrapper.$el.querySelector('span');
+    await flushPromises();
+    expect(meta.textContent).toBe('true');
+  });
+
+  test('sets touched dirty with touchedDirty', async () => {
+    const touched = {
+      email: true,
+    };
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          touched,
+        };
+      },
+      template: `
+      <VForm ref="form" :initial-touched="touched">
+        <Field id="email" name="email"  v-slot="{ meta, field }">
+          <input v-bind="field" />
+          <span>{{ meta.touched }}</span>
+        </Field>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const meta = wrapper.$el.querySelector('span');
+    await flushPromises();
+    expect(meta.textContent).toBe('true');
+  });
 });
