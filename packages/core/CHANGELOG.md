@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.15](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.14...vee-validate@4.0.0-beta.15) (2020-10-28)
+
+
+### Features
+
+* add `initialErrors` prop ([#3002](https://github.com/logaretm/vee-validate/issues/3002)) ([9850b3f](https://github.com/logaretm/vee-validate/commit/9850b3f2f1c1739f31ff05f32890196097ef426e))
+
+
+
+
+
 # [4.0.0-beta.14](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.13...vee-validate@4.0.0-beta.14) (2020-10-26)
 
 
