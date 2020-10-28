@@ -38,6 +38,7 @@ The full signature of the `useForm` function looks like this:
 interface FormOptions {
   validationSchema?: any; // A yup schema, or a Record<string, any> containing valid rules as `useField`
   initialValues?: Record<string, any>;
+  initialErrors?: Record<string, string>; // a map of the form's initial error messages
   validateOnMount?: boolean;
 }
 

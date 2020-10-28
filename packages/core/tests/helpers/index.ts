@@ -1,5 +1,5 @@
 import { createApp, ComponentPublicInstance } from 'vue';
-import { Field, Form } from '@vee-validate/core';
+import { Field, Form, ErrorMessage } from '@vee-validate/core';
 
 export function mount(component: Record<string, any>) {
   const app = createApp(component);
@@ -15,6 +15,7 @@ export function mountWithHoc(component: Record<string, any>) {
     ...(component.components || {}),
     Field,
     VForm: Form,
+    ErrorMessage,
   };
 
   return mount(component);

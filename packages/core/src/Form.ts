@@ -19,6 +19,10 @@ export const Form = defineComponent({
       type: Object,
       default: undefined,
     },
+    initialErrors: {
+      type: Object,
+      default: undefined,
+    },
     validateOnMount: {
       type: Boolean,
       default: false,
@@ -46,6 +50,7 @@ export const Form = defineComponent({
     } = useForm({
       validationSchema: props.validationSchema,
       initialValues,
+      initialErrors: props.initialErrors,
       validateOnMount: props.validateOnMount,
     });
 
