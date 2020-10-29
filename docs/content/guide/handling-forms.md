@@ -262,142 +262,6 @@ Note that calling `validate` from the `Form` slot props will not cause the `isSu
 
 </doc-tip>
 
-## Handling Resets
-
-vee-validate also handles form resets in similar way to submissions, consider this example:
-
-```vue
-<template>
-  <Form :validation-schema="schema">
-    <Field name="email" as="input" />
-    <Field name="name" as="input" type="email" />
-    <Field name="password" as="input" type="password" />
-
-    <button type="Submit">Submit</button>
-    <button type="reset">Reset</button>
-  </Form>
-</template>
-
-<script>
-import { Form, Field } from 'vee-validate';
-import * as yup from 'yup';
-
-export default {
-  components: {
-    Form,
-    Field,
-  },
-  data() {
-    const schema = yup.object().shape({
-      email: yup.string().required().email(),
-      name: yup.string().required(),
-      password: yup.string().required().min(8),
-    });
-
-    return {
-      schema,
-    };
-  },
-};
-</script>
-```
-
-If you try resetting the form you see that vee-validate is automatically resetting the values to their initial state and removes any form errors as well. Form reset is handled automatically if you are using the `as` prop to render a `form` element.
-
-Alternatively if you plan to use the scoped slot for complex markup, you can use the `handleReset` slot prop function to trigger the reset manually:
-
-```vue
-<Form v-slot="{ handleReset }" :validation-schema="schema">
-  <Field name="email" as="input">
-  <Field name="name" as="input" type="email">
-  <Field name="password" as="input" type="password">
-
-  <button type="button" @click="handleReset">Reset</button>
-</Form>
-```
-
-### Resetting Forms After Submit
-
-Usually you will reset your forms after a successful submission, the `onSubmit` handler receives an additional `form` object in the second argument that allows you do some actions on the form after submissions:
-
-```vue
-<template>
-  <Form @submit="onSubmit" :validation-schema="schema">
-    <!-- fields ... -->
-  </Form>
-</template>
-
-<script>
-import { Form, Field } from 'vee-validate';
-import * as yup from 'yup';
-
-export default {
-  components: {
-    Form,
-    Field,
-  },
-  data() {
-    const schema = yup.object().shape({
-      // ...
-    });
-
-    return {
-      schema,
-    };
-  },
-  methods: {
-    onSubmit(values, { form }) {
-      console.log(values); // send data to API
-
-      // reset the form
-      form.reset();
-    },
-  },
-};
-</script>
-```
-
-Alternatively you can also use template `$refs` to reset the form whenever you need:
-
-```vue
-<template>
-  <Form ref="form" @submit="onSubmit" :validation-schema="schema">
-    <!-- fields ... -->
-
-    <button type="Submit">Submit</button>
-  </Form>
-</template>
-
-<script>
-import { Form, Field } from 'vee-validate';
-import * as yup from 'yup';
-
-export default {
-  components: {
-    Form,
-    Field,
-  },
-  data() {
-    const schema = yup.object().shape({
-      // ...
-    });
-
-    return {
-      schema,
-    };
-  },
-  methods: {
-    onSubmit(values) {
-      console.log(values); // send data to API
-
-      // reset the form
-      this.$refs.form.reset();
-    },
-  },
-};
-</script>
-```
-
 ## Initial Values
 
 Since with vee-validate you don't use `v-model` often to track your values, the `Form` component allows you to define the starting values for your fields, by default all fields start with `undefined` as a value.
@@ -556,6 +420,148 @@ export default {
 ```
 
 Note that setting any field's value using this way will trigger validation
+
+## Handling Resets
+
+vee-validate also handles form resets in similar way to submissions, consider this example. When resetting the form or its fields, only the validation state will get reset. The field values will remain intact.
+
+Form reset is handled automatically if you are using the `as` prop to render a `form` element, like shown in this example:
+
+```vue
+<template>
+  <Form :validation-schema="schema">
+    <Field name="email" as="input" />
+    <Field name="name" as="input" type="email" />
+    <Field name="password" as="input" type="password" />
+
+    <button type="Submit">Submit</button>
+    <button type="reset">Reset</button>
+  </Form>
+</template>
+
+<script>
+import { Form, Field } from 'vee-validate';
+import * as yup from 'yup';
+
+export default {
+  components: {
+    Form,
+    Field,
+  },
+  data() {
+    const schema = yup.object().shape({
+      email: yup.string().required().email(),
+      name: yup.string().required(),
+      password: yup.string().required().min(8),
+    });
+
+    return {
+      schema,
+    };
+  },
+};
+</script>
+```
+
+To reset the values as well, you will need to use `setValues` from the scoped slot or the component instance to set them to whatever is suitable.
+
+Alternatively if you plan to use the scoped slot for complex markup, you can use the `handleReset` slot prop function to trigger the reset manually:
+
+```vue
+<Form v-slot="{ handleReset }" :validation-schema="schema">
+  <Field name="email" as="input">
+  <Field name="name" as="input" type="email">
+  <Field name="password" as="input" type="password">
+
+  <button type="button" @click="handleReset">Reset</button>
+</Form>
+```
+
+### Resetting Forms After Submit
+
+Usually you will reset your forms after a successful submission, the `onSubmit` handler receives an additional `form` object in the second argument that allows you do some actions on the form after submissions:
+
+```vue
+<template>
+  <Form @submit="onSubmit" :validation-schema="schema">
+    <!-- fields ... -->
+  </Form>
+</template>
+
+<script>
+import { Form, Field } from 'vee-validate';
+import * as yup from 'yup';
+
+export default {
+  components: {
+    Form,
+    Field,
+  },
+  data() {
+    const schema = yup.object().shape({
+      // ...
+    });
+
+    return {
+      schema,
+    };
+  },
+  methods: {
+    onSubmit(values, { form }) {
+      console.log(values); // send data to API
+
+      // reset values
+      form.setValues({
+        // field values ..
+      });
+      // reset the form
+      form.reset();
+    },
+  },
+};
+</script>
+```
+
+Alternatively you can also use template `$refs` to reset the form whenever you need:
+
+```vue
+<template>
+  <Form ref="form" @submit="onSubmit" :validation-schema="schema">
+    <!-- fields ... -->
+
+    <button type="Submit">Submit</button>
+  </Form>
+</template>
+
+<script>
+import { Form, Field } from 'vee-validate';
+import * as yup from 'yup';
+
+export default {
+  components: {
+    Form,
+    Field,
+  },
+  data() {
+    const schema = yup.object().shape({
+      // ...
+    });
+
+    return {
+      schema,
+    };
+  },
+  methods: {
+    onSubmit(values) {
+      console.log(values); // send data to API
+
+      // reset the form
+      this.$refs.form.reset();
+    },
+  },
+};
+</script>
+```
 
 ## Initial Errors
 
