@@ -23,6 +23,14 @@ export const Form = defineComponent({
       type: Object,
       default: undefined,
     },
+    initialDirty: {
+      type: Object,
+      default: undefined,
+    },
+    initialTouched: {
+      type: Object,
+      default: undefined,
+    },
     validateOnMount: {
       type: Boolean,
       default: false,
@@ -51,6 +59,8 @@ export const Form = defineComponent({
       validationSchema: props.validationSchema,
       initialValues,
       initialErrors: props.initialErrors,
+      initialTouched: props.initialTouched,
+      initialDirty: props.initialDirty,
       validateOnMount: props.validateOnMount,
     });
 
