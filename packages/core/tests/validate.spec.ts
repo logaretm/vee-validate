@@ -1,5 +1,5 @@
-import { validate, defineRule } from '@vee-validate/core';
-import { numeric } from '@vee-validate/rules';
+import { validate, defineRule } from '@/core';
+import { numeric } from '@/rules';
 
 test('allows empty rules for the string format', async () => {
   defineRule('numeric', numeric);

@@ -1,5 +1,5 @@
 import flushPromises from 'flush-promises';
-import { defineRule, ErrorMessage } from '@vee-validate/core';
+import { defineRule, ErrorMessage } from '@/core';
 import { mountWithHoc, setValue } from './helpers';
 
 describe('<ErrorMessage />', () => {

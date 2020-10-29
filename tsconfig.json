@@ -21,7 +21,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "paths": {
-      "@vee-validate/*": ["packages/*/src"]
+      "@/*": ["packages/*/src"]
     }
   },
   "include": ["packages/*/src", "packages/*/tests"],

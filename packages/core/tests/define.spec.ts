@@ -1,4 +1,4 @@
-import { defineRule, validate } from '@vee-validate/core';
+import { defineRule, validate } from '@/core';
 
 test('passing a non-function as the validate method will throw', () => {
   expect(() => {

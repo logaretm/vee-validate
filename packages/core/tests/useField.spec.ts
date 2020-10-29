@@ -1,5 +1,5 @@
 import flushPromises from 'flush-promises';
-import { useField } from '@vee-validate/core';
+import { useField } from '@/core';
 import { mountWithHoc, setValue } from './helpers';
 
 describe('useField()', () => {
