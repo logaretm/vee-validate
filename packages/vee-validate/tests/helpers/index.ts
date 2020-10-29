@@ -1,5 +1,5 @@
 import { createApp, ComponentPublicInstance } from 'vue';
-import { Field, Form, ErrorMessage } from '@/core';
+import { Field, Form, ErrorMessage } from '@/vee-validate';
 
 export function mount(component: Record<string, any>) {
   const app = createApp(component);

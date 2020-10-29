@@ -3,13 +3,13 @@ const typescript = require('rollup-plugin-typescript2');
 const replace = require('rollup-plugin-replace');
 
 const formatNameMap = {
-  core: 'VeeValidate',
+  'vee-validate': 'VeeValidate',
   rules: 'VeeValidateRules',
   i18n: 'VeeValidateI18n',
 };
 
 const pkgNameMap = {
-  core: 'vee-validate',
+  'vee-validate': 'vee-validate',
   rules: 'vee-validate-rules',
   i18n: 'vee-validate-i18n',
 };

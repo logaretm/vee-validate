@@ -66,8 +66,8 @@ async function build(pkg) {
 
 (async function Bundle() {
   const arg = [...process.argv][2];
-  if (arg === 'core' || !arg) {
-    await build('core');
+  if (arg === 'vee-validate' || !arg) {
+    await build('vee-validate');
   }
 
   if (arg === 'rules' || !arg) {

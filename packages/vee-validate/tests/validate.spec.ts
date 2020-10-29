@@ -1,4 +1,4 @@
-import { validate, defineRule } from '@/core';
+import { validate, defineRule } from '@/vee-validate';
 import { numeric } from '@/rules';
 
 test('allows empty rules for the string format', async () => {
