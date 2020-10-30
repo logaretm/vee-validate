@@ -89,7 +89,7 @@ For more information on the `Field` component, read [the API reference](/api/fie
 ## Form-level Validation
 
 vee-validate supports using a validation schema to define all your validations on your fields beforehand so you don't have to define them individually on your fields.
-Form-level validation is connivent if you are building large forms and want to keep your templates cleaner.
+Form-level validation is convenient if you are building large forms and want to keep your templates cleaner.
 
 A simple validation schema can be an object containing field names as keys and validation functions as the value for those keys:
 
@@ -129,7 +129,7 @@ export default {
     };
 
     return {
-      schema,
+      simpleSchema,
     };
   },
 };
