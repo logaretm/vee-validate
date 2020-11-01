@@ -117,6 +117,6 @@ To display error messages, the `ValidationProvider` exposes `errors` array throu
 
 #### Demo
 
-Here is the above example in action, enter `example` to pass validation:
+Here is the above example in action, enter an **even number** to pass validation:
 
 @[example](getting-started)
