@@ -23,6 +23,7 @@ function createConfig(pkg, format) {
   const tsPlugin = typescript({
     tsconfig: path.resolve(__dirname, '../tsconfig.json'),
     cacheRoot: path.resolve(__dirname, '../node_modules/.rts2_cache'),
+    useTsconfigDeclarationDir: true,
     tsconfigOverride: {
       exclude: ['**/tests'],
     },
