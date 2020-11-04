@@ -136,7 +136,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     });
   }
 
-  if (isRef(rules)) {
+  if (isRef(rules) && typeof unref(rules) !== 'function') {
     watch(rules, validate, {
       deep: true,
     });
