@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.17](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.16...vee-validate@4.0.0-beta.17) (2020-11-04)
+
+
+### Features
+
+* added context information to validation functions ([7e6675d](https://github.com/logaretm/vee-validate/commit/7e6675db6a103eae33cbb6d959621b4549af66b2))
+
+
+
+
+
 # [4.0.0-beta.16](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.15...vee-validate@4.0.0-beta.16) (2020-10-29)
 
 
