@@ -51,7 +51,7 @@ module.exports = {
         'accent-800': 'var(--accent, #06d77b)',
         'accent-100': '#7bffc5',
 
-        warning: 'hsl(14deg 36% 34%)',
+        warning: '#ffa629',
         error: '#cf6679',
 
         'gray-900': 'hsl(0 0% 29%)',
@@ -59,6 +59,8 @@ module.exports = {
         'gray-700': '#e8e8e8',
         'gray-200': 'hsl(0 0% 74%)',
         'gray-100': '#f6f6f6',
+
+        background: '#22212C',
       },
       screens: {
         motion: { raw: '(prefers-reduced-motion: no-preference)' },
