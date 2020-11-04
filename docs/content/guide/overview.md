@@ -20,7 +20,6 @@ Most validation libraries will save you a lot of time, but `vee-validate` tackle
 - UI and UX
 - Synchronous and Asynchronous Validation
 - Handling submissions
-- Accessability (A11y)
 
 </div>
 
