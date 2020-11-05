@@ -176,3 +176,5 @@ export default {
 };
 </script>
 ```
+
+You can [visit this link](/examples/array-fields) for a practical example using nested arrays.
