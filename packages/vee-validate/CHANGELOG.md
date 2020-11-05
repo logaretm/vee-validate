@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.18](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.17...vee-validate@4.0.0-beta.18) (2020-11-05)
+
+
+### Bug Fixes
+
+* handle reactive field names and value swaps ([cf8051d](https://github.com/logaretm/vee-validate/commit/cf8051d3b92eb43103f4e7c682e615343239d717))
+
+
+### Features
+
+* avoid watching rules when passed as functions ([539f753](https://github.com/logaretm/vee-validate/commit/539f7535bf935e62030b83f8c7b19e95256bcc52))
+
+
+
+
+
 # [4.0.0-beta.17](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.16...vee-validate@4.0.0-beta.17) (2020-11-04)
 
 
