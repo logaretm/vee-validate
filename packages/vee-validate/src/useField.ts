@@ -39,12 +39,15 @@ interface FieldOptions {
 
 type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValidateFunction>;
 
+let ID_COUNTER = 0;
+
 /**
  * Creates a field composite.
  */
-export function useField(name: string, rules: RuleExpression, opts?: Partial<FieldOptions>) {
+export function useField(name: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
+  const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
   const { initialValue, validateOnMount, bails, type, valueProp, label, validateOnValueUpdate } = normalizeOptions(
-    name,
+    unref(name),
     opts
   );
 
@@ -58,7 +61,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
     valueProp,
   });
 
-  const nonYupSchemaRules = extractRuleFromSchema(form?.schema, name);
+  const nonYupSchemaRules = extractRuleFromSchema(form?.schema, unref(name));
   const normalizedRules = computed(() => {
     return normalizeRules(nonYupSchemaRules || unref(rules));
   });
@@ -73,7 +76,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
         bails,
       });
     } else {
-      result = (await form.validateSchema())[name];
+      result = (await form.validateSchema())[unref(name)];
     }
 
     meta.pending = false;
@@ -111,6 +114,7 @@ export function useField(name: string, rules: RuleExpression, opts?: Partial<Fie
   }
 
   const field = {
+    fid,
     name,
     value: value,
     meta,
@@ -223,14 +227,14 @@ function useValidationState({
   type,
   valueProp,
 }: {
-  name: string;
+  name: MaybeReactive<string>;
   initValue?: any;
   form?: FormContext;
   type?: string;
   valueProp: any;
 }) {
   const errors: Ref<string[]> = ref([]);
-  const initialValue = getFromPath(unref(inject(FormInitialValues, undefined)), name) ?? initValue;
+  const initialValue = getFromPath(unref(inject(FormInitialValues, undefined)), unref(name)) ?? initValue;
   const { reset: resetFlags, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
@@ -343,21 +347,21 @@ function extractRuleFromSchema(schema: Record<string, any> | undefined, fieldNam
 /**
  * Manages the field value
  */
-function useFieldValue(initialValue: any, path: string, form?: FormContext) {
+function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: FormContext) {
   // if no form is associated, use a regular ref.
   if (!form) {
     return ref(initialValue);
   }
 
   // set initial value
-  setInPath(form.values, path, initialValue);
+  setInPath(form.values, unref(path), initialValue);
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed({
     get() {
-      return getFromPath(form.values, path);
+      return getFromPath(form.values, unref(path));
     },
     set(newVal: any) {
-      form.setFieldValue(path, newVal);
+      form.setFieldValue(unref(path), newVal);
     },
   });
 

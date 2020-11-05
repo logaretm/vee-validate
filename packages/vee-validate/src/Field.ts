@@ -34,6 +34,7 @@ export const Field = defineComponent({
   },
   setup(props, ctx) {
     const rules = toRef(props, 'rules');
+    const name = toRef(props, 'name');
 
     const {
       errors,
@@ -48,7 +49,7 @@ export const Field = defineComponent({
       reset,
       meta,
       checked,
-    } = useField(props.name, rules, {
+    } = useField(name, rules, {
       validateOnMount: props.validateOnMount,
       bails: props.bails,
       type: ctx.attrs.type as string,
