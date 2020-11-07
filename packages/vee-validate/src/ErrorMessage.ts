@@ -1,4 +1,4 @@
-import { inject, h, defineComponent, computed } from 'vue';
+import { inject, h, defineComponent, computed, resolveDynamicComponent } from 'vue';
 import { FormErrorsSymbol } from './symbols';
 import { normalizeChildren } from './utils';
 
@@ -24,7 +24,7 @@ export const ErrorMessage = defineComponent({
         message: message.value,
       });
 
-      const tag = props.as;
+      const tag = (props.as ? resolveDynamicComponent(props.as) : props.as) as string;
       const attrs = {
         role: 'alert',
         ...ctx.attrs,

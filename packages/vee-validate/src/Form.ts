@@ -1,4 +1,4 @@
-import { h, defineComponent, toRef } from 'vue';
+import { h, defineComponent, toRef, resolveDynamicComponent } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
 import { normalizeChildren } from './utils';
@@ -126,7 +126,8 @@ export const Form = defineComponent({
           : {};
 
       return h(
-        props.as,
+        // avoid resolving the form component as itself
+        props.as === 'form' ? props.as : (resolveDynamicComponent(props.as) as string),
         {
           ...formAttrs,
           ...ctx.attrs,
