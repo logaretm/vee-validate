@@ -32,13 +32,13 @@ export const ErrorMessage = defineComponent({
 
       // If no tag was specified and there are children
       // render the slot as is without wrapping it
-      if (!tag && children.length) {
+      if (!tag && children?.length) {
         return children;
       }
 
       // If no children in slot
       // render whatever specified and fallback to a <span> with the message in it's contents
-      if (!children.length) {
+      if (!children?.length) {
         return h(tag || 'span', attrs, message.value);
       }
 
