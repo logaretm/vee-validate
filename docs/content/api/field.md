@@ -133,18 +133,35 @@ The first error in the `errors` array if available, a handy shortcut to display 
 
 <code-title level="4">
 
-`reset: () => void`
+`resetField: (state?: Partial<FieldState>) => void`
 
 </code-title>
 
 Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages, it will also reset the field value to it's initial value. Note that no error messages will be generated if the initial value is invalid after reset.
 
-```js
-const { reset } = useField('field', value => !!value);
+Note that it is unsafe to use this function as an event handler directly, check the following snippet:
 
-// reset the field validation state and its value
-reset();
+```vue
+<!-- ⛔️ Unsafe -->
+<button @click="resetField">Reset</button>
+
+<!-- ✅  Safe -->
+<button @click="resetField()">Reset</button>
 ```
+
+You can use `resetField` to update the fields' current value to something other than its initial value,
+
+```vue
+<button @click="resetField({ value: 'new value' })">Reset</button>
+```
+
+<code-title level="4">
+
+`handleReset: () => void`
+
+</code-title>
+
+Similar to `resetField` but it doesn't accept any arguments and can be safely used as an event handler. The values won't be validated after reset.
 
 <code-title level="4">
 

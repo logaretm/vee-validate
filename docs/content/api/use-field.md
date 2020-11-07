@@ -75,6 +75,13 @@ interface ValidationResult {
   errors: string[];
 }
 
+interface FieldState {
+  value: any;
+  dirty: boolean;
+  touched: boolean;
+  errors: string[];
+}
+
 type useField = (
   fieldName: MaybeReactive<string>,
   rules: RuleExpression,
@@ -85,7 +92,7 @@ type useField = (
   meta: FieldMeta;
   errors: Ref<string[]>; // all error messages
   errorMessage: Ref<string | undefined>; // the first error message
-  reset: () => void; // resets errors and field meta, updates the current value to its initial value
+  resetField: (state?: Partial<FieldState>) => void; // resets errors and field meta, updates the current value to its initial value
   validate: () => Promise<ValidationResult>; // validates and updates the errors and field meta
   handleChange: (e: Event) => void; // updates the value
   handleInput: (e: Event) => void; // updates the field meta associated with input event and syncs the field value
@@ -212,17 +219,48 @@ errorMessage.value; // 'field is not valid' or undefined
 
 <code-title level="4">
 
-`resetField: () => void`
+`resetField: (state?: Partial<FieldState>) => void`
 
 </code-title>
 
-Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages. It also updates the field value to its initial value.
+Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages. It also updates the field value to its initial value without validating them.
 
 ```js
-const { reset } = useField('field', value => !!value);
+const { resetField } = useField('field', value => !!value);
 
 // reset the field validation state and its initial value
-reset();
+resetField();
+// reset the field validation state and updates its value
+resetField({
+  value: 'new value',
+});
+```
+
+Note that it is unsafe to use this function as an event handler directly, check the following snippet:
+
+```vue
+<!-- ⛔️ Unsafe -->
+<button @click="resetField">Reset</button>
+
+<!-- ✅  Safe -->
+<button @click="resetField()">Reset</button>
+```
+
+You can also use `handleReset` which is a safe alternative for `resetField`.
+
+<code-title level="4">
+
+`handleReset: () => void`
+
+</code-title>
+
+Similar to `resetField` but it doesn't accept any arguments and can be safely used as an event handler. The values won't be validated after reset.
+
+```js
+const { handleReset } = useField('field', value => !!value);
+
+// reset the field validation state and its initial value
+handleReset();
 ```
 
 <code-title level="4">
