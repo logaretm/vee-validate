@@ -85,7 +85,7 @@ type useField = (
   meta: FieldMeta;
   errors: Ref<string[]>; // all error messages
   errorMessage: Ref<string | undefined>; // the first error message
-  reset: () => void; // resets errors and field meta
+  reset: () => void; // resets errors and field meta, updates the current value to its initial value
   validate: () => Promise<ValidationResult>; // validates and updates the errors and field meta
   handleChange: (e: Event) => void; // updates the value
   handleInput: (e: Event) => void; // updates the field meta associated with input event and syncs the field value
@@ -212,16 +212,16 @@ errorMessage.value; // 'field is not valid' or undefined
 
 <code-title level="4">
 
-`reset: () => void`
+`resetField: () => void`
 
 </code-title>
 
-Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages. Doesn't change the field's value.
+Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages. It also updates the field value to its initial value.
 
 ```js
 const { reset } = useField('field', value => !!value);
 
-// reset the field validation state
+// reset the field validation state and its initial value
 reset();
 ```
 
@@ -336,7 +336,7 @@ Because this event doesn't set the field value, it might not report validation c
 
 </code-title>
 
-Sets the errors array for the fields and updates all the assoicated meta tags like `valid` and `invalid`, if the array is empty it is considered as marking the field valid.
+Sets the errors array for the fields and updates all the associated meta tags like `valid` and `invalid`, if the array is empty it is considered as marking the field valid.
 
 ```js
 const { setValidationState } = useField('field', value => !!value);

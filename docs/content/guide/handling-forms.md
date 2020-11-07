@@ -423,7 +423,7 @@ Note that setting any field's value using this way will trigger validation
 
 ## Handling Resets
 
-vee-validate also handles form resets in similar way to submissions, consider this example. When resetting the form or its fields, only the validation state will get reset. The field values will remain intact.
+vee-validate also handles form resets in similar way to submissions. When resetting the form, all fields' errors and meta flags will be reset to their original state, including the fields' values.
 
 Form reset is handled automatically if you are using the `as` prop to render a `form` element, like shown in this example:
 
@@ -463,8 +463,6 @@ export default {
 </script>
 ```
 
-To reset the values as well, you will need to use `setValues` from the scoped slot or the component instance to set them to whatever is suitable.
-
 Alternatively if you plan to use the scoped slot for complex markup, you can use the `handleReset` slot prop function to trigger the reset manually:
 
 ```vue
@@ -479,7 +477,23 @@ Alternatively if you plan to use the scoped slot for complex markup, you can use
 
 ### Resetting Forms After Submit
 
-Usually you will reset your forms after a successful submission, the `onSubmit` handler receives an additional `form` object in the second argument that allows you do some actions on the form after submissions:
+Usually you will reset your forms after a successful submission, the `onSubmit` handler receives an additional `FormActions` object in the second argument that allows you do some actions on the form after submissions, this is the shape of the `FormActions` object:
+
+```ts
+export interface FormActions {
+  setFieldValue: (field: T, value: any) => void;
+  setFieldError: (field: string, message: string | undefined) => void;
+  setErrors: (fields: Partial<Record<string, string | undefined>>) => void;
+  setValues: (fields: Partial<Record<T, any>>) => void;
+  setFieldTouched: (field: string, isTouched: boolean) => void;
+  setTouched: (fields: Partial<Record<string, boolean>>) => void;
+  setFieldDirty: (field: string, isDirty: boolean) => void;
+  setDirty: (fields: Partial<Record<string, boolean>>) => void;
+  resetForm: (state?: Partial<FormState>) => void;
+}
+```
+
+This is an example of using the form actions object to reset the form:
 
 ```vue
 <template>
@@ -507,22 +521,43 @@ export default {
     };
   },
   methods: {
-    onSubmit(values, { form }) {
+    onSubmit(values, { resetForm }) {
       console.log(values); // send data to API
-
-      // reset values
-      form.setValues({
-        // field values ..
-      });
-      // reset the form
-      form.reset();
+      // reset the form and the field values to their initial values
+      resetForm();
     },
   },
 };
 </script>
 ```
 
-Alternatively you can also use template `$refs` to reset the form whenever you need:
+The `resetForm` accepts an optional `state` object that allows you to specify the new initial values for any of the fields state, this is the shape of the `FormState` object:
+
+```ts
+interface FormState {
+  // any error messages
+  errors: Record<string, string>;
+  // dirty meta flags
+  dirty: Record<string, boolean>;
+  // touched meta flags
+  touched: Record<string, boolean>;
+  // Form Values
+  values: Record<string, any>;
+}
+```
+
+In the following snippet, `resetForm` is used to update the form values to specific ones other than their original values. This is useful if your receive your form state asynchronously
+
+```js
+resetForm({
+  values: {
+    email: 'example@example.com',
+    password: '',
+  },
+});
+```
+
+You can also use template `$refs` to reset the form whenever you need:
 
 ```vue
 <template>
@@ -556,7 +591,7 @@ export default {
       console.log(values); // send data to API
 
       // reset the form
-      this.$refs.form.reset();
+      this.$refs.form.resetForm();
     },
   },
 };

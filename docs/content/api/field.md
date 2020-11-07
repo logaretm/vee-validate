@@ -137,12 +137,12 @@ The first error in the `errors` array if available, a handy shortcut to display 
 
 </code-title>
 
-Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages. Doesn't change the field's value.
+Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages, it will also reset the field value to it's initial value. Note that no error messages will be generated if the initial value is invalid after reset.
 
 ```js
 const { reset } = useField('field', value => !!value);
 
-// reset the field validation state
+// reset the field validation state and its value
 reset();
 ```
 

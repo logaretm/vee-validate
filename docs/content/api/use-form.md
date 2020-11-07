@@ -58,7 +58,8 @@ type useForm = (
   validate: () => Promise<boolean>; // validates the form fields and returns the overall result
   handleSubmit: (cb: (values: Record<string, any>, ctx: SubmissionContext)) => () => void; // Creates a submission handler that calls the cb only after successful validation with the form values
   submitForm: (e: Event) => void; // Forces submission of a form after successful validation (calls e.target.submit())
-  handleReset: () => void; // Resets all fields' errors and meta
+  handleReset: () => void; // Resets all fields' errors and meta and their values
+  resetForm: (state?: Partial<FormState>) => void; // Resets all fields' errors and meta and their values to their initial state or the specified state
 };
 ```
 
@@ -453,7 +454,7 @@ export default {
 
 </code-title>
 
-You can use this function as handler for the `reset` events on native form elements, it a
+Clears error messages, resets the meta state for all fields and reverts their values to their initial state. you can use this function as handler for the `reset` events on native form elements.
 
 ```vue
 <template>
@@ -479,4 +480,49 @@ export default {
   },
 };
 </script>
+```
+
+<code-title level="4">
+
+`resetForm: (state?: Partial<FormState>) => void`
+
+</code-title>
+
+Clears error messages, resets the meta state for all fields and reverts their values to their initial state. Accepts an optional object containing the new form state, useful if you need to reset the form values to different values other than their initial state.
+
+This is the `FormState` interface:
+
+```ts
+interface FormState {
+  // any error messages
+  errors: Record<string, string>;
+  // dirty meta flags
+  dirty: Record<string, boolean>;
+  // touched meta flags
+  touched: Record<string, boolean>;
+  // Form Values
+  values: Record<string, any>;
+}
+```
+
+In this example, the `resetForm` function is updating the fields current values to the ones provided, these values will be used as the new initial values for future `resetForm` or `handleReset` calls. This also applies if the `Field` component or `useField` used their individual `resetField` function.
+
+```js
+const { resetForm } = useForm();
+
+// ...
+function onSubmit(values) {
+  // send values to the API
+  // ...
+
+  // Reset the form values
+  resetForm({
+    values: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+    },
+  });
+}
 ```

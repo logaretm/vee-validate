@@ -268,4 +268,37 @@ This is useful if you plan to handle form submissions using a backend API like L
 
 </code-title>
 
-You can use this function as handler for the `reset` events on native form elements, it a
+Clears error messages, resets the meta state for all fields and reverts their values to their initial state. you can use this function as handler for the `reset` events on native form elements.
+
+<code-title level="4">
+
+`resetForm: (state?: Partial<FormState>) => void`
+
+</code-title>
+
+Clears error messages, resets the meta state for all fields and reverts their values to their initial state. Accepts an optional object containing the new form state, useful if you need to reset the form values to different values other than their initial state.
+
+This is the shape of the `state` object:
+
+```ts
+interface FormState {
+  // any error messages
+  errors: Record<string, string>;
+  // dirty meta flags
+  dirty: Record<string, boolean>;
+  // touched meta flags
+  touched: Record<string, boolean>;
+  // Form Values
+  values: Record<string, any>;
+}
+```
+
+In the following example the form is resetting the `email` field value to another value, this will change the field current value as well as it's initial value. Meaning any future calls of `resetForm` without arguments or `handleReset` will use `example@example.com` as their value. This also applies if fields are reset individually using `resetField` on either `useField` return value or `<Field />` component's slot props.
+
+```vue
+<Form v-slot="{ resetForm }">
+  ...
+
+  <button @click="resetForm({ values: { email: 'example@example.com' } })" type="button">Reset</button>
+</Form>
+```
