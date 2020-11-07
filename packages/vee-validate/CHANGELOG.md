@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.19](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.18...vee-validate@4.0.0-beta.19) (2020-11-07)
+
+
+### Bug Fixes
+
+* resolve component before rendering closes [#3014](https://github.com/logaretm/vee-validate/issues/3014) ([f8f481d](https://github.com/logaretm/vee-validate/commit/f8f481daad754a4b18a91e2b07b9549433d023f9))
+
+
+### Features
+
+* field.reset() should reset the field to its initial value ([a11f1b7](https://github.com/logaretm/vee-validate/commit/a11f1b7dda3deafe683e13a00b28a7fab09b82cb))
+* implement similar reset API for fields ([38c3923](https://github.com/logaretm/vee-validate/commit/38c392320b4154061ccc5d70dde11517357467e8))
+* new reset API ([6983738](https://github.com/logaretm/vee-validate/commit/69837383e42636c24d6ee7d15cb5fe8e98f2ac55))
+* rename reset methods to be more consistent ([3a0dc4d](https://github.com/logaretm/vee-validate/commit/3a0dc4db2f1a00a8a4f3940ddd452d9b1369cace))
+* use resolveDynamicComponent instead ([f1b5f89](https://github.com/logaretm/vee-validate/commit/f1b5f896840ed159df06cf59badd83282496b777))
+
+
+
+
+
 # [4.0.0-beta.18](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.17...vee-validate@4.0.0-beta.18) (2020-11-05)
 
 
