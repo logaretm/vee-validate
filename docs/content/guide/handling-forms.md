@@ -366,14 +366,14 @@ You can set any field's value using either `setFieldValue` or `setValues`, both 
 export default {
   // ...
   methods: {
-    onSubmit(values, { form }) {
+    onSubmit(values, actions) {
       // Submit the values...
 
       // set single field value
-      form.setFieldValue('email', 'ummm@example.com');
+      actions.setFieldValue('email', 'ummm@example.com');
 
       // set multiple values
-      form.setValues({
+      actions.setValues({
         email: 'ummm@example.com',
         password: 'P@$$w0Rd',
       });
@@ -683,14 +683,14 @@ Here are a few snippets showcasing it's usage in these various scenarios:
 export default {
   // ...
   methods: {
-    onSubmit(values, { form }) {
+    onSubmit(values, actions) {
       // Submit the values...
 
       // set single field error
-      form.setFieldError('email', 'this email is already taken');
+      actions.setFieldError('email', 'this email is already taken');
 
       // set multiple errors
-      form.setErrors({
+      actions.setErrors({
         email: 'this field is already taken',
         password: 'someone already has this password',
       });

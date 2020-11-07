@@ -396,23 +396,23 @@ export default {
 </script>
 ```
 
-For advanced forms, you may need to trigger various actions on the form in the `submit` handler. Your callback receives a `FormContext` object as part of the second argument along with the event object that triggered the submission if available.
+For advanced forms, you may need to trigger various actions on the form in the `submit` handler. Your callback receives a `FormActions` object as part of the second argument along with the event object that triggered the submission if available.
 
 ```js
 const { handleSubmit } = useForm();
 
-const onSubmit = handleSubmit((values, { evt, form }) => {
-  evt; // the event object that triggered the submission if available, might be undefined
+const onSubmit = handleSubmit((values, actions) => {
+  actions.evt; // the event object that triggered the submission if available, might be undefined
 
   // the form object contains useful methods
   // set a single field value
-  form.setFieldValue('field', 'hello');
+  actions.setFieldValue('field', 'hello');
   // set multiple fields values
-  form.setValues({ email: 'value', password: 'hi' });
+  actions.setValues({ email: 'value', password: 'hi' });
   // set a single field error
-  form.setFieldError('field', 'this field is bad');
+  actions.setFieldError('field', 'this field is bad');
   // set multiple fields errors
-  form.setErrors({ email: 'bad email', password: 'bad password' });
+  actions.setErrors({ email: 'bad email', password: 'bad password' });
 });
 ```
 
@@ -442,40 +442,6 @@ export default {
 
     return {
       submitForm,
-    };
-  },
-};
-</script>
-```
-
-<code-title level="4">
-
-`handleReset: () => void`
-
-</code-title>
-
-Clears error messages, resets the meta state for all fields and reverts their values to their initial state. you can use this function as handler for the `reset` events on native form elements.
-
-```vue
-<template>
-  <form @reset="handleReset">
-    <!-- ... -->
-  </form>
-</template>
-
-<script>
-import { useForm } from 'vee-validate';
-
-export default {
-  setup() {
-    const { handleReset } = useForm();
-
-    // you can use it in your code
-    handleReset();
-
-    // or pass it to be used in the template
-    return {
-      handleReset,
     };
   },
 };
@@ -525,4 +491,38 @@ function onSubmit(values) {
     },
   });
 }
+```
+
+<code-title level="4">
+
+`handleReset: () => void`
+
+</code-title>
+
+Clears error messages, resets the meta state for all fields and reverts their values to their initial state. you can use this function as handler for the `reset` events on native form elements.
+
+```vue
+<template>
+  <form @reset="handleReset">
+    <!-- ... -->
+  </form>
+</template>
+
+<script>
+import { useForm } from 'vee-validate';
+
+export default {
+  setup() {
+    const { handleReset } = useForm();
+
+    // you can use it in your code
+    handleReset();
+
+    // or pass it to be used in the template
+    return {
+      handleReset,
+    };
+  },
+};
+</script>
 ```
