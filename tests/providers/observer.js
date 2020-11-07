@@ -318,6 +318,63 @@ test('validates and resets nested observers', async () => {
   expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
 });
 
+test('does not validate nested disabled observers', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        name: ''
+      }),
+      template: `
+      <ValidationObserver ref="obs" v-slot="state">
+        <ValidationObserver>
+          <ValidationProvider disabled vid="name" rules="required|alpha" v-slot="_">
+            <input v-model="name" type="text">
+          </ValidationProvider>
+        </ValidationObserver>
+        <p>{{ state.errors }}</p>
+      </ValidationObserver>
+    `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  await flush();
+  expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
+  await wrapper.vm.$refs.obs.validate();
+  await flush();
+  await flush();
+  expect(wrapper.find('p').text()).not.toContain(DEFAULT_REQUIRED_MESSAGE);
+});
+
+test('parent observer does not collect errors from nested disabled observers', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        name: ''
+      }),
+      template: `
+      <ValidationObserver ref="obs" v-slot="state">
+        <ValidationObserver disabled>
+          <ValidationProvider vid="name" rules="required|alpha" v-slot="_">
+            <input v-model="name" type="text">
+          </ValidationProvider>
+        </ValidationObserver>
+        <p>{{ state.errors }}</p>
+      </ValidationObserver>
+    `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  await flush();
+  const input = wrapper.find('input');
+  input.setValue('1');
+  await flush();
+  await flush();
+
+  expect(wrapper.find('p').text()).not.toContain('The {field} field may only contain alphabetic characters');
+});
+
 test('merges nested observers state', async () => {
   const wrapper = mount(
     {

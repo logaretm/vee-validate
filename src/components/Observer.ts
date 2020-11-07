@@ -262,7 +262,8 @@ function createObserverFlags() {
 }
 
 function computeObserverState(this: ObserverInstance) {
-  const vms = [...values(this.refs), ...this.observers];
+  const vms = [...values(this.refs), ...this.observers.filter(o => !o.disabled)];
+
   let errors: ObserverErrors = {};
   const flags: ValidationFlags = createObserverFlags();
   let fields: Record<string, ObserverField> = {};
