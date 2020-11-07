@@ -142,7 +142,7 @@ export function useField(name: MaybeReactive<string>, rules: RuleExpression, opt
     valueProp,
     checked,
     idx: -1,
-    reset,
+    resetField: reset,
     validate,
     handleChange,
     handleBlur,

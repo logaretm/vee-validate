@@ -41,11 +41,12 @@ export const Form = defineComponent({
     const {
       errors,
       validate,
-      handleSubmit,
       handleReset,
+      resetForm,
       values,
       meta,
       isSubmitting,
+      handleSubmit,
       submitForm,
       setErrors,
       setFieldError,
@@ -91,6 +92,7 @@ export const Form = defineComponent({
         this.setDirty = setDirty;
         this.setFieldTouched = setFieldTouched;
         this.setTouched = setTouched;
+        this.resetForm = resetForm;
       }
 
       const children = normalizeChildren(ctx, {
@@ -110,6 +112,7 @@ export const Form = defineComponent({
         setDirty,
         setFieldTouched,
         setTouched,
+        resetForm,
       });
 
       if (!props.as) {

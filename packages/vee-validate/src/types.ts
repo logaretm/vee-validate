@@ -37,13 +37,7 @@ export interface FormState<TValues> {
   touched: Partial<Record<keyof TValues, boolean>>;
 }
 
-export interface FormContext<TValues extends Record<string, any> = Record<string, any>> {
-  register(field: any): void;
-  unregister(field: any): void;
-  values: TValues;
-  fields: ComputedRef<Record<keyof TValues, any>>;
-  schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | ObjectSchema<TValues>;
-  validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
+export interface FormActions<TValues> {
   setFieldValue<T extends keyof TValues>(field: T, value: TValues[T]): void;
   setFieldError: (field: keyof TValues, message: string | undefined) => void;
   setErrors: (fields: Partial<Record<keyof TValues, string | undefined>>) => void;
@@ -52,13 +46,21 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   setTouched: (fields: Partial<Record<keyof TValues, boolean>>) => void;
   setFieldDirty: (field: keyof TValues, isDirty: boolean) => void;
   setDirty: (fields: Partial<Record<keyof TValues, boolean>>) => void;
-  reset: (state?: Partial<FormState<TValues>>) => void;
+  resetForm: (state?: Partial<FormState<TValues>>) => void;
 }
 
-type SubmissionContext<TValues extends Record<string, any> = Record<string, any>> = {
+export interface FormContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
+  register(field: any): void;
+  unregister(field: any): void;
+  values: TValues;
+  fields: ComputedRef<Record<keyof TValues, any>>;
+  schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | ObjectSchema<TValues>;
+  validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
+}
+
+interface SubmissionContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
   evt: SubmitEvent;
-  form: FormContext<TValues>;
-};
+}
 
 export type SubmissionHandler<TValues extends Record<string, any> = Record<string, any>> = (
   values: TValues,

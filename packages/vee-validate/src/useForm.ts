@@ -218,14 +218,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   /**
    * Resets all fields
    */
-  const reset = (state?: Partial<FormState<TValues>>) => {
+  const resetForm = (state?: Partial<FormState<TValues>>) => {
     // set initial values if provided
     if (state?.values) {
       setInitialValues(state.values);
     }
 
     // Reset all fields state
-    fields.value.forEach((f: any) => f.reset());
+    fields.value.forEach((f: any) => f.resetField());
 
     // set explicit state afterwards
     if (state?.dirty) {
@@ -316,7 +316,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setTouched,
     setFieldDirty,
     setDirty,
-    reset,
+    resetForm,
   };
 
   const validate = async () => {
@@ -354,7 +354,18 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       return validate()
         .then(result => {
           if (result && typeof fn === 'function') {
-            return fn(immutableFormValues.value, { evt: e as SubmitEvent, form: formCtx });
+            return fn(immutableFormValues.value, {
+              evt: e as SubmitEvent,
+              setDirty,
+              setFieldDirty,
+              setErrors,
+              setFieldError,
+              setTouched,
+              setFieldTouched,
+              setValues,
+              setFieldValue,
+              resetForm,
+            });
           }
         })
         .then(
@@ -406,8 +417,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     values: formValues,
     validate,
     isSubmitting,
-    handleReset: () => reset(),
-    resetForm: reset,
+    handleReset: () => resetForm(),
+    resetForm,
     handleSubmit,
     submitForm,
     setFieldError,
