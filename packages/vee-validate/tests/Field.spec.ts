@@ -455,12 +455,13 @@ describe('<Field />', () => {
 
     setValue(input, '');
     await flushPromises();
-
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
-
+    setValue(input, '123');
+    await flushPromises();
     wrapper.$el.querySelector('button').click();
     await flushPromises();
     expect(error.textContent).toBe('');
+    expect(input.value).toBe('');
   });
 
   test('yup abortEarly is set by bails global option', async () => {
