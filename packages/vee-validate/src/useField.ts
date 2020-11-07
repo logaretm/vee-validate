@@ -38,6 +38,13 @@ interface FieldOptions {
   label?: string;
 }
 
+interface FieldState {
+  value: any;
+  dirty: boolean;
+  touched: boolean;
+  errors: string[];
+}
+
 type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValidateFunction>;
 
 let ID_COUNTER = 0;
@@ -53,7 +60,16 @@ export function useField(name: MaybeReactive<string>, rules: RuleExpression, opt
   );
 
   const form = injectWithSelf(FormSymbol);
-  const { meta, errors, handleBlur, handleInput, resetField, setValidationState, value, checked } = useValidationState({
+  const {
+    meta,
+    errors,
+    handleBlur,
+    handleInput,
+    resetValidationState,
+    setValidationState,
+    value,
+    checked,
+  } = useValidationState({
     name,
     // make sure to unref initial value because of possible refs passed in
     initValue: unref(initialValue),
@@ -125,9 +141,18 @@ export function useField(name: MaybeReactive<string>, rules: RuleExpression, opt
 
   watchValue();
 
-  function reset() {
+  function resetField(state?: Partial<FieldState>) {
     unwatchValue?.();
-    resetField();
+    resetValidationState(state?.value);
+    if (state?.dirty) {
+      setTouched(state.dirty);
+    }
+    if (state?.touched) {
+      setTouched(state.touched);
+    }
+    if (state?.errors) {
+      errors.value = state.errors;
+    }
     watchValue();
   }
 
@@ -142,7 +167,8 @@ export function useField(name: MaybeReactive<string>, rules: RuleExpression, opt
     valueProp,
     checked,
     idx: -1,
-    resetField: reset,
+    resetField,
+    handleReset: () => resetField(),
     validate,
     handleChange,
     handleBlur,
@@ -248,7 +274,7 @@ function useValidationState({
   const errors: Ref<string[]> = ref([]);
   const formInitialValues = inject(FormInitialValues, undefined);
   const initialValue = getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
-  const { reset: resetFlags, meta } = useMeta(initialValue);
+  const { resetMeta, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
     value.value = initialValue;
@@ -297,17 +323,17 @@ function useValidationState({
   }
 
   // Resets the validation state
-  function resetField() {
-    value.value = getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
+  function resetValidationState(newValue?: any) {
+    value.value = newValue ?? getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
     errors.value = [];
-    resetFlags();
+    resetMeta();
   }
 
   return {
     meta,
     errors,
     setValidationState,
-    resetField,
+    resetValidationState,
     handleBlur,
     handleInput,
     value,
@@ -332,7 +358,7 @@ function useMeta(initialValue: any) {
   /**
    * Resets the flag state
    */
-  function reset() {
+  function resetMeta() {
     const defaults = initialMeta();
     keysOf(meta).forEach(key => {
       meta[key] = defaults[key];
@@ -341,7 +367,7 @@ function useMeta(initialValue: any) {
 
   return {
     meta,
-    reset,
+    resetMeta,
   };
 }
 

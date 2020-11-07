@@ -47,6 +47,7 @@ export const Field = defineComponent({
       setDirty,
       setTouched,
       resetField,
+      handleReset,
       meta,
       checked,
     } = useField(name, rules, {
@@ -136,6 +137,7 @@ export const Field = defineComponent({
         resetField,
         handleChange: onChangeHandler,
         handleInput: onInputHandler,
+        handleReset,
         handleBlur,
         setDirty,
         setTouched,

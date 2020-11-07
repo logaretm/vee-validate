@@ -439,10 +439,10 @@ describe('<Field />', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <Field name="field" rules="required" v-slot="{ field, errors, resetField }">
+        <Field name="field" rules="required" v-slot="{ field, errors, handleReset }">
           <input type="text" v-bind="field">
           <span id="error">{{ errors && errors[0] }}</span>
-          <button @click="resetField">Reset</button>
+          <button @click="handleReset">Reset</button>
         </Field>
       </div>
     `,
