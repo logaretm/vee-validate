@@ -12,6 +12,7 @@ import {
   getCurrentInstance,
   unref,
   InjectionKey,
+  WatchStopHandle,
 } from 'vue';
 import { validate as validateValue } from './validate';
 import { FormContext, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
@@ -52,7 +53,7 @@ export function useField(name: MaybeReactive<string>, rules: RuleExpression, opt
   );
 
   const form = injectWithSelf(FormSymbol);
-  const { meta, errors, handleBlur, handleInput, reset, setValidationState, value, checked } = useValidationState({
+  const { meta, errors, handleBlur, handleInput, resetField, setValidationState, value, checked } = useValidationState({
     name,
     // make sure to unref initial value because of possible refs passed in
     initValue: unref(initialValue),
@@ -113,6 +114,23 @@ export function useField(name: MaybeReactive<string>, rules: RuleExpression, opt
     meta.dirty = isDirty;
   }
 
+  let unwatchValue: WatchStopHandle;
+  function watchValue() {
+    if (validateOnValueUpdate) {
+      unwatchValue = watch(value, validate, {
+        deep: true,
+      });
+    }
+  }
+
+  watchValue();
+
+  function reset() {
+    unwatchValue?.();
+    resetField();
+    watchValue();
+  }
+
   const field = {
     fid,
     name,
@@ -133,12 +151,6 @@ export function useField(name: MaybeReactive<string>, rules: RuleExpression, opt
     setTouched,
     setDirty,
   };
-
-  if (validateOnValueUpdate) {
-    watch(value, validate, {
-      deep: true,
-    });
-  }
 
   if (isRef(rules) && typeof unref(rules) !== 'function') {
     watch(rules, validate, {
@@ -285,17 +297,17 @@ function useValidationState({
   }
 
   // Resets the validation state
-  const reset = () => {
+  function resetField() {
     value.value = getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
     errors.value = [];
     resetFlags();
-  };
+  }
 
   return {
     meta,
     errors,
     setValidationState,
-    reset,
+    resetField,
     handleBlur,
     handleInput,
     value,

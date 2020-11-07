@@ -9,6 +9,7 @@ import {
   SubmitEvent,
   ValidationResult,
   MaybeReactive,
+  FormState,
 } from './types';
 import { getFromPath, isYupValidator, keysOf, setInPath, unsetPath } from './utils';
 import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
@@ -85,7 +86,11 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   });
 
   // initial form values
-  const { initialValues } = useFormInitialValues<TValues>(fieldsById, formValues, opts?.initialValues);
+  const { initialValues, setInitialValues } = useFormInitialValues<TValues>(
+    fieldsById,
+    formValues,
+    opts?.initialValues
+  );
 
   // form meta aggregations
   const meta = useFormMeta(fields, initialValues);
@@ -213,8 +218,25 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   /**
    * Resets all fields
    */
-  const handleReset = () => {
+  const reset = (state?: Partial<FormState<TValues>>) => {
+    // set initial values if provided
+    if (state?.values) {
+      setInitialValues(state.values);
+    }
+
+    // Reset all fields state
     fields.value.forEach((f: any) => f.reset());
+
+    // set explicit state afterwards
+    if (state?.dirty) {
+      setDirty(state.dirty);
+    }
+    if (state?.touched) {
+      setTouched(state.touched);
+    }
+    if (state?.errors) {
+      setErrors(state.errors);
+    }
   };
 
   function registerField(field: FieldComposite) {
@@ -294,7 +316,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setTouched,
     setFieldDirty,
     setDirty,
-    reset: handleReset,
+    reset,
   };
 
   const validate = async () => {
@@ -375,7 +397,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   });
 
   // Provide injections
-  provide(FormInitialValues, initialValues);
   provide(FormSymbol, formCtx as FormContext);
   provide(FormErrorsSymbol, errors);
 
@@ -385,7 +406,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     values: formValues,
     validate,
     isSubmitting,
-    handleReset,
+    handleReset: () => reset(),
+    resetForm: reset,
     handleSubmit,
     submitForm,
     setFieldError,
@@ -482,43 +504,59 @@ async function validateYupSchema<TValues>(
 /**
  * Manages the initial values prop
  */
-function useFormInitialValues<TValues>(
+function useFormInitialValues<TValues extends Record<string, any>>(
   fields: Ref<Record<keyof TValues, any>>,
   formValues: TValues,
   providedValues?: MaybeReactive<TValues>
 ) {
-  const initialValues = computed<TValues>(() => {
-    if (isRef(providedValues)) {
-      return providedValues.value;
-    }
-
-    return providedValues || ({} as TValues);
+  const initialValues = ref<TValues>((unref(providedValues) as TValues) || ({} as TValues));
+  // acts as a read only proxy of the initial values object
+  const computedInitials = computed<TValues>(() => {
+    return initialValues.value as TValues;
   });
 
-  // Watch initial values for changes, and update the pristine (non-dirty and non-touched fields)
-  // we exclude dirty and untouched fields because it's unlikely you want to change the form values using initial values
-  // we mostly watch them for API population or newly inserted fields
-  watch(
-    initialValues,
-    value => {
-      const isSafeToUpdate = (f: any) => f.meta.dirty || f.meta.touched;
-      keysOf(fields.value).forEach(fieldPath => {
-        const field = fields.value[fieldPath];
-        const isFieldDirty = Array.isArray(field) ? field.some(isSafeToUpdate) : isSafeToUpdate(field);
-        if (isFieldDirty) {
-          return;
-        }
+  function setInitialValues(values: Partial<TValues>, updateFields = false) {
+    initialValues.value = {
+      ...initialValues.value,
+      ...values,
+    };
 
-        const newValue = getFromPath(value, fieldPath as string);
-        setInPath(formValues, fieldPath as string, newValue);
-      });
-    },
-    {
-      deep: true,
+    if (!updateFields) {
+      return;
     }
-  );
+
+    // update the pristine (non-dirty and non-touched fields)
+    // we exclude dirty and untouched fields because it's unlikely you want to change the form values using initial values
+    // we mostly watch them for API population or newly inserted fields
+    const isSafeToUpdate = (f: any) => f.meta.dirty || f.meta.touched;
+    keysOf(fields.value).forEach(fieldPath => {
+      const field = fields.value[fieldPath];
+      const isFieldDirty = Array.isArray(field) ? field.some(isSafeToUpdate) : isSafeToUpdate(field);
+      if (isFieldDirty) {
+        return;
+      }
+
+      const newValue = getFromPath(initialValues.value, fieldPath as string);
+      setInPath(formValues, fieldPath as string, newValue);
+    });
+  }
+
+  if (isRef(providedValues)) {
+    watch(
+      providedValues,
+      value => {
+        setInitialValues(value, true);
+      },
+      {
+        deep: true,
+      }
+    );
+  }
+
+  provide(FormInitialValues, computedInitials);
 
   return {
-    initialValues,
+    initialValues: computedInitials,
+    setInitialValues,
   };
 }

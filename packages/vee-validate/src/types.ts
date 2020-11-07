@@ -30,6 +30,13 @@ export type SubmitEvent = Event & { target: HTMLFormElement };
 
 export type GenericValidateFunction = (value: any) => boolean | string | Promise<boolean | string>;
 
+export interface FormState<TValues> {
+  values: TValues;
+  errors: Partial<Record<keyof TValues, string | undefined>>;
+  dirty: Partial<Record<keyof TValues, boolean>>;
+  touched: Partial<Record<keyof TValues, boolean>>;
+}
+
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>> {
   register(field: any): void;
   unregister(field: any): void;
@@ -45,7 +52,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   setTouched: (fields: Partial<Record<keyof TValues, boolean>>) => void;
   setFieldDirty: (field: keyof TValues, isDirty: boolean) => void;
   setDirty: (fields: Partial<Record<keyof TValues, boolean>>) => void;
-  reset: () => void;
+  reset: (state?: Partial<FormState<TValues>>) => void;
 }
 
 type SubmissionContext<TValues extends Record<string, any> = Record<string, any>> = {

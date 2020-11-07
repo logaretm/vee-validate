@@ -111,6 +111,8 @@ describe('<Form />', () => {
     });
 
     const error = wrapper.$el.querySelector('#error');
+    const input = wrapper.$el.querySelector('input');
+
     expect(error.textContent).toBe('');
 
     wrapper.$el.querySelector('#submit').click();
@@ -118,9 +120,14 @@ describe('<Form />', () => {
 
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
 
+    setValue(input, 'value');
+    await flushPromises();
     wrapper.$el.querySelector('#reset').click();
     await flushPromises();
 
+    // value was reset
+    expect(input.value).toBe('');
+    // errors were cleared
     expect(error.textContent).toBe('');
     expect(isReset).toBe(true);
   });
