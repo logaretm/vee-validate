@@ -1,4 +1,4 @@
-import { h, defineComponent, nextTick, toRef, SetupContext } from 'vue';
+import { h, defineComponent, nextTick, toRef, SetupContext, resolveComponent } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, isFileInput } from './utils';
@@ -143,7 +143,7 @@ export const Field = defineComponent({
     };
 
     return () => {
-      const tag = resolveTag(props, ctx);
+      const tag = resolveComponent(resolveTag(props, ctx));
       const slotProps = makeSlotProps();
 
       // Sync the model value with the inner field value if they mismatch
