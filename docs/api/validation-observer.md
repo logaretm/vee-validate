@@ -67,7 +67,7 @@ Note that `slim` will take effect only when you have **one child element** in th
 | -------- | --------- | ------------- | ------------------------------------------------------------------------------------------------------- |
 | tag      | `string`  | `span`        | The default tag to [render](#rendering).                                                                |
 | slim     | `boolean` | `false`       | If true, it will make the observer [renderless](#renderless), only rendering the HTML inside its slot.  |
-| disabled | `boolean` | `false`       | If true, the observer will be ignored when `validate` is called by a parent observer.                   |
+| disabled | `boolean` | `false`       | If true, the observer will be excluded from the parent observer validation.                             |
 | vid      | `string`  | random string | if provided it will be used as the observer's id when being registered as a child of a parent observer. |
 
 ## Methods
