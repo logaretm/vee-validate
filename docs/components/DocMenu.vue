@@ -28,6 +28,10 @@ const GROUPS = [
     contentPath: 'examples',
   },
   {
+    name: '3rd-party integrations',
+    contentPath: 'integrations',
+  },
+  {
     name: 'api reference',
     contentPath: 'api',
   },
