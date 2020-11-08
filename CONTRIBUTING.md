@@ -96,3 +96,10 @@ yarn build
 # or
 npm run build
 ```
+
+## Tips for Testing your changes
+
+If you need to try out your changes, here is a few tips
+
+- Build vee-validate dist files once you are done with your changes
+- To use the built files you can either use `npm link` and link vee-validate dist files to your project, or use [yalc](https://github.com/whitecolor/yalc) (recommended)
