@@ -1,0 +1,68 @@
+---
+title: Custom Checkboxes
+description: Creating validatable checkbox inputs
+order: 6
+---
+
+# Custom Checkboxes
+
+Checkboxes are more complex than regular text inputs, because there is always two states to keep track of which can be confusing at first. Mainly you should keep track of:
+
+- Each individual input's value
+- Which inputs are current selected
+
+To make this easier, remember that native checkboxes behave as a group while each input maintains it's own value. Then a checkbox said to be checked when either:
+
+- It's value is the one currently selected
+- It's value is included in the ones selected
+
+This is because of the nature of checkboxes behaving as **"multi-value"** form inputs, so you need to keep track of each input's value and the currently selected one(s).
+
+With all of that in mind, vee-validate offers simple abstractions for checkboxes. You can build your own checkboxes with vee-validate's `useField` function which gives you the full capabilities of validation in a composable fashion.
+
+Because `useField` isn't aware of what kind of input will be composed with it, you will need to specify that the input is of type `checkbox` and pass a `valueProp` as well which represents that single field's value. By doing so, you gain access to `checked` prop which tells you if the checkbox should be selected.
+
+```js
+import { useField } from 'vee-validate';
+
+export default {
+  props: {
+    // The group's value
+    modelValue: {
+      type: null,
+    },
+    // Field's own value
+    value: {
+      type: null,
+    },
+    name: {
+      type: String,
+    },
+    rules: {
+      type: String,
+      default: undefined,
+    },
+  },
+  setup(props) {
+    const { checked, handleChange } = useField(props.name, props.rules, {
+      // 👇 These are important
+      type: 'checkbox',
+      valueProp: props.value,
+    });
+
+    // select/unselect the input
+    handleChange(props.value);
+
+    return {
+      checked, // readonly
+      handleChange,
+    };
+  },
+};
+```
+
+vee-validate handles some of the complexities of the checkbox inputs nature, by default if a checkbox field is registered it will be treated as a single input until another checkbox with the same name is registered. Then they will be treated as a group, and their values will affect the group value when they are selected or not.
+
+Here is a live example of a custom checkbox input:
+
+<code-sandbox id="vee-validate-custom-checkboxes-v0rnv" title="vee-validate custom checkboxes"></code-sandbox>
