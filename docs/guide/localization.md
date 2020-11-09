@@ -242,3 +242,19 @@ The i18n in vee-validate is library-agnostic, you can even implement one from ot
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
 ></iframe>
+
+## Handling Localization Changes with localeChanged()
+
+While it is rare, you might need to change the locale immediately and ideally you would need the error messages to be regenerated with the new locale as well.
+
+vee-validate exposes a `localeChanged` helper that you can call whenever the locale changes, this will prompt vee-validate to re-generated the already generated messages with whatever localization solution you've set up as shown in the previous sections.
+
+```js
+import { localeChanged } from 'vee-validate';
+
+// in your app code...
+this.$i18n.locale = 'ar'; // locale changed
+localeChanged(); // notify vee-validate of localization changes
+```
+
+Note that your i18n solution locale must be updated first before you call `localeChanged`, otherwise the messages might remain the same.
