@@ -69,6 +69,8 @@ interface FieldOptions {
   validateOnValueUpdate?: boolean; // if the field should be validated when the value changes (default is true)
   bails?: boolean; // if the field validation should run all validations
   label?: string; // A friendly name to be used in `generateMessage` config instead of the field name
+  type?: string; // The input type, can be any string. Toggles specific toggle mode for `checkbox`
+  valueProp?: string; // Used the input type is `checkbox` or `radio` otherwise ignored
 }
 
 interface ValidationResult {
@@ -98,6 +100,7 @@ type useField = (
   handleInput: (e: Event) => void; // updates the field meta associated with input event and syncs the field value
   handleBlur: (e: Event) => void; // updates the field meta associated with blur event
   setValidationState: (v: ValidationResult) => ValidationResult; // updates the field state
+  checked: ComputedRef<boolean> | undefined; // Present if input type is checkbox
 };
 ```
 
@@ -415,3 +418,22 @@ const { setTouched } = useField('field', value => !!value);
 // mark the field as touched
 setTouched(true);
 ```
+
+<code-title level="4">
+
+`checked: ComputedRef<boolean> | undefined`
+
+</code-title>
+
+A computed property that indicates if the field should be checked or unchecked, only available if `type=checkbox` or `type=radio` in field options. Useful if you are creating [custom checkboxes](/examples/custom-checkboxes).
+
+```js
+const { checked } = useField('field', ..., {
+  type: 'checkbox',
+  valueProp: 'Checkbox value'
+});
+
+checked.value; // true or false
+```
+
+For more information on how you might use the `checked` property, check the [custom checkboxes example](/examples/custom-checkboxes).
