@@ -28,8 +28,8 @@ const GROUPS = [
     contentPath: 'examples',
   },
   {
-    name: '3rd-party integrations',
-    contentPath: 'integrations',
+    name: 'integrations',
+    contentPath: '3rd-party-integrations',
   },
   {
     name: 'api reference',
@@ -47,6 +47,13 @@ export default {
         })
       )
     ).map((pages, idx) => {
+      if (!Array.isArray(pages)) {
+        return {
+          title: GROUPS[idx].name,
+          pages: [pages],
+        };
+      }
+
       return {
         title: GROUPS[idx].name,
         pages: pages.sort((a, b) => a.order - b.order),

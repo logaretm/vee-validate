@@ -22,6 +22,14 @@ Let's quickly recap what you will be building, the component we will be building
 
 </div>
 
+<doc-tip>
+
+This guide will cover how to build a basic form generator manually.
+
+If you are looking for a more robust solution for form generation, take a look at [Formvuelate](https://formvuelate.js.org/), they have very good [vee-validate support](https://formvuelate.js.org/#vee-validate-plugin).
+
+</doc-tip>
+
 ## Prerequisites
 
 You will need to be familiar with HTML and a good understanding of modern JavaScript like arrow functions and ES modules, you need to have basic understanding of Vue's `v-for` and prop binding using `v-bind` and its shorthand `:`.
