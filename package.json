@@ -16,8 +16,7 @@
     "build": "node scripts/build.js",
     "cover": "jest --coverage",
     "postversion": "npm run build",
-    "docs:dev": "cd ./docs && npm run dev && cd -",
-    "docs:deploy": "./scripts/deploy-docs.sh"
+    "docs:dev": "cd ./docs && npm run dev && cd -"
   },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
