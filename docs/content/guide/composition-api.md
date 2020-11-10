@@ -158,7 +158,7 @@ const { ... } = useForm({
     email: yup.string().required().email(),
     password: yup.string().required().min(3),
   })
-})
+});
 ```
 
 You can do a lot more than that with `useForm`, check the [useForm API reference](/api/use-form) for more information.
