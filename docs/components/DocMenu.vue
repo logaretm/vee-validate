@@ -20,7 +20,7 @@ const GROUPS = [
     contentPath: 'guide',
   },
   {
-    name: 'tutorials and resources',
+    name: 'tutorials',
     contentPath: 'tutorials',
   },
   {
@@ -30,6 +30,10 @@ const GROUPS = [
   {
     name: 'integrations',
     contentPath: '3rd-party-integrations',
+  },
+  {
+    name: 'resources',
+    contentPath: 'resources',
   },
   {
     name: 'api reference',
