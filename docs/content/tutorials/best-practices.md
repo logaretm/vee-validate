@@ -75,7 +75,7 @@ Instead you could either use `setup` instead of your data or [`markRaw`](https:/
 import { markRaw } from 'vue';
 
 {
-  setup() {
+  data() {
     // Non-reactive because it was explicitly defined with `markRaw`
     const schema = markRaw(yup.object().shape({
       email: yup.string().required().email(),
