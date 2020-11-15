@@ -1,12 +1,23 @@
 <template>
   <header
-    class="pt-6 pb-3 sticky top-0 dark-mode:bg-dark bg-white z-20 border-b dark-mode:border-carbon border-gray-700"
+    class="pt-3 pb-3 sticky top-0 dark-mode:bg-dark bg-white z-20 border-b dark-mode:border-carbon border-gray-700"
   >
-    <div class="w-full text-white bg-accent-800 fixed top-0 h-8 flex items-center justify-center text-xs">
-      Documentation is still a work in progress 🚧
+    <div
+      class="px-4 lg:px-8 py-2 lg:py-0 text-sm lg:text-base w-full text-black bg-warning fixed font-bold bottom-0 lg:top-0 lg:h-10 flex items-center"
+      v-if="displayWarning"
+    >
+      <p class="ml-auto">
+        ⛔️ HEADS UP: You are viewing the documentation for v4.x (Vue 3.0) For Vue 2.x head over to
+        <a href="https://logaretm.github.io/vee-validate/" class="underline"> v3.x documentation</a>
+      </p>
+      <button class="ml-auto" title="close warning" @click="hideWarning">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
     </div>
 
-    <div class="mt-8 flex items-center header__content px-6 lg:px-10">
+    <div class="flex items-center header__content px-6 lg:px-10" :class="{ 'lg:mt-8': displayWarning }">
       <nuxt-link class="mr-auto" to="/">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 858.42 693.79" class="h-10 w-10 lg:w-12 lg:h-12">
           <defs>
@@ -55,7 +66,17 @@ export default {
   name: 'TheHeader',
   data: () => ({
     isMenuOpen: false,
+    displayWarning: false,
   }),
+  mounted() {
+    this.displayWarning = !localStorage.getItem('hide_version_warning');
+  },
+  methods: {
+    hideWarning() {
+      this.displayWarning = false;
+      localStorage.setItem('hide_version_warning', '1');
+    },
+  },
 };
 </script>
 
