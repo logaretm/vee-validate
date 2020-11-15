@@ -65,11 +65,19 @@ type useForm = (
 
 ### Arguments
 
-#### `validationSchema?: Record<string, string | Function> | YupObjectSchema`
+<code-title level="4">
+
+`validationSchema?: Record<string, string | Function> | YupObjectSchema`
+
+</code-title>
 
 Enables form-level validation, uses the specified schema to validate the fields. The schema can be either valid vee-validate global validators or functions or a yup object schema.
 
-#### `initialValues?: Record<string, any>`
+<code-title level="4">
+
+`initialValues?: Record<string, any>`
+
+</code-title>
 
 The initial values for the form, can be a reactive object or reference.
 
@@ -82,7 +90,11 @@ const { ... } = useForm({
 });
 ```
 
-#### `initialErrors?: Record<string, string>`
+<code-title level="4">
+
+`initialErrors?: Record<string, string>`
+
+</code-title>
 
 The initial errors for the fields, useful for non hydrated SSR applications like Laravel, errors are applied on mounted.
 
@@ -95,7 +107,11 @@ const { ... } = useForm({
 });
 ```
 
-#### `initialDirty?: Record<string, any>`
+<code-title level="4">
+
+`initialDirty?: Record<string, any>`
+
+</code-title>
 
 The initial dirty status for the form fields, applied on mounted.
 
@@ -108,7 +124,11 @@ const { ... } = useForm({
 });
 ```
 
-#### `initialTouched?: Record<string, any>`
+<code-title level="4">
+
+`initialTouched?: Record<string, any>`
+
+</code-title>
 
 The initial touched status for the form fields, applied on mounted.
 
@@ -121,7 +141,11 @@ const { ... } = useForm({
 });
 ```
 
-#### `validateOnMount?: boolean`
+<code-title level="4">
+
+`validateOnMount?: boolean`
+
+</code-title>
 
 If true, it will trigger validation for all fields once the form component is mounted.
 
@@ -458,14 +482,17 @@ Clears error messages, resets the meta state for all fields and reverts their va
 
 This is the `FormState` interface:
 
-```ts
+```typescript
+type DirtyFlags = { [k: string]: boolean };
+type TouchedFlags = { [k: string]: boolean };
+
 interface FormState {
   // any error messages
   errors: Record<string, string>;
   // dirty meta flags
-  dirty: Record<string, boolean>;
+  dirty: DirtyFlags;
   // touched meta flags
-  touched: Record<string, boolean>;
+  touched: TouchedFlags;
   // Form Values
   values: Record<string, any>;
 }
