@@ -93,6 +93,7 @@ export const Form = defineComponent({
         this.setFieldTouched = setFieldTouched;
         this.setTouched = setTouched;
         this.resetForm = resetForm;
+        this.validate = validate;
       }
 
       const children = normalizeChildren(ctx, {
