@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.19...vee-validate@4.0.0) (2020-11-16)
+
+
+### Features
+
+* added validate method on the form ref instance closes [#3030](https://github.com/logaretm/vee-validate/issues/3030) ([ed0faff](https://github.com/logaretm/vee-validate/commit/ed0faffd79615830a9f7c247abf1eae2254ee3f9))
+* update docs ([0f5ac98](https://github.com/logaretm/vee-validate/commit/0f5ac98153f74bdbbd1d9f5090e4dc4b438c998f))
+
+
+
+
+
 # [4.0.0-beta.19](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.18...vee-validate@4.0.0-beta.19) (2020-11-07)
 
 
