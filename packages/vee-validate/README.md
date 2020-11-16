@@ -9,7 +9,6 @@
 [![Financial Contributors on Open Collective](https://opencollective.com/vee-validate/all/badge.svg?label=financial+contributors)](https://opencollective.com/vee-validate)
 [![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
 [![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=master)](https://travis-ci.org/logaretm/vee-validate)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/087bd788687c4ccab6650756ce56fa05)](https://www.codacy.com/app/logaretm/vee-validate?utm_source=github.com&utm_medium=referral&utm_content=logaretm/vee-validate&utm_campaign=Badge_Grade)
 [![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/)
 [![npm](https://img.shields.io/npm/dm/vee-validate.svg)](https://npm-stat.com/charts.html?package=vee-validate)
 [![npm](https://img.shields.io/npm/v/vee-validate.svg)](https://www.npmjs.com/package/vee-validate)
@@ -48,10 +47,12 @@ npm install vee-validate@next --save
 
 ### Vue version support
 
-| vue Version | vee-validate version |
-| ----------- | -------------------- |
-| `2.x`       | `2.x` or `3.x`       |
-| `3.x`       | `4.x`                |
+The main v4 version supports Vue 3.x only, for previous versions of Vue, check the following the table
+
+| vue Version | vee-validate version | Documentation Link                                                                           |
+| ----------- | -------------------- | -------------------------------------------------------------------------------------------- |
+| `2.x`       | `2.x` or `3.x`       | [v2](https://vee-validate.logaretm.com/v2) or [v3](https://logaretm.github.io/vee-validate/) |
+| `3.x`       | `4.x`                | [v4](https://vee-validate.logaretm.com/v4)                                                   |
 
 ### Usage
 
@@ -86,7 +87,7 @@ Then use the `Form` and `Field` components to render your form:
 
 The `Field` component renders an `input` of type `text` by default but you can [control that](https://vee-validate.logaretm.com/v4/api/field#rendering-fields)
 
-#### Composition API Functions
+#### Composition API
 
 If you want more fine grained control, you can use `useField` function to compose validation logic into your component:
 
@@ -117,10 +118,6 @@ Then in your template use `v-model` to bind the `value` to your input and displa
 ## 📚 Documentation
 
 Read the [documentation and demos](https://vee-validate.logaretm.com/v4).
-
-## Compatibility
-
-This library uses ES6 Promises so be sure to provide a polyfill for it for the browsers that do not support it.
 
 ## Contributing
 

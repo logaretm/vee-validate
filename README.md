@@ -47,10 +47,12 @@ npm install vee-validate@next --save
 
 ### Vue version support
 
-| vue Version | vee-validate version |
-| ----------- | -------------------- |
-| `2.x`       | `2.x` or `3.x`       |
-| `3.x`       | `4.x`                |
+The main v4 version supports Vue 3.x only, for previous versions of Vue, check the following the table
+
+| vue Version | vee-validate version | Documentation Link                                                                           |
+| ----------- | -------------------- | -------------------------------------------------------------------------------------------- |
+| `2.x`       | `2.x` or `3.x`       | [v2](https://vee-validate.logaretm.com/v2) or [v3](https://logaretm.github.io/vee-validate/) |
+| `3.x`       | `4.x`                | [v4](https://vee-validate.logaretm.com/v4)                                                   |
 
 ### Usage
 
@@ -85,7 +87,7 @@ Then use the `Form` and `Field` components to render your form:
 
 The `Field` component renders an `input` of type `text` by default but you can [control that](https://vee-validate.logaretm.com/v4/api/field#rendering-fields)
 
-#### Composition API Functions
+#### Composition API
 
 If you want more fine grained control, you can use `useField` function to compose validation logic into your component:
 
@@ -116,10 +118,6 @@ Then in your template use `v-model` to bind the `value` to your input and displa
 ## 📚 Documentation
 
 Read the [documentation and demos](https://vee-validate.logaretm.com/v4).
-
-## Compatibility
-
-This library uses ES6 Promises so be sure to provide a polyfill for it for the browsers that do not support it.
 
 ## Contributing
 
