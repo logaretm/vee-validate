@@ -36,7 +36,6 @@ export default {
   @apply static text-gray-800 ml-3;
   margin-top: 3.6rem;
   z-index: 1;
-  float: right;
 
   #carbonads {
     display: block;
