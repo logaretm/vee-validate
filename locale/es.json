@@ -26,6 +26,8 @@
     "required": "El campo {_field_} es obligatorio",
     "required_if": "El campo {_field_} es obligatorio",
     "size": "El campo {_field_} debe ser menor a {size}KB",
-    "double": "El campo {_field_} debe ser un decimal válido"
+    "double": "El campo {_field_} debe ser un decimal válido",
+    "is": "El campo {_field_} no coincide con {other}",
+    "is_not": "El campo {_field_} debe ser diferente a {other}"
   }
 }
