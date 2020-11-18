@@ -7,7 +7,7 @@
   "description": "Template Based Validation for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
-  "homepage": "https://logaretm.github.io/vee-validate/",
+  "homepage": "https://vee-validate.logaretm.com",
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
     "test": "jest",

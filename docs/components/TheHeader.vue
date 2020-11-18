@@ -8,7 +8,7 @@
     >
       <p class="ml-auto">
         ⛔️ HEADS UP: You are viewing the documentation for v4.x (Vue 3.0) For Vue 2.x head over to
-        <a href="https://logaretm.github.io/vee-validate/" class="underline"> v3.x documentation</a>
+        <a href="https://vee-validate.logaretm.com/v3" class="underline"> v3.x documentation</a>
       </p>
       <button class="ml-auto" title="close warning" @click="hideWarning">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

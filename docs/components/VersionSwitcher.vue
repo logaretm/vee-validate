@@ -21,7 +21,7 @@ export default {
       },
       {
         text: 'v3.x',
-        link: 'https://logaretm.github.io/vee-validate/',
+        link: 'https://vee-validate.logaretm.com/v3',
       },
       {
         text: 'v2.x',

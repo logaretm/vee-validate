@@ -1,14 +1,14 @@
 <p align="center">
-  <a href="https://logaretm.github.io/vee-validate/" target="_blank">
-    <img width="200" src="https://github.com/logaretm/vee-validate/blob/master/logo.png">
+  <a href="https://vee-validate.logaretm.com/" target="_blank">
+    <img width="200" src="https://github.com/logaretm/vee-validate/blob/main/logo.png">
   </a>
 </p>
 
 <p align="center">
 
 [![Financial Contributors on Open Collective](https://opencollective.com/vee-validate/all/badge.svg?label=financial+contributors)](https://opencollective.com/vee-validate)
-[![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
-[![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=master)](https://travis-ci.org/logaretm/vee-validate)
+[![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/main/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
+[![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=main)](https://travis-ci.org/logaretm/vee-validate)
 [![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/)
 [![npm](https://img.shields.io/npm/dm/vee-validate.svg)](https://npm-stat.com/charts.html?package=vee-validate)
 [![npm](https://img.shields.io/npm/v/vee-validate.svg)](https://www.npmjs.com/package/vee-validate)
@@ -49,10 +49,10 @@ npm install vee-validate@next --save
 
 The main v4 version supports Vue 3.x only, for previous versions of Vue, check the following the table
 
-| vue Version | vee-validate version | Documentation Link                                                                           |
-| ----------- | -------------------- | -------------------------------------------------------------------------------------------- |
-| `2.x`       | `2.x` or `3.x`       | [v2](https://vee-validate.logaretm.com/v2) or [v3](https://logaretm.github.io/vee-validate/) |
-| `3.x`       | `4.x`                | [v4](https://vee-validate.logaretm.com/v4)                                                   |
+| vue Version | vee-validate version | Documentation Link                                                                       |
+| ----------- | -------------------- | ---------------------------------------------------------------------------------------- |
+| `2.x`       | `2.x` or `3.x`       | [v2](https://vee-validate.logaretm.com/v2) or [v3](https://vee-validate.logaretm.com/v3) |
+| `3.x`       | `4.x`                | [v4](https://vee-validate.logaretm.com/v4)                                               |
 
 ### Usage
 

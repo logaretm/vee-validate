@@ -1,8 +1,8 @@
 # @vee-validate/i18n
 
 <p align="center">
-  <a href="https://logaretm.github.io/vee-validate/" target="_blank">
-    <img width="150" src="https://github.com/logaretm/vee-validate/blob/master/logo.png">
+  <a href="https://vee-validate.logaretm.com/v4/guide/i18n" target="_blank">
+    <img width="150" src="https://github.com/logaretm/vee-validate/blob/main/logo.png">
   </a>
 </p>
 
