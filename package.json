@@ -16,7 +16,6 @@
     "flow": "flow",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "docs:deploy": "./scripts/deploy.sh",
     "build:locale": "node scripts/locale.js",
     "build:umd": "node scripts/umd.js",
     "build:esm": "node scripts/esm.js",

@@ -22,6 +22,9 @@ const sidebars = {
     'ui-integrations',
     'testing'
   ],
+  resources: [
+    '/resources'
+  ],
   api: [
     'directive',
     'mixin',
@@ -115,14 +118,13 @@ module.exports = {
           { text: 'Concepts', link: '/concepts/' },
           { text: 'Examples', link: '/examples/' },
           { text: 'API', link: '/api/' },
-          { text: 'v3.x', link: 'https://logaretm.github.io/vee-validate/' }
         ],
         sidebarDepth: 3,
         sidebar: {
-          '/guide/': genSidebarConfig('Guide', 'Components'),
-          '/concepts/': genSidebarConfig('Concepts'),
-          '/examples/': genSidebarConfig('Examples'),
-          '/api/': genSidebarConfig('API'),
+          '/guide/': genSidebarConfig('Guide', 'Components', 'Resources'),
+          '/concepts/': genSidebarConfig('Concepts', 'Resources'),
+          '/examples/': genSidebarConfig('Examples', 'Resources'),
+          '/api/': genSidebarConfig('API', 'Resources'),
         }
       }
     }

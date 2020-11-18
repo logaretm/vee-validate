@@ -1,19 +1,21 @@
 <template>
   <div class="UpgradeNotice">
-    <a href="https://logaretm.github.io/vee-validate/">VeeValidate 3 has been released 🚀</a>
+    <a href="https://vee-validate.logaretm.com/v4/">
+      VeeValidate 4.0 has been released for Vue 3 🚀
+    </a>
   </div>
 </template>
 
 <script>
 export default {
-  name: "UpgradeNotice"
+  name: 'UpgradeNotice'
 };
 </script>
 
 <style lang="stylus" scoped>
 .UpgradeNotice
   position: fixed
-  background: #087ff4
+  background: linear-gradient(90deg, #06d77b, #009f53)
   width: 100%
   height: 50px
   display: flex
