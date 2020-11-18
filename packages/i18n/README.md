@@ -99,4 +99,4 @@ configure({
 });
 ```
 
-You can view a list of the available languages by [checking the locale folder](https://github.com/logaretm/vee-validate/tree/next/packages/i18n/src/locale)
+You can view a list of the available languages by [checking the locale folder](https://github.com/logaretm/vee-validate/tree/main/packages/i18n/src/locale)
