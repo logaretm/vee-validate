@@ -4,7 +4,7 @@
 
 ## Signature
 
-For the signature or the typings of the `validate` function, see [validate() in source code](https://github.com/logaretm/vee-validate/blob/master/src/validate.ts).
+For the signature or the typings of the `validate` function, see [validate() in source code](https://github.com/logaretm/vee-validate/blob/v3/src/validate.ts).
 
 ## Example
 
@@ -22,5 +22,5 @@ validate(password, 'required|confirmed:@confirmation', {
 ```
 
 :::warning Rules
-  Although you are not required to import the rest of vee-validate exported members, you still need to `extend` the rules that you will use with the `validate()` function. For more information on adding rules, see [Guide: Basics - Adding Rules](../guide/basics.md#adding-rules).
+Although you are not required to import the rest of vee-validate exported members, you still need to `extend` the rules that you will use with the `validate()` function. For more information on adding rules, see [Guide: Basics - Adding Rules](../guide/basics.md#adding-rules).
 :::

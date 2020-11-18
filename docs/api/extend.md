@@ -4,12 +4,12 @@
 
 ## Signature
 
-For the signature or the typings of the `extend` function, see [extend() in source code](https://github.com/logaretm/vee-validate/blob/master/src/extend.ts).
+For the signature or the typings of the `extend` function, see [extend() in source code](https://github.com/logaretm/vee-validate/blob/v3/src/extend.ts).
 
 ## Example
 
 ```js
-extend('positive', (value) => {
+extend('positive', value => {
   if (value >= 0) {
     return true;
   }

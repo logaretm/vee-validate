@@ -1,12 +1,12 @@
 <p align="center">
   <a href="https://logaretm.github.io/vee-validate/" target="_blank">
-    <img width="200" src="https://github.com/logaretm/vee-validate/blob/master/logo.png">
+    <img width="200" src="https://github.com/logaretm/vee-validate/blob/v3/logo.png">
   </a>
 </p>
 
 <p align="center">
 
-[![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
+[![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/v3/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
 [![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=master)](https://travis-ci.org/logaretm/vee-validate)
 [![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/)
 [![npm](https://img.shields.io/npm/dm/vee-validate.svg)](https://npm-stat.com/charts.html?package=vee-validate)

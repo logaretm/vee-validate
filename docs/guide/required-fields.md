@@ -33,7 +33,7 @@ To create a `required` rule, you need to add a `computesRequired` key to the `ex
 
 ```js{6}
 extend('required', {
-  validate () {
+  validate() {
     // ...
   },
   // This rule reports the `required` state of the field.
@@ -45,7 +45,7 @@ Then you need to actually report said state, this is done inside the `validate` 
 
 ```js{4,5}
 extend('required', {
-  validate (value) {
+  validate(value) {
     return {
       required: true,
       valid: ['', null, undefined].indexOf(value) === -1
@@ -60,4 +60,4 @@ Note that the return type of the `validate` function is now an `object` containi
 - A `valid` key which reports the validity of the field.
 - A `required` key which reports if the field is required or not.
 
-For the classic `required` rule, the `required` key will always be `true`. However, having the power to dynamically set the `required` state for the field allows you to create really powerful and interesting rules. For an example of such a rule, see [`required_if` implementation](https://github.com/logaretm/vee-validate/blob/master/src/rules/required_if.ts).
+For the classic `required` rule, the `required` key will always be `true`. However, having the power to dynamically set the `required` state for the field allows you to create really powerful and interesting rules. For an example of such a rule, see [`required_if` implementation](https://github.com/logaretm/vee-validate/blob/v3/src/rules/required_if.ts).
