@@ -19,7 +19,7 @@ module.exports = {
       }
     ]
   ],
-  base: '/vee-validate/',
+  base: '/v3/',
   head: [
     ['meta', { charset: 'utf-8' }],
     ['meta', { name: 'msapplication-TileColor', content: '#ffffff' }],
