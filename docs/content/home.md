@@ -73,3 +73,7 @@ Then use the `Form` and `Field` components to render your form:
 ```
 
 For more information continue reading the [Guide](/guide/overview).
+
+### Supporting This Projecting
+
+If you or your company are using vee-validate and would like to support the development of this project head over to [my patreon](https://www.patreon.com/logaretm) and select the tier you would like. Every bit helps keeping this project active.

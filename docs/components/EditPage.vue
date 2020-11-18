@@ -16,6 +16,21 @@
       </svg>
       <span class="ml-2">Edit This Page on GitHub</span>
     </a>
+
+    <a
+      href="https://www.patreon.com/bePatron?u=26796482"
+      target="_blank"
+      class="ml-auto bg-patreon text-white px-4 py-2 rounded-full text-sm flex items-center"
+    >
+      <svg class="w-4 h-4 fill-current" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <title>Support Me on Patreon</title>
+        <path
+          d="M15.386.524c-4.764 0-8.64 3.876-8.64 8.64 0 4.75 3.876 8.613 8.64 8.613 4.75 0 8.614-3.864 8.614-8.613C24 4.4 20.136.524 15.386.524M.003 23.537h4.22V.524H.003"
+        />
+      </svg>
+
+      <span class="ml-2">Support vee-validate</span>
+    </a>
   </div>
 </template>
 
