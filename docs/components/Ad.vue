@@ -33,8 +33,7 @@ export default {
 
 <style lang="postcss">
 #ad {
-  @apply static text-gray-800 ml-3;
-  margin-top: 3.6rem;
+  @apply static text-gray-800 mb-8;
   z-index: 1;
 
   #carbonads {
