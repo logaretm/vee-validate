@@ -7,22 +7,24 @@
 
       <div class="mt-16 grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8">
         <div v-for="feature in page.features" :key="feature.title">
-          <h3 class="md:text-xl font-bold font-display">{{ feature.title }}</h3>
+          <h4 class="md:text-xl font-bold font-display">{{ feature.title }}</h4>
           <p class="mt-2">{{ feature.details }}</p>
         </div>
       </div>
 
       <div class="mt-16 grid grid-cols-3 gap-x-4">
-        <nuxt-link class="block mt-8 bg-accent-900 p-4 text-white rounded-lg font-bold text-center" to="/guide/overview"
+        <nuxt-link
+          class="block mt-8 bg-gray-600 p-4 text-white rounded-lg font-bold text-center focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-accent-800"
+          to="/guide/overview"
           >📚 Getting Started</nuxt-link
         >
         <nuxt-link
-          class="block mt-8 bg-accent-900 p-4 text-white rounded-lg font-bold text-center"
+          class="block mt-8 bg-warning p-4 text-gray-800 rounded-lg font-bold text-center focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-accent-800"
           to="/tutorials/basics"
           >⏰ 10 Minute Tutorial</nuxt-link
         >
         <nuxt-link
-          class="block mt-8 bg-accent-900 p-4 text-white rounded-lg font-bold text-center"
+          class="block mt-8 bg-error p-4 text-white rounded-lg font-bold text-center focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-accent-800"
           to="/examples/checkboxes-and-radio"
           >🧪 Examples</nuxt-link
         >
