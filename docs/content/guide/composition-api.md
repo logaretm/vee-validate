@@ -86,7 +86,6 @@ You can also use string rules with [global validators](/guide/global-validators)
 
 ```js
 import { useField } from 'vee-validate';
-import * as yup from 'yup';
 
 const { ... } = useField('fieldName', 'required|min:3');
 ```
