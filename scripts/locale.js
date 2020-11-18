@@ -14,7 +14,7 @@ async function build() {
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    process.stdout.write(`${chalk.green(`Output File ${i}/${files.length}: `)} ${file}`);
+    console.log(`${chalk.green(`Output File ${i}/${files.length}: `)} ${file}`);
 
     // ignore utils file.
     if (/utils/.test(file)) continue;
@@ -22,8 +22,7 @@ async function build() {
     const input = path.join(__dirname, '..', 'locale', file);
     const out = path.join(paths.dist, 'locale', file);
     fs.copyFileSync(input, out);
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
+    console.log('\n');
   }
 }
 
