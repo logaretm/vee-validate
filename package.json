@@ -8,7 +8,7 @@
   "unpkg": "dist/vee-validate.js",
   "main": "dist/vee-validate.js",
   "types": "dist/types/index.d.ts",
-  "homepage": "https://logaretm.github.io/vee-validate/",
+  "homepage": "https://vee-validate.logaretm.com/v3",
   "repository": "https://github.com/logaretm/vee-validate",
   "sideEffects": false,
   "scripts": {

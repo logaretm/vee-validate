@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://logaretm.github.io/vee-validate/" target="_blank">
+  <a href="https://vee-validate.logaretm.com/v3" target="_blank">
     <img width="200" src="https://github.com/logaretm/vee-validate/blob/v3/logo.png">
   </a>
 </p>
@@ -20,7 +20,7 @@
 
 vee-validate is a template-based validation framework for [Vue.js](https://vuejs.org/) that allows you to validate inputs and display errors.
 
-Being template-based you only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated with 40+ locales supported. [Many rules are available out of the box](https://logaretm.github.io/vee-validate/guide/rules.html).
+Being template-based you only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated with 40+ locales supported. [Many rules are available out of the box](https://vee-validate.logaretm.com/v3/guide/rules.html).
 
 This plugin is inspired by [PHP Framework Laravel's validation](https://laravel.com/).
 
@@ -131,11 +131,11 @@ The validation provider accepts two props: `rules` which is in its simplest form
 
 and That's it, your input will be validated automatically, notice that the `ValidationProvider` uses [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
 
-There is more that can be done! You can customize events, validate initial values, manually validate or reset the field and much more. Make sure to [read the docs](https://logaretm.github.io/vee-validate).
+There is more that can be done! You can customize events, validate initial values, manually validate or reset the field and much more. Make sure to [read the docs](https://vee-validate.logaretm.com/v3).
 
 ### Documentation
 
-Read the [documentation and demos](https://logaretm.github.io/vee-validate/).
+Read the [documentation and demos](https://vee-validate.logaretm.com/v3/).
 
 ### Compatibility
 
@@ -149,15 +149,15 @@ You are welcome to contribute to this project, but before you do, please make su
 
 #### Docs Highlights
 
-- [Backend and Server Side Validation](https://logaretm.github.io/vee-validate/advanced/server-side-validation.html)
-- [Localization (i18n)](https://logaretm.github.io/vee-validate/guide/localization.html)
-- [Handling Forms](https://logaretm.github.io/vee-validate/guide/forms.html)
-- [UI Libraries Validation Samples](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html)
-  - [Vuetify](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#vuetify)
-  - [Quasar](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#quasar)
-  - [BootstrapVue](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#bootstrapvue)
-  - [Buefy](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#buefy)
-  - [Ant Design](https://logaretm.github.io/vee-validate/guide/3rd-party-libraries.html#ant-design)
+- [Backend and Server Side Validation](https://vee-validate.logaretm.com/v3/advanced/server-side-validation.html)
+- [Localization (i18n)](https://vee-validate.logaretm.com/v3/guide/localization.html)
+- [Handling Forms](https://vee-validate.logaretm.com/v3/guide/forms.html)
+- [UI Libraries Validation Samples](https://vee-validate.logaretm.com/v3/guide/3rd-party-libraries.html)
+  - [Vuetify](https://vee-validate.logaretm.com/v3/guide/3rd-party-libraries.html#vuetify)
+  - [Quasar](https://vee-validate.logaretm.com/v3/guide/3rd-party-libraries.html#quasar)
+  - [BootstrapVue](https://vee-validate.logaretm.com/v3/guide/3rd-party-libraries.html#bootstrapvue)
+  - [Buefy](https://vee-validate.logaretm.com/v3/guide/3rd-party-libraries.html#buefy)
+  - [Ant Design](https://vee-validate.logaretm.com/v3/guide/3rd-party-libraries.html#ant-design)
 
 ### Credits
 
