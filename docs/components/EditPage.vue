@@ -26,7 +26,7 @@ export default {
     pageLink() {
       const path = this.$route.path.replace(/\/$/g, '');
 
-      return `https://github.com/logaretm/vee-validate/edit/next/docs/content${path}.md`;
+      return `https://github.com/logaretm/vee-validate/edit/main/docs/content${path}.md`;
     },
   },
 };
