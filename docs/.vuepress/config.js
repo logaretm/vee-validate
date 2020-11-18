@@ -69,7 +69,7 @@ module.exports = {
       {
         title: 'Getting Started',
         collapsable: false,
-        children: ['/overview', '/migration']
+        children: ['/overview', '/migration', '/resources']
       },
       {
         title: 'Guide',

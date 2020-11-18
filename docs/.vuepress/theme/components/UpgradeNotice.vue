@@ -1,7 +1,7 @@
 <template>
   <div class="UpgradeNotice">
     <a href="https://vee-validate.logaretm.com/v4/">
-      VeeValidate 4 alpha has been released with Vue 3 support 🚀
+      VeeValidate 4.0 has been released for Vue 3 🚀
     </a>
   </div>
 </template>
