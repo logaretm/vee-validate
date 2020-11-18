@@ -12,7 +12,7 @@ body {
 :root {
   --accent: #09a884;
 
-  .is-dark {
+  .dark {
     --accent: #06d77b;
   }
 }

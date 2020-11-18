@@ -1,10 +1,10 @@
 <template>
-  <div class="pt-4 border-t dark-mode:border-carbon border-gray-700 w-full flex items-center">
+  <div class="pt-4 border-t dark:border-gray-600 border-gray-200 w-full flex items-center">
     <a
       :href="pageLink"
       target="_blank"
       rel="noopener"
-      class="flex items-center text-sm font-bold text-carbon dark-mode:text-gray-800"
+      class="flex items-center text-sm font-bold text-gray-600 dark:text-gray-400"
     >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path

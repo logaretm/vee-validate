@@ -10,7 +10,7 @@ export default function StorePlugin({ store }) {
       theme = themeSetting;
     }
 
-    document.body.classList.toggle('is-dark', theme === 'dark');
+    document.body.classList.toggle('dark', theme === 'dark');
     store.commit('SET_THEME', theme);
   });
 }

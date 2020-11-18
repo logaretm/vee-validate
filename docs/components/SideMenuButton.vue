@@ -67,7 +67,7 @@ export default {
   transform: rotate(0);
 }
 
-.is-dark {
+.dark {
   .burger .burger-lines,
   .burger .burger-lines:after,
   .burger .burger-lines:before {

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-6 rounded my-8 border-l-4 dark-mode:bg-background bg-gray-100"
+    class="p-6 rounded my-8 border-l-4 dark:bg-background bg-gray-100"
     :class="{
       'border-accent-800 text-accent-800': type === 'tip',
       'border-warning text-warning': type === 'warn',
@@ -26,7 +26,7 @@
       <p v-else class="font-bold text-lg uppercase">{{ type }}</p>
     </div>
 
-    <div class="mt-4 text-black dark-mode:text-white">
+    <div class="mt-4 text-black dark:text-white">
       <slot />
     </div>
   </div>

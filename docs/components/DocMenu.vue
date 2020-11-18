@@ -2,7 +2,7 @@
   <aside class="px-6 pt-24">
     <nav class="space-y-8 text-sm">
       <div v-for="category in categories" :key="category.title">
-        <p class="text-xs font-bold text-gray-800 uppercase">{{ category.title }}</p>
+        <p class="text-xs font-bold text-gray-400 uppercase">{{ category.title }}</p>
         <ul class="mt-3 space-y-2">
           <li v-for="page in category.pages" :key="page.title">
             <nuxt-link :to="page.path">{{ page.menuTitle || page.title }}</nuxt-link>

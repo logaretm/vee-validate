@@ -91,7 +91,7 @@ export default {
   }
 
   *:not(pre) > code:not([class]) {
-    @apply text-sm px-1 rounded bg-gray-100 border border-gray-200 text-gray-900;
+    @apply text-sm px-1 rounded bg-gray-100 border border-gray-300 text-gray-500;
   }
 
   details {
@@ -269,162 +269,162 @@ export default {
   }
 }
 
-.is-dark {
+.dark {
   * >>> {
     *:not(pre) > code:not([class]) {
-      @apply px-1 bg-black border border-gray-900 text-gray-200;
+      @apply px-1 bg-black border border-gray-500 text-gray-300;
     }
-    
-  pre,
-  pre[class*='language-'] {
-    line-height: 1.4;
-    padding: 1.25rem 1.5rem;
-    margin: 0.85rem 0;
-    background-color: #22212C;
-    border-radius: 6px;
-    overflow: auto;
-    position: relative;
-  }
-  pre code,
-  pre[class*='language-'] code {
-    color: #F8F8F2;
-    padding: 0;
-    background-color: transparent;
-    border-radius: 0;
-  }
-  div[class*='language-'] {
-    position: relative;
-    background-color: #22212C;
-    border-radius: 6px;
-  }
-  div[class*='language-'] .highlight-lines {
-    background-color: #22212C;
-    color: #F8F8F2;
-    user-select: none;
-    padding-top: 1.3rem;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    line-height: 1.4;
-  }
-  div[class*='language-'] .highlight-lines .highlighted {
-    background-color: #f8ec06;
-  }
-  div[class*='language-'] pre,
-  div[class*='language-'] pre[class*='language-'] {
-    background: transparent;
-    position: relative;
-    z-index: 1;
-  }
 
-  *[class*='language-']::before {
-    position: absolute;
-    z-index: 3;
-    top: 0.8em;
-    right: 1em;
-    font-size: 0.75rem;
-    color: #00000c;
-  }
-
-  .language-html:before {
-    content: 'html';
-  }
-  .language-js:before {
-    content: 'js';
-  }
-  .language-ts:before {
-    content: 'ts';
-  }
-  div[class~='language-javascript']:before {
-    content: 'js';
-  }
-  div[class~='language-typescript']:before {
-    content: 'ts';
-  }
-  div[class~='language-markup']:before {
-    content: 'html';
-  }
-  div[class~='language-json']:before {
-    content: 'json';
-  }
-  div.reactivecontent {
-    width: 1000px;
-    margin-left: -100px;
-  }
-  .token.punctuation {
-    color: #F8F8F2;
-  }
-  .token.tag,
-  .token.namespace,
-  .token.deleted {
-    color: #FF80BF;
-  }
-
-  .token.attr-name {
-    color: #8AFF80;
-  }
-
-  .token.string,
-  .token.char,
-  .token.attr-value,
-  .token.regex,
-  .token.variable {
-    color: #FFFF80;
-  }
-  .token.selector,
-  .token.important,
-  .token.atrule,
-  .token.keyword,
-  .token.builtin {
-    color: #FF80BF;
-  }
-
-  .token.function {
-    color: #8AFF80;
-  }
-
-  .token.boolean,
-  .token.number {
-    color: #9580FF;
-  }
-  
-  .token.property,
-  .token.class-name,
-  .token.constant,
-  .token.symbol {
-    color: #F8F8F2;
-  }
-  .token.operator,
-  .token.entity,
-  .token.url {
-    color: #FF80BF;
-  }
-  .token.comment,
-  .token.block-comment,
-  .token.prolog,
-  .token.doctype,
-  .token.cdata {
-    color: #7970A9;
-  }
-
+    pre,
+    pre[class*='language-'] {
+      line-height: 1.4;
+      padding: 1.25rem 1.5rem;
+      margin: 0.85rem 0;
+      background-color: #22212c;
+      border-radius: 6px;
+      overflow: auto;
+      position: relative;
+    }
     pre code,
     pre[class*='language-'] code {
-      color: #F8F8F2;
+      color: #f8f8f2;
+      padding: 0;
+      background-color: transparent;
+      border-radius: 0;
+    }
+    div[class*='language-'] {
+      position: relative;
+      background-color: #22212c;
+      border-radius: 6px;
+    }
+    div[class*='language-'] .highlight-lines {
+      background-color: #22212c;
+      color: #f8f8f2;
+      user-select: none;
+      padding-top: 1.3rem;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      line-height: 1.4;
+    }
+    div[class*='language-'] .highlight-lines .highlighted {
+      background-color: #f8ec06;
+    }
+    div[class*='language-'] pre,
+    div[class*='language-'] pre[class*='language-'] {
+      background: transparent;
+      position: relative;
+      z-index: 1;
     }
 
     *[class*='language-']::before {
-      color: #7970A9;
+      position: absolute;
+      z-index: 3;
+      top: 0.8em;
+      right: 1em;
+      font-size: 0.75rem;
+      color: #00000c;
+    }
+
+    .language-html:before {
+      content: 'html';
+    }
+    .language-js:before {
+      content: 'js';
+    }
+    .language-ts:before {
+      content: 'ts';
+    }
+    div[class~='language-javascript']:before {
+      content: 'js';
+    }
+    div[class~='language-typescript']:before {
+      content: 'ts';
+    }
+    div[class~='language-markup']:before {
+      content: 'html';
+    }
+    div[class~='language-json']:before {
+      content: 'json';
+    }
+    div.reactivecontent {
+      width: 1000px;
+      margin-left: -100px;
+    }
+    .token.punctuation {
+      color: #f8f8f2;
+    }
+    .token.tag,
+    .token.namespace,
+    .token.deleted {
+      color: #ff80bf;
+    }
+
+    .token.attr-name {
+      color: #8aff80;
+    }
+
+    .token.string,
+    .token.char,
+    .token.attr-value,
+    .token.regex,
+    .token.variable {
+      color: #ffff80;
+    }
+    .token.selector,
+    .token.important,
+    .token.atrule,
+    .token.keyword,
+    .token.builtin {
+      color: #ff80bf;
+    }
+
+    .token.function {
+      color: #8aff80;
+    }
+
+    .token.boolean,
+    .token.number {
+      color: #9580ff;
+    }
+
+    .token.property,
+    .token.class-name,
+    .token.constant,
+    .token.symbol {
+      color: #f8f8f2;
+    }
+    .token.operator,
+    .token.entity,
+    .token.url {
+      color: #ff80bf;
+    }
+    .token.comment,
+    .token.block-comment,
+    .token.prolog,
+    .token.doctype,
+    .token.cdata {
+      color: #7970a9;
+    }
+
+    pre code,
+    pre[class*='language-'] code {
+      color: #f8f8f2;
+    }
+
+    *[class*='language-']::before {
+      color: #7970a9;
     }
 
     pre[class*='language-'] {
-      @apply border-carbon;
+      @apply border-gray-600;
     }
 
     table,
     th,
     td {
-      @apply border border-carbon;
+      @apply border border-gray-600;
     }
   }
 }

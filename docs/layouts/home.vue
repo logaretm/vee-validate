@@ -16,12 +16,12 @@ export default {};
 
 <style lang="postcss" scoped>
 .AppWrapper {
-  @apply bg-white text-dark w-full h-full min-h-screen;
+  @apply bg-white text-gray-700 w-full h-full min-h-screen;
 }
 
-.is-dark {
+.dark {
   .AppWrapper {
-    @apply bg-dark text-white;
+    @apply bg-gray-700 text-white;
   }
 }
 

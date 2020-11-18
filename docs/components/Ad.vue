@@ -33,7 +33,7 @@ export default {
 
 <style lang="postcss">
 #ad {
-  @apply static text-gray-800 mb-8;
+  @apply static text-gray-400 mb-8;
   z-index: 1;
 
   #carbonads {
@@ -130,7 +130,7 @@ export default {
   }
 }
 
-.is-dark {
+.dark {
   #ad {
     #carbonads {
       @apply bg-black;

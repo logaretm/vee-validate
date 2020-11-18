@@ -1,7 +1,7 @@
 <template>
   <aside>
     <nav class="pt-24" v-show="headings.length">
-      <p class="font-bold text-xs uppercase text-gray-800">On this page</p>
+      <p class="font-bold text-xs uppercase text-gray-400">On this page</p>
       <ul class="mt-4 space-y-1 text-sm">
         <li v-for="heading in headings" :key="heading.id" :class="{ 'ml-4': heading.depth === 3 }">
           <nuxt-link class="inline-block py-1" :to="`${$route.path}#${heading.id}`">{{ heading.text }}</nuxt-link>

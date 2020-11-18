@@ -3,7 +3,7 @@
     <div class="flex flex-col items-center justify-center mb-16">
       <img src="@/assets/img/logo.png" width="300" height="300" alt="" />
       <h1 class="mt-4 text-4xl font-bold font-display">{{ page.title }}</h1>
-      <p class="mt-4 text-xl text-gray-800">{{ page.description }}</p>
+      <p class="mt-4 text-xl text-gray-400">{{ page.description }}</p>
 
       <div class="mt-16 grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8">
         <div v-for="feature in page.features" :key="feature.title">

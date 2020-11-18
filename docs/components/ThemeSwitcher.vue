@@ -26,7 +26,7 @@
         width="24"
         height="24"
         viewBox="0 0 24 24"
-        class="fill-current text-dark"
+        class="fill-current text-gray-700"
         v-if="!isDark"
       >
         <title>Light Mode</title>
@@ -50,7 +50,7 @@ export default {
       set(value) {
         this.$store.commit('SET_THEME', value ? 'dark' : 'light');
         localStorage.setItem('theme', this.$store.state.theme);
-        document.body.classList.toggle('is-dark', value);
+        document.body.classList.toggle('dark', value);
       },
     },
   },
