@@ -839,7 +839,7 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       setup() {
         const schema = yup.object().shape({
-          drink: yup.array().required(),
+          drink: yup.array().required().min(1),
         });
 
         drinks = ref([]);
@@ -869,7 +869,7 @@ describe('<Form />', () => {
 
     wrapper.$el.querySelector('button').click();
     await flushPromises();
-    expect(err.textContent).toBe('drink is a required field');
+    expect(err.textContent).toBe('drink field must have at least 1 items');
     setChecked(inputs[1]);
     await flushPromises();
     expect(err.textContent).toBe('');
@@ -877,7 +877,7 @@ describe('<Form />', () => {
 
     drinks.value = [];
     await flushPromises();
-    expect(err.textContent).toBe('drink is a required field');
+    expect(err.textContent).toBe('drink field must have at least 1 items');
     expect(values.textContent).toBe('');
 
     drinks.value = ['Coke'];

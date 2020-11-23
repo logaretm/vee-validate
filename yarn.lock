@@ -3923,11 +3923,6 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-fn-name@~3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/fn-name/-/fn-name-3.0.0.tgz#0596707f635929634d791f452309ab41558e3c5c"
-  integrity sha512-eNMNr5exLoavuAMhIUVsOKF79SWd/zG104ef6sxBTSw+cZc6BXdQXDvYcGvp0VbxVVSp1XDUNoz7mg1xMtSznA==
-
 for-in@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
@@ -5709,7 +5704,7 @@ lodash@^4.17.12, lodash@^4.2.1:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
 
-lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19:
+lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
@@ -6878,10 +6873,10 @@ promzard@^0.3.0:
   dependencies:
     read "1"
 
-property-expr@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/property-expr/-/property-expr-2.0.2.tgz#fff2a43919135553a3bc2fdd94bdb841965b2330"
-  integrity sha512-bc/5ggaYZxNkFKj374aLbEDqVADdYaLcFo8XBkishUWbaAdjlphaBFns9TvRA2pUseVL/wMFmui9X3IdNDU37g==
+property-expr@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/property-expr/-/property-expr-2.0.4.tgz#37b925478e58965031bb612ec5b3260f8241e910"
+  integrity sha512-sFPkHQjVKheDNnPvotjQmm3KD3uk1fWKUN7CrpdbwmUx3CrG3QiM8QpTSimvig5vTXmTvjz7+TDvXOI9+4rkcg==
 
 proto-list@~1.2.1:
   version "1.2.4"
@@ -8004,11 +7999,6 @@ symbol-tree@^3.2.4:
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
-synchronous-promise@^2.0.13:
-  version "2.0.13"
-  resolved "https://registry.yarnpkg.com/synchronous-promise/-/synchronous-promise-2.0.13.tgz#9d8c165ddee69c5a6542862b405bc50095926702"
-  integrity sha512-R9N6uDkVsghHePKh1TEqbnLddO2IY25OcsksyFp/qBe7XYd0PVbKEWxhcdMhpLzE1I6skj5l4aEZ3CRxcbArlA==
-
 table@^5.2.3:
   version "5.4.6"
   resolved "https://registry.yarnpkg.com/table/-/table-5.4.6.tgz#1292d19500ce3f86053b05f0e8e7e4a3bb21079e"
@@ -8819,15 +8809,13 @@ yargs@^15.1.0, yargs@^15.4.1:
     y18n "^4.0.0"
     yargs-parser "^18.1.2"
 
-yup@^0.29.3:
-  version "0.29.3"
-  resolved "https://registry.yarnpkg.com/yup/-/yup-0.29.3.tgz#69a30fd3f1c19f5d9e31b1cf1c2b851ce8045fea"
-  integrity sha512-RNUGiZ/sQ37CkhzKFoedkeMfJM0vNQyaz+wRZJzxdKE7VfDeVKH8bb4rr7XhRLbHJz5hSjoDNwMEIaKhuMZ8gQ==
+yup@^0.31.0:
+  version "0.31.0"
+  resolved "https://registry.yarnpkg.com/yup/-/yup-0.31.0.tgz#e882ab42940a15a980ab8d9cc19f2489418253d2"
+  integrity sha512-t4nFalWdyIZW2n9wgJVracCe/VPbFmh0/fKaKz40gxcZHCZPOhm4akWYg08t0OOiBhV5xvqLY+fnqzCnLh+ItQ==
   dependencies:
     "@babel/runtime" "^7.10.5"
-    fn-name "~3.0.0"
-    lodash "^4.17.15"
+    lodash "^4.17.20"
     lodash-es "^4.17.11"
-    property-expr "^2.0.2"
-    synchronous-promise "^2.0.13"
+    property-expr "^2.0.4"
     toposort "^2.0.2"
