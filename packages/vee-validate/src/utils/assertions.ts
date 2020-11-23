@@ -22,7 +22,7 @@ export function isFileInput(tag: string, type: string) {
 type YupValidator = { validate: (value: any) => Promise<void | boolean> };
 
 export function isYupValidator(value: unknown): value is YupValidator {
-  return value && isCallable((value as any).validate);
+  return !!value && isCallable((value as any).validate);
 }
 
 export function hasCheckedAttr(type: unknown) {
