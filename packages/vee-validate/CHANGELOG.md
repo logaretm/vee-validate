@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.1](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0...vee-validate@4.0.1) (2020-11-25)
+
+
+### Bug Fixes
+
+* pass down listeners to the input node closes [#3048](https://github.com/logaretm/vee-validate/issues/3048) ([2526a63](https://github.com/logaretm/vee-validate/commit/2526a63c2361e412b528cf370c03b39cb84b606d))
+
+
+
+
+
 # [4.0.0](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0-beta.19...vee-validate@4.0.0) (2020-11-16)
 
 
