@@ -677,4 +677,24 @@ describe('<Field />', () => {
     await flushPromises();
     expect(span?.textContent).toBe('true');
   });
+
+  // #3048
+  test('proxies native listeners', async () => {
+    const onBlur = jest.fn();
+    mountWithHoc({
+      setup() {
+        return {
+          onBlur,
+        };
+      },
+      template: `
+      <Field name="field" @blur="onBlur" />
+    `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input');
+    dispatchEvent(input as HTMLInputElement, 'blur');
+    expect(onBlur).toHaveBeenCalledTimes(1);
+  });
 });

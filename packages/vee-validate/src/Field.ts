@@ -94,25 +94,27 @@ export const Field = defineComponent({
         : handleInput;
 
     const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = getConfig();
+    const baseOnBlur = [handleBlur, ctx.attrs.onBlur, validateOnBlur ? validateField : undefined].filter(Boolean);
+    const baseOnInput = [
+      onInputHandler,
+      valueTick,
+      validateOnInput ? onChangeHandler : undefined,
+      ctx.attrs.onInput,
+    ].filter(Boolean);
+    const baseOnChange = [
+      onInputHandler,
+      valueTick,
+      validateOnChange ? onChangeHandler : undefined,
+      ctx.attrs.onChange,
+    ].filter(Boolean);
+
     const makeSlotProps = () => {
       const fieldProps: Record<string, any> = {
         name: props.name,
-        onBlur: [handleBlur],
-        onInput: [onInputHandler, valueTick],
-        onChange: [onInputHandler, valueTick],
+        onBlur: baseOnBlur,
+        onInput: baseOnInput,
+        onChange: baseOnChange,
       };
-
-      if (validateOnInput) {
-        fieldProps.onInput.push(onChangeHandler);
-      }
-
-      if (validateOnChange) {
-        fieldProps.onChange.push(onChangeHandler);
-      }
-
-      if (validateOnBlur) {
-        fieldProps.onBlur.push(validateField);
-      }
 
       if (validateOnModelUpdate) {
         fieldProps['onUpdate:modelValue'] = [onChangeHandler, valueTick];
