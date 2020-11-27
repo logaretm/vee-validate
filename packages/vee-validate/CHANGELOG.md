@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.2](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.1...vee-validate@4.0.2) (2020-11-27)
+
+
+### Bug Fixes
+
+* support dynamic labels closes [#3053](https://github.com/logaretm/vee-validate/issues/3053) ([31b2238](https://github.com/logaretm/vee-validate/commit/31b223878bda75c3150217ea80bb878d8dc1e320))
+
+
+
+
+
 ## [4.0.1](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.0...vee-validate@4.0.1) (2020-11-25)
 
 
