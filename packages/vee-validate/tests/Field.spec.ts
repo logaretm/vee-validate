@@ -678,6 +678,41 @@ describe('<Field />', () => {
     expect(span?.textContent).toBe('true');
   });
 
+  // #3053
+  test('labels can be set dynamically', async () => {
+    const label = ref('label');
+    const message = (field: string) => `${field} is not valid`;
+
+    mountWithHoc({
+      setup() {
+        const rules = (_: any, { field }: any) => message(field);
+
+        return {
+          rules,
+          label,
+        };
+      },
+      template: `
+        <Field name="field" :rules="rules" :label="label" v-slot="{ errors, field }">
+          <input v-bind="field" type="text">
+          <span>{{ errors[0] }}</span>
+        </Field>
+    `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    setValue(input, '1');
+    await flushPromises();
+    expect(document.querySelector('span')?.textContent).toBe(message(label.value));
+
+    label.value = 'updated';
+    await flushPromises();
+    setValue(input, '2');
+    await flushPromises();
+    expect(document.querySelector('span')?.textContent).toBe(message(label.value));
+  });
+
   // #3048
   test('proxies native listeners', async () => {
     const onBlur = jest.fn();

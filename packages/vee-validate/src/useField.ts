@@ -35,7 +35,7 @@ interface FieldOptions {
   bails?: boolean;
   type?: string;
   valueProp?: MaybeReactive<any>;
-  label?: string;
+  label?: MaybeReactive<string>;
 }
 
 interface FieldState {
@@ -88,7 +88,7 @@ export function useField(name: MaybeReactive<string>, rules: RuleExpression, opt
     let result: ValidationResult;
     if (!form || !form.validateSchema) {
       result = await validateValue(value.value, normalizedRules.value, {
-        name: label,
+        name: unref(label) || unref(name),
         values: form?.values ?? {},
         bails,
       });

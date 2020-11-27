@@ -35,6 +35,7 @@ export const Field = defineComponent({
   setup(props, ctx) {
     const rules = toRef(props, 'rules');
     const name = toRef(props, 'name');
+    const label = toRef(props, 'label');
 
     const {
       errors,
@@ -63,7 +64,7 @@ export const Field = defineComponent({
         : ctx.attrs.value,
       // Only for checkboxes and radio buttons
       valueProp: ctx.attrs.value,
-      label: props.label || props.name,
+      label,
       validateOnValueUpdate: false,
     });
 
