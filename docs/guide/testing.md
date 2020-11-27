@@ -29,12 +29,6 @@ test('my test', async () => {
 });
 ```
 
-::: tip
-  While `vue-test-utils` do sport a `sync` rendering mode to make assertions easier for you, it is not recommended to use it for vee-validate and there are also plans to deprecate it from the test-utils. So you should treat all your tests as close to the real world as possible.
-
-  You can disable it with `sync: false` when mounting your components.
-:::
-
 ## Flushing the Update Queue
 
 Since both the Vue rendering and the validation are async, it can prove a difficult task to `await` all the async changes, for example:
