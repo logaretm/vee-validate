@@ -53,7 +53,7 @@ Consider this test for example, we have this component:
 A test case could look like this:
 
 ```js
-const wrapper = mount(MyComponent, { sync: false });
+const wrapper = mount(MyComponent);
 
 wrapper.find('input').setValue('');
 // flush the pending validation.
@@ -72,7 +72,7 @@ So instead of checking the internal messages, let's describe what the user will 
 You could test that like this,
 
 ```js
-const wrapper = mount(MyComponent, { sync: false });
+const wrapper = mount(MyComponent);
 
 wrapper.find('input').setValue('');
 // flush the pending validation.
