@@ -17,7 +17,7 @@ export function useFieldError(path: MaybeReactive<string>) {
 /**
  * Gives access to all form errors
  */
-export function useErrors() {
+export function useFormErrors() {
   const errors = injectWithSelf(FormErrorsSymbol);
 
   return errors;

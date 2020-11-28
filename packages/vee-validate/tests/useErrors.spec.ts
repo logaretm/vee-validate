@@ -1,5 +1,5 @@
 import flushPromises from 'flush-promises';
-import { useErrors, useField, useFieldError, useForm } from '@/vee-validate';
+import { useFormErrors, useField, useFieldError, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue } from './helpers';
 
 describe('useErrors()', () => {
@@ -37,7 +37,7 @@ describe('useErrors()', () => {
       setup() {
         useForm();
         const { value } = useField('test', validate);
-        const messages = useErrors();
+        const messages = useFormErrors();
 
         return {
           value,
