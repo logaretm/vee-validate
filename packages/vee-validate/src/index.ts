@@ -9,3 +9,4 @@ export { useForm } from './useForm';
 export { ValidationResult, FormActions, FormState, FormValidationResult, FormContext } from './types';
 export * from './useErrors';
 export { useResetForm } from './useResetForm';
+export * from './useIsDirty';

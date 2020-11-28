@@ -68,6 +68,13 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | ObjectSchema<TValues>;
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
   validate(): Promise<FormValidationResult<TValues>>;
+  meta: ComputedRef<{
+    dirty: boolean;
+    touched: boolean;
+    valid: boolean;
+    pending: boolean;
+    initialValues: TValues;
+  }>;
 }
 
 interface SubmissionContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
