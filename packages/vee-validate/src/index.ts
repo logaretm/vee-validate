@@ -10,3 +10,4 @@ export { ValidationResult, FormActions, FormState, FormValidationResult, FormCon
 export * from './useErrors';
 export { useResetForm } from './useResetForm';
 export * from './useIsDirty';
+export * from './useIsTouched';
