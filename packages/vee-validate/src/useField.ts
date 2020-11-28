@@ -50,7 +50,7 @@ let ID_COUNTER = 0;
 /**
  * Creates a field composite.
  */
-export function useField(name: MaybeReactive<string>, rules: RuleExpression, opts?: Partial<FieldOptions>) {
+export function useField(name: MaybeReactive<string>, rules?: RuleExpression, opts?: Partial<FieldOptions>) {
   const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
   const { initialValue, validateOnMount, bails, type, valueProp, label, validateOnValueUpdate } = normalizeOptions(
     unref(name),
