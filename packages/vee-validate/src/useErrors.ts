@@ -1,15 +1,16 @@
-import { computed, inject } from 'vue';
+import { computed, unref } from 'vue';
 import { FormErrorsSymbol } from './symbols';
-import { getFromPath } from './utils';
+import { MaybeReactive } from './types';
+import { getFromPath, injectWithSelf } from './utils';
 
 /**
  * Gives access to a single field error
  */
-export function useFieldError(path: string) {
-  const errors = inject(FormErrorsSymbol);
+export function useFieldError(path: MaybeReactive<string>) {
+  const errors = injectWithSelf(FormErrorsSymbol);
 
   return computed(() => {
-    getFromPath(errors?.value, path);
+    return getFromPath(errors?.value, unref(path)) as string | undefined;
   });
 }
 
@@ -17,7 +18,7 @@ export function useFieldError(path: string) {
  * Gives access to all form errors
  */
 export function useErrors() {
-  const errors = inject(FormErrorsSymbol);
+  const errors = injectWithSelf(FormErrorsSymbol);
 
   return errors;
 }
