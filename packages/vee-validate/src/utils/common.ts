@@ -1,3 +1,4 @@
+import { getCurrentInstance, inject, InjectionKey } from 'vue';
 import { isEmptyContainer, isIndex, isNotNestedPath } from './assertions';
 
 function cleanupNonNestedPath(path: string) {
@@ -118,4 +119,12 @@ export function unsetPath(object: Record<string, any>, path: string): void {
  */
 export function keysOf<TRecord extends Record<string, any>>(record: TRecord): (keyof TRecord)[] {
   return Object.keys(record);
+}
+
+// Uses same component provide as its own injections
+// Due to changes in https://github.com/vuejs/vue-next/pull/2424
+export function injectWithSelf<T>(symbol: InjectionKey<T>, def: T | undefined = undefined): T | undefined {
+  const vm = getCurrentInstance() as any;
+
+  return inject(symbol, vm?.provides[symbol as any] || def);
 }

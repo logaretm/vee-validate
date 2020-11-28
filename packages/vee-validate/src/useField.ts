@@ -7,11 +7,8 @@ import {
   computed,
   onMounted,
   watchEffect,
-  inject,
   onBeforeUnmount,
-  getCurrentInstance,
   unref,
-  InjectionKey,
   WatchStopHandle,
 } from 'vue';
 import { validate as validateValue } from './validate';
@@ -24,6 +21,7 @@ import {
   getFromPath,
   setInPath,
   keysOf,
+  injectWithSelf,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FormInitialValues, FormSymbol } from './symbols';
@@ -272,7 +270,7 @@ function useValidationState({
   valueProp: any;
 }) {
   const errors: Ref<string[]> = ref([]);
-  const formInitialValues = inject(FormInitialValues, undefined);
+  const formInitialValues = injectWithSelf(FormInitialValues, undefined);
   const initialValue = getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
   const { resetMeta, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
@@ -406,12 +404,4 @@ function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: Fo
   });
 
   return value;
-}
-
-// Uses same component provide as its own injections
-// Due to changes in https://github.com/vuejs/vue-next/pull/2424
-function injectWithSelf<T>(symbol: InjectionKey<T>, def: T | undefined = undefined): T | undefined {
-  const vm = getCurrentInstance() as any;
-
-  return inject(symbol, vm?.provides[symbol as any] || def);
 }
