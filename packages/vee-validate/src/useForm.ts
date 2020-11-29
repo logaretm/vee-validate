@@ -364,6 +364,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     resetForm,
     validate,
     meta,
+    isSubmitting,
   };
 
   const immutableFormValues = computed<TValues>(() => {

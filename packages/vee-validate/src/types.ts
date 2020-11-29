@@ -75,6 +75,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     pending: boolean;
     initialValues: TValues;
   }>;
+  isSubmitting: Ref<boolean>;
 }
 
 interface SubmissionContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
