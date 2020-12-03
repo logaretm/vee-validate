@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import { useField, useForm, useIsFormTouched, useIsFieldTouched } from '@/vee-validate';
 import { dispatchEvent, mountWithHoc } from './helpers';
 
-describe('useIsTouched()', () => {
+describe('useIsFieldTouched()', () => {
   test('gives access to a field isTouched status', async () => {
     mountWithHoc({
       setup() {
@@ -32,7 +32,9 @@ describe('useIsTouched()', () => {
     await flushPromises();
     expect(error?.textContent).toBe('true');
   });
+});
 
+describe('useIsFormValid()', () => {
   test('gives access to the forms isTouched status', async () => {
     mountWithHoc({
       setup() {

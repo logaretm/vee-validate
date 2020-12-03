@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import { useField, useForm, useIsFormDirty, useIsFieldDirty } from '@/vee-validate';
 import { mountWithHoc, setValue } from './helpers';
 
-describe('useIsDirty()', () => {
+describe('useIsFieldDirty()', () => {
   test('gives access to a field isDirty status', async () => {
     mountWithHoc({
       setup() {
@@ -31,7 +31,9 @@ describe('useIsDirty()', () => {
     await flushPromises();
     expect(error?.textContent).toBe('true');
   });
+});
 
+describe('useIsFormDirty()', () => {
   test('gives access to the forms isDirty status', async () => {
     mountWithHoc({
       setup() {

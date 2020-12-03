@@ -2,10 +2,10 @@ import flushPromises from 'flush-promises';
 import { useIsFormValid, useField, useIsFieldValid, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue } from './helpers';
 
-describe('useIsValid()', () => {
-  const REQUIRED_MESSAGE = 'Field is required';
-  const validate = (val: any) => (val ? true : REQUIRED_MESSAGE);
+const REQUIRED_MESSAGE = 'Field is required';
+const validate = (val: any) => (val ? true : REQUIRED_MESSAGE);
 
+describe('useIsFieldValid()', () => {
   test('returns the validity of a single field', async () => {
     mountWithHoc({
       setup() {
@@ -34,7 +34,9 @@ describe('useIsValid()', () => {
     await flushPromises();
     expect(span?.textContent).toBe('true');
   });
+});
 
+describe('useIsFormValid()', () => {
   test('returns validity of the form', async () => {
     mountWithHoc({
       setup() {

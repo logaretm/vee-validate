@@ -2,10 +2,10 @@ import flushPromises from 'flush-promises';
 import { useFormErrors, useField, useFieldError, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue } from './helpers';
 
-describe('useErrors()', () => {
-  const REQUIRED_MESSAGE = 'Field is required';
-  const validate = (val: any) => (val ? true : REQUIRED_MESSAGE);
+const REQUIRED_MESSAGE = 'Field is required';
+const validate = (val: any) => (val ? true : REQUIRED_MESSAGE);
 
+describe('useFieldError()', () => {
   test('gives access to a form field error', async () => {
     mountWithHoc({
       setup() {
@@ -31,7 +31,9 @@ describe('useErrors()', () => {
     await flushPromises();
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
+});
 
+describe('useFormErrors()', () => {
   test('gives access to all form errors', async () => {
     mountWithHoc({
       setup() {
