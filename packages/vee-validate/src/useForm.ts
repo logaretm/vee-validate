@@ -353,6 +353,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           return validateYupSchema(formCtx, shouldMutate);
         }
       : undefined,
+    validate,
     setFieldValue,
     setValues,
     setErrors,
@@ -362,7 +363,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setFieldDirty,
     setDirty,
     resetForm,
-    validate,
     meta,
     isSubmitting,
   };
