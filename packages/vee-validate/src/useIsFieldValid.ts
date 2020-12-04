@@ -12,14 +12,3 @@ export function useIsFieldValid(path: string) {
     return form?.fields.value[path]?.meta.valid;
   });
 }
-
-/**
- * If the form has been validated and is valid
- */
-export function useIsFormValid() {
-  const form = injectWithSelf(FormSymbol);
-
-  return computed(() => {
-    return form?.meta.value.valid;
-  });
-}

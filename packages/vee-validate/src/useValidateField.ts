@@ -18,14 +18,3 @@ export function useValidateField(path: string) {
     return field.validate();
   };
 }
-
-/**
- * Validate multiple fields
- */
-export function useValidateForm() {
-  const form = injectWithSelf(FormSymbol);
-
-  return function validateField() {
-    return form?.validate();
-  };
-}

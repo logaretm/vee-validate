@@ -13,12 +13,3 @@ export function useFieldError(path: MaybeReactive<string>) {
     return getFromPath(errors?.value, unref(path)) as string | undefined;
   });
 }
-
-/**
- * Gives access to all form errors
- */
-export function useFormErrors() {
-  const errors = injectWithSelf(FormErrorsSymbol);
-
-  return errors;
-}

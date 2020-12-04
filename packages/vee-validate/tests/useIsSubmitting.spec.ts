@@ -2,8 +2,8 @@ import flushPromises from 'flush-promises';
 import { useField, useForm, useIsSubmitting } from '@/vee-validate';
 import { mountWithHoc } from './helpers';
 
-describe('useIsFormSubmitting()', () => {
-  const validate = (val: any) =>
+describe('useIsSubmitting()', () => {
+  const validate = () =>
     new Promise(resolve => {
       setTimeout(resolve, 10);
     });

@@ -12,14 +12,3 @@ export function useIsFieldDirty(path: string) {
     return form?.fields.value[path]?.meta.dirty;
   });
 }
-
-/**
- * If the form is dirty or not
- */
-export function useIsFormDirty() {
-  const form = injectWithSelf(FormSymbol);
-
-  return computed(() => {
-    return form?.meta.value.dirty;
-  });
-}
