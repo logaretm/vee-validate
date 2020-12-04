@@ -322,8 +322,7 @@ describe('<Field />', () => {
     expect(error.textContent).toBeTruthy();
   });
 
-  test('validates file input', async () => {
-    // FIXME: typing here should be more lax
+  test('validates file input in scoped slots', async () => {
     defineRule('atLeastOne', files => {
       return files && files.length >= 1;
     });
@@ -336,6 +335,28 @@ describe('<Field />', () => {
           <p id="error">{{ errors[0] }}</p>
         </Field>
       </div>
+    `,
+    });
+
+    const input = wrapper.$el.querySelector('input');
+    dispatchEvent(input, 'change');
+    await flushPromises();
+
+    const error = wrapper.$el.querySelector('#error');
+    expect(error.textContent).toBeTruthy();
+  });
+
+  test('validates file input by rendering', async () => {
+    defineRule('atLeastOne', files => {
+      return files && files.length >= 1;
+    });
+
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm v-slot="{ errors }">
+        <Field name="field" rules="required|atLeastOne" type="file" />
+        <span id="error">{{ errors.field }}</span>
+      </VForm>
     `,
     });
 
@@ -435,7 +456,7 @@ describe('<Field />', () => {
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
   });
 
-  test('resets validation state using reset method in slot scope data', async () => {
+  test('resets validation state using handleReset() in slot scope props', async () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
@@ -462,6 +483,43 @@ describe('<Field />', () => {
     await flushPromises();
     expect(error.textContent).toBe('');
     expect(input.value).toBe('');
+  });
+
+  test('resets validation state using resetField() in slot scope props', async () => {
+    const resetMessage = 'field is bad';
+    const resetValue = 'val';
+    const wrapper = mountWithHoc({
+      template: `
+      <div>
+        <Field name="field" rules="required" v-slot="{ field, errors, resetField, meta }">
+          <input type="text" v-bind="field">
+          <span id="error">{{ errors && errors[0] }}</span>
+          <span id="touched">{{ meta.touched.toString() }}</span>
+          <span id="dirty">{{ meta.dirty.toString() }}</span>
+          <button @click="resetField({ value: '${resetValue}', dirty: true, touched: true, errors: ['${resetMessage}'] })">Reset</button>
+        </Field>
+      </div>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    const input = wrapper.$el.querySelector('input');
+    const dirty = wrapper.$el.querySelector('#dirty');
+    const touched = wrapper.$el.querySelector('#touched');
+
+    expect(error.textContent).toBe('');
+
+    setValue(input, '');
+    await flushPromises();
+    expect(error.textContent).toBe(REQUIRED_MESSAGE);
+    expect(dirty.textContent).toBe('true');
+    expect(touched.textContent).toBe('false');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(error.textContent).toBe(resetMessage);
+    expect(input.value).toBe(resetValue);
+    expect(dirty.textContent).toBe('true');
+    expect(touched.textContent).toBe('true');
   });
 
   test('yup abortEarly is set by bails global option', async () => {

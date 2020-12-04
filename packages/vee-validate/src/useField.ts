@@ -20,7 +20,6 @@ import {
   hasCheckedAttr,
   getFromPath,
   setInPath,
-  keysOf,
   injectWithSelf,
 } from './utils';
 import { isCallable } from '../../shared';
@@ -141,16 +140,7 @@ export function useField(name: MaybeReactive<string>, rules?: RuleExpression, op
 
   function resetField(state?: Partial<FieldState>) {
     unwatchValue?.();
-    resetValidationState(state?.value);
-    if (state?.dirty) {
-      setTouched(state.dirty);
-    }
-    if (state?.touched) {
-      setTouched(state.touched);
-    }
-    if (state?.errors) {
-      errors.value = state.errors;
-    }
+    resetValidationState(state);
     watchValue();
   }
 
@@ -321,10 +311,12 @@ function useValidationState({
   }
 
   // Resets the validation state
-  function resetValidationState(newValue?: any) {
-    value.value = newValue ?? getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
-    errors.value = [];
-    resetMeta();
+  function resetValidationState(state?: Partial<FieldState>) {
+    value.value =
+      state && 'value' in state ? state.value : getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
+    errors.value = state?.errors || [];
+
+    resetMeta(state);
   }
 
   return {
@@ -356,11 +348,12 @@ function useMeta(initialValue: any) {
   /**
    * Resets the flag state
    */
-  function resetMeta() {
+  function resetMeta(state?: Pick<Partial<FieldState>, 'dirty' | 'touched' | 'value'>) {
     const defaults = initialMeta();
-    keysOf(meta).forEach(key => {
-      meta[key] = defaults[key];
-    });
+    meta.pending = defaults.pending;
+    meta.touched = state?.touched ?? defaults.touched;
+    meta.dirty = state?.dirty ?? defaults.dirty;
+    meta.initialValue = state?.value ?? defaults.initialValue;
   }
 
   return {
