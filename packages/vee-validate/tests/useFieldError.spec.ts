@@ -6,11 +6,38 @@ describe('useFieldError()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
   const validate = (val: any) => (val ? true : REQUIRED_MESSAGE);
 
-  test('gives access to a form field error', async () => {
+  test('gives access to a single field error message', async () => {
     mountWithHoc({
       setup() {
         useForm();
         const { value } = useField('test', validate);
+        const message = useFieldError('test');
+
+        return {
+          value,
+          message,
+        };
+      },
+      template: `
+      <input name="field" v-model="value" />
+      <span>{{ message }}</span>
+    `,
+    });
+    await flushPromises();
+
+    const input = document.querySelector('input');
+    const error = document.querySelector('span');
+    setValue(input as any, '');
+    await flushPromises();
+    expect(error?.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('gives access to array fields error message', async () => {
+    mountWithHoc({
+      setup() {
+        useForm();
+        const { value } = useField('test', validate);
+        useField('test', validate);
         const message = useFieldError('test');
 
         return {

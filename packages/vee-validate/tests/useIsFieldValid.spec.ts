@@ -35,6 +35,36 @@ describe('useIsFieldValid()', () => {
     expect(span?.textContent).toBe('true');
   });
 
+  test('returns the validity of array fields', async () => {
+    mountWithHoc({
+      setup() {
+        useForm();
+        const { value } = useField('test', validate);
+        useField('test', validate);
+        const isValid = useIsFieldValid('test');
+
+        return {
+          value,
+          isValid,
+        };
+      },
+      template: `
+      <input name="field" v-model="value" />
+      <span>{{ isValid.toString() }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input');
+    const span = document.querySelector('span');
+    setValue(input as any, '');
+    await flushPromises();
+    expect(span?.textContent).toBe('false');
+    setValue(input as any, '12');
+    await flushPromises();
+    expect(span?.textContent).toBe('true');
+  });
+
   test('returns undefined if field is not found', async () => {
     mountWithHoc({
       setup() {

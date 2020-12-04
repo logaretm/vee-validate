@@ -1,4 +1,5 @@
 import { getCurrentInstance, inject, InjectionKey } from 'vue';
+import type { useField } from '../useField';
 import { isEmptyContainer, isIndex, isNotNestedPath } from './assertions';
 
 function cleanupNonNestedPath(path: string) {
@@ -131,4 +132,17 @@ export function injectWithSelf<T>(symbol: InjectionKey<T>, def: T | undefined = 
 
 export function warn(message: string) {
   console.warn(`[vee-validate]: ${message}`);
+}
+
+type FieldApi = ReturnType<typeof useField>;
+
+/**
+ * Ensures we deal with a singular field value
+ */
+export function normalizeField(field: FieldApi | FieldApi[]): FieldApi | undefined {
+  if (Array.isArray(field)) {
+    return field[0];
+  }
+
+  return field;
 }

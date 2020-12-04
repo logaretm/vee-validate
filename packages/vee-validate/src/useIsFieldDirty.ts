@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { FormSymbol } from './symbols';
-import { injectWithSelf } from './utils';
+import { injectWithSelf, normalizeField } from './utils';
 
 /**
  * If a field is dirty or not
@@ -9,6 +9,11 @@ export function useIsFieldDirty(path: string) {
   const form = injectWithSelf(FormSymbol);
 
   return computed(() => {
-    return form?.fields.value[path]?.meta.dirty as boolean | undefined;
+    const field = normalizeField(form?.fields.value[path]);
+    if (!field) {
+      return undefined;
+    }
+
+    return field.meta.dirty;
   });
 }

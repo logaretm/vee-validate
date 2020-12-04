@@ -33,6 +33,34 @@ describe('useValidateField()', () => {
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
 
+  test('validates array fields', async () => {
+    let validate!: ReturnType<typeof useValidateField>;
+    mountWithHoc({
+      setup() {
+        useForm();
+        const { errorMessage } = useField('test', rules);
+        useField('test', rules);
+        validate = useValidateField('test');
+
+        return {
+          errorMessage,
+        };
+      },
+      template: `
+      <span>{{ errorMessage }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const error = document.querySelector('span');
+    expect(error?.textContent).toBe('');
+    await validate();
+    await flushPromises();
+
+    await flushPromises();
+    expect(error?.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
   test('warns if the field does not exist', async () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation();
     let validate!: ReturnType<typeof useValidateField>;
