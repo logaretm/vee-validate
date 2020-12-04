@@ -46,9 +46,31 @@ describe('useResetForm()', () => {
     });
 
     await flushPromises();
-
-    await flushPromises();
     expect(error?.textContent).toBe('');
     expect(input?.value).toBe(inputValue);
+  });
+
+  test('warns if the form does not exist', async () => {
+    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    let resetForm: any;
+
+    mountWithHoc({
+      setup() {
+        resetForm = useResetForm();
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    resetForm({
+      values: {
+        test: 'someValue',
+      },
+    });
+
+    await flushPromises();
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
   });
 });

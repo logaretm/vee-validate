@@ -31,4 +31,23 @@ describe('useFormErrors()', () => {
     await flushPromises();
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
+
+  test('returns empty object if form is not found', async () => {
+    mountWithHoc({
+      setup() {
+        const messages = useFormErrors();
+
+        return {
+          messages,
+        };
+      },
+      template: `
+      <span>{{ messages }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const error = document.querySelector('span');
+    expect(error?.textContent).toBe('{}');
+  });
 });

@@ -31,4 +31,43 @@ describe('useIsFieldDirty()', () => {
     await flushPromises();
     expect(error?.textContent).toBe('true');
   });
+
+  test('returns undefined if field does not exist', async () => {
+    mountWithHoc({
+      setup() {
+        useForm();
+        const isDirty = useIsFieldDirty('something');
+
+        return {
+          isDirty,
+        };
+      },
+      template: `
+      <span>{{ isDirty }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const error = document.querySelector('span');
+    expect(error?.textContent).toBe('');
+  });
+
+  test('returns undefined if form does not exist', async () => {
+    mountWithHoc({
+      setup() {
+        const isDirty = useIsFieldDirty('something');
+
+        return {
+          isDirty,
+        };
+      },
+      template: `
+      <span>{{ isDirty }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const error = document.querySelector('span');
+    expect(error?.textContent).toBe('');
+  });
 });

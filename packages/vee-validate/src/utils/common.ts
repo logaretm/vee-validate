@@ -128,3 +128,7 @@ export function injectWithSelf<T>(symbol: InjectionKey<T>, def: T | undefined = 
 
   return inject(symbol, vm?.provides[symbol as any] || def);
 }
+
+export function warn(message: string) {
+  console.warn(`[vee-validate]: ${message}`);
+}

@@ -33,4 +33,22 @@ describe('useValidateForm()', () => {
     await flushPromises();
     expect(errors.map(span => span.textContent)).toEqual([REQUIRED_MESSAGE, REQUIRED_MESSAGE]);
   });
+
+  test('warns if form is not found', async () => {
+    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    let validate!: ReturnType<typeof useValidateForm>;
+    mountWithHoc({
+      setup() {
+        validate = useValidateForm();
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await validate();
+    await flushPromises();
+    expect(console.warn).toHaveBeenCalled();
+    spy.mockRestore();
+  });
 });

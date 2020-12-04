@@ -34,4 +34,23 @@ describe('useIsFormValid()', () => {
     await flushPromises();
     expect(span?.textContent).toBe('true');
   });
+
+  test('returns undefined if form is not found', async () => {
+    mountWithHoc({
+      setup() {
+        const isValid = useIsFormValid();
+
+        return {
+          isValid,
+        };
+      },
+      template: `
+      <span>{{ isValid }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const span = document.querySelector('span');
+    expect(span?.textContent).toBe('');
+  });
 });

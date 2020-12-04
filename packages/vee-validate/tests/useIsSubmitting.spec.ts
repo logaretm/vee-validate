@@ -10,12 +10,11 @@ describe('useIsSubmitting()', () => {
 
   test('indicates if a form is submitting', async () => {
     jest.useFakeTimers();
-    let isSubmitting: any;
     mountWithHoc({
       setup() {
         const { submitForm } = useForm();
         useField('test', validate);
-        isSubmitting = useIsSubmitting();
+        const isSubmitting = useIsSubmitting();
 
         return {
           isSubmitting,
@@ -41,5 +40,24 @@ describe('useIsSubmitting()', () => {
     expect(submitText?.textContent).toBe('false');
 
     jest.useRealTimers();
+  });
+
+  test('returns undefined if form is not found', async () => {
+    mountWithHoc({
+      setup() {
+        const isSubmitting = useIsSubmitting();
+
+        return {
+          isSubmitting,
+        };
+      },
+      template: `
+      <span>{{ isSubmitting }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const submitText = document.querySelector('span');
+    expect(submitText?.textContent).toBe('');
   });
 });

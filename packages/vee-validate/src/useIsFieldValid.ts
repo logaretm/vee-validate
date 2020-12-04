@@ -9,6 +9,6 @@ export function useIsFieldValid(path: string) {
   const form = injectWithSelf(FormSymbol);
 
   return computed(() => {
-    return form?.fields.value[path]?.meta.valid;
+    return form?.fields.value[path]?.meta.valid as boolean | undefined;
   });
 }

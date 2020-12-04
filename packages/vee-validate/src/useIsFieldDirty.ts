@@ -9,6 +9,6 @@ export function useIsFieldDirty(path: string) {
   const form = injectWithSelf(FormSymbol);
 
   return computed(() => {
-    return form?.fields.value[path]?.meta.dirty;
+    return form?.fields.value[path]?.meta.dirty as boolean | undefined;
   });
 }

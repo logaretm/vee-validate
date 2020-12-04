@@ -9,6 +9,6 @@ export function useIsFieldTouched(path: string) {
   const form = injectWithSelf(FormSymbol);
 
   return computed(() => {
-    return form?.fields.value[path]?.meta.touched;
+    return form?.fields.value[path]?.meta.touched as boolean | undefined;
   });
 }

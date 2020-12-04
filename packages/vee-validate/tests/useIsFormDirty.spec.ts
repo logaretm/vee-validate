@@ -30,4 +30,24 @@ describe('useIsFormDirty()', () => {
     await flushPromises();
     expect(error?.textContent).toBe('true');
   });
+
+  test('returns undefined if form is not found', async () => {
+    mountWithHoc({
+      setup() {
+        const isDirty = useIsFormDirty();
+
+        return {
+          isDirty,
+        };
+      },
+      template: `
+      <span>{{ isDirty }}</span>
+    `,
+    });
+
+    const error = document.querySelector('span');
+
+    await flushPromises();
+    expect(error?.textContent).toBe('');
+  });
 });

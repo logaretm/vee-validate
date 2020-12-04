@@ -32,4 +32,41 @@ describe('useValidateField()', () => {
     await flushPromises();
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
+
+  test('warns if the field does not exist', async () => {
+    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    let validate!: ReturnType<typeof useValidateField>;
+    mountWithHoc({
+      setup() {
+        useForm();
+        validate = useValidateField('something');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await validate();
+    await flushPromises();
+    expect(console.warn).toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  test('warns if the form does not exist', async () => {
+    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    let validate!: ReturnType<typeof useValidateField>;
+    mountWithHoc({
+      setup() {
+        validate = useValidateField('something');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await validate();
+    await flushPromises();
+    expect(console.warn).toHaveBeenCalled();
+    spy.mockRestore();
+  });
 });

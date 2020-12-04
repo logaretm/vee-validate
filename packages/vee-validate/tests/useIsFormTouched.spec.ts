@@ -30,4 +30,23 @@ describe('useIsFormTouched()', () => {
     await flushPromises();
     expect(error?.textContent).toBe('true');
   });
+
+  test('returns undefined if form is not found', async () => {
+    mountWithHoc({
+      setup() {
+        const isTouched = useIsFormTouched();
+
+        return {
+          isTouched,
+        };
+      },
+      template: `
+      <span>{{ isTouched }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const error = document.querySelector('span');
+    expect(error?.textContent).toBe('');
+  });
 });

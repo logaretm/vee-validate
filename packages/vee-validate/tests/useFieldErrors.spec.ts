@@ -31,4 +31,43 @@ describe('useFieldError()', () => {
     await flushPromises();
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
+
+  test('returns undefined if field not found', async () => {
+    mountWithHoc({
+      setup() {
+        useForm();
+        const message = useFieldError('something');
+
+        return {
+          message,
+        };
+      },
+      template: `
+      <span>{{ message }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const error = document.querySelector('span');
+    expect(error?.textContent).toBe('');
+  });
+
+  test('returns undefined if form is not found', async () => {
+    mountWithHoc({
+      setup() {
+        const message = useFieldError('something');
+
+        return {
+          message,
+        };
+      },
+      template: `
+      <span>{{ message }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const error = document.querySelector('span');
+    expect(error?.textContent).toBe('');
+  });
 });
