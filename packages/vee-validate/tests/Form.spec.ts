@@ -89,7 +89,7 @@ describe('<Form />', () => {
     expect(calls).toBe(1);
   });
 
-  test('handles reset', async () => {
+  test('handles reset event', async () => {
     let isReset = false;
     const wrapper = mountWithHoc({
       setup() {
@@ -130,6 +130,46 @@ describe('<Form />', () => {
     // errors were cleared
     expect(error.textContent).toBe('');
     expect(isReset).toBe(true);
+  });
+
+  test('handles reset with resetForm slot prop', async () => {
+    const resetError = 'Field is wrong';
+    const resetValue = 'I was reset';
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm as="form" v-slot="{ errors, resetForm, meta }">
+        <Field rules="required" name="field" as="input"/>
+        <span id="error">{{ errors.field }}</span>
+        <span id="dirty">{{ meta.dirty.toString() }}</span>
+        <span id="touched">{{ meta.touched.toString() }}</span>
+
+        <button id="submit">Validate</button>
+        <button id="reset" type="button" @click="resetForm({ values: { field: '${resetValue}' }, errors: { field: '${resetError}' }, touched: { field: true }, dirty: { field: true } })">Reset</button>
+      </VForm>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    const input = wrapper.$el.querySelector('input');
+
+    expect(error.textContent).toBe('');
+
+    wrapper.$el.querySelector('#submit').click();
+    await flushPromises();
+
+    expect(error.textContent).toBe(REQUIRED_MESSAGE);
+
+    setValue(input, 'value');
+    await flushPromises();
+    wrapper.$el.querySelector('#reset').click();
+    await flushPromises();
+
+    // value was reset
+    expect(input.value).toBe(resetValue);
+    // errors were cleared
+    expect(error.textContent).toBe(resetError);
+    expect(wrapper.$el.querySelector('#dirty').textContent).toBe('true');
+    expect(wrapper.$el.querySelector('#touched').textContent).toBe('true');
   });
 
   test('initial values can be set with initialValues prop', async () => {
