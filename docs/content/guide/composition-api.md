@@ -6,9 +6,13 @@ order: 7
 
 # Composition API
 
-vee-validate supports the composition API through the `useField` and `useForm` functions, internally the `<Form />` and `<Field />` components actually use the composition functions under the hood.
+vee-validate is built from the ground up with the composition API through a collection of functions, mainly the `useField` and `useForm` functions. Internally the `<Form />` and `<Field />` components actually use the composition functions under the hood.
 
-Meaning you can create your own custom input and form components and they will be treated the same as `<Form />` and `<Field />` components. You can interchange them and mix them together and it all just works. The previous guides mainly covered the components, but all these features are supported in a similar manner with `useField` and `useForm`.
+Meaning you can create your own custom input and form components and they will be treated the same as `<Form />` and `<Field />` components. You can mix them together and use a `Form` component with any other custom component that uses `useField` and vice versa.
+
+All of the features discussed previously in the guides with `Form` or `Field` components are supported in a similar manner with `useField` and `useForm`.
+
+Aside from `useField` and `useForm`, vee-validate offers simpler utility composable functions that you can use to build very specific and specialized components that contribute to your form experience, they are mentioned later on in this page.
 
 ## When to use composition API
 
@@ -161,3 +165,30 @@ const { ... } = useForm({
 ```
 
 You can do a lot more than that with `useForm`, check the [useForm API reference](/api/use-form) for more information.
+
+## Composition Helpers
+
+These are a collection of simple functions that you can use to opt-in specific parts of vee-validate features like form state and various actions you can perform on fields and forms.
+
+Here are a few examples of what you can build with these functions:
+
+- A custom submission progress component
+- A custom error message component.
+- A form validity indicators
+- reset buttons or submit buttons
+
+Here is a list of the functions available that you can use:
+
+- `useFieldError` Gives access to a single field's first error message
+- `useFormErrors` Gives access to the entire error bag of the form
+- `useIsFieldDirty` If a field is dirty
+- `useIsFormDirty` If the form is dirty (form contains at least one dirty field)
+- `useIsFieldTouched` If a field is touched
+- `useIsFormTouched` If the form is touched (form contains at least one touched field)
+- `useIsFieldValid` If a field is valid
+- `useIsFormValid` If all fields are **validated and valid**
+- `useValidateField` Returns a function that validates a specific field
+- `useValidateForm` Returns a function that validates the entire form
+- `useIsSubmitting` If the form is currently submitting
+
+For more information about the functions, you can head over to the [API reference and check them out](/api/composition-helpers).
