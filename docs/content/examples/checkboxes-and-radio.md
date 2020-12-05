@@ -18,6 +18,27 @@ The only requirements are that the fields:
 
 </div>
 
+<doc-tip title="Slot props and custom components">
+
+When using `Field` slot props with checkbox/radio components, you still need to provide the `type` and `value` props to the `Field` node itself.
+
+```vue
+<Field v-slot="{ field }" name="terms" type="checkbox" :value="false">
+  <label>
+    <input type="checkbox" name="terms" v-bind="field" :value="false" />
+    I agree
+  </label>
+</Field>
+```
+
+The same caveat applies if you are rendering another component with `as` prop:
+
+```vue
+<Field as="my-checkbox" name="terms" type="checkbox" :value="false" />
+```
+
+</doc-tip>
+
 ## Validating Radio Inputs
 
 vee-validate handles radio input groups as long as they have the `type="radio"` and the same `name` prop value. The selected value will be present in the `values` object.
