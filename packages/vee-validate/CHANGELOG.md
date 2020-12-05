@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.3](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.2...vee-validate@4.0.3) (2020-12-05)
+
+
+### Bug Fixes
+
+* cast radio buttons value correctly closes [#3064](https://github.com/logaretm/vee-validate/issues/3064) ([3e0f9a4](https://github.com/logaretm/vee-validate/commit/3e0f9a47369edac32d0c8a068f8b61d8f761458f))
+* reset meta correctly with resetField ([012658c](https://github.com/logaretm/vee-validate/commit/012658c082a00b1beeb53ce8cf3fcd91bc5b21ec))
+* use the custom injection fn for initial field values ([38cd32b](https://github.com/logaretm/vee-validate/commit/38cd32bd3ae9f263510d0ab4a1713c6a9a2011af))
+
+
+
+
+
 ## [4.0.2](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.1...vee-validate@4.0.2) (2020-11-27)
 
 
