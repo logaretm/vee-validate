@@ -7,7 +7,7 @@ const digitsValidator = (value: any, params?: any[] | Record<string, any>): bool
   }
   const strVal = String(value);
 
-  return /^[0-9]*$/.test(strVal) && strVal.length === length;
+  return /^[0-9]*$/.test(strVal) && strVal.length === Number(length);
 };
 
 export default digitsValidator;
