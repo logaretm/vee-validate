@@ -46,6 +46,7 @@ export default {
 <style lang="postcss" scoped>
 .SideMenu {
   @apply fixed h-screen w-screen inset-0 z-20 overflow-y-auto bg-white text-gray-700 flex flex-col;
+  height: -webkit-fill-available;
 }
 
 .dark {
