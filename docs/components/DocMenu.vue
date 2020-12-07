@@ -74,7 +74,7 @@ export default {
 
 <style lang="postcss" scoped>
 nav {
-  max-height: 80vh;
+  max-height: calc(80vh - 96px);
   a {
     @screen motion {
       transition: color 0.2s ease-in-out;
