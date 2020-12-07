@@ -1,6 +1,6 @@
 <template>
   <aside class="px-6 pt-24">
-    <nav class="space-y-8 text-sm overflow-y-auto">
+    <nav class="space-y-8 text-sm overflow-y-auto overscroll-y-contain">
       <div v-for="category in categories" :key="category.title">
         <p class="text-xs font-bold text-gray-400 uppercase">{{ category.title }}</p>
         <ul class="mt-3 space-y-2">
@@ -74,7 +74,7 @@ export default {
 
 <style lang="postcss" scoped>
 nav {
-  max-height: 80vh;
+  max-height: calc(80vh - 96px);
   a {
     @screen motion {
       transition: color 0.2s ease-in-out;
