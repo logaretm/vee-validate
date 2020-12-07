@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.3](https://github.com/logaretm/vee-validate/compare/@vee-validate/rules@4.0.2...@vee-validate/rules@4.0.3) (2020-12-07)
+
+
+### Bug Fixes
+
+* cast digits param to number when in string format closes [#3067](https://github.com/logaretm/vee-validate/issues/3067) ([e7eb242](https://github.com/logaretm/vee-validate/commit/e7eb242a0ee9effa217133a3321e877b11cec652))
+
+
+
+
+
 ## [4.0.2](https://github.com/logaretm/vee-validate/compare/@vee-validate/rules@4.0.1...@vee-validate/rules@4.0.2) (2020-12-05)
 
 **Note:** Version bump only for package @vee-validate/rules
