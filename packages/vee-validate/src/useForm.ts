@@ -59,6 +59,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }, {} as Record<string, any>);
   });
 
+  // The number of times the user tried to submit the form
+  const submitCount = ref(0);
+
   // a private ref for all form values
   const formValues = reactive({}) as TValues;
   // a lookup to keep track of values by their field ids
@@ -237,6 +240,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     if (state?.errors) {
       setErrors(state.errors);
     }
+
+    submitCount.value = state?.submitCount || 0;
   };
 
   function registerField(field: FieldComposite) {
@@ -303,6 +308,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     fields: fieldsById,
     values: formValues,
     schema: opts?.validationSchema,
+    submitCount,
     validateSchema: isYupValidator(opts?.validationSchema)
       ? (shouldMutate = false) => {
           return validateYupSchema(formCtx, shouldMutate);
@@ -351,6 +357,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       }
 
       isSubmitting.value = true;
+      submitCount.value++;
       return validate()
         .then(result => {
           if (result && typeof fn === 'function') {
@@ -415,8 +422,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     errors,
     meta,
     values: formValues,
-    validate,
     isSubmitting,
+    submitCount,
+    validate,
     handleReset: () => resetForm(),
     resetForm,
     handleSubmit,
