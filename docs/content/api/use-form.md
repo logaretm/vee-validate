@@ -49,6 +49,7 @@ type useForm = (
 ) => {
   errors: Record<string, string>; // first error message for each field
   isSubmitting: boolean; // if the form submission function is being run
+  submitCount: number; // the number of submission attempts
   meta: FormMeta; // aggregate of the field's meta information
   values: Record<string, any>; // current form values
   setFieldError: (field: string, errorMessage: string) => void; // Sets an error message for a field
@@ -474,11 +475,19 @@ export default {
 
 <code-title level="4">
 
+`submitCount: number`
+
+</code-title>
+
+The number of submission attempts by the user, it increments whenever `submitForm` or `handleSubmit` callback are called.
+
+<code-title level="4">
+
 `resetForm: (state?: Partial<FormState>) => void`
 
 </code-title>
 
-Clears error messages, resets the meta state for all fields and reverts their values to their initial state. Accepts an optional object containing the new form state, useful if you need to reset the form values to different values other than their initial state.
+Clears error messages, resets the meta state for all fields and reverts their values to their initial state as well as the `submitCount` state. Accepts an optional object containing the new form state, useful if you need to reset the form values to different values other than their initial state.
 
 This is the `FormState` interface:
 
@@ -495,6 +504,8 @@ interface FormState {
   touched: TouchedFlags;
   // Form Values
   values: Record<string, any>;
+  // The form submit attempts count
+  submitCount: number;
 }
 ```
 
@@ -526,7 +537,7 @@ function onSubmit(values) {
 
 </code-title>
 
-Clears error messages, resets the meta state for all fields and reverts their values to their initial state. you can use this function as handler for the `reset` events on native form elements.
+Clears error messages, resets the meta state for all fields and reverts their values to their initial state as well as the `submitCount` state. you can use this function as handler for the `reset` events on native form elements.
 
 ```vue
 <template>

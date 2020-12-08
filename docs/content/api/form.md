@@ -264,11 +264,19 @@ This is useful if you plan to handle form submissions using a backend API like L
 
 <code-title level="4">
 
+`submitCount: number`
+
+</code-title>
+
+The number of submission attempts by the user, it increments whenever `submitForm` or `handleSubmit` callback are called.
+
+<code-title level="4">
+
 `handleReset: () => void`
 
 </code-title>
 
-Clears error messages, resets the meta state for all fields and reverts their values to their initial state. you can use this function as handler for the `reset` events on native form elements.
+Clears error messages, resets the meta state for all fields and reverts their values to their initial state and resets the `submitCount` to `0`. You can use this function as handler for the `reset` events on native form elements.
 
 <code-title level="4">
 
@@ -276,7 +284,9 @@ Clears error messages, resets the meta state for all fields and reverts their va
 
 </code-title>
 
-Clears error messages, resets the meta state for all fields and reverts their values to their initial state. Accepts an optional object containing the new form state, useful if you need to reset the form values to different values other than their initial state.
+Clears error messages, resets the meta state for all fields and reverts their values to their initial state and resets the `submitCount`.
+
+Accepts an optional object containing the new form state, useful if you need to reset the form values to different values other than their initial state.
 
 This is the shape of the `state` object:
 
@@ -290,6 +300,8 @@ interface FormState {
   touched: Record<string, boolean>;
   // Form Values
   values: Record<string, any>;
+  // The form submit attempts count
+  submitCount: number;
 }
 ```
 
