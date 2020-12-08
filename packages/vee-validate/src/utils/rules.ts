@@ -91,6 +91,11 @@ function buildParams(provided: any[] | Record<string, any>) {
     return provided.map(mapValueToLocator);
   }
 
+  // #3073
+  if (provided instanceof RegExp) {
+    return [provided];
+  }
+
   return Object.keys(provided).reduce((prev, key) => {
     prev[key] = mapValueToLocator(provided[key]);
 
