@@ -70,6 +70,36 @@ The most crucial part of rendering fields with `v-slot` is that you **must bind 
 
 When using `v-slot` on the `Field` component you no longer have to provide an `as` prop and then it will become a renderless component.
 
+### Using v-model
+
+The `<Field />` component uses a different way to apply input values to your rendered inputs using the `v-bind="field"` syntax which adds various listeners and attributes to your rendered inputs.
+
+Because of this, using `v-model` will conflict with `v-bind="field"` because both will attempt to update the input value.
+
+For simple inputs this is not an issue:
+
+```vue
+<!-- ✅  Simple Field -->
+<Field type="text" name="name" v-model="name" />
+```
+
+But for complex inputs rendered with scoped slots (v-slot), you need to place it on the `Field` component tag itself, not the rendered input.
+
+```vue
+<!-- DONT: ⛔️  v-model on input tag -->
+<Field type="text" name="name" v-slot="{ field }">
+  <!-- Conflict between v-model and `v-bind=field` -->
+  <input v-bind="field" v-model="name">
+</Field>
+
+<!-- DO: ✅  v-model on field tag -->
+<Field type="text" name="name" v-slot="{ field }">
+  <input v-bind="field">
+</Field>
+```
+
+Note that you no longer should use `v-model` on your input as `v-bind="field"` will take care of the rest.
+
 ## API Reference
 
 ### Props
