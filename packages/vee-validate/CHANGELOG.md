@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.4](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.3...vee-validate@4.0.4) (2020-12-09)
+
+
+### Bug Fixes
+
+* add a handler for regex object params closes [#3073](https://github.com/logaretm/vee-validate/issues/3073) ([7a5e2eb](https://github.com/logaretm/vee-validate/commit/7a5e2ebf8303395372ae08ebcca55427a58faecb))
+* fill the target rule params for message generators closes [#3077](https://github.com/logaretm/vee-validate/issues/3077) ([f5e1bd3](https://github.com/logaretm/vee-validate/commit/f5e1bd3cbc278a8588fa0c96af66823d82eefb8c))
+
+
+### Features
+
+* add submit count state ([#3070](https://github.com/logaretm/vee-validate/issues/3070)) ([a7fe71e](https://github.com/logaretm/vee-validate/commit/a7fe71e01072dacfeb7baa80eebf0b8d7d9d3ffd))
+
+
+
+
+
 ## [4.0.3](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.2...vee-validate@4.0.3) (2020-12-05)
 
 
