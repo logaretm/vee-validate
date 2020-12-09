@@ -35,6 +35,7 @@ export interface FormState<TValues> {
   errors: Partial<Record<keyof TValues, string | undefined>>;
   dirty: Partial<Record<keyof TValues, boolean>>;
   touched: Partial<Record<keyof TValues, boolean>>;
+  submitCount: number;
 }
 
 export interface FormActions<TValues> {
@@ -54,6 +55,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   unregister(field: any): void;
   values: TValues;
   fields: ComputedRef<Record<keyof TValues, any>>;
+  submitCount: Ref<number>;
   schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | ObjectSchema<TValues>;
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
 }

@@ -262,6 +262,12 @@ Note that calling `validate` from the `Form` slot props will not cause the `isSu
 
 </doc-tip>
 
+<doc-tip title="submitCount">
+
+The `Form` and `useForm` both expose a `submitCount` state that you can use to track the number of submission attempts done by the user. For more information check the [API Reference](/api/form).
+
+</doc-tip>
+
 ## Initial Values
 
 Since with vee-validate you don't use `v-model` often to track your values, the `Form` component allows you to define the starting values for your fields, by default all fields start with `undefined` as a value.

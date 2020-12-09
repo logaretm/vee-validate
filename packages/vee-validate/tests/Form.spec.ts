@@ -1480,4 +1480,63 @@ describe('<Form />', () => {
     await flushPromises();
     expect(meta.textContent).toBe('true');
   });
+
+  test('counts the number of submission attempts', async () => {
+    const spy = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          onSubmit: spy,
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" v-slot="{ submitCount }">
+        <Field id="email" name="email" />
+        <span>{{ submitCount }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const countSpan = wrapper.$el.querySelector('span');
+    expect(countSpan.textContent).toBe('0');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(countSpan.textContent).toBe('1');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(countSpan.textContent).toBe('2');
+    expect(spy).toHaveReturnedTimes(2);
+  });
+
+  test('can reset the submit count to whatever value with resetForm', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          onSubmit: jest.fn(),
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" v-slot="{ submitCount, resetForm }">
+        <Field id="email" name="email" />
+        <span>{{ submitCount }}</span>
+
+        <button>Submit</button>
+        <button type="button" id="reset" @click="resetForm({ submitCount: 5 })">Submit</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const countSpan = wrapper.$el.querySelector('span');
+    expect(countSpan.textContent).toBe('0');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(countSpan.textContent).toBe('1');
+    wrapper.$el.querySelector('#reset').click();
+    await flushPromises();
+    expect(countSpan.textContent).toBe('5');
+  });
 });
