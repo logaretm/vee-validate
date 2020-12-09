@@ -140,7 +140,10 @@ async function _test(field: FieldValidationContext, value: any, rule: { name: st
     field: field.name,
     value,
     form: field.formData,
-    rule,
+    rule: {
+      ...rule,
+      params,
+    },
   };
 
   const result = await validator(value, params, ctx);
