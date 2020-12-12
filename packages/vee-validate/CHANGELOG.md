@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.5](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.4...vee-validate@4.0.5) (2020-12-12)
+
+
+### Features
+
+* added validation trigger config per component closes [#3066](https://github.com/logaretm/vee-validate/issues/3066) ([f0e30a2](https://github.com/logaretm/vee-validate/commit/f0e30a2cc79843040028b7070bc88846f2447c85))
+
+
+
+
+
 ## [4.0.4](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.3...vee-validate@4.0.4) (2020-12-09)
 
 
