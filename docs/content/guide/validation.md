@@ -246,7 +246,14 @@ configure({
 
 Note that configuring any of these options to `false` will not remove all the events, they only control if each event triggers a validation check or not.
 
-This might not be flexible enough for your needs, which is why you can specifically control which events to listen to by using the scoped-slot `handleChange` prop of the `<Field />` component and binding it to the desired event:
+This might not be flexible enough for your needs, which is why you can define the same config per `Field` component instance:
+
+```vue
+<!-- Turns off validation events -->
+<Field name="email" :validateOnBlur="false" :validateOnChange="false" :validateOnInput="false" />
+```
+
+Additionally if you need to use different events or have specific needs in mind, you can control which events to listen to by using the scoped-slot `handleChange` prop of the `<Field />` component and binding it to the desired event:
 
 ```vue
 <!-- Listen to all events, this is the default behavior -->

@@ -642,7 +642,7 @@ describe('<Field />', () => {
     expect(error.textContent).toBe('field is bad');
   });
 
-  test('can customize validation triggers', async () => {
+  test('can customize validation triggers via global config', async () => {
     configure({
       validateOnChange: false,
       validateOnInput: true,
@@ -652,6 +652,32 @@ describe('<Field />', () => {
       template: `
       <div>
         <Field name="field" rules="required" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
+          <span id="error">{{ errors[0] }}</span>
+        </Field>
+      </div>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    const input = wrapper.$el.querySelector('input');
+    input.value = '';
+    dispatchEvent(input, 'change');
+    await flushPromises();
+    // nothing got triggered
+    expect(error.textContent).toBe('');
+
+    input.value = '';
+    dispatchEvent(input, 'input');
+    await flushPromises();
+    expect(error.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('can customize validation triggers via props', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <div>
+        <Field name="field" rules="required" v-slot="{ field, errors }" validateOnInput :validateOnChange="false">
           <input v-bind="field" type="text">
           <span id="error">{{ errors[0] }}</span>
         </Field>

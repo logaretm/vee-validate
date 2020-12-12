@@ -1,7 +1,15 @@
-import { h, defineComponent, nextTick, toRef, SetupContext, resolveDynamicComponent } from 'vue';
+import { h, defineComponent, nextTick, toRef, SetupContext, resolveDynamicComponent, ExtractPropTypes } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, isFileInput } from './utils';
+
+interface ValidationTriggersProps {
+  validateOnMount: boolean;
+  validateOnBlur: boolean;
+  validateOnChange: boolean;
+  validateOnInput: boolean;
+  validateOnModelUpdate: boolean;
+}
 
 export const Field = defineComponent({
   name: 'Field',
@@ -22,6 +30,22 @@ export const Field = defineComponent({
     validateOnMount: {
       type: Boolean,
       default: false,
+    },
+    validateOnBlur: {
+      type: Boolean,
+      default: undefined,
+    },
+    validateOnChange: {
+      type: Boolean,
+      default: undefined,
+    },
+    validateOnInput: {
+      type: Boolean,
+      default: undefined,
+    },
+    validateOnModelUpdate: {
+      type: Boolean,
+      default: undefined,
     },
     bails: {
       type: Boolean,
@@ -94,7 +118,9 @@ export const Field = defineComponent({
           }
         : handleInput;
 
-    const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = getConfig();
+    const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = resolveValidationTriggers(
+      props
+    );
     const baseOnBlur = [handleBlur, ctx.attrs.onBlur, validateOnBlur ? validateField : undefined].filter(Boolean);
     const baseOnInput = [
       onInputHandler,
@@ -185,4 +211,15 @@ function resolveTag(props: Record<string, any>, ctx: SetupContext) {
   }
 
   return tag;
+}
+
+function resolveValidationTriggers(props: ValidationTriggersProps) {
+  const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = getConfig();
+
+  return {
+    validateOnInput: props.validateOnInput ?? validateOnInput,
+    validateOnChange: props.validateOnChange ?? validateOnChange,
+    validateOnBlur: props.validateOnBlur ?? validateOnBlur,
+    validateOnModelUpdate: props.validateOnModelUpdate ?? validateOnModelUpdate,
+  };
 }
