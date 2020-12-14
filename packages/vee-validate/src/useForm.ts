@@ -148,7 +148,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     let newValue = value;
     // Single Checkbox
     if (fieldInstance?.type === 'checkbox') {
-      newValue = getFromPath(formValues, field as string) === value ? undefined : value;
+      newValue = getFromPath(formValues, field as string) === value ? fieldInstance.uncheckedValue : value;
     }
 
     setInPath(formValues, field as string, newValue);

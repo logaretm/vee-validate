@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 import { defineRule, configure } from '@/vee-validate';
-import { mountWithHoc, setValue, dispatchEvent } from './helpers';
+import { mountWithHoc, setValue, dispatchEvent, setChecked } from './helpers';
 import * as yup from 'yup';
 import { ref, Ref } from 'vue';
 
@@ -815,5 +815,31 @@ describe('<Field />', () => {
     const input = document.querySelector('input');
     dispatchEvent(input as HTMLInputElement, 'blur');
     expect(onBlur).toHaveBeenCalledTimes(1);
+  });
+
+  test('can customize checkboxes unchecked value', async () => {
+    const spy = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        return { onSubmit: spy };
+      },
+      template: `
+      <VForm @submit="onSubmit">
+        <Field name="terms" as="input" type="checkbox" :unchecked-value="false" :value="true" /> Coffee
+
+        <button type="submit">Submit</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const input = wrapper.$el.querySelector('input');
+    setChecked(input, true);
+    await flushPromises();
+    setChecked(input, false);
+    await flushPromises();
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(spy).toHaveBeenCalledWith(expect.objectContaining({ terms: false }), expect.anything());
   });
 });

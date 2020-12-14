@@ -32,6 +32,7 @@ interface FieldOptions {
   bails?: boolean;
   type?: string;
   valueProp?: MaybeReactive<any>;
+  uncheckedValue?: MaybeReactive<any>;
   label?: MaybeReactive<string>;
 }
 
@@ -51,10 +52,16 @@ let ID_COUNTER = 0;
  */
 export function useField(name: MaybeReactive<string>, rules?: RuleExpression, opts?: Partial<FieldOptions>) {
   const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
-  const { initialValue, validateOnMount, bails, type, valueProp, label, validateOnValueUpdate } = normalizeOptions(
-    unref(name),
-    opts
-  );
+  const {
+    initialValue,
+    validateOnMount,
+    bails,
+    type,
+    valueProp,
+    label,
+    validateOnValueUpdate,
+    uncheckedValue,
+  } = normalizeOptions(unref(name), opts);
 
   const form = injectWithSelf(FormSymbol);
   const {
@@ -153,6 +160,7 @@ export function useField(name: MaybeReactive<string>, rules?: RuleExpression, op
     errorMessage,
     type,
     valueProp,
+    uncheckedValue,
     checked,
     idx: -1,
     resetField,

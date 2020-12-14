@@ -55,11 +55,16 @@ export const Field = defineComponent({
       type: String,
       default: undefined,
     },
+    uncheckedValue: {
+      type: null,
+      default: undefined,
+    },
   },
   setup(props, ctx) {
     const rules = toRef(props, 'rules');
     const name = toRef(props, 'name');
     const label = toRef(props, 'label');
+    const uncheckedValue = toRef(props, 'uncheckedValue');
 
     const {
       errors,
@@ -88,6 +93,7 @@ export const Field = defineComponent({
         : ctx.attrs.value,
       // Only for checkboxes and radio buttons
       valueProp: ctx.attrs.value,
+      uncheckedValue,
       label,
       validateOnValueUpdate: false,
     });
