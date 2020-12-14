@@ -129,7 +129,11 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   /**
    * Sets a single field value
    */
-  function setFieldValue<T extends keyof TValues = string>(field: T, value: TValues[T] | undefined) {
+  function setFieldValue<T extends keyof TValues = string>(
+    field: T,
+    value: TValues[T] | undefined,
+    { force } = { force: false }
+  ) {
     const fieldInstance = fieldsById.value[field] as any;
 
     // Multiple checkboxes, and only one of them got updated
@@ -146,8 +150,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     let newValue = value;
-    // Single Checkbox
-    if (fieldInstance?.type === 'checkbox') {
+    // Single Checkbox: toggles the field value unless the field is being reset then force it
+    if (fieldInstance?.type === 'checkbox' && !force) {
       newValue = getFromPath(formValues, field as string) === value ? fieldInstance.uncheckedValue : value;
     }
 

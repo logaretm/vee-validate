@@ -1539,4 +1539,30 @@ describe('<Form />', () => {
     await flushPromises();
     expect(countSpan.textContent).toBe('5');
   });
+
+  // #3084
+  test('reset should not toggle the checkbox values', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm>
+        <Field name="field" as="input" type="checkbox" :value="true" />
+
+        <button type="reset">Submit</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const input = wrapper.$el.querySelector('input');
+    const btn = wrapper.$el.querySelector('button');
+    setChecked(input, true);
+    await flushPromises();
+    btn.click();
+    await flushPromises();
+    expect(input.checked).toBe(false);
+
+    btn.click();
+    await flushPromises();
+    expect(input.checked).toBe(false);
+  });
 });

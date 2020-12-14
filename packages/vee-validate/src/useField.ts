@@ -320,8 +320,14 @@ function useValidationState({
 
   // Resets the validation state
   function resetValidationState(state?: Partial<FieldState>) {
-    value.value =
-      state && 'value' in state ? state.value : getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
+    const fieldPath = unref(name);
+    const newValue =
+      state && 'value' in state ? state.value : getFromPath(unref(formInitialValues), fieldPath) ?? initValue;
+    if (form) {
+      form.setFieldValue(fieldPath, newValue, { force: true });
+    } else {
+      value.value = newValue;
+    }
     errors.value = state?.errors || [];
 
     resetMeta(state);

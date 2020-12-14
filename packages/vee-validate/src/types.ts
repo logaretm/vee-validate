@@ -38,8 +38,11 @@ export interface FormState<TValues> {
   submitCount: number;
 }
 
+export interface SetFieldValueOptions {
+  force: boolean;
+}
 export interface FormActions<TValues> {
-  setFieldValue<T extends keyof TValues>(field: T, value: TValues[T]): void;
+  setFieldValue<T extends keyof TValues>(field: T, value: TValues[T], opts?: Partial<SetFieldValueOptions>): void;
   setFieldError: (field: keyof TValues, message: string | undefined) => void;
   setErrors: (fields: Partial<Record<keyof TValues, string | undefined>>) => void;
   setValues<T extends keyof TValues>(fields: Partial<Record<T, TValues[T]>>): void;
