@@ -116,6 +116,9 @@ Note that you no longer should use `v-model` on your input as `v-bind="field"` w
 | validateOnModelUpdate | `boolean`                      | `true`           | If true, field will be validated when `update:modelValue` event is emitted                                                                                                                                                 |
 | bails                 | `boolean`                      | `true`           | Stops validating as soon as a rule fails the validation                                                                                                                                                                    |
 | label                 | `string`                       | `undefined`      | A different string to override the field `name` prop in error messages, useful for display better or formatted names. The generated message won't be updated if this prop changes, you will need to re-validate the input. |
+| value                 | `any`                          | `undefined`      | The field's initial value, optional as long as the field type is not `checkbox` or `radio`.                                                                                                                                |
+| type                  | `string`                       | `undefined`      | The field type, must be provided if you want your field to behave as a `checkbox` or a `radio` input.                                                                                                                      |
+| unchecked-value       | `any`                          | `undefined`      | Only useful when the `type="checkbox"` and the field is a single checkbox field (not bound to an array value). Controls the input's value when it's unchecked.                                                             |
 
 ### Slots
 
