@@ -1,4 +1,13 @@
-import { h, defineComponent, nextTick, toRef, SetupContext, resolveDynamicComponent, ExtractPropTypes } from 'vue';
+import {
+  h,
+  defineComponent,
+  nextTick,
+  toRef,
+  SetupContext,
+  resolveDynamicComponent,
+  ExtractPropTypes,
+  computed,
+} from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, isFileInput } from './utils';
@@ -141,8 +150,8 @@ export const Field = defineComponent({
       ctx.attrs.onChange,
     ].filter(Boolean);
 
-    const makeSlotProps = () => {
-      const fieldProps: Record<string, any> = {
+    const fieldProps = computed(() => {
+      const attrs: Record<string, any> = {
         name: props.name,
         onBlur: baseOnBlur,
         onInput: baseOnInput,
@@ -150,21 +159,25 @@ export const Field = defineComponent({
       };
 
       if (validateOnModelUpdate) {
-        fieldProps['onUpdate:modelValue'] = [onChangeHandler, valueTick];
+        attrs['onUpdate:modelValue'] = [onChangeHandler, valueTick];
       }
 
       if (hasCheckedAttr(ctx.attrs.type) && checked) {
-        fieldProps.checked = checked.value;
+        attrs.checked = checked.value;
       } else {
-        fieldProps.value = value.value;
+        attrs.value = value.value;
       }
 
       if (isFileInput(resolveTag(props, ctx), ctx.attrs.type as string)) {
-        delete fieldProps.value;
+        delete attrs.value;
       }
 
+      return attrs;
+    });
+
+    const slotProps = computed(() => {
       return {
-        field: fieldProps,
+        field: fieldProps.value,
         meta,
         errors: errors.value,
         errorMessage: errorMessage.value,
@@ -177,11 +190,10 @@ export const Field = defineComponent({
         setDirty,
         setTouched,
       };
-    };
+    });
 
     return () => {
       const tag = resolveDynamicComponent(resolveTag(props, ctx)) as string;
-      const slotProps = makeSlotProps();
 
       // Sync the model value with the inner field value if they mismatch
       // a simple string comparison is used here
@@ -192,13 +204,14 @@ export const Field = defineComponent({
         });
       }
 
-      const children = normalizeChildren(ctx, slotProps);
+      const children = normalizeChildren(ctx, slotProps.value);
+
       if (tag) {
         return h(
           tag,
           {
             ...ctx.attrs,
-            ...slotProps.field,
+            ...fieldProps.value,
           },
           children
         );
