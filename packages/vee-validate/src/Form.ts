@@ -1,4 +1,4 @@
-import { h, defineComponent, toRef, resolveDynamicComponent } from 'vue';
+import { h, defineComponent, toRef, resolveDynamicComponent, computed } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
 import { normalizeChildren } from './utils';
@@ -80,24 +80,8 @@ export const Form = defineComponent({
       return handleSubmit(onSuccess)(evt);
     }
 
-    return function renderForm(this: any) {
-      // FIXME: Hacky but cute way to expose some stuff to the rendered instance
-      // getCurrentInstance doesn't work with render fns, it returns the wrong instance
-      // we want to expose setFieldError and setErrors
-      if (!('setErrors' in this)) {
-        this.setFieldError = setFieldError;
-        this.setErrors = setErrors;
-        this.setFieldValue = setFieldValue;
-        this.setValues = setValues;
-        this.setFieldDirty = setFieldDirty;
-        this.setDirty = setDirty;
-        this.setFieldTouched = setFieldTouched;
-        this.setTouched = setTouched;
-        this.resetForm = resetForm;
-        this.validate = validate;
-      }
-
-      const children = normalizeChildren(ctx, {
+    const slotProps = computed(() => {
+      return {
         meta: meta.value,
         errors: errors.value,
         values: values,
@@ -116,7 +100,27 @@ export const Form = defineComponent({
         setFieldTouched,
         setTouched,
         resetForm,
-      });
+      };
+    });
+
+    return function renderForm(this: any) {
+      // FIXME: Hacky but cute way to expose some stuff to the rendered instance
+      // getCurrentInstance doesn't work with render fns, it returns the wrong instance
+      // we want to expose setFieldError and setErrors
+      if (!('setErrors' in this)) {
+        this.setFieldError = setFieldError;
+        this.setErrors = setErrors;
+        this.setFieldValue = setFieldValue;
+        this.setValues = setValues;
+        this.setFieldDirty = setFieldDirty;
+        this.setDirty = setDirty;
+        this.setFieldTouched = setFieldTouched;
+        this.setTouched = setTouched;
+        this.resetForm = resetForm;
+        this.validate = validate;
+      }
+
+      const children = normalizeChildren(ctx, slotProps.value);
 
       if (!props.as) {
         return children;
