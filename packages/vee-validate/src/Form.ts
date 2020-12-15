@@ -1,7 +1,7 @@
 import { h, defineComponent, toRef, resolveDynamicComponent, computed } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
-import { normalizeChildren } from './utils';
+import { isEvent, normalizeChildren } from './utils';
 
 export const Form = defineComponent({
   name: 'Form',
@@ -67,7 +67,12 @@ export const Form = defineComponent({
     });
 
     const onSubmit = ctx.attrs.onSubmit ? handleSubmit(ctx.attrs.onSubmit as SubmissionHandler) : submitForm;
-    function handleFormReset() {
+    function handleFormReset(e?: Event) {
+      if (isEvent(e)) {
+        // Prevent default form reset behavior
+        e.preventDefault();
+      }
+
       handleReset();
       if (typeof ctx.attrs.onReset === 'function') {
         ctx.attrs.onReset();
