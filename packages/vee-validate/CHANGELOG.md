@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.6](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.5...vee-validate@4.0.6) (2020-12-15)
+
+
+### Bug Fixes
+
+* prevent default reset behavior with handleReset ([a66df13](https://github.com/logaretm/vee-validate/commit/a66df13c3f39d84984581dc3c0ce368b052b6e8e))
+* prevent resetForm from toggling checkbox value [#3084](https://github.com/logaretm/vee-validate/issues/3084) ([38778f9](https://github.com/logaretm/vee-validate/commit/38778f96471b6aa16fb020cfb1bde56b77a19cfb))
+
+
+### Features
+
+* added unchecked-value prop to the field component ([af910c3](https://github.com/logaretm/vee-validate/commit/af910c3f3c6343538658ab90f356dd8957bb6a1a))
+
+
+### Performance Improvements
+
+* cache field props in a computed property ([d266878](https://github.com/logaretm/vee-validate/commit/d2668787d0ffcab5ba2e8be048ee7334d2b0f9e7))
+* cache form slot props in a computed property ([49fa2c1](https://github.com/logaretm/vee-validate/commit/49fa2c1b4a337149c533c13725d2e71bb2664706))
+
+
+
+
+
 ## [4.0.5](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.4...vee-validate@4.0.5) (2020-12-12)
 
 
