@@ -63,6 +63,7 @@ module.exports = {
       indexName: 'vee-validate'
     },
     docsDir: 'docs',
+    docsBranch: 'v3',
     editLinks: true,
     sidebarDepth: 2,
     sidebar: [
