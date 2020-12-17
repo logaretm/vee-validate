@@ -1,4 +1,4 @@
-import { getCurrentInstance, inject, InjectionKey } from 'vue';
+import { getCurrentInstance, inject, InjectionKey, warn as vueWarning } from 'vue';
 import type { useField } from '../useField';
 import { isEmptyContainer, isIndex, isNotNestedPath } from './assertions';
 
@@ -131,7 +131,7 @@ export function injectWithSelf<T>(symbol: InjectionKey<T>, def: T | undefined = 
 }
 
 export function warn(message: string) {
-  console.warn(`[vee-validate]: ${message}`);
+  vueWarning(`[vee-validate]: ${message}`);
 }
 
 type FieldApi = ReturnType<typeof useField>;
