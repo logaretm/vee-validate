@@ -10,6 +10,7 @@ import {
   onBeforeUnmount,
   unref,
   WatchStopHandle,
+  provide,
 } from 'vue';
 import { validate as validateValue } from './validate';
 import { FormContext, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
@@ -23,7 +24,7 @@ import {
   injectWithSelf,
 } from './utils';
 import { isCallable } from '../../shared';
-import { FormInitialValues, FormSymbol } from './symbols';
+import { FieldContext, FormInitialValues, FormSymbol } from './symbols';
 
 interface FieldOptions {
   initialValue: any;
@@ -173,6 +174,8 @@ export function useField(name: MaybeReactive<string>, rules?: RuleExpression, op
     setTouched,
     setDirty,
   };
+
+  provide(FieldContext, field);
 
   if (isRef(rules) && typeof unref(rules) !== 'function') {
     watch(rules, validate, {

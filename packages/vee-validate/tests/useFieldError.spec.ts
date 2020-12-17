@@ -1,6 +1,7 @@
 import flushPromises from 'flush-promises';
 import { useField, useFieldError, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue } from './helpers';
+import { defineComponent } from 'vue';
 
 describe('useFieldError()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -25,6 +26,43 @@ describe('useFieldError()', () => {
     });
     await flushPromises();
 
+    const input = document.querySelector('input');
+    const error = document.querySelector('span');
+    setValue(input as any, '');
+    await flushPromises();
+    expect(error?.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('gives access to a single field error message in a child component with specifying a path', async () => {
+    const CustomErrorComponent = defineComponent({
+      template: '<span>{{ message }}</span>',
+      setup() {
+        const message = useFieldError();
+
+        return {
+          message,
+        };
+      },
+    });
+    mountWithHoc({
+      components: {
+        CustomErrorComponent,
+      },
+      setup() {
+        useForm();
+        const { value } = useField('test', validate);
+
+        return {
+          value,
+        };
+      },
+      template: `
+      <input name="field" v-model="value" />
+      <CustomErrorComponent />
+    `,
+    });
+
+    await flushPromises();
     const input = document.querySelector('input');
     const error = document.querySelector('span');
     setValue(input as any, '');
