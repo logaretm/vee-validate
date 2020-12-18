@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.7](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.6...vee-validate@4.0.7) (2020-12-18)
+
+
+### Bug Fixes
+
+* react to validation events changes ([078e61b](https://github.com/logaretm/vee-validate/commit/078e61b17bd299a28752b733b494a0ddb368a812))
+
+
+
+
+
 ## [4.0.6](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.5...vee-validate@4.0.6) (2020-12-15)
 
 
