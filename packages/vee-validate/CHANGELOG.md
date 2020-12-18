@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.7...vee-validate@4.1.0) (2020-12-18)
+
+
+### Bug Fixes
+
+* avoid returning undefined for form errors when form does not exist ([8cce17a](https://github.com/logaretm/vee-validate/commit/8cce17ae2846be912d51926c79e557ed8bb39582))
+
+
+### Features
+
+* added context awareness to composition helpers for fields ([b59fe88](https://github.com/logaretm/vee-validate/commit/b59fe88197ce3cd587edfc33666bcb676030fa61))
+* added test cases and fallbacks for unresolved cases ([71bda03](https://github.com/logaretm/vee-validate/commit/71bda03a72a9e8f27bc0b7620ce78ba48a194309))
+* added the useResetForm helper ([4c57715](https://github.com/logaretm/vee-validate/commit/4c57715ab621526a5c987cff9a53cb5b7af2155a))
+* added useErrors and useField error helpers ([4cda2fe](https://github.com/logaretm/vee-validate/commit/4cda2fea6428a7f10b53b633daa46252bf779289))
+* added useIsDirty helpers ([6b7e4ab](https://github.com/logaretm/vee-validate/commit/6b7e4abfcdb2f0eebe0dd8c62785178fbee8d25f))
+* added useIsSubmitting helper ([7a58fd8](https://github.com/logaretm/vee-validate/commit/7a58fd840425a5e09f625054389aebbb096c2e1a))
+* added useIsTouched helpers ([fdb2d5a](https://github.com/logaretm/vee-validate/commit/fdb2d5a3c7c82d55aefef2deb95823e1ba6ba93d))
+* added useIsValid helpers ([26fbb29](https://github.com/logaretm/vee-validate/commit/26fbb29467bab66c159e98793e4269768845b938))
+* added useSubmitCount helper ([c4a6dea](https://github.com/logaretm/vee-validate/commit/c4a6deae68b588494ff0e2477d7ec2b9302c6f09))
+* added useValidateField and useValidateForm helpers ([62355a8](https://github.com/logaretm/vee-validate/commit/62355a8db6477562f0689208669d0a1be63de03c))
+* added values helpers ([e0f16d6](https://github.com/logaretm/vee-validate/commit/e0f16d6f5c01c7b1e4e8832b3490b8cc7e7b8aa7))
+* added warnings for non existent fields and allow reactive paths ([4182d2f](https://github.com/logaretm/vee-validate/commit/4182d2f1716d712962dff3b6be27916e311e5870))
+* enhance ts typing for form functions ([8f7d8e8](https://github.com/logaretm/vee-validate/commit/8f7d8e89864b5df5255cbe5e88713022537ec236))
+* enrich form validation results ([0c84c80](https://github.com/logaretm/vee-validate/commit/0c84c809fa729cd2b8620329305b4da0a45e9eaf))
+* export some internal types closes [#3065](https://github.com/logaretm/vee-validate/issues/3065) ([b88dffd](https://github.com/logaretm/vee-validate/commit/b88dffdb4c638bd439d093f653bfa1915f4ad9be))
+
+
+
+
+
 ## [4.0.7](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.6...vee-validate@4.0.7) (2020-12-18)
 
 
