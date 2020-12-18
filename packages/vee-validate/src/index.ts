@@ -6,3 +6,4 @@ export { Form } from './Form';
 export { ErrorMessage } from './ErrorMessage';
 export { useField } from './useField';
 export { useForm } from './useForm';
+export { ValidationResult, FormActions, FormState, FormValidationResult, FormContext } from './types';
