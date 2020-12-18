@@ -257,3 +257,35 @@ const isSubmitting = useIsSubmitting();
 
 useIsSubmitting.value; // true or false
 ```
+
+<code-title level="4">
+
+`useSubmitCount(): ComputedRef<number>`
+
+</code-title>
+
+Returns a computed ref to the form's `submitCount` state.
+
+```js
+import { useSubmitCount } from 'vee-validate';
+
+const count = useSubmitCount();
+
+count.value;
+```
+
+<code-title level="4">
+
+`useResetForm(): () => void`
+
+</code-title>
+
+Returns a function that you can use to reset the form
+
+```js
+import { useResetForm } from 'vee-validate';
+
+const resetForm = useResetForm();
+
+resetForm(); // resets the form
+```

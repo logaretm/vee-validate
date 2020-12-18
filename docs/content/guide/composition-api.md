@@ -189,6 +189,8 @@ Here is a list of the functions available that you can use:
 - `useIsFormValid` If all fields are **validated and valid**
 - `useValidateField` Returns a function that validates a specific field
 - `useValidateForm` Returns a function that validates the entire form
+- `useResetForm` Resets the form to its initial state
 - `useIsSubmitting` If the form is currently submitting
+- `useSubmitCount` The number of times the user attempted to submit the form
 
 For more information about the functions, you can head over to the [API reference and check them out](/api/composition-helpers).
