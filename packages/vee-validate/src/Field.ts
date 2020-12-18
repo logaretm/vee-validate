@@ -133,24 +133,24 @@ export const Field = defineComponent({
           }
         : handleInput;
 
-    const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = resolveValidationTriggers(
-      props
-    );
-    const baseOnBlur = [handleBlur, ctx.attrs.onBlur, validateOnBlur ? validateField : undefined].filter(Boolean);
-    const baseOnInput = [
-      onInputHandler,
-      valueTick,
-      validateOnInput ? onChangeHandler : undefined,
-      ctx.attrs.onInput,
-    ].filter(Boolean);
-    const baseOnChange = [
-      onInputHandler,
-      valueTick,
-      validateOnChange ? onChangeHandler : undefined,
-      ctx.attrs.onChange,
-    ].filter(Boolean);
-
     const fieldProps = computed(() => {
+      const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = resolveValidationTriggers(
+        props
+      );
+      const baseOnBlur = [handleBlur, ctx.attrs.onBlur, validateOnBlur ? validateField : undefined].filter(Boolean);
+      const baseOnInput = [
+        onInputHandler,
+        valueTick,
+        validateOnInput ? onChangeHandler : undefined,
+        ctx.attrs.onInput,
+      ].filter(Boolean);
+      const baseOnChange = [
+        onInputHandler,
+        valueTick,
+        validateOnChange ? onChangeHandler : undefined,
+        ctx.attrs.onChange,
+      ].filter(Boolean);
+
       const attrs: Record<string, any> = {
         name: props.name,
         onBlur: baseOnBlur,
