@@ -24,7 +24,7 @@ All of the following code snippets assume you are using them inside a `setup` fu
 
 </code-title>
 
-Returns a computed ref to a single field's error message, if the field does not exist or contains no messages it will return `undefined`.
+Returns a computed ref to a single field's error message, returns `undefined` if no errors were found for that field or if the field does not exist.
 
 ```js
 import { useFieldError } from 'vee-validate';
@@ -62,19 +62,18 @@ message.value; // {}
 
 <code-title level="4">
 
-`useIsFieldDirty(field?: string): ComputedRef<boolean | undefined>`
+`useIsFieldDirty(field?: string): ComputedRef<boolean>`
 
 </code-title>
 
-Returns a computed ref to the specified field's `dirty` meta state. If the field is not found or there is no form context associated it will produce `undefined` instead of a boolean.
+Returns a computed ref to the specified field's `dirty` meta state.
 
 ```js
 import { useIsFieldDirty } from 'vee-validate';
 
 const isDirty = useIsFieldDirty();
 
-isDirty.value; // if field exists: true or false
-isDirty.value; // otherwise: undefined
+isDirty.value; // true or false
 ```
 
 You can also use it in a child component that has a parent that used `useField`, The `useIsFieldDirty` will automatically pick up the field and produce its meta `dirty` value
@@ -88,11 +87,11 @@ const isDirty = useIsFieldDirty();
 
 <code-title level="4">
 
-`useIsFormDirty(): ComputedRef<boolean | undefined>`
+`useIsFormDirty(): ComputedRef<boolean>`
 
 </code-title>
 
-Returns a computed ref to the context form `dirty` meta state, if the form is not found then it will produce `undefined` instead of a boolean.
+Returns a computed ref to the context form `dirty` meta state.
 
 ```js
 import { useIsFormDirty } from 'vee-validate';
@@ -100,16 +99,15 @@ import { useIsFormDirty } from 'vee-validate';
 const isDirty = useIsFormDirty();
 
 isDirty.value; // if form exists: true or false
-isDirty.value; // otherwise: undefined
 ```
 
 <code-title level="4">
 
-`useIsFieldTouched(field?: string): ComputedRef<boolean | undefined>`
+`useIsFieldTouched(field?: string): ComputedRef<boolean>`
 
 </code-title>
 
-Returns a computed ref to the specified field's `touched` meta state. If the field is not found or there is no form context associated it will produce `undefined` instead of a boolean.
+Returns a computed ref to the specified field's `touched` meta state.
 
 ```js
 import { useIsFieldTouched } from 'vee-validate';
@@ -117,7 +115,6 @@ import { useIsFieldTouched } from 'vee-validate';
 const isTouched = useIsFieldTouched('fieldName');
 
 isTouched.value; // if form exists: true or false
-isTouched.value; // otherwise: undefined
 ```
 
 You can also use it in a child component that has a parent that used `useField`, The `useIsFieldTouched` will automatically pick up the field and produce its meta `touched` value
@@ -131,11 +128,11 @@ const isTouched = useIsFieldTouched();
 
 <code-title level="4">
 
-`useIsFormTouched(): ComputedRef<boolean | undefined>`
+`useIsFormTouched(): ComputedRef<boolean>`
 
 </code-title>
 
-Returns a computed ref to the context form `touched` meta state, if the form is not found then it will produce `undefined` instead of a boolean.
+Returns a computed ref to the context form `touched` meta state.
 
 ```js
 import { useIsFormTouched } from 'vee-validate';
@@ -143,7 +140,6 @@ import { useIsFormTouched } from 'vee-validate';
 const isTouched = useIsFormTouched();
 
 isTouched.value; // if form exists: true or false
-isTouched.value; // otherwise: undefined
 ```
 
 <code-title level="4">
@@ -152,7 +148,7 @@ isTouched.value; // otherwise: undefined
 
 </code-title>
 
-Returns a computed ref to the specified field's `valid` meta state. If the field is not found or there is no form context associated it will produce `undefined` instead of a boolean.
+Returns a computed ref to the specified field's `valid` meta state.
 
 ```js
 import { useIsFieldValid } from 'vee-validate';
@@ -160,7 +156,6 @@ import { useIsFieldValid } from 'vee-validate';
 const isValid = useIsFieldValid('fieldName');
 
 isValid.value; // if form exists: true or false
-isValid.value; // otherwise: undefined
 ```
 
 You can also use it in a child component that has a parent that used `useField`, The `useIsFieldValid` will automatically pick up the field and produce its meta `valid` value
@@ -180,11 +175,11 @@ You should only use the `valid` state to determine if a field is valid. The oppo
 
 <code-title level="4">
 
-`useIsFormValid(): ComputedRef<boolean | undefined>`
+`useIsFormValid(): ComputedRef<boolean>`
 
 </code-title>
 
-Returns a computed ref to the context form `valid` meta state, if the form is not found then it will produce `undefined` instead of a boolean.
+Returns a computed ref to the context form `valid` meta state.
 
 ```js
 import { useIsFormValid } from 'vee-validate';
@@ -192,7 +187,6 @@ import { useIsFormValid } from 'vee-validate';
 const isValid = useIsFormValid();
 
 isValid.value; // if form exists: true or false
-isValid.value; // otherwise: undefined
 ```
 
 <doc-tip type="warn">
@@ -203,7 +197,7 @@ You should only use the `valid` state to determine if a field is valid. The oppo
 
 <code-title level="4">
 
-`useValidateField(field?: string): () => Promise<{ errors: string[] }>`
+`useValidateField(field?: string): () => Promise<ValidationResult>`
 
 </code-title>
 
@@ -228,11 +222,11 @@ const validate = useValidateField();
 
 <code-title level="4">
 
-`useValidateForm(): () => Promise<boolean | undefined>`
+`useValidateForm(): () => Promise<FormValidationResult>`
 
 </code-title>
 
-Returns a function that validates the form and returns a `boolean`. If the form doesn't not exist, it will return `undefined` with a warning.
+Returns a function that validates the form and returns a `Form`.
 
 ```js
 import { useValidateForm } from 'vee-validate';
@@ -244,11 +238,11 @@ await validate(); // true or false
 
 <code-title level="4">
 
-`useIsSubmitting(): ComputedRef<boolean | undefined>`
+`useIsSubmitting(): ComputedRef<boolean>`
 
 </code-title>
 
-Returns a computed ref to the form's `isSubmitting` state. If a form does not exist, it will return `undefined` instead of a boolean.
+Returns a computed ref to the form's `isSubmitting` state.
 
 ```js
 import { useIsSubmitting } from 'vee-validate';

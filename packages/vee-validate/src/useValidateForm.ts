@@ -1,4 +1,5 @@
 import { FormSymbol } from './symbols';
+import { FormValidationResult } from './types';
 import { injectWithSelf, warn } from './utils';
 
 /**
@@ -12,7 +13,7 @@ export function useValidateForm() {
 
   return function validateField() {
     if (!form) {
-      return Promise.resolve(undefined);
+      return Promise.resolve({ errors: {}, valid: true } as FormValidationResult<any>);
     }
 
     return form.validate();
