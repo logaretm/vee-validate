@@ -208,7 +208,7 @@ import { useValidateField } from 'vee-validate';
 
 const validate = useValidateField('fieldName');
 
-await validate(); // { errors: [] }
+await validate();
 ```
 
 You can also use it in a child component that has a parent that used `useField`, The `useValidateField` will automatically pick up the field and will return the function that validates it.
@@ -233,7 +233,7 @@ import { useValidateForm } from 'vee-validate';
 
 const validate = useValidateForm();
 
-await validate(); // true or false
+await validate();
 ```
 
 <code-title level="4">

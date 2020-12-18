@@ -380,7 +380,7 @@ Validates all the fields and populates the `errors` object, returns a promise th
 ```js
 const { validate } = useForm();
 
-await validate(); // true or false
+await validate();
 ```
 
 <code-title level="4">
