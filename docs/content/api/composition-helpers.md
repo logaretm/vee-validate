@@ -20,7 +20,7 @@ All of the following code snippets assume you are using them inside a `setup` fu
 
 <code-title level="4">
 
-`useFieldError(field: string): ComputedRef<string | undefined>`
+`useFieldError(field?: string): ComputedRef<string | undefined>`
 
 </code-title>
 
@@ -32,6 +32,16 @@ import { useFieldError } from 'vee-validate';
 const message = useFieldError('fieldName');
 
 message.value; // string or `undefined`
+```
+
+You can also use it in a child component that has a parent that used `useField`, The `useFieldError` will automatically pick up the field and produce its error messages.
+
+```js
+import { useFieldError } from 'vee-validate';
+
+// Will look for the first parent that used `useField`
+const message = useFieldError();
+message.value;
 ```
 
 <code-title level="4">
@@ -52,7 +62,7 @@ message.value; // {}
 
 <code-title level="4">
 
-`useIsFieldDirty(field: string): ComputedRef<boolean | undefined>`
+`useIsFieldDirty(field?: string): ComputedRef<boolean | undefined>`
 
 </code-title>
 
@@ -65,6 +75,15 @@ const isDirty = useIsFieldDirty();
 
 isDirty.value; // if field exists: true or false
 isDirty.value; // otherwise: undefined
+```
+
+You can also use it in a child component that has a parent that used `useField`, The `useIsFieldDirty` will automatically pick up the field and produce its meta `dirty` value
+
+```js
+import { useIsFieldDirty } from 'vee-validate';
+
+// Will look for the first parent that used `useField`
+const isDirty = useIsFieldDirty();
 ```
 
 <code-title level="4">
@@ -86,7 +105,7 @@ isDirty.value; // otherwise: undefined
 
 <code-title level="4">
 
-`useIsFieldTouched(field: string): ComputedRef<boolean | undefined>`
+`useIsFieldTouched(field?: string): ComputedRef<boolean | undefined>`
 
 </code-title>
 
@@ -99,6 +118,15 @@ const isTouched = useIsFieldTouched('fieldName');
 
 isTouched.value; // if form exists: true or false
 isTouched.value; // otherwise: undefined
+```
+
+You can also use it in a child component that has a parent that used `useField`, The `useIsFieldTouched` will automatically pick up the field and produce its meta `touched` value
+
+```js
+import { useIsFieldTouched } from 'vee-validate';
+
+// Will look for the first parent that used `useField`
+const isTouched = useIsFieldTouched();
 ```
 
 <code-title level="4">
@@ -120,7 +148,7 @@ isTouched.value; // otherwise: undefined
 
 <code-title level="4">
 
-`useIsFieldValid(field: string): ComputedRef<boolean>`
+`useIsFieldValid(field?: string): ComputedRef<boolean>`
 
 </code-title>
 
@@ -133,6 +161,15 @@ const isValid = useIsFieldValid('fieldName');
 
 isValid.value; // if form exists: true or false
 isValid.value; // otherwise: undefined
+```
+
+You can also use it in a child component that has a parent that used `useField`, The `useIsFieldValid` will automatically pick up the field and produce its meta `valid` value
+
+```js
+import { useIsFieldValid } from 'vee-validate';
+
+// Will look for the first parent that used `useField`
+const isValid = useIsFieldValid();
 ```
 
 <doc-tip type="warn">
@@ -166,7 +203,7 @@ You should only use the `valid` state to determine if a field is valid. The oppo
 
 <code-title level="4">
 
-`useValidateField(field: string): () => Promise<{ errors: string[] }>`
+`useValidateField(field?: string): () => Promise<{ errors: string[] }>`
 
 </code-title>
 
@@ -178,6 +215,15 @@ import { useValidateField } from 'vee-validate';
 const validate = useValidateField('fieldName');
 
 await validate(); // { errors: [] }
+```
+
+You can also use it in a child component that has a parent that used `useField`, The `useValidateField` will automatically pick up the field and will return the function that validates it.
+
+```js
+import { useValidateField } from 'vee-validate';
+
+// Will look for the first parent that used `useField`
+const validate = useValidateField();
 ```
 
 <code-title level="4">
