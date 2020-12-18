@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.0...vee-validate@4.1.1) (2020-12-18)
+
+
+### Bug Fixes
+
+* missing export for useErrors helpers ([28537cc](https://github.com/logaretm/vee-validate/commit/28537cc547cf945b10adc485620ad226f71d60fc))
+
+
+
+
+
 # [4.1.0](https://github.com/logaretm/vee-validate/compare/vee-validate@4.0.7...vee-validate@4.1.0) (2020-12-18)
 
 
