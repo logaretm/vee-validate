@@ -18,7 +18,7 @@ export function useIsFieldValid(path?: MaybeReactive<string>) {
     if (!field) {
       warn(`field with name ${unref(path)} was not found`);
 
-      return undefined;
+      return false;
     }
 
     return field.meta.valid;

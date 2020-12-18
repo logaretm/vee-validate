@@ -12,6 +12,6 @@ export function useIsFormTouched() {
   }
 
   return computed(() => {
-    return form?.meta.value.touched;
+    return form?.meta.value.touched ?? false;
   });
 }

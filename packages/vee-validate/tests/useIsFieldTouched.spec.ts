@@ -106,7 +106,7 @@ describe('useIsFieldTouched()', () => {
     expect(error?.textContent).toBe('true');
   });
 
-  test('returns undefined and warns if field does not exist', async () => {
+  test('returns false and warns if field does not exist', async () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation();
 
     mountWithHoc({
@@ -119,18 +119,18 @@ describe('useIsFieldTouched()', () => {
         };
       },
       template: `
-      <span>{{ isTouched }}</span>
+      <span>{{ isTouched.toString() }}</span>
     `,
     });
 
     await flushPromises();
     const error = document.querySelector('span');
-    expect(error?.textContent).toBe('');
+    expect(error?.textContent).toBe('false');
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
   });
 
-  test('returns undefined and warns if form does not exist', async () => {
+  test('returns false and warns if form does not exist', async () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation();
 
     mountWithHoc({
@@ -142,13 +142,13 @@ describe('useIsFieldTouched()', () => {
         };
       },
       template: `
-      <span>{{ isTouched }}</span>
+      <span>{{ isTouched.toString() }}</span>
     `,
     });
 
     await flushPromises();
     const error = document.querySelector('span');
-    expect(error?.textContent).toBe('');
+    expect(error?.textContent).toBe('false');
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
   });

@@ -12,6 +12,6 @@ export function useIsSubmitting() {
   }
 
   return computed(() => {
-    return form?.isSubmitting.value;
+    return form?.isSubmitting.value ?? false;
   });
 }

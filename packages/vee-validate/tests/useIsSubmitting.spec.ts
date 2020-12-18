@@ -42,7 +42,7 @@ describe('useIsSubmitting()', () => {
     jest.useRealTimers();
   });
 
-  test('returns undefined and warns if form is not found', async () => {
+  test('returns false and warns if form is not found', async () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation();
     mountWithHoc({
       setup() {
@@ -53,13 +53,13 @@ describe('useIsSubmitting()', () => {
         };
       },
       template: `
-      <span>{{ isSubmitting }}</span>
+      <span>{{ isSubmitting.toString() }}</span>
     `,
     });
 
     await flushPromises();
     const submitText = document.querySelector('span');
-    expect(submitText?.textContent).toBe('');
+    expect(submitText?.textContent).toBe('false');
     expect(console.warn).toHaveBeenCalled();
     spy.mockRestore();
   });

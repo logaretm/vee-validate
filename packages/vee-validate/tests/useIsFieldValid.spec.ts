@@ -107,7 +107,7 @@ describe('useIsFieldValid()', () => {
     expect(span?.textContent).toBe('true');
   });
 
-  test('returns undefined and warns if field is not found', async () => {
+  test('returns false and warns if field is not found', async () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation();
 
     mountWithHoc({
@@ -120,18 +120,18 @@ describe('useIsFieldValid()', () => {
         };
       },
       template: `
-      <span>{{ isValid }}</span>
+      <span>{{ isValid.toString() }}</span>
     `,
     });
 
     await flushPromises();
     const span = document.querySelector('span');
-    expect(span?.textContent).toBe('');
+    expect(span?.textContent).toBe('false');
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
   });
 
-  test('returns undefined and warns if form is not found', async () => {
+  test('returns false and warns if form is not found', async () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation();
 
     mountWithHoc({
@@ -143,13 +143,13 @@ describe('useIsFieldValid()', () => {
         };
       },
       template: `
-      <span>{{ isValid }}</span>
+      <span>{{ isValid.toString() }}</span>
     `,
     });
 
     await flushPromises();
     const span = document.querySelector('span');
-    expect(span?.textContent).toBe('');
+    expect(span?.textContent).toBe('false');
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
   });

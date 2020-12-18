@@ -12,6 +12,6 @@ export function useIsFormDirty() {
   }
 
   return computed(() => {
-    return form?.meta.value.dirty;
+    return form?.meta.value.dirty ?? false;
   });
 }

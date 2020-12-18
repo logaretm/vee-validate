@@ -20,6 +20,7 @@ export function useValidateField(path?: MaybeReactive<string>) {
 
       return Promise.resolve({
         errors: [],
+        valid: true,
       });
     }
 

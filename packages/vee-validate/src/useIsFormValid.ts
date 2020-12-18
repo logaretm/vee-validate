@@ -12,6 +12,6 @@ export function useIsFormValid() {
   }
 
   return computed(() => {
-    return form?.meta.value.valid;
+    return form?.meta.value.valid ?? false;
   });
 }
