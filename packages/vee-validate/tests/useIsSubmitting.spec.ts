@@ -42,7 +42,8 @@ describe('useIsSubmitting()', () => {
     jest.useRealTimers();
   });
 
-  test('returns undefined if form is not found', async () => {
+  test('returns undefined and warns if form is not found', async () => {
+    const spy = jest.spyOn(console, 'warn').mockImplementation();
     mountWithHoc({
       setup() {
         const isSubmitting = useIsSubmitting();
@@ -59,5 +60,7 @@ describe('useIsSubmitting()', () => {
     await flushPromises();
     const submitText = document.querySelector('span');
     expect(submitText?.textContent).toBe('');
+    expect(console.warn).toHaveBeenCalled();
+    spy.mockRestore();
   });
 });
