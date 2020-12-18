@@ -98,7 +98,7 @@ import { useIsFormDirty } from 'vee-validate';
 
 const isDirty = useIsFormDirty();
 
-isDirty.value; // if form exists: true or false
+isDirty.value; // true or false
 ```
 
 <code-title level="4">
@@ -114,7 +114,7 @@ import { useIsFieldTouched } from 'vee-validate';
 
 const isTouched = useIsFieldTouched('fieldName');
 
-isTouched.value; // if form exists: true or false
+isTouched.value; // true or false
 ```
 
 You can also use it in a child component that has a parent that used `useField`, The `useIsFieldTouched` will automatically pick up the field and produce its meta `touched` value
@@ -139,7 +139,7 @@ import { useIsFormTouched } from 'vee-validate';
 
 const isTouched = useIsFormTouched();
 
-isTouched.value; // if form exists: true or false
+isTouched.value; // true or false
 ```
 
 <code-title level="4">
@@ -155,7 +155,7 @@ import { useIsFieldValid } from 'vee-validate';
 
 const isValid = useIsFieldValid('fieldName');
 
-isValid.value; // if form exists: true or false
+isValid.value; // true or false
 ```
 
 You can also use it in a child component that has a parent that used `useField`, The `useIsFieldValid` will automatically pick up the field and produce its meta `valid` value
@@ -186,7 +186,7 @@ import { useIsFormValid } from 'vee-validate';
 
 const isValid = useIsFormValid();
 
-isValid.value; // if form exists: true or false
+isValid.value; // true or false
 ```
 
 <doc-tip type="warn">
@@ -282,4 +282,45 @@ import { useResetForm } from 'vee-validate';
 const resetForm = useResetForm();
 
 resetForm(); // resets the form
+```
+
+<code-title level="4">
+
+`useFieldValue(field?: string): ComputedRef<any>`
+
+</code-title>
+
+Returns a computed ref to the specified field's current value.
+
+```js
+import { useFieldValue } from 'vee-validate';
+
+const currentValue = useFieldValue('fieldName');
+
+currentValue.value;
+```
+
+You can also use it in a child component that has a parent that used `useField`, The `useFieldValue` will automatically pick up the field and produce its current value.
+
+```js
+import { useFieldValue } from 'vee-validate';
+
+// Will look for the first parent that used `useField`
+const currentValue = useFieldValue();
+```
+
+<code-title level="4">
+
+`useFormValues(): ComputedRef<Record<string, any>>`
+
+</code-title>
+
+Returns a computed ref to the context form current values.
+
+```js
+import { useFormValues } from 'vee-validate';
+
+const values = useFormValues();
+
+values.value;
 ```
