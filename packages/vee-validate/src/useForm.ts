@@ -10,6 +10,7 @@ import {
   ValidationResult,
   MaybeReactive,
   FormState,
+  FormValidationResult,
 } from './types';
 import { getFromPath, isYupValidator, keysOf, setInPath, unsetPath } from './utils';
 import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
@@ -306,6 +307,40 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     unsetPath(formValues, fieldName);
   }
 
+  async function validate(): Promise<FormValidationResult<TValues>> {
+    function resultReducer(acc: FormValidationResult<TValues>, result: { key: keyof TValues; errors: string[] }) {
+      if (!result.errors.length) {
+        return acc;
+      }
+
+      acc.valid = false;
+      acc.errors[result.key] = result.errors[0];
+
+      return acc;
+    }
+
+    if (formCtx.validateSchema) {
+      return formCtx.validateSchema(true).then(results => {
+        return keysOf(results)
+          .map(r => ({ key: r, errors: results[r].errors }))
+          .reduce(resultReducer, { errors: {}, valid: true });
+      });
+    }
+
+    const results = await Promise.all(
+      fields.value.map((f: any) => {
+        return f.validate().then((result: ValidationResult) => {
+          return {
+            key: f.name,
+            errors: result.errors,
+          };
+        });
+      })
+    );
+
+    return results.reduce(resultReducer, { errors: {}, valid: true });
+  }
+
   const formCtx: FormContext<TValues> = {
     register: registerField,
     unregister: unregisterField,
@@ -327,22 +362,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setFieldDirty,
     setDirty,
     resetForm,
-  };
-
-  const validate = async () => {
-    if (formCtx.validateSchema) {
-      return formCtx.validateSchema(true).then(results => {
-        return Object.keys(results).every(r => !results[r].errors.length);
-      });
-    }
-
-    const results = await Promise.all(
-      fields.value.map((f: any) => {
-        return f.validate();
-      })
-    );
-
-    return results.every(r => !r.errors.length);
+    validate,
   };
 
   const immutableFormValues = computed<TValues>(() => {
@@ -364,7 +384,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       submitCount.value++;
       return validate()
         .then(result => {
-          if (result && typeof fn === 'function') {
+          if (result.valid && typeof fn === 'function') {
             return fn(immutableFormValues.value, {
               evt: e as SubmitEvent,
               setDirty,
@@ -501,6 +521,7 @@ async function validateYupSchema<TValues>(
     const messages = (errorsByPath[fieldId] || { errors: [] }).errors;
     const fieldResult = {
       errors: messages,
+      valid: !messages.length,
     };
 
     result[fieldId] = fieldResult;

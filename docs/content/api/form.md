@@ -236,11 +236,11 @@ Sets multiple fields `touched` meta flag, does not validate.
 
 <code-title level="4">
 
-`validate: () => Promise<boolean>`
+`validate: () => Promise<{ valid: boolean; errors: Record<string, string>}>`
 
 </code-title>
 
-Validates all the fields and populates the `errors` object, returns a promise that resolves to a boolean indicating if the validation was successful or not
+Validates all the fields and populates the `errors` object, returns a promise that resolves to an object containing aggregated validation result of all fields.
 
 <code-title level="4">
 

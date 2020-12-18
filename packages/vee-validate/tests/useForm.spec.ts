@@ -1,6 +1,7 @@
 import flushPromises from 'flush-promises';
 import { useField, useForm } from '@/vee-validate';
 import { mountWithHoc } from './helpers';
+import * as yup from 'yup';
 
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -188,5 +189,61 @@ describe('useForm()', () => {
     expect(meta[0]?.textContent).toBe('true');
     expect(meta[1]?.textContent).toBe('false');
     expect(meta[2]?.textContent).toBe('true');
+  });
+
+  test('has a validate() method that returns an aggregate of validation results using field rules', async () => {
+    let validate: any;
+    mountWithHoc({
+      setup() {
+        const form = useForm();
+        validate = form.validate;
+        useField('field1', val => (val ? true : REQUIRED_MESSAGE));
+        useField('field2', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    const result = await validate();
+    expect(result).toEqual({
+      valid: false,
+      errors: {
+        field1: REQUIRED_MESSAGE,
+        field2: REQUIRED_MESSAGE,
+      },
+    });
+  });
+
+  test('has a validate() method that returns an aggregate of validation results using validation schema', async () => {
+    let validate: any;
+    mountWithHoc({
+      setup() {
+        const form = useForm({
+          validationSchema: yup.object().shape({
+            field1: yup.string().required(REQUIRED_MESSAGE),
+            field2: yup.string().required(REQUIRED_MESSAGE),
+          }),
+        });
+
+        validate = form.validate;
+        useField('field1');
+        useField('field2');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    const result = await validate();
+    expect(result).toEqual({
+      valid: false,
+      errors: {
+        field1: REQUIRED_MESSAGE,
+        field2: REQUIRED_MESSAGE,
+      },
+    });
   });
 });

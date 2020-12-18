@@ -56,7 +56,7 @@ type useForm = (
   setErrors: (fields: Record<string, string>) => void; // Sets error messages for fields
   setFieldValue: (field: string, value: any) => void; // Sets a field value
   setValues: (fields: Record<string, any>) => void; // Sets multiple fields values
-  validate: () => Promise<boolean>; // validates the form fields and returns the overall result
+  validate: () => Promise<{ errors: Record<string, string>; valid: boolean; }>; // validates the form fields and returns the overall result
   handleSubmit: (cb: (values: Record<string, any>, ctx: SubmissionContext)) => () => void; // Creates a submission handler that calls the cb only after successful validation with the form values
   submitForm: (e: Event) => void; // Forces submission of a form after successful validation (calls e.target.submit())
   handleReset: () => void; // Resets all fields' errors and meta and their values
@@ -371,11 +371,11 @@ setTouched({
 
 <code-title level="4">
 
-`validate: () => Promise<boolean>`
+`validate: () => Promise<{ valid: boolean; errors: Record<string, string>}>`
 
 </code-title>
 
-Validates all the fields and populates the `errors` object, returns a promise that resolves to a boolean indicating if the validation was successful or not
+Validates all the fields and populates the `errors` object, returns a promise that resolves to an object containing aggregated validation result of all fields.
 
 ```js
 const { validate } = useForm();

@@ -44,6 +44,7 @@ export async function validate(
 
   return {
     errors,
+    valid: !errors.length,
   };
 }
 

@@ -3,6 +3,7 @@ import { ObjectSchema } from 'yup';
 
 export interface ValidationResult {
   errors: string[];
+  valid: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -53,6 +54,11 @@ export interface FormActions<TValues> {
   resetForm: (state?: Partial<FormState<TValues>>) => void;
 }
 
+export interface FormValidationResult<TValues> {
+  errors: Partial<Record<keyof TValues, string>>;
+  valid: boolean;
+}
+
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
   register(field: any): void;
   unregister(field: any): void;
@@ -61,6 +67,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   submitCount: Ref<number>;
   schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | ObjectSchema<TValues>;
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
+  validate(): Promise<FormValidationResult<TValues>>;
 }
 
 interface SubmissionContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {

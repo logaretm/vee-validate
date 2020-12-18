@@ -75,6 +75,7 @@ interface FieldOptions {
 
 interface ValidationResult {
   errors: string[];
+  valid: boolean;
 }
 
 interface FieldState {
