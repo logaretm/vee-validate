@@ -31,7 +31,9 @@ describe('useIsFormTouched()', () => {
     expect(error?.textContent).toBe('true');
   });
 
-  test('returns undefined if form is not found', async () => {
+  test('returns undefined and warns if form is not found', async () => {
+    const spy = jest.spyOn(console, 'warn').mockImplementation();
+
     mountWithHoc({
       setup() {
         const isTouched = useIsFormTouched();
@@ -48,5 +50,7 @@ describe('useIsFormTouched()', () => {
     await flushPromises();
     const error = document.querySelector('span');
     expect(error?.textContent).toBe('');
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
   });
 });

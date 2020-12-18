@@ -31,7 +31,9 @@ describe('useIsFormDirty()', () => {
     expect(error?.textContent).toBe('true');
   });
 
-  test('returns undefined if form is not found', async () => {
+  test('returns undefined and warns if form is not found', async () => {
+    const spy = jest.spyOn(console, 'warn').mockImplementation();
+
     mountWithHoc({
       setup() {
         const isDirty = useIsFormDirty();
@@ -49,5 +51,7 @@ describe('useIsFormDirty()', () => {
 
     await flushPromises();
     expect(error?.textContent).toBe('');
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
   });
 });

@@ -6,10 +6,12 @@ import { injectWithSelf, warn } from './utils';
  */
 export function useValidateForm() {
   const form = injectWithSelf(FormSymbol);
+  if (!form) {
+    warn('No vee-validate <Form /> or `useForm` was detected in the component tree');
+  }
 
   return function validateField() {
     if (!form) {
-      warn('No form context was detected, undefined is returned');
       return Promise.resolve(undefined);
     }
 

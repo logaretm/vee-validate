@@ -4,10 +4,12 @@ import { injectWithSelf, warn } from './utils';
 
 export function useResetForm<TValues = Record<string, any>>() {
   const form = injectWithSelf(FormSymbol);
+  if (!form) {
+    warn('No vee-validate <Form /> or `useForm` was detected in the component tree');
+  }
 
   return function resetForm(state?: Partial<FormState<TValues>>) {
     if (!form) {
-      warn('No form context was detected');
       return;
     }
 

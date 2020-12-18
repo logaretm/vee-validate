@@ -32,7 +32,9 @@ describe('useFormErrors()', () => {
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
 
-  test('returns empty object if form is not found', async () => {
+  test('returns empty object and warns if form is not found', async () => {
+    const spy = jest.spyOn(console, 'warn').mockImplementation();
+
     mountWithHoc({
       setup() {
         const messages = useFormErrors();
@@ -49,5 +51,7 @@ describe('useFormErrors()', () => {
     await flushPromises();
     const error = document.querySelector('span');
     expect(error?.textContent).toBe('{}');
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
   });
 });
