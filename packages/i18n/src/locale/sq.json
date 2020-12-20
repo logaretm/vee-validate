@@ -13,7 +13,7 @@
     "excluded": "Vlera {field} duhet të jetë vlerë valide",
     "ext": "{field} duhet të jetë fajll valid",
     "image": "{field} duhet të jetë fotografi",
-    "oneOf": "Vlera {field} duhet të jetë vlerë valide",
+    "one_of": "Vlera {field} duhet të jetë vlerë valide",
     "max": "{field} nuk duhet të jetë më i gjatë se 0:{length} karaktere",
     "max_value": "Vlera {field} duhet të jetë 0:{max} ose më e vogël",
     "mimes": "{field} duhet të përmbaj llojin e fajllit valid",

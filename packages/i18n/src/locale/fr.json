@@ -21,7 +21,7 @@
     "min_value": "Le champ {field} doit avoir une valeur de 0:{min} ou plus",
     "min": "Le champ {field} doit contenir au minimum 0:{length} caractères",
     "numeric": "Le champ {field} ne peut contenir que des chiffres",
-    "oneOf": "Le champ {field} doit être une valeur valide",
+    "one_of": "Le champ {field} doit être une valeur valide",
     "regex": "Le champ {field} est invalide",
     "required": "Le champ {field} est obligatoire",
     "required_if": "Le champ {field} est obligatoire lorsque {target} possède cette valeur",

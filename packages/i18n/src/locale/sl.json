@@ -13,7 +13,7 @@
     "excluded": "Polje {field} mora biti ustrezne vrednosti",
     "ext": "Datoteka polja {field} mora biti ustrezna",
     "image": "Datoteka polja {field} mora biti slika",
-    "oneOf": "Polje {field} mora biti ustrezne vrednosti",
+    "one_of": "Polje {field} mora biti ustrezne vrednosti",
     "max": "Dolžina polja {field} ne sme biti večja od 0:{length} znakov",
     "max_value": "Vrednost polja {field} mora biti 0:{max} ali manj",
     "mimes": "Datoteka polja {field} mora biti ustreznega tipa",

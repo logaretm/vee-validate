@@ -22,7 +22,7 @@
     "min_value": "{field}は{min}以上でなければなりません",
     "min": "{field}は{length}文字以上でなければなりません",
     "numeric": "{field}は数字のみ使用できます",
-    "oneOf": "{field}は有効な値ではありません",
+    "one_of": "{field}は有効な値ではありません",
     "regex": "{field}のフォーマットが正しくありません",
     "required": "{field}は必須項目です",
     "required_if": "{field}は必須項目です",

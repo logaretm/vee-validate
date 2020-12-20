@@ -19,7 +19,7 @@
     "min_value": "{field} peab olema 0:{min} või suurem",
     "min": "{field} peab olema vähemalt 0:{length} tähemärki pikk",
     "numeric": "{field} võib sisaldada ainult numbreid",
-    "oneOf": "{field} ei oma sobivat väärtust",
+    "one_of": "{field} ei oma sobivat väärtust",
     "regex": "{field} pole sobival kujul",
     "required": "{field} on nõutud väli",
     "required_if": "{field} on nõutud väli",

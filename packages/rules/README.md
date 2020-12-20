@@ -61,7 +61,7 @@ Object.keys(rules).forEach(rule => {
 - excluded
 - ext
 - image
-- oneOf
+- one_of
 - integer
 - is
 - is_not

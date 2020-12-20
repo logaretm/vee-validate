@@ -13,7 +13,7 @@
     "excluded": "Položka {field} má nesprávnu hodnotu",
     "ext": "{field} nie je platný súbor",
     "image": "{field} nie je obrázok",
-    "oneOf": "Položka {field} má nesprávnu hodnotu",
+    "one_of": "Položka {field} má nesprávnu hodnotu",
     "max": "Položka {field} môže obsahovať najviac 0:{length} znakov",
     "max_value": "Položka {field} musí byť maximálne 0:{max}",
     "mimes": "Položka {field} obsahuje nesprávny typ súboru",

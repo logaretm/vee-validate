@@ -13,7 +13,7 @@
     "excluded": "{field} perlulah sah",
     "ext": "{field} perlulah dalam format fail yang sah",
     "image": "{field} perlulah dalam bentuk imej",
-    "oneOf": "{field} perlulah dalam nilai yang sah",
+    "one_of": "{field} perlulah dalam nilai yang sah",
     "integer": "{field} perlulah dalam bentuk integer",
     "length": "Panjang {field} perlulah bernilai 0:{length}",
     "max": "{field} perlulah tidak melebihi 0:{length} karakter",

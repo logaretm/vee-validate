@@ -19,7 +19,7 @@
     "min_value": "Vrijednost {field} mora biti 0:{min} ili više",
     "min": "{field} mora biti barem 0:{length} znakova",
     "numeric": "{field} može sadrživati samo numeričke znakove",
-    "oneOf": "Vrijednost {field} mora biti važeća vrijednost",
+    "one_of": "Vrijednost {field} mora biti važeća vrijednost",
     "regex": "Oblik {field} nije važeći",
     "required": "Polje {field} je obavezno",
     "required_if": "Polje {field} je obavezno",

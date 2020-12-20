@@ -21,7 +21,7 @@
     "min_value": "{field}항목의 값은 0:{min} 이상이어야 합니다",
     "min": "{field}항목의 값은 최소 0:{length}글자이어야 합니다",
     "numeric": "{field}항목에는 숫자만 사용 가능합니다",
-    "oneOf": "{field}항목의 값은 유효한 값이어야 합니다",
+    "one_of": "{field}항목의 값은 유효한 값이어야 합니다",
     "regex": "{field}항목은 형식에 맞지 않습니다",
     "required": "{field}항목은 필수 정보입니다",
     "required_if": "{field}항목은 필수 정보입니다",

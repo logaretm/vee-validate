@@ -13,7 +13,7 @@
     "excluded": "{field} muss ein gültiger Wert sein",
     "ext": "{field} muss eine gültige Datei sein",
     "image": "{field} muss eine Grafik sein",
-    "oneOf": "{field} muss ein gültiger Wert sein",
+    "one_of": "{field} muss ein gültiger Wert sein",
     "integer": "{field} muss eine ganze Zahl sein",
     "length": "Die Länge von {field} muss 0:{length} sein",
     "max": "{field} darf nicht länger als 0:{length} Zeichen sein",

@@ -21,7 +21,7 @@
     "min_value": "Nilai {field} tidak boleh kurang dari 0:{min}",
     "min": "{field} minimal mengandung 0:{length} karakter",
     "numeric": "{field} harus berupa angka",
-    "oneOf": "{field} harus berupa nilai yang sah",
+    "one_of": "{field} harus berupa nilai yang sah",
     "regex": "Format {field} salah",
     "required": "{field} harus diisi",
     "required_if": "{field} harus diisi",

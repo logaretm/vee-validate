@@ -20,7 +20,7 @@
     "min_value": "{field} göstəricisi minimum 0:{min} və ya daha çox olmalıdır",
     "min": "{field} uzunluğu ən az 0:{length} simvoldan ibarət olmalıdır",
     "numeric": "{field} yalnız rəqəmlərdən ibarət olmalıdır",
-    "oneOf": "{field} göstəricisi yalnışdır",
+    "one_of": "{field} göstəricisi yalnışdır",
     "regex": "{field} formatı yalnışdır",
     "required": "{field} əlavə etmək zəruridir",
     "required_if": "{field} əlavə etmək zəruridir",

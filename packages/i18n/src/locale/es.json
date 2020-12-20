@@ -13,7 +13,7 @@
     "excluded": "El campo {field} debe ser un valor válido",
     "ext": "El campo {field} debe ser un archivo válido",
     "image": "El campo {field} debe ser una imagen",
-    "oneOf": "El campo {field} debe ser un valor válido",
+    "one_of": "El campo {field} debe ser un valor válido",
     "integer": "El campo {field} debe ser un entero",
     "length": "El largo del campo {field} debe ser 0:{length}",
     "max": "El campo {field} no debe ser mayor a 0:{length} caracteres",

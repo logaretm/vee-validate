@@ -15,7 +15,7 @@
     "image": "Fältet {field} måste vara en bildfil",
     "integer": "Fältet {field} måste vara ett heltal",
     "length": "Fältet {field} måste vara 0:{length} långt",
-    "oneOf": "Fältet {field} måste vara ett godkänt alternativ",
+    "one_of": "Fältet {field} måste vara ett godkänt alternativ",
     "max": "Fältet {field} får inte vara längre än 0:{length} tecken",
     "mimes": "Fältet {field} måste ha en filändelse",
     "min": "Fältet {field} måste minst vara 0:{length} tecken",

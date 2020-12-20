@@ -13,7 +13,7 @@
     "excluded": "{field} is ongeldig",
     "ext": "{field} moet een geldig bestand zijn",
     "image": "{field} moet een afbeelding zijn",
-    "oneOf": "{field} moet een geldige waarde zijn",
+    "one_of": "{field} moet een geldige waarde zijn",
     "max": "{field} mag niet groter zijn dan 0:{length} karakters",
     "max_value": "{field} mag maximaal 0:{max} zijn",
     "mimes": "{field} moet een geldig bestandstype hebben",

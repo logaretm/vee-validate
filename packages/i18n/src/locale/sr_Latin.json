@@ -13,7 +13,7 @@
     "excluded": "Polje {field} mora imati validnu vrednost",
     "ext": "Polje {field} mora biti validan fajl",
     "image": "Polje {field} mora biti slika",
-    "oneOf": "Polje {field} mora biti validna vrednost",
+    "one_of": "Polje {field} mora biti validna vrednost",
     "max": "Polje {field} ne sme biti duže od 0:{length} karaktera",
     "max_value": "Polje {field} ne sme biti veće od 0:{max}",
     "mimes": "Polje {field} mora biti validan tip fajla",

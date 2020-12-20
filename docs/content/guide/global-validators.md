@@ -332,7 +332,7 @@ Object.keys(rules).forEach(rule => {
   <li><a href="#excluded">excluded</a></li>
   <li><a href="#ext">ext</a></li>
   <li><a href="#image">image</a></li>
-  <li><a href="#oneof">oneOf</a></li>
+  <li><a href="#one_of">one_of</a></li>
   <li><a href="#integer">integer</a></li>
   <li><a href="#is">is</a></li>
   <li><a href="#is-not">is_not</a></li>
@@ -690,19 +690,19 @@ The field under validation must only consist of numbers.
 <Field name="field" :rules="{ numeric: true }" />
 ```
 
-#### oneOf
+#### one_of
 
 The field under validation must have a value that is in the specified list. **Uses double equals** for checks.
 
 ```vue
 <!-- string format -->
-<Field name="field" rules="oneOf:1,2,3" />
+<Field name="field" rules="one_of:1,2,3" />
 
 <!-- object format -->
-<Field name="field" :rules="{ oneOf: [1, 2, 3] }" />
+<Field name="field" :rules="{ one_of: [1, 2, 3] }" />
 ```
 
-`oneOf` takes an infinite number of params, each is a value that is allowed.
+`one_of` takes an infinite number of params, each is a value that is allowed.
 
 #### regex
 

@@ -13,7 +13,7 @@
     "excluded": "{field}-feltet må være en gyldig verdi",
     "ext": "{field}-feltet må være en gyldig fil",
     "image": "{field}-feltet må være et bilde",
-    "oneOf": "{field}-feltet må være en gyldig verdi",
+    "one_of": "{field}-feltet må være en gyldig verdi",
     "max": "{field}-feltet kan ikke være lengre enn 0:{length} tegn",
     "max_value": "{field}-feltet må være 0:{max} eller mindre",
     "mimes": "{field}-feltet må ha en gyldig filtype",

@@ -21,7 +21,7 @@
     "min_value": "Laukā {field} izmanto minimālo vērtību 0:{min} vai lielāku",
     "min": "Laukā {field} jāievada vismaz 0:{length} rakstzīmes",
     "numeric": "Laukā {field} var ievadīt tikai ciparus",
-    "oneOf": "Lauka {field} vērtībai jābūt derīgai",
+    "one_of": "Lauka {field} vērtībai jābūt derīgai",
     "regex": "Lauka {field} formāts nav korekts",
     "required": "Lauks {field} ir obligāti aizpildāms",
     "required_if": "Lauks {field} ir obligāti aizpildāms",

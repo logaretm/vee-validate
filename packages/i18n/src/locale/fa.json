@@ -21,7 +21,7 @@
     "min_value": "مقدار {field} باید 0:{min} یا بیشتر باشد",
     "min": "{field} باید حداقل 0:{length} کارکتر باشد",
     "numeric": "{field} فقط می تواند عددی باشد",
-    "oneOf": "{field} باید یک مقدار معتبر باشد",
+    "one_of": "{field} باید یک مقدار معتبر باشد",
     "regex": "قالب {field} قابل قبول نیست",
     "required_if": "{field} الزامی است",
     "required": "{field} الزامی است",

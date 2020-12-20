@@ -13,7 +13,7 @@
     "excluded": "Câmpul {field} trebuie să conțină o valoare validă",
     "ext": "Câmpul {field} trebuie să fie un nume de fișier valid",
     "image": "Câmpul {field} trebuie să fie o imagine",
-    "oneOf": "Câmpul {field} trebuie să conțină o valoare validă",
+    "one_of": "Câmpul {field} trebuie să conțină o valoare validă",
     "max": "Câmpul {field} nu poate conține mai mult de 0:{length} caractere",
     "max_value": "Valoarea câmpului {field} trebuie să fie maxim 0:{max}",
     "mimes": "Câmpul {field} trebuie să conțină un fișier cu extensie validă",

@@ -16,7 +16,7 @@
     "mimes": "{field} tulee olla kelvollinen tiedostotyyppi",
     "min": "{field} tulee olla vähintään 0:{length} merkkiä",
     "numeric": "{field} voi sisältää vain numeroita",
-    "oneOf": "{field} tulee olla kelvollinen arvo",
+    "one_of": "{field} tulee olla kelvollinen arvo",
     "regex": "{field} tulee olla kelvollinen säännöllinen lauseke",
     "required": "{field} on pakollinen kenttä",
     "required_if": "{field} on pakollinen kenttä",

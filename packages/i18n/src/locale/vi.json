@@ -13,7 +13,7 @@
     "excluded": "{field} phải chứa một giá trị hợp lệ",
     "ext": "{field} phải là một tệp",
     "image": "Trường {field} phải là một ảnh",
-    "oneOf": "{field} phải là một giá trị",
+    "one_of": "{field} phải là một giá trị",
     "max": "{field} không thể có nhiều hơn 0:{length} kí tự",
     "max_value": "{field} phải nhỏ hơn hoặc bằng 0:{max}",
     "mimes": "{field} phải chứa kiểu tệp phù hợp",

@@ -19,7 +19,7 @@
     "min_value": "Pole {field} musí být 0:{min}, nebo více",
     "min": "Pole {field} musí obsahovat alespoň 0:{length} znaků",
     "numeric": "Pole {field} může obsahovat pouze číslice",
-    "oneOf": "{field} musí být správná hodnota",
+    "one_of": "{field} musí být správná hodnota",
     "regex": "Pole {field} není vyplněno správně",
     "required": "Pole {field} je povinné",
     "required_if": "Pole {field} je povinné",

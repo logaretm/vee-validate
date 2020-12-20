@@ -21,7 +21,7 @@
     "min_value": "{field} eremuak 0:{min} edo gehiago izan behar du",
     "min": "{field} eremuak gutxienez 0:{length} karaktere izan behar ditu",
     "numeric": "{field} eremuak zenbakizko karaktereak soilik izan ditzake",
-    "oneOf": "{field} eremuak baliozko balio bat izan behar du",
+    "one_of": "{field} eremuak baliozko balio bat izan behar du",
     "regex": "{field} eremuaren formatua baliogabea da",
     "required": "{field} eremua derrigorrezkoa da",
     "required_if": "{field} eremua derrigorrezkoa da",

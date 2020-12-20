@@ -19,7 +19,7 @@
     "min_value": "El camp {field} ha de ser de 0:{min} o superior",
     "min": "El camp {field} ha de tenir almenys 0:{length} caràcters",
     "numeric": "El camp {field} ha de contenir només caràcters numèrics",
-    "oneOf": "El camp {field} ha de ser un valor vàlid",
+    "one_of": "El camp {field} ha de ser un valor vàlid",
     "regex": "El format del camp {field} no és vàlid",
     "required": "El camp {field} és obligatori",
     "required_if": "El camp {field} és obligatori",

@@ -13,7 +13,7 @@
     "excluded": "A(z) {field} értéke érvénytelen",
     "ext": "A(z) {field} nem érvényes fájl",
     "image": "A(z) {field} képfálj kell, hogy legyen",
-    "oneOf": "A kiválaszott {field} érvénytelen",
+    "one_of": "A kiválaszott {field} érvénytelen",
     "max": "A(z) {field} értéke nem lehet hosszabb mint 0:{length}",
     "max_value": "A(z) {field} értéke 0:{max} vagy kevesebb lehet",
     "mimes": "A(z) {field} kizárólag érvényes fájlformátumok egyike lehet",

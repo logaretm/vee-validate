@@ -17,7 +17,7 @@
     "mimes": "{field} skal være en gyldig filtype",
     "min": "{field} skal minimum være 0:{length} karakterer",
     "numeric": "{field} skal være numerisk",
-    "oneOf": "{field} skal være en gyldig værdi",
+    "one_of": "{field} skal være en gyldig værdi",
     "regex": "{field} skal have et gyldigt format",
     "required": "{field} skal udfyldes",
     "required_if": "{field} skal udfyldes",

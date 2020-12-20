@@ -13,7 +13,7 @@
     "excluded": "Pole {field} musi być poprawną wartością",
     "ext": "Plik {field} musi być poprawnym plikiem",
     "image": "Pole {field} musi być obrazem",
-    "oneOf": "Pole {field} musi być poprawną wartością",
+    "one_of": "Pole {field} musi być poprawną wartością",
     "integer": "Pole {field} musi być liczbą całkowitą",
     "length": "Pole {field} musi mieć długość 0:{length}",
     "max": "Pole {field} nie może być dłuższe niż 0:{length}",

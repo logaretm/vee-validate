@@ -13,7 +13,7 @@
     "excluded": "{field} reikšmė nėra leidžiama",
     "ext": "{field} turi būti tinkamas failas",
     "image": "{field} turi būti paveikslėlis",
-    "oneOf": "{field} reikšmė nėra leidžiama",
+    "one_of": "{field} reikšmė nėra leidžiama",
     "max": "{field} negali būti ilgesnis nei 0:{length}",
     "max_value": "{field} turi būti 0:{max} arba mažiau",
     "mimes": "{field}  privalo turėti tinkmą failo tipą",

@@ -13,7 +13,7 @@
     "excluded": "{field}不是一个有效值",
     "ext": "{field}不是一个有效的文件",
     "image": "{field}不是一张有效的图片",
-    "oneOf": "{field}不是一个有效值",
+    "one_of": "{field}不是一个有效值",
     "integer": "{field}必须是整数",
     "length": "{field}长度必须为0:{length}",
     "max": "{field}不能超过0:{length}个字符",

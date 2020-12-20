@@ -21,7 +21,7 @@
     "min_value": "The {field} field must be 0:{min} or more",
     "min": "The {field} field must be at least 0:{length} characters",
     "numeric": "The {field} field may only contain numeric characters",
-    "oneOf": "The {field} field is not a valid value",
+    "one_of": "The {field} field is not a valid value",
     "regex": "The {field} field format is invalid",
     "required_if": "The {field} field is required",
     "required": "The {field} field is required",
