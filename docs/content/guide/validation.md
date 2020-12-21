@@ -225,12 +225,12 @@ This is only relevant to the `<Field />` and `<Form />` components
 
 By default vee-validate adds multiple event listeners to your fields:
 
-- **input:** Adds a `handleInput` handler that updates the `meta.dirty` flag.
+- **input:** Adds a `handleInput` handler that updates the `meta.dirty` flag and updates the field value.
 - **change:** Adds a `handleInput` handler just like the input event but also adds a `handleChange` event that updates the field value and validates the field
-- **blur:** Adds a `handleBlur` handler that updates the `meta.touched` flag, and validates the field (does not update the value)
+- **blur:** Adds a `handleBlur` handler that updates the `meta.touched` flag.
 - **update:modelValue** Adds a `handleChange` handler to components emitting the `update:modelValue` event
 
-Notice that in all of these, the `handleChange` handler is the only one that triggers validation. This is because its the handler responsible for updating the value, which then triggers a validation check. You can configure whether the `handleChange` is added to any of these fields by using the `configure` helper:
+Notice that in all of these, the `handleChange` handler is the only one that triggers validation. You can configure if a handler should validate by using the `configure` helper:
 
 ```js
 import { configure } from 'vee-validate';
@@ -278,8 +278,6 @@ handleChange(newValue);
 ```
 
 </doc-tip>
-
-This is slightly verbose, but this gives you exact control on which events triggers validation.
 
 `useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. It gives you everything you need to setup your own validation experience.
 
