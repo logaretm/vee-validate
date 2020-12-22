@@ -1,5 +1,5 @@
 import { computed, inject, unref } from 'vue';
-import { FieldContext, FormSymbol } from './symbols';
+import { FieldContextSymbol, FormContextSymbol } from './symbols';
 import { MaybeReactive } from './types';
 import { getFromPath, injectWithSelf } from './utils';
 
@@ -7,9 +7,9 @@ import { getFromPath, injectWithSelf } from './utils';
  * Gives access to a field's current value
  */
 export function useFieldValue<TValue = any>(path?: MaybeReactive<string>) {
-  const form = injectWithSelf(FormSymbol);
+  const form = injectWithSelf(FormContextSymbol);
   // We don't want to use self injected context as it doesn't make sense
-  const field = path ? undefined : inject(FieldContext);
+  const field = path ? undefined : inject(FieldContextSymbol);
 
   return computed(() => {
     if (path) {

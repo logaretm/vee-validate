@@ -1,5 +1,5 @@
 import { computed, inject, unref } from 'vue';
-import { FieldContext, FormErrorsSymbol } from './symbols';
+import { FieldContextSymbol, FormErrorsSymbol } from './symbols';
 import { MaybeReactive } from './types';
 import { injectWithSelf } from './utils';
 
@@ -9,7 +9,7 @@ import { injectWithSelf } from './utils';
 export function useFieldError(path?: MaybeReactive<string>) {
   const errors = injectWithSelf(FormErrorsSymbol);
   // We don't want to use self injected context as it doesn't make sense
-  const field = path ? undefined : inject(FieldContext);
+  const field = path ? undefined : inject(FieldContextSymbol);
 
   return computed(() => {
     if (path) {

@@ -1,9 +1,9 @@
-import { FormSymbol } from './symbols';
+import { FormContextSymbol } from './symbols';
 import { FormState } from './types';
 import { injectWithSelf, warn } from './utils';
 
 export function useResetForm<TValues extends Record<string, any> = Record<string, any>>() {
-  const form = injectWithSelf(FormSymbol);
+  const form = injectWithSelf(FormContextSymbol);
   if (!form) {
     warn('No vee-validate <Form /> or `useForm` was detected in the component tree');
   }

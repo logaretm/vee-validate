@@ -24,7 +24,7 @@ import {
   injectWithSelf,
 } from './utils';
 import { isCallable } from '../../shared';
-import { FieldContext, FormInitialValues, FormSymbol } from './symbols';
+import { FieldContextSymbol, FormInitialValuesSymbol, FormContextSymbol } from './symbols';
 
 interface FieldOptions {
   initialValue: any;
@@ -64,7 +64,7 @@ export function useField(name: MaybeReactive<string>, rules?: RuleExpression, op
     uncheckedValue,
   } = normalizeOptions(unref(name), opts);
 
-  const form = injectWithSelf(FormSymbol);
+  const form = injectWithSelf(FormContextSymbol);
   const {
     meta,
     errors,
@@ -175,7 +175,7 @@ export function useField(name: MaybeReactive<string>, rules?: RuleExpression, op
     setDirty,
   };
 
-  provide(FieldContext, field);
+  provide(FieldContextSymbol, field);
 
   if (isRef(rules) && typeof unref(rules) !== 'function') {
     watch(rules, validate, {
@@ -271,7 +271,7 @@ function useValidationState({
   valueProp: any;
 }) {
   const errors: Ref<string[]> = ref([]);
-  const formInitialValues = injectWithSelf(FormInitialValues, undefined);
+  const formInitialValues = injectWithSelf(FormInitialValuesSymbol, undefined);
   const initialValue = getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
   const { resetMeta, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);

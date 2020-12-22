@@ -13,7 +13,7 @@ import {
   FormValidationResult,
 } from './types';
 import { getFromPath, isYupValidator, keysOf, setInPath, unsetPath } from './utils';
-import { FormErrorsSymbol, FormInitialValues, FormSymbol } from './symbols';
+import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?:
@@ -441,7 +441,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   });
 
   // Provide injections
-  provide(FormSymbol, formCtx as FormContext);
+  provide(FormContextSymbol, formCtx as FormContext);
   provide(FormErrorsSymbol, errors);
 
   return {
@@ -599,7 +599,7 @@ function useFormInitialValues<TValues extends Record<string, any>>(
     );
   }
 
-  provide(FormInitialValues, computedInitials);
+  provide(FormInitialValuesSymbol, computedInitials);
 
   return {
     initialValues: computedInitials,
