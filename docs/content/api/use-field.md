@@ -348,9 +348,7 @@ export default {
 
 </code-title>
 
-Validates the field by default unless explicitly [specified by validation triggers](/guide/validation#customizing-validation-triggers). Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
-
-It sets the `touched` meta flag to `true`
+Sets the `touched` meta flag to `true`
 
 ```vue
 <template>
@@ -369,8 +367,6 @@ export default {
 };
 </script>
 ```
-
-Because this event doesn't set the field value, it might not report validation correctly if other events are unspecified or disabled.
 
 <code-title level="4">
 
