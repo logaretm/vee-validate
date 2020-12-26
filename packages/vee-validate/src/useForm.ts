@@ -341,40 +341,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     return results.reduce(resultReducer, { errors: {}, valid: true });
   }
 
-  const formCtx: FormContext<TValues> = {
-    register: registerField,
-    unregister: unregisterField,
-    fields: fieldsById,
-    values: formValues,
-    schema: opts?.validationSchema,
-    submitCount,
-    validateSchema: isYupValidator(opts?.validationSchema)
-      ? (shouldMutate = false) => {
-          return validateYupSchema(formCtx, shouldMutate);
-        }
-      : undefined,
-    validate,
-    setFieldValue,
-    setValues,
-    setErrors,
-    setFieldError,
-    setFieldTouched,
-    setTouched,
-    setFieldDirty,
-    setDirty,
-    resetForm,
-    meta,
-    isSubmitting,
-  };
-
-  const immutableFormValues = computed<TValues>(() => {
-    return fields.value.reduce((formData: Record<keyof TValues, any>, field) => {
-      setInPath(formData, field.name, unref(field.value));
-
-      return formData;
-    }, {});
-  });
-
   const handleSubmit = (fn?: SubmissionHandler<TValues>) => {
     return function submissionHandler(e: unknown) {
       if (e instanceof Event) {
@@ -415,9 +381,44 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     };
   };
 
+  const formCtx: FormContext<TValues> = {
+    register: registerField,
+    unregister: unregisterField,
+    fields: fieldsById,
+    values: formValues,
+    schema: opts?.validationSchema,
+    submitCount,
+    validateSchema: isYupValidator(opts?.validationSchema)
+      ? (shouldMutate = false) => {
+          return validateYupSchema(formCtx, shouldMutate);
+        }
+      : undefined,
+    validate,
+    setFieldValue,
+    setValues,
+    setErrors,
+    setFieldError,
+    setFieldTouched,
+    setTouched,
+    setFieldDirty,
+    setDirty,
+    resetForm,
+    meta,
+    isSubmitting,
+    handleSubmit,
+  };
+
+  const immutableFormValues = computed<TValues>(() => {
+    return fields.value.reduce((formData: Record<keyof TValues, any>, field) => {
+      setInPath(formData, field.name, unref(field.value));
+
+      return formData;
+    }, {});
+  });
+
   const submitForm = handleSubmit((_, { evt }) => {
     if (evt) {
-      evt?.target?.submit();
+      evt?.target?.submit?.();
     }
   });
 

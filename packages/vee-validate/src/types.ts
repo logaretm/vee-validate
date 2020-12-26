@@ -59,6 +59,15 @@ export interface FormValidationResult<TValues> {
   valid: boolean;
 }
 
+interface SubmissionContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
+  evt: SubmitEvent;
+}
+
+export type SubmissionHandler<TValues extends Record<string, any> = Record<string, any>> = (
+  values: TValues,
+  ctx: SubmissionContext<TValues>
+) => any;
+
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
   register(field: any): void;
   unregister(field: any): void;
@@ -76,13 +85,5 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     initialValues: TValues;
   }>;
   isSubmitting: Ref<boolean>;
+  handleSubmit(cb: SubmissionHandler<TValues>): (e?: SubmitEvent) => Promise<void>;
 }
-
-interface SubmissionContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
-  evt: SubmitEvent;
-}
-
-export type SubmissionHandler<TValues extends Record<string, any> = Record<string, any>> = (
-  values: TValues,
-  ctx: SubmissionContext<TValues>
-) => any;
