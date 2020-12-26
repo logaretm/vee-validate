@@ -1,7 +1,6 @@
 import flushPromises from 'flush-promises';
-import { useField, useForm } from '@/vee-validate';
+import { useField, useForm, useResetForm } from '@/vee-validate';
 import { mountWithHoc, setValue } from './helpers';
-import { useResetForm } from '../src/useResetForm';
 
 describe('useResetForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
