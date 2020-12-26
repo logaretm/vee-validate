@@ -190,6 +190,7 @@ Here is a list of the functions available that you can use:
 - `useValidateField` Returns a function that validates a specific field
 - `useValidateForm` Returns a function that validates the entire form
 - `useResetForm` Resets the form to its initial state
+- `useSubmitForm` Creates a submission function that validates and submits the form (even if no `form` element is involved)
 - `useIsSubmitting` If the form is currently submitting
 - `useSubmitCount` The number of times the user attempted to submit the form
 - `useFieldValue` Returns a specific fields' current value

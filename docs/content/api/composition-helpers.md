@@ -286,6 +286,41 @@ resetForm(); // resets the form
 
 <code-title level="4">
 
+`useSubmitForm(cb: SubmissionHandler): () => void`
+
+</code-title>
+
+Returns a function that you can use to validate the form and submit if it turns out valid. It does this by accepting a function that should handle the submission logic like sending data to your API. That function will not run unless the form is valid and it receives all the fields current values packed in an object.
+
+```js
+import { useSubmitForm } from 'vee-validate';
+
+const submitForm = useSubmitForm((values, actions) => {
+  // Send data to your api ...
+  alert(JSON.stringify(values, null, 2));
+
+  // You can perform any of the form actions using the actions object
+  // set a single field value
+  actions.setFieldValue('field', 'hello');
+  // set multiple fields values
+  actions.setValues({ email: 'value', password: 'hi' });
+  // set a single field error
+  actions.setFieldError('field', 'this field is bad');
+  // set multiple fields errors
+  actions.setErrors({ email: 'bad email', password: 'bad password' });
+  // reset the form
+  actions.resetForm();
+});
+```
+
+<doc-tip title="Virtual Forms">
+
+While it is recommended to use actual `form` elements for accessibility, you could still use `useSubmitForm` to submit any group of data which may or may not be involved with a `form` element.
+
+</doc-tip>
+
+<code-title level="4">
+
 `useFieldValue(field?: string): ComputedRef<any>`
 
 </code-title>
