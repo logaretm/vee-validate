@@ -1,13 +1,4 @@
-import {
-  h,
-  defineComponent,
-  nextTick,
-  toRef,
-  SetupContext,
-  resolveDynamicComponent,
-  ExtractPropTypes,
-  computed,
-} from 'vue';
+import { h, defineComponent, nextTick, toRef, SetupContext, resolveDynamicComponent, computed } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, isFileInput } from './utils';
