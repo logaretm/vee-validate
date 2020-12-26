@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.2](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.1...vee-validate@4.1.2) (2020-12-26)
+
+
+### Features
+
+* added useSubmitForm hook ([#3101](https://github.com/logaretm/vee-validate/issues/3101)) ([d042882](https://github.com/logaretm/vee-validate/commit/d04288295a090328f7022641799dbaee1c404b91))
+
+
+
+
+
 ## [4.1.1](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.0...vee-validate@4.1.1) (2020-12-18)
 
 
