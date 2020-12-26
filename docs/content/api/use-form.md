@@ -427,7 +427,8 @@ For advanced forms, you may need to trigger various actions on the form in the `
 const { handleSubmit } = useForm();
 
 const onSubmit = handleSubmit((values, actions) => {
-  actions.evt; // the event object that triggered the submission if available, might be undefined
+  // Send data to API
+  alert(JSON.stringify(values, null, 2));
 
   // the form object contains useful methods
   // set a single field value
@@ -438,8 +439,16 @@ const onSubmit = handleSubmit((values, actions) => {
   actions.setFieldError('field', 'this field is bad');
   // set multiple fields errors
   actions.setErrors({ email: 'bad email', password: 'bad password' });
+  // reset the form
+  actions.resetForm();
 });
 ```
+
+<doc-tip title="Virtual Forms">
+
+You can use `handleSubmit` to submit **virtual forms** that may use `form` elements or not. As you may have noticed the snippet above doesn't really care if you are using forms or not.
+
+</doc-tip>
 
 <code-title level="4">
 
