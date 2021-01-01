@@ -84,7 +84,7 @@ The initial values for the form, can be a reactive object or reference.
 
 ```js
 const { ... } = useForm({
-  initialErrors: {
+  initialValues: {
     email: 'example@gmail.com',
     password: 'p@$$w0rd',
   }
