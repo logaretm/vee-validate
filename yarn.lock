@@ -8834,3 +8834,8 @@ yup@^0.32.8:
     nanoclone "^0.2.1"
     property-expr "^2.0.4"
     toposort "^2.0.2"
+
+zod@^2.0.0-beta.29:
+  version "2.0.0-beta.29"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-2.0.0-beta.29.tgz#153b5ca799def7f9f6e49a925bc992f8d5793d57"
+  integrity sha512-sKQv8DTkZ8WcuikGPBT/UIpXmzfmyux9RgngeCHhq9x8QUEpjxVLSY7dowNJt3eLzEl98Wa/ClKEzdc1mA4igQ==
