@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.3](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.2...vee-validate@4.1.3) (2021-01-02)
+
+
+### Features
+
+* enhance useField types ([dcb8049](https://github.com/logaretm/vee-validate/commit/dcb80495ffdefb2e789887e1d40b2c4a57ade257))
+
+
+
+
+
 ## [4.1.2](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.1...vee-validate@4.1.2) (2020-12-26)
 
 
