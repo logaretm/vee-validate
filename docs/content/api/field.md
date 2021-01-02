@@ -93,7 +93,7 @@ But for complex inputs rendered with scoped slots (v-slot), you need to place it
 </Field>
 
 <!-- DO: ✅  v-model on field tag -->
-<Field type="text" name="name" v-slot="{ field }">
+<Field v-model="name" type="text" name="name" v-slot="{ field }">
   <input v-bind="field">
 </Field>
 ```
