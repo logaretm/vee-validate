@@ -31,7 +31,6 @@ export function toSchemaValidator<TValues extends Record<string, any>>(zodSchema
       }
 
       const errorsByField = result.error.formErrors.fieldErrors;
-      console.log(result.error.formErrors);
 
       const errors = Object.keys(errorsByField).reduce((acc, path) => {
         acc.push({ path, errors: errorsByField[path] });
