@@ -270,7 +270,7 @@ The `Form` and `useForm` both expose a `submitCount` state that you can use to t
 
 ## Initial Values
 
-Since with vee-validate you don't use `v-model` often to track your values, the `Form` component allows you to define the starting values for your fields, by default all fields start with `undefined` as a value.
+Since with vee-validate you don't have to use `v-model` to track your values, the `Form` component allows you to define the starting values for your fields, by default all fields start with `undefined` as a value.
 
 Using the `initialValues` prop you can send an object that contains the field names as keys and their values:
 
@@ -325,6 +325,12 @@ You can use `validateOnMount` prop present on the `<Form />` component to force 
 The `initialValues` prop on both the `<Form />` component and `useForm()` function can reactive value, meaning you can change the initial values after your component was created/mounted which is very useful if you are populating form fields from external API.
 
 Note that **only the non-dirty fields will be updated**. In other words, **only the fields that were not manipulated by the user will be updated**. For information on how to set the values for all fields regardless of their dirty status check the following [Setting Form Values section](#setting-form-values)
+
+<doc-tip>
+
+It's generally Recommended that you provide the `initialValues`, this is because vee-validate cannot assume a reasonable initial value for your fields other than `undefined` which may cause unexpected behavior when using 3rd-party validator that do not deal with `undefined`.
+
+</doc-tip>
 
 <doc-tip title="Composition API">
 
