@@ -26,19 +26,19 @@ import {
 import { isCallable } from '../../shared';
 import { FieldContextSymbol, FormInitialValuesSymbol, FormContextSymbol } from './symbols';
 
-interface FieldOptions {
-  initialValue: any;
+interface FieldOptions<TValue = any> {
+  initialValue: TValue;
   validateOnValueUpdate: boolean;
   validateOnMount?: boolean;
   bails?: boolean;
   type?: string;
-  valueProp?: MaybeReactive<any>;
-  uncheckedValue?: MaybeReactive<any>;
+  valueProp?: MaybeReactive<TValue>;
+  uncheckedValue?: MaybeReactive<TValue>;
   label?: MaybeReactive<string>;
 }
 
-interface FieldState {
-  value: any;
+interface FieldState<TValue = any> {
+  value: TValue;
   dirty: boolean;
   touched: boolean;
   errors: string[];
@@ -51,7 +51,11 @@ let ID_COUNTER = 0;
 /**
  * Creates a field composite.
  */
-export function useField(name: MaybeReactive<string>, rules?: RuleExpression, opts?: Partial<FieldOptions>) {
+export function useField<TValue = any>(
+  name: MaybeReactive<string>,
+  rules?: RuleExpression,
+  opts?: Partial<FieldOptions<TValue>>
+) {
   const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
   const {
     initialValue,
@@ -74,7 +78,7 @@ export function useField(name: MaybeReactive<string>, rules?: RuleExpression, op
     setValidationState,
     value,
     checked,
-  } = useValidationState({
+  } = useValidationState<TValue>({
     name,
     // make sure to unref initial value because of possible refs passed in
     initValue: unref(initialValue),
@@ -146,7 +150,7 @@ export function useField(name: MaybeReactive<string>, rules?: RuleExpression, op
 
   watchValue();
 
-  function resetField(state?: Partial<FieldState>) {
+  function resetField(state?: Partial<FieldState<TValue>>) {
     unwatchValue?.();
     resetValidationState(state);
     watchValue();
@@ -155,7 +159,7 @@ export function useField(name: MaybeReactive<string>, rules?: RuleExpression, op
   const field = {
     fid,
     name,
-    value: value,
+    value,
     meta,
     errors,
     errorMessage,
@@ -175,7 +179,7 @@ export function useField(name: MaybeReactive<string>, rules?: RuleExpression, op
     setDirty,
   };
 
-  provide(FieldContextSymbol, field);
+  provide(FieldContextSymbol, field as any);
 
   if (isRef(rules) && typeof unref(rules) !== 'function') {
     watch(rules, validate, {
@@ -257,7 +261,7 @@ function normalizeOptions(name: string, opts: Partial<FieldOptions> | undefined)
 /**
  * Manages the validation state of a field.
  */
-function useValidationState({
+function useValidationState<TValue = any>({
   name,
   initValue,
   form,
@@ -265,14 +269,14 @@ function useValidationState({
   valueProp,
 }: {
   name: MaybeReactive<string>;
-  initValue?: any;
+  initValue?: TValue;
   form?: FormContext;
   type?: string;
   valueProp: any;
 }) {
   const errors: Ref<string[]> = ref([]);
   const formInitialValues = injectWithSelf(FormInitialValuesSymbol, undefined);
-  const initialValue = getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
+  const initialValue: TValue = getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
   const { resetMeta, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
@@ -322,7 +326,7 @@ function useValidationState({
   }
 
   // Resets the validation state
-  function resetValidationState(state?: Partial<FieldState>) {
+  function resetValidationState(state?: Partial<FieldState<TValue>>) {
     const fieldPath = unref(name);
     const newValue =
       state && 'value' in state ? state.value : getFromPath(unref(formInitialValues), fieldPath) ?? initValue;
@@ -365,7 +369,7 @@ function useMeta(initialValue: any) {
   /**
    * Resets the flag state
    */
-  function resetMeta(state?: Pick<Partial<FieldState>, 'dirty' | 'touched' | 'value'>) {
+  function resetMeta<TValue = any>(state?: Pick<Partial<FieldState<TValue>>, 'dirty' | 'touched' | 'value'>) {
     const defaults = initialMeta();
     meta.pending = defaults.pending;
     meta.touched = state?.touched ?? defaults.touched;
@@ -395,7 +399,7 @@ function extractRuleFromSchema(schema: Record<string, any> | undefined, fieldNam
 /**
  * Manages the field value
  */
-function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: FormContext) {
+function useFieldValue<TValue>(initialValue: TValue, path: MaybeReactive<string>, form?: FormContext) {
   // if no form is associated, use a regular ref.
   if (!form) {
     return ref(initialValue);
@@ -404,11 +408,11 @@ function useFieldValue(initialValue: any, path: MaybeReactive<string>, form?: Fo
   // set initial value
   setInPath(form.values, unref(path), initialValue);
   // otherwise use a computed setter that triggers the `setFieldValue`
-  const value = computed({
+  const value = computed<TValue>({
     get() {
       return getFromPath(form.values, unref(path));
     },
-    set(newVal: any) {
+    set(newVal) {
       form.setFieldValue(unref(path), newVal);
     },
   });

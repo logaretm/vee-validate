@@ -58,6 +58,24 @@ export default {
 
 You are responsible for when the field validates, blurs or when its value changes. This gives you greater control over the `Field` component which may include or implement sensible defaults for most common use cases.
 
+## Usage with TypeScript
+
+You can use `useField` with typescript and type the field's value type to ensure safety when manipulating it's value. The `useField` function is a generic function that receives the value type and applies it on the various interactions you have with its API.
+
+```typescript
+const { value, resetField } = useField<string>('email', yup.string().email());
+
+value.value = 1; // ⛔️  Error
+value.value = 'test@example.com'; // ✅
+
+resetField({
+  value: 1, // ⛔️  Error
+});
+resetField({
+  value: 'test@example.com', // ✅
+});
+```
+
 ## API Reference
 
 The full signature of the `useField` function looks like this:
