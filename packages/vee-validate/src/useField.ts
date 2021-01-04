@@ -22,6 +22,7 @@ import {
   getFromPath,
   setInPath,
   injectWithSelf,
+  resolveNextCheckboxValue,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FieldContextSymbol, FormInitialValuesSymbol, FormContextSymbol } from './symbols';
@@ -116,7 +117,13 @@ export function useField<TValue = any>(
       return;
     }
 
-    value.value = normalizeEventValue(e);
+    let newValue = normalizeEventValue(e);
+    // Single checkbox field without a form to toggle it's value
+    if (checked && type === 'checkbox' && !form) {
+      newValue = resolveNextCheckboxValue(value.value, unref(valueProp), unref(uncheckedValue));
+    }
+
+    value.value = newValue;
     meta.dirty = true;
     if (!validateOnValueUpdate) {
       return validate();

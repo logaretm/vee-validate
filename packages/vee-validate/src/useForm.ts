@@ -12,7 +12,7 @@ import {
   FormState,
   FormValidationResult,
 } from './types';
-import { getFromPath, isYupValidator, keysOf, setInPath, unsetPath } from './utils';
+import { getFromPath, isYupValidator, keysOf, resolveNextCheckboxValue, setInPath, unsetPath } from './utils';
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
 
 interface FormOptions<TValues extends Record<string, any>> {
@@ -139,10 +139,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
     // Multiple checkboxes, and only one of them got updated
     if (Array.isArray(fieldInstance) && fieldInstance[0]?.type === 'checkbox' && !Array.isArray(value)) {
-      const oldVal = getFromPath(formValues, field as string);
-      const newVal = Array.isArray(oldVal) ? [...oldVal] : [];
-      const idx = newVal.indexOf(value);
-      idx >= 0 ? newVal.splice(idx, 1) : newVal.push(value);
+      const newVal = resolveNextCheckboxValue(getFromPath(formValues, field as string) || [], value, undefined);
       setInPath(formValues, field as string, newVal);
       fieldInstance.forEach(fieldItem => {
         valuesByFid[fieldItem.fid] = newVal;
@@ -153,7 +150,11 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     let newValue = value;
     // Single Checkbox: toggles the field value unless the field is being reset then force it
     if (fieldInstance?.type === 'checkbox' && !force) {
-      newValue = getFromPath(formValues, field as string) === value ? fieldInstance.uncheckedValue : value;
+      newValue = resolveNextCheckboxValue<TValues[T]>(
+        getFromPath(formValues, field as string),
+        value as TValues[T],
+        unref(fieldInstance.uncheckedValue)
+      );
     }
 
     setInPath(formValues, field as string, newValue);

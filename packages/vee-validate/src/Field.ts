@@ -1,4 +1,4 @@
-import { h, defineComponent, nextTick, toRef, SetupContext, resolveDynamicComponent, computed } from 'vue';
+import { h, defineComponent, nextTick, toRef, SetupContext, resolveDynamicComponent, computed, watch } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, isFileInput } from './utils';
@@ -59,6 +59,9 @@ export const Field = defineComponent({
       type: null,
       default: undefined,
     },
+    modelValue: {
+      type: null,
+    },
   },
   setup(props, ctx) {
     const rules = toRef(props, 'rules');
@@ -87,9 +90,9 @@ export const Field = defineComponent({
       // Gets the initial value either from `value` prop/attr or `v-model` binding (modelValue)
       // For checkboxes and radio buttons it will always be the model value not the `value` attribute
       initialValue: hasCheckedAttr(ctx.attrs.type)
-        ? ctx.attrs.modelValue
+        ? props.modelValue
         : 'modelValue' in ctx.attrs
-        ? ctx.attrs.modelValue
+        ? props.modelValue
         : ctx.attrs.value,
       // Only for checkboxes and radio buttons
       valueProp: ctx.attrs.value,
@@ -98,18 +101,9 @@ export const Field = defineComponent({
       validateOnValueUpdate: false,
     });
 
-    let isDuringValueTick = false;
-    // Prevents re-render updates that rests value when using v-model (#2941)
-    function valueTick() {
-      isDuringValueTick = true;
-      nextTick(() => {
-        isDuringValueTick = false;
-      });
-    }
-
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
     const onChangeHandler =
-      'modelValue' in ctx.attrs
+      'modelValue' in props
         ? function handleChangeWithModel(e: any) {
             handleChange(e);
             ctx.emit('update:modelValue', value.value);
@@ -117,7 +111,7 @@ export const Field = defineComponent({
         : handleChange;
 
     const onInputHandler =
-      'modelValue' in ctx.attrs
+      'modelValue' in props
         ? function handleChangeWithModel(e: any) {
             handleInput(e);
             ctx.emit('update:modelValue', value.value);
@@ -129,18 +123,12 @@ export const Field = defineComponent({
         props
       );
       const baseOnBlur = [handleBlur, ctx.attrs.onBlur, validateOnBlur ? validateField : undefined].filter(Boolean);
-      const baseOnInput = [
-        onInputHandler,
-        valueTick,
-        validateOnInput ? onChangeHandler : undefined,
-        ctx.attrs.onInput,
-      ].filter(Boolean);
-      const baseOnChange = [
-        onInputHandler,
-        valueTick,
-        validateOnChange ? onChangeHandler : undefined,
-        ctx.attrs.onChange,
-      ].filter(Boolean);
+      const baseOnInput = [onInputHandler, validateOnInput ? onChangeHandler : undefined, ctx.attrs.onInput].filter(
+        Boolean
+      );
+      const baseOnChange = [onInputHandler, validateOnChange ? onChangeHandler : undefined, ctx.attrs.onChange].filter(
+        Boolean
+      );
 
       const attrs: Record<string, any> = {
         name: props.name,
@@ -150,7 +138,7 @@ export const Field = defineComponent({
       };
 
       if (validateOnModelUpdate) {
-        attrs['onUpdate:modelValue'] = [onChangeHandler, valueTick];
+        attrs['onUpdate:modelValue'] = [onChangeHandler];
       }
 
       if (hasCheckedAttr(ctx.attrs.type) && checked) {
@@ -183,17 +171,18 @@ export const Field = defineComponent({
       };
     });
 
+    if ('modelValue' in props) {
+      const modelValue = toRef(props, 'modelValue');
+      watch(modelValue, newModelValue => {
+        if (newModelValue !== value.value) {
+          value.value = newModelValue;
+          validateField();
+        }
+      });
+    }
+
     return () => {
       const tag = resolveDynamicComponent(resolveTag(props, ctx)) as string;
-
-      // Sync the model value with the inner field value if they mismatch
-      // a simple string comparison is used here
-      // make sure to check if the re-render isn't caused by a value update tick
-      if ('modelValue' in ctx.attrs && String(ctx.attrs.modelValue) !== String(value.value) && !isDuringValueTick) {
-        nextTick(() => {
-          handleChange(ctx.attrs.modelValue as any);
-        });
-      }
 
       const children = normalizeChildren(ctx, slotProps.value);
 

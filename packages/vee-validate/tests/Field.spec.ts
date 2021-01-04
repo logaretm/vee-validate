@@ -842,4 +842,30 @@ describe('<Field />', () => {
     await flushPromises();
     expect(spy).toHaveBeenCalledWith(expect.objectContaining({ terms: false }), expect.anything());
   });
+
+  // #3105
+  test('single checkboxes without forms toggles their value with v-model', async () => {
+    let model!: Ref<boolean>;
+    const wrapper = mountWithHoc({
+      setup() {
+        model = ref(false);
+
+        return { model };
+      },
+      template: `
+      <div>
+        <Field name="terms" type="checkbox" v-model="model" :unchecked-value="false" :value="true" /> Dinner?
+      </div>
+    `,
+    });
+
+    await flushPromises();
+    const input = wrapper.$el.querySelector('input');
+    setChecked(input, true);
+    await flushPromises();
+    expect(model.value).toBe(true);
+    setChecked(input, false);
+    await flushPromises();
+    expect(model.value).toBe(false);
+  });
 });

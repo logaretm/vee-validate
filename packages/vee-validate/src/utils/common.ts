@@ -146,3 +146,17 @@ export function normalizeField(field: FieldApi | FieldApi[]): FieldApi | undefin
 
   return field;
 }
+
+export function resolveNextCheckboxValue<T>(currentValue: T, checkedValue: T, uncheckedValue: T): T;
+export function resolveNextCheckboxValue<T>(currentValue: T[], checkedValue: T, uncheckedValue: T): T[];
+export function resolveNextCheckboxValue<T>(currentValue: T | T[], checkedValue: T, uncheckedValue: T) {
+  if (Array.isArray(currentValue)) {
+    const newVal = [...currentValue];
+    const idx = newVal.indexOf(checkedValue);
+    idx >= 0 ? newVal.splice(idx, 1) : newVal.push(checkedValue);
+
+    return newVal;
+  }
+
+  return currentValue === checkedValue ? uncheckedValue : checkedValue;
+}
