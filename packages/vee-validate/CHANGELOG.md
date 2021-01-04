@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.4](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.3...vee-validate@4.1.4) (2021-01-04)
+
+
+### Bug Fixes
+
+* handle formless checkboxes value toggling closes [#3105](https://github.com/logaretm/vee-validate/issues/3105) ([504f30b](https://github.com/logaretm/vee-validate/commit/504f30bfcbcb1db710397ef05545b5008b0103fb))
+
+
+
+
+
 ## [4.1.3](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.2...vee-validate@4.1.3) (2021-01-02)
 
 
