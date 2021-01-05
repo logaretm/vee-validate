@@ -91,7 +91,7 @@ export const Field = defineComponent({
       // For checkboxes and radio buttons it will always be the model value not the `value` attribute
       initialValue: hasCheckedAttr(ctx.attrs.type)
         ? props.modelValue
-        : 'modelValue' in ctx.attrs
+        : 'modelValue' in props
         ? props.modelValue
         : ctx.attrs.value,
       // Only for checkboxes and radio buttons

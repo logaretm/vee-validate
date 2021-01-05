@@ -868,4 +868,25 @@ describe('<Field />', () => {
     await flushPromises();
     expect(model.value).toBe(false);
   });
+
+  // #3107
+  test('sets initial value with v-model', async () => {
+    const modelValue = 'allo';
+    const wrapper = mountWithHoc({
+      setup() {
+        const model = ref(modelValue);
+
+        return { model };
+      },
+      template: `
+      <div>
+        <Field name="whatever" v-model="model" />
+      </div>
+    `,
+    });
+
+    await flushPromises();
+    const input = wrapper.$el.querySelector('input');
+    expect(input.value).toBe(modelValue);
+  });
 });
