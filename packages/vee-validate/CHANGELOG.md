@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.5](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.4...vee-validate@4.1.5) (2021-01-05)
+
+
+### Bug Fixes
+
+* correctly set the initial value from the v-model closes [#3107](https://github.com/logaretm/vee-validate/issues/3107) ([4bed9a8](https://github.com/logaretm/vee-validate/commit/4bed9a806323139d2f274e51b6bfe3de2190e54d))
+
+
+
+
+
 ## [4.1.4](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.3...vee-validate@4.1.4) (2021-01-04)
 
 
