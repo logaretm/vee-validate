@@ -1,6 +1,6 @@
 ---
 title: VeeValidate
-description: Template Based Validation for Vue.js
+description: Form Validation for Vue.js
 home: true
 features:
   - title: 🍞 Easy

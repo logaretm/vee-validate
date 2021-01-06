@@ -4,7 +4,7 @@
   "workspaces": [
     "packages/*"
   ],
-  "description": "Template Based Validation for Vue.js",
+  "description": "Form Validation for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
   "homepage": "https://vee-validate.logaretm.com",
