@@ -40,6 +40,7 @@ async function minify({ code, pkg, bundleName }) {
 }
 
 async function build(pkg) {
+  console.log(chalk.magenta(`Generating bundle for ${pkg}`));
   const pkgout = path.join(__dirname, `../packages/${pkg}/dist`);
   for (const format of ['es', 'umd']) {
     const { input, output, bundleName } = createConfig(pkg, format);
@@ -60,6 +61,7 @@ async function build(pkg) {
   }
 
   await generateDts(pkg);
+  console.log(`${chalk.magenta('✅ Bundled ' + pkg)}`);
 
   return true;
 }
