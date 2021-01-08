@@ -15,7 +15,7 @@ The `ValidationObserver` component allows you to set errors on the form level us
 ```js
 {
   email: ['The email field is required', 'The email field must be a valid email'],
-  name: ['The email field is required'],
+  name: ['The name field is required'],
   age: ['The age field must be a valid number'],
 }
 ```
