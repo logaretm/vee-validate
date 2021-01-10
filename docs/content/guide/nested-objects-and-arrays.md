@@ -2,6 +2,7 @@
 title: Nested Objects and Arrays
 description: Structuring forms in nested paths in objects or arrays
 order: 4
+next: guide/global-validators
 ---
 
 # Nested Objects and Arrays

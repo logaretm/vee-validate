@@ -2,6 +2,7 @@
 title: Global Validators
 description: Defining global rules to be used throughout your web app
 order: 5
+next: guide/i18n
 ---
 
 # Global Validators

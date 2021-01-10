@@ -2,6 +2,7 @@
 title: Overview
 description: Getting started with VeeValidate
 order: 1
+next: guide/validation
 ---
 
 # Overview
