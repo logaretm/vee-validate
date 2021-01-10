@@ -28,7 +28,67 @@ export default {
 };
 ```
 
-The `useForm` composable has very powerful type information and can be fully typed, for more information check the [useForm typing tutorial](/tutorials/use-form-types)
+## Field Types
+
+The `useForm` function has field typing capabilities if you need it, getting type information for your fields and their values can be very powerful when building complex forms.
+
+By unlocking the field type you automatically get more strict information for the various properties/methods exposed by `useForm` like `setErrors` and `setTouched`. There are two ways you can get the advanced typing information for your fields, the first is to provide a generic type to `useForm`.
+
+```ts
+import { useForm } from 'vee-validate';
+
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+// in your setup
+const { errors } = useForm<LoginForm>();
+```
+
+Or simply provide initial values to `useForm` and it will automatically pick up the type of `initialValues` and use it for the field types.
+
+```typescript
+import { useForm } from 'vee-validate';
+
+const { errors, setErrors, setFieldValue } = useForm({
+  initialValues: {
+    email: '',
+    password: '',
+  },
+});
+```
+
+Whichever approach you prefer, you get full type information for your fields for all the functions exposed by `useForm`, here are a few examples.
+
+```ts
+import { useForm } from 'vee-validate';
+
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+// in your setup
+const { errors, setErrors, setFieldValue } = useForm<LoginForm>();
+
+errors.value; // typed as { email?: string; password?: string }
+
+setErrors({
+  email: 'This field is invalid', // auto-complete for `email` and `password`
+});
+
+setFieldValue('email', 'example@gmail.com'); // auto-complete for the field name and its value type
+```
+
+For example if you were to do this in the previous example:
+
+```ts
+setFieldValue('age', 5); // ⛔️ TypeScript error
+setFieldValue('email', 5); // ⛔️ TypeScript error
+```
+
+It will error out because `age` is not defined in the `LoginForm` type you defined. The second line errors out because the `email` field is typed as a `string`.
 
 ## API Reference
 
