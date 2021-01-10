@@ -9,22 +9,14 @@ next: guide/handling-forms
 
 vee-validate handles complex validations in a very easy way, it supports synchronous and asynchronous validation, and allows defining rules on the field-level or on the form level using validation schemas with built-in support for [yup](https://github.com/jquense/yup).
 
-With Vue 3, vee-validate offers both flavors of doing validation: an _imperative validation_ approach with composition functions API and a _declarative approach_ with higher order components (HOC) and scoped slots.
-
-This guide will discuss all those aspects of vee-validate.
-
-vee-validate supports both flavors of doing validation, using either _the composition API_ or _higher-order components_, the latter will be focused upon more as it offers a lot of convenience over the composition API and will make building forms faster and fun.
-
-vee-validate exposes the following components that you will be using frequently to validate your forms:
+You will be using the following components to validate your forms:
 
 - A `Field` component which represents a single form input.
-- A `Form` component which represents a form.
+- A `Form` component which represents a form. Do not confuse the `<Form>` tag with the native HTML `<form>` tag.
 
 ## Field-level Validation
 
-You can define validation rules for your fields using the `Field` component or `useField` composition API function, your rules can be as simple as a function that accepts the current value and returns an error message.
-
-This is an example using the `<Field />` component:
+You can define validation rules for your fields using the `Field` component, your rules can be as simple as a function that accepts the current value and returns an error message.
 
 ```vue
 <template>
@@ -109,7 +101,6 @@ A simple validation schema can be an object containing field names as keys and v
 
 <script>
 import { Form, Field } from 'vee-validate';
-import * as yup from 'yup';
 
 export default {
   components: {
@@ -268,20 +259,6 @@ Additionally if you need to use different events or have specific needs in mind,
 </Field>
 ```
 
-<doc-tip type="danger">
-
-When using `handleChange` in scoped slot or with `useField`, make sure to pass the event object or the new value. Otherwise vee-validate won't pick up the new value.
-
-```js
-handleChange(e);
-
-handleChange(newValue);
-```
-
-</doc-tip>
-
-`useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. It gives you everything you need to setup your own validation experience.
-
 In addition to those events, you can also validate when the `<Field />` or `<Form />` components are mounted with `validateOnMount` prop present on both components:
 
 ```vue
@@ -392,8 +369,6 @@ The down payment is required
 ```
 
 You can do this in two ways depending on which validators you are using (yup or [global validators](/guide/global-validators)).
-
-#### Custom Labels with Yup
 
 With yup it is very straightforward, you just need to call `label()` after defining your field's validations either in field level or form level:
 

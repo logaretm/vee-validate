@@ -2,7 +2,6 @@
 title: Overview
 description: Getting started with VeeValidate
 order: 1
-next: guide/validation
 ---
 
 # Overview
@@ -26,7 +25,13 @@ Most validation libraries will save you a lot of time, but `vee-validate` tackle
 
 ## Getting Started
 
-vee-validate primarily makes use of higher-order components to validate your fields, in the next examples you will find `Field`, `Form` and `ErrorMessage` components being used, don't worry about them for now as they are documented extensively later on.
+vee-validate makes use of two flavors to add validation to your forms.
+
+The first approach is using higher-order components (HOC) to validate your fields, in the next examples you will find `Field`, `Form` and `ErrorMessage` components being used.
+
+The second flavor is using the composition API to add the validation logic into your existing components, You will be using `useField` and `useForm` to validation your fields/data.
+
+Whichever approach you prefer to use, both flavors can be used interchangeably so you can mix and match between the two approaches when suitable.
 
 ### Using a script tag
 

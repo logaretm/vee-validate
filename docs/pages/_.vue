@@ -2,7 +2,8 @@
   <div>
     <ContentWrapper :document="page" />
 
-    <DocNextStep v-if="nextPage" v-bind="nextPage" />
+    <DocFlavor v-if="isOverview" next="validation" />
+    <DocNextStep v-else-if="nextPage" v-bind="nextPage" />
   </div>
 </template>
 
@@ -26,6 +27,7 @@ export default {
     return {
       page,
       nextPage,
+      isOverview: /overview/i.test(params.pathMatch),
     };
   },
   mounted() {
