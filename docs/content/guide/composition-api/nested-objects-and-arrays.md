@@ -173,7 +173,7 @@ When fields get unmounted like in the case of conditional rendered fields with `
 
 When referencing errors using `errors` object returned from the `useForm` function. Make sure to reference the field name in the exact same way you set it on the `name` argument for that field. So even if you avoid nesting you should always include the square brackets. In other words `errors` do not get nested, they are always flat.
 
-### Referencing In Validation Schema
+### Nested Fields With Validation Schema
 
 Since vee-validate supports [form-level validation](/guide/compostion-api/validation#form-level-validation), referencing the nested fields may vary depending on how you are specifying the schema.
 

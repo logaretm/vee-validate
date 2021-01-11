@@ -135,7 +135,7 @@ export default {
 Fortunately there is already a very neat way to build validation schemas for your forms by using `yup`, it allows you create validation objects like this:
 
 ```js
-const schema = yup.object().shape({
+const schema = yup.object({
   email: yup.string().required().email(),
   name: yup.string().required(),
   password: yup.string().required().min(8),
@@ -162,7 +162,7 @@ import * as yup from 'yup';
 export default {
   data() {
     // Define a validation schema
-    const schema = yup.object().shape({
+    const schema = yup.object({
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
@@ -579,7 +579,7 @@ import * as yup from 'yup';
 export default {
   data() {
     // Define a validation schema
-    const schema = yup.object().shape({
+    const schema = yup.object({
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
@@ -624,7 +624,7 @@ You can do this in two ways depending on which validators you are using (yup or 
 With yup it is very straightforward, you just need to call `label()` after defining your field's validations either in field level or form level:
 
 ```js
-const schema = Yup.object().shape({
+const schema = Yup.object({
   email_addr: Yup.string().email().required().label('Email Address'),
   acc_pazzword: Yup.string().min(5).required().label('Your Password'),
 });
