@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.6](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.5...vee-validate@4.1.6) (2021-01-11)
+
+
+### Bug Fixes
+
+* added emits and onSubmit custom prop ([#3115](https://github.com/logaretm/vee-validate/issues/3115)) ([8f2c110](https://github.com/logaretm/vee-validate/commit/8f2c110f14add0fbd82a28a91601e89938144624))
+
+
+
+
+
 ## [4.1.5](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.4...vee-validate@4.1.5) (2021-01-05)
 
 
