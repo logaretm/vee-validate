@@ -59,7 +59,8 @@ export interface FormValidationResult<TValues> {
   valid: boolean;
 }
 
-interface SubmissionContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
+export interface SubmissionContext<TValues extends Record<string, any> = Record<string, any>>
+  extends FormActions<TValues> {
   evt: SubmitEvent;
 }
 

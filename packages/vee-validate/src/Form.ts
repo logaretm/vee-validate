@@ -1,6 +1,6 @@
-import { h, defineComponent, toRef, resolveDynamicComponent, computed } from 'vue';
+import { h, defineComponent, toRef, resolveDynamicComponent, computed, PropType } from 'vue';
 import { useForm } from './useForm';
-import { SubmissionHandler } from './types';
+import { SubmissionContext, SubmissionHandler } from './types';
 import { isEvent, normalizeChildren } from './utils';
 
 export const Form = defineComponent({
@@ -35,6 +35,14 @@ export const Form = defineComponent({
       type: Boolean,
       default: false,
     },
+    onSubmit: {
+      type: Function as PropType<SubmissionHandler>,
+      default: undefined,
+    },
+  },
+  emits: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    submit: (values: Record<string, any>, actions: SubmissionContext) => true,
   },
   setup(props, ctx) {
     const initialValues = toRef(props, 'initialValues');
@@ -66,7 +74,7 @@ export const Form = defineComponent({
       validateOnMount: props.validateOnMount,
     });
 
-    const onSubmit = ctx.attrs.onSubmit ? handleSubmit(ctx.attrs.onSubmit as SubmissionHandler) : submitForm;
+    const onSubmit = props.onSubmit ? handleSubmit(props.onSubmit) : submitForm;
     function handleFormReset(e?: Event) {
       if (isEvent(e)) {
         // Prevent default form reset behavior
