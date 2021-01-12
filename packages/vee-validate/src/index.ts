@@ -6,7 +6,15 @@ export { Form } from './Form';
 export { ErrorMessage } from './ErrorMessage';
 export { useField } from './useField';
 export { useForm } from './useForm';
-export { ValidationResult, FormActions, FormState, FormValidationResult, FormContext } from './types';
+export {
+  ValidationResult,
+  FormActions,
+  FormState,
+  FormValidationResult,
+  FormContext,
+  SubmissionContext,
+  SubmissionHandler,
+} from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';
 export { useIsFieldTouched } from './useIsFieldTouched';
