@@ -28,8 +28,8 @@ You may access your form's values using either the `Form` component scoped slot 
 ```vue
 <template>
   <Form v-slot="{ values }" :validation-schema="schema">
-    <Field name="email" as="input" />
-    <Field name="name" as="input" type="email" />
+    <Field name="name" as="input" />
+    <Field name="email" as="input" type="email" />
     <Field name="password" as="input" type="password" />
 
     <!-- print form values -->
@@ -50,8 +50,8 @@ export default {
   },
   data() {
     const schema = yup.object().shape({
-      email: yup.string().required().email(),
       name: yup.string().required(),
+      email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
 
@@ -70,8 +70,8 @@ So if you were to add a `submit` handler on the `<Form />` component, vee-valida
 ```vue
 <template>
   <Form @submit="onSubmit" :validation-schema="schema">
-    <Field name="email" as="input" />
-    <Field name="name" as="input" type="email" />
+    <Field name="name" as="input" />
+    <Field name="email" as="input" type="email" />
     <Field name="password" as="input" type="password" />
 
     <button>Submit</button>
@@ -89,8 +89,8 @@ export default {
   },
   data() {
     const schema = yup.object().shape({
-      email: yup.string().required().email(),
       name: yup.string().required(),
+      email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
 
@@ -119,8 +119,8 @@ But in the case when you don't have a `submit` listener on your form, vee-valida
 
 ```vue
 <Form method="post" action="/api/users" :validation-schema="schema" />
-  <Field name="email" as="input" />
-  <Field name="name" as="input" type="email" />
+  <Field name="name" as="input" />
+  <Field name="email" as="input" type="email"/>
   <Field name="password" as="input" type="password" />
 
   <button>Submit</button>
@@ -143,8 +143,8 @@ The `handleSubmit` slot prop is probably the most common method you will use to 
 <template>
   <VeeForm v-slot="{ handleSubmit }" :validation-schema="schema" as="div">
     <form @submit="handleSubmit($event, onSubmit)">
-      <Field name="email" as="input" />
-      <Field name="name" as="input" type="email" />
+      <Field name="name" as="input" />
+      <Field name="email" as="input" type="email" />
       <Field name="password" as="input" type="password" />
 
       <button>Submit</button>
@@ -164,8 +164,8 @@ export default {
   },
   data() {
     const schema = yup.object().shape({
-      email: yup.string().required().email(),
       name: yup.string().required(),
+      email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
 
@@ -191,8 +191,8 @@ Alternatively if you plan to submit forms natively which will cause a page "relo
 <template>
   <VeeForm v-slot="{ submitForm }" :validation-schema="schema" as="div">
     <form @submit="submitForm" method="post" action="/api/users/">
-      <Field name="email" as="input" />
-      <Field name="name" as="input" type="email" />
+      <Field name="name" as="input" />
+      <Field name="email" as="input" type="email" />
       <Field name="password" as="input" type="password" />
 
       <button>Submit</button>
@@ -212,8 +212,8 @@ export default {
   },
   data() {
     const schema = yup.object().shape({
-      email: yup.string().required().email(),
       name: yup.string().required(),
+      email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
 
@@ -233,8 +233,8 @@ You can validate the form without submissions using the `validate()` slot prop f
 
 ```vue
 <Form v-slot="{ validate }" :validation-schema="schema">
-  <Field name="email" as="input" />
-  <Field name="name" as="input" type="email" />
+  <Field name="name" as="input" />
+  <Field name="email" as="input" type="email" />
   <Field name="password" as="input" type="password" />
 
   <button type="button" @click="validate">Submit</button>
@@ -278,8 +278,8 @@ Using the `initialValues` prop you can send an object that contains the field na
 ```vue
 <template>
   <Form :validation-schema="schema" :initial-values="formValues">
-    <Field name="email" as="input" />
-    <Field name="name" as="input" type="email" />
+    <Field name="name" as="input" />
+    <Field name="email" as="input" type="email" />
     <Field name="password" as="input" type="password" />
 
     <button type="Submit">Submit</button>
@@ -298,15 +298,15 @@ export default {
   data() {
     // Validation Schema
     const schema = yup.object().shape({
-      email: yup.string().required().email(),
       name: yup.string().required(),
+      email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
 
     // Initial values
     const formValues = {
-      email: 'example@example.com',
       name: 'John Smith',
+      email: 'example@example.com',
       password: 'P@$$w0Rd',
     };
 
@@ -443,8 +443,8 @@ Form reset is handled automatically if you are using the `as` prop to render a `
 ```vue
 <template>
   <Form :validation-schema="schema">
-    <Field name="email" as="input" />
-    <Field name="name" as="input" type="email" />
+    <Field name="name" as="input" />
+    <Field name="email" as="input" type="email" />
     <Field name="password" as="input" type="password" />
 
     <button type="Submit">Submit</button>
@@ -463,8 +463,8 @@ export default {
   },
   data() {
     const schema = yup.object().shape({
-      email: yup.string().required().email(),
       name: yup.string().required(),
+      email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
 
@@ -480,9 +480,9 @@ Alternatively if you plan to use the scoped slot for complex markup, you can use
 
 ```vue
 <Form v-slot="{ handleReset }" :validation-schema="schema">
-  <Field name="email" as="input">
-  <Field name="name" as="input" type="email">
-  <Field name="password" as="input" type="password">
+  <Field name="name" as="input" >
+  <Field name="email" as="input" type="email" >
+  <Field name="password" as="input" type="password" >
 
   <button type="button" @click="handleReset">Reset</button>
 </Form>
