@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.7](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.6...vee-validate@4.1.7) (2021-01-12)
+
+
+### Bug Fixes
+
+* export submission types [#3112](https://github.com/logaretm/vee-validate/issues/3112) ([3f35167](https://github.com/logaretm/vee-validate/commit/3f351670da02364b0fb8e61198145dfa02dc59b9))
+
+
+
+
+
 ## [4.1.6](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.5...vee-validate@4.1.6) (2021-01-11)
 
 
