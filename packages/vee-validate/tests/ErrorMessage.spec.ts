@@ -12,6 +12,23 @@ describe('<ErrorMessage />', () => {
     return true;
   });
 
+  test('does not render if no errors are present', async () => {
+    const wrapper = mountWithHoc({
+      components: {
+        ErrorMessage,
+      },
+      template: `
+      <VForm>
+        <Field name="field" rules="required" as="input" />
+        <ErrorMessage name="field" id="error" />
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    expect(wrapper.$el.querySelector('#error')).toBe(null);
+  });
+
   test('shows error messages for a field', async () => {
     const wrapper = mountWithHoc({
       components: {
@@ -25,20 +42,20 @@ describe('<ErrorMessage />', () => {
     `,
     });
 
+    const input = wrapper.$el.querySelector('input');
+    setValue(input, '');
+    await flushPromises();
+
     const error = wrapper.$el.querySelector('#error');
     expect(error.tagName).toBe('SPAN');
-    const input = wrapper.$el.querySelector('input');
-    await flushPromises();
-    expect(error.textContent).toBe('');
-
-    setValue(input, '');
     await flushPromises();
 
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
     setValue(input, '12');
     await flushPromises();
 
-    expect(error.textContent).toBe('');
+    // was removed
+    expect(wrapper.$el.querySelector('#error')).toBe(null);
   });
 
   test('render with "as" prop', async () => {
@@ -56,11 +73,10 @@ describe('<ErrorMessage />', () => {
     `,
     });
 
-    const error = wrapper.$el.querySelector('#error');
-
-    expect(error.tagName).toBe('DIV');
     wrapper.$el.querySelector('button').click();
     await flushPromises();
+    const error = wrapper.$el.querySelector('#error');
+    expect(error.tagName).toBe('DIV');
 
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
   });
@@ -82,13 +98,11 @@ describe('<ErrorMessage />', () => {
       </VForm>
     `,
     });
-
-    const error = wrapper.$el.querySelector('#error');
-
-    expect(error.tagName).toBe('DIV');
     wrapper.$el.querySelector('button').click();
     await flushPromises();
 
+    const error = wrapper.$el.querySelector('#error');
+    expect(error.tagName).toBe('DIV');
     expect(error.textContent).toContain(REQUIRED_MESSAGE);
   });
 
@@ -109,10 +123,10 @@ describe('<ErrorMessage />', () => {
     `,
     });
 
-    const error = wrapper.$el.querySelector('#error');
-    expect(error.tagName).toBe('P');
     wrapper.$el.querySelector('button').click();
     await flushPromises();
+    const error = wrapper.$el.querySelector('#error');
+    expect(error.tagName).toBe('P');
 
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
   });

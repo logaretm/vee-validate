@@ -20,6 +20,11 @@ export const ErrorMessage = defineComponent({
     });
 
     return () => {
+      // Renders nothing if there are no messages
+      if (!message.value) {
+        return undefined;
+      }
+
       const children = normalizeChildren(ctx, {
         message: message.value,
       });

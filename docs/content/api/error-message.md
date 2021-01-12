@@ -7,7 +7,7 @@ order: 3
 
 # ErrorMessage
 
-The `ErrorMessage` component is used to conveniently display error messages without resorting to scoped slots on either the `Form` and `Field` components.
+The `ErrorMessage` component is used to conveniently display error messages without resorting to scoped slots on either the `Form` and `Field` components. It also renders nothing if there are no messages for the associated field.
 
 The basic usage looks like this:
 
@@ -42,7 +42,7 @@ export default {
 
 ## Rendering Messages
 
-The `ErrorMessage` component accepts an `as` prop that allows to control the root node to render for your error messages, by default it will render a `span` if none provided.
+The `ErrorMessage` component accepts an `as` prop that allows to control the root node to render for your error messages, by default it will render a `span` if none provided if there is an error message for the field.
 
 ```vue
 <ErrorMessage name="email" as="p" />
@@ -67,6 +67,12 @@ You can use a combination of both to render a root node with children:
   <p>{{ message }}</p>
 </ErrorMessage>
 ```
+
+<doc-tip title="No Errors Rendering" type="danger">
+
+When there are not any error messages for the field the `<ErrorMessage />` component will render nothing, even if you used the slot or `as` prop.
+
+</doc-tip>
 
 ## API
 
