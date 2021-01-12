@@ -28,8 +28,8 @@ You may access your form's values using either the `Form` component scoped slot 
 ```vue
 <template>
   <Form v-slot="{ values }" :validation-schema="schema">
-    <Field name="email" as="input" />
-    <Field name="name" as="input" type="email" />
+    <Field name="email" as="input" type="email" />
+    <Field name="name" as="input" />
     <Field name="password" as="input" type="password" />
 
     <!-- print form values -->
