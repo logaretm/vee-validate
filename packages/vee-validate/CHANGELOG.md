@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.8](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.7...vee-validate@4.1.8) (2021-01-12)
+
+
+### Features
+
+* dont render any tags when no message exists closes [#3118](https://github.com/logaretm/vee-validate/issues/3118) ([92eba41](https://github.com/logaretm/vee-validate/commit/92eba41a2cdef643bc2af4c2a0366382cdffc625))
+
+
+
+
+
 ## [4.1.7](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.6...vee-validate@4.1.7) (2021-01-12)
 
 
