@@ -13,7 +13,7 @@ vee-validate's entire core size is very small, but the same can't be said about 
 ```js
 import * as yup from 'yup';
 
-const schema = yup.object().shape({
+const schema = yup.object({
   email: yup.string().email(),
   // ...
 });
@@ -24,7 +24,7 @@ Instead you can leverage your bundler's tree-shaking capabilities and only impor
 ```js
 import { object, string } as yup from 'yup';
 
-const schema = object().shape({
+const schema = object({
   email: string().email(),
   // ...
 });
@@ -39,7 +39,7 @@ In most examples you probably noticed something like this:
 ```js
 {
   data() {
-    const schema = yup.object().shape({
+    const schema = yup.object({
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
@@ -59,7 +59,7 @@ Instead you could either use `setup` instead of your data or [`markRaw`](https:/
 {
   setup() {
     // Non-reactive because it was not explicitly defined with `reactive` or `ref`
-    const schema = yup.object().shape({
+    const schema = yup.object({
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
@@ -77,7 +77,7 @@ import { markRaw } from 'vue';
 {
   data() {
     // Non-reactive because it was explicitly defined with `markRaw`
-    const schema = markRaw(yup.object().shape({
+    const schema = markRaw(yup.object({
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
     }));

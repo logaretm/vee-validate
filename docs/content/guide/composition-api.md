@@ -157,7 +157,7 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 
 const { ... } = useForm({
-  validationSchema: yup.object().shape({
+  validationSchema: yup.object({
     email: yup.string().required().email(),
     password: yup.string().required().min(3),
   })

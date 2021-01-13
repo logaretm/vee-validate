@@ -128,7 +128,7 @@ type useForm = (
 
 <code-title level="4">
 
-`validationSchema?: Record<string, string | Function> | YupObjectSchema`
+`validationSchema?: Record<string, string | Function> | Yup.ShapeOf<T>`
 
 </code-title>
 
