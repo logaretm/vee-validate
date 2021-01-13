@@ -1,5 +1,5 @@
 import { ComputedRef, Ref } from 'vue';
-import { ObjectSchema } from 'yup';
+import { SchemaOf } from 'yup';
 
 export interface ValidationResult {
   errors: string[];
@@ -75,7 +75,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   values: TValues;
   fields: ComputedRef<Record<keyof TValues, any>>;
   submitCount: Ref<number>;
-  schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | ObjectSchema<TValues>;
+  schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>;
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
   validate(): Promise<FormValidationResult<TValues>>;
   meta: ComputedRef<{
