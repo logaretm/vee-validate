@@ -9,6 +9,17 @@ next: guide/composition-api/handling-forms
 
 vee-validate handles complex validations in a very easy way, it supports synchronous and asynchronous validation, and allows defining rules on the field-level or on the form level using validation schemas with built-in support for [yup](https://github.com/jquense/yup).
 
+You will be using the following composition functions to validate your forms:
+
+- `useField`: Creates a form field with its validation state, you will use this inside your custom input components.
+- `useForm`: Creates a vee-validate's form context and associated any fields created with `useField` inside the same component or its children with it automatically, you will use to create custom form components and to manage your fields in general.
+
+There are tons of other composition API functions, check them out in the [API reference](/api/composition-helpers).
+
+This is the most basic example with the composition API, you can create a simple field and validate it in a couple of lines:
+
+<code-sandbox id="basic-example-composition-api-whocv" title="Basic Example - Composition API"> </code-sandbox>
+
 ## Field-level Validation
 
 You can define validation rules for your fields using the `useField` composition API function, your rules can be as simple as a function that accepts the current value and returns an error message.

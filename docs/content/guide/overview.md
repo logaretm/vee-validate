@@ -33,6 +33,16 @@ The second flavor is using the composition API to add the validation logic into 
 
 Whichever approach you prefer to use, both flavors can be used interchangeably so you can mix and match between the two approaches when suitable.
 
+### Using NPM
+
+For a more modern workflow with a bundler, you can install vee-validate using a package manager like `yarn` or `npm`:
+
+```bash
+yarn add vee-validate@next
+# or
+npm i vee-validate@next --save
+```
+
 ### Using a script tag
 
 You can use vee-validate with a script tag and a CDN, import the library like this:
@@ -42,58 +52,3 @@ You can use vee-validate with a script tag and a CDN, import the library like th
 ```
 
 This will inject `VeeValidate` global object, which you will use to access the various components, functions exposed by vee-validate.
-
-Here is a basic example with vee-validate:
-
-<p class="codepen" data-height="265" data-theme-id="light" data-default-tab="js,result" data-user="logaretm" data-slug-hash="rNxbMzq" style="height: 265px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="Basic Example">
-  <span>See the Pen <a href="https://codepen.io/logaretm/pen/rNxbMzq">
-  Basic Example</a> by Abdelrahman Awad (<a href="https://codepen.io/logaretm">@logaretm</a>)
-  on <a href="https://codepen.io">CodePen</a>.</span>
-</p>
-
-<doc-tip>
-
-From this point forwards, the docs will assume basic knowledge of [Vue's SFC components](https://v3.vuejs.org/guide/single-file-component.html) and will demonstrate examples as such and will be using ES6+ code snippets. So be sure to brush up on these if you haven't already.
-
-</doc-tip>
-
-### Using NPM
-
-For a more modern workflow with a bundler, you can install vee-validate using a package manager like `yarn` or `npm`:
-
-```sh
-yarn add vee-validate@next
-
-npm i vee-validate@next --save
-```
-
-Then you can import the various components from vee-validate:
-
-```vue
-<template>
-  <Form v-slot="{ errors }">
-    <Field name="field" as="input" :rules="isRequired" />
-
-    <span>{{ errors.field }}</span>
-  </Form>
-</template>
-
-<script>
-import { Field, Form } from 'vee-validate';
-
-export default {
-  components: {
-    Field,
-    Form,
-  },
-  methods: {
-    // Validator function
-    isRequired(value) {
-      return value ? true : 'This field is required';
-    },
-  },
-};
-</script>
-```
-
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>

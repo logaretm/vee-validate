@@ -15,6 +15,20 @@ You will be using the following components to validate your forms:
 - A `Form` component which represents a form. Do not confuse the `<Form>` tag with the HTML `<form>` tag.
 - An `ErrorMessage` component which displays an error message for a field, you don't have to use it as there are many ways to render error messages.
 
+Here is the most simple example in action:
+
+<p class="codepen" data-height="265" data-theme-id="light" data-default-tab="js,result" data-user="logaretm" data-slug-hash="rNxbMzq" style="height: 265px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="Basic Example">
+  <span>See the Pen <a href="https://codepen.io/logaretm/pen/rNxbMzq">
+  Basic Example</a> by Abdelrahman Awad (<a href="https://codepen.io/logaretm">@logaretm</a>)
+  on <a href="https://codepen.io">CodePen</a>.</span>
+</p>
+
+<doc-tip>
+
+From this point forwards, the docs will assume basic knowledge of [Vue's SFC components](https://v3.vuejs.org/guide/single-file-component.html) and will demonstrate examples as such and will be using ES6+ code snippets. So be sure to brush up on these if you haven't already.
+
+</doc-tip>
+
 ## Field-level Validation
 
 You can define validation rules for your fields using the `Field` component, your rules can be as simple as a function that accepts the current value and returns an error message.
@@ -362,3 +376,5 @@ Here is a live example:
 <code-sandbox id="vee-validate-v4-custom-field-labels-with-yup-qikju" title="Custom Labels with yup"></code-sandbox>
 
 If you are interested on how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
+
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
