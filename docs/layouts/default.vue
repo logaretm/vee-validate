@@ -60,7 +60,6 @@ export default {};
 }
 
 .lside {
-  @apply ml-auto;
   grid-area: lside;
 }
 

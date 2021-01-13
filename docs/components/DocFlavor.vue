@@ -4,8 +4,8 @@
     <p class="mt-4">Before you go on, you should choose which flavor of vee-validate you want to use.</p>
 
     <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-x-8 text-white">
-      <nuxt-link :to="`/guide/${next}`" class="bg-gray-600 hover:bg-accent-900 p-6 rounded-lg relative">
-        <p class="text-xl font-semibold font-display">Components API</p>
+      <nuxt-link :to="`/guide/components/${next}`" class="bg-gray-600 hover:bg-accent-900 p-6 rounded-lg relative">
+        <p class="text-xl font-semibold font-display">Components</p>
         <p class="mt-8">Simple, high-level, dynamic template-based higher-order components.</p>
         <p class="mt-4">Great for simple UI components and native HTML elements with custom styling.</p>
 

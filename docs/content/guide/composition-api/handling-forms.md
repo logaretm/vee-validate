@@ -1,7 +1,7 @@
 ---
 title: Handling Forms
 description: Handling form state and submissions
-order: 2
+order: 3
 next: guide/composition-api/nested-objects-and-arrays
 ---
 

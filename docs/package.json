@@ -13,9 +13,10 @@
     "@nuxt/content": "^1.9.0",
     "@nuxtjs/pwa": "^3.3.3",
     "@nuxtjs/tailwindcss": "^3.4.2",
+    "@tailwindcss/postcss7-compat": "^2.0.2",
     "autoprefixer": "^9",
     "nuxt": "^2.14.12",
-    "tailwindcss": "^2.0.1-compat"
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
   },
   "devDependencies": {
     "markdown-it-custom-block": "^0.1.1",

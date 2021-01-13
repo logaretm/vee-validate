@@ -1,7 +1,7 @@
 ---
 title: Validation
 description: Field-level and form-level validation and validation behavior and error messages with composition API
-order: 1
+order: 2
 next: guide/composition-api/handling-forms
 ---
 
