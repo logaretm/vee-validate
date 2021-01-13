@@ -23,73 +23,61 @@ So far you probably noticed we didn't use `v-model` once in the examples. This i
 
 Having to create models just to be able to reference them later is redundant and vee-validate goes around this by creating an internal model for the `<Field />` field component instances and tracks them and keeps them in sync with the input. You can still use `v-model` if you need it but vee-validate doesn't require it.
 
-You may access your form's values using either the `Form` component scoped slot prop called "values":
+You may access your form's values using the `values` scoped slot prop on the `Form` component:
 
 ```vue
 <template>
-  <Form v-slot="{ values }" :validation-schema="schema">
-    <Field name="name" as="input" />
-    <Field name="email" as="input" type="email" />
-    <Field name="password" as="input" type="password" />
+  <Form v-slot="{ values }">
+    <Field name="email" type="email" />
+    <Field name="password" type="password" />
 
     <!-- print form values -->
-    <pre>
-      {{ values }}
-    </pre>
+    <pre>{{ values }}</pre>
   </Form>
 </template>
 
 <script>
 import { Form, Field } from 'vee-validate';
-import * as yup from 'yup';
 
 export default {
   components: {
     Form,
     Field,
   },
-  data() {
-    const schema = yup.object({
-      name: yup.string().required(),
-      email: yup.string().required().email(),
-      password: yup.string().required().min(8),
-    });
-
-    return {
-      schema,
-    };
-  },
+  // no data, no v-model!!!
 };
 </script>
 ```
 
-You will rarely need to access the form values inside the template, but its there if you ever need it. The more interesting approach is that vee-validate follows the assumption that most likely you will need the form values at the submission phase.
+You will rarely need to access the form values inside the template, but its there if you ever need it. What's interesting is that vee-validate follows the assumption that most likely you will need the form values at the submission phase.
 
 So if you were to add a `submit` handler on the `<Form />` component, vee-validate will automatically pass the form values to your handler as the first argument.
 
 ```vue
 <template>
   <Form @submit="onSubmit" :validation-schema="schema">
-    <Field name="name" as="input" />
-    <Field name="email" as="input" type="email" />
-    <Field name="password" as="input" type="password" />
+    <Field name="email" type="email" />
+    <ErrorMessage name="email" />
+
+    <Field name="password" type="password" />
+    <ErrorMessage name="password" />
 
     <button>Submit</button>
   </Form>
 </template>
 
 <script>
-import { Form, Field } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
 export default {
   components: {
     Form,
     Field,
+    ErrorMessage,
   },
   data() {
     const schema = yup.object({
-      name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
@@ -101,6 +89,7 @@ export default {
   methods: {
     onSubmit(values) {
       // Submit values to API...
+      alert(JSON.stringify(values, null, 2));
     },
   },
 };
@@ -119,9 +108,9 @@ But in the case when you don't have a `submit` listener on your form, vee-valida
 
 ```vue
 <Form method="post" action="/api/users" :validation-schema="schema" />
-  <Field name="name" as="input" />
-  <Field name="email" as="input" type="email"/>
-  <Field name="password" as="input" type="password" />
+  <Field name="email" />
+  <Field name="name" type="email" />
+  <Field name="password" type="password" />
 
   <button>Submit</button>
 </Form>
@@ -143,9 +132,11 @@ The `handleSubmit` slot prop is probably the most common method you will use to 
 <template>
   <VeeForm v-slot="{ handleSubmit }" :validation-schema="schema" as="div">
     <form @submit="handleSubmit($event, onSubmit)">
-      <Field name="name" as="input" />
-      <Field name="email" as="input" type="email" />
-      <Field name="password" as="input" type="password" />
+      <Field name="email" type="email" />
+      <ErrorMessage name="email" />
+
+      <Field name="password" type="password" />
+      <ErrorMessage name="password" />
 
       <button>Submit</button>
     </form>
@@ -153,7 +144,7 @@ The `handleSubmit` slot prop is probably the most common method you will use to 
 </template>
 
 <script>
-import { Form as VeeForm, Field } from 'vee-validate';
+import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
 export default {
@@ -161,10 +152,10 @@ export default {
     // Rename form to avoid confusion with native `form`
     VeeForm,
     Field,
+    ErrorMessage,
   },
   data() {
     const schema = yup.object({
-      name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
@@ -176,7 +167,7 @@ export default {
   methods: {
     onSubmit(values) {
       // Submit values to API...
-      console.log(values);
+      alert(JSON.stringify(values, null, 2));
     },
   },
 };
@@ -191,9 +182,11 @@ Alternatively if you plan to submit forms natively which will cause a page "relo
 <template>
   <VeeForm v-slot="{ submitForm }" :validation-schema="schema" as="div">
     <form @submit="submitForm" method="post" action="/api/users/">
-      <Field name="name" as="input" />
-      <Field name="email" as="input" type="email" />
-      <Field name="password" as="input" type="password" />
+      <Field name="email" type="email" />
+      <ErrorMessage name="email" />
+
+      <Field name="password" type="password" />
+      <ErrorMessage name="password" />
 
       <button>Submit</button>
     </form>
@@ -201,7 +194,7 @@ Alternatively if you plan to submit forms natively which will cause a page "relo
 </template>
 
 <script>
-import { Form as VeeForm, Field } from 'vee-validate';
+import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
 export default {
@@ -209,10 +202,10 @@ export default {
     // Rename form to avoid confusion with native `form`
     VeeForm,
     Field,
+    ErrorMessage,
   },
   data() {
     const schema = yup.object({
-      name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
@@ -233,9 +226,11 @@ You can validate the form without submissions using the `validate()` slot prop f
 
 ```vue
 <Form v-slot="{ validate }" :validation-schema="schema">
-  <Field name="name" as="input" />
-  <Field name="email" as="input" type="email" />
-  <Field name="password" as="input" type="password" />
+  <Field name="email" type="email" />
+  <ErrorMessage name="email" />
+
+  <Field name="password" type="password" />
+  <ErrorMessage name="password" />
 
   <button type="button" @click="validate">Submit</button>
 </Form>
@@ -265,7 +260,7 @@ Note that calling `validate` from the `Form` slot props will not cause the `isSu
 
 <doc-tip title="submitCount">
 
-The `Form` and `useForm` both expose a `submitCount` state that you can use to track the number of submission attempts done by the user. For more information check the [API Reference](/api/form).
+The `Form` component exposes a `submitCount` state that you can use to track the number of submission attempts done by the user. For more information check the [API Reference](/api/form).
 
 </doc-tip>
 
@@ -278,34 +273,35 @@ Using the `initialValues` prop you can send an object that contains the field na
 ```vue
 <template>
   <Form :validation-schema="schema" :initial-values="formValues">
-    <Field name="name" as="input" />
-    <Field name="email" as="input" type="email" />
-    <Field name="password" as="input" type="password" />
+    <Field name="email" type="email" />
+    <ErrorMessage name="email" />
+
+    <Field name="password" type="password" />
+    <ErrorMessage name="password" />
 
     <button type="Submit">Submit</button>
   </Form>
 </template>
 
 <script>
-import { Form, Field } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
 export default {
   components: {
     Form,
     Field,
+    ErrorMessage,
   },
   data() {
     // Validation Schema
     const schema = yup.object({
-      name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
 
     // Initial values
     const formValues = {
-      name: 'John Smith',
       email: 'example@example.com',
       password: 'P@$$w0Rd',
     };
@@ -323,8 +319,6 @@ Doing so will trigger initial validation on the form and it will generate messag
 
 You can use `validateOnMount` prop present on the `<Form />` component to force an initial validation when the component is mounted.
 
-The `initialValues` prop on both the `<Form />` component and `useForm()` function can reactive value, meaning you can change the initial values after your component was created/mounted which is very useful if you are populating form fields from external API.
-
 Note that **only the non-dirty fields will be updated**. In other words, **only the fields that were not manipulated by the user will be updated**. For information on how to set the values for all fields regardless of their dirty status check the following [Setting Form Values section](#setting-form-values)
 
 <doc-tip>
@@ -333,24 +327,18 @@ It's generally Recommended that you provide the `initialValues`, this is because
 
 </doc-tip>
 
-<doc-tip title="Composition API">
-
-If you are using the composition API with `setup` function, you could create the `initialValues` prop using both [**reactive()**](https://v3.vuejs.org/api/basic-reactivity.html#reactive) and [**ref()**](https://v3.vuejs.org/api/refs-api.html#ref). vee-validate handles both cases.
-
-</doc-tip>
-
 ## Setting Form Values
 
-You can set any field's value using either `setFieldValue` or `setValues`, both methods are exposed on the `<Form />` component scoped slot props, and in `useForm` return value, and as instance methods if so you can call them with template `$refs` and for an added convenience you can call them in the submit handler callback.
+You can set any field's value using either `setFieldValue` or `setValues`, both methods are exposed on the `<Form />` component scoped slot props, and as instance methods if so you can call them with template `$refs` and for an added convenience you can call them in the submit handler callback.
 
 **Using scoped slot props**
 
 ```vue
 <Form v-slot="{ setFieldValue, setValues }">
-  <Field name="email" as="input" />
+  <Field name="email"  />
   <ErrorMessage name="email" />
 
-  <Field name="password" as="input" />
+  <Field name="password"  />
   <ErrorMessage name="password" />
 
   <button type="button" @click="setFieldValue('email', 'test')">Set Field Value</button>
@@ -365,10 +353,10 @@ You can set any field's value using either `setFieldValue` or `setValues`, both 
 ```vue
 <template>
   <Form @submit="onSubmit">
-    <Field name="email" as="input" />
+    <Field name="email" />
     <ErrorMessage name="email" />
 
-    <Field name="password" as="input" />
+    <Field name="password" />
     <ErrorMessage name="password" />
 
     <button>Submit</button>
@@ -401,10 +389,10 @@ export default {
 ```vue
 <template>
   <Form @submit="onSubmit" ref="myForm">
-    <Field name="email" as="input" />
+    <Field name="email" />
     <ErrorMessage name="email" />
 
-    <Field name="password" as="input" />
+    <Field name="password" />
     <ErrorMessage name="password" />
 
     <button>Submit</button>
@@ -443,9 +431,11 @@ Form reset is handled automatically if you are using the `as` prop to render a `
 ```vue
 <template>
   <Form :validation-schema="schema">
-    <Field name="name" as="input" />
-    <Field name="email" as="input" type="email" />
-    <Field name="password" as="input" type="password" />
+    <Field name="email" type="email" />
+    <ErrorMessage name="email" />
+
+    <Field name="password" type="password" />
+    <ErrorMessage name="password" />
 
     <button type="Submit">Submit</button>
     <button type="reset">Reset</button>
@@ -463,7 +453,6 @@ export default {
   },
   data() {
     const schema = yup.object({
-      name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
     });
@@ -480,9 +469,11 @@ Alternatively if you plan to use the scoped slot for complex markup, you can use
 
 ```vue
 <Form v-slot="{ handleReset }" :validation-schema="schema">
-  <Field name="name" as="input" >
-  <Field name="email" as="input" type="email" >
-  <Field name="password" as="input" type="password" >
+  <Field name="email" type="email" />
+  <ErrorMessage name="email" />
+
+  <Field name="password" type="password" />
+  <ErrorMessage name="password" />
 
   <button type="button" @click="handleReset">Reset</button>
 </Form>
@@ -613,17 +604,17 @@ export default {
 
 ## Initial Errors
 
-If you are building a non-SPA application it is very common to pre-fill form errors using server-side rendering, frameworks like Laravel make this very easy to do. vee-validate supports filling the errors initially before any validation is done using the `initialErrors` prop which is both present on `useForm()` function and the `<Form />` component.
+If you are building a non-SPA application it is very common to pre-fill form errors using server-side rendering, frameworks like Laravel make this very easy to do. vee-validate supports filling the errors initially before any validation is done using the `initialErrors` prop which is present on the `<Form />` component scoped slot props.
 
 The `initialErrors` property accepts an object containing the field names as keys with their corresponding error message string.
 
 ```vue
 <template>
   <Form :initial-errors="initialErrors">
-    <Field name="email" as="input" />
+    <Field name="email" />
     <ErrorMessage name="email" />
 
-    <Field name="password" as="input" />
+    <Field name="password" />
     <ErrorMessage name="password" />
 
     <button>Submit</button>
@@ -652,11 +643,11 @@ See the next section for setting errors manually.
 
 ## Setting Errors Manually
 
-Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example a `unique` email validation is complex to implement on the client-side, which is why the `<Form />` component and `useForm()` function allow you to set errors manually.
+Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example a `unique` email validation is complex to implement on the client-side, which is why the `<Form />` component allow you to set errors manually.
 
 You can set messages for fields by using either `setFieldError` which sets an error message for one field at a time, and the `setErrors` function which allows you set error messages for multiple fields at once.
 
-Both functions are available as a return value from `useForm` and on the `Form` component scoped slot props, and also on the `Form` component instance which enables you to use it with template `$refs`, and also for added convenience on the `submit` event handler since it would be the most common place for its usage.
+Both functions are available on the `Form` component scoped slot props, and also on the `Form` component instance which enables you to use it with template `$refs`, and also for added convenience on the `submit` event handler since it would be the most common place for its usage.
 
 Here are a few snippets showcasing it's usage in these various scenarios:
 
@@ -664,10 +655,10 @@ Here are a few snippets showcasing it's usage in these various scenarios:
 
 ```vue
 <Form v-slot="{ setFieldError, setErrors }">
-  <Field name="email" as="input" />
+  <Field name="email"  />
   <ErrorMessage name="email" />
 
-  <Field name="password" as="input" />
+  <Field name="password"  />
   <ErrorMessage name="password" />
 
   <button type="button" @click="setFieldError('email', 'nope')">Set Single Error</button>
@@ -682,10 +673,10 @@ Here are a few snippets showcasing it's usage in these various scenarios:
 ```vue
 <template>
   <Form @submit="onSubmit">
-    <Field name="email" as="input" />
+    <Field name="email" />
     <ErrorMessage name="email" />
 
-    <Field name="password" as="input" />
+    <Field name="password" />
     <ErrorMessage name="password" />
 
     <button>Submit</button>
@@ -718,10 +709,10 @@ export default {
 ```vue
 <template>
   <Form @submit="onSubmit" ref="myForm">
-    <Field name="email" as="input" />
+    <Field name="email" />
     <ErrorMessage name="email" />
 
-    <Field name="password" as="input" />
+    <Field name="password" />
     <ErrorMessage name="password" />
 
     <button>Submit</button>
@@ -754,9 +745,5 @@ Always try to avoid using the template `$refs` to gain access to the `<Form />` 
 So treat them as such and don't reach out for template `$refs` if you can help it.
 
 </doc-tip>
-
-**With useForm composable**
-
-For information on how to use `setErrors` and `setFieldError` with `useForm` composable function, [check the API reference](/api/use-form)
 
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>

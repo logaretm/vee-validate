@@ -131,29 +131,27 @@ Submitting the previous form would result in the following values being passed t
 
 vee-validate creates the paths inside the form data automatically but lazily, so initially your form values won't contain the fields values unless you provide initial values for them. It might be worthwhile to provide initial data for your forms with nested paths.
 
-When fields get unmounted like in the case of conditional rendered fields with `v-if` or `v-for`, their path will be destroyed just as it was created if they are the last field in that path. So you need to be careful while accessing the nested field in `values` inside your submission handler or the `Form` component or `useForm` composable.
+When fields get unmounted like in the case of conditional rendered fields with `v-if` or `v-for`, their path will be destroyed just as it was created if they are the last field in that path. So you need to be careful while accessing the nested field in `values` inside your submission handler or the `Form` component `values` slot prop.
 
 ### Referencing Errors
 
 When referencing errors using `errors` object on the `Form` slot props or the `ErrorMessage` component, make sure to reference the field name in the exact same way you set it on the `name` prop for that field. So even if you avoid nesting you should always include the square brackets. In other words `errors` do not get nested, they are always flat.
 
-### Referencing In Validation Schema
+### Nested Fields With Validation Schema
 
-Since vee-validate supports [form-level validation](/guide/validation#form-level-validation), referencing the nested fields may vary depending on how you are specifying the schema.
-
-#### Using Yup
+Since vee-validate supports [form-level validation](/guide/components/validation#form-level-validation), referencing the nested fields may vary depending on how you are specifying the schema.
 
 If you are using yup, you can utilize the nested `yup.object` or `yup.array` schemas to provide validation for your nested fields, here is a quick example:
 
 ```vue
 <template>
-  <Form @submit="onSubmit" v-slot="{ errors }">
-    <Field name="user.name" as="input" />
-    <span id="nameErr">{{ errors['user.name'] }}</span>
-    <Field name="user.addresses[0]" as="input" id="address" />
-    <span id="addrErr">{{ errors['user.addresses[0]'] }}</span>
+  <Form v-slot="{ errors }" :validation-schema="schema" @submit="onSubmit">
+    <Field name="user.name" />
+    <span>{{ errors['user.name'] }}</span>
+    <Field name="user.addresses[0]" />
+    <span>{{ errors['user.addresses[0]'] }}</span>
 
-    <button id="submit">Submit</button>
+    <button>Submit</button>
   </Form>
 </template>
 
@@ -161,7 +159,7 @@ If you are using yup, you can utilize the nested `yup.object` or `yup.array` sch
 import * as yup from 'yup';
 
 export default {
-  setup() {
+  data() {
     return {
       schema: yup.object({
         user: yup.object({
@@ -169,10 +167,12 @@ export default {
           addresses: yup.array().of(yup.string().required()),
         }),
       }),
-      onSubmit(values: any) {
-        fn(values);
-      },
     };
+  },
+  methods: {
+    onSubmit(values: any) {
+      fn(values);
+    },
   },
 };
 </script>

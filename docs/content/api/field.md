@@ -51,7 +51,7 @@ You can also render any globally defined components:
 
 <doc-tip>
 
-For validation to work, the rendered tag with `as` prop must conform to the events that the `Field` component listens for, you can view a list of these in the [Validation Behavior](/guide/validation#validation-behavior)
+For validation to work, the rendered tag with `as` prop must conform to the events that the `Field` component listens for, you can view a list of these in the [Validation Behavior](/guide/components/validation#validation-behavior)
 
 </doc-tip>
 
@@ -241,7 +241,7 @@ It sets the `dirty` meta flag to true
 
 </code-title>
 
-Validates the field by default unless explicitly [specified by validation triggers](/guide/validation#customizing-validation-triggers). Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
+Validates the field by default unless explicitly [specified by validation triggers](/guide/components/validation#customizing-validation-triggers). Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
 It sets the `touched` meta flag to true
 

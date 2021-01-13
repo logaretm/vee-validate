@@ -9,38 +9,46 @@ next: guide/handling-forms
 
 vee-validate handles complex validations in a very easy way, it supports synchronous and asynchronous validation, and allows defining rules on the field-level or on the form level using validation schemas with built-in support for [yup](https://github.com/jquense/yup).
 
-With Vue 3, vee-validate offers both flavors of doing validation: an _imperative validation_ approach with composition functions API and a _declarative approach_ with higher order components (HOC) and scoped slots.
+You will be using the following components to validate your forms:
 
-This guide will discuss all those aspects of vee-validate.
+- A `Field` component which represents a single form input, you can use it to render any kind of HTML elements or Vue components.
+- A `Form` component which represents a form. Do not confuse the `<Form>` tag with the HTML `<form>` tag.
+- An `ErrorMessage` component which displays an error message for a field, you don't have to use it as there are many ways to render error messages.
 
-vee-validate supports both flavors of doing validation, using either _the composition API_ or _higher-order components_, the latter will be focused upon more as it offers a lot of convenience over the composition API and will make building forms faster and fun.
+Here is the most simple example in action:
 
-vee-validate exposes the following components that you will be using frequently to validate your forms:
+<p class="codepen" data-height="265" data-theme-id="light" data-default-tab="js,result" data-user="logaretm" data-slug-hash="rNxbMzq" style="height: 265px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="Basic Example">
+  <span>See the Pen <a href="https://codepen.io/logaretm/pen/rNxbMzq">
+  Basic Example</a> by Abdelrahman Awad (<a href="https://codepen.io/logaretm">@logaretm</a>)
+  on <a href="https://codepen.io">CodePen</a>.</span>
+</p>
 
-- A `Field` component which represents a single form input.
-- A `Form` component which represents a form.
+<doc-tip>
+
+From this point forwards, the docs will assume basic knowledge of [Vue's SFC components](https://v3.vuejs.org/guide/single-file-component.html) and will demonstrate examples as such and will be using ES6+ code snippets. So be sure to brush up on these if you haven't already.
+
+</doc-tip>
 
 ## Field-level Validation
 
-You can define validation rules for your fields using the `Field` component or `useField` composition API function, your rules can be as simple as a function that accepts the current value and returns an error message.
-
-This is an example using the `<Field />` component:
+You can define validation rules for your fields using the `Field` component, your rules can be as simple as a function that accepts the current value and returns an error message.
 
 ```vue
 <template>
-  <Form v-slot="{ errors }">
-    <Field name="field" as="input" :rules="isRequired" />
-    {{ errors.field }}
+  <Form>
+    <Field name="field" :rules="isRequired" />
+    <ErrorMessage name="field" />
   </Form>
 </template>
 
 <script>
-import { Field, Form } from 'vee-validate';
+import { Field, Form, ErrorMessage } from 'vee-validate';
 
 export default {
   components: {
     Field,
     Form,
+    ErrorMessage,
   },
   methods: {
     isRequired(value) {
@@ -57,24 +65,25 @@ export default {
 
 ### Validating fields with yup
 
-yup is a very popular, simple and powerful data validation library for JavaScript, you can use it in combination with vee-validate, You can use [`yup`](https://github.com/jquense/yup) to define your validation rules for that field:
+[`yup`](https://github.com/jquense/yup) is a very popular, simple and powerful data validation library for JavaScript, you can use it in combination with vee-validate, You can use `yup` to define your validation rules for that field:
 
 ```vue
 <template>
-  <Form v-slot="{ errors }">
-    <Field name="password" as="input" type="password" :rules="passwordRules" />
-    {{ errors.field }}
+  <Form>
+    <Field name="password" type="password" :rules="passwordRules" />
+    <ErrorMessage name="password" />
   </Form>
 </template>
 
 <script>
-import { Field, Form } from 'vee-validate';
+import { Field, Form, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
 export default {
   components: {
     Field,
     Form,
+    ErrorMessage,
   },
   data() {
     return {
@@ -96,25 +105,25 @@ A simple validation schema can be an object containing field names as keys and v
 
 ```vue
 <template>
-  <Form @submit="submit" :validation-schema="simpleSchema" v-slot="{ errors }">
-    <Field name="email" as="input" />
-    <span>{{ errors.email }}</span>
+  <Form @submit="submit" :validation-schema="simpleSchema">
+    <Field name="email" >
+    <ErrorMessage name="email" />
 
-    <Field name="password" as="input" type="password" />
-    <span>{{ errors.password }}</span>
+    <Field name="password"type="password" />
+    <ErrorMessage name="password" />
 
     <button>Submit</button>
   </Form>
 </template>
 
 <script>
-import { Form, Field } from 'vee-validate';
-import * as yup from 'yup';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 
 export default {
   components: {
     Form,
     Field,
+    ErrorMessage,
   },
   data() {
     const simpleSchema = {
@@ -153,25 +162,26 @@ vee-validate has built-in support for yup schemas, You can pass your schemas to 
 
 ```vue
 <template>
-  <Form @submit="submit" :validation-schema="schema" v-slot="{ errors }">
-    <Field name="email" as="input" />
-    <span>{{ errors.email }}</span>
+  <Form @submit="submit" :validation-schema="schema">
+    <Field name="email" />
+    <ErrorMessage name="email" />
 
-    <Field name="password" as="input" type="password" />
-    <span>{{ errors.password }}</span>
+    <Field name="password" ype="password" />
+    <ErrorMessage name="password" />
 
     <button>Submit</button>
   </Form>
 </template>
 
 <script>
-import { Form, Field } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
 export default {
   components: {
     Form,
     Field,
+    ErrorMessage,
   },
   data() {
     const schema = yup.object({
@@ -214,13 +224,7 @@ Note that `input` event is not considered to be a trigger because it would make 
 
 **After form submissions**
 
-- When the form has been submitted with either `handleSubmit` or `submitForm` on the `<Form />` component
-
-<doc-tip>
-
-This is only relevant to the `<Field />` and `<Form />` components
-
-</doc-tip>
+- When the form has been submitted with either `handleSubmit` or `submitForm` on the `<Form />` component slot props
 
 ### Customizing Validation Triggers
 
@@ -268,20 +272,6 @@ Additionally if you need to use different events or have specific needs in mind,
 </Field>
 ```
 
-<doc-tip type="danger">
-
-When using `handleChange` in scoped slot or with `useField`, make sure to pass the event object or the new value. Otherwise vee-validate won't pick up the new value.
-
-```js
-handleChange(e);
-
-handleChange(newValue);
-```
-
-</doc-tip>
-
-`useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. It gives you everything you need to setup your own validation experience.
-
 In addition to those events, you can also validate when the `<Field />` or `<Form />` components are mounted with `validateOnMount` prop present on both components:
 
 ```vue
@@ -318,7 +308,7 @@ As you noticed the `<Form />` component gives you access to the `errors` on its 
 
 ```vue
 <Form v-slot="{ errors }">
-  <Field name="field" as="input" :rules="rules" />
+  <Field name="field" :rules="rules" />
   {{ errors.field }}
 </Form>
 ```
@@ -336,43 +326,22 @@ and if you would like, you could display all error messages for your fields by i
     </ul>
   </template>
 
-  <Field name="name" as="input" :rules="rules" />
-  <Field name="email" as="input" :rules="rules" />
-  <Field name="password" as="input" :rules="rules" />
+  <Field name="name" :rules="rules" />
+  <Field name="email" :rules="rules" />
+  <Field name="password" :rules="rules" />
 </Form>
 ```
 
 ### Using ErrorMessage component
 
-vee-validate offers an `<ErrorMessage />` component that displays your error messages in a convenient manner.
+You've seen how the `ErrorMessage` works in the previous examples, by default the `ErrorMessage` component renders a `span` but you can specify any kind of HTML element or global component to the `as` prop.
 
 ```vue
-<template>
-  <Form>
-    <Field name="field" as="input" :rules="rules" />
-    <ErrorMessage name="field" />
-  </Form>
-</template>
-
-<script>
-import { Field, Form, ErrorMessage } from 'vee-validate';
-import * as yup from 'yup';
-
-export default {
-  components: {
-    Field,
-    Form,
-    ErrorMessage,
-  },
-  data() {
-    const rules = yup.string().required();
-
-    return {
-      rules,
-    };
-  },
-};
-</script>
+<Form>
+  <Field name="field" :rules="rules" />
+  <!-- Render the error message as a div element -->
+  <ErrorMessage name="field" as="div" />
+</Form>
 ```
 
 The `<ErrorMessage />` component is very flexible and you can customize its render output with scoped slots to build complex messages markup, read the [ErrorMessage API reference](/api/error-message) for more information.
@@ -393,8 +362,6 @@ The down payment is required
 
 You can do this in two ways depending on which validators you are using (yup or [global validators](/guide/global-validators)).
 
-#### Custom Labels with Yup
-
 With yup it is very straightforward, you just need to call `label()` after defining your field's validations either in field level or form level:
 
 ```js
@@ -409,3 +376,5 @@ Here is a live example:
 <code-sandbox id="vee-validate-v4-custom-field-labels-with-yup-qikju" title="Custom Labels with yup"></code-sandbox>
 
 If you are interested on how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
+
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>

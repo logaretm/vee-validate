@@ -12,7 +12,7 @@
         </div>
       </div>
 
-      <div class="mt-16 grid grid-cols-3 gap-x-4">
+      <div class="mt-16 grid md:grid-cols-3 gap-x-4">
         <nuxt-link
           class="block mt-8 bg-gray-600 p-4 text-white rounded-lg font-bold text-center focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-accent-800"
           to="/guide/overview"
