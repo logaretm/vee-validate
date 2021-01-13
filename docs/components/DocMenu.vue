@@ -136,7 +136,7 @@ export default {
           children.push({
             title: child.name,
             icon: child.icon,
-            expanded: false,
+            expanded: this.$route.path.indexOf(child.contentPath) >= 0,
             pages: Array.isArray(childPages) ? childPages.sort((a, b) => a.order - b.order) : [childPages],
             order: childPages[0].order,
           });
