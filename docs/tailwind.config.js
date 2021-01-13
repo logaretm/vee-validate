@@ -58,8 +58,6 @@ module.exports = {
         'gray-100': '#f6f6f6',
 
         background: '#22212C',
-
-        patreon: 'rgb(255, 66, 77)',
       },
 
       screens: {
