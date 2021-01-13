@@ -3,7 +3,7 @@
     <h2 class="text-2xl font-display">Choose a flavor</h2>
     <p class="mt-4">Before you go on, you should choose which flavor of vee-validate you want to use.</p>
 
-    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-x-8 text-white">
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-8 text-white">
       <nuxt-link :to="`/guide/components/${next}`" class="bg-gray-600 hover:bg-accent-900 p-6 rounded-lg relative">
         <p class="text-xl font-semibold font-display">Components</p>
         <p class="mt-8">Simple, high-level, dynamic template-based higher-order components.</p>

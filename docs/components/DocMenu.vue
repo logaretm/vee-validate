@@ -1,8 +1,8 @@
 <template>
   <aside class="px-6 pt-24">
-    <nav class="space-y-8 text-sm overflow-y-auto overscroll-y-contain">
+    <nav class="space-y-8 md:text-sm overflow-y-auto overscroll-y-contain">
       <div v-for="category in categories" :key="category.title">
-        <p class="text-xs font-bold text-gray-400 uppercase">{{ category.title }}</p>
+        <p class="md:text-xs font-bold text-gray-400 uppercase">{{ category.title }}</p>
         <ul class="mt-3 space-y-2 w-full">
           <li v-for="page in category.pages" :key="page.title" class="group">
             <nuxt-link v-if="!page.pages" :to="page.path">{{ page.menuTitle || page.title }}</nuxt-link>
