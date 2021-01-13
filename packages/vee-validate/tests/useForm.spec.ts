@@ -221,7 +221,7 @@ describe('useForm()', () => {
     mountWithHoc({
       setup() {
         const form = useForm({
-          validationSchema: yup.object().shape({
+          validationSchema: yup.object({
             field1: yup.string().required(REQUIRED_MESSAGE),
             field2: yup.string().required(REQUIRED_MESSAGE),
           }),
