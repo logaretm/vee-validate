@@ -1,4 +1,4 @@
 # redirects old component api paths to new one
-/v4/validation                     /v4/components/validation
-/v4/handling-forms                 /v4/components/handling-forms
-/v4/nested-objects-and-arrays      /v4/components/nested-objects-and-arrays
+/v4/guide/validation                     /v4/guide/components/validation
+/v4/guide/handling-forms                 /v4/guide/components/handling-forms
+/v4/guide/nested-objects-and-arrays      /v4/guide/components/nested-objects-and-arrays
