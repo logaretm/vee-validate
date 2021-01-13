@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.9](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.8...vee-validate@4.1.9) (2021-01-13)
+
+
+### Features
+
+* use internal yup types ([#3123](https://github.com/logaretm/vee-validate/issues/3123)) ([7554bfc](https://github.com/logaretm/vee-validate/commit/7554bfc49b0103f218f901148bc06e6a455f09b0))
+
+
+
+
+
 ## [4.1.8](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.7...vee-validate@4.1.8) (2021-01-12)
 
 
