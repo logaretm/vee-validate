@@ -135,7 +135,7 @@ Then you can use it like this:
 
 ## Schema Validation
 
-The [Form-level validation](/guide/validation#form-level-validation) feature isn't limited to `yup` validators, you can define your global validators and define them in the exact same way as the previous examples in the `Form` component `validation-schema` prop.
+The [Form-level validation](/guide/components/validation#form-level-validation) feature isn't limited to `yup` validators, you can define your global validators and define them in the exact same way as the previous examples in the `Form` component `validation-schema` prop.
 
 Here is an example that uses all the rules we've defined prior in this page in a form validation schema:
 

@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "nuxt dev",
     "serve": "nuxt dev",
-    "generate": "nuxt generate",
+    "generate": "nuxt generate && node scripts/afterBuild.js",
     "build": "nuxt build --target static",
     "export": "nuxt export"
   },
