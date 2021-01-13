@@ -1,5 +1,5 @@
 import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref, nextTick } from 'vue';
-import type { ObjectSchema, ValidationError } from 'yup';
+import type { SchemaOf, ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
   FieldMeta,
@@ -16,9 +16,7 @@ import { getFromPath, isYupValidator, keysOf, resolveNextCheckboxValue, setInPat
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
 
 interface FormOptions<TValues extends Record<string, any>> {
-  validationSchema?:
-    | Record<keyof TValues, GenericValidateFunction | string | Record<string, any>>
-    | ObjectSchema<TValues>;
+  validationSchema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>;
   initialValues?: MaybeReactive<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;
   initialTouched?: Record<keyof TValues, boolean>;

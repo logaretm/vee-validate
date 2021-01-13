@@ -259,7 +259,7 @@ const formSchema = {
   fields: [
     // ...
   ],
-+ validation: yup.object().shape({
++ validation: yup.object({
 +   email: yup.string().email().required(),
 +   name: yup.string().required(),
 +   password: yup.string().min(8).required(),
@@ -322,7 +322,7 @@ const formSchema = {
   fields: [
     // ...
   ],
-  validation: yup.object().shape({
+  validation: yup.object({
     // ...
   }),
 + values: {

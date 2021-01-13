@@ -344,7 +344,7 @@ describe('<Form />', () => {
   test('validation schema with yup', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object().shape({
+        const schema = yup.object({
           email: yup.string().required().email(),
           password: yup.string().required().min(8),
         });
@@ -430,7 +430,7 @@ describe('<Form />', () => {
   test('cross field validation with yup schema', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object().shape({
+        const schema = yup.object({
           password: yup.string().required(),
           confirmation: yup.string().oneOf([yup.ref('password')], 'passwords must match'),
         });
@@ -826,7 +826,7 @@ describe('<Form />', () => {
   test('checkboxes with yup schema', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object().shape({
+        const schema = yup.object({
           drink: yup.array().required().min(1),
         });
 
@@ -878,7 +878,7 @@ describe('<Form />', () => {
     let drinks!: Ref<string[]>;
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object().shape({
+        const schema = yup.object({
           drink: yup.array().required().min(1),
         });
 
@@ -1118,7 +1118,7 @@ describe('<Form />', () => {
   test('validate fields on mount with validateOnMount = true', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object().shape({
+        const schema = yup.object({
           email: yup.string().required().email(),
           password: yup.string().required().min(8),
         });
@@ -1259,7 +1259,7 @@ describe('<Form />', () => {
     const spy = jest.fn();
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object().shape({
+        const schema = yup.object({
           email: yup.string().required().email(),
           password: yup.string().required().min(8),
         });
@@ -1311,7 +1311,7 @@ describe('<Form />', () => {
     const spy = jest.fn();
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object().shape({
+        const schema = yup.object({
           email: yup.string().required().email(),
           password: yup.string().required().min(8),
         });

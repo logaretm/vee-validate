@@ -49,7 +49,7 @@ export default {
     Field,
   },
   data() {
-    const schema = yup.object().shape({
+    const schema = yup.object({
       name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
@@ -88,7 +88,7 @@ export default {
     Field,
   },
   data() {
-    const schema = yup.object().shape({
+    const schema = yup.object({
       name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
@@ -163,7 +163,7 @@ export default {
     Field,
   },
   data() {
-    const schema = yup.object().shape({
+    const schema = yup.object({
       name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
@@ -211,7 +211,7 @@ export default {
     Field,
   },
   data() {
-    const schema = yup.object().shape({
+    const schema = yup.object({
       name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
@@ -297,7 +297,7 @@ export default {
   },
   data() {
     // Validation Schema
-    const schema = yup.object().shape({
+    const schema = yup.object({
       name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
@@ -462,7 +462,7 @@ export default {
     Field,
   },
   data() {
-    const schema = yup.object().shape({
+    const schema = yup.object({
       name: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(8),
@@ -525,7 +525,7 @@ export default {
     Field,
   },
   data() {
-    const schema = yup.object().shape({
+    const schema = yup.object({
       // ...
     });
 
@@ -591,7 +591,7 @@ export default {
     Field,
   },
   data() {
-    const schema = yup.object().shape({
+    const schema = yup.object({
       // ...
     });
 
