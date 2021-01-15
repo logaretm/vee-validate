@@ -171,7 +171,7 @@ import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 
 export default {
-  data() {
+  setup() {
     // Define a validation schema
     const schema = yup.object({
       email: yup.string().required().email(),
@@ -588,7 +588,7 @@ import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 
 export default {
-  data() {
+  setup() {
     // Define a validation schema
     const schema = yup.object({
       email: yup.string().required().email(),
