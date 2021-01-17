@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.10](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.9...vee-validate@4.1.10) (2021-01-17)
+
+
+### Bug Fixes
+
+* set field initial value on the fid lookup closes [#3128](https://github.com/logaretm/vee-validate/issues/3128) ([650d5cf](https://github.com/logaretm/vee-validate/commit/650d5cf9f75f9b9247fc813acf2aff4089f05415))
+
+
+
+
+
 ## [4.1.9](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.8...vee-validate@4.1.9) (2021-01-13)
 
 
