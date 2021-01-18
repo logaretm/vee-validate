@@ -244,6 +244,14 @@ Validates all the fields and populates the `errors` object, returns a promise th
 
 <code-title level="4">
 
+`validateField: (field: string) => Promise<{ valid: boolean; errors: string[] }>`
+
+</code-title>
+
+Validates a specific field inside the form, returns a promise that resolves to an object containing the validation result.
+
+<code-title level="4">
+
 `handleSubmit: (evt: Event, cb: (values: Record<string, any>, ctx: SubmissionContext) => any) => Promise<void>`
 
 </code-title>

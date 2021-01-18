@@ -117,6 +117,7 @@ type useForm = (
   setFieldValue: (field: string, value: any) => void; // Sets a field value
   setValues: (fields: Record<string, any>) => void; // Sets multiple fields values
   validate: () => Promise<{ errors: Record<string, string>; valid: boolean; }>; // validates the form fields and returns the overall result
+  validateField: (field: string) => Promise<{ errors: string[]; valid: boolean; }>; // validates the form fields and returns the overall result
   handleSubmit: (cb: (values: Record<string, any>, ctx: SubmissionContext)) => () => void; // Creates a submission handler that calls the cb only after successful validation with the form values
   submitForm: (e: Event) => void; // Forces submission of a form after successful validation (calls e.target.submit())
   handleReset: () => void; // Resets all fields' errors and meta and their values
@@ -440,7 +441,21 @@ Validates all the fields and populates the `errors` object, returns a promise th
 ```js
 const { validate } = useForm();
 
-await validate();
+const { valid, errors } = await validate();
+```
+
+<code-title level="4">
+
+`validateField: (field: string) => Promise<{ valid: boolean; errors: string[] }>`
+
+</code-title>
+
+Validates a specific field inside the form, returns a promise that resolves to an object containing the validation result.
+
+```js
+const { validateField } = useForm();
+
+const { valid, errors } = await validateField('email');
 ```
 
 <code-title level="4">

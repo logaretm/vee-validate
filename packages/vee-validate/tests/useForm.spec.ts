@@ -2,6 +2,7 @@ import flushPromises from 'flush-promises';
 import { useField, useForm } from '@/vee-validate';
 import { mountWithHoc } from './helpers';
 import * as yup from 'yup';
+import { doc } from 'prettier';
 
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -245,5 +246,33 @@ describe('useForm()', () => {
         field2: REQUIRED_MESSAGE,
       },
     });
+  });
+
+  test('has a validateField() method that validates a specific field', async () => {
+    let validateField: any;
+    mountWithHoc({
+      setup() {
+        const form = useForm();
+        validateField = form.validateField;
+        const { errorMessage: f1 } = useField('field1', val => (val ? true : REQUIRED_MESSAGE));
+        const { errorMessage: f2 } = useField('field2', val => (val ? true : REQUIRED_MESSAGE));
+
+        return { f1, f2 };
+      },
+      template: `<div>
+        <span id="f1">{{ f1 }}</span>
+        <span id="f2">{{ f2 }}</span>
+      </div>`,
+    });
+
+    await flushPromises();
+    const result = await validateField('field2');
+    expect(result).toEqual({
+      valid: false,
+      errors: [REQUIRED_MESSAGE],
+    });
+
+    expect(document.querySelector('#f2')?.textContent).toBe(REQUIRED_MESSAGE);
+    expect(document.querySelector('#f1')?.textContent).toBe('');
   });
 });
