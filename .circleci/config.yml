@@ -7,7 +7,6 @@ orbs:
   # Orbs reduce the amount of configuration required for common tasks.
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
   node: circleci/node@4.1
-  codecov: codecov/codecov@1.1.3
 
 jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
@@ -27,8 +26,9 @@ jobs:
       - run:
           name: Generate Coverage
           command: npm run cover:ci
-      - codecov/upload:
-          file: { { coverage_report_filepath } }
+      - run:
+          name: Upload Coverage
+          command: bash <(curl -s https://codecov.io/bash)
 
 workflows:
   sample:
