@@ -12,7 +12,7 @@ jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
   test:
     docker:
-      - image: cimg/node:14
+      - image: cimg/node:14.15
     steps:
       # Checkout the code as the first step.
       - checkout
@@ -22,7 +22,7 @@ jobs:
           pkg-manager: yarn
       - run:
           name: Run tests
-          command: npm test
+          command: yarn test
 
 workflows:
   sample:
