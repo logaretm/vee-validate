@@ -11,7 +11,7 @@
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
     "test": "jest",
-    "test:ci": "jest --ci",
+    "test:ci": "jest --ci --detectOpenHandles --runInBand",
     "lint": "eslint . '**/*.{js,jsx,ts,tsx}' --fix",
     "format": "prettier \"./**/*.ts\" --write",
     "build": "node scripts/build.js",
