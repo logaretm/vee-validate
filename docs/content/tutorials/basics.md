@@ -85,10 +85,9 @@ First, start by adding the markup you would typically have for a sign up form, y
 <template>
   <div id="app">
     <form>
-      <input type="text" name="name" />
-      <input type="password" name="password" />
+      <input type="email" name="email" />
 
-      <button>Sign up</button>
+      <button>Sign up for newsletter</button>
     </form>
   </div>
 </template>
@@ -108,7 +107,7 @@ Fix that by adding a `submit` event handler that prevents the native form submis
     <form @submit.prevent="onSubmit">
       <input type="email" name="email" />
 
-      <button>Sign up</button>
+      <button>Sign up for newsletter</button>
     </form>
   </div>
 </template>
@@ -134,9 +133,9 @@ VeeValidate exposes 2 components that you will be using regularly, the `<Field>`
 <template>
   <div id="app">
     <Form @submit="onSubmit">
-      <Field name="email" as="input" />
+      <Field name="email" type="email" />
 
-      <button>Sign up</button>
+      <button>Sign up for newsletter</button>
     </Form>
   </div>
 </template>
@@ -176,7 +175,7 @@ There are multiple ways to define rules with VeeValidate, this tutorial will cov
 <template>
   <div id="app">
     <Form @submit="onSubmit">
-      <Field name="email" as="input" :rules="validateEmail" />
+      <Field name="email" type="email" :rules="validateEmail" />
 
       <button>Sign up</button>
     </Form>
@@ -244,7 +243,7 @@ Then add the `<ErrorMessage />` component to your template, passing a `name` pro
 <template>
   <div id="app">
     <Form @submit="onSubmit">
-      <Field name="email" as="input" :rules="validateEmail" />
+      <Field name="email" :rules="validateEmail" />
       <ErrorMessage name="email" />
 
       <button>Sign up</button>
