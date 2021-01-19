@@ -1,4 +1,4 @@
-import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref, nextTick } from 'vue';
+import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref, nextTick, warn } from 'vue';
 import type { SchemaOf, ValidationError } from 'yup';
 import type { useField } from './useField';
 import {
@@ -341,6 +341,17 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     return results.reduce(resultReducer, { errors: {}, valid: true });
   }
 
+  async function validateField(field: keyof TValues): Promise<ValidationResult> {
+    const fieldInstance = fieldsById.value[field];
+    if (!fieldInstance) {
+      warn(`field with name ${field} was not found`);
+
+      return Promise.resolve({ errors: [], valid: true });
+    }
+
+    return fieldInstance.validate();
+  }
+
   const handleSubmit = (fn?: SubmissionHandler<TValues>) => {
     return function submissionHandler(e: unknown) {
       if (e instanceof Event) {
@@ -394,6 +405,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         }
       : undefined,
     validate,
+    validateField,
     setFieldValue,
     setValues,
     setErrors,
@@ -452,6 +464,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     isSubmitting,
     submitCount,
     validate,
+    validateField,
     handleReset: () => resetForm(),
     resetForm,
     handleSubmit,

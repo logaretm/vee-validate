@@ -53,6 +53,7 @@ export const Form = defineComponent({
       isSubmitting,
       submitCount,
       validate,
+      validateField,
       handleReset,
       resetForm,
       handleSubmit,
@@ -101,6 +102,7 @@ export const Form = defineComponent({
         isSubmitting: isSubmitting.value,
         submitCount: submitCount.value,
         validate,
+        validateField,
         handleSubmit: handleScopedSlotSubmit,
         handleReset,
         submitForm,
@@ -131,6 +133,7 @@ export const Form = defineComponent({
         this.setTouched = setTouched;
         this.resetForm = resetForm;
         this.validate = validate;
+        this.validateField = validateField;
       }
 
       const children = normalizeChildren(ctx, slotProps.value);
