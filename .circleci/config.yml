@@ -21,9 +21,6 @@ jobs:
       - node/install-packages:
           pkg-manager: yarn
       - run:
-          name: Run tests
-          command: npm run test:ci
-      - run:
           name: Generate Coverage
           command: npm run cover:ci
       - run:
