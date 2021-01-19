@@ -70,6 +70,12 @@ The most crucial part of rendering fields with `v-slot` is that you **must bind 
 
 When using `v-slot` on the `Field` component you no longer have to provide an `as` prop and then it will become a renderless component.
 
+<doc-tip title="Passing Props and Attrs">
+
+Whichever element/component you chose to render with `<Field />` you can pass also any props or attributes the element/component would normally reieve for example if you render `input` elements you can pass any of it's attributes like `type` or `disabled` to just name a few.
+
+</doc-tip>
+
 ### Using v-model
 
 The `<Field />` component uses a different way to apply input values to your rendered inputs using the `v-bind="field"` syntax which adds various listeners and attributes to your rendered inputs.

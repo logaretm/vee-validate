@@ -66,7 +66,7 @@ Then use the `Form` and `Field` components to render your form:
 
 ```vue
 <Form v-slot="{ errors }">
-  <Field name="field" as="input" :rules="isRequired" />
+  <Field name="field" :rules="isRequired" />
 
   <span>{{ errors.field }}</span>
 </Form>

@@ -13,7 +13,7 @@ The `<Form />` component is like its name, a simple HTML form but with a few adj
 
 ```vue
 <Form>
-  <Field name="password" as="input" type="password" />
+  <Field name="password" type="password" />
 </Form>
 ```
 
@@ -23,7 +23,7 @@ Just like the `Field` component you can pass whatever you want to render in its 
 
 ```vue
 <Form as="v-form">
-  <Field name="password" as="input" type="password" />
+  <Field name="password" type="password" />
 </Form>
 ```
 
@@ -35,9 +35,9 @@ For more complex form markup, you can render a `div` and inline your forms in th
 <Form as="div">
   <h2>Sign up form</h2>
   <form>
-    <Field name="name" as="input"" />
-    <Field name="email" as="input" type="email" />
-    <Field name="password" as="input" type="password" />
+    <Field name="name" />
+    <Field name="email" type="email" />
+    <Field name="password" type="password" />
   </form>
 </Form>
 ```
@@ -64,9 +64,9 @@ Lastly, you can use the `Form` component slot props to access various aspects of
 
 ```vue
 <Form v-slot="{ values }">
-  <Field name="name" as="input" />
-  <Field name="email" as="input" type="email" />
-  <Field name="password" as="input" type="password" />
+  <Field name="name" />
+  <Field name="email" type="email" />
+  <Field name="password" type="password" />
 
   <!-- prints current form values -->
   <pre>
@@ -83,9 +83,9 @@ While not recommended, you can make the `Form` component a renderless component 
 <Form as="" v-slot="{ values, submitForm }">
   <h2>Sign up form</h2>
   <form @submit="submitForm">
-    <Field name="name" as="input" />
-    <Field name="email" as="input" type="email" />
-    <Field name="password" as="input" type="password" />
+    <Field name="name" />
+    <Field name="email" type="email" />
+    <Field name="password" type="password" />
 
     <!-- prints current form values -->
     <pre>

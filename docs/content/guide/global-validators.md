@@ -68,9 +68,9 @@ You should make the `defineRule` calls in your application entry-point file to m
 Now that you've defined your validators, for example the `email` and `required` rules. You can pass them directly to `<Field />` component's `rules` prop like this:
 
 ```vue
-<Field name="name" as="input" rules="required" />
+<Field name="name" rules="required" />
 
-<Field name="email" as="input" rules="required|email" />
+<Field name="email" rules="required|email" />
 ```
 
 Notice that to define multiple rules you have to place a `|` (pipe) character between your rules as a separator.
@@ -101,7 +101,7 @@ defineRule('minLength', (value, [limit]) => {
 And then you can use it on the `Field` component like this:
 
 ```vue
-<Field name="password" as="input" type="password" rules="required|min:8" />
+<Field name="password" type="password" rules="required|min:8" />
 ```
 
 Note that to pass arguments to rules, you need to place a colon `:` character to signify the beginning of rules. You can pass multiple arguments as a comma separated list. Here is an example for a `minMax` rule:
@@ -130,7 +130,7 @@ defineRule('minLength', (value, [min, max]) => {
 Then you can use it like this:
 
 ```vue
-<Field name="longitude" as="input" type="number" rules="required|minMax:-180,180" />
+<Field name="longitude" type="number" rules="required|minMax:-180,180" />
 ```
 
 ## Schema Validation
@@ -142,10 +142,10 @@ Here is an example that uses all the rules we've defined prior in this page in a
 ```vue
 <template>
   <Form @submit="submit" :validation-schema="schema" v-slot="{ errors }">
-    <Field name="email" as="input" />
+    <Field name="email" />
     <span>{{ errors.email }}</span>
 
-    <Field name="password" as="input" type="password" />
+    <Field name="password" type="password" />
     <span>{{ errors.password }}</span>
 
     <button>Submit</button>
@@ -197,9 +197,9 @@ defineRule('confirmed', (value, [target], ctx) => {
 Here is an example of the two fields using that rule:
 
 ```vue
-<Field name="password" as="input" rules="required" />
+<Field name="password" rules="required" />
 
-<Field name="confirmation" as="input" rules="required|confirmed:password" />
+<Field name="confirmation" rules="required|confirmed:password" />
 ```
 
 There is a shorthand for this using `@` prefix before specifying arguments, this tells vee-validate to automatically swap the specified field value in the arguments array:
