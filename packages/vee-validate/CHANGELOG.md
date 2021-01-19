@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.11](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.10...vee-validate@4.1.11) (2021-01-19)
+
+
+### Features
+
+* added validate field function to form and useForm ([#3133](https://github.com/logaretm/vee-validate/issues/3133)) ([926bed1](https://github.com/logaretm/vee-validate/commit/926bed1bded6990f17a51ca68e9aa47c339a80f2))
+
+
+
+
+
 ## [4.1.10](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.9...vee-validate@4.1.10) (2021-01-17)
 
 
