@@ -275,4 +275,29 @@ describe('useForm()', () => {
     expect(document.querySelector('#f2')?.textContent).toBe(REQUIRED_MESSAGE);
     expect(document.querySelector('#f1')?.textContent).toBe('');
   });
+
+  test('warns when validateField() is called on a non-existent field', async () => {
+    const spy = jest.spyOn(console, 'warn').mockImplementation();
+
+    let validateField: any;
+    mountWithHoc({
+      setup() {
+        const form = useForm();
+        validateField = form.validateField;
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    const result = await validateField('field2');
+    expect(result).toEqual({
+      valid: true,
+      errors: [],
+    });
+
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  });
 });
