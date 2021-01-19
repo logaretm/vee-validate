@@ -8,7 +8,7 @@
 
 [![Financial Contributors on Open Collective](https://opencollective.com/vee-validate/all/badge.svg?label=financial+contributors)](https://opencollective.com/vee-validate)
 [![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/main/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
-[![Build Status](https://travis-ci.org/logaretm/vee-validate.svg?branch=main)](https://travis-ci.org/logaretm/vee-validate)
+[![circleci](https://circleci.com/gh/logaretm/vee-validate.svg?style=svg)](https://circleci.com/gh/logaretm/vee-validate)
 [![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/)
 [![npm](https://img.shields.io/npm/dm/vee-validate.svg)](https://npm-stat.com/charts.html?package=vee-validate)
 [![npm](https://img.shields.io/npm/v/vee-validate.svg)](https://www.npmjs.com/package/vee-validate)
