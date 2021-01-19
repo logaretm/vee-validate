@@ -88,14 +88,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   });
 
   // initial form values
-  const { initialValues, setInitialValues } = useFormInitialValues<TValues>(
+  const { readonlyInitialValues, initialValues, setInitialValues } = useFormInitialValues<TValues>(
     fieldsById,
     formValues,
     opts?.initialValues
   );
 
   // form meta aggregations
-  const meta = useFormMeta(fields, initialValues);
+  const meta = useFormMeta(fields, readonlyInitialValues);
 
   /**
    * Manually sets an error message on a specific field
@@ -283,6 +283,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     // so remove the field value key immediately
     if (field.idx === -1) {
       unsetPath(formValues, fieldName);
+      unsetPath(initialValues.value, fieldName);
       return;
     }
 
@@ -305,6 +306,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     unsetPath(formValues, fieldName);
+    unsetPath(initialValues.value, fieldName);
   }
 
   async function validate(): Promise<FormValidationResult<TValues>> {
@@ -616,7 +618,8 @@ function useFormInitialValues<TValues extends Record<string, any>>(
   provide(FormInitialValuesSymbol, computedInitials);
 
   return {
-    initialValues: computedInitials,
+    readonlyInitialValues: computedInitials,
+    initialValues,
     setInitialValues,
   };
 }
