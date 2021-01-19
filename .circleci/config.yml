@@ -31,6 +31,6 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash)
 
 workflows:
-  sample:
+  ci:
     jobs:
       - test
