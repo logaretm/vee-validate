@@ -16,6 +16,7 @@
     "format": "prettier \"./**/*.ts\" --write",
     "build": "node scripts/build.js",
     "cover": "jest --coverage",
+    "cover:ci": "jest --coverage --ci --runInBand --detectOpenHandles",
     "postversion": "npm run build",
     "docs:dev": "cd ./docs && npm run dev && cd -"
   },
