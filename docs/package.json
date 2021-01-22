@@ -19,7 +19,6 @@
     "tailwindcss": "npm:@tailwindcss/postcss7-compat"
   },
   "devDependencies": {
-    "markdown-it-custom-block": "^0.1.1",
     "postcss-nested": "^4.2.3"
   }
 }
