@@ -63,6 +63,7 @@ export const Field = defineComponent({
       type: null,
     },
   },
+  emits: ['update:modelValue'],
   setup(props, ctx) {
     const rules = toRef(props, 'rules');
     const name = toRef(props, 'name');
