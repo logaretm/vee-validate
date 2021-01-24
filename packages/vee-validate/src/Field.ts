@@ -1,4 +1,4 @@
-import { h, defineComponent, nextTick, toRef, SetupContext, resolveDynamicComponent, computed, watch } from 'vue';
+import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, watch } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, isFileInput } from './utils';
@@ -203,7 +203,7 @@ export const Field = defineComponent({
   },
 });
 
-function resolveTag(props: Record<string, any>, ctx: SetupContext) {
+function resolveTag(props: Record<string, any>, ctx: SetupContext<any>) {
   let tag: string = props.as || '';
 
   if (!props.as && !ctx.slots.default) {
