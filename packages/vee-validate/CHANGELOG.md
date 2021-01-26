@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.12](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.11...vee-validate@4.1.12) (2021-01-26)
+
+
+### Bug Fixes
+
+* array radio fields not switching value correctly closes [#3141](https://github.com/logaretm/vee-validate/issues/3141) ([3d4efef](https://github.com/logaretm/vee-validate/commit/3d4efef68c63a3b57e2bf14fed913dbf841a7f5e))
+* clear out initial values for unregistered fields closes [#3060](https://github.com/logaretm/vee-validate/issues/3060) ([56206de](https://github.com/logaretm/vee-validate/commit/56206de995fe8f2eaca3e303ab6980784a3c95b1))
+* typing issue from [#3134](https://github.com/logaretm/vee-validate/issues/3134) ([29e5cff](https://github.com/logaretm/vee-validate/commit/29e5cffc654a2502f29fe616eda088de958e02d3))
+
+
+
+
+
 ## [4.1.11](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.10...vee-validate@4.1.11) (2021-01-19)
 
 
