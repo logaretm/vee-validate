@@ -156,6 +156,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     setInPath(formValues, field as string, newValue);
+    // multiple radio fields
+    if (fieldInstance && Array.isArray(fieldInstance)) {
+      fieldInstance.forEach(fieldItem => {
+        valuesByFid[fieldItem.fid] = newValue;
+      });
+      return;
+    }
+
     if (fieldInstance) {
       valuesByFid[fieldInstance.fid] = newValue;
     }
