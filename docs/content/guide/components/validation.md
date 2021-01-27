@@ -109,7 +109,7 @@ A simple validation schema can be an object containing field names as keys and v
     <Field name="email" >
     <ErrorMessage name="email" />
 
-    <Field name="password"type="password" />
+    <Field name="password" type="password" />
     <ErrorMessage name="password" />
 
     <button>Submit</button>
@@ -166,7 +166,7 @@ vee-validate has built-in support for yup schemas, You can pass your schemas to 
     <Field name="email" />
     <ErrorMessage name="email" />
 
-    <Field name="password" ype="password" />
+    <Field name="password" type="password" />
     <ErrorMessage name="password" />
 
     <button>Submit</button>
