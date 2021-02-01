@@ -1,7 +1,7 @@
 import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, watch } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
-import { normalizeChildren, hasCheckedAttr, isFileInput } from './utils';
+import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding } from './utils';
 
 interface ValidationTriggersProps {
   validateOnMount: boolean;
@@ -148,7 +148,8 @@ export const Field = defineComponent({
         attrs.value = value.value;
       }
 
-      if (isFileInput(resolveTag(props, ctx), ctx.attrs.type as string)) {
+      const tag = resolveTag(props, ctx);
+      if (shouldHaveValueBinding(tag, ctx.attrs)) {
         delete attrs.value;
       }
 
