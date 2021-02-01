@@ -62,7 +62,11 @@ export function isNativeMultiSelect(el: HTMLElement): el is HTMLSelectElement {
  * Checks if a tag name with attrs object will render a native multi-select element
  */
 export function isNativeMultiSelectNode(tag: string, attrs: Record<string, unknown>) {
-  return tag === 'select' && 'multiple' in attrs && ![false, null, undefined].includes(attrs.multiple as boolean);
+  // The falsy value array is the values that Vue won't add the `multiple` prop if it has one of these values
+  const hasTruthyBindingValue =
+    ![false, null, undefined, 0].includes(attrs.multiple as boolean) && !Number.isNaN(attrs.multiple);
+
+  return tag === 'select' && 'multiple' in attrs && hasTruthyBindingValue;
 }
 
 /**
