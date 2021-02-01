@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.13](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.12...vee-validate@4.1.13) (2021-02-01)
+
+
+### Features
+
+* added value change support for native multi select ([#3146](https://github.com/logaretm/vee-validate/issues/3146)) ([0601586](https://github.com/logaretm/vee-validate/commit/0601586eabbf76fac9d4fa79e6ae1d86fd3a0e37))
+
+
+
+
+
 ## [4.1.12](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.11...vee-validate@4.1.12) (2021-01-26)
 
 
