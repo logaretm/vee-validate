@@ -43,6 +43,19 @@ For example you could render a `select` input like this:
 </Field>
 ```
 
+<doc-tip>
+
+The `Field` component has partial support for native `select[multiple]` element, while it picks up the multiple values correctly, it doesn't set the initial values UI state on the element itself. You may use `v-model` here or bind the `selected` attributes on the options which is straightforward with the `value` prop exposed on the slot props.
+
+```vue
+<Field v-slot="{ value }" name="drink" as="select" multiple>
+  <option value="" disabled>Select a drink</option>
+  <option v-for="drink in drinks" :key="drink" :value="drink" :selected="value && value.includes(drink)">{{ drink }}</option>
+</Field>
+```
+
+</doc-tip>
+
 You can also render any globally defined components:
 
 ```vue
@@ -165,6 +178,14 @@ You should check the `errorMessage` or `errors` to determine if a field is indee
 </code-title>
 
 An array containing all error messages for the field.
+
+<code-title level="4">
+
+`value: unknown`
+
+</code-title>
+
+The current value of the field, useful to compare and do conditional rendering based on the field value. **You should not use it as a target of `v-model` or `:value` binding**. Instead use the `field` prop.
 
 <code-title level="4">
 
