@@ -159,6 +159,7 @@ export const Field = defineComponent({
     const slotProps = computed(() => {
       return {
         field: fieldProps.value,
+        value: value.value,
         meta,
         errors: errors.value,
         errorMessage: errorMessage.value,
