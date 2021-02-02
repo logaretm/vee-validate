@@ -1,7 +1,8 @@
 export { validate } from './validate';
 export { defineRule } from './defineRule';
-export { configure } from './config';
+export { configure, getConfig } from './config';
 export { Field } from './Field';
+export { fieldUtils } from './utils/fieldUtils';
 export { Form } from './Form';
 export { ErrorMessage } from './ErrorMessage';
 export { useField } from './useField';
