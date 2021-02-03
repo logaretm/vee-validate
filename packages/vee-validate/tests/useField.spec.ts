@@ -27,4 +27,28 @@ describe('useField()', () => {
     await flushPromises();
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
+
+  test('doesnt validate when value changes and its paussed', async () => {
+    mountWithHoc({
+      setup() {
+        const { value, errorMessage, setPaused } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+        setPaused(true);
+        return {
+          value,
+          errorMessage,
+        };
+      },
+      template: `
+      <input name="field" v-model="value" />
+      <span>{{ errorMessage }}</span>
+    `,
+    });
+
+    const input = document.querySelector('input');
+    const error = document.querySelector('span');
+
+    setValue(input as any, '');
+    await flushPromises();
+    expect(error?.textContent).toBe('');
+  });
 });
