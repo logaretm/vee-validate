@@ -42,6 +42,7 @@ interface FieldState<TValue = any> {
   value: TValue;
   dirty: boolean;
   touched: boolean;
+  paused: boolean;
   errors: string[];
 }
 
@@ -113,6 +114,10 @@ export function useField<TValue = any>(
 
   // Common input/change event handler
   const handleChange = (e: unknown) => {
+    if (meta.paused) {
+      return;
+    }
+
     if (checked && checked.value === (e as any)?.target?.checked) {
       return;
     }
@@ -146,12 +151,24 @@ export function useField<TValue = any>(
     meta.dirty = isDirty;
   }
 
+  function setPaused(isPaused: boolean) {
+    meta.paused = isPaused;
+  }
+
   let unwatchValue: WatchStopHandle;
   function watchValue() {
     if (validateOnValueUpdate) {
-      unwatchValue = watch(value, validate, {
-        deep: true,
-      });
+      unwatchValue = watch(
+        value,
+        () => {
+          if (!meta.paused) {
+            validate();
+          }
+        },
+        {
+          deep: true,
+        }
+      );
     }
   }
 
@@ -184,6 +201,7 @@ export function useField<TValue = any>(
     setValidationState,
     setTouched,
     setDirty,
+    setPaused,
   };
 
   provide(FieldContextSymbol, field as any);
@@ -368,6 +386,7 @@ function useMeta(initialValue: any) {
     dirty: false,
     valid: false,
     pending: false,
+    paused: false,
     initialValue,
   });
 
@@ -376,9 +395,12 @@ function useMeta(initialValue: any) {
   /**
    * Resets the flag state
    */
-  function resetMeta<TValue = any>(state?: Pick<Partial<FieldState<TValue>>, 'dirty' | 'touched' | 'value'>) {
+  function resetMeta<TValue = any>(
+    state?: Pick<Partial<FieldState<TValue>>, 'dirty' | 'touched' | 'value' | 'paused'>
+  ) {
     const defaults = initialMeta();
     meta.pending = defaults.pending;
+    meta.paused = state?.paused ?? defaults.paused;
     meta.touched = state?.touched ?? defaults.touched;
     meta.dirty = state?.dirty ?? defaults.dirty;
     meta.initialValue = state?.value ?? defaults.initialValue;

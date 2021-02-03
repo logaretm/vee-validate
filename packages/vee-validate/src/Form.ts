@@ -64,6 +64,9 @@ export const Form = defineComponent({
       setValues,
       setFieldDirty,
       setDirty,
+      setFieldPaused,
+      setPaused,
+      setFormPaused,
       setFieldTouched,
       setTouched,
     } = useForm({
@@ -112,6 +115,9 @@ export const Form = defineComponent({
         setValues,
         setFieldDirty,
         setDirty,
+        setFieldPaused,
+        setPaused,
+        setFormPaused,
         setFieldTouched,
         setTouched,
         resetForm,
@@ -129,6 +135,9 @@ export const Form = defineComponent({
         this.setValues = setValues;
         this.setFieldDirty = setFieldDirty;
         this.setDirty = setDirty;
+        this.setFieldPaused = setFieldPaused;
+        this.setPaused = setPaused;
+        this.setFormPaused = setFormPaused;
         this.setFieldTouched = setFieldTouched;
         this.setTouched = setTouched;
         this.resetForm = resetForm;

@@ -22,6 +22,7 @@ export interface FieldMeta {
   dirty: boolean;
   valid: boolean;
   pending: boolean;
+  paused: boolean;
   initialValue?: any;
 }
 
@@ -35,6 +36,7 @@ export interface FormState<TValues> {
   values: TValues;
   errors: Partial<Record<keyof TValues, string | undefined>>;
   dirty: Partial<Record<keyof TValues, boolean>>;
+  paused: Partial<Record<keyof TValues, boolean>>;
   touched: Partial<Record<keyof TValues, boolean>>;
   submitCount: number;
 }
@@ -51,6 +53,9 @@ export interface FormActions<TValues> {
   setTouched: (fields: Partial<Record<keyof TValues, boolean>>) => void;
   setFieldDirty: (field: keyof TValues, isDirty: boolean) => void;
   setDirty: (fields: Partial<Record<keyof TValues, boolean>>) => void;
+  setFieldPaused: (field: keyof TValues, isDirty: boolean) => void;
+  setPaused: (fields: Partial<Record<keyof TValues, boolean>>) => void;
+  setFormPaused: (isPaused: boolean) => void;
   resetForm: (state?: Partial<FormState<TValues>>) => void;
 }
 
@@ -84,6 +89,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     touched: boolean;
     valid: boolean;
     pending: boolean;
+    paused: boolean;
     initialValues: TValues;
   }>;
   isSubmitting: Ref<boolean>;

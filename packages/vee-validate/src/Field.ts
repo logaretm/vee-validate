@@ -79,6 +79,7 @@ export const Field = defineComponent({
       handleBlur,
       handleInput,
       setDirty,
+      setPaused,
       setTouched,
       resetField,
       handleReset,
@@ -168,6 +169,7 @@ export const Field = defineComponent({
         handleReset,
         handleBlur,
         setDirty,
+        setPaused,
         setTouched,
       };
     });

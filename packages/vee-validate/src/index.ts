@@ -24,6 +24,8 @@ export { useValidateField } from './useValidateField';
 export { useIsFormDirty } from './useIsFormDirty';
 export { useIsFormTouched } from './useIsFormTouched';
 export { useIsFormValid } from './useIsFormValid';
+export { useIsFieldPaused } from './useIsFieldPaused';
+export { useIsFormPaused } from './useIsFormPaused';
 export { useValidateForm } from './useValidateForm';
 export { useSubmitCount } from './useSubmitCount';
 export { useFieldValue } from './useFieldValue';

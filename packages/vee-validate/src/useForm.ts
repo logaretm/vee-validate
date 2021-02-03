@@ -231,6 +231,41 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   /**
+   * Sets the paused meta state on a field
+   */
+  function setFieldPaused(field: keyof TValues, isPaused: boolean) {
+    const fieldInstance = fieldsById.value[field];
+    if (!fieldInstance) {
+      return;
+    }
+
+    if (Array.isArray(fieldInstance)) {
+      fieldInstance.forEach(f => f.setPaused(isPaused));
+      return;
+    }
+
+    fieldInstance.setPaused(isPaused);
+  }
+
+  /**
+   * Sets the paused meta state on multiple fields
+   */
+  function setPaused(fields: Partial<Record<keyof TValues, boolean>>) {
+    keysOf(fields).forEach(field => {
+      setFieldPaused(field, !!fields[field]);
+    });
+  }
+
+  /**
+   * Sets the paused meta state on all fields
+   */
+  function setFormPaused(isPaused: boolean) {
+    keysOf(fieldsById.value).forEach(field => {
+      setFieldPaused(field, isPaused);
+    });
+  }
+
+  /**
    * Resets all fields
    */
   const resetForm = (state?: Partial<FormState<TValues>>) => {
@@ -251,6 +286,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
     if (state?.errors) {
       setErrors(state.errors);
+    }
+    if (state?.paused) {
+      setPaused(state.paused);
     }
 
     submitCount.value = state?.submitCount || 0;
@@ -378,6 +416,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
               evt: e as SubmitEvent,
               setDirty,
               setFieldDirty,
+              setPaused,
+              setFieldPaused,
+              setFormPaused,
               setErrors,
               setFieldError,
               setTouched,
@@ -424,6 +465,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setTouched,
     setFieldDirty,
     setDirty,
+    setFieldPaused,
+    setPaused,
+    setFormPaused,
     resetForm,
     meta,
     isSubmitting,
@@ -487,6 +531,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setTouched,
     setFieldDirty,
     setDirty,
+    setFieldPaused,
+    setPaused,
+    setFormPaused,
   };
 }
 
@@ -499,6 +546,7 @@ function useFormMeta<TValues>(fields: Ref<any[]>, initialValues: MaybeReactive<T
     dirty: 'some',
     touched: 'some',
     pending: 'some',
+    paused: 'some',
   };
 
   return computed(() => {

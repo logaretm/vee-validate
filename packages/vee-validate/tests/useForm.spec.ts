@@ -127,6 +127,113 @@ describe('useForm()', () => {
     expect(meta[2]?.textContent).toBe('true');
   });
 
+  test('sets individual field paused meta', async () => {
+    mountWithHoc({
+      setup() {
+        const { setFieldPaused, meta: formMeta } = useForm();
+        const { meta } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          meta,
+          formMeta,
+          setFieldPaused,
+        };
+      },
+      template: `
+      <span id="field">{{ meta.paused }}</span>
+      <span id="form">{{ formMeta.paused }}</span>
+      <button @click="setFieldPaused('field', true)">Set Meta</button>
+    `,
+    });
+
+    const fieldMeta = document.querySelector('#field');
+    const formMeta = document.querySelector('#form');
+
+    await flushPromises();
+
+    expect(fieldMeta?.textContent).toBe('false');
+    expect(formMeta?.textContent).toBe('false');
+    document.querySelector('button')?.click();
+
+    await flushPromises();
+
+    expect(fieldMeta?.textContent).toBe('true');
+    expect(formMeta?.textContent).toBe('true');
+  });
+
+  test('sets multiple fields paused meta', async () => {
+    mountWithHoc({
+      setup() {
+        const { setPaused, meta: formMeta } = useForm();
+        const { meta: meta1 } = useField('field1', val => (val ? true : REQUIRED_MESSAGE));
+        const { meta: meta2 } = useField('field2', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          meta1,
+          meta2,
+          formMeta,
+          setPaused,
+        };
+      },
+      template: `
+      <span>{{ meta1.paused }}</span>
+      <span>{{ meta2.paused }}</span>
+      <span>{{ formMeta.paused }}</span>
+      <button @click="setPaused({ field1: true, field2: false, field3: false })">Set Meta</button>
+    `,
+    });
+
+    const meta = document.querySelectorAll('span');
+
+    await flushPromises();
+    expect(meta[0]?.textContent).toBe('false');
+    expect(meta[1]?.textContent).toBe('false');
+    expect(meta[2]?.textContent).toBe('false');
+    document.querySelector('button')?.click();
+    await flushPromises();
+    expect(meta[0]?.textContent).toBe('true');
+    expect(meta[1]?.textContent).toBe('false');
+    expect(meta[2]?.textContent).toBe('true');
+  });
+
+  test('sets all fields paused meta', async () => {
+    mountWithHoc({
+      setup() {
+        const { setFormPaused, meta: formMeta } = useForm();
+        const { meta: meta1 } = useField('field1', val => (val ? true : REQUIRED_MESSAGE));
+        const { meta: meta2 } = useField('field2', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          meta1,
+          meta2,
+          formMeta,
+          setFormPaused,
+        };
+      },
+      template: `
+      <span>{{ meta1.paused }}</span>
+      <span>{{ meta2.paused }}</span>
+      <span>{{ formMeta.paused }}</span>
+      <button @click="setFormPaused(true)">Pause form</button>
+    `,
+    });
+
+    const meta = document.querySelectorAll('span');
+
+    await flushPromises();
+
+    expect(meta[0]?.textContent).toBe('false');
+    expect(meta[1]?.textContent).toBe('false');
+    expect(meta[2]?.textContent).toBe('false');
+    document.querySelector('button')?.click();
+
+    await flushPromises();
+
+    expect(meta[0]?.textContent).toBe('true');
+    expect(meta[1]?.textContent).toBe('true');
+    expect(meta[2]?.textContent).toBe('true');
+  });
+
   test('sets individual field touched meta', async () => {
     mountWithHoc({
       setup() {
