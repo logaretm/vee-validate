@@ -142,9 +142,10 @@ describe('<Form />', () => {
         <span id="error">{{ errors.field }}</span>
         <span id="dirty">{{ meta.dirty.toString() }}</span>
         <span id="touched">{{ meta.touched.toString() }}</span>
+        <span id="paused">{{ meta.paused.toString() }}</span>
 
         <button id="submit">Validate</button>
-        <button id="reset" type="button" @click="resetForm({ values: { field: '${resetValue}' }, errors: { field: '${resetError}' }, touched: { field: true }, dirty: { field: true } })">Reset</button>
+        <button id="reset" type="button" @click="resetForm({ values: { field: '${resetValue}' }, errors: { field: '${resetError}' }, touched: { field: true }, dirty: { field: true }, paused: { field: true }})">Reset</button>
       </VForm>
     `,
     });
@@ -170,6 +171,7 @@ describe('<Form />', () => {
     expect(error.textContent).toBe(resetError);
     expect(wrapper.$el.querySelector('#dirty').textContent).toBe('true');
     expect(wrapper.$el.querySelector('#touched').textContent).toBe('true');
+    expect(wrapper.$el.querySelector('#paused').textContent).toBe('true');
   });
 
   test('initial values can be set with initialValues prop', async () => {
@@ -1397,6 +1399,27 @@ describe('<Form />', () => {
     const meta = wrapper.$el.querySelector('#meta');
     expect(meta?.textContent).toBe('false');
     (wrapper.$refs as any)?.form.setFieldDirty('drink', true);
+    await flushPromises();
+    expect(meta?.textContent).toBe('true');
+  });
+
+  test('sets meta paused with setFieldPaused for checkboxes', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm ref="form" v-slot="{ meta }">
+        <Field name="drink" type="checkbox" value="" /> Coffee
+        <Field name="drink" type="checkbox" value="Tea" /> Tea
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
+
+        <span id="meta">{{ meta.paused }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const meta = wrapper.$el.querySelector('#meta');
+    expect(meta?.textContent).toBe('false');
+    (wrapper.$refs as any)?.form.setFieldPaused('drink', true);
     await flushPromises();
     expect(meta?.textContent).toBe('true');
   });
