@@ -1,4 +1,6 @@
-function getParams(params?: any[] | Record<string, any>) {
+type BetweenParams = [string | number, string | number] | { min: number | string; max: number | string };
+
+function getParams(params: BetweenParams) {
   if (!params) {
     return {
       min: 0,
@@ -13,7 +15,7 @@ function getParams(params?: any[] | Record<string, any>) {
   return params;
 }
 
-const betweenValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
+const betweenValidator = (value: string | number, params: BetweenParams): boolean => {
   const { min, max } = getParams(params);
   if (Array.isArray(value)) {
     return value.every(val => !!betweenValidator(val, { min, max }));

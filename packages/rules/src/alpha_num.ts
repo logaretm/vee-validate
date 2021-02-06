@@ -1,6 +1,6 @@
 import { alphanumeric, getLocale } from './alpha_helper';
 
-const alphaNumValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
+const alphaNumValidator = (value: string, params?: [string] | { locale?: string }): boolean => {
   const locale = getLocale(params);
   if (Array.isArray(value)) {
     return value.every(val => alphaNumValidator(val, { locale }));

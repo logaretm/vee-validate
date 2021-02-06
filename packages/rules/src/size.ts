@@ -1,6 +1,6 @@
 import { getSingleParam } from './utils';
 
-const sizeValidator = (files: any, params?: any[] | Record<string, any>) => {
+const sizeValidator = (files: File | File[], params: [number | string] | { size: string | number }) => {
   if (!files) {
     return true;
   }

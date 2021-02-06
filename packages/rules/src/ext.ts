@@ -1,4 +1,4 @@
-const extValidator = (files: File | File[], extensions: any[]) => {
+const extValidator = (files: File | File[], extensions: string[]) => {
   if (!extensions) {
     extensions = [];
   }

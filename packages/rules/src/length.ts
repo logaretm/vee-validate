@@ -1,7 +1,7 @@
 import { isNullOrUndefined } from '../../shared';
 import { getSingleParam } from './utils';
 
-const lengthValidator = (value: any, params?: any[] | Record<string, any>) => {
+const lengthValidator = (value: ArrayLike<unknown>, params: [number | string] | { length: string | number }) => {
   // Normalize the length value
   const length = getSingleParam(params, 'length');
   if (isNullOrUndefined(value)) {

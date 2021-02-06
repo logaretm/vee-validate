@@ -8,7 +8,7 @@ test('validates integer numbers', () => {
   expect.assertions(16);
   // valid.
   valid.forEach(value => expect(validate(value)).toBe(true));
-  expect(validate(valid)).toBe(true);
+  expect(validate(valid as any)).toBe(true);
 
   // invalid
   invalid.forEach(value => expect(validate(value as any)).toBe(false));

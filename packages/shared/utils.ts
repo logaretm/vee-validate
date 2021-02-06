@@ -6,7 +6,7 @@ export function isNullOrUndefined(value: unknown): value is undefined | null {
   return value === null || value === undefined;
 }
 
-export function isEmptyArray(arr: any[]): boolean {
+export function isEmptyArray(arr: unknown): boolean {
   return Array.isArray(arr) && arr.length === 0;
 }
 

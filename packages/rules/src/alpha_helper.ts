@@ -96,7 +96,7 @@ export const alphaDash: { [k: string]: RegExp } = {
   az: /^[0-9A-ZÇƏĞİıÖŞÜ_-]*$/i,
 };
 
-export const getLocale = (params?: Record<string, any> | any[]) => {
+export const getLocale = (params?: { locale?: string } | [string | undefined]) => {
   if (!params) {
     return undefined;
   }

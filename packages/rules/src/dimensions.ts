@@ -1,4 +1,5 @@
-const validateImage = (file: any, width: number, height: number): Promise<boolean> => {
+const validateImage = (file: File, width: number, height: number): Promise<boolean> => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const URL = window.URL || (window as any).webkitURL;
 
   return new Promise(resolve => {
@@ -10,7 +11,9 @@ const validateImage = (file: any, width: number, height: number): Promise<boolea
   });
 };
 
-function getParams(params?: any[] | Record<string, any>) {
+type Params = [number | string, number | string] | { width: string | number; height: string | number };
+
+function getParams(params: Params) {
   if (!params) {
     return { width: 0, height: 0 };
   }
@@ -25,21 +28,21 @@ function getParams(params?: any[] | Record<string, any>) {
   };
 }
 
-const dimensionsValidator = (files: any, params?: any[] | Record<string, any>) => {
+const dimensionsValidator = (files: File | File[], params: Params) => {
   if (!files) {
     return true;
   }
 
   const { width, height } = getParams(params);
   const list = [];
-  files = Array.isArray(files) ? files : [files];
-  for (let i = 0; i < files.length; i++) {
+  const fileList = Array.isArray(files) ? files : [files];
+  for (let i = 0; i < fileList.length; i++) {
     // if file is not an image, reject.
-    if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
+    if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(fileList[i].name)) {
       return Promise.resolve(false);
     }
 
-    list.push(files[i]);
+    list.push(fileList[i]);
   }
 
   return Promise.all(list.map(file => validateImage(file, width, height))).then(values => {

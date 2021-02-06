@@ -1,6 +1,6 @@
 import { alpha, getLocale } from './alpha_helper';
 
-const alphaValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
+const alphaValidator = (value: string, params?: [string] | { locale?: string }): boolean => {
   const locale = getLocale(params);
   if (Array.isArray(value)) {
     return value.every(val => alphaValidator(val, { locale }));

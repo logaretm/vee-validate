@@ -7,7 +7,7 @@ const invalid = ['', undefined, null, {}, '1234', '12', 'abc', '12a', ['123', '1
 test('validates digits', () => {
   expect.assertions(14);
   const params = { length: 3 }; // 3 digits only.
-  valid.forEach(value => expect(validate(value, params)).toBe(true));
+  valid.forEach(value => expect(validate(value as any, params)).toBe(true));
 
   invalid.forEach(value => expect(validate(value as any, params)).toBe(false));
 });

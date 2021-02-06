@@ -17,10 +17,10 @@ const invalid = ['this is sparta', '1234567a89', {}, ' ', ['abcdefg', 'hijk', 'l
 test('validates that the string may only contains alphabetic characters', () => {
   expect.assertions(14);
   // valid.
-  valid.forEach(value => expect(validate(value)).toBe(true));
+  valid.forEach(value => expect(validate(value as any)).toBe(true));
 
   // invalid
-  invalid.forEach(value => expect(validate(value)).toBe(false));
+  invalid.forEach(value => expect(validate(value as any)).toBe(false));
 });
 
 test('validates the string contains alphabetic chars from other locales', () => {
