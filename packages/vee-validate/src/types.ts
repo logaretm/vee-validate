@@ -1,13 +1,15 @@
+import { FieldContext } from 'packages/shared';
 import { ComputedRef, Ref } from 'vue';
-import { SchemaOf } from 'yup';
+import { SchemaOf, AnySchema, AnyObjectSchema } from 'yup';
 
 export interface ValidationResult {
   errors: string[];
   valid: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type Locator = { __locatorRef: string } & Function;
+export type YupValidator = AnySchema | AnyObjectSchema;
+
+export type Locator = { __locatorRef: string } & ((values: Record<string, unknown>) => unknown);
 
 // Extracts explicit keys of an interface without index signature
 // https://stackoverflow.com/questions/51465182/typescript-remove-index-signature-using-mapped-types
@@ -22,14 +24,17 @@ export interface FieldMeta {
   dirty: boolean;
   valid: boolean;
   pending: boolean;
-  initialValue?: any;
+  initialValue?: unknown;
 }
 
 export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
 
 export type SubmitEvent = Event & { target: HTMLFormElement };
 
-export type GenericValidateFunction = (value: any) => boolean | string | Promise<boolean | string>;
+export type GenericValidateFunction = (
+  value: unknown,
+  ctx: FieldContext
+) => boolean | string | Promise<boolean | string>;
 
 export interface FormState<TValues> {
   values: TValues;
@@ -59,15 +64,15 @@ export interface FormValidationResult<TValues> {
   valid: boolean;
 }
 
-export interface SubmissionContext<TValues extends Record<string, any> = Record<string, any>>
+export interface SubmissionContext<TValues extends Record<string, unknown> = Record<string, unknown>>
   extends FormActions<TValues> {
   evt: SubmitEvent;
 }
 
-export type SubmissionHandler<TValues extends Record<string, any> = Record<string, any>> = (
+export type SubmissionHandler<TValues extends Record<string, unknown> = Record<string, unknown>> = (
   values: TValues,
   ctx: SubmissionContext<TValues>
-) => any;
+) => unknown;
 
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
   register(field: any): void;

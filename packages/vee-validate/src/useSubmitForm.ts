@@ -2,7 +2,7 @@ import { FormContextSymbol } from './symbols';
 import { FormContext, SubmissionHandler, SubmitEvent } from './types';
 import { injectWithSelf, warn } from './utils';
 
-export function useSubmitForm<TValues extends Record<string, any> = Record<string, any>>(
+export function useSubmitForm<TValues extends Record<string, unknown> = Record<string, unknown>>(
   cb: SubmissionHandler<TValues>
 ) {
   const form = injectWithSelf(FormContextSymbol) as FormContext<TValues> | undefined;

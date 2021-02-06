@@ -149,7 +149,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     // Single Checkbox: toggles the field value unless the field is being reset then force it
     if (fieldInstance?.type === 'checkbox' && !force) {
       newValue = resolveNextCheckboxValue<TValues[T]>(
-        getFromPath(formValues, field as string),
+        getFromPath(formValues, field as string) as TValues[T],
         value as TValues[T],
         unref(fieldInstance.uncheckedValue)
       );
@@ -296,7 +296,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     // otherwise find the actual value in the current array of values and remove it
-    const valueIdx: number | undefined = getFromPath(formValues, fieldName)?.indexOf?.(unref(field.valueProp));
+    const valueIdx: number | undefined = getFromPath<unknown[] | undefined>(formValues, fieldName)?.indexOf?.(
+      unref(field.valueProp)
+    );
 
     if (valueIdx === undefined) {
       unsetPath(formValues, fieldName);

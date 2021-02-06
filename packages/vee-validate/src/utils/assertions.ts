@@ -1,8 +1,8 @@
-import { Locator } from '../types';
+import { Locator, YupValidator } from '../types';
 import { isCallable, isObject } from '../../../shared';
 
 export function isLocator(value: unknown): value is Locator {
-  return isCallable(value) && !!(value as any).__locatorRef;
+  return isCallable(value) && !!(value as Locator).__locatorRef;
 }
 
 /**
@@ -19,10 +19,8 @@ export function isFileInputNode(tag: string, attrs: Record<string, unknown>) {
   return isHTMLTag(tag) && attrs.type === 'file';
 }
 
-type YupValidator = { validate: (value: any) => Promise<void | boolean> };
-
 export function isYupValidator(value: unknown): value is YupValidator {
-  return !!value && isCallable((value as any).validate);
+  return !!value && isCallable((value as { validate?: () => unknown }).validate);
 }
 
 export function hasCheckedAttr(type: unknown) {
@@ -31,6 +29,10 @@ export function hasCheckedAttr(type: unknown) {
 
 export function isIndex(value: unknown): value is number {
   return Number(value) >= 0;
+}
+
+export function isContainerValue(value: unknown): value is Record<string, unknown> {
+  return isObject(value) || Array.isArray(value);
 }
 
 /**

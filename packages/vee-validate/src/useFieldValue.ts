@@ -6,7 +6,7 @@ import { getFromPath, injectWithSelf } from './utils';
 /**
  * Gives access to a field's current value
  */
-export function useFieldValue<TValue = any>(path?: MaybeReactive<string>) {
+export function useFieldValue<TValue = unknown>(path?: MaybeReactive<string>) {
   const form = injectWithSelf(FormContextSymbol);
   // We don't want to use self injected context as it doesn't make sense
   const field = path ? undefined : inject(FieldContextSymbol);

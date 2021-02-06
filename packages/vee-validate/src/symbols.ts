@@ -8,7 +8,7 @@ export const FormErrorsSymbol: InjectionKey<ComputedRef<Record<string, string | 
   'vee-validate-form-errors'
 );
 
-export const FormInitialValuesSymbol: InjectionKey<ComputedRef<Record<string, any>>> = Symbol(
+export const FormInitialValuesSymbol: InjectionKey<ComputedRef<Record<string, unknown>>> = Symbol(
   'vee-validate-form-initial-values'
 );
 
