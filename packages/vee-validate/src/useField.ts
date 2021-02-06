@@ -6,7 +6,6 @@ import {
   reactive,
   computed,
   onMounted,
-  watchEffect,
   onBeforeUnmount,
   unref,
   WatchStopHandle,
@@ -215,28 +214,38 @@ export function useField<TValue = any>(
     }
 
     return Object.keys(rulesVal).reduce((acc: string[], rule: string) => {
-      const deps = extractLocators((normalizedRules as Ref<Record<string, any>>).value[rule]).map(
-        (dep: any) => dep.__locatorRef
-      );
+      const deps = extractLocators(rulesVal[rule]).map((dep: any) => dep.__locatorRef);
+
       acc.push(...deps);
 
       return acc;
     }, []);
   });
 
+  const dependenciesValues = computed(() => {
+    return dependencies.value.reduce((acc, depName) => {
+      if (depName in form.values) {
+        acc[depName] = form.values[depName];
+      }
+
+      return acc;
+    }, {} as Record<string, unknown>);
+  });
+
   // Adds a watcher that runs the validation whenever field dependencies change
-  watchEffect(() => {
-    // Skip if no dependencies
-    if (!dependencies.value.length) {
+  watch(dependenciesValues, (deps, oldDeps) => {
+    // Skip if no dependencies or if the field wasn't manipulated
+    if (!Object.keys(deps).length || !meta.dirty) {
       return;
     }
 
-    // For each dependent field, validate it if it was validated before
-    dependencies.value.forEach(dep => {
-      if (dep in form.values && meta.dirty) {
-        return validate();
-      }
+    const shouldValidate = Object.keys(deps).some(depName => {
+      return deps[depName] !== oldDeps[depName];
     });
+
+    if (shouldValidate) {
+      validate();
+    }
   });
 
   return field;
