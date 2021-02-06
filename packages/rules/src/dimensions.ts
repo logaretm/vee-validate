@@ -28,7 +28,7 @@ function getParams(params: Params) {
   };
 }
 
-const dimensionsValidator = (files: File | File[], params: Params) => {
+const dimensionsValidator = (files: unknown, params: Params) => {
   if (!files) {
     return true;
   }

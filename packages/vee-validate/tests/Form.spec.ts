@@ -6,7 +6,7 @@ import { onErrorCaptured, reactive, ref, Ref } from 'vue';
 
 describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
-  defineRule('required', value => {
+  defineRule('required', (value: unknown) => {
     if (!value) {
       return REQUIRED_MESSAGE;
     }

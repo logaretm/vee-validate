@@ -1,6 +1,6 @@
 import { getSingleParam } from './utils';
 
-const regexValidator = (value: string | string[], params: [string | RegExp] | { regex: RegExp | string }): boolean => {
+const regexValidator = (value: unknown, params: [string | RegExp] | { regex: RegExp | string }): boolean => {
   let regex = getSingleParam(params, 'regex');
   if (typeof regex === 'string') {
     regex = new RegExp(regex);

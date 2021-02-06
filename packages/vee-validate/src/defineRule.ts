@@ -1,15 +1,18 @@
-import { ValidationRuleFunction, isCallable } from '../../shared';
+import { ValidationRuleFunction, SimpleValidationRuleFunction, isCallable } from '../../shared';
 
-const RULES: Record<string, ValidationRuleFunction> = {};
+const RULES: Record<string, ValidationRuleFunction | SimpleValidationRuleFunction> = {};
 
 /**
  * Adds a custom validator to the list of validation rules.
  */
-export function defineRule(id: string, validator: ValidationRuleFunction) {
+export function defineRule<TValue = unknown, TParams = any[] | Record<string, any>>(
+  id: string,
+  validator: ValidationRuleFunction<TValue, TParams> | SimpleValidationRuleFunction<TValue, TParams>
+) {
   // makes sure new rules are properly formatted.
   guardExtend(id, validator);
 
-  RULES[id] = validator;
+  RULES[id] = validator as SimpleValidationRuleFunction;
 }
 
 /**
@@ -22,7 +25,10 @@ export function resolveRule(id: string) {
 /**
  * Guards from extension violations.
  */
-function guardExtend(id: string, validator: ValidationRuleFunction) {
+function guardExtend<TValue, TParams>(
+  id: string,
+  validator: ValidationRuleFunction<TValue, TParams> | SimpleValidationRuleFunction<TValue, TParams>
+) {
   if (isCallable(validator)) {
     return;
   }

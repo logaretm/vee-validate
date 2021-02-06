@@ -1,10 +1,7 @@
 import { isNullOrUndefined } from '../../shared';
 import { getSingleParam } from './utils';
 
-const minValueValidator = (
-  value: string | number | (string | number)[],
-  params: [string | number] | { min: string | number }
-): boolean => {
+const minValueValidator = (value: unknown, params: [string | number] | { min: string | number }): boolean => {
   const min = getSingleParam(params, 'min');
   if (isNullOrUndefined(value) || value === '') {
     return false;

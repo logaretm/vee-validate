@@ -1,6 +1,6 @@
 import { getSingleParam } from './utils';
 
-const sizeValidator = (files: File | File[], params: [number | string] | { size: string | number }) => {
+const sizeValidator = (files: unknown, params: [number | string] | { size: string | number }) => {
   if (!files) {
     return true;
   }
@@ -13,11 +13,11 @@ const sizeValidator = (files: File | File[], params: [number | string] | { size:
 
   const nSize = size * 1024;
   if (!Array.isArray(files)) {
-    return files.size <= nSize;
+    return (files as File).size <= nSize;
   }
 
   for (let i = 0; i < files.length; i++) {
-    if (files[i].size > nSize) {
+    if ((files[i] as File).size > nSize) {
       return false;
     }
   }

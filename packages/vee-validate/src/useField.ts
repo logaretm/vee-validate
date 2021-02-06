@@ -50,7 +50,7 @@ interface FieldOptions<TValue = unknown> {
   label?: MaybeReactive<string>;
 }
 
-type RuleExpression = string | Record<string, unknown> | GenericValidateFunction | YupValidator;
+type RuleExpression = string | Record<string, unknown> | GenericValidateFunction | YupValidator | undefined;
 
 let ID_COUNTER = 0;
 
