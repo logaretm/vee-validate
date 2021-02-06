@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.14](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.13...vee-validate@4.1.14) (2021-02-06)
+
+
+### Bug Fixes
+
+* avoid validating dependencies via watcheffect closes [#3156](https://github.com/logaretm/vee-validate/issues/3156) ([a7b91f6](https://github.com/logaretm/vee-validate/commit/a7b91f6e6c38f0b5262e2d4c1814154efa3b78c8))
+
+
+
+
+
 ## [4.1.13](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.12...vee-validate@4.1.13) (2021-02-01)
 
 
