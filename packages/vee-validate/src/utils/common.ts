@@ -2,6 +2,7 @@ import { isObject } from '../../../shared';
 import { getCurrentInstance, inject, InjectionKey, warn as vueWarning } from 'vue';
 import type { useField } from '../useField';
 import { isContainerValue, isEmptyContainer, isIndex, isNotNestedPath } from './assertions';
+import { PrivateFieldComposite } from '../types';
 
 function cleanupNonNestedPath(path: string) {
   if (isNotNestedPath(path)) {
@@ -141,12 +142,12 @@ export function warn(message: string) {
   vueWarning(`[vee-validate]: ${message}`);
 }
 
-type FieldApi = ReturnType<typeof useField>;
-
 /**
  * Ensures we deal with a singular field value
  */
-export function normalizeField(field: FieldApi | FieldApi[]): FieldApi | undefined {
+export function normalizeField<TValue = unknown>(
+  field: PrivateFieldComposite<TValue> | PrivateFieldComposite<TValue>[] | undefined
+): PrivateFieldComposite<TValue> | undefined {
   if (Array.isArray(field)) {
     return field[0];
   }
