@@ -19,6 +19,10 @@ import {
   GenericValidateFunction,
   FieldMeta,
   YupValidator,
+  FieldComposable,
+  FieldState,
+  PrivateFieldComposite,
+  WritableRef,
 } from './types';
 import {
   normalizeRules,
@@ -46,13 +50,6 @@ interface FieldOptions<TValue = unknown> {
   label?: MaybeReactive<string>;
 }
 
-interface FieldState<TValue = unknown> {
-  value: TValue;
-  dirty: boolean;
-  touched: boolean;
-  errors: string[];
-}
-
 type RuleExpression = string | Record<string, unknown> | GenericValidateFunction | YupValidator;
 
 let ID_COUNTER = 0;
@@ -64,7 +61,7 @@ export function useField<TValue = unknown>(
   name: MaybeReactive<string>,
   rules?: MaybeReactive<RuleExpression>,
   opts?: Partial<FieldOptions<TValue>>
-) {
+): FieldComposable<TValue> {
   const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
   const {
     initialValue,
@@ -180,7 +177,8 @@ export function useField<TValue = unknown>(
     watchValue();
   }
 
-  const field = {
+  const field: PrivateFieldComposite<TValue> = {
+    idx: -1,
     fid,
     name,
     value,
@@ -191,7 +189,6 @@ export function useField<TValue = unknown>(
     valueProp,
     uncheckedValue,
     checked,
-    idx: -1,
     resetField,
     handleReset: () => resetField(),
     validate,
@@ -203,8 +200,7 @@ export function useField<TValue = unknown>(
     setDirty,
   };
 
-  // TODO: PURGE ANY
-  provide(FieldContextSymbol, field as any);
+  provide(FieldContextSymbol, field);
 
   if (isRef(rules) && typeof unref(rules) !== 'function') {
     watch(rules, validate, {
@@ -311,7 +307,7 @@ function useValidationState<TValue>({
 }) {
   const errors: Ref<string[]> = ref([]);
   const formInitialValues = injectWithSelf(FormInitialValuesSymbol, undefined);
-  const initialValue = getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? initValue;
+  const initialValue = (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? initValue) as TValue;
   const { resetMeta, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
@@ -364,7 +360,9 @@ function useValidationState<TValue>({
   function resetValidationState(state?: Partial<FieldState<TValue>>) {
     const fieldPath = unref(name);
     const newValue =
-      state && 'value' in state ? state.value : getFromPath<TValue>(unref(formInitialValues), fieldPath) ?? initValue;
+      state && 'value' in state
+        ? (state.value as TValue)
+        : ((getFromPath<TValue>(unref(formInitialValues), fieldPath) ?? initValue) as TValue);
     if (form) {
       form.setFieldValue(fieldPath, newValue, { force: true });
     } else {
@@ -390,8 +388,8 @@ function useValidationState<TValue>({
 /**
  * Exposes meta flags state and some associated actions with them.
  */
-function useMeta(initialValue: unknown) {
-  const initialMeta = (): FieldMeta => ({
+function useMeta<TValue>(initialValue: TValue) {
+  const initialMeta = (): FieldMeta<TValue> => ({
     touched: false,
     dirty: false,
     valid: false,
@@ -399,12 +397,12 @@ function useMeta(initialValue: unknown) {
     initialValue,
   });
 
-  const meta = reactive(initialMeta());
+  const meta = reactive(initialMeta()) as FieldMeta<TValue>;
 
   /**
    * Resets the flag state
    */
-  function resetMeta<TValue = unknown>(state?: Pick<Partial<FieldState<TValue>>, 'dirty' | 'touched' | 'value'>) {
+  function resetMeta(state?: Pick<Partial<FieldState<TValue>>, 'dirty' | 'touched' | 'value'>) {
     const defaults = initialMeta();
     meta.pending = defaults.pending;
     meta.touched = state?.touched ?? defaults.touched;
@@ -434,23 +432,27 @@ function extractRuleFromSchema(schema: Record<string, RuleExpression> | undefine
 /**
  * Manages the field value
  */
-function useFieldValue<TValue>(initialValue: TValue, path: MaybeReactive<string>, form?: FormContext) {
+function useFieldValue<TValue>(
+  initialValue: TValue | undefined,
+  path: MaybeReactive<string>,
+  form?: FormContext
+): WritableRef<TValue> {
   // if no form is associated, use a regular ref.
   if (!form) {
-    return ref(initialValue);
+    return ref(initialValue) as WritableRef<TValue>;
   }
 
   // set initial value
   setInPath(form.values, unref(path), initialValue);
   // otherwise use a computed setter that triggers the `setFieldValue`
-  const value = computed<TValue | undefined>({
+  const value = computed<TValue>({
     get() {
-      return getFromPath<TValue>(form.values, unref(path));
+      return getFromPath<TValue>(form.values, unref(path)) as TValue;
     },
     set(newVal) {
       form.setFieldValue(unref(path), newVal);
     },
   });
 
-  return value;
+  return value as WritableRef<TValue>;
 }

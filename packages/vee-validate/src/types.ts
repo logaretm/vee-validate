@@ -1,5 +1,5 @@
 import { FieldContext } from 'packages/shared';
-import { ComputedRef, Ref } from 'vue';
+import { ComputedRef, Ref, WritableComputedRef } from 'vue';
 import { SchemaOf, AnySchema, AnyObjectSchema } from 'yup';
 
 export interface ValidationResult {
@@ -19,15 +19,49 @@ export type KnownKeys<T> = {
   ? U
   : never;
 
-export interface FieldMeta {
+export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
+
+export interface FieldMeta<TValue> {
   touched: boolean;
   dirty: boolean;
   valid: boolean;
   pending: boolean;
-  initialValue?: unknown;
+  initialValue?: TValue;
 }
 
-export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
+export interface FieldState<TValue = unknown> {
+  value: TValue;
+  dirty: boolean;
+  touched: boolean;
+  errors: string[];
+}
+
+export type WritableRef<TValue> = Ref<TValue> | WritableComputedRef<TValue>;
+
+export interface PrivateFieldComposite<TValue = unknown> {
+  fid: number;
+  idx: number;
+  name: MaybeReactive<string>;
+  value: WritableRef<TValue>;
+  meta: FieldMeta<TValue>;
+  errors: Ref<string[]>;
+  errorMessage: ComputedRef<string | undefined>;
+  type?: string;
+  valueProp?: MaybeReactive<TValue>;
+  uncheckedValue?: MaybeReactive<TValue>;
+  checked?: ComputedRef<boolean>;
+  resetField(state?: FieldState<TValue>): void;
+  handleReset(state?: FieldState<TValue>): void;
+  validate(): Promise<ValidationResult>;
+  handleChange(e: Event | unknown): void;
+  handleBlur(e?: Event): void;
+  handleInput(e?: Event | unknown): void;
+  setValidationState(state: ValidationResult): void;
+  setTouched(isTouched: boolean): void;
+  setDirty(isDirty: boolean): void;
+}
+
+export type FieldComposable<TValue = unknown> = Omit<PrivateFieldComposite<TValue>, 'idx' | 'fid'>;
 
 export type SubmitEvent = Event & { target: HTMLFormElement };
 
@@ -75,10 +109,10 @@ export type SubmissionHandler<TValues extends Record<string, unknown> = Record<s
 ) => unknown;
 
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
-  register(field: any): void;
-  unregister(field: any): void;
+  register(field: PrivateFieldComposite): void;
+  unregister(field: PrivateFieldComposite): void;
   values: TValues;
-  fields: ComputedRef<Record<keyof TValues, any>>;
+  fields: ComputedRef<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>;
   submitCount: Ref<number>;
   schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>;
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
@@ -93,4 +127,11 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   }>;
   isSubmitting: Ref<boolean>;
   handleSubmit(cb: SubmissionHandler<TValues>): (e?: SubmitEvent) => Promise<void>;
+}
+
+export interface PublicFormContext<TValues extends Record<string, any> = Record<string, any>>
+  extends Omit<FormContext<TValues>, 'register' | 'unregister' | 'fields' | 'schema' | 'validateSchema'> {
+  errors: ComputedRef<Record<keyof TValues, string | undefined>>;
+  handleReset: () => void;
+  submitForm: (e?: unknown) => Promise<void>;
 }

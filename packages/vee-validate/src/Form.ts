@@ -1,6 +1,6 @@
 import { h, defineComponent, toRef, resolveDynamicComponent, computed, PropType } from 'vue';
 import { useForm } from './useForm';
-import { SubmissionHandler } from './types';
+import { SubmissionHandler, SubmitEvent } from './types';
 import { isEvent, normalizeChildren } from './utils';
 
 export const Form = defineComponent({
@@ -87,7 +87,7 @@ export const Form = defineComponent({
     function handleScopedSlotSubmit(evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) {
       const onSuccess = typeof evt === 'function' && !onSubmit ? evt : onSubmit;
 
-      return handleSubmit(onSuccess)(evt);
+      return handleSubmit(onSuccess as SubmissionHandler<Record<string, unknown>>)(evt as SubmitEvent);
     }
 
     const slotProps = computed(() => {
