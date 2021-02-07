@@ -304,10 +304,10 @@ Or you can globally define all the available rules in the `@vee-validate/rules` 
 
 ```js
 import { defineRule } from 'vee-validate';
-import * as rules from '@vee-validate/rules';
+import AllRules from '@vee-validate/rules';
 
 Object.keys(rules).forEach(rule => {
-  defineRule(rule, rules[rule]);
+  defineRule(rule, AllRules[rule]);
 });
 ```
 
