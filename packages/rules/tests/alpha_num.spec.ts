@@ -21,16 +21,16 @@ const invalid = ['this is sparta', '123-abc', {}, ' ', ['asdasda  ', '123 ad']];
 test('validates that the string may only contain alphabetic and numeric characters', () => {
   expect.assertions(18);
   // valid.
-  valid.forEach(value => expect(validate(value as any)).toBe(true));
+  valid.forEach(value => expect(validate(value, [undefined])).toBe(true));
 
   // invalid
-  invalid.forEach(value => expect(validate(value as any)).toBe(false));
+  invalid.forEach(value => expect(validate(value, [undefined])).toBe(false));
 });
 
 test('validates the string contains alphabetic chars from other locales', () => {
   // any locale.
-  expect(validate('سلام12')).toBe(true);
-  expect(validate('Привет12')).toBe(true);
+  expect(validate('سلام12', [undefined])).toBe(true);
+  expect(validate('Привет12', [undefined])).toBe(true);
 
   // specfic locale
   expect(validate('peace', { locale: 'ar' })).toBe(false);
