@@ -1,6 +1,7 @@
 import { Locator, GenericValidateFunction } from '../types';
 import { isLocator, isYupValidator } from './assertions';
 import { isCallable, isObject } from '../../../shared';
+import { getFromPath } from './common';
 
 /**
  * Normalizes the given rules expression.
@@ -119,7 +120,7 @@ export const parseRule = (rule: string) => {
 
 function createLocator(value: string): Locator {
   const locator: Locator = (crossTable: Record<string, any>) => {
-    const val = crossTable[value];
+    const val = getFromPath(crossTable, value) || crossTable[value];
 
     return val;
   };

@@ -210,30 +210,30 @@ export function useField<TValue = any>(
     const rulesVal = normalizedRules.value;
     // is falsy, a function schema or a yup schema
     if (!rulesVal || isCallable(rulesVal) || isCallable(rulesVal.validate)) {
-      return [];
+      return {};
     }
 
-    return Object.keys(rulesVal).reduce((acc: string[], rule: string) => {
-      const deps = extractLocators(rulesVal[rule]).map((dep: any) => dep.__locatorRef);
+    return Object.keys(rulesVal).reduce((acc, rule: string) => {
+      const deps = extractLocators(rulesVal[rule])
+        .map((dep: any) => dep.__locatorRef)
+        .reduce((depAcc, depName) => {
+          const depValue = getFromPath(form.values, depName) || form.values[depName];
 
-      acc.push(...deps);
+          if (depValue !== undefined) {
+            depAcc[depName] = depValue;
+          }
 
-      return acc;
-    }, []);
-  });
+          return depAcc;
+        }, {} as Record<string, unknown>);
 
-  const dependenciesValues = computed(() => {
-    return dependencies.value.reduce((acc, depName) => {
-      if (depName in form.values) {
-        acc[depName] = form.values[depName];
-      }
+      Object.assign(acc, deps);
 
       return acc;
     }, {} as Record<string, unknown>);
   });
 
   // Adds a watcher that runs the validation whenever field dependencies change
-  watch(dependenciesValues, (deps, oldDeps) => {
+  watch(dependencies, (deps, oldDeps) => {
     // Skip if no dependencies or if the field wasn't manipulated
     if (!Object.keys(deps).length || !meta.dirty) {
       return;
