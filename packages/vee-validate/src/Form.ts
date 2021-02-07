@@ -1,6 +1,6 @@
 import { h, defineComponent, toRef, resolveDynamicComponent, computed, PropType } from 'vue';
 import { useForm } from './useForm';
-import { SubmissionContext, SubmissionHandler } from './types';
+import { SubmissionHandler, SubmitEvent } from './types';
 import { isEvent, normalizeChildren } from './utils';
 
 export const Form = defineComponent({
@@ -39,10 +39,6 @@ export const Form = defineComponent({
       type: Function as PropType<SubmissionHandler>,
       default: undefined,
     },
-  },
-  emits: {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    submit: (values: Record<string, any>, actions: SubmissionContext) => true,
   },
   setup(props, ctx) {
     const initialValues = toRef(props, 'initialValues');
@@ -91,7 +87,7 @@ export const Form = defineComponent({
     function handleScopedSlotSubmit(evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) {
       const onSuccess = typeof evt === 'function' && !onSubmit ? evt : onSubmit;
 
-      return handleSubmit(onSuccess)(evt);
+      return handleSubmit(onSuccess as SubmissionHandler<Record<string, unknown>>)(evt as SubmitEvent);
     }
 
     const slotProps = computed(() => {

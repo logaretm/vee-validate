@@ -12,7 +12,18 @@ import {
   provide,
 } from 'vue';
 import { validate as validateValue } from './validate';
-import { FormContext, ValidationResult, MaybeReactive, GenericValidateFunction, FieldMeta } from './types';
+import {
+  FormContext,
+  ValidationResult,
+  MaybeReactive,
+  GenericValidateFunction,
+  FieldMeta,
+  YupValidator,
+  FieldComposable,
+  FieldState,
+  PrivateFieldComposite,
+  WritableRef,
+} from './types';
 import {
   normalizeRules,
   extractLocators,
@@ -22,12 +33,14 @@ import {
   setInPath,
   injectWithSelf,
   resolveNextCheckboxValue,
+  isYupValidator,
+  keysOf,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FieldContextSymbol, FormInitialValuesSymbol, FormContextSymbol } from './symbols';
 
-interface FieldOptions<TValue = any> {
-  initialValue: TValue;
+interface FieldOptions<TValue = unknown> {
+  initialValue?: MaybeReactive<TValue>;
   validateOnValueUpdate: boolean;
   validateOnMount?: boolean;
   bails?: boolean;
@@ -37,25 +50,18 @@ interface FieldOptions<TValue = any> {
   label?: MaybeReactive<string>;
 }
 
-interface FieldState<TValue = any> {
-  value: TValue;
-  dirty: boolean;
-  touched: boolean;
-  errors: string[];
-}
-
-type RuleExpression = MaybeReactive<string | Record<string, any> | GenericValidateFunction>;
+type RuleExpression = string | Record<string, unknown> | GenericValidateFunction | YupValidator | undefined;
 
 let ID_COUNTER = 0;
 
 /**
  * Creates a field composite.
  */
-export function useField<TValue = any>(
+export function useField<TValue = unknown>(
   name: MaybeReactive<string>,
-  rules?: RuleExpression,
+  rules?: MaybeReactive<RuleExpression>,
   opts?: Partial<FieldOptions<TValue>>
-) {
+): FieldComposable<TValue> {
   const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
   const {
     initialValue,
@@ -81,15 +87,24 @@ export function useField<TValue = any>(
   } = useValidationState<TValue>({
     name,
     // make sure to unref initial value because of possible refs passed in
-    initValue: unref(initialValue),
+    initValue: unref(initialValue) as TValue | undefined,
     form,
     type,
     valueProp,
   });
 
-  const nonYupSchemaRules = extractRuleFromSchema(form?.schema, unref(name));
   const normalizedRules = computed(() => {
-    return normalizeRules(nonYupSchemaRules || unref(rules));
+    let rulesValue = unref(rules);
+    const schema = form?.schema;
+    if (schema && !isYupValidator(schema)) {
+      rulesValue = extractRuleFromSchema(schema, unref(name)) || rulesValue;
+    }
+
+    if (isYupValidator(rulesValue) || isCallable(rulesValue)) {
+      return rulesValue;
+    }
+
+    return normalizeRules(rulesValue);
   });
 
   const validate = async (): Promise<ValidationResult> => {
@@ -112,14 +127,14 @@ export function useField<TValue = any>(
 
   // Common input/change event handler
   const handleChange = (e: unknown) => {
-    if (checked && checked.value === (e as any)?.target?.checked) {
+    if (checked && checked.value === ((e as Event)?.target as HTMLInputElement)?.checked) {
       return;
     }
 
-    let newValue = normalizeEventValue(e);
+    let newValue = normalizeEventValue(e) as TValue;
     // Single checkbox field without a form to toggle it's value
     if (checked && type === 'checkbox' && !form) {
-      newValue = resolveNextCheckboxValue(value.value, unref(valueProp), unref(uncheckedValue));
+      newValue = resolveNextCheckboxValue(value.value, unref(valueProp), unref(uncheckedValue)) as TValue;
     }
 
     value.value = newValue;
@@ -162,7 +177,8 @@ export function useField<TValue = any>(
     watchValue();
   }
 
-  const field = {
+  const field: PrivateFieldComposite<TValue> = {
+    idx: -1,
     fid,
     name,
     value,
@@ -173,7 +189,6 @@ export function useField<TValue = any>(
     valueProp,
     uncheckedValue,
     checked,
-    idx: -1,
     resetField,
     handleReset: () => resetField(),
     validate,
@@ -185,7 +200,7 @@ export function useField<TValue = any>(
     setDirty,
   };
 
-  provide(FieldContextSymbol, field as any);
+  provide(FieldContextSymbol, field);
 
   if (isRef(rules) && typeof unref(rules) !== 'function') {
     watch(rules, validate, {
@@ -209,7 +224,7 @@ export function useField<TValue = any>(
   const dependencies = computed(() => {
     const rulesVal = normalizedRules.value;
     // is falsy, a function schema or a yup schema
-    if (!rulesVal || isCallable(rulesVal) || isCallable(rulesVal.validate)) {
+    if (!rulesVal || isCallable(rulesVal) || isYupValidator(rulesVal)) {
       return {};
     }
 
@@ -254,7 +269,7 @@ export function useField<TValue = any>(
 /**
  * Normalizes partial field options to include the full
  */
-function normalizeOptions(name: string, opts: Partial<FieldOptions> | undefined): FieldOptions {
+function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValue>> | undefined): FieldOptions<TValue> {
   const defaults = () => ({
     initialValue: undefined,
     validateOnMount: false,
@@ -277,7 +292,7 @@ function normalizeOptions(name: string, opts: Partial<FieldOptions> | undefined)
 /**
  * Manages the validation state of a field.
  */
-function useValidationState<TValue = any>({
+function useValidationState<TValue>({
   name,
   initValue,
   form,
@@ -285,14 +300,14 @@ function useValidationState<TValue = any>({
   valueProp,
 }: {
   name: MaybeReactive<string>;
+  valueProp?: MaybeReactive<TValue>;
   initValue?: TValue;
   form?: FormContext;
   type?: string;
-  valueProp: any;
 }) {
   const errors: Ref<string[]> = ref([]);
   const formInitialValues = injectWithSelf(FormInitialValuesSymbol, undefined);
-  const initialValue: TValue = getFromPath(unref(formInitialValues), unref(name)) ?? initValue;
+  const initialValue = (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? initValue) as TValue;
   const { resetMeta, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
   if (hasCheckedAttr(type) && initialValue) {
@@ -327,7 +342,7 @@ function useValidationState<TValue = any>({
     // Checkboxes/Radio will emit a `change` event anyway, custom components will use `update:modelValue`
     // so this is redundant
     if (!hasCheckedAttr(type)) {
-      value.value = normalizeEventValue(e);
+      value.value = normalizeEventValue(e) as TValue;
     }
 
     meta.dirty = true;
@@ -345,7 +360,9 @@ function useValidationState<TValue = any>({
   function resetValidationState(state?: Partial<FieldState<TValue>>) {
     const fieldPath = unref(name);
     const newValue =
-      state && 'value' in state ? state.value : getFromPath(unref(formInitialValues), fieldPath) ?? initValue;
+      state && 'value' in state
+        ? (state.value as TValue)
+        : ((getFromPath<TValue>(unref(formInitialValues), fieldPath) ?? initValue) as TValue);
     if (form) {
       form.setFieldValue(fieldPath, newValue, { force: true });
     } else {
@@ -371,8 +388,8 @@ function useValidationState<TValue = any>({
 /**
  * Exposes meta flags state and some associated actions with them.
  */
-function useMeta(initialValue: any) {
-  const initialMeta = (): FieldMeta => ({
+function useMeta<TValue>(initialValue: TValue) {
+  const initialMeta = (): FieldMeta<TValue> => ({
     touched: false,
     dirty: false,
     valid: false,
@@ -380,12 +397,12 @@ function useMeta(initialValue: any) {
     initialValue,
   });
 
-  const meta = reactive(initialMeta());
+  const meta = reactive(initialMeta()) as FieldMeta<TValue>;
 
   /**
    * Resets the flag state
    */
-  function resetMeta<TValue = any>(state?: Pick<Partial<FieldState<TValue>>, 'dirty' | 'touched' | 'value'>) {
+  function resetMeta(state?: Pick<Partial<FieldState<TValue>>, 'dirty' | 'touched' | 'value'>) {
     const defaults = initialMeta();
     meta.pending = defaults.pending;
     meta.touched = state?.touched ?? defaults.touched;
@@ -402,7 +419,7 @@ function useMeta(initialValue: any) {
 /**
  * Extracts the validation rules from a schema
  */
-function extractRuleFromSchema(schema: Record<string, any> | undefined, fieldName: string) {
+function extractRuleFromSchema(schema: Record<string, RuleExpression> | undefined, fieldName: string) {
   // no schema at all
   if (!schema) {
     return undefined;
@@ -415,10 +432,14 @@ function extractRuleFromSchema(schema: Record<string, any> | undefined, fieldNam
 /**
  * Manages the field value
  */
-function useFieldValue<TValue>(initialValue: TValue, path: MaybeReactive<string>, form?: FormContext) {
+function useFieldValue<TValue>(
+  initialValue: TValue | undefined,
+  path: MaybeReactive<string>,
+  form?: FormContext
+): WritableRef<TValue> {
   // if no form is associated, use a regular ref.
   if (!form) {
-    return ref(initialValue);
+    return ref(initialValue) as WritableRef<TValue>;
   }
 
   // set initial value
@@ -426,12 +447,12 @@ function useFieldValue<TValue>(initialValue: TValue, path: MaybeReactive<string>
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed<TValue>({
     get() {
-      return getFromPath(form.values, unref(path));
+      return getFromPath<TValue>(form.values, unref(path)) as TValue;
     },
     set(newVal) {
       form.setFieldValue(unref(path), newVal);
     },
   });
 
-  return value;
+  return value as WritableRef<TValue>;
 }

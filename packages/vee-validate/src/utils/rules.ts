@@ -1,14 +1,15 @@
-import { Locator, GenericValidateFunction } from '../types';
-import { isLocator, isYupValidator } from './assertions';
-import { isCallable, isObject } from '../../../shared';
-import { getFromPath } from './common';
+import { isLocator } from './assertions';
+import { getFromPath, keysOf } from './common';
+import { Locator } from '../types';
+import { isObject } from '../../../shared';
 
 /**
  * Normalizes the given rules expression.
  */
-export function normalizeRules(rules: any): GenericValidateFunction | Record<string, any> {
-  // if falsy value return an empty object.
-  const acc: { [x: string]: any } = {};
+export function normalizeRules(
+  rules: undefined | string | Record<string, unknown | unknown[] | Record<string, unknown>>
+): Record<string, unknown[] | Record<string, unknown>> {
+  const acc: Record<string, unknown[] | Record<string, unknown>> = {};
   Object.defineProperty(acc, '_$$isNormalized', {
     value: true,
     writable: false,
@@ -18,11 +19,6 @@ export function normalizeRules(rules: any): GenericValidateFunction | Record<str
 
   if (!rules) {
     return acc;
-  }
-
-  // If its a single validate function or a yup fn, leave as is.
-  if (isCallable(rules) || isYupValidator(rules)) {
-    return rules;
   }
 
   // Object is already normalized, skip.
@@ -64,11 +60,11 @@ export function normalizeRules(rules: any): GenericValidateFunction | Record<str
  */
 function normalizeParams(params: unknown) {
   if (params === true) {
-    return [];
+    return [] as unknown[];
   }
 
   if (Array.isArray(params)) {
-    return params;
+    return params as unknown[];
   }
 
   if (isObject(params)) {
@@ -78,7 +74,7 @@ function normalizeParams(params: unknown) {
   return [params];
 }
 
-function buildParams(provided: any[] | Record<string, any>) {
+function buildParams(provided: unknown[] | Record<string, unknown>) {
   const mapValueToLocator = (value: unknown) => {
     // A target param using interpolation
     if (typeof value === 'string' && value[0] === '@') {
@@ -101,7 +97,7 @@ function buildParams(provided: any[] | Record<string, any>) {
     prev[key] = mapValueToLocator(provided[key]);
 
     return prev;
-  }, {} as Record<string, any>);
+  }, {} as Record<string, unknown>);
 }
 
 /**
@@ -119,7 +115,7 @@ export const parseRule = (rule: string) => {
 };
 
 function createLocator(value: string): Locator {
-  const locator: Locator = (crossTable: Record<string, any>) => {
+  const locator: Locator = (crossTable: Record<string, unknown>) => {
     const val = getFromPath(crossTable, value) || crossTable[value];
 
     return val;
@@ -130,12 +126,12 @@ function createLocator(value: string): Locator {
   return locator;
 }
 
-export function extractLocators(params: Record<string, string> | string[]): string[] {
+export function extractLocators(params: Record<string, unknown> | unknown[]): Locator[] {
   if (Array.isArray(params)) {
     return params.filter(isLocator);
   }
 
-  return Object.keys(params)
+  return keysOf(params)
     .filter(key => isLocator(params[key]))
-    .map(key => params[key]);
+    .map(key => (params[key] as unknown) as Locator);
 }

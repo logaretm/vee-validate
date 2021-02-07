@@ -7,7 +7,7 @@ const invalid = ['', undefined, null, {}, '1234', '12', 'abc', '12a', 0, 4, -1, 
 test('validates numbers range', () => {
   expect.assertions(16);
   const params = { min: 1, max: 3 };
-  valid.forEach(value => expect(validate(value, params)).toBe(true));
+  valid.forEach(value => expect(validate(value as any, params)).toBe(true));
 
   invalid.forEach(value => expect(validate(value as any, params)).toBe(false));
 });

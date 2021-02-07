@@ -12,11 +12,11 @@ test('validates number maximum value', () => {
   valid.forEach(value => expect(validate(value, { max })).toBe(true));
 
   // invalid
-  invalid.forEach(value => expect(validate(value, { max })).toBe(false));
+  invalid.forEach(value => expect(validate(value as any, { max })).toBe(false));
 });
 
 test('handles array of values', () => {
   expect(validate(valid, { max: 10 })).toBe(true);
 
-  expect(validate(invalid, { max: 10 })).toBe(false);
+  expect(validate(invalid as any[], { max: 10 })).toBe(false);
 });

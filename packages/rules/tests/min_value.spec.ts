@@ -16,7 +16,7 @@ test('validates number minimum value', () => {
 });
 
 test('handles array of values', () => {
-  expect(validate(valid, { min: -1 })).toBe(true);
+  expect(validate(valid as any[], { min: -1 })).toBe(true);
 
   expect(validate(invalid as any, { min: -1 })).toBe(false);
 });

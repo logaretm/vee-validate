@@ -1,4 +1,4 @@
-const integerValidator = (value: any) => {
+const integerValidator = (value: unknown) => {
   if (Array.isArray(value)) {
     return value.every(val => /^-?[0-9]+$/.test(String(val)));
   }

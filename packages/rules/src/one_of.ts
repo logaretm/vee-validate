@@ -1,9 +1,9 @@
-const oneOfValidator = (value: any, options: any[]): boolean => {
+const oneOfValidator = (value: unknown, list: unknown[]): boolean => {
   if (Array.isArray(value)) {
-    return value.every(val => oneOfValidator(val, options));
+    return value.every(val => oneOfValidator(val, list));
   }
 
-  return Array.from(options as any[]).some(item => {
+  return Array.from(list).some(item => {
     // eslint-disable-next-line
     return item == value;
   });

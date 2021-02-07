@@ -6,11 +6,11 @@ export function isNullOrUndefined(value: unknown): value is undefined | null {
   return value === null || value === undefined;
 }
 
-export function isEmptyArray(arr: any[]): boolean {
+export function isEmptyArray(arr: unknown): boolean {
   return Array.isArray(arr) && arr.length === 0;
 }
 
-export const isObject = (obj: unknown): obj is { [x: string]: any } =>
+export const isObject = (obj: unknown): obj is Record<string, unknown> =>
   obj !== null && !!obj && typeof obj === 'object' && !Array.isArray(obj);
 
 export function merge(target: any, source: any) {

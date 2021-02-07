@@ -25,5 +25,5 @@ test('validates number of elements in an array', () => {
 });
 
 test('validates strings consisting of numbers', () => {
-  expect(validate(123, { length: 3 })).toBe(true);
+  expect(validate(123 as any, { length: 3 })).toBe(true);
 });

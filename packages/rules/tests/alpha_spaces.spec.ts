@@ -20,16 +20,16 @@ const invalid = ['123-abc', {}, '1234567890', 'abc123', 123, ['adasd dasdasda', 
 test('validates that the string may only contain alphabetic characters and spaces', () => {
   expect.assertions(18);
   // valid.
-  valid.forEach(value => expect(validate(value)).toBe(true));
+  valid.forEach(value => expect(validate(value, [undefined])).toBe(true));
 
   // invalid
-  invalid.forEach(value => expect(validate(value)).toBe(false));
+  invalid.forEach(value => expect(validate(value, [undefined])).toBe(false));
 });
 
 test('validates the string contains alphabetic chars from other locales', () => {
   // any locale.
-  expect(validate('سلام عليكم')).toBe(true);
-  expect(validate('Привет т')).toBe(true);
+  expect(validate('سلام عليكم', [undefined])).toBe(true);
+  expect(validate('Привет т', [undefined])).toBe(true);
 
   // specfic locale
   expect(validate('peace', { locale: 'ar' })).toBe(false);

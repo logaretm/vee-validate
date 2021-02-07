@@ -1,17 +1,19 @@
 import { alphaSpaces, getLocale } from './alpha_helper';
 
-const alphaSpacesValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
+const alphaSpacesValidator = (value: unknown, params: [string | undefined] | { locale?: string }): boolean => {
   const locale = getLocale(params);
   if (Array.isArray(value)) {
     return value.every(val => alphaSpacesValidator(val, { locale }));
   }
 
+  const valueAsString = String(value);
+
   // Match at least one locale.
   if (!locale) {
-    return Object.keys(alphaSpaces).some(loc => alphaSpaces[loc].test(value));
+    return Object.keys(alphaSpaces).some(loc => alphaSpaces[loc].test(valueAsString));
   }
 
-  return (alphaSpaces[locale] || alphaSpaces.en).test(value);
+  return (alphaSpaces[locale] || alphaSpaces.en).test(valueAsString);
 };
 
 export default alphaSpacesValidator;

@@ -1,8 +1,8 @@
 const ar = /^[٠١٢٣٤٥٦٧٨٩]+$/;
 const en = /^[0-9]+$/;
 
-const numericValidator = (value: any) => {
-  const testValue = (val: any) => {
+const numericValidator = (value: unknown) => {
+  const testValue = (val: unknown) => {
     const strValue = String(val);
 
     return en.test(strValue) || ar.test(strValue);

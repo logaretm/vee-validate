@@ -2,7 +2,8 @@ import { SetupContext } from 'vue';
 
 type HTMLElementWithValueBinding = HTMLElement & { _value: unknown };
 
-export const normalizeChildren = (context: SetupContext<any>, slotProps: any) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const normalizeChildren = (context: SetupContext<any>, slotProps: Record<string, unknown>) => {
   if (!context.slots.default) {
     return context.slots.default;
   }

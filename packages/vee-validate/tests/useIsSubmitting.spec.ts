@@ -3,9 +3,11 @@ import { useField, useForm, useIsSubmitting } from '@/vee-validate';
 import { mountWithHoc } from './helpers';
 
 describe('useIsSubmitting()', () => {
-  const validate = () =>
+  const validate = (): Promise<false> =>
     new Promise(resolve => {
-      setTimeout(resolve, 10);
+      setTimeout(() => {
+        resolve(false);
+      }, 10);
     });
 
   test('indicates if a form is submitting', async () => {

@@ -25,7 +25,7 @@ export const Field = defineComponent({
     },
     rules: {
       type: [Object, String, Function],
-      default: null,
+      default: undefined,
     },
     validateOnMount: {
       type: Boolean,

@@ -1,4 +1,8 @@
-function getParams(params?: any[] | Record<string, any>) {
+import { SimpleValidationRuleFunction } from '../../shared';
+
+type BetweenParams = [string | number, string | number] | { min: number | string; max: number | string };
+
+function getParams(params: BetweenParams) {
   if (!params) {
     return {
       min: 0,
@@ -13,13 +17,14 @@ function getParams(params?: any[] | Record<string, any>) {
   return params;
 }
 
-const betweenValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
+const betweenValidator: SimpleValidationRuleFunction<unknown, BetweenParams> = (value, params): boolean => {
   const { min, max } = getParams(params);
   if (Array.isArray(value)) {
     return value.every(val => !!betweenValidator(val, { min, max }));
   }
 
-  return Number(min) <= value && Number(max) >= value;
+  const valueAsNumber = Number(value);
+  return Number(min) <= valueAsNumber && Number(max) >= valueAsNumber;
 };
 
 export default betweenValidator;

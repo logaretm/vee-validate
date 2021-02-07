@@ -2,7 +2,7 @@ import type { ValidationError } from 'yup';
 import { resolveRule } from './defineRule';
 import { isLocator, normalizeRules, isYupValidator } from './utils';
 import { getConfig } from './config';
-import { ValidationResult, GenericValidateFunction } from './types';
+import { ValidationResult, GenericValidateFunction, YupValidator } from './types';
 import { isCallable, FieldContext } from '../../shared';
 
 /**
@@ -10,14 +10,14 @@ import { isCallable, FieldContext } from '../../shared';
  */
 interface FieldValidationContext {
   name: string;
-  rules: Record<string, any>;
+  rules: GenericValidateFunction | YupValidator | string | Record<string, unknown>;
   bails: boolean;
-  formData: Record<string, any>;
+  formData: Record<string, unknown>;
 }
 
 interface ValidationOptions {
   name?: string;
-  values?: Record<string, any>;
+  values?: Record<string, unknown>;
   bails?: boolean;
   skipIfEmpty?: boolean;
   isInitial?: boolean;
@@ -27,14 +27,14 @@ interface ValidationOptions {
  * Validates a value against the rules.
  */
 export async function validate(
-  value: any,
-  rules: string | Record<string, any> | GenericValidateFunction,
+  value: unknown,
+  rules: string | Record<string, unknown | unknown[]> | GenericValidateFunction | YupValidator,
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
   const field: FieldValidationContext = {
     name: options?.name || '{field}',
-    rules: normalizeRules(rules),
+    rules,
     bails: shouldBail ?? true,
     formData: options?.values || {},
   };
@@ -51,40 +51,40 @@ export async function validate(
 /**
  * Starts the validation process.
  */
-async function _validate(field: FieldValidationContext, value: any) {
+async function _validate(field: FieldValidationContext, value: unknown) {
   if (isYupValidator(field.rules)) {
-    return validateFieldWithYup(field, value);
+    return validateFieldWithYup(value, field.rules, { bails: field.bails });
   }
 
   // if a generic function, use it as the pipeline.
   if (isCallable(field.rules)) {
-    const result = await field.rules(value, {
+    const ctx = {
       field: field.name,
       form: field.formData,
-    });
+      value: value,
+    };
+
+    const result = await field.rules(value, ctx);
     const isValid = typeof result !== 'string' && result;
-    const message =
-      typeof result === 'string'
-        ? result
-        : _generateFieldError({
-            field: field.name,
-            value,
-            form: field.formData,
-          });
+    const message = typeof result === 'string' ? result : _generateFieldError(ctx);
 
     return {
       errors: !isValid ? [message] : [],
     };
   }
 
+  const normalizedContext = {
+    ...field,
+    rules: normalizeRules(field.rules),
+  };
   const errors: ReturnType<typeof _generateFieldError>[] = [];
-  const rules = Object.keys(field.rules);
-  const length = rules.length;
+  const rulesKeys = Object.keys(normalizedContext.rules);
+  const length = rulesKeys.length;
   for (let i = 0; i < length; i++) {
-    const rule = rules[i];
-    const result = await _test(field, value, {
+    const rule = rulesKeys[i];
+    const result = await _test(normalizedContext, value, {
       name: rule,
-      params: field.rules[rule],
+      params: normalizedContext.rules[rule],
     });
 
     if (result.error) {
@@ -102,13 +102,17 @@ async function _validate(field: FieldValidationContext, value: any) {
   };
 }
 
+interface YupValidationOptions {
+  bails: boolean;
+}
+
 /**
  * Handles yup validation
  */
-async function validateFieldWithYup(field: FieldValidationContext, value: any) {
-  const errors = await field.rules
+async function validateFieldWithYup(value: unknown, validator: YupValidator, opts: Partial<YupValidationOptions>) {
+  const errors = await validator
     .validate(value, {
-      abortEarly: field.bails,
+      abortEarly: opts.bails ?? true,
     })
     .then(() => [])
     .catch((err: ValidationError) => {
@@ -130,7 +134,11 @@ async function validateFieldWithYup(field: FieldValidationContext, value: any) {
 /**
  * Tests a single input value against a rule.
  */
-async function _test(field: FieldValidationContext, value: any, rule: { name: string; params: Record<string, any> }) {
+async function _test(
+  field: FieldValidationContext,
+  value: unknown,
+  rule: { name: string; params: Record<string, unknown> | unknown[] }
+) {
   const validator = resolveRule(rule.name);
   if (!validator) {
     throw new Error(`No such validator '${rule.name}' exists.`);
@@ -172,8 +180,8 @@ function _generateFieldError(fieldCtx: FieldContext) {
   return message(fieldCtx);
 }
 
-function fillTargetValues(params: any[] | Record<string, any>, crossTable: Record<string, any>) {
-  const normalize = (value: any) => {
+function fillTargetValues(params: unknown[] | Record<string, unknown>, crossTable: Record<string, unknown>) {
+  const normalize = (value: unknown) => {
     if (isLocator(value)) {
       return value(crossTable);
     }
@@ -189,5 +197,5 @@ function fillTargetValues(params: any[] | Record<string, any>, crossTable: Recor
     acc[param] = normalize(params[param]);
 
     return acc;
-  }, {} as Record<string, any>);
+  }, {} as Record<string, unknown>);
 }

@@ -1,4 +1,4 @@
-const mimesValidator = (files: File | File[], mimes: string[]) => {
+const mimesValidator = (files: unknown, mimes: string[]) => {
   if (!files) {
     return true;
   }
@@ -9,10 +9,10 @@ const mimesValidator = (files: File | File[], mimes: string[]) => {
 
   const regex = new RegExp(`${mimes.join('|').replace('*', '.+')}$`, 'i');
   if (Array.isArray(files)) {
-    return files.every(file => regex.test(file.type));
+    return files.every(file => regex.test((file as File).type));
   }
 
-  return regex.test(files.type);
+  return regex.test((files as File).type);
 };
 
 export default mimesValidator;

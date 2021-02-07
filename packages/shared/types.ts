@@ -1,17 +1,22 @@
 export interface FieldContext {
   field: string;
-  value: any;
-  form: Record<string, any>;
+  value: unknown;
+  form: Record<string, unknown>;
   rule?: {
     name: string;
-    params?: Record<string, any> | any[];
+    params?: Record<string, unknown> | unknown[];
   };
 }
 
-export type ValidationRuleFunction = (
-  value: any,
-  params: any[] | Record<string, any>,
+export type ValidationRuleFunction<TValue = unknown, TParams = unknown[] | Record<string, unknown>> = (
+  value: TValue,
+  params: TParams,
   ctx: FieldContext
+) => boolean | string | Promise<boolean | string>;
+
+export type SimpleValidationRuleFunction<TValue = unknown, TParams = unknown[] | Record<string, unknown>> = (
+  value: TValue,
+  params: TParams
 ) => boolean | string | Promise<boolean | string>;
 
 export type ValidationMessageGenerator = (ctx: FieldContext) => string;

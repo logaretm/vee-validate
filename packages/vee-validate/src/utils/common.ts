@@ -1,6 +1,8 @@
+import { isObject } from '../../../shared';
 import { getCurrentInstance, inject, InjectionKey, warn as vueWarning } from 'vue';
 import type { useField } from '../useField';
-import { isEmptyContainer, isIndex, isNotNestedPath } from './assertions';
+import { isContainerValue, isEmptyContainer, isIndex, isNotNestedPath } from './assertions';
+import { PrivateFieldComposite } from '../types';
 
 function cleanupNonNestedPath(path: string) {
   if (isNotNestedPath(path)) {
@@ -10,41 +12,45 @@ function cleanupNonNestedPath(path: string) {
   return path;
 }
 
+type NestedRecord = Record<string, unknown> | { [k: string]: NestedRecord };
+
 /**
  * Gets a nested property value from an object
  */
-export function getFromPath(object: Record<string, any> | undefined, path: string): any {
+export function getFromPath<TValue = unknown>(object: NestedRecord | undefined, path: string): TValue | undefined {
   if (!object) {
     return undefined;
   }
 
   if (isNotNestedPath(path)) {
-    return object[cleanupNonNestedPath(path)];
+    return object[cleanupNonNestedPath(path)] as TValue | undefined;
   }
 
-  return path
+  const resolvedValue = path
     .split(/\.|\[(\d+)\]/)
     .filter(Boolean)
     .reduce((acc, propKey) => {
-      if (acc && propKey in acc) {
+      if (isContainerValue(acc) && propKey in acc) {
         return acc[propKey];
       }
 
       return undefined;
-    }, object);
+    }, object as unknown);
+
+  return resolvedValue as TValue | undefined;
 }
 
 /**
  * Sets a nested property value in a path, creates the path properties if it doesn't exist
  */
-export function setInPath(object: Record<string, any>, path: string, value: any): void {
+export function setInPath(object: NestedRecord, path: string, value: unknown): void {
   if (isNotNestedPath(path)) {
     object[cleanupNonNestedPath(path)] = value;
     return;
   }
 
   const keys = path.split(/\.|\[(\d+)\]/).filter(Boolean);
-  let acc = object;
+  let acc: Record<string, unknown> = object;
   for (let i = 0; i < keys.length; i++) {
     // Last key, set it
     if (i === keys.length - 1) {
@@ -58,30 +64,32 @@ export function setInPath(object: Record<string, any>, path: string, value: any)
       acc[keys[i]] = isIndex(keys[i + 1]) ? [] : {};
     }
 
-    acc = acc[keys[i]];
+    acc = acc[keys[i]] as Record<string, unknown>;
   }
 }
 
-function unset(object: any, key: string | number) {
+function unset(object: Record<string, unknown> | unknown[], key: string | number) {
   if (Array.isArray(object) && isIndex(key)) {
     object.splice(Number(key), 1);
     return;
   }
 
-  delete object[key];
+  if (isObject(object)) {
+    delete object[key];
+  }
 }
 
 /**
  * Removes a nested property from object
  */
-export function unsetPath(object: Record<string, any>, path: string): void {
+export function unsetPath(object: NestedRecord, path: string): void {
   if (isNotNestedPath(path)) {
     delete object[cleanupNonNestedPath(path)];
     return;
   }
 
   const keys = path.split(/\.|\[(\d+)\]/).filter(Boolean);
-  let acc = object;
+  let acc: Record<string, unknown> = object;
   for (let i = 0; i < keys.length; i++) {
     // Last key, unset it
     if (i === keys.length - 1) {
@@ -94,10 +102,10 @@ export function unsetPath(object: Record<string, any>, path: string): void {
       break;
     }
 
-    acc = acc[keys[i]];
+    acc = acc[keys[i]] as Record<string, unknown>;
   }
 
-  const pathValues = keys.map((_, idx) => {
+  const pathValues: (unknown | Record<string, unknown>)[] = keys.map((_, idx) => {
     return getFromPath(object, keys.slice(0, idx).join('.'));
   });
 
@@ -111,14 +119,14 @@ export function unsetPath(object: Record<string, any>, path: string): void {
       continue;
     }
 
-    unset(pathValues[i - 1], keys[i - 1]);
+    unset(pathValues[i - 1] as Record<string, unknown>, keys[i - 1]);
   }
 }
 
 /**
  * A typed version of Object.keys
  */
-export function keysOf<TRecord extends Record<string, any>>(record: TRecord): (keyof TRecord)[] {
+export function keysOf<TRecord extends Record<string, unknown>>(record: TRecord): (keyof TRecord)[] {
   return Object.keys(record);
 }
 
@@ -134,12 +142,12 @@ export function warn(message: string) {
   vueWarning(`[vee-validate]: ${message}`);
 }
 
-type FieldApi = ReturnType<typeof useField>;
-
 /**
  * Ensures we deal with a singular field value
  */
-export function normalizeField(field: FieldApi | FieldApi[]): FieldApi | undefined {
+export function normalizeField<TValue = unknown>(
+  field: PrivateFieldComposite<TValue> | PrivateFieldComposite<TValue>[] | undefined
+): PrivateFieldComposite<TValue> | undefined {
   if (Array.isArray(field)) {
     return field[0];
   }

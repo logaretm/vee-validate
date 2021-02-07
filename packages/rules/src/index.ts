@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 
+import { ValidationRuleFunction } from '../../shared';
 import alpha from './alpha';
 import alpha_dash from './alpha_dash';
 import alpha_num from './alpha_num';
@@ -55,3 +56,34 @@ export {
   required,
   size,
 };
+
+const all: Record<string, ValidationRuleFunction<unknown, any>> = {
+  alpha_dash,
+  alpha_num,
+  alpha_spaces,
+  alpha,
+  between,
+  confirmed,
+  digits,
+  dimensions,
+  email,
+  ext,
+  image,
+  integer,
+  is_not,
+  is,
+  length,
+  max_value,
+  max,
+  mimes,
+  min_value,
+  min,
+  not_one_of,
+  numeric,
+  one_of,
+  regex,
+  required,
+  size,
+};
+
+export default all;

@@ -4,7 +4,7 @@ import { mountWithHoc, setValue } from './helpers';
 
 describe('<ErrorMessage />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
-  defineRule('required', value => {
+  defineRule('required', (value: string) => {
     if (!value) {
       return REQUIRED_MESSAGE;
     }

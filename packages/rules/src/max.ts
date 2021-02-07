@@ -1,7 +1,7 @@
 import { isNullOrUndefined } from '../../shared';
 import { getSingleParam } from './utils';
 
-const maxLengthValidator = (value: any, params?: any[] | Record<string, any>): boolean => {
+const maxLengthValidator = (value: unknown, params: [string | number] | { length: string | number }): boolean => {
   const length = getSingleParam(params, 'length');
 
   if (isNullOrUndefined(value)) {
