@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.15](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.14...vee-validate@4.1.15) (2021-02-07)
+
+
+### Bug Fixes
+
+* resolve path values with global rules closes [#3157](https://github.com/logaretm/vee-validate/issues/3157) ([beaf316](https://github.com/logaretm/vee-validate/commit/beaf3168490aee585542a19c9a910d9493e78208))
+
+
+
+
+
 ## [4.1.14](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.13...vee-validate@4.1.14) (2021-02-06)
 
 
