@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/logaretm/vee-validate/compare/@vee-validate/i18n@4.0.3...@vee-validate/i18n@4.1.0) (2021-02-07)
+
+
+### Features
+
+* added new loadLocaleFromURL function ([e7ba3db](https://github.com/logaretm/vee-validate/commit/e7ba3dbc82bed48d425f10771f4f5d11e767b042))
+
+
+
+
+
 ## [4.0.3](https://github.com/logaretm/vee-validate/compare/@vee-validate/i18n@4.0.2...@vee-validate/i18n@4.0.3) (2021-02-06)
 
 **Note:** Version bump only for package @vee-validate/i18n
