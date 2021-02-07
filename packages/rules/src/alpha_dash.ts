@@ -1,6 +1,6 @@
 import { alphaDash, getLocale } from './alpha_helper';
 
-const alphaDashValidator = (value: unknown, params?: [string | undefined] | { locale?: string }): boolean => {
+const alphaDashValidator = (value: unknown, params: [string | undefined] | { locale?: string }): boolean => {
   const locale = getLocale(params);
   if (Array.isArray(value)) {
     return value.every(val => alphaDashValidator(val, { locale }));

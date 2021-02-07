@@ -1,6 +1,6 @@
 import { alphaSpaces, getLocale } from './alpha_helper';
 
-const alphaSpacesValidator = (value: unknown, params?: [string] | { locale?: string }): boolean => {
+const alphaSpacesValidator = (value: unknown, params: [string] | { locale?: string }): boolean => {
   const locale = getLocale(params);
   if (Array.isArray(value)) {
     return value.every(val => alphaSpacesValidator(val, { locale }));
