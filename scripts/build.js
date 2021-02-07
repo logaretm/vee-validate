@@ -10,7 +10,6 @@ const { generateDts } = require('./generate-dts');
 async function buildLocales() {
   const localesDir = path.join(__dirname, '../packages/i18n/src/locale');
   const files = fs.readdirSync(localesDir);
-  // eslint-disable-next-line
   console.log(chalk.cyan('Building i18n...'));
 
   for (let i = 0; i < files.length; i++) {

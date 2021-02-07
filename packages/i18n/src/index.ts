@@ -88,4 +88,26 @@ function setLocale(locale: string) {
   DICTIONARY.locale = locale;
 }
 
-export { localize, setLocale };
+/**
+ * Loads a locale file from URL and merges it with the current dictionary
+ */
+async function loadLocaleFromURL(url: string) {
+  try {
+    const locale: { code: string; messages: Record<string, string> } = await fetch(url, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    }).then(res => res.json());
+
+    if (!locale.code) {
+      console.error('Could not identify locale, ensure the locale file contains `code` field');
+      return;
+    }
+
+    localize({ [locale.code]: locale });
+  } catch (err) {
+    console.error(`Failed to load locale `);
+  }
+}
+
+export { localize, setLocale, loadLocaleFromURL };
