@@ -12,7 +12,7 @@ test('allows empty rules for the string format', async () => {
 });
 
 test('handles targets expressed in objects', async () => {
-  defineRule('confirmed', (value, { target }: any) => {
+  defineRule('confirmed', (value: string, { target }: any) => {
     return value === target ? true : 'must match';
   });
 
@@ -25,7 +25,7 @@ test('handles targets expressed in objects', async () => {
 
 // #3077
 test('target params are filled in the params in message context', async () => {
-  defineRule('lessThan', (value, params: any) => Number(value) < Number(params[0]));
+  defineRule('lessThan', (value: number, params: any) => Number(value) < Number(params[0]));
   const { generateMessage: original } = getConfig();
   configure({
     generateMessage: context => {
