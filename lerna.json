@@ -1,6 +1,7 @@
 {
   "packages": ["packages/*"],
   "npmClient": "yarn",
+  "version": "4.1.16",
   "useWorkspaces": true,
   "command": {
     "version": {
