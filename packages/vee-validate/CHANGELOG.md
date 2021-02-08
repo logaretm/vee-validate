@@ -3,6 +3,83 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.17](https://github.com/logaretm/vee-validate/compare/v3.2.0...v4.1.17) (2021-02-08)
+
+
+### Bug Fixes
+
+* add a handler for regex object params closes [#3073](https://github.com/logaretm/vee-validate/issues/3073) ([7a5e2eb](https://github.com/logaretm/vee-validate/commit/7a5e2ebf8303395372ae08ebcca55427a58faecb))
+* added emits and onSubmit custom prop ([#3115](https://github.com/logaretm/vee-validate/issues/3115)) ([8f2c110](https://github.com/logaretm/vee-validate/commit/8f2c110f14add0fbd82a28a91601e89938144624))
+* array radio fields not switching value correctly closes [#3141](https://github.com/logaretm/vee-validate/issues/3141) ([3d4efef](https://github.com/logaretm/vee-validate/commit/3d4efef68c63a3b57e2bf14fed913dbf841a7f5e))
+* avoid returning undefined for form errors when form does not exist ([8cce17a](https://github.com/logaretm/vee-validate/commit/8cce17ae2846be912d51926c79e557ed8bb39582))
+* avoid validating dependencies via watcheffect closes [#3156](https://github.com/logaretm/vee-validate/issues/3156) ([a7b91f6](https://github.com/logaretm/vee-validate/commit/a7b91f6e6c38f0b5262e2d4c1814154efa3b78c8))
+* cast radio buttons value correctly closes [#3064](https://github.com/logaretm/vee-validate/issues/3064) ([3e0f9a4](https://github.com/logaretm/vee-validate/commit/3e0f9a47369edac32d0c8a068f8b61d8f761458f))
+* clear out initial values for unregistered fields closes [#3060](https://github.com/logaretm/vee-validate/issues/3060) ([56206de](https://github.com/logaretm/vee-validate/commit/56206de995fe8f2eaca3e303ab6980784a3c95b1))
+* correctly set the initial value from the v-model closes [#3107](https://github.com/logaretm/vee-validate/issues/3107) ([4bed9a8](https://github.com/logaretm/vee-validate/commit/4bed9a806323139d2f274e51b6bfe3de2190e54d))
+* export submission types [#3112](https://github.com/logaretm/vee-validate/issues/3112) ([3f35167](https://github.com/logaretm/vee-validate/commit/3f351670da02364b0fb8e61198145dfa02dc59b9))
+* fill the target rule params for message generators closes [#3077](https://github.com/logaretm/vee-validate/issues/3077) ([f5e1bd3](https://github.com/logaretm/vee-validate/commit/f5e1bd3cbc278a8588fa0c96af66823d82eefb8c))
+* handle formless checkboxes value toggling closes [#3105](https://github.com/logaretm/vee-validate/issues/3105) ([504f30b](https://github.com/logaretm/vee-validate/commit/504f30bfcbcb1db710397ef05545b5008b0103fb))
+* handle reactive field names and value swaps ([cf8051d](https://github.com/logaretm/vee-validate/commit/cf8051d3b92eb43103f4e7c682e615343239d717))
+* missing export for useErrors helpers ([28537cc](https://github.com/logaretm/vee-validate/commit/28537cc547cf945b10adc485620ad226f71d60fc))
+* pass down listeners to the input node closes [#3048](https://github.com/logaretm/vee-validate/issues/3048) ([2526a63](https://github.com/logaretm/vee-validate/commit/2526a63c2361e412b528cf370c03b39cb84b606d))
+* prevent default reset behavior with handleReset ([a66df13](https://github.com/logaretm/vee-validate/commit/a66df13c3f39d84984581dc3c0ce368b052b6e8e))
+* prevent resetForm from toggling checkbox value [#3084](https://github.com/logaretm/vee-validate/issues/3084) ([38778f9](https://github.com/logaretm/vee-validate/commit/38778f96471b6aa16fb020cfb1bde56b77a19cfb))
+* react to validation events changes ([078e61b](https://github.com/logaretm/vee-validate/commit/078e61b17bd299a28752b733b494a0ddb368a812))
+* reset meta correctly with resetField ([012658c](https://github.com/logaretm/vee-validate/commit/012658c082a00b1beeb53ce8cf3fcd91bc5b21ec))
+* resolve component before rendering closes [#3014](https://github.com/logaretm/vee-validate/issues/3014) ([f8f481d](https://github.com/logaretm/vee-validate/commit/f8f481daad754a4b18a91e2b07b9549433d023f9))
+* resolve path values with global rules closes [#3157](https://github.com/logaretm/vee-validate/issues/3157) ([beaf316](https://github.com/logaretm/vee-validate/commit/beaf3168490aee585542a19c9a910d9493e78208))
+* set field initial value on the fid lookup closes [#3128](https://github.com/logaretm/vee-validate/issues/3128) ([650d5cf](https://github.com/logaretm/vee-validate/commit/650d5cf9f75f9b9247fc813acf2aff4089f05415))
+* support dynamic labels closes [#3053](https://github.com/logaretm/vee-validate/issues/3053) ([31b2238](https://github.com/logaretm/vee-validate/commit/31b223878bda75c3150217ea80bb878d8dc1e320))
+* typing issue from [#3134](https://github.com/logaretm/vee-validate/issues/3134) ([29e5cff](https://github.com/logaretm/vee-validate/commit/29e5cffc654a2502f29fe616eda088de958e02d3))
+* use the custom injection fn for initial field values ([38cd32b](https://github.com/logaretm/vee-validate/commit/38cd32bd3ae9f263510d0ab4a1713c6a9a2011af))
+
+
+### Features
+
+* add submit count state ([#3070](https://github.com/logaretm/vee-validate/issues/3070)) ([a7fe71e](https://github.com/logaretm/vee-validate/commit/a7fe71e01072dacfeb7baa80eebf0b8d7d9d3ffd))
+* added context awareness to composition helpers for fields ([b59fe88](https://github.com/logaretm/vee-validate/commit/b59fe88197ce3cd587edfc33666bcb676030fa61))
+* added context information to validation functions ([7e6675d](https://github.com/logaretm/vee-validate/commit/7e6675db6a103eae33cbb6d959621b4549af66b2))
+* added test cases and fallbacks for unresolved cases ([71bda03](https://github.com/logaretm/vee-validate/commit/71bda03a72a9e8f27bc0b7620ce78ba48a194309))
+* added the useResetForm helper ([4c57715](https://github.com/logaretm/vee-validate/commit/4c57715ab621526a5c987cff9a53cb5b7af2155a))
+* added unchecked-value prop to the field component ([af910c3](https://github.com/logaretm/vee-validate/commit/af910c3f3c6343538658ab90f356dd8957bb6a1a))
+* added useErrors and useField error helpers ([4cda2fe](https://github.com/logaretm/vee-validate/commit/4cda2fea6428a7f10b53b633daa46252bf779289))
+* added useIsDirty helpers ([6b7e4ab](https://github.com/logaretm/vee-validate/commit/6b7e4abfcdb2f0eebe0dd8c62785178fbee8d25f))
+* added useIsSubmitting helper ([7a58fd8](https://github.com/logaretm/vee-validate/commit/7a58fd840425a5e09f625054389aebbb096c2e1a))
+* added useIsTouched helpers ([fdb2d5a](https://github.com/logaretm/vee-validate/commit/fdb2d5a3c7c82d55aefef2deb95823e1ba6ba93d))
+* added useIsValid helpers ([26fbb29](https://github.com/logaretm/vee-validate/commit/26fbb29467bab66c159e98793e4269768845b938))
+* added useSubmitCount helper ([c4a6dea](https://github.com/logaretm/vee-validate/commit/c4a6deae68b588494ff0e2477d7ec2b9302c6f09))
+* added useSubmitForm hook ([#3101](https://github.com/logaretm/vee-validate/issues/3101)) ([d042882](https://github.com/logaretm/vee-validate/commit/d04288295a090328f7022641799dbaee1c404b91))
+* added useValidateField and useValidateForm helpers ([62355a8](https://github.com/logaretm/vee-validate/commit/62355a8db6477562f0689208669d0a1be63de03c))
+* added validate field function to form and useForm ([#3133](https://github.com/logaretm/vee-validate/issues/3133)) ([926bed1](https://github.com/logaretm/vee-validate/commit/926bed1bded6990f17a51ca68e9aa47c339a80f2))
+* added validate method on the form ref instance closes [#3030](https://github.com/logaretm/vee-validate/issues/3030) ([ed0faff](https://github.com/logaretm/vee-validate/commit/ed0faffd79615830a9f7c247abf1eae2254ee3f9))
+* added validation trigger config per component closes [#3066](https://github.com/logaretm/vee-validate/issues/3066) ([f0e30a2](https://github.com/logaretm/vee-validate/commit/f0e30a2cc79843040028b7070bc88846f2447c85))
+* added value change support for native multi select ([#3146](https://github.com/logaretm/vee-validate/issues/3146)) ([0601586](https://github.com/logaretm/vee-validate/commit/0601586eabbf76fac9d4fa79e6ae1d86fd3a0e37))
+* added values helpers ([e0f16d6](https://github.com/logaretm/vee-validate/commit/e0f16d6f5c01c7b1e4e8832b3490b8cc7e7b8aa7))
+* added warnings for non existent fields and allow reactive paths ([4182d2f](https://github.com/logaretm/vee-validate/commit/4182d2f1716d712962dff3b6be27916e311e5870))
+* avoid watching rules when passed as functions ([539f753](https://github.com/logaretm/vee-validate/commit/539f7535bf935e62030b83f8c7b19e95256bcc52))
+* dont render any tags when no message exists closes [#3118](https://github.com/logaretm/vee-validate/issues/3118) ([92eba41](https://github.com/logaretm/vee-validate/commit/92eba41a2cdef643bc2af4c2a0366382cdffc625))
+* enhance ts typing for form functions ([8f7d8e8](https://github.com/logaretm/vee-validate/commit/8f7d8e89864b5df5255cbe5e88713022537ec236))
+* enhance useField types ([dcb8049](https://github.com/logaretm/vee-validate/commit/dcb80495ffdefb2e789887e1d40b2c4a57ade257))
+* enrich form validation results ([0c84c80](https://github.com/logaretm/vee-validate/commit/0c84c809fa729cd2b8620329305b4da0a45e9eaf))
+* export some internal types closes [#3065](https://github.com/logaretm/vee-validate/issues/3065) ([b88dffd](https://github.com/logaretm/vee-validate/commit/b88dffdb4c638bd439d093f653bfa1915f4ad9be))
+* field.reset() should reset the field to its initial value ([a11f1b7](https://github.com/logaretm/vee-validate/commit/a11f1b7dda3deafe683e13a00b28a7fab09b82cb))
+* implement similar reset API for fields ([38c3923](https://github.com/logaretm/vee-validate/commit/38c392320b4154061ccc5d70dde11517357467e8))
+* new reset API ([6983738](https://github.com/logaretm/vee-validate/commit/69837383e42636c24d6ee7d15cb5fe8e98f2ac55))
+* rename reset methods to be more consistent ([3a0dc4d](https://github.com/logaretm/vee-validate/commit/3a0dc4db2f1a00a8a4f3940ddd452d9b1369cace))
+* update docs ([0f5ac98](https://github.com/logaretm/vee-validate/commit/0f5ac98153f74bdbbd1d9f5090e4dc4b438c998f))
+* use internal yup types ([#3123](https://github.com/logaretm/vee-validate/issues/3123)) ([7554bfc](https://github.com/logaretm/vee-validate/commit/7554bfc49b0103f218f901148bc06e6a455f09b0))
+* use resolveDynamicComponent instead ([f1b5f89](https://github.com/logaretm/vee-validate/commit/f1b5f896840ed159df06cf59badd83282496b777))
+
+
+### Performance Improvements
+
+* cache field props in a computed property ([d266878](https://github.com/logaretm/vee-validate/commit/d2668787d0ffcab5ba2e8be048ee7334d2b0f9e7))
+* cache form slot props in a computed property ([49fa2c1](https://github.com/logaretm/vee-validate/commit/49fa2c1b4a337149c533c13725d2e71bb2664706))
+
+
+
+
+
 ## [4.1.16](https://github.com/logaretm/vee-validate/compare/vee-validate@4.1.15...vee-validate@4.1.16) (2021-02-07)
 
 **Note:** Version bump only for package vee-validate
