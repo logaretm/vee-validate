@@ -11,6 +11,12 @@ export const isEvent = (evt: unknown): evt is Event => {
     return true;
   }
 
+  // this is for IE and Cypress #3161
+  /* istanbul ignore next */
+  if (evt && (evt as Event).srcElement) {
+    return true;
+  }
+
   return false;
 };
 
