@@ -1565,4 +1565,62 @@ describe('<Form />', () => {
     await flushPromises();
     expect(input.checked).toBe(false);
   });
+
+  // #3166
+  test('fields replacing others with the same name should have their value set correctly', async () => {
+    const data = [
+      {
+        id: 1,
+        title: 'this is a test no 1',
+      },
+      {
+        id: 2,
+        title: 'this is a test no 2',
+      },
+      {
+        id: 3,
+        title: 'this is a test no 3',
+      },
+      {
+        id: 4,
+        title: 'this is a test no 4',
+      },
+    ];
+    let setModified!: (field: { id: number; title: string }) => void;
+    mountWithHoc({
+      setup() {
+        const fields = ref(data);
+        const modified = ref({ id: -1, title: '' });
+        setModified = (item: { id: number; title: string }) => {
+          modified.value = { ...item };
+        };
+
+        return {
+          fields,
+          setModified,
+          modified,
+        };
+      },
+      template: `
+        <VForm>
+          <ul>
+            <li v-for="field in fields" :key="field.id">
+              <Field v-if="modified.id === field.id" name="test" v-model="modified.title" type="text" as="input" />
+            </li>
+          </ul>
+        </VForm>
+    `,
+    });
+
+    await flushPromises();
+
+    const input = () => document.querySelector('input');
+    setModified(data[3]);
+    await flushPromises();
+    expect(input()?.value).not.toBe('');
+
+    setModified(data[2]);
+    await flushPromises();
+    expect(input()?.value).not.toBe('');
+  });
 });

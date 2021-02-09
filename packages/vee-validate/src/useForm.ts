@@ -295,6 +295,13 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     // in this case, this is a single field not a group (checkbox or radio)
     // so remove the field value key immediately
     if (field.idx === -1) {
+      // avoid un-setting the value if the field was switched with another that shares the same name
+      // #3166
+      const isSharingName = fields.value.find(f => unref(f.name) === fieldName);
+      if (isSharingName) {
+        return;
+      }
+
       unsetPath(formValues, fieldName);
       unsetPath(initialValues.value, fieldName);
       return;
