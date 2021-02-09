@@ -5,13 +5,15 @@ about: Create a report to help us improve.
 
 **Versions**
 
-- vee-validate: 2.#.#
-- vue: 2.#.#
+- vee-validate: ?.?.?
+- vue: ?.?.?
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+
+<!-- Describe what is happening -->
 
 **To reproduce**
+
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -19,21 +21,13 @@ Steps to reproduce the behavior:
 4. See error
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+
+<!-- A clear and concise description of what you expected to happen. -->
 
 **Demo link**
-If applicable, add a minimal demo link to help explain your problem. You can use [JSFiddle](https://jsfiddle.net/) or [Codesandbox](https://codesandbox.io/).
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+<!-- If applicable, add a minimal demo link to help explain your problem. You can use [JSFiddle](https://jsfiddle.net/) or [Codesandbox](https://codesandbox.io/). -->
 
 **Additional context**
-Add any other context about the problem here.
+
+<!-- More information about the problem here, like if it happens in a specific browser or operating system -->
