@@ -1,12 +1,10 @@
 🔎 __Overview__
 
-Explain the premise for adding this PR and why is it important.
-
-Ex (Feat):
-> This PR {adds/fixes/improves} the {feature/bug/something}.
-
-Ex (Locale):
-> This PR changes the {locale} messages style because {reason}
+<!-- Explain the why behind adding this PR, here is a couple of examples -->
+<!--
+  This PR {adds/fixes/improves} the {feature/bug/something}.
+  This PR changes the {locale} messages style because {reason}
+-->
 
 🤓 __Code snippets/examples (if applicable)__
 
@@ -16,6 +14,7 @@ Ex (Locale):
 
 ✔ __Issues affected__
 
-list of issues formatted like this:
-
-> closes #{issue id}
+<!-- list of issues formatted like this
+closes #{issue id}
+ -->
+ 
