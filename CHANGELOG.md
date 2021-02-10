@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.18](https://github.com/logaretm/vee-validate/compare/v4.1.17...v4.1.18) (2021-02-10)
+
+
+### Bug Fixes
+
+* avoid unsetting field value if switched with another closes [#3166](https://github.com/logaretm/vee-validate/issues/3166) ([f5a79fe](https://github.com/logaretm/vee-validate/commit/f5a79fe3b15f7437acf183c162e69178fd4fa7ec))
+
+
+
+
+
 ## [4.1.17](https://github.com/logaretm/vee-validate/compare/v3.2.0...v4.1.17) (2021-02-08)
 
 
