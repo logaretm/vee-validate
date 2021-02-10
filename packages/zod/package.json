@@ -1,7 +1,7 @@
 {
   "name": "@vee-validate/zod",
-  "version": "1.0.0",
-  "description": "vee-validate integration with zod validation",
+  "version": "4.1.18",
+  "description": "vee-validate integration with zod schema validation",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
   "module": "dist/vee-validate-zod.esm.js",
@@ -23,8 +23,9 @@
     "dist/*.js",
     "dist/*.d.ts"
   ],
-  "dependencies": {
-    "vee-validate": "^4.1.0"
+  "peerDependencies": {
+    "zod": "^2.0.0-beta.29",
+    "vee-validate": "^4.1.18"
   },
   "devDependencies": {
     "zod": "^2.0.0-beta.29"

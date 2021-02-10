@@ -22,7 +22,7 @@ interface AggregatedZodError {
   errors: string[];
 }
 
-export function toSchemaValidator<TValues extends Record<string, any>>(zodSchema: ZodObject<TValues>) {
+export function toFormValidator<TValues extends Record<string, any>>(zodSchema: ZodObject<TValues>) {
   return {
     async validate(value: TValues) {
       const result = await zodSchema.safeParseAsync(value);

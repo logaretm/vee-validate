@@ -1,7 +1,7 @@
 import { mountWithHoc, setValue, setChecked } from '../../vee-validate/tests/helpers';
 import * as zod from 'zod';
 import flushPromises from 'flush-promises';
-import { toFieldValidator, toSchemaValidator } from '../src/index';
+import { toFieldValidator, toFormValidator } from '../src/index';
 
 const REQUIRED_MSG = 'field is required';
 const MIN_MSG = 'field is too short';
@@ -43,7 +43,7 @@ test('validates field with zod', async () => {
 test('validates form with zod', async () => {
   const wrapper = mountWithHoc({
     setup() {
-      const schema = toSchemaValidator(
+      const schema = toFormValidator(
         zod.object({
           email: zod.string().nonempty(REQUIRED_MSG).email({ message: EMAIL_MSG }),
           password: zod.string().nonempty(REQUIRED_MSG).min(8, { message: MIN_MSG }),
@@ -103,7 +103,7 @@ test('cross field validation with zod', async () => {
   const CONFIRM_MSG = "Passwords don't match";
   const wrapper = mountWithHoc({
     setup() {
-      const schema = toSchemaValidator(
+      const schema = toFormValidator(
         zod
           .object({
             password: zod.string(),
@@ -159,7 +159,7 @@ test('cross field validation with zod', async () => {
 test('checkboxes with zod schema', async () => {
   const wrapper = mountWithHoc({
     setup() {
-      const schema = toSchemaValidator(
+      const schema = toFormValidator(
         zod.object({
           drink: zod.array(zod.string()).min(1, REQUIRED_MSG),
         })
