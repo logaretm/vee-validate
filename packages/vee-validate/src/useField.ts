@@ -34,10 +34,10 @@ import {
   injectWithSelf,
   resolveNextCheckboxValue,
   isYupValidator,
-  keysOf,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FieldContextSymbol, FormInitialValuesSymbol, FormContextSymbol } from './symbols';
+import { BaseSchema } from 'yup';
 
 interface FieldOptions<TValue = unknown> {
   initialValue?: MaybeReactive<TValue>;
@@ -50,7 +50,13 @@ interface FieldOptions<TValue = unknown> {
   label?: MaybeReactive<string>;
 }
 
-type RuleExpression = string | Record<string, unknown> | GenericValidateFunction | YupValidator | undefined;
+type RuleExpression<TValue> =
+  | string
+  | Record<string, unknown>
+  | GenericValidateFunction
+  | YupValidator
+  | BaseSchema<TValue>
+  | undefined;
 
 let ID_COUNTER = 0;
 
@@ -59,7 +65,7 @@ let ID_COUNTER = 0;
  */
 export function useField<TValue = unknown>(
   name: MaybeReactive<string>,
-  rules?: MaybeReactive<RuleExpression>,
+  rules?: MaybeReactive<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
 ): FieldComposable<TValue> {
   const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
@@ -97,7 +103,7 @@ export function useField<TValue = unknown>(
     let rulesValue = unref(rules);
     const schema = form?.schema;
     if (schema && !isYupValidator(schema)) {
-      rulesValue = extractRuleFromSchema(schema, unref(name)) || rulesValue;
+      rulesValue = extractRuleFromSchema<TValue>(schema, unref(name)) || rulesValue;
     }
 
     if (isYupValidator(rulesValue) || isCallable(rulesValue)) {
@@ -419,7 +425,7 @@ function useMeta<TValue>(initialValue: TValue) {
 /**
  * Extracts the validation rules from a schema
  */
-function extractRuleFromSchema(schema: Record<string, RuleExpression> | undefined, fieldName: string) {
+function extractRuleFromSchema<TValue>(schema: Record<string, RuleExpression<TValue>> | undefined, fieldName: string) {
   // no schema at all
   if (!schema) {
     return undefined;
