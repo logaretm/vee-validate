@@ -1,8 +1,14 @@
-import type { ZodObject, ZodTypeAny } from 'zod';
+import type { ZodObject, ZodType, ZodTypeDef, TypeOf as ZodTypeOf, ZodRawShape } from 'zod';
+import type { BaseSchema, SchemaOf } from 'yup';
 
-export function toFieldValidator(zodSchema: ZodTypeAny) {
+/**
+ * Transforms a Zod's base type schema to yup's base type schema
+ */
+export function toFieldValidator<TValue = any, TDef extends ZodTypeDef = ZodTypeDef, TInput = TValue>(
+  zodSchema: ZodType<TValue, TDef, TInput>
+): BaseSchema<TValue> {
   return {
-    async validate(value: any) {
+    async validate(value: TValue) {
       const result = await zodSchema.safeParseAsync(value);
       if (result.success) {
         return true;
@@ -14,7 +20,7 @@ export function toFieldValidator(zodSchema: ZodTypeAny) {
 
       throw error;
     },
-  };
+  } as BaseSchema<TValue>;
 }
 
 interface AggregatedZodError {
@@ -22,7 +28,16 @@ interface AggregatedZodError {
   errors: string[];
 }
 
-export function toFormValidator<TValues extends Record<string, any>>(zodSchema: ZodObject<TValues>) {
+type ToBaseTypes<TShape extends ZodRawShape> = {
+  [P in keyof TShape]: ZodTypeOf<TShape[P]>;
+};
+
+/**
+ * Transforms a Zod object schema to Yup's schema
+ */
+export function toFormValidator<TShape extends ZodRawShape, TValues extends Record<string, any> = ToBaseTypes<TShape>>(
+  zodSchema: ZodObject<TShape>
+): SchemaOf<TValues> {
   return {
     async validate(value: TValues) {
       const result = await zodSchema.safeParseAsync(value);
@@ -44,5 +59,5 @@ export function toFormValidator<TValues extends Record<string, any>>(zodSchema: 
 
       throw error;
     },
-  };
+  } as SchemaOf<TValues>;
 }
