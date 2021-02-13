@@ -84,12 +84,9 @@ const { errors } = useForm({
 
 ### Limitations
 
-Under the hood, this plugin converts zod schemas to `yup` schemas by wrapping them with a similar API, this means there are some limitations.
+Under the hood, this plugin converts zod schemas to `yup` schemas by wrapping them with a similar API, this means there are some limitations, if you encounter unexpected behaviors or type issues please report them.
 
-- No type safety with form's `initialValues` or `setValues`
-- Some features of `zod` may not be supported
-
-As this plugin progresses it will be decided if it should join the main repo or not which would eliminate these limitations. It depends on the popularity of zod and this plugin.
+At the moment there are no known limitations.
 
 ### Documentation
 
