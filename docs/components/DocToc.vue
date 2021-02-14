@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import { slugify } from '@/utils/string';
-
 export default {
   name: 'DocToc',
   computed: {

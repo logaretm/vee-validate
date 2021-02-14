@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import { slugify } from '@/utils/string';
 import { generateSocialImage, generateMetaTags, generateLinks } from '@/utils/seo';
 
 export default {
@@ -29,21 +28,6 @@ export default {
       nextPage,
       isOverview: /overview/i.test(params.pathMatch),
     };
-  },
-  mounted() {
-    const linkify = node => {
-      const anchor = document.createElement('a');
-      const slug = slugify(node.textContent);
-      anchor.href = `${this.$config.appURL}${this.$route.path}#${slug}`;
-      anchor.textContent = node.textContent;
-      node.id = slug;
-      node.textContent = '';
-      node.appendChild(anchor);
-    };
-
-    Array.from(this.$el.querySelectorAll('h2')).forEach(linkify);
-    Array.from(this.$el.querySelectorAll('h3')).forEach(linkify);
-    Array.from(this.$el.querySelectorAll('h4')).forEach(linkify);
   },
   head() {
     const url = `${this.$config.appURL}${this.$route.path}`;
