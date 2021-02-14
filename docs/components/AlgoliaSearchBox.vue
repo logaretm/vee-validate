@@ -22,7 +22,8 @@ export default {
     },
     getRelativePath(absoluteUrl) {
       const { pathname, hash } = new URL(absoluteUrl);
-      const url = pathname.replace('/v4/', '/') + hash;
+      const url = pathname + hash;
+
       return this.stripTrailingSlash(url);
     },
     initialize(userOptions, lang) {
@@ -73,13 +74,16 @@ export default {
                     if (this.$router.history.current.fullPath === hit.url) {
                       return;
                     }
-                    const { pathname: hitPathname } = new URL(window.location.origin + hit.url);
+
+                    const { pathname, hash } = new URL(window.location.origin + hit.url);
                     // If the hits goes to another page, we prevent the native link behavior
                     // to leverage the Vue Router loading feature.
-                    if (this.$router.history.current.path !== hitPathname) {
+                    if (this.$router.history.current.path !== pathname) {
                       event.preventDefault();
                     }
-                    this.$router.push(hit.url);
+                    // makes sure to remove base path to prevent duplicate base paths
+                    const url = pathname.replace('/v4/', '/') + hash;
+                    this.$router.push(url);
                   },
                   children,
                 },
