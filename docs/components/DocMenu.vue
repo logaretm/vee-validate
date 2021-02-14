@@ -107,7 +107,7 @@ const GROUPS = [
   },
   {
     name: 'integrations',
-    contentPath: '3rd-party-integrations',
+    contentPath: 'integrations',
   },
   {
     name: 'resources',

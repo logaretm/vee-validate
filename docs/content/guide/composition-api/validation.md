@@ -200,8 +200,16 @@ export default {
 
 For more information on the `useForm` function, read [the API reference](/api/use-form).
 
-<doc-tip title="Yup Schema Optimizations">
-  There are a couple of optimization caveats when it comes to using `yup` schemas to validate your forms, be sure to check the [best practices guide](/tutorials/best-practices)
+<doc-tip title="Yup Schema Optimizations" type="warn">
+
+There are a couple of optimization caveats when it comes to using `yup` schemas to validate your forms, be sure to check the [best practices guide](/tutorials/best-practices).
+
+</doc-tip>
+
+<doc-tip title="Zod Schema Plugin">
+
+There is an official integration available for [Zod validation](https://github.com/colinhacks/zod) that you can use as a drop-in replacement for `yup`. Check the [zod integration page](/integrations/zod-schema-validation).
+
 </doc-tip>
 
 ## Validation Behavior

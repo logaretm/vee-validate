@@ -1,7 +1,7 @@
 ---
 title: 3rd Party Integrations
 description: Integrations with other libraries and frameworks
-order: 1
+order: 2
 ---
 
 # 3rd Party Integrations
