@@ -1,6 +1,6 @@
-import { FieldContext } from 'packages/shared';
 import { ComputedRef, Ref, WritableComputedRef } from 'vue';
 import { SchemaOf, AnySchema, AnyObjectSchema } from 'yup';
+import { FieldContext } from '../../shared';
 
 export interface ValidationResult {
   errors: string[];
