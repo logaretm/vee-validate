@@ -6,12 +6,14 @@ const formatNameMap = {
   'vee-validate': 'VeeValidate',
   rules: 'VeeValidateRules',
   i18n: 'VeeValidateI18n',
+  zod: 'VeeValidateZod',
 };
 
 const pkgNameMap = {
   'vee-validate': 'vee-validate',
   rules: 'vee-validate-rules',
   i18n: 'vee-validate-i18n',
+  zod: 'vee-validate-zod',
 };
 
 const formatMap = {
