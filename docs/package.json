@@ -10,8 +10,8 @@
   "dependencies": {
     "@docsearch/css": "^1.0.0-alpha.28",
     "@docsearch/js": "^1.0.0-alpha.28",
-    "@nuxt/content": "^1.9.0",
-    "@nuxtjs/pwa": "^3.3.3",
+    "@nuxt/content": "^1.13.1",
+    "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/tailwindcss": "^3.4.2",
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "autoprefixer": "^9",
