@@ -9,6 +9,7 @@ import {
   unref,
   WatchStopHandle,
   provide,
+  Ref,
 } from 'vue';
 import { validate as validateValue } from './validate';
 import {
@@ -350,7 +351,6 @@ function useValidationState<TValue>({
   // Updates the validation state with the validation result
   function setValidationState(result: ValidationResult) {
     setErrors(result.errors);
-    meta.valid = !result.errors.length;
 
     return result;
   }
@@ -389,10 +389,10 @@ function useValidationState<TValue>({
  * Exposes meta flags state and some associated actions with them.
  */
 function useMeta<TValue>(initialValue: TValue, errors: Ref<string[]>) {
-  const initialMeta = (): FieldMeta<TValue> => ({
+  const initialMeta = () => ({
     touched: false,
     dirty: false,
-    valid: !errors.value.length,
+    valid: computed(() => !errors.value.length),
     pending: false,
     initialValue,
   });
@@ -408,7 +408,6 @@ function useMeta<TValue>(initialValue: TValue, errors: Ref<string[]>) {
     meta.touched = state?.touched ?? defaults.touched;
     meta.dirty = state?.dirty ?? defaults.dirty;
     meta.initialValue = state?.value ?? defaults.initialValue;
-    meta.valid = !errors.value.length;
   }
 
   return {
