@@ -991,10 +991,10 @@ describe('<Form />', () => {
     const submitBtn = wrapper.$el.querySelector('#submit');
     const input = wrapper.$el.querySelector('input');
     await flushPromises();
-    expect(submitBtn.disabled).toBe(true);
-    setValue(input, '12');
-    await flushPromises();
     expect(submitBtn.disabled).toBe(false);
+    setValue(input, '');
+    await flushPromises();
+    expect(submitBtn.disabled).toBe(true);
   });
 
   test('nested object fields', async () => {

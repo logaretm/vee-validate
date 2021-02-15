@@ -310,7 +310,7 @@ function useValidationState<TValue>({
   const { errors, errorMessage, setErrors } = useErrorsSource(name, form);
   const formInitialValues = injectWithSelf(FormInitialValuesSymbol, undefined);
   const initialValue = (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? initValue) as TValue;
-  const { resetMeta, meta } = useMeta(initialValue);
+  const { resetMeta, meta } = useMeta(initialValue, errors);
   const value = useFieldValue(initialValue, name, form);
   const checked = hasCheckedAttr(type)
     ? computed(() => {
@@ -388,11 +388,11 @@ function useValidationState<TValue>({
 /**
  * Exposes meta flags state and some associated actions with them.
  */
-function useMeta<TValue>(initialValue: TValue) {
+function useMeta<TValue>(initialValue: TValue, errors: Ref<string[]>) {
   const initialMeta = (): FieldMeta<TValue> => ({
     touched: false,
     dirty: false,
-    valid: false,
+    valid: !errors.value.length,
     pending: false,
     initialValue,
   });
@@ -408,6 +408,7 @@ function useMeta<TValue>(initialValue: TValue) {
     meta.touched = state?.touched ?? defaults.touched;
     meta.dirty = state?.dirty ?? defaults.dirty;
     meta.initialValue = state?.value ?? defaults.initialValue;
+    meta.valid = !errors.value.length;
   }
 
   return {
