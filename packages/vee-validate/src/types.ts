@@ -118,6 +118,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   validateField(field: keyof TValues): Promise<ValidationResult>;
   errorBag: Ref<FormErrorBag<TValues>>;
   setFieldErrorBag(field: string, messages: string[]): void;
+  stageInitialValue(path: string, value: unknown): void;
   meta: ComputedRef<{
     dirty: boolean;
     touched: boolean;
@@ -132,7 +133,14 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
 export interface PublicFormContext<TValues extends Record<string, any> = Record<string, any>>
   extends Omit<
     FormContext<TValues>,
-    'register' | 'unregister' | 'fields' | 'schema' | 'validateSchema' | 'errorBag' | 'setFieldErrorBag'
+    | 'register'
+    | 'unregister'
+    | 'fields'
+    | 'schema'
+    | 'validateSchema'
+    | 'errorBag'
+    | 'setFieldErrorBag'
+    | 'stageInitialValue'
   > {
   errors: ComputedRef<FormErrors<TValues>>;
   handleReset: () => void;

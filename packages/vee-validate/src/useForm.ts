@@ -12,6 +12,7 @@ import {
   warn,
   ComputedRef,
 } from 'vue';
+import isEqual from 'fast-deep-equal/es6';
 import type { SchemaOf, ValidationError } from 'yup';
 import {
   FieldMeta,
@@ -108,7 +109,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   );
 
   // form meta aggregations
-  const meta = useFormMeta(fields, errors, readonlyInitialValues);
+  const meta = useFormMeta(fields, errors, formValues, readonlyInitialValues);
 
   /**
    * Manually sets an error message on a specific field
@@ -382,6 +383,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     };
   };
 
+  /**
+   * Sneaky function to set initial field values
+   */
+  function stageInitialValue(path: string, value: unknown) {
+    setInPath(formValues, path, value);
+    setInPath(initialValues.value, path, value);
+  }
+
   const formCtx: FormContext<TValues> = {
     register: registerField,
     unregister: unregisterField,
@@ -408,6 +417,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     meta,
     isSubmitting,
     handleSubmit,
+    stageInitialValue,
   };
 
   const immutableFormValues = computed<TValues>(() => {
@@ -470,12 +480,12 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 function useFormMeta<TValues extends Record<string, unknown>>(
   fields: Ref<PrivateFieldComposite[]>,
   errors: ComputedRef<FormErrors<TValues>>,
+  currentValues: TValues,
   initialValues: MaybeReactive<TValues>
 ) {
-  const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending' | 'dirty'>, 'every' | 'some'> = {
+  const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending'>, 'every' | 'some'> = {
     touched: 'some',
     pending: 'some',
-    dirty: 'some',
   };
 
   const isValid = computed(() => {
@@ -485,6 +495,10 @@ function useFormMeta<TValues extends Record<string, unknown>>(
     }
 
     return keys.every(key => !errors.value[key]);
+  });
+
+  const isDirty = computed(() => {
+    return !isEqual(currentValues, unref(initialValues));
   });
 
   return computed(() => {
@@ -498,6 +512,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
     return {
       initialValues: unref(initialValues) as TValues,
       ...flags,
+      dirty: isDirty.value,
       valid: isValid.value,
     };
   });

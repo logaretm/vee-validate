@@ -441,7 +441,7 @@ function useFieldValue<TValue>(
   }
 
   // set initial value
-  setInPath(form.values, unref(path), unref(initialValue));
+  form.stageInitialValue(unref(path), unref(initialValue));
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed<TValue>({
     get() {
