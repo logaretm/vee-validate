@@ -729,24 +729,6 @@ describe('<Field />', () => {
     expect(error.textContent).toBe('nice name is bad');
   });
 
-  test('can set dirty meta', async () => {
-    mountWithHoc({
-      template: `
-      <Field name="field" v-slot="{ meta, setDirty }">
-        <span>{{ meta.dirty }}</span>
-        <button @click="setDirty(true)">Set Meta</button>
-      </Field>
-    `,
-    });
-
-    await flushPromises();
-    const span = document.querySelector('span');
-    expect(span?.textContent).toBe('false');
-    document.querySelector('button')?.click();
-    await flushPromises();
-    expect(span?.textContent).toBe('true');
-  });
-
   test('can set touched meta', async () => {
     mountWithHoc({
       template: `

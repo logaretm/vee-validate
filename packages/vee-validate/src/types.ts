@@ -31,7 +31,6 @@ export interface FieldMeta<TValue> {
 
 export interface FieldState<TValue = unknown> {
   value: TValue;
-  dirty: boolean;
   touched: boolean;
   errors: string[];
 }
@@ -58,7 +57,6 @@ export interface PrivateFieldComposite<TValue = unknown> {
   handleInput(e?: Event | unknown): void;
   setValidationState(state: ValidationResult): void;
   setTouched(isTouched: boolean): void;
-  setDirty(isDirty: boolean): void;
 }
 
 export type FieldComposable<TValue = unknown> = Omit<PrivateFieldComposite<TValue>, 'idx' | 'fid'>;
@@ -73,7 +71,6 @@ export type GenericValidateFunction = (
 export interface FormState<TValues> {
   values: TValues;
   errors: Partial<Record<keyof TValues, string | undefined>>;
-  dirty: Partial<Record<keyof TValues, boolean>>;
   touched: Partial<Record<keyof TValues, boolean>>;
   submitCount: number;
 }
@@ -91,8 +88,6 @@ export interface FormActions<TValues extends Record<string, unknown>> {
   setValues<T extends keyof TValues>(fields: Partial<Record<T, TValues[T]>>): void;
   setFieldTouched: (field: keyof TValues, isTouched: boolean) => void;
   setTouched: (fields: Partial<Record<keyof TValues, boolean>>) => void;
-  setFieldDirty: (field: keyof TValues, isDirty: boolean) => void;
-  setDirty: (fields: Partial<Record<keyof TValues, boolean>>) => void;
   resetForm: (state?: Partial<FormState<TValues>>) => void;
 }
 

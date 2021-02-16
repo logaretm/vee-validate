@@ -1,4 +1,17 @@
-import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref, nextTick, warn } from 'vue';
+import {
+  computed,
+  ref,
+  Ref,
+  provide,
+  reactive,
+  onMounted,
+  isRef,
+  watch,
+  unref,
+  nextTick,
+  warn,
+  ComputedRef,
+} from 'vue';
 import type { SchemaOf, ValidationError } from 'yup';
 import {
   FieldMeta,
@@ -18,13 +31,13 @@ import {
 } from './types';
 import { getFromPath, isYupValidator, keysOf, resolveNextCheckboxValue, setInPath, unsetPath } from './utils';
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
+import isEqual from 'fast-deep-equal/es6';
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>;
   initialValues?: MaybeReactive<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;
   initialTouched?: Record<keyof TValues, boolean>;
-  initialDirty?: Record<keyof TValues, boolean>;
   validateOnMount?: boolean;
 }
 
@@ -96,7 +109,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   );
 
   // form meta aggregations
-  const meta = useFormMeta(fields, readonlyInitialValues);
+  const meta = useFormMeta(fields, errors, readonlyInitialValues);
 
   /**
    * Manually sets an error message on a specific field
@@ -192,32 +205,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   /**
-   * Sets the dirty meta state on a field
-   */
-  function setFieldDirty(field: keyof TValues, isDirty: boolean) {
-    const fieldInstance: PrivateFieldComposite | PrivateFieldComposite[] | undefined = fieldsById.value[field];
-    if (!fieldInstance) {
-      return;
-    }
-
-    if (Array.isArray(fieldInstance)) {
-      fieldInstance.forEach(f => f.setDirty(isDirty));
-      return;
-    }
-
-    fieldInstance.setDirty(isDirty);
-  }
-
-  /**
-   * Sets the dirty meta state on multiple fields
-   */
-  function setDirty(fields: Partial<Record<keyof TValues, boolean>>) {
-    keysOf(fields).forEach(field => {
-      setFieldDirty(field, !!fields[field]);
-    });
-  }
-
-  /**
    * Resets all fields
    */
   const resetForm = (state?: Partial<FormState<TValues>>) => {
@@ -229,10 +216,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     // Reset all fields state
     fields.value.forEach(f => f.resetField());
 
-    // set explicit state afterwards
-    if (state?.dirty) {
-      setDirty(state.dirty);
-    }
     if (state?.touched) {
       setTouched(state.touched);
     }
@@ -376,8 +359,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           if (result.valid && typeof fn === 'function') {
             return fn(immutableFormValues.value, {
               evt: e as SubmitEvent,
-              setDirty,
-              setFieldDirty,
               setErrors,
               setFieldError,
               setTouched,
@@ -424,8 +405,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setFieldError,
     setFieldTouched,
     setTouched,
-    setFieldDirty,
-    setDirty,
     resetForm,
     meta,
     isSubmitting,
@@ -450,10 +429,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   onMounted(() => {
     if (opts?.initialErrors) {
       setErrors(opts.initialErrors);
-    }
-
-    if (opts?.initialDirty) {
-      setDirty(opts.initialDirty);
     }
 
     if (opts?.initialTouched) {
@@ -487,21 +462,31 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setValues,
     setFieldTouched,
     setTouched,
-    setFieldDirty,
-    setDirty,
   };
 }
 
 /**
  * Manages form meta aggregation
  */
-function useFormMeta<TValues>(fields: Ref<PrivateFieldComposite[]>, initialValues: MaybeReactive<TValues>) {
-  const MERGE_STRATEGIES: Record<keyof Omit<FieldMeta<unknown>, 'initialValue'>, 'every' | 'some'> = {
-    valid: 'every',
-    dirty: 'some',
+function useFormMeta<TValues extends Record<string, unknown>>(
+  fields: Ref<PrivateFieldComposite[]>,
+  errors: ComputedRef<FormErrors<TValues>>,
+  initialValues: MaybeReactive<TValues>
+) {
+  const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending' | 'dirty'>, 'every' | 'some'> = {
     touched: 'some',
     pending: 'some',
+    dirty: 'some',
   };
+
+  const isValid = computed(() => {
+    const keys = keysOf(errors.value);
+    if (!keys.length) {
+      return true;
+    }
+
+    return keys.every(key => !errors.value[key]);
+  });
 
   return computed(() => {
     const flags = keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
@@ -514,6 +499,7 @@ function useFormMeta<TValues>(fields: Ref<PrivateFieldComposite[]>, initialValue
     return {
       initialValues: unref(initialValues) as TValues,
       ...flags,
+      valid: isValid.value,
     };
   });
 }
@@ -553,8 +539,10 @@ async function validateYupSchema<TValues>(
     };
 
     result[fieldId] = fieldResult;
-    const isDirty = Array.isArray(field) ? field.some(f => f.meta.dirty) : field.meta.dirty;
-    if (!shouldMutate && !isDirty) {
+    const isTouched = Array.isArray(field)
+      ? field.some(f => f.meta.touched || f.meta.dirty)
+      : field.meta.touched || field.meta.dirty;
+    if (!shouldMutate && !isTouched) {
       return result;
     }
 
@@ -596,14 +584,14 @@ function useFormInitialValues<TValues extends Record<string, any>>(
       return;
     }
 
-    // update the pristine (non-dirty and non-touched fields)
+    // update the pristine (non-touched fields)
     // we exclude dirty and untouched fields because it's unlikely you want to change the form values using initial values
     // we mostly watch them for API population or newly inserted fields
-    const isSafeToUpdate = (f: PrivateFieldComposite) => f.meta.dirty || f.meta.touched;
+    const isSafeToUpdate = (f: PrivateFieldComposite) => f.meta.touched;
     keysOf(fields.value).forEach(fieldPath => {
       const field: PrivateFieldComposite | PrivateFieldComposite[] = fields.value[fieldPath];
-      const isFieldDirty = Array.isArray(field) ? field.some(isSafeToUpdate) : isSafeToUpdate(field);
-      if (isFieldDirty) {
+      const touchedByUser = Array.isArray(field) ? field.some(isSafeToUpdate) : isSafeToUpdate(field);
+      if (touchedByUser) {
         return;
       }
 

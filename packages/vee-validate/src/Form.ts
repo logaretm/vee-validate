@@ -23,10 +23,6 @@ export const Form = defineComponent({
       type: Object,
       default: undefined,
     },
-    initialDirty: {
-      type: Object,
-      default: undefined,
-    },
     initialTouched: {
       type: Object,
       default: undefined,
@@ -58,8 +54,6 @@ export const Form = defineComponent({
       setFieldError,
       setFieldValue,
       setValues,
-      setFieldDirty,
-      setDirty,
       setFieldTouched,
       setTouched,
     } = useForm({
@@ -67,7 +61,6 @@ export const Form = defineComponent({
       initialValues,
       initialErrors: props.initialErrors,
       initialTouched: props.initialTouched,
-      initialDirty: props.initialDirty,
       validateOnMount: props.validateOnMount,
     });
 
@@ -106,8 +99,6 @@ export const Form = defineComponent({
         setFieldError,
         setFieldValue,
         setValues,
-        setFieldDirty,
-        setDirty,
         setFieldTouched,
         setTouched,
         resetForm,
@@ -123,8 +114,6 @@ export const Form = defineComponent({
         this.setErrors = setErrors;
         this.setFieldValue = setFieldValue;
         this.setValues = setValues;
-        this.setFieldDirty = setFieldDirty;
-        this.setDirty = setDirty;
         this.setFieldTouched = setFieldTouched;
         this.setTouched = setTouched;
         this.resetForm = resetForm;

@@ -23,12 +23,12 @@ describe('useIsFormDirty()', () => {
     });
 
     const input = document.querySelector('input');
-    const error = document.querySelector('span');
-    expect(error?.textContent).toBe('false');
+    const dirty = document.querySelector('span');
+    expect(dirty?.textContent).toBe('false');
 
     setValue(input as any, '');
     await flushPromises();
-    expect(error?.textContent).toBe('true');
+    expect(dirty?.textContent).toBe('true');
   });
 
   test('returns false and warns if form is not found', async () => {
@@ -47,10 +47,10 @@ describe('useIsFormDirty()', () => {
     `,
     });
 
-    const error = document.querySelector('span');
+    const dirty = document.querySelector('span');
 
     await flushPromises();
-    expect(error?.textContent).toBe('false');
+    expect(dirty?.textContent).toBe('false');
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
   });
