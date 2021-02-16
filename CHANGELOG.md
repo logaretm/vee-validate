@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.19](https://github.com/logaretm/vee-validate/compare/v4.1.18...v4.1.19) (2021-02-16)
+
+
+### Bug Fixes
+
+* use relative imports for shared type ([6790545](https://github.com/logaretm/vee-validate/commit/6790545dc9c35550d231fb14a310f3655dbc7256))
+
+
+### Features
+
+* improve typing for field yup schema ([c59f1f0](https://github.com/logaretm/vee-validate/commit/c59f1f01526b160a1081f276d732523ad9ab5ba2))
+* initial zod support ([#3171](https://github.com/logaretm/vee-validate/issues/3171)) ([3778373](https://github.com/logaretm/vee-validate/commit/37783732a01d9a635ff6603849d609b99d222cb8))
+
+
+
+
+
 ## [4.1.18](https://github.com/logaretm/vee-validate/compare/v4.1.17...v4.1.18) (2021-02-10)
 
 
