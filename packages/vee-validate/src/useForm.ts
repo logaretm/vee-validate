@@ -31,7 +31,6 @@ import {
 } from './types';
 import { getFromPath, isYupValidator, keysOf, resolveNextCheckboxValue, setInPath, unsetPath } from './utils';
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
-import isEqual from 'fast-deep-equal/es6';
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>;

@@ -1,6 +1,8 @@
 const path = require('path');
 const typescript = require('rollup-plugin-typescript2');
 const replace = require('rollup-plugin-replace');
+const resolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
 
 const formatNameMap = {
   'vee-validate': 'VeeValidate',
@@ -37,7 +39,14 @@ function createConfig(pkg, format) {
     input: {
       input: path.resolve(__dirname, `../packages/${pkg}/src/index.ts`),
       external: ['vue'],
-      plugins: [tsPlugin, replace({ __VERSION__: version })],
+      plugins: [
+        tsPlugin,
+        resolve({
+          dedupe: ['fast-deep-equal/es6', 'fast-deep-equal'],
+        }),
+        commonjs(),
+        replace({ __VERSION__: version }),
+      ],
     },
     output: {
       banner: `/**
