@@ -1,26 +1,22 @@
 import validate from '../src/alpha';
 
-const valid = [
-  'abcdefgHijklMnOpqRsTUVwxYZ',
-  '',
-  null,
-  undefined,
-  'null',
-  'undefined',
-  true,
-  false,
-  ['abcdefg', 'hijk', 'lmnopq'],
-];
-
-const invalid = ['this is sparta', '1234567a89', {}, ' ', ['abcdefg', 'hijk', 'lmnopq123']];
-
 test('validates that the string may only contains alphabetic characters', () => {
-  expect.assertions(14);
-  // valid.
-  valid.forEach(value => expect(validate(value, [undefined])).toBe(true));
+  expect(validate('abcdefgHijklMnOpqRsTUVwxYZ', [undefined])).toBe(true);
+  expect(validate('', [undefined])).toBe(true);
+  expect(validate(null, [undefined])).toBe(true);
+  expect(validate(undefined, [undefined])).toBe(true);
+  expect(validate('null', [undefined])).toBe(true);
+  expect(validate('undefined', [undefined])).toBe(true);
+  expect(validate(true, [undefined])).toBe(true);
+  expect(validate(false, [undefined])).toBe(true);
+  expect(validate(['abcdefg', 'hijk', 'lmnopq'], [undefined])).toBe(true);
 
   // invalid
-  invalid.forEach(value => expect(validate(value, [undefined])).toBe(false));
+  expect(validate('this is sparta', [undefined])).toBe(false);
+  expect(validate('1234567a89', [undefined])).toBe(false);
+  expect(validate({}, [undefined])).toBe(false);
+  expect(validate(' ', [undefined])).toBe(false);
+  expect(validate(['abcdefg', 'hijk', 'lmnopq123'], [undefined])).toBe(false);
 });
 
 test('validates the string contains alphabetic chars from other locales', () => {

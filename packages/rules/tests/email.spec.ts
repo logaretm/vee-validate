@@ -1,32 +1,22 @@
 import validate from '../src/email';
 
-const valid = [
-  'someone@example.com',
-  'someone@example.co',
-  'someone123@example.co.uk',
-  'Pelé@example.com',
-  'very.common@example.com',
-  'other.email-with-dash@example.com',
-  'disposable.style.email.with+symbol@example.com',
-  ['someone@example.com', 'someone12@example.com'],
-];
-
-const invalid = [
-  '@example.com',
-  '@example',
-  undefined,
-  null,
-  'undefined',
-  'null',
-  'someone@example.c',
-  ['someone@example.com', 'someone@example.c'],
-];
-
 test('validates that the string is a valid email address', () => {
-  expect.assertions(16);
-  // valid.
-  valid.forEach(value => expect(validate(value)).toBe(true));
+  expect(validate('someone@example.com')).toBe(true);
+  expect(validate('someone@example.co')).toBe(true);
+  expect(validate('someone123@example.co.uk')).toBe(true);
+  expect(validate('Pelé@example.com')).toBe(true);
+  expect(validate('very.common@example.com')).toBe(true);
+  expect(validate('other.email-with-dash@example.com')).toBe(true);
+  expect(validate('disposable.style.email.with+symbol@example.com')).toBe(true);
+  expect(validate(['someone@example.com', 'someone12@example.com'])).toBe(true);
 
   // invalid
-  invalid.forEach(value => expect(validate(value as any)).toBe(false));
+  expect(validate('@example.com')).toBe(false);
+  expect(validate('@example')).toBe(false);
+  expect(validate(undefined)).toBe(false);
+  expect(validate(null)).toBe(false);
+  expect(validate('undefined')).toBe(false);
+  expect(validate('null')).toBe(false);
+  expect(validate('someone@example.c')).toBe(false);
+  expect(validate(['someone@example.com', 'someone@example.c'])).toBe(false);
 });

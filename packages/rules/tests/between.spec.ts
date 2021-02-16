@@ -1,15 +1,26 @@
 import validate from '../src/between';
 
-const valid = ['1', 2, 3, [1, 2, 3]];
-
-const invalid = ['', undefined, null, {}, '1234', '12', 'abc', '12a', 0, 4, -1, [4, 5, 6]];
-
 test('validates numbers range', () => {
   expect.assertions(16);
   const params = { min: 1, max: 3 };
-  valid.forEach(value => expect(validate(value as any, params)).toBe(true));
+  expect(validate('1', params)).toBe(true);
+  expect(validate(2, params)).toBe(true);
+  expect(validate(3, params)).toBe(true);
+  expect(validate([1, 2, 3], params)).toBe(true);
 
-  invalid.forEach(value => expect(validate(value as any, params)).toBe(false));
+  // invalid
+  expect(validate('', params)).toBe(false);
+  expect(validate(undefined, params)).toBe(false);
+  expect(validate(null, params)).toBe(false);
+  expect(validate({}, params)).toBe(false);
+  expect(validate('1234', params)).toBe(false);
+  expect(validate('12', params)).toBe(false);
+  expect(validate('abc', params)).toBe(false);
+  expect(validate('12a', params)).toBe(false);
+  expect(validate(0, params)).toBe(false);
+  expect(validate(4, params)).toBe(false);
+  expect(validate(-1, params)).toBe(false);
+  expect(validate([4, 5, 6], params)).toBe(false);
 });
 
 test('validates numbers range including negative numbers', () => {

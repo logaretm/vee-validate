@@ -1,22 +1,22 @@
 import validate from '../src/max_value';
 
-const valid = [0, '1', 10];
-
-const invalid = ['', 10.01, 11, [], undefined, null, {}, 'abc'];
-
 test('validates number maximum value', () => {
-  expect.assertions(11);
-  const max = 10;
+  const params = { max: 10 };
 
   // valid.
-  valid.forEach(value => expect(validate(value, { max })).toBe(true));
+  expect(validate(0, params)).toBe(true);
+  expect(validate('1', params)).toBe(true);
+  expect(validate(10, params)).toBe(true);
+  expect(validate([10], params)).toBe(true);
 
   // invalid
-  invalid.forEach(value => expect(validate(value as any, { max })).toBe(false));
-});
-
-test('handles array of values', () => {
-  expect(validate(valid, { max: 10 })).toBe(true);
-
-  expect(validate(invalid as any[], { max: 10 })).toBe(false);
+  expect(validate('', params)).toBe(false);
+  expect(validate(10.01, params)).toBe(false);
+  expect(validate(11, params)).toBe(false);
+  expect(validate([], params)).toBe(false);
+  expect(validate(undefined, params)).toBe(false);
+  expect(validate(null, params)).toBe(false);
+  expect(validate({}, params)).toBe(false);
+  expect(validate('abc', params)).toBe(false);
+  expect(validate([10.01], params)).toBe(false);
 });

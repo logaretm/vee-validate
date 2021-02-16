@@ -1,22 +1,20 @@
 import validate from '../src/min_value';
 
-const valid = [-1, 0, '5'];
-
-const invalid = ['', [], undefined, null, {}, 'abc', -2, '-3'];
-
 test('validates number minimum value', () => {
-  expect.assertions(11);
-  const min = -1;
-
-  // valid
-  valid.forEach(value => expect(validate(value, { min })).toBe(true));
+  const params = { min: -1 };
+  expect(validate(-1, params)).toBe(true);
+  expect(validate(0, params)).toBe(true);
+  expect(validate('5', params)).toBe(true);
+  expect(validate([-1, 5], params)).toBe(true);
 
   // invalid
-  invalid.forEach(value => expect(validate(value as any, { min })).toBe(false));
-});
-
-test('handles array of values', () => {
-  expect(validate(valid as any[], { min: -1 })).toBe(true);
-
-  expect(validate(invalid as any, { min: -1 })).toBe(false);
+  expect(validate('', params)).toBe(false);
+  expect(validate([], params)).toBe(false);
+  expect(validate(undefined, params)).toBe(false);
+  expect(validate(null, params)).toBe(false);
+  expect(validate({}, params)).toBe(false);
+  expect(validate('abc', params)).toBe(false);
+  expect(validate(-2, params)).toBe(false);
+  expect(validate('-3', params)).toBe(false);
+  expect(validate(['-3'], params)).toBe(false);
 });

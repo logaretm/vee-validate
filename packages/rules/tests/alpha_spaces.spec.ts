@@ -1,29 +1,26 @@
 import validate from '../src/alpha_spaces';
 
-const valid = [
-  'a',
-  'abcdefgHijklMnOpqRsTUVwxYZ',
-  '',
-  null,
-  undefined,
-  'null',
-  'undefined',
-  true,
-  false,
-  'this is sparta',
-  ' ',
-  ['adasd dasdasda', 'yy'],
-];
-
-const invalid = ['123-abc', {}, '1234567890', 'abc123', 123, ['adasd dasdasda', '123']];
-
 test('validates that the string may only contain alphabetic characters and spaces', () => {
-  expect.assertions(18);
-  // valid.
-  valid.forEach(value => expect(validate(value, [undefined])).toBe(true));
+  expect(validate('a', [undefined])).toBe(true);
+  expect(validate('abcdefgHijklMnOpqRsTUVwxYZ', [undefined])).toBe(true);
+  expect(validate('', [undefined])).toBe(true);
+  expect(validate(null, [undefined])).toBe(true);
+  expect(validate(undefined, [undefined])).toBe(true);
+  expect(validate('null', [undefined])).toBe(true);
+  expect(validate('undefined', [undefined])).toBe(true);
+  expect(validate(true, [undefined])).toBe(true);
+  expect(validate(false, [undefined])).toBe(true);
+  expect(validate('this is sparta', [undefined])).toBe(true);
+  expect(validate(' ', [undefined])).toBe(true);
+  expect(validate(['adasd dasdasda', 'yy'], [undefined])).toBe(true);
 
   // invalid
-  invalid.forEach(value => expect(validate(value, [undefined])).toBe(false));
+  expect(validate('123-abc', [undefined])).toBe(false);
+  expect(validate({}, [undefined])).toBe(false);
+  expect(validate('1234567890', [undefined])).toBe(false);
+  expect(validate('abc123', [undefined])).toBe(false);
+  expect(validate(123, [undefined])).toBe(false);
+  expect(validate(['adasd dasdasda', '123'], [undefined])).toBe(false);
 });
 
 test('validates the string contains alphabetic chars from other locales', () => {
