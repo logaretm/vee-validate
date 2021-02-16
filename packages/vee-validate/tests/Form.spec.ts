@@ -1623,4 +1623,51 @@ describe('<Form />', () => {
     await flushPromises();
     expect(input()?.value).not.toBe('');
   });
+
+  test('resetForm should reset the meta flag', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm  v-slot="{ meta, resetForm }">
+        <Field id="email" name="email" as="input" rules="required" />
+        <Field id="password" name="password" as="input" rules="required" />
+
+        <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
+        <button type="button" @click="resetForm()">Reset</button> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const span = wrapper.$el.querySelector('#meta');
+    const input = wrapper.$el.querySelector('input');
+    expect(span.textContent).toBe('valid');
+    setValue(input, '');
+    await flushPromises();
+
+    expect(span.textContent).toBe('invalid');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(span.textContent).toBe('valid');
+  });
+
+  test('resetForm should reset the meta flag based on the errors length', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm  v-slot="{ meta, resetForm }">
+        <Field id="email" name="email" as="input" rules="required" />
+        <Field id="password" name="password" as="input" rules="required" />
+
+        <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
+        <button type="button" @click="resetForm({ errors: { email: 'bad' } })">Reset</button> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const span = wrapper.$el.querySelector('#meta');
+    expect(span.textContent).toBe('valid');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(span.textContent).toBe('invalid');
+  });
 });

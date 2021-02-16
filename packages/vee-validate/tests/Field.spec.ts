@@ -892,4 +892,54 @@ describe('<Field />', () => {
     const input = wrapper.$el.querySelector('input');
     expect(input.value).toBe(modelValue);
   });
+
+  test('resetField should reset the valid flag to true', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <div>
+        <Field name="whatever" v-slot="{ meta, field, resetField }" rules="required">
+          <input v-bind="field" />
+          <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
+          <button @click="resetField">Reset</button>
+        </Field>
+      </div>
+    `,
+    });
+
+    await flushPromises();
+    const input = wrapper.$el.querySelector('input');
+    const meta = wrapper.$el.querySelector('#meta');
+
+    expect(meta?.textContent).toBe('valid');
+    setValue(input, '');
+    await flushPromises();
+    expect(meta?.textContent).toBe('invalid');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(meta?.textContent).toBe('valid');
+  });
+
+  test('valid flag is synced with the field errors array length', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <div>
+        <Field name="whatever" v-slot="{ meta, field, resetField }" rules="required">
+          <input v-bind="field" />
+          <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
+          <button @click="resetField({ errors: ['bad'] })">Reset</button>
+        </Field>
+      </div>
+    `,
+    });
+
+    await flushPromises();
+    const meta = wrapper.$el.querySelector('#meta');
+
+    expect(meta?.textContent).toBe('valid');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(meta?.textContent).toBe('invalid');
+  });
 });

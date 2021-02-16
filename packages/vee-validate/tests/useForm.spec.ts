@@ -1,8 +1,7 @@
 import flushPromises from 'flush-promises';
 import { useField, useForm } from '@/vee-validate';
-import { mountWithHoc } from './helpers';
+import { mountWithHoc, setValue } from './helpers';
 import * as yup from 'yup';
-import { doc } from 'prettier';
 
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -299,5 +298,67 @@ describe('useForm()', () => {
 
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
+  });
+
+  test('resets the meta valid state on reset', async () => {
+    mountWithHoc({
+      setup() {
+        const { meta: formMeta, resetForm } = useForm();
+        const { value } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+        useField('password', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          value,
+          formMeta,
+          resetForm,
+        };
+      },
+      template: `
+      <input v-model="value" />
+      <span id="meta">{{ formMeta.valid ? 'valid': 'invalid' }}</span>
+      <button @click="resetForm()">Reset Meta</button>
+    `,
+    });
+
+    await flushPromises();
+    const span = document.querySelector('#meta');
+    const input = document.querySelector('input') as HTMLInputElement;
+    expect(span?.textContent).toBe('valid');
+    setValue(input, '');
+    await flushPromises();
+    expect(span?.textContent).toBe('invalid');
+
+    document.querySelector('button')?.click();
+    await flushPromises();
+    expect(span?.textContent).toBe('valid');
+  });
+
+  test('resets the meta valid state on reset with the errors length', async () => {
+    mountWithHoc({
+      setup() {
+        const { meta: formMeta, resetForm } = useForm();
+        const { value } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+        useField('password', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          value,
+          formMeta,
+          resetForm,
+        };
+      },
+      template: `
+      <input v-model="value" />
+      <span id="meta">{{ formMeta.valid ? 'valid': 'invalid' }}</span>
+      <button @click="resetForm({ errors: { field: 'test' } })">Reset Meta</button>
+    `,
+    });
+
+    await flushPromises();
+    const span = document.querySelector('#meta');
+    expect(span?.textContent).toBe('valid');
+
+    document.querySelector('button')?.click();
+    await flushPromises();
+    expect(span?.textContent).toBe('invalid');
   });
 });

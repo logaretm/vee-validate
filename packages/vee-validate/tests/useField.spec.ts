@@ -28,7 +28,7 @@ describe('useField()', () => {
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
 
-  test('meta.valid is true after reset', async () => {
+  test('valid flag is true after reset', async () => {
     mountWithHoc({
       setup() {
         const { value, meta, resetField } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
@@ -61,5 +61,34 @@ describe('useField()', () => {
     document.querySelector('button')?.click();
     await flushPromises();
     expect(meta?.textContent).toBe('valid');
+  });
+
+  test('valid flag is synced with fields errors length', async () => {
+    mountWithHoc({
+      setup() {
+        const { value, meta, resetField } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          value,
+          meta,
+          resetField,
+        };
+      },
+      template: `
+      <input name="field" v-model="value" />
+      <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
+      <button @click="resetField({ errors: ['bad'] })">Reset</button>
+    `,
+    });
+
+    await flushPromises();
+    const meta = document.querySelector('#meta');
+    // by default it should be `valid`
+    expect(meta?.textContent).toBe('valid');
+
+    // trigger reset
+    document.querySelector('button')?.click();
+    await flushPromises();
+    expect(meta?.textContent).toBe('invalid');
   });
 });
