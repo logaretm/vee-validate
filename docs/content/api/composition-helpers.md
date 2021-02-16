@@ -148,7 +148,7 @@ isTouched.value; // true or false
 
 </code-title>
 
-Returns a computed ref to the specified field's `valid` meta state.
+Returns a computed ref to the specified field's `valid` meta state, inner `value` will be `true` if the field has no errors, and `false` if it has any error message.
 
 ```js
 import { useIsFieldValid } from 'vee-validate';
@@ -169,7 +169,7 @@ const isValid = useIsFieldValid();
 
 <doc-tip type="warn">
 
-You should only use the `valid` state to determine if a field is valid. The opposite is not accurate, meaning using this to determine if a field **is not valid** is not accurate because the field may not have been validated yet. To determine if a field is not valid you should check if it has an error message.
+Creating disabled buttons based on the `valid` attribute isn't accurate, because if the field hasn't been validated yet it, the `valid` property will be `true` which isn't accurate. You should combine `valid` checks with `dirty` state to get the most accuracy.
 
 </doc-tip>
 
@@ -191,7 +191,7 @@ isValid.value; // true or false
 
 <doc-tip type="warn">
 
-You should only use the `valid` state to determine if a field is valid. The opposite is not accurate, meaning using this to determine if a field **is not valid** is not accurate because the field may not have been validated yet. To determine if a field is not valid you should check if it has an error message.
+Creating disabled buttons based on the `valid` attribute isn't accurate, because if the form hasn't been validated yet it, the `valid` property will be `true` which isn't accurate. You should combine `valid` checks with `dirty` state to get the most accuracy.
 
 </doc-tip>
 

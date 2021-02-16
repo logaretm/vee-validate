@@ -157,7 +157,7 @@ Contains useful information/flags about the field status.
 interface FieldMeta {
   touched: boolean; // if the field has been blurred (via handleBlur)
   dirty: boolean; // if the field has been manipulated (via handleInput or handleChange)
-  valid: boolean; // if the field has been validated and is valid
+  valid: boolean; // if the field doesn't have any errors
   pending: boolean; // if validation is in progress
   initialValue?: any; // the field's initial value
 }
@@ -165,9 +165,9 @@ interface FieldMeta {
 
 <doc-tip title="The valid flag">
 
-The `valid` flag on the meta object can be tricky, because by default it stars off with `false` until the field has been validated, only then it is updated to its proper state.
+The `valid` flag on the meta object can be tricky, because by default it stars off with `true` until the field has been validated, only then it is updated to its proper state.
 
-You should check the `errorMessage` or `errors` to determine if a field is indeed invalid. Combining your `valid` flag checks with `dirty` or `errorMessage` may yield the experience you are trying to build.
+Combining your `valid` flag checks with `dirty` will yield the expected result based on user interaction. Otherwise you may use `validateOnMount` to make sure the field is validated immediately.
 
 </doc-tip>
 
@@ -201,7 +201,7 @@ The first error in the `errors` array if available, a handy shortcut to display 
 
 </code-title>
 
-Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages, it will also reset the field value to it's initial value. Note that no error messages will be generated if the initial value is invalid after reset.
+Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages, it will also reset the field value to it's initial value. Note that no error messages will be generated if the initial value is invalid after reset, the `valid` flag will be then set to `true` in that case.
 
 Note that it is unsafe to use this function as an event handler directly, check the following snippet:
 

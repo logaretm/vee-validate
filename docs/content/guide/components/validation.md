@@ -385,4 +385,86 @@ Here is a live example:
 
 If you are interested on how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
 
+## Validation Metadata
+
+### Field-level Meta
+
+Each field has meta data associated with it, the `meta` property available on the `<Field />` component contains additional information about the field:
+
+- `valid`: The current field validity, will be `true` if there are no messages inside the `errors` array. Note that `true` could either mean the field is valid or **that it was not validated yet**.
+- `touched`: If the field was blurred (unfocused), updated by the `handleBlur` function.
+- `dirty`: If the field value was updated, both `handleChange` and `handleInput` update this flag.
+- `pending`: If the field's validations are still running, useful for long running async validation.
+- `initialValue`: The field's initial value, it is `undefined` if you didn't specify any.
+
+```vue
+<Field name="email" type="email" v-slot="{ field, meta }">
+  <input v-bind="field" />
+  <pre>{{ meta }}</pre>
+</Field>
+```
+
+This is the typescript interface for a field's meta object value
+
+```ts
+interface FieldMeta {
+  dirty: boolean;
+  pending: boolean;
+  touched: boolean;
+  valid: boolean;
+  initialValue: any;
+}
+```
+
+### Form-level Meta
+
+Forms also have their own `meta` value containing useful information about the form, it is an aggregation of the metadata for the fields inside that form.
+
+The form's meta data properties are:
+
+- `valid`: The form's validity status, will be `true` if the errors array is empty. Note that `true` could either mean the form doesn't have any errors or that the **form was not validated yet**.
+- `touched`: If at least one field was blurred (unfocused) inside the form.
+- `dirty`: If at least one field's value was updated.
+- `pending`: If at least one field's validation is still pending.
+- `initialValues`: All fields' initial values, packed into an object where the keys are the field names.
+
+```vue
+<Form v-slot="{ meta }">
+  <!-- Some fields -->
+  <pre>{{ meta }}</pre>
+</Form>
+```
+
+Here is a similar example where we disable the form's submit button if no value was changed, because we are doing object comparisons we will use `lodash.isEqual` function. Another caveat is that we have to provide an `initialValues` prop to `<Form />` component to make sure `isEqual` works correctly:
+
+```vue
+<template>
+  <Form v-slot="{ meta, values }" :initial-values="initialValues">
+    <Field name="email" />
+
+    <button :disabled="isEqual(meta.initialValues, values)">Submit</button>
+  </Form>
+</template>
+
+<script>
+import { Field, Form } from 'vee-validate';
+import { isEqual } from 'lodash-es';
+
+export default {
+  components: {
+    Field,
+    Form,
+  },
+  data() {
+    return {
+      initialValues: { email: '' },
+    };
+  },
+  methods: {
+    isEqual,
+  },
+};
+</script>
+```
+
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>

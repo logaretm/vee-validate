@@ -368,142 +368,6 @@ Check the working example here:
 
 <code-sandbox id="cool-monad-7uy17" title="Implementing Eager Validation with VeeValidate"></code-sandbox>
 
-## Validation Metadata
-
-### Field-level Meta
-
-Each field has meta data associated with it, the `meta` property returned from `useField` contains information about the field:
-
-- `valid`: The current field validity, note that `false` could either mean the field is invalid or **that it was not validated yet**.
-- `touched`: If the field was blurred (unfocused), updated by the `handleBlur` function.
-- `dirty`: If the field value was updated, both `handleChange` and `handleInput` update this flag.
-- `pending`: If the field's validations are still running, useful for long running async validation.
-- `initialValue`: The field's initial value, it is `undefined` if you didn't specify any.
-
-```js
-const { meta } = useField('fieldName');
-
-meta.dirty;
-meta.pending;
-meta.touched;
-meta.valid;
-meta.initialValue;
-```
-
-This is the typescript interface for a field's meta value
-
-```ts
-interface FieldMeta {
-  dirty: boolean;
-  pending: boolean;
-  touched: boolean;
-  valid: boolean;
-  initialValue: any;
-}
-```
-
-The `meta` property is a reactive object, meaning you can use it in `computed` and derive additional computed state about your fields. For example we can create a `changed` computed flag that tells us if the field value is changed like this:
-
-```vue
-<template>
-  <div>
-    <input v-model="value" type="text" />
-
-    <button :disabled="!changed" @click="submit">Submit</button>
-  </div>
-</template>
-
-<script>
-import { useField } from 'vee-validate';
-import { computed } from 'vue';
-
-export default {
-  setup() {
-    const { value, meta } = useField('fieldName');
-    const changed = computed(() => {
-      return meta.initialValue !== value.value;
-    });
-
-    function submit() {
-      // send stuff to api
-    }
-
-    return {
-      errorMessage,
-      value,
-      changed,
-      submit,
-    };
-  },
-};
-</script>
-```
-
-### Form-level Meta
-
-Forms also have their own `meta` value containing useful information about the form, it acts as an aggregation of the metadata for the fields inside that form. But unlike the `useField` function, it is a computed ref instead of a reactive object.
-
-```js
-const { meta } = useForm();
-
-meta.value.dirty;
-meta.value.pending;
-meta.value.touched;
-meta.value.valid;
-meta.value.initialValues;
-```
-
-- `valid`: The form's validity status, note that `false` could either mean that at least one field is invalid or that **all fields were not validated yet**.
-- `touched`: If at least one field was blurred (unfocused) inside the form.
-- `dirty`: If at least one field's value was updated.
-- `pending`: If at least one field's validation is still pending.
-- `initialValues`: All fields' initial values, packed into an object where the keys are the field names.
-
-Here is a similar example where we disable the form's submit button if no value was changed, because we are doing object comparisons we will use `lodash.isEqual` function. Another caveat is that we have to provide an `initialValues` prop to `useForm` to make sure `isEqual` works correctly:
-
-```vue
-<template>
-  <form @submit="submit">
-    <input v-model="value" type="text" />
-
-    <button :disabled="!changed">Submit</button>
-  </form>
-</template>
-
-<script>
-import { computed } from 'vue';
-import { useField, useForm } from 'vee-validate';
-import { isEqual } from 'lodash-es';
-
-export default {
-  setup() {
-    const { meta, values } = useForm({
-      initialValues: {
-        email: '',
-      },
-    });
-
-    const changed = computed(() => {
-      return isEqual(meta.value.initialValues, values);
-    });
-
-    // create some fields with use field
-    const { value } = useField('email');
-
-    function submit() {
-      // send stuff to api
-    }
-
-    return {
-      value,
-      changed,
-      submit,
-    };
-  },
-};
-</script>
-```
-
 ## Displaying Error Messages
 
 You can display error messages using either `useField`, or `useForm`.
@@ -654,3 +518,139 @@ Here is a live example:
 <code-sandbox id="vee-validate-v4-custom-field-labels-with-yup-qikju" title="Custom Labels with yup"></code-sandbox>
 
 If you are interested on how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
+
+## Validation Metadata
+
+### Field-level Meta
+
+Each field has meta data associated with it, the `meta` property returned from `useField` contains information about the field:
+
+- `valid`: The current field validity, note that `true` could either mean the field is valid or **that it was not validated yet**.
+- `touched`: If the field was blurred (unfocused), updated by the `handleBlur` function.
+- `dirty`: If the field value was updated, both `handleChange` and `handleInput` update this flag.
+- `pending`: If the field's validations are still running, useful for long running async validation.
+- `initialValue`: The field's initial value, it is `undefined` if you didn't specify any.
+
+```js
+const { meta } = useField('fieldName');
+
+meta.dirty;
+meta.pending;
+meta.touched;
+meta.valid;
+meta.initialValue;
+```
+
+This is the typescript interface for a field's meta value
+
+```ts
+interface FieldMeta {
+  dirty: boolean;
+  pending: boolean;
+  touched: boolean;
+  valid: boolean;
+  initialValue: any;
+}
+```
+
+The `meta` property is a reactive object, meaning you can use it in `computed` and derive additional computed state about your fields. For example we can create a `changed` computed flag that tells us if the field value is changed like this:
+
+```vue
+<template>
+  <div>
+    <input v-model="value" type="text" />
+
+    <button :disabled="!changed" @click="submit">Submit</button>
+  </div>
+</template>
+
+<script>
+import { useField } from 'vee-validate';
+import { computed } from 'vue';
+
+export default {
+  setup() {
+    const { value, meta } = useField('fieldName');
+    const changed = computed(() => {
+      return meta.initialValue !== value.value;
+    });
+
+    function submit() {
+      // send stuff to api
+    }
+
+    return {
+      errorMessage,
+      value,
+      changed,
+      submit,
+    };
+  },
+};
+</script>
+```
+
+### Form-level Meta
+
+Forms also have their own `meta` value containing useful information about the form, it acts as an aggregation of the metadata for the fields inside that form.
+
+```js
+const { meta } = useForm();
+
+meta.value.dirty;
+meta.value.pending;
+meta.value.touched;
+meta.value.valid;
+meta.value.initialValues;
+```
+
+- `valid`: The form's validity status, will be `true` if the errors array is empty. Note that `true` could either mean the form doesn't have any errors or that the **form was not validated yet**.
+- `touched`: If at least one field was blurred (unfocused) inside the form.
+- `dirty`: If at least one field's value was updated.
+- `pending`: If at least one field's validation is still pending.
+- `initialValues`: All fields' initial values, packed into an object where the keys are the field names.
+
+Here is a similar example where we disable the form's submit button if no value was changed, because we are doing object comparisons we will use `lodash.isEqual` function. Another caveat is that we have to provide an `initialValues` prop to `useForm` to make sure `isEqual` works correctly:
+
+```vue
+<template>
+  <form @submit="submit">
+    <input v-model="value" type="text" />
+
+    <button :disabled="!changed">Submit</button>
+  </form>
+</template>
+
+<script>
+import { computed } from 'vue';
+import { useField, useForm } from 'vee-validate';
+import { isEqual } from 'lodash-es';
+
+export default {
+  setup() {
+    const { meta, values } = useForm({
+      initialValues: {
+        email: '',
+      },
+    });
+
+    const changed = computed(() => {
+      return isEqual(meta.value.initialValues, values);
+    });
+
+    // create some fields with use field
+    const { value } = useField('email');
+
+    function submit() {
+      // send stuff to api
+    }
+
+    return {
+      value,
+      changed,
+      submit,
+    };
+  },
+};
+</script>
+```

@@ -266,7 +266,7 @@ A computed property that contains an aggregated meta information/flags reflectin
 interface FormMeta {
   touched: boolean; // if at least one field is touched (was blurred)
   dirty: boolean; // if at least one field is dirty (manipulated)
-  valid: boolean; // if all fields are valid
+  valid: boolean; // if the form doesn't have any error messages
   pending: boolean; // if at least one field is pending validation
   initialValues?: Record<string, any>; // a map of the form's initial values
 }
