@@ -1,7 +1,6 @@
 import {
   watch,
   ref,
-  Ref,
   isRef,
   reactive,
   computed,
@@ -84,6 +83,7 @@ export function useField<TValue = unknown>(
   const {
     meta,
     errors,
+    errorMessage,
     handleBlur,
     handleInput,
     resetValidationState,
@@ -153,10 +153,6 @@ export function useField<TValue = unknown>(
   if (validateOnMount) {
     onMounted(validate);
   }
-
-  const errorMessage = computed(() => {
-    return errors.value[0];
-  });
 
   function setTouched(isTouched: boolean) {
     meta.touched = isTouched;
@@ -311,7 +307,7 @@ function useValidationState<TValue>({
   form?: FormContext;
   type?: string;
 }) {
-  const errors: Ref<string[]> = ref([]);
+  const { errors, errorMessage, setErrors } = useErrorsSource(name, form);
   const formInitialValues = injectWithSelf(FormInitialValuesSymbol, undefined);
   const initialValue = (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? initValue) as TValue;
   const { resetMeta, meta } = useMeta(initialValue);
@@ -356,7 +352,7 @@ function useValidationState<TValue>({
 
   // Updates the validation state with the validation result
   function setValidationState(result: ValidationResult) {
-    errors.value = result.errors;
+    setErrors(result.errors);
     meta.valid = !result.errors.length;
 
     return result;
@@ -374,14 +370,15 @@ function useValidationState<TValue>({
     } else {
       value.value = newValue;
     }
-    errors.value = state?.errors || [];
 
+    setErrors(state?.errors || []);
     resetMeta(state);
   }
 
   return {
     meta,
     errors,
+    errorMessage,
     setValidationState,
     resetValidationState,
     handleBlur,
@@ -461,4 +458,27 @@ function useFieldValue<TValue>(
   });
 
   return value as WritableRef<TValue>;
+}
+
+function useErrorsSource(path: MaybeReactive<string>, form?: FormContext) {
+  if (!form) {
+    const errors = ref<string[]>([]);
+    return {
+      errors: computed(() => errors.value),
+      errorMessage: computed<string | undefined>(() => errors.value[0]),
+      setErrors: (messages: string[]) => {
+        errors.value = messages;
+      },
+    };
+  }
+
+  const errors = computed(() => form.errorBag.value[unref(path)] || []);
+
+  return {
+    errors,
+    errorMessage: computed<string | undefined>(() => errors.value[0]),
+    setErrors: (messages: string[]) => {
+      form.setFieldErrorBag(unref(path), messages);
+    },
+  };
 }

@@ -13,6 +13,8 @@ import {
   PrivateFieldComposite,
   YupValidator,
   PublicFormContext,
+  FormErrors,
+  FormErrorBag,
 } from './types';
 import { getFromPath, isYupValidator, keysOf, resolveNextCheckboxValue, setInPath, unsetPath } from './utils';
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
@@ -71,25 +73,19 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   // this is important because later we need it if fields swap names
   const valuesByFid: Record<string, any> = {};
 
-  // an aggregation of field errors in a map object
-  const errors = computed<Record<keyof TValues, string | undefined>>(() => {
-    return fields.value.reduce((acc, field) => {
-      // Check if its a grouped field (checkbox/radio)
-      let message: string | undefined;
-      const fieldName: keyof TValues = unref(field.name);
-      const fieldInstance = fieldsById.value[fieldName];
-      if (Array.isArray(fieldInstance)) {
-        message = unref((fieldInstance.find(f => unref(f.checked)) || field).errorMessage);
-      } else {
-        message = unref(field.errorMessage);
-      }
+  // the source of errors for the form fields
+  const { errorBag, setErrorBag, setFieldErrorBag } = useErrorBag(opts?.initialErrors);
 
-      if (message) {
-        acc[fieldName] = message;
+  // Gets the first error of each field
+  const errors = computed(() => {
+    return keysOf(errorBag.value).reduce((acc, key) => {
+      const bag = errorBag.value[key];
+      if (bag && bag.length) {
+        acc[key] = bag[0];
       }
 
       return acc;
-    }, {} as Record<keyof TValues, string | undefined>);
+    }, {} as FormErrors<TValues>);
   });
 
   // initial form values
@@ -106,28 +102,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
    * Manually sets an error message on a specific field
    */
   function setFieldError(field: keyof TValues, message: string | undefined) {
-    const fieldInstance: PrivateFieldComposite | PrivateFieldComposite[] | undefined = fieldsById.value[field];
-    if (!fieldInstance) {
-      return;
-    }
-
-    if (Array.isArray(fieldInstance)) {
-      fieldInstance.forEach(instance => {
-        instance.setValidationState({ valid: !!message, errors: message ? [message] : [] });
-      });
-      return;
-    }
-
-    fieldInstance.setValidationState({ valid: !!message, errors: message ? [message] : [] });
+    setFieldErrorBag(field, message);
   }
 
   /**
    * Sets errors for the fields specified in the object
    */
   function setErrors(fields: Partial<Record<keyof TValues, string | undefined>>) {
-    keysOf(fields).forEach(field => {
-      setFieldError(field, fields[field]);
-    });
+    setErrorBag(fields);
   }
 
   /**
@@ -425,6 +407,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     unregister: unregisterField,
     fields: fieldsById,
     values: formValues,
+    setFieldErrorBag,
+    errorBag,
     schema: opts?.validationSchema,
     submitCount,
     validateSchema: isYupValidator(opts?.validationSchema)
@@ -575,7 +559,7 @@ async function validateYupSchema<TValues>(
     }
 
     if (Array.isArray(field)) {
-      field.forEach(f => f.setValidationState(fieldResult));
+      field[0].setValidationState(fieldResult);
 
       return result;
     }
@@ -646,5 +630,35 @@ function useFormInitialValues<TValues extends Record<string, any>>(
     readonlyInitialValues: computedInitials,
     initialValues,
     setInitialValues,
+  };
+}
+
+function useErrorBag<TValues extends Record<string, any>>(initialErrors?: FormErrors<TValues>) {
+  const errorBag: Ref<FormErrorBag<TValues>> = ref({});
+
+  /**
+   * Manually sets an error message on a specific field
+   */
+  function setFieldErrorBag(field: keyof TValues, message: string | undefined | string[]) {
+    errorBag.value[field] = Array.isArray(message) ? message : message ? [message] : [];
+  }
+
+  /**
+   * Sets errors for the fields specified in the object
+   */
+  function setErrorBag(fields: Partial<Record<keyof TValues, string | string[] | undefined>>) {
+    keysOf(fields).forEach(field => {
+      setFieldErrorBag(field, fields[field]);
+    });
+  }
+
+  if (initialErrors) {
+    setErrorBag(initialErrors);
+  }
+
+  return {
+    errorBag,
+    setErrorBag,
+    setFieldErrorBag,
   };
 }

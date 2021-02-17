@@ -78,13 +78,16 @@ export interface FormState<TValues> {
   submitCount: number;
 }
 
+export type FormErrors<TValues extends Record<string, unknown>> = Partial<Record<keyof TValues, string | undefined>>;
+export type FormErrorBag<TValues extends Record<string, unknown>> = Partial<Record<keyof TValues, string[]>>;
+
 export interface SetFieldValueOptions {
   force: boolean;
 }
-export interface FormActions<TValues> {
+export interface FormActions<TValues extends Record<string, unknown>> {
   setFieldValue<T extends keyof TValues>(field: T, value: TValues[T], opts?: Partial<SetFieldValueOptions>): void;
   setFieldError: (field: keyof TValues, message: string | undefined) => void;
-  setErrors: (fields: Partial<Record<keyof TValues, string | undefined>>) => void;
+  setErrors: (fields: FormErrors<TValues>) => void;
   setValues<T extends keyof TValues>(fields: Partial<Record<T, TValues[T]>>): void;
   setFieldTouched: (field: keyof TValues, isTouched: boolean) => void;
   setTouched: (fields: Partial<Record<keyof TValues, boolean>>) => void;
@@ -118,6 +121,8 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
   validate(): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
+  errorBag: Ref<FormErrorBag<TValues>>;
+  setFieldErrorBag(field: string, messages: string[]): void;
   meta: ComputedRef<{
     dirty: boolean;
     touched: boolean;
@@ -130,8 +135,11 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
 }
 
 export interface PublicFormContext<TValues extends Record<string, any> = Record<string, any>>
-  extends Omit<FormContext<TValues>, 'register' | 'unregister' | 'fields' | 'schema' | 'validateSchema'> {
-  errors: ComputedRef<Record<keyof TValues, string | undefined>>;
+  extends Omit<
+    FormContext<TValues>,
+    'register' | 'unregister' | 'fields' | 'schema' | 'validateSchema' | 'errorBag' | 'setFieldErrorBag'
+  > {
+  errors: ComputedRef<FormErrors<TValues>>;
   handleReset: () => void;
   submitForm: (e?: unknown) => Promise<void>;
 }
