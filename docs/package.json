@@ -13,12 +13,15 @@
     "@nuxt/content": "^1.13.1",
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/tailwindcss": "^3.4.2",
-    "@tailwindcss/postcss7-compat": "^2.0.2",
     "autoprefixer": "^9",
-    "nuxt": "^2.15.0",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
+    "nuxt": "^2.15.0"
   },
   "devDependencies": {
-    "postcss-nested": "^4.2.3"
+    "css-loader": "^5.0.2",
+    "postcss": "^8.2.6",
+    "postcss-loader": "4.1",
+    "postcss-nested": "^4.2.3",
+    "postcss-url": "10",
+    "tailwindcss": "^2.0.3"
   }
 }
