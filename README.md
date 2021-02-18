@@ -1,12 +1,11 @@
 <p align="center">
   <a href="https://vee-validate.logaretm.com" target="_blank">
-    <img width="200" src="https://github.com/logaretm/vee-validate/blob/main/logo.png">
+    <img width="200" src="https://raw.githubusercontent.com/logaretm/vee-validate/main/logo.png">
   </a>
 </p>
 
 <p align="center">
 
-[![Financial Contributors on Open Collective](https://opencollective.com/vee-validate/all/badge.svg?label=financial+contributors)](https://opencollective.com/vee-validate)
 [![codecov](https://codecov.io/gh/logaretm/vee-validate/branch/main/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate)
 [![circleci](https://circleci.com/gh/logaretm/vee-validate.svg?style=svg)](https://circleci.com/gh/logaretm/vee-validate)
 [![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/)
@@ -14,7 +13,7 @@
 [![npm](https://img.shields.io/npm/v/vee-validate.svg)](https://www.npmjs.com/package/vee-validate)
 [![Bundle Size](https://badgen.net/bundlephobia/minzip/vee-validate@next)](https://bundlephobia.com/result?p=vee-validate@next)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/logaretm/vee-validate.svg)](http://isitmaintained.com/project/logaretm/vee-validate 'Average time to resolve an issue')
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/logaretm/vee-validate.svg)](http://isitmaintained.com/project/logaretm/vee-validate 'Percentage of issues still open')
+[![Percentage of issues still open](https://isitmaintained.com/badge/open/logaretm/vee-validate.svg)](https://isitmaintained.com/project/logaretm/vee-validate 'Percentage of issues still open')
 
 </p>
 <br>
