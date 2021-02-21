@@ -1,6 +1,11 @@
 import { alphanumeric, getLocale } from './alpha_helper';
+import { isEmpty } from './utils';
 
 const alphaNumValidator = (value: unknown, params: [string | undefined] | { locale?: string }): boolean => {
+  if (isEmpty(value)) {
+    return true;
+  }
+
   const locale = getLocale(params);
   if (Array.isArray(value)) {
     return value.every(val => alphaNumValidator(val, { locale }));

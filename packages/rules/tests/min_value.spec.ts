@@ -6,12 +6,12 @@ test('validates number minimum value', () => {
   expect(validate(0, params)).toBe(true);
   expect(validate('5', params)).toBe(true);
   expect(validate([-1, 5], params)).toBe(true);
+  expect(validate(undefined, params)).toBe(true);
+  expect(validate(null, params)).toBe(true);
+  expect(validate('', params)).toBe(true);
+  expect(validate([], params)).toBe(true);
 
   // invalid
-  expect(validate('', params)).toBe(false);
-  expect(validate([], params)).toBe(false);
-  expect(validate(undefined, params)).toBe(false);
-  expect(validate(null, params)).toBe(false);
   expect(validate({}, params)).toBe(false);
   expect(validate('abc', params)).toBe(false);
   expect(validate(-2, params)).toBe(false);

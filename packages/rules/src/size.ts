@@ -1,7 +1,7 @@
-import { getSingleParam } from './utils';
+import { getSingleParam, isEmpty } from './utils';
 
 const sizeValidator = (files: unknown, params: [number | string] | { size: string | number }) => {
-  if (!files) {
+  if (isEmpty(files)) {
     return true;
   }
 

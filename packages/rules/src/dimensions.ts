@@ -1,3 +1,5 @@
+import { isEmpty } from './utils';
+
 const validateImage = (file: File, width: number, height: number): Promise<boolean> => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const URL = window.URL || (window as any).webkitURL;
@@ -29,7 +31,7 @@ function getParams(params: Params) {
 }
 
 const dimensionsValidator = (files: unknown, params: Params) => {
-  if (!files) {
+  if (isEmpty(files)) {
     return true;
   }
 

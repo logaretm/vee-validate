@@ -1,10 +1,12 @@
+import { isEmpty } from './utils';
+
 const extValidator = (files: unknown, extensions: string[]) => {
-  if (!extensions) {
-    extensions = [];
+  if (isEmpty(files)) {
+    return true;
   }
 
-  if (!files) {
-    return true;
+  if (!extensions) {
+    extensions = [];
   }
 
   const regex = new RegExp(`.(${extensions.join('|')})$`, 'i');

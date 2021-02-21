@@ -9,12 +9,13 @@ test('validates minimum number of characters in a string', () => {
   expect(validate(123, params)).toBe(true);
   expect(validate('abc', params)).toBe(true);
   expect(validate([123, '123', 'abc'], params)).toBe(true);
+  expect(validate(undefined, params)).toBe(true);
+  expect(validate(null, params)).toBe(true);
+  expect(validate('', params)).toBe(true);
+  expect(validate([], params)).toBe(true);
 
   // invalid
   expect(validate(1, params)).toBe(false);
   expect(validate(12, params)).toBe(false);
-  expect(validate(undefined, params)).toBe(false);
-  expect(validate(null, params)).toBe(false);
-  expect(validate('', params)).toBe(false);
   expect(validate([1], params)).toBe(false);
 });

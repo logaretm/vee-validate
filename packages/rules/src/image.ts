@@ -1,9 +1,11 @@
+import { isEmpty } from './utils';
+
 const imageValidator = (files: unknown) => {
-  const regex = /\.(jpg|svg|jpeg|png|bmp|gif|webp)$/i;
-  if (!files) {
+  if (isEmpty(files)) {
     return true;
   }
 
+  const regex = /\.(jpg|svg|jpeg|png|bmp|gif|webp)$/i;
   if (Array.isArray(files)) {
     return files.every(file => regex.test((file as File).name));
   }
