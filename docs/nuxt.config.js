@@ -80,6 +80,7 @@ export default {
    ** Build configuration
    */
   build: {
+    corejs: '3',
     postcss: {
       plugins: {
         tailwindcss: {},
