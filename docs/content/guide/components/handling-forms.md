@@ -2,7 +2,7 @@
 title: Handling Forms
 description: Handling form state and submissions
 order: 3
-next: guide/nested-objects-and-arrays
+next: guide/components/nested-objects-and-arrays
 ---
 
 # Handling Forms
