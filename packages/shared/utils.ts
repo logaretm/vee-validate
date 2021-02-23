@@ -29,3 +29,7 @@ export function merge(target: any, source: any) {
 
   return target;
 }
+
+export function isIndex(value: unknown): value is number {
+  return Number(value) >= 0;
+}

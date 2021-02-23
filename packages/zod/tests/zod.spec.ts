@@ -45,8 +45,8 @@ test('validates form with zod', async () => {
     setup() {
       const schema = toFormValidator(
         zod.object({
-          email: zod.string().nonempty(REQUIRED_MSG).email({ message: EMAIL_MSG }),
-          password: zod.string().nonempty(REQUIRED_MSG).min(8, { message: MIN_MSG }),
+          email: zod.string().email({ message: EMAIL_MSG }),
+          password: zod.string().min(8, { message: MIN_MSG }),
         })
       );
 
@@ -80,9 +80,6 @@ test('validates form with zod', async () => {
 
   wrapper.$el.querySelector('button').click();
   await flushPromises();
-
-  expect(emailError.textContent).toBe(REQUIRED_MSG);
-  expect(passwordError.textContent).toBe(REQUIRED_MSG);
 
   setValue(email, 'hello@');
   setValue(password, '1234');

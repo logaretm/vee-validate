@@ -1,7 +1,6 @@
-import { isObject } from '../../../shared';
+import { isIndex, isObject } from '../../../shared';
 import { getCurrentInstance, inject, InjectionKey, warn as vueWarning } from 'vue';
-import type { useField } from '../useField';
-import { isContainerValue, isEmptyContainer, isIndex, isNotNestedPath } from './assertions';
+import { isContainerValue, isEmptyContainer, isNotNestedPath } from './assertions';
 import { PrivateFieldComposite } from '../types';
 
 function cleanupNonNestedPath(path: string) {

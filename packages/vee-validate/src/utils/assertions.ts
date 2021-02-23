@@ -27,10 +27,6 @@ export function hasCheckedAttr(type: unknown) {
   return type === 'checkbox' || type === 'radio';
 }
 
-export function isIndex(value: unknown): value is number {
-  return Number(value) >= 0;
-}
-
 export function isContainerValue(value: unknown): value is Record<string, unknown> {
   return isObject(value) || Array.isArray(value);
 }
