@@ -199,9 +199,19 @@ export function useField<TValue = unknown>(
   provide(FieldContextSymbol, field);
 
   if (isRef(rules) && typeof unref(rules) !== 'function') {
-    watch(rules, validate, {
-      deep: true,
-    });
+    watch(
+      rules,
+      (value, oldValue) => {
+        if (isEqual(value, oldValue)) {
+          return;
+        }
+
+        return validate();
+      },
+      {
+        deep: true,
+      }
+    );
   }
 
   // if no associated form return the field API immediately
