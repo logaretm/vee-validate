@@ -2,6 +2,7 @@
   <button @click="isDark = !isDark" class="opacity-50 transition-opacity duration-200 hover:opacity-100i">
     <transition name="popup" mode="out-in">
       <svg
+        v-if="isDark"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         version="1.1"
@@ -9,7 +10,6 @@
         height="24"
         viewBox="0 0 24 24"
         class="fill-current text-white"
-        v-if="isDark"
       >
         <title>Dark Mode</title>
         <path d="M0 0h24v24H0z" fill="none" />
@@ -17,9 +17,8 @@
           d="M11,12A8,8,0,0,0,5.67,4.46a1,1,0,0,1,0-1.88A9.66,9.66,0,0,1,9,2,10,10,0,0,1,9,22a9.66,9.66,0,0,1-3.34-.58,1,1,0,0,1,0-1.88A8,8,0,0,0,11,12Z"
         />
       </svg>
-    </transition>
-    <transition name="popup" mode="out-in">
       <svg
+        v-else
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         version="1.1"
@@ -27,7 +26,6 @@
         height="24"
         viewBox="0 0 24 24"
         class="fill-current text-gray-700"
-        v-if="!isDark"
       >
         <title>Light Mode</title>
         <path d="M0 0h24v24H0z" fill="none" />
