@@ -32,7 +32,6 @@ import {
   normalizeEventValue,
   hasCheckedAttr,
   getFromPath,
-  setInPath,
   injectWithSelf,
   resolveNextCheckboxValue,
   isYupValidator,
@@ -308,7 +307,7 @@ function useValidationState<TValue>({
     return (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? unref(initValue)) as TValue;
   });
   const value = useFieldValue(initialValue, name, form);
-  const { resetMeta, meta } = useMeta(initialValue, value, errors);
+  const meta = useMeta(initialValue, value, errors);
 
   const checked = hasCheckedAttr(type)
     ? computed(() => {
@@ -365,7 +364,8 @@ function useValidationState<TValue>({
     }
 
     setErrors(state?.errors || []);
-    resetMeta(state);
+    meta.touched = state?.touched ?? false;
+    meta.pending = false;
   }
 
   return {
@@ -385,33 +385,17 @@ function useValidationState<TValue>({
  * Exposes meta flags state and some associated actions with them.
  */
 function useMeta<TValue>(initialValue: MaybeReactive<TValue>, currentValue: Ref<TValue>, errors: Ref<string[]>) {
-  const initialMeta = () => {
-    return {
-      touched: false,
-      pending: false,
-      valid: computed(() => !errors.value.length),
-      initialValue: computed(() => unref(initialValue) as TValue | undefined),
-      dirty: computed(() => {
-        return !isEqual(currentValue.value, unref(initialValue));
-      }),
-    };
-  };
+  const meta = reactive({
+    touched: false,
+    pending: false,
+    valid: computed(() => !errors.value.length),
+    initialValue: computed(() => unref(initialValue) as TValue | undefined),
+    dirty: computed(() => {
+      return !isEqual(currentValue.value, unref(initialValue));
+    }),
+  }) as FieldMeta<TValue>;
 
-  const meta = reactive(initialMeta()) as FieldMeta<TValue>;
-
-  /**
-   * Resets the flag state
-   */
-  function resetMeta(state?: Pick<Partial<FieldState<TValue>>, 'touched' | 'value'>) {
-    const defaults = initialMeta();
-    meta.pending = defaults.pending;
-    meta.touched = state?.touched ?? defaults.touched;
-  }
-
-  return {
-    meta,
-    resetMeta,
-  };
+  return meta;
 }
 
 /**
