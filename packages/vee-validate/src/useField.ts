@@ -9,7 +9,10 @@ import {
   unref,
   WatchStopHandle,
   provide,
+  Ref,
 } from 'vue';
+import { BaseSchema } from 'yup';
+import isEqual from 'fast-deep-equal/es6';
 import { validate as validateValue } from './validate';
 import {
   FormContext,
@@ -29,14 +32,12 @@ import {
   normalizeEventValue,
   hasCheckedAttr,
   getFromPath,
-  setInPath,
   injectWithSelf,
   resolveNextCheckboxValue,
   isYupValidator,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FieldContextSymbol, FormInitialValuesSymbol, FormContextSymbol } from './symbols';
-import { BaseSchema } from 'yup';
 
 interface FieldOptions<TValue = unknown> {
   initialValue?: MaybeReactive<TValue>;
@@ -92,8 +93,7 @@ export function useField<TValue = unknown>(
     checked,
   } = useValidationState<TValue>({
     name,
-    // make sure to unref initial value because of possible refs passed in
-    initValue: unref(initialValue) as TValue | undefined,
+    initValue: initialValue,
     form,
     type,
     valueProp,
@@ -144,7 +144,6 @@ export function useField<TValue = unknown>(
     }
 
     value.value = newValue;
-    meta.dirty = true;
     if (!validateOnValueUpdate) {
       return validate();
     }
@@ -156,10 +155,6 @@ export function useField<TValue = unknown>(
 
   function setTouched(isTouched: boolean) {
     meta.touched = isTouched;
-  }
-
-  function setDirty(isDirty: boolean) {
-    meta.dirty = isDirty;
   }
 
   let unwatchValue: WatchStopHandle;
@@ -199,15 +194,24 @@ export function useField<TValue = unknown>(
     handleInput,
     setValidationState,
     setTouched,
-    setDirty,
   };
 
   provide(FieldContextSymbol, field);
 
   if (isRef(rules) && typeof unref(rules) !== 'function') {
-    watch(rules, validate, {
-      deep: true,
-    });
+    watch(
+      rules,
+      (value, oldValue) => {
+        if (isEqual(value, oldValue)) {
+          return;
+        }
+
+        return validate();
+      },
+      {
+        deep: true,
+      }
+    );
   }
 
   // if no associated form return the field API immediately
@@ -303,15 +307,18 @@ function useValidationState<TValue>({
 }: {
   name: MaybeReactive<string>;
   valueProp?: MaybeReactive<TValue>;
-  initValue?: TValue;
+  initValue?: MaybeReactive<TValue>;
   form?: FormContext;
   type?: string;
 }) {
   const { errors, errorMessage, setErrors } = useErrorsSource(name, form);
   const formInitialValues = injectWithSelf(FormInitialValuesSymbol, undefined);
-  const initialValue = (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? initValue) as TValue;
-  const { resetMeta, meta } = useMeta(initialValue);
+  const initialValue = computed(() => {
+    return (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? unref(initValue)) as TValue;
+  });
   const value = useFieldValue(initialValue, name, form);
+  const meta = useMeta(initialValue, value, errors);
+
   const checked = hasCheckedAttr(type)
     ? computed(() => {
         if (Array.isArray(value.value)) {
@@ -321,11 +328,6 @@ function useValidationState<TValue>({
         return unref(valueProp) === value.value;
       })
     : undefined;
-
-  if (checked === undefined || checked.value) {
-    // Set the value without triggering the watcher
-    value.value = initialValue;
-  }
 
   /**
    * Handles common onBlur meta update
@@ -343,14 +345,11 @@ function useValidationState<TValue>({
     if (!hasCheckedAttr(type)) {
       value.value = normalizeEventValue(e) as TValue;
     }
-
-    meta.dirty = true;
   };
 
   // Updates the validation state with the validation result
   function setValidationState(result: ValidationResult) {
     setErrors(result.errors);
-    meta.valid = !result.errors.length;
 
     return result;
   }
@@ -362,6 +361,7 @@ function useValidationState<TValue>({
       state && 'value' in state
         ? (state.value as TValue)
         : ((getFromPath<TValue>(unref(formInitialValues), fieldPath) ?? initValue) as TValue);
+
     if (form) {
       form.setFieldValue(fieldPath, newValue, { force: true });
     } else {
@@ -369,7 +369,8 @@ function useValidationState<TValue>({
     }
 
     setErrors(state?.errors || []);
-    resetMeta(state);
+    meta.touched = state?.touched ?? false;
+    meta.pending = false;
   }
 
   return {
@@ -388,32 +389,18 @@ function useValidationState<TValue>({
 /**
  * Exposes meta flags state and some associated actions with them.
  */
-function useMeta<TValue>(initialValue: TValue) {
-  const initialMeta = (): FieldMeta<TValue> => ({
+function useMeta<TValue>(initialValue: MaybeReactive<TValue>, currentValue: Ref<TValue>, errors: Ref<string[]>) {
+  const meta = reactive({
     touched: false,
-    dirty: false,
-    valid: false,
     pending: false,
-    initialValue,
-  });
+    valid: computed(() => !errors.value.length),
+    initialValue: computed(() => unref(initialValue) as TValue | undefined),
+    dirty: computed(() => {
+      return !isEqual(currentValue.value, unref(initialValue));
+    }),
+  }) as FieldMeta<TValue>;
 
-  const meta = reactive(initialMeta()) as FieldMeta<TValue>;
-
-  /**
-   * Resets the flag state
-   */
-  function resetMeta(state?: Pick<Partial<FieldState<TValue>>, 'dirty' | 'touched' | 'value'>) {
-    const defaults = initialMeta();
-    meta.pending = defaults.pending;
-    meta.touched = state?.touched ?? defaults.touched;
-    meta.dirty = state?.dirty ?? defaults.dirty;
-    meta.initialValue = state?.value ?? defaults.initialValue;
-  }
-
-  return {
-    meta,
-    resetMeta,
-  };
+  return meta;
 }
 
 /**
@@ -433,17 +420,17 @@ function extractRuleFromSchema<TValue>(schema: Record<string, RuleExpression<TVa
  * Manages the field value
  */
 function useFieldValue<TValue>(
-  initialValue: TValue | undefined,
+  initialValue: MaybeReactive<TValue | undefined>,
   path: MaybeReactive<string>,
   form?: FormContext
 ): WritableRef<TValue> {
   // if no form is associated, use a regular ref.
   if (!form) {
-    return ref(initialValue) as WritableRef<TValue>;
+    return ref(unref(initialValue)) as WritableRef<TValue>;
   }
 
   // set initial value
-  setInPath(form.values, unref(path), initialValue);
+  form.stageInitialValue(unref(path), unref(initialValue));
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed<TValue>({
     get() {

@@ -1,8 +1,7 @@
 import flushPromises from 'flush-promises';
 import { useField, useForm } from '@/vee-validate';
-import { mountWithHoc } from './helpers';
+import { mountWithHoc, setValue } from './helpers';
 import * as yup from 'yup';
-import { doc } from 'prettier';
 
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -60,71 +59,6 @@ describe('useForm()', () => {
     await flushPromises();
     expect(errors[0]?.textContent).toBe('WRONG');
     expect(errors[1]?.textContent).toBe('WRONG AGAIN');
-  });
-
-  test('sets individual field dirty meta', async () => {
-    mountWithHoc({
-      setup() {
-        const { setFieldDirty, meta: formMeta } = useForm();
-        const { meta } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
-
-        return {
-          meta,
-          formMeta,
-          setFieldDirty,
-        };
-      },
-      template: `
-      <span id="field">{{ meta.dirty }}</span>
-      <span id="form">{{ formMeta.dirty }}</span>
-      <button @click="setFieldDirty('field', true)">Set Meta</button>
-    `,
-    });
-
-    const fieldMeta = document.querySelector('#field');
-    const formMeta = document.querySelector('#form');
-    await flushPromises();
-    expect(fieldMeta?.textContent).toBe('false');
-    expect(formMeta?.textContent).toBe('false');
-    document.querySelector('button')?.click();
-    await flushPromises();
-    expect(fieldMeta?.textContent).toBe('true');
-    expect(formMeta?.textContent).toBe('true');
-  });
-
-  test('sets multiple fields dirty meta', async () => {
-    mountWithHoc({
-      setup() {
-        const { setDirty, meta: formMeta } = useForm();
-        const { meta: meta1 } = useField('field1', val => (val ? true : REQUIRED_MESSAGE));
-        const { meta: meta2 } = useField('field2', val => (val ? true : REQUIRED_MESSAGE));
-
-        return {
-          meta1,
-          meta2,
-          formMeta,
-          setDirty,
-        };
-      },
-      template: `
-      <span>{{ meta1.dirty }}</span>
-      <span>{{ meta2.dirty }}</span>
-      <span>{{ formMeta.dirty }}</span>
-      <button @click="setDirty({ field1: true, field2: false, field3: false })">Set Meta</button>
-    `,
-    });
-
-    const meta = document.querySelectorAll('span');
-
-    await flushPromises();
-    expect(meta[0]?.textContent).toBe('false');
-    expect(meta[1]?.textContent).toBe('false');
-    expect(meta[2]?.textContent).toBe('false');
-    document.querySelector('button')?.click();
-    await flushPromises();
-    expect(meta[0]?.textContent).toBe('true');
-    expect(meta[1]?.textContent).toBe('false');
-    expect(meta[2]?.textContent).toBe('true');
   });
 
   test('sets individual field touched meta', async () => {
@@ -299,5 +233,112 @@ describe('useForm()', () => {
 
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
+  });
+
+  test('resets the meta valid state on reset', async () => {
+    mountWithHoc({
+      setup() {
+        const { meta: formMeta, resetForm } = useForm();
+        const { value } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+        useField('password', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          value,
+          formMeta,
+          resetForm,
+        };
+      },
+      template: `
+      <input v-model="value" />
+      <span id="meta">{{ formMeta.valid ? 'valid': 'invalid' }}</span>
+      <button @click="resetForm()">Reset Meta</button>
+    `,
+    });
+
+    await flushPromises();
+    const span = document.querySelector('#meta');
+    const input = document.querySelector('input') as HTMLInputElement;
+    expect(span?.textContent).toBe('valid');
+    setValue(input, '');
+    await flushPromises();
+    expect(span?.textContent).toBe('invalid');
+
+    document.querySelector('button')?.click();
+    await flushPromises();
+    expect(span?.textContent).toBe('valid');
+  });
+
+  test('resets the meta valid state on reset with the errors length', async () => {
+    mountWithHoc({
+      setup() {
+        const { meta: formMeta, resetForm } = useForm();
+        const { value } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+        useField('password', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          value,
+          formMeta,
+          resetForm,
+        };
+      },
+      template: `
+      <input v-model="value" />
+      <span id="meta">{{ formMeta.valid ? 'valid': 'invalid' }}</span>
+      <button @click="resetForm({ errors: { field: 'test' } })">Reset Meta</button>
+    `,
+    });
+
+    await flushPromises();
+    const span = document.querySelector('#meta');
+    expect(span?.textContent).toBe('valid');
+
+    document.querySelector('button')?.click();
+    await flushPromises();
+    expect(span?.textContent).toBe('invalid');
+  });
+
+  test('resets the meta dirty on reset', async () => {
+    mountWithHoc({
+      setup() {
+        const { meta: formMeta, resetForm } = useForm();
+        const { meta: meta1, value } = useField('field1', val => (val ? true : REQUIRED_MESSAGE));
+        const { meta: meta2 } = useField('field2', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          meta1,
+          meta2,
+          formMeta,
+          resetForm,
+          value,
+        };
+      },
+      template: `
+      <input v-model="value">
+      <span>{{ meta1.dirty }}</span>
+      <span>{{ meta2.dirty }}</span>
+      <span>{{ formMeta.dirty }}</span>
+      <button @click="resetForm()">Reset</button>
+    `,
+    });
+
+    const meta = document.querySelectorAll('span');
+    const input = document.querySelector('input') as HTMLInputElement;
+
+    await flushPromises();
+    expect(meta[0]?.textContent).toBe('false');
+    expect(meta[1]?.textContent).toBe('false');
+    expect(meta[2]?.textContent).toBe('false');
+
+    setValue(input, '1');
+    await flushPromises();
+    expect(meta[0]?.textContent).toBe('true');
+    expect(meta[1]?.textContent).toBe('false');
+    expect(meta[2]?.textContent).toBe('true');
+
+    document.querySelector('button')?.click();
+    await flushPromises();
+    expect(meta[0]?.textContent).toBe('false');
+    expect(meta[1]?.textContent).toBe('false');
+    expect(meta[2]?.textContent).toBe('false');
   });
 });

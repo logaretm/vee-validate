@@ -1,13 +1,11 @@
-import { isNullOrUndefined } from '../../shared';
-import { getSingleParam } from './utils';
+import { getSingleParam, isEmpty } from './utils';
 
 const maxValueValidator = (value: unknown, params: [string | number] | { max: string | number }): boolean => {
-  const max = getSingleParam(params, 'max');
-
-  if (isNullOrUndefined(value) || value === '') {
-    return false;
+  if (isEmpty(value)) {
+    return true;
   }
 
+  const max = getSingleParam(params, 'max');
   if (Array.isArray(value)) {
     return value.length > 0 && value.every(val => maxValueValidator(val, { max }));
   }

@@ -182,7 +182,7 @@ test('interpolates object params with short format', async () => {
   const wrapper = mountWithHoc({
     template: `
         <div>
-          <Field name="name" :validateOnMount="true" :rules="{ between: { min: 1, max: 10 } }" v-slot="{ field, errors }">
+          <Field name="name" value="-1" :validateOnMount="true" :rules="{ between: { min: 1, max: 10 } }" v-slot="{ field, errors }">
             <input v-bind="field" type="text">
             <span id="error">{{ errors[0] }}</span>
           </Field>
@@ -210,7 +210,7 @@ test('interpolates object params with extended format', async () => {
   const wrapper = mountWithHoc({
     template: `
         <div>
-          <Field name="name" :validateOnMount="true" :rules="{ between: { min: 1, max: 10 } }" v-slot="{ field, errors }">
+          <Field name="name" value="-1" :validateOnMount="true" :rules="{ between: { min: 1, max: 10 } }" v-slot="{ field, errors }">
             <input v-bind="field" type="text">
             <span id="error">{{ errors[0] }}</span>
           </Field>
@@ -238,7 +238,7 @@ test('interpolates array params', async () => {
   const wrapper = mountWithHoc({
     template: `
         <div>
-          <Field name="name" :validateOnMount="true" :rules="{ between: [1, 10] }" v-slot="{ field, errors }">
+          <Field name="name" value="-1" :validateOnMount="true" :rules="{ between: [1, 10] }" v-slot="{ field, errors }">
             <input v-bind="field" type="text">
             <span id="error">{{ errors[0] }}</span>
           </Field>
@@ -266,7 +266,7 @@ test('interpolates string params', async () => {
   const wrapper = mountWithHoc({
     template: `
         <div>
-          <Field name="name" :validateOnMount="true" rules="between:1,10" v-slot="{ field, errors }">
+          <Field name="name" value="-1" :validateOnMount="true" rules="between:1,10" v-slot="{ field, errors }">
             <input v-bind="field" type="text">
             <span id="error">{{ errors[0] }}</span>
           </Field>
@@ -295,7 +295,7 @@ describe('interpolation preserves placeholders if not found', () => {
     const wrapper = mountWithHoc({
       template: `
         <div>
-          <Field name="name" :validateOnMount="true" :rules="{ between: [1] }" v-slot="{ field, errors }">
+          <Field name="name" value="-1" :validateOnMount="true" :rules="{ between: [1] }" v-slot="{ field, errors }">
             <input v-bind="field" type="text">
             <span id="error">{{ errors[0] }}</span>
           </Field>
@@ -323,7 +323,7 @@ describe('interpolation preserves placeholders if not found', () => {
     const wrapper = mountWithHoc({
       template: `
         <div>
-          <Field name="name" :validateOnMount="true" :rules="{ between: { min: 0 } }" v-slot="{ field, errors }">
+          <Field name="name" value="-1" :validateOnMount="true" :rules="{ between: { min: 0 } }" v-slot="{ field, errors }">
             <input v-bind="field" type="text">
             <span id="error">{{ errors[0] }}</span>
           </Field>

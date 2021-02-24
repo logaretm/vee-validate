@@ -385,4 +385,135 @@ Here is a live example:
 
 If you are interested on how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
 
+## Validation Metadata
+
+### Field-level Meta
+
+Each field has meta data associated with it, the `meta` property available on the `<Field />` component contains additional information about the field:
+
+- `valid`: The current field validity, will be `true` if there are no messages inside the `errors` array. Note that `true` could either mean the field is valid or **that it was not validated yet**.
+- `touched`: If the field was blurred (unfocused), updated by the `handleBlur` function.
+- `dirty`: If the field value was updated, both `handleChange` and `handleInput` update this flag.
+- `pending`: If the field's validations are still running, useful for long running async validation.
+- `initialValue`: The field's initial value, it is `undefined` if you didn't specify any.
+
+```vue
+<Field name="email" type="email" :rules="validateEmail" v-slot="{ field, meta }">
+  <input v-bind="field" />
+  <pre>{{ meta }}</pre>
+</Field>
+```
+
+This is the typescript interface for a field's meta object value
+
+```ts
+interface FieldMeta {
+  dirty: boolean;
+  pending: boolean;
+  touched: boolean;
+  valid: boolean;
+  initialValue: any;
+}
+```
+
+<doc-tip title="Field Dirty Flag and Initial Values">
+  
+The default value is `undefined` unless specified which may cause unexpected `meta.dirty` results. To get accurate results for the `meta.dirty` flag, you must provide an initial value to your field even if the values are empty.
+
+```vue
+<Field name="email" value="" type="email" v-slot="{ field, meta }">
+  <input v-bind="field" />
+  <pre>{{ meta }}</pre>
+</Field>
+```
+
+To reduce the verbosity of adding a `value` prop to each field, you could provide the `initial-values` prop to your `<Form />` component instead.
+
+</doc-tip>
+
+<doc-tip title="Valid Flag Combinations">
+  
+Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
+
+To avoid this case you could combine the `valid` flag with either `meta.dirty` or `meta.touched` to get accurate representation:
+
+```vue
+<Field name="email" type="email" :rules="validateEmail" v-slot="{ field, errorMessage, meta }">
+  <input v-bind="field" />
+  <span v-if="errorMessage">⛔️ {{ errorMessage }}</span>
+  <span v-if="meta.valid && meta.touched">✅ Field is valid</span>
+</Field>
+```
+
+</doc-tip>
+
+### Form-level Meta
+
+Forms also have their own `meta` value containing useful information about the form, it is an aggregation of the metadata for the fields inside that form.
+
+The form's meta data properties are:
+
+- `valid`: The form's validity status, will be `true` if the errors array is empty. Note that `true` could either mean the form doesn't have any errors or that the **form was not validated yet**.
+- `touched`: If at least one field was blurred (unfocused) inside the form.
+- `dirty`: If at least one field's value was updated.
+- `pending`: If at least one field's validation is still pending.
+- `initialValues`: All fields' initial values, packed into an object where the keys are the field names.
+
+```vue
+<Form v-slot="{ meta }">
+  <!-- Some fields -->
+  <pre>{{ meta }}</pre>
+</Form>
+```
+
+Here is a similar example where we disable the form's submit button if no value was changed, we will check the `dirty` flag on the form's scoped slot props which should tell us if the form values have changed or not.
+
+```vue
+<template>
+  <Form v-slot="{ meta }" :initial-values="initialValues">
+    <Field name="email" />
+
+    <button :disabled="!meta.dirty">Submit</button>
+  </Form>
+</template>
+
+<script>
+import { Field, Form } from 'vee-validate';
+
+export default {
+  components: {
+    Field,
+    Form,
+  },
+  data() {
+    return {
+      initialValues: { email: '' },
+    };
+  },
+};
+</script>
+```
+
+<doc-tip title="Form Dirty Flag and Initial Values">
+  
+Notice that the `initial-values` in the previous example were provided, like mentioned for the `meta.dirty` accuracy for fields, to get accurate results for the `meta.dirty` flag, you must provide initial values to your forms even if the values are empty.
+
+</doc-tip>
+
+<doc-tip title="Valid Flag Combinations">
+  
+Forms `meta.valid` flag is also initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state or an indicator.
+
+To avoid this case you could combine the form's `valid` flag with either `meta.dirty` or `meta.touched` to get accurate representation:
+
+```vue
+<Form v-slot="{ meta, errors }">
+  <Field name="email" type="email" :rules="validateEmail" />
+  <span v-if="errors.email">⛔️ {{ errors.email }}</span>
+  <span v-if="meta.valid && meta.touched">✅ Form is valid</span>
+</Form>
+```
+
+</doc-tip>
+
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>

@@ -1,13 +1,11 @@
-import { isNullOrUndefined } from '../../shared';
-import { getSingleParam } from './utils';
+import { getSingleParam, isEmpty } from './utils';
 
 const minValidator = (value: unknown, params: [string | number] | { length: string | number }): boolean => {
-  const length = getSingleParam(params, 'length');
-
-  if (isNullOrUndefined(value)) {
-    return false;
+  if (isEmpty(value)) {
+    return true;
   }
 
+  const length = getSingleParam(params, 'length');
   if (Array.isArray(value)) {
     return value.every(val => minValidator(val, { length }));
   }

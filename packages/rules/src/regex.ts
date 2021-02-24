@@ -1,6 +1,10 @@
-import { getSingleParam } from './utils';
+import { getSingleParam, isEmpty } from './utils';
 
 const regexValidator = (value: unknown, params: [string | RegExp] | { regex: RegExp | string }): boolean => {
+  if (isEmpty(value)) {
+    return true;
+  }
+
   let regex = getSingleParam(params, 'regex');
   if (typeof regex === 'string') {
     regex = new RegExp(regex);

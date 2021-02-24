@@ -240,39 +240,7 @@ Could be rewritten as an object like this
 { required: true, between: [0, 10] }
 ```
 
-This makes defining rules more expressive and less limited by the string format, **however there is a caveat you must be aware of.**
-
-<doc-tip type="danger" title="Infinite Render Loops">
-
-Because vee-validate automatically re-validates the fields whenever their rules change, the following snippet is fine when using string expressions for your validations:
-
-```vue
-<Field rules="required|between:0,10" name="field" />
-```
-
-However if you were to do the same sample in an object format:
-
-```vue
-<Field :rules="{ required: true, between: [1, 10] }" name="field" />
-```
-
-You will encounter an infinite render loop error, this is because of how equality works in JavaScript. On each re-render the props will be checked by Vue and determine if anything changes, but because the object is an inline object. You will be constructing a new object each time a re-render happens which opens the possibility for errors. Strings are fine because they are unlike objects, a value type.
-
-So if you decided to use objects to express your rules, you must extract them to a named object instead. Define it in your `data` or `setup` and bind it to the `rules` prop, this way vee-validate could tell whenever it changes without triggering infinite render loops. Here is a quick sample:
-
-```vue
-<template>
-  <Field name="field" :rules="validations" />
-</template>
-
-<script>
-export default {
-  data: () => ({
-    validations: { required: true, between: [0, 10] },
-  }),
-};
-</script>
-```
+This makes defining rules more expressive and less limited by the string format.
 
 For dynamic expressions, you can use computed properties in the same way to define dynamic validation rules.
 

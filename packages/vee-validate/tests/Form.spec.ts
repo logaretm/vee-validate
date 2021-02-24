@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 import { defineRule } from '@/vee-validate';
-import { mountWithHoc, setValue, setChecked } from './helpers';
+import { mountWithHoc, setValue, setChecked, dispatchEvent } from './helpers';
 import * as yup from 'yup';
 import { onErrorCaptured, reactive, ref, Ref } from 'vue';
 
@@ -137,14 +137,14 @@ describe('<Form />', () => {
     const resetValue = 'I was reset';
     const wrapper = mountWithHoc({
       template: `
-      <VForm as="form" v-slot="{ errors, resetForm, meta }">
+      <VForm as="form" v-slot="{ errors, resetForm, meta, values }">
         <Field rules="required" name="field" as="input"/>
         <span id="error">{{ errors.field }}</span>
         <span id="dirty">{{ meta.dirty.toString() }}</span>
         <span id="touched">{{ meta.touched.toString() }}</span>
 
         <button id="submit">Validate</button>
-        <button id="reset" type="button" @click="resetForm({ values: { field: '${resetValue}' }, errors: { field: '${resetError}' }, touched: { field: true }, dirty: { field: true } })">Reset</button>
+        <button id="reset" type="button" @click="resetForm({ values: { field: '${resetValue}' }, errors: { field: '${resetError}' }, touched: { field: true } })">Reset</button>
       </VForm>
     `,
     });
@@ -168,7 +168,7 @@ describe('<Form />', () => {
     expect(input.value).toBe(resetValue);
     // errors were cleared
     expect(error.textContent).toBe(resetError);
-    expect(wrapper.$el.querySelector('#dirty').textContent).toBe('true');
+    expect(wrapper.$el.querySelector('#dirty').textContent).toBe('false');
     expect(wrapper.$el.querySelector('#touched').textContent).toBe('true');
   });
 
@@ -196,7 +196,7 @@ describe('<Form />', () => {
     expect(input.value).toBe(initialValues.field);
   });
 
-  test('initial values can be reactive and will update non-dirty fields', async () => {
+  test('initial values can be reactive and will update non-touched fields', async () => {
     let initialValues!: Record<string, any>;
 
     const wrapper = mountWithHoc({
@@ -224,6 +224,7 @@ describe('<Form />', () => {
 
     await flushPromises();
     setValue(inputs[0], '12');
+    dispatchEvent(inputs[0], 'blur');
     await flushPromises();
     initialValues.field1 = 'new';
     initialValues.field2 = 'tada';
@@ -236,7 +237,7 @@ describe('<Form />', () => {
     expect(inputs[1].value).toBe(initialValues.field2);
   });
 
-  test('initial values can be refs and will update non-dirty fields', async () => {
+  test('initial values can be refs and will update non-touched fields', async () => {
     let initialValues!: Record<string, any>;
 
     const wrapper = mountWithHoc({
@@ -264,6 +265,7 @@ describe('<Form />', () => {
 
     await flushPromises();
     setValue(inputs[0], '12');
+    dispatchEvent(inputs[0], 'blur');
     await flushPromises();
     initialValues.value = {
       field1: 'new',
@@ -991,10 +993,10 @@ describe('<Form />', () => {
     const submitBtn = wrapper.$el.querySelector('#submit');
     const input = wrapper.$el.querySelector('input');
     await flushPromises();
-    expect(submitBtn.disabled).toBe(true);
-    setValue(input, '12');
-    await flushPromises();
     expect(submitBtn.disabled).toBe(false);
+    setValue(input, '');
+    await flushPromises();
+    expect(submitBtn.disabled).toBe(true);
   });
 
   test('nested object fields', async () => {
@@ -1380,27 +1382,6 @@ describe('<Form />', () => {
     expect(meta?.textContent).toBe('true');
   });
 
-  test('sets meta dirty with setFieldDirty for checkboxes', async () => {
-    const wrapper = mountWithHoc({
-      template: `
-      <VForm ref="form" v-slot="{ meta }">
-        <Field name="drink" type="checkbox" value="" /> Coffee
-        <Field name="drink" type="checkbox" value="Tea" /> Tea
-        <Field name="drink" type="checkbox" value="Coke" /> Coke
-
-        <span id="meta">{{ meta.dirty }}</span>
-      </VForm>
-    `,
-    });
-
-    await flushPromises();
-    const meta = wrapper.$el.querySelector('#meta');
-    expect(meta?.textContent).toBe('false');
-    (wrapper.$refs as any)?.form.setFieldDirty('drink', true);
-    await flushPromises();
-    expect(meta?.textContent).toBe('true');
-  });
-
   test('sets initial errors with initialErrors', async () => {
     const errors = {
       password: 'too short',
@@ -1429,33 +1410,7 @@ describe('<Form />', () => {
     expect(errorEls[1].textContent).toBe(errors.password);
   });
 
-  test('sets initial dirty with initialDirty', async () => {
-    const dirty = {
-      email: true,
-    };
-    const wrapper = mountWithHoc({
-      setup() {
-        return {
-          dirty,
-        };
-      },
-      template: `
-      <VForm ref="form" :initial-dirty="dirty">
-        <Field id="email" name="email"  v-slot="{ meta, field }">
-          <input v-bind="field" />
-          <span>{{ meta.dirty }}</span>
-        </Field>
-      </VForm>
-    `,
-    });
-
-    await flushPromises();
-    const meta = wrapper.$el.querySelector('span');
-    await flushPromises();
-    expect(meta.textContent).toBe('true');
-  });
-
-  test('sets touched dirty with touchedDirty', async () => {
+  test('sets touched with initial touched', async () => {
     const touched = {
       email: true,
     };
@@ -1622,5 +1577,52 @@ describe('<Form />', () => {
     setModified(data[2]);
     await flushPromises();
     expect(input()?.value).not.toBe('');
+  });
+
+  test('resetForm should reset the meta flag', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm  v-slot="{ meta, resetForm }">
+        <Field id="email" name="email" as="input" rules="required" />
+        <Field id="password" name="password" as="input" rules="required" />
+
+        <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
+        <button type="button" @click="resetForm()">Reset</button> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const span = wrapper.$el.querySelector('#meta');
+    const input = wrapper.$el.querySelector('input');
+    expect(span.textContent).toBe('valid');
+    setValue(input, '');
+    await flushPromises();
+
+    expect(span.textContent).toBe('invalid');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(span.textContent).toBe('valid');
+  });
+
+  test('resetForm should reset the meta flag based on the errors length', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm  v-slot="{ meta, resetForm }">
+        <Field id="email" name="email" as="input" rules="required" />
+        <Field id="password" name="password" as="input" rules="required" />
+
+        <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
+        <button type="button" @click="resetForm({ errors: { email: 'bad' } })">Reset</button> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const span = wrapper.$el.querySelector('#meta');
+    expect(span.textContent).toBe('valid');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(span.textContent).toBe('invalid');
   });
 });

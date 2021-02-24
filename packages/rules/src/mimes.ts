@@ -1,5 +1,7 @@
+import { isEmpty } from './utils';
+
 const mimesValidator = (files: unknown, mimes: string[]) => {
-  if (!files) {
+  if (isEmpty(files)) {
     return true;
   }
 

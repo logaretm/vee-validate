@@ -6,12 +6,15 @@ test('validates digits', () => {
   expect(validate('456', params)).toBe(true);
   expect(validate('789', params)).toBe(true);
   expect(validate('012', params)).toBe(true);
+  expect(validate('000', params)).toBe(true);
   expect(validate(['012', '789'], params)).toBe(true);
+  expect(validate(undefined, params)).toBe(true);
+  expect(validate(null, params)).toBe(true);
+  expect(validate('', params)).toBe(true);
+  expect(validate([], params)).toBe(true);
 
   // invalid
-  expect(validate('', params)).toBe(false);
-  expect(validate(undefined, params)).toBe(false);
-  expect(validate(null, params)).toBe(false);
+  expect(validate(0, params)).toBe(false);
   expect(validate({}, params)).toBe(false);
   expect(validate('1234', params)).toBe(false);
   expect(validate('12', params)).toBe(false);
