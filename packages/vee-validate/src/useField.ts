@@ -312,9 +312,6 @@ function useValidationState<TValue>({
   const initialValue = (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? initValue) as TValue;
   const { resetMeta, meta } = useMeta(initialValue);
   const value = useFieldValue(initialValue, name, form);
-  if (hasCheckedAttr(type) && initialValue) {
-    value.value = initialValue;
-  }
   const checked = hasCheckedAttr(type)
     ? computed(() => {
         if (Array.isArray(value.value)) {
