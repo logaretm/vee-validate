@@ -17,8 +17,6 @@
     "nuxt": "^2.15.2"
   },
   "devDependencies": {
-    "@babel/preset-env": "7.12.17",
-    "core-js": "^3.9.0",
     "css-loader": "^5.0.2",
     "postcss": "^8.2.6",
     "postcss-loader": "4.1",
