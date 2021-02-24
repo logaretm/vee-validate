@@ -319,11 +319,6 @@ function useValidationState<TValue>({
       })
     : undefined;
 
-  if (checked === undefined || checked.value) {
-    // Set the value without triggering the watcher
-    value.value = unref(initialValue);
-  }
-
   /**
    * Handles common onBlur meta update
    */
