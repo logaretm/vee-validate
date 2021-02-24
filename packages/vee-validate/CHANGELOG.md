@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.20](https://github.com/logaretm/vee-validate/compare/v4.1.19...v4.1.20) (2021-02-24)
+
+
+### Bug Fixes
+
+* avoid setting checkbox values before registeration closes [#3183](https://github.com/logaretm/vee-validate/issues/3183) ([ab5f821](https://github.com/logaretm/vee-validate/commit/ab5f82103f8cfe5f5934a51057ce989ad30d0d44))
+* change errors source to form closes [#3177](https://github.com/logaretm/vee-validate/issues/3177) ([7c13c92](https://github.com/logaretm/vee-validate/commit/7c13c92f477bc3d63067509fd9fec72964263f5d))
+* use the issues array for zod error aggregation closes [#3184](https://github.com/logaretm/vee-validate/issues/3184) ([01b89e4](https://github.com/logaretm/vee-validate/commit/01b89e4940e997ef65dc950be3a13e0ffc18e881))
+
+
+
+
+
 ## [4.1.19](https://github.com/logaretm/vee-validate/compare/v4.1.18...v4.1.19) (2021-02-16)
 
 
