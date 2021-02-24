@@ -14,7 +14,7 @@
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/tailwindcss": "^3.4.2",
     "autoprefixer": "^10.2.4",
-    "nuxt": "^2.15.1"
+    "nuxt": "^2.15.2"
   },
   "devDependencies": {
     "@babel/preset-env": "7.12.17",
