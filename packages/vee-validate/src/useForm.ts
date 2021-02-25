@@ -109,7 +109,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   );
 
   // form meta aggregations
-  const meta = useFormMeta(fields, errors, formValues, readonlyInitialValues);
+  const meta = useFormMeta(fields, formValues, readonlyInitialValues);
 
   /**
    * Manually sets an error message on a specific field
@@ -444,8 +444,16 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       setTouched(opts.initialTouched);
     }
 
+    // if validate on mount was enabled
     if (opts?.validateOnMount) {
       validate();
+      return;
+    }
+
+    // otherwise run initial silent validation through schema if available
+    // the useField should skip their own silent validation if a yup schema is present
+    if (formCtx.validateSchema) {
+      formCtx.validateSchema(false);
     }
   });
 
@@ -479,7 +487,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
  */
 function useFormMeta<TValues extends Record<string, unknown>>(
   fields: Ref<PrivateFieldComposite[]>,
-  errors: ComputedRef<FormErrors<TValues>>,
   currentValues: TValues,
   initialValues: MaybeReactive<TValues>
 ) {
@@ -544,10 +551,14 @@ async function validateYupSchema<TValues>(
     };
 
     result[fieldId] = fieldResult;
-    const isTouched = Array.isArray(field)
-      ? field.some(f => f.meta.touched || f.meta.dirty)
-      : field.meta.touched || field.meta.dirty;
+    const isTouched = Array.isArray(field) ? field.some(f => f.meta.touched) : field.meta.touched;
     if (!shouldMutate && !isTouched) {
+      // Update the valid flag regardless to keep it accurate
+      if (Array.isArray(field)) {
+        field.forEach(f => (f.meta.valid = fieldResult.valid));
+      } else {
+        field.meta.valid = fieldResult.valid;
+      }
       return result;
     }
 

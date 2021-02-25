@@ -164,7 +164,18 @@ export function useField<TValue = unknown>(
     }
   };
 
-  onMounted(validateOnMount ? validateWithStateMutation : validateValidStateOnly);
+  // Runs the initial validation
+  onMounted(() => {
+    if (validateOnMount) {
+      return validateWithStateMutation();
+    }
+
+    // validate self initially if no form was handling this
+    // forms should have their own initial silent validation run to make things more efficient
+    if (!form || !form.validateSchema) {
+      validateValidStateOnly();
+    }
+  });
 
   function setTouched(isTouched: boolean) {
     meta.touched = isTouched;
