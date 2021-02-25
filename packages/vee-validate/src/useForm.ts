@@ -483,19 +483,11 @@ function useFormMeta<TValues extends Record<string, unknown>>(
   currentValues: TValues,
   initialValues: MaybeReactive<TValues>
 ) {
-  const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending'>, 'every' | 'some'> = {
+  const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending' | 'valid'>, 'every' | 'some'> = {
     touched: 'some',
     pending: 'some',
+    valid: 'every',
   };
-
-  const isValid = computed(() => {
-    const keys = keysOf(errors.value);
-    if (!keys.length) {
-      return true;
-    }
-
-    return keys.every(key => !errors.value[key]);
-  });
 
   const isDirty = computed(() => {
     return !isEqual(currentValues, unref(initialValues));
@@ -513,7 +505,6 @@ function useFormMeta<TValues extends Record<string, unknown>>(
       initialValues: unref(initialValues) as TValues,
       ...flags,
       dirty: isDirty.value,
-      valid: isValid.value,
     };
   });
 }
