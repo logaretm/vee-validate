@@ -172,11 +172,9 @@ export function useField<TValue = unknown>(
 
   let unwatchValue: WatchStopHandle;
   function watchValue() {
-    if (validateOnValueUpdate) {
-      unwatchValue = watch(value, validateWithStateMutation, {
-        deep: true,
-      });
-    }
+    unwatchValue = watch(value, validateOnValueUpdate ? validateWithStateMutation : validateValidStateOnly, {
+      deep: true,
+    });
   }
 
   watchValue();
