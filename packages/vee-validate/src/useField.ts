@@ -164,9 +164,7 @@ export function useField<TValue = unknown>(
     }
   };
 
-  if (validateOnMount) {
-    onMounted(validateWithStateMutation);
-  }
+  onMounted(validateOnMount ? validateWithStateMutation : validateValidStateOnly);
 
   function setTouched(isTouched: boolean) {
     meta.touched = isTouched;

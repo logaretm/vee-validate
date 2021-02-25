@@ -50,8 +50,7 @@ describe('useField()', () => {
     const meta = document.querySelector('#meta');
 
     await flushPromises();
-    // by default it should be `valid`
-    expect(meta?.textContent).toBe('valid');
+    expect(meta?.textContent).toBe('invalid');
 
     setValue(input, '');
     await flushPromises();
@@ -83,7 +82,12 @@ describe('useField()', () => {
 
     await flushPromises();
     const meta = document.querySelector('#meta');
-    // by default it should be `valid`
+    const input = document.querySelector('input') as HTMLInputElement;
+
+    expect(meta?.textContent).toBe('invalid');
+
+    setValue(input, '12');
+    await flushPromises();
     expect(meta?.textContent).toBe('valid');
 
     // trigger reset

@@ -258,7 +258,7 @@ describe('useForm()', () => {
     await flushPromises();
     const span = document.querySelector('#meta');
     const input = document.querySelector('input') as HTMLInputElement;
-    expect(span?.textContent).toBe('valid');
+    expect(span?.textContent).toBe('invalid');
     setValue(input, '');
     await flushPromises();
     expect(span?.textContent).toBe('invalid');
@@ -273,7 +273,6 @@ describe('useForm()', () => {
       setup() {
         const { meta: formMeta, resetForm } = useForm();
         const { value } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
-        useField('password', val => (val ? true : REQUIRED_MESSAGE));
 
         return {
           value,
@@ -290,6 +289,11 @@ describe('useForm()', () => {
 
     await flushPromises();
     const span = document.querySelector('#meta');
+    expect(span?.textContent).toBe('invalid');
+
+    const input = document.querySelector('input') as HTMLInputElement;
+    setValue(input, '12');
+    await flushPromises();
     expect(span?.textContent).toBe('valid');
 
     document.querySelector('button')?.click();

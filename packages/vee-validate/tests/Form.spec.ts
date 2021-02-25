@@ -993,10 +993,10 @@ describe('<Form />', () => {
     const submitBtn = wrapper.$el.querySelector('#submit');
     const input = wrapper.$el.querySelector('input');
     await flushPromises();
-    expect(submitBtn.disabled).toBe(false);
-    setValue(input, '');
-    await flushPromises();
     expect(submitBtn.disabled).toBe(true);
+    setValue(input, '12');
+    await flushPromises();
+    expect(submitBtn.disabled).toBe(false);
   });
 
   test('nested object fields', async () => {
@@ -1595,7 +1595,7 @@ describe('<Form />', () => {
     await flushPromises();
     const span = wrapper.$el.querySelector('#meta');
     const input = wrapper.$el.querySelector('input');
-    expect(span.textContent).toBe('valid');
+    expect(span.textContent).toBe('invalid');
     setValue(input, '');
     await flushPromises();
 
@@ -1608,7 +1608,7 @@ describe('<Form />', () => {
   test('resetForm should reset the meta flag based on the errors length', async () => {
     const wrapper = mountWithHoc({
       template: `
-      <VForm  v-slot="{ meta, resetForm }">
+      <VForm :initial-values="{ email: '2', password: '3' }"  v-slot="{ meta, resetForm }">
         <Field id="email" name="email" as="input" rules="required" />
         <Field id="password" name="password" as="input" rules="required" />
 
@@ -1624,5 +1624,39 @@ describe('<Form />', () => {
     wrapper.$el.querySelector('button').click();
     await flushPromises();
     expect(span.textContent).toBe('invalid');
+  });
+
+  test('valid flag should reflect the accurate form validity', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm  v-slot="{ meta, resetForm }">
+        <Field id="email" name="email" as="input" rules="required" />
+        <Field id="password" name="password" as="input" rules="required" />
+
+        <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const span = wrapper.$el.querySelector('#meta');
+    expect(span.textContent).toBe('invalid');
+
+    const email = wrapper.$el.querySelector('#email');
+    setValue(email, '');
+    await flushPromises();
+    // the email field is invalid
+    expect(span.textContent).toBe('invalid');
+
+    // should be valid now
+    setValue(email, 'example@test.com');
+    await flushPromises();
+    // still invalid because the password is invalid
+    expect(span.textContent).toBe('invalid');
+
+    const password = wrapper.$el.querySelector('#password');
+    setValue(password, '12');
+    await flushPromises();
+    expect(span.textContent).toBe('valid');
   });
 });
