@@ -238,8 +238,8 @@ Note that `input` event is not considered to be a trigger because it would make 
 
 By default vee-validate adds multiple event listeners to your fields:
 
-- **input:** Adds a `handleInput` handler that updates the `meta.dirty` flag and updates the field value.
-- **change:** Adds a `handleInput` handler just like the input event but also adds a `handleChange` event that updates the field value and validates the field
+- **input:** Adds a `handleInput` handler that updates the field value (may update `meta.dirty` flag if the value changed).
+- **change:** Adds a `handleInput` handler that updates the field value and validates the field (may update `meta.dirty` flag if the value changed).
 - **blur:** Adds a `handleBlur` handler that updates the `meta.touched` flag.
 - **update:modelValue** Adds a `handleChange` handler to components emitting the `update:modelValue` event
 
@@ -391,7 +391,7 @@ If you are interested on how to do the same for global validators check the [i18
 
 Each field has meta data associated with it, the `meta` property available on the `<Field />` component contains additional information about the field:
 
-- `valid`: The current field validity, will be `true` if there are no messages inside the `errors` array. Note that `true` could either mean the field is valid or **that it was not validated yet**.
+- `valid`: The current field validity, will be `true` if there are no messages inside the `errors` array initially, but will be updated once the field is mounted.
 - `touched`: If the field was blurred (unfocused), updated by the `handleBlur` function.
 - `dirty`: If the field value was updated, both `handleChange` and `handleInput` update this flag.
 - `pending`: If the field's validations are still running, useful for long running async validation.
@@ -453,7 +453,7 @@ Forms also have their own `meta` value containing useful information about the f
 
 The form's meta data properties are:
 
-- `valid`: The form's validity status, will be `true` if the errors array is empty. Note that `true` could either mean the form doesn't have any errors or that the **form was not validated yet**.
+- `valid`: The form's validity status, will be `true` if the errors array is empty. After the form is mounted, vee-validate will update the flag to it's accurate state
 - `touched`: If at least one field was blurred (unfocused) inside the form.
 - `dirty`: If at least one field's value was updated.
 - `pending`: If at least one field's validation is still pending.
