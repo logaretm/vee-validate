@@ -197,9 +197,9 @@ interface FieldMeta {
 
 <doc-tip title="The valid flag">
 
-The `valid` flag on the meta object can be tricky, because by default it stars off with `true` until the field has been validated, only then it is updated to its proper state.
+The `valid` flag on the meta object can be tricky, because by default it stars off with `true` for a few moments, only then it is updated to its proper state.
 
-Combining your `valid` flag checks with `dirty` will yield the expected result based on user interaction. Otherwise you may use `validateOnMount` to make sure the field is validated immediately.
+Combining your `valid` flag checks with `dirty` will yield the expected result based on user interaction.
 
 </doc-tip>
 
@@ -402,21 +402,6 @@ setValidationState({ errors: ['something is not right'] });
 
 // set the field as valid and clears errors
 setValidationState({ errors: [] });
-```
-
-<code-title level="4">
-
-`setDirty: (isDirty: boolean) => void`
-
-</code-title>
-
-Sets the `dirty` meta flag for this field, useful to create your own `input` or other behaviors handlers
-
-```js
-const { setDirty } = useField('field', value => !!value);
-
-// mark the field as dirty
-setDirty(true);
 ```
 
 <code-title level="4">

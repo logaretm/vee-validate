@@ -370,37 +370,6 @@ setValues({
 
 <code-title level="4">
 
-`setFieldDirty: (field: string, isDirty: boolean) => void`
-
-</code-title>
-
-Sets a field's `dirty` meta flag
-
-```js
-const { setFieldDirty } = useForm();
-
-setFieldDirty('email', true);
-```
-
-<code-title level="4">
-
-`setDirty: (fields: Record<string, boolean>) => void`
-
-</code-title>
-
-Sets multiple fields `dirty` meta flag, does not validate.
-
-```js
-const { setDirty } = useForm();
-
-setDirty({
-  email: true,
-  password: false,
-});
-```
-
-<code-title level="4">
-
 `setFieldTouched: (field: string, isTouched: boolean) => void`
 
 </code-title>
@@ -576,14 +545,11 @@ Clears error messages, resets the meta state for all fields and reverts their va
 This is the `FormState` interface:
 
 ```typescript
-type DirtyFlags = { [k: string]: boolean };
 type TouchedFlags = { [k: string]: boolean };
 
 interface FormState {
   // any error messages
   errors: Record<string, string>;
-  // dirty meta flags
-  dirty: DirtyFlags;
   // touched meta flags
   touched: TouchedFlags;
   // Form Values

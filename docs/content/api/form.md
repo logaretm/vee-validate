@@ -204,22 +204,6 @@ Sets multiple fields values, will trigger validation for all the changed fields.
 
 <code-title level="4">
 
-`setFieldDirty: (field: string, isDirty: boolean) => void`
-
-</code-title>
-
-Sets a field's `dirty` meta flag
-
-<code-title level="4">
-
-`setDirty: (fields: Record<string, boolean>) => void`
-
-</code-title>
-
-Sets multiple fields `dirty` meta flag, does not validate.
-
-<code-title level="4">
-
 `setFieldTouched: (field: string, isTouched: boolean) => void`
 
 </code-title>
@@ -302,8 +286,6 @@ This is the shape of the `state` object:
 interface FormState {
   // any error messages
   errors: Record<string, string>;
-  // dirty meta flags
-  dirty: Record<string, boolean>;
   // touched meta flags
   touched: Record<string, boolean>;
   // Form Values

@@ -248,7 +248,7 @@ The `useField` function exposes some handler functions, each handles a specific 
 
 - `handleChange`: Updates the field value, triggers validation in all cases.
 - `handleInput`: Updates the field value, triggers validation if `validateOnValueUpdate` option is enabled.
-- `handleBlur`: Updates some metadata, doesn't trigger validation.
+- `handleBlur`: Updates the `meta.touched` flag, doesn't trigger validation.
 
 ```js
 const { handleChange, handleBlur, handleInput } = useField('someField');
@@ -525,7 +525,7 @@ If you are interested on how to do the same for global validators check the [i18
 
 Each field has meta data associated with it, the `meta` property returned from `useField` contains information about the field:
 
-- `valid`: The current field validity, note that `true` could either mean the field is valid or **that it was not validated yet**.
+- `valid`: The current field validity, it starts off with `true` until the field is validated on mounted which will then reflect it's actual state
 - `touched`: If the field was blurred (unfocused), updated by the `handleBlur` function.
 - `dirty`: If the field value was updated, both `handleChange` and `handleInput` update this flag.
 - `pending`: If the field's validations are still running, useful for long running async validation.
@@ -597,7 +597,7 @@ To reduce the verbosity of adding an `initialValue` prop to each field, you coul
   
 Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
 
-To avoid this case you should combine the `valid` flag with either `meta.dirty` or `meta.touched` to get accurate representation:
+To avoid this case you should combine the `valid` flag with either `meta.dirty` or `meta.touched` to get accurate representation.
 
 </doc-tip>
 
@@ -615,7 +615,7 @@ meta.value.valid;
 meta.value.initialValues;
 ```
 
-- `valid`: The form's validity status, will be `true` if the errors array is empty. Note that `true` could either mean the form doesn't have any errors or that the **form was not validated yet**.
+- `valid`: The form's validity status, will be `true` if the errors array is empty initially, but will be updated once the form is mounted.
 - `touched`: If at least one field was blurred (unfocused) inside the form.
 - `dirty`: If at least one field's value was updated.
 - `pending`: If at least one field's validation is still pending.

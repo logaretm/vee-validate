@@ -165,9 +165,9 @@ interface FieldMeta {
 
 <doc-tip title="The valid flag">
 
-The `valid` flag on the meta object can be tricky, because by default it stars off with `true` until the field has been validated, only then it is updated to its proper state.
+The `valid` flag on the meta object can be tricky, because by default it stars off with `true` for a few moments, only then it is updated to its proper state.
 
-Combining your `valid` flag checks with `dirty` will yield the expected result based on user interaction. Otherwise you may use `validateOnMount` to make sure the field is validated immediately.
+Combining your `valid` flag checks with `dirty` will yield the expected result based on user interaction.
 
 </doc-tip>
 
@@ -250,8 +250,6 @@ await validate();
 
 Updates the field value, and validates the field. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
-It sets the `dirty` meta flag to true
-
 <code-title level="4">
 
 `handleInput: (evt: Event | any) => void`
@@ -259,8 +257,6 @@ It sets the `dirty` meta flag to true
 </code-title>
 
 Updates the field value, **but does not validate the field**. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
-
-It sets the `dirty` meta flag to true
 
 <code-title level="4">
 
@@ -273,14 +269,6 @@ Validates the field by default unless explicitly [specified by validation trigge
 It sets the `touched` meta flag to true
 
 Because this handler doesn't set the field value, it might not report validation correctly if other events are unspecified or disabled.
-
-<code-title level="4">
-
-`setDirty: (isDirty: boolean) => void`
-
-</code-title>
-
-Sets the `dirty` meta flag for this field, useful to create your own `input` or other behaviors handlers
 
 <code-title level="4">
 

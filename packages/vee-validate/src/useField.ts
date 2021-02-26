@@ -113,7 +113,7 @@ export function useField<TValue = unknown>(
     return normalizeRules(rulesValue);
   });
 
-  const validate = async (): Promise<ValidationResult> => {
+  async function validateWithStateMutation(): Promise<ValidationResult> {
     meta.pending = true;
     let result: ValidationResult;
     if (!form || !form.validateSchema) {
@@ -129,7 +129,22 @@ export function useField<TValue = unknown>(
     meta.pending = false;
 
     return setValidationState(result);
-  };
+  }
+
+  async function validateValidStateOnly(): Promise<void> {
+    let result: ValidationResult;
+    if (!form || !form.validateSchema) {
+      result = await validateValue(value.value, normalizedRules.value, {
+        name: unref(label) || unref(name),
+        values: form?.values ?? {},
+        bails,
+      });
+    } else {
+      result = (await form.validateSchema(false))[unref(name)];
+    }
+
+    meta.valid = result.valid;
+  }
 
   // Common input/change event handler
   const handleChange = (e: unknown) => {
@@ -145,13 +160,22 @@ export function useField<TValue = unknown>(
 
     value.value = newValue;
     if (!validateOnValueUpdate) {
-      return validate();
+      return validateWithStateMutation();
     }
   };
 
-  if (validateOnMount) {
-    onMounted(validate);
-  }
+  // Runs the initial validation
+  onMounted(() => {
+    if (validateOnMount) {
+      return validateWithStateMutation();
+    }
+
+    // validate self initially if no form was handling this
+    // forms should have their own initial silent validation run to make things more efficient
+    if (!form || !form.validateSchema) {
+      validateValidStateOnly();
+    }
+  });
 
   function setTouched(isTouched: boolean) {
     meta.touched = isTouched;
@@ -159,11 +183,9 @@ export function useField<TValue = unknown>(
 
   let unwatchValue: WatchStopHandle;
   function watchValue() {
-    if (validateOnValueUpdate) {
-      unwatchValue = watch(value, validate, {
-        deep: true,
-      });
-    }
+    unwatchValue = watch(value, validateOnValueUpdate ? validateWithStateMutation : validateValidStateOnly, {
+      deep: true,
+    });
   }
 
   watchValue();
@@ -188,7 +210,7 @@ export function useField<TValue = unknown>(
     checked,
     resetField,
     handleReset: () => resetField(),
-    validate,
+    validate: validateWithStateMutation,
     handleChange,
     handleBlur,
     handleInput,
@@ -206,7 +228,7 @@ export function useField<TValue = unknown>(
           return;
         }
 
-        return validate();
+        return validateWithStateMutation();
       },
       {
         deep: true,
@@ -256,16 +278,13 @@ export function useField<TValue = unknown>(
   // Adds a watcher that runs the validation whenever field dependencies change
   watch(dependencies, (deps, oldDeps) => {
     // Skip if no dependencies or if the field wasn't manipulated
-    if (!Object.keys(deps).length || !meta.dirty) {
+    if (!Object.keys(deps).length) {
       return;
     }
 
-    const shouldValidate = Object.keys(deps).some(depName => {
-      return deps[depName] !== oldDeps[depName];
-    });
-
+    const shouldValidate = !isEqual(deps, oldDeps);
     if (shouldValidate) {
-      validate();
+      meta.dirty ? validateWithStateMutation() : validateValidStateOnly();
     }
   });
 
@@ -273,7 +292,7 @@ export function useField<TValue = unknown>(
 }
 
 /**
- * Normalizes partial field options to include the full
+ * Normalizes partial field options to include the full options
  */
 function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValue>> | undefined): FieldOptions<TValue> {
   const defaults = () => ({
@@ -393,12 +412,22 @@ function useMeta<TValue>(initialValue: MaybeReactive<TValue>, currentValue: Ref<
   const meta = reactive({
     touched: false,
     pending: false,
-    valid: computed(() => !errors.value.length),
+    valid: true,
     initialValue: computed(() => unref(initialValue) as TValue | undefined),
     dirty: computed(() => {
       return !isEqual(currentValue.value, unref(initialValue));
     }),
   }) as FieldMeta<TValue>;
+
+  watch(
+    errors,
+    value => {
+      meta.valid = !value.length;
+    },
+    {
+      flush: 'sync',
+    }
+  );
 
   return meta;
 }

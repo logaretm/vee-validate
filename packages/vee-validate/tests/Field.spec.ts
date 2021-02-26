@@ -892,7 +892,7 @@ describe('<Field />', () => {
     const input = wrapper.$el.querySelector('input');
     const meta = wrapper.$el.querySelector('#meta');
 
-    expect(meta?.textContent).toBe('valid');
+    expect(meta?.textContent).toBe('invalid');
     setValue(input, '');
     await flushPromises();
     expect(meta?.textContent).toBe('invalid');
@@ -917,8 +917,11 @@ describe('<Field />', () => {
 
     await flushPromises();
     const meta = wrapper.$el.querySelector('#meta');
-
-    expect(meta?.textContent).toBe('valid');
+    expect(meta?.textContent).toBe('invalid');
+    const input = wrapper.$el.querySelector('input');
+    setValue(input, '');
+    await flushPromises();
+    expect(meta?.textContent).toBe('invalid');
 
     wrapper.$el.querySelector('button').click();
     await flushPromises();
