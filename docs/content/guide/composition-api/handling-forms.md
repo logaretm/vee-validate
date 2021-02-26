@@ -303,8 +303,6 @@ export interface FormActions {
   setValues: (fields: Partial<Record<T, any>>) => void;
   setFieldTouched: (field: string, isTouched: boolean) => void;
   setTouched: (fields: Partial<Record<string, boolean>>) => void;
-  setFieldDirty: (field: string, isDirty: boolean) => void;
-  setDirty: (fields: Partial<Record<string, boolean>>) => void;
   resetForm: (state?: Partial<FormState>) => void;
 }
 ```

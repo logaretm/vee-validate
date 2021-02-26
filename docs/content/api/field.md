@@ -272,14 +272,6 @@ Because this handler doesn't set the field value, it might not report validation
 
 <code-title level="4">
 
-`setDirty: (isDirty: boolean) => void`
-
-</code-title>
-
-Sets the `dirty` meta flag for this field, useful to create your own `input` or other behaviors handlers
-
-<code-title level="4">
-
 `setTouched: (isTouched: boolean) => void`
 
 </code-title>

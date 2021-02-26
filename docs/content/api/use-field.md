@@ -406,21 +406,6 @@ setValidationState({ errors: [] });
 
 <code-title level="4">
 
-`setDirty: (isDirty: boolean) => void`
-
-</code-title>
-
-Sets the `dirty` meta flag for this field, useful to create your own `input` or other behaviors handlers
-
-```js
-const { setDirty } = useField('field', value => !!value);
-
-// mark the field as dirty
-setDirty(true);
-```
-
-<code-title level="4">
-
 `setTouched: (isTouched: boolean) => void`
 
 </code-title>
