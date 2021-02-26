@@ -425,6 +425,7 @@ function useMeta<TValue>(initialValue: MaybeReactive<TValue>, currentValue: Ref<
       meta.valid = !value.length;
     },
     {
+      immediate: true,
       flush: 'sync',
     }
   );
