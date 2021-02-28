@@ -90,7 +90,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   const { errorBag, setErrorBag, setFieldErrorBag } = useErrorBag(opts?.initialErrors);
 
   // Gets the first error of each field
-  const errors = computed(() => {
+  const errors = computed<FormErrors<TValues>>(() => {
     return keysOf(errorBag.value).reduce((acc, key) => {
       const bag = errorBag.value[key];
       if (bag && bag.length) {

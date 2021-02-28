@@ -10,8 +10,7 @@
     "standard",
     "plugin:jest/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
-    "prettier/@typescript-eslint"
+    "plugin:prettier/recommended"
   ],
   "plugins": ["jest", "prettier", "@typescript-eslint"],
   "rules": {
