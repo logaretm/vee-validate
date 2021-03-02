@@ -69,7 +69,8 @@ export default {
   },
   methods: {
     isRequired(value) {
-    return value ? true : 'This field is required';
+      return value ? true : 'This field is required';
+    },
   },
 };
 ```
