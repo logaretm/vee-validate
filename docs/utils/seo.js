@@ -15,7 +15,7 @@ export function generateSocialImage({
   textLeftOffset = 70,
   titleBottomOffset = 350,
   taglineTopOffset = 360,
-  textColor = '06d77b',
+  textColor = '09a884',
   taglineColor = 'ffffff',
   titleFontSize = 64,
   taglineFontSize = 48,
