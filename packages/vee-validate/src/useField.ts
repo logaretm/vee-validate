@@ -140,7 +140,7 @@ export function useField<TValue = unknown>(
         bails,
       });
     } else {
-      result = (await form.validateSchema(false))[unref(name)];
+      result = (await form.validateSchema(false))?.[unref(name)] ?? { valid: true, errors: [] };
     }
 
     meta.valid = result.valid;
