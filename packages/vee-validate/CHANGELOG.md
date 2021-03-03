@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.2](https://github.com/logaretm/vee-validate/compare/v4.2.1...v4.2.2) (2021-03-03)
+
+
+### Bug Fixes
+
+* ensure having a truthy fallback for fields missing in schema ([7cd6941](https://github.com/logaretm/vee-validate/commit/7cd694114403f7c252b6ba6b83c159110cdc58cf))
+* handle pending validation runs during field unmounting ([ef5a7cc](https://github.com/logaretm/vee-validate/commit/ef5a7ccb269db8bbdee446e76dd60ebe8704b57e))
+
+
+
+
+
 ## [4.2.1](https://github.com/logaretm/vee-validate/compare/v4.2.0...v4.2.1) (2021-02-26)
 
 
