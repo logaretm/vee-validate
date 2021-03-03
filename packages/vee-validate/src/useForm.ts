@@ -394,7 +394,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   const formCtx: FormContext<TValues> = {
     register: registerField,
     unregister: unregisterField,
-    fields: fieldsById,
+    fieldsById,
     values: formValues,
     setFieldErrorBag,
     errorBag,
@@ -534,7 +534,7 @@ async function validateYupSchema<TValues>(
       return err.inner || [];
     });
 
-  const fields = form.fields.value;
+  const fields = form.fieldsById.value;
   const errorsByPath = errors.reduce((acc, err) => {
     acc[err.path as keyof TValues] = err;
 

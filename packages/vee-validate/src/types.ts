@@ -110,7 +110,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   register(field: PrivateFieldComposite): void;
   unregister(field: PrivateFieldComposite): void;
   values: TValues;
-  fields: ComputedRef<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>;
+  fieldsById: ComputedRef<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>;
   submitCount: Ref<number>;
   schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>;
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
@@ -135,7 +135,7 @@ export interface PublicFormContext<TValues extends Record<string, any> = Record<
     FormContext<TValues>,
     | 'register'
     | 'unregister'
-    | 'fields'
+    | 'fieldsById'
     | 'schema'
     | 'validateSchema'
     | 'errorBag'

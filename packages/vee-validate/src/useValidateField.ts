@@ -12,7 +12,7 @@ export function useValidateField(path?: MaybeReactive<string>) {
 
   return function validateField(): Promise<ValidationResult> {
     if (path) {
-      field = normalizeField(form?.fields.value[unref(path)]);
+      field = normalizeField(form?.fieldsById.value[unref(path)]);
     }
 
     if (!field) {

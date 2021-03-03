@@ -12,7 +12,7 @@ export function useIsFieldValid(path?: MaybeReactive<string>) {
 
   return computed(() => {
     if (path) {
-      field = normalizeField(form?.fields.value[unref(path)]);
+      field = normalizeField(form?.fieldsById.value[unref(path)]);
     }
 
     if (!field) {
