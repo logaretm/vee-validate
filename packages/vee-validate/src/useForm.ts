@@ -521,7 +521,7 @@ async function validateYupSchema<TValues>(
       return err.inner || [];
     });
 
-  const fields = form.fieldsById.value;
+  const fieldsById = form.fieldsById.value || {};
   const errorsByPath = errors.reduce((acc, err) => {
     acc[err.path as keyof TValues] = err;
 
@@ -529,8 +529,8 @@ async function validateYupSchema<TValues>(
   }, {} as Record<keyof TValues, ValidationError>);
 
   // Aggregates the validation result
-  const aggregatedResult = keysOf(fields).reduce((result: Record<keyof TValues, ValidationResult>, fieldId) => {
-    const field: PrivateFieldComposite | PrivateFieldComposite[] = fields[fieldId];
+  const aggregatedResult = keysOf(fieldsById).reduce((result: Record<keyof TValues, ValidationResult>, fieldId) => {
+    const field: PrivateFieldComposite | PrivateFieldComposite[] = fieldsById[fieldId];
     const messages = (errorsByPath[fieldId] || { errors: [] }).errors;
     const fieldResult = {
       errors: messages,
