@@ -2,7 +2,7 @@
   <div class="pt-4">
     <h2 class="text-xl">Next Step</h2>
 
-    <nuxt-link :to="path" class="bg-accent-900 w-full flex items-start p-4 rounded text-white">
+    <nuxt-link :to="path" class="bg-accent-800 w-full flex items-start p-4 rounded text-white">
       <svg
         class="w-5 h-5 mr-2 mt-1 flex-shrink-0"
         fill="none"
