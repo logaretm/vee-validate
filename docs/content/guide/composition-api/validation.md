@@ -525,9 +525,9 @@ If you are interested on how to do the same for global validators check the [i18
 
 Each field has meta data associated with it, the `meta` property returned from `useField` contains information about the field:
 
-- `valid`: The current field validity, it starts off with `true` until the field is validated on mounted which will then reflect it's actual state
-- `touched`: If the field was blurred (unfocused), updated by the `handleBlur` function.
-- `dirty`: If the field value was updated, both `handleChange` and `handleInput` update this flag.
+- `valid`: The current field validity, automatically updated for you.
+- `touched`: If the field was **touched**, can be updated with `setTouched` on `useField` return value.
+- `dirty`: If the field value was updated, you cannot change its value.
 - `pending`: If the field's validations are still running, useful for long running async validation.
 - `initialValue`: The field's initial value, it is `undefined` if you didn't specify any.
 
@@ -553,13 +553,13 @@ interface FieldMeta {
 }
 ```
 
-The `meta` property is a reactive object, meaning you can use it in `computed` and derive additional computed state about your fields. In the following example we use the `meta.dirty` flag to check if the field value was changed or not
+In the following example we use the `meta.dirty` flag to check if the field value was changed or not
 
 ```vue
 <template>
   <input v-model="value" type="text" />
 
-  <button :disabled="!meta.dirty" @click="submit">Submit</button>
+  <button :disabled="!meta.dirty">Submit</button>
 </template>
 
 <script>
@@ -576,7 +576,6 @@ export default {
       errorMessage,
       value,
       meta,
-      submit,
     };
   },
 };

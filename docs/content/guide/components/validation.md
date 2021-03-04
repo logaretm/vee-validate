@@ -391,9 +391,9 @@ If you are interested on how to do the same for global validators check the [i18
 
 Each field has meta data associated with it, the `meta` property available on the `<Field />` component contains additional information about the field:
 
-- `valid`: The current field validity, will be `true` if there are no messages inside the `errors` array initially, but will be updated once the field is mounted.
-- `touched`: If the field was blurred (unfocused), updated by the `handleBlur` function.
-- `dirty`: If the field value was updated, both `handleChange` and `handleInput` update this flag.
+- `valid`: The current field validity, automatically updated for you.
+- `touched`: If the field was blurred (unfocused), can be updated with the `handleBlur` function or `setTouched` on the field's slot scope props.
+- `dirty`: If the field value was updated, you cannot change its value.
 - `pending`: If the field's validations are still running, useful for long running async validation.
 - `initialValue`: The field's initial value, it is `undefined` if you didn't specify any.
 
