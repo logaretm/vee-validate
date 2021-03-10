@@ -1,6 +1,6 @@
 <template>
   <div class="mt-8">
-    <h2 class="text-2xl font-display">Choose a flavor</h2>
+    <h2 class="text-2xl font-display inline-block">Choose a flavor</h2>
     <p class="mt-4">Before you go on, you should choose which flavor of vee-validate you want to use.</p>
 
     <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-8 text-white">
@@ -58,8 +58,13 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
+p {
+  @apply text-lg lg:text-base;
+}
+
 h2 {
-  @apply font-semibold relative;
+  @apply font-semibold relative text-3xl lg:text-xl;
+
   transform: translateX(2ch);
   &::before {
     @apply absolute text-accent-800;

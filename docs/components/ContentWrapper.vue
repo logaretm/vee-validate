@@ -1,5 +1,5 @@
 <template>
-  <nuxt-content :document="document" attr="value" />
+  <nuxt-content :document="document" class="content" />
 </template>
 
 <script>
@@ -9,13 +9,20 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
+.content {
+  @apply overflow-y-hidden;
+}
 * >>> {
+  p {
+    @apply text-lg lg:text-base;
+  }
+
   h1 {
     @apply text-4xl mb-8;
   }
 
   h2 {
-    @apply text-2xl;
+    @apply text-3xl lg:text-xl;
   }
 
   h3 {
@@ -40,7 +47,7 @@ export default {
   h3,
   h4,
   h5 {
-    @apply font-semibold my-8 relative;
+    @apply font-semibold my-8 relative inline-block;
     transform: translateX(2ch);
     &::before {
       @apply absolute text-accent-800;
@@ -48,8 +55,12 @@ export default {
       content: '#';
     }
 
-    @screen lg {
-      transform: none;
+    a {
+      @apply absolute inset-0;
+
+      &:focus {
+        @apply outline-none border-b-2 border-dotted;
+      }
     }
   }
 
@@ -79,7 +90,7 @@ export default {
   }
 
   .nuxt-content-highlight {
-    @apply my-4 text-sm;
+    @apply my-4 text-sm relative;
   }
 
   iframe {
@@ -95,7 +106,7 @@ export default {
   }
 
   *:not(pre) > code:not([class]) {
-    @apply text-sm px-1 rounded bg-gray-100 border border-gray-300 text-gray-500;
+    @apply font-mono p-1 rounded bg-gray-100 border border-gray-300 text-gray-500;
   }
 
   details {
@@ -135,14 +146,13 @@ export default {
 
   pre,
   pre[class*='language-'] {
+    @apply my-8 font-mono text-lg lg:text-base px-4 pt-8 pb-4;
     line-height: 1.4;
-    padding: 1.25rem 1.5rem;
-    margin: 0.85rem 0;
     background-color: #f6f6f6;
     border-radius: 6px;
     overflow: auto;
-    position: relative;
   }
+
   pre code,
   pre[class*='language-'] code {
     color: #3a385d;
@@ -150,8 +160,8 @@ export default {
     background-color: transparent;
     border-radius: 0;
   }
+
   div[class*='language-'] {
-    position: relative;
     background-color: #f6f6f6;
     border-radius: 6px;
   }
@@ -172,7 +182,6 @@ export default {
   div[class*='language-'] pre,
   div[class*='language-'] pre[class*='language-'] {
     background: transparent;
-    position: relative;
     z-index: 1;
   }
 
@@ -185,31 +194,28 @@ export default {
     color: #00000c;
   }
 
-  .language-html:before {
+  .language-html::before {
     content: 'html';
   }
-  .language-js:before {
+  .language-js::before {
     content: 'js';
   }
-  .language-ts:before {
+  .language-ts::before {
     content: 'ts';
   }
-  div[class~='language-javascript']:before {
+  div[class~='language-javascript']::before {
     content: 'js';
   }
-  div[class~='language-typescript']:before {
+  div[class~='language-typescript']::before {
     content: 'ts';
   }
-  div[class~='language-markup']:before {
+  div[class~='language-markup']::before {
     content: 'html';
   }
-  div[class~='language-json']:before {
+  div[class~='language-json']::before {
     content: 'json';
   }
-  div.reactivecontent {
-    width: 1000px;
-    margin-left: -100px;
-  }
+
   .token.punctuation {
     color: #a8a9cc;
   }
@@ -281,45 +287,22 @@ export default {
 
     pre,
     pre[class*='language-'] {
-      line-height: 1.4;
-      padding: 1.25rem 1.5rem;
-      margin: 0.85rem 0;
       background-color: #22212c;
-      border-radius: 6px;
-      overflow: auto;
-      position: relative;
     }
     pre code,
     pre[class*='language-'] code {
       color: #f8f8f2;
-      padding: 0;
       background-color: transparent;
-      border-radius: 0;
     }
     div[class*='language-'] {
-      position: relative;
       background-color: #22212c;
-      border-radius: 6px;
     }
     div[class*='language-'] .highlight-lines {
       background-color: #22212c;
       color: #f8f8f2;
-      user-select: none;
-      padding-top: 1.3rem;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      line-height: 1.4;
     }
     div[class*='language-'] .highlight-lines .highlighted {
       background-color: #f8ec06;
-    }
-    div[class*='language-'] pre,
-    div[class*='language-'] pre[class*='language-'] {
-      background: transparent;
-      position: relative;
-      z-index: 1;
     }
 
     *[class*='language-']::before {
@@ -331,31 +314,6 @@ export default {
       color: #00000c;
     }
 
-    .language-html:before {
-      content: 'html';
-    }
-    .language-js:before {
-      content: 'js';
-    }
-    .language-ts:before {
-      content: 'ts';
-    }
-    div[class~='language-javascript']:before {
-      content: 'js';
-    }
-    div[class~='language-typescript']:before {
-      content: 'ts';
-    }
-    div[class~='language-markup']:before {
-      content: 'html';
-    }
-    div[class~='language-json']:before {
-      content: 'json';
-    }
-    div.reactivecontent {
-      width: 1000px;
-      margin-left: -100px;
-    }
     .token.punctuation {
       color: #f8f8f2;
     }

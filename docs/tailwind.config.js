@@ -27,6 +27,16 @@ module.exports = {
     fontFamily: {
       display: ['Montserrat', 'sans-serif'],
       body: ['Noto Sans', 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+      mono: [
+        'ui-monospace',
+        'SFMono-Regular',
+        'Menlo',
+        'Monaco',
+        'Consolas',
+        'Liberation Mono',
+        'Courier New',
+        'monospace',
+      ],
     },
 
     extend: {
