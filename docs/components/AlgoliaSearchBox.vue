@@ -114,10 +114,10 @@ export default {
   --docsearch-primary-color: var(--accent);
   --docsearch-highlight-color: var(--docsearch-primary-color);
   --docsearch-text-color: var(--color-gray-200);
-  --docsearch-modal-background: var(--color-gray-100);
+  --docsearch-modal-background: #f6f6f6;
   --docsearch-searchbox-shadow: inset 0 0 0 2px var(--docsearch-primary-color);
-  --docsearch-searchbox-background: var(--color-gray-300);
-  --docsearch-searchbox-focus-background: var(--color-gray-300);
+  --docsearch-searchbox-background: #e8e8e8;
+  --docsearch-searchbox-focus-background: #e8e8e8;
   --docsearch-hit-color: var(--color-gray-200);
   --docsearch-muted-color: var(--color-gray-500);
   --docsearch-logo-color: var(--accent);
@@ -154,7 +154,10 @@ export default {
     --docsearch-muted-color: var(--color-gray-500);
   }
 
-  .DocSearch-NoResults {
+  .DocSearch-NoResults,
+  .DocSearch-Footer,
+  .DocSearch-Help,
+  .DocSearch-Reset {
     color: #e8e8e8;
   }
 }
