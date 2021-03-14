@@ -25,6 +25,8 @@ features:
 
 ## Quick Setup
 
+<br />
+
 ### Installation
 
 ```bash
