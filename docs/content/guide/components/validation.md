@@ -67,7 +67,7 @@ export default {
 
 [`yup`](https://github.com/jquense/yup) is a very popular, simple and powerful data validation library for JavaScript, you can use it in combination with vee-validate, You can use `yup` to define your validation rules for that field:
 
-```vue
+```vue{3,10,20}
 <template>
   <Form>
     <Field name="password" type="password" :rules="passwordRules" />

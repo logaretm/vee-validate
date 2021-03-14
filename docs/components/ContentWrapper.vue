@@ -3,8 +3,15 @@
 </template>
 
 <script>
+import Prism from 'prismjs';
+import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
+import 'prismjs/plugins/line-highlight/prism-line-highlight.js';
+
 export default {
   props: ['document'],
+  mounted() {
+    Prism.highlightAll();
+  },
 };
 </script>
 
@@ -14,7 +21,7 @@ export default {
 }
 * >>> {
   p {
-    @apply text-lg lg:text-base;
+    @apply text-lg antialiased;
   }
 
   h1 {
@@ -71,6 +78,10 @@ export default {
   ul {
     @apply px-8 my-4 list-disc;
 
+    li {
+      @apply text-lg antialiased;
+    }
+
     li + li {
       @apply mt-2;
     }
@@ -79,9 +90,9 @@ export default {
   .features {
     ul {
       li {
-        @apply relative flex items-center;
+        @apply relative flex items-center antialiased;
         &:before {
-          @apply w-5 h-5 absolute rounded-full flex text-accent-900 bg-accent-100 items-center justify-center;
+          @apply w-5 h-5 text-lg absolute rounded-full flex text-accent-900 bg-accent-100 items-center justify-center flex-shrink-0;
           content: '✓';
           left: -2rem;
         }
@@ -106,7 +117,7 @@ export default {
   }
 
   *:not(pre) > code:not([class]) {
-    @apply font-mono p-1 rounded bg-gray-100 border border-gray-300 text-gray-500;
+    @apply font-mono text-base p-1 rounded bg-gray-100 border border-gray-300 text-gray-500;
   }
 
   details {
@@ -146,7 +157,8 @@ export default {
 
   pre,
   pre[class*='language-'] {
-    @apply my-8 font-mono text-lg lg:text-base px-4 pt-8 pb-4;
+    @apply my-8 font-mono text-base px-4 pt-8 pb-4;
+    padding-left: 3.8rem;
     line-height: 1.4;
     background-color: #f6f6f6;
     border-radius: 6px;
@@ -192,6 +204,43 @@ export default {
     right: 1em;
     font-size: 0.75rem;
     color: #00000c;
+  }
+
+  .line-highlight {
+    @apply absolute right-0 left-0 bg-gray-300 opacity-30 select-none z-0 pointer-events-none;
+    transform: translateY(calc(2rem - 2px));
+  }
+
+  .line-numbers {
+    counter-reset: linenumber;
+  }
+
+  .line-numbers .line-numbers-rows {
+    @apply top-8;
+    position: absolute;
+    pointer-events: none;
+    left: 0;
+    width: 3rem;
+    letter-spacing: -1px;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .line-numbers-rows > span {
+    display: block;
+    counter-increment: linenumber;
+  }
+
+  .line-numbers-rows > span:before {
+    color: #848486;
+    background-color: #f6f6f6;
+    content: counter(linenumber);
+    display: block;
+    padding-right: 0.8em;
+    text-align: right;
   }
 
   .language-html::before {
@@ -368,6 +417,16 @@ export default {
     .token.doctype,
     .token.cdata {
       color: #7970a9;
+    }
+
+    .line-numbers-rows > span:before {
+      color: #7970a9;
+      background-color: #22212c;
+    }
+
+    .line-highlight {
+      @apply bg-dracula-selection;
+      mix-blend-mode: screen;
     }
 
     pre code,

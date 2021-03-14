@@ -1,5 +1,5 @@
 <template>
-  <aside>
+  <aside class="font-ui">
     <nav class="pt-24" v-show="headings.length">
       <p class="font-bold text-xs uppercase text-gray-400">On this page</p>
       <ul class="mt-4 space-y-1 text-sm">

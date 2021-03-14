@@ -111,6 +111,7 @@ export default {
 
 <style lang="postcss">
 .DocSearch {
+  font-family: Arial, Helvetica, sans-serif;
   --docsearch-primary-color: var(--accent);
   --docsearch-highlight-color: var(--docsearch-primary-color);
   --docsearch-text-color: var(--color-gray-200);

@@ -26,7 +26,8 @@ module.exports = {
   theme: {
     fontFamily: {
       display: ['Montserrat', 'sans-serif'],
-      body: ['Noto Sans', 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+      body: ['Atkinson-Hyperlegible', 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+      ui: ['Noto Sans', 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
       mono: [
         'ui-monospace',
         'SFMono-Regular',
@@ -41,9 +42,14 @@ module.exports = {
 
     extend: {
       fontSize: {
+        xs: '12px',
+        sm: '14px',
+        base: '16px',
+        lg: '20px',
         xl: 'calc(1em + 0.40vw)',
         '2xl': 'calc(1em + 0.75vw)',
         '3xl': 'calc(1em + 1.75vw)',
+        '4xl': 'calc(1em + 2vw)',
         '6xl': 'calc(1em + 2.8vw)',
       },
 
@@ -66,7 +72,7 @@ module.exports = {
         'gray-300': 'hsl(0 0% 74%)',
         'gray-200': '#e8e8e8',
         'gray-100': '#f6f6f6',
-
+        'dracula-selection': '#454158',
         background: '#22212C',
       },
 

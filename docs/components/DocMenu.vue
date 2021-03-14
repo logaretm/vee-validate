@@ -1,5 +1,5 @@
 <template>
-  <aside class="px-6 pt-24">
+  <aside class="px-6 pt-24 font-ui">
     <nav class="space-y-8 md:text-sm overflow-y-auto overscroll-y-contain">
       <div v-for="category in categories" :key="category.title">
         <p class="md:text-xs font-bold text-gray-400 uppercase">{{ category.title }}</p>

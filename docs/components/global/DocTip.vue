@@ -26,7 +26,7 @@
       <p v-else class="font-bold text-lg uppercase">{{ type }}</p>
     </div>
 
-    <div class="mt-4 text-black dark:text-white">
+    <div class="mt-4 text-black dark:text-white px-4 lg:px-8">
       <slot />
     </div>
   </div>
