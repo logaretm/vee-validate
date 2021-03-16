@@ -53,6 +53,7 @@ function data() {
 }
 
 export const ValidationProvider = (Vue as withProviderPrivates).extend({
+  name: 'ValidationProvider',
   inject: {
     $_veeObserver: {
       from: '$_veeObserver',
