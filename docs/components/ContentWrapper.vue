@@ -3,15 +3,8 @@
 </template>
 
 <script>
-import Prism from 'prismjs';
-import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
-import 'prismjs/plugins/line-highlight/prism-line-highlight.js';
-
 export default {
   props: ['document'],
-  mounted() {
-    Prism.highlightAll();
-  },
 };
 </script>
 

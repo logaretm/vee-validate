@@ -1,10 +1,10 @@
 <template>
-  <aside class="px-6 pt-24 font-ui">
-    <nav class="space-y-8 md:text-sm overflow-y-auto overscroll-y-contain">
+  <div class="px-6 pt-24 font-ui">
+    <div class="space-y-8 md:text-sm overflow-y-auto overscroll-y-contain">
       <div v-for="category in categories" :key="category.title">
         <p class="md:text-xs font-bold text-gray-400 uppercase">{{ category.title }}</p>
-        <ul class="mt-3 space-y-2 w-full">
-          <li v-for="page in category.pages" :key="page.title" class="group">
+        <div class="mt-3 space-y-2 w-full">
+          <div v-for="page in category.pages" :key="page.title" class="group">
             <nuxt-link v-if="!page.pages" :to="page.path">{{ page.menuTitle || page.title }}</nuxt-link>
 
             <div v-else class="flex flex-col bg-gray-200 dark:bg-gray-600 w-full rounded-lg py-3 px-2">
@@ -43,11 +43,11 @@
                 </ul>
               </ExpandTransition>
             </div>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
-    </nav>
-  </aside>
+    </div>
+  </div>
 </template>
 
 <script>

@@ -1,4 +1,6 @@
 const basePath = process.env.NODE_ENV === 'production' ? '/v4/' : '/';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { prismHighlighter } = require('./highlighter');
 
 export default {
   router: {
@@ -75,6 +77,7 @@ export default {
       prism: {
         theme: false,
       },
+      highlighter: prismHighlighter,
     },
   },
 
