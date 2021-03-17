@@ -1,6 +1,6 @@
 <template>
   <transition name="slide">
-    <div class="SideMenu lg:hidden" v-if="isOpen">
+    <div class="SideMenu lg:hidden" v-show="isOpen">
       <DocMenu />
     </div>
   </transition>
