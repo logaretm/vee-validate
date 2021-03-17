@@ -12,6 +12,7 @@ export {
   FormState,
   FormValidationResult,
   FormContext,
+  PublicFormContext,
   SubmissionContext,
   SubmissionHandler,
 } from './types';
