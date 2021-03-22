@@ -159,6 +159,7 @@ export function useField<TValue = unknown>(
     }
 
     value.value = newValue;
+    meta.hadValueUserInteraction = true;
     if (!validateOnValueUpdate) {
       return validateWithStateMutation();
     }
@@ -364,6 +365,8 @@ function useValidationState<TValue>({
     if (!hasCheckedAttr(type)) {
       value.value = normalizeEventValue(e) as TValue;
     }
+
+    meta.hadValueUserInteraction = true;
   };
 
   // Updates the validation state with the validation result
@@ -390,6 +393,7 @@ function useValidationState<TValue>({
     setErrors(state?.errors || []);
     meta.touched = state?.touched ?? false;
     meta.pending = false;
+    meta.hadValueUserInteraction = false;
   }
 
   return {
@@ -413,6 +417,7 @@ function useMeta<TValue>(initialValue: MaybeReactive<TValue>, currentValue: Ref<
     touched: false,
     pending: false,
     valid: true,
+    hadValueUserInteraction: false,
     initialValue: computed(() => unref(initialValue) as TValue | undefined),
     dirty: computed(() => {
       return !isEqual(currentValue.value, unref(initialValue));

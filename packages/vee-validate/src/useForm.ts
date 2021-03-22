@@ -538,8 +538,10 @@ async function validateYupSchema<TValues>(
     };
 
     result[fieldId] = fieldResult;
-    const isTouched = Array.isArray(field) ? field.some(f => f.meta.touched) : field.meta.touched;
-    if (!shouldMutate && !isTouched) {
+    const hadInteraction = Array.isArray(field)
+      ? field.some(f => f.meta.hadValueUserInteraction)
+      : field.meta.hadValueUserInteraction;
+    if (!shouldMutate && !hadInteraction) {
       // Update the valid flag regardless to keep it accurate
       if (Array.isArray(field)) {
         field.forEach(f => (f.meta.valid = fieldResult.valid));
@@ -587,10 +589,11 @@ function useFormInitialValues<TValues extends Record<string, any>>(
       return;
     }
 
-    // update the pristine (non-touched fields)
-    // we exclude dirty and untouched fields because it's unlikely you want to change the form values using initial values
+    // update the non-interacted-by-user fields
+    // those are excluded because it's unlikely you want to change the form values using initial values
     // we mostly watch them for API population or newly inserted fields
-    const isSafeToUpdate = (f: PrivateFieldComposite) => f.meta.touched;
+    // if the user API is taking too much time before user interaction they should consider disabling or hiding their inputs until the values are ready
+    const isSafeToUpdate = (f: PrivateFieldComposite) => f.meta.hadValueUserInteraction;
     keysOf(fields.value).forEach(fieldPath => {
       const field: PrivateFieldComposite | PrivateFieldComposite[] = fields.value[fieldPath];
       const touchedByUser = Array.isArray(field) ? field.some(isSafeToUpdate) : isSafeToUpdate(field);

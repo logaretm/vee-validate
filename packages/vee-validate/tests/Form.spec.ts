@@ -1659,4 +1659,44 @@ describe('<Form />', () => {
     await flushPromises();
     expect(span.textContent).toBe('valid');
   });
+
+  // #3228
+  test('should not validate touched fields with yup schema if other fields value change', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object({
+          email: yup.string().required(),
+          password: yup.string().required(),
+        });
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema"  v-slot="{ errors }">
+        <Field id="email" name="email" as="input" :validate-on-blur="false" />
+        <Field id="password" name="password" as="input" :validate-on-blur="false" />
+
+        <span>{{ errors.email }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const span = wrapper.$el.querySelector('span');
+    const email = wrapper.$el.querySelector('#email');
+    const password = wrapper.$el.querySelector('#password');
+    // the field is now blurred
+    dispatchEvent(email, 'blur');
+    await flushPromises();
+    // no error messages for email
+    expect(span.textContent).toBe('');
+
+    // should be valid now
+    setValue(password, '');
+    await flushPromises();
+    // again there should be no error messages for email, only the password
+    expect(span.textContent).toBe('');
+  });
 });
