@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.3](https://github.com/logaretm/vee-validate/compare/v4.2.2...v4.2.3) (2021-03-22)
+
+
+### Bug Fixes
+
+* prevent yup schema from setting non-interacted fields errors closes [#3228](https://github.com/logaretm/vee-validate/issues/3228) ([534f8b2](https://github.com/logaretm/vee-validate/commit/534f8b28850c9f28245a748f956d1358bb7cb2e1))
+
+
+
+
+
 ## [4.2.2](https://github.com/logaretm/vee-validate/compare/v4.2.1...v4.2.2) (2021-03-03)
 
 
