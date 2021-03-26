@@ -388,7 +388,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     schema: opts?.validationSchema,
     submitCount,
     validateSchema: isYupValidator(opts?.validationSchema)
-      ? (shouldMutate = false) => {
+      ? shouldMutate => {
           return validateYupSchema(formCtx, shouldMutate);
         }
       : undefined,
@@ -505,7 +505,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
 
 async function validateYupSchema<TValues>(
   form: FormContext<TValues>,
-  shouldMutate = false
+  shouldMutate?: boolean
 ): Promise<Record<keyof TValues, ValidationResult>> {
   const errors: ValidationError[] = await (form.schema as YupValidator)
     .validate(form.values, { abortEarly: false })
@@ -538,26 +538,32 @@ async function validateYupSchema<TValues>(
     };
 
     result[fieldId] = fieldResult;
-    const hadInteraction = Array.isArray(field)
-      ? field.some(f => f.meta.hadValueUserInteraction)
-      : field.meta.hadValueUserInteraction;
-    if (!shouldMutate && !hadInteraction) {
+    function updateValidMeta() {
       // Update the valid flag regardless to keep it accurate
       if (Array.isArray(field)) {
         field.forEach(f => (f.meta.valid = fieldResult.valid));
-      } else {
-        field.meta.valid = fieldResult.valid;
+        return;
       }
+
+      field.meta.valid = fieldResult.valid;
+    }
+
+    function updateValidationState() {
+      if (Array.isArray(field)) {
+        field[0].setValidationState(fieldResult);
+        return;
+      }
+
+      field.setValidationState(fieldResult);
+    }
+
+    if (shouldMutate) {
+      updateValidationState();
+
       return result;
     }
 
-    if (Array.isArray(field)) {
-      field[0].setValidationState(fieldResult);
-
-      return result;
-    }
-
-    field.setValidationState(fieldResult);
+    updateValidMeta();
 
     return result;
   }, {} as Record<keyof TValues, ValidationResult>);
@@ -589,14 +595,14 @@ function useFormInitialValues<TValues extends Record<string, any>>(
       return;
     }
 
-    // update the non-interacted-by-user fields
+    // update the pristine non-touched fields
     // those are excluded because it's unlikely you want to change the form values using initial values
     // we mostly watch them for API population or newly inserted fields
     // if the user API is taking too much time before user interaction they should consider disabling or hiding their inputs until the values are ready
-    const isSafeToUpdate = (f: PrivateFieldComposite) => f.meta.hadValueUserInteraction;
+    const hadInteraction = (f: PrivateFieldComposite) => f.meta.touched;
     keysOf(fields.value).forEach(fieldPath => {
       const field: PrivateFieldComposite | PrivateFieldComposite[] = fields.value[fieldPath];
-      const touchedByUser = Array.isArray(field) ? field.some(isSafeToUpdate) : isSafeToUpdate(field);
+      const touchedByUser = Array.isArray(field) ? field.some(hadInteraction) : hadInteraction(field);
       if (touchedByUser) {
         return;
       }

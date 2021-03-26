@@ -26,7 +26,6 @@ export interface FieldMeta<TValue> {
   dirty: boolean;
   valid: boolean;
   pending: boolean;
-  hadValueUserInteraction: boolean;
   initialValue?: TValue;
 }
 
