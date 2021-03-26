@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.4](https://github.com/logaretm/vee-validate/compare/v4.2.3...v4.2.4) (2021-03-26)
+
+**Note:** Version bump only for package @vee-validate/zod
+
+
+
+
+
 ## [4.2.3](https://github.com/logaretm/vee-validate/compare/v4.2.2...v4.2.3) (2021-03-22)
 
 **Note:** Version bump only for package @vee-validate/zod

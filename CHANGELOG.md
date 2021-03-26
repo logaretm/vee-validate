@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.4](https://github.com/logaretm/vee-validate/compare/v4.2.3...v4.2.4) (2021-03-26)
+
+
+### Bug Fixes
+
+* validation triggered on value change ([10549b7](https://github.com/logaretm/vee-validate/commit/10549b77dc350cee4f198cb14e3fd12f61e12b80))
+
+
+
+
+
 ## [4.2.3](https://github.com/logaretm/vee-validate/compare/v4.2.2...v4.2.3) (2021-03-22)
 
 
