@@ -174,12 +174,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       return;
     }
 
-    if (Array.isArray(fieldInstance)) {
-      fieldInstance.forEach(f => f.setTouched(isTouched));
-      return;
-    }
-
-    fieldInstance.setTouched(isTouched);
+    applyFieldMutation(fieldInstance, f => f.setTouched(isTouched));
   }
 
   /**
@@ -538,32 +533,14 @@ async function validateYupSchema<TValues>(
     };
 
     result[fieldId] = fieldResult;
-    function updateValidMeta() {
-      // Update the valid flag regardless to keep it accurate
-      if (Array.isArray(field)) {
-        field.forEach(f => (f.meta.valid = fieldResult.valid));
-        return;
-      }
-
-      field.meta.valid = fieldResult.valid;
-    }
-
-    function updateValidationState() {
-      if (Array.isArray(field)) {
-        field[0].setValidationState(fieldResult);
-        return;
-      }
-
-      field.setValidationState(fieldResult);
-    }
 
     if (shouldMutate) {
-      updateValidationState();
+      applyFieldMutation(field, f => f.setValidationState(fieldResult), true);
 
       return result;
     }
 
-    updateValidMeta();
+    applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
 
     return result;
   }, {} as Record<keyof TValues, ValidationResult>);
