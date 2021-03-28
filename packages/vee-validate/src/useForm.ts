@@ -8,7 +8,7 @@ import {
   GenericValidateFunction,
   SubmitEvent,
   ValidationResult,
-  MaybeReactive,
+  MaybeRef,
   FormState,
   FormValidationResult,
   PrivateFieldComposite,
@@ -30,7 +30,7 @@ import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>;
-  initialValues?: MaybeReactive<TValues>;
+  initialValues?: MaybeRef<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;
   initialTouched?: Record<keyof TValues, boolean>;
   validateOnMount?: boolean;
@@ -478,7 +478,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 function useFormMeta<TValues extends Record<string, unknown>>(
   fields: Ref<PrivateFieldComposite[]>,
   currentValues: TValues,
-  initialValues: MaybeReactive<TValues>
+  initialValues: MaybeRef<TValues>
 ) {
   const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending' | 'valid'>, 'every' | 'some'> = {
     touched: 'some',
@@ -562,7 +562,7 @@ async function validateYupSchema<TValues>(
 function useFormInitialValues<TValues extends Record<string, any>>(
   fields: Ref<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>,
   formValues: TValues,
-  providedValues?: MaybeReactive<TValues>
+  providedValues?: MaybeRef<TValues>
 ) {
   const initialValues = ref<TValues>((unref(providedValues) as TValues) || ({} as TValues));
   // acts as a read only proxy of the initial values object

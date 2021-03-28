@@ -1,12 +1,12 @@
 import { computed, inject, unref } from 'vue';
 import { FieldContextSymbol, FormContextSymbol } from './symbols';
-import { MaybeReactive } from './types';
+import { MaybeRef } from './types';
 import { getFromPath, injectWithSelf } from './utils';
 
 /**
  * Gives access to a field's current value
  */
-export function useFieldValue<TValue = unknown>(path?: MaybeReactive<string>) {
+export function useFieldValue<TValue = unknown>(path?: MaybeRef<string>) {
   const form = injectWithSelf(FormContextSymbol);
   // We don't want to use self injected context as it doesn't make sense
   const field = path ? undefined : inject(FieldContextSymbol);

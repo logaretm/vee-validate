@@ -1,12 +1,12 @@
 import { computed, inject, unref } from 'vue';
 import { FieldContextSymbol, FormContextSymbol } from './symbols';
-import { MaybeReactive } from './types';
+import { MaybeRef } from './types';
 import { injectWithSelf, normalizeField, warn } from './utils';
 
 /**
  * If a field is validated and is valid
  */
-export function useIsFieldValid(path?: MaybeReactive<string>) {
+export function useIsFieldValid(path?: MaybeRef<string>) {
   const form = injectWithSelf(FormContextSymbol);
   let field = path ? undefined : inject(FieldContextSymbol);
 

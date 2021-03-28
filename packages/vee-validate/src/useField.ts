@@ -17,7 +17,7 @@ import { validate as validateValue } from './validate';
 import {
   FormContext,
   ValidationResult,
-  MaybeReactive,
+  MaybeRef,
   GenericValidateFunction,
   FieldMeta,
   YupValidator,
@@ -40,14 +40,14 @@ import { isCallable } from '../../shared';
 import { FieldContextSymbol, FormInitialValuesSymbol, FormContextSymbol } from './symbols';
 
 interface FieldOptions<TValue = unknown> {
-  initialValue?: MaybeReactive<TValue>;
+  initialValue?: MaybeRef<TValue>;
   validateOnValueUpdate: boolean;
   validateOnMount?: boolean;
   bails?: boolean;
   type?: string;
-  valueProp?: MaybeReactive<TValue>;
-  uncheckedValue?: MaybeReactive<TValue>;
-  label?: MaybeReactive<string>;
+  valueProp?: MaybeRef<TValue>;
+  uncheckedValue?: MaybeRef<TValue>;
+  label?: MaybeRef<string>;
 }
 
 type RuleExpression<TValue> =
@@ -64,8 +64,8 @@ let ID_COUNTER = 0;
  * Creates a field composite.
  */
 export function useField<TValue = unknown>(
-  name: MaybeReactive<string>,
-  rules?: MaybeReactive<RuleExpression<TValue>>,
+  name: MaybeRef<string>,
+  rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
 ): FieldComposable<TValue> {
   const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
@@ -326,9 +326,9 @@ function useValidationState<TValue>({
   type,
   valueProp,
 }: {
-  name: MaybeReactive<string>;
-  valueProp?: MaybeReactive<TValue>;
-  initValue?: MaybeReactive<TValue>;
+  name: MaybeRef<string>;
+  valueProp?: MaybeRef<TValue>;
+  initValue?: MaybeRef<TValue>;
   form?: FormContext;
   type?: string;
 }) {
@@ -411,7 +411,7 @@ function useValidationState<TValue>({
 /**
  * Exposes meta flags state and some associated actions with them.
  */
-function useMeta<TValue>(initialValue: MaybeReactive<TValue>, currentValue: Ref<TValue>, errors: Ref<string[]>) {
+function useMeta<TValue>(initialValue: MaybeRef<TValue>, currentValue: Ref<TValue>, errors: Ref<string[]>) {
   const meta = reactive({
     touched: false,
     pending: false,
@@ -453,8 +453,8 @@ function extractRuleFromSchema<TValue>(schema: Record<string, RuleExpression<TVa
  * Manages the field value
  */
 function useFieldValue<TValue>(
-  initialValue: MaybeReactive<TValue | undefined>,
-  path: MaybeReactive<string>,
+  initialValue: MaybeRef<TValue | undefined>,
+  path: MaybeRef<string>,
   form?: FormContext
 ): WritableRef<TValue> {
   // if no form is associated, use a regular ref.
@@ -477,7 +477,7 @@ function useFieldValue<TValue>(
   return value as WritableRef<TValue>;
 }
 
-function useErrorsSource(path: MaybeReactive<string>, form?: FormContext) {
+function useErrorsSource(path: MaybeRef<string>, form?: FormContext) {
   if (!form) {
     const errors = ref<string[]>([]);
     return {

@@ -104,7 +104,7 @@ interface FieldState {
 }
 
 type useField = (
-  fieldName: MaybeReactive<string>,
+  fieldName: MaybeRef<string>,
   rules: RuleExpression,
   opts?: FieldOptions
 ) => {

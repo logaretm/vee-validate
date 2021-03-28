@@ -1,12 +1,12 @@
 import { computed, inject, unref } from 'vue';
 import { FieldContextSymbol, FormContextSymbol } from './symbols';
-import { MaybeReactive } from './types';
+import { MaybeRef } from './types';
 import { injectWithSelf, normalizeField, warn } from './utils';
 
 /**
  * If a field is touched or not
  */
-export function useIsFieldTouched(path?: MaybeReactive<string>) {
+export function useIsFieldTouched(path?: MaybeRef<string>) {
   const form = injectWithSelf(FormContextSymbol);
   let field = path ? undefined : inject(FieldContextSymbol);
 

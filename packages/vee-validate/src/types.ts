@@ -19,7 +19,7 @@ export type KnownKeys<T> = {
   ? U
   : never;
 
-export type MaybeReactive<T> = Ref<T> | ComputedRef<T> | T;
+export type MaybeRef<T> = Ref<T> | ComputedRef<T> | T;
 
 export interface FieldMeta<TValue> {
   touched: boolean;
@@ -40,14 +40,14 @@ export type WritableRef<TValue> = Ref<TValue> | WritableComputedRef<TValue>;
 export interface PrivateFieldComposite<TValue = unknown> {
   fid: number;
   idx: number;
-  name: MaybeReactive<string>;
+  name: MaybeRef<string>;
   value: WritableRef<TValue>;
   meta: FieldMeta<TValue>;
   errors: Ref<string[]>;
   errorMessage: ComputedRef<string | undefined>;
   type?: string;
-  valueProp?: MaybeReactive<TValue>;
-  uncheckedValue?: MaybeReactive<TValue>;
+  valueProp?: MaybeRef<TValue>;
+  uncheckedValue?: MaybeRef<TValue>;
   checked?: ComputedRef<boolean>;
   resetField(state?: FieldState<TValue>): void;
   handleReset(state?: FieldState<TValue>): void;
