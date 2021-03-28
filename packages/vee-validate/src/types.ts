@@ -57,6 +57,7 @@ export interface PrivateFieldComposite<TValue = unknown> {
   handleInput(e?: Event | unknown): void;
   setValidationState(state: ValidationResult): void;
   setTouched(isTouched: boolean): void;
+  setErrors(message: string | string[]): void;
 }
 
 export type FieldComposable<TValue = unknown> = Omit<PrivateFieldComposite<TValue>, 'idx' | 'fid'>;
@@ -83,7 +84,7 @@ export interface SetFieldValueOptions {
 }
 export interface FormActions<TValues extends Record<string, unknown>> {
   setFieldValue<T extends keyof TValues>(field: T, value: TValues[T], opts?: Partial<SetFieldValueOptions>): void;
-  setFieldError: (field: keyof TValues, message: string | undefined) => void;
+  setFieldError: (field: keyof TValues, message: string | string[] | undefined) => void;
   setErrors: (fields: FormErrors<TValues>) => void;
   setValues<T extends keyof TValues>(fields: Partial<Record<T, TValues[T]>>): void;
   setFieldTouched: (field: keyof TValues, isTouched: boolean) => void;
@@ -117,7 +118,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   validate(): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
   errorBag: Ref<FormErrorBag<TValues>>;
-  setFieldErrorBag(field: string, messages: string[]): void;
+  setFieldErrorBag(field: string, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown): void;
   meta: ComputedRef<{
     dirty: boolean;

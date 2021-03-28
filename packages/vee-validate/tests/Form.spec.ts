@@ -1699,4 +1699,28 @@ describe('<Form />', () => {
     // again there should be no error messages for email, only the password
     expect(span.textContent).toBe('');
   });
+
+  test('can set multiple field errors on the form level', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm v-slot="{ setFieldError }">
+        <Field name="whatever" v-slot="{ field, errors, setErrors }" rules="required">
+          <input v-bind="field" />
+          <ul>
+            <li v-for="error in errors">{{ error }}</li>
+          </ul>
+          <button type="button" @click="setFieldError('whatever', ['bad', 'wrong'])">Set errors</button>
+        </Field>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const list = document.querySelector('ul');
+    expect(list?.children).toHaveLength(0);
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(list?.children).toHaveLength(2);
+    expect(list?.textContent).toBe('badwrong');
+  });
 });

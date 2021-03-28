@@ -17,7 +17,15 @@ import {
   FormErrors,
   FormErrorBag,
 } from './types';
-import { getFromPath, isYupValidator, keysOf, resolveNextCheckboxValue, setInPath, unsetPath } from './utils';
+import {
+  applyFieldMutation,
+  getFromPath,
+  isYupValidator,
+  keysOf,
+  resolveNextCheckboxValue,
+  setInPath,
+  unsetPath,
+} from './utils';
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
 
 interface FormOptions<TValues extends Record<string, any>> {
@@ -101,14 +109,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   /**
    * Manually sets an error message on a specific field
    */
-  function setFieldError(field: keyof TValues, message: string | undefined) {
+  function setFieldError(field: keyof TValues, message: string | string[] | undefined) {
     setFieldErrorBag(field, message);
   }
 
   /**
    * Sets errors for the fields specified in the object
    */
-  function setErrors(fields: Partial<Record<keyof TValues, string | undefined>>) {
+  function setErrors(fields: Partial<Record<keyof TValues, string | string[] | undefined>>) {
     setErrorBag(fields);
   }
 

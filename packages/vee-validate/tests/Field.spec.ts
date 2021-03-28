@@ -927,4 +927,28 @@ describe('<Field />', () => {
     await flushPromises();
     expect(meta?.textContent).toBe('invalid');
   });
+
+  test('can set multiple field errors', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <div>
+        <Field name="whatever" v-slot="{ field, errors, setErrors }" rules="required">
+          <input v-bind="field" />
+          <ul>
+            <li v-for="error in errors">{{ error }}</li>
+          </ul>
+          <button type="button" @click="setErrors(['bad', 'wrong'])">Set errors</button>
+        </Field>
+      </div>
+    `,
+    });
+
+    await flushPromises();
+    const list = document.querySelector('ul');
+    expect(list?.children).toHaveLength(0);
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(list?.children).toHaveLength(2);
+    expect(list?.textContent).toBe('badwrong');
+  });
 });

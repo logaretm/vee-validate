@@ -89,6 +89,7 @@ export function useField<TValue = unknown>(
     handleInput,
     resetValidationState,
     setValidationState,
+    setErrors,
     value,
     checked,
   } = useValidationState<TValue>({
@@ -216,6 +217,7 @@ export function useField<TValue = unknown>(
     handleInput,
     setValidationState,
     setTouched,
+    setErrors,
   };
 
   provide(FieldContextSymbol, field);
@@ -396,6 +398,7 @@ function useValidationState<TValue>({
     meta,
     errors,
     errorMessage,
+    setErrors,
     setValidationState,
     resetValidationState,
     handleBlur,
@@ -480,8 +483,8 @@ function useErrorsSource(path: MaybeReactive<string>, form?: FormContext) {
     return {
       errors: computed(() => errors.value),
       errorMessage: computed<string | undefined>(() => errors.value[0]),
-      setErrors: (messages: string[]) => {
-        errors.value = messages;
+      setErrors: (messages: string | string[]) => {
+        errors.value = Array.isArray(messages) ? messages : [messages];
       },
     };
   }
@@ -491,7 +494,7 @@ function useErrorsSource(path: MaybeReactive<string>, form?: FormContext) {
   return {
     errors,
     errorMessage: computed<string | undefined>(() => errors.value[0]),
-    setErrors: (messages: string[]) => {
+    setErrors: (messages: string | string[]) => {
       form.setFieldErrorBag(unref(path), messages);
     },
   };

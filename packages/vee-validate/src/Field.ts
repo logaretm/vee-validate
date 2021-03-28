@@ -83,6 +83,7 @@ export const Field = defineComponent({
       handleReset,
       meta,
       checked,
+      setErrors,
     } = useField(name, rules, {
       validateOnMount: props.validateOnMount,
       bails: props.bails,
@@ -169,6 +170,7 @@ export const Field = defineComponent({
         handleReset,
         handleBlur,
         setTouched,
+        setErrors,
       };
     });
 
