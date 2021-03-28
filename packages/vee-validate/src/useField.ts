@@ -102,7 +102,7 @@ export function useField<TValue = unknown>(
 
   const normalizedRules = computed(() => {
     let rulesValue = unref(rules);
-    const schema = form?.schema;
+    const schema = unref(form?.schema);
     if (schema && !isYupValidator(schema)) {
       rulesValue = extractRuleFromSchema<TValue>(schema, unref(name)) || rulesValue;
     }

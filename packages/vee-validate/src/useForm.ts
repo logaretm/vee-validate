@@ -29,7 +29,9 @@ import {
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
 
 interface FormOptions<TValues extends Record<string, any>> {
-  validationSchema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>;
+  validationSchema?: MaybeRef<
+    Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>
+  >;
   initialValues?: MaybeRef<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;
   initialTouched?: Record<keyof TValues, boolean>;
@@ -381,6 +383,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setInPath(initialValues.value, path, value);
   }
 
+  const schema = opts?.validationSchema;
   const formCtx: FormContext<TValues> = {
     register: registerField,
     unregister: unregisterField,
@@ -388,9 +391,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     values: formValues,
     setFieldErrorBag,
     errorBag,
-    schema: opts?.validationSchema,
+    schema,
     submitCount,
-    validateSchema: isYupValidator(opts?.validationSchema)
+    validateSchema: isYupValidator(unref(schema))
       ? shouldMutate => {
           return validateYupSchema(formCtx, shouldMutate);
         }
@@ -446,6 +449,12 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       formCtx.validateSchema(false);
     }
   });
+
+  if (isRef(schema)) {
+    watch(schema, () => {
+      formCtx.validateSchema?.(true);
+    });
+  }
 
   // Provide injections
   provide(FormContextSymbol, formCtx as FormContext);
@@ -510,7 +519,7 @@ async function validateYupSchema<TValues>(
   form: FormContext<TValues>,
   shouldMutate?: boolean
 ): Promise<Record<keyof TValues, ValidationResult>> {
-  const errors: ValidationError[] = await (form.schema as YupValidator)
+  const errors: ValidationError[] = await (unref(form.schema) as YupValidator)
     .validate(form.values, { abortEarly: false })
     .then(() => [])
     .catch((err: ValidationError) => {

@@ -113,7 +113,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   values: TValues;
   fieldsById: ComputedRef<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>;
   submitCount: Ref<number>;
-  schema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>;
+  schema?: MaybeRef<Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>>;
   validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
   validate(): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;

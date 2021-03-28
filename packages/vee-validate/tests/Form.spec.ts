@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import { defineRule } from '@/vee-validate';
 import { mountWithHoc, setValue, setChecked, dispatchEvent } from './helpers';
 import * as yup from 'yup';
-import { onErrorCaptured, reactive, ref, Ref } from 'vue';
+import { computed, onErrorCaptured, reactive, ref, Ref } from 'vue';
 
 describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
@@ -1722,5 +1722,82 @@ describe('<Form />', () => {
     await flushPromises();
     expect(list?.children).toHaveLength(2);
     expect(list?.textContent).toBe('badwrong');
+  });
+
+  test('supports computed yup schemas', async () => {
+    mountWithHoc({
+      setup() {
+        const acceptList = ref(['1', '2']);
+        const schema = computed(() => {
+          return yup.object({
+            password: yup.string().oneOf(acceptList.value),
+          });
+        });
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema" v-slot="{ errors }">
+        <Field name="password" />
+        <span>{{ errors.password }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    expect(document.querySelector('span')?.textContent).toBe('');
+    setValue(input, '3');
+    await flushPromises();
+    // 3 is not allowed yet
+    expect(document.querySelector('span')?.textContent).toBeTruthy();
+    await flushPromises();
+    // field is re-validated
+    setValue(input, '2');
+    await flushPromises();
+
+    expect(document.querySelector('span')?.textContent).toBe('');
+  });
+
+  test('re-validates when a computed yup schema changes', async () => {
+    const acceptList = ref(['1', '2']);
+    function addItem(item: string) {
+      acceptList.value.push(item);
+    }
+
+    mountWithHoc({
+      setup() {
+        const schema = computed(() => {
+          return yup.object({
+            password: yup.string().oneOf(acceptList.value),
+          });
+        });
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema" v-slot="{ errors }">
+        <Field name="password" />
+        <span>{{ errors.password }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    expect(document.querySelector('span')?.textContent).toBe('');
+    setValue(input, '3');
+    await flushPromises();
+    // 3 is not allowed yet
+    expect(document.querySelector('span')?.textContent).toBeTruthy();
+
+    // field is re-validated automatically
+    addItem('3');
+    await flushPromises();
+    expect(document.querySelector('span')?.textContent).toBe('');
   });
 });
