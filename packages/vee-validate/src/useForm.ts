@@ -16,6 +16,7 @@ import {
   PublicFormContext,
   FormErrors,
   FormErrorBag,
+  SchemaValidationMode,
 } from './types';
 import {
   applyFieldMutation,
@@ -301,7 +302,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     if (formCtx.validateSchema) {
-      return formCtx.validateSchema(true).then(results => {
+      return formCtx.validateSchema('force').then(results => {
         return keysOf(results)
           .map(r => ({ key: r, errors: results[r].errors }))
           .reduce(resultReducer, { errors: {}, valid: true });
@@ -394,8 +395,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     schema,
     submitCount,
     validateSchema: isYupValidator(unref(schema))
-      ? shouldMutate => {
-          return validateYupSchema(formCtx, shouldMutate);
+      ? mode => {
+          return validateYupSchema(formCtx, mode);
         }
       : undefined,
     validate,
@@ -446,13 +447,13 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     // otherwise run initial silent validation through schema if available
     // the useField should skip their own silent validation if a yup schema is present
     if (formCtx.validateSchema) {
-      formCtx.validateSchema(false);
+      formCtx.validateSchema('silent');
     }
   });
 
   if (isRef(schema)) {
     watch(schema, () => {
-      formCtx.validateSchema?.(true);
+      formCtx.validateSchema?.('validated-only');
     });
   }
 
@@ -517,7 +518,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
 
 async function validateYupSchema<TValues>(
   form: FormContext<TValues>,
-  shouldMutate?: boolean
+  mode: SchemaValidationMode
 ): Promise<Record<keyof TValues, ValidationResult>> {
   const errors: ValidationError[] = await (unref(form.schema) as YupValidator)
     .validate(form.values, { abortEarly: false })
@@ -550,14 +551,18 @@ async function validateYupSchema<TValues>(
     };
 
     result[fieldId] = fieldResult;
-
-    if (shouldMutate) {
-      applyFieldMutation(field, f => f.setValidationState(fieldResult), true);
+    if (mode === 'silent') {
+      applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
 
       return result;
     }
 
-    applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
+    const wasValidated = Array.isArray(field) ? field.some(f => f.meta.validated) : field.meta.validated;
+    if (mode === 'validated-only' && !wasValidated) {
+      return result;
+    }
+
+    applyFieldMutation(field, f => f.setValidationState(fieldResult), true);
 
     return result;
   }, {} as Record<keyof TValues, ValidationResult>);

@@ -25,6 +25,7 @@ export interface FieldMeta<TValue> {
   touched: boolean;
   dirty: boolean;
   valid: boolean;
+  validated: boolean;
   pending: boolean;
   initialValue?: TValue;
 }
@@ -107,6 +108,12 @@ export type SubmissionHandler<TValues extends Record<string, unknown> = Record<s
   ctx: SubmissionContext<TValues>
 ) => unknown;
 
+/**
+ * validated-only: only mutate the previously validated fields
+ * silent: do not mutate any field
+ * force: validate all fields and mutate their state
+ */
+export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
   register(field: PrivateFieldComposite): void;
   unregister(field: PrivateFieldComposite): void;
@@ -114,7 +121,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   fieldsById: ComputedRef<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>;
   submitCount: Ref<number>;
   schema?: MaybeRef<Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>>;
-  validateSchema?: (shouldMutate?: boolean) => Promise<Record<keyof TValues, ValidationResult>>;
+  validateSchema?: (mode: SchemaValidationMode) => Promise<Record<keyof TValues, ValidationResult>>;
   validate(): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
   errorBag: Ref<FormErrorBag<TValues>>;

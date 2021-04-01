@@ -117,6 +117,7 @@ export function useField<TValue = unknown>(
   async function validateWithStateMutation(): Promise<ValidationResult> {
     meta.pending = true;
     let result: ValidationResult;
+    meta.validated = true;
     if (!form || !form.validateSchema) {
       result = await validateValue(value.value, normalizedRules.value, {
         name: unref(label) || unref(name),
@@ -124,7 +125,7 @@ export function useField<TValue = unknown>(
         bails,
       });
     } else {
-      result = (await form.validateSchema())[unref(name)] ?? { valid: true, errors: [] };
+      result = (await form.validateSchema('validated-only'))[unref(name)] ?? { valid: true, errors: [] };
     }
 
     meta.pending = false;
@@ -141,7 +142,7 @@ export function useField<TValue = unknown>(
         bails,
       });
     } else {
-      result = (await form.validateSchema(false))?.[unref(name)] ?? { valid: true, errors: [] };
+      result = (await form.validateSchema('silent'))?.[unref(name)] ?? { valid: true, errors: [] };
     }
 
     meta.valid = result.valid;
@@ -392,6 +393,7 @@ function useValidationState<TValue>({
     setErrors(state?.errors || []);
     meta.touched = state?.touched ?? false;
     meta.pending = false;
+    meta.validated = false;
   }
 
   return {
@@ -416,6 +418,7 @@ function useMeta<TValue>(initialValue: MaybeRef<TValue>, currentValue: Ref<TValu
     touched: false,
     pending: false,
     valid: true,
+    validated: false,
     initialValue: computed(() => unref(initialValue) as TValue | undefined),
     dirty: computed(() => {
       return !isEqual(currentValue.value, unref(initialValue));
