@@ -1,5 +1,5 @@
 import { FormContextSymbol } from './symbols';
-import { FormContext, SubmissionHandler, SubmitEvent } from './types';
+import { FormContext, SubmissionHandler } from './types';
 import { injectWithSelf, warn } from './utils';
 
 export function useSubmitForm<TValues extends Record<string, unknown> = Record<string, unknown>>(
@@ -12,7 +12,7 @@ export function useSubmitForm<TValues extends Record<string, unknown> = Record<s
 
   const onSubmit = form ? form.handleSubmit(cb) : undefined;
 
-  return function submitForm(e?: SubmitEvent) {
+  return function submitForm(e?: Event) {
     if (!onSubmit) {
       return;
     }

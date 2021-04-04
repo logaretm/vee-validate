@@ -1,5 +1,6 @@
 import { Locator, YupValidator } from '../types';
 import { isCallable, isObject } from '../../../shared';
+import { isEvent } from './events';
 
 export function isLocator(value: unknown): value is Locator {
   return isCallable(value) && !!(value as Locator).__locatorRef;
@@ -76,4 +77,8 @@ export function isNativeMultiSelectNode(tag: string, attrs: Record<string, unkno
  */
 export function shouldHaveValueBinding(tag: string, attrs: Record<string, unknown>) {
   return isNativeMultiSelectNode(tag, attrs) || isFileInputNode(tag, attrs);
+}
+
+export function isFormSubmitEvent(evt: unknown): evt is Event & { target: HTMLFormElement } {
+  return isEvent(evt) && (evt as any).target && 'submit' in (evt as any).target;
 }

@@ -62,8 +62,6 @@ export interface PrivateFieldComposite<TValue = unknown> {
 
 export type FieldComposable<TValue = unknown> = Omit<PrivateFieldComposite<TValue>, 'idx' | 'fid'>;
 
-export type SubmitEvent = Event & { target: HTMLFormElement };
-
 export type GenericValidateFunction = (
   value: unknown,
   ctx: FieldContext
@@ -99,7 +97,7 @@ export interface FormValidationResult<TValues> {
 
 export interface SubmissionContext<TValues extends Record<string, unknown> = Record<string, unknown>>
   extends FormActions<TValues> {
-  evt: SubmitEvent;
+  evt?: Event;
 }
 
 export type SubmissionHandler<TValues extends Record<string, unknown> = Record<string, unknown>> = (
@@ -128,7 +126,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     initialValues: TValues;
   }>;
   isSubmitting: Ref<boolean>;
-  handleSubmit(cb: SubmissionHandler<TValues>): (e?: SubmitEvent) => Promise<void>;
+  handleSubmit(cb: SubmissionHandler<TValues>): (e?: Event) => Promise<void>;
 }
 
 export interface PublicFormContext<TValues extends Record<string, any> = Record<string, any>>

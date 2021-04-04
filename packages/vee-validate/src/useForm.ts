@@ -6,7 +6,6 @@ import {
   FormContext,
   SubmissionHandler,
   GenericValidateFunction,
-  SubmitEvent,
   ValidationResult,
   MaybeRef,
   FormState,
@@ -25,6 +24,7 @@ import {
   resolveNextCheckboxValue,
   setInPath,
   unsetPath,
+  isFormSubmitEvent,
 } from './utils';
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
 
@@ -348,7 +348,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         .then(result => {
           if (result.valid && typeof fn === 'function') {
             return fn(immutableFormValues.value, {
-              evt: e as SubmitEvent,
+              evt: e as Event,
               setErrors,
               setFieldError,
               setTouched,
@@ -419,8 +419,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   });
 
   const submitForm = handleSubmit((_, { evt }) => {
-    if (evt) {
-      evt?.target?.submit?.();
+    if (isFormSubmitEvent(evt)) {
+      evt.target.submit();
     }
   });
 
