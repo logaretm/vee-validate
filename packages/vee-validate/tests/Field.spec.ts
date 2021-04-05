@@ -951,4 +951,38 @@ describe('<Field />', () => {
     expect(list?.children).toHaveLength(2);
     expect(list?.textContent).toBe('badwrong');
   });
+
+  // #3230
+  test('v-model.number should not ignore the validation triggers', async () => {
+    const errorMessage = 'Field is invalid';
+    let model!: Ref<string | number>;
+    const wrapper = mountWithHoc({
+      setup() {
+        model = ref('');
+        const isAlwaysInvalid = () => errorMessage;
+
+        return { model, isAlwaysInvalid };
+      },
+      template: `
+      <div>
+        <Field v-model.number="model" name="field" :rules="isAlwaysInvalid" v-slot="{ field, errors }" :validateOnModelUpdate="false">
+          <input v-bind="field" id="input" type="text">
+          <span id="error">{{ errors[0] }}</span>
+        </Field>
+      </div>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    const input = wrapper.$el.querySelector('#input');
+    input.value = '310';
+    dispatchEvent(input, 'input');
+    await flushPromises();
+    expect(model.value).toBe(310);
+    expect(error.textContent).toBe('');
+
+    dispatchEvent(input, 'blur');
+    await flushPromises();
+    expect(error.textContent).toBe(errorMessage);
+  });
 });

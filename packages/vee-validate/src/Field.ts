@@ -2,6 +2,7 @@ import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, compu
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding } from './utils';
+import { toNumber } from '../../shared';
 
 interface ValidationTriggersProps {
   validateOnMount: boolean;
@@ -61,6 +62,10 @@ export const Field = defineComponent({
     },
     modelValue: {
       type: null,
+    },
+    modelModifiers: {
+      type: null,
+      default: () => ({}),
     },
   },
   emits: ['update:modelValue'],
@@ -177,7 +182,7 @@ export const Field = defineComponent({
     if ('modelValue' in props) {
       const modelValue = toRef(props, 'modelValue');
       watch(modelValue, newModelValue => {
-        if (newModelValue !== value.value) {
+        if (newModelValue !== applyModifiers(value.value, props.modelModifiers)) {
           value.value = newModelValue;
           validateField();
         }
@@ -224,4 +229,12 @@ function resolveValidationTriggers(props: ValidationTriggersProps) {
     validateOnBlur: props.validateOnBlur ?? validateOnBlur,
     validateOnModelUpdate: props.validateOnModelUpdate ?? validateOnModelUpdate,
   };
+}
+
+function applyModifiers(value: unknown, modifiers: Record<string, boolean>) {
+  if (modifiers.number) {
+    return toNumber(value as string);
+  }
+
+  return value;
 }

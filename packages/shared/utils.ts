@@ -33,3 +33,9 @@ export function merge(target: any, source: any) {
 export function isIndex(value: unknown): value is number {
   return Number(value) >= 0;
 }
+
+export function toNumber(value: string): number | string {
+  const n = parseFloat(value);
+
+  return isNaN(n) ? value : n;
+}
