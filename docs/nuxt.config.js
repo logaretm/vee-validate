@@ -64,6 +64,13 @@ export default {
    ** Nuxt.js dev-modules
    */
   buildModules: ['@nuxtjs/tailwindcss'],
+
+  hooks: {
+    'vue-renderer:ssr:templateParams': function (params) {
+      params.HEAD = params.HEAD.replace('<base href="/v4/">', '');
+    },
+  },
+
   /*
    ** Nuxt.js modules
    */

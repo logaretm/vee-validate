@@ -64,6 +64,19 @@ export default {
     }
   }
 
+  h2 + h2,
+  h2 + h3,
+  h3 + h3,
+  h3 + h4,
+  h4 + h4,
+  h4 + h5,
+  h5 + h5 {
+    &::after {
+      content: '';
+      display: block;
+    }
+  }
+
   p + p {
     @apply mt-4;
   }
