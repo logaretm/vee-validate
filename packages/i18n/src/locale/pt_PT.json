@@ -24,6 +24,7 @@
     "regex": "O campo {field} possui um formato inválido",
     "required": "O campo {field} é obrigatório",
     "required_if": "O campo {field} é obrigatório",
-    "size": "O campo {field} deve ser menor que 0:{size}KB"
+    "size": "O campo {field} deve ser menor que 0:{size}KB",
+    "url": "O campo {field} deve ser uma URL válida"
   }
 }
