@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/logaretm/vee-validate/compare/v4.2.4...v4.3.0) (2021-04-07)
+
+
+### Features
+
+* **rules:** add url validator ([#3253](https://github.com/logaretm/vee-validate/issues/3253)) ([1fad5bb](https://github.com/logaretm/vee-validate/commit/1fad5bb5e0f3264386bc8e40beeb4cdae2a832cb))
+
+
+
+
+
 ## [4.2.4](https://github.com/logaretm/vee-validate/compare/v4.2.3...v4.2.4) (2021-03-26)
 
 **Note:** Version bump only for package @vee-validate/rules

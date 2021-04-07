@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/logaretm/vee-validate/compare/v4.2.4...v4.3.0) (2021-04-07)
+
+
+### Bug Fixes
+
+* wrong string format in Japanese translation file ([#3257](https://github.com/logaretm/vee-validate/issues/3257)) ([99dbdb2](https://github.com/logaretm/vee-validate/commit/99dbdb288accfe0257d7c1073d4aeaa291eb1d6b))
+
+
+### Features
+
+* added support for reactive schemas ([#3238](https://github.com/logaretm/vee-validate/issues/3238)) ([295d656](https://github.com/logaretm/vee-validate/commit/295d6567035bc3c452ad0f13fce13ff362b08005))
+* **rules:** add url validator ([#3253](https://github.com/logaretm/vee-validate/issues/3253)) ([1fad5bb](https://github.com/logaretm/vee-validate/commit/1fad5bb5e0f3264386bc8e40beeb4cdae2a832cb))
+* added support for setting multiple field errors closes [#3117](https://github.com/logaretm/vee-validate/issues/3117) ([db0a6a0](https://github.com/logaretm/vee-validate/commit/db0a6a02cdc0fdab02a18e4756005c46dc06b1f8))
+* support v-model.number ([#3252](https://github.com/logaretm/vee-validate/issues/3252)) ([8f491da](https://github.com/logaretm/vee-validate/commit/8f491da0b0998d0f7383a6a444d6aa498e3d96f4))
+
+
+
+
+
 ## [4.2.4](https://github.com/logaretm/vee-validate/compare/v4.2.3...v4.2.4) (2021-03-26)
 
 
