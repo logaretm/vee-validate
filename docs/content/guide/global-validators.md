@@ -289,33 +289,33 @@ Object.keys(rules).forEach(rule => {
 ## Available Rules
 
 <ul class="grid grid-cols-2 col-gap-4 lg:grid-cols-3 lg:col-gap-8 text-accent-800">
-  <li><a href="#alpha">alpha</a></li>
-  <li><a href="#alpha-dash">alpha_dash</a></li>
-  <li><a href="#alpha-num">alpha_num</a></li>
-  <li><a href="#alpha-spaces">alpha_spaces</a></li>
-  <li><a href="#between">between</a></li>
-  <li><a href="#confirmed">confirmed</a></li>
-  <li><a href="#digits">digits</a></li>
-  <li><a href="#dimensions">dimensions</a></li>
-  <li><a href="#email">email</a></li>
-  <li><a href="#excluded">excluded</a></li>
-  <li><a href="#ext">ext</a></li>
-  <li><a href="#image">image</a></li>
-  <li><a href="#one_of">one_of</a></li>
-  <li><a href="#integer">integer</a></li>
-  <li><a href="#is">is</a></li>
-  <li><a href="#is-not">is_not</a></li>
-  <li><a href="#length">length</a></li>
-  <li><a href="#max">max</a></li>
-  <li><a href="#max-value">max_value</a></li>
-  <li><a href="#mimes">mimes</a></li>
-  <li><a href="#min">min</a></li>
-  <li><a href="#min-value">min_value</a></li>
-  <li><a href="#numeric">numeric</a></li>
-  <li><a href="#regex">regex</a></li>
-  <li><a href="#required">required</a></li>
-  <li><a href="#size">size</a></li>
-  <li><a href="#url">url</a></li>
+  <li><a href="/guide/global-validators#alpha">alpha</a></li>
+  <li><a href="/guide/global-validators#alpha-dash">alpha_dash</a></li>
+  <li><a href="/guide/global-validators#alpha-num">alpha_num</a></li>
+  <li><a href="/guide/global-validators#alpha-spaces">alpha_spaces</a></li>
+  <li><a href="/guide/global-validators#between">between</a></li>
+  <li><a href="/guide/global-validators#confirmed">confirmed</a></li>
+  <li><a href="/guide/global-validators#digits">digits</a></li>
+  <li><a href="/guide/global-validators#dimensions">dimensions</a></li>
+  <li><a href="/guide/global-validators#email">email</a></li>
+  <li><a href="/guide/global-validators#excluded">excluded</a></li>
+  <li><a href="/guide/global-validators#ext">ext</a></li>
+  <li><a href="/guide/global-validators#image">image</a></li>
+  <li><a href="/guide/global-validators#one_of">one_of</a></li>
+  <li><a href="/guide/global-validators#integer">integer</a></li>
+  <li><a href="/guide/global-validators#is">is</a></li>
+  <li><a href="/guide/global-validators#is-not">is_not</a></li>
+  <li><a href="/guide/global-validators#length">length</a></li>
+  <li><a href="/guide/global-validators#max">max</a></li>
+  <li><a href="/guide/global-validators#max-value">max_value</a></li>
+  <li><a href="/guide/global-validators#mimes">mimes</a></li>
+  <li><a href="/guide/global-validators#min">min</a></li>
+  <li><a href="/guide/global-validators#min-value">min_value</a></li>
+  <li><a href="/guide/global-validators#numeric">numeric</a></li>
+  <li><a href="/guide/global-validators#regex">regex</a></li>
+  <li><a href="/guide/global-validators#required">required</a></li>
+  <li><a href="/guide/global-validators#size">size</a></li>
+  <li><a href="/guide/global-validators#url">url</a></li>
 </ul>
 
 ### Playground
@@ -731,7 +731,7 @@ The file size added to the field under validation must not exceed the specified 
 
 #### url
 
-The field under validation must be a valid url. You can pass a `pattern` if you need the url to be more restricted. 
+The field under validation must be a valid url. You can pass a `pattern` if you need the url to be more restricted.
 
 ```vue
 <!-- string format -->
