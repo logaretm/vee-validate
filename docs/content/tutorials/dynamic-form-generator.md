@@ -24,9 +24,9 @@ Let's quickly recap what you will be building, the component we will be building
 
 <doc-tip>
 
-This guide will cover how to build a basic form generator manually.
+This guide will cover how to build a basic form generator.
 
-If you are looking for a more robust solution for form generation, take a look at [Formvuelate](https://formvuelate.js.org/), they have very good [vee-validate support](https://formvuelate.js.org/#vee-validate-plugin).
+If you are looking for a more robust solution for form generation, take a look at [Formvuelate](https://formvuelate.js.org/), and it has first-party [vee-validate support](https://formvuelate.js.org/#vee-validate-plugin).
 
 </doc-tip>
 
