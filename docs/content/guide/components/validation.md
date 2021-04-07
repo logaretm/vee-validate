@@ -211,6 +211,63 @@ There is an official integration available for [Zod validation](https://github.c
 
 </doc-tip>
 
+### Reactive Form Schema
+
+You can have reactive form schemas using `computed` if you are looking to create dynamic schemas using either `yup` or a validation object.
+
+```js
+import * as yup from 'yup';
+
+export default {
+  data: () => ({
+    min: 6,
+  }),
+  computed: {
+    schema() {
+      return yup.object({
+        password: yup.string().min(this.min),
+      });
+    },
+  },
+};
+```
+
+```vue
+<template>
+  <Form @submit="submit" :validation-schema="schema">
+    <Field name="password" type="password" />
+    <ErrorMessage name="password" />
+
+    <button>Submit</button>
+  </Form>
+</template>
+
+<script>
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+
+export default {
+  components: {
+    Form,
+    Field,
+    ErrorMessage,
+  },
+  data: () => ({
+    min: 6,
+  }),
+  computed: {
+    schema() {
+      return yup.object({
+        password: yup.string().min(this.min),
+      });
+    },
+  },
+};
+</script>
+```
+
+When the validation schema changes, only the fields that were validated at least once will be re-validated, the other fields won't be validated to avoid aggressive validation behavior.
+
 ## Validation Behavior
 
 By default vee-validate runs validation in these scenarios:

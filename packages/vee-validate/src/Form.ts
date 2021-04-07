@@ -38,6 +38,8 @@ export const Form = defineComponent({
   },
   setup(props, ctx) {
     const initialValues = toRef(props, 'initialValues');
+    const validationSchema = toRef(props, 'validationSchema');
+
     const {
       errors,
       values,
@@ -57,7 +59,7 @@ export const Form = defineComponent({
       setFieldTouched,
       setTouched,
     } = useForm({
-      validationSchema: props.validationSchema,
+      validationSchema: validationSchema.value ? validationSchema : undefined,
       initialValues,
       initialErrors: props.initialErrors,
       initialTouched: props.initialTouched,

@@ -15,6 +15,7 @@ import {
   PublicFormContext,
   FormErrors,
   FormErrorBag,
+  SchemaValidationMode,
 } from './types';
 import {
   applyFieldMutation,
@@ -29,7 +30,9 @@ import {
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
 
 interface FormOptions<TValues extends Record<string, any>> {
-  validationSchema?: Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>;
+  validationSchema?: MaybeRef<
+    Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>
+  >;
   initialValues?: MaybeRef<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;
   initialTouched?: Record<keyof TValues, boolean>;
@@ -299,7 +302,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     if (formCtx.validateSchema) {
-      return formCtx.validateSchema(true).then(results => {
+      return formCtx.validateSchema('force').then(results => {
         return keysOf(results)
           .map(r => ({ key: r, errors: results[r].errors }))
           .reduce(resultReducer, { errors: {}, valid: true });
@@ -381,6 +384,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setInPath(initialValues.value, path, value);
   }
 
+  const schema = opts?.validationSchema;
   const formCtx: FormContext<TValues> = {
     register: registerField,
     unregister: unregisterField,
@@ -388,11 +392,11 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     values: formValues,
     setFieldErrorBag,
     errorBag,
-    schema: opts?.validationSchema,
+    schema,
     submitCount,
-    validateSchema: isYupValidator(opts?.validationSchema)
-      ? shouldMutate => {
-          return validateYupSchema(formCtx, shouldMutate);
+    validateSchema: isYupValidator(unref(schema))
+      ? mode => {
+          return validateYupSchema(formCtx, mode);
         }
       : undefined,
     validate,
@@ -443,9 +447,15 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     // otherwise run initial silent validation through schema if available
     // the useField should skip their own silent validation if a yup schema is present
     if (formCtx.validateSchema) {
-      formCtx.validateSchema(false);
+      formCtx.validateSchema('silent');
     }
   });
+
+  if (isRef(schema)) {
+    watch(schema, () => {
+      formCtx.validateSchema?.('validated-only');
+    });
+  }
 
   // Provide injections
   provide(FormContextSymbol, formCtx as FormContext);
@@ -508,9 +518,9 @@ function useFormMeta<TValues extends Record<string, unknown>>(
 
 async function validateYupSchema<TValues>(
   form: FormContext<TValues>,
-  shouldMutate?: boolean
+  mode: SchemaValidationMode
 ): Promise<Record<keyof TValues, ValidationResult>> {
-  const errors: ValidationError[] = await (form.schema as YupValidator)
+  const errors: ValidationError[] = await (unref(form.schema) as YupValidator)
     .validate(form.values, { abortEarly: false })
     .then(() => [])
     .catch((err: ValidationError) => {
@@ -541,14 +551,18 @@ async function validateYupSchema<TValues>(
     };
 
     result[fieldId] = fieldResult;
-
-    if (shouldMutate) {
-      applyFieldMutation(field, f => f.setValidationState(fieldResult), true);
+    if (mode === 'silent') {
+      applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
 
       return result;
     }
 
-    applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
+    const wasValidated = Array.isArray(field) ? field.some(f => f.meta.validated) : field.meta.validated;
+    if (mode === 'validated-only' && !wasValidated) {
+      return result;
+    }
+
+    applyFieldMutation(field, f => f.setValidationState(fieldResult), true);
 
     return result;
   }, {} as Record<keyof TValues, ValidationResult>);
