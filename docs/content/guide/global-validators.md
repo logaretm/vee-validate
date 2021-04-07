@@ -315,6 +315,7 @@ Object.keys(rules).forEach(rule => {
   <li><a href="#regex">regex</a></li>
   <li><a href="#required">required</a></li>
   <li><a href="#size">size</a></li>
+  <li><a href="#url">url</a></li>
 </ul>
 
 ### Playground
@@ -727,3 +728,19 @@ The file size added to the field under validation must not exceed the specified 
 | Param Name | Required? | Default | Description                         |
 | ---------- | --------- | ------- | ----------------------------------- |
 | `size`     | **yes**   |         | The maximum file size in kilobytes. |
+
+#### url
+
+The field under validation must be a valid url. You can pass a `pattern` if you need the url to be more restricted. 
+
+```vue
+<!-- string format -->
+<Field name="field" type="url" rules="url" />
+
+<!-- object format -->
+<Field name="field" type="text" :rules="{ url: 'https://.*' }" />
+```
+
+| Param Name | Required? | Default | Description                                               |
+| ---------- | --------- | ------- | --------------------------------------------------------- |
+| `pattern`  | **no**    |         | A regular expression instance or string representing one. |
