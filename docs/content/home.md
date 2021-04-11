@@ -6,7 +6,7 @@ features:
   - title: 🍞 Easy
     details: Declarative validation that is familiar and easy to setup
   - title: 🧘‍♀️ Flexible
-    details: Synchronous, Asynchronous, field-level or form-level validation
+    details: Synchronous, Asynchronous, field-level, or form-level validation
   - title: ⚡️ Fast
     details: Build faster forms faster with intuitive API and small footprint
   - title: 🏏 Minimal

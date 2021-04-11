@@ -10,17 +10,17 @@ VeeValidate offers many ways to do form validation, this tutorial will teach you
 
 ## What are we building
 
-In this tutorial we will be building a "sign up newsletter" form where the user would have to fill a field to complete their sign up.
+In this tutorial, we will be building a "sign up newsletter" form where the user would have to fill a field to complete their sign-up.
 
 ## Prerequisites
 
-You will need to be familiar with HTML and a good understanding of modern JavaScript like arrow functions and ES modules, also you will need to have basic understanding of Vue's scoped slots feature.
+You will need to be familiar with HTML and a good understanding of modern JavaScript like arrow functions and ES modules, also you will need to have a basic understanding of Vue's scoped slots feature.
 
 Also to make it clear, this tutorial code snippets are formatted into steps and to avoid repetitive code, any unchanged snippets in-between steps will be collapsed as comments.
 
 ## Setup
 
-It is preferable to use a local development environment to follow along, make sure to have to following:
+It is preferable to use a local development environment to follow along, make sure to have the following:
 
 - Prepare a Vue 3.x project using the [`vue-cli`](https://cli.vuejs.org/)
 - Install `vee-validate`
@@ -79,7 +79,7 @@ And that's it, follow the tutorial for the next steps.
 
 ## Building the Form
 
-First, start by adding the markup you would typically have for a sign up form, you can start by having a `form` wrapping a few `input` elements.
+First, start by adding the markup you would typically have for a sign-up form, you can start by having a `form` wrapping a few `input` elements.
 
 ```vue
 <template>
@@ -97,7 +97,7 @@ export default {};
 </script>
 ```
 
-So far so good, this form currently submits whenever the button is clicked and is not being validated and the page refreshes because by defaults forms submit a `GET` request to the current page if not specified otherwise.
+So far so good, this form currently submits whenever the button is clicked and is not being validated and the page refreshes because by default forms submit a `GET` request to the current page if not specified otherwise.
 
 Fix that by adding a `submit` event handler that prevents the native form submission using the `prevent` modifier, we will use `onSubmit` function to handle our form submission.
 
@@ -159,13 +159,13 @@ export default {
 
 <doc-tip type="danger" title="Component Registration">
 
-It might be necessary to rename the `Form` and `Field` components to something else to avoid conflicting with HTML native elements tag names, while this will work fine in [Vue's single file components (SFCs)](https://v3.vuejs.org/guide/single-file-component.html) because the compiler is able to determine which one to render, but in native browser environment the `Form` will still render the native HTML counterpart because HTML is case-insensitive.
+It might be necessary to rename the `Form` and `Field` components to something else to avoid conflicting with HTML native elements tag names, while this will work fine in [Vue's single-file components (SFCs)](https://v3.vuejs.org/guide/single-file-component.html) because the compiler can determine which one to render, but in the native browser environment, the `Form` will still render the native HTML counterpart because HTML is case-insensitive.
 
 </doc-tip>
 
-Another distinction is that the `.prevents` modifier is removed, this is because the `Form` component does that automatically for you since you won't be listening to the `submit` event unless you want to handle it in JavaScript. And lastly, it sends all the fields values to your submit handler and that saves you the need to use `v-model` to bind your inputs.
+Another distinction is that the `.prevents` modifier is removed, this is because the `Form` component does that automatically for you since you won't be listening to the `submit` event unless you want to handle it in JavaScript. And lastly, it sends all the fields' values to your submit handler and that saves you the need to use `v-model` to bind your inputs.
 
-Similarly the `Field` component also accepts an `as` prop that allows it to render any type of input, in our case we still want it to render an `input` element.
+Similarly, the `Field` component also accepts an `as` prop that allows it to render any type of input, in our case we still want it to render an `input` element.
 
 This is all the boilerplate necessary to prepare your forms for validation, all that remains is to add validation rules to validate the input as currently it doesn't have any rules and will still submit in any case.
 
@@ -213,7 +213,7 @@ export default {
 </script>
 ```
 
-The `validateEmail` validator function makes sure the `email` field is both required and is a valid email. Using the `rules` prop, you can define validators for your `Field` components and whenever their value change the validators will be run against the new value.
+The `validateEmail` validator function makes sure the `email` field is both required and is a valid email. Using the `rules` prop, you can define validators for your `Field` components and whenever their value changes the validators will be run against the new value.
 
 If you try submitting the form now you will notice that it doesn't submit while the field is empty, but once you input a valid email and click on the button it will be submitted, this means the validation is now working and is preventing submission until the form as a whole becomes valid.
 
@@ -221,7 +221,7 @@ You are not quite there yet, The last step is to show error messages that you al
 
 ## Displaying Error Messages
 
-There are multiple ways to display error messages with VeeValidate. In this tutorial you will use the `ErrorMessage` component to display the error message.
+There are multiple ways to display error messages with VeeValidate. In this tutorial, you will use the `ErrorMessage` component to display the error message.
 
 First, grab the `ErrorMessage` component from `vee-validate` and register it in your component:
 
@@ -295,7 +295,7 @@ You can checkout the finished code in action:
 
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-There is a lot more you can do with vee-validate and while this example is verbose, there are other ways and features you can use to clean up your form validation logic. Here is a few things that you can do with vee-validate:
+There is a lot more you can do with vee-validate and while this example is verbose, there are other ways and features you can use to clean up your form validation logic. Here are a few things that you can do with vee-validate:
 
 - Declare rules globally and use them in a Laravel-like syntax
 - Using 3rd-party libraries like `yup` to validate

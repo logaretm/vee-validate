@@ -29,9 +29,9 @@ The declarative components cover tons of use-cases and they are extremely easy t
 
 When your input's complexities grow, you might then consider using `useField` and `useForm`. While they require more labor to integrate into your inputs, they give you access to the same logical parts of vee-validate's validation at a much lower level. They are great if you are building your own UI library/framework with form controls.
 
-It's up to you what to do with what `useField` and `useForm` give you, for example `useField` doesn't handle input events automatically, you will need to do that.
+It's up to you what to do with what `useField` and `useForm` give you, for example, `useField` doesn't handle input events automatically, you will need to do that.
 
-To summarize, **the validation composition API is a great power with a great responsibility.**
+To summarize, **the validation composition API is a great power with great responsibility.**
 
 ## Composition Helpers
 

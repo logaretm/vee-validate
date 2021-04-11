@@ -6,7 +6,7 @@ order: 2
 
 # Build a Form Generator
 
-Building forms is annoying and an often repetitive task and requires a lot of back and forth to maintain it, maybe your client asked to add field, maybe they asked to remove a field, for most cases using static markup is good enough for your web form needs but in some cases it would great if you had a dynamic form generator that would quickly render your fields based on some JSON schema.
+Building forms is annoying and an often repetitive task and requires a lot of back and forth to maintain, maybe your client asked to add a field, maybe they asked to remove a field, for most cases using static markup is good enough for your web form needs but in some cases, it would great if you had a dynamic form generator that would quickly render your fields based on some JSON schema.
 
 In this tutorial you will learn how to use vee-validate to build your own form-generator without external libraries.
 
@@ -32,7 +32,7 @@ If you are looking for a more robust solution for form generation, take a look a
 
 ## Prerequisites
 
-You will need to be familiar with HTML and a good understanding of modern JavaScript like arrow functions and ES modules, you need to have basic understanding of Vue's `v-for` and prop binding using `v-bind` and its shorthand `:`.
+You will need to be familiar with HTML and a good understanding of modern JavaScript like arrow functions and ES modules, you need to have a basic understanding of Vue's `v-for` and prop binding using `v-bind` and its shorthand `:`.
 
 Some basic understanding of typescript would help understand some ideas but not required.
 
@@ -54,7 +54,7 @@ We have a few requirements to fulfill:
 - Should be able to specify types (elements) for those fields
 - Should be able to specify validation either on field-level or form-level
 
-An initial draft would look like this:
+The initial draft would look like this:
 
 ```typescript
 // The field schema shape
@@ -70,7 +70,7 @@ interface FormSchema {
 }
 ```
 
-Notice that for the field schema we tried to match the same prop names on the [Field component](/api/field#props) which will help you later. Let's imagine we are building a sign up form, our schema will look like this:
+Notice that for the field schema we tried to match the same prop names on the [Field component](/api/field#props) which will help you later. Let's imagine we are building a sign-up form, our schema will look like this:
 
 ```js
 const formSchema = {
@@ -98,7 +98,7 @@ That looks fine for now, we will tackle initial values and validation later on, 
 
 ## Rendering Fields
 
-An initial implementation will follow these generic steps:
+The initial implementation will follow these generic steps:
 
 - Use `Form` component from vee-validate to render the form
 - Iterate over each field in `schema.fields`
@@ -155,7 +155,7 @@ Then in the template we will update the iteration with `v-for` portion to extrac
 </div>
 ```
 
-The `v-bind` there allows us to bind everything in the `attrs` object which is all the other props we didn't extract explicitly and bind them to the `Field` component, and luckily for us the `Field` component will pass down any props that it doesn't accept to whatever gets rendered in its place, effectively passing down our attributes to our `input` tags.
+The `v-bind` there allows us to bind everything in the `attrs` object which is all the other props we didn't extract explicitly and bind them to the `Field` component, and luckily for us, the `Field` component will pass down any props that it doesn't accept to whatever gets rendered in its place, effectively passing down our attributes to our `input` tags.
 
 That looks alright for now, but before we tackle validation and other things, what if we wanted to render a `select` input?
 
@@ -163,7 +163,7 @@ That looks alright for now, but before we tackle validation and other things, wh
 
 <summary>Bonus: Adding support for slotted inputs</summary>
 
-The `select` input introduces an edge case where your field would need to have children nodes inside its slot, the nodes being `option` tags. If you are rendering a component that accepts its options via prop you don't need to do this but let's tackle this edge case head on.
+The `select` input introduces an edge case where your field would need to have children nodes inside its slot, the nodes being `option` tags. If you are rendering a component that accepts its options via prop you don't need to do this but let's tackle this edge case head-on.
 
 First, back to our schema and let's add support for `children` prop that accepts a flat array of child nodes:
 
@@ -356,6 +356,12 @@ You can check a live sample of what we did here, note that there are differences
 
 ## Conclusion
 
-In this guide you learned how to use the dynamic rendering capabilities of Vue.js combined with the flexible nature of the vee-validate components. You created a form that renders fields and validates them based on a JSON schema.
+In this guide, you learned how to use the dynamic rendering capabilities of Vue.js combined with the flexible nature of the vee-validate components. You created a form that renders fields and validates them based on a JSON schema.
 
 While the finished product is far from being complete, you can add features as needed to your form generator.
+
+<doc-tip>
+
+If you are looking for a more robust solution for form generation, take a look at [Formvuelate](https://formvuelate.js.org/), and it has first-party [vee-validate support](https://formvuelate.js.org/#vee-validate-plugin).
+
+</doc-tip>

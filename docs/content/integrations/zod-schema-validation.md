@@ -22,7 +22,7 @@ With `@vee-validate/zod` you can use `Zod` typed schemas as drop-in replacements
 
 ## Install
 
-To use this plugin, make sure to install these packages `vee-validate`, `zod` and `@vee-validate/zod`.
+To use this plugin, make sure to install these packages `vee-validate`, `zod`, and `@vee-validate/zod`.
 
 ```sh
 yarn add vee-validate@next zod@beta @vee-validate/zod
@@ -216,11 +216,11 @@ const validationSchema = toFormValidator(
 const { handleSubmit, errors } = useForm({
   validationSchema,
   initialValues: {
-    // You get auto completion and type check for `email` and `age` properties
+    // You get auto-completion and type check for `email` and `age` properties
   },
 });
 
-// You will get auto completion for possible errors for `email` and `age`
+// You will get auto-completion for possible errors for `email` and `age`
 errors.email;
 
 const onSubmit = handleSubmit(values => {

@@ -7,7 +7,7 @@ next: guide/components/nested-objects-and-arrays
 
 # Handling Forms
 
-vee-validate offers many helpers to handle form submissions, resets and DX to make your forms much easier to reason about and less of a burden to maintain. The `Form` component handles the following form cases:
+vee-validate offers many helpers to handle form submissions, resets, and DX to make your forms much easier to reason about and less of a burden to maintain. The `Form` component handles the following form cases:
 
 <div class="features">
 
@@ -19,7 +19,7 @@ vee-validate offers many helpers to handle form submissions, resets and DX to ma
 
 ## Form Values
 
-So far you probably noticed we didn't use `v-model` once in the examples. This is because in most cases you don't actually need the model values until you submit them to your API or not at all if you are submitting an HTML form without JavaScript.
+So far you probably noticed we didn't use `v-model` once in the examples. This is because in most cases you don't need the model values until you submit them to your API or not at all if you are submitting an HTML form without JavaScript.
 
 Having to create models just to be able to reference them later is redundant and vee-validate goes around this by creating an internal model for the `<Field />` field component instances and tracks them and keeps them in sync with the input. You can still use `v-model` if you need it but vee-validate doesn't require it.
 
@@ -49,7 +49,7 @@ export default {
 </script>
 ```
 
-You will rarely need to access the form values inside the template, but its there if you ever need it. What's interesting is that vee-validate follows the assumption that most likely you will need the form values at the submission phase.
+You will rarely need to access the form values inside the template, but it is there if you ever need it. What's interesting is that vee-validate follows the assumption that most likely you will need the form values at the submission phase.
 
 So if you were to add a `submit` handler on the `<Form />` component, vee-validate will automatically pass the form values to your handler as the first argument.
 
@@ -98,7 +98,7 @@ export default {
 
 ## Handling Submissions
 
-vee-validate exposes useful defaults to help you handle form submissions whether you submit them using JavaScript or native HTML submissions, in most cases you would like to make sure all your fields are valid before you submit the form, this is done for you by default.
+vee-validate exposes useful defaults to help you handle form submissions whether you submit them using JavaScript or native HTML submissions, in most cases, you would like to make sure all your fields are valid before you submit the form, this is done for you by default.
 
 Consider the last example, if you tried submitting the form, it won't be submitted unless all fields are valid. When rendering a form using the `as` prop, vee-validate will automatically listen for the `submit` event and prevent the execution of any `submit` listener you may have on the form.
 
@@ -236,13 +236,13 @@ You can validate the form without submissions using the `validate()` slot prop f
 </Form>
 ```
 
-That form doesn't render a `form` tag, so vee-validate doesn't handle submissions for those group of fields. But you can still validate them using the `validate` function present on the `Form` component slot props.
+That form doesn't render a `form` tag, so vee-validate doesn't handle submissions for that group of fields. But you can still validate them using the `validate` function present on the `Form` component slot props.
 
 ## Submission Progress
 
-Quite often you need to show your users a submission indicator, or you might want to disable the submit button entirely until the submission attempt is done. The `Form` component offers a `isSubmitting` slot prop that you can use to show such UI indicators.
+Quite often you need to show your users a submission indicator, or you might want to disable the submit button entirely until the submission attempt is done. The `Form` component offers an `isSubmitting` slot prop that you can use to show such UI indicators.
 
-The `isSubmitting` state will be set to `true` once the validation of the form starts (as a result of a submit event) and will keep track of the submission handler you passed to either `onSubmit` or until it calls `submitForm`. If the submission handler throws any errors or completes successfully it will be set to `false` afterwards.
+The `isSubmitting` state will be set to `true` once the validation of the form starts (as a result of a submit event) and will keep track of the submission handler you passed to either `onSubmit` or until it calls `submitForm`. If the submission handler throws any errors or completes successfully it will be set to `false` afterward.
 
 Here is small example:
 
@@ -323,13 +323,15 @@ Note that **only the non-dirty fields will be updated**. In other words, **only 
 
 <doc-tip>
 
-It's generally Recommended that you provide the `initialValues`, this is because vee-validate cannot assume a reasonable initial value for your fields other than `undefined` which may cause unexpected behavior when using 3rd-party validator that do not deal with `undefined`.
+It's generally recommended that you provide the `initialValues`, this is because vee-validate cannot assume a reasonable initial value for your fields other than `undefined` which may cause unexpected behavior when using a 3rd-party validator that does not deal with `undefined`.
 
 </doc-tip>
 
 ## Setting Form Values
 
-You can set any field's value using either `setFieldValue` or `setValues`, both methods are exposed on the `<Form />` component scoped slot props, and as instance methods if so you can call them with template `$refs` and for an added convenience you can call them in the submit handler callback.
+You can set any field's value using either `setFieldValue` or `setValues`, both methods are exposed on the `<Form />` component scoped slot props, and as component instance methods.
+
+You can call them with template `$refs` and for an added convenience you can call them in the submit handler callback.
 
 **Using scoped slot props**
 
@@ -424,7 +426,7 @@ Note that setting any field's value using this way will trigger validation
 
 ## Handling Resets
 
-vee-validate also handles form resets in similar way to submissions. When resetting the form, all fields' errors and meta flags will be reset to their original state, including the fields' values.
+vee-validate also handles form resets in a similar way to submissions. When resetting the form, all fields' errors and meta flags will be reset to their original state, including the fields' values.
 
 Form reset is handled automatically if you are using the `as` prop to render a `form` element, like shown in this example:
 
@@ -641,13 +643,13 @@ See the next section for setting errors manually.
 
 ## Setting Errors Manually
 
-Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example a `unique` email validation is complex to implement on the client-side, which is why the `<Form />` component allow you to set errors manually.
+Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example, `unique` email validation is complex to implement on the client-side, which is why the `<Form />` component allows you to set errors manually.
 
-You can set messages for fields by using either `setFieldError` which sets an error message for one field at a time, and the `setErrors` function which allows you set error messages for multiple fields at once.
+You can set messages for fields by using either `setFieldError` which sets an error message for one field at a time, and the `setErrors` function which allows you to set error messages for multiple fields at once.
 
 Both functions are available on the `Form` component scoped slot props, and also on the `Form` component instance which enables you to use it with template `$refs`, and also for added convenience on the `submit` event handler since it would be the most common place for its usage.
 
-Here are a few snippets showcasing it's usage in these various scenarios:
+Here are a few snippets showcasing its usage in these various scenarios:
 
 **Using scoped slot props (recommended)**
 

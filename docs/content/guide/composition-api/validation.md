@@ -7,12 +7,12 @@ next: guide/composition-api/handling-forms
 
 # Validation
 
-vee-validate handles complex validations in a very easy way, it supports synchronous and asynchronous validation, and allows defining rules on the field-level or on the form level using validation schemas with built-in support for [yup](https://github.com/jquense/yup).
+vee-validate handles complex validations in a very easy way, it supports synchronous and asynchronous validation and allows defining rules on the field-level or the form level using validation schemas with built-in support for [yup](https://github.com/jquense/yup).
 
 You will be using the following composition functions to validate your forms:
 
 - `useField`: Creates a form field with its validation state, you will use this inside your custom input components.
-- `useForm`: Creates a vee-validate's form context and associated any fields created with `useField` inside the same component or its children with it automatically, you will use to create custom form components and to manage your fields in general.
+- `useForm`: Creates a vee-validate's form context and associates any fields created with `useField` inside the same component or its children with it automatically, which you will use to create custom form components and to manage your fields in general.
 
 There are tons of other composition API functions, check them out in the [API reference](/api/composition-helpers).
 
@@ -91,7 +91,7 @@ For more information on the `useField` function, read [the API reference](/api/u
 
 ## Form-level Validation
 
-Instead of providing validations for each field individually which can clutter your code, you can instead define the validation schema using the `useForm` function by passing a `validationSchema` option. Each field will automatically be associated with it and will be validated accordingly.
+Instead of providing validations for each field individually which can clutter your code, you can define the validation schema using the `useForm` function by passing a `validationSchema` option. Each field will automatically be associated with it and will be validated accordingly.
 
 A simple validation schema can be an object containing field names as keys and validation functions as the value for those keys.
 
@@ -284,7 +284,7 @@ value.value = 'something';
 
 ### Handling Events
 
-`useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. However it gives you everything you need to setup your own validation experience.
+`useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. However, it gives you everything you need to set up your own validation experience.
 
 The `useField` function exposes some handler functions, each handles a specific aspect of the validation experience:
 
@@ -296,7 +296,7 @@ The `useField` function exposes some handler functions, each handles a specific 
 const { handleChange, handleBlur, handleInput } = useField('someField');
 ```
 
-In this example we are validating on `input` event (when user types), which would make the validation aggressive:
+In this example we are validating on `input` event (when the user types), which would make the validation aggressive:
 
 ```vue
 <template>
@@ -327,7 +327,7 @@ export default {
 </script>
 ```
 
-With a slight adjustment we can make our validation lazy by changing the listener to `@change` (validates when user leaves the control):
+With a slight adjustment we can make our validation lazy by changing the listener to `@change` (validates when the user leaves the control):
 
 ```vue
 <div>
@@ -345,7 +345,7 @@ If we wanted to validate on `blur` as well, you can simply add `handleChange` as
 </div>
 ```
 
-As you can see, the `useField` doesn't really care which events you use `handleChange` for. This allows for greater flexibility that's not possible with the `<Field>` component, not as straightforward at least.
+As you can see, the `useField` doesn't care which events you use `handleChange` for. This allows for greater flexibility that's not possible with the `<Field>` component, not as straightforward at least.
 
 Consider this validation experience:
 
@@ -412,7 +412,7 @@ Check the working example here:
 
 ## Displaying Error Messages
 
-You can display error messages using either `useField`, or `useForm`.
+You can display error messages using either `useField` or `useForm`.
 
 ### Displaying Errors with useField
 
@@ -484,7 +484,7 @@ export default {
 
 ### Displaying Errors with useForm
 
-If you have multiple fields, it can be cumbersome to rename each `errorMessage` ref so they don't conflict with each other. Instead you can use the `errors` returned by `useForm` to display messages for all fields.
+If you have multiple fields, it can be cumbersome to rename each `errorMessage` ref so they don't conflict with each other. Instead, you can use the `errors` returned by `useForm` to display messages for all fields.
 
 ```vue
 <template>
@@ -530,7 +530,7 @@ export default {
 
 ### Custom Field Labels
 
-More often than not, your fields will have names with underscores or shorthands which isn't very nice when showing in error messages, for example you might have specific encoding to your field names because they might be generated by backend. Ideally you want to avoid having messages like:
+More often than not, your fields will have names with underscores or shorthands which isn't very nice when showing in error messages, for example, you might have specific encoding to your field names because they might be generated by the backend. Ideally, you want to avoid having messages like:
 
 ```
 The down_p is required
@@ -559,19 +559,19 @@ Here is a live example:
 
 <code-sandbox id="vee-validate-v4-custom-field-labels-with-yup-qikju" title="Custom Labels with yup"></code-sandbox>
 
-If you are interested on how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
+If you are interested in how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
 
 ## Validation Metadata
 
 ### Field-level Meta
 
-Each field has meta data associated with it, the `meta` property returned from `useField` contains information about the field:
+Each field has metadata associated with it, the `meta` property returned from `useField` contains information about the field:
 
 - `valid`: The current field validity, automatically updated for you.
 - `touched`: If the field was **touched**, can be updated with `setTouched` on `useField` return value.
 - `dirty`: If the field value was updated, you cannot change its value.
-- `pending`: If the field's validations are still running, useful for long running async validation.
-- `initialValue`: The field's initial value, it is `undefined` if you didn't specify any.
+- `pending`: If the field's validations are still running, useful for long-running async validation.
+- `initialValue`: The field's initial value, is `undefined` if you didn't specify any.
 
 ```js
 const { meta } = useField('fieldName');
@@ -595,7 +595,7 @@ interface FieldMeta {
 }
 ```
 
-In the following example we use the `meta.dirty` flag to check if the field value was changed or not
+In the following example, we use the `meta.dirty` flag to check if the field value was changed or not
 
 ```vue
 <template>
@@ -638,7 +638,7 @@ To reduce the verbosity of adding an `initialValue` prop to each field, you coul
   
 Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
 
-To avoid this case you should combine the `valid` flag with either `meta.dirty` or `meta.touched` to get accurate representation.
+To avoid this case you should combine the `valid` flag with either `meta.dirty` or `meta.touched` to get an accurate representation.
 
 </doc-tip>
 

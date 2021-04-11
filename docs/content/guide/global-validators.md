@@ -7,9 +7,9 @@ next: guide/i18n
 
 # Global Validators
 
-Sometimes you are building an application that is form-heavy and needs to validate forms frequently, like an admin dashboard or a form based application. importing validation rules every time you need them can be quite tedious.
+Sometimes you are building an application that is form-heavy and needs to validate forms frequently, like an admin dashboard or a form-based application. importing validation rules every time you need them can be quite tedious.
 
-VeeValidate allows you to define validation rules globally on the app-level which in turn can allow you express your rules in a minimal syntax that is inspired by the [Laravel framework's validation syntax](https://laravel.com/docs/validation).
+VeeValidate allows you to define validation rules globally on the app-level which in turn can allow you to express your rules in a minimal syntax that is inspired by the [Laravel framework's validation syntax](https://laravel.com/docs/validation).
 
 ## Defining Global Validators
 
@@ -19,7 +19,7 @@ You can define a global validator using the `defineRule` function exported by ve
 import { defineRule } from 'vee-validate';
 ```
 
-The `defineRule` function accepts a rule name which acts as an identifier for that validation rule, the second argument is the validator function that will verify the field value. Here is an example of a simple `required` and an `email` rule:
+The `defineRule` function accepts a rule name that acts as an identifier for that validation rule, the second argument is the validator function that will verify the field value. Here is an example of a simple `required` and an `email` rule:
 
 ```js
 import { defineRule } from 'vee-validate';
@@ -51,12 +51,12 @@ The validator function is a simple function that receives the current field valu
 
 - `true` if the validation passed
 - `string` if the validation failed and there is an error message to display
-- `false` if validation fails, in that case vee-validate will try to generate an error message using `config.defaultMessage`
+- `false` if validation fails, in that case, vee-validate will try to generate an error message using `config.defaultMessage`
 - `Promise` if you have an asynchronous rule, the promise must either resolve to `string` or `true`
 
 <doc-tip title="Rules Placement">
 
-You should make the `defineRule` calls in your application entry-point file to make sure your forms have access to them, otherwise you may risk a form not being able to use some global rules because they weren't defined then. Here is some common entry points:
+You should make the `defineRule` calls in your application entry-point file to make sure your forms have access to them, otherwise, you may risk a form not being able to use some global rules because they weren't defined then. Here are some common entry points:
 
 - In vue-cli applications that would be the `src/main.js` file
 - In a Nuxt application, you need to create a `plugins/vee-validate.js` file and register it in `nuxt.config.js`
@@ -65,7 +65,7 @@ You should make the `defineRule` calls in your application entry-point file to m
 
 ### Using Global Validators
 
-Now that you've defined your validators, for example the `email` and `required` rules. You can pass them directly to `<Field />` component's `rules` prop like this:
+Now that you've defined your validators, for example, the `email` and `required` rules. You can pass them directly to `<Field />` component's `rules` prop like this:
 
 ```vue
 <Field name="name" rules="required" />
@@ -77,7 +77,7 @@ Notice that to define multiple rules you have to place a `|` (pipe) character be
 
 ## Configuring Global Validators
 
-Sometimes you rules require more information to work properly, for example if we want to define a `minLength` rule it won't be very useful to hard code the character limit, instead it should receive it per field.
+Sometimes your rules require more information to work properly, for example, if we want to define a `minLength` rule it won't be very useful to hard code the character limit, instead, it should receive it per field.
 
 VeeValidate passes rules arguments or (configuration) as the second argument to the validator function which is often an array containing the arguments in the same order they were passed in. Here is an example defining a `minLength` rule:
 
@@ -104,7 +104,7 @@ And then you can use it on the `Field` component like this:
 <Field name="password" type="password" rules="required|min:8" />
 ```
 
-Note that to pass arguments to rules, you need to place a colon `:` character to signify the beginning of rules. You can pass multiple arguments as a comma separated list. Here is an example for a `minMax` rule:
+Note that to pass arguments to rules, you need to place a colon `:` character to signify the beginning of rules. You can pass multiple arguments as a comma-separated list. Here is an example for a `minMax` rule:
 
 ```js
 import { defineRule } from 'vee-validate';
@@ -135,7 +135,7 @@ Then you can use it like this:
 
 ## Schema Validation
 
-The [Form-level validation](/guide/components/validation#form-level-validation) feature isn't limited to `yup` validators, you can define your global validators and define them in the exact same way as the previous examples in the `Form` component `validation-schema` prop.
+The [Form-level validation](/guide/components/validation#form-level-validation) feature isn't limited to `yup` validators, you can define your global validators and define them in the same way as the previous examples in the `Form` component `validation-schema` prop.
 
 Here is an example that uses all the rules we've defined prior in this page in a form validation schema:
 
@@ -228,7 +228,7 @@ This allows you to create more concise rules, you can reference any number of fi
 
 ## Object Expressions
 
-There is another way to use global validators which is more expressive by using JavaScript object to describe the validation for your fields. For example this:
+There is another way to use global validators which is more expressive by using JavaScript objects to describe the validation for your fields. For example this:
 
 ```
 required|between:0,10
@@ -281,9 +281,9 @@ Object.keys(rules).forEach(rule => {
 
 ## Caveats
 
-- Be careful of having too many global rules as this can slow down your initial website load time due to large initial bundle size
+- Be careful of having too many global rules as this can slow down your initial website load time due to the large initial bundle size
 - It is recommended to treat your validation rules as pure functions, meaning they only operate with the information given to them
-- Having small, pure global validations is preferable to allow re-using them across the app
+- Having small, pure global validations is preferable to allow reusing them across the app
 - You could possibly trigger an infinite render-loop when using the [object expressions](/guide/global-validators#object-expressions) to define your validations for a field, read the [linked section](/guide/global-validators#object-expressions) for a workaround
 
 ## Available Rules
@@ -338,7 +338,7 @@ The field under validation may only contain alphabetic characters.
 
 #### alpha_dash
 
-The field under validation may contain alphabetic characters, numbers, dashes or underscores.
+The field under validation may contain alphabetic characters, numbers, dashes, or underscores.
 
 ```vue
 <!-- string format -->
@@ -504,7 +504,7 @@ The file added to the field under validation must have an image mime type (image
 
 #### integer
 
-The field under validation must be a valid integer value. Doesn't accept exponentiale notation.
+The field under validation must be a valid integer value. Doesn't accept exponential notation.
 
 ```vue
 <!-- string format -->
@@ -548,9 +548,9 @@ The field under validation must not match the given value, uses strict equality.
 
 #### length
 
-The field under validation must have exactly have the specified number of items, only works for iterables.
+The field under validation must exactly have the specified number of items, only works for iterables.
 
-Allowed Iterable values are: `string`, `array` and any object that can be used with `Array.from`.
+Allowed Iterable values are `string`, `array`, and any object that can be used with `Array.from`.
 
 ```vue
 <!-- string format -->
@@ -691,7 +691,7 @@ The field under validation must match the specified regular expression.
 
 <doc-tip type="warn">
 
-You should not use the pipe '|' or commas ',' within your regular expression when using the string rules format as it will cause a conflict with how validators parsing works. You should use the object format of the rules instead as show in the last snippet
+You should not use the pipe '|' or commas ',' within your regular expression when using the string rules format as it will cause a conflict with how validators parsing works. You should use the object format of the rules instead as shown in the last snippet
 
 </doc-tip>
 
@@ -703,7 +703,7 @@ When using the `regex` rule, using the `g` flag may result in unexpected falsy v
 
 #### required
 
-The field under validation must have a non-empty value. By default, all validators pass the validation if they have "empty values" unless they are required. Those empty values are: empty strings, `undefined`, `null`, `false` and empty arrays.
+The field under validation must have a non-empty value. By default, all validators pass the validation if they have "empty values" unless they are required. Those empty values are empty strings, `undefined`, `null`, `false`, and empty arrays.
 
 ```vue
 <!-- string format -->

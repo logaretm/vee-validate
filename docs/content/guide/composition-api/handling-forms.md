@@ -7,7 +7,7 @@ next: guide/composition-api/nested-objects-and-arrays
 
 # Handling Forms
 
-vee-validate offers many helpers to handle form submissions, resets and DX to make your forms much easier to reason about and less of a burden to maintain. The `useForm` functions allows you to easily handle:
+vee-validate offers many helpers to handle form submissions, resets, and DX to make your forms much easier to reason about and less of a burden to maintain. The `useForm` function allow you to easily handle:
 
 <div class="features">
 
@@ -21,13 +21,13 @@ vee-validate offers many helpers to handle form submissions, resets and DX to ma
 
 Before we get to submitting forms, there are a few things to keep in mind.
 
-The main goal of the composition API is enable you to add validation logic to your components and UI. So in real world examples `useField` will be called in `TextField` and `SelectField` components, while `useForm` will be called in their parent form component.
+The main goal of the composition API is to enable you to add validation logic to your components and UI. So in real-world examples `useField` will be called in `TextField` and `SelectField` components, while `useForm` will be called in their parent form component.
 
-vee-validate exposes useful defaults to help you handle form submissions whether you submit them using JavaScript or native HTML submissions, in most cases you would like to make sure all your fields are valid before you submit the form, this is done for you by default.
+vee-validate exposes useful defaults to help you handle form submissions whether you submit them using JavaScript or native HTML submissions, in most cases, you would like to make sure all your fields are valid before you submit the form, this is done for you by default.
 
 ### JavaScript Submissions (AJAX)
 
-Mainly you will be using the `handleSubmit` function to create submission handlers for your forms, the `handleSubmit` function accepts a callback which receives the final form values, which is very convient since you don't normally have access to the form values in the parent component.
+Mainly you will be using the `handleSubmit` function to create submission handlers for your forms, the `handleSubmit` function accepts a callback that receives the final form values, which is very convenient since you don't normally have access to the form values in the parent component.
 
 ```vue
 <template>
@@ -59,11 +59,11 @@ The `handleSubmit` function will only execute your callback once the returned fu
 
 You can call the returned function either manually or via an event like `@submit` and it will validate all the fields and execute the callback if everything passes validation.
 
-As an added bonus, when the returned function is used as an event handler (like in the previous example) it will automatically prevent the default submission of the form so you don't need to use the `prevent` modifier like you normally would.
+As a bonus, when the returned function is used as an event handler (like in the previous example) it will automatically prevent the default submission of the form so you don't need to use the `prevent` modifier like you normally would.
 
 ### Full-Page Submissions (non-AJAX)
 
-For non-ajax submissions that trigger a full page reload, you can use the `submitForm` function instead of `handleSubmit`. You normally would use this if you are not building a single page application.
+For non-ajax submissions that trigger a full page reload, you can use the `submitForm` function instead of `handleSubmit`. You normally would use this if you are not building a single-page application.
 
 ```vue
 <template>
@@ -87,13 +87,13 @@ export default {
 </script>
 ```
 
-In that case **YOU MUST** use `submitForm` as an event handler for the `submit` event for a native `form` element, otherwise it will would have no effect.
+In that case **YOU MUST** use `submitForm` as an event handler for the `submit` event for a native `form` element, otherwise, it would have no effect.
 
 ## Submission Progress
 
 Quite often you need to show your users a submission indicator, or you might want to disable the submit button entirely until the submission attempt is done. The `useForm` function exposes an `isSubmitting` ref that you can use.
 
-The `isSubmitting` state will be set to `true` once the validation of the form starts (as a result of a submit event) and will keep track of the submission handler you passed to either `onSubmit` or until it calls `submitForm`. If the submission handler throws any errors or completes successfully it will be set to `false` afterwards.
+The `isSubmitting` state will be set to `true` once the validation of the form starts (as a result of a submit event) and will keep track of the submission handler you passed to either `onSubmit` or until it calls `submitForm`. If the submission handler throws any errors or completes successfully it will be set to `false` afterward.
 
 ```vue
 <template>
@@ -202,7 +202,7 @@ All fields created with `useField` or `<Field />` component will then grab their
 
 <doc-tip>
 
-It's generally Recommended that you provide the `initialValues`, this is because vee-validate cannot assume a reasonable initial value for your fields other than `undefined` which may cause unexpected behavior when using 3rd-party validator that do not deal with `undefined`.
+It's generally recommended that you provide the `initialValues`, this is because vee-validate cannot assume a reasonable initial value for your fields other than `undefined` which may cause unexpected behavior when using a 3rd-party validator that does not deal with `undefined`.
 
 </doc-tip>
 
@@ -235,7 +235,7 @@ export default {
 
 ## Handling Resets
 
-vee-validate also handles form resets in similar way to submissions. When resetting the form, all fields' errors and meta flags will be reset to their original state, including the fields' values.
+vee-validate also handles form resets in a similar way to submissions. When resetting the form, all fields' errors and meta flags will be reset to their original state, including the fields' values.
 
 To reset forms you can use the `resetForm` function returned by `useForm`.
 
@@ -383,9 +383,9 @@ export default {
 
 ## Setting Errors Manually
 
-Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example a `unique` email validation is complex to implement on the client-side, which the ability to set errors manually can be useful.
+Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example, `unique` email validation is complex to implement on the client-side, which the ability to set errors manually can be useful.
 
-You can set messages for fields by using either `setFieldError` which sets an error message for one field at a time, and the `setErrors` function which allows you set error messages for multiple fields at once.
+You can set messages for fields by using either `setFieldError` which sets an error message for one field at a time, and the `setErrors` function which allows you to set error messages for multiple fields at once.
 
 Both functions are available as a return value from `useForm`. In the following example, we check if the server response contains any validation errors and we set them on the fields:
 
@@ -418,7 +418,7 @@ export default {
       }
 
       // set multiple errors, assuming the keys are the names of the fields
-      // and the values is the error message
+      // and the values are the error message(s)
       setErrors(response.errors);
     });
 

@@ -8,7 +8,7 @@ order: 3
 
 ## Yup Bundle Size
 
-vee-validate's entire core size is very small, but the same can't be said about the validators you import. Most examples uses the following snippet to import everything `yup` has to offer:
+vee-validate's entire core size is very small, but the same can't be said about the validators you import. Most examples use the following snippet to import everything `yup` has to offer:
 
 ```js
 import * as yup from 'yup';
@@ -19,7 +19,7 @@ const schema = yup.object({
 });
 ```
 
-Instead you can leverage your bundler's tree-shaking capabilities and only import what you need:
+You should leverage your bundler's tree-shaking capabilities and only import what you need:
 
 ```js
 import { object, string } as yup from 'yup';
@@ -34,7 +34,7 @@ This will keep your app bundle size and routes to a minimum, ensuring faster loa
 
 ## Yup schemas in data
 
-In most examples you probably noticed something like this:
+In most examples, you probably noticed something like this:
 
 ```js
 {
@@ -89,4 +89,4 @@ import { markRaw } from 'vue';
 }
 ```
 
-The performance implications for this might be negligible for most cases, however for large form schemas this can be helpful to avoid the default behavior of deep reactive conversion.
+The performance implications for this might be negligible for most cases, however, for large form schemas, this can be helpful to avoid the default behavior of deep reactive conversion.
