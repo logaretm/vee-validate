@@ -5,7 +5,7 @@ The [English messages file](https://github.com/logaretm/vee-validate/blob/v2/loc
 
 ## Aliases
 
-Not only can you create and overwrite messages but you can also provide an alias for a field that to be used in the message instead of it's original name. Seeing 'first_name' in your error messages can't be very good for your users experience. There is a couple of solutions.
+Not only can you create and overwrite messages but you can also provide an alias for a field that to be used in the message instead of its original name. Seeing 'first_name' in your error messages can't be very good for your users experience. There is a couple of solutions.
 
 ### Using data-vv-as
 

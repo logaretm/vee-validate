@@ -16,7 +16,7 @@ It receives the field name or an alias for it as the first parameter, as well as
 
 ## Overwriting Messages
 
-The Validator class and it's instances provide a `localize` method, which will merge the provided messages with the internal dictionary, overwriting any duplicates.
+The Validator class and its instances provide a `localize` method, which will merge the provided messages with the internal dictionary, overwriting any duplicates.
 
 ::: tip
   Any merges will have an effect on all validator instances as the messages dictionary is shared.
