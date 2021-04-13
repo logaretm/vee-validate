@@ -22,7 +22,7 @@ export default {
 };
 ```
 
-This will make the component inherit it's parent's validator scope, thus sharing all errors and validation state. Meaning it has access to the same `errors` and `fields` computed properties as well.
+This will make the component inherit its parent's validator scope, thus sharing all errors and validation state. Meaning it has access to the same `errors` and `fields` computed properties as well.
 
 ::: tip
   If the direct parent isn't able to provide a validator scope, the API will traverse the tree upwards looking for a parent that can.
