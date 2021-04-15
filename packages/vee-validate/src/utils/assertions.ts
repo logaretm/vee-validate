@@ -1,6 +1,5 @@
 import { Locator, YupValidator } from '../types';
 import { isCallable, isObject } from '../../../shared';
-import { isEvent } from './events';
 
 export function isLocator(value: unknown): value is Locator {
   return isCallable(value) && !!(value as Locator).__locatorRef;
@@ -81,4 +80,22 @@ export function shouldHaveValueBinding(tag: string, attrs: Record<string, unknow
 
 export function isFormSubmitEvent(evt: unknown): evt is Event & { target: HTMLFormElement } {
   return isEvent(evt) && (evt as any).target && 'submit' in (evt as any).target;
+}
+
+export function isEvent(evt: unknown): evt is Event {
+  if (!evt) {
+    return false;
+  }
+
+  if (typeof Event !== 'undefined' && isCallable(Event) && evt instanceof Event) {
+    return true;
+  }
+
+  // this is for IE and Cypress #3161
+  /* istanbul ignore next */
+  if (evt && (evt as Event).srcElement) {
+    return true;
+  }
+
+  return false;
 }

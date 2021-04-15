@@ -1,24 +1,5 @@
-import { isCallable } from '../../../shared';
-import { hasCheckedAttr, isNativeMultiSelect } from './assertions';
+import { hasCheckedAttr, isNativeMultiSelect, isEvent } from './assertions';
 import { getBoundValue, hasValueBinding } from './vnode';
-
-export const isEvent = (evt: unknown): evt is Event => {
-  if (!evt) {
-    return false;
-  }
-
-  if (typeof Event !== 'undefined' && isCallable(Event) && evt instanceof Event) {
-    return true;
-  }
-
-  // this is for IE and Cypress #3161
-  /* istanbul ignore next */
-  if (evt && (evt as Event).srcElement) {
-    return true;
-  }
-
-  return false;
-};
 
 export function normalizeEventValue(value: Event | unknown): unknown {
   if (!isEvent(value)) {
