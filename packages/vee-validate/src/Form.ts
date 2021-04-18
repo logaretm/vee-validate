@@ -85,7 +85,7 @@ export const Form = defineComponent({
       return handleSubmit(onSuccess as SubmissionHandler<Record<string, unknown>>)(evt as Event);
     }
 
-    const slotProps = computed(() => {
+    function slotProps() {
       return {
         meta: meta.value,
         errors: errors.value,
@@ -105,7 +105,7 @@ export const Form = defineComponent({
         setTouched,
         resetForm,
       };
-    });
+    }
 
     return function renderForm(this: any) {
       // FIXME: Hacky but cute way to expose some stuff to the rendered instance
@@ -123,7 +123,9 @@ export const Form = defineComponent({
         this.validateField = validateField;
       }
 
-      const children = normalizeChildren(ctx, slotProps.value);
+      // avoid resolving the form component as itself
+      const tag = props.as === 'form' ? props.as : (resolveDynamicComponent(props.as) as string);
+      const children = normalizeChildren(tag, ctx, slotProps);
 
       if (!props.as) {
         return children;
@@ -139,8 +141,7 @@ export const Form = defineComponent({
           : {};
 
       return h(
-        // avoid resolving the form component as itself
-        props.as === 'form' ? props.as : (resolveDynamicComponent(props.as) as string),
+        tag,
         {
           ...formAttrs,
           ...ctx.attrs,

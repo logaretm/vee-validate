@@ -19,17 +19,21 @@ export const ErrorMessage = defineComponent({
       return errors?.value[props.name];
     });
 
+    function slotProps() {
+      return {
+        message: message.value,
+      };
+    }
+
     return () => {
       // Renders nothing if there are no messages
       if (!message.value) {
         return undefined;
       }
 
-      const children = normalizeChildren(ctx, {
-        message: message.value,
-      });
-
       const tag = (props.as ? resolveDynamicComponent(props.as) : props.as) as string;
+      const children = normalizeChildren(tag, ctx, slotProps);
+
       const attrs = {
         role: 'alert',
         ...ctx.attrs,
@@ -37,13 +41,13 @@ export const ErrorMessage = defineComponent({
 
       // If no tag was specified and there are children
       // render the slot as is without wrapping it
-      if (!tag && children?.length) {
+      if (!tag && (Array.isArray(children) || !children) && children?.length) {
         return children;
       }
 
       // If no children in slot
       // render whatever specified and fallback to a <span> with the message in it's contents
-      if (!children?.length) {
+      if ((Array.isArray(children) || !children) && !children?.length) {
         return h(tag || 'span', attrs, message.value);
       }
 

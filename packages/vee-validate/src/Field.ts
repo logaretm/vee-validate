@@ -161,7 +161,17 @@ export const Field = defineComponent({
       return attrs;
     });
 
-    const slotProps = computed(() => {
+    if ('modelValue' in props) {
+      const modelValue = toRef(props, 'modelValue');
+      watch(modelValue, newModelValue => {
+        if (newModelValue !== applyModifiers(value.value, props.modelModifiers)) {
+          value.value = newModelValue;
+          validateField();
+        }
+      });
+    }
+
+    function slotProps() {
       return {
         field: fieldProps.value,
         value: value.value,
@@ -177,22 +187,11 @@ export const Field = defineComponent({
         setTouched,
         setErrors,
       };
-    });
-
-    if ('modelValue' in props) {
-      const modelValue = toRef(props, 'modelValue');
-      watch(modelValue, newModelValue => {
-        if (newModelValue !== applyModifiers(value.value, props.modelModifiers)) {
-          value.value = newModelValue;
-          validateField();
-        }
-      });
     }
 
     return () => {
       const tag = resolveDynamicComponent(resolveTag(props, ctx)) as string;
-
-      const children = normalizeChildren(ctx, slotProps.value);
+      const children = normalizeChildren(tag, ctx, slotProps);
 
       if (tag) {
         return h(

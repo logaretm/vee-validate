@@ -3,12 +3,22 @@ import { SetupContext } from 'vue';
 type HTMLElementWithValueBinding = HTMLElement & { _value: unknown };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const normalizeChildren = (context: SetupContext<any>, slotProps: Record<string, unknown>) => {
+export const normalizeChildren = (
+  tag: string | Record<string, unknown> | undefined,
+  context: SetupContext<any>,
+  slotProps: () => Record<string, unknown>
+) => {
   if (!context.slots.default) {
     return context.slots.default;
   }
 
-  return context.slots.default(slotProps);
+  if (typeof tag === 'string' || !tag) {
+    return context.slots.default(slotProps());
+  }
+
+  return {
+    default: () => context.slots.default?.(slotProps()),
+  };
 };
 
 /**
