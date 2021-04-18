@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.1](https://github.com/logaretm/vee-validate/compare/v4.3.0...v4.3.1) (2021-04-18)
+
+
+### Bug Fixes
+
+* give error message component a name ([b7dcebf](https://github.com/logaretm/vee-validate/commit/b7dcebfcd202538cf082314817f97c3b8e07fefb))
+* minor perf enhancement by lazy evaulation of slot props ([a306b1b](https://github.com/logaretm/vee-validate/commit/a306b1b0047ec82eaf727a6e380856de077c4fbe))
+
+
+
+
+
 # [4.3.0](https://github.com/logaretm/vee-validate/compare/v4.2.4...v4.3.0) (2021-04-07)
 
 
