@@ -3,6 +3,7 @@ import { FormErrorsSymbol } from './symbols';
 import { normalizeChildren } from './utils';
 
 export const ErrorMessage = defineComponent({
+  name: 'ErrorMessage',
   props: {
     as: {
       type: String,
