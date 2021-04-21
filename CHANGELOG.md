@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.2](https://github.com/logaretm/vee-validate/compare/v4.3.1...v4.3.2) (2021-04-21)
+
+
+### Bug Fixes
+
+* unwrap initial value with useField.resetField fixes [#3272](https://github.com/logaretm/vee-validate/issues/3272) ([#3274](https://github.com/logaretm/vee-validate/issues/3274)) ([f6e9574](https://github.com/logaretm/vee-validate/commit/f6e95741f31fc085f718e07d3b1f1adfe0229df6))
+
+
+
+
+
 ## [4.3.1](https://github.com/logaretm/vee-validate/compare/v4.3.0...v4.3.1) (2021-04-18)
 
 
