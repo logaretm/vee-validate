@@ -95,4 +95,72 @@ describe('useField()', () => {
     await flushPromises();
     expect(meta?.textContent).toBe('invalid');
   });
+
+  test('dirty flag is false after reset', async () => {
+    mountWithHoc({
+      setup() {
+        const { value, meta, resetField } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          value,
+          meta,
+          resetField,
+        };
+      },
+      template: `
+      <input name="field" v-model="value" />
+      <span id="meta">{{ meta.dirty ? 'dirty' : 'clean' }}</span>
+      <button @click="resetField()">Reset</button>
+    `,
+    });
+
+    const input = document.querySelector('input') as HTMLInputElement;
+    const meta = document.querySelector('#meta');
+
+    await flushPromises();
+    expect(meta?.textContent).toBe('clean');
+
+    setValue(input, '');
+    await flushPromises();
+    expect(meta?.textContent).toBe('dirty');
+
+    // trigger reset
+    document.querySelector('button')?.click();
+    await flushPromises();
+    expect(meta?.textContent).toBe('clean');
+  });
+
+  test('dirty flag is false after reset with a new value', async () => {
+    mountWithHoc({
+      setup() {
+        const { value, meta, resetField } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          value,
+          meta,
+          resetField,
+        };
+      },
+      template: `
+      <input name="field" v-model="value" />
+      <span id="meta">{{ meta.dirty ? 'dirty' : 'clean' }}</span>
+      <button @click="resetField({ value: '12' })">Reset</button>
+    `,
+    });
+
+    const input = document.querySelector('input') as HTMLInputElement;
+    const meta = document.querySelector('#meta');
+
+    await flushPromises();
+    expect(meta?.textContent).toBe('clean');
+
+    setValue(input, '');
+    await flushPromises();
+    expect(meta?.textContent).toBe('dirty');
+
+    // trigger reset
+    document.querySelector('button')?.click();
+    await flushPromises();
+    expect(meta?.textContent).toBe('clean');
+  });
 });

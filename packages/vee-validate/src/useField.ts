@@ -335,9 +335,13 @@ function useValidationState<TValue>({
 }) {
   const { errors, errorMessage, setErrors } = useErrorsSource(name, form);
   const formInitialValues = injectWithSelf(FormInitialValuesSymbol, undefined);
+  // clones the ref value to a mutable version
+  const initialValueRef = ref(unref(initValue)) as Ref<TValue>;
+
   const initialValue = computed(() => {
-    return (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? unref(initValue)) as TValue;
+    return (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? unref(initialValueRef)) as TValue;
   });
+
   const value = useFieldValue(initialValue, name, form);
   const meta = useMeta(initialValue, value, errors);
 
@@ -382,12 +386,14 @@ function useValidationState<TValue>({
     const newValue =
       state && 'value' in state
         ? (state.value as TValue)
-        : ((getFromPath<TValue>(unref(formInitialValues), fieldPath) ?? initValue) as TValue);
+        : ((getFromPath<TValue>(unref(formInitialValues), fieldPath) ?? unref(initValue)) as TValue);
 
     if (form) {
       form.setFieldValue(fieldPath, newValue, { force: true });
+      form.setFieldInitialValue(fieldPath, newValue);
     } else {
       value.value = newValue;
+      initialValueRef.value = newValue;
     }
 
     setErrors(state?.errors || []);
@@ -421,7 +427,7 @@ function useMeta<TValue>(initialValue: MaybeRef<TValue>, currentValue: Ref<TValu
     validated: false,
     initialValue: computed(() => unref(initialValue) as TValue | undefined),
     dirty: computed(() => {
-      return !isEqual(currentValue.value, unref(initialValue));
+      return !isEqual(unref(currentValue), unref(initialValue));
     }),
   }) as FieldMeta<TValue>;
 

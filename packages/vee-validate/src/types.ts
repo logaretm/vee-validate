@@ -134,6 +134,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   }>;
   isSubmitting: Ref<boolean>;
   handleSubmit(cb: SubmissionHandler<TValues>): (e?: Event) => Promise<void>;
+  setFieldInitialValue(path: string, value: unknown): void;
 }
 
 export interface PublicFormContext<TValues extends Record<string, any> = Record<string, any>>
@@ -147,6 +148,7 @@ export interface PublicFormContext<TValues extends Record<string, any> = Record<
     | 'errorBag'
     | 'setFieldErrorBag'
     | 'stageInitialValue'
+    | 'setFieldInitialValue'
   > {
   errors: ComputedRef<FormErrors<TValues>>;
   handleReset: () => void;
