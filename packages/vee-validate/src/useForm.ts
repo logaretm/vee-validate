@@ -376,12 +376,16 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     };
   };
 
+  function setFieldInitialValue(path: string, value: unknown) {
+    setInPath(initialValues.value, path, value);
+  }
+
   /**
    * Sneaky function to set initial field values
    */
   function stageInitialValue(path: string, value: unknown) {
     setInPath(formValues, path, value);
-    setInPath(initialValues.value, path, value);
+    setFieldInitialValue(path, value);
   }
 
   const schema = opts?.validationSchema;
@@ -412,6 +416,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     isSubmitting,
     handleSubmit,
     stageInitialValue,
+    setFieldInitialValue,
   };
 
   const immutableFormValues = computed<TValues>(() => {

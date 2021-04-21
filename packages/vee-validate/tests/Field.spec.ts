@@ -499,7 +499,7 @@ describe('<Field />', () => {
           <span id="error">{{ errors && errors[0] }}</span>
           <span id="touched">{{ meta.touched.toString() }}</span>
           <span id="dirty">{{ meta.dirty.toString() }}</span>
-          <button @click="resetField({ value: '${resetValue}', dirty: true, touched: true, errors: ['${resetMessage}'] })">Reset</button>
+          <button @click="resetField({ value: '${resetValue}', touched: true, errors: ['${resetMessage}'] })">Reset</button>
         </Field>
       </div>
     `,
@@ -521,7 +521,7 @@ describe('<Field />', () => {
     await flushPromises();
     expect(error.textContent).toBe(resetMessage);
     expect(input.value).toBe(resetValue);
-    expect(dirty.textContent).toBe('true');
+    expect(dirty.textContent).toBe('false');
     expect(touched.textContent).toBe('true');
   });
 
