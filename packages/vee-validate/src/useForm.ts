@@ -345,6 +345,15 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         e.stopPropagation();
       }
 
+      // Touch all fields
+      setTouched(
+        keysOf(fieldsById.value).reduce((acc, field) => {
+          acc[field] = true;
+
+          return acc;
+        }, {} as Record<keyof TValues, boolean>)
+      );
+
       isSubmitting.value = true;
       submitCount.value++;
       return validate()

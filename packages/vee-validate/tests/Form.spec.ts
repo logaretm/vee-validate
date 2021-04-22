@@ -1800,4 +1800,36 @@ describe('<Form />', () => {
     await flushPromises();
     expect(document.querySelector('span')?.textContent).toBe('');
   });
+
+  test('submitting forms should touch fields', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          onSubmit: jest.fn(),
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" v-slot="{ meta }">
+        <Field id="email" name="email" as="input" rules="required" />
+        <Field id="password" name="password" as="input" rules="required" v-slot="fieldProps">
+          <input v-bind="fieldProps.field" />
+          <span id="fieldMeta">{{ fieldProps.meta.touched ? 'touched' : 'untouched' }}</span>
+        </Field>
+
+        <span id="meta">{{ meta.touched ? 'touched' : 'untouched' }}</span>
+        <button type="submit">Submit</button> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const formMeta = wrapper.$el.querySelector('#meta');
+    const fieldMeta = wrapper.$el.querySelector('#fieldMeta');
+    expect(formMeta.textContent).toBe('untouched');
+    expect(fieldMeta.textContent).toBe('untouched');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(formMeta.textContent).toBe('touched');
+    expect(fieldMeta.textContent).toBe('touched');
+  });
 });
