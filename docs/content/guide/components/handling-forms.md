@@ -424,6 +424,31 @@ export default {
 
 Note that setting any field's value using this way will trigger validation
 
+## Submission Behavior
+
+vee-validate does the following when you submit a form rendered by `<Form />` or when calling either `handleSubmit` or `submitForm`:
+
+### Before validation stage
+
+- Sets all fields `touched` meta to `true`
+- Sets `isSubmitting` form state to `true`
+- Increments the `submitCount` form state by `1`
+
+### Validation stage
+
+- Sets form and individual fields meta `pending` to `true` to indicate validation is in progress
+- Runs the validation function/schema/rule against the current form values asynchronously
+- Checks for any errors in the validation result
+  - If there are errors then it will skip the next stage and update the validation state (meta, errors) for the form and fields
+  - If there aren't any errors then it will set the `pending` meta flag to `false` and proceed to the next stage
+
+### After validation stage
+
+- Calls the `@submit` handler you specified, or calls the `handleSubmit` callback you provided.
+- After the callbacks in either method finish (it will wait if the result is asynchronous), then it will set `isSubmitting` to `false`
+
+Note that there isn't a need to have `isSubmitting` set back to false if you've used `submitForm`, as this submission method will perform a full-page refresh (native forms behavior).
+
 ## Handling Resets
 
 vee-validate also handles form resets in a similar way to submissions. When resetting the form, all fields' errors and meta flags will be reset to their original state, including the fields' values.
