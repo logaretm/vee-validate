@@ -274,7 +274,7 @@ Or you can globally define all the available rules in the `@vee-validate/rules` 
 import { defineRule } from 'vee-validate';
 import AllRules from '@vee-validate/rules';
 
-Object.keys(rules).forEach(rule => {
+Object.keys(AllRules).forEach(rule => {
   defineRule(rule, AllRules[rule]);
 });
 ```
