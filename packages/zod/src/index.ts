@@ -5,7 +5,7 @@ import { isIndex } from '../../shared';
 /**
  * Transforms a Zod's base type schema to yup's base type schema
  */
-export function toFieldValidator<TValue = any, TDef extends ZodTypeDef = ZodTypeDef, TInput = TValue>(
+export function toFieldValidator<TValue = unknown, TDef extends ZodTypeDef = ZodTypeDef, TInput = TValue>(
   zodSchema: ZodType<TValue, TDef, TInput>
 ): BaseSchema<TValue> {
   return {
@@ -36,9 +36,10 @@ type ToBaseTypes<TShape extends ZodRawShape> = {
 /**
  * Transforms a Zod object schema to Yup's schema
  */
-export function toFormValidator<TShape extends ZodRawShape, TValues extends Record<string, any> = ToBaseTypes<TShape>>(
-  zodSchema: ZodObject<TShape>
-): SchemaOf<TValues> {
+export function toFormValidator<
+  TShape extends ZodRawShape,
+  TValues extends Record<string, unknown> = ToBaseTypes<TShape>
+>(zodSchema: ZodObject<TShape>): SchemaOf<TValues> {
   return {
     async validate(value: TValues) {
       const result = await zodSchema.safeParseAsync(value);

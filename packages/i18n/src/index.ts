@@ -15,7 +15,7 @@ type RootI18nDictionary = Record<string, PartialI18nDictionary>;
 class Dictionary {
   public locale: string;
 
-  private container: any;
+  private container: RootI18nDictionary;
 
   public constructor(locale: string, dictionary: RootI18nDictionary) {
     this.container = {};
@@ -28,7 +28,7 @@ class Dictionary {
   }
 
   public format(locale: string, ctx: FieldContext) {
-    let message!: ValidationMessageTemplate;
+    let message!: ValidationMessageTemplate | undefined;
     const { field, rule, form } = ctx;
     if (!rule) {
       return `${field} is not valid`;
