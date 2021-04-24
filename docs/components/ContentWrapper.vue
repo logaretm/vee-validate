@@ -26,7 +26,7 @@ export default {
   }
 
   h3 {
-    @apply text-xl;
+    @apply text-xl lg:text-lg;
   }
 
   h4 {
