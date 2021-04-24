@@ -1,3 +1,5 @@
+import { isObject } from '../../shared';
+
 /**
  * Replaces placeholder values in a string with their actual values
  */
@@ -21,4 +23,21 @@ export function interpolate(template: string, values: Record<string, any>): stri
 
     return paramIndex in values.params ? values.params[paramIndex] : `${param}{${placeholder}}`;
   });
+}
+
+export function merge(target: any, source: any) {
+  Object.keys(source).forEach(key => {
+    if (isObject(source[key])) {
+      if (!target[key]) {
+        target[key] = {};
+      }
+
+      merge(target[key], source[key]);
+      return;
+    }
+
+    target[key] = source[key];
+  });
+
+  return target;
 }

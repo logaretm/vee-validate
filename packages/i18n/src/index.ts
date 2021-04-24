@@ -1,5 +1,5 @@
-import { isCallable, merge, FieldContext, ValidationMessageGenerator } from '../../shared';
-import { interpolate } from './utils';
+import { isCallable, FieldContext, ValidationMessageGenerator } from '../../shared';
+import { interpolate, merge } from './utils';
 
 type ValidationMessageTemplate = ValidationMessageGenerator | string;
 

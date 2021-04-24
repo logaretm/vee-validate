@@ -1,4 +1,4 @@
-import { h, defineComponent, toRef, resolveDynamicComponent, computed, PropType } from 'vue';
+import { h, defineComponent, toRef, resolveDynamicComponent, PropType } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler } from './types';
 import { isEvent, normalizeChildren } from './utils';
