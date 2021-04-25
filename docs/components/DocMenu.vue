@@ -1,6 +1,6 @@
 <template>
   <div class="px-6 pt-24 font-ui">
-    <div class="space-y-8 md:text-sm overflow-y-auto overscroll-y-contain">
+    <nav class="space-y-8 md:text-sm overflow-y-auto overscroll-y-contain">
       <div v-for="category in categories" :key="category.title">
         <p class="md:text-xs font-bold text-gray-400 uppercase">{{ category.title }}</p>
         <div class="mt-3 space-y-2 w-full">
@@ -46,7 +46,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </nav>
   </div>
 </template>
 
