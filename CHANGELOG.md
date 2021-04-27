@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.4](https://github.com/logaretm/vee-validate/compare/v4.3.3...v4.3.4) (2021-04-27)
+
+
+### Bug Fixes
+
+* update the valid flag regardless of mode closes [#3284](https://github.com/logaretm/vee-validate/issues/3284) ([6594ad1](https://github.com/logaretm/vee-validate/commit/6594ad15e4423c6a7861da188560b06f98365d9d))
+
+
+
+
+
 ## [4.3.3](https://github.com/logaretm/vee-validate/compare/v4.3.2...v4.3.3) (2021-04-22)
 
 
