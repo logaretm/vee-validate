@@ -565,9 +565,9 @@ async function validateYupSchema<TValues>(
     };
 
     result[fieldId] = fieldResult;
+    // always update the valid flag regardless of the mode
+    applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
     if (mode === 'silent') {
-      applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
-
       return result;
     }
 
