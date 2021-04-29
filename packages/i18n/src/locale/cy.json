@@ -14,7 +14,7 @@
     "ext": "Dyw {field} ddim yn ffeil dilys",
     "image": "Mae'n rhaid i {field} fod yn lun",
     "integer": "Mae'n rhaid i {field} fod yn gyfanrif",
-    "length": "Mae'n rhaid i {field}The {field} field must be 0:{length} long",
+    "length": "Mae'n rhaid i {field}",
     "max_value": "Mae'n rhaid i {field} fod yn 0:{max} o hyd neu'n llai",
     "max": "Mae'n rhaid i {field} fod yn 0:{length} o hyd neu'n fwy",
     "mimes": "Mae'n rhaid i {field} fod yn ffeil ddilys",
