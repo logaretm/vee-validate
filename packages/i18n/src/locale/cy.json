@@ -1,0 +1,31 @@
+{
+  "code": "cy",
+  "messages": {
+    "alpha": "Gall {field} ond gynnwys llythrennau'r wyddor",
+    "alpha_num": "Gall {field} ond gynnwys llythrennau'r wyddor a rhifau",
+    "alpha_dash": "Gall {field} ond gynnwys llythrennau'r wyddor a chysylltnod",
+    "alpha_spaces": "Gall {field} ond gynnwys llythrennau'r wyddor a gofod",
+    "between": "Mae'n rhaid i {field} fod rhwng 0:{min} a 1:{max}",
+    "confirmed": "Dyw {field} ddim yn gyfatebol",
+    "digits": "Mae'n rhaid i {field} fod yn ddigidau 0:{length} o hyd",
+    "dimensions": "Mae'n rhaid i {field} fod yn 0:{width} pixel llydan, a 1:{height} pixel o uchder",
+    "email": "Mae'n rhaid i {field} fod yn ebost ddilys",
+    "excluded": "Dyw {field} ddim yn fewnbwn ddilys",
+    "ext": "Dyw {field} ddim yn ffeil dilys",
+    "image": "Mae'n rhaid i {field} fod yn lun",
+    "integer": "Mae'n rhaid i {field} fod yn gyfanrif",
+    "length": "Mae'n rhaid i {field}",
+    "max_value": "Mae'n rhaid i {field} fod yn 0:{max} o hyd neu'n llai",
+    "max": "Mae'n rhaid i {field} fod yn 0:{length} o hyd neu'n fwy",
+    "mimes": "Mae'n rhaid i {field} fod yn ffeil ddilys",
+    "min_value": "Mae'n rhaid i {field} fod yn 0:{min} o hyd neu'n fwy",
+    "min": "Mae'n rhaid i {field} fod yn 0:{length} o hyd neu'n fwy",
+    "numeric": "Mae'n rhaid i {field} fod yn rhif",
+    "one_of": "Dyw {field} ddim yn fewnbwn dilys",
+    "regex": "Dyw {field} ddim yn fformat dilys",
+    "required_if": "Mae {field} yn angenrheidiol",
+    "required": "Mae {field} yn angenrheidiol",
+    "size": "Mae'n rhaid i faint {field} for yn llai na 0:{size}KB",
+    "url": "Dyw {field} ddim yn URL dilys"
+  }
+}
