@@ -134,7 +134,7 @@ export function keysOf<TRecord extends Record<string, unknown>>(record: TRecord)
 export function injectWithSelf<T>(symbol: InjectionKey<T>, def: T | undefined = undefined): T | undefined {
   const vm = getCurrentInstance() as any;
 
-  return inject(symbol, vm?.provides[symbol as any] || def);
+  return vm?.provides[symbol as any] || inject(symbol, def);
 }
 
 export function warn(message: string) {
