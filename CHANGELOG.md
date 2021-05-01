@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.5](https://github.com/logaretm/vee-validate/compare/v4.3.4...v4.3.5) (2021-05-01)
+
+
+### Bug Fixes
+
+* priotrize self injections over parent injections closes [#3270](https://github.com/logaretm/vee-validate/issues/3270) ([07c1234](https://github.com/logaretm/vee-validate/commit/07c12341d7f2e25e41a56ea0d5e38e9a374ae84b))
+
+
+
+
+
 ## [4.3.4](https://github.com/logaretm/vee-validate/compare/v4.3.3...v4.3.4) (2021-04-27)
 
 
