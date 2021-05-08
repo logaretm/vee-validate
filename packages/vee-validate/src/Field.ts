@@ -1,8 +1,9 @@
 import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, watch } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
-import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding } from './utils';
+import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent } from './utils';
 import { toNumber } from '../../shared';
+import { EMPTY_VALUE } from './symbols';
 
 interface ValidationTriggersProps {
   validateOnMount: boolean;
@@ -62,6 +63,7 @@ export const Field = defineComponent({
     },
     modelValue: {
       type: null,
+      default: EMPTY_VALUE,
     },
     modelModifiers: {
       type: null,
@@ -93,13 +95,7 @@ export const Field = defineComponent({
       validateOnMount: props.validateOnMount,
       bails: props.bails,
       type: ctx.attrs.type as string,
-      // Gets the initial value either from `value` prop/attr or `v-model` binding (modelValue)
-      // For checkboxes and radio buttons it will always be the model value not the `value` attribute
-      initialValue: hasCheckedAttr(ctx.attrs.type)
-        ? props.modelValue
-        : 'modelValue' in props
-        ? props.modelValue
-        : ctx.attrs.value,
+      initialValue: resolveInitialValue(props, ctx),
       // Only for checkboxes and radio buttons
       valueProp: ctx.attrs.value,
       uncheckedValue,
@@ -108,21 +104,19 @@ export const Field = defineComponent({
     });
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
-    const onChangeHandler =
-      'modelValue' in props
-        ? function handleChangeWithModel(e: any) {
-            handleChange(e);
-            ctx.emit('update:modelValue', value.value);
-          }
-        : handleChange;
+    const onChangeHandler = isPropPresent(props, 'modelValue')
+      ? function handleChangeWithModel(e: any) {
+          handleChange(e);
+          ctx.emit('update:modelValue', value.value);
+        }
+      : handleChange;
 
-    const onInputHandler =
-      'modelValue' in props
-        ? function handleChangeWithModel(e: any) {
-            handleInput(e);
-            ctx.emit('update:modelValue', value.value);
-          }
-        : handleInput;
+    const onInputHandler = isPropPresent(props, 'modelValue')
+      ? function handleChangeWithModel(e: any) {
+          handleInput(e);
+          ctx.emit('update:modelValue', value.value);
+        }
+      : handleInput;
 
     const fieldProps = computed(() => {
       const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = resolveValidationTriggers(
@@ -161,7 +155,7 @@ export const Field = defineComponent({
       return attrs;
     });
 
-    if ('modelValue' in props) {
+    if (isPropPresent(props, 'modelValue')) {
       const modelValue = toRef(props, 'modelValue');
       watch(modelValue, newModelValue => {
         if (newModelValue !== applyModifiers(value.value, props.modelModifiers)) {
@@ -236,4 +230,14 @@ function applyModifiers(value: unknown, modifiers: Record<string, boolean>) {
   }
 
   return value;
+}
+
+function resolveInitialValue(props: Record<string, unknown>, ctx: SetupContext<any>) {
+  // Gets the initial value either from `value` prop/attr or `v-model` binding (modelValue)
+  // For checkboxes and radio buttons it will always be the model value not the `value` attribute
+  if (!hasCheckedAttr(ctx.attrs.type)) {
+    return isPropPresent(props, 'modelValue') ? props.modelValue : ctx.attrs.value;
+  }
+
+  return isPropPresent(props, 'modelValue') ? props.modelValue : undefined;
 }

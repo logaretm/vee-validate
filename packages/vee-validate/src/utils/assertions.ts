@@ -1,5 +1,6 @@
 import { Locator, YupValidator } from '../types';
 import { isCallable, isObject } from '../../../shared';
+import { EMPTY_VALUE } from '../symbols';
 
 export function isLocator(value: unknown): value is Locator {
   return isCallable(value) && !!(value as Locator).__locatorRef;
@@ -98,4 +99,8 @@ export function isEvent(evt: unknown): evt is Event {
   }
 
   return false;
+}
+
+export function isPropPresent(obj: Record<string, unknown>, prop: string) {
+  return prop in obj && obj[prop] !== EMPTY_VALUE;
 }
