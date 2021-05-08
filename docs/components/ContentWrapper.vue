@@ -47,7 +47,7 @@ export default {
   h3,
   h4,
   h5 {
-    @apply font-semibold my-8 relative inline-block;
+    @apply font-semibold my-8 relative w-max;
     transform: translateX(2ch);
     &::before {
       @apply absolute text-accent-800;
