@@ -12,3 +12,5 @@ export const FormInitialValuesSymbol: InjectionKey<ComputedRef<Record<string, un
 );
 
 export const FieldContextSymbol: InjectionKey<PrivateFieldComposite<unknown>> = Symbol('vee-validate-field-instance');
+
+export const EMPTY_VALUE = Symbol('Default empty value');
