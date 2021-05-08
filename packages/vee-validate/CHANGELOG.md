@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.6](https://github.com/logaretm/vee-validate/compare/v4.3.5...v4.3.6) (2021-05-08)
+
+
+### Bug Fixes
+
+* added a symbol to detect non passed props with Vue 3.1.x ([#3295](https://github.com/logaretm/vee-validate/issues/3295)) ([0663539](https://github.com/logaretm/vee-validate/commit/06635397424526c3a3c4a53f63322bbfd55000ee))
+
+
+
+
+
 ## [4.3.5](https://github.com/logaretm/vee-validate/compare/v4.3.4...v4.3.5) (2021-05-01)
 
 
